@@ -1,6 +1,6 @@
 /* GraphicsScreen.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/05/28 GPL
  * pb 2004/10/18 ReleaseDC
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
+ * sdk 2008/03/24 cairo
  */
 
 #include "GraphicsP.h"
@@ -70,6 +71,9 @@ void Graphics_flushWs (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			// Ik weet niet of dit is wat het zou moeten zijn ;)
+			// gdk_window_process_updates (my window, TRUE);
+			gdk_flush ();
 			// TODO: een aanroep die de eventuele grafische buffer ledigt,
 			// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
 		#elif xwin
@@ -126,10 +130,22 @@ void Graphics_updateWs (I) {
 	iam (Graphics);
 	if (me && my screen) {
 		iam (GraphicsScreen);
-		#if cairo
-			cairo_rectangle (my cr, my x1DC, my y1DC, my x1DC - my x2DC, my y1DC - my y2DC);
-			cairo_clip (my cr);
+		#if gtk
+			g_debug ("updateWs");
+			GdkEventExpose event;
+			event.type = GDK_EXPOSE;
+			event.window = NULL;
+			event.send_event = FALSE;
+			event.region = NULL;
+			event.count = 0;
+			event.area.x = my x1DC;
+			event.area.y = my y1DC;
+			event.area.width = my x2DC - my x1DC;
+			event.area.height = my y2DC - my y1DC;
+			gtk_widget_send_expose (my drawingArea, (GdkEvent *) & event);
 			// TODO: niet goed. Deze functie behoort een expose event te genereren.
+			// Hopelijk nu wel goed. De width en height verdienen een controle!
+			// PB: ja, want y1DC is waarschijnlijk groter dan y2DC.
 		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, True);
 		#elif win
@@ -309,7 +325,11 @@ static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
 
 Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget */
 	GraphicsScreen me = new (GraphicsScreen);
-	Dimension width, height, marginWidth, marginHeight;
+	#if gtk
+		GtkRequisition realsize;
+	#elif motif
+		Dimension width, height, marginWidth, marginHeight;
+	#endif
 
 	my drawingArea = w;   /* Now !!!!!!!!!! */
 	my screen = true;
@@ -321,23 +341,40 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#ifdef macintosh
 		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) GetWindowPort ((WindowRef) XtWindow (w)), Gui_getResolution (w));
 	#else
-		#if motif
-		GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), Gui_getResolution (w));
+		#if gtk
+			GraphicsScreen_init (me, GTK_WIDGET (w), (unsigned long) GTK_WIDGET (w), Gui_getResolution(w));
+		#elif motif
+			GraphicsScreen_init (me, XtDisplay (w), (unsigned long) XtWindow (w), Gui_getResolution (w));
 		#endif
 	#endif
 
-	#if motif
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
+	#if gtk
+		gtk_widget_size_request (my drawingArea, &realsize);
+		// HIER WAS IK
+		//	g_debug("--> %d %d", realsize.width, realsize.height);
+		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
+	#elif motif
+		XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
 		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	// TODO
-	Graphics_setWsViewport ((Graphics) me,
-		marginWidth, width - marginWidth, marginHeight, height - marginHeight);
+		Graphics_setWsViewport ((Graphics) me,
+			marginWidth, width - marginWidth, marginHeight, height - marginHeight);
 	#endif
 	#ifdef macintosh
 		XtAddCallback (w, XmNmoveCallback, cb_move, (XtPointer) me);
 	#endif
 	return (Graphics) me;
 }
+
+#if cairo
+	void *Graphics_x_getCR (I) {
+		iam (GraphicsScreen);
+		return my cr;
+	}
+	void Graphics_x_setCR (I, void *cr) {
+		iam (GraphicsScreen);
+		my cr = cr;
+	}
+#endif
 
 #if xwin
 	void *Graphics_x_getGC (I) {

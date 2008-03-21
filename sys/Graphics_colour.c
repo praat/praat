@@ -1,6 +1,6 @@
 /* Graphics_colour.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/05/28 GPL
  * pb 2004/09/09 Xwin: highlight2
+ * sdk 2008/03/24 cairo
  */
 
 #include "GraphicsP.h"
@@ -84,7 +85,26 @@ void _Graphics_setColour (I, int colour) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if gtk
+			switch (colour) {
+				case Graphics_WHITE:   cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0); break;
+				case Graphics_RED:     cairo_set_source_rgb (my cr, 1.0, 0.0, 0.0); break;
+				case Graphics_GREEN:   cairo_set_source_rgb (my cr, 0.0, 0.5, 0.0); break;
+				case Graphics_BLUE:    cairo_set_source_rgb (my cr, 0.0, 0.0, 1.0); break;
+				case Graphics_CYAN:    cairo_set_source_rgb (my cr, 0.0, 1.0, 1.0); break;
+				case Graphics_MAGENTA: cairo_set_source_rgb (my cr, 1.0, 0.0, 1.0); break;
+				case Graphics_YELLOW:  cairo_set_source_rgb (my cr, 1.0, 1.0, 0.0); break;
+				case Graphics_MAROON:  cairo_set_source_rgb (my cr, 0.5, 0.0, 0.0); break;
+				case Graphics_LIME:    cairo_set_source_rgb (my cr, 0.0, 1.0, 0.0); break;
+				case Graphics_NAVY:    cairo_set_source_rgb (my cr, 0.0, 0.0, 0.5); break;
+				case Graphics_TEAL:    cairo_set_source_rgb (my cr, 0.0, 0.5, 0.5); break;
+				case Graphics_PURPLE:  cairo_set_source_rgb (my cr, 0.5, 0.0, 0.5); break;
+				case Graphics_OLIVE:   cairo_set_source_rgb (my cr, 0.5, 0.5, 0.0); break;
+				case Graphics_SILVER:  cairo_set_source_rgb (my cr, 0.75, 0.75, 0.75); break;
+				case Graphics_GREY:    cairo_set_source_rgb (my cr, 0.5, 0.5, 0.5); break;
+				default:               cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0); break;
+			}
+		#elif xwin
 			XSetForeground (my display, my gc,
 				colour == Graphics_WHITE ? white :
 				colour == Graphics_RED ? red :
@@ -153,7 +173,10 @@ void _Graphics_setGrey (I, double fgrey) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if gtk
+			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
+			cairo_set_source_rgb (my cr, lightness, lightness, lightness);
+		#elif xwin
 			int igrey = (int) floor (100 * fgrey + 0.5);
 			if (igrey < 0) igrey = 0; else if (igrey > 100) igrey = 100;
 			XSetForeground (my display, my gc, grey [igrey]);
@@ -204,7 +227,13 @@ static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if gtk
+			int width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width <= 0 || height <= 0) return;
+			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
+			cairo_rectangle (my cr, x1DC, y2DC, width, height);
+			cairo_fill (my cr);
+		#elif xwin
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			XSetForeground (my display, my gc, pink ^ white);
@@ -246,7 +275,9 @@ void Graphics_highlight (I, double x1WC, double x2WC, double y1WC, double y2WC) 
 
 void Graphics_unhighlight (I, double x1WC, double x2WC, double y1WC, double y2WC) {
 	iam (Graphics);
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
+	#if motif
+		highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
+	#endif
 	if (my recording)
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
@@ -257,7 +288,16 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if gtk
+			int line = x1DC_inner - x1DC, width = (x2DC - x1DC) - line, height = (y1DC - y2DC) - line;
+			double half = line / 2;
+			if (width <= 0 || height <= 0) return;
+			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
+			//g_debug("RECT %d %d %d %d", x1DC, x2DC, y1DC, y2DC);
+			cairo_rectangle (my cr,  (double) (x1DC + half), (double) (y2DC + half), width, height);
+			cairo_set_line_width (my cr, (double) line);
+			cairo_stroke (my cr);
+		#elif xwin
 			XSetForeground (my display, my gc, pink ^ white);
 			XSetFunction (my display, my gc, GXxor);
 			XFillRectangle (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
@@ -314,11 +354,14 @@ void Graphics_unhighlight2 (I, double x1WC, double x2WC, double y1WC, double y2W
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
 	iam (Graphics);
-	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
+	#if motif
+		highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
+	#endif
 	if (my recording)
 		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
+#if motif
 void Graphics_xorOn (I, int colour) {
 	iam (Graphics);
 	if (my screen) {
@@ -371,6 +414,7 @@ void Graphics_xorOff (I) {
 	}
 	if (my recording) { op (XOR_OFF, 0); }
 }
+#endif
 
 int Graphics_inqColour (I) { iam (Graphics); return my colour; }
 

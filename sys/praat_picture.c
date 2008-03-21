@@ -63,18 +63,23 @@ static double x1NDC = 0.0, x2NDC = 6.0, y1NDC = 8.0, y2NDC = 12.0;
 
 /***** "Font" MENU: font part *****/
 
+#if 0
 static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
+#endif
+static Widget praatButton_fonts [1 + kGraphics_font_MAX];
+
 static void updateFontMenu (void) {
-	#if motif
 	if (! theCurrentPraat -> batch) {
 		if (praat_font < kGraphics_font_MIN) praat_font = kGraphics_font_MIN;
 		if (praat_font > kGraphics_font_MAX) praat_font = kGraphics_font_MAX;
-		XmToggleButtonGadgetSetState (praatButton_times, praat_font == kGraphics_font_TIMES, 0);
-		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == kGraphics_font_HELVETICA, 0);
-		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == kGraphics_font_PALATINO, 0);
-		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == kGraphics_font_COURIER, 0);
+		#if gtk
+	//		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font]), TRUE);
+		#elif motif
+			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
+				XmToggleButtonGadgetSetState (praatButton_fonts [i], praat_font == i, 0);
+			}
+		#endif
 	}
-	#endif
 }
 static void setFont (int font) {
 	praat_picture_open ();
@@ -94,15 +99,33 @@ DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 
 static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
-	#if motif
 	if (! theCurrentPraat -> batch) {
-		XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
-		XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
-		XmToggleButtonGadgetSetState (praatButton_14, praat_size == 14, 0);
-		XmToggleButtonGadgetSetState (praatButton_18, praat_size == 18, 0);
-		XmToggleButtonGadgetSetState (praatButton_24, praat_size == 24, 0);
+		#if gtk
+/*			switch (praat_size) {
+				case 10:
+					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_10), TRUE);
+					break;
+				case 12:
+					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_12), TRUE);
+					break;
+				case 14:
+					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_14), TRUE);
+					break;
+				case 18:
+					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_18), TRUE);
+					break;
+				case 24:
+					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_24), TRUE);
+					break;
+			}*/
+		#elif motif
+			XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
+			XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
+			XmToggleButtonGadgetSetState (praatButton_14, praat_size == 14, 0);
+			XmToggleButtonGadgetSetState (praatButton_18, praat_size == 18, 0);
+			XmToggleButtonGadgetSetState (praatButton_24, praat_size == 24, 0);
+		#endif
 	}
-	#endif
 }
 static void setFontSize (int fontSize) {
 	praat_picture_open ();
@@ -152,12 +175,16 @@ END
 
 static Widget praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
-	#if motif
 	if (! theCurrentPraat -> batch) {
-		XmToggleButtonGadgetSetState (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0, 0);
-		XmToggleButtonGadgetSetState (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1, 0);
+		#if gtk
+//			gtk_check_menu_item_set_active((praat_mouseSelectsInnerViewport ?
+//			                                  GTK_CHECK_MENU_ITEM(praatButton_innerViewport) :
+//							  GTK_CHECK_MENU_ITEM(praatButton_outerViewport)), TRUE);
+		#elif motif
+			XmToggleButtonGadgetSetState (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0, 0);
+			XmToggleButtonGadgetSetState (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1, 0);
+		#endif
 	}
-	#endif
 }
 
 DIRECT (MouseSelectsInnerViewport)
@@ -286,38 +313,40 @@ static int praat_lineType = Graphics_DRAWN;
 static int praat_colour = Graphics_BLACK;
 static double praat_lineWidth = 1.0, praat_arrowSize = 1.0;
 
+#if 0
 static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
 static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime,
 	praatButton_navy, praatButton_teal, praatButton_purple, praatButton_olive, praatButton_silver, praatButton_grey;
+#endif
+
+static Widget praatButton_lines [3];
+static Widget praatButton_colours [16];
+
+
 static void updatePenMenu (void) {
-	#if motif
 	if (! theCurrentPraat -> batch) {
-		XmToggleButtonGadgetSetState (praatButton_solidLine, praat_lineType == Graphics_DRAWN, 0);
-		XmToggleButtonGadgetSetState (praatButton_dottedLine, praat_lineType == Graphics_DOTTED, 0);
-		XmToggleButtonGadgetSetState (praatButton_dashedLine, praat_lineType == Graphics_DASHED, 0);
-		XmToggleButtonGadgetSetState (praatButton_black, praat_colour == Graphics_BLACK, 0);
-		XmToggleButtonGadgetSetState (praatButton_white, praat_colour == Graphics_WHITE, 0);
-		XmToggleButtonGadgetSetState (praatButton_red, praat_colour == Graphics_RED, 0);
-		XmToggleButtonGadgetSetState (praatButton_green, praat_colour == Graphics_GREEN, 0);
-		XmToggleButtonGadgetSetState (praatButton_blue, praat_colour == Graphics_BLUE, 0);
-		XmToggleButtonGadgetSetState (praatButton_yellow, praat_colour == Graphics_YELLOW, 0);
-		XmToggleButtonGadgetSetState (praatButton_cyan, praat_colour == Graphics_CYAN, 0);
-		XmToggleButtonGadgetSetState (praatButton_magenta, praat_colour == Graphics_MAGENTA, 0);
-		XmToggleButtonGadgetSetState (praatButton_maroon, praat_colour == Graphics_MAROON, 0);
-		XmToggleButtonGadgetSetState (praatButton_lime, praat_colour == Graphics_LIME, 0);
-		XmToggleButtonGadgetSetState (praatButton_navy, praat_colour == Graphics_NAVY, 0);
-		XmToggleButtonGadgetSetState (praatButton_teal, praat_colour == Graphics_TEAL, 0);
-		XmToggleButtonGadgetSetState (praatButton_purple, praat_colour == Graphics_PURPLE, 0);
-		XmToggleButtonGadgetSetState (praatButton_olive, praat_colour == Graphics_OLIVE, 0);
-		XmToggleButtonGadgetSetState (praatButton_silver, praat_colour == Graphics_SILVER, 0);
-		XmToggleButtonGadgetSetState (praatButton_grey, praat_colour == Graphics_GREY, 0);
-	}
+	#if gtk
+		//gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_lines[praat_lineType]), TRUE);
+		//gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_colours[praat_colour]), TRUE);
+	#elif motif
+		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
+			XmToggleButtonGadgetSetState (praatButton_lines [i], praat_lineType == i, 0);
+		}
+		for (int i = Graphics_BLACK; i <= Graphics_GREY; i ++) {
+			XmToggleButtonGadgetSetState (praatButton_colours [i], praat_colour == i, 0);
+		}
 	#endif
+	}
 }
 static void setLineType (int lineType) {
 	praat_picture_open ();
 	Graphics_setLineType (GRAPHICS, lineType);
+	#if gtk
+		// gtk_widget_queue_draw(GTK_WIDGET(GRAPHICS -> drawingArea));
+		// TODO: Ik will hier een fullscreen redraw hebben, of iig een redraw van de
+		// outline van de selectie.
+	#endif
 	praat_picture_close ();
 	if (theCurrentPraat == & theForegroundPraat) {
 		praat_lineType = lineType;
@@ -1487,11 +1516,11 @@ void praat_picture_init (void) {
 		char pictureWindowTitle [100];
 		// Ook al eerder gezien... Migreren naar UI?
 		#if gtk
-		// TODO werkt niet
-//		int screenWidth = gdk_screen_get_width(screen);
-		int screenWidth = 0;
+	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (theCurrentPraat -> topShell));
+	                int screenWidth = gdk_screen_get_width (screen);
+//	                int screenHeight = gdk_screen_get_height (screen);
 		#elif motif
-		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
+			int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
 		#endif
 		resolution = Gui_getResolution (theCurrentPraat -> topShell);
 		#if defined (macintosh)
@@ -1640,30 +1669,30 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Select", L"-- viewport drawing --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Select", L"Viewport text...", 0, 0, DO_ViewportText);
 
-	praatButton_solidLine = praat_addMenuCommand (L"Picture", L"Pen", L"Solid line", 0, praat_RADIO_FIRST, DO_Solid_line);
+	praatButton_lines [Graphics_DRAWN] = praat_addMenuCommand (L"Picture", L"Pen", L"Solid line", 0, praat_RADIO_FIRST, DO_Solid_line);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Plain line", 0, praat_RADIO_NEXT | praat_HIDDEN, DO_Solid_line);
-	praatButton_dottedLine = praat_addMenuCommand (L"Picture", L"Pen", L"Dotted line", 0, praat_RADIO_NEXT, DO_Dotted_line);
-	praatButton_dashedLine = praat_addMenuCommand (L"Picture", L"Pen", L"Dashed line", 0, praat_RADIO_NEXT, DO_Dashed_line);
+	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (L"Picture", L"Pen", L"Dotted line", 0, praat_RADIO_NEXT, DO_Dotted_line);
+	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (L"Picture", L"Pen", L"Dashed line", 0, praat_RADIO_NEXT, DO_Dashed_line);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- line width --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Line width...", 0, 0, DO_Line_width);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- colour --", 0, 0, 0);
-	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_RADIO_FIRST, DO_Black);
-	praatButton_white = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_RADIO_NEXT, DO_White);
-	praatButton_red = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_RADIO_NEXT, DO_Red);
-	praatButton_green = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_RADIO_NEXT, DO_Green);
-	praatButton_blue = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_RADIO_NEXT, DO_Blue);
-	praatButton_yellow = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_RADIO_NEXT, DO_Yellow);
-	praatButton_cyan = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_RADIO_NEXT, DO_Cyan);
-	praatButton_magenta = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_RADIO_NEXT, DO_Magenta);
-	praatButton_maroon = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_RADIO_NEXT, DO_Maroon);
-	praatButton_lime = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_RADIO_NEXT, DO_Lime);
-	praatButton_navy = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_RADIO_NEXT, DO_Navy);
-	praatButton_teal = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
-	praatButton_purple = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
-	praatButton_olive = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
-	praatButton_silver = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
-	praatButton_grey = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
+	praatButton_colours [Graphics_BLACK] = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_RADIO_FIRST, DO_Black);
+	praatButton_colours [Graphics_WHITE] = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_RADIO_NEXT, DO_White);
+	praatButton_colours [Graphics_RED] = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_RADIO_NEXT, DO_Red);
+	praatButton_colours [Graphics_GREEN] = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_RADIO_NEXT, DO_Green);
+	praatButton_colours [Graphics_BLUE] = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_RADIO_NEXT, DO_Blue);
+	praatButton_colours [Graphics_YELLOW] = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_RADIO_NEXT, DO_Yellow);
+	praatButton_colours [Graphics_CYAN] = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_RADIO_NEXT, DO_Cyan);
+	praatButton_colours [Graphics_MAGENTA] = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_RADIO_NEXT, DO_Magenta);
+	praatButton_colours [Graphics_MAROON] = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_RADIO_NEXT, DO_Maroon);
+	praatButton_colours [Graphics_LIME] = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_RADIO_NEXT, DO_Lime);
+	praatButton_colours [Graphics_NAVY] = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_RADIO_NEXT, DO_Navy);
+	praatButton_colours [Graphics_TEAL] = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
+	praatButton_colours [Graphics_PURPLE] = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
+	praatButton_colours [Graphics_OLIVE] = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
+	praatButton_colours [Graphics_SILVER] = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
+	praatButton_colours [Graphics_GREY] = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
 
 	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_RADIO_FIRST, DO_10);
 	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_RADIO_NEXT,  DO_12);
@@ -1672,10 +1701,10 @@ void praat_picture_init (void) {
 	praatButton_24 = praat_addMenuCommand (L"Picture", L"Font", L"24", 0, praat_RADIO_NEXT, DO_24);
 	praat_addMenuCommand (L"Picture", L"Font", L"Font size...", 0, 0, DO_Font_size);
 	praat_addMenuCommand (L"Picture", L"Font", L"-- font ---", 0, 0, 0);
-	praatButton_times = praat_addMenuCommand (L"Picture", L"Font", L"Times", 0, praat_RADIO_FIRST, DO_Times);
-	praatButton_helvetica = praat_addMenuCommand (L"Picture", L"Font", L"Helvetica", 0, praat_RADIO_NEXT, DO_Helvetica);
-	praatButton_palatino = praat_addMenuCommand (L"Picture", L"Font", L"Palatino", 0, praat_RADIO_NEXT, DO_Palatino);
-	praatButton_courier = praat_addMenuCommand (L"Picture", L"Font", L"Courier", 0, praat_RADIO_NEXT, DO_Courier);
+	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (L"Picture", L"Font", L"Times", 0, praat_RADIO_FIRST, DO_Times);
+	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (L"Picture", L"Font", L"Helvetica", 0, praat_RADIO_NEXT, DO_Helvetica);
+	praatButton_fonts [kGraphics_font_PALATINO] = praat_addMenuCommand (L"Picture", L"Font", L"Palatino", 0, praat_RADIO_NEXT, DO_Palatino);
+	praatButton_fonts [kGraphics_font_COURIER] = praat_addMenuCommand (L"Picture", L"Font", L"Courier", 0, praat_RADIO_NEXT, DO_Courier);
 
 	praat_addMenuCommand (L"Picture", L"Help", L"Picture window help", 0, '?', DO_PictureWindowHelp);
 	praat_addMenuCommand (L"Picture", L"Help", L"About special symbols", 0, 0, DO_AboutSpecialSymbols);
@@ -1685,36 +1714,50 @@ void praat_picture_init (void) {
 	MelderString_empty (& itemTitle_search);
 	MelderString_append3 (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
 	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
-	
-	#if motif
+
 	if (! theCurrentPraat -> batch) {
-		XtManageChild (menuBar);
 		width = height = resolution * 12;
-		#if defined (macintosh) || defined (_WIN32)
-			scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
-			XtVaSetValues (scrollWindow,
-				XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
-				XmNrightAttachment, XmATTACH_FORM,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
-				XmNbottomAttachment, XmATTACH_FORM, NULL);
-		#else
-			
-			#if gtk
-				// TODO
-			#elif motif
-			scrollWindow = XtVaCreateWidget (
-				"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
-				XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
-				XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
+		#if gtk
+			scrollWindow = gtk_scrolled_window_new(NULL, NULL);
+			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		#elif motif
+			XtManageChild (menuBar);
+			#if defined (macintosh) || defined (_WIN32)
+				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
+				XtVaSetValues (scrollWindow,
+					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
+					XmNrightAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
+					XmNbottomAttachment, XmATTACH_FORM, NULL);
+			#else
+				scrollWindow = XtVaCreateWidget (
+					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
+					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
+					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
 			#endif
 		#endif
-		drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		#if gtk
+			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), drawingArea);
+			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
+
+//			gtk_widget_set_size_request (GTK_WINDOW(dialog), width, height);
+//
+			GuiObject_show (menuBar);
+			GuiObject_show (drawingArea);
+		#elif motif
+			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		#endif
 		GuiObject_show (scrollWindow);
 		GuiObject_show (dialog);
-		XtRealizeWidget (shell);
+
+		#if gtk
+			GuiWindow_show (shell);
+		#elif motif
+			XtRealizeWidget (shell);
+		#endif
 	}
-	#endif
 	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);
 	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
 	updatePenMenu ();

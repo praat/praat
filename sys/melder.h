@@ -680,7 +680,7 @@ extern char Melder_buffer1 [30001], Melder_buffer2 [30001];
 
 /* Procedures to enforce interactive behaviour of the Melder_XXXXXX routines. */
 
-void MelderMotif_create (/* XtAppContext* */ void *appContext, /* Widget */ void *parent);
+void MelderGui_create (/* XtAppContext* */ void *appContext, /* Widget */ void *parent);
 /*
 	'appContext' is the XtAppContext* output from Xt(Va)AppInitialize;
 		if you used Xt(Va)Initialize it should be NULL.

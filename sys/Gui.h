@@ -20,9 +20,7 @@
  */
 
 /*
- * pb 2007/12/30
- * sdk 2008/01/14 GTK
- * pb 2008/03/20
+ * 2008/03/24
  */
 
 #ifdef USE_GTK
@@ -393,6 +391,7 @@ void GuiDialog_show (Widget widget);
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1
+enum mouse_events { MOTION_NOTIFY = 1, BUTTON_PRESS, BUTTON_RELEASE };
 typedef struct structGuiDrawingAreaExposeEvent {
 	Widget widget;
 	int x, y, width, height;
@@ -402,6 +401,7 @@ typedef struct structGuiDrawingAreaClickEvent {
 	int x, y;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 	int button;
+	enum mouse_events type;
 } *GuiDrawingAreaClickEvent;
 typedef struct structGuiDrawingAreaKeyEvent {
 	Widget widget;

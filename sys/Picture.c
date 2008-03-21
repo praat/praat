@@ -42,6 +42,10 @@ struct structPicture {
 	void (*selectionChangedCallback) (struct structPicture *, XtPointer, double, double, double, double);
 	XtPointer selectionChangedClosure;
 	int backgrounding, mouseSelectsInnerViewport;
+#if gtk
+	bool selectionInProgress;
+	double ixstart, iystart;
+#endif
 #if defined (UNIX)
 	#if motif
 	Region updateRegion;
@@ -71,6 +75,13 @@ static void drawMarkers (Picture me)
 	Graphics_fillRectangle (my selectionGraphics, 0, SIDE, 0, SIDE);
 
 	/* Draw yellow grid lines for coarse navigation. */
+
+	//Graphics_setLineWidth (my selectionGraphics, 2.0);
+	// TODO: Paul, ik ben van mening dat je dit moet zetten,
+	// en niet moet vertrouwen op een statemachine die niet is geimplementeerd.
+	// Stefan, "selectionGraphics" begint met een lijndikte van 1, en verandert nooit;
+	// in het bijzonder kan/mag selectionGraphics niet door andere graphicsen beinvloed worden.
+	// Maar leg het nog maar eens rustig uit.
 
 	Graphics_setColour (my selectionGraphics, Graphics_YELLOW);
 	for (i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
@@ -116,18 +127,38 @@ static void drawSelection (Picture me, int high) {
 	dx = 1.5 * dy;
 	if (dy > 0.4 * (my sely2 - my sely1)) dy = 0.4 * (my sely2 - my sely1);
 	if (dx > 0.4 * (my selx2 - my selx1)) dx = 0.4 * (my selx2 - my selx1);
-	if (high)
+	if (high) {
 		Graphics_highlight2 (my selectionGraphics, my selx1, my selx2, my sely1, my sely2,
 			my selx1 + dx, my selx2 - dx, my sely1 + dy, my sely2 - dy);
-	else
+	} else {
 		Graphics_unhighlight2 (my selectionGraphics, my selx1, my selx2, my sely1, my sely2,
 			my selx1 + dx, my selx2 - dx, my sely1 + dy, my sely2 - dy);
+	}
 }
+
+//static double test = 0.0;
 
 static int SMERIG_valid;
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (Picture);
-#if defined (macintosh) && 0
+#if gtk
+//	g_debug("EXPOSE DRAWING AREA");
+	Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
+	cairo_rectangle (Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
+	cairo_clip_preserve (Graphics_x_getCR (my graphics));
+	drawMarkers (me);
+	Graphics_play (my graphics, my graphics);
+	drawSelection (me, 1);
+//	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
+//	cairo_fill(Graphics_x_getCR (my graphics));
+	cairo_destroy (Graphics_x_getCR (my graphics));
+
+//	test+=0.1;
+//	if (test > 3) test = 0.1;
+//	g_debug("%d", test);
+#elif defined (macintosh) && 0
 	WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
 	static RgnHandle visRgn;
 	Rect rect;
@@ -170,11 +201,54 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 #endif
 }
 
+// TODO: Paul, als praat nu 100dpi zou zijn waarom zie ik hier dan nog 72.0 onder?
+// Stefan, die 72.0 is het aantal font-punten per inch,
+// gewoon een vaste verhouding die niks met pixels te maken heeft.
+// TODO: Paul, deze code is bagger :) En dient door event-model-extremisten te worden veroordeeld.
+// Stefan, zoals gezegd, er zijn goede redenen waarom sommige platforms dit synchroon oplossen;
+// misschien maar splitsen tussen die platforms en platforms die met events kunnen werken.
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (Picture);
 	int xstart = event -> x;
 	int ystart = event -> y;
 	double xWC, yWC;
+#if gtk
+	int ix, iy;
+
+	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
+	ix = 1 + floor (xWC * SQUARES / SIDE);
+	iy = SQUARES - floor (yWC * SQUARES / SIDE);
+//	if (my ixstart < 1 || my ixstart > SQUARES || my iystart < 1 || my iystart > SQUARES) return;
+			
+	if (my selectionInProgress == 0) {
+		if (event->type == BUTTON_PRESS) {
+			my selectionInProgress = 1;
+			my ixstart = ix;
+			my iystart = iy;
+		}
+	} else {
+		int ix1, ix2, iy1, iy2;
+		if (ix < my ixstart) { ix1 = ix; ix2 = my ixstart; }
+		else              { ix1 = my ixstart; ix2 = ix; }
+		if (iy < my iystart) { iy1 = iy; iy2 = my iystart; }
+		else              { iy1 = my iystart; iy2 = iy; }
+		if (my mouseSelectsInnerViewport) {
+			int fontSize = Graphics_inqFontSize (my graphics);
+			double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
+			if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
+			if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;
+			Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
+				0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, False);
+		} else {
+			Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
+				0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), False);
+		}
+	
+		if (event->type == BUTTON_RELEASE) {
+			my selectionInProgress = 0;
+		}
+	}
+#elif motif
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
 
 	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
@@ -213,6 +287,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		ix = 1 + floor (xWC * SQUARES / SIDE);
 		iy = SQUARES - floor (yWC * SQUARES / SIDE);
 	}
+#endif
 	if (my selectionChangedCallback)
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
@@ -221,6 +296,9 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	Picture me = Melder_calloc (struct structPicture, 1);
 	if (! me) return NULL;
+	#if gtk
+		my selectionInProgress = 0;
+	#endif
 	my drawingArea = drawingArea;
 	/*
 	 * The initial viewport is a rectangle 6 inches wide and 4 inches high.
@@ -247,8 +325,8 @@ Picture Picture_create (Widget drawingArea, Boolean sensitive) {
 	Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
 	if (my sensitive) {
 		my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
-		GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
 		Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
+		GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
 	}
 	Graphics_startRecording (my graphics);
 	return me;
@@ -607,12 +685,35 @@ void Picture_print (Picture me) {
 void Picture_setSelection
 	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, Boolean notify)
 {
-	if (my drawingArea) drawSelection (me, 0);   /* Unselect. */
+	#if gtk
+		if (my drawingArea) {
+			short x1, x2, y1, y2;
+			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+
+//			g_debug("%d %d %d %d", x1, y1, abs(x2 - x1), abs(y2 - y1));
+			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+			/* Dit gaan we als het werkt *COMPLEET* anders doen */
+		}
+	#else
+		if (my drawingArea) drawSelection (me, 0);   /* Unselect. */
+	#endif
 	my selx1 = x1NDC;
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
-	if (my drawingArea) drawSelection (me, 1);   /* Select. */
+	#if gtk
+		if (my drawingArea) {
+			short x1, x2, y1, y2;
+			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+
+//			g_debug("%d %d %d %d", x1, y1, x2 - x1, y2 - y1);
+			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+		}
+	#else
+		if (my drawingArea) drawSelection (me, 1);   /* Select. */
+	#endif
 
 	if (notify && my selectionChangedCallback)
 		my selectionChangedCallback (me, my selectionChangedClosure,

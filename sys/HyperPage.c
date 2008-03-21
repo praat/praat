@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2006/10/20 embedded scripts allow links
  * pb 2007/06/10 wchar_t
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/03/21 new Editor API
  */
 
 #include <ctype.h>
@@ -581,53 +582,63 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	}
 }
 
-DIRECT (HyperPage, cb_postScriptSettings)
+static int menu_cb_postScriptSettings (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
 	Printer_postScriptSettings ();
-END
+	return 1;
+}
 
 #ifdef macintosh
-	DIRECT (HyperPage, cb_pageSetup)
-		Printer_pageSetup ();
-	END
+static int menu_cb_pageSetup (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
+	Printer_pageSetup ();
+	return 1;
+}
 #endif
 
-FORM (HyperPage, cb_print, L"Print", 0)
-	SENTENCE (L"Left or inside header", L"")
-	SENTENCE (L"Middle header", L"")
-	LABEL (L"", L"Right or outside header:")
-	TEXTFIELD (L"Right or outside header", L"")
-	SENTENCE (L"Left or inside footer", L"")
-	SENTENCE (L"Middle footer", L"")
-	SENTENCE (L"Right or outside footer", L"")
-	BOOLEAN (L"Mirror even/odd headers", TRUE)
-	INTEGER (L"First page number", L"0 (= no page numbers)")
-	OK
-our defaultHeaders (cmd);
-if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
-DO
-	my insideHeader = GET_STRING (L"Left or inside header");
-	my middleHeader = GET_STRING (L"Middle header");
-	my outsideHeader = GET_STRING (L"Right or outside header");
-	my insideFooter = GET_STRING (L"Left or inside footer");
-	my middleFooter = GET_STRING (L"Middle footer");
-	my outsideFooter = GET_STRING (L"Right or outside footer");
-	my mirror = GET_INTEGER (L"Mirror even/odd headers");
-	my pageNumber = GET_INTEGER (L"First page number");
-	Printer_print (print, me);
-END
+static int menu_cb_print (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
+	EDITOR_FORM (L"Print", 0)
+		SENTENCE (L"Left or inside header", L"")
+		SENTENCE (L"Middle header", L"")
+		LABEL (L"", L"Right or outside header:")
+		TEXTFIELD (L"Right or outside header", L"")
+		SENTENCE (L"Left or inside footer", L"")
+		SENTENCE (L"Middle footer", L"")
+		SENTENCE (L"Right or outside footer", L"")
+		BOOLEAN (L"Mirror even/odd headers", TRUE)
+		INTEGER (L"First page number", L"0 (= no page numbers)")
+	EDITOR_OK
+		our defaultHeaders (cmd);
+		if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
+	EDITOR_DO
+		my insideHeader = GET_STRING (L"Left or inside header");
+		my middleHeader = GET_STRING (L"Middle header");
+		my outsideHeader = GET_STRING (L"Right or outside header");
+		my insideFooter = GET_STRING (L"Left or inside footer");
+		my middleFooter = GET_STRING (L"Middle footer");
+		my outsideFooter = GET_STRING (L"Right or outside footer");
+		my mirror = GET_INTEGER (L"Mirror even/odd headers");
+		my pageNumber = GET_INTEGER (L"First page number");
+		Printer_print (print, me);
+	EDITOR_END
+}
 
-FORM (HyperPage, cb_font, L"Font", 0)
-	RADIO (L"Font", 1)
-		RADIOBUTTON (L"Times")
-		RADIOBUTTON (L"Helvetica")
-	OK
-SET_INTEGER (L"Font", my font == kGraphics_font_TIMES ? 1 :
-		my font == kGraphics_font_HELVETICA ? 2 : my font == kGraphics_font_PALATINO ? 3 : 1);
-DO
-	int font = GET_INTEGER (L"Font");
-	prefs_font = my font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
-	if (my g) Graphics_updateWs (my g);
-END
+static int menu_cb_font (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
+	EDITOR_FORM (L"Font", 0)
+		RADIO (L"Font", 1)
+			RADIOBUTTON (L"Times")
+			RADIOBUTTON (L"Helvetica")
+	EDITOR_OK
+		SET_INTEGER (L"Font", my font == kGraphics_font_TIMES ? 1 :
+				my font == kGraphics_font_HELVETICA ? 2 : my font == kGraphics_font_PALATINO ? 3 : 1);
+	EDITOR_DO
+		int font = GET_INTEGER (L"Font");
+		prefs_font = my font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
+		if (my g) Graphics_updateWs (my g);
+	EDITOR_END
+}
 
 static void updateSizeMenu (HyperPage me) {
 	#if motif
@@ -644,26 +655,32 @@ static void setFontSize (HyperPage me, int fontSize) {
 	updateSizeMenu (me);
 }
 
-DIRECT (HyperPage, cb_10) setFontSize (me, 10); END
-DIRECT (HyperPage, cb_12) setFontSize (me, 12); END
-DIRECT (HyperPage, cb_14) setFontSize (me, 14); END
-DIRECT (HyperPage, cb_18) setFontSize (me, 18); END
-DIRECT (HyperPage, cb_24) setFontSize (me, 24); END
+static int menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 10); return 1; }
+static int menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 12); return 1; }
+static int menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 14); return 1; }
+static int menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 18); return 1; }
+static int menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 24); return 1; }
 
-FORM (HyperPage, cb_fontSize, L"Font size", 0)
-	NATURAL (L"Font size (points)", L"12")
-	OK
-SET_INTEGER (L"Font size", my fontSize)
-DO
-	setFontSize (me, GET_INTEGER (L"Font size"));
-END
+static int menu_cb_fontSize (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
+	EDITOR_FORM (L"Font size", 0)
+		NATURAL (L"Font size (points)", L"12")
+	EDITOR_OK
+		SET_INTEGER (L"Font size", my fontSize)
+	EDITOR_DO
+		setFontSize (me, GET_INTEGER (L"Font size"));
+	EDITOR_END
+}
 
-FORM (HyperPage, cb_searchForPage, L"Search for page", 0)
-	TEXTFIELD (L"Page", L"a")
-	OK
-DO
-	if (! HyperPage_goToPage (me, GET_STRING (L"Page"))) return 0;
-END
+static int menu_cb_searchForPage (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
+	EDITOR_FORM (L"Search for page", 0)
+		TEXTFIELD (L"Page", L"a")
+	EDITOR_OK
+	EDITOR_DO
+		if (! HyperPage_goToPage (me, GET_STRING (L"Page"))) return 0;
+	EDITOR_END
+}
 
 /********************************************************************************
  *
@@ -729,7 +746,8 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 	}
 }
 
-DIRECT (HyperPage, cb_pageUp)
+static int menu_cb_pageUp (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
 	#if motif
@@ -745,9 +763,11 @@ DIRECT (HyperPage, cb_pageUp)
 		our draw (me);   /* Do not wait for expose event. */
 		updateVerticalScrollBar (me);
 	}
-END
+	return 1;
+}
 
-DIRECT (HyperPage, cb_pageDown)
+static int menu_cb_pageDown (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
 	#if motif
@@ -762,7 +782,8 @@ DIRECT (HyperPage, cb_pageDown)
 		our draw (me);   /* Do not wait for expose event. */
 		updateVerticalScrollBar (me);
 	}
-END
+	return 1;
+}
 
 /********** **********/
 
@@ -782,9 +803,11 @@ static int do_back (HyperPage me) {
 	return 1;
 }
 
-DIRECT (HyperPage, cb_back)
+static int menu_cb_back (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
 	if (! do_back (me)) return 0;
-END
+	return 1;
+}
 
 static void gui_button_cb_back (I, GuiButtonEvent event) {
 	(void) event;
@@ -810,9 +833,11 @@ static int do_forth (HyperPage me) {
 	return 1;
 }
 
-DIRECT (HyperPage, cb_forth)
+static int menu_cb_forth (EDITOR_ARGS) {
+	EDITOR_IAM (HyperPage);
 	if (! do_forth (me)) return 0;
-END
+	return 1;
+}
 
 static void gui_button_cb_forth (I, GuiButtonEvent event) {
 	(void) event;
@@ -824,31 +849,31 @@ static void createMenus (I) {
 	iam (HyperPage);
 	inherited (HyperPage) createMenus (me);
 
-	Editor_addCommand (me, L"File", L"PostScript settings...", 0, cb_postScriptSettings);
+	Editor_addCommand (me, L"File", L"PostScript settings...", 0, menu_cb_postScriptSettings);
 	#ifdef macintosh
-		Editor_addCommand (me, L"File", L"Page setup...", 0, cb_pageSetup);
+		Editor_addCommand (me, L"File", L"Page setup...", 0, menu_cb_pageSetup);
 	#endif
-	Editor_addCommand (me, L"File", L"Print page...", 'P', cb_print);
+	Editor_addCommand (me, L"File", L"Print page...", 'P', menu_cb_print);
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
 	if (our hasHistory) {
 		Editor_addMenu (me, L"Go to", 0);
-		Editor_addCommand (me, L"Go to", L"Search for page...", 0, cb_searchForPage);
-		Editor_addCommand (me, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, cb_back);
-		Editor_addCommand (me, L"Go to", L"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, cb_forth);
+		Editor_addCommand (me, L"Go to", L"Search for page...", 0, menu_cb_searchForPage);
+		Editor_addCommand (me, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
+		Editor_addCommand (me, L"Go to", L"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_forth);
 		Editor_addCommand (me, L"Go to", L"-- page --", 0, NULL);
-		Editor_addCommand (me, L"Go to", L"Page up", GuiMenu_PAGE_UP, cb_pageUp);
-		Editor_addCommand (me, L"Go to", L"Page down", GuiMenu_PAGE_DOWN, cb_pageDown);
+		Editor_addCommand (me, L"Go to", L"Page up", GuiMenu_PAGE_UP, menu_cb_pageUp);
+		Editor_addCommand (me, L"Go to", L"Page down", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 	}
 
 	Editor_addMenu (me, L"Font", 0);
-	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, cb_24);
-	Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
-	Editor_addCommand (me, L"Font", L"Font...", 0, cb_font);
+	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, menu_cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, menu_cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, menu_cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, menu_cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, menu_cb_24);
+	Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
+	Editor_addCommand (me, L"Font", L"Font...", 0, menu_cb_font);
 }
 
 /********** **********/
@@ -913,6 +938,7 @@ static void createChildren (I) {
 
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (HyperPage);
+#if 0
 	#if defined (UNIX)
 		#if motif
 		// TODO: Ugh!
@@ -923,6 +949,7 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	#else
 		resolution = 100;
 	#endif
+#endif
 	resolution = 100;
 	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
 	#if motif

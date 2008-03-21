@@ -26,6 +26,7 @@
  * pb 2007/03/14 arrowSize
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2008/01/19 double
+ * sdk 2008/03/24 cairo
  */
 
 #include "GraphicsP.h"
@@ -150,10 +151,11 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 			int i;
 			cairoPrepareLine (me);
 			cairo_new_path (my cr);
-			cairo_move_to (my cr, xyDC[0], xyDC[1]);
+			cairo_move_to (my cr, (double) xyDC [0], (double) xyDC [1]);
 			for (i = 1; i < numberOfPoints; i ++)
-				cairo_line_to (my cr, xyDC[i + i], xyDC [i + i + 1]);
+				cairo_line_to (my cr, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
 			cairo_close_path (my cr);
+			cairo_stroke (my cr);
 			cairoRevertLine (me);
 		#elif xwin
 			XPoint *p = (void *) xyDC;

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080320)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080321)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.15# (March 21, 2008)")
+LIST_ITEM (L"\\bu Windows: more reliable dropping of files on the Praat icon when Praat is already running.")
 NORMAL (L"##5.0.14# (March 20, 2008)")
 LIST_ITEM (L"\\bu David's vowel editor (New \\-> Sound).")
 LIST_ITEM (L"\\bu Formulas: corrected scaling of sinc function.")
@@ -33,7 +35,7 @@ NORMAL (L"##5.0.13# (March 18, 2008)")
 LIST_ITEM (L"\\bu Corrected drawing of histograms.")
 LIST_ITEM (L"\\bu TextGrid window: selected part of the TextGrid can be extracted and saved.")
 LIST_ITEM (L"\\bu TextGrid: more complete conversion between backslash trigraphs and Unicode.")
-LIST_ITEM (L"\\bu Windows: more reliable dropping of files on the Praat icon.")
+LIST_ITEM (L"\\bu Windows: more reliable dropping of files on the Praat icon when Praat is not running yet.")
 LIST_ITEM (L"\\bu Formulas: sinc function.")
 NORMAL (L"##5.0.12# (March 12, 2008)")
 LIST_ITEM (L"\\bu Bigger ligature symbol (k\\lip).")

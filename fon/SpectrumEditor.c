@@ -25,6 +25,7 @@
  * pb 2007/09/04 new FunctionEditor API
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "SpectrumEditor.h"
@@ -122,74 +123,87 @@ static void play (I, double fmin, double fmax) {
 	forget (sound);
 }
 
-DIRECT (SpectrumEditor, cb_publishBand)
+static int menu_cb_publishBand (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
 	Spectrum publish = Spectrum_band (my data, my startSelection, my endSelection);
 	if (! publish) return 0;
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);
-END
+	return 1;
+}
 
-DIRECT (SpectrumEditor, cb_publishSound)
+static int menu_cb_publishSound (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
 	Sound publish = Spectrum_to_Sound_part (my data, my startSelection, my endSelection);
 	if (! publish) return 0;
 	if (my publishCallback)
 		my publishCallback (me, my publishClosure, publish);
-END
+	return 1;
+}
 
-FORM (SpectrumEditor, cb_passBand, L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
-	REAL (L"Band smoothing (Hz)", L"100.0")
-	OK
-SET_REAL (L"Band smoothing", my bandSmoothing)
-DO
-	preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
-	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
-	Editor_save (me, L"Pass band");
-	Spectrum_passHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_passBand (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
+	EDITOR_FORM (L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
+		REAL (L"Band smoothing (Hz)", L"100.0")
+	EDITOR_OK
+		SET_REAL (L"Band smoothing", my bandSmoothing)
+	EDITOR_DO
+		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
+		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
+		Editor_save (me, L"Pass band");
+		Spectrum_passHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-FORM (SpectrumEditor, cb_stopBand, L"Filter (stop Hann band)", 0)
-	REAL (L"Band smoothing (Hz)", L"100.0")
-	OK
-SET_REAL (L"Band smoothing", my bandSmoothing)
-DO
-	preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
-	if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
-	Editor_save (me, L"Stop band");
-	Spectrum_stopHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_stopBand (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
+	EDITOR_FORM (L"Filter (stop Hann band)", 0)
+		REAL (L"Band smoothing (Hz)", L"100.0")
+	EDITOR_OK
+		SET_REAL (L"Band smoothing", my bandSmoothing)
+	EDITOR_DO
+		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
+		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
+		Editor_save (me, L"Stop band");
+		Spectrum_stopHannBand (my data, my startSelection, my endSelection, my bandSmoothing);
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-FORM (SpectrumEditor, cb_setDynamicRange, L"Set dynamic range", 0)
-	POSITIVE (L"Dynamic range (dB)", L"60.0")
-	OK
-SET_REAL (L"Dynamic range", my dynamicRange)
-DO
-	preferences.dynamicRange = my dynamicRange = GET_REAL (L"Dynamic range");
-	updateRange (me);
-	FunctionEditor_redraw (me);
-END
+static int menu_cb_setDynamicRange (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
+	EDITOR_FORM (L"Set dynamic range", 0)
+		POSITIVE (L"Dynamic range (dB)", L"60.0")
+	EDITOR_OK
+		SET_REAL (L"Dynamic range", my dynamicRange)
+	EDITOR_DO
+		preferences.dynamicRange = my dynamicRange = GET_REAL (L"Dynamic range");
+		updateRange (me);
+		FunctionEditor_redraw (me);
+	EDITOR_END
+}
 
-DIRECT (SpectrumEditor, cb_help_SpectrumEditor) Melder_help (L"SpectrumEditor"); END
-DIRECT (SpectrumEditor, cb_help_Spectrum) Melder_help (L"Spectrum"); END
+static int menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"SpectrumEditor"); return 1; }
+static int menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); return 1; }
 
 static void createMenus (I) {
 	iam (SpectrumEditor);
 	inherited (SpectrumEditor) createMenus (me);
-	my publishBandButton = Editor_addCommand (me, L"File", L"Publish band", 0, cb_publishBand);
-	my publishSoundButton = Editor_addCommand (me, L"File", L"Publish band-filtered sound", 0, cb_publishSound);
+	my publishBandButton = Editor_addCommand (me, L"File", L"Publish band", 0, menu_cb_publishBand);
+	my publishSoundButton = Editor_addCommand (me, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"-- edit band --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Pass band...", 0, cb_passBand);
-	Editor_addCommand (me, L"Edit", L"Stop band...", 0, cb_stopBand);
+	Editor_addCommand (me, L"Edit", L"Pass band...", 0, menu_cb_passBand);
+	Editor_addCommand (me, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
 }
 
 static void createMenuItems_view (I, EditorMenu menu) {
 	iam (SpectrumEditor);
 	(void) me;
-	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, cb_setDynamicRange);
+	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, menu_cb_setDynamicRange);
 	EditorMenu_addCommand (menu, L"-- view settings --", 0, 0);
 	inherited (SpectrumEditor) createMenuItems_view (me, menu);
 }
@@ -197,8 +211,8 @@ static void createMenuItems_view (I, EditorMenu menu) {
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (SpectrumEditor);
 	inherited (SpectrumEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', cb_help_SpectrumEditor);
-	EditorMenu_addCommand (menu, L"Spectrum help", 0, cb_help_Spectrum);
+	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
+	EditorMenu_addCommand (menu, L"Spectrum help", 0, menu_cb_help_Spectrum);
 }
 
 class_methods (SpectrumEditor, FunctionEditor) {

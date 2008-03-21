@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20080314 Latest modification
+ djmw 20080320 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2886,6 +2886,8 @@ MAN_END
 MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20080314)
 INTRO (L"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (L"Arguments")
+TAG (L"%%Channel%")
+DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
 TAG (L"%%Time (s)%")
 DEFINITION (L"determines where the fade-in will take place. If %time is earlier than the start time of the sound, the start time of the sound wil be used.")
 TAG (L"%%Fade time (s)%")
@@ -2900,15 +2902,17 @@ NORMAL (L"The following script cross-fades two sounds s1 and s2 at time 1 second
 CODE1 (L"crossFTime = 0.5")
 CODE1 (L"t = 1")
 CODE1 (L"Create Sound from formula... s1 Mono 0 2 44100 sin(2*pi*500*x)")
-CODE1 (L"Fade out... t-crossFTime/2 crossFTime y")
+CODE1 (L"Fade out... All t-crossFTime/2 crossFTime y")
 CODE1 (L"Create Sound from formula... s2 Mono 0 2 44100 sin(2*pi*1000*x)")
-CODE1 (L"Fade in... t-crossFTime/2 crossFTime y")
+CODE1 (L"Fade in... All t-crossFTime/2 crossFTime y")
 CODE1 (L"Formula... self+Sound_s1[]")
 MAN_END
 
 MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20080314)
 INTRO (L"A command to gradually decrease the amplitude of a selected @Sound.")
 ENTRY (L"Arguments")
+TAG (L"%%Channel%")
+DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
 TAG (L"%%Time (s)%")
 DEFINITION (L"determines where the fade-out will take place. If %time is later than the end time of the sound, the end time of the sound wil be used.")
 TAG (L"%%Fade time (s)%")

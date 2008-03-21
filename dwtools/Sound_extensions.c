@@ -37,7 +37,7 @@
  djmw 20071030 Sound_preEmphasis: no pre-emphasis above the Nyquist frequency.
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
- djmw 20080313 Sound_fade.
+ djmw 20080320 Sound_fade.
 */
 
 #include "Intensity_extensions.h"
@@ -1550,19 +1550,29 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	}
 }
 
-void Sound_fade (Sound me, double t, double fadeTime, int inout, int fadeGlobal)
+void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal)
 {
-	long i0 = 0, i, istart, iend, numberOfSamples = fabs (fadeTime) / my dx;
+	long i0 = 0, i, istart, iend, iystart, iyend; 
+	long numberOfSamples = fabs (fadeTime) / my dx;
 	double t1 = t, t2 = t1 + fadeTime;
-	
+	wchar_t *fade_inout = inout > 0 ? L"out" : L"in";
+		
 	if (t > my xmax)
 	{
-		if (inout <= 0) return; // fade in
+		if (inout <= 0) // fade in
+		{
+			Melder_warning1 (L"The start time of the fade-in is after the end time of the sound. The fade-in will not happen.");
+			return;
+		}
 		t = my xmax;
 	}
 	else if (t < my xmin)
 	{
-		if (inout > 0) return; // fade  out
+		if (inout > 0)// fade  out
+		{ 
+			Melder_warning1 (L"The start time of the fade-out is before the start time of the sound. The fade-out will not happen.");
+			return;
+		}
 		t = my xmin;
 	}
 	if (fadeTime < 0)
@@ -1575,13 +1585,36 @@ void Sound_fade (Sound me, double t, double fadeTime, int inout, int fadeGlobal)
 	}
 	else
 	{
+		Melder_warning3 (L"You have given a \"Fade time\" of zero seconds. The fade-", fade_inout,
+			L"will not happen.");
 		return;
 	}
+	if (channel == 0) // all
+	{
+		iystart = 1; iyend = my ny;
+	}
+	else if (channel == 2) // right	
+	{
+		iystart = iyend = my ny < 2 ? 1 : 2;
+	}
+	else // left and other cases
+	{
+		iystart = iyend = 1; // default channel 1
+	}
+	
 	istart = Sampled_xToNearestIndex (me, t1);
 	if (istart < 1) istart = 1;
-	if (istart > my nx) return;
+	if (istart >= my nx)
+	{
+		Melder_warning5 (L"The part to fade ", fade_inout, L" lies after the end time of the sound. The fade-",  fade_inout, L" will not happen.");
+		return;
+	}
 	iend = Sampled_xToNearestIndex (me, t2);
-	if (iend < 1) return;
+	if (iend <= 1)
+	{
+		Melder_warning5 (L"The part to fade ", fade_inout, L" lies before the start time of the sound. Fade-", fade_inout, L" will be incomplete.");
+		return;
+	}
 	if (iend > my nx) iend = my nx;
 	if (iend - istart + 1 > numberOfSamples)
 	{
@@ -1592,22 +1625,26 @@ void Sound_fade (Sound me, double t, double fadeTime, int inout, int fadeGlobal)
 		// If the start of the fade is before xmin, arrange starting phase.
 		// The end of the fade after xmax presents no problems (i0 = 0).
 		if(fadeTime < 0) i0 = numberOfSamples - (iend - istart +1);
+		Melder_warning5 (L"The fade time is larger than the part of the sound to fade ", fade_inout, L". Fade-", fade_inout, L" will be incomplete.");
 	}
-	for (i = istart; i <= iend; i++)
+	for (long ichannel = iystart; ichannel <= iyend; ichannel++)
 	{
-		double cosp = cos (NUMpi * (i0 + i - istart) / (numberOfSamples - 1));
-		if (inout <= 0) cosp = -cosp; // fade-in
-		my z[1][i] *= 0.5*(1 + cosp);
-	}
-	if (fadeGlobal)
-	{
-		if (inout <= 0)
+		for (i = istart; i <= iend; i++)
 		{
-			for (i = 1; i < istart; i++) my z[1][i] = 0;
+			double cosp = cos (NUMpi * (i0 + i - istart) / (numberOfSamples - 1));
+			if (inout <= 0) cosp = -cosp; // fade-in
+			my z[ichannel][i] *= 0.5*(1 + cosp);
 		}
-		else
+		if (fadeGlobal)
 		{
-			for (i = iend; i < my nx; i++) my z[1][i] = 0;
+			if (inout <= 0)
+			{
+				for (i = 1; i < istart; i++) my z[ichannel][i] = 0;
+			}
+			else
+			{
+				for (i = iend; i < my nx; i++) my z[ichannel][i] = 0;
+			}
 		}
 	}
 }

@@ -30,6 +30,7 @@
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "Pitch_to_Sound.h"
@@ -46,82 +47,99 @@ class_create_opaque (PitchEditor, FunctionEditor);
 
 /********** MENU COMMANDS **********/
 
-FORM (PitchEditor, cb_setCeiling, L"Change ceiling", 0)
-	POSITIVE (L"Ceiling (Hertz)", L"600")
-	OK
-Pitch pitch = my data;
-SET_REAL (L"Ceiling", pitch -> ceiling)
-DO
-	Pitch pitch = my data;
-	Editor_save (me, L"Change ceiling");
-	Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_setCeiling (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
+	EDITOR_FORM (L"Change ceiling", 0)
+		POSITIVE (L"Ceiling (Hertz)", L"600")
+	EDITOR_OK
+		Pitch pitch = my data;
+		SET_REAL (L"Ceiling", pitch -> ceiling)
+	EDITOR_DO
+		Pitch pitch = my data;
+		Editor_save (me, L"Change ceiling");
+		Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-FORM (PitchEditor, cb_pathFinder, L"Path finder", 0);
-	REAL (L"Silence threshold", L"0.03")
-	REAL (L"Voicing threshold", L"0.45")
-	REAL (L"Octave cost", L"0.01")
-	REAL (L"Octave-jump cost", L"0.35")
-	REAL (L"Voiced/unvoiced cost", L"0.14")
-	POSITIVE (L"Ceiling (Hertz)", L"600")
-	BOOLEAN (L"Pull formants", 0)
-	OK
-Pitch pitch = my data;
-SET_REAL (L"Ceiling", pitch -> ceiling)
-DO
-	Pitch pitch = my data;
-	Editor_save (me, L"Path finder");
-	Pitch_pathFinder (pitch,
-		GET_REAL (L"Silence threshold"), GET_REAL (L"Voicing threshold"),
-		GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
-		GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_pathFinder (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
+	EDITOR_FORM (L"Path finder", 0)
+		REAL (L"Silence threshold", L"0.03")
+		REAL (L"Voicing threshold", L"0.45")
+		REAL (L"Octave cost", L"0.01")
+		REAL (L"Octave-jump cost", L"0.35")
+		REAL (L"Voiced/unvoiced cost", L"0.14")
+		POSITIVE (L"Ceiling (Hertz)", L"600")
+		BOOLEAN (L"Pull formants", 0)
+	EDITOR_OK
+		Pitch pitch = my data;
+		SET_REAL (L"Ceiling", pitch -> ceiling)
+	EDITOR_DO
+		Pitch pitch = my data;
+		Editor_save (me, L"Path finder");
+		Pitch_pathFinder (pitch,
+			GET_REAL (L"Silence threshold"), GET_REAL (L"Voicing threshold"),
+			GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
+			GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-DIRECT (PitchEditor, cb_getPitch)
+static int menu_cb_getPitch (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	if (my startSelection == my endSelection) {
 		Melder_informationReal (Pitch_getValueAtTime (my data, my startSelection, kPitch_unit_HERTZ, 1), L"Hertz");
 	} else {
 		Melder_informationReal (Pitch_getMean (my data, my startSelection, my endSelection, kPitch_unit_HERTZ), L"Hertz");
 	}
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_octaveUp)
+static int menu_cb_octaveUp (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	Pitch pitch = my data;
 	Editor_save (me, L"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_fifthUp)
+static int menu_cb_fifthUp (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	Pitch pitch = my data;
 	Editor_save (me, L"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_fifthDown)
+static int menu_cb_fifthDown (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	Pitch pitch = my data;
 	Editor_save (me, L"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_octaveDown)
+static int menu_cb_octaveDown (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	Pitch pitch = my data;
 	Editor_save (me, L"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_voiceless)
+static int menu_cb_voiceless (EDITOR_ARGS) {
+	EDITOR_IAM (PitchEditor);
 	Pitch pitch = my data;
 	long ileft = Sampled_xToHighIndex (pitch, my startSelection), i, cand;
 	long iright = Sampled_xToLowIndex (pitch, my endSelection);
@@ -140,35 +158,36 @@ DIRECT (PitchEditor, cb_voiceless)
 	}
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (PitchEditor, cb_PitchEditorHelp) Melder_help (L"PitchEditor"); END
-DIRECT (PitchEditor, cb_PitchHelp) Melder_help (L"Pitch"); END
+static int menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"PitchEditor"); return 1; }
+static int menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"Pitch"); return 1; }
 
 static void createMenus (I) {
 	iam (PitchEditor);
 	inherited (PitchEditor) createMenus (me);
 
-	Editor_addCommand (me, L"Edit", L"Change ceiling...", 0, cb_setCeiling);
-	Editor_addCommand (me, L"Edit", L"Path finder...", 0, cb_pathFinder);
+	Editor_addCommand (me, L"Edit", L"Change ceiling...", 0, menu_cb_setCeiling);
+	Editor_addCommand (me, L"Edit", L"Path finder...", 0, menu_cb_pathFinder);
 
 	Editor_addCommand (me, L"Query", L"-- pitch --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Get pitch", GuiMenu_F5, cb_getPitch);
+	Editor_addCommand (me, L"Query", L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
 
 	Editor_addMenu (me, L"Selection", 0);
-	Editor_addCommand (me, L"Selection", L"Unvoice", 0, cb_voiceless);
+	Editor_addCommand (me, L"Selection", L"Unvoice", 0, menu_cb_voiceless);
 	Editor_addCommand (me, L"Selection", L"-- up and down --", 0, NULL);
-	Editor_addCommand (me, L"Selection", L"Octave up", 0, cb_octaveUp);
-	Editor_addCommand (me, L"Selection", L"Fifth up", 0, cb_fifthUp);
-	Editor_addCommand (me, L"Selection", L"Fifth down", 0, cb_fifthDown);
-	Editor_addCommand (me, L"Selection", L"Octave down", 0, cb_octaveDown);
+	Editor_addCommand (me, L"Selection", L"Octave up", 0, menu_cb_octaveUp);
+	Editor_addCommand (me, L"Selection", L"Fifth up", 0, menu_cb_fifthUp);
+	Editor_addCommand (me, L"Selection", L"Fifth down", 0, menu_cb_fifthDown);
+	Editor_addCommand (me, L"Selection", L"Octave down", 0, menu_cb_octaveDown);
 }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (PitchEditor);
 	inherited (PitchEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"PitchEditor help", '?', cb_PitchEditorHelp);
-	EditorMenu_addCommand (menu, L"Pitch help", 0, cb_PitchHelp);
+	EditorMenu_addCommand (menu, L"PitchEditor help", '?', menu_cb_PitchEditorHelp);
+	EditorMenu_addCommand (menu, L"Pitch help", 0, menu_cb_PitchHelp);
 }
 	
 /********** DRAWING AREA **********/

@@ -46,6 +46,7 @@
  * pb 2007/12/09 192 kHz
  * pb 2007/12/23 Gui
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -1435,54 +1436,66 @@ static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType)
 	return 1;
 }
 
-FORM_WRITE (SoundRecorder, cb_writeWav, L"Write to WAV file", 0)
-	wchar_t *name = GuiText_getString (my soundName);
-	swprintf (defaultName, 300, L"%ls.wav", name);
-	Melder_free (name);
-DO_WRITE
-	if (! writeAudioFile (me, file, Melder_WAV)) return 0;
-END
+static int menu_cb_writeWav (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	EDITOR_FORM_WRITE (L"Write to WAV file", 0)
+		wchar_t *name = GuiText_getString (my soundName);
+		swprintf (defaultName, 300, L"%ls.wav", name);
+		Melder_free (name);
+	EDITOR_DO_WRITE
+		if (! writeAudioFile (me, file, Melder_WAV)) return 0;
+	EDITOR_END
+}
 
-FORM_WRITE (SoundRecorder, cb_writeAifc, L"Write to AIFC file", 0)
-	wchar_t *name = GuiText_getString (my soundName);
-	swprintf (defaultName, 300, L"%ls.aifc", name);
-	Melder_free (name);
-DO_WRITE
-	if (! writeAudioFile (me, file, Melder_AIFC)) return 0;
-END
+static int menu_cb_writeAifc (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	EDITOR_FORM_WRITE (L"Write to AIFC file", 0)
+		wchar_t *name = GuiText_getString (my soundName);
+		swprintf (defaultName, 300, L"%ls.aifc", name);
+		Melder_free (name);
+	EDITOR_DO_WRITE
+		if (! writeAudioFile (me, file, Melder_AIFC)) return 0;
+	EDITOR_END
+}
 
-FORM_WRITE (SoundRecorder, cb_writeNextSun, L"Write to NeXT/Sun file", 0)
-	wchar_t *name = GuiText_getString (my soundName);
-	swprintf (defaultName, 300, L"%ls.au", name);
-	Melder_free (name);
-DO_WRITE
-	if (! writeAudioFile (me, file, Melder_NEXT_SUN)) return 0;
-END
+static int menu_cb_writeNextSun (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	EDITOR_FORM_WRITE (L"Write to NeXT/Sun file", 0)
+		wchar_t *name = GuiText_getString (my soundName);
+		swprintf (defaultName, 300, L"%ls.au", name);
+		Melder_free (name);
+	EDITOR_DO_WRITE
+		if (! writeAudioFile (me, file, Melder_NEXT_SUN)) return 0;
+	EDITOR_END
+}
 
-FORM_WRITE (SoundRecorder, cb_writeNist, L"Write to NIST file", 0)
-	wchar_t *name = GuiText_getString (my soundName);
-	swprintf (defaultName, 300, L"%ls.nist", name);
-	Melder_free (name);
-DO_WRITE
-	if (! writeAudioFile (me, file, Melder_NIST)) return 0;
-END
+static int menu_cb_writeNist (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	EDITOR_FORM_WRITE (L"Write to NIST file", 0)
+		wchar_t *name = GuiText_getString (my soundName);
+		swprintf (defaultName, 300, L"%ls.nist", name);
+		Melder_free (name);
+	EDITOR_DO_WRITE
+		if (! writeAudioFile (me, file, Melder_NIST)) return 0;
+	EDITOR_END
+}
 
-DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help (L"SoundRecorder"); END
+static int menu_cb_SoundRecorder_help (EDITOR_ARGS) { EDITOR_IAM (SoundRecorder); Melder_help (L"SoundRecorder"); return 1; }
 
 static void createMenus (I) {
 	iam (SoundRecorder);
 	inherited (SoundRecorder) createMenus (me);
-	Editor_addCommand (me, L"File", L"Write to WAV file...", 0, cb_writeWav);
-	Editor_addCommand (me, L"File", L"Write to AIFC file...", 0, cb_writeAifc);
-	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, cb_writeNextSun);
-	Editor_addCommand (me, L"File", L"Write to NIST file...", 0, cb_writeNist);
+	Editor_addCommand (me, L"File", L"Write to WAV file...", 0, menu_cb_writeWav);
+	Editor_addCommand (me, L"File", L"Write to AIFC file...", 0, menu_cb_writeAifc);
+	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, menu_cb_writeNextSun);
+	Editor_addCommand (me, L"File", L"Write to NIST file...", 0, menu_cb_writeNist);
 	Editor_addCommand (me, L"File", L"-- write --", 0, 0);
 }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (SoundRecorder);
 	inherited (SoundRecorder) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', cb_SoundRecorder_help);
+	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 
 class_methods (SoundRecorder, Editor)

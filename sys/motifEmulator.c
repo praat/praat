@@ -2870,10 +2870,10 @@ Widget XtInitialize (void *dum1, const char *name,
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				Melder_relativePathToFile (Melder_peekUtf8ToWcs (argv [3] [0] == '\"' ? argv [3] + 1 : argv [3]), & file);  // BUG
-				if (wcslen (file. path) > 0 && file. path [wcslen (file. path) - 1] == '\"') {
-					file. path [wcslen (file. path) - 1] = '\0';
-				}
+				wchar_t *s = Melder_peekUtf8ToWcs (argv [3]);
+				Melder_relativePathToFile (s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s, & file);
+				long l = wcslen (file. path);
+				if (l > 0 && file. path [l - 1] == '\"') file. path [l - 1] = '\0';
 				theOpenDocumentCallback (& file);
 			}
 			exit (0);   // possible problem

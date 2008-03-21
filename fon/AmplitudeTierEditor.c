@@ -22,6 +22,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "AmplitudeTierEditor.h"
@@ -31,14 +32,12 @@
 #define AmplitudeTierEditor_methods RealTierEditor_methods
 class_create_opaque (AmplitudeTierEditor, RealTierEditor);
 
-/*DIRECT (AmplitudeTierEditor, cb_AmplitudeTierEditorHelp) Melder_help (L"AmplitudeTierEditor"); END*/
-DIRECT (AmplitudeTierEditor, cb_AmplitudeTierHelp) Melder_help (L"AmplitudeTier"); END
+static int menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); return 1; }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (AmplitudeTierEditor);
 	inherited (AmplitudeTierEditor) createHelpMenuItems (me, menu);
-	/*EditorMenu_addCommand (menu, L"AmplitudeTierEditor help", 0, cb_AmplitudeTierEditorHelp);*/
-	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, cb_AmplitudeTierHelp);
+	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {

@@ -30,6 +30,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include <ctype.h>
@@ -49,37 +50,46 @@ static const wchar_t *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
-FORM_WRITE (Manual, cb_writeOneToHtmlFile, L"Write to HTML file", 0)
-	ManPages manPages = my data;
-	wchar_t *p = defaultName;
-	wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
-	while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
-	wcscat (defaultName, L".html");
-DO_WRITE
-	if (! ManPages_writeOneToHtmlFile (my data, my path, file)) return 0;
-END
+static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
+	EDITOR_IAM (Manual);
+	EDITOR_FORM_WRITE (L"Write to HTML file", 0)
+		ManPages manPages = my data;
+		wchar_t *p = defaultName;
+		wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
+		while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
+		wcscat (defaultName, L".html");
+	EDITOR_DO_WRITE
+		if (! ManPages_writeOneToHtmlFile (my data, my path, file)) return 0;
+	EDITOR_END
+}
 
-FORM (Manual, cb_writeAllToHtmlDir, L"Write all pages as HTML files", 0)
-	LABEL (L"", L"Type a directory name:")
-	TEXTFIELD (L"directory", L"")
-	OK
-structMelderDir currentDirectory = { { 0 } };
-Melder_getDefaultDir (& currentDirectory);
-SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
-DO
-	wchar_t *directory = GET_STRING (L"directory");
-	if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;
-END
+static int menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
+	EDITOR_IAM (Manual);
+	EDITOR_FORM (L"Write all pages as HTML files", 0)
+		LABEL (L"", L"Type a directory name:")
+		TEXTFIELD (L"directory", L"")
+	EDITOR_OK
+		structMelderDir currentDirectory = { { 0 } };
+		Melder_getDefaultDir (& currentDirectory);
+		SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
+	EDITOR_DO
+		wchar_t *directory = GET_STRING (L"directory");
+		if (! ManPages_writeAllToHtmlDir (my data, directory)) return 0;
+	EDITOR_END
+}
 
-FORM (Manual, cb_searchForPageList, L"Search for page", 0)
-	{ ManPages manPages = my data;
-	long numberOfPages;
-	const wchar_t **pages = ManPages_getTitles (manPages, & numberOfPages);
-	LIST (L"Page", manPages -> pages -> size, pages, 1) }
-	OK
-DO
-	if (! HyperPage_goToPage_i (me, GET_INTEGER (L"Page"))) return 0;
-END
+static int menu_cb_searchForPageList (EDITOR_ARGS) {
+	EDITOR_IAM (Manual);
+	EDITOR_FORM (L"Search for page", 0)
+		ManPages manPages = my data;
+		long numberOfPages;
+		const wchar_t **pages = ManPages_getTitles (manPages, & numberOfPages);
+		LIST (L"Page", manPages -> pages -> size, pages, 1)
+	EDITOR_OK
+	EDITOR_DO
+		if (! HyperPage_goToPage_i (me, GET_INTEGER (L"Page"))) return 0;
+	EDITOR_END
+}
 
 static void destroy (I) {
 	iam (Manual);
@@ -217,50 +227,53 @@ static void print (I, Graphics graphics) {
 	my printPagesStartingWith = NULL;
 }
 
-FORM (Manual, cb_printRange, L"Print range", 0)
-	SENTENCE (L"Left or inside header", L"")
-	SENTENCE (L"Middle header", L"")
-	SENTENCE (L"Right or outside header", L"Manual")
-	SENTENCE (L"Left or inside footer", L"")
-	SENTENCE (L"Middle footer", L"")
-	SENTENCE (L"Right or outside footer", L"")
-	BOOLEAN (L"Mirror even/odd headers", TRUE)
-	LABEL (L"", L"Print all pages whose title starts with:")
-	TEXTFIELD (L"Print pages starting with", L"Intro")
-	INTEGER (L"First page number", L"1")
-	BOOLEAN (L"Suppress \"Links to this page\"", FALSE)
-	OK
-ManPages manPages = my data;
-time_t today = time (NULL);
-char dateA [50];
-#ifdef UNIX
-	struct tm *tm = localtime (& today);
-	strftime (dateA, 50, "%B %e, %Y", tm);
-#else
-	strcpy (dateA, ctime (& today));
-#endif
-wchar_t *date = Melder_peekUtf8ToWcs (dateA), *newline;
-newline = wcschr (date, '\n'); if (newline) *newline = '\0';
-SET_STRING (L"Left or inside header", date)
-SET_STRING (L"Right or outside header", my name)
-if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
-if (my path >= 1 && my path <= manPages -> pages -> size) {
-	ManPage page = manPages -> pages -> item [my path];
-	SET_STRING (L"Print pages starting with", page -> title);
+static int menu_cb_printRange (EDITOR_ARGS) {
+	EDITOR_IAM (Manual);
+	EDITOR_FORM (L"Print range", 0)
+		SENTENCE (L"Left or inside header", L"")
+		SENTENCE (L"Middle header", L"")
+		SENTENCE (L"Right or outside header", L"Manual")
+		SENTENCE (L"Left or inside footer", L"")
+		SENTENCE (L"Middle footer", L"")
+		SENTENCE (L"Right or outside footer", L"")
+		BOOLEAN (L"Mirror even/odd headers", TRUE)
+		LABEL (L"", L"Print all pages whose title starts with:")
+		TEXTFIELD (L"Print pages starting with", L"Intro")
+		INTEGER (L"First page number", L"1")
+		BOOLEAN (L"Suppress \"Links to this page\"", FALSE)
+	EDITOR_OK
+		ManPages manPages = my data;
+		time_t today = time (NULL);
+		char dateA [50];
+		#ifdef UNIX
+			struct tm *tm = localtime (& today);
+			strftime (dateA, 50, "%B %e, %Y", tm);
+		#else
+			strcpy (dateA, ctime (& today));
+		#endif
+		wchar_t *date = Melder_peekUtf8ToWcs (dateA), *newline;
+		newline = wcschr (date, '\n'); if (newline) *newline = '\0';
+		SET_STRING (L"Left or inside header", date)
+		SET_STRING (L"Right or outside header", my name)
+		if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
+		if (my path >= 1 && my path <= manPages -> pages -> size) {
+			ManPage page = manPages -> pages -> item [my path];
+			SET_STRING (L"Print pages starting with", page -> title);
+		}
+	EDITOR_DO
+		my insideHeader = GET_STRING (L"Left or inside header");
+		my middleHeader = GET_STRING (L"Middle header");
+		my outsideHeader = GET_STRING (L"Right or outside header");
+		my insideFooter = GET_STRING (L"Left or inside footer");
+		my middleFooter = GET_STRING (L"Middle footer");
+		my outsideFooter = GET_STRING (L"Right or outside footer");
+		my mirror = GET_INTEGER (L"Mirror even/odd headers");
+		my printPagesStartingWith = GET_STRING (L"Print pages starting with");
+		my pageNumber = GET_INTEGER (L"First page number");
+		my suppressLinksHither = GET_INTEGER (L"Suppress \"Links to this page\"");
+		Printer_print (print, me);
+	EDITOR_END
 }
-DO
-	my insideHeader = GET_STRING (L"Left or inside header");
-	my middleHeader = GET_STRING (L"Middle header");
-	my outsideHeader = GET_STRING (L"Right or outside header");
-	my insideFooter = GET_STRING (L"Left or inside footer");
-	my middleFooter = GET_STRING (L"Middle footer");
-	my outsideFooter = GET_STRING (L"Right or outside footer");
-	my mirror = GET_INTEGER (L"Mirror even/odd headers");
-	my printPagesStartingWith = GET_STRING (L"Print pages starting with");
-	my pageNumber = GET_INTEGER (L"First page number");
-	my suppressLinksHither = GET_INTEGER (L"Suppress \"Links to this page\"");
-	Printer_print (print, me);
-END
 
 /********** SEARCHING **********/
 
@@ -454,26 +467,24 @@ static void createChildren (I) {
 	#endif
 }
 
-DIRECT (Manual, cb_help)
-	if (! HyperPage_goToPage (me, L"Manual")) return 0;
-END
+static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); if (! HyperPage_goToPage (me, L"Manual")) return 0; return 1; }
 
 static void createMenus (I) {
 	iam (Manual);
 	inherited (Manual) createMenus (me);
 
-	Editor_addCommand (me, L"File", L"Print manual...", 0, cb_printRange);
-	Editor_addCommand (me, L"File", L"Write page to HTML file...", 0, cb_writeOneToHtmlFile);
-	Editor_addCommand (me, L"File", L"Write manual to HTML directory...", 0, cb_writeAllToHtmlDir);
+	Editor_addCommand (me, L"File", L"Print manual...", 0, menu_cb_printRange);
+	Editor_addCommand (me, L"File", L"Write page to HTML file...", 0, menu_cb_writeOneToHtmlFile);
+	Editor_addCommand (me, L"File", L"Write manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
-	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, cb_searchForPageList);
+	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);
 }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (Manual);
 	inherited (Manual) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"Manual help", '?', cb_help);
+	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
 }
 
 static void defaultHeaders (EditorCommand cmd) {

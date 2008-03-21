@@ -1,6 +1,6 @@
 /* praat_logo.c
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/06/10 wchar_t
  * pb 2007/12/09 enums
+ * sdk 2008/03/24 GTK
  */
 
 #include "praatP.h"
+#include "Picture.h"
 
 static void logo_defaultDraw (Graphics g) {
 	Graphics_setColour (g, Graphics_MAGENTA);
@@ -40,7 +42,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2007");
+	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2008");
 }
 
 static struct {
@@ -65,11 +67,21 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
+	if (theLogo.graphics == NULL)
+		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+#if gtk
+	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	cairo_rectangle (Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
+	cairo_clip (Graphics_x_getCR (theLogo.graphics));
+	theLogo.draw (theLogo.graphics);
+	cairo_destroy (Graphics_x_getCR (theLogo.graphics));
+#elif motif
 	(void) void_me;
 	(void) event;
 	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	theLogo.draw (theLogo.graphics);
+#endif
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
@@ -84,6 +96,24 @@ static void gui_cb_goAway (I) {
 }
 
 void praat_showLogo (int autoPopDown) {
+	#if gtk
+		const gchar * authors [4];
+		authors [0] = "Paul Boersma";
+		authors [1] = "David Weenink";
+		authors [2] = "Stefan de Konink";
+		authors [3] = NULL;
+
+		Widget dialog = gtk_about_dialog_new();
+//		gtk_about_dialog_set_version (dialog, xstr(PRAAT_VERSION));
+//		gtk_about_dialog_set_copyright (dialog, "Copyright (C) 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
+		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://praat.org");
+		gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
+		g_signal_connect (GTK_DIALOG (dialog), "response", gtk_widget_destroy, NULL);
+
+		gtk_dialog_run (GTK_DIALOG (dialog));
+
+	#else
 	#ifdef UNIX
 		#if motif
 			XWindowAttributes windowAttributes;
@@ -126,13 +156,14 @@ void praat_showLogo (int autoPopDown) {
 		XtAppNextEvent (theCurrentPraat -> context, & event);
 		XtDispatchEvent (& event);
 	}
-	#endif
 	gui_drawingarea_cb_expose (NULL, NULL);   // BUG
+	#endif
 	#endif
 
 	#if motif
 	if (autoPopDown)
 		XtAppAddTimeOut (theCurrentPraat -> context, 2000, logo_timeOut, (XtPointer) NULL);
+	#endif
 	#endif
 }
 

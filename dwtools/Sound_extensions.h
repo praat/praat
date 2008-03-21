@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20080313 Latest modification
+ djmw 20080320 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -133,8 +133,10 @@ void Sound_scale_dB (Sound me, double level_dB);
 	where extremum is the maximum of the absolute values the signal values. 
 */
 
-void Sound_fade (Sound me, double t, double fadeTime, int inout, int fadeGlobal);
-/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2 */
+void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal);
+/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2 
+	channel = 0 (all), 1 (left), 2 (right).
+*/
 
 #define FROM_LEFT_TO_RIGHT 0
 #define FROM_RIGHT_TO_LEFT 1

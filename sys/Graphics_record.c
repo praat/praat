@@ -22,6 +22,7 @@
  * pb 2007/03/14 arrowSize
  * pb 2007/08/08 text is saved as UTF-8
  * pb 2008/01/19 removed 16M limitation on number of elements (-> double)
+ * sdk 2008/03/24 cairo
  */
 
 #include "GraphicsP.h"
@@ -75,6 +76,8 @@ int Graphics_stopRecording (I) {
 	return wasRecording;
 }
 
+// TODO: Paul, ik zou er een enorme fan van zijn als bij deze functie
+// ook een bounding box van events kan worden meegeven.
 void Graphics_play (Graphics me, Graphics thee) {
 	double *p = my record, *endp = p + my irecord;
 	int wasRecording = my recording;
@@ -84,21 +87,25 @@ void Graphics_play (Graphics me, Graphics thee) {
 		#define get  (* ++ p)
 		#define mget(n)  (p += n, p - n)
 		#define sget(n)  ((char *) (p += n, p - n + 1))
+//		#define skip(x1, x2, y1, y2) if ((((x1 >= thy x1DC && x1 <= thy x2DC) || (x2 >= thy x1DC && x2 <= thy x2DC)) && ((y1 >= thy y1DC && y1 <= thy y2DC) || (y2 >= thy y1DC && y2 <= thy y2DC))) == FALSE) { g_debug("SKIP!"); break; }
 		int opcode = (int) get;
 		(void) (long) get;   // ignore number of arguments
 		switch (opcode) {
 			case SET_VIEWPORT:
 			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+//				skip(x1NDC, x2NDC, y1NDC, y2NDC)
 				Graphics_setViewport (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			}  break;
 			case SET_INNER: Graphics_setInner (thee); break;
 			case UNSET_INNER: Graphics_unsetInner (thee); break;
 			case SET_WINDOW:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+//				skip(x1, x2, y1, y2)
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			}  break;
 			case TEXT:
 			{  double x = get, y = get; long length = get; char *text_utf8 = sget (length);
+//				skip(x, x, y, y)
 				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text_utf8));
 			}  break;
 			case POLYLINE:
@@ -107,6 +114,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case LINE:
 			{  double x1 = get, y1 = get, x2 = get, y2 = get;
+//				skip(x1, x2, y1, y2)
 				Graphics_line (thee, x1, y1, x2, y2);
 			}  break;
 			case ARROW:
@@ -127,6 +135,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case FILL_RECTANGLE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+//				skip(x1, x2, y1, y2)
 				Graphics_fillRectangle (thee, x1, x2, y1, y2);
 			}  break;
 			case CIRCLE:
@@ -209,8 +218,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_unhighlight (thee, x1, x2, y1, y2);
 			}  break;
+#if motif
 			case XOR_ON: Graphics_xorOn (thee, get); break;
 			case XOR_OFF: Graphics_xorOff (thee); break;
+#endif
 			case RECTANGLE_MM:
 			{  double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_rectangle_mm (thee, x, y, horSide, vertSide);

@@ -38,7 +38,21 @@ typedef struct structGuiWindow {
 } *GuiWindow;
 
 #if gtk
-	// Bla..
+	static gboolean _GuiWindow_destroyCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+		(void) widget;
+		iam (GuiWindow);
+		Melder_free (me);
+		return TRUE;
+	}
+
+	static gboolean _GuiWindow_goAwayCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+		(void) widget;
+		iam (GuiWindow);
+		if (my goAwayCallback != NULL) {
+			my goAwayCallback (my goAwayBoss);
+		}
+		return TRUE;
+	}
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -61,6 +75,20 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk
+		Widget shell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		g_signal_connect (G_OBJECT (shell), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me);
+		g_signal_connect (G_OBJECT (shell), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
+
+		// TODO: Paul ik denk dat Gui_AUTOMATIC voor GTK gewoon -1 moet zijn veel minder (onnodig) gezeur
+		if (width == Gui_AUTOMATIC) width = -1;
+		if (height == Gui_AUTOMATIC) height = -1;
+
+		gtk_window_set_default_size (GTK_WINDOW (shell), width, height);
+		GuiWindow_setTitle (shell, title);
+		
+		my widget = gtk_vbox_new (FALSE, 0);
+		gtk_container_add (GTK_CONTAINER (shell), my widget);
+		_GuiObject_setUserData (my widget, me);
 	#elif motif
 		#if win || mac
 			(void) parent;
@@ -90,6 +118,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 
 void GuiWindow_show (Widget widget) {
 	#if gtk
+		gtk_widget_show (widget);
 	#elif motif
 		XtManageChild (widget);
 		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));

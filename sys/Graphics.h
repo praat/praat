@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2008/03/24
  */
 
 #ifndef _Thing_h_
@@ -230,6 +230,8 @@ void Graphics_marksRightEvery (I, double units, double distance, bool haveNumber
 void Graphics_marksBottomEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksTopEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 
+void *Graphics_x_getCR (I);
+void Graphics_x_setCR (I, void *cr);
 void *Graphics_x_getGC (I);
 
 int Graphics_startRecording (I);

@@ -1173,12 +1173,7 @@ static void createMenus (I)
 	Editor_addCommand (me, L"Edit", L"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (me, L"Edit", L"Shift trajectory...", 0, menu_cb_shiftTrajectory);
 	Editor_addCommand (me, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
-}
-
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (VowelEditor);
-	inherited (VowelEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"VowelEditor help", '?', menu_cb_help);
+	Editor_addCommand (me, L"Help", L"VowelEditor help", '?', menu_cb_help);
 }
 
 static void createChildren (I)
@@ -1256,14 +1251,12 @@ static void dataChanged (I)
 	(void) me;
 }
 
-class_methods (VowelEditor, Editor) {
+class_methods (VowelEditor, Editor)
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createMenus)
-	class_method (createHelpMenuItems)
-	class_methods_end
-}
+class_methods_end
 
 static int VowelEditor_setSource (VowelEditor me)
 {
@@ -1297,6 +1290,7 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = new (VowelEditor);
+	
 	if (me == NULL || ! Editor_init (me, parent, 20, 40, 650, 650, title, data)) goto end;
 	Melder_assert (XtWindow (my drawingArea));
 	my g = Graphics_create_xmdrawingarea (my drawingArea);

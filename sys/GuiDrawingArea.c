@@ -1,6 +1,6 @@
 /* GuiDrawingArea.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2007/12/28 extracted from Motif
+ * sdk 2008/03/24 GTK
  */
 
 #include "GuiP.h"
@@ -52,15 +53,52 @@ typedef struct structGuiDrawingArea {
 		iam (GuiDrawingArea);
 		Melder_free (me);
 	}
-	static void _GuiGtkDrawingArea_activateCallback (Widget widget, gpointer void_me) {
-		iam (GuiDrawingArea);
+//	static void _GuiGtkDrawingArea_activateCallback (GtkAction *action, gpointer void_me) {
+		//iam (GuiDrawingArea);
 		// TODO: compliled niet
 		/*
 		struct structGuiDrawingAreaEvent event = { widget, 0 };
 		if (my activateCallback != NULL) {
 			my activateCallback (my activateBoss, & event);
 		}*/
+//	}
+	static void  _GuiGtkDrawingArea_exposeCallback(Widget widget, GdkEventExpose *event, gpointer void_me) {
+		iam (GuiDrawingArea);
+		if (my exposeCallback) {
+			//g_debug("--> expose %d %d %d %d", event->area. x, event-> area.y, event-> area.width, event->area.height);
+       	                struct structGuiDrawingAreaExposeEvent myevent = { widget, 0 };
+       	                myevent. x = event->area. x;
+                        myevent. y = event->area. y;
+       	                myevent. width = event->area. width;
+       	                myevent. height = event->area. height;
+			my exposeCallback (my exposeBoss, & myevent);
+		}
 	}
+	static void _GuiGtkDrawingArea_clickCallback (Widget widget, GdkEventButton *event, gpointer void_me) {
+		iam (GuiDrawingArea);
+		if (my clickCallback) {
+			struct structGuiDrawingAreaClickEvent myevent = { widget, 0 };
+			switch (event -> type) {
+				case GDK_BUTTON_PRESS:
+					myevent. type = BUTTON_PRESS;
+					break;
+				case GDK_BUTTON_RELEASE:
+					myevent. type = BUTTON_RELEASE;
+					break;
+				case GDK_MOTION_NOTIFY:
+					myevent. type = MOTION_NOTIFY;
+					break;
+				default:
+					// Do NOTHING
+					return;
+			}
+			myevent. x = event -> x;
+			myevent. y = event -> y;
+			myevent. shiftKeyPressed = (event -> state & GDK_SHIFT_MASK) != 0;
+			my clickCallback (my clickBoss, & myevent);
+		}
+	}
+
 #elif win || mac
 	void _GuiWinMacDrawingArea_destroy (Widget widget) {
 		iam_drawingarea;
@@ -242,9 +280,26 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 	my resizeCallback = resizeCallback;
 	my resizeBoss = boss;
 	#if gtk
-//		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
-//		_GuiObject_setUserData (my widget, me);
+		my widget = gtk_drawing_area_new ();
+		g_signal_connect (GTK_DRAWING_AREA (my widget), "expose-event",
+			G_CALLBACK (_GuiGtkDrawingArea_exposeCallback), me);
+		g_signal_connect (G_OBJECT (my widget), "destroy",
+			G_CALLBACK (_GuiGtkDrawingArea_destroyCallback), me);
+		g_signal_connect (GTK_WIDGET (my widget), "button-press-event",
+			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
+		g_signal_connect (GTK_WIDGET (my widget), "button-release-event",
+			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
+		g_signal_connect (GTK_WIDGET (my widget), "motion-notify-event",
+			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
+
+		gtk_widget_set_events (my widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
+//		g_signal_connect (GTK_WIDGET (my widget), "activate",
+//			G_CALLBACK (_GuiGtkDrawingArea_activateCallback), me);
+
+//		_Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
+		_GuiObject_setUserData (my widget, me);
 //		_GuiObject_position (my widget, left, right, top, bottom);
+		gtk_widget_set_size_request (my widget, right - left, bottom - top);
 	#elif win
 		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
 		_GuiObject_setUserData (my widget, me);
@@ -278,6 +333,9 @@ Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, 
 	unsigned long flags)
 {
 	Widget me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
+	#if gtk
+		gtk_container_add (GTK_WIDGET (parent), GTK_WIDGET (me));
+	#endif
 	GuiObject_show (me);
 	return me;
 }

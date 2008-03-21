@@ -22,6 +22,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "PitchTierEditor.h"
@@ -32,14 +33,14 @@
 #define PitchTierEditor_methods RealTierEditor_methods
 class_create_opaque (PitchTierEditor, RealTierEditor);
 
-DIRECT (PitchTierEditor, cb_PitchTierEditorHelp) Melder_help (L"PitchTierEditor"); END
-DIRECT (PitchTierEditor, cb_PitchTierHelp) Melder_help (L"PitchTier"); END
+static int menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTierEditor"); return 1; }
+static int menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTier"); return 1; }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (PitchTierEditor);
 	inherited (PitchTierEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, cb_PitchTierEditorHelp);
-	EditorMenu_addCommand (menu, L"PitchTier help", 0, cb_PitchTierHelp);
+	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
+	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {

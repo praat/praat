@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2008/03/23
  */
 
 #include "Thing.h"
@@ -37,27 +37,27 @@
 	if (dia == NULL) {
 		Any radio;
 		dia = UiForm_create
-		  (topShell,			// The parent Widget of the dialog window.
-			"Create a new person",		// The window title.
-			DO_Person_create,		// The routine to call when the user clicks OK.
-			NULL,				// The second argument to this routine (first is 'dia').
-							// Normally the creator/owner, if dynamic.
-			"Create person...");		// The help string; may be NULL.
-		UiForm_addNatural (dia, "Age (years)",		"18");
-		UiForm_addPositive (dia, "Length (metres)",	"1.68 (average)");
-		UiForm_addBoolean (dia, "Beard",			FALSE);
-		radio = UiForm_addRadio ("Sex",				1);
-			UiRadio_addButton (radio, "Female");
-			UiRadio_addButton (radio, "Male");
-		UiForm_addWord (dia, "Colour",			"black");
-		UiForm_addLabel (dia, "features", "Some less conspicuous features:");
-		UiForm_addNatural (dia, "Number of birth marks",	"28");
-		UiForm_addSentence (dia, "Favourite greeting",	"Good morning");
+		  (topShell,   // The parent Widget of the dialog window.
+			L"Create a new person",   // The window title.
+			DO_Person_create,   // The routine to call when the user clicks OK.
+			NULL,   // The second argument to this routine (first is 'dia').
+			   // Normally the creator/owner, if dynamic.
+			L"Create person...");   // The help string; may be NULL.
+		UiForm_addNatural (dia, L"Age (years)", L"18");
+		UiForm_addPositive (dia, L"Length (metres)", L"1.68 (average)");
+		UiForm_addBoolean (dia, L"Beard", FALSE);
+		radio = UiForm_addRadio (L"Sex", 1);
+			UiRadio_addButton (radio, L"Female");
+			UiRadio_addButton (radio, L"Male");
+		UiForm_addWord (dia, L"Colour", L"black");
+		UiForm_addLabel (dia, L"features", L"Some less conspicuous features:");
+		UiForm_addNatural (dia, L"Number of birth marks", L"28");
+		UiForm_addSentence (dia, L"Favourite greeting", L"Good morning");
 		UiForm_finish (dia);
 	}
 	UiForm_setReal (dia, L"Length", myLength);
 	UiForm_setInteger (dia, L"Number of birth marks", 30);
-	UiForm_do (dia, 0);   			// Show dialog box.
+	UiForm_do (dia, 0);   // Show dialog box.
 }
 	Real, Positive, Integer, Natural, Word, and Sentence
 		show a label (name) and an editable text field (value).
@@ -68,7 +68,7 @@
 	RadioButton does the same inside a radio box.
 	As shown in the example, Real, Positive, Integer, Natural, and Word may contain extra text;
 	this text is considered as comments and is erased as soon as you click OK.
-	When you click "Use defaults", the default values (including comments)
+	When you click "Standards", the standard values (including comments)
 	are restored to all items in the form.
 */
 
@@ -138,13 +138,11 @@ void UiForm_do (I, int modified);
 /* These routines work from the screen and from batch. */
 double UiForm_getReal (I, const wchar_t *fieldName);	/* Real, Positive. */
 long UiForm_getInteger (I, const wchar_t *fieldName);	/* Integer, Natural, Boolean, Radio, Enum, List. */
-char * UiForm_getStringA (I, const char *fieldName);	/* Word, Sentence, Text, Radio, Enum, List. */
 wchar_t * UiForm_getString (I, const wchar_t *fieldName);	/* Word, Sentence, Text, Radio, Enum, List. */
 MelderFile UiForm_getFile (I, const wchar_t *fieldName); /* FileIn, FileOut */
 
 double UiForm_getReal_check (I, const wchar_t *fieldName);
 long UiForm_getInteger_check (I, const wchar_t *fieldName);
-char * UiForm_getStringA_check (I, const char *fieldName);
 wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
 
 int UiForm_parseString (I, const wchar_t *arguments);

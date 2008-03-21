@@ -3179,29 +3179,37 @@ DO
 END
 
 FORM (Sound_fadeIn, L"Sound: Fade in", L"Sound: Fade in...")
+	OPTIONMENU (L"Channel", 1)
+	OPTION (L"All")
+	OPTION (L"Left")
+	OPTION (L"Right")
 	REAL (L"Time (s)", L"-10000.0")
 	REAL (L"Fade time (s)", L"0.005")
 	BOOLEAN (L"Silent from start", 0)
 	OK
 DO
+	long channel = GET_INTEGER (L"Channel") - 1;
 	WHERE (SELECTED)
 	{
-		Sound_fade (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Fade time"),
-			 -1, GET_INTEGER (L"Silent from start"));
+		Sound_fade (OBJECT, channel, GET_REAL (L"Time"), GET_REAL (L"Fade time"), -1, GET_INTEGER (L"Silent from start"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
 FORM (Sound_fadeOut, L"Sound: Fade out", L"Sound: Fade out...")
+	OPTIONMENU (L"Channel", 1)
+	OPTION (L"All")
+	OPTION (L"Left")
+	OPTION (L"Right")
 	REAL (L"Time (s)", L"10000.0")
 	REAL (L"Fade time (s)", L"-0.005")
 	BOOLEAN (L"Silent to end", 0)
 	OK
 DO
+	long channel = GET_INTEGER (L"Channel") - 1;
 	WHERE (SELECTED)
 	{
-		Sound_fade (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Fade time"),
-			1, GET_INTEGER (L"Silent to end"));
+		Sound_fade (OBJECT, channel, GET_REAL (L"Time"), GET_REAL (L"Fade time"), 1, GET_INTEGER (L"Silent to end"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -4211,7 +4219,7 @@ void praat_uvafon_David_init (void)
     	praat_addMenuCommand (L"Objects", L"New", L"Create ISpline...", 0, 1, DO_ISpline_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gamma-tone...", 1, DO_Sound_createFromShepardTone);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", 1, DO_VowelEditor_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Weenink 1985)", L"Create formant table (Peterson & Barney 1952)",1, DO_Table_createFromWeeninkData);

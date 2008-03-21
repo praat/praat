@@ -889,11 +889,16 @@ String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 	
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
+	#if gtk
+		g_set_application_name (title);
+	#endif
 	#if defined (UNIX)
 		FILE *f;
 		//setlocale (LC_ALL, "en_US");
 		#if gtk
 			gtk_init (& argc, & argv);
+			gtk_set_locale ();
+			setlocale (LC_ALL, "en_US.utf8");
 		#elif motif
 			XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
 		#endif
@@ -1101,26 +1106,28 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#if gtk
 			theCurrentPraat -> topShell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_title (GTK_WINDOW (theCurrentPraat -> topShell), objectWindowTitle);
+			// TODO: Nu hebben we een vreselijk mooie GuiWindow_setTitle, werkt het niet...
 			gtk_window_set_default_size (GTK_WINDOW (theCurrentPraat -> topShell), -1, 600);
 			g_signal_connect (G_OBJECT (theCurrentPraat -> topShell), "delete-event", DO_Quit, NULL);
+			theCurrentPraat -> context = g_main_context_default ();
 		#else
-		#ifdef _WIN32
-			argv [0] = & praatP. title [0];   /* argc == 4 */
-			Gui_setOpenDocumentCallback (cb_openDocument);
-		#endif
-		theCurrentPraat -> topShell = XtVaAppInitialize (& theCurrentPraat -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
-		XtVaSetValues (theCurrentPraat -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
-		#if defined (macintosh) || defined (_WIN32)
-			XtVaSetValues (theCurrentPraat -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
-		#endif
-		#if ! defined (sun4)
-		{
-			/* Catch Window Manager "Close" and "Quit". */
-			Atom atom = XmInternAtom (XtDisplay (theCurrentPraat -> topShell), "WM_DELETE_WINDOW", True);
-			XmAddWMProtocols (theCurrentPraat -> topShell, & atom, 1);
-			XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, gui_cb_quit, 0);
-		}
-		#endif
+			#ifdef _WIN32
+				argv [0] = & praatP. title [0];   /* argc == 4 */
+				Gui_setOpenDocumentCallback (cb_openDocument);
+			#endif
+			theCurrentPraat -> topShell = XtVaAppInitialize (& theCurrentPraat -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
+			XtVaSetValues (theCurrentPraat -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
+			#if defined (macintosh) || defined (_WIN32)
+				XtVaSetValues (theCurrentPraat -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
+			#endif
+			#if ! defined (sun4)
+			{
+				/* Catch Window Manager "Close" and "Quit". */
+				Atom atom = XmInternAtom (XtDisplay (theCurrentPraat -> topShell), "WM_DELETE_WINDOW", True);
+				XmAddWMProtocols (theCurrentPraat -> topShell, & atom, 1);
+				XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, gui_cb_quit, 0);
+			}
+			#endif
 		#endif
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
@@ -1138,7 +1145,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 
 		#ifdef macintosh
-			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
+			MelderGui_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		#if gtk
 			Raam = gtk_vbox_new (FALSE, 0);
@@ -1200,8 +1207,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#if ! defined (macintosh)
 			/* praat_showLogo (TRUE);   /* Mac: later. */
 		#endif
-		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh) && motif
-			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* Mac: done this earlier. */
+		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
+			MelderGui_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* Mac: done this earlier. */
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
@@ -1312,7 +1319,7 @@ void praat_run (void) {
 				structMelderFile batchFile = { 0 };
 				if (! Melder_relativePathToFile (theCurrentPraat -> batchName.string, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
-					MelderMotif_create (NULL, NULL);
+					MelderGui_create (NULL, NULL);
 				#endif
 				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": command file \"", MelderFile_messageNameW (& batchFile), L"\" not completed.");
 				Melder_flushError (NULL);

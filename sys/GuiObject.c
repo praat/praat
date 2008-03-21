@@ -1,6 +1,6 @@
 /* GuiObject.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2007/12/26 abstraction from motif
  * pb 2007/12/28 _GuiObject_position: allow the combination of fixed height and automatic position
+ * sdk 2008/03/24 GTK
  */
 
 #include "GuiP.h"
@@ -201,7 +202,7 @@ void GuiObject_hide (Widget me) {
 
 Widget GuiObject_parent (Widget me) {
 	#if gtk
-		return NULL;   // TODO: implement
+		return gtk_widget_get_parent (me);
 	#elif win || mac
 		return my parent;
 	#elif motif

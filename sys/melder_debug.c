@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2008/02/11
+ * pb 2008/03/21
  */
 
 #include "melder.h"
@@ -52,6 +52,7 @@ the behaviour of that program changes in the following way:
 22: UTF-8 tests in logo
 23: recognize special chunks in WAV files
 24: measure buttons in drawing area
+25: read crooked Manipulation files (January 2008)
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

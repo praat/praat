@@ -35,6 +35,7 @@
  * pb 2007/12/05 prefs
  * pb 2007/12/23 Gui
  * pb 2008/01/04 guard against multiple opening of same file
+ * pb 2008/03/21 new Editor API
  */
 
 #include "TextEditor.h"
@@ -330,37 +331,37 @@ static void goAway (I) {
 	}
 }
 
-static int cb_undo (EDITOR_ARGS) {
+static int menu_cb_undo (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_undo (my textWidget);
 	return 1;
 }
 
-static int cb_redo (EDITOR_ARGS) {
+static int menu_cb_redo (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_redo (my textWidget);
 	return 1;
 }
 
-static int cb_cut (EDITOR_ARGS) {
+static int menu_cb_cut (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_cut (my textWidget);  // use ((XmAnyCallbackStruct *) call) -> event -> xbutton. time
 	return 1;
 }
 
-static int cb_copy (EDITOR_ARGS) {
+static int menu_cb_copy (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_copy (my textWidget);
 	return 1;
 }
 
-static int cb_paste (EDITOR_ARGS) {
+static int menu_cb_paste (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_paste (my textWidget);
 	return 1;
 }
 
-static int cb_erase (EDITOR_ARGS) {
+static int menu_cb_erase (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_remove (my textWidget);
 	return 1;
@@ -399,7 +400,8 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 	return TRUE;
 }
 
-DIRECT (TextEditor, cb_whereAmI)
+static int menu_cb_whereAmI (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
 	long numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
 		Melder_information3 (L"The cursor is on line ", Melder_integer (numberOfLinesLeft), L".");
@@ -409,45 +411,49 @@ DIRECT (TextEditor, cb_whereAmI)
 		Melder_information5 (L"The selection runs from line ", Melder_integer (numberOfLinesLeft),
 			L" to line ", Melder_integer (numberOfLinesRight), L".");
 	}
-END
+	return 1;
+}
 
-FORM (TextEditor, cb_goToLine, L"Go to line", 0)
-	NATURAL (L"Line", L"1")
-	OK
-long firstLine, lastLine;
-getSelectedLines (me, & firstLine, & lastLine);
-SET_INTEGER (L"Line", firstLine);
-DO
-	wchar_t *text = GuiText_getString (my textWidget);
-	long lineToGo = GET_INTEGER (L"Line"), currentLine = 1;
-	unsigned long left = 0, right = 0;
-	if (lineToGo == 1) {
-		for (; text [right] != '\n' && text [right] != '\0'; right ++) { }
-	} else {
-		for (; text [left] != '\0'; left ++) {
-			if (text [left] == '\n') {
-				currentLine ++;
-				if (currentLine == lineToGo) {
-					left ++;
-					for (right = left; text [right] != '\n' && text [right] != '\0'; right ++) { }
-					break;
+static int menu_cb_goToLine (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	EDITOR_FORM (L"Go to line", 0)
+		NATURAL (L"Line", L"1")
+	EDITOR_OK
+		long firstLine, lastLine;
+		getSelectedLines (me, & firstLine, & lastLine);
+		SET_INTEGER (L"Line", firstLine);
+	EDITOR_DO
+		wchar_t *text = GuiText_getString (my textWidget);
+		long lineToGo = GET_INTEGER (L"Line"), currentLine = 1;
+		unsigned long left = 0, right = 0;
+		if (lineToGo == 1) {
+			for (; text [right] != '\n' && text [right] != '\0'; right ++) { }
+		} else {
+			for (; text [left] != '\0'; left ++) {
+				if (text [left] == '\n') {
+					currentLine ++;
+					if (currentLine == lineToGo) {
+						left ++;
+						for (right = left; text [right] != '\n' && text [right] != '\0'; right ++) { }
+						break;
+					}
 				}
 			}
 		}
-	}
-	if (left == wcslen (text)) {
-		right = left;
-	} else if (text [right] == '\n') {
-		right ++;
-	}
-	Melder_free (text);
-	#if defined (_WIN32)
-		left += lineToGo - 1;
-		right += lineToGo - 1;
-	#endif
-	GuiText_setSelection (my textWidget, left, right);
-	GuiText_scrollToSelection (my textWidget);
-END
+		if (left == wcslen (text)) {
+			right = left;
+		} else if (text [right] == '\n') {
+			right ++;
+		}
+		Melder_free (text);
+		#if defined (_WIN32)
+			left += lineToGo - 1;
+			right += lineToGo - 1;
+		#endif
+		GuiText_setSelection (my textWidget, left, right);
+		GuiText_scrollToSelection (my textWidget);
+	EDITOR_END
+}
 
 /***** 'Font' menu *****/
 
@@ -466,18 +472,21 @@ static void setFontSize (TextEditor me, int fontSize) {
 	updateSizeMenu (me);
 }
 
-DIRECT (TextEditor, cb_10) setFontSize (me, 10); END
-DIRECT (TextEditor, cb_12) setFontSize (me, 12); END
-DIRECT (TextEditor, cb_14) setFontSize (me, 14); END
-DIRECT (TextEditor, cb_18) setFontSize (me, 18); END
-DIRECT (TextEditor, cb_24) setFontSize (me, 24); END
-FORM (TextEditor, cb_fontSize, L"Text window: Font size", 0)
-	NATURAL (L"Font size (points)", L"12")
-	OK
-SET_INTEGER (L"Font size", (long) my fontSize);
-DO
-	setFontSize (me, GET_INTEGER (L"Font size"));
-END
+static int menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 10); return 1; }
+static int menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 12); return 1; }
+static int menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 14); return 1; }
+static int menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 18); return 1; }
+static int menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 24); return 1; }
+static int menu_cb_fontSize (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	EDITOR_FORM (L"Text window: Font size", 0)
+		NATURAL (L"Font size (points)", L"12")
+	EDITOR_OK
+		SET_INTEGER (L"Font size", (long) my fontSize);
+	EDITOR_DO
+		setFontSize (me, GET_INTEGER (L"Font size"));
+	EDITOR_END
+}
 
 static void createMenus (I) {
 	iam (TextEditor);
@@ -496,24 +505,24 @@ static void createMenus (I) {
 		Editor_addCommand (me, L"File", L"Save as...", 'S', menu_cb_saveAs);
 	}
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Undo", 'Z', cb_undo);
-	Editor_addCommand (me, L"Edit", L"Redo", 'Y', cb_redo);
+	Editor_addCommand (me, L"Edit", L"Undo", 'Z', menu_cb_undo);
+	Editor_addCommand (me, L"Edit", L"Redo", 'Y', menu_cb_redo);
 	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Cut", 'X', cb_cut);
-	Editor_addCommand (me, L"Edit", L"Copy", 'C', cb_copy);
-	Editor_addCommand (me, L"Edit", L"Paste", 'V', cb_paste);
-	Editor_addCommand (me, L"Edit", L"Erase", 0, cb_erase);
+	Editor_addCommand (me, L"Edit", L"Cut", 'X', menu_cb_cut);
+	Editor_addCommand (me, L"Edit", L"Copy", 'C', menu_cb_copy);
+	Editor_addCommand (me, L"Edit", L"Paste", 'V', menu_cb_paste);
+	Editor_addCommand (me, L"Edit", L"Erase", 0, menu_cb_erase);
 	Editor_addMenu (me, L"Search", 0);
-	if (our fileBased) Editor_addCommand (me, L"Search", L"Where am I?", 0, cb_whereAmI);
-	Editor_addCommand (me, L"Search", L"Go to line...", 'L', cb_goToLine);
+	if (our fileBased) Editor_addCommand (me, L"Search", L"Where am I?", 0, menu_cb_whereAmI);
+	Editor_addCommand (me, L"Search", L"Go to line...", 'L', menu_cb_goToLine);
 	#ifdef macintosh
 		Editor_addMenu (me, L"Font", 0);
-		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, cb_10);
-		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, cb_12);
-		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, cb_14);
-		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, cb_18);
-		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, cb_24);
-		Editor_addCommand (me, L"Font", L"Font size...", 0, cb_fontSize);
+		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, menu_cb_10);
+		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, menu_cb_12);
+		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, menu_cb_14);
+		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, menu_cb_18);
+		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, menu_cb_24);
+		Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
 	#endif
 }
 

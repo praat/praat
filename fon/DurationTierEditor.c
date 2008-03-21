@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/03/20
+ * pb 2008/03/21
  */
 
 #include "DurationTierEditor.h"
@@ -28,14 +28,12 @@
 #define DurationTierEditor_methods RealTierEditor_methods
 class_create_opaque (DurationTierEditor, RealTierEditor);
 
-/*DIRECT (DurationTierEditor, cb_DurationTierEditorHelp) Melder_help (L"DurationTierEditor"); END*/
-DIRECT (DurationTierEditor, cb_DurationTierHelp) Melder_help (L"DurationTier"); END
+static int menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); return 1; }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (DurationTierEditor);
 	inherited (DurationTierEditor) createHelpMenuItems (me, menu);
-	/*EditorMenu_addCommand (menu, L"DurationTierEditor help", 0, cb_DurationTierEditorHelp);*/
-	EditorMenu_addCommand (menu, L"DurationTier help", 0, cb_DurationTierHelp);
+	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {

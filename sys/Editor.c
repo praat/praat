@@ -27,6 +27,7 @@
  * pb 2007/09/19 info
  * pb 2007/12/05 enums
  * pb 2008/03/20 split off Help menu
+ * sdk 2008/03/24 GTK
  */
 
 #include <time.h>
@@ -243,10 +244,14 @@ static void destroy (I) {
 	 */
 	forget (my menus);
 	if (my shell) {
-		#if defined (UNIX)
-			#if motif
-			XtUnrealizeWidget (my shell);   // LEAK BUG: should also destroy; but then, Praat will often crash on a destroy (OpenMotif 2.2 and 2.3)
-			//XtDestroyWidget (my shell);
+		#if gtk
+			gtk_widget_destroy (my shell);
+		#elif motif
+			#if defined (UNIX)
+				XtUnrealizeWidget (my shell);   // LEAK BUG: should also destroy; but then, Praat will often crash on a destroy (OpenMotif 2.2 and 2.3)
+				//XtDestroyWidget (my shell);
+			#else
+				XtDestroyWidget (my shell);
 			#endif
 		#else
 			XtDestroyWidget (my shell);
@@ -302,8 +307,10 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
 	else wcscpy (my undoText, L"Undo?");
-	#if motif
-	XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+	#if gtk
+		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
+	#elif motif
+		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
 	#endif
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
@@ -538,16 +545,22 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 
 	our createChildren (me);
 	GuiObject_show (my dialog);
-	#if motif
+	#if gtk
+		GuiWindow_show (my shell);
+	#elif motif
 		XtRealizeWidget (my shell);
 	#endif
+
 	return 1;
 }
 
 void Editor_raise (I) {
 	iam (Editor);
-	#if motif
-	XMapRaised (XtDisplay (my shell), XtWindow (my shell));
+	#if gtk
+		// TODO: Wellicht dat my shell geen GDK_WINDOW is...
+		gdk_window_raise (GDK_WINDOW (my shell)); 
+	#elif motif
+		XMapRaised (XtDisplay (my shell), XtWindow (my shell));
 	#endif
 }
  
@@ -599,7 +612,9 @@ void Editor_save (I, const wchar_t *text) {
 	if (! my undoButton) return;
 	GuiObject_setSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
-	#if motif
+	#if gtk
+		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
+	#elif motif
 		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
 	#endif
 }

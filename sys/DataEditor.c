@@ -30,6 +30,7 @@
  * pb 2007/12/23 Gui
  * pb 2007/12/31 Gui
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #define NAME_X  30
@@ -401,12 +402,12 @@ static void classDataSubEditor_createChildren (I) {
 	#endif
 }
 
-DIRECT (DataSubEditor, cb_help) Melder_help (L"Inspect"); END
+static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); return 1; }
 
 static void classDataSubEditor_createHelpMenuItems (I, EditorMenu menu) {
 	iam (DataSubEditor);
 	inherited (DataSubEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"DataEditor help", '?', cb_help);
+	EditorMenu_addCommand (menu, L"DataEditor help", '?', menu_cb_help);
 }
 
 static long classDataSubEditor_countFields (I) { iam (DataSubEditor); (void) me; return 0; }

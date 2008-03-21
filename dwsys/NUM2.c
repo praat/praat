@@ -2773,16 +2773,16 @@ int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double 
 
 double NUMsinc (const double x)
 {
-	struct gsl_sf_result_struct result;
-	int status = gsl_sf_sinc_e (x / NUMpi, &result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+        struct gsl_sf_result_struct result;
+        int status = gsl_sf_sinc_e (x / NUMpi, &result);
+        return status == GSL_SUCCESS ? result. val * NUMpi : NUMundefined;
 }
 
 double NUMsincpi (const double x)
 {
-	struct gsl_sf_result_struct result;
-	int status = gsl_sf_sinc_e (x, &result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+        struct gsl_sf_result_struct result;
+        int status = gsl_sf_sinc_e (x, &result);
+        return status == GSL_SUCCESS ? result. val : NUMundefined;
 }
 
 #define MACRO_NUMvector_extrema(TYPE) \

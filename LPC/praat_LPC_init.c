@@ -47,7 +47,7 @@
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "Cepstrum_and_Spectrum.h"
-int praat_Fon_formula (Any dia);
+extern int praat_Fon_formula (Any dia);
 
 static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
 static wchar_t *QUERY_BUTTON   = L"Query -                ";

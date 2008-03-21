@@ -25,6 +25,7 @@
  * pb 2007/06/12 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "ScriptEditor.h"
@@ -120,13 +121,16 @@ static void run (ScriptEditor me, wchar_t **text) {
 	}
 }
 
-DIRECT (ScriptEditor, cb_go)
+static int menu_cb_go (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
 	wchar_t *text = GuiText_getString (my textWidget);
 	run (me, & text);
 	Melder_free (text);
-END
+	return 1;
+}
 
-DIRECT (ScriptEditor, cb_runSelection)
+static int menu_cb_runSelection (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
 	wchar_t *text = GuiText_getSelection (my textWidget);
 	if (! text) {
 		Melder_free (text);
@@ -134,81 +138,94 @@ DIRECT (ScriptEditor, cb_runSelection)
 	}
 	run (me, & text);
 	Melder_free (text);
-END
+	return 1;
+}
 
-FORM (ScriptEditor, cb_addToMenu, L"Add to menu", L"Add to fixed menu...");
-	WORD (L"Window", L"?")
-	SENTENCE (L"Menu", L"File")
-	SENTENCE (L"Command", L"Do it...")
-	SENTENCE (L"After command", L"")
-	INTEGER (L"Depth", L"0")
-	LABEL (L"", L"Script file:")
-	TEXTFIELD (L"Script", L"")
-	OK
-if (my editorClass) SET_STRING (L"Window", my editorClass -> _classNameW)
-if (my name)
-	SET_STRING (L"Script", my name)
-else
-	SET_STRING (L"Script", L"(please save your script first)")
-DO
-	if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
-		GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
-		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
-	praat_show ();
-END
+static int menu_cb_addToMenu (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
+	EDITOR_FORM (L"Add to menu", L"Add to fixed menu...")
+		WORD (L"Window", L"?")
+		SENTENCE (L"Menu", L"File")
+		SENTENCE (L"Command", L"Do it...")
+		SENTENCE (L"After command", L"")
+		INTEGER (L"Depth", L"0")
+		LABEL (L"", L"Script file:")
+		TEXTFIELD (L"Script", L"")
+	EDITOR_OK
+		if (my editorClass) SET_STRING (L"Window", my editorClass -> _classNameW)
+		if (my name)
+			SET_STRING (L"Script", my name)
+		else
+			SET_STRING (L"Script", L"(please save your script first)")
+	EDITOR_DO
+		if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
+			GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+			GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
+		praat_show ();
+	EDITOR_END
+}
 
-FORM (ScriptEditor, cb_addToFixedMenu, L"Add to fixed menu", L"Add to fixed menu...");
-	RADIO (L"Window", 1)
-		RADIOBUTTON (L"Objects")
-		RADIOBUTTON (L"Picture")
-	SENTENCE (L"Menu", L"New")
-	SENTENCE (L"Command", L"Do it...")
-	SENTENCE (L"After command", L"")
-	INTEGER (L"Depth", L"0")
-	LABEL (L"", L"Script file:")
-	TEXTFIELD (L"Script", L"")
-	OK
-if (my name)
-	SET_STRING (L"Script", my name)
-else
-	SET_STRING (L"Script", L"(please save your script first)")
-DO
-	if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
-		GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
-		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
-	praat_show ();
-END
+static int menu_cb_addToFixedMenu (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
+	EDITOR_FORM (L"Add to fixed menu", L"Add to fixed menu...");
+		RADIO (L"Window", 1)
+			RADIOBUTTON (L"Objects")
+			RADIOBUTTON (L"Picture")
+		SENTENCE (L"Menu", L"New")
+		SENTENCE (L"Command", L"Do it...")
+		SENTENCE (L"After command", L"")
+		INTEGER (L"Depth", L"0")
+		LABEL (L"", L"Script file:")
+		TEXTFIELD (L"Script", L"")
+	EDITOR_OK
+		if (my name)
+			SET_STRING (L"Script", my name)
+		else
+			SET_STRING (L"Script", L"(please save your script first)")
+	EDITOR_DO
+		if (! praat_addMenuCommandScript (GET_STRING (L"Window"),
+			GET_STRING (L"Menu"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+			GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
+		praat_show ();
+	EDITOR_END
+}
 
-FORM (ScriptEditor, cb_addToDynamicMenu, L"Add to dynamic menu", L"Add to dynamic menu...")
-	WORD (L"Class 1", L"Sound")
-	INTEGER (L"Number 1", L"0")
-	WORD (L"Class 2", L"")
-	INTEGER (L"Number 2", L"0")
-	WORD (L"Class 3", L"")
-	INTEGER (L"Number 3", L"0")
-	SENTENCE (L"Command", L"Do it...")
-	SENTENCE (L"After command", L"")
-	INTEGER (L"Depth", L"0")
-	LABEL (L"", L"Script file:")
-	TEXTFIELD (L"Script", L"")
-	OK
-if (my name)
-	SET_STRING (L"Script", my name)
-else
-	SET_STRING (L"Script", L"(please save your script first)")
-DO
-	if (! praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
-		GET_STRING (L"Class 2"), GET_INTEGER (L"Number 2"), GET_STRING (L"Class 3"),
-		GET_INTEGER (L"Number 3"), GET_STRING (L"Command"), GET_STRING (L"After command"),
-		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
-	praat_show ();
-END
+static int menu_cb_addToDynamicMenu (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
+	EDITOR_FORM (L"Add to dynamic menu", L"Add to dynamic menu...")
+		WORD (L"Class 1", L"Sound")
+		INTEGER (L"Number 1", L"0")
+		WORD (L"Class 2", L"")
+		INTEGER (L"Number 2", L"0")
+		WORD (L"Class 3", L"")
+		INTEGER (L"Number 3", L"0")
+		SENTENCE (L"Command", L"Do it...")
+		SENTENCE (L"After command", L"")
+		INTEGER (L"Depth", L"0")
+		LABEL (L"", L"Script file:")
+		TEXTFIELD (L"Script", L"")
+	EDITOR_OK
+		if (my name)
+			SET_STRING (L"Script", my name)
+		else
+			SET_STRING (L"Script", L"(please save your script first)")
+	EDITOR_DO
+		if (! praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
+			GET_STRING (L"Class 2"), GET_INTEGER (L"Number 2"), GET_STRING (L"Class 3"),
+			GET_INTEGER (L"Number 3"), GET_STRING (L"Command"), GET_STRING (L"After command"),
+			GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
+		praat_show ();
+	EDITOR_END
+}
 
-DIRECT (ScriptEditor, cb_clearHistory)
+static int menu_cb_clearHistory (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
 	UiHistory_clear ();
-END
+	return 1;
+}
 
-DIRECT (ScriptEditor, cb_viewHistory)
+static int menu_cb_viewHistory (EDITOR_ARGS) {
+	EDITOR_IAM (ScriptEditor);
 	long first = 0, last = 0;
 	wchar_t *history = UiHistory_get ();
 	long length;
@@ -229,50 +246,51 @@ DIRECT (ScriptEditor, cb_viewHistory)
 	#if defined (UNIX) || defined (macintosh)
 		GuiText_setSelection (my textWidget, first, first + length);
 	#endif
-END
+	return 1;
+}
 
-DIRECT (ScriptEditor, cb_AboutScriptEditor) Melder_help (L"ScriptEditor"); END
-DIRECT (ScriptEditor, cb_ScriptingTutorial) Melder_help (L"Scripting"); END
-DIRECT (ScriptEditor, cb_ScriptingExamples) Melder_help (L"Scripting examples"); END
-DIRECT (ScriptEditor, cb_PraatScript) Melder_help (L"Praat script"); END
-DIRECT (ScriptEditor, cb_FormulasTutorial) Melder_help (L"Formulas"); END
-DIRECT (ScriptEditor, cb_TheHistoryMechanism) Melder_help (L"History mechanism"); END
-DIRECT (ScriptEditor, cb_InitializationScripts) Melder_help (L"Initialization script"); END
-DIRECT (ScriptEditor, cb_AddingToAFixedMenu) Melder_help (L"Add to fixed menu..."); END
-DIRECT (ScriptEditor, cb_AddingToADynamicMenu) Melder_help (L"Add to dynamic menu..."); END
+static int menu_cb_AboutScriptEditor (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"ScriptEditor"); return 1; }
+static int menu_cb_ScriptingTutorial (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Scripting"); return 1; }
+static int menu_cb_ScriptingExamples (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Scripting examples"); return 1; }
+static int menu_cb_PraatScript (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Praat script"); return 1; }
+static int menu_cb_FormulasTutorial (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Formulas"); return 1; }
+static int menu_cb_TheHistoryMechanism (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"History mechanism"); return 1; }
+static int menu_cb_InitializationScripts (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Initialization script"); return 1; }
+static int menu_cb_AddingToAFixedMenu (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Add to fixed menu..."); return 1; }
+static int menu_cb_AddingToADynamicMenu (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Add to dynamic menu..."); return 1; }
 
 static void createMenus (I) {
 	iam (ScriptEditor);
 	inherited (ScriptEditor) createMenus (me);
 	if (my editorClass) {
-		Editor_addCommand (me, L"File", L"Add to menu...", 0, cb_addToMenu);
+		Editor_addCommand (me, L"File", L"Add to menu...", 0, menu_cb_addToMenu);
 	} else {
-		Editor_addCommand (me, L"File", L"Add to fixed menu...", 0, cb_addToFixedMenu);
-		Editor_addCommand (me, L"File", L"Add to dynamic menu...", 0, cb_addToDynamicMenu);
+		Editor_addCommand (me, L"File", L"Add to fixed menu...", 0, menu_cb_addToFixedMenu);
+		Editor_addCommand (me, L"File", L"Add to dynamic menu...", 0, menu_cb_addToDynamicMenu);
 	}
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"-- history --", 0, 0);
-	Editor_addCommand (me, L"Edit", L"Clear history", 0, cb_clearHistory);
-	Editor_addCommand (me, L"Edit", L"Paste history", 'H', cb_viewHistory);
+	Editor_addCommand (me, L"Edit", L"Clear history", 0, menu_cb_clearHistory);
+	Editor_addCommand (me, L"Edit", L"Paste history", 'H', menu_cb_viewHistory);
 	Editor_addMenu (me, L"Run", 0);
-	Editor_addCommand (me, L"Run", L"Run", 'R', cb_go);
-	Editor_addCommand (me, L"Run", L"Run selection", 0, cb_runSelection);
+	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_go);
+	Editor_addCommand (me, L"Run", L"Run selection", 0, menu_cb_runSelection);
 }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (ScriptEditor);
 	inherited (ScriptEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"About ScriptEditor", '?', cb_AboutScriptEditor);
-	EditorMenu_addCommand (menu, L"Scripting tutorial", 0, cb_ScriptingTutorial);
-	EditorMenu_addCommand (menu, L"Scripting examples", 0, cb_ScriptingExamples);
-	EditorMenu_addCommand (menu, L"Praat script", 0, cb_PraatScript);
-	EditorMenu_addCommand (menu, L"Formulas tutorial", 0, cb_FormulasTutorial);
+	EditorMenu_addCommand (menu, L"About ScriptEditor", '?', menu_cb_AboutScriptEditor);
+	EditorMenu_addCommand (menu, L"Scripting tutorial", 0, menu_cb_ScriptingTutorial);
+	EditorMenu_addCommand (menu, L"Scripting examples", 0, menu_cb_ScriptingExamples);
+	EditorMenu_addCommand (menu, L"Praat script", 0, menu_cb_PraatScript);
+	EditorMenu_addCommand (menu, L"Formulas tutorial", 0, menu_cb_FormulasTutorial);
 	EditorMenu_addCommand (menu, L"-- help history --", 0, NULL);
-	EditorMenu_addCommand (menu, L"The History mechanism", 0, cb_TheHistoryMechanism);
-	EditorMenu_addCommand (menu, L"Initialization scripts", 0, cb_InitializationScripts);
+	EditorMenu_addCommand (menu, L"The History mechanism", 0, menu_cb_TheHistoryMechanism);
+	EditorMenu_addCommand (menu, L"Initialization scripts", 0, menu_cb_InitializationScripts);
 	EditorMenu_addCommand (menu, L"-- help add --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Adding to a fixed menu", 0, cb_AddingToAFixedMenu);
-	EditorMenu_addCommand (menu, L"Adding to a dynamic menu", 0, cb_AddingToADynamicMenu);
+	EditorMenu_addCommand (menu, L"Adding to a fixed menu", 0, menu_cb_AddingToAFixedMenu);
+	EditorMenu_addCommand (menu, L"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
 }
 
 class_methods (ScriptEditor, TextEditor) {

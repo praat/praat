@@ -578,15 +578,15 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my widget), ww);
 		} else {
 			my widget = gtk_entry_new ();
-			gtk_entry_set_editable (GTK_ENTRY (my widget), (flags & GuiText_NONEDITABLE) == 0);
+			gtk_editable_set_editable (GTK_ENTRY (my widget), (flags & GuiText_NONEDITABLE) == 0);
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, FALSE, 0);
+		gtk_container_add (GTK_CONTAINER (parent), my widget);
 //		g_signal_connect (G_OBJECT (my widget), "destroy",
 //			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
-		g_signal_connect (GTK_EDITABLE (my widget), "changed",
-			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
+//		g_signal_connect (GTK_EDITABLE (my widget), "changed",
+//			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
 		// TODO: First input focus verhaal? *check*
 	#elif win
 		my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, flags & GuiText_SCROLLED ? L"scrolledText" : L"text");

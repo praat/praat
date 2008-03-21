@@ -25,6 +25,7 @@
  * pb 2007/12/13 Gui
  * pb 2007/12/30 Gui
  * sdk 2008/02/08 GTK
+ * sdk 2008/03/24 GDK
  */
 
 #include "Gui.h"
@@ -33,7 +34,7 @@ Widget Gui_addMenuBar (Widget form) {
 	Widget menuBar;
 	#if gtk
 		menuBar = gtk_menu_bar_new ();
-		gtk_box_pack_start (GTK_VBOX (form), menuBar, FALSE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (form), menuBar, FALSE, FALSE, 0);
 	#elif motif
 		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
 		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);

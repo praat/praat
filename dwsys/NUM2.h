@@ -853,10 +853,10 @@ int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double 
 	a value of x, this routine returns an interpolated value y.
 */
 
-double NUMsinc(const double x);
-/* Calculates sin(x)/x */
-double NUMsincpi(const double x);
+double NUMsincpi (const double x);
 /* Calculates sin(pi*x)/(pi*x) */
+double NUMsinc (const double x);
+/* Calculates sin(x)/(x) */
 
 /*********************** Geometry *************************************/
 

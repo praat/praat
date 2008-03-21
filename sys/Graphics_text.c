@@ -1,6 +1,6 @@
 /* Graphics_text.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
  * pb 2007/08/25 use Charis SIL or Doulos SIL rather than SILDoulos IPA93
  * pb 2007/09/29 correct counting of UTF-8 bytes
  * pb 2007/12/09 enums
+ * pb 2008/03/24 cairo
  */
 
 #include <ctype.h>
@@ -1111,6 +1112,7 @@ static double textWidth (_Graphics_widechar string []) {
 }
 
 static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
+	#if motif
 	int nchars = 0;
 	double width = textWidth (lc), dx, dy;
 	/*
@@ -1243,6 +1245,7 @@ static void text1 (Graphics me, int xDC, int yDC, _Graphics_widechar lc []) {
 			//ATSUDisposeStyle (style);
 			QDEndCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
 		}
+	#endif
 	#endif
 }
 
@@ -1480,9 +1483,15 @@ double Graphics_textWidth (I, const wchar_t *txt) {
 	double width;
 	if (! initBuffer (txt)) return 0.0;
 	initText (me);
-	stringToWidechar (me, txt, widechar);
-	charSizes (me, widechar);
-	width = textWidth (widechar);
+	#if gtk
+		cairo_text_extents_t extents;
+		cairo_text_extents (my cr, Melder_peekWcsToUtf8 (txt), & extents);
+		width = extents -> width;
+	#elif motif
+		stringToWidechar (me, txt, widechar);
+		charSizes (me, widechar);
+		width = textWidth (widechar);
+	#endif
 	exitText (me);
 	return width / my scaleX;
 }
@@ -1549,8 +1558,12 @@ void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 	iam (Graphics);
 	if (! initBuffer (txt)) return;
 	initText (me);
-	stringToWidechar (me, txt, widechar);
-	text (me, xWC, yWC, widechar);
+	#if gtk
+		cairo_show_text (me cr, 
+	#elif motif
+		stringToWidechar (me, txt, widechar);
+		text (me, xWC, yWC, widechar);
+	#endif
 	exitText (me);
 	if (my recording) {
 		char *txt_utf8 = Melder_peekWcsToUtf8 (txt);

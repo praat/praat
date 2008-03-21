@@ -22,6 +22,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/11 wchar_t
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "IntensityTierEditor.h"
@@ -31,14 +32,12 @@
 #define IntensityTierEditor_methods RealTierEditor_methods
 class_create_opaque (IntensityTierEditor, RealTierEditor);
 
-/*DIRECT (IntensityTierEditor, cb_IntensityTierEditorHelp) Melder_help (L"IntensityTierEditor"); END*/
-DIRECT (IntensityTierEditor, cb_IntensityTierHelp) Melder_help (L"IntensityTier"); END
+static int menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (L"IntensityTier"); return 1; }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (IntensityTierEditor);
 	inherited (IntensityTierEditor) createHelpMenuItems (me, menu);
-	/*EditorMenu_addCommand (menu, L"IntensityTierEditor help", 0, cb_IntensityTierEditorHelp);*/
-	EditorMenu_addCommand (menu, L"IntensityTier help", 0, cb_IntensityTierHelp);
+	EditorMenu_addCommand (menu, L"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
 static void play (I, double tmin, double tmax) {

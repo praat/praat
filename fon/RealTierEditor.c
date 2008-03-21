@@ -1,6 +1,6 @@
 /* RealTierEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/09/04 new FunctionEditor API
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2008/03/21 new Editor API
  */
 
 #include "RealTierEditor.h"
@@ -36,7 +37,8 @@
 
 /********** MENU COMMANDS **********/
 
-DIRECT (RealTierEditor, cb_removePoints)
+static int menu_cb_removePoints (EDITOR_ARGS) {
+	EDITOR_IAM (RealTierEditor);
 	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (my data, my startSelection);
@@ -45,58 +47,67 @@ DIRECT (RealTierEditor, cb_removePoints)
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-DIRECT (RealTierEditor, cb_addPointAtCursor)
+static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
+	EDITOR_IAM (RealTierEditor);
 	Editor_save (me, L"Add point");
 	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
-END
+	return 1;
+}
 
-FORM (RealTierEditor, cb_addPointAt, L"Add point", 0);
-	REAL (L"Time (s)", L"0.0")
-	REAL (our quantityText, L"0.0")
-	OK
-SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
-SET_REAL (our quantityKey, my ycursor)
-DO
-	Editor_save (me, L"Add point");
-	RealTier_addPoint (my data, GET_REAL (L"Time"), GET_REAL (our quantityKey));
-	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-END
+static int menu_cb_addPointAt (EDITOR_ARGS) {
+	EDITOR_IAM (RealTierEditor);
+	EDITOR_FORM (L"Add point", 0)
+		REAL (L"Time (s)", L"0.0")
+		REAL (our quantityText, L"0.0")
+	EDITOR_OK
+		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (our quantityKey, my ycursor)
+	EDITOR_DO
+		Editor_save (me, L"Add point");
+		RealTier_addPoint (my data, GET_REAL (L"Time"), GET_REAL (our quantityKey));
+		RealTierEditor_updateScaling (me);
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
+	EDITOR_END
+}
 
-FORM (RealTierEditor, cb_setRange, our setRangeTitle, 0);
-	REAL (our yminText, our defaultYminText)
-	REAL (our ymaxText, our defaultYmaxText)
-	OK
-SET_REAL (our yminKey, my ymin)
-SET_REAL (our ymaxKey, my ymax)
-DO
-	my ymin = GET_REAL (our yminKey);
-	my ymax = GET_REAL (our ymaxKey);
-	if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-END
+static int menu_cb_setRange (EDITOR_ARGS) {
+	EDITOR_IAM (RealTierEditor);
+	EDITOR_FORM (our setRangeTitle, 0)
+		REAL (our yminText, our defaultYminText)
+		REAL (our ymaxText, our defaultYmaxText)
+	EDITOR_OK
+		SET_REAL (our yminKey, my ymin)
+		SET_REAL (our ymaxKey, my ymax)
+	EDITOR_DO
+		my ymin = GET_REAL (our yminKey);
+		my ymax = GET_REAL (our ymaxKey);
+		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
+		FunctionEditor_redraw (me);
+	EDITOR_END
+}
 
 static void createMenuItems_view (I, EditorMenu menu) {
 	iam (RealTierEditor);
 	inherited (RealTierEditor) createMenuItems_view (me, menu);
 	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
-	EditorMenu_addCommand (menu, our setRangeTitle, 0, cb_setRange);
+	EditorMenu_addCommand (menu, our setRangeTitle, 0, menu_cb_setRange);
 }
 
 static void createMenus (I) {
 	iam (RealTierEditor);
 	inherited (RealTierEditor) createMenus (me);
 	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
-	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', cb_addPointAtCursor);
-	EditorMenu_addCommand (menu, L"Add point at...", 0, cb_addPointAt);
+	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
+	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
 	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', cb_removePoints);
+	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
 }
 
 void RealTierEditor_updateScaling (I) {

@@ -950,7 +950,7 @@ static int menu_cb_Find (EDITOR_ARGS) {
 	EDITOR_FORM (L"Find text", 0)
 		LABEL (L"", L"Text:")
 		TEXTFIELD (L"string", L"")
-		OK
+	EDITOR_OK
 	EDITOR_DO
 		Melder_free (my findString);
 		my findString = Melder_wcsdup (GET_STRING (L"string"));

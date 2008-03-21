@@ -24,6 +24,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/12/14 Gui
  * pb 2008/03/20 split off Help menu
+ * pb 2008/03/21 new Editor API
  */
 
 #include "ButtonEditor.h"
@@ -293,12 +294,12 @@ static void createChildren (I) {
 	#endif
 }
 
-DIRECT (ButtonEditor, cb_ButtonEditorHelp) Melder_help (L"ButtonEditor"); END
+static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); return 1; }
 
 static void createHelpMenuItems (I, EditorMenu menu) {
 	iam (ButtonEditor);
 	inherited (ButtonEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', cb_ButtonEditorHelp);
+	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
 class_methods (ButtonEditor, HyperPage)

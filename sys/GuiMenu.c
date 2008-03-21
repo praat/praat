@@ -24,13 +24,14 @@
  * pb 2007/06/09 wchar_t
  * pb 2007/12/13 Gui
  * sdk 2008/02/08 GTK
+ * sdk 2008/03/24 GTK
  */
 
 #include "Gui.h"
 
 Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags) {
 	Widget menu = NULL, menuTitle;
-	menu = GuiMenuBar_addMenu2 (bar, title, flags, &menuTitle);
+	menu = GuiMenuBar_addMenu2 (bar, title, flags, & menuTitle);
 	return menu;
 }
 
@@ -158,7 +159,7 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 		#endif
 	}
 	#if gtk
-		g_signal_connect_swapped (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
+		g_signal_connect (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
 		gtk_widget_show (button);
 	#elif motif
 		XtAddCallback (button,

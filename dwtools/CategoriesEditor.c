@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
  djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
  	for 64-bit compatibility.
  djmw 20070620 Latest modification.
- pb 20080320 split off Help menu
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -43,10 +42,7 @@ static void update_dos (I);
 
 wchar_t *CategoriesEditor_EMPTYLABEL = L"(empty)";
 
-DIRECT (CategoriesEditor, cb_help)
-	(void) me;
-	Melder_help (L"CategoriesEditor");
-END
+static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (CategoriesEditor); Melder_help (L"CategoriesEditor"); return 1; }
 
 /**************** Some methods for Collection  ****************/
 
@@ -839,7 +835,7 @@ static void createHelpMenuItems (I, EditorMenu menu)
 {
 	iam (CategoriesEditor);
 	inherited (CategoriesEditor) createHelpMenuItems (me, menu);
-	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', cb_help);
+	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', menu_cb_help);
 }
 
 static void createChildren (I)
@@ -907,13 +903,12 @@ static void dataChanged (I)
 	updateWidgets (me);
 }
 
-class_methods (CategoriesEditor, Editor) {
+class_methods (CategoriesEditor, Editor)
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createHelpMenuItems)
-	class_methods_end
-}
+class_methods_end
 
 Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data)
 {

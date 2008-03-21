@@ -1,6 +1,6 @@
 /* InfoEditor.c
  *
- * Copyright (C) 2004-2007 Paul Boersma
+ * Copyright (C) 2004-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/05/24 wchar_t
  * pb 2007/06/09 more wchar_t
  * pb 2007/12/31 Gui
+ * sdk 2008/03/24 Gui
  */
 
 #include "TextEditor.h"
@@ -52,8 +53,8 @@ class_methods (InfoEditor, TextEditor)
 	class_method (clear)
 class_methods_end
 
-void motif_information (wchar_t *message);
-void motif_information (wchar_t *message) {
+void gui_information (wchar_t *message);
+void gui_information (wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = new (InfoEditor);
 		TextEditor_init (theInfoEditor, Melder_topShell, L"");

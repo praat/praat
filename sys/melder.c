@@ -621,6 +621,29 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 static bool pause_continued, pause_stopped;
 static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
 static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
+
+#if gtk
+static int gtk_error (wchar_t *message) {
+	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
+					 GTK_DIALOG_DESTROY_WITH_PARENT,
+					 GTK_MESSAGE_ERROR,
+					 GTK_BUTTONS_OK,
+					 Melder_peekWcsToUtf8 (message));
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
+
+static int gtk_warning (wchar_t *message) {
+	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
+					 GTK_DIALOG_DESTROY_WITH_PARENT,
+					 GTK_MESSAGE_WARNING,
+					 GTK_BUTTONS_OK,
+					 Melder_peekWcsToUtf8 (message));
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
+#endif
+
 #if motif
 static bool motif_pause (const wchar_t *message) {
 	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
@@ -737,23 +760,26 @@ static void motif_warning (wchar_t *message) {
 	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
 }
 #endif
-
-#if motif
-	// TODO: dit is volgens mij voor de console application, niet?
-void MelderMotif_create (void *appContext, void *parent) {
-	extern void motif_information (wchar_t *);
-	Melder_appContext = appContext;
-	Melder_topShell = (Widget) parent;
-	Melder_setInformationProc (motif_information);
-	Melder_setWarningProc (motif_warning);
-	Melder_setErrorProc (motif_error);
-	#if defined (macintosh) || defined (_WIN32)
-		Melder_setFatalProc (motif_fatal);
-	#endif
-	Melder_setPauseProc (motif_pause);
-}
 #endif
 
+#ifndef CONSOLE_APPLICATION
+void MelderGui_create (void *appContext, void *parent) {
+	extern void gui_information (wchar_t *);
+	Melder_appContext = appContext;
+	Melder_topShell = (Widget) parent;
+	Melder_setInformationProc (gui_information);
+	#if gtk
+		Melder_setWarningProc (gtk_warning);
+		Melder_setErrorProc (gtk_error);
+	#elif motif
+		Melder_setWarningProc (motif_warning);
+		Melder_setErrorProc (motif_error);
+		#if defined (macintosh) || defined (_WIN32)
+			Melder_setFatalProc (motif_fatal);
+		#endif
+		Melder_setPauseProc (motif_pause);
+	#endif
+}
 #endif
 
 int Melder_publish (void *anything) {

@@ -1342,28 +1342,6 @@ wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 	return NULL;
 }
 
-char * UiForm_getStringA (I, const char *fieldName) {
-	iam (UiForm);
-	UiField field = findField (me, Melder_peekUtf8ToWcs (fieldName));
-	switch (field -> type) {
-		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-			Melder_free (field -> stringValueA);
-			field -> stringValueA = Melder_wcsToUtf8 (field -> stringValue);
-			return field -> stringValueA;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			UiOption b = field -> options -> item [field -> integerValue];
-			return Melder_peekWcsToUtf8 (b -> name);
-		} break; case UI_ENUM: {
-			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
-		} break; case UI_LIST: {
-			return Melder_peekWcsToUtf8 (field -> strings [field -> integerValue]);
-		} break; default: {
-			fatalField (me);
-		}
-	}
-	return NULL;
-}
-
 wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField_check (me, fieldName); cherror
@@ -1379,32 +1357,6 @@ wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 			return (wchar_t *) field -> strings [field -> integerValue];
 		} break; default: {
 			Melder_error3 (L"Cannot find a string in field \"", fieldName, L"\" in the form.\n"
-				"The script may have changed while the form was open.\n"
-				"Please click Cancel in the form and try again.");
-		}
-	}
-end:
-	return NULL;
-}
-
-char * UiForm_getStringA_check (I, const char *fieldName) {
-	iam (UiForm);
-	UiField field = findField_check (me, Melder_peekUtf8ToWcs (fieldName)); cherror
-	switch (field -> type) {
-		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-			if (field -> stringValueA == NULL) {
-				field -> stringValueA = Melder_wcsToUtf8 (field -> stringValue);
-			}
-			return field -> stringValueA;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			UiOption b = field -> options -> item [field -> integerValue];
-			return Melder_peekWcsToUtf8 (b -> name);
-		} break; case UI_ENUM: {
-			return Melder_peekWcsToUtf8 (enum_string (field -> enumerated, field -> integerValue));
-		} break; case UI_LIST: {
-			return Melder_peekWcsToUtf8 (field -> strings [field -> integerValue]);
-		} break; default: {
-			Melder_error3 (L"Cannot find a string in field \"", Melder_peekUtf8ToWcs (fieldName), L"\" in the form.\n"
 				"The script may have changed while the form was open.\n"
 				"Please click Cancel in the form and try again.");
 		}

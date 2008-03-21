@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/03/20
+ * pb 2008/03/24
  */
 
 #include "Editor.h"
@@ -145,7 +145,9 @@ typedef struct {   /* Readonly */
 	int batch;   /* Was the program called from the command line? */
 	int totalSelection;   /* The total number of selected objects, <= n. */
 	int totalBeingCreated;
-	#if motif
+	#if gtk
+		GMainContext *context;
+	#elif motif
 		XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
 	#endif
 	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
