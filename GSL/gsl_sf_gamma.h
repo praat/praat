@@ -24,7 +24,17 @@
 
 #include "gsl_sf_result.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* Log[Gamma(x)], x not a negative integer
@@ -278,5 +288,6 @@ double gsl_sf_beta_inc(const double a, const double b, const double x);
 /* The maximum n such that gsl_sf_doublefact(n) does not give an overflow. */
 #define GSL_SF_DOUBLEFACT_NMAX 297
 
+__END_DECLS
 
 #endif /* __GSL_SF_GAMMA_H__ */

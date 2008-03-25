@@ -21,7 +21,17 @@
 #define __GSL_MESSAGE_H__
 #include "gsl_types.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 /* Provide a general messaging service for client use.  Messages can
  * be selectively turned off at compile time by defining an
@@ -63,6 +73,7 @@ enum {
        } while (0)
 #endif
 
+__END_DECLS
 
 #endif /* __GSL_MESSAGE_H__ */
 

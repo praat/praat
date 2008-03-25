@@ -24,7 +24,17 @@
 
 #include "gsl_sf_result.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* Poly-Gamma Functions
@@ -98,5 +108,6 @@ int     gsl_sf_psi_n_e(const int n, const double x, gsl_sf_result * result);
 double  gsl_sf_psi_n(const int n, const double x);
 
 
+__END_DECLS
 
 #endif /* __GSL_SF_PSI_H__ */

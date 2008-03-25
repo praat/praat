@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080321)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080325)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.16# (March 25, 2008)")
+LIST_ITEM (L"\\bu Macintosh: returned to old compiler because of incompatibility with MacOS X 10.4.")
 NORMAL (L"##5.0.15# (March 21, 2008)")
 LIST_ITEM (L"\\bu Windows: more reliable dropping of files on the Praat icon when Praat is already running.")
 NORMAL (L"##5.0.14# (March 20, 2008)")

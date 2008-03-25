@@ -24,7 +24,17 @@
 #include <errno.h>
 #include "gsl_types.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 enum { 
   GSL_SUCCESS  = 0, 
@@ -139,5 +149,6 @@ FILE * gsl_set_stream (FILE * new_stream);
 
 #define GSL_STATUS_UPDATE(sp, s) do { if ((s) != GSL_SUCCESS) *(sp) = (s);} while(0)
 
+__END_DECLS
 
 #endif /* __GSL_ERRNO_H__ */

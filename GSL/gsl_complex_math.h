@@ -21,7 +21,17 @@
 #define __GSL_COMPLEX_MATH_H__
 #include "gsl_complex.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+#define __BEGIN_DECLS extern "C" {
+#define __END_DECLS }
+#else
+#define __BEGIN_DECLS           /* empty */
+#define __END_DECLS             /* empty */
+#endif
 
+__BEGIN_DECLS
 
 /* Complex numbers */
 
@@ -125,5 +135,6 @@ gsl_complex gsl_complex_arctanh (gsl_complex a);  /* r=arctanh(a) */
 gsl_complex gsl_complex_arctanh_real (double a);  /* r=arctanh(a) */
 gsl_complex gsl_complex_arccoth (gsl_complex a);  /* r=arccoth(a) */
 
+__END_DECLS
 
 #endif /* __GSL_COMPLEX_MATH_H__ */

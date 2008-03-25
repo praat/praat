@@ -23,7 +23,17 @@
 #include <stdlib.h>
 #include "gsl_complex.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* Evaluate polynomial
@@ -119,5 +129,6 @@ gsl_poly_complex_solve (const double * a, size_t n,
                         gsl_poly_complex_workspace * w,
                         gsl_complex_packed_ptr z);
 
+__END_DECLS
 
 #endif /* __GSL_POLY_H__ */

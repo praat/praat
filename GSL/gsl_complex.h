@@ -20,7 +20,17 @@
 #ifndef __GSL_COMPLEX_H__
 #define __GSL_COMPLEX_H__
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* two consecutive built-in types as a complex number */
@@ -88,5 +98,6 @@ gsl_complex_float;
 
 #define GSL_SET_COMPLEX_PACKED(zp,n,x,y) do {*((zp)+2*(n))=(x); *((zp)+(2*(n)+1))=(y);} while(0)
 
+__END_DECLS
 
 #endif /* __GSL_COMPLEX_H__ */

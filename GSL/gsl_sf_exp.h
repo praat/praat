@@ -25,7 +25,17 @@
 #include "gsl_sf_result.h"
 #include "gsl_precision.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 /* Provide an exp() function with GSL semantics,
  * i.e. with proper error checking, etc.
@@ -117,5 +127,6 @@ int gsl_sf_exp_mult_err_e(const double x, const double dx, const double y, const
  */
 int gsl_sf_exp_mult_err_e10_e(const double x, const double dx, const double y, const double dy, gsl_sf_result_e10 * result);
 
+__END_DECLS
 
 #endif /* __GSL_SF_EXP_H__ */

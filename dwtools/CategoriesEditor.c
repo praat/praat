@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
  djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
  	for 64-bit compatibility.
  djmw 20070620 Latest modification.
+ pb 20080320 split off Help menu
+ pb 20080321 new Editor API
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -903,12 +905,13 @@ static void dataChanged (I)
 	updateWidgets (me);
 }
 
-class_methods (CategoriesEditor, Editor)
+class_methods (CategoriesEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
 	class_method (createHelpMenuItems)
-class_methods_end
+	class_methods_end
+}
 
 Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data)
 {

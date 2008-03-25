@@ -22,7 +22,17 @@
 #ifndef __GSL_CDF_H__
 #define __GSL_CDF_H__
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS          /* empty */
+# define __END_DECLS            /* empty */
+#endif
 
+__BEGIN_DECLS 
 
 double gsl_cdf_ugaussian_P (const double x);
 double gsl_cdf_ugaussian_Q (const double x);
@@ -155,5 +165,6 @@ double gsl_cdf_hypergeometric_P (const unsigned int k, const unsigned int n1,
 double gsl_cdf_hypergeometric_Q (const unsigned int k, const unsigned int n1,
                                  const unsigned int n2, const unsigned int t);
 
+__END_DECLS
 
 #endif /* __GSL_CDF_H__ */

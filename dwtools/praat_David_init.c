@@ -4219,7 +4219,7 @@ void praat_uvafon_David_init (void)
     	praat_addMenuCommand (L"Objects", L"New", L"Create ISpline...", 0, 1, DO_ISpline_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gamma-tone...", 1, DO_Sound_createFromShepardTone);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", 1, DO_VowelEditor_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Weenink 1985)", L"Create formant table (Peterson & Barney 1952)",1, DO_Table_createFromWeeninkData);

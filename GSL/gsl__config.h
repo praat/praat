@@ -23,7 +23,11 @@
 
 /* Define to 1 if you have the declaration of `feenableexcept', and to 0 if
    you don't. */
-#define HAVE_DECL_FEENABLEEXCEPT 1
+#if defined(linux)
+	#define HAVE_DECL_FEENABLEEXCEPT 1
+#else
+	#define HAVE_DECL_FEENABLEEXCEPT 0
+#endif
 
 /* Define to 1 if you have the declaration of `fesettrapenable', and to 0 if
    you don't. */

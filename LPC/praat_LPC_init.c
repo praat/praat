@@ -47,13 +47,13 @@
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
 #include "Cepstrum_and_Spectrum.h"
-extern int praat_Fon_formula (Any dia);
 
 static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
 static wchar_t *QUERY_BUTTON   = L"Query -                ";
 
 extern void praat_CC_init (void *klas);
 extern void praat_TimeFrameSampled_query_init (void *klas);
+extern int praat_Fon_formula (Any dia);
 
 /********************** Cepstrum  ****************************************/
 

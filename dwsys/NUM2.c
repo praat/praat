@@ -2775,7 +2775,7 @@ double NUMsinc (const double x)
 {
         struct gsl_sf_result_struct result;
         int status = gsl_sf_sinc_e (x / NUMpi, &result);
-        return status == GSL_SUCCESS ? result. val * NUMpi : NUMundefined;
+        return status == GSL_SUCCESS ? result. val : NUMundefined;
 }
 
 double NUMsincpi (const double x)

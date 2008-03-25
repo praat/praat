@@ -20,7 +20,7 @@ call test_erf
 call test_lnGamma
 call test_incompleteBeta
 call test_incompleteGammaP
-call test_sinc
+call test_sincpi
 
 procedure func_1arg .func$ .arg .r .tol
   assert$ = ""
@@ -209,15 +209,15 @@ procedure test_incompleteGammaP
   printline test_incompleteGammaP: succes
 endproc
 
-procedure test_sinc
-  printline test_sinc: start
-  call func_1arg sinc 0 1 tol0
+procedure test_sincpi
+  printline test_sincpi: start
+  call func_1arg sincpi 0 1 tol0
   for .i to 200
     .arg = .i
-    call func_1argzero sinc .arg tol0
+    call func_1argzero sincpi .arg tol0
     .arg = -.arg
-    call func_1argzero sinc .arg tol0
+    call func_1argzero sincpi .arg tol0
   endfor
-  printline test_sinc: succes
+  printline test_sincpi: succes
 endproc
 

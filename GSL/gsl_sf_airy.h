@@ -25,7 +25,17 @@
 #include "gsl_mode.h"
 #include "gsl_sf_result.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* Airy function Ai(x)
@@ -124,5 +134,6 @@ int gsl_sf_airy_zero_Bi_deriv_e(unsigned int s, gsl_sf_result * result);
 double gsl_sf_airy_zero_Bi_deriv(unsigned int s);
 
 
+__END_DECLS
 
 #endif /* __GSL_SF_AIRY_H__ */

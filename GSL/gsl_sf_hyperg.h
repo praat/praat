@@ -24,7 +24,17 @@
 
 #include "gsl_sf_result.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* Hypergeometric function related to Bessel functions
@@ -139,5 +149,6 @@ int     gsl_sf_hyperg_2F0_e(const double a, const double b, const double x, gsl_
 double     gsl_sf_hyperg_2F0(const double a, const double b, const double x);
 
 
+__END_DECLS
 
 #endif /* __GSL_SF_HYPERG_H__ */

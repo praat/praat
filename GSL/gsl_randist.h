@@ -21,7 +21,17 @@
 #define __GSL_RANDIST_H__
 #include "gsl_rng.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 unsigned int gsl_ran_bernoulli (const gsl_rng * r, double p);
 double gsl_ran_bernoulli_pdf (const unsigned int k, double p);
@@ -170,5 +180,6 @@ size_t gsl_ran_discrete (const gsl_rng *r, const gsl_ran_discrete_t *g);
 double gsl_ran_discrete_pdf (size_t k, const gsl_ran_discrete_t *g);
 
 
+__END_DECLS
 
 #endif /* __GSL_RANDIST_H__ */

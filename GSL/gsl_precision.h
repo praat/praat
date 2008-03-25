@@ -23,7 +23,17 @@
 #define __GSL_PRECISION_H__
 #include "gsl_types.h"
 
+#undef __BEGIN_DECLS
+#undef __END_DECLS
+#ifdef __cplusplus
+# define __BEGIN_DECLS extern "C" {
+# define __END_DECLS }
+#else
+# define __BEGIN_DECLS /* empty */
+# define __END_DECLS /* empty */
+#endif
 
+__BEGIN_DECLS
 
 
 /* A type for the precision indicator.
@@ -51,5 +61,6 @@ GSL_VAR const double gsl_prec_root5_eps[];
 GSL_VAR const double gsl_prec_root6_eps[];
 
 
+__END_DECLS
 
 #endif /* __GSL_PRECISION_H__ */
