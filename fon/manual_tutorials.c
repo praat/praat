@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080325)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080329)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.17# (March 29, 2008)")
+LIST_ITEM (L"\\bu Sped up vowel editor by a large factor.")
+LIST_ITEM (L"\\bu OT learning: corrected Exponential HG update rule from OT-GLA to HG-GLA.")
+LIST_ITEM (L"\\bu OT learning: shift Exponential HG average constraint weight to zero after every learning step.")
 NORMAL (L"##5.0.16# (March 25, 2008)")
 LIST_ITEM (L"\\bu Macintosh: returned to old compiler because of incompatibility with MacOS X 10.4.")
 NORMAL (L"##5.0.15# (March 21, 2008)")

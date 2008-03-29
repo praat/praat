@@ -56,6 +56,8 @@
  * pb 2008/03/03 EDCD with vacation
  * pb 2008/03/07 Demote one with vacation
  * pb 2008/03/07 Reset to random total ranking
+ * pb 2008/03/27 Exponential HG: reset average weight to zero after every change
+ * pb 2008/03/28 Exponential HG: set update rule to HG-GLA rather than OT-GLA
  */
 
 #include "OTGrammar.h"
@@ -1098,7 +1100,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG);
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG);
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		OTGrammarConstraint constraint = & my constraints [icons];
@@ -1116,6 +1119,7 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 			if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
 		}
 	} else if (strategy == OTGrammar_SYMMETRIC_ALL) {
+		bool changed = false;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
@@ -1124,14 +1128,25 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 			if (loserMarks > winnerMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
-				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
+				changed = true;
 			}
 			if (winnerMarks > loserMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-				if (grammarHasChanged != NULL) *grammarHasChanged = TRUE;
+				changed = true;
 			}
 		}
+		if (changed && my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+			double sumOfWeights = 0.0;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				sumOfWeights += my constraints [icons]. ranking;
+			}
+			double averageWeight = sumOfWeights / my numberOfConstraints;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				my constraints [icons]. ranking -= averageWeight;
+			}
+		}
+		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
 	} else if (strategy == OTGrammar_WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {

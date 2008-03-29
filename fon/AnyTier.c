@@ -1,6 +1,6 @@
 /* AnyTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
+ * pb 2008/03/27 binary rather than linear searches
  */
 
 #include "AnyTier.h"
@@ -71,24 +72,60 @@ class_methods (AnyTier, Function) {
 
 long AnyTier_timeToLowIndex (I, double time) {
 	iam (AnyTier);
-	long i;
-	if (my points -> size == 0) return 0;
-	for (i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = my points -> item [i];
-		if (point -> time > time) return i - 1;   /* If i == 1: offleft. */
+	if (my points -> size == 0) return 0;   // undefined
+	long ileft = 1, iright = my points -> size;
+	AnyPoint *points = (AnyPoint *) my points -> item;
+	double tleft = points [ileft] -> time;
+	if (time < tleft) return 0;   // offleft
+	double tright = points [iright] -> time;
+	if (time > tright) return iright;
+	Melder_assert (time >= tleft && time <= tright);
+	while (iright > ileft + 1) {
+		long imid = (ileft + iright) / 2;
+		double tmid = points [imid] -> time;
+		if (time < tmid) {
+			iright = imid;
+			tright = tmid;
+		} else {
+			ileft = imid;
+			tleft = tmid;
+		}
 	}
-	return my points -> size;
+	Melder_assert (iright == ileft + 1);
+	Melder_assert (ileft >= 1);
+	Melder_assert (iright <= my points -> size);
+	Melder_assert (time >= points [ileft] -> time);
+	Melder_assert (time <= points [iright] -> time);
+	return ileft;
 }
 
 long AnyTier_timeToHighIndex (I, double time) {
 	iam (AnyTier);
-	long i;
-	if (my points -> size == 0) return 0;   /* BUG ? Should it be 1? */
-	for (i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = my points -> item [i];
-		if (point -> time >= time) return i;
+	if (my points -> size == 0) return 0;   // undefined; is this right?
+	long ileft = 1, iright = my points -> size;
+	AnyPoint *points = (AnyPoint *) my points -> item;
+	double tleft = points [ileft] -> time;
+	if (time < tleft) return 1;
+	double tright = points [iright] -> time;
+	if (time > tright) return iright + 1;   // offright
+	Melder_assert (time >= tleft && time <= tright);
+	while (iright > ileft + 1) {
+		long imid = (ileft + iright) / 2;
+		double tmid = points [imid] -> time;
+		if (time <= tmid) {
+			iright = imid;
+			tright = tmid;
+		} else {
+			ileft = imid;
+			tleft = tmid;
+		}
 	}
-	return my points -> size + 1;   /* Offright. */
+	Melder_assert (iright == ileft + 1);
+	Melder_assert (ileft >= 1);
+	Melder_assert (iright <= my points -> size);
+	Melder_assert (time >= points [ileft] -> time);
+	Melder_assert (time <= points [iright] -> time);
+	return iright;
 }
 
 long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax) {
@@ -102,32 +139,61 @@ long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *ima
 	
 long AnyTier_timeToNearestIndex (I, double time) {
 	iam (AnyTier);
-	long i;
-	if (my points -> size == 0) return 0;
-	for (i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = my points -> item [i];
-		if (point -> time >= time) {
-			AnyPoint previousPoint;
-			if (i == 1) return 1;
-			previousPoint = my points -> item [i - 1];
-			if (point -> time - time < time - previousPoint -> time)
-				return i;
-			else
-				return i - 1;
+	if (my points -> size == 0) return 0;   // undefined
+	long ileft = 1, iright = my points -> size;
+	AnyPoint *points = (AnyPoint *) my points -> item;
+	double tleft = points [ileft] -> time;
+	if (time <= tleft) return 1;
+	double tright = points [iright] -> time;
+	if (time >= tright) return iright;
+	Melder_assert (time > tleft && time < tright);
+	while (iright > ileft + 1) {
+		long imid = (ileft + iright) / 2;
+		double tmid = points [imid] -> time;
+		if (time < tmid) {
+			iright = imid;
+			tright = tmid;
+		} else {
+			ileft = imid;
+			tleft = tmid;
 		}
 	}
-	return my points -> size;
+	Melder_assert (iright == ileft + 1);
+	Melder_assert (ileft >= 1);
+	Melder_assert (iright <= my points -> size);
+	Melder_assert (time >= points [ileft] -> time);
+	Melder_assert (time <= points [iright] -> time);
+	return time - tleft <= tright - time ? ileft : iright;
 }
 
 long AnyTier_hasPoint (I, double t) {
 	iam (AnyTier);
-	long ipoint;
-	for (ipoint = 1; ipoint <= my points -> size; ipoint ++) {
-		AnyPoint point = my points -> item [ipoint];
-		if (point -> time == t) {
-			return ipoint;   /* Point found. */
+	if (my points -> size == 0) return 0;   // point not found
+	long ileft = 1, iright = my points -> size;
+	AnyPoint *points = (AnyPoint *) my points -> item;
+	double tleft = points [ileft] -> time;
+	if (t < tleft) return 0;   // offleft
+	double tright = points [iright] -> time;
+	if (t > tright) return 0;   // offright
+	Melder_assert (t >= tleft && t <= tright);
+	while (iright > ileft + 1) {
+		long imid = (ileft + iright) / 2;
+		double tmid = points [imid] -> time;
+		if (t < tmid) {
+			iright = imid;
+			tright = tmid;
+		} else if (t == tmid) {
+			return imid;   // point found
+		} else {
+			ileft = imid;
+			tleft = tmid;
 		}
 	}
+	Melder_assert (iright == ileft + 1);
+	Melder_assert (ileft >= 1);
+	Melder_assert (iright <= my points -> size);
+	Melder_assert (t > points [ileft] -> time);
+	Melder_assert (t < points [iright] -> time);
 	return 0;   /* Point not found. */
 }
 
@@ -150,22 +216,21 @@ void AnyTier_removePointNear (I, double time) {
 
 void AnyTier_removePointsBetween (I, double tmin, double tmax) {
 	iam (AnyTier);
-	long ileft, iright, i;
 	if (my points -> size == 0) return;
-	ileft = AnyTier_timeToHighIndex (me, tmin);
-	iright = AnyTier_timeToLowIndex (me, tmax);
-	for (i = iright; i >= ileft; i --)
+	long ileft = AnyTier_timeToHighIndex (me, tmin);
+	long iright = AnyTier_timeToLowIndex (me, tmax);
+	for (long i = iright; i >= ileft; i --)
 		Collection_removeItem (my points, i);
 }
 
 PointProcess AnyTier_downto_PointProcess (I) {
 	iam (AnyTier);
-	long numberOfPoints = my points -> size, i;
+	long numberOfPoints = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
 	PointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
 	if (! thee) return NULL;
 	/* OPTIMIZATION, bypassing PointProcess_addTime: */
-	for (i = 1; i <= numberOfPoints; i ++)
+	for (long i = 1; i <= numberOfPoints; i ++)
 		thy t [i] = points [i] -> time;
 	thy nt = numberOfPoints;
 	return thee;
