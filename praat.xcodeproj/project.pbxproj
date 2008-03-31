@@ -887,6 +887,125 @@
 		2356B6650D039CB400A12FAE /* enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2356B6640D039CB400A12FAE /* enums.h */; };
 		2356B6680D039D3F00A12FAE /* melder_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2356B6670D039D3F00A12FAE /* melder_enums.h */; };
 		2356B66C0D039FA100A12FAE /* Graphics_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2356B66B0D039FA100A12FAE /* Graphics_enums.h */; };
+		2359CB530DA06B1F002EBEB7 /* glpapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CADC0DA06B1E002EBEB7 /* glpapi.h */; };
+		2359CB540DA06B1F002EBEB7 /* glpapi01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CADD0DA06B1E002EBEB7 /* glpapi01.c */; };
+		2359CB550DA06B1F002EBEB7 /* glpapi02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CADE0DA06B1E002EBEB7 /* glpapi02.c */; };
+		2359CB560DA06B1F002EBEB7 /* glpapi03.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CADF0DA06B1E002EBEB7 /* glpapi03.c */; };
+		2359CB570DA06B1F002EBEB7 /* glpapi04.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE00DA06B1E002EBEB7 /* glpapi04.c */; };
+		2359CB580DA06B1F002EBEB7 /* glpapi05.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE10DA06B1E002EBEB7 /* glpapi05.c */; };
+		2359CB590DA06B1F002EBEB7 /* glpapi06.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE20DA06B1E002EBEB7 /* glpapi06.c */; };
+		2359CB5A0DA06B1F002EBEB7 /* glpapi07.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE30DA06B1E002EBEB7 /* glpapi07.c */; };
+		2359CB5B0DA06B1F002EBEB7 /* glpapi08.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE40DA06B1E002EBEB7 /* glpapi08.c */; };
+		2359CB5C0DA06B1F002EBEB7 /* glpapi09.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE50DA06B1E002EBEB7 /* glpapi09.c */; };
+		2359CB5D0DA06B1F002EBEB7 /* glpapi10.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE60DA06B1E002EBEB7 /* glpapi10.c */; };
+		2359CB5E0DA06B1F002EBEB7 /* glpapi11.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE70DA06B1E002EBEB7 /* glpapi11.c */; };
+		2359CB5F0DA06B1F002EBEB7 /* glpapi12.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE80DA06B1E002EBEB7 /* glpapi12.c */; };
+		2359CB600DA06B1F002EBEB7 /* glpapi13.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAE90DA06B1E002EBEB7 /* glpapi13.c */; };
+		2359CB610DA06B1F002EBEB7 /* glpavl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAEA0DA06B1E002EBEB7 /* glpavl.c */; };
+		2359CB620DA06B1F002EBEB7 /* glpavl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAEB0DA06B1E002EBEB7 /* glpavl.h */; };
+		2359CB630DA06B1F002EBEB7 /* glpbfd.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAEC0DA06B1E002EBEB7 /* glpbfd.c */; };
+		2359CB640DA06B1F002EBEB7 /* glpbfd.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAED0DA06B1E002EBEB7 /* glpbfd.h */; };
+		2359CB650DA06B1F002EBEB7 /* glpbfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAEE0DA06B1E002EBEB7 /* glpbfx.c */; };
+		2359CB660DA06B1F002EBEB7 /* glpbfx.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAEF0DA06B1E002EBEB7 /* glpbfx.h */; };
+		2359CB670DA06B1F002EBEB7 /* glpcli.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAF00DA06B1E002EBEB7 /* glpcli.c */; };
+		2359CB680DA06B1F002EBEB7 /* glpcli.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAF10DA06B1E002EBEB7 /* glpcli.h */; };
+		2359CB690DA06B1F002EBEB7 /* glpdmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAF20DA06B1E002EBEB7 /* glpdmp.c */; };
+		2359CB6A0DA06B1F002EBEB7 /* glpdmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAF30DA06B1E002EBEB7 /* glpdmp.h */; };
+		2359CB6B0DA06B1F002EBEB7 /* glpfhv.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAF40DA06B1E002EBEB7 /* glpfhv.c */; };
+		2359CB6C0DA06B1F002EBEB7 /* glpfhv.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAF50DA06B1E002EBEB7 /* glpfhv.h */; };
+		2359CB6D0DA06B1F002EBEB7 /* glpgmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAF60DA06B1E002EBEB7 /* glpgmp.c */; };
+		2359CB6E0DA06B1F002EBEB7 /* glpgmp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAF70DA06B1E002EBEB7 /* glpgmp.h */; };
+		2359CB6F0DA06B1F002EBEB7 /* glphbm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAF80DA06B1E002EBEB7 /* glphbm.c */; };
+		2359CB700DA06B1F002EBEB7 /* glphbm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAF90DA06B1E002EBEB7 /* glphbm.h */; };
+		2359CB710DA06B1F002EBEB7 /* glpios.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CAFA0DA06B1E002EBEB7 /* glpios.h */; };
+		2359CB720DA06B1F002EBEB7 /* glpios01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAFB0DA06B1E002EBEB7 /* glpios01.c */; };
+		2359CB730DA06B1F002EBEB7 /* glpios02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAFC0DA06B1E002EBEB7 /* glpios02.c */; };
+		2359CB740DA06B1F002EBEB7 /* glpios03.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAFD0DA06B1E002EBEB7 /* glpios03.c */; };
+		2359CB750DA06B1F002EBEB7 /* glpios04.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAFE0DA06B1E002EBEB7 /* glpios04.c */; };
+		2359CB760DA06B1F002EBEB7 /* glpios05.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CAFF0DA06B1E002EBEB7 /* glpios05.c */; };
+		2359CB770DA06B1F002EBEB7 /* glpios06.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB000DA06B1E002EBEB7 /* glpios06.c */; };
+		2359CB780DA06B1F002EBEB7 /* glpipm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB010DA06B1E002EBEB7 /* glpipm.c */; };
+		2359CB790DA06B1F002EBEB7 /* glpipm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB020DA06B1E002EBEB7 /* glpipm.h */; };
+		2359CB7A0DA06B1F002EBEB7 /* glpipp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB030DA06B1E002EBEB7 /* glpipp.h */; };
+		2359CB7B0DA06B1F002EBEB7 /* glpipp01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB040DA06B1E002EBEB7 /* glpipp01.c */; };
+		2359CB7C0DA06B1F002EBEB7 /* glpipp02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB050DA06B1E002EBEB7 /* glpipp02.c */; };
+		2359CB7D0DA06B1F002EBEB7 /* glpk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB060DA06B1E002EBEB7 /* glpk.h */; };
+		2359CB7E0DA06B1F002EBEB7 /* glplib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB070DA06B1E002EBEB7 /* glplib.h */; };
+		2359CB7F0DA06B1F002EBEB7 /* glplib01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB080DA06B1E002EBEB7 /* glplib01.c */; };
+		2359CB800DA06B1F002EBEB7 /* glplib02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB090DA06B1E002EBEB7 /* glplib02.c */; };
+		2359CB810DA06B1F002EBEB7 /* glplib03.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0A0DA06B1E002EBEB7 /* glplib03.c */; };
+		2359CB820DA06B1F002EBEB7 /* glplib04.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0B0DA06B1E002EBEB7 /* glplib04.c */; };
+		2359CB830DA06B1F002EBEB7 /* glplib05.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0C0DA06B1E002EBEB7 /* glplib05.c */; };
+		2359CB840DA06B1F002EBEB7 /* glplib06.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0D0DA06B1E002EBEB7 /* glplib06.c */; };
+		2359CB850DA06B1F002EBEB7 /* glplib07.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0E0DA06B1E002EBEB7 /* glplib07.c */; };
+		2359CB860DA06B1F002EBEB7 /* glplib08.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB0F0DA06B1E002EBEB7 /* glplib08.c */; };
+		2359CB870DA06B1F002EBEB7 /* glplib09.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB100DA06B1E002EBEB7 /* glplib09.c */; };
+		2359CB880DA06B1F002EBEB7 /* glplib10.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB110DA06B1E002EBEB7 /* glplib10.c */; };
+		2359CB890DA06B1F002EBEB7 /* glplib11.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB120DA06B1E002EBEB7 /* glplib11.c */; };
+		2359CB8A0DA06B1F002EBEB7 /* glplib12.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB130DA06B1E002EBEB7 /* glplib12.c */; };
+		2359CB8B0DA06B1F002EBEB7 /* glplpf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB140DA06B1E002EBEB7 /* glplpf.c */; };
+		2359CB8C0DA06B1F002EBEB7 /* glplpf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB150DA06B1E002EBEB7 /* glplpf.h */; };
+		2359CB8D0DA06B1F002EBEB7 /* glplpp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB160DA06B1E002EBEB7 /* glplpp.h */; };
+		2359CB8E0DA06B1F002EBEB7 /* glplpp01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB170DA06B1E002EBEB7 /* glplpp01.c */; };
+		2359CB8F0DA06B1F002EBEB7 /* glplpp02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB180DA06B1E002EBEB7 /* glplpp02.c */; };
+		2359CB900DA06B1F002EBEB7 /* glplpx01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB190DA06B1E002EBEB7 /* glplpx01.c */; };
+		2359CB910DA06B1F002EBEB7 /* glplpx02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1A0DA06B1E002EBEB7 /* glplpx02.c */; };
+		2359CB920DA06B1F002EBEB7 /* glplpx03.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1B0DA06B1E002EBEB7 /* glplpx03.c */; };
+		2359CB930DA06B1F002EBEB7 /* glplpx04.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1C0DA06B1E002EBEB7 /* glplpx04.c */; };
+		2359CB940DA06B1F002EBEB7 /* glplpx05.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1D0DA06B1E002EBEB7 /* glplpx05.c */; };
+		2359CB950DA06B1F002EBEB7 /* glplpx06.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1E0DA06B1E002EBEB7 /* glplpx06.c */; };
+		2359CB960DA06B1F002EBEB7 /* glplpx07.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB1F0DA06B1E002EBEB7 /* glplpx07.c */; };
+		2359CB970DA06B1F002EBEB7 /* glplpx08.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB200DA06B1E002EBEB7 /* glplpx08.c */; };
+		2359CB980DA06B1F002EBEB7 /* glplpx09.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB210DA06B1E002EBEB7 /* glplpx09.c */; };
+		2359CB990DA06B1F002EBEB7 /* glplpx10.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB220DA06B1E002EBEB7 /* glplpx10.c */; };
+		2359CB9A0DA06B1F002EBEB7 /* glplpx11.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB230DA06B1E002EBEB7 /* glplpx11.c */; };
+		2359CB9B0DA06B1F002EBEB7 /* glplpx12.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB240DA06B1E002EBEB7 /* glplpx12.c */; };
+		2359CB9C0DA06B1F002EBEB7 /* glplpx13.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB250DA06B1F002EBEB7 /* glplpx13.c */; };
+		2359CB9D0DA06B1F002EBEB7 /* glplpx14.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB260DA06B1F002EBEB7 /* glplpx14.c */; };
+		2359CB9E0DA06B1F002EBEB7 /* glplpx15.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB270DA06B1F002EBEB7 /* glplpx15.c */; };
+		2359CB9F0DA06B1F002EBEB7 /* glplpx16.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB280DA06B1F002EBEB7 /* glplpx16.c */; };
+		2359CBA00DA06B1F002EBEB7 /* glplpx17.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB290DA06B1F002EBEB7 /* glplpx17.c */; };
+		2359CBA10DA06B1F002EBEB7 /* glplpx18.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB2A0DA06B1F002EBEB7 /* glplpx18.c */; };
+		2359CBA20DA06B1F002EBEB7 /* glplpx19.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB2B0DA06B1F002EBEB7 /* glplpx19.c */; };
+		2359CBA30DA06B1F002EBEB7 /* glplpx20.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB2C0DA06B1F002EBEB7 /* glplpx20.c */; };
+		2359CBA40DA06B1F002EBEB7 /* glpluf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB2D0DA06B1F002EBEB7 /* glpluf.c */; };
+		2359CBA50DA06B1F002EBEB7 /* glpluf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB2E0DA06B1F002EBEB7 /* glpluf.h */; };
+		2359CBA60DA06B1F002EBEB7 /* glplux.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB2F0DA06B1F002EBEB7 /* glplux.c */; };
+		2359CBA70DA06B1F002EBEB7 /* glplux.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB300DA06B1F002EBEB7 /* glplux.h */; };
+		2359CBA80DA06B1F002EBEB7 /* glpmat.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB310DA06B1F002EBEB7 /* glpmat.c */; };
+		2359CBA90DA06B1F002EBEB7 /* glpmat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB320DA06B1F002EBEB7 /* glpmat.h */; };
+		2359CBAA0DA06B1F002EBEB7 /* glpmpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB330DA06B1F002EBEB7 /* glpmpl.h */; };
+		2359CBAB0DA06B1F002EBEB7 /* glpmpl01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB340DA06B1F002EBEB7 /* glpmpl01.c */; };
+		2359CBAC0DA06B1F002EBEB7 /* glpmpl02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB350DA06B1F002EBEB7 /* glpmpl02.c */; };
+		2359CBAD0DA06B1F002EBEB7 /* glpmpl03.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB360DA06B1F002EBEB7 /* glpmpl03.c */; };
+		2359CBAE0DA06B1F002EBEB7 /* glpmpl04.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB370DA06B1F002EBEB7 /* glpmpl04.c */; };
+		2359CBAF0DA06B1F002EBEB7 /* glpmpl05.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB380DA06B1F002EBEB7 /* glpmpl05.c */; };
+		2359CBB00DA06B1F002EBEB7 /* glppds.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB390DA06B1F002EBEB7 /* glppds.c */; };
+		2359CBB10DA06B1F002EBEB7 /* glppds.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB3A0DA06B1F002EBEB7 /* glppds.h */; };
+		2359CBB20DA06B1F002EBEB7 /* glpqmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB3B0DA06B1F002EBEB7 /* glpqmd.c */; };
+		2359CBB30DA06B1F002EBEB7 /* glpqmd.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB3C0DA06B1F002EBEB7 /* glpqmd.h */; };
+		2359CBB40DA06B1F002EBEB7 /* glprgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB3D0DA06B1F002EBEB7 /* glprgr.c */; };
+		2359CBB50DA06B1F002EBEB7 /* glprgr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB3E0DA06B1F002EBEB7 /* glprgr.h */; };
+		2359CBB60DA06B1F002EBEB7 /* glprng.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB3F0DA06B1F002EBEB7 /* glprng.h */; };
+		2359CBB70DA06B1F002EBEB7 /* glprng01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB400DA06B1F002EBEB7 /* glprng01.c */; };
+		2359CBB80DA06B1F002EBEB7 /* glprng02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB410DA06B1F002EBEB7 /* glprng02.c */; };
+		2359CBB90DA06B1F002EBEB7 /* glpscf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB420DA06B1F002EBEB7 /* glpscf.c */; };
+		2359CBBA0DA06B1F002EBEB7 /* glpscf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB430DA06B1F002EBEB7 /* glpscf.h */; };
+		2359CBBB0DA06B1F002EBEB7 /* glpscg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB440DA06B1F002EBEB7 /* glpscg.c */; };
+		2359CBBC0DA06B1F002EBEB7 /* glpscg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB450DA06B1F002EBEB7 /* glpscg.h */; };
+		2359CBBD0DA06B1F002EBEB7 /* glpspm.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB460DA06B1F002EBEB7 /* glpspm.c */; };
+		2359CBBE0DA06B1F002EBEB7 /* glpspm.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB470DA06B1F002EBEB7 /* glpspm.h */; };
+		2359CBBF0DA06B1F002EBEB7 /* glpspx.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB480DA06B1F002EBEB7 /* glpspx.h */; };
+		2359CBC00DA06B1F002EBEB7 /* glpspx01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB490DA06B1F002EBEB7 /* glpspx01.c */; };
+		2359CBC10DA06B1F002EBEB7 /* glpspx02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB4A0DA06B1F002EBEB7 /* glpspx02.c */; };
+		2359CBC20DA06B1F002EBEB7 /* glpsql.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB4B0DA06B1F002EBEB7 /* glpsql.c */; };
+		2359CBC30DA06B1F002EBEB7 /* glpsql.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB4C0DA06B1F002EBEB7 /* glpsql.h */; };
+		2359CBC40DA06B1F002EBEB7 /* glpssx.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB4D0DA06B1F002EBEB7 /* glpssx.h */; };
+		2359CBC50DA06B1F002EBEB7 /* glpssx01.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB4E0DA06B1F002EBEB7 /* glpssx01.c */; };
+		2359CBC60DA06B1F002EBEB7 /* glpssx02.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB4F0DA06B1F002EBEB7 /* glpssx02.c */; };
+		2359CBC70DA06B1F002EBEB7 /* glpstd.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB500DA06B1F002EBEB7 /* glpstd.h */; };
+		2359CBC80DA06B1F002EBEB7 /* glptsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2359CB510DA06B1F002EBEB7 /* glptsp.c */; };
+		2359CBC90DA06B1F002EBEB7 /* glptsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2359CB520DA06B1F002EBEB7 /* glptsp.h */; };
 		235E4A090D0A0D06009CC7DE /* TextGridEditor_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 235E4A080D0A0D06009CC7DE /* TextGridEditor_enums.h */; };
 		236449F20AF4AC3B0047F320 /* Strings_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 236449F10AF4AC3B0047F320 /* Strings_def.h */; };
 		23660A0B0D50C95200FB6B8B /* NUMhuber.c in Sources */ = {isa = PBXBuildFile; fileRef = 23660A0A0D50C95200FB6B8B /* NUMhuber.c */; };
@@ -2472,6 +2591,125 @@
 		2356B6640D039CB400A12FAE /* enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enums.h; path = sys/enums.h; sourceTree = "<group>"; };
 		2356B6670D039D3F00A12FAE /* melder_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = melder_enums.h; path = sys/melder_enums.h; sourceTree = "<group>"; };
 		2356B66B0D039FA100A12FAE /* Graphics_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Graphics_enums.h; path = sys/Graphics_enums.h; sourceTree = "<group>"; };
+		2359CADC0DA06B1E002EBEB7 /* glpapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpapi.h; path = glpk/glpapi.h; sourceTree = "<group>"; };
+		2359CADD0DA06B1E002EBEB7 /* glpapi01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi01.c; path = glpk/glpapi01.c; sourceTree = "<group>"; };
+		2359CADE0DA06B1E002EBEB7 /* glpapi02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi02.c; path = glpk/glpapi02.c; sourceTree = "<group>"; };
+		2359CADF0DA06B1E002EBEB7 /* glpapi03.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi03.c; path = glpk/glpapi03.c; sourceTree = "<group>"; };
+		2359CAE00DA06B1E002EBEB7 /* glpapi04.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi04.c; path = glpk/glpapi04.c; sourceTree = "<group>"; };
+		2359CAE10DA06B1E002EBEB7 /* glpapi05.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi05.c; path = glpk/glpapi05.c; sourceTree = "<group>"; };
+		2359CAE20DA06B1E002EBEB7 /* glpapi06.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi06.c; path = glpk/glpapi06.c; sourceTree = "<group>"; };
+		2359CAE30DA06B1E002EBEB7 /* glpapi07.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi07.c; path = glpk/glpapi07.c; sourceTree = "<group>"; };
+		2359CAE40DA06B1E002EBEB7 /* glpapi08.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi08.c; path = glpk/glpapi08.c; sourceTree = "<group>"; };
+		2359CAE50DA06B1E002EBEB7 /* glpapi09.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi09.c; path = glpk/glpapi09.c; sourceTree = "<group>"; };
+		2359CAE60DA06B1E002EBEB7 /* glpapi10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi10.c; path = glpk/glpapi10.c; sourceTree = "<group>"; };
+		2359CAE70DA06B1E002EBEB7 /* glpapi11.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi11.c; path = glpk/glpapi11.c; sourceTree = "<group>"; };
+		2359CAE80DA06B1E002EBEB7 /* glpapi12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi12.c; path = glpk/glpapi12.c; sourceTree = "<group>"; };
+		2359CAE90DA06B1E002EBEB7 /* glpapi13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpapi13.c; path = glpk/glpapi13.c; sourceTree = "<group>"; };
+		2359CAEA0DA06B1E002EBEB7 /* glpavl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpavl.c; path = glpk/glpavl.c; sourceTree = "<group>"; };
+		2359CAEB0DA06B1E002EBEB7 /* glpavl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpavl.h; path = glpk/glpavl.h; sourceTree = "<group>"; };
+		2359CAEC0DA06B1E002EBEB7 /* glpbfd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpbfd.c; path = glpk/glpbfd.c; sourceTree = "<group>"; };
+		2359CAED0DA06B1E002EBEB7 /* glpbfd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpbfd.h; path = glpk/glpbfd.h; sourceTree = "<group>"; };
+		2359CAEE0DA06B1E002EBEB7 /* glpbfx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpbfx.c; path = glpk/glpbfx.c; sourceTree = "<group>"; };
+		2359CAEF0DA06B1E002EBEB7 /* glpbfx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpbfx.h; path = glpk/glpbfx.h; sourceTree = "<group>"; };
+		2359CAF00DA06B1E002EBEB7 /* glpcli.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpcli.c; path = glpk/glpcli.c; sourceTree = "<group>"; };
+		2359CAF10DA06B1E002EBEB7 /* glpcli.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpcli.h; path = glpk/glpcli.h; sourceTree = "<group>"; };
+		2359CAF20DA06B1E002EBEB7 /* glpdmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpdmp.c; path = glpk/glpdmp.c; sourceTree = "<group>"; };
+		2359CAF30DA06B1E002EBEB7 /* glpdmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpdmp.h; path = glpk/glpdmp.h; sourceTree = "<group>"; };
+		2359CAF40DA06B1E002EBEB7 /* glpfhv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpfhv.c; path = glpk/glpfhv.c; sourceTree = "<group>"; };
+		2359CAF50DA06B1E002EBEB7 /* glpfhv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpfhv.h; path = glpk/glpfhv.h; sourceTree = "<group>"; };
+		2359CAF60DA06B1E002EBEB7 /* glpgmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpgmp.c; path = glpk/glpgmp.c; sourceTree = "<group>"; };
+		2359CAF70DA06B1E002EBEB7 /* glpgmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpgmp.h; path = glpk/glpgmp.h; sourceTree = "<group>"; };
+		2359CAF80DA06B1E002EBEB7 /* glphbm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glphbm.c; path = glpk/glphbm.c; sourceTree = "<group>"; };
+		2359CAF90DA06B1E002EBEB7 /* glphbm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glphbm.h; path = glpk/glphbm.h; sourceTree = "<group>"; };
+		2359CAFA0DA06B1E002EBEB7 /* glpios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpios.h; path = glpk/glpios.h; sourceTree = "<group>"; };
+		2359CAFB0DA06B1E002EBEB7 /* glpios01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios01.c; path = glpk/glpios01.c; sourceTree = "<group>"; };
+		2359CAFC0DA06B1E002EBEB7 /* glpios02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios02.c; path = glpk/glpios02.c; sourceTree = "<group>"; };
+		2359CAFD0DA06B1E002EBEB7 /* glpios03.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios03.c; path = glpk/glpios03.c; sourceTree = "<group>"; };
+		2359CAFE0DA06B1E002EBEB7 /* glpios04.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios04.c; path = glpk/glpios04.c; sourceTree = "<group>"; };
+		2359CAFF0DA06B1E002EBEB7 /* glpios05.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios05.c; path = glpk/glpios05.c; sourceTree = "<group>"; };
+		2359CB000DA06B1E002EBEB7 /* glpios06.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpios06.c; path = glpk/glpios06.c; sourceTree = "<group>"; };
+		2359CB010DA06B1E002EBEB7 /* glpipm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpipm.c; path = glpk/glpipm.c; sourceTree = "<group>"; };
+		2359CB020DA06B1E002EBEB7 /* glpipm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpipm.h; path = glpk/glpipm.h; sourceTree = "<group>"; };
+		2359CB030DA06B1E002EBEB7 /* glpipp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpipp.h; path = glpk/glpipp.h; sourceTree = "<group>"; };
+		2359CB040DA06B1E002EBEB7 /* glpipp01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpipp01.c; path = glpk/glpipp01.c; sourceTree = "<group>"; };
+		2359CB050DA06B1E002EBEB7 /* glpipp02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpipp02.c; path = glpk/glpipp02.c; sourceTree = "<group>"; };
+		2359CB060DA06B1E002EBEB7 /* glpk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpk.h; path = glpk/glpk.h; sourceTree = "<group>"; };
+		2359CB070DA06B1E002EBEB7 /* glplib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplib.h; path = glpk/glplib.h; sourceTree = "<group>"; };
+		2359CB080DA06B1E002EBEB7 /* glplib01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib01.c; path = glpk/glplib01.c; sourceTree = "<group>"; };
+		2359CB090DA06B1E002EBEB7 /* glplib02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib02.c; path = glpk/glplib02.c; sourceTree = "<group>"; };
+		2359CB0A0DA06B1E002EBEB7 /* glplib03.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib03.c; path = glpk/glplib03.c; sourceTree = "<group>"; };
+		2359CB0B0DA06B1E002EBEB7 /* glplib04.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib04.c; path = glpk/glplib04.c; sourceTree = "<group>"; };
+		2359CB0C0DA06B1E002EBEB7 /* glplib05.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib05.c; path = glpk/glplib05.c; sourceTree = "<group>"; };
+		2359CB0D0DA06B1E002EBEB7 /* glplib06.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib06.c; path = glpk/glplib06.c; sourceTree = "<group>"; };
+		2359CB0E0DA06B1E002EBEB7 /* glplib07.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib07.c; path = glpk/glplib07.c; sourceTree = "<group>"; };
+		2359CB0F0DA06B1E002EBEB7 /* glplib08.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib08.c; path = glpk/glplib08.c; sourceTree = "<group>"; };
+		2359CB100DA06B1E002EBEB7 /* glplib09.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib09.c; path = glpk/glplib09.c; sourceTree = "<group>"; };
+		2359CB110DA06B1E002EBEB7 /* glplib10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib10.c; path = glpk/glplib10.c; sourceTree = "<group>"; };
+		2359CB120DA06B1E002EBEB7 /* glplib11.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib11.c; path = glpk/glplib11.c; sourceTree = "<group>"; };
+		2359CB130DA06B1E002EBEB7 /* glplib12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplib12.c; path = glpk/glplib12.c; sourceTree = "<group>"; };
+		2359CB140DA06B1E002EBEB7 /* glplpf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpf.c; path = glpk/glplpf.c; sourceTree = "<group>"; };
+		2359CB150DA06B1E002EBEB7 /* glplpf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplpf.h; path = glpk/glplpf.h; sourceTree = "<group>"; };
+		2359CB160DA06B1E002EBEB7 /* glplpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplpp.h; path = glpk/glplpp.h; sourceTree = "<group>"; };
+		2359CB170DA06B1E002EBEB7 /* glplpp01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpp01.c; path = glpk/glplpp01.c; sourceTree = "<group>"; };
+		2359CB180DA06B1E002EBEB7 /* glplpp02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpp02.c; path = glpk/glplpp02.c; sourceTree = "<group>"; };
+		2359CB190DA06B1E002EBEB7 /* glplpx01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx01.c; path = glpk/glplpx01.c; sourceTree = "<group>"; };
+		2359CB1A0DA06B1E002EBEB7 /* glplpx02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx02.c; path = glpk/glplpx02.c; sourceTree = "<group>"; };
+		2359CB1B0DA06B1E002EBEB7 /* glplpx03.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx03.c; path = glpk/glplpx03.c; sourceTree = "<group>"; };
+		2359CB1C0DA06B1E002EBEB7 /* glplpx04.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx04.c; path = glpk/glplpx04.c; sourceTree = "<group>"; };
+		2359CB1D0DA06B1E002EBEB7 /* glplpx05.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx05.c; path = glpk/glplpx05.c; sourceTree = "<group>"; };
+		2359CB1E0DA06B1E002EBEB7 /* glplpx06.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx06.c; path = glpk/glplpx06.c; sourceTree = "<group>"; };
+		2359CB1F0DA06B1E002EBEB7 /* glplpx07.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx07.c; path = glpk/glplpx07.c; sourceTree = "<group>"; };
+		2359CB200DA06B1E002EBEB7 /* glplpx08.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx08.c; path = glpk/glplpx08.c; sourceTree = "<group>"; };
+		2359CB210DA06B1E002EBEB7 /* glplpx09.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx09.c; path = glpk/glplpx09.c; sourceTree = "<group>"; };
+		2359CB220DA06B1E002EBEB7 /* glplpx10.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx10.c; path = glpk/glplpx10.c; sourceTree = "<group>"; };
+		2359CB230DA06B1E002EBEB7 /* glplpx11.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx11.c; path = glpk/glplpx11.c; sourceTree = "<group>"; };
+		2359CB240DA06B1E002EBEB7 /* glplpx12.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx12.c; path = glpk/glplpx12.c; sourceTree = "<group>"; };
+		2359CB250DA06B1F002EBEB7 /* glplpx13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx13.c; path = glpk/glplpx13.c; sourceTree = "<group>"; };
+		2359CB260DA06B1F002EBEB7 /* glplpx14.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx14.c; path = glpk/glplpx14.c; sourceTree = "<group>"; };
+		2359CB270DA06B1F002EBEB7 /* glplpx15.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx15.c; path = glpk/glplpx15.c; sourceTree = "<group>"; };
+		2359CB280DA06B1F002EBEB7 /* glplpx16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx16.c; path = glpk/glplpx16.c; sourceTree = "<group>"; };
+		2359CB290DA06B1F002EBEB7 /* glplpx17.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx17.c; path = glpk/glplpx17.c; sourceTree = "<group>"; };
+		2359CB2A0DA06B1F002EBEB7 /* glplpx18.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx18.c; path = glpk/glplpx18.c; sourceTree = "<group>"; };
+		2359CB2B0DA06B1F002EBEB7 /* glplpx19.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx19.c; path = glpk/glplpx19.c; sourceTree = "<group>"; };
+		2359CB2C0DA06B1F002EBEB7 /* glplpx20.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplpx20.c; path = glpk/glplpx20.c; sourceTree = "<group>"; };
+		2359CB2D0DA06B1F002EBEB7 /* glpluf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpluf.c; path = glpk/glpluf.c; sourceTree = "<group>"; };
+		2359CB2E0DA06B1F002EBEB7 /* glpluf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpluf.h; path = glpk/glpluf.h; sourceTree = "<group>"; };
+		2359CB2F0DA06B1F002EBEB7 /* glplux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glplux.c; path = glpk/glplux.c; sourceTree = "<group>"; };
+		2359CB300DA06B1F002EBEB7 /* glplux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glplux.h; path = glpk/glplux.h; sourceTree = "<group>"; };
+		2359CB310DA06B1F002EBEB7 /* glpmat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmat.c; path = glpk/glpmat.c; sourceTree = "<group>"; };
+		2359CB320DA06B1F002EBEB7 /* glpmat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpmat.h; path = glpk/glpmat.h; sourceTree = "<group>"; };
+		2359CB330DA06B1F002EBEB7 /* glpmpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpmpl.h; path = glpk/glpmpl.h; sourceTree = "<group>"; };
+		2359CB340DA06B1F002EBEB7 /* glpmpl01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmpl01.c; path = glpk/glpmpl01.c; sourceTree = "<group>"; };
+		2359CB350DA06B1F002EBEB7 /* glpmpl02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmpl02.c; path = glpk/glpmpl02.c; sourceTree = "<group>"; };
+		2359CB360DA06B1F002EBEB7 /* glpmpl03.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmpl03.c; path = glpk/glpmpl03.c; sourceTree = "<group>"; };
+		2359CB370DA06B1F002EBEB7 /* glpmpl04.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmpl04.c; path = glpk/glpmpl04.c; sourceTree = "<group>"; };
+		2359CB380DA06B1F002EBEB7 /* glpmpl05.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpmpl05.c; path = glpk/glpmpl05.c; sourceTree = "<group>"; };
+		2359CB390DA06B1F002EBEB7 /* glppds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glppds.c; path = glpk/glppds.c; sourceTree = "<group>"; };
+		2359CB3A0DA06B1F002EBEB7 /* glppds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glppds.h; path = glpk/glppds.h; sourceTree = "<group>"; };
+		2359CB3B0DA06B1F002EBEB7 /* glpqmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpqmd.c; path = glpk/glpqmd.c; sourceTree = "<group>"; };
+		2359CB3C0DA06B1F002EBEB7 /* glpqmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpqmd.h; path = glpk/glpqmd.h; sourceTree = "<group>"; };
+		2359CB3D0DA06B1F002EBEB7 /* glprgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glprgr.c; path = glpk/glprgr.c; sourceTree = "<group>"; };
+		2359CB3E0DA06B1F002EBEB7 /* glprgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glprgr.h; path = glpk/glprgr.h; sourceTree = "<group>"; };
+		2359CB3F0DA06B1F002EBEB7 /* glprng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glprng.h; path = glpk/glprng.h; sourceTree = "<group>"; };
+		2359CB400DA06B1F002EBEB7 /* glprng01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glprng01.c; path = glpk/glprng01.c; sourceTree = "<group>"; };
+		2359CB410DA06B1F002EBEB7 /* glprng02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glprng02.c; path = glpk/glprng02.c; sourceTree = "<group>"; };
+		2359CB420DA06B1F002EBEB7 /* glpscf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpscf.c; path = glpk/glpscf.c; sourceTree = "<group>"; };
+		2359CB430DA06B1F002EBEB7 /* glpscf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpscf.h; path = glpk/glpscf.h; sourceTree = "<group>"; };
+		2359CB440DA06B1F002EBEB7 /* glpscg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpscg.c; path = glpk/glpscg.c; sourceTree = "<group>"; };
+		2359CB450DA06B1F002EBEB7 /* glpscg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpscg.h; path = glpk/glpscg.h; sourceTree = "<group>"; };
+		2359CB460DA06B1F002EBEB7 /* glpspm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpspm.c; path = glpk/glpspm.c; sourceTree = "<group>"; };
+		2359CB470DA06B1F002EBEB7 /* glpspm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpspm.h; path = glpk/glpspm.h; sourceTree = "<group>"; };
+		2359CB480DA06B1F002EBEB7 /* glpspx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpspx.h; path = glpk/glpspx.h; sourceTree = "<group>"; };
+		2359CB490DA06B1F002EBEB7 /* glpspx01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpspx01.c; path = glpk/glpspx01.c; sourceTree = "<group>"; };
+		2359CB4A0DA06B1F002EBEB7 /* glpspx02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpspx02.c; path = glpk/glpspx02.c; sourceTree = "<group>"; };
+		2359CB4B0DA06B1F002EBEB7 /* glpsql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpsql.c; path = glpk/glpsql.c; sourceTree = "<group>"; };
+		2359CB4C0DA06B1F002EBEB7 /* glpsql.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpsql.h; path = glpk/glpsql.h; sourceTree = "<group>"; };
+		2359CB4D0DA06B1F002EBEB7 /* glpssx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpssx.h; path = glpk/glpssx.h; sourceTree = "<group>"; };
+		2359CB4E0DA06B1F002EBEB7 /* glpssx01.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpssx01.c; path = glpk/glpssx01.c; sourceTree = "<group>"; };
+		2359CB4F0DA06B1F002EBEB7 /* glpssx02.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glpssx02.c; path = glpk/glpssx02.c; sourceTree = "<group>"; };
+		2359CB500DA06B1F002EBEB7 /* glpstd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glpstd.h; path = glpk/glpstd.h; sourceTree = "<group>"; };
+		2359CB510DA06B1F002EBEB7 /* glptsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glptsp.c; path = glpk/glptsp.c; sourceTree = "<group>"; };
+		2359CB520DA06B1F002EBEB7 /* glptsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glptsp.h; path = glpk/glptsp.h; sourceTree = "<group>"; };
 		235E4A080D0A0D06009CC7DE /* TextGridEditor_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextGridEditor_enums.h; path = fon/TextGridEditor_enums.h; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
 		23660A0A0D50C95200FB6B8B /* NUMhuber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NUMhuber.c; path = dwsys/NUMhuber.c; sourceTree = "<group>"; };
@@ -3261,6 +3499,132 @@
 			name = mp3;
 			sourceTree = "<group>";
 		};
+		2359CAD50DA069DE002EBEB7 /* glpk */ = {
+			isa = PBXGroup;
+			children = (
+				2359CB060DA06B1E002EBEB7 /* glpk.h */,
+				2359CADC0DA06B1E002EBEB7 /* glpapi.h */,
+				2359CADD0DA06B1E002EBEB7 /* glpapi01.c */,
+				2359CADE0DA06B1E002EBEB7 /* glpapi02.c */,
+				2359CADF0DA06B1E002EBEB7 /* glpapi03.c */,
+				2359CAE00DA06B1E002EBEB7 /* glpapi04.c */,
+				2359CAE10DA06B1E002EBEB7 /* glpapi05.c */,
+				2359CAE20DA06B1E002EBEB7 /* glpapi06.c */,
+				2359CAE30DA06B1E002EBEB7 /* glpapi07.c */,
+				2359CAE40DA06B1E002EBEB7 /* glpapi08.c */,
+				2359CAE50DA06B1E002EBEB7 /* glpapi09.c */,
+				2359CAE60DA06B1E002EBEB7 /* glpapi10.c */,
+				2359CAE70DA06B1E002EBEB7 /* glpapi11.c */,
+				2359CAE80DA06B1E002EBEB7 /* glpapi12.c */,
+				2359CAE90DA06B1E002EBEB7 /* glpapi13.c */,
+				2359CAEA0DA06B1E002EBEB7 /* glpavl.c */,
+				2359CAEB0DA06B1E002EBEB7 /* glpavl.h */,
+				2359CAEC0DA06B1E002EBEB7 /* glpbfd.c */,
+				2359CAED0DA06B1E002EBEB7 /* glpbfd.h */,
+				2359CAEE0DA06B1E002EBEB7 /* glpbfx.c */,
+				2359CAEF0DA06B1E002EBEB7 /* glpbfx.h */,
+				2359CAF00DA06B1E002EBEB7 /* glpcli.c */,
+				2359CAF10DA06B1E002EBEB7 /* glpcli.h */,
+				2359CAF20DA06B1E002EBEB7 /* glpdmp.c */,
+				2359CAF30DA06B1E002EBEB7 /* glpdmp.h */,
+				2359CAF40DA06B1E002EBEB7 /* glpfhv.c */,
+				2359CAF50DA06B1E002EBEB7 /* glpfhv.h */,
+				2359CAF60DA06B1E002EBEB7 /* glpgmp.c */,
+				2359CAF70DA06B1E002EBEB7 /* glpgmp.h */,
+				2359CAF80DA06B1E002EBEB7 /* glphbm.c */,
+				2359CAF90DA06B1E002EBEB7 /* glphbm.h */,
+				2359CAFA0DA06B1E002EBEB7 /* glpios.h */,
+				2359CAFB0DA06B1E002EBEB7 /* glpios01.c */,
+				2359CAFC0DA06B1E002EBEB7 /* glpios02.c */,
+				2359CAFD0DA06B1E002EBEB7 /* glpios03.c */,
+				2359CAFE0DA06B1E002EBEB7 /* glpios04.c */,
+				2359CAFF0DA06B1E002EBEB7 /* glpios05.c */,
+				2359CB000DA06B1E002EBEB7 /* glpios06.c */,
+				2359CB010DA06B1E002EBEB7 /* glpipm.c */,
+				2359CB020DA06B1E002EBEB7 /* glpipm.h */,
+				2359CB030DA06B1E002EBEB7 /* glpipp.h */,
+				2359CB040DA06B1E002EBEB7 /* glpipp01.c */,
+				2359CB050DA06B1E002EBEB7 /* glpipp02.c */,
+				2359CB070DA06B1E002EBEB7 /* glplib.h */,
+				2359CB080DA06B1E002EBEB7 /* glplib01.c */,
+				2359CB090DA06B1E002EBEB7 /* glplib02.c */,
+				2359CB0A0DA06B1E002EBEB7 /* glplib03.c */,
+				2359CB0B0DA06B1E002EBEB7 /* glplib04.c */,
+				2359CB0C0DA06B1E002EBEB7 /* glplib05.c */,
+				2359CB0D0DA06B1E002EBEB7 /* glplib06.c */,
+				2359CB0E0DA06B1E002EBEB7 /* glplib07.c */,
+				2359CB0F0DA06B1E002EBEB7 /* glplib08.c */,
+				2359CB100DA06B1E002EBEB7 /* glplib09.c */,
+				2359CB110DA06B1E002EBEB7 /* glplib10.c */,
+				2359CB120DA06B1E002EBEB7 /* glplib11.c */,
+				2359CB130DA06B1E002EBEB7 /* glplib12.c */,
+				2359CB140DA06B1E002EBEB7 /* glplpf.c */,
+				2359CB150DA06B1E002EBEB7 /* glplpf.h */,
+				2359CB160DA06B1E002EBEB7 /* glplpp.h */,
+				2359CB170DA06B1E002EBEB7 /* glplpp01.c */,
+				2359CB180DA06B1E002EBEB7 /* glplpp02.c */,
+				2359CB190DA06B1E002EBEB7 /* glplpx01.c */,
+				2359CB1A0DA06B1E002EBEB7 /* glplpx02.c */,
+				2359CB1B0DA06B1E002EBEB7 /* glplpx03.c */,
+				2359CB1C0DA06B1E002EBEB7 /* glplpx04.c */,
+				2359CB1D0DA06B1E002EBEB7 /* glplpx05.c */,
+				2359CB1E0DA06B1E002EBEB7 /* glplpx06.c */,
+				2359CB1F0DA06B1E002EBEB7 /* glplpx07.c */,
+				2359CB200DA06B1E002EBEB7 /* glplpx08.c */,
+				2359CB210DA06B1E002EBEB7 /* glplpx09.c */,
+				2359CB220DA06B1E002EBEB7 /* glplpx10.c */,
+				2359CB230DA06B1E002EBEB7 /* glplpx11.c */,
+				2359CB240DA06B1E002EBEB7 /* glplpx12.c */,
+				2359CB250DA06B1F002EBEB7 /* glplpx13.c */,
+				2359CB260DA06B1F002EBEB7 /* glplpx14.c */,
+				2359CB270DA06B1F002EBEB7 /* glplpx15.c */,
+				2359CB280DA06B1F002EBEB7 /* glplpx16.c */,
+				2359CB290DA06B1F002EBEB7 /* glplpx17.c */,
+				2359CB2A0DA06B1F002EBEB7 /* glplpx18.c */,
+				2359CB2B0DA06B1F002EBEB7 /* glplpx19.c */,
+				2359CB2C0DA06B1F002EBEB7 /* glplpx20.c */,
+				2359CB2D0DA06B1F002EBEB7 /* glpluf.c */,
+				2359CB2E0DA06B1F002EBEB7 /* glpluf.h */,
+				2359CB2F0DA06B1F002EBEB7 /* glplux.c */,
+				2359CB300DA06B1F002EBEB7 /* glplux.h */,
+				2359CB310DA06B1F002EBEB7 /* glpmat.c */,
+				2359CB320DA06B1F002EBEB7 /* glpmat.h */,
+				2359CB330DA06B1F002EBEB7 /* glpmpl.h */,
+				2359CB340DA06B1F002EBEB7 /* glpmpl01.c */,
+				2359CB350DA06B1F002EBEB7 /* glpmpl02.c */,
+				2359CB360DA06B1F002EBEB7 /* glpmpl03.c */,
+				2359CB370DA06B1F002EBEB7 /* glpmpl04.c */,
+				2359CB380DA06B1F002EBEB7 /* glpmpl05.c */,
+				2359CB390DA06B1F002EBEB7 /* glppds.c */,
+				2359CB3A0DA06B1F002EBEB7 /* glppds.h */,
+				2359CB3B0DA06B1F002EBEB7 /* glpqmd.c */,
+				2359CB3C0DA06B1F002EBEB7 /* glpqmd.h */,
+				2359CB3D0DA06B1F002EBEB7 /* glprgr.c */,
+				2359CB3E0DA06B1F002EBEB7 /* glprgr.h */,
+				2359CB3F0DA06B1F002EBEB7 /* glprng.h */,
+				2359CB400DA06B1F002EBEB7 /* glprng01.c */,
+				2359CB410DA06B1F002EBEB7 /* glprng02.c */,
+				2359CB420DA06B1F002EBEB7 /* glpscf.c */,
+				2359CB430DA06B1F002EBEB7 /* glpscf.h */,
+				2359CB440DA06B1F002EBEB7 /* glpscg.c */,
+				2359CB450DA06B1F002EBEB7 /* glpscg.h */,
+				2359CB460DA06B1F002EBEB7 /* glpspm.c */,
+				2359CB470DA06B1F002EBEB7 /* glpspm.h */,
+				2359CB480DA06B1F002EBEB7 /* glpspx.h */,
+				2359CB490DA06B1F002EBEB7 /* glpspx01.c */,
+				2359CB4A0DA06B1F002EBEB7 /* glpspx02.c */,
+				2359CB4B0DA06B1F002EBEB7 /* glpsql.c */,
+				2359CB4C0DA06B1F002EBEB7 /* glpsql.h */,
+				2359CB4D0DA06B1F002EBEB7 /* glpssx.h */,
+				2359CB4E0DA06B1F002EBEB7 /* glpssx01.c */,
+				2359CB4F0DA06B1F002EBEB7 /* glpssx02.c */,
+				2359CB500DA06B1F002EBEB7 /* glpstd.h */,
+				2359CB510DA06B1F002EBEB7 /* glptsp.c */,
+				2359CB520DA06B1F002EBEB7 /* glptsp.h */,
+			);
+			name = glpk;
+			sourceTree = "<group>";
+		};
 		23E5C91109A228F6004E41D5 = {
 			isa = PBXGroup;
 			children = (
@@ -3286,6 +3650,7 @@
 				230021240B32FC7200A7FE19 /* audio */,
 				23F8A89F0BF103B2000ED19D /* FLAC */,
 				233FEC540C1345C7003E27FB /* mp3 */,
+				2359CAD50DA069DE002EBEB7 /* glpk */,
 				23E5CB6B09A22902004E41D5 /* gsl */,
 				23E5CF3409A22A55004E41D5 /* Frameworks */,
 				23E5C92109A228FA004E41D5 /* Products */,
@@ -5587,6 +5952,38 @@
 				2306288D0D99AAF6006629AC /* gsl_sf_trig.h in Headers */,
 				2306288F0D99AAFE006629AC /* gsl_sf_zeta.h in Headers */,
 				230628910D99AB0F006629AC /* gsl_sf.h in Headers */,
+				2359CB530DA06B1F002EBEB7 /* glpapi.h in Headers */,
+				2359CB620DA06B1F002EBEB7 /* glpavl.h in Headers */,
+				2359CB640DA06B1F002EBEB7 /* glpbfd.h in Headers */,
+				2359CB660DA06B1F002EBEB7 /* glpbfx.h in Headers */,
+				2359CB680DA06B1F002EBEB7 /* glpcli.h in Headers */,
+				2359CB6A0DA06B1F002EBEB7 /* glpdmp.h in Headers */,
+				2359CB6C0DA06B1F002EBEB7 /* glpfhv.h in Headers */,
+				2359CB6E0DA06B1F002EBEB7 /* glpgmp.h in Headers */,
+				2359CB700DA06B1F002EBEB7 /* glphbm.h in Headers */,
+				2359CB710DA06B1F002EBEB7 /* glpios.h in Headers */,
+				2359CB790DA06B1F002EBEB7 /* glpipm.h in Headers */,
+				2359CB7A0DA06B1F002EBEB7 /* glpipp.h in Headers */,
+				2359CB7D0DA06B1F002EBEB7 /* glpk.h in Headers */,
+				2359CB7E0DA06B1F002EBEB7 /* glplib.h in Headers */,
+				2359CB8C0DA06B1F002EBEB7 /* glplpf.h in Headers */,
+				2359CB8D0DA06B1F002EBEB7 /* glplpp.h in Headers */,
+				2359CBA50DA06B1F002EBEB7 /* glpluf.h in Headers */,
+				2359CBA70DA06B1F002EBEB7 /* glplux.h in Headers */,
+				2359CBA90DA06B1F002EBEB7 /* glpmat.h in Headers */,
+				2359CBAA0DA06B1F002EBEB7 /* glpmpl.h in Headers */,
+				2359CBB10DA06B1F002EBEB7 /* glppds.h in Headers */,
+				2359CBB30DA06B1F002EBEB7 /* glpqmd.h in Headers */,
+				2359CBB50DA06B1F002EBEB7 /* glprgr.h in Headers */,
+				2359CBB60DA06B1F002EBEB7 /* glprng.h in Headers */,
+				2359CBBA0DA06B1F002EBEB7 /* glpscf.h in Headers */,
+				2359CBBC0DA06B1F002EBEB7 /* glpscg.h in Headers */,
+				2359CBBE0DA06B1F002EBEB7 /* glpspm.h in Headers */,
+				2359CBBF0DA06B1F002EBEB7 /* glpspx.h in Headers */,
+				2359CBC30DA06B1F002EBEB7 /* glpsql.h in Headers */,
+				2359CBC40DA06B1F002EBEB7 /* glpssx.h in Headers */,
+				2359CBC70DA06B1F002EBEB7 /* glpstd.h in Headers */,
+				2359CBC90DA06B1F002EBEB7 /* glptsp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6634,6 +7031,93 @@
 				230627EE0D99A15C006629AC /* gsl_ode-initval__gear1.c in Sources */,
 				230627F00D99A166006629AC /* gsl_ode-initval__gear2.c in Sources */,
 				230627F30D99A1B9006629AC /* gsl_ode-initval__rk2simp.c in Sources */,
+				2359CB540DA06B1F002EBEB7 /* glpapi01.c in Sources */,
+				2359CB550DA06B1F002EBEB7 /* glpapi02.c in Sources */,
+				2359CB560DA06B1F002EBEB7 /* glpapi03.c in Sources */,
+				2359CB570DA06B1F002EBEB7 /* glpapi04.c in Sources */,
+				2359CB580DA06B1F002EBEB7 /* glpapi05.c in Sources */,
+				2359CB590DA06B1F002EBEB7 /* glpapi06.c in Sources */,
+				2359CB5A0DA06B1F002EBEB7 /* glpapi07.c in Sources */,
+				2359CB5B0DA06B1F002EBEB7 /* glpapi08.c in Sources */,
+				2359CB5C0DA06B1F002EBEB7 /* glpapi09.c in Sources */,
+				2359CB5D0DA06B1F002EBEB7 /* glpapi10.c in Sources */,
+				2359CB5E0DA06B1F002EBEB7 /* glpapi11.c in Sources */,
+				2359CB5F0DA06B1F002EBEB7 /* glpapi12.c in Sources */,
+				2359CB600DA06B1F002EBEB7 /* glpapi13.c in Sources */,
+				2359CB610DA06B1F002EBEB7 /* glpavl.c in Sources */,
+				2359CB630DA06B1F002EBEB7 /* glpbfd.c in Sources */,
+				2359CB650DA06B1F002EBEB7 /* glpbfx.c in Sources */,
+				2359CB670DA06B1F002EBEB7 /* glpcli.c in Sources */,
+				2359CB690DA06B1F002EBEB7 /* glpdmp.c in Sources */,
+				2359CB6B0DA06B1F002EBEB7 /* glpfhv.c in Sources */,
+				2359CB6D0DA06B1F002EBEB7 /* glpgmp.c in Sources */,
+				2359CB6F0DA06B1F002EBEB7 /* glphbm.c in Sources */,
+				2359CB720DA06B1F002EBEB7 /* glpios01.c in Sources */,
+				2359CB730DA06B1F002EBEB7 /* glpios02.c in Sources */,
+				2359CB740DA06B1F002EBEB7 /* glpios03.c in Sources */,
+				2359CB750DA06B1F002EBEB7 /* glpios04.c in Sources */,
+				2359CB760DA06B1F002EBEB7 /* glpios05.c in Sources */,
+				2359CB770DA06B1F002EBEB7 /* glpios06.c in Sources */,
+				2359CB780DA06B1F002EBEB7 /* glpipm.c in Sources */,
+				2359CB7B0DA06B1F002EBEB7 /* glpipp01.c in Sources */,
+				2359CB7C0DA06B1F002EBEB7 /* glpipp02.c in Sources */,
+				2359CB7F0DA06B1F002EBEB7 /* glplib01.c in Sources */,
+				2359CB800DA06B1F002EBEB7 /* glplib02.c in Sources */,
+				2359CB810DA06B1F002EBEB7 /* glplib03.c in Sources */,
+				2359CB820DA06B1F002EBEB7 /* glplib04.c in Sources */,
+				2359CB830DA06B1F002EBEB7 /* glplib05.c in Sources */,
+				2359CB840DA06B1F002EBEB7 /* glplib06.c in Sources */,
+				2359CB850DA06B1F002EBEB7 /* glplib07.c in Sources */,
+				2359CB860DA06B1F002EBEB7 /* glplib08.c in Sources */,
+				2359CB870DA06B1F002EBEB7 /* glplib09.c in Sources */,
+				2359CB880DA06B1F002EBEB7 /* glplib10.c in Sources */,
+				2359CB890DA06B1F002EBEB7 /* glplib11.c in Sources */,
+				2359CB8A0DA06B1F002EBEB7 /* glplib12.c in Sources */,
+				2359CB8B0DA06B1F002EBEB7 /* glplpf.c in Sources */,
+				2359CB8E0DA06B1F002EBEB7 /* glplpp01.c in Sources */,
+				2359CB8F0DA06B1F002EBEB7 /* glplpp02.c in Sources */,
+				2359CB900DA06B1F002EBEB7 /* glplpx01.c in Sources */,
+				2359CB910DA06B1F002EBEB7 /* glplpx02.c in Sources */,
+				2359CB920DA06B1F002EBEB7 /* glplpx03.c in Sources */,
+				2359CB930DA06B1F002EBEB7 /* glplpx04.c in Sources */,
+				2359CB940DA06B1F002EBEB7 /* glplpx05.c in Sources */,
+				2359CB950DA06B1F002EBEB7 /* glplpx06.c in Sources */,
+				2359CB960DA06B1F002EBEB7 /* glplpx07.c in Sources */,
+				2359CB970DA06B1F002EBEB7 /* glplpx08.c in Sources */,
+				2359CB980DA06B1F002EBEB7 /* glplpx09.c in Sources */,
+				2359CB990DA06B1F002EBEB7 /* glplpx10.c in Sources */,
+				2359CB9A0DA06B1F002EBEB7 /* glplpx11.c in Sources */,
+				2359CB9B0DA06B1F002EBEB7 /* glplpx12.c in Sources */,
+				2359CB9C0DA06B1F002EBEB7 /* glplpx13.c in Sources */,
+				2359CB9D0DA06B1F002EBEB7 /* glplpx14.c in Sources */,
+				2359CB9E0DA06B1F002EBEB7 /* glplpx15.c in Sources */,
+				2359CB9F0DA06B1F002EBEB7 /* glplpx16.c in Sources */,
+				2359CBA00DA06B1F002EBEB7 /* glplpx17.c in Sources */,
+				2359CBA10DA06B1F002EBEB7 /* glplpx18.c in Sources */,
+				2359CBA20DA06B1F002EBEB7 /* glplpx19.c in Sources */,
+				2359CBA30DA06B1F002EBEB7 /* glplpx20.c in Sources */,
+				2359CBA40DA06B1F002EBEB7 /* glpluf.c in Sources */,
+				2359CBA60DA06B1F002EBEB7 /* glplux.c in Sources */,
+				2359CBA80DA06B1F002EBEB7 /* glpmat.c in Sources */,
+				2359CBAB0DA06B1F002EBEB7 /* glpmpl01.c in Sources */,
+				2359CBAC0DA06B1F002EBEB7 /* glpmpl02.c in Sources */,
+				2359CBAD0DA06B1F002EBEB7 /* glpmpl03.c in Sources */,
+				2359CBAE0DA06B1F002EBEB7 /* glpmpl04.c in Sources */,
+				2359CBAF0DA06B1F002EBEB7 /* glpmpl05.c in Sources */,
+				2359CBB00DA06B1F002EBEB7 /* glppds.c in Sources */,
+				2359CBB20DA06B1F002EBEB7 /* glpqmd.c in Sources */,
+				2359CBB40DA06B1F002EBEB7 /* glprgr.c in Sources */,
+				2359CBB70DA06B1F002EBEB7 /* glprng01.c in Sources */,
+				2359CBB80DA06B1F002EBEB7 /* glprng02.c in Sources */,
+				2359CBB90DA06B1F002EBEB7 /* glpscf.c in Sources */,
+				2359CBBB0DA06B1F002EBEB7 /* glpscg.c in Sources */,
+				2359CBBD0DA06B1F002EBEB7 /* glpspm.c in Sources */,
+				2359CBC00DA06B1F002EBEB7 /* glpspx01.c in Sources */,
+				2359CBC10DA06B1F002EBEB7 /* glpspx02.c in Sources */,
+				2359CBC20DA06B1F002EBEB7 /* glpsql.c in Sources */,
+				2359CBC50DA06B1F002EBEB7 /* glpssx01.c in Sources */,
+				2359CBC60DA06B1F002EBEB7 /* glpssx02.c in Sources */,
+				2359CBC80DA06B1F002EBEB7 /* glptsp.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -21,7 +21,7 @@
 
 /*
  djmw 20070130 First
- djmw 20080202 Latest modification.
+ djmw 20080327 Latest modification.
 */
 
 #ifndef _Graphics_h_
@@ -57,6 +57,7 @@ struct structF1F2Grid
 #define VowelEditor_members Editor_members \
 	int soundFollowsMouse, shiftKeyPressed; \
 	double f1min, f1max, f2min, f2max; /* Domain of graphics F1-F2 area */ \
+	Matrix f3, b3, f4, b4; \
 	int frequencyScale; /* 0: lin, 1: log, 2: bark, 3: mel */ \
 	int axisOrientation; /* 0: origin topright + f1 down + f2 to left, 0: origin lb + f1 right +f2 up */ \
 	int speakerType; /* 1 male, 2 female, 3 child */ \

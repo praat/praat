@@ -22,6 +22,7 @@
 */
 
 /*
+trajectory --> path ????
  The main part of the VowelEditor is a drawing area. 
  In this drawing area a cursor can be moved around by a mouse.
  The position of the cursor is related to the F1 and F2 frequencies.
@@ -98,6 +99,7 @@ static int menu_cb_extract_PitchTier (EDITOR_ARGS);
 static int menu_cb_showOneVowelMark (EDITOR_ARGS);
 static int menu_cb_showVowelMarks (EDITOR_ARGS);
 static int menu_cb_setF0 (EDITOR_ARGS);
+static int menu_cb_setF3F4 (EDITOR_ARGS);
 static int menu_cb_reverseTrajectory (EDITOR_ARGS);
 static int menu_cb_newTrajectory (EDITOR_ARGS);
 static int menu_cb_extendTrajectory (EDITOR_ARGS);
@@ -124,12 +126,12 @@ static void PitchTier_newDuration (PitchTier me, struct structF0 *f0p, double ne
 static void FormantTier_newDuration (FormantTier me, double newDuration);
 static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width);
 static void Vowel_newDuration (Vowel me, struct structF0 *f0p, double newDuration);
-static int Vowel_addData (Vowel me, double time, double f1, double f2, double f0);
 static PitchTier VowelEditor_to_PitchTier (VowelEditor me, double duration);
 static void VowelEditor_updateF0Info (VowelEditor me);
 static void VowelEditor_updateExtendDuration (VowelEditor me);
 static double VowelEditor_updateDurationInfo (VowelEditor me);
 static int VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y);
+static int VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, double f1, double f2, double f0);
 static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, double *x, double *y);
 static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, double *f1, double *f2);
 static void VowelEditor_updateVowel (VowelEditor me);
@@ -138,6 +140,10 @@ static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me);
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st);
 static int VowelEditor_setSource (VowelEditor me);
 static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType);
+static int VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4);
+static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3, 
+	double *f4, double *b4);
+static double Matrix_getValue (Matrix me, double x, double y);
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g);
 // forward declarations end
 
@@ -280,8 +286,8 @@ static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st)
 	for (long i = 1; i <= ft -> points -> size; i++)
 	{
 		FormantPoint fp = ft -> points -> item[i];
-		double f1 = fp -> formant[0];
-		double f2 = fp -> formant[1];
+		double f1 = fp -> formant[0], f2 = fp -> formant[1];
+		double f3, b3, f4, b4;
 		
 		f1 *= pow (2, f1_st / 12);
 		if (f1 < my f1min) f1 = my f1min;
@@ -294,6 +300,11 @@ static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st)
 		if (f2 > my f2max) f2 = my f2max;
 		fp -> formant[1] = f2;
 		fp -> bandwidth[1] = f2 / 10;
+		VowelEditor_getF3F4 (me, f1, f2, &f3, &b3, &f4, &b4);
+		fp -> formant[2] = f3;
+		fp -> bandwidth[2] = b3;
+		fp -> formant[3] = f4;
+		fp -> bandwidth[3] = b4;
 	}
 }
 
@@ -458,6 +469,7 @@ end:
 static struct {
 	int soundFollowsMouse;
 	double f1min, f1max, f2min, f2max;
+	double f3, b3, f4, b4;
 	int frequencyScale;
 	int axisOrientation;
 	int speakerType;
@@ -473,6 +485,10 @@ void VowelEditor_prefs (void)
 	Preferences_addDouble (L"VowelEditor.f1max", &prefs.f1max, 1200);
 	Preferences_addDouble (L"VowelEditor.f2min", &prefs.f2min, 500);
 	Preferences_addDouble (L"VowelEditor.f2max", &prefs.f2max, 3500);
+	Preferences_addDouble (L"VowelEditor.f3", &prefs.f3, 2500);
+	Preferences_addDouble (L"VowelEditor.b3", &prefs.b3, 250);
+	Preferences_addDouble (L"VowelEditor.f4", &prefs.f4, 3500);
+	Preferences_addDouble (L"VowelEditor.b4", &prefs.b4, 350);
 	Preferences_addInt (L"VowelEditor.frequencyScale", &prefs.frequencyScale, 0);
 	Preferences_addInt (L"VowelEditor.axisOrientation", &prefs.axisOrientation, 0);
 	Preferences_addInt (L"VowelEditor.speakerType", &prefs.speakerType, 1);
@@ -505,6 +521,11 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 			te = Table_extractRowsWhereColumn_string (thee, 1, kMelder_string_EQUAL_TO, Type[speakerType]);
 		}
 	}
+	else
+	{
+		if (my marks != NULL) forget (my marks);
+		return 1;
+	}
 	forget (thee);
 	if (te == NULL) return 0;
 	thee = Table_collapseRows (te, L"IPA", L"", L"F1 F2", L"", L"", L"");
@@ -513,6 +534,56 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 	if (my marks != NULL) forget (my marks);
 	my marks = thee;
 	return 1;
+}
+
+static int VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4)
+{
+	double xmin = my f2min, xmax = my f2max, dx = my f2max - my f2min, x1 = dx / 2;
+	double dy = my f1max - my f1min, y1 = dy / 2; 
+
+	if (my f3 == NULL)
+	{
+		my f3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
+		if (my f3 == NULL) goto end;
+	}
+	if (my b3 == NULL)
+	{
+		my b3 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
+		if (my b3 == NULL) goto end;
+	}
+	if (my f4 == NULL)
+	{
+		my f4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
+		if (my f4 == NULL) goto end;
+	}
+	if (my b4 == NULL) my b4 = Matrix_create (xmin, xmax, 1, dx, x1, my f1min, my f1max, 1, dy, y1);
+	
+end:
+
+	if (Melder_hasError ())
+	{
+		forget (my f3); forget (my b3);
+		forget (my f4); forget (my b4);
+		return 0;
+	}
+	my f3 -> z[1][1] = f3; my b3 -> z[1][1] = b3;
+	my f4 -> z[1][1] = f4; my b4 -> z[1][1] = b4;
+	return 1;
+}
+
+static double Matrix_getValue (Matrix me, double x, double y)
+{
+	(void) x;
+	(void) y;
+	return my z[1][1];
+}
+
+static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3, double *f4, double *b4)
+{
+	*f3 = Matrix_getValue (my f3, f2, f1);
+	*b3 = Matrix_getValue (my b3, f2, f1);
+	*f4 = Matrix_getValue (my f4, f2, f1);
+	*b4 = Matrix_getValue (my b4, f2, f1);
 }
 
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g)
@@ -761,7 +832,7 @@ static int menu_cb_showVowelMarks (EDITOR_ARGS)
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Show vowel marks", 0);
 		OPTIONMENU (L"Data set:", 1)
-		OPTION (L"American-English")
+		OPTION (L"American English")
 		OPTION (L"Dutch")
 		OPTION (L"None")
 		OPTIONMENU (L"Speaker:", 1)
@@ -793,6 +864,22 @@ static int menu_cb_setF0 (EDITOR_ARGS)
 	EDITOR_END
 }
 
+static int menu_cb_setF3F4 (EDITOR_ARGS)
+{
+	EDITOR_IAM (VowelEditor);
+	EDITOR_FORM (L"Set F3 & F4", 0);
+		POSITIVE (L"F3 (Hz)", L"2500.0")
+		POSITIVE (L"B3 (Hz)", L"250.0")
+		POSITIVE (L"F4 (Hz)", L"3500.0")
+		POSITIVE (L"B4 (Hz)", L"350.0")
+	EDITOR_OK
+	EDITOR_DO
+		double f3 = GET_REAL (L"F3"), b3 = GET_REAL (L"B3");
+		double f4 = GET_REAL (L"F4"), b4 = GET_REAL (L"B4");
+		if (f3 >= f4 ) return Melder_error1 (L"F4 must be larger than F3.");
+		if (! VowelEditor_setF3F4 (me, f3, b3, f4, b4)) return 0;
+	EDITOR_END
+}
 static int menu_cb_reverseTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
@@ -802,18 +889,25 @@ static int menu_cb_reverseTrajectory (EDITOR_ARGS)
 	return 1;
 }
 
-static int Vowel_addData (Vowel me, double time, double f1, double f2, double f0)
+static int VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, double f1, double f2, double f0)
 {
 	FormantPoint fp = FormantPoint_create (time);
+	double f3, b3, f4, b4;
 	
 	if (fp == NULL) return 0;
 	fp -> formant[0] = f1;
 	fp -> bandwidth[0] = f1 / 10;
 	fp -> formant[1] = f2;
 	fp -> bandwidth[1] = f2 / 10;
-	fp -> numberOfFormants = 2;
-	if (! Collection_addItem (my ft -> points, fp) ||
-		! RealTier_addPoint (my pt, time, f0)) return 0;
+	VowelEditor_getF3F4 (me, f1, f2, &f3, &b3, &f4, &b4);
+	fp -> formant[2] = f3;
+	fp -> bandwidth[2] = b3;
+	fp -> formant[3] = f4;
+	fp -> bandwidth[3] = b4;
+	fp -> numberOfFormants = 4;
+
+	if (! Collection_addItem (thy ft -> points, fp) ||
+		! RealTier_addPoint (thy pt, time, f0)) return 0;
 	return 1;
 }
 
@@ -859,13 +953,13 @@ static int menu_cb_newTrajectory (EDITOR_ARGS)
 		f1 = GET_REAL (L"Start F1");
 		f2 = GET_REAL (L"Start F2");
 		checkF1F2 (me, &f1, &f2);
-		if (! Vowel_addData (vowel, time, f1, f2, f0)) goto end;
+		if (! VowelEditor_Vowel_addData (me, vowel, time, f1, f2, f0)) goto end;
 		time = duration;
 		f0 =  getF0 (&my f0, time);
 		f1 = GET_REAL (L"End F1");
 		f2 = GET_REAL (L"End F2");
 		checkF1F2 (me, &f1, &f2);
-		if (! Vowel_addData (vowel, time, f1, f2, f0)) goto end;
+		if (! VowelEditor_Vowel_addData (me, vowel, time, f1, f2, f0)) goto end;
 		
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION(duration)));
 end:	
@@ -898,7 +992,7 @@ static int menu_cb_extendTrajectory (EDITOR_ARGS)
 		double f2 = GET_REAL (L"To F2");
 		thy xmax = thy pt -> xmax = thy ft -> xmax = newDuration;
 		checkF1F2 (me, &f1, &f2);
-		if (! Vowel_addData (thee, newDuration, f1, f2, f0)) return 0;
+		if (! VowelEditor_Vowel_addData (me, thee, newDuration, f1, f2, f0)) return 0;
 		
 		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION(newDuration)));
 		Graphics_updateWs (my g);
@@ -1024,6 +1118,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event)
 
 static int VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y)
 {
+	double f3, b3, f4, b4;
 	if (time > thy xmax)
 	{
 		thy xmax = time;
@@ -1036,12 +1131,17 @@ static int VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double tim
 	if (point == NULL) return 0;
 	
 	VowelEditor_getF1F2FromXY (me, x, y, &f1, &f2);
+	VowelEditor_getF3F4 (me, f1, f2, &f3, &b3, &f4, &b4);
 	
 	point -> formant[0] = f1;
 	point -> bandwidth[0] = f1 / 10;
 	point -> formant[1] = f2;
 	point -> bandwidth[1] = f2 / 10;
-	point -> numberOfFormants = 2;
+	point -> formant[2] = f3;
+	point -> bandwidth[2] = b3;
+	point -> formant[3] = f4;
+	point -> bandwidth[3] = b4;
+	point -> numberOfFormants = 4;
 	return Collection_addItem (thy ft -> points, point) && RealTier_addPoint (thy pt, time, f0);
 }
 
@@ -1166,6 +1266,7 @@ static void createMenus (I)
 	Editor_addCommand (me, L"Edit", L"Show vowel marks...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (me, L"Edit", L"-- f0 --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Set F0...", 0, menu_cb_setF0);
+	Editor_addCommand (me, L"Edit", L"Set F3 & F4...", 0, menu_cb_setF3F4);
 	Editor_addCommand (me, L"Edit", L"-- trajectory commands --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Reverse trajectory", 0, menu_cb_reverseTrajectory);
 	Editor_addCommand (me, L"Edit", L"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
@@ -1313,6 +1414,7 @@ VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 	my speakerType = prefs.speakerType;
 	my soundFollowsMouse = prefs.soundFollowsMouse;
 	if (! VowelEditor_setMarks (me, 2, my speakerType)) goto end;
+	if (! VowelEditor_setF3F4 (me, prefs.f3, prefs.b3, prefs.f4, prefs.b4)) goto end;
 	my maximumDuration = BUFFER_SIZE_SEC;
 	my extendDuration = 0.05;
 	if (my data != NULL)

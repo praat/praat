@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2008/03/30
  */
 
 #include "praat.h"
@@ -589,6 +589,22 @@ DIRECT (Sound_edit)
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_SoundEditor_publish, NULL);
+		}
+	}
+END
+
+DIRECT (Sound_extractAllChannels)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (my ny == 1) {
+			if (! praat_new2 (Data_copy (me), my name, L"_mono")) return 0;
+		} else if (my ny == 2) {
+			if (! praat_new2 (Sound_extractLeftChannel (me), my name, L"_left")) return 0;
+			if (! praat_new2 (Sound_extractRightChannel (me), my name, L"_right")) return 0;
+		} else {
+			for (long channel = 1; channel <= my ny; channel ++) {
+				if (! praat_new3 (Sound_extractChannel (me, channel), my name, L"_", Melder_integer (channel))) return 0;
+			}
 		}
 	}
 END
@@ -2087,6 +2103,7 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 0, L"Convert -       ", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"Convert to mono", 0, 1, DO_Sound_convertToMono);
 		praat_addAction1 (classSound, 0, L"Convert to stereo", 0, 1, DO_Sound_convertToStereo);
+		praat_addAction1 (classSound, 0, L"Extract all channels", 0, 1, DO_Sound_extractAllChannels);
 		praat_addAction1 (classSound, 0, L"Extract left channel", 0, 1, DO_Sound_extractLeftChannel);
 		praat_addAction1 (classSound, 0, L"Extract right channel", 0, 1, DO_Sound_extractRightChannel);
 		praat_addAction1 (classSound, 0, L"Extract part...", 0, 1, DO_Sound_extractPart);

@@ -585,6 +585,19 @@ DO
 	if (! OTGrammar_Distributions_listObligatoryRankings (ONLY (classOTGrammar), ONLY (classDistributions), GET_INTEGER (L"Column number"))) return 0;
 END
 
+FORM (OTGrammar_PairDistribution_findPositiveWeights, L"OTGrammar & PairDistribution: Find positive weights", L"OTGrammar & PairDistribution: Find positive weights...")
+	POSITIVE (L"Weight floor", L"1.0")
+	POSITIVE (L"Margin of separation", L"1.0")
+	OK
+DO
+	OTGrammar grammar = ONLY (classOTGrammar);
+	OTGrammar_PairDistribution_findPositiveWeights_e (grammar, ONLY (classPairDistribution),
+		GET_REAL (L"Weight floor"), GET_REAL (L"Margin of separation"));
+	iferror return 0;
+	praat_dataChanged (grammar);
+	iferror return 0;
+END
+
 FORM (OTGrammar_PairDistribution_getFractionCorrect, L"OTGrammar & PairDistribution: Get fraction correct...", 0)
 	REAL (L"Evaluation noise", L"2.0")
 	INTEGER (L"Replications", L"100000")
@@ -1026,6 +1039,7 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Get fraction correct...", 0, 0, DO_OTGrammar_Distributions_getFractionCorrect);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"List obligatory rankings...", 0, praat_HIDDEN, DO_OTGrammar_Distributions_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Learn...", 0, 0, DO_OTGrammar_PairDistribution_learn);
+	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Find positive weights...", 0, 0, DO_OTGrammar_PairDistribution_findPositiveWeights);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Get fraction correct...", 0, 0, DO_OTGrammar_PairDistribution_getFractionCorrect);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"List obligatory rankings", 0, 0, DO_OTGrammar_PairDistribution_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, L"Inputs to outputs...", 0, 0, DO_OTGrammar_inputsToOutputs);

@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080329)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080331)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.18# (March 31, 2008)")
+LIST_ITEM (L"\\bu Manipulation window: corrected a bug introduced in 5.0.17 that caused Praat to crash when adding the first duration point.")
+LIST_ITEM (L"\\bu Sound: added ##Extract all channels#.")
+LIST_ITEM (L"\\bu OT learning: added @@OTGrammar & PairDistribution: Find positive weights...@.")
+LIST_ITEM (L"\\bu ExperimentMFC: corrected a bug that caused Praat to crash when the second of multiple experiments "
+	"referred to non-existing sound files.")
 NORMAL (L"##5.0.17# (March 29, 2008)")
 LIST_ITEM (L"\\bu Sped up vowel editor by a large factor.")
 LIST_ITEM (L"\\bu OT learning: corrected Exponential HG update rule from OT-GLA to HG-GLA.")

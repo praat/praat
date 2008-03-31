@@ -162,6 +162,11 @@ NORMAL (L"Eric Moulines & Francis Charpentier (1990): Pitch-synchronous waveform
 	"%%Speech Communication% #9: 453\\--467.")
 MAN_END
 
+MAN_BEGIN (L"Pater, Potts & Bhatt (2007)", L"ppgb", 20080331)
+NORMAL (L"Joe Pater, Christopher Potts & Rajesh Bhatt (2007): Harmonic Grammar with linear programming. "
+	"Manuscript, University of Massachusetts, Amherst. %%Rutgers Optimality Archive% #872.")
+MAN_END
+
 MAN_BEGIN (L"Patterson & Wightman (1976)", L"ppgb", 20021215)
 NORMAL (L"R. Patterson & F. Wightman (1976): \"Residue pitch as a function of component spacing.\" "
 	"%%Journal of the Acoustical Society of America% #59: 1450\\--1459.")

@@ -58,9 +58,11 @@
  * pb 2008/03/07 Reset to random total ranking
  * pb 2008/03/27 Exponential HG: reset average weight to zero after every change
  * pb 2008/03/28 Exponential HG: set update rule to HG-GLA rather than OT-GLA
+ * pb 2008/03/31 OTGrammar_PairDistribution_findPositiveWeights
  */
 
 #include "OTGrammar.h"
+#include "glpk.h"
 
 #include "oo_DESTROY.h"
 #include "OTGrammar_def.h"
@@ -1406,6 +1408,139 @@ end:
 	Melder_monitor1 (1.0, NULL);
 	iferror return Melder_error1 (L"OTGrammar did not complete learning from input-output pairs.");
 	return 1;
+}
+
+static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const wchar_t *input, wchar_t **attestedOutput) {
+	long result = 0;
+	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
+		PairProbability pair = my pairs -> item [ipair];
+		if (wcsequ (pair -> string1, input) && pair -> weight > 0.0) {
+			if (attestedOutput != NULL) *attestedOutput = pair -> string2;
+			result ++;
+		}
+	}
+	return result;
+}
+
+bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
+	bool result = false;
+	glp_prob *linearProgram = NULL;
+	long *optimalCandidates = NULL;
+	int *ind = NULL;
+	double *val = NULL;
+	if (my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) &&
+		my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, LinearOT) &&
+		my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, PositiveHG) &&
+		my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG))
+	{
+		error1 (L"To find positive weights, the decision strategy has to be "
+			"HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
+	}
+	optimalCandidates = NUMlvector (1, my numberOfTableaus); cherror
+	/*
+	 * Check that there is exactly one optimal output for each input.
+	 */
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		OTGrammarTableau tab = & my tableaus [itab];
+		wchar_t *attestedOutput = NULL;
+		long numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input, & attestedOutput);
+		if (numberOfAttestedOutputs == 0) {
+			error3 (L"Input \"", my tableaus [itab]. input, L"\" has no attested output.");
+		} else if (numberOfAttestedOutputs > 1) {
+			error3 (L"Input \"", my tableaus [itab]. input, L"\" has more than one attested output.");
+		} else {
+			Melder_assert (attestedOutput != NULL);
+			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+				OTGrammarCandidate cand = & tab -> candidates [icand];
+				if (wcsequ (attestedOutput, cand -> output)) {
+					optimalCandidates [itab] = icand;
+				}
+			}
+		}
+		Melder_assert (optimalCandidates [itab] != 0);
+	}
+	/*
+	 * Count informative pairs.
+	 */
+	long numberOfInformativePairs = 0;
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		numberOfInformativePairs += my tableaus [itab]. numberOfCandidates - 1;
+	}
+	/*
+	 * Create linear programming problem.
+	 */
+	linearProgram = glp_create_prob ();
+	glp_set_obj_dir (linearProgram, GLP_MIN);
+	glp_add_rows (linearProgram, numberOfInformativePairs);
+	for (long ipair = 1; ipair <= numberOfInformativePairs; ipair ++) {
+		glp_set_row_bnds (linearProgram, ipair, GLP_LO, marginOfSeparation, 0.0);
+	}
+	glp_add_cols (linearProgram, my numberOfConstraints);
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		glp_set_col_bnds (linearProgram, icons, GLP_LO, weightFloor, 0.0);
+		glp_set_obj_coef (linearProgram, icons, 1.0);
+	}
+	ind = NUMivector (1, my numberOfConstraints);
+	val = NUMdvector (1, my numberOfConstraints);
+	long ipair = 0;
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		OTGrammarTableau tab = & my tableaus [itab];
+		long ioptimalCandidate = optimalCandidates [itab];
+		Melder_assert (ioptimalCandidate >= 1);
+		Melder_assert (ioptimalCandidate <= tab -> numberOfCandidates);
+		OTGrammarCandidate optimalCandidate = & tab -> candidates [ioptimalCandidate];
+		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
+			OTGrammarCandidate cand = & tab -> candidates [icand];
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				ind [icons] = icons;
+				val [icons] = cand -> marks [icons] - optimalCandidate -> marks [icons];
+			}
+			glp_set_mat_row (linearProgram, ++ ipair, my numberOfConstraints, ind, val);
+		}
+	}
+	Melder_assert (ipair == numberOfInformativePairs);
+	glp_smcp parm;
+	glp_init_smcp (& parm);
+	parm. msg_lev = GLP_MSG_OFF;
+	int status = glp_simplex (linearProgram, & parm);
+	switch (status) {
+		case GLP_EBADB: error1 (L"Unable to start the search, because the initial basis is invalid.");
+		case GLP_ESING: error1 (L"Unable to start the search, because the basis matrix is singular.");
+		case GLP_ECOND: error1 (L"Unable to start the search, because the basis matrix is ill-conditioned.");
+		case GLP_EBOUND: error1 (L"Unable to start the search, because some variables have incorrect bounds.");
+		case GLP_EFAIL: error1 (L"Search prematurely terminated due to solver failure.");
+		case GLP_EOBJLL: error1 (L"Search prematurely terminated: lower limit reached.");
+		case GLP_EOBJUL: error1 (L"Search prematurely terminated: upper limit reached.");
+		case GLP_EITLIM: error1 (L"Search prematurely terminated: iteration limit exceeded.");
+		case GLP_ETMLIM: error1 (L"Search prematurely terminated: time limit exceeded.");
+		case GLP_ENOPFS: error1 (L"The problem has no primal feasible solution.");
+		case GLP_ENODFS: error1 (L"The problem has no dual feasible solution.");
+		default: break;
+	}
+	status = glp_get_status (linearProgram);
+	switch (status) {
+		case GLP_INFEAS: error1 (L"Solution is infeasible.");
+		case GLP_NOFEAS: error1 (L"Problem has no feasible solution.");
+		case GLP_UNBND: error1 (L"Problem has unbounded solution.");
+		case GLP_UNDEF: error1 (L"Solution is undefined.");
+		default: break;
+	}
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		double weighting = glp_get_col_prim (linearProgram, icons);
+		Melder_assert (weighting >= weightFloor);
+		my constraints [icons]. ranking = my constraints [icons]. disharmony =
+			my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ? log (weighting) : weighting;
+	}
+	if (status == GLP_FEAS) {
+		Melder_warning1 (L"Linear programming solution is feasible but not optimal.");
+	}
+end:
+	NUMlvector_free (optimalCandidates, 1);
+	if (linearProgram != NULL) glp_delete_prob (linearProgram);
+	NUMivector_free (ind, 1);
+	NUMdvector_free (val, 1);
+	iferror Melder_error1 (L"Positive weights not found.");
+	return result;
 }
 
 void OTGrammar_reset (OTGrammar me, double ranking) {

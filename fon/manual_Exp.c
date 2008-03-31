@@ -129,7 +129,7 @@ NORMAL (L"This experiment will play 4 different stimuli to the listener, each 3 
 	"Thus, the listener is confronted with 12 trials.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.2. The stimuli", L"ppgb", 20061220)
+MAN_BEGIN (L"ExperimentMFC 2.2. The stimuli", L"ppgb", 20080330)
 INTRO (L"You can see that the @@ExperimentMFC 2.1. The experiment file|example experiment@ "
 	"contains four different stimuli: %heed, %hid, %hood, and %hud. "
 	"These are the %names of the four stimuli.")
@@ -156,8 +156,6 @@ NORMAL (L"Instead of a relative path, you can also supply a %%full file path%. "
 CODE (L"fileNameHead = \"D:\\bsCorpus\\bsAutumn\\bsSpeaker23\\bs\"")
 NORMAL (L"If you have a Macintosh (OS X) or Unix computer and the stimuli are in ##/Users/mietta/Sounds/Dutch#, you write")
 CODE (L"fileNameHead = \"/Users/mietta/Sounds/Dutch/\"")
-NORMAL (L"If you have an older Macintosh and the stimuli are in ##My disk:My experiment:Stimuli#, you write")
-CODE (L"fileNameHead = \"My disk:My experiment:Stimuli:\"")
 NORMAL (L"But relative file paths will usually be preferred: they are more %portable. "
 	"The advantage of using relative file paths is that you can move your whole experiment (experiment file plus sounds) "
 	"from one computer to another without changing the experiment file, "

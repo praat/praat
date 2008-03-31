@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/03/07
+ * pb 2008/03/31
  */
 
 #ifndef _Strings_h_
@@ -125,6 +125,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, int strategy, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews);
+bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation);
 int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAdultOutput,
 	double rankingSpreading, int strategy, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, int warnIfStalled);

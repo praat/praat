@@ -1224,6 +1224,23 @@ INTRO (L"A command to ask the selected @OTGrammar object to evaluate a number of
 	"with every input form. The result is a @Distributions object. See @@OT learning 2.9. Output distributions@.")
 MAN_END
 
+MAN_BEGIN (L"OTGrammar & PairDistribution: Find positive weights...", L"ppgb", 20080331)
+INTRO (L"A command to change the weights of the selected @OTGrammar on the basis of the language data "
+	"in the selected @PairDistribution.")
+NORMAL (L"This command works only if the decision strategy of the selected OTGrammar is "
+	"HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG. Also, "
+	"the selected PairDistribution must contain exactly one non-zero-probability output for every possible input of the grammar.")
+NORMAL (L"The procedure follows the linear programming method by @@Pater, Potts & Bhatt (2007)@. "
+	"This method tries to find a special correct weighting of the constraints, "
+	"namely one that minimizes the sum of the constraint weights.")
+ENTRY (L"Settings")
+TAG (L"%%Weight floor% (standard value: 1.0)")
+DEFINITION (L"After the command finishes, every weight will have at least this value.")
+TAG (L"%%Margin of separation% (standard value: 1.0)")
+DEFINITION (L"After the command finishes, the harmony of every optimal (and correct) output candidate "
+	"will be at least this much greater than the harmony of any competitor in the same tableau.")
+MAN_END
+
 MAN_BEGIN (L"OTGrammar & Strings: Inputs to outputs...", L"ppgb", 19981230)
 INTRO (L"An action that creates a @Strings object from a selected @OTGrammar and a selected @Strings.")
 NORMAL (L"The selected Strings object is considered as a list of inputs to the OTGrammar grammar.")

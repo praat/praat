@@ -1,6 +1,6 @@
 /* RunnerMFC.c
  *
- * Copyright (C) 2001-2007 Paul Boersma
+ * Copyright (C) 2001-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/01/19 fixed a bug that caused an assertion violation when the oops button was pressed after the experiment finished
  * pb 2006/02/23 repaired small memory leak in destroy()
  * pb 2007/08/12 wchar_t
+ * pb 2008/03/31 correct error message when the second of multiple experiments cannot start
  */
 
 #include "RunnerMFC.h"
@@ -340,7 +341,11 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		}
 		if (my iexperiment < my experiments -> size) {
 			my iexperiment ++;
-			RunnerMFC_startExperiment (me);
+			if (! RunnerMFC_startExperiment (me)) {
+				Melder_flushError (NULL);
+				forget (me);
+				return;
+			}
 		}
 	}
 }

@@ -21,6 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
  * pb 2008/03/27 binary rather than linear searches
+ * pb 2008/03/31 corrected binary search (case n=1)
  */
 
 #include "AnyTier.h"
@@ -78,8 +79,9 @@ long AnyTier_timeToLowIndex (I, double time) {
 	double tleft = points [ileft] -> time;
 	if (time < tleft) return 0;   // offleft
 	double tright = points [iright] -> time;
-	if (time > tright) return iright;
-	Melder_assert (time >= tleft && time <= tright);
+	if (time >= tright) return iright;
+	Melder_assert (time >= tleft && time < tright);
+	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
 		double tmid = points [imid] -> time;
@@ -105,10 +107,11 @@ long AnyTier_timeToHighIndex (I, double time) {
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
 	double tleft = points [ileft] -> time;
-	if (time < tleft) return 1;
+	if (time <= tleft) return 1;
 	double tright = points [iright] -> time;
 	if (time > tright) return iright + 1;   // offright
-	Melder_assert (time >= tleft && time <= tright);
+	Melder_assert (time > tleft && time <= tright);
+	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
 		double tmid = points [imid] -> time;
@@ -147,6 +150,7 @@ long AnyTier_timeToNearestIndex (I, double time) {
 	double tright = points [iright] -> time;
 	if (time >= tright) return iright;
 	Melder_assert (time > tleft && time < tright);
+	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
 		double tmid = points [imid] -> time;
