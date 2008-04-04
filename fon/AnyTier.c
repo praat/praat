@@ -179,7 +179,10 @@ long AnyTier_hasPoint (I, double t) {
 	if (t < tleft) return 0;   // offleft
 	double tright = points [iright] -> time;
 	if (t > tright) return 0;   // offright
-	Melder_assert (t >= tleft && t <= tright);
+	if (t == tleft) return 1;
+	if (t == tright) return iright;
+	Melder_assert (t > tleft && t < tright);
+	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
 		double tmid = points [imid] -> time;

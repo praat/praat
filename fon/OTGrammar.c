@@ -1104,6 +1104,13 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG);
+	if (Melder_debug != 0) {
+		/*
+		 * Perhaps override the standard update rule.
+		 */
+		if (Melder_debug == 26) multiplyStepByNumberOfViolations = false;   // OT-GLA
+		else if (Melder_debug == 27) multiplyStepByNumberOfViolations = true;   // HG-GLA
+	}
 	if (strategy == OTGrammar_SYMMETRIC_ONE) {
 		long icons = NUMrandomInteger (1, my numberOfConstraints);
 		OTGrammarConstraint constraint = & my constraints [icons];

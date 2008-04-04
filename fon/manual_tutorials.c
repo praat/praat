@@ -26,6 +26,8 @@ void manual_tutorials_init (ManPages me) {
 MAN_BEGIN (L"What's new?", L"ppgb", 20080331)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.19# (April 4, 2008)")
+LIST_ITEM (L"\\bu TextGrid window: corrected a bug introduced in 5.0.17 that could cause Praat to crash when handling point tiers.")
 NORMAL (L"##5.0.18# (March 31, 2008)")
 LIST_ITEM (L"\\bu Manipulation window: corrected a bug introduced in 5.0.17 that caused Praat to crash when adding the first duration point.")
 LIST_ITEM (L"\\bu Sound: added ##Extract all channels#.")

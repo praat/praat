@@ -4449,25 +4449,25 @@
 		23E5CB6009A22902004E41D5 /* sys/melder */ = {
 			isa = PBXGroup;
 			children = (
-				23E5CB6209A22902004E41D5 /* melder.h */,
 				2356B6670D039D3F00A12FAE /* melder_enums.h */,
-				23EE67C709F2E62700E660F9 /* melder_ftoa.c */,
-				23EE67C509F2E61200E660F9 /* melder_atof.c */,
-				230E41D30B0A833A000CCE15 /* melder_error.c */,
-				2339E6FC0B2C77CB00B6B6A7 /* melder_alloc.c */,
+				23E5CB6209A22902004E41D5 /* melder.h */,
 				23E5CB6109A22902004E41D5 /* melder.c */,
-				23AC02E90C2195F300990540 /* melder_encodings.c */,
-				2339E2E00B2618D000B6B6A7 /* melder_strings.c */,
-				2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */,
+				2339E6FC0B2C77CB00B6B6A7 /* melder_alloc.c */,
+				23EE67C509F2E61200E660F9 /* melder_atof.c */,
 				23E5CB6309A22902004E41D5 /* melder_audio.c */,
 				23E5CB6409A22902004E41D5 /* melder_audiofiles.c */,
 				23A9342D0D110ED900D51876 /* melder_console.c */,
 				23E5CB6509A22902004E41D5 /* melder_debug.c */,
+				23AC02E90C2195F300990540 /* melder_encodings.c */,
+				230E41D30B0A833A000CCE15 /* melder_error.c */,
 				23E5CB6609A22902004E41D5 /* melder_files.c */,
+				2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */,
+				23EE67C709F2E62700E660F9 /* melder_ftoa.c */,
+				2343BF7F0BAC1526003D66E8 /* melder_quantity.c */,
+				2339E2E00B2618D000B6B6A7 /* melder_strings.c */,
 				23E5CB6709A22902004E41D5 /* melder_sysenv.c */,
 				23660A620D510E4600FB6B8B /* melder_time.c */,
 				23EE67C909F2E63900E660F9 /* melder_token.c */,
-				2343BF7F0BAC1526003D66E8 /* melder_quantity.c */,
 			);
 			name = sys/melder;
 			sourceTree = "<group>";
@@ -7254,7 +7254,8 @@
 				REZ_SUPPRESS_REDECLARED_RESOURCE_TYPE_WARNINGS = NO;
 				SDKROOT = "";
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
-				STRIP_INSTALLED_PRODUCT = YES;
+				SEPARATE_STRIP = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = "-Wno-long-double";
 			};
 			name = Configuration1;
