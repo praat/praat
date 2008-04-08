@@ -1,6 +1,6 @@
 /* Thing.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2004/10/16 structThing -> theStructThing etc.
  * pb 2006/12/10 info method can contain only MelderInfo_writeXXX
  * pb 2007/06/11 wchar_t
+ * pb 2008/04/04 Thing_infoWithId
  */
 
 #include <stdarg.h>
@@ -181,12 +182,18 @@ void * _Thing_check (I, void *klas, const char *fileName, int line) {
 	return me;
 }
 
-void Thing_info (I) {
+void Thing_infoWithId (I, unsigned long id) {
 	iam (Thing);
 	Melder_clearInfo ();
 	MelderInfo_open ();
+	if (id != 0) MelderInfo_writeLine2 (L"Object id: ", Melder_integer (id));
 	our info (me);   /* This calls a set of MelderInfo_writeXXX. */
 	MelderInfo_close ();
+}
+
+void Thing_info (I) {
+	iam (Thing);
+	Thing_infoWithId (me, 0);
 }
 
 wchar_t * Thing_getName (I) { iam (Thing); return my name; }

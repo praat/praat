@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2006/12/10 update on "info" documentation
  * pb 2007/06/11 wchar_t
  * pb 2007/10/09 removed char
+ * pb 2008/04/04 Thing_infoWithId
  */
 
 /* The root class of all objects. */
@@ -96,6 +97,7 @@ int Thing_subclass (void *klas, void *ancestor);
 */
 
 void Thing_info (I);
+void Thing_infoWithId (I, unsigned long id);
 
 #define new(klas)  (klas) Thing_new ((void *) class##klas)
 /*

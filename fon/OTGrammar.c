@@ -59,6 +59,7 @@
  * pb 2008/03/27 Exponential HG: reset average weight to zero after every change
  * pb 2008/03/28 Exponential HG: set update rule to HG-GLA rather than OT-GLA
  * pb 2008/03/31 OTGrammar_PairDistribution_findPositiveWeights
+ * pb 2008/04/08 made (OTGrammar & Distributions) learnFromPartialOutputs and getFractionCorrect five times faster
  */
 
 #include "OTGrammar.h"
@@ -495,7 +496,8 @@ int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, 
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			if (wcsstr (tableau -> candidates [icand]. output, partialOutput)) {   /* T&S idea of surface->overt mapping */
+			OTGrammarCandidate cand = & tableau -> candidates [icand];
+			if (wcsstr (cand -> output, partialOutput)) {   /* T&S idea of surface->overt mapping */
 				if (itab_best == 0) {
 					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
 					icand_best = icand;
@@ -521,6 +523,46 @@ int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, 
 		}
 	}
 	if (itab_best == 0) error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.")
+end:
+	if (bestTableau != NULL) *bestTableau = itab_best;
+	if (bestCandidate != NULL) *bestCandidate = icand_best;
+	iferror return Melder_error1 (L"(OTGrammar: Get interpretive parse:) Not performed.");
+	return 1;
+}
+
+static int OTGrammar_getInterpretiveParse_opt (OTGrammar me, long ipartialOutput, long *bestTableau, long *bestCandidate) {
+	long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		OTGrammarTableau tableau = & my tableaus [itab];
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			OTGrammarCandidate cand = & tableau -> candidates [icand];
+			Melder_assert (cand -> partialOutputMatches != NULL);
+			if (cand -> partialOutputMatches [ipartialOutput]) {   /* T&S idea of surface->overt mapping */
+				if (itab_best == 0) {
+					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
+					icand_best = icand;
+					numberOfBestCandidates = 1;
+				} else {
+					int comparison = OTGrammar_compareCandidates (me, itab, icand, itab_best, icand_best);
+					if (comparison == -1) {
+						itab_best = itab;   /* The current input/output pair is the best candidate found so far. */
+						icand_best = icand;
+						numberOfBestCandidates = 1;
+					} else if (comparison == 0) {
+						numberOfBestCandidates += 1;   /* The current input/output pair is equally good as the best found before. */
+						/*
+						 * Give all candidates that are equally good an equal chance to become the winner.
+						 */
+						if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+							itab_best = itab;
+							icand_best = icand;
+						}
+					}
+				}
+			}
+		}
+	}
+	Melder_assert (itab_best != 0);
 end:
 	if (bestTableau != NULL) *bestTableau = itab_best;
 	if (bestCandidate != NULL) *bestCandidate = icand_best;
@@ -1077,9 +1119,8 @@ static double learningStep (double mean, double relativeSpreading) {
 static void OTGrammar_honourLocalRankings (OTGrammar me, double meanLearningStep, double relativeStdevLearningStep, int *grammarHasChanged) {
 	int improved;
 	do {
-		long irank;
 		improved = FALSE;
-		for (irank = 1; irank <= my numberOfFixedRankings; irank ++) {
+		for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
 			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
 			OTGrammarConstraint higher = & my constraints [fixedRanking -> higher], lower = & my constraints [fixedRanking -> lower];
 			while (higher -> ranking <= lower -> ranking) {
@@ -1669,6 +1710,47 @@ end:
 	return 1;
 }
 
+static int OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartialAdultOutput,
+	double rankingSpreading, int strategy, int honourLocalRankings,
+	double meanLearningStep, double relativeStdevLearningStep, long numberOfChews, int warnIfStalled)
+{
+	long ichew, assumedAdultInputTableau, assumedAdultCandidate;
+	OTGrammar_newDisharmonies (me, rankingSpreading);
+
+	if (numberOfChews > 1 && strategy == OTGrammar_EDCD) {
+		OTGrammar_save (me);
+	}
+	for (ichew = 1; ichew <= numberOfChews; ichew ++) {
+		int grammarHasChanged;
+		OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
+		OTGrammar_learnOne (me,
+			my tableaus [assumedAdultInputTableau]. input,
+			my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
+			rankingSpreading, strategy, honourLocalRankings,
+			meanLearningStep, relativeStdevLearningStep, FALSE, warnIfStalled, & grammarHasChanged); cherror
+		if (! grammarHasChanged) goto end;
+	}
+	if (numberOfChews > 1 && strategy == OTGrammar_EDCD && ichew > numberOfChews) {
+		/*
+		 * Is the partial output form grammatical by now?
+		 */
+		OTGrammarCandidate learnerCandidate;
+		OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
+		learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
+		if (! wcsequ (learnerCandidate -> output,
+		    my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
+		{   /* Still ungrammatical? */
+			/*
+			 * Backtrack as in Tesar & Smolensky 2000:69.
+			 */
+			OTGrammar_restore (me);
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
 static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, long numberOfData) {
 	long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   /* E.g. 0, 20, 40, ... */
 	OTHistory thee = new (OTHistory); cherror
@@ -1743,31 +1825,84 @@ end:
 	return 1;
 }
 
+static void OTGrammar_opt_deleteOutputMatching (OTGrammar me) {
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		OTGrammarTableau tab = & my tableaus [itab];
+		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+			OTGrammarCandidate cand = & tab -> candidates [icand];
+			cand -> numberOfPotentialPartialOutputsMatching = 0;
+			NUMbvector_free (cand -> partialOutputMatches, 1);
+			cand -> partialOutputMatches = NULL;
+		}
+	}
+}
+
+static int OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Distributions thee, long columnNumber) {
+	if (columnNumber > thy numberOfColumns)
+		error3 (L"No column ", Melder_integer (columnNumber), L" in Distributions.")
+	if (thy numberOfRows < 1)
+		error1 (L"No candidates in Distributions.")
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		OTGrammarTableau tab = & my tableaus [itab];
+		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+			OTGrammarCandidate cand = & tab -> candidates [icand];
+			cand -> numberOfPotentialPartialOutputsMatching = thy numberOfRows;
+			cand -> partialOutputMatches = NUMbvector (1, thy numberOfRows); cherror
+		}
+	}
+	for (long ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
+		if (thy data [ipartialOutput] [columnNumber] > 0.0) {
+			wchar_t *partialOutput = thy rowLabels [ipartialOutput];
+			bool foundPartialOutput = false;
+			for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+				OTGrammarTableau tab = & my tableaus [itab];
+				for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+					OTGrammarCandidate cand = & tab -> candidates [icand];
+					if (wcsstr (cand -> output, partialOutput)) {
+						foundPartialOutput = true;
+						cand -> partialOutputMatches [ipartialOutput] = true;
+					}
+				}
+			}
+			if (! foundPartialOutput)
+				error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.")
+		}
+	}
+end:
+	iferror {
+		OTGrammar_opt_deleteOutputMatching (me);
+		return 0;
+	}
+	return 1;
+}
+
 int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, int strategy, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out)
 {
-	long iplasticity, ireplication, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
-	double plasticity = initialPlasticity;
+	const long numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	OTHistory history = NULL;
-	Graphics graphics = Melder_monitor1 (0.0, L"Learning with limited knowledge...");
+
+	OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
+	const Graphics graphics = Melder_monitor1 (0.0, L"Learning with limited knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
 	}
 	if (storeHistoryEvery) {
 		history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData); cherror
 	}
-	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
-		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-			wchar_t *partialOutput;
-			if (! Distributions_peek (thee, columnNumber, & partialOutput)) goto end;
+	long idatum = 0;
+	double plasticity = initialPlasticity;
+	for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
+		for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
+			long ipartialOutput;
+			if (! Distributions_peek_opt (thee, columnNumber, & ipartialOutput)) goto end;
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
-				long icons;
 				Graphics_setWindow (graphics, 0, numberOfData, 50, 150);
-				for (icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
+				for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
 					Graphics_setColour (graphics, icons + 1);
 					Graphics_line (graphics, idatum, my constraints [icons]. ranking,
 						idatum, my constraints [icons]. ranking+1);
@@ -1775,16 +1910,17 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 				Graphics_flushWs (graphics);   /* Because drawing is faster than progress loop. */
 			}
 			if (! Melder_monitor6 ((double) idatum / numberOfData,
-				L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ", partialOutput))
+				L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ",
+				thy rowLabels [ipartialOutput]))
 			{
 				Melder_flushError ("Only %ld partial outputs out of %ld were processed.", idatum - 1, numberOfData);
 				goto end;
 			}
-			OTGrammar_learnOneFromPartialOutput (me, partialOutput,
+			OTGrammar_learnOneFromPartialOutput_opt (me, ipartialOutput,
 				evaluationNoise, strategy, honourLocalRankings,
 				plasticity, relativePlasticityNoise, numberOfChews, FALSE);   // No warning if stalled: RIP form is allowed to be harmonically bounded.
 			if (history) {
-				OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, partialOutput);
+				OTGrammar_updateHistory (me, history, storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
 			}
 			cherror
 		}
@@ -1792,6 +1928,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 	}
 end:
 	Melder_monitor1 (1.0, NULL);
+	OTGrammar_opt_deleteOutputMatching (me);
 	if (history_out) *history_out = history;   /* Even (or especially) in case of error, so that we can inspect. */
 	iferror return Melder_error1 (L"OTGrammar did not complete learning from partial outputs.");
 	if (history) {
@@ -1803,13 +1940,14 @@ end:
 int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs, double *fractionCorrect)
 {
-	long ireplication, numberOfCorrect = 0, inputTableau;
-	for (ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
+	long numberOfCorrect = 0;
+
+	for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
 		wchar_t *input, *adultOutput;
 		OTGrammarCandidate learnerCandidate;
 		PairDistribution_peekPair (thee, & input, & adultOutput); cherror
 		OTGrammar_newDisharmonies (me, evaluationNoise);
-		inputTableau = OTGrammar_getTableau (me, input); cherror
+		long inputTableau = OTGrammar_getTableau (me, input); cherror
 		learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];
 		if (wcsequ (learnerCandidate -> output, adultOutput))
 			numberOfCorrect ++;
@@ -1823,18 +1961,21 @@ end:
 int OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, long numberOfInputs, double *fractionCorrect)
 {
-	long ireplication, numberOfCorrect = 0, assumedAdultInputTableau, assumedAdultCandidate;
-	for (ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
-		wchar_t *partialOutput;
-		OTGrammarCandidate learnerCandidate;
-		Distributions_peek (thee, columnNumber, & partialOutput); cherror
+	long numberOfCorrect = 0;
+
+	OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
+	for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
+		long ipartialOutput;
+		Distributions_peek_opt (thee, columnNumber, & ipartialOutput); cherror
 		OTGrammar_newDisharmonies (me, evaluationNoise);
-		OTGrammar_getInterpretiveParse (me, partialOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
-		learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
+		long assumedAdultInputTableau, assumedAdultCandidate;
+		OTGrammar_getInterpretiveParse_opt (me, ipartialOutput, & assumedAdultInputTableau, & assumedAdultCandidate); cherror
+		OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
 		if (wcsequ (learnerCandidate -> output, my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
 			numberOfCorrect ++;
 	}
 end:
+	OTGrammar_opt_deleteOutputMatching (me);
 	iferror return Melder_error1 (L"(OTGrammar_Distributions_getFractionCorrect:) Not completed.");
 	*fractionCorrect = (double) numberOfCorrect / numberOfInputs;
 	return 1;

@@ -29,6 +29,7 @@
  * pb 2006/02/23 repaired small memory leak in destroy()
  * pb 2007/08/12 wchar_t
  * pb 2008/03/31 correct error message when the second of multiple experiments cannot start
+ * pb 2008/04/08 disable the OK key if no response has been given yet
  */
 
 #include "RunnerMFC.h"
@@ -360,7 +361,10 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		ExperimentMFC experiment = my data;
 		long iresponse;
-		if (experiment -> ok_key != NULL && experiment -> ok_key [0] == event -> key) {
+		if (experiment -> ok_key != NULL && experiment -> ok_key [0] == event -> key &&
+			experiment -> responses [experiment -> trial] != 0 &&
+			(experiment -> numberOfGoodnessCategories == 0 || experiment -> goodnesses [experiment -> trial] != 0))
+		{
 			do_ok (me);
 		} else if (experiment -> replay_key != NULL && experiment -> replay_key [0] == event -> key &&
 			my numberOfReplays < experiment -> maximumNumberOfReplays)

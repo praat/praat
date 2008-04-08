@@ -55,6 +55,8 @@ the behaviour of that program changes in the following way:
 25: read crooked Manipulation files (January 2008)
 26: force OT-GLA
 27: force HG-GLA
+28: don't use GSL in NUMfisherQ
+29: use GSL in NUMinvFisherQ
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

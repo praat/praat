@@ -1,6 +1,6 @@
 /* ExperimentMFC.c
  *
- * Copyright (C) 2001-2007 Paul Boersma
+ * Copyright (C) 2001-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/26 added font size; version 5
  * pb 2007/10/01 can write as encoding
+ * pb 2008/04/08 in ExtractResults, check that a resonse was given
  */
 
 #include "ExperimentMFC.h"
@@ -370,6 +371,7 @@ ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 		} else {
 			thy result [trial]. stimulus = Melder_wcsdup (my stimulus [my stimuli [trial]]. name); cherror
 		}
+		if (my responses [trial] < 1) error3 (L"No response for trial ", Melder_integer (trial), L".")
 		thy result [trial]. response = Melder_wcsdup (my response [my responses [trial]]. name); cherror
 		thy result [trial]. goodness = my goodnesses [trial];
 	}

@@ -101,7 +101,7 @@ DIRECT (Info)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot query.");
 	if (theCurrentPraat -> totalSelection > 1)
 		return Melder_error1 (L"Selection changed!\nCannot query more than one object at a time.");
-	WHERE (SELECTED) Thing_info (OBJECT);
+	WHERE (SELECTED) Thing_infoWithId (OBJECT, ID);
 END
 
 DIRECT (Inspect)

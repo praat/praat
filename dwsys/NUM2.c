@@ -70,6 +70,7 @@
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_erf.h"
 #include "gsl_sf_trig.h"
+#include "gsl_cdf.h"
 
 #define my me ->
 
@@ -2315,7 +2316,13 @@ double NUMfisherP (double f, double df1, double df2)
 double NUMfisherQ (double f, double df1, double df2)
 {
 	if (f < 0 || df1 < 1 || df2 < 1) return NUMundefined;
-	return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
+	if (Melder_debug == 28) {
+		return NUMincompleteBeta (0.5 * df2, 0.5 * df1, df2 / (df2 + f * df1));
+	} else {
+		double result = gsl_cdf_fdist_Q (f, df1, df2);
+		if (isnan (result)) return NUMundefined;
+		return result;
+	}
 }
 
 double NUMinvGaussQ (double p)
@@ -2408,31 +2415,29 @@ static double fisherQ_func (double x, void *voidParams)
 	return q == NUMundefined ? NUMundefined : q - params -> p;
 }
 
-/* gsl-1.10
-double NUMinvFisherQ2 (double p, double df1, double df2)
-{
-return gsl_cdf_fdist_Pinv (p, df1, df2);
-
-}*/
-
 double NUMinvFisherQ (double p, double df1, double df2)
 {
-	struct pdf2_struct params;
-	double top = 1000.0;
 	if (p <= 0.0 || p > 1.0 || df1 < 1 || df2 < 1) return NUMundefined;
-	if (p == 1.0) return 0.0;
-	params. p = p;
-	params. df1 = df1;
-	params. df2 = df2;
-	for (;;)
-	{
-		double q = NUMfisherQ (top, df1, df2);
-		if (q == NUMundefined) return NUMundefined;
-		if (q < p) break;
-		if (top > 0.9e300) return NUMundefined;
-		top *= 1e9;
+	if (Melder_debug == 29) {
+		//if (p == 1.0) return 0.0;
+		return gsl_cdf_fdist_Qinv (p, df1, df2);
+	} else {
+		struct pdf2_struct params;
+		double top = 1000.0;
+		if (p == 1.0) return 0.0;
+		params. p = p;
+		params. df1 = df1;
+		params. df2 = df2;
+		for (;;)
+		{
+			double q = NUMfisherQ (top, df1, df2);
+			if (q == NUMundefined) return NUMundefined;
+			if (q < p) break;
+			if (top > 0.9e300) return NUMundefined;
+			top *= 1e9;
+		}
+		return NUMridders (fisherQ_func, 0.0, p > 0.5 ? 2.2 : top, & params);
 	}
-	return NUMridders (fisherQ_func, 0.0, p > 0.5 ? 2.2 : top, & params);
 }
 
 double NUMbeta2 (double z, double w) {

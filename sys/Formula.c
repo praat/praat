@@ -48,6 +48,7 @@
 
 #include <ctype.h>
 #include <time.h>
+#include "gsl_cdf.h"
 #include "NUM.h"
 #include "NUM2.h"
 #include "regularExp.h"

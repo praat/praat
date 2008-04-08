@@ -139,7 +139,7 @@ gsl_cdf_beta_Pinv (const double P, const double a, const double b)
   start:
     dP = P - gsl_cdf_beta_P (x, a, b);
     phi = gsl_ran_beta_pdf (x, a, b);
-
+//fprintf (stderr, "x %.17g dP %.17g phi %.17g\n", x, dP, phi);
     if (dP == 0.0 || n++ > 64)
       goto end;
 
@@ -169,6 +169,7 @@ gsl_cdf_beta_Pinv (const double P, const double a, const double b)
         {
           x = sqrt (x) * sqrt (mean);   /* try a new starting point */
         }
+//fprintf (stderr, "step %.17g step0 %.17g step1 %.17g mean %.17g\n", step, step0, step1, mean);
 
       if (fabs (step0) > 1e-10 * x)
         goto start;
@@ -178,6 +179,7 @@ gsl_cdf_beta_Pinv (const double P, const double a, const double b)
 
     if (fabs(dP) > GSL_SQRT_DBL_EPSILON * P)
       {
+	  //fprintf (stderr, "dP %.17g sqrteps %.17g P %.17g sqrtepsP %.17g", dP, GSL_SQRT_DBL_EPSILON, P, GSL_SQRT_DBL_EPSILON * P);
         GSL_ERROR_VAL("inverse failed to converge", GSL_EFAILED, GSL_NAN);
       }
 

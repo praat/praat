@@ -257,7 +257,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 					xyDC [i + 3] - xyDC [i + 1], dy);
 				ipath += 9;
 				i += 18;
-			} else {
+			} else if (dx != 0 || dy != 0 || i < 4) {
 				my printf (my file, "%d %d L\n", dx, dy);
 			}
 			if (++ ipath >= POSTSCRIPT_MAXPATH && i != nn - 2) {

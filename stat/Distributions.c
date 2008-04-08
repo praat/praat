@@ -1,6 +1,6 @@
 /* Distributions.c
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/07/28 Distributions_peek
  * pb 2006/12/10 MelderInfo
  * pb 2007/08/12 wchar_t
+ * pb 2008/04/08 Distributions_peek_opt
  */
 
 #include "Distributions.h"
@@ -65,6 +66,33 @@ int Distributions_peek (Distributions me, long column, wchar_t **string) {
 	*string = my rowLabels [irow];
 	if (! *string)
 		error3 (L"No string in row ", Melder_integer (irow), L".")
+end:
+	iferror return Melder_error1 (L"(Distributions_peek:) Not performed.");
+	return 1;
+}
+
+int Distributions_peek_opt (Distributions me, long column, long *number) {
+	double total = 0.0;
+	long irow;
+	if (column > my numberOfColumns)
+		error3 (L"No column ", Melder_integer (column), L".")
+	if (my numberOfRows < 1)
+		error1 (L"No candidates.")
+	for (irow = 1; irow <= my numberOfRows; irow ++) {
+		total += my data [irow] [column];
+	}
+	if (total <= 0.0)
+		error1 (L"Column total not positive.")
+	do {
+		double rand = NUMrandomUniform (0, total), sum = 0.0;
+		for (irow = 1; irow <= my numberOfRows; irow ++) {
+			sum += my data [irow] [column];
+			if (rand <= sum) break;
+		}
+	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
+	if (my rowLabels [irow] == NULL)
+		error3 (L"No string in row ", Melder_integer (irow), L".")
+	*number = irow;
 end:
 	iferror return Melder_error1 (L"(Distributions_peek:) Not performed.");
 	return 1;
