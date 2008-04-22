@@ -1,6 +1,6 @@
 /* OTMulti.c
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/10/01 leak and constraint plasticity
  * pb 2007/10/01 can write as encoding
  * pb 2007/11/14 drawTableau: corrected direction of arrows for positive satisfactions
+ * pb 2008/04/14 OTMulti_getConstraintIndexFromName
  */
 
 #include "OTMulti.h"
@@ -146,6 +147,14 @@ class_methods (OTMulti, Data)
 	class_method_local (OTMulti, writeBinary)
 	class_method_local (OTMulti, readBinary)
 class_methods_end
+
+long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar_t *name) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		if (Melder_wcsequ (my constraints [icons]. name, name))
+			return icons;
+	}
+	return 0;
+}
 
 void OTMulti_sort (OTMulti me) {
 	long icons, jcons;

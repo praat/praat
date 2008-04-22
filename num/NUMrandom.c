@@ -29,7 +29,7 @@
 */
 
 #include "NUM.h"
-#include "melder.h"
+//#include "melder.h"
 #include <time.h>
 
 /*

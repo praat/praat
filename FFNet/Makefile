@@ -1,10 +1,11 @@
 # Makefile of the library "FFNet"
 # David Weenink 19990223
+# djmw 20081011 Latest modification.
 
 
 include ../makefile.defs
 
-CFLAGS =  -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
+CFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 all: libFFNet.a
 
@@ -17,7 +18,7 @@ OBJECTS = FFNet.o \
 	FFNet_Pattern_Categories.o \
 	praat_FFNet_init.o manual_FFNet.o
 
-$(OBJECTS): *.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
 
 libFFNet.a: $(OBJECTS)
 	touch libFFNet.a

@@ -40,11 +40,11 @@
  * sdk 2008/01/14 GTK
  * pb 2008/02/01 made sure that praat_dataChanged can be called at error time
  * pb 2008/03/13 Windows: better file dropping
+ * pb 2008/04/09 removed explicit GSL
  */
 
 #include "melder.h"
 #include "NUMmachar.h"
-#include "gsl_errno.h"
 #include <ctype.h>
 #include <stdarg.h>
 #if defined (UNIX) || defined (macintosh)
@@ -913,7 +913,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Initialize numerical libraries.
 	*/
 	NUMmachar ();
-	gsl_set_error_handler_off ();
+	NUMinit ();
 	/*
 		Remember the current directory. Only useful for scripts run from batch.
 	*/

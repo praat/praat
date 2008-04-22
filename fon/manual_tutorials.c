@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080408)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080422)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.21# (April 22, 2008)")
+LIST_ITEM (L"\\bu Annotating with Cyrillic, Arabic, Chinese, Korean characters, and many more (on Macintosh and Windows).")
 NORMAL (L"##5.0.20# (April 8, 2008)")
 LIST_ITEM (L"\\bu @ExperimentMFC: prevented the OK key from working if no response (and goodness choice) had been made.")
 LIST_ITEM (L"\\bu OT learning: sped up learning from partial outputs by a factor of five or more.")

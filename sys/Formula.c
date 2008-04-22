@@ -44,11 +44,11 @@
  * pb 2007/06/09 wchar_t for Interpreter
  * pb 2007/11/17 implemented self0$
  * pb 2008/02/01 object
+ * pb 2008/04/09 removed explicit GSL
  */
 
 #include <ctype.h>
 #include <time.h>
-#include "gsl_cdf.h"
 #include "NUM.h"
 #include "NUM2.h"
 #include "regularExp.h"

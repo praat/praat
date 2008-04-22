@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/02/08
+ * pb 2008/04/18
  */
 
 #ifndef _Graphics_h_
@@ -29,9 +29,11 @@
 
 typedef struct {
 	unsigned char first, second, link;
-	short style, size, code, baseline, kar;
+	short style, size, code, baseline;
+	wchar_t kar;
 	double width;
 	union { long integer; const char *string; } font;
+	int cell, line, run;
 } _Graphics_widechar;
 
 #include "Gui.h"

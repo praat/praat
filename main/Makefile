@@ -1,8 +1,8 @@
 # Makefile of the 'main' routines.
-# Paul Boersma, March 9, 2005
+# Paul Boersma, April 9, 2008
 
 include ../makefile.defs
-CFLAGS = -I ../sys -I ../fon
+CFLAGS = -I ../num -I ../sys -I ../fon
 
 main_*.o: ../sys/praat.h ../fon/praat_version.h
 

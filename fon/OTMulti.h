@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/10/01
+ * pb 2008/04/14
  */
 
 #ifndef _Data_h_
@@ -43,6 +43,8 @@
 
 #define OTMulti_methods Data_methods
 oo_CLASS_CREATE (OTMulti, Data);
+
+long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar_t *name);
 
 void OTMulti_checkIndex (OTMulti me);
 

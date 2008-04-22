@@ -92,7 +92,7 @@ Vowel Vowel_create_twoFormantSchwa (double duration)
 	fp -> formant [1] = 1500;
 	fp -> bandwidth[1] = 150;
 	fp -> numberOfFormants = 2;
-	Collection_addItem (my ft -> points, fp) && RealTier_addPoint (my pt, duration, 140);
+	if (Collection_addItem (my ft -> points, fp)) RealTier_addPoint (my pt, duration, 140);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;

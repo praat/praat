@@ -1,7 +1,7 @@
 # Makefile for library glpk.
-# Paul Boersma, March 31, 2008
+# Paul Boersma, April 11, 2008
 
-include ../makefile.defs
+include ../../makefile.defs
 
 CFLAGS = 
 

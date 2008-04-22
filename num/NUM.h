@@ -30,10 +30,15 @@
  * pb 2007/07/21 readText API change
  * pb 2007/08/10 NUMsort_strW
  * pb 2008/01/19 double
+ * pb 2008/04/09 40-digit constants
+ * pb 2008/04/09 NUMinit
+ * pb 2008/04/12 NUMlinprog
  */
 
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
+
+void NUMinit (void);
 
 /********** Inherit all the ANSI routines from math.h **********/
 
@@ -66,26 +71,70 @@
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
 
-/********** Constants **********/
-
-#define NUMe  2.71828182845904523536028747135
-#define NUMlog2e  1.44269504088896340735992468100
-#define NUMlog10e  0.43429448190325182765112891892
-#define NUMln2	  0.69314718055994530941723212146
-#define NUMln10  2.30258509299404568401799145468
-#define NUMpi  3.14159265358979323846264338328
-#define NUMpi_2  1.57079632679489661923132169164
-#define NUMpi_4  0.78539816339744830961566084582
-#define NUM1_pi  0.31830988618379067153776752675
-#define NUM2_pi  0.63661977236758134307553505349
-#define NUMsqrtpi  1.77245385090551602729816748334
-#define NUM2_sqrtpi  1.12837916709551257389615890312
-#define NUMlnpi  1.14472988584940017414342735135
-#define NUMsqrt2  1.41421356237309504880168872421
-#define NUMsqrt1_2  0.70710678118654752440084436210
-#define NUMsqrt3  1.73205080756887729352744634151
-#define NUM_euler  0.57721566490153286060651209008
-#define NUM_goldenSection  0.618033988749895
+/********** Constants **********
+ * Forty-digit constants computed by e.g.:
+ *    bc -l
+ *       scale=42
+ *       print e(1)
+ * Then rounding away the last two digits.
+ */
+//      print e(1)
+#define NUMe  2.7182818284590452353602874713526624977572
+//      print 1/l(2)
+#define NUMlog2e  1.4426950408889634073599246810018921374266
+//      print l(10)/l(2)
+#define NUMlog2_10  3.3219280948873623478703194294893901758648
+//      print 1/l(10)
+#define NUMlog10e  0.4342944819032518276511289189166050822944
+//      print l(2)/l(10)
+#define NUMlog10_2  0.3010299956639811952137388947244930267682
+//      print l(2)
+#define NUMln2  0.6931471805599453094172321214581765680755
+//      print l(10)
+#define NUMln10  2.3025850929940456840179914546843642076011
+//      print a(1)*8
+#define NUM2pi  6.2831853071795864769252867665590057683943
+//      print a(1)*4
+#define NUMpi  3.1415926535897932384626433832795028841972
+//      print a(1)*2
+#define NUMpi_2  1.5707963267948966192313216916397514420986
+//      print a(1)
+#define NUMpi_4  0.7853981633974483096156608458198757210493
+//      print 0.25/a(1)
+#define NUM1_pi  0.3183098861837906715377675267450287240689
+//      print 0.5/a(1)
+#define NUM2_pi  0.6366197723675813430755350534900574481378
+//      print sqrt(a(1)*4)
+#define NUMsqrtpi  1.7724538509055160272981674833411451827975
+//      print sqrt(a(1)*8)
+#define NUMsqrt2pi  2.5066282746310005024157652848110452530070
+//      print 1/sqrt(a(1)*8)
+#define NUM1_sqrt2pi  0.3989422804014326779399460599343818684759
+//      print 1/sqrt(a(1))
+#define NUM2_sqrtpi  1.1283791670955125738961589031215451716881
+//      print l(a(1)*4)
+#define NUMlnpi  1.1447298858494001741434273513530587116473
+//      print sqrt(2)
+#define NUMsqrt2  1.4142135623730950488016887242096980785697
+//      print sqrt(0.5)
+#define NUMsqrt1_2  0.7071067811865475244008443621048490392848
+//      print sqrt(3)
+#define NUMsqrt3  1.7320508075688772935274463415058723669428
+//      print sqrt(5)
+#define NUMsqrt5  2.2360679774997896964091736687312762354406
+//      print sqrt(6)
+#define NUMsqrt6  2.4494897427831780981972840747058913919659
+//      print sqrt(7)
+#define NUMsqrt7  2.6457513110645905905016157536392604257102
+//      print sqrt(8)
+#define NUMsqrt8  2.8284271247461900976033774484193961571393
+//      print sqrt(10)
+#define NUMsqrt10  3.1622776601683793319988935444327185337196
+//      print sqrt(5)/2-0.5
+#define NUM_goldenSection  0.6180339887498948482045868343656381177203
+// The Euler-Mascheroni constant cannot be computed by bc.
+// Instead we use the 40 digits computed by Johann von Soldner in 1809.
+#define NUM_euler  0.5772156649015328606065120900824024310422
 #define NUMundefined  HUGE_VAL
 #define NUMdefined(x)  ((x) != NUMundefined)
 
@@ -95,7 +144,7 @@ void * NUMvector (long elementSize, long lo, long hi);
 /*
 	Function:
 		create a vector [lo...hi] with all values initialized to 0.
-		Queue an error message and return NULL if something went wrong.
+		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		hi >= lo;
 */
@@ -112,7 +161,7 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
-		Queue an error message and return NULL if something went wrong.
+		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		if v != NULL, the values v [lo..hi] must exist.
 */
@@ -136,7 +185,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2);
 /*
 	Function:
 		create a matrix [row1...row2] [col1...col2] with all values initialized to 0.
-		Queue an error message and return NULL if something went wrong.
+		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		row2 >= row1;
 		col2 >= col1;
@@ -155,7 +204,7 @@ void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long co
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
-		Queue an error message and return NULL if something went wrong.
+		Queue an error message and return NULL if anything went wrong.
 	Preconditions:
 		if m != NULL: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
@@ -415,36 +464,45 @@ FUNCTION (c, char, c1)
 int NUMr8vector_writeBinary (const double *v, long lo, long hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
-	Return 0 if something went wrong, else return 1.
+	Return 0 if anything went wrong, else return 1.
 	The vectors need not have been created by NUM...vector.
 double * NUMr8vector_readText (long lo, long hi, MelderReadString *text, const char *name);   // etc
 	create and read a vector as text.
-	Queue an error message and return NULL if something went wrong.
+	Queue an error message and return NULL if anything went wrong.
 	Every element is supposed to be on the beginning of a line.
 double * NUMr8vector_readBinary (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
-	Queue an error message and return NULL if something went wrong.
+	Queue an error message and return NULL if anything went wrong.
 int NUMr8vector_writeText (const double *v, long lo, long hi, MelderFile file, const char *name);   // etc
 	write the vector elements v [lo..hi] as text to the stream f,
 	each element on its own line, preceded by "name [index]: ".
-	Return 0 if something went wrong, else return 1.
+	Return 0 if anything went wrong, else return 1.
 	The vectors need not have been created by NUMvector.
 int NUMr8matrix_writeText (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
-	Return 0 if something went wrong, else return 1.
+	Return 0 if anything went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
 int NUMr8matrix_writeBinary (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
-	Return 0 if something went wrong, else return 1.
+	Return 0 if anything went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
 double ** NUMr8matrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
 	create and read a matrix as text.
-	Give an error message and return NULL if something went wrong.
+	Give an error message and return NULL if anything went wrong.
 double ** NUMr8matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
-	Give an error message and return NULL if something went wrong.
+	Give an error message and return NULL if anything went wrong.
 */
+
+typedef struct structNUMlinprog *NUMlinprog;
+void NUMlinprog_delete (NUMlinprog me);
+NUMlinprog NUMlinprog_new (bool maximize);
+void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff);
+int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
+void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
+int NUMlinprog_run (NUMlinprog me);
+double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 /* End of file NUM.h */
 #endif

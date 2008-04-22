@@ -1,4 +1,5 @@
-# Makefile
+# # Makefile of the library "dwtools"
+
 # 
 #  Copyright (C) 1993-2008 David Weenink
 # 
@@ -24,7 +25,7 @@
 
 include ../makefile.defs
 
-CFLAGS =  -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
+CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
 
 all: libdwtools.a
 
@@ -61,13 +62,13 @@ OBJECTS = Activation.o AffineTransform.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrum_extensions.o SSCP.o Strings_extensions.o \
 	Table_extensions.o TableOfReal_and_SVD.o\
-	TableOfReal_extensions.o TableOfReal_and_Matrix.o \
+	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
 	Vowel.o VowelEditor.o \
 	praat_MDS_init.o praat_David_init.o
 
-$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h
 
 
 libdwtools.a: $(OBJECTS)

@@ -1,8 +1,8 @@
 # Makefile of the library "artsynth"
-# Paul Boersma, March 18, 2007
+# Paul Boersma, April 9, 2008
 
 include ../makefile.defs
-CFLAGS = -I ../sys -I ../fon -I ../stat
+CFLAGS = -I ../num -I ../sys -I ../fon -I ../stat
 
 all: libartsynth.a
 
@@ -18,5 +18,5 @@ libartsynth.a: $(OBJECTS)
 	ar cq libartsynth.a $(OBJECTS)
 	$(RANLIB) libartsynth.a
 
-$(OBJECTS): *.h ../sys/*.h ../fon/*.h ../stat/*.h
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../stat/*.h
 

@@ -1,10 +1,10 @@
-# makefile for library dwsys.
+# makefile for library "dwsys".
 # David Weenink 20061222
 # djmw 20080130 Latest modification.
 
 include ../makefile.defs
 
-CFLAGS = -I ../sys -I ../fon -I ../dwtools -I ../GSL -I ../dwsys -I ../kar
+CFLAGS = -I ../num -I ../sys -I ../GSL -I ../dwsys -I ../kar
 
 all: libdwsys.a
 
@@ -19,7 +19,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o
 
-$(OBJECTS): *.h ../sys/*.h
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../GSL/*.h ../dwsys/*.h ../kar/*.h
 
 
 libdwsys.a: $(OBJECTS) NUMmachar.o

@@ -59,6 +59,10 @@ Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget
 	return menu;
 }
 
+#if gtk
+	static GSList *group = NULL;
+#endif
+
 Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure)
 {
@@ -68,7 +72,13 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	Melder_assert (title != NULL);
 	#if gtk
 		if (toggle) {
-			button = gtk_check_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+			if (flags & (GuiMenu_RADIO_FIRST)) group = NULL;
+			if (flags & (GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT)) {
+				button = gtk_radio_menu_item_new_with_label (group, Melder_peekWcsToUtf8 (title));
+				group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (button));
+			} else {
+				button = gtk_check_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+			}
 		} else {
 			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		}

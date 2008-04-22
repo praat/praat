@@ -28,6 +28,7 @@
  djmw 20071022 phase_unwrap initialize phase = 0.
  djmw 20080122 float -> double
  djmw 20080202 Warning in Spectrum_drawPhases to wchar_t
+ djmw 20080411 Removed define NUM2pi
 */
 
 #include "Spectrum_extensions.h"
@@ -36,7 +37,6 @@
 
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 
-#define NUM2pi 6.2831853071795864
 #define THLCON 0.5
 #define THLINC 1.5
 #define EXP2   12

@@ -131,7 +131,7 @@ void Graphics_updateWs (I) {
 	if (me && my screen) {
 		iam (GraphicsScreen);
 		#if gtk
-			g_debug ("updateWs");
+			g_debug ("updateWs %d %d %d %d", my x1DC, my x2DC, my x2DC - my x1DC, my y1DC - my y2DC);
 			GdkEventExpose event;
 			event.type = GDK_EXPOSE;
 			event.window = NULL;
@@ -142,7 +142,7 @@ void Graphics_updateWs (I) {
 			event.area.y = my y1DC;
 			event.area.width = my x2DC - my x1DC;
 			event.area.height = my y2DC - my y1DC;
-			gtk_widget_send_expose (my drawingArea, (GdkEvent *) & event);
+//			gtk_widget_send_expose (my drawingArea, (GdkEvent *) & event);
 			// TODO: niet goed. Deze functie behoort een expose event te genereren.
 			// Hopelijk nu wel goed. De width en height verdienen een controle!
 			// PB: ja, want y1DC is waarschijnlijk groter dan y2DC.
@@ -173,6 +173,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 
 	#if cairo
 		_Graphics_text_init (me);
+		my resolution = 100;
 	#elif xwin
 		if (! inited) {
 			int i;

@@ -52,6 +52,7 @@
  djmw 20080110 Corrected some bugs in str_replace_regexp
  djmw 20080122 Bug in str_replace_regexp
  djmw 20080317 +NUMsinc
+ pb   20080410 FisherQ from gsl
 */
 
 #include "SVD.h"

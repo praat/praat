@@ -44,7 +44,6 @@
 #include <ctype.h>
 #include "melder.h"
 #include "longchar.h"
-#include "NUM.h"
 #include "regularExp.h"
 #ifdef _WIN32
 	#include <windows.h>

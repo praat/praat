@@ -18,7 +18,7 @@
  */
 
 /*
- djmw 20080202, 20080207
+ djmw 20080202, 20080330
 */
 
 /*
@@ -523,7 +523,7 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 	}
 	else
 	{
-		if (my marks != NULL) forget (my marks);
+		forget (my marks);
 		return 1;
 	}
 	forget (thee);
@@ -531,7 +531,7 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 	thee = Table_collapseRows (te, L"IPA", L"", L"F1 F2", L"", L"", L"");
 	if (thee == NULL) return 0;
 
-	if (my marks != NULL) forget (my marks);
+	forget (my marks);
 	my marks = thee;
 	return 1;
 }
@@ -1152,8 +1152,9 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	iam (VowelEditor);
 	(void) event;
 	Vowel thee;
-	double x, y, xb, yb, t, dt = 0;
+	double x, y, xb, yb, tb, t, dt = 0;
 	double t0 = Melder_clock ();
+	long iskipped = 0;
 	struct structGuiButtonEvent gb_event = { 0 };
 	Graphics_setInner (my g);
 	Graphics_getMouseLocation (my g, & x, & y);
@@ -1188,10 +1189,19 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	Graphics_xorOn (my g, Graphics_BLUE);
 	while (Graphics_mouseStillDown (my g))
 	{
-		xb = x, yb = y;
+		xb = x, yb = y, tb = t;
 		t = Melder_clock () - t0 + dt; // Get relative time in seconds from the clock
 		Graphics_getMouseLocation (my g, & x, & y);
 		checkXY (&x, &y);
+		// If the new point equals the previous one: no tier update
+		if (xb == x && yb == y)
+		{
+			iskipped++;
+			continue;
+		}
+		// Add previous point only if at least one previous event was skipped... 
+		if (iskipped > 0) VowelEditor_Vowel_updateTiers (me, thee, tb, xb, yb);
+		iskipped = 0;
 		Graphics_line (my g, xb, yb, x, y);
 		
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);

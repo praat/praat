@@ -1,8 +1,8 @@
 # Makefile of the library "stat"
-# Paul Boersma, November 18, 2007
+# Paul Boersma, April 9, 2008
 
 include ../makefile.defs
-CFLAGS = -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
+CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
 
 OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
    TableOfReal.o Distributions.o Distributions_and_Strings.o PairDistribution.o \
@@ -15,4 +15,4 @@ libstat.a: $(OBJECTS)
 	ar cq libstat.a $(OBJECTS)
 	$(RANLIB) libstat.a
 
-$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../num/NUM.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h

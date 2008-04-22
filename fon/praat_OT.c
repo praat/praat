@@ -713,6 +713,19 @@ DO
 	praat_dataChanged (ONLY_OBJECT);
 END
 
+FORM (OTMulti_generateOptimalForms, L"OTMulti: Generate optimal forms", 0)
+	SENTENCE (L"Partial form 1", L"")
+	SENTENCE (L"Partial form 2", L"")
+	NATURAL (L"Number of trials", L"1000")
+	REAL (L"Evaluation noise", L"2.0")
+	OK
+DO
+	OTMulti me = ONLY (classOTMulti);
+	if (! praat_new2 (OTMulti_generateOptimalForms (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
+		GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise")), my name, L"_out")) return 0;
+	praat_dataChanged (me);
+END
+
 FORM (OTMulti_getCandidate, L"Get candidate", 0)
 	NATURAL (L"Candidate", L"1")
 	OK
@@ -731,6 +744,14 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	REQUIRE (icons <= my numberOfConstraints, L"'Constraint number' should not exceed number of constraints.")
 	Melder_information1 (my constraints [icons]. name);
+END
+
+FORM (OTMulti_getConstraintIndexFromName, L"OTMulti: Get constraint number", 0)
+	SENTENCE (L"Constraint name", L"")
+	OK
+DO
+	OTMulti me = ONLY_OBJECT;
+	Melder_information1 (Melder_integer (OTMulti_getConstraintIndexFromName (me, GET_STRING (L"Constraint name"))));
 END
 
 FORM (OTMulti_getDisharmony, L"Get disharmony", 0)
@@ -795,19 +816,6 @@ DO
 		output, GET_REAL (L"Evaluation noise"))) return 0;
 	Melder_information1 (output);
 	praat_dataChanged (ONLY_OBJECT);
-END
-
-FORM (OTMulti_generateOptimalForms, L"OTMulti: Generate optimal forms", 0)
-	SENTENCE (L"Partial form 1", L"")
-	SENTENCE (L"Partial form 2", L"")
-	NATURAL (L"Number of trials", L"1000")
-	REAL (L"Evaluation noise", L"2.0")
-	OK
-DO
-	OTMulti me = ONLY (classOTMulti);
-	if (! praat_new2 (OTMulti_generateOptimalForms (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
-		GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise")), my name, L"_out")) return 0;
-	praat_dataChanged (me);
 END
 
 FORM (OTMulti_learnOne, L"OTMulti: Learn one", 0)
@@ -1012,6 +1020,7 @@ void praat_uvafon_OT_init (void) {
 	praat_addAction1 (classOTMulti, 0, L"Query -          ", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 1, L"Get number of constraints", 0, 1, DO_OTMulti_getNumberOfConstraints);
 	praat_addAction1 (classOTMulti, 1, L"Get constraint...", 0, 1, DO_OTMulti_getConstraint);
+	praat_addAction1 (classOTMulti, 1, L"Get constraint number...", 0, 1, DO_OTMulti_getConstraintIndexFromName);
 	praat_addAction1 (classOTMulti, 1, L"Get ranking value...", 0, 1, DO_OTMulti_getRankingValue);
 	praat_addAction1 (classOTMulti, 1, L"Get disharmony...", 0, 1, DO_OTMulti_getDisharmony);
 	praat_addAction1 (classOTMulti, 1, L"Get number of candidates", 0, 1, DO_OTMulti_getNumberOfCandidates);

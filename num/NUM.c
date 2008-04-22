@@ -45,6 +45,10 @@ double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (b
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_erf.h"
 
+void NUMinit (void) {
+	gsl_set_error_handler_off ();
+}
+
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2) {
 	*a1 = 2 * exp (- NUMpi * bandwidth * dt) * cos (2 * NUMpi * formant * dt);
 	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
