@@ -56,6 +56,36 @@ NORMAL (L"Clicking on an object is used for selecting this object while deselect
 	"all previously selected objects; clicking is also used for moving a cursor hair.")
 MAN_END
 
+MAN_BEGIN (L"constant extrapolation", L"ppgb", 20080425)
+INTRO (L"- the interpretation of values in tiers before the first point or after the last point.")
+ENTRY (L"Example")
+NORMAL (L"The following is a @PitchTier with three points:")
+SCRIPT (4, 3, L""
+	"tier = Create PitchTier... tier 0 0.5\n"
+	"Add point... 0.10 170\n"
+	"Add point... 0.20 180\n"
+	"Add point... 0.45 110\n"
+	"Draw... 0 0 50 250 yes\n"
+	"One mark left... 100 yes yes yes\n"
+	"One mark left... 150 yes yes yes\n"
+	"One mark left... 200 yes yes yes\n"
+	"One mark bottom... 0.1 yes yes yes\n"
+	"One mark bottom... 0.2 yes yes yes\n"
+	"One mark bottom... 0.3 yes yes yes\n"
+	"One mark bottom... 0.4 yes yes yes\n"
+)
+NORMAL (L"Between 0.10 and 0.20 seconds, the pitch rises from 170 to 180 Hz, "
+	"and between 0.20 and 0.45 seconds it falls from 180 to 110 Hz. "
+	"This is @@linear interpolation@.")
+NORMAL (L"But what happens before 0.10 seconds? There, the pitch is just 170 Hz, "
+	"i.e. the value of the first pitch point. This is %%constant extrapolation% to the left.")
+NORMAL (L"Likewise, after 0.45 seconds the pitch is just 110 Hz, "
+	"i.e. the value of the last pitch point. This is constant extrapolation to the right.")
+ENTRY (L"Constant extrapolation in Praat")
+NORMAL (L"Praat uses constant extrapolation in all tiers and grids with values at time points "
+	"(@PitchTier, @IntensityTier, @DurationTier, @AmplitudeTier, @FormantGrid).")
+MAN_END
+
 MAN_BEGIN (L"Drag", L"ppgb", 19960913)
 INTRO (L"Dragging is one of the ways to control @Editors.")
 ENTRY (L"How to drag")
@@ -109,6 +139,34 @@ NORMAL (L"In order to prevent confusion, P\\s{RAAT} always requires frequency to
 NORMAL (L"In P\\s{RAAT} editor windows, frequency usually runs from bottom to top, since time already has to run "
 	"from left to right. This goes for spectrograms, pitch contours, and formant contours. "
 	"In spectral slices, frequency runs from left to right, since these have no time axis.")
+MAN_END
+
+MAN_BEGIN (L"linear interpolation", L"ppgb", 20080426)
+INTRO (L"- the interpretation of values in tiers between the first point and the last point.")
+ENTRY (L"Example")
+NORMAL (L"The following is a @PitchTier with three points:")
+SCRIPT (4, 3, L""
+	"tier = Create PitchTier... tier 0 0.5\n"
+	"Add point... 0.10 170\n"
+	"Add point... 0.20 180\n"
+	"Add point... 0.45 110\n"
+	"Draw... 0 0 50 250 yes\n"
+	"One mark left... 100 yes yes yes\n"
+	"One mark left... 150 yes yes yes\n"
+	"One mark left... 200 yes yes yes\n"
+	"One mark bottom... 0.1 yes yes yes\n"
+	"One mark bottom... 0.2 yes yes yes\n"
+	"One mark bottom... 0.3 yes yes yes\n"
+	"One mark bottom... 0.4 yes yes yes\n"
+)
+NORMAL (L"Between 0.10 and 0.20 seconds, the pitch rises linearly from 170 to 180 Hz, "
+	"and between 0.20 and 0.45 seconds it falls linearly from 180 to 110 Hz. "
+	"This is %%linear interpolation%: at all times between two adjacent points, "
+	"the pitch values follow the straight line that connects the two points.")
+NORMAL (L"(Before 0.10 seconds and after 0.45 seconds there is @@constant extrapolation@.")
+ENTRY (L"Linear interpolation in Praat")
+NORMAL (L"Praat uses linear interpolation in all tiers and grids with values at time points "
+	"(@PitchTier, @IntensityTier, @DurationTier, @AmplitudeTier, @FormantGrid).")
 MAN_END
 
 MAN_BEGIN (L"Nyquist frequency", L"ppgb", 20040331)

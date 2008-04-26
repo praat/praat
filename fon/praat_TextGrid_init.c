@@ -799,6 +799,36 @@ DIRECT (TextGrid_nativize)
 	}
 END
 
+FORM (TextGrid_getHighIndexFromTime, L"Get high index", L"AnyTier: Get high index from time...")
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	REAL (L"Time (s)", L"0.5")
+	OK
+DO
+	TextTier textTier = pr_TextGrid_getTextTier (dia);
+	if (! textTier) return 0;
+	Melder_information1 (Melder_integer (AnyTier_timeToHighIndex (textTier, GET_REAL (L"Time"))));
+END
+
+FORM (TextGrid_getLowIndexFromTime, L"Get low index", L"AnyTier: Get low index from time...")
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	REAL (L"Time (s)", L"0.5")
+	OK
+DO
+	TextTier textTier = pr_TextGrid_getTextTier (dia);
+	if (! textTier) return 0;
+	Melder_information1 (Melder_integer (AnyTier_timeToLowIndex (textTier, GET_REAL (L"Time"))));
+END
+
+FORM (TextGrid_getNearestIndexFromTime, L"Get nearest index", L"AnyTier: Get nearest index from time...")
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	REAL (L"Time (s)", L"0.5")
+	OK
+DO
+	TextTier textTier = pr_TextGrid_getTextTier (dia);
+	if (! textTier) return 0;
+	Melder_information1 (Melder_integer (AnyTier_timeToNearestIndex (textTier, GET_REAL (L"Time"))));
+END
+
 FORM (TextGrid_getIntervalAtTime, L"TextGrid: Get interval at time", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	REAL (L"Time (s)", L"0.5")
@@ -1209,6 +1239,17 @@ DIRECT (TextTier_downto_TableOfReal_any)
 	EVERY_TO (TextTier_downto_TableOfReal_any (OBJECT))
 END
 
+FORM (TextTier_getLabelOfPoint, L"Get label of point", 0)
+	NATURAL (L"Point number", L"1")
+	OK
+DO
+	TextTier me = ONLY_OBJECT;
+	long ipoint = GET_INTEGER (L"Point number");
+	REQUIRE (ipoint <= my points -> size, L"No such point.")
+	TextPoint point = my points -> item [ipoint];
+	Melder_information1 (point -> mark);
+END
+
 FORM (TextTier_getPoints, L"Get points", 0)
 	SENTENCE (L"Text", L"")
 	OK
@@ -1297,6 +1338,9 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 1, L"Get number of points...", 0, 1, DO_TextGrid_getNumberOfPoints);
 		praat_addAction1 (classTextGrid, 1, L"Get time of point...", 0, 1, DO_TextGrid_getTimeOfPoint);
 		praat_addAction1 (classTextGrid, 1, L"Get label of point...", 0, 1, DO_TextGrid_getLabelOfPoint);
+		praat_addAction1 (classTextGrid, 1, L"Get low index from time...", 0, 1, DO_TextGrid_getLowIndexFromTime);
+		praat_addAction1 (classTextGrid, 1, L"Get high index from time...", 0, 1, DO_TextGrid_getHighIndexFromTime);
+		praat_addAction1 (classTextGrid, 1, L"Get nearest index from time...", 0, 1, DO_TextGrid_getNearestIndexFromTime);
 		praat_addAction1 (classTextGrid, 1, L"-- query labels --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Count labels...", 0, 1, DO_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, L"Modify -        ", 0, 0, 0);
@@ -1332,6 +1376,7 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction1 (classTextTier, 0, L"TextTier help", 0, 0, DO_TextTier_help);
 	praat_addAction1 (classTextTier, 0, L"Query -          ", 0, 0, 0);
 		praat_TimeTier_query_init (classTextTier);
+		praat_addAction1 (classTextTier, 0, L"Get label of point...", 0, 1, DO_TextTier_getLabelOfPoint);
 	praat_addAction1 (classTextTier, 0, L"Modify -          ", 0, 0, 0);
 		praat_TimeTier_modify_init (classTextTier);
 		praat_addAction1 (classTextTier, 0, L"Add point...", 0, 1, DO_TextTier_addPoint);

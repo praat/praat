@@ -127,7 +127,7 @@ void _GuiObject_setUserData (Widget me, void *userData);
 					unsigned long lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
 				struct { unsigned char acceleratorChar; int acceleratorModifiers; } pushButton;
 				struct { int inBar; } cascadeButton;
-				struct { XtCallbackList valueChangedCallbacks; } toggleButton;
+				struct { unsigned char acceleratorChar; int acceleratorModifiers; XtCallbackList valueChangedCallbacks; } toggleButton;
 				struct { XtCallbackList valueChangedCallbacks, dragCallbacks; } scrollBar;
 			} motiff;
 

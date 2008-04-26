@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080422)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080426)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.22# (April 26, 2008)")
+LIST_ITEM (L"\\bu Editing formant contours: @FormantGrid.")
 NORMAL (L"##5.0.21# (April 22, 2008)")
 LIST_ITEM (L"\\bu Annotating with Cyrillic, Arabic, Chinese, Korean characters, and many more (on Macintosh and Windows).")
 NORMAL (L"##5.0.20# (April 8, 2008)")
@@ -787,7 +789,7 @@ ENTRY (L"Praat 3.7, March 24, 1998")
 	LIST_ITEM (L"\\bu Many new interpolations.")
 	LIST_ITEM (L"\\bu Sound enhancements: @@Sound: Lengthen (overlap-add)...@, @@Sound: Deepen band modulation...@")
 	LIST_ITEM (L"\\bu @@Source-filter synthesis@ tutorial, @@Sound & IntensityTier: Multiply@, "
-		"@@Sound & FormantTier: Filter@, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-line)...@.")
+		"##Sound & FormantTier: Filter#, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-line)...@.")
 	NORMAL (L"Labelling")
 	LIST_ITEM (L"\\bu TextGrid queries (#Get times and labels in a script).")
 	LIST_ITEM (L"\\bu @@TextGrid: Count labels...@.")
@@ -975,7 +977,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20071008)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20080423)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -992,7 +994,8 @@ LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")
 LIST_ITEM (L"Darryl Purnell from Pretoria created the first version of audio for Praat for Linux.")
 NORMAL (L"We included the following freely available software libraries in Praat (sometimes with adaptations):")
 LIST_ITEM (L"IPA font for Unix (XIPA) by Fukui Rei (GPL).")
-LIST_ITEM (L"Gnu Scientific Library (GSL) by Gerard Jungman and Brian Gough (GPL).")
+LIST_ITEM (L"GNU Scientific Library (GSL) by Gerard Jungman and Brian Gough (GPL).")
+LIST_ITEM (L"GNU Linear Programming Kit (GLPK) by Andrew Makhorin (GPL).")
 LIST_ITEM (L"Portable Audio Library (PortAudio) by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
 LIST_ITEM (L"MPEG Audio Decoder (MAD) by Underbit Technologies (GPL).")
 LIST_ITEM (L"Free Lossless Audio Codec (FLAC) by Josh Coalson.")
@@ -1001,7 +1004,7 @@ LIST_ITEM (L"Public domain LAPACK by Univ. of Tennessee, Univ. of California Ber
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (L"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
 NORMAL (L"For technical support and advice:")
-LIST_ITEM (L"Ton Wempe.")
+LIST_ITEM (L"Ton Wempe, Dirk-Jan Vet.")
 NORMAL (L"For their financial support during the development of Praat:")
 LIST_ITEM (L"Netherlands Organization for Scientific Research (NWO) (1996\\--1999).")
 LIST_ITEM (L"Nederlandse Taalunie (2006\\--2008).")
@@ -1231,7 +1234,7 @@ MAN_BEGIN (L"File menu", L"ppgb", 20021204)
 INTRO (L"One of the menus in all @editors, in the @manual, and in the @@Picture window@.")
 MAN_END
 
-MAN_BEGIN (L"Filtering", L"ppgb", 20030316)
+MAN_BEGIN (L"Filtering", L"ppgb", 20080427)
 INTRO (L"This tutorial describes the use of filtering techniques in P\\s{RAAT}. "
 	"It assumes you are familiar with the @Intro.")
 ENTRY (L"Frequency-domain filtering")
@@ -1265,7 +1268,7 @@ LIST_ITEM (L"\\bu @@Sounds: Convolve@")
 ENTRY (L"Described elsewhere")
 NORMAL (L"Described in the @@Source-filter synthesis@ tutorial:")
 LIST_ITEM (L"\\bu @@Sound & Formant: Filter@")
-LIST_ITEM (L"\\bu @@Sound & FormantTier: Filter@")
+LIST_ITEM (L"\\bu @@Sound & FormantGrid: Filter@")
 LIST_ITEM (L"\\bu @@LPC & Sound: Filter...@")
 LIST_ITEM (L"\\bu @@LPC & Sound: Filter (inverse)@")
 MAN_END
@@ -2286,7 +2289,7 @@ NORMAL (L"In the Praat shell, the user-controllability of window sizes and fonts
 	"the changes made by the user while the application is running.")
 MAN_END
 
-MAN_BEGIN (L"New menu", L"ppgb", 20070225)
+MAN_BEGIN (L"New menu", L"ppgb", 20080427)
 INTRO (L"The ##New menu# is one of the menus in the @@Object window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
 LIST_ITEM (L"\\bu @@Record mono Sound...@")
@@ -2302,7 +2305,7 @@ LIST_ITEM (L"\\bu @@Create Poisson process...@")
 LIST_ITEM (L"\\bu @@Create PitchTier...@")
 LIST_ITEM (L"\\bu @@Create DurationTier...@")
 LIST_ITEM (L"\\bu @@Create IntensityTier...@")
-LIST_ITEM (L"\\bu @@Create FormantTier...@")
+LIST_ITEM (L"\\bu @@Create FormantGrid...@")
 LIST_ITEM (L"\\bu @@Create Strings as file list...@")
 LIST_ITEM (L"\\bu @@Create TextGrid...@")
 LIST_ITEM (L"\\bu @@OT learning@ tutorial")
@@ -2508,7 +2511,7 @@ LIST_ITEM (L"@@Source-filter synthesis 3. The ba-da continuum")
 LIST_ITEM (L"@@Source-filter synthesis 4. Using existing sounds")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20050713)
+MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20080425)
 INTRO (L"Creating a glottal source signal for speech synthesis involves creating a @PointProcess, "
 	"which is a series of time points that should represent the exact moments of glottal closure.")
 NORMAL (L"You may want to start with creating a well-defined pitch contour. "
@@ -2516,21 +2519,21 @@ NORMAL (L"You may want to start with creating a well-defined pitch contour. "
 	"during that time. You first create an empty @PitchTier by choosing @@Create PitchTier...@ from the #New menu "
 	"(I call this PitchTier \"empty\" because it does not contain any pitch information yet); "
 	"you may want to name the PitchTier \"source\" and have it start at 0 seconds and end at 0.5 seconds. "
-	"Once the PitchTier exists and is selected, you can choose @@PitchTier: Add point...@ from the #Modify menu repeatedly "
-	"to add pitch points (pitch targets) at certain times. You would add a pitch point of 300 Hz at time 0.0 "
-	"and a pitch point of 200 Hz at time 1.0. This whole mouse-clicking procedure can be abbreviated as follows "
-	"(if you want to automate this procedure in a script, it would look exactly like this):")
+	"Once the PitchTier exists and is selected, you can #Edit it to add pitch points (pitch targets) to it at certain times "
+	"(or you choose @@PitchTier: Add point...@ from the #Modify menu repeatedly). "
+	"You could add a pitch point of 300 Hz at time 0.0 and a pitch point of 200 Hz at time 1.0. "
+	"In a script, it would look like this):")
 CODE (L"Create PitchTier... source 0 0.5")
 CODE (L"Add point... 0 300")
 CODE (L"Add point... 0.5 200")
-NORMAL (L"If you #Draw or #Edit this PitchTier, you can see that the pitch curve falls linearly "
-	"from 300 to 200 Hz during its time domain. You can hear the falling pitch by choosing "
-	"##Play pulses#, #Hum, or ##Play sine#.")
+NORMAL (L"If the PitchTier window, you can see that the pitch curve falls linearly "
+	"from 300 to 200 Hz during its time domain. You can hear the falling pitch by clicking on the rectangles in the PitchTier window "
+	"(or by clicking ##Play pulses#, #Hum, or ##Play sine# in the Objects window).")
 NORMAL (L"From this PitchTier, you can create a @PointProcess with @@PitchTier: To PointProcess@. "
 	"The resulting PointProcess now represents a series of glottal pulses. To make some parts of this "
 	"point process voiceless, you can use @@PointProcess: Remove points between...@. "
 	"It is advisable to make the very beginning and end of this point process voiceless, so that the filtered sound "
-	"will not start or end abruptly. For instance:")
+	"will not start or end abruptly. A script version could look like this:")
 CODE (L"Remove points between... 0 0.02")
 CODE (L"Remove points between... 0.24 0.31")
 CODE (L"Remove points between... 0.48 0.5")
@@ -2550,31 +2553,41 @@ NORMAL (L"The glottal source signal sounds as a voice without a vocal tract. "
 	"The following section describes how you add vocal-tract resonances, i.e. the %filter.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20050713)
+MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20080427)
 INTRO (L"Once you have a glottal source signal, you are ready to create a filter that represents "
-	"the resonances of the vocal tract, as a function of time. In other words, you create a @FormantTier object.")
+	"the resonances of the vocal tract, as a function of time. In other words, you create a @FormantGrid object.")
 NORMAL (L"For a vowel spoken by an average (i.e. adult female) human voice, tradition assumes five formants in the range "
 	"between 0 and 5500 Hertz. This number comes from a computation of the formants of a "
 	"straight tube, which has resonances at wavelengths of four tube lengths, four thirds of a tube length, "
 	"four fifths, and so on. For a straight tube 16 centimetres long, the shortest wavelength is 64 cm, "
 	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 Hertz. "
 	"The other resonances will be at 1650, 2750, 3850, and 4950 Hertz.")
-NORMAL (L"You can create a @FormantTier object with @@Create FormantTier...@, "
-	"and add some points to it with @@FormantTier: Add point...@:")
-CODE (L"Create FormantTier... filter 0 0.5")
-CODE (L"Add point... 0.00 100 50 500 100 2750 200 3850 300 4950 400 6050 500 7150 600 8250 700 9350 800")
-CODE (L"Add point... 0.05 700 50 1100 100 2750 200 3850 300 4950 400 6050 500 7150 600 8250 700 9350 800")
+NORMAL (L"You can create a @FormantGrid object with @@Create FormantGrid...@ from the #New menu (submenu #Tiers):")
+CODE (L"Create FormantGrid... filter 0 0.5 10 550 1100 60 50")
+NORMAL (L"This creates a FormantGrid with 10 formants and a single frequency value for each formant: %F__1_ is 550 Hz "
+	"and the higher formants are spaced 1100 Hz apart, i.e., they are "
+	"1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 Hertz; "
+	"the ten bandwidths start at 60 Hz and have a spacing of 50 Hz, "
+	"i.e., they are 60, 110, 160, 210, 260, 310, 360, 410, 460, and 510 Hertz.")
+NORMAL (L"You can then create formant contours with @@FormantGrid: Add formant point...@:")
+CODE (L"Remove formant points between... 1 0 0.5")
+CODE (L"Add formant point... 1 0.00 100")
+CODE (L"Add formant point... 1 0.05 700")
+CODE (L"Remove formant points between... 2 0 0.5")
+CODE (L"Add formant point... 2 0.00 500")
+CODE (L"Add formant point... 2 0.05 1100")
 NORMAL (L"This example creates a spectral specification whose %F__1_ rises from 100 to 700 Hertz during the "
 	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 Hertz. "
-	"This may be a [ba]-like formant transition.")
+	"The other eight formants keep their original values, as do the ten bandwidths. "
+	"The resulting sound may be a [ba]-like formant transition.")
 NORMAL (L"To get the final acoustic result (the sound), you select the glottal source signal "
-	"together with the FormantTier and choose @@Sound & FormantTier: Filter@.")
+	"together with the FormantGrid and choose @@Sound & FormantGrid: Filter@.")
 NORMAL (L"The resulting sound will have a fairly straight intensity contour. You can change this with "
 	"the #Formula command (@@Sound: Formula...@), or by multiplying the source signal or the "
 	"acoustic result with an @Intensity or @IntensityTier object.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20050713)
+MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20080425)
 INTRO (L"As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference "
 	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
 NORMAL (L"We use the same @PitchTier throughout, to model a falling intonation contour:")
@@ -2599,15 +2612,16 @@ CODE (L"Rename... source")
 NORMAL (L"The ten sounds are generated in a loop:")
 CODE (L"#for i #from 1 #to 10")
 CODE (L"   f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
-CODE (L"   Create FormantTier... filter 0.00 0.50")
-CODE (L"   Add point... 0.05   100 50 'f2_locus' 100")
-CODE (L"      ... 3000 300 4000 400 5000 500 6000 600 7000 700 8000 800 9000 900")
-CODE (L"   Add point... 0.10   700 50 1100 100")
-CODE (L"      ... 3000 300 4000 400 5000 500 6000 600 7000 700 8000 800 9000 900")
+CODE (L"   Create FormantGrid... filter 0.0 0.5 9 0 1000 0 100")
+CODE (L"   Remove formant points between... 1 0.0 0.5")
+CODE (L"   Add formant point... 1 0.05 100")
+CODE (L"   Add bandwidth point... 1 0.05 50")
+CODE (L"   Add formant point... 2 0.05 f2_locus")
+CODE (L"   Add bandwidth point... 2 0.05 100")
 CODE (L"   #plus Sound source")
 CODE (L"   Filter (no scale)")
 CODE (L"   Rename... bada'i'")
-CODE (L"   #select FormantTier filter")
+CODE (L"   #select FormantGrid filter")
 CODE (L"   Remove")
 CODE (L"#endfor")
 NORMAL (L"Clean up:")
@@ -2682,10 +2696,9 @@ CODE (L"#select Sound hallo")
 CODE (L"To Formant (burg)... 0.005 5 5500 0.025 50")
 NORMAL (L"A @Formant object has a fixed sampling (time step, frame length), and for every "
 	"%%formant frame%, it contains a number of formant-bandwidth pairs.")
-NORMAL (L"From a Formant object, you can create a @FormantTier with @@Formant: Down to FormantTier@. "
-	"A FormantTier object contains a number of time-stamped %%formant points%, "
-	"each with a number of formant-bandwidth pairs.")
-NORMAL (L"Any of these three classes (@LPC, @Formant, and @FormantTier) can represent the %filter "
+NORMAL (L"From a Formant object, you can create a @FormantGrid with @@Formant: Down to FormantGrid@. "
+	"A FormantGrid object contains a number of tiers with time-stamped %%formant points% and %%bandwidth points%.")
+NORMAL (L"Any of these three classes (@LPC, @Formant, and @FormantGrid) can represent the %filter "
 	"in source-filter synthesis.")
 ENTRY (L"2. How to extract the %source from an existing speech sound")
 NORMAL (L"If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
@@ -2723,9 +2736,9 @@ CODE (L"Filter")
 NORMAL (L"If you had computed the source and filter from an LPC analysis, this procedure will not generally give "
 	"you back the original Sound, because some linear-prediction coefficients will have been ignored "
 	"in the conversion to formant-bandwidth pairs.")
-NORMAL (L"If your filter is a @FormantTier object, you select it and the source, and choose @@Sound & FormantTier: Filter@:")
+NORMAL (L"If your filter is a @FormantGrid object, you select it and the source, and choose @@Sound & FormantGrid: Filter@:")
 CODE (L"#select Sound source")
-CODE (L"#plus FormantTier filter")
+CODE (L"#plus FormantGrid filter")
 CODE (L"Filter")
 NORMAL (L"Finally, you could just know the %%impulse response% of your filter (in a @Sound object). "
 	"You then select both Sound objects, and choose @@Sounds: Convolve@:")
@@ -2742,11 +2755,11 @@ CODE (L"#select Formant filter")
 CODE (L"Formula (frequencies)... self * 0.9")
 NORMAL (L"To add 200 Hertz to all values of %F__2_, you do")
 CODE (L"Formula (frequencies)... if row = 2 then self + 200 else self fi")
-NORMAL (L"A @FormantTier object can be changed by adding or removing points:")
-LIST_ITEM (L"@@FormantTier: Add point...@")
-LIST_ITEM (L"@@Remove point...@")
-LIST_ITEM (L"@@Remove point near...@")
-LIST_ITEM (L"@@Remove points between...@")
+NORMAL (L"A @FormantGrid object can be changed by adding or removing points:")
+LIST_ITEM (L"@@FormantGrid: Add formant point...@")
+LIST_ITEM (L"@@FormantGrid: Add bandwidth point...@")
+LIST_ITEM (L"@@FormantGrid: Remove formant points between...@")
+LIST_ITEM (L"@@FormantGrid: Remove bandwidth points between...@")
 ENTRY (L"5. How to manipulate the source signal")
 NORMAL (L"You can manipulate the source signal in the same way you that would manipulate any sound, "
 	"for instance with the @ManipulationEditor.")
@@ -2757,7 +2770,7 @@ INTRO (L"A command in the Spectrogram menu of the @SoundEditor and @TextGridEdit
 	"See @@Intro 3.2. Configuring the spectrogram@.")
 MAN_END
 
-MAN_BEGIN (L"Types of objects", L"ppgb", 20050713)
+MAN_BEGIN (L"Types of objects", L"ppgb", 20080427)
 INTRO (L"P\\s{RAAT} contains the following types of objects and @Editors. "
 	"For an introduction and tutorials, see @Intro.")
 NORMAL (L"General purpose:")
@@ -2806,7 +2819,7 @@ LIST_ITEM1 (L"\\bu @@Source-filter synthesis")
 LIST_ITEM (L"\\bu @PitchTier (@PitchTierEditor)")
 LIST_ITEM (L"\\bu @Manipulation (@ManipulationEditor): @@overlap-add@")
 LIST_ITEM (L"\\bu @DurationTier")
-LIST_ITEM (L"\\bu @FormantTier")
+LIST_ITEM (L"\\bu @FormantGrid")
 NORMAL (L"Articulatory synthesis (see the @@Articulatory synthesis@ tutorial):")
 LIST_ITEM (L"\\bu @Speaker: speaker characteristics of a woman, a man, or a child")
 LIST_ITEM (L"\\bu #Articulation: snapshot of articulatory specifications (muscle activities)")

@@ -100,8 +100,8 @@ class_methods (UiFile, Thing)
 class_methods_end
 
 #ifdef UNIX
+#if motif
 static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
-	#if motif
 	iam (UiFile);
 	char *fileName;
 	int motifBug;
@@ -123,14 +123,11 @@ static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
 		our ok (me);
 	}
 	XtFree (fileName);
-	#endif
 }
 static void UiFile_cancel (Widget w, XtPointer void_me, XtPointer call) {
-	#if motif
 	(void) void_me;
 	(void) call;
 	XtUnmanageChild (w);
-	#endif
 }
 static void UiFile_help (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
@@ -139,6 +136,7 @@ static void UiFile_help (Widget w, XtPointer void_me, XtPointer call) {
 	(void) call;
 	if (my helpTitle) Melder_help (my helpTitle);
 }
+#endif
 #endif
 
 #ifdef UNIX
@@ -158,24 +156,32 @@ static void UiFile_init (I, Widget parent, const wchar_t *title) {
 	iam (UiFile);
 	my parent = parent;
 	#ifdef UNIX
-		#if motif
 		if (my parent) {
-			my dialog = XmCreateFileSelectionDialog (my parent, "FSB dialog", NULL, 0);
+			#if gtk
+				my dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL,
+									 GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
+									 GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+
+				gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (my dialog), TRUE);
+			#elif motif
+				my dialog = XmCreateFileSelectionDialog (my parent, "FSB dialog", NULL, 0);
+			#endif
 		}
 		if (my dialog) {
-			XtVaSetValues (my dialog,
-				motif_argXmString (XmNdialogTitle, Melder_peekWcsToUtf8 (title)),
-				XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, NULL);
-			XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, NULL);
-			XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST),
-				XmNvisibleItemCount, 20, NULL);
-			XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
-				XmNvisibleItemCount, 20, NULL);
-			XtAddCallback (my dialog, XmNokCallback, UiFile_ok, (XtPointer) me);
-			XtAddCallback (my dialog, XmNcancelCallback, UiFile_cancel, (XtPointer) me);
-			XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
+			#if motif
+				XtVaSetValues (my dialog,
+					motif_argXmString (XmNdialogTitle, Melder_peekWcsToUtf8 (title)),
+					XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, NULL);
+				XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, NULL);
+				XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST),
+					XmNvisibleItemCount, 20, NULL);
+				XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
+					XmNvisibleItemCount, 20, NULL);
+				XtAddCallback (my dialog, XmNokCallback, UiFile_ok, (XtPointer) me);
+				XtAddCallback (my dialog, XmNcancelCallback, UiFile_cancel, (XtPointer) me);
+				XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
+			#endif
 		}
-		#endif
 	#endif
 	Thing_setName (me, title);
 }
@@ -243,7 +249,24 @@ Any UiInfile_create (Widget parent, const wchar_t *title,
 
 void UiInfile_do (I) {
 	iam (UiInfile);
-	#if defined (macintosh)
+	#if gtk
+		if (gtk_dialog_run (GTK_DIALOG (my dialog)) == GTK_RESPONSE_ACCEPT) {
+			structMelderFile file;
+			char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (my dialog));
+			Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
+			g_free (filename);
+			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+			if (! my okCallback (me, my okClosure)) {
+				Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+				Melder_flushError (NULL);
+			}
+			UiHistory_write (L" ");
+			UiHistory_write (Melder_fileToPath (& file));
+			/* TODO: IMHO mag deze code wel gedeeld worden tussen de verschillende platfromen
+			 * met een platform afhankelijke run/fetch methode. */
+		}
+		gtk_widget_hide(my dialog);
+	#elif defined (macintosh)
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
@@ -372,33 +395,34 @@ static XmString outDirMask;
 	/* Used just before managing dialog. */
 static void classUiOutfile_ok (I) {
 	iam (UiFile);
+
+	#if gtk
+		UiFile_ok_ok (NULL, me, NULL);
+	#elif motif
 	char message [1000];
-	#if motif
 		if (outDirMask) XmStringFree (outDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & outDirMask, NULL);
-	#endif
 	if (MelderFile_exists (& my file)) {
 		if (! my warning) {
-			#if motif
-				my warning = XmCreateWarningDialog (my dialog, "fileExists", NULL, 0);
-				XtVaSetValues (my warning,
-					motif_argXmString (XmNdialogTitle, "File exists"),
-					XmNautoUnmanage, True,
-					XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-					motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
-				XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
-				XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
-			#endif
+			my warning = XmCreateWarningDialog (my dialog, "fileExists", NULL, 0);
+			XtVaSetValues (my warning,
+				motif_argXmString (XmNdialogTitle, "File exists"),
+				XmNautoUnmanage, True,
+				XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
+				motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
+			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
+			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
 		}
 		sprintf (message, "A file with the name \"%s\" already exists.\n"
 			"Do you want to replace it?", MelderFile_messageName (& my file));
-		#if motif
-			XtVaSetValues (my warning, motif_argXmString (XmNmessageString, message), NULL);
-			XtManageChild (my warning);
-		#endif
+		
+		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, message), NULL);
+		XtManageChild (my warning);
 	} else {
 		UiFile_ok_ok (NULL, me, NULL);
+	
 	}
+	#endif
 }
 #endif
 
@@ -409,8 +433,8 @@ class_methods (UiOutfile, UiFile)
 class_methods_end
 
 #ifdef UNIX
+#if motif
 static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
-	#if motif
 	iam (UiOutfile);
 	XmString dirMask;
 	(void) w;
@@ -418,8 +442,8 @@ static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
 	XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
 	XmFileSelectionDoSearch (my dialog, dirMask);
 	XmStringFree (dirMask);
-	#endif
 }
+#endif
 #endif
 Any UiOutfile_create (Widget parent, const wchar_t *title,
 	int (*okCallback) (Any dia, void *closure), void *okClosure, const wchar_t *helpTitle)
@@ -431,7 +455,9 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 	UiFile_init (me, parent, title);
 	#ifdef UNIX
 		if (my dialog) {
-			#if motif
+			#if gtk
+				gtk_file_chooser_set_action(GTK_FILE_CHOOSER(my dialog), GTK_FILE_CHOOSER_ACTION_SAVE);
+			#elif motif
 			XtUnmanageChild (XtParent (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST)));
 			XtUnmanageChild (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST_LABEL));
 			/* Work around a Motif BUG. */
@@ -464,7 +490,26 @@ Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *h
 
 void UiOutfile_do (I, const wchar_t *defaultName) {
 	iam (UiOutfile);
-	#if defined (macintosh)
+	#if gtk
+	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(my dialog), Melder_peekWcsToUtf8(defaultName)); // TODO: Waarom krijg ik hier geen fullpath?
+	if (gtk_dialog_run (GTK_DIALOG (my dialog)) == GTK_RESPONSE_ACCEPT) {
+		structMelderFile file;
+		char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (my dialog));
+		Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
+		g_free (filename);
+		MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+		if (! my okCallback (me, my okClosure)) {
+			Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+			Melder_flushError (NULL);
+		}
+		UiHistory_write (L" ");
+		UiHistory_write (Melder_fileToPath (& file));
+		/* TODO: IMHO mag deze code wel gedeeld worden tussen de verschillende platfromen
+		 * met een platform afhankelijke run/fetch methode. */
+	}
+	gtk_widget_hide(my dialog);
+
+	#elif defined (macintosh)
 		const wchar_t *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
 		OSStatus err;
 		NavDialogRef dialogRef;

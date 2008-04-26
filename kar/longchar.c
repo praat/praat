@@ -356,43 +356,43 @@ static struct Longchar_Info Longchar_database [] = {
 { 'O', 'm', 1, { "/Omega",          768, 0,   0,   0,    768, 0,    768, 0,   0,   0   },  87,  87,  87,  87, UNICODE_GREEK_CAPITAL_LETTER_OMEGA },
 
 /* Hebrew. */
-{ '?', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ALEF },
-{ 'B', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_BET },
-{ 'G', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_GIMEL },
-{ 'D', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_DALET },
-{ 'H', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HE },
-{ 'V', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV },
-{ 'Z', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ZAYIN },
-{ 'X', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HET },
-{ 'Y', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TET },
-{ 'J', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_YOD },
-{ 'K', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_KAF },
-{ 'K', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_KAF },
-{ 'L', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_LAMED },
-{ 'M', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_MEM },
-{ 'M', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_MEM },
-{ 'N', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_NUN },
-{ 'N', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_NUN },
-{ 'S', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SAMEKH },
-{ '9', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_AYIN },
-{ 'P', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_PE },
-{ 'P', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_PE },
-{ 'C', '%', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_TSADI },
-{ 'C', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TSADI },
-{ 'Q', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_QOF },
-{ 'R', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_RESH },
-{ 'W', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SHIN },
-{ 'T', '+', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TAV },
-{ 'h', 'I', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HIRIQ },
-{ 's', 'E', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_SEGOL },
-{ 'c', 'E', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_TSERE },
-{ 'q', 'A', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QAMATS },
-{ 'p', 'A', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_PATAH },
-{ 'h', 'O', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HOLAM },
-{ 'v', 'O', 0, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_HOLAM },
-{ 'q', 'U', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QUBUTS },
-{ 'd', 'q', 0, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_DAGESH_OR_MAPIQ },
-{ 's', 'U', 0, { "/shuruq",         500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_DAGESH },
+{ '?', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ALEF },
+{ 'B', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_BET },
+{ 'G', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_GIMEL },
+{ 'D', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_DALET },
+{ 'H', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HE },
+{ 'V', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV },
+{ 'Z', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_ZAYIN },
+{ 'X', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_HET },
+{ 'Y', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TET },
+{ 'J', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_YOD },
+{ 'K', '%', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_KAF },
+{ 'K', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_KAF },
+{ 'L', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_LAMED },
+{ 'M', '%', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_MEM },
+{ 'M', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_MEM },
+{ 'N', '%', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_NUN },
+{ 'N', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_NUN },
+{ 'S', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SAMEKH },
+{ '9', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_AYIN },
+{ 'P', '%', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_PE },
+{ 'P', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_PE },
+{ 'C', '%', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_FINAL_TSADI },
+{ 'C', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TSADI },
+{ 'Q', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_QOF },
+{ 'R', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_RESH },
+{ 'W', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_SHIN },
+{ 'T', '+', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_TAV },
+{ 'h', 'I', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HIRIQ },
+{ 's', 'E', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_SEGOL },
+{ 'c', 'E', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_TSERE },
+{ 'q', 'A', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QAMATS },
+{ 'p', 'A', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_PATAH },
+{ 'h', 'O', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_HOLAM },
+{ 'v', 'O', 4, { "",                500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_HOLAM },
+{ 'q', 'U', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_QUBUTS },
+{ 'd', 'q', 4, { "",                  0,   0,   0,   0,    0,   0,    0,   0,   0,   0 },   0,   0,   0,   0, UNICODE_HEBREW_POINT_DAGESH_OR_MAPIQ },
+{ 's', 'U', 4, { "/shuruq",         500, 500, 500, 500,  500, 500,  500, 500, 500, 500 },   0,   0,   0,   0, UNICODE_HEBREW_LETTER_VAV_WITH_DAGESH },
 
 /* Symbol. */
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
@@ -597,24 +597,10 @@ static void init (void) {
 			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n", data -> first, data -> second);
 		}
 		*location = i;
-		#if defined (macintosh) || defined (_WIN32)
-			if (data -> unicode <= UNICODE_TOP_GENERICIZABLE) {
-				genericDigraph [data -> unicode]. first = data -> first;
-				genericDigraph [data -> unicode]. second = data -> second;
-			}
-		#else
-			if (data -> alphabet == Longchar_ROMAN) {
-				#if defined (UNIX)
-					genericDigraph [data -> xwinEncoding]. first = data -> first;
-					genericDigraph [data -> xwinEncoding]. second = data -> second;
-				#elif defined (_WIN32)
-					genericDigraph [data -> winEncoding]. first = data -> first;
-					genericDigraph [data -> winEncoding]. second = data -> second;
-				#else
-					#error Choose an encoding.
-				#endif
-			}
-		#endif
+		if (data -> unicode <= UNICODE_TOP_GENERICIZABLE) {
+			genericDigraph [data -> unicode]. first = data -> first;
+			genericDigraph [data -> unicode]. second = data -> second;
+		}
 	}
 	inited = 1;
 }

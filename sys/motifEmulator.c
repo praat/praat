@@ -1571,7 +1571,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 	while (resource = va_arg (arg, int), resource != 0) switch (resource) {
 		case XmNaccelerator: {
 			char *string = va_arg (arg, char *), *key = strstr (string, "<Key>");
-			Melder_assert (MEMBER (me, PushButton));
+			Melder_assert (MEMBER2 (me, PushButton, ToggleButton));
 			if (! key) break;
 			key = & key [5];
 			if (my inMenu && key [0]) {
@@ -1623,7 +1623,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 		}
 		case XmNacceleratorText: {
 			char *string = va_arg (arg, char *);
-			Melder_assert (MEMBER (me, PushButton));
+			Melder_assert (MEMBER2 (me, PushButton, ToggleButton));
 			break;
 		}
 		case XmNautoUnmanage:
@@ -3663,13 +3663,19 @@ static int _motif_shell_processKeyboardEquivalent (Widget shell, unsigned char k
 	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> macWindow == macWindow) {
 		Widget child;
 		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
-			if (child -> widgetClass == xmPushButtonWidgetClass &&
+			if ((child -> widgetClass == xmPushButtonWidgetClass || child -> widgetClass == xmToggleButtonWidgetClass) &&
 					child -> motiff.pushButton.acceleratorChar == kar &&
 					child -> motiff.pushButton.acceleratorModifiers == modifiers)
-				if (child -> activateCallback && ! child -> insensitive) {
+			{
+				if (child -> widgetClass == xmPushButtonWidgetClass && child -> activateCallback && ! child -> insensitive) {
 					child -> activateCallback (child, child -> activateClosure, (XtPointer) event);
 					return 1;
+				} else if (child -> widgetClass == xmToggleButtonWidgetClass) {
+					XmToggleButtonGadgetSetState (child, 1 - XmToggleButtonGadgetGetState (child), False);
+					_Gui_callCallbacks (child, & child -> motiff.toggleButton.valueChangedCallbacks, (XtPointer) event);
+					return 1;
 				}
+			}
 	}
 	return 0;
 }
@@ -4201,11 +4207,15 @@ static int win_shell_processKeyboardEquivalent (Widget me, int kar, int modifier
 	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
 		Widget child;
 		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
-			if (child -> widgetClass == xmPushButtonWidgetClass &&
+			if ((child -> widgetClass == xmPushButtonWidgetClass || child -> widgetClass == xmToggleButtonWidgetClass) &&
 					child -> motiff.pushButton.acceleratorChar == kar &&
 					child -> motiff.pushButton.acceleratorModifiers == modifiers)
 				if (child -> activateCallback && ! child -> insensitive) {
 					child -> activateCallback (child, child -> activateClosure, 0);
+					return 1;
+				} else if (child -> widgetClass == xmToggleButtonWidgetClass) {
+					XmToggleButtonGadgetSetState (child, 1 - XmToggleButtonGadgetGetState (child), False);
+					_Gui_callCallbacks (child, & child -> motiff.toggleButton.valueChangedCallbacks, 0);
 					return 1;
 				}
 	}

@@ -1097,7 +1097,7 @@ DEFINITION (L"gives the value at a time of 0.7 seconds and at a frequency of 250
 TAG (L"##PitchTier_hullo (0.7)")
 DEFINITION (L"gives the pitch (in Hertz) at a time of 0.7 seconds in the PitchTier %hullo.")
 NORMAL (L"In the interpolation, times outside the time domain of the objects are considered to contain zeroes (this does not apply to PitchTiers and the like, "
-	"which undergo constant extrapolation).")
+	"which undergo @@constant extrapolation@).")
 ENTRY (L"Object contents in a modification formula")
 NORMAL (L"Suppose you want to do the difficult way of reversing the contents of a Sound called %hello (the easy way is to choose #Reverse "
 	"from the @Modify menu). You select this sound, then choose @@Copy...@ to duplicate it to a new Sound, which you name %%hello_reverse%. "

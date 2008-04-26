@@ -1,6 +1,6 @@
 /* manual_formant.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,37 @@
 void manual_formant_init (ManPages me);
 void manual_formant_init (ManPages me) {
 
-MAN_BEGIN (L"Create FormantTier...", L"ppgb", 20021204)
-INTRO (L"A command in the @@New menu@ to create an empty @FormantTier object.")
-NORMAL (L"The resulting object will have the specified name and time domain, but contain no formant points. "
-	"To add some points to it, use @@FormantTier: Add point...@.")
-NORMAL (L"For an example, see @@Source-filter synthesis@.")
+MAN_BEGIN (L"Create FormantGrid...", L"ppgb", 20080425)
+INTRO (L"A command in the @@New menu@ to create an empty @FormantGrid object.")
+ENTRY (L"Settings")
+TAG (L"%%Start time% (s), %%End time% (s)")
+DEFINITION (L"the @@time domain@ of the resulting FormantGrid.")
+TAG (L"%%Number of formants% (e.g. 10)")
+DEFINITION (L"the number of formants in the resulting FormantGrid. For instance, if you set this to 10, "
+	"the resulting FormantGrid will contain 10 formant tiers (for F1 through F10) "
+	"and 10 bandwidth tiers (for B1 through B10). Each of these 20 tiers will contain one point.")
+TAG (L"%%Initial first formant% (e.g. 550 Hz)")
+DEFINITION (L"the frequency value of the single formant point in the first formant tier. "
+	"Because of @@constant extrapolation@, F1 will have this value throughout the time domain.")
+TAG (L"%%Initial formant spacing% (e.g. 1100 Hz)")
+DEFINITION (L"the difference between the frequency values of the points in adjacent formant tiers. "
+	"For instance, the example values mentioned here cause F2 to be 1650 Hz throughout the time domain; "
+	"F3 will be 2750 Hz, F4 will be 3850 Hz, and so on.")
+TAG (L"%%Initial first bandwidth% (e.g. 60 Hz)")
+DEFINITION (L"the value of the single bandwidth point in the first bandwidth tier. "
+	"Because of @@constant extrapolation@, B1 will have this value throughout the time domain.")
+TAG (L"%%Initial bandwidth spacing% (e.g. 50 Hz)")
+DEFINITION (L"the difference between the values of the points in adjacent bandwidth tiers. "
+	"For instance, the example values mentioned here cause B2 to be 110 Hz throughout the time domain; "
+	"B3 will be 160 Hz, B4 will be 210 Hz, and so on.")
+NORMAL (L"To add some points to it, use @@FormantGrid: Add formant point...@ and @@FormantGrid: Add bandwidth point...@.")
+NORMAL (L"For more examples, see @@Source-filter synthesis@.")
 MAN_END
 
-MAN_BEGIN (L"Formant", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+MAN_BEGIN (L"Formant", L"ppgb", 20050427)
+INTRO (L"One of the @@types of objects@ in Praat. "
 	"A Formant object represents spectral structure as a function of time: a %%formant contour%. "
-	"Unlike the time-stamped @FormantTier object, it is sampled into a number of %frames centred around equally spaced times, "
+	"Unlike the time-stamped @FormantGrid object, it is sampled into a number of %frames centred around equally spaced times, "
 	"Each frame contains frequency and bandwidth information about several formants.")
 ENTRY (L"Inside a Formant object")
 NORMAL (L"With @Inspect, you will see the following attributes:")
@@ -69,29 +89,11 @@ ENTRY (L"See also")
 NORMAL (L"##Linear Prediction#")
 MAN_END
 
-MAN_BEGIN (L"Formant: Down to FormantTier", L"ppgb", 19980101)
-INTRO (L"A command for converting each selected @Formant object into a @FormantTier object.")
-NORMAL (L"The resulting FormantTier contains a point for each original frame. The number of formants "
-	"in the result is limited to 10. The intensity information is lost.")
-MAN_END
-
-MAN_BEGIN (L"Formant: Speckle...", L"ppgb", 20030916)
-INTRO (L"A command to draw the selected @Formant objects to the @@Picture window@.")
-ENTRY (L"Behaviour")
-NORMAL (L"Every formant value is drawn as a small circle, filled with the current colour.")
-ENTRY (L"Arguments")
-TAG (L"%%From time% (s), %%To time% (s)")
-DEFINITION (L"the time domain of the drawing. If %%To time% is not greater than %%From time%, "
-	"the entire formant contour is drawn.")
-TAG (L"%%Maximum frequency% (Hz)")
-DEFINITION (L"the height of the %y axis. For speech, 5000 Hz is a usual value.")
-TAG (L"%%Dynamic range% (dB)")
-DEFINITION (L"determines the signal intensity (as stored in each formant frame) below which "
-	"no formants will be drawn. If zero, all formants will be drawn. The standard value is 30 dB, "
-	"which would mean that formants in frames with intensities less than the maximum intensity minus 30 dB will not be drawn.")
-TAG (L"%%Garnish")
-DEFINITION (L"determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
-	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
+MAN_BEGIN (L"Formant: Down to FormantGrid", L"ppgb", 20080427)
+INTRO (L"A command to convert every selected @Formant into a @FormantGrid.")
+NORMAL (L"This performs a trivial copying of frames to points. "
+	"Each formant tier and each bandwidth tier of the resulting FormantGrid contains a point for each original frame. "
+	"The intensity information is lost.")
 MAN_END
 
 MAN_BEGIN (L"Formant: Draw tracks...", L"ppgb", 19980321)
@@ -306,6 +308,25 @@ NORMAL (L"If possible (i.e. if the adjacent frame has enough formants), "
 	"With Bark units, the Hertz-to-Bark transformation is performed before interpolation.")
 MAN_END
 
+MAN_BEGIN (L"Formant: Speckle...", L"ppgb", 20030916)
+INTRO (L"A command to draw the selected @Formant objects to the @@Picture window@.")
+ENTRY (L"Behaviour")
+NORMAL (L"Every formant value is drawn as a small circle, filled with the current colour.")
+ENTRY (L"Arguments")
+TAG (L"%%From time% (s), %%To time% (s)")
+DEFINITION (L"the time domain of the drawing. If %%To time% is not greater than %%From time%, "
+	"the entire formant contour is drawn.")
+TAG (L"%%Maximum frequency% (Hz)")
+DEFINITION (L"the height of the %y axis. For speech, 5000 Hz is a usual value.")
+TAG (L"%%Dynamic range% (dB)")
+DEFINITION (L"determines the signal intensity (as stored in each formant frame) below which "
+	"no formants will be drawn. If zero, all formants will be drawn. The standard value is 30 dB, "
+	"which would mean that formants in frames with intensities less than the maximum intensity minus 30 dB will not be drawn.")
+TAG (L"%%Garnish")
+DEFINITION (L"determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
+	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
+MAN_END
+
 MAN_BEGIN (L"Formant: Track...", L"ppgb", 20020308)
 INTRO (L"A command to extract a specified number of formant tracks from each selected @Formant object. "
 	"The tracks represent the cheapest paths through the measured formant values in consecutive frames.")
@@ -390,23 +411,123 @@ NORMAL (L"Analogous formulas compute the cost of track 1 and track 2. "
 	"the sum of three track costs.")
 MAN_END
 
-MAN_BEGIN (L"FormantTier", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+MAN_BEGIN (L"FormantGrid", L"ppgb", 20080427)
+INTRO (L"One of the @@types of objects@ in Praat.")
+NORMAL (L"A FormantGrid object represents spectral structure as a function of time: a %%formant contour%. "
+	"Unlike the evenly sampled @Formant object, it consists of a number of formant tiers and bandwidth tiers, "
+	"each of which contains a number of formant or bandwidth %points (or %targets), sorted by time.")
+NORMAL (L"For examples, see @@Source-filter synthesis@.")
+ENTRY (L"FormantGrid commands")
+NORMAL (L"Creation:")
+LIST_ITEM (L"From scratch:")
+LIST_ITEM (L"\\bu @@Create FormantGrid...")
+LIST_ITEM (L"\\bu @@FormantGrid: Add formant point...")
+LIST_ITEM (L"\\bu @@FormantGrid: Add bandwidth point...")
+LIST_ITEM (L"Copy from another object:")
+LIST_ITEM (L"\\bu @@Formant: Down to FormantGrid@: trivial copying of frames to points.")
+//NORMAL (L"Conversion:")
+//LIST_ITEM (L"\\bu @@FormantGrid: Down to PointProcess@: copy times.")
+NORMAL (L"Synthesis:")
+LIST_ITEM (L"\\bu @@Sound & FormantGrid: Filter@: see @@Source-filter synthesis@.")
+//NORMAL (L"Queries:")
+//LIST_ITEM (L"\\bu @@Get low index from time...")
+//LIST_ITEM (L"\\bu @@Get high index from time...")
+//LIST_ITEM (L"\\bu @@Get nearest index from time...")
+NORMAL (L"Modification:")
+LIST_ITEM (L"\\bu @@FormantGrid: Add formant point...")
+LIST_ITEM (L"\\bu @@FormantGrid: Add bandwidth point...")
+//LIST_ITEM (L"\\bu @@Remove point...")
+//LIST_ITEM (L"\\bu @@Remove point near...")
+LIST_ITEM (L"\\bu @@FormantGrid: Remove formant points between...")
+LIST_ITEM (L"\\bu @@FormantGrid: Remove bandwidth points between...")
+MAN_END
+
+MAN_BEGIN (L"FormantGrid: Add bandwidth point...", L"ppgb", 20080425)
+INTRO (L"A command to add a bandwidth point to each selected @FormantGrid.")
+NORMAL (L"For examples, see @@Source-filter synthesis@.")
+ENTRY (L"Settings")
+TAG (L"%%Formant number")
+DEFINITION (L"the number of the formant (e.g. 1, 2,...) to which a bandwidth point is to be added.")
+TAG (L"%Time (s)")
+DEFINITION (L"the time at which a bandwidth point is to be added.")
+TAG (L"%%Bandwidth (Hz)")
+DEFINITION (L"the bandwidth value of the requested new point.")
+ENTRY (L"Example")
+NORMAL (L"To set the bandwidth of F2 at 0.3 seconds to 130 Hz, "
+	"you set %%formant number% to 2, %time to 0.3, and %bandwidth to 130.")
+ENTRY (L"Behaviour")
+NORMAL (L"The formant tier is modified so that it contains the new point. "
+	"If a bandwidth point at the specified time was already present in the formant tier, nothing happens.")
+MAN_END
+
+MAN_BEGIN (L"FormantGrid: Add formant point...", L"ppgb", 20080425)
+INTRO (L"A command to add a formant point to each selected @FormantGrid.")
+NORMAL (L"For examples, see @@Source-filter synthesis@.")
+ENTRY (L"Settings")
+TAG (L"%%Formant number")
+DEFINITION (L"the number of the formant (e.g. 1, 2,...) to which a formant point is to be added.")
+TAG (L"%Time (s)")
+DEFINITION (L"the time at which a formant point is to be added.")
+TAG (L"%%Frequency (Hz)")
+DEFINITION (L"the formant frequency value of the requested new point.")
+ENTRY (L"Example")
+NORMAL (L"To set the value of F2 at 0.3 seconds to 2200 Hz, "
+	"you set %%formant number% to 2, %time to 0.3, and %frequency to 2200.")
+ENTRY (L"Behaviour")
+NORMAL (L"The formant tier is modified so that it contains the new point. "
+	"If a formant point at the specified time was already present in the formant tier, nothing happens.")
+MAN_END
+
+MAN_BEGIN (L"FormantGrid: Remove bandwidth points between...", L"ppgb", 20080427)
+INTRO (L"A command to remove some points from a bandwidth tier in every selected @FormantGrid.")
+ENTRY (L"Settings")
+TAG (L"%%Formant number")
+DEFINITION (L"the formant (1, 2,...) from whose bandwidth tier you want to remove some points.")
+TAG (L"%%From time% (s), %%To time% (s)")
+DEFINITION (L"the times between which you want to remove all bandwidth points.")
+ENTRY (L"Example")
+NORMAL (L"If you want to remove all bandwidth points in F2 between 0.5 and 0.7 seconds, "
+	"you set %%formant number% to 2, %%from time% to 0.5, and %%to time% to 0.7.")
+MAN_END
+
+MAN_BEGIN (L"FormantGrid: Remove formant points between...", L"ppgb", 20080427)
+INTRO (L"A command to remove some points from a formant tier in every selected @FormantGrid.")
+ENTRY (L"Settings")
+TAG (L"%%Formant number")
+DEFINITION (L"the formant (1, 2,...) from which you want to remove some points.")
+TAG (L"%%From time% (s), %%To time% (s)")
+DEFINITION (L"the times between which you want to remove all formant points.")
+ENTRY (L"Example")
+NORMAL (L"If you want to remove all formant points in F2 between 0.5 and 0.7 seconds, "
+	"you set %%formant number% to 2, %%from time% to 0.5, and %%to time% to 0.7.")
+MAN_END
+
+MAN_BEGIN (L"FormantTier", L"ppgb", 20080427)
+INTRO (L"One of the @@types of objects@ in Praat. You are advised to use instead the much more flexible @FormantGrid, "
+	"which moreover comes with an editing window. The commands that create FormantTier objects are now hidden, "
+	"but they are still available in Praat scripts, for backward compatibility.")
 NORMAL (L"A FormantTier object represents spectral structure as a function of time: a %%formant contour%. "
 	"Unlike the evenly sampled @Formant object, it consists of a number of formant %points (or %targets), sorted by time. "
 	"Each point contains contains several formant/bandwidth pairs.")
-NORMAL (L"For examples, see @@Source-filter synthesis@.")
 ENTRY (L"FormantTier commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"From scratch:")
-LIST_ITEM (L"\\bu @@Create FormantTier...")
-LIST_ITEM (L"\\bu @@FormantTier: Add point...")
+LIST_ITEM (L"\\bu ##Create FormantTier...#: the resulting object will have the specified name and time domain, "
+	"but contain no formant points. "
+	"To add some points to it, use:")
+LIST_ITEM (L"\\bu ##FormantTier: Add point...#: to get three formants at "
+	"500, 1500, and 2500 Hz with bandwidths of 50, 100, and 150 Hz, respectively, "
+	"you specify \"500 50 1500 100 2500 150\".")
 LIST_ITEM (L"Copy from another object:")
-LIST_ITEM (L"\\bu @@Formant: Down to FormantTier@: trivial copying of frames to points.")
+LIST_ITEM (L"\\bu ##Formant: Down to FormantTier#: trivial copying of frames to points. "
+	"The resulting FormantTier contains a point for each original frame. The number of formants "
+	"in the result is limited to 10. The intensity information is lost.")
 NORMAL (L"Conversion:")
-LIST_ITEM (L"\\bu @@FormantTier: Down to PointProcess@: copy times.")
+LIST_ITEM (L"\\bu ##FormantTier: Down to PointProcess#: the times of all the formant points are trivially copied, and so is the time domain. "
+	"The formant information is lost.")
 NORMAL (L"Synthesis:")
-LIST_ITEM (L"\\bu @@Sound & FormantTier: Filter@: see @@Source-filter synthesis@.")
+LIST_ITEM (L"\\bu ##Sound & FormantTier: Filter#: comparable to @@Sound & FormantGrid: Filter@.")
+LIST_ITEM (L"\\bu ##Sound & FormantTier: Filter (no scale)#: comparable to @@Sound & FormantGrid: Filter (no scale)@.")
 NORMAL (L"Queries:")
 LIST_ITEM (L"\\bu @@Get low index from time...")
 LIST_ITEM (L"\\bu @@Get high index from time...")
@@ -415,43 +536,7 @@ NORMAL (L"Modification:")
 LIST_ITEM (L"\\bu @@Remove point...")
 LIST_ITEM (L"\\bu @@Remove point near...")
 LIST_ITEM (L"\\bu @@Remove points between...")
-LIST_ITEM (L"\\bu @@FormantTier: Add point...")
-ENTRY (L"FormantTier attributes")
-NORMAL (L"With @Inspect, you will see the following attribute:")
-TAG (L"%points")
-DEFINITION (L"when you open this, you see the %size (the number of points) and a series of points (%item [%i], %i = 1...%n).")
-ENTRY (L"Attributes of a formant point")
-NORMAL (L"Each point contains the following attributes:")
-TAG (L"%time")
-DEFINITION (L"the time associated with this formant target, in seconds. Also used to sort the targets.")
-TAG (L"%numberOfFormants")
-DEFINITION (L"the number of formant/bandwidth pairs (never more than 10).")
-TAG (L"%formant [0..%numberOfFormants-1]")
-DEFINITION (L"the formant frequencies in Hertz. ##Caution:# the frequency of the %%i%th formant is in %formant [%i-1]!")
-TAG (L"%bandwidth [0..%numberOfFormants-1]")
-DEFINITION (L"the formant bandwidths in Hertz. ##Caution:# the bandwidth of the %%i%th formant is in %bandwidth [%i-1]!")
-MAN_END
-
-MAN_BEGIN (L"FormantTier: Add point...", L"ppgb", 19981221)
-INTRO (L"A command to add a point to each selected @FormantTier.")
-NORMAL (L"For examples, see @@Source-filter synthesis@.")
-ENTRY (L"Arguments")
-TAG (L"%Time (s)")
-DEFINITION (L"the time at which a point is to be added.")
-TAG (L"%%Frequencies and bandwidths (Hz)")
-DEFINITION (L"the frequency and bandwidth values of the requested new point. To get three formants at "
-	"500, 1500, and 2500 Hz with bandwidths of 50, 100, and 150 Hz, respectively, "
-	"you specify \"500 50 1500 100 2500 150\".")
-ENTRY (L"Behaviour")
-NORMAL (L"The tier is modified so that it contains the new point. "
-	"If a point at the specified time was already present in the tier, nothing happens.")
-MAN_END
-
-MAN_BEGIN (L"FormantTier: Down to PointProcess", L"ppgb", 20010410)
-INTRO (L"A command to degrade every selected @FormantTier to a @PointProcess.")
-ENTRY (L"Behaviour")
-NORMAL (L"The times of all the formant points are trivially copied, and so is the time domain. "
-	"The formant information is lost.")
+LIST_ITEM (L"\\bu ##FormantTier: Add point...#")
 MAN_END
 
 MAN_BEGIN (L"Sound: To Formant (burg)...", L"ppgb", 20031003)
@@ -554,17 +639,17 @@ NORMAL (L"Unlike what happens in @@Sound & Formant: Filter@, "
 	"of signals with controlled relative intensities.")
 MAN_END
 
-MAN_BEGIN (L"Sound & FormantTier: Filter", L"ppgb", 19991120)
-INTRO (L"A command to create a new Sound from the selected @Sound and @FormantTier objects.")
+MAN_BEGIN (L"Sound & FormantGrid: Filter", L"ppgb", 20080425)
+INTRO (L"A command to create a new Sound from the selected @Sound and @FormantGrid objects.")
 NORMAL (L"For examples, see @@Source-filter synthesis@.")
 NORMAL (L"The resulting Sound is scaled so that its maximum absolute amplitude is 0.99. "
-	"If you don't want this, use @@Sound & FormantTier: Filter (no scale)@ instead.")
+	"If you don't want this, use @@Sound & FormantGrid: Filter (no scale)@ instead.")
 MAN_END
 
-MAN_BEGIN (L"Sound & FormantTier: Filter (no scale)", L"ppgb", 19991119)
-INTRO (L"A command to create a new Sound from the selected @Sound and @FormantTier objects.")
+MAN_BEGIN (L"Sound & FormantGrid: Filter (no scale)", L"ppgb", 20080425)
+INTRO (L"A command to create a new Sound from the selected @Sound and @FormantGrid objects.")
 NORMAL (L"For examples, see @@Source-filter synthesis@.")
-NORMAL (L"Unlike what happens in @@Sound & FormantTier: Filter@, "
+NORMAL (L"Unlike what happens in @@Sound & FormantGrid: Filter@, "
 	"the resulting Sound is not scaled. This allows generation of a series "
 	"of signals with controlled relative intensities.")
 MAN_END

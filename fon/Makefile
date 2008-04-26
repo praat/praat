@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, April 12, 2008
+# Paul Boersma, April 24, 2008
 
 include ../makefile.defs
 CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../FLAC -I ../mp3
@@ -16,7 +16,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Spectrum.o Ltas.o Spectrogram.o SpectrumTier.o Ltas_to_SpectrumTier.o \
    Formant.o Image.o Sound_to_Formant.o Sound_and_Spectrogram.o \
    Sound_and_Spectrum.o Spectrum_and_Spectrogram.o Spectrum_to_Formant.o \
-   FormantTier.o TextGrid.o Label.o \
+   FormantTier.o TextGrid.o Label.o FormantGrid.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \
@@ -25,7 +25,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    PitchEditor.o SoundEditor.o SpectrumEditor.o SpectrogramEditor.o PointEditor.o \
    RealTierEditor.o PitchTierEditor.o IntensityTierEditor.o \
    DurationTierEditor.o AmplitudeTierEditor.o \
-   ManipulationEditor.o TextGridEditor.o \
+   ManipulationEditor.o TextGridEditor.o FormantGridEditor.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
    ExperimentMFC.o RunnerMFC.o manual_Exp.o praat_Exp.o \

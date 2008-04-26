@@ -1,6 +1,6 @@
 /* praat_Fon.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/04/24
  */
 
 #include "praat.h"
@@ -30,6 +30,8 @@
 #include "Distributions_and_Transition.h"
 #include "DurationTierEditor.h"
 #include "Excitation_to_Formant.h"
+#include "FormantGrid.h"
+#include "FormantGridEditor.h"
 #include "FormantTier.h"
 #include "Harmonicity.h"
 #include "IntensityTier.h"
@@ -546,6 +548,10 @@ END
 
 /***** FORMANT *****/
 
+DIRECT (Formant_downto_FormantGrid)
+	EVERY_TO (Formant_downto_FormantGrid (OBJECT))
+END
+
 DIRECT (Formant_downto_FormantTier)
 	EVERY_TO (Formant_downto_FormantTier (OBJECT))
 END
@@ -834,6 +840,110 @@ END
 DIRECT (Sound_Formant_filter_noscale)
 	Sound me = ONLY (classSound);
 	if (! praat_new2 (Sound_Formant_filter_noscale (me, ONLY (classFormant)), my name, L"_filt")) return 0;
+END
+
+/***** FORMANTGRID *****/
+
+FORM (FormantGrid_addBandwidthPoint, L"FormantGrid: Add bandwidth point", L"FormantGrid: Add bandwidth point...")
+	NATURAL (L"Formant number", L"1")
+	REAL (L"Time (s)", L"0.5")
+	POSITIVE (L"Bandwidth (Hz)", L"100")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! FormantGrid_addBandwidthPoint (OBJECT, GET_INTEGER (L"Formant number"),
+			GET_REAL (L"Time"), GET_REAL (L"Bandwidth"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (FormantGrid_addFormantPoint, L"FormantGrid: Add formant point", L"FormantGrid: Add formant point...")
+	NATURAL (L"Formant number", L"1")
+	REAL (L"Time (s)", L"0.5")
+	POSITIVE (L"Frequency (Hz)", L"550")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! FormantGrid_addFormantPoint (OBJECT, GET_INTEGER (L"Formant number"),
+			GET_REAL (L"Time"), GET_REAL (L"Frequency"))) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (FormantGrid_create, L"Create FormantGrid", NULL)
+	WORD (L"Name", L"schwa")
+	REAL (L"Start time (s)", L"0.0")
+	REAL (L"End time (s)", L"1.0")
+	NATURAL (L"Number of formants", L"10")
+	POSITIVE (L"Initial first formant (Hz)", L"550")
+	POSITIVE (L"Initial formant spacing (Hz)", L"1100")
+	REAL (L"Initial first bandwidth (Hz)", L"60")
+	REAL (L"Initial bandwidth spacing (Hz)", L"50")
+	OK
+DO
+	double startTime = GET_REAL (L"Start time"), endTime = GET_REAL (L"End time");
+	REQUIRE (endTime > startTime, L"End time must be greater than start time.")
+	if (! praat_new1 (FormantGrid_create (startTime, endTime, GET_INTEGER (L"Number of formants"),
+		GET_REAL (L"Initial first formant"), GET_REAL (L"Initial formant spacing"),
+		GET_REAL (L"Initial first bandwidth"), GET_REAL (L"Initial bandwidth spacing")), GET_STRING (L"Name"))) return 0;
+END
+
+static void cb_FormantGridEditor_publish (Any editor, void *closure, Any publish) {
+	(void) editor;
+	(void) closure;
+	if (! praat_new1 (publish, L"fromFormantGridEditor")) { Melder_flushError (NULL); return; }
+	praat_updateSelection ();
+}
+DIRECT (FormantGrid_edit)
+	if (theCurrentPraat -> batch) {
+		return Melder_error1 (L"Cannot edit a FormantGrid from batch.");
+	} else {
+		WHERE (SELECTED) {
+			FormantGridEditor editor = FormantGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
+			if (! praat_installEditor (editor, IOBJECT)) return 0;
+			Editor_setPublishCallback (editor, cb_FormantGridEditor_publish, NULL);
+		}
+	}
+END
+
+DIRECT (FormantGrid_help) Melder_help (L"FormantGrid"); END
+
+FORM (FormantGrid_removeBandwidthPointsBetween, L"Remove bandwidth points between", L"FormantGrid: Remove bandwidth points between...")
+	NATURAL (L"Formant number", L"1")
+	REAL (L"From time (s)", L"0.3")
+	REAL (L"To time (s)", L"0.7")
+	OK
+DO
+	WHERE (SELECTED) {
+		FormantGrid_removeBandwidthPointsBetween (OBJECT, GET_INTEGER (L"Formant number"),
+			GET_REAL (L"From time"), GET_REAL (L"To time"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (FormantGrid_removeFormantPointsBetween, L"Remove formant points between", L"FormantGrid: Remove formant points between...")
+	NATURAL (L"Formant number", L"1")
+	REAL (L"From time (s)", L"0.3")
+	REAL (L"To time (s)", L"0.7")
+	OK
+DO
+	WHERE (SELECTED) {
+		FormantGrid_removeFormantPointsBetween (OBJECT, GET_INTEGER (L"Formant number"),
+			GET_REAL (L"From time"), GET_REAL (L"To time"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+/***** FORMANTGRID & SOUND *****/
+
+DIRECT (Sound_FormantGrid_filter)
+	Sound me = ONLY (classSound);
+	if (! praat_new2 (Sound_FormantGrid_filter (me, ONLY (classFormantGrid)), my name, L"_filt")) return 0;
+END
+
+DIRECT (Sound_FormantGrid_filter_noscale)
+	Sound me = ONLY (classSound);
+	if (! praat_new2 (Sound_FormantGrid_filter_noscale (me, ONLY (classFormantGrid)), my name, L"_filt")) return 0;
 END
 
 /***** FORMANTTIER *****/
@@ -4155,7 +4265,7 @@ void praat_uvafon_init (void);
 void praat_uvafon_init (void) {
 	Thing_recognizeClassesByName (classSound, classMatrix, classPolygon, classPointProcess, classParamCurve,
 		classSpectrum, classLtas, classSpectrogram, classFormant,
-		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier,
+		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier, classFormantGrid,
 		classLabel, classTier, classAutosegment,   /* Three obsolete classes. */
 		classIntensity, classPitch, classHarmonicity,
 		classTransition,
@@ -4172,6 +4282,7 @@ void praat_uvafon_init (void) {
 
 	ManipulationEditor_prefs ();
 	SpectrumEditor_prefs ();
+	FormantGridEditor_prefs ();
 
 	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
 	INCLUDE_LIBRARY (praat_uvafon_TextGrid_init)
@@ -4194,7 +4305,8 @@ void praat_uvafon_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create Poisson process...", 0, 1, DO_PointProcess_createPoissonProcess);
 		praat_addMenuCommand (L"Objects", L"New", L"-- new tiers ---", 0, 1, 0);
 		praat_addMenuCommand (L"Objects", L"New", L"Create PitchTier...", 0, 1, DO_PitchTier_create);
-		praat_addMenuCommand (L"Objects", L"New", L"Create FormantTier...", 0, 1, DO_FormantTier_create);
+		praat_addMenuCommand (L"Objects", L"New", L"Create FormantGrid...", 0, 1, DO_FormantGrid_create);
+		praat_addMenuCommand (L"Objects", L"New", L"Create FormantTier...", 0, praat_HIDDEN | praat_DEPTH_1, DO_FormantTier_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create IntensityTier...", 0, 1, DO_IntensityTier_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create DurationTier...", 0, 1, DO_DurationTier_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create AmplitudeTier...", 0, 1, DO_AmplitudeTier_create);
@@ -4323,9 +4435,18 @@ praat_addAction1 (classExcitation, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classFormant, 0, L"Formula (bandwidths)...", 0, 1, DO_Formant_formula_bandwidths);
 praat_addAction1 (classFormant, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, L"Track...", 0, 0, DO_Formant_tracker);
-	praat_addAction1 (classFormant, 0, L"Down to FormantTier", 0, 0, DO_Formant_downto_FormantTier);
+	praat_addAction1 (classFormant, 0, L"Down to FormantTier", 0, praat_HIDDEN, DO_Formant_downto_FormantTier);
+	praat_addAction1 (classFormant, 0, L"Down to FormantGrid", 0, 0, DO_Formant_downto_FormantGrid);
 praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, L"To Matrix...", 0, 0, DO_Formant_to_Matrix);
+
+	praat_addAction1 (classFormantGrid, 0, L"FormantGrid help", 0, 0, DO_FormantGrid_help);
+	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, 0, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 0, L"Modify -          ", 0, 0, 0);
+		praat_addAction1 (classFormantGrid, 0, L"Add formant point...", 0, 1, DO_FormantGrid_addFormantPoint);
+		praat_addAction1 (classFormantGrid, 0, L"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
+		praat_addAction1 (classFormantGrid, 0, L"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);
+		praat_addAction1 (classFormantGrid, 0, L"Remove bandwidth points between...", 0, 1, DO_FormantGrid_removeBandwidthPointsBetween);
 
 	praat_addAction1 (classFormantTier, 0, L"FormantTier help", 0, 0, DO_FormantTier_help);
 	praat_addAction1 (classFormantTier, 0, L"Draw -          ", 0, 0, 0);
@@ -4799,6 +4920,8 @@ praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
 	praat_addAction2 (classFormant, 1, classPointProcess, 1, L"To FormantTier", 0, 0, DO_Formant_PointProcess_to_FormantTier);
 	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_Formant_filter);
 	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_Formant_filter_noscale);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_FormantGrid_filter);
+	praat_addAction2 (classFormantGrid, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_FormantGrid_filter_noscale);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_FormantTier_filter);
 	praat_addAction2 (classFormantTier, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_FormantTier_filter_noscale);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, L"Draw", 0, 0, 0);

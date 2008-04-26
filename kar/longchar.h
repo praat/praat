@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,26 @@
  * pb 2006/12/05 first wchar support
  * pb 2007/08/08 more wchar_t support
  * pb 2007/08/16 removed New Century Schoolbook
+ * pb 2008/04/23 updated info
  */
 #include <wchar.h>
 
 /********** NON-ASCII CHARACTERS **********/
 
 /* System-independent representation of some non-ASCII symbols.
-	We need this because Praat is multilingual, and not all input methods are available on all international systems.
 	These symbols are represented by a backslash (\) plus two ASCII symbols.
+	In 1992, we needed this because Praat is multilingual.
+	Nowadays, we have Unicode, which is a system-independent representation as well.
+	Still, backslash sequences are useful if your computer does not have a fast input method for the symbols
+	you want to use, which is likely to happen with phonetic characters.
 
-	- ASCII would suffice for English.
-	- By supporting ISO8859-1, we support the Roman alphabets of Dutch, German, French, Spanish, Portuguese, Italian,
-	  Danish, Swedish, Norwegian, Welsh, Rumanian, Luxemburgian, Frisian.
-	- We will soon also support the Roman alphabets of Hungarian, Polish, Czech, Icelandic, Serbocroat, Turkish.
-
-	The following symbols are in the Roman alphabet:
-		vowel + dieresis: \a" \e" \i" \o" \u" \y"
-		vowel + grave: \a` \e` \i` \o` \u`
-		vowel + circumflex: \a^ \e^ \i^ \o^ \u^
-		vowel + acute: \a' \e' \i' \o' \u' \y'
-		letter + tilde: \n~ \a~ \o~
-		c + cedilla: \c,
-		German double s: \ss
-		ligatures: \ae
-		o + slash: \o/
-		a + ring: \ao
-		thorn: \th
-	These symbols will look right on all systems (most fonts).
+	- For the characters of the following languages, we supply backslash sequences as well as size and PostScript information:
+	  English, Dutch, German, French, Spanish, Portuguese, Italian,
+	  Danish, Swedish, Norwegian, Welsh, Luxemburgian, Frisian.
+	- For the characters of the following languages, we supply backslash sequences (PostScript will not work yet):
+	  Hungarian, Polish, Czech, Rumanian, Icelandic, Serbocroat, Turkish, Greek, Hebrew.
+	- By supporting Unicode, we also support other alphabets, such as Arabic, Chinese, Cyrillic, and Devanagari;
+	  since we have no backslash support for these, you need a specialized input method to enter them into Praat.
 */
 
 /* Alphabets. */
@@ -63,6 +56,7 @@
 #define Longchar_SYMBOL  1
 #define Longchar_PHONETIC  2
 #define Longchar_DINGBATS  3
+#define Longchar_RIGHT_TO_LEFT  4
 
 /********** Conversion of Roman native and generic string encodings. **********/
 

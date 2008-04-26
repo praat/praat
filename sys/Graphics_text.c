@@ -234,11 +234,11 @@ static void charSize (I, _Graphics_widechar *lc) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
-			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
+			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
 			int normalSize = my fontSize * my resolution / 72.0;
 			int smallSize = (3 * normalSize + 2) / 4;
-			int size = lc -> size < 100 ? smallSize : normalSize;
+			size = lc -> size < 100 ? smallSize : normalSize;
 			cairo_text_extents_t extents;
 
 			enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
@@ -261,7 +261,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
 			}
 			wchar_t buffer [2] = { lc -> kar, 0 };
-			cairo_text_extents (my cr, Melder_peekWcsToUtf8 (buffer, & extents));
+			cairo_text_extents (my cr, Melder_peekWcsToUtf8 (buffer), & extents);
 			lc -> width = extents.width;
 			lc -> baseline *= my fontSize * 0.01;
 			lc -> code = lc -> kar;
@@ -269,7 +269,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> font.integer = font;
 			lc -> size = size;
 		#elif xwin
-			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
+			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
 			XFontStruct *fontInfo;
 			XCharStruct *charInfo;
@@ -291,7 +291,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> font.string = 0;
 			lc -> font.integer = (long) fontInfo -> fid;
 		#elif win
-			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
+			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
 			HFONT fontInfo;
 			int normalSize = win_size2isize (my fontSize);
@@ -324,25 +324,21 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> code = font == kGraphics_font_IPATIMES || font == kGraphics_font_TIMES || font == kGraphics_font_HELVETICA || font == kGraphics_font_COURIER ? lc -> kar : info -> winEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
-					if (lc -> first == 's' && lc -> second == 'r') {
+					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
 						info = Longchar_getInfo ('s', 'w');
 						lc -> kar = info -> unicode;
 						lc -> code = info -> winEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-						lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-						lc [1]. first = 'h';
-						lc [1]. second = 'r';
 						lc [1]. kar = UNICODE_MODIFIER_LETTER_RHOTIC_HOOK;
-					} else if (lc -> first == 'l' && lc -> second == '~') {
+					} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
 						info = Longchar_getInfo ('l', ' ');
 						lc -> kar = info -> unicode;
 						lc -> code = info -> winEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-						lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-						lc [1]. first = '~';
-						lc [1]. second = '<';
 						lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
 					}
 				}
@@ -356,17 +352,18 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
 		#elif mac
-			Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
+			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int normalSize = my fontSize * my resolution / 72.0;
 			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 			lc -> baseline *= 0.01 * normalSize;
-			lc -> font.string = NULL;
+			long saveFont = lc -> font.integer;   // Save!
+			lc -> font.string = NULL;   // This erases font.integer!
 			lc -> font.integer =
 				info -> alphabet == Longchar_SYMBOL ? theSymbolFont :
 				info -> alphabet == Longchar_PHONETIC ? theIpaTimesFont :
 				lc -> kar == '/' ? thePalatinoFont :   /* Override Courier. */
 				info -> alphabet == Longchar_DINGBATS ? theZapfDingbatsFont:
-				lc -> font.integer == kGraphics_font_COURIER ? theCourierFont :
+				saveFont == kGraphics_font_COURIER ? theCourierFont :
 				my macFont;
 			lc -> style =
 				(lc -> style & Graphics_ITALIC ? italic : 0) +
@@ -393,25 +390,21 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? lc -> kar : info -> macEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
-					if (lc -> first == 's' && lc -> second == 'r') {
+					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
 						info = Longchar_getInfo ('s', 'w');
 						lc -> kar = info -> unicode;
 						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-						lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-						lc [1]. first = 'h';
-						lc [1]. second = 'r';
 						lc [1]. kar = UNICODE_MODIFIER_LETTER_RHOTIC_HOOK;
-					} else if (lc -> first == 'l' && lc -> second == '~') {
+					} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
 						info = Longchar_getInfo ('l', ' ');
 						lc -> kar = info -> unicode;
 						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-						lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-						lc [1]. first = '~';
-						lc [1]. second = '<';
 						lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
 					}
 				}
@@ -485,7 +478,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		int normalSize = (int) ((double) my fontSize * (double) my resolution / 72.0);
-		Longchar_Info info = Longchar_getInfo (lc -> first, lc -> second);
+		Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
@@ -619,27 +612,23 @@ static void charSize (I, _Graphics_widechar *lc) {
 		lc -> code = font == kGraphics_font_IPATIMES && my useSilipaPS ? info -> macEncoding : info -> psEncoding;
 		if (lc -> code == 0) {
 			_Graphics_widechar *lc2;
-			if (lc -> first == 's' && lc -> second == 'r') {
+			if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
 				info = Longchar_getInfo ('s', 'w');
 				lc -> kar = info -> unicode;
 				lc -> code = info -> macEncoding;
 				lc -> width = info -> ps.timesItalic * lc -> size / 1000.0;
 				for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-				lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+				lc2 [1]. kar = '\0';
 				while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-				lc [1]. first = 'h';
-				lc [1]. second = 'r';
 				lc [1]. kar = UNICODE_MODIFIER_LETTER_RHOTIC_HOOK;
-			} else if (lc -> first == 'l' && lc -> second == '~') {
+			} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
 				info = Longchar_getInfo ('l', ' ');
 				lc -> code = info -> macEncoding;
 				lc -> kar = info -> unicode;
 				lc -> width = info -> ps.timesItalic * lc -> size / 1000.0;
 				for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
-				lc2 [1]. first = lc2 [1]. second = lc2 [1]. kar = '\0';
+				lc2 [1]. kar = '\0';
 				while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
-				lc [1]. first = '~';
-				lc [1]. second = '<';
 				lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
 			}
 		}
@@ -648,8 +637,11 @@ static void charSize (I, _Graphics_widechar *lc) {
 
 static int shellHeight;
 
-static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *codes8, const MelderUtf16 *codes16, int nchars, int width) {
+static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
+	const wchar_t *codes, const char *codes8, const MelderUtf16 *codes16, int nchars, int width)
+{
 	iam (Graphics);
+	//Melder_casual ("nchars %d first %d %c rightToLeft %d", nchars, lc->kar, lc -> kar, lc->rightToLeft);
 	if (my postScript) {
 		iam (GraphicsPostscript);
 		int slant = (lc -> style & Graphics_ITALIC) && lc -> font.string [0] == 'S';   /* Symbol & SILDoulos ! */
@@ -787,7 +779,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 					cairo_set_font_size (my cr, lc -> size);
-			
 					switch (font) {
 						case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
 						case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times", slant, weight); break;
@@ -798,9 +789,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 						case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
 						default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
 					}
-					cairo_move_to(my cr, xDC, yDC);
-					cairo_show_text(my cr, Melder_peekWcsToUtf8 (codes16));
-		
+					cairo_move_to (my cr, xDC, yDC);
+					cairo_show_text (my cr, Melder_peekWcsToUtf8 (codes));
 				#elif xwin
 					XSetFont (my display, my text.gc, font);
 					XDrawString (my display, my text.window, my text.gc, xDC, yDC, (char *) codes8, nchars);
@@ -914,8 +904,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc, const char *c
 								int xp = xDC + (int) (cosa * dx1 + sina * dy1);
 								int yp = yDC - (int) (sina * dx1 - cosa * dy1);
 								#if gtk
-									cairo_move_to(my cr, xp, yp);
-									cairo_line_to(my cr, xp, yp);
+									cairo_move_to (my cr, xp, yp);
+									cairo_line_to (my cr, xp, yp);
 								#elif xwin
 									XDrawPoint (my display, my window, my gc, xp, yp);
 								#elif win
@@ -1129,6 +1119,7 @@ static void exitText (I) {
 
 static long bufferSize;
 static _Graphics_widechar *widechar;
+static wchar_t *charCodes;
 static char *charCodes8;
 static MelderUtf16 *charCodes16;
 static int initBuffer (const wchar_t *txt) {
@@ -1136,9 +1127,12 @@ static int initBuffer (const wchar_t *txt) {
 	if (sizeNeeded > bufferSize) {
 		sizeNeeded += sizeNeeded / 2 + 100;
 		Melder_free (widechar);
+		Melder_free (charCodes);
 		Melder_free (charCodes8);
 		Melder_free (charCodes16);
 		if (! (widechar = Melder_calloc (_Graphics_widechar, sizeNeeded)))
+			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
+		if (! (charCodes = Melder_calloc (wchar_t, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
 		if (! (charCodes8 = Melder_calloc (char, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
@@ -1157,7 +1151,7 @@ static void charSizes (Graphics me, _Graphics_widechar string []) {
 	 * Measure the size of each character.
 	 */
 	_Graphics_widechar *character;
-	for (character = string; character -> first; character ++)
+	for (character = string; character -> kar > '\t'; character ++)
 		charSize (me, character);
 	/*
 	 * Each character has been garnished with information about the character's width.
@@ -1189,7 +1183,7 @@ static void charSizes (Graphics me, _Graphics_widechar string []) {
 static double textWidth (_Graphics_widechar string []) {
 	_Graphics_widechar *character;
 	double width = 0;
-	for (character = string; character -> first; character ++)
+	for (character = string; character -> kar > '\t'; character ++)
 		width += character -> width;
 	return width;
 }
@@ -1228,6 +1222,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		else { double a = my textRotation * NUMpi / 180.0; cosa = cos (a); sina = sin (a); }
 		for (plc = lc; plc -> kar > '\t'; plc ++) {
 			_Graphics_widechar *next = plc + 1;
+			charCodes [nchars] = plc -> code;   /* Buffer... */
 			charCodes8 [nchars] = plc -> code;   /* Buffer... */
 			charCodes16 [nchars ++] = plc -> code;   /* Buffer... */
 			x += plc -> width;
@@ -1241,15 +1236,17 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 			if (next->kar < ' ' || next->style != plc->style ||
 				next->baseline != plc->baseline || next->size != plc->size ||
 				next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
+				next->rightToLeft != plc->rightToLeft ||
 				(my screen && my resolution > 150))
 			{
 				double dy2 = dy + plc -> baseline;
 				double xr = cosa * xbegin - sina * dy2;
 				double yr = sina * xbegin + cosa * dy2;
+				charCodes [nchars] = '\0';   /* ...and flush. */
 				charCodes8 [nchars] = '\0';   /* ...and flush. */
 				charCodes16 [nchars] = '\0';   /* ...and flush. */
 				charDraw (me, xDC + xr, my yIsZeroAtTheTop ? yDC - yr : yDC + yr,
-					plc, charCodes8, charCodes16, nchars, x - xbegin);
+					plc, charCodes, charCodes8, charCodes16, nchars, x - xbegin);
 				nchars = 0;
 				xbegin = x;
 			}
@@ -1297,17 +1294,20 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 				xbegin = x = xDC + dx + my secondIndent * my scaleX;
 				y = my yIsZeroAtTheTop ? y + (1.2/72) * my fontSize * my resolution : y - (1.2/72) * my fontSize * my resolution;
 			} else {
+				charCodes [nchars] = plc -> code;   /* Buffer... */
 				charCodes8 [nchars] = plc -> code;   /* Buffer... */
 				charCodes16 [nchars ++] = plc -> code;   /* Buffer... */
 				x += plc -> width;
 				if (next->kar < ' ' || next->style != plc->style ||
 					next->baseline != plc->baseline || next->size != plc->size || next->link != plc->link ||
-					next->font.integer != plc->font.integer || next->font.string != plc->font.string)
+					next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
+					next->rightToLeft != plc->rightToLeft)
 				{
+					charCodes [nchars] = '\0';   /* ...and flush. */
 					charCodes8 [nchars] = '\0';   /* ...and flush. */
 					charCodes16 [nchars] = '\0';   /* ...and flush. */
 					charDraw (me, xbegin, my yIsZeroAtTheTop ? y - plc -> baseline : y + plc -> baseline,
-						plc, charCodes8, charCodes16, nchars, x - xbegin);
+						plc, charCodes, charCodes8, charCodes16, nchars, x - xbegin);
 					nchars = 0;
 					xbegin = x;
 				}
@@ -1372,7 +1372,6 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 	unsigned int globalSmall = 0;
 	numberOfLinks = 0;
 	while ((kar = *in++) != '\0') {
-		Longchar_Info info;
 		if (kar == '^' && my circumflexIsSuperscript) {
 			if (globalSuperscript) globalSuperscript = 0;
 			else if (in [0] == '^') { globalSuperscript = 1; in ++; }
@@ -1381,20 +1380,20 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			continue;
 		} else if (kar == '_' && my underscoreIsSubscript) {
 			if (globalSubscript) { globalSubscript = 0; wordItalic = wordBold = wordCode = 0; continue; }
-			if (in [0] == '_') { globalSubscript = 1; in ++; wordItalic = wordBold = wordCode = 0; continue; }
-			if (! my dollarSignIsCode) { charSubscript = 1; wordItalic = wordBold = wordCode = 0; continue; }
-			info = Longchar_getInfo ('_', ' ');
-			kar = info -> unicode;
+			else if (in [0] == '_') { globalSubscript = 1; in ++; wordItalic = wordBold = wordCode = 0; continue; }
+			else if (! my dollarSignIsCode) { charSubscript = 1; wordItalic = wordBold = wordCode = 0; continue; }   // Not in manuals.
+			else
+				;   // A normal underscore in manuals.
 		} else if (kar == '%' && my percentSignIsItalic) {
 			if (globalItalic) globalItalic = 0;
 			else if (in [0] == '%') { globalItalic = 1; in ++; }
-			else if (my dollarSignIsCode) wordItalic = 1;
+			else if (my dollarSignIsCode) wordItalic = 1;   // In manuals.
 			else charItalic = 1;
 			continue;
 		} else if (kar == '#' && my numberSignIsBold) {
 			if (globalBold) globalBold = 0;
 			else if (in [0] == '#') { globalBold = 1; in ++; }
-			else if (my dollarSignIsCode) wordBold = 1;
+			else if (my dollarSignIsCode) wordBold = 1;   // In manuals.
 			else charBold = 1;
 			continue;
 		} else if (kar == '$' && my dollarSignIsCode) {
@@ -1484,7 +1483,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			 * ... except if kar1 or kar2 is null: in that case, draw the backslash.
 			 */
 			if (! (kar1 = in [0]) || ! (kar2 = in [1])) {
-				info = Longchar_getInfo ('b', 's');   /* Backslash symbol. */
+				;   // Normal backslash symbol.
 			/*
 			 * Catch "\s{", which means: small characters until corresponding '}'.
 			 */
@@ -1493,55 +1492,45 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				in += 2;
 				continue;
 			/*
-			 * Catch "\tm": if the font is Helvetica, replace with sans-serif version ("\TM").
-			 */
-			} else if (kar1 == 't' && kar2 == 'm' && my font == kGraphics_font_HELVETICA) {
-				info = Longchar_getInfo ('T', 'M');
-				in += 2;
-			/*
 			 * Default action: translate the backslash sequence into the long character 'kar1,kar2'.
 			 */
 			} else {
-				info = Longchar_getInfo (kar1, kar2);
+				kar = Longchar_getInfo (kar1, kar2) -> unicode;
 				in += 2;
 			}
-			kar = info -> unicode;
 		} else if (kar == '\"') {
-			info = Longchar_getInfo ('\"', ++nquote & 1 ? 'l' : 'r');
-			kar = info -> unicode;
+			kar = ++nquote & 1 ? UNICODE_LEFT_DOUBLE_QUOTATION_MARK : UNICODE_RIGHT_DOUBLE_QUOTATION_MARK;
+		} else if (kar == '\'') {
+			kar = UNICODE_RIGHT_SINGLE_QUOTATION_MARK;
+		} else if (kar == '`') {
+			kar = UNICODE_LEFT_SINGLE_QUOTATION_MARK;
 		} else if (kar >= 32 && kar <= 126) {
 			if (kar == 'f') {
-				if (in [0] == 'i' && HAS_FI_AND_FL_LIGATURES) { info = Longchar_getInfo ('F', 'I'); in ++; }
-				else if (in [0] == 'l' && HAS_FI_AND_FL_LIGATURES) { info = Longchar_getInfo ('F', 'L'); in ++; }
-				else info = Longchar_getInfo (kar, ' ');
+				if (in [0] == 'i' && HAS_FI_AND_FL_LIGATURES) {
+					kar = UNICODE_LATIN_SMALL_LIGATURE_FI;
+					in ++;
+				} else if (in [0] == 'l' && HAS_FI_AND_FL_LIGATURES) {
+					kar = UNICODE_LATIN_SMALL_LIGATURE_FL;
+					in ++;
+				}
 			} else if (kar == '}') {
 				if (globalSmall) { globalSmall = 0; continue; }
-				else info = Longchar_getInfo (kar, ' ');
-			} else {
-				info = Longchar_getInfo (kar, ' ');
 			}
-			kar = info -> unicode;
 		} else if (kar == '\t') {
-			out -> first = '\0';   /* End of substring. */
-			out -> second = kar;
 			out -> kar = '\t';
+			out -> rightToLeft = false;
 			wordItalic = wordBold = wordCode = wordLink = 0;
 			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = globalSmall = 0;
 			charItalic = charBold = charSuperscript = charSubscript = 0;
 			out ++;
 			continue;   /* Do not draw. */
-		} else {
-			if (kar == '\n') kar = ' ';
-			//Melder_casual ("kar %d",kar);
-			info = Longchar_getInfoFromNative (kar);
+		} else if (kar == '\n') {
+			kar = ' ';
 		}
 		if (wordItalic | wordBold | wordCode | wordLink) {
-			char kar1 = info -> first;
-			if (! isalnum (kar1) && kar1 != '_')
+			if (! isalnum (kar) && kar != '_')   // FIXME: this test could be more precise.
 				wordItalic = wordBold = wordCode = wordLink = 0;
 		}
-		out -> first = info -> first;
-		out -> second = info -> second;
 		out -> style =
 			(wordLink | globalLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
@@ -1556,13 +1545,17 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
 		}
-		out -> code = out -> first;   // Does this have any meaning?
+		out -> code = '?';   // Does this have any meaning?
 		out -> kar = kar;
+		out -> rightToLeft =
+			kar >= 0x0590 && kar <= 0x06FF ||
+			kar >= 0xFE70 && kar <= 0xFEFF ||
+			kar >= 0xFB1E && kar <= 0xFDFF;
 		charItalic = charBold = charSuperscript = charSubscript = 0;
 		out ++;
 	}
-	out -> first = out -> second = '\0';	/* Mark end of string. */
 	out -> kar = '\0';   // End of text.
+	out -> rightToLeft = false;
 }
 
 double Graphics_textWidth (I, const wchar_t *txt) {
@@ -1615,7 +1608,7 @@ void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wch
 				flush = TRUE;
 			}
 			if (flush) {
-				int saveFirst = plc -> first, saveKar = plc -> kar, direction = my yIsZeroAtTheTop ? -1 : 1;
+				int saveKar = plc -> kar, direction = my yIsZeroAtTheTop ? -1 : 1;
 				int x = my horizontalTextAlignment == Graphics_LEFT ? x1DC :
 					my horizontalTextAlignment == Graphics_RIGHT ? x2DC :
 					0.5 * (x1 + x2) * my scaleX + my deltaX;
@@ -1624,10 +1617,8 @@ void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wch
 					my verticalTextAlignment == Graphics_TOP ?
 					y2DC - direction * (iline - 1) * lineHeight :
 					0.5 * (y1 + y2) * my scaleY + my deltaY + 0.5 * direction * (lines - iline*2 + 1) * lineHeight;
-				plc -> first = '\0';
 				plc -> kar = '\0';
 				drawOneCell (me, x, y, startOfLine);
-				plc -> first = saveFirst;
 				plc -> kar = saveKar;
 				startOfLine = plc;
 				break;
@@ -1663,7 +1654,7 @@ static double psTextWidth (_Graphics_widechar string [], int useSilipaPS) {
 	 */
 	double textWidth = 0;
 	for (character = string; character -> kar > '\t'; character ++) {
-		Longchar_Info info = Longchar_getInfo (character -> first, character -> second);
+		Longchar_Info info = Longchar_getInfoFromNative (character -> kar);
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : character -> font.integer;

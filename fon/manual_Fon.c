@@ -44,47 +44,47 @@ void manual_Fon_init (ManPages me) {
 { extern void manual_formant_init (ManPages me); manual_formant_init (me); }
 { extern void manual_annotation_init (ManPages me); manual_annotation_init (me); }
 
-MAN_BEGIN (L"Get high index from time...", L"ppgb", 20030216)
+MAN_BEGIN (L"Get high index from time...", L"ppgb", 20080427)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
 	"which point is nearest to, but no earlier than, the specified time.")
 ENTRY (L"Argument")
 TAG (L"%Time (s)")
 DEFINITION (L"the time from which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the lowest time greater than or equal to %time."
+NORMAL (L"This query returns the index of the point with the lowest time greater than or equal to %time. "
 	"It is @undefined if there are no points. "
 	"It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.")
 MAN_END
 
-MAN_BEGIN (L"Get low index from time...", L"ppgb", 20030216)
+MAN_BEGIN (L"Get low index from time...", L"ppgb", 20080427)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
 	"which point is nearest to, but no later than, the specified time.")
 ENTRY (L"Argument")
 TAG (L"%Time (s)")
 DEFINITION (L"the time from which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time."
+NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time. "
 	"It is @undefined if there are no points. "
 	"It is 0 (offleft) if the specified time is less than the time of the first point.")
 MAN_END
 
-MAN_BEGIN (L"Get nearest index from time...", L"ppgb", 20030216)
+MAN_BEGIN (L"Get nearest index from time...", L"ppgb", 20080427)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
 	"which point is nearest to the specified time.")
 ENTRY (L"Argument")
 TAG (L"%Time (s)")
 DEFINITION (L"the time near which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time."
+NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time. "
 	"It is @undefined if there are no points.")
 MAN_END
 
-MAN_BEGIN (L"Remove point...", L"ppgb", 20030216)
+MAN_BEGIN (L"Remove point...", L"ppgb", 20080427)
 INTRO (L"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier).")
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
 ENTRY (L"Argument")
 TAG (L"%%Point number")
 DEFINITION (L"the index of the point you want to remove.")
@@ -93,9 +93,9 @@ NORMAL (L"If %%point number% is 3, the third point counted from the start of the
 	"is removed from the tier.")
 MAN_END
 
-MAN_BEGIN (L"Remove point near...", L"ppgb", 20030216)
+MAN_BEGIN (L"Remove point near...", L"ppgb", 20080427)
 INTRO (L"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier).")
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
 ENTRY (L"Argument")
 TAG (L"%Time (s)")
 DEFINITION (L"the time near which you want to remove a point.")
@@ -103,9 +103,9 @@ ENTRY (L"Behaviour")
 NORMAL (L"The point nearest to %time (if there is any point) is removed from the tier.")
 MAN_END
 
-MAN_BEGIN (L"Remove points between...", L"ppgb", 20030216)
+MAN_BEGIN (L"Remove points between...", L"ppgb", 20080427)
 INTRO (L"A command to remove some points from every selected time-based tier object "
-	"(@DurationTier, @FormantTier, @IntensityTier, @PitchTier, @TextTier).")
+	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
 ENTRY (L"Arguments")
 TAG (L"%%From time% (s), %%To time% (s)")
 DEFINITION (L"the times between which you want to remove all points.")

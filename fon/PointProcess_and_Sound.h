@@ -45,6 +45,12 @@ Sound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequenc
 Sound PointProcess_to_Sound_phonation
 	(PointProcess me, double samplingFrequency, double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2);
+#define PointProcess_to_Sound_phonation_DEFAULT_ADAPT_FACTOR  1.0
+#define PointProcess_to_Sound_phonation_DEFAULT_MAXIMUM_PERIOD  0.05
+#define PointProcess_to_Sound_phonation_DEFAULT_OPEN_PHASE  0.7
+#define PointProcess_to_Sound_phonation_DEFAULT_COLLISION_PHASE  0.03
+#define PointProcess_to_Sound_phonation_DEFAULT_POWER_1  3.0
+#define PointProcess_to_Sound_phonation_DEFAULT_POWER_2  4.0
 
 int PointProcess_playPart (PointProcess me, double tmin, double tmax);
 int PointProcess_play (PointProcess me);

@@ -1034,6 +1034,11 @@
 		23AC0C5C0C2A996A00990540 /* oo_READ_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */; };
 		23AC0C5E0C2A998900990540 /* oo_WRITE_TEXT.h in Headers */ = {isa = PBXBuildFile; fileRef = 23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */; };
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
+		23B594950DC0AC290005FC43 /* FormantGrid_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B594940DC0AC290005FC43 /* FormantGrid_def.h */; };
+		23B594970DC0AE4B0005FC43 /* FormantGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B594960DC0AE4B0005FC43 /* FormantGrid.h */; };
+		23B594990DC0AF260005FC43 /* FormantGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B594980DC0AF260005FC43 /* FormantGrid.c */; };
+		23B594B40DC0C25A0005FC43 /* FormantGridEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23B594B30DC0C25A0005FC43 /* FormantGridEditor.h */; };
+		23B594B60DC0C2630005FC43 /* FormantGridEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B594B50DC0C2630005FC43 /* FormantGridEditor.c */; };
 		23B6C16D0C0633CB0090DBBB /* regularExp.c in Sources */ = {isa = PBXBuildFile; fileRef = 23B6C16C0C0633CB0090DBBB /* regularExp.c */; };
 		23C47C9B0C933F680024C703 /* TimeSoundEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 23C47C990C933F680024C703 /* TimeSoundEditor.h */; };
 		23C47C9C0C933F680024C703 /* TimeSoundEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 23C47C9A0C933F680024C703 /* TimeSoundEditor.c */; };
@@ -2736,6 +2741,11 @@
 		23AC02E90C2195F300990540 /* melder_encodings.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_encodings.c; path = sys/melder_encodings.c; sourceTree = "<group>"; };
 		23AC0C5B0C2A996A00990540 /* oo_READ_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_READ_TEXT.h; path = sys/oo_READ_TEXT.h; sourceTree = "<group>"; };
 		23AC0C5D0C2A998900990540 /* oo_WRITE_TEXT.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_TEXT.h; path = sys/oo_WRITE_TEXT.h; sourceTree = "<group>"; };
+		23B594940DC0AC290005FC43 /* FormantGrid_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormantGrid_def.h; path = fon/FormantGrid_def.h; sourceTree = "<group>"; };
+		23B594960DC0AE4B0005FC43 /* FormantGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormantGrid.h; path = fon/FormantGrid.h; sourceTree = "<group>"; };
+		23B594980DC0AF260005FC43 /* FormantGrid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FormantGrid.c; path = fon/FormantGrid.c; sourceTree = "<group>"; };
+		23B594B30DC0C25A0005FC43 /* FormantGridEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormantGridEditor.h; path = fon/FormantGridEditor.h; sourceTree = "<group>"; };
+		23B594B50DC0C2630005FC43 /* FormantGridEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FormantGridEditor.c; path = fon/FormantGridEditor.c; sourceTree = "<group>"; };
 		23B6C16C0C0633CB0090DBBB /* regularExp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = regularExp.c; path = dwsys/regularExp.c; sourceTree = "<group>"; };
 		23C47C990C933F680024C703 /* TimeSoundEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimeSoundEditor.h; path = fon/TimeSoundEditor.h; sourceTree = "<group>"; };
 		23C47C9A0C933F680024C703 /* TimeSoundEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TimeSoundEditor.c; path = fon/TimeSoundEditor.c; sourceTree = "<group>"; };
@@ -4081,6 +4091,9 @@
 				23E5CE7009A22A37004E41D5 /* Formant_def.h */,
 				23E5CA5709A228FF004E41D5 /* Formant.h */,
 				23E5CA5609A228FF004E41D5 /* Formant.c */,
+				23B594940DC0AC290005FC43 /* FormantGrid_def.h */,
+				23B594960DC0AE4B0005FC43 /* FormantGrid.h */,
+				23B594980DC0AF260005FC43 /* FormantGrid.c */,
 				23E5CE7209A22A37004E41D5 /* FormantTier_def.h */,
 				23E5CA5909A228FF004E41D5 /* FormantTier.h */,
 				23E5CA5809A228FF004E41D5 /* FormantTier.c */,
@@ -4223,6 +4236,8 @@
 				23E5CACB09A22900004E41D5 /* AmplitudeTierEditor.c */,
 				23E5CACE09A22900004E41D5 /* DurationTierEditor.h */,
 				23E5CACD09A22900004E41D5 /* DurationTierEditor.c */,
+				23B594B30DC0C25A0005FC43 /* FormantGridEditor.h */,
+				23B594B50DC0C2630005FC43 /* FormantGridEditor.c */,
 				23E5CAD009A22900004E41D5 /* FunctionEditor.h */,
 				23E5CACF09A22900004E41D5 /* FunctionEditor.c */,
 				23E5CAD609A22901004E41D5 /* IntensityTierEditor.h */,
@@ -5980,6 +5995,9 @@
 				239955D10DAFF29500FB871A /* glpssx.h in Headers */,
 				239955D40DAFF29500FB871A /* glpstd.h in Headers */,
 				239955D60DAFF29500FB871A /* glptsp.h in Headers */,
+				23B594950DC0AC290005FC43 /* FormantGrid_def.h in Headers */,
+				23B594970DC0AE4B0005FC43 /* FormantGrid.h in Headers */,
+				23B594B40DC0C25A0005FC43 /* FormantGridEditor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7114,6 +7132,8 @@
 				239955D30DAFF29500FB871A /* glpssx02.c in Sources */,
 				239955D50DAFF29500FB871A /* glptsp.c in Sources */,
 				239956420DB0CB6900FB871A /* NUMlinprog.c in Sources */,
+				23B594990DC0AF260005FC43 /* FormantGrid.c in Sources */,
+				23B594B60DC0C2630005FC43 /* FormantGridEditor.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/04/18
+ * pb 2008/04/24
  */
 
 #ifndef _Graphics_h_
@@ -28,7 +28,7 @@
 #endif
 
 typedef struct {
-	unsigned char first, second, link;
+	unsigned char link, rightToLeft;
 	short style, size, code, baseline;
 	wchar_t kar;
 	double width;
