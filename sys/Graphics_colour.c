@@ -86,6 +86,7 @@ void _Graphics_setColour (I, int colour) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			switch (colour) {
 				case Graphics_WHITE:   cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0); break;
 				case Graphics_RED:     cairo_set_source_rgb (my cr, 1.0, 0.0, 0.0); break;
@@ -174,6 +175,7 @@ void _Graphics_setGrey (I, double fgrey) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
 			cairo_set_source_rgb (my cr, lightness, lightness, lightness);
 		#elif xwin
@@ -228,6 +230,7 @@ static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
@@ -289,6 +292,7 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			int line = x1DC_inner - x1DC, width = (x2DC - x1DC) - line, height = (y1DC - y2DC) - line;
 			double half = line / 2;
 			if (width <= 0 || height <= 0) return;

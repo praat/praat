@@ -925,15 +925,26 @@ static void createChildren (I) {
 		GuiButton_createShown (my dialog, 224, 268, y, y + height,
 			L"1 >", gui_button_cb_nextPage, me, 0);
 	}
+	#if gtk
+		// TODO: GuiScrollWindow.c
+		Widget scrollWindow = gtk_scrolled_window_new(NULL, NULL);
+                gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		my drawingArea = GuiDrawingArea_create (GTK_WIDGET(scrollWindow), 0, 200, 0, 400,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
 
+                gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), my drawingArea);
+                gtk_container_add (GTK_CONTAINER (my dialog), scrollWindow);
+		GuiObject_show(my drawingArea);
+		GuiObject_show(scrollWindow);
+	#elif motif
 	/***** Create scroll bar. *****/
 
 	createVerticalScrollBar (me, my dialog);
 
 	/***** Create drawing area. *****/
-
-	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
+		my drawingArea = GuiDrawingArea_createShown (my dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
+	#endif
 }
 
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {

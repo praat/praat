@@ -30,6 +30,8 @@
  * pb 2007/12/09 enums
  */
 
+#include <unistd.h> // close
+
 #include "melder.h"
 
 #if defined (_WIN32)

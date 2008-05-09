@@ -169,7 +169,11 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 		#endif
 	}
 	#if gtk
-		g_signal_connect (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
+		if (commandCallback != NULL) {
+			g_signal_connect (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
+		} else {
+			gtk_widget_set_sensitive (button, FALSE);
+		}
 		gtk_widget_show (button);
 	#elif motif
 		XtAddCallback (button,

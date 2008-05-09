@@ -109,7 +109,7 @@ void praat_showLogo (int autoPopDown) {
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://praat.org");
 		gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
-		g_signal_connect (GTK_DIALOG (dialog), "response", gtk_widget_destroy, NULL);
+		g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
 
 		gtk_dialog_run (GTK_DIALOG (dialog));
 

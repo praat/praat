@@ -334,7 +334,7 @@ Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, 
 {
 	Widget me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
 	#if gtk
-		gtk_container_add (GTK_WIDGET (parent), GTK_WIDGET (me));
+		gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (me));
 	#endif
 	GuiObject_show (me);
 	return me;

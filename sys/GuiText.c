@@ -578,7 +578,7 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my widget), ww);
 		} else {
 			my widget = gtk_entry_new ();
-			gtk_editable_set_editable (GTK_ENTRY (my widget), (flags & GuiText_NONEDITABLE) == 0);
+			gtk_editable_set_editable (GTK_EDITABLE (my widget), (flags & GuiText_NONEDITABLE) == 0);
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
@@ -750,10 +750,9 @@ wchar_t * GuiText_getSelection (Widget widget) {
 				wchar_t *temp =  Melder_utf8ToWcs (text);
 				g_free(text);
 				return temp;
-			} else { 
-				return NULL;
 			}
 		}
+		return NULL;
 	#elif win || mac
 		long length, start, end;
 		wchar_t *result;

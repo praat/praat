@@ -849,7 +849,7 @@ static void createChildren (I)
 	GuiLabel_createShown (my dialog, 5, 100, 3+menuBarOffset, Gui_AUTOMATIC, L"Positions:", 0);
 	GuiLabel_createShown (my dialog, 100, 190, 3+menuBarOffset, Gui_AUTOMATIC, L"Values:", 0);
 
-	my list = GuiList_create (my dialog, 0, 260, 40+menuBarOffset, 140+menuBarOffset, true);
+	my list = GuiList_create (my dialog, 0, 260, 40+menuBarOffset, 140+menuBarOffset, true, NULL);
 	GuiList_setSelectionChangedCallback (my list, gui_list_cb_extended, me);
 	GuiList_setDoubleClickCallback (my list, gui_list_cb_double_click, me);
 	GuiObject_show (my list);

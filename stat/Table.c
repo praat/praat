@@ -47,6 +47,7 @@
  * pb 2007/10/13 made Table_getExtrema global
  * pb 2007/11/18 refactoring
  * pb 2008/01/02 Table_drawRowFromDistribution
+ * pb 2008/04/30 new Formula API
  */
 
 #include <ctype.h>
@@ -1157,17 +1158,20 @@ end:
 int Table_formula_columnRange (Table me, long icol1, long icol2, const wchar_t *expression) {
 	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol1), L".");
 	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol2), L".");
-	Formula_compile (NULL, me, expression, 2, TRUE); cherror
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); cherror
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		for (long icol = icol1; icol <= icol2; icol ++) {
-			double numericResult;
-			wchar_t *stringResult = NULL;
-			Formula_run (irow, icol, & numericResult, & stringResult); cherror
-			if (stringResult) {
-				Table_setStringValue (me, irow, icol, stringResult);
-				Melder_free (stringResult);
-			} else {
-				Table_setNumericValue (me, irow, icol, numericResult);
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
+				Table_setStringValue (me, irow, icol, result. result.stringResult);
+				Melder_free (result. result.stringResult);
+			} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+				Table_setNumericValue (me, irow, icol, result. result.numericResult);
+			} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
+				error1 (L"Table_formula_columnRange: cannot put arrays into cells.")
+			} else if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING_ARRAY) {
+				error1 (L"Table_formula_columnRange: cannot put arrays into cells.")
 			}
 		}
 	}

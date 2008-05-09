@@ -28,6 +28,7 @@
  * pb 2007/06/21 tex
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
+ * pb 2008/04/30 new Formula API
  */
 
 #include "Matrix.h"
@@ -685,14 +686,13 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
 }
 
 int Matrix_formula (Matrix me, const wchar_t *expression, Matrix target) {
-	long irow, icol;
-	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
+	struct Formula_Result result;
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (target == NULL) target = me;
-	for (irow = 1; irow <= my ny; irow ++) {
-		for (icol = 1; icol <= my nx; icol ++) {
-			double result;
-			Formula_run (irow, icol, & result, NULL); cherror
-			target -> z [irow] [icol] = result;
+	for (long irow = 1; irow <= my ny; irow ++) {
+		for (long icol = 1; icol <= my nx; icol ++) {
+			Formula_run (irow, icol, & result); cherror
+			target -> z [irow] [icol] = result. result.numericResult;
 		}
 	}
 end:

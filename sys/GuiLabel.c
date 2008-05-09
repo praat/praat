@@ -115,7 +115,7 @@ Widget GuiLabel_createShown (Widget parent, int left, int right, int top, int bo
 
 void GuiLabel_setString (Widget widget, const wchar_t *text) {
 	#if gtk
-		gtk_label_set_text (widget, Melder_peekWcsToUtf8 (text));
+		gtk_label_set_text (GTK_LABEL (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup (text);

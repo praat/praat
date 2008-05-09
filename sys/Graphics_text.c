@@ -234,6 +234,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
 			int normalSize = my fontSize * my resolution / 72.0;
@@ -252,7 +253,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 
 			switch (font) {
 				case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
-				case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times", slant, weight); break;
+				case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times New Roman", slant, weight); break;
 				case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
 				case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
 				case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
@@ -675,6 +676,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 	} else if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
+			if (my cr == NULL) return;
 			// TODO!
 			int font = lc -> font.integer;
 			int needBitmappedIPA = 0;

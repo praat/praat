@@ -1,6 +1,6 @@
 /* TableOfReal.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2007/03/17 moved Table stuff here
  * pb 2007/06/21 tex
  * pb 2007/10/01 can write as encoding
+ * pb 2008/04/30 new Formula API
  */
 
 #include <ctype.h>
@@ -326,13 +327,13 @@ void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label) {
 int TableOfReal_formula (I, const wchar_t *expression, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
-	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			double result;
-			Formula_run (irow, icol, & result, NULL); cherror
-			thy data [irow] [icol] = result;
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			thy data [irow] [icol] = result. result.numericResult;
 		}
 	}
 end:
@@ -620,17 +621,16 @@ end:
 TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
-	long irow, icol, numberOfElements;
-	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
+	Formula_compile (NULL, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	/*
 	 * Count the new number of rows.
 	 */
-	numberOfElements = 0;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			double numericResult;
-			Formula_run (irow, icol, & numericResult, NULL); cherror
-			if (numericResult != 0.0) {
+	long numberOfElements = 0;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			if (result. result.numericResult != 0.0) {
 				numberOfElements ++;
 				break;
 			}
@@ -647,11 +647,11 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition) {
 	 * Store the result.
 	 */
 	numberOfElements = 0;
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			double numericResult;
-			Formula_run (irow, icol, & numericResult, NULL);
-			if (numericResult != 0.0) {
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result);
+			if (result. result.numericResult != 0.0) {
 				copyRow (me, irow, thee, ++ numberOfElements); cherror
 				break;
 			}
@@ -666,16 +666,16 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
-	Formula_compile (NULL, me, condition, FALSE, TRUE); cherror
+	Formula_compile (NULL, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	/*
 	 * Count the new number of columns.
 	 */
 	numberOfElements = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
-			double numericResult;
-			Formula_run (irow, icol, & numericResult, NULL); cherror
-			if (numericResult != 0.0) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			if (result. result.numericResult != 0.0) {
 				numberOfElements ++;
 				break;
 			}
@@ -694,9 +694,9 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition) {
 	numberOfElements = 0;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
-			double numericResult;
-			Formula_run (irow, icol, & numericResult, NULL);
-			if (numericResult != 0.0) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result);
+			if (result. result.numericResult != 0.0) {
 				copyColumn (me, icol, thee, ++ numberOfElements); cherror
 				break;
 			}

@@ -54,6 +54,7 @@ static void psRevertLine (GraphicsPostscript me) {
 
 #if cairo
 	static void cairoPrepareLine (GraphicsScreen me) {
+		if (my cr == NULL) return;
 		double dotted_line[] = { 0, 6 };
 		double rounded_line[] = { 2, 6 };
 		switch (my lineType) {
@@ -73,6 +74,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		}
 	}
 	static void cairoRevertLine (GraphicsScreen me) {
+		if (my cr == NULL) return;
 		cairo_set_line_cap (my cr, CAIRO_LINE_CAP_BUTT);
 	}
 #elif xwin
@@ -148,6 +150,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;	
 			int i;
 			cairoPrepareLine (me);
 			cairo_new_path (my cr);
@@ -275,6 +278,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairo_new_path (my cr);
 			cairo_move_to (my cr, xyDC [0], xyDC [1]);
 			for (long i = 1; i < numberOfPoints; i ++)
@@ -339,6 +343,7 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		ORDER_DC
 		{
 		#if cairo
+			if (my cr == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
 			cairoPrepareLine (me);
@@ -389,6 +394,7 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 		ORDER_DC
 		{
 		#if cairo
+			if (my cr == NULL) return;	
 			int width = x2DC - x1DC + 1, height = y1DC - y2DC + 1;
 			if (width <= 0 || height <= 0) return;
 			cairo_rectangle (my cr, x1DC, y2DC, width, height);
@@ -435,6 +441,7 @@ static void circle (I, short xDC, short yDC, short rDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairoPrepareLine (me);
 			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI); // TODO: This is my lucky guess.
 			cairoRevertLine (me);
@@ -471,6 +478,7 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		ORDER_DC
 		{
 		#if cairo
+			if (my cr == NULL) return;
 			cairoPrepareLine (me);
 			cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
 			// xc, yc, radius(!), angle1, angle2
@@ -516,6 +524,7 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;	
 			double arcAngle = toAngle - fromAngle;
 			if (arcAngle < 0.0) arcAngle += 360.0;
 			cairoPrepareLine (me);
@@ -565,6 +574,7 @@ static void fillCircle (I, short xDC, short yDC, short rDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI);
 			cairo_fill (my cr);		
 		#elif xwin
@@ -601,6 +611,7 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		ORDER_DC
 		{
 		#if cairo
+			if (my cr == NULL) return;	
 			cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
 			cairo_fill (my cr);
 		#elif xwin
@@ -818,6 +829,7 @@ static void initLine (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairoPrepareLine (me);
 		#elif xwin
 			xwinPrepareLine (me);
@@ -838,6 +850,7 @@ static void exitLine (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairoRevertLine (me);
 		#elif xwin
 			xwinRevertLine (me);
@@ -859,6 +872,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			long i;
 			int halfLine = ceil (0.5 * my lineWidth);
 			for (i = 0; i < numberOfPoints; i ++) {
@@ -1235,6 +1249,7 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			double size = 10.0 * my resolution * my arrowSize / 75.0; // TODO: die 75 zou dat niet de scherm resolutie moeten worden?
 			cairo_new_path (my cr);
 			cairo_move_to (my cr, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);

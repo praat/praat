@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/05/01
  */
 
 #ifndef _Collection_h_
@@ -29,10 +29,14 @@
 #ifndef _Gui_h_
 	#include "Gui.h"
 #endif
+#ifndef _Formula_h_
+	#include "Formula.h"
+#endif
 
 #define InterpreterVariable_members Thing_members \
 	wchar_t *key, *stringValue; \
-	double numericValue;
+	double numericValue; \
+	struct Formula_NumericArray numericArrayValue;
 #define InterpreterVariable_methods Thing_methods
 class_create (InterpreterVariable, Thing);
 
@@ -65,9 +69,10 @@ Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *fileNa
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
 int Interpreter_run (Interpreter me, wchar_t *text);   /* Destroys 'text'. */
-int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *result);
-int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **result);
-int Interpreter_numericOrStringExpression (Interpreter me, const wchar_t *expression, double *numericResult, wchar_t **stringResult);
+int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value);
+int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value);
+int Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value);
+int Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key);

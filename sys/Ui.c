@@ -160,6 +160,8 @@ Any UiRadio_addButton (I, const wchar_t *label) {
 	return thee;
 }
 
+#if motif
+// TODO: Ik denk dat dit Native GTK gedrag is (als dit alleen het label update)
 static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiField);
 	int i;
@@ -167,7 +169,6 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 	for (i = 1; i <= my options -> size; i ++) {
 		UiOption b = my options -> item [i];
 		#if motif
-			// TODO
 		if (b -> toggle == w) {
 			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
@@ -180,6 +181,7 @@ static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
 		#endif
 	}
 }
+#endif
 
 Any UiOptionMenu_addButton (I, const wchar_t *label) {
 	iam (UiField);
@@ -207,16 +209,17 @@ static void UiField_setDefault (UiField me) {
 				GuiRadioButton_setValue (b -> toggle, i == my integerDefaultValue);
 			}
 		} break; case UI_OPTIONMENU: {
-			for (int i = 1; i <= my options -> size; i ++) {
-				UiOption b = my options -> item [i];
-				#if motif
-				// TODO
-				XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
-				if (i == my integerDefaultValue) {
-					XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+			#if gtk
+				gtk_combo_box_set_active (GTK_COMBO_BOX (my cascadeButton), (my integerDefaultValue - 1));
+			#elif motif
+				for (int i = 1; i <= my options -> size; i ++) {
+					UiOption b = my options -> item [i];
+					XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
+					if (i == my integerDefaultValue) {
+						XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+					}
 				}
-				#endif
-			}
+			#endif
 		} break; case UI_ENUM: {
 			GuiList_selectItem (my list, my integerDefaultValue + my includeZero);
 		} break; case UI_LIST: {
@@ -316,14 +319,16 @@ static int UiField_widgetToValue (UiField me) {
 		} break; case UI_OPTIONMENU: {
 			int i;
 			my integerValue = 0;
+			#if gtk
+				// TODO: Graag even een check :)
+				my integerValue = gtk_combo_box_get_active (GTK_COMBO_BOX (my cascadeButton)) + 1;
+			#elif motif
 			for (i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
-				#if motif
-				// TODO
 				if (XmToggleButtonGetState (b -> toggle))
 					my integerValue = i;
-				#endif
 			}
+			#endif
 			if (my integerValue == 0)
 				return Melder_error3 (L"No option chosen for `", my name, L"'.");
 		} break; case UI_ENUM: case UI_LIST: {
@@ -933,30 +938,38 @@ void UiForm_finish (I) {
 				GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 
-				// TODO
 				#if motif
-				bar = XmCreateMenuBar (form, "UiOptionMenu", NULL, 0);
-				XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
-					#if defined (macintosh)
-						- 1
-					#endif
-					, XmNwidth, fieldWidth + 8, XmNheight, Gui_OPTIONMENU_HEIGHT + 8, NULL);
+					bar = XmCreateMenuBar (form, "UiOptionMenu", NULL, 0);
+					XtVaSetValues (bar, XmNx, fieldX - 4, XmNy, y - 4
+						#if defined (macintosh)
+							- 1
+						#endif
+						, XmNwidth, fieldWidth + 8, XmNheight, Gui_OPTIONMENU_HEIGHT + 8, NULL);
 				#endif
-				box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
-
-				#if motif
-				XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
-				XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_OPTIONMENU_HEIGHT, NULL);
+				// TODO: dit wil natuurlijk heel graag in GuiComboBox.c ;)
+				#if gtk
+					field -> cascadeButton = gtk_combo_box_new_text();
+					gtk_container_add (GTK_CONTAINER (form), field -> cascadeButton);
+				#elif motif
+					box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
+					XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
+					XtVaSetValues (field -> cascadeButton, XmNx, 4, XmNy, 4, XmNwidth, fieldWidth, XmNheight, Gui_OPTIONMENU_HEIGHT, NULL);
 				#endif
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					#if motif
+					#if gtk
+						gtk_combo_box_append_text(GTK_COMBO_BOX(field -> cascadeButton), Melder_peekWcsToUtf8 (theFinishBuffer.string));
+					#elif motif
 						button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
-					XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
+						XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
 					#endif
 				}
-				GuiObject_show (bar);
+				#if gtk
+					GuiObject_show (field -> cascadeButton);
+				#elif motif
+					GuiObject_show (bar);
+				#endif
 			} break;
 			case UI_BOOLEAN:
 			{
@@ -971,10 +984,12 @@ void UiForm_finish (I) {
 			{
 				int max = enum_length (field -> enumerated);
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				#if motif
 				appendColon ();
 				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> list = GuiList_create (form, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false);
+				#endif
+				field -> list = GuiList_create (form, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
 				for (int i = field -> includeZero ? 0 : 1; i <= max; i ++) {
 					GuiList_insertItem (field -> list, enum_string (field -> enumerated, i), 0);
 				}
@@ -984,10 +999,12 @@ void UiForm_finish (I) {
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				#if motif
 				appendColon ();
 				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
-				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false);
+				#endif
+				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
 				for (long i = 1; i <= field -> numberOfStrings; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}

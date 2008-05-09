@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2005/09/18 useSilipaPS
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/11/30 erased Graphics_printf
+ * sdk 2008/05/09 Picture_selfExpose
  */
 
 #include "melder.h"
@@ -686,15 +687,7 @@ void Picture_setSelection
 	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, Boolean notify)
 {
 	#if gtk
-		if (my drawingArea) {
-			short x1, x2, y1, y2;
-			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
-			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-
-//			g_debug("%d %d %d %d", x1, y1, abs(x2 - x1), abs(y2 - y1));
-			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
-			/* Dit gaan we als het werkt *COMPLEET* anders doen */
-		}
+		Picture_selfExpose (me);
 	#else
 		if (my drawingArea) drawSelection (me, 0);   /* Unselect. */
 	#endif
@@ -722,5 +715,16 @@ void Picture_setSelection
 
 void Picture_background (Picture me) { my backgrounding = TRUE; }
 void Picture_foreground (Picture me) { my backgrounding = FALSE; }
+
+#if gtk
+void Picture_selfExpose (Picture me) {
+	if (my drawingArea) {
+		short x1, x2, y1, y2;
+		Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+		Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+		gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+	}
+}
+#endif
 
 /* End of file Picture.c */

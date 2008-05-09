@@ -484,7 +484,7 @@ extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (I, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	iam (Editor);
 	#if gtk
-		GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (parent));
+		GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (parent)));
 		int screenWidth = gdk_screen_get_width (screen);
 		int screenHeight = gdk_screen_get_height (screen);
 	#elif motif

@@ -1,6 +1,6 @@
 /* Picture.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/05/09
  */
 
 /* A self-recording picture inside a Motif DrawingArea widget.
@@ -139,5 +139,7 @@ void Picture_setSelection
 
 void Picture_background (Picture me);
 void Picture_foreground (Picture me);
+
+void Picture_selfExpose (Picture me);
 
 /* End of file Picture.h */

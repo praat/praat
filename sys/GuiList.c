@@ -279,7 +279,7 @@ typedef struct structGuiList {
 	}
 #endif
 
-Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection) {
+Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
 	GuiList me = Melder_calloc (struct structGuiList, 1);
 	my allowMultipleSelection = allowMultipleSelection;
 	#if gtk
@@ -302,7 +302,8 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		col = gtk_tree_view_column_new ();
 		gtk_tree_view_column_pack_start (col, renderer, TRUE);
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_OBJECTS);
-		gtk_tree_view_column_set_title (col, " Objects ");
+		if (header != NULL)
+			gtk_tree_view_column_set_title (col, Melder_peekWcsToUtf8 (header));
 		gtk_tree_view_append_column (GTK_TREE_VIEW (my widget), col);	
 
 		g_object_set_data_full (G_OBJECT (my widget), "guiList",  me, _GuiGtkList_destroyCallback); 
@@ -404,8 +405,8 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 	return my widget;
 }
 
-Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection) {
-	Widget widget = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection);
+Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
+	Widget widget = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection, header);
 	GuiObject_show (widget);
 	return widget;
 }
@@ -714,12 +715,16 @@ void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position)
 void GuiList_selectItem (Widget widget, long position) {
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
-		GtkTreeIter iter;
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1);
+		gtk_tree_selection_select_path(selection, path);
 		gtk_tree_path_free (path);
-		gtk_tree_selection_select_iter (selection, & iter);
+
+// TODO: check of het bovenstaande werkt, dan kan dit weg
+//		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
+//		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
+//		GtkTreeIter iter;
+//		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
+//		gtk_tree_selection_select_iter (selection, & iter);
 	#elif win
 		iam_list;
 		if (! my allowMultipleSelection) {

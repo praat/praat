@@ -206,9 +206,9 @@ static void deleteDynamicMenu (void) {
 
 			praat_writeMenuSeparator = NULL;
 
-			// RFC: Beter?
+			// RFC: Beter? Nog beter?
 			#if gtk
-				praat_writeMenu = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
+				praat_writeMenuTitle = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
 			#elif motif
 				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
 				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
@@ -740,8 +740,9 @@ void praat_actions_createWriteMenu (Widget bar) {
 	// RFC: korter dus beter?
 	// Vraag: ik zie dat er twee keer een Menu Write wordt gedaan. Waar is dat goed voor?
 	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
+	// TODO: writeMenu -> writeMenuTitle gedaan
 	#if gtk
-		praat_writeMenu = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
+		praat_writeMenuTitle = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
 	#elif motif
 		praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
 		GuiObject_setSensitive (praat_writeMenuTitle, False);

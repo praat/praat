@@ -32,6 +32,18 @@ oo_DEFINE_STRUCT (ArtwordData)
 	#if oo_DECLARING
 		oo_INT (_iTarget)
 	#endif
+	#if oo_READING
+		double *newTargets = NUMdvector (1, 100);
+		double *newTimes = NUMdvector (1, 100);
+		if (my numberOfTargets > 0) {
+			NUMdvector_copyElements (my targets, newTargets, 1, my numberOfTargets);
+			NUMdvector_copyElements (my times, newTimes, 1, my numberOfTargets);
+			NUMdvector_free (my targets, 1);
+			NUMdvector_free (my times, 1);
+		}
+		my targets = newTargets;
+		my times = newTimes;
+	#endif
 
 oo_END_STRUCT (ArtwordData)
 #undef ooSTRUCT

@@ -1,6 +1,6 @@
 /* Interpreter.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@
  * pb 2007/08/12 more wchar_t
  * pb 2007/11/30 removed bug: allowed long arguments to the "call" statement (thanks to Ingmar Steiner)
  * pb 2007/12/10 predefined numeric variables macintosh/windows/unix
+ * pb 2008/04/30 new Formula API
+ * pb 2008/05/01 arrays
  */
 
 #include <ctype.h>
@@ -68,6 +70,7 @@ static void classInterpreterVariable_destroy (I) {
 	iam (InterpreterVariable);
 	Melder_free (my key);
 	Melder_free (my stringValue);
+	NUMdmatrix_free (my numericArrayValue. data, 1, 1);
 	inherited (InterpreterVariable) destroy (me);
 }
 
@@ -1210,7 +1213,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 			wchar_t *p = & command2.string [0];
 			/*
 			 * Variable names consist of a sequence of letters, digits, and underscores,
-			 * optionally precede by a period and optionally followed by a $.
+			 * optionally preceded by a period and optionally followed by a $ and/or #.
 			 */
 			if (*p == '.') p ++;
 			while (isalnum (*p) || *p == '_' || *p == '.')  p ++;
@@ -1284,6 +1287,26 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					Melder_free (var -> stringValue);
 					var -> stringValue = value;   /* var becomes owner */
 				}
+			} else if (*p == '#') {
+				/*
+				 * Assign to a numeric array variable.
+				 */
+				wchar_t *endOfVariable = ++ p;
+				while (*p == ' ' || *p == '\t') p ++;   // Go to first token after variable name.
+				if (*p == '=') {
+					;
+				} else error3 (L"Missing '=' after variable ", command2.string, L".")
+				*endOfVariable = '\0';
+				p ++;
+				while (*p == ' ' || *p == '\t') p ++;   // Go to first token after assignment or I/O symbol.
+				if (*p == '\0') {
+					error3 (L"Missing expression after variable ", command2.string, L".")
+				}
+				struct Formula_NumericArray value;
+				Interpreter_numericArrayExpression (me, p, & value); cherror
+				InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); cherror
+				NUMdmatrix_free (var -> numericArrayValue. data, 1, 1);
+				var -> numericArrayValue = value;
 			} else {
 				/*
 				 * Try to assign to a numeric variable.
@@ -1312,7 +1335,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						 * This must be an assignment (though: "echo = ..." ???)
 						 */
 						typeOfAssignment = *p == '+' ? 1 : *p == '-' ? 2 : *p == '*' ? 3 : *p == '/' ? 4 : 0;
-						*endOfVariable = '\0';   /* Close variable name. */
+						*endOfVariable = '\0';   // Close variable name. FIXME: this can be any weird character, e.g. hallo&
 					} else {
 						/*
 						 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
@@ -1434,30 +1457,44 @@ end2:
 	return 1;
 }
 
-int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *result) {
-	Melder_assert (result != NULL);
+int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value) {
+	Melder_assert (value != NULL);
 	if (wcsstr (expression, L"(=")) {
-		*result = Melder_atof (expression);
+		*value = Melder_atof (expression);
 	} else {
-		Formula_compile (me, NULL, expression, 0, FALSE); cherror
-		Formula_run (0, 0, result, NULL); cherror
+		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); cherror
+		struct Formula_Result result;
+		Formula_run (0, 0, & result); cherror
+		*value = result. result.numericResult;
 	}
 end:
 	iferror return 0;
 	return 1;
 }
 
-int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **result) {
-	Formula_compile (me, NULL, expression, 1, FALSE); cherror
-	Formula_run (0, 0, NULL, result); cherror
+int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE); cherror
+	struct Formula_Result result;
+	Formula_run (0, 0, & result); cherror
+	*value = result. result.stringResult;
 end:
 	iferror return 0;
 	return 1;
 }
 
-int Interpreter_numericOrStringExpression (Interpreter me, const wchar_t *expression, double *numericResult, wchar_t **stringResult) {
-	Formula_compile (me, NULL, expression, 2, FALSE); cherror
-	Formula_run (0, 0, numericResult, stringResult); cherror
+int Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE); cherror
+	struct Formula_Result result;
+	Formula_run (0, 0, & result); cherror
+	*value = result. result.numericArrayResult;
+end:
+	iferror return 0;
+	return 1;
+}
+
+int Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE); cherror
+	Formula_run (0, 0, result); cherror
 end:
 	iferror return 0;
 	return 1;

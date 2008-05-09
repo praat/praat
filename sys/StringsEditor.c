@@ -139,7 +139,7 @@ static void gui_list_cb_doubleClick (Widget widget, void *void_me, long item) {
 
 static void createChildren (I) {
 	iam (StringsEditor);
-	my list = GuiList_create (my dialog, 1, 0, Machine_getMenuBarHeight (), -70, true);
+	my list = GuiList_create (my dialog, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
 	//GuiList_setDoubleClickCallback (my list, gui_list_cb_doubleClick, me);
 	GuiObject_show (my list);
 

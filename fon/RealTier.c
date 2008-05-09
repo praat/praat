@@ -1,6 +1,6 @@
 /* RealTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/04/19 RealTier_formula: defence against undefined values
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
+ * pb 2008/04/30 new Formula API
  */
 
 #include "RealTier.h"
@@ -495,14 +496,14 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
 int RealTier_formula (I, const wchar_t *expression, thou) {
 	iam (RealTier);
 	thouart (RealTier);
-	Formula_compile (NULL, me, expression, FALSE, TRUE); cherror
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long icol = 1; icol <= my points -> size; icol ++) {
-		double result;
-		Formula_run (0, icol, & result, NULL); cherror
-		if (result == NUMundefined)
+		struct Formula_Result result;
+		Formula_run (0, icol, & result); cherror
+		if (result. result.numericResult == NUMundefined)
 			error1 (L"Cannot put an undefined value into the tier.\nFormula not finished.")
-		((RealPoint) thy points -> item [icol]) -> value = result;
+		((RealPoint) thy points -> item [icol]) -> value = result. result.numericResult;
 	}
 end:
 	iferror return 0;

@@ -246,11 +246,13 @@ static int goToPage (Any editor, const wchar_t *title) {
 
 static void which (ButtonEditor me, int show) {
 	my show = show;
+	#if motif
 	GuiRadioButton_setValue (my button1, show == 1);
 	GuiRadioButton_setValue (my button2, show == 2);
 	GuiRadioButton_setValue (my button3, show == 3);
 	GuiRadioButton_setValue (my button4, show == 4);
 	GuiRadioButton_setValue (my button5, show == 5);
+	#endif
 	HyperPage_goToPage (me, L"Buttons");
 }
 

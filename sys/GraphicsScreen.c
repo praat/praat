@@ -22,6 +22,7 @@
  * pb 2004/10/18 ReleaseDC
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * sdk 2008/03/24 cairo
+ * sdk 2008/05/09 cairo
  */
 
 #include "GraphicsP.h"
@@ -46,7 +47,7 @@
 static void destroy (I) {
 	iam (GraphicsScreen);
 	#if cairo
-		cairo_destroy (my cr);
+		if (my cr) cairo_destroy (my cr);
 	#elif xwin
 		XFreeGC (my display, my gc);
 	#elif win
@@ -60,10 +61,10 @@ static void destroy (I) {
 		 * No ReleaseDC here, because we have not created it ourselves,
 		 * not even with GetDC.
 		 */
-		inherited (GraphicsScreen) destroy (me);
 	#elif mac
 		/* Nothing. */
 	#endif
+	inherited (GraphicsScreen) destroy (me);
 }
 
 void Graphics_flushWs (I) {
@@ -91,6 +92,7 @@ void Graphics_clearWs (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
+			if (my cr == NULL) return;
 			cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
 			// TODO: cairo_rectangle (my gc, 0, 0, GTK_WIDGET(I)->allocation.width, GTK_WIDGET(I)->allocation.height); ?
 			cairo_rectangle (my cr, my x1DC, my y1DC, my x1DC - my x2DC, my y1DC - my y2DC);
@@ -174,6 +176,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 	#if cairo
 		_Graphics_text_init (me);
 		my resolution = 100;
+		my cr = NULL;
 	#elif xwin
 		if (! inited) {
 			int i;

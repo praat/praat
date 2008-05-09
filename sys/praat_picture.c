@@ -35,6 +35,7 @@
  * pb 2007/12/09 enums
  * pb 2008/01/19 double
  * pb 2008/03/18 function comment
+ * pb 2008/04/30 new Formula API
  */
 
 #include "praatP.h"
@@ -73,7 +74,8 @@ static void updateFontMenu (void) {
 		if (praat_font < kGraphics_font_MIN) praat_font = kGraphics_font_MIN;
 		if (praat_font > kGraphics_font_MAX) praat_font = kGraphics_font_MAX;
 		#if gtk
-	//		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font]), TRUE);
+//			if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font])))
+				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font]), TRUE);
 		#elif motif
 			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
 				XmToggleButtonGadgetSetState (praatButton_fonts [i], praat_font == i, 0);
@@ -101,23 +103,28 @@ static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, pr
 static void updateSizeMenu (void) {
 	if (! theCurrentPraat -> batch) {
 		#if gtk
-/*			switch (praat_size) {
+			switch (praat_size) {
 				case 10:
-					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_10), TRUE);
+//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_10)))
+						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_10), TRUE);
 					break;
 				case 12:
-					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_12), TRUE);
+//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_12)))
+						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_12), TRUE);
 					break;
 				case 14:
-					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_14), TRUE);
+//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_14)))
+						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_14), TRUE);
 					break;
 				case 18:
-					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_18), TRUE);
+//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_18)))
+						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_18), TRUE);
 					break;
 				case 24:
-					gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_24), TRUE);
+//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_24)))
+						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_24), TRUE);
 					break;
-			}*/
+			}
 		#elif motif
 			XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
 			XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
@@ -136,6 +143,7 @@ static void setFontSize (int fontSize) {
 		updateSizeMenu ();
 	}
 }
+
 DIRECT (10) setFontSize (10); END
 DIRECT (12) setFontSize (12); END
 DIRECT (14) setFontSize (14); END
@@ -327,8 +335,8 @@ static Widget praatButton_colours [16];
 static void updatePenMenu (void) {
 	if (! theCurrentPraat -> batch) {
 	#if gtk
-		//gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_lines[praat_lineType]), TRUE);
-		//gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_colours[praat_colour]), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_lines[praat_lineType]), TRUE);
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_colours[praat_colour]), TRUE);
 	#elif motif
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			XmToggleButtonGadgetSetState (praatButton_lines [i], praat_lineType == i, 0);
@@ -342,11 +350,6 @@ static void updatePenMenu (void) {
 static void setLineType (int lineType) {
 	praat_picture_open ();
 	Graphics_setLineType (GRAPHICS, lineType);
-	#if gtk
-		// gtk_widget_queue_draw(GTK_WIDGET(GRAPHICS -> drawingArea));
-		// TODO: Ik will hier een fullscreen redraw hebben, of iig een redraw van de
-		// outline van de selectie.
-	#endif
 	praat_picture_close ();
 	if (theCurrentPraat == & theForegroundPraat) {
 		praat_lineType = lineType;
@@ -702,7 +705,7 @@ FORM (DrawFunction, L"Praat picture: Draw function", 0)
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
-	long n = GET_INTEGER (L"Number of horizontal steps"), i;
+	long n = GET_INTEGER (L"Number of horizontal steps");
 	double *y = NULL;
 	PraatPictureFunction function = NULL;
 	wchar_t *formula = GET_STRING (L"formula");
@@ -716,11 +719,11 @@ DO
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	Formula_compile (NULL, function, formula, FALSE, TRUE); cherror
-	for (i = 1; i <= n; i ++) {
-		double result;
-		Formula_run (1, i, & result, NULL); cherror
-		y [i] = result;
+	Formula_compile (NULL, function, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	for (long i = 1; i <= n; i ++) {
+		struct Formula_Result result;
+		Formula_run (1, i, & result); cherror
+		y [i] = result. result.numericResult;
 	}
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
@@ -1495,7 +1498,15 @@ void praat_picture_open (void) {
 
 void praat_picture_close (void) {
 	if (theCurrentPraat != & theForegroundPraat) return;
-	if (! theCurrentPraat -> batch) Picture_highlight (praat_picture);
+	if (! theCurrentPraat -> batch) {
+		Picture_highlight (praat_picture);
+		#if gtk
+			// TODO: Tijdelijke fix; dit exposed de selectie, maar voor bijvoorbeeld 'text' die buiten
+			// de selectie valt is dit geen optie. Het mooiste zou zijn als na praat_picture_close
+			// bekend zou zijn wat de 'dirty' regio is van het scherm. Om vervolgens alleen dat te exposen
+			Picture_selfExpose (praat_picture);
+		#endif
+	}
 }
 
 Graphics praat_picture_editor_open (bool eraseFirst) {
@@ -1512,11 +1523,12 @@ void praat_picture_init (void) {
 	Widget dialog, scrollWindow, menuBar, drawingArea = NULL;
 	int margin, width, height, resolution, x;
 	static MelderString itemTitle_search = { 0 };
+
 	if (! theCurrentPraat -> batch) {
 		char pictureWindowTitle [100];
 		// Ook al eerder gezien... Migreren naar UI?
 		#if gtk
-	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (theCurrentPraat -> topShell));
+	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (theCurrentPraat -> topShell)));
 	                int screenWidth = gdk_screen_get_width (screen);
 //	                int screenHeight = gdk_screen_get_height (screen);
 		#elif motif
@@ -1558,6 +1570,50 @@ void praat_picture_init (void) {
 		fontMenu = GuiMenuBar_addMenu (menuBar, L"Font", 0);
 		helpMenu = GuiMenuBar_addMenu (menuBar, L"Help", 0);
 	}
+
+	if (! theCurrentPraat -> batch) {
+		width = height = resolution * 12;
+		#if gtk
+			// TODO: GuiScrollWindow
+			scrollWindow = gtk_scrolled_window_new (NULL, NULL);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		#elif motif
+			XtManageChild (menuBar);
+			#if defined (macintosh) || defined (_WIN32)
+				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
+				XtVaSetValues (scrollWindow,
+					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
+					XmNrightAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
+					XmNbottomAttachment, XmATTACH_FORM, NULL);
+			#else
+				scrollWindow = XtVaCreateWidget (
+					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
+					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
+					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
+			#endif
+		#endif
+		#if gtk
+			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), drawingArea);
+			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
+
+			GuiObject_show (menuBar);
+			GuiObject_show (drawingArea);
+		#elif motif
+			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		#endif
+	}
+	
+	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
+	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);
+	
+	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
+	// READ THIS!
+
+	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
+
 
 	praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
 	praat_addMenuCommand (L"Picture", L"File", L"Picture info", 0, 0, DO_Picture_settings_report);
@@ -1716,39 +1772,6 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
 
 	if (! theCurrentPraat -> batch) {
-		width = height = resolution * 12;
-		#if gtk
-			scrollWindow = gtk_scrolled_window_new(NULL, NULL);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		#elif motif
-			XtManageChild (menuBar);
-			#if defined (macintosh) || defined (_WIN32)
-				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
-				XtVaSetValues (scrollWindow,
-					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
-					XmNrightAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
-					XmNbottomAttachment, XmATTACH_FORM, NULL);
-			#else
-				scrollWindow = XtVaCreateWidget (
-					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
-					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
-					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
-			#endif
-		#endif
-		#if gtk
-			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), drawingArea);
-			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
-
-//			gtk_widget_set_size_request (GTK_WINDOW(dialog), width, height);
-//
-			GuiObject_show (menuBar);
-			GuiObject_show (drawingArea);
-		#elif motif
-			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		#endif
 		GuiObject_show (scrollWindow);
 		GuiObject_show (dialog);
 
@@ -1758,13 +1781,11 @@ void praat_picture_init (void) {
 			XtRealizeWidget (shell);
 		#endif
 	}
-	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);
-	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
+
 	updatePenMenu ();
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
 }
 
 void praat_picture_prefsChanged (void) {

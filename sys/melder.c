@@ -622,7 +622,7 @@ static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (vo
 static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
 
 #if gtk
-static int gtk_error (wchar_t *message) {
+static void gtk_error (wchar_t *message) {
 	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_ERROR,
@@ -632,7 +632,7 @@ static int gtk_error (wchar_t *message) {
 	gtk_widget_destroy (dialog);
 }
 
-static int gtk_warning (wchar_t *message) {
+static void gtk_warning (wchar_t *message) {
 	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_WARNING,
@@ -765,7 +765,11 @@ static void motif_warning (wchar_t *message) {
 void MelderGui_create (void *appContext, void *parent) {
 	extern void gui_information (wchar_t *);
 	Melder_appContext = appContext;
-	Melder_topShell = (Widget) parent;
+	#if gtk
+		Melder_topShell = (Widget) GuiObject_parent (parent);
+	#else
+		Melder_topShell = (Widget) parent;
+	#endif
 	Melder_setInformationProc (gui_information);
 	#if gtk
 		Melder_setWarningProc (gtk_warning);

@@ -78,7 +78,10 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 
 	if (tim < 0) tim = 0;
 	if (tim > artword -> totalTime) tim = artword -> totalTime;
-	while (tim != a -> times [i]) i ++;
+	while (tim != a -> times [i]) {
+		i ++;
+		Melder_assert (i <= a -> numberOfTargets);   // can fail if tim is in an extended precision register
+	}
 	static MelderString itemText = { 0 };
 	MelderString_empty (& itemText);
 	MelderString_append3 (& itemText, Melder_single (tim), L"  ", Melder_single (value));
@@ -94,8 +97,13 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
 	iam (ArtwordEditor);
 	int i = 0;
-	while (event -> toggle != my button [i]) i ++;
+	while (event -> toggle != my button [i]) {
+		i ++;
+		Melder_assert (i <= enumlength (Art_MUSCLE));
+	}
 	my feature = i;
+	Melder_assert (my feature > 0);
+	Melder_assert (my feature <= enumlength (Art_MUSCLE));
 	updateList (me);
 }
 
@@ -133,7 +141,7 @@ static void createChildren (I) {
 	GuiLabel_createShown (my dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
 	GuiLabel_createShown (my dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
 	GuiLabel_createShown (my dialog, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
-	my list = GuiList_createShown (my dialog, 0, 140, dy + 40, dy + 340, true);
+	my list = GuiList_createShown (my dialog, 0, 140, dy + 40, dy + 340, true, NULL);
 
 	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, me, 0);
 

@@ -1104,12 +1104,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Machine_initLookAndFeel (argc, argv);
 		sprintf (objectWindowTitle, "%s objects", praatP.title);
 		#if gtk
-			theCurrentPraat -> topShell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-			gtk_window_set_title (GTK_WINDOW (theCurrentPraat -> topShell), objectWindowTitle);
-			// TODO: Nu hebben we een vreselijk mooie GuiWindow_setTitle, werkt het niet...
-			gtk_window_set_default_size (GTK_WINDOW (theCurrentPraat -> topShell), -1, 600);
-			g_signal_connect (G_OBJECT (theCurrentPraat -> topShell), "delete-event", DO_Quit, NULL);
+			theCurrentPraat -> topShell = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit, NULL, 0);
 			theCurrentPraat -> context = g_main_context_default ();
+			GuiObject_show (GuiObject_parent (theCurrentPraat -> topShell));
 		#else
 			#ifdef _WIN32
 				argv [0] = & praatP. title [0];   /* argc == 4 */
@@ -1148,8 +1145,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			MelderGui_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		#if gtk
-			Raam = gtk_vbox_new (FALSE, 0);
-			gtk_container_add (GTK_CONTAINER (theCurrentPraat -> topShell), Raam);
+			Raam = theCurrentPraat -> topShell;
+/*			Raam = gtk_vbox_new (FALSE, 0);
+			gtk_container_add (GTK_CONTAINER (theCurrentPraat -> topShell), Raam);*/
 		#elif motif
 			Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
 		#endif
@@ -1174,7 +1172,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		// TODO: Paul hoe moet dit? #if not gtk?
 		GuiLabel_createShown (raLeft, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
 		#endif
-		praatList_objects = GuiList_create (raLeft, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true);
+		praatList_objects = GuiList_create (raLeft, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
 		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, NULL);
 		GuiObject_show (praatList_objects);

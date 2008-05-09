@@ -610,14 +610,14 @@ static int Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *en
 {
 	FLAC__StreamMetadata metadata;
 	FLAC__StreamMetadata_StreamInfo *info;
-	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPath (file)), & metadata))   // BUG: not Unicode-compatible on Windows.
+	if (! FLAC__metadata_get_streaminfo (Melder_peekWcsToUtf8 (Melder_fileToPath (file)), & metadata))   // FIXME: not Unicode-compatible on Windows.
 		return Melder_error1 (L"Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;
 	*encoding = Melder_FLAC_COMPRESSION;
 	*sampleRate = (double) info -> sample_rate;
 	*startOfData = 0;   /* Meaningless, libFLAC does the I/O */
-	*numberOfSamples = info -> total_samples;   /* Might lose bits above LONG_MAX */
+	*numberOfSamples = info -> total_samples;   /* FIXME: may lose bits above LONG_MAX */
 	if ((FLAC__uint64) *numberOfSamples != info -> total_samples)
 		return Melder_error1 (L"FLAC file too long.");
 	return 1;

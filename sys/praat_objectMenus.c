@@ -1,6 +1,6 @@
 /* praat_objectMenus.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2007/01/26 layout objects window
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
+ * pb 2008/04/30 new Formula API
  */
 
 #include <ctype.h>
@@ -290,7 +291,7 @@ FORM (praat_calculator, L"Calculator", L"Calculator")
 	LABEL (L"", L"For details, click Help.")
 	OK
 DO
-	return Interpreter_numericOrStringExpression (NULL, GET_STRING (L"expression"), NULL, NULL);
+	return Interpreter_anyExpression (NULL, GET_STRING (L"expression"), NULL);
 END
 
 FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions")

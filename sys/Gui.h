@@ -35,11 +35,7 @@
 	#include "melder.h"
 #endif
 
-//#if gtk
-//	#define GUI_ARGS  Widget w, gpointer void_me
-//#elif motif
-	#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
-//#endif
+#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
 
 #define GUI_IAM(klas)  (void) w; (void) void_me; (void) call; iam (klas);
 
@@ -439,8 +435,8 @@ void GuiLabel_setString (Widget widget, const wchar_t *text);
 typedef struct structGuiListEvent {
 	Widget list;
 } *GuiListEvent;
-Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection);
-Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection);
+Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
+Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
 void GuiList_deleteAllItems (Widget me);
 void GuiList_deleteItem (Widget me, long position);
 void GuiList_deselectAllItems (Widget me);

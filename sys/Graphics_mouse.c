@@ -25,6 +25,8 @@
 #include "GraphicsP.h"
 #include "Gui.h"
 
+#if motif
+
 #if xwin
 	static int mouseDown = TRUE;
 #endif
@@ -82,5 +84,6 @@ void Graphics_waitMouseUp (I) {
 		Graphics_getMouseLocation (me, & xWC, & yWC);
 	}
 }
+#endif
 
 /* End of file Graphics_mouse.c */
