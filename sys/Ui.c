@@ -1047,7 +1047,7 @@ void UiForm_destroyWhenUnmanaged (I) {
 	my destroyWhenUnmanaged = 1;
 }
 
-void UiForm_do (I, int modified) {
+void UiForm_do (I, bool modified) {
 	iam (UiForm);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;

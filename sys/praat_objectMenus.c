@@ -291,7 +291,15 @@ FORM (praat_calculator, L"Calculator", L"Calculator")
 	LABEL (L"", L"For details, click Help.")
 	OK
 DO
-	return Interpreter_anyExpression (NULL, GET_STRING (L"expression"), NULL);
+	Interpreter interpreter = UiInterpreter_get ();
+	if (interpreter == NULL) {
+		interpreter = Interpreter_create (NULL, NULL);
+		int status = Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), NULL);
+		forget (interpreter);
+		return status;
+	} else {
+		return Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), NULL);
+	}
 END
 
 FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions")

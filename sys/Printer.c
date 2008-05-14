@@ -305,7 +305,7 @@ int Printer_postScriptSettings (void) {
 	#if defined (macintosh)
 		SET_INTEGER (L"EPS files include preview", thePrinter. epsFilesHavePreview);
 	#endif
-	UiForm_do (dia, FALSE);
+	UiForm_do (dia, false);
 	return 1;
 }
 

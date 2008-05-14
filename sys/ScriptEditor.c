@@ -111,7 +111,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 		 */
 		forget (my argsDialog);
 		my argsDialog = Interpreter_createForm (my interpreter, my shell, NULL, args_ok, me);
-		UiForm_do (my argsDialog, 0);
+		UiForm_do (my argsDialog, false);
 	} else {
 		praat_background ();
 		if (my name) MelderFile_setDefaultDir (& file);   /* BUG if two disks have the same name (on Mac). */

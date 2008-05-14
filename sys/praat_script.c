@@ -493,7 +493,7 @@ static int firstPassThroughScript (MelderFile file) {
 			praatP.editor ? ((Editor) praatP.editor) -> dialog : theCurrentPraat -> topShell,
 			Melder_fileToPath (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
-		UiForm_do (form, 0);
+		UiForm_do (form, false);
 	} else {
 		praat_background ();
 		praat_executeScriptFromFile (file, NULL);

@@ -269,9 +269,9 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
 #define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
-#define DO  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
+#define DO  UiForm_do (dia, modified != NULL); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (wchar_t *) sender)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
-#define DO_ALTERNATIVE(alternative)  UiForm_do (dia, (int) modified); } else if (sender != dia) { \
+#define DO_ALTERNATIVE(alternative)  UiForm_do (dia, modified != NULL); } else if (sender != dia) { \
 	if (! UiForm_parseString (dia, (wchar_t *) sender)) { wchar_t *parkedError = Melder_wcsdup (Melder_getError ()); Melder_clearError (); \
 	int result = DO_##alternative (sender, modified); \
 	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \

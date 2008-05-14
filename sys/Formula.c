@@ -46,6 +46,7 @@
  * pb 2008/02/01 object
  * pb 2008/04/09 removed explicit GSL
  * pb 2008/05/01 arrays
+ * pb 2008/05/12 to, sum
  */
 
 #include <ctype.h>
@@ -59,7 +60,7 @@
 #include "praatP.h"
 #include "UnicodeData.h"
 
-static Interpreter theInterpreter;
+static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
 static const wchar_t *theExpression;
 static int theExpressionType, theOptimize;
@@ -88,7 +89,7 @@ enum { GEENSYMBOOL_,
 /* The list ends with "MINUS_" itself. */
 
 	/* Haakjes-openen. */
-	IF_, THEN_, ELSE_, HAAKJEOPENEN_, RECHTEHAAKOPENEN_, KOMMA_,
+	IF_, THEN_, ELSE_, HAAKJEOPENEN_, RECHTEHAAKOPENEN_, KOMMA_, FROM_, TO_,
 	/* Operatoren met boolean resultaat. */
 	OR_, AND_, NOT_, EQ_, NE_, LE_, LT_, GE_, GT_,
 	/* Operatoren met reeel resultaat. */
@@ -160,8 +161,13 @@ enum { GEENSYMBOOL_,
 		FIXEDSTR_, PERCENTSTR_,
 	#define HIGH_STRING_FUNCTION  PERCENTSTR_
 
+	/* Range functions. */
+	#define LOW_RANGE_FUNCTION  SUM_
+		SUM_,
+	#define HIGH_RANGE_FUNCTION  SUM_
+
 	#define LOW_FUNCTION  LOW_FUNCTION_1
-	#define HIGH_FUNCTION  HIGH_STRING_FUNCTION
+	#define HIGH_FUNCTION  HIGH_RANGE_FUNCTION
 
 	/* Membership operator. */
 	PERIOD_,
@@ -169,8 +175,11 @@ enum { GEENSYMBOOL_,
 
 /* Symbols introduced by the parser. */
 
-	TRUE_, FALSE_, IFTRUE_, IFFALSE_, GOTO_, LABEL_,
-	NUMERIC_ARRAY_ELEMENT_,
+	TRUE_, FALSE_,
+	GOTO_, IFTRUE_, IFFALSE_, INCREMENT_GREATER_GOTO_,
+	LABEL_,
+	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
+	NUMERIC_ARRAY_ELEMENT_, VARIABLE_REFERENCE_,
 	SELF0_, SELFSTR0_,
 	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
 	OBJECTLOCATION0_, OBJECTLOCATIONSTR0_, OBJECTLOCATION1_, OBJECTLOCATIONSTR1_, OBJECTLOCATION2_, OBJECTLOCATIONSTR2_,
@@ -184,6 +193,7 @@ enum { GEENSYMBOOL_,
 
 	STRING_,
 	NUMERIC_VARIABLE_, STRING_VARIABLE_, NUMERIC_ARRAY_VARIABLE_, STRING_ARRAY_VARIABLE_,
+	VARIABLE_NAME_,
 	END_
 	#define hoogsteSymbool END_
 };
@@ -192,7 +202,7 @@ enum { GEENSYMBOOL_,
 /* they are used in error messages and in debugging (see Formula_print). */
 
 static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
-	L"if", L"then", L"else", L"(", L"[", L",",
+	L"if", L"then", L"else", L"(", L"[", L",", L"from", L"to",
 	L"or", L"and", L"not", L"=", L"<>", L"<=", L"<", L">=", L">",
 	L"+", L"-", L"*", L"/", L"div", L"mod", L"^", L"_neg",
 	L"endif", L"fi", L")", L"]",
@@ -227,9 +237,13 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
 	L"extractNumber", L"extractWord$", L"extractLine$",
 	L"fixed$", L"percent$",
+	L"sum",
 	L".",
-	L"_true", L"_false", L"_iftrue", L"_iffalse", L"_gaNaar", L"_label",
-	L"_numericArrayElement",
+	L"_true", L"_false",
+	L"_goto", L"_iftrue", L"_iffalse", L"_incrementGreaterGoto",
+	L"_label",
+	L"_decrementAndAssign", L"_add3Down", L"_pop2",
+	L"_numericArrayElement", L"_variableReference",
 	L"_self0", L"_self0$",
 	L"_objectcell0", L"_objectcell0$", L"_objectcell1", L"_objectcell1$", L"_objectcell2", L"_objectcell2$",
 	L"_objectlocation0", L"_objectlocation0$", L"_objectlocation1", L"_objectlocation1$", L"_objectlocation2", L"_objectlocation2$",
@@ -240,6 +254,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"_square",
 	L"_string",
 	L"_numericVariable", L"_stringVariable", L"_numericArrayVariable", L"_stringArrayVariable",
+	L"_variableName",
 	L"_end"
 };
 
@@ -403,21 +418,26 @@ static int Formula_lexan (void) {
 						 * This could be a variable with the same name as a function.
 						 */
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) return formulefout (L"Unknown variable, or function with missing arguments", ikar);
-						if (isArray) {
-							if (isString) {
-								nieuwtok (STRING_ARRAY_VARIABLE_)
-							} else {
-								nieuwtok (NUMERIC_ARRAY_VARIABLE_)
-							}
+						if (var == NULL) {
+							nieuwtok (VARIABLE_NAME_)
+							lexan [itok]. content.string = Melder_wcsdup (token.string);
+							numberOfStringConstants ++;
 						} else {
-							if (isString) {
-								nieuwtok (STRING_VARIABLE_)
+							if (isArray) {
+								if (isString) {
+									nieuwtok (STRING_ARRAY_VARIABLE_)
+								} else {
+									nieuwtok (NUMERIC_ARRAY_VARIABLE_)
+								}
 							} else {
-								nieuwtok (NUMERIC_VARIABLE_)
+								if (isString) {
+									nieuwtok (STRING_VARIABLE_)
+								} else {
+									nieuwtok (NUMERIC_VARIABLE_)
+								}
 							}
+							lexan [itok]. content.variable = var;
 						}
-						lexan [itok]. content.variable = var;
 					} else {
 						return formulefout (L"Function with missing arguments", ikar);
 					}
@@ -457,23 +477,26 @@ static int Formula_lexan (void) {
 						 * This must be a variable, since there is no "current object" here.
 						 */
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) return Melder_error3 (
-							L"Unknown variable " L_LEFT_GUILLEMET, token.string,
-							L_RIGHT_GUILLEMET L" in formula (no \"current object\" here).");
-						if (isArray) {
-							if (isString) {
-								nieuwtok (STRING_ARRAY_VARIABLE_)
-							} else {
-								nieuwtok (NUMERIC_ARRAY_VARIABLE_)
-							}
+						if (var == NULL) {
+							nieuwtok (VARIABLE_NAME_)
+							lexan [itok]. content.string = Melder_wcsdup (token.string);
+							numberOfStringConstants ++;
 						} else {
-							if (isString) {
-								nieuwtok (STRING_VARIABLE_)
+							if (isArray) {
+								if (isString) {
+									nieuwtok (STRING_ARRAY_VARIABLE_)
+								} else {
+									nieuwtok (NUMERIC_ARRAY_VARIABLE_)
+								}
 							} else {
-								nieuwtok (NUMERIC_VARIABLE_)
+								if (isString) {
+									nieuwtok (STRING_VARIABLE_)
+								} else {
+									nieuwtok (NUMERIC_VARIABLE_)
+								}
 							}
+							lexan [itok]. content.variable = var;
 						}
-						lexan [itok]. content.variable = var;
 					} else {
 						return Melder_error3 (
 							L"Unknown token " L_LEFT_GUILLEMET, token.string,
@@ -493,25 +516,26 @@ static int Formula_lexan (void) {
 							L"Unknown function " L_LEFT_GUILLEMET, token.string,
 							L_RIGHT_GUILLEMET L" in formula.");
 					} else {
-						return Melder_error3 (
-							L"Unknown variable " L_LEFT_GUILLEMET, token.string,
-							L_RIGHT_GUILLEMET L" in formula.");
-					}
-				}
-				if (isArray) {
-					if (isString) {
-						nieuwtok (STRING_ARRAY_VARIABLE_)
-					} else {
-						nieuwtok (NUMERIC_ARRAY_VARIABLE_)
+						nieuwtok (VARIABLE_NAME_)
+						lexan [itok]. content.string = Melder_wcsdup (token.string);
+						numberOfStringConstants ++;
 					}
 				} else {
-					if (isString) {
-						nieuwtok (STRING_VARIABLE_)
+					if (isArray) {
+						if (isString) {
+							nieuwtok (STRING_ARRAY_VARIABLE_)
+						} else {
+							nieuwtok (NUMERIC_ARRAY_VARIABLE_)
+						}
 					} else {
-						nieuwtok (NUMERIC_VARIABLE_)
+						if (isString) {
+							nieuwtok (STRING_VARIABLE_)
+						} else {
+							nieuwtok (NUMERIC_VARIABLE_)
+						}
 					}
+					lexan [itok]. content.variable = var;
 				}
-				lexan [itok]. content.variable = var;
 			} else {
 				return Melder_error3 (
 					L"Unknown function or attribute " L_LEFT_GUILLEMET, token.string,
@@ -748,6 +772,17 @@ static int parsePowerFactor (void) {
 			oudlees;
 			nieuwontleed (NUMERIC_ARRAY_VARIABLE_);
 		}
+		parse [iparse]. content.variable = var;
+		return 1;
+	}
+
+	if (symbol == VARIABLE_NAME_) {
+		InterpreterVariable var = Interpreter_hasVariable (theInterpreter, lexan [ilexan]. content.string);
+		if (var == NULL) {
+			formulefout (L"Unknown variable", lexan [ilexan]. position);
+			return 0;
+		}
+		nieuwontleed (NUMERIC_VARIABLE_);
 		parse [iparse]. content.variable = var;
 		return 1;
 	}
@@ -1219,6 +1254,53 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
+	if (symbol >= LOW_RANGE_FUNCTION && symbol <= HIGH_RANGE_FUNCTION) {
+		if (symbol == SUM_) {
+			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
+			if (! pas (HAAKJEOPENEN_)) return 0;
+			int symbol = nieuwlees;
+			if (symbol == NUMERIC_VARIABLE_) {
+				nieuwontleed (VARIABLE_REFERENCE_);
+				InterpreterVariable loopVariable = lexan [ilexan]. content.variable;
+				parse [iparse]. content.variable = loopVariable;
+			} else if (symbol == VARIABLE_NAME_) {
+				InterpreterVariable loopVariable = Interpreter_lookUpVariable (theInterpreter, lexan [ilexan]. content.string);
+				nieuwontleed (VARIABLE_REFERENCE_);
+				parse [iparse]. content.variable = loopVariable;
+			} else {
+				formulefout (L"Numeric variable expected", lexan [ilexan]. position);
+				return 0;
+			}
+			// now on stack: sum, loop variable
+			if (nieuwlees == FROM_) {
+				if (! parseExpression ()) return 0;
+			} else {
+				oudlees;
+				nieuwontleed (NUMBER_); parsenumber (1.0);
+			}
+			nieuwontleed (DECREMENT_AND_ASSIGN_);   // this pushes the variable back on the stack
+			// now on stack: sum, loop variable
+			if (! pas (TO_)) return 0;
+			if (! parseExpression ()) return 0;
+			// now on stack: sum, loop variable, end value
+			int startLabel = nieuwlabel;
+			int endLabel = nieuwlabel;
+			nieuwontleed (LABEL_); ontleedlabel (startLabel);
+			nieuwontleed (INCREMENT_GREATER_GOTO_); ontleedlabel (endLabel);
+			if (! pas (KOMMA_)) return 0;
+			if (! parseExpression ()) return 0;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+			// now on stack: sum, loop variable, end value, value to add
+			nieuwontleed (ADD_3DOWN_);
+			// now on stack: sum, loop variable, end value
+			nieuwontleed (GOTO_); ontleedlabel (startLabel);
+			nieuwontleed (LABEL_); ontleedlabel (endLabel);
+			nieuwontleed (POP_2_);
+			// now on stack: sum
+			return 1;
+		}
+	}
+
 	if (symbol == STOPWATCH_) {
 		nieuwontleed (symbol);
 		return 1;
@@ -1354,7 +1436,7 @@ static int parseExpression (void) {
 
 /*
 	Translate the infix expression "my lexan" into the postfix expression "my parse":
-	remove parentheses and brackets, commas,
+	remove parentheses and brackets, commas, FROM_, TO_,
 	IF_ THEN_ ELSE_ ENDIF_ OR_ AND_;
 	introduce LABEL_ GOTO_ IFTRUE_ IFFALSE_ TRUE_ FALSE_
 	SELF0_ SELF1_ SELF2_ MATRIKS0_ MATRIKS1_ MATRIKS2_
@@ -1571,8 +1653,9 @@ static void Formula_optimizeFlow (void)
 			if (parse [i]. symbol == LABEL_)
 			{
 				int gevonden = 0;
-				for (j = 1; j < i; j ++)
-					if ((parse [j]. symbol == GOTO_ || parse [j]. symbol == IFFALSE_ || parse [j]. symbol == IFTRUE_)
+				for (j = 1; j <= numberOfInstructions; j ++)
+					if ((parse [j]. symbol == GOTO_ || parse [j]. symbol == IFFALSE_ || parse [j]. symbol == IFTRUE_
+						|| parse [j]. symbol == INCREMENT_GREATER_GOTO_)
 						&& parse [i]. content.label == parse [j]. content.label)
 						gevonden = 1;
 				if (! gevonden)
@@ -1615,26 +1698,38 @@ static void Formula_evaluateConstants (void) {
 }
 
 static void Formula_removeLabels (void) {
-/* Vertaal symbolische labels (<0) in adressen (> 0). */
-	int i = 1, j;
-	while (i <= numberOfInstructions) {
+	/*
+	 * First translate symbolic labels (< 0) into instructions locations (> 0).
+	 */
+	for (int i = 1; i <= numberOfInstructions; i ++) {
 		int symboli = parse [i]. symbol;
-		if (symboli == GOTO_ || symboli == IFTRUE_ || symboli == IFFALSE_)
-			for (j = theOptimize ? i + 1 : 1; j <= numberOfInstructions; j ++) /* Alleen voorwaarts. */
-				if (parse [j]. symbol == LABEL_ && parse [i]. content.label == parse [j]. content.label)
+		if (symboli == GOTO_ || symboli == IFTRUE_ || symboli == IFFALSE_ || symboli == INCREMENT_GREATER_GOTO_) {
+			int label = parse [i]. content.label;
+			for (int j = 1; j <= numberOfInstructions; j ++) {
+				if (parse [j]. symbol == LABEL_ && parse [j]. content.label == label) {
 					parse [i]. content.label = j;
-				else
-					(void) 0;
-		else if (theOptimize && symboli == LABEL_) {
-			schuif (i, 1);      /* Verwijder een label. */
-			for (j = 1; j < i; j ++) {
-				int symbolj = parse [j]. symbol;
-				if ((symbolj == GOTO_ || symbolj == IFTRUE_ || symbolj == IFFALSE_) && parse [j]. content.label > i)
-					parse [j]. content.label --;  /* Pas een label aan. */
+				}
 			}
-			i --;   /* Voorkom ophogen i (overbodig?). */
 		}
-		i ++;
+	}
+	/*
+	 * Then remove the labels, which have become superfluous.
+	 */
+	if (theOptimize) {
+		int i = 1;
+		while (i <= numberOfInstructions) {
+			int symboli = parse [i]. symbol;
+			if (symboli == LABEL_) {
+				schuif (i, 1);   // remove one label
+				for (int j = 1; j <= numberOfInstructions; j ++) {
+					int symbolj = parse [j]. symbol;
+					if ((symbolj == GOTO_ || symbolj == IFTRUE_ || symbolj == IFFALSE_ || symbolj == INCREMENT_GREATER_GOTO_) && parse [j]. content.label > i)
+						parse [j]. content.label --;  /* Pas een label aan. */
+				}
+				i --;   /* Voorkom ophogen i (overbodig?). */
+			}
+			i ++;
+		}
 	}
 	numberOfInstructions --;   /* Het END_-symbol hoeft niet geinterpreteerd. */
 }
@@ -1650,13 +1745,13 @@ static void Formula_print (FormulaInstruction f) {
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
 			Melder_casual ("%d %ls %.17g", i, instructionName, f [i]. content.number);
-		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_)
+		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_ || symbol == INCREMENT_GREATER_GOTO_)
 			Melder_casual ("%d %ls %d", i, instructionName, f [i]. content.label);
 		else if (symbol == NUMERIC_VARIABLE_)
 			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, Melder_double (f [i]. content.variable -> numericValue));
 		else if (symbol == STRING_VARIABLE_)
 			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
-		else if (symbol == STRING_)
+		else if (symbol == STRING_ || symbol == VARIABLE_NAME_)
 			Melder_casual ("%d %ls \"%ls\"", i, instructionName, f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
 		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
@@ -1675,6 +1770,13 @@ static void Formula_print (FormulaInstruction f) {
 
 int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize) {
 	theInterpreter = interpreter ? interpreter : UiInterpreter_get ();
+	if (theInterpreter == NULL) {
+		if (theLocalInterpreter == NULL) {
+			theLocalInterpreter = Interpreter_create (NULL, NULL);
+		}
+		theInterpreter = theLocalInterpreter;
+	}
+	//Melder_casual ("interpreter %ld %ld", interpreter, theInterpreter);
 	theSource = data;
 	theExpression = expression;
 	theExpressionType = expressionType;
@@ -1695,7 +1797,7 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 		ilexan = 1;
 		for (;;) {
 			int symbol = lexan [ilexan]. symbol;
-			if (symbol == STRING_) Melder_free (lexan [ilexan]. content.string);
+			if (symbol == STRING_ || symbol == VARIABLE_NAME_) Melder_free (lexan [ilexan]. content.string);
 			else if (symbol == END_) break;   /* Either the end of a formula, or the end of lexan. */
 			ilexan ++;
 		}
@@ -1728,11 +1830,13 @@ typedef struct Stackel {
 	#define Stackel_STRING  1
 	#define Stackel_NUMERIC_ARRAY  2
 	#define Stackel_STRING_ARRAY  3
+	#define Stackel_VARIABLE  -1
 	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
 	union {
 		double number;
 		wchar_t *string;
 		struct Formula_NumericArray numericArray;
+		InterpreterVariable variable;
 	} content;
 } *Stackel;
 
@@ -1769,6 +1873,13 @@ static void pushNumericArray (long numberOfRows, long numberOfColumns, double **
 	stackel -> content.numericArray.numberOfRows = numberOfRows;
 	stackel -> content.numericArray.numberOfColumns = numberOfColumns;
 	stackel -> content.numericArray.data = x;
+}
+static void pushVariable (InterpreterVariable var) {
+	Stackel stackel = & theStack [++ w];
+	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+	if (w > wmax) wmax ++;
+	stackel -> which = Stackel_VARIABLE;
+	stackel -> content.variable = var;
 }
 static wchar_t *Stackel_whichText (Stackel me) {
 	return
@@ -3668,7 +3779,39 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	programPointer = f [programPointer]. content.label - theOptimize;
 } break; case LABEL_: {
 	;
+} break; case DECREMENT_AND_ASSIGN_: {
+	Stackel x = pop, v = pop;
+	InterpreterVariable var = v->content.variable;
+	var -> numericValue = x->content.number - 1.0;
+	//Melder_casual ("starting value %f", var -> numericValue);
+	pushVariable (var);
+} break; case INCREMENT_GREATER_GOTO_: {
+	//Melder_casual ("top of loop, stack depth %d", w);
+	Stackel e = & theStack [w], v = & theStack [w - 1];
+	Melder_assert (e->which == Stackel_NUMBER);
+	Melder_assert (v->which == Stackel_VARIABLE);
+	InterpreterVariable var = v->content.variable;
+	//Melder_casual ("loop variable %f", var -> numericValue);
+	var -> numericValue += 1.0;
+	//Melder_casual ("loop variable %f", var -> numericValue);
+	//Melder_casual ("end value %f", e->content.number);
+	if (var -> numericValue > e->content.number) {
+		programPointer = f [programPointer]. content.label - theOptimize;
+	}
+} break; case ADD_3DOWN_: {
+	Stackel x = pop, s = & theStack [w - 2];
+	Melder_assert (x->which == Stackel_NUMBER);
+	Melder_assert (s->which == Stackel_NUMBER);
+	//Melder_casual ("to add %f", x->content.number);
+	s->content.number += x->content.number;
+	//Melder_casual ("sum %f", s->content.number);
+} break; case POP_2_: {
+	w -= 2;
+	//Melder_casual ("total %f", theStack[w].content.number);
 } break; case NUMERIC_ARRAY_ELEMENT_: { do_numericArrayElement ();
+} break; case VARIABLE_REFERENCE_: {
+	InterpreterVariable var = f [programPointer]. content.variable;
+	pushVariable (var);
 } break; case SELF0_: { do_self0 (row, col);
 } break; case SELFSTR0_: { do_selfStr0 (row, col);
 } break; case SELFMATRIKS1_: { do_selfMatriks1 (row);

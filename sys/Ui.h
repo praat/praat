@@ -106,7 +106,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value);
 void UiForm_setInteger (I, const wchar_t *fieldName, long value);
 	/* Integer, Natural, Boolean, Radio, Enum, List. */
 
-void UiForm_do (I, int modified);
+void UiForm_do (I, bool modified);
 /*
 	Function:
 		put the form on the screen.

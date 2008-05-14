@@ -1,5 +1,5 @@
 Praats/FLAC/READ_ME.TXT
-Paul Boersma, November 21, 2007
+Paul Boersma, May 13, 2008
 This file describes the adaptations to the FLAC 1.2.1 sources
 that were needed to make them compatible with Praat.
 
@@ -31,3 +31,10 @@ Some changes from int to FLAC__int32 may be necessary.
 We also have to insert
 Melder_assert (sizeof (int) == 4)
 in read_residual_partitioned_rice_.
+
+To ensure compatibility with international file names on Windows,
+the following is added to flac_FLAC_formant.h:
+#ifdef _WIN32
+	#include "melder.h"
+	#define fopen(filename,mode)  _wfopen (Melder_peekWcsToUtf16 (Melder_peekUtf8ToWcs (filename)), L"" mode)
+#endif

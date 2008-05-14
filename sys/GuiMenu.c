@@ -163,8 +163,9 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 // TODO: Even uitzoeken hoe dit 'accel_path' werkt
 //			gtk_menu_item_set_accel_path (GTK_MENU_ITEM (button), ...);
 		#elif motif
-			if (acceleratorString [0])
+			if (acceleratorString [0]) {
 				XtVaSetValues (button, XmNaccelerator, acceleratorString, NULL);
+			}
 			XtVaSetValues (button, motif_argXmString (XmNacceleratorText, acceleratorText), NULL);
 		#endif
 	}

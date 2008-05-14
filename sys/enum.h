@@ -86,7 +86,8 @@ typedef struct enum_ANY { int _length; const wchar_t *_type, *zero, *_end; int _
 
 typedef signed char enum1;
 typedef signed short enum2;
-#define enumi(type,element)  (((int) & ((type *) 0) -> element - (int) & ((enum_ANY *) 0) -> zero) / (int) sizeof (char *))
+//#define enumi(type,element)  (((int) & ((type *) 0) -> element - (int) & ((enum_ANY *) 0) -> zero) / (int) sizeof (char *))
+#define enumi(type,element)  ((wchar_t **) & ((type *) 0) -> element - (wchar_t **) & ((enum_ANY *) 0) -> zero)
 
 #define enum_type(enumerated)  (((enum_ANY *) enumerated) -> _type)
 

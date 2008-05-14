@@ -90,7 +90,7 @@
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
 	cmd -> dialog = UiForm_createE (cmd, title, helpTitle);
 #define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sender == NULL) {
-#define EDITOR_DO  UiForm_do (cmd -> dialog, 0); } else if (sender != cmd -> dialog) { \
+#define EDITOR_DO  UiForm_do (cmd -> dialog, false); } else if (sender != cmd -> dialog) { \
 	if (! UiForm_parseStringE (cmd, (wchar_t *) sender)) return 0; } else {
 #define EDITOR_END  } return 1;
 

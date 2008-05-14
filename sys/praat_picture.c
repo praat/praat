@@ -1571,50 +1571,6 @@ void praat_picture_init (void) {
 		helpMenu = GuiMenuBar_addMenu (menuBar, L"Help", 0);
 	}
 
-	if (! theCurrentPraat -> batch) {
-		width = height = resolution * 12;
-		#if gtk
-			// TODO: GuiScrollWindow
-			scrollWindow = gtk_scrolled_window_new (NULL, NULL);
-			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		#elif motif
-			XtManageChild (menuBar);
-			#if defined (macintosh) || defined (_WIN32)
-				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
-				XtVaSetValues (scrollWindow,
-					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
-					XmNrightAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
-					XmNbottomAttachment, XmATTACH_FORM, NULL);
-			#else
-				scrollWindow = XtVaCreateWidget (
-					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
-					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
-					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
-			#endif
-		#endif
-		#if gtk
-			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), drawingArea);
-			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
-
-			GuiObject_show (menuBar);
-			GuiObject_show (drawingArea);
-		#elif motif
-			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		#endif
-	}
-	
-	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
-	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);
-	
-	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
-	// READ THIS!
-
-	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
-
-
 	praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
 	praat_addMenuCommand (L"Picture", L"File", L"Picture info", 0, 0, DO_Picture_settings_report);
 	praat_addMenuCommand (L"Picture", L"File", L"Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
@@ -1772,15 +1728,52 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
 
 	if (! theCurrentPraat -> batch) {
+		width = height = resolution * 12;
+		#if gtk
+			// TODO: GuiScrollWindow
+			scrollWindow = gtk_scrolled_window_new (NULL, NULL);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+		#elif motif
+			XtManageChild (menuBar);
+			#if defined (macintosh) || defined (_WIN32)
+				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
+				XtVaSetValues (scrollWindow,
+					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
+					XmNrightAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
+					XmNbottomAttachment, XmATTACH_FORM, NULL);
+			#else
+				scrollWindow = XtVaCreateWidget (
+					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
+					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
+					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
+					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
+			#endif
+		#endif
+		#if gtk
+			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+			gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), drawingArea);
+			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
+
+			GuiObject_show (menuBar);
+			GuiObject_show (drawingArea);
+		#elif motif
+			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
+		#endif
 		GuiObject_show (scrollWindow);
 		GuiObject_show (dialog);
-
 		#if gtk
 			GuiWindow_show (shell);
 		#elif motif
 			XtRealizeWidget (shell);
 		#endif
 	}
+
+	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
+	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);	
+	// READ THIS!
+	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
+	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
 
 	updatePenMenu ();
 	updateFontMenu ();
