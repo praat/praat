@@ -61,6 +61,7 @@
  * pb 2008/03/31 OTGrammar_PairDistribution_findPositiveWeights
  * pb 2008/04/08 made (OTGrammar & Distributions) learnFromPartialOutputs and getFractionCorrect five times faster
  * pb 2008/04/12 split off NUMlinprog
+ * pb 2008/05/31 new decision strategy: ExponentialMaximumEntropy
  */
 
 #include "OTGrammar.h"
@@ -316,7 +317,9 @@ static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				disharmony += my constraints [icons]. disharmony * marks [icons];
 			}
-		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+		} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+			my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+		{
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				disharmony += exp (my constraints [icons]. disharmony) * marks [icons];
 			}
@@ -379,7 +382,9 @@ int OTGrammar_compareCandidates (OTGrammar me, long itab1, long icand1, long ita
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
@@ -428,7 +433,9 @@ static void _OTGrammar_fillInProbabilities (OTGrammar me, long itab) {
 
 long OTGrammar_getWinner (OTGrammar me, long itab) {
 	long icand_best = 1;
-	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy)) {
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+	{
 		_OTGrammar_fillInHarmonies (me, itab);
 		_OTGrammar_fillInProbabilities (me, itab);
 		double cutOff = NUMrandomUniform (0.0, 1.0);
@@ -462,7 +469,8 @@ long OTGrammar_getWinner (OTGrammar me, long itab) {
 }
 
 long OTGrammar_getNumberOfOptimalCandidates (OTGrammar me, long itab) {
-	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy)) return 1;
+	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy)) return 1;
 	long icand_best = 1, icand, numberOfBestCandidates = 1;
 	for (icand = 2; icand <= my tableaus [itab]. numberOfCandidates; icand ++) {
 		int comparison = OTGrammar_compareCandidates (me, itab, icand, itab, icand_best);
@@ -860,10 +868,14 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 		if (my decisionStrategy != enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
 			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 			double value = tableau -> candidates [icand]. harmony;
-			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
-				value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
+			if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+				my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+			{
+				//value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
+				Graphics_text (g, x, y + descent, Melder_float (Melder_half (value)));
+			} else {
+				Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
 			}
-			Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
 		}
 	}
 	/*
@@ -1145,7 +1157,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
 		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG);
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy);
 	if (Melder_debug != 0) {
 		/*
 		 * Perhaps override the standard update rule.
@@ -1187,7 +1200,8 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 				changed = true;
 			}
 		}
-		if (changed && my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+		if (changed && my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG))
+		{
 			double sumOfWeights = 0.0;
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				sumOfWeights += my constraints [icons]. ranking;

@@ -895,6 +895,7 @@
 		236DDF040D11DC81009CB8B9 /* GuiList.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF030D11DC81009CB8B9 /* GuiList.c */; };
 		236DDF350D11F1EB009CB8B9 /* Gui.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF340D11F1EB009CB8B9 /* Gui.c */; };
 		236DDF370D11F1FB009CB8B9 /* GuiMenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 236DDF360D11F1FB009CB8B9 /* GuiMenu.c */; };
+		2374B8BA0DF07C0B004CCF41 /* praat_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 2374B8B90DF07C0B004CCF41 /* praat_version.h */; };
 		23760E9C0D0C7B370037FD07 /* Pitch_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23760E9B0D0C7B370037FD07 /* Pitch_enums.h */; };
 		23760F720D0C89870037FD07 /* ManipulationEditor_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23760F710D0C89870037FD07 /* ManipulationEditor_enums.h */; };
 		237D4FE20D919B99000AF022 /* gsl_complex__math.c in Sources */ = {isa = PBXBuildFile; fileRef = 237D4FE10D919B99000AF022 /* gsl_complex__math.c */; };
@@ -1606,7 +1607,6 @@
 		23E5D1CD09A22AB0004E41D5 /* Praat_tests_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA409A22A3E004E41D5 /* Praat_tests_enums.h */; };
 		23E5D1CE09A22AB0004E41D5 /* Tube_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEA609A22A3E004E41D5 /* Tube_def.h */; };
 		23E5D1D209A22AB0004E41D5 /* OTMulti_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEAE09A22A3F004E41D5 /* OTMulti_def.h */; };
-		23E5D1D309A22AB0004E41D5 /* praat_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB009A22A3F004E41D5 /* praat_version.h */; };
 		23E5D1D409A22AB1004E41D5 /* ManPagesM.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB209A22A3F004E41D5 /* ManPagesM.h */; };
 		23E5D1D509A22AB1004E41D5 /* oo_DESTROY.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB409A22A40004E41D5 /* oo_DESTROY.h */; };
 		23E5D1D609A22AB1004E41D5 /* oo_WRITE_CACHE.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEB609A22A40004E41D5 /* oo_WRITE_CACHE.h */; };
@@ -2603,6 +2603,7 @@
 		236DDF030D11DC81009CB8B9 /* GuiList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiList.c; path = sys/GuiList.c; sourceTree = "<group>"; };
 		236DDF340D11F1EB009CB8B9 /* Gui.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Gui.c; path = sys/Gui.c; sourceTree = "<group>"; };
 		236DDF360D11F1FB009CB8B9 /* GuiMenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = GuiMenu.c; path = sys/GuiMenu.c; sourceTree = "<group>"; };
+		2374B8B90DF07C0B004CCF41 /* praat_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = praat_version.h; path = sys/praat_version.h; sourceTree = "<group>"; };
 		23760E9B0D0C7B370037FD07 /* Pitch_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pitch_enums.h; path = fon/Pitch_enums.h; sourceTree = "<group>"; };
 		23760F710D0C89870037FD07 /* ManipulationEditor_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ManipulationEditor_enums.h; path = fon/ManipulationEditor_enums.h; sourceTree = "<group>"; };
 		237D4FE10D919B99000AF022 /* gsl_complex__math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gsl_complex__math.c; path = GSL/gsl_complex__math.c; sourceTree = "<group>"; };
@@ -3314,7 +3315,6 @@
 		23E5CEA409A22A3E004E41D5 /* Praat_tests_enums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Praat_tests_enums.h; path = fon/Praat_tests_enums.h; sourceTree = "<group>"; };
 		23E5CEA609A22A3E004E41D5 /* Tube_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Tube_def.h; path = LPC/Tube_def.h; sourceTree = "<group>"; };
 		23E5CEAE09A22A3F004E41D5 /* OTMulti_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OTMulti_def.h; path = fon/OTMulti_def.h; sourceTree = "<group>"; };
-		23E5CEB009A22A3F004E41D5 /* praat_version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = praat_version.h; path = fon/praat_version.h; sourceTree = "<group>"; };
 		23E5CEB209A22A3F004E41D5 /* ManPagesM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ManPagesM.h; path = sys/ManPagesM.h; sourceTree = "<group>"; };
 		23E5CEB409A22A40004E41D5 /* oo_DESTROY.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_DESTROY.h; path = sys/oo_DESTROY.h; sourceTree = "<group>"; };
 		23E5CEB609A22A40004E41D5 /* oo_WRITE_CACHE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_WRITE_CACHE.h; path = sys/oo_WRITE_CACHE.h; sourceTree = "<group>"; };
@@ -4070,7 +4070,6 @@
 				23E5CEA409A22A3E004E41D5 /* Praat_tests_enums.h */,
 				23E5CA4109A228FF004E41D5 /* Praat_tests.h */,
 				23E5CA4009A228FF004E41D5 /* Praat_tests.c */,
-				23E5CEB009A22A3F004E41D5 /* praat_version.h */,
 				23E5CE6E09A22A36004E41D5 /* AnyTier_def.h */,
 				23E5CA4309A228FF004E41D5 /* AnyTier.h */,
 				23E5CA4209A228FF004E41D5 /* AnyTier.c */,
@@ -4312,6 +4311,7 @@
 				23E5CB0709A22901004E41D5 /* praat_script.h */,
 				23E5CB0609A22901004E41D5 /* praat_script.c */,
 				23E5CB0809A22901004E41D5 /* praat_statistics.c */,
+				2374B8B90DF07C0B004CCF41 /* praat_version.h */,
 				23E5CB0A09A22901004E41D5 /* abcio.h */,
 				23E5CB0909A22901004E41D5 /* abcio.c */,
 				23E5CB0C09A22901004E41D5 /* Collection.h */,
@@ -5623,7 +5623,6 @@
 				23E5D1CD09A22AB0004E41D5 /* Praat_tests_enums.h in Headers */,
 				23E5D1CE09A22AB0004E41D5 /* Tube_def.h in Headers */,
 				23E5D1D209A22AB0004E41D5 /* OTMulti_def.h in Headers */,
-				23E5D1D309A22AB0004E41D5 /* praat_version.h in Headers */,
 				23E5D1D409A22AB1004E41D5 /* ManPagesM.h in Headers */,
 				23E5D1D509A22AB1004E41D5 /* oo_DESTROY.h in Headers */,
 				23E5D1D609A22AB1004E41D5 /* oo_WRITE_CACHE.h in Headers */,
@@ -5998,6 +5997,7 @@
 				23B594950DC0AC290005FC43 /* FormantGrid_def.h in Headers */,
 				23B594970DC0AE4B0005FC43 /* FormantGrid.h in Headers */,
 				23B594B40DC0C25A0005FC43 /* FormantGridEditor.h in Headers */,
+				2374B8BA0DF07C0B004CCF41 /* praat_version.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7202,7 +7202,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = /Developer/Headers/FlatCarbon;
 				INFOPLIST_FILE = main/praat_mac.plist;
-				INFOPLIST_PREFIX_HEADER = fon/praat_version.h;
+				INFOPLIST_PREFIX_HEADER = sys/praat_version.h;
 				INFOPLIST_PREPROCESS = YES;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;

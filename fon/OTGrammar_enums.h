@@ -1,6 +1,6 @@
 /* OTGrammar_enums.h
  *
- * Copyright (C) 2006-2007 Paul Boersma
+ * Copyright (C) 2006-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/05/19
+ * pb 2008/05/31
  */
 
 enum_begin (OTGrammar_DECISION_STRATEGY, OptimalityTheory)   /* This cannot be called "None" !!! */
@@ -27,6 +27,7 @@ enum_begin (OTGrammar_DECISION_STRATEGY, OptimalityTheory)   /* This cannot be c
 	enum (ExponentialHG)
 	enum (MaximumEntropy)
 	enum (PositiveHG)
+	enum (ExponentialMaximumEntropy)
 enum_end (OTGrammar_DECISION_STRATEGY)
 
 /* End of file Experiment_enums.h */

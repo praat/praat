@@ -18,6 +18,7 @@
  */
 
 #include "ManPagesM.h"
+#include "praat_version.h"
 
 void manual_Script_init (ManPages me);
 void manual_Script_init (ManPages me) {
@@ -1705,7 +1706,7 @@ LIST_ITEM (L"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (L"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20071210)
+MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20080515)
 INTRO (L"In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY (L"Numeric variables")
 NORMAL (L"Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
@@ -1750,8 +1751,11 @@ CODE (L"jitter = 0.000000156789")
 CODE (L"echo The jitter is 'jitter:3\\% '.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 0.00002\\% .")
+#define xstr(s) str(s)
+#define str(s) #s
 NORMAL (L"Some ##predefined numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
-	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero.")
+	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
+	"Another one is $praatVersion, which is e.g. " xstr(PRAAT_VERSION_NUM) " for the current version of Praat.")
 NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
 	"The last one specifies the directory that was the default directory when Praat started up; "
 	"you can use it in scripts that run from the Unix or DOS command line. "
@@ -1759,7 +1763,8 @@ NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"$$preferencesDirectory\\$ $, and $$temporaryDirectory\\$ $. These three refer to your home directory "
 	"(which is where you log in), the Praat @@preferences directory@, and a directory for saving temporary files; "
 	"if you want to know what they are on your computer, try to #echo them in a script window. "
-	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file.")
+	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file. "
+	"Finally, we have $$praatVersion\\$ $, which is \"" xstr(PRAAT_VERSION_STR) "\" for the current version of Praat.")
 MAN_END
 /*
 form Convert from WAV to AIFF
@@ -1916,7 +1921,7 @@ NORMAL (L"The reason for this is that the following line would not work, because
 CODE (L"#print The square of 'i' is 'square'i''")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.7. Including other scripts", L"ppgb", 20021206)
+MAN_BEGIN (L"Scripting 5.7. Including other scripts", L"ppgb", 20080530)
 INTRO (L"You can include other scripts within your script:")
 CODE (L"a = 5")
 CODE (L"include square.praat")
@@ -1939,6 +1944,7 @@ NORMAL (L"You can use full or relative file names. For instance, the file square
 	"uses of relative file names in scripts).")
 NORMAL (L"You can %nest include files, i.e., included scripts can include other scripts. However, relative file names "
 	"are always evaluated relative to the directory of the outermost script.")
+NORMAL (L"The #include statement can only be at the start of a line: you cannot put any spaces in front of it.")
 MAN_END
 
 MAN_BEGIN (L"Scripting 5.8. Quitting", L"ppgb", 20040414)

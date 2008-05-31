@@ -1256,6 +1256,7 @@ static int parsePowerFactor (void) {
 
 	if (symbol >= LOW_RANGE_FUNCTION && symbol <= HIGH_RANGE_FUNCTION) {
 		if (symbol == SUM_) {
+			//theOptimize = 1;
 			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			int symbol = nieuwlees;
@@ -1775,6 +1776,7 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 			theLocalInterpreter = Interpreter_create (NULL, NULL);
 		}
 		theInterpreter = theLocalInterpreter;
+		Collection_removeAllItems (theInterpreter -> variables);
 	}
 	//Melder_casual ("interpreter %ld %ld", interpreter, theInterpreter);
 	theSource = data;

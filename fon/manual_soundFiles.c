@@ -309,7 +309,7 @@ ENTRY (L"Writing")
 NORMAL (L"With ##Write to FLAC audio file...#.")
 MAN_END
 
-MAN_BEGIN (L"How to concatenate sound files", L"ppgb", 20000123)
+MAN_BEGIN (L"How to concatenate sound files", L"ppgb", 20080526)
 INTRO (L"You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, NIST "
 	"and FLAC audio files, and other files that you have read into memory.")
 NORMAL (L"For instance, if you want to concatenate a 30-minute AIFF file, "
@@ -325,7 +325,7 @@ LIST_ITEM (L"3. Open the AIFF file with @@Open long sound file...@ from the @@Re
 LIST_ITEM (L"4. Select the three objects and choose @@Write to WAV file...@ "
 	"from the @@Write menu@.")
 NORMAL (L"This only works if all the sounds have the same sampling frequency "
-	"and the same number of channels (a @Sound object is always mono, of course).")
+	"and the same number of channels.")
 ENTRY (L"Available formats")
 NORMAL (L"The format of the original sound files may be 16-bit linear "
 	"(with big-endian or little-endian byte order), 8-bit linear (signed or unsigned), "

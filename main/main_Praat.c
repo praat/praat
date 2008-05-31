@@ -43,7 +43,7 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.55, L"%%doing phonetics by computer");
 	#define xstr(s) str(s)
 	#define str(s) #s
-	Graphics_text (g, 0.5, 0.45, L"version " xstr(PRAAT_VERSION));
+	Graphics_text (g, 0.5, 0.45, L"version " xstr(PRAAT_VERSION_STR));
 	Graphics_setColour (g, Graphics_BLACK);
 	Graphics_setFontSize (g, 14);
 	Graphics_text (g, 0.5, 0.33, L"www.praat.org");

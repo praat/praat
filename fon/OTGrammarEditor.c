@@ -25,6 +25,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2008/05/31 ExponentialMaximumEntropy
  */
 
 #include "OTGrammarEditor.h"
@@ -227,17 +228,32 @@ static void draw (I) {
 	iam (OTGrammarEditor);
 	OTGrammar ot = my data;
 	static wchar_t text [1000];
-	long icons, itab;
 	Graphics_clearWs (my g);
-	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
-	for (icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
+	if (ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+		ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+	{
+		HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
+	} else {
+		HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
+	}
+	for (long icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f", icons == my selected ? L"\\sp " : L"   ", icons,
-			constraint -> name, constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
+		if (ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
+			ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+		{
+			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f\t %ls",
+				icons == my selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				constraint -> ranking, constraint -> disharmony, constraint -> plasticity,
+				Melder_float (Melder_half (exp (constraint -> disharmony))));
+		} else {
+			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f",
+				icons == my selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
+		}
 		HyperPage_listItem (me, text);
 	}
 	Graphics_setAtSignIsLink (my g, FALSE);
-	for (itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
+	for (long itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & ot -> tableaus [itab];
 		double rowHeight = 0.25;
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);

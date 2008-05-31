@@ -43,6 +43,7 @@
  * pb 2007/12/10 predefined numeric variables macintosh/windows/unix
  * pb 2008/04/30 new Formula API
  * pb 2008/05/01 arrays
+ * pb 2008/05/15 praatVersion, praatVersion$
  */
 
 #include <ctype.h>
@@ -51,6 +52,7 @@
 extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
+#include "praat_version.h"
 
 #define Interpreter_WORD 1
 #define Interpreter_REAL 2
@@ -737,6 +739,10 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		Interpreter_addNumericVariable (me, L"windows", 0);
 		Interpreter_addNumericVariable (me, L"unix", 0);
 	#endif
+	#define xstr(s) str(s)
+	#define str(s) #s
+	Interpreter_addStringVariable (me, L"praatVersion$", L"" xstr(PRAAT_VERSION_STR));
+	Interpreter_addNumericVariable (me, L"praatVersion", PRAAT_VERSION_NUM);
 	/*
 	 * Execute commands.
 	 */
@@ -756,9 +762,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 			 */
 			wchar_t *q = p + 1, varName [300], *r, *s, *colon;
 			int precision = -1, percent = FALSE;
-			while (*q != '\0' && *q != '\'') q ++;
+			while (*q != '\0' && *q != '\'' && q - p < 299) q ++;
 			if (*q == '\0') break;   /* No matching right quote: done with this line. */
-			if (q - p == 1) continue;   /* Ignore empty variable names. */
+			if (q - p == 1 || q - p >= 299) continue;   /* Ignore empty variable names. */
 			/*
 			 * Found a right quote. Get potential variable name.
 			 */
@@ -1207,7 +1213,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		}
 		if (fail) {
 			/*
-			 * Found an unknown word starting with a lower-case letter, optionally preced by a period.
+			 * Found an unknown word starting with a lower-case letter, optionally preceded by a period.
 			 * See whether the word is a variable name.
 			 */
 			wchar_t *p = & command2.string [0];

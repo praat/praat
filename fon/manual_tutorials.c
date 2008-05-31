@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080514)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080531)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.25# (May 31, 2008)")
+LIST_ITEM (L"\\bu OT learning: added decision strategy ExponentialMaximumEntropy.")
 NORMAL (L"##5.0.24# (May 14, 2008)")
 LIST_ITEM (L"\\bu Linux: corrected a bug at start-up.")
 NORMAL (L"##5.0.23# (May 9, 2008)")
@@ -1136,7 +1138,7 @@ NORMAL (L"Answer: nowadays most journals allow you to cite computer programs and
 #define xstr(s) str(s)
 #define str(s) #s
 NORMAL (L"Boersma, Paul & Weenink, David (" xstr(PRAAT_YEAR) "). "
-	"Praat: doing phonetics by computer (Version " xstr(PRAAT_VERSION) ") [Computer program]. "
+	"Praat: doing phonetics by computer (Version " xstr(PRAAT_VERSION_STR) ") [Computer program]. "
 	"Retrieved " xstr(PRAAT_MONTH) " " xstr(PRAAT_DAY) ", " xstr(PRAAT_YEAR) ", from http://www.praat.org/")
 NORMAL (L"If the journal does not allow you to cite a web site, then try:")
 NORMAL (L"Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
@@ -2433,14 +2435,14 @@ LIST_ITEM (L"\\bu If the file contains one object of class Pitch, named \"hallo\
 	"called \"Pitch hallo\" and \"Polygon kromme\".")
 MAN_END
 
-MAN_BEGIN (L"Read menu", L"ppgb", 19970911)
+MAN_BEGIN (L"Read menu", L"ppgb", 20080526)
 INTRO (L"One of the menus in the @@Object window@.")
 NORMAL (L"With the Read menu, you read one or more @objects from a file on disk into memory. "
 	"The resulting object(s) will appear in the @@List of Objects@.")
 NORMAL (L"The Read menu contains the command @@Read from file...@, which recognizes most file types, "
 	"and perhaps several other commands for reading unrecognizable file types (e.g., raw sound data), "
 	"or for interpreting known file types in a different way "
-	"(e.g., reading two sounds from a stereo sound file, which is normally read as mono):")
+	"(e.g., reading two mono sounds from one stereo sound file):")
 MAN_END
 
 MAN_BEGIN (L"Remove", L"ppgb", 20021212)
