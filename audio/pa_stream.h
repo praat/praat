@@ -73,6 +73,10 @@ typedef struct {
     PaError (*IsActive)( PaStream *stream );
     PaTime (*GetTime)( PaStream *stream );
     double (*GetCpuLoad)( PaStream* stream );
+    PaError (*Read)( PaStream* stream, void *buffer, unsigned long frames );
+    PaError (*Write)( PaStream* stream, const void *buffer, unsigned long frames );
+    signed long (*GetReadAvailable)( PaStream* stream );
+    signed long (*GetWriteAvailable)( PaStream* stream );
 } PaUtilStreamInterface;
 
 
@@ -86,7 +90,48 @@ void PaUtil_InitializeStreamInterface( PaUtilStreamInterface *streamInterface,
     PaError (*IsStopped)( PaStream* ),
     PaError (*IsActive)( PaStream* ),
     PaTime (*GetTime)( PaStream* ),
-    double (*GetCpuLoad)( PaStream* ) );
+    double (*GetCpuLoad)( PaStream* ),
+    PaError (*Read)( PaStream* stream, void *buffer, unsigned long frames ),
+    PaError (*Write)( PaStream* stream, const void *buffer, unsigned long frames ),
+    signed long (*GetReadAvailable)( PaStream* stream ),
+    signed long (*GetWriteAvailable)( PaStream* stream ) );
+
+
+/** Dummy Read function for use in interfaces to a callback based streams.
+ Pass to the Read parameter of PaUtil_InitializeStreamInterface.
+ @return An error code indicating that the function has no effect
+ because the stream is a callback stream.
+*/
+PaError PaUtil_DummyRead( PaStream* stream,
+                       void *buffer,
+                       unsigned long frames );
+
+
+/** Dummy Write function for use in an interfaces to callback based streams.
+ Pass to the Write parameter of PaUtil_InitializeStreamInterface.
+ @return An error code indicating that the function has no effect
+ because the stream is a callback stream.
+*/
+PaError PaUtil_DummyWrite( PaStream* stream,
+                       const void *buffer,
+                       unsigned long frames );
+
+
+/** Dummy GetReadAvailable function for use in interfaces to callback based
+ streams. Pass to the GetReadAvailable parameter of PaUtil_InitializeStreamInterface.
+ @return An error code indicating that the function has no effect
+ because the stream is a callback stream.
+*/
+signed long PaUtil_DummyGetReadAvailable( PaStream* stream );
+
+
+/** Dummy GetWriteAvailable function for use in interfaces to callback based
+ streams. Pass to the GetWriteAvailable parameter of PaUtil_InitializeStreamInterface.
+ @return An error code indicating that the function has no effect
+ because the stream is a callback stream.
+*/
+signed long PaUtil_DummyGetWriteAvailable( PaStream* stream );
+
 
 
 /** Dummy GetCpuLoad function for use in an interface to a read/write stream.

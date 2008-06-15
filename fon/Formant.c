@@ -25,6 +25,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 version 2
  * pb 2008/01/19 don't draw undefined lines
+ * pb 2008/06/01 Formant_downto_Table, Formant_list
  */
 
 #include "Formant.h"
@@ -474,6 +475,66 @@ Formant Formant_tracker (Formant me, int ntrack,
 	if (! NUM_viterbi_multi (my nx, my maxnFormants, ntrack,
 		getLocalCost, getTransitionCost, putResult, & parm)) { forget (thee); return NULL; }
 	return thee;
+}
+
+Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
+	bool includeTimes, int timeDecimals,
+	bool includeIntensity, int intensityDecimals,
+	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeBandwidths)
+{
+	Table thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
+		includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths)); cherror
+	long icol = 0;
+	if (includeFrameNumbers) { Table_setColumnLabel (thee, ++ icol, L"frame"); cherror }
+	if (includeTimes) { Table_setColumnLabel (thee, ++ icol, L"time(s)"); cherror }
+	if (includeIntensity) { Table_setColumnLabel (thee, ++ icol, L"intensity"); cherror }
+	if (includeNumberOfFormants) { Table_setColumnLabel (thee, ++ icol, L"nformants"); cherror }
+	for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
+		Table_setColumnLabel (thee, ++ icol, Melder_wcscat3 (L"F", Melder_integer (iformant), L"(Hz)")); cherror
+		if (includeBandwidths) { Table_setColumnLabel (thee, ++ icol, Melder_wcscat3 (L"B", Melder_integer (iformant), L"(Hz)")); cherror }
+	}
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
+		icol = 0;
+		if (includeFrameNumbers) { Table_setNumericValue (thee, iframe, ++ icol,
+			iframe); cherror }
+		if (includeTimes) { Table_setStringValue (thee, iframe, ++ icol,
+			Melder_fixed (my x1 + (iframe - 1) * my dx, timeDecimals)); cherror }
+		Formant_Frame frame = & my frame [iframe];
+		if (includeIntensity) { Table_setStringValue (thee, iframe, ++ icol,
+			Melder_fixed (frame -> intensity, intensityDecimals)); cherror }
+		if (includeNumberOfFormants) { Table_setNumericValue (thee, iframe, ++ icol,
+			frame -> nFormants); cherror }
+		for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+			Formant_Formant formant = & frame -> formant [iformant];
+			Table_setStringValue (thee, iframe, ++ icol,
+				Melder_fixed (formant -> frequency, frequencyDecimals)); cherror
+			if (includeBandwidths) { Table_setStringValue (thee, iframe, ++ icol,
+				Melder_fixed (formant -> bandwidth, frequencyDecimals)); cherror }
+		}
+		for (long iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
+			Table_setNumericValue (thee, iframe, ++ icol, NUMundefined); cherror
+			if (includeBandwidths) { Table_setNumericValue (thee, iframe, ++ icol, NUMundefined); cherror }
+		}
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+void Formant_list (Formant me, bool includeFrameNumbers,
+	bool includeTimes, int timeDecimals,
+	bool includeIntensity, int intensityDecimals,
+	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeBandwidths)
+{
+	Table table = Formant_downto_Table (me, includeFrameNumbers, includeTimes, timeDecimals,
+		includeIntensity, intensityDecimals,
+		includeNumberOfFormants, frequencyDecimals, includeBandwidths); cherror
+	Table_list (table, false);
+end:
+	iferror { Melder_clearError (); Melder_information1 (L"Nothing to list."); }
+	forget (table);
 }
 
 /* End of file Formant.c */

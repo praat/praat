@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/06/01
  */
 
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+#ifndef _Table_h_
+	#include "Table.h"
 #endif
 
 #include "Formant_def.h"
@@ -92,6 +95,17 @@ Formant Formant_tracker (Formant me, int numberOfTracks,
 	double refF1, double refF2, double refF3, double refF4, double refF5,
 	double dfCost,   /* Per kHz. */
 	double bfCost, double octaveJumpCost);
+
+Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
+	bool includeTimes, int timeDecimals,
+	bool includeIntensity, int intensityDecimals,
+	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeBandwidths);
+void Formant_list (Formant me, bool includeFrameNumbers,
+	bool includeTimes, int timeDecimals,
+	bool includeIntensity, int intensityDecimals,
+	bool includeNumberOfFormants, int frequencyDecimals,
+	bool includeBandwidths);
 
 /* End of file Formant.h */
 #endif

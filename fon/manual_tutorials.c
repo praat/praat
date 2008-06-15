@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080531)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080601)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.26# (June 15, 2008)")
+LIST_ITEM (L"\\bu Windows: sound recording no longer makes your laptop's fan spin.")
+LIST_ITEM (L"\\bu Windows: no longer any 64 MB limit on recorded sounds.")
+LIST_ITEM (L"\\bu Linux: replaced OSS by ALSA for recording and playing sounds.")
 NORMAL (L"##5.0.25# (May 31, 2008)")
 LIST_ITEM (L"\\bu OT learning: added decision strategy ExponentialMaximumEntropy.")
 NORMAL (L"##5.0.24# (May 14, 2008)")

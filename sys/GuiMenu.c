@@ -60,6 +60,56 @@ Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget
 }
 
 #if gtk
+void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
+{
+	gint w, h;
+	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
+
+	if (GTK_WIDGET(menu)->requisition.width < button->allocation.width)
+		gtk_widget_set_size_request(GTK_WIDGET(menu), button->allocation.width, -1);
+
+	gdk_window_get_origin (button->window, px, py);
+	*px += button->allocation.x;
+	*py += button->allocation.y + button->allocation.height; /* Dit is vreemd */
+
+}
+
+static gint button_press (GtkWidget *widget, GdkEvent *event)
+{
+	gint w, h;
+	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (widget), "button");
+
+/*	gdk_window_get_size (button->window, &w, &h);
+	gtk_widget_set_usize (widget, w, 0);*/
+	
+	if (event->type == GDK_BUTTON_PRESS) {
+		GdkEventButton *bevent = (GdkEventButton *) event;
+		gtk_menu_popup (GTK_MENU(widget), NULL, NULL, (GtkMenuPositionFunc) set_position, NULL, bevent->button, bevent->time);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags) {
+	Widget menu, button;
+	menu = gtk_menu_new ();
+	button = gtk_button_new_with_label(Melder_peekWcsToUtf8(title));
+	g_signal_connect_object (G_OBJECT(button), "event",
+	GTK_SIGNAL_FUNC (button_press), G_OBJECT(menu), G_CONNECT_SWAPPED);
+	g_object_set_data (G_OBJECT (menu), "button", button);
+	
+	if (flags & GuiMenu_INSENSITIVE)
+		gtk_widget_set_sensitive (menu, FALSE);
+	gtk_menu_attach_to_widget (GTK_MENU(menu), button, NULL);
+	/* TODO: Free button? */
+	gtk_container_add (GTK_CONTAINER(parent), button);
+	gtk_widget_show (menu);
+	gtk_widget_show (button);
+	return menu;
+}
+#endif
+
+#if gtk
 	static GSList *group = NULL;
 #endif
 

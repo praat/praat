@@ -237,7 +237,7 @@ int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t
 
 static void destroy (I) {
 	iam (Editor);
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
 	 * The following command must be performed before the shell is destroyed.
 	 * Otherwise, we would be forgetting dangling command dialogs here.

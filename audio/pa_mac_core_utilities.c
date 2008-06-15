@@ -199,15 +199,104 @@ PaError PaMacCore_SetError(OSStatus error, int line, int isError)
     else
         errorType = "Warning";
 
-    if ((int)error < -99999 || (int)error > 99999)
-        DBUG(("%s on line %d: err='%4s', msg='%s'\n", errorType, line, (const char *)&error, errorText));
-    else
-        DBUG(("%s on line %d: err=%d, 0x%x, msg='%s'\n", errorType, line, (int)error, (unsigned)error, errorText));
+    char str[20];
+    // see if it appears to be a 4-char-code
+    *(UInt32 *)(str + 1) = CFSwapInt32HostToBig(error);
+    if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4]))
+    {
+        str[0] = str[5] = '\'';
+        str[6] = '\0';
+    } else {
+        // no, format it as an integer
+        sprintf(str, "%d", (int)error);
+    }
+
+    DBUG(("%s on line %d: err='%s', msg=%s\n", errorType, line, str, errorText));
 
     PaUtil_SetLastHostErrorInfo( paCoreAudio, error, errorText );
 
     return result;
 }
+
+/*
+ * This function computes an appropriate ring buffer size given
+ * a requested latency (in seconds), sample rate and framesPerBuffer.
+ *
+ * The returned ringBufferSize is computed using the following
+ * constraints:
+ *   - it must be at least 4.
+ *   - it must be at least 3x framesPerBuffer.
+ *   - it must be at least 2x the suggestedLatency.
+ *   - it must be a power of 2.
+ * This function attempts to compute the minimum such size.
+ *
+ * FEEDBACK: too liberal/conservative/another way?
+ */
+long computeRingBufferSize( const PaStreamParameters *inputParameters,
+                                   const PaStreamParameters *outputParameters,
+                                   long inputFramesPerBuffer,
+                                   long outputFramesPerBuffer,
+                                   double sampleRate )
+{
+   long ringSize;
+   int index;
+   int i;
+   double latencyTimesChannelCount ;
+   long framesPerBufferTimesChannelCount ;
+
+   VVDBUG(( "computeRingBufferSize()\n" ));
+
+   assert( inputParameters || outputParameters );
+
+   if( outputParameters && inputParameters )
+   {
+      latencyTimesChannelCount = MAX(
+           inputParameters->suggestedLatency * inputParameters->channelCount,
+           outputParameters->suggestedLatency * outputParameters->channelCount );
+      framesPerBufferTimesChannelCount = MAX(
+           inputFramesPerBuffer * inputParameters->channelCount,
+           outputFramesPerBuffer * outputParameters->channelCount );
+   } 
+   else if( outputParameters )
+   {
+      latencyTimesChannelCount
+                = outputParameters->suggestedLatency * outputParameters->channelCount;
+      framesPerBufferTimesChannelCount
+                = outputFramesPerBuffer * outputParameters->channelCount;
+   }
+   else /* we have inputParameters  */
+   {
+      latencyTimesChannelCount
+                = inputParameters->suggestedLatency * inputParameters->channelCount;
+      framesPerBufferTimesChannelCount
+                = inputFramesPerBuffer * inputParameters->channelCount;
+   }
+
+   ringSize = (long) ( latencyTimesChannelCount * sampleRate * 2 + .5);
+   VDBUG( ( "suggested latency * channelCount: %d\n", (int) (latencyTimesChannelCount*sampleRate) ) );
+   if( ringSize < framesPerBufferTimesChannelCount * 3 )
+      ringSize = framesPerBufferTimesChannelCount * 3 ;
+   VDBUG(("framesPerBuffer*channelCount:%d\n",(int)framesPerBufferTimesChannelCount));
+   VDBUG(("Ringbuffer size (1): %d\n", (int)ringSize ));
+
+   /* make sure it's at least 4 */
+   ringSize = MAX( ringSize, 4 );
+
+   /* round up to the next power of 2 */
+   index = -1;
+   for( i=0; i<sizeof(long)*8; ++i )
+      if( ringSize >> i & 0x01 )
+         index = i;
+   assert( index > 0 );
+   if( ringSize <= ( 0x01 << index ) )
+      ringSize = 0x01 << index ;
+   else
+      ringSize = 0x01 << ( index + 1 );
+
+   VDBUG(( "Final Ringbuffer size (2): %d\n", (int)ringSize ));
+   return ringSize;
+}
+
 
 /*
  * Durring testing of core audio, I found that serious crashes could occur
@@ -223,10 +312,6 @@ OSStatus propertyProc(
     AudioDevicePropertyID inPropertyID, 
     void* inClientData )
 {
-   (void)inDevice;
-   (void)inChannel;
-   (void)isInput;
-   (void)inPropertyID;
    MutexAndBool *mab = (MutexAndBool *) inClientData;
    mab->once = TRUE;
    pthread_mutex_unlock( &(mab->mutex) );
@@ -444,9 +529,9 @@ PaError setBestSampleRateForDevice( const AudioDeviceID device,
    not usually catastrophic.
 */
 PaError setBestFramesPerBuffer( const AudioDeviceID device,
-                                       const bool isOutput,
-                                       unsigned long requestedFramesPerBuffer, 
-                                       unsigned long *actualFramesPerBuffer )
+                                const bool isOutput,
+                                UInt32 requestedFramesPerBuffer, 
+                                UInt32 *actualFramesPerBuffer )
 {
    UInt32 afpb;
    const bool isInput = !isOutput;

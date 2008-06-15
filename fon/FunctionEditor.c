@@ -365,7 +365,7 @@ static void drawNow (FunctionEditor me) {
 
 static void destroy (I) {
 	iam (FunctionEditor);
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	if (my group) {   /* Undangle. */
 		int i = 1; while (group [i] != me) { Melder_assert (i < maxGroup); i ++; } group [i] = NULL;
 		nGroup --;
@@ -510,7 +510,7 @@ static void gui_button_cb_zoomIn (I, GuiButtonEvent event) {
 
 static void do_zoomOut (FunctionEditor me) {
 	double shift = (my endWindow - my startWindow) / 2;
-	Melder_stopPlaying (Melder_IMPLICIT);   /* Quickly, before window changes. */
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
 	my startWindow -= shift;
 	if (my startWindow < my tmin + 1e-12)
 		my startWindow = my tmin;
@@ -579,15 +579,15 @@ static int menu_cb_play (EDITOR_ARGS) {
 		SET_REAL (L"From", my startWindow)
 		SET_REAL (L"To", my endWindow)
 	EDITOR_DO
-		Melder_stopPlaying (Melder_IMPLICIT);
+		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 		our play (me, GET_REAL (L"From"), GET_REAL (L"To"));
 	EDITOR_END
 }
 
 static int menu_cb_playOrStop (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	if (Melder_isPlaying) {
-		Melder_stopPlaying (Melder_EXPLICIT);
+	if (MelderAudio_isPlaying) {
+		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
 	} else if (my startSelection < my endSelection) {
 		my playingSelection = TRUE;
 		our play (me, my startSelection, my endSelection);
@@ -603,7 +603,7 @@ static int menu_cb_playOrStop (EDITOR_ARGS) {
 
 static int menu_cb_playWindow (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	my playingCursor = TRUE;
 	our play (me, my startWindow, my endWindow);
 	return 1;
@@ -611,7 +611,7 @@ static int menu_cb_playWindow (EDITOR_ARGS) {
 
 static int menu_cb_interruptPlaying (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	return 1;
 }
 
@@ -739,7 +739,7 @@ static int menu_cb_moveEby (EDITOR_ARGS) {
 void FunctionEditor_shift (I, double shift) {
 	iam (FunctionEditor);
 	double windowLength = my endWindow - my startWindow;
-	Melder_stopPlaying (Melder_IMPLICIT);   /* Quickly, before window changes. */
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
 	if (shift < 0.0) {
 		my startWindow += shift;
 		if (my startWindow < my tmin + 1e-12)
@@ -1478,7 +1478,7 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 	Graphics_setViewport (my graphics, x1NDC, x2NDC, y1NDC, y2NDC);
 	my playCursor = t;
 	if (phase == 3) {
-		if (t < tmax && Melder_stopWasExplicit ()) {
+		if (t < tmax && MelderAudio_stopWasExplicit ()) {
 			if (t > my startSelection && t < my endSelection)
 				my startSelection = t;
 			else

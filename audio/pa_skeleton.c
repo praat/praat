@@ -210,14 +210,14 @@ PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiI
 
     PaUtil_InitializeStreamInterface( &skeletonHostApi->callbackStreamInterface, CloseStream, StartStream,
                                       StopStream, AbortStream, IsStreamStopped, IsStreamActive,
-                                      GetStreamTime, GetStreamCpuLoad /*,
+                                      GetStreamTime, GetStreamCpuLoad,
                                       PaUtil_DummyRead, PaUtil_DummyWrite,
-                                      PaUtil_DummyGetReadAvailable, PaUtil_DummyGetWriteAvailable */);
+                                      PaUtil_DummyGetReadAvailable, PaUtil_DummyGetWriteAvailable );
 
     PaUtil_InitializeStreamInterface( &skeletonHostApi->blockingStreamInterface, CloseStream, StartStream,
                                       StopStream, AbortStream, IsStreamStopped, IsStreamActive,
-                                      GetStreamTime, PaUtil_DummyGetCpuLoad /*,
-                                      ReadStream, WriteStream, GetStreamReadAvailable, GetStreamWriteAvailable */);
+                                      GetStreamTime, PaUtil_DummyGetCpuLoad,
+                                      ReadStream, WriteStream, GetStreamReadAvailable, GetStreamWriteAvailable );
 
     return result;
 
@@ -744,4 +744,73 @@ static double GetStreamCpuLoad( PaStream* s )
 
     return PaUtil_GetCpuLoad( &stream->cpuLoadMeasurer );
 }
+
+
+/*
+    As separate stream interfaces are used for blocking and callback
+    streams, the following functions can be guaranteed to only be called
+    for blocking streams.
+*/
+
+static PaError ReadStream( PaStream* s,
+                           void *buffer,
+                           unsigned long frames )
+{
+    PaSkeletonStream *stream = (PaSkeletonStream*)s;
+
+    /* suppress unused variable warnings */
+    (void) buffer;
+    (void) frames;
+    (void) stream;
+    
+    /* IMPLEMENT ME, see portaudio.h for required behavior*/
+
+    return paNoError;
+}
+
+
+static PaError WriteStream( PaStream* s,
+                            const void *buffer,
+                            unsigned long frames )
+{
+    PaSkeletonStream *stream = (PaSkeletonStream*)s;
+
+    /* suppress unused variable warnings */
+    (void) buffer;
+    (void) frames;
+    (void) stream;
+    
+    /* IMPLEMENT ME, see portaudio.h for required behavior*/
+
+    return paNoError;
+}
+
+
+static signed long GetStreamReadAvailable( PaStream* s )
+{
+    PaSkeletonStream *stream = (PaSkeletonStream*)s;
+
+    /* suppress unused variable warnings */
+    (void) stream;
+    
+    /* IMPLEMENT ME, see portaudio.h for required behavior*/
+
+    return 0;
+}
+
+
+static signed long GetStreamWriteAvailable( PaStream* s )
+{
+    PaSkeletonStream *stream = (PaSkeletonStream*)s;
+
+    /* suppress unused variable warnings */
+    (void) stream;
+    
+    /* IMPLEMENT ME, see portaudio.h for required behavior*/
+
+    return 0;
+}
+
+
+
 

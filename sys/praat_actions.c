@@ -208,7 +208,8 @@ static void deleteDynamicMenu (void) {
 
 			// RFC: Beter? Nog beter?
 			#if gtk
-				praat_writeMenuTitle = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
+				praat_writeMenu = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
+				praat_writeMenuTitle = praat_writeMenu;
 			#elif motif
 				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
 				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
@@ -545,14 +546,15 @@ void praat_actions_show (void) {
 					// TODO: Is er een reden waarom je dit pas achteraf zou willen
 					// in plaats van direct zonder twee lijstjes te maken?
 					// Antwoord: onder Motif gaat/ging UnmanageChildren veel sneller dan een serie UnmanageChild's
+					/*
 					while (nbuttons > 0) {
-						gtk_widget_hide (buttons [nbuttons]);
+						gtk_widget_hide (GTK_WIDGET(buttons [nbuttons]));
 						nbuttons --;
 					}
 					while (nwriteButtons > 0) {
-						gtk_widget_hide (writeButtons [nwriteButtons]);
+						gtk_widget_hide (GTK_WIDGET(writeButtons [nwriteButtons]));
 						nwriteButtons --;
-					}
+					}*/
 				#elif motif
 					if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
 					if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
@@ -684,7 +686,7 @@ void praat_actions_show (void) {
 					if (! my button) {
 						// RFC: Beter?
 						#if gtk
-							GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
+							my button = GuiMenu_addSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1);
 						#elif motif
 							my button = XmCreateSeparator (currentSubmenu2 ? currentSubmenu2 : currentSubmenu1, "separator", NULL, 0);
 						#endif
@@ -696,11 +698,16 @@ void praat_actions_show (void) {
 				 * Apparently a submenu.
 				 */
 				if (! my button) {
-					#if motif
 					Widget cascadeButton;
 					if (my depth == 0) {
-						my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
-						currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
+						#if gtk
+							my button = GuiMenuBar_addMenu3 (praat_dynamicMenu, my title, 0);
+							currentSubmenu1 = my button;
+						#elif motif
+							my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
+							currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
+						#endif
+
 						#if defined (_WIN32)
 							GuiObject_size (cascadeButton, BUTTON_WIDTH - 24, 19);
 							GuiObject_size (my button, BUTTON_WIDTH - 20, 21);
@@ -712,7 +719,6 @@ void praat_actions_show (void) {
 						currentSubmenu2 = GuiMenuBar_addMenu2 (currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu, my title, 0, & my button);
 					}
 					GuiObject_show (my button);
-					#endif
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
 				}
@@ -742,7 +748,8 @@ void praat_actions_createWriteMenu (Widget bar) {
 	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
 	// TODO: writeMenu -> writeMenuTitle gedaan
 	#if gtk
-		praat_writeMenuTitle = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
+		praat_writeMenu = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
+		praat_writeMenuTitle = praat_writeMenu;
 	#elif motif
 		praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
 		GuiObject_setSensitive (praat_writeMenuTitle, False);

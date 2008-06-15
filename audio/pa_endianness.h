@@ -1,7 +1,7 @@
 #ifndef PA_ENDIANNESS_H
 #define PA_ENDIANNESS_H
 /*
- * $Id: pa_endianness.h 1097 2006-08-26 08:27:53Z rossb $
+ * $Id: pa_endianness.h 1216 2007-06-10 09:26:00Z aknudsen $
  * Portable Audio I/O Library current platform endianness macros
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -82,37 +82,39 @@ extern "C"
        #endif
     #endif
 #else
-   /* this is not an apple, so first check the existing defines, and, failing that,
-      detect well-known architechtures. */
+    /* this is not an apple, so first check the existing defines, and, failing that,
+       detect well-known architechtures. */
 
-   #if defined(PA_LITTLE_ENDIAN) || defined(PA_BIG_ENDIAN)
-       /* endianness define has been set externally, such as by autoconf */
+    #if defined(PA_LITTLE_ENDIAN) || defined(PA_BIG_ENDIAN)
+        /* endianness define has been set externally, such as by autoconf */
 
-       #if defined(PA_LITTLE_ENDIAN) && defined(PA_BIG_ENDIAN)
-       #error both PA_LITTLE_ENDIAN and PA_BIG_ENDIAN have been defined externally to pa_endianness.h - only one endianness at a time please
-       #endif
+        #if defined(PA_LITTLE_ENDIAN) && defined(PA_BIG_ENDIAN)
+        #error both PA_LITTLE_ENDIAN and PA_BIG_ENDIAN have been defined externally to pa_endianness.h - only one endianness at a time please
+        #endif
 
-   #endif
-   /* endianness define has not been set externally */
+    #else
+        /* endianness define has not been set externally */
 
-   /* set PA_LITTLE_ENDIAN or PA_BIG_ENDIAN by testing well known platform specific defines */
+        /* set PA_LITTLE_ENDIAN or PA_BIG_ENDIAN by testing well known platform specific defines */
 
-   #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(LITTLE_ENDIAN) || defined(__i386) || defined(_M_IX86)
-      #define PA_LITTLE_ENDIAN /* win32, assume intel byte order */
-   #else
-      #define PA_BIG_ENDIAN
-   #endif
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__) || defined(LITTLE_ENDIAN) || defined(__i386) || defined(_M_IX86) || defined(__x86_64__)
+            #define PA_LITTLE_ENDIAN /* win32, assume intel byte order */
+        #else
+            #define PA_BIG_ENDIAN
+        #endif
+    #endif
 
-   #if !defined(PA_LITTLE_ENDIAN) && !defined(PA_BIG_ENDIAN)
-   /*
-    If the following error is raised, you either need to modify the code above
-    to automatically determine the endianness from other symbols defined on your
-    platform, or define either PA_LITTLE_ENDIAN or PA_BIG_ENDIAN externally.
-   */
-   #error pa_endianness.h was unable to automatically determine the endianness of the target platform
-   #endif
+    #if !defined(PA_LITTLE_ENDIAN) && !defined(PA_BIG_ENDIAN)
+        /*
+         If the following error is raised, you either need to modify the code above
+         to automatically determine the endianness from other symbols defined on your
+         platform, or define either PA_LITTLE_ENDIAN or PA_BIG_ENDIAN externally.
+        */
+        #error pa_endianness.h was unable to automatically determine the endianness of the target platform
+    #endif
 
 #endif
+
 
 /* PA_VALIDATE_ENDIANNESS compares the compile time and runtime endianness,
  and raises an assertion if they don't match. <assert.h> must be included in

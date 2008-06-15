@@ -56,7 +56,11 @@ void PaUtil_InitializeStreamInterface( PaUtilStreamInterface *streamInterface,
                                        PaError (*IsStopped)( PaStream* ),
                                        PaError (*IsActive)( PaStream* ),
                                        PaTime (*GetTime)( PaStream* ),
-                                       double (*GetCpuLoad)( PaStream* ) )
+                                       double (*GetCpuLoad)( PaStream* ),
+                                       PaError (*Read)( PaStream*, void *, unsigned long ),
+                                       PaError (*Write)( PaStream*, const void *, unsigned long ),
+                                       signed long (*GetReadAvailable)( PaStream* ),
+                                       signed long (*GetWriteAvailable)( PaStream* )  )
 {
     streamInterface->Close = Close;
     streamInterface->Start = Start;
@@ -66,6 +70,10 @@ void PaUtil_InitializeStreamInterface( PaUtilStreamInterface *streamInterface,
     streamInterface->IsActive = IsActive;
     streamInterface->GetTime = GetTime;
     streamInterface->GetCpuLoad = GetCpuLoad;
+    streamInterface->Read = Read;
+    streamInterface->Write = Write;
+    streamInterface->GetReadAvailable = GetReadAvailable;
+    streamInterface->GetWriteAvailable = GetWriteAvailable;
 }
 
 
@@ -91,6 +99,46 @@ void PaUtil_InitializeStreamRepresentation( PaUtilStreamRepresentation *streamRe
 void PaUtil_TerminateStreamRepresentation( PaUtilStreamRepresentation *streamRepresentation )
 {
     streamRepresentation->magic = 0;
+}
+
+
+PaError PaUtil_DummyRead( PaStream* stream,
+                               void *buffer,
+                               unsigned long frames )
+{
+    (void)stream; /* unused parameter */
+    (void)buffer; /* unused parameter */
+    (void)frames; /* unused parameter */
+
+    return paCanNotReadFromACallbackStream;
+}
+
+
+PaError PaUtil_DummyWrite( PaStream* stream,
+                               const void *buffer,
+                               unsigned long frames )
+{
+    (void)stream; /* unused parameter */
+    (void)buffer; /* unused parameter */
+    (void)frames; /* unused parameter */
+
+    return paCanNotWriteToACallbackStream;
+}
+
+
+signed long PaUtil_DummyGetReadAvailable( PaStream* stream )
+{
+    (void)stream; /* unused parameter */
+
+    return paCanNotReadFromACallbackStream;
+}
+
+
+signed long PaUtil_DummyGetWriteAvailable( PaStream* stream )
+{
+    (void)stream; /* unused parameter */
+
+    return paCanNotWriteToACallbackStream;
 }
 
 

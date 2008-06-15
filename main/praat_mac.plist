@@ -318,7 +318,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Praat PRAAT_VERSION, © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
+	<string>Praat PRAAT_VERSION_STR, © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
 	<key>CFBundleIconFile</key>
 	<string>Praat</string>
 	<key>CFBundleIdentifier</key>
@@ -330,7 +330,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Praat PRAAT_VERSION</string>
+	<string>Praat PRAAT_VERSION_STR</string>
 	<key>CFBundleSignature</key>
 	<string>PpgB</string>
 	<key>CFBundleVersion</key>

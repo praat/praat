@@ -1,8 +1,7 @@
-
 #ifndef PORTAUDIO_H
 #define PORTAUDIO_H
 /*
- * $Id: portaudio.h 1083 2006-08-23 07:30:49Z rossb $
+ * $Id: portaudio.h 1247 2007-08-11 16:29:09Z rossb $
  * PortAudio Portable Real-Time Audio Library
  * PortAudio API Header File
  * Latest version available at: http://www.portaudio.com/
@@ -112,7 +111,8 @@ const char *Pa_GetErrorText( PaError errorCode );
 
 /** Library initialization function - call this before using PortAudio.
  This function initialises internal data structures and prepares underlying
- host APIs for use. This function MUST be called before using any other
+ host APIs for use.  With the exception of Pa_GetVersion(), Pa_GetVersionText(),
+ and Pa_GetErrorText(), this function MUST be called before using any other
  PortAudio API functions.
 
  If Pa_Initialize() is called multiple times, each successful 
@@ -152,10 +152,10 @@ PaError Pa_Terminate( void );
 
 
 /** The type used to refer to audio devices. Values of this type usually
- range from 0 to (Pa_DeviceCount-1), and may also take on the PaNoDevice
+ range from 0 to (Pa_GetDeviceCount()-1), and may also take on the PaNoDevice
  and paUseHostApiSpecificDeviceSpecification values.
 
- @see Pa_DeviceCount, paNoDevice, paUseHostApiSpecificDeviceSpecification
+ @see Pa_GetDeviceCount, paNoDevice, paUseHostApiSpecificDeviceSpecification
 */
 typedef int PaDeviceIndex;
 

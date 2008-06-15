@@ -47,6 +47,8 @@
  * pb 2007/12/23 Gui
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2008/06/02 PortAudio for Linux
+ * pb 2008/06/16 PortAudio optional
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -70,21 +72,9 @@
 #include "EditorM.h"
 #include "Preferences.h"
 
-/* Uncomment the following line if you want to override the default choices for using PortAudio. */
-//#define USE_PORTAUDIO  1
-#ifndef USE_PORTAUDIO
-	// Default: use PortAudio on Mac only.
-	#if defined (macintosh)
-		#define USE_PORTAUDIO  1
-	#else
-		#define USE_PORTAUDIO  0
-	#endif
-#endif
-#if USE_PORTAUDIO
-	#include "portaudio.h"
-	#if defined (macintosh)
-		#include "pa_mac_core.h"
-	#endif
+#include "portaudio.h"
+#if defined (macintosh)
+	#include "pa_mac_core.h"
 #endif
 
 struct SoundRecorder_Device {
@@ -120,7 +110,6 @@ struct SoundRecorder_Fsamp {
 	XtWorkProcId workProcId; \
 	long nsamp, nmax; \
 	int synchronous, recording, lastLeftMaximum, lastRightMaximum; \
-	bool coupled; \
 	long numberOfInputDevices; \
 	struct SoundRecorder_Device device [1+SoundRecorder_IDEVICE_MAX]; \
 	struct SoundRecorder_Fsamp fsamp [1+SoundRecorder_IFSAMP_MAX]; \
@@ -129,17 +118,15 @@ struct SoundRecorder_Fsamp {
 	Widget progressScale, recordButton, stopButton, playButton; \
 	Widget soundName, cancelButton, applyButton, okButton; \
 	Widget leftGainScale, rightGainScale; \
-	Widget coupleButton; \
-	Graphics graphics;
+	Graphics graphics; \
+	bool inputUsesPortAudio; \
+	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX]; \
+	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
+	PaStream *portaudioStream;
 
 /* Class definition of SoundRecorder. */
 
-#if USE_PORTAUDIO
-	#define SoundRecorder_members CommonSoundRecorder_members \
-		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX]; \
-		PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
-		PaStream *portaudioStream;
-#elif defined (sgi)
+#if defined (sgi)
 	#include <audio.h>
 	#define SoundRecorder_members CommonSoundRecorder_members \
 		ALconfig audio; \
@@ -205,16 +192,16 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_methods Editor_methods
 class_create_opaque (SoundRecorder, Editor);
 
-static bool theCouplePreference;
-static int nmaxMB_pref;
+static struct {
+	int bufferSize_MB;
+} preferences;
 
 void SoundRecorder_prefs (void) {
-	Preferences_addInt (L"SoundRecorder.bufferSize_MB", & nmaxMB_pref, 20);
-	Preferences_addBool (L"SoundRecorder.coupleSliders", & theCouplePreference, true);
+	Preferences_addInt (L"SoundRecorder.bufferSize_MB", & preferences.bufferSize_MB, 20);
 }
 
-int SoundRecorder_getBufferSizePref_MB (void) { return nmaxMB_pref; }
-void SoundRecorder_setBufferSizePref_MB (int size) { nmaxMB_pref = size < 1 ? 1 : size > 1000 ? 1000: size; }
+int SoundRecorder_getBufferSizePref_MB (void) { return preferences.bufferSize_MB; }
+void SoundRecorder_setBufferSizePref_MB (int size) { preferences.bufferSize_MB = size < 1 ? 1 : size > 1000 ? 1000: size; }
 
 #define step 1000
 
@@ -238,7 +225,7 @@ static struct {
 
 /********** ERROR HANDLING **********/
 
-#if defined (_WIN32) && ! USE_PORTAUDIO
+#if defined (_WIN32)
 static void win_fillFormat (SoundRecorder me) {
 	my waveFormat. nSamplesPerSec = (int) theControlPanel. sampleRate;
 	my waveFormat. nChannels = my numberOfChannels;
@@ -313,7 +300,7 @@ static int win_waveInClose (SoundRecorder me) {
 }
 #endif
 
-#ifdef macintosh
+#if defined (macintosh)
 static const char *errString (long err) {
 	switch (err) {
 		/* -54 */ case permErr: return "Attempt to open locked file for writing.";
@@ -348,50 +335,52 @@ static void stopRecording (SoundRecorder me) {
 	if (! my recording) return;
 	my recording = FALSE;
 	if (! my synchronous) {
-		#if USE_PORTAUDIO
+		if (my inputUsesPortAudio) {
 			Pa_StopStream (my portaudioStream);
 			Pa_CloseStream (my portaudioStream);
 			my portaudioStream = NULL;
-		#elif defined (_WIN32)
-			/*
-			 * On newer systems, waveInStop waits until the buffer is full.
-			 * Wrong behaviour!
-			 * Therefore, we call waveInReset instead.
-			 * But on these same newer systems, waveInReset causes the dwBytesRecorded
-			 * attribute to go to zero, so we cannot do
-			 * my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
-			 */
-			MMTIME mmtime;
-			mmtime. wType = TIME_BYTES;
-			my nsamp = 0;
-			if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
-				my nsamp = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
-			win_waveInReset (me); cherror
-			if (my nsamp == 0)
-				my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
-			if (my nsamp > my nmax)
-				my nsamp = my nmax;
-			win_waveInUnprepareHeader (me, 0); cherror
-			win_waveInClose (me); cherror
-		#elif defined (macintosh)
-			OSErr err;
-			short recordingStatus, meterLevel;
-			unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
-			err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
-					& totalSamplesToRecord, & numberOfSamplesRecorded,
-					& totalMsecsToRecord, & numberOfMsecsRecorded);
-			if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return; }
-			/* Melder_assert (meterLevel >= 0); Melder_assert (meterLevel <= 255); */
-			if (totalSamplesToRecord == 0)
-				my nsamp = my nmax;
-			else
-				my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);   /* From Mac "samples" to Mac "frames" (our "samples"). */
-			err = SPBStopRecording (my refNum);
-			if (err != noErr) { onceError ("SPBStopRecording", err); return; }
-			my spb. bufferPtr = NULL;
-			err = SPBRecord (& my spb, true);
-			if (err != noErr) onceError ("SPBRecord", err);
-		#endif
+		} else {
+			#if defined (_WIN32)
+				/*
+				 * On newer systems, waveInStop waits until the buffer is full.
+				 * Wrong behaviour!
+				 * Therefore, we call waveInReset instead.
+				 * But on these same newer systems, waveInReset causes the dwBytesRecorded
+				 * attribute to go to zero, so we cannot do
+				 * my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
+				 */
+				MMTIME mmtime;
+				mmtime. wType = TIME_BYTES;
+				my nsamp = 0;
+				if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
+					my nsamp = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
+				win_waveInReset (me); cherror
+				if (my nsamp == 0)
+					my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
+				if (my nsamp > my nmax)
+					my nsamp = my nmax;
+				win_waveInUnprepareHeader (me, 0); cherror
+				win_waveInClose (me); cherror
+			#elif defined (macintosh)
+				OSErr err;
+				short recordingStatus, meterLevel;
+				unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
+				err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
+						& totalSamplesToRecord, & numberOfSamplesRecorded,
+						& totalMsecsToRecord, & numberOfMsecsRecorded);
+				if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return; }
+				/* Melder_assert (meterLevel >= 0); Melder_assert (meterLevel <= 255); */
+				if (totalSamplesToRecord == 0)
+					my nsamp = my nmax;
+				else
+					my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);   /* From Mac "samples" to Mac "frames" (our "samples"). */
+				err = SPBStopRecording (my refNum);
+				if (err != noErr) { onceError ("SPBStopRecording", err); return; }
+				my spb. bufferPtr = NULL;
+				err = SPBRecord (& my spb, true);
+				if (err != noErr) onceError ("SPBRecord", err);
+			#endif
+		}
 	}
 #ifdef _WIN32
 end:
@@ -405,9 +394,9 @@ end:
 static void destroy (I) {
 	iam (SoundRecorder);
 	stopRecording (me);   /* Must occur before freeing my buffer. */
-	Melder_stopPlaying (Melder_IMPLICIT);   /* Must also occur before freeing my buffer. */
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Must also occur before freeing my buffer. */
 	if (my workProcId) XtRemoveWorkProc (my workProcId);
-	#if defined (macintosh) && ! USE_PORTAUDIO
+	#if defined (macintosh)
 		if (my temporaryMemoryHandle) {
 			DisposeHandle (my temporaryMemoryHandle);
 		} else {
@@ -417,23 +406,25 @@ static void destroy (I) {
 		NUMsvector_free (my buffer, 0);
 	#endif
 
-	#if USE_PORTAUDIO
+	if (my inputUsesPortAudio) {
 		if (my portaudioStream) Pa_StopStream (my portaudioStream);
 		if (my portaudioStream) Pa_CloseStream (my portaudioStream);
-	#elif defined (_WIN32)
-		if (my hWaveIn != 0) {
-			waveInReset (my hWaveIn);
-			waveInUnprepareHeader (my hWaveIn, & my waveHeader [0], sizeof (WAVEHDR));
-			waveInClose (my hWaveIn);
-		}
-	#elif defined (macintosh)
-		if (my refNum) SPBCloseDevice (my refNum);
-	#elif defined (sgi)
-		if (my port) ALcloseport (my port);
-		if (my audio) ALfreeconfig (my audio);
-	#elif defined (UNIX) || defined (HPUX)
-		if (my fd != -1) close (my fd);
-	#endif
+	} else {
+		#if defined (_WIN32)
+			if (my hWaveIn != 0) {
+				waveInReset (my hWaveIn);
+				waveInUnprepareHeader (my hWaveIn, & my waveHeader [0], sizeof (WAVEHDR));
+				waveInClose (my hWaveIn);
+			}
+		#elif defined (macintosh)
+			if (my refNum) SPBCloseDevice (my refNum);
+		#elif defined (sgi)
+			if (my port) ALcloseport (my port);
+			if (my audio) ALfreeconfig (my audio);
+		#elif defined (UNIX) || defined (HPUX)
+			if (my fd != -1) close (my fd);
+		#endif
+	}
 	forget (my graphics);
 	inherited (SoundRecorder) destroy (me);
 }
@@ -526,7 +517,7 @@ static long getMyNsamp (SoundRecorder me) {
 static Boolean workProc (XtPointer void_me) {
 	iam (SoundRecorder);
 	short buffertje [step*2];
-	int leftMaximum = 0, rightMaximum = 0, stepje = 0;
+	int stepje = 0;
 
 	#if defined (linux)
 		#define min(a,b) a > b ? b : a
@@ -537,20 +528,20 @@ static Boolean workProc (XtPointer void_me) {
 	 *   2. left and right gain;
 	 *   3. sampling frequency.
 	 */
-	#if defined (sgi)
-		my info [0] = AL_INPUT_RATE;
-		my info [2] = AL_INPUT_SOURCE;
-		my info [4] = AL_LEFT_INPUT_ATTEN;
-		my info [6] = AL_RIGHT_INPUT_ATTEN;
-		my info [8] = AL_DIGITAL_INPUT_RATE;
-		ALgetparams (AL_DEFAULT_DEVICE, my info, 10);
-		theControlPanel. inputSource = my info [3] == AL_INPUT_MIC ? 1 : my info [3] == AL_INPUT_LINE ? 2 : 3;
-		theControlPanel. leftGain = 255 - my info [5];
-		theControlPanel. rightGain = 255 - my info [7];
-		theControlPanel. sampleRate = my info [3] == AL_INPUT_DIGITAL ? my info [9] : my info [1];
-	#elif defined (macintosh)
-		#if USE_PORTAUDIO
-		#else
+	if (my inputUsesPortAudio) {
+	} else {
+		#if defined (sgi)
+			my info [0] = AL_INPUT_RATE;
+			my info [2] = AL_INPUT_SOURCE;
+			my info [4] = AL_LEFT_INPUT_ATTEN;
+			my info [6] = AL_RIGHT_INPUT_ATTEN;
+			my info [8] = AL_DIGITAL_INPUT_RATE;
+			ALgetparams (AL_DEFAULT_DEVICE, my info, 10);
+			theControlPanel. inputSource = my info [3] == AL_INPUT_MIC ? 1 : my info [3] == AL_INPUT_LINE ? 2 : 3;
+			theControlPanel. leftGain = 255 - my info [5];
+			theControlPanel. rightGain = 255 - my info [7];
+			theControlPanel. sampleRate = my info [3] == AL_INPUT_DIGITAL ? my info [9] : my info [1];
+		#elif defined (macintosh)
 			OSErr err;
 			short macSource, isource;
 			Str255 pdeviceName;
@@ -565,36 +556,36 @@ static Boolean workProc (XtPointer void_me) {
 					break;
 				}
 			}
+		#elif defined (sun)
+			ioctl (my fd, AUDIO_GETINFO, & my info);
+			theControlPanel. inputSource =
+				my info. record. port == AUDIO_MICROPHONE ? 1 : 2;
+			theControlPanel. leftGain = my info. record. balance <= 32 ? my info. record. gain:
+				my info. record. gain * (64 - my info. record. balance) / 32;
+			theControlPanel. rightGain = my info. record. balance >= 32 ? my info. record. gain:
+				my info. record. gain * my info. record. balance / 32;
+			theControlPanel. sampleRate = my info. record. sample_rate;
+			if (my info. record. channels != my numberOfChannels)
+				Melder_casual ("(SoundRecorder:) Not %s.", my numberOfChannels == 1 ? "mono" : "stereo");
+			if (my info. record. precision != 16)
+				Melder_casual ("(SoundRecorder:) Not 16-bit.");
+			if (my info. record. encoding != AUDIO_ENCODING_LINEAR)
+				Melder_casual ("(SoundRecorder:) Not linear.");
+		#elif defined (HPUX)
+			int leftGain = my hpGains. cgain [0]. receive_gain * 11;
+			int rightGain = my hpGains. cgain [1]. receive_gain * 11;
+			int sampleRate;
+			ioctl (my fd, AUDIO_GET_INPUT, & my hpInputSource);
+			theControlPanel. inputSource = (my hpInputSource & AUDIO_IN_MIKE) ? 1 : 2;
+			ioctl (my fd, AUDIO_GET_GAINS, & my hpGains);
+			if (leftGain < theControlPanel. leftGain - 10 || leftGain > theControlPanel. leftGain)
+				theControlPanel. leftGain = leftGain;
+			if (rightGain < theControlPanel. rightGain - 10 || rightGain > theControlPanel. rightGain)
+				theControlPanel. rightGain = rightGain;
+			ioctl (my fd, AUDIO_GET_SAMPLE_RATE, & sampleRate);
+			theControlPanel. sampleRate = sampleRate;
 		#endif
-	#elif defined (sun)
-		ioctl (my fd, AUDIO_GETINFO, & my info);
-		theControlPanel. inputSource =
-			my info. record. port == AUDIO_MICROPHONE ? 1 : 2;
-		theControlPanel. leftGain = my info. record. balance <= 32 ? my info. record. gain:
-			my info. record. gain * (64 - my info. record. balance) / 32;
-		theControlPanel. rightGain = my info. record. balance >= 32 ? my info. record. gain:
-			my info. record. gain * my info. record. balance / 32;
-		theControlPanel. sampleRate = my info. record. sample_rate;
-		if (my info. record. channels != my numberOfChannels)
-			Melder_casual ("(SoundRecorder:) Not %s.", my numberOfChannels == 1 ? "mono" : "stereo");
-		if (my info. record. precision != 16)
-			Melder_casual ("(SoundRecorder:) Not 16-bit.");
-		if (my info. record. encoding != AUDIO_ENCODING_LINEAR)
-			Melder_casual ("(SoundRecorder:) Not linear.");
-	#elif defined (HPUX)
-		int leftGain = my hpGains. cgain [0]. receive_gain * 11;
-		int rightGain = my hpGains. cgain [1]. receive_gain * 11;
-		int sampleRate;
-		ioctl (my fd, AUDIO_GET_INPUT, & my hpInputSource);
-		theControlPanel. inputSource = (my hpInputSource & AUDIO_IN_MIKE) ? 1 : 2;
-		ioctl (my fd, AUDIO_GET_GAINS, & my hpGains);
-		if (leftGain < theControlPanel. leftGain - 10 || leftGain > theControlPanel. leftGain)
-			theControlPanel. leftGain = leftGain;
-		if (rightGain < theControlPanel. rightGain - 10 || rightGain > theControlPanel. rightGain)
-			theControlPanel. rightGain = rightGain;
-		ioctl (my fd, AUDIO_GET_SAMPLE_RATE, & sampleRate);
-		theControlPanel. sampleRate = sampleRate;
-	#endif
+	}
 
 	/* Set the buttons according to the audio parameters. */
 
@@ -632,18 +623,24 @@ static Boolean workProc (XtPointer void_me) {
 		 * Read some samples into 'buffertje'.
 		 */
 		do {
-			#if USE_PORTAUDIO || defined (macintosh) || defined (_WIN32)
+			if (my inputUsesPortAudio) {
 				/*
-				 * Asynchronous recording on these systems: do nothing.
+				 * Asynchronous recording: do nothing.
 				 */
-			#elif defined (sgi)
-				ALreadsamps (my port, buffertje, step * my numberOfChannels);
-				stepje = step;
-			#else
-				// linux, sun, HPUX
-				if (my fd != -1)
-					stepje = read (my fd, (void *) buffertje, step * (sizeof (short) * my numberOfChannels)) / (sizeof (short) * my numberOfChannels);
-			#endif
+			} else {
+				#if defined (macintosh) || defined (_WIN32)
+					/*
+					 * Asynchronous recording on these systems: do nothing.
+					 */
+				#elif defined (sgi)
+					ALreadsamps (my port, buffertje, step * my numberOfChannels);
+					stepje = step;
+				#else
+					// linux, sun, HPUX
+					if (my fd != -1)
+						stepje = read (my fd, (void *) buffertje, step * (sizeof (short) * my numberOfChannels)) / (sizeof (short) * my numberOfChannels);
+				#endif
+			}
 
 			if (my recording) {
 				memcpy (my buffer + my nsamp * my numberOfChannels, buffertje, stepje * (sizeof (short) * my numberOfChannels));
@@ -661,38 +658,39 @@ static Boolean workProc (XtPointer void_me) {
 			/*
 			 * We have to know how far the buffer has been filled.
 			 * However, the buffer may be filled at interrupt time,
-			 * so that the buffer may be filled during this workproc.
+			 * so that the buffer may be being filled during this workproc.
 			 * So we ask for the buffer filling just once, namely here at the beginning.
 			 */
-			#if USE_PORTAUDIO
+			long lastSample = 0;
+			if (my inputUsesPortAudio) {
 				 /*
 				  * The buffer filling is contained in my nsamp,
 				  * which has been set during interrupt time and may again be updated behind our backs during this workproc.
 				  * So we do it in such a way that the compiler cannot ask for my nsamp twice.
 				  */
-				long lastSample = getMyNsamp (me);
-			#elif defined (_WIN32)
-				MMTIME mmtime;
-				mmtime. wType = TIME_BYTES;
-				long lastSample = 0;
-				if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
-					lastSample = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
-			#elif defined (macintosh)
-				OSErr err;
-				short recordingStatus, meterLevel;
-				unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
-				err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
-						& totalSamplesToRecord, & numberOfSamplesRecorded,
-						& totalMsecsToRecord, & numberOfMsecsRecorded);
-				if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
-				if (totalSamplesToRecord == 0)
-					my nsamp = my nmax;
-				else
-					my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);
-				long lastSample = my nsamp;
-			#else
-				long lastSample = 0;   // Will not occur.
-			#endif
+				lastSample = getMyNsamp (me);
+				Pa_Sleep (10);
+			} else {
+				#if defined (_WIN32)
+					MMTIME mmtime;
+					mmtime. wType = TIME_BYTES;
+					if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
+						lastSample = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
+				#elif defined (macintosh)
+					OSErr err;
+					short recordingStatus, meterLevel;
+					unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
+					err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
+							& totalSamplesToRecord, & numberOfSamplesRecorded,
+							& totalMsecsToRecord, & numberOfMsecsRecorded);
+					if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
+					if (totalSamplesToRecord == 0)
+						my nsamp = my nmax;
+					else
+						my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);
+					lastSample = my nsamp;
+				#endif
+			}
 			long firstSample = lastSample - 1000;
 			if (firstSample < 0) firstSample = 0;
 			showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
@@ -705,7 +703,6 @@ static Boolean workProc (XtPointer void_me) {
 	return False;
 }
 
-#if USE_PORTAUDIO
 static int portaudioStreamCallback (
     const void *input, void *output,
     unsigned long frameCount,
@@ -740,7 +737,6 @@ static int portaudioStreamCallback (
 	}
 	return paContinue;
 }
-#endif
 
 static void gui_button_cb_record (I, GuiButtonEvent event) {
 	(void) event;
@@ -751,18 +747,18 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	my lastLeftMaximum = 0;
 	my lastRightMaximum = 0;
 	if (! my synchronous) {
-		#if USE_PORTAUDIO
+		if (my inputUsesPortAudio) {
 			PaStreamParameters streamParameters = { 0 };
 			streamParameters. device = my deviceIndices [theControlPanel. inputSource];
 			streamParameters. channelCount = my numberOfChannels;
 			streamParameters. sampleFormat = paInt16;
 			streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
 			#if defined (macintosh)
-				struct paMacCoreStreamInfo macCoreStreamInfo = { 0 };
-				macCoreStreamInfo. size = sizeof (paMacCoreStreamInfo);
+				PaMacCoreStreamInfo macCoreStreamInfo = { 0 };
+				macCoreStreamInfo. size = sizeof (PaMacCoreStreamInfo);
 				macCoreStreamInfo. hostApiType = paCoreAudio;
 				macCoreStreamInfo. version = 0x01;
-				macCoreStreamInfo. flags = paMacCore_ChangeDeviceParameters | paMacCore_FailIfConversionRequired;
+				macCoreStreamInfo. flags = paMacCoreChangeDeviceParameters | paMacCoreFailIfConversionRequired;
 				streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
 			#endif
 			if (Melder_debug == 20) Melder_casual ("Before Pa_OpenStream");
@@ -773,32 +769,34 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 			Pa_StartStream (my portaudioStream);
 			if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", err);
 			if (err) { Melder_error2 (L"start ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err))); goto end; }
-		#elif defined (_WIN32)
-			win_fillFormat (me);
-			win_fillHeader (me, 0);
-			win_waveInOpen (me); cherror
-			win_waveInPrepareHeader (me, 0); cherror
-			win_waveInAddBuffer (me, 0); cherror
-			win_waveInStart (me); cherror
-		#elif defined (macintosh)
-			OSErr err;
-			err = SPBStopRecording (my refNum);
-			if (err != noErr) { onceError ("SPBStopRecording", err); return; }
-			for (;;) {
-				my spb. bufferPtr = (char *) my buffer;
-				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
-				err = SPBRecord (& my spb, true);   /* Asynchronous. */
-				if (err == noErr) break;   /* Success. */
-				if (err == notEnoughMemoryErr) {
-					if (my temporaryMemoryHandle) {
-						if (my nmax < 50000) { Melder_flushError ("Out of memory. Quit other programs."); return; }
-						my nmax /= 2;   /* Retry with less temporary memory. */
-						SetHandleSize (my temporaryMemoryHandle, my nmax * (sizeof (short) * my numberOfChannels));
-						HLock ((Handle) my temporaryMemoryHandle);
-					} else { Melder_flushError ("Out of memory. Quit other programs."); return; }
-				} else if (err != noErr) { onceError ("SPBRecord", err); return; }
-			}
-		#endif
+		} else {
+			#if defined (_WIN32)
+				win_fillFormat (me);
+				win_fillHeader (me, 0);
+				win_waveInOpen (me); cherror
+				win_waveInPrepareHeader (me, 0); cherror
+				win_waveInAddBuffer (me, 0); cherror
+				win_waveInStart (me); cherror
+			#elif defined (macintosh)
+				OSErr err;
+				err = SPBStopRecording (my refNum);
+				if (err != noErr) { onceError ("SPBStopRecording", err); return; }
+				for (;;) {
+					my spb. bufferPtr = (char *) my buffer;
+					my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
+					err = SPBRecord (& my spb, true);   /* Asynchronous. */
+					if (err == noErr) break;   /* Success. */
+					if (err == notEnoughMemoryErr) {
+						if (my temporaryMemoryHandle) {
+							if (my nmax < 50000) { Melder_flushError ("Out of memory. Quit other programs."); return; }
+							my nmax /= 2;   /* Retry with less temporary memory. */
+							SetHandleSize (my temporaryMemoryHandle, my nmax * (sizeof (short) * my numberOfChannels));
+							HLock ((Handle) my temporaryMemoryHandle);
+						} else { Melder_flushError ("Out of memory. Quit other programs."); return; }
+					} else if (err != noErr) { onceError ("SPBRecord", err); return; }
+				}
+			#endif
+		}
 	}
 end:
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
@@ -813,15 +811,13 @@ static void gui_button_cb_stop (I, GuiButtonEvent event) {
 	stopRecording (me);
 }
 
-#if defined (sgi) || defined (macintosh) || defined (_WIN32)
 static void gui_button_cb_play (I, GuiButtonEvent event) {
 	(void) event;
 	iam (SoundRecorder);
 	if (my recording || my nsamp == 0) return;
-	if (! Melder_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL))
+	if (! MelderAudio_play16 (my buffer, theControlPanel. sampleRate, my fakeMono ? my nsamp / 2 : my nsamp, my fakeMono ? 2 : my numberOfChannels, NULL, NULL))
 		Melder_flushError (NULL);
 }
-#endif
 
 static void publish (SoundRecorder me) {
 	Sound sound = NULL;
@@ -881,93 +877,8 @@ static void gui_button_cb_ok (I, GuiButtonEvent event) {
 	forget (me);
 }
 
-static void setSystemInputGains (SoundRecorder me) {
-	#if USE_PORTAUDIO
-		(void) me;
-	#elif defined (sgi)
-		my info [0] = AL_LEFT_INPUT_ATTEN;
-		my info [1] = 255 - theControlPanel. leftGain;
-		my info [2] = AL_RIGHT_INPUT_ATTEN;
-		my info [3] = 255 - theControlPanel. rightGain;
-		ALsetparams (AL_DEFAULT_DEVICE, my info, 4);
-	#elif defined (sun)
-		AUDIO_INITINFO (& my info);
-		my info. record. gain = theControlPanel. leftGain > theControlPanel. rightGain ?
-			theControlPanel. leftGain : theControlPanel. rightGain;
-		my info. record. balance = theControlPanel. leftGain == theControlPanel. rightGain ? 32 :
-			theControlPanel. leftGain > theControlPanel. rightGain ?
-			32 * theControlPanel. rightGain / theControlPanel. leftGain :
-			64 - 32 * theControlPanel. leftGain / theControlPanel. rightGain;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-	#elif defined (HPUX)
-		my hpGains. cgain [0]. receive_gain = theControlPanel. leftGain / 11;
-		my hpGains. cgain [1]. receive_gain = theControlPanel. rightGain / 11;
-		my hpGains. channel_mask = AUDIO_CHANNEL_LEFT | AUDIO_CHANNEL_RIGHT;
-		ioctl (my fd, AUDIO_SET_GAINS, & my hpGains);
-	#elif defined (linux)
-	{
-		int val, fd_mixer = open ("/dev/mixer", O_WRONLY);	
-		(void) me;	
-		if (fd_mixer == -1) {
-			Melder_flushError ("(Sound_record:) Cannot open /dev/mixer.");
-		}
-
-		val = (int)(100*((float)theControlPanel.leftGain/255)) | ((int)((100*((float)theControlPanel.rightGain/255))) << 8);			      
-		if (theControlPanel.inputSource == 1) {			
-			if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_MIC), & val) == -1)
-				Melder_flushError ("(Sound_record:) Cannot set gain and balance.");
-		} else {
-			if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_LINE), & val) == -1)
-				Melder_flushError ("(Sound_record:) Cannot set gain and balance.");
-		}
-		close (fd_mixer);
-	}
-	#else
-		(void) me;
-	#endif
-}
-
-static void cb_leftGain (Widget w, XtPointer void_me, XtPointer call) {
-	iam (SoundRecorder);
-	Melder_assert (w == my leftGainScale);
-	(void) call;
-	XmScaleGetValue (my leftGainScale, & theControlPanel. leftGain);
-	if (my coupled) {
-		theControlPanel. rightGain = theControlPanel. leftGain;
-		XmScaleSetValue (my rightGainScale, theControlPanel. rightGain);
-	}
-	setSystemInputGains (me);
-}
-
-static void cb_rightGain (Widget w, XtPointer void_me, XtPointer call) {
-	iam (SoundRecorder);
-	Melder_assert (w == my rightGainScale);
-	(void) call;
-	XmScaleGetValue (my rightGainScale, & theControlPanel. rightGain);
-	if (my coupled) {
-		theControlPanel. leftGain = theControlPanel. rightGain;
-		XmScaleSetValue (my leftGainScale, theControlPanel. leftGain);
-	}
-	setSystemInputGains (me);
-}
-
-static void cb_couple (Widget w, XtPointer void_me, XtPointer call) {
-	iam (SoundRecorder);
-	(void) w;
-	(void) call;
-	my coupled = ! my coupled;
-	if (my coupled) {
-		theControlPanel. leftGain = theControlPanel. rightGain =
-			(theControlPanel. leftGain + theControlPanel. rightGain) / 2;
-		XmScaleSetValue (my leftGainScale, theControlPanel. leftGain);
-		XmScaleSetValue (my rightGainScale, theControlPanel. rightGain);
-		setSystemInputGains (me);
-	}
-	theCouplePreference = my coupled;
-}
-
 static int initialize (SoundRecorder me) {
-	#if USE_PORTAUDIO
+	if (my inputUsesPortAudio) {
 		#if defined (macintosh)
 			my fsamp [SoundRecorder_IFSAMP_8000]. canDo = false;
 			my fsamp [SoundRecorder_IFSAMP_11025]. canDo = false;
@@ -981,231 +892,233 @@ static int initialize (SoundRecorder me) {
 			// Accept all standard sample rates.
 			(void) me;
 		#endif
-	#elif defined (sgi)
-		my audio = ALnewconfig ();
-		if (! my audio)
-			return Melder_error1 (L"Unexpected error: cannot create audio config...");
-		ALsetchannels (my audio, my numberOfChannels == 1 ? AL_MONO : AL_STEREO);
-		ALsetwidth (my audio, AL_SAMPLE_16);
-		if (! (my port = ALopenport ("SoundRecorder", "r", my audio)))
-			return Melder_error1 (L"Cannot open audio port (too many open already).");
-		my can9800 = TRUE;
-	#elif defined (macintosh)
-		unsigned long sampleRate_uf = theControlPanel. sampleRate * 65536L;
-		short numberOfChannels = my numberOfChannels, continuous = TRUE, sampleSize = 16, async;
-		char levelMeterOnOff = 1;
-		short inputSource = theControlPanel. inputSource, irate;
-		OSType compressionType = 'NONE';
-		struct { Handle dummy1; short dummy2, number; Handle handle; } sampleRateInfo;   /* Make sure that number is adjacent to handle. */
-		if (SPBOpenDevice (my hybridDeviceNames [inputSource], siWritePermission, & my refNum) != noErr)
-			Melder_flushError ("(Sound_record:) Cannot open audio input device.");
-		/*
-			From Apple:
-			"Get the range of sample rates this device can produce.
-			The infoData  parameter points to an integer, which is the number of sample rates the device supports, followed by a handle.
-			The handle references a list of sample rates, each of type Fixed .
-			If the device can record a range of sample rates, the number of sample rates is set to 0 and the handle contains two rates,
-			the minimum and the maximum of the range of sample rates.
-			Otherwise, a list is returned that contains the sample rates supported.
-			In order to accommodate sample rates greater than 32 kHz, the most significant bit is not treated as a sign bit;
-			instead, that bit is interpreted as having the value 32,768."
-		 */
-		SPBGetDeviceInfo (my refNum, siSampleRateAvailable, & sampleRateInfo. number);
-		if (sampleRateInfo. number == 0) {
-		} else {
-			for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
-				my fsamp [i]. canDo = false;
-			}
-			for (irate = 1; irate <= sampleRateInfo. number; irate ++) {
-				Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
-				unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
-				switch (rate_ushort) {
-					case 0: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true,
-					        my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;   /* BUG */
-					case 8000: my fsamp [SoundRecorder_IFSAMP_8000]. canDo = true; break;
-					case 11025: my fsamp [SoundRecorder_IFSAMP_11025]. canDo = true; break;
-					case 12000: my fsamp [SoundRecorder_IFSAMP_12000]. canDo = true; break;
-					case 16000: my fsamp [SoundRecorder_IFSAMP_16000]. canDo = true; break;
-					case 22050: my fsamp [SoundRecorder_IFSAMP_22050]. canDo = true; break;
-					case 22254: my fsamp [SoundRecorder_IFSAMP_22254]. canDo = true; break;
-					case 24000: my fsamp [SoundRecorder_IFSAMP_24000]. canDo = true; break;
-					case 32000: my fsamp [SoundRecorder_IFSAMP_32000]. canDo = true; break;
-					case 44100: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true; break;
-					case 48000: my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;
-					case 64000: my fsamp [SoundRecorder_IFSAMP_64000]. canDo = true; break;
-					default: Melder_warning3 (L"Your computer seems to support a sampling frequency of ", Melder_integer (rate_ushort), L" Hz. "
-						"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.");
+	} else {
+		#if defined (sgi)
+			my audio = ALnewconfig ();
+			if (! my audio)
+				return Melder_error1 (L"Unexpected error: cannot create audio config...");
+			ALsetchannels (my audio, my numberOfChannels == 1 ? AL_MONO : AL_STEREO);
+			ALsetwidth (my audio, AL_SAMPLE_16);
+			if (! (my port = ALopenport ("SoundRecorder", "r", my audio)))
+				return Melder_error1 (L"Cannot open audio port (too many open already).");
+			my can9800 = TRUE;
+		#elif defined (macintosh)
+			unsigned long sampleRate_uf = theControlPanel. sampleRate * 65536L;
+			short numberOfChannels = my numberOfChannels, continuous = TRUE, sampleSize = 16, async;
+			char levelMeterOnOff = 1;
+			short inputSource = theControlPanel. inputSource, irate;
+			OSType compressionType = 'NONE';
+			struct { Handle dummy1; short dummy2, number; Handle handle; } sampleRateInfo;   /* Make sure that number is adjacent to handle. */
+			if (SPBOpenDevice (my hybridDeviceNames [inputSource], siWritePermission, & my refNum) != noErr)
+				Melder_flushError ("(Sound_record:) Cannot open audio input device.");
+			/*
+				From Apple:
+				"Get the range of sample rates this device can produce.
+				The infoData  parameter points to an integer, which is the number of sample rates the device supports, followed by a handle.
+				The handle references a list of sample rates, each of type Fixed .
+				If the device can record a range of sample rates, the number of sample rates is set to 0 and the handle contains two rates,
+				the minimum and the maximum of the range of sample rates.
+				Otherwise, a list is returned that contains the sample rates supported.
+				In order to accommodate sample rates greater than 32 kHz, the most significant bit is not treated as a sign bit;
+				instead, that bit is interpreted as having the value 32,768."
+			 */
+			SPBGetDeviceInfo (my refNum, siSampleRateAvailable, & sampleRateInfo. number);
+			if (sampleRateInfo. number == 0) {
+			} else {
+				for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
+					my fsamp [i]. canDo = false;
+				}
+				for (irate = 1; irate <= sampleRateInfo. number; irate ++) {
+					Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
+					unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
+					switch (rate_ushort) {
+						case 0: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true,
+								my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;   /* BUG */
+						case 8000: my fsamp [SoundRecorder_IFSAMP_8000]. canDo = true; break;
+						case 11025: my fsamp [SoundRecorder_IFSAMP_11025]. canDo = true; break;
+						case 12000: my fsamp [SoundRecorder_IFSAMP_12000]. canDo = true; break;
+						case 16000: my fsamp [SoundRecorder_IFSAMP_16000]. canDo = true; break;
+						case 22050: my fsamp [SoundRecorder_IFSAMP_22050]. canDo = true; break;
+						case 22254: my fsamp [SoundRecorder_IFSAMP_22254]. canDo = true; break;
+						case 24000: my fsamp [SoundRecorder_IFSAMP_24000]. canDo = true; break;
+						case 32000: my fsamp [SoundRecorder_IFSAMP_32000]. canDo = true; break;
+						case 44100: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true; break;
+						case 48000: my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;
+						case 64000: my fsamp [SoundRecorder_IFSAMP_64000]. canDo = true; break;
+						default: Melder_warning3 (L"Your computer seems to support a sampling frequency of ", Melder_integer (rate_ushort), L" Hz. "
+							"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.");
+					}
 				}
 			}
-		}
-		if (SPBSetDeviceInfo (my refNum, siInputSource, & my macSource [inputSource]) != noErr)
-			Melder_flushError ("(Sound_record:) Cannot change input source.");
-		/*if (SPBOpenDevice (NULL, siWritePermission, & my refNum) != noErr)
-			return Melder_error1 (L"Cannot open audio input device.");*/
-		if (SPBSetDeviceInfo (my refNum, siSampleRate, & sampleRate_uf) != noErr) {
-			Melder_flushError ("Cannot set sampling frequency to %.5f Hz.", theControlPanel. sampleRate);
-			theControlPanel. sampleRate = 44100;
-		}
-		if (SPBSetDeviceInfo (my refNum, siNumberChannels, & numberOfChannels) != noErr) {
-			if (my numberOfChannels == 1) {
-				my fakeMono = TRUE;
-			} else {
-				return Melder_error1 (L"(Sound_record:) Cannot set to stereo.");
+			if (SPBSetDeviceInfo (my refNum, siInputSource, & my macSource [inputSource]) != noErr)
+				Melder_flushError ("(Sound_record:) Cannot change input source.");
+			/*if (SPBOpenDevice (NULL, siWritePermission, & my refNum) != noErr)
+				return Melder_error1 (L"Cannot open audio input device.");*/
+			if (SPBSetDeviceInfo (my refNum, siSampleRate, & sampleRate_uf) != noErr) {
+				Melder_flushError ("Cannot set sampling frequency to %.5f Hz.", theControlPanel. sampleRate);
+				theControlPanel. sampleRate = 44100;
 			}
-		}
-		if (SPBSetDeviceInfo (my refNum, siCompressionType, & compressionType) != noErr)
-			return Melder_error1 (L"(Sound_record:) Cannot set to linear.");
-		if (SPBSetDeviceInfo (my refNum, siSampleSize, & sampleSize) != noErr)
-			return Melder_error3 (L"(Sound_record:) Cannot set to ", Melder_integer (sampleSize), L"-bit.");
-		if (SPBSetDeviceInfo (my refNum, siLevelMeterOnOff, & levelMeterOnOff) != noErr)
-			return Melder_error1 (L"(Sound_record:) Cannot set level meter to ON.");
-		if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
-			static int warned = FALSE;
-			my synchronous = TRUE;
-			if (! warned) { Melder_warning1 (L"Recording must and will be synchronous on this machine."); warned = TRUE; }
-		}
-		if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
-			return Melder_error1 (L"(Sound_record:) Cannot set continuous recording.");
-		my spb. inRefNum = my refNum;
-		if (! my synchronous) {
-			OSErr err;
-			if (my recording) {
-				my spb. bufferPtr = (char *) my buffer;
-				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
-			} else {
-				my spb. bufferPtr = NULL;
+			if (SPBSetDeviceInfo (my refNum, siNumberChannels, & numberOfChannels) != noErr) {
+				if (my numberOfChannels == 1) {
+					my fakeMono = TRUE;
+				} else {
+					return Melder_error1 (L"(Sound_record:) Cannot set to stereo.");
+				}
 			}
-			err = SPBRecord (& my spb, true);
-			if (err != noErr) { onceError ("SPBRecord", err); return 1; }
-		}
-	#elif defined (sun)
-		my fd = open (getenv ("AUDIODEV") ? getenv ("AUDIODEV") : "/dev/audio", O_RDONLY);
-		if (my fd == -1) {
-			if (errno == EBUSY)
-				return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
-			else
-				return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.");
-		}
-		AUDIO_INITINFO (& my info);
-		my info. record. pause = 1;
-		ioctl (my fd, AUDIO_SETINFO, & my info);   /* Pause! */
-		ioctl (my fd, I_FLUSH, FLUSHR);   /* Discard buffers! */
-
-		#ifndef sun4
+			if (SPBSetDeviceInfo (my refNum, siCompressionType, & compressionType) != noErr)
+				return Melder_error1 (L"(Sound_record:) Cannot set to linear.");
+			if (SPBSetDeviceInfo (my refNum, siSampleSize, & sampleSize) != noErr)
+				return Melder_error3 (L"(Sound_record:) Cannot set to ", Melder_integer (sampleSize), L"-bit.");
+			if (SPBSetDeviceInfo (my refNum, siLevelMeterOnOff, & levelMeterOnOff) != noErr)
+				return Melder_error1 (L"(Sound_record:) Cannot set level meter to ON.");
+			if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
+				static int warned = FALSE;
+				my synchronous = TRUE;
+				if (! warned) { Melder_warning1 (L"Recording must and will be synchronous on this machine."); warned = TRUE; }
+			}
+			if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
+				return Melder_error1 (L"(Sound_record:) Cannot set continuous recording.");
+			my spb. inRefNum = my refNum;
+			if (! my synchronous) {
+				OSErr err;
+				if (my recording) {
+					my spb. bufferPtr = (char *) my buffer;
+					my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
+				} else {
+					my spb. bufferPtr = NULL;
+				}
+				err = SPBRecord (& my spb, true);
+				if (err != noErr) { onceError ("SPBRecord", err); return 1; }
+			}
+		#elif defined (sun)
+			my fd = open (getenv ("AUDIODEV") ? getenv ("AUDIODEV") : "/dev/audio", O_RDONLY);
+			if (my fd == -1) {
+				if (errno == EBUSY)
+					return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
+				else
+					return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.");
+			}
 			AUDIO_INITINFO (& my info);
-			my info. record. buffer_size = 8176;   /* Maximum. */
+			my info. record. pause = 1;
+			ioctl (my fd, AUDIO_SETINFO, & my info);   /* Pause! */
+			ioctl (my fd, I_FLUSH, FLUSHR);   /* Discard buffers! */
+
+			#ifndef sun4
+				AUDIO_INITINFO (& my info);
+				my info. record. buffer_size = 8176;   /* Maximum. */
+				ioctl (my fd, AUDIO_SETINFO, & my info);
+			#endif
+
+			AUDIO_INITINFO (& my info);
+			my info. monitor_gain = 0;   /* Not rondzingen. */
 			ioctl (my fd, AUDIO_SETINFO, & my info);
+
+			/* Take over the saved settings. */
+
+			AUDIO_INITINFO (& my info);
+			my info. record. port = theControlPanel. inputSource == 2 ? AUDIO_LINE_IN :
+				AUDIO_MICROPHONE;
+			ioctl (my fd, AUDIO_SETINFO, & my info);
+			AUDIO_INITINFO (& my info);
+			my info. record. gain = theControlPanel. leftGain > theControlPanel. rightGain ?
+				theControlPanel. leftGain : theControlPanel. rightGain;
+			my info. record. balance = theControlPanel. leftGain == theControlPanel. rightGain ? 32 :
+				theControlPanel. leftGain > theControlPanel. rightGain ?
+				32 * theControlPanel. rightGain / theControlPanel. leftGain :
+				64 - 32 * theControlPanel. leftGain / theControlPanel. rightGain;
+			ioctl (my fd, AUDIO_SETINFO, & my info);
+			AUDIO_INITINFO (& my info);
+			my info. record. sample_rate = theControlPanel. sampleRate;
+			ioctl (my fd, AUDIO_SETINFO, & my info);
+
+			AUDIO_INITINFO (& my info);
+			my info. record. precision = 16;
+			my info. record. encoding = AUDIO_ENCODING_LINEAR;
+			my info. record. channels = my numberOfChannels;
+			ioctl (my fd, AUDIO_SETINFO, & my info);   /* 16-bit linear mono/stereo! */
+			ioctl (my fd, AUDIO_GETINFO, & my info);
+			if (my info. record. channels != my numberOfChannels)
+				return Melder_error3 (L"(SoundRecorder:) Cannot set to ", my numberOfChannels == 1 ? L"mono" : L"stereo", L".");
+
+			AUDIO_INITINFO (& my info);
+			my info. record. pause = 0;
+			ioctl (my fd, AUDIO_SETINFO, & my info);   /* Start listening! */
+		#elif defined (HPUX)
+			struct audio_limits limits;
+			int dataFormat, channels, wantedInput, currentInput, sampleRate, bufferSize;
+			my fd = open ("/dev/audio", O_RDONLY);
+			if (my fd == -1) {
+				if (errno == EBUSY)
+					return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
+				else
+					return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.");
+			}
+			ioctl (my fd, AUDIO_RESET, RESET_RX_BUF | RESET_RX_OVF);
+			ioctl (my fd, AUDIO_PAUSE, AUDIO_RECEIVE);
+
+			ioctl (my fd, AUDIO_GET_DATA_FORMAT, & dataFormat);
+			if (dataFormat != AUDIO_FORMAT_LINEAR16BIT && ioctl (my fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1)
+				return Melder_error1 (L"(SoundRecorder:) Cannot set 16-bit linear.");
+
+			ioctl (my fd, AUDIO_GET_CHANNELS, & channels);
+			if (channels != my numberOfChannels && ioctl (my fd, AUDIO_SET_CHANNELS, my numberOfChannels) == -1)
+				return Melder_error3 (L"(SoundRecorder:) Cannot set ", my numberOfChannels == 1 ? L"mono" : L"stereo", L" input.");
+
+			wantedInput = theControlPanel. inputSource == 2 ? AUDIO_IN_LINE : AUDIO_IN_MIKE;
+			ioctl (my fd, AUDIO_GET_INPUT, & currentInput);
+			if (currentInput != wantedInput && ioctl (my fd, AUDIO_SET_INPUT, wantedInput) == -1)
+				return Melder_error1 (L"(SoundRecorder:) Cannot set input source.");
+
+			ioctl (my fd, AUDIO_GET_SAMPLE_RATE, & sampleRate);
+			if (sampleRate != theControlPanel. sampleRate && ioctl (my fd, AUDIO_SET_SAMPLE_RATE, (int) theControlPanel. sampleRate) == -1)
+				return Melder_error1 (L"(SoundRecorder:) Cannot set sampling frequency.");
+
+			ioctl (my fd, AUDIO_GET_LIMITS, & limits);
+			ioctl (my fd, AUDIO_GET_RXBUFSIZE, & bufferSize);
+			if (bufferSize != limits. max_receive_buffer_size && ioctl (my fd, AUDIO_SET_RXBUFSIZE, limits. max_receive_buffer_size) == -1)
+				return Melder_error1 (L"(SoundRecorder:) Cannot set buffer size.");
+
+			ioctl (my fd, AUDIO_RESUME, AUDIO_RECEIVE);
+		#elif defined (_WIN32)
+			(void) me;
+		#elif defined (linux)
+			int sampleRate = (int) theControlPanel. sampleRate, sampleSize = 16;
+			int channels = my numberOfChannels, stereo = ( my numberOfChannels == 2 ), val;
+			#if __BYTE_ORDER == __BIG_ENDIAN
+				int format = AFMT_S16_BE;
+			#else
+				int format = AFMT_S16_LE;
+			#endif
+			int fd_mixer;
+			my fd = open ("/dev/dsp", O_RDONLY);
+			if (my fd == -1) {
+				if (errno == EBUSY)
+					return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
+				else
+					return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.\n"
+						"Consult /usr/doc/HOWTO/Sound-HOWTO.");
+			}
+			ioctl (my fd, SNDCTL_DSP_RESET, NULL);
+			ioctl (my fd, SNDCTL_DSP_SPEED, & sampleRate);
+			ioctl (my fd, SNDCTL_DSP_SAMPLESIZE, & sampleSize);
+			ioctl (my fd, SNDCTL_DSP_CHANNELS, (val = channels, & val));
+			if (channels == 1 && val == 2) {
+				close (my fd);
+				return Melder_error1 (L"(SoundRecorder:) This sound card does not support mono.");
+			}
+			ioctl (my fd, SNDCTL_DSP_STEREO, & stereo);
+			ioctl (my fd, SNDCTL_DSP_SETFMT, & format);
+			fd_mixer = open ("/dev/mixer", O_WRONLY);		
+			if (fd_mixer == -1) {
+				return Melder_error1 (L"(SoundRecorder:) Cannot open /dev/mixer.");
+			} else {
+				int dev_mask = theControlPanel. inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
+				if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
+					Melder_flushError ("(SoundRecorder:) Can't set recording device in mixer.");		
+				close (fd_mixer);
+			}
 		#endif
-
-		AUDIO_INITINFO (& my info);
-		my info. monitor_gain = 0;   /* Not rondzingen. */
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-
-		/* Take over the saved settings. */
-
-		AUDIO_INITINFO (& my info);
-		my info. record. port = theControlPanel. inputSource == 2 ? AUDIO_LINE_IN :
-			AUDIO_MICROPHONE;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-		AUDIO_INITINFO (& my info);
-		my info. record. gain = theControlPanel. leftGain > theControlPanel. rightGain ?
-			theControlPanel. leftGain : theControlPanel. rightGain;
-		my info. record. balance = theControlPanel. leftGain == theControlPanel. rightGain ? 32 :
-			theControlPanel. leftGain > theControlPanel. rightGain ?
-			32 * theControlPanel. rightGain / theControlPanel. leftGain :
-			64 - 32 * theControlPanel. leftGain / theControlPanel. rightGain;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-		AUDIO_INITINFO (& my info);
-		my info. record. sample_rate = theControlPanel. sampleRate;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-
-		AUDIO_INITINFO (& my info);
-		my info. record. precision = 16;
-		my info. record. encoding = AUDIO_ENCODING_LINEAR;
-		my info. record. channels = my numberOfChannels;
-		ioctl (my fd, AUDIO_SETINFO, & my info);   /* 16-bit linear mono/stereo! */
-		ioctl (my fd, AUDIO_GETINFO, & my info);
-		if (my info. record. channels != my numberOfChannels)
-			return Melder_error3 (L"(SoundRecorder:) Cannot set to ", my numberOfChannels == 1 ? L"mono" : L"stereo", L".");
-
-		AUDIO_INITINFO (& my info);
-		my info. record. pause = 0;
-		ioctl (my fd, AUDIO_SETINFO, & my info);   /* Start listening! */
-	#elif defined (HPUX)
-		struct audio_limits limits;
-		int dataFormat, channels, wantedInput, currentInput, sampleRate, bufferSize;
-		my fd = open ("/dev/audio", O_RDONLY);
-		if (my fd == -1) {
-			if (errno == EBUSY)
-				return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
-			else
-				return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.");
-		}
-		ioctl (my fd, AUDIO_RESET, RESET_RX_BUF | RESET_RX_OVF);
-		ioctl (my fd, AUDIO_PAUSE, AUDIO_RECEIVE);
-
-		ioctl (my fd, AUDIO_GET_DATA_FORMAT, & dataFormat);
-		if (dataFormat != AUDIO_FORMAT_LINEAR16BIT && ioctl (my fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1)
-			return Melder_error1 (L"(SoundRecorder:) Cannot set 16-bit linear.");
-
-		ioctl (my fd, AUDIO_GET_CHANNELS, & channels);
-		if (channels != my numberOfChannels && ioctl (my fd, AUDIO_SET_CHANNELS, my numberOfChannels) == -1)
-			return Melder_error3 (L"(SoundRecorder:) Cannot set ", my numberOfChannels == 1 ? L"mono" : L"stereo", L" input.");
-
-		wantedInput = theControlPanel. inputSource == 2 ? AUDIO_IN_LINE : AUDIO_IN_MIKE;
-		ioctl (my fd, AUDIO_GET_INPUT, & currentInput);
-		if (currentInput != wantedInput && ioctl (my fd, AUDIO_SET_INPUT, wantedInput) == -1)
-			return Melder_error1 (L"(SoundRecorder:) Cannot set input source.");
-
-		ioctl (my fd, AUDIO_GET_SAMPLE_RATE, & sampleRate);
-		if (sampleRate != theControlPanel. sampleRate && ioctl (my fd, AUDIO_SET_SAMPLE_RATE, (int) theControlPanel. sampleRate) == -1)
-			return Melder_error1 (L"(SoundRecorder:) Cannot set sampling frequency.");
-
-		ioctl (my fd, AUDIO_GET_LIMITS, & limits);
-		ioctl (my fd, AUDIO_GET_RXBUFSIZE, & bufferSize);
-		if (bufferSize != limits. max_receive_buffer_size && ioctl (my fd, AUDIO_SET_RXBUFSIZE, limits. max_receive_buffer_size) == -1)
-			return Melder_error1 (L"(SoundRecorder:) Cannot set buffer size.");
-
-		ioctl (my fd, AUDIO_RESUME, AUDIO_RECEIVE);
-	#elif defined (_WIN32)
-		(void) me;
-	#elif defined (linux)
-		int sampleRate = (int) theControlPanel. sampleRate, sampleSize = 16;
-		int channels = my numberOfChannels, stereo = ( my numberOfChannels == 2 ), val;
-		#if __BYTE_ORDER == __BIG_ENDIAN
-			int format = AFMT_S16_BE;
-		#else
-			int format = AFMT_S16_LE;
-		#endif
-		int fd_mixer;
-		my fd = open ("/dev/dsp", O_RDONLY);
-		if (my fd == -1) {
-			if (errno == EBUSY)
-				return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
-			else
-				return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.\n"
-					"Consult /usr/doc/HOWTO/Sound-HOWTO.");
-		}
-		ioctl (my fd, SNDCTL_DSP_RESET, NULL);
-		ioctl (my fd, SNDCTL_DSP_SPEED, & sampleRate);
-		ioctl (my fd, SNDCTL_DSP_SAMPLESIZE, & sampleSize);
-		ioctl (my fd, SNDCTL_DSP_CHANNELS, (val = channels, & val));
-		if (channels == 1 && val == 2) {
-			close (my fd);
-			return Melder_error1 (L"(SoundRecorder:) This sound card does not support mono.");
-		}
-		ioctl (my fd, SNDCTL_DSP_STEREO, & stereo);
-		ioctl (my fd, SNDCTL_DSP_SETFMT, & format);
-		fd_mixer = open ("/dev/mixer", O_WRONLY);		
-		if (fd_mixer == -1) {
-			return Melder_error1 (L"(SoundRecorder:) Cannot open /dev/mixer.");
-		} else {
-			int dev_mask = theControlPanel. inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
-			if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
-				Melder_flushError ("(SoundRecorder:) Can't set recording device in mixer.");		
-			close (fd_mixer);
-		}
-	#endif
+	}
 	return 1;
 }
 
@@ -1220,35 +1133,39 @@ static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
 	}
 
 	/* Set system's input source. */
-	#if USE_PORTAUDIO || defined (_WIN32)
-	    // Deferred to the start of recording.
-	#elif defined (sgi)
-		my info [0] = AL_INPUT_SOURCE;
-		my info [1] =
-			theControlPanel. inputSource == 1 ? AL_INPUT_MIC :
-			theControlPanel. inputSource == 2 ? AL_INPUT_LINE : AL_INPUT_DIGITAL;
-		ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
-	#elif defined (macintosh)
-		SPBCloseDevice (my refNum);
-		if (! initialize (me)) Melder_flushError (NULL);
-	#elif defined (sun)
-		AUDIO_INITINFO (& my info);
-		my info. record. port =
-			theControlPanel. inputSource == 1 ? AUDIO_MICROPHONE : AUDIO_LINE_IN;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-	#elif defined (HPUX)
-		ioctl (my fd, AUDIO_SET_INPUT,
-			theControlPanel. inputSource == 1 ? AUDIO_IN_MIKE : AUDIO_IN_LINE);
-	#elif defined (linux)
-		int fd_mixer = open ("/dev/mixer", O_WRONLY);		
-		if (fd_mixer == -1) {
-			Melder_flushError ("(Sound_record:) Cannot open /dev/mixer.");
-		}
-		int dev_mask = theControlPanel.inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
-		if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
-			Melder_flushError ("(Sound_record:) Can't set recording device in mixer");		
-		close (fd_mixer);
-	#endif
+	if (my inputUsesPortAudio) {
+		// Deferred to the start of recording.
+	} else {
+		#if defined (_WIN32)
+			// Deferred to the start of recording.
+		#elif defined (sgi)
+			my info [0] = AL_INPUT_SOURCE;
+			my info [1] =
+				theControlPanel. inputSource == 1 ? AL_INPUT_MIC :
+				theControlPanel. inputSource == 2 ? AL_INPUT_LINE : AL_INPUT_DIGITAL;
+			ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
+		#elif defined (macintosh)
+			SPBCloseDevice (my refNum);
+			if (! initialize (me)) Melder_flushError (NULL);
+		#elif defined (sun)
+			AUDIO_INITINFO (& my info);
+			my info. record. port =
+				theControlPanel. inputSource == 1 ? AUDIO_MICROPHONE : AUDIO_LINE_IN;
+			ioctl (my fd, AUDIO_SETINFO, & my info);
+		#elif defined (HPUX)
+			ioctl (my fd, AUDIO_SET_INPUT,
+				theControlPanel. inputSource == 1 ? AUDIO_IN_MIKE : AUDIO_IN_LINE);
+		#elif defined (linux)
+			int fd_mixer = open ("/dev/mixer", O_WRONLY);		
+			if (fd_mixer == -1) {
+				Melder_flushError ("(Sound_record:) Cannot open /dev/mixer.");
+			}
+			int dev_mask = theControlPanel.inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
+			if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
+				Melder_flushError ("(Sound_record:) Can't set recording device in mixer");		
+			close (fd_mixer);
+		#endif
+	}
 }
 
 static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
@@ -1276,27 +1193,31 @@ static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
 	 * On some systems, we cannot do this without closing the audio device,
 	 * and reopening it with a new sampling frequency.
 	 */
-	#if USE_PORTAUDIO || defined (_WIN32)
-	    // Deferred to the start of recording.
-	#elif defined (sgi)
-		my info [0] = AL_INPUT_RATE;
-		my info [1] = (int) theControlPanel. sampleRate;
-		ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
-	#elif defined (macintosh)
-		SPBCloseDevice (my refNum);
-		if (! initialize (me)) Melder_flushError (NULL);
-	#elif defined (sun)
-		AUDIO_INITINFO (& my info);
-		my info. record. sample_rate = (int) theControlPanel. sampleRate;
-		ioctl (my fd, AUDIO_SETINFO, & my info);
-	#elif defined (HPUX)
-		close (my fd);
-		sleep (1);
-		if (! initialize (me)) Melder_flushError (NULL);
-	#elif defined (linux)		
-		close (my fd);
-		if (! initialize (me)) Melder_flushError (NULL);
-	#endif
+	if (my inputUsesPortAudio) {
+		// Deferred to the start of recording.
+	} else {
+		#if defined (_WIN32)
+			// Deferred to the start of recording.
+		#elif defined (sgi)
+			my info [0] = AL_INPUT_RATE;
+			my info [1] = (int) theControlPanel. sampleRate;
+			ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
+		#elif defined (macintosh)
+			SPBCloseDevice (my refNum);
+			if (! initialize (me)) Melder_flushError (NULL);
+		#elif defined (sun)
+			AUDIO_INITINFO (& my info);
+			my info. record. sample_rate = (int) theControlPanel. sampleRate;
+			ioctl (my fd, AUDIO_SETINFO, & my info);
+		#elif defined (HPUX)
+			close (my fd);
+			sleep (1);
+			if (! initialize (me)) Melder_flushError (NULL);
+		#elif defined (linux)		
+			close (my fd);
+			if (! initialize (me)) Melder_flushError (NULL);
+		#endif
+	}
 #ifdef _WIN32
 end:
 	iferror Melder_flushError ("Cannot change sampling frequency.");
@@ -1393,10 +1314,15 @@ static void createChildren (I) {
 		L"Record", gui_button_cb_record, me, 0);
 	my stopButton = GuiButton_createShown (form, 100, 170, Gui_AUTOMATIC, -y,
 		L"Stop", gui_button_cb_stop, me, 0);
-	#if defined (sgi) || defined (_WIN32) || defined (macintosh)
+	if (my inputUsesPortAudio) {
 		my playButton = GuiButton_createShown (form, 180, 250, Gui_AUTOMATIC, -y,
 			L"Play", gui_button_cb_play, me, 0);
-	#endif
+	} else {
+		#if defined (sgi) || defined (_WIN32) || defined (macintosh)
+			my playButton = GuiButton_createShown (form, 180, 250, Gui_AUTOMATIC, -y,
+				L"Play", gui_button_cb_play, me, 0);
+		#endif
+	}
 	GuiLabel_createShown (form, -200, -130, Gui_AUTOMATIC, -y - 2, L"Name:", GuiLabel_RIGHT);
 	my soundName = GuiText_createShown (form, -120, -20, Gui_AUTOMATIC, -y, 0);
 	XtAddCallback (my soundName, XmNactivateCallback, gui_cb_apply, (XtPointer) me);
@@ -1509,56 +1435,64 @@ class_methods_end
 
 SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppContext context) {
 	SoundRecorder me = new (SoundRecorder);
+	my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
 
-	#if defined (_WIN32)
-		UINT numberOfDevices = waveInGetNumDevs (), i;
-		WAVEINCAPS caps;
-		MMRESULT err;
-		if (numberOfDevices == 0) { Melder_error1 (L"No sound input devices available."); goto error; }
-		err = waveInGetDevCaps (WAVE_MAPPER, & caps, sizeof (WAVEINCAPS));
-		if (numberOfChannels == 2 && caps. wChannels < 2) {
-			Melder_error1 (L"Your computer does not support stereo sound input.");
-			goto error;
-		}
-		/* BUG: should we ask whether 16 bit is supported? */
-		for (i = 0; i < numberOfDevices; i ++) {
-			waveInGetDevCaps (i, & caps, sizeof (WAVEINCAPS));
-			/*Melder_casual ("Name of device %d: %s", i, caps. szPname);*/
-		}
-	#elif defined (macintosh)
-		long soundFeatures;
-		if (Gestalt (gestaltSoundAttr, & soundFeatures) ||
-				! (soundFeatures & (1 << gestaltSoundIOMgrPresent)) ||
-				! (soundFeatures & (1 << gestaltBuiltInSoundInput)) ||
-				! (soundFeatures & (1 << gestaltHasSoundInputDevice)))
-		{
-			Melder_error1 (L"(SoundRecorder_create:) Your computer does not support sound input.");
-			goto error;
-		}
-		if (! (soundFeatures & (1 << gestalt16BitSoundIO)) ||   /* Hardware. */
-		    ! (soundFeatures & (1 << gestaltStereoInput)) ||   /* Hardware. */
-		    ! (soundFeatures & (1 << gestalt16BitAudioSupport)))   /* Software. */
-		{
-			Melder_error1 (L"Your computer does not support stereo sound input.");
-			goto error;
-		}
-	#endif
+	if (my inputUsesPortAudio) {
+	} else {
+		#if defined (_WIN32)
+			UINT numberOfDevices = waveInGetNumDevs (), i;
+			WAVEINCAPS caps;
+			MMRESULT err;
+			if (numberOfDevices == 0) { Melder_error1 (L"No sound input devices available."); goto error; }
+			err = waveInGetDevCaps (WAVE_MAPPER, & caps, sizeof (WAVEINCAPS));
+			if (numberOfChannels == 2 && caps. wChannels < 2) {
+				Melder_error1 (L"Your computer does not support stereo sound input.");
+				goto error;
+			}
+			/* BUG: should we ask whether 16 bit is supported? */
+			for (i = 0; i < numberOfDevices; i ++) {
+				waveInGetDevCaps (i, & caps, sizeof (WAVEINCAPS));
+				/*Melder_casual ("Name of device %d: %s", i, caps. szPname);*/
+			}
+		#elif defined (macintosh)
+			long soundFeatures;
+			if (Gestalt (gestaltSoundAttr, & soundFeatures) ||
+					! (soundFeatures & (1 << gestaltSoundIOMgrPresent)) ||
+					! (soundFeatures & (1 << gestaltBuiltInSoundInput)) ||
+					! (soundFeatures & (1 << gestaltHasSoundInputDevice)))
+			{
+				Melder_error1 (L"(SoundRecorder_create:) Your computer does not support sound input.");
+				goto error;
+			}
+			if (! (soundFeatures & (1 << gestalt16BitSoundIO)) ||   /* Hardware. */
+				! (soundFeatures & (1 << gestaltStereoInput)) ||   /* Hardware. */
+				! (soundFeatures & (1 << gestalt16BitAudioSupport)))   /* Software. */
+			{
+				Melder_error1 (L"Your computer does not support stereo sound input.");
+				goto error;
+			}
+		#endif
+	}
 	my numberOfChannels = numberOfChannels;
 	if (sizeof (short) != 2)
 		return Melder_errorp ("Long shorts!!!!!");
-	#if USE_PORTAUDIO || defined (macintosh) || defined (_WIN32)
-		my synchronous = FALSE;
-	#else
-		my synchronous = TRUE;
-	#endif
+		if (my inputUsesPortAudio) {
+			my synchronous = FALSE;
+		} else {
+			#if defined (macintosh) || defined (_WIN32)
+				my synchronous = FALSE;
+			#else
+				my synchronous = TRUE;
+			#endif
+		}
 	/*
 	 * Allocate the maximum buffer.
 	 */
-	if (nmaxMB_pref < 1) nmaxMB_pref = 1;   /* Validate preferences. */
-	if (nmaxMB_pref > 1000) nmaxMB_pref = 1000;
+	if (preferences.bufferSize_MB < 1) preferences.bufferSize_MB = 1;   /* Validate preferences. */
+	if (preferences.bufferSize_MB > 1000) preferences.bufferSize_MB = 1000;
 	if (my buffer == NULL) {
-		long nmax_bytes_pref = nmaxMB_pref * 1000000;
-		long nmax_bytes =
+		long nmax_bytes_pref = preferences.bufferSize_MB * 1000000;
+		long nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
 			#if defined (_WIN32)
 				66150000;   /* The maximum physical buffer on Windows XP; shorter than in Windows 98, alas. */
 			#else
@@ -1578,7 +1512,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	/*
 	 * Count the number of input devices and sources.
 	 */
-	#if USE_PORTAUDIO
+	if (my inputUsesPortAudio) {
 		static bool paInitialized = false;
 		if (! paInitialized) {
 			PaError err = Pa_Initialize ();
@@ -1611,46 +1545,52 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 				my deviceIndices [my numberOfInputDevices] = idevice;
 			}
 		}
-	#elif defined (macintosh)
-		for (long idevice = 1; idevice <= 8; idevice ++) {
-			Str255 hybridDeviceName;
-			OSErr err = SPBGetIndexedDevice (idevice, & hybridDeviceName [0], NULL);
-			if (err == siBadSoundInDevice) break;
-			(void) PtoCstr (hybridDeviceName);
-			if (SPBOpenDevice (hybridDeviceName, siWritePermission, & my refNum) == noErr) {
-				Handle handle;
-				if (SPBGetDeviceInfo (my refNum, siInputSourceNames, & handle) == noErr) {
-					char *data = *handle, *plength;
-					int numberOfDeviceSources = * (short *) data, deviceSource;
-					/*HLock (handle);*/
-					plength = & data [2];
-					for (deviceSource = 1; deviceSource <= numberOfDeviceSources; deviceSource ++) {
-						if (my numberOfInputDevices == SoundRecorder_IDEVICE_MAX) break;
-						my device [++ my numberOfInputDevices]. canDo = true;
-						strcpy ((char *) my hybridDeviceNames [my numberOfInputDevices], (const char *) hybridDeviceName);
-						my macSource [my numberOfInputDevices] = deviceSource;
-						plength [40] = '\0';
-						wcsncpy (my device [my numberOfInputDevices]. name, Melder_peekUtf8ToWcs (plength + 1), *plength < 40 ? *plength : 40);
-						my device [my numberOfInputDevices]. name [*plength < 40 ? *plength : 40] = '\0';
-						plength += *plength + 1;
-					}
-					DisposeHandle (handle);
-				}
-				SPBCloseDevice (my refNum);
-			}
+		if (my numberOfInputDevices == 0) {
+			Melder_error1 (L"No input devices available.");
+			goto error;
 		}
-	#elif defined (_WIN32)
-		// No device info: use Windows mixer.
-	#else
-		my device [1]. canDo = true;
-		wcscpy (my device [1]. name, L"Microphone");
-		my device [2]. canDo = true;
-		wcscpy (my device [2]. name, L"Line");
-		#if defined (sgi)
-			my device [3]. canDo = true;
-			wcscpy (my device [3]. name, L"Digital");
+	} else {
+		#if defined (macintosh)
+			for (long idevice = 1; idevice <= 8; idevice ++) {
+				Str255 hybridDeviceName;
+				OSErr err = SPBGetIndexedDevice (idevice, & hybridDeviceName [0], NULL);
+				if (err == siBadSoundInDevice) break;
+				(void) PtoCstr (hybridDeviceName);
+				if (SPBOpenDevice (hybridDeviceName, siWritePermission, & my refNum) == noErr) {
+					Handle handle;
+					if (SPBGetDeviceInfo (my refNum, siInputSourceNames, & handle) == noErr) {
+						char *data = *handle, *plength;
+						int numberOfDeviceSources = * (short *) data, deviceSource;
+						/*HLock (handle);*/
+						plength = & data [2];
+						for (deviceSource = 1; deviceSource <= numberOfDeviceSources; deviceSource ++) {
+							if (my numberOfInputDevices == SoundRecorder_IDEVICE_MAX) break;
+							my device [++ my numberOfInputDevices]. canDo = true;
+							strcpy ((char *) my hybridDeviceNames [my numberOfInputDevices], (const char *) hybridDeviceName);
+							my macSource [my numberOfInputDevices] = deviceSource;
+							plength [40] = '\0';
+							wcsncpy (my device [my numberOfInputDevices]. name, Melder_peekUtf8ToWcs (plength + 1), *plength < 40 ? *plength : 40);
+							my device [my numberOfInputDevices]. name [*plength < 40 ? *plength : 40] = '\0';
+							plength += *plength + 1;
+						}
+						DisposeHandle (handle);
+					}
+					SPBCloseDevice (my refNum);
+				}
+			}
+		#elif defined (_WIN32)
+			// No device info: use Windows mixer.
+		#else
+			my device [1]. canDo = true;
+			wcscpy (my device [1]. name, L"Microphone");
+			my device [2]. canDo = true;
+			wcscpy (my device [2]. name, L"Line");
+			#if defined (sgi)
+				my device [3]. canDo = true;
+				wcscpy (my device [3]. name, L"Digital");
+			#endif
 		#endif
-	#endif
+	}
 
 	/*
 	 * Sampling frequency constants.

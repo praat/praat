@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/02/06
+ * pb 2008/06/16
  */
 
 #include <stdio.h>
@@ -822,26 +822,42 @@ long Melder_killReturns_inline (char *text);
 
 /********** AUDIO **********/
 
-void Melder_setUseInternalSpeaker (int useInternalSpeaker);
-int Melder_getUseInternalSpeaker (void);
-void Melder_setOutputGain (double gain);
-double Melder_getOutputGain (void);
+#if defined (macintosh) || defined (_WIN32)
+	#define kMelderAudio_inputUsesPortAudio_DEFAULT  true
+#else
+	#define kMelderAudio_inputUsesPortAudio_DEFAULT  false
+#endif
+#if defined (macintosh)
+	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
+#else
+	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false
+#endif
+void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio);
+bool MelderAudio_getInputUsesPortAudio (void);
+void MelderAudio_setOutputUsesPortAudio (bool outputUsesPortAudio);
+bool MelderAudio_getOutputUsesPortAudio (void);
+void MelderAudio_setOutputUsesBlocking (bool outputUsesBlocking);
+bool MelderAudio_getOutputUsesBlocking (void);
+void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);
+bool MelderAudio_getUseInternalSpeaker (void);
+void MelderAudio_setOutputGain (double gain);
+double MelderAudio_getOutputGain (void);
 void Melder_audio_prefs (void);
-long Melder_getBestSampleRate (long fsamp);
-extern int Melder_isPlaying;
-int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
+long MelderAudio_getOutputBestSampleRate (long fsamp);
+extern int MelderAudio_isPlaying;
+int MelderAudio_play16 (const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	int (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure);
-int Melder_stopPlaying (int explicit);   /* Returns 1 if sound was playing. */
-#define Melder_IMPLICIT  0
-#define Melder_EXPLICIT  1
-long Melder_getSamplesPlayed (void);
-int Melder_stopWasExplicit (void);
+int MelderAudio_stopPlaying (bool explicit);   /* Returns 1 if sound was playing. */
+#define MelderAudio_IMPLICIT  0
+#define MelderAudio_EXPLICIT  1
+long MelderAudio_getSamplesPlayed (void);
+bool MelderAudio_stopWasExplicit (void);
 
-void Melder_setMaximumAsynchronicity (int maximumAsynchronicity);
-int Melder_getMaximumAsynchronicity (void);
+void MelderAudio_setOutputMaximumAsynchronicity (int maximumAsynchronicity);
+int MelderAudio_getOutputMaximumAsynchronicity (void);
 
-void Melder_setZeroPadding (double zeroPadding);   /* Seconds of silence before and after playing. */
-double Melder_getZeroPadding (void);
+void MelderAudio_setOutputZeroPadding (double zeroPadding);   /* Seconds of silence before and after playing. */
+double MelderAudio_getOutputZeroPadding (void);
 
 /********** AUDIO FILES **********/
 

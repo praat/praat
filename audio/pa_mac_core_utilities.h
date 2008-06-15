@@ -62,7 +62,6 @@
 #include <pthread.h>
 #include "portaudio.h"
 #include "pa_util.h"
-typedef unsigned char Boolean;
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 
@@ -126,6 +125,25 @@ PaError PaMacCore_SetUnixError( int err, int line );
 PaError PaMacCore_SetError(OSStatus error, int line, int isError);
 
 /*
+ * This function computes an appropriate ring buffer size given
+ * a requested latency (in seconds), sample rate and framesPerBuffer.
+ *
+ * The returned ringBufferSize is computed using the following
+ * constraints:
+ *   - it must be at least 4.
+ *   - it must be at least 3x framesPerBuffer.
+ *   - it must be at least 2x the suggestedLatency.
+ *   - it must be a power of 2.
+ * This function attempts to compute the minimum such size.
+ *
+ */
+long computeRingBufferSize( const PaStreamParameters *inputParameters,
+                                   const PaStreamParameters *outputParameters,
+                                   long inputFramesPerBuffer,
+                                   long outputFramesPerBuffer,
+                                   double sampleRate );
+
+/*
  * Durring testing of core audio, I found that serious crashes could occur
  * if properties such as sample rate were changed multiple times in rapid
  * succession. The function below has some fancy logic to make sure that changes
@@ -181,7 +199,7 @@ PaError setBestSampleRateForDevice( const AudioDeviceID device,
    not usually catastrophic.
 */
 PaError setBestFramesPerBuffer( const AudioDeviceID device,
-                                       const bool isOutput,
-                                       unsigned long requestedFramesPerBuffer, 
-                                       unsigned long *actualFramesPerBuffer );
+                                const bool isOutput,
+                                UInt32 requestedFramesPerBuffer, 
+                                UInt32 *actualFramesPerBuffer );
 #endif /* PA_MAC_CORE_UTILITIES_H__*/

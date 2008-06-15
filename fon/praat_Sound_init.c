@@ -115,12 +115,12 @@ FORM (LongSound_playPart, L"LongSound: Play part", 0)
 DO
 	int n = 0;
 	EVERY (n ++)
-	if (n == 1 || Melder_getMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		EVERY (LongSound_playPart (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), NULL, NULL))
 	} else {
-		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		EVERY (LongSound_playPart (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), NULL, NULL))
-		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
 END
 
@@ -1058,12 +1058,12 @@ END
 DIRECT (Sound_play)
 	int n = 0;
 	EVERY (n ++)
-	if (n == 1 || Melder_getMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
+	if (n == 1 || MelderAudio_getOutputMaximumAsynchronicity () < kMelder_asynchronicityLevel_ASYNCHRONOUS) {
 		EVERY (Sound_play (OBJECT, NULL, NULL))
 	} else {
-		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_INTERRUPTABLE);
 		EVERY (Sound_play (OBJECT, NULL, NULL))
-		Melder_setMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
+		MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_ASYNCHRONOUS);
 	}
 END
 
@@ -1617,12 +1617,15 @@ END
 
 FORM (SoundInputPrefs, L"Sound recording preferences", L"SoundRecorder")
 	NATURAL (L"Buffer size (MB)", L"20")
+	BOOLEAN (L"Input uses PortAudio", kMelderAudio_inputUsesPortAudio_DEFAULT)
 	OK
 SET_INTEGER (L"Buffer size", SoundRecorder_getBufferSizePref_MB ())
+SET_INTEGER (L"Input uses PortAudio", MelderAudio_getInputUsesPortAudio ())
 DO
 	long size = GET_INTEGER (L"Buffer size");
 	REQUIRE (size <= 1000, L"Buffer size cannot exceed 1000 megabytes.")
 	SoundRecorder_setBufferSizePref_MB (size);
+	MelderAudio_setInputUsesPortAudio (GET_INTEGER (L"Input uses PortAudio"));
 END
 
 FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
@@ -1639,24 +1642,30 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	LABEL (L"", L"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
 	REAL (L"Silence before and after (s)", L"0.0")
+	BOOLEAN (L"Output uses PortAudio", kMelderAudio_outputUsesPortAudio_DEFAULT)
+	BOOLEAN (L"Output uses blocking", 0)
 	OK
 #if defined (sun) || defined (HPUX)
-	SET_INTEGER (L"Internal speaker", 2 - Melder_getUseInternalSpeaker ())
+	SET_INTEGER (L"Internal speaker", 2 - MelderAudio_getUseInternalSpeaker ())
 #endif
 #if defined (pietjepuk)
-	SET_REAL ("Output gain", Melder_getOutputGain ())
+	SET_REAL ("Output gain", MelderAudio_getOutputGain ())
 #endif
-SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, Melder_getMaximumAsynchronicity ());
-SET_REAL (L"Silence before and after", Melder_getZeroPadding ());
+SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
+SET_REAL (L"Silence before and after", MelderAudio_getOutputZeroPadding ())
+SET_INTEGER (L"Output uses PortAudio", MelderAudio_getOutputUsesPortAudio ())
+SET_INTEGER (L"Output uses blocking", MelderAudio_getOutputUsesBlocking ())
 DO
 	#if defined (sun) || defined (HPUX)
-		Melder_setUseInternalSpeaker (2 - GET_INTEGER (L"Internal speaker"));
+		MelderAudio_setUseInternalSpeaker (2 - GET_INTEGER (L"Internal speaker"));
 	#endif
 	#if defined (pietjepuk)
-		Melder_setOutputGain (GET_REAL (L"Gain"));
+		MelderAudio_setOutputGain (GET_REAL (L"Gain"));
 	#endif
-	Melder_setMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
-	Melder_setZeroPadding (GET_REAL (L"Silence before and after"));
+	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
+	MelderAudio_setOutputZeroPadding (GET_REAL (L"Silence before and after"));
+	MelderAudio_setOutputUsesPortAudio (GET_INTEGER (L"Output uses PortAudio"));
+	MelderAudio_setOutputUsesBlocking (GET_INTEGER (L"Output uses blocking"));
 END
 
 FORM_WRITE (Sound_writeToAifcFile, L"Write to AIFC file", 0, L"aifc")
@@ -1781,7 +1790,7 @@ END
 /***** STOP *****/
 
 DIRECT (stopPlayingSound)
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 END
 
 /***** Help menus *****/
@@ -1853,7 +1862,7 @@ static Sound melderSound, melderSoundFromFile, last;
 static int recordProc (double duration) {
 	if (last == melderSound) last = NULL;
 	forget (melderSound);
-	Melder_stopPlaying (Melder_IMPLICIT);
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	melderSound = Sound_recordFixedTime (1, 1.0, 0.5, 44100, duration);
 	if (! melderSound) return 0;
 	last = melderSound;

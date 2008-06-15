@@ -766,6 +766,42 @@ END
 	
 DIRECT (Formant_help) Melder_help (L"Formant"); END
 
+FORM (Formant_downto_Table, L"Formant: Down to Table", 0)
+	BOOLEAN (L"Include frame number", false)
+	BOOLEAN (L"Include time", true)
+	NATURAL (L"Time decimals", L"6")
+	BOOLEAN (L"Include intensity", false)
+	NATURAL (L"Intensity decimals", L"3")
+	BOOLEAN (L"Include number of formants", true)
+	NATURAL (L"Frequency decimals", L"3")
+	BOOLEAN (L"Include bandwidths", true)
+	OK
+DO
+	EVERY_TO (Formant_downto_Table (OBJECT, GET_INTEGER (L"Include frame number"),
+		GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"),
+		GET_INTEGER (L"Include intensity"), GET_INTEGER (L"Intensity decimals"),
+		GET_INTEGER (L"Include number of formants"), GET_INTEGER (L"Frequency decimals"),
+		GET_INTEGER (L"Include bandwidths")))
+END
+
+FORM (Formant_list, L"Formant: List", 0)
+	BOOLEAN (L"Include frame number", false)
+	BOOLEAN (L"Include time", true)
+	NATURAL (L"Time decimals", L"6")
+	BOOLEAN (L"Include intensity", false)
+	NATURAL (L"Intensity decimals", L"3")
+	BOOLEAN (L"Include number of formants", true)
+	NATURAL (L"Frequency decimals", L"3")
+	BOOLEAN (L"Include bandwidths", true)
+	OK
+DO
+	EVERY (Formant_list (OBJECT, GET_INTEGER (L"Include frame number"),
+		GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"),
+		GET_INTEGER (L"Include intensity"), GET_INTEGER (L"Intensity decimals"),
+		GET_INTEGER (L"Include number of formants"), GET_INTEGER (L"Frequency decimals"),
+		GET_INTEGER (L"Include bandwidths")))
+END
+
 FORM (Formant_scatterPlot, L"Formant: Scatter plot", 0)
 	praat_dia_timeRange (dia);
 	NATURAL (L"Horizontal formant number", L"2")
@@ -4411,6 +4447,8 @@ praat_addAction1 (classExcitation, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classFormant, 0, L"Speckle...", 0, 1, DO_Formant_drawSpeckles);
 		praat_addAction1 (classFormant, 0, L"Draw tracks...", 0, 1, DO_Formant_drawTracks);
 		praat_addAction1 (classFormant, 0, L"Scatter plot...", 0, 1, DO_Formant_scatterPlot);
+	praat_addAction1 (classFormant, 0, L"List...", 0, 0, DO_Formant_list);
+	praat_addAction1 (classFormant, 0, L"Down to Table...", 0, 0, DO_Formant_downto_Table);
 	praat_addAction1 (classFormant, 0, L"Query -          ", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classFormant);
 		praat_addAction1 (classFormant, 1, L"Get number of formants...", 0, 1, DO_Formant_getNumberOfFormants);

@@ -814,6 +814,10 @@
 		230E41D40B0A833A000CCE15 /* melder_error.c in Sources */ = {isa = PBXBuildFile; fileRef = 230E41D30B0A833A000CCE15 /* melder_error.c */; };
 		231E5F980AC6D1C4004B07A8 /* DTW_and_TextGrid.c in Sources */ = {isa = PBXBuildFile; fileRef = 231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */; };
 		231E5F990AC6D1C4004B07A8 /* DTW_and_TextGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */; };
+		231F67940DF32ACB00B3B0EA /* pa_mac_core_blocking.c in Sources */ = {isa = PBXBuildFile; fileRef = 231F67930DF32ACB00B3B0EA /* pa_mac_core_blocking.c */; };
+		231F67960DF32AD200B3B0EA /* pa_mac_core_blocking.h in Headers */ = {isa = PBXBuildFile; fileRef = 231F67950DF32AD200B3B0EA /* pa_mac_core_blocking.h */; };
+		231F67990DF32AFF00B3B0EA /* pa_ringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 231F67980DF32AFF00B3B0EA /* pa_ringbuffer.c */; };
+		231F679B0DF32B0400B3B0EA /* pa_ringbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 231F679A0DF32B0400B3B0EA /* pa_ringbuffer.h */; };
 		2320D63D0D190A56002D5AE0 /* StringsEditor.c in Sources */ = {isa = PBXBuildFile; fileRef = 2320D63C0D190A56002D5AE0 /* StringsEditor.c */; };
 		2320D63F0D190A60002D5AE0 /* StringsEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2320D63E0D190A60002D5AE0 /* StringsEditor.h */; };
 		2327C98B0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h in Headers */ = {isa = PBXBuildFile; fileRef = 2327C98A0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h */; };
@@ -2522,6 +2526,10 @@
 		230E41D30B0A833A000CCE15 /* melder_error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = melder_error.c; path = sys/melder_error.c; sourceTree = "<group>"; };
 		231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = DTW_and_TextGrid.c; path = dwtools/DTW_and_TextGrid.c; sourceTree = "<group>"; };
 		231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DTW_and_TextGrid.h; path = dwtools/DTW_and_TextGrid.h; sourceTree = "<group>"; };
+		231F67930DF32ACB00B3B0EA /* pa_mac_core_blocking.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pa_mac_core_blocking.c; path = audio/pa_mac_core_blocking.c; sourceTree = "<group>"; };
+		231F67950DF32AD200B3B0EA /* pa_mac_core_blocking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pa_mac_core_blocking.h; path = audio/pa_mac_core_blocking.h; sourceTree = "<group>"; };
+		231F67980DF32AFF00B3B0EA /* pa_ringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pa_ringbuffer.c; path = audio/pa_ringbuffer.c; sourceTree = "<group>"; };
+		231F679A0DF32B0400B3B0EA /* pa_ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pa_ringbuffer.h; path = audio/pa_ringbuffer.h; sourceTree = "<group>"; };
 		2320D63C0D190A56002D5AE0 /* StringsEditor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = StringsEditor.c; path = sys/StringsEditor.c; sourceTree = "<group>"; };
 		2320D63E0D190A60002D5AE0 /* StringsEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringsEditor.h; path = sys/StringsEditor.h; sourceTree = "<group>"; };
 		2327C98A0D08B25D00A2FFEE /* Sound_and_Spectrogram_enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound_and_Spectrogram_enums.h; path = fon/Sound_and_Spectrogram_enums.h; sourceTree = "<group>"; };
@@ -3455,6 +3463,8 @@
 				230021430B32FCEF00A7FE19 /* pa_hostapi.h */,
 				2300220B0B3340C800A7FE19 /* pa_mac_core.c */,
 				2300221D0B3342E300A7FE19 /* pa_mac_core.h */,
+				231F67930DF32ACB00B3B0EA /* pa_mac_core_blocking.c */,
+				231F67950DF32AD200B3B0EA /* pa_mac_core_blocking.h */,
 				230022C30B3347D900A7FE19 /* pa_mac_core_internal.h */,
 				230022260B33458700A7FE19 /* pa_mac_core_utilities.c */,
 				230022C50B3347E000A7FE19 /* pa_mac_core_utilities.h */,
@@ -3463,6 +3473,8 @@
 				230026EA0B34E03200A7FE19 /* pa_mac_util.h */,
 				230021440B32FCEF00A7FE19 /* pa_process.c */,
 				230021450B32FCEF00A7FE19 /* pa_process.h */,
+				231F67980DF32AFF00B3B0EA /* pa_ringbuffer.c */,
+				231F679A0DF32B0400B3B0EA /* pa_ringbuffer.h */,
 				230021470B32FCEF00A7FE19 /* pa_stream.c */,
 				230021480B32FCEF00A7FE19 /* pa_stream.h */,
 				230021490B32FCEF00A7FE19 /* pa_trace.c */,
@@ -5998,6 +6010,8 @@
 				23B594970DC0AE4B0005FC43 /* FormantGrid.h in Headers */,
 				23B594B40DC0C25A0005FC43 /* FormantGridEditor.h in Headers */,
 				2374B8BA0DF07C0B004CCF41 /* praat_version.h in Headers */,
+				231F67960DF32AD200B3B0EA /* pa_mac_core_blocking.h in Headers */,
+				231F679B0DF32B0400B3B0EA /* pa_ringbuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7134,6 +7148,8 @@
 				239956420DB0CB6900FB871A /* NUMlinprog.c in Sources */,
 				23B594990DC0AF260005FC43 /* FormantGrid.c in Sources */,
 				23B594B60DC0C2630005FC43 /* FormantGridEditor.c in Sources */,
+				231F67940DF32ACB00B3B0EA /* pa_mac_core_blocking.c in Sources */,
+				231F67990DF32AFF00B3B0EA /* pa_ringbuffer.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
