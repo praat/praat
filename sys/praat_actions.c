@@ -519,7 +519,9 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 
 void praat_actions_show (void) {
 	long i;
-	Widget buttons [1000], writeButtons [50];
+	#if motif
+		Widget buttons [1000], writeButtons [50];
+	#endif
 
 	/* The selection has changed;
 	 * kill the dynamic menu and the write menu.
@@ -529,7 +531,9 @@ void praat_actions_show (void) {
 			deleteDynamicMenu ();
 		#endif
 		if (! Melder_backgrounding) {
-			int nbuttons = 0, nwriteButtons = 0;
+			#if motif
+				int nbuttons = 0, nwriteButtons = 0;
+			#endif
 			GuiObject_setSensitive (praat_writeMenuTitle, False);
 			if (praat_writeMenuSeparator) GuiObject_hide (praat_writeMenuSeparator);
 			if (praat_dynamicMenu) GuiObject_hide (praat_dynamicMenu);
@@ -538,24 +542,19 @@ void praat_actions_show (void) {
 				if (! my visible) continue;
 				if (my button) {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
-						buttons [nbuttons ++] = my button;
+						#if gtk
+							GuiObject_hide (my button);
+						#elif motif
+							buttons [nbuttons ++] = my button;
+						#endif
 					else if (my title && (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
-						writeButtons [nwriteButtons ++] = my button;
+						#if gtk
+							GuiObject_hide (my button);
+						#elif motif
+							writeButtons [nwriteButtons ++] = my button;
+						#endif
 				}
-				#if gtk
-					// TODO: Is er een reden waarom je dit pas achteraf zou willen
-					// in plaats van direct zonder twee lijstjes te maken?
-					// Antwoord: onder Motif gaat/ging UnmanageChildren veel sneller dan een serie UnmanageChild's
-					/*
-					while (nbuttons > 0) {
-						gtk_widget_hide (GTK_WIDGET(buttons [nbuttons]));
-						nbuttons --;
-					}
-					while (nwriteButtons > 0) {
-						gtk_widget_hide (GTK_WIDGET(writeButtons [nwriteButtons]));
-						nwriteButtons --;
-					}*/
-				#elif motif
+				#if motif
 					if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
 					if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
 				#endif
@@ -604,7 +603,9 @@ void praat_actions_show (void) {
 	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
 		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
-		int nbuttons = 0, nwriteButtons = 0;
+		#if motif
+			int nbuttons = 0, nwriteButtons = 0;
+		#endif
 		if (! praat_dynamicMenu) {
 			#if gtk
 				praat_dynamicMenu = gtk_vbutton_box_new ();
@@ -649,7 +650,11 @@ void praat_actions_show (void) {
 							#endif
 							my title, gui_button_cb_menu,
 							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback,
-							( my executable ? 0 : GuiButton_INSENSITIVE ));
+								( my executable ? 0 : GuiButton_INSENSITIVE ));
+						#if gtk
+							/* Dit soort onzin zou eigenlijk in GuiButton moeten */
+							gtk_button_set_alignment (GTK_BUTTON (my button), 0.0f, 0.5f);
+						#endif
 					} else {
 						my button = GuiMenu_addItem (parent, my title,
 							( my executable ? 0 : GuiMenu_INSENSITIVE ),
@@ -664,10 +669,18 @@ void praat_actions_show (void) {
 					} else if (wcsequ (my title, L"Write to binary file...")) {
 						writeMenuGoingToSeparate = TRUE;
 					}
-					GuiObject_setSensitive (writeButtons [nwriteButtons++] = my button, my executable);
+					#if motif
+						writeButtons [nwriteButtons ++] = my button;
+					#endif
+					GuiObject_setSensitive (my button, my executable);
 				} else {
 					GuiObject_setSensitive (my button, my executable);
-					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					if (GuiObject_parent (my button) == praat_dynamicMenu)
+						#if gtk
+							GuiObject_show (my button);
+						#elif motif
+							buttons [nbuttons ++] = my button;
+						#endif
 				}
 			} else if (i == theNumberOfActions || theActions [i + 1]. depth == 0) {
 				/*
@@ -676,7 +689,12 @@ void praat_actions_show (void) {
 				if (! my button) {
 					my button = GuiLabel_createShown (praat_dynamicMenu, 0, BUTTON_WIDTH - 20, Gui_AUTOMATIC, Gui_AUTOMATIC, my title, 0);
 				} else {
-					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					if (GuiObject_parent (my button) == praat_dynamicMenu)
+						#if gtk
+							GuiObject_show(my button);
+						#elif motif
+							buttons [nbuttons ++] = my button;
+						#endif
 				}
 			} else if (my title == NULL || my title [0] == '-') {
 				/*
@@ -698,12 +716,13 @@ void praat_actions_show (void) {
 				 * Apparently a submenu.
 				 */
 				if (! my button) {
-					Widget cascadeButton;
 					if (my depth == 0) {
 						#if gtk
-							my button = GuiMenuBar_addMenu3 (praat_dynamicMenu, my title, 0);
-							currentSubmenu1 = my button;
+							currentSubmenu1 = GuiMenuBar_addMenu3 (praat_dynamicMenu, my title, 0, & my button);
+							/* Dit soort onzin zou eigenlijk in GuiButton moeten */
+							gtk_button_set_alignment (GTK_BUTTON (my button), 0.0f, 0.5f);
 						#elif motif
+							Widget cascadeButton;
 							my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
 							currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
 						#endif
@@ -720,20 +739,16 @@ void praat_actions_show (void) {
 					}
 					GuiObject_show (my button);
 				} else {
-					if (GuiObject_parent (my button) == praat_dynamicMenu) buttons [nbuttons++] = my button;
+					if (GuiObject_parent (my button) == praat_dynamicMenu)
+						#if gtk
+							GuiObject_show(my button);
+						#elif motif
+							buttons [nbuttons++] = my button;
+						#endif
 				}
 			}
 		}
-		#if gtk
-			while (nbuttons > 0) {
-				gtk_widget_show (buttons [nbuttons]);
-				nbuttons --;
-			}
-			while (nwriteButtons > 0) {
-				gtk_widget_show (writeButtons [nwriteButtons]);
-				nwriteButtons --;
-			}
-		#elif motif
+		#if motif
 			if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
 			if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
 		#endif

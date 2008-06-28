@@ -23,6 +23,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
+ djmw 20080513 CC_getValue
  */
 
 #include "CC.h"
@@ -220,6 +221,15 @@ long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe)
 	CC_getNumberOfCoefficients_extrema (me, startframe, endframe, &min, &max);
 
 	return max;
+}
+
+double CC_getValue (I, double t, long index)
+{
+	iam (CC);
+	long iframe = Sampled_xToNearestIndex (me, t);
+	if (iframe < 0 || iframe > my nx) return NUMundefined;
+	CC_Frame cf = & me -> frame[iframe];
+	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
 }
 
 /* End of file CC.c */

@@ -192,6 +192,8 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (RunnerMFC);
 	if (my graphics == NULL) return;
 	Dimension marginWidth = 10, marginHeight = 10;
+	#if motif
+	/* TODO */
 	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	long width = event -> width - marginWidth - marginWidth;
@@ -199,6 +201,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
 	Graphics_updateWs (my graphics);
+	#endif
 }
 
 static void do_ok (RunnerMFC me) {

@@ -546,6 +546,7 @@ static struct Longchar_Info Longchar_database [] = {
 { ':', '^', 2, { "/diaeresisover",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  95,  95,  95,  95, UNICODE_COMBINING_DIAERESIS }, // centralized
 { '0', '^', 2, { "/ringover",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  42,  42,  42,  42, UNICODE_COMBINING_RING_ABOVE }, // voiceless
 { 'v', '^', 2, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek
+{ 'N', '^', 2, { "/breveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  40,  40,  40,  40, UNICODE_COMBINING_BREVE }, // nonsyllabic
 { 'c', 'n', 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
 { 'c', 'v', 2, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
@@ -561,7 +562,7 @@ static struct Longchar_Info Longchar_database [] = {
 { 'D', 'v', 2, { "/squareunder",      0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  54,  54,  54,  54, UNICODE_COMBINING_SQUARE_BELOW }, // laminal
 { 'n', 'v', 2, { "/archunder",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  57,  57,  57,  57, UNICODE_COMBINING_INVERTED_BREVE_BELOW }, // nonsyllabic
 { '~', 'v', 2, { "/tildeunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  48,  48,  48,  48, UNICODE_COMBINING_TILDE_BELOW }, // creaky voiced
-{ '-', 'v', 2, { "/minusunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  61,  61,  61,  61, UNICODE_COMBINING_MACRON_BELOW }, // backed
+{ '-', 'v', 2, { "/minusunder",       0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  61,  61,  61,  61, UNICODE_COMBINING_MINUS_SIGN_BELOW }, // backed
 { '~', '<', 2, { "/tildethrough",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },   0, 242, 242,   0, UNICODE_COMBINING_TILDE_OVERLAY }, // velarized l
 { '3', 'v', 2, { "/halfringright",    0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 166, 166, 166, 166, UNICODE_COMBINING_RIGHT_HALF_RING_BELOW }, // rounded
 { 'l', 'i', 2, { "/ligature",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   }, 131, 131, 131, 131, UNICODE_COMBINING_DOUBLE_INVERTED_BREVE },

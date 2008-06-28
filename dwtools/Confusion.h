@@ -2,7 +2,7 @@
 #define _Confusion_h_
 /* Confusion.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,4 +104,8 @@ TableOfReal Confusion_to_TableOfReal_marginals (I);
 	Create a table with one extra row and one extra column with marginals,
 	i.e., column and row sums. 
 */
+
+void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision);
+// option marginals draw one extra row and column with sums.
+
 #endif /* _Confusion_h_ */

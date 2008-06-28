@@ -58,14 +58,16 @@ typedef struct structGuiList {
 } *GuiList;
 
 #if gtk
-	static void _GuiGtkList_destroyCallback (Widget widget, gpointer void_me) {
-		(void) widget;
+	static void _GuiGtkList_destroyCallback (gpointer void_me) {
 		iam (GuiList);
 		Melder_free (me);
 	}
 	static void _GuiGtkList_selectionChangedCallback (GtkTreeSelection *sel, gpointer void_me) {
 		iam (GuiList);
-		// TODO: where in the argument list is the widget?
+		if (my selectionChangedCallback != NULL) {
+			struct structGuiListEvent event = { GTK_WIDGET(gtk_tree_selection_get_tree_view(sel)) };
+			my selectionChangedCallback (my selectionChangedBoss, & event);
+		}
 	}
 #elif win || mac
 	void _GuiWinMacList_destroy (Widget widget) {
@@ -279,6 +281,13 @@ typedef struct structGuiList {
 	}
 #endif
 
+#if gtk
+enum {
+  COLUMN_STRING,
+  N_COLUMNS
+};
+#endif
+
 Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
 	GuiList me = Melder_calloc (struct structGuiList, 1);
 	my allowMultipleSelection = allowMultipleSelection;
@@ -294,9 +303,11 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		GtkTreeSelection *sel;
 		GtkListStore *liststore;
 
-		liststore = gtk_list_store_new (1, G_TYPE_STRING);
+		liststore = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING);
 		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
 		g_object_unref(liststore); // Destroys the widget after the list is destroyed
+
+		_GuiObject_setUserData (my widget, me); /* nog een functie die je niet moet vergeten */
 
 		renderer = gtk_cell_renderer_text_new ();
 		col = gtk_tree_view_column_new ();
@@ -304,9 +315,9 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		gtk_tree_view_column_add_attribute (col, renderer, "text", COL_OBJECTS);
 		if (header != NULL)
 			gtk_tree_view_column_set_title (col, Melder_peekWcsToUtf8 (header));
-		gtk_tree_view_append_column (GTK_TREE_VIEW (my widget), col);	
+		gtk_tree_view_append_column (GTK_TREE_VIEW (my widget), col);
 
-		g_object_set_data_full (G_OBJECT (my widget), "guiList",  me, _GuiGtkList_destroyCallback); 
+		g_object_set_data_full (G_OBJECT (my widget), "guiList",  me, (GDestroyNotify) _GuiGtkList_destroyCallback); 
 
 /*		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *col;
@@ -342,7 +353,7 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
 		}
 		gtk_box_pack_start (GTK_BOX (parent), my widget, TRUE, TRUE, 0);
-		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), NULL);
+		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me);
 	#elif win
 		my widget = _Gui_initializeWidget (xmListWidgetClass, parent, L"list");
 		_GuiObject_setUserData (my widget, me);
@@ -429,12 +440,11 @@ void GuiList_deleteAllItems (Widget widget) {
 
 void GuiList_deleteItem (Widget widget, long position) {
 	#if gtk
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
 		GtkTreeIter iter;
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-		gtk_tree_path_free (path);
-		gtk_list_store_remove (list_store, & iter);
+		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW(widget));
+		if (gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, (gint) (position - 1))) {
+			gtk_list_store_remove (GTK_LIST_STORE(tree_model), & iter);
+		}
 	#elif win
 		ListBox_DeleteString (widget -> window, position - 1);
 	#elif mac
@@ -468,12 +478,15 @@ void GuiList_deselectAllItems (Widget widget) {
 void GuiList_deselectItem (Widget widget, long position) {
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
+/*		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);*/
 		GtkTreeIter iter;
-		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-		gtk_tree_path_free (path);
-		gtk_tree_selection_unselect_iter (selection, & iter);
+//		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
+//		gtk_tree_path_free (path);
+		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW(widget));
+		if (gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, (gint) (position - 1))) {
+			gtk_tree_selection_unselect_iter (selection, & iter);
+		}
 	#elif win
 		ListBox_SetSel (widget -> window, False, position - 1);
 	#elif mac
@@ -497,18 +510,18 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		int n = gtk_tree_selection_count_selected_rows (selection);
 		if (n > 0) {
-			GList *list = gtk_tree_selection_get_selected_rows (selection, list_store);
+			GList *list = gtk_tree_selection_get_selected_rows (selection, (GtkTreeModel **) &list_store);
 			long ipos = 1;
 			*numberOfSelectedPositions = n;
 			selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
 			Melder_assert (selectedPositions != NULL);
 			g_list_first (list);
-			while (g_list_next (list) != NULL) {
+			do {
 				gint *index = gtk_tree_path_get_indices (list -> data);
-				selectedPositions [ipos] = index [0];
+				selectedPositions [ipos] = index [0] + 1;
 				ipos ++;
-			}
-			g_list_foreach (list, gtk_tree_path_free, NULL);
+			} while (g_list_next (list) != NULL);
+			g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
 			g_list_free (list);
 
 			// TODO: probably one big bug
@@ -650,9 +663,8 @@ void GuiList_insertItem (Widget widget, const wchar_t *itemText, long position) 
 	 * a value of 0 is special: the item is put at the bottom of the list.
 	 */
 	#if gtk
-		GtkTreeIter iter;
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
-		gtk_list_store_insert_with_values (list_store, & iter, (gint) position, Melder_peekWcsToUtf8 (itemText), -1);
+		gtk_list_store_insert_with_values (list_store, NULL, (gint) position - 1, COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about NULL, to append in another function
@@ -684,12 +696,18 @@ void GuiList_insertItem (Widget widget, const wchar_t *itemText, long position) 
 
 void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position) {
 	#if gtk
+		GtkTreeIter iter;
+		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW(widget));
+		if (gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, (gint) (position - 1))) {
+			gtk_list_store_set(GTK_LIST_STORE(tree_model), COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
+		}
+/*
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
 		GtkTreeIter iter;
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		gtk_tree_model_get_iter (GTK_TREE_MODEL (list_store), & iter, path);
-		gtk_tree_path_free (path);
-		gtk_list_store_set (list_store, & iter, Melder_peekWcsToUtf8 (itemText), -1);
+		gtk_tree_path_free (path);*/
+		// gtk_list_store_set (list_store, & iter, 0, Melder_peekWcsToUtf8 (itemText), -1);
 		// TODO: Tekst opsplitsen
 	#elif win
 		long nativePosition = position - 1;   // convert from 1-based to zero-based
@@ -715,7 +733,7 @@ void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position)
 void GuiList_selectItem (Widget widget, long position) {
 	#if gtk
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position, -1);
+		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position - 1, -1);
 		gtk_tree_selection_select_path(selection, path);
 		gtk_tree_path_free (path);
 

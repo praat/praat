@@ -22,7 +22,8 @@
  djmw 20040113 Added comment header for Peterson&Barney data.
  djmw 20040512 Corrected Peterson&Barney ARPABET-labeling.
  djmw 20041213 Added Table_createFromWeeninkData.
- djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset
+ djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset according to Watrous
+ djmw 20080508 Labeling back to original PB article.
 */
 /*	speaker type (m|w|c), sex(m|f), id, vowel_number, vowel_label
 	F0, F1, F2, F3
@@ -32,7 +33,7 @@
 #include "GraphicsP.h"
 #include "NUM2.h"
 
-/*
+/* 
 The Peterson & Barney data were once (1991) obtained by me as a compressed tar-file 
 by anonymous ftp from ftp://linc.cis.upenn.edu/pub,
 however, this site appears no longer to be an anonymous ftp site.
@@ -56,8 +57,8 @@ The data are organized by speaker type, speaker, and vowel into 1520
 lines of 8 fields. The fields are: Speaker Type, Speaker Number,
 Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
 are type 1 (men), type 2 (women) and type 3 (children)."
-
 */
+
 Table Table_createFromPetersonBarneyData (void)
 {
 	Table me;
@@ -70,7 +71,10 @@ Table Table_createFromPetersonBarneyData (void)
 //	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u", 
 //		L"\\vt", L"\\er\\hr"};
 	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"ah", L"aa", L"ao", L"uh", L"uw", L"er"};
-	wchar_t *ipa[10] = {L"i", L"\\ic", L"e", L"\\ae", L"\\vt", L"\\as", L"o", L"\\hs", L"u", L"\\er"};
+// Watrous IPA symbols
+//	wchar_t *ipa[10] = {L"i", L"\\ic", L"e", L"\\ae", L"\\vt", L"\\as", L"o", L"\\hs", L"u", L"\\er"};
+// P&B IPA symbols
+	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ef", L"\\ae", L"\\vt", L"\\as", L"\\ct", L"\\hs", L"u", L"\\er\\hr"};
 	wchar_t *sex[2] = {L"m", L"f"};
 	struct pbdatum {
 		short star; /* was there a * in front of the vowel-type? */

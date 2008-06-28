@@ -37,7 +37,8 @@
  djmw 20071030 Sound_preEmphasis: no pre-emphasis above the Nyquist frequency.
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
- djmw 20080320 Sound_fade.
+ djmw 20080320 +Sound_fade.
+ djmw 20080530 +Sound_localAverage
 */
 
 #include "Intensity_extensions.h"
@@ -1647,6 +1648,84 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 			}
 		}
 	}
+}
+
+/* 1; rect 2:hamming 3: bartlet 4: welch 5: hanning 6:gaussian */
+Sound Sound_createFromWindowFunction (double windowDuration, double samplingFrequency, int windowType)
+{
+	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
+	if (me == NULL) return NULL;
+	
+	for (long i = 1; i <= my nx; i ++)
+	{
+		double phase = (my x1 + (i - 1) * my dx) / windowDuration;
+		double value;
+		switch (windowType) {
+			case 1:
+				value = 1.0;
+				break;
+			case 2: /* Hamming */
+				value = 0.54 - 0.46 * cos (2.0 * NUMpi * phase);
+				break;
+			case 3: /* Bartlett */
+				value = 1.0 - fabs ((2.0 * phase - 1.0));
+				break;
+			case 4: /* Welch */
+				value = 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0);
+				break;
+			case 5: /* Hanning */
+				value = 0.5 * (1.0 - cos (2.0 * NUMpi * phase));
+				break;
+			case 6: /* Gaussian */
+				{
+					double edge = exp (-12.0);
+					phase -= 0.5;   /* -0.5 .. +0.5 */
+					value = (exp (-48.0 * phase * phase) - edge) / (1.0 - edge);
+					break;
+				}
+				break;
+			default:
+				value = 1.0;
+		}
+		my z[1][i] = value;
+	}
+	return me;
+}
+
+/* y[n] = sum(i=-n, i=n, x[n+mi])/(2*n+1) */
+Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
+{
+	double windowDuration = windowType == 6 ? 2 * averagingInterval : averagingInterval;
+	Sound thee = Data_copy (me);
+	Sound window = Sound_createFromWindowFunction (windowDuration, 1 / my dx, windowType);
+	
+	if (window == NULL || thee == NULL) return thee;
+	
+	double *w = window -> z[1];
+	long nswindow2 = window -> nx / 2;
+	long nswindow2p = (window -> nx - 1) / 2; // nx is odd: one sample less in the forward direction
+	if (nswindow2 < 1) return thee;
+		
+	for (long k = 1; k <= thy ny; k++)
+	{
+		for (long i = 1; i <= thy nx; i++)
+		{
+			double sum = 0, wsum = 0;
+			long m = (nswindow2 + 1 - i + 1) < 1 ? 1 : (nswindow2 + 1 - i + 1);
+			long jfrom =  (i - nswindow2) < 1 ? 1 : (i - nswindow2);
+			long jto = (i + nswindow2p) > my nx ? my nx : (i + nswindow2p);
+			for (long j = jfrom; j <= jto; j++, m++)
+			{
+				sum += my z[k][j] * w[m];
+				wsum += w[m];
+			}
+			thy z[k][i] = sum / wsum;
+		}
+	}
+	forget (window);
+end:
+	if (Melder_hasError ()) forget (thee);
+	return thee;
 }
 
 /* End of file Sound_extensions.c */

@@ -121,6 +121,7 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 	wchar_t *rightHeader = reflect ? my insideHeader : my outsideHeader;
 	wchar_t *leftFooter = reflect ? my outsideFooter : my insideFooter;
 	wchar_t *rightFooter = reflect ? my insideFooter : my outsideFooter;
+
 	my y = PAPER_TOP - TOP_MARGIN;
 	my x = 0;
 	my previousBottomSpacing = 0.0;
@@ -174,6 +175,7 @@ if (! my printing) {
 	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	my y -= size * (1.2/72);
 	my x = x;
+
 	if (/* my y > PAGE_HEIGHT + 2.0 + heightGuess || */ my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 		my y -= heightGuess;
 	} else {
@@ -552,6 +554,9 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (HyperPage);
 	(void) event;
 	if (my g == NULL) return;   // Could be the case in the very beginning.
+	#if gtk
+		Graphics_x_setCR (my g, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	#endif
 	initScreen (me);
 	our draw (me);
 	if (my entryHint && my entryPosition) {
@@ -563,6 +568,9 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		our draw (me);
 		updateVerticalScrollBar (me);
 	}
+	#if gtk
+		Graphics_x_setCR (my g, NULL);
+	#endif
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
@@ -881,7 +889,7 @@ static void createMenus (I) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;
-	Dimension marginWidth, marginHeight;
+	Dimension marginWidth = 1, marginHeight = 1;
 	#if motif
 		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	#endif
@@ -911,29 +919,36 @@ static void createChildren (I) {
 	int height = Machine_getTextHeight ();
 	int y = Machine_getMenuBarHeight () + 4;
 
+	#if gtk
+		my holder = gtk_hbox_new (FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (my dialog), my holder, false, false, 0);
+		GuiObject_show (my holder);
+	#elif motif
+		my holder = my dialog;
+	#endif
+
 	/***** Create navigation buttons. *****/
 
 	if (our hasHistory) {
-		GuiButton_createShown (my dialog, 4, 48, y, y + height,
+		GuiButton_createShown (my holder, 4, 48, y, y + height,
 			L"<", gui_button_cb_back, me, 0);
-		GuiButton_createShown (my dialog, 54, 98, y, y + height,
+		GuiButton_createShown (my holder, 54, 98, y, y + height,
 			L">", gui_button_cb_forth, me, 0);
 	}
 	if (our isOrdered) {
-		GuiButton_createShown (my dialog, 174, 218, y, y + height,
+		GuiButton_createShown (my holder, 174, 218, y, y + height,
 			L"< 1", gui_button_cb_previousPage, me, 0);
-		GuiButton_createShown (my dialog, 224, 268, y, y + height,
+		GuiButton_createShown (my holder, 224, 268, y, y + height,
 			L"1 >", gui_button_cb_nextPage, me, 0);
 	}
 	#if gtk
 		// TODO: GuiScrollWindow.c
 		Widget scrollWindow = gtk_scrolled_window_new(NULL, NULL);
-                gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		my drawingArea = GuiDrawingArea_create (GTK_WIDGET(scrollWindow), 0, 200, 0, 400,
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollWindow), 0, 0, 0, 0,
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
-
-                gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrollWindow), my drawingArea);
-                gtk_container_add (GTK_CONTAINER (my dialog), scrollWindow);
+		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), my drawingArea);
+		gtk_container_add (GTK_CONTAINER (my dialog), scrollWindow);
 		GuiObject_show(my drawingArea);
 		GuiObject_show(scrollWindow);
 	#elif motif

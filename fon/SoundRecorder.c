@@ -49,6 +49,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2008/06/02 PortAudio for Linux
  * pb 2008/06/16 PortAudio optional
+ * pb 2008/06/17 api
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -105,11 +106,11 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_IFSAMP_192000  14
 #define SoundRecorder_IFSAMP_MAX  14
 
-#define CommonSoundRecorder_members Editor_members \
-	int numberOfChannels, fakeMono; \
-	XtWorkProcId workProcId; \
+#define CommonSoundRecorder1_members Editor_members \
+	int numberOfChannels; \
 	long nsamp, nmax; \
-	int synchronous, recording, lastLeftMaximum, lastRightMaximum; \
+	bool fakeMono, synchronous, recording; \
+	int lastLeftMaximum, lastRightMaximum; \
 	long numberOfInputDevices; \
 	struct SoundRecorder_Device device [1+SoundRecorder_IDEVICE_MAX]; \
 	struct SoundRecorder_Fsamp fsamp [1+SoundRecorder_IFSAMP_MAX]; \
@@ -117,12 +118,17 @@ struct SoundRecorder_Fsamp {
 	Widget monoButton, stereoButton, meter; \
 	Widget progressScale, recordButton, stopButton, playButton; \
 	Widget soundName, cancelButton, applyButton, okButton; \
-	Widget leftGainScale, rightGainScale; \
 	Graphics graphics; \
 	bool inputUsesPortAudio; \
 	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX]; \
 	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
 	PaStream *portaudioStream;
+#if gtk
+	#define CommonSoundRecorder_members CommonSoundRecorder1_members
+#elif motif
+	#define CommonSoundRecorder_members CommonSoundRecorder1_members \
+	XtWorkProcId workProcId;
+#endif
 
 /* Class definition of SoundRecorder. */
 
@@ -142,7 +148,6 @@ struct SoundRecorder_Fsamp {
 #elif defined (macintosh)
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 	#define SoundRecorder_members CommonSoundRecorder_members \
-		Handle temporaryMemoryHandle; \
 		short macSource [1+8]; \
 		Str255 hybridDeviceNames [1+8]; \
 		SPB spb; \
@@ -333,7 +338,7 @@ static void onceError (const char *routine, long err) {
 
 static void stopRecording (SoundRecorder me) {	
 	if (! my recording) return;
-	my recording = FALSE;
+	my recording = false;
 	if (! my synchronous) {
 		if (my inputUsesPortAudio) {
 			Pa_StopStream (my portaudioStream);
@@ -395,16 +400,10 @@ static void destroy (I) {
 	iam (SoundRecorder);
 	stopRecording (me);   /* Must occur before freeing my buffer. */
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Must also occur before freeing my buffer. */
-	if (my workProcId) XtRemoveWorkProc (my workProcId);
-	#if defined (macintosh)
-		if (my temporaryMemoryHandle) {
-			DisposeHandle (my temporaryMemoryHandle);
-		} else {
-			NUMsvector_free (my buffer, 0);
-		}
-	#else
-		NUMsvector_free (my buffer, 0);
+	#if motif
+		if (my workProcId) XtRemoveWorkProc (my workProcId);
 	#endif
+	NUMsvector_free (my buffer, 0);
 
 	if (my inputUsesPortAudio) {
 		if (my portaudioStream) Pa_StopStream (my portaudioStream);
@@ -589,11 +588,11 @@ static Boolean workProc (XtPointer void_me) {
 
 	/* Set the buttons according to the audio parameters. */
 
-	if (my recordButton) GuiObject_setSensitive (my recordButton, my recording == FALSE);
-	if (my stopButton) GuiObject_setSensitive (my stopButton, my recording == TRUE);
-	if (my playButton) GuiObject_setSensitive (my playButton, my recording == FALSE && my nsamp > 0);
-	if (my applyButton) GuiObject_setSensitive (my applyButton, my recording == FALSE && my nsamp > 0);
-	if (my okButton) GuiObject_setSensitive (my okButton, my recording == FALSE && my nsamp > 0);
+	if (my recordButton) GuiObject_setSensitive (my recordButton, ! my recording);
+	if (my stopButton) GuiObject_setSensitive (my stopButton, my recording);
+	if (my playButton) GuiObject_setSensitive (my playButton, ! my recording && my nsamp > 0);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, ! my recording && my nsamp > 0);
+	if (my okButton) GuiObject_setSensitive (my okButton, ! my recording && my nsamp > 0);
 	if (my monoButton) GuiRadioButton_setValue (my monoButton, my numberOfChannels == 1);
 	if (my stereoButton) GuiRadioButton_setValue (my stereoButton, my numberOfChannels == 2);
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
@@ -610,8 +609,6 @@ static Boolean workProc (XtPointer void_me) {
 	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 		if (my device [i]. button)
 			GuiObject_setSensitive (my device [i]. button, ! my recording);
-	if (my leftGainScale) XmScaleSetValue (my leftGainScale, theControlPanel. leftGain);
-	if (my rightGainScale) XmScaleSetValue (my rightGainScale, theControlPanel. rightGain);
 
 	/*Graphics_setGrey (my graphics, 0.9);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
@@ -648,9 +645,11 @@ static Boolean workProc (XtPointer void_me) {
 			showMeter (me, buffertje, stepje);
 			if (my recording) {
 				my nsamp += stepje;
-				if (my nsamp > my nmax - step) my recording = FALSE;
+				if (my nsamp > my nmax - step) my recording = false;
+				#if motif
 				XmScaleSetValue (my progressScale,
 					(int) (1000.0f * ((float) my nsamp / (float) my nmax)));
+				#endif
 			}
 		} while (my recording && tooManySamplesInBufferToReturnToGui (me));
 	} else {
@@ -694,7 +693,9 @@ static Boolean workProc (XtPointer void_me) {
 			long firstSample = lastSample - 1000;
 			if (firstSample < 0) firstSample = 0;
 			showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
+			#if motif
 			XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) lastSample / (float) my nmax)));
+			#endif
 		} else {
 			showMeter (me, NULL, 0);
 		}
@@ -781,20 +782,12 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 				OSErr err;
 				err = SPBStopRecording (my refNum);
 				if (err != noErr) { onceError ("SPBStopRecording", err); return; }
-				for (;;) {
-					my spb. bufferPtr = (char *) my buffer;
-					my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
-					err = SPBRecord (& my spb, true);   /* Asynchronous. */
-					if (err == noErr) break;   /* Success. */
-					if (err == notEnoughMemoryErr) {
-						if (my temporaryMemoryHandle) {
-							if (my nmax < 50000) { Melder_flushError ("Out of memory. Quit other programs."); return; }
-							my nmax /= 2;   /* Retry with less temporary memory. */
-							SetHandleSize (my temporaryMemoryHandle, my nmax * (sizeof (short) * my numberOfChannels));
-							HLock ((Handle) my temporaryMemoryHandle);
-						} else { Melder_flushError ("Out of memory. Quit other programs."); return; }
-					} else if (err != noErr) { onceError ("SPBRecord", err); return; }
-				}
+				my spb. bufferPtr = (char *) my buffer;
+				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
+				err = SPBRecord (& my spb, true);   /* Asynchronous. */
+				if (err == notEnoughMemoryErr) {
+					Melder_flushError ("Out of memory. Quit other programs."); return;
+				} else if (err != noErr) { onceError ("SPBRecord", err); return; }
 			#endif
 		}
 	}
@@ -960,7 +953,7 @@ static int initialize (SoundRecorder me) {
 			}
 			if (SPBSetDeviceInfo (my refNum, siNumberChannels, & numberOfChannels) != noErr) {
 				if (my numberOfChannels == 1) {
-					my fakeMono = TRUE;
+					my fakeMono = true;
 				} else {
 					return Melder_error1 (L"(Sound_record:) Cannot set to stereo.");
 				}
@@ -973,7 +966,7 @@ static int initialize (SoundRecorder me) {
 				return Melder_error1 (L"(Sound_record:) Cannot set level meter to ON.");
 			if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
 				static int warned = FALSE;
-				my synchronous = TRUE;
+				my synchronous = true;
 				if (! warned) { Melder_warning1 (L"Recording must and will be synchronous on this machine."); warned = TRUE; }
 			}
 			if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
@@ -1228,17 +1221,21 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (SoundRecorder);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	Dimension marginWidth = 10, marginHeight = 10;
+	#if motif
 	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	long width = event -> width - marginWidth - marginWidth;
 	long height = event -> height - marginHeight - marginHeight;
 	Graphics_setWsWindow (my graphics, 0, width, 0, height);
 	Graphics_setViewport (my graphics, 0, width, 0, height);
+	#endif
 	Graphics_updateWs (my graphics);
 }
 
 static void createChildren (I) {
 	iam (SoundRecorder);
+	#if motif
+	 /* TODO */
 	Widget form = XmCreateForm (my dialog, "form", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -1261,17 +1258,18 @@ static void createChildren (I) {
 	GuiObject_show (channels);
 
 	long y = 110, dy = 25;
-	GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"Input source:", 0);
-	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
-		if (my device [i]. canDo) {
-			y += dy;
-			my device [i]. button = GuiRadioButton_createShown (form, 10, 160, y, Gui_AUTOMATIC,
-				my device [i]. name, gui_radiobutton_cb_input, me, 0);
-		}
-	}
 	#if defined (_WIN32)
 		GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"(use Windows mixer", 0);
 		GuiLabel_createShown (form, 10, 160, y + dy, Gui_AUTOMATIC, L"   without meters)", 0);
+	#else
+		GuiLabel_createShown (form, 10, 160, y, Gui_AUTOMATIC, L"Input source:", 0);
+		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
+			if (my device [i]. canDo) {
+				y += dy;
+				my device [i]. button = GuiRadioButton_createShown (form, 10, 160, y, Gui_AUTOMATIC,
+					my device [i]. name, gui_radiobutton_cb_input, me, 0);
+			}
+		}
 	#endif
 
 	GuiLabel_createShown (form, 170, -170, 20, Gui_AUTOMATIC, L"Meter", GuiLabel_CENTRE);
@@ -1280,11 +1278,13 @@ static void createChildren (I) {
 
 	GuiLabel_createShown (form, -160, -10, 20, Gui_AUTOMATIC, L"Sampling frequency:", 0);
 	Widget fsampBox = XmCreateRadioBox (form, "fsamp", NULL, 0);
+	#if motif
 	XtVaSetValues (fsampBox,
 		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
 		XmNwidth, 150,
 		NULL);
+	#endif
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
 		if (my fsamp [i]. canDo) {
 			double fsamp = my fsamp [i]. fsamp;
@@ -1296,7 +1296,8 @@ static void createChildren (I) {
 		}
 	}
 	GuiObject_show (fsampBox);
-
+	
+	#if motif
 	my progressScale = XmCreateScale (form, "scale", NULL, 0);
 	XtVaSetValues (my progressScale, XmNorientation, XmHORIZONTAL,
 		XmNminimum, 0, XmNmaximum, 1000,
@@ -1307,6 +1308,7 @@ static void createChildren (I) {
 			XmNscaleWidth, 340,
 		#endif
 		NULL);
+	#endif
 	GuiObject_show (my progressScale);
 
 	y = 60;
@@ -1325,7 +1327,9 @@ static void createChildren (I) {
 	}
 	GuiLabel_createShown (form, -200, -130, Gui_AUTOMATIC, -y - 2, L"Name:", GuiLabel_RIGHT);
 	my soundName = GuiText_createShown (form, -120, -20, Gui_AUTOMATIC, -y, 0);
+	#if motif	
 	XtAddCallback (my soundName, XmNactivateCallback, gui_cb_apply, (XtPointer) me);
+	#endif
 	GuiText_setString (my soundName, L"untitled");
 
 	y = 20;
@@ -1338,6 +1342,7 @@ static void createChildren (I) {
 		L"Save to list & Close", gui_button_cb_ok, me, 0);
 
 	GuiObject_show (form);
+	#endif
 }
 
 static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
@@ -1433,7 +1438,7 @@ class_methods (SoundRecorder, Editor)
 	class_method (createHelpMenuItems)
 class_methods_end
 
-SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppContext context) {
+SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *applicationContext) {
 	SoundRecorder me = new (SoundRecorder);
 	my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
 
@@ -1477,12 +1482,12 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	if (sizeof (short) != 2)
 		return Melder_errorp ("Long shorts!!!!!");
 		if (my inputUsesPortAudio) {
-			my synchronous = FALSE;
+			my synchronous = false;
 		} else {
 			#if defined (macintosh) || defined (_WIN32)
-				my synchronous = FALSE;
+				my synchronous = false;
 			#else
-				my synchronous = TRUE;
+				my synchronous = true;
 			#endif
 		}
 	/*
@@ -1626,7 +1631,9 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	if (! initialize (me)) goto error;
 
 	if (! Editor_init (me, parent, 100, 100, 600, 500, L"SoundRecorder", NULL)) goto error;
+	#if motif
 	Melder_assert (XtWindow (my meter));
+	#endif
 	my graphics = Graphics_create_xmdrawingarea (my meter);
 	Melder_assert (my graphics);
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
@@ -1638,7 +1645,9 @@ event. width = GuiObject_getWidth (my meter);
 event. height = GuiObject_getHeight (my meter);
 gui_drawingarea_cb_resize (me, & event);
 
-	my workProcId = XtAppAddWorkProc (context, workProc, (XtPointer) me);
+	#if motif
+		my workProcId = XtAppAddWorkProc (applicationContext, workProc, (XtPointer) me);
+	#endif
 	return me;
 error:
 	forget (me);

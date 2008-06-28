@@ -190,9 +190,15 @@ static void createChildren (I) {
 		#endif
 		);
 	my form1Text = GuiText_createShown (my dialog, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	#if motif
+	/* TODO */
 	XtAddCallback (my form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
+	#endif
 	my form2Text = GuiText_createShown (my dialog, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	#if motif
+	/* TODO */
 	XtAddCallback (my form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
+	#endif
 }
 
 static void createMenus (I) {

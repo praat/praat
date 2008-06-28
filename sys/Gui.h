@@ -66,6 +66,7 @@
 	#include <gdk/gdk.h>
 	#include <cairo/cairo.h>
 	// GTK include files...
+	typedef GMainContext *AppContext;
 	typedef GtkWidget *Widget;
 	typedef void *XtPointer;
 	typedef gint Dimension;
@@ -155,6 +156,7 @@
 		typedef struct structWidget *Widget;   // Opaque
 		typedef Widget *WidgetList;
 		typedef void *XtAppContext;
+		typedef XtAppContext Context;
 		typedef long XtWorkProcId, XtIntervalId;
 		typedef void (*XtCallbackProc) (Widget w, XtPointer client_data, XtPointer call_data);
 		typedef Boolean (*XtWorkProc) (XtPointer client_data);

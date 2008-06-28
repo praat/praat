@@ -1157,8 +1157,10 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	long iskipped = 0;
 	struct structGuiButtonEvent gb_event = { 0 };
 	Graphics_setInner (my g);
+	#if motif
 	Graphics_getMouseLocation (my g, & x, & y);
 	checkXY (&x, &y);
+	#endif
 	
 	if (event->shiftKeyPressed)
 	{
@@ -1185,7 +1187,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 		}
 	}
 	
-
+	#if motif
 	Graphics_xorOn (my g, Graphics_BLUE);
 	while (Graphics_mouseStillDown (my g))
 	{
@@ -1215,6 +1217,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 	
 	Graphics_xorOff (my g);
+	#endif
 	
 end:	
 	Graphics_unsetInner (my g);
@@ -1301,6 +1304,9 @@ static void createChildren (I)
 	
 	// Origin is top left!
 	
+	#if gtk
+	form = my dialog; /* TODO: ?? */
+	#elif motif
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -1308,6 +1314,7 @@ static void createChildren (I)
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget?? */
 		NULL);
+	#endif
 		
 	// Three buttons on a row: Play, Reverse, Publish
 	left = 10; right = left + button_width; 
@@ -1409,7 +1416,9 @@ VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = new (VowelEditor);
 	if (me == NULL || ! Editor_init (me, parent, 20, 40, 650, 650, title, data)) goto end;
+	#if motif
 	Melder_assert (XtWindow (my drawingArea));
+	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setFontSize (my g, 10);
 	VowelEditor_prefs ();

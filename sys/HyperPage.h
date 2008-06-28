@@ -55,6 +55,7 @@ HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1
 	int historyPointer; \
 	wchar_t *currentPageTitle; \
 	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24; \
+	Widget holder; \
 	void *praat; \
 	bool scriptErrorHasBeenNotified; \
 	structMelderDir rootDirectory;

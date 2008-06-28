@@ -1,6 +1,6 @@
 /* Confusion.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2008 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20020813 GPL header
  djmw 20061214 Changed info to Melder_writeLine<x> format.
  djmw 20070620 Latest modification.
+ djmw 20080521 +Confusion_drawAsNumbers
 */
 
 #include "Confusion.h"
@@ -474,10 +475,10 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 {
 	iam (Confusion);
 	TableOfReal thee;
-	long i, j, nrows = my numberOfRows + 1, ncols = my numberOfColumns + 1;
+	long i, j;
 	double total = 0;
 	
-	thee = TableOfReal_create (nrows, ncols);
+	thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 	if (thee == NULL) return NULL;
 	
 	for (i = 1; i <= my numberOfRows; i++)
@@ -488,11 +489,11 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 			thy data[i][j] = my data[i][j];
 			rowsum += my data[i][j];
 		}
-		thy data[i][ncols] = rowsum;
+		thy data[i][my numberOfColumns + 1] = rowsum;
 		total += rowsum;
 	}
 	
-	thy data[nrows][ncols] = total;
+	thy data[my numberOfRows + 1][my numberOfColumns + 1] = total;
 	
 	for (j = 1; j <= my numberOfColumns; j++)
 	{
@@ -501,7 +502,7 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 		{
 			colsum += my data[i][j];
 		}
-		thy data[nrows][j] = colsum;
+		thy data[my numberOfRows + 1][j] = colsum;
 	}
 	
 	if (! NUMstrings_copyElements (my rowLabels, thy rowLabels, 
@@ -509,6 +510,16 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 		! NUMstrings_copyElements (my columnLabels, thy columnLabels,
 			1, my numberOfColumns)) forget (thee);
 	return thee; 
+}
+
+void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision)
+{
+	iam (Confusion);
+	TableOfReal thee = NULL;
+	thee = marginals ? Confusion_to_TableOfReal_marginals (me) : (TableOfReal) me; 
+	if (thee == NULL) return;
+	TableOfReal_drawAsNumbers (thee, g, 1, thy numberOfRows, iformat, precision);
+	if (marginals) forget (thee);
 }
 
 

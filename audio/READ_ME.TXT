@@ -1,4 +1,4 @@
-Changes to make PostAudio v19 (November 2007) work with Praat:
+Changes to make PortAudio v19 (November 2007) work with Praat:
 
 Deleted lines in pa_***_hostapis.c.
 

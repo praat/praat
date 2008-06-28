@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080601)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080628)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.27# (June 28, 2008)")
+LIST_ITEM (L"\\bu @@Phonetic symbols@: breve (a\\N^).")
+LIST_ITEM (L"\\bu Annotation: improved some SpellingChecker commands.")
+LIST_ITEM (L"\\bu Table: can now set string values that contain spaces.")
 NORMAL (L"##5.0.26# (June 15, 2008)")
 LIST_ITEM (L"\\bu Windows: sound recording no longer makes your laptop's fan spin.")
 LIST_ITEM (L"\\bu Windows: no longer any 64 MB limit on recorded sounds.")

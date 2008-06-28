@@ -523,11 +523,13 @@ static int menu_cb_showAnalyses (EDITOR_ARGS) {
 		SET_INTEGER (L"Show pulses", my pulses.show)
 		SET_REAL (L"Longest analysis", my longestAnalysis)
 	EDITOR_DO
+		#if motif
 		XmToggleButtonGadgetSetState (my spectrogramToggle, preferences.spectrogram.show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"), False);
 		XmToggleButtonGadgetSetState (my pitchToggle, preferences.pitch.show = my pitch.show = GET_INTEGER (L"Show pitch"), False);
 		XmToggleButtonGadgetSetState (my intensityToggle, preferences.intensity.show = my intensity.show = GET_INTEGER (L"Show intensity"), False);
 		XmToggleButtonGadgetSetState (my formantToggle, preferences.formant.show = my formant.show = GET_INTEGER (L"Show formants"), False);
 		XmToggleButtonGadgetSetState (my pulsesToggle, preferences.pulses.show = my pulses.show = GET_INTEGER (L"Show pulses"), False);
+		#endif
 		preferences.longestAnalysis = my longestAnalysis = GET_REAL (L"Longest analysis");
 		FunctionEditor_redraw (me);
 	EDITOR_END

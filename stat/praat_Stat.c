@@ -932,7 +932,7 @@ END
 FORM (Table_setStringValue, L"Table: Set string value", 0)
 	NATURAL (L"Row number", L"1")
 	WORD (L"Column label", L"")
-	WORD (L"String value", L"xx")
+	SENTENCE (L"String value", L"xx")
 	OK
 DO
 	WHERE (SELECTED) {

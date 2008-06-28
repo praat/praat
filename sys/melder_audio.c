@@ -243,8 +243,9 @@ bool MelderAudio_stopWasExplicit (void) {
  * 3. After asynchronous play, by the workProc.
  * 4. After interruption of asynchronicity 3 by MelderAudio_stopPlaying ().
  */
-#if motif
 static Boolean flush (void) {
+
+#if motif
 	struct MelderPlay *me = & thePlay;
 	if (my usePortAudio) {
 		if (my stream != NULL) Pa_CloseStream (my stream), my stream = NULL;
@@ -317,9 +318,10 @@ static Boolean flush (void) {
 		my callback (my closure, my samplesPlayed);
 	my callback = 0;
 	my closure = 0;
+
+#endif
 	return True;   /* Remove workProc if called from workProc. */
 }
-#endif
 
 int MelderAudio_stopPlaying (bool explicit) {
 	struct MelderPlay *me = & thePlay;
@@ -566,13 +568,13 @@ static int thePaStreamCallback (const void *input, void *output,
 		unsigned long dsamples = my samplesLeft > frameCount ? frameCount : my samplesLeft;
 		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my stream)));
-		memset (output, 2 * frameCount * my numberOfChannels, 0);
+		memset (output, 0, 2 * frameCount * my numberOfChannels);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 		my samplesLeft -= dsamples;
 		my samplesSent += dsamples;
 		my samplesPlayed = my samplesSent;
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
-		memset (output, 2 * frameCount * my numberOfChannels, 0);
+		memset (output, 0, 2 * frameCount * my numberOfChannels);
 		my samplesPlayed = my numberOfSamples;
 		return paComplete;
 	}
@@ -685,7 +687,9 @@ if (my usePortAudio) {
 			}
 			Pa_StopStream (my stream);
 		} else {
-			my workProcId = XtAppAddWorkProc (0, workProc, 0);
+			#if motif
+				my workProcId = XtAppAddWorkProc (0, workProc, 0);
+			#endif
 			return 1;
 		}
 	} else {
@@ -742,7 +746,9 @@ if (my usePortAudio) {
 			}
 			Pa_StopStream (my stream);
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-			my workProcId = XtAppAddWorkProc (0, workProc, 0);
+			#if motif
+				my workProcId = XtAppAddWorkProc (0, workProc, 0);
+			#endif
 			return 1;
 		}
 	}

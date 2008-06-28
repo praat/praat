@@ -469,6 +469,8 @@ SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data) {
 		return NULL;
 	if (my longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
+		if (my startWindow == my tmin)
+			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 		FunctionEditor_marksChanged (me);
 	}
 	return me;

@@ -156,6 +156,10 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 //	cairo_fill(Graphics_x_getCR (my graphics));
 	cairo_destroy (Graphics_x_getCR (my graphics));
 
+	/* Voorkomt problemen! */
+	Graphics_x_setCR (my graphics, NULL);
+	Graphics_x_setCR (my selectionGraphics, NULL);
+
 //	test+=0.1;
 //	if (test > 3) test = 0.1;
 //	g_debug("%d", test);

@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20080320 Latest modification
+ djmw 20080509 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1191,7 +1191,7 @@ CODE1 (L"Formula... if x>xmax-twin then self*(1+cos(2*pi*fwin*(x-xmax+twin)))/2 
 CODE (L"endfor")
 MAN_END
 
-MAN_BEGIN (L"Create formant table (Peterson & Barney 1952)", L"djmw", 20080125)
+MAN_BEGIN (L"Create formant table (Peterson & Barney 1952)", L"djmw", 20080509)
 INTRO (L"A command to create a @Table object filled with the "
 	"fundamental frequency and the first three formant frequency values from 10 "
 	"American-English monophthongal vowels as spoken in a /h_d/ context by 76 speakers "
@@ -1211,17 +1211,18 @@ DEFINITION (L"the vowel name. The following list gives the vowel in a %h_d conte
 	"(%head, eh), (%had, ae), (%hod, aa), (%hawed, ao), (%hood, uh), (%%who'd%, uw), "
 	"(%hud, ah), (%heard, er).")
 TAG (L"Column 5, labelled as %IPA")
-DEFINITION (L"the IPA notation for the vowels as defined in @@Watrous (1991)@. "
-	"He uses /e/ and /o/ for the vowels where Peterson & Barney use /\\ef/ and /\\ct/, respectively.")
+DEFINITION (L"the IPA notation for the vowels as defined in @@Peterson & Barney (1952)@. ")
 TAG (L"Column 6, labelled as %F0")
 DEFINITION (L"the fundamental frequency in Hertz.")
 TAG (L"Column 7, 8 and 9, labelled as %F1, %F2 and %F3")
 DEFINITION (L"the frequencies in Hertz of the first three formants.")
-NORMAL (L"We originally downloaded the data from a University of Pennsylvania FTP site, "
-	"where they were reportedly based on a printed version supplied by Ignatius Mattingly. "
-	"More details about these data and how they were measured can be found in "
+ENTRY (L"Remarks")
+NORMAL (L"We originally downloaded the data from the University of Pennsylvania FTP site, "
+	"where they were reportedly based on a printed version supplied by Ignatius Mattingly. ")
+NORMAL (L"About the IPA notation. We used the original notation from the Peterson & Barney article. "
+	"The notation in @@Watrous (1991)@ differs for three vowels: Watrous uses /e, o, \\er/ where Peterson & Barney use /\\ef, \\ct, \\er\\hr/.")
+NORMAL (L"More details about these data and how they were measured can be found in the articles"
 	"@@Watrous (1991)@ and in @@Peterson & Barney (1952)@.")
-
 MAN_END
 
 MAN_BEGIN (L"Create formant table (Pols & Van Nierop 1973)", L"djmw", 20020620)
@@ -2847,7 +2848,7 @@ NORMAL (L"Hence, it follows that no further scaling occurs if %pitchRangeScaleFa
 MAN_END
 
 
-MAN_BEGIN (L"Sound: Change speaker...", L"djmw", 20061215)
+MAN_BEGIN (L"Sound: Change speaker...", L"djmw", 20080515)
 INTRO (L"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (L"Arguments")
 NORMAL (L"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
@@ -2880,6 +2881,12 @@ NORMAL (L"If you want more control over the synthesis you can supply your own "
 	"Pitch object and use the @@Sound & Pitch: Change speaker...@ command. ")
 ENTRY (L"Algorithm")
 NORMAL (L"The shifting of formant frequencies is done via manipulation of the sampling frequency. "
+	"To multiply all formants by a factor of 1.10 (i.e. raising them by 10 percent), a sampling "
+	"frequency of 44100 Hz is first raised to 48510 Hz (without changing "
+	"the samples). After this, the sound is lengthened by a factor of 1.10 "
+	"and the pitch is lowered by a factor of 1.10, so that the original "
+	"duration and pitch are restored. After this, the sound is resampled "
+	"to 44100 Hz (by sinc interpolation)."
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 MAN_END
 

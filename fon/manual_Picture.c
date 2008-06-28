@@ -313,7 +313,7 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20080312)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20080625)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can then use the backslash sequences in the following list.")
@@ -349,6 +349,7 @@ LIST_ITEM (L"\\ep\\~^ \\bsep\\bs~\\^  (%%combining tilde%): nasalized")
 LIST_ITEM (L"\\ep\\v^ \\bsep\\bsv\\^  (%%combining caron%, %hac\\v^ek, %wedge): rising tone")
 LIST_ITEM (L"\\ep\\^^ \\bsep\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
 LIST_ITEM (L"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
+LIST_ITEM (L"\\ep\\N^ \\ep\\bsN\\^  (%%combining breve%): short")
 LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
 MAN_END
 

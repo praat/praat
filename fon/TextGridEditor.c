@@ -1328,7 +1328,7 @@ static void createMenus (I) {
 
 	if (my spellingChecker) {
 		menu = Editor_addMenu (me, L"Spell", 0);
-		EditorMenu_addCommand (menu, L"Check spelling in tier", 'N', menu_cb_CheckSpelling);
+		EditorMenu_addCommand (menu, L"Check spelling in tier", GuiMenu_COMMAND | GuiMenu_OPTION | 'L', menu_cb_CheckSpelling);
 		EditorMenu_addCommand (menu, L"Check spelling in interval", 0, menu_cb_CheckSpellingInInterval);
 		EditorMenu_addCommand (menu, L"-- edit lexicon --", 0, NULL);
 		EditorMenu_addCommand (menu, L"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
@@ -1786,6 +1786,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		}
 	}
 
+	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
@@ -1796,6 +1797,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	}
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	Graphics_xorOff (my graphics);
+	#endif
 
 	/*
 	 * The simplest way to cancel the dragging operation, is to drag outside the window.
@@ -1987,6 +1989,7 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
+	#if motif
 	while (Graphics_mouseStillDown (my graphics)) {
 		Graphics_getMouseLocation (my graphics, & x, & y);
 		if (x < my startWindow) x = my startWindow;
@@ -1996,6 +1999,7 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 			break;
 		}
 	}
+	#endif
 
 	if (nearBoundaryOrPoint) {
 		/*
@@ -2039,7 +2043,9 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 		my selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (me);
 		Editor_broadcastChange (me);
+		#if motif
 		if (drag) Graphics_waitMouseUp (my graphics);
+		#endif
 		return FunctionEditor_NO_UPDATE_NEEDED;
 	} else {
 		/*
@@ -2051,7 +2057,9 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 		}
 		my selectedTier = iClickedTier;
 	}
+	#if motif
 	if (drag) Graphics_waitMouseUp (my graphics);
+	#endif
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
@@ -2298,8 +2306,12 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 	my selectedTier = 1;
 	if (my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
+		if (my startWindow == my tmin)
+			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
 		FunctionEditor_marksChanged (me);
 	}
+	if (spellingChecker != NULL)
+		GuiText_setSelection (my text, 0, 0);
 end:
 	iferror forget (me);
 	return me;

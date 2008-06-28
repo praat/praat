@@ -1,11 +1,11 @@
 # File: makefile.defs.linux.gtk
 
 # System: Linux
-# Paul Boersma & Stefan de Konink, February 10, 2008
+# Paul Boersma & Stefan de Konink, June 17, 2008
 
 CC = gcc -std=gnu99 -DUNIX -Dlinux `pkg-config --cflags gtk+-2.0 cairo` -I /usr/X11R6/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O -DUSE_GTK
 
-LIBS = -L -lm -lpthread `pkg-config --libs gtk+-2.0 cairo`
+LIBS = -L -lm -lpthread `pkg-config --libs gtk+-2.0 cairo` -lasound
 
 RANLIB = ls
 ICON =

@@ -100,10 +100,14 @@ static void updateScrollBar (FunctionEditor me) {
 	if (value > maximumScrollBarValue - slider_size)
 		value = maximumScrollBarValue - slider_size;
 	if (value < 1) value = 1;
+	#if motif
 	XtVaSetValues (my scrollBar, XmNmaximum, maximumScrollBarValue, NULL);
+	#endif
 	increment = slider_size / SCROLL_INCREMENT_FRACTION + 1;
 	page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1;
+	#if motif
 	XmScrollBarSetValues (my scrollBar, value, slider_size, increment, page_increment, False);
+	#endif
 }
 
 static void updateGroup (FunctionEditor me) {
@@ -846,7 +850,9 @@ static void gui_cb_scroll (GUI_ARGS) {
 	GUI_IAM (FunctionEditor);
 	int value, slider, incr, pincr;
 	double shift;
+	#if motif
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	#endif
 	shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
 	if (shift != 0.0) {
 		int i;
@@ -1083,7 +1089,9 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (FunctionEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	Dimension marginWidth = 10, marginHeight = 10;
+	#if motif
 	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	#endif
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	my width = event -> width - marginWidth - marginWidth + 111;
 	my height = event -> height - marginHeight - marginHeight + 111;
@@ -1102,6 +1110,9 @@ static void createChildren (I) {
 	Widget form;
 	int x = BUTTON_X;
 
+	#if gtk
+		form = my dialog;
+	#elif motif
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -1109,6 +1120,7 @@ static void createChildren (I) {
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
 		NULL);
+	#endif
 
 	/***** Create zoom buttons. *****/
 
@@ -1126,6 +1138,7 @@ static void createChildren (I) {
 
 	/***** Create scroll bar. *****/
 
+	#if motif
 	my scrollBar = XtVaCreateManagedWidget ("scrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmHORIZONTAL,
@@ -1138,6 +1151,7 @@ static void createChildren (I) {
 		XmNvalue, 1,
 		XmNsliderSize, maximumScrollBarValue - 1,
 		NULL);
+	#endif
 
 	/***** Create Group button. *****/
 
@@ -1162,7 +1176,9 @@ static void createChildren (I) {
 		 * in the window (in our Motif emulator, this is the automatic behaviour).
 		 */
 		#ifdef UNIX
+			#if motif
 			XtSetKeyboardFocus (form, my text);
+			#endif
 		#endif
 	}
 
@@ -1207,6 +1223,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	 */
 	double xleft, xright;
 	if (x1 > x2) xleft = x2, xright = x1; else xleft = x1, xright = x2;
+	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_text1 (my graphics, xleft, 1.0, Melder_fixed (xleft, 6));
@@ -1217,6 +1234,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_text1 (my graphics, xright, 0.0, Melder_fixed (xright, 6));
 	Graphics_xorOff (my graphics);
+	#endif
 }
 
 static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
@@ -1314,6 +1332,7 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
+	#if motif
 	while (Graphics_mouseStillDown (my graphics)) {
 		Graphics_getMouseLocation (my graphics, & x, & y);
 		if (x < my startWindow) x = my startWindow;
@@ -1323,6 +1342,7 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 			break;
 		}
 	}
+	#endif
 	if (drag) {
 		if (! shiftKeyPressed) {
 			anchorForDragging = xbegin;
@@ -1358,6 +1378,7 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 		/*
 		 * Drag for the new selection.
 		 */
+		#if motif
 		while (Graphics_mouseStillDown (my graphics)) {
 			double xold = x, x1, x2;
 			Graphics_getMouseLocation (my graphics, & x, & y);
@@ -1385,6 +1406,7 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 			 */
 			drawWhileDragging (me, anchorForDragging, x);
 		} ;
+		#endif
 		/*
 		 * Set the new selection.
 		 */
@@ -1447,6 +1469,7 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 	(void) tmin;
 	Graphics_inqViewport (my graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (me);
+	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	/*
 	 * Undraw the play cursor at its old location.
@@ -1466,6 +1489,7 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 		Graphics_setLineWidth (my graphics, 1.0);
 	}
 	Graphics_xorOff (my graphics);
+	#endif
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
 	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
@@ -1573,7 +1597,9 @@ int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
 	my startWindow = my tmin;
 	my endWindow = my tmax;
 	my startSelection = my endSelection = 0.5 * (my tmin + my tmax);
-	Melder_assert (XtWindow (my drawingArea));
+	#if motif
+		Melder_assert (XtWindow (my drawingArea));
+	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 Graphics_setFontSize (my graphics, 10);
 
@@ -1582,8 +1608,10 @@ event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
-	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
+	#if motif
+		XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
+		XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
+	#endif
 	our updateText (me);
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL

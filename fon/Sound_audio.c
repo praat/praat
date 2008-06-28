@@ -803,7 +803,7 @@ int Sound_playPart (Sound me, double tmin, double tmax,
 		thy buffer = NUMsvector (1, (i2 - i1 + 1 + 2 * thy zeroPadding) * numberOfChannels); cherror
 		thy i1 = i1;
 		thy i2 = i2;
-		short *to = thy buffer + thy zeroPadding;
+		short *to = thy buffer + thy zeroPadding * numberOfChannels;
 		if (numberOfChannels == 2) {
 			for (long i = i1; i <= i2; i ++) {
 				long valueLeft = (long) floor (fromLeft [i] * 32768.0 + 0.5);

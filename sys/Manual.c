@@ -103,7 +103,9 @@ static void draw (I) {
 	ManPages manPages = my data;
 	ManPage page;
 	ManPage_Paragraph paragraph;
+	#if motif
 	Graphics_clearWs (my g);
+	#endif
 	if (my path == SEARCH_PAGE) {
 		int i;
 		HyperPage_pageTitle (me, L"Best matches");
@@ -439,7 +441,7 @@ static void createChildren (I) {
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	inherited (Manual) createChildren (me);
-	my homeButton = GuiButton_createShown (my dialog, 104, 168, y, y + height,
+	my homeButton = GuiButton_createShown (my holder, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, me, 0);
 	if (pages -> dynamic) {
 		#if motif
@@ -453,7 +455,7 @@ static void createChildren (I) {
 		my publishButton = GuiButton_createShown (my dialog, 166, 166 + 175, y+height+8, y+height+8 + height, 
 			L"Copy last played to list", gui_button_cb_publish, me, 0);
 	}
-	GuiButton_createShown (my dialog, 274, 274 + 63, y, y + height,
+	GuiButton_createShown (my holder, 274, 274 + 63, y, y + height,
 		L"Search:", gui_button_cb_search, me,
 		#ifdef _WIN32
 			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
@@ -461,8 +463,9 @@ static void createChildren (I) {
 			0
 		#endif
 		);
-	my searchText = GuiText_createShown (my dialog, 274+63 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
+	my searchText = GuiText_createShown (my holder, 274+63 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
 	#if motif
+		/* TODO */
 		XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
 	#endif
 }

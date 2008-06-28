@@ -141,7 +141,13 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
 //		_GuiObject_position (my widget, left, right, top, bottom);
+
+
+		/* TODO: dit moet eigenlijk netter, problemen zijn er al met focus van
+		 * dialogbox */
 		gtk_container_add (GTK_CONTAINER (parent), my widget);
+		
+		
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkButton_destroyCallback), me);
 		g_signal_connect (GTK_BUTTON (my widget), "clicked",
@@ -149,8 +155,10 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		if (flags & GuiButton_DEFAULT) {
 			// TODO: Werkt nog niet
 			GTK_WIDGET_SET_FLAGS (my widget, GTK_CAN_DEFAULT);
+			GTK_WIDGET_SET_FLAGS (my widget, GTK_HAS_DEFAULT);
 			gtk_widget_activate (my widget);
 			gtk_widget_grab_default (my widget);
+			gtk_widget_grab_focus (my widget);
 		}
 //		if (flags & GuiButton_CANCEL) {
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;

@@ -51,6 +51,7 @@
  djmw 20070903 Melder_new<1...>
  djmw 20071011 REQUIRE requires L"".
  djmw 20071202 Melder_warning<n>
+ djmw 20080521 Confusion_drawAsnumbers
 */
 
 #include "praat.h"
@@ -301,6 +302,13 @@ DIRECT (Categories_permuteItems)
 END
 
 /***************** CC ****************************************/
+FORM (CC_getValue, L"CC: Get value", L"CC: Get value...")
+	REAL (L"Time (s)", L"0.1")
+	NATURAL (L"Index", L"1")
+	OK
+DO
+	Melder_informationReal (CC_getValue (ONLY_OBJECT, GET_REAL (L"Time"), GET_INTEGER (L"Index")), NULL);
+END
 
 FORM (CC_paint, L"CC: Paint", L"CC: Paint...")
 	REAL (L"left Time range (s)", L"0.0")
@@ -565,13 +573,28 @@ DO
 		GET_INTEGER (L"Search and replace are") - 1))
 END
 
-/******************* Confusion & Matrix *************************************/
+FORM (Confusion_drawAsNumbers, L"", L"")
+	BOOLEAN (L"Draw marginals", 1)
+	RADIO (L"Format", 3)
+		RADIOBUTTON (L"decimal")
+		RADIOBUTTON (L"exponential")
+		RADIOBUTTON (L"free")
+		RADIOBUTTON (L"rational")
+	NATURAL (L"Precision", L"5")
+	OK
+DO
+	EVERY_DRAW (Confusion_drawAsNumbers (OBJECT, GRAPHICS,
+		GET_INTEGER (L"Draw marginals"),
+		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision")))
+END
 
 DIRECT (Confusion_getFractionCorrect)
 	double f; long n;
 	Confusion_getFractionCorrect (ONLY (classConfusion), &f, &n);
 	Melder_information2 (Melder_double (f), L" (fraction correct)");
 END
+
+/******************* Confusion & Matrix *************************************/
 
 FORM (Confusion_Matrix_draw, L"Confusion & Matrix: Draw confusions with arrows", 0)
     INTEGER (L"Category position", L"0 (=all)")
@@ -4035,6 +4058,7 @@ void praat_CC_init (void *klas)
 	praat_addAction1 (klas, 1, L"Draw...", 0, 1, DO_CC_drawC0);
 	praat_addAction1 (klas, 1, QUERY_BUTTON, 0, 0, 0);
 	praat_TimeFrameSampled_query_init (klas);
+	praat_addAction1 (klas, 1, L"Get value...", 0, 1, DO_CC_getValue);
 	praat_addAction1 (klas, 0, L"To Matrix", 0, 0, DO_CC_to_Matrix);
 	praat_addAction1 (klas, 2, L"To DTW...", 0, 0, DO_CCs_to_DTW);
 }
@@ -4297,6 +4321,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classConfusion, 0, L"Confusion help", 0, 0,
 		DO_Confusion_help);
     praat_TableOfReal_init2 (classConfusion);
+	praat_removeAction (classConfusion, NULL, NULL, L"Draw as numbers...");
+	praat_addAction1 (classConfusion, 0, L"Draw as numbers...", L"Draw -                 ", 1, DO_Confusion_drawAsNumbers);
 	praat_addAction1 (classConfusion, 0, L"-- confusion statistics --", L"Get value...", 1, 0);
 	praat_addAction1 (classConfusion, 1, L"Get fraction correct", L"-- confusion statistics --", 1, DO_Confusion_getFractionCorrect);
 	praat_addAction1 (classConfusion, 1, L"Get row sum...", L"Get fraction correct", 1, DO_TableOfReal_getRowSum);	
@@ -4708,8 +4734,8 @@ void praat_uvafon_David_init (void)
 			praat_addAction1 (classTextGrid, 0, L"Replace interval text...", L"Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
 			praat_addAction1 (classTextGrid, 0, L"Replace point text...", L"Set point text...", 2, DO_TextGrid_replacePointTexts);
 
-	praat_addAction1 (classTextGrid, 0, L"Edit", 0, 0, DO_Vowel_edit);
-	praat_addAction1 (classTextGrid, 0, L"Play", 0, 0, DO_Vowel_play);
+	praat_addAction1 (classVowel, 0, L"Edit", 0, 0, DO_Vowel_edit);
+	praat_addAction1 (classVowel, 0, L"Play", 0, 0, DO_Vowel_play);
 	
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)

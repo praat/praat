@@ -89,14 +89,40 @@ void Graphics_flushWs (I) {
 
 void Graphics_clearWs (I) {
 	iam (Graphics);
+
+	/* Suggestie: voor screen plaatsen, dan kan gtk gewoon 'updaten' */
+	if (my record) { Melder_free (my record); my irecord = 0; my nrecord = 0; }
+	
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my cr == NULL) return;
-			cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
-			// TODO: cairo_rectangle (my gc, 0, 0, GTK_WIDGET(I)->allocation.width, GTK_WIDGET(I)->allocation.height); ?
-			cairo_rectangle (my cr, my x1DC, my y1DC, my x1DC - my x2DC, my y1DC - my y2DC);
-			cairo_fill (my cr);
+			if (my cr == NULL) {
+				Graphics_updateWs (me);
+				return;
+			} else {
+				GdkRectangle rect;
+
+				if (my x1DC < my x2DC) {
+					rect.x = my x1DC;
+					rect.width = my x2DC - my x1DC;
+				} else {
+					rect.x = my x2DC;
+					rect.width = my x1DC - my x2DC;
+				}
+
+				if (my y1DC < my y2DC) {
+					rect.y = my y1DC;
+					rect.height = my y2DC - my y1DC;
+				} else {
+					rect.y = my y2DC;
+					rect.height = my y1DC - my y2DC;
+				}
+
+				cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
+				// TODO: cairo_rectangle (my gc, 0, 0, GTK_WIDGET(I)->allocation.width, GTK_WIDGET(I)->allocation.height); ?
+				cairo_rectangle (my cr, rect.x, rect.y, rect.width, rect.height);
+				cairo_fill (my cr);
+			}
 		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, False);
 		#elif win
@@ -118,7 +144,6 @@ void Graphics_clearWs (I) {
 			if (my drawingArea) GuiMac_clipOff ();
 		#endif
 	}
-	if (my record) { Melder_free (my record); my irecord = 0; my nrecord = 0; }
 }
 
 void Graphics_updateWs (I) {
@@ -133,21 +158,27 @@ void Graphics_updateWs (I) {
 	if (me && my screen) {
 		iam (GraphicsScreen);
 		#if gtk
-			g_debug ("updateWs %d %d %d %d", my x1DC, my x2DC, my x2DC - my x1DC, my y1DC - my y2DC);
-			GdkEventExpose event;
-			event.type = GDK_EXPOSE;
-			event.window = NULL;
-			event.send_event = FALSE;
-			event.region = NULL;
-			event.count = 0;
-			event.area.x = my x1DC;
-			event.area.y = my y1DC;
-			event.area.width = my x2DC - my x1DC;
-			event.area.height = my y2DC - my y1DC;
-//			gtk_widget_send_expose (my drawingArea, (GdkEvent *) & event);
-			// TODO: niet goed. Deze functie behoort een expose event te genereren.
-			// Hopelijk nu wel goed. De width en height verdienen een controle!
-			// PB: ja, want y1DC is waarschijnlijk groter dan y2DC.
+			GdkWindow *window = gtk_widget_get_parent_window (my drawingArea);
+			GdkRectangle rect;
+
+			if (my x1DC < my x2DC) {
+				rect.x = my x1DC;
+				rect.width = my x2DC - my x1DC;
+			} else {
+				rect.x = my x2DC;
+				rect.width = my x1DC - my x2DC;
+			}
+
+			if (my y1DC < my y2DC) {
+				rect.y = my y1DC;
+				rect.height = my y2DC - my y1DC;
+			} else {
+				rect.y = my y2DC;
+				rect.height = my y1DC - my y2DC;
+			}
+
+			gdk_window_invalidate_rect (window, & rect, true);
+			gdk_window_process_updates (window, true);
 		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, True);
 		#elif win

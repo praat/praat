@@ -860,6 +860,7 @@ static void createChildren (I)
 	*/
 
 	#ifndef _WIN32
+		#if motif
 		XtVaGetValues (GuiObject_parent (my list), XmNverticalScrollBar, & vertScrollBar, NULL);
 		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll, 
 			(XtPointer) me);
@@ -872,6 +873,7 @@ static void createChildren (I)
 			(XtPointer) me);
 		XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll, 
 			(XtPointer) me);
+		#endif
 	#endif
 
 	GuiLabel_createShown (my dialog, 280, 370, 3+menuBarOffset, Gui_AUTOMATIC, L"Value:", 0);

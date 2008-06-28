@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20080320 Latest modification
+ djmw 20080530 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -109,6 +109,9 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyFraction, long m);
 	
+Sound Sound_createFromWindowFunction (double effectiveTime, double samplingFrequency, int windowType);
+/* 1; rect 2:hamming 3: bartlet 4: welch 5: hanning 6:gaussian */
+	
 Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
 
 void Sounds_multiply (Sound me, Sound thee);
@@ -121,6 +124,9 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 
 void Sound_localMean (Sound me, double fromTime, double toTime, double *mean);
 void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *peak);
+
+Sound Sound_localAverage (Sound me, double averaginginterval, int windowType);
+/* y[n] = sum(i=-n, i=n, x[n+i])/(2*n+1) */
 
 double Sound_power (Sound me);
 

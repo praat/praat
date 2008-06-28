@@ -156,9 +156,13 @@ static void createChildren (I) {
 
 	GuiButton_createShown (my dialog, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, me, GuiButton_DEFAULT);
 
+	#if gtk
+	my radio = my dialog;	
+	#elif motif
 	my radio = XtVaCreateManagedWidget
 		("radioBox", xmRowColumnWidgetClass, my dialog,
 		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
+	#endif
 	for (int i = 1; i <= enumlength (Art_MUSCLE); i ++) {
 		my button [i] = GuiRadioButton_createShown (my radio,
 			0, 160, Gui_AUTOMATIC, Gui_AUTOMATIC,

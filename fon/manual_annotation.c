@@ -167,7 +167,7 @@ NORMAL (L"If %%Tier names% is \"a b c\", and \"Point tiers\" is \"b\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
 
-MAN_BEGIN (L"SpellingChecker", L"ppgb", 20030916)
+MAN_BEGIN (L"SpellingChecker", L"ppgb", 20080622)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. For checking the spelling in texts and @TextGrid objects.")
 ENTRY (L"1. How to create a SpellingChecker object")
 NORMAL (L"You normally read in a SpellignChecker with @@Read from file...@ from the Read menu.")
@@ -177,7 +177,8 @@ NORMAL (L"A SpellingChecker object can be used fur purposes of spelling checking
 	"the TextGrid together with the SpellingChecker object, and clicking Edit. In most cases, you will also want "
 	"to select a @Sound or @LongSound object before clicking Edit, so that a representation of the sound "
 	"is also visible (and audible) in the editor. Thus, you typically select three objects and click Edit. "
-	"The editor then allows you to check the spellings (command ##Check spelling# from the Search menu).")
+	"The editor then allows you to check the spellings "
+	"(commands ##Check spelling in tier# and ##Check spelling in interval# from the #Spell menu).")
 ENTRY (L"3. How to create a SpellingChecker object for the first time")
 NORMAL (L"If you are the maintainer of a word list for spelling checking, you will want "
 	"to convert this list to a SpellingChecker object that you can distribute among the transcribers of your corpus.")
@@ -280,8 +281,8 @@ MAN_BEGIN (L"TextGrid & TextTier: Append", L"ppgb", 19970317)
 INTRO (L"A command to append the selected @TextTier to the selected @TextGrid.")
 MAN_END
 
-MAN_BEGIN (L"TextGridEditor", L"ppgb", 20030316)
-INTRO (L"One of the @Editors in P\\s{RAAT}, for editing a @TextGrid object.")
+MAN_BEGIN (L"TextGridEditor", L"ppgb", 20080628)
+INTRO (L"One of the @Editors in Praat, for editing a @TextGrid object.")
 NORMAL (L"You can optionally include a copy of a @Sound or @LongSound in this editor, "
 	"by selecting both the TextGrid and the Sound or LongSound before clicking #Edit. "
 	"The Sound or LongSound is shown in the upper part of the window, the tiers in the lower part. "
@@ -321,7 +322,7 @@ LIST_ITEM (L"2. Just type the text, and use the mouse and the arrow keys to navi
 	"Everything you type will become visible immediately in the text window as well as in the selected "
 	"interval or point.")
 NORMAL (L"You can use all the @@Special symbols@ "
-	"that you can use elsewhere in Praat, including mathematical symbols, Greek letters, superscripts, "
+	"that you can use elsewhere in Praat, including mathematical symbols, Greek and Chinese letters, superscripts, "
 	"and phonetic symbols.")
 ENTRY (L"Selecting a tier")
 NORMAL (L"To select a tier, click anywhere inside it. Its number and name will be drawn in red, "
@@ -367,8 +368,8 @@ NORMAL (L"The Search menu contains the command #Find (Command-F), which will all
 ENTRY (L"Checking the spelling")
 NORMAL (L"You can check the spelling of the intervals in your tiers by including a @SpellingChecker "
 	"object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, "
-	"then click Edit. The Search menu will contain the command ##Check spelling# (Command-L), "
-	"which will search for the next word that does not occur in its lexicon.")
+	"then click Edit. The #Spell menu will contain the commands ##Check spelling in tier# (Command-N), and ##Check spelling in interval# "
+	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 
 MAN_BEGIN (L"TextTier", L"ppgb", 20030316)

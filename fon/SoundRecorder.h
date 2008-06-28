@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2008/06/17
  */
 
 /* An editor-like object that allows the user to record sounds. */
@@ -34,7 +34,7 @@
 
 typedef struct structSoundRecorder *SoundRecorder;   /* Opaque. */
 
-SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppContext context);
+SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *applicationContext);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window
