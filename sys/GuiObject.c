@@ -21,6 +21,7 @@
  * pb 2007/12/26 abstraction from motif
  * pb 2007/12/28 _GuiObject_position: allow the combination of fixed height and automatic position
  * sdk 2008/03/24 GTK
+ * sdk 2008/07/01 GTK get sizes
  */
 
 #include "GuiP.h"
@@ -117,6 +118,7 @@ void GuiObject_destroy (Widget me) {
 long GuiObject_getHeight (Widget me) {
 	long height = 0;
 	#if gtk
+		gtk_widget_get_size_request (me, NULL, & height);
 	#elif win || mac
 		height = my height;
 	#elif motif
@@ -130,6 +132,7 @@ long GuiObject_getHeight (Widget me) {
 long GuiObject_getWidth (Widget me) {
 	long width = 0;
 	#if gtk
+		gtk_widget_get_size_request (me, & width, NULL);
 	#elif win || mac
 		width = my width;
 	#elif motif

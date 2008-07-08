@@ -58,7 +58,7 @@ RealPoint RealPoint_create (double time, double value);
 #define RealTier_methods Function_methods
 class_create (RealTier, Function);
 
-int RealTier_init (I, double tmin, double tmax);
+void RealTier_init_e (I, double tmin, double tmax);
 RealTier RealTier_create (double tmin, double tmax);
 /*
 	Postconditions:

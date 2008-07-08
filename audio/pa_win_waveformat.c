@@ -36,6 +36,7 @@
  * license above.
  */
 
+#undef UNICODE
 #include <windows.h>
 #include <mmsystem.h>
 

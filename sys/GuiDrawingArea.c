@@ -20,6 +20,7 @@
 /*
  * pb 2007/12/28 extracted from Motif
  * sdk 2008/03/24 GTK
+ * sdk 2008/07/01 GTK resize callback
  */
 
 #include "GuiP.h"
@@ -62,42 +63,52 @@ typedef struct structGuiDrawingArea {
 			my activateCallback (my activateBoss, & event);
 		}*/
 //	}
-	static void  _GuiGtkDrawingArea_exposeCallback(Widget widget, GdkEventExpose *event, gpointer void_me) {
+	static void  _GuiGtkDrawingArea_exposeCallback (Widget widget, GdkEventExpose *expose, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my exposeCallback) {
-			//g_debug("--> expose %d %d %d %d", event->area. x, event-> area.y, event-> area.width, event->area.height);
-       	                struct structGuiDrawingAreaExposeEvent myevent = { widget, 0 };
-       	                myevent. x = event->area. x;
-                        myevent. y = event->area. y;
-       	                myevent. width = event->area. width;
-       	                myevent. height = event->area. height;
-			my exposeCallback (my exposeBoss, & myevent);
+			struct structGuiDrawingAreaExposeEvent event = { widget, 0 };
+			event. x = expose -> area. x;
+			event. y = expose -> area. y;
+			event. width = expose -> area. width;
+			event. height = expose -> area. height;
+			my exposeCallback (my exposeBoss, & event);
 		}
 	}
-	static void _GuiGtkDrawingArea_clickCallback (Widget widget, GdkEventButton *event, gpointer void_me) {
+	static void _GuiGtkDrawingArea_clickCallback (Widget widget, GdkEventButton *button, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my clickCallback) {
-			struct structGuiDrawingAreaClickEvent myevent = { widget, 0 };
-			switch (event -> type) {
+			struct structGuiDrawingAreaClickEvent event = { widget, 0 };
+			switch (button -> type) {
 				case GDK_BUTTON_PRESS:
-					myevent. type = BUTTON_PRESS;
+					event. type = BUTTON_PRESS;
 					break;
 				case GDK_BUTTON_RELEASE:
-					myevent. type = BUTTON_RELEASE;
+					event. type = BUTTON_RELEASE;
 					break;
 				case GDK_MOTION_NOTIFY:
-					myevent. type = MOTION_NOTIFY;
+					event. type = MOTION_NOTIFY;
 					break;
 				default:
 					// Do NOTHING
 					return;
 			}
-			myevent. x = event -> x;
-			myevent. y = event -> y;
-			myevent. shiftKeyPressed = (event -> state & GDK_SHIFT_MASK) != 0;
-			my clickCallback (my clickBoss, & myevent);
+			event. x = button -> x;
+			event. y = button -> y;
+			event. shiftKeyPressed = (button -> state & GDK_SHIFT_MASK) != 0;
+			my clickCallback (my clickBoss, & event);
 		}
 	}
+	static void  _GuiGtkDrawingArea_resizeCallback(Widget widget, GtkAllocation *allocation, gpointer void_me) {
+		iam (GuiDrawingArea);
+		if (my resizeCallback) {
+			struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
+			event. width = allocation -> width;
+			event. height = allocation -> height;
+			//g_debug("%d %d", allocation->width, allocation->height);
+			my resizeCallback (my clickBoss, & event);
+		}
+	}
+
 
 #elif win || mac
 	void _GuiWinMacDrawingArea_destroy (Widget widget) {
@@ -291,6 +302,8 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
 		g_signal_connect (GTK_WIDGET (my widget), "motion-notify-event",
 			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
+		g_signal_connect (GTK_WIDGET (my widget), "size-allocate",
+			G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
 
 		gtk_widget_set_events (my widget, GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
 //		g_signal_connect (GTK_WIDGET (my widget), "activate",

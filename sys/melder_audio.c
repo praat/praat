@@ -36,6 +36,7 @@
  * pb 2007/12/04 enums
  * pb 2008/06/01 removed SPEXLAB audio server
  * pb 2008/06/10 made PortAudio and foreground playing optional
+ * pb 2008/07/03 DirectSound
  */
 
 #include "melder.h"
@@ -112,24 +113,24 @@
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;
 	bool useInternalSpeaker, inputUsesPortAudio, outputUsesPortAudio, outputUsesBlocking;
-	double outputGain, zeroPadding;
+	double silenceBefore, silenceAfter;
 } preferences;
 
 void Melder_audio_prefs (void) {
 	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, DEFAULT);
 	Preferences_addBool (L"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
-	Preferences_addDouble (L"Audio.outputGain", & preferences. outputGain, 1.0);
 	Preferences_addBool (L"Audio.outputUsesPortAudio", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
 	Preferences_addBool (L"Audio.outputUsesBlocking", & preferences. outputUsesBlocking, false);
-	Preferences_addDouble (L"Audio.zeroPadding", & preferences. zeroPadding, 0.0);
+	Preferences_addDouble (L"Audio.silenceBefore", & preferences. silenceBefore, 0.0);
+	Preferences_addDouble (L"Audio.silenceAfter", & preferences. silenceAfter, 0.5);
 	Preferences_addBool (L"Audio.inputUsesPortAudio", & preferences.inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
 }
 
-void MelderAudio_setOutputMaximumAsynchronicity (int maximumAsynchronicity) {
+void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	preferences. maximumAsynchronicity = maximumAsynchronicity;
 }
-int MelderAudio_getOutputMaximumAsynchronicity (void) { return preferences. maximumAsynchronicity; }
+enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (void) { return preferences. maximumAsynchronicity; }
 
 void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio) {
 	preferences. inputUsesPortAudio = inputUsesPortAudio;
@@ -154,17 +155,17 @@ void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker) {
 }
 bool MelderAudio_getUseInternalSpeaker (void) { return preferences. useInternalSpeaker; }
 
-void MelderAudio_setOutputGain (double gain) {
+void MelderAudio_setOutputSilenceBefore (double silenceBefore) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	preferences. outputGain = gain;
+	preferences. silenceBefore = silenceBefore;
 }
-double MelderAudio_getOutputGain (void) { return preferences. outputGain; }
+double MelderAudio_getOutputSilenceBefore (void) { return preferences. silenceBefore; }
 
-void MelderAudio_setOutputZeroPadding (double zeroPadding) {
+void MelderAudio_setOutputSilenceAfter (double silenceAfter) {
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	preferences. zeroPadding = zeroPadding;
+	preferences. silenceAfter = silenceAfter;
 }
-double MelderAudio_getOutputZeroPadding (void) { return preferences. zeroPadding; }
+double MelderAudio_getOutputSilenceAfter (void) { return preferences. silenceAfter; }
 
 long MelderAudio_getOutputBestSampleRate (long fsamp) {
 	#if defined (macintosh)
@@ -194,14 +195,15 @@ static double theStartingTime = 0.0;
 
 static struct MelderPlay {
 	const short *buffer;
-	unsigned long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
-	int asynchronicity, numberOfChannels, explicit, fakeMono;
+	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
+	int asynchronicity, numberOfChannels;
+	bool explicit, fakeMono;
 	int (*callback) (void *closure, long samplesPlayed);
 	void *closure;
 	#if motif
 		XtWorkProcId workProcId;
 	#endif
-	bool usePortAudio, blocking;
+	bool usePortAudio, blocking, supports_paComplete;
 	PaStream *stream;
 	double paStartingTime;
 	#if defined (sgi)
@@ -353,15 +355,32 @@ static Boolean workProc (XtPointer closure) {
 				return flush ();
 			}
 		} else {
-			if (Pa_IsStreamActive (my stream)) {
-				// my samplesPlayed has been set at interrupt time.
-				if (my callback && ! my callback (my closure,
-						//my samplesPlayed)
-						(Pa_GetStreamTime (my stream) - my paStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency) * my sampleRate)
-						//(Melder_clock () - theStartingTime) * my sampleRate)
-					)
+			/*
+			 * Not all hostApis support paComplete or wait till all buffers have been played in Pa_StopStream.
+			 * Once pa_win_ds implements this, we can simply do:
+			 * if (Pa_IsStreamActive (my stream)) {
+			 *    if (my callback && ! my callback (my closure, my samplesPlayed))
+			 *       return flush ();
+			 * } else {
+			 *    my samplesPlayed = my numberOfSamples;
+			 *    return flush ();
+			 * }
+			 * But then we also have to use paComplete in the stream callback.
+			 */
+			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+			my samplesPlayed = timeElapsed * my sampleRate;
+			if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
+				if (my callback && ! my callback (my closure, my samplesPlayed)) {
+					Pa_AbortStream (my stream);
 					return flush ();
+				}
+			} else if (my samplesPlayed < my numberOfSamples + my sampleRate / 20) {   // allow the latency estimate to be 50 ms off.
+				if (my callback && ! my callback (my closure, my samplesPlayed)) {
+					Pa_AbortStream (my stream);
+					return flush ();
+				}
 			} else {
+				Pa_AbortStream (my stream);
 				my samplesPlayed = my numberOfSamples;
 				return flush ();
 			}
@@ -387,7 +406,7 @@ static Boolean workProc (XtPointer closure) {
 				if (my callback && ! my callback (my closure, my samplesPlayed))
 					return flush ();
 			}
-			sginap (1);
+			sginap (1);   // 0.01 seconds
 		}
 	#elif defined (macintosh)
 		SCStatus status;
@@ -565,18 +584,18 @@ static int thePaStreamCallback (const void *input, void *output,
 		if (Melder_debug == 20) Melder_casual ("output overflow");
 	}
 	if (my samplesLeft > 0) {
-		unsigned long dsamples = my samplesLeft > frameCount ? frameCount : my samplesLeft;
+		long dsamples = my samplesLeft > (long) frameCount ? (long) frameCount : my samplesLeft;
 		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my stream)));
-		memset (output, 0, 2 * frameCount * my numberOfChannels);
+		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 		my samplesLeft -= dsamples;
 		my samplesSent += dsamples;
 		my samplesPlayed = my samplesSent;
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
-		memset (output, 0, 2 * frameCount * my numberOfChannels);
+		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		my samplesPlayed = my numberOfSamples;
-		return paComplete;
+		return my supports_paComplete ? paComplete : paContinue;
 	}
 	return paContinue;
 }
@@ -604,7 +623,7 @@ int MelderAudio_play16 (const short *buffer, long sampleRate, long numberOfSampl
 	my usePortAudio = preferences. outputUsesPortAudio;
 	my blocking = preferences. outputUsesBlocking;
 	my explicit = MelderAudio_IMPLICIT;
-	my fakeMono = FALSE;
+	my fakeMono = false;
 
 	my samplesLeft = numberOfSamples;
 	my samplesSent = 0;
@@ -618,6 +637,7 @@ if (my usePortAudio) {
 		if (err) Melder_fatal ("PortAudio does not initialize: %s", Pa_GetErrorText (err));
 		paInitialized = true;
 	}
+	my supports_paComplete = Pa_GetHostApiInfo (Pa_GetDefaultHostApi ()) -> type != paDirectSound;
 	PaStreamParameters outputParameters = { 0 };
 	outputParameters. device = Pa_GetDefaultOutputDevice ();
 	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
@@ -683,7 +703,6 @@ if (my usePortAudio) {
 					flush ();
 					return 1;
 				}
-				//Pa_Sleep (10);
 			}
 			Pa_StopStream (my stream);
 		} else {
@@ -697,10 +716,16 @@ if (my usePortAudio) {
 		if (err) return Melder_error ("PortAudio cannot start sound output: %s", Pa_GetErrorText (err));
 		my paStartingTime = Pa_GetStreamTime (my stream);
 		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
-			while (Pa_IsStreamActive (my stream)) {
+			for (;;) {
+				double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+				my samplesPlayed = timeElapsed * my sampleRate;
+				if (my samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
+					my samplesPlayed = my numberOfSamples;
+					break;
+				}
 				bool interrupted = false;
 				if (my asynchronicity != kMelder_asynchronicityLevel_SYNCHRONOUS && my callback &&
-					! my callback (my closure, my samplesPlayed - Pa_GetStreamInfo (my stream) -> outputLatency * my sampleRate))
+					! my callback (my closure, my samplesPlayed))
 					interrupted = true;
 				/*
 				 * Safe operation: only listen to key-down events.
@@ -739,12 +764,12 @@ if (my usePortAudio) {
 					flush ();
 					return 1;
 				}
-				//Pa_Sleep (10);
+				Pa_Sleep (10);
 			}
 			if (my samplesPlayed != my numberOfSamples) {
 				Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);
 			}
-			Pa_StopStream (my stream);
+			Pa_AbortStream (my stream);
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			#if motif
 				my workProcId = XtAppAddWorkProc (0, workProc, 0);
@@ -789,7 +814,7 @@ if (my usePortAudio) {
 		}
 		while ((n = ALgetfilled (my port)) > 0 && ! interrupted) {
 			XEvent event;
-			sginap (1);
+			sginap (1);   // 0.01 seconds
 			my samplesPlayed = my numberOfSamples - n / my numberOfChannels;
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				interrupted = 1;
@@ -1017,29 +1042,6 @@ if (my usePortAudio) {
 	if (dataFormat != AUDIO_FORMAT_LINEAR16BIT && ioctl (my audio_fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1)
 		return cancelPlay16 (), Melder_error1 (L"Cannot set to 16-bit linear.");
 
-	/*{
-		struct audio_beep_type beep;
-		if (ioctl (audio_fd, AUDIO_GET_BEEP, & oldBeep) == -1)
-			return cancelPlay16 (), Melder_error1 (L"Cannot get old beep.");
-		beep. type = 1;
-		beep. datalen = 1;
-		beep. data = "";
-		beep. returnlen = 0;
-		beep. repeat_count = 1;
-		beep. sample_rate = 8000;
-		beep. nchannels = 1;
-		if (ioctl (audio_fd, AUDIO_SET_BEEP, & beep) == -1)
-			return cancelPlay16 (), Melder_error1 (L"Cannot remove beep.");
-	}*/
-	/*ioctl (audio_fd, AUDIO_DESCRIBE, & audioInfo);
-	audioGains. transmit_gain = 9 + 20 * log10 (
-		preferences. outputGain > 1.0 ? 1.0 : preferences. outputGain < 1e-30 ? 1e-30 : preferences. outputGain);
-	if (audioGains. transmit_gain < -84) audioGains. transmit_gain = -84;
-	audioGains. monitor_gain = audioInfo. min_monitor_gain;
-	if (ioctl (audio_fd, AUDIO_SET_GAINS, & audioGains) == -1)
-		return cancelPlay16 (), Melder_error1 (L"Cannot set gains.");
-	}*/
-
 	ioctl (audio_fd, AUDIO_GET_SAMPLE_RATE, & oldSampleRate);
 	if (sampleRate != oldSampleRate && ioctl (audio_fd, AUDIO_SET_SAMPLE_RATE, sampleRate) == -1)
 		return cancelPlay16 (), Melder_error ("Cannot set the sampling frequency to %ld Hz.", sampleRate);
@@ -1147,7 +1149,7 @@ if (my usePortAudio) {
 		if (my numberOfChannels == 1 && my val == 2) {
 			long isamp;
 			short *newBuffer;
-			my fakeMono = TRUE;
+			my fakeMono = true;
 			if ((newBuffer = NUMsvector (0, 2 * numberOfSamples - 1)) == NULL)
 				return cancelPlay16 (), Melder_error1 (L"Cannot fake mono.");
 			for (isamp = 0; isamp < numberOfSamples; isamp ++) {

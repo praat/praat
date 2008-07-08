@@ -577,7 +577,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		for (k = 0, i = from; i <= to; i++)
 		{
 			MelderString_empty (&itemText);
-			MelderString_append2 (&itemText, Melder_integer (i), OrderedOfString_itemAtIndex_c (my data, i));
+			MelderString_append3 (&itemText, Melder_integer (i), L":   ", OrderedOfString_itemAtIndex_c (my data, i));
 			table[k++] = Melder_wcsdup (itemText.string);
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */

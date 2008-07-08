@@ -33,8 +33,10 @@ class_methods (IntensityTier, RealTier)
 class_methods_end
 
 IntensityTier IntensityTier_create (double tmin, double tmax) {
-	IntensityTier me = new (IntensityTier);
-	if (! me || ! RealTier_init (me, tmin, tmax)) { forget (me); return NULL; }
+	IntensityTier me = new (IntensityTier); cherror
+	RealTier_init_e (me, tmin, tmax); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 

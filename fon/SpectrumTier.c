@@ -42,8 +42,10 @@ class_methods (SpectrumTier, RealTier)
 class_methods_end
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax) {
-	SpectrumTier me = new (SpectrumTier);
-	if (! me || ! RealTier_init (me, fmin, fmax)) { forget (me); return NULL; }
+	SpectrumTier me = new (SpectrumTier); cherror
+	RealTier_init_e (me, fmin, fmax); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 

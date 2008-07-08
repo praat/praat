@@ -111,6 +111,7 @@ Non-critical stuff for the future:
     Events (when necessary) inside the ReadStream() and WriteStream() functions.
 */
 
+#undef UNICODE
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

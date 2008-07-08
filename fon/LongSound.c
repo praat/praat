@@ -509,7 +509,7 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 }
 
 static struct LongSoundPlay {
-	long numberOfSamples, i1, i2, zeroPadding;
+	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
 	short *resampledBuffer;
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t);
@@ -519,9 +519,9 @@ static struct LongSoundPlay {
 static int melderPlayCallback (void *closure, long samplesPlayed) {
 	struct LongSoundPlay *me = (struct LongSoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my zeroPadding ? my tmin :
-		samplesPlayed >= my zeroPadding + my numberOfSamples ? my tmax :
-		my t1 + (my i1 - 1.5 + samplesPlayed - my zeroPadding) * my dt;
+	double t = samplesPlayed <= my silenceBefore ? my tmin :
+		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
 		phase = 3;
 		Melder_free (my resampledBuffer);
@@ -554,13 +554,15 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		thy t1 = my x1;
 		thy i1 = i1;
 		thy i2 = i2;
-		thy zeroPadding = (long) (my sampleRate * MelderAudio_getOutputZeroPadding ());
+		thy silenceBefore = (long) (my sampleRate * MelderAudio_getOutputSilenceBefore ());
+		thy silenceAfter = (long) (my sampleRate * MelderAudio_getOutputSilenceAfter ());
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
-		if (thy zeroPadding) {
-			thy resampledBuffer = Melder_calloc (short, (thy zeroPadding + thy numberOfSamples + thy zeroPadding) * my numberOfChannels);
-			memcpy (& thy resampledBuffer [thy zeroPadding * my numberOfChannels], & my buffer [(i1 - my imin) * my numberOfChannels],
+		if (thy silenceBefore > 0 || thy silenceAfter > 0) {
+			Melder_assert (thy resampledBuffer == NULL);
+			thy resampledBuffer = Melder_calloc (short, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
+			memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels], & my buffer [(i1 - my imin) * my numberOfChannels],
 				thy numberOfSamples * sizeof (short) * my numberOfChannels);
-			if (! MelderAudio_play16 (thy resampledBuffer, my sampleRate, thy zeroPadding + thy numberOfSamples + thy zeroPadding,
+			if (! MelderAudio_play16 (thy resampledBuffer, my sampleRate, thy silenceBefore + thy numberOfSamples + thy silenceAfter,
 			    my numberOfChannels, melderPlayCallback, thee))
 				Melder_flushError (NULL);
 		} else {
@@ -571,8 +573,9 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	} else {
 		long newSampleRate = my sampleRate < 11025 ? 11025 : my sampleRate < 22050 ? 22050 : 44100;
 		long newN = ((double) n * newSampleRate) / my sampleRate - 1, i;
-		long zeroPadding = (long) (newSampleRate * MelderAudio_getOutputZeroPadding ());
-		short *resampledBuffer = Melder_calloc (short, (zeroPadding + newN + zeroPadding) * my numberOfChannels);
+		long silenceBefore = (long) (newSampleRate * MelderAudio_getOutputSilenceBefore ());
+		long silenceAfter = (long) (newSampleRate * MelderAudio_getOutputSilenceAfter ());
+		short *resampledBuffer = Melder_calloc (short, (silenceBefore + newN + silenceAfter) * my numberOfChannels);
 		short *from = my buffer + (i1 - my imin) * my numberOfChannels;   /* Guaranteed: from [0 .. (my imax - my imin + 1) * nchan] */
 		double t1 = my x1, dt = 1.0 / newSampleRate;
 		if (! resampledBuffer) { Melder_flushError ("Cannot resample and play this sound."); return; }
@@ -581,7 +584,9 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		thy t1 = t1 + i1 / my sampleRate;
 		thy i1 = 0;
 		thy i2 = newN - 1;
-		thy zeroPadding = zeroPadding;
+		thy silenceBefore = silenceBefore;
+		thy silenceAfter = silenceAfter;
+		Melder_assert (thy resampledBuffer == NULL);
 		thy resampledBuffer = resampledBuffer;
 		if (my numberOfChannels == 1) {
 			for (i = 0; i < newN; i ++) {
@@ -589,20 +594,20 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				double index = (t - t1) * my sampleRate;   /* From 0. */
 				long flore = index;   /* DANGEROUS: Implicitly rounding down... */
 				double fraction = index - flore;
-				resampledBuffer [i + zeroPadding] = (1 - fraction) * from [flore] + fraction * from [flore + 1];
+				resampledBuffer [i + silenceBefore] = (1 - fraction) * from [flore] + fraction * from [flore + 1];
 			}
 		} else {
 			for (i = 0; i < newN; i ++) {
 				double t = t1 + i * dt;
 				double index = (t - t1) * newSampleRate;
-				long flore = index, ii = i + zeroPadding;
+				long flore = index, ii = i + silenceBefore;
 				double fraction = index - flore;
 				resampledBuffer [ii + ii] = (1 - fraction) * from [flore + flore] + fraction * from [flore + flore + 2];
 				resampledBuffer [ii + ii + 1] = (1 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
 			}
 		}
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
-		if (! MelderAudio_play16 (resampledBuffer, newSampleRate, zeroPadding + newN + zeroPadding, my numberOfChannels, melderPlayCallback, thee))
+		if (! MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee))
 			Melder_flushError (NULL);
 	}
 }

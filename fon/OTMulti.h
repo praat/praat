@@ -69,7 +69,7 @@ int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
 int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double evaluationNoise, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise);
+	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 
 void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wchar_t *form2, int showDisharmonies);
 

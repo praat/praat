@@ -318,18 +318,58 @@ end:
 	return 1;
 }
 
+static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long numberOfData) {
+	long numberOfSamplingPoints = numberOfData / storeHistoryEvery;   /* E.g. 0, 20, 40, ... */
+	Table thee = Table_createWithoutColumnNames (1 + numberOfSamplingPoints, 3 + my numberOfConstraints); cherror
+	Table_setColumnLabel (thee, 1, L"Datum");
+	Table_setColumnLabel (thee, 2, L"Form1");
+	Table_setColumnLabel (thee, 3, L"Form2");
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		Table_setColumnLabel (thee, 3 + icons, my constraints [icons]. name); cherror
+	}
+	Table_setNumericValue (thee, 1, 1, 0); cherror
+	Table_setStringValue (thee, 1, 2, L"(initial)"); cherror
+	Table_setStringValue (thee, 1, 3, L"(initial)"); cherror
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		Table_setNumericValue (thee, 1, 3 + icons, my constraints [icons]. ranking);
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery, long idatum, const wchar_t *form1, const wchar_t *form2) {
+	if (idatum % storeHistoryEvery == 0) {
+		long irow = 1 + idatum / storeHistoryEvery;
+		Table_setNumericValue (thee, irow, 1, idatum); cherror
+		Table_setStringValue (thee, irow, 2, form1); cherror
+		Table_setStringValue (thee, irow, 3, form2); cherror
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			Table_setNumericValue (thee, irow, 3 + icons, my constraints [icons]. ranking);
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+
 int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double evaluationNoise, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
-	long numberOfPlasticities, double relativePlasticityNoise)
+	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out)
 {
-	long iplasticity, ireplication, idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
+	long idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	double plasticity = initialPlasticity;
+	Table history = NULL;
+	if (storeHistoryEvery) {
+		history = OTMulti_createHistory (me, storeHistoryEvery, numberOfData); cherror
+	}
 	Graphics graphics = Melder_monitor1 (0.0, L"Learning with full knowledge...");
 	if (graphics) {
 		Graphics_clearWs (graphics);
 	}
-	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
-		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
+	for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
+		for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 			wchar_t *form1, *form2;
 			if (! PairDistribution_peekPair (thee, & form1, & form2)) goto end;
 			++ idatum;
@@ -359,12 +399,16 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 			}
 			OTMulti_newDisharmonies (me, evaluationNoise);
 			if (! OTMulti_learnOne (me, form1, form2, direction, plasticity, relativePlasticityNoise)) goto end;
+			if (history) {
+				OTMulti_updateHistory (me, history, storeHistoryEvery, idatum, form1, form2);
+			}
 		}
 		plasticity *= plasticityDecrement;
 	}
 end:
 	Melder_monitor1 (1.0, NULL);
 	iferror return Melder_error1 (L"OTMulti did not complete learning from partial pairs.");
+	*history_out = history;
 	return 1;
 }
 

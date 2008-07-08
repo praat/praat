@@ -775,7 +775,7 @@ wchar_t * GuiText_getSelection (Widget widget) {
 		return result;
 	#elif motif
 		char *selectionUtf8 = XmTextGetSelection (widget);
-		wchar_t *selection = Melder_utf8ToWcs (selectionUtf8);
+		wchar_t *selection = Melder_8bitToWcs (selectionUtf8, kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1);
 		XtFree (selectionUtf8);
 		return selection;
 	#endif
@@ -836,7 +836,7 @@ wchar_t *GuiText_getString (Widget widget) {
 		return result;
 	#elif motif
 		char *textUtf8 = XmTextGetString (widget);
-		wchar_t *result = Melder_utf8ToWcs (textUtf8);
+		wchar_t *result = Melder_8bitToWcs (textUtf8, kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1);
 		XtFree (textUtf8);
 		return result;
 	#endif

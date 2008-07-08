@@ -2,13 +2,9 @@ Changes to make PortAudio v19 (November 2007) work with Praat:
 
 Deleted lines in pa_***_hostapis.c.
 
-In pa_win_mme.c:
-GetEnvironmentVariable -> GetEnvironmentVariableA
-WAVEINCAPS -> WAVEINCAPSA (2x)
-waveInGetDevCaps -> waveInGetDevCapsA
-WAVEOUTCAPS -> WAVEOUTCAPSA (2x)
-waveOutGetDevCaps -> waveOutGetDevCapsA
-Remove the #ifndef/endif from:
+At the top of pa_win_*.c:
+#undef UNICODE
+In pa_win_mme.c, remove the #ifndef/endif from:
 #ifndef __MWERKS__
 #include <malloc.h>
 #include <memory.h>
@@ -46,4 +42,4 @@ In pa_mac_core.c idem:
    }
 (this may not really work; am I right in thinking that the danger is low?)
 
-Paul Boersma, June 1, 2008.
+Paul Boersma, July 3, 2008.

@@ -263,7 +263,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			}
 			wchar_t buffer [2] = { lc -> kar, 0 };
 			cairo_text_extents (my cr, Melder_peekWcsToUtf8 (buffer), & extents);
-			lc -> width = extents.width;
+			lc -> width = extents.x_advance;
 			lc -> baseline *= my fontSize * 0.01;
 			lc -> code = lc -> kar;
 			lc -> font.string = NULL;
@@ -419,14 +419,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 						lc -> font.integer == theIpaTimesFont ? theIpaTimesAtsuiFont :
 						lc -> font.integer == theZapfDingbatsFont ? theZapfDingbatsAtsuiFont : theTimesAtsuiFont;
 					Melder_assert (atsuiFont != 0);
-					if (lc -> font.integer == theIpaTimesFont && theIpaTimesAtsuiFont == theTimesAtsuiFont) {
-						static bool notified = false;
-						if (! notified) {
-							Melder_error1 (L"You have not installed the Charis SIL or Doulos SIL font. Some characters may not be shown correctly.");
-							Melder_flushError (NULL);
-							notified = true;
-						}
-					}
 					/*
 					 * Define the text layout.
 					 */
@@ -699,14 +691,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					lc -> font.integer == theIpaTimesFont ? theIpaTimesAtsuiFont :
 					lc -> font.integer == theZapfDingbatsFont ? theZapfDingbatsAtsuiFont : theTimesAtsuiFont;
 				Melder_assert (atsuiFont != 0);
-				if (lc -> font.integer == theIpaTimesFont && theIpaTimesAtsuiFont == theTimesAtsuiFont) {
-					static bool notified = false;
-					if (! notified) {
-						Melder_error1 (L"You have not installed the Charis SIL or Doulos SIL font. Some characters may not be shown correctly.");
-						Melder_flushError (NULL);
-						notified = true;
-					}
-				}
 				/*
 				 * Define the text layout.
 				 */
@@ -1550,9 +1534,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 		out -> code = '?';   // Does this have any meaning?
 		out -> kar = kar;
 		out -> rightToLeft =
-			kar >= 0x0590 && kar <= 0x06FF ||
-			kar >= 0xFE70 && kar <= 0xFEFF ||
-			kar >= 0xFB1E && kar <= 0xFDFF;
+			(kar >= 0x0590 && kar <= 0x06FF) ||
+			(kar >= 0xFE70 && kar <= 0xFEFF) ||
+			(kar >= 0xFB1E && kar <= 0xFDFF);
 		charItalic = charBold = charSuperscript = charSubscript = 0;
 		out ++;
 	}
@@ -1730,6 +1714,7 @@ double Graphics_textWidth_ps (I, const wchar_t *txt, bool useSilipaPS) {
 
 #if mac
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
+	if (theTimesAtsuiFont != 0) return true;   // once
 	theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times"), kATSOptionFlagsDefault);
 	if (! theTimesAtsuiFont) theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times New Roman"), kATSOptionFlagsDefault);
 	theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Helvetica"), kATSOptionFlagsDefault);
@@ -1753,10 +1738,12 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 		theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
 		if (! theIpaTimesAtsuiFont) {
 			theIpaTimesAtsuiFont = theTimesAtsuiFont;
+			Melder_assert (theIpaTimesAtsuiFont != 0);
 			Melder_warning1 (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
 				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
 		}
 	}
+	Melder_assert (theTimesAtsuiFont != 0);
 	return true;
 }
 #endif

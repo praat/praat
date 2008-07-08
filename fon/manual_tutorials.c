@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080628)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080708)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.29# (July 8, 2008)")
+LIST_ITEM (L"\\bu OTMulti: can record history.")
+LIST_ITEM (L"\\bu Picture window: corrected text in Praat picture files.")
+NORMAL (L"##5.0.28# (July 3, 2008)")
+LIST_ITEM (L"\\bu Windows: audio output uses DirectX (next to Multi-Media Extensions).")
 NORMAL (L"##5.0.27# (June 28, 2008)")
 LIST_ITEM (L"\\bu @@Phonetic symbols@: breve (a\\N^).")
 LIST_ITEM (L"\\bu Annotation: improved some SpellingChecker commands.")
@@ -33,7 +38,7 @@ LIST_ITEM (L"\\bu Table: can now set string values that contain spaces.")
 NORMAL (L"##5.0.26# (June 15, 2008)")
 LIST_ITEM (L"\\bu Windows: sound recording no longer makes your laptop's fan spin.")
 LIST_ITEM (L"\\bu Windows: no longer any 64 MB limit on recorded sounds.")
-LIST_ITEM (L"\\bu Linux: replaced OSS by ALSA for recording and playing sounds.")
+LIST_ITEM (L"\\bu Linux: audio input and output uses Alsa (next to OSS).")
 NORMAL (L"##5.0.25# (May 31, 2008)")
 LIST_ITEM (L"\\bu OT learning: added decision strategy ExponentialMaximumEntropy.")
 NORMAL (L"##5.0.24# (May 14, 2008)")

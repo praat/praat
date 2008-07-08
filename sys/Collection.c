@@ -164,7 +164,7 @@ static int classCollection_readText (I, MelderReadString *text) {
 		my item [i] = Thing_newFromClassName (className); cherror
 		my size ++;
 		if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-			error3 (L"Cannot read item of class ", Thing_classNameW (my item [i]), L"in collection.");
+			error3 (L"Cannot read item of class ", Thing_classNameW (my item [i]), L" in collection.");
 		Melder_free (objectName); objectName = texgetw2 (text); cherror
 		Thing_setName (my item [i], objectName); cherror
 		Data_readText (my item [i], text); cherror

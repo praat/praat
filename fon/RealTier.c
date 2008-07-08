@@ -69,10 +69,10 @@ class_methods (RealPoint, Data) {
 }
 
 RealPoint RealPoint_create (double time, double value) {
-	RealPoint me = new (RealPoint);
-	if (! me) return NULL;
+	RealPoint me = new (RealPoint); cherror
 	my time = time;
 	my value = value;
+end:
 	return me;
 }
 
@@ -120,24 +120,29 @@ class_methods (RealTier, Function) {
 	class_methods_end
 }
 
-int RealTier_init (I, double tmin, double tmax) {
+void RealTier_init_e (I, double tmin, double tmax) {
 	iam (RealTier);
 	my xmin = tmin;
 	my xmax = tmax;
-	if (! (my points = SortedSetOfDouble_create ())) return 0;
-	return 1;
+	my points = SortedSetOfDouble_create (); cherror
+end:
+	return;
 }
 
 RealTier RealTier_create (double tmin, double tmax) {
-	RealTier me = new (RealTier);
-	if (! me || ! RealTier_init (me, tmin, tmax)) { forget (me); return NULL; }
+	RealTier me = new (RealTier); cherror
+	RealTier_init_e (me, tmin, tmax); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 
 int RealTier_addPoint (I, double t, double value) {
 	iam (RealTier);
-	RealPoint point = RealPoint_create (t, value);
-	if (! point || ! Collection_addItem (my points, point)) return 0;
+	RealPoint point = RealPoint_create (t, value); cherror
+	Collection_addItem (my points, point); cherror
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -172,8 +177,8 @@ double RealTier_getValueAtTime (I, double t) {
 double RealTier_getMaximumValue (I) {
 	iam (RealTier);
 	double result = NUMundefined;
-	long n = my points -> size, i;
-	for (i = 1; i <= n; i ++) {
+	long n = my points -> size;
+	for (long i = 1; i <= n; i ++) {
 		RealPoint point = my points -> item [i];
 		if (result == NUMundefined || point -> value > result)
 			result = point -> value;
@@ -184,8 +189,8 @@ double RealTier_getMaximumValue (I) {
 double RealTier_getMinimumValue (I) {
 	iam (RealTier);
 	double result = NUMundefined;
-	long n = my points -> size, i;
-	for (i = 1; i <= n; i ++) {
+	long n = my points -> size;
+	for (long i = 1; i <= n; i ++) {
 		RealPoint point = my points -> item [i];
 		if (result == NUMundefined || point -> value < result)
 			result = point -> value;
@@ -195,9 +200,8 @@ double RealTier_getMinimumValue (I) {
 
 double RealTier_getArea (I, double tmin, double tmax) {
 	iam (RealTier);
-	long n = my points -> size, imin, imax, i;
+	long n = my points -> size, imin, imax;
 	RealPoint *points = (RealPoint *) my points -> item;
-	double area = 0.0;
 	if (n == 0) return NUMundefined;
 	if (n == 1) return (tmax - tmin) * points [1] -> value;
 	imin = AnyTier_timeToLowIndex (me, tmin);
@@ -207,10 +211,11 @@ double RealTier_getArea (I, double tmin, double tmax) {
 	Melder_assert (imin < n);
 	Melder_assert (imax > 1);
 	/*
-	 * Add the areas between the points.
+	 * Sum the areas between the points.
 	 * This works even if imin is 0 (offleft) and/or imax is n + 1 (offright).
 	 */
-	for (i = imin; i < imax; i ++) {
+	double area = 0.0;
+	for (long i = imin; i < imax; i ++) {
 		double tleft, fleft, tright, fright;
 		if (i == imin) tleft = tmin, fleft = RealTier_getValueAtTime (me, tmin);
 		else tleft = points [i] -> time, fleft = points [i] -> value;
@@ -223,16 +228,15 @@ double RealTier_getArea (I, double tmin, double tmax) {
 
 double RealTier_getMean_curve (I, double tmin, double tmax) {
 	iam (RealTier);
-	double area;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindow. */
-	area = RealTier_getArea (me, tmin, tmax);
+	double area = RealTier_getArea (me, tmin, tmax);
 	if (area == NUMundefined) return NUMundefined;
 	return area / (tmax - tmin);
 }
 
 double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
 	iam (RealTier);
-	long n = my points -> size, imin, imax, i;
+	long n = my points -> size, imin, imax;
 	RealPoint *points = (RealPoint *) my points -> item;
 	double mean, integral = 0.0;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindow. */
@@ -249,7 +253,7 @@ double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
 	 * This works even if imin is 0 (offleft) and/or imax is n + 1 (offright).
 	 */
 	mean = RealTier_getMean_curve (me, tmin, tmax);
-	for (i = imin; i < imax; i ++) {
+	for (long i = imin; i < imax; i ++) {
 		double tleft, fleft, tright, fright, sum, diff;
 		if (i == imin) tleft = tmin, fleft = RealTier_getValueAtTime (me, tmin);
 		else tleft = points [i] -> time, fleft = points [i] -> value - mean;
@@ -274,27 +278,27 @@ double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
 
 double RealTier_getMean_points (I, double tmin, double tmax) {
 	iam (RealTier);
-	long n = my points -> size, imin, imax, i;
+	long n = my points -> size, imin, imax;
 	double sum = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindow. */
 	n = AnyTier_getWindowPoints (me, tmin, tmax, & imin, & imax);
 	if (n == 0) return NUMundefined;
-	for (i = imin; i <= imax; i ++)
+	for (long i = imin; i <= imax; i ++)
 		sum += points [i] -> value;
 	return sum / n;
 }
 
 double RealTier_getStandardDeviation_points (I, double tmin, double tmax) {
 	iam (RealTier);
-	long n = my points -> size, imin, imax, i;
+	long n = my points -> size, imin, imax;
 	double mean, sum = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindow. */
 	n = AnyTier_getWindowPoints (me, tmin, tmax, & imin, & imax);
 	if (n < 2) return NUMundefined;
 	mean = RealTier_getMean_points (me, tmin, tmax);
-	for (i = imin; i <= imax; i ++) {
+	for (long i = imin; i <= imax; i ++) {
 		double diff = points [i] -> value - mean;
 		sum += diff * diff;
 	}
@@ -357,13 +361,10 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 
 TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wchar_t *valueLabel) {
 	iam (RealTier);
-	TableOfReal thee = NULL;
-	long i;
-
-	thee = TableOfReal_create (my points -> size, 2); cherror
-	TableOfReal_setColumnLabel (thee, 1, timeLabel);
-	TableOfReal_setColumnLabel (thee, 2, valueLabel);
-	for (i = 1; i <= my points -> size; i ++) {
+	TableOfReal thee = TableOfReal_create (my points -> size, 2); cherror
+	TableOfReal_setColumnLabel (thee, 1, timeLabel); cherror
+	TableOfReal_setColumnLabel (thee, 2, valueLabel); cherror
+	for (long i = 1; i <= my points -> size; i ++) {
 		RealPoint point = my points -> item [i];
 		thy data [i] [1] = point -> time;
 		thy data [i] [2] = point -> value;
@@ -375,9 +376,8 @@ end:
 
 int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically) {
 	iam (RealTier);
-	long ipoint, inewpoint;
-	RealTier thee = Data_copy (me);
-	for (ipoint = 1; ipoint < my points -> size; ipoint ++) {
+	RealTier thee = Data_copy (me); cherror
+	for (long ipoint = 1; ipoint < my points -> size; ipoint ++) {
 		RealPoint point1 = my points -> item [ipoint], point2 = my points -> item [ipoint + 1];
 		double time1 = point1 -> time, time2 = point2 -> time, tmid = 0.5 * (time1 + time2);
 		double value1 = point1 -> value, value2 = point2 -> value, valuemid;
@@ -387,7 +387,7 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 		/*
 		 * Left from the midpoint.
 		 */
-		for (inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
+		for (long inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
 			double newTime = time1 + inewpoint * timeStep;
 			double phase = (newTime - time1) / (tmid - time1);
 			double newValue = value1 + (valuemid - value1) * phase * phase;
@@ -401,7 +401,7 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 		/*
 		 * Right from the midpoint.
 		 */
-		for (inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
+		for (long inewpoint = 1; inewpoint <= numberOfPointsPerParabola; inewpoint ++) {
 			double newTime = tmid + inewpoint * timeStep;
 			double phase = (time2 - newTime) / (time2 - tmid);
 			double newValue = value2 + (valuemid - value2) * phase * phase;
@@ -438,58 +438,56 @@ end:
 
 RealTier Vector_to_RealTier (I, long channel) {
 	iam (Vector);
-	RealTier thee = RealTier_create (my xmin, my xmax);
-	long i;
-	if (! thee) return NULL;
-	for (i = 1; i <= my nx; i ++) {
-		if (! RealTier_addPoint (thee, Sampled_indexToX (me, i), my z [channel] [i]))
-			{ forget (thee); return NULL; }
+	RealTier thee = RealTier_create (my xmin, my xmax); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		RealTier_addPoint (thee, Sampled_indexToX (me, i), my z [channel] [i]); cherror
 	}
+end:
+	iferror forget (thee);
 	return thee;
 }
 
 RealTier Vector_to_RealTier_peaks (I, long channel) {
 	iam (Vector);
-	RealTier thee = RealTier_create (my xmin, my xmax);
-	long i;
-	if (! thee) return NULL;
-	for (i = 2; i < my nx; i ++) {
+	RealTier thee = RealTier_create (my xmin, my xmax); cherror
+	for (long i = 2; i < my nx; i ++) {
 		double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 		if (left <= centre && right < centre) {
 			double x, maximum;
 			Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 				channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & maximum, & x);
-			if (! RealTier_addPoint (thee, x, maximum))
-				{ forget (thee); return NULL; }
+			RealTier_addPoint (thee, x, maximum); cherror
 		}
 	}
+end:
+	iferror forget (thee);
 	return thee;
 }
 
 RealTier Vector_to_RealTier_valleys (I, long channel) {
 	iam (Vector);
-	RealTier thee = RealTier_create (my xmin, my xmax);
-	long i;
-	if (! thee) return NULL;
-	for (i = 2; i < my nx; i ++) {
+	RealTier thee = RealTier_create (my xmin, my xmax); cherror
+	for (long i = 2; i < my nx; i ++) {
 		double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 		if (left >= centre && right > centre) {
 			double x, minimum;
 			Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 				channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & minimum, & x);
-			if (! RealTier_addPoint (thee, x, minimum))
-				{ forget (thee); return NULL; }
+			RealTier_addPoint (thee, x, minimum); cherror
 		}
 	}
+end:
+	iferror forget (thee);
 	return thee;
 }
 
 RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
-	long i;
-	RealTier thee = RealTier_create (my xmin, my xmax);
-	if (! thee) return NULL;
-	for (i = 1; i <= my nt; i ++)
-		if (! RealTier_addPoint (thee, my t [i], value)) { forget (thee); return NULL; }
+	RealTier thee = RealTier_create (my xmin, my xmax); cherror
+	for (long i = 1; i <= my nt; i ++) {
+		RealTier_addPoint (thee, my t [i], value); cherror
+	}
+end:
+	iferror forget (thee);
 	return thee;
 }
 

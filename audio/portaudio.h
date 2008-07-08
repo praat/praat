@@ -382,7 +382,7 @@ PaDeviceIndex Pa_GetDefaultInputDevice( void );
 /** Retrieve the index of the default output device. The result can be
  used in the outputDevice parameter to Pa_OpenStream().
 
- @return The default output device index for the defualt host API, or paNoDevice
+ @return The default output device index for the default host API, or paNoDevice
  if no default output device is available or an error was encountered.
 
  @note

@@ -335,7 +335,8 @@ int Graphics_writeRecordings (I, FILE *f) {
 			binputr4 (get, f);   /* x */
 			binputr4 (get, f);   /* y */
 			binputr4 (get, f);   /* length */
-			fwrite (++ p, 4, numberOfArguments - 3, f);   /* text */
+			Melder_assert (sizeof (double) == 8);
+			fwrite (++ p, 8, numberOfArguments - 3, f);   /* text */
 			p += numberOfArguments - 4;
 		} else {
 			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
@@ -388,7 +389,7 @@ int Graphics_readRecordings (I, FILE *f) {
 			put (bingetr4 (f));   /* x */
 			put (bingetr4 (f));   /* y */
 			put (bingetr4 (f));   /* length */
-			fread (++ p, 4, numberOfArguments - 3, f);   /* text */
+			fread (++ p, 8, numberOfArguments - 3, f);   /* text */
 			p += numberOfArguments - 4;
 		} else {
 			long i;

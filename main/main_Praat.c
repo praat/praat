@@ -1,6 +1,6 @@
 /* main_Praat.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/09
+ * pb 2008/07/14
  */
 
 #include "praat.h"
@@ -56,6 +56,7 @@ int main (int argc, char *argv []) {
 	praat_setLogo (130, 80, logo);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
+	//INCLUDE_LIBRARY (praat_contrib_Ola_init)
 	praat_run ();
 	return 0;
 }

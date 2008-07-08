@@ -1641,7 +1641,10 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	LABEL (L"", L"Between parentheses, you find what you can do simultaneously.")
 	LABEL (L"", L"Decrease asynchronicity if sound plays with discontinuities.")
 	OPTIONMENU_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
-	REAL (L"Silence before and after (s)", L"0.0")
+	#define xstr(s) str(s)
+	#define str(s) #s
+	REAL (L"Silence before (s)", L"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
+	REAL (L"Silence after (s)", L"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
 	BOOLEAN (L"Output uses PortAudio", kMelderAudio_outputUsesPortAudio_DEFAULT)
 	BOOLEAN (L"Output uses blocking", 0)
 	OK
@@ -1652,7 +1655,8 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	SET_REAL ("Output gain", MelderAudio_getOutputGain ())
 #endif
 SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
-SET_REAL (L"Silence before and after", MelderAudio_getOutputZeroPadding ())
+SET_REAL (L"Silence before", MelderAudio_getOutputSilenceBefore ())
+SET_REAL (L"Silence after", MelderAudio_getOutputSilenceAfter ())
 SET_INTEGER (L"Output uses PortAudio", MelderAudio_getOutputUsesPortAudio ())
 SET_INTEGER (L"Output uses blocking", MelderAudio_getOutputUsesBlocking ())
 DO
@@ -1663,7 +1667,8 @@ DO
 		MelderAudio_setOutputGain (GET_REAL (L"Gain"));
 	#endif
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
-	MelderAudio_setOutputZeroPadding (GET_REAL (L"Silence before and after"));
+	MelderAudio_setOutputSilenceBefore (GET_REAL (L"Silence before"));
+	MelderAudio_setOutputSilenceAfter (GET_REAL (L"Silence after"));
 	MelderAudio_setOutputUsesPortAudio (GET_INTEGER (L"Output uses PortAudio"));
 	MelderAudio_setOutputUsesBlocking (GET_INTEGER (L"Output uses blocking"));
 END

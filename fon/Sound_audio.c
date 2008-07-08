@@ -30,6 +30,7 @@
  * pb 2007/01/07 PortAudio
  * Stefan de Konink 2007/12/02 big-endian Linux
  * pb 2008/01/19 double
+ * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
  */
 
 #include <errno.h>
@@ -760,7 +761,7 @@ error:
 /********** PLAYING A SOUND **********/
 
 static struct SoundPlay {
-	long numberOfSamples, i1, i2, zeroPadding;
+	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t);
 	void *closure;
@@ -770,9 +771,9 @@ static struct SoundPlay {
 static int melderPlayCallback (void *closure, long samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
-	double t = samplesPlayed <= my zeroPadding ? my tmin :
-		samplesPlayed >= my zeroPadding + my numberOfSamples ? my tmax :
-		my t1 + (my i1 - 1.5 + samplesPlayed - my zeroPadding) * my dt;
+	double t = samplesPlayed <= my silenceBefore ? my tmin :
+		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
+		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
 		NUMsvector_free (my buffer, 1), my buffer = 0;
 		phase = 3;
@@ -798,12 +799,13 @@ int Sound_playPart (Sound me, double tmin, double tmax,
 		thy t1 = my x1;
 		thy callback = callback;
 		thy closure = closure;
-		thy zeroPadding = (long) (ifsamp * MelderAudio_getOutputZeroPadding ());
+		thy silenceBefore = (long) (ifsamp * MelderAudio_getOutputSilenceBefore ());
+		thy silenceAfter = (long) (ifsamp * MelderAudio_getOutputSilenceAfter ());
 		int numberOfChannels = my ny > 1 ? 2 : 1;
-		thy buffer = NUMsvector (1, (i2 - i1 + 1 + 2 * thy zeroPadding) * numberOfChannels); cherror
+		thy buffer = NUMsvector (1, (i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels); cherror
 		thy i1 = i1;
 		thy i2 = i2;
-		short *to = thy buffer + thy zeroPadding * numberOfChannels;
+		short *to = thy buffer + thy silenceBefore * numberOfChannels;
 		if (numberOfChannels == 2) {
 			for (long i = i1; i <= i2; i ++) {
 				long valueLeft = (long) floor (fromLeft [i] * 32768.0 + 0.5);
@@ -819,7 +821,7 @@ int Sound_playPart (Sound me, double tmin, double tmax,
 		}
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
 		if (! MelderAudio_play16 (thy buffer + 1, ifsamp,
-			thy zeroPadding + thy numberOfSamples + thy zeroPadding, numberOfChannels, melderPlayCallback, thee))
+			thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee))
 			Melder_flushError (NULL);
 	} else {
 		Sound resampled = Sound_resample (me, bestSampleRate, 1);

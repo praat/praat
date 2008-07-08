@@ -928,15 +928,19 @@ FORM (OTMulti_PairDistribution_learn, L"OTMulti & PairDistribution: Learn", 0)
 	REAL (L"Plasticity decrement", L"0.1")
 	NATURAL (L"Number of plasticities", L"4")
 	REAL (L"Rel. plasticity spreading", L"0.1")
+	INTEGER (L"Store history every", L"0")
 	OK
 DO
 	OTMulti grammar = ONLY (classOTMulti);
+	Table history = NULL;
 	OTMulti_PairDistribution_learn (grammar, ONLY (classPairDistribution),
 		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Learn"),
 		GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 		GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
-		GET_REAL (L"Rel. plasticity spreading"));
+		GET_REAL (L"Rel. plasticity spreading"),
+		GET_INTEGER (L"Store history every"), & history);
 	praat_dataChanged (grammar);
+	if (history) praat_new1 (history, grammar -> name);
 	iferror return 0;
 END
 

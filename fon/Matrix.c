@@ -601,24 +601,21 @@ end:
 
 int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues) {
 	iam (Matrix);
-	Eigen eigen = NULL;
-	long i, j;
-
 	*eigenvectors = NULL, *eigenvalues = NULL;
 	if (my nx != my ny) return Melder_error1 (L"(Matrix_eigen:) Matrix not square.");
-	return Melder_error1 (L"(Matrix_eigen:) Not implemented. Write to the authors.");
-	//if ((eigen = Eigen_createFromSymmetricMatrix_f (eigen, my z, my nx)) == NULL) goto end;   // BUG
 
+	Eigen eigen = new (Eigen); cherror
+	Eigen_initFromSymmetricMatrix (eigen, my z, my nx); cherror
 	*eigenvectors = Data_copy (me); cherror
-	*eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);
-	for (i = 1; i <= my nx; i ++) {
+	*eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1); cherror
+	for (long i = 1; i <= my nx; i ++) {
 		(*eigenvalues) -> z [i] [1] = eigen -> eigenvalues [i];
-		for (j = 1; j <= my nx; j ++)
+		for (long j = 1; j <= my nx; j ++)
 			(*eigenvectors) -> z [i] [j] = eigen -> eigenvectors [j] [i];
 	}
 end:
 	forget (eigen);
-	if (Melder_hasError ()) {
+	iferror {
 		_Thing_forget ((Thing *) eigenvectors); *eigenvectors = NULL;
 		_Thing_forget ((Thing *) eigenvalues); *eigenvalues = NULL;
 		return 0;

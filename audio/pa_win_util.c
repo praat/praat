@@ -45,7 +45,8 @@
     @todo Implement workaround for QueryPerformanceCounter() skipping forward
     bug. (see msdn kb Q274323).
 */
- 
+
+#undef UNICODE
 #include <windows.h>
 #include <mmsystem.h> /* for timeGetTime() */
 

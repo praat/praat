@@ -165,7 +165,12 @@ int HyperPage_any (I, const wchar_t *text, int font, int size, int style, double
 {
 	iam (HyperPage);
 	double heightGuess;
+
+	if (my rightMargin == 0) return 0;
+	// Melder_assert (my rightMargin != 0);
+
 	heightGuess = size * (1.2/72) * ((long) size * wcslen (text) / (int) (my rightMargin * 150));
+
 if (! my printing) {
 	Graphics_Link *paragraphLinks;
 	int numberOfParagraphLinks, ilink;
@@ -889,7 +894,7 @@ static void createMenus (I) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;
-	Dimension marginWidth = 1, marginHeight = 1;
+	Dimension marginWidth = 10, marginHeight = 10;
 	#if motif
 		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	#endif
@@ -979,7 +984,7 @@ int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	resolution = 100;
 	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
 	#if motif
-	Melder_assert (XtWindow (my drawingArea));
+		Melder_assert (XtWindow (my drawingArea));
 	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my g, TRUE);

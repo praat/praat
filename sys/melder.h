@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/06/16
+ * pb 2008/07/07
  */
 
 #include <stdio.h>
@@ -824,40 +824,56 @@ long Melder_killReturns_inline (char *text);
 
 #if defined (macintosh) || defined (_WIN32)
 	#define kMelderAudio_inputUsesPortAudio_DEFAULT  true
+		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
+		// Win: in order to allow recording for over 64 megabytes (paMME)
 #else
 	#define kMelderAudio_inputUsesPortAudio_DEFAULT  false
 #endif
-#if defined (macintosh)
-	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
-#else
-	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false
-#endif
 void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio);
 bool MelderAudio_getInputUsesPortAudio (void);
+#if defined (macintosh)
+	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
+		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
+#else
+	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false
+		// Win: in order to reduce the long latencies of paMME and to avoid the incomplete implementation of paDirectSound
+#endif
 void MelderAudio_setOutputUsesPortAudio (bool outputUsesPortAudio);
 bool MelderAudio_getOutputUsesPortAudio (void);
+#if 1
+	#define kMelderAudio_outputSilenceBefore_DEFAULT  0.0
+		// Mac: in order to switch off the BOING caused by the automatic gain control
+#endif
+void MelderAudio_setOutputSilenceBefore (double silenceBefore);
+double MelderAudio_getOutputSilenceBefore (void);
+#if defined (macintosh)
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.0
+		// Mac: in order to reduce the BOING caused by the automatic gain control when the user replays immediately after a sound has finished
+#else
+	#define kMelderAudio_outputSilenceAfter_DEFAULT  0.5
+		// Win: in order to get rid of the click on some cards
+		// Linux: in order to get rid of double playing of a sounding buffer
+#endif
+void MelderAudio_setOutputSilenceAfter (double silenceAfter);
+double MelderAudio_getOutputSilenceAfter (void);
 void MelderAudio_setOutputUsesBlocking (bool outputUsesBlocking);
 bool MelderAudio_getOutputUsesBlocking (void);
-void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);
+void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);   // for HP-UX and Sun
 bool MelderAudio_getUseInternalSpeaker (void);
-void MelderAudio_setOutputGain (double gain);
-double MelderAudio_getOutputGain (void);
-void Melder_audio_prefs (void);
+void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity);
+enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (void);
 long MelderAudio_getOutputBestSampleRate (long fsamp);
+
 extern int MelderAudio_isPlaying;
 int MelderAudio_play16 (const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	int (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure);
 int MelderAudio_stopPlaying (bool explicit);   /* Returns 1 if sound was playing. */
-#define MelderAudio_IMPLICIT  0
-#define MelderAudio_EXPLICIT  1
+#define MelderAudio_IMPLICIT  false
+#define MelderAudio_EXPLICIT  true
 long MelderAudio_getSamplesPlayed (void);
 bool MelderAudio_stopWasExplicit (void);
 
-void MelderAudio_setOutputMaximumAsynchronicity (int maximumAsynchronicity);
-int MelderAudio_getOutputMaximumAsynchronicity (void);
-
-void MelderAudio_setOutputZeroPadding (double zeroPadding);   /* Seconds of silence before and after playing. */
-double MelderAudio_getOutputZeroPadding (void);
+void Melder_audio_prefs (void);   // in init file
 
 /********** AUDIO FILES **********/
 

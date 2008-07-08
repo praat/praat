@@ -1,9 +1,12 @@
 /*
- * $Id: pa_win_hostapis.c 1097 2006-08-26 08:27:53Z rossb $
- * Portable Audio I/O Library Windows initialization table
+ * Interface for dynamically loading directsound and providing a dummy
+ * implementation if it isn't present.
  *
- * Based on the Open Source API proposed by Ross Bencina
- * Copyright (c) 1999-2002 Ross Bencina, Phil Burk
+ * Author: Ross Bencina (some portions Phil Burk & Robert Marsanyi)
+ *
+ * For PortAudio Portable Real-Time Audio Library
+ * For more information see: http://www.portaudio.com
+ * Copyright (c) 1999-2006 Phil Burk, Robert Marsanyi and Ross Bencina
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files
@@ -36,44 +39,57 @@
  * license above.
  */
 
-/** @file
- @ingroup win_src
-
-    Win32 host API initialization function table.
-
-    @todo Consider using PA_USE_WMME etc instead of PA_NO_WMME. This is what
-    the Unix version does, we should consider being consistent.
+/**
+ @file
+ @ingroup hostaip_src
 */
 
+#ifndef INCLUDED_PA_DSOUND_DYNLINK_H
+#define INCLUDED_PA_DSOUND_DYNLINK_H
 
-#include "pa_hostapi.h"
+/* on Borland compilers, WIN32 doesn't seem to be defined by default, which
+    breaks dsound.h. Adding the define here fixes the problem. - rossb. */
+#ifdef __BORLANDC__
+#if !defined(WIN32)
+#define WIN32
+#endif
+#endif
+
+/*
+  We are only using DX3 in here, no need to polute the namespace - davidv
+*/
+#define DIRECTSOUND_VERSION 0x0300
+#include <dsound.h>
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif /* __cplusplus */
 
-PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaWinMme_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaWinWdm_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaWinWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+
+typedef struct
+{
+    HINSTANCE hInstance_;
+    
+    HRESULT (WINAPI *DllGetClassObject)(REFCLSID , REFIID , LPVOID *);
+
+    HRESULT (WINAPI *DirectSoundCreate)(LPGUID, LPDIRECTSOUND *, LPUNKNOWN);
+    HRESULT (WINAPI *DirectSoundEnumerateW)(LPDSENUMCALLBACKW, LPVOID);
+    HRESULT (WINAPI *DirectSoundEnumerateA)(LPDSENUMCALLBACKA, LPVOID);
+
+    HRESULT (WINAPI *DirectSoundCaptureCreate)(LPGUID, LPDIRECTSOUNDCAPTURE *, LPUNKNOWN);
+    HRESULT (WINAPI *DirectSoundCaptureEnumerateW)(LPDSENUMCALLBACKW, LPVOID);
+    HRESULT (WINAPI *DirectSoundCaptureEnumerateA)(LPDSENUMCALLBACKA, LPVOID);
+}PaWinDsDSoundEntryPoints;
+
+extern PaWinDsDSoundEntryPoints paWinDsDSoundEntryPoints;
+
+void PaWinDs_InitializeDSoundEntryPoints(void);
+void PaWinDs_TerminateDSoundEntryPoints(void);
+
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-
-PaUtilHostApiInitializer *paHostApiInitializers[] =
-    {
-        PaSkeleton_Initialize,   // 0; just for testing
-        PaWinMme_Initialize,   // 1
-        PaWinDs_Initialize,   // 2
-        PaWinWdm_Initialize,   // 3
-        //PaAsio_Initialize,
-		//PaWinWasapi_Initialize,
-        0   /* NULL terminated array */
-    };
-
-int paDefaultHostApiIndex = 1;
+#endif /* INCLUDED_PA_DSOUND_DYNLINK_H */
