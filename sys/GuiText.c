@@ -116,6 +116,9 @@ void _GuiText_handleFocusReception (Widget widget) {
 	 */
 	widget -> shell -> textFocus = widget;   /* see (1.2) */
 	theGui.textFocus = widget;   /* see (1.4) */
+	#if win
+		GuiText_setSelection (widget, 0, 10000000);
+	#endif
 }
 
 void _GuiText_handleFocusLoss (Widget widget) {
@@ -161,7 +164,7 @@ void _GuiText_setTheTextFocus (Widget widget) {
 	if (widget == NULL || theGui.textFocus == widget
 		|| ! widget -> managed) return;   /* Perhaps not-yet-managed. Test: open Praat's DataEditor with a Sound, then type. */
 	#if gtk
-		gtk_widget_grab_focus(widget);
+		gtk_widget_grab_focus (widget);
 	#elif win
 		SetFocus (widget -> window);   /* Will send an EN_SETFOCUS notification, which will call _GuiText_handleFocusReception (). */
 	#elif mac

@@ -78,8 +78,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 
 /* All functions with 'I' as the first argument assume that it is not NULL. */
 
-char * Thing_className (I);
-wchar_t * Thing_classNameW (I);
+wchar_t * Thing_className (I);
 /* Return your class name. */
 
 int Thing_member (I, void *klas);
@@ -139,8 +138,8 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 */
 void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
 
-Any Thing_newFromClassName (const char *className);
-Any Thing_newFromClassNameW (const wchar_t *className);
+Any Thing_newFromClassNameA (const char *className);
+Any Thing_newFromClassName (const wchar_t *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -228,8 +227,7 @@ void Thing_swap (I, thou);
 	typedef struct struct##klas##_Table *klas##_Table; \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		char *_className; \
-		wchar_t *_classNameW; \
+		wchar_t *_className; \
 		parentKlas##_Table	_parent; \
 		long _size; \
 		klas##_methods \
@@ -250,7 +248,7 @@ void Thing_swap (I, thou);
 #define class_methods(klas,parentKlas) \
 	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
 	struct struct##klas##_Table theStruct##klas = { \
-		_##klas##_initialize, #klas, L"" #klas,   /* Partial initialization because init and */ \
+		_##klas##_initialize, L"" #klas,   /* Partial initialization because init and */ \
 		& theStruct##parentKlas, sizeof (struct struct##klas) };   /* parent must be known. */ \
 	klas##_Table class##klas = & theStruct##klas; \
 	static void _##klas##_initialize (void *table) { \

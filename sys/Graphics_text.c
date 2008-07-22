@@ -637,33 +637,40 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 	//Melder_casual ("nchars %d first %d %c rightToLeft %d", nchars, lc->kar, lc -> kar, lc->rightToLeft);
 	if (my postScript) {
 		iam (GraphicsPostscript);
-		int slant = (lc -> style & Graphics_ITALIC) && lc -> font.string [0] == 'S';   /* Symbol & SILDoulos ! */
+		bool onlyRegular = lc -> font.string [0] == 'S' ||
+			(lc -> font.string [0] == 'T' && lc -> font.string [1] == 'e');   /* Symbol & SILDoulos ! */
+		int slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
+		int thick = (lc -> style & Graphics_BOLD) && onlyRegular;
 		if (lc -> font.string != my lastFid || lc -> size != my lastSize)
 			my printf (my file, my languageLevel == 1 ? "/%s %d FONT\n" : "/%s %d selectfont\n",
 				my lastFid = lc -> font.string, my lastSize = lc -> size);
 		if (lc -> link) my printf (my file, "0 0 1 setrgbcolor\n");
-		my printf (my file, "%d %d M ", xDC, yDC);
-		if (my textRotation || slant) {
-			my printf (my file, "gsave currentpoint translate ");
-			if (my textRotation)
-				my printf (my file, "%.6g rotate 0 0 M\n", (double) my textRotation);
-			if (slant)
-				my printf (my file, "[1 0 0.25 1 0 0] concat 0 0 M\n");
+		for (int i = -3; i <= 3; i ++) {
+			if (i != 0 && ! thick) continue;
+			my printf (my file, "%d %d M ", xDC + i, yDC);
+			if (my textRotation || slant) {
+				my printf (my file, "gsave currentpoint translate ");
+				if (my textRotation)
+					my printf (my file, "%.6g rotate 0 0 M\n", (double) my textRotation);
+				if (slant)
+					my printf (my file, "[1 0 0.25 1 0 0] concat 0 0 M\n");
+			}
+			my printf (my file, "(");
+			const char *kars = codes8;
+			while (*kars) {
+				if (*kars == '(' || *kars == ')' || *kars == '\\')
+					my printf (my file, "\\%c", *kars);
+				else if (*kars >= 32 && *kars <= 126)
+					my printf (my file, "%c", *kars);
+				else
+					my printf (my file, "\\%d%d%d", *(unsigned char*)kars / 64,
+						(*(unsigned char*)kars % 64) / 8, *(unsigned char*)kars % 8);
+				kars ++;
+			}
+			my printf (my file, ") show\n");
+			if (my textRotation || slant)
+				my printf (my file, "grestore\n");
 		}
-		my printf (my file, "(");
-		while (*codes8) {
-			if (*codes8 == '(' || *codes8 == ')' || *codes8 == '\\')
-				my printf (my file, "\\%c", *codes8);
-			else if (*codes8 >= 32 && *codes8 <= 126)
-				my printf (my file, "%c", *codes8);
-			else
-				my printf (my file, "\\%d%d%d", *(unsigned char*)codes8 / 64,
-					(*(unsigned char*)codes8 % 64) / 8, *(unsigned char*)codes8 % 8);
-			codes8 ++;
-		}
-		my printf (my file, ") show\n");
-		if (my textRotation || slant)
-			my printf (my file, "grestore\n");
 		if (lc -> link) my printf (my file, "0 0 0 setrgbcolor\n");
 	} else if (my screen) {
 		iam (GraphicsScreen);

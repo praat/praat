@@ -128,8 +128,8 @@ long praat_getIdOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	return inplace ?
-		Melder_error5 (L"No ", klas ? klas -> _classNameW : L"object", L" #", Melder_integer (inplace), L" selected.") :
-		Melder_error3 (L"No ", klas ? klas -> _classNameW : L"object", L" selected.");
+		Melder_error5 (L"No ", klas ? klas -> _className : L"object", L" #", Melder_integer (inplace), L" selected.") :
+		Melder_error3 (L"No ", klas ? klas -> _className : L"object", L" selected.");
 }
 
 wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
@@ -148,9 +148,9 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	if (inplace) {
-		Melder_error5 (L"No ", klas ? klas -> _classNameW : L"object", L" #", Melder_integer (inplace), L" selected.");
+		Melder_error5 (L"No ", klas ? klas -> _className : L"object", L" #", Melder_integer (inplace), L" selected.");
 	} else {
-		Melder_error3 (L"No ", klas ? klas -> _classNameW : L"object", L" selected.");
+		Melder_error3 (L"No ", klas ? klas -> _className : L"object", L" selected.");
 	}
 	return 0;   // Failure.
 }
@@ -232,7 +232,7 @@ void praat_write_do (Any dia, const wchar_t *extension) {
 	if (found == 1) {
 		MelderString_append (& defaultFileName, data -> name);
 		if (defaultFileName.length > 50) { defaultFileName.string [50] = '\0'; defaultFileName.length = 50; }
-		MelderString_append2 (& defaultFileName, L".", extension ? extension : Thing_classNameW (data));
+		MelderString_append2 (& defaultFileName, L".", extension ? extension : Thing_className (data));
 	} else if (extension == NULL) {
 		MelderString_append (& defaultFileName, L"praat.Collection");
 	} else {
@@ -329,7 +329,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	} else {
 		MelderString_copy (& givenName, my name && my name [0] ? my name : L"untitled");
 	}
-	MelderString_append3 (& name, Thing_classNameW (me), L" ", givenName.string);
+	MelderString_append3 (& name, Thing_className (me), L" ", givenName.string);
 
 	if (theCurrentPraat -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);

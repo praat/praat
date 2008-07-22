@@ -1759,7 +1759,9 @@ static void Formula_print (FormulaInstruction f) {
 		{
 			Thing object = (Thing) f [i]. content.object;
 			if (object) {
-				Melder_casual ("%d %ls %s %s", i, instructionName, Thing_className (object), Melder_peekWcsToUtf8 (object -> name));
+				Melder_casual ("%d %ls %s %s", i, instructionName,
+					Melder_peekWcsToUtf8 (Thing_className (object)),
+					Melder_peekWcsToUtf8 (object -> name));
 			} else {
 				Melder_casual ("%d %ls", i, instructionName);
 			}
@@ -3020,7 +3022,7 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 		result = floor (row->content.number + 0.5);   /* Round. */
 	} else if (row->which == Stackel_STRING) {
 		if (your getRowIndex == NULL)
-			return Melder_error3 (L"Objects of type ", Thing_classNameW (thee),
+			return Melder_error3 (L"Objects of type ", Thing_className (thee),
 				L" do not have row labels, so row indexes have to be numbers.");
 		result = your getRowIndex (thee, row->content.string);
 		if (result == 0)
@@ -3037,7 +3039,7 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 		result = floor (column->content.number + 0.5);   /* Round. */
 	} else if (column->which == Stackel_STRING) {
 		if (your getColumnIndex == NULL)
-			return Melder_error3 (L"Objects of type ", Thing_classNameW (thee),
+			return Melder_error3 (L"Objects of type ", Thing_className (thee),
 				L" do not have column labels, so column indexes have to be numbers.");
 		result = your getColumnIndex (thee, column->content.string);
 		if (result == 0)
@@ -3056,7 +3058,7 @@ static void do_self0 (long irow, long icol) {
 	} else if (our getVector) {
 		if (icol == 0) {
 			error3 (L"We are not in a loop, hence no implicit column index for the current ",
-				Thing_classNameW (me), L" object (self).\nTry using the [column] index explicitly.")
+				Thing_className (me), L" object (self).\nTry using the [column] index explicitly.")
 		} else {
 			pushNumber (our getVector (me, irow, icol));
 		}
@@ -3065,19 +3067,19 @@ static void do_self0 (long irow, long icol) {
 			if (icol == 0) {
 				error3 (L"We are not in a loop over rows and columns,\n"
 					"hence no implicit row and column indexing for the current ",
-					Thing_classNameW (me), L" object (self).\n"
+					Thing_className (me), L" object (self).\n"
 					"Try using both [row, column] indexes explicitly.")
 			} else {
 				error3 (L"We are not in a loop over columns only,\n"
 					"hence no implicit row index for the current ",
-					Thing_classNameW (me), L" object (self).\n"
+					Thing_className (me), L" object (self).\n"
 					"Try using the [row] index explicitly.")
 			}
 		} else {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (me), L" objects (like self) accept no [] indexing.")
+		error2 (Thing_className (me), L" objects (like self) accept no [] indexing.")
 	}
 end: return;
 }
@@ -3090,7 +3092,7 @@ static void do_selfStr0 (long irow, long icol) {
 	} else if (our getVectorStr) {
 		if (icol == 0) {
 			error3 (L"We are not in a loop, hence no implicit column index for the current ",
-				Thing_classNameW (me), L" object (self).\nTry using the [column] index explicitly.")
+				Thing_className (me), L" object (self).\nTry using the [column] index explicitly.")
 		} else {
 			wchar_t *result = Melder_wcsdup (our getVectorStr (me, icol)); cherror
 			pushString (result);
@@ -3100,12 +3102,12 @@ static void do_selfStr0 (long irow, long icol) {
 			if (icol == 0) {
 				error3 (L"We are not in a loop over rows and columns,\n"
 					"hence no implicit row and column indexing for the current ",
-					Thing_classNameW (me), L" object (self).\n"
+					Thing_className (me), L" object (self).\n"
 					"Try using both [row, column] indexes explicitly.")
 			} else {
 				error3 (L"We are not in a loop over columns only,\n"
 					"hence no implicit row index for the current ",
-					Thing_classNameW (me), L" object (self).\n"
+					Thing_className (me), L" object (self).\n"
 					"Try using the [row] index explicitly.")
 			}
 		} else {
@@ -3113,7 +3115,7 @@ static void do_selfStr0 (long irow, long icol) {
 			pushString (result);
 		}
 	} else {
-		error2 (Thing_classNameW (me), L" objects (like self) accept no [] indexing.")
+		error2 (Thing_className (me), L" objects (like self) accept no [] indexing.")
 	}
 end: return;
 }
@@ -3148,7 +3150,7 @@ static void do_objectCell0 (long irow, long icol) {
 	} else if (your getVector) {
 		if (icol == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit column index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit column index for this ", Thing_className (thee), L" object.\n"
 				"Try using: object [id, column].")
 		} else {
 			pushNumber (your getVector (thee, irow, icol));
@@ -3157,18 +3159,18 @@ static void do_objectCell0 (long irow, long icol) {
 		if (irow == 0) {
 			if (icol == 0) {
 				error3 (L"We are not in a loop over rows and columns,\n"
-					"hence no implicit row and column indexing for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit row and column indexing for this ", Thing_className (thee), L" object.\n"
 					"Try using: object [id, row, column].")
 			} else {
 				error3 (L"We are not in a loop over columns only,\n"
-					"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 					"Try using: object [id, row].")
 			}
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [] indexing.")
+		error2 (Thing_className (thee), L" objects accept no [] indexing.")
 	}
 end: return;
 }
@@ -3179,7 +3181,7 @@ static void do_matriks0 (long irow, long icol) {
 	} else if (your getVector) {
 		if (icol == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit column index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit column index for this ", Thing_className (thee), L" object.\n"
 				"Try using the [column] index explicitly.")
 		} else {
 			pushNumber (your getVector (thee, irow, icol));
@@ -3188,18 +3190,18 @@ static void do_matriks0 (long irow, long icol) {
 		if (irow == 0) {
 			if (icol == 0) {
 				error3 (L"We are not in a loop over rows and columns,\n"
-					"hence no implicit row and column indexing for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit row and column indexing for this ", Thing_className (thee), L" object.\n"
 					"Try using both [row, column] indexes explicitly.")
 			} else {
 				error3 (L"We are not in a loop over columns only,\n"
-					"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 					"Try using the [row] index explicitly.")
 			}
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [] indexing.")
+		error2 (Thing_className (thee), L" objects accept no [] indexing.")
 	}
 end: return;
 }
@@ -3214,13 +3216,13 @@ static void do_selfMatriks1 (long irow) {
 	} else if (our getMatrix) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for the current ", Thing_classNameW (me), L" object (self).\n"
+				"hence no implicit row index for the current ", Thing_className (me), L" object (self).\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
 			pushNumber (our getMatrix (me, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (me), L" objects (like self) accept no [column] indexes.")
+		error2 (Thing_className (me), L" objects (like self) accept no [column] indexes.")
 	}
 end: return;
 }
@@ -3236,14 +3238,14 @@ static void do_selfMatriksStr1 (long irow) {
 	} else if (our getMatrixStr) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for the current ", Thing_classNameW (me), L" object (self).\n"
+				"hence no implicit row index for the current ", Thing_className (me), L" object (self).\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
 			wchar_t *result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
 			pushString (result);
 		}
 	} else {
-		error2 (Thing_classNameW (me), L" objects (like self) accept no [column] indexes.")
+		error2 (Thing_className (me), L" objects (like self) accept no [column] indexes.")
 	}
 end: return;
 }
@@ -3256,13 +3258,13 @@ static void do_objectCell1 (long irow) {
 	} else if (your getMatrix) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using: object [id, row, column].")
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes.")
+		error2 (Thing_className (thee), L" objects accept no [column] indexes.")
 	}
 end: return;
 }
@@ -3275,13 +3277,13 @@ static void do_matriks1 (long irow) {
 	} else if (your getMatrix) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
 			pushNumber (your getMatrix (thee, irow, icol));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes.")
+		error2 (Thing_className (thee), L" objects accept no [column] indexes.")
 	}
 end: return;
 }
@@ -3294,13 +3296,13 @@ static void do_objectCellStr1 (long irow) {
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using: object [id, row, column].")
 		} else {
 			pushString (Melder_wcsdup (your getMatrixStr (thee, irow, icol)));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes for string cells.")
+		error2 (Thing_className (thee), L" objects accept no [column] indexes for string cells.")
 	}
 end: return;
 }
@@ -3313,13 +3315,13 @@ static void do_matrixStr1 (long irow) {
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
-				"hence no implicit row index for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
 			pushString (Melder_wcsdup (your getMatrixStr (thee, irow, icol)));
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no [column] indexes for string cells.")
+		error2 (Thing_className (thee), L" objects accept no [column] indexes for string cells.")
 	}
 end: return;
 }
@@ -3330,7 +3332,7 @@ static void do_selfMatriks2 (void) {
 	if (me == NULL) error1 (L"The name \"self\" is restricted to formulas for objects.")
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
-	if (our getMatrix == NULL) error2 (Thing_classNameW (me), L" objects like \"self\" accept no [row, column] indexing.")
+	if (our getMatrix == NULL) error2 (Thing_className (me), L" objects like \"self\" accept no [row, column] indexing.")
 	pushNumber (our getMatrix (me, irow, icol));
 end: return;
 }
@@ -3342,7 +3344,7 @@ static void do_selfMatriksStr2 (void) {
 	if (me == NULL) error1 (L"The name \"self$\" is restricted to formulas for objects.")
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
-	if (our getMatrixStr == NULL) error2 (Thing_classNameW (me), L" objects like \"self$\" accept no [row, column] indexing for string cells.")
+	if (our getMatrixStr == NULL) error2 (Thing_className (me), L" objects like \"self$\" accept no [row, column] indexing for string cells.")
 	result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
 	pushString (result);
 end: return;
@@ -3352,7 +3354,7 @@ static void do_objectCell2 (void) {
 	Data thee = getObjectFromUniqueID (pop); cherror
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
-	if (your getMatrix == NULL) error2 (Thing_classNameW (thee), L" objects accept no [id, row, column] indexing.")
+	if (your getMatrix == NULL) error2 (Thing_className (thee), L" objects accept no [id, row, column] indexing.")
 	pushNumber (your getMatrix (thee, irow, icol));
 end: return;
 }
@@ -3361,7 +3363,7 @@ static void do_matriks2 (void) {
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
-	if (your getMatrix == NULL) error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing.")
+	if (your getMatrix == NULL) error2 (Thing_className (thee), L" objects accept no [row, column] indexing.")
 	pushNumber (your getMatrix (thee, irow, icol));
 end: return;
 }
@@ -3370,7 +3372,7 @@ static void do_objectCellStr2 (void) {
 	Data thee = getObjectFromUniqueID (pop); cherror
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
-	if (your getMatrixStr == NULL) error2 (Thing_classNameW (thee), L" objects accept no [id, row, column] indexing for string cells.")
+	if (your getMatrixStr == NULL) error2 (Thing_className (thee), L" objects accept no [id, row, column] indexing for string cells.")
 	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
 	pushString (result);
 end: return;
@@ -3380,7 +3382,7 @@ static void do_matriksStr2 (void) {
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
-	if (your getMatrixStr == NULL) error2 (Thing_classNameW (thee), L" objects accept no [row, column] indexing for string cells.")
+	if (your getMatrixStr == NULL) error2 (Thing_className (thee), L" objects accept no [row, column] indexing for string cells.")
 	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
 	pushString (result);
 end: return;
@@ -3393,12 +3395,12 @@ static void do_objectLocation0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL)
 			error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit x value for this ", Thing_className (thee), L" object.\n"
 				"Try using: object (id, x).")
 		if (our getX == NULL)
-			error5 (L"The current ", Thing_classNameW (me),
+			error5 (L"The current ", Thing_className (me),
 				L" object gives no implicit x values,\nhence no implicit x value for this ",
-				Thing_classNameW (thee), L" object.\n"
+				Thing_className (thee), L" object.\n"
 				"Try using: object (id, x).")
 		double x = our getX (me, icol);
 		pushNumber (your getFunction1 (thee, irow, x));
@@ -3406,21 +3408,21 @@ static void do_objectLocation0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL)
 			error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x or y values for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit x or y values for this ", Thing_className (thee), L" object.\n"
 				"Try using: object (id, x, y).")
 		if (our getX == NULL)
-			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit x values,\n"
-				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+			error5 (L"The current ", Thing_className (me), L" object gives no implicit x values,\n"
+				"hence no implicit x value for this ", Thing_className (thee), L" object.\n"
 				"Try using: object (id, x, y).")
 		double x = our getX (me, icol);
 		if (our getY == NULL)
-			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+			error5 (L"The current ", Thing_className (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using: object (id, y).")
 		double y = our getY (me, irow);
 		pushNumber (your getFunction2 (thee, x, y));
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no () values.")
+		error2 (Thing_className (thee), L" objects accept no () values.")
 	}
 end: return;
 }
@@ -3432,12 +3434,12 @@ static void do_funktie0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL)
 			error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit x value for this ", Thing_className (thee), L" object.\n"
 				"Try using the (x) argument explicitly.")
 		if (our getX == NULL)
-			error5 (L"The current ", Thing_classNameW (me),
+			error5 (L"The current ", Thing_className (me),
 				L" object gives no implicit x values,\nhence no implicit x value for this ",
-				Thing_classNameW (thee), L" object.\n"
+				Thing_className (thee), L" object.\n"
 				"Try using the (x) argument explicitly.")
 		double x = our getX (me, icol);
 		pushNumber (your getFunction1 (thee, irow, x));
@@ -3445,21 +3447,21 @@ static void do_funktie0 (long irow, long icol) {
 		Data me = theSource;
 		if (me == NULL)
 			error3 (L"No current object (we are not in a Formula command),\n"
-				"hence no implicit x or y values for this ", Thing_classNameW (thee), L" object.\n"
+				"hence no implicit x or y values for this ", Thing_className (thee), L" object.\n"
 				"Try using both (x, y) arguments explicitly.")
 		if (our getX == NULL)
-			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit x values,\n"
-				"hence no implicit x value for this ", Thing_classNameW (thee), L" object.\n"
+			error5 (L"The current ", Thing_className (me), L" object gives no implicit x values,\n"
+				"hence no implicit x value for this ", Thing_className (thee), L" object.\n"
 				"Try using both (x, y) arguments explicitly.")
 		double x = our getX (me, icol);
 		if (our getY == NULL)
-			error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+			error5 (L"The current ", Thing_className (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using the (y) argument explicitly.")
 		double y = our getY (me, irow);
 		pushNumber (your getFunction2 (thee, x, y));
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept no () values.")
+		error2 (Thing_className (thee), L" objects accept no () values.")
 	}
 end: return;
 }
@@ -3472,15 +3474,15 @@ static void do_selfFunktie1 (long irow) {
 			pushNumber (our getFunction1 (me, irow, x->content.number));
 		} else if (our getFunction2) {
 			if (our getY == NULL)
-				error3 (L"The current ", Thing_classNameW (me), L" object (self) accepts no implicit y values.\n"
+				error3 (L"The current ", Thing_className (me), L" object (self) accepts no implicit y values.\n"
 					"Try using both (x, y) arguments instead.")
 			double y = our getY (me, irow);
 			pushNumber (our getFunction2 (me, x->content.number, y));
 		} else {
-			error2 (Thing_classNameW (me), L" objects like \"self\" accept no (x) values.")
+			error2 (Thing_className (me), L" objects like \"self\" accept no (x) values.")
 		}
 	} else {
-		error2 (Thing_classNameW (me), L" objects like \"self\" accept only numeric x values.")
+		error2 (Thing_className (me), L" objects like \"self\" accept only numeric x values.")
 	}
 end: return;
 }
@@ -3494,19 +3496,19 @@ static void do_objectLocation1 (long irow) {
 			Data me = theSource;
 			if (me == NULL)
 				error3 (L"No current object (we are not in a Formula command),\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using: object (id, x, y).")
 			if (our getY == NULL)
-				error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+				error5 (L"The current ", Thing_className (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using: object (id, x, y).")
 			double y = our getY (me, irow);
 			pushNumber (your getFunction2 (thee, x->content.number, y));
 		} else {
-			error2 (Thing_classNameW (thee), L" objects accept no (x) values.")
+			error2 (Thing_className (thee), L" objects accept no (x) values.")
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
+		error2 (Thing_className (thee), L" objects accept only numeric x values.")
 	}
 end: return;
 }
@@ -3520,19 +3522,19 @@ static void do_funktie1 (long irow) {
 			Data me = theSource;
 			if (me == NULL)
 				error3 (L"No current object (we are not in a Formula command),\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using both (x, y) arguments instead.")
 			if (our getY == NULL)
-				error5 (L"The current ", Thing_classNameW (me), L" object gives no implicit y values,\n"
-					"hence no implicit y value for this ", Thing_classNameW (thee), L" object.\n"
+				error5 (L"The current ", Thing_className (me), L" object gives no implicit y values,\n"
+					"hence no implicit y value for this ", Thing_className (thee), L" object.\n"
 					"Try using both (x, y) arguments instead.")
 			double y = our getY (me, irow);
 			pushNumber (your getFunction2 (thee, x->content.number, y));
 		} else {
-			error2 (Thing_classNameW (thee), L" objects accept no (x) values.")
+			error2 (Thing_className (thee), L" objects accept no (x) values.")
 		}
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
+		error2 (Thing_className (thee), L" objects accept only numeric x values.")
 	}
 end: return;
 }
@@ -3541,10 +3543,10 @@ static void do_selfFunktie2 (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (me == NULL) error1 (L"The name \"self\" is restricted to formulas for objects.")
-		if (our getFunction2 == NULL) error2 (Thing_classNameW (me), L" objects like \"self\" accept no (x, y) values.")
+		if (our getFunction2 == NULL) error2 (Thing_className (me), L" objects like \"self\" accept no (x, y) values.")
 		pushNumber (our getFunction2 (me, x->content.number, y->content.number));
 	} else {
-		error2 (Thing_classNameW (me), L" objects accept only numeric x values.")
+		error2 (Thing_className (me), L" objects accept only numeric x values.")
 	}
 end: return;
 }
@@ -3552,10 +3554,10 @@ static void do_objectLocation2 (void) {
 	Stackel y = pop, x = pop;
 	Data thee = getObjectFromUniqueID (pop); cherror
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		if (your getFunction2 == NULL) error2 (Thing_classNameW (thee), L" objects accept no (x, y) values.")
+		if (your getFunction2 == NULL) error2 (Thing_className (thee), L" objects accept no (x, y) values.")
 		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
+		error2 (Thing_className (thee), L" objects accept only numeric x values.")
 	}
 end: return;
 }
@@ -3563,10 +3565,10 @@ static void do_funktie2 (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		if (your getFunction2 == NULL) error2 (Thing_classNameW (thee), L" objects accept no (x, y) values.")
+		if (your getFunction2 == NULL) error2 (Thing_className (thee), L" objects accept no (x, y) values.")
 		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
 	} else {
-		error2 (Thing_classNameW (thee), L" objects accept only numeric x values.")
+		error2 (Thing_className (thee), L" objects accept only numeric x values.")
 	}
 end: return;
 }

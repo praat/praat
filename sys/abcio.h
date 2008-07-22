@@ -204,6 +204,7 @@ char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..429
 	or NULL if out of memory.
 	binputsxxx expects a null-terminated C string whose 'strlen' fits in 1, 2, or 4 bytes.
 */
+wchar_t * bingetw1 (FILE *f);   void binputw1 (const wchar_t *s, FILE *f);
 wchar_t * bingetw2 (FILE *f);   void binputw2 (const wchar_t *s, FILE *f);
 wchar_t * bingetw4 (FILE *f);   void binputw4 (const wchar_t *s, FILE *f);
 

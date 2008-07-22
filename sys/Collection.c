@@ -26,6 +26,7 @@
  * pb 2007/08/08 canWriteAsEncoding
  * pb 2007/10/01 make sure that names are encodable when writing
  * pb 2008/03/19 removed SortedSetOfFloat
+ * pb 2008/07/20 wchar_t
  */
 
 #include "Collection.h"
@@ -55,8 +56,8 @@ static int classCollection_copy (I, thou) {
 	thy item --;   /* Base 1. */
 	for (long i = 1; i <= my size; i ++) {   /* Try to copy the items themselves. */
 		if (! Thing_member (my item [i], classData))
-			return Melder_error ("Collection::copy: "
-				"cannot copy item of class %s.", Thing_className (my item [i]));
+			return Melder_error3 (L"Collection::copy: "
+				"cannot copy item of class ", Thing_className (my item [i]), L".");
 		if (! (thy item [i] = Data_copy (my item [i]))) return 0;
 		/* Copy the names of the items (but Data_copy does that). */
 		/* if (! Thing_getName (thy item [i]))
@@ -71,11 +72,11 @@ static bool classCollection_equal (I, thou) {
 	if (my size != thy size) return 0;
 	for (long i = 1; i <= my size; i ++) {
 		if (! Thing_member (my item [i], classData))
-			return Melder_error ("Collection::equal: "
-				"cannot compare items of class %s.", Thing_className (my item [i]));
+			return Melder_error3 (L"Collection::equal: "
+				"cannot compare items of class ", Thing_className (my item [i]), L".");
 		if (! Thing_member (thy item [i], classData))
-			return Melder_error ("Collection::equal: "
-				"cannot compare items of class %s.", Thing_className (thy item [i]));
+			return Melder_error3 (L"Collection::equal: "
+				"cannot compare items of class ", Thing_className (thy item [i]), L".");
 		if (! Data_equal (my item [i], thy item [i])) return 0;
 	}
 	return 1;
@@ -101,14 +102,9 @@ static int classCollection_writeText (I, MelderFile file) {
 		Thing_Table table = thing -> methods;
 		texputintro (file, L"item [", Melder_integer (i), L"]:", 0,0,0);
 		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
-			return Melder_error ("(Collection::writeText:) "
-				"Objects of class %s cannot be written.", table -> _className);
-		wchar_t className [100];
-		if (table -> version)
-			swprintf (className, 100, L"%ls %ld", table -> _classNameW, table -> version);
-		else
-			wcscpy (className, table -> _classNameW);
-		texputw2 (file, className, L"class", 0,0,0,0,0);
+			return Melder_error3 (L"(Collection::writeText:) "
+				"Objects of class ", table -> _className, L" cannot be written.");
+		texputw2 (file, table -> version > 0 ? Melder_wcscat3 (table -> _className, L" ", Melder_integer (table -> version)) : table -> _className, L"class", 0,0,0,0,0);
 		texputw2 (file, thing -> name, L"name", 0,0,0,0,0);
 		if (! Data_writeText (thing, file)) return 0;
 		texexdent (file);
@@ -138,12 +134,12 @@ static int classCollection_readText (I, MelderReadString *text) {
 				return Melder_error ("Collection::readText: read item number %ld while expecting %ld.", itemNumberRead, i);
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				return Melder_error ("Collection::readText: wrong header at object %ld.", i);
-			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
+			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
 			Thing_version = -1;   /* Override. */
 			my size ++;
 			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-				return Melder_error ("Collection::readText: "
-					"cannot read item of class %s.", Thing_className (my item [i]));
+				return Melder_error3 (L"Collection::readText: "
+					"cannot read item of class ", Thing_className (my item [i]), L".");
 			if (! Data_readText (my item [i], text)) return 0;
 			if (stringsRead == 3) {
 				if (line [n] == ' ') n ++;   /* Skip space character. */
@@ -161,10 +157,10 @@ static int classCollection_readText (I, MelderReadString *text) {
 	for (long i = 1; i <= size; i ++) {
 		long saveVersion = Thing_version;   /* The version of the Collection... */
 		Melder_free (className); className = texgets2 (text); cherror
-		my item [i] = Thing_newFromClassName (className); cherror
+		my item [i] = Thing_newFromClassNameA (className); cherror
 		my size ++;
 		if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-			error3 (L"Cannot read item of class ", Thing_classNameW (my item [i]), L" in collection.");
+			error3 (L"Cannot read item of class ", Thing_className (my item [i]), L" in collection.");
 		Melder_free (objectName); objectName = texgetw2 (text); cherror
 		Thing_setName (my item [i], objectName); cherror
 		Data_readText (my item [i], text); cherror
@@ -184,15 +180,11 @@ static int classCollection_writeBinary (I, FILE *f) {
 	for (i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
-		char className [100];
-		if (table -> version)
-			sprintf (className, "%s %ld", table -> _className, table -> version);
-		else
-			strcpy (className, table -> _className);
 		if (! Thing_member (thing, classData) || ! Data_canWriteBinary (thing))
-			return Melder_error ("(Collection::writeBinary:) "
-				"Objects of class %s cannot be written.", table -> _className);
-		binputs1 (className, f);
+			return Melder_error3 (L"(Collection::writeBinary:) "
+				"Objects of class ", table -> _className, L" cannot be written.");
+		binputw1 (table -> version > 0 ?
+			Melder_wcscat3 (table -> _className, L" ", Melder_integer (table -> version)) : table -> _className, f);
 		binputw2 (thing -> name, f);
 		if (! Data_writeBinary (thing, f)) return 0;
 	}
@@ -207,12 +199,12 @@ static int classCollection_readBinary (I, FILE *f) {
 		for (i = 1; i <= size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2 ||
-				! (my item [i] = Thing_newFromClassName (klas))) return 0;
+				! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
 			Thing_version = -1;   /* Override. */
 			my size ++;
 			if (! Thing_member (my item [i], classData))
-				return Melder_error ("Collection::readBinary: "
-					"cannot read item of class %s.", Thing_className (my item [i]));
+				return Melder_error3 (L"Collection::readBinary: "
+					"cannot read item of class ", Thing_className (my item [i]), L".");
 			if (fgetc (f) != ' ' || ! Data_readBinary (my item [i], f)) return 0;
 			if (strcmp (name, "?")) Thing_setName (my item [i], Melder_peekUtf8ToWcs (name));
 		}
@@ -223,12 +215,12 @@ static int classCollection_readBinary (I, FILE *f) {
 		for (i = 1; i <= size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
 			char *klas = bingets1 (f);
-			if (! (my item [i] = Thing_newFromClassName (klas))) return 0;
+			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
 			Melder_free (klas);
 			my size ++;
 			if (! Thing_member (my item [i], classData) || ! Data_canReadBinary (my item [i]))
-				return Melder_error ("(Collection::readBinary:) "
-					"Cannot read item of class %s.", Thing_className (my item [i]));
+				return Melder_error3 (L"(Collection::readBinary:) "
+					"Cannot read item of class ", Thing_className (my item [i]), L".");
 			wchar_t *name = bingetw2 (f);
 			Thing_setName (my item [i], name);
 			Melder_free (name);
@@ -355,9 +347,8 @@ Any Collections_merge (I, thou) {
 	iam (Collection); thouart (Collection);
 	Collection him;
 	long i;
-	if (my methods != thy methods) return Melder_errorp ("(Collection_join:) "
-		"Objects are of different class (%s and %s).",
-		Thing_className (me), Thing_className (thee));
+	if (my methods != thy methods) return Melder_errorp5 (L"(Collections_merge:) "
+		"Objects are of different class (", Thing_className (me), L" and ", Thing_className (thee), L").");
 	if (! (him = Data_copy (me))) goto error;
 	for (i = 1; i <= thy size; i ++) {
 		Data tmp = Data_copy (thy item [i]);

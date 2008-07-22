@@ -440,9 +440,8 @@ praat_Command praat_getMenuCommand (long i)
 	{ return i < 1 || i > theNumberOfCommands ? NULL : & theCommands [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	const wchar_t *windowName = our _classNameW;
-	long i;
-	for (i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
+	const wchar_t *windowName = our _className;
+	for (long i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
 		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
 			Melder_flushError ("To fix this, go to Praat:Preferences:Buttons:Editors, "
 				"and remove the script from this menu.\n"

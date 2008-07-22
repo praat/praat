@@ -1618,7 +1618,7 @@ int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 	for (itier = 1; itier <= my tiers -> size; itier ++) {
 		Function anyTier = (Function) my tiers -> item [itier];
 		MelderFile_write1 (file, L"\n");
-		writeQuotedString (file, Thing_classNameW (anyTier));
+		writeQuotedString (file, Thing_className (anyTier));
 		MelderFile_write1 (file, L" ");
 		writeQuotedString (file, anyTier -> name);
 		MelderFile_write4 (file, L" ", Melder_double (anyTier -> xmin), L" ", Melder_double (anyTier -> xmax));

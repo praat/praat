@@ -266,8 +266,7 @@
 #define oo_CLASS_CREATE(klas,parent) \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		char *_className; \
-		wchar_t *_classNameW; \
+		wchar_t *_className; \
 		parent##_Table _parent; \
 		long _size; \
 		klas##_methods \

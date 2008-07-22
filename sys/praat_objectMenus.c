@@ -68,7 +68,7 @@ DO
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
 	static MelderString fullName = { 0 };
 	MelderString_empty (& fullName);
-	MelderString_append3 (& fullName, Thing_classNameW (OBJECT), L" ", string);
+	MelderString_append3 (& fullName, Thing_className (OBJECT), L" ", string);
 	if (! wcsequ (fullName.string, FULL_NAME)) {
 		Melder_free (FULL_NAME), FULL_NAME = Melder_wcsdup (fullName.string);
 		MelderString listName = { 0 };

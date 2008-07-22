@@ -1236,6 +1236,30 @@ char * bingets4 (FILE *f) {
 	return result;
 }
 
+wchar_t * bingetw1 (FILE *f) {
+	wchar_t *result = NULL;
+	unsigned short length = bingetu1 (f);
+	if (length == 0xff) {
+		length = bingetu1 (f);
+		result = Melder_malloc (wchar_t, length + 1);
+		if (! result)
+			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned short i = 0; i < length; i ++) {
+			result [i] = bingetu2 (f);
+		}
+	} else {
+		result = Melder_malloc (wchar_t, length + 1);
+		if (! result)
+			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
+		for (unsigned short i = 0; i < length; i ++) {
+			result [i] = bingetu1 (f);
+		}
+	}
+	if (feof (f)) { Melder_free (result); return NULL; }
+	result [length] = 0;   /* Trailing null byte. */
+	return result;
+}
+
 wchar_t * bingetw2 (FILE *f) {
 	wchar_t *result = NULL;
 	unsigned short length = bingetu2 (f);
@@ -1297,6 +1321,26 @@ void binputs2 (const char *s, FILE *f) {
 void binputs4 (const char *s, FILE *f) {
 	unsigned long length = s ? strlen (s) : 0;
 	binputu4 (length, f); if (s) fwrite (s, 1, length, f);
+}
+
+void binputw1 (const wchar_t *s, FILE *f) {
+	if (s == NULL) {
+		binputu1 (0, f);
+	} else {
+		unsigned long length = wcslen (s); if (length > 254) length = 254;
+		if (Melder_isValidAscii (s)) {
+			binputu1 (length, f);
+			for (unsigned long i = 0; i < length; i ++) {
+				binputu1 (s [i], f);
+			}
+		} else {
+			binputu1 (0xff, f);
+			binputu1 (length, f);
+			for (unsigned long i = 0; i < length; i ++) {
+				binputu2 (s [i], f);   // BUG: should be UTF-16.
+			}
+		}
+	}
 }
 
 void binputw2 (const wchar_t *s, FILE *f) {

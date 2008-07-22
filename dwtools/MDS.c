@@ -3749,7 +3749,7 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 	{
 		MelderInfo_open ();
 		MelderInfo_writeLine4 (L"**************** INDSCAL results on Distances "
-			"*******************\n\n", Thing_classNameW (sp), 
+			"*******************\n\n", Thing_className (sp), 
 			L"number of objects: ",  Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{
@@ -3867,7 +3867,7 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	{
 		MelderInfo_open ();
 		MelderInfo_writeLine1 (L"**************** INDSCAL with monotone regression *******************");
-		MelderInfo_writeLine1  (Thing_classNameW (dissims));
+		MelderInfo_writeLine1  (Thing_className (dissims));
 		MelderInfo_writeLine2  (L"Number of objects: ", Melder_integer (nSources));
 		for (i = 1; i <= nSources; i++)
 		{

@@ -25,6 +25,7 @@
  * pb 2006/12/10 info method can contain only MelderInfo_writeXXX
  * pb 2007/06/11 wchar_t
  * pb 2008/04/04 Thing_infoWithId
+ * pb 2008/07/20 wchar_t
  */
 
 #include <stdarg.h>
@@ -37,7 +38,7 @@ static void destroy (I) { iam (Thing); Melder_free (my name); }
 
 static void info (I) {
 	iam (Thing);
-	MelderInfo_writeLine2 (L"Object type: ", Thing_classNameW (me));
+	MelderInfo_writeLine2 (L"Object type: ", Thing_className (me));
 	MelderInfo_writeLine2 (L"Object name: ", my name ? my name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
@@ -50,7 +51,7 @@ static void nameChanged (Any thing) {
 /* Because Thing has no parent, we cannot use the macro `class_methods': */
 static void _Thing_initialize (void *table);
 struct structThing_Table theStructThing =
-	{ _Thing_initialize, "Thing", L"Thing", NULL, sizeof (struct structThing) };
+	{ _Thing_initialize, L"Thing", NULL, sizeof (struct structThing) };
 Thing_Table classThing = & theStructThing;
 static void _Thing_initialize (void *table) {
 	Thing_Table us = table;
@@ -59,8 +60,7 @@ static void _Thing_initialize (void *table) {
 	us -> nameChanged = nameChanged;
 }
 
-char * Thing_className (I) { iam (Thing); return our _className; }
-wchar_t * Thing_classNameW (I) { iam (Thing); return our _classNameW; }
+wchar_t * Thing_className (I) { iam (Thing); return our _className; }
 
 Any Thing_new (void *table) {
 	Thing_Table us = table;
@@ -116,7 +116,7 @@ void *Thing_classFromClassName (const wchar_t *klas) {
 	 */
 	for (i = 1; i <= numberOfReadableClasses; i ++) {
 		Thing_Table table = readableClasses [i];
-		if (wcsequ (buffer, table -> _classNameW)) {
+		if (wcsequ (buffer, table -> _className)) {
 			if (! table -> destroy)   /* Table not initialized? */
 				table -> _initialize (table);
 			return table;
@@ -138,12 +138,12 @@ void *Thing_classFromClassName (const wchar_t *klas) {
 	return Melder_errorp3 (L"(Thing_classFromClassName:) Class \"", buffer, L"\" not recognized.");
 }
 
-Any Thing_newFromClassName (const char *className) {
+Any Thing_newFromClassNameA (const char *className) {
 	void *table = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
 	return Thing_new (table);
 }
-Any Thing_newFromClassNameW (const wchar_t *className) {
+Any Thing_newFromClassName (const wchar_t *className) {
 	void *table = Thing_classFromClassName (className);
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
 	return Thing_new (table);
@@ -178,7 +178,7 @@ void * _Thing_check (I, void *klas, const char *fileName, int line) {
 	while (table != klas && table != NULL) table = table -> _parent;
 	if (! table)
 		Melder_fatal ("(_Thing_check:) Object of wrong class (%.50s) passed to a function\n"
-				"in file %.100s at line %d.", our _className, fileName, line);
+				"in file %.100s at line %d.", Melder_peekWcsToUtf8 (our _className), fileName, line);
 	return me;
 }
 
@@ -204,7 +204,7 @@ wchar_t * Thing_messageName (I) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	MelderString_append4 (& buffers [ibuffer], our _classNameW, L" \"", my name ? my name : L"(nameless)", L"\"");
+	MelderString_append4 (& buffers [ibuffer], our _className, L" \"", my name ? my name : L"(nameless)", L"\"");
 	return buffers [ibuffer]. string;
 }
 

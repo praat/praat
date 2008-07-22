@@ -31,6 +31,7 @@
  * pb 2007/12/31 Gui
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2008/07/20 wchar_t
  */
 
 #define NAME_X  30
@@ -836,8 +837,8 @@ class_methods_end
 
 static int ClassEditor_init (I, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	iam (ClassEditor);
-	if (! description) return Melder_error
-		("(ClassEditor_init:) Class \"%s\" cannot be inspected.", Thing_className (address));
+	if (! description) return Melder_error3
+		(L"(ClassEditor_init:) Class ", Thing_className (address), L" cannot be inspected.");
 	if (! StructEditor_init (me, root, title, address, description))
 		return 0;
 	return 1;
@@ -893,8 +894,8 @@ class_methods_end
 DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data) {
 	DataEditor me;
 	Data_Table klas = ((Data) data) -> methods;
-	if (! klas -> description) return Melder_errorp
-		("(DataEditor_create:) Class \"%s\" cannot be inspected.", klas -> _className);
+	if (! klas -> description) return Melder_errorp3
+		(L"(DataEditor_create:) Class ", klas -> _className, L" cannot be inspected.");
 	me = new (DataEditor);
 	my children = Collection_create (classDataSubEditor, 10);
 	my parent = parent;

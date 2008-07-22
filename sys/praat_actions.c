@@ -64,14 +64,14 @@ static void fixSelectionSpecification (void **class1, int *n1, void **class2, in
 	/* Now: if *class3, then *class2, and if *class2, then *class1.
 	 * Bubble-sort the input by class name.
 	 */
-	if (*class2 && strcmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
+	if (*class2 && wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
 		helpClass = *class1; *class1 = *class2; *class2 = helpClass;
 		helpN = *n1; *n1 = *n2; *n2 = helpN;
 	}
-	if (*class3 && strcmp (((Data_Table) *class2) -> _className, ((Data_Table) *class3) -> _className) > 0) {
+	if (*class3 && wcscmp (((Data_Table) *class2) -> _className, ((Data_Table) *class3) -> _className) > 0) {
 		helpClass = *class2; *class2 = *class3; *class3 = helpClass;
 		helpN = *n2; *n2 = *n3; *n3 = helpN;
-		if (strcmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
+		if (wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
 			helpClass = *class1; *class1 = *class2; *class2 = helpClass;
 			helpN = *n1; *n1 = *n2; *n2 = helpN;
 		}
@@ -124,11 +124,12 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
 	if (callback && ! title) {
-		Melder_flushError ("praat_addAction: command with callback has no title. Classes: %s %s %s.",
-			class1 ? ((Data_Table) class1) -> _className : "",
-			class2 ? ((Data_Table) class2) -> _className : "",
-			class3 ? ((Data_Table) class3) -> _className : "",
-			class4 ? ((Data_Table) class4) -> _className : "");
+		Melder_error9 (L"praat_addAction: command with callback has no title. Classes: ",
+			class1 ? ((Data_Table) class1) -> _className : L"", L" ",
+			class2 ? ((Data_Table) class2) -> _className : L"", L" ",
+			class3 ? ((Data_Table) class3) -> _className : L"", L" ",
+			class4 ? ((Data_Table) class4) -> _className : L"", L".");
+		Melder_flushError (NULL);
 		return;
 	}
 
@@ -310,9 +311,9 @@ int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t 
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
-		return Melder_error9 (L"(praat_removeAction:) Action command \"", ((Data_Table) class1) -> _classNameW,
-			class2 ? L" & ": L"", ((Data_Table) class2) -> _classNameW,
-			class3 ? L" & ": L"", ((Data_Table) class3) -> _classNameW,
+		return Melder_error9 (L"(praat_removeAction:) Action command \"", ((Data_Table) class1) -> _className,
+			class2 ? L" & ": L"", ((Data_Table) class2) -> _className,
+			class3 ? L" & ": L"", ((Data_Table) class3) -> _className,
 			L": ", title, L"\" not found.");
 	}
 	theNumberOfActions --;
@@ -338,9 +339,9 @@ int praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *t
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
-		return Melder_error9 (L"(praat_hideAction:) Action command \"", class1 ? ((Data_Table) class1) -> _classNameW : NULL,
-			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _classNameW : NULL,
-			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _classNameW : NULL,
+		return Melder_error9 (L"(praat_hideAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
+			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
+			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
 			L": ", title, L"\" not found.");
 	}
 	if (! theActions [found]. hidden) {
@@ -368,9 +369,9 @@ int praat_showAction (void *class1, void *class2, void *class3, const wchar_t *t
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
-		return Melder_error9 (L"(praat_showAction:) Action command \"", class1 ? ((Data_Table) class1) -> _classNameW : NULL,
-			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _classNameW : NULL,
-			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _classNameW : NULL,
+		return Melder_error9 (L"(praat_showAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
+			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
+			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
 			L": ", title, L"\" not found.");
 	}
 	if (theActions [found]. hidden) {
@@ -396,16 +397,16 @@ int praat_showAction_classNames (const wchar_t *className1, const wchar_t *class
 static int compareActions (const void *void_me, const void *void_thee) {
 	praat_Command me = (praat_Command) void_me, thee = (praat_Command) void_thee;
 	int compare;
-	compare = wcscmp (((Data_Table) my class1) -> _classNameW, ((Data_Table) thy class1) -> _classNameW);
+	compare = wcscmp (((Data_Table) my class1) -> _className, ((Data_Table) thy class1) -> _className);
 	if (compare) return my class1 == classData ? -1 : thy class1 == classData ? 1 : compare;
 	if (my class2) {
 		if (! thy class2) return 1;
-		compare = wcscmp (((Data_Table) my class2) -> _classNameW, ((Data_Table) thy class2) -> _classNameW);
+		compare = wcscmp (((Data_Table) my class2) -> _className, ((Data_Table) thy class2) -> _className);
 		if (compare) return compare;
 	} else if (thy class2) return -1;
 	if (my class3) {
 		if (! thy class3) return 1;
-		compare = wcscmp (((Data_Table) my class3) -> _classNameW, ((Data_Table) thy class3) -> _classNameW);
+		compare = wcscmp (((Data_Table) my class3) -> _className, ((Data_Table) thy class3) -> _className);
 		if (compare) return compare;
 	} else if (thy class3) return -1;
 	if (my sortingTail < thy sortingTail) return -1;
@@ -423,7 +424,7 @@ static const wchar_t *numberString (int number) {
 	return number == 1 ? L"one" : number == 2 ? L"two" : number == 3 ? L"three" : L"any number of";
 }
 static const wchar_t *classString (void *klas) {
-	return klas == classData ? L"" : ((Data_Table) klas) -> _classNameW;
+	return klas == classData ? L"" : ((Data_Table) klas) -> _className;
 }
 static const wchar_t *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
@@ -832,9 +833,9 @@ void praat_saveAddedActions (FILE *f) {
 			praat_Command me = & theActions [i];
 			if (my uniqueID == id && ! my hidden && my title) {
 				fwprintf (f, L"Add action command... %ls %d %ls %d %ls %d \"%ls\" \"%ls\" %d %ls\n",
-					((Data_Table) my class1) -> _classNameW, my n1,
-					my class2 ? ((Data_Table) my class2) -> _classNameW : L"\"\"", my n2,
-					my class3 ? ((Data_Table) my class3) -> _classNameW : L"\"\"", my n3,
+					((Data_Table) my class1) -> _className, my n1,
+					my class2 ? ((Data_Table) my class2) -> _className : L"\"\"", my n2,
+					my class3 ? ((Data_Table) my class3) -> _className : L"\"\"", my n3,
 					my title, my after ? my after : L"", my depth, my script ? my script : L"");
 				break;
 			}
@@ -844,9 +845,9 @@ void praat_saveAddedActions (FILE *f) {
 		if (my toggled && my title && ! my uniqueID && ! my script)
 			fwprintf (f, L"%ls action command... %ls %ls %ls %ls\n",
 				my hidden ? L"Hide" : L"Show",
-				((Data_Table) my class1) -> _classNameW,
-				my class2 ? ((Data_Table) my class2) -> _classNameW : L"\"\"",
-				my class3 ? ((Data_Table) my class3) -> _classNameW : L"\"\"",
+				((Data_Table) my class1) -> _className,
+				my class2 ? ((Data_Table) my class2) -> _className : L"\"\"",
+				my class3 ? ((Data_Table) my class3) -> _className : L"\"\"",
 				my title);
 	}
 }

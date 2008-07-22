@@ -96,27 +96,27 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	} else {
 		MelderString_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderString_append (& text, ((Data_Table) cmd -> class1) -> _classNameW);
+	MelderString_append (& text, ((Data_Table) cmd -> class1) -> _className);
 	if (n1) {
 		MelderString_append3 (& text, L" (", Melder_integer (n1), L")");
 	}
 	if (cmd -> class2) {
 		int n2 = cmd -> n2;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _className);
 		if (n2) {
 			MelderString_append3 (& text, L" (", Melder_integer (n2), L")");
 		}
 	}
 	if (cmd -> class3) {
 		int n3 = cmd -> n3;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _className);
 		if (n3) {
 			MelderString_append3 (& text, L" (", Melder_integer (n3), L")");
 		}
 	}
 	if (cmd -> class4) {
 		int n4 = cmd -> n4;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _classNameW);
+		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _className);
 		if (n4) {
 			MelderString_append3 (& text, L" (", Melder_integer (n4), L")");
 		}
@@ -170,7 +170,7 @@ static void draw (I) {
 		case 4:
 			for (i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				wchar_t *klas = ((Data_Table) cmd -> class1) -> _classNameW;
+				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") < 0)
 					drawAction (me, praat_getAction (i), i);
 			}
@@ -178,7 +178,7 @@ static void draw (I) {
 		case 5:
 			for (i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				wchar_t *klas = ((Data_Table) cmd -> class1) -> _classNameW;
+				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") >= 0)
 					drawAction (me, praat_getAction (i), i);
 			}

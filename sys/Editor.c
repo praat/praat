@@ -230,7 +230,7 @@ int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t
 			}
 		}
 	}
-	return Melder_error3 (L"Command not available in ", our _classNameW, L".");
+	return Melder_error3 (L"Command not available in ", our _className, L".");
 }
 
 /********** class Editor **********/
@@ -264,12 +264,12 @@ static void destroy (I) {
 
 static void info (I) {
 	iam (Editor);
-	MelderInfo_writeLine2 (L"Editor type: ", Thing_classNameW (me));
+	MelderInfo_writeLine2 (L"Editor type: ", Thing_className (me));
 	MelderInfo_writeLine2 (L"Editor name: ", my name ? my name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 	if (my data) {
-		MelderInfo_writeLine2 (L"Data type: ", ((Thing) my data) -> methods -> _classNameW);
+		MelderInfo_writeLine2 (L"Data type: ", ((Thing) my data) -> methods -> _className);
 		MelderInfo_writeLine2 (L"Data name: ", ((Thing) my data) -> name);
 	}
 }
@@ -381,7 +381,7 @@ static void createMenuItems_query_info (I, EditorMenu menu) {
 	if (my data) {
 		static MelderString title = { 0 };
 		MelderString_empty (& title);
-		MelderString_append2 (& title, Thing_classNameW (my data), L" info");
+		MelderString_append2 (& title, Thing_className (my data), L" info");
 		EditorMenu_addCommand (menu, title.string, 0, menu_cb_info);
 	}
 }

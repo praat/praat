@@ -152,7 +152,7 @@ static int menu_cb_addToMenu (EDITOR_ARGS) {
 		LABEL (L"", L"Script file:")
 		TEXTFIELD (L"Script", L"")
 	EDITOR_OK
-		if (my editorClass) SET_STRING (L"Window", my editorClass -> _classNameW)
+		if (my editorClass) SET_STRING (L"Window", my editorClass -> _className)
 		if (my name)
 			SET_STRING (L"Script", my name)
 		else

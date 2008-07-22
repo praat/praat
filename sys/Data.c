@@ -25,6 +25,7 @@
  * pb 2007/06/21 wchar_t
  * pb 2007/07/21 Data_canWriteAsEncoding
  * pb 2008/01/18 guarded against some crashes (-> Data me = NULL)
+ * pb 2008/07/20 wchar_t
  */
 
 #include "Collection.h"
@@ -116,12 +117,12 @@ Any Data_copy (I) {
 	iam (Data);
 	Data thee;
 	if (me == NULL) return NULL;
-	if (our copy == classData -> copy) return Melder_errorp ("(Data_copy:) Class %s cannot be copied.", our _className);
+	if (our copy == classData -> copy) return Melder_errorp3 (L"(Data_copy:) Class ", our _className, L" cannot be copied.");
 	thee = Thing_new (my methods);
 	if (! thee) return NULL;
 	if (! our copy (me, thee)) {
 		forget (thee);
-		return Melder_errorp ("(Data_copy:) Object of class %s not copied.", our _className);
+		return Melder_errorp3 (L"(Data_copy:) Object of class ", our _className, L" not copied.");
 	}
 	Thing_setName (thee, my name);
 	return thee;
@@ -175,16 +176,16 @@ end:
 
 static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _classNameW, L" cannot be written to a text file.")
+	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _className, L" cannot be written to a text file.")
 	Data_createTextFile (me, file, verbose); cherror
-	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _classNameW);
+	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _className);
 	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
 	MelderFile_write1 (file, L"\"\n");
 	Data_writeText (me, file); cherror
 	MelderFile_writeCharacter (file, '\n');
 end:
 	MelderFile_close (file);
-	iferror return Melder_error5 (L"Cannot write ", our _classNameW, L"to file \"", MelderFile_messageNameW (file), L"\".");
+	iferror return Melder_error5 (L"Cannot write ", our _className, L"to file \"", MelderFile_messageNameW (file), L"\".");
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }
@@ -211,20 +212,15 @@ int Data_writeBinary (I, FILE *f) {
 
 int Data_writeToBinaryFile (I, MelderFile file) {
 	iam (Data);
-	if (! Data_canWriteBinary (me)) error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _classNameW, L" cannot be written to a generic binary file.")
+	if (! Data_canWriteBinary (me)) error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _className, L" cannot be written to a generic binary file.")
 	MelderFile_create (file, 0, 0, 0); cherror
 	if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
 		error1 (L"Cannot write first bytes of file.")
-	char className [100];
-	if (our version)
-		sprintf (className, "%s %ld", our _className, our version);
-	else
-		strcpy (className, our _className);
-	binputs1 (className, file -> filePointer);
+	binputw1 (our version > 0 ? Melder_wcscat3 (our _className, L" ", Melder_integer (our version)) : our _className, file -> filePointer);
 	if (! Data_writeBinary (me, file -> filePointer)) goto end;
 end:
 	MelderFile_close (file);
-	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file \"", MelderFile_messageNameW (file), L"\".");
+	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file ", MelderFile_messageNameW (file), L".");
 	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	return 1;
 }
@@ -243,17 +239,17 @@ int Data_writeLisp (I, FILE *f) {
 
 int Data_writeLispToConsole (I) {
 	iam (Data);
-	if (! Data_canWriteLisp (me)) return Melder_error ("(Data_writeLispToConsole:) Class %s cannot be written as LISP.", our _className);
-	wprintf (L"Write as LISP sequence to console: class %ls,  name \"%ls\".\n", Thing_classNameW (me), my name ? my name : L"<none>");
+	if (! Data_canWriteLisp (me)) return Melder_error3 (L"(Data_writeLispToConsole:) Class ", our _className, L" cannot be written as LISP.");
+	wprintf (L"Write as LISP sequence to console: class %ls,  name \"%ls\".\n", Thing_className (me), my name ? my name : L"<none>");
 	return Data_writeLisp (me, stdout);
 }
 
 int Data_writeToLispFile (I, MelderFile fs) {
 	iam (Data);
 	FILE *f;
-	if (! Data_canWriteLisp (me)) return Melder_error ("(Data_writeToLispFile:) Class %s cannot be written as LISP.", our _className);
+	if (! Data_canWriteLisp (me)) return Melder_error3 (L"(Data_writeToLispFile:) Class ", our _className, L" cannot be written as LISP.");
 	if ((f = Melder_fopen (fs, "w")) == NULL) return 0;
-	if (fprintf (f, "%sLispFile\n", our _className) == EOF || ! Data_writeLisp (me, f)) {
+	if (fprintf (f, "%sLispFile\n", Melder_peekWcsToUtf8 (our _className)) == EOF || ! Data_writeLisp (me, f)) {
 		fclose (f);
 		return Melder_error ("(Data_writeToLispFile:) Error while writing file \"%.200s\". Disk probably full.", MelderFile_messageName (fs));
 	}
@@ -270,9 +266,9 @@ bool Data_canReadText (I) {
 int Data_readText (I, MelderReadString *text) {
 	iam (Data);
 	if (! our readText (me, text) || Melder_hasError ())
-		return Melder_error2 (Thing_classNameW (me), L" not read.");
+		return Melder_error2 (Thing_className (me), L" not read.");
 	if (text -> readPointer == NULL)
-		return Melder_error3 (L"Early end of file. ", Thing_classNameW (me), L" not read.");
+		return Melder_error3 (L"Early end of file. ", Thing_className (me), L" not read.");
 	return 1;
 }
 
@@ -285,12 +281,12 @@ Any Data_readFromTextFile (MelderFile file) {
 	wchar_t *end = wcsstr (line, L"ooTextFile");   /* oo format? */
 	if (end) {
 		klas = texgetw2 (& text); cherror
-		me = Thing_newFromClassNameW (klas); cherror
+		me = Thing_newFromClassName (klas); cherror
 	} else {
 		end = wcsstr (line, L"TextFile");
 		if (end == NULL) error1 (L"Not an old-type text file; should not occur.")
 		*end = '\0';
-		me = Thing_newFromClassNameW (line); cherror
+		me = Thing_newFromClassName (line); cherror
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */
 	}
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
@@ -309,10 +305,10 @@ bool Data_canReadBinary (I) {
 
 int Data_readBinary (I, FILE *f) {
 	iam (Data);
-	if (! our readBinary (me, f)) return Melder_error ("(Data_readBinary:) %s not read.", Thing_className (me));
+	if (! our readBinary (me, f)) return Melder_error3 (L"(Data_readBinary:) ", Thing_className (me), L" not read.");
 	if (feof (f))
-		return Melder_error ("(Data_readBinary:) Early end of file. %s not read.", Thing_className (me));
-	if (ferror (f)) return Melder_error ("(Data_readBinary:) I/O error. %s not read.", Thing_className (me));
+		return Melder_error3 (L"(Data_readBinary:) Early end of file. ", Thing_className (me), L" not read.");
+	if (ferror (f)) return Melder_error3 (L"(Data_readBinary:) I/O error. ", Thing_className (me), L" not read.");
 	return 1;
 }
 
@@ -328,11 +324,11 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		char *klas;
 		fseek (f, strlen ("ooBinaryFile"), 0);
 		klas = bingets1 (f);
-		if (! klas || ! (me = Thing_newFromClassName (klas))) { fclose (f); return 0; }
+		if (! klas || ! (me = Thing_newFromClassNameA (klas))) { fclose (f); return 0; }
 		Melder_free (klas);
 	} else {
 		end = strstr (line, "BinaryFile");
-		if (! end || ! (*end = '\0', me = Thing_newFromClassName (line))) {
+		if (! end || ! (*end = '\0', me = Thing_newFromClassNameA (line))) {
 			fclose (f);
 			return Melder_errorp ("(Data_readFromBinaryFile:) File \"%.200s\" is not a Data binary file.", MelderFile_messageName (file));
 		}
@@ -353,9 +349,9 @@ bool Data_canReadLisp (I) {
 
 int Data_readLisp (I, FILE *f) {
 	iam (Data);
-	if (! our readLisp (me, f)) return Melder_error ("(Data_readLisp:) %s not read.", Thing_className (me));
+	if (! our readLisp (me, f)) return Melder_error3 (L"(Data_readLisp:) ", Thing_className (me), L" not read.");
 	/* (Do not check for end-of-file) */
-	if (ferror (f)) return Melder_error ("(Data_readLisp:) I/O error. %s not read.", Thing_className (me));
+	if (ferror (f)) return Melder_error3 (L"(Data_readLisp:) I/O error. ", Thing_className (me), L" not read.");
 	return 1;
 }
 
@@ -366,7 +362,7 @@ Any Data_readFromLispFile (MelderFile file) {
 	if ((f = Melder_fopen (file, "r")) == NULL) return NULL;
 	fgets (line, 199, f);
 	end = strstr (line, "LispFile");
-	if (! end || ! (*end = '\0', me = Thing_newFromClassName (line))) {
+	if (! end || ! (*end = '\0', me = Thing_newFromClassNameA (line))) {
 		fclose (f);
 		return Melder_errorp ("(Data_readFromLispFile:) File \"%.200s\" is not a Data LISP file.", MelderFile_messageName (file));
 	}

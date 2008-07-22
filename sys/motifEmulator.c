@@ -3428,6 +3428,50 @@ void XmUpdateDisplay (Widget displayDummy) {
 
 /***** EVENT *****/
 
+static long numberOfTextWidgets = 0, textWidgetLocation = 0;
+static Widget nextTextWidget = NULL;
+static void _motif_inspectTextWidgets (Widget me, Widget text) {
+	for (Widget sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
+		if (MEMBER (sub, Shell)) continue;
+		if (MEMBER (sub, Text)) {
+			numberOfTextWidgets ++;
+			if (sub == text) {
+				textWidgetLocation = numberOfTextWidgets;
+			}
+		} else {
+			_motif_inspectTextWidgets (sub, text);
+		}
+	}
+}
+static void _motif_getLocatedTextWidget (Widget me) {
+	for (Widget sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
+		if (MEMBER (sub, Shell)) continue;
+		if (MEMBER (sub, Text)) {
+			numberOfTextWidgets ++;
+			if (numberOfTextWidgets == textWidgetLocation) {
+				nextTextWidget = sub;
+			}
+		} else {
+			_motif_getLocatedTextWidget (sub);
+		}
+	}
+}
+static Widget _motif_getNextTextWidget (Widget shell, Widget text) {
+	numberOfTextWidgets = 0;
+	textWidgetLocation = 0;
+	_motif_inspectTextWidgets (shell, text);
+	Melder_assert (numberOfTextWidgets >= 1);
+	Melder_assert (textWidgetLocation >= 1);
+	Melder_assert (textWidgetLocation <= numberOfTextWidgets);
+	if (numberOfTextWidgets == 1) return NULL;   // no tab navigation if there is only one text widget
+	nextTextWidget = NULL;
+	textWidgetLocation ++;   // tab to next text widget
+	if (textWidgetLocation > numberOfTextWidgets) textWidgetLocation = 1;   // if at end, then tab around to first text widget
+	numberOfTextWidgets = 0;
+	_motif_getLocatedTextWidget (shell);
+	return nextTextWidget;
+}
+
 #if win
 static void on_scroll (Widget me, UINT part, int pos) {
 	if (my maximum == my minimum) return;
@@ -3764,6 +3808,14 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			 */
 			if (shell && (shell -> motiff.shell.lowAccelerators [modifiers] & 1 << GuiMenu_TAB)) {
 				_motif_processKeyboardEquivalent (GuiMenu_TAB, modifiers, event);
+				return true;
+			}
+			/*
+			 * Next, try tab navigation.
+			 */
+			Widget nextTextWidget = _motif_getNextTextWidget (shell, text);
+			if (nextTextWidget != NULL) {
+				_GuiText_setTheTextFocus (nextTextWidget);
 				return true;
 			}
 			/*
@@ -4395,6 +4447,16 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 					return;
 				}
 			}
+			/*
+			 * Next, try tab navigation.
+			 */
+			if (me && MEMBER (me, Text) && kar == 9) {
+				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me);
+				if (nextTextWidget != NULL) {
+					_GuiText_setTheTextFocus (nextTextWidget);
+					return;
+				}
+			}
 		} else if (message -> message == WM_LBUTTONDOWN) {
 			/*
 			 * Catch mouse-down messages to cascade buttons:
@@ -4610,6 +4672,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 	static void on_char (HWND window, TCHAR kar, int repeat) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
+			Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
 				Widget drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
@@ -4618,8 +4681,21 @@ void XtAppMainLoop (XtAppContext appctxt) {
 				} else {
 					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
 				}
+			} else if (MEMBER (me, Text) && kar == 9) {
+				/*
+				 * Next, try tab navigation.
+				 */
+				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me);
+				if (nextTextWidget != NULL) {
+					_GuiText_setTheTextFocus (nextTextWidget);
+					GuiText_setSelection (nextTextWidget, 0, 10000000);
+				} else {
+					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
+				}
 			} else FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
-		} else FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
+		} else {
+			FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
+		}
 	}
 	static void on_move (HWND window, int x, int y) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
