@@ -4247,8 +4247,21 @@ static Any cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile fi
 
 static Any chronologicalTextGridTextFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 100) return NULL;
-	if (! strnequ (& header [0], "\"Praat chronological TextGrid text file\"", 40)) return NULL;
-	return TextGrid_readFromChronologicalTextFile (file);
+	if (strnequ (& header [0], "\"Praat chronological TextGrid text file\"", 40))
+		return TextGrid_readFromChronologicalTextFile (file);
+	char headerCopy [101];
+	memcpy (headerCopy, header, 100);
+	headerCopy [100] = '\0';
+	for (int i = 0; i < 100; i ++)
+		if (headerCopy [i] == '\0') headerCopy [i] = '\001';
+	//if (strstr (headerCopy, "\"\001P\001r\001a\001a\001t\001 \001c\001h\001r\001o\001n\001o\001l\001o\001g\001i\001c\001a\001l\001"
+	//	" \001T\001e\001x\001t\001G\001r\001i\001d\001 t\001"))
+	if (strstr (headerCopy, "\"\001P\001r\001a\001a\001t\001 \001c\001h\001r\001o\001n\001o\001l\001o\001g\001i\001c\001a\001l\001"
+		" \001T\001e\001x\001t\001G\001r\001i\001d\001 \001t\001e\001x\001t\001 \001f\001i\001l\001e\001\""))
+	{
+		return TextGrid_readFromChronologicalTextFile (file);
+	}
+	return NULL;
 }
 
 /***** buttons *****/

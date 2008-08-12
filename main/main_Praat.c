@@ -56,7 +56,7 @@ int main (int argc, char *argv []) {
 	praat_setLogo (130, 80, logo);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
-	//INCLUDE_LIBRARY (praat_contrib_Ola_init)
+	INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 	praat_run ();
 	return 0;
 }

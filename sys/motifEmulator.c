@@ -3460,7 +3460,7 @@ static Widget _motif_getNextTextWidget (Widget shell, Widget text) {
 	numberOfTextWidgets = 0;
 	textWidgetLocation = 0;
 	_motif_inspectTextWidgets (shell, text);
-	Melder_assert (numberOfTextWidgets >= 1);
+	if (numberOfTextWidgets == 0) return NULL;   // no tab navigation if there is no text widget (shouldn't normally occur)
 	Melder_assert (textWidgetLocation >= 1);
 	Melder_assert (textWidgetLocation <= numberOfTextWidgets);
 	if (numberOfTextWidgets == 1) return NULL;   // no tab navigation if there is only one text widget
@@ -3813,10 +3813,12 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			/*
 			 * Next, try tab navigation.
 			 */
-			Widget nextTextWidget = _motif_getNextTextWidget (shell, text);
-			if (nextTextWidget != NULL) {
-				_GuiText_setTheTextFocus (nextTextWidget);
-				return true;
+			if (text) {
+				Widget nextTextWidget = _motif_getNextTextWidget (shell, text);
+				if (nextTextWidget != NULL) {
+					_GuiText_setTheTextFocus (nextTextWidget);
+					return true;
+				}
 			}
 			/*
 			 * Otherwise, hand it to a text widget.

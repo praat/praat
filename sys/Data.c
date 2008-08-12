@@ -26,6 +26,7 @@
  * pb 2007/07/21 Data_canWriteAsEncoding
  * pb 2008/01/18 guarded against some crashes (-> Data me = NULL)
  * pb 2008/07/20 wchar_t
+ * pb 2008/08/13 prevented overriding of header in file recognition
  */
 
 #include "Collection.h"
@@ -398,12 +399,13 @@ Any Data_readFromFile (MelderFile file) {
 			return Data_readFromTextFile (file);
 	}
 	if (nread > 22) {
-		char headerCopy [513];
+		char headerCopy [101];
 		memcpy (headerCopy, header, 100);
-		for (i = 0; i < 512; i ++)
-			if (header [i] == '\0') header [i] = '\001';
-		char *p = strstr (header, "T\001e\001x\001t\001F\001i\001l\001e");
-		if (p != NULL && p - header < nread - 15 && p - header < 80)
+		headerCopy [100] = '\0';
+		for (i = 0; i < 100; i ++)
+			if (headerCopy [i] == '\0') headerCopy [i] = '\001';
+		char *p = strstr (headerCopy, "T\001e\001x\001t\001F\001i\001l\001e");
+		if (p != NULL && p - headerCopy < nread - 15 && p - headerCopy < 80)
 			return Data_readFromTextFile (file);
 	}
 

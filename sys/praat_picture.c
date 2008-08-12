@@ -36,6 +36,7 @@
  * pb 2008/01/19 double
  * pb 2008/03/18 function comment
  * pb 2008/04/30 new Formula API
+ * pb 2008/08/06 axes info
  */
 
 #include "praatP.h"
@@ -1405,6 +1406,12 @@ DIRECT (Picture_settings_report)
 		praat_colour == Graphics_PURPLE ? L"Purple" :
 		praat_colour == Graphics_LIME ? L"Lime" :
 		L"(unknown)");
+	double x1WC, x2WC, y1WC, y2WC;
+	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	MelderInfo_writeLine2 (L"Axis left: ", Melder_double (x1WC));
+	MelderInfo_writeLine2 (L"Axis right: ", Melder_double (x2WC));
+	MelderInfo_writeLine2 (L"Axis bottom: ", Melder_double (y1WC));
+	MelderInfo_writeLine2 (L"Axis top: ", Melder_double (y2WC));
 	MelderInfo_close ();
 END
 

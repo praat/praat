@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080722)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080812)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.32# (August 12, 2008)")
+LIST_ITEM (L"\\bu Contributed by Ola S\\o\"der: @@kNN classifiers@ and @@k-means clustering@.")
+LIST_ITEM (L"\\bu Made UTF-16-encoded chronological TextGrid files readable.")
+NORMAL (L"##5.0.31# (August 6, 2008)")
+LIST_ITEM (L"\\bu Macintosh: corrected a bug introduced in 5.0.30 that caused Praat to crash when you pressed the Tab key "
+	"in a window without text fields.")
 NORMAL (L"##5.0.30# (July 22, 2008)")
 LIST_ITEM (L"\\bu Macintosh and Windows: tab navigation.")
 NORMAL (L"##5.0.29# (July 8, 2008)")
@@ -998,7 +1004,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20080423)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20080812)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1006,11 +1012,14 @@ LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, 
 	"@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@, "
 	"@@ExperimentMFC|listening experiments@, "
 	"@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@, "
-	"tables, @formulas, @scripting, and adaptation of PortAudio.")
+	"tables, @formulas, @scripting, and adaptation of PortAudio and GLPK.")
 LIST_ITEM (L"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
+	"@VowelEditor, "
 	"and adaptation of GSL, LAPACK, fftpack, and regular expressions.")
+LIST_ITEM (L"Stefan de Konink: port to GTK.")
 LIST_ITEM (L"Erez Volk: adaptation of FLAC and MAD.")
+LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
 LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")
 LIST_ITEM (L"Darryl Purnell from Pretoria created the first version of audio for Praat for Linux.")
 NORMAL (L"We included the following freely available software libraries in Praat (sometimes with adaptations):")
