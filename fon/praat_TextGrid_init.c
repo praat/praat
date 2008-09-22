@@ -1173,20 +1173,21 @@ DO
 	}
 END
 
-FORM (TextGrid_shiftTimes, L"TextGrid: Shift times", 0)
+FORM (TextGrid_shiftTimesBy, L"TextGrid: Shift times", 0)
 	REAL (L"Time shift (s)", L"0.5")
 	OK
 DO
 	WHERE (SELECTED) {
-		TextGrid_shiftTimes (OBJECT, GET_REAL (L"Time shift"));
+		Function_shiftXBy (OBJECT, GET_REAL (L"Time shift"));
 		praat_dataChanged (OBJECT);
 	}
 END
 
 DIRECT (TextGrid_shiftToZero)
 	WHERE (SELECTED) {
-		TextGrid_shiftToZero (OBJECT);
-		praat_dataChanged (OBJECT);
+		TextGrid me = OBJECT;
+		Function_shiftXTo (me, my xmin, 0.0);
+		praat_dataChanged (me);
 	}
 END
 
@@ -1330,7 +1331,8 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 1, L"Is interval tier...", 0, 1, DO_TextGrid_isIntervalTier);
 		praat_addAction1 (classTextGrid, 1, L"-- query intervals --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Get number of intervals...", 0, 1, DO_TextGrid_getNumberOfIntervals);
-		praat_addAction1 (classTextGrid, 1, L"Get starting point...", 0, 1, DO_TextGrid_getStartingPoint);
+		praat_addAction1 (classTextGrid, 1, L"Get start point...", 0, 1, DO_TextGrid_getStartingPoint);
+		praat_addAction1 (classTextGrid, 1, L"Get starting point...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_getStartingPoint);   // hidden 2008
 		praat_addAction1 (classTextGrid, 1, L"Get end point...", 0, 1, DO_TextGrid_getEndPoint);
 		praat_addAction1 (classTextGrid, 1, L"Get label of interval...", 0, 1, DO_TextGrid_getLabelOfInterval);
 		praat_addAction1 (classTextGrid, 1, L"Get interval at time...", 0, 1, DO_TextGrid_getIntervalAtTime);
@@ -1344,12 +1346,13 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 1, L"-- query labels --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Count labels...", 0, 1, DO_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, L"Modify -        ", 0, 0, 0);
-		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_genericize);
 		praat_addAction1 (classTextGrid, 0, L"Convert to backslash trigraphs", 0, 1, DO_TextGrid_genericize);
-		praat_addAction1 (classTextGrid, 0, L"Nativize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_nativize);
+		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_genericize);   // hidden 2007
 		praat_addAction1 (classTextGrid, 0, L"Convert to Unicode", 0, 1, DO_TextGrid_nativize);
+		praat_addAction1 (classTextGrid, 0, L"Nativize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_nativize);   // hidden 2007
 		praat_addAction1 (classTextGrid, 0, L"Modify time domain", 0, 1, 0);
-			praat_addAction1 (classTextGrid, 0, L"Shift times...", 0, 2, DO_TextGrid_shiftTimes);
+			praat_addAction1 (classTextGrid, 0, L"Shift times by...", 0, 2, DO_TextGrid_shiftTimesBy);
+			praat_addAction1 (classTextGrid, 0, L"Shift times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TextGrid_shiftTimesBy);   // hidden 2008
 			praat_addAction1 (classTextGrid, 0, L"Shift to zero", 0, 2, DO_TextGrid_shiftToZero);
 			praat_addAction1 (classTextGrid, 0, L"Scale times...", 0, 2, DO_TextGrid_scaleTimes);
 		praat_addAction1 (classTextGrid, 0, L"Modify interval tier", 0, 1, 0);

@@ -28,7 +28,7 @@
 oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if oo_READING
-		if (localVersion >= 5 || Melder_debug == 25 && localVersion == 4) {
+		if (localVersion >= 5 || (Melder_debug == 25 && localVersion == 4)) {
 			oo_OBJECT (Sound, 2, sound)
 		} else {
 			oo_OBJECT (Sound, 0, sound)

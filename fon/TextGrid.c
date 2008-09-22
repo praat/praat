@@ -142,6 +142,15 @@ int TextInterval_setText (TextInterval me, const wchar_t *text) {
 	return 1;
 }
 
+static void classTextTier_shiftX (I, double xfrom, double xto) {
+	iam (TextTier);
+	inherited (TextTier) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		TextPoint point = my points -> item [i];
+		NUMshift (& point -> time, xfrom, xto);
+	}
+}
+
 class_methods (TextTier, Function)
 	class_method_local (TextTier, destroy)
 	class_method_local (TextTier, copy)
@@ -153,6 +162,7 @@ class_methods (TextTier, Function)
 	class_method_local (TextTier, readBinary)
 	class_method_local (TextTier, description)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
+	class_method_local (TextTier, shiftX)
 class_methods_end
 
 TextTier TextTier_create (double tmin, double tmax) {
@@ -170,6 +180,15 @@ int TextTier_addPoint (TextTier me, double time, const wchar_t *mark) {
 	return 1;
 }
 
+static void classIntervalTier_shiftX (I, double xfrom, double xto) {
+	iam (IntervalTier);
+	inherited (IntervalTier) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my intervals -> size; i ++) {
+		TextInterval interval = my intervals -> item [i];
+		interval -> methods -> shiftX (interval, xfrom, xto);
+	}
+}
+
 class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, destroy)
 	class_method_local (IntervalTier, copy)
@@ -181,6 +200,7 @@ class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, readBinary)
 	class_method_local (IntervalTier, description)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
+	class_method_local (IntervalTier, shiftX)
 class_methods_end
 
 IntervalTier IntervalTier_create (double tmin, double tmax) {
@@ -266,6 +286,15 @@ static void classTextGrid_info (I) {
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfPoints));
 }
 
+static void classTextGrid_shiftX (I, double xfrom, double xto) {
+	iam (TextGrid);
+	inherited (TextGrid) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my tiers -> size; i ++) {
+		Function tier = my tiers -> item [i];
+		tier -> methods -> shiftX (tier, xfrom, xto);
+	}
+}
+
 class_methods (TextGrid, Function) {
 	class_method_local (TextGrid, destroy)
 	class_method_local (TextGrid, copy)
@@ -278,6 +307,7 @@ class_methods (TextGrid, Function) {
 	class_method_local (TextGrid, description)
 	class_method_local (TextGrid, info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
+	class_method_local (TextGrid, shiftX)
 	class_methods_end
 }
 
@@ -458,37 +488,6 @@ static TextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 	return thee;
 }
 
-void TextGrid_shiftTimes (TextGrid me, double shift) {
-	int itier, ntier = my tiers -> size;
-	for (itier = 1; itier <= ntier; itier ++) {
-		Function anyTier = my tiers -> item [itier];
-		if (anyTier -> methods == (Function_Table) classIntervalTier) {
-			IntervalTier tier = (IntervalTier) anyTier;
-			long iinterval, ninterval = tier -> intervals -> size;
-			for (iinterval = ninterval; iinterval >= 1; iinterval --) {
-				TextInterval interval = tier -> intervals -> item [iinterval];
-				interval -> xmin += shift;
-				interval -> xmax += shift;
-			}
-		} else {
-			TextTier tier = (TextTier) anyTier;
-			long i, n = tier -> points -> size;
-			for (i = n; i >= 1; i --) {
-				TextPoint point = tier -> points -> item [i];
-				point -> time += shift;
-			}
-		}
-		anyTier -> xmin += shift;
-		anyTier -> xmax += shift;
-	}
-	my xmin += shift;
-	my xmax += shift;
-}
-
-void TextGrid_shiftToZero (TextGrid me) {
-	TextGrid_shiftTimes (me, - my xmin);
-}
-
 TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes) {
 	TextGrid thee = Data_copy (me);
 	int itier, ntier = my tiers -> size;
@@ -522,7 +521,7 @@ TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preser
 	}
 	thy xmin = tmin;
 	thy xmax = tmax;
-	if (! preserveTimes) TextGrid_shiftToZero (thee);
+	if (! preserveTimes) Function_shiftXTo (thee, thy xmin, 0.0);
 	return thee;
 }
 

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/04/24
+ * pb 2008/09/20
  */
 
 #include "praat.h"
@@ -4094,6 +4094,32 @@ DIRECT (TimeFunction_getStartTime)
 	Melder_informationReal (my xmin, L"seconds");
 END
 
+FORM (TimeFunction_shiftTimesBy, L"Shift times by", 0)
+	REAL (L"Shift (s)", L"0.5")
+	OK
+DO
+	WHERE (SELECTED) {
+		Function_shiftXBy (OBJECT, GET_REAL (L"Shift"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TimeFunction_shiftTimesTo, L"Shift times to", 0)
+	RADIO (L"Shift", 1)
+		OPTION (L"start time")
+		OPTION (L"centre time")
+		OPTION (L"end time")
+	REAL (L"To time (s)", L"0.0")
+	OK
+DO
+	int shift = GET_INTEGER (L"Shift");
+	WHERE (SELECTED) {
+		Function me = OBJECT;
+		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (L"To time"));
+		praat_dataChanged (me);
+	}
+END
+
 /***** TIMETIER *****/
 
 FORM (TimeTier_getHighIndexFromTime, L"Get high index", L"AnyTier: Get high index from time...")
@@ -4266,11 +4292,11 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 
 /***** buttons *****/
 
-void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
+void praat_TableOfReal_init (void *klas);   // Buttons for TableOfReal and for its subclasses.
 
-void praat_TimeFunction_query_init (void *klas);   /* Query buttons for time-based subclasses of Function. */
+void praat_TimeFunction_query_init (void *klas);   // Query buttons for time-based subclasses of Function.
 void praat_TimeFunction_query_init (void *klas) {
-	praat_addAction1 (klas, 1, L"Time domain", 0, 1, 0);
+	praat_addAction1 (klas, 1, L"Query time domain", 0, 1, 0);
 	praat_addAction1 (klas, 1, L"Get start time", 0, 2, DO_TimeFunction_getStartTime);
 						praat_addAction1 (klas, 1, L"Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
 	praat_addAction1 (klas, 1, L"Get end time", 0, 2, DO_TimeFunction_getEndTime);
@@ -4279,10 +4305,17 @@ void praat_TimeFunction_query_init (void *klas) {
 						praat_addAction1 (klas, 1, L"Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
 }
 
-void praat_TimeFrameSampled_query_init (void *klas);   /* Query buttons for frame-based time-based subclasses of Sampled. */
+void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
+void praat_TimeFunction_modify_init (void *klas) {
+	praat_addAction1 (klas, 0, L"Modify time domain", 0, 1, 0);
+	praat_addAction1 (klas, 0, L"Shift times by...", 0, 2, DO_TimeFunction_shiftTimesBy);
+	praat_addAction1 (klas, 0, L"Shift times to...", 0, 2, DO_TimeFunction_shiftTimesTo);
+}
+
+void praat_TimeFrameSampled_query_init (void *klas);   // Query buttons for frame-based time-based subclasses of Sampled.
 void praat_TimeFrameSampled_query_init (void *klas) {
 	praat_TimeFunction_query_init (klas);
-	praat_addAction1 (klas, 1, L"Time sampling", 0, 1, 0);
+	praat_addAction1 (klas, 1, L"Query time sampling", 0, 1, 0);
 	praat_addAction1 (klas, 1, L"Get number of frames", 0, 2, DO_TimeFrameSampled_getNumberOfFrames);
 	praat_addAction1 (klas, 1, L"Get time step", 0, 2, DO_TimeFrameSampled_getFrameLength);
 						praat_addAction1 (klas, 1, L"Get frame length", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameLength);
@@ -4293,7 +4326,7 @@ void praat_TimeFrameSampled_query_init (void *klas) {
 						praat_addAction1 (klas, 1, L"Get frame from time...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameFromTime);
 }
 
-void praat_TimeTier_query_init (void *klas);   /* Query buttons for time-based subclasses of AnyTier. */
+void praat_TimeTier_query_init (void *klas);   // Query buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_query_init (void *klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, L"Get number of points", 0, 1, DO_TimeTier_getNumberOfPoints);
@@ -4303,7 +4336,7 @@ void praat_TimeTier_query_init (void *klas) {
 	praat_addAction1 (klas, 1, L"Get time from index...", 0, 1, DO_TimeTier_getTimeFromIndex);
 }
 
-void praat_TimeTier_modify_init (void *klas);   /* Modification buttons for time-based subclasses of AnyTier. */
+void praat_TimeTier_modify_init (void *klas);   // Modification buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_modify_init (void *klas) {
 	praat_addAction1 (klas, 0, L"Remove point...", 0, 1, DO_TimeTier_removePoint);
 	praat_addAction1 (klas, 0, L"Remove point near...", 0, 1, DO_TimeTier_removePointNear);

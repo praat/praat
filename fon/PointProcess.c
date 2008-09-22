@@ -1,6 +1,6 @@
 /* PointProcess.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
  * pb 2007/10/01 can write as encoding
+ * pb 2008/09/20 shiftXBy
  */
 
 #include "PointProcess.h"
@@ -90,6 +91,14 @@ static void info (I) {
 	infoPeriods (me, 0.0, 0.0, 1e300, 6);
 }
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (PointProcess);
+	inherited (PointProcess) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my nt; i ++) {
+		NUMshift (& my t [i], xfrom, xto);
+	}
+}
+
 class_methods (PointProcess, Function) {
 	class_method_local (PointProcess, destroy)
 	class_method (info)
@@ -102,6 +111,7 @@ class_methods (PointProcess, Function) {
 	class_method_local (PointProcess, writeBinary)
 	class_method_local (PointProcess, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
+	class_method (shiftX)
 	class_methods_end
 }
 

@@ -22,6 +22,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/03/27 binary rather than linear searches
  * pb 2008/03/31 corrected binary search (case n=1)
+ * pb 2008/09/20 shiftXBy
  */
 
 #include "AnyTier.h"
@@ -58,6 +59,15 @@ class_methods (AnyPoint, Data) {
 	class_methods_end
 }
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (AnyTier);
+	inherited (AnyTier) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		AnyPoint point = my points -> item [i];
+		NUMshift (& point -> time, xfrom, xto);
+	}
+}
+
 class_methods (AnyTier, Function) {
 	class_method_local (AnyTier, destroy)
 	class_method_local (AnyTier, copy)
@@ -68,6 +78,7 @@ class_methods (AnyTier, Function) {
 	class_method_local (AnyTier, writeBinary)
 	class_method_local (AnyTier, readBinary)
 	class_method_local (AnyTier, description)
+	class_method (shiftX)
 	class_methods_end
 }
 

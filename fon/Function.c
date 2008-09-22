@@ -1,6 +1,6 @@
 /* Function.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/03/17 domain texts
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
+ * pb 2008/09/20 shiftXBy
  */
 
 #include "Function.h"
@@ -113,6 +114,12 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 	return value;
 }
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (Function);
+	NUMshift (& my xmin, xfrom, xto);
+	NUMshift (& my xmax, xfrom, xto);
+}
+
 class_methods (Function, Data) {
 	class_method_local (Function, copy)
 	class_method_local (Function, equal)
@@ -132,6 +139,7 @@ class_methods (Function, Data) {
 	class_method (isUnitLogarithmic)
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
+	class_method (shiftX)
 	class_methods_end
 }
 
@@ -191,6 +199,19 @@ double ClassFunction_convertToNonlogarithmic (I, double value, long ilevel, int 
 	if (! my destroy) my _initialize (me);
 	return NUMdefined (value) && my isUnitLogarithmic (me, ilevel, unit) ? pow (10.0, value) : value;
 }
+
+void Function_shiftXBy (I, double shift) {
+	iam (Function);
+	our shiftX (me, 0.0, shift);
+}
+
+void Function_shiftXTo (I, double xfrom, double xto) {
+	iam (Function);
+	our shiftX (me, xfrom, xto);
+}
+
+void Function_scaleXBy (I, double factor);
+void Function_scaleXTo (I, double xminto, double xmaxto);
 
 double Function_window (double tim, int windowType) {
 	static double one_by_bessi_0_12, one_by_bessi_0_20;

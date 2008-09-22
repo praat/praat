@@ -1,6 +1,6 @@
 /* Function.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/09/21
  */
 
 #ifndef _Function_h_
@@ -38,7 +38,8 @@
 	const wchar_t * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
 	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
 	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
-	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit);
+	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit); \
+	void (*shiftX) (I, double xfrom, double xto);
 class_create (Function, Data);
 
 /*
@@ -145,6 +146,11 @@ double Function_window (double tim, int windowType);
 void Function_unidirectionalAutowindow (I, double *xmin, double *xmax);
 void Function_bidirectionalAutowindow (I, double *x1, double *x2);
 int Function_intersectRangeWithDomain (I, double *x1, double *x2);
+
+void Function_shiftXBy (I, double shift);
+void Function_shiftXTo (I, double xfrom, double xto);
+void Function_scaleXBy (I, double factor);
+void Function_scaleXTo (I, double xminto, double xmaxto);
 
 /* End of file Function.h */
 #endif

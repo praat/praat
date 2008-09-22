@@ -48,6 +48,7 @@
 
 int praat_Fon_formula (Any dia);
 void praat_TimeFunction_query_init (void *klas);
+void praat_TimeFunction_modify_init (void *klas);
 
 static int pr_LongSound_concatenate (MelderFile file, int audioFileType) {
 	int IOBJECT;
@@ -2016,7 +2017,7 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 1, L"Query -          ", 0, 0, 0);
 		praat_TimeFunction_query_init (classSound);
 		praat_addAction1 (classSound, 1, L"Get number of channels", 0, 1, DO_Sound_getNumberOfChannels);
-		praat_addAction1 (classSound, 1, L"Time sampling", 0, 1, 0);
+		praat_addAction1 (classSound, 1, L"Query time sampling", 0, 1, 0);
 		praat_addAction1 (classSound, 1, L"Get number of samples", 0, 2, DO_Sound_getNumberOfSamples);
 		praat_addAction1 (classSound, 1, L"Get sampling period", 0, 2, DO_Sound_getSamplePeriod);
 							praat_addAction1 (classSound, 1, L"Get sample duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_Sound_getSamplePeriod);
@@ -2051,6 +2052,8 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 1, L"Get power in air", 0, 1, DO_Sound_getPowerInAir);
 		praat_addAction1 (classSound, 1, L"Get intensity (dB)", 0, 1, DO_Sound_getIntensity_dB);
 	praat_addAction1 (classSound, 0, L"Modify -          ", 0, 0, 0);
+		praat_TimeFunction_modify_init (classSound);
+		praat_addAction1 (classSound, 0, L"-- modify generic --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Reverse", 0, 1, DO_Sound_reverse);
 		praat_addAction1 (classSound, 0, L"Formula...", 0, 1, DO_Sound_formula);
 		praat_addAction1 (classSound, 0, L"-- add & mul --", 0, 1, 0);

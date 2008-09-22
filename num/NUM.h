@@ -33,6 +33,7 @@
  * pb 2008/04/09 40-digit constants
  * pb 2008/04/09 NUMinit
  * pb 2008/04/12 NUMlinprog
+ * pb 2008/09/21 NUMshift
  */
 
 /* "NUM" = "NUMerics" */
@@ -70,6 +71,7 @@ void NUMinit (void);
 #endif
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
+void NUMshift (double *x, double xfrom, double xto);
 
 /********** Constants **********
  * Forty-digit constants computed by e.g.:

@@ -92,8 +92,6 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 
 int TextGrid_add (TextGrid me, Any tier);
 TextGrid TextGrid_merge (Collection textGrids);
-void TextGrid_shiftTimes (TextGrid me, double shift);
-void TextGrid_shiftToZero (TextGrid me);
 TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes);
 
 TextGrid Label_to_TextGrid (Label me, double duration);

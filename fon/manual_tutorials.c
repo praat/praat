@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080812)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080922)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.34# (September 22, 2008)")
+LIST_ITEM (L"\\bu Sound: ##Shift times by...# and ##Shift times to...#.")
+LIST_ITEM (L"\\bu Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.")
+NORMAL (L"##5.0.33# (September 9, 2008)")
+LIST_ITEM (L"\\bu Windows: prevented warning messages about \"Widget type\".")
 NORMAL (L"##5.0.32# (August 12, 2008)")
 LIST_ITEM (L"\\bu Contributed by Ola S\\o\"der: @@kNN classifiers@ and @@k-means clustering@.")
 LIST_ITEM (L"\\bu Made UTF-16-encoded chronological TextGrid files readable.")

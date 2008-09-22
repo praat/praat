@@ -27,6 +27,7 @@
  * pb 2007/01/27 use #defines for value interpolation
  * pb 2007/08/20 built a "weird value" check into NUMviterbi (bug report by Adam Jacks)
  * pb 2008/01/19 double
+ * pb 2008/09/21 NUMshift
  */
 
 #include "NUM.h"
@@ -44,6 +45,10 @@ double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (b
 #include "gsl_sf_bessel.h"
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_erf.h"
+
+void NUMshift (double *x, double xfrom, double xto) {
+	if (*x == xfrom) *x = xto; else *x += xto - xfrom;
+}
 
 void NUMinit (void) {
 	gsl_set_error_handler_off ();

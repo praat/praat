@@ -191,14 +191,24 @@ end:
 
 Sound Sounds_combineToStereo (Sound me, Sound thee) {
 	if (my ny != 1 || thy ny != 1) return Melder_errorp ("Can only combine mono sounds. Stereo sound not created.");
-	if (my xmin != thy xmin || my xmax != thy xmax) return Melder_errorp ("Time domains do not match. Sounds not combined.");
-	if (my nx != thy nx) return Melder_errorp ("Numbers of samples do not match. Sounds not combined.");
 	if (my dx != thy dx) return Melder_errorp ("Sampling frequencies do not match. Sounds not combined.");
-	if (my x1 != thy x1) return Melder_errorp ("Sampling times do not match. Sounds not combined.");
-	Sound him = Sound_create (2, my xmin, my xmax, my nx, my dx, my x1); cherror
+	double dx = my dx;   // or thy dx, which is the same
+	double xmin = my xmin < thy xmin ? my xmin : thy xmin;
+	double xmax = my xmax > thy xmax ? my xmax : thy xmax;
+	long myInitialZeroes = floor ((my xmin - xmin) / dx);
+	long thyInitialZeroes = floor ((thy xmin - xmin) / dx);
+	double myx1 = my x1 - my dx * myInitialZeroes;
+	double thyx1 = thy x1 - thy dx * thyInitialZeroes;
+	double x1 = 0.5 * (myx1 + thyx1);
+	long mynx = my nx + myInitialZeroes;
+	long thynx = thy nx + thyInitialZeroes;
+	long nx = mynx > thynx ? mynx : thynx;
+	Sound him = Sound_create (2, xmin, xmax, nx, dx, x1); cherror
 	for (long i = 1; i <= my nx; i ++) {
-		his z [1] [i] = my z [1] [i];
-		his z [2] [i] = thy z [1] [i];
+		his z [1] [i + myInitialZeroes] = my z [1] [i];
+	}
+	for (long i = 1; i <= thy nx; i ++) {
+		his z [2] [i + thyInitialZeroes] = thy z [1] [i];
 	}
 end:
 	iferror forget (him);

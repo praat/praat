@@ -59,6 +59,16 @@
 #include "oo_DESCRIPTION.h"
 #include "Manipulation_def.h"
 
+static void classManipulation_shiftX (I, double xfrom, double xto) {
+	iam (Manipulation);
+	inherited (Manipulation) shiftX (me, xfrom, xto);
+	if (my sound != NULL) Function_shiftXTo (my sound, xfrom, xto);
+	if (my pulses != NULL) Function_shiftXTo (my pulses, xfrom, xto);
+	if (my pitch != NULL) Function_shiftXTo (my pitch, xfrom, xto);
+	if (my duration != NULL) Function_shiftXTo (my duration, xfrom, xto);
+	if (my lpc != NULL) Function_shiftXTo (my lpc, xfrom, xto);
+}
+
 class_methods (Manipulation, Function) {
 	us -> version = 5;
 	class_method_local (Manipulation, destroy)
@@ -71,6 +81,7 @@ class_methods (Manipulation, Function) {
 	class_method_local (Manipulation, writeBinary)
 	class_method_local (Manipulation, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
+	class_method_local (Manipulation, shiftX);
 	class_methods_end
 }
 

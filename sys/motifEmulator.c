@@ -4674,7 +4674,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 	static void on_char (HWND window, TCHAR kar, int repeat) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
-			Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
+			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
 				Widget drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {

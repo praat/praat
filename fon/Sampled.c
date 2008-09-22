@@ -29,6 +29,7 @@
  * pb 2005/06/16 removed units
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
+ * pb 2008/09/20 shiftXBy
  */
 
 #include <math.h>
@@ -64,6 +65,12 @@ static double getValueAtSample (I, long isamp, long ilevel, int unit) {
 	return NUMundefined;
 }
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (Sampled);
+	inherited (Sampled) shiftX (me, xfrom, xto);
+	NUMshift (& my x1, xfrom, xto);
+}
+
 class_methods (Sampled, Function) {
 	class_method_local (Sampled, copy)
 	class_method_local (Sampled, equal)
@@ -77,6 +84,7 @@ class_methods (Sampled, Function) {
 	class_method (getDx)
 	class_method (getX)
 	class_method (getValueAtSample)
+	class_method (shiftX)
 	class_methods_end
 }
 
