@@ -186,7 +186,7 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	MelderFile_writeCharacter (file, '\n');
 end:
 	MelderFile_close (file);
-	iferror return Melder_error5 (L"Cannot write ", our _className, L"to file \"", MelderFile_messageNameW (file), L"\".");
+	iferror return Melder_error5 (L"Cannot write ", our _className, L"to file ", MelderFile_messageName (file), L".");
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }
@@ -221,7 +221,7 @@ int Data_writeToBinaryFile (I, MelderFile file) {
 	if (! Data_writeBinary (me, file -> filePointer)) goto end;
 end:
 	MelderFile_close (file);
-	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file ", MelderFile_messageNameW (file), L".");
+	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file ", MelderFile_messageName (file), L".");
 	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	return 1;
 }
@@ -245,17 +245,18 @@ int Data_writeLispToConsole (I) {
 	return Data_writeLisp (me, stdout);
 }
 
-int Data_writeToLispFile (I, MelderFile fs) {
+int Data_writeToLispFile (I, MelderFile file) {
 	iam (Data);
 	FILE *f;
 	if (! Data_canWriteLisp (me)) return Melder_error3 (L"(Data_writeToLispFile:) Class ", our _className, L" cannot be written as LISP.");
-	if ((f = Melder_fopen (fs, "w")) == NULL) return 0;
+	if ((f = Melder_fopen (file, "w")) == NULL) return 0;
 	if (fprintf (f, "%sLispFile\n", Melder_peekWcsToUtf8 (our _className)) == EOF || ! Data_writeLisp (me, f)) {
 		fclose (f);
-		return Melder_error ("(Data_writeToLispFile:) Error while writing file \"%.200s\". Disk probably full.", MelderFile_messageName (fs));
+		return Melder_error3 (L"(Data_writeToLispFile:) Error while writing file ",
+			MelderFile_messageName (file), L". Disk probably full.");
 	}
 	fclose (f);
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
 }
 
@@ -331,7 +332,8 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		end = strstr (line, "BinaryFile");
 		if (! end || ! (*end = '\0', me = Thing_newFromClassNameA (line))) {
 			fclose (f);
-			return Melder_errorp ("(Data_readFromBinaryFile:) File \"%.200s\" is not a Data binary file.", MelderFile_messageName (file));
+			return Melder_errorp3 (L"(Data_readFromBinaryFile:) File ", MelderFile_messageName (file),
+				L" is not a Data binary file.");
 		}
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */
 		rewind (f);
@@ -365,7 +367,8 @@ Any Data_readFromLispFile (MelderFile file) {
 	end = strstr (line, "LispFile");
 	if (! end || ! (*end = '\0', me = Thing_newFromClassNameA (line))) {
 		fclose (f);
-		return Melder_errorp ("(Data_readFromLispFile:) File \"%.200s\" is not a Data LISP file.", MelderFile_messageName (file));
+		return Melder_errorp3 (L"(Data_readFromLispFile:) File ", MelderFile_messageName (file),
+			L" is not a Data LISP file.");
 	}
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	if (! Data_readLisp (me, f)) forget (me);
@@ -441,7 +444,7 @@ Any Data_readFromFile (MelderFile file) {
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
-	return Melder_errorp ("(Data_readFromFile:) File %.200s not recognized.", MelderFile_messageName (file));
+	return Melder_errorp3 (L"(Data_readFromFile:) File ", MelderFile_messageName (file), L"not recognized.");
 }
 
 /* Recursive routines for working with struct members. */

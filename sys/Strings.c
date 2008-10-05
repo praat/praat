@@ -267,7 +267,7 @@ end:
 	Melder_free (string);
 	iferror {
 		forget (me);
-		Melder_error3 (L"(Strings_readFromRawTextFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		Melder_error3 (L"(Strings_readFromRawTextFile:) File ", MelderFile_messageName (file), L" not read.");
 		return NULL;
 	}
 	return me;

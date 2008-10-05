@@ -2109,9 +2109,28 @@ static void draw_analysis_pulses (I) {
 	}
 }
 
+static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
+	iam (TimeSoundAnalysisEditor);
+	if (my pitch.show) {
+		//Melder_warning3 (Melder_double (xbegin), L" ", Melder_double (ybegin));
+		if (xbegin >= my endWindow && ybegin > 0.48 && ybegin <= 0.50) {
+			my pitch.ceiling *= 1.26;
+			forget (my pitch.data);
+			return 1;
+		}
+		if (xbegin >= my endWindow && ybegin > 0.46 && ybegin <= 0.48) {
+			my pitch.ceiling /= 1.26;
+			forget (my pitch.data);
+			return 1;
+		}
+	}
+	return inherited (TimeSoundAnalysisEditor) click (me, xbegin, ybegin, shiftKeyPressed);
+}
+
 class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	class_method (destroy)
 	class_method (info)
+	class_method (click)
 	class_method (destroy_analysis)
 	class_method (createMenuItems_query)
 	class_method (createMenuItems_query_log)

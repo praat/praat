@@ -57,6 +57,7 @@ the behaviour of that program changes in the following way:
 27: force HG-GLA
 28: don't use GSL in NUMfisherQ
 29: use GSL in NUMinvFisherQ
+30: pitch path finder: use octave jump cost across voiceless parts
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

@@ -23,11 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20080922)
+MAN_BEGIN (L"What's new?", L"ppgb", 20080923)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.35# (October 5, 2008)")
+LIST_ITEM (L"\\bu ##Scale times by...# and ##Scale times to...# (Modify menu).")
 NORMAL (L"##5.0.34# (September 22, 2008)")
-LIST_ITEM (L"\\bu Sound: ##Shift times by...# and ##Shift times to...#.")
+LIST_ITEM (L"\\bu ##Shift times by...# and ##Shift times to...# (Modify menu).")
 LIST_ITEM (L"\\bu Sound: @@Combine to stereo@ works even if the two mono sounds have different durations or time domains.")
 NORMAL (L"##5.0.33# (September 9, 2008)")
 LIST_ITEM (L"\\bu Windows: prevented warning messages about \"Widget type\".")

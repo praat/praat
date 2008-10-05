@@ -529,7 +529,7 @@ static int goToPage_i (I, long i) {
 			my path = SEARCH_PAGE;
 			Melder_free (my currentPageTitle);
 			return 1;
-		} else return Melder_error ("Page %ld not found.", i);
+		} else return Melder_error3 (L"Page ", Melder_integer (i), L" not found.");
 	}
 	my path = i;
 	page = manPages -> pages -> item [my path];

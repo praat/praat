@@ -1704,7 +1704,7 @@ Table Table_readFromTableFile (MelderFile file) {
 end:
 	iferror {
 		forget (me);
-		Melder_error3 (L"(Table_readFromTableFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		Melder_error3 (L"(Table_readFromTableFile:) File ", MelderFile_messageName (file), L" not read.");
 		return NULL;
 	}
 	return me;
@@ -1793,7 +1793,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 end:
 	iferror {
 		forget (me);
-		Melder_error3 (L"(Table_readFromCharacterSeparatedTextFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		Melder_error3 (L"(Table_readFromCharacterSeparatedTextFile:) File ", MelderFile_messageName (file), L" not read.");
 		return NULL;
 	}
 	return me;

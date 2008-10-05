@@ -119,7 +119,7 @@ static int classCollection_readText (I, MelderReadString *text) {
 		long size;
 		wchar_t *line = MelderReadString_readLine (text);
 		if (line == NULL || ! swscanf (line, L"%ld", & size) || size < 0)
-			return Melder_error ("Collection::readText: cannot read size.");
+			return Melder_error1 (L"Collection::readText: cannot read size.");
 		if (! Collection_init (me, NULL, size)) return 0;
 		for (long i = 1; i <= size; i ++) {
 			long itemNumberRead;
@@ -129,11 +129,12 @@ static int classCollection_readText (I, MelderReadString *text) {
 			while (wcsncmp (line, L"Object ", 7));
 			stringsRead = swscanf (line, L"Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
-				return Melder_error ("Collection::readText: cannot read header of object %ld.", i);
+				return Melder_error3 (L"Collection::readText: cannot read header of object ", Melder_integer (i), L".");
 			if (itemNumberRead != i)
-				return Melder_error ("Collection::readText: read item number %ld while expecting %ld.", itemNumberRead, i);
+				return Melder_error5 (L"Collection::readText: read item number ", Melder_integer (itemNumberRead),
+					L" while expecting ", Melder_integer (i), L".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
-				return Melder_error ("Collection::readText: wrong header at object %ld.", i);
+				return Melder_error3 (L"Collection::readText: wrong header at object ", Melder_integer (i), L".");
 			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
 			Thing_version = -1;   /* Override. */
 			my size ++;
@@ -278,7 +279,7 @@ int _Collection_insertItem (I, Any data, long pos) {
 	long i;
 	if (my size >= my _capacity) {
 		Any *dum = (Any *) Melder_realloc (my item + 1, 2 * my _capacity * sizeof (Any));
-		if (! dum) return Melder_error ("Collection_insert: out of memory.");
+		if (! dum) return Melder_error1 (L"Collection_insert: out of memory.");
 		my item = dum - 1;
 		my _capacity *= 2;
 	}

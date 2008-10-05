@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2008/09/23
  */
 
 #ifndef _AnyTier_h_
@@ -114,9 +114,6 @@ TableOfReal TextTier_downto_TableOfReal (TextTier me, const wchar_t *label);
 TableOfReal TextTier_downto_TableOfReal_any (TextTier me);
 
 TextGrid PointProcess_to_TextGrid_vuv (PointProcess me, double maxT, double meanT);
-
-void TextGrid_scaleTimes (TextGrid me, double tmin, double tmax);
-void TextGrid_Function_scaleTimes (TextGrid me, Function thee);
 
 long TextInterval_labelLength (TextInterval me);
 long TextPoint_labelLength (TextPoint me);

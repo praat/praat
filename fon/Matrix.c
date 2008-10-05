@@ -594,8 +594,8 @@ Matrix Matrix_readFromRawTextFile (MelderFile fs) {   // BUG: not Unicode-compat
 
 end:
 	Melder_fclose (fs, f);
-	iferror { forget (me); return Melder_errorp (
-		"(Matrix_readFromRawTextFile:) File %s not read.", MelderFile_messageName (fs)); }
+	iferror { forget (me); return Melder_errorp3 (
+		L"(Matrix_readFromRawTextFile:) File ", MelderFile_messageName (fs), L" not read."); }
 	return me;
 }
 

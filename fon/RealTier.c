@@ -29,6 +29,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/30 new Formula API
+ * pb 2008/09/23 shiftX, scaleX
  */
 
 #include "RealTier.h"
@@ -100,6 +101,24 @@ static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flag
 	return L"Time (s)";
 }
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (RealTier);
+	inherited (RealTier) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		RealPoint point = my points -> item [i];
+		NUMshift (& point -> time, xfrom, xto);
+	}
+}
+
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (RealTier);
+	inherited (RealTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		RealPoint point = my points -> item [i];
+		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (RealTier, Function) {
 	class_method_local (RealTier, destroy)
 	class_method_local (RealTier, copy)
@@ -117,6 +136,8 @@ class_methods (RealTier, Function) {
 	class_method (getVector)
 	class_method (getFunction1)
 	class_method (getUnitText)
+	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 

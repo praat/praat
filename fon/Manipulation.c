@@ -27,6 +27,7 @@
  * pb 2007/07/22 changed names of overlap-add method in such a way that it does not sound like an existing trademark of a diphone concatenation method
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
+ * pb 2008/09/23 shiftX, scaleX
  */
 
 #include "Manipulation.h"
@@ -69,6 +70,16 @@ static void classManipulation_shiftX (I, double xfrom, double xto) {
 	if (my lpc != NULL) Function_shiftXTo (my lpc, xfrom, xto);
 }
 
+static void classManipulation_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (Manipulation);
+	inherited (Manipulation) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	if (my sound != NULL) my sound -> methods -> scaleX (my sound, xminfrom, xmaxfrom, xminto, xmaxto);
+	if (my pulses != NULL) my pulses -> methods -> scaleX (my pulses, xminfrom, xmaxfrom, xminto, xmaxto);
+	if (my pitch != NULL) my pitch -> methods -> scaleX (my pitch, xminfrom, xmaxfrom, xminto, xmaxto);
+	if (my duration != NULL) my duration -> methods -> scaleX (my duration, xminfrom, xmaxfrom, xminto, xmaxto);
+	if (my lpc != NULL) my lpc -> methods -> scaleX (my lpc, xminfrom, xmaxfrom, xminto, xmaxto);
+}
+
 class_methods (Manipulation, Function) {
 	us -> version = 5;
 	class_method_local (Manipulation, destroy)
@@ -82,6 +93,7 @@ class_methods (Manipulation, Function) {
 	class_method_local (Manipulation, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method_local (Manipulation, shiftX);
+	class_method_local (Manipulation, scaleX);
 	class_methods_end
 }
 

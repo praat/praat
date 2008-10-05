@@ -626,7 +626,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			Melder_error ("%s.", strerror (errno));
 		#endif
 		Melder_error5 (L"Cannot ", type [0] == 'r' ? L"open" : type [0] == 'a' ? L"append to" : L"create",
-			L" file \"", MelderFile_messageNameW (file), L"\".");
+			L" file ", MelderFile_messageName (file), L".");
 		if (path [0] == '\0')
 			Melder_error1 (L"Hint: empty file name.");
 		else if (path [0] == ' ')
@@ -692,7 +692,7 @@ int Melder_fclose (MelderFile file, FILE *f) {
 		#ifdef sgi
 			Melder_error ("%s", strerror (errno));
 		#endif
-		return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+		return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 	}
 	return 1;
 }
@@ -769,11 +769,7 @@ wchar_t * Melder_peekExpandBackslashes (const wchar_t *message) {
 	return & names [index] [0];
 }
 
-char * MelderFile_messageName (MelderFile file) {
-	return Melder_peekWcsToUtf8 (file -> path);
-}
-
-wchar_t * MelderFile_messageNameW (MelderFile file) {
+wchar_t * MelderFile_messageName (MelderFile file) {
 	return file -> path;
 }
 
@@ -811,7 +807,7 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 	sa. bInheritHandle = FALSE;
 	swprintf (file. path, 260, L"%ls\\%ls", parent -> path, dirName);
 	if (! CreateDirectoryW (file. path, & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   /* Ignore if directory already exists. */
-		return Melder_error3 (L"Cannot create directory \"", MelderFile_messageNameW (& file), L"\".");
+		return Melder_error3 (L"Cannot create directory ", MelderFile_messageName (& file), L".");
 	return 1;
 #else
 	structMelderFile file = { 0 };
@@ -823,7 +819,7 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 	char utf8path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8path);
 	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   /* Ignore if directory already exists. */
-		return Melder_error3 (L"Cannot create directory \"", MelderFile_messageNameW (& file), L"\".");
+		return Melder_error3 (L"Cannot create directory ", MelderFile_messageName (& file), L".");
 	return 1;
 #endif
 }
@@ -925,7 +921,7 @@ void MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *ma
 void MelderFile_seek (MelderFile me, long position, int direction) {
 	if (! my filePointer) return;
 	if (fseek (my filePointer, position, direction)) {
-		Melder_error3 (L"Cannot seek in file ", MelderFile_messageNameW (me), L".");
+		Melder_error3 (L"Cannot seek in file ", MelderFile_messageName (me), L".");
 		fclose (my filePointer);
 		my filePointer = NULL;
 	}
@@ -935,7 +931,7 @@ long MelderFile_tell (MelderFile me) {
 	long result = 0;
 	if (! my filePointer) return 0;
 	if ((result = ftell (my filePointer)) == -1) {
-		Melder_error3 (L"Cannot tell in file ", MelderFile_messageNameW (me), L".");
+		Melder_error3 (L"Cannot tell in file ", MelderFile_messageName (me), L".");
 		fclose (my filePointer);
 		my filePointer = NULL;
 	}

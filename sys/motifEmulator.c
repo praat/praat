@@ -1,6 +1,6 @@
 /* motifEmulator.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
  * pb 2007/12/15 userData
  * pb 2007/12/26 extractions to Gui*.c
  * pb 2007/12/30 extractions to Gui*.c
+ * pb 2008/10/05 better tab navigation
  */
 #ifndef UNIX
 
@@ -3456,7 +3457,7 @@ static void _motif_getLocatedTextWidget (Widget me) {
 		}
 	}
 }
-static Widget _motif_getNextTextWidget (Widget shell, Widget text) {
+static Widget _motif_getNextTextWidget (Widget shell, Widget text, bool backward) {
 	numberOfTextWidgets = 0;
 	textWidgetLocation = 0;
 	_motif_inspectTextWidgets (shell, text);
@@ -3465,8 +3466,13 @@ static Widget _motif_getNextTextWidget (Widget shell, Widget text) {
 	Melder_assert (textWidgetLocation <= numberOfTextWidgets);
 	if (numberOfTextWidgets == 1) return NULL;   // no tab navigation if there is only one text widget
 	nextTextWidget = NULL;
-	textWidgetLocation ++;   // tab to next text widget
-	if (textWidgetLocation > numberOfTextWidgets) textWidgetLocation = 1;   // if at end, then tab around to first text widget
+	if (backward) {
+		textWidgetLocation --;   // tab to previous text widget
+		if (textWidgetLocation < 1) textWidgetLocation = numberOfTextWidgets;   // if at beginning, then tab around to last text widget
+	} else {
+		textWidgetLocation ++;   // tab to next text widget
+		if (textWidgetLocation > numberOfTextWidgets) textWidgetLocation = 1;   // if at end, then tab around to first text widget
+	}
 	numberOfTextWidgets = 0;
 	_motif_getLocatedTextWidget (shell);
 	return nextTextWidget;
@@ -3814,9 +3820,10 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			 * Next, try tab navigation.
 			 */
 			if (text) {
-				Widget nextTextWidget = _motif_getNextTextWidget (shell, text);
+				Widget nextTextWidget = _motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
+					GuiText_setSelection (nextTextWidget, 0, 10000000);
 					return true;
 				}
 			}
@@ -4343,8 +4350,8 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			message -> message == WM_SYSKEYDOWN && GetKeyState (VK_CONTROL) < 0)
 		{
 			int kar = LOWORD (message -> wParam);
-			int modifiers = 0;
 			Widget me = (Widget) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			int modifiers = 0;
 			if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 			if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
 			if (GetKeyState (VK_SHIFT) < 0) modifiers |= _motif_SHIFT_MASK;
@@ -4453,9 +4460,10 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Next, try tab navigation.
 			 */
 			if (me && MEMBER (me, Text) && kar == 9) {
-				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me);
+				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
+					GuiText_setSelection (nextTextWidget, 0, 10000000);
 					return;
 				}
 			}
@@ -4680,17 +4688,6 @@ void XtAppMainLoop (XtAppContext appctxt) {
 				if (drawingArea) {
 					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
 					_GuiWinDrawingArea_handleKey (drawingArea, kar);
-				} else {
-					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
-				}
-			} else if (MEMBER (me, Text) && kar == 9) {
-				/*
-				 * Next, try tab navigation.
-				 */
-				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me);
-				if (nextTextWidget != NULL) {
-					_GuiText_setTheTextFocus (nextTextWidget);
-					GuiText_setSelection (nextTextWidget, 0, 10000000);
 				} else {
 					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
 				}

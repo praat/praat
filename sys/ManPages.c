@@ -177,7 +177,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 					Melder_clearError ();
 					Melder_warning3 (L"Cannot find sound file \"", link + 3, L"\".");
 				} else if (! MelderFile_exists (& file2)) {
-					Melder_warning3 (L"Cannot find sound file ", MelderFile_messageNameW (& file2), L".");
+					Melder_warning3 (L"Cannot find sound file ", MelderFile_messageName (& file2), L".");
 				}
 			} else if (link [0] == '\\' && link [1] == 'S' && link [2] == 'C') {
 				/*
@@ -199,7 +199,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 					Melder_clearError ();
 					Melder_warning3 (L"Cannot find script \"", fileName, L"\".");
 				} else if (! MelderFile_exists (& file2)) {
-					Melder_warning3 (L"Cannot find script ", MelderFile_messageNameW (& file2), L".");
+					Melder_warning3 (L"Cannot find script ", MelderFile_messageName (& file2), L".");
 				}
 				my executable = TRUE;
 			} else {
@@ -216,7 +216,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 					MelderReadString text2 = { string2, string2 };
 					if (! readOnePage (me, & text2)) {
 						Melder_free (string2);
-						return Melder_error3 (L"File \"", MelderFile_messageNameW (& file2), L"\".");
+						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
 					}
 				} else {
 					/*
@@ -232,7 +232,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 					MelderReadString text2 = { string2, string2 };
 					if (! readOnePage (me, & text2)) {
 						Melder_free (string2);
-						return Melder_error3 (L"File \"", MelderFile_messageNameW (& file2), L"\".");
+						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
 					}
 				}
 				Melder_free (string2);

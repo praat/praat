@@ -516,12 +516,33 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 				double f1 = prevFrame -> candidate [icand1]. frequency, transitionCost;
 				int previousVoiceless = f1 <= 0 || f1 >= ceiling2;
 				int currentVoiceless = f2 <= 0 || f2 >= ceiling2;
-				if (previousVoiceless != currentVoiceless)   /* Voice transition. */
-					transitionCost = voicedUnvoicedCost;
-				else if (currentVoiceless)   /* Both voiceless. */
-					transitionCost = 0;
-				else   /* Both voiced; frequency jump. */
-					transitionCost = octaveJumpCost * fabs (NUMlog2 (f1 / f2));
+				if (currentVoiceless) {
+					if (previousVoiceless) {
+						transitionCost = 0;   // both voiceless
+					} else {
+						transitionCost = voicedUnvoicedCost;   // voiced-to-unvoiced transition
+					}
+				} else {
+					if (previousVoiceless) {
+						transitionCost = voicedUnvoicedCost;   // unvoiced-to-voiced transition
+						if (Melder_debug == 30) {
+							/*
+							 * Try to take into account a frequency jump across a voiceless stretch.
+							 */
+							long place1 = icand1;
+							for (long jframe = iframe - 2; jframe >= 1; jframe --) {
+								place1 = psi [jframe + 1] [place1];
+								f1 = my frame [jframe]. candidate [place1]. frequency;
+								if (f1 > 0 && f1 < ceiling) {
+									transitionCost += octaveJumpCost * fabs (NUMlog2 (f1 / f2)) / (iframe - jframe);
+									break;
+								}
+							}
+						}
+					} else {
+						transitionCost = octaveJumpCost * fabs (NUMlog2 (f1 / f2));   // both voiced
+					}
+				}
 				value = prevDelta [icand1] - transitionCost + curDelta [icand2];
 				if (value > maximum) {
 					maximum = value;

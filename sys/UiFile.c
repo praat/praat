@@ -219,7 +219,7 @@ static void classUiInfile_ok (I) {
 	structMelderFile file;
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 	if (! my okCallback (me, my okClosure)) {
-		Melder_error3 (L"File ", MelderFile_messageNameW (& file), L" not finished.");
+		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 		Melder_flushError (NULL);
 	} else if (! my shiftKeyPressed) {
 		GuiObject_hide (my dialog);
@@ -257,7 +257,7 @@ void UiInfile_do (I) {
 			g_free (filename);
 			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 			if (! my okCallback (me, my okClosure)) {
-				Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
 			}
 			UiHistory_write (L" ");
@@ -287,7 +287,7 @@ void UiInfile_do (I) {
 				structMelderFile file;
 				MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 				if (! my okCallback (me, my okClosure)) {
-					Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+					Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 					Melder_flushError (NULL);
 				}
 				UiHistory_write (L" ");
@@ -340,9 +340,8 @@ void UiInfile_do (I) {
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 			if (! my okCallback (me, my okClosure)) {
-				Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
-				//Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& file));
 			}
 			UiHistory_write (L" ");
 			UiHistory_write (Melder_fileToPath (& file));
@@ -382,8 +381,10 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
 	(void) call;
 	if (w) GuiObject_hide (w);
-	if (! my okCallback (me, my okClosure))
-		Melder_flushError ("File \"%s\" not finished.", MelderFile_messageName (& my file));
+	if (! my okCallback (me, my okClosure)) {
+		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
+		Melder_flushError (NULL);
+	}
 	GuiObject_hide (my dialog);
 	UiHistory_write (L" ");
 	UiHistory_write (my file. path);
@@ -399,7 +400,6 @@ static void classUiOutfile_ok (I) {
 	#if gtk
 		UiFile_ok_ok (NULL, me, NULL);
 	#elif motif
-	char message [1000];
 		if (outDirMask) XmStringFree (outDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & outDirMask, NULL);
 	if (MelderFile_exists (& my file)) {
@@ -413,10 +413,9 @@ static void classUiOutfile_ok (I) {
 			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
 			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
 		}
-		sprintf (message, "A file with the name \"%s\" already exists.\n"
-			"Do you want to replace it?", MelderFile_messageName (& my file));
-		
-		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, message), NULL);
+		wchar_t *message = Melder_wcscat3 (L"A file with the name ", MelderFile_messageName (& my file),
+				L" already exists.\nDo you want to replace it?");
+		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
 		XtManageChild (my warning);
 	} else {
 		UiFile_ok_ok (NULL, me, NULL);
@@ -499,7 +498,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		g_free (filename);
 		MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 		if (! my okCallback (me, my okClosure)) {
-			Melder_error3 (L"File \"", MelderFile_messageNameW (& file), L"\" not finished.");
+			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 			Melder_flushError (NULL);
 		}
 		UiHistory_write (L" ");
@@ -550,7 +549,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 					*p = '\0';
 				}
 				if (! my okCallback (me, my okClosure)) {
-					Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+					Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 					Melder_flushError (NULL);
 				}
 				UiHistory_write (L" ");
@@ -596,7 +595,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 			}
 			Melder_pathToFile (fullFileName, & my file);
 			if (! my okCallback (me, my okClosure)) {
-				Melder_error3 (L"File \"", MelderFile_messageNameW (& my file), L"\" not finished.");
+				Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 				Melder_flushError (NULL);
 			}
 			UiHistory_write (L" ");

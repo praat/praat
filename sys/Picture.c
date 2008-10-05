@@ -383,7 +383,7 @@ int Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 	if (! f) return 0;
 	if (fprintf (f, "PraatPictureFile") < 0 || ! Graphics_writeRecordings (my graphics, f)) {
 		fclose (f);
-		return Melder_error3 (L"Cannot write picture file ", MelderFile_messageNameW (file), L".");
+		return Melder_error3 (L"Cannot write picture file ", MelderFile_messageName (file), L".");
 	}
 	fclose (f);
 	return 1;
@@ -398,7 +398,7 @@ static int Picture_readFromPraatPictureFile_any (Picture me, MelderFile file, in
 	end = strstr (line, tag);
 	if (! end) {
 		fclose (f);
-		return Melder_error2 (MelderFile_messageNameW (file), L" is not a Praat picture file.");
+		return Melder_error2 (MelderFile_messageName (file), L" is not a Praat picture file.");
 	}
 	*end = '\0';
 	rewind (f);
@@ -531,7 +531,7 @@ int Picture_writeToMacPictFile (Picture me, MelderFile file) {
 	MelderFile_delete (file);   /* Overwrite existing file with same name. */
 	FILE *f = Melder_fopen (file, "wb");
 	if (f == NULL)
-		return Melder_error3 (L"Cannot create Mac picture file ", MelderFile_messageNameW (file), L".");
+		return Melder_error3 (L"Cannot create Mac picture file ", MelderFile_messageName (file), L".");
 	count = 4;
 	for (i = 1; i <= 128; i ++)
 		fwrite (& zero, 4, 1, f);
@@ -634,7 +634,7 @@ int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int u
 	ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
 		my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
 	if (! ps)
-		return Melder_error3 (L"Cannot create EPS file ", MelderFile_messageNameW (file), L".");
+		return Melder_error3 (L"Cannot create EPS file ", MelderFile_messageName (file), L".");
 	Graphics_play (my graphics, ps);
 	forget (ps);
 	MelderFile_setMacTypeAndCreator (file, 'EPSF', 'vgrd');

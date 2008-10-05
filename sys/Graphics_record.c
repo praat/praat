@@ -362,8 +362,8 @@ int Graphics_readRecordings_oldWindows (I, FILE *f) {
 		double value = bingetr4 (f);
 		if (ferror (f) || feof (f)) {
 			my irecord = old_irecord;
-			return Melder_error ("Graphics_readRecordings: "
-				"error reading record %ld out of %ld.", i, added_irecord);
+			return Melder_error5 (L"Graphics_readRecordings: error reading record ",
+				Melder_integer (i), L" out of ", Melder_integer (added_irecord), L".");
 		}
 		* ++ p = value;
 	}   
@@ -397,9 +397,9 @@ int Graphics_readRecordings (I, FILE *f) {
 		}
 		if (ferror (f) || feof (f)) {
 			my irecord = old_irecord;
-			return Melder_error ("Graphics_readRecordings: "
-				"error reading record %ld out of %ld.\nOpcode %d, args %ld.",
-				added_irecord - (endp - p), added_irecord, opcode, numberOfArguments);
+			return Melder_error9 (L"Graphics_readRecordings: error reading record ", Melder_integer (added_irecord - (endp - p)),
+				L" out of ", Melder_integer (added_irecord), L".\nOpcode ",
+				Melder_integer (opcode), L", args ", Melder_integer (numberOfArguments), L".");
 		}
 	}   
 	return 1;

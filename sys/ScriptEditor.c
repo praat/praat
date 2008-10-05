@@ -63,7 +63,7 @@ static void nameChanged (I) {
 		MelderString_append3 (& buffer, L" [", my environmentName, L"]");
 	}
 	if (my name) {
-		MelderString_append3 (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+		MelderString_append3 (& buffer, L" " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageName (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 	}
 	if (my dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
@@ -323,7 +323,7 @@ ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Scrip
 			TextEditor editor = theScriptEditors -> item [ieditor];
 			if (MelderFile_equal (& script -> file, & editor -> file)) {
 				Editor_raise (editor);
-				Melder_error3 (L"Script ", MelderFile_messageNameW (& script -> file), L" is already open.");
+				Melder_error3 (L"Script ", MelderFile_messageName (& script -> file), L" is already open.");
 				return NULL;
 			}
 		}

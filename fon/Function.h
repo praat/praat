@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/09/21
+ * pb 2008/09/22
  */
 
 #ifndef _Function_h_
@@ -39,7 +39,8 @@
 	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
 	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
 	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit); \
-	void (*shiftX) (I, double xfrom, double xto);
+	void (*shiftX) (I, double xfrom, double xto); \
+	void (*scaleX) (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 class_create (Function, Data);
 
 /*

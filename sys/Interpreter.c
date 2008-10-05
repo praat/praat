@@ -158,7 +158,7 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 			structMelderFile includeFile = { 0 };
 			if (! Melder_relativePathToFile (includeFileName, & includeFile)) return 0;
 			includeText = MelderFile_readText (& includeFile);
-			if (! includeText) error3 (L"Include file \"", MelderFile_messageNameW (& includeFile), L"\" not read.")
+			if (! includeText) error3 (L"Include file ", MelderFile_messageName (& includeFile), L" not read.")
 			/*
 				Construct the new text.
 			 */

@@ -120,6 +120,12 @@ static void shiftX (I, double xfrom, double xto) {
 	NUMshift (& my xmax, xfrom, xto);
 }
 
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (Function);
+	NUMscale (& my xmin, xminfrom, xmaxfrom, xminto, xmaxto);
+	NUMscale (& my xmax, xminfrom, xmaxfrom, xminto, xmaxto);
+}
+
 class_methods (Function, Data) {
 	class_method_local (Function, copy)
 	class_method_local (Function, equal)
@@ -140,6 +146,7 @@ class_methods (Function, Data) {
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)
 	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 
@@ -210,8 +217,15 @@ void Function_shiftXTo (I, double xfrom, double xto) {
 	our shiftX (me, xfrom, xto);
 }
 
-void Function_scaleXBy (I, double factor);
-void Function_scaleXTo (I, double xminto, double xmaxto);
+void Function_scaleXBy (I, double factor) {
+	iam (Function);
+	our scaleX (me, 0.0, 1.0, 0.0, factor);
+}
+
+void Function_scaleXTo (I, double xminto, double xmaxto) {
+	iam (Function);
+	our scaleX (me, my xmin, my xmax, xminto, xmaxto);
+}
 
 double Function_window (double tim, int windowType) {
 	static double one_by_bessi_0_12, one_by_bessi_0_20;

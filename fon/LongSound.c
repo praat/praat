@@ -267,19 +267,19 @@ LongSound LongSound_open (MelderFile fs) {
 static int _LongSound_FLAC_process (LongSound me, long firstSample, long numberOfSamples) {
 	my compressedSamplesLeft = numberOfSamples - 1;
 	if (! FLAC__stream_decoder_seek_absolute (my flacDecoder, firstSample))
-		return Melder_error3 (L"Cannot seek in FLAC file ", MelderFile_messageNameW (& my file), L".");
+		return Melder_error3 (L"Cannot seek in FLAC file ", MelderFile_messageName (& my file), L".");
 	while (my compressedSamplesLeft > 0) {
 		if (FLAC__stream_decoder_get_state (my flacDecoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
-			return Melder_error3 (L"FLAC file ", MelderFile_messageNameW (& my file ), L" too short.");
+			return Melder_error3 (L"FLAC file ", MelderFile_messageName (& my file), L" too short.");
 		if (! FLAC__stream_decoder_process_single (my flacDecoder))
-			return Melder_error3 (L"Error decoding FLAC file ", MelderFile_messageNameW (& my file ), L".");
+			return Melder_error3 (L"Error decoding FLAC file ", MelderFile_messageName (& my file), L".");
 	}
 	return 1;
 }
 
 static int _LongSound_FILE_seekSample (LongSound me, long firstSample) {
 	if (fseek (my f, my startOfData + (firstSample - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
-		return Melder_error3 (L"Cannot seek in file ", MelderFile_messageNameW (& my file), L".");
+		return Melder_error3 (L"Cannot seek in file ", MelderFile_messageName (& my file), L".");
 	return 1;
 }
 
@@ -298,10 +298,10 @@ static int _LongSound_FLAC_readAudioToShort (LongSound me, short *buffer, long f
 
 static int _LongSound_MP3_process (LongSound me, long firstSample, long numberOfSamples) {
 	if (! mp3f_seek (my mp3f, firstSample))
-		return Melder_error3 (L"Cannot seek in MP3 file \"", MelderFile_messageNameW (& my file), L"\".");
+		return Melder_error3 (L"Cannot seek in MP3 file ", MelderFile_messageName (& my file), L".");
 	my compressedSamplesLeft = numberOfSamples;
 	if (! mp3f_read (my mp3f, numberOfSamples))
-		return Melder_error3 (L"Error decoding MP3 file \"", MelderFile_messageNameW (& my file), L"\".");
+		return Melder_error3 (L"Error decoding MP3 file ", MelderFile_messageName (& my file), L".");
 	return 1;
 }
 

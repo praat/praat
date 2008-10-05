@@ -78,7 +78,7 @@ static void nameChanged (I) {
 			if (my dirty && ! dirtinessAlreadyShown) MelderString_append (& windowTitle, L", modified");
 			MelderString_append (& windowTitle, L")");
 		} else {
-			MelderString_append3 (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageNameW (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+			MelderString_append3 (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageName (& my file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
 			if (my dirty && ! dirtinessAlreadyShown) MelderString_append (& windowTitle, L" (modified)");
 		}
 		GuiWindow_setTitle (my shell, windowTitle.string);
@@ -98,7 +98,7 @@ static int openDocument (TextEditor me, MelderFile file) {
 			TextEditor editor = theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
 				Editor_raise (editor);
-				Melder_error3 (L"Text file ", MelderFile_messageNameW (file), L" is already open.");
+				Melder_error3 (L"Text file ", MelderFile_messageName (file), L" is already open.");
 				forget (me);   // don't forget me before Melder_error, because "file" is owned by one of my dialogs
 				return 0;
 			}

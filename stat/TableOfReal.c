@@ -1300,7 +1300,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 end:
 	iferror {
 		forget (me);
-		Melder_error3 (L"(TableOfReal_readFromHeaderlessSpreadsheetFile:) File ", MelderFile_messageNameW (file), L" not read.");
+		Melder_error3 (L"(TableOfReal_readFromHeaderlessSpreadsheetFile:) File ", MelderFile_messageName (file), L" not read.");
 		return NULL;
 	}
 	return me;

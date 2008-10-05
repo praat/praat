@@ -147,7 +147,7 @@ static int MelderFile_truncate (MelderFile me, long size)
   	hFile = CreateFileW (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
         FILE_ATTRIBUTE_NORMAL, NULL);
     if (hFile == INVALID_HANDLE_VALUE) return Melder_error3
-    	(L"Can't open file \"", MelderFile_messageNameW (me), L"\".");
+    	(L"Can't open file ", MelderFile_messageName (me), L".");
 
     /*
         Set current file pointer to position 'size'
@@ -157,7 +157,7 @@ static int MelderFile_truncate (MelderFile me, long size)
     fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
 	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
 	if (fPos == 0xFFFFFFFF) return Melder_error5 (L"Can't set the position at size ",
-		Melder_integer(size), L"for file \"", MelderFile_messageNameW (me), L"\".");
+		Melder_integer(size), L"for file ", MelderFile_messageName (me), L".");
 
 	/*
 		Limit the file size as the current position of the file pointer.
@@ -172,7 +172,7 @@ static int MelderFile_truncate (MelderFile me, long size)
 
     if (truncate (Melder_peekWcsToUtf8 (my path), size) == -1)
     {
-		return Melder_error5 (L"Truncating failed for file \"", MelderFile_messageNameW (me), L"\" (",
+		return Melder_error5 (L"Truncating failed for file ", MelderFile_messageName (me), L" (",
 			Melder_peekUtf8ToWcs(strerror (errno)), L").");
 	}
 #else
@@ -330,7 +330,7 @@ end:
 		/* Restore file at original size */
 		int error = errno;
 		status = MelderFile_truncate (file, pre_append_endpos);
-		return Melder_error5 (L"File \"", MelderFile_messageNameW (file), L"\" restored to original size (",
+		return Melder_error5 (L"File ", MelderFile_messageName (file), L" restored to original size (",
 			Melder_peekUtf8ToWcs (strerror (error)), L").");
 	}
 	

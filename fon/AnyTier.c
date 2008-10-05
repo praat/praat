@@ -22,7 +22,8 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/03/27 binary rather than linear searches
  * pb 2008/03/31 corrected binary search (case n=1)
- * pb 2008/09/20 shiftXBy
+ * pb 2008/09/20 shiftX
+ * pb 2008/09/23 scaleX
  */
 
 #include "AnyTier.h"
@@ -68,6 +69,15 @@ static void shiftX (I, double xfrom, double xto) {
 	}
 }
 
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (AnyTier);
+	inherited (AnyTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		AnyPoint point = my points -> item [i];
+		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (AnyTier, Function) {
 	class_method_local (AnyTier, destroy)
 	class_method_local (AnyTier, copy)
@@ -79,6 +89,7 @@ class_methods (AnyTier, Function) {
 	class_method_local (AnyTier, readBinary)
 	class_method_local (AnyTier, description)
 	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 

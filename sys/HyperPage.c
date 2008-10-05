@@ -969,19 +969,7 @@ static void createChildren (I) {
 
 int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
 	iam (HyperPage);
-#if 0
-	#if defined (UNIX)
-		#if motif
-		// TODO: Ugh!
-		Display *display = XtDisplay (parent);
-		resolution = floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
-			DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
-		#endif
-	#else
-		resolution = 100;
-	#endif
-#endif
-	resolution = 100;
+	resolution = Gui_getResolution (parent);
 	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
 	#if motif
 		Melder_assert (XtWindow (my drawingArea));

@@ -28,6 +28,7 @@
  * pb 2007/08/20 built a "weird value" check into NUMviterbi (bug report by Adam Jacks)
  * pb 2008/01/19 double
  * pb 2008/09/21 NUMshift
+ * pb 2008/09/22 NUMscale
  */
 
 #include "NUM.h"
@@ -48,6 +49,12 @@ double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (b
 
 void NUMshift (double *x, double xfrom, double xto) {
 	if (*x == xfrom) *x = xto; else *x += xto - xfrom;
+}
+
+void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	if (*x == xminfrom) *x = xminto;
+	else if (*x == xmaxfrom) *x = xmaxto;
+	else *x = xminto + (xmaxto - xminto) * ((*x - xminfrom) / (xmaxfrom - xminfrom));
 }
 
 void NUMinit (void) {

@@ -1813,7 +1813,7 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 	#ifdef macintosh
 		return Sound_readFromMacSoundFile (file);
 	#else
-		return Melder_errorp ("File %.200s is empty", MelderFile_messageName (file));   /* !!! */
+		return Melder_errorp3 (L"File ", MelderFile_messageName (file), L" is empty.");   /* !!! */
 	#endif
 }
 
@@ -2032,7 +2032,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 1, L"-- get content --", 0, 1, 0);
 		praat_addAction1 (classSound, 1, L"Get value at time...", 0, 1, DO_Sound_getValueAtTime);
 		praat_addAction1 (classSound, 1, L"Get value at sample number...", 0, 1, DO_Sound_getValueAtIndex);
-							praat_addAction1 (classSound, 1, L"Get value at index...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Sound_getValueAtIndex);
+							praat_addAction1 (classSound, 1, L"Get value at index...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_getValueAtIndex);
 		praat_addAction1 (classSound, 1, L"-- get shape --", 0, 1, 0);
 		praat_addAction1 (classSound, 1, L"Get minimum...", 0, 1, DO_Sound_getMinimum);
 		praat_addAction1 (classSound, 1, L"Get time of minimum...", 0, 1, DO_Sound_getTimeOfMinimum);

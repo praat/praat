@@ -136,7 +136,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
 			forget (substimulus);
-			error3 (L"The sound in file ", MelderFile_messageNameW (& file), L" has a different number of channels than some other sound.")
+			error3 (L"The sound in file ", MelderFile_messageName (& file), L" has a different number of channels than some other sound.")
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
@@ -145,7 +145,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
 			forget (substimulus);
-			error3 (L"The sound in file ", MelderFile_messageNameW (& file), L" has a different sampling frequency than some other sound.")
+			error3 (L"The sound in file ", MelderFile_messageName (& file), L" has a different sampling frequency than some other sound.")
 		}
 		/*
 		 * Append the substimuli, perhaps with silent intervals.

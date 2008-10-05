@@ -43,22 +43,27 @@ Widget Gui_addMenuBar (Widget form) {
 }
 
 int Gui_getResolution (Widget widget) {
-	return 100;   // New fixed resolution for Praat 5.
-	#if defined (macintosh)
-		(void) widget;
-		return 72;
-	#elif defined (_WIN32)
-		(void) widget;
-		return 72;
-	#else
-		#if gtk
-			return (int) gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (widget)));
-		#elif motif
-			Display *display = XtDisplay (widget);
-			return floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
-				DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+	static int resolution = 0;
+	if (resolution == 0) {
+		#if defined (macintosh)
+			(void) widget;
+			CGSize size = CGDisplayScreenSize (kCGDirectMainDisplay);
+			resolution = floor (25.4 * (double) CGDisplayPixelsWide (kCGDirectMainDisplay) / size.width);
+			//resolution = 100;
+		#elif defined (_WIN32)
+			(void) widget;
+			resolution = 100;
+		#else
+			#if gtk
+				resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (widget)));
+			#elif motif
+				Display *display = XtDisplay (widget);
+				resolution = floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
+					DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+			#endif
 		#endif
-	#endif
+	}
+	return resolution;
 }
 
 /* End of file Gui.c */

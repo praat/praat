@@ -407,7 +407,7 @@ end:
 	Melder_setDefaultDir (& saveDir);
 	Melder_free (text);
 	forget (interpreter);
-	iferror return Melder_error3 (L"Script \"", MelderFile_messageNameW (file), L"\" not completed.");
+	iferror return Melder_error3 (L"Script ", MelderFile_messageName (file), L" not completed.");
 	return 1;
 }
 
@@ -503,7 +503,7 @@ end:
 	Melder_setDefaultDir (& saveDir);
 	Melder_free (text);
 	forget (interpreter);
-	iferror return Melder_error3 (L"Script ", MelderFile_messageNameW (file), L" not completed.");
+	iferror return Melder_error3 (L"Script ", MelderFile_messageName (file), L" not completed.");
 	return 1;
 }
 

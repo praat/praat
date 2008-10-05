@@ -21,6 +21,7 @@
  * pb 2008/04/24 created
  * pb 2008/04/25 playPart
  * pb 2008/04/27 removePointsBetween, filter_noscale
+ * pb 2008/09/23 shiftX, scaleX
  */
 
 #include "FormantGrid.h"
@@ -45,6 +46,32 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantGrid_def.h"
 
+static void shiftX (I, double xfrom, double xto) {
+	iam (FormantGrid);
+	inherited (FormantGrid) shiftX (me, xfrom, xto);
+	for (long i = 1; i <= my formants -> size; i ++) {
+		RealTier tier = my formants -> item [i];
+		tier -> methods -> shiftX (tier, xfrom, xto);
+	}
+	for (long i = 1; i <= my bandwidths -> size; i ++) {
+		RealTier tier = my bandwidths -> item [i];
+		tier -> methods -> shiftX (tier, xfrom, xto);
+	}
+}
+
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (FormantGrid);
+	inherited (FormantGrid) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my formants -> size; i ++) {
+		RealTier tier = my formants -> item [i];
+		tier -> methods -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+	for (long i = 1; i <= my bandwidths -> size; i ++) {
+		RealTier tier = my bandwidths -> item [i];
+		tier -> methods -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (FormantGrid, Function) {
 	class_method_local (FormantGrid, destroy)
 	class_method_local (FormantGrid, copy)
@@ -55,6 +82,8 @@ class_methods (FormantGrid, Function) {
 	class_method_local (FormantGrid, writeBinary)
 	class_method_local (FormantGrid, readBinary)
 	class_method_local (FormantGrid, description)
+	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 

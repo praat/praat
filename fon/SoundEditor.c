@@ -422,7 +422,7 @@ static void play (I, double tmin, double tmax) {
 
 static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 	iam (SoundEditor);
-	if ((my spectrogram.show || my formant.show) && yWC < 0.5) {
+	if ((my spectrogram.show || my formant.show) && yWC < 0.5 && xWC > my startWindow && xWC < my endWindow) {
 		my spectrogram.cursor = my spectrogram.viewFrom +
 			2 * yWC * (my spectrogram.viewTo - my spectrogram.viewFrom);
 	}

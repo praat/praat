@@ -40,6 +40,8 @@ static const wchar_t *STRING_TIER_NUMBER = L"Tier number";
 static const wchar_t *STRING_INTERVAL_NUMBER = L"Interval number";
 static const wchar_t *STRING_POINT_NUMBER = L"Point number";
 
+void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
+
 /***** ANYTIER (generic) *****/
 
 DIRECT (AnyTier_into_TextGrid)
@@ -493,7 +495,8 @@ END
 
 DIRECT (TextGrid_Sound_scaleTimes)
 	TextGrid grid = ONLY (classTextGrid);
-	TextGrid_Function_scaleTimes (grid, ONLY (classSound));
+	Sound sound = ONLY (classSound);
+	Function_scaleXTo (grid, sound -> xmin, sound -> xmax);
 	praat_dataChanged (grid);
 END
 
@@ -1134,19 +1137,6 @@ DIRECT (info_TextGrid_Sound_draw)
 	Melder_information1 (L"You can draw a TextGrid together with a Sound after selecting them both.");
 END
 
-FORM (TextGrid_scaleTimes, L"TextGrid: Scale times", 0)
-	REAL (L"left New time domain (s)", L"0.0")
-	REAL (L"right New time domain (s)", L"1.0")
-	OK
-DO
-	double tmin = GET_REAL (L"left New time domain"), tmax = GET_REAL (L"right New time domain");
-	if (tmin >= tmax) return Melder_error1 (L"Duration of time domain must be positive.");
-	WHERE (SELECTED) {
-		TextGrid_scaleTimes (OBJECT, tmin, tmax);
-		praat_dataChanged (OBJECT);
-	}
-END
-
 FORM (TextGrid_setIntervalText, L"TextGrid: Set interval text", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	NATURAL (STRING_INTERVAL_NUMBER, L"1")
@@ -1173,24 +1163,6 @@ DO
 	}
 END
 
-FORM (TextGrid_shiftTimesBy, L"TextGrid: Shift times", 0)
-	REAL (L"Time shift (s)", L"0.5")
-	OK
-DO
-	WHERE (SELECTED) {
-		Function_shiftXBy (OBJECT, GET_REAL (L"Time shift"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-DIRECT (TextGrid_shiftToZero)
-	WHERE (SELECTED) {
-		TextGrid me = OBJECT;
-		Function_shiftXTo (me, my xmin, 0.0);
-		praat_dataChanged (me);
-	}
-END
-
 FORM_WRITE (TextGrid_writeToChronologicalTextFile, L"Text file", 0, 0)
 	if (! TextGrid_writeToChronologicalTextFile (ONLY_OBJECT, file)) return 0;
 END
@@ -1208,7 +1180,8 @@ END
 
 DIRECT (TextGrid_LongSound_scaleTimes)
 	TextGrid grid = ONLY (classTextGrid);
-	TextGrid_Function_scaleTimes (grid, ONLY (classLongSound));
+	LongSound longSound = ONLY (classLongSound);
+	Function_scaleXTo (grid, longSound -> xmin, longSound -> xmax);
 	praat_dataChanged (grid);
 END
 
@@ -1350,11 +1323,7 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_genericize);   // hidden 2007
 		praat_addAction1 (classTextGrid, 0, L"Convert to Unicode", 0, 1, DO_TextGrid_nativize);
 		praat_addAction1 (classTextGrid, 0, L"Nativize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_nativize);   // hidden 2007
-		praat_addAction1 (classTextGrid, 0, L"Modify time domain", 0, 1, 0);
-			praat_addAction1 (classTextGrid, 0, L"Shift times by...", 0, 2, DO_TextGrid_shiftTimesBy);
-			praat_addAction1 (classTextGrid, 0, L"Shift times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TextGrid_shiftTimesBy);   // hidden 2008
-			praat_addAction1 (classTextGrid, 0, L"Shift to zero", 0, 2, DO_TextGrid_shiftToZero);
-			praat_addAction1 (classTextGrid, 0, L"Scale times...", 0, 2, DO_TextGrid_scaleTimes);
+		praat_TimeFunction_modify_init (classTextGrid);
 		praat_addAction1 (classTextGrid, 0, L"Modify interval tier", 0, 1, 0);
 			praat_addAction1 (classTextGrid, 0, L"Insert boundary...", 0, 2, DO_TextGrid_insertBoundary);
 			praat_addAction1 (classTextGrid, 0, L"Remove left boundary...", 0, 2, DO_TextGrid_removeLeftBoundary);

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/09/20
+ * pb 2008/09/23
  */
 
 #include "praat.h"
@@ -839,7 +839,7 @@ DO
 END
 
 FORM (Formant_tracker, L"Formant tracker", L"Formant: Track...")
-	NATURAL (L"Number of tracks", L"3")
+	NATURAL (L"Number of tracks (1-5)", L"3")
 	REAL (L"Reference F1 (Hz)", L"550")
 	REAL (L"Reference F2 (Hz)", L"1650")
 	REAL (L"Reference F3 (Hz)", L"2750")
@@ -850,6 +850,8 @@ FORM (Formant_tracker, L"Formant tracker", L"Formant: Track...")
 	REAL (L"Transition cost (/octave)", L"1.0")
 	OK
 DO
+	long numberOfTracks = GET_INTEGER (L"Number of tracks");
+	REQUIRE (numberOfTracks <= 5, L"Number of tracks cannot be more than 5.")
 	EVERY_TO (Formant_tracker (OBJECT, GET_INTEGER (L"Number of tracks"),
 		GET_REAL (L"Reference F1"), GET_REAL (L"Reference F2"),
 		GET_REAL (L"Reference F3"), GET_REAL (L"Reference F4"),
@@ -4094,6 +4096,30 @@ DIRECT (TimeFunction_getStartTime)
 	Melder_informationReal (my xmin, L"seconds");
 END
 
+FORM (TimeFunction_scaleTimesBy, L"Scale times by", 0)
+	POSITIVE (L"Factor", L"2.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		Function_scaleXBy (OBJECT, GET_REAL (L"Factor"));
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TimeFunction_scaleTimesTo, L"Scale times to", 0)
+	REAL (L"New start time (s)", L"0.0")
+	REAL (L"New end time (s)", L"1.0")
+	OK
+DO
+	double tminto = GET_REAL (L"New start time"), tmaxto = GET_REAL (L"New end time");
+	REQUIRE (tminto < tmaxto, L"New end time should be greater than new start time.")
+	WHERE (SELECTED) {
+		Function me = OBJECT;
+		Function_scaleXTo (me, tminto, tmaxto);
+		praat_dataChanged (me);
+	}
+END
+
 FORM (TimeFunction_shiftTimesBy, L"Shift times by", 0)
 	REAL (L"Shift (s)", L"0.5")
 	OK
@@ -4116,6 +4142,14 @@ DO
 	WHERE (SELECTED) {
 		Function me = OBJECT;
 		Function_shiftXTo (me, shift == 1 ? my xmin : shift == 2 ? 0.5 * (my xmin + my xmax) : my xmax, GET_REAL (L"To time"));
+		praat_dataChanged (me);
+	}
+END
+
+DIRECT (TimeFunction_shiftToZero)
+	WHERE (SELECTED) {
+		Function me = OBJECT;
+		Function_shiftXTo (me, my xmin, 0.0);
 		praat_dataChanged (me);
 	}
 END
@@ -4307,9 +4341,13 @@ void praat_TimeFunction_query_init (void *klas) {
 
 void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
 void praat_TimeFunction_modify_init (void *klas) {
-	praat_addAction1 (klas, 0, L"Modify time domain", 0, 1, 0);
+	praat_addAction1 (klas, 0, L"Modify times", 0, 1, 0);
 	praat_addAction1 (klas, 0, L"Shift times by...", 0, 2, DO_TimeFunction_shiftTimesBy);
 	praat_addAction1 (klas, 0, L"Shift times to...", 0, 2, DO_TimeFunction_shiftTimesTo);
+						praat_addAction1 (klas, 0, L"Shift to zero", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_shiftToZero);   // hidden 2008
+	praat_addAction1 (klas, 0, L"Scale times by...", 0, 2, DO_TimeFunction_scaleTimesBy);
+	praat_addAction1 (klas, 0, L"Scale times to...", 0, 2, DO_TimeFunction_scaleTimesTo);
+						praat_addAction1 (klas, 0, L"Scale times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_scaleTimesTo);   // hidden 2008
 }
 
 void praat_TimeFrameSampled_query_init (void *klas);   // Query buttons for frame-based time-based subclasses of Sampled.
@@ -4338,6 +4376,7 @@ void praat_TimeTier_query_init (void *klas) {
 
 void praat_TimeTier_modify_init (void *klas);   // Modification buttons for time-based subclasses of AnyTier.
 void praat_TimeTier_modify_init (void *klas) {
+	praat_TimeFunction_modify_init (klas);
 	praat_addAction1 (klas, 0, L"Remove point...", 0, 1, DO_TimeTier_removePoint);
 	praat_addAction1 (klas, 0, L"Remove point near...", 0, 1, DO_TimeTier_removePointNear);
 	praat_addAction1 (klas, 0, L"Remove points between...", 0, 1, DO_TimeTier_removePointsBetween);
@@ -4514,6 +4553,7 @@ praat_addAction1 (classExcitation, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classFormant, 1, L"Get mean...", 0, 1, DO_Formant_getMean);
 		praat_addAction1 (classFormant, 1, L"Get standard deviation...", 0, 1, DO_Formant_getStandardDeviation);
 	praat_addAction1 (classFormant, 0, L"Modify -          ", 0, 0, 0);
+		praat_TimeFunction_modify_init (classFormant);
 		praat_addAction1 (classFormant, 0, L"Sort", 0, 1, DO_Formant_sort);
 		praat_addAction1 (classFormant, 0, L"Formula (frequencies)...", 0, 1, DO_Formant_formula_frequencies);
 		praat_addAction1 (classFormant, 0, L"Formula (bandwidths)...", 0, 1, DO_Formant_formula_bandwidths);
@@ -4527,6 +4567,7 @@ praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classFormantGrid, 0, L"FormantGrid help", 0, 0, DO_FormantGrid_help);
 	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, 0, DO_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, L"Modify -          ", 0, 0, 0);
+		praat_TimeFunction_modify_init (classFormantGrid);
 		praat_addAction1 (classFormantGrid, 0, L"Add formant point...", 0, 1, DO_FormantGrid_addFormantPoint);
 		praat_addAction1 (classFormantGrid, 0, L"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
 		praat_addAction1 (classFormantGrid, 0, L"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);
@@ -4547,8 +4588,8 @@ praat_addAction1 (classFormantTier, 0, L"Down", 0, 0, 0);
 	praat_addAction1 (classFormantTier, 0, L"Down to TableOfReal...", 0, 0, DO_FormantTier_downto_TableOfReal);
 
 	praat_addAction1 (classHarmonicity, 0, L"Harmonicity help", 0, 0, DO_Harmonicity_help);
-praat_addAction1 (classHarmonicity, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classHarmonicity, 0, L"Draw...", 0, 0, DO_Harmonicity_draw);
+	praat_addAction1 (classHarmonicity, 0, L"Draw", 0, 0, 0);
+		praat_addAction1 (classHarmonicity, 0, L"Draw...", 0, 0, DO_Harmonicity_draw);
 	praat_addAction1 (classHarmonicity, 1, L"Query -          ", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classHarmonicity);
 		praat_addAction1 (classHarmonicity, 1, L"-- get content --", 0, 1, 0);
@@ -4562,10 +4603,11 @@ praat_addAction1 (classHarmonicity, 0, L"Draw", 0, 0, 0);
 		praat_addAction1 (classHarmonicity, 1, L"-- get statistics --", 0, 1, 0);
 		praat_addAction1 (classHarmonicity, 1, L"Get mean...", 0, 1, DO_Harmonicity_getMean);
 		praat_addAction1 (classHarmonicity, 1, L"Get standard deviation...", 0, 1, DO_Harmonicity_getStandardDeviation);
-praat_addAction1 (classHarmonicity, 0, L"Modify", 0, 0, 0);
-	praat_addAction1 (classHarmonicity, 0, L"Formula...", 0, 0, DO_Harmonicity_formula);
-praat_addAction1 (classHarmonicity, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classHarmonicity, 0, L"To Matrix", 0, 0, DO_Harmonicity_to_Matrix);
+	praat_addAction1 (classHarmonicity, 0, L"Modify", 0, 0, 0);
+		praat_TimeFunction_modify_init (classHarmonicity);
+		praat_addAction1 (classHarmonicity, 0, L"Formula...", 0, 0, DO_Harmonicity_formula);
+	praat_addAction1 (classHarmonicity, 0, L"Hack", 0, 0, 0);
+		praat_addAction1 (classHarmonicity, 0, L"To Matrix", 0, 0, DO_Harmonicity_to_Matrix);
 
 	praat_addAction1 (classIntensity, 0, L"Intensity help", 0, 0, DO_Intensity_help);
 	praat_addAction1 (classIntensity, 0, L"Draw...", 0, 0, DO_Intensity_draw);
@@ -4584,6 +4626,7 @@ praat_addAction1 (classHarmonicity, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classIntensity, 1, L"Get mean...", 0, 1, DO_Intensity_getMean);
 		praat_addAction1 (classIntensity, 1, L"Get standard deviation...", 0, 1, DO_Intensity_getStandardDeviation);
 	praat_addAction1 (classIntensity, 0, L"Modify", 0, 0, 0);
+		praat_TimeFunction_modify_init (classIntensity);
 		praat_addAction1 (classIntensity, 0, L"Formula...", 0, 0, DO_Intensity_formula);
 	praat_addAction1 (classIntensity, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classIntensity, 0, L"To IntensityTier (peaks)", 0, 0, DO_Intensity_to_IntensityTier_peaks);
@@ -4660,8 +4703,10 @@ praat_addAction1 (classIntensityTier, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classManipulation, 0, L"Extract pulses", 0, 0, DO_Manipulation_extractPulses);
 	praat_addAction1 (classManipulation, 0, L"Extract pitch tier", 0, 0, DO_Manipulation_extractPitchTier);
 	praat_addAction1 (classManipulation, 0, L"Extract duration tier", 0, 0, DO_Manipulation_extractDurationTier);
-	praat_addAction1 (classManipulation, 0, L"Replace pitch tier?", 0, 0, DO_Manipulation_replacePitchTier_help);
-	praat_addAction1 (classManipulation, 0, L"Replace duration tier?", 0, 0, DO_Manipulation_replaceDurationTier_help);
+	praat_addAction1 (classManipulation, 0, L"Modify -", 0, 0, 0);
+		praat_TimeFunction_modify_init (classManipulation);
+		praat_addAction1 (classManipulation, 0, L"Replace pitch tier?", 0, 1, DO_Manipulation_replacePitchTier_help);
+		praat_addAction1 (classManipulation, 0, L"Replace duration tier?", 0, 1, DO_Manipulation_replaceDurationTier_help);
 	praat_addAction1 (classManipulation, 1, L"Write to text file without Sound...", 0, 0, DO_Manipulation_writeToTextFileWithoutSound);
 	praat_addAction1 (classManipulation, 1, L"Write to binary file without Sound...", 0, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
 
@@ -4763,6 +4808,7 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classPitch, 2, L"-- query two --", 0, 1, 0);
 		praat_addAction1 (classPitch, 2, L"Count differences", 0, 1, DO_Pitch_difference);
 	praat_addAction1 (classPitch, 0, L"Modify -          ", 0, 0, 0);
+		praat_TimeFunction_modify_init (classPitch);
 		praat_addAction1 (classPitch, 0, L"Formula...", 0, 1, DO_Pitch_formula);
 	praat_addAction1 (classPitch, 0, L"Annotate -   ", 0, 0, 0);
 		praat_addAction1 (classPitch, 0, L"To TextGrid...", 0, 1, DO_Pitch_to_TextGrid);
@@ -4849,6 +4895,7 @@ praat_addAction1 (classPitch, 0, L"Convert", 0, 0, 0);
 		praat_addAction1 (classPointProcess, 1, L"Get jitter (ppq5)...", 0, 1, DO_PointProcess_getJitter_ppq5);
 		praat_addAction1 (classPointProcess, 1, L"Get jitter (ddp)...", 0, 1, DO_PointProcess_getJitter_ddp);
 	praat_addAction1 (classPointProcess, 0, L"Modify -          ", 0, 0, 0);
+		praat_TimeFunction_modify_init (classPointProcess);
 		praat_addAction1 (classPointProcess, 0, L"Add point...", 0, 1, DO_PointProcess_addPoint);
 		praat_addAction1 (classPointProcess, 0, L"Remove point...", 0, 1, DO_PointProcess_removePoint);
 		praat_addAction1 (classPointProcess, 0, L"Remove point near...", 0, 1, DO_PointProcess_removePointNear);
@@ -4895,19 +4942,20 @@ praat_addAction1 (classPolygon, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classSpectrogram, 0, L"Spectrogram help", 0, 0, DO_Spectrogram_help);
 	praat_addAction1 (classSpectrogram, 1, L"View", 0, 0, DO_Spectrogram_view);
 	praat_addAction1 (classSpectrogram, 1, L"Movie", 0, 0, DO_Spectrogram_movie);
-praat_addAction1 (classSpectrogram, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classSpectrogram, 0, L"Query -", 0, 0, 0);
 		praat_TimeFrameSampled_query_init (classSpectrogram);
-	praat_addAction1 (classSpectrogram, 1, L"Get power at...", 0, 1, DO_Spectrogram_getPowerAt);
-praat_addAction1 (classSpectrogram, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classSpectrogram, 0, L"Paint...", 0, 0, DO_Spectrogram_paint);
-praat_addAction1 (classSpectrogram, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classSpectrogram, 0, L"To Spectrum (slice)...", 0, 0, DO_Spectrogram_to_Spectrum);
-praat_addAction1 (classSpectrogram, 0, L"Synthesize", 0, 0, 0);
-	praat_addAction1 (classSpectrogram, 0, L"To Sound...", 0, 0, DO_Spectrogram_to_Sound);
-praat_addAction1 (classSpectrogram, 0, L"Modify", 0, 0, 0);
-	praat_addAction1 (classSpectrogram, 0, L"Formula...", 0, 0, DO_Spectrogram_formula);
-praat_addAction1 (classSpectrogram, 0, L"Hack", 0, 0, 0);
-	praat_addAction1 (classSpectrogram, 0, L"To Matrix", 0, 0, DO_Spectrogram_to_Matrix);
+		praat_addAction1 (classSpectrogram, 1, L"Get power at...", 0, 1, DO_Spectrogram_getPowerAt);
+	praat_addAction1 (classSpectrogram, 0, L"Draw -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, L"Paint...", 0, 1, DO_Spectrogram_paint);
+	praat_addAction1 (classSpectrogram, 0, L"Analyse -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, L"To Spectrum (slice)...", 0, 1, DO_Spectrogram_to_Spectrum);
+	praat_addAction1 (classSpectrogram, 0, L"Synthesize -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, L"To Sound...", 0, 1, DO_Spectrogram_to_Sound);
+	praat_addAction1 (classSpectrogram, 0, L"Modify -", 0, 0, 0);
+		praat_TimeFunction_modify_init (classSpectrogram);
+		praat_addAction1 (classSpectrogram, 0, L"Formula...", 0, 1, DO_Spectrogram_formula);
+	praat_addAction1 (classSpectrogram, 0, L"Hack -", 0, 0, 0);
+		praat_addAction1 (classSpectrogram, 0, L"To Matrix", 0, 1, DO_Spectrogram_to_Matrix);
 
 	praat_addAction1 (classSpectrum, 0, L"Spectrum help", 0, 0, DO_Spectrum_help);
 	praat_addAction1 (classSpectrum, 1, L"Edit", 0, 0, DO_Spectrum_edit);

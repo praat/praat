@@ -809,8 +809,7 @@ void MelderFile_setDefaultDir (MelderFile file);
 /* The trick is that they return one of 11 cyclically used static strings, */
 /* so you can use up to 11 strings in a single Melder_* call. */
 wchar_t * Melder_peekExpandBackslashes (const wchar_t *message);
-char * MelderFile_messageName (MelderFile file);
-wchar_t * MelderFile_messageNameW (MelderFile file);   // Calls Melder_peekExpandBackslashes ().
+wchar_t * MelderFile_messageName (MelderFile file);   // Calls Melder_peekExpandBackslashes ().
 
 double Melder_stopwatch (void);
 

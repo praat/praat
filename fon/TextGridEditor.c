@@ -40,6 +40,7 @@
  * pb 2008/03/17 extract selected TextGrid
  * pb 2008/03/18 renamed: "convert to backslash trigraphs/Unicode"
  * pb 2008/03/20 split off Help menu
+ * pb 2008/09/23 info: selectedTier
  */
 
 #include "TextGridEditor.h"
@@ -110,6 +111,7 @@ void TextGridEditor_prefs (void) {
 static void info (I) {
 	iam (TextGridEditor);
 	inherited (TextGridEditor) info (me);
+	MelderInfo_writeLine2 (L"Selected tier: ", Melder_integer (my selectedTier));
 	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", Melder_boolean (my useTextStyles));
 	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (my fontSize));
 	MelderInfo_writeLine2 (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (my alignment));

@@ -28,7 +28,8 @@
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
  * pb 2007/10/01 can write as encoding
- * pb 2008/09/20 shiftXBy
+ * pb 2008/09/20 shiftX
+ * pb 2008/09/23 scaleX
  */
 
 #include "PointProcess.h"
@@ -99,6 +100,14 @@ static void shiftX (I, double xfrom, double xto) {
 	}
 }
 
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (PointProcess);
+	inherited (PointProcess) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my nt; i ++) {
+		NUMscale (& my t [i], xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (PointProcess, Function) {
 	class_method_local (PointProcess, destroy)
 	class_method (info)
@@ -112,6 +121,7 @@ class_methods (PointProcess, Function) {
 	class_method_local (PointProcess, readBinary)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 

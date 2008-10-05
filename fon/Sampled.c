@@ -29,7 +29,8 @@
  * pb 2005/06/16 removed units
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
- * pb 2008/09/20 shiftXBy
+ * pb 2008/09/20 shiftX
+ * pb 2008/09/23 scaleX
  */
 
 #include <math.h>
@@ -71,6 +72,13 @@ static void shiftX (I, double xfrom, double xto) {
 	NUMshift (& my x1, xfrom, xto);
 }
 
+static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (Sampled);
+	inherited (Sampled) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	NUMscale (& my x1, xminfrom, xmaxfrom, xminto, xmaxto);
+	my dx *= (xmaxto - xminto) / (xmaxfrom - xminfrom);
+}
+
 class_methods (Sampled, Function) {
 	class_method_local (Sampled, copy)
 	class_method_local (Sampled, equal)
@@ -85,6 +93,7 @@ class_methods (Sampled, Function) {
 	class_method (getX)
 	class_method (getValueAtSample)
 	class_method (shiftX)
+	class_method (scaleX)
 	class_methods_end
 }
 

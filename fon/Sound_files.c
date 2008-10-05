@@ -178,7 +178,7 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 	Melder_readAudioToFloat (f, numberOfChannels, encoding, my z [1], numberOfChannels == 1 ? NULL : my z [2], numberOfSamples); cherror
 end:
 	if (f) fclose (f);
-	iferror { Melder_error3 (L"(Sound_readFromSoundFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (me); }
+	iferror { Melder_error3 (L"(Sound_readFromSoundFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
 	return me;
 }
 
@@ -206,7 +206,7 @@ int Sound_read2FromSoundFile (MelderFile file, Sound *return_left, Sound *return
 	Melder_readAudioToFloat (f, numberOfChannels, encoding, left -> z [1], right ? right -> z [1] : NULL, numberOfSamples); cherror
 end:
 	if (f) fclose (f);
-	iferror { Melder_error3 (L"(Sound_read2FromSoundFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (left); forget (right); }
+	iferror { Melder_error3 (L"(Sound_read2FromSoundFile:) File ", MelderFile_messageName (file), L" not read."); forget (left); forget (right); }
 	*return_left = left;
 	*return_right = right;
 	return 1;
@@ -231,13 +231,13 @@ Sound Sound_readFromSesamFile (MelderFile fs) {
 	if (numberOfSamples < 1 || numberOfSamples > 1000000000 ||
 			samplingFrequency < 10.0 || samplingFrequency > 100000000.0) {
 		fclose (f);
-		return Melder_errorp ("(Sound_readFromSesamFile:) "
-			"File \"%s\" is not a correct SESAM or LVS file.", MelderFile_messageName (fs));
+		return Melder_errorp3 (L"(Sound_readFromSesamFile:) "
+			"File ", MelderFile_messageName (fs), L" is not a correct SESAM or LVS file.");
 	}
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (! me) return NULL;
 	for (i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2LE (f) * (1.0 / 2048);   /* 12 bits. */
-	if (fclose (f) == EOF) return Melder_errorp ("Error reading file \"%s\".", MelderFile_messageName (fs));
+	if (fclose (f) == EOF) return Melder_errorp3 (L"Error reading file ", MelderFile_messageName (fs), L".");
 	return me;
 }
 
@@ -518,11 +518,11 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 error:
 	if (f) fclose (f);
 	Melder_free (lines);
-	return Melder_errorp3 (L"(Sound_readFromBellLabsFile:) File ", MelderFile_messageNameW (fs), L" not read.");
+	return Melder_errorp3 (L"(Sound_readFromBellLabsFile:) File ", MelderFile_messageName (fs), L" not read.");
 }
 
 static Sound readError (MelderFile file) {
-	return Melder_errorp3 (L"(Sound_readFrom...File:) Cannot read file ", MelderFile_messageNameW (file), L".");
+	return Melder_errorp3 (L"(Sound_readFrom...File:) Cannot read file ", MelderFile_messageName (file), L".");
 }
 
 Sound Sound_readFromKayFile (MelderFile fs) {
@@ -540,7 +540,7 @@ Sound Sound_readFromKayFile (MelderFile fs) {
 	if (fread (data, 1, 12, f) < 12) return readError (fs);
 	if (! strnequ (data, "FORMDS16", 8)) {
 		fclose (f);
-		return Melder_errorp ("(Sound_readFromKayFile:) File \"%s\" is not a KAY DS-16 file.", MelderFile_messageName (fs));
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" is not a KAY DS-16 file.");
 	}
 
 	/* HEDR chunk */
@@ -548,7 +548,7 @@ Sound Sound_readFromKayFile (MelderFile fs) {
 	if (fread (data, 1, 4, f) < 4) return readError (fs);
 	if (! strnequ (data, "HEDR", 4)) {
 		fclose (f);
-		return Melder_errorp ("(Sound_readFromKayFile:) File \"%s\" does not contain HEDR chunk.", MelderFile_messageName (fs));
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain HEDR chunk.");
 	}
 	chunkSize = bingeti4LE (f);
 	if (chunkSize & 1) ++ chunkSize;
@@ -558,7 +558,7 @@ Sound Sound_readFromKayFile (MelderFile fs) {
 	if (samplingFrequency <= 0 || samplingFrequency > 1e7 ||
 	    numberOfSamples <= 0 || numberOfSamples >= 1000000000) {
 		fclose (f);
-		return Melder_errorp ("(Sound_readFromKayFile:) File \"%s\" is not a correct Kay file.", MelderFile_messageName (fs));
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" is not a correct Kay file.");
 	}
 	if (fread (data, 1, 4, f) < 4) return readError (fs);   /* Absolute extrema A/B. */
 
@@ -568,7 +568,7 @@ Sound Sound_readFromKayFile (MelderFile fs) {
 	while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
 		if (feof (f)) {
 			fclose (f);
-			return Melder_errorp ("(Sound_readFromKayFile:) File \"%s\" does not contain readable SD chunk.", MelderFile_messageName (fs));
+			return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain readable SD chunk.");
 		}
 		chunkSize = bingeti4LE (f);
 		if (chunkSize & 1) ++ chunkSize;
@@ -578,7 +578,7 @@ Sound Sound_readFromKayFile (MelderFile fs) {
 	chunkSize = bingeti4LE (f);
 	if (chunkSize != numberOfSamples * 2) {
 		fclose (f);
-		return Melder_errorp ("(Sound_readFromKayFile:) File \"%s\" does not contain readable SD chunk.", MelderFile_messageName (fs));
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain readable SD chunk.");
 	}
 
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
@@ -601,7 +601,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 	Melder_readAudioToFloat (f, 1, Melder_ALAW, my z [1], NULL, numberOfSamples); cherror
 end:
 	Melder_fclose (file, f);
-	iferror { Melder_error3 (L"(Sound_readFromRawAlawFile:) File ", MelderFile_messageNameW (file), L" not read."); forget (me); }
+	iferror { Melder_error3 (L"(Sound_readFromRawAlawFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
 	return me;
 }
 
@@ -641,7 +641,7 @@ int Sound_writeToSesamFile (Sound me, MelderFile file) {
 	tail = 256 - my nx % 256;
 	if (tail == 256) tail = 0;
 	for (i = 1; i <= tail; i ++) binputi2LE (0, f);   /* Pad last block with zeroes. */
-	if (fclose (f) == EOF) return Melder_error3 (L"Error writing file ", MelderFile_messageNameW (file), L".");
+	if (fclose (f) == EOF) return Melder_error3 (L"Error writing file ", MelderFile_messageName (file), L".");
 	return 1;
 }
 

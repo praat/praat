@@ -844,7 +844,10 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	extern wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static int cb_openDocument (MelderFile file) {
 		wchar_t text [500];
-		swprintf (text, 500, L"Read from file... %ls", file -> path);
+		wchar_t *s = file -> path;
+		swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
+		long l = wcslen (text);
+		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 		return 0;
 	}
@@ -1231,7 +1234,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
 			fclose (f);
 			if (! praat_executeScriptFromFile (& startUp, NULL)) {
-				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": start-up file \"", MelderFile_messageNameW (& startUp), L"\" not completed.");
+				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": start-up file ", MelderFile_messageName (& startUp), L" not completed.");
 				Melder_flushError (NULL);
 			}
 		} else {
@@ -1292,8 +1295,10 @@ void praat_run (void) {
 			MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
 			if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
 				fclose (f);
-				if (! praat_executeScriptFromFile (& plugin, NULL))
-					Melder_flushError ("%s: plugin \"%s\" contains an error.", praatP.title, MelderFile_messageName (& plugin));
+				if (! praat_executeScriptFromFile (& plugin, NULL)) {
+					Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": plugin ", MelderFile_messageName (& plugin), L" contains an error.");
+					Melder_flushError (NULL);
+				}
 			} else {
 				Melder_clearError ();
 			}
@@ -1319,7 +1324,7 @@ void praat_run (void) {
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderGui_create (NULL, NULL);
 				#endif
-				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": command file \"", MelderFile_messageNameW (& batchFile), L"\" not completed.");
+				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": command file ", MelderFile_messageName (& batchFile), L" not completed.");
 				Melder_flushError (NULL);
 				praat_exit (-1);
 			}

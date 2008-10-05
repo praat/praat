@@ -1,6 +1,6 @@
 /* TextGrid.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
  * pb 2007/07/03 canWriteAsEncoding
  * pb 2007/07/21 corrected chronologicalTextFile
  * pb 2007/08/08 wchar_t
+ * pb 2008/09/23 shiftX, scaleX
  */
 
 #include "TextGrid.h"
@@ -151,6 +152,15 @@ static void classTextTier_shiftX (I, double xfrom, double xto) {
 	}
 }
 
+static void classTextTier_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (TextTier);
+	inherited (TextTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my points -> size; i ++) {
+		TextPoint point = my points -> item [i];
+		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (TextTier, Function)
 	class_method_local (TextTier, destroy)
 	class_method_local (TextTier, copy)
@@ -163,6 +173,7 @@ class_methods (TextTier, Function)
 	class_method_local (TextTier, description)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method_local (TextTier, shiftX)
+	class_method_local (TextTier, scaleX)
 class_methods_end
 
 TextTier TextTier_create (double tmin, double tmax) {
@@ -189,6 +200,15 @@ static void classIntervalTier_shiftX (I, double xfrom, double xto) {
 	}
 }
 
+static void classIntervalTier_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (IntervalTier);
+	inherited (IntervalTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my intervals -> size; i ++) {
+		TextInterval interval = my intervals -> item [i];
+		interval -> methods -> scaleX (interval, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, destroy)
 	class_method_local (IntervalTier, copy)
@@ -201,6 +221,7 @@ class_methods (IntervalTier, Function)
 	class_method_local (IntervalTier, description)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method_local (IntervalTier, shiftX)
+	class_method_local (IntervalTier, scaleX)
 class_methods_end
 
 IntervalTier IntervalTier_create (double tmin, double tmax) {
@@ -295,6 +316,15 @@ static void classTextGrid_shiftX (I, double xfrom, double xto) {
 	}
 }
 
+static void classTextGrid_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	iam (TextGrid);
+	inherited (TextGrid) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= my tiers -> size; i ++) {
+		Function tier = my tiers -> item [i];
+		tier -> methods -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+	}
+}
+
 class_methods (TextGrid, Function) {
 	class_method_local (TextGrid, destroy)
 	class_method_local (TextGrid, copy)
@@ -308,6 +338,7 @@ class_methods (TextGrid, Function) {
 	class_method_local (TextGrid, info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method_local (TextGrid, shiftX)
+	class_method_local (TextGrid, scaleX)
 	class_methods_end
 }
 
@@ -1182,45 +1213,6 @@ end:
 	return thee;
 }
 
-static double TextGrid_scaleTime (TextGrid me, double tmin, double tmax, double t) {
-	if (t == my xmin) return tmin;
-	if (t == my xmax) return tmax;
-	return (tmax - tmin) / (my xmax - my xmin) * (t - my xmin) + tmin;
-}
-
-void TextGrid_scaleTimes (TextGrid me, double tmin, double tmax) {
-	long itier, ntier;
-	if (my xmin == tmin && my xmax == tmax) return;
-	ntier = my tiers -> size;
-	for (itier = 1; itier <= ntier; itier ++) {
-		Function anyTier = my tiers -> item [itier];
-		if (anyTier -> methods == (Function_Table) classIntervalTier) {
-			IntervalTier tier = (IntervalTier) anyTier;
-			long iinterval, ninterval = tier -> intervals -> size;
-			for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
-				TextInterval interval = tier -> intervals -> item [iinterval];
-				interval -> xmin = TextGrid_scaleTime (me, tmin, tmax, interval -> xmin);
-				interval -> xmax = TextGrid_scaleTime (me, tmin, tmax, interval -> xmax);
-			}
-		} else {
-			TextTier tier = (TextTier) anyTier;
-			long i, n = tier -> points -> size;
-			for (i = 1; i <= n; i ++) {
-				TextPoint point = tier -> points -> item [i];
-				point -> time = TextGrid_scaleTime (me, tmin, tmax, point -> time);
-			}
-		}
-		anyTier -> xmin = TextGrid_scaleTime (me, tmin, tmax, anyTier -> xmin);
-		anyTier -> xmax = TextGrid_scaleTime (me, tmin, tmax, anyTier -> xmax);
-	}
-	my xmin = tmin;
-	my xmax = tmax;
-}
-
-void TextGrid_Function_scaleTimes (TextGrid me, Function thee) {
-	TextGrid_scaleTimes (me, thy xmin, thy xmax);
-}
-
 long TextInterval_labelLength (TextInterval me) {
 	return my text ? wcslen (my text) : 0;
 }
@@ -1587,7 +1579,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 end:
 	Melder_free (string);
 	Melder_free (tag);
-	iferror { Melder_error ("(TextGrid_readFromChronologicalTextFile:) File %s not read.", MelderFile_messageName (file)); forget (me); }
+	iferror { Melder_error3 (L"(TextGrid_readFromChronologicalTextFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
 	return me;
 }
 

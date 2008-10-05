@@ -33,6 +33,7 @@
  * pb 2007/12/15 erased ASCII versions
  * pb 2007/12/25 Gui
  * sdk 2007/12/27 first GTK version
+ * pb 2008/10/05 better implicit selection (namely, none)
  */
 
 #include "GuiP.h"
@@ -116,9 +117,6 @@ void _GuiText_handleFocusReception (Widget widget) {
 	 */
 	widget -> shell -> textFocus = widget;   /* see (1.2) */
 	theGui.textFocus = widget;   /* see (1.4) */
-	#if win
-		GuiText_setSelection (widget, 0, 10000000);
-	#endif
 }
 
 void _GuiText_handleFocusLoss (Widget widget) {

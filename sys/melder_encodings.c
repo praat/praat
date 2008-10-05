@@ -447,26 +447,79 @@ const void * Melder_peekWcsToCfstring (const wchar_t *text) {
 }
 #endif
 
+static void Melder_fwriteUnicodeAsUtf8 (unsigned long unicode, FILE *f) {
+	if (unicode <= 0x00007F) {
+		#ifdef _WIN32
+			if (unicode == '\n') fputc (13, f);
+		#endif
+		fputc (unicode, f);
+	} else if (unicode <= 0x0007FF) {
+		fputc (0xC0 | (unicode >> 6), f);
+		fputc (0x80 | (unicode & 0x00003F), f);
+	} else if (unicode <= 0x00FFFF) {
+		fputc (0xE0 | (unicode >> 12), f);
+		fputc (0x80 | ((unicode >> 6) & 0x00003F), f);
+		fputc (0x80 | (unicode & 0x00003F), f);
+	} else {
+		fputc (0xF0 | (unicode >> 18), f);
+		fputc (0x80 | ((unicode >> 12) & 0x00003F), f);
+		fputc (0x80 | ((unicode >> 6) & 0x00003F), f);
+		fputc (0x80 | (unicode & 0x00003F), f);
+	}
+}
+
 void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
+	/*
+	 * Precondition:
+	 *    the string's encoding is either UTF-32 or UTF-16.
+	 * Failure:
+	 *    if the precondition does not hold, we don't crash,
+	 *    but the characters that are written may be incorrect.
+	 */
 	for (size_t i = 0; i < n; i ++) {
-		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) ptr [i] : ptr [i];
-		if (kar <= 0x00007F) {
-			#ifdef _WIN32
-				if (kar == '\n') fputc (13, f);
-			#endif
-			fputc (kar, f);
-		} else if (kar <= 0x0007FF) {
-			fputc (0xC0 | (kar >> 6), f);
-			fputc (0x80 | (kar & 0x00003F), f);
-		} else if (kar <= 0x00FFFF) {
-			fputc (0xE0 | (kar >> 12), f);
-			fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-			fputc (0x80 | (kar & 0x00003F), f);
+		if (sizeof (wchar_t) == 4) {
+			/*
+			 * We are likely to be on Macintosh or Linux.
+			 * We assume that the string's encoding is UTF-32.
+			 */
+			Melder_fwriteUnicodeAsUtf8 (ptr [i], f);
+		} else if (sizeof (wchar_t) == 2) {
+			/*
+			 * We are likely to be on Windows.
+			 * We assume that the string's encoding is UTF-16;
+			 * if it turns out to be otherwise, we write question marks.
+			 */
+			unsigned long kar1 = (unsigned short) ptr [i];   // potential intermediate conversion from signed short to unsigned short
+			if (kar1 < 0xD800) {
+				Melder_fwriteUnicodeAsUtf8 (kar1, f);   // a character from the Basic Multilingual Plane
+			} else if (kar1 < 0xDC00) {
+				/*
+				 * We detected a surrogate code point
+				 * and will therefore translate two UTF-16 words into one Unicode supplementary character.
+				 */
+				unsigned long kar2 = ptr [++ i];
+				if (kar2 == 0) {   // string exhausted?
+					// Melder_fatal ("Detected a bare (final) high surrogate in UTF-16.");
+					Melder_fwriteUnicodeAsUtf8 ('?', f);
+					return;
+				}
+				if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+					Melder_fwriteUnicodeAsUtf8 (0x10000 + ((kar1 - 0xD800) << 10) + (kar2 - 0xDC00), f);
+				} else {
+					// Melder_fatal ("Detected a bare high surrogate in UTF-16.");
+					Melder_fwriteUnicodeAsUtf8 ('?', f);
+					i --;   // try to interpret the next character in the normal way
+				}
+			} else if (kar1 < 0xE000) {
+				// Melder_fatal ("Detected a bare low surrogate in UTF-16.");
+				Melder_fwriteUnicodeAsUtf8 ('?', f);
+			} else if (kar1 <= 0xFFFF) {
+				Melder_fwriteUnicodeAsUtf8 (kar1, f);   // a character from the Basic Multilingual Plane
+			} else {
+				Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
+			}
 		} else {
-			fputc (0xF0 | (kar >> 18), f);
-			fputc (0x80 | ((kar >> 12) & 0x00003F), f);
-			fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-			fputc (0x80 | (kar & 0x00003F), f);
+			Melder_fatal ("MelderFile_readText: unsupported size of wide character.");
 		}
 	}
 }
@@ -494,7 +547,7 @@ wchar_t * MelderFile_readText (MelderFile file) {
 		fread (text8bit, sizeof (char), length, f);
 		if (! Melder_fclose (file, f)) {
 			Melder_free (text8bit);
-			Melder_error3 (L"Error reading file \"", MelderFile_messageNameW (file), L"\".");
+			Melder_error3 (L"Error reading file ", MelderFile_messageName (file), L".");
 			return NULL;
 		}
 		text8bit [length] = '\0';
@@ -515,7 +568,7 @@ wchar_t * MelderFile_readText (MelderFile file) {
 				}
 			}
 			if (numberOfNullBytes > 0) {
-				Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageNameW (file), L".");
+				Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageName (file), L".");
 			}
 		}
 		text = Melder_8bitToWcs (text8bit, 0);
@@ -586,7 +639,7 @@ wchar_t * MelderFile_readText (MelderFile file) {
 	}
 end:
 	if (text == NULL)
-		return Melder_errorp3 (L"Error reading file \"", MelderFile_messageNameW (file), L"\".");
+		return Melder_errorp3 (L"Error reading file ", MelderFile_messageName (file), L".");
 	(void) Melder_killReturns_inlineW (text);
 	return text;
 }
@@ -635,7 +688,7 @@ int MelderFile_writeText (MelderFile file, const wchar_t *text) {
 		}
 	}
 	if (fclose (f)) {
-		Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+		Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 		return 0;
 	}
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
@@ -665,7 +718,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 			if (! f) return 0;
 			Melder_fwriteWcsAsUtf8 (text, wcslen (text), f);
 			if (fclose (f))
-				return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+				return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 		} else if ((preferences. outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
 		    || (preferences. outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
 		{
@@ -683,7 +736,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 				fputc (kar, f);
 			}
 			if (fclose (f))
-				return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+				return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 		} else {
 			/*
 			 * Convert to wide character file.
@@ -710,7 +763,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 				binputu2 (kar, f);   // BUG: should be UTF-16.
 			}
 			if (fclose (f))
-				return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+				return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 		}
 	} else {
 		FILE *f = Melder_fopen (file, "ab");
@@ -732,7 +785,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 			}
 		}
 		if (fclose (f))
-			return Melder_error3 (L"Error closing file \"", MelderFile_messageNameW (file), L"\".");
+			return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
 	}
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	return 1;
