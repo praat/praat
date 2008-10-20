@@ -33,6 +33,7 @@
  * pb 2007/09/26 added font size; version 5
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/08 in ExtractResults, check that a resonse was given
+ * pb 2008/10/20 except nonstandard sound files
  */
 
 #include "ExperimentMFC.h"
@@ -128,7 +129,11 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 		/*
 		 * Read the substimulus.
 		 */
-		Sound substimulus = Sound_readFromSoundFile (& file); cherror
+		Sound substimulus = Data_readFromFile (& file);   // Sound_readFromSoundFile (& file); cherror
+		if (substimulus -> methods != classSound) {
+			forget (substimulus);
+			error5 (L"File ", MelderFile_messageName (& file), L" contains a ", Thing_className (substimulus), L" instead of a sound.");
+		}
 		/*
 		 * Check whether all sounds have the same number of channels.
 		 */

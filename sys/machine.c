@@ -102,7 +102,7 @@ int Machine_getTextHeight (void) {
 		29,   /* HP */
 		29,   /* Sun4 */
 		22,   /* Mac */
-		19,   /* Win32 */
+		20,   /* Win32 */
 		29    /* Linux */
 	};
 	return heights [lookAndFeel];

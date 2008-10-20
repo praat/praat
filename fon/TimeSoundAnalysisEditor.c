@@ -2116,11 +2116,15 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 		if (xbegin >= my endWindow && ybegin > 0.48 && ybegin <= 0.50) {
 			my pitch.ceiling *= 1.26;
 			forget (my pitch.data);
+			forget (my intensity.data);
+			forget (my pulses.data);
 			return 1;
 		}
 		if (xbegin >= my endWindow && ybegin > 0.46 && ybegin <= 0.48) {
 			my pitch.ceiling /= 1.26;
 			forget (my pitch.data);
+			forget (my intensity.data);
+			forget (my pulses.data);
 			return 1;
 		}
 	}

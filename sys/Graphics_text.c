@@ -87,8 +87,10 @@ extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	#include <QDOffscreen.h>
 	#include "macport_off.h"
 	static int ipaAvailable = FALSE, ipaInited = FALSE;
-	static short int theTimesFont, theHelveticaFont, theCourierFont, theSymbolFont, thePalatinoFont, theIpaTimesFont, theZapfDingbatsFont;
-	static ATSFontRef theTimesAtsuiFont, theHelveticaAtsuiFont, theCourierAtsuiFont, theSymbolAtsuiFont, thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theZapfDingbatsAtsuiFont;
+	static short int theTimesFont, theHelveticaFont, theCourierFont, theSymbolFont,
+		thePalatinoFont, theIpaTimesFont, theZapfDingbatsFont;
+	static ATSFontRef theTimesAtsuiFont, theHelveticaAtsuiFont, theCourierAtsuiFont, theSymbolAtsuiFont,
+		thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theZapfDingbatsAtsuiFont, theArabicAtsuiFont;
 	static RGBColor theBlackColour = { 0, 0, 0 };
 #endif
 
@@ -712,6 +714,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				if (fontFallbacks == NULL) {
 					ATSUCreateFontFallbacks (& fontFallbacks);
 					ATSUSetObjFontFallbacks (fontFallbacks, 0, NULL, kATSUDefaultFontFallbacks);
+					ATSUSetObjFontFallbacks (fontFallbacks, 1, & theArabicAtsuiFont, kATSUSequentialFallbacksPreferred);
 				}
 				ATSUAttributeTag attributeTags [] = { kATSUCGContextTag, kATSULineFontFallbacksTag };
 				ByteCount valueSizes [] = { sizeof (CGContextRef), sizeof (ATSUFontFallbacks) };
@@ -1751,6 +1754,7 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 		}
 	}
 	Melder_assert (theTimesAtsuiFont != 0);
+	ATSUFindFontFromName (NULL, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);
 	return true;
 }
 #endif

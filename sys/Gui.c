@@ -29,6 +29,7 @@
  */
 
 #include "Gui.h"
+#include <math.h>   // floor
 
 Widget Gui_addMenuBar (Widget form) {
 	Widget menuBar;
@@ -48,7 +49,7 @@ int Gui_getResolution (Widget widget) {
 		#if defined (macintosh)
 			(void) widget;
 			CGSize size = CGDisplayScreenSize (kCGDirectMainDisplay);
-			resolution = floor (25.4 * (double) CGDisplayPixelsWide (kCGDirectMainDisplay) / size.width);
+			resolution = floor (25.4 * (double) CGDisplayPixelsWide (kCGDirectMainDisplay) / size.width + 0.5);
 			//resolution = 100;
 		#elif defined (_WIN32)
 			(void) widget;
@@ -58,8 +59,12 @@ int Gui_getResolution (Widget widget) {
 				resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (widget)));
 			#elif motif
 				Display *display = XtDisplay (widget);
-				resolution = floor (25.4 * (double) DisplayWidth (display, DefaultScreen (display)) /
-					DisplayWidthMM (display, DefaultScreen (display)) + 0.5);
+				double width_pixels = DisplayWidth (display, DefaultScreen (display));
+				double width_mm = DisplayWidthMM (display, DefaultScreen (display));
+				resolution = floor (25.4 * width_pixels / width_mm + 0.5);
+				//Melder_casual ("Gui_getResolution: display width %g %g %d", width_pixels, width_mm, resolution);
+			#else
+				Melder_fatal ("Gui_getResolution: unknown framework.");
 			#endif
 		#endif
 	}

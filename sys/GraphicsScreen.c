@@ -210,17 +210,20 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 		my cr = NULL;
 	#elif xwin
 		if (! inited) {
-			int i;
 			display = (Display *) voidDisplay;
 			xscreen = DefaultScreen (display);
 			rootWindow = RootWindow (display, xscreen);
 			visual = DefaultVisual (display, xscreen);
 			depth = DefaultDepth (display, xscreen);
 			colourMap = DefaultColormap (display, xscreen);
-			resolution = 100; // floor (25.4 * (double) DisplayWidth (display, xscreen) / DisplayWidthMM (display, xscreen) + 0.5);
+			double width_pixels = DisplayWidth (display, xscreen);
+			double width_mm = DisplayWidthMM (display, xscreen);
+			resolution = floor (25.4 * width_pixels / width_mm + 0.5);
+			//Melder_casual ("display width %g %g %d", width_pixels, width_mm, resolution);
+			//resolution = 100;
 			/*if (resolution >= 90) resolution = 100; else resolution = 75;*/
 			/*Melder_casual ("nformats %d, depth %d, pad %d", ((_XPrivDisplay) display) -> nformats, depth, BitmapPad (display));*/
-			for (i = 0; i < ((_XPrivDisplay) display) -> nformats; i ++) {
+			for (int i = 0; i < ((_XPrivDisplay) display) -> nformats; i ++) {
 				ScreenFormat *format = & ((_XPrivDisplay) display) -> pixmap_format [i];
 				/*Melder_casual ("depth %d, bpp %d, pad %d", format -> depth, format -> bits_per_pixel,
 					format -> scanline_pad);*/
