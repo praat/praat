@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/04/27
+ * pb 2008/10/28
  */
 
 #ifndef _RealTier_h_
@@ -64,6 +64,7 @@ int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double sampl
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 
 FormantGrid Formant_downto_FormantGrid (Formant me);
+Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
 
 /* End of file FormantGrid.h */
 #endif

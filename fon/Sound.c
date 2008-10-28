@@ -78,11 +78,11 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"   Mean: ", Melder_single (mean), L" Pascal");
 	MelderInfo_writeLine3 (L"   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (my nx * my ny))), L" Pascal");
 	double penergy = sumOfSquares * my dx / my ny;   /* Pa2 s = kg2 m-2 s-3 */
-	MelderInfo_write3 (L"Total energy: ", Melder_single (penergy), L" Pascal^2 sec");
+	MelderInfo_write3 (L"Total energy: ", Melder_single (penergy), L" Pascal\u00B2 sec");
 	double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
-	MelderInfo_writeLine3 (L" (energy in air: ", Melder_single (energy), L" Joule/m^2)");
+	MelderInfo_writeLine3 (L" (energy in air: ", Melder_single (energy), L" Joule/m\u00B2)");
 	double power = energy / (my dx * my nx);   /* kg s-3 = Watt/m2 */
-	MelderInfo_write3 (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m^2");
+	MelderInfo_write3 (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m\u00B2");
 	if (power != 0.0) {
 		MelderInfo_writeLine3 (L" = ", Melder_half (10 * log10 (power / 1e-12)), L" dB");
 	} else {

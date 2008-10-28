@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/07/07
+ * pb 2008/10/27
  */
 
 #include <stdio.h>
@@ -689,6 +689,7 @@ void MelderGui_create (/* XtAppContext* */ void *appContext, /* Widget */ void *
 
 extern int Melder_batch;   /* True if run from the batch or from an interactive command-line interface. */
 extern int Melder_backgrounding;   /* True if running a script. */
+extern bool Melder_consoleIsAnsi;
 #ifndef CONTROL_APPLICATION
 	extern void *Melder_appContext;   /* XtAppContext* */
 	extern void *Melder_topShell;   /* Widget */

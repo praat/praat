@@ -941,8 +941,15 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * or running PRAATCON.EXE from the Windows command prompt:
 		 *    <programName> <scriptFileName>
 		 */
+		if (argc == 2 && (int) argv [1] [0] == '-' && argv [1] [1] == 'a' && argv [1] [2] == ' ') {
+			Melder_consoleIsAnsi = true;
+			argv [1] += 3;
+		}
+		//fprintf (stdout, "Console <%d> <%s>", Melder_consoleIsAnsi, argv [1]);
 		MelderString_copy (& theCurrentPraat -> batchName,
-			argc > 1 && (int) argv [1] [0] != '-' ? Melder_peekUtf8ToWcs (argv [1]) : L"");
+			Melder_consoleIsAnsi ? Melder_peekUtf8ToWcs (argv [1]) :
+			argc > 1 && (int) argv [1] [0] != '-' ? Melder_peekUtf8ToWcs (argv [1]) :
+			L"");
 
 		Melder_batch = theCurrentPraat -> batchName.string [0] != '\0';
 

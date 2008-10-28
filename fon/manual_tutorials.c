@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20081020)
+MAN_BEGIN (L"What's new?", L"ppgb", 20081028)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.38# (October 28, 2008)")
+LIST_ITEM (L"\\bu @FormantGrid: To Formant...")
 NORMAL (L"##5.0.36# (October 20, 2008)")
 LIST_ITEM (L"\\bu @ExperimentMFC: accepts nonstandard sound files.")
 NORMAL (L"##5.0.35# (October 5, 2008)")

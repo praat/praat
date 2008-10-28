@@ -262,4 +262,27 @@ end:
 	return thee;
 }
 
+Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
+	Melder_assert (dt > 0.0);
+	Melder_assert (intensity >= 0.0);
+	long nt = (long) floor ((my xmax - my xmin) / dt) + 1;
+	double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
+	Formant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants -> size);
+	for (long iframe = 1; iframe <= nt; iframe ++) {
+		Formant_Frame frame = & thy frame [iframe];
+		frame -> intensity = intensity;
+		frame -> nFormants = my formants -> size;
+		frame -> formant = NUMstructvector (Formant_Formant, 1, my formants -> size);
+		double t = t1 + (iframe - 1) * dt;
+		for (long iformant = 1; iformant <= my formants -> size; iformant ++) {
+			Formant_Formant formant = & frame -> formant [iformant];
+			formant -> frequency = RealTier_getValueAtTime (my formants -> item [iformant], t);
+			formant -> bandwidth = RealTier_getValueAtTime (my bandwidths -> item [iformant], t);
+		}
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
 /* End of file FormantGrid.c */

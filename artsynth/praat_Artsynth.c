@@ -263,7 +263,7 @@ DIRECT (VocalTract_draw)
 END
 
 FORM (VocalTract_formula, L"VocalTract Formula", L"Matrix: Formula...")
-	LABEL (L"label", L"`x' is the distance form the glottis in metres, `col' is the section number, `self' is in m^2")
+	LABEL (L"label", L"`x' is the distance form the glottis in metres, `col' is the section number, `self' is in m\u00B2")
 	LABEL (L"label", L"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
 	TEXTFIELD (L"formula", L"0")
 	OK

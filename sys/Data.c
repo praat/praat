@@ -444,7 +444,7 @@ Any Data_readFromFile (MelderFile file) {
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
-	return Melder_errorp3 (L"(Data_readFromFile:) File ", MelderFile_messageName (file), L"not recognized.");
+	return Melder_errorp3 (L"(Data_readFromFile:) File ", MelderFile_messageName (file), L" not recognized.");
 }
 
 /* Recursive routines for working with struct members. */

@@ -18,6 +18,7 @@
  */
 
 /* pb 2008/02/17
+ * pb 2008/10/27 Melder_consoleIsAnsi
  */
 
 #include "melder.h"
@@ -25,6 +26,8 @@
 #ifdef _WIN32
 	#include <windows.h>
 #endif
+
+bool Melder_consoleIsAnsi = false;
 
 void Melder_writeToConsole (wchar_t *message, bool useStderr) {
 	if (message == NULL) return;
@@ -34,7 +37,12 @@ void Melder_writeToConsole (wchar_t *message, bool useStderr) {
 		if (console == NULL) {
 			console = CreateFile (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
 		}
-		WriteConsole (console, message, wcslen (message), NULL, NULL);   // BUG: does not support redirection.
+		if (Melder_consoleIsAnsi) {
+			char *messageA = Melder_peekWcsToUtf8 (message);
+			fprintf (stdout, "%s", messageA);
+		} else {
+			WriteConsole (console, message, wcslen (message), NULL, NULL);
+		}
 	#else
 		Melder_fwriteWcsAsUtf8 (message, wcslen (message), useStderr ? stderr : stdout);
 	#endif

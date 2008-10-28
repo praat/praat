@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/09/23
+ * pb 2008/10/28
  */
 
 #include "praat.h"
@@ -970,6 +970,16 @@ DO
 			GET_REAL (L"From time"), GET_REAL (L"To time"));
 		praat_dataChanged (OBJECT);
 	}
+END
+
+FORM (FormantGrid_to_Formant, L"FormantGrid: To Formant", 0)
+	POSITIVE (L"Time step (s)", L"0.01")
+	REAL (L"Intensity (Pa\u00B2)", L"0.1")
+	OK
+DO
+	double intensity = GET_REAL (L"Intensity");
+	REQUIRE (intensity >= 0.0, L"Intensity cannot be negative.")
+	EVERY_TO (FormantGrid_to_Formant (OBJECT, GET_REAL (L"Time step"), intensity))
 END
 
 /***** FORMANTGRID & SOUND *****/
@@ -3599,7 +3609,7 @@ FORM (Spectrogram_formula, L"Spectrogram: Formula", L"Spectrogram: Formula...")
 	LABEL (L"label", L"Do for all times and frequencies:")
 	LABEL (L"label", L"   `x' is the time in seconds")
 	LABEL (L"label", L"   `y' is the frequency in Hertz")
-	LABEL (L"label", L"   `self' is the current value in Pa^2/Hz")
+	LABEL (L"label", L"   `self' is the current value in Pa\u00B2/Hz")
 	LABEL (L"label", L"   Replace all values with:")
 	TEXTFIELD (L"formula", L"self * exp (- x / 0.1)")
 	OK
@@ -4572,6 +4582,8 @@ praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classFormantGrid, 0, L"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
 		praat_addAction1 (classFormantGrid, 0, L"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);
 		praat_addAction1 (classFormantGrid, 0, L"Remove bandwidth points between...", 0, 1, DO_FormantGrid_removeBandwidthPointsBetween);
+	praat_addAction1 (classFormantGrid, 0, L"Convert -", 0, 0, 0);
+		praat_addAction1 (classFormantGrid, 0, L"To Formant...", 0, 1, DO_FormantGrid_to_Formant);
 
 	praat_addAction1 (classFormantTier, 0, L"FormantTier help", 0, 0, DO_FormantTier_help);
 	praat_addAction1 (classFormantTier, 0, L"Draw -          ", 0, 0, 0);
