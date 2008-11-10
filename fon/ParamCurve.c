@@ -87,7 +87,7 @@ static int writeText (I, MelderFile file) {
 	return Data_writeText (my x, file) && Data_writeText (my y, file);
 }
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (ParamCurve);
 	return (my x = new (Sound)) != NULL && (my y = new (Sound)) != NULL &&
 		Data_readText (my x, text) && Data_readText (my y, text);

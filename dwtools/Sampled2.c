@@ -43,7 +43,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled2_def.h"
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (Sampled2);
 	my xmin = texgetr8 (text);
 	my xmax = texgetr8 (text);

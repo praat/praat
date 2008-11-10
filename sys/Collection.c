@@ -113,11 +113,11 @@ static int classCollection_writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int classCollection_readText (I, MelderReadString *text) {
+static int classCollection_readText (I, MelderReadText text) {
 	iam (Collection);
 	if (Thing_version < 0) {
 		long size;
-		wchar_t *line = MelderReadString_readLine (text);
+		wchar_t *line = MelderReadText_readLine (text);
 		if (line == NULL || ! swscanf (line, L"%ld", & size) || size < 0)
 			return Melder_error1 (L"Collection::readText: cannot read size.");
 		if (! Collection_init (me, NULL, size)) return 0;
@@ -125,7 +125,7 @@ static int classCollection_readText (I, MelderReadString *text) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
-			do { line = MelderReadString_readLine (text); if (line == NULL) return 0; }
+			do { line = MelderReadText_readLine (text); if (line == NULL) return 0; }
 			while (wcsncmp (line, L"Object ", 7));
 			stringsRead = swscanf (line, L"Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)

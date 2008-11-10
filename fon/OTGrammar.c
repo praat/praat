@@ -157,7 +157,7 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	int localVersion = Thing_version;
 	iam (OTGrammar);
 	if (! inherited (OTGrammar) readText (me, text)) return 0;
@@ -200,7 +200,7 @@ static int readText (I, MelderReadString *text) {
 		if (tableau -> numberOfCandidates < 1) return Melder_error9
 			(L"No candidates in tableau ", Melder_integer (itab),
 			 L" (input: ", tableau -> input, L")"
-			 L" in line ", MelderReadString_getLineNumber (text),
+			 L" in line ", MelderReadText_getLineNumber (text),
 			 itab == 1 ? L"." : L", or perhaps wrong number of candidates for input " L_LEFT_GUILLEMET,
 			 itab == 1 ? NULL : my tableaus [itab - 1]. input,
 			 itab == 1 ? NULL : L_RIGHT_GUILLEMET L".");
@@ -211,7 +211,7 @@ static int readText (I, MelderReadString *text) {
 				(L"Trying to read candidate ", Melder_integer (icand),
 				 L" of tableau ", Melder_integer (itab),
 				 L" (input: ", tableau -> input, L")"
-				 L" in line ", MelderReadString_getLineNumber (text), L".");
+				 L" in line ", MelderReadText_getLineNumber (text), L".");
 			candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
 			if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
@@ -222,7 +222,7 @@ static int readText (I, MelderReadString *text) {
 					 L" (", candidate -> output, L")"
 					 L" of tableau ", Melder_integer (itab),
 					 L" (input: ", tableau -> input, L")"
-					 L" in line ", MelderReadString_getLineNumber (text), L".");
+					 L" in line ", MelderReadText_getLineNumber (text), L".");
 			}
 		}
 	}

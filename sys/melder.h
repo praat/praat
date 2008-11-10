@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/10/27
+ * pb 2008/11/03
  */
 
 #include <stdio.h>
@@ -281,8 +281,10 @@ typedef unsigned short MelderUtf16;
 typedef unsigned int MelderUtf32;
 
 bool Melder_isValidAscii (const wchar_t *string);
-bool Melder_isValidUtf8 (const char *string);
+bool Melder_strIsValidUtf8 (const char *string);
 bool Melder_isEncodable (const wchar_t *string, int outputEncoding);
+extern wchar_t Melder_decodeMacRoman [256];
+extern wchar_t Melder_decodeWindowsLatin1 [256];
 
 long Melder_killReturns_inlineW (wchar_t *text);
 
@@ -341,6 +343,29 @@ double Melder_allocationSize (void);
 	since the start of the process. Mainly for debugging purposes.
 */
 
+/********** FILES **********/
+
+#if defined (_WIN32)
+	#define Melder_DIRECTORY_SEPARATOR  '\\'
+#else
+	#define Melder_DIRECTORY_SEPARATOR  '/'
+#endif
+
+struct FLAC__StreamDecoder;
+struct FLAC__StreamEncoder;
+
+typedef struct {
+	FILE *filePointer;
+	wchar_t path [260];
+	bool openForReading, openForWriting, verbose, requiresCRLF;
+	unsigned long outputEncoding;
+	int indent;
+	struct FLAC__StreamEncoder *flacEncoder;
+} structMelderFile, *MelderFile;
+typedef struct {
+	wchar_t path [260];
+} structMelderDir, *MelderDir;
+
 /********** STRINGS **********/
 
 /* These are routines for never having to check string boundaries again. */
@@ -355,9 +380,6 @@ typedef struct {
 	unsigned long bufferSize;
 	MelderUtf16 *string;   // a growing buffer, never shrunk (can only be freed by MelderString16_free)
 } MelderString16;
-typedef struct {
-	wchar_t *string, *readPointer;
-} MelderReadString;
 
 void MelderString_free (MelderString *me);   // frees the "string" attribute only (and sets other attributes to zero)
 void MelderString16_free (MelderString16 *me);   // frees the "string" attribute only (and sets other attributes to zero)
@@ -387,8 +409,16 @@ double MelderString_allocationCount (void);
 double MelderString_deallocationCount (void);
 double MelderString_allocationSize (void);
 double MelderString_deallocationSize (void);
-wchar_t * MelderReadString_readLine (MelderReadString *text);
-const wchar_t * MelderReadString_getLineNumber (MelderReadString *text);
+
+typedef struct structMelderReadText *MelderReadText;
+MelderReadText MelderReadText_createFromFile (MelderFile file);
+MelderReadText MelderReadText_createFromString (const wchar_t *string);
+bool MelderReadText_isValid (MelderReadText text);
+wchar_t MelderReadText_getChar (MelderReadText text);   // precondition: isValid
+wchar_t * MelderReadText_readLine (MelderReadText text);
+long MelderReadText_getNumberOfLines (MelderReadText me);
+const wchar_t * MelderReadText_getLineNumber (MelderReadText text);
+void MelderReadText_delete (MelderReadText text);
 
 const wchar_t * Melder_wcscat2 (const wchar_t *s1, const wchar_t *s2);
 const wchar_t * Melder_wcscat3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
@@ -398,29 +428,6 @@ const wchar_t * Melder_wcscat6 (const wchar_t *s1, const wchar_t *s2, const wcha
 const wchar_t * Melder_wcscat7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
 const wchar_t * Melder_wcscat8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
 const wchar_t * Melder_wcscat9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-
-/********** FILES **********/
-
-#if defined (_WIN32)
-	#define Melder_DIRECTORY_SEPARATOR  '\\'
-#else
-	#define Melder_DIRECTORY_SEPARATOR  '/'
-#endif
-
-struct FLAC__StreamDecoder;
-struct FLAC__StreamEncoder;
-
-typedef struct {
-	FILE *filePointer;
-	wchar_t path [260];
-	bool openForReading, openForWriting, verbose, requiresCRLF;
-	unsigned long outputEncoding;
-	int indent;
-	struct FLAC__StreamEncoder *flacEncoder;
-} structMelderFile, *MelderFile;
-typedef struct {
-	wchar_t path [260];
-} structMelderDir, *MelderDir;
 
 /********** NUMBER AND STRING COMPARISON **********/
 

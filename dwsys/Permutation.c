@@ -76,7 +76,7 @@ static void info (I)
 	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
 }
 
-static int readText (I, MelderReadString *text)
+static int readText (I, MelderReadText text)
 {
 	iam (Permutation);
 	my numberOfElements = texgeti4 (text);

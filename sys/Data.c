@@ -57,7 +57,7 @@ static int writeText (Any data, MelderFile openFile) {
 	return 1;
 }
 
-static int readText (Any data, MelderReadString *text) {
+static int readText (Any data, MelderReadText text) {
 	(void) data;
 	(void) text;
 	return 1;
@@ -265,24 +265,24 @@ bool Data_canReadText (I) {
 	return our readText != classData -> readText;
 }
 
-int Data_readText (I, MelderReadString *text) {
+int Data_readText (I, MelderReadText text) {
 	iam (Data);
 	if (! our readText (me, text) || Melder_hasError ())
 		return Melder_error2 (Thing_className (me), L" not read.");
-	if (text -> readPointer == NULL)
+	if (! MelderReadText_isValid (text))
 		return Melder_error3 (L"Early end of file. ", Thing_className (me), L" not read.");
 	return 1;
 }
 
 Any Data_readFromTextFile (MelderFile file) {
 	Data me = NULL;
-	wchar_t *klas = NULL, *string = NULL;
-	string = MelderFile_readText (file); cherror
-	MelderReadString text = { string, string };
-	wchar_t *line = MelderReadString_readLine (& text);
+	wchar_t *klas = NULL;
+	MelderReadText text = MelderReadText_createFromFile (file); cherror
+	wchar_t *line = MelderReadText_readLine (text);
+	if (line == NULL) error1 (L"No lines.")
 	wchar_t *end = wcsstr (line, L"ooTextFile");   /* oo format? */
 	if (end) {
-		klas = texgetw2 (& text); cherror
+		klas = texgetw2 (text); cherror
 		me = Thing_newFromClassName (klas); cherror
 	} else {
 		end = wcsstr (line, L"TextFile");
@@ -292,10 +292,10 @@ Any Data_readFromTextFile (MelderFile file) {
 		Thing_version = -1;   /* Old version: override version number, which was set to 0 by newFromClassName. */
 	}
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
-	Data_readText (me, & text); cherror
+	Data_readText (me, text); cherror
 end:
 	Melder_free (klas);
-	Melder_free (string);
+	MelderReadText_delete (text);
 	iferror forget (me);
 	return me;
 }

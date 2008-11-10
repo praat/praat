@@ -125,18 +125,15 @@ void Preferences_read (MelderFile file) {
 	 * In that case, do nothing.
 	 */
 	if (! thePreferences) return;
-	wchar_t *string = MelderFile_readText (file); cherror
-	MelderReadString buffer = { string, string };
+	MelderReadText text = MelderReadText_createFromFile (file); cherror
 	for (;;) {
-		wchar_t *line = MelderReadString_readLine (& buffer), *value;
-		long ipref;
-		Preference pref;
-		if (! line) goto end;
+		wchar_t *line = MelderReadText_readLine (text), *value;
+		if (line == NULL) goto end;
 		if ((value = wcsstr (line, L": ")) == NULL) goto end;
 		*value = '\0', value += 2;
-		ipref = SortedSetOfString_lookUp (thePreferences, line);
+		long ipref = SortedSetOfString_lookUp (thePreferences, line);
 		if (! ipref) continue;   /* Ignore unrecognized preferences. */
-		pref = thePreferences -> item [ipref];
+		Preference pref = thePreferences -> item [ipref];
 		switch (pref -> type) {
 			case bytewa: * (signed char *) pref -> value = wcstol (value, NULL, 10); break;
 			case shortwa: * (short *) pref -> value = wcstol (value, NULL, 10); break;
@@ -161,7 +158,7 @@ void Preferences_read (MelderFile file) {
 	}
 end:
 	Melder_clearError ();
-	Melder_free (string);
+	MelderReadText_delete (text);
 }
 
 void Preferences_write (MelderFile file) {

@@ -41,6 +41,7 @@
  * pb 2008/02/01 made sure that praat_dataChanged can be called at error time
  * pb 2008/03/13 Windows: better file dropping
  * pb 2008/04/09 removed explicit GSL
+ * pb 2008/11/01 praatcon -a
  */
 
 #include "melder.h"
@@ -935,21 +936,30 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Printer_prefs ();   // Paper size, printer command...
 	TextEditor_prefs ();   // Font size...
 
+	int iarg_batchName = 1;
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
 		 * or running PRAATCON.EXE from the Windows command prompt:
 		 *    <programName> <scriptFileName>
 		 */
-		if (argc == 2 && (int) argv [1] [0] == '-' && argv [1] [1] == 'a' && argv [1] [2] == ' ') {
+		if (argc > iarg_batchName
+			&& (int) argv [iarg_batchName] [0] == '-'
+			&& (int) argv [iarg_batchName] [1] == 'a'
+			&& argv [iarg_batchName] [2] == '\0')
+		{
 			Melder_consoleIsAnsi = true;
-			argv [1] += 3;
+			iarg_batchName ++;
 		}
 		//fprintf (stdout, "Console <%d> <%s>", Melder_consoleIsAnsi, argv [1]);
+		bool hasCommandLineInput =
+			argc > iarg_batchName
+			&& (int) argv [iarg_batchName] [0] == '-'
+			&& argv [iarg_batchName] [1] == '\0';
 		MelderString_copy (& theCurrentPraat -> batchName,
-			Melder_consoleIsAnsi ? Melder_peekUtf8ToWcs (argv [1]) :
-			argc > 1 && (int) argv [1] [0] != '-' ? Melder_peekUtf8ToWcs (argv [1]) :
-			L"");
+			hasCommandLineInput ? L""
+			: argc > iarg_batchName && argv [iarg_batchName] [0] != '-' /* funny Mac test */ ? Melder_peekUtf8ToWcs (argv [iarg_batchName])
+			: L"");
 
 		Melder_batch = theCurrentPraat -> batchName.string [0] != '\0';
 
@@ -963,7 +973,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * Running the Praat shell from the command line:
 		 *    praat -
 		 */
-		if (argc == 2 && (int) argv [1] [0] == '-' && argv [1] [1] == '\0') {
+		if (hasCommandLineInput) {
 			Melder_batch = TRUE;
 			doingCommandLineInterface = TRUE;   /* Read from stdin. */
 		}
@@ -1099,8 +1109,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	if (Melder_batch) {
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			MelderString_empty (& theCurrentPraat -> batchName);
-			for (unsigned int i = 1; i < argc; i ++) {
-				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == 1 || i < argc - 1);
+			for (unsigned int i = iarg_batchName; i < argc; i ++) {
+				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == iarg_batchName || i < argc - 1);
 				if (i > 1) MelderString_append1 (& theCurrentPraat -> batchName, L" ");
 				if (needsQuoting) MelderString_append1 (& theCurrentPraat -> batchName, L"\"");
 				MelderString_append1 (& theCurrentPraat -> batchName, Melder_peekUtf8ToWcs (argv [i]));

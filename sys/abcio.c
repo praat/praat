@@ -41,150 +41,143 @@
 
 #define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xffff : 0xffffffff)
 
-static wchar_t getChar (MelderReadString *text) {
-	if (*text -> readPointer == '\0') {
-		return 0;
-	}
-	return * text -> readPointer ++;
-}
-
-static long getInteger (MelderReadString *text) {
-	if (text -> readPointer == NULL) return 0;
+static long getInteger (MelderReadText me) {
+	if (! MelderReadText_isValid (me)) return 0;
 	int i;
 	wchar_t buffer [41], c;
 	/*
 	 * Look for the first numeric character.
 	 */
-	for (c = getChar (text); c != '-' && ! isdigit (c) && c != '+'; c = getChar (text)) {
+	for (c = MelderReadText_getChar (me); c != '-' && ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
 		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for an integer (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Early end of text detected while looking for an integer (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an integer (line ", MelderReadString_getLineNumber (text), L").");
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an integer (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
 		}
 		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an integer in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a string while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for an integer in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found an enumerated value while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
-			c = getChar (text);
+			c = MelderReadText_getChar (me);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
 		buffer [i] = c;
-		c = getChar (text);
+		c = MelderReadText_getChar (me);
 		if (c == 0) { break; }   /* This may well be OK here. */
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
 	if (i >= 40) {
-		Melder_error3 (L"Found strange text while looking for an integer in text (line ", MelderReadString_getLineNumber (text), L").");
+		Melder_error3 (L"Found strange text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
 		return 0;
 	}
 	buffer [i + 1] = '\0';
 	return wcstol (buffer, NULL, 10);
 }
 
-static unsigned long getUnsigned (MelderReadString *text) {
-	if (text -> readPointer == NULL) return 0;
+static unsigned long getUnsigned (MelderReadText me) {
+	if (! MelderReadText_isValid (me)) return 0;
 	int i;
 	wchar_t buffer [41], c;
-	for (c = getChar (text); ! isdigit (c) && c != '+'; c = getChar (text)) {
+	for (c = MelderReadText_getChar (me); ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
 		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for an unsigned integer (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Early end of text detected while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an unsigned integer (line ", MelderReadString_getLineNumber (text), L").");
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
 		}
 		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an unsigned integer in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a string while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		if (c == '-') {
-			Melder_error3 (L"Found a negative value while looking for an unsigned integer in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a negative value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
-			c = getChar (text);
+			c = MelderReadText_getChar (me);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
 		buffer [i] = c;
-		c = getChar (text);
+		c = MelderReadText_getChar (me);
 		if (c == 0) { break; }   /* This may well be OK here. */
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
 	if (i >= 40) {
-		Melder_error3 (L"Found strange text while searching for an unsigned integer in text (line ", MelderReadString_getLineNumber (text), L").");
+		Melder_error3 (L"Found strange text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
 		return 0;
 	}
 	buffer [i + 1] = '\0';
 	return wcstoul (buffer, NULL, 10);
 }
 
-static double getReal (MelderReadString *text) {
-	if (text -> readPointer == NULL) return NUMundefined;
+static double getReal (MelderReadText me) {
+	if (! MelderReadText_isValid (me)) return 0;
 	int i;
 	wchar_t buffer [41], c, *slash;
 	do {
-		for (c = getChar (text); c != '-' && ! isdigit (c) && c != '+'; c = getChar (text)) {
+		for (c = MelderReadText_getChar (me); c != '-' && ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
 			if (c == 0) {
-				Melder_error3 (L"Early end of text detected while looking for a real number (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Early end of text detected while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
 			if (c == '!') {   /* End-of-line comment? */
-				while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
-					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadString_getLineNumber (text), L").");
+				while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
+					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
 					return 0;
 				}
 			}
 			if (c == '\"') {
-				Melder_error3 (L"Found a string while looking for a real number in text (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Found a string while looking for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
 			if (c == '<') {
-				Melder_error3 (L"Found an enumerated value while looking for a real number in text (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Found an enumerated value while looking for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
 				return 0;
 			}
 			while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 				if (c == 0) {
-					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadString_getLineNumber (text), L").");
+					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
 					return 0;
 				}
-				c = getChar (text);
+				c = MelderReadText_getChar (me);
 			}
 		}
 		for (i = 0; i < 40; i ++) {
 			buffer [i] = c;
-			c = getChar (text);
+			c = MelderReadText_getChar (me);
 			if (c == 0) { break; }   /* This may well be OK here. */
 			if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 		}
 		if (i >= 40) {
-			Melder_error3 (L"Found strange text while searching for a real number in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found strange text while searching for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
 			return 0;
 		}
 	} while (i == 0 && buffer [0] == '+');   /* Guard against single '+' symbols, which occur in complex numbers. */
@@ -201,45 +194,45 @@ static double getReal (MelderReadString *text) {
 	return Melder_atof (buffer);
 }
 
-static short getEnum (MelderReadString *text, void *enumerated) {
-	if (text -> readPointer == NULL) return -1;
+static short getEnum (MelderReadText me, void *enumerated) {
+	if (! MelderReadText_isValid (me)) return -1;
 	int i;
 	wchar_t buffer [41], c;
-	for (c = getChar (text); c != '<'; c = getChar (text)) {
+	for (c = MelderReadText_getChar (me); c != '<'; c = MelderReadText_getChar (me)) {
 		if (c == 0) {
-			(void) Melder_error3 (L"Early end of text detected while looking for an enumerated value (line ", MelderReadString_getLineNumber (text), L").");
+			(void) Melder_error3 (L"Early end of text detected while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
 			return -1;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadString_getLineNumber (text), L").");
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
 				return -1;
 			}
 		}
 		if (c == '-' || isdigit (c) || c == '+') {
-			Melder_error3 (L"Found a number while looking for an enumerated value in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a number while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
 			return -1;
 		}
 		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an enumerated value in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a string while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
 			return -1;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadString_getLineNumber (text), L").");
+				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
 				return -1;
 			}
-			c = getChar (text);
+			c = MelderReadText_getChar (me);
 		}
 	}
 	for (i = 0; i < 40; i ++) {
-		c = getChar (text);   /* Read past first '<'. */
+		c = MelderReadText_getChar (me);   /* Read past first '<'. */
 		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while reading an enumerated value (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
 			return -1;
 		}
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
-			Melder_error3 (L"No matching '>' while reading an enumerated value (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
 			return -1;
 		}
 		if (c == '>')
@@ -247,61 +240,61 @@ static short getEnum (MelderReadString *text, void *enumerated) {
 		buffer [i] = c;
 	}
 	if (i >= 40) {
-		Melder_error3 (L"Found strange text while reading an enumerated value in text (line ", MelderReadString_getLineNumber (text), L").");
+		Melder_error3 (L"Found strange text while reading an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
 		return -1;
 	}
 	buffer [i] = '\0';
 	return enum_search (enumerated, buffer);
 }
 
-static wchar_t * getString (MelderReadString *text) {
-	if (text -> readPointer == NULL) return NULL;
+static wchar_t * getString (MelderReadText me) {
+	if (! MelderReadText_isValid (me)) return NULL;
 	int i;
 	wchar_t c;
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	for (c = getChar (text); c != '\"'; c = getChar (text)) {
+	for (c = MelderReadText_getChar (me); c != '\"'; c = MelderReadText_getChar (me)) {
 		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
 			return NULL;
 		}
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = getChar (text)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadString_getLineNumber (text), L").");
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
+				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
 				return NULL;
 			}
 		}
 		if (c == '-' || isdigit (c) || c == '+') {
-			Melder_error3 (L"Found a number while looking for a string in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found a number while looking for a string in text (line ", MelderReadText_getLineNumber (me), L").");
 			return NULL;
 		}
 		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for a string in text (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Found an enumerated value while looking for a string in text (line ", MelderReadText_getLineNumber (me), L").");
 			return NULL;
 		}
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadString_getLineNumber (text), L")");
+				Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
 				return NULL;
 			}
-			c = getChar (text);
+			c = MelderReadText_getChar (me);
 		}
 	}
 	for (i = 0; 1; i ++) {
-		c = getChar (text);   /* Read past first '"'. */
+		c = MelderReadText_getChar (me);   /* Read past first '"'. */
 		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while reading a string (line ", MelderReadString_getLineNumber (text), L").");
+			Melder_error3 (L"Early end of text detected while reading a string (line ", MelderReadText_getLineNumber (me), L").");
 			return NULL;
 		}
 		if (c == '\"') {
-			wchar_t next = getChar (text);
-			if (next == 0) { break; }   /* Closing quote is last character in file: OK. */
+			wchar_t next = MelderReadText_getChar (me);
+			if (next == 0) { break; }   // Closing quote is last character in file: OK.
 			if (next != '\"') {
 				if (next == ' ' || next == '\n' || next == '\t' || next == '\r') {
-					text -> readPointer --;   /* Put it back on the stream. */
+					// Closing quote is followed by whitespace: it is OK to skip this whitespace (no need to "ungetChar").
 				} else {
 					wchar_t kar2 [2] = { next, '\0' };
-					Melder_error5 (L"Character ", kar2, L" following quote (line ", MelderReadString_getLineNumber (text), L"). End of string or undoubled quote?");
+					Melder_error5 (L"Character ", kar2, L" following quote (line ", MelderReadText_getLineNumber (me), L"). End of string or undoubled quote?");
 					return NULL;
 				}
 				break;   /* The expected closing double quote; not added to the buffer. */
@@ -341,27 +334,27 @@ enum_begin (Existence, absent)
 	enum (exists)
 enum_end (Existence)
 
-int texgeti1 (MelderReadString *text) { return getInteger (text); }   /* There should be out-of-bound checks here... */
-int texgeti2 (MelderReadString *text) { return getInteger (text); }
-long texgeti4 (MelderReadString *text) { return getInteger (text); }
-unsigned int texgetu1 (MelderReadString *text) { return getInteger (text); }
-unsigned int texgetu2 (MelderReadString *text) { return getUnsigned (text); }
-unsigned long texgetu4 (MelderReadString *text) { return getUnsigned (text); }
-double texgetr4 (MelderReadString *text) { return getReal (text); }
-double texgetr8 (MelderReadString *text) { return getReal (text); }
-double texgetr10 (MelderReadString *text) { return getReal (text); }
-fcomplex texgetc8 (MelderReadString *text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
-dcomplex texgetc16 (MelderReadString *text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
-char texgetc1 (MelderReadString *text) { return getInteger (text); }
-short texgete1 (MelderReadString *text, void *enumerated) { return getEnum (text, enumerated); }
-short texgete2 (MelderReadString *text, void *enumerated) { return getEnum (text, enumerated); }
-short texgeteb (MelderReadString *text) { return getEnum (text, & enum_Boolean); }
-short texgeteq (MelderReadString *text) { return getEnum (text, & enum_Question); }
-short texgetex (MelderReadString *text) { return getEnum (text, & enum_Existence); }
-char *texgets2 (MelderReadString *text) { return Melder_wcsToUtf8 (getString (text)); }
-char *texgets4 (MelderReadString *text) { return Melder_wcsToUtf8 (getString (text)); }
-wchar_t *texgetw2 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
-wchar_t *texgetw4 (MelderReadString *text) { return Melder_wcsdup (getString (text)); }
+int texgeti1 (MelderReadText text) { return getInteger (text); }   /* There should be out-of-bound checks here... */
+int texgeti2 (MelderReadText text) { return getInteger (text); }
+long texgeti4 (MelderReadText text) { return getInteger (text); }
+unsigned int texgetu1 (MelderReadText text) { return getInteger (text); }
+unsigned int texgetu2 (MelderReadText text) { return getUnsigned (text); }
+unsigned long texgetu4 (MelderReadText text) { return getUnsigned (text); }
+double texgetr4 (MelderReadText text) { return getReal (text); }
+double texgetr8 (MelderReadText text) { return getReal (text); }
+double texgetr10 (MelderReadText text) { return getReal (text); }
+fcomplex texgetc8 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+dcomplex texgetc16 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+char texgetc1 (MelderReadText text) { return getInteger (text); }
+short texgete1 (MelderReadText text, void *enumerated) { return getEnum (text, enumerated); }
+short texgete2 (MelderReadText text, void *enumerated) { return getEnum (text, enumerated); }
+short texgeteb (MelderReadText text) { return getEnum (text, & enum_Boolean); }
+short texgeteq (MelderReadText text) { return getEnum (text, & enum_Question); }
+short texgetex (MelderReadText text) { return getEnum (text, & enum_Existence); }
+char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
+char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
+wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
+wchar_t *texgetw4 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }

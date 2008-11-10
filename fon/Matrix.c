@@ -53,7 +53,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (Matrix);
 	if (Thing_version < 0) {
 		my xmin = texgetr8 (text);

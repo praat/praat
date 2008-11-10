@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20081028)
+MAN_BEGIN (L"What's new?", L"ppgb", 20081110)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.40# (November 10, 2008)")
+LIST_ITEM (L"\\bu Improved reading and writing of text files (faster, bigger).")
+NORMAL (L"##5.0.39# (November 1, 2008)")
+LIST_ITEM (L"\\bu praatcon -a (for sending ANSI encoding when redirected)")
 NORMAL (L"##5.0.38# (October 28, 2008)")
 LIST_ITEM (L"\\bu @FormantGrid: To Formant...")
 NORMAL (L"##5.0.36# (October 20, 2008)")

@@ -237,16 +237,12 @@ Strings Strings_createAsDirectoryList (const wchar_t *path) {
 
 Strings Strings_readFromRawTextFile (MelderFile file) {
 	Strings me = NULL;
-	wchar_t *string = MelderFile_readText (file); cherror
-	MelderReadString text = { string, string };
+	MelderReadText text = MelderReadText_createFromFile (file); cherror
 
 	/*
 	 * Count number of strings.
 	 */
-	long n = 0;
-	wchar_t *p = & string [0];
-	for (; *p != '\0'; p ++) if (*p == '\n') n ++;
-	if (p - string > 1 && p [-1] != '\n') n ++;
+	long n = MelderReadText_getNumberOfLines (text);
 
 	/*
 	 * Create.
@@ -259,12 +255,12 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 	 * Read strings.
 	 */
 	for (long i = 1; i <= n; i ++) {
-		wchar_t *line = MelderReadString_readLine (& text); cherror
+		wchar_t *line = MelderReadText_readLine (text); cherror
 		my strings [i] = Melder_wcsdup (line); cherror
 	}
 
 end:
-	Melder_free (string);
+	MelderReadText_delete (text);
 	iferror {
 		forget (me);
 		Melder_error3 (L"(Strings_readFromRawTextFile:) File ", MelderFile_messageName (file), L" not read.");

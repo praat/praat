@@ -1523,29 +1523,27 @@ static int sgmlToPraat (char *text) {
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	TextGrid me = NULL;
 	wchar_t *tag = NULL;
-	wchar_t *string = MelderFile_readText (file); cherror
-
-	MelderReadString text = { string, string };
-	tag = texgetw2 (& text); cherror
+	MelderReadText text = MelderReadText_createFromFile (file); cherror
+	tag = texgetw2 (text); cherror
 	if (! wcsequ (tag, L"Praat chronological TextGrid text file"))
 		error1 (L"Not a chronological TextGrid text file.")
 	me = new (TextGrid); cherror
-	classFunction -> readText (me, & text); cherror
+	classFunction -> readText (me, text); cherror
 	my tiers = Ordered_create (); cherror
-	long numberOfTiers = texgeti4 (& text); cherror
+	long numberOfTiers = texgeti4 (text); cherror
 	for (long itier = 1; itier <= numberOfTiers; itier ++) {
-		wchar_t *klas = texgetw2 (& text); cherror
+		wchar_t *klas = texgetw2 (text); cherror
 		if (wcsequ (klas, L"IntervalTier")) {
 			IntervalTier tier = new (IntervalTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> name = texgetw2 (& text); cherror
-			classFunction -> readText (tier, & text); cherror
+			tier -> name = texgetw2 (text); cherror
+			classFunction -> readText (tier, text); cherror
 			tier -> intervals = SortedSetOfDouble_create (); cherror
 		} else if (wcsequ (klas, L"TextTier")) {
 			TextTier tier = new (TextTier); cherror
 			Collection_addItem (my tiers, tier); cherror
-			tier -> name = texgetw2 (& text); cherror
-			classFunction -> readText (tier, & text); cherror
+			tier -> name = texgetw2 (text); cherror
+			classFunction -> readText (tier, text); cherror
 			tier -> points = SortedSetOfDouble_create (); cherror
 		} else {
 			error3 (L"Unknown tier class \"", klas, L"\".")
@@ -1553,7 +1551,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		Melder_free (klas);
 	}
 	for (;;) {
-		long itier = texgeti4 (& text);
+		long itier = texgeti4 (text);
 		iferror {
 			if (wcsstr (Melder_getError (), L"Early end of text")) {
 				Melder_clearError ();
@@ -1567,17 +1565,17 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		if (((Data) my tiers -> item [itier]) -> methods == (Data_Table) classIntervalTier) {
 			IntervalTier tier = my tiers -> item [itier];
 			TextInterval interval = new (TextInterval); cherror
-			classTextInterval -> readText (interval, & text); cherror
+			classTextInterval -> readText (interval, text); cherror
 			Collection_addItem (tier -> intervals, interval); cherror   /* Not earlier: sorting depends on contents of interval. */
 		} else {
 			TextTier tier = my tiers -> item [itier];
 			TextPoint point = new (TextPoint); cherror
-			classTextPoint -> readText (point, & text); cherror
+			classTextPoint -> readText (point, text); cherror
 			Collection_addItem (tier -> points, point); cherror   /* Not earlier: sorting depends on contents of point. */
 		}
 	}
 end:
-	Melder_free (string);
+	MelderReadText_delete (text);
 	Melder_free (tag);
 	iferror { Melder_error3 (L"(TextGrid_readFromChronologicalTextFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
 	return me;

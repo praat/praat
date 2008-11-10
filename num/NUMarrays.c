@@ -192,7 +192,7 @@ FUNCTION (c, char)
 			cacput##storage (v [i], f); \
 		return 1; \
 	} \
-	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadString *text, const char *name) { \
+	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadText text, const char *name) { \
 		type *result = NUM##t##vector (lo, hi); \
 		if (! result) return NULL; \
 		for (long i = lo; i <= hi; i ++) { \
@@ -263,7 +263,7 @@ FUNCTION (c, char)
 		} \
 		return 1; \
 	} \
-	type ** NUM##t##matrix_readText_##storage (long row1, long row2, long col1, long col2, MelderReadString *text, const char *name) { \
+	type ** NUM##t##matrix_readText_##storage (long row1, long row2, long col1, long col2, MelderReadText text, const char *name) { \
 		type **result = NUM##t##matrix (row1, row2, col1, col2); \
 		if (! result) return NULL; \
 		for (long i = row1; i <= row2; i ++) for (long j = col1; j <= col2; j ++) { \

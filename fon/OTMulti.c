@@ -97,7 +97,7 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	int localVersion = Thing_version;
 	iam (OTMulti);
 	if (! inherited (OTMulti) readText (me, text)) return 0;

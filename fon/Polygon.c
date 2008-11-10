@@ -60,7 +60,7 @@ static int writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (Polygon);
 	my numberOfPoints = texgeti4 (text);
 	if (my numberOfPoints < 1)

@@ -23,7 +23,7 @@
 
 #include "Categories.h"
 
-static int readText (I, MelderReadString *text)
+static int readText (I, MelderReadText text)
 {
     iam (Categories); long size = texgeti4 (text), i;
 	if (size == 0)

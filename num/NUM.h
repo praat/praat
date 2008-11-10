@@ -35,6 +35,7 @@
  * pb 2008/04/12 NUMlinprog
  * pb 2008/09/21 NUMshift
  * pb 2008/09/22 NUMscale
+ * pb 2008/11/04 MelderReadText
  */
 
 /* "NUM" = "NUMerics" */
@@ -440,13 +441,13 @@ void NUMautoscale (double x [], long n, double scale);
 	int NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
 	int NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
 	int NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
-	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadString *text, const char *name); \
+	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
 	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f); \
 	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f); \
 	int NUM##t##matrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
 	int NUM##t##matrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
 	int NUM##t##matrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
-	type ** NUM##t##matrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name); \
+	type ** NUM##t##matrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
 	type ** NUM##t##matrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f); \
 	type ** NUM##t##matrix_readCache_##storage (long r1, long r2, long c1, long c2, CACHE *f);
 FUNCTION (b, signed char, i1)

@@ -16,9 +16,11 @@ endfor
 echo invFisherQ
 call invFisherQ 2 70 1e-14
 call invFisherQ 70 2 1e-14
-call invFisherQ 1 100000 1e-11
-call invFisherQ 100000 1 1e-11
-call invFisherQ 1 1 1e-14
+call invFisherQ 1 if(windows)then(100)else(100000)fi 1e-11
+if not windows
+	call invFisherQ 1 1 1e-14
+	call invFisherQ 100000 1 1e-11
+endif
 call invFisherQ 100 100 1e-9
 procedure invFisherQ df1 df2 precision
    # Known values.
@@ -29,14 +31,14 @@ procedure invFisherQ df1 df2 precision
       assert abs (fisherQ (invFisherQ (i/1000, df1, df2), 'df1', 'df2') - 'i'/1000) < 'precision'   ; 'i' 'df1' 'df2'
    endfor
    # Q near 0, i.e. F large: relative precision.
-   for power from 4 to 150
+   for power from 4 to if windows then 147 else 150 fi
       q = 10 ^ -power
       f = invFisherQ (q, df1, df2)
       assert f <> undefined ; 'q' 'df1' 'df2'
       assert abs (fisherQ (f, 'df1', 'df2') - 'q') < 'q'*'precision'*10 ; 'f'
    endfor
    mentioned = 0
-   for power from 151 to 307
+   for power from if windows then 148 else 151 fi to 307
       q = 10 ^ -power
       f = invFisherQ (q, df1, df2)
       if f = undefined and not mentioned
@@ -86,7 +88,7 @@ assert fisherQ (1, 1e19, 1e19) = undefined
 #
 Debug... 29   ; set invFisherQ to GSL
 f = invFisherQ (0.01, 1, 10000)   ; not such an unusual case
-assert "'f'" = "nan"
+assert "'f'" = "nan" or "'f'" = "NaN"
 Debug... 0   ; use our corrected NUMridders again
 f = invFisherQ (0.01, 1, 10000)   ; same case
 assert "'f:5'" = "6.63743"

@@ -22,10 +22,12 @@
  * pb 2008/04/25 playPart
  * pb 2008/04/27 removePointsBetween, filter_noscale
  * pb 2008/09/23 shiftX, scaleX
+ * pb 2008/10/28 FormantGrid_to_Formant, FormantGrid_formula
  */
 
 #include "FormantGrid.h"
 #include "PitchTier_to_Sound.h"
+#include "Formula.h"
 
 #include "oo_DESTROY.h"
 #include "FormantGrid_def.h"
@@ -45,6 +47,26 @@
 #include "FormantGrid_def.h"
 #include "oo_DESCRIPTION.h"
 #include "FormantGrid_def.h"
+
+static double getVector (I, long irow, long icol) {
+	iam (FormantGrid);
+	RealTier tier = my formants -> item [irow];
+	return RealTier_getValueAtIndex (tier, icol);
+}
+
+static double getFunction1 (I, long irow, double x) {
+	iam (FormantGrid);
+	RealTier tier = my formants -> item [irow];
+	return RealTier_getValueAtTime (tier, x);
+}
+
+static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+	(void) void_me;
+	(void) ilevel;
+	(void) unit;
+	(void) flags;
+	return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)";
+}
 
 static void shiftX (I, double xfrom, double xto) {
 	iam (FormantGrid);
@@ -82,6 +104,9 @@ class_methods (FormantGrid, Function) {
 	class_method_local (FormantGrid, writeBinary)
 	class_method_local (FormantGrid, readBinary)
 	class_method_local (FormantGrid, description)
+	class_method (getVector)
+	class_method (getFunction1)
+	class_method (getUnitText)
 	class_method (shiftX)
 	class_method (scaleX)
 	class_methods_end
@@ -242,6 +267,46 @@ int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double sampl
 	Sound_playPart (sound, tmin, tmax, playCallback, playClosure);
 end:
 	forget (sound);
+	iferror return 0;
+	return 1;
+}
+
+int FormantGrid_formula_bandwidths (I, const wchar_t *expression, thou) {
+	iam (FormantGrid);
+	thouart (FormantGrid);
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	if (thee == NULL) thee = me;
+	for (long irow = 1; irow <= my formants -> size; irow ++) {
+		RealTier bandwidth = my bandwidths -> item [irow];
+		for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			if (result. result.numericResult == NUMundefined)
+				error1 (L"Cannot put an undefined value into the tier.\nFormula not finished.")
+			((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+int FormantGrid_formula_frequencies (I, const wchar_t *expression, thou) {
+	iam (FormantGrid);
+	thouart (FormantGrid);
+	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	if (thee == NULL) thee = me;
+	for (long irow = 1; irow <= my formants -> size; irow ++) {
+		RealTier formant = my formants -> item [irow];
+		for (long icol = 1; icol <= formant -> points -> size; icol ++) {
+			struct Formula_Result result;
+			Formula_run (irow, icol, & result); cherror
+			if (result. result.numericResult == NUMundefined)
+				error1 (L"Cannot put an undefined value into the tier.\nFormula not finished.")
+			((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
+		}
+	}
+end:
 	iferror return 0;
 	return 1;
 }

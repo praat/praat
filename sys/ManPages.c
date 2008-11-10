@@ -114,7 +114,7 @@ static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_
 	return p;
 }
 
-static int readOnePage (ManPages me, MelderReadString *text) {
+static int readOnePage (ManPages me, MelderReadText text) {
 	ManPage page;
 	ManPage_Paragraph par;
 	wchar_t *title = texgetw2 (text);
@@ -211,11 +211,10 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 				wcscpy (fileName, link);
 				wcscat (fileName, L".man");
 				MelderDir_getFile (& my rootDirectory, fileName, & file2);
-				wchar_t *string2 = MelderFile_readText (& file2);
-				if (string2 != NULL) {
-					MelderReadString text2 = { string2, string2 };
-					if (! readOnePage (me, & text2)) {
-						Melder_free (string2);
+				MelderReadText text2 = MelderReadText_createFromFile (& file2);
+				if (text2 != NULL) {
+					if (! readOnePage (me, text2)) {
+						MelderReadText_delete (text2);
 						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
 					}
 				} else {
@@ -227,15 +226,14 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 					wcscpy (fileName, link);
 					wcscat (fileName, L".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
-					string2 = MelderFile_readText (& file2);
-					if (string2 == NULL) return 0;
-					MelderReadString text2 = { string2, string2 };
-					if (! readOnePage (me, & text2)) {
-						Melder_free (string2);
+					text2 = MelderReadText_createFromFile (& file2);
+					if (text2 == NULL) return 0;
+					if (! readOnePage (me, text2)) {
+						MelderReadText_delete (text2);
 						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
 					}
 				}
-				Melder_free (string2);
+				MelderReadText_delete (text2);
 			}
 		}
 		iferror return 0;
@@ -245,7 +243,7 @@ static int readOnePage (ManPages me, MelderReadString *text) {
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (ManPages);
 	my dynamic = TRUE;
 	my pages = Ordered_create ();

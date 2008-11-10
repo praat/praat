@@ -29,6 +29,7 @@
  * pb 2007/07/22 improved reading of <exists>
  * pb 2008/01/19 NUM##storage
  * pb 2008/03/20 layout
+ * pb 2008/11/04 MelderReadText
  */
 
 #include "oo_undef.h"
@@ -166,7 +167,7 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_readText (Type me, MelderReadString *text) { \
+	static int Type##_readText (Type me, MelderReadText text) { \
 		int localVersion = Thing_version; (void) localVersion;
 
 #define oo_END_STRUCT(Type)  \
@@ -174,7 +175,7 @@
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_readText (I, MelderReadString *text) { \
+	static int class##Class##_readText (I, MelderReadText text) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > our version) \

@@ -458,33 +458,6 @@ double MelderString_deallocationSize (void) {
 	return totalDeallocationSize;
 }
 
-wchar_t * MelderReadString_readLine (MelderReadString *text) {
-	if (text -> readPointer == NULL) return NULL;
-	if (*text -> readPointer == '\0') {   // Tried to read past end of file.
-		text -> readPointer = NULL;
-		return NULL;
-	}
-	wchar_t *result = text -> readPointer;
-	wchar_t *newline = wcschr (result, '\n');
-	if (newline != NULL) {
-		*newline = '\0';
-		text -> readPointer = newline + 1;
-	} else {
-		text -> readPointer += wcslen (result);
-	}
-	return result;
-}
-
-const wchar_t * MelderReadString_getLineNumber (MelderReadString *text) {
-	wchar_t *p = text -> string;
-	long result = 1;
-	while (text -> readPointer - p > 0) {
-		if (*p == '\0' || *p == '\n') result ++;
-		p ++;
-	}
-	return Melder_integer (result);
-}
-
 #define NUMBER_OF_BUFFERS  33
 static MelderString buffer [NUMBER_OF_BUFFERS] = { { 0 } };
 static int ibuffer = 0;

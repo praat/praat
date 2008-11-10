@@ -944,6 +944,28 @@ DIRECT (FormantGrid_edit)
 	}
 END
 
+FORM (FormantGrid_formula_bandwidths, L"FormantGrid: Formula (bandwidths)", L"Formant: Formula (bandwidths)...")
+	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	TEXTFIELD (L"formula", L"self / 2 ; sharpen all peaks")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! FormantGrid_formula_bandwidths (OBJECT, GET_STRING (L"formula"), NULL)) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (FormantGrid_formula_frequencies, L"FormantGrid: Formula (frequencies)", L"Formant: Formula (frequencies)...")
+	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
+	OK
+DO
+	WHERE (SELECTED) {
+		if (! FormantGrid_formula_frequencies (OBJECT, GET_STRING (L"formula"), NULL)) return 0;
+		praat_dataChanged (OBJECT);
+	}
+END
+
 DIRECT (FormantGrid_help) Melder_help (L"FormantGrid"); END
 
 FORM (FormantGrid_removeBandwidthPointsBetween, L"Remove bandwidth points between", L"FormantGrid: Remove bandwidth points between...")
@@ -4578,6 +4600,8 @@ praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, 0, DO_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, L"Modify -          ", 0, 0, 0);
 		praat_TimeFunction_modify_init (classFormantGrid);
+		praat_addAction1 (classFormantGrid, 0, L"Formula (frequencies)...", 0, 1, DO_FormantGrid_formula_frequencies);
+		//praat_addAction1 (classFormantGrid, 0, L"Formula (bandwidths)...", 0, 1, DO_FormantGrid_formula_bandwidths);
 		praat_addAction1 (classFormantGrid, 0, L"Add formant point...", 0, 1, DO_FormantGrid_addFormantPoint);
 		praat_addAction1 (classFormantGrid, 0, L"Add bandwidth point...", 0, 1, DO_FormantGrid_addBandwidthPoint);
 		praat_addAction1 (classFormantGrid, 0, L"Remove formant points between...", 0, 1, DO_FormantGrid_removeFormantPointsBetween);

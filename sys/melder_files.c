@@ -1,6 +1,6 @@
 /* melder_files.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
  * pb 2007/06/09 more wchar_t
  * pb 2007/08/12 more wchar_t
  * pb 2007/10/05 FSFindFolder
+ * pb 2008/11/01 warn after finding final tabs (not just spaces) in file names
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -629,10 +630,10 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			L" file ", MelderFile_messageName (file), L".");
 		if (path [0] == '\0')
 			Melder_error1 (L"Hint: empty file name.");
-		else if (path [0] == ' ')
-			Melder_error1 (L"Hint: file name starts with a space.");
-		else if (path [wcslen (path) - 1] == ' ')
-			Melder_error1 (L"Hint: file name ends in a space.");
+		else if (path [0] == ' ' || path [0] == '\t')
+			Melder_error1 (L"Hint: file name starts with a space or tab.");
+		else if (path [wcslen (path) - 1] == ' ' || path [wcslen (path) - 1] == '\t')
+			Melder_error1 (L"Hint: file name ends in a space or tab.");
 		return NULL;
 	}
 	return f;

@@ -38,8 +38,14 @@ void Melder_writeToConsole (wchar_t *message, bool useStderr) {
 			console = CreateFile (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
 		}
 		if (Melder_consoleIsAnsi) {
-			char *messageA = Melder_peekWcsToUtf8 (message);
-			fprintf (stdout, "%s", messageA);
+			size_t n = wcslen (message);
+			for (long i = 0; i < n; i ++) {
+				unsigned int kar = (unsigned short) message [i];
+				fputc (kar, stdout);
+			}
+		//} else if (Melder_consoleIsUtf8) {
+			//char *messageA = Melder_peekWcsToUtf8 (message);
+			//fprintf (stdout, "%s", messageA);
 		} else {
 			WriteConsole (console, message, wcslen (message), NULL, NULL);
 		}

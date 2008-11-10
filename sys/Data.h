@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/02
+ * pb 2008/11/04
  */
 
 /* Data inherits from Thing. */
@@ -184,7 +184,7 @@ bool Data_canReadText (I);
 	but is preferably the same as the answer from Data_canWriteText.
 */
 
-int Data_readText (I, MelderReadString *text);
+int Data_readText (I, MelderReadText text);
 /*
 	Message:
 		"try to read yourself as text from a string."
@@ -312,7 +312,7 @@ typedef struct structData_Description {
 	bool (*equal) (Any data1, Any data2); \
 	bool (*canWriteAsEncoding) (I, int outputEncoding); \
 	int (*writeText) (I, MelderFile openFile); \
-	int (*readText) (I, MelderReadString *text); \
+	int (*readText) (I, MelderReadText text); \
 	int (*writeBinary) (I, FILE *f); \
 	int (*readBinary) (I, FILE *f); \
 	int (*writeCache) (I, CACHE *f); \

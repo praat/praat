@@ -84,7 +84,7 @@ static int writeText (I, MelderFile file) {
 	return 1;
 }
 
-static int readText (I, MelderReadString *text) {
+static int readText (I, MelderReadText text) {
 	iam (TableOfReal);
 	my numberOfColumns = texgeti4 (text);
 	if (my numberOfColumns >= 1) {

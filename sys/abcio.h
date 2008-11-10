@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/06/10 *w4
  * pb 2007/06/21 *w2
  * pb 2007/07/21 MelderReadString
+ * pb 2008/11/04 MelderReadText
  */
 
 #ifndef _complex_h_
@@ -37,27 +38,27 @@
 
 /* Numeric text input and output. */
 
-int texgeti1 (MelderReadString *text);
-int texgeti2 (MelderReadString *text);
-long texgeti4 (MelderReadString *text);
-unsigned int texgetu1 (MelderReadString *text);
-unsigned int texgetu2 (MelderReadString *text);
-unsigned long texgetu4 (MelderReadString *text);
-double texgetr4 (MelderReadString *text);
-double texgetr8 (MelderReadString *text);
-double texgetr10 (MelderReadString *text);
-fcomplex texgetc8 (MelderReadString *text);
-dcomplex texgetc16 (MelderReadString *text);
-char texgetc1 (MelderReadString *text);
-short texgete1 (MelderReadString *text, void *enumerated);
-short texgete2 (MelderReadString *text, void *enumerated);
-short texgeteb (MelderReadString *text);
-short texgeteq (MelderReadString *text);
-short texgetex (MelderReadString *text);
-char *texgets2 (MelderReadString *text);
-char *texgets4 (MelderReadString *text);
-wchar_t *texgetw2 (MelderReadString *text);
-wchar_t *texgetw4 (MelderReadString *text);
+int texgeti1 (MelderReadText text);
+int texgeti2 (MelderReadText text);
+long texgeti4 (MelderReadText text);
+unsigned int texgetu1 (MelderReadText text);
+unsigned int texgetu2 (MelderReadText text);
+unsigned long texgetu4 (MelderReadText text);
+double texgetr4 (MelderReadText text);
+double texgetr8 (MelderReadText text);
+double texgetr10 (MelderReadText text);
+fcomplex texgetc8 (MelderReadText text);
+dcomplex texgetc16 (MelderReadText text);
+char texgetc1 (MelderReadText text);
+short texgete1 (MelderReadText text, void *enumerated);
+short texgete2 (MelderReadText text, void *enumerated);
+short texgeteb (MelderReadText text);
+short texgeteq (MelderReadText text);
+short texgetex (MelderReadText text);
+char *texgets2 (MelderReadText text);
+char *texgets4 (MelderReadText text);
+wchar_t *texgetw2 (MelderReadText text);
+wchar_t *texgetw4 (MelderReadText text);
 
 void texindent (MelderFile file);
 void texexdent (MelderFile file);
