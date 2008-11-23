@@ -893,9 +893,6 @@ String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 	
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
-	#if gtk
-		g_set_application_name (title);
-	#endif
 	#if defined (UNIX)
 		FILE *f;
 		//setlocale (LC_ALL, "en_US");
@@ -1124,6 +1121,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Machine_initLookAndFeel (argc, argv);
 		sprintf (objectWindowTitle, "%s objects", praatP.title);
 		#if gtk
+			g_set_application_name (title);
 			theCurrentPraat -> topShell = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit, NULL, 0);
 			theCurrentPraat -> context = g_main_context_default ();
 			GuiObject_show (GuiObject_parent (theCurrentPraat -> topShell));

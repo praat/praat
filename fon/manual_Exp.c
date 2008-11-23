@@ -81,7 +81,7 @@ LIST_ITEM (L"@@ExperimentMFC 2.8. Goodness judgments")
 LIST_ITEM (L"@@ExperimentMFC 2.9. How an experiment proceeds")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.1. The experiment file", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 2.1. The experiment file", L"ppgb", 20081123)
 INTRO (L"An experiment is defined in a simple text file, which we call an %%experiment file%. "
 	"The following is an example of such an experiment file. The first two lines have to be typed "
 	"exactly as in this example, the rest depends on your stimuli, on your response categories, "
@@ -104,7 +104,10 @@ CODE1 (L"\"hud\"   \"\"")
 CODE (L"numberOfReplicationsPerStimulus = 3")
 CODE (L"breakAfterEvery = 0")
 CODE (L"randomize = <PermuteBalancedNoDoublets>")
-CODE (L"startText = \"Click to start.\"")
+CODE (L"startText = \"This is a listening experiment.")
+CODE (L"After hearing a sound, choose the vowel that is most similar to what you heard.")
+CODE (L"")
+CODE (L"Click to start.\"")
 CODE (L"runText = \"Choose the vowel that you heard.\"")
 CODE (L"pauseText = \"You can have a short break if you like. Click to proceed.\"")
 CODE (L"endText = \"The experiment has finished.\"")
@@ -229,11 +232,12 @@ NORMAL (L"The randomization procedure does not interfere in any way with the bre
 	"before any breaks are inserted.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.6. Instructions", L"ppgb", 20051205)
+MAN_BEGIN (L"ExperimentMFC 2.6. Instructions", L"ppgb", 20081123)
 NORMAL (L"Before the experiment begins, the listener will see the %startText in the centre of the screen. "
 	"During each trial, she will see the %runText at the top of the screen. "
 	"During breaks, she will see the %pauseText in the centre of the screen. "
-	"After all the trials have been performed, she will see the %endText.")
+	"After all the trials have been performed, she will see the %endText. "
+	"As you can see in the example, all these texts can consist of multiple lines.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 2.7. Response categories", L"ppgb", 20070926)
@@ -507,7 +511,7 @@ NORMAL (L"The behaviour of the experiment changes appreciably if you include an 
 	"If you do not include an OK button, Praat will present the next stimulus as soon as the participant "
 	"has clicked a response category (and a goodness category, if there are such). "
 	"If you do include an OK button, it will become visible to the participant as soon as she has chosen "
-	"a response category (and a goodness catgory, if there are such). "
+	"a response category (and a goodness category, if there are such). "
 	"The participant can then click the OK button, but she can also choose to click the response "
 	"(and goodness buttons) a bit more first.")
 NORMAL (L"The OK button seems to be useful only if there is also a replay button, "

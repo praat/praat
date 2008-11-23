@@ -29,6 +29,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
+ djmw 20081119 Check in TableOfReal_to_PCA if TableOfReal_areAllCellsDefined
 */
 
 #include "PCA.h"
@@ -139,7 +140,9 @@ PCA TableOfReal_to_PCA (I)
 	PCA thee;
 	double **a = NULL;
 	long i, j, m = my numberOfRows, n = my numberOfColumns;
-	
+
+	if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) return NULL;
+
 	if (m < 2) return Melder_errorp1 (L"There is not enough data to perform a PCA.\n"
 		"Your table has less than 2 rows.");
 

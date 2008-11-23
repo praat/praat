@@ -274,7 +274,7 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Edit", L"Paste history", 'H', menu_cb_viewHistory);
 	Editor_addMenu (me, L"Run", 0);
 	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_go);
-	Editor_addCommand (me, L"Run", L"Run selection", 0, menu_cb_runSelection);
+	Editor_addCommand (me, L"Run", L"Run selection", 'T', menu_cb_runSelection);
 }
 
 static void createHelpMenuItems (I, EditorMenu menu) {

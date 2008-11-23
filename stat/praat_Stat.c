@@ -637,26 +637,26 @@ END
 FORM (Table_reportCorrelation_kendallTau, L"Report correlation (Kendall tau)", 0)
 	WORD (L"left Columns", L"")
 	WORD (L"right Columns", L"")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double correlation, significance, lowerLimit, upperLimit;
-	correlation = Table_getCorrelation_kendallTau (me, column1, column2, significanceLevel,
+	correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
 		L" and column ", Table_messageColumn (me, column2), L":");
 	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest tau that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest tau that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest tau that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest tau that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -664,26 +664,26 @@ END
 FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
 	WORD (L"left Columns", L"")
 	WORD (L"right Columns", L"")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double correlation, significance, lowerLimit, upperLimit;
-	correlation = Table_getCorrelation_pearsonR (me, column1, column2, significanceLevel,
+	correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
 		& significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
 		L" and column ", Table_messageColumn (me, column2), L":");
 	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest r that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest r that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest r that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest r that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -691,15 +691,15 @@ END
 FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
 	WORD (L"left Columns", L"")
 	WORD (L"right Columns", L"")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double difference, t, significance, lowerLimit, upperLimit;
-	difference = Table_getDifference_studentT (me, column1, column2, significanceLevel,
+	difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
 		& t, & significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
@@ -707,11 +707,11 @@ DO
 	MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
 	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -721,16 +721,16 @@ FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t
 	WORD (L"Group column", L"gender")
 	SENTENCE (L"Group 1", L"F")
 	SENTENCE (L"Group 2", L"M")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
 	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, significanceLevel,
+	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
@@ -738,11 +738,11 @@ DO
 	MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -751,16 +751,16 @@ FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
 	WORD (L"Column", L"salary")
 	WORD (L"Group column", L"gender")
 	SENTENCE (L"Group", L"F")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
 	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group = GET_STRING (L"Group");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, significanceLevel,
+	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
@@ -768,36 +768,36 @@ DO
 	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
 
 FORM (Table_reportMean_studentT, L"Report mean (Student t)", 0)
 	WORD (L"Column", L"")
-	POSITIVE (L"Significance level", L"0.025")
+	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
 	Table me = ONLY_OBJECT;
 	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
-	double significanceLevel = GET_REAL (L"Significance level");
+	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getMean_studentT (me, column, significanceLevel,
+	mean = Table_getMean_studentT (me, column, unconfidence,
 		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
 	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * significanceLevel)), L"%):");
+	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (lowest value that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), L")");
+		L" (highest value that cannot be rejected with p = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END

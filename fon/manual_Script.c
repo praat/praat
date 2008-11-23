@@ -2360,7 +2360,7 @@ NORMAL (L"This script reads a sound file from disk, pops up an editor for the re
 	"and returns to the Praat shell to play the entire sound.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20050822)
+MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20081112)
 NORMAL (L"This section will show how you can permanently extend the functionality of an editor.")
 NORMAL (L"As an example, consider the following problem: you want to see a graphic representation "
 	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
@@ -2374,7 +2374,7 @@ CODE2 (L"cursor = Get cursor")
 CODE2 (L"Select... cursor-0.02 cursor+0.02")
 CODE2 (L"Extract windowed selection... slice Kaiser2 2 no")
 CODE1 (L"#endeditor")
-CODE1 (L"To Spectrum (fft)")
+CODE1 (L"To Spectrum... yes")
 CODE1 (L"Edit")
 NORMAL (L"If you choose Run from the Run menu in the ScriptEditor, a region of 40 milliseconds around the "
 	"current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects, "
@@ -2429,7 +2429,7 @@ CODE1 (L"\\#  Create a name. E.g. \"670ms\" means at 670 milliseconds.")
 CODE1 (L"milliseconds = round (cursor*1000)")
 CODE1 (L"Extract windowed selection... 'milliseconds'ms Kaiser2 2 no")
 CODE (L"#endeditor")
-CODE (L"To Spectrum (fft)")
+CODE (L"To Spectrum... yes")
 CODE (L"Edit")
 CODE (L"#editor Spectrum 'milliseconds'ms")
 CODE1 (L"Zoom... 0 5000")

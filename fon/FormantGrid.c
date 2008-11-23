@@ -23,6 +23,7 @@
  * pb 2008/04/27 removePointsBetween, filter_noscale
  * pb 2008/09/23 shiftX, scaleX
  * pb 2008/10/28 FormantGrid_to_Formant, FormantGrid_formula
+ * pb 2008/11/16 FormantGrid_init
  */
 
 #include "FormantGrid.h"
@@ -112,8 +113,8 @@ class_methods (FormantGrid, Function) {
 	class_methods_end
 }
 
-FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
-	FormantGrid me = new (FormantGrid); cherror
+int FormantGrid_init (I, double tmin, double tmax, long numberOfFormants) {
+	iam (FormantGrid);
 	my formants = Ordered_create (); cherror
 	my bandwidths = Ordered_create (); cherror
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
@@ -124,6 +125,14 @@ FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfForm
 	}
 	my xmin = tmin;
 	my xmax = tmax;
+end:
+	iferror return 0;
+	return 1;
+}
+
+FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
+	FormantGrid me = new (FormantGrid); cherror
+	FormantGrid_init (me, tmin, tmax, numberOfFormants); cherror
 end:
 	iferror forget (me);
 	return me;

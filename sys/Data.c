@@ -179,12 +179,18 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
 	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _className, L" cannot be written to a text file.")
 	Data_createTextFile (me, file, verbose); cherror
+	#ifndef _WIN32
+		flockfile (file -> filePointer);
+	#endif
 	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _className);
 	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
 	MelderFile_write1 (file, L"\"\n");
 	Data_writeText (me, file); cherror
 	MelderFile_writeCharacter (file, '\n');
 end:
+	#ifndef _WIN32
+		if (file -> filePointer) funlockfile (file -> filePointer);
+	#endif
 	MelderFile_close (file);
 	iferror return Melder_error5 (L"Cannot write ", our _className, L"to file ", MelderFile_messageName (file), L".");
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);

@@ -237,7 +237,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		if (xmin < interval -> xmax && linesRead > 1)
 		{
 			xmin = interval -> xmax;
-			Melder_warning5 (L"File ", MelderFile_messageName (file), L": Start time set to previous end "
+			Melder_warning5 (L"File \"", MelderFile_messageName (file), L"\": Start time set to previous end "
 				"time for label at line ", Melder_integer (linesRead), L".");
 		}
 		/* standard: new TextInterval */

@@ -27,6 +27,7 @@
  djmw 20071106 drawSplines: to wchar_t
  djmw 20071201 Melder_warning<n>
  djmw 20071213 Removed Preference.
+ djmw 20080724 Thing_classNameW ->Thing_className
 */
 
 #include "SVD.h"

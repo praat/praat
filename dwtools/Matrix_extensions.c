@@ -27,6 +27,7 @@
 */
 
 #include "Matrix_extensions.h"
+#include "Eigen.h"
 #include "NUM2.h"
 
 void Matrix_scatterPlot (I, Any g, long icx, long icy,

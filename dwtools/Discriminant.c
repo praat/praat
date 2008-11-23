@@ -32,6 +32,7 @@
  djmw 20071009 wchar_t
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
+ djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
 */
 
 #include "Discriminant.h"
@@ -484,6 +485,9 @@ Discriminant TableOfReal_to_Discriminant (I)
 	long j, k, dimension = my numberOfColumns; 
 
 	if (thee == NULL) return NULL;
+	
+	if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) return NULL;
+	
 	if (NUMdmatrix_hasInfinities (my data, 1, my numberOfRows, 1, dimension))
 	{
 		(void) Melder_error1 (L"Table contains infinities.");

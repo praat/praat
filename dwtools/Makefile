@@ -25,7 +25,7 @@
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
+CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL
 
 all: libdwtools.a
 
@@ -46,6 +46,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o Formant_extensions.o \
 	Intensity_extensions.o \
+	KlattTable.o KlattGrid.o Resonator.o \
 	LFCC.o LongSound_extensions.o \
 	MelFilter_and_MFCC.o MFCC.o \
 	manual_dwtools.o manual_MDS.o manual_Permutation.o \

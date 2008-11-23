@@ -178,6 +178,12 @@ call replace_re "ababccccd" "ab" "x" 1 xabccccd
 
 call replace_re "ababccccd" "^ab" "x" 1 xabccccd
 
+printline ---  # empty string
+
+call replace_re "" ".*" "aaa" 0 aaa
+call replace_re "" ".*" "aaa" 1 aaa
+call replace_re "" ".*" "aaa" 10 aaa
+
 # special constructs with parenthesis
 
 # special control characters
@@ -205,4 +211,8 @@ call replace_re "ababccccd" "^ab" "x" 0 xabccccd
 printline --------- PREVIOUS BUGS < 5.0.5
 call replace_re "hallo" "l" "b" 0 habbo
 call replace_re "hallo" "." "&&" 0 hhaalllloo
+printline --------- PREVIOUS BUGS --- END
+
+printline --------- BUG in 5.0.40
+call replace_re "c " ".*" "aaaa" 0 aaaa
 printline --------- PREVIOUS BUGS --- END

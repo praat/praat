@@ -137,7 +137,7 @@ typedef struct {
 	int _beingCreated;
 } structPraat_Object, *praat_Object;
 
-#define praat_MAXNUM_OBJECTS 1000   /* Maximum number of objects in the list. */
+#define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
 typedef struct {   /* Readonly */
 	int n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */

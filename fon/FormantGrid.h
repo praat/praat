@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/10/28
+ * pb 2008/11/16
  */
 
 #ifndef _RealTier_h_
@@ -34,9 +34,12 @@
 #endif
 
 #include "FormantGrid_def.h"
+#define FormantGrid_members Function_members \
+	Ordered formants, bandwidths;
 #define FormantGrid_methods Function_methods
 oo_CLASS_CREATE (FormantGrid, Function);
 
+int FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);
 FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
 
 FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,

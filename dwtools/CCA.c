@@ -26,6 +26,7 @@
  djmw 20031221 Removed bug: CCA_and_TableOfReal_scores (wrong dimensions to Eigen_project_into).
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20081119 Check in TableOfReal_to_CCA if TableOfReal_areAllCellsDefined
 */
 
 #include "CCA_and_Correlation.h"
@@ -123,6 +124,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 	long nx = my numberOfColumns - ny;
 		
 	if (ny < 1 || ny > my numberOfColumns - 1) return Melder_errorp1 (L"Dimension of first part not correct.");
+
+	if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) return NULL;
 
 	/*
 		The dependent 'part' of the CCA should be the smallest dimension.

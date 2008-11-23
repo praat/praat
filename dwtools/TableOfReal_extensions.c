@@ -41,6 +41,7 @@
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
+ djmw 20081119 +TableOfReal_areAllCellsDefined
 */
 
 #include <ctype.h>
@@ -61,6 +62,43 @@
 #define Graphics_TWOWAYARROW 2
 #define Graphics_LINE 3
 
+int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce)
+{
+	iam (TableOfReal);
+	long *invalid_columns;
+	long i, j, numberOfInvalidRows = 0, numberOfInvalidColumns = 0;
+
+	if (re <= rb || rb < 1 || re > my numberOfRows) { rb = 1; re = my numberOfRows; }
+	if (ce <= cb || cb < 1 || ce > my numberOfColumns) { cb = 1; ce = my numberOfColumns; }
+
+	invalid_columns = NUMlvector (1, my numberOfColumns);
+	if (invalid_columns == NULL) return 0;
+	
+	for (i = rb; i <= re; i++)
+	{
+		for (j = cb; j <= ce; j++)
+		{
+			long rowcount = 0;
+			if (my data[i][j] == NUMundefined)
+			{
+				invalid_columns[j]++;
+				rowcount++;
+			}
+			if (rowcount > 0) numberOfInvalidRows++;
+		}
+	}
+	if (numberOfInvalidRows != 0)
+	{
+		for (j = 1; j <= my numberOfColumns; j++)
+		{
+			if (invalid_columns[j] > 0) numberOfInvalidColumns++;
+		}
+		(void) Melder_error1 (numberOfInvalidRows == 1 ? L"One row contains invalid data." :
+			(numberOfInvalidColumns == 1 ?  L"One column contains invalid data." : L"Several rows and columns contain invalid data."));
+	}
+	NUMlvector_free (invalid_columns, 1);
+	return numberOfInvalidRows == 0 ? 1 : 0;
+}
 
 int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 {

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20070620 Latest modification.
+ djmw 20081119 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
@@ -64,7 +64,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse);
 */
 
 TableOfReal TableOfReal_createIrisDataset (void);
-
+int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce);
 TableOfReal TableOfReal_createFromPolsData_50males (int include_levels);
 TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
 TableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */

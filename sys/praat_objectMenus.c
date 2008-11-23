@@ -487,26 +487,26 @@ void praat_show (void) {
 void praat_addFixedButtons (Widget form) {
 // Het is bagger, ik weet het, maar kom maar met een betere oplossing... bijvoorkeur zonder #defines
 #if gtk
-	Widget buttons1 = gtk_hbutton_box_new ();
-	Widget buttons2 = gtk_hbutton_box_new ();
-	Widget buttons3 = gtk_hbutton_box_new ();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttons1), GTK_BUTTONBOX_START);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttons2), GTK_BUTTONBOX_START);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttons3), GTK_BUTTONBOX_START);
-	
-	gtk_box_pack_end(GTK_BOX(form), buttons3, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(form), buttons2, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(form), buttons1, FALSE, FALSE, 0);
-
+	Widget buttons1 = NULL, buttons2 = NULL, buttons3 = NULL;
+	if (form) {
+		buttons1 = gtk_hbutton_box_new ();
+		buttons2 = gtk_hbutton_box_new ();
+		buttons3 = gtk_hbutton_box_new ();
+		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons1), GTK_BUTTONBOX_START);
+		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons2), GTK_BUTTONBOX_START);
+		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons3), GTK_BUTTONBOX_START);
+		gtk_box_pack_end (GTK_BOX (form), buttons3, FALSE, FALSE, 0);
+		gtk_box_pack_end (GTK_BOX (form), buttons2, FALSE, FALSE, 0);
+		gtk_box_pack_end (GTK_BOX (form), buttons1, FALSE, FALSE, 0);
+		gtk_widget_show (buttons1);
+		gtk_widget_show (buttons2);
+		gtk_widget_show (buttons3);
+	}
 	praat_addFixedButtonCommand (buttons1, L"Rename...", DO_Rename, 8, 70);
 	praat_addFixedButtonCommand (buttons1, L"Copy...", DO_Copy, 92, 70);
 	praat_addFixedButtonCommand (buttons2, L"Inspect", DO_Inspect, 8, 40);
 	praat_addFixedButtonCommand (buttons2, L"Info", DO_Info, 92, 40);
 	praat_addFixedButtonCommand (buttons3, L"Remove", DO_Remove, 8, 10);
-
-	gtk_widget_show(buttons1);
-	gtk_widget_show(buttons2);
-	gtk_widget_show(buttons3);
 #else
 	praat_addFixedButtonCommand (form, L"Rename...", DO_Rename, 8, 70);
 	praat_addFixedButtonCommand (form, L"Copy...", DO_Copy, 92, 70);

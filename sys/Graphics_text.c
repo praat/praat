@@ -1626,6 +1626,33 @@ void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wch
 
 void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 	iam (Graphics);
+	if (my wrapWidth == 0.0 && wcschr (txt, '\n')) {
+		double lineSpacingWC = (1.2/72) * my fontSize * my resolution / fabs (my scaleY);
+		long numberOfLines = 1;
+		for (const wchar_t *p = & txt [0]; *p != '\0'; p ++) {
+			if (*p == '\n') {
+				numberOfLines ++;
+			}
+		}
+		yWC +=
+			my verticalTextAlignment == Graphics_TOP ? 0 :
+			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
+			(numberOfLines - 1) * lineSpacingWC;
+		wchar_t *linesToDraw = Melder_wcsdup (txt);
+		for (;;) {
+			wchar_t *newline = wcschr (linesToDraw, '\n');
+			if (newline != NULL) *newline = '\0';
+			Graphics_text (me, xWC, yWC, linesToDraw);
+			yWC -= lineSpacingWC;
+			if (newline != NULL) {
+				linesToDraw = newline + 1;
+			} else {
+				break;
+			}
+		}
+		Melder_free (linesToDraw);
+		return;
+	}
 	if (! initBuffer (txt)) return;
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, widechar);

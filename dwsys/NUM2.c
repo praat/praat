@@ -367,7 +367,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	replace_length = strlen (replaceRE);
 	if (string_length == 0) maximumNumberOfReplaces = 1;
 	
-	i = maximumNumberOfReplaces > 0 ? 0 : -214748363;
+	i = maximumNumberOfReplaces > 0 ? 0 : - string_length;
 		  
 	/*
 		We do not know the size of the replaced string in advance,
@@ -375,7 +375,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		original string. After all replaces have taken place we do a
 		final realloc to the then exactly known size. 
 		If during the replace, the size of the buffer happens to be too
-		small (this is signalled by thre replaceRE function), 
+		small (this is signalled by the replaceRE function),
 		we double its size and restart the replace.
 	*/
 
@@ -444,6 +444,9 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		gap_copied = 0;
 		posp = pos; //pb 20080121
 		(*nmatches)++;
+		// at end of string?
+		// we need this because .* matches at end of a string
+		if (pos - string == string_length) break;	
 	}
 	
 	/*

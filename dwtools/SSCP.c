@@ -50,6 +50,7 @@
  djmw 20071016 To Melder_error<n>
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
+ djmw 20081119 TableOfReal_to_SSCP check if numbers are defined
 */
 
 #include "SSCP.h"
@@ -473,8 +474,10 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 {
 	iam (TableOfReal);
 	SSCP thee = NULL;
-	long i, j, k, m, n;
+	long i, j, k, m, n, nvalidrows = 0;
 	double **v = NULL;
+
+	if (! TableOfReal_areAllCellsDefined (me, rowb, rowe, colb, cole)) return NULL;
 	
 	if (rowb == 0 && rowe == 0)
 	{
@@ -490,10 +493,11 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 	
 	m = rowe - rowb + 1; /* # rows */
 	n = cole - colb + 1; /* # columns */
+	
 	if (m < n) Melder_warning1 (L"TableOfReal_to_SSCP: The SSCP will not have \n"
 		"full dimensionality. This may be a problem in following analysis steps. \n"
 		"(The number of data points was less than the number of variables.)");
-		
+			
 	thee = SSCP_create (n);
 	if (thee == NULL) goto end;
 	v = NUMdmatrix (1, m, 1, n);
@@ -501,6 +505,7 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 	
 	for (i = 1; i <= m; i++)
 	{
+		nvalidrows++;
 		for (j = 1; j <= n; j++)
 		{
 			v[i][j] = my data[rowb + i - 1][colb + j - 1];

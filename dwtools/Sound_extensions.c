@@ -1708,7 +1708,7 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 		
 	for (long k = 1; k <= thy ny; k++)
 	{
-		for (long i = 1; i <= thy nx; i++)
+		for (long i = 1; i <= my nx; i++)
 		{
 			double sum = 0, wsum = 0;
 			long m = (nswindow2 + 1 - i + 1) < 1 ? 1 : (nswindow2 + 1 - i + 1);

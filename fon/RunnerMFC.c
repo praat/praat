@@ -103,7 +103,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		const wchar_t *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
-		wchar_t *visibleText_dup = Melder_wcsdup (visibleText ? visibleText : L""), *visibleText_p = visibleText_dup, *visibleText_q;
+		wchar_t *visibleText_dup = Melder_wcsdup (visibleText ? visibleText : L""), *visibleText_p = visibleText_dup;
 		Graphics_setFont (my graphics, kGraphics_font_TIMES);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setColour (my graphics, Graphics_BLACK);
@@ -115,12 +115,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		 * The run text.
 		 */
 		if (visibleText_p [0] != '\0') {
-			visibleText_q = wcschr (visibleText_p, '|');
+			wchar_t *visibleText_q = wcschr (visibleText_p, '|');
 			if (visibleText_q) *visibleText_q = '\0';
-			Graphics_text (my graphics, 0.5, 1, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
+			Graphics_text (my graphics, 0.5, 1.0, visibleText_p [0] != '\0' ? visibleText_p : experiment -> runText);
 			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
 		} else {
-			Graphics_text (my graphics, 0.5, 1, experiment -> runText);
+			Graphics_text (my graphics, 0.5, 1.0, experiment -> runText);
 		}
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
@@ -136,7 +136,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 			Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
 			Graphics_setFontSize (my graphics, response -> fontSize ? response -> fontSize : 24);
 			if (visibleText_p [0] != '\0') {
-				visibleText_q = wcschr (visibleText_p, '|');
+				wchar_t *visibleText_q = wcschr (visibleText_p, '|');
 				if (visibleText_q) *visibleText_q = '\0';
 				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
 					0.5 * (response -> bottom + response -> top), visibleText_p);
