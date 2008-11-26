@@ -50,7 +50,7 @@ oo_END_CLASS (PhonationGrid)
 
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
-
+	// Filter
 	oo_INT (klatt88)
 	oo_OBJECT (FormantGridP, 0, formants)
 	oo_OBJECT (FormantGridP, 0, nasal_formants)
@@ -58,16 +58,16 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	oo_OBJECT (FormantGridP, 0, tracheal_formants)
 	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
 	oo_OBJECT (FormantGridP, 0, frication_formants)
-
+	// Coupling between source and filter
 	oo_OBJECT (RealTier, 0, open_glottis_delta_f1) // Hz
 	oo_OBJECT (RealTier, 0, open_glottis_delta_b1) // Hz
-	// Source tiers
+	// Glottal source
 	oo_OBJECT (PhonationGrid, 0, source)
-	// Others
+	// Frication source
 	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
 	oo_OBJECT (IntensityTier, 0, bypassAmplitude) // dB
+	// Output
 	oo_OBJECT (IntensityTier, 0, gain) // dB
-	//
 	
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

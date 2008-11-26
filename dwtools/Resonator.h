@@ -32,7 +32,9 @@
 
 #define Filter_methods Data_methods \
 	double (*getOutput) (I, double input); \
-	void (*setFB) (I, double f, double b);
+	void (*setFB) (I, double f, double b); \
+	void (*resetMemory)(I);
+
 class_create (Filter, Data);
 
 #define Resonator_members Filter_members
@@ -43,7 +45,17 @@ class_create (Resonator, Filter);
 #define AntiResonator_methods Resonator_methods
 class_create (AntiResonator, Filter);
 
+#define ConstantGainResonator_members Filter_members \
+	double d; \
+	double p3, p4;
+
+#define ConstantGainResonator_methods Filter_methods
+class_create (ConstantGainResonator, Filter);
+
+
 Resonator Resonator_create (double dT);
+
+ConstantGainResonator ConstantGainResonator_create (double dT);
 
 AntiResonator AntiResonator_create (double dT);
 

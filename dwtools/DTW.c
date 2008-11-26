@@ -68,7 +68,6 @@ static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, dou
 	double ymax, double minimum, double maximum, int garnish, int inset);
 static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ymin,
 	double ymax, int garnish, int inset);
-static void box (Graphics g);
 static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
 
 /*

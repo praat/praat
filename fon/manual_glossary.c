@@ -61,11 +61,12 @@ INTRO (L"- the interpretation of values in tiers before the first point or after
 ENTRY (L"Example")
 NORMAL (L"The following is a @PitchTier with three points:")
 SCRIPT (4, 3, L""
-	"tier = Create PitchTier... tier 0 0.5\n"
+	"Create PitchTier... tier 0 0.5\n"
 	"Add point... 0.10 170\n"
 	"Add point... 0.20 180\n"
 	"Add point... 0.45 110\n"
 	"Draw... 0 0 50 250 yes\n"
+	"Remove\n"
 	"One mark left... 100 yes yes yes\n"
 	"One mark left... 150 yes yes yes\n"
 	"One mark left... 200 yes yes yes\n"
@@ -146,11 +147,12 @@ INTRO (L"- the interpretation of values in tiers between the first point and the
 ENTRY (L"Example")
 NORMAL (L"The following is a @PitchTier with three points:")
 SCRIPT (4, 3, L""
-	"tier = Create PitchTier... tier 0 0.5\n"
+	"Create PitchTier... tier 0 0.5\n"
 	"Add point... 0.10 170\n"
 	"Add point... 0.20 180\n"
 	"Add point... 0.45 110\n"
 	"Draw... 0 0 50 250 yes\n"
+	"Remove\n"
 	"One mark left... 100 yes yes yes\n"
 	"One mark left... 150 yes yes yes\n"
 	"One mark left... 200 yes yes yes\n"

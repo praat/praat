@@ -512,7 +512,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 		-1891,-1045,-1600,-1462,-1384,-1261,-949,-730
 	};
 	
-	my nspfr = my samrate * frameDuration;
+	my nspfr = my samrate * frameDuration; /* average number of samples per frame */
 	my synthesis_model = synthesisModel;
 	my nfcascade = numberOfFormants;
 	my glsource = glottalSource;
@@ -745,12 +745,11 @@ static float KlattGlobal_sampled_source (KlattGlobal me)
 */
 
 
-Sound Sound_createFromResonator (double f, double b, double samplingFrequency)
+Sound Sound_createFromResonator (double f, double b, int anti, int constantGain, double samplingFrequency)
 {
 	Filter r; double dT = 1/samplingFrequency;
-	int anti = f < 0;
 	Sound me = NULL;
-	r = anti ? (Filter) AntiResonator_create (dT) : (Filter) Resonator_create (dT);
+	r = anti ? (Filter) AntiResonator_create (dT) : (constantGain ?  (Filter) ConstantGainResonator_create (dT): (Filter) Resonator_create (dT));
 	Filter_setFB (r, f, b);
 	me = Sound_createSimple (1, 1, samplingFrequency);
 	my z[1][1] = 1;
@@ -902,7 +901,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 
 	/* MAIN LOOP, for each output sample of current frame: */
 
-	for (my ns = 0; my ns < my nspfr; my ns++) 
+	for (my ns = 0; my ns < my nspfr; my ns++)
 	{
 
 		/* Get low-passed random number for aspiration and frication noise */
@@ -1107,7 +1106,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 	him = Sound_createSimple (1, frameDuration * my rows -> size, samplingFrequency);
 	if (him == NULL) goto end;
 	
-	for (long irow =1 ; irow <= my rows -> size; irow++)
+	for (long irow = 1 ; irow <= my rows -> size; irow++)
 	{
 		for (jcol = 1; jcol <= NPAR; jcol++)
 		{
@@ -1138,13 +1137,13 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 		frame ->  Fhz[8] = 7500;        frame ->  Bhz[8] = 600;
 	
 		KlattGlobal_getFrame (thee, frame);
-		
+
 		KlattGlobal_synthesizeFrame (thee, iwave);
 		
-		for (long isam = 1; isam < thy nspfr; isam++)
+		for (long isam = 0; isam < thy nspfr; isam++)
 		{
-			his z[1][numberOfSamples++] = iwave[isam-1] / 32768.0;
-		}
+			his z[1][numberOfSamples++] = iwave[isam] / 32768.0;
+		}		
 	}
 	
 end:

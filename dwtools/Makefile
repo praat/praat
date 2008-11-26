@@ -20,7 +20,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20080202 Latest modification.
+#  djmw 20081124 Latest modification.
 
 
 include ../makefile.defs
@@ -46,8 +46,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o Formant_extensions.o \
 	Intensity_extensions.o \
-	KlattTable.o KlattGrid.o Resonator.o \
 	LFCC.o LongSound_extensions.o \
+	KlattGrid.o KlattTable.o \
 	MelFilter_and_MFCC.o MFCC.o \
 	manual_dwtools.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \
@@ -57,6 +57,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Pitch_extensions.o Polynomial.o \
 	Polygon_extensions.o Procrustes.o \
 	Proximity.o \
+	Resonator.o \
 	Sampled2.o \
 	Sound_and_FilterBank.o Sound_extensions.o \
 	Sound_to_MFCC.o \

@@ -54,15 +54,25 @@ oo_CLASS_CREATE (PhonationGrid, Function);
 oo_CLASS_CREATE (KlattGrid, Function);
 
 FormantGridP FormantGridP_create (double tmin, double tmax, long numberOfFormants);
+FormantGrid FormantGridP_downto_FormantGrid (FormantGridP me);
 
 PhonationGrid PhonationGrid_create (double tmin, double tmax);
 
 KlattGrid KlattGrid_create (double tmin, double tmax);
 
-Sound KlattGrid_to_Sound (KlattGrid me, double samplingFrequency, double maximumPeriod, int parallel);
+Sound KlattGrid_to_Sound_simple (KlattGrid me, double samplingFrequency, double maximumPeriod, int parallel);
+
+Sound KlattGrid_to_Sound (KlattGrid me, double samplingFrequency, double maximumPeriod, int parallel,
+	long startFormant, long endFormant, long startNasalFormant, long endNasalFormant, long startTrachealFormant, long endTrachealFormant,
+	long startNasalAntiFormant, long endNasalAntiFormant, long startTrachealAntiFormant, long endTrachealAntiFormant,
+	int noVoicing, int noAspiration, int noFrication);
 
 int KlattGrid_synthesize (KlattGrid me, double t1, double t2, double samplingFrequency, double maximumPeriod);
 
 KlattGrid KlattGrid_createExample (void);
+
+/*** temporarily to test source */
+KlattGrid KlattGrid_test (double tmin, double tmax, double f0b, double f0e, double flutterb, double fluttere, double openphb, double openphe, double p1b, double p1e, double p2b, double p2e, double colphb, double colphe, double dpulsb, double dpulse, double avdbb, double avdbe, double aspNoisedBb, double aspNoisedBe, double breathyb, double breathye, double tiltb, double tilte,
+double f1b, double f1e, double b1b, double b1e, double df1b, double df1e, double f2b, double f2e, double b2b, double b2e);
 
 #endif /* _KlattGrid_h_ */

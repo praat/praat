@@ -1440,6 +1440,7 @@ end:
 				Melder_error6 (L"Script assertion fails in line ", Melder_integer (assertErrorLineNumber),
 					L": error " L_LEFT_GUILLEMET L" ", assertErrorString.string, L" " L_RIGHT_GUILLEMET L" not raised. Instead:\n",
 					errorCopy);
+				Melder_free (errorCopy);
 				goto end2;
 			}
 		}

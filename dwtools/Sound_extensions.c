@@ -1723,7 +1723,7 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 		}
 	}
 	forget (window);
-end:
+
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }

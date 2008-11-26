@@ -104,6 +104,6 @@ Sound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
 
 KlattTable KlattTable_createExample (void);
 
-Sound Sound_createFromResonator (double f, double b, double samplingFrequency);
+Sound Sound_createFromResonator (double f, double b, int anti, int constantGain, double samplingFrequency);
 
 #endif /* _KlattTable_h_ */

@@ -153,6 +153,7 @@ typedef struct {   /* Readonly */
 	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
 	Graphics graphics;   /* The Graphics associated with the Picture window. */
 	ManPages manPages;
+	long uniqueId;
 } structPraat, *Praat;
 extern structPraat theForegroundPraat;
 extern Praat theCurrentPraat;

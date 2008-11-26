@@ -1982,9 +1982,42 @@ DO
 	NEW (KlattGrid_create (tmin, tmax))
 END
 
+DIRECT (KlattGrid_extractFormantGrid)
+	KlattGrid kg;
+	EVERY_TO ((kg = OBJECT, FormantGridP_downto_FormantGrid (kg-> formants)))
+END
+
 DIRECT (KlattGrid_extractPitchTier)
 	KlattGrid kg;
 	EVERY_TO ((kg = OBJECT, Data_copy (kg -> source -> f0)))
+END
+
+FORM (KlattGrid_to_Sound, L"KlattGrid: To_Sound", L"")
+	RADIO (L"Model", 1)
+	RADIOBUTTON (L"Parallel")
+	RADIOBUTTON (L"Cascade")
+	REAL (L"left Formant range", L"1")
+	REAL (L"right Formant range", L"5")
+	REAL (L"left Nasal formant range", L"0")
+	REAL (L"right Nasal formant range", L"1")
+	REAL (L"left Tracheal formant range", L"0")
+	REAL (L"right Tracheal formant range", L"1")
+	REAL (L"left Nasal antiformant range", L"0")
+	REAL (L"right Nasal antiformant range", L"1")
+	REAL (L"left Tracheal antiformant range", L"0")
+	REAL (L"right Tracheal antiformant range", L"1")
+	BOOLEAN (L"No voicing", 0)
+	BOOLEAN (L"No aspiration", 0)
+	BOOLEAN (L"No frication", 0)
+	OK
+DO
+	EVERY_TO (KlattGrid_to_Sound (OBJECT, 44100., 0.05, GET_INTEGER (L"Model"),
+		GET_REAL (L"left Formant range"), GET_REAL (L"right Formant range"),
+		GET_REAL (L"left Nasal formant range"), GET_REAL (L"right Nasal formant range"),
+		GET_REAL (L"left Tracheal formant range"), GET_REAL (L"right Tracheal formant range"),
+		GET_REAL (L"left Nasal antiformant range"), GET_REAL (L"right Nasal antiformant range"),
+		GET_REAL (L"left Tracheal antiformant range"), GET_REAL (L"right Tracheal antiformant range"),
+		GET_INTEGER (L"No voicing"), GET_INTEGER (L"No aspiration"), GET_INTEGER (L"No frication")))
 END
 
 DIRECT (KlattGrid_help) Melder_help (L"KlattGrid"); END
@@ -1994,10 +2027,12 @@ DIRECT (KlattGrid_help) Melder_help (L"KlattGrid"); END
 FORM (Sound_createFromResonator, L"Sound: Create from resonator", L"")
 	REAL (L"F", L"500.0")
 	REAL (L"B", L"100")
+	BOOLEAN (L"Antiresonator", 0)
+	BOOLEAN (L"Constant gain", 1)
 	POSITIVE (L"Sampling frequency (Hz)", L"100000.0")
 	OK
 DO	
-	NEW (Sound_createFromResonator (GET_REAL (L"F"), GET_REAL (L"B"), GET_REAL (L"Sampling frequency")));
+	NEW (Sound_createFromResonator (GET_REAL (L"F"), GET_REAL (L"B"), GET_INTEGER (L"Antiresonator"), GET_INTEGER (L"Constant gain"), GET_REAL (L"Sampling frequency")));
 END
 
 DIRECT (KlattTable_help) Melder_help (L"KlattTable"); END
@@ -4317,7 +4352,7 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gamma-tone...", 1, DO_Sound_createFromShepardTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
-	//praat_addMenuCommand (L"Objects", L"New", L"Sound_createFromResonator...", L"Create Sound from VowelEditor...", praat_DEPTH_1, DO_Sound_createFromResonator);
+	praat_addMenuCommand (L"Objects", L"New", L"Sound_createFromResonator...", L"Create Sound from VowelEditor...", praat_DEPTH_1+praat_HIDDEN, DO_Sound_createFromResonator);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Weenink 1985)", L"Create formant table (Peterson & Barney 1952)",1, DO_Table_createFromWeeninkData);
@@ -4573,7 +4608,9 @@ void praat_uvafon_David_init (void)
 	praat_Spline_init (classISpline);
 
 	praat_addAction1 (classKlattGrid, 0, L"KlattGrid help", 0, 0, DO_KlattGrid_help);
+	praat_addAction1 (classKlattGrid, 0, L"To Sound...", 0, 0, DO_KlattGrid_to_Sound);
 	praat_addAction1 (classKlattGrid, 0, L"Extract pitch tier", 0, 0, DO_KlattGrid_extractPitchTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract FormantGrid", 0, 0, DO_KlattGrid_extractFormantGrid);
 	
 	praat_addAction1 (classKlattTable, 0, L"KlattTable help", 0, 0, DO_KlattTable_help);
 	praat_addAction1 (classKlattTable, 0, L"To Sound...", 0, 0, DO_KlattTable_to_Sound);

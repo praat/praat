@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20081123)
+MAN_BEGIN (L"What's new?", L"ppgb", 20081126)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.0.42# (November 26, 2008)")
+LIST_ITEM (L"\\bu Removed a bug that could cause Praat to crash when drawing pictures in the manual window.")
+LIST_ITEM (L"\\bu Removed a bug that could cause Praat to crash when drawing multi-line text.")
 NORMAL (L"##5.0.41# (November 23, 2008)")
 LIST_ITEM (L"\\bu ExperimentMFC: allow multiple lines in all texts.")
 LIST_ITEM (L"\\bu Regular expressions: removed a bug that could cause Praat to hang when using \".*\".")

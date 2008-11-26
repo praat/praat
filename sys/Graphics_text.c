@@ -1638,14 +1638,14 @@ void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 			my verticalTextAlignment == Graphics_TOP ? 0 :
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
-		wchar_t *linesToDraw = Melder_wcsdup (txt);
+		wchar_t *linesToDraw = Melder_wcsdup (txt), *p = & linesToDraw [0];
 		for (;;) {
-			wchar_t *newline = wcschr (linesToDraw, '\n');
+			wchar_t *newline = wcschr (p, '\n');
 			if (newline != NULL) *newline = '\0';
-			Graphics_text (me, xWC, yWC, linesToDraw);
+			Graphics_text (me, xWC, yWC, p);
 			yWC -= lineSpacingWC;
 			if (newline != NULL) {
-				linesToDraw = newline + 1;
+				p = newline + 1;
 			} else {
 				break;
 			}

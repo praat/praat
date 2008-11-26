@@ -23,12 +23,21 @@
 
 #include "Resonator.h"
 
+#define SETBC(f,bw) \
+	double r = exp (-NUMpi * my dT * bw); \
+	my c = -(r * r); \
+	my b = 2.0 * r * cos (2.0 * NUMpi * f * my dT);
+
+static void classFilter_resetMemory (I)
+{
+	iam (Filter);
+	my p1 = my p2 = 0;
+}
+
 static void classFilter_setFB (I, double f, double bw)
 {
 	iam (Filter);
-	double r = exp (-NUMpi * my dT * bw);
-	my c = -(r * r);
-	my b = 2.0 * r * cos (2.0 * NUMpi * f * my dT);
+	SETBC (f, bw)
 	my a = 1.0 - my b - my c;
 }
 
@@ -44,6 +53,7 @@ static double classFilter_getOutput (I, double input)
 class_methods (Filter, Data)
 	class_method_local (Filter, setFB)
 	class_method_local (Filter, getOutput)
+	class_method_local (Filter, resetMemory)
 class_methods_end
 
 class_methods (Resonator, Filter)
@@ -59,22 +69,18 @@ static void classAntiResonator_setFB (I, double f, double bw)
 	}
 	else
 	{
-		double r = exp (-NUMpi * my dT * bw);
-		my c = -(r * r);
-		my b = 2.0 * r * cos (2.0 * NUMpi * f * my dT);
-		my a = 1.0 - my b - my c;
-	
-		my a = 1.0 / my a;
-		my c *= - my a;
-		my b *= - my a;
+		SETBC (f, bw)
+		my a = 1 / (1.0 - my b - my c);
+		// The next equations are incorporated in the getOutput function
+		//my c *= - my a; my b *= - my a;
 	}
 }
 
-/* y[n] = a*x[n] + b*x[n-1] +c*x[n-2] */
+/* y[n] = a * (x[n] - b * x[n-1] - c * x[n-2]) */
 static double classAntiResonator_getOutput (I, double input)
 {
 	iam (AntiResonator);
-	double output = my a * input + my b * my p1 + my c * my p2;
+	double output = my a * (input - my b * my p1 - my c * my p2);
 	my p2 = my p1;
 	my p1 = input;
 	return output;
@@ -85,9 +91,50 @@ class_methods (AntiResonator, Filter)
 	class_method_local (AntiResonator, getOutput)
 class_methods_end
 
+static void classConstantGainResonator_resetMemory (I)
+{
+	iam (ConstantGainResonator);
+	my p1 = my p2 = my p3 = my p4 = 0;
+}
+
+static void classConstantGainResonator_setFB (I, double f, double bw)
+{
+	iam (ConstantGainResonator);
+
+	SETBC (f, bw)
+	my a = 1 - r;
+	my d = -r;
+}
+
+/* y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2] */
+static double classConstantGainResonator_getOutput (I, double input)
+{
+	iam (ConstantGainResonator);
+	double output = my a * (input + my d * my p4) + my b * my p1 + my c * my p2;
+	my p2 = my p1;
+	my p1 = output;
+	my p4 = my p3;
+	my p3 = input;
+	return output;
+}
+
+class_methods (ConstantGainResonator, Filter)
+	class_method_local (ConstantGainResonator, setFB)
+	class_method_local (ConstantGainResonator, getOutput)
+	class_method_local (ConstantGainResonator, resetMemory)
+class_methods_end
+
 Resonator Resonator_create (double dT)
 {
 	Resonator me = new (Resonator);
+	my a = 1; // all-pass
+	my dT = dT;
+	return me;
+}
+
+ConstantGainResonator ConstantGainResonator_create (double dT)
+{
+	ConstantGainResonator me = new (ConstantGainResonator);
 	my a = 1; // all-pass
 	my dT = dT;
 	return me;
@@ -116,7 +163,7 @@ double Filter_getOutput (I, double input)
 void Filter_resetMemory (I)
 {
 	iam (Filter);
-	my p1 = my p2 = 0;
+	our resetMemory (me);
 }
 
 /* End of file Resonator.c */

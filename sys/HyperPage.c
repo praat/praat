@@ -27,6 +27,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/03/21 new Editor API
+ * pb 2008/11/24 prevented crash by Melder_malloc (replaced with Melder_calloc)
  */
 
 #include <ctype.h>
@@ -442,7 +443,7 @@ if (! my printing) {
 		Graphics_setWrapWidth (my g, 0);
 		Graphics_setViewport (my g, my x, my x + width_inches, my y, my y + height_inches);
 		{
-			if (my praat == NULL) my praat = Melder_malloc (structPraat, 1);
+			if (my praat == NULL) my praat = Melder_calloc (structPraat, 1);
 			theCurrentPraat = my praat;
 			theCurrentPraat -> graphics = my g;
 			theCurrentPraat -> batch = true;
@@ -499,7 +500,7 @@ if (! my printing) {
 	Graphics_setWrapWidth (my ps, 0);
 	Graphics_setViewport (my ps, my x, my x + width_inches, my y, my y + height_inches);
 	{
-		if (my praat == NULL) my praat = Melder_malloc (structPraat, 1);
+		if (my praat == NULL) my praat = Melder_calloc (structPraat, 1);
 		theCurrentPraat = my praat;
 		theCurrentPraat -> graphics = my ps;
 		theCurrentPraat -> batch = true;

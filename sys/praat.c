@@ -300,7 +300,6 @@ void praat_cleanUpName (wchar_t *name) {
 bool praat_new1 (I, const wchar_t *myName) {
 	iam (Data);
 	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
-	static long uniqueID = 0;
 	if (me == NULL) return Melder_error1 (L"No object was put into the list.");
 	/*
 	 * If my class is Collection, I'll have to be unpacked.
@@ -342,7 +341,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	Melder_assert (FULL_NAME == NULL);
 	FULL_NAME = Melder_wcsdup (name.string);
 	Melder_assert (FULL_NAME != NULL);
-	++ uniqueID;
+	++ theCurrentPraat -> uniqueId;
 
 	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
 		#ifdef UNIX
@@ -351,7 +350,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 			#endif
 		#endif
 		MelderString listName = { 0 };
-		MelderString_append3 (& listName, Melder_integer (uniqueID), L". ", name.string);
+		MelderString_append3 (& listName, Melder_integer (theCurrentPraat -> uniqueId), L". ", name.string);
 		GuiList_insertItem (praatList_objects, listName.string, theCurrentPraat -> n);
 		MelderString_free (& listName);
 	}
@@ -361,7 +360,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = NULL;
 	MelderFile_setToNull (& theCurrentPraat -> list [IOBJECT]. file);
-	ID = uniqueID;
+	ID = theCurrentPraat -> uniqueId;
 	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setName (OBJECT, givenName.string);
 	theCurrentPraat -> totalBeingCreated ++;
