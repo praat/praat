@@ -634,6 +634,8 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 			Melder_error1 (L"Hint: file name starts with a space or tab.");
 		else if (path [wcslen (path) - 1] == ' ' || path [wcslen (path) - 1] == '\t')
 			Melder_error1 (L"Hint: file name ends in a space or tab.");
+		else if (wcschr (path, '\n'))
+			Melder_error1 (L"Hint: file name contains a newline symbol.");
 		return NULL;
 	}
 	return f;

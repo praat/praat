@@ -21,6 +21,11 @@
  * djmw 20081112
  */
 
+#define ooSTRUCT DeltaFormantGrid
+oo_DEFINE_CLASS (DeltaFormantGrid, FormantGrid)
+oo_END_CLASS (DeltaFormantGrid)
+#undef ooSTRUCT
+
 #define ooSTRUCT FormantGridP
 oo_DEFINE_CLASS (FormantGridP, FormantGrid)
 
@@ -33,25 +38,25 @@ oo_END_CLASS (FormantGridP)
 oo_DEFINE_CLASS (PhonationGrid, Function)
 
 	oo_OBJECT (PitchTier, 0, f0)
-	oo_OBJECT (IntensityTier, 0, amplitudeOfVoicing) // dB
+	oo_OBJECT (RealTier, 0, flutter) // [0,1]
+	oo_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
+	oo_OBJECT (RealTier, 0, doublePulsing) // [0,1]
 	oo_OBJECT (RealTier, 0, openPhase) // (0,1)
 	oo_OBJECT (RealTier, 0, collisionPhase) //
-	oo_OBJECT (RealTier, 0, power1)
-	oo_OBJECT (RealTier, 0, power2)
-	oo_OBJECT (RealTier, 0, flutter) // [0,1]
-	oo_OBJECT (RealTier, 0, doublePulsing) // [0,1]
-	oo_OBJECT (IntensityTier, 0, extraSpectralTilt) // dB
+	oo_OBJECT (RealTier, 0, power1) // 2,3..
+	oo_OBJECT (RealTier, 0, power2) // 3,4.. power2>power1
+	oo_OBJECT (IntensityTier, 0, spectralTilt) // dB
 	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
-	oo_OBJECT (IntensityTier, 0, breathyness) // dB
+	oo_OBJECT (IntensityTier, 0, breathynessAmplitude) // dB
 	
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
 
-
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
+	// Glottal source
+	oo_OBJECT (PhonationGrid, 0, source)
 	// Filter
-	oo_INT (klatt88)
 	oo_OBJECT (FormantGridP, 0, formants)
 	oo_OBJECT (FormantGridP, 0, nasal_formants)
 	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
@@ -59,10 +64,7 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
 	oo_OBJECT (FormantGridP, 0, frication_formants)
 	// Coupling between source and filter
-	oo_OBJECT (RealTier, 0, open_glottis_delta_f1) // Hz
-	oo_OBJECT (RealTier, 0, open_glottis_delta_b1) // Hz
-	// Glottal source
-	oo_OBJECT (PhonationGrid, 0, source)
+	oo_OBJECT (DeltaFormantGrid, 0, open_glottis_delta) // Hz
 	// Frication source
 	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
 	oo_OBJECT (IntensityTier, 0, bypassAmplitude) // dB

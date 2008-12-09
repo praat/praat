@@ -347,7 +347,7 @@ e-mail sensimetrics@sens.com
 
 /*
   djmw 20081019 first implementation.
-  djmw 20081117 renamed asp -> ah
+  djmw 20081128 Parallel section: rnp filters dif(source)+frication instead of source only.
 */
 
 #include "KlattTable.h"
@@ -396,16 +396,16 @@ static wchar_t *columnNames = L"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bn
 static double DBtoLIN (long dB) 
 {
 	static double amptable[88] = 
-	{
+	{   0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		0.0, 0.0, 0.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 13.0,
-		14.0, 16.0, 18.0, 20.0, 22.0, 25.0, 28.0, 32.0, 35.0, 40.0, 
-		45.0, 51.0, 57.0, 64.0, 71.0, 80.0, 90.0, 101.0, 114.0, 128.0,
-		142.0, 159.0, 179.0, 202.0, 227.0, 256.0, 284.0, 318.0, 359.0, 405.0,
-		455.0, 512.0, 568.0, 638.0, 719.0, 811.0, 911.0, 1024.0, 1137.0, 1276.0,
-		1438.0, 1622.0, 1823.0, 2048.0, 2273.0, 2552.0, 2875.0, 3244.0, 3645.0, 4096.0,
-		4547.0, 5104.0, 5751.0, 6488.0, 7291.0, 8192.0, 9093.0, 10207.0, 11502.0, 12976.0,
-		14582.0, 16384.0, 18350.0, 20644.0, 23429.0, 26214.0, 29491.0, 32767
+		0.0, 0.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 13.0, 14.0,
+		16.0, 18.0, 20.0, 22.0, 25.0, 28.0, 32.0, 35.0, 40.0, 45.0,
+		51.0, 57.0, 64.0, 71.0, 80.0, 90.0, 101.0, 114.0, 128.0, 142.0,
+		159.0, 179.0, 202.0, 227.0, 256.0, 284.0, 318.0, 359.0, 405.0, 455.0,
+		512.0, 568.0, 638.0, 719.0, 811.0, 911.0, 1024.0, 1137.0, 1276.0, 1438.0,
+		1622.0, 1823.0, 2048.0, 2273.0, 2552.0, 2875.0, 3244.0, 3645.0, 4096.0, 4547.0,
+		5104.0, 5751.0, 6488.0, 7291.0, 8192.0, 9093.0, 10207.0, 11502.0, 12976.0, 14582.0,
+		16384.0, 18350.0, 20644.0, 23429.0, 26214.0, 29491.0, 32767
 	};
 	return (dB < 0) || (dB > 87) ? 0 : amptable[dB] * .001;
 }
@@ -742,25 +742,28 @@ static float KlattGlobal_sampled_source (KlattGlobal me)
   Thus, to generate the table below for 40 <= nopen <= 263:
 
   B0[nopen - 40] = 1920000 / (nopen * nopen)
+
+  Modified calculation by djmw 20081127
+  Given a and b as above (which are wrong, see below) V'[n]= b*N/3*n - b/2*n^2.
+  V'[N]=b/3*N^2-b/2*N^2=b/6*N^2
+  Given the table B0 for N=40, b=1200 and V'[N]=1200/6*(40)^2=320000
+  Also b=G/N^2 then V'[n]=-G/6 (=1920000/6=320000)!
+
+
+  (We have not implemented the following correct calculations in the code) N=nopen
+  dV/dt = vwave[n]=sum(i=1, n, a-i*b) = a*n-b*1/2*n*(n+1)=(a-b/2)*n-b/2 * n^2
+  (Here they forgot that sum(i=1,N,i)=1/2*n*(n+1) ! )
+  We want the sum(i=1,N, dV/dt[n])==0, therefore (a-b/2)*1/2*N*(N+1)-b*1/2*1/6*N*(N+1)*(2*N+1)==0.
+  It follows that (a-b/2) - b*1/6*(2*N+1)==0 => a = b*(N+2)/3
+  we can rewrite with only b: V'[n] = b/2 {(2N+1)/3*n - n^2}
+  The maximum of V'[n] is where (2N+1)/3-2n==0 => for n=(2N+1)/6
+  This maximum is b/2{(2N+1)/3*(2N+1)/(2*3)-((2N+1)/(2*3))^2} = 1/72*b*(2N+1)^2
+  The minimum is at n=N and equals V'[N]=b/6 {N-N^2}.
+  This minimum has larger amplitude than the maximum.
+  b = 6*gain/(N^2-N), b approx 6*gain/N^2. With a maximum gain of 32767 we arrive at
+  b= 196602 / (N^2-N) Their value is 20*log10(1920000/196602) = 19.79 dB too high!
+  The noise is in the range [-8192,8192], 
 */
-
-
-Sound Sound_createFromResonator (double f, double b, int anti, int constantGain, double samplingFrequency)
-{
-	Filter r; double dT = 1/samplingFrequency;
-	Sound me = NULL;
-	r = anti ? (Filter) AntiResonator_create (dT) : (constantGain ?  (Filter) ConstantGainResonator_create (dT): (Filter) Resonator_create (dT));
-	Filter_setFB (r, f, b);
-	me = Sound_createSimple (1, 1, samplingFrequency);
-	my z[1][1] = 1;
-	for (long i = 1; i <= my nx; i++)
-	{
-		double noise = NUMrandomGauss(0, 0.1);
-		my z[1][i] = Filter_getOutput (r, noise);
-	}
-	Melder_free (r);
-	return me;
-}
 
 static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) 
 {
@@ -839,7 +842,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 
 		temp = my samrate / my nopen;
 
-		Filter_setFB (my rgl, 0, temp);
+		Filter_setFB (my rgl, 0, temp); // Only used for impulsive source.
 
 		/* Make gain at F1 about constant */
 
@@ -890,6 +893,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 	}
 }
 
+// This is Klatt80 with improved source model.
 static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) 
 {
 	double temp, outbypas, out;
@@ -1024,12 +1028,25 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 		Standard parallel vocal tract Formants F6,F5,F4,F3,F2, 
 		outputs added with alternating sign. Sound sourc for other 
 		parallel resonators is frication plus first difference of 
-		voicing waveform. 
+		voicing waveform.
+
+		In Klatt80:
+			source: through r1,
+			diff(source)+frication: through filters rnp, r2, r3, r4
+			frication: through r5, r6 and ab.
+		In the original code of Iles and Ing it was
+			source: through r1 and rnp
+			diff(source)+frication: r2, r3, r4 , r5, r6, ab
+
+		Problem: The source signal is already v'[n], and we are differentiating here again ???
 		*/
+		
 		out += Filter_getOutput (my rp[1], sourc);
-		out += Filter_getOutput (my rnpp, sourc);
-		sourc = frics + par_glotout - glotlast;
+		
+		sourc = frics + par_glotout - glotlast; // diff
 		glotlast = par_glotout;
+		
+		out += Filter_getOutput (my rnpp, sourc);
 
 		for (i = 6; i >= 2; i--)
 		{

@@ -1369,8 +1369,8 @@ NORMAL (L"In scripts, the command ##%%Run script...#% is automatically replaced 
 	"by the script directive #execute.")
 MAN_END
 
-MAN_BEGIN (L"Scripting", L"ppgb", 20080106)
-INTRO (L"This is one of the tutorials of the P\\s{RAAT} program. It assumes you are familiar with the @Intro.")
+MAN_BEGIN (L"Scripting", L"ppgb", 20081208)
+INTRO (L"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
 	"the commands are executed as if you clicked on them.")
@@ -1380,7 +1380,7 @@ LIST_ITEM (L"@@Scripting 2. Arguments to commands@ (numeric, check, radio, text,
 LIST_ITEM (L"@@Scripting 3. Layout@ (white space, comments, continuation lines)")
 LIST_ITEM (L"@@Scripting 4. Object selection@ (selecting and querying)")
 LIST_ITEM (L"@@Scripting 5. Language elements@")
-LIST_ITEM1 (L"@@Scripting 5.1. Variables@ (numeric, string, copy, substitution)")
+LIST_ITEM1 (L"@@Scripting 5.1. Variables@ (numeric, string, substitution)")
 LIST_ITEM1 (L"@@Scripting 5.2. Formulas@ (numeric, string)")
 LIST_ITEM1 (L"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM1 (L"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
@@ -1408,17 +1408,16 @@ LIST_ITEM1 (L"@@Scripting 8.3. The sendpraat directive")
 NORMAL (L"Also see the @@scripting examples@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 1. My first script", L"ppgb", 20050822)
+MAN_BEGIN (L"Scripting 1. My first script", L"ppgb", 20081207)
 NORMAL (L"Suppose that you want to create a script that allows you to play a selected Sound object twice. "
 	"You first create an empty script, by choosing @@New Praat script@ from the Praat menu. "
 	"A @ScriptEditor will appear on your screen. In this editor, you type")
 CODE (L"Play")
 CODE (L"Play")
-NORMAL (L"Now select a #Sound in the object menu. As you expect from selecting a Sound, a #Play button will "
-	"appear in the dynamic menu. If you now choose #Run in the ScriptEditor, the sound "
-	"will be played twice.")
+NORMAL (L"Now select a Sound in the object menu. As you expect from selecting a Sound, a #Play button will "
+	"appear in the dynamic menu. If you now choose #Run in the ScriptEditor, Praat will play the sound twice.")
 ENTRY (L"What commands can I put into my script?")
-NORMAL (L"In the above example, you could use the \"Play\" command because that was "
+NORMAL (L"In the above example, you could use the #Play command because that was "
 	"the text on a button currently available button in the dynamic menu. "
 	"Apart from these selection-dependent (dynamic) commands, "
 	"you can also use all fixed commands in the menus of the @@Object window@ "
@@ -1429,7 +1428,7 @@ ENTRY (L"Faster ways of getting a script text")
 NORMAL (L"Instead of manually typing the command lines, as described above, it may be easier "
 	"to create a script text from a %%macro recording%, with the @@History mechanism@. "
 	"This allows you to create script texts without typing. "
-	"For instance, if you choose @@Clear history@ in your ScriptEditor, then click the #%Play button twice (after selecting a Sound), "
+	"For instance, if you choose @@Clear history@ in your ScriptEditor, then click the #Play button twice (after selecting a Sound), "
 	"and then choose @@Paste history@, your new script text "
 	"contains exactly two lines that read \"Play\".")
 NORMAL (L"To edit a script that is already contained in a file on disk, use @@Open Praat script...@.")
@@ -1437,7 +1436,7 @@ ENTRY (L"How to run a script")
 NORMAL (L"You can run scripts from the @ScriptEditor. If you will have to use the script very often, "
 	"it is advisable to create a button for it in the fixed menu or in a dynamic menu. See the "
 	"@ScriptEditor manual page.")
-NORMAL (L"On Unix and Windows, you can also run scripts from the command line. See @@Scripting 6.9. Calling from the command line@.")
+NORMAL (L"(You can also run scripts from the command line. See @@Scripting 6.9. Calling from the command line|\\SS6.9@)")
 MAN_END
 
 MAN_BEGIN (L"Scripting 2. Arguments to commands", L"ppgb", 20041229)
@@ -1476,7 +1475,7 @@ NORMAL (L"Though spaces separate the arguments, the last argument is always writ
 	"quotes, even if it contains spaces. This is possible because the interpreter knows that the ##Text...# "
 	"command takes five arguments. The fifth argument is simply everything that follows the first four "
 	"arguments. With this strategy, you will not suffer from %%quote paranoia%, which would occur "
-	"if your text itself contains quotes:")
+	"if your text itself contained quotes:")
 CODE (L"Text... 0.5 Centre 0.5 Half \"hello world\"")
 NORMAL (L"In this case, the quotes around \"hello world\" will be written to the Picture window as well.")
 NORMAL (L"For these reasons, nearly all texts in settings windows appear in the last (bottom) field, "
@@ -1553,22 +1552,22 @@ NORMAL (L"If you dislike manually copying arguments from settings windows into y
 	"appears in a the ScriptEditor. You can build a new script on the basis of this line.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 3. Layout", L"ppgb", 20070419)
+MAN_BEGIN (L"Scripting 3. Layout", L"ppgb", 20081207)
 INTRO (L"This chapter handles the way you use white space, comments, "
 	"and continuation lines in a Praat script.")
 ENTRY (L"White space")
-NORMAL (L"All white space (spaces and tabs) at the beginning of lines is ignored. This means that you can "
-	"use indenting to make your script readable. You are advised to use three spaces for each level of indenting:")
+NORMAL (L"Praat ignores all white space (spaces and tabs) that you put at the beginning of lines. This means that you can "
+	"use indenting to make your script readable. You are advised to use three or four spaces for each level of indenting:")
 CODE (L"sum = 0")
-CODE (L"for i to 10")
-CODE (L"   for j to 10")
-CODE (L"      sum += i\\^ j")
-CODE (L"   endfor")
-CODE (L"endfor")
-CODE (L"echo The sum of the products is 'sum'")
-NORMAL (L"Lines that are empty or consist solely of white space, are also ignored.")
+CODE (L"#for i #to 10")
+	CODE1 (L"#for j #to 10")
+		CODE2 (L"sum += i\\^ j")
+	CODE1 (L"#endfor")
+CODE (L"#endfor")
+CODE (L"#echo The sum of the products is 'sum'.")
+NORMAL (L"Praat also ignores lines that are empty or consist solely of white space.")
 ENTRY (L"Comments")
-NORMAL (L"Comments are lines that start with !, \\# , or ;. These lines are ignored when your script is running:")
+NORMAL (L"Comments are lines that start with !, \\# , or ;. Praat ignores these lines when your script is running:")
 CODE (L"\\#  Create 1 second of a sine wave with a frequency of 100 Hertz,")
 CODE (L"\\#  sampled at 44100 Hz:")
 CODE (L"Create Sound from formula... sine Mono 0 1 44100 sin (2*pi*100*x)")
@@ -1576,16 +1575,16 @@ ENTRY (L"Continuation lines")
 NORMAL (L"There is normally one line per command, and one command per line.")
 NORMAL (L"But you can chop up long lines by using continuaton lines that start with three dots:")
 CODE (L"Create Sound from formula... windowedSine Mono 0 1 44100")
-CODE (L"   ... 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
+CODE (L"... 0.5 * sin(2*pi*1000*x) * exp(-0.5*((x-0.5)/0.1)\\^ 2)")
 NORMAL (L"You will normally want to follow such an %ellipsis with a space, unless you want to concatenate "
 	"the parts of a long word:")
 CODE (L"Viewport... 0 10 0 4")
 CODE (L"Text top... yes It's a long way to Llanfairpwllgwyngyll")
-CODE (L"   ...gogerychwyrndrobwllllantysiliogogogoch,")
-CODE (L"   ... unless you start from Tyddyn-y-felin.")
+CODE (L"...gogerychwyrndrobwllllantysiliogogogoch,")
+CODE (L"... unless you start from Tyddyn-y-felin.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 4. Object selection", L"ppgb", 20070419)
+MAN_BEGIN (L"Scripting 4. Object selection", L"ppgb", 20081208)
 INTRO (L"This chapter is about how to select objects from your script, "
 	"and how to find out what objects are currently selected.")
 ENTRY (L"Selecting objects")
@@ -1602,15 +1601,16 @@ DEFINITION (L"adds one object to the current selection.")
 TAG (L"#minus %object")
 DEFINITION (L"removes one object from the current selection.")
 TAG (L"##select all")
-DEFINITION (L"selects all objects:")
+DEFINITION (L"selects all objects (please try not to use this, because it will remove even the objects that your script did not create!):")
 CODE1 (L"##select all")
 CODE1 (L"Remove")
 NORMAL (L"In the Praat shell, newly created objects are automatically selected. "
 	"This is also true in scripts:")
 CODE (L"! Generate a sine wave, play it, and draw its spectrum.")
-CODE (L"Create Sound from formula... sine377 Mono 0 1 44100   0.9 * sin (2*pi*377*x)")
+CODE (L"Create Sound from formula... sine377 Mono 0 1 44100")
+CODE (L"... 0.9 * sin (2 * pi * 377 * x)")
 CODE (L"Play")
-CODE (L"To Spectrum")
+CODE (L"To Spectrum... yes")
 CODE (L"! Draw the Spectrum:")
 CODE (L"Draw... 0 5000 20 80 yes")
 CODE (L"! Remove the created Spectrum and Sound:")
@@ -1656,47 +1656,49 @@ CODE (L"pitch = #selected (\"Pitch\")")
 CODE (L"\\#  Correct:")
 CODE (L"#select pitch")
 NORMAL (L"To get the number of selected Sound objects into a variable, use")
-CODE (L"numberOfSelectedSounds = numberOfSelected (\"Sound\")")
+CODE (L"numberOfSelectedSounds = #numberOfSelected (\"Sound\")")
 NORMAL (L"To get the number of selected objects into a variable, use")
-CODE (L"numberOfSelectedObjects = numberOfSelected ()")
+CODE (L"numberOfSelectedObjects = #numberOfSelected ()")
 ENTRY (L"Example: doing something to every selected Sound")
-CODE (L"n = numberOfSelected (\"Sound\")")
-CODE (L"for i to n")
-CODE1 (L"sound'i' = selected (\"Sound\", i)")
-CODE (L"endfor")
+CODE (L"n = #numberOfSelected (\"Sound\")")
+CODE (L"#for i to n")
+	CODE1 (L"sound'i' = #selected (\"Sound\", i)")
+CODE (L"#endfor")
 CODE (L"\\#  Median pitches of all selected sounds:")
-CODE (L"for i to n")
-CODE1 (L"select sound'i'")
-CODE1 (L"To Pitch... 0.0 75 600")
-CODE1 (L"f0 = Get quantile... 0 0 0.50 Hertz")
-CODE1 (L"Remove")
-CODE (L"endfor")
+CODE (L"#for i to n")
+	CODE1 (L"#select sound'i'")
+	CODE1 (L"To Pitch... 0.0 75 600")
+	CODE1 (L"f0 = Get quantile... 0 0 0.50 Hertz")
+	CODE1 (L"Remove")
+CODE (L"#endfor")
 CODE (L"\\#  Restore selection:")
-CODE (L"if n >= 1")
-CODE1 (L"select sound1")
-CODE1 (L"for i from 2 to n")
-CODE2 (L"plus sound'i'")
-CODE1 (L"endfor")
-CODE (L"endif")
+CODE (L"#if n >= 1")
+	CODE1 (L"#select sound1")
+	CODE1 (L"#for i from 2 to n")
+		CODE2 (L"#plus sound'i'")
+	CODE1 (L"#endfor")
+CODE (L"#endif")
 ENTRY (L"A shortcut")
 NORMAL (L"Instead of")
-CODE (L"Create Sound from formula... sine Mono 0 1 44100 0.5*sin(2*pi*1000*x)")
-CODE (L"sound = selected (\"Sound\")")
+CODE (L"Create Sound from formula... sine Mono 0 1 44100")
+CODE (L"... 0.5 * sin(2*pi*1000*x)")
+CODE (L"sound = #selected (\"Sound\")")
 NORMAL (L"you can just write")
-CODE (L"sound = Create Sound from formula... sine Mono 0 1 44100 0.5*sin(2*pi*1000*x)")
+CODE (L"sound = Create Sound from formula... sine Mono 0 1 44100")
+CODE (L"... 0.5 * sin(2*pi*1000*x)")
 NORMAL (L"and instead of")
 CODE (L"To Pitch... 0.0 75 600")
-CODE (L"pitch = selected (\"Pitch\")")
+CODE (L"pitch = #selected (\"Pitch\")")
 NORMAL (L"you can write")
 CODE (L"pitch = To Pitch... 0.0 75 600")
 NORMAL (L"This only works if the command creates a single object.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5. Language elements", L"ppgb", 20021218)
+MAN_BEGIN (L"Scripting 5. Language elements", L"ppgb", 20081208)
 NORMAL (L"In a Praat script, you can use variables, expressions, and functions, of numeric as well as string type, "
 	"and most of the control structures known from other procedural computer languages. "
 	"The way the distinction between numbers and strings is made, may remind you of the programming language Basic.")
-LIST_ITEM (L"@@Scripting 5.1. Variables@ (numeric, string, copy, expansion)")
+LIST_ITEM (L"@@Scripting 5.1. Variables@ (numeric, string, substitution)")
 LIST_ITEM (L"@@Scripting 5.2. Formulas@ (numeric, string)")
 LIST_ITEM (L"@@Scripting 5.3. Jumps@ (if, then, elsif, else, endif)")
 LIST_ITEM (L"@@Scripting 5.4. Loops@ (for/endfor, while/endwhile, repeat/until)")
@@ -1727,28 +1729,28 @@ ENTRY (L"Variable substitution")
 NORMAL (L"Existing variables are substituted when put between quotes:")
 CODE (L"x = 99")
 CODE (L"x2 = x * x")
-CODE (L"echo The square of 'x' is 'x2'.")
+CODE (L"#echo The square of 'x' is 'x2'.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The square of 99 is 9801.")
 NORMAL (L"You can reduce the number of digits after the decimal point by use of the colon:")
 CODE (L"root = sqrt (2)")
-CODE (L"echo The square root of 2 is approximately 'root:3'.")
+CODE (L"#echo The square root of 2 is approximately 'root:3'.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The square root of 2 is approximately 1.414.")
 NORMAL (L"By using \":0\", you round to whole values:")
 CODE (L"root = sqrt (2)")
-CODE (L"echo The square root of 2 is very approximately 'root:0'.")
+CODE (L"#echo The square root of 2 is very approximately 'root:0'.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The square root of 2 is very approximately 1.")
 NORMAL (L"By using \":3\\% \", you give the result in a percent format:")
 CODE (L"jitter = 0.0156789")
-CODE (L"echo The jitter is 'jitter:3\\% '.")
+CODE (L"#echo The jitter is 'jitter:3\\% '.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 1.568\\% .")
 NORMAL (L"The number 0, however, will always be written as 0, and for small numbers the number of "
 	"significant digits will never be less than 1:")
 CODE (L"jitter = 0.000000156789")
-CODE (L"echo The jitter is 'jitter:3\\% '.")
+CODE (L"#echo The jitter is 'jitter:3\\% '.")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 0.00002\\% .")
 #define xstr(s) str(s)
@@ -1779,14 +1781,15 @@ if left$ (fileName$) <> "/"
 endif
 */
 
-MAN_BEGIN (L"Scripting 5.2. Formulas", L"ppgb", 20021218)
+MAN_BEGIN (L"Scripting 5.2. Formulas", L"ppgb", 20081207)
 INTRO (L"In a Praat script, you can use numeric expressions as well as string expressions.")
 ENTRY (L"Numeric expressions")
 NORMAL (L"You can use a large variety of @@Formulas@ in your script:")
 CODE1 (L"length = 10")
 CODE1 (L"height = length/2")
 CODE1 (L"area = length * height")
-NORMAL (L"You can use numeric variables and formulas in arguments to commands:")
+CODE1 (L"echo The area is 'area'.")
+NORMAL (L"You can use numeric variables and formulas in numeric arguments to commands:")
 CODE1 (L"Draw line... 0 length 0 length/2")
 NORMAL (L"Of course, all arguments except the last should either not contain spaces, "
 	"or be enclosed in double quotes. So you would write either")
@@ -1795,6 +1798,15 @@ NORMAL (L"or")
 CODE1 (L"Draw line... 0 \"height * 2\" 0 height")
 NORMAL (L"You can use numeric expressions in assignments (as above), or after "
 	"#if, #elsif, #while, #until, and twice after #for.")
+ENTRY (L"String expressions")
+NORMAL (L"You can use a large variety of @@Formulas@ in your script:")
+CODE1 (L"addressee\\$  = \"Silke\"")
+CODE1 (L"greeting\\$  = \"Hi \" + addressee\\$  + \"!\"")
+CODE1 (L"echo The greeting is: 'greeting\\$ '")
+NORMAL (L"You can use string variables and formulas in %numeric arguments to commands:")
+CODE1 (L"Draw line... 0 length(greeting\\$ ) 0 100")
+CODE1 (L"Draw line... 0 if(answer\\$ =\"yes\")then(20)else(30)fi 0 100")
+ENTRY (L"Assignments fromQuery commands")
 NORMAL (L"On how to get information from commands that normally write to the Info window, "
 	"see @@Scripting 6.3. Query commands@.")
 MAN_END
@@ -1862,43 +1874,244 @@ NORMAL (L"If the expression evaluates to zero or %false to begin with, the state
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20070225)
-NORMAL (L"In a Praat script, you can define and call %procedures (subroutines).")
-TAG (L"#call %procedureName [%argument1 [%argument2 [...]]]")
-DEFINITION (L"the execution of the script jumps to the line after the matching #procedure line, "
-	"which can be anywhere in the script.")
-TAG (L"#procedure %procedureName [%parameter1 [%parameter2 [...]]]")
-DEFINITION (L"introduces a procedure definition (when the execution of the script happens to arrive here, "
-	"it jumps after the matching #endproc, i.e., the statements in the procedure are ignored).")
-TAG (L"#endproc")
-DEFINITION (L"the execution of the script jumps to the line after the #call line that invoked this procedure.")
-NORMAL (L"The following script plays three notes:")
-CODE (L"#call play_note 440")
-CODE (L"#call play_note 400")
-CODE (L"#procedure play_note frequency")
-CODE (L"   Create Sound from formula... note Mono 0 0.3 44100 0.9 * sin (2*pi*'frequency'*x)")
-CODE (L"   Play")
-CODE (L"   Remove")
+MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20081209)
+NORMAL (L"Sometimes in a Praat script, you will want to perform the same thing more than once. "
+	"In @@Scripting 5.4. Loops|\\SS5.4@ we saw how %loops can help there. "
+	"In this section we will see how %procedures (also called %subroutines) can help us.")
+NORMAL (L"Imagine that you want to play a musical note with a frequency of 440 Hz (an \"A\") "
+	"followed by a note that is one ocatve higher, i.e. has a frequency of 880 Hz (an \"a\"). "
+	"You could achieve this with the following script:")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * 440 * x)")
+CODE (L"Play")
+CODE (L"Formula... 0.4 * sin (2 * pi * 880 * x)")
+CODE (L"Play")
+CODE (L"Remove")
+NORMAL (L"This script creates a sound with a sine wave with an amplitude of 0.4 and a frequency of 440 Hz, "
+	"then plays this sound, then changes the sound into a sine wave with a frequency of 880 Hz, "
+	"then plays this changed sound, and then removes the Sound object from the object list.")
+NORMAL (L"This script is perfect if all you want to do is to play those two notes and nothing more. "
+	"But now imagine that you want to play such an octave jump not only for a note of 440 Hz, "
+	"but also for a note of 400 Hz and for a note of 500 Hz. You could use the following script:")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * 440 * x)")
+CODE (L"Play")
+CODE (L"Formula... 0.4 * sin (2 * pi * 880 * x)")
+CODE (L"Play")
+CODE (L"Remove")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * 400 * x)")
+CODE (L"Play")
+CODE (L"Formula... 0.4 * sin (2 * pi * 800 * x)")
+CODE (L"Play")
+CODE (L"Remove")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * 500 * x)")
+CODE (L"Play")
+CODE (L"Formula... 0.4 * sin (2 * pi * 1000 * x)")
+CODE (L"Play")
+CODE (L"Remove")
+NORMAL (L"This script works but is no longer perfect. It contains many similar lines, and is difficult to read.")
+NORMAL (L"Here is where %procedures come in handy. With procedures, you can re-use similar pieces of code. "
+	"To make the three parts of the above script more similar, I'll rewrite it using two variables "
+	"(%frequency and %octaveHigher):")
+CODE (L"frequency = 440")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * frequency * x)")
+CODE (L"Play")
+CODE (L"octaveHigher = 2 * frequency")
+CODE (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+CODE (L"Play")
+CODE (L"Remove")
+CODE (L"frequency = 400")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * frequency * x)")
+CODE (L"Play")
+CODE (L"octaveHigher = 2 * frequency")
+CODE (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+CODE (L"Play")
+CODE (L"Remove")
+CODE (L"frequency = 500")
+CODE (L"Create Sound from formula... note Mono 0 0.3 44100")
+CODE (L"... 0.4 * sin (2 * pi * frequency * x)")
+CODE (L"Play")
+CODE (L"octaveHigher = 2 * frequency")
+CODE (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+CODE (L"Play")
+CODE (L"Remove")
+NORMAL (L"You can now see that seven lines of the script appear identically three times. "
+	"I'll put those seven lines into a %procedure that I name \"playOctave\":")
+CODE (L"#procedure playOctave")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L"octaveHigher = 2 * frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
 CODE (L"#endproc")
-CODE (L"#call play_note 500")
-NORMAL (L"The variable %frequency is a normal variable, global to the script. "
-	"The procedure uses the same name space as the rest of the script, so beware of possible conflicts.")
-NORMAL (L"For arguments that contain spaces, you use double quotes, except for the last argument, "
+NORMAL (L"As you see, a %%procedure definition% in Praat consists of three parts:")
+LIST_ITEM (L"1. a line with the word #procedure followed by the name of the procedure;")
+LIST_ITEM (L"2. the %body of the procedure (here: seven lines);")
+LIST_ITEM (L"3. a line with the word #endproc.")
+NORMAL (L"You can put a procedure definition anywhere in your script; "
+	"the beginning or end of the script are common places.")
+NORMAL (L"The bodies of procedures are executed only if you %call the procedure explicitly, "
+	"which you can do anywhere in the rest of your script:")
+CODE (L"frequency = 440")
+CODE (L"#call playOctave")
+CODE (L"frequency = 400")
+CODE (L"#call playOctave")
+CODE (L"frequency = 500")
+CODE (L"#call playOctave")
+CODE (L"#procedure playOctave")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L"octaveHigher = 2 * frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
+CODE (L"#endproc")
+NORMAL (L"This script works as follows. First, the number 440 is assigned to the variable %frequency in line 1. "
+	"Then, execution of the script arrives at the #call statement of line 2. "
+	"Praat then knows that it has to jump to the procedure called %playOctave, "
+	"which is found on line 7. The execution of the script then proceeds with the first line of the procedure body, "
+	"where a Sound is created. Then, the other lines of the procedure body are also executed, ending with the removal of the Sound. "
+	"Then, the execution of the script arrives at the #endproc statement. Here, Praat knows that it has to jump back "
+	"to the line after the line that the procedure was called from; since the procedure was called from line 2, "
+	"the execution proceeds at line 3 of the script. There, the number 400 is assigned to the variable %frequency. "
+	"In line 4, execution will jump to the procedure again, and with the next #endproc the execution will jump back to line 5. "
+	"There, 500 is assigned to %frequency, followed by the third jump to the procedure. "
+	"the third #endproc jumps back to the line after the third #call, i.e. to line 7. "
+	"Here the execution of the script will stop, because there are no more executable commands "
+	"(the procedure definition at the end is not executed again).")
+ENTRY (L"Arguments")
+NORMAL (L"The above example contains something awkward. The procedure %playOctave requires that the variable %frequency "
+	"is set to an appropriate value, so before calling %playOctave you always have to insert a line like")
+CODE (L"frequency = 440")
+NORMAL (L"This can be improved upon. In the following version of the script, the procedure %playOctave requires an explicit %argument:")
+CODE (L"#call playOctave 440")
+CODE (L"#call playOctave 400")
+CODE (L"#call playOctave 500")
+CODE (L"#procedure playOctave  frequency")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L"octaveHigher = 2 * frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
+CODE (L"#endproc")
+NORMAL (L"This works as follows. The first line of the procedure now not only contains the name (%playOctave), "
+	"but also a list of variables (here only one: %frequency). In the first line of the script, "
+	"the procedure %playOctave is called with the %%argument list% \"440\". "
+	"Execution then jumps to the procedure, where the argument 440 is assigned to the variable %frequency, "
+	"which is then used in the body of the procedure.")
+ENTRY (L"Encapsulation and local variables")
+NORMAL (L"Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon, "
+	"there is still something wrong with it. Imagine the following script:")
+CODE (L"frequency = 300")
+CODE (L"#call playOctave 440")
+CODE (L"#call playOctave 400")
+CODE (L"#call playOctave 500")
+CODE (L"#echo 'frequency'")
+CODE (L"#procedure playOctave  frequency")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L"octaveHigher = 2 * frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
+CODE (L"#endproc")
+NORMAL (L"You might have thought that this script will write \"300\" to the Info window, "
+	"because that is what you expect if you look at the first five lines. "
+	"However, the procedure will assign the values 440, 400, and 500 to the variable %frequency, "
+	"so that the script will actually write \"500\" to the Info window, because 500 "
+	"is last (fourth!) value that was assigned to the variable %frequency.")
+NORMAL (L"What you would want is that variables that are used inside procedures, such as %frequency and %octaveHigher here, "
+	"could somehow be made not to \"clash\" with variable names outside the procedure. "
+	"A trick that works would be to include the procedure name into the names of these variables:")
+CODE (L"frequency = 300")
+CODE (L"#call playOctave 440")
+CODE (L"#call playOctave 400")
+CODE (L"#call playOctave 500")
+CODE (L"#echo 'frequency'")
+CODE (L"#procedure playOctave  playOctave.frequency")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * playOctave.frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L"playOctave.octaveHigher = 2 * playOctave.frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * playOctave.octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
+CODE (L"#endproc")
+NORMAL (L"This works. The six tones will be played, and \"300\" will be written to the Info window. "
+	"But the formulation is a bit wordy, isn't it?")
+NORMAL (L"Fortunately, Praat allows an abbreviated version of these long names: "
+	"just leave \"playOctave\" off from the names of the variables, but keep the period (.):")
+CODE (L"frequency = 300")
+CODE (L"#call playOctave 440")
+CODE (L"#call playOctave 400")
+CODE (L"#call playOctave 500")
+CODE (L"#echo 'frequency'")
+CODE (L"#procedure playOctave  .frequency")
+	CODE1 (L"Create Sound from formula... note Mono 0 0.3 44100")
+	CODE1 (L"... 0.4 * sin (2 * pi * .frequency * x)")
+	CODE1 (L"Play")
+	CODE1 (L".octaveHigher = 2 * .frequency")
+	CODE1 (L"Formula... 0.4 * sin (2 * pi * .octaveHigher * x)")
+	CODE1 (L"Play")
+	CODE1 (L"Remove")
+CODE (L"#endproc")
+NORMAL (L"This is the final version of the script. It works because Praat knows that "
+	"you are using the variable names %%.frequency% and %%.octaveHigher% in the context of the procedure %playOctave, "
+	"so that Praat knows that by these variable names you actually mean to refer to %%playOctave.frequency% and %%playOctave.octaveHigher%.")
+NORMAL (L"It is advisable that you use such \"local\" variable names for all %parameters of a procedure, "
+	"i.e. for the variables listed after the #procedure word (e.g. %%.frequency%), "
+	"as well as for all variables that you create in the procedure body (e.g. %%.octaveHigher%).")
+ENTRY (L"Numeric and string arguments")
+NORMAL (L"For numeric arguments you can use numeric expressions:")
+CODE (L"#call playOctave 400+100")
+NORMAL (L"For string arguments you can only use literal text:")
+CODE (L"#call listSpeaker Bart 38")
+CODE (L"#call listSpeaker Katja 24")
+CODE (L"#procedure listSpeaker  .name\\$  .age")
+	CODE1 (L"#printline Speaker '.name\\$ ' is '.age' years old.")
+CODE (L"#endproc")
+NORMAL (L"For string arguments that contain spaces, you use double quotes, except for the last argument, "
 	"which is the rest of the line:")
-CODE (L"#call Conjugate be \"I am\" \"you are\" she is")
-CODE (L"#procedure Conjugate verb\\$  first\\$  second\\$  third\\$ ")
-CODE (L"   #echo Conjugation of 'to 'verb\\$ '':")
-CODE (L"   #printline 1sg 'first\\$ '")
-CODE (L"   #printline 2sg 'second\\$ '")
-CODE (L"   #printline 3sg 'third\\$ '")
+CODE (L"#call conjugateVerb  be \"I am\" \"you are\" she is")
+CODE (L"#procedure conjugateVerb  .verb\\$  .first\\$  .second\\$  .third\\$ ")
+	CODE1 (L"#echo Conjugation of 'to '.verb\\$ '':")
+	CODE1 (L"#printline 1sg '.first\\$ '")
+	CODE1 (L"#printline 2sg '.second\\$ '")
+	CODE1 (L"#printline 3sg '.third\\$ '")
 CODE (L"#endproc")
 NORMAL (L"Arguments (except for the last) that contain double quotes should also be put between double quotes, and the "
 	"double quotes should be doubled:")
-CODE (L"#procedure texts top\\$  bottom\\$ ")
-CODE (L"   Text top... yes 'top\\$ '")
-CODE (L"   Text bottom... yes 'bottom\\$ '")
+CODE (L"#procedure texts .top\\$  .bottom\\$ ")
+	CODE1 (L"Text top... yes '.top\\$ '")
+	CODE1 (L"Text bottom... yes '.bottom\\$ '")
 CODE (L"#endproc")
 CODE (L"#call texts \\\" \\\" \\\" hello\\\" \\\"  at the top\\\"  \\\" goodbye\\\"  at the bottom")
+ENTRY (L"Functions")
+NORMAL (L"The Praat scripting language does not have the concept of a \"function\" like some other scripting languages do. "
+	"A function is a procedure that returns a number or a string. For instance, you can imagine the function $$squareNumber$ "
+	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
+	"Here is an example of how you can do that, using the global availability of local variables:")
+CODE (L"#call squareNumber 5")
+CODE (L"#echo The square of 5 is 'squareNumber.result'.")
+CODE (L"#procedure squareNumber  .number")
+	CODE1 (L".result = .number \\^  2")
+CODE (L"#endproc")
+NORMAL (L"Another way to emulate functions is to use a variable name as an argument:")
+CODE (L"#call squareNumber 5 square5")
+CODE (L"#echo The square of 5 is 'square5'.")
+CODE (L"#procedure squareNumber  .number .squareVariableName\\$ ")
+	CODE1 (L"'.squareVariableName\\$ ' = .number \\^  2")
+CODE (L"#endproc")
 MAN_END
 
 MAN_BEGIN (L"Scripting 5.6. Arrays", L"ppgb", 20020624)
@@ -2088,10 +2301,10 @@ CODE (L"#execute \"fill attributes.praat\" \"Navy blue\" With holes")
 NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20070225)
+MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20081207)
 NORMAL (L"With the @Info button and several commands in the #Query menus, "
-	"you write to the @@Info window@. If your program is run from batch (on Unix or Windows), "
-	"the text goes to %stdout.")
+	"you write to the @@Info window@ (if your program is run from the @@Scripting 6.9. Calling from the command line|command line@, "
+	"the text goes to %stdout instead).")
 NORMAL (L"The following commands allow you to write to the Info window from a script only:")
 TAG (L"#echo %text")
 DEFINITION (L"clears the Info window and writes some text to it:")
@@ -2300,9 +2513,13 @@ CODE (L"nocheck Remove")
 NORMAL (L"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20040414)
-INTRO (L"On most computers, you can call a Praat script from the command line.")
-ENTRY (L"Command lines on Unix and MacOS X")
+MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20081207)
+INTRO (L"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
+	"However, you can also call a Praat script from the command line (text console) instead. "
+	"Information that would normally show up in the Info window, then goes to %stdout, "
+	"and error messages go to %stderr. "
+	"You cannot use commands like \"Edit\".")
+ENTRY (L"Command lines on Unix and Macintosh")
 NORMAL (L"On Unix or MacOS X, you call Praat scripts from the command line like this:")
 CODE (L"> /people/mietta/praat doit.praat 50 hallo")
 NORMAL (L"or")
@@ -2317,8 +2534,9 @@ CODE (L"> echo \"Statistics...\" | /people/mietta/praat -")
 ENTRY (L"Command lines on Windows")
 NORMAL (L"On Windows, you call Praat scripts from the command line like this:")
 CODE (L"e:\\bspraatcon.exe e:\\bsdoit.praat 50 hallo")
-NORMAL (L"Note that you use ##praatcon.exe# instead of ##praat.exe#. The script will write to the console output, and its output "
-	"can be used in pipes.")
+NORMAL (L"Note that you use the program ##praatcon.exe# instead of ##praat.exe#. "
+	"The script will write to the console output, and its output "
+	"can be used in pipes (in UTF-16 Little Endian encoding; use ##praatcon -a# if you want to use ISO Latin-1 encoding instead).")
 ENTRY (L"How to get arguments into the script")
 NORMAL (L"In the above example, the script ##doit.praat# requires two arguments. In the script ##doit.praat#, "
 	"you use #form and #endform to receive these arguments. See @@Scripting 6.1. Arguments to the script@. "

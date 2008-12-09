@@ -19,6 +19,7 @@
 
 /*
  * djmw 20081029
+ * djmw 20081124 +ConstantGainResonator
  */
 
 #include "Resonator.h"
@@ -164,6 +165,24 @@ void Filter_resetMemory (I)
 {
 	iam (Filter);
 	our resetMemory (me);
+}
+
+Sound Sound_filterByResonator (Sound me, double f, double b, int anti, int constantGain)
+{
+	Sound thee = NULL;
+	Filter r = anti ? (Filter) AntiResonator_create (my dx) : (constantGain ?  (Filter) ConstantGainResonator_create (my dx): (Filter) Resonator_create (my dx));
+	Filter_setFB (r, f, b);
+	thee = Data_copy (me);
+	for (long ic = 1; ic <= my ny; ic++)
+	{
+		Filter_resetMemory (r);
+		for (long is = 1; is <= my nx; is++)
+		{
+			thy z[ic][is] = Filter_getOutput (r, my z[ic][is]);
+		}
+	}
+	Melder_free (r);
+	return thee;
 }
 
 /* End of file Resonator.c */

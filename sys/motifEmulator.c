@@ -222,7 +222,8 @@ static Widget theApplicationShell;   /* For global menus. */
 static Widget theShells [MAXIMUM_NUMBER_OF_SHELLS];   /* For XmUpdateDisplay and suspend events. */
 static int theBackground = False;   /* Set by suspend and resume events; used by Motif-style activation methods. */
 static int theDialogHint = False;   /* Should the shell that is currently being created, have dialog or document looks? */
-long numberOfWidgets;
+long numberOfWidgets = 0;
+long Gui_getNumberOfMotifWidgets (void) { return numberOfWidgets; }
 
 static void _motif_addShell (Widget me) {
 	int i;

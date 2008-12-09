@@ -1,6 +1,6 @@
 /* praat_statistics.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/07/27 string deallocation size
  * pb 2007/08/12 wchar_t
  * pb 2007/12/09 preferences
+ * pb 2008/11/26 numberOfMotifWidgets
  */
 
 #include <time.h>
@@ -71,10 +72,20 @@ void praat_memoryInfo (void) {
 	MelderInfo_writeLine2 (L"   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
 	MelderInfo_writeLine5 (L"   Things: ", Melder_integer (Thing_getTotalNumberOfThings ()),
 		L" (objects in list: ", Melder_integer (theCurrentPraat -> n), L")");
+	long numberOfMotifWidgets =
+		#if motif && (defined (_WIN32) || defined (macintosh))
+			Gui_getNumberOfMotifWidgets ();
+		#else
+			0;
+		#endif
+	if (numberOfMotifWidgets > 0) {
+		MelderInfo_writeLine2 (L"   Motif widgets: ", Melder_integer (numberOfMotifWidgets));
+	}
 	MelderInfo_writeLine2 (L"   Other: ",
 		Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()
 			- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
-			- (MelderString_allocationCount () - MelderString_deallocationCount ())));
+			- (MelderString_allocationCount () - MelderString_deallocationCount ())
+			- numberOfMotifWidgets));
 	MelderInfo_writeLine5 (
 		L"\nMemory history of this session:\n"
 		L"   Total created: ", Melder_bigInteger (Melder_allocationCount ()), L" (", Melder_bigInteger (Melder_allocationSize ()), L" bytes)");

@@ -21,9 +21,12 @@
 
 /*
  * djmw 20081029
+ * djmw 20081124 +ConstantGainResonator
  */
-
-#include "Data.h"
+	
+#ifndef _Sound_h_
+	#include "Sound.h"
+#endif
 
 #define Filter_members Data_members \
 	double dT; \
@@ -64,6 +67,8 @@ void Filter_setFB (I, double f, double b);
 double Filter_getOutput (I, double input);
 
 void Filter_resetMemory (I);
+
+Sound Sound_filterByResonator (Sound me, double f, double b, int anti, int constantGain);
 
 #endif /* _Resonator_h_ */
 

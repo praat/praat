@@ -201,6 +201,7 @@
 		void XtVaGetValues (Widget w, ...);
 		void XtVaSetValues (Widget w, ...);
 		Window XtWindow (Widget w);
+		long Gui_getNumberOfMotifWidgets (void);
 
 		/*
 		 * Xm widget classes.

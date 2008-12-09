@@ -32,6 +32,7 @@
  djmw 20071201 Melder_warning<n>.
  djmw 20071204 DTW_and_Sounds_draw.
  djmw 20080122 float -> double
+ djmw 200811203 DTW_and_Sounds_checkDomains did not swap sounds correctly.
 */
 
 #include "DTW.h"
@@ -1453,21 +1454,20 @@ void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, d
 
 static int DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax)
 {
-	Sound yy = *y, xx = *x;
-	if (my ymin == yy -> xmin && my ymax == yy -> xmax)
+	if (my ymin == (*y) -> xmin && my ymax == (*y) -> xmax)
 	{
-		if (my xmin != xx -> xmin || my xmax != xx -> xmax)
+		if (my xmin != (*x) -> xmin || my xmax != (*x) -> xmax)
 		{
 			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
 		}
 	}
-	else if (my ymin == xx -> xmin && my ymax == xx -> xmax)
+	else if (my ymin == (*x) -> xmin && my ymax == (*x) -> xmax)
 	{
-		if (my xmin != yy -> xmin || my xmax != yy -> xmax)
+		if (my xmin != (*y) -> xmin || my xmax != (*y) -> xmax)
 		{
 			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
 		}
-		y = &xx; x = &yy; // swap x and y
+		Sound tmp = *y; *y = *x; *x = tmp; // swap x and y
 	}
 	else
 	{
@@ -1507,10 +1507,9 @@ static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x)
 	return 1 - ((1 - dtw_part_x) * (x2NDC -x1NDC))/(y2NDC -y1NDC);
 }
 
-void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, int garnish)
 {
-	Sound y = yy, x = xx;
 	double xmin3, ymin3, dtw_part_x = 0.85, dtw_part_y = dtw_part_x;
 	Graphics_Viewport vp, ovp;
 	
