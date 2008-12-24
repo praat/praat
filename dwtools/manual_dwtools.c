@@ -1980,78 +1980,110 @@ NORMAL (L"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to 
 	"removed.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid", L"djmw", 20081207)
-INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source as well as the filter, and the interaction between them. The KlattGrid implements a superset of the speech synthsizer described in figure 14 in the @@Klatt & Klatt (1990)@ article. All parameters in the synthesizer are represented by a separate tier.")
-NORMAL (L"")
+MAN_BEGIN (L"KlattGrid", L"djmw", 20081224)
+INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source as well as the filter, and the interaction between them. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
+/* Als ik deze scripts gebruik crasht Praat op een gegeven moment en de menustructur klopt niet meer. TODO: Nog uitzoeken waarom
+NORMAL (L"The following drawing represents a cascade synthesizer with six normal formants, one nasal formant, "
+	"one nasal antiformant, one tracheal formant a, one tracheal antiformant and six frication formants. ")
+SCRIPT (6.0, 5.5,
+	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
+	"Draw synthesizer... Cascade\n"
+	"Remove\n")
+NORMAL (L"In the next picture a parallel synthesizer branch is used instead of the cascade one.")
+SCRIPT (6.0, 5.5,
+	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
+	"Draw synthesizer... Parallel\n"
+	"Remove\n")*/
+NORMAL (L"All parameters in the synthesizer are represented by separate tiers.")
 ENTRY (L"The source")
 NORMAL (L"The source is modelled by the following tiers:")
-TAG (L"%%F0%,")
-DEFINITION (L"a @@PitchTier|pitch tier@ that models fundamental frequency (in hertz).")
-TAG (L"%%Flutter%,")
-DEFINITION (L"a tier that models a kind of \"random\" variation of the pitch (with a number between zero and one). ")
-TAG (L"%%Voicing amplitude,%")
-DEFINITION (L"a tier that models the maximum amplitude of the glottal flow (in decibels).")
-TAG (L"%%Open phase%,")
+TAG (L"%%Pitch%")
+DEFINITION (L"models fundamental frequency (in Hertz).")
+TAG (L"%%Flutter%")
+DEFINITION (L"models a kind of \"random\" variation of the pitch (with a number between zero and one). ")
+TAG (L"%%Voicing amplitude%")
+DEFINITION (L"models the maximum amplitude of the glottal flow (in dB).")
+TAG (L"%%Open phase%")
 DEFINITION (L"models the open phase of the glottis (with a number between zero and one).")
-TAG (L"%%Power1% and %%power2%,")
+TAG (L"%%Power1%, %%power2%")
 DEFINITION (L"model the form of the glottal flow function flow(%t)=%t^^%%power1%^-%t^^%%power2%^ for 0\\<_ t \\<_ 1. "
-	"To make glottal closure possible, power2 has to be larger than power1. ")
-TAG (L"%%Collision phase%,")
+	"To make glottal closure possible, %power2 has to be larger than %power1. ")
+TAG (L"%%Collision phase%")
 DEFINITION (L"models the last part of the flow function with an exponential decay function instead of a polynomial one. "
-	"More information about the power1, power2, open phase and collision phase can be found in the @@PointProcess: To Sound (phonation)...@ manual.")
-TAG (L"%%Spectral tilt%,")
-DEFINITION (L"models the extra number of decibels the voicing spectrum should be down at 3000 hertz.")
-TAG (L"%%Aspiration amplitude%,")
-DEFINITION (L"models the (maximum) amplitude of the noise generated at the glottis (in decibel). ")
-TAG (L"%%Breathyness amplitude%,")
-DEFINITION (L"models the maximum breathyness noise amplitude during the open phase of the glottis (in decibel). The amplitude of the breathyness noise also is modulated by the glottal flow.")
-TAG (L"%%Double pulsing%,")
-DEFINITION (L"models diplohonia (by a fraction between zero and one). Whenever this parameter is greater than zero, "
+	"More information about %power1, %power2, %%open phase% and %%collision phase% can be found in the @@PointProcess: To Sound (phonation)...@ manual.")
+TAG (L"%%Spectral tilt%")
+DEFINITION (L"models the extra number of dB the voicing spectrum should be down at 3000 Hertz.")
+TAG (L"%%Aspiration amplitude%")
+DEFINITION (L"models the (maximum) amplitude of the noise generated at the glottis (in dB). ")
+TAG (L"%%Breathiness amplitude%")
+DEFINITION (L"models the maximum breathiness noise amplitude during the open phase of the glottis (in dB). "
+	"The amplitude of the breathiness noise is modulated by the glottal flow.")
+TAG (L"%%Double pulsing%")
+DEFINITION (L"models diplophonia (by a fraction between zero and one). Whenever this parameter is greater than zero, "
 	"alternate pulses are modified. A pulse is modified with this %%single% parameter in %%two% ways: it is %%delayed "
 	"in time% and its amplitude is %%attenuated%.  If the double pulsing value is a maximum and equals one, the time of "
 	"closure of the first peak coincides with the opening time of the second one. ")
 ENTRY (L"The voicing filter")
-NORMAL (L"The filter is modeled by anumber of @@FormantGrid@'s. For parallel synthesis the formant grids that normally "
-	"only contain formant frequency and formant bandwidth tiers, have been extended with amplitude tiers. Amplitudes values are in decibel. The following formant grids can be used:")
+NORMAL (L"The filter is modelled by anumber of @@FormantGrid@'s. For parallel synthesis the formant grids that normally "
+	"only contain formant frequency and formant bandwidth tiers, have been extended with amplitude tiers. Amplitudes values are in dB. The following formant grids can be used:")
 TAG (L"%%Normal formants%")
 DEFINITION (L"represent the \"standard\" resonances of the vocal tract. ")
 TAG (L"%%Nasal formants%")
 DEFINITION (L"model resonances in the nasal tract. Because the form of the nasal tract does not vary much during the course of an utterance, nasal formants tend to be constant. ")
-TAG (L"%%Tracheal formants%")
-DEFINITION (L"model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the "
-	" introduction of extra formants (and anti formants) that sometimes distort vowel spectra to a varying degrees."
-	"According to @@Klatt & Klatt (1990)@, the other effect being increased losses at glottal termination which primarily affect first-formant bandwidths. ")
-TAG (L"%%Nasal anti formants%")
+TAG (L"%%Nasal anti-formants%")
 DEFINITION (L"model dips in the spectrum caused by leakage to the nasal tract.")
-TAG (L"%%Tracheal anti formants%")
+TAG (L"%%Tracheal anti-formants%")
 DEFINITION (L"model dips in the spectrum caused by the trachea.")
 ENTRY (L"Interaction between source and filter")
-NORMAL (L"The interaction between source and filter is modeled by a formant grid with delta frequency values. "
-	"The values in these tiers model the amount of Herz that the formant and/or bandwidth change during the open phase "
+NORMAL (L"The interaction between source and filter is modeled by two formant grids.")
+TAG (L"%%Tracheal formants%")
+DEFINITION (L"model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the "
+	"introduction of extra formants (and anti-formants) that sometimes distort vowel spectra to a varying degrees. "
+	"According to @@Klatt & Klatt (1990)@, the other effect being increased losses at glottal termination which primarily affect first-formant bandwidths.")
+TAG (L"%%Delta formants%")
+DEFINITION (L"The values in this grid model the number of Hertz that the formants and/or bandwidths change during the open phase "
 	"of the glottis. @@Klatt & Klatt (1990)@ distinguish four types of source-filter interactions: an F1 ripple in the "
 	"source waveform, a non-linear interaction between the first formant and the fundamental frequency, a truncation of "
-	"the first formant and tracheal formants and anti formants. ")
-ENTRY (L"The frication filter")
-NORMAL (L"The frication filter is a separate unit and is modeled with a frication formant grid, a frication by-pass tier and an amplitude tier that governs the maximum amplitude of the frication noise source. Because the filtering is parallel, besides frequencies and bandwidths, formant amplitudes need be specified in the formant grid as well.")
+	"the first formant and tracheal formants and anti-formants. ")
+ENTRY (L"The frication section")
+NORMAL (L"The frication section is modeled with a frication formant grid, with formant frequencies, bandwidths and (separate) "
+	"amplitudes, a frication by-pass tier and an amplitude tier that governs the frication noise source.")
+ENTRY (L"A minimal synthesizer")
+NORMAL (L"The following script produces a minimal voiced sound. The first line creates the standard KlattGrid."
+	"The next two lines define a pitch point, in Hz, and the amplitude of voicing, in dB. The last line "
+	"creates the sound.")
+CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
+CODE (L"Add pitch point... 0.5 100")
+CODE (L"Add voicing amplitude point... 0.5 90 ")
+CODE (L"@@KlattGrid: To Sound...|To Sound...@ 44100 0 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes yes")
+NORMAL (L"The following script will produce raw frication noise. Because we do not specify formant amplitudes, "
+	"we turn off the formants in the parallel section.")
+CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
+CODE (L"Add frication bypass point... 0.5 60")
+CODE (L"Add frication amplitude point... 0.5 90")
+CODE (L"To Sound... 44100 0 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 no no yes")
 MAN_END
 
-MAN_BEGIN (L"Create KlattGrid...", L"djmw", 20081207)
-INTRO (L"A command to create an empty @@KlattGrid@.")
+MAN_BEGIN (L"Create KlattGrid...", L"djmw", 20081224)
+INTRO (L"A command to create a multitier @@KlattGrid@ speech synthesizer.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid: To Sound...", L"djmw", 20081208)
+MAN_BEGIN (L"KlattGrid: To Sound...", L"djmw", 20081224)
 INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
 ENTRY (L"Arguments")
-TAG (L"%%Sampling frequency% (Hz),")
+TAG (L"%%Sampling frequency% (Hz)")
 DEFINITION (L"the @@sampling frequency@ of the resulting sound.")
-TAG (L"%%Model%,")
-DEFINITION (L"switches either the cascade or the parallel section of the synthesizer on.")
-TAG (L"%%Formant range, Nasal formant range, ...%")
-DEFINITION (L"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches all those formants off. ")
-TAG (L"%%Voicing, Aspiration%,")
-DEFINITION (L"switches the voicing and/or aspiration section of the source on or off.")
-TAG (L"%%Frication bypass")
-DEFINITION (L"switches the frication bypass of the frication filter on or off.")
+TAG (L"%%Minimum pitch%")
+DEFINITION (L"determines the minimum pitch that will be generated. With the default zero value, the minimum pitch will be determined from the pitch tier.")
+TAG (L"%%Model%")
+DEFINITION (L"switches on either the cascade or the parallel section of the synthesizer.")
+TAG (L"%%Formant range, Nasal formant range...%")
+DEFINITION (L"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches off the formants. ")
+TAG (L"%%Voicing, Aspiration%")
+DEFINITION (L"switches voicing and/or aspiration of the source section on or off.")
+TAG (L"%%Frication bypass%")
+DEFINITION (L"switches the frication bypass of the frication section on or off. "
+	"The complete frication section can be turned off by also switching off the frication formants.")
 MAN_END
 
 MAN_BEGIN (L"Legendre polynomials", L"djmw", 19990620)

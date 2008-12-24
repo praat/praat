@@ -24,6 +24,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
+ djmw 20081223 Corrected a bug in Matrix LPC_to_Matrix (last coefficient was not copied)
 */
 
 #include "LPC_and_Polynomial.h"
@@ -158,7 +159,7 @@ Matrix LPC_to_Matrix (LPC me)
 	for (i = 1; i <= my nx; i++)
 	{
 		LPC_Frame frame = & my frame[i];
-		for (j = 1; j < frame -> nCoefficients; j++)
+		for (j = 1; j <= frame -> nCoefficients; j++)
 		{ 
 			thy z[j][i] = frame -> a[j];
 		}

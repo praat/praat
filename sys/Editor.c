@@ -310,7 +310,8 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
 	#elif motif
-		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
+		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, text_utf8), NULL);
 	#endif
 	/*
 	 * Send a message to myself (e.g., I will redraw myself).
@@ -615,7 +616,8 @@ void Editor_save (I, const wchar_t *text) {
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
 	#elif motif
-		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (my undoText)), NULL);
+		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
+		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, text_utf8), NULL);
 	#endif
 }
 

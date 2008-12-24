@@ -21,23 +21,10 @@
  * djmw 20081112
  */
 
-#define ooSTRUCT DeltaFormantGrid
-oo_DEFINE_CLASS (DeltaFormantGrid, FormantGrid)
-oo_END_CLASS (DeltaFormantGrid)
-#undef ooSTRUCT
-
-#define ooSTRUCT FormantGridP
-oo_DEFINE_CLASS (FormantGridP, FormantGrid)
-
-	oo_COLLECTION (Ordered, amplitudes, RealTier, 0)
-	
-oo_END_CLASS (FormantGridP)
-#undef ooSTRUCT
-
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
 
-	oo_OBJECT (PitchTier, 0, f0)
+	oo_OBJECT (PitchTier, 0, pitch)
 	oo_OBJECT (RealTier, 0, flutter) // [0,1]
 	oo_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
 	oo_OBJECT (RealTier, 0, doublePulsing) // [0,1]
@@ -47,29 +34,57 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	oo_OBJECT (RealTier, 0, power2) // 3,4.. power2>power1
 	oo_OBJECT (IntensityTier, 0, spectralTilt) // dB
 	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
-	oo_OBJECT (IntensityTier, 0, breathynessAmplitude) // dB
+	oo_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
 	
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
 
+#define ooSTRUCT VocalTractGrid
+oo_DEFINE_CLASS (VocalTractGrid, Function)
+
+	oo_OBJECT (FormantGrid, 0, formants)
+	oo_OBJECT (FormantGrid, 0, nasal_formants)
+	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
+	// for parallel synthesis
+	oo_COLLECTION (Ordered, formants_amplitudes, IntensityTier, 0)
+	oo_COLLECTION (Ordered, nasal_formants_amplitudes, IntensityTier, 0)
+
+oo_END_CLASS (VocalTractGrid)
+#undef ooSTRUCT
+
+#define ooSTRUCT CouplingGrid
+oo_DEFINE_CLASS (CouplingGrid, Function)
+
+	oo_OBJECT (FormantGrid, 0, tracheal_formants)
+	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
+	oo_COLLECTION (Ordered, tracheal_formants_amplitudes, IntensityTier, 0)
+	oo_OBJECT (FormantGrid, 0, delta_formants)
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (RealTier, 0, glottisOpenDurations)
+	#endif
+
+oo_END_CLASS (CouplingGrid)
+#undef ooSTRUCT
+
+#define ooSTRUCT FricationGrid
+oo_DEFINE_CLASS (FricationGrid, Function)
+
+	oo_OBJECT (IntensityTier, 0, noise_amplitude) // dB
+	oo_OBJECT (FormantGrid, 0, formants)
+	oo_COLLECTION (Ordered, formants_amplitudes, RealTier, 0)
+	oo_OBJECT (IntensityTier, 0, bypass) // dB
+	
+oo_END_CLASS (FricationGrid)
+#undef ooSTRUCT
+
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
-	// Glottal source
-	oo_OBJECT (PhonationGrid, 0, source)
-	// Filter
-	oo_OBJECT (FormantGridP, 0, formants)
-	oo_OBJECT (FormantGridP, 0, nasal_formants)
-	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
-	oo_OBJECT (FormantGridP, 0, tracheal_formants)
-	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
-	oo_OBJECT (FormantGridP, 0, frication_formants)
-	// Coupling between source and filter
-	oo_OBJECT (DeltaFormantGrid, 0, open_glottis_delta) // Hz
-	// Frication source
-	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
-	oo_OBJECT (IntensityTier, 0, bypassAmplitude) // dB
-	// Output
-	oo_OBJECT (IntensityTier, 0, gain) // dB
+
+	oo_OBJECT (PhonationGrid, 0, phonation) // Glottal source
+	oo_OBJECT (VocalTractGrid, 0, vocalTract) // Filter
+	oo_OBJECT (CouplingGrid, 0, coupling) // // Coupling between source and filter
+	oo_OBJECT (FricationGrid, 0, frication) // Frication source
+	oo_OBJECT (IntensityTier, 0, gain) // final scaling
 	
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

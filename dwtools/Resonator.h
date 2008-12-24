@@ -62,6 +62,7 @@ ConstantGainResonator ConstantGainResonator_create (double dT);
 
 AntiResonator AntiResonator_create (double dT);
 
+// Set a,b,c with a = 1-b-c. This makes H(0)=1 (0 dB)
 void Filter_setFB (I, double f, double b);
 
 double Filter_getOutput (I, double input);

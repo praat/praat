@@ -1967,410 +1967,8 @@ END
 
 /******************* KlattGrid  *********************************/
 
-static void KlattGrid_4formants_addCommonField (void *dia)
-{
-	Any radio;
-	OPTIONMENU(L"Formant type", 1)
-	OPTION (L"Normal formant")
-	OPTION (L"Nasal formant")
-	OPTION (L"Tracheal formant")
-	OPTION (L"Frication formant")
-}
-
-static void KlattGrid_6formants_addCommonField (void *dia)
-{
-	Any radio;
-	OPTIONMENU(L"Formant type", 1)
-	OPTION (L"Normal formant")
-	OPTION (L"Nasal formant")
-	OPTION (L"Tracheal formant")
-	OPTION (L"Frication formant")
-	OPTION (L"Nasal antiformant")
-	OPTION (L"Tracheal antiformant")
-}
-
-FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", L"KlattGrid: Add amplitude point...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Amplitude (dB)", L"70")
-	KlattGrid_4formants_addCommonField (dia);
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! KlattGrid_addAmplitudePoint (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"Time"), GET_REAL (L"Amplitude"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeAmplitudePointsBetween, L"Remove amplitude points between", L"KlattGrid: Remove amplitude points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	KlattGrid_4formants_addCommonField (dia);
-	OK
-DO
-	WHERE (SELECTED) {
-		KlattGrid_removeAmplitudePointsBetween (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addBandwidthPoint, L"KlattGrid: Add bandwidth point", L"KlattGrid: Add bandwidth point...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Bandwidth (Hz)", L"100")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	double bw = GET_REAL (L"Bandwidth");
-	REQUIRE (bw >= 0, L"Bandwidth must be greater equal zero.")
-	WHERE (SELECTED) {
-		if (! KlattGrid_addBandwidthPoint (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"Time"), bw)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeBandwidthPointsBetween, L"Remove bandwidth points between", L"KlattGrid: Remove bandwidth points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	WHERE (SELECTED) {
-		KlattGrid_removeBandwidthPointsBetween (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addFormantPoint, L"KlattGrid: Add formant point", L"KlattGrid: Add formant point...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Frequency (Hz)", L"500")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	double f = GET_REAL (L"Frequency");
-	REQUIRE (f >= 0, L"Frequency must be greater equal zero.")
-	WHERE (SELECTED) {
-		if (! KlattGrid_addFormantPoint (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"Time"), f)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeFormantPointsBetween, L"Remove formant points between", L"KlattGrid: Remove formant points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	WHERE (SELECTED) {
-		KlattGrid_removeFormantPointsBetween (OBJECT, GET_INTEGER (L"Formant type"), GET_INTEGER (L"Formant number"),
-			GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addDeltaFormantPoint, L"KlattGrid: Add delta formant point", L"KlattGrid: Add delta formant point...")
-	LABEL (L"", L"Formant frequency change when glottis is open.")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Frequency change (Hz)", L"50")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! KlattGrid_addDeltaFormantPoint (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Frequency change"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeDeltaFormantPointsBetween, L"Remove delta formant points between", L"KlattGrid: Remove delta formant points between...")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		KlattGrid_removeDeltaFormantPointsBetween (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addDeltaBandwidthPoint, L"KlattGrid: Add delta bandwidth point", L"KlattGrid: Add delta bandwidth point...")
-	LABEL (L"", L"Formant bandwidth change when glottis is open.")
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Bandwidth frequency change (Hz)", L"100")
-	OK
-DO
-	WHERE (SELECTED) {
-		if (! KlattGrid_addDeltaBandwidthPoint (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Bandwidth frequency change"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeDeltaBandwidthPointsBetween, L"Remove delta bandwidth points between", 0)
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED)
-	{
-		KlattGrid_removeDeltaBandwidthPointsBetween (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addFricationAmplitudePoint, L"KlattGrid: Add frication amplitude point", 0)
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Amplitude (dB)", L"0.0")
-	OK
-DO
-	WHERE (SELECTED)
-	{
-		KlattGrid_addFricationAmplitudePoint (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Amplitude"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeFricationAmplitudePointsBetween, L"Remove frication amplitude points between", 0)
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED)
-	{
-		KlattGrid_removeFricationAmplitudePointsBetween (OBJECT, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addFricationBypassPoint, L"KlattGrid: Add frication bypass point", 0)
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Bypass (dB)", L"0.0")
-	OK
-DO
-	WHERE (SELECTED)
-	{
-		KlattGrid_addFricationBypassPoint (OBJECT, GET_REAL (L"Time"), GET_REAL (L"Bypass"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeFricationBypassPointsBetween, L"Remove frication bypass points between", 0)
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		KlattGrid_removeFricationBypassPointsBetween (OBJECT, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addFlowFunctionPoint, L"KlattGrid: Add flow function point", L"KlattGrid: Add flow function point...")
-	LABEL (L"", L"flow(t)=x^power1(t)-x^power2(t)")
-	LABEL (L"", L"For all t: power2(t) > power1(t)")
-	RADIO (L"Power term", 2)
-	RADIOBUTTON (L"Power1")
-	RADIOBUTTON (L"Power2")	
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Value", L"3")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addFlowFunctionPoint (fg, GET_INTEGER (L"Power term"), GET_REAL (L"Time"), GET_REAL (L"Value"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeFlowFunctionPointsBetween, L"Remove flow function points between", L"KlattGrid: Remove flow function points between...")
-	RADIO (L"Power term", 1)
-	RADIOBUTTON (L"Power1")
-	RADIOBUTTON (L"Power2")	
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removeFlowFunctionPointsBetween (fg, GET_INTEGER (L"Power term"), GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addPhonationAmplitudePoint, L"KlattGrid: Add phonation amplitude point", L"KlattGrid: Add phonation amplitude point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Amplitude (dB)", L"90.0")
-	OPTIONMENU(L"Phonation type", 1)
-	OPTION (L"Voicing")
-	OPTION (L"Aspiration")
-	OPTION (L"Breathyness")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addPhonationAmplitudePoint (fg, GET_INTEGER (L"Phonation type"),
-			GET_REAL (L"Time"), GET_REAL (L"Amplitude"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removePhonationAmplitudePointsBetween, L"Remove phonation amplitude between", L"KlattGrid: Remove phonation amplitude points between...")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OPTIONMENU(L"Phonation type", 1)
-	OPTION (L"Voicing")
-	OPTION (L"Aspiration")
-	OPTION (L"Breathyness")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removePhonationAmplitudePointsBetween (fg, GET_INTEGER (L"Phonation type"),
-			GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addCollisionPhasePoint, L"KlattGrid: Add collision phase point", L"KlattGrid: Add collision phase point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Phase (0..1)", L"0.03")
-	OK
-DO
-	double collisionPhase = GET_REAL (L"Phase");
-	REQUIRE (collisionPhase >= 0 && collisionPhase < 1, L"Collision phase must be smaller than one and larger equal zero.")
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addCollisionPhasePoint (fg, GET_REAL (L"Time"), collisionPhase)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeCollisionPhasePointsBetween, L"Remove collision phase points between", L"KlattGrid: Remove collision phase points between...")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removeCollisionPhasePointsBetween (fg, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addOpenPhasePoint, L"KlattGrid: Add open phase point", L"KlattGrid: Add open phase point...")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Phase (0..1)", L"0.5")
-	OK
-DO
-	double openPhase = GET_REAL (L"Phase");
-	REQUIRE (openPhase > 0 && openPhase <= 1, L"The open phase must be greater than zero and less equal 1.")
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addOpenPhasePoint (fg, GET_REAL (L"Time"), openPhase)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeOpenPhasePointsBetween, L"Remove open phase points between", L"KlattGrid: Remove open phase points between...")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removeOpenPhasePointsBetween (fg, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addPitchPoint, L"KlattGrid: Add pitch point", L"KlattGrid: Add pitch point...")
-	REAL (L"Time (s)", L"0.5")
-	POSITIVE (L"Frequency (Hz)", L"100")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addPitchPoint (fg, GET_REAL (L"Time"), GET_REAL (L"Frequency"))) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removePitchPointsBetween, L"Remove pitch points between", L"KlattGrid: Remove pitch points between...")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removePitchPointsBetween (fg, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addFlutterPoint, L"KlattGrid: Add flutter point", 0)
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Flutter fraction (0..1)", L"0.1")
-	OK
-DO
-	double flutter = GET_REAL (L"Flutter fraction");
-	REQUIRE (flutter >= 0 && flutter <= 1, L"Flutter must be greater equal zero and smaller equal one.")
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addFlutterPoint (fg, GET_REAL (L"Time"), flutter)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeFlutterPointsBetween, L"Remove flutter points between", 0)
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removeFlutterPointsBetween (fg, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_addSpectralTiltPoint, L"KlattGrid: Add spectral tilt point", L"KlattGrid: Add spectral tilt point...")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Extra attenuation at 3 kHz (dB)", L"10.0")
-	OK
-DO
-	double spectralTilt = GET_REAL (L"Extra attenuation at 3 kHz");
-	REQUIRE (spectralTilt >= 0, L"Number must greater equal zero." )
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		if (! PhonationGrid_addSpectralTiltPoint (fg, GET_REAL (L"Time"), spectralTilt)) return 0;
-		praat_dataChanged (OBJECT);
-	}
-END
-
-FORM (KlattGrid_removeSpectralTiltPointsBetween, L"Remove spectral tilt points between", L"KlattGrid: Remove spectral tilt points between...")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
-DO
-	WHERE (SELECTED) {
-		PhonationGrid fg =((KlattGrid) OBJECT) -> source;
-		PhonationGrid_removeSpectralTiltPointsBetween (fg, GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
-	}
-END
-
 DIRECT (KlattGrid_createExample)
-	NEW (KlattGrid_createExample())
+	if (! praat_new1 (KlattGrid_createExample(), L"example")) return 0;
 END
 
 FORM (KlattGrid_create, L"Create KlattGrid", L"Create KlattGrid...")
@@ -2379,163 +1977,303 @@ FORM (KlattGrid_create, L"Create KlattGrid", L"Create KlattGrid...")
 	REAL (L"End time (s)", L"1.0")
 	INTEGER (L"Number of formants", L"6")
 	INTEGER (L"Number of nasal formants", L"1")
-	INTEGER (L"Number of trachael formants", L"1")
+	INTEGER (L"Number of nasal antiformants", L"1")
 	INTEGER (L"Number of frication formants", L"6")
 	LABEL (L"", L"Coupling between source and filter")
+	INTEGER (L"Number of trachael formants", L"1")
+	INTEGER (L"Number of trachael antiformants", L"1")
 	INTEGER (L"Number of delta formants", L"1")
 	OK
 DO
 	double tmin = GET_REAL (L"Start time");
 	double tmax = GET_REAL (L"End time");
 	REQUIRE (tmin < tmax, L"The start time must lie before the end time.")
-	long numberOfFormants = GET_INTEGER (L"Number of formants");
+	long numberOfNormalFormants = GET_INTEGER (L"Number of formants");
 	long numberOfNasalFormants = GET_INTEGER (L"Number of nasal formants");
+	long numberOfNasalAntiFormants = GET_INTEGER (L"Number of nasal antiformants");
 	long numberOfTrachealFormants = GET_INTEGER (L"Number of trachael formants");
+	long numberOfTrachealAntiFormants = GET_INTEGER (L"Number of trachael antiformants");
 	long numberOfFricationFormants = GET_INTEGER (L"Number of frication formants");
 	long numberOfDeltaFormants = GET_INTEGER (L"Number of delta formants");
-	if (! praat_new1 (KlattGrid_create (tmin, tmax, numberOfFormants, numberOfNasalFormants,
-		numberOfTrachealFormants, numberOfFricationFormants, numberOfDeltaFormants),
+	REQUIRE (numberOfNormalFormants>=0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0 
+		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
+		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
+		L"The number of (..) formants can not be negative!")
+	if (! praat_new1 (KlattGrid_create (tmin, tmax, numberOfNormalFormants,
+		numberOfNasalFormants, numberOfNasalAntiFormants,
+		numberOfTrachealFormants, numberOfTrachealAntiFormants,
+		numberOfFricationFormants, numberOfDeltaFormants),
 		GET_STRING (L"Name"))) return 0;
 END
 
-DIRECT (KlattGrid_extractFormantGrid)
-	KlattGrid kg;
-	EVERY_TO ((kg = OBJECT, FormantGridP_downto_FormantGrid (kg-> formants)))
+#define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,require, requiremessage,newname,tiertype) \
+FORM(KlattGrid_get##Name##AtTime, L"KlattGrid: Get " #name " at time", 0) \
+	REAL (L"Time", L"0.5") \
+	OK \
+DO \
+	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, GET_REAL (L"Time")), unit); \
+END \
+FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
+	REAL (L"Time (s)", L"0.5") \
+	REAL (L"Value" unit, default) \
+	OK \
+DO \
+	double value = GET_REAL (L"Value"); \
+	REQUIRE (require, requiremessage) \
+	WHERE (SELECTED) { \
+		if (! KlattGrid_add##Name##Point (OBJECT, GET_REAL (L"Time"), value)) return 0; \
+		praat_dataChanged (OBJECT); \
+	} \
+END \
+FORM (KlattGrid_remove##Name##PointsBetween, L"Remove " #name " points between", 0) \
+	REAL (L"From time (s)", L"0.3")\
+	REAL (L"To time (s)", L"0.7") \
+	OK \
+DO \
+	WHERE (SELECTED) { \
+		KlattGrid_remove##Name##PointsBetween (OBJECT, GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (OBJECT);\
+	} \
+END \
+DIRECT (KlattGrid_extract##Name##Tier) \
+	WHERE (SELECTED) { \
+		if (! praat_new1 (KlattGrid_extract##Name##Tier (OBJECT), newname)) return 0; \
+	} \
+END \
+DIRECT (KlattGrid_replace##Name##Tier) \
+	if (! KlattGrid_replace##Name##Tier (ONLY(classKlattGrid), ONLY(class##tiertype))) return 0; \
+	praat_dataChanged (OBJECT);\
 END
 
-DIRECT (KlattGrid_extractPitchTier)
-	KlattGrid kg;
-	EVERY_TO ((kg = OBJECT, Data_copy (kg -> source -> f0)))
-END
+// 55 DO_KlattGrid... functions
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Pitch, pitch, L" (Hz)", (L"100.0"),
+	(value>=0), (L"Pitch must be greater equal zero."), L"f0", PitchTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(VoicingAmplitude,voicing amplitude, L" (dB)", L"90.0",
+	(1), L"", L"voicing", IntensityTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Flutter, flutter, L" (0..1)", (L"0.0"),
+	(value>=0&&value<=1), (L"Flutter must be in [0,1]."),L"flutter",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power1, power1, L"", L"3",
+	(value>0), L"Power1 needs to be positive.",L"power1",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power2, power2, L"", L"4",
+	(value>0), L"Power2 needs to be positive.",L"power2",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (OpenPhase, open phase, L"", L"0.7",
+	(value >=0&&value<=1), L"Open phase must be greater than zero and smaller equal one.", L"openPhase",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (CollisionPhase, collision phase, L"", L"0.03",
+	(value>=0&&value<1), L"Collision phase must be greater equal zero and smaller than one.", L"collisionPhase",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (DoublePulsing,double pulsing,L" (0..1)",L"0.0",
+	(value>=0&&value<=1), L"Double pulsing must be greater equal zero and smaller equal one.",L"doublePulsing",RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (SpectralTilt,spectral tilt,L" (dB)",L"0.0",
+	(value>=0), L"Spectral tilt must be greater equal zero.", L"spectralTilt",IntensityTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (AspirationAmplitude, aspiration amplitude, L" (dB)", L"0.0",
+	(1), L"", L"aspiration", IntensityTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (BreathinessAmplitude, breathiness amplitude, L" (dB)", L"30.0",
+	(1), L"", L"breathiness", IntensityTier)
 
-FORM (KlattGrid_getPitchAtTime, L"KlattGrid: Get pitch at time", 0)
-	REAL (L"Time", L"0.5")
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationAmplitude, frication amplitude, L" (dB)", L"30.0",
+	(1), L"", L"frication", IntensityTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationBypass, frication bypass, L" (dB)", L"30.0",
+	(1), L"", L"bypass", IntensityTier)
+
+
+#undef KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE
+
+static wchar_t *formant_names[] = { L"", L"formants", L"nasal", L"frication", L"tracheal", L"nasal_anti", L"tracheal_anti", L"delta"};
+
+static void KlattGrid_4formants_addCommonField (void *dia)
+{
+	Any radio;
+	OPTIONMENU(L"Formant type", 1)
+	OPTION (L"Normal formant")
+	OPTION (L"Nasal formant")
+	OPTION (L"Frication formant")
+	OPTION (L"Tracheal formant")
+}
+
+static void KlattGrid_6formants_addCommonField (void *dia)
+{
+	Any radio;
+	OPTIONMENU(L"Formant type", 1)
+	OPTION (L"Normal formant")
+	OPTION (L"Nasal formant")
+	OPTION (L"Frication formant")
+	OPTION (L"Tracheal formant")
+	OPTION (L"Nasal antiformant")
+	OPTION (L"Tracheal antiformant")
+//	OPTION (L"Delta antiformant")
+}
+
+#define KlattGrid_FORMANT_GET_ADD_REMOVE(Name,name,unit,default,require,requiremessage) \
+FORM (KlattGrid_get##Name##AtTime, L"KlattGrid: Get " #name " at time", 0) \
+	KlattGrid_6formants_addCommonField (dia); \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"Time (s)", L"0.5") \
+	OK \
+DO \
+	int formantType = GET_INTEGER (L"Formant type"); \
+	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz"); \
+END \
+FORM (KlattGrid_getDelta##Name##AtTime, L"KlattGrid: Get delta " #name " at time", 0) \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"Time (s)", L"0.5") \
+	OK \
+DO \
+	Melder_informationReal (KlattGrid_getDelta##Name##AtTime (ONLY_OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz"); \
+END \
+FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
+	KlattGrid_6formants_addCommonField (dia); \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"Time (s)", L"0.5") \
+	REAL (L"Value" unit, default) \
+	OK \
+DO \
+	int formantType = GET_INTEGER (L"Formant type"); \
+	double value = GET_REAL (L"Value"); \
+	REQUIRE (require, requiremessage) \
+	WHERE (SELECTED) { \
+		if (! KlattGrid_add##Name##Point (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0; \
+		praat_dataChanged (OBJECT); \
+	} \
+END \
+FORM (KlattGrid_addDelta##Name##Point, L"KlattGrid: Add delta " #name " point", 0) \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"Time (s)", L"0.5") \
+	REAL (L"Value" unit, default) \
+	OK \
+DO \
+	double value = GET_REAL (L"Value"); \
+	REQUIRE (require, requiremessage) \
+	WHERE (SELECTED) { \
+		if (! KlattGrid_addDelta##Name##Point (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0; \
+		praat_dataChanged (OBJECT); \
+	} \
+END \
+FORM (KlattGrid_remove##Name##PointsBetween, L"Remove " #name " points between", 0) \
+	KlattGrid_6formants_addCommonField (dia); \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"From time (s)", L"0.3")\
+	REAL (L"To time (s)", L"0.7") \
+	OK \
+DO \
+	int formantType = GET_INTEGER (L"Formant type"); \
+	WHERE (SELECTED) { \
+		KlattGrid_remove##Name##PointsBetween (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (OBJECT);\
+	} \
+END \
+FORM (KlattGrid_removeDelta##Name##PointsBetween, L"Remove delta " #name " points between", 0) \
+	NATURAL (L"Formant number", L"1") \
+	REAL (L"From time (s)", L"0.3")\
+	REAL (L"To time (s)", L"0.7") \
+	OK \
+DO \
+	WHERE (SELECTED) { \
+		KlattGrid_removeDelta##Name##PointsBetween (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (OBJECT);\
+	} \
+END 
+
+KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, L" (Hz)", L"500.0", (value>0), L"Frequency must be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, L" (Hz)", L"50.0", (value>0), L"Bandwidth must be greater than zero.")
+#undef KlattGrid_FORMANT_GET_ADD_REMOVE
+
+FORM (KlattGrid_extractFormantGrid, L"KlattGrid: Extract formant grid", 0)
+	KlattGrid_6formants_addCommonField (dia);
 	OK
 DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getPitchAtTime (fg, GET_REAL (L"Time")), L"Hertz");
+	long gridType = GET_INTEGER (L"Formant type");
+	WHERE (SELECTED) {
+		if (! praat_new1 (KlattGrid_extractFormantGrid (OBJECT, gridType), formant_names[gridType])) return 0;
+	}
 END
 
-FORM (KlattGrid_getFlutterAtTime, L"KlattGrid: Get flutter at time",0)
-	REAL (L"Time", L"0.5")
+FORM (KlattGrid_replaceFormantGrid, L"KlattGrid: Replace formant grid", 0)
+	KlattGrid_6formants_addCommonField (dia);
 	OK
 DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getFlutterAtTime (fg, GET_REAL (L"Time")), NULL);
+	WHERE (SELECTED) {
+		if (! KlattGrid_replaceFormantGrid (ONLY(classKlattGrid), GET_INTEGER (L"Formant type"), ONLY(classFormantGrid))) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
-FORM (KlattGrid_getPhonationAmplitudeAtTime, L"KlattGrid: Get phonation amplitude at time", 0)
-	REAL (L"Time", L"0.5")
-	OPTIONMENU(L"Phonation type", 1)
-	OPTION (L"Voicing")
-	OPTION (L"Aspiration")
-	OPTION (L"Breathyness")
-	OK
-DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getPhonationAmplitudeAtTime (fg, GET_INTEGER (L"Phonation type"),
-		GET_REAL (L"Time")), L"dB");
+DIRECT (KlattGrid_extractDeltaFormantGrid)
+	WHERE (SELECTED) {
+		if (! praat_new1 (KlattGrid_extractDeltaFormantGrid (OBJECT), formant_names[KlattGrid_DELTA_FORMANTS])) return 0;
+	}
 END
 
-FORM (KlattGrid_getFlowFunctionAtTime, L"KlattGrid: Get flow function", 0)
-	RADIO (L"Power term", 1)
-	RADIOBUTTON (L"Power1")
-	RADIOBUTTON (L"Power2")	
-	REAL (L"Time", L"0.5")
-	OK
-DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getFlowFunctionAtTime (fg, GET_INTEGER (L"Power term"), GET_REAL (L"Time")), L"");
+DIRECT (KlattGrid_replaceDeltaFormantGrid)
+	WHERE (SELECTED) {
+		if (! KlattGrid_replaceDeltaFormantGrid (ONLY(classKlattGrid), ONLY(classFormantGrid))) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
-FORM (KlattGrid_getOpenPhaseAtTime, L"KlattGrid: Get open phase at time", 0)
-	REAL (L"Time", L"0.5")
-	OK
-DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getOpenPhaseAtTime (fg, GET_REAL (L"Time")), 0);
-END
-
-FORM (KlattGrid_getCollisionPhaseAtTime, L"KlattGrid: Get collision phase at time", 0)
-	REAL (L"Time", L"0.5")
-	OK
-DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getCollisionPhaseAtTime (fg, GET_REAL (L"Time")), L"");
-END
-
-FORM (KlattGrid_getSpectralTiltAtTime, L"KlattGrid: Get spectral tilt at time", L"")
-	REAL (L"Time", L"0.5")
-	OK
-DO
-	PhonationGrid fg =((KlattGrid) ONLY_OBJECT) -> source;
-	Melder_informationReal (PhonationGrid_getSpectralTiltAtTime (fg, GET_REAL (L"Time")), L"dB");
-END
-
-FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0)
-	NATURAL (L"formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
+FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0) \
 	KlattGrid_4formants_addCommonField (dia);
-	OK
-DO
-	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, GET_INTEGER (L"Formant type"),
-		GET_INTEGER (L"formant number"), GET_REAL (L"Time")), L"dB");
-END
-
-FORM (KlattGrid_getBandwidthAtTime, L"KlattGrid: Get bandwidth at time", 0)
-	NATURAL (L"formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	Melder_informationReal (KlattGrid_getBandwidthAtTime (ONLY_OBJECT, GET_INTEGER (L"Formant type"),
-		GET_INTEGER (L"formant number"), GET_REAL (L"Time")), L"Hertz");
-END
-
-FORM (KlattGrid_getFormantAtTime, L"KlattGrid: Get formant at time", 0)
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	KlattGrid_6formants_addCommonField (dia);
-	OK
-DO
-	Melder_informationReal (KlattGrid_getFormantAtTime (ONLY_OBJECT, GET_INTEGER (L"Formant type"),
-		GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz");
-END
-
-FORM (KlattGrid_getDeltaFormantAtTime, L"KlattGrid: Get delta formant at time", 0)
 	NATURAL (L"Formant number", L"1")
 	REAL (L"Time (s)", L"0.5")
 	OK
 DO
-	DeltaFormantGrid df = ((KlattGrid) ONLY_OBJECT) -> open_glottis_delta;
-	Melder_informationReal (DeltaFormantGrid_getDeltaFormantAtTime (df, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz");
+	int formantType = GET_INTEGER (L"Formant type");
+	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz");
 END
 
-FORM (KlattGrid_getDeltaBandwidthAtTime, L"KlattGrid: Get delta bandwidth at time", 0)
+FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", 0)
+	KlattGrid_4formants_addCommonField (dia);
 	NATURAL (L"Formant number", L"1")
 	REAL (L"Time (s)", L"0.5")
+	REAL (L"Value (Hz)", L"80.0")
 	OK
 DO
-	DeltaFormantGrid df = ((KlattGrid) ONLY_OBJECT) -> open_glottis_delta;
-	Melder_informationReal (DeltaFormantGrid_getDeltaBandwidthAtTime (df, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz");
+	int formantType = GET_INTEGER (L"Formant type");
+	double value = GET_REAL (L"Value");
+	WHERE (SELECTED) {
+		if (! KlattGrid_addAmplitudePoint (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
-FORM (KlattGrid_getFricationBypassAtTime, L"KlattGrid: Get frication bypass at time", L"")
-	REAL (L"Time", L"0.5")
+FORM (KlattGrid_removeAmplitudePointsBetween, L"Remove amplitude points between", 0) \
+	KlattGrid_4formants_addCommonField (dia);
+	NATURAL (L"Formant number", L"1")
+	REAL (L"From time (s)", L"0.3")
+	REAL (L"To time (s)", L"0.7")
 	OK
 DO
-	Melder_informationReal (KlattGrid_getFricationBypassAtTime ((KlattGrid) ONLY_OBJECT, GET_REAL (L"Time")), L"dB");
+	int formantType = GET_INTEGER (L"Formant type");
+	WHERE (SELECTED) {
+		KlattGrid_removeAmplitudePointsBetween (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
+		praat_dataChanged (OBJECT);
+	}
 END
 
-FORM (KlattGrid_getFricationAmplitudeAtTime, L"KlattGrid: Get frication amplitude at time", L"")
-	REAL (L"Time", L"0.5")
+FORM (KlattGrid_extractAmplitudeTier, L"", 0)
+	KlattGrid_4formants_addCommonField (dia);
+	NATURAL (L"Formant number", L"1")
 	OK
 DO
-	Melder_informationReal (KlattGrid_getFricationAmplitudeAtTime ((KlattGrid) ONLY_OBJECT, GET_REAL (L"Time")), L"dB");
+	int formantType = GET_INTEGER (L"Formant type");
+	WHERE (SELECTED) {
+		if (! praat_new1 (KlattGrid_extractAmplitudeTier (OBJECT, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType])) return 0;
+	}
+END
+
+FORM (KlattGrid_replaceAmplitudeTier, L"KlattGrid: Replace amplitude tier", 0)
+	KlattGrid_4formants_addCommonField (dia);
+	NATURAL (L"Formant number", L"1")
+	OK
+DO
+	int formantType = GET_INTEGER (L"Formant type");
+	WHERE (SELECTED) {
+		if (! KlattGrid_replaceAmplitudeTier (ONLY(classKlattGrid), formantType, GET_INTEGER (L"Formant number"), ONLY(classIntensityTier))) return 0;
+		praat_dataChanged (OBJECT);
+	}
 END
 
 FORM (KlattGrid_to_Sound, L"KlattGrid: To_Sound", L"KlattGrid: To Sound...")
 	POSITIVE (L"Sampling frequency (Hz)", L"44100")
+	REAL (L"Minimum pitch (Hz)", L"0.0")
 	RADIO (L"Model", 1)
 	RADIOBUTTON (L"Cascade")
 	RADIOBUTTON (L"Parallel")
@@ -2557,21 +2295,78 @@ FORM (KlattGrid_to_Sound, L"KlattGrid: To_Sound", L"KlattGrid: To Sound...")
 	OK
 DO
 	struct synthesisParams p;
-	p.samplingFrequency = GET_REAL (L"Sampling frequency");
-	p.maximumPeriod = 0.05;
-	p.filterModel = GET_INTEGER (L"Model") - 1; // 1: parallel, 0: cascade
-	p.startFormant = GET_REAL (L"left Formant range"); p.endFormant  = GET_REAL (L"right Formant range");
-	p.startNasalFormant = GET_REAL (L"left Nasal formant range"); p.endNasalFormant = GET_REAL (L"right Nasal formant range");
-	p.startTrachealFormant = GET_REAL (L"left Tracheal formant range"); p.endTrachealFormant = GET_REAL (L"right Tracheal formant range");
-	p.startNasalAntiFormant = GET_REAL (L"left Nasal antiformant range"); p.endNasalAntiFormant = GET_REAL (L"right Nasal antiformant range");
-	p.startTrachealAntiFormant = GET_REAL (L"left Tracheal antiformant range"); p.endTrachealAntiFormant = GET_REAL (L"right Tracheal antiformant range");
-	p.startFricationFormant = GET_REAL (L"left Frication formant range"); p.endFricationFormant = GET_REAL (L"right Frication formant range");
-	p.voicing = GET_INTEGER (L"Voicing"); p.aspiration = GET_INTEGER (L"Aspiration"); p.fricationBypass = GET_INTEGER (L"Frication bypass");
+	double minimumPitch = GET_REAL (L"Minimum pitch");
+	REQUIRE (minimumPitch >= 0, L"Minimum pitch must be greater equal zero.")
+	WHERE(SELECTED)
+	{
+		KlattGrid thee = OBJECT;
+		p.openglottis_fadeFraction = 0.1;
+		p.maximumPeriod = minimumPitch > 0 ? 1 / minimumPitch : 0;
+		p.sourceIsFlowDerivative = 1; p.spectralTilt = 1; // via interface ?
+		p.samplingFrequency = GET_REAL (L"Sampling frequency");
+		p.filterModel = GET_INTEGER (L"Model") - 1; // 1: parallel, 0: cascade
+		p.startFormant = GET_REAL (L"left Formant range"); p.endFormant  = GET_REAL (L"right Formant range");
+		p.startNasalFormant = GET_REAL (L"left Nasal formant range"); p.endNasalFormant = GET_REAL (L"right Nasal formant range");
+		p.startTrachealFormant = GET_REAL (L"left Tracheal formant range"); p.endTrachealFormant = GET_REAL (L"right Tracheal formant range");
+		p.startNasalAntiFormant = GET_REAL (L"left Nasal antiformant range"); p.endNasalAntiFormant = GET_REAL (L"right Nasal antiformant range");
+		p.startTrachealAntiFormant = GET_REAL (L"left Tracheal antiformant range"); p.endTrachealAntiFormant = GET_REAL (L"right Tracheal antiformant range");
+		p.startFricationFormant = GET_REAL (L"left Frication formant range"); p.endFricationFormant = GET_REAL (L"right Frication formant range");
+		p.voicing = GET_INTEGER (L"Voicing"); p.aspiration = GET_INTEGER (L"Aspiration"); p.fricationBypass = GET_INTEGER (L"Frication bypass");
 
-	EVERY_TO (KlattGrid_to_Sound (OBJECT, &p))
+		if (! praat_new1 (KlattGrid_to_Sound (thee, &p), NAMEW)) return 0;
+	}
 END
 
 DIRECT (KlattGrid_help) Melder_help (L"KlattGrid"); END
+
+DIRECT (KlattGrid_play)
+	EVERY_CHECK (KlattGrid_play (OBJECT))
+END
+
+FORM (KlattGrid_draw, L"KlattGrid: Draw", 0)
+	RADIO (L"Synthesis model", 1)
+	RADIOBUTTON (L"Cascade")
+	RADIOBUTTON (L"Parallel")
+	OK
+DO
+	EVERY_DRAW (KlattGrid_draw (OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1))
+END
+
+FORM (KlattGrid_drawVocalTract, L"KlattGrid: Draw vocal tract", 0)
+	RADIO (L"Synthesis model", 1)
+	RADIOBUTTON (L"Cascade")
+	RADIOBUTTON (L"Parallel")
+	BOOLEAN (L"Include trachael formants", 1);
+	OK
+DO
+	praat_picture_open ();
+		KlattGrid_drawVocalTract (ONLY_OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include trachael formants"));
+	praat_picture_close (); return 1;
+END
+
+DIRECT(KlattGrid_drawPhonation)
+	praat_picture_open ();
+	KlattGrid thee = ONLY_OBJECT;
+		PhonationGrid_draw (thy phonation, GRAPHICS);
+	praat_picture_close (); return 1;
+END
+
+DIRECT(KlattGrid_drawFrication)
+	praat_picture_open ();
+	KlattGrid thee = ONLY_OBJECT;
+		FricationGrid_draw (thy frication, GRAPHICS);
+	praat_picture_close (); return 1;
+END
+
+FORM (KlattGrid_to_FormantGrid_openPhases, L"KlattGrid: To FormantGrid (open phases)", 0)
+	REAL (L"Fade fraction (0..0.5)", L"0.1")
+	OK
+DO
+	WHERE (SELECTED)
+	{
+		if (! praat_new1 (KlattGrid_to_FormantGrid_openPhases (OBJECT, GET_REAL (L"Fade fraction")), L"corrected")) return 0;
+	}
+END
 
 /******************* KlattTable  *********************************/
 
@@ -2584,7 +2379,7 @@ END
 FORM (KlattTable_to_Sound, L"KlattTable: To Sound", L"KlattTable: To Sound...")
 	POSITIVE (L"Sampling frequency", L"16000")
 	RADIO (L"Synthesis model", 1)
-	RADIOBUTTON (L"Series")
+	RADIOBUTTON (L"Cascade")
 	RADIOBUTTON (L"Parallel")
 	NATURAL (L"Number of formants", L"5")
 	POSITIVE (L"Frame duration (s)", L"0.005")
@@ -4901,8 +4696,8 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Vowel...", 0, praat_HIDDEN, DO_Vowel_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Klatt synthesis", 0, praat_HIDDEN, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Klatt synthesis", 0, 0, 0);
+	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid...", 0, praat_DEPTH_1, DO_KlattGrid_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid example", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_createExample);
 	
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
@@ -4923,7 +4718,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classBarkFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", 1, DO_BarkFilter_drawSpectrum);
 	praat_addAction1 (classBarkFilter, 1, L"Draw filter functions...", L"Draw filters...", 1, DO_BarkFilter_drawSekeyHansonFilterFunctions);
 
-    praat_addAction1 (classCategories, 0, L"Edit", 0, 0, DO_Categories_edit);
+    praat_addAction1 (classCategories, 0, L"Edit", 0, praat_HIDDEN, DO_Categories_edit);
     praat_addAction1 (classCategories, 0, QUERY_BUTTON, 0, 0, 0);
     praat_addAction1 (classCategories, 2, L"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, DO_Categories_difference);
      praat_addAction1 (classCategories, 2, L"Get number of differences", QUERY_BUTTON, 1, DO_Categories_getNumberOfDifferences);
@@ -5148,14 +4943,28 @@ void praat_uvafon_David_init (void)
 	praat_Spline_init (classISpline);
 
 	praat_addAction1 (classKlattGrid, 0, L"KlattGrid help", 0, 0, DO_KlattGrid_help);
-	praat_addAction1 (classKlattGrid, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Play", 0, 0, DO_KlattGrid_play);	
+	praat_addAction1 (classKlattGrid, 0, L"To Sound...", 0, 0, DO_KlattGrid_to_Sound);
+	
+	praat_addAction1 (classKlattGrid, 0, L"Draw -     ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Draw synthesizer...", 0, 1, DO_KlattGrid_draw);
+	praat_addAction1 (classKlattGrid, 0, L"Draw vocal tract...", 0, 1, DO_KlattGrid_drawVocalTract);
+	praat_addAction1 (classKlattGrid, 0, L"Draw phonation", 0, 1, DO_KlattGrid_drawPhonation);
+	praat_addAction1 (classKlattGrid, 0, L"Draw frication", 0, 1, DO_KlattGrid_drawFrication);
+	
+	praat_addAction1 (classKlattGrid, 1, L"Query -          ", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 1, L"Get pitch at time...", 0, 1, DO_KlattGrid_getPitchAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get voicing amplitude at time...", 0, 1, DO_KlattGrid_getVoicingAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get flutter at time...", 0, 1, DO_KlattGrid_getFlutterAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get phonation amplitude at time...", 0, 1, DO_KlattGrid_getPhonationAmplitudeAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get flow function at time...", 0, 1, DO_KlattGrid_getFlowFunctionAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get power1 at time...", 0, 1, DO_KlattGrid_getPower1AtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get power2 at time...", 0, 1, DO_KlattGrid_getPower2AtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get open phase at time...", 0, 1, DO_KlattGrid_getOpenPhaseAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get collision phase at time...", 0, 1, DO_KlattGrid_getCollisionPhaseAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get double pulsing at time...", 0, 1, DO_KlattGrid_getDoublePulsingAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get spectral tilt at time...", 0, 1, DO_KlattGrid_getSpectralTiltAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get aspiration amplitude at time...", 0, 1, DO_KlattGrid_getAspirationAmplitudeAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get breathiness amplitude at time...", 0, 1, DO_KlattGrid_getBreathinessAmplitudeAtTime);
+
 	praat_addAction1 (classKlattGrid, 1, L"-- query filter characteristics", 0, 1, 0);
 	praat_addAction1 (classKlattGrid, 1, L"Get formant at time...", 0, 1, DO_KlattGrid_getFormantAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get bandwidth at time...", 0, 1, DO_KlattGrid_getBandwidthAtTime);
@@ -5163,25 +4972,35 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 1, L"-- query delta characteristics", 0, 1, 0);
 	praat_addAction1 (classKlattGrid, 1, L"Get delta formant at time...", 0, 1, DO_KlattGrid_getDeltaFormantAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get delta bandwidth at time...", 0, 1, DO_KlattGrid_getDeltaBandwidthAtTime);
-	praat_addAction1 (classKlattGrid, 0, L"-- query frication characteristics", 0, 1, 0);
-	praat_addAction1 (classKlattGrid, 0, L"Get frication bypass at time...", 0, 1, DO_KlattGrid_getFricationBypassAtTime);
-	praat_addAction1 (classKlattGrid, 0, L"Get frication amplitude at time...", 0, 1, DO_KlattGrid_getFricationAmplitudeAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"-- query frication characteristics", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 1, L"Get frication bypass at time...", 0, 1, DO_KlattGrid_getFricationBypassAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get frication amplitude at time...", 0, 1, DO_KlattGrid_getFricationAmplitudeAtTime);
 	
 	praat_addAction1 (classKlattGrid, 0, L"Modify -          ", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Add pitch point...", 0, 1, DO_KlattGrid_addPitchPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add voicing amplitude point...", 0, 1, DO_KlattGrid_addVoicingAmplitudePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add flutter point...", 0, 1, DO_KlattGrid_addFlutterPoint);
-	praat_addAction1 (classKlattGrid, 0, L"Add phonation amplitude point...", 0, 1, DO_KlattGrid_addPhonationAmplitudePoint);
-	praat_addAction1 (classKlattGrid, 0, L"Add flow function point...", 0, 1, DO_KlattGrid_addFlowFunctionPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add power1 point...", 0, 1, DO_KlattGrid_addPower1Point);
+	praat_addAction1 (classKlattGrid, 0, L"Add power2 point...", 0, 1, DO_KlattGrid_addPower2Point);
 	praat_addAction1 (classKlattGrid, 0, L"Add open phase point...", 0, 1, DO_KlattGrid_addOpenPhasePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add collision phase point...", 0, 1, DO_KlattGrid_addCollisionPhasePoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add double pulsing point...", 0, 1, DO_KlattGrid_addDoublePulsingPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add spectral tilt point...", 0, 1, DO_KlattGrid_addSpectralTiltPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add aspiration amplitude point...", 0, 1, DO_KlattGrid_addAspirationAmplitudePoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add breathiness amplitude point...", 0, 1, DO_KlattGrid_addBreathinessAmplitudePoint);
+	
 	praat_addAction1 (classKlattGrid, 0, L"Remove pitch points between...", 0, 1, DO_KlattGrid_removePitchPointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove voicing amplitude points between...", 0, 1, DO_KlattGrid_removeVoicingAmplitudePointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove flutter points between...", 0, 1, DO_KlattGrid_removeFlutterPointsBetween);
-	praat_addAction1 (classKlattGrid, 0, L"Remove phonation amplitude points between...", 0, 1, DO_KlattGrid_removePhonationAmplitudePointsBetween);
-	praat_addAction1 (classKlattGrid, 0, L"Remove flow function points between...", 0, 1, DO_KlattGrid_removeFlowFunctionPointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove power1 points between...", 0, 1, DO_KlattGrid_removePower1PointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove power2 points between...", 0, 1, DO_KlattGrid_removePower2PointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove open phase points between...", 0, 1, DO_KlattGrid_removeOpenPhasePointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove collision phase points between...", 0, 1, DO_KlattGrid_removeCollisionPhasePointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove double pulsing points between...", 0, 1, DO_KlattGrid_removeDoublePulsingPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove spectral tilt points between...", 0, 1, DO_KlattGrid_removeSpectralTiltPointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove aspiration amplitude points between...", 0, 1, DO_KlattGrid_removeAspirationAmplitudePointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"Remove breathiness amplitude points between...", 0, 1, DO_KlattGrid_removeBreathinessAmplitudePointsBetween);
+
 	praat_addAction1 (classKlattGrid, 0, L"-- modify filter characteristics", 0, 1, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Add formant point...", 0, 1, DO_KlattGrid_addFormantPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add bandwidth point...", 0, 1, DO_KlattGrid_addBandwidthPoint);
@@ -5189,7 +5008,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 0, L"Remove formant points between...", 0, 1, DO_KlattGrid_removeFormantPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove bandwidth points between...", 0, 1, DO_KlattGrid_removeBandwidthPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove amplitude points between...", 0, 1, DO_KlattGrid_removeAmplitudePointsBetween);
-	praat_addAction1 (classKlattGrid, 0, L"-- modify source-filter interaction", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"-- modify delta characteristics", 0, 1, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Add delta formant point...", 0, 1, DO_KlattGrid_addDeltaFormantPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add delta bandwidth point...", 0, 1, DO_KlattGrid_addDeltaBandwidthPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Remove delta formant points between...", 0, 1, DO_KlattGrid_removeDeltaFormantPointsBetween);
@@ -5199,11 +5018,51 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 0, L"Add frication amplitude point...", 0, 1, DO_KlattGrid_addFricationAmplitudePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Remove frication bypass points between...", 0, 1, DO_KlattGrid_removeFricationBypassPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove frication amplitude points between...", 0, 1, DO_KlattGrid_removeFricationAmplitudePointsBetween);
+
+	praat_addAction1 (classKlattGrid, 0, L"Extract -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract pitch tier", 0, 1, DO_KlattGrid_extractPitchTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract voicing amplitude tier", 0, 1, DO_KlattGrid_extractVoicingAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract flutter tier", 0, 1, DO_KlattGrid_extractFlutterTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract power1 tier", 0, 1, DO_KlattGrid_extractPower1Tier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract power2 tier", 0, 1, DO_KlattGrid_extractPower2Tier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract open phase tier", 0, 1, DO_KlattGrid_extractOpenPhaseTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract collision phase tier", 0, 1, DO_KlattGrid_extractCollisionPhaseTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract double pulsing tier", 0, 1, DO_KlattGrid_extractDoublePulsingTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract spectral tilt tier", 0, 1, DO_KlattGrid_extractSpectralTiltTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract aspiration amplitude tier", 0, 1, DO_KlattGrid_extractAspirationAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract breathiness amplitude tier", 0, 1, DO_KlattGrid_extractBreathinessAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, L"-- extract filter characteristics", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract formant grid...", 0, 1, DO_KlattGrid_extractFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, L"Extract amplitude tier...", 0, 1, DO_KlattGrid_extractAmplitudeTier);
+	praat_addAction1 (classKlattGrid, 0, L"-- extract delta characteristics", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract delta formant grid", 0, 1, DO_KlattGrid_extractDeltaFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, L"-- extract frication characteristics", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract frication bypass tier", 0, 1, DO_KlattGrid_extractFricationBypassTier);
+	praat_addAction1 (classKlattGrid, 0, L"Extract frication amplitude tier", 0, 1, DO_KlattGrid_extractFricationAmplitudeTier);
 	
-	praat_addAction1 (classKlattGrid, 0, L"To Sound...", 0, 0, DO_KlattGrid_to_Sound);
-	praat_addAction1 (classKlattGrid, 0, L"Extract pitch tier", 0, 0, DO_KlattGrid_extractPitchTier);
-	praat_addAction1 (classKlattGrid, 0, L"Extract FormantGrid", 0, 0, DO_KlattGrid_extractFormantGrid);
+	praat_addAction1 (classKlattGrid, 0, L"To formant grid (open phases)...", 0, 0, DO_KlattGrid_to_FormantGrid_openPhases);
 	
+	praat_addAction2 (classKlattGrid, 1, classPitchTier, 1, L"Replace pitch tier", 0, 1, DO_KlattGrid_replacePitchTier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace flutter tier", 0, 1, DO_KlattGrid_replaceFlutterTier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace power1 tier", 0, 1, DO_KlattGrid_replacePower1Tier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace power2 tier", 0, 1, DO_KlattGrid_replacePower2Tier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace open phase tier", 0, 1, DO_KlattGrid_replaceOpenPhaseTier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace collision phase tier", 0, 1, DO_KlattGrid_replaceCollisionPhaseTier);
+	praat_addAction2 (classKlattGrid, 1, classRealTier, 1, L"Replace double pulsing tier", 0, 1, DO_KlattGrid_replaceDoublePulsingTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace voicing amplitude tier", 0, 1, DO_KlattGrid_replaceVoicingAmplitudeTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace spectral tilt tier", 0, 1, DO_KlattGrid_replaceSpectralTiltTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace aspiration amplitude tier", 0, 1,
+		DO_KlattGrid_replaceAspirationAmplitudeTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace breathiness amplitude tier", 0, 1,
+		DO_KlattGrid_replaceBreathinessAmplitudeTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"-- replace formant amplitudes --", 0, 1, 0);
+	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, L"Replace formant grid...", 0, 1, DO_KlattGrid_replaceFormantGrid);	
+	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, L"Replace delta formant grid", 0, 1, DO_KlattGrid_replaceDeltaFormantGrid);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace amplitude tier...", 0, 1, DO_KlattGrid_replaceAmplitudeTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"-- replace frication amplitudes --", 0, 1, 0);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace frication amplitude tier", 0, 1, DO_KlattGrid_replaceFricationAmplitudeTier);
+	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace frication bypass tier", 0, 1, DO_KlattGrid_replaceFricationBypassTier);
+		
 	praat_addAction1 (classKlattTable, 0, L"KlattTable help", 0, 0, DO_KlattTable_help);
 	praat_addAction1 (classKlattTable, 0, L"To Sound...", 0, 0, DO_KlattTable_to_Sound);
 	
@@ -5436,8 +5295,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, L"Draw scatter plot...", L"-- scatter plots --", 1, DO_TableOfReal_drawScatterPlot);
 	praat_addAction1 (classTableOfReal, 0, L"Draw scatter plot matrix...", L"Draw scatter plot...", 1, DO_TableOfReal_drawScatterPlotMatrix);
 	praat_addAction1 (classTableOfReal, 0, L"Draw box plots...", L"Draw scatter plot matrix...", 1, DO_TableOfReal_drawBoxPlots);
-	praat_addAction1 (classTableOfReal, 0, L"Draw biplot...", L"Draw box plots...", 1, DO_TableOfReal_drawBiplot);
-		
+	praat_addAction1 (classTableOfReal, 0, L"Draw biplot...", L"Draw box plots...", 1, DO_TableOfReal_drawBiplot);	
+	
 	praat_addAction2 (classStrings, 1, classPermutation, 1, L"Permute strings", 0, 0, DO_Strings_and_Permutation_permuteStrings);
 
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, L"Permute rows",	0, 0, DO_TableOfReal_and_Permutation_permuteRows);

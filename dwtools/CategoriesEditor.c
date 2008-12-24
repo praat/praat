@@ -463,6 +463,7 @@ static void notifyOutOfView (I)
 		{
 			MelderString_append2 (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
 		}
+		else MelderString_append1 (&tmp, L"");
 	}
 	GuiLabel_setString (my outOfView, tmp.string);
 	MelderString_free (&tmp);

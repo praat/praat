@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../sys -I ../GSL -I ../dwsys -I ../kar
+CFLAGS = -I ../stat -I ../num -I ../sys -I ../GSL -I ../kar
 
 all: libdwsys.a
 
@@ -19,7 +19,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \
 	SVD.o
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../GSL/*.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../stat/*.h ../num/NUM.h ../sys/*.h ../GSL/*.h ../dwsys/*.h ../kar/*.h
 
 
 libdwsys.a: $(OBJECTS) NUMmachar.o

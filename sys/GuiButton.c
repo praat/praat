@@ -235,7 +235,8 @@ void GuiButton_setString (Widget widget, const wchar_t *text) {
 		widget -> name = Melder_wcsdup (text);
 		_GuiNativeControl_setTitle (widget);
 	#elif motif
-		XtVaSetValues (widget, XtVaTypedArg, XmNlabelString, XmRString, Melder_peekWcsToUtf8 (text), NULL);
+		char *text_utf8 = Melder_peekWcsToUtf8 (text);
+		XtVaSetValues (widget, XtVaTypedArg, XmNlabelString, XmRString, text_utf8, strlen (text_utf8), NULL);
 	#endif
 }
 
