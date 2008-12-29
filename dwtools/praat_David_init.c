@@ -1980,8 +1980,8 @@ FORM (KlattGrid_create, L"Create KlattGrid", L"Create KlattGrid...")
 	INTEGER (L"Number of nasal antiformants", L"1")
 	INTEGER (L"Number of frication formants", L"6")
 	LABEL (L"", L"Coupling between source and filter")
-	INTEGER (L"Number of trachael formants", L"1")
-	INTEGER (L"Number of trachael antiformants", L"1")
+	INTEGER (L"Number of tracheal formants", L"1")
+	INTEGER (L"Number of tracheal antiformants", L"1")
 	INTEGER (L"Number of delta formants", L"1")
 	OK
 DO
@@ -1991,14 +1991,14 @@ DO
 	long numberOfNormalFormants = GET_INTEGER (L"Number of formants");
 	long numberOfNasalFormants = GET_INTEGER (L"Number of nasal formants");
 	long numberOfNasalAntiFormants = GET_INTEGER (L"Number of nasal antiformants");
-	long numberOfTrachealFormants = GET_INTEGER (L"Number of trachael formants");
-	long numberOfTrachealAntiFormants = GET_INTEGER (L"Number of trachael antiformants");
+	long numberOfTrachealFormants = GET_INTEGER (L"Number of tracheal formants");
+	long numberOfTrachealAntiFormants = GET_INTEGER (L"Number of tracheal antiformants");
 	long numberOfFricationFormants = GET_INTEGER (L"Number of frication formants");
 	long numberOfDeltaFormants = GET_INTEGER (L"Number of delta formants");
 	REQUIRE (numberOfNormalFormants>=0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0 
 		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
 		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
-		L"The number of (..) formants can not be negative!")
+		L"The number of (..) formants cannot be negative!")
 	if (! praat_new1 (KlattGrid_create (tmin, tmax, numberOfNormalFormants,
 		numberOfNasalFormants, numberOfNasalAntiFormants,
 		numberOfTrachealFormants, numberOfTrachealAntiFormants,
@@ -2110,14 +2110,14 @@ FORM (KlattGrid_get##Name##AtTime, L"KlattGrid: Get " #name " at time", 0) \
 	OK \
 DO \
 	int formantType = GET_INTEGER (L"Formant type"); \
-	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz"); \
+	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
 END \
 FORM (KlattGrid_getDelta##Name##AtTime, L"KlattGrid: Get delta " #name " at time", 0) \
 	NATURAL (L"Formant number", L"1") \
 	REAL (L"Time (s)", L"0.5") \
 	OK \
 DO \
-	Melder_informationReal (KlattGrid_getDelta##Name##AtTime (ONLY_OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz"); \
+	Melder_informationReal (KlattGrid_getDelta##Name##AtTime (ONLY_OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
 END \
 FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
 	KlattGrid_6formants_addCommonField (dia); \
@@ -2216,7 +2216,7 @@ FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0) \
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L"Hertz");
+	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)");
 END
 
 FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", 0)
@@ -2271,9 +2271,8 @@ DO
 	}
 END
 
-FORM (KlattGrid_to_Sound, L"KlattGrid: To_Sound", L"KlattGrid: To Sound...")
+FORM (KlattGrid_to_Sound, L"KlattGrid: To Sound", L"KlattGrid: To Sound...")
 	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	REAL (L"Minimum pitch (Hz)", L"0.0")
 	RADIO (L"Model", 1)
 	RADIOBUTTON (L"Cascade")
 	RADIOBUTTON (L"Parallel")
@@ -2294,14 +2293,11 @@ FORM (KlattGrid_to_Sound, L"KlattGrid: To_Sound", L"KlattGrid: To Sound...")
 	BOOLEAN (L"Frication bypass", 1)
 	OK
 DO
-	struct synthesisParams p;
-	double minimumPitch = GET_REAL (L"Minimum pitch");
-	REQUIRE (minimumPitch >= 0, L"Minimum pitch must be greater equal zero.")
+	struct synthesisParams p = { 0 };
 	WHERE(SELECTED)
 	{
 		KlattGrid thee = OBJECT;
-		p.openglottis_fadeFraction = 0.1;
-		p.maximumPeriod = minimumPitch > 0 ? 1 / minimumPitch : 0;
+		p.openglottis_fadeFraction = 0.1;p.maximumPeriod = 0;
 		p.sourceIsFlowDerivative = 1; p.spectralTilt = 1; // via interface ?
 		p.samplingFrequency = GET_REAL (L"Sampling frequency");
 		p.filterModel = GET_INTEGER (L"Model") - 1; // 1: parallel, 0: cascade
@@ -2336,11 +2332,11 @@ FORM (KlattGrid_drawVocalTract, L"KlattGrid: Draw vocal tract", 0)
 	RADIO (L"Synthesis model", 1)
 	RADIOBUTTON (L"Cascade")
 	RADIOBUTTON (L"Parallel")
-	BOOLEAN (L"Include trachael formants", 1);
+	BOOLEAN (L"Include tracheal formants", 1);
 	OK
 DO
 	praat_picture_open ();
-		KlattGrid_drawVocalTract (ONLY_OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include trachael formants"));
+		KlattGrid_drawVocalTract (ONLY_OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include tracheal formants"));
 	praat_picture_close (); return 1;
 END
 
@@ -3519,8 +3515,8 @@ DO
 	if (f >= samplingFrequency / 2) return Melder_error2
 		(L"Frequency cannot be larger than half the sampling frequency.\n"
 			"Please use a frequency smaller than ", Melder_double (samplingFrequency / 2));
-	if (gamma < 0) return Melder_error1 (L"Gamma can not be negative.\nPlease use a positive or zero gamma.");
-	if (bandwidth < 0) return Melder_error1 (L"Bandwidth can not be negative.\nPlease use a positive or zero bandwidth.");
+	if (gamma < 0) return Melder_error1 (L"Gamma cannot be negative.\nPlease use a positive or zero gamma.");
+	if (bandwidth < 0) return Melder_error1 (L"Bandwidth cannot be negative.\nPlease use a positive or zero bandwidth.");
 	sound = Sound_createGammaTone (startingTime, finishingTime, samplingFrequency, gamma, f,
 		bandwidth, GET_REAL (L"Initial phase"), GET_REAL (L"Addition factor"),
 		GET_INTEGER (L"Scale amplitudes"));
@@ -3543,7 +3539,7 @@ DO
 	double amplitudeRange = GET_REAL (L"Amplitude range");
 	double octaveShiftFraction = GET_REAL (L"Octave shift fraction");
 	if (! Sound_create_checkCommonFields (dia, &startingTime, &finishingTime, &samplingFrequency)) return 0;
-	if (amplitudeRange < 0) return Melder_error1 (L"Amplitude range can not be negative.\nPlease use a positive or zero amplitude range.");
+	if (amplitudeRange < 0) return Melder_error1 (L"Amplitude range cannot be negative.\nPlease use a positive or zero amplitude range.");
 	sound = Sound_createShepardToneComplex (startingTime, finishingTime, samplingFrequency,
 		GET_REAL (L"Lowest frequency"), GET_INTEGER (L"Number of components"),
 		GET_REAL (L"Frequency change"), GET_REAL (L"Amplitude range"), octaveShiftFraction);
@@ -4677,6 +4673,11 @@ void praat_uvafon_David_init (void)
 		classSimpleString, classStringsIndex, classSSCP, classSVD, NULL);
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
+	praat_addMenuCommand (L"Objects", L"New", L"Acoustic synthesis (Klatt)", 0, 0, 0);
+	praat_addMenuCommand (L"Objects", L"New", L"KlattGrid help", 0, 1, DO_KlattGrid_help);
+	praat_addMenuCommand (L"Objects", L"New", L"-- the synthesizer grid --", 0, 1, 0);
+	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid...", 0, 1, DO_KlattGrid_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid example", 0, 1+praat_HIDDEN, DO_KlattGrid_createExample);
 		
  praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
     praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
@@ -4696,9 +4697,6 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Vowel...", 0, praat_HIDDEN, DO_Vowel_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Klatt synthesis", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid...", 0, praat_DEPTH_1, DO_KlattGrid_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid example", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_createExample);
 	
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);

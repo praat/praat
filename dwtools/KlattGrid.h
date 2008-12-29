@@ -47,6 +47,12 @@
 
 #include "KlattGrid_def.h"
 
+#define PhonationPoint_methods Data_methods
+oo_CLASS_CREATE (PhonationPoint, Data);
+
+#define PhonationTier_methods Function_methods
+oo_CLASS_CREATE (PhonationTier, Function);
+
 #define PhonationGrid_methods Function_methods
 oo_CLASS_CREATE (PhonationGrid, Function);
 
@@ -54,7 +60,7 @@ oo_CLASS_CREATE (PhonationGrid, Function);
 oo_CLASS_CREATE (VocalTractGrid, Function);
 
 #define CouplingGrid_methods Function_methods
-oo_CLASS_CREATE (CouplingGrid, FormantGrid);
+oo_CLASS_CREATE (CouplingGrid, Function);
 
 #define FricationGrid_methods Function_methods
 oo_CLASS_CREATE (FricationGrid, Function);
@@ -80,11 +86,24 @@ typedef struct synthesisParams {
 	KlattGrid *kg; // because of coupling between source and filter
 } *synthesisParams;
 
+/******************** PhonationPoint & Tier ************************************/
+
+PhonationPoint PhonationPoint_create (double time, double period, double openPhase, double collisionPhase, double te,
+	double power1, double power2, double pulseScale);
+
+PhonationTier PhonationTier_create (double tmin, double tmax);
+
 /************************ PhonationGrid *********************************************/
 
 PhonationGrid PhonationGrid_create (double tmin, double tmax);
 
+Sound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFrequency);
+
 void PhonationGrid_draw (PhonationGrid me, Graphics g);
+
+double PhonationGrid_getMaximumPeriod (PhonationGrid me);
+
+PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me, double maximumPeriod, int klatt80);
 
 /************************ VocalTractGrid *********************************************/
 
@@ -208,6 +227,8 @@ void KlattGrid_removeFricationBypassPointsBetween (KlattGrid me, double t1, doub
 IntensityTier KlattGrid_extractFricationBypassTier (KlattGrid me);
 int KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee);
 
+int KlattGrid_setGlottisCoupling (KlattGrid me, double maximumPeriod, int klatt80);
+
 /***************** KlattGrid & Sound *************************************/
 
 Sound KlattGrid_to_Sound_simple (KlattGrid me, double samplingFrequency, int filterType);
@@ -215,6 +236,8 @@ Sound KlattGrid_to_Sound_simple (KlattGrid me, double samplingFrequency, int fil
 int KlattGrid_play (KlattGrid me);
 
 Sound KlattGrid_to_Sound (KlattGrid me, synthesisParams params);
+
+Sound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency);
 
 int KlattGrid_synthesize (KlattGrid me, double t1, double t2, double samplingFrequency, double maximumPeriod);
 

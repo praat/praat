@@ -37,7 +37,7 @@ procedure test_get_add_remove_extract_replace
     call setget_1 "double pulsing" 0.4
     call setget_1 "spectral tilt" 20
     call setget_1 "aspiration amplitude" 90
-    call setget_1 "breathyness amplitude" 90
+    call setget_1 "breathiness amplitude" 90
 
     call setget_1 "frication bypass" 20
     call setget_1 "frication amplitude" 50
@@ -180,7 +180,7 @@ procedure test_deltaFormants
   Add formant point... "Normal formant" 1 0.003553 400
   Add formant point... "Normal formant" 1 0.002 300
   Add formant point... "Normal formant" 1 0.0112 430
-  .sound = To Sound... 44100 0 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes no
+  .sound = To Sound... 44100 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes no
   Remove
   select .kg
   To formant grid (open phases)... 0.1

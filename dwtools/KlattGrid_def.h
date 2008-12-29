@@ -21,6 +21,29 @@
  * djmw 20081112
  */
 
+#define ooSTRUCT PhonationPoint
+oo_DEFINE_CLASS (PhonationPoint, Data)
+
+	oo_DOUBLE (time)  /* AnyPoint : glottis closing time */
+	oo_DOUBLE (period)  /* 1/F0 */
+	oo_DOUBLE (openPhase)
+	oo_DOUBLE (collisionPhase)
+	oo_DOUBLE (te) // time from glottis open to exponential decay or closing
+	oo_DOUBLE (power1)  /* flow function */
+	oo_DOUBLE (power2)
+	oo_DOUBLE (pulseScale) /* multiplier for diplophonia, shimmer */
+	
+oo_END_CLASS (PhonationPoint)
+#undef ooSTRUCT
+
+#define ooSTRUCT PhonationTier
+oo_DEFINE_CLASS (PhonationTier, Function)
+
+	oo_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
+
+oo_END_CLASS (PhonationTier)
+#undef ooSTRUCT
+
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
 
@@ -60,7 +83,7 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 	oo_COLLECTION (Ordered, tracheal_formants_amplitudes, IntensityTier, 0)
 	oo_OBJECT (FormantGrid, 0, delta_formants)
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (RealTier, 0, glottisOpenDurations)
+		oo_OBJECT (PhonationTier, 0, glottis)
 	#endif
 
 oo_END_CLASS (CouplingGrid)

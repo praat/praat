@@ -447,6 +447,7 @@ if (! my printing) {
 			theCurrentPraat = my praat;
 			theCurrentPraat -> graphics = my g;
 			theCurrentPraat -> batch = true;
+			theCurrentPraat -> topShell = theForegroundPraat. topShell;
 			Melder_progressOff ();
 			Melder_warningOff ();
 			structMelderDir saveDir = { { 0 } };

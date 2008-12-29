@@ -1982,7 +1982,7 @@ MAN_END
 
 MAN_BEGIN (L"KlattGrid", L"djmw", 20081224)
 INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source as well as the filter, and the interaction between them. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
-/* Als ik deze scripts gebruik crasht Praat op een gegeven moment en de menustructur klopt niet meer. TODO: Nog uitzoeken waarom
+/* djmw 20081226 : The following scripts will still crash praat in an unpredictable way.
 NORMAL (L"The following drawing represents a cascade synthesizer with six normal formants, one nasal formant, "
 	"one nasal antiformant, one tracheal formant a, one tracheal antiformant and six frication formants. ")
 SCRIPT (6.0, 5.5,
@@ -2030,21 +2030,21 @@ TAG (L"%%Normal formants%")
 DEFINITION (L"represent the \"standard\" resonances of the vocal tract. ")
 TAG (L"%%Nasal formants%")
 DEFINITION (L"model resonances in the nasal tract. Because the form of the nasal tract does not vary much during the course of an utterance, nasal formants tend to be constant. ")
-TAG (L"%%Nasal anti-formants%")
+TAG (L"%%Nasal antiformants%")
 DEFINITION (L"model dips in the spectrum caused by leakage to the nasal tract.")
-TAG (L"%%Tracheal anti-formants%")
-DEFINITION (L"model dips in the spectrum caused by the trachea.")
 ENTRY (L"Interaction between source and filter")
 NORMAL (L"The interaction between source and filter is modeled by two formant grids.")
 TAG (L"%%Tracheal formants%")
 DEFINITION (L"model one aspect of the coupling of the trachea with the vocal tract transfer function, namely, by the "
-	"introduction of extra formants (and anti-formants) that sometimes distort vowel spectra to a varying degrees. "
+	"introduction of extra formants (and antiformants) that sometimes distort vowel spectra to a varying degrees. "
 	"According to @@Klatt & Klatt (1990)@, the other effect being increased losses at glottal termination which primarily affect first-formant bandwidths.")
+TAG (L"%%Tracheal antiformants%")
+DEFINITION (L"model dips in the spectrum caused by the trachea.")
 TAG (L"%%Delta formants%")
 DEFINITION (L"The values in this grid model the number of Hertz that the formants and/or bandwidths change during the open phase "
 	"of the glottis. @@Klatt & Klatt (1990)@ distinguish four types of source-filter interactions: an F1 ripple in the "
 	"source waveform, a non-linear interaction between the first formant and the fundamental frequency, a truncation of "
-	"the first formant and tracheal formants and anti-formants. ")
+	"the first formant and tracheal formants and antiformants. ")
 ENTRY (L"The frication section")
 NORMAL (L"The frication section is modeled with a frication formant grid, with formant frequencies, bandwidths and (separate) "
 	"amplitudes, a frication by-pass tier and an amplitude tier that governs the frication noise source.")
@@ -2757,7 +2757,7 @@ DEFINITION (L"Default a regex is case sensitive. ")
 LIST_ITEM1 (L"Example: \"(?iaa)\" matches \"aa\", \"aA\", \"Aa\" and \"AA\".")
 TAG (L"##(?n#%regex#)#   matches newlines.")
 TAG (L"##(?N#%regex#)#   doesn't match newlines.") 
-NORMAL (L"All the constructs above do not capture text and can not be "
+NORMAL (L"All the constructs above do not capture text and cannot be "
 	"referenced, i.e., the parenthesis are not counted. However, you "
 	"can make them capture text by surrounding them with %ordinary "
 	"parenthesis.")
