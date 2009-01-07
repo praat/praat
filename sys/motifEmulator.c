@@ -2296,7 +2296,7 @@ void XtDestroyWidget (Widget me) {
 	}
 	while (subview) {
 		Widget nextSibling = subview -> nextSibling;   /* Save... */
-		if (subview -> widgetClass != xmShellWidgetClass)   /* FIX instead of Xm's being_destroyed mark. */
+		//if (subview -> widgetClass != xmShellWidgetClass)   /* FIX instead of Xm's being_destroyed mark. */   // removed 20090105
 			XtDestroyWidget (subview);
 		subview = nextSibling;   /* ...because we can't dereference dead subview. */
 	}

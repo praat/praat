@@ -1,6 +1,6 @@
 /* Ui.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,11 @@
  * pb 2007/06/09 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2007/12/30 Gui
+ * pb 2009/01/04 UiForm_widgetsToValues ()
+ * pb 2009/01/05 pause forms (e.g. Revert button)
  */
 
-#include <ctype.h>
+#include <wctype.h>
 #include "longchar.h"
 #include "machine.h"
 #include "Gui.h"
@@ -366,9 +368,9 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
-			double realValue;
 			if (wcsspn (string, L" \t") == wcslen (string))
 				return Melder_error3 (L"Argument `", my name, L"' empty.");
+			double realValue;
 			if (! Interpreter_numericExpression (theCurrentInterpreter, string, & realValue)) return 0;
 			my integerValue = floor (realValue + 0.5);
 			if (my type == UI_NATURAL && my integerValue < 1)
@@ -381,9 +383,8 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			my integerValue = string [0] == '1' || string [0] == 'y' || string [0] == 'Y' ||
 				string [0] == 't' || string [0] == 'T';
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			int i;
 			my integerValue = 0;
-			for (i = 1; i <= my options -> size; i ++) {
+			for (int i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
 				if (wcsequ (string, b -> name))
 					my integerValue = i;
@@ -392,7 +393,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 				/*
 				 * Retry with different case.
 				 */
-				for (i = 1; i <= my options -> size; i ++) {
+				for (int i = 1; i <= my options -> size; i ++) {
 					UiOption b = my options -> item [i];
 					wchar_t name2 [100];
 					wcscpy (name2, b -> name);
@@ -503,12 +504,14 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 	EditorCommand command; \
 	Widget parent, shell, dialog; \
 	int (*okCallback) (Any dia, void *closure); \
-	void *okClosure; \
+	int (*applyCallback) (Any dia, void *closure); \
+	int (*cancelCallback) (Any dia, void *closure); \
+	void *buttonClosure; \
 	const wchar_t *helpTitle; \
 	int numberOfFields; \
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS]; \
-	Widget okButton, cancelButton, useStandards, helpButton, applyButton; \
-	int destroyWhenUnmanaged; \
+	Widget okButton, cancelButton, revertButton, helpButton, applyButton; \
+	bool destroyWhenUnmanaged, isPauseForm; \
 	int (*allowExecutionHook) (void *closure); \
 	void *allowExecutionClosure;
 #define UiForm_methods Thing_methods
@@ -528,23 +531,35 @@ class_methods (UiForm, Thing) {
 	class_method_local (UiForm, destroy)
 class_methods_end }
 
-static void gui_button_cb_useStandards (I, GuiButtonEvent event) {
+static void gui_button_cb_revert (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
 }
 
-static void UiForm_hide (I) {
+static void gui_dialog_cb_close (I) {
 	iam (UiForm);
+	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
 	GuiObject_hide (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
 }
-static void gui_button_UiForm_hide (I, GuiButtonEvent event) {
+static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
+	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
 	GuiObject_hide (my dialog);
 	if (my destroyWhenUnmanaged) forget (me);
+}
+
+int UiForm_widgetsToValues (I) {
+	iam (UiForm);
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		if (! UiField_widgetToValue (my field [ifield])) {
+			return Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my name, L_RIGHT_SINGLE_QUOTE L" or cancel.");
+		}
+	}
+	return 1;
 }
 
 static void UiForm_okOrApply (I, int hide) {
@@ -554,36 +569,37 @@ static void UiForm_okOrApply (I, int hide) {
 		Melder_flushError (NULL);
 		return;
 	}
-	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
-		if (! UiField_widgetToValue (my field [ifield])) {
-			Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my name, L_RIGHT_SINGLE_QUOTE L" or cancel.");
-			Melder_flushError (NULL);
-			return;
-		}
+	if (! UiForm_widgetsToValues (me)) {
+		Melder_flushError (NULL);
+		return;
 	}
 	/* In the next, w must become my okButton? */
 	/*XtRemoveCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
 	GuiObject_setSensitive (my okButton, False);
 	if (my applyButton) GuiObject_setSensitive (my applyButton, False);
 	GuiObject_setSensitive (my cancelButton, False);
-	if (my useStandards) GuiObject_setSensitive (my useStandards, False);
+	if (my revertButton) GuiObject_setSensitive (my revertButton, False);
 	if (my helpButton) GuiObject_setSensitive (my helpButton, False);
 	#if motif
 	XmUpdateDisplay (my dialog);
 	#endif
-	if (my okCallback (me, my okClosure)) {
-		int destroyWhenUnmanaged = my destroyWhenUnmanaged;   /* Save before destruction. */
+	if (my okCallback (me, my buttonClosure)) {
 		/*
 		 * Write everything to history. Before destruction!
 		 */
-		int size = my numberOfFields;
-		while (size >= 1 && my field [size] -> type == UI_LABEL)
-			size --;   /* Ignore trailing fields without a value. */
-		for (int ifield = 1; ifield <= size; ifield ++)
-			UiField_valueToHistory (my field [ifield], ifield == size);
+		if (! my isPauseForm) {
+			int size = my numberOfFields;
+			while (size >= 1 && my field [size] -> type == UI_LABEL)
+				size --;   /* Ignore trailing fields without a value. */
+			for (int ifield = 1; ifield <= size; ifield ++)
+				UiField_valueToHistory (my field [ifield], ifield == size);
+		}
 		if (hide) {
-			gui_button_UiForm_hide (me, 0);   // BUG: should not send 0
-			if (destroyWhenUnmanaged) return;
+			GuiObject_hide (my dialog);
+			if (my destroyWhenUnmanaged) {
+				forget (me);
+				return;
+			}
 		}
 	} else {
 		/*
@@ -607,17 +623,17 @@ static void UiForm_okOrApply (I, int hide) {
 	GuiObject_setSensitive (my okButton, True);
 	if (my applyButton) GuiObject_setSensitive (my applyButton, True);
 	GuiObject_setSensitive (my cancelButton, True);
-	if (my useStandards) GuiObject_setSensitive (my useStandards, True);
+	if (my revertButton) GuiObject_setSensitive (my revertButton, True);
 	if (my helpButton) GuiObject_setSensitive (my helpButton, True);
 }
 
-static void gui_button_UiForm_ok (I, GuiButtonEvent event) {
+static void gui_button_cb_ok (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, true);
 }
 
-static void gui_button_UiForm_apply (I, GuiButtonEvent event) {
+static void gui_button_cb_apply (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
 	UiForm_okOrApply (me, false);
@@ -630,7 +646,7 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 }
 
 Any UiForm_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (Any dia, void *closure), void *okClosure,
+	int (*okCallback) (Any dia, void *closure), void *buttonClosure,
 	const wchar_t *helpTitle)
 {
 	UiForm me = new (UiForm);
@@ -638,8 +654,14 @@ Any UiForm_create (Widget parent, const wchar_t *title,
 	Thing_setName (me, title);
 	my helpTitle = Melder_wcsdup (helpTitle);
 	my okCallback = okCallback;
-	my okClosure = okClosure;
+	my buttonClosure = buttonClosure;
 	return me;
+}
+
+void UiForm_setPauseForm (I, int (*cancelCallback) (Any dia, void *closure)) {
+	iam (UiForm);
+	my isPauseForm = true;
+	my cancelCallback = cancelCallback;
 }
 
 static int commonOkCallback (Any dia, void *closure) {
@@ -841,8 +863,8 @@ void UiForm_finish (I) {
 			textFieldHeight;
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
-	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, UiForm_hide, me, 0);
-	
+	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, gui_dialog_cb_close, me, 0);
+
 	#if gtk
 		form = GTK_DIALOG(my dialog) -> vbox;
 		buttons = GTK_DIALOG(my dialog) -> action_area;
@@ -1021,30 +1043,30 @@ void UiForm_finish (I) {
 			L"Help", gui_button_cb_help, me, 0);
 	}
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
-		my useStandards = GuiButton_createShown (buttons,
+		my revertButton = GuiButton_createShown (buttons,
 			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,
 			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + DEF_BUTTON_WIDTH,
 			y, Gui_AUTOMATIC,
-			L"Standards", gui_button_cb_useStandards, me, 0);
+			my isPauseForm ? L"Revert" : L"Standards", gui_button_cb_revert, me, 0);
 	}
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
 		 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
 	my cancelButton = GuiButton_createShown (buttons, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"Cancel", gui_button_UiForm_hide, me, GuiButton_CANCEL);
+		my isPauseForm ? L"Stop" : L"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
-	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
+	if (! my isPauseForm && (my numberOfFields > 1 || my field [1] -> type != UI_LABEL)) {
 		my applyButton = GuiButton_createShown (buttons, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-			L"Apply", gui_button_UiForm_apply, me, 0);
+			L"Apply", gui_button_cb_apply, me, 0);
 	}
 	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
 	my okButton = GuiButton_createShown (buttons, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"OK", gui_button_UiForm_ok, me, GuiButton_DEFAULT);
+		my isPauseForm ? L"Continue" : L"OK", gui_button_cb_ok, me, GuiButton_DEFAULT);
 	/*GuiObject_show (separator);*/
 }
 
 void UiForm_destroyWhenUnmanaged (I) {
 	iam (UiForm);
-	my destroyWhenUnmanaged = 1;
+	my destroyWhenUnmanaged = true;
 }
 
 void UiForm_do (I, bool modified) {
@@ -1057,15 +1079,15 @@ void UiForm_do (I, bool modified) {
 	/*XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	GuiDialog_show (my dialog);
 	if (modified)
-		gui_button_UiForm_ok (me, 0);   // BUG: should not send 0
+		UiForm_okOrApply (me, true);
 }
 
 int UiForm_parseString (I, const wchar_t *arguments) {
 	iam (UiForm);
-	int i, size = my numberOfFields;
+	int size = my numberOfFields;
 	while (size >= 1 && my field [size] -> type == UI_LABEL)
 		size --;   /* Ignore trailing fields without a value. */
-	for (i = 1; i < size; i ++) {
+	for (int i = 1; i < size; i ++) {
 		static wchar_t stringValue [3000];
 		int ichar = 0;
 		if (my field [i] -> type == UI_LABEL)
@@ -1106,7 +1128,7 @@ int UiForm_parseString (I, const wchar_t *arguments) {
 		if (! UiField_stringToValue (my field [size], arguments))
 			return Melder_error3 (L"Don't understand contents of field \"", my field [size] -> name, L"\".");
 	}
-	return my okCallback (me, my okClosure);
+	return my okCallback (me, my buttonClosure);
 }
 
 int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments) {
@@ -1114,8 +1136,7 @@ int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments) {
 }
 
 static UiField findField_lenient (UiForm me, const wchar_t *fieldName) {
-	int ifield;
-	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		if (wcsequ (fieldName, my field [ifield] -> name)) return my field [ifield];
 	return NULL;
 }
@@ -1380,6 +1401,63 @@ wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 	}
 end:
 	return NULL;
+}
+
+int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
+	iam (UiForm);
+	//Melder_casual ("Adding %ld variables to interpreter %ld", my numberOfFields, interpreter);
+	static MelderString lowerCaseFieldName = { 0 };
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		UiField field = my field [ifield];
+		MelderString_copy (& lowerCaseFieldName, field -> name);
+		/*
+		 * Change e.g. "Number of people" to "number_of_people".
+		 */
+		lowerCaseFieldName.string [0] = towlower (lowerCaseFieldName.string [0]);
+		for (wchar_t *p = & lowerCaseFieldName.string [0]; *p != '\0'; p ++) {
+			if (*p == ' ') *p = '_';
+		}
+		switch (field -> type) {
+			case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: {
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				var -> numericValue = field -> integerValue;
+			} break; case UI_REAL: case UI_POSITIVE: case UI_COLOUR: {
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				var -> numericValue = field -> realValue;
+			} break; case UI_RADIO: case UI_OPTIONMENU: {
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				var -> numericValue = field -> integerValue;
+				MelderString_appendCharacter (& lowerCaseFieldName, '$');
+				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				Melder_free (var -> stringValue);
+				UiOption b = field -> options -> item [field -> integerValue];
+				var -> stringValue = Melder_wcsdup (b -> name);
+			} break; case UI_ENUM: {
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				var -> numericValue = field -> integerValue;
+				MelderString_appendCharacter (& lowerCaseFieldName, '$');
+				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				Melder_free (var -> stringValue);
+				var -> stringValue = Melder_wcsdup (enum_string (field -> enumerated, field -> integerValue));
+			} break; case UI_LIST: {
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				var -> numericValue = field -> integerValue;
+				MelderString_appendCharacter (& lowerCaseFieldName, '$');
+				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				Melder_free (var -> stringValue);
+				var -> stringValue = Melder_wcsdup ((wchar_t *) field -> strings [field -> integerValue]);
+			} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+				MelderString_appendCharacter (& lowerCaseFieldName, '$');
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
+				Melder_free (var -> stringValue);
+				var -> stringValue = Melder_wcsdup (field -> stringValue);
+			} break; default: {
+			}
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
 }
 
 /* End of file Ui.c */

@@ -983,7 +983,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 			voice += my amp_breth * my nrand;
 		}
 
-		/* Set amplitude of voicing */
+		/* Set voicing amplitude */
 
 		glotout = my amp_voice * voice;
 		par_glotout = my par_amp_voice * voice;

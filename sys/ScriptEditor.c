@@ -96,14 +96,13 @@ static int args_ok (Any dia, I) {
 
 static void run (ScriptEditor me, wchar_t **text) {
 	structMelderFile file = { 0 };
-	int npar;
 	if (my name) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (text);
 	iferror { Melder_flushError (NULL); return; }
-	npar = Interpreter_readParameters (my interpreter, *text);
+	int npar = Interpreter_readParameters (my interpreter, *text);
 	iferror { Melder_flushError (NULL); return; }
 	if (npar) {
 		/*
@@ -132,8 +131,7 @@ static int menu_cb_go (EDITOR_ARGS) {
 static int menu_cb_runSelection (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	wchar_t *text = GuiText_getSelection (my textWidget);
-	if (! text) {
-		Melder_free (text);
+	if (text == NULL) {
 		return Melder_error1 (L"No text selected.");
 	}
 	run (me, & text);
@@ -226,12 +224,10 @@ static int menu_cb_clearHistory (EDITOR_ARGS) {
 
 static int menu_cb_viewHistory (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
-	long first = 0, last = 0;
 	wchar_t *history = UiHistory_get ();
-	long length;
-	if (! history || history [0] == '\0')
+	if (history == NULL || history [0] == '\0')
 		return Melder_error1 (L"No history.");
-	length = wcslen (history);
+	long length = wcslen (history);
 	if (history [length - 1] != '\n') {
 		UiHistory_write (L"\n");
 		history = UiHistory_get ();
@@ -241,6 +237,7 @@ static int menu_cb_viewHistory (EDITOR_ARGS) {
 		history ++;
 		length --;
 	}
+	long first = 0, last = 0;
 	GuiText_getSelectionPosition (my textWidget, & first, & last);
 	GuiText_replace (my textWidget, first, last, history);
 	#if defined (UNIX) || defined (macintosh)
@@ -304,16 +301,19 @@ class_methods (ScriptEditor, TextEditor) {
 
 ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const wchar_t *initialText) {
 	Editor editor = (Editor) voidEditor;
-	ScriptEditor me = new (ScriptEditor);
-	if (! me) return NULL;
-	if (editor) {
+	ScriptEditor me = new (ScriptEditor); cherror
+	if (editor != NULL) {
 		my environmentName = Melder_wcsdup (editor -> name);
 		my editorClass = editor -> methods;
 	}
-	if (! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
-	my interpreter = Interpreter_createFromEnvironment (editor);
-	if (! theScriptEditors) theScriptEditors = Collection_create (NULL, 10);
-	Collection_addItem (theScriptEditors, me);
+	TextEditor_init (me, parent, initialText); cherror
+	my interpreter = Interpreter_createFromEnvironment (editor); cherror
+	if (theScriptEditors == NULL) {
+		theScriptEditors = Collection_create (NULL, 10); cherror
+	}
+	Collection_addItem (theScriptEditors, me); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 
@@ -328,14 +328,14 @@ ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Scrip
 			}
 		}
 	}
-	ScriptEditor me;
-	wchar_t *text = MelderFile_readText (& script -> file);
-	if (! text) return NULL;
-	me = ScriptEditor_createFromText (parent, voidEditor, text);
-	Melder_free (text);
-	if (! me) return NULL;
+	ScriptEditor me = NULL;
+	wchar_t *text = MelderFile_readText (& script -> file); cherror
+	me = ScriptEditor_createFromText (parent, voidEditor, text); cherror
 	MelderFile_copy (& script -> file, & my file);
-	Thing_setName (me, Melder_fileToPath (& script -> file));
+	Thing_setName (me, Melder_fileToPath (& script -> file)); cherror
+end:
+	iferror forget (me);
+	Melder_free (text);
 	return me;
 }
 

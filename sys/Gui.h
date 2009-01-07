@@ -511,10 +511,11 @@ void GuiText_setString (Widget widget, const wchar_t *text);
 void GuiText_undo (Widget widget);
 void GuiText_updateChangeCountAfterSave (Widget widget);
 
-Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
+Widget GuiWindow_create (Widget parentOfShell, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
-void GuiWindow_show (Widget widget);
-void GuiWindow_setTitle (Widget widget, const wchar_t *titleW);
+	// returns a Form widget that has a new Shell parent.
+void GuiWindow_show (Widget form);
+void GuiWindow_setTitle (Widget shell, const wchar_t *title);
 int GuiWindow_setDirty (Widget shell, int dirty);
 /*
 	Purpose: like on MacOSX you get this little dot in the red close button,

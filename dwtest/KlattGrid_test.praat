@@ -145,6 +145,9 @@ procedure setget_formants .type$
     call setget_3 "bandwidth" "'.type$' formant" .i .time .b
     call setget_3a "amplitude" "'.type$' formant" .i .time .a
   endfor
+  select kg
+  Formula (frequencies)... "'.type$' formant" self + 100
+  Formula (bandwidths)... "'.type$' formant" self * 2
 endproc
 
 
@@ -183,7 +186,7 @@ procedure test_deltaFormants
   .sound = To Sound... 44100 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes no
   Remove
   select .kg
-  To formant grid (open phases)... 0.1
+  Extract formant grid (open phases)... 0.1
 endproc
 
 

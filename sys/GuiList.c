@@ -52,6 +52,7 @@ typedef struct structGuiList {
 		GtkListStore *liststore;
 	#elif win
 	#elif mac
+		Widget scrolled;
 		ListHandle macListHandle;
 	#elif motif
 	#endif
@@ -372,9 +373,9 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		}*/
 		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif mac
-		Widget scrolled = XmCreateScrolledWindow (parent, "scrolled", NULL, 0);
-		_GuiObject_position (scrolled, left, right, top, bottom);
-		my widget = _Gui_initializeWidget (xmListWidgetClass, scrolled, L"list");
+		my scrolled = XmCreateScrolledWindow (parent, "scrolled", NULL, 0);
+		_GuiObject_position (my scrolled, left, right, top, bottom);
+		my widget = _Gui_initializeWidget (xmListWidgetClass, my scrolled, L"list");
 		_GuiObject_setUserData (my widget, me);
 		if (USE_MAC_LISTBOX_CONTROL) {
 			CreateListBoxControl (my widget -> macWindow, & my widget -> rect, false, 1000, 1, true, true,
@@ -452,6 +453,8 @@ void GuiList_deleteItem (Widget widget, long position) {
 		_GuiMac_clipOnParent (widget);
 		LDelRow (1, position - 1, my macListHandle);
 		GuiMac_clipOff ();
+		long n = (** my macListHandle). dataBounds. bottom;
+		XtVaSetValues (widget, XmNheight, n * CELL_HEIGHT, NULL);
 	#elif motif
 		XmListDeletePos (widget, position);
 	#endif
@@ -592,17 +595,20 @@ long GuiList_getBottomPosition (Widget widget) {
 		long bottom = ListBox_GetTopIndex (widget -> window) + widget -> height / ListBox_GetItemHeight (widget -> window, 0);
 		if (bottom < 1) bottom = 1;
 		long n = ListBox_GetCount (widget -> window);
-		if (bottom > n) bottom = 0;
+		if (bottom > n) bottom = n;
 		return bottom;
 	#elif mac
 		iam_list;
 		Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
 		Widget clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
 		Widget workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
-		long bottom = (clipWindow -> rect.bottom - workWindow -> rect.bottom - 5) / CELL_HEIGHT + 1;
-		if (bottom < 1) bottom = 1;
+		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
+		long visible = (clipWindow -> rect.bottom - clipWindow -> rect.top - 5) / CELL_HEIGHT + 1;
 		long n = (** my macListHandle). dataBounds. bottom;
-		if (bottom > n) bottom = 0;
+		if (visible > n) visible = n;
+		long bottom = top + visible - 1;
+		if (bottom < 1) bottom = 1;
+		if (bottom > n) bottom = n;
 		return bottom;
 	#elif motif
 		int top, visible;
@@ -795,6 +801,7 @@ void GuiList_setSelectionChangedCallback (Widget widget, void (*callback) (void 
 }
 
 void GuiList_setTopPosition (Widget widget, long topPosition) {
+Melder_casual ("Set top position %ld", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);
@@ -804,9 +811,11 @@ void GuiList_setTopPosition (Widget widget, long topPosition) {
 		ListBox_SetTopIndex (widget -> window, topPosition - 1);
 	#elif mac
 		iam_list;
-		_GuiMac_clipOnParent (widget);
-		LScroll (0, topPosition - (** my macListHandle). visible. top - 1, my macListHandle);
-		GuiMac_clipOff ();
+		//_GuiMac_clipOnParent (widget);
+		//LScroll (0, topPosition - (** my macListHandle). visible. top - 1, my macListHandle);   // TODO: implement
+		//GuiMac_clipOff ();
+		//my scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
+		XtVaSetValues (widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, NULL);
 	#elif motif
 		XmListSetPos (widget, topPosition);
 	#endif

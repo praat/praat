@@ -518,6 +518,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	my dialog = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, 0);
 	if (! my dialog) return 0;
 	my shell = GuiObject_parent (my dialog);   /* Note that GuiObject_parent (my shell) will be NULL! */
+	//Melder_casual ("my parent %ld my dialog %ld my shell %ld", my parent, my dialog, my shell);
 	Thing_setName (me, title);
 	my data = data;
 
@@ -526,7 +527,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	my menus = Ordered_create ();
 	my menuBar = Gui_addMenuBar (my dialog);
 	our createMenus (me);
-	Melder_clearError ();   /* TEMPORARY: to protect against CategoriesEditor */
+	Melder_clearError ();   /* FIXME: to protect against CategoriesEditor */
 	EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
 	our createHelpMenuItems (me, helpMenu);
 	EditorMenu_addCommand (helpMenu, L"-- search --", 0, NULL);

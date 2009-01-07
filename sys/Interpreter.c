@@ -1,6 +1,6 @@
 /* Interpreter.c
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@
  * pb 2008/04/30 new Formula API
  * pb 2008/05/01 arrays
  * pb 2008/05/15 praatVersion, praatVersion$
+ * pb 2009/01/04 Interpreter_voidExpression
  */
 
 #include <ctype.h>
@@ -95,9 +96,8 @@ static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
 
 static void classInterpreter_destroy (I) {
 	iam (Interpreter);
-	int ipar;
 	Melder_free (my environmentName);
-	for (ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
+	for (int ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
 		Melder_free (my arguments [ipar]);
 	forget (my variables);
 	inherited (Interpreter) destroy (me);
@@ -748,6 +748,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	 */
 	#define wordEnd(c)  (c == '\0' || c == ' ' || c == '\t')
 	for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
+		if (my stopped) { my stopped = false; goto end2; }
 		int c0, fail = FALSE;
 		wchar_t *p;
 		MelderString_copy (& command2, lines [lineNumber]);
@@ -1387,7 +1388,9 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * Get the value of the formula.
 					 */
+					UiInterpreter_set (me);
 					Interpreter_numericExpression (me, p, & value); cherror
+					UiInterpreter_set (NULL);
 				}
 				/*
 				 * Assign the value to a variable.
@@ -1460,6 +1463,19 @@ end2:
 	MelderString_free (& command2);
 	MelderString_free (& buffer);
 	my numberOfLabels = 0;
+	iferror return 0;
+	return 1;
+}
+
+void Interpreter_stop (Interpreter me) {
+	my stopped = true;
+}
+
+int Interpreter_voidExpression (Interpreter me, const wchar_t *expression) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); cherror
+	struct Formula_Result result;
+	Formula_run (0, 0, & result); cherror
+end:
 	iferror return 0;
 	return 1;
 }

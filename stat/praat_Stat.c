@@ -678,6 +678,7 @@ DO
 	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
 		L" and column ", Table_messageColumn (me, column2), L":");
 	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
+	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_integer (my rows -> size - 2));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),

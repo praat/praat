@@ -1,6 +1,6 @@
 /* praat_script.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2007/02/17 corrected the messages about trailing spaces
  * pb 2007/06/11 wchar_t
  * pb 2007/10/04 removed swscanf
+ * pb 2009/01/04 allow proc(args) syntax
  */
 
 #include <ctype.h>
@@ -174,14 +175,14 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"nocheck ", 8)) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
-		} else if (wcsnequ (command, L"pause", 5)) {
+		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
 			int wasBackgrounding = Melder_backgrounding;
 			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);
 			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
 			if (wasBackgrounding) praat_foreground ();
-			if (! Melder_pause (command + 5)) return Melder_error1 (L"You interrupted the script.");
+			if (! Melder_pause (wcsequ (command, L"pause") ? L"" : command + 6)) return Melder_error1 (L"You interrupted the script.");
 			if (wasBackgrounding) praat_background ();
 			Melder_setDefaultDir (& dir);
 			/* BUG: should also restore praatP. editor. */
@@ -285,27 +286,14 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 				if (! MelderFile_appendText (& file, p + 1)) return 0;
 			}
 		} else {
-			if (wcsnequ (command, L"getinfostring ", 14))
-				return Melder_error1 (L"Command \"getinfostring\" no longer supported. Consult scripting tutorial or the author.");
-			if (wcsnequ (command, L"getinfonumber ", 14))
-				return Melder_error1 (L"Command \"getinfonumber\" no longer supported. Consult scripting tutorial or the author.");
-			if (wcsnequ (command, L"getnameofselected ", 18))
-				return Melder_error1 (L"Command \"getnameofselected\" no longer supported. Instead use things like: name$ = selected$ (\"Sound\")");
-			if (wcsnequ (command, L"getidofselected ", 16))
-				return Melder_error1 (L"Command \"getidofselected\" no longer supported. Instead use things like: id = selected (\"Sound\")");
-			if (wcsnequ (command, L"getnumberofselected ", 20))
-				return Melder_error1 (L"Command \"getnumberofselected\" no longer supported. Instead use things like: n = numberOfSelected (\"Sound\")");
-			if (wcsnequ (command, L"getnumber ", 10))
-				return Melder_error1 (L"Command \"getnumber\" no longer supported. Instead use things like: \"variable = Menu command\".");
-			if (wcsnequ (command, L"getstring ", 10))
-				return Melder_error1 (L"Command \"getstring\" no longer supported. Instead use things like: \"variable$ = Menu command\".");
-			if (wcsnequ (command, L"let ", 4))
-				return Melder_error1 (L"Command \"let\" no longer supported. Instead use things like: \"variable = numeric-formula\" or \"variable$ = string-formula\".");
-			if (wcsnequ (command, L"proc ", 5))
-				return Melder_error1 (L"Command \"proc\" no longer supported. Instead use \"procedure\", and distinguish between numeric variables and string variables.");
-			if (wcsnequ (command, L"copy ", 5))
-				return Melder_error1 (L"Command \"copy x y\" no longer supported. Instead use normal assignments, i.e. y = x.");
-			return Melder_error2 (L"Unknown command: ", command);
+			/*
+			 * This must be a formula command:
+			 *    proc (args)
+			 */
+			UiInterpreter_set (interpreter);
+			int status = Interpreter_voidExpression (interpreter, command);
+			UiInterpreter_set (NULL);
+			return status;
 		}
 	} else {   /* Simulate menu choice. */
 		wchar_t *arguments;
@@ -337,6 +325,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			 wcsnequ (command, L"Append ", 7) ||
 			 wcsequ (command, L"Quit")))
 		{
+			UiInterpreter_set (NULL);
 			return Melder_error1 (L"Commands that write files (including Quit) are not available inside pictures.");
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {

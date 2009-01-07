@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  djmw 20070620 Latest modification.
  pb 20080320 split off Help menu
  pb 20080321 new Editor API
+ djmw 20090107 Removed a bug in update that caused editor to crash on replace
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -449,7 +450,8 @@ static void notifyOutOfView (I)
 {
 	iam (CategoriesEditor); 
 	MelderString tmp = { 0 };
-	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount); 
+	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
+	MelderString_append1 (&tmp, L"");
 	if (posList != NULL)
 	{
 		long outOfView = 0, top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
@@ -463,7 +465,6 @@ static void notifyOutOfView (I)
 		{
 			MelderString_append2 (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
 		}
-		else MelderString_append1 (&tmp, L"");
 	}
 	GuiLabel_setString (my outOfView, tmp.string);
 	MelderString_free (&tmp);
@@ -517,11 +518,11 @@ static void updateWidgets (I) /*all buttons except undo & redo */
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
 		my position = firstPos;	
-		remove = True; replace = True; insertAtEnd = False;
+		remove = True; replace = True; //insertAtEnd = False;
 		if (posCount == 1)
 		{
 			insert = True;
-			if (posList[1] == size) insertAtEnd = True;
+			//if (posList[1] == size) insertAtEnd = True;
 			if (size == 1 && ! wcscmp (CategoriesEditor_EMPTYLABEL,
 				OrderedOfString_itemAtIndex_c (my data, 1))) remove = False; 
 		}
@@ -577,8 +578,10 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		}*/
 		for (k = 0, i = from; i <= to; i++)
 		{
+			wchar_t wcindex[20];
 			MelderString_empty (&itemText);
-			MelderString_append2 (&itemText, Melder_integer (i), OrderedOfString_itemAtIndex_c (my data, i));
+			swprintf (wcindex, 19, L"%5ld ", i);
+			MelderString_append2 (&itemText, wcindex, OrderedOfString_itemAtIndex_c (my data, i));
 			table[k++] = Melder_wcsdup (itemText.string);
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
@@ -596,9 +599,9 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		}
 		if (from <= itemCount)
 		{
-			long n = ( to < itemCount ? to : itemCount );
-			for (long j = 0; j < n; j ++) {
-				GuiList_replaceItem (my list, table [j], from + j);
+			long n = (to < itemCount ? to : itemCount);
+			for (long j = 0; j < n - from + 1; j++) {
+				GuiList_replaceItem (my list, table[j], from + j);
 			}
 		}
 		for (k = 0, i = from; i <= to; i++)
@@ -841,16 +844,23 @@ static void createHelpMenuItems (I, EditorMenu menu)
 	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', menu_cb_help);
 }
 
+// origin is at top left.
 static void createChildren (I)
 {
 	iam (CategoriesEditor);
 	Widget vertScrollBar;
-	int menuBarOffset = 40;
-	
-	GuiLabel_createShown (my dialog, 5, 100, 3+menuBarOffset, Gui_AUTOMATIC, L"Positions:", 0);
-	GuiLabel_createShown (my dialog, 100, 190, 3+menuBarOffset, Gui_AUTOMATIC, L"Values:", 0);
+	double menuBarOffset = 40;
+	double button_width = 90, button_height = menuBarOffset, list_width = 260, list_height = 200, list_bottom;
+	double delta_x = 15, delta_y = menuBarOffset / 2, text_button_height = button_height / 2;
+	double left, right, top, bottom, buttons_left, buttons_top;
 
-	my list = GuiList_create (my dialog, 0, 260, 40+menuBarOffset, 140+menuBarOffset, true, NULL);
+	left = 5; right = left + button_width; top = 3 + menuBarOffset; bottom = top + text_button_height;
+	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Positions:", 0);
+	left = right + delta_x ; right = left + button_width;
+	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Values:", 0);
+
+	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
+	my list = GuiList_create (my dialog, left, right, top, bottom, true, NULL);
 	GuiList_setSelectionChangedCallback (my list, gui_list_cb_extended, me);
 	GuiList_setDoubleClickCallback (my list, gui_list_cb_double_click, me);
 	GuiObject_show (my list);
@@ -877,28 +887,31 @@ static void createChildren (I)
 		#endif
 	#endif
 
-	GuiLabel_createShown (my dialog, 280, 370, 3+menuBarOffset, Gui_AUTOMATIC, L"Value:", 0);
-	my text = GuiText_createShown (my dialog, 370, 510, 3+menuBarOffset, Gui_AUTOMATIC, 0);
+	buttons_left = left = right + 2*delta_x; right = left + button_width; bottom = top + button_height;
+	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Value:", 0);
+	left = right + delta_x; right = left + button_width;
+	my text = GuiText_createShown (my dialog, left, right, top, bottom, 0);
 	GuiText_setString (my text, CategoriesEditor_EMPTYLABEL);
 				 
-	my insert = GuiButton_createShown (my dialog, 280, 370, 43+menuBarOffset, Gui_AUTOMATIC,
-		L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
-	my replace = GuiButton_createShown (my dialog, 380, 470, 43+menuBarOffset, Gui_AUTOMATIC,
-		L"Replace", gui_button_cb_replace, me, 0);
-	my insertAtEnd = GuiButton_createShown (my dialog, 280, 470, 83+menuBarOffset, Gui_AUTOMATIC,
-		L"Insert at end", gui_button_cb_insertAtEnd, me, 0);
-	my undo = GuiButton_createShown (my dialog, 280, 470, 140+menuBarOffset, Gui_AUTOMATIC,
-		L"Undo", gui_button_cb_undo, me, 0);
-	my redo = GuiButton_createShown (my dialog, 280, 470, 180+menuBarOffset, Gui_AUTOMATIC,
-		L"Redo", gui_button_cb_redo, me, 0);
-	my remove = GuiButton_createShown (my dialog, 280, 470, 240+menuBarOffset, Gui_AUTOMATIC,
-		L"Remove", gui_button_cb_remove, me, 0);	
-	my moveUp = GuiButton_createShown (my dialog, 280, 470, 280+menuBarOffset, Gui_AUTOMATIC,
-		L"Move selection up", gui_button_cb_moveUp, me, 0);	
-	my moveDown = GuiButton_createShown (my dialog, 280, 470, 320+menuBarOffset, Gui_AUTOMATIC,
-		L"Move selection down", gui_button_cb_moveDown, me, 0);	
+	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
+	my insert = GuiButton_createShown (my dialog, left, right, top, bottom,	L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
+	left = right + delta_x; right = left + button_width;
+	my replace = GuiButton_createShown (my dialog, left, right, top, bottom, L"Replace", gui_button_cb_replace, me, 0);
+	left = buttons_left; right = left + 1.5 * button_width; top = bottom + delta_y; bottom = top + button_height;
+	my insertAtEnd = GuiButton_createShown (my dialog, left, right, top, bottom, L"Insert at end", gui_button_cb_insertAtEnd, me, 0);
+	top = bottom + delta_y; bottom = top + button_height;
+	my undo = GuiButton_createShown (my dialog, left, right, top, bottom, L"Undo", gui_button_cb_undo, me, 0);
+	top = bottom + delta_y; bottom = top + button_height;
+	my redo = GuiButton_createShown (my dialog, left, right, top, bottom, L"Redo", gui_button_cb_redo, me, 0);
+	top = bottom + delta_y; bottom = top + button_height;
+	my remove = GuiButton_createShown (my dialog, left, right, top, bottom, L"Remove", gui_button_cb_remove, me, 0);
+	top = bottom + delta_y; bottom = top + button_height;
+	my moveUp = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, me, 0);
+	top = bottom + delta_y; bottom = top + button_height;	
+	my moveDown = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, me, 0);
 
-	my outOfView = GuiLabel_createShown (my dialog, 5, 205, 450, Gui_AUTOMATIC, L"", 0);
+	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
+	my outOfView = GuiLabel_createShown (my dialog, left, right, top, bottom, L"", 0);
 }
 
 static void dataChanged (I)

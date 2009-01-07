@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/05/01
+ * pb 2009/01/05
  */
 
 #ifndef _Collection_h_
@@ -55,7 +55,8 @@ class_create (InterpreterVariable, Thing);
 	wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
 	wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
-	SortedSetOfString variables;
+	SortedSetOfString variables; \
+	bool stopped;
 #define Interpreter_methods Thing_methods
 class_create (Interpreter, Thing);
 
@@ -69,6 +70,8 @@ Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *fileNa
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
 int Interpreter_run (Interpreter me, wchar_t *text);   /* Destroys 'text'. */
+void Interpreter_stop (Interpreter me);   // Can be called from any procedure called deep-down by the interpreter. Will stop before next line.
+int Interpreter_voidExpression (Interpreter me, const wchar_t *expression);
 int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value);
 int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value);
 int Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value);

@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/03/23
+ * pb 2009/01/04
  */
 
 #include "Thing.h"
@@ -94,6 +94,7 @@ Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t
 Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue);
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
+void UiForm_setPauseForm (I, int (*cancelCallback) (Any dia, void *closure));
 
 /* The following three routines set values in widgets. */
 /* Do not call from batch. */
@@ -113,10 +114,13 @@ void UiForm_do (I, bool modified);
 	Behaviour:
 		If the user clicks "OK",
 		the form will call the okCallback that was registered with UiForm_create ().
-
-		If the okCallback returns 1, the form will disappear from the screen;
+		   If the okCallback then returns 1, the form will disappear from the screen;
 		if it returns 0, the form will stay on the screen; this can be used
 		for enabling the user to repair mistakes in the form.
+
+		If the user clicks "Apply",
+		the form will call the okCallback that was registered with UiForm_create (),
+		and the form disappears from the screen.
 
 		If the user clicks "Cancel", the form disappears from the screen.
 
@@ -179,6 +183,9 @@ void UiHistory_clear (void);
 void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
 void UiInterpreter_set (Interpreter interpreter);
 Interpreter UiInterpreter_get (void);
+
+int UiForm_widgetsToValues (I);
+int UiForm_Interpreter_addVariables (I, Interpreter interpreter);
 
 #endif
 /* End of file Ui.h */

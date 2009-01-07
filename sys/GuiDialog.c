@@ -43,6 +43,7 @@ typedef struct structGuiDialog {
 	static void _GuiMotifDialog_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiDialog);
+		//Melder_casual ("destroying dialog widget");
 		Melder_free (me);
 	}
 	static void _GuiMotifDialog_goAwayCallback (Widget widget, XtPointer void_me, XtPointer call) {

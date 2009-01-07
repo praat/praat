@@ -358,10 +358,10 @@ void _GuiWinMacText_destroy (Widget widget) {
 		theGui.textFocus = NULL;   // remove dangling reference
 	if (widget == widget -> shell -> textFocus)
 		widget -> shell -> textFocus = NULL;   // remove dangling reference
+	iam_text;
 	#if win
 		DestroyWindow (widget -> window);
 	#elif mac
-		iam_text;
 		if (isTextControl (widget)) {
 			_GuiMac_clipOnParent (widget);
 			DisposeControl (widget -> nat.control.handle);
@@ -370,6 +370,7 @@ void _GuiWinMacText_destroy (Widget widget) {
 			TXNDeleteObject (my macMlteObject);
 		}
 	#endif
+	Melder_free (me);   // NOTE: my widget is not destroyed here
 }
 
 void _GuiWinMacText_map (Widget widget) {
@@ -383,7 +384,6 @@ void _GuiWinMacText_map (Widget widget) {
 		}
 	#endif
 }
-
 #endif
 
 
@@ -554,6 +554,11 @@ void _GuiText_exit (void) {
 #elif win
 #elif mac
 #elif motif
+	static void _GuiMotifText_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
+		(void) widget; (void) call;
+		iam (GuiText);
+		Melder_free (me);
+	}
 	static void _GuiMotifText_valueChangedCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) call;
 		iam (GuiText);
@@ -664,6 +669,7 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 			my widget = XmCreateScrolledText (parent, "scrolledText", arg, 4);
 			_GuiObject_setUserData (my widget, me);
 			_GuiObject_position (XtParent (my widget), left, right, top, bottom);
+			XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifText_destroyCallback, me);
 			XtVaSetValues (my widget,
 				XmNeditable, (flags & GuiText_NONEDITABLE) == 0,
 				XmNeditMode, XmMULTI_LINE_EDIT,   // "results of ScrolledWindow when XmNeditMode is XmSINGLE_LINE_EDIT are undefined"
@@ -1042,7 +1048,7 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 
 void GuiText_setString (Widget widget, const wchar_t *text) {
 	#if gtk
-		if (G_OBJECT_TYPE (widget) == GTK_TYPE_ENTRY) {	
+		if (G_OBJECT_TYPE (widget) == GTK_TYPE_ENTRY) {
 			gtk_entry_set_text (GTK_ENTRY (widget), Melder_peekWcsToUtf8 (text));
 		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));

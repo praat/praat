@@ -57,6 +57,7 @@ typedef struct structGuiWindow {
 	static void _GuiMotifWindow_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiWindow);
+		//Melder_casual ("destroying window widget");
 		Melder_free (me);
 	}
 	static void _GuiMotifWindow_goAwayCallback (Widget widget, XtPointer void_me, XtPointer call) {
@@ -125,24 +126,24 @@ void GuiWindow_show (Widget widget) {
 	#endif
 }
 
-void GuiWindow_setTitle (Widget me, const wchar_t *title) {
+void GuiWindow_setTitle (Widget shell, const wchar_t *title) {
 	#if gtk
-		gtk_window_set_title (GTK_WINDOW (me), Melder_peekWcsToUtf8 (title));
+		gtk_window_set_title (GTK_WINDOW (shell), Melder_peekWcsToUtf8 (title));
 	#elif mac
-		SetWindowTitleWithCFString (my nat.window.ptr, Melder_peekWcsToCfstring (title));
+		SetWindowTitleWithCFString (shell -> nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win
-		SetWindowText (my window, title);
+		SetWindowText (shell -> window, title);
 	#elif motif
-		XtVaSetValues (me, XmNtitle, Melder_peekWcsToUtf8 (title), XmNiconName, Melder_peekWcsToUtf8 (title), NULL);
+		XtVaSetValues (shell, XmNtitle, Melder_peekWcsToUtf8 (title), XmNiconName, Melder_peekWcsToUtf8 (title), NULL);
 	#endif
 }
 
-int GuiWindow_setDirty (Widget me, int dirty) {
+int GuiWindow_setDirty (Widget shell, int dirty) {
 	#if mac
-		SetWindowModified (my nat.window.ptr, dirty);
+		SetWindowModified (shell -> nat.window.ptr, dirty);
 		return 1;
 	#else
-		(void) me;
+		(void) shell;
 		(void) dirty;
 		return 0;
 	#endif

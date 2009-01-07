@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  
 /*
  djmw 20020313 GPL
- djmw 20080509 Latest modification
+ djmw 20090106 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2050,7 +2050,7 @@ NORMAL (L"The frication section is modeled with a frication formant grid, with f
 	"amplitudes, a frication by-pass tier and an amplitude tier that governs the frication noise source.")
 ENTRY (L"A minimal synthesizer")
 NORMAL (L"The following script produces a minimal voiced sound. The first line creates the standard KlattGrid."
-	"The next two lines define a pitch point, in Hz, and the amplitude of voicing, in dB. The last line "
+	"The next two lines define a pitch point, in Hz, and the voicing amplitude, in dB. The last line "
 	"creates the sound.")
 CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
 CODE (L"Add pitch point... 0.5 100")
@@ -2084,6 +2084,41 @@ DEFINITION (L"switches voicing and/or aspiration of the source section on or off
 TAG (L"%%Frication bypass%")
 DEFINITION (L"switches the frication bypass of the frication section on or off. "
 	"The complete frication section can be turned off by also switching off the frication formants.")
+MAN_END
+
+MAN_BEGIN (L"KlattGrid: To Sound (phonation)...", L"djmw", 20090108)
+INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
+ENTRY (L"Arguments")
+TAG (L"%%Sampling frequency% (Hz),")
+DEFINITION (L"the @@sampling frequency@ of the resulting sound.")
+TAG (L"%%Voicing%,")
+DEFINITION (L"switches voicing on or off.")
+TAG (L"%%Derivative%,")
+DEFINITION (L"determines if the flow derivative is used during phonation. ")
+TAG (L"%%Spectral tilt%,")
+DEFINITION (L"determines whether the spectral tilt tier is used in the synthesis.")
+TAG (L"%%Breathiness%,")
+DEFINITION (L"determines whether breathiness is included in the synthesis.")
+TAG (L"%%Aspiration%,")
+DEFINITION (L"determines whether aspiration is included in the synthesis.")
+MAN_END
+
+MAN_BEGIN (L"KlattGrid: Extract formant grid (open phases)...", L"djmw", 20080930)
+INTRO (L"Extracts the formant grid as used in the synthesis, i.e. the informantion in the normal formant grid, the delta formant grid and the open phase of the glottis are combined. ")
+MAN_END
+
+MAN_BEGIN (L"Sound: To KlattGrid (simple)...", L"djmw", 20090105)
+INTRO (L"Create a @@KlattGrid@ from a @@Sound@.")
+ENTRY (L"Algorithm")
+NORMAL (L"Formants are determined by the @@Sound: To Formant (burg)...@ method and transformed to a @@FormantGrid@. "
+	"Pitch is determined by the @@Sound: To Pitch...@ method and transformed to a @@PitchTier@. "
+	"With @@Sound: To Intensity...@ we determine intensity and convert it to an @@IntensityTier@.")
+NORMAL (L"Next a KlattGrid is created whose time domain conforms to the sound. Its pitch tier, normal formant grid "
+	"and its voicing amplitude are replaced by the results from the analyses.")
+MAN_END
+
+MAN_BEGIN (L"Sound & KlattGrid: Filter by vocal tract...", L"djmw", 20090108)
+INTRO (L"Filters the selected sound with the vocal tract part of the selected @@KlattGrid@. During this filtering delta formants and bandwidths are %%not% used. ")
 MAN_END
 
 MAN_BEGIN (L"Legendre polynomials", L"djmw", 19990620)
