@@ -1,7 +1,7 @@
 # # Makefile of the library "dwtools"
 
 # 
-#  Copyright (C) 1993-2008 David Weenink
+#  Copyright (C) 1993-2009 David Weenink
 # 
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
-	Vowel.o VowelEditor.o \
+	VowelEditor.o \
 	praat_MDS_init.o praat_David_init.o
 
 $(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h

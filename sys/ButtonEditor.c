@@ -1,6 +1,6 @@
 /* ButtonEditor.c
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/12/14 Gui
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2009/01/17 arguments to UiForm callbacks
  */
 
 #include "ButtonEditor.h"
@@ -218,9 +219,9 @@ static int goToPage (Any editor, const wchar_t *title) {
 				UiHistory_write (action -> title);
 			}
 			if (action -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand ((Any) action -> script, NULL)) Melder_flushError ("Command not executed.");
+				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL)) Melder_flushError ("Command not executed.");
 			} else {
-				if (! action -> callback (NULL, FALSE)) Melder_flushError ("Command not executed.");
+				if (! action -> callback (NULL, NULL, NULL, FALSE)) Melder_flushError ("Command not executed.");
 			}
 			praat_updateSelection ();
 		} break;
@@ -233,9 +234,9 @@ static int goToPage (Any editor, const wchar_t *title) {
 				UiHistory_write (menuCommand -> title);
 			}
 			if (menuCommand -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand ((Any) menuCommand -> script, NULL)) Melder_flushError ("Command not executed.");
+				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL)) Melder_flushError ("Command not executed.");
 			} else {
-				if (! menuCommand -> callback (NULL, FALSE)) Melder_flushError ("Command not executed.");
+				if (! menuCommand -> callback (NULL, NULL, NULL, FALSE)) Melder_flushError ("Command not executed.");
 			}
 			praat_updateSelection ();
 		} break;

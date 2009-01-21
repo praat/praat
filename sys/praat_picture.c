@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
  * pb 2008/03/18 function comment
  * pb 2008/04/30 new Formula API
  * pb 2008/08/06 axes info
+ * pb 2009/01/17 arguments to UiForm callbacks
  */
 
 #include "praatP.h"
@@ -435,16 +436,17 @@ FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat
 END
 #endif
 
-static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
+static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 	static Any dia;
+	(void) interpreter;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to EPS file",
 		DO_Picture_writeToEpsFile, NULL, NULL);
-	if (! sender) {
+	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
-		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		if (sendingString == NULL) file = UiFile_getFile (dia);
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
 	return 1;
@@ -453,46 +455,49 @@ static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
-static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
+static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 	static Any dia;
+	(void) interpreter;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
-	if (! sender) {
+	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
-		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		if (sendingString == NULL) file = UiFile_getFile (dia);
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
 	return 1;
 }
 
-static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
+static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 	static Any dia;
+	(void) interpreter;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
-	if (! sender) {
+	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
-		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		if (sendingString == NULL) file = UiFile_getFile (dia);
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
 	return 1;
 }
 
-static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
+static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 	static Any dia;
+	(void) interpreter;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Praat picture file",
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
-	if (! sender) {
+	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
-		if (sender == dia) file = UiFile_getFile (sender);
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		if (sendingString == NULL) file = UiFile_getFile (dia);
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 		return Picture_writeToPraatPictureFile (praat_picture, file);
 	}
 	return 1;
@@ -513,32 +518,34 @@ DIRECT (Print)
 END
 
 #ifdef macintosh
-	static int DO_Picture_writeToMacPictFile (Any sender, void *dummy) {
+	static int DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 		static Any dia;
+		(void) interpreter;
 		(void) dummy;
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Mac PICT file",
 			DO_Picture_writeToMacPictFile, NULL, NULL);
-		if (! sender) {
+		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.pict");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
-			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			if (sendingString == NULL) file = UiFile_getFile (dia);
+			else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 			return Picture_writeToMacPictFile (praat_picture, file);
 		}
 		return 1;
 	}
 #endif
 #ifdef _WIN32
-	static int DO_Picture_writeToWindowsMetafile (Any sender, void *dummy) {
+	static int DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 		static Any dia;
+		(void) interpreter;
 		(void) dummy;
 		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Windows metafile",
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
-		if (! sender) {
+		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
-			if (sender == dia) file = UiFile_getFile (sender);
-			else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+			if (sendingString == NULL) file = UiFile_getFile (dia);
+			else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 			return Picture_writeToWindowsMetafile (praat_picture, file);
 		}
 		return 1;
@@ -720,7 +727,7 @@ DO
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	Formula_compile (NULL, function, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, function, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	for (long i = 1; i <= n; i ++) {
 		struct Formula_Result result;
 		Formula_run (1, i, & result); cherror

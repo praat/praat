@@ -45,6 +45,8 @@
  * pb 2008/05/01 arrays
  * pb 2008/05/15 praatVersion, praatVersion$
  * pb 2009/01/04 Interpreter_voidExpression
+ * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2009/01/20 pause forms
  */
 
 #include <ctype.h>
@@ -299,7 +301,7 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 	return npar;
 }
 
-Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, int (*okCallback) (Any dia, void *closure), void *okClosure) {
+Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure) {
 	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL);
 	int ipar;
 	Any radio = NULL;
@@ -645,6 +647,10 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		praatP. editor = NULL;
 	}
 	/*
+	 * Start.
+	 */
+	my running = true;
+	/*
 	 * Count lines and set the newlines to zero.
 	 */
 	while (! atLastLine) {
@@ -748,7 +754,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	 */
 	#define wordEnd(c)  (c == '\0' || c == ' ' || c == '\t')
 	for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
-		if (my stopped) { my stopped = false; goto end2; }
+		if (my stopped) goto end2;
 		int c0, fail = FALSE;
 		wchar_t *p;
 		MelderString_copy (& command2, lines [lineNumber]);
@@ -1388,9 +1394,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * Get the value of the formula.
 					 */
-					UiInterpreter_set (me);
 					Interpreter_numericExpression (me, p, & value); cherror
-					UiInterpreter_set (NULL);
 				}
 				/*
 				 * Assign the value to a variable.
@@ -1463,6 +1467,8 @@ end2:
 	MelderString_free (& command2);
 	MelderString_free (& buffer);
 	my numberOfLabels = 0;
+	my running = false;
+	my stopped = false;
 	iferror return 0;
 	return 1;
 }

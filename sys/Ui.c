@@ -37,6 +37,8 @@
  * pb 2007/12/30 Gui
  * pb 2009/01/04 UiForm_widgetsToValues ()
  * pb 2009/01/05 pause forms (e.g. Revert button)
+ * pb 2009/01/18 Interpreter argument to UiForm callbacks
+ * pb 2009/01/19 multiple Continue buttons in pause forms
  */
 
 #include <wctype.h>
@@ -48,11 +50,8 @@
 #include "Editor.h"
 #include "Graphics.h"   /* colours. */
 
-static Interpreter theCurrentInterpreter;
-void UiInterpreter_set (Interpreter interpreter) { theCurrentInterpreter = interpreter; }
-Interpreter UiInterpreter_get (void) { return theCurrentInterpreter; }
-
 #define MAXIMUM_NUMBER_OF_FIELDS  30
+#define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
 
 /***** class UiField: the things that have values in an UiForm dialog *****/
 
@@ -359,19 +358,19 @@ static int UiField_widgetToValue (UiField me) {
 static wchar_t *colourNames [] = { L"black", L"white", L"red", L"green", L"blue", L"cyan", L"magenta", L"yellow",
 	L"maroon", L"lime", L"navy", L"teal", L"purple", L"olive", L"silver", L"grey" };
 
-static int UiField_stringToValue (UiField me, const wchar_t *string) {
+static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter interpreter) {
 	switch (my type) {
 		case UI_REAL: case UI_POSITIVE: {
 			if (wcsspn (string, L" \t") == wcslen (string))
 				return Melder_error3 (L"Argument `", my name, L"' empty.");
-			if (! Interpreter_numericExpression (theCurrentInterpreter, string, & my realValue)) return 0;
+			if (! Interpreter_numericExpression (interpreter, string, & my realValue)) return 0;
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
 			if (wcsspn (string, L" \t") == wcslen (string))
 				return Melder_error3 (L"Argument `", my name, L"' empty.");
 			double realValue;
-			if (! Interpreter_numericExpression (theCurrentInterpreter, string, & realValue)) return 0;
+			if (! Interpreter_numericExpression (interpreter, string, & realValue)) return 0;
 			my integerValue = floor (realValue + 0.5);
 			if (my type == UI_NATURAL && my integerValue < 1)
 				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
@@ -422,7 +421,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string) {
 			wchar_t *string2 = Melder_wcsdup (string);
 			if (colourToValue (me, string2)) {
 				;
-			} else if (! Interpreter_numericExpression (theCurrentInterpreter, string2, & my realValue)) {
+			} else if (! Interpreter_numericExpression (interpreter, string2, & my realValue)) {
 				Melder_free (string2);
 				return 0;
 			}
@@ -503,19 +502,21 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 #define UiForm_members Thing_members \
 	EditorCommand command; \
 	Widget parent, shell, dialog; \
-	int (*okCallback) (Any dia, void *closure); \
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure); \
 	int (*applyCallback) (Any dia, void *closure); \
 	int (*cancelCallback) (Any dia, void *closure); \
 	void *buttonClosure; \
 	const wchar_t *helpTitle; \
+	int numberOfContinueButtons, defaultContinueButton, clickedContinueButton; \
+	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	int numberOfFields; \
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS]; \
-	Widget okButton, cancelButton, revertButton, helpButton, applyButton; \
+	Widget okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	bool destroyWhenUnmanaged, isPauseForm; \
 	int (*allowExecutionHook) (void *closure); \
 	void *allowExecutionClosure;
 #define UiForm_methods Thing_methods
-class_create (UiForm, Thing);
+class_create_opaque (UiForm, Thing);
 
 static void classUiForm_destroy (I) {
 	iam (UiForm);
@@ -562,7 +563,7 @@ int UiForm_widgetsToValues (I) {
 	return 1;
 }
 
-static void UiForm_okOrApply (I, int hide) {
+static void UiForm_okOrApply (I, Widget button, int hide) {
 	iam (UiForm);
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_error3 (L"Cannot execute dialog `", my name, L"'.");
@@ -575,15 +576,23 @@ static void UiForm_okOrApply (I, int hide) {
 	}
 	/* In the next, w must become my okButton? */
 	/*XtRemoveCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
-	GuiObject_setSensitive (my okButton, False);
-	if (my applyButton) GuiObject_setSensitive (my applyButton, False);
-	GuiObject_setSensitive (my cancelButton, False);
-	if (my revertButton) GuiObject_setSensitive (my revertButton, False);
-	if (my helpButton) GuiObject_setSensitive (my helpButton, False);
+	if (my okButton) GuiObject_setSensitive (my okButton, false);
+	for (int i = 1; i <= my numberOfContinueButtons; i ++) if (my continueButtons [i]) GuiObject_setSensitive (my continueButtons [i], false);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, false);
+	if (my cancelButton) GuiObject_setSensitive (my cancelButton, false);
+	if (my revertButton) GuiObject_setSensitive (my revertButton, false);
+	if (my helpButton) GuiObject_setSensitive (my helpButton, false);
 	#if motif
 	XmUpdateDisplay (my dialog);
 	#endif
-	if (my okCallback (me, my buttonClosure)) {
+	if (my isPauseForm) {
+		for (int i = 1; i <= my numberOfContinueButtons; i ++) {
+			if (button == my continueButtons [i]) {
+				my clickedContinueButton = i;
+			}
+		}
+	}
+	if (my okCallback (me, NULL, NULL, my buttonClosure)) {
 		/*
 		 * Write everything to history. Before destruction!
 		 */
@@ -620,23 +629,24 @@ static void UiForm_okOrApply (I, int hide) {
 		/*XtAddCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
 		Melder_flushError (NULL);
 	}
-	GuiObject_setSensitive (my okButton, True);
-	if (my applyButton) GuiObject_setSensitive (my applyButton, True);
-	GuiObject_setSensitive (my cancelButton, True);
-	if (my revertButton) GuiObject_setSensitive (my revertButton, True);
-	if (my helpButton) GuiObject_setSensitive (my helpButton, True);
+	if (my okButton) GuiObject_setSensitive (my okButton, true);
+	for (int i = 1; i <= my numberOfContinueButtons; i ++) if (my continueButtons [i]) GuiObject_setSensitive (my continueButtons [i], true);
+	if (my applyButton) GuiObject_setSensitive (my applyButton, true);
+	if (my cancelButton) GuiObject_setSensitive (my cancelButton, true);
+	if (my revertButton) GuiObject_setSensitive (my revertButton, true);
+	if (my helpButton) GuiObject_setSensitive (my helpButton, true);
 }
 
 static void gui_button_cb_ok (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
-	UiForm_okOrApply (me, true);
+	UiForm_okOrApply (me, event -> button, true);
 }
 
 static void gui_button_cb_apply (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
-	UiForm_okOrApply (me, false);
+	UiForm_okOrApply (me, event -> button, false);
 }
 
 static void gui_button_cb_help (I, GuiButtonEvent event) {
@@ -646,7 +656,7 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 }
 
 Any UiForm_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (Any dia, void *closure), void *buttonClosure,
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *buttonClosure,
 	const wchar_t *helpTitle)
 {
 	UiForm me = new (UiForm);
@@ -658,16 +668,36 @@ Any UiForm_create (Widget parent, const wchar_t *title,
 	return me;
 }
 
-void UiForm_setPauseForm (I, int (*cancelCallback) (Any dia, void *closure)) {
+void UiForm_setPauseForm (I,
+	int numberOfContinueButtons, int defaultContinueButton,
+	const wchar_t *continue1, const wchar_t *continue2, const wchar_t *continue3,
+	const wchar_t *continue4, const wchar_t *continue5, const wchar_t *continue6,
+	const wchar_t *continue7, const wchar_t *continue8, const wchar_t *continue9,
+	const wchar_t *continue10,
+	int (*cancelCallback) (Any dia, void *closure))
+{
 	iam (UiForm);
 	my isPauseForm = true;
+	my numberOfContinueButtons = numberOfContinueButtons;
+	my defaultContinueButton = defaultContinueButton;
+	my continueTexts [1] = continue1;
+	my continueTexts [2] = continue2;
+	my continueTexts [3] = continue3;
+	my continueTexts [4] = continue4;
+	my continueTexts [5] = continue5;
+	my continueTexts [6] = continue6;
+	my continueTexts [7] = continue7;
+	my continueTexts [8] = continue8;
+	my continueTexts [9] = continue9;
+	my continueTexts [10] = continue10;
 	my cancelCallback = cancelCallback;
 }
 
-static int commonOkCallback (Any dia, void *closure) {
+static int commonOkCallback (UiForm dia, const wchar_t *dummy, Interpreter interpreter, void *closure) {
 	EditorCommand cmd = (EditorCommand) closure;
 	(void) dia;
-	return cmd -> commandCallback (cmd -> editor, cmd, cmd -> dialog);
+	(void) dummy;
+	return cmd -> commandCallback (cmd -> editor, cmd, cmd -> dialog, NULL, interpreter);
 }
 
 Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle) {
@@ -805,9 +835,10 @@ Widget Gui_addRadioButton (Widget parent, const char *title, int x1, int x2, int
 #define DIALOG_X  150
 #define DIALOG_Y  70
 #define HELP_BUTTON_WIDTH  60
-#define DEF_BUTTON_WIDTH  100
+#define STANDARDS_BUTTON_WIDTH  100
+#define REVERT_BUTTON_WIDTH  60
+#define STOP_BUTTON_WIDTH  50
 #define HELP_BUTTON_X  20
-#define DEF_BUTTON_X  100
 #define LIST_HEIGHT  192
 
 static MelderString theFinishBuffer = { 0 };
@@ -1043,24 +1074,45 @@ void UiForm_finish (I) {
 			L"Help", gui_button_cb_help, me, 0);
 	}
 	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
-		my revertButton = GuiButton_createShown (buttons,
-			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,
-			HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + DEF_BUTTON_WIDTH,
-			y, Gui_AUTOMATIC,
-			my isPauseForm ? L"Revert" : L"Standards", gui_button_cb_revert, me, 0);
+		if (my isPauseForm) {
+			my revertButton = GuiButton_createShown (buttons,
+				HELP_BUTTON_X, HELP_BUTTON_X + REVERT_BUTTON_WIDTH,
+				y, Gui_AUTOMATIC, L"Revert", gui_button_cb_revert, me, 0);
+		} else {
+			my revertButton = GuiButton_createShown (buttons,
+				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING,
+				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + STANDARDS_BUTTON_WIDTH,
+				y, Gui_AUTOMATIC, L"Standards", gui_button_cb_revert, me, 0);
+		}
 	}
-	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
-		 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
-	my cancelButton = GuiButton_createShown (buttons, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		my isPauseForm ? L"Stop" : L"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
-	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
-	if (! my isPauseForm && (my numberOfFields > 1 || my field [1] -> type != UI_LABEL)) {
-		my applyButton = GuiButton_createShown (buttons, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-			L"Apply", gui_button_cb_apply, me, 0);
+	if (my isPauseForm) {
+		x = HELP_BUTTON_X + REVERT_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING;
+		my cancelButton = GuiButton_createShown (buttons, x, x + STOP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+			L"Stop", gui_button_cb_cancel, me, GuiButton_CANCEL);
+		x += STOP_BUTTON_WIDTH + 7;
+		int room = dialogWidth - Gui_RIGHT_DIALOG_SPACING - x;
+		int roomPerContinueButton = room / my numberOfContinueButtons;
+		int horizontalSpacing = my numberOfContinueButtons > 7 ? Gui_HORIZONTAL_DIALOG_SPACING - 2 * (my numberOfContinueButtons - 7) : Gui_HORIZONTAL_DIALOG_SPACING;
+		int continueButtonWidth = roomPerContinueButton - horizontalSpacing;
+		for (int i = 1; i <= my numberOfContinueButtons; i ++) {
+			x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - roomPerContinueButton * (my numberOfContinueButtons - i + 1) + horizontalSpacing;
+			my continueButtons [i] = GuiButton_createShown (buttons, x, x + continueButtonWidth, y, Gui_AUTOMATIC,
+				my continueTexts [i], gui_button_cb_ok, me, i == my defaultContinueButton ? GuiButton_DEFAULT : 0);
+		}
+	} else {
+		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - 2 * Gui_HORIZONTAL_DIALOG_SPACING
+			 - Gui_APPLY_BUTTON_WIDTH - Gui_CANCEL_BUTTON_WIDTH;
+		my cancelButton = GuiButton_createShown (buttons, x, x + Gui_CANCEL_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+			L"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
+		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
+		if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
+			my applyButton = GuiButton_createShown (buttons, x, x + Gui_APPLY_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+				L"Apply", gui_button_cb_apply, me, 0);
+		}
+		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
+		my okButton = GuiButton_createShown (buttons, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+			my isPauseForm ? L"Continue" : L"OK", gui_button_cb_ok, me, GuiButton_DEFAULT);
 	}
-	x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH;
-	my okButton = GuiButton_createShown (buttons, x, x + Gui_OK_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		my isPauseForm ? L"Continue" : L"OK", gui_button_cb_ok, me, GuiButton_DEFAULT);
 	/*GuiObject_show (separator);*/
 }
 
@@ -1079,10 +1131,10 @@ void UiForm_do (I, bool modified) {
 	/*XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	GuiDialog_show (my dialog);
 	if (modified)
-		UiForm_okOrApply (me, true);
+		UiForm_okOrApply (me, NULL, true);
 }
 
-int UiForm_parseString (I, const wchar_t *arguments) {
+int UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter) {
 	iam (UiForm);
 	int size = my numberOfFields;
 	while (size >= 1 && my field [size] -> type == UI_LABEL)
@@ -1117,7 +1169,7 @@ int UiForm_parseString (I, const wchar_t *arguments) {
 				stringValue [ichar ++] = *arguments ++;
 		}
 		stringValue [ichar] = '\0';   /* Trailing null byte. */
-		if (! UiField_stringToValue (my field [i], stringValue))
+		if (! UiField_stringToValue (my field [i], stringValue, interpreter))
 			return Melder_error3 (L"Don't understand contents of field \"", my field [i] -> name, L"\".");
 	}
 	/* The last item is handled separately, because it consists of the rest of the line.
@@ -1125,14 +1177,14 @@ int UiForm_parseString (I, const wchar_t *arguments) {
 	 */
 	if (size > 0) {
 		while (*arguments == ' ' || *arguments == '\t') arguments ++;
-		if (! UiField_stringToValue (my field [size], arguments))
+		if (! UiField_stringToValue (my field [size], arguments, interpreter))
 			return Melder_error3 (L"Don't understand contents of field \"", my field [size] -> name, L"\".");
 	}
-	return my okCallback (me, my buttonClosure);
+	return my okCallback (me, NULL, interpreter, my buttonClosure);
 }
 
-int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments) {
-	return UiForm_parseString (cmd -> dialog, arguments);
+int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter) {
+	return UiForm_parseString (cmd -> dialog, arguments, interpreter);
 }
 
 static UiField findField_lenient (UiForm me, const wchar_t *fieldName) {
@@ -1405,7 +1457,6 @@ end:
 
 int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 	iam (UiForm);
-	//Melder_casual ("Adding %ld variables to interpreter %ld", my numberOfFields, interpreter);
 	static MelderString lowerCaseFieldName = { 0 };
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
@@ -1458,6 +1509,10 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 end:
 	iferror return 0;
 	return 1;
+}
+
+int UiForm_getClickedContinueButton (UiForm me) {
+	return my clickedContinueButton;
 }
 
 /* End of file Ui.c */

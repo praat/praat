@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2009/01/18
  */
 
 #ifndef _AnyTier_h_
@@ -34,6 +34,9 @@
 #endif
 #ifndef _Vector_h_
 	#include "Vector.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 /********** class RealPoint **********/
@@ -96,7 +99,7 @@ RealTier Vector_to_RealTier_peaks (I, long channel);
 RealTier Vector_to_RealTier_valleys (I, long channel);
 RealTier PointProcess_upto_RealTier (PointProcess me, double value);
 
-int RealTier_formula (I, const wchar_t *expression, thou);
+int RealTier_formula (I, const wchar_t *expression, Interpreter interpreter, thou);
 void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
 

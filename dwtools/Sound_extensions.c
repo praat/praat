@@ -1161,7 +1161,7 @@ int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 	return 1;
 }
 
-int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula)
+int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter)
 {
 	Sound part = NULL, filtered = NULL;
 	Spectrum spec = NULL;
@@ -1173,7 +1173,7 @@ int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *fo
 	spec = Sound_to_Spectrum (part, TRUE); 
 	if (spec == NULL) goto end;
 	
-	if (! Matrix_formula ((Matrix) spec, formula, 0)) goto end;
+	if (! Matrix_formula ((Matrix) spec, formula, interpreter, 0)) goto end;
 	
 	filtered = Spectrum_to_Sound (spec);
 	if (filtered == NULL) goto end;

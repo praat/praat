@@ -1,6 +1,6 @@
 /* ScriptEditor.c
  *
- * Copyright (C) 1997-2008 Paul Boersma
+ * Copyright (C) 1997-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
  * pb 2007/08/12 wchar_t
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2009/01/18 arguments to UiForm callbacks
+ * pb 2009/01/20 pause forms
  */
 
 #include "ScriptEditor.h"
@@ -73,8 +75,20 @@ static void nameChanged (I) {
 	#endif
 }
 
-static int args_ok (Any dia, I) {
+static void goAway (I) {
 	iam (ScriptEditor);
+	if (my interpreter -> running) {
+		Melder_error1 (L"Cannot close the script window while the script is running or paused. Click away the pause window to stop or continue the script.");
+		Melder_flushError (NULL);
+		return;
+	}
+	inherited (ScriptEditor) goAway (me);
+}
+
+static int args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, I) {
+	iam (ScriptEditor);
+	(void) sendingString_dummy;
+	(void) interpreter_dummy;
 	structMelderFile file = { 0 };
 	wchar_t *text = GuiText_getString (my textWidget);
 	if (my name) {
@@ -83,7 +97,7 @@ static int args_ok (Any dia, I) {
 	}
 	Melder_includeIncludeFiles (& text);
 
-	Interpreter_getArgumentsFromDialog (my interpreter, dia);
+	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
 
 	praat_background ();
 	if (my name) MelderFile_setDefaultDir (& file);   /* BUG if two disks have the same name (on Mac). */
@@ -122,6 +136,8 @@ static void run (ScriptEditor me, wchar_t **text) {
 
 static int menu_cb_go (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
+	if (my interpreter -> running)
+		return Melder_error1 (L"The script is already running (paused). Click away the pause window to stop or continue the script.");
 	wchar_t *text = GuiText_getString (my textWidget);
 	run (me, & text);
 	Melder_free (text);
@@ -130,6 +146,8 @@ static int menu_cb_go (EDITOR_ARGS) {
 
 static int menu_cb_runSelection (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
+	if (my interpreter -> running)
+		return Melder_error1 (L"The script is already running (paused). Click away the pause window to stop or continue the script.");
 	wchar_t *text = GuiText_getSelection (my textWidget);
 	if (text == NULL) {
 		return Melder_error1 (L"No text selected.");
@@ -293,6 +311,7 @@ static void createHelpMenuItems (I, EditorMenu menu) {
 class_methods (ScriptEditor, TextEditor) {
 	class_method (destroy)
 	class_method (nameChanged)
+	class_method (goAway)
 	class_method (createMenus)
 	class_method (createHelpMenuItems)
 	us -> scriptable = FALSE;

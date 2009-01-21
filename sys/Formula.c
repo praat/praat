@@ -49,6 +49,8 @@
  * pb 2008/05/12 to, sum
  * pb 2009/01/04 fileDelete
  * pb 2009/01/05 pause forms
+ * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2009/01/20 pause forms moved to UiPause.c
  */
 
 #include <ctype.h>
@@ -61,6 +63,7 @@
 #include "Ui.h"
 #include "praatP.h"
 #include "UnicodeData.h"
+#include "UiPause.h"
 
 static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
@@ -234,10 +237,10 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
 	L"selected", L"selected$", L"numberOfSelected",
-	L"pauseForm", L"real", L"positive", L"integer", L"natural",
+	L"beginPause", L"real", L"positive", L"integer", L"natural",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
-	L"comment", L"endPauseForm",
+	L"comment", L"endPause",
 	L"zero#", L"linear#", L"randomUniform#", L"randomInteger#", L"randomGauss#",
 	L"numberOfRows", L"numberOfColumns",
 
@@ -1787,7 +1790,7 @@ static void Formula_print (FormulaInstruction f) {
 }
 
 int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize) {
-	theInterpreter = interpreter ? interpreter : UiInterpreter_get ();
+	theInterpreter = interpreter;
 	if (theInterpreter == NULL) {
 		if (theLocalInterpreter == NULL) {
 			theLocalInterpreter = Interpreter_create (NULL, NULL);
@@ -1795,7 +1798,6 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 		theInterpreter = theLocalInterpreter;
 		Collection_removeAllItems (theInterpreter -> variables);
 	}
-	//Melder_casual ("interpreter %ld %ld %ld %ld", interpreter, theInterpreter, UiInterpreter_get (), theLocalInterpreter);
 	theSource = data;
 	theExpression = expression;
 	theExpressionType = expressionType;
@@ -3045,27 +3047,6 @@ static void do_deleteFile (void) {
 	}
 end: return;
 }
-static Any thePauseForm = NULL, thePauseFormRadio = NULL;
-static int thePauseForm_clicked = 0;
-static int thePauseFormOkCallback (Any dia, void *closure) {
-	//Melder_casual ("Clicked Continue");
-	(void) dia;
-	(void) closure;
-	/* BUG: should also restore praatP. editor. */
-	/*
-	 * Get the data from the pause form.
-	 */
-	UiForm_widgetsToValues (thePauseForm);
-	UiForm_Interpreter_addVariables (thePauseForm, theInterpreter);
-	thePauseForm_clicked = 3;
-	return 1;
-}
-static int thePauseFormCancelCallback (Any dia, void *closure) {
-	(void) dia;
-	(void) closure;
-	thePauseForm_clicked = 1;
-	return 1;
-}
 static void do_beginPauseForm (void) {
 	if (theCurrentPraat != & theForegroundPraat)
 		error1 (L"The function \"beginPauseForm\" is not available inside pictures.")
@@ -3073,9 +3054,7 @@ static void do_beginPauseForm (void) {
 	if (n->content.number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			//forget (thePauseForm);
-			thePauseForm = UiForm_create (theCurrentPraat -> topShell, title->content.string, thePauseFormOkCallback, NULL, NULL); cherror
-			UiForm_setPauseForm (thePauseForm, thePauseFormCancelCallback);
+			UiPause_begin (theCurrentPraat -> topShell, title->content.string, theInterpreter); cherror
 		} else {
 			error3 (L"The function \"beginPauseForm\" requires a string (the title), not ", Stackel_whichText (title), L".")
 		}
@@ -3087,7 +3066,7 @@ end: return;
 }
 static void do_pauseFormAddReal (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddReal\" is not available inside pictures.")
+		error1 (L"The function \"real\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
@@ -3097,23 +3076,23 @@ static void do_pauseFormAddReal (void) {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->content.number);
 		} else {
-			error3 (L"The second argument of \"pauseFormAddReal\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"real\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addReal (thePauseForm, label->content.string, defaultString); cherror
+			UiPause_real (label->content.string, defaultString); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddReal\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"real\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddReal\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"real\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddPositive (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddPositive\" is not available inside pictures.")
+		error1 (L"The function \"positive\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
@@ -3123,23 +3102,23 @@ static void do_pauseFormAddPositive (void) {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->content.number);
 		} else {
-			error3 (L"The second argument of \"pauseFormAddPositive\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"positive\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addPositive (thePauseForm, label->content.string, defaultString); cherror
+			UiPause_positive (label->content.string, defaultString); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddPositive\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"positive\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddPositive\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"positive\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddInteger (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddInteger\" is not available inside pictures.")
+		error1 (L"The function \"integer\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
@@ -3149,23 +3128,23 @@ static void do_pauseFormAddInteger (void) {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->content.number);
 		} else {
-			error3 (L"The second argument of \"pauseFormAddInteger\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"integer\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addInteger (thePauseForm, label->content.string, defaultString); cherror
+			UiPause_integer (label->content.string, defaultString); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddInteger\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"integer\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddInteger\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"integer\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddNatural (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddNatural\" is not available inside pictures.")
+		error1 (L"The function \"natural\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
@@ -3175,176 +3154,176 @@ static void do_pauseFormAddNatural (void) {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->content.number);
 		} else {
-			error3 (L"The second argument of \"pauseFormAddNatural\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"natural\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addNatural (thePauseForm, label->content.string, defaultString); cherror
+			UiPause_natural (label->content.string, defaultString); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddNatural\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"natural\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddNatural\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"natural\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddWord (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddWord\" is not available inside pictures.")
+		error1 (L"The function \"word\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			error3 (L"The second argument of \"pauseFormAddWord\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"word\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addWord (thePauseForm, label->content.string, defaultValue->content.string); cherror
+			UiPause_word (label->content.string, defaultValue->content.string); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddWord\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"word\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddWord\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"word\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddSentence (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddSentence\" is not available inside pictures.")
+		error1 (L"The function \"sentence\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			error3 (L"The second argument of \"pauseFormAddSentence\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"sentence\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addSentence (thePauseForm, label->content.string, defaultValue->content.string); cherror
+			UiPause_sentence (label->content.string, defaultValue->content.string); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddSentence\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"sentence\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddSentence\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"sentence\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddText (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddText\" is not available inside pictures.")
+		error1 (L"The function \"text\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			error3 (L"The second argument of \"pauseFormAddText\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"text\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addText (thePauseForm, label->content.string, defaultValue->content.string); cherror
+			UiPause_text (label->content.string, defaultValue->content.string); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddText\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"text\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddText\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"text\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddBoolean (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddBoolean\" is not available inside pictures.")
+		error1 (L"The function \"boolean\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			error3 (L"The second argument of \"pauseFormAddBoolean\" (the default value) must be a number (0 or 1), not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"boolean\" (the default value) must be a number (0 or 1), not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiForm_addBoolean (thePauseForm, label->content.string, defaultValue->content.number); cherror
+			UiPause_boolean (label->content.string, defaultValue->content.number); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddBoolean\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"boolean\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddBoolean\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"boolean\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddChoice (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddChoice\" is not available inside pictures.")
+		error1 (L"The function \"choice\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			error3 (L"The second argument of \"pauseFormAddChoice\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"choice\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			thePauseFormRadio = UiForm_addRadio (thePauseForm, label->content.string, defaultValue->content.number); cherror
+			UiPause_choice (label->content.string, defaultValue->content.number); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddChoice\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"choice\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddChoice\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"choice\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddOptionMenu (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddOptionMenu\" is not available inside pictures.")
+		error1 (L"The function \"optionMenu\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			error3 (L"The second argument of \"pauseFormAddOptionMenu\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), L".")
+			error3 (L"The second argument of \"optionMenu\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), L".")
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			thePauseFormRadio = UiForm_addOptionMenu (thePauseForm, label->content.string, defaultValue->content.number); cherror
+			UiPause_optionMenu (label->content.string, defaultValue->content.number); cherror
 		} else {
-			error3 (L"The first argument of \"pauseFormAddOptionMenu\" (the label) must be a string, not ", Stackel_whichText (label), L".")
+			error3 (L"The first argument of \"optionMenu\" (the label) must be a string, not ", Stackel_whichText (label), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddOptionMenu\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"optionMenu\" requires 2 arguments (a label and a default value), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddOption (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddOption\" is not available inside pictures.")
+		error1 (L"The function \"option\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiRadio_addButton (thePauseFormRadio, text->content.string); cherror
+			UiPause_option (text->content.string); cherror
 		} else {
-			error3 (L"The argument of \"pauseFormAddOption\" must be a string (the text), not ", Stackel_whichText (text), L".")
+			error3 (L"The argument of \"option\" must be a string (the text), not ", Stackel_whichText (text), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddOption\" requires 1 argument (a text), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"option\" requires 1 argument (a text), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
 }
 static void do_pauseFormAddComment (void) {
 	if (theCurrentPraat != & theForegroundPraat)
-		error1 (L"The function \"pauseFormAddComment\" is not available inside pictures.")
+		error1 (L"The function \"comment\" is not available inside pictures.")
 	Stackel n = pop;
 	if (n->content.number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiForm_addLabel (thePauseForm, L"", text->content.string); cherror
+			UiPause_comment (text->content.string); cherror
 		} else {
-			error3 (L"The argument of \"pauseFormAddComment\" must be a string (the text), not ", Stackel_whichText (text), L".")
+			error3 (L"The argument of \"comment\" must be a string (the text), not ", Stackel_whichText (text), L".")
 		}
 	} else {
-		error3 (L"The function \"pauseFormAddComment\" requires 1 argument (a text), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"comment\" requires 1 argument (a text), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
@@ -3353,42 +3332,27 @@ static void do_endPauseForm (void) {
 	if (theCurrentPraat != & theForegroundPraat)
 		error1 (L"The function \"endPauseForm\" is not available inside pictures.")
 	Stackel n = pop;
-	if (n->content.number == 1) {
-		Stackel title = pop;
-		if (title->which == Stackel_STRING) {
-			UiForm_finish (thePauseForm); cherror
-			int wasBackgrounding = Melder_backgrounding;
-			structMelderDir dir = { { 0 } };
-			Melder_getDefaultDir (& dir);
-			if (theCurrentPraat -> batch) goto end;
-			UiFile_hide ();
-			if (wasBackgrounding) praat_foreground ();
-			/*
-			 * Put the pause form on the screen.
-			 */
-			UiForm_destroyWhenUnmanaged (thePauseForm);
-			UiForm_do (thePauseForm, false);
-			/*
-			 * Wait for the user to click Stop or Continue.
-			 */
-			thePauseForm_clicked = 0;
-			do {
-				XEvent event;
-				XtAppNextEvent (Melder_appContext, & event);
-				XtDispatchEvent (& event);
-			} while (! thePauseForm_clicked);
-			if (wasBackgrounding) praat_background ();
-			Melder_setDefaultDir (& dir);
-			if (thePauseForm_clicked == 1) {
-				Interpreter_stop (theInterpreter);
-			}
-		} else {
-			error3 (L"The function \"endPauseForm\" requires a string (the title), not ", Stackel_whichText (title), L".")
-		}
-	} else {
-		error3 (L"The function \"endPauseForm\" requires 1 argument (a title), not ", Melder_integer (n->content.number), L".")
+	if (n->content.number < 2 || n->content.number > 11)
+		error3 (L"The function \"endPauseForm\" requires 2 to 11 arguments, not ", Melder_integer (n->content.number), L".")
+	Stackel d = pop;
+	if (d->which != Stackel_NUMBER)
+		error3 (L"The last argument of \"endPauseForm\" has to be a number (the default continue button), not ", Stackel_whichText (d), L".")
+	int numberOfContinueButtons = n->content.number - 1;
+	Stackel c [1+10] = { 0 };
+	for (int i = numberOfContinueButtons; i >= 1; i --) {
+		c [i] = pop;
+		if (c[i]->which != Stackel_STRING)
+			error5 (L"Each of the first ", Melder_integer (numberOfContinueButtons),
+				L" argument(s) of \"endPauseForm\" has to be a string (a button text), not ", Stackel_whichText (c[i]), L".")
 	}
-	pushNumber (1);
+	int buttonClicked = UiPause_end (numberOfContinueButtons, d->content.number,
+		c [1] == NULL ? NULL : c[1]->content.string, c [2] == NULL ? NULL : c[2]->content.string,
+		c [3] == NULL ? NULL : c[3]->content.string, c [4] == NULL ? NULL : c[4]->content.string,
+		c [5] == NULL ? NULL : c[5]->content.string, c [6] == NULL ? NULL : c[6]->content.string,
+		c [7] == NULL ? NULL : c[7]->content.string, c [8] == NULL ? NULL : c[8]->content.string,
+		c [9] == NULL ? NULL : c[9]->content.string, c [10] == NULL ? NULL : c[10]->content.string,
+		theInterpreter); cherror
+	pushNumber (buttonClicked);
 end: return;
 }
 static long Stackel_getRowNumber (Stackel row, Data thee) {

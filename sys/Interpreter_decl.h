@@ -1,6 +1,8 @@
-/* Matrix_and_Pitch.h
+#ifndef _Interpreter_decl_h_
+#define _Interpreter_decl_h_
+/* Interpreter_decl.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +20,10 @@
  */
 
 /*
- * pb 1995/08/24
- * pb 2002/07/16 GPL
+ * pb 2009/01/18
  */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
+typedef struct structInterpreter *Interpreter;
+
+/* End of file Interpreter_decl.h */
 #endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-
-Matrix Pitch_to_Matrix (Pitch me);
-
-Pitch Matrix_to_Pitch (Matrix me);
-
-/* End of file Matrix_and_Pitch.h */

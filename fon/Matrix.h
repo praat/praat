@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2009/01/18
  */
 
 /* Matrix inherits from Sampled */
@@ -35,6 +35,9 @@
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+#ifndef _Interpreter_decl_h
+	#include "Interpreter_decl.h"
 #endif
 
 #define Matrix_members Sampled_members \
@@ -192,7 +195,7 @@ long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
 		if result == 0, *minimum and *maximum are not changed;
 */
 
-int Matrix_formula (Matrix me, const wchar_t *expression, Matrix target);
+int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target);
 /*
 	Arguments:
 		"me" is the Matrix referred to as "self" or with "nx" etc. in the expression

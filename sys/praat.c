@@ -1,6 +1,6 @@
 /* praat.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
  * pb 2008/03/13 Windows: better file dropping
  * pb 2008/04/09 removed explicit GSL
  * pb 2008/11/01 praatcon -a
+ * pb 2009/01/17 arguments to UiForm callbacks
  */
 
 #include "melder.h"
@@ -792,7 +793,7 @@ END
 
 static void gui_cb_quit (GUI_ARGS) {
 	(void) w; (void) void_me; (void) call;
-	DO_Quit (NULL, NULL);
+	DO_Quit (NULL, NULL, NULL, NULL);
 }
 
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
@@ -871,7 +872,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, NULL);
+		DO_Quit (NULL, NULL, NULL, NULL);
 		return 0;
 	}
 #endif

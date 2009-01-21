@@ -1,6 +1,6 @@
 /* FormantGrid.c
  *
- * Copyright (C) 2008 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2009 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2008/09/23 shiftX, scaleX
  * pb 2008/10/28 FormantGrid_to_Formant, FormantGrid_formula
  * pb 2008/11/16 FormantGrid_init
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "FormantGrid.h"
@@ -280,10 +281,10 @@ end:
 	return 1;
 }
 
-int FormantGrid_formula_bandwidths (I, const wchar_t *expression, thou) {
+int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter interpreter, thou) {
 	iam (FormantGrid);
 	thouart (FormantGrid);
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my formants -> size; irow ++) {
 		RealTier bandwidth = my bandwidths -> item [irow];
@@ -300,10 +301,10 @@ end:
 	return 1;
 }
 
-int FormantGrid_formula_frequencies (I, const wchar_t *expression, thou) {
+int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter interpreter, thou) {
 	iam (FormantGrid);
 	thouart (FormantGrid);
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my formants -> size; irow ++) {
 		RealTier formant = my formants -> item [irow];

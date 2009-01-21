@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/11/03
+ * pb 2009/01/20
  */
 
 #include <stdio.h>
@@ -626,29 +626,6 @@ void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, c
 			(void) Melder_monitor1 (1.0, NULL);
 */
 
-bool Melder_pause (const wchar_t *message);
-/*
-	Function:
-		Pause the progress of a process.
-	Arguments:
-		'format' may be NULL.
-	Batch behaviour:
-		Writes a prompt "Pause:" to stderr, followed by the message text,
-		and followed by the line "Press 'q' to stop, or any other key to continue.".
-		Waits for the user to hit a key to stdin.
-		Returns 0 if the user hits 'q' or 'Q', otherwise 1.
-	Interactive behaviour:
-		Shows a window titled "Pause" with the message text and two buttons named Continue and Stop.
-		Waits for the user to click one of these.
-		Returns 1 if user clicks Continue, 0 if user clicks Stop.
-	Usage:
-		Check the return value to see if the user clicked the Stop button:
-			nextPicture ();
-			if (! Melder_pause (L"See this beautiful picture"))
-				return Melder_errorp ("Demo interrupted.");
-			nextPicture ();
-*/
-
 /********** RECORD AND PLAY ROUTINES **********/
 
 int Melder_publish (void *anything);
@@ -711,7 +688,6 @@ extern bool Melder_consoleIsAnsi;
 void Melder_setCasualProc (void (*casualProc) (wchar_t *message));
 void Melder_setProgressProc (int (*progressProc) (double progress, wchar_t *message));
 void Melder_setMonitorProc (void * (*monitorProc) (double progress, wchar_t *message));
-void Melder_setPauseProc (bool (*pauseProc) (const wchar_t *message));
 void Melder_setInformationProc (void (*informationProc) (wchar_t *message));
 void Melder_setHelpProc (void (*help) (const wchar_t *query));
 void Melder_setSearchProc (void (*search) (void));

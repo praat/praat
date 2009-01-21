@@ -19,6 +19,7 @@
 
 /*
  djmw 20080202, 20080330
+ djmw 20090114 FormantTier_to_FormantGrid.
 */
 
 /*
@@ -50,8 +51,12 @@ trajectory --> path ????
  Make sound-follows-mouse real time!
 */
 
+#include "FormantGrid.h"
+#include "portaudio.h"
 #include "praat.h"
+#include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"
+#include "PointProcess_and_Sound.h"
 #include "Polygon.h"
 #include "TableOfReal_extensions.h"
 #include "Table_extensions.h"
@@ -94,7 +99,7 @@ trajectory --> path ????
 static int menu_cb_help (EDITOR_ARGS);
 static int menu_cb_prefs (EDITOR_ARGS);
 static int menu_cb_publishSound (EDITOR_ARGS);
-static int menu_cb_extract_FormantTier (EDITOR_ARGS);
+static int menu_cb_extract_FormantGrid (EDITOR_ARGS);
 static int menu_cb_extract_PitchTier (EDITOR_ARGS);
 static int menu_cb_showOneVowelMark (EDITOR_ARGS);
 static int menu_cb_showVowelMarks (EDITOR_ARGS);
@@ -125,7 +130,7 @@ static void Sound_fadeOut (Sound me, double duration);
 static void PitchTier_newDuration (PitchTier me, struct structF0 *f0p, double newDuration);
 static void FormantTier_newDuration (FormantTier me, double newDuration);
 static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f1min, double f1max, double f2min, double f2max, double markTraceEvery, double width);
-static void Vowel_newDuration (Vowel me, struct structF0 *f0p, double newDuration);
+static FormantGrid FormantTier_to_FormantGrid (FormantTier me);
 static PitchTier VowelEditor_to_PitchTier (VowelEditor me, double duration);
 static void VowelEditor_updateF0Info (VowelEditor me);
 static void VowelEditor_updateExtendDuration (VowelEditor me);
@@ -145,7 +150,105 @@ static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f
 	double *f4, double *b4);
 static double Matrix_getValue (Matrix me, double x, double y);
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g);
+
+static Vowel Vowel_create (double duration);
+static Vowel Vowel_create_twoFormantSchwa (double duration);
+static void Vowel_newDuration (Vowel me, struct structF0 *f0p, double newDuration);
+static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth);
 // forward declarations end
+
+#define VOWEL_def_h \
+oo_DEFINE_CLASS (Vowel, Function)\
+	oo_OBJECT (PitchTier, 0, pt)\
+	oo_OBJECT (FormantTier, 0, ft)\
+oo_END_CLASS (Vowel)
+
+#include "oo_DESTROY.h"
+#define ooSTRUCT Vowel
+VOWEL_def_h
+#undef ooSTRUCT
+#include "oo_COPY.h"
+#define ooSTRUCT Vowel
+VOWEL_def_h
+#undef ooSTRUCT
+
+class_methods (Vowel, Function)
+{
+	class_method_local (Vowel, destroy)
+	class_method_local (Vowel, copy)
+	class_methods_end
+}
+
+static Vowel Vowel_create (double duration)
+{
+	Vowel me = new (Vowel);
+	
+	if (me == NULL || ! Function_init (me, 0, duration)) return NULL;
+	my ft = FormantTier_create (0, duration);
+	my pt = PitchTier_create (0, duration);
+	if (Melder_hasError ()) forget (me);
+	return me;
+}
+
+static Vowel Vowel_create_twoFormantSchwa (double duration)
+{
+	FormantPoint fp = NULL;
+	Vowel me = Vowel_create (duration);
+	if (me == NULL) return NULL;
+	
+	fp =  FormantPoint_create (0);
+	fp -> formant [0] = 500;
+	fp -> bandwidth[0] = 50;
+	fp -> formant [1] = 1500;
+	fp -> bandwidth[1] = 150;
+	fp -> numberOfFormants = 2;
+	if (! Collection_addItem (my ft -> points, fp) || ! RealTier_addPoint (my pt, 0, 140)) goto end;
+	
+	fp =  FormantPoint_create (duration);
+	if (fp == NULL) goto end;
+	fp -> formant [0] = 500;
+	fp -> bandwidth[0] = 50;
+	fp -> formant [1] = 1500;
+	fp -> bandwidth[1] = 150;
+	fp -> numberOfFormants = 2;
+	if (Collection_addItem (my ft -> points, fp)) RealTier_addPoint (my pt, duration, 140);
+end:
+	if (Melder_hasError ()) forget (me);
+	return me;
+}
+
+static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth)
+{
+	Sound thee = NULL;
+	PointProcess pp = PitchTier_to_PointProcess (my pt);
+	if (pp != NULL)
+	{
+		thee = PointProcess_to_Sound_pulseTrain (pp, samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
+		Sound_FormantTier_filter_inline (thee, my ft);
+		forget (pp);
+	}
+	return thee;
+}
+
+static FormantGrid FormantTier_to_FormantGrid (FormantTier me)
+{
+	int numberOfFormants = FormantTier_getMaxNumFormants (me);
+	FormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, numberOfFormants);
+	if (thee == NULL) return NULL;
+	for (long ipoint = 1; ipoint <= my points -> size; ipoint++)
+	{
+		FormantPoint fp = my points -> item[ipoint];
+		double t = fp -> time;
+		for (long iformant = 1; iformant <= fp -> numberOfFormants; iformant++)
+		{
+			if (! FormantGrid_addFormantPoint (thee, iformant, t, fp -> formant[iformant - 1]) ||
+				! FormantGrid_addBandwidthPoint (thee, iformant, t, fp -> bandwidth[iformant -1])) goto end;
+		}
+	}
+end:
+	if (Melder_hasError ()) forget (thee);
+	return thee;
+}
 
 static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, double *x, double *y)
 {
@@ -756,11 +859,11 @@ static int menu_cb_publishSound (EDITOR_ARGS)
 	return 1;
 }
 
-static int menu_cb_extract_FormantTier (EDITOR_ARGS)
+static int menu_cb_extract_FormantGrid (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
-	FormantTier publish = Data_copy (my vowel -> ft);
+	FormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft);
 	if (publish == NULL) return 0;
 	if (my publishCallback)	my publishCallback (me, my publishClosure, publish);
 	return 1;
@@ -1271,7 +1374,7 @@ static void createMenus (I)
 	Editor_addCommand (me, L"File", L"Preferences...", 0, menu_cb_prefs);
 	Editor_addCommand (me, L"File", L"-- publish data --", 0, NULL);
 	Editor_addCommand (me, L"File", L"Publish Sound", 0, menu_cb_publishSound);
-	Editor_addCommand (me, L"File", L"Extract formant tier", 0, menu_cb_extract_FormantTier);
+	Editor_addCommand (me, L"File", L"Extract formant grid", 0, menu_cb_extract_FormantGrid);
 	Editor_addCommand (me, L"File", L"Extract pitch tier", 0, menu_cb_extract_PitchTier);
 	Editor_addCommand (me, L"File", L"-- script stuff --", 0, NULL);
 	Editor_addCommand (me, L"File", L"Draw trajectory...", 0, menu_cb_drawTrajectory);

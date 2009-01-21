@@ -31,7 +31,7 @@
 #include "VocalTract_to_Spectrum.h"
 #include "praat.h"
 
-extern int praat_Fon_formula (Any dia);
+extern int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 /***** ART *****/
 
@@ -268,7 +268,7 @@ FORM (VocalTract_formula, L"VocalTract Formula", L"Matrix: Formula...")
 	TEXTFIELD (L"formula", L"0")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 DIRECT (VocalTract_help) Melder_help (L"VocalTract"); END

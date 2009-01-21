@@ -1980,11 +1980,10 @@ NORMAL (L"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to 
 	"removed.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid", L"djmw", 20081224)
+MAN_BEGIN (L"KlattGrid", L"djmw", 20090114)
 INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source as well as the filter, and the interaction between them. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
-/* djmw 20081226 : The following scripts will still crash praat in an unpredictable way.
 NORMAL (L"The following drawing represents a cascade synthesizer with six normal formants, one nasal formant, "
-	"one nasal antiformant, one tracheal formant a, one tracheal antiformant and six frication formants. ")
+	"one nasal antiformant, one tracheal formant, one tracheal antiformant and six frication formants. ")
 SCRIPT (6.0, 5.5,
 	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
 	"Draw synthesizer... Cascade\n"
@@ -1993,7 +1992,7 @@ NORMAL (L"In the next picture a parallel synthesizer branch is used instead of t
 SCRIPT (6.0, 5.5,
 	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
 	"Draw synthesizer... Parallel\n"
-	"Remove\n")*/
+	"Remove\n")
 NORMAL (L"All parameters in the synthesizer are represented by separate tiers.")
 ENTRY (L"The source")
 NORMAL (L"The source is modelled by the following tiers:")

@@ -1,6 +1,6 @@
 /* RealTier.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/30 new Formula API
  * pb 2008/09/23 shiftX, scaleX
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "RealTier.h"
@@ -512,10 +513,10 @@ end:
 	return thee;
 }
 
-int RealTier_formula (I, const wchar_t *expression, thou) {
+int RealTier_formula (I, const wchar_t *expression, Interpreter interpreter, thou) {
 	iam (RealTier);
 	thouart (RealTier);
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long icol = 1; icol <= my points -> size; icol ++) {
 		struct Formula_Result result;

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/05
+ * pb 2009/01/18
  */
 
 #ifndef _Collection_h_
@@ -29,6 +29,8 @@
 #ifndef _Gui_h_
 	#include "Gui.h"
 #endif
+#include "Ui_decl.h"
+#include "Interpreter_decl.h"
 #ifndef _Formula_h_
 	#include "Formula.h"
 #endif
@@ -56,9 +58,9 @@ class_create (InterpreterVariable, Thing);
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
 	wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
 	SortedSetOfString variables; \
-	bool stopped;
+	bool running, stopped;
 #define Interpreter_methods Thing_methods
-class_create (Interpreter, Thing);
+class_create_opaque (Interpreter, Thing);
 
 Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass);
 Interpreter Interpreter_createFromEnvironment (Any editor);
@@ -66,7 +68,7 @@ Interpreter Interpreter_createFromEnvironment (Any editor);
 int Melder_includeIncludeFiles (wchar_t **text);
 int Interpreter_readParameters (Interpreter me, wchar_t *text);
 Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *fileName,
-	int (*okCallback) (Any dia, void *closure), void *okClosure);
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure);
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
 int Interpreter_run (Interpreter me, wchar_t *text);   /* Destroys 'text'. */

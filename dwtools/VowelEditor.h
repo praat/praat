@@ -2,7 +2,7 @@
 #define _VowelEditor_h_
 /* VowelEditor.h
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,31 @@
 
 /*
  djmw 20070130 First
- djmw 20080327 Latest modification.
+ djmw 20090114 Latest modification.
 */
+
+#ifndef _FormantTier_h_
+	#include "FormantTier.h"
+#endif
+#ifndef _PitchTier_h_
+	#include "PitchTier.h"
+#endif
 
 #ifndef _Graphics_h_
 	#include "Graphics.h"
 #endif
-#ifndef _Vowel_h_
-	#include "Vowel.h"
-#endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
 #endif
+#ifndef _Editor_h_
+	#include "Editor.h"
+#endif
 
-#include "Command.h"
-#include "Editor.h"
-#include "portaudio.h"
+#define Vowel_members Function_members \
+	PitchTier pt; \
+	FormantTier ft;
+#define Vowel_methods Function_methods
+class_create (Vowel, Function);
 
 struct structF0 
 {

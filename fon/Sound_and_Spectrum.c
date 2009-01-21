@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2004/11/22 single Sound_to_Spectrum procedure
  * pb 2006/12/30 new Sound_create API
  * pb 2006/12/31 compatible with stereo sounds
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "Sound_and_Spectrum.h"
@@ -144,12 +145,12 @@ end:
 	return thee;
 }
 
-Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
+Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interpreter) {
 	Spectrum spec = NULL;
 	Sound thee = Data_copy (me), him = NULL; cherror
 	if (my ny == 1) {
 		spec = Sound_to_Spectrum (me, TRUE); cherror
-		Matrix_formula ((Matrix) spec, formula, 0); cherror
+		Matrix_formula ((Matrix) spec, formula, interpreter, 0); cherror
 		him = Spectrum_to_Sound (spec); cherror
 		NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	} else {
@@ -158,7 +159,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula) {
 			him = Sound_extractChannel (me, channel); cherror
 			forget (spec);
 			spec = Sound_to_Spectrum (him, TRUE); cherror
-			Matrix_formula ((Matrix) spec, formula, 0); cherror
+			Matrix_formula ((Matrix) spec, formula, interpreter, 0); cherror
 			forget (him);
 			him = Spectrum_to_Sound (spec); cherror
 			NUMdvector_copyElements (his z [1], thy z [channel], 1, thy nx);

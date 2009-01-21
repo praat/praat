@@ -127,7 +127,7 @@ void praat_CC_init (void *klas);
 void DTW_constraints_addCommonFields (void *dia);
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
 void praat_Matrixft_query_init (void *klas);
-int praat_Fon_formula (Any dia);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 #undef INCLUDE_DTW_SLOPES
 
@@ -164,7 +164,7 @@ FORM (Activation_formula, L"Activation: Formula", 0)
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END	
 
 DIRECT (Activation_to_Matrix)
@@ -1520,7 +1520,7 @@ DO
 		Ordered ms = OBJECT;
 		int j;
 		for (j = 1; j <= ms -> size; j++)
-			if (! Matrix_formula (ms->item[j], GET_STRING (L"formula"), NULL)) break;
+			if (! Matrix_formula (ms->item[j], GET_STRING (L"formula"), interpreter, NULL)) break;
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -2192,7 +2192,7 @@ FORM (KlattGrid_formula_frequencies, L"KlattGrid: Formula (frequencies)", L"Form
 DO
 	int formantType = GET_INTEGER (L"Formant type");
 	WHERE (SELECTED) {
-		if (! KlattGrid_formula_frequencies (OBJECT, formantType, GET_STRING (L"formula"))) return 0;
+		if (! KlattGrid_formula_frequencies (OBJECT, formantType, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -2205,7 +2205,7 @@ FORM (KlattGrid_formula_bandwidths, L"KlattGrid: Formula (bandwidths)", L"Forman
 DO
 	int formantType = GET_INTEGER (L"Formant type");
 	WHERE (SELECTED) {
-		if (! KlattGrid_formula_bandwidths (OBJECT, formantType, GET_STRING (L"formula"))) return 0;
+		if (! KlattGrid_formula_bandwidths (OBJECT, formantType, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -2922,7 +2922,7 @@ FORM (Pattern_formula, L"Pattern: Formula", 0)
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Pattern_setValue, L"Pattern: Set value", L"Pattern: Set value...")
@@ -4623,27 +4623,9 @@ END
 
 static VowelEditor vowelEditor = NULL;
 DIRECT (VowelEditor_create)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit from batch.");
 	vowelEditor = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", NULL);
 	if (vowelEditor == NULL) return 0;
-END
-
-FORM (Vowel_create, L"Create Vowel", 0)
-	POSITIVE (L"Duration (s)", L"0.2")
-	OK
-DO
-	if (! praat_new1 (Vowel_create_twoFormantSchwa (GET_REAL (L"Duration")), NULL)) return 0;
-END
-
-DIRECT (Vowel_play)
-	WHERE (SELECTED) {
-		Vowel_play (OBJECT);
-	}
-END
-
-DIRECT (Vowel_edit)
-	VowelEditor ve = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", OBJECT);
-	if (ve == NULL) return 0;
 END
 
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
@@ -4857,7 +4839,6 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Van Nierop 1973)...", L"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_createFromVanNieropData_25females);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Vowel...", 0, praat_HIDDEN, DO_Vowel_create);
 	
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
@@ -5485,9 +5466,6 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTextGrid, 1, L"Set tier name...", L"Remove tier...", 1, DO_TextGrid_setTierName);
 			praat_addAction1 (classTextGrid, 0, L"Replace interval text...", L"Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
 			praat_addAction1 (classTextGrid, 0, L"Replace point text...", L"Set point text...", 2, DO_TextGrid_replacePointTexts);
-
-	praat_addAction1 (classVowel, 0, L"Edit", 0, 0, DO_Vowel_edit);
-	praat_addAction1 (classVowel, 0, L"Play", 0, 0, DO_Vowel_play);
 	
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)

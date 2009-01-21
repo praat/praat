@@ -445,9 +445,9 @@ if (! my printing) {
 		{
 			if (my praat == NULL) my praat = Melder_calloc (structPraat, 1);
 			theCurrentPraat = my praat;
-			theCurrentPraat -> graphics = my g;
-			theCurrentPraat -> batch = true;
-			theCurrentPraat -> topShell = theForegroundPraat. topShell;
+			theCurrentPraat -> graphics = my g;   // has to draw into HyperPage rather than Picture window
+			theCurrentPraat -> batch = true;   // prevent creation of editor windows
+			theCurrentPraat -> topShell = theForegroundPraat. topShell;   // needed for UiForm_create () in dialogs
 			Melder_progressOff ();
 			Melder_warningOff ();
 			structMelderDir saveDir = { { 0 } };

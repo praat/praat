@@ -371,7 +371,7 @@ END
 // Learning                                                                            //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-FORM (KNN_learnAgain, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
+FORM (KNN_learn, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
     RADIO (L"Learning method", 1)
     RADIOBUTTON (L"Append new information")
     RADIOBUTTON (L"Replace current intancebase")
@@ -400,7 +400,7 @@ DO
     switch (method)
     {
         case 1:
-            result = KNN_learn(me, p, c, kOla_APPEND, ordering);
+            result = KNN_learn(me, p, c, my nInstances == 0 ? kOla_REPLACE : kOla_APPEND, ordering);
             break;
         case 2:
             result = KNN_learn(me, p, c, kOla_REPLACE, ordering);
@@ -413,49 +413,6 @@ DO
             return Melder_error1 (L"The number of Categories must match the number of rows in Pattern");
         case kOla_DIMENSIONALITY_MISMATCH:
             return Melder_error1 (L"The dimensionality of Pattern must match that of the instance base");
-    }
-END
-
-FORM (KNN_learnFirst, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
-    RADIO (L"Ordering", 1)
-    RADIOBUTTON (L"Random")
-    RADIOBUTTON (L"Sequential")
-    OK
-DO
-    KNN  me = ONLY(classKNN);
-    Pattern p = ONLY(classPattern);
-    Categories c = ONLY(classCategories);
-    int result = kOla_ERROR;
-    int ordering = GET_INTEGER (L"Ordering");
-
-    switch (ordering)
-    {
-        case 1:
-            ordering = kOla_SHUFFLE;
-            break;
-        case 2:
-            ordering = kOla_SEQUENTIAL;
-    }
-
-    result = KNN_learn(me, p, c, kOla_REPLACE, ordering);
-    switch (result)
-    {
-        case kOla_PATTERN_CATEGORIES_MISMATCH:
-            return Melder_error1 (L"The number of Categories must match the number of rows in Pattern");
-        case kOla_DIMENSIONALITY_MISMATCH:
-            return Melder_error1 (L"The dimensionality of Pattern must match that of the instance base");
-    }
-END
-
-DIRECT (KNN_learn)
-    KNN  me = ONLY(classKNN);
-    if (my nInstances == 0)
-    {
-        DO_KNN_learnFirst(NULL, NULL);
-    }   
-    else
-    {
-        DO_KNN_learnAgain(NULL, NULL);
     }
 END
 

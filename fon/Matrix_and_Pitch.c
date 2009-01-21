@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/08/12 wchar_t
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "Matrix_and_Pitch.h"
@@ -57,7 +58,7 @@ error:
 	return Melder_errorp ("(Matrix_to_Pitch:) Not performed.");
 }
 
-int Pitch_formula (Pitch me, const wchar_t *formula) {
+int Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
 	Matrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		1, my maxnCandidates, my maxnCandidates, 1, 1);
 	long iframe, icand;
@@ -67,7 +68,7 @@ int Pitch_formula (Pitch me, const wchar_t *formula) {
 		for (icand = 1; icand <= frame -> nCandidates; icand ++)
 			m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
 	}
-	if (! Matrix_formula (m, formula, 0)) {
+	if (! Matrix_formula (m, formula, interpreter, 0)) {
 		forget (m);
 		return Melder_error1 (L"(Pitch_formula:) Not performed.");
 	}

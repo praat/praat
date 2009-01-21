@@ -1,6 +1,6 @@
 /* melder.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
  * pb 2007/12/13 Melder_writeToConsole
  * pb 2007/12/18 Gui
  * sdk 2008/01/22 GTK
+ * pb 2009/09/20 removed pause
  */
 
 #include <math.h>
@@ -82,12 +83,6 @@ unsigned long Melder_systemVersion;
 	void *Melder_appContext;   /* XtAppContext* */
 	void *Melder_topShell;   /* Widget */
 #endif
-
-static bool defaultPause (const wchar_t *message) {
-	fprintf (stderr, "Pause: %s\nPress 'q' to stop, or any other key to continue.\n", Melder_peekWcsToUtf8 (message));
-	int key = getc (stdin);
-	return key != 'q' && key != 'Q';
-}
 
 static void defaultHelp (const wchar_t *query) {
 	Melder_error3 (L"Do not know how to find help on \"", query, L"\".");
@@ -136,7 +131,6 @@ static int defaultPublishPlayed (void) {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	bool (*pause) (const wchar_t *message);
 	void (*help) (const wchar_t *query);
 	void (*search) (void);
 	void (*warning) (wchar_t *message);
@@ -149,7 +143,7 @@ static struct {
 	int (*publishPlayed) (void);
 }
 	theMelder = {
-		defaultPause, defaultHelp, defaultSearch,
+		defaultHelp, defaultSearch,
 		defaultWarning, defaultFatal,
 		defaultPublish,
 		defaultRecord, defaultRecordFromFile, defaultPlay, defaultPlayReverse, defaultPublishPlayed
@@ -463,12 +457,6 @@ void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, c
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
 
-/********** PAUSE **********/
-
-bool Melder_pause (const wchar_t *message) {
-	return theMelder. pause (message);
-}
-
 /********** NUMBER AND STRING COMPARISONS **********/
 
 int Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion) {
@@ -617,9 +605,6 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 }
 
 #ifndef CONSOLE_APPLICATION
-static bool pause_continued, pause_stopped;
-static void gui_button_cb_continue (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_continued = true; }
-static void gui_button_cb_stop (I, GuiButtonEvent event) { (void) event; (void) void_me; pause_stopped = true; }
 
 #if gtk
 static void gtk_error (wchar_t *message) {
@@ -640,36 +625,6 @@ static void gtk_warning (wchar_t *message) {
 					 Melder_peekWcsToUtf8 (message));
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
-}
-#endif
-
-#if motif
-static bool motif_pause (const wchar_t *message) {
-	static Widget dia = NULL, continueButton = NULL, stopButton = NULL, rc, buttons, text;
-	if (dia == NULL) {
-		dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Pause", NULL, NULL, 0);
-		rc = XmCreateRowColumn (dia, "rc", NULL, 0);
-		text = GuiLabel_createShown (rc, 3, 403, Gui_AUTOMATIC, Gui_AUTOMATIC, L"text", 0);
-		buttons = XmCreateRowColumn (rc, "rc", NULL, 0);
-		XtVaSetValues (buttons, XmNorientation, XmHORIZONTAL, NULL);
-		continueButton = GuiButton_createShown (buttons, 10, 310, Gui_AUTOMATIC, Gui_AUTOMATIC,
-			L"Continue", gui_button_cb_continue, dia, 0);
-		stopButton = GuiButton_createShown (buttons, 320, 380, Gui_AUTOMATIC, Gui_AUTOMATIC,
-			L"Stop", gui_button_cb_stop, dia, 0);
-		XtManageChild (buttons);
-		XtManageChild (rc);
-	}
-	if (! message) message = L"";
-	GuiLabel_setString (text, message);
-	GuiDialog_show (dia);
-	pause_continued = pause_stopped = FALSE;
-	do {
-		XEvent event;
-		XtAppNextEvent (Melder_appContext, & event);
-		XtDispatchEvent (& event);
-	} while (! pause_continued && ! pause_stopped);
-	GuiObject_hide (dia);
-	return pause_continued;
 }
 #endif
 
@@ -780,7 +735,6 @@ void MelderGui_create (void *appContext, void *parent) {
 		#if defined (macintosh) || defined (_WIN32)
 			Melder_setFatalProc (motif_fatal);
 		#endif
-		Melder_setPauseProc (motif_pause);
 	#endif
 }
 #endif
@@ -810,9 +764,6 @@ int Melder_publishPlayed (void) {
 }
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
-
-void Melder_setPauseProc (bool (*pause) (const wchar_t *))
-	{ theMelder. pause = pause ? pause : defaultPause; }
 
 void Melder_setHelpProc (void (*help) (const wchar_t *query))
 	{ theMelder. help = help ? help : defaultHelp; }

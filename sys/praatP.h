@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2009/01/18
  */
 
 #include "praat.h"
@@ -50,7 +50,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_saveMenuCommands (FILE *f);
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (Any, void *), int x, int y);
+void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands (void);
 
@@ -61,14 +61,14 @@ typedef struct structPraat_Command {
 	void *class1, *class2, *class3, *class4;   /* Selected classes. */
 	short n1, n2, n3, n4;   /* Number of selected objects of each class; 0 means "any number" */
 	const wchar_t *title;   /* Button text = command text. */
-	int (*callback) (Any sender, void *closure);   /* Multi-purpose. */
-		/* If sender is NULL, this routine is an activate callback;
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure);   /* Multi-purpose. */
+		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
-			UiForm_do will call this routine again with sender = dialog. */
-		/* If sender is the UiForm of UiFile dialog, this routine is an ok callback,
+			UiForm_do will call this routine again with sendingForm = dialog. */
+		/* If sendingForm exists, this routine is an ok callback,
 			and you should execute the command. */
-		/* If sender is a string (apparently from a command file),
-			UiForm_parseString should be called, which will call this routine again with sender = dialog. */
+		/* If sendingString exists (apparently from a command file),
+			UiForm_parseString should be called, which will call this routine again with sendingForm. */
 		/* All of these things are normally taken care of by the macros defined in praat.h. */
 	signed char
 		visible,   /* Selected classes match class1, class2, and class3? */
@@ -132,7 +132,7 @@ void praat_showLogo (int autoPopDown);
 /* Communication with praat_menuCommands.c: */
 void praat_menuCommands_init (void);
 void praat_menuCommands_exit (void);
-int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments);   /* 0 = not found or error */
+int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   /* 0 = not found or error */
 long praat_getNumberOfMenuCommands (void);
 praat_Command praat_getMenuCommand (long i);
 
@@ -142,7 +142,7 @@ void praat_actions_createWriteMenu (Widget bar);
 void praat_actions_init (void);   /* Creates space for action commands. */
 void praat_actions_createDynamicMenu (Widget form, int leftOffset);
 void praat_saveAddedActions (FILE *f);
-int praat_doAction (const wchar_t *command, const wchar_t *arguments);   /* 0 = not found or error */
+int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   /* 0 = not found or error */
 long praat_getNumberOfActions (void);   /* For ButtonEditor. */
 praat_Command praat_getAction (long i);   /* For ButtonEditor. */
 

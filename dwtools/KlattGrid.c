@@ -1091,8 +1091,8 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, C
 	long numberOfTrachealFormants = thee != NULL ? thy tracheal_formants -> formants -> size : 0;
 	long numberOfTrachealAntiFormants = thee != NULL ? thy tracheal_antiformants -> formants -> size : 0;
  	double x1, y1 = ymin, x2, y2 = ymax, dx, ddx = 0.2, ymid = (y1 + y2) / 2;
- 	wchar_t *text[6] = { 0, L"NF", L"NAF", L"TF", L"TAF", L""};
- 	long nf[6] = {0, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNormalFormants};
+ 	wchar_t *text[6] = { 0, L"TF", L"TAF", L"NF", L"NAF", L""};
+ 	long nf[6] = {0, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfNormalFormants};
 	long numberOfFilters, numberOfXSections = 5, nsx = 0, isection, i;
 	MelderString ff = { 0 }, fb = { 0 };
 	
@@ -2113,16 +2113,16 @@ void KlattGrid_remove##Name##PointsBetween (KlattGrid me, int formantType, long 
 KlattGrid_QUERY_ADD_REMOVE(Formant)
 KlattGrid_QUERY_ADD_REMOVE(Bandwidth)
 
-int KlattGrid_formula_frequencies (KlattGrid me, int formantType, const wchar_t *expression)
+int KlattGrid_formula_frequencies (KlattGrid me, int formantType, const wchar_t *expression, Interpreter interpreter)
 {
 	FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
-	return FormantGrid_formula_frequencies (*fg, expression, NULL);
+	return FormantGrid_formula_frequencies (*fg, expression, interpreter, NULL);
 }
 
-int KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const wchar_t *expression)
+int KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const wchar_t *expression, Interpreter interpreter)
 {
 	FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
-	return FormantGrid_formula_bandwidths (*fg, expression, NULL);
+	return FormantGrid_formula_bandwidths (*fg, expression, interpreter, NULL);
 }
 
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t)

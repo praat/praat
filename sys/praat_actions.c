@@ -1,6 +1,6 @@
 /* praat_actions.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/10/17 removed a bug that caused a crash in praat_show/hideAction if class2 or class3 was NULL
  * pb 2007/12/26 Gui
+ * pb 2009/01/18 arguments to UiForm callbacks
  */
 
 #include "praatP.h"
@@ -93,23 +94,23 @@ static int lookUpMatchingAction (void *class1, void *class2, void *class3, void 
 }
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (void *class1, int n1,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (void *class1, int n1, void *class2, int n2,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 {
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
@@ -430,7 +431,7 @@ static const wchar_t *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
 }
 static int allowExecutionHook (void *closure) {
-	int (*callback) (Any, void *) = (int (*) (Any, void *)) closure;
+	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long i, numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (i = 1; i <= theNumberOfActions; i ++) {
@@ -469,7 +470,7 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	int (*callback) (Any, void *) = (int (*) (Any, void *)) void_me;
+	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) void_me;
 	for (int i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
@@ -478,14 +479,14 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (my title);
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, callback);
-			if (! callback (NULL, (XtPointer) modified))
+			if (! callback (NULL, NULL, NULL, (XtPointer) modified))
 				Melder_flushError ("Command not executed.");
 			Ui_setAllowExecutionHook (NULL, NULL);
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
 			UiHistory_write (L"\nexecute");
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand ((wchar_t *) my script, NULL))
+			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL))
 				Melder_flushError ("Script not executed.");
 			praat_updateSelection (); return;
 		}
@@ -528,7 +529,7 @@ void praat_actions_show (void) {
 	 * kill the dynamic menu and the write menu.
 	 */
 	if (! theCurrentPraat -> batch) {
-		#if defined (macintosh) || defined (_WIN32)
+		#if defined (macintosh) || defined (_WIN32) || 1
 			deleteDynamicMenu ();
 		#endif
 		if (! Melder_backgrounding) {
@@ -852,11 +853,11 @@ void praat_saveAddedActions (FILE *f) {
 	}
 }
 
-int praat_doAction (const wchar_t *command, const wchar_t *arguments) {
+int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter) {
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	if (! theActions [i]. callback ((wchar_t *) arguments, NULL))
+	if (! theActions [i]. callback (NULL, arguments, interpreter, NULL))
 		return 0;
 	return 1;
 }

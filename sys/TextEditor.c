@@ -1,6 +1,6 @@
 /* TextEditor.c
  *
- * Copyright (C) 1997-2008 Paul Boersma
+ * Copyright (C) 1997-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
  * pb 2007/12/23 Gui
  * pb 2008/01/04 guard against multiple opening of same file
  * pb 2008/03/21 new Editor API
+ * pb 2009/01/18 arguments to UiForm callbacks
  */
 
 #include "TextEditor.h"
@@ -138,24 +139,30 @@ static void closeDocument (TextEditor me) {
 	forget (me);
 }
 
-static int cb_open_ok (Any sender, I) {
+static int cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, I) {
 	iam (TextEditor);
-	MelderFile file = UiFile_getFile (sender);
+	(void) sendingString;
+	(void) interpreter;
+	MelderFile file = UiFile_getFile (sendingForm);
 	if (! openDocument (me, file)) return 0;
 	return 1;
 }
 
-static void cb_showOpen (EditorCommand cmd, Any sender) {
+static void cb_showOpen (EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter) {
 	TextEditor me = (TextEditor) cmd -> editor;
-	(void) sender;
+	(void) sendingForm;
+	(void) sendingString;
+	(void) interpreter;
 	if (! my openDialog)
 		my openDialog = UiInfile_create (my dialog, L"Open", cb_open_ok, me, 0);
 	UiInfile_do (my openDialog);
 }
 
-static int cb_saveAs_ok (Any sender, I) {
+static int cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, I) {
 	iam (TextEditor);
-	MelderFile file = UiFile_getFile (sender);
+	(void) sendingString;
+	(void) interpreter;
+	MelderFile file = UiFile_getFile (sendingForm);
 	if (! saveDocument (me, file)) return 0;
 	return 1;
 }
@@ -177,9 +184,9 @@ static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
 	GuiObject_hide (my dirtyOpenDialog);
 	if (my name) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
-		cb_showOpen (cmd, NULL);
+		cb_showOpen (cmd, NULL, NULL, NULL);
 	} else {
-		menu_cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
 	}
 }
 
@@ -195,7 +202,7 @@ static void gui_button_cb_discardAndOpen (I, GuiButtonEvent event) {
 	EditorCommand cmd = (EditorCommand) void_me;
 	TextEditor me = (TextEditor) cmd -> editor;
 	GuiObject_hide (my dirtyOpenDialog);
-	cb_showOpen (cmd, NULL);
+	cb_showOpen (cmd, NULL, NULL, NULL);
 }
 
 static int menu_cb_open (EDITOR_ARGS) {
@@ -227,7 +234,7 @@ static int menu_cb_open (EDITOR_ARGS) {
 		}
 		GuiDialog_show (my dirtyOpenDialog);
 	} else {
-		cb_showOpen (cmd, sender);
+		cb_showOpen (cmd, sendingForm, sendingString, interpreter);
 	}
 	return 1;
 }
@@ -241,7 +248,7 @@ static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		newDocument (me);
 	} else {
-		menu_cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
 	}
 }
 
@@ -290,7 +297,7 @@ static int menu_cb_save (EDITOR_ARGS) {
 	if (my name) {
 		if (! saveDocument (me, & my file)) return 0;
 	} else {
-		menu_cb_saveAs (me, cmd, NULL);
+		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
 	}
 	return 1;
 }
@@ -303,7 +310,7 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL);
+		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL, NULL, NULL);
 	}
 }
 
@@ -583,7 +590,7 @@ TextEditor TextEditor_create (Widget parent, const wchar_t *initialText) {
 
 void TextEditor_showOpen (I) {
 	iam (TextEditor);
-	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL);
+	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL, NULL, NULL);
 }
 
 /* End of file TextEditor.c */

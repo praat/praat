@@ -1,6 +1,6 @@
 /* praat_objectMenus.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/08/12 wchar_t
  * pb 2008/04/30 new Formula API
+ * pb 2009/01/17 arguments to UiForm callbacks
  */
 
 #include <ctype.h>
@@ -291,7 +292,6 @@ FORM (praat_calculator, L"Calculator", L"Calculator")
 	LABEL (L"", L"For details, click Help.")
 	OK
 DO
-	Interpreter interpreter = UiInterpreter_get ();
 	if (interpreter == NULL) {
 		interpreter = Interpreter_create (NULL, NULL);
 		int status = Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), NULL);
@@ -517,7 +517,7 @@ void praat_addFixedButtons (Widget form) {
 }
 
 static void searchProc (void) {
-	DO_SearchManual (NULL, NULL);
+	DO_SearchManual (NULL, NULL, NULL, NULL);
 }
 
 static MelderString itemTitle_about = { 0 };

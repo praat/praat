@@ -123,7 +123,7 @@ DO
 	Configuration c = Configuration_create (GET_INTEGER (L"Number of points"),
 		GET_INTEGER (L"Number of dimensions"));
 	if (c == NULL || ! praat_new1 (c, GET_STRING (L"Name"))) return 0;
-	if (! TableOfReal_formula (c, GET_STRING (L"formula"), NULL)) return 0;
+	if (! TableOfReal_formula (c, GET_STRING (L"formula"), interpreter, NULL)) return 0;
 END
 
 FORM (drawSplines, L"Draw splines", L"spline")

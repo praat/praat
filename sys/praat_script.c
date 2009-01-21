@@ -32,6 +32,8 @@
  * pb 2007/06/11 wchar_t
  * pb 2007/10/04 removed swscanf
  * pb 2009/01/04 allow proc(args) syntax
+ * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2009/01/20 pause uses a pause form
  */
 
 #include <ctype.h>
@@ -39,6 +41,7 @@
 #include "praat_script.h"
 #include "sendpraat.h"
 #include "sendsocket.h"
+#include "UiPause.h"
 
 static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *string) {
 	int IOBJECT;
@@ -91,6 +94,7 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 }
 
 int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
+	//Melder_casual ("praat_executeCommand: %ld: %ls", interpreter, command);
 	if (command [0] == '\0' || command [0] == '#' || command [0] == '!' || command [0] == ';')
 		/* Skip empty lines and comments. */;
 	else if ((command [0] == '.' || command [0] == '+' || command [0] == '-') && isupper (command [1])) {   /* Selection? */
@@ -176,16 +180,10 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
-			int wasBackgrounding = Melder_backgrounding;
-			structMelderDir dir = { { 0 } };
-			Melder_getDefaultDir (& dir);
 			if (theCurrentPraat -> batch) return 1;
-			UiFile_hide ();
-			if (wasBackgrounding) praat_foreground ();
-			if (! Melder_pause (wcsequ (command, L"pause") ? L"" : command + 6)) return Melder_error1 (L"You interrupted the script.");
-			if (wasBackgrounding) praat_background ();
-			Melder_setDefaultDir (& dir);
-			/* BUG: should also restore praatP. editor. */
+			UiPause_begin (theCurrentPraat -> topShell, L"stop or continue", interpreter); iferror return 0;
+			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6); iferror return 0;
+			UiPause_end (1, 1, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter); iferror return 0; 
 		} else if (wcsnequ (command, L"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (wcsnequ (command, L"editor", 6)) {
@@ -290,9 +288,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			 * This must be a formula command:
 			 *    proc (args)
 			 */
-			UiInterpreter_set (interpreter);
 			int status = Interpreter_voidExpression (interpreter, command);
-			UiInterpreter_set (NULL);
 			return status;
 		}
 	} else {   /* Simulate menu choice. */
@@ -314,10 +310,8 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		/* See if command exists and is available; ignore separators. */
 		/* First try loose commands, then fixed commands. */
 
-		UiInterpreter_set (interpreter);
 		if (theCurrentPraat == & theForegroundPraat && praatP. editor != NULL) {
-			if (! Editor_doMenuCommand (praatP. editor, command, arguments)) {
-				UiInterpreter_set (NULL);
+			if (! Editor_doMenuCommand (praatP. editor, command, arguments, interpreter)) {
 				return 0;
 			}
 		} else if (theCurrentPraat != & theForegroundPraat &&
@@ -325,18 +319,15 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			 wcsnequ (command, L"Append ", 7) ||
 			 wcsequ (command, L"Quit")))
 		{
-			UiInterpreter_set (NULL);
 			return Melder_error1 (L"Commands that write files (including Quit) are not available inside pictures.");
-		} else if (! praat_doAction (command, arguments)) {
+		} else if (! praat_doAction (command, arguments, interpreter)) {
 			if (Melder_hasError ()) {
-				UiInterpreter_set (NULL);
 				if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
 					return Melder_error3 (L"It may be helpful to remove the trailing spaces in \"", arguments, L"\".");
 				}
 				return 0;
 			}
-			if (! praat_doMenuCommand (command, arguments)) {
-				UiInterpreter_set (NULL);
+			if (! praat_doMenuCommand (command, arguments, interpreter)) {
 				if (Melder_hasError ()) {
 					if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
 						return Melder_error3 (L"It may be helpful to remove the trailing spaces in \"", arguments, L"\".");
@@ -355,7 +346,6 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 				}
 			}
 		}
-		UiInterpreter_set (NULL);
 		praat_updateSelection ();
 	}
 	return 1;
@@ -461,9 +451,11 @@ end:
 	return 1;
 }
 
-static int secondPassThroughScript (Any dia, void *dummy) {
+static int secondPassThroughScript (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, void *dummy) {
+	(void) sendingString_dummy;
+	(void) interpreter_dummy;
 	(void) dummy;
-	return praat_executeScriptFromDialog (dia);
+	return praat_executeScriptFromDialog (sendingForm);
 }
 
 static int firstPassThroughScript (MelderFile file) {
@@ -496,7 +488,9 @@ end:
 	return 1;
 }
 
-static int fileSelectorOkCallback (Any dia, void *dummy) {
+static int fileSelectorOkCallback (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, void *dummy) {
+	(void) sendingString_dummy;
+	(void) interpreter_dummy;
 	(void) dummy;
 	return firstPassThroughScript (UiFile_getFile (dia));
 }
@@ -505,9 +499,10 @@ static int fileSelectorOkCallback (Any dia, void *dummy) {
  * DO_praat_runScript () is the command callback for "Run script...", which is a bit obsolete command,
  * hidden in the Praat menu, and otherwise replaced by "execute".
  */
-int DO_praat_runScript (Any sender, void *dummy) {
+int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter_dummy, void *dummy) {
+	(void) interpreter_dummy;
 	(void) dummy;
-	if (sender == NULL) {
+	if (sendingForm == NULL && sendingString == NULL) {
 		/*
 		 * User clicked the "Run script..." button in the Praat menu.
 		 */
@@ -519,13 +514,15 @@ int DO_praat_runScript (Any sender, void *dummy) {
 		/*
 		 * A script called "Run script..."
 		 */
-		praat_executeScriptFromFileNameWithArguments (sender);
+		praat_executeScriptFromFileNameWithArguments (sendingString);
 	}
 	return 1;
 }
 
-int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
+int DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter, void *dummy) {
 	structMelderFile file = { 0 };
+	(void) sendingForm_dummy;
+	(void) interpreter;
 	(void) dummy;
 	if (! Melder_relativePathToFile ((wchar_t *) scriptPath, & file)) return 0;
 	return firstPassThroughScript (& file);
@@ -533,7 +530,7 @@ int DO_RunTheScriptFromAnyAddedMenuCommand (Any scriptPath, void *dummy) {
 
 int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar_t *script) {
 	praatP.editor = editor;
-	DO_RunTheScriptFromAnyAddedMenuCommand ((Any) script, NULL);
+	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, script, NULL, NULL);
 	/*praatP.editor = NULL;*/
 	iferror return 0;
 	return 1;

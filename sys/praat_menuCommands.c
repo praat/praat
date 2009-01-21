@@ -1,6 +1,6 @@
 /* praat_menuCommands.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/01/26 buttons along top
  * pb 2007/06/09 wchar_t
+ * pb 2009/01/17 arguments to UiForm callbacks
  */
 
 #include "praatP.h"
@@ -78,7 +79,7 @@ static int lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu
 }
 
 static void do_menu (I, unsigned long modified) {
-	int (*callback) (Any, void *) = (int (*) (Any, void *)) void_me;
+	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) void_me;
 	Melder_assert (callback != NULL);
 	for (int i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
@@ -87,13 +88,13 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (L"\n");
 				UiHistory_write (my title);
 			}
-			if (! callback (NULL, (XtPointer) modified))
+			if (! callback (NULL, NULL, NULL, (XtPointer) modified))
 				Melder_flushError ("Command not executed.");
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
 			UiHistory_write (L"\nexecute");
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand ((wchar_t *) my script, NULL))
+			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL))
 				Melder_flushError ("Script not executed.");
 			praat_updateSelection (); return;
 		}
@@ -146,7 +147,7 @@ static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 }
 
 Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, unsigned long flags, int (*callback) (Any, void *))
+	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
 {
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
@@ -399,7 +400,7 @@ void praat_saveMenuCommands (FILE *f) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (Any, void *), int x, int y) {
+void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_wcsdup (L"Objects");
 	my title = title;
@@ -424,12 +425,12 @@ void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
 	if (! theCurrentPraat -> batch && ! Melder_backgrounding) GuiObject_setSensitive (theCommands [i]. button, sensitive);
 }
 
-int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments) {
+int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter) {
 	long i = 1;
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
 		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	if (! theCommands [i]. callback ((Any) arguments, NULL))
+	if (! theCommands [i]. callback (NULL, arguments, interpreter, NULL))
 		return 0;
 	return 1;
 }

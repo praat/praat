@@ -1,6 +1,6 @@
 /* EditorM.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/03/21
+ * pb 2009/01/18
  */
 
 #undef FORM
@@ -85,23 +85,23 @@
 
 #define DIALOG  cmd -> dialog
 
-#define EDITOR_ARGS  Any void_me, EditorCommand cmd, Any sender
-#define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sender
+#define EDITOR_ARGS  Any void_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter
+#define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
 	cmd -> dialog = UiForm_createE (cmd, title, helpTitle);
-#define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sender == NULL) {
-#define EDITOR_DO  UiForm_do (cmd -> dialog, false); } else if (sender != cmd -> dialog) { \
-	if (! UiForm_parseStringE (cmd, (wchar_t *) sender)) return 0; } else {
+#define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sendingForm == NULL && sendingString == NULL) {
+#define EDITOR_DO  UiForm_do (cmd -> dialog, false); } else if (sendingForm == NULL) { \
+	if (! UiForm_parseStringE (cmd, sendingString, interpreter)) return 0; } else {
 #define EDITOR_END  } return 1;
 
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> dialog == NULL) { \
 		cmd -> dialog = UiOutfile_createE (cmd, title, helpTitle); \
-		} if (sender == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
+		} if (sendingForm == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
-		if (sender == cmd -> dialog) file = UiFile_getFile (sender); \
-		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; }
+		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, name)

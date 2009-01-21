@@ -1,6 +1,6 @@
 /* UiFile.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
                  that was raised in Praat. The workaround is to temporarily disable file info tips.
  * pb 2007/03/23 new Editor API
  * pb 2007/05/30 wchar_t
+ * pb 2009/01/18 arguments to UiForm callbacks
  */
 
 #if defined (macintosh)
@@ -63,7 +64,7 @@
 	Widget parent, dialog, warning; \
 	structMelderFile file; \
 	const wchar_t *helpTitle; \
-	int (*okCallback) (Any sender, void *closure); \
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure); \
 	void *okClosure; \
 	int shiftKeyPressed;
 #ifdef macintosh
@@ -218,7 +219,7 @@ static void classUiInfile_ok (I) {
 	#endif
 	structMelderFile file;
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-	if (! my okCallback (me, my okClosure)) {
+	if (! my okCallback (me, NULL, NULL, my okClosure)) {
 		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 		Melder_flushError (NULL);
 	} else if (! my shiftKeyPressed) {
@@ -237,7 +238,7 @@ class_methods (UiInfile, UiFile)
 class_methods_end
 
 Any UiInfile_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (Any dia, void *closure), void *okClosure, const wchar_t *helpTitle)
+	int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure, const wchar_t *helpTitle)
 {
 	UiInfile me = new (UiInfile);
 	my okCallback = okCallback;
@@ -256,7 +257,7 @@ void UiInfile_do (I) {
 			Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
 			g_free (filename);
 			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-			if (! my okCallback (me, my okClosure)) {
+			if (! my okCallback (me, NULL, NULL, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
 			}
@@ -286,7 +287,7 @@ void UiInfile_do (I) {
 					Melder_machToFile (& machFile, & my file);
 				structMelderFile file;
 				MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-				if (! my okCallback (me, my okClosure)) {
+				if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 					Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 					Melder_flushError (NULL);
 				}
@@ -339,7 +340,7 @@ void UiInfile_do (I) {
 			Melder_pathToFile (fullFileName, & my file);
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-			if (! my okCallback (me, my okClosure)) {
+			if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
 			}
@@ -381,7 +382,7 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
 	(void) call;
 	if (w) GuiObject_hide (w);
-	if (! my okCallback (me, my okClosure)) {
+	if (! my okCallback (me, NULL, NULL, my okClosure)) {
 		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 		Melder_flushError (NULL);
 	}
@@ -445,7 +446,7 @@ static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
 #endif
 #endif
 Any UiOutfile_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (Any dia, void *closure), void *okClosure, const wchar_t *helpTitle)
+	int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure, const wchar_t *helpTitle)
 {
 	UiOutfile me = new (UiOutfile);
 	my okCallback = okCallback;
@@ -475,9 +476,9 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 	return me;
 }
 
-static int commonOutfileCallback (Any dia, void *closure) {
+static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure) {
 	EditorCommand command = (EditorCommand) closure;
-	return command -> commandCallback (command -> editor, command, dia);
+	return command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter);
 }
 
 Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle) {
@@ -497,7 +498,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
 		g_free (filename);
 		MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-		if (! my okCallback (me, my okClosure)) {
+		if (! my okCallback (me, NULL, NULL, my okClosure)) {
 			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 			Melder_flushError (NULL);
 		}
@@ -548,7 +549,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 						*p = CFStringGetCharacterAtIndex (fileName, i);
 					*p = '\0';
 				}
-				if (! my okCallback (me, my okClosure)) {
+				if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 					Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 					Melder_flushError (NULL);
 				}
@@ -594,7 +595,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 				return;
 			}
 			Melder_pathToFile (fullFileName, & my file);
-			if (! my okCallback (me, my okClosure)) {
+			if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 				Melder_flushError (NULL);
 			}

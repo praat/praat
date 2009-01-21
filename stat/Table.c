@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2008 Paul Boersma
+ * Copyright (C) 2002-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
  * pb 2007/11/18 refactoring
  * pb 2008/01/02 Table_drawRowFromDistribution
  * pb 2008/04/30 new Formula API
+ * pb 2009/01/18 Interpreter argument in formula
  */
 
 #include <ctype.h>
@@ -1155,10 +1156,10 @@ end:
 	return 1;
 }
 
-int Table_formula_columnRange (Table me, long icol1, long icol2, const wchar_t *expression) {
+int Table_formula_columnRange (Table me, long icol1, long icol2, const wchar_t *expression, Interpreter interpreter) {
 	if (icol1 < 1 || icol1 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol1), L".");
 	if (icol2 < 1 || icol2 > my numberOfColumns) return Melder_error3 (L"No column ", Melder_integer (icol2), L".");
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); cherror
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		for (long icol = icol1; icol <= icol2; icol ++) {
 			struct Formula_Result result;
@@ -1180,8 +1181,8 @@ end:
 	return 1;
 }
 
-int Table_formula (Table me, long icol, const wchar_t *expression) {
-	return Table_formula_columnRange (me, icol, icol, expression);
+int Table_formula (Table me, long icol, const wchar_t *expression, Interpreter interpreter) {
+	return Table_formula_columnRange (me, icol, icol, expression, interpreter);
 }
 
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,

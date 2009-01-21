@@ -1,6 +1,6 @@
 /* Formant.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2008/01/19 version 2
  * pb 2008/01/19 don't draw undefined lines
  * pb 2008/06/01 Formant_downto_Table, Formant_list
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "Formant.h"
@@ -202,7 +203,7 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	}
 }
 
-int Formant_formula_bandwidths (Formant me, const wchar_t *formula) {
+int Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
 	if (nrow < 1) return Melder_error1 (L"(Formant_formula_bandwidths:) No formants available.");
@@ -212,7 +213,7 @@ int Formant_formula_bandwidths (Formant me, const wchar_t *formula) {
 		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
 			mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 	}
-	Matrix_formula (mat, formula, NULL); cherror
+	Matrix_formula (mat, formula, interpreter, NULL); cherror
 	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
 		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -224,7 +225,7 @@ end:
 	return 1;
 }
 
-int Formant_formula_frequencies (Formant me, const wchar_t *formula) {
+int Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter) {
 	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
 	Matrix mat = NULL;
 	if (nrow < 1) return Melder_error1 (L"(Formant_formula_frequencies:) No formants available.");
@@ -234,7 +235,7 @@ int Formant_formula_frequencies (Formant me, const wchar_t *formula) {
 		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
 			mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 	}
-	Matrix_formula (mat, formula, NULL); cherror
+	Matrix_formula (mat, formula, interpreter, NULL); cherror
 	for (iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
 		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)

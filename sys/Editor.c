@@ -1,6 +1,6 @@
 /* Editor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/12/05 enums
  * pb 2008/03/20 split off Help menu
  * sdk 2008/03/24 GTK
+ * pb 2009/01/18 arguments to UiForm callbacks
  */
 
 #include <time.h>
@@ -102,11 +103,11 @@ static void commonCallback (GUI_ARGS) {
 		UiHistory_write (L"\n");
 		UiHistory_write (my itemTitle);
 	}
-	if (! my commandCallback (my editor, me, NULL)) Melder_flushError (NULL);
+	if (! my commandCallback (my editor, me, NULL, NULL, NULL)) Melder_flushError (NULL);
 }
 
 Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
-	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter))
 {
 	EditorCommand me = new (EditorCommand);
 	my editor = menu -> editor;
@@ -136,7 +137,7 @@ EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 /*Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
 Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	int (*commandCallback) (Any editor_me, EditorCommand cmd, Any sender))
+	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter))
 {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
@@ -149,9 +150,11 @@ Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *i
 	return NULL;
 }
 
-static int Editor_scriptCallback (I, EditorCommand cmd, Any sender) {
+static int Editor_scriptCallback (I, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter) {
 	iam (Editor);
-	(void) sender;
+	(void) sendingForm;
+	(void) sendingString;
+	(void) interpreter;
 	return DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
@@ -215,7 +218,7 @@ EditorCommand Editor_getMenuCommand (Any editor, const wchar_t *menuTitle, const
 	return NULL;
 }
 
-int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t *arguments) {
+int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t *arguments, Interpreter interpreter) {
 	Editor me = (Editor) editor;
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
@@ -224,7 +227,7 @@ int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t
 		for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands -> item [icommand];
 			if (wcsequ (commandTitle, command -> itemTitle)) {
-				if (! command -> commandCallback (me, command, (Any) arguments))
+				if (! command -> commandCallback (me, command, NULL, arguments, interpreter))
 					return 0;
 				return 1;
 			}

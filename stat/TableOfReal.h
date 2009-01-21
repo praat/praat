@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/10
+ * pb 2009/01/18
  */
 
 /* TableOfReal inherits from Data */
@@ -32,6 +32,9 @@
 #endif
 #ifndef _Table_h_
 	#include "Table.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 /* For the inheritors. */
@@ -57,10 +60,10 @@ double TableOfReal_getColumnStdev (I, long icol);
 
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
 Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn);
-int TableOfReal_formula (I, const wchar_t *expression, Any /* TableOfReal */ target);
+int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, Any /* TableOfReal */ target);
 void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int iformat, int precision);
 void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
-	const wchar_t *conditionFormula);
+	const wchar_t *conditionFormula, Interpreter interpreter);
 void TableOfReal_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
 	long colmin, long colmax, int garnish);
 void TableOfReal_drawVerticalLines (I, Graphics g, long rowmin, long rowmax);
@@ -85,8 +88,8 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, int which_Melder_N
 TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion);
 TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion);
 
-TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition);
-TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition);
+TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpreter interpreter);
+TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interpreter interpreter);
 
 Strings TableOfReal_extractRowLabelsAsStrings (I);
 Strings TableOfReal_extractColumnLabelsAsStrings (I);

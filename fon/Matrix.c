@@ -1,6 +1,6 @@
 /* Matrix.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
  * pb 2008/04/30 new Formula API
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include "Matrix.h"
@@ -682,9 +683,9 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
 	return 1;
 }
 
-int Matrix_formula (Matrix me, const wchar_t *expression, Matrix target) {
+int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
 	struct Formula_Result result;
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (target == NULL) target = me;
 	for (long irow = 1; irow <= my ny; irow ++) {
 		for (long icol = 1; icol <= my nx; icol ++) {

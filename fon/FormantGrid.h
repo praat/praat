@@ -2,7 +2,7 @@
 #define _FormantGrid_h_
 /* FormantGrid.h
  *
- * Copyright (C) 2008 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2009 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/11/16
+ * pb 2009/01/18
  */
 
 #ifndef _RealTier_h_
@@ -31,6 +31,9 @@
 #endif
 #ifndef _Formant_h_
 	#include "Formant.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 #include "FormantGrid_def.h"
@@ -66,8 +69,8 @@ int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double sampl
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 
-int FormantGrid_formula_frequencies (I, const wchar_t *expression, thou);
-int FormantGrid_formula_bandwidths (I, const wchar_t *expression, thou);
+int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter interpreter, thou);
+int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter interpreter, thou);
 
 FormantGrid Formant_downto_FormantGrid (Formant me);
 Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);

@@ -21,7 +21,7 @@
 
 /*
  * djmw 20080917 Initial version
- * djmw 20090109 Latest modification
+ * djmw 20090112 Latest modification
  */
 
 #ifndef _Collection_h_
@@ -44,6 +44,9 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 #include "KlattGrid_def.h"
@@ -206,8 +209,8 @@ void KlattGrid_removeDelta##Name##PointsBetween (KlattGrid me, long iformant, do
 KlattGrid_QUERY_ADD_REMOVE_PROTO(Formant)
 KlattGrid_QUERY_ADD_REMOVE_PROTO(Bandwidth)
 
-int KlattGrid_formula_frequencies (KlattGrid me, int formantType, const wchar_t *expression);
-int KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const wchar_t *expression);
+int KlattGrid_formula_frequencies (KlattGrid me, int formantType, const wchar_t *expression, Interpreter interpreter);
+int KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const wchar_t *expression, Interpreter interpreter);
 
 FormantGrid KlattGrid_extractFormantGrid (KlattGrid me, int formantType);
 int KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid thee);

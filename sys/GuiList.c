@@ -801,7 +801,7 @@ void GuiList_setSelectionChangedCallback (Widget widget, void (*callback) (void 
 }
 
 void GuiList_setTopPosition (Widget widget, long topPosition) {
-Melder_casual ("Set top position %ld", topPosition);
+	//Melder_casual ("Set top position %ld", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) topPosition);

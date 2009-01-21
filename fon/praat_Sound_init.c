@@ -46,7 +46,7 @@
 	#define LONG_MAX  2147483647
 #endif
 
-int praat_Fon_formula (Any dia);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 void praat_TimeFunction_query_init (void *klas);
 void praat_TimeFunction_modify_init (void *klas);
 
@@ -389,7 +389,7 @@ DIRECT (Sounds_convolve)
 		wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1)) return 0;
 END
 
-static int common_Sound_create (void *dia, bool allowStereo) {
+static int common_Sound_create (void *dia, Interpreter interpreter, bool allowStereo) {
 	Sound sound = NULL;
 	long channels = allowStereo ? GET_INTEGER (L"Channels") : 1;
 	double startTime = GET_REAL (L"Start time");
@@ -441,7 +441,7 @@ static int common_Sound_create (void *dia, bool allowStereo) {
 			return 0;   /* Unexpected error. Wait for generic message. */
 		}
 	}
-	Matrix_formula ((Matrix) sound, GET_STRING (L"formula"), NULL);
+	Matrix_formula ((Matrix) sound, GET_STRING (L"formula"), interpreter, NULL);
 	iferror {
 		forget (sound);
 		return Melder_error1 (L"Please correct the formula.");
@@ -460,7 +460,7 @@ FORM (Sound_create, L"Create mono Sound", L"Create Sound from formula...")
 	TEXTFIELD (L"formula", L"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
-	if (! common_Sound_create (dia, false)) return 0;
+	if (! common_Sound_create (dia, interpreter, false)) return 0;
 END
 
 FORM (Sound_createFromFormula, L"Create Sound from formula", L"Create Sound from formula...")
@@ -475,7 +475,7 @@ FORM (Sound_createFromFormula, L"Create Sound from formula", L"Create Sound from
 	TEXTFIELD (L"formula", L"1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)")
 	OK
 DO
-	if (! common_Sound_create (dia, true)) return 0;
+	if (! common_Sound_create (dia, interpreter, true)) return 0;
 END
 
 FORM (Sound_createFromToneComplex, L"Create Sound from tone complex", L"Create Sound from tone complex...")
@@ -658,7 +658,7 @@ FORM (Sound_filter_formula, L"Sound: Filter (formula)...", L"Formula...")
 	OK
 DO
 	WHERE (SELECTED)
-		if (! praat_new2 (Sound_filter_formula (OBJECT, GET_STRING (L"formula")),
+		if (! praat_new2 (Sound_filter_formula (OBJECT, GET_STRING (L"formula"), interpreter),
 			NAMEW, L"_filt")) return 0;
 END
 
@@ -730,7 +730,7 @@ FORM (Sound_formula, L"Sound: Formula", L"Sound: Formula...")
 	LABEL (L"label6", L"endfor")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Sound_getAbsoluteExtremum, L"Sound: Get absolute extremum", L"Sound: Get absolute extremum...")

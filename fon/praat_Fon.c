@@ -132,11 +132,11 @@ static int getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmi
 
 /***** Two auxiliary routines, exported. *****/
 
-int praat_Fon_formula (Any dia);
-int praat_Fon_formula (Any dia) {
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	int IOBJECT;
 	WHERE_DOWN (SELECTED) {
-		Matrix_formula (OBJECT, GET_STRING (L"formula"), NULL);
+		Matrix_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -216,7 +216,7 @@ FORM (AmplitudeTier_formula, L"AmplitudeTier: Formula", L"AmplitudeTier: Formula
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING (L"formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -338,7 +338,7 @@ FORM (Cochleagram_formula, L"Cochleagram Formula", L"Cochleagram: Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 DIRECT (Cochleagram_help) Melder_help (L"Cochleagram"); END
@@ -469,7 +469,7 @@ FORM (DurationTier_formula, L"DurationTier: Formula", L"DurationTier: Formula...
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING (L"formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -526,7 +526,7 @@ FORM (Excitation_formula, L"Excitation Formula", L"Excitation: Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 DIRECT (Excitation_getLoudness)
@@ -585,7 +585,7 @@ FORM (Formant_formula_bandwidths, L"Formant: Formula (bandwidths)", L"Formant: F
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Formant_formula_bandwidths (OBJECT, GET_STRING (L"formula"))) return 0;
+		if (! Formant_formula_bandwidths (OBJECT, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -596,7 +596,7 @@ FORM (Formant_formula_frequencies, L"Formant: Formula (frequencies)", L"Formant:
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Formant_formula_frequencies (OBJECT, GET_STRING (L"formula"))) return 0;
+		if (! Formant_formula_frequencies (OBJECT, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -950,7 +950,7 @@ FORM (FormantGrid_formula_bandwidths, L"FormantGrid: Formula (bandwidths)", L"Fo
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! FormantGrid_formula_bandwidths (OBJECT, GET_STRING (L"formula"), NULL)) return 0;
+		if (! FormantGrid_formula_bandwidths (OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -961,7 +961,7 @@ FORM (FormantGrid_formula_frequencies, L"FormantGrid: Formula (frequencies)", L"
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! FormantGrid_formula_frequencies (OBJECT, GET_STRING (L"formula"), NULL)) return 0;
+		if (! FormantGrid_formula_frequencies (OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1121,7 +1121,7 @@ FORM (Harmonicity_formula, L"Harmonicity Formula", L"Harmonicity: Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Harmonicity_getMaximum, L"Harmonicity: Get maximum", L"Harmonicity: Get maximum...")
@@ -1221,7 +1221,7 @@ FORM (Intensity_formula, L"Intensity Formula", 0)
 	TEXTFIELD (L"formula", L"0")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Intensity_getMaximum, L"Intensity: Get maximum", L"Intensity: Get maximum...")
@@ -1414,7 +1414,7 @@ FORM (IntensityTier_formula, L"IntensityTier: Formula", L"IntensityTier: Formula
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING (L"formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -1537,7 +1537,7 @@ FORM (Ltas_formula, L"Ltas Formula", 0)
 	TEXTFIELD (L"formula", L"0")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Ltas_getBinNumberFromFrequency, L"Ltas: Get band from frequency", L"Ltas: Get band from frequency...")
@@ -1947,7 +1947,7 @@ DO
 		ymin, ymax, GET_INTEGER (L"Number of rows"), GET_REAL (L"dy"), GET_REAL (L"y1")),
 		GET_STRING (L"Name"))) return 0;
 	praat_updateSelection ();
-	return praat_Fon_formula (dia);
+	return praat_Fon_formula (dia, interpreter);
 END
 
 FORM (Matrix_createSimple, L"Create simple Matrix", L"Create simple Matrix...")
@@ -1962,7 +1962,7 @@ DO
 		GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns")),
 		GET_STRING (L"Name"))) return 0;
 	praat_updateSelection ();
-	return praat_Fon_formula (dia);
+	return praat_Fon_formula (dia, interpreter);
 END
 
 FORM (Matrix_drawOneContour, L"Draw one altitude contour", 0)
@@ -2022,7 +2022,7 @@ FORM (Matrix_formula, L"Matrix Formula", L"Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 DIRECT (Matrix_getHighestX) Matrix me = ONLY_OBJECT; Melder_informationReal (my xmax, NULL); END
@@ -2356,7 +2356,7 @@ FORM (Pitch_formula, L"Pitch: Formula", L"Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! Pitch_formula (OBJECT, GET_STRING (L"formula"))) return 0;
+		if (! Pitch_formula (OBJECT, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -2806,7 +2806,7 @@ FORM (PitchTier_formula, L"PitchTier: Formula", L"PitchTier: Formula...")
 	OK
 DO
 	WHERE_DOWN (SELECTED) {
-		RealTier_formula (OBJECT, GET_STRING (L"formula"), NULL);
+		RealTier_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -3636,7 +3636,7 @@ FORM (Spectrogram_formula, L"Spectrogram: Formula", L"Spectrogram: Formula...")
 	TEXTFIELD (L"formula", L"self * exp (- x / 0.1)")
 	OK
 DO
-	return praat_Fon_formula (dia);
+	return praat_Fon_formula (dia, interpreter);
 END
 
 FORM (Spectrogram_getPowerAt, L"Spectrogram: Get power at (time, frequency)", 0)
@@ -3738,7 +3738,7 @@ FORM (Spectrum_formula, L"Spectrum: Formula", L"Spectrum: Formula...")
 	TEXTFIELD (L"formula", L"0")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
 FORM (Spectrum_getBandDensity, L"Spectrum: Get band density", 0)
@@ -3826,7 +3826,10 @@ FORM (Spectrum_passHannBand, L"Spectrum: Filter (pass Hann band)", L"Spectrum: F
 	POSITIVE (L"Smoothing (Hz)", L"100")
 	OK
 DO
-	EVERY (Spectrum_passHannBand (OBJECT, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing")))
+	WHERE (SELECTED) {
+		Spectrum_passHannBand (OBJECT, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing"));
+		praat_dataChanged (OBJECT);
+	}
 END
 
 FORM (Spectrum_stopHannBand, L"Spectrum: Filter (stop Hann band)", L"Spectrum: Filter (stop Hann band)...")
@@ -3835,7 +3838,10 @@ FORM (Spectrum_stopHannBand, L"Spectrum: Filter (stop Hann band)", L"Spectrum: F
 	POSITIVE (L"Smoothing (Hz)", L"100")
 	OK
 DO
-	EVERY (Spectrum_stopHannBand (OBJECT, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing")))
+	WHERE (SELECTED) {
+		Spectrum_stopHannBand (OBJECT, GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing"));
+		praat_dataChanged (OBJECT);
+	}
 END
 
 FORM (Spectrum_to_Excitation, L"Spectrum: To Excitation", 0)

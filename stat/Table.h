@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2008 Paul Boersma
+ * Copyright (C) 2002-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/02
+ * pb 2009/01/18
  */
 
 #ifndef _Collection_h_
@@ -28,6 +28,9 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 /* For the inheritors. */
@@ -102,8 +105,8 @@ double Table_getVarianceRatio (Table me, long column1, long column2, double sign
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum);
 
-int Table_formula (Table me, long column, const wchar_t *formula);
-int Table_formula_columnRange (Table me, long column1, long column2, const wchar_t *expression);
+int Table_formula (Table me, long column, const wchar_t *formula, Interpreter interpreter);
+int Table_formula_columnRange (Table me, long column1, long column2, const wchar_t *expression, Interpreter interpreter);
 
 Table Tables_append (I, thou);
 Table Tables_appendMany (Collection me);

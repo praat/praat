@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/01/02
+ * pb 2009/01/18
  */
 
 #include "praat.h"
@@ -434,7 +434,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-		if (! Table_formula (OBJECT, icol, GET_STRING (L"formula"))) return 0;
+		if (! Table_formula (OBJECT, icol, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -450,7 +450,7 @@ DO
 		Table me = OBJECT;
 		long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); cherror
 		long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); cherror
-		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRING (L"formula"))) return 0;
+		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -1041,7 +1041,7 @@ FORM (TableOfReal_drawAsNumbers_if, L"Draw as numbers if...", 0)
 DO
 	EVERY_DRAW (TableOfReal_drawAsNumbers_if (OBJECT, GRAPHICS,
 		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
-		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition")))
+		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition"), interpreter))
 END
 
 FORM (TableOfReal_drawAsSquares, L"Draw table as squares", 0)
@@ -1092,7 +1092,7 @@ FORM (TableOfReal_extractColumnsWhere, L"Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING (L"condition")), NAMEW, L"_cols")) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAMEW, L"_cols")) return 0;
 	}
 END
 
@@ -1145,7 +1145,7 @@ FORM (TableOfReal_extractRowsWhere, L"Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRING (L"condition")), NAMEW, L"_rows")) return 0;
+		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAMEW, L"_rows")) return 0;
 	}
 END
 
@@ -1183,7 +1183,7 @@ FORM (TableOfReal_formula, L"TableOfReal: Formula", L"Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_formula (OBJECT, GET_STRING (L"formula"), NULL)) return 0;
+		if (! TableOfReal_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END

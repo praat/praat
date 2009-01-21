@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@
 #endif
 #ifndef _Table_h_
 	#include "Table.h"
+#endif
+#ifndef _Interpreter_decl_h_
+	#include "Interpreter_decl.h"
 #endif
 
 #include "Formant_def.h"
@@ -88,8 +91,8 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 
 Matrix Formant_to_Matrix (Formant me, int iformant);
 Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant);
-int Formant_formula_frequencies (Formant me, const wchar_t *formula);
-int Formant_formula_bandwidths (Formant me, const wchar_t *formula);
+int Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter);
+int Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter);
 
 Formant Formant_tracker (Formant me, int numberOfTracks,
 	double refF1, double refF2, double refF3, double refF4, double refF5,

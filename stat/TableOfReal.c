@@ -1,6 +1,6 @@
 /* TableOfReal.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * pb 2007/06/21 tex
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/30 new Formula API
+ * pb 2009/01/18 Interpreter argument to formula
  */
 
 #include <ctype.h>
@@ -324,10 +325,10 @@ void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label) {
 	my columnLabels [icol] = Melder_wcsdup (label);
 }
 
-int TableOfReal_formula (I, const wchar_t *expression, thou) {
+int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
-	Formula_compile (NULL, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -618,10 +619,10 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition) {
+TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpreter interpreter) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
-	Formula_compile (NULL, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	/*
 	 * Count the new number of rows.
 	 */
@@ -662,11 +663,11 @@ end:
 	return thee;
 }
 
-TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition) {
+TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interpreter interpreter) {
 	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	long irow, icol, numberOfElements;
-	Formula_compile (NULL, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	/*
 	 * Count the new number of columns.
 	 */
@@ -845,7 +846,7 @@ void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int ifo
 }
 
 void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
-	const wchar_t *conditionFormula)
+	const wchar_t *conditionFormula, Interpreter interpreter)
 {
 	iam (TableOfReal);
 	double leftMargin, lineSpacing, maxTextWidth, maxTextHeight;
@@ -857,7 +858,7 @@ void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int 
 	leftMargin = getLeftMargin (g), lineSpacing = getLineSpacing (g);   /* Not earlier! */
 	maxTextWidth = getMaxRowLabelWidth (me, g, rowmin, rowmax);
 	maxTextHeight = getMaxColumnLabelHeight (me, g, 1, my numberOfColumns);
-	if (! Matrix_formula (original, conditionFormula, conditions))
+	if (! Matrix_formula (original, conditionFormula, interpreter, conditions))
 		{ forget (original); forget (conditions); Melder_flushError ("Numbers not drawn."); return; }
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);

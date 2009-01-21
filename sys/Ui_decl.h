@@ -1,4 +1,6 @@
-/* Matrix_and_Pitch.h
+#ifndef _Ui_decl_h_
+#define _Ui_decl_h_
+/* Ui_decl.h
  *
  * Copyright (C) 1992-2009 Paul Boersma
  *
@@ -18,19 +20,10 @@
  */
 
 /*
- * pb 1995/08/24
- * pb 2002/07/16 GPL
+ * pb 2009/01/18
  */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
+typedef struct structUiForm *UiForm;
+
 #endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-
-Matrix Pitch_to_Matrix (Pitch me);
-
-Pitch Matrix_to_Pitch (Matrix me);
-
-/* End of file Matrix_and_Pitch.h */
+/* End of file Ui_decl.h */

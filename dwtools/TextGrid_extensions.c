@@ -116,8 +116,7 @@ static char * TIMIT_DELIMITER = "h\\# ";
 
 static const char *timitLabelToIpaLabel (const char timitLabel[])
 {
-	long i;
-	for (i=1; i <= TIMIT_NLABELS; i++)
+	for (unsigned int i=1; i <= TIMIT_NLABELS; i++)
 		if (!strcmp (TIMIT_toIpaTable[i].timitLabel, timitLabel))
 			return TIMIT_toIpaTable[i].ipaLabel;
 	return timitLabel;
@@ -125,8 +124,7 @@ static const char *timitLabelToIpaLabel (const char timitLabel[])
 
 static int isTimitPhoneticLabel (const char label[])
 {
-	int i;
-	for (i=1; i <= TIMIT_NLABELS; i++)
+	for (unsigned int i=1; i <= TIMIT_NLABELS; i++)
 		if (! strcmp (TIMIT_toIpaTable[i].timitLabel, label)) return 1;
 	return 0;
 }

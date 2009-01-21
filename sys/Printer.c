@@ -1,5 +1,5 @@
 /* Printer.c
- * Copyright (C) 1998-2007 Paul Boersma
+ * Copyright (C) 1998-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/05 less char
  * pb 2007/12/09 enums
+ * pb 2009/01/18 arguments to UiForm callbacks
  */
 
 #include <unistd.h> // close
@@ -236,7 +237,9 @@ int Printer_pageSetup (void) {
 	return 1;
 }
 
-static int DO_Printer_postScriptSettings (Any dia, void *dummy) {
+static int DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, void *dummy) {
+	(void) sendingString_dummy;
+	(void) interpreter_dummy;
 	(void) dummy;
 	#if defined (_WIN32) || defined (macintosh)
 		thePrinter. allowDirectPostScript = GET_INTEGER (L"Allow direct PostScript");
