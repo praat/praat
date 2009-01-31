@@ -77,9 +77,12 @@ static bool classCollection_equal (I, thou) {
 		if (! Thing_member (thy item [i], classData))
 			return Melder_error3 (L"Collection::equal: "
 				"cannot compare items of class ", Thing_className (thy item [i]), L".");
-		if (! Data_equal (my item [i], thy item [i])) return 0;
+		bool equal = Data_equal (my item [i], thy item [i]);
+		//Melder_casual ("classCollection_equal: %d, items %ld, types %ls and %ls",
+		//	equal, i, Thing_className (my item [i]), Thing_className (thy item [i]));
+		if (! equal) return false;
 	}
-	return 1;
+	return true;
 }
 
 static bool classCollection_canWriteAsEncoding (I, int encoding) {

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090121)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090131)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1# (31 January 2009)")
+LIST_ITEM (L"\\bu Editors for Klatt synthesis.")
+LIST_ITEM (L"\\bu Corrected many bugs.")
 NORMAL (L"##5.0.47# (21 January 2009)")
 LIST_ITEM (L"\\bu Extensive pause windows: @@Scripting 6.6. Controlling the user@.")
 NORMAL (L"##5.0.46# (7 January 2009)")

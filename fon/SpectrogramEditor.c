@@ -26,8 +26,7 @@
 
 #include "SpectrogramEditor.h"
 
-static void draw (I) {
-	iam (SpectrogramEditor);
+static void draw (SpectrogramEditor me) {
 	Spectrogram spectrogram = my data;
 	long itmin, itmax;
 
@@ -67,8 +66,7 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 }
 
-static int click (I, double xWC, double yWC, int shiftKeyPressed) {
-	iam (SpectrogramEditor);
+static int click (SpectrogramEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	Spectrogram spectrogram = my data;
 	/*double frequency = yWC * my maximum;*/
 	long bestFrame;
@@ -77,18 +75,21 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 		bestFrame = 1;
 	else if (bestFrame > spectrogram -> nx)
 		bestFrame = spectrogram -> nx;
-	return inherited (SpectrogramEditor) click (me, xWC, yWC, shiftKeyPressed);
+	return inherited (SpectrogramEditor) click (SpectrogramEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
 }
 
-class_methods (SpectrogramEditor, FunctionEditor)
+class_methods (SpectrogramEditor, FunctionEditor) {
 	class_method (draw)
 	class_method (click)
-class_methods_end
+	class_methods_end
+}
 
-Any SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data) {
-	SpectrogramEditor me = new (SpectrogramEditor);
-	if (! me || ! FunctionEditor_init (me, parent, title, data)) return NULL;
+SpectrogramEditor SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data) {
+	SpectrogramEditor me = new (SpectrogramEditor); cherror
+	FunctionEditor_init (SpectrogramEditor_as_parent (me), parent, title, data); cherror
 	my maximum = 10000;
+end:
+	iferror forget (me);
 	return me;
 }
 

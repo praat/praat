@@ -4,17 +4,17 @@
 
 include ../../makefile.defs
 
-CFLAGS =  -I ../../dwtools -I ../../fon -I ../../sys -I ../../dwsys -I ../../stat -I ../../num
+CFLAGS =  -I ../../dwtools -I ../../fon -I ../../sys -I ../../dwsys -I ../../stat -I ../../num -I ../../GSL -D_DEBUG -D_REENTRANT
 
 all: libOla.a  
 
 clean:
-	rm *.o
+	rm *.o *.a
 
 OBJECTS = KNN.o \
-   Pattern_to_Categories_cluster.o KNN_prune.o FeatureWeights.o praat_contrib_Ola_KNN.o manual_KNN.o
+   KNN_threads.o Pattern_to_Categories_cluster.o KNN_prune.o FeatureWeights.o praat_contrib_Ola_KNN.o manual_KNN.o
 
-$(OBJECTS): *.h ../../sys/*.h ../../dwtools/*.h ../../fon/*.h ../../dwsys/*.h ../../stat/*.h ../../num/*.h
+$(OBJECTS): *.h ../../sys/*.h ../../dwtools/*.h ../../fon/*.h ../../dwsys/*.h ../../stat/*.h ../../num/*.h ../../GSL/*.h
 
 libOla.a: $(OBJECTS)
 	touch libOla.a

@@ -44,21 +44,14 @@
 #include "Preferences.h"
 #include "EditorM.h"
 
-#define SoundEditor_members TimeSoundAnalysisEditor_members \
-	Widget cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
-	double maxBuffer;
-#define SoundEditor_methods TimeSoundAnalysisEditor_methods
-class_create_opaque (SoundEditor, TimeSoundAnalysisEditor);
-
 /********** METHODS **********/
 
-static void dataChanged (I) {
-	iam (SoundEditor);
+static void dataChanged (SoundEditor me) {
 	Sound sound = my data;
 	Melder_assert (sound != NULL);   /* LongSound objects should not get dataChanged messages. */
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 	our destroy_analysis (me);
-	inherited (SoundEditor) dataChanged (me);
+	inherited (SoundEditor) dataChanged (SoundEditor_as_parent (me));
 }
 
 /***** EDIT MENU *****/
@@ -106,7 +99,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 				newData [channel] [++ j] = oldData [channel] [i];
 			}
 		}
-		Editor_save (me, L"Cut");
+		Editor_save (SoundEditor_as_Editor (me), L"Cut");
 		NUMdmatrix_free (oldData, 1, 1);
 		sound -> xmin = 0.0;
 		sound -> xmax = newNumberOfSamples * sound -> dx;
@@ -157,9 +150,9 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 		our destroy_analysis (me);
-		FunctionEditor_ungroup (me);
-		FunctionEditor_marksChanged (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_ungroup (SoundEditor_as_FunctionEditor (me));
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (SoundEditor_as_Editor (me));
 	} else {
 		Melder_warning1 (L"No samples selected.");
 	}
@@ -200,7 +193,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 			newData [channel] [++ j] = oldData [channel] [i];
 		}
 	}
-	Editor_save (me, L"Paste");
+	Editor_save (SoundEditor_as_Editor (me), L"Paste");
 	NUMdmatrix_free (oldData, 1, 1);
 	sound -> xmin = 0.0;
 	sound -> xmax = newNumberOfSamples * sound -> dx;
@@ -219,9 +212,9 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
 	our destroy_analysis (me);
-	FunctionEditor_ungroup (me);
-	FunctionEditor_marksChanged (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_ungroup (SoundEditor_as_FunctionEditor (me));
+	FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (SoundEditor_as_Editor (me));
 	return 1;
 }
 
@@ -230,25 +223,25 @@ static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	Sound sound = my data;
 	long first, last;
 	Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
-	Editor_save (me, L"Set to zero");
+	Editor_save (SoundEditor_as_Editor (me), L"Set to zero");
 	for (long channel = 1; channel <= sound -> ny; channel ++) {
 		for (long i = first; i <= last; i ++) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
 	our destroy_analysis (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_redraw (SoundEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (SoundEditor_as_Editor (me));
 	return 1;
 }
 
 static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
-	Editor_save (me, L"Reverse selection");
+	Editor_save (SoundEditor_as_Editor (me), L"Reverse selection");
 	Sound_reverse (my data, my startSelection, my endSelection);
 	our destroy_analysis (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_redraw (SoundEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (SoundEditor_as_Editor (me));
 	return 1;
 }
 
@@ -259,7 +252,7 @@ static int menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	double zero = Sound_getNearestZeroCrossing (my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -274,7 +267,7 @@ static int menu_cb_MoveBtoZero (EDITOR_ARGS) {
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -289,7 +282,7 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -299,9 +292,8 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 static int menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); return 1; }
 static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); return 1; }
 
-static void createMenus (I) {
-	iam (SoundEditor);
-	inherited (SoundEditor) createMenus (me);
+static void createMenus (SoundEditor me) {
+	inherited (SoundEditor) createMenus (SoundEditor_as_parent (me));
 	Melder_assert (my data != NULL);
 	Melder_assert (my sound.data != NULL || my longSound.data != NULL);
 
@@ -326,25 +318,22 @@ static void createMenus (I) {
 	our createMenus_analysis (me);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (SoundEditor);
-	inherited (SoundEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (SoundEditor me, EditorMenu menu) {
+	inherited (SoundEditor) createHelpMenuItems (SoundEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
 	EditorMenu_addCommand (menu, L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
 }
 
 /********** UPDATE **********/
 
-static void prepareDraw (I) {
-	iam (SoundEditor);
+static void prepareDraw (SoundEditor me) {
 	if (my longSound.data) {
 		LongSound_haveWindow (my longSound.data, my startWindow, my endWindow);
 		Melder_clearError ();
 	}
 }
 
-static void draw (I) {
-	iam (SoundEditor);
+static void draw (SoundEditor me) {
 	long first, last, selectedSamples;
 	Graphics_Viewport viewport;
 	int showAnalysis = my spectrogram.show || my pitch.show || my intensity.show || my formant.show;
@@ -373,7 +362,7 @@ static void draw (I) {
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);
+	TimeSoundEditor_draw_sound (SoundEditor_as_TimeSoundEditor (me), my sound.minimum, my sound.maximum);
 	Graphics_flushWs (my graphics);
 	if (showAnalysis)
 		Graphics_resetViewport (my graphics, viewport);
@@ -394,7 +383,7 @@ static void draw (I) {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (my graphics, 0, 1, 0.5, 1);
 		our draw_analysis_pulses (me);
-		TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);   /* Second time, partially across the pulses. */
+		TimeSoundEditor_draw_sound (SoundEditor_as_TimeSoundEditor (me), my sound.minimum, my sound.maximum);   /* Second time, partially across the pulses. */
 		Graphics_flushWs (my graphics);
 		if (showAnalysis)
 			Graphics_resetViewport (my graphics, viewport);
@@ -412,33 +401,29 @@ static void draw (I) {
 	}
 }
 
-static void play (I, double tmin, double tmax) {
-	iam (SoundEditor);
+static void play (SoundEditor me, double tmin, double tmax) {
 	if (my longSound.data)
 		LongSound_playPart (my data, tmin, tmax, our playCallback, me);
 	else
 		Sound_playPart (my data, tmin, tmax, our playCallback, me);
 }
 
-static int click (I, double xWC, double yWC, int shiftKeyPressed) {
-	iam (SoundEditor);
+static int click (SoundEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	if ((my spectrogram.show || my formant.show) && yWC < 0.5 && xWC > my startWindow && xWC < my endWindow) {
 		my spectrogram.cursor = my spectrogram.viewFrom +
 			2 * yWC * (my spectrogram.viewTo - my spectrogram.viewFrom);
 	}
-	return inherited (SoundEditor) click (me, xWC, yWC, shiftKeyPressed);   /* Drag & update. */
+	return inherited (SoundEditor) click (SoundEditor_as_parent (me), xWC, yWC, shiftKeyPressed);   /* Drag & update. */
 }
 
-static void highlightSelection (I, double left, double right, double bottom, double top) {
-	iam (SoundEditor);
+static void highlightSelection (SoundEditor me, double left, double right, double bottom, double top) {
 	if (my spectrogram.show)
 		Graphics_highlight (my graphics, left, right, 0.5 * (bottom + top), top);
 	else
 		Graphics_highlight (my graphics, left, right, bottom, top);
 }
 
-static void unhighlightSelection (I, double left, double right, double bottom, double top) {
-	iam (SoundEditor);
+static void unhighlightSelection (SoundEditor me, double left, double right, double bottom, double top) {
 	if (my spectrogram.show)
 		Graphics_unhighlight (my graphics, left, right, 0.5 * (bottom + top), top);
 	else
@@ -465,13 +450,13 @@ SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data) {
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expect that one of them is not NULL.
 	 */
-	if (! me || ! TimeSoundAnalysisEditor_init (me, parent, title, data, data, false))
+	if (! me || ! TimeSoundAnalysisEditor_init (SoundEditor_as_parent (me), parent, title, data, data, false))
 		return NULL;
 	if (my longSound.data && my endWindow - my startWindow > 30.0) {
 		my endWindow = my startWindow + 30.0;
 		if (my startWindow == my tmin)
 			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
 	}
 	return me;
 }

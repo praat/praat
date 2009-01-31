@@ -55,7 +55,7 @@
 #include "enums_getValue.h"
 #include "TextGridEditor_enums.h"
 
-#define TextGridEditor_members TimeSoundAnalysisEditor_members \
+#define TextGridEditor__members(Klas) TimeSoundAnalysisEditor__members(Klas) \
 	SpellingChecker spellingChecker; \
 	long selectedTier; \
 	bool useTextStyles, shiftDragMultiple, suppressRedraw; \
@@ -64,8 +64,8 @@
 	wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod; \
 	Widget extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
-#define TextGridEditor_methods TimeSoundAnalysisEditor_methods
-class_create_opaque (TextGridEditor, TimeSoundAnalysisEditor);
+#define TextGridEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
+Thing_declare2 (TextGridEditor, TimeSoundAnalysisEditor);
 
 /********** PREFERENCES **********/
 
@@ -110,7 +110,7 @@ void TextGridEditor_prefs (void) {
 
 static void info (I) {
 	iam (TextGridEditor);
-	inherited (TextGridEditor) info (me);
+	inherited (TextGridEditor) info (TextGridEditor_as_parent (me));
 	MelderInfo_writeLine2 (L"Selected tier: ", Melder_integer (my selectedTier));
 	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", Melder_boolean (my useTextStyles));
 	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (my fontSize));
@@ -214,11 +214,11 @@ static long getSelectedPoint (TextGridEditor me) {
 
 static void scrollToView (TextGridEditor me, double t) {
 	if (t <= my startWindow) {
-		FunctionEditor_shift (me, t - my startWindow - 0.618 * (my endWindow - my startWindow));
+		FunctionEditor_shift (TextGridEditor_as_FunctionEditor (me), t - my startWindow - 0.618 * (my endWindow - my startWindow));
 	} else if (t >= my endWindow) {
-		FunctionEditor_shift (me, t - my endWindow + 0.618 * (my endWindow - my startWindow));
+		FunctionEditor_shift (TextGridEditor_as_FunctionEditor (me), t - my endWindow + 0.618 * (my endWindow - my startWindow));
 	} else {
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 }
 
@@ -233,7 +233,7 @@ static void scrollToView (TextGridEditor me, double t) {
 static void destroy (I) {
 	iam (TextGridEditor);
 	forget (my sound.data);
-	inherited (TextGridEditor) destroy (me);
+	inherited (TextGridEditor) destroy (TextGridEditor_as_parent (me));
 }
 
 /***** FILE MENU *****/
@@ -258,9 +258,8 @@ static int menu_cb_ExtractSelectedTextGrid_timeFromZero (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_file_extract (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_file_extract (me, menu);
+static void createMenuItems_file_extract (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createMenuItems_file_extract (TextGridEditor_as_parent (me), menu);
 	my extractSelectedTextGridPreserveTimesButton =
 		EditorMenu_addCommand (menu, L"Extract selected TextGrid (preserve times)", 0, menu_cb_ExtractSelectedTextGrid_preserveTimes);
 	my extractSelectedTextGridTimeFromZeroButton =
@@ -288,9 +287,8 @@ static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenuItems_file_write (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_file_write (me, menu);
+static void createMenuItems_file_write (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createMenuItems_file_write (TextGridEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
 	my writeSelectedTextGridButton = EditorMenu_addCommand (menu, L"Write selected TextGrid to text file...", 0, menu_cb_WriteSelectionToTextFile);
 }
@@ -312,11 +310,11 @@ static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (TextGridEditor_as_Editor (me));
 		TextGrid_Sound_draw (my data, NULL, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles,
 			preferences.picture.garnish);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
+		FunctionEditor_garnish (TextGridEditor_as_FunctionEditor (me));
+		Editor_closePraatPicture (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -337,21 +335,20 @@ static int menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 		our do_pictureMargins (me, cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (TextGridEditor_as_Editor (me));
 		Sound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, true) :
 			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
 		if (! publish) return 0;
 		TextGrid_Sound_draw (my data, publish, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles, preferences.picture.garnish);
 		forget (publish);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
+		FunctionEditor_garnish (TextGridEditor_as_FunctionEditor (me));
+		Editor_closePraatPicture (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
-static void createMenuItems_file_draw (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_file_draw (me, menu);
+static void createMenuItems_file_draw (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createMenuItems_file_draw (TextGridEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
 	if (my sound.data || my longSound.data)
 		EditorMenu_addCommand (menu, L"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
@@ -384,21 +381,21 @@ static int menu_cb_Erase (EDITOR_ARGS) {
 
 static int menu_cb_Genericize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, L"Convert to Backslash Trigraphs");
+	Editor_save (TextGridEditor_as_Editor (me), L"Convert to Backslash Trigraphs");
 	TextGrid_genericize (my data);
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
 static int menu_cb_Nativize (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	Editor_save (me, L"Convert to Unicode");
+	Editor_save (TextGridEditor_as_Editor (me), L"Convert to Unicode");
 	TextGrid_nativize (my data);
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
@@ -468,7 +465,7 @@ static void do_selectAdjacentTier (TextGridEditor me, int previous) {
 			my selectedTier > 1 ? my selectedTier - 1 : n :
 			my selectedTier < n ? my selectedTier + 1 : 1;
 		_TextGridEditor_timeToInterval (me, my startSelection, my selectedTier, & my startSelection, & my endSelection);
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 }
 
@@ -583,7 +580,7 @@ static int menu_cb_MoveBtoZero (EDITOR_ARGS) {
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -593,7 +590,7 @@ static int menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	double zero = Sound_getNearestZeroCrossing (my sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -608,7 +605,7 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 			my startSelection = my endSelection;
 			my endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 	return 1;
 }
@@ -643,10 +640,10 @@ static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 		if (! my pitch.show)
 			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
-			FunctionEditor_SoundAnalysis_computePitch (me);
+			TimeSoundAnalysisEditor_computePitch (TextGridEditor_as_TimeSoundAnalysisEditor (me));
 			if (! my pitch.data) return Melder_error1 (L"Cannot compute pitch.");
 		}
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (TextGridEditor_as_Editor (me));
 		double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		double pitchFloor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -656,8 +653,8 @@ static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 		TextGrid_Pitch_drawSeparately (my data, my pitch.data, my pictureGraphics, my startWindow, my endWindow,
 			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (L"Show boundaries and points"), my useTextStyles, GET_INTEGER (L"Garnish"),
 			GET_INTEGER (L"Speckle"), my pitch.unit);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
+		FunctionEditor_garnish (TextGridEditor_as_FunctionEditor (me));
+		Editor_closePraatPicture (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -686,7 +683,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			return 0;   /* Clicked outside time domain of intervals. */
 		}
 
-		Editor_save (me, L"Add boundary");
+		Editor_save (TextGridEditor_as_Editor (me), L"Add boundary");
 
 		if (itier == my selectedTier) {
 			/*
@@ -733,7 +730,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			return 0;
 		} 
 
-		Editor_save (me, L"Add point");
+		Editor_save (TextGridEditor_as_Editor (me), L"Add point");
 
 		newPoint = TextPoint_create (t, L"");
 		Collection_addItem (textTier -> points, newPoint);
@@ -745,8 +742,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
 	if (! insertBoundaryOrPoint (me, itier, my playingCursor || my playingSelection ? my playCursor : my startSelection, TRUE)) return;
 	my selectedTier = itier;
-	FunctionEditor_marksChanged (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 }
 
 static int menu_cb_InsertIntervalOnTier1 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 1); return 1; }
@@ -771,19 +768,19 @@ static int menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 		long selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary) return Melder_error1 (L"To remove a boundary, first click on it.");
 
-		Editor_save (me, L"Remove boundary");
+		Editor_save (TextGridEditor_as_Editor (me), L"Remove boundary");
 		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary); iferror return 0;
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		long selectedPoint = getSelectedPoint (me);
 		if (! selectedPoint) return Melder_error1 (L"To remove a point, first click on it.");
 
-		Editor_save (me, L"Remove point");
+		Editor_save (TextGridEditor_as_Editor (me), L"Remove point");
 		Collection_removeItem (tier -> points, selectedPoint);
 	}
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
@@ -808,7 +805,7 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 		if (position <= left -> xmin || position >= right -> xmax)
 			{ Melder_beep (); return 0; }
 
-		Editor_save (me, boundarySaveText [where]);
+		Editor_save (TextGridEditor_as_Editor (me), boundarySaveText [where]);
 
 		left -> xmax = right -> xmin = my startSelection = my endSelection = position;
 	} else {
@@ -822,12 +819,12 @@ static int do_movePointOrBoundary (TextGridEditor me, int where) {
 			Sound_getNearestZeroCrossing (my sound.data, point -> time, 1);   // STEREO BUG
 		if (position == NUMundefined) return 1;
 
-		Editor_save (me, pointSaveText [where]);
+		Editor_save (TextGridEditor_as_Editor (me), pointSaveText [where]);
 
 		point -> time = my startSelection = my endSelection = position;
 	}
-	FunctionEditor_marksChanged (me);   /* Because cursor has moved. */
-	Editor_broadcastChange (me);
+	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));   /* Because cursor has moved. */
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
@@ -852,8 +849,8 @@ static int menu_cb_MoveToZero (EDITOR_ARGS) {
 static void do_insertOnTier (TextGridEditor me, int itier) {
 	if (! insertBoundaryOrPoint (me, itier, my playingCursor || my playingSelection ? my playCursor : my startSelection, FALSE)) return;
 	my selectedTier = itier;
-	FunctionEditor_marksChanged (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 }
 
 static int menu_cb_InsertOnSelectedTier (EDITOR_ARGS) {
@@ -1084,12 +1081,12 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 		if (! checkTierSelection (me, L"rename a tier")) return 0;
 		tier = grid -> tiers -> item [my selectedTier];
 
-		Editor_save (me, L"Rename tier");
+		Editor_save (TextGridEditor_as_Editor (me), L"Rename tier");
 
 		Thing_setName (tier, newName);
 
-		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -1115,16 +1112,16 @@ static int menu_cb_RemoveAllTextFromTier (EDITOR_ARGS) {
 	if (! checkTierSelection (me, L"remove all text from a tier")) return 0;
 	_AnyTier_identifyClass (grid -> tiers -> item [my selectedTier], & intervalTier, & textTier);
 
-	Editor_save (me, L"Remove text from tier");
+	Editor_save (TextGridEditor_as_Editor (me), L"Remove text from tier");
 	if (intervalTier) {
 		IntervalTier_removeText (intervalTier);
 	} else {
 		TextTier_removeText (textTier);
 	}
 
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
@@ -1136,13 +1133,13 @@ static int menu_cb_RemoveTier (EDITOR_ARGS) {
 	}
 	if (! checkTierSelection (me, L"remove a tier")) return 0;
 
-	Editor_save (me, L"Remove tier");
+	Editor_save (TextGridEditor_as_Editor (me), L"Remove tier");
 	Collection_removeItem (grid -> tiers, my selectedTier);
 
 	my selectedTier = 1;
-	FunctionEditor_updateText (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	return 1;
 }
 
@@ -1167,13 +1164,13 @@ static int menu_cb_AddIntervalTier (EDITOR_ARGS) {
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (tier, name);
 
-		Editor_save (me, L"Add interval tier");
+		Editor_save (TextGridEditor_as_Editor (me), L"Add interval tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
 
 		my selectedTier = position;
-		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -1198,13 +1195,13 @@ static int menu_cb_AddPointTier (EDITOR_ARGS) {
 		if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (tier, name);
 
-		Editor_save (me, L"Add point tier");
+		Editor_save (TextGridEditor_as_Editor (me), L"Add point tier");
 		Ordered_addItemPos (grid -> tiers, tier, position);
 
 		my selectedTier = position;
-		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -1231,13 +1228,13 @@ static int menu_cb_DuplicateTier (EDITOR_ARGS) {
 			if (position > grid -> tiers -> size) position = grid -> tiers -> size + 1;
 		Thing_setName (newTier, name);
 
-		Editor_save (me, L"Duplicate tier");
+		Editor_save (TextGridEditor_as_Editor (me), L"Duplicate tier");
 		Ordered_addItemPos (grid -> tiers, newTier, position);
 
 		my selectedTier = position;
-		FunctionEditor_updateText (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_updateText (TextGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (TextGridEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -1248,10 +1245,9 @@ static int menu_cb_AboutSpecialSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEdito
 static int menu_cb_PhoneticSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Phonetic symbols"); return 1; }
 static int menu_cb_AboutTextStyles (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Text styles"); return 1; }
 
-static void createMenus (I) {
-	iam (TextGridEditor);
+static void createMenus (TextGridEditor me) {
 	EditorMenu menu;
-	inherited (TextGridEditor) createMenus (me);
+	inherited (TextGridEditor) createMenus (TextGridEditor_as_parent (me));
 
 	#ifndef macintosh
 		Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
@@ -1341,9 +1337,8 @@ static void createMenus (I) {
 	}
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createHelpMenuItems (TextGridEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
 	EditorMenu_addCommand (menu, L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
 	EditorMenu_addCommand (menu, L"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
@@ -1367,8 +1362,8 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 			if (selectedInterval) {
 				TextInterval interval = intervalTier -> intervals -> item [selectedInterval];
 				TextInterval_setText (interval, text);
-				FunctionEditor_redraw (me);
-				Editor_broadcastChange (me);
+				FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+				Editor_broadcastChange (TextGridEditor_as_Editor (me));
 			}
 		} else {
 			long selectedPoint = getSelectedPoint (me);
@@ -1377,22 +1372,20 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 				Melder_free (point -> mark);
 				if (wcsspn (text, L" \n\t") != wcslen (text))   /* Any visible characters? */
 				point -> mark = Melder_wcsdup (text);
-				FunctionEditor_redraw (me);
-				Editor_broadcastChange (me);
+				FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
+				Editor_broadcastChange (TextGridEditor_as_Editor (me));
 			}
 		}
 		Melder_free (text);
 	}
 }
 
-static void createChildren (I) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createChildren (me);
+static void createChildren (TextGridEditor me) {
+	inherited (TextGridEditor) createChildren (TextGridEditor_as_parent (me));
 	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
 }
 
-static void dataChanged (I) {
-	iam (TextGridEditor);
+static void dataChanged (TextGridEditor me) {
 	TextGrid grid = my data;
 	/*
 	 * Perform a minimal selection change.
@@ -1402,13 +1395,12 @@ static void dataChanged (I) {
 	if (grid -> tiers -> size < my selectedTier) {
 		my selectedTier = grid -> tiers -> size;
 	}
-	inherited (TextGridEditor) dataChanged (me);   /* Does all the updating. */
+	inherited (TextGridEditor) dataChanged (TextGridEditor_as_parent (me));   /* Does all the updating. */
 }
 
 /********** DRAWING AREA **********/
 
-static void prepareDraw (I) {
-	iam (TextGridEditor);
+static void prepareDraw (TextGridEditor me) {
 	if (my longSound.data) {
 		LongSound_haveWindow (my longSound.data, my startWindow, my endWindow);
 		Melder_clearError ();
@@ -1588,8 +1580,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 	Graphics_setUnderscoreIsSubscript (my graphics, TRUE);
 }
 
-static void draw (I) {
-	iam (TextGridEditor);
+static void draw (TextGridEditor me) {
 	TextGrid grid = my data;
 	Graphics_Viewport vp1, vp2;
 	long itier, ntier = grid -> tiers -> size;
@@ -1606,7 +1597,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		TimeSoundEditor_draw_sound (me, -1.0, 1.0);
+		TimeSoundEditor_draw_sound (TextGridEditor_as_TimeSoundEditor (me), -1.0, 1.0);
 		Graphics_flushWs (my graphics);
 		Graphics_resetViewport (my graphics, vp1);
 	}
@@ -1705,7 +1696,7 @@ static void draw (I) {
 		if (my pulses.show) {
 			vp1 = Graphics_insetViewport (my graphics, 0.0, 1.0, soundY2, 1.0);
 			our draw_analysis_pulses (me);
-			TimeSoundEditor_draw_sound (me, -1.0, 1.0);   /* Second time, partially across the pulses. */
+			TimeSoundEditor_draw_sound (TextGridEditor_as_TimeSoundEditor (me), -1.0, 1.0);   /* Second time, partially across the pulses. */
 			Graphics_flushWs (my graphics);
 			Graphics_resetViewport (my graphics, vp1);
 		}
@@ -1859,7 +1850,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		return;
 	}
 
-	Editor_save (me, L"Drag");
+	Editor_save (TextGridEditor_as_Editor (me), L"Drag");
 
 	for (itier = 1; itier <= numberOfTiers; itier ++) if (selectedTier [itier]) {
 		IntervalTier intervalTier;
@@ -1907,12 +1898,11 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		my startSelection = my endSelection;
 		my endSelection = dummy;
 	}
-	FunctionEditor_marksChanged (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (TextGridEditor_as_Editor (me));
 }
 
-static int click (I, double xclick, double yWC, int shiftKeyPressed) {
-	iam (TextGridEditor);
+static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPressed) {
 	TextGrid grid = my data;
 	double tmin, tmax, x, y;
 	long ntiers = grid -> tiers -> size, iClickedTier, iClickedInterval, iClickedPoint;
@@ -1933,7 +1923,7 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 			my spectrogram.cursor = my spectrogram.viewFrom +
 				2.0 * (yWC - soundY) / (1.0 - soundY) * (my spectrogram.viewTo - my spectrogram.viewFrom);
 		}
-		inherited (TextGridEditor) click (me, xclick, yWC, shiftKeyPressed);
+		inherited (TextGridEditor) click (TextGridEditor_as_parent (me), xclick, yWC, shiftKeyPressed);
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 
@@ -2043,8 +2033,8 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 		 */
 		insertBoundaryOrPoint (me, iClickedTier, my startSelection, FALSE);
 		my selectedTier = iClickedTier;
-		FunctionEditor_marksChanged (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (TextGridEditor_as_Editor (me));
 		#if motif
 		if (drag) Graphics_waitMouseUp (my graphics);
 		#endif
@@ -2065,8 +2055,7 @@ static int click (I, double xclick, double yWC, int shiftKeyPressed) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static int clickB (I, double t, double yWC) {
-	iam (TextGridEditor);
+static int clickB (TextGridEditor me, double t, double yWC) {
 	int itier;
 	double tmin, tmax;
 	double soundY = _TextGridEditor_computeSoundY (me);
@@ -2091,8 +2080,7 @@ static int clickB (I, double t, double yWC) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static int clickE (I, double t, double yWC) {
-	iam (TextGridEditor);
+static int clickE (TextGridEditor me, double t, double yWC) {
 	int itier;
 	double tmin, tmax;
 	double soundY = _TextGridEditor_computeSoundY (me);
@@ -2117,8 +2105,7 @@ static int clickE (I, double t, double yWC) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static void play (I, double tmin, double tmax) {
-	iam (TextGridEditor);
+static void play (TextGridEditor me, double tmin, double tmax) {
 	if (my longSound.data) {
 		LongSound_playPart (my longSound.data, tmin, tmax, our playCallback, me);
 	} else if (my sound.data) {
@@ -2126,8 +2113,7 @@ static void play (I, double tmin, double tmax) {
 	}
 }
 
-static void updateText (I) {
-	iam (TextGridEditor);
+static void updateText (TextGridEditor me) {
 	TextGrid grid = my data;
 	wchar_t *newText = L"";
 	if (my selectedTier) {
@@ -2159,9 +2145,9 @@ static void updateText (I) {
 	my suppressRedraw = FALSE;
 }
 
-static void prefs_addFields (Any editor, EditorCommand cmd) {
+static void prefs_addFields (TextGridEditor me, EditorCommand cmd) {
+	(void) me;
 	Any radio;
-	(void) editor;
 	NATURAL (L"Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
 	OPTIONMENU_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, DEFAULT)
 	OPTIONMENU (L"The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
@@ -2174,8 +2160,7 @@ static void prefs_addFields (Any editor, EditorCommand cmd) {
 	OPTIONMENU_ENUM (L"Paint intervals green whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
 }
-static void prefs_setValues (I, EditorCommand cmd) {
-	iam (TextGridEditor);
+static void prefs_setValues (TextGridEditor me, EditorCommand cmd) {
 	SET_INTEGER (L"The symbols %#_^ in labels", my useTextStyles + 1)
 	SET_INTEGER (L"Font size", my fontSize)
 	SET_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, my alignment)
@@ -2184,8 +2169,7 @@ static void prefs_setValues (I, EditorCommand cmd) {
 	SET_ENUM (L"Paint intervals green whose label...", kMelder_string, my greenMethod)
 	SET_STRING (L"...the text", my greenString)
 }
-static void prefs_getValues (I, EditorCommand cmd) {
- 	iam (TextGridEditor);
+static void prefs_getValues (TextGridEditor me, EditorCommand cmd) {
 	preferences.useTextStyles = my useTextStyles = GET_INTEGER (L"The symbols %#_^ in labels") - 1;
 	preferences.fontSize = my fontSize = GET_INTEGER (L"Font size");
 	preferences.alignment = my alignment = GET_ENUM (kGraphics_horizontalAlignment, L"Text alignment in intervals");
@@ -2195,12 +2179,11 @@ static void prefs_getValues (I, EditorCommand cmd) {
 	wcsncpy (my greenString, GET_STRING (L"...the text"), Preferences_STRING_BUFFER_SIZE);
 	my greenString [Preferences_STRING_BUFFER_SIZE - 1] = '\0';
 	wcscpy (preferences.greenString, my greenString);
-	FunctionEditor_redraw (me);
+	FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
 }
 
-static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_view_timeDomain (me, menu);
+static void createMenuItems_view_timeDomain (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createMenuItems_view_timeDomain (TextGridEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Select previous tier", GuiMenu_OPTION | GuiMenu_UP_ARROW, menu_cb_SelectPreviousTier);
 	EditorMenu_addCommand (menu, L"Select next tier", GuiMenu_OPTION | GuiMenu_DOWN_ARROW, menu_cb_SelectNextTier);
 	EditorMenu_addCommand (menu, L"Select previous interval", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_SelectPreviousInterval);
@@ -2209,8 +2192,7 @@ static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Extend-select right", GuiMenu_SHIFT | GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_ExtendSelectNextInterval);
 }
 
-static void highlightSelection (I, double left, double right, double bottom, double top) {
-	iam (TextGridEditor);
+static void highlightSelection (TextGridEditor me, double left, double right, double bottom, double top) {
 	if (my spectrogram.show && (my longSound.data || my sound.data)) {
 		TextGrid grid = my data;
 		double soundY = grid -> tiers -> size / (2.0 + grid -> tiers -> size * 1.8), soundY2 = 0.5 * (1.0 + soundY);
@@ -2221,8 +2203,7 @@ static void highlightSelection (I, double left, double right, double bottom, dou
 	}
 }
 
-static void unhighlightSelection (I, double left, double right, double bottom, double top) {
-	iam (TextGridEditor);
+static void unhighlightSelection (TextGridEditor me, double left, double right, double bottom, double top) {
 	if (my spectrogram.show) {
 		TextGrid grid = my data;
 		double soundY = grid -> tiers -> size / (2.0 + grid -> tiers -> size * 1.8), soundY2 = 0.5 * (1.0 + soundY);
@@ -2233,20 +2214,17 @@ static void unhighlightSelection (I, double left, double right, double bottom, d
 	}
 }
 
-static double getBottomOfSoundAndAnalysisArea (I) {
-	iam (TextGridEditor);
+static double getBottomOfSoundAndAnalysisArea (TextGridEditor me) {
 	return _TextGridEditor_computeSoundY (me);
 }
 
-static void createMenuItems_pitch_picture (I, EditorMenu menu) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) createMenuItems_pitch_picture (me, menu);
+static void createMenuItems_pitch_picture (TextGridEditor me, EditorMenu menu) {
+	inherited (TextGridEditor) createMenuItems_pitch_picture (TextGridEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Draw visible pitch contour and TextGrid...", 0, menu_cb_DrawTextGridAndPitch);
 }
 
-static void updateMenuItems_file (I) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) updateMenuItems_file (me);
+static void updateMenuItems_file (TextGridEditor me) {
+	inherited (TextGridEditor) updateMenuItems_file (TextGridEditor_as_parent (me));
 	GuiObject_setSensitive (my writeSelectedTextGridButton, my endSelection > my startSelection);
 	GuiObject_setSensitive (my extractSelectedTextGridPreserveTimesButton, my endSelection > my startSelection);
 	GuiObject_setSensitive (my extractSelectedTextGridTimeFromZeroButton, my endSelection > my startSelection);
@@ -2293,9 +2271,9 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 	 * Include a deep copy of the Sound, owned by the TextGridEditor, or a pointer to the LongSound.
 	 */
 	if (sound && Thing_member (sound, classSound)) {
-		TimeSoundAnalysisEditor_init (me, parent, title, grid, sound, true); cherror
+		TimeSoundAnalysisEditor_init (TextGridEditor_as_parent (me), parent, title, grid, sound, true); cherror
 	} else {
-		TimeSoundAnalysisEditor_init (me, parent, title, grid, sound, false); cherror
+		TimeSoundAnalysisEditor_init (TextGridEditor_as_parent (me), parent, title, grid, sound, false); cherror
 	}
 
 	my useTextStyles = preferences.useTextStyles;
@@ -2310,7 +2288,7 @@ TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextG
 		my endWindow = my startWindow + 30.0;
 		if (my startWindow == my tmin)
 			my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	}
 	if (spellingChecker != NULL)
 		GuiText_setSelection (my text, 0, 0);

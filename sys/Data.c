@@ -131,9 +131,8 @@ Any Data_copy (I) {
 
 bool Data_equal (I, thou) {
 	iam (Data); thouart (Data);
-	int offset;
 	if (my methods != thy methods) return 0;   /* Different class: not equal. */
-	offset = sizeof (struct structData);   /* We already compared the methods, and are going to skip the names. */
+	int offset = sizeof (struct structData);   /* We already compared the methods, and are going to skip the names. */
 	if (! memcmp ((char *) me + offset, (char *) thee + offset, our _size - offset))
 		return 1;   /* No shallow differences. */
 	return our equal (me, thee);

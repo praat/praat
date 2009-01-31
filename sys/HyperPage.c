@@ -523,7 +523,7 @@ if (! my printing) {
 	return 1;
 }
 
-static void draw (Any hyperPage) {
+static void draw (HyperPage hyperPage) {
 	(void) hyperPage;
 }
 
@@ -860,9 +860,8 @@ static void gui_button_cb_forth (I, GuiButtonEvent event) {
 	if (! do_forth (me)) Melder_flushError (NULL);
 }
 
-static void createMenus (I) {
-	iam (HyperPage);
-	inherited (HyperPage) createMenus (me);
+static void createMenus (HyperPage me) {
+	inherited (HyperPage) createMenus (HyperPage_as_parent (me));
 
 	Editor_addCommand (me, L"File", L"PostScript settings...", 0, menu_cb_postScriptSettings);
 	#ifdef macintosh
@@ -921,8 +920,7 @@ static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
 		our getCurrentPageNumber (me) + 1 : 1);
 }
 
-static void createChildren (I) {
-	iam (HyperPage);
+static void createChildren (HyperPage me) {
 	int height = Machine_getTextHeight ();
 	int y = Machine_getMenuBarHeight () + 4;
 
@@ -969,10 +967,9 @@ static void createChildren (I) {
 	#endif
 }
 
-int HyperPage_init (I, Widget parent, const wchar_t *title, Any data) {
-	iam (HyperPage);
+int HyperPage_init (HyperPage me, Widget parent, const wchar_t *title, Any data) {
 	resolution = Gui_getResolution (parent);
-	if (! Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data)) { forget (me); return 0; }
+	Editor_init (HyperPage_as_parent (me), parent, 0, 0, 6 * resolution + 30, 800, title, data); cherror
 	#if motif
 		Melder_assert (XtWindow (my drawingArea));
 	#endif
@@ -995,6 +992,8 @@ gui_drawingarea_cb_resize (me, & event);
 		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
 	#endif
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -1003,39 +1002,38 @@ void HyperPage_clear (HyperPage me) {
 	forget (my links);
 }
 
-static void dataChanged (I) {
-	iam (HyperPage);
+static void dataChanged (HyperPage me) {
 	int oldError = Melder_hasError ();
 	(void) our goToPage (me, my currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
 	HyperPage_clear (me);
 	updateVerticalScrollBar (me);
 }
-static long getNumberOfPages (Any hyperPage) {
-	(void) hyperPage;
+static long getNumberOfPages (HyperPage me) {
+	(void) me;
 	return 0;
 }
-static long getCurrentPageNumber (Any hyperPage) {
-	(void) hyperPage;
+static long getCurrentPageNumber (HyperPage me) {
+	(void) me;
 	return 0;
 }
 static void defaultHeaders (EditorCommand cmd) {
 	(void) cmd;
 }
-static int goToPage (Any hyperPage, const wchar_t *title) {
-	(void) hyperPage;
+static int goToPage (HyperPage me, const wchar_t *title) {
+	(void) me;
 	(void) title;
 	return 0;
 }
-static int goToPage_i (Any hyperPage, long i) {
-	(void) hyperPage;
+static int goToPage_i (HyperPage me, long i) {
+	(void) me;
 	(void) i;
 	return 0;
 }
 static int hasHistory = FALSE;
 static int isOrdered = FALSE;
 
-class_methods (HyperPage, Editor)
+class_methods (HyperPage, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (draw)
@@ -1049,7 +1047,8 @@ class_methods (HyperPage, Editor)
 	class_method (goToPage_i)
 	class_method (hasHistory)
 	class_method (isOrdered)
-class_methods_end
+	class_methods_end
+}
 
 int HyperPage_goToPage (I, const wchar_t *title) {
 	iam (HyperPage);

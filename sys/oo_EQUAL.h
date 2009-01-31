@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2006/08/08 reduced Lint warnings
  * pb 2007/06/09 wchar_t
  * pb 2007/06/21
+ * pb 2009/01/22 consider empty strings and null strings identical
  */
 
 #include "oo_undef.h"
@@ -61,48 +62,39 @@
 		(my x && ! NUM##t##vector_equal (my x, thy x, min, max))) return 0;
 
 #define oo_STRINGx(storage,x)  \
-	if (! my x != ! thy x || (my x && ! strequ (my x, thy x))) return 0;
+	if (! Melder_strequ (my x, thy x)) return 0;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! my x [i] != ! thy x [i] || \
-			(my x [i] && ! strequ (my x [i], thy x [i]))) return 0;
+		if (! Melder_strequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		if (! my x [i] != ! thy x [i] || \
-			(my x [i] && ! strequ (my x [i], thy x [i]))) return 0;
+		if (! Melder_strequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! strequ (my x [i], thy x [i]))) return 0; \
+			if (! Melder_strequ (my x [i], thy x [i])) return 0; \
 	}
 
 #define oo_STRINGWx(storage,x)  \
-	if (! my x != ! thy x || (my x && ! wcsequ (my x, thy x))) return 0;
+	if (! Melder_wcsequ (my x, thy x)) return 0;
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (int i = 0; i < n; i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
 	for (int i = 0; i <= enumlength (setType); i ++) \
-		if (! my x [i] != ! thy x [i] || \
-			(my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0;
+		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! my x [i] != ! thy x [i] || \
-			    (my x [i] && ! wcsequ (my x [i], thy x [i]))) return 0; \
+			if (! Melder_wcsequ (my x [i], thy x [i])) return 0; \
 	}
 
 #define oo_STRUCT(Type,x)  \

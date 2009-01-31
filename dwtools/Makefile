@@ -20,7 +20,7 @@
 # 
 # 
 #  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20081124 Latest modification.
+#  djmw 20090123 Latest modification.
 
 
 include ../makefile.defs
@@ -47,7 +47,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	FilterBank.o Formant_extensions.o \
 	Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
-	KlattGrid.o KlattTable.o \
+	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	MelFilter_and_MFCC.o MFCC.o \
 	manual_dwtools.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \

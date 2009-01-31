@@ -33,13 +33,16 @@
 	#include "Interpreter.h"
 #endif
 
-#define ScriptEditor_members TextEditor_members \
+#define ScriptEditor__parents(Klas) TextEditor__parents(Klas) Thing_inherit (Klas, TextEditor)
+Thing_declare1 (ScriptEditor);
+
+#define ScriptEditor__members(Klas) TextEditor__members(Klas) \
 	wchar_t *environmentName; \
 	Editor_Table editorClass; \
 	Interpreter interpreter; \
 	Any argsDialog;
-#define ScriptEditor_methods TextEditor_methods
-class_create (ScriptEditor, TextEditor);
+#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
+Thing_declare2 (ScriptEditor, TextEditor);
 
 ScriptEditor ScriptEditor_createFromText (Widget parent, Any editor, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */

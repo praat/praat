@@ -908,7 +908,7 @@ static wchar_t ** _Table_getLevels (Table me, long column, long *numberOfLevels)
 	}
 	sortRowsByIndex (me);   /* Unsort the original table. */
 end:
-	iferror NUMpvector_free ((void **) result, 1);
+	iferror { NUMpvector_free ((void **) result, 1), result = NULL; }
 	return result;
 }
 

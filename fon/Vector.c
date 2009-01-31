@@ -159,7 +159,7 @@ void Vector_getMinimumAndX (I, double xmin, double xmax, long channel, int inter
 	double *return_minimum, double *return_xOfMinimum)
 {
 	iam (Vector);
-	long imin, imax, i, n = my nx;
+	long imin, imax, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
 	double *y = my z [channel];
 	double minimum, x;
@@ -180,7 +180,7 @@ void Vector_getMinimumAndX (I, double xmin, double xmax, long channel, int inter
 		if (y [imax] < minimum) minimum = y [imax], x = imax;
 		if (imin == 1) imin ++;
 		if (imax == my nx) imax --;
-		for (i = imin; i <= imax; i ++) {
+		for (long i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
 				double i_real, localMinimum = NUMimproveMinimum (y, n, i, interpolation, & i_real);
 				if (localMinimum < minimum) minimum = localMinimum, x = i_real;

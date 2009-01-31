@@ -30,12 +30,15 @@
 	#include "Spectrogram.h"
 #endif
 
-#define SpectrogramEditor_members FunctionEditor_members \
-	double maximum;
-#define SpectrogramEditor_methods FunctionEditor_methods
-class_create (SpectrogramEditor, FunctionEditor);
+#define SpectrogramEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (SpectrogramEditor);
 
-Any SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data);
+#define SpectrogramEditor__members(Klas) FunctionEditor__members(Klas) \
+	double maximum;
+#define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2 (SpectrogramEditor, FunctionEditor);
+
+SpectrogramEditor SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data);
 
 /* End of file SpectrogramEditor.h */
 #endif

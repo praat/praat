@@ -589,7 +589,7 @@ DIRECT (Sound_edit)
 			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
-			Editor_setPublishCallback (editor, cb_SoundEditor_publish, NULL);
+			Editor_setPublishCallback (SoundEditor_as_Editor (editor), cb_SoundEditor_publish, NULL);
 		}
 	}
 END
@@ -1107,7 +1107,7 @@ DIRECT (Sound_record_mono)
 	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 1) {
-			Editor_raise (soundRecorder);
+			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
 		} else {
 			forget (soundRecorder);
 		}
@@ -1115,8 +1115,8 @@ DIRECT (Sound_record_mono)
 	if (! soundRecorder) {
 		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 1, theCurrentPraat -> context);
 		if (soundRecorder == NULL) return 0;
-		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
+		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
+		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);
 	}
 	previousNumberOfChannels = 1;
 END
@@ -1130,7 +1130,7 @@ DIRECT (Sound_record_stereo)
 	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 2) {
-			Editor_raise (soundRecorder);
+			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
 		} else {
 			forget (soundRecorder);
 		}
@@ -1138,9 +1138,9 @@ DIRECT (Sound_record_stereo)
 	if (! soundRecorder) {
 		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 2, theCurrentPraat -> context);
 		if (soundRecorder == NULL) return 0;
-		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
-		Editor_setPublish2Callback (soundRecorder, cb_SoundRecorder_publish2, NULL);
+		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
+		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);
+		Editor_setPublish2Callback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish2, NULL);
 	}
 	previousNumberOfChannels = 2;
 END

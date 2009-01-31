@@ -223,6 +223,30 @@ void Thing_swap (I, thou);
 /*    and use class_create_opaque in the klasP.h header file */
 /*    (or in klas.c if there will not be any inheritors). */
 
+#define Thing_declare1(klas) \
+	typedef struct struct##klas *klas; \
+	klas##__parents (klas) \
+	typedef struct struct##klas##_Table *klas##_Table; \
+	extern klas##_Table class##klas
+
+#define Thing_inherit(klas,parentKlas) \
+	static inline parentKlas klas##_as_##parentKlas (klas me) { return (parentKlas) me; }
+
+#define Thing_declare2(klas,parentKlas) \
+	static inline parentKlas klas##_as_parent (klas me) { return (parentKlas) me; } \
+	struct struct##klas##_Table { \
+		void (* _initialize) (void *table); \
+		wchar_t *_className; \
+		parentKlas##_Table _parent; \
+		long _size; \
+		klas##__methods(klas) \
+	}; \
+	struct struct##klas { \
+		klas##_Table methods; \
+		klas##__members(klas) \
+	}; \
+	extern struct struct##klas##_Table theStruct##klas
+
 #define class_create_opaque(klas,parentKlas) \
 	typedef struct struct##klas##_Table *klas##_Table; \
 	struct struct##klas##_Table { \

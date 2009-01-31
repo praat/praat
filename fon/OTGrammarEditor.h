@@ -30,7 +30,8 @@
 	#include "OTGrammar.h"
 #endif
 
-typedef struct structOTGrammarEditor *OTGrammarEditor;
+#define OTGrammarEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
+Thing_declare1 (OTGrammarEditor);
 
 OTGrammarEditor OTGrammarEditor_create (Widget parent, const wchar_t *title, OTGrammar ot);
 

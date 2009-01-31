@@ -42,11 +42,11 @@
 	#define BUTTON_WIDTH  96
 #endif
 
-#define ButtonEditor_members HyperPage_members \
+#define ButtonEditor__members(Klas) HyperPage__members(Klas) \
 	int show; \
 	Widget button1, button2, button3, button4, button5;
-#define ButtonEditor_methods HyperPage_methods
-class_create_opaque (ButtonEditor, HyperPage);
+#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2 (ButtonEditor, HyperPage);
 
 static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 	static MelderString text = { 0 };
@@ -142,34 +142,32 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
-static void draw (I) {
-	iam (ButtonEditor);
-	long i, n;
+static void draw (ButtonEditor me) {
 	Graphics_clearWs (my g);
 	switch (my show) {
 		case 1:
-			for (i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
+			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (wcsequ (cmd -> window, L"Objects"))
 					drawMenuCommand (me, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 2:
-			for (i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
+			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (wcsequ (cmd -> window, L"Picture"))
 					drawMenuCommand (me, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 3:
-			for (i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
+			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (! wcsequ (cmd -> window, L"Objects") && ! wcsequ (cmd -> window, L"Picture"))
 					drawMenuCommand (me, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 4:
-			for (i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
 				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") < 0)
@@ -177,7 +175,7 @@ static void draw (I) {
 			}
 			break;
 		case 5:
-			for (i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
+			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
 				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") >= 0)
@@ -187,8 +185,8 @@ static void draw (I) {
 	}
 }
 
-static int goToPage (Any editor, const wchar_t *title) {
-	(void) editor;
+static int goToPage (ButtonEditor me, const wchar_t *title) {
+	(void) me;
 	if (! title || ! title [0]) return 0;
 	if (wcsequ (title, L"Buttons")) return 1;
 	switch (title [0]) {
@@ -263,13 +261,12 @@ static void gui_radiobutton_cb_editors (I, GuiRadioButtonEvent event) { (void) e
 static void gui_radiobutton_cb_actionsAM (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 4); }
 static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void) event; which (void_me, 5); }
 
-static void createChildren (I) {
-	iam (ButtonEditor);
+static void createChildren (ButtonEditor me) {
 	#if gtk
 		void *group = NULL;
 	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
-	inherited (ButtonEditor) createChildren (me);
+	inherited (ButtonEditor) createChildren (ButtonEditor_as_parent (me));
 	my button1 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Objects", gui_radiobutton_cb_objects, me, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
@@ -299,26 +296,26 @@ static void createChildren (I) {
 
 static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); return 1; }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (ButtonEditor);
-	inherited (ButtonEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (ButtonEditor me, EditorMenu menu) {
+	inherited (ButtonEditor) createHelpMenuItems (ButtonEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
-class_methods (ButtonEditor, HyperPage)
+class_methods (ButtonEditor, HyperPage) {
 	us -> scriptable = FALSE;
 	class_method (createChildren)
 	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (goToPage)
-class_methods_end
+	class_methods_end
+}
 
 ButtonEditor ButtonEditor_create (Widget parent) {
-	ButtonEditor me = new (ButtonEditor);
-	if (! me) return NULL;
-	if (! HyperPage_init (me, parent, L"Buttons", NULL))
-		{ forget (me); return NULL; }
+	ButtonEditor me = new (ButtonEditor); cherror
+	HyperPage_init (ButtonEditor_as_parent (me), parent, L"Buttons", NULL); cherror
 	which (me, 1);
+end:
+	iferror forget (me);
 	return me;
 }
 

@@ -27,7 +27,8 @@
 	#include "HyperPage.h"
 #endif
 
-typedef struct structButtonEditor *ButtonEditor;
+#define ButtonEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
+Thing_declare1 (ButtonEditor);
 
 ButtonEditor ButtonEditor_create (Widget parent);
 

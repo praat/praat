@@ -1,6 +1,6 @@
 /* RealTierEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/03/21 new Editor API
+ * pb 2009/01/23 minimum and maximum legal values
  */
 
 #include "RealTierEditor.h"
@@ -39,24 +40,28 @@
 
 static int menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
-	Editor_save (me, L"Remove point(s)");
+	Editor_save (RealTierEditor_as_Editor (me), L"Remove point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (my data, my startSelection);
 	else
 		AnyTier_removePointsBetween (my data, my startSelection, my endSelection);
 	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (RealTierEditor_as_Editor (me));
 	return 1;
 }
 
 static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
-	Editor_save (me, L"Add point");
+	if (NUMdefined (our minimumLegalValue) && my ycursor < our minimumLegalValue)
+		return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
+	if (NUMdefined (our maximumLegalValue) && my ycursor > our maximumLegalValue)
+		return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
+	Editor_save (RealTierEditor_as_Editor (me), L"Add point");
 	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
+	FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
+	Editor_broadcastChange (RealTierEditor_as_Editor (me));
 	return 1;
 }
 
@@ -69,11 +74,16 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
 		SET_REAL (our quantityKey, my ycursor)
 	EDITOR_DO
-		Editor_save (me, L"Add point");
-		RealTier_addPoint (my data, GET_REAL (L"Time"), GET_REAL (our quantityKey));
+		double desiredValue = GET_REAL (our quantityKey);
+		if (NUMdefined (our minimumLegalValue) && desiredValue < our minimumLegalValue)
+			return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
+		if (NUMdefined (our maximumLegalValue) && desiredValue > our maximumLegalValue)
+			return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
+		Editor_save (RealTierEditor_as_Editor (me), L"Add point");
+		RealTier_addPoint (my data, GET_REAL (L"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (RealTierEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -89,20 +99,18 @@ static int menu_cb_setRange (EDITOR_ARGS) {
 		my ymin = GET_REAL (our yminKey);
 		my ymax = GET_REAL (our ymaxKey);
 		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (me);
+		FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
 	EDITOR_END
 }
 
-static void createMenuItems_view (I, EditorMenu menu) {
-	iam (RealTierEditor);
-	inherited (RealTierEditor) createMenuItems_view (me, menu);
+static void createMenuItems_view (RealTierEditor me, EditorMenu menu) {
+	inherited (RealTierEditor) createMenuItems_view (RealTierEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
 	EditorMenu_addCommand (menu, our setRangeTitle, 0, menu_cb_setRange);
 }
 
-static void createMenus (I) {
-	iam (RealTierEditor);
-	inherited (RealTierEditor) createMenus (me);
+static void createMenus (RealTierEditor me) {
+	inherited (RealTierEditor) createMenus (RealTierEditor_as_parent (me));
 	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
@@ -110,8 +118,7 @@ static void createMenus (I) {
 	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
 }
 
-void RealTierEditor_updateScaling (I) {
-	iam (RealTierEditor);
+void RealTierEditor_updateScaling (RealTierEditor me) {
 	RealTier data = my data;
 	if (data -> points -> size == 0) {
 		my ymin = our defaultYmin;
@@ -122,6 +129,27 @@ void RealTierEditor_updateScaling (I) {
 		double range = ymax - ymin;
 		if (range == 0.0) ymin -= 1.0, ymax += 1.0;
 		else ymin -= 0.2 * range, ymax += 0.2 * range;
+		if (NUMdefined (our minimumLegalValue) && ymin < our minimumLegalValue)
+			ymin = our minimumLegalValue;
+		if (NUMdefined (our maximumLegalValue) && ymin > our maximumLegalValue)
+			ymin = our maximumLegalValue;
+		if (NUMdefined (our minimumLegalValue) && ymax < our minimumLegalValue)
+			ymax = our minimumLegalValue;
+		if (NUMdefined (our maximumLegalValue) && ymax > our maximumLegalValue)
+			ymax = our maximumLegalValue;
+		if (ymin >= ymax) {
+			if (NUMdefined (our minimumLegalValue) && NUMdefined (our maximumLegalValue)) {
+				ymin = our minimumLegalValue;
+				ymax = our maximumLegalValue;
+			} else if (NUMdefined (our minimumLegalValue)) {
+				ymin = our minimumLegalValue;
+				ymax = ymin + 1.0;
+			} else {
+				Melder_assert (NUMdefined (our maximumLegalValue));
+				ymax = our maximumLegalValue;
+				ymin = ymax - 1.0;
+			}
+		}
 		if (ymin < my ymin || my ymin < 0.0) my ymin = ymin;
 		if (ymax > my ymax) my ymax = ymax;
 		if (my ycursor <= my ymin || my ycursor >= my ymax)
@@ -129,16 +157,14 @@ void RealTierEditor_updateScaling (I) {
 	}
 }
 
-static void dataChanged (I) {
-	iam (RealTierEditor);
+static void dataChanged (RealTierEditor me) {
 	RealTierEditor_updateScaling (me);
-	inherited (RealTierEditor) dataChanged (me);
+	inherited (RealTierEditor) dataChanged (RealTierEditor_as_parent (me));
 }
 
 /********** DRAWING AREA **********/
 
-static void draw (I) {
-	iam (RealTierEditor);
+static void draw (RealTierEditor me) {
 	RealTier data = my data;
 	long ifirstSelected, ilastSelected, n = data -> points -> size, imin, imax, i;
 	Graphics_Viewport viewport;
@@ -147,7 +173,7 @@ static void draw (I) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		TimeSoundEditor_draw_sound (me, -1.0, 1.0);
+		TimeSoundEditor_draw_sound (RealTierEditor_as_TimeSoundEditor (me), -1.0, 1.0);
 		Graphics_resetViewport (my graphics, viewport);
 		Graphics_insetViewport (my graphics, 0, 1, 0.0, 1 - SOUND_HEIGHT);
 	}
@@ -233,8 +259,7 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 	}
 }
 
-static int click (I, double xWC, double yWC, int shiftKeyPressed) {
-	iam (RealTierEditor);
+static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	RealTier pitch = my data;
 	long inearestPoint, ifirstSelected, ilastSelected, i;
 	RealPoint nearestPoint;
@@ -252,7 +277,7 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 			my ycursor = (1.0 - yWC) * my ymin + yWC * my ymax;
 			viewport = Graphics_insetViewport (my graphics, 0, 1, 0, 1 - SOUND_HEIGHT);
 		} else {
-			return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
+			return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
 		}
 	} else {
 		my ycursor = (1.0 - yWC) * my ymin + yWC * my ymax;
@@ -264,11 +289,11 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 	 * Clicked on a point?
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
-	if (inearestPoint == 0) return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
+	if (inearestPoint == 0) return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
 	nearestPoint = pitch -> points -> item [inearestPoint];
 	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> time, nearestPoint -> value) > 1.5) {
 		if (my sound.data) Graphics_resetViewport (my graphics, viewport);
-		return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
 	}
 
 	/*
@@ -279,10 +304,10 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
-		Editor_save (me, L"Drag points");
+		Editor_save (RealTierEditor_as_Editor (me), L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (me, L"Drag point");
+		Editor_save (RealTierEditor_as_Editor (me), L"Drag point");
 	}
 
 	/*
@@ -329,6 +354,10 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 		RealPoint point = pitch -> points -> item [i];
 		point -> time += dt;
 		point -> value += df;
+		if (NUMdefined (our minimumLegalValue) && point -> value < our minimumLegalValue)
+			point -> value = our minimumLegalValue;
+		if (NUMdefined (our maximumLegalValue) && point -> value > our maximumLegalValue)
+			point -> value = our maximumLegalValue;
 	}
 
 	/*
@@ -349,26 +378,30 @@ static int click (I, double xWC, double yWC, int shiftKeyPressed) {
 		 */
 		/*my cursor += dt;*/
 		my ycursor += df;
+		if (NUMdefined (our minimumLegalValue) && my ycursor < our minimumLegalValue)
+			my ycursor = our minimumLegalValue;
+		if (NUMdefined (our maximumLegalValue) && my ycursor > our maximumLegalValue)
+			my ycursor = our maximumLegalValue;
 	}
 
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (RealTierEditor_as_Editor (me));
 	RealTierEditor_updateScaling (me);
 	return 1;   /* Update needed. */
 }
 
-static void play (I, double tmin, double tmax) {
-	iam (RealTierEditor);
+static void play (RealTierEditor me, double tmin, double tmax) {
 	if (my sound.data)
 		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 }
 
-class_methods (RealTierEditor, TimeSoundEditor)
+class_methods (RealTierEditor, TimeSoundEditor) {
 	class_method (dataChanged)
 	class_method (createMenus)
 	class_method (draw)
 	class_method (click)
 	class_method (play)
-	us -> zeroIsMinimum = FALSE;
+	us -> minimumLegalValue = NUMundefined;
+	us -> maximumLegalValue = NUMundefined;
 	us -> quantityText = L"Y";   /* Normally includes units. */
 	us -> quantityKey = L"Y";   /* Without units. */
 	us -> rightTickUnits = L"";
@@ -382,16 +415,18 @@ class_methods (RealTierEditor, TimeSoundEditor)
 	us -> yminKey = L"Minimum";   /* Without units. */
 	us -> ymaxKey = L"Maximum";   /* Without units. */
 	class_method (createMenuItems_view)
-class_methods_end
+	class_methods_end
+}
 
-int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
-	iam (RealTierEditor);
+int RealTierEditor_init (RealTierEditor me, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
-	if (! TimeSoundEditor_init (me, parent, title, data, sound, ownSound)) return 0;
+	TimeSoundEditor_init (RealTierEditor_as_parent (me), parent, title, data, sound, ownSound); cherror
 	my ymin = -1.0;
 	RealTierEditor_updateScaling (me);
 	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
+end:
+	iferror return 0;
 	return 1;
 }
 

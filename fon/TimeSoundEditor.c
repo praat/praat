@@ -108,12 +108,12 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
 		if (! publish) return 0;
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
 		forget (publish);
-		FunctionEditor_garnish (me);
-		Editor_closePraatPicture (me);
+		FunctionEditor_garnish (TimeSoundEditor_as_FunctionEditor (me));
+		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -147,11 +147,11 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
 		if (! publish) return 0;
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
 		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
 		forget (publish);
-		Editor_closePraatPicture (me);
+		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -295,8 +295,7 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenuItems_file_draw (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
+static void createMenuItems_file_draw (TimeSoundEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
 	if (my sound.data || my longSound.data) {
 		EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
@@ -304,8 +303,7 @@ static void createMenuItems_file_draw (I, EditorMenu menu) {
 	}
 }
 
-static void createMenuItems_file_extract (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
+static void createMenuItems_file_extract (TimeSoundEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
 	if (my sound.data || my longSound.data) {
 		my publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
@@ -323,8 +321,7 @@ static void createMenuItems_file_extract (I, EditorMenu menu) {
 	}
 }
 
-static void createMenuItems_file_write (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
+static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Write to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
 	if (my sound.data || my longSound.data) {
 		my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
@@ -347,9 +344,8 @@ static void createMenuItems_file_write (I, EditorMenu menu) {
 	}
 }
 
-static void createMenuItems_file (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
-	inherited (TimeSoundEditor) createMenuItems_file (me, menu);
+static void createMenuItems_file (TimeSoundEditor me, EditorMenu menu) {
+	inherited (TimeSoundEditor) createMenuItems_file (TimeSoundEditor_as_parent (me), menu);
 	our createMenuItems_file_draw (me, menu);
 	EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
 	our createMenuItems_file_extract (me, menu);
@@ -372,9 +368,8 @@ static int menu_cb_LongSoundInfo (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_query_info (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
-	inherited (TimeSoundEditor) createMenuItems_query_info (me, menu);
+static void createMenuItems_query_info (TimeSoundEditor me, EditorMenu menu) {
+	inherited (TimeSoundEditor) createMenuItems_query_info (TimeSoundEditor_as_parent (me), menu);
 	if (my sound.data != NULL && my sound.data != my data) {
 		EditorMenu_addCommand (menu, L"Sound info", 0, menu_cb_SoundInfo);
 	} else if (my longSound.data != NULL && my longSound.data != my data) {
@@ -387,25 +382,22 @@ static void createMenuItems_query_info (I, EditorMenu menu) {
 static int menu_cb_autoscaling (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	preferences.sound.autoscaling = my sound.autoscaling = ! my sound.autoscaling;
-	FunctionEditor_redraw (me);
+	FunctionEditor_redraw (TimeSoundEditor_as_FunctionEditor (me));
 	return 1;
 }
 
-static void createMenuItems_view (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
+static void createMenuItems_view (TimeSoundEditor me, EditorMenu menu) {
 	if (my sound.data || my longSound.data) our createMenuItems_view_sound (me, menu);
-	inherited (TimeSoundEditor) createMenuItems_view (me, menu);
+	inherited (TimeSoundEditor) createMenuItems_view (TimeSoundEditor_as_parent (me), menu);
 }
 
-static void createMenuItems_view_sound (I, EditorMenu menu) {
-	iam (TimeSoundEditor);
+static void createMenuItems_view_sound (TimeSoundEditor me, EditorMenu menu) {
 	(void) me;
 	EditorMenu_addCommand (menu, L"Sound autoscaling", GuiMenu_CHECKBUTTON | (preferences.sound.autoscaling ? GuiMenu_TOGGLE_ON : 0), menu_cb_autoscaling);
 	EditorMenu_addCommand (menu, L"-- sound view --", 0, 0);
 }
 
-static void updateMenuItems_file (I) {
-	iam (TimeSoundEditor);
+static void updateMenuItems_file (TimeSoundEditor me) {
 	Any sound = my sound.data != NULL ? (Sampled) my sound.data : (Sampled) my longSound.data;
 	if (sound == NULL) return;
 	long first, last, selectedSamples = Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
@@ -423,8 +415,7 @@ static void updateMenuItems_file (I) {
 	GuiObject_setSensitive (my writeFlacButton, selectedSamples != 0);
 }
 
-void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum) {
-	iam (TimeSoundEditor);
+void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum) {
 	Sound sound = my sound.data;
 	LongSound longSound = my longSound.data;
 	Melder_assert ((sound == NULL) != (longSound == NULL));
@@ -518,7 +509,7 @@ void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum) 
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
+				FunctionEditor_drawCursorFunctionValue (TimeSoundEditor_as_FunctionEditor (me), cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
@@ -548,8 +539,7 @@ class_methods (TimeSoundEditor, FunctionEditor) {
 	class_methods_end
 }
 
-int TimeSoundEditor_init (I, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
-	iam (TimeSoundEditor);
+int TimeSoundEditor_init (TimeSoundEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
 	my ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {
@@ -566,7 +556,7 @@ int TimeSoundEditor_init (I, Widget parent, const wchar_t *title, Any data, Any 
 			Melder_fatal ("Invalid sound class in TimeSoundEditor_init.");
 		}
 	}
-	if (! FunctionEditor_init (me, parent, title, data)) return 0;
+	FunctionEditor_init (TimeSoundEditor_as_parent (me), parent, title, data); cherror
 	my sound.autoscaling = preferences.sound.autoscaling;
 end:
 	iferror return 0;

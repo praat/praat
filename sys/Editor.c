@@ -200,8 +200,7 @@ void Editor_setMenuSensitive (Any editor, const wchar_t *menuTitle, int sensitiv
 	}
 }
 
-EditorCommand Editor_getMenuCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle) {
-	Editor me = (Editor) editor;
+EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle) {
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
@@ -218,8 +217,7 @@ EditorCommand Editor_getMenuCommand (Any editor, const wchar_t *menuTitle, const
 	return NULL;
 }
 
-int Editor_doMenuCommand (Any editor, const wchar_t *commandTitle, const wchar_t *arguments, Interpreter interpreter) {
-	Editor me = (Editor) editor;
+int Editor_doMenuCommand (Editor me, const wchar_t *commandTitle, const wchar_t *arguments, Interpreter interpreter) {
 	int numberOfMenus = my menus -> size, imenu;
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
@@ -283,17 +281,15 @@ static void nameChanged (I) {
 		GuiWindow_setTitle (my shell, my name);
 }
 
-static void goAway (I) { iam (Editor); forget (me); }
+static void goAway (Editor me) { forget (me); }
 
-static void save (I) {
-	iam (Editor);
+static void save (Editor me) {
 	if (! my data) return;
 	forget (my previousData);
 	my previousData = Data_copy (my data);
 }
 
-static void restore (I) {
-	iam (Editor);
+static void restore (Editor me) {
 	if (my data && my previousData)   /* Swap contents of my data and my previousData. */
 		Thing_swap (my data, my previousData);
 }
@@ -335,27 +331,27 @@ static int menu_cb_searchManual (EDITOR_ARGS) {
 
 static int menu_cb_newScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL);
-	if (! scriptEditor) return 0;
+	(void) ScriptEditor_createFromText (my parent, me, NULL); cherror
+end:
+	iferror return 0;
 	return 1;
 }
 
 static int menu_cb_openScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL);
-	if (! scriptEditor) return 0;
-	TextEditor_showOpen (scriptEditor);
+	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL); cherror
+	TextEditor_showOpen (ScriptEditor_as_TextEditor (scriptEditor));
+end:
+	iferror return 0;
 	return 1;
 }
 
-static void createMenuItems_file (I, EditorMenu menu) {
-	iam (Editor);
+static void createMenuItems_file (Editor me, EditorMenu menu) {
 	(void) me;
 	(void) menu;
 }
 
-static void createMenuItems_edit (I, EditorMenu menu) {
-	iam (Editor);
+static void createMenuItems_edit (Editor me, EditorMenu menu) {
 	(void) me;
 	if (my data)
 		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
@@ -373,13 +369,11 @@ static int menu_cb_info (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_query (I, EditorMenu menu) {
-	iam (Editor);
+static void createMenuItems_query (Editor me, EditorMenu menu) {
 	our createMenuItems_query_info (me, menu);
 }
 
-static void createMenuItems_query_info (I, EditorMenu menu) {
-	iam (Editor);
+static void createMenuItems_query_info (Editor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Editor info", 0, menu_cb_settingsReport);
 	EditorMenu_addCommand (menu, L"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
 	if (my data) {
@@ -390,8 +384,7 @@ static void createMenuItems_query_info (I, EditorMenu menu) {
 	}
 }
 
-static void createMenus (I) {
-	iam (Editor);
+static void createMenus (Editor me) {
 	EditorMenu menu = Editor_addMenu (me, L"File", 0);
 	our createMenuItems_file (me, menu);
 	if (our editable) {
@@ -404,51 +397,50 @@ static void createMenus (I) {
 	}
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (Editor);
+static void createHelpMenuItems (Editor me, EditorMenu menu) {
 	(void) me;
 	(void) menu;
 }
 
-static void createChildren (Any editor) {
-	(void) editor;
+static void createChildren (Editor me) {
+	(void) me;
 }
 
-static void dataChanged (Any editor) {
-	(void) editor;
+static void dataChanged (Editor me) {
+	(void) me;
 }
 
-static void clipboardChanged (Any editor, Any clipboard) {
-	(void) editor;
+static void clipboardChanged (Editor me, Any clipboard) {
+	(void) me;
 	(void) clipboard;
 }
 
-static void form_pictureWindow (I, EditorCommand cmd) {
-	(void) void_me;
+static void form_pictureWindow (Editor me, EditorCommand cmd) {
+	(void) me;
 	LABEL (L"", L"Picture window:")
 	BOOLEAN (L"Erase first", 1);
 }
-static void ok_pictureWindow (I, EditorCommand cmd) {
-	(void) void_me;
+static void ok_pictureWindow (Editor me, EditorCommand cmd) {
+	(void) me;
 	SET_INTEGER (L"Erase first", preferences.picture.eraseFirst);
 }
-static void do_pictureWindow (I, EditorCommand cmd) {
-	(void) void_me;
+static void do_pictureWindow (Editor me, EditorCommand cmd) {
+	(void) me;
 	preferences.picture.eraseFirst = GET_INTEGER (L"Erase first");
 }
 
-static void form_pictureMargins (I, EditorCommand cmd) {
-	(void) void_me;
+static void form_pictureMargins (Editor me, EditorCommand cmd) {
+	(void) me;
 	Any radio = 0;
 	LABEL (L"", L"Margins:")
 	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, DEFAULT);
 }
-static void ok_pictureMargins (I, EditorCommand cmd) {
-	(void) void_me;
+static void ok_pictureMargins (Editor me, EditorCommand cmd) {
+	(void) me;
 	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, preferences.picture.writeNameAtTop);
 }
-static void do_pictureMargins (I, EditorCommand cmd) {
-	(void) void_me;
+static void do_pictureMargins (Editor me, EditorCommand cmd) {
+	(void) me;
 	preferences.picture.writeNameAtTop = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
 }
 
@@ -485,8 +477,7 @@ static void gui_window_cb_goAway (I) {
 }
 
 extern void praat_addCommandsToEditor (Editor me);
-int Editor_init (I, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
-	iam (Editor);
+int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	#if gtk
 		GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (parent)));
 		int screenWidth = gdk_screen_get_width (screen);
@@ -559,8 +550,7 @@ int Editor_init (I, Widget parent, int x, int y, int width, int height, const wc
 	return 1;
 }
 
-void Editor_raise (I) {
-	iam (Editor);
+void Editor_raise (Editor me) {
 	#if gtk
 		// TODO: Wellicht dat my shell geen GDK_WINDOW is...
 		gdk_window_raise (GDK_WINDOW (my shell)); 
@@ -569,50 +559,42 @@ void Editor_raise (I) {
 	#endif
 }
  
-void Editor_dataChanged (I, Any data) {
-	iam (Editor);
+void Editor_dataChanged (Editor me, Any data) {
 	/*if (data) my data = data; BUG */
 	(void) data;
 	our dataChanged (me);
 }
 
-void Editor_clipboardChanged (I, Any data) {
-	iam (Editor);
+void Editor_clipboardChanged (Editor me, Any data) {
 	our clipboardChanged (me, data);
 }
 
-void Editor_setDestroyCallback (I, void (*cb) (I, void *closure), void *closure) {
-	iam (Editor);
+void Editor_setDestroyCallback (Editor me, void (*cb) (I, void *closure), void *closure) {
 	my destroyCallback = cb;
 	my destroyClosure = closure;
 }
 
-void Editor_broadcastChange (I) {
-	iam (Editor);
+void Editor_broadcastChange (Editor me) {
 	if (my dataChangedCallback)
 		my dataChangedCallback (me, my dataChangedClosure, NULL);
 }
 
-void Editor_setDataChangedCallback (I, void (*cb) (I, void *closure, Any data), void *closure) {
-	iam (Editor);
+void Editor_setDataChangedCallback (Editor me, void (*cb) (I, void *closure, Any data), void *closure) {
 	my dataChangedCallback = cb;
 	my dataChangedClosure = closure;
 }
 
-void Editor_setPublishCallback (I, void (*cb) (I, void *closure, Any publish), void *closure) {
-	iam (Editor);
+void Editor_setPublishCallback (Editor me, void (*cb) (I, void *closure, Any publish), void *closure) {
 	my publishCallback = cb;
 	my publishClosure = closure;
 }
 
-void Editor_setPublish2Callback (I, void (*cb) (I, void *closure, Any publish1, Any publish2), void *closure) {
-	iam (Editor);
+void Editor_setPublish2Callback (Editor me, void (*cb) (I, void *closure, Any publish1, Any publish2), void *closure) {
 	my publish2Callback = cb;
 	my publish2Closure = closure;
 }
 
-void Editor_save (I, const wchar_t *text) {
-	iam (Editor);
+void Editor_save (Editor me, const wchar_t *text) {
 	our save (me);
 	if (! my undoButton) return;
 	GuiObject_setSensitive (my undoButton, True);
@@ -625,12 +607,10 @@ void Editor_save (I, const wchar_t *text) {
 	#endif
 }
 
-void Editor_openPraatPicture (I) {
-	iam (Editor);
+void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (preferences.picture.eraseFirst);
 }
-void Editor_closePraatPicture (I) {
-	iam (Editor);
+void Editor_closePraatPicture (Editor me) {
 	if (my data != NULL && preferences.picture.writeNameAtTop != kEditor_writeNameAtTop_NO) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);

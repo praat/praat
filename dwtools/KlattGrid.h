@@ -27,6 +27,9 @@
 #ifndef _Collection_h_
 	#include "Collection.h"
 #endif
+#ifndef _PointProcess_h_
+	#include "PointProcess.h"
+#endif
 #ifndef _Sound_h_
 	#include "Sound.h"
 #endif
@@ -57,43 +60,35 @@ oo_CLASS_CREATE (PhonationPoint, Data);
 #define PhonationTier_methods Function_methods
 oo_CLASS_CREATE (PhonationTier, Function);
 
+#define PhonationGridPlayOptions_methods Data_methods
+oo_CLASS_CREATE (PhonationGridPlayOptions, Data);
+
 #define PhonationGrid_methods Function_methods
 oo_CLASS_CREATE (PhonationGrid, Function);
+
+#define VocalTractGridPlayOptions_methods Data_methods
+oo_CLASS_CREATE (VocalTractGridPlayOptions, Data);
 
 #define VocalTractGrid_methods Function_methods
 oo_CLASS_CREATE (VocalTractGrid, Function);
 
+#define CouplingGridPlayOptions_methods Data_methods
+oo_CLASS_CREATE (CouplingGridPlayOptions, Data);
+
 #define CouplingGrid_methods Function_methods
 oo_CLASS_CREATE (CouplingGrid, Function);
+
+#define FricationGridPlayOptions_methods Data_methods
+oo_CLASS_CREATE (FricationGridPlayOptions, Data);
 
 #define FricationGrid_methods Function_methods
 oo_CLASS_CREATE (FricationGrid, Function);
 
+#define KlattGridPlayOptions_methods Data_methods
+oo_CLASS_CREATE (KlattGridPlayOptions, Data);
+
 #define KlattGrid_methods Function_methods
 oo_CLASS_CREATE (KlattGrid, Function);
-
-/****************** synthesis parameters **************************/
-
-typedef struct KlattGrid_synthesisParams {
-	double samplingFrequency;
-	double maximumPeriod;
-	int voicing, aspiration, breathiness, spectralTilt;
-	int filterModel; // 1: parallel, 0: cascade
-	int sourceIsFlowDerivative;
-	long startFormant, endFormant;
-	long startNasalFormant, endNasalFormant;
-	long startTrachealFormant, endTrachealFormant;
-	long startNasalAntiFormant, endNasalAntiFormant;
-	long startTrachealAntiFormant, endTrachealAntiFormant;
-	long startFricationFormant, endFricationFormant;
-	double openglottis_fadeFraction; // (0-0.5)
-	int openglottis, fricationBypass;
-	int klatt80;
-	KlattGrid *kg; // because of coupling between source and filter
-} *KlattGrid_synthesisParams;
-
-struct KlattGrid_synthesisParams KlattGrid_synthesisParams_createDefault (KlattGrid me);
-void KlattGrid_synthesisParams_setDefault (KlattGrid_synthesisParams p, KlattGrid thee);
 
 /******************** PhonationPoint & Tier ************************************/
 
@@ -101,6 +96,7 @@ PhonationPoint PhonationPoint_create (double time, double period, double openPha
 	double power1, double power2, double pulseScale);
 
 PhonationTier PhonationTier_create (double tmin, double tmax);
+PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me);
 
 /************************ PhonationGrid *********************************************/
 
@@ -112,7 +108,7 @@ void PhonationGrid_draw (PhonationGrid me, Graphics g);
 
 double PhonationGrid_getMaximumPeriod (PhonationGrid me);
 
-PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me, double maximumPeriod, int klatt80);
+PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me);
 
 /************************ VocalTractGrid *********************************************/
 
@@ -130,7 +126,7 @@ double CouplingGrid_getDeltaBandwidthAtTime (CouplingGrid me, long iformant, dou
 
 /********************** FormantGrid & CouplingGrid *************************************/
 
-int FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid thee, double fadeFraction);
+int FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid thee);
 
 /********************** Sound & FormantGrid (& IntensityTier) *************************************/
 
@@ -145,13 +141,13 @@ FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfForma
 
 void FricationGrid_draw (FricationGrid me, Graphics g);
 
-Sound FricationGrid_to_Sound (FricationGrid me, KlattGrid_synthesisParams p);
+Sound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency);
 
-Sound Sound_FricationGrid_filter (Sound me, FricationGrid thee, KlattGrid_synthesisParams params);
+Sound Sound_FricationGrid_filter (Sound me, FricationGrid thee);
 
 /************************ Sound & VocalTractGrid & CouplingGrid *********************************************/
 
-Sound Sound_VocalTractGrid_CouplingGrid_filter (Sound me, VocalTractGrid thee, CouplingGrid coupling, KlattGrid_synthesisParams p);
+Sound Sound_VocalTractGrid_CouplingGrid_filter (Sound me, VocalTractGrid thee, CouplingGrid coupling);
 
 /************************ KlattGrid *********************************************/
 
@@ -219,13 +215,13 @@ FormantGrid KlattGrid_extractDeltaFormantGrid (KlattGrid me);
 int KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee);
 
 FormantGrid KlattGrid_to_FormantGrid_openPhases (KlattGrid me, double fadeFraction);
+PointProcess KlattGrid_extractPointProcess_glottalClosures (KlattGrid me);
 
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t);
 int KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, double t, double value);
 void KlattGrid_removeAmplitudePointsBetween (KlattGrid me, int formantType, long iformant, double t1, double t2);
 IntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, long iformant);
 int KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iformant, IntensityTier thee);
-
 
 double KlattGrid_getFricationAmplitudeAtTime (KlattGrid me, double t);
 int KlattGrid_addFricationAmplitudePoint (KlattGrid me, double t, double value);
@@ -239,20 +235,23 @@ void KlattGrid_removeFricationBypassPointsBetween (KlattGrid me, double t1, doub
 IntensityTier KlattGrid_extractFricationBypassTier (KlattGrid me);
 int KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee);
 
-int KlattGrid_setGlottisCoupling (KlattGrid me, double maximumPeriod, int klatt80);
+int KlattGrid_setGlottisCoupling (KlattGrid me);
 
 Any KlattGrid_getAddressOfFormantGrid (KlattGrid me, int formantType);
 Any KlattGrid_getAddressOfAmplitudes (KlattGrid me, int formantType);
 
 /***************** KlattGrid & Sound *************************************/
 
-Sound KlattGrid_to_Sound_simple (KlattGrid me, double samplingFrequency, int filterType);
-
+// reset PlayOptions to defaults
 int KlattGrid_play (KlattGrid me);
+// use playOptions
+int KlattGrid_playSpecial (KlattGrid me);
 
-Sound KlattGrid_to_Sound (KlattGrid me, KlattGrid_synthesisParams params);
+void KlattGrid_setDefaultPlayOptions (KlattGrid me);
 
-Sound KlattGrid_to_Sound_phonation (KlattGrid me, double samplingFrequency, int voicing, int spectralTilt, int sourceIsFlowDerivative, int breathiness, int aspiration);
+Sound KlattGrid_to_Sound (KlattGrid me);
+
+Sound KlattGrid_to_Sound_phonation (KlattGrid me);
 
 int KlattGrid_synthesize (KlattGrid me, double t1, double t2, double samplingFrequency, double maximumPeriod);
 
@@ -263,14 +262,7 @@ int KlattGrid_synthesize (KlattGrid me, double t1, double t2, double samplingFre
 
 Sound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, int filterModel);
 
-Sound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee, KlattGrid_synthesisParams params);
-
-Sound Sounds_KlattGrid_filter_allSources (Sound glottal, Sound frication, KlattGrid me, KlattGrid_synthesisParams params);
-
-Sound Sounds_KlattGrid_filter_oneSource (Sound frication, KlattGrid me, int sourceType, KlattGrid_synthesisParams params);
-
-/* type = 0 glottal souce signal, 1 = voiced only, 2 = aspiration only 3: frication */
-Sound Sound_KlattGrid_filter (Sound me, KlattGrid thee, int type, KlattGrid_synthesisParams params);
+Sound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee);
 
 KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double minimumPitchIntensity, int subtractMean);
 

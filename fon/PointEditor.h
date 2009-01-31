@@ -30,7 +30,14 @@
 	#include "PointProcess.h"
 #endif
 
-typedef struct structPointEditor *PointEditor;
+#define PointEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
+Thing_declare1 (PointEditor);
+
+#define PointEditor__members(Klas) TimeSoundEditor__members(Klas) \
+	Sound monoSound; \
+	Widget addPointAtDialog;
+#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
+Thing_declare2 (PointEditor, TimeSoundEditor);
 
 PointEditor PointEditor_create (Widget parent, const wchar_t *title,
 	PointProcess point, Sound sound);

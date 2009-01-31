@@ -183,7 +183,7 @@ procedure test_deltaFormants
   Add formant point... "Normal formant" 1 0.003553 400
   Add formant point... "Normal formant" 1 0.002 300
   Add formant point... "Normal formant" 1 0.0112 430
-  .sound = To Sound... 44100 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes no
+  .sound = To Sound
   Remove
   select .kg
   Extract formant grid (open phases)... 0.1

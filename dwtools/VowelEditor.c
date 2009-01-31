@@ -1,6 +1,6 @@
 /* VowelEditor.c
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -890,10 +890,10 @@ static int menu_cb_drawTrajectory (EDITOR_ARGS)
 	EDITOR_DO
 		int garnish = GET_INTEGER (L"Garnish");
 		our do_pictureWindow (me, cmd);
-		Editor_openPraatPicture (me);
+		Editor_openPraatPicture (VowelEditor_as_Editor (me));
 		if (garnish) VowelEditor_drawBackground (me, my pictureGraphics);
 		FormantTier_drawF1F2Trajectory (my vowel -> ft, my pictureGraphics, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
-		Editor_closePraatPicture (me);
+		Editor_closePraatPicture (VowelEditor_as_Editor (me));
 	EDITOR_END
 }
 
@@ -1366,10 +1366,9 @@ static void destroy (I)
 	inherited (VowelEditor) destroy (me);
 }
 
-static void createMenus (I)
+static void createMenus (VowelEditor me)
 {
-	iam (VowelEditor);
-	inherited (VowelEditor) createMenus (me);
+	inherited (VowelEditor) createMenus (VowelEditor_as_parent (me));
 
 	Editor_addCommand (me, L"File", L"Preferences...", 0, menu_cb_prefs);
 	Editor_addCommand (me, L"File", L"-- publish data --", 0, NULL);
@@ -1392,15 +1391,13 @@ static void createMenus (I)
 	Editor_addCommand (me, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (VowelEditor);
-	inherited (VowelEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (VowelEditor me, EditorMenu menu) {
+	inherited (VowelEditor) createHelpMenuItems (VowelEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"VowelEditor help", '?', menu_cb_help);
 }
 
-static void createChildren (I)
+static void createChildren (VowelEditor me)
 {
-	iam (VowelEditor);
 	double button_width = 60, text_width = 95, status_info_width = 290;
 	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 	Widget form;
@@ -1471,9 +1468,8 @@ static void createChildren (I)
 	GuiObject_show (form);
 }
 
-static void dataChanged (I)
+static void dataChanged (VowelEditor me)
 {
-	iam (VowelEditor);
 	(void) me;
 }
 
@@ -1518,14 +1514,14 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = new (VowelEditor);
-	if (me == NULL || ! Editor_init (me, parent, 20, 40, 650, 650, title, data)) goto end;
+	if (me == NULL || ! Editor_init (VowelEditor_as_parent (me), parent, 20, 40, 650, 650, title, data)) goto end;
 	#if motif
 	Melder_assert (XtWindow (my drawingArea));
 	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setFontSize (my g, 10);
 	VowelEditor_prefs ();
-	Editor_setPublishCallback (me, cb_publish, NULL);
+	Editor_setPublishCallback (VowelEditor_as_Editor (me), cb_publish, NULL);
 	
 	my f1min = prefs.f1min;
 	my f1max = prefs.f1max;

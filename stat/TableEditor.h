@@ -30,7 +30,8 @@
 	#include "Table.h"
 #endif
 
-typedef struct structTableEditor *TableEditor;
+#define TableEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (TableEditor, Editor)
+Thing_declare1 (TableEditor);
 
 TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table);
 

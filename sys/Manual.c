@@ -98,8 +98,7 @@ static void destroy (I) {
 	inherited (Manual) destroy (me);
 }
 
-static void draw (I) {
-	iam (Manual);
+static void draw (Manual me) {
 	ManPages manPages = my data;
 	ManPage page;
 	ManPage_Paragraph paragraph;
@@ -431,8 +430,7 @@ static void gui_cb_search (GUI_ARGS) {
 	do_search (me);
 }
 
-static void createChildren (I) {
-	iam (Manual);
+static void createChildren (Manual me) {
 	ManPages pages = my data;   /* Has been installed here by Editor_init (). */
 #if defined (macintosh)
 	#define STRING_SPACING 8
@@ -440,7 +438,7 @@ static void createChildren (I) {
 	#define STRING_SPACING 2
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	inherited (Manual) createChildren (me);
+	inherited (Manual) createChildren (Manual_as_parent (me));
 	my homeButton = GuiButton_createShown (my holder, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, me, 0);
 	if (pages -> dynamic) {
@@ -472,9 +470,8 @@ static void createChildren (I) {
 
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); if (! HyperPage_goToPage (me, L"Manual")) return 0; return 1; }
 
-static void createMenus (I) {
-	iam (Manual);
-	inherited (Manual) createMenus (me);
+static void createMenus (Manual me) {
+	inherited (Manual) createMenus (Manual_as_parent (me));
 
 	Editor_addCommand (me, L"File", L"Print manual...", 0, menu_cb_printRange);
 	Editor_addCommand (me, L"File", L"Write page to HTML file...", 0, menu_cb_writeOneToHtmlFile);
@@ -484,9 +481,8 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (Manual);
-	inherited (Manual) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (Manual me, EditorMenu menu) {
+	inherited (Manual) createHelpMenuItems (Manual_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
 }
 
@@ -508,19 +504,16 @@ static void defaultHeaders (EditorCommand cmd) {
 	}
 }
 
-static long getNumberOfPages (I) {
-	iam (Manual);
+static long getNumberOfPages (Manual me) {
 	ManPages manPages = my data;
 	return manPages -> pages -> size;
 }
 
-static long getCurrentPageNumber (I) {
-	iam (Manual);
+static long getCurrentPageNumber (Manual me) {
 	return my path ? my path : 1;
 }
 
-static int goToPage_i (I, long i) {
-	iam (Manual);
+static int goToPage_i (Manual me, long i) {
 	ManPages manPages = my data;
 	ManPage page;
 	ManPage_Paragraph par;
@@ -542,8 +535,7 @@ static int goToPage_i (I, long i) {
 	return 1;
 }
 
-static int goToPage (I, const wchar_t *title) {
-	iam (Manual);
+static int goToPage (Manual me, const wchar_t *title) {
 	ManPages manPages = my data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
 		structMelderFile file = { 0 };
@@ -588,8 +580,7 @@ class_methods (Manual, HyperPage) {
 	class_methods_end
 }
 
-int Manual_init (I, Widget parent, const wchar_t *title, Any data) {
-	iam (Manual);
+int Manual_init (Manual me, Widget parent, const wchar_t *title, Any data) {
 	ManPages manPages = data;
 	wchar_t windowTitle [101];
 	long i;
@@ -610,15 +601,19 @@ int Manual_init (I, Widget parent, const wchar_t *title, Any data) {
 	} else {
 		wcscpy (windowTitle, L"Manual");
 	}
-	if (! HyperPage_init (me, parent, windowTitle, data)) { forget (me); return 0; }
+	HyperPage_init (Manual_as_parent (me), parent, windowTitle, data); cherror
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_wcsdup (title);   /* BAD */
+end:
+	iferror return 0;
 	return 1;
 }
 
 Manual Manual_create (Widget parent, const wchar_t *title, Any data) {
-	Manual me = new (Manual);
-	if (! me || ! Manual_init (me, parent, title, data)) forget (me);
+	Manual me = new (Manual); cherror
+	Manual_init (me, parent, title, data); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 

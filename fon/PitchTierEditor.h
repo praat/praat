@@ -33,7 +33,12 @@
 	#include "Sound.h"
 #endif
 
-typedef struct structPitchTierEditor *PitchTierEditor;
+#define PitchTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
+Thing_declare1 (PitchTierEditor);
+
+#define PitchTierEditor__members(Klas) RealTierEditor__members(Klas)
+#define PitchTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2 (PitchTierEditor, RealTierEditor);
 
 PitchTierEditor PitchTierEditor_create (Widget parent, const wchar_t *title,
 	PitchTier pitch, Sound sound, int ownSound);

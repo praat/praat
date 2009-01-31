@@ -28,9 +28,12 @@
 
 #include "TextEditor.h"
 
-#define InfoEditor_members TextEditor_members
-#define InfoEditor_methods TextEditor_methods
-class_create (InfoEditor, TextEditor);
+#define InfoEditor__parents(Klas) TextEditor__parents(Klas) Thing_inherit (Klas, TextEditor)
+Thing_declare1 (InfoEditor);
+
+#define InfoEditor__members(Klas) TextEditor__members(Klas)
+#define InfoEditor__methods(Klas) TextEditor__methods(Klas)
+Thing_declare2 (InfoEditor, TextEditor);
 
 static InfoEditor theInfoEditor;
 
@@ -40,24 +43,24 @@ static void destroy (I) {
 	inherited (InfoEditor) destroy (me);
 }
 
-static void clear (I) {
-	iam (TextEditor);
+static void clear (InfoEditor me) {
 	(void) me;
 	Melder_clearInfo ();
 }
 
-class_methods (InfoEditor, TextEditor)
+class_methods (InfoEditor, TextEditor) {
 	class_method (destroy)
 	us -> scriptable = FALSE;
 	us -> fileBased = FALSE;
 	class_method (clear)
-class_methods_end
+	class_methods_end
+}
 
 void gui_information (wchar_t *message);
 void gui_information (wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = new (InfoEditor);
-		TextEditor_init (theInfoEditor, Melder_topShell, L"");
+		TextEditor_init (InfoEditor_as_parent (theInfoEditor), Melder_topShell, L"");
 		Thing_setName (theInfoEditor, L"Praat: Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);

@@ -30,7 +30,12 @@
 	#include "Pitch.h"
 #endif
 
-typedef struct structPitchEditor *PitchEditor;
+#define PitchEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (PitchEditor);
+
+#define PitchEditor__members(Klas) FunctionEditor__members(Klas)
+#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2 (PitchEditor, FunctionEditor);
 
 PitchEditor PitchEditor_create (Widget parent, const wchar_t *title, Pitch pitch);
 

@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/08
+ * pb 2009/01/23
  */
 
 #ifndef _TimeSoundEditor_h_
@@ -30,23 +30,26 @@
 	#include "RealTier.h"
 #endif
 
-#define RealTierEditor_members TimeSoundEditor_members \
+#define RealTierEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
+Thing_declare1 (RealTierEditor);
+
+#define RealTierEditor__members(Klas) TimeSoundEditor__members(Klas) \
 	double ymin, ymax, ycursor;
-#define RealTierEditor_methods TimeSoundEditor_methods \
-	int zeroIsMinimum; \
+#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
+	double minimumLegalValue, maximumLegalValue; \
 	const wchar_t *quantityText, *quantityKey, *rightTickUnits; \
 	double defaultYmin, defaultYmax; \
 	const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
 	const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
-class_create (RealTierEditor, TimeSoundEditor);
+Thing_declare2 (RealTierEditor, TimeSoundEditor);
 
-void RealTierEditor_updateScaling (I);
+void RealTierEditor_updateScaling (RealTierEditor me);
 /*
 	Computes the ymin and ymax values on the basis of the data.
 	Call after every change in the data.
 */
 
-int RealTierEditor_init (I, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
+int RealTierEditor_init (RealTierEditor me, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
 /*
 	'Sound' may be NULL;
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,

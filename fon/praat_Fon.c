@@ -939,7 +939,7 @@ DIRECT (FormantGrid_edit)
 		WHERE (SELECTED) {
 			FormantGridEditor editor = FormantGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
-			Editor_setPublishCallback (editor, cb_FormantGridEditor_publish, NULL);
+			Editor_setPublishCallback (FormantGridEditor_as_Editor (editor), cb_FormantGridEditor_publish, NULL);
 		}
 	}
 END
@@ -1768,7 +1768,7 @@ DIRECT (Manipulation_edit)
 		WHERE (SELECTED) {
 			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
-			Editor_setPublishCallback (editor, cb_ManipulationEditor_publish, NULL);
+			Editor_setPublishCallback (ManipulationEditor_as_Editor (editor), cb_ManipulationEditor_publish, NULL);
 		}
 	}
 END

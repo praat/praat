@@ -33,7 +33,12 @@
 	#include "Sound.h"
 #endif
 
-typedef struct structDurationTierEditor *DurationTierEditor;
+#define DurationTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
+Thing_declare1 (DurationTierEditor);
+
+#define DurationTierEditor__members(Klas) RealTierEditor__members(Klas)
+#define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2 (DurationTierEditor, RealTierEditor);
 
 DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title,
 	DurationTier duration, Sound sound, int ownSound);

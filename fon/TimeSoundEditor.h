@@ -40,23 +40,25 @@ struct TimeSoundEditor_sound {
 	double minimum, maximum;
 };
 
-#define TimeSoundEditor_members FunctionEditor_members \
+#define TimeSoundEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (TimeSoundEditor);
+
+#define TimeSoundEditor__members(Klas) FunctionEditor__members(Klas) \
 	bool ownSound; \
 	struct TimeSoundEditor_sound sound; \
 	struct { LongSound data; } longSound; \
 	Widget drawButton, publishButton, publishPreserveButton, publishWindowButton; \
 	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-#define TimeSoundEditor_methods FunctionEditor_methods \
-	void (*createMenuItems_view_sound) (I, EditorMenu menu); \
-	void (*updateMenuItems_file) (I);
-
-class_create (TimeSoundEditor, FunctionEditor);
+#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
+	void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
+	void (*updateMenuItems_file) (Klas me);
+Thing_declare2 (TimeSoundEditor, FunctionEditor);
 
 void TimeSoundEditor_prefs (void);
 
-int TimeSoundEditor_init (I, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
+int TimeSoundEditor_init (TimeSoundEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 
-void TimeSoundEditor_draw_sound (I, double globalMinimum, double globalMaximum);
+void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 
 /* End of file TimeSoundEditor.h */
 #endif

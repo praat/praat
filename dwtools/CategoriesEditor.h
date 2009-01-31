@@ -2,7 +2,7 @@
 #define _CategoriesEditor_h_
 /* CategoriesEditor.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 /*
  djmw 19950713
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20090127 Latest modification.
 */
 
 #include "Command.h"
 #include "Editor.h"
 #include "Categories.h"
 
-/* 'CommandHistory history' should (in the future) belong to Editor.h */
-#define CategoriesEditor_members Editor_members				\
+#define CategoriesEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (CategoriesEditor);
+#define CategoriesEditor__members(Klas) Editor__members(Klas)				\
 	CommandHistory history;									\
 	int position;											\
 	Widget list, text, outOfView, undo, redo;				\
 	Widget remove, insert, insertAtEnd, replace, moveUp, moveDown;
-	
-#define CategoriesEditor_methods Editor_methods
-class_create (CategoriesEditor, Editor);
+#define CategoriesEditor__methods(Klas) Editor__methods(Klas)
+Thing_declare2 (CategoriesEditor, Editor);
 
-Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data);
+CategoriesEditor CategoriesEditor_create (Widget parent, const wchar_t *title, Any data);
 
 #endif /* _CategoriesEditor_h_ */

@@ -75,14 +75,13 @@ static void nameChanged (I) {
 	#endif
 }
 
-static void goAway (I) {
-	iam (ScriptEditor);
+static void goAway (ScriptEditor me) {
 	if (my interpreter -> running) {
 		Melder_error1 (L"Cannot close the script window while the script is running or paused. Click away the pause window to stop or continue the script.");
 		Melder_flushError (NULL);
 		return;
 	}
-	inherited (ScriptEditor) goAway (me);
+	inherited (ScriptEditor) goAway (ScriptEditor_as_parent (me));
 }
 
 static int args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, I) {
@@ -274,9 +273,8 @@ static int menu_cb_InitializationScripts (EDITOR_ARGS) { EDITOR_IAM (ScriptEdito
 static int menu_cb_AddingToAFixedMenu (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Add to fixed menu..."); return 1; }
 static int menu_cb_AddingToADynamicMenu (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Add to dynamic menu..."); return 1; }
 
-static void createMenus (I) {
-	iam (ScriptEditor);
-	inherited (ScriptEditor) createMenus (me);
+static void createMenus (ScriptEditor me) {
+	inherited (ScriptEditor) createMenus (ScriptEditor_as_parent (me));
 	if (my editorClass) {
 		Editor_addCommand (me, L"File", L"Add to menu...", 0, menu_cb_addToMenu);
 	} else {
@@ -292,9 +290,8 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Run", L"Run selection", 'T', menu_cb_runSelection);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (ScriptEditor);
-	inherited (ScriptEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (ScriptEditor me, EditorMenu menu) {
+	inherited (ScriptEditor) createHelpMenuItems (ScriptEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"About ScriptEditor", '?', menu_cb_AboutScriptEditor);
 	EditorMenu_addCommand (menu, L"Scripting tutorial", 0, menu_cb_ScriptingTutorial);
 	EditorMenu_addCommand (menu, L"Scripting examples", 0, menu_cb_ScriptingExamples);
@@ -325,7 +322,7 @@ ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const w
 		my environmentName = Melder_wcsdup (editor -> name);
 		my editorClass = editor -> methods;
 	}
-	TextEditor_init (me, parent, initialText); cherror
+	TextEditor_init (ScriptEditor_as_parent (me), parent, initialText); cherror
 	my interpreter = Interpreter_createFromEnvironment (editor); cherror
 	if (theScriptEditors == NULL) {
 		theScriptEditors = Collection_create (NULL, 10); cherror
@@ -339,9 +336,9 @@ end:
 ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script) {
 	if (theScriptEditors) {
 		for (long ieditor = 1; ieditor <= theScriptEditors -> size; ieditor ++) {
-			TextEditor editor = theScriptEditors -> item [ieditor];
+			ScriptEditor editor = theScriptEditors -> item [ieditor];
 			if (MelderFile_equal (& script -> file, & editor -> file)) {
-				Editor_raise (editor);
+				Editor_raise (ScriptEditor_as_Editor (editor));
 				Melder_error3 (L"Script ", MelderFile_messageName (& script -> file), L" is already open.");
 				return NULL;
 			}

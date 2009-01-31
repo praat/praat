@@ -106,7 +106,7 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_IFSAMP_192000  14
 #define SoundRecorder_IFSAMP_MAX  14
 
-#define CommonSoundRecorder1_members Editor_members \
+#define CommonSoundRecorder1__members(Klas) Editor__members(Klas) \
 	int numberOfChannels; \
 	long nsamp, nmax; \
 	bool fakeMono, synchronous, recording; \
@@ -124,9 +124,9 @@ struct SoundRecorder_Fsamp {
 	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
 	PaStream *portaudioStream;
 #if gtk
-	#define CommonSoundRecorder_members CommonSoundRecorder1_members
+	#define CommonSoundRecorder__members(Klas) CommonSoundRecorder1__members(Klas)
 #elif motif
-	#define CommonSoundRecorder_members CommonSoundRecorder1_members \
+	#define CommonSoundRecorder__members(Klas) CommonSoundRecorder1__members(Klas) \
 	XtWorkProcId workProcId;
 #endif
 
@@ -134,12 +134,12 @@ struct SoundRecorder_Fsamp {
 
 #if defined (sgi)
 	#include <audio.h>
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		ALconfig audio; \
 		ALport port; \
 		long info [10];
 #elif defined (_WIN32)
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 	HWAVEIN hWaveIn; \
 	WAVEFORMATEX waveFormat; \
 	WAVEHDR waveHeader [3]; \
@@ -147,7 +147,7 @@ struct SoundRecorder_Fsamp {
 	short buffertje1 [1000*2], buffertje2 [1000*2];
 #elif defined (macintosh)
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		short macSource [1+8]; \
 		Str255 hybridDeviceNames [1+8]; \
 		SPB spb; \
@@ -161,7 +161,7 @@ struct SoundRecorder_Fsamp {
 	#else
 		#include <sys/audioio.h>
 	#endif
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		int fd; \
 		struct audio_info info;
 #elif defined (HPUX)
@@ -171,7 +171,7 @@ struct SoundRecorder_Fsamp {
 	#include <sys/audio.h>
 	#include <sys/ioctl.h>
 	#include <sys/stat.h>
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		int fd; \
 		struct audio_describe info; \
 		int hpInputSource; \
@@ -187,15 +187,15 @@ struct SoundRecorder_Fsamp {
 	#else
 		#include <sys/soundcard.h>
 	#endif
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		int fd;
 #else
-	#define SoundRecorder_members CommonSoundRecorder_members \
+	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
 		int fd;
 #endif
 
-#define SoundRecorder_methods Editor_methods
-class_create_opaque (SoundRecorder, Editor);
+#define SoundRecorder__methods(Klas) Editor__methods(Klas)
+Thing_declare2 (SoundRecorder, Editor);
 
 static struct {
 	int bufferSize_MB;
@@ -1232,8 +1232,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_updateWs (my graphics);
 }
 
-static void createChildren (I) {
-	iam (SoundRecorder);
+static void createChildren (SoundRecorder me) {
 	#if motif
 	 /* TODO */
 	Widget form = XmCreateForm (my dialog, "form", NULL, 0);
@@ -1413,9 +1412,8 @@ static int menu_cb_writeNist (EDITOR_ARGS) {
 
 static int menu_cb_SoundRecorder_help (EDITOR_ARGS) { EDITOR_IAM (SoundRecorder); Melder_help (L"SoundRecorder"); return 1; }
 
-static void createMenus (I) {
-	iam (SoundRecorder);
-	inherited (SoundRecorder) createMenus (me);
+static void createMenus (SoundRecorder me) {
+	inherited (SoundRecorder) createMenus (SoundRecorder_as_parent (me));
 	Editor_addCommand (me, L"File", L"Write to WAV file...", 0, menu_cb_writeWav);
 	Editor_addCommand (me, L"File", L"Write to AIFC file...", 0, menu_cb_writeAifc);
 	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, menu_cb_writeNextSun);
@@ -1423,20 +1421,20 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"File", L"-- write --", 0, 0);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (SoundRecorder);
-	inherited (SoundRecorder) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (SoundRecorder me, EditorMenu menu) {
+	inherited (SoundRecorder) createHelpMenuItems (SoundRecorder_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 
-class_methods (SoundRecorder, Editor)
+class_methods (SoundRecorder, Editor) {
 	class_method (destroy)
 	class_method (createChildren)
 	us -> editable = FALSE;
 	us -> scriptable = FALSE;
 	class_method (createMenus)
 	class_method (createHelpMenuItems)
-class_methods_end
+	class_methods_end
+}
 
 SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *applicationContext) {
 	SoundRecorder me = new (SoundRecorder);
@@ -1630,7 +1628,7 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *a
 	 */
 	if (! initialize (me)) goto error;
 
-	if (! Editor_init (me, parent, 100, 100, 600, 500, L"SoundRecorder", NULL)) goto error;
+	if (! Editor_init (SoundRecorder_as_parent (me), parent, 100, 100, 600, 500, L"SoundRecorder", NULL)) goto error;
 	#if motif
 	Melder_assert (XtWindow (my meter));
 	#endif

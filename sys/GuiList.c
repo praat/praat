@@ -1,6 +1,6 @@
 /* GuiList.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /*
- * pb 2007/12/26 abstractin from Motif
+ * pb 2007/12/26 abstraction from Motif
+ * pb 2009/01/31 NUMlvector_free has to be followed by assigning a NULL
  */
 
 #include "GuiP.h"
@@ -572,6 +573,7 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 		}
 		if (*numberOfSelectedPositions == 0) {
 			NUMlvector_free (selectedPositions, 1);
+			selectedPositions = NULL;
 		}
 	#elif motif
 		int position_count, *position_list;

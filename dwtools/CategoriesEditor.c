@@ -185,7 +185,8 @@ static int CategoriesEditorInsert_execute (I)
 	if (! (str = Data_copy (((Categories) my categories)->item[1])) ||
 		! Ordered_addItemPos (editor->data, str, my selection[1]))
 	{
-		forget (str); return 0;
+		forget (str);
+		return 0;
 	}
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
@@ -262,7 +263,8 @@ static Any CategoriesEditorRemove_create (Any data, long *posList, long posCount
 	
 	if (! me || ! CategoriesEditorCommand_init (me, L"Remove", data,
 		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, 
-		posCount, posCount)) forget (me);
+		posCount, posCount))
+	{ forget (me); return NULL; }
 	for (i = 1; i <= posCount; i++) my selection[i] = posList[i];
 	return me;
 }
@@ -318,7 +320,8 @@ static Any CategoriesEditorReplace_create (Any data, Any str, long *posList, lon
 	
 	if (! me || ! CategoriesEditorCommand_init (me, L"Replace", data,
 		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo, 
-			posCount + 1, posCount)) forget (me);
+			posCount + 1, posCount))
+	{ forget (me); return NULL; }
 	for (i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
@@ -376,7 +379,8 @@ static Any CategoriesEditorMoveUp_create (Any data, long *posList,
 	
 	if (! me || ! CategoriesEditorCommand_init (me, L"Move up", data,
 		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 
-		0, posCount)) forget (me);
+		0, posCount))
+	{ forget (me); return NULL; }
 	for (i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
@@ -432,7 +436,8 @@ static Any CategoriesEditorMoveDown_create (Any data, long *posList,
 	
 	if (! me || ! CategoriesEditorCommand_init (me, L"Move down", data,
 		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 
-			0, posCount)) forget (me);
+			0, posCount))
+	{ forget (me); return NULL; }
 	for (i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
@@ -837,17 +842,15 @@ static void destroy (I)
 	inherited (CategoriesEditor) destroy (me);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu)
+static void createHelpMenuItems (CategoriesEditor me, EditorMenu menu)
 {
-	iam (CategoriesEditor);
-	inherited (CategoriesEditor) createHelpMenuItems (me, menu);
+	inherited (CategoriesEditor) createHelpMenuItems (CategoriesEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', menu_cb_help);
 }
 
 // origin is at top left.
-static void createChildren (I)
+static void createChildren (CategoriesEditor me)
 {
-	iam (CategoriesEditor);
 	Widget vertScrollBar;
 	double menuBarOffset = 40;
 	double button_width = 90, button_height = menuBarOffset, list_width = 260, list_height = 200, list_bottom;
@@ -914,9 +917,8 @@ static void createChildren (I)
 	my outOfView = GuiLabel_createShown (my dialog, left, right, top, bottom, L"", 0);
 }
 
-static void dataChanged (I)
+static void dataChanged (CategoriesEditor me)
 {
-	iam (CategoriesEditor);
 	update (me, 0, 0, NULL, 0);
 	updateWidgets (me);
 }
@@ -929,10 +931,10 @@ class_methods (CategoriesEditor, Editor) {
 	class_methods_end
 }
 
-Any CategoriesEditor_create (Widget parent, wchar_t *title, Any data)
+CategoriesEditor CategoriesEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	CategoriesEditor me = new (CategoriesEditor);
-	if (me && Editor_init (me, parent, 20, 40, 600, 600, title, data) &&
+	if (me && Editor_init (CategoriesEditor_as_parent (me), parent, 20, 40, 600, 600, title, data) &&
 		(my history = CommandHistory_create (100)))
 	{
 		update (me, 0, 0, NULL, 0); 

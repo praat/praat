@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2009 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/04/24
+ * pb 2009/01/23
  */
 
 #ifndef _FunctionEditor_h_
@@ -30,7 +30,28 @@
 	#include "FormantGrid.h"
 #endif
 
-typedef struct structFormantGridEditor *FormantGridEditor;
+struct FormantGridEditor_Play {
+	double samplingFrequency;
+};
+struct FormantGridEditor_Source {
+	struct { double tStart, f0Start, tMid, f0Mid, tEnd, f0End; } pitch;
+	struct { double adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2; } phonation;
+};
+
+#define FormantGridEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (FormantGridEditor);
+
+#define FormantGridEditor__members(Klas) FunctionEditor__members(Klas) \
+	bool editingBandwidths; \
+	long selectedFormant; \
+	double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor; \
+	struct FormantGridEditor_Play play; \
+	struct FormantGridEditor_Source source;
+#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
+	bool hasSourceMenu;
+Thing_declare2 (FormantGridEditor, FunctionEditor);
+
+int FormantGridEditor_init (FormantGridEditor me, Widget parent, const wchar_t *title, FormantGrid data);
 
 FormantGridEditor FormantGridEditor_create (Widget parent, const wchar_t *title, FormantGrid data);
 

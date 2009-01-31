@@ -1980,17 +1980,17 @@ NORMAL (L"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to 
 	"removed.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid", L"djmw", 20090114)
-INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source as well as the filter, and the interaction between them. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
+MAN_BEGIN (L"KlattGrid", L"djmw", 20090126)
+INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source and the filter, and the interaction between source and filter. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
 NORMAL (L"The following drawing represents a cascade synthesizer with six normal formants, one nasal formant, "
 	"one nasal antiformant, one tracheal formant, one tracheal antiformant and six frication formants. ")
-SCRIPT (6.0, 5.5,
-	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
+SCRIPT (7.0, 6.5,
+	L"Create KlattGrid... kg 0 1 6 1 1 6 1 1 1\n"
 	"Draw synthesizer... Cascade\n"
 	"Remove\n")
 NORMAL (L"In the next picture a parallel synthesizer branch is used instead of the cascade one.")
-SCRIPT (6.0, 5.5,
-	L"Create KlattGrid... kg 0.0 1.0 6 1 1 6 1 1 1\n"
+SCRIPT (7.0, 6.5,
+	L"Create KlattGrid... kg 0 1 6 1 1 6 1 1 1\n"
 	"Draw synthesizer... Parallel\n"
 	"Remove\n")
 NORMAL (L"All parameters in the synthesizer are represented by separate tiers.")
@@ -2003,10 +2003,12 @@ DEFINITION (L"models a kind of \"random\" variation of the pitch (with a number 
 TAG (L"%%Voicing amplitude%")
 DEFINITION (L"models the maximum amplitude of the glottal flow (in dB).")
 TAG (L"%%Open phase%")
-DEFINITION (L"models the open phase of the glottis (with a number between zero and one).")
+DEFINITION (L"models the open phase of the glottis (with a number between zero and one). If the tier is empty a default of 0.7 "
+	"will be used.")
 TAG (L"%%Power1%, %%power2%")
 DEFINITION (L"model the form of the glottal flow function flow(%t)=%t^^%%power1%^-%t^^%%power2%^ for 0\\<_ t \\<_ 1. "
-	"To make glottal closure possible, %power2 has to be larger than %power1. ")
+	"To make glottal closure possible, %power2 has to be larger than %power1. If the power1 tier is empty, a default "
+	"value of 3 will be used. If the power2 tier is empty, a default of 4 will be used.")
 TAG (L"%%Collision phase%")
 DEFINITION (L"models the last part of the flow function with an exponential decay function instead of a polynomial one. "
 	"More information about %power1, %power2, %%open phase% and %%collision phase% can be found in the @@PointProcess: To Sound (phonation)...@ manual.")
@@ -2054,56 +2056,88 @@ NORMAL (L"The following script produces a minimal voiced sound. The first line c
 CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
 CODE (L"Add pitch point... 0.5 100")
 CODE (L"Add voicing amplitude point... 0.5 90 ")
-CODE (L"@@KlattGrid: To Sound...|To Sound...@ 44100 0 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 yes yes yes")
+CODE (L"KlattGrid: To Sound")
 NORMAL (L"The following script will produce raw frication noise. Because we do not specify formant amplitudes, "
 	"we turn off the formants in the parallel section.")
 CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
 CODE (L"Add frication bypass point... 0.5 60")
 CODE (L"Add frication amplitude point... 0.5 90")
-CODE (L"To Sound... 44100 0 Cascade 1 5 1 0 1 0 1 0 1 0 1 5 no no yes")
+CODE (L"To Sound")
 MAN_END
 
 MAN_BEGIN (L"Create KlattGrid...", L"djmw", 20081224)
 INTRO (L"A command to create a multitier @@KlattGrid@ speech synthesizer.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid: To Sound...", L"djmw", 20081224)
+#define PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP \
+TAG (L"%%Sampling frequency% (Hz),") \
+DEFINITION (L"the @@sampling frequency@ of the resulting sound.") \
+TAG (L"%%Voicing%,") \
+DEFINITION (L"switches voicing on or off.") \
+TAG (L"%%Flutter%") \
+DEFINITION (L"switches the flutter tier on or off. This will, of course, only have effect if at least one flutter point has been defined in the flutter tier.") \
+TAG (L"%%Double pulsing%") \
+DEFINITION (L"switches the double pulsing tier on or off.") \
+TAG (L"%%Collision phase%") \
+DEFINITION (L"switches the collision phase tier on or off.") \
+TAG (L"%%Spectral tilt%,") \
+DEFINITION (L"switches the spectral tilt tier on or off.") \
+TAG (L"%%Flow function%") \
+DEFINITION (L"determines which flow function will be used. The flow function is determined by two parameters, %%power1% and %%power2% as %%flow(t)=x^^power1^-x^^power2^%. " \
+	"If the option \"Powers in tier\" is chosen the power1 and power2 tiers will be used for the values of %%power1% and %%power2%. The other choices switch the two tiers off and instead fixed values will be used for %%power1% and %%power2%.") \
+TAG (L"%%Flow derivative%,") \
+DEFINITION (L"determines whether the flow or the flow derivative is used for phonation. ") \
+TAG (L"%%Aspiration%,") \
+DEFINITION (L"determines whether aspiration is included in the synthesis.") \
+TAG (L"%%Breathiness%,") \
+DEFINITION (L"determines whether breathiness is included in the synthesis.")
+
+MAN_BEGIN (L"KlattGrid: To Sound (phonation)...", L"djmw", 20090122)
 INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
 ENTRY (L"Arguments")
+PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
+MAN_END
+
+MAN_BEGIN (L"KlattGrid: Play special...", L"djmw", 20090126)
+INTRO (L"A command to play part of a @@KlattGrid@.")
+ENTRY (L"Arguments")
+TAG (L"%%Time range%")
+DEFINITION (L"determines the part of the sound's domain that you want to hear. If both argument equal zero the complete sound is played. ")
 TAG (L"%%Sampling frequency% (Hz)")
-DEFINITION (L"the @@sampling frequency@ of the resulting sound.")
-TAG (L"%%Minimum pitch%")
-DEFINITION (L"determines the minimum pitch that will be generated. With the default zero value, the minimum pitch will be determined from the pitch tier.")
+DEFINITION (L"determines the @@sampling frequency@ of the resulting sound.")
+TAG (L"%%Scale peak%")
+DEFINITION (L"determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well.")
+PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
 TAG (L"%%Model%")
 DEFINITION (L"switches on either the cascade or the parallel section of the synthesizer.")
-TAG (L"%%Formant range, Nasal formant range...%")
+TAG (L"%%Formant range, Nasal formant range ...%")
 DEFINITION (L"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches off the formants. ")
-TAG (L"%%Voicing, Aspiration%")
-DEFINITION (L"switches voicing and/or aspiration of the source section on or off.")
 TAG (L"%%Frication bypass%")
 DEFINITION (L"switches the frication bypass of the frication section on or off. "
 	"The complete frication section can be turned off by also switching off the frication formants.")
 MAN_END
 
-MAN_BEGIN (L"KlattGrid: To Sound (phonation)...", L"djmw", 20090108)
+MAN_BEGIN (L"KlattGrid: To Sound (special)...", L"djmw", 20090122)
 INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
 ENTRY (L"Arguments")
-TAG (L"%%Sampling frequency% (Hz),")
-DEFINITION (L"the @@sampling frequency@ of the resulting sound.")
-TAG (L"%%Voicing%,")
-DEFINITION (L"switches voicing on or off.")
-TAG (L"%%Derivative%,")
-DEFINITION (L"determines if the flow derivative is used during phonation. ")
-TAG (L"%%Spectral tilt%,")
-DEFINITION (L"determines whether the spectral tilt tier is used in the synthesis.")
-TAG (L"%%Breathiness%,")
-DEFINITION (L"determines whether breathiness is included in the synthesis.")
-TAG (L"%%Aspiration%,")
-DEFINITION (L"determines whether aspiration is included in the synthesis.")
+TAG (L"%%Time range%")
+DEFINITION (L"determines the part of the domain that you want to save as a sound. If both argument equal zero the complete sound is created. ")
+TAG (L"%%Sampling frequency% (Hz)")
+DEFINITION (L"determines the @@sampling frequency@ of the resulting sound.")
+TAG (L"%%Scale peak%")
+DEFINITION (L"determines whether the peak value of the sound will be set to 0.99. In this way the sound will always play well and can be saved to a file with minimal loss of resolution.")
+PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
+TAG (L"%%Model%")
+DEFINITION (L"switches on either the cascade or the parallel section of the synthesizer.")
+TAG (L"%%Formant range, Nasal formant range...%")
+DEFINITION (L"selects the formants to use in the synthesis. Choosing the end of a range smaller than the start of the range switches off the formants. ")
+TAG (L"%%Frication bypass%")
+DEFINITION (L"switches the frication bypass of the frication section on or off. "
+	"The complete frication section can be turned off by also switching off the frication formants.")
 MAN_END
 
 MAN_BEGIN (L"KlattGrid: Extract formant grid (open phases)...", L"djmw", 20080930)
-INTRO (L"Extracts the formant grid as used in the synthesis, i.e. the informantion in the normal formant grid, the delta formant grid and the open phase of the glottis are combined. ")
+INTRO (L"Extracts the formant grid as used in the synthesis, i.e. the resulting grid contains the informantion from the normal formant grid and the delta formant grid combined during the open phase of the glottis. If the delta formant grid is not empty than ")
 MAN_END
 
 MAN_BEGIN (L"Sound: To KlattGrid (simple)...", L"djmw", 20090105)

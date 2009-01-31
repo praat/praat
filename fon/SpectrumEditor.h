@@ -30,7 +30,15 @@
 	#include "Spectrum.h"
 #endif
 
-typedef struct structSpectrumEditor *SpectrumEditor;
+#define SpectrumEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (SpectrumEditor);
+
+#define SpectrumEditor__members(Klas) FunctionEditor__members(Klas) \
+	double minimum, maximum, cursorHeight; \
+	double bandSmoothing, dynamicRange; \
+	Widget publishBandButton, publishSoundButton;
+#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2 (SpectrumEditor, FunctionEditor);
 
 SpectrumEditor SpectrumEditor_create (Widget parent, const wchar_t *title, Any data);
 

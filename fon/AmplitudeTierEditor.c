@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.c
  *
- * Copyright (C) 2003-2008 Paul Boersma
+ * Copyright (C) 2003-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,25 +23,20 @@
  * pb 2007/08/12 wchar_t
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2009/01/23 minimum and maximum legal values
  */
 
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 
-#define AmplitudeTierEditor_members RealTierEditor_members
-#define AmplitudeTierEditor_methods RealTierEditor_methods
-class_create_opaque (AmplitudeTierEditor, RealTierEditor);
-
 static int menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); return 1; }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (AmplitudeTierEditor);
-	inherited (AmplitudeTierEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (AmplitudeTierEditor me, EditorMenu menu) {
+	inherited (AmplitudeTierEditor) createHelpMenuItems (AmplitudeTierEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
-static void play (I, double tmin, double tmax) {
-	iam (AmplitudeTierEditor);
+static void play (AmplitudeTierEditor me, double tmin, double tmax) {
 	if (my sound.data) {
 		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 	} else {
@@ -52,7 +47,6 @@ static void play (I, double tmin, double tmax) {
 class_methods (AmplitudeTierEditor, RealTierEditor) {
 	class_method (createHelpMenuItems)
 	class_method (play)
-	us -> zeroIsMinimum = FALSE;
 	us -> quantityText = L"Sound pressure (Pa)", us -> quantityKey = L"Sound pressure";
 	us -> rightTickUnits = L" Pa";
 	us -> defaultYmin = -1.0, us -> defaultYmax = +1.0;
@@ -65,7 +59,7 @@ class_methods (AmplitudeTierEditor, RealTierEditor) {
 
 AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const wchar_t *title, AmplitudeTier amplitude, Sound sound, int ownSound) {
 	AmplitudeTierEditor me = new (AmplitudeTierEditor);
-	if (! me || ! RealTierEditor_init (me, parent, title, (RealTier) amplitude, sound, ownSound))
+	if (! me || ! RealTierEditor_init (AmplitudeTierEditor_as_parent (me), parent, title, (RealTier) amplitude, sound, ownSound))
 		{ forget (me); return NULL; }
 	return me;
 }

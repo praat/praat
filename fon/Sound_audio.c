@@ -713,7 +713,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	else
 		for (i = 1; i <= numberOfSamples; i ++)
 			my z [1] [i] = ((int) ((unsigned char *) buffer) [i + 1] - 128) * (1.0 / 128);
-	NUMsvector_free (buffer, 1);
+	NUMsvector_free (buffer, 1), buffer = NULL;
 
 	/* Close the audio device. */
 
@@ -775,7 +775,7 @@ static int melderPlayCallback (void *closure, long samplesPlayed) {
 		samplesPlayed >= my silenceBefore + my numberOfSamples ? my tmax :
 		my t1 + (my i1 - 1.5 + samplesPlayed - my silenceBefore) * my dt;
 	if (! MelderAudio_isPlaying) {
-		NUMsvector_free (my buffer, 1), my buffer = 0;
+		NUMsvector_free (my buffer, 1), my buffer = NULL;
 		phase = 3;
 	}
 	if (my callback)

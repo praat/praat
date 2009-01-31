@@ -1987,6 +1987,7 @@ int OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName) {
 			my numberOfFixedRankings -= 1;
 			if (my numberOfFixedRankings == 0) {
 				NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+				my fixedRankings = NULL;
 			}
 			for (jfixed = ifixed; jfixed <= my numberOfFixedRankings; jfixed ++) {
 				my fixedRankings [jfixed] = my fixedRankings [jfixed + 1];
@@ -2028,7 +2029,7 @@ static int OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, lon
 	 * Free up memory associated with this candidate.
 	 */
 	Melder_free (my candidates [icand]. output);
-	NUMivector_free (my candidates [icand]. marks, 1);
+	NUMivector_free (my candidates [icand]. marks, 1);   // dangle
 	/*
 	 * Remove.
 	 */
@@ -2040,7 +2041,7 @@ static int OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, lon
 		OTGrammarCandidate candj = & my candidates [jcand];
 		OTGrammarCandidate candj1 = & my candidates [jcand + 1];
 		candj -> output = candj1 -> output;
-		candj -> marks = candj1 -> marks;
+		candj -> marks = candj1 -> marks;   // undangle
 	}
 	return 1;
 }
@@ -2332,11 +2333,11 @@ end:
 	 * Remove room.
 	 */
 	my numberOfFixedRankings = savedNumberOfFixedRankings;
-	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);   // dangle
 	/*
 	 * Restore.
 	 */
-	my fixedRankings = savedFixedRankings;
+	my fixedRankings = savedFixedRankings;   // undangle
 	OTGrammar_restore (me);
 	iferror return 0;
 	return 1;
@@ -2392,11 +2393,11 @@ end:
 	 * Remove room.
 	 */
 	my numberOfFixedRankings --;
-	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);   // dangle
 	/*
 	 * Restore.
 	 */
-	my fixedRankings = savedFixedRankings;
+	my fixedRankings = savedFixedRankings;   // undangle
 	OTGrammar_restore (me);
 	iferror return 0;
 	return 1;

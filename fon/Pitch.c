@@ -429,8 +429,8 @@ class_methods (Pitch, Sampled) {
 }
 
 int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
-	NUMstructvector_free (Pitch_Candidate, my candidate, 1);
-	if (! (my candidate = NUMstructvector (Pitch_Candidate, 1, nCandidates))) return 0;
+	NUMstructvector_free (Pitch_Candidate, my candidate, 1);   // dangle
+	if (! (my candidate = NUMstructvector (Pitch_Candidate, 1, nCandidates))) return 0;   // undangle
 	my nCandidates = nCandidates;
 	return 1;
 }

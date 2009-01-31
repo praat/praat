@@ -98,7 +98,7 @@ static int openDocument (TextEditor me, MelderFile file) {
 		for (long ieditor = 1; ieditor <= theOpenTextEditors -> size; ieditor ++) {
 			TextEditor editor = theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
-				Editor_raise (editor);
+				Editor_raise (TextEditor_as_Editor (editor));
 				Melder_error3 (L"Text file ", MelderFile_messageName (file), L" is already open.");
 				forget (me);   // don't forget me before Melder_error, because "file" is owned by one of my dialogs
 				return 0;
@@ -310,7 +310,7 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL, NULL, NULL);
+		menu_cb_saveAs (me, Editor_getMenuCommand (TextEditor_as_Editor (me), L"File", L"Save as..."), NULL, NULL, NULL);
 	}
 }
 
@@ -321,8 +321,7 @@ static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
 	closeDocument (me);
 }
 
-static void goAway (I) {
-	iam (TextEditor);
+static void goAway (TextEditor me) {
 	if (our fileBased && my dirty) {
 		if (! my dirtyCloseDialog) {
 			my dirtyCloseDialog = GuiDialog_create (my shell, 150, 70, 290, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
@@ -495,9 +494,8 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenus (I) {
-	iam (TextEditor);
-	inherited (TextEditor) createMenus (me);
+static void createMenus (TextEditor me) {
+	inherited (TextEditor) createMenus (TextEditor_as_Editor (me));
 	if (our fileBased) {
 		Editor_addCommand (me, L"File", L"New", 'N', menu_cb_new);
 		Editor_addCommand (me, L"File", L"Open...", 'O', menu_cb_open);
@@ -542,14 +540,12 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	}
 }
 
-static void createChildren (I) {
-	iam (TextEditor);
+static void createChildren (TextEditor me) {
 	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
 }
 
-static void clear (I) {
-	iam (TextEditor);
+static void clear (TextEditor me) {
 	(void) me;
 }
 
@@ -559,14 +555,13 @@ class_methods (TextEditor, Editor)
 	class_method (goAway)
 	class_method (createChildren)
 	class_method (createMenus)
-	us -> fileBased = TRUE;
 	us -> createMenuItems_query = NULL;
+	us -> fileBased = true;
 	class_method (clear)
 class_methods_end
 
-int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
-	iam (TextEditor);
-	if (! Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL)) return 0;
+int TextEditor_init (TextEditor me, Widget parent, const wchar_t *initialText) {
+	Editor_init (TextEditor_as_parent (me), parent, 0, 0, 600, 400, NULL, NULL); cherror
 	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);
@@ -579,6 +574,8 @@ int TextEditor_init (I, Widget parent, const wchar_t *initialText) {
 	if (theOpenTextEditors != NULL) {
 		Collection_addItem (theOpenTextEditors, me);
 	}
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -588,9 +585,8 @@ TextEditor TextEditor_create (Widget parent, const wchar_t *initialText) {
 	return me;
 }
 
-void TextEditor_showOpen (I) {
-	iam (TextEditor);
-	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL, NULL, NULL);
+void TextEditor_showOpen (TextEditor me) {
+	cb_showOpen (Editor_getMenuCommand (TextEditor_as_Editor (me), L"File", L"Open..."), NULL, NULL, NULL);
 }
 
 /* End of file TextEditor.c */

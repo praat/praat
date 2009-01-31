@@ -27,7 +27,23 @@
 	#include "Editor.h"
 #endif
 
-typedef struct structDataEditor *DataEditor;
+#define DataSubEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (DataSubEditor);
+
+#define VectorEditor__parents(Klas) DataSubEditor__parents(Klas) Thing_inherit (Klas, DataSubEditor)
+Thing_declare1 (VectorEditor);
+
+#define MatrixEditor__parents(Klas) DataSubEditor__parents(Klas) Thing_inherit (Klas, DataSubEditor)
+Thing_declare1 (MatrixEditor);
+
+#define StructEditor__parents(Klas) DataSubEditor__parents(Klas) Thing_inherit (Klas, DataSubEditor)
+Thing_declare1 (StructEditor);
+
+#define ClassEditor__parents(Klas) StructEditor__parents(Klas) Thing_inherit (Klas, StructEditor)
+Thing_declare1 (ClassEditor);
+
+#define DataEditor__parents(Klas) ClassEditor__parents(Klas) Thing_inherit (Klas, ClassEditor)
+Thing_declare1 (DataEditor);
 
 DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data);
 

@@ -30,7 +30,10 @@
 	#include "ManPages.h"
 #endif
 
-#define Manual_members HyperPage_members \
+#define Manual__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
+Thing_declare1 (Manual);
+
+#define Manual__members(Klas) HyperPage__members(Klas) \
 	long path, numberOfParagraphs; \
 	struct structManPage_Paragraph *paragraphs; \
 	Widget searchText; \
@@ -39,11 +42,12 @@
 	long matches [1 + 20], fromPage, toPage; \
 	int suppressLinksHither; \
 	wchar_t *printPagesStartingWith;
-#define Manual_methods HyperPage_methods
-class_create (Manual, HyperPage);
+#define Manual__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2 (Manual, HyperPage);
 
-int Manual_init (I, Widget parent, const wchar_t *title, Any data);
+int Manual_init (Manual me, Widget parent, const wchar_t *title, Any data);
 Manual Manual_create (Widget parent, const wchar_t *title, Any data);
+
 void Manual_search (Manual me, const wchar_t *query);
 
 /* End of file Manual.h */

@@ -678,7 +678,7 @@ DIRECT (TextGrid_edit)
 			TextGridEditor editor = TextGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
 				OBJECT, ONLY (classSound), NULL);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
-			Editor_setPublishCallback (editor, cb_TextGridEditor_publish, NULL);
+			Editor_setPublishCallback (TextGridEditor_as_Editor (editor), cb_TextGridEditor_publish, NULL);
 		}
 	}
 END

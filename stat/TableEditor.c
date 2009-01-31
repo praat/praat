@@ -36,15 +36,15 @@
 #define MAXNUM_VISIBLE_COLUMNS  100
 #define SIZE_INCHES  40
 
-#define TableEditor_members Editor_members \
+#define TableEditor__members(Klas) Editor__members(Klas) \
 	long topRow, leftColumn, selectedRow, selectedColumn; \
 	Widget text, drawingArea, horizontalScrollBar, verticalScrollBar; \
 	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS]; \
 	Graphics graphics;
-#define TableEditor_methods Editor_methods \
-	void (*draw) (I); \
-	int (*click) (I, double xWC, double yWC, int shiftKeyPressed);
-class_create_opaque (TableEditor, Editor);
+#define TableEditor__methods(Klas) Editor__methods(Klas) \
+	void (*draw) (Klas me); \
+	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
+Thing_declare2 (TableEditor, Editor);
 
 /********** EDITOR METHODS **********/
 
@@ -76,8 +76,7 @@ static void updateHorizontalScrollBar (TableEditor me) {
 	#endif
 }
 
-static void dataChanged (I) {
-	iam (TableEditor);
+static void dataChanged (TableEditor me) {
 	Table table = my data;
 	if (my topRow > table -> rows -> size) my topRow = table -> rows -> size;
 	if (my leftColumn > table -> numberOfColumns) my leftColumn = table -> numberOfColumns;
@@ -126,8 +125,7 @@ static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
 
 /********** DRAWING AREA **********/
 
-static void draw (I) {
-	iam (TableEditor);
+static void draw (TableEditor me) {
 	Table table = my data;
 	double spacing = 2.0;   /* millimetres at both edges */
 	double columnWidth, cellWidth;
@@ -209,8 +207,7 @@ static void draw (I) {
 	}
 }
 
-static int click (I, double xclick, double yWC, int shiftKeyPressed) {
-	iam (TableEditor);
+static int click (TableEditor me, double xclick, double yWC, int shiftKeyPressed) {
 	Table table = my data;
 	return 1;
 }
@@ -219,7 +216,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	iam (TableEditor);
 	(void) event;
 	Table table = my data;
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (TableEditor_as_Editor (me));
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -237,8 +234,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	// TODO: implement selection
 }
 
-static void createChildren (I) {
-	iam (TableEditor);
+static void createChildren (TableEditor me) {
 	Table table = my data;
 	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
 
@@ -308,9 +304,8 @@ static void createChildren (I) {
 	GuiObject_show (form);
 }
 
-static void createMenus (I) {
-	iam (TableEditor);
-	inherited (TableEditor) createMenus (me);
+static void createMenus (TableEditor me) {
+	inherited (TableEditor) createMenus (TableEditor_as_parent (me));
 
 	#ifndef macintosh
 	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
@@ -325,9 +320,8 @@ static void createMenus (I) {
 	#endif
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (TableEditor);
-	inherited (TableEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (TableEditor me, EditorMenu menu) {
+	inherited (TableEditor) createHelpMenuItems (TableEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
@@ -363,7 +357,7 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 
 TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
-	Editor_init (me, parent, 0, 0, 700, 500, title, table); cherror
+	Editor_init (TableEditor_as_parent (me), parent, 0, 0, 700, 500, title, table); cherror
 	#if motif
 	Melder_assert (XtWindow (my drawingArea));
 	#endif

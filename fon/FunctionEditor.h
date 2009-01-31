@@ -38,7 +38,10 @@ struct FunctionEditor_picture {
 	bool garnish;
 };
 
-#define FunctionEditor_members Editor_members \
+#define FunctionEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (FunctionEditor);
+
+#define FunctionEditor__members(Klas) Editor__members(Klas) \
 	/* Subclass may change the following attributes, */ \
 	/* but has to respect the invariants, */ \
 	/* and has to call FunctionEditor_marksChanged () */ \
@@ -64,37 +67,35 @@ struct FunctionEditor_picture {
 	struct { double left, right, bottom, top; } rect [8]; \
 	double marker [1 + 3], playCursor; \
 	int numberOfMarkers;
-
-#define FunctionEditor_methods Editor_methods \
-	void (*draw) (I); \
-	void (*prepareDraw) (I);   /* For less flashing. */ \
+#define FunctionEditor__methods(Klas) Editor__methods(Klas) \
+	void (*draw) (Klas me); \
+	void (*prepareDraw) (Klas me);   /* For less flashing. */ \
 	const wchar_t *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
 	int fixedPrecision_long; \
 	int hasText; \
-	void (*play) (I, double tmin, double tmax); \
-	int (*click) (I, double xWC, double yWC, int shiftKeyPressed); \
-	int (*clickB) (I, double xWC, double yWC); \
-	int (*clickE) (I, double xWC, double yWC); \
-	void (*key) (I, unsigned char key); \
-	int (*playCallback) (I, int phase, double tmin, double tmax, double t); \
-	void (*updateText) (I); \
-	void (*prefs_addFields) (I, EditorCommand cmd); \
-	void (*prefs_setValues) (I, EditorCommand cmd); \
-	void (*prefs_getValues) (I, EditorCommand cmd); \
-	void (*createMenuItems_file_draw) (I, EditorMenu menu); \
-	void (*createMenuItems_file_extract) (I, EditorMenu menu); \
-	void (*createMenuItems_file_write) (I, EditorMenu menu); \
-	void (*createMenuItems_view) (I, EditorMenu menu); \
-	void (*createMenuItems_view_timeDomain) (I, EditorMenu menu); \
-	void (*createMenuItems_view_audio) (I, EditorMenu menu); \
-	void (*highlightSelection) (I, double left, double right, double bottom, double top); \
-	void (*unhighlightSelection) (I, double left, double right, double bottom, double top); \
-	double (*getBottomOfSoundAndAnalysisArea) (I); \
-	void (*form_pictureSelection) (I, EditorCommand cmd); \
-	void (*ok_pictureSelection) (I, EditorCommand cmd); \
-	void (*do_pictureSelection) (I, EditorCommand cmd);
-
-class_create (FunctionEditor, Editor);
+	void (*play) (Klas me, double tmin, double tmax); \
+	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed); \
+	int (*clickB) (Klas me, double xWC, double yWC); \
+	int (*clickE) (Klas me, double xWC, double yWC); \
+	void (*key) (Klas me, unsigned char key); \
+	int (*playCallback) (Any me, int phase, double tmin, double tmax, double t); \
+	void (*updateText) (Klas me); \
+	void (*prefs_addFields) (Klas me, EditorCommand cmd); \
+	void (*prefs_setValues) (Klas me, EditorCommand cmd); \
+	void (*prefs_getValues) (Klas me, EditorCommand cmd); \
+	void (*createMenuItems_file_draw) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_file_extract) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_file_write) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_view) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_view_timeDomain) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_view_audio) (Klas me, EditorMenu menu); \
+	void (*highlightSelection) (Klas me, double left, double right, double bottom, double top); \
+	void (*unhighlightSelection) (Klas me, double left, double right, double bottom, double top); \
+	double (*getBottomOfSoundAndAnalysisArea) (Klas me); \
+	void (*form_pictureSelection) (Klas me, EditorCommand cmd); \
+	void (*ok_pictureSelection) (Klas me, EditorCommand cmd); \
+	void (*do_pictureSelection) (Klas me, EditorCommand cmd);
+Thing_declare2 (FunctionEditor, Editor);
 
 /*
 	Attributes:
@@ -142,7 +143,7 @@ class_create (FunctionEditor, Editor);
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data);
+int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title, Any data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
@@ -173,7 +174,7 @@ int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data);
 			before calling FunctionEditor_open (me).
 */ 
 
-void FunctionEditor_marksChanged (I);
+void FunctionEditor_marksChanged (FunctionEditor me);
 /*
 	Function:
 		update optional text field, the scroll bar, the drawing area and the buttons,
@@ -183,7 +184,7 @@ void FunctionEditor_marksChanged (I);
 		call this after a change in any of the markers or in the duration of the data.
 */
 
-void FunctionEditor_shift (I, double shift);
+void FunctionEditor_shift (FunctionEditor me, double shift);
 /*
 	Function:
 		shift (scroll) the window through time, keeping the window length constant.
@@ -191,7 +192,7 @@ void FunctionEditor_shift (I, double shift);
 		call this after a search.
 */
 
-void FunctionEditor_updateText (I);
+void FunctionEditor_updateText (FunctionEditor me);
 /*
 	Function:
 		update the optional text widget.
@@ -203,7 +204,7 @@ void FunctionEditor_updateText (I);
 		since FunctionEditor::updateText does nothing.
 */
 
-void FunctionEditor_redraw (I);
+void FunctionEditor_redraw (FunctionEditor me);
 /*
 	Function:
 		update the drawing area of a single editor.
@@ -214,20 +215,20 @@ void FunctionEditor_redraw (I);
 		we just call Graphics_updateWs (my graphics).
 */
 
-void FunctionEditor_enableUpdates (I, int enable);
+void FunctionEditor_enableUpdates (FunctionEditor me, bool enable);
 /*
 	Function:
 		temporarily disable update event to cause 'draw' messages.
 	Usage:
 		If you call from your 'draw' method routines that may trigger expose events,
 		you should bracket those routines between
-			FunctionEditor_enableUpdates (me, FALSE);
+			FunctionEditor_enableUpdates (me, false);
 		and
-			FunctionEditor_enableUpdates (me, TRUE);
+			FunctionEditor_enableUpdates (me, true);
 		This may happen if you call an analysis routine which calls Melder_progress.
 */
 
-void FunctionEditor_ungroup (I);
+void FunctionEditor_ungroup (FunctionEditor me);
 /*
 	Function:
 		force me out of the group.
@@ -244,15 +245,15 @@ void FunctionEditor_prefs (void);
 /* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */
 /* Preconditions: default line type, default line width. */
 /* Postconditions: default line type, default line width, undefined colour, undefined text alignment. */
-void FunctionEditor_drawRangeMark (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment);
-void FunctionEditor_drawCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units);
-void FunctionEditor_insertCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum);
-void FunctionEditor_drawHorizontalHair (I, double yWC, const wchar_t *yWC_string, const wchar_t *units);
-void FunctionEditor_drawGridLine (I, double yWC);
+void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment);
+void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units);
+void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum);
+void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units);
+void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 
-void FunctionEditor_insetViewport (I);
+void FunctionEditor_insetViewport (FunctionEditor me);
 
-void FunctionEditor_garnish (I);   // Optionally selection times and selection hairs.
+void FunctionEditor_garnish (FunctionEditor me);   // Optionally selection times and selection hairs.
 
 /* End of file FunctionEditor.h */
 #endif

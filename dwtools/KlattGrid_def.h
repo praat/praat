@@ -44,6 +44,21 @@ oo_DEFINE_CLASS (PhonationTier, Function)
 oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT
 
+#define ooSTRUCT PhonationGridPlayOptions
+oo_DEFINE_CLASS (PhonationGridPlayOptions, Data)
+	oo_INT (voicing)
+	oo_INT (aspiration)
+	oo_INT (breathiness)
+	oo_INT (flutter)
+	oo_INT (doublePulsing)
+	oo_INT (collisionPhase)
+	oo_INT (spectralTilt)
+	oo_INT (flowFunction) // 1: User defined with tiers (power1, power2); 2: (2,3); 3: (3,4)
+	oo_INT (flowDerivative)
+	oo_DOUBLE (maximumPeriod)
+oo_END_CLASS (PhonationGridPlayOptions)
+#undef ooSTRUCT
+
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
 
@@ -58,8 +73,23 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	oo_OBJECT (IntensityTier, 0, spectralTilt) // dB
 	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
 	oo_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (PhonationGridPlayOptions, 0, options)
+	#endif
 	
 oo_END_CLASS (PhonationGrid)
+#undef ooSTRUCT
+
+#define ooSTRUCT VocalTractGridPlayOptions
+oo_DEFINE_CLASS (VocalTractGridPlayOptions, Data)
+	oo_INT (filterModel)
+	oo_LONG (startFormant)
+	oo_LONG (endFormant)
+	oo_LONG (startNasalFormant)
+	oo_LONG (endNasalFormant)
+	oo_LONG (startNasalAntiFormant)
+	oo_LONG (endNasalAntiFormant)
+oo_END_CLASS (VocalTractGridPlayOptions)
 #undef ooSTRUCT
 
 #define ooSTRUCT VocalTractGrid
@@ -71,8 +101,26 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	// for parallel synthesis
 	oo_COLLECTION (Ordered, formants_amplitudes, IntensityTier, 0)
 	oo_COLLECTION (Ordered, nasal_formants_amplitudes, IntensityTier, 0)
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
+	#endif
 
 oo_END_CLASS (VocalTractGrid)
+#undef ooSTRUCT
+
+#define ooSTRUCT CouplingGridPlayOptions
+oo_DEFINE_CLASS (CouplingGridPlayOptions, Data)
+	oo_LONG (startTrachealFormant)
+	oo_LONG (endTrachealFormant)
+	oo_LONG (startTrachealAntiFormant)
+	oo_LONG (endTrachealAntiFormant)
+	oo_LONG (startDeltaFormant)
+	oo_LONG (endDeltaFormant)
+	oo_LONG (startDeltaBandwidth)
+	oo_LONG (endDeltaBandwidth)
+	oo_INT (openglottis)
+	oo_DOUBLE (fadeFraction)
+oo_END_CLASS (CouplingGridPlayOptions)
 #undef ooSTRUCT
 
 #define ooSTRUCT CouplingGrid
@@ -84,30 +132,54 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 	oo_OBJECT (FormantGrid, 0, delta_formants)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (PhonationTier, 0, glottis)
+		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
 
 oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
 
+#define ooSTRUCT FricationGridPlayOptions
+oo_DEFINE_CLASS (FricationGridPlayOptions, Data)
+	oo_LONG (startFricationFormant)
+	oo_LONG (endFricationFormant)
+	oo_INT (bypass)
+oo_END_CLASS (FricationGridPlayOptions)
+#undef ooSTRUCT
+
 #define ooSTRUCT FricationGrid
 oo_DEFINE_CLASS (FricationGrid, Function)
 
-	oo_OBJECT (IntensityTier, 0, noise_amplitude) // dB
+	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
 	oo_OBJECT (FormantGrid, 0, formants)
 	oo_COLLECTION (Ordered, formants_amplitudes, RealTier, 0)
 	oo_OBJECT (IntensityTier, 0, bypass) // dB
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (FricationGridPlayOptions, 0, options)
+	#endif
 	
 oo_END_CLASS (FricationGrid)
+#undef ooSTRUCT
+
+#define ooSTRUCT KlattGridPlayOptions
+oo_DEFINE_CLASS (KlattGridPlayOptions, Data)
+	oo_DOUBLE (samplingFrequency)
+	oo_INT (scalePeak)
+	oo_DOUBLE (xmin)
+	oo_DOUBLE (xmax)
+oo_END_CLASS (KlattGridPlayOptions)
 #undef ooSTRUCT
 
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
 
-	oo_OBJECT (PhonationGrid, 0, phonation) // Glottal source
+	oo_OBJECT (PhonationGrid, 0, phonation)   // Glottal source
 	oo_OBJECT (VocalTractGrid, 0, vocalTract) // Filter
-	oo_OBJECT (CouplingGrid, 0, coupling) // // Coupling between source and filter
-	oo_OBJECT (FricationGrid, 0, frication) // Frication source
-	oo_OBJECT (IntensityTier, 0, gain) // final scaling
+	oo_OBJECT (CouplingGrid, 0, coupling)     // Coupling between source and filter
+	oo_OBJECT (FricationGrid, 0, frication)   // Frication source
+	oo_OBJECT (IntensityTier, 0, gain)        // final scaling
+	#if !oo_READING && !oo_WRITING
+		oo_OBJECT (KlattGridPlayOptions, 0, options)
+	#endif
 	
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

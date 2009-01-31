@@ -57,7 +57,7 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	}
 	NUMlvector_free (selectedPositions, 1);
 	updateList (me);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (ArtwordEditor_as_Editor (me));
 }
 
 static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
@@ -91,7 +91,7 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (ArtwordEditor_as_Editor (me));
 }
 
 static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
@@ -129,14 +129,12 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	GuiText_setString (my value, Melder_fixed (yWC, 6));
 }
 
-static void dataChanged (I) {
-	iam (ArtwordEditor);
+static void dataChanged (ArtwordEditor me) {
 	updateList (me);
 	Graphics_updateWs (my graphics);
 }
 
-static void createChildren (I) {
-	iam (ArtwordEditor);
+static void createChildren (ArtwordEditor me) {
 	int dy = Machine_getMenuBarHeight ();
 	GuiLabel_createShown (my dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
 	GuiLabel_createShown (my dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
@@ -172,15 +170,16 @@ static void createChildren (I) {
 	GuiRadioButton_setValue (my button [1], true);
 }
 
-class_methods (ArtwordEditor, Editor)
+class_methods (ArtwordEditor, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
-class_methods_end
+	class_methods_end
+}
 
 ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data) {
 	ArtwordEditor me = new (ArtwordEditor);
-	if (! me || ! Editor_init (me, parent, 20, 40, 650, 600, title, data))
+	if (! me || ! Editor_init (ArtwordEditor_as_parent (me), parent, 20, 40, 650, 600, title, data))
 		return NULL;
 	//XtUnmanageChild (my menuBar);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);

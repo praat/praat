@@ -23,16 +23,22 @@
  * 2008/02/06
 */
 
-#include "Editor.h"
-#include "Strings.h"
+#ifndef _Editor_h_
+	#include "Editor.h"
+#endif
+#ifndef _Strings_h_
+	#include "Strings.h"
+#endif
 
-#define StringsEditor_members Editor_members \
+#define StringsEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (StringsEditor);
+
+#define StringsEditor__members(Klas) Editor__members(Klas) \
 	Widget list, text;
-	
-#define StringsEditor_methods Editor_methods
-class_create (StringsEditor, Editor);
+#define StringsEditor__methods(Klas) Editor__methods(Klas)
+Thing_declare2 (StringsEditor, Editor);
 
-Any StringsEditor_create (Widget parent, const wchar_t *title, Any data);
+StringsEditor StringsEditor_create (Widget parent, const wchar_t *title, Any data);
 
 /* End of file StringsEditor.h */
 #endif

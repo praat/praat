@@ -1,0 +1,18 @@
+--------------------
+libOla.a - ChangeLog
+--------------------
+
+2008-05-29 * Initial release
+
+2008-08-10 * Bugfixes
+           * Merging with the upstream version of Praat
+
+2008-10-01 * Bugfix: C-Pruner now rejects instance bases of sizes <= 1
+           * Multithreaded kNN-classification implemented (Linux only)
+
+2009-01-23 * Bugfix: KNN_learn(...) MUX:ing removed; broke scripting
+		   * Bugfix: KNN serialization fixed (using the proper version ID)
+		   * Removed redundant information from the manual
+		   * The TableOfReal output of the KNN classifier now mimics the
+		     format of the corresponding output of the FFNet classifier.
+

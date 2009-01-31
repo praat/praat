@@ -33,7 +33,12 @@
 	#include "Sound.h"
 #endif
 
-typedef struct structAmplitudeTierEditor *AmplitudeTierEditor;
+#define AmplitudeTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
+Thing_declare1 (AmplitudeTierEditor);
+
+#define AmplitudeTierEditor__members(Klas) RealTierEditor__members(Klas)
+#define AmplitudeTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2 (AmplitudeTierEditor, RealTierEditor);
 
 AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const wchar_t *title,
 	AmplitudeTier amplitude, Sound sound, int ownSound);

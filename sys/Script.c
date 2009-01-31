@@ -1,6 +1,6 @@
 /* Script.c
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,20 @@
 /*
  * pb 2000/09/21
  * pb 2002/03/07 GPL
+ * pb 2009/01/26
  */
 
 #include "Script.h"
 
-class_methods (Script, Data)
-class_methods_end
+class_methods (Script, Data) {
+	class_methods_end
+}
 
-Script Script_createFromFile (MelderFile fs) {
-	Script me = new (Script);
-	if (! me) return NULL;
-	MelderFile_copy (fs, & my file);
+Script Script_createFromFile (MelderFile file) {
+	Script me = new (Script); cherror
+	MelderFile_copy (file, & my file);
+end:
+	iferror forget (me);
 	return me;
 }
 

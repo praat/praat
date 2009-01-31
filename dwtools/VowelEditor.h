@@ -63,7 +63,9 @@ struct structF1F2Grid
 	double grey;
 };
 
-#define VowelEditor_members Editor_members \
+#define VowelEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (VowelEditor);
+#define VowelEditor__members(Klas) Editor__members(Klas) \
 	int soundFollowsMouse, shiftKeyPressed; \
 	double f1min, f1max, f2min, f2max; /* Domain of graphics F1-F2 area */ \
 	Matrix f3, b3, f4, b4; \
@@ -83,9 +85,8 @@ struct structF1F2Grid
 	Widget durationLabel, durationTextField, extendLabel, extendTextField; \
 	Widget startInfo, endInfo; \
 	struct structF1F2Grid grid;
-
-#define VowelEditor_methods Editor_methods
-class_create (VowelEditor, Editor);
+#define VowelEditor__methods(Klas) Editor__methods(Klas)
+Thing_declare2 (VowelEditor, Editor);
 
 VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data);
 

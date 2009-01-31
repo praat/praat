@@ -25,14 +25,15 @@
 
 /* An editor-like object that allows the user to record sounds. */
 
-#ifndef _Gui_h_
-	#include "Gui.h"
+#ifndef _Editor_h_
+	#include "Editor.h"
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
 #endif
 
-typedef struct structSoundRecorder *SoundRecorder;   /* Opaque. */
+#define SoundRecorder__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (SoundRecorder);
 
 SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *applicationContext);
 /*

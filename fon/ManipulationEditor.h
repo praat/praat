@@ -32,7 +32,26 @@
 
 #include "ManipulationEditor_enums.h"
 
-typedef struct structManipulationEditor *ManipulationEditor;
+#define ManipulationEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
+Thing_declare1 (ManipulationEditor);
+
+#define ManipulationEditor__members(Klas) FunctionEditor__members(Klas) \
+	PointProcess previousPulses; \
+	PitchTier previousPitch; \
+	DurationTier previousDuration; \
+	double soundmin, soundmax; \
+	int synthesisMethod; \
+	Widget synthPulsesButton, synthPulsesHumButton; \
+	Widget synthPulsesLpcButton; \
+	Widget synthPitchButton, synthPitchHumButton; \
+	Widget synthPulsesPitchButton, synthPulsesPitchHumButton; \
+	Widget synthOverlapAddNodurButton, synthOverlapAddButton; \
+	Widget synthPitchLpcButton; \
+	struct { int units, draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
+	struct { double minimum, maximum, cursor;  } duration; \
+	Graphics_Viewport inset;
+#define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2 (ManipulationEditor, FunctionEditor);
 
 ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana);
 

@@ -39,14 +39,12 @@ static int menu_cb_help (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (StringsEditor);
-	inherited (StringsEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (StringsEditor me, EditorMenu menu) {
+	inherited (StringsEditor) createHelpMenuItems (StringsEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"StringsEditor help", '?', menu_cb_help);
 }
 
-static void updateList (I) {
-	iam (StringsEditor);
+static void updateList (StringsEditor me) {
 	Strings strings = my data;
 	GuiList_deleteAllItems (my list);
 	for (long i = 1; i <= strings -> numberOfStrings; i ++)
@@ -78,7 +76,7 @@ static void gui_button_cb_insert (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (StringsEditor_as_Editor (me));
 }
 
 static void gui_button_cb_append (I, GuiButtonEvent event) {
@@ -100,7 +98,7 @@ static void gui_button_cb_append (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (StringsEditor_as_Editor (me));
 }
 
 static void gui_button_cb_remove (I, GuiButtonEvent event) {
@@ -112,7 +110,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	}
 	NUMlvector_free (selected, 1);
 	updateList (me);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (StringsEditor_as_Editor (me));
 }
 
 static void gui_button_cb_replace (I, GuiButtonEvent event) {
@@ -126,7 +124,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 		GuiList_replaceItem (my list, text, selected [iselected]);
 	}
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	Editor_broadcastChange (StringsEditor_as_Editor (me));
 }
 
 static void gui_list_cb_doubleClick (Widget widget, void *void_me, long item) {
@@ -137,8 +135,7 @@ static void gui_list_cb_doubleClick (Widget widget, void *void_me, long item) {
 		GuiText_setString (my text, strings -> strings [item]);
 }
 
-static void createChildren (I) {
-	iam (StringsEditor);
+static void createChildren (StringsEditor me) {
 	my list = GuiList_create (my dialog, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
 	//GuiList_setDoubleClickCallback (my list, gui_list_cb_doubleClick, me);
 	GuiObject_show (my list);
@@ -150,8 +147,7 @@ static void createChildren (I) {
 	GuiButton_createShown (my dialog, 310, 400, Gui_AUTOMATIC, -10, L"Remove", gui_button_cb_remove, me, 0);	
 }
 
-static void dataChanged (I) {
-	iam (StringsEditor);
+static void dataChanged (StringsEditor me) {
 	updateList (me);
 }
 
@@ -163,12 +159,12 @@ class_methods (StringsEditor, Editor) {
 	class_methods_end
 }
 
-Any StringsEditor_create (Widget parent, const wchar_t *title, Any data) {
-	StringsEditor me = new (StringsEditor);
-	if (me && Editor_init (me, parent, 20, 40, 600, 600, title, data)) {
-		updateList (me);
-	}
-	else forget (me);
+StringsEditor StringsEditor_create (Widget parent, const wchar_t *title, Any data) {
+	StringsEditor me = new (StringsEditor); cherror
+	Editor_init (StringsEditor_as_parent (me), parent, 20, 40, 600, 600, title, data); cherror
+	updateList (me);
+end:
+	iferror forget (me);
 	return me;
 }
 

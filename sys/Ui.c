@@ -50,7 +50,7 @@
 #include "Editor.h"
 #include "Graphics.h"   /* colours. */
 
-#define MAXIMUM_NUMBER_OF_FIELDS  30
+#define MAXIMUM_NUMBER_OF_FIELDS  50
 #define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
 
 /***** class UiField: the things that have values in an UiForm dialog *****/
@@ -523,7 +523,7 @@ static void classUiForm_destroy (I) {
 	int ifield;
 	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
 		forget (my field [ifield]);
-	if (my dialog) GuiObject_destroy (my dialog);
+	if (my dialog) GuiObject_destroy (GuiObject_parent (my dialog));
 	Melder_free (my helpTitle);
 	inherited (UiForm) destroy (me);
 }

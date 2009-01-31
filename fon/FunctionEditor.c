@@ -391,8 +391,8 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Group: ", my group ? L"yes" : L"no");
 }
 
-static void updateText (Any functionEditor) {
-	(void) functionEditor;
+static void updateText (FunctionEditor me) {
+	(void) me;
 }
 
 /********** FILE MENU **********/
@@ -418,18 +418,18 @@ static int menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void form_pictureSelection (I, EditorCommand cmd) {
-	(void) void_me;
+static void form_pictureSelection (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	BOOLEAN (L"Draw selection times", 1);
 	BOOLEAN (L"Draw selection hairs", 1);
 }
-static void ok_pictureSelection (I, EditorCommand cmd) {
-	(void) void_me;
+static void ok_pictureSelection (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	SET_INTEGER (L"Draw selection times", preferences.picture.drawSelectionTimes);
 	SET_INTEGER (L"Draw selection hairs", preferences.picture.drawSelectionHairs);
 }
-static void do_pictureSelection (I, EditorCommand cmd) {
-	(void) void_me;
+static void do_pictureSelection (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	preferences.picture.drawSelectionTimes = GET_INTEGER (L"Draw selection times");
 	preferences.picture.drawSelectionHairs = GET_INTEGER (L"Draw selection hairs");
 }
@@ -740,8 +740,7 @@ static int menu_cb_moveEby (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-void FunctionEditor_shift (I, double shift) {
-	iam (FunctionEditor);
+void FunctionEditor_shift (FunctionEditor me, double shift) {
 	double windowLength = my endWindow - my startWindow;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
 	if (shift < 0.0) {
@@ -927,15 +926,13 @@ static int menu_cb_intro (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_file (I, EditorMenu menu) {
-	iam (FunctionEditor);
-	inherited (FunctionEditor) createMenuItems_file (me, menu);
+static void createMenuItems_file (FunctionEditor me, EditorMenu menu) {
+	inherited (FunctionEditor) createMenuItems_file (FunctionEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Preferences...", 0, menu_cb_preferences);
 	EditorMenu_addCommand (menu, L"-- after preferences --", 0, 0);
 }
 
-static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
-	iam (FunctionEditor);
+static void createMenuItems_view_timeDomain (FunctionEditor me, EditorMenu menu) {
 	(void) me;
 	EditorMenu_addCommand (menu, our format_domain, GuiMenu_INSENSITIVE, menu_cb_zoom /* dummy */);
 	EditorMenu_addCommand (menu, L"Zoom...", 0, menu_cb_zoom);
@@ -947,8 +944,7 @@ static void createMenuItems_view_timeDomain (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 }
 
-static void createMenuItems_view_audio (I, EditorMenu menu) {
-	iam (FunctionEditor);
+static void createMenuItems_view_audio (FunctionEditor me, EditorMenu menu) {
 	(void) me;
 	EditorMenu_addCommand (menu, L"-- play --", 0, 0);
 	EditorMenu_addCommand (menu, L"Audio:", GuiMenu_INSENSITIVE, menu_cb_play /* dummy */);
@@ -958,15 +954,13 @@ static void createMenuItems_view_audio (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Interrupt playing", GuiMenu_ESCAPE, menu_cb_interruptPlaying);
 }
 
-static void createMenuItems_view (I, EditorMenu menu) {
-	iam (FunctionEditor);
+static void createMenuItems_view (FunctionEditor me, EditorMenu menu) {
 	our createMenuItems_view_timeDomain (me, menu);
 	our createMenuItems_view_audio (me, menu);
 }
 
-static void createMenuItems_query (I, EditorMenu menu) {
-	iam (FunctionEditor);
-	inherited (FunctionEditor) createMenuItems_query (me, menu);
+static void createMenuItems_query (FunctionEditor me, EditorMenu menu) {
+	inherited (FunctionEditor) createMenuItems_query (FunctionEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"-- query selection --", 0, 0);
 	EditorMenu_addCommand (menu, L"Get start of selection", 0, menu_cb_getB);
 	EditorMenu_addCommand (menu, L"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
@@ -975,9 +969,8 @@ static void createMenuItems_query (I, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Get selection length", 0, menu_cb_getSelectionDuration);
 }
 
-static void createMenus (I) {
-	iam (FunctionEditor);
-	inherited (FunctionEditor) createMenus (me);
+static void createMenus (FunctionEditor me) {
+	inherited (FunctionEditor) createMenus (FunctionEditor_as_parent (me));
 	EditorMenu menu;
 
 	menu = Editor_addMenu (me, L"View", 0);
@@ -1004,9 +997,8 @@ static void createMenus (I) {
 	Editor_addCommand (me, L"Select", L"Move end of selection right", GuiMenu_COMMAND + GuiMenu_DOWN_ARROW, menu_cb_moveEright);
 }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (FunctionEditor);
-	inherited (FunctionEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (FunctionEditor me, EditorMenu menu) {
+	inherited (FunctionEditor) createHelpMenuItems (FunctionEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"Intro", 0, menu_cb_intro);
 }
 
@@ -1105,8 +1097,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	preferences.shellHeight = GuiObject_getHeight (my shell);
 }
 
-static void createChildren (I) {
-	iam (FunctionEditor);
+static void createChildren (FunctionEditor me) {
 	Widget form;
 	int x = BUTTON_X;
 
@@ -1185,8 +1176,7 @@ static void createChildren (I) {
 	GuiObject_show (form);
 }
 
-static void dataChanged (I) {
-	iam (FunctionEditor);
+static void dataChanged (FunctionEditor me) {
 	Function function = my data;
 	Melder_assert (Thing_member (function, classFunction));
 	my tmin = function -> xmin;
@@ -1201,16 +1191,16 @@ static void dataChanged (I) {
 	FunctionEditor_marksChanged (me);
 }
 
-static void draw (Any functionEditor) {
-	(void) functionEditor;
+static void draw (FunctionEditor me) {
+	(void) me;
 }
 
-static void prepareDraw (Any functionEditor) {
-	(void) functionEditor;
+static void prepareDraw (FunctionEditor me) {
+	(void) me;
 }
 
-static void play (Any functionEditor, double tmin, double tmax) {
-	(void) functionEditor;
+static void play (FunctionEditor me, double tmin, double tmax) {
+	(void) me;
 	(void) tmin;
 	(void) tmax;
 }
@@ -1237,8 +1227,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	#endif
 }
 
-static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
-	iam (FunctionEditor);
+static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyPressed) {
 	int drag = FALSE;
 	double x = xbegin, y = ybegin, x1, x2;
 	/*
@@ -1421,8 +1410,7 @@ static int click (I, double xbegin, double ybegin, int shiftKeyPressed) {
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
-static int clickB (I, double xWC, double yWC) {
-	iam (FunctionEditor);
+static int clickB (FunctionEditor me, double xWC, double yWC) {
 	(void) yWC;
 	my startSelection = xWC;
 	if (my startSelection > my endSelection) {
@@ -1433,8 +1421,7 @@ static int clickB (I, double xWC, double yWC) {
 	return 1;
 }
 
-static int clickE (I, double xWC, double yWC) {
-	iam (FunctionEditor);
+static int clickE (FunctionEditor me, double xWC, double yWC) {
 	my endSelection = xWC;
 	(void) yWC;
 	if (my startSelection > my endSelection) {
@@ -1445,26 +1432,25 @@ static int clickE (I, double xWC, double yWC) {
 	return 1;
 }
 
-static void key (Any functionEditor, unsigned char key) {
-	(void) functionEditor;
+static void key (FunctionEditor me, unsigned char key) {
+	(void) me;
 	(void) key;
 }
 
-void FunctionEditor_insetViewport (I) {
-	iam (FunctionEditor);
+void FunctionEditor_insetViewport (FunctionEditor me) {
 	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
 		BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, 1);
 }
 
-static int playCallback (I, int phase, double tmin, double tmax, double t) {
+static int playCallback (Any void_me, int phase, double tmin, double tmax, double t) {
+	iam (FunctionEditor);
 	/*
 	 * This callback will often be called by the Melder workproc during playback.
 	 * However, it will sometimes be called by Melder_stopPlaying with phase=3.
 	 * This will occur at unpredictable times, perhaps when the LongSound is updated.
 	 * So we had better make no assumptions about the current viewport.
 	 */
-	iam (FunctionEditor);
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	(void) tmin;
 	Graphics_inqViewport (my graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
@@ -1517,31 +1503,28 @@ static int playCallback (I, int phase, double tmin, double tmax, double t) {
 	return 1;
 }
 
-static void prefs_addFields (Any functionEditor, EditorCommand cmd) {
-	(void) functionEditor;
+static void prefs_addFields (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	(void) cmd;
 }
-static void prefs_setValues (Any functionEditor, EditorCommand cmd) {
-	(void) functionEditor;
+static void prefs_setValues (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	(void) cmd;
 }
-static void prefs_getValues (Any functionEditor, EditorCommand cmd) {
-	(void) functionEditor;
+static void prefs_getValues (FunctionEditor me, EditorCommand cmd) {
+	(void) me;
 	(void) cmd;
 }
 
-static void highlightSelection (I, double left, double right, double bottom, double top) {
-	iam (FunctionEditor);
+static void highlightSelection (FunctionEditor me, double left, double right, double bottom, double top) {
 	Graphics_highlight (my graphics, left, right, bottom, top);
 }
 
-static void unhighlightSelection (I, double left, double right, double bottom, double top) {
-	iam (FunctionEditor);
+static void unhighlightSelection (FunctionEditor me, double left, double right, double bottom, double top) {
 	Graphics_unhighlight (my graphics, left, right, bottom, top);
 }
 
-static double getBottomOfSoundAndAnalysisArea (I) {
-	iam (FunctionEditor);
+static double getBottomOfSoundAndAnalysisArea (FunctionEditor me) {
 	(void) me;
 	return 0.0;
 }
@@ -1588,11 +1571,10 @@ class_methods (FunctionEditor, Editor) {
 	class_methods_end
 }
 
-int FunctionEditor_init (I, Widget parent, const wchar_t *title, Any data) {
-	iam (FunctionEditor);
+int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title, Any data) {
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
 	my tmax = ((Function) data) -> xmax;
-	if (! Editor_init (me, parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data)) return 0;
+	Editor_init (FunctionEditor_as_parent (me), parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data); cherror
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -1617,37 +1599,34 @@ gui_drawingarea_cb_resize (me, & event);
 		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
 	my enableUpdates = TRUE;
 	my arrowScrollStep = preferences.arrowScrollStep;
+end:
+	iferror return 0;
 	return 1;
 }
 
-void FunctionEditor_marksChanged (I) {
-	iam (FunctionEditor);
+void FunctionEditor_marksChanged (FunctionEditor me) {
 	our updateText (me);
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
 }
 
-void FunctionEditor_updateText (I) {
-	iam (FunctionEditor);
+void FunctionEditor_updateText (FunctionEditor me) {
 	our updateText (me);
 }
 
-void FunctionEditor_redraw (I) {
-	iam (FunctionEditor);
+void FunctionEditor_redraw (FunctionEditor me) {
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 }
 
-void FunctionEditor_enableUpdates (I, int enable) {
-	iam (FunctionEditor);
+void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 	my enableUpdates = enable;
 }
 
-void FunctionEditor_ungroup (I) {
-	iam (FunctionEditor);
+void FunctionEditor_ungroup (FunctionEditor me) {
 	int i = 1;
 	if (! my group) return;
-	my group = FALSE;
+	my group = false;
 	GuiCheckButton_setValue (my groupButton, false);
 	while (group [i] != me) i ++;
 	group [i] = NULL;
@@ -1656,8 +1635,7 @@ void FunctionEditor_ungroup (I) {
 	Graphics_updateWs (my graphics);   /* For setting buttons in draw method. */
 }
 
-void FunctionEditor_drawRangeMark (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment) {
-	iam (FunctionEditor);
+void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment) {
 	static MelderString text = { 0 };
 	MelderString_empty (& text);
 	MelderString_append2 (& text, yWC_string, units);
@@ -1669,8 +1647,7 @@ void FunctionEditor_drawRangeMark (I, double yWC, const wchar_t *yWC_string, con
 	Graphics_text (my graphics, my endWindow, yWC, text.string);
 }
 
-void FunctionEditor_drawCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
-	iam (FunctionEditor);
+void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
 	Graphics_setColour (my graphics, Graphics_CYAN);
 	Graphics_line (my graphics, my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics, 0.5 * (my startSelection + my endSelection), yWC, 1.5);
@@ -1679,8 +1656,7 @@ void FunctionEditor_drawCursorFunctionValue (I, double yWC, const wchar_t *yWC_s
 	Graphics_text2 (my graphics, my startWindow, yWC, yWC_string, units);
 }
 
-void FunctionEditor_insertCursorFunctionValue (I, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum) {
-	iam (FunctionEditor);
+void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum) {
 	static MelderString text = { 0 };
 	MelderString_empty (& text);
 	MelderString_append2 (& text, yWC_string, units);
@@ -1704,24 +1680,21 @@ void FunctionEditor_insertCursorFunctionValue (I, double yWC, const wchar_t *yWC
 	Graphics_text (my graphics, textX, textY, text.string);
 }
 
-void FunctionEditor_drawHorizontalHair (I, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
-	iam (FunctionEditor);
+void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units) {
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_line (my graphics, my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
 	Graphics_text2 (my graphics, my startWindow, yWC, yWC_string, units);
 }
 
-void FunctionEditor_drawGridLine (I, double yWC) {
-	iam (FunctionEditor);
+void FunctionEditor_drawGridLine (FunctionEditor me, double yWC) {
 	Graphics_setColour (my graphics, Graphics_CYAN);
 	Graphics_setLineType (my graphics, Graphics_DOTTED);
 	Graphics_line (my graphics, my startWindow, yWC, my endWindow, yWC);
 	Graphics_setLineType (my graphics, Graphics_DRAWN);
 }
 
-void FunctionEditor_garnish (I) {
-	iam (FunctionEditor);
+void FunctionEditor_garnish (FunctionEditor me) {
 	if (preferences.picture.drawSelectionTimes) {
 		if (my startSelection >= my startWindow && my startSelection <= my endWindow)
 			Graphics_markTop (my pictureGraphics, my startSelection, true, true, false, NULL);

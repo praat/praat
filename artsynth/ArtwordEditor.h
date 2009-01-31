@@ -33,13 +33,16 @@
 	#include "Artword.h"
 #endif
 
-#define ArtwordEditor_members Editor_members \
+#define ArtwordEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (ArtwordEditor);
+
+#define ArtwordEditor__members(Klas) Editor__members(Klas) \
 	Graphics graphics; \
 	int feature; \
 	Widget list, drawingArea, radio, time, value; \
 	Widget button [1 + enumlength (Art_MUSCLE)];
-#define ArtwordEditor_methods Editor_methods
-class_create (ArtwordEditor, Editor);
+#define ArtwordEditor__methods(Klas) Editor__methods(Klas)
+Thing_declare2 (ArtwordEditor, Editor);
 
 ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data);
 

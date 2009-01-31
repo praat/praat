@@ -176,7 +176,7 @@ long MelderAudio_getOutputBestSampleRate (long fsamp) {
 	#elif defined (_WIN32)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
 			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
-	#elif defined (HPUX) && defined (USE_AUDIO_SERVER)
+	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		return fsamp == 5513 ? 5512 : fsamp;   /* 5512.5 should be given as 5512 */
 	#elif defined (sun) || defined (HPUX)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
@@ -305,6 +305,7 @@ static Boolean flush (void) {
 	}
 	if (my fakeMono) {
 		NUMsvector_free ((short *) my buffer, 0);
+		my buffer = NULL;
 	}
 	MelderAudio_isPlaying = 0;
 	if (my samplesPlayed >= my numberOfSamples)

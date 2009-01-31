@@ -120,7 +120,10 @@ struct FunctionEditor_pulses {
 	double maximumPeriodFactor, maximumAmplitudeFactor;
 };
 
-#define TimeSoundAnalysisEditor_members TimeSoundEditor_members \
+#define TimeSoundAnalysisEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
+Thing_declare1 (TimeSoundAnalysisEditor);
+
+#define TimeSoundAnalysisEditor__members(Klas) TimeSoundEditor__members(Klas) \
 	double longestAnalysis; \
 	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy; \
 	double fixedTimeStep; \
@@ -131,8 +134,7 @@ struct FunctionEditor_pulses {
 	struct FunctionEditor_formant formant; \
 	struct FunctionEditor_pulses pulses; \
 	Widget spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-
-#define TimeSoundAnalysisEditor_methods TimeSoundEditor_methods \
+#define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
 	struct { struct { \
 		struct { bool garnish; } spectrogram; \
 		struct { bool garnish; } pitch; \
@@ -140,26 +142,26 @@ struct FunctionEditor_pulses {
 		struct { bool garnish; } formant; \
 		struct { bool garnish; } pulses; \
 	} picture; } preferences; \
-	void (*createMenuItems_spectrum_picture) (I, EditorMenu menu); \
-	void (*createMenuItems_pitch_picture) (I, EditorMenu menu); \
-	void (*createMenuItems_intensity_picture) (I, EditorMenu menu); \
-	void (*createMenuItems_formant_picture) (I, EditorMenu menu); \
-	void (*createMenuItems_pulses_picture) (I, EditorMenu menu); \
-	void (*destroy_analysis) (I); \
-	void (*draw_analysis) (I); \
-	void (*draw_analysis_pulses) (I); \
-	void (*createMenuItems_query_log) (I, EditorMenu menu); \
-	void (*createMenus_analysis) (I); \
-	void (*createMenuItems_view_sound_analysis) (I, EditorMenu menu);
+	void (*createMenuItems_spectrum_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_pitch_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_intensity_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_formant_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_pulses_picture) (Klas me, EditorMenu menu); \
+	void (*destroy_analysis) (Klas me); \
+	void (*draw_analysis) (Klas me); \
+	void (*draw_analysis_pulses) (Klas me); \
+	void (*createMenuItems_query_log) (Klas me, EditorMenu menu); \
+	void (*createMenus_analysis) (Klas me); \
+	void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
+Thing_declare2 (TimeSoundAnalysisEditor, TimeSoundEditor);
 
-class_create (TimeSoundAnalysisEditor, TimeSoundEditor);
+int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 
-int TimeSoundAnalysisEditor_init (I, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
-void FunctionEditor_SoundAnalysis_computeSpectrogram (I);
-void FunctionEditor_SoundAnalysis_computePitch (I);
-void FunctionEditor_SoundAnalysis_computeIntensity (I);
-void FunctionEditor_SoundAnalysis_computeFormants (I);
-void FunctionEditor_SoundAnalysis_computePulses (I);
+void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me);
 
 void TimeSoundAnalysisEditor_prefs (void);
 

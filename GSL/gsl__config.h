@@ -15,7 +15,7 @@
 
 /* Define to 1 if you have the declaration of `expm1', and to 0 if you don't.
    */
-#if defined(linux)
+#if defined(linux) || defined (_WIN32)
    #define HAVE_DECL_EXPM1 1
 #else
    #define HAVE_DECL_EXPM1 0

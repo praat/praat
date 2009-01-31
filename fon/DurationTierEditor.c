@@ -1,6 +1,6 @@
 /* DurationTierEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,25 +19,20 @@
 
 /*
  * pb 2008/03/21
+ * pb 2009/01/23 minimum and maximum legal values
  */
 
 #include "DurationTierEditor.h"
 #include "EditorM.h"
 
-#define DurationTierEditor_members RealTierEditor_members
-#define DurationTierEditor_methods RealTierEditor_methods
-class_create_opaque (DurationTierEditor, RealTierEditor);
-
 static int menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); return 1; }
 
-static void createHelpMenuItems (I, EditorMenu menu) {
-	iam (DurationTierEditor);
-	inherited (DurationTierEditor) createHelpMenuItems (me, menu);
+static void createHelpMenuItems (DurationTierEditor me, EditorMenu menu) {
+	inherited (DurationTierEditor) createHelpMenuItems (DurationTierEditor_as_parent (me), menu);
 	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
-static void play (I, double tmin, double tmax) {
-	iam (DurationTierEditor);
+static void play (DurationTierEditor me, double tmin, double tmax) {
 	if (my sound.data) {
 		Sound_playPart (my sound.data, tmin, tmax, NULL, NULL);
 	} else {
@@ -48,7 +43,7 @@ static void play (I, double tmin, double tmax) {
 class_methods (DurationTierEditor, RealTierEditor) {
 	class_method (createHelpMenuItems)
 	class_method (play)
-	us -> zeroIsMinimum = TRUE;
+	us -> minimumLegalValue = 0.0;
 	us -> quantityText = L"Relative duration", us -> quantityKey = L"Relative duration";
 	us -> rightTickUnits = L"";
 	us -> defaultYmin = 0.25, us -> defaultYmax = 3.0;
@@ -61,7 +56,7 @@ class_methods (DurationTierEditor, RealTierEditor) {
 
 DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
 	DurationTierEditor me = new (DurationTierEditor);
-	if (! me || ! RealTierEditor_init (me, parent, title, (RealTier) duration, sound, ownSound))
+	if (! me || ! RealTierEditor_init (DurationTierEditor_as_parent (me), parent, title, (RealTier) duration, sound, ownSound))
 		{ forget (me); return NULL; }
 	return me;
 }

@@ -40,7 +40,10 @@ class_create (HyperLink, Data);
 
 HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1, double y2);
 
-#define HyperPage_members Editor_members \
+#define HyperPage__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
+Thing_declare1 (HyperPage);
+
+#define HyperPage__members(Klas) Editor__members(Klas) \
 	Widget drawingArea, verticalScrollBar; \
 	Graphics g, ps; \
 	double x, y, rightMargin, previousBottomSpacing; \
@@ -59,15 +62,15 @@ HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1
 	void *praat; \
 	bool scriptErrorHasBeenNotified; \
 	structMelderDir rootDirectory;
-#define HyperPage_methods Editor_methods \
-	void (*draw) (I); \
-	long (*getNumberOfPages) (I); \
-	long (*getCurrentPageNumber) (I); \
-	int (*goToPage) (I, const wchar_t *title); \
-	int (*goToPage_i) (I, long ipage); \
+#define HyperPage__methods(Klas) Editor__methods(Klas) \
+	void (*draw) (Klas me); \
+	long (*getNumberOfPages) (Klas me); \
+	long (*getCurrentPageNumber) (Klas me); \
+	int (*goToPage) (Klas me, const wchar_t *title); \
+	int (*goToPage_i) (Klas me, long ipage); \
 	void (*defaultHeaders) (EditorCommand cmd); \
 	int hasHistory, isOrdered;
-class_create (HyperPage, Editor);
+Thing_declare2 (HyperPage, Editor);
 
 void HyperPage_clear (HyperPage me);
 
@@ -107,7 +110,7 @@ int HyperPage_script (I, double width_inches, double height_inches, const wchar_
 int HyperPage_goToPage (I, const wchar_t *title);
 int HyperPage_goToPage_i (I, long i);
 
-int HyperPage_init (I, Widget parent, const wchar_t *title, Any data);
+int HyperPage_init (HyperPage me, Widget parent, const wchar_t *title, Any data);
 
 void HyperPage_prefs (void);
 void HyperPage_setEntryHint (I, const wchar_t *entry);

@@ -155,7 +155,7 @@ END
 DIRECT (praat_openScript)
 	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraat -> topShell, NULL, NULL);
 	if (! editor) return 0;
-	TextEditor_showOpen (editor);
+	TextEditor_showOpen (ScriptEditor_as_TextEditor (editor));
 END
 
 static ButtonEditor theButtonEditor;
@@ -179,10 +179,10 @@ END
 
 DIRECT (praat_editButtons)
 	if (theButtonEditor) {
-		Editor_raise (theButtonEditor);
+		Editor_raise (ButtonEditor_as_Editor (theButtonEditor));
 	} else {
 		theButtonEditor = ButtonEditor_create (theCurrentPraat -> topShell);
-		Editor_setDestroyCallback (theButtonEditor, cb_ButtonEditor_destroy, NULL);
+		Editor_setDestroyCallback (ButtonEditor_as_Editor (theButtonEditor), cb_ButtonEditor_destroy, NULL);
 		if (! theButtonEditor) return 0;
 	}
 END
@@ -479,7 +479,7 @@ void praat_show (void) {
 	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraat -> totalSelection == 1);
 	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraat -> totalSelection != 0);
 	praat_actions_show ();
-	if (theCurrentPraat == & theForegroundPraat && theButtonEditor) Editor_dataChanged (theButtonEditor, NULL);
+	if (theCurrentPraat == & theForegroundPraat && theButtonEditor) Editor_dataChanged (ButtonEditor_as_Editor (theButtonEditor), NULL);
 }
 
 /********** Menu descriptions. **********/

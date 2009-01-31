@@ -213,8 +213,8 @@ int PointProcess_addPoint (PointProcess me, double t) {
 		double *dum = NUMdvector (1, 2 * my maxnt);
 		if (! dum) return 0;
 		NUMdvector_copyElements (my t, dum, 1, my nt);
-		NUMdvector_free (my t, 1);
-		my t = dum;
+		NUMdvector_free (my t, 1);   // dangle
+		my t = dum;   // undangle
 		my maxnt *= 2;
 	}
 	if (my nt == 0 || t >= my t [my nt]) {   /* Special case that often occurs in practice. */
