@@ -30,6 +30,7 @@
  pb 20080320 split off Help menu
  pb 20080321 new Editor API
  djmw 20090107 Removed a bug in update that caused editor to crash on replace
+ djmw 20090203 Removed potential crashes in CategoriesEditor<command>_create.
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -185,8 +186,7 @@ static int CategoriesEditorInsert_execute (I)
 	if (! (str = Data_copy (((Categories) my categories)->item[1])) ||
 		! Ordered_addItemPos (editor->data, str, my selection[1]))
 	{
-		forget (str);
-		return 0;
+		forget (str); return 0;
 	}
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
@@ -204,13 +204,12 @@ static int CategoriesEditorInsert_undo (I)
 static Any CategoriesEditorInsert_create (Any data, Any str, int position)
 {
 	CategoriesEditorInsert me = new (CategoriesEditorInsert);
-	if (! me || ! CategoriesEditorCommand_init (me, L"Insert", data,
-		CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1))
-	{
-		forget (me); return NULL;
-	}
+	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Insert", data,
+		CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1)) goto end;
 	my selection[1] = position;
 	Collection_addItem (my categories, str);
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -259,13 +258,13 @@ static int CategoriesEditorRemove_undo (I)
 static Any CategoriesEditorRemove_create (Any data, long *posList, long posCount)
 {
 	CategoriesEditorRemove me = new (CategoriesEditorRemove); 
-	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, L"Remove", data,
+	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Remove", data,
 		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, 
-		posCount, posCount))
-	{ forget (me); return NULL; }
-	for (i = 1; i <= posCount; i++) my selection[i] = posList[i];
+		posCount, posCount)) goto end;
+	for (long i = 1; i <= posCount; i++) my selection[i] = posList[i];
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -316,17 +315,17 @@ static int CategoriesEditorReplace_undo (I)
 static Any CategoriesEditorReplace_create (Any data, Any str, long *posList, long posCount)
 {
 	CategoriesEditorReplace me = new (CategoriesEditorReplace);
-	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, L"Replace", data,
+	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Replace", data,
 		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo, 
-			posCount + 1, posCount))
-	{ forget (me); return NULL; }
-	for (i = 1; i <= posCount; i++)
+			posCount + 1, posCount)) goto end;
+	for (long i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
 	}
-	Collection_addItem (my categories, str);	
+	Collection_addItem (my categories, str);
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -375,17 +374,16 @@ static Any CategoriesEditorMoveUp_create (Any data, long *posList,
 	long posCount, long newPos)
 {
 	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp); 
-	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, L"Move up", data,
-		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 
-		0, posCount))
-	{ forget (me); return NULL; }
-	for (i = 1; i <= posCount; i++)
+	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move up", data,
+		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount)) goto end;
+	for (long i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
 	}
 	my newPos = newPos;
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -432,17 +430,17 @@ static Any CategoriesEditorMoveDown_create (Any data, long *posList,
 	long posCount, long newPos)
 {
 	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown); 
-	long i;
 	
-	if (! me || ! CategoriesEditorCommand_init (me, L"Move down", data,
+	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move down", data,
 		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 
-			0, posCount))
-	{ forget (me); return NULL; }
-	for (i = 1; i <= posCount; i++)
+			0, posCount)) goto end;
+	for (long i = 1; i <= posCount; i++)
 	{
 		my selection[i] = posList[i];
 	}
 	my newPos = newPos;
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -934,19 +932,14 @@ class_methods (CategoriesEditor, Editor) {
 CategoriesEditor CategoriesEditor_create (Widget parent, const wchar_t *title, Any data)
 {
 	CategoriesEditor me = new (CategoriesEditor);
-	if (me && Editor_init (CategoriesEditor_as_parent (me), parent, 20, 40, 600, 600, title, data) &&
-		(my history = CommandHistory_create (100)))
-	{
-		update (me, 0, 0, NULL, 0); 
-		updateWidgets (me);
-	}
-	else forget (me);
+
+	if (me == NULL || ! Editor_init (CategoriesEditor_as_parent (me), parent, 20, 40, 600, 600, title, data) ||
+		((my history = CommandHistory_create (100)) == NULL)) goto end;
+	update (me, 0, 0, NULL, 0);
+	updateWidgets (me);
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
-
-/*
-	19980225 djmw Inserting items resulted in a memory leak.
-		Cause: wrong inheritance for CategoriesEditorInsert command.
-*/
 
 /* End of file CategoriesEditor.c */

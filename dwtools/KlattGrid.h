@@ -101,6 +101,7 @@ PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me);
 /************************ PhonationGrid *********************************************/
 
 PhonationGrid PhonationGrid_create (double tmin, double tmax);
+PhonationGridPlayOptions PhonationGridPlayOptions_create (void);
 
 Sound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFrequency);
 
@@ -114,13 +115,13 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me);
 
 VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfNasalFormants,	long numberOfNasalAntiFormants);
-
+VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void);
 void VocalTractGrid_draw (VocalTractGrid me, Graphics g, int filterModel);
 
 /************************ CouplingGrid *********************************************/
 	
 CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachealFormants, long numberOfTrachealAntiFormants, long numberOfDeltaFormants);
-
+CouplingGridPlayOptions CouplingGridPlayOptions_create (void);
 double CouplingGrid_getDeltaFormantAtTime (CouplingGrid me, long iformant, double t);
 double CouplingGrid_getDeltaBandwidthAtTime (CouplingGrid me, long iformant, double t);
 
@@ -138,7 +139,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 /************************ FricationGrid *********************************************/
 
 FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfFormants);
-
+FricationGridPlayOptions FricationGridPlayOptions_create (void);
 void FricationGrid_draw (FricationGrid me, Graphics g);
 
 Sound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency);
@@ -157,7 +158,7 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfFricationFormants, long numberOfDeltaFormants);
 
 KlattGrid KlattGrid_createExample (void);
-
+KlattGridPlayOptions KlattGridPlayOptions_create (void);
 KlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration);
 
 void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel);

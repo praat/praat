@@ -51,10 +51,14 @@
  * pb 2009/01/05 pause forms
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/01/20 pause forms moved to UiPause.c
+ * pb 2009/02/06 createDirectory
  */
 
 #include <ctype.h>
 #include <time.h>
+#if defined (UNIX)
+	#include <sys/stat.h>
+#endif
 #include "NUM.h"
 #include "NUM2.h"
 #include "regularExp.h"
@@ -161,8 +165,8 @@ enum { GEENSYMBOOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STRNUM
 	#define LOW_FUNCTION_STRNUM  LENGTH_
-		LENGTH_, FILE_READABLE_, DELETEFILE_,
-	#define HIGH_FUNCTION_STRNUM  DELETEFILE_
+		LENGTH_, FILE_READABLE_, DELETEFILE_, CREATEDIRECTORY_,
+	#define HIGH_FUNCTION_STRNUM  CREATEDIRECTORY_
 		DATESTR_,
 		ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
@@ -244,7 +248,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"zero#", L"linear#", L"randomUniform#", L"randomInteger#", L"randomGauss#",
 	L"numberOfRows", L"numberOfColumns",
 
-	L"length", L"fileReadable",	L"deleteFile",
+	L"length", L"fileReadable",	L"deleteFile", L"createDirectory",
 	L"date$",
 	L"environment$", L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
@@ -3047,6 +3051,24 @@ static void do_deleteFile (void) {
 	}
 end: return;
 }
+static void do_createDirectory (void) {
+	if (theCurrentPraat != & theForegroundPraat)
+		error1 (L"The function \"createDirectory\" is not available inside pictures.")
+	Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderDir currentDirectory = { { 0 } };
+		Melder_getDefaultDir (& currentDirectory);
+		#if defined (UNIX) || defined (macintosh)
+			Melder_createDirectory (& currentDirectory, f->content.string, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); cherror
+		#else
+			Melder_createDirectory (& currentDirectory, f->content.string, 0); cherror
+		#endif
+		pushNumber (1);
+	} else {
+		error3 (L"The function \"deleteFile\" requires a string, not ", Stackel_whichText (f), L".")
+	}
+end: return;
+}
 static void do_beginPauseForm (void) {
 	if (theCurrentPraat != & theForegroundPraat)
 		error1 (L"The function \"beginPauseForm\" is not available inside pictures.")
@@ -4092,6 +4114,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case FIXEDSTR_: { do_fixedStr ();
 } break; case PERCENTSTR_: { do_percentStr ();
 } break; case DELETEFILE_: { do_deleteFile ();
+} break; case CREATEDIRECTORY_: { do_createDirectory ();
 /********** Pause form functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();

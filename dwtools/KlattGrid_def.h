@@ -23,7 +23,6 @@
 
 #define ooSTRUCT PhonationPoint
 oo_DEFINE_CLASS (PhonationPoint, Data)
-
 	oo_DOUBLE (time)  /* AnyPoint : glottis closing time */
 	oo_DOUBLE (period)  /* 1/F0 */
 	oo_DOUBLE (openPhase)
@@ -31,16 +30,13 @@ oo_DEFINE_CLASS (PhonationPoint, Data)
 	oo_DOUBLE (te) // time from glottis open to exponential decay or closing
 	oo_DOUBLE (power1)  /* flow function */
 	oo_DOUBLE (power2)
-	oo_DOUBLE (pulseScale) /* multiplier for diplophonia, shimmer */
-	
+	oo_DOUBLE (pulseScale) /* multiplier for diplophonia, shimmer */	
 oo_END_CLASS (PhonationPoint)
 #undef ooSTRUCT
 
 #define ooSTRUCT PhonationTier
 oo_DEFINE_CLASS (PhonationTier, Function)
-
 	oo_COLLECTION (SortedSetOfDouble, points, PhonationPoint, 0)
-
 oo_END_CLASS (PhonationTier)
 #undef ooSTRUCT
 
@@ -61,7 +57,6 @@ oo_END_CLASS (PhonationGridPlayOptions)
 
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
-
 	oo_OBJECT (PitchTier, 0, pitch)
 	oo_OBJECT (RealTier, 0, flutter) // [0,1]
 	oo_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
@@ -76,7 +71,9 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
-	
+	#if oo_READING
+		if ((my options = PhonationGridPlayOptions_create ())== NULL) return 0;
+	#endif
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
 
@@ -94,7 +91,6 @@ oo_END_CLASS (VocalTractGridPlayOptions)
 
 #define ooSTRUCT VocalTractGrid
 oo_DEFINE_CLASS (VocalTractGrid, Function)
-
 	oo_OBJECT (FormantGrid, 0, formants)
 	oo_OBJECT (FormantGrid, 0, nasal_formants)
 	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
@@ -104,7 +100,9 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
-
+	#if oo_READING
+		if ((my options = VocalTractGridPlayOptions_create ()) == NULL) return 0;
+	#endif
 oo_END_CLASS (VocalTractGrid)
 #undef ooSTRUCT
 
@@ -125,7 +123,6 @@ oo_END_CLASS (CouplingGridPlayOptions)
 
 #define ooSTRUCT CouplingGrid
 oo_DEFINE_CLASS (CouplingGrid, Function)
-
 	oo_OBJECT (FormantGrid, 0, tracheal_formants)
 	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
 	oo_COLLECTION (Ordered, tracheal_formants_amplitudes, IntensityTier, 0)
@@ -134,7 +131,9 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 		oo_OBJECT (PhonationTier, 0, glottis)
 		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
-
+	#if oo_READING
+		if ((my options = CouplingGridPlayOptions_create()) == NULL) return 0;
+	#endif
 oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
 
@@ -148,7 +147,6 @@ oo_END_CLASS (FricationGridPlayOptions)
 
 #define ooSTRUCT FricationGrid
 oo_DEFINE_CLASS (FricationGrid, Function)
-
 	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
 	oo_OBJECT (FormantGrid, 0, formants)
 	oo_COLLECTION (Ordered, formants_amplitudes, RealTier, 0)
@@ -156,7 +154,9 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (FricationGridPlayOptions, 0, options)
 	#endif
-	
+	#if oo_READING
+		if ((my options = FricationGridPlayOptions_create()) == NULL) return 0;
+	#endif
 oo_END_CLASS (FricationGrid)
 #undef ooSTRUCT
 
@@ -171,7 +171,6 @@ oo_END_CLASS (KlattGridPlayOptions)
 
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
-
 	oo_OBJECT (PhonationGrid, 0, phonation)   // Glottal source
 	oo_OBJECT (VocalTractGrid, 0, vocalTract) // Filter
 	oo_OBJECT (CouplingGrid, 0, coupling)     // Coupling between source and filter
@@ -180,6 +179,8 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (KlattGridPlayOptions, 0, options)
 	#endif
-	
+	#if oo_READING
+		if ((my options = KlattGridPlayOptions_create()) == NULL) return 0;
+	#endif
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

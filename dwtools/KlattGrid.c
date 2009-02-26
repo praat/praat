@@ -510,7 +510,7 @@ static void PhonationGridPlayOptions_setDefaults (PhonationGridPlayOptions me)
 	my maximumPeriod = 0;
 }
 
-static PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
+PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
 {
 	PhonationGridPlayOptions me = new (PhonationGridPlayOptions);
 	if (me == NULL) return NULL;
@@ -519,8 +519,33 @@ static PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
 
 /********************** PhonationGrid **********************/
 
+
+static void classPhonationGrid_info (I)
+{
+	iam (PhonationGrid);
+	wchar_t *in1 = L"  ", *in2= L"    ";
+	classData -> info (me);
+	MelderInfo_writeLine2 (in1, L"Time domain:");
+	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the PHONATION tiers:");
+	MelderInfo_writeLine3 (in2, L"pitch:               ", Melder_integer (my pitch -> points -> size));
+	MelderInfo_writeLine3 (in2, L"voicingAmplitude:    ", Melder_integer (my voicingAmplitude -> points -> size));
+	MelderInfo_writeLine3 (in2, L"openPhase:           ", Melder_integer (my openPhase -> points -> size));
+	MelderInfo_writeLine3 (in2, L"collisionPhase:      ", Melder_integer (my collisionPhase -> points -> size));
+	MelderInfo_writeLine3 (in2, L"power1:              ", Melder_integer (my power1 -> points -> size));
+	MelderInfo_writeLine3 (in2, L"power2:              ", Melder_integer (my power2 -> points -> size));
+	MelderInfo_writeLine3 (in2, L"flutter:             ", Melder_integer (my flutter -> points -> size));
+	MelderInfo_writeLine3 (in2, L"doublePulsing:       ", Melder_integer (my doublePulsing -> points -> size));
+	MelderInfo_writeLine3 (in2, L"spectralTilt:        ", Melder_integer (my spectralTilt -> points -> size));
+	MelderInfo_writeLine3 (in2, L"aspirationAmplitude: ", Melder_integer (my aspirationAmplitude -> points -> size));
+	MelderInfo_writeLine3 (in2, L"breathinessAmplitude:", Melder_integer (my breathinessAmplitude -> points -> size));
+}
+
 class_methods (PhonationGrid, Function)
 {
+	class_method_local (PhonationGrid, info)
 	class_method_local (PhonationGrid, destroy)
 	class_method_local (PhonationGrid, copy)
 	class_method_local (PhonationGrid, equal)
@@ -718,7 +743,7 @@ static void Sound_PhonationGrid_spectralTilt_inline (Sound thee, PhonationGrid m
 	if (my spectralTilt -> points -> size > 0)
 	{
 		/* Spectral tilt
-			Filter y[n] = a * x[n] + b * y[n] => H(z) = a / (1 - bz^(-1)).
+			Filter y[n] = a * x[n] + b * y[n-1] => H(z) = a / (1 - bz^(-1)).
 			We need attenuation, i.e. low-pass. Therefore 0 <= b <= 1.
 			|H(f)| = a / sqrt (1 - 2*b*cos(2*pi*f*T) + b^2),
 			|H(0)|= a /(1 - b) => if |H(0)| == 1, then a = 1 - b.
@@ -872,7 +897,7 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me)
 				if (nextPeriod == NUMundefined) nextPeriod = period;
 				double openPhase2 = KlattGrid_OPENPHASE_DEFAULT;
 				if (my openPhase -> points -> size > 0) openPhase2 = RealTier_getValueAtTime (my openPhase, t);
-				double maxDelay = period * openPhase2;
+				double maxDelay = period * (1 - openPhase2);
 				pulseDelay = maxDelay * doublePulsing;
 				pulseScale *= (1 - doublePulsing);
 			}
@@ -947,6 +972,7 @@ Sound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTi
 		long midSample = Sampled_xToLowIndex (him, t), beginSample;
 		beginSample = midSample - floor (te / his dx);
 		if (beginSample < 1) beginSample = 0;
+		if (midSample > his nx) midSample = his nx;
 		for (i = beginSample; i <= midSample; i++)
 		{
 			double tsamp = his x1 + (i - 1) * his dx;
@@ -1100,7 +1126,7 @@ static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me,
 	my startNasalAntiFormant = 1;
 }
 
-static VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
+VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
 {
 	VocalTractGridPlayOptions me = new (VocalTractGridPlayOptions);
 	if (me == NULL) return NULL;
@@ -1109,8 +1135,71 @@ static VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
 
 /********************** VocalTractGrid ***************************************/
 
+static long FormantGrid_getNumberOfFormantPoints (FormantGrid me, long iformant)
+{
+	if (iformant < 1 || iformant > my formants -> size) return -1;
+	RealTier f = my formants -> item[iformant];
+	return f -> points -> size;
+}
+
+static long FormantGrid_getNumberOfBandwidthPoints (FormantGrid me, long iformant)
+{
+	if (iformant < 1 || iformant > my bandwidths -> size) return -1;
+	RealTier b = my bandwidths -> item[iformant];
+	return b -> points -> size;
+}
+
+static long Ordered_getNumberOfAmplitudePoints (Ordered me, long iformant)
+{
+	if (me == NULL || iformant < 1 || iformant > my size) return -1;
+	RealTier t = my item[iformant];
+	return t -> points -> size;
+}
+
+static void FormantGrid_info (FormantGrid me, Ordered amplitudes, wchar_t *in1, wchar_t *in2)
+{
+	long nformants = my formants -> size;
+	long namplitudes = amplitudes != NULL ? amplitudes -> size : 0;
+	long nmax = MAX (nformants, namplitudes);
+	
+	for (long iformant = 1; iformant <= nmax; iformant++)
+	{
+	    MelderInfo_writeLine4 (in1, L"Formant ", Melder_integer (iformant), L":");
+		if (iformant <= my formants -> size)
+		{
+			long nfp = FormantGrid_getNumberOfFormantPoints (me, iformant);
+			long nbp = FormantGrid_getNumberOfBandwidthPoints (me, iformant);
+			MelderInfo_writeLine3 (in2, L"formants:   ", (nfp >= 0 ? Melder_integer (nfp): L"-- undefined --"));
+			MelderInfo_writeLine3 (in2, L"bandwidths: ", (nbp >= 0 ? Melder_integer (nbp): L"-- undefined --"));
+		}
+		if (amplitudes != NULL)
+		{
+			long nap = Ordered_getNumberOfAmplitudePoints (amplitudes, iformant);
+			MelderInfo_writeLine3 (in2, L"amplitudes: ", (nap >= 0 ? Melder_integer (nap): L"-- undefined --"));
+		}
+	}
+}
+		
+static void classVocalTractGrid_info (I)
+{
+	iam (VocalTractGrid);
+	wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
+	classData -> info (me);
+	MelderInfo_writeLine2 (in1, L"Time domain:");
+	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the NORMAL FORMANT tiers:");
+	FormantGrid_info (my formants, my formants_amplitudes, in2, in3);
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the NASAL FORMANT tiers:");
+	FormantGrid_info (my nasal_formants, my nasal_formants_amplitudes, in2, in3);
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the NASAL ANTIFORMANT tiers:");
+	FormantGrid_info (my nasal_antiformants, NULL, in2, in3);
+}
+
 class_methods (VocalTractGrid, Function)
 {
+	class_method_local (VocalTractGrid, info)
 	class_method_local (VocalTractGrid, destroy)
 	class_method_local (VocalTractGrid, copy)
 	class_method_local (VocalTractGrid, equal)
@@ -1563,7 +1652,7 @@ static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, Cou
 	my endDeltaBandwidth = thy delta_formants -> bandwidths -> size;
 }
 
-static CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
+CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
 {
 	CouplingGridPlayOptions me = new (CouplingGridPlayOptions);
 	if (me == NULL) return NULL;
@@ -1572,8 +1661,26 @@ static CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
 
 /********************** CouplingGrid *************************************/
 
+static void classCouplingGrid_info (I)
+{
+	iam (CouplingGrid);
+	wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
+	classData -> info (me);
+	MelderInfo_writeLine2 (in1, L"Time domain:");
+	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the TRACHEAL FORMANT tiers:");
+	FormantGrid_info (my tracheal_formants, my tracheal_formants_amplitudes, in2, in3);
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the TRACHEAL ANTIFORMANT tiers:");
+	FormantGrid_info (my tracheal_antiformants, NULL, in2, in3);
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the DELTA FORMANT tiers:");
+	FormantGrid_info (my delta_formants, NULL, in2, in3);
+}
+
 class_methods (CouplingGrid, Function)
 {
+	class_method_local (CouplingGrid, info)
 	class_method_local (CouplingGrid, destroy)
 	class_method_local (CouplingGrid, copy)
 	class_method_local (CouplingGrid, equal)
@@ -1772,7 +1879,7 @@ static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, F
 	my bypass = 1;
 }
 
-static FricationGridPlayOptions FricationGridPlayOptions_create (void)
+FricationGridPlayOptions FricationGridPlayOptions_create (void)
 {
 	FricationGridPlayOptions me = new (FricationGridPlayOptions);
 	if (me == NULL) return NULL;
@@ -1780,9 +1887,26 @@ static FricationGridPlayOptions FricationGridPlayOptions_create (void)
 }
 
 /************************ FricationGrid (& Sound) *********************************************/
+		
+static void classFricationGrid_info (I)
+{
+	iam (FricationGrid);
+	wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
+	classData -> info (me);
+	MelderInfo_writeLine2 (in1, L"Time domain:");
+	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the FRICATION tiers:");
+	MelderInfo_writeLine3 (in2, L"fricationAmplitude:  ", Melder_integer (my fricationAmplitude -> points -> size));
+	MelderInfo_writeLine3 (in2, L"bypass:              ", Melder_integer (my bypass -> points -> size));
+	MelderInfo_writeLine2 (in1, L"\nNumber of points in the FRICATION FORMANT tiers:");
+	FormantGrid_info (my formants, my formants_amplitudes, in2, in3);
+}
 
 class_methods (FricationGrid, Function)
 {
+	class_method_local (FricationGrid, info)
 	class_method_local (FricationGrid, destroy)
 	class_method_local (FricationGrid, copy)
 	class_method_local (FricationGrid, equal)
@@ -1971,7 +2095,7 @@ static void KlattGridPlayOptions_setDefaults (KlattGridPlayOptions me, KlattGrid
 	my xmax = thy xmax;
 }
 
-static KlattGridPlayOptions KlattGridPlayOptions_create (void)
+KlattGridPlayOptions KlattGridPlayOptions_create (void)
 {
 	KlattGridPlayOptions me = new (KlattGridPlayOptions);
 	if (me == NULL) return NULL;
@@ -1989,8 +2113,27 @@ void KlattGrid_setDefaultPlayOptions (KlattGrid me)
 
 /************************ KlattGrid *********************************************/
 
+static void classKlattGrid_info (I)
+{
+	iam (KlattGrid);
+	classData -> info (me);
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time:     ", Melder_double (my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time:       ", Melder_double (my xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine1 (L"\n--- PhonationGrid ---\n");
+	my phonation -> methods -> info (my phonation);
+	MelderInfo_writeLine1 (L"\n--- VocalTractGrid ---\n");
+	my vocalTract -> methods -> info (my vocalTract);
+	MelderInfo_writeLine1 (L"\n--- CouplingGrid ---\n");
+	my coupling -> methods -> info (my coupling);
+	MelderInfo_writeLine1 (L"\n--- FricationgGrid ---\n");
+	my frication -> methods -> info (my frication);
+}
+
 class_methods (KlattGrid, Function)
 {
+	class_method_local (KlattGrid, info)
 	class_method_local (KlattGrid, destroy)
 	class_method_local (KlattGrid, copy)
 	class_method_local (KlattGrid, equal)

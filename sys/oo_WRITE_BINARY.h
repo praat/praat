@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2008 Paul Boersma
+ * Copyright (C) 1994-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
  * pb 2008/01/19 NUM##storage
+ * pb 2009/02/01
  */
 
 #include "oo_undef.h"
@@ -32,18 +33,12 @@
 	binput##storage (my x, f);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_SET(type,storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (my x && ! NUM##t##vector_writeBinary_##storage (my x, min, max, f)) return 0;
@@ -56,18 +51,12 @@
 	binput##storage (my x, f, & enum_##Type);
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			binput##storage (my x [i], f, & enum_##Type); \
-	}
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f, & enum_##Type);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			binput##storage (my x [i], f, & enum_##Type); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		binput##storage (my x [i], f, & enum_##Type);
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (my x && ! NUM##t##vector_writeBinary_##storage (my x, min, max, f)) return 0;
@@ -77,23 +66,16 @@
 	binput##storage (my x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			binput##storage (my x [i], f); \
 	}
 
@@ -102,23 +84,16 @@
 	binput##storage (my x, f);
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			binput##storage (my x [i], f); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		binput##storage (my x [i], f);
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			binput##storage (my x [i], f); \
 	}
 
@@ -127,23 +102,16 @@
 	Type##_writeBinary (& my x, f);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			Type##_writeBinary (& my x [i], f); \
-	}
+	for (int i = 0; i < n; i ++) \
+		Type##_writeBinary (& my x [i], f);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			Type##_writeBinary (& my x [i], f); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		Type##_writeBinary (& my x [i], f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			Type##_writeBinary (& my x [i], f); \
 	}
 
@@ -156,8 +124,7 @@
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	binputi4 (my x ? my x -> size : 0, f); \
 	if (my x) { \
-		long i; \
-		for (i = 1; i <= my x -> size; i ++) { \
+		for (long i = 1; i <= my x -> size; i ++) { \
 			ItemClass data = my x -> item [i]; \
 			if (! class##ItemClass -> writeBinary (data, f)) return 0; \
 		} \

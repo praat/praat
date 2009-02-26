@@ -1096,7 +1096,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.01 * (y2WC - y1WC);
+	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
@@ -1116,7 +1116,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.01 * (y2WC - y1WC);
+	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
 	praat_picture_open ();
@@ -1136,7 +1136,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.01 * (x2WC - x1WC);
+	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
@@ -1156,7 +1156,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.01 * (x2WC - x1WC);
+	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
 	praat_picture_open ();
@@ -1184,7 +1184,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.01 * (y2WC - y1WC);
+	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
@@ -1204,7 +1204,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dy = 0.01 * (y2WC - y1WC);
+	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
 	praat_picture_open ();
@@ -1224,7 +1224,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.01 * (x2WC - x1WC);
+	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
 	praat_picture_open ();
@@ -1244,7 +1244,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	praat_picture_close ();
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
-	dx = 0.01 * (x2WC - x1WC);
+	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
 	praat_picture_open ();

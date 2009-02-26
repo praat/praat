@@ -660,7 +660,7 @@ static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 
 /***** INTERVAL MENU *****/
 
-static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int insertSecond) {
+static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, double t2, bool insertSecond) {
 	TextGrid grid = my data;
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -669,42 +669,76 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 	_AnyTier_identifyClass (grid -> tiers -> item [itier], & intervalTier, & textTier);
 
 	if (intervalTier) {
-		TextInterval interval, newInterval;
-		long iinterval, position;
-		wchar_t *text;
-		if (IntervalTier_hasTime (intervalTier, t)) {
-			Melder_flushError ("Cannot add a boundary at %f seconds, because there is already a boundary there.", t);
+		TextInterval rightNewInterval = NULL, midNewInterval = NULL;
+		bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1), t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
+		if (t1 == t2 && t1IsABoundary) {
+			Melder_error3 (L"Cannot add a boundary at ", Melder_fixed (t1, 6), L" seconds, because there is already a boundary there.");
+			Melder_flushError (NULL);
+			return 0;
+		} else if (t1IsABoundary && t2IsABoundary) {
+			Melder_error5 (L"Cannot add boundaries at ", Melder_fixed (t1, 6), L" and ", Melder_fixed (t2, 6), L" seconds, because there are already boundaries there.");
+			Melder_flushError (NULL);
 			return 0;
 		}
-		iinterval = IntervalTier_timeToIndex (intervalTier, t);
-		if (iinterval) {
-			interval = intervalTier -> intervals -> item [iinterval];
-		} else {
-			return 0;   /* Clicked outside time domain of intervals. */
+		long iinterval = IntervalTier_timeToIndex (intervalTier, t1), iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
+		if (iinterval == 0 || iinterval2 == 0) {
+			return 0;   // selection is outside time domain of intervals
 		}
+		if (iinterval2 > iinterval + 1 || (iinterval2 > iinterval && ! t2IsABoundary)) {
+			return 0;   // selection straddles a boundary
+		}
+		TextInterval interval = intervalTier -> intervals -> item [iinterval];
 
-		Editor_save (TextGridEditor_as_Editor (me), L"Add boundary");
+		if (t1 == t2) {
+			Editor_save (TextGridEditor_as_Editor (me), L"Add boundary");
+		} else {
+			Editor_save (TextGridEditor_as_Editor (me), L"Add interval");
+		}
 
 		if (itier == my selectedTier) {
 			/*
-			 * Divide up the label text into left and right, depending on where the text cursor is.
+			 * Divide up the label text into left, mid and right, depending on where the text selection is.
 			 */
-			text = GuiText_getString (my text);
+			wchar_t *text = GuiText_getString (my text);
 			long left, right;
 			GuiText_getSelectionPosition (my text, & left, & right);
-			position = left;
-			newInterval = TextInterval_create (t, interval -> xmax, text + position);
-			text [position] = '\0';
+			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
+			text [right] = '\0';
+			midNewInterval = TextInterval_create (t1, t2, text + left);
+			text [left] = '\0';
 			TextInterval_setText (interval, text);
 			Melder_free (text);
 		} else {
 			/*
 			 * Move the text to the left of the boundary.
 			 */
-			newInterval = TextInterval_create (t, interval -> xmax, L"");
+			rightNewInterval = TextInterval_create (t2, interval -> xmax, L"");
+			midNewInterval = TextInterval_create (t1, t2, L"");
 		}
-		interval -> xmax = t;
-		Collection_addItem (intervalTier -> intervals, newInterval);
+		if (t1IsABoundary) {
+			/*
+			 * Merge mid with left interval.
+			 */
+			Melder_assert (interval -> xmin == t1);
+			interval -> xmax = t2;
+			TextInterval_setText (interval, Melder_wcscat2 (interval -> text, midNewInterval -> text));
+			forget (midNewInterval);
+		} else if (t2IsABoundary) {
+			/*
+			 * Merge mid and right interval.
+			 */
+			Melder_assert (interval -> xmax == t2);
+			interval -> xmax = t1;
+			Melder_assert (rightNewInterval -> xmin == t2);
+			Melder_assert (rightNewInterval -> xmax == t2);
+			rightNewInterval -> xmin = t1;
+			TextInterval_setText (rightNewInterval, Melder_wcscat2 (midNewInterval -> text, rightNewInterval -> text));
+			forget (midNewInterval);
+		} else {
+			interval -> xmax = t1;
+			if (t1 != t2) Collection_addItem (intervalTier -> intervals, midNewInterval);
+		}
+		Collection_addItem (intervalTier -> intervals, rightNewInterval);
 		if (insertSecond && ntiers >= 2) {
 			/*
 			 * Find the last time before t on another tier.
@@ -712,35 +746,38 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t, int in
 			double tlast = interval -> xmin, tmin, tmax;
 			int jtier;
 			for (jtier = 1; jtier <= ntiers; jtier ++) if (jtier != itier) {
-				_TextGridEditor_timeToInterval (me, t, jtier, & tmin, & tmax);
+				_TextGridEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
 				if (tmin > tlast) {
 					tlast = tmin;
 				}
 			}
-			if (tlast > interval -> xmin && tlast < t) {
-				newInterval = TextInterval_create (tlast, t, L"");
+			if (tlast > interval -> xmin && tlast < t1) {
+				TextInterval newInterval = TextInterval_create (tlast, t1, L"");
 				interval -> xmax = tlast;
 				Collection_addItem (intervalTier -> intervals, newInterval);
 			}
 		}
 	} else {
 		TextPoint newPoint;
-		if (AnyTier_hasPoint (textTier, t)) {
-			Melder_flushError ("Cannot add a point at %f seconds, because there is already a point there.", t);
+		if (AnyTier_hasPoint (textTier, t1)) {
+			Melder_flushError ("Cannot add a point at %f seconds, because there is already a point there.", t1);
 			return 0;
 		} 
 
 		Editor_save (TextGridEditor_as_Editor (me), L"Add point");
 
-		newPoint = TextPoint_create (t, L"");
+		newPoint = TextPoint_create (t1, L"");
 		Collection_addItem (textTier -> points, newPoint);
 	}
-	my startSelection = my endSelection = t;
+	my startSelection = my endSelection = t1;
 	return 1;
 }
 
 static void do_insertIntervalOnTier (TextGridEditor me, int itier) {
-	if (! insertBoundaryOrPoint (me, itier, my playingCursor || my playingSelection ? my playCursor : my startSelection, TRUE)) return;
+	if (! insertBoundaryOrPoint (me, itier,
+		my playingCursor || my playingSelection ? my playCursor : my startSelection,
+		my playingCursor || my playingSelection ? my playCursor : my endSelection,
+		true)) return;
 	my selectedTier = itier;
 	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	Editor_broadcastChange (TextGridEditor_as_Editor (me));
@@ -847,7 +884,10 @@ static int menu_cb_MoveToZero (EDITOR_ARGS) {
 }
 
 static void do_insertOnTier (TextGridEditor me, int itier) {
-	if (! insertBoundaryOrPoint (me, itier, my playingCursor || my playingSelection ? my playCursor : my startSelection, FALSE)) return;
+	if (! insertBoundaryOrPoint (me, itier,
+		my playingCursor || my playingSelection ? my playCursor : my startSelection,
+		my playingCursor || my playingSelection ? my playCursor : my endSelection,
+		false)) return;
 	my selectedTier = itier;
 	FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 	Editor_broadcastChange (TextGridEditor_as_Editor (me));
@@ -2031,7 +2071,7 @@ static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPres
 		 * Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
 		 * because we are not 'nearBoundaryOrPoint'.
 		 */
-		insertBoundaryOrPoint (me, iClickedTier, my startSelection, FALSE);
+		insertBoundaryOrPoint (me, iClickedTier, my startSelection, my startSelection, false);
 		my selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 		Editor_broadcastChange (TextGridEditor_as_Editor (me));

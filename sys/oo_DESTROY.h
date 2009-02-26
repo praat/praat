@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * pb 2003/06/11 made struct_destroy global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
+ * pb 2009/02/01
  */
 
 #include "oo_undef.h"
@@ -58,23 +58,16 @@
 	Melder_free (my x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			Melder_free (my x [i]); \
-	}
+	for (int i = 0; i < n; i ++) \
+		Melder_free (my x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			Melder_free (my x [i]); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		Melder_free (my x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			Melder_free (my x [i]); \
 		NUMvector_free (sizeof (char *), my x, min); \
 	}
@@ -85,23 +78,16 @@
 	Melder_free (my x);
 
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			Melder_free (my x [i]); \
-	}
+	for (int i = 0; i < n; i ++) \
+		Melder_free (my x [i]);
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			Melder_free (my x [i]); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		Melder_free (my x [i]);
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			Melder_free (my x [i]); \
 		NUMvector_free (sizeof (wchar_t *), my x, min); \
 	}
@@ -112,32 +98,24 @@
 	Type##_destroy (& my x);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			Type##_destroy (& my x [i]); \
-	}
+	for (int i = 0; i < n; i ++) \
+		Type##_destroy (& my x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			Type##_destroy (& my x [i]); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		Type##_destroy (& my x [i]);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) \
+		for (long i = min; i <= max; i ++) \
 			Type##_destroy (& my x [i]); \
 		NUMstructvector_free (Type, my x, min); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
-		long i, j; \
-		for (i = row1; i <= row2; i ++) \
-			for (j = col1; j <= col2; j ++) \
+		for (long i = row1; i <= row2; i ++) \
+			for (long j = col1; j <= col2; j ++) \
 				Type##_destroy (& my x [i] [j]); \
 		NUMstructmatrix_free (Type, my x, row1, col1); \
 	}
@@ -148,23 +126,17 @@
 	if (my x) XtDestroyWidget (my x);
 
 #define oo_WIDGET_ARRAY(x,cap,n)  \
-	{ \
-		int i; \
-		for (i = 0; i < n; i ++) \
-			if (my x [i]) XtDestroyWidget (my x [i]); \
-	}
+	for (int i = 0; i < n; i ++) \
+		if (my x [i]) XtDestroyWidget (my x [i]);
 
 #define oo_WIDGET_SET(x,setType)  \
-	{ \
-		int i; \
-		for (i = 0; i <= enumlength (setType); i ++) \
-			if (my x [i]) XtDestroyWidget (my x [i]); \
-	}
+	for (int i = 0; i <= enumlength (setType); i ++) \
+		if (my x [i]) XtDestroyWidget (my x [i]);
 
 #define oo_WIDGET_VECTOR_FROM(x,min,max)  \
 	if (my x) { \
-		long i; \
-		for (i = min; i <= max; i ++) XtDestroyWidget (my x [i]); \
+		for (long i = min; i <= max; i ++) \
+			XtDestroyWidget (my x [i]); \
 		NUMvector_free (sizeof (Widget), my x, min, 0); \
 	}
 
