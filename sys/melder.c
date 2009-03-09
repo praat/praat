@@ -640,6 +640,7 @@ static void motif_fatal (wchar_t *message) {
 	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
 	CFRelease (messageCF);
 	RunStandardAlert (dialog, NULL, NULL);
+//messageU[0] = * (UniChar *) 0;
 	SysError (11);
 }
 static void motif_error (wchar_t *messageW) {

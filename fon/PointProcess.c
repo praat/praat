@@ -158,7 +158,7 @@ long PointProcess_getLowIndex (PointProcess me, double t) {
 		return 0;
 	if (t >= my t [my nt])   /* Special case that often occurs in practice. */
 		return my nt;
-	Melder_assert (my nt != 1);   /* May fail if my t [1] is NaN. */
+	Melder_assert (my nt != 1);   /* May fail if t or my t [1] is NaN. */
 	/* Start binary search. */
 	left = 1, right = my nt;
 	while (left < right - 1) {

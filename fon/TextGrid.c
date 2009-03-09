@@ -1867,4 +1867,80 @@ end:
 	return me;
 }
 
+Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals)
+{
+	long numberOfRows = 0;
+	for (long itier = 1; itier <= my tiers -> size; itier ++) {
+		Data anyTier = my tiers -> item [itier];
+		if (anyTier -> methods == (Data_Table) classIntervalTier) {
+			IntervalTier tier = (IntervalTier) anyTier;
+			if (includeEmptyIntervals) {
+				numberOfRows += tier -> intervals -> size;
+			} else {
+				for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
+					TextInterval interval = tier -> intervals -> item [iinterval];
+					if (interval -> text != NULL && interval -> text [0] != '\0') {
+						numberOfRows ++;
+					}
+				}
+			}
+		} else {
+			TextTier tier = (TextTier) anyTier;
+			numberOfRows += tier -> points -> size;
+		}
+	}
+	Table thee = Table_createWithoutColumnNames (numberOfRows,
+		3 + includeLineNumbers + includeTierNames); cherror
+	long icol = 0;
+	if (includeLineNumbers) { Table_setColumnLabel (thee, ++ icol, L"line"); cherror }
+	Table_setColumnLabel (thee, ++ icol, L"tmin"); cherror
+	if (includeTierNames) { Table_setColumnLabel (thee, ++ icol, L"tier"); cherror }
+	Table_setColumnLabel (thee, ++ icol, L"text"); cherror
+	Table_setColumnLabel (thee, ++ icol, L"tmax"); cherror
+	long irow = 0;
+	for (long itier = 1; itier <= my tiers -> size; itier ++) {
+		Data anyTier = my tiers -> item [itier];
+		if (anyTier -> methods == (Data_Table) classIntervalTier) {
+			IntervalTier tier = (IntervalTier) anyTier;
+			for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
+				TextInterval interval = tier -> intervals -> item [iinterval];
+				if (includeEmptyIntervals || (interval -> text != NULL && interval -> text [0] != '\0')) {
+					++ irow;
+					icol = 0;
+					if (includeLineNumbers) { Table_setNumericValue (thee, irow, ++ icol, irow); cherror }
+					Table_setStringValue (thee, irow, ++ icol, Melder_fixed (interval -> xmin, timeDecimals)); cherror
+					if (includeTierNames) { Table_setStringValue (thee, irow, ++ icol, tier -> name); cherror }
+					Table_setStringValue (thee, irow, ++ icol, interval -> text); cherror
+					Table_setStringValue (thee, irow, ++ icol, Melder_fixed (interval -> xmax, timeDecimals)); cherror
+				}
+			}
+		} else {
+			TextTier tier = (TextTier) anyTier;
+			for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
+				TextPoint point = tier -> points -> item [ipoint];
+				++ irow;
+				icol = 0;
+				if (includeLineNumbers) { Table_setNumericValue (thee, irow, ++ icol, irow); cherror }
+				Table_setStringValue (thee, irow, ++ icol, Melder_fixed (point -> time, timeDecimals)); cherror
+				if (includeTierNames) { Table_setStringValue (thee, irow, ++ icol, tier -> name); cherror }
+				Table_setStringValue (thee, irow, ++ icol, point -> mark); cherror
+				Table_setStringValue (thee, irow, ++ icol, Melder_fixed (point -> time, timeDecimals)); cherror
+			}
+		}
+	}
+	long columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
+	Table_sortRows (thee, columns, 2);
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
+	Table table = TextGrid_downto_Table (me, includeLineNumbers, timeDecimals, includeTierNames, includeEmptyIntervals); cherror
+	Table_list (table, false);
+end:
+	iferror { Melder_clearError (); Melder_information1 (L"Nothing to list."); }
+	forget (table);
+}
+
 /* End of file TextGrid.c */

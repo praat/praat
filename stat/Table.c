@@ -1050,8 +1050,7 @@ static long *cellCompare_columns, cellCompare_numberOfColumns;
 
 static int cellCompare (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	long icol;
-	for (icol = 1; icol <= cellCompare_numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= cellCompare_numberOfColumns; icol ++) {
 		if (my cells [cellCompare_columns [icol]]. number < thy cells [cellCompare_columns [icol]]. number) return -1;
 		if (my cells [cellCompare_columns [icol]]. number > thy cells [cellCompare_columns [icol]]. number) return +1;
 	}
@@ -1059,8 +1058,7 @@ static int cellCompare (const void *first, const void *second) {
 }
 
 void Table_sortRows (Table me, long *columns, long numberOfColumns) {
-	long icol;
-	for (icol = 1; icol <= numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= numberOfColumns; icol ++) {
 		Melder_assert (columns [icol] >= 1 && columns [icol] <= my numberOfColumns);
 		Table_numericize (me, columns [icol]);
 	}
@@ -1070,12 +1068,12 @@ void Table_sortRows (Table me, long *columns, long numberOfColumns) {
 }
 
 int Table_sortRows_string (Table me, const wchar_t *columns_string) {
-	long numberOfColumns, icol, *columns = NULL;
+	long numberOfColumns, *columns = NULL;
 	wchar_t **columns_tokens = Melder_getTokens (columns_string, & numberOfColumns); cherror
 	if (numberOfColumns < 1)
 		error1 (L"Empty list of columns. Cannot sort.")
 	columns = NUMlvector (1, numberOfColumns); cherror
-	for (icol = 1; icol <= numberOfColumns; icol ++) {
+	for (long icol = 1; icol <= numberOfColumns; icol ++) {
 		columns [icol] = Table_findColumnIndexFromColumnLabel (me, columns_tokens [icol]);
 		if (columns [icol] == 0)
 			error3 (L"Column \"", columns_tokens [icol], L"\" does not exist.")
@@ -1089,13 +1087,12 @@ end:
 }
 
 int Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label) {
-	long irow;
 	if (column1 < 1 || column1 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column1), L" out of range.");
 	if (column2 < 1 || column2 > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (column2), L" out of range.");
 	Table_numericize (me, column1);
 	Table_numericize (me, column2);
 	Table_appendColumn (me, label); cherror
-	for (irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
 		Table_setNumericValue (me, irow, my numberOfColumns,
 			row -> cells [column1]. number + row -> cells [column2]. number);

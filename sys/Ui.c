@@ -39,6 +39,7 @@
  * pb 2009/01/05 pause forms (e.g. Revert button)
  * pb 2009/01/18 Interpreter argument to UiForm callbacks
  * pb 2009/01/19 multiple Continue buttons in pause forms
+ * pb 2009/03/09 UI_REAL_OR_UNDEFINED
  */
 
 #include <wctype.h>
@@ -57,21 +58,22 @@
 
 /* Values for 'type'. */
 #define UI_REAL  1
-#define UI_POSITIVE  2
-#define UI_INTEGER  3
-#define UI_NATURAL  4
-#define UI_WORD  5
-#define UI_SENTENCE  6
-#define UI_COLOUR  7
+#define UI_REAL_OR_UNDEFINED  2
+#define UI_POSITIVE  3
+#define UI_INTEGER  4
+#define UI_NATURAL  5
+#define UI_WORD  6
+#define UI_SENTENCE  7
+#define UI_COLOUR  8
 	#define UI_LABELLEDTEXT_MIN  UI_REAL
 	#define UI_LABELLEDTEXT_MAX  UI_COLOUR
-#define UI_LABEL  8
-#define UI_TEXT  9
-#define UI_BOOLEAN  10
-#define UI_RADIO  11
-#define UI_OPTIONMENU  12
-#define UI_ENUM  13
-#define UI_LIST  14
+#define UI_LABEL  9
+#define UI_TEXT  10
+#define UI_BOOLEAN  11
+#define UI_RADIO  12
+#define UI_OPTIONMENU  13
+#define UI_ENUM  14
+#define UI_LIST  15
 
 #define UiField_members Thing_members \
 	int type; \
@@ -198,7 +200,7 @@ Any UiOptionMenu_addButton (I, const wchar_t *label) {
 
 static void UiField_setDefault (UiField me) {
 	switch (my type) {
-		case UI_REAL: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
 			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT:
 		{
 			GuiText_setString (my text, my stringDefaultValue);
@@ -258,7 +260,7 @@ static int colourToValue (UiField me, wchar_t *string) {
 
 static int UiField_widgetToValue (UiField me) {
 	switch (my type) {
-		case UI_REAL: case UI_POSITIVE: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			wchar_t *dirty = GuiText_getString (my text);   /* The text as typed by the user. */
 			if (! Interpreter_numericExpression (NULL, dirty, & my realValue)) { Melder_free (dirty); return 0; }
 			Melder_free (dirty);
@@ -281,6 +283,8 @@ static int UiField_widgetToValue (UiField me) {
 				}
 				GuiText_setString (my text, clean);
 			}
+			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+				return Melder_error3 (L"`", my name, L"' has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
@@ -360,10 +364,12 @@ static wchar_t *colourNames [] = { L"black", L"white", L"red", L"green", L"blue"
 
 static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter interpreter) {
 	switch (my type) {
-		case UI_REAL: case UI_POSITIVE: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			if (wcsspn (string, L" \t") == wcslen (string))
 				return Melder_error3 (L"Argument `", my name, L"' empty.");
 			if (! Interpreter_numericExpression (interpreter, string, & my realValue)) return 0;
+			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+				return Melder_error3 (L"`", my name, L"' has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.");
 		} break; case UI_INTEGER: case UI_NATURAL: {
@@ -436,7 +442,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 static void UiField_valueToHistory (UiField me, int isLast) {
 	UiHistory_write (L" ");
 	switch (my type) {
-		case UI_REAL: case UI_POSITIVE: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			UiHistory_write (Melder_double (my realValue));
 		} break; case UI_INTEGER: case UI_NATURAL: {
 			UiHistory_write (Melder_integer (my integerValue));
@@ -720,6 +726,14 @@ Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue) {
 	return thee;
 }
 
+Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue) {
+	iam (UiForm);
+	UiField thee = UiForm_addField (me, UI_REAL_OR_UNDEFINED, label);
+	if (thee == NULL) return NULL;
+	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	return thee;
+}
+
 Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_POSITIVE, label);
@@ -909,6 +923,7 @@ void UiForm_finish (I) {
 		y = field -> y;
 		switch (field -> type) {
 			case UI_REAL:
+			case UI_REAL_OR_UNDEFINED:
 			case UI_POSITIVE:
 			case UI_INTEGER:
 			case UI_NATURAL:
@@ -1073,7 +1088,7 @@ void UiForm_finish (I) {
 		my helpButton = GuiButton_createShown (buttons, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 			L"Help", gui_button_cb_help, me, 0);
 	}
-	if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
+	if (my numberOfFields > 1 || (my numberOfFields > 0 && my field [1] -> type != UI_LABEL)) {
 		if (my isPauseForm) {
 			my revertButton = GuiButton_createShown (buttons,
 				HELP_BUTTON_X, HELP_BUTTON_X + REVERT_BUTTON_WIDTH,
@@ -1207,7 +1222,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
 	switch (field -> type) {
-		case UI_REAL: case UI_POSITIVE: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			if (value == Melder_atof (field -> stringDefaultValue)) {
 				GuiText_setString (field -> text, field -> stringDefaultValue);
 			} else {
@@ -1285,7 +1300,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 	UiField field = findField (me, fieldName);
 	if (value == NULL) value = L"";   /* Accept NULL strings. */
 	switch (field -> type) {
-		case UI_REAL: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
 			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT:
 		{
 			GuiText_setString (field -> text, value);
@@ -1354,7 +1369,7 @@ double UiForm_getReal (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
 	switch (field -> type) {
-		case UI_REAL: case UI_POSITIVE: case UI_COLOUR: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
 			return field -> realValue;
 		} break; default: {
 			fatalField (me);
@@ -1367,7 +1382,7 @@ double UiForm_getReal_check (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField_check (me, fieldName); cherror
 	switch (field -> type) {
-		case UI_REAL: case UI_POSITIVE: case UI_COLOUR: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
 			return field -> realValue;
 		} break; default: {
 			Melder_error3 (L"Cannot find a real value in field \"", fieldName, L"\" in the form.\n"
@@ -1472,7 +1487,7 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 			case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> integerValue;
-			} break; case UI_REAL: case UI_POSITIVE: case UI_COLOUR: {
+			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> realValue;
 			} break; case UI_RADIO: case UI_OPTIONMENU: {

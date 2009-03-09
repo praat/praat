@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/09/23
+ * pb 2008/03/09
  */
 
 #ifndef _AnyTier_h_
@@ -40,6 +40,9 @@
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+#ifndef _Table_h_
+	#include "Table.h"
 #endif
 
 #include "TextGrid_def.h"
@@ -137,6 +140,9 @@ int TextGrid_setPointText (TextGrid me, int itier, long ipoint, const wchar_t *t
 int TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file);
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file);
 TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
+
+Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
+void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
 #endif
 /* End of file TextGrid.h */

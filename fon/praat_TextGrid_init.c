@@ -623,6 +623,17 @@ DO
 		GET_INTEGER (STRING_TIER_NUMBER), GET_STRING (L"Label text"))), L" labels");
 END
 
+FORM (TextGrid_downto_Table, L"TextGrid: Down to Table", 0)
+	BOOLEAN (L"Include line number", false)
+	NATURAL (L"Time decimals", L"6")
+	BOOLEAN (L"Include tier names", true)
+	BOOLEAN (L"Include empty intervals", false)
+	OK
+DO
+	EVERY_TO (TextGrid_downto_Table (OBJECT, GET_INTEGER (L"Include line number"), GET_INTEGER (L"Time decimals"),
+		GET_INTEGER (L"Include tier names"), GET_INTEGER (L"Include empty intervals")))
+END
+
 FORM (TextGrid_draw, L"TextGrid: Draw", 0)
 	praat_dia_timeRange (dia);
 	BOOLEAN (L"Show boundaries", 1)
@@ -1001,6 +1012,17 @@ DO
 	}
 END
 
+FORM (TextGrid_list, L"TextGrid: List", 0)
+	BOOLEAN (L"Include line number", false)
+	NATURAL (L"Time decimals", L"6")
+	BOOLEAN (L"Include tier names", true)
+	BOOLEAN (L"Include empty intervals", false)
+	OK
+DO
+	EVERY (TextGrid_list (OBJECT, GET_INTEGER (L"Include line number"), GET_INTEGER (L"Time decimals"),
+		GET_INTEGER (L"Include tier names"), GET_INTEGER (L"Include empty intervals")))
+END
+
 DIRECT (TextGrids_merge)
 	Collection textGrids;
 	int n = 0;
@@ -1292,10 +1314,12 @@ void praat_uvafon_TextGrid_init (void) {
 	praat_addAction1 (classTextGrid, 0, L"Edit", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 1, L"Edit", 0, 0, DO_TextGrid_edit);
 	praat_addAction1 (classTextGrid, 1, L"& Sound: Edit?", 0, 0, DO_info_TextGrid_Sound_edit);
-	praat_addAction1 (classTextGrid, 0, L"Draw", 0, 0, 0);
-	praat_addAction1 (classTextGrid, 0, L"Draw...", 0, 0, DO_TextGrid_draw);
-	praat_addAction1 (classTextGrid, 1, L"& Sound: Draw?", 0, 0, DO_info_TextGrid_Sound_draw);
-	praat_addAction1 (classTextGrid, 1, L"& Pitch: Draw?", 0, 0, DO_info_TextGrid_Pitch_draw);
+	praat_addAction1 (classTextGrid, 0, L"Draw -", 0, 0, 0);
+	praat_addAction1 (classTextGrid, 0, L"Draw...", 0, 1, DO_TextGrid_draw);
+	praat_addAction1 (classTextGrid, 1, L"& Sound: Draw?", 0, 1, DO_info_TextGrid_Sound_draw);
+	praat_addAction1 (classTextGrid, 1, L"& Pitch: Draw?", 0, 1, DO_info_TextGrid_Pitch_draw);
+	praat_addAction1 (classTextGrid, 0, L"List...", 0, 0, DO_TextGrid_list);
+	praat_addAction1 (classTextGrid, 0, L"Down to Table...", 0, 0, DO_TextGrid_downto_Table);
 	praat_addAction1 (classTextGrid, 0, L"Query -          ", 0, 0, 0);
 		praat_TimeFunction_query_init (classTextGrid);
 		praat_addAction1 (classTextGrid, 1, L"-- query tiers --", 0, 1, 0);

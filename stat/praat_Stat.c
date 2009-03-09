@@ -917,7 +917,7 @@ END
 FORM (Table_setNumericValue, L"Table: Set numeric value", 0)
 	NATURAL (L"Row number", L"1")
 	WORD (L"Column label", L"")
-	REAL (L"Numeric value", L"1.5")
+	REAL_OR_UNDEFINED (L"Numeric value", L"1.5")
 	OK
 DO
 	WHERE (SELECTED) {
@@ -1352,7 +1352,7 @@ END
 FORM (TableOfReal_setValue, L"Set value", L"TableOfReal: Set value...")
 	NATURAL (L"Row number", L"1")
 	NATURAL (L"Column number", L"1")
-	REAL (L"New value", L"0.0")
+	REAL_OR_UNDEFINED (L"New value", L"0.0")
 	OK
 DO
 	WHERE (SELECTED) {

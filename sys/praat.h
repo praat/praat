@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/03/09
  */
 
 #include "Editor.h"
@@ -241,6 +241,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	{ static UiForm dia; if (dia == NULL) { Any radio = 0; (void) radio; \
 	dia = UiForm_create (theCurrentPraat -> topShell, name, DO_##proc, NULL, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
+#define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
 #define INTEGER(label,def)	UiForm_addInteger (dia, label, def);
 #define NATURAL(label,def)	UiForm_addNatural (dia, label, def);

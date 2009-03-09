@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/19
+ * pb 2009/03/09
  */
 
 #include "Thing.h"
@@ -78,6 +78,7 @@ Any UiForm_create (Widget parent, const wchar_t *title,
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure,
 	const wchar_t *helpTitle);
 Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addInteger (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addNatural (I, const wchar_t *label, const wchar_t *defaultValue);

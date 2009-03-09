@@ -18,11 +18,12 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/03/09
  */
 
 #undef FORM
 #undef REAL
+#undef REAL_OR_UNDEFINED
 #undef POSITIVE
 #undef INTEGER
 #undef NATURAL
@@ -54,6 +55,7 @@
 #undef GET_FILE
 
 #define REAL(label,def)		UiForm_addReal (cmd -> dialog, label, def);
+#define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (cmd -> dialog, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (cmd -> dialog, label, def);
 #define INTEGER(label,def)	UiForm_addInteger (cmd -> dialog, label, def);
 #define NATURAL(label,def)	UiForm_addNatural (cmd -> dialog, label, def);

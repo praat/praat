@@ -33,9 +33,13 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 	if (size == 0) return thee;
 	for (interval = 0; interval <= size; interval ++) {
 		double t1 = interval == 0 ? my xmin : ((RealPoint) my points -> item [interval]) -> time;
+		Melder_assert (NUMdefined (t1));
 		double t2 = interval == size ? my xmax : ((RealPoint) my points -> item [interval + 1]) -> time;
+		Melder_assert (NUMdefined (t2));
 		double f1 = ((RealPoint) my points -> item [interval == 0 ? 1 : interval]) -> value;
+		Melder_assert (NUMdefined (f1));
 		double f2 = ((RealPoint) my points -> item [interval == size ? size : interval + 1]) -> value;
+		Melder_assert (NUMdefined (f2));
 		area += (t2 - t1) * 0.5 * (f1 + f2);
 		while (area >= 1.0) {
 			double slope = (f2 - f1) / (t2 - t1), discriminant;

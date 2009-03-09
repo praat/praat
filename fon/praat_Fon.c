@@ -5152,12 +5152,14 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Analyse", 0, 0, 0);
 	INCLUDE_MANPAGES (manual_statistics_init)
 	INCLUDE_MANPAGES (manual_voice_init)
 	INCLUDE_MANPAGES (manual_programming_init)
-	INCLUDE_MANPAGES (manual_OT_init)
+	INCLUDE_MANPAGES (manual_gram_init)
 	INCLUDE_MANPAGES (manual_Exp_init)
 
-	INCLUDE_LIBRARY (praat_uvafon_OT_init)
+	praat_addMenuCommand (L"Objects", L"New", L"-- new synthesis --", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
 	INCLUDE_LIBRARY (praat_uvafon_David_init)
+	praat_addMenuCommand (L"Objects", L"New", L"-- new grammars --", 0, 0, 0);
+	INCLUDE_LIBRARY (praat_uvafon_gram_init)
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)
 	INCLUDE_LIBRARY (praat_uvafon_Exp_init)
