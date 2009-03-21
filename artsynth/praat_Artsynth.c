@@ -1,6 +1,6 @@
 /* praat_Artsynth.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2009/03/21
  */
 
 #include "Art_Speaker.h"
@@ -43,23 +43,19 @@ DO
 END
 
 FORM (Art_edit, L"Edit Art", 0)
-	{
-		int i;
-		for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-			REAL (enumstring (Art_MUSCLE, i), L"0.0")
-	}
+	for (int i = 1; i <= kArt_muscle_MAX; i ++)
+		REAL (kArt_muscle_getText (i), L"0.0")
 	OK
 {
 	Art object = (Art) ONLY_OBJECT;
-	int i; for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-		SET_REAL (enumstring (Art_MUSCLE, i), object -> art [i]);
+	for (enum kArt_muscle i = 1; i <= kArt_muscle_MAX; i ++)
+		SET_REAL (kArt_muscle_getText (i), object -> art [i]);
 }
 DO
 	Art object = (Art) ONLY_OBJECT;
-	int i;
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit an Art from batch.");
-	for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
-		object -> art [i] = GET_REAL (enumstring (Art_MUSCLE, i));
+	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot edit an Art from batch.");
+	for (enum kArt_muscle i = 1; i <= kArt_muscle_MAX; i ++)
+		object -> art [i] = GET_REAL (kArt_muscle_getText (i));
 END
 
 /***** ARTWORD *****/
@@ -73,7 +69,9 @@ DO
 END
 
 FORM (Artword_draw, L"Draw one Artword tier", NULL)
-	ENUM (L"Muscle", Art_MUSCLE, enumi (Art_MUSCLE, Lungs))
+	OPTIONMENU (L"Muscle", kArt_muscle_LUNGS)
+	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+		OPTION (kArt_muscle_getText (ienum))
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
@@ -81,16 +79,18 @@ DO
 END
 
 DIRECT (Artword_edit)
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot edit an Artword from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Artword_getTarget, L"Get one Artword target", 0)
 	REAL (L"Time (seconds)", L"0.0")
-	ENUM (L"Muscle", Art_MUSCLE, enumi (Art_MUSCLE, Lungs))
+	OPTIONMENU (L"Muscle", kArt_muscle_LUNGS)
+	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+		OPTION (kArt_muscle_getText (ienum))
 	OK
 DO
 	Melder_information1 (Melder_double (Artword_getTarget ((Artword) ONLY (classArtword), GET_INTEGER (L"Muscle"), GET_REAL (L"Time"))));
@@ -101,7 +101,9 @@ DIRECT (Artword_help) Melder_help (L"Artword"); END
 FORM (Artword_setTarget, L"Set one Artword target", 0)
 	REAL (L"Time (seconds)", L"0.0")
 	REAL (L"Target value (0-1)", L"0.0")
-	ENUM (L"Muscle", Art_MUSCLE, enumi (Art_MUSCLE, Lungs))
+	OPTIONMENU (L"Muscle", kArt_muscle_LUNGS)
+	for (int ienum = 1; ienum <= kArt_muscle_MAX; ienum ++)
+		OPTION (kArt_muscle_getText (ienum))
 	OK
 DO
 	double tim = GET_REAL (L"Time");

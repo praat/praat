@@ -241,14 +241,14 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			case enumwa: {
 				if (wcslen (text) < 3) goto error;
 				text [wcslen (text) - 1] = '\0';   /* Remove trailing ">". */
-				int value = enum_search (my fieldData [i]. description -> tagType, text + 1);   /* Skip leading "<". */
+				int value = ((int (*) (const wchar_t *)) (my fieldData [i]. description -> tagType)) (text + 1);   /* Skip leading "<". */
 				if (value < 0) goto error;
 				* (signed char *) my fieldData [i]. address = value;
 			} break;
 			case lenumwa: {
 				if (wcslen (text) < 3) goto error;
 				text [wcslen (text) - 1] = '\0';   /* Remove trailing ">". */
-				int value = enum_search (my fieldData [i]. description -> tagType, text + 1);   /* Skip leading "<". */
+				int value = ((int (*) (const wchar_t *)) (my fieldData [i]. description -> tagType)) (text + 1);   /* Skip leading "<". */
 				if (value < 0) goto error;
 				* (signed short *) my fieldData [i]. address = value;
 			} break;
@@ -461,8 +461,8 @@ static wchar_t * singleTypeToText (void *address, int type, void *tagType, Melde
 		case dcomplexwa: { dcomplex value = * (dcomplex *) address;
 			MelderString_append4 (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
 		case charwa: MelderString_append1 (buffer, Melder_integer (* (wchar_t *) address)); break;
-		case enumwa: MelderString_append3 (buffer, L"<", enum_string (tagType, * (signed char *) address), L">"); break;
-		case lenumwa: MelderString_append3 (buffer, L"<", enum_string (tagType, * (signed short *) address), L">"); break;
+		case enumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed char *) address), L">"); break;
+		case lenumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
 		case booleanwa: MelderString_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
 		case questionwa: MelderString_append1 (buffer, * (signed char *) address ? L"<yes>" : L"<no>"); break;
 		case stringwa:
@@ -517,7 +517,7 @@ static void showStructMember (
 		long minimum, maximum;
 		if (arrayAddress == NULL) return;   /* No button for empty fields. */
 		Data_Description_evaluateInteger (structAddress, structDescription,
-			memberDescription -> min1,  & minimum);
+			memberDescription -> min1, & minimum);
 		Data_Description_evaluateInteger (structAddress, structDescription,
 			memberDescription -> max1, & maximum);
 		if (maximum < minimum) return;   /* No button if no elements. */
@@ -549,8 +549,8 @@ static void showStructMember (
 		 */
 		fieldData -> address = memberAddress;   /* Direct. */
 		fieldData -> description = memberDescription;
-		fieldData -> minimum = wcsequ (enum_string (memberDescription -> max1, 0), L"_") ? 1 : 0;
-		fieldData -> maximum = enum_length (memberDescription -> max1);
+		fieldData -> minimum = wcsequ (((const wchar_t * (*) (int)) memberDescription -> min1) (0), L"_") ? 1 : 0;
+		fieldData -> maximum = ((int (*) (const wchar_t *)) memberDescription -> max1) (L"\n");
 		fieldData -> rank = rank;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
 		GuiObject_show (fieldData -> button);
@@ -660,7 +660,7 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 
 		if (isSingleType) {
 			MelderString_append4 (& buffer, my description -> name, L" [",
-				my description -> rank == 3 ? enum_string (my description -> max1, ielement) : Melder_integer (ielement), L"]");
+				my description -> rank == 3 ? ((const wchar_t * (*) (int)) my description -> min1) (ielement) : Melder_integer (ielement), L"]");
 			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
 			GuiLabel_setString (fieldData -> label, buffer.string);
 			GuiObject_show (fieldData -> label);

@@ -122,33 +122,33 @@ static void draw (Manual me) {
 	HyperPage_pageTitle (me, page -> title);
 	for (paragraph = & page -> paragraphs [0]; paragraph -> type != 0; paragraph ++) {
 		switch (paragraph -> type) {
-			case  enumi (ManPage_TYPE, intro): HyperPage_intro (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, entry): HyperPage_entry (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, normal): HyperPage_paragraph (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, list_item): HyperPage_listItem (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, tag): HyperPage_listTag (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, definition): HyperPage_definition (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code): HyperPage_code (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, prototype): HyperPage_prototype (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, formula): HyperPage_formula (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, picture): HyperPage_picture (me, paragraph -> width,
+			case  kManPage_type_INTRO: HyperPage_intro (me, paragraph -> text); break;
+			case  kManPage_type_ENTRY: HyperPage_entry (me, paragraph -> text); break;
+			case  kManPage_type_NORMAL: HyperPage_paragraph (me, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM: HyperPage_listItem (me, paragraph -> text); break;
+			case  kManPage_type_TAG: HyperPage_listTag (me, paragraph -> text); break;
+			case  kManPage_type_DEFINITION: HyperPage_definition (me, paragraph -> text); break;
+			case  kManPage_type_CODE: HyperPage_code (me, paragraph -> text); break;
+			case  kManPage_type_PROTOTYPE: HyperPage_prototype (me, paragraph -> text); break;
+			case  kManPage_type_FORMULA: HyperPage_formula (me, paragraph -> text); break;
+			case  kManPage_type_PICTURE: HyperPage_picture (me, paragraph -> width,
 				paragraph -> height, paragraph -> draw); break;
-			case  enumi (ManPage_TYPE, script): HyperPage_script (me, paragraph -> width,
+			case  kManPage_type_SCRIPT: HyperPage_script (me, paragraph -> width,
 				paragraph -> height, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, list_item1): HyperPage_listItem1 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, list_item2): HyperPage_listItem2 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, list_item3): HyperPage_listItem3 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, tag1): HyperPage_listTag1 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, tag2): HyperPage_listTag2 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, tag3): HyperPage_listTag3 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, definition1): HyperPage_definition1 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, definition2): HyperPage_definition2 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, definition3): HyperPage_definition3 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code1): HyperPage_code1 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code2): HyperPage_code2 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code3): HyperPage_code3 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code4): HyperPage_code4 (me, paragraph -> text); break;
-			case  enumi (ManPage_TYPE, code5): HyperPage_code5 (me, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM1: HyperPage_listItem1 (me, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM2: HyperPage_listItem2 (me, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM3: HyperPage_listItem3 (me, paragraph -> text); break;
+			case  kManPage_type_TAG1: HyperPage_listTag1 (me, paragraph -> text); break;
+			case  kManPage_type_TAG2: HyperPage_listTag2 (me, paragraph -> text); break;
+			case  kManPage_type_TAG3: HyperPage_listTag3 (me, paragraph -> text); break;
+			case  kManPage_type_DEFINITION1: HyperPage_definition1 (me, paragraph -> text); break;
+			case  kManPage_type_DEFINITION2: HyperPage_definition2 (me, paragraph -> text); break;
+			case  kManPage_type_DEFINITION3: HyperPage_definition3 (me, paragraph -> text); break;
+			case  kManPage_type_CODE1: HyperPage_code1 (me, paragraph -> text); break;
+			case  kManPage_type_CODE2: HyperPage_code2 (me, paragraph -> text); break;
+			case  kManPage_type_CODE3: HyperPage_code3 (me, paragraph -> text); break;
+			case  kManPage_type_CODE4: HyperPage_code4 (me, paragraph -> text); break;
+			case  kManPage_type_CODE5: HyperPage_code5 (me, paragraph -> text); break;
 			default: break;
 		}
 	}

@@ -61,7 +61,7 @@ void gui_information (wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = new (InfoEditor);
 		TextEditor_init (InfoEditor_as_parent (theInfoEditor), Melder_topShell, L"");
-		Thing_setName (theInfoEditor, L"Praat: Info");
+		Thing_setName (theInfoEditor, L"Praat Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);
 	GuiWindow_show (theInfoEditor -> dialog);

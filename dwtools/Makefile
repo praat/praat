@@ -44,7 +44,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
-	FilterBank.o Formant_extensions.o \
+	FilterBank.o FormantGrid_extensions.o \
 	Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \

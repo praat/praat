@@ -42,7 +42,7 @@ END
 /***** EXPERIMENT_MFC *****/
 
 DIRECT (ExperimentMFC_run)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot run experiments from the command line.");
 	} else {
 		RunnerMFC runner = NULL;
@@ -55,7 +55,7 @@ DIRECT (ExperimentMFC_run)
 				return 0;
 			}
 		}
-		runner = RunnerMFC_create (theCurrentPraat -> topShell, L"listening experiments", experiments);   /* Transfer ownership of experiments (ref). */
+		runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experiments);   /* Transfer ownership of experiments (ref). */
 		if (! runner) return 0;
 		if (! praat_installEditorN (runner, experiments)) return 0;
 	}

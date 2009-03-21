@@ -36,6 +36,8 @@
 	#include "melder.h"
 #endif
 
+#include "abcio_enums.h"
+
 /* Numeric text input and output. */
 
 int texgeti1 (MelderReadText text);
@@ -50,8 +52,8 @@ double texgetr10 (MelderReadText text);
 fcomplex texgetc8 (MelderReadText text);
 dcomplex texgetc16 (MelderReadText text);
 char texgetc1 (MelderReadText text);
-short texgete1 (MelderReadText text, void *enumerated);
-short texgete2 (MelderReadText text, void *enumerated);
+short texgete1 (MelderReadText text, int (*getValue) (const wchar_t *));
+short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *));
 short texgeteb (MelderReadText text);
 short texgeteq (MelderReadText text);
 short texgetex (MelderReadText text);
@@ -76,8 +78,8 @@ void texputr8 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, 
 void texputc8 (MelderFile file, fcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texpute1 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texpute2 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void texpute2 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputeq (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputex (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
@@ -143,14 +145,14 @@ void bingetb (FILE *f);   void binputb (FILE *f);
 		binputb (f);
 */
 
-int bingete1 (FILE *f, void *enumerated);
-int bingete2 (FILE *f, void *enumerated);
+int bingete1 (FILE *f, int min, int max, const wchar_t *type);
+int bingete2 (FILE *f, int min, int max, const wchar_t *type);
 #define bingeteb bingeti1
 #define bingeteq bingeti1
 #define bingetex bingeti1
 
-void binpute1 (int value, FILE *f, void *enumerated);
-void binpute2 (int value, FILE *f, void *enumerated);
+void binpute1 (int value, FILE *f);
+void binpute2 (int value, FILE *f);
 #define binputeb binputi1
 #define binputeq binputi1
 #define binputex binputi1
@@ -248,8 +250,8 @@ void cacgetb (CACHE *f);   void cacputb (CACHE *f);
 unsigned int cacgetu1 (CACHE *f); void cacputu1 (unsigned int u, CACHE *f);
 unsigned int cacgetu2 (CACHE *f);   void cacputu2 (unsigned int i, CACHE *f);
 unsigned long cacgetu4 (CACHE *f);   void cacputu4 (unsigned long i, CACHE *f);
-int cacgete1 (CACHE *f, void *enumerated); void cacpute1 (int value, CACHE *f, void *enumerated);
-int cacgete2 (CACHE *f, void *enumerated);   void cacpute2 (int value, CACHE *f, void *enumerated);
+int cacgete1 (CACHE *f, const wchar_t *type); void cacpute1 (int value, CACHE *f);
+int cacgete2 (CACHE *f, const wchar_t *type);   void cacpute2 (int value, CACHE *f);
 #define cacgeteb cacgeti1
 #define cacgeteq cacgeti1
 #define cacgetex cacgeti1

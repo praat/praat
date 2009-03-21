@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2008 Paul Boersma
+ * Copyright (C) 1994-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/06/21 oo_LSTRINGW; removed oo_SSTRINGxxx
  * pb 2007/09/01 oo_BOOL
  * pb 2008/01/19 double
+ * pb 2009/03/21 modern enums
  */
 
 /*** Single types. ***/
@@ -93,8 +94,8 @@
 #define oo_WCHAR_ARRAY(x,cap,n)  oo_ARRAY (wchar_t, c2, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
-/* Sets with compile-time allocation of capacity. Declarations like: int x [1 + enumlength (Type)]; */
-/* First index is always 0, last index is enumlength (Type). */
+/* Sets with compile-time allocation of capacity. Declarations like: int x [1 + setType_MAX]; */
+/* First index is always 0, last index is setType_MAX. */
 
 #define oo_BYTE_SET(x,setType)  oo_SET (signed char, i1, x, setType)
 #define oo_SHORT_SET(x,setType)  oo_SET (short, i2, x, setType)
@@ -284,34 +285,34 @@
 
 #define oo_SIMPLE(type,storage,x)  type x;
 #define oo_ARRAY(type,storage,x,cap,n)  type x [cap];
-#define oo_SET(type,storage,x,setType)  type x [1 + enumlength (setType)];
+#define oo_SET(type,storage,x,setType)  type x [1 + setType##_MAX];
 #define oo_VECTOR(type,t,storage,x,min,max)  type *x;
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  type **x;
 
 #define oo_ENUMx(type,storage,Type,x)  type x;
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  type x [cap];
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + enumlength (setType)];
+#define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + setType##_MAX];
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  type *x;
 
 #define oo_STRINGx(storage,x)  char *x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  char *x [cap];
-#define oo_STRINGx_SET(storage,x,setType)  char *x [1 + enumlength (setType)];
+#define oo_STRINGx_SET(storage,x,setType)  char *x [1 + setType##_MAX];
 #define oo_STRINGx_VECTOR(storage,x,min,max)  char **x;
 
 #define oo_STRINGWx(storage,x)  wchar_t *x;
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];
-#define oo_STRINGWx_SET(storage,x,setType)  wchar_t *x [1 + enumlength (setType)];
+#define oo_STRINGWx_SET(storage,x,setType)  wchar_t *x [1 + setType##_MAX];
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  wchar_t **x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];
-#define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + enumlength (setType)];
+#define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + setType##_MAX];
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
 
 #define oo_WIDGET(x)  Widget x;
 #define oo_WIDGET_ARRAY(x,cap,n)  Widget x [cap];
-#define oo_WIDGET_SET(x,setType)  Widget x [1 + enumlength (setType)];
+#define oo_WIDGET_SET(x,setType)  Widget x [1 + setType##_MAX];
 #define oo_WIDGET_VECTOR_FROM(x,min,max)  Widget *x;
 
 #define oo_OBJECT(Class,version,x)  Class x;

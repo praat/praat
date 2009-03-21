@@ -40,6 +40,7 @@
  * pb 2009/01/18 Interpreter argument to UiForm callbacks
  * pb 2009/01/19 multiple Continue buttons in pause forms
  * pb 2009/03/09 UI_REAL_OR_UNDEFINED
+ * pb 2009/03/21 removed enums
  */
 
 #include <wctype.h>
@@ -72,8 +73,7 @@
 #define UI_BOOLEAN  11
 #define UI_RADIO  12
 #define UI_OPTIONMENU  13
-#define UI_ENUM  14
-#define UI_LIST  15
+#define UI_LIST  14
 
 #define UiField_members Thing_members \
 	int type; \
@@ -83,8 +83,6 @@
 	wchar_t *stringValue; const wchar_t *stringDefaultValue; \
 	char *stringValueA; \
 	Ordered options; \
-	void *enumerated; \
-	int includeZero; \
 	long numberOfStrings; \
 	const wchar_t **strings; \
 	Widget text, toggle, list, cascadeButton; \
@@ -223,8 +221,6 @@ static void UiField_setDefault (UiField me) {
 					}
 				}
 			#endif
-		} break; case UI_ENUM: {
-			GuiList_selectItem (my list, my integerDefaultValue + my includeZero);
 		} break; case UI_LIST: {
 			GuiList_selectItem (my list, my integerDefaultValue);
 		}
@@ -336,7 +332,7 @@ static int UiField_widgetToValue (UiField me) {
 			#endif
 			if (my integerValue == 0)
 				return Melder_error3 (L"No option chosen for `", my name, L"'.");
-		} break; case UI_ENUM: case UI_LIST: {
+		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
 			if (selected == NULL) {
 				Melder_warning1 (L"No items selected.");
@@ -346,8 +342,6 @@ static int UiField_widgetToValue (UiField me) {
 				my integerValue = selected [1];
 				NUMlvector_free (selected, 1);
 			}
-			if (my type == UI_ENUM && my includeZero)
-				my integerValue -= 1;
 		} break; case UI_COLOUR: {
 			wchar_t *string = GuiText_getString (my text);
 			if (colourToValue (me, string))
@@ -412,10 +406,6 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 				return Melder_error5
 					(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 			}
-		} break; case UI_ENUM: {
-			my integerValue = enum_search (my enumerated, string);
-			if (my integerValue < 0) return Melder_error5
-				(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 		} break; case UI_LIST: {
 			long i;
 			for (i = 1; i <= my numberOfStrings; i ++)
@@ -465,8 +455,6 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 			} else {
 				UiHistory_write (b -> name);
 			}
-		} break; case UI_ENUM: {
-			UiHistory_write (enum_string (my enumerated, my integerValue));
 		} break; case UI_LIST: {
 			if (isLast == FALSE && (my strings [my integerValue] [0] == '\0' || wcschr (my strings [my integerValue], ' '))) {
 				UiHistory_write (L"\"");
@@ -816,16 +804,6 @@ Any UiForm_addOptionMenu (I, const wchar_t *label, int defaultValue) {
 	return thee;
 }
 
-Any UiForm_addEnum (I, const wchar_t *label, void *enumerated, int defaultValue) {
-	iam (UiForm);
-	UiField thee = UiForm_addField (me, UI_ENUM, label);
-	if (thee == NULL) return NULL;
-	thy enumerated = enumerated;
-	thy integerDefaultValue = defaultValue;
-	thy includeZero = enum_string (enumerated, 0) [0] != '_';
-	return thee;
-}
-
 Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t **strings, long defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_LIST, label);
@@ -897,7 +875,7 @@ void UiForm_finish (I) {
 			thy type == UI_RADIO ? thy options -> size * Gui_RADIOBUTTON_HEIGHT +
 				(thy options -> size - 1) * Gui_RADIOBUTTON_SPACING :
 			thy type == UI_OPTIONMENU ? Gui_OPTIONMENU_HEIGHT :
-			thy type == UI_ENUM || thy type == UI_LIST ? LIST_HEIGHT :
+			thy type == UI_LIST ? LIST_HEIGHT :
 			thy type == UI_LABEL && thy stringValue [0] != '\0' && thy stringValue [wcslen (thy stringValue) - 1] != '.' &&
 				ifield != my numberOfFields ? textFieldHeight
 				#ifdef _WIN32
@@ -1047,21 +1025,6 @@ void UiForm_finish (I) {
 				field -> toggle = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, y, Gui_AUTOMATIC,
 					theFinishBuffer.string, NULL, NULL, 0);
-			} break;
-			case UI_ENUM:
-			{
-				int max = enum_length (field -> enumerated);
-				MelderString_copy (& theFinishBuffer, field -> formLabel);
-				#if motif
-				appendColon ();
-				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
-					theFinishBuffer.string, GuiLabel_RIGHT);
-				#endif
-				field -> list = GuiList_create (form, fieldX, fieldX + fieldWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
-				for (int i = field -> includeZero ? 0 : 1; i <= max; i ++) {
-					GuiList_insertItem (field -> list, enum_string (field -> enumerated, i), 0);
-				}
-				GuiObject_show (field -> list);
 			} break;
 			case UI_LIST:
 			{
@@ -1283,9 +1246,6 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 				}
 				#endif
 			}
-		} break; case UI_ENUM: {
-			if (value < 0 || value > enum_length (field -> enumerated)) value = 0;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, value + field -> includeZero);
 		} break; case UI_LIST: {
 			if (value < 1 || value > field -> numberOfStrings) value = 1;   /* Guard against incorrect prefs file. */
 			GuiList_selectItem (field -> list, value);
@@ -1339,10 +1299,6 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 				}
 			}
 			/* If not found: do nothing (guard against incorrect prefs file). */
-		} break; case UI_ENUM: {
-			long integerValue = enum_search (field -> enumerated, value);
-			if (integerValue < 0) integerValue = 0;   /* Guard against incorrect prefs file. */
-			GuiList_selectItem (field -> list, integerValue + field -> includeZero);
 		} break; case UI_LIST: {
 			long i;
 			for (i = 1; i <= field -> numberOfStrings; i ++)
@@ -1399,7 +1355,7 @@ long UiForm_getInteger (I, const wchar_t *fieldName) {
 	UiField field = findField (me, fieldName);
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: case UI_RADIO:
-			case UI_OPTIONMENU: case UI_ENUM: case UI_LIST:
+			case UI_OPTIONMENU: case UI_LIST:
 		{
 			return field -> integerValue;
 		} break; default: {
@@ -1414,7 +1370,7 @@ long UiForm_getInteger_check (I, const wchar_t *fieldName) {
 	UiField field = findField_check (me, fieldName); cherror
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: case UI_RADIO:
-			case UI_OPTIONMENU: case UI_ENUM: case UI_LIST:
+			case UI_OPTIONMENU: case UI_LIST:
 		{
 			return field -> integerValue;
 		} break; default: {
@@ -1436,8 +1392,6 @@ wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
-		} break; case UI_ENUM: {
-			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
 			return (wchar_t *) field -> strings [field -> integerValue];
 		} break; default: {
@@ -1456,8 +1410,6 @@ wchar_t * UiForm_getString_check (I, const wchar_t *fieldName) {
 		} break; case UI_RADIO: case UI_OPTIONMENU: {
 			UiOption b = field -> options -> item [field -> integerValue];
 			return b -> name;
-		} break; case UI_ENUM: {
-			return enum_string (field -> enumerated, field -> integerValue);
 		} break; case UI_LIST: {
 			return (wchar_t *) field -> strings [field -> integerValue];
 		} break; default: {
@@ -1498,13 +1450,6 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 				Melder_free (var -> stringValue);
 				UiOption b = field -> options -> item [field -> integerValue];
 				var -> stringValue = Melder_wcsdup (b -> name);
-			} break; case UI_ENUM: {
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
-				var -> numericValue = field -> integerValue;
-				MelderString_appendCharacter (& lowerCaseFieldName, '$');
-				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
-				Melder_free (var -> stringValue);
-				var -> stringValue = Melder_wcsdup (enum_string (field -> enumerated, field -> integerValue));
 			} break; case UI_LIST: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> integerValue;

@@ -2,7 +2,7 @@
 #define _Articulation_h_
 /* Articulation.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2002/07/16 GPL
+ * pb 2009/03/21
  */
 
 /* Art = Articulation */
@@ -42,9 +42,9 @@ Art Art_create (void);
 	Return value:
 		an array of double, with indices from enum Art.
 	Postconditions:
-		result -> art [enumi (Art_MUSCLE, Lungs)] == 0.0;
+		result -> art [kArt_muscle_LUNGS] == 0.0;
 		...
-		result -> art [enumi (Art_MUSCLE, Mylohyoid)] = 0.0;
+		result -> art [kArt_muscle_BUCCINATOR] = 0.0;
 */
 
 /* End of file Articulation.h */

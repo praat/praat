@@ -152,11 +152,11 @@ DO
 END
 
 DIRECT (LongSound_view)
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot view a LongSound from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -290,7 +290,7 @@ DIRECT (Sounds_combineToStereo)
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
 	if (! praat_new3 (Sounds_combineToStereo (sound1, sound2),
-		wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1)) return 0;
+		wcschr (theCurrentPraatObjects -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraatObjects -> list [i2]. name, ' ') + 1)) return 0;
 END
 
 DIRECT (Sounds_concatenate)
@@ -386,7 +386,7 @@ DIRECT (Sounds_convolve)
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
 	if (! praat_new3 (Sounds_convolve (sound1, sound2),
-		wcschr (theCurrentPraat -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraat -> list [i2]. name, ' ') + 1)) return 0;
+		wcschr (theCurrentPraatObjects -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraatObjects -> list [i2]. name, ' ') + 1)) return 0;
 END
 
 static int common_Sound_create (void *dia, Interpreter interpreter, bool allowStereo) {
@@ -575,18 +575,18 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	if (Thing_member (publish, classSpectrum)) {
 		int IOBJECT;
 		WHERE (SELECTED) {
-			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
+			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor2) return;
 			if (! praat_installEditor (editor2, IOBJECT)) Melder_flushError (NULL);
 		}
 	}
 }
 DIRECT (Sound_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a Sound from batch.");
 	} else {
 		WHERE (SELECTED) {
-			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
+			SoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (SoundEditor_as_Editor (editor), cb_SoundEditor_publish, NULL);
@@ -1104,7 +1104,7 @@ static void cb_SoundRecorder_publish (Any editor, void *closure, Any publish) {
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_mono)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
+	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 1) {
 			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
@@ -1113,7 +1113,7 @@ DIRECT (Sound_record_mono)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 1, theCurrentPraat -> context);
+		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 1, theCurrentPraatApplication -> context);
 		if (soundRecorder == NULL) return 0;
 		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);
@@ -1127,7 +1127,7 @@ static void cb_SoundRecorder_publish2 (Any editor, Any closure, Any publish1, An
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_stereo)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
+	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 2) {
 			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
@@ -1136,7 +1136,7 @@ DIRECT (Sound_record_stereo)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 2, theCurrentPraat -> context);
+		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 2, theCurrentPraatApplication -> context);
 		if (soundRecorder == NULL) return 0;
 		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);

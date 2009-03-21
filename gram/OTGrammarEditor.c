@@ -226,8 +226,8 @@ static void draw (OTGrammarEditor me) {
 	OTGrammar ot = my data;
 	static wchar_t text [1000];
 	Graphics_clearWs (my g);
-	if (ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
-		ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
+		ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
 		HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
 	} else {
@@ -235,8 +235,8 @@ static void draw (OTGrammarEditor me) {
 	}
 	for (long icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
-		if (ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG) ||
-			ot -> decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialMaximumEntropy))
+		if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
+			ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f\t %ls",
 				icons == my selected ? L"\\sp " : L"   ", icons, constraint -> name,

@@ -287,7 +287,7 @@ int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter in
 	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my formants -> size; irow ++) {
-		RealTier bandwidth = my bandwidths -> item [irow];
+		RealTier bandwidth = thy bandwidths -> item [irow];
 		for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
 			struct Formula_Result result;
 			Formula_run (irow, icol, & result); cherror
@@ -307,7 +307,7 @@ int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter i
 	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
 	if (thee == NULL) thee = me;
 	for (long irow = 1; irow <= my formants -> size; irow ++) {
-		RealTier formant = my formants -> item [irow];
+		RealTier formant = thy formants -> item [irow];
 		for (long icol = 1; icol <= formant -> points -> size; icol ++) {
 			struct Formula_Result result;
 			Formula_run (irow, icol, & result); cherror

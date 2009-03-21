@@ -147,7 +147,7 @@ static int readOnePage (ManPages me, MelderReadText text) {
 	for (par = page -> paragraphs;; par ++) {
 		wchar_t link [501], fileName [256];
 		const wchar_t *p;
-		par -> type = texgete1 (text, & enum_ManPage_TYPE);
+		par -> type = texgete1 (text, kManPage_type_getValue);
 		if (Melder_hasError ()) {
 			if (wcsstr (Melder_getError (), L"end of text")) {
 				Melder_clearError ();
@@ -156,7 +156,7 @@ static int readOnePage (ManPages me, MelderReadText text) {
 				return 0;
 			}
 		}
-		if (par -> type == enumi (ManPage_TYPE, script)) {
+		if (par -> type == kManPage_type_SCRIPT) {
 			par -> width = texgetr4 (text);
 			par -> height = texgetr4 (text);
 		}
@@ -502,14 +502,14 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, Me
 	for (paragraph = paragraphs; paragraph -> type != 0; paragraph ++) {
 		const wchar_t *p = paragraph -> text;
 		int type = paragraph -> type, inTable;
-		int isListItem = type == enumi (ManPage_TYPE, list_item) ||
-			(type >= enumi (ManPage_TYPE, list_item1) && type <= enumi (ManPage_TYPE, list_item3));
-		int isTag = type == enumi (ManPage_TYPE, tag) ||
-			(type >= enumi (ManPage_TYPE, tag1) && type <= enumi (ManPage_TYPE, tag3));
-		int isDefinition = type == enumi (ManPage_TYPE, definition) ||
-			(type >= enumi (ManPage_TYPE, definition1) && type <= enumi (ManPage_TYPE, definition3));
-		/*int isCode = type == enumi (ManPage_TYPE, code) ||
-			(type >= enumi (ManPage_TYPE, code1) && type <= enumi (ManPage_TYPE, code5));*/
+		int isListItem = type == kManPage_type_LIST_ITEM ||
+			(type >= kManPage_type_LIST_ITEM1 && type <= kManPage_type_LIST_ITEM3);
+		int isTag = type == kManPage_type_TAG ||
+			(type >= kManPage_type_TAG1 && type <= kManPage_type_TAG3);
+		int isDefinition = type == kManPage_type_DEFINITION ||
+			(type >= kManPage_type_DEFINITION1 && type <= kManPage_type_DEFINITION3);
+		/*int isCode = type == kManPage_type_CODE ||
+			(type >= kManPage_type_CODE1 && type <= kManPage_type_CODE5);*/
 
 		/*
 		 * We do not recognize pictures yet.

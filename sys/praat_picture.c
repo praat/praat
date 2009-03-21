@@ -46,13 +46,11 @@
 #include "machine.h"
 #include "Formula.h"
 
-static int praat_font;
-static int praat_size;
 static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs (void) {
-	Preferences_addEnum (L"Picture.font", & praat_font, kGraphics_font, DEFAULT);
-	Preferences_addInt (L"Picture.fontSize", & praat_size, 10);
+	Preferences_addEnum (L"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, DEFAULT);
+	Preferences_addInt (L"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
 	Preferences_addBool (L"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
 
@@ -62,8 +60,6 @@ static Picture praat_picture;
 
 /********** CALLBACKS OF THE PICTURE MENUS **********/
 
-static double x1NDC = 0.0, x2NDC = 6.0, y1NDC = 8.0, y2NDC = 12.0;
-
 /***** "Font" MENU: font part *****/
 
 #if 0
@@ -72,15 +68,15 @@ static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, pr
 static Widget praatButton_fonts [1 + kGraphics_font_MAX];
 
 static void updateFontMenu (void) {
-	if (! theCurrentPraat -> batch) {
-		if (praat_font < kGraphics_font_MIN) praat_font = kGraphics_font_MIN;
-		if (praat_font > kGraphics_font_MAX) praat_font = kGraphics_font_MAX;
+	if (! theCurrentPraatApplication -> batch) {
+		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
+		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;
 		#if gtk
 //			if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font])))
 				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font]), TRUE);
 		#elif motif
 			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
-				XmToggleButtonGadgetSetState (praatButton_fonts [i], praat_font == i, 0);
+				XmToggleButtonGadgetSetState (praatButton_fonts [i], theCurrentPraatPicture -> font == i, 0);
 			}
 		#endif
 	}
@@ -89,8 +85,8 @@ static void setFont (int font) {
 	praat_picture_open ();
 	Graphics_setFont (GRAPHICS, font);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_font = font;
+	theCurrentPraatPicture -> font = font;
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateFontMenu ();
 	}
 }
@@ -103,9 +99,9 @@ DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 
 static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		#if gtk
-			switch (praat_size) {
+			switch (theCurrentPraatPicture -> fontSize) {
 				case 10:
 //					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_10)))
 						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_10), TRUE);
@@ -128,11 +124,11 @@ static void updateSizeMenu (void) {
 					break;
 			}
 		#elif motif
-			XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
-			XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
-			XmToggleButtonGadgetSetState (praatButton_14, praat_size == 14, 0);
-			XmToggleButtonGadgetSetState (praatButton_18, praat_size == 18, 0);
-			XmToggleButtonGadgetSetState (praatButton_24, praat_size == 24, 0);
+			XmToggleButtonGadgetSetState (praatButton_10, theCurrentPraatPicture -> fontSize == 10, 0);
+			XmToggleButtonGadgetSetState (praatButton_12, theCurrentPraatPicture -> fontSize == 12, 0);
+			XmToggleButtonGadgetSetState (praatButton_14, theCurrentPraatPicture -> fontSize == 14, 0);
+			XmToggleButtonGadgetSetState (praatButton_18, theCurrentPraatPicture -> fontSize == 18, 0);
+			XmToggleButtonGadgetSetState (praatButton_24, theCurrentPraatPicture -> fontSize == 24, 0);
 		#endif
 	}
 }
@@ -140,8 +136,8 @@ static void setFontSize (int fontSize) {
 	praat_picture_open ();
 	Graphics_setFontSize (GRAPHICS, fontSize);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_size = fontSize;
+	theCurrentPraatPicture -> fontSize = fontSize;
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateSizeMenu ();
 	}
 }
@@ -154,7 +150,7 @@ DIRECT (24) setFontSize (24); END
 FORM (Font_size, L"Praat picture: Font size", L"Font menu")
 	NATURAL (L"Font size (points)", L"10")
 	OK
-SET_INTEGER (L"Font size", (long) praat_size);
+SET_INTEGER (L"Font size", (long) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (GET_INTEGER (L"Font size"));
 END
@@ -185,7 +181,7 @@ END
 
 static Widget praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		#if gtk
 //			gtk_check_menu_item_set_active((praat_mouseSelectsInnerViewport ?
 //			                                  GTK_CHECK_MENU_ITEM(praatButton_innerViewport) :
@@ -198,7 +194,7 @@ static void updateViewportMenu (void) {
 }
 
 DIRECT (MouseSelectsInnerViewport)
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
 	praat_picture_close ();
@@ -206,7 +202,7 @@ DIRECT (MouseSelectsInnerViewport)
 END
 
 DIRECT (MouseSelectsOuterViewport)
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
 	praat_picture_close ();
@@ -223,18 +219,18 @@ FORM (SelectInnerViewport, L"Praat picture: Select inner viewport", L"Select inn
 	REAL (L"left Vertical range (inches)", L"0.0")
 	REAL (L"right Vertical range (inches)", L"6.0")
 	OK
-double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
-if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
-if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
-SET_REAL (L"left Horizontal range", x1NDC + xmargin);
-SET_REAL (L"right Horizontal range", x2NDC - xmargin);
-SET_REAL (L"left Vertical range", 12-y2NDC + ymargin);
-SET_REAL (L"right Vertical range", 12-y1NDC - ymargin);
+double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin);
+SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
+SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
+SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin);
 DO
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
-	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
+	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
 	if (left == right) {
@@ -247,11 +243,11 @@ DO
 		return Melder_error1 (L"Please change the vertical range.");
 	}
 	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
-	x1NDC = left - xmargin;
-	x2NDC = right + xmargin;
-	y1NDC = 12-bottom - ymargin;
-	y2NDC = 12-top + ymargin;
-	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
+	theCurrentPraatPicture -> x1NDC = left - xmargin;
+	theCurrentPraatPicture -> x2NDC = right + xmargin;
+	theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
+	theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
+	Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
 END
 
 FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select outer viewport...")
@@ -264,12 +260,12 @@ FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select out
 	REAL (L"left Vertical range (inches)", L"0.0")
 	REAL (L"right Vertical range (inches)", L"6.0")
 	OK
-SET_REAL (L"left Horizontal range", x1NDC);
-SET_REAL (L"right Horizontal range", x2NDC);
-SET_REAL (L"left Vertical range", 12-y2NDC);
-SET_REAL (L"right Vertical range", 12-y1NDC);
+SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC);
+SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC);
+SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
+SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
 DO
-	if (theCurrentPraat != & theForegroundPraat) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	if (left == right) {
@@ -282,11 +278,11 @@ DO
 		return Melder_error1 (L"Please change the vertical range.");
 	}
 	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
-	x1NDC = left;
-	x2NDC = right;
-	y1NDC = 12-bottom;
-	y2NDC = 12-top;
-	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
+	theCurrentPraatPicture -> x1NDC = left;
+	theCurrentPraatPicture -> x2NDC = right;
+	theCurrentPraatPicture -> y1NDC = 12-bottom;
+	theCurrentPraatPicture -> y2NDC = 12-top;
+	Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
 END
 
 FORM (ViewportText, L"Praat picture: Viewport text", L"Viewport text...")
@@ -319,10 +315,6 @@ END
 
 /***** "Pen" MENU *****/
 
-static int praat_lineType = Graphics_DRAWN;
-static int praat_colour = Graphics_BLACK;
-static double praat_lineWidth = 1.0, praat_arrowSize = 1.0;
-
 #if 0
 static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
 static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
@@ -335,16 +327,16 @@ static Widget praatButton_colours [16];
 
 
 static void updatePenMenu (void) {
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 	#if gtk
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_lines[praat_lineType]), TRUE);
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_colours[praat_colour]), TRUE);
 	#elif motif
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
-			XmToggleButtonGadgetSetState (praatButton_lines [i], praat_lineType == i, 0);
+			XmToggleButtonGadgetSetState (praatButton_lines [i], theCurrentPraatPicture -> lineType == i, 0);
 		}
 		for (int i = Graphics_BLACK; i <= Graphics_GREY; i ++) {
-			XmToggleButtonGadgetSetState (praatButton_colours [i], praat_colour == i, 0);
+			XmToggleButtonGadgetSetState (praatButton_colours [i], theCurrentPraatPicture -> colour == i, 0);
 		}
 	#endif
 	}
@@ -353,8 +345,8 @@ static void setLineType (int lineType) {
 	praat_picture_open ();
 	Graphics_setLineType (GRAPHICS, lineType);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_lineType = lineType;
+	theCurrentPraatPicture -> lineType = lineType;
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
 	}
 }
@@ -365,37 +357,33 @@ DIRECT (Dashed_line) setLineType (Graphics_DASHED); END
 FORM (Line_width, L"Praat picture: Line width", 0)
 	POSITIVE (L"Line width", L"1.0")
 	OK
-SET_REAL (L"Line width", praat_lineWidth);
+SET_REAL (L"Line width", theCurrentPraatPicture -> lineWidth);
 DO
 	double lineWidth = GET_REAL (L"Line width");
 	praat_picture_open ();
 	Graphics_setLineWidth (GRAPHICS, lineWidth);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_lineWidth = lineWidth;
-	}
+	theCurrentPraatPicture -> lineWidth = lineWidth;
 END
 
 FORM (Arrow_size, L"Praat picture: Arrow size", 0)
 	POSITIVE (L"Arrow size", L"1.0")
 	OK
-SET_REAL (L"Arrow size", praat_arrowSize);
+SET_REAL (L"Arrow size", theCurrentPraatPicture -> arrowSize);
 DO
 	double arrowSize = GET_REAL (L"Arrow size");
 	praat_picture_open ();
 	Graphics_setArrowSize (GRAPHICS, arrowSize);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_arrowSize = arrowSize;
-	}
+	theCurrentPraatPicture -> arrowSize = arrowSize;
 END
 
 static void setColour (int colour) {
 	praat_picture_open ();
 	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
-	if (theCurrentPraat == & theForegroundPraat) {
-		praat_colour = colour;
+	theCurrentPraatPicture -> colour = colour;
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
 	}
 }
@@ -440,7 +428,7 @@ static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sending
 	static Any dia;
 	(void) interpreter;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to EPS file",
 		DO_Picture_writeToEpsFile, NULL, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -459,7 +447,7 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wch
 	static Any dia;
 	(void) interpreter;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -475,7 +463,7 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const w
 	static Any dia;
 	(void) interpreter;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -491,7 +479,7 @@ static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t
 	static Any dia;
 	(void) interpreter;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Praat picture file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Praat picture file",
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.prapic");
@@ -522,7 +510,7 @@ END
 		static Any dia;
 		(void) interpreter;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Mac PICT file",
+		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Mac PICT file",
 			DO_Picture_writeToMacPictFile, NULL, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.pict");
@@ -539,7 +527,7 @@ END
 		static Any dia;
 		(void) interpreter;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, L"Write to Windows metafile",
+		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Windows metafile",
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.emf");
@@ -1259,8 +1247,8 @@ FORM (dxMMtoWC, L"Compute horizontal distance in world coordinates", 0)
 	OK
 DO
 	double wc;
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
@@ -1272,8 +1260,8 @@ FORM (dxWCtoMM, L"Compute horizontal distance in millimetres", 0)
 	OK
 DO
 	double mm;
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
@@ -1285,8 +1273,8 @@ FORM (dyMMtoWC, L"Compute vertical distance in world coordinates", 0)
 	OK
 DO
 	double wc;
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
@@ -1298,8 +1286,8 @@ FORM (dyWCtoMM, L"Compute vertical distance in millimetres", 0)
 	OK
 DO
 	double mm;
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
@@ -1311,9 +1299,9 @@ FORM (textWidth_wc, L"Text width in world coordinates", 0)
 	OK
 DO
 	double wc;
-	Graphics_setFont (GRAPHICS, praat_font);
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_textWidth (GRAPHICS, GET_STRING (L"text"));
 	Graphics_unsetInner (GRAPHICS);
@@ -1325,9 +1313,9 @@ FORM (textWidth_mm, L"Text width in millimetres", 0)
 	OK
 DO
 	double mm;
-	Graphics_setFont (GRAPHICS, praat_font);
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING (L"text")));
 	Graphics_unsetInner (GRAPHICS);
@@ -1342,9 +1330,9 @@ FORM (textWidth_ps_wc, L"PostScript text width in world coordinates", 0)
 	OK
 DO
 	double wc;
-	Graphics_setFont (GRAPHICS, praat_font);
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
@@ -1359,9 +1347,9 @@ FORM (textWidth_ps_mm, L"PostScript text width in millimetres", 0)
 	OK
 DO
 	double mm;
-	Graphics_setFont (GRAPHICS, praat_font);
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
 	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
@@ -1375,43 +1363,43 @@ DIRECT (AboutTextStyles) Melder_help (L"Text styles"); END
 DIRECT (PhoneticSymbols) Melder_help (L"Phonetic symbols"); END
 DIRECT (Picture_settings_report)
 	MelderInfo_open ();
-	MelderInfo_writeLine3 (L"Outer viewport left: ", Melder_double (x1NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport right: ", Melder_double (x2NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport top: ", Melder_double (12-y2NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport bottom: ", Melder_double (12-y1NDC), L" inches");
-	MelderInfo_writeLine3 (L"Font size: ", Melder_double (praat_size), L" points");
-	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
-	if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
-	if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
-	MelderInfo_writeLine3 (L"Inner viewport left: ", Melder_double (x1NDC + xmargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport right: ", Melder_double (x2NDC - xmargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport top: ", Melder_double (12-y2NDC + ymargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport bottom: ", Melder_double (12-y1NDC - ymargin), L" inches");
-	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (praat_font));
+	MelderInfo_writeLine3 (L"Outer viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC), L" inches");
+	MelderInfo_writeLine3 (L"Outer viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC), L" inches");
+	MelderInfo_writeLine3 (L"Font size: ", Melder_double (theCurrentPraatPicture -> fontSize), L" points");
+	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+	MelderInfo_writeLine3 (L"Inner viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC + xmargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC - xmargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC + ymargin), L" inches");
+	MelderInfo_writeLine3 (L"Inner viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC - ymargin), L" inches");
+	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
 	MelderInfo_writeLine2 (L"Line type: ",
-		praat_lineType == Graphics_DRAWN ? L"Solid" :
-		praat_lineType == Graphics_DOTTED ? L"Dotted" :
-		praat_lineType == Graphics_DASHED ? L"Dashed" :
+		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? L"Solid" :
+		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? L"Dotted" :
+		theCurrentPraatPicture -> lineType == Graphics_DASHED ? L"Dashed" :
 		L"(unknown)");
-	MelderInfo_writeLine2 (L"Line width: ", Melder_double (praat_lineWidth));
-	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (praat_arrowSize));
+	MelderInfo_writeLine2 (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
+	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
 	MelderInfo_writeLine2 (L"Colour: ",
-		praat_colour == Graphics_WHITE ? L"White" :
-		praat_colour == Graphics_BLACK ? L"Black" :
-		praat_colour == Graphics_GREY ? L"Grey" :
-		praat_colour == Graphics_SILVER ? L"Silver" :
-		praat_colour == Graphics_TEAL ? L"Teal" :
-		praat_colour == Graphics_RED ? L"Red" :
-		praat_colour == Graphics_GREEN ? L"Green" :
-		praat_colour == Graphics_BLUE ? L"Blue" :
-		praat_colour == Graphics_MAGENTA ? L"Magenta" :
-		praat_colour == Graphics_OLIVE ? L"Olive" :
-		praat_colour == Graphics_NAVY ? L"Navy" :
-		praat_colour == Graphics_YELLOW ? L"Yellow" :
-		praat_colour == Graphics_CYAN ? L"Cyan" :
-		praat_colour == Graphics_MAROON ? L"Maroon" :
-		praat_colour == Graphics_PURPLE ? L"Purple" :
-		praat_colour == Graphics_LIME ? L"Lime" :
+		theCurrentPraatPicture -> colour == Graphics_WHITE ? L"White" :
+		theCurrentPraatPicture -> colour == Graphics_BLACK ? L"Black" :
+		theCurrentPraatPicture -> colour == Graphics_GREY ? L"Grey" :
+		theCurrentPraatPicture -> colour == Graphics_SILVER ? L"Silver" :
+		theCurrentPraatPicture -> colour == Graphics_TEAL ? L"Teal" :
+		theCurrentPraatPicture -> colour == Graphics_RED ? L"Red" :
+		theCurrentPraatPicture -> colour == Graphics_GREEN ? L"Green" :
+		theCurrentPraatPicture -> colour == Graphics_BLUE ? L"Blue" :
+		theCurrentPraatPicture -> colour == Graphics_MAGENTA ? L"Magenta" :
+		theCurrentPraatPicture -> colour == Graphics_OLIVE ? L"Olive" :
+		theCurrentPraatPicture -> colour == Graphics_NAVY ? L"Navy" :
+		theCurrentPraatPicture -> colour == Graphics_YELLOW ? L"Yellow" :
+		theCurrentPraatPicture -> colour == Graphics_CYAN ? L"Cyan" :
+		theCurrentPraatPicture -> colour == Graphics_MAROON ? L"Maroon" :
+		theCurrentPraatPicture -> colour == Graphics_PURPLE ? L"Purple" :
+		theCurrentPraatPicture -> colour == Graphics_LIME ? L"Lime" :
 		L"(unknown)");
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
@@ -1431,32 +1419,32 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 {
 	(void) closure;
 	Melder_assert (p == praat_picture);
-	x1NDC = selx1;
-	x2NDC = selx2;
-	y1NDC = sely1;
-	y2NDC = sely2;
+	theCurrentPraatPicture -> x1NDC = selx1;
+	theCurrentPraatPicture -> x2NDC = selx2;
+	theCurrentPraatPicture -> y1NDC = sely1;
+	theCurrentPraatPicture -> y2NDC = sely2;
 	if (praat_mouseSelectsInnerViewport) {
 		int fontSize = Graphics_inqFontSize (GRAPHICS);
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
-		if (ymargin > 0.4 * (y2NDC - y1NDC)) ymargin = 0.4 * (y2NDC - y1NDC);
-		if (xmargin > 0.4 * (x2NDC - x1NDC)) xmargin = 0.4 * (x2NDC - x1NDC);
+		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
 		UiHistory_write (L"\nSelect inner viewport... ");
-		UiHistory_write (Melder_single (x1NDC + xmargin));
+		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC + xmargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (x2NDC - xmargin));
+		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC - xmargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (12-y2NDC + ymargin));
+		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC + ymargin));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (12-y1NDC - ymargin));
+		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC - ymargin));
 	} else {
 		UiHistory_write (L"\nSelect outer viewport... ");
-		UiHistory_write (Melder_single (x1NDC));
+		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (x2NDC));
+		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (12-y2NDC));
+		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC));
 		UiHistory_write (L" ");
-		UiHistory_write (Melder_single (12-y1NDC));
+		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC));
 	}
 }
 
@@ -1482,10 +1470,10 @@ void praat_picture_exit (void) {
 }
 
 void praat_picture_open (void) {
-	double x1WC, x2WC, y1WC, y2WC;
-	if (theCurrentPraat != & theForegroundPraat) return;
-	Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
-	if (! theCurrentPraat -> batch) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
+	}
+	if (! theCurrentPraatApplication -> batch) {
 		#if motif
 			XtMapWidget (shell);
 			XMapRaised (XtDisplay (shell), XtWindow (shell)); 
@@ -1498,21 +1486,24 @@ void praat_picture_open (void) {
 	/* This is especially necessary after an 'erase picture': */
 	/* the output attributes that were set by the user before the 'erase' */
 	/* must be recorded before copying to a PostScript file. */
-	Graphics_setFont (GRAPHICS, praat_font);
-	Graphics_setFontSize (GRAPHICS, praat_size);
-	Graphics_setLineType (GRAPHICS, praat_lineType);
-	Graphics_setLineWidth (GRAPHICS, praat_lineWidth);
-	Graphics_setArrowSize (GRAPHICS, praat_arrowSize);
-	Graphics_setColour (GRAPHICS, praat_colour);
-	Graphics_setViewport (GRAPHICS, x1NDC, x2NDC, y1NDC, y2NDC);
-	/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
+	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
+	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
+	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);
+	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
+	Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize);
+	Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour);
+	/*if (theCurrentPraat == & theForegroundPraat)*/ {
+		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+		/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
+		double x1WC, x2WC, y1WC, y2WC;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+		Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
+	}
 }
 
 void praat_picture_close (void) {
-	if (theCurrentPraat != & theForegroundPraat) return;
-	if (! theCurrentPraat -> batch) {
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;
+	if (! theCurrentPraatApplication -> batch) {
 		Picture_highlight (praat_picture);
 		#if gtk
 			// TODO: Tijdelijke fix; dit exposed de selectie, maar voor bijvoorbeeld 'text' die buiten
@@ -1537,18 +1528,26 @@ void praat_picture_init (void) {
 	Widget dialog, scrollWindow, menuBar, drawingArea = NULL;
 	int margin, width, height, resolution, x;
 	static MelderString itemTitle_search = { 0 };
+	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+	theCurrentPraatPicture -> colour = Graphics_BLACK;
+	theCurrentPraatPicture -> lineWidth = 1.0;
+	theCurrentPraatPicture -> arrowSize = 1.0;
+	theCurrentPraatPicture -> x1NDC = 0.0;
+	theCurrentPraatPicture -> x2NDC = 6.0;
+	theCurrentPraatPicture -> y1NDC = 8.0;
+	theCurrentPraatPicture -> y2NDC = 12.0;
 
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		char pictureWindowTitle [100];
 		// Ook al eerder gezien... Migreren naar UI?
 		#if gtk
-	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (theCurrentPraat -> topShell)));
+	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (theCurrentPraatApplication -> topShell)));
 	                int screenWidth = gdk_screen_get_width (screen);
 //	                int screenHeight = gdk_screen_get_height (screen);
 		#elif motif
-			int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
+			int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraatApplication -> topShell)));
 		#endif
-		resolution = Gui_getResolution (theCurrentPraat -> topShell);
+		resolution = Gui_getResolution (theCurrentPraatApplication -> topShell);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
@@ -1564,8 +1563,8 @@ void praat_picture_init (void) {
 			x = screenWidth - width - 10;
 			width += margin * 2;
 		#endif
-		sprintf (pictureWindowTitle, "%s picture", praatP.title);
-		dialog = GuiWindow_create (theCurrentPraat -> topShell, x, Gui_AUTOMATIC, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
+		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
+		dialog = GuiWindow_create (theCurrentPraatApplication -> topShell, x, Gui_AUTOMATIC, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
 		shell = GuiObject_parent (dialog);
 		#ifdef UNIX
 			#if motif
@@ -1574,7 +1573,7 @@ void praat_picture_init (void) {
 		#endif
 		menuBar = Gui_addMenuBar (dialog);
 	}
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		fileMenu = GuiMenuBar_addMenu (menuBar, L"File", 0);
 		editMenu = GuiMenuBar_addMenu (menuBar, L"Edit", 0);
 		marginsMenu = GuiMenuBar_addMenu (menuBar, L"Margins", 0);
@@ -1741,7 +1740,7 @@ void praat_picture_init (void) {
 	MelderString_append3 (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
 	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
 
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
 		#if gtk
 			// TODO: GuiScrollWindow
@@ -1784,10 +1783,10 @@ void praat_picture_init (void) {
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
-	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);	
+	praat_picture = Picture_create (drawingArea, ! theCurrentPraatApplication -> batch);	
 	// READ THIS!
 	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
-	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
+	theCurrentPraatPicture -> graphics = Picture_getGraphics (praat_picture);
 
 	updatePenMenu ();
 	updateFontMenu ();
@@ -1799,7 +1798,7 @@ void praat_picture_prefsChanged (void) {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	Graphics_setFontSize (theCurrentPraat -> graphics, praat_size);   /* So that the thickness of the selection rectangle is correct. */
+	Graphics_setFontSize (theCurrentPraatPicture -> graphics, theCurrentPraatPicture -> fontSize);   /* So that the thickness of the selection rectangle is correct. */
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport);
 }
 

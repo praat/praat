@@ -31,8 +31,6 @@
 	#include "Graphics.h"
 #endif
 
-#define Artword_maximumNumberOfTargets 100
-
 #include "Artword_def.h"
 
 #define Artword_methods  Data_methods

@@ -47,6 +47,7 @@
  * pb 2009/01/04 Interpreter_voidExpression
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/01/20 pause forms
+ * pb 2009/03/17 split up structPraat
  */
 
 #include <ctype.h>
@@ -1265,12 +1266,12 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						Melder_free (var -> stringValue);
 						var -> stringValue = value;   /* var becomes owner */
 					} else if (withFile == 2) {
-						if (theCurrentPraat != & theForegroundPraat) error1 (L"Commands that write to a file are not available inside pictures.")
+						if (theCurrentPraatObjects != & theForegroundPraatObjects) error1 (L"Commands that write to a file are not available inside pictures.")
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) error3 (L"Variable ", command2.string, L" undefined.")
 						MelderFile_appendText (& file, var -> stringValue); cherror
 					} else {
-						if (theCurrentPraat != & theForegroundPraat) error1 (L"Commands that write to a file are not available inside pictures.")
+						if (theCurrentPraatObjects != & theForegroundPraatObjects) error1 (L"Commands that write to a file are not available inside pictures.")
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) error3 (L"Variable ", command2.string, L" undefined.")
 						MelderFile_writeText (& file, var -> stringValue); cherror
@@ -1384,7 +1385,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 							Melder_divertInfo (NULL);
 							error1 (L"No objects selected. Cannot assign ID to variable.")
 						} else {
-							value = theCurrentPraat -> list [result]. id;
+							value = theCurrentPraatObjects -> list [result]. id;
 						}
 					} else {
 						value = Melder_atof (valueString.string);   /* Including --undefined-- */

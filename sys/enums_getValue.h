@@ -1,6 +1,6 @@
 /* enums_getValue.h
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /*
- * pb 2007/12/05
+ * pb 2009/03/21
  */
 
-/* See enum.h */
+/* See enums.h */
 
 /* For C files. */
 
@@ -32,6 +32,9 @@
 #define enums_begin(type,minimum)  int type##_getValue (const wchar_t *testText) {
 #define enums_add(type,value,which,text)  if (Melder_wcsequ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
 #define enums_alt(type,which,text)  if (Melder_wcsequ_firstCharacterCaseInsensitive (testText, text)) return type##_##which;
-#define enums_end(type,maximum,def) return type##_DEFAULT; }
+#define enums_end(type,maximum,def) \
+	if (wcsequ (testText, L"\t")) return type##_DEFAULT; \
+	if (wcsequ (testText, L"\n")) return maximum; \
+	return -1; }
 
 /* End of file enums_getValue.h */

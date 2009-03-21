@@ -24,7 +24,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
  * pb 2008/01/19 NUM##storage
- * pb 2009/02/01
+ * pb 2009/03/21 modern enums
  */
 
 #include "oo_undef.h"
@@ -38,7 +38,7 @@
 		my x [i] = binget##storage (f);
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		my x [i] = binget##storage (f);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
@@ -49,22 +49,22 @@
 	    ! (my x = NUM##t##matrix_readBinary_##storage (row1, row2, col1, col2, f))) return 0;
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	if ((my x = binget##storage (f, & enum_##Type)) < 0) return 0;
+	if ((my x = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	for (int i = 0; i < n; i ++) \
-		if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0;
+		if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
-		if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
 		if (! (my x = NUM##t##vector (min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
-			if ((my x [i] = binget##storage (f, & enum_##Type)) < 0) return 0; \
+			if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0; \
 	}
 
 #define oo_STRINGx(storage,x)  \
@@ -76,7 +76,7 @@
 		if (! (my x [i] = binget##storage (f))) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! (my x [i] = binget##storage (f))) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -95,7 +95,7 @@
 		if (! (my x [i] = binget##storage (f))) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! (my x [i] = binget##storage (f))) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
@@ -114,7 +114,7 @@
 		if (! Type##_readBinary (& my x [i], f)) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Type##_readBinary (& my x [i], f)) return 0;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

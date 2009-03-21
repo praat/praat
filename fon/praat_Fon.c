@@ -148,7 +148,7 @@ Graphics Movie_create (const wchar_t *title, int width, int height) {
 	static Graphics graphics;
 	static Widget dialog, drawingArea;
 	if (! graphics) {
-		dialog = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
+		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
 		GuiDialog_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
@@ -193,14 +193,14 @@ DIRECT (AmplitudeTier_downto_TableOfReal)
 END
 
 DIRECT (AmplitudeTier_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit an AmplitudeTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classAmplitudeTier)
-			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -446,14 +446,14 @@ DIRECT (DurationTier_downto_PointProcess)
 END
 
 DIRECT (DurationTier_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a DurationTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classDurationTier)
-			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -933,11 +933,11 @@ static void cb_FormantGridEditor_publish (Any editor, void *closure, Any publish
 	praat_updateSelection ();
 }
 DIRECT (FormantGrid_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a FormantGrid from batch.");
 	} else {
 		WHERE (SELECTED) {
-			FormantGridEditor editor = FormantGridEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
+			FormantGridEditor editor = FormantGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (FormantGridEditor_as_Editor (editor), cb_FormantGridEditor_publish, NULL);
 		}
@@ -1391,14 +1391,14 @@ DIRECT (IntensityTier_downto_TableOfReal)
 END
 
 DIRECT (IntensityTier_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit an IntensityTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classIntensityTier)
-			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1762,11 +1762,11 @@ static void cb_ManipulationEditor_publish (Any editor, void *closure, Any publis
 	praat_updateSelection ();
 }
 DIRECT (Manipulation_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a Manipulation from batch.");
 	} else {
 		WHERE (SELECTED) {
-			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT);
+			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (ManipulationEditor_as_Editor (editor), cb_ManipulationEditor_publish, NULL);
 		}
@@ -2342,11 +2342,11 @@ DO
 END
 
 DIRECT (Pitch_edit)
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot edit a Pitch from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (PitchEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -2783,14 +2783,14 @@ DO
 END
 
 DIRECT (PitchTier_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a PitchTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPitchTier)
-			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -3046,14 +3046,14 @@ DO
 END
 
 DIRECT (PointProcess_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a PointProcess from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPointProcess)
-			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (PointEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT, sound), IOBJECT)) return 0;
 	}
 END
@@ -3678,12 +3678,12 @@ DO
 END
 
 DIRECT (Spectrogram_view)
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot view a Spectrogram from batch.");
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
+				(SpectrogramEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT))
 					return 0;
 END
 
@@ -3723,9 +3723,9 @@ DO
 END
 
 DIRECT (Spectrum_edit)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit a Spectrum from batch.");
+	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot edit a Spectrum from batch.");
 	else WHERE (SELECTED)
-		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
+		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Spectrum_formula, L"Spectrum: Formula", L"Spectrum: Formula...")
@@ -3985,11 +3985,11 @@ DO
 END
 
 DIRECT (Strings_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit a Strings from batch.");
 	} else {
 		WHERE (SELECTED && CLASS == classStrings)
-			if (! praat_installEditor (StringsEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (StringsEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 	}
 END
@@ -4308,7 +4308,7 @@ END
 /***** Praat menu *****/
 
 FORM (Praat_test, L"Praat test", 0)
-	ENUM (L"Test", PraatTests, 1)
+	OPTIONMENU_ENUM (L"Test", kPraatTests, DEFAULT)
 	SENTENCE (L"arg1", L"1000000")
 	SENTENCE (L"arg2", L"")
 	SENTENCE (L"arg3", L"")

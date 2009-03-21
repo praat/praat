@@ -76,6 +76,7 @@ extern machar_Table NUMfpp;
 #include "Excitations.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
+#include "FormantGrid_extensions.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
 #include "Matrix_Categories.h"
@@ -225,10 +226,10 @@ DO
 END
 
 DIRECT (Categories_edit)
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot edit a Categories from batch.");
 	else
-		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraat -> topShell,
+		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
 			FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
@@ -1796,6 +1797,23 @@ DO
 		GET_REAL (L"right Amplitude range"), L"Hz", GET_INTEGER (L"Garnish")))
 END
 
+/****************** FormantGrid  *********************************/
+
+FORM (FormantGrid_draw, L"FormantGrid: Draw", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0 (=all)")
+	REAL (L"left Frequency range (Hz)", L"0.0")
+	REAL (L"right Frequency range (Hz)", L"0.0 (=auto)")
+	BOOLEAN (L"Bandwidths", false)
+	BOOLEAN (L"Garnish", true)
+	OK
+DO
+	EVERY_DRAW (FormantGrid_draw (OBJECT, GRAPHICS, 
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_INTEGER (L"Bandwidths"), GET_INTEGER (L"Garnish")))
+END
+
 /****************** FunctionTerms  *********************************/
 
 FORM (FunctionTerms_draw, L"FunctionTerms: Draw", 0)
@@ -1993,7 +2011,20 @@ static void KlattGrid_6formants_addCommonField (void *dia)
 	OPTION (L"Tracheal formant")
 	OPTION (L"Nasal antiformant")
 	OPTION (L"Tracheal antiformant")
-//	OPTION (L"Delta antiformant")
+//	OPTION (L"Delta formant")
+}
+
+static void KlattGrid_7formants_addCommonField (void *dia)
+{
+	Any radio;
+	OPTIONMENU(L"Formant type", 1)
+	OPTION (L"Normal formant")
+	OPTION (L"Nasal formant")
+	OPTION (L"Frication formant")
+	OPTION (L"Tracheal formant")
+	OPTION (L"Nasal antiformant")
+	OPTION (L"Tracheal antiformant")
+	OPTION (L"Delta formant")
 }
 
 static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia)
@@ -2136,11 +2167,11 @@ END
 
 #define KlattGrid_INSTALL_TIER_EDITOR(Name,name) \
 DIRECT (KlattGrid_edit##Name##Tier) \
-	if (theCurrentPraat -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); } \
+	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); } \
 	else { \
 		WHERE (SELECTED && CLASS == classKlattGrid) {\
 			const wchar_t *id_and_name = Melder_wcscat2 (Melder_integer (ID), L". " #name  " tier"); \
-			if (! praat_installEditor (KlattGrid_##name##TierEditor_create (theCurrentPraat -> topShell, id_and_name, \
+			if (! praat_installEditor (KlattGrid_##name##TierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, \
 				OBJECT), IOBJECT)) return 0; \
 			Melder_free (id_and_name); \
 		}\
@@ -2166,26 +2197,25 @@ FORM (KlattGrid_editFormantGrid, L"KlattGrid: edit formant grid", 0)
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	if (theCurrentPraat -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
+	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
 	else
 	{
 		WHERE (SELECTED && CLASS == classKlattGrid) {
 			const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L" grid");
-			if (! praat_installEditor (KlattGrid_formantGridEditor_create (theCurrentPraat -> topShell, id_and_name, OBJECT, formantType), IOBJECT)) return 0;
+			if (! praat_installEditor (KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, OBJECT, formantType), IOBJECT)) return 0;
 			Melder_free (id_and_name);
 		}
 	}
 END
 
 DIRECT (KlattGrid_editDeltaFormantGrid)
-	if (theCurrentPraat -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
+	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
 	else
 	{
 		WHERE (SELECTED && CLASS == classKlattGrid) {
-			KlattGrid kg = OBJECT;
 			const wchar_t *id_and_name = Melder_wcscat2 (Melder_integer (ID), L". delta formant grid");
-			if (! praat_installEditor (FormantGridEditor_create (theCurrentPraat -> topShell, id_and_name,
-				kg -> coupling -> delta_formants), IOBJECT)) return 0;
+			if (! praat_installEditor (KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, OBJECT,
+				KlattGrid_DELTA_FORMANTS), IOBJECT)) return 0;
 			Melder_free (id_and_name);
 		}
 	}
@@ -2198,7 +2228,7 @@ FORM (KlattGrid_editFormantAmplitude, L"KlattGrid: Edit formant amplitude", 0)
 DO
 	int formantType = GET_INTEGER (L"Formant type");
 	long formantNumber = GET_INTEGER (L"Formant number");
-	if (theCurrentPraat -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
+	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); }
 	else
 	{
 		WHERE (SELECTED && CLASS == classKlattGrid)
@@ -2208,7 +2238,7 @@ DO
 			if (amp == NULL) return Melder_error1 (L"Unknown formant type");
 			if (formantNumber > (*amp) -> size) return Melder_error1 (L"Formant number does not exist.");
 			const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L" amplitude tier");
-			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, id_and_name, (*amp)->item[formantNumber], NULL, TRUE), IOBJECT)) return 0;
+			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, (*amp)->item[formantNumber], NULL, TRUE), IOBJECT)) return 0;
 			Melder_free (id_and_name);
 		}
 	}
@@ -2391,6 +2421,18 @@ END
 KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, L" (Hz)", L"500.0", (value>0), L"Frequency must be greater than zero.")
 KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, L" (Hz)", L"50.0", (value>0), L"Bandwidth must be greater than zero.")
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
+
+FORM (KlattGrid_addFormantAndBandwidthTier, L"", 0)
+	KlattGrid_7formants_addCommonField (dia);
+	INTEGER (L"Position", L"0 (=at end)")
+	OK
+DO
+	long gridType = GET_INTEGER (L"Formant type");
+	WHERE (SELECTED) {
+		if (! KlattGrid_addFormantAndBandwidthTier (OBJECT, gridType, GET_INTEGER (L"Position"))) return 0;
+		praat_dataChanged (OBJECT);
+	}	
+END
 
 FORM (KlattGrid_extractFormantGrid, L"KlattGrid: Extract formant grid", 0)
 	KlattGrid_6formants_addCommonField (dia);
@@ -3605,18 +3647,20 @@ END
 
 DIRECT (Praat_ReportFloatingPointProperties)
 	if (! NUMfpp) NUMmachar ();
-	Melder_information1 (L"Double precision floating point properties of this machine,");
-	Melder_information1 (L"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
-	Melder_information2 (L"Radix: ", Melder_double (NUMfpp -> base));
-	Melder_information2 (L"Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
-	Melder_information2 (L"Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
-	Melder_information2 (L"Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
-	Melder_information2 (L"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? L"yes" : L"no"));
-	Melder_information2 (L"Quantization step (d): ", Melder_double (NUMfpp -> prec));
-	Melder_information2 (L"Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
-	Melder_information2 (L"Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
-	Melder_information2 (L"Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
-	Melder_information2 (L"Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
+	MelderInfo_open ();
+	MelderInfo_writeLine1 (L"Double precision floating point properties of this machine,");
+	MelderInfo_writeLine1 (L"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
+	MelderInfo_writeLine2 (L"Radix: ", Melder_double (NUMfpp -> base));
+	MelderInfo_writeLine2 (L"Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
+	MelderInfo_writeLine2 (L"Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
+	MelderInfo_writeLine2 (L"Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
+	MelderInfo_writeLine2 (L"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? L"yes" : L"no"));
+	MelderInfo_writeLine2 (L"Quantization step (d): ", Melder_double (NUMfpp -> prec));
+	MelderInfo_writeLine2 (L"Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
+	MelderInfo_writeLine2 (L"Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
+	MelderInfo_writeLine2 (L"Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
+	MelderInfo_writeLine2 (L"Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
+	MelderInfo_close ();
 END
 
 /******************** Sound ****************************************/
@@ -4724,8 +4768,8 @@ END
 
 static VowelEditor vowelEditor = NULL;
 DIRECT (VowelEditor_create)
-	if (theCurrentPraat -> batch) return Melder_error1 (L"Cannot edit from batch.");
-	vowelEditor = VowelEditor_create (theCurrentPraat -> topShell, L"VowelEditor", NULL);
+	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot edit from batch.");
+	vowelEditor = VowelEditor_create (theCurrentPraatApplication -> topShell, L"VowelEditor", NULL);
 	if (vowelEditor == NULL) return 0;
 END
 
@@ -5177,6 +5221,7 @@ void praat_uvafon_David_init (void)
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", 1, DO_FormantFilter_drawSpectrum);
 	praat_addAction1 (classFormantFilter, 0, L"Draw filter functions...", L"Draw filters...", 1, DO_FormantFilter_drawFilterFunctions);
+	praat_addAction1 (classFormantGrid, 0, L"Draw...", L"Edit", 1, DO_FormantGrid_draw);
 
 	praat_addAction1 (classIntensity, 0, L"To TextGrid (silences)...", L"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
 	
@@ -5241,7 +5286,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 1, L"Get frication bypass at time...", 0, 1, DO_KlattGrid_getFricationBypassAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get frication amplitude at time...", 0, 1, DO_KlattGrid_getFricationAmplitudeAtTime);
 	
-	praat_addAction1 (classKlattGrid, 0, L"Modify -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Modify phonation -          ", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Add pitch point...", 0, 1, DO_KlattGrid_addPitchPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add voicing amplitude point...", 0, 1, DO_KlattGrid_addVoicingAmplitudePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add flutter point...", 0, 1, DO_KlattGrid_addFlutterPoint);
@@ -5265,8 +5310,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 0, L"Remove spectral tilt points between...", 0, 1, DO_KlattGrid_removeSpectralTiltPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove aspiration amplitude points between...", 0, 1, DO_KlattGrid_removeAspirationAmplitudePointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove breathiness amplitude points between...", 0, 1, DO_KlattGrid_removeBreathinessAmplitudePointsBetween);
-
-	praat_addAction1 (classKlattGrid, 0, L"-- modify filter characteristics", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Modify filters -          ", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Formula (frequencies)...", 0, 1, DO_KlattGrid_formula_frequencies);
 	praat_addAction1 (classKlattGrid, 0, L"Formula (bandwidths)...", 0, 1, DO_KlattGrid_formula_bandwidths);
 	praat_addAction1 (classKlattGrid, 0, L"Add formant point...", 0, 1, DO_KlattGrid_addFormantPoint);
@@ -5285,6 +5329,9 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classKlattGrid, 0, L"Add frication amplitude point...", 0, 1, DO_KlattGrid_addFricationAmplitudePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Remove frication bypass points between...", 0, 1, DO_KlattGrid_removeFricationBypassPointsBetween);
 	praat_addAction1 (classKlattGrid, 0, L"Remove frication amplitude points between...", 0, 1, DO_KlattGrid_removeFricationAmplitudePointsBetween);
+	praat_addAction1 (classKlattGrid, 0, L"-- insert tier", 0, 1, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Add formant and bandwidth tier...", 0, 1, DO_KlattGrid_addFormantAndBandwidthTier);
+	
 
 	praat_addAction1 (classKlattGrid, 0, L"Extract -          ", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Extract pitch tier", 0, 1, DO_KlattGrid_extractPitchTier);

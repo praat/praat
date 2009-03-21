@@ -1,6 +1,6 @@
 /* ManPage.c
  *
- * Copyright (C) 1996-2002 Paul Boersma
+ * Copyright (C) 1996-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,14 @@
 /*
  * pb 1997/01/29
  * pb 2002/03/07 GPL
+ * pb 2009/03/18 modern enums
  */
 
 #include "ManPage.h"
 
-#include "enum_c.h"
+#include "enums_getText.h"
+#include "ManPage_enums.h"
+#include "enums_getValue.h"
 #include "ManPage_enums.h"
 
 class_methods (ManPage, Thing)

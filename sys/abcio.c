@@ -1,6 +1,6 @@
 /* abcio.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2006/03/28 support for systems where a long is not 32 bits and a short is not 16 bits
  * pb 2007/07/21 MelderReadString
  * pb 2007/08/14 check for NULL pointer before Melder_isValidAscii
+ * pb 2009/03/18 modern enums
  */
 
 #include "melder.h"
@@ -34,7 +35,6 @@
 #ifdef macintosh
 	#include <TargetConditionals.h>
 #endif
-#include "enum.h"
 #include "abcio.h"
 
 /********** ASCII I/O **********/
@@ -194,7 +194,7 @@ static double getReal (MelderReadText me) {
 	return Melder_atof (buffer);
 }
 
-static short getEnum (MelderReadText me, void *enumerated) {
+static short getEnum (MelderReadText me, int (*getValue) (const wchar_t *)) {
 	if (! MelderReadText_isValid (me)) return -1;
 	int i;
 	wchar_t buffer [41], c;
@@ -244,7 +244,12 @@ static short getEnum (MelderReadText me, void *enumerated) {
 		return -1;
 	}
 	buffer [i] = '\0';
-	return enum_search (enumerated, buffer);
+	int value = getValue (buffer);
+	if (value < 0) {
+		Melder_error3 (L"\"", buffer, L"\" is not a value of the enumerated type.");
+		return -1;
+	}
+	return value;
 }
 
 static wchar_t * getString (MelderReadText me) {
@@ -308,31 +313,10 @@ static wchar_t * getString (MelderReadText me) {
 #undef false
 #undef true
 
-enum_begin (Boolean, false)
-	enum (true)
-enum_end (Boolean)
-
-enum_begin (Question, no)
-	enum (yes)
-enum_end (Question)
-
-enum_begin (Existence, absent)
-	enum (exists)
-enum_end (Existence)
-
-#include "enum_c.h"
-
-enum_begin (Boolean, false)
-	enum (true)
-enum_end (Boolean)
-
-enum_begin (Question, no)
-	enum (yes)
-enum_end (Question)
-
-enum_begin (Existence, absent)
-	enum (exists)
-enum_end (Existence)
+#include "enums_getText.h"
+#include "abcio_enums.h"
+#include "enums_getValue.h"
+#include "abcio_enums.h"
 
 int texgeti1 (MelderReadText text) { return getInteger (text); }   /* There should be out-of-bound checks here... */
 int texgeti2 (MelderReadText text) { return getInteger (text); }
@@ -346,11 +330,11 @@ double texgetr10 (MelderReadText text) { return getReal (text); }
 fcomplex texgetc8 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc16 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 char texgetc1 (MelderReadText text) { return getInteger (text); }
-short texgete1 (MelderReadText text, void *enumerated) { return getEnum (text, enumerated); }
-short texgete2 (MelderReadText text, void *enumerated) { return getEnum (text, enumerated); }
-short texgeteb (MelderReadText text) { return getEnum (text, & enum_Boolean); }
-short texgeteq (MelderReadText text) { return getEnum (text, & enum_Question); }
-short texgetex (MelderReadText text) { return getEnum (text, & enum_Existence); }
+short texgete1 (MelderReadText text, int (*getValue) (const wchar_t *)) { return getEnum (text, getValue); }
+short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *)) { return getEnum (text, getValue); }
+short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
+short texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
+short texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
 char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
 char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
 wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
@@ -426,13 +410,13 @@ void texputc1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, con
 	PUTLEADER
 	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
-void texpute1 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", enum_string (enumerated, i), file -> verbose ? L"> " : L">");
+	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
 }
-void texpute2 (MelderFile file, int i, void *enumerated, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void texpute2 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", enum_string (enumerated, i), file -> verbose ? L"> " : L">");
+	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
 }
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
@@ -637,13 +621,13 @@ void binputu1 (unsigned int u, FILE *f) { putc (u, f); }
 int bingeti1 (FILE *f) { return (signed char) getc (f); }
 void binputi1 (int u, FILE *f) { putc (u, f); }
 
-int bingete1 (FILE *f, void *enumerated) {
+int bingete1 (FILE *f, int min, int max, const wchar_t *type) {
 	int result = (signed char) getc (f);
-	if (result < 0)
-		(void) Melder_error5 (L"(bingete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
+	if (result < min || result > max)
+		(void) Melder_error5 (L"(bingete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", type, L"\".");
 	return result;
 }
-void binpute1 (int value, FILE *f, void *enumerated) { (void) enumerated; putc (value, f); }
+void binpute1 (int value, FILE *f) { putc (value, f); }
 
 static int bitsInReadBuffer = 0;
 static unsigned char readBuffer;
@@ -684,7 +668,7 @@ unsigned int bingetu2 (FILE *f) {
 	}
 }
 
-int bingete2 (FILE *f, void *enumerated) {
+int bingete2 (FILE *f, int min, int max, const wchar_t *type) {
 	signed short result;
 	if (binario_shortBE2 && Melder_debug != 18) {
 		fread (& result, 2, 1, f);
@@ -692,8 +676,8 @@ int bingete2 (FILE *f, void *enumerated) {
 		unsigned char bytes [2]; fread (bytes, 1, 2, f);
 		result = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
 	}
-	if (result < 0)
-		(void) Melder_error5 (L"(bingete2:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
+	if (result < min || result > max)
+		(void) Melder_error5 (L"(bingete2:) ", Melder_integer (result), L" is not a value of enumerated type \"", type, L"\".");
 	return result;
 }
 
@@ -919,8 +903,7 @@ void binputu2 (unsigned int u, FILE *f) {
 	}
 }
 
-void binpute2 (int value, FILE *f, void *enumerated) {
-	(void) enumerated;
+void binpute2 (int value, FILE *f) {
 	if (binario_shortBE2 && Melder_debug != 18) {
 		short s = value; fwrite (& s, 2, 1, f);
 	} else {
@@ -1446,14 +1429,13 @@ unsigned int cacgetu1 (CACHE *me) { return * (unsigned char *) my ptr ++; }
 void cacputu1 (unsigned int u, CACHE *me) { * (unsigned char *) my ptr ++ = u; }
 int cacgeti1 (CACHE *me) { return * (signed char *) my ptr ++; }
 void cacputi1 (int u, CACHE *me) { * (signed char *) my ptr ++ = u; }
-int cacgete1 (CACHE *me, void *enumerated) {
+int cacgete1 (CACHE *me, const wchar_t *type) {
 	int result = * (signed char *) my ptr ++;
 	if (result < 0)
-		(void) Melder_error5 (L"(cacgete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
+		(void) Melder_error5 (L"(cacgete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", type, L"\".");
 	return result;
 }
-void cacpute1 (int value, CACHE *me, void *enumerated) {
-	(void) enumerated;
+void cacpute1 (int value, CACHE *me) {
 	* (signed char *) my ptr ++ = value;
 }
 
@@ -1507,7 +1489,7 @@ unsigned int cacgetu2 (CACHE *f) {
 	}
 }
 
-int cacgete2 (CACHE *f, void *enumerated) {
+int cacgete2 (CACHE *f, const wchar_t *type) {
 	signed short s;
 	if (binario_shortBE2) {
 		START (s) READ READ
@@ -1517,7 +1499,7 @@ int cacgete2 (CACHE *f, void *enumerated) {
 		s = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
 	}
 	if (s < 0)
-		(void) Melder_error5 (L"(cacgete2:) ", Melder_integer (s), L" is not a value of enumerated type \"", enum_type (enumerated), L"\".");
+		(void) Melder_error5 (L"(cacgete2:) ", Melder_integer (s), L" is not a value of enumerated type \"", type, L"\".");
 	return s;
 }
 
@@ -1702,7 +1684,7 @@ void cacputu2 (unsigned int u, CACHE *f) {
 	}
 }
 
-void cacpute2 (int value, CACHE *f, void *enumerated) {
+void cacpute2 (int value, CACHE *f) {
 	if (binario_shortBE2) {
 		signed short s = value;
 		START (s) WRITE WRITE
@@ -1712,7 +1694,6 @@ void cacpute2 (int value, CACHE *f, void *enumerated) {
 		bytes [1] = value;
 		{ START (bytes) WRITE WRITE }
 	}
-	(void) enumerated;
 }
 
 void cacputi4 (long i, CACHE *f) {

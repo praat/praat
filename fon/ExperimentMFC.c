@@ -34,6 +34,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/08 in ExtractResults, check that a resonse was given
  * pb 2008/10/20 except nonstandard sound files
+ * pb 2009/03/18 removed a bug introduced by the previous change (a cherror got hidden)
  */
 
 #include "ExperimentMFC.h"
@@ -71,7 +72,9 @@ class_methods (ExperimentMFC, Data) {
 	class_methods_end
 }
 
-#include "enum_c.h"
+#include "enums_getText.h"
+#include "Experiment_enums.h"
+#include "enums_getValue.h"
 #include "Experiment_enums.h"
 
 static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar_t *fileNameTail,
@@ -116,8 +119,8 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			 * Relative or absolute file name.
 			 */
 			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
-			#if 0
-				Melder_error3 (L"Full path name <", file.path, L">");
+			#if 1
+				//Melder_error3 (L"Full path name <", file.path, L">");
 				MelderInfo_open ();
 				MelderInfo_writeLine3 (L"Path name <", pathName, L">");
 				MelderInfo_writeLine3 (L"Root directory <", my rootDirectory.path, L">");
@@ -129,7 +132,7 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 		/*
 		 * Read the substimulus.
 		 */
-		Sound substimulus = Data_readFromFile (& file);   // Sound_readFromSoundFile (& file); cherror
+		Sound substimulus = Data_readFromFile (& file); cherror   // Sound_readFromSoundFile (& file);
 		if (substimulus -> methods != classSound) {
 			forget (substimulus);
 			error5 (L"File ", MelderFile_messageName (& file), L" contains a ", Thing_className (substimulus), L" instead of a sound.");
@@ -256,21 +259,21 @@ int ExperimentMFC_start (ExperimentMFC me) {
 	/*
 	 * Determine the order in which the stimuli will be presented to the subject.
 	 */
-	if (my randomize == enumi (Experiment_RANDOMIZE, CyclicNonRandom)) {
+	if (my randomize == kExperiment_randomize_CYCLIC_NON_RANDOM) {
 		for (itrial = 1; itrial <= my numberOfTrials; itrial ++)
 			my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
-	} else if (my randomize == enumi (Experiment_RANDOMIZE, PermuteAll)) {
+	} else if (my randomize == kExperiment_randomize_PERMUTE_ALL) {
 		for (itrial = 1; itrial <= my numberOfTrials; itrial ++)
 			my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
 		permuteRandomly (me, 1, my numberOfTrials);
-	} else if (my randomize == enumi (Experiment_RANDOMIZE, PermuteBalanced)) {
+	} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED) {
 		for (ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
 			long offset = (ireplica - 1) * my numberOfDifferentStimuli;
 			for (istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
 				my stimuli [offset + istim] = istim;
 			permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
 		}
-	} else if (my randomize == enumi (Experiment_RANDOMIZE, PermuteBalancedNoDoublets)) {
+	} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED_NO_DOUBLETS) {
 		for (ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
 			long offset = (ireplica - 1) * my numberOfDifferentStimuli;
 			for (istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
@@ -279,7 +282,7 @@ int ExperimentMFC_start (ExperimentMFC me) {
 				permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
 			} while (ireplica != 1 && my stimuli [offset + 1] == my stimuli [offset] && my numberOfDifferentStimuli > 1);
 		}
-	} else if (my randomize == enumi (Experiment_RANDOMIZE, WithReplacement)) {
+	} else if (my randomize == kExperiment_randomize_WITH_REPLACEMENT) {
 		for (itrial = 1; itrial <= my numberOfTrials; itrial ++)
 			my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
 	}

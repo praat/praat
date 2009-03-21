@@ -1,4 +1,4 @@
-/* Artword_def.h
+/* abcio_enums.h
  *
  * Copyright (C) 1992-2009 Paul Boersma
  *
@@ -18,34 +18,22 @@
  */
 
 /*
- * pb 1996/06/14
- * pb 2002/07/16 GPL
- * pb 2009/03/21
+ * pb 2009/03/18
  */
 
+enums_begin (kBoolean, 0)
+	enums_add (kBoolean, 0, FALSE, L"false")
+	enums_add (kBoolean, 1, TRUE, L"true")
+enums_end (kBoolean, 1, FALSE)
 
-#define ooSTRUCT ArtwordData
-oo_DEFINE_STRUCT (ArtwordData)
+enums_begin (kQuestion, 0)
+	enums_add (kQuestion, 0, NO, L"no")
+	enums_add (kQuestion, 1, YES, L"yes")
+enums_end (kQuestion, 1, NO)
 
-	oo_INT (numberOfTargets)
-	oo_DOUBLE_VECTOR (targets, my numberOfTargets)
-	oo_DOUBLE_VECTOR (times, my numberOfTargets)
-	#if oo_DECLARING
-		oo_INT (_iTarget)
-	#endif
+enums_begin (kExistence, 0)
+	enums_add (kExistence, 0, ABSENT, L"absent")
+	enums_add (kExistence, 1, EXISTS, L"exists")
+enums_end (kExistence, 1, ABSENT)
 
-oo_END_STRUCT (ArtwordData)
-#undef ooSTRUCT
-
-
-#define ooSTRUCT Artword
-oo_DEFINE_CLASS (Artword, Data)
-
-	oo_DOUBLE (totalTime)
-	oo_STRUCT_SET (ArtwordData, data, kArt_muscle)
-
-oo_END_CLASS (Artword)
-#undef ooSTRUCT
-
-
-/* End of file Artword_def.h */
+/* End of file abcio_enums.h */

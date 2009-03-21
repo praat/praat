@@ -59,7 +59,7 @@ Thing_declare1 (HyperPage);
 	wchar_t *currentPageTitle; \
 	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24; \
 	Widget holder; \
-	void *praat; \
+	void *praatApplication, *praatObjects, *praatPicture; \
 	bool scriptErrorHasBeenNotified; \
 	structMelderDir rootDirectory;
 #define HyperPage__methods(Klas) Editor__methods(Klas) \

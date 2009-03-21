@@ -25,7 +25,7 @@
 #define ooSTRUCT Art
 oo_DEFINE_CLASS (Art, Data)
 
-	oo_DOUBLE_SET (art, Art_MUSCLE)
+	oo_DOUBLE_SET (art, kArt_muscle)
 
 oo_END_CLASS (Art)
 #undef ooSTRUCT

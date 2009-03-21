@@ -441,12 +441,12 @@ static int allowExecutionHook (void *closure) {
 			if (! my class1) return Melder_error1 (L"No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classData ? theCurrentPraat -> totalSelection : praat_selection (my class1);
+			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (my class1);
 			if (sel1 == 0) continue;
 			if (my class2 && (sel2 = praat_selection (my class2)) == 0) continue;
 			if (my class3 && (sel3 = praat_selection (my class3)) == 0) continue;
 			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
-			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraat -> totalSelection) continue;
+			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;
 			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
 			return TRUE;   /* Found a matching action. */
 		}
@@ -528,7 +528,7 @@ void praat_actions_show (void) {
 	/* The selection has changed;
 	 * kill the dynamic menu and the write menu.
 	 */
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		#if defined (macintosh) || defined (_WIN32) || 1
 			deleteDynamicMenu ();
 		#endif
@@ -571,7 +571,7 @@ void praat_actions_show (void) {
 
 		/* Determine the visibility and sensitivity of all the actions.
 		 */
-		if (theCurrentPraat -> totalSelection != 0 && ! Melder_backgrounding)
+		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiObject_setSensitive (praat_writeMenuTitle, True);
 	}
 	for (i = 1; i <= theNumberOfActions; i ++) {
@@ -586,12 +586,12 @@ void praat_actions_show (void) {
 		/* Match the actually selected classes with the selection required for this visibility. */
 
 		if (! theActions [i]. class1) continue;   /* At least one class selected. */
-		sel1 = theActions [i]. class1 == classData ? theCurrentPraat -> totalSelection : praat_selection (theActions [i]. class1);
+		sel1 = theActions [i]. class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (theActions [i]. class1);
 		if (sel1 == 0) continue;
 		if (theActions [i]. class2 && (sel2 = praat_selection (theActions [i]. class2)) == 0) continue;
 		if (theActions [i]. class3 && (sel3 = praat_selection (theActions [i]. class3)) == 0) continue;
 		if (theActions [i]. class4 && (sel4 = praat_selection (theActions [i]. class4)) == 0) continue;
-		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraat -> totalSelection) continue;   /* Other classes selected? Do not show. */
+		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;   /* Other classes selected? Do not show. */
 		theActions [i]. visible = ! theActions [i]. hidden;
 
 		/* Match the actually selected objects with the selection required for this action. */
@@ -602,7 +602,7 @@ void praat_actions_show (void) {
 	}
 
 	/* Create a new column of buttons in the dynamic menu. */
-	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
+	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
 		#if motif
@@ -759,7 +759,7 @@ void praat_actions_show (void) {
 }
 
 void praat_actions_createWriteMenu (Widget bar) {
-	if (theCurrentPraat -> batch) return;
+	if (theCurrentPraatApplication -> batch) return;
 	// RFC: korter dus beter?
 	// Vraag: ik zie dat er twee keer een Menu Write wordt gedaan. Waar is dat goed voor?
 	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
@@ -780,7 +780,7 @@ void praat_actions_init (void) {
 }
 
 void praat_actions_createDynamicMenu (Widget form, int width) {
-	if (theCurrentPraat -> batch) return;
+	if (theCurrentPraatApplication -> batch) return;
 	// Kan dit bovenstaande niet met een #if constructie?
 	// Wat doet dit?
 	// Dit maakt de buitenkant van de dynamische knoppenlijst (Sound help, Edit, Draw, Modify...):

@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
  * pb 2008/09/21 NUMshift
  * pb 2008/09/22 NUMscale
  * pb 2008/11/04 MelderReadText
- */
-
+ * pb 2009/03/14 NUMvector_append
+ * pb 2009/03/21 NUMvector_insert
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
 
@@ -184,6 +184,15 @@ int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
 	The vectors need not have been created by NUMvector.
 */
 
+void NUMvector_append_e (long elementSize, void **v, long lo, long *hi);
+void NUMvector_insert_e (long elementSize, void **v, long lo, long *hi, long position);
+/*
+	add one element to the vector *v.
+	The new element is initialized to zero.
+	On success, *v points to the new vector, and *hi is incremented by 1.
+	On failure, *v and *hi are not changed.
+*/
+
 /********** Arrays with two indices (NUMarrays.c) **********/
 
 void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2);
@@ -205,7 +214,7 @@ void NUMmatrix_free (long elementSize, void *m, long row1, long col1);
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long col1, long col2);
+void * NUMmatrix_copy (long elementSize, void *m, long row1, long row2, long col1, long col2);
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
@@ -234,6 +243,8 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 	type * NUM##t##vector_copy (const type *v, long lo, long hi); \
 	void NUM##t##vector_copyElements (const type *v, type *to, long lo, long hi); \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi); \
+	void NUM##t##vector_append_e (type **v, long lo, long *hi); \
+	void NUM##t##vector_insert_e (type **v, long lo, long *hi, long position); \
 	type ** NUM##t##matrix (long row1, long row2, long col1, long col2); \
 	void NUM##t##matrix_free (type **m, long row1, long col1); \
 	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2); \
@@ -264,6 +275,10 @@ FUNCTION (c, char)
 	NUMvector_copyElements (sizeof (struct struct##Type), v, to, lo, hi)
 #define NUMstructvector_equal(Type,v1,v2,lo,hi)  \
 	NUMvector_equal (sizeof (struct struct##Type), v1, v2, lo, hi)
+#define NUMstructvector_append_e(Type,v,lo,hi)  \
+	NUMvector_append_e (sizeof (struct struct##Type), (void **) v, lo, hi)
+#define NUMstructvector_insert_e(Type,v,lo,hi,position)  \
+	NUMvector_insert_e (sizeof (struct struct##Type), (void **) v, lo, hi, position)
 
 #define NUMpvector(lo,hi)  \
 	NUMvector (sizeof (void *), lo, hi)
@@ -275,6 +290,10 @@ FUNCTION (c, char)
 	NUMvector_copyElements (sizeof (void *), v, to, lo, hi)
 #define NUMpvector_equal(v1,v2,lo,hi)  \
 	NUMvector_equal (sizeof (void *), v1, v2, lo, hi)
+#define NUMpvector_append_e(v,lo,hi)  \
+	NUMvector_append_e (sizeof (void *), (void **) v, lo, hi)
+#define NUMpvector_insert_e(v,lo,hi,position)  \
+	NUMvector_insert_e (sizeof (void *), (void **) v, lo, hi, position)
 
 #define NUMstructmatrix(Type,row1,row2,col1,col2)  \
 	NUMmatrix (sizeof (struct struct##Type), row1, row2, col1, col2)

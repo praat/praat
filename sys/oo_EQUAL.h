@@ -23,8 +23,8 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2006/08/08 reduced Lint warnings
  * pb 2007/06/09 wchar_t
- * pb 2007/06/21
  * pb 2009/01/22 consider empty strings and null strings identical
+ * pb 2009/03/21 modern enums
  */
 
 #include "oo_undef.h"
@@ -37,7 +37,7 @@
 		if (my x [i] != thy x [i]) return 0; \
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i] != thy x [i]) return 0; \
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
@@ -55,7 +55,7 @@
 	for (int i = 0; i < n; i ++) if (my x [i] != thy x [i]) return 0;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) if (my x [i] != thy x [i]) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) if (my x [i] != thy x [i]) return 0;
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (! my x != ! thy x || \
@@ -69,7 +69,7 @@
 		if (! Melder_strequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Melder_strequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -87,7 +87,7 @@
 		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
@@ -105,7 +105,7 @@
 		if (! Type##_equal (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Type##_equal (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

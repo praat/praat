@@ -22,7 +22,7 @@
  * pb 2003/06/11 made struct_destroy global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2009/02/01
+ * pb 2009/03/21 modern enums
  */
 
 #include "oo_undef.h"
@@ -62,7 +62,7 @@
 		Melder_free (my x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (my x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -82,7 +82,7 @@
 		Melder_free (my x [i]);
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (my x [i]);
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
@@ -102,7 +102,7 @@
 		Type##_destroy (& my x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		Type##_destroy (& my x [i]);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
@@ -130,7 +130,7 @@
 		if (my x [i]) XtDestroyWidget (my x [i]);
 
 #define oo_WIDGET_SET(x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i]) XtDestroyWidget (my x [i]);
 
 #define oo_WIDGET_VECTOR_FROM(x,min,max)  \

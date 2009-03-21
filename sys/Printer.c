@@ -272,7 +272,7 @@ int Printer_postScriptSettings (void) {
 	static Any dia;
 	if (dia == NULL) {
 		Any radio;
-		dia = UiForm_create (theCurrentPraat -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...");
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...");
 		#if defined (_WIN32) || defined (macintosh)
 			BOOLEAN (L"Allow direct PostScript", TRUE);
 		#endif
@@ -407,7 +407,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			thePrinter. paperWidth = 1000;
 			thePrinter. paperHeight = 1000;
 		}
-		EnableWindow ((HWND) XtWindow (theCurrentPraat -> topShell), FALSE);
+		EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), FALSE);
 		SetAbortProc (theWinDC, AbortFunc);
 		memset (& docInfo, 0, sizeof (DOCINFO));
 		docInfo. cbSize = sizeof (DOCINFO);
@@ -437,7 +437,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				EndDoc (theWinDC);
 			}
 		}
-		EnableWindow ((HWND) XtWindow (theCurrentPraat -> topShell), TRUE);
+		EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), TRUE);
 		DeleteDC (theWinDC), theWinDC = NULL;
 	#elif defined (macintosh)
 		Boolean result;

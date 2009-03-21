@@ -73,6 +73,7 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	#endif
 	#if oo_READING
 		if ((my options = PhonationGridPlayOptions_create ())== NULL) return 0;
+		PhonationGrid_setNames (me);
 	#endif
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
@@ -102,6 +103,7 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 	#endif
 	#if oo_READING
 		if ((my options = VocalTractGridPlayOptions_create ()) == NULL) return 0;
+		VocalTractGrid_setNames (me);
 	#endif
 oo_END_CLASS (VocalTractGrid)
 #undef ooSTRUCT
@@ -133,6 +135,8 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 	#endif
 	#if oo_READING
 		if ((my options = CouplingGridPlayOptions_create()) == NULL) return 0;
+		if ((my glottis = PhonationTier_create (my xmin, my xmax)) == NULL) return 0;
+		CouplingGrid_setNames (me);
 	#endif
 oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
@@ -156,6 +160,7 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 	#endif
 	#if oo_READING
 		if ((my options = FricationGridPlayOptions_create()) == NULL) return 0;
+		FricationGrid_setNames (me);
 	#endif
 oo_END_CLASS (FricationGrid)
 #undef ooSTRUCT
@@ -181,6 +186,7 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 	#endif
 	#if oo_READING
 		if ((my options = KlattGridPlayOptions_create()) == NULL) return 0;
+		KlattGrid_setNames (me);
 	#endif
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/03/05
+ * pb 2009/03/14
  */
 
 #ifndef _Data_h_
@@ -47,6 +47,13 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
+Network Network_create_rectangle_vertical_e (double minimumActivity, double maximumActivity, double spreadingRate,
+	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
+	double initialMinimumWeight, double initialMaximumWeight);
+
+void Network_addNode_e (Network me, double x, double y, double activity, bool clamped);
+void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight);
 
 void Network_draw (Network me, Graphics graphics, bool colour);
 

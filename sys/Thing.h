@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/06/11 wchar_t
  * pb 2007/10/09 removed char
  * pb 2008/04/04 Thing_infoWithId
+ * pb 2009/03/21 modern enums
  */
 
 /* The root class of all objects. */
@@ -37,8 +38,6 @@
 		#include "NUM.h"   /* Including math.h */
 	/* The messaging mechanism: */
 		#include "melder.h"   /* Including stdio.h string.h etc. */
-	/* Enumerated types: */
-		#include "enum.h"
 	/* The macros for struct and class definitions: */
 		#include "oo.h"
 	/* The input/output mechanism: */

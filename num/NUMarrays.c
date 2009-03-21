@@ -1,6 +1,6 @@
 /* NUMarrays.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2007/07/21 readText and writeText API changes
  * pb 2008/01/19 include storage in I/O names
+ * pb 2009/03/14 NUMvector_add
  */
 
 #include "NUM.h"
@@ -33,6 +34,7 @@ long NUM_getTotalNumberOfArrays (void) { return theTotalNumberOfArrays; }
 /*** Generic memory routines for vectors. ***/
 
 void * NUMvector (long elementSize, long lo, long hi) {
+	if (hi < lo) return NULL;   // no error
 	char *result;
 	Melder_assert (sizeof (char) == 1);
 	for (;;) { /* Not very infinite: 99.999 % of the time once, 0.001 % twice. */
@@ -46,9 +48,8 @@ void * NUMvector (long elementSize, long lo, long hi) {
 }
 
 void NUMvector_free (long elementSize, void *v, long lo) {
-	char *dum;
-	if (! v) return;
-	dum = (char *) v + lo * elementSize;
+	if (v == NULL) return;   // no error
+	char *dum = (char *) v + lo * elementSize;
 	Melder_free (dum);
 	theTotalNumberOfArrays -= 1;
 }
@@ -56,7 +57,7 @@ void NUMvector_free (long elementSize, void *v, long lo) {
 void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 	char *result;
 	long offset = lo * elementSize;
-	if (! v) return NULL;
+	if (v == NULL) return NULL;
 	if (! (result = NUMvector (elementSize, lo, hi))) return NULL;
 	memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 	return result;
@@ -72,6 +73,45 @@ int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi) {
 	long offset = lo * elementSize;
 	Melder_assert (v1 != NULL && v2 != NULL);
 	return ! memcmp ((char *) v1 + offset, (char *) v2 + offset, (hi - lo + 1) * elementSize);
+}
+
+void NUMvector_append_e (long elementSize, void **v, long lo, long *hi) {
+	char *result = NULL;
+	if (*v == NULL) {
+		result = NUMvector (elementSize, lo, lo); cherror
+		*hi = lo;
+	} else {
+		long offset = lo * elementSize;
+		for (;;) { /* Not very infinite: 99.999 % of the time once, 0.001 % twice. */
+			result = Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize); cherror
+			if ((result -= offset) != NULL) break;   /* This will normally succeed at the first try. */
+			(void) Melder_realloc (result + offset, 1);   /* Make sure that second try will succeed. */
+		}
+		(*hi) ++;
+		memset (result + *hi * elementSize, 0, elementSize);   // initialize the new element to zeroes
+	}
+	*v = result;
+end:
+	iferror Melder_error1 (L"(NUMvector_append:) Not appended.");
+}
+
+void NUMvector_insert_e (long elementSize, void **v, long lo, long *hi, long position) {
+	char *result = NULL;
+	if (*v == NULL) {
+		result = NUMvector (elementSize, lo, lo); cherror
+		*hi = lo;
+		Melder_assert (position == lo);
+	} else {
+		result = NUMvector (elementSize, lo, *hi + 1); cherror
+		Melder_assert (position >= lo && position <= *hi + 1);
+		NUMvector_copyElements (elementSize, *v, result, lo, position - 1);
+		NUMvector_copyElements (elementSize, *v, result + elementSize, position, *hi);
+		NUMvector_free (elementSize, *v, lo);
+		(*hi) ++;
+	}
+	*v = result;
+end:
+	iferror Melder_error1 (L"(NUMvector_insert:) Not inserted.");
 }
 
 /*** Generic memory routines for matrices. ***/
@@ -145,6 +185,10 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
+	void NUM##t##vector_append_e (type **v, long lo, long *hi) \
+		{ NUMvector_append_e (sizeof (type), (void **) v, lo, hi); } \
+	void NUM##t##vector_insert_e (type **v, long lo, long *hi, long position) \
+		{ NUMvector_insert_e (sizeof (type), (void **) v, lo, hi, position); } \
 	type ** NUM##t##matrix (long row1, long row2, long col1, long col2) \
 		{ return NUMmatrix (sizeof (type), row1, row2, col1, col2); } \
 	void NUM##t##matrix_free (type **m, long row1, long col1) \

@@ -1,6 +1,6 @@
 /* ArtwordEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2003/05/19 Melder_atof
  * pb 2007/08/30 include menu bar height
  * pb 2007/12/27 Gui
+ * pb 2009/03/21 modern enums
  */
 
 #include "ArtwordEditor.h"
@@ -99,11 +100,11 @@ static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
 	int i = 0;
 	while (event -> toggle != my button [i]) {
 		i ++;
-		Melder_assert (i <= enumlength (Art_MUSCLE));
+		Melder_assert (i <= kArt_muscle_MAX);
 	}
 	my feature = i;
 	Melder_assert (my feature > 0);
-	Melder_assert (my feature <= enumlength (Art_MUSCLE));
+	Melder_assert (my feature <= kArt_muscle_MAX);
 	updateList (me);
 }
 
@@ -161,10 +162,10 @@ static void createChildren (ArtwordEditor me) {
 		("radioBox", xmRowColumnWidgetClass, my dialog,
 		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
 	#endif
-	for (int i = 1; i <= enumlength (Art_MUSCLE); i ++) {
+	for (int i = 1; i <= kArt_muscle_MAX; i ++) {
 		my button [i] = GuiRadioButton_createShown (my radio,
 			0, 160, Gui_AUTOMATIC, Gui_AUTOMATIC,
-			enumstring (Art_MUSCLE, i), gui_radiobutton_cb_toggle, me, 0);
+			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, me, 0);
 	}
 	my feature = 1;
 	GuiRadioButton_setValue (my button [1], true);

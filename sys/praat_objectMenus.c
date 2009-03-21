@@ -44,7 +44,7 @@
 #include "DataEditor.h"
 #include "site.h"
 
-#define EDITOR  theCurrentPraat -> list [IOBJECT]. editors
+#define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
 /********** Callbacks of the fixed buttons. **********/
 
@@ -61,9 +61,9 @@ FORM (Rename, L"Rename object", L"Rename...")
 { int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAMEW) }
 DO
 	wchar_t *string = GET_STRING (L"newName");
-	if (theCurrentPraat -> totalSelection == 0)
+	if (theCurrentPraatObjects -> totalSelection == 0)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot rename.");
-	if (theCurrentPraat -> totalSelection > 1)
+	if (theCurrentPraatObjects -> totalSelection > 1)
 		return Melder_error1 (L"Selection changed!\nCannot rename more than one object at a time.");
 	WHERE (SELECTED) break;
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
@@ -88,9 +88,9 @@ FORM (Copy, L"Copy object", L"Copy...")
 	OK
 { int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAMEW) }
 DO
-	if (theCurrentPraat -> totalSelection == 0)
+	if (theCurrentPraatObjects -> totalSelection == 0)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot copy.");
-	if (theCurrentPraat -> totalSelection > 1)
+	if (theCurrentPraatObjects -> totalSelection > 1)
 		return Melder_error1 (L"Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
 		wchar_t *name = GET_STRING (L"newName");
@@ -99,21 +99,21 @@ DO
 END
 
 DIRECT (Info)
-	if (theCurrentPraat -> totalSelection == 0)
+	if (theCurrentPraatObjects -> totalSelection == 0)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot query.");
-	if (theCurrentPraat -> totalSelection > 1)
+	if (theCurrentPraatObjects -> totalSelection > 1)
 		return Melder_error1 (L"Selection changed!\nCannot query more than one object at a time.");
 	WHERE (SELECTED) Thing_infoWithId (OBJECT, ID);
 END
 
 DIRECT (Inspect)
-	if (theCurrentPraat -> totalSelection == 0)
+	if (theCurrentPraatObjects -> totalSelection == 0)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot inspect.");
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED)
-			if (! praat_installEditor (DataEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (DataEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
 	}
 END
 
@@ -148,12 +148,12 @@ DIRECT (Memory_info)
 END
 
 DIRECT (praat_newScript)
-	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraat -> topShell, NULL, NULL);
+	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
 	if (! editor) return 0;
 END
 
 DIRECT (praat_openScript)
-	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraat -> topShell, NULL, NULL);
+	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
 	if (! editor) return 0;
 	TextEditor_showOpen (ScriptEditor_as_TextEditor (editor));
 END
@@ -181,7 +181,7 @@ DIRECT (praat_editButtons)
 	if (theButtonEditor) {
 		Editor_raise (ButtonEditor_as_Editor (theButtonEditor));
 	} else {
-		theButtonEditor = ButtonEditor_create (theCurrentPraat -> topShell);
+		theButtonEditor = ButtonEditor_create (theCurrentPraatApplication -> topShell);
 		Editor_setDestroyCallback (ButtonEditor_as_Editor (theButtonEditor), cb_ButtonEditor_destroy, NULL);
 		if (! theButtonEditor) return 0;
 	}
@@ -359,14 +359,14 @@ static int readFromFile (MelderFile file) {
 	if (object && Thing_member (object, classManPages)) {
 		ManPages pages = (ManPages) object;
 		ManPage firstPage = pages -> pages -> item [1];
-		if (! Manual_create (theCurrentPraat -> topShell, firstPage -> title, object)) return 0;
+		if (! Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object)) return 0;
 		if (pages -> executable)
 			Melder_warning1 (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return 1;
 	}
 	if (object && Thing_member (object, classScript)) {
-		ScriptEditor_createFromScript (theCurrentPraat -> topShell, NULL, (Script) object);
+		ScriptEditor_createFromScript (theCurrentPraatApplication -> topShell, NULL, (Script) object);
 		forget (object);
 		iferror return 0;
 		return 1;
@@ -383,11 +383,11 @@ END
 /********** Callbacks of the Write menu. **********/
 
 FORM_WRITE (Data_writeToTextFile, L"Write Object(s) to text file", 0, 0)
-	if (theCurrentPraat -> totalSelection == 1) {
+	if (theCurrentPraatObjects -> totalSelection == 1) {
 		return Data_writeToTextFile (ONLY_OBJECT, file);
 	} else {
 		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraat -> n);
+		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
 		WHERE (SELECTED) Collection_addItem (list, OBJECT);
 		result = Data_writeToTextFile (list, file);
 		list -> size = 0;   /* Disown. */
@@ -397,11 +397,11 @@ FORM_WRITE (Data_writeToTextFile, L"Write Object(s) to text file", 0, 0)
 END
 
 FORM_WRITE (Data_writeToShortTextFile, L"Write Object(s) to short text file", 0, 0)
-	if (theCurrentPraat -> totalSelection == 1)
+	if (theCurrentPraatObjects -> totalSelection == 1)
 		return Data_writeToShortTextFile (ONLY_OBJECT, file);
 	else {
 		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraat -> n);
+		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
 		WHERE (SELECTED) Collection_addItem (list, OBJECT);
 		result = Data_writeToShortTextFile (list, file);
 		list -> size = 0;   /* Disown. */
@@ -411,11 +411,11 @@ FORM_WRITE (Data_writeToShortTextFile, L"Write Object(s) to short text file", 0,
 END
 
 FORM_WRITE (Data_writeToBinaryFile, L"Write Object(s) to binary file", 0, 0)
-	if (theCurrentPraat -> totalSelection == 1)
+	if (theCurrentPraatObjects -> totalSelection == 1)
 		return Data_writeToBinaryFile (ONLY_OBJECT, file);
 	else {
 		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraat -> n);
+		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
 		WHERE (SELECTED) Collection_addItem (list, OBJECT);
 		result = Data_writeToBinaryFile (list, file);
 		list -> size = 0;   /* Disown. */
@@ -436,22 +436,22 @@ FORM (SearchManual, L"Search manual", L"Manual")
 	OK
 DO
 	Manual manPage;
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot view manual from batch.");
-	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
+	manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages);
 	Manual_search (manPage, GET_STRING (L"query"));
 END
 
 FORM (GoToManualPage, L"Go to manual page", 0)
 	{long numberOfPages;
-	const wchar_t **pages = ManPages_getTitles (theCurrentPraat -> manPages, & numberOfPages);
+	const wchar_t **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (L"Page", numberOfPages, pages, 1)}
 	OK
 DO
 	Manual manPage;
-	if (theCurrentPraat -> batch)
+	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot view manual from batch.");
-	manPage = Manual_create (theCurrentPraat -> topShell, L"Intro", theCurrentPraat -> manPages);
+	manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages);
 	if (! HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page"))) return 0;
 END
 
@@ -464,7 +464,7 @@ Melder_getDefaultDir (& currentDirectory);
 SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 DO
 	wchar_t *directory = GET_STRING (L"directory");
-	if (! ManPages_writeAllToHtmlDir (theCurrentPraat -> manPages, directory)) return 0;
+	if (! ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory)) return 0;
 END
 
 /********** Menu descriptions. **********/
@@ -473,13 +473,13 @@ void praat_show (void) {
 	/*
 	 * (De)sensitivize the fixed buttons as appropriate for the current selection.
 	 */
-	praat_sensitivizeFixedButtonCommand (L"Remove", theCurrentPraat -> totalSelection != 0);
-	praat_sensitivizeFixedButtonCommand (L"Rename...", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand (L"Copy...", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraat -> totalSelection == 1);
-	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraat -> totalSelection != 0);
+	praat_sensitivizeFixedButtonCommand (L"Remove", theCurrentPraatObjects -> totalSelection != 0);
+	praat_sensitivizeFixedButtonCommand (L"Rename...", theCurrentPraatObjects -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Copy...", theCurrentPraatObjects -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraatObjects -> totalSelection == 1);
+	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraatObjects -> totalSelection != 0);
 	praat_actions_show ();
-	if (theCurrentPraat == & theForegroundPraat && theButtonEditor) Editor_dataChanged (ButtonEditor_as_Editor (theButtonEditor), NULL);
+	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor) Editor_dataChanged (ButtonEditor_as_Editor (theButtonEditor), NULL);
 }
 
 /********** Menu descriptions. **********/
@@ -549,7 +549,7 @@ void praat_addMenus (Widget bar) {
 	/*
 	 * Create the menu titles in the bar.
 	 */
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		#ifdef macintosh
 			praatMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
 		#else

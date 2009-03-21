@@ -206,6 +206,45 @@ end:
 	return me;
 }
 
+Network Network_create_rectangle_vertical_e (double minimumActivity, double maximumActivity, double spreadingRate,
+	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
+	double initialMinimumWeight, double initialMaximumWeight)
+{
+	Network me = Network_create_e (minimumActivity, maximumActivity, spreadingRate,
+		selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
+		0.0, numberOfColumns, 0.0, numberOfRows, numberOfRows * numberOfColumns,
+		numberOfColumns * numberOfColumns * (numberOfRows - 1)); cherror
+	/*
+	 * Define nodes.
+	 */
+	for (long inode = 1; inode <= my numberOfNodes; inode ++) {
+		NetworkNode node = & my nodes [inode];
+		node -> x = (inode - 1) % numberOfColumns + 0.5;
+		node -> y = (inode - 1) / numberOfColumns + 0.5;
+		node -> clamped = bottomRowClamped && inode <= numberOfColumns;
+		node -> activity = NUMrandomUniform (my minimumActivity, my maximumActivity);
+	}
+	/*
+	 * Define connections.
+	 */
+	long iconn = 0;
+	for (long icol = 1; icol <= numberOfColumns; icol ++) {
+		for (long jcol = 1; jcol <= numberOfColumns; jcol ++) {
+			for (long irow = 1; irow <= numberOfRows - 1; irow ++) {
+				NetworkConnection conn = & my connections [++ iconn];
+				conn -> nodeFrom = (irow - 1) * numberOfColumns + icol;
+				conn -> nodeTo = irow * numberOfColumns + jcol;
+				conn -> weight = NUMrandomUniform (initialMinimumWeight, initialMaximumWeight);
+			}
+		}
+	}
+	Melder_assert (iconn == my numberOfConnections);
+end:
+	iferror forget (me);
+	return me;
+}
+
 void Network_draw (Network me, Graphics graphics, bool colour) {
 	double saveLineWidth = Graphics_inqLineWidth (graphics);
 	Graphics_setInner (graphics);
@@ -247,6 +286,25 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 	Graphics_setColour (graphics, Graphics_BLACK);
 	Graphics_setLineWidth (graphics, saveLineWidth);
 	Graphics_unsetInner (graphics);
+}
+
+void Network_addNode_e (Network me, double x, double y, double activity, bool clamped) {
+	NUMstructvector_append_e (NetworkNode, & my nodes, 1, & my numberOfNodes); cherror
+	my nodes [my numberOfNodes]. x = x;
+	my nodes [my numberOfNodes]. y = y;
+	my nodes [my numberOfNodes]. activity = activity;
+	my nodes [my numberOfNodes]. clamped = clamped;
+end:
+	return;
+}
+
+void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight) {
+	NUMstructvector_append_e (NetworkConnection, & my connections, 1, & my numberOfConnections); cherror
+	my connections [my numberOfConnections]. nodeFrom = nodeFrom;
+	my connections [my numberOfConnections]. nodeTo = nodeTo;
+	my connections [my numberOfConnections]. weight = weight;
+end:
+	return;
 }
 
 /* End of file Network.c */

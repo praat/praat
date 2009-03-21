@@ -1,6 +1,6 @@
 /* Preferences.c
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/11/30 Preferences_write forgets thePreferences
  * pb 2007/12/09 removed "resources"
  * pb 2008/01/19 removed float
+ * pb 2009/03/21 modern enums
  */
 
 #include "Preferences.h"
@@ -153,7 +154,12 @@ void Preferences_read (MelderFile file) {
 				wcsncpy ((wchar_t *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
 				((wchar_t *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;
 			}
-			case enumwa: * (enum kPreferences_dummy *) pref -> value = pref -> getValue (value); break;
+			case enumwa: {
+				int intValue = pref -> getValue (value);
+				if (intValue < 0)
+					intValue = pref -> getValue (L"\t");   // look for the default
+				* (enum kPreferences_dummy *) pref -> value = intValue; break;
+			}
 		}
 	}
 end:

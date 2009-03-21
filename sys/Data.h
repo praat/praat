@@ -300,7 +300,7 @@ typedef struct structData_Description {
 	int size;   /* The size of this field if it is in an array. */
 	const wchar_t *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
 	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
-	int rank;   /* 0 = single, 1 = vector, 2 = matrix, -1 = array. */
+	int rank;   /* 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array. */
 	const wchar_t *min1, *max1;   /* For vectors and matrices. */
 	const wchar_t *min2, *max2;   /* For matrices. */
 } *Data_Description;

@@ -1,6 +1,6 @@
 /* OTMulti.c
  *
- * Copyright (C) 2005-2008 Paul Boersma
+ * Copyright (C) 2005-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2007/11/14 drawTableau: corrected direction of arrows for positive satisfactions
  * pb 2008/04/14 OTMulti_getConstraintIndexFromName
+ * pb 2009/03/18 modern enums
  */
 
 #include "OTMulti.h"
@@ -53,7 +54,7 @@ static void classOTMulti_info (I) {
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++)
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
 			numberOfViolations += my candidates [icand]. marks [icons];
-	MelderInfo_writeLine2 (L"Decision strategy: ", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy));
+	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (my decisionStrategy));
 	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (my numberOfConstraints));
 	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (my numberOfCandidates));
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
@@ -61,7 +62,7 @@ static void classOTMulti_info (I) {
 
 static int writeText (I, MelderFile file) {
 	iam (OTMulti);
-	MelderFile_write7 (file, L"\n<", enumstring (OTGrammar_DECISION_STRATEGY, my decisionStrategy),
+	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (my decisionStrategy),
 		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
@@ -102,7 +103,7 @@ static int readText (I, MelderReadText text) {
 	iam (OTMulti);
 	if (! inherited (OTMulti) readText (me, text)) return 0;
 	if (localVersion >= 1) {
-		if ((my decisionStrategy = texgete1 (text, & enum_OTGrammar_DECISION_STRATEGY)) < 0) return Melder_error1 (L"Trying to read decision strategy.");
+		if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) return Melder_error1 (L"Trying to read decision strategy.");
 	}
 	if (localVersion >= 2) {
 		my leak = texgetr8 (text); iferror return Melder_error1 (L"Trying to read leak.");
@@ -190,15 +191,15 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 	int *marks1 = my candidates [icand1]. marks;
 	int *marks2 = my candidates [icand2]. marks;
 	long icons;
-	if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
+	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int numberOfMarks1 = marks1 [my index [icons]];
 			int numberOfMarks2 = marks2 [my index [icons]];
 			if (numberOfMarks1 < numberOfMarks2) return -1;   /* Candidate 1 is better than candidate 2. */
 			if (numberOfMarks1 > numberOfMarks2) return +1;   /* Candidate 2 is better than candidate 1. */
 		}
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy))
+	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY)
 	{
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -207,7 +208,7 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT)) {
+	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			if (my constraints [icons]. disharmony > 0.0) {
@@ -217,7 +218,7 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, ExponentialHG)) {
+	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			disharmony1 += exp (my constraints [icons]. disharmony) * marks1 [icons];
@@ -225,7 +226,7 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 		}
 		if (disharmony1 < disharmony2) return -1;   /* Candidate 1 is better than candidate 2. */
 		if (disharmony1 > disharmony2) return +1;   /* Candidate 2 is better than candidate 1. */
-	} else if (my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG)) {
+	} else if (my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG) {
 		double disharmony1 = 0.0, disharmony2 = 0.0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			double constraintDisharmony = my constraints [icons]. disharmony > 1.0 ? my constraints [icons]. disharmony : 1.0;
@@ -277,10 +278,10 @@ static int OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	double step = relativePlasticityNoise == 0.0 ? plasticity :
 		NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
 	bool multiplyStepByNumberOfViolations =
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, HarmonicGrammar) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, LinearOT) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, MaximumEntropy) ||
-		my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, PositiveHG);
+		my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
 		double constraintStep = step * constraint -> plasticity;
@@ -634,7 +635,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 		/*
 		 * Draw grey cell backgrounds.
 		 */
-		if (! bidirectional && my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory)) {
+		if (! bidirectional && my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -677,7 +678,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			 * 2. this is the crucial cell, i.e. the cells after it are drawn in grey.
 			 */
 			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal &&
-			    my decisionStrategy == enumi (OTGrammar_DECISION_STRATEGY, OptimalityTheory))
+			    my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY)
 			{
 				int winnerMarks = my candidates [winner]. marks [index];
 				if (winnerMarks + 1 > 5) {

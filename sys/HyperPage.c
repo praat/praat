@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/11/30 erased Graphics_printf
  * pb 2008/03/21 new Editor API
  * pb 2008/11/24 prevented crash by Melder_malloc (replaced with Melder_calloc)
+ * pb 2009/03/17 split up structPraat
  */
 
 #include <ctype.h>
@@ -441,13 +442,25 @@ if (! my printing) {
 		Graphics_setFontSize (my g, size);
 		my x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
 		Graphics_setWrapWidth (my g, 0);
-		Graphics_setViewport (my g, my x, my x + width_inches, my y, my y + height_inches);
 		{
-			if (my praat == NULL) my praat = Melder_calloc (structPraat, 1);
-			theCurrentPraat = my praat;
-			theCurrentPraat -> graphics = my g;   // has to draw into HyperPage rather than Picture window
-			theCurrentPraat -> batch = true;   // prevent creation of editor windows
-			theCurrentPraat -> topShell = theForegroundPraat. topShell;   // needed for UiForm_create () in dialogs
+			if (my praatApplication == NULL) my praatApplication = Melder_calloc (structPraatApplication, 1);
+			if (my praatObjects == NULL) my praatObjects = Melder_calloc (structPraatObjects, 1);
+			if (my praatPicture == NULL) my praatPicture = Melder_calloc (structPraatPicture, 1);
+			theCurrentPraatApplication = my praatApplication;
+			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
+			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
+			theCurrentPraatObjects = my praatObjects;
+			theCurrentPraatPicture = my praatPicture;
+			theCurrentPraatPicture -> graphics = my g;   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+			theCurrentPraatPicture -> colour = Graphics_BLACK;
+			theCurrentPraatPicture -> lineWidth = 1.0;
+			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> x1NDC = my x;
+			theCurrentPraatPicture -> x2NDC = my x + width_inches;
+			theCurrentPraatPicture -> y1NDC = my y;
+			theCurrentPraatPicture -> y2NDC = my y + height_inches;
+			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 			Melder_progressOff ();
 			Melder_warningOff ();
 			structMelderDir saveDir = { { 0 } };
@@ -459,6 +472,7 @@ if (! my printing) {
 			Melder_progressOn ();
 			Graphics_setLineType (my g, Graphics_DRAWN);
 			Graphics_setLineWidth (my g, 1.0);
+			Graphics_setArrowSize (my g, 1.0);
 			Graphics_setColour (my g, Graphics_BLACK);
 			iferror {
 				if (my scriptErrorHasBeenNotified) {
@@ -476,7 +490,9 @@ if (! my printing) {
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
 				Collection_addItem (my links, link);
 			}*/
-			theCurrentPraat = & theForegroundPraat;
+			theCurrentPraatApplication = & theForegroundPraatApplication;
+			theCurrentPraatObjects = & theForegroundPraatObjects;
+			theCurrentPraatPicture = & theForegroundPraatPicture;
 		}
 		Graphics_setViewport (my g, 0, 1, 0, 1);
 		Graphics_setWindow (my g, 0, 1, 0, 1);
@@ -499,19 +515,32 @@ if (! my printing) {
 	my x = 3.7 - 0.5 * width_inches;
 	if (my x < 0) my x = 0;
 	Graphics_setWrapWidth (my ps, 0);
-	Graphics_setViewport (my ps, my x, my x + width_inches, my y, my y + height_inches);
 	{
-		if (my praat == NULL) my praat = Melder_calloc (structPraat, 1);
-		theCurrentPraat = my praat;
-		theCurrentPraat -> graphics = my ps;
-		theCurrentPraat -> batch = true;
+		if (my praatObjects == NULL) my praatObjects = Melder_calloc (structPraatObjects, 1);
+		if (my praatPicture == NULL) my praatPicture = Melder_calloc (structPraatPicture, 1);
+		theCurrentPraatApplication = my praatApplication;
+		theCurrentPraatApplication -> batch = true;
+		theCurrentPraatObjects = my praatObjects;
+		theCurrentPraatPicture = my praatPicture;
+		theCurrentPraatPicture -> graphics = my ps;
+		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+		theCurrentPraatPicture -> colour = Graphics_BLACK;
+		theCurrentPraatPicture -> lineWidth = 1.0;
+		theCurrentPraatPicture -> arrowSize = 1.0;
+		theCurrentPraatPicture -> x1NDC = my x;
+		theCurrentPraatPicture -> x2NDC = my x + width_inches;
+		theCurrentPraatPicture -> y1NDC = my y;
+		theCurrentPraatPicture -> y2NDC = my y + height_inches;
+		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Melder_progressOff ();
 		Melder_warningOff ();
 		Interpreter_run (interpreter, text);
 		Melder_warningOn ();
 		Melder_progressOn ();
 		iferror Melder_clearError ();
-		theCurrentPraat = & theForegroundPraat;
+		theCurrentPraatApplication = & theForegroundPraatApplication;
+		theCurrentPraatObjects = & theForegroundPraatObjects;
+		theCurrentPraatPicture = & theForegroundPraatPicture;
 	}
 	Graphics_setViewport (my ps, 0, 1, 0, 1);
 	Graphics_setWindow (my ps, 0, 1, 0, 1);
@@ -547,12 +576,14 @@ static void destroy (I) {
 	forget (my g);
 	for (int i = 0; i < 20; i ++) Melder_free (my history [i]. page);
 	Melder_free (my currentPageTitle);
-	if (my praat != NULL) {
-		for (int iobject = ((Praat) my praat) -> n; iobject >= 1; iobject --) {
-			Melder_free (((Praat) my praat) -> list [iobject]. name);
-			forget (((Praat) my praat) -> list [iobject]. object);
+	if (my praatApplication != NULL) {
+		for (int iobject = ((PraatObjects) my praatObjects) -> n; iobject >= 1; iobject --) {
+			Melder_free (((PraatObjects) my praatObjects) -> list [iobject]. name);
+			forget (((PraatObjects) my praatObjects) -> list [iobject]. object);
 		}
-		Melder_free (my praat);
+		Melder_free (my praatApplication);
+		Melder_free (my praatObjects);
+		Melder_free (my praatPicture);
 	}
 	inherited (HyperPage) destroy (me);
 }

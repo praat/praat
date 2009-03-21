@@ -87,7 +87,7 @@ oo_END_STRUCT (OTGrammarTableau)
 oo_DEFINE_CLASS (OTGrammar, Data)
 
 	oo_FROM (1)
-		oo_ENUM (OTGrammar_DECISION_STRATEGY, decisionStrategy)
+		oo_ENUM (kOTGrammar_decisionStrategy, decisionStrategy)
 	oo_ENDFROM
 	oo_FROM (2)
 		oo_DOUBLE (leak)

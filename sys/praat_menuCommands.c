@@ -209,7 +209,7 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 	theCommands [position]. hidden = hidden;
 	theCommands [position]. unhidable = unhidable;
 
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		Widget parent = NULL;
 
 		/* WHERE TO PUT IT?
@@ -309,7 +309,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 		theCommands [position]. uniqueID = ++ uniqueID;
 	}
 
-	if (! theCurrentPraat -> batch) {
+	if (! theCurrentPraatApplication -> batch) {
 		Widget parent = NULL;
 
 		/* WHERE TO PUT IT?
@@ -351,7 +351,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 	int found;
 	praat_Command command;
-	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
 	found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
 	command = & theCommands [found];
@@ -366,7 +366,7 @@ int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wch
 int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 	int found;
 	praat_Command command;
-	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
 	found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
 	command = & theCommands [found];
@@ -406,7 +406,7 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 	my title = title;
 	my callback = callback;
 	my unhidable = TRUE;
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		my button = NULL;
 	} else {
 		Widget button = my button = GuiButton_create (parent, x, x + 76, Gui_AUTOMATIC, -y,
@@ -422,7 +422,7 @@ void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
 	for (i = 1; i <= theNumberOfCommands; i ++)
 		if (wcsequ (theCommands [i]. title, title)) break;   /* Search. */
 	theCommands [i]. executable = sensitive;
-	if (! theCurrentPraat -> batch && ! Melder_backgrounding) GuiObject_setSensitive (theCommands [i]. button, sensitive);
+	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) GuiObject_setSensitive (theCommands [i]. button, sensitive);
 }
 
 int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter) {

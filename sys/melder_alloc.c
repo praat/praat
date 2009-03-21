@@ -1,6 +1,6 @@
 /* melder_alloc.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,14 @@
  * pb 2007/05/24 wcsdup, wcsToAscii, asciiToWcs
  * pb 2007/08/14 underscores for names _Melder_malloc and _Melder_calloc
  * pb 2007/12/05 Melder_wcsequ_firstCharacterCaseInsensitive
+ * pb 2009/03/14 counting reallocs moving and in situ
  */
 
 #include "melder.h"
 #include <wctype.h>
 
-static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0;
+static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,
+	totalNumberOfMovingReallocs = 0, totalNumberOfReallocsInSitu = 0;
 
 #define TRACE_MALLOC  0
 
@@ -71,6 +73,9 @@ void * Melder_realloc (void *ptr, long size) {
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 		totalNumberOfDeallocations += 1;
+		totalNumberOfMovingReallocs += 1;
+	} else {
+		totalNumberOfReallocsInSitu += 1;
 	}
 	#if TRACE_MALLOC
 		Melder_casual ("realloc %ld", size);
@@ -142,6 +147,14 @@ double Melder_deallocationCount (void) {
 
 double Melder_allocationSize (void) {
 	return totalAllocationSize;
+}
+
+double Melder_reallocationsInSituCount (void) {
+	return totalNumberOfReallocsInSitu;
+}
+
+double Melder_movingReallocationsCount (void) {
+	return totalNumberOfMovingReallocs;
 }
 
 int Melder_strcmp (const char *string1, const char *string2) {

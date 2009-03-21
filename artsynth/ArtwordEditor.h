@@ -2,7 +2,7 @@
 #define _ArtwordEditor_h
 /* ArtwordEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2009/03/21
  */
 
 #ifndef _Editor_h_
@@ -40,7 +40,7 @@ Thing_declare1 (ArtwordEditor);
 	Graphics graphics; \
 	int feature; \
 	Widget list, drawingArea, radio, time, value; \
-	Widget button [1 + enumlength (Art_MUSCLE)];
+	Widget button [1 + kArt_muscle_MAX];
 #define ArtwordEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (ArtwordEditor, Editor);
 

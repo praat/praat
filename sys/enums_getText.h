@@ -21,7 +21,7 @@
  * pb 2007/12/04
  */
 
-/* See enum.h */
+/* See enums.h */
 
 /* For C files. */
 

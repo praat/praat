@@ -21,6 +21,8 @@
   djmw 20090109 Add formulas for formant frequencies and bandwidths.
   djmw 20090123 Add PlayOptions.
   djmw 20090129 KlattGrid_draw text in boxes displays better
+  djmw 20090311 Add RealTier_valuesInRange
+  djmw 20090312 Add klattGrid_addFormantAndBandwidthTier
 */
 
 #include "KlattGrid.h"
@@ -34,6 +36,7 @@
 #include "Sound_to_Formant.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
+#include "FormantGrid_extensions.h"
 
 #include "oo_DESTROY.h"
 #include "KlattGrid_def.h"
@@ -99,6 +102,18 @@ static void rel_to_abs (double *w, double *ws, long n, double d)
 			ws[i] = sum;
 		}
 	}
+}
+
+static int RealTier_valuesInRange (I, double min, double max)
+{
+	iam (RealTier);
+	for (long i = 1; i <= my points -> size; i++)
+	{
+		RealPoint p = my points -> item[i];
+		if (NUMdefined (min) && p -> value < min) return 0;
+		if (NUMdefined (max) && p -> value < max) return 0;
+	}
+	return 1;
 }
 
 static RealTier RealTier_copyInterval (I, double t1, double t2, int interpolateBorders)
@@ -558,6 +573,21 @@ class_methods (PhonationGrid, Function)
 	class_methods_end
 }
 
+void PhonationGrid_setNames (PhonationGrid me)
+{
+	Thing_setName (my pitch, L"pitch");
+	Thing_setName (my voicingAmplitude, L"voicingAmplitude");
+	Thing_setName (my openPhase, L"openPhase");
+	Thing_setName (my collisionPhase, L"collisionPhase");
+	Thing_setName (my power1, L"power1");
+	Thing_setName (my power2, L"power2");
+	Thing_setName (my flutter, L"flutter");
+	Thing_setName (my doublePulsing, L"doublePulsing");
+	Thing_setName (my spectralTilt, L"spectralTilt");
+	Thing_setName (my aspirationAmplitude, L"aspirationAmplitude");
+	Thing_setName (my breathinessAmplitude, L"breathinessAmplitude");
+}
+
 PhonationGrid PhonationGrid_create (double tmin, double tmax)
 {
 	PhonationGrid me = new (PhonationGrid);
@@ -576,17 +606,7 @@ PhonationGrid PhonationGrid_create (double tmin, double tmax)
 		((my aspirationAmplitude = IntensityTier_create (tmin, tmax)) == NULL) ||
 		((my breathinessAmplitude = IntensityTier_create (tmin, tmax)) == NULL)) goto end;
 	my options = PhonationGridPlayOptions_create ();
-	Thing_setName (my pitch, L"pitch");
-	Thing_setName (my voicingAmplitude, L"voicingAmplitude");
-	Thing_setName (my openPhase, L"openPhase");
-	Thing_setName (my collisionPhase, L"collisionPhase");
-	Thing_setName (my power1, L"power1");
-	Thing_setName (my power2, L"power2");
-	Thing_setName (my flutter, L"flutter");
-	Thing_setName (my doublePulsing, L"doublePulsing");
-	Thing_setName (my spectralTilt, L"spectralTilt");
-	Thing_setName (my aspirationAmplitude, L"aspirationAmplitude");
-	Thing_setName (my breathinessAmplitude, L"breathinessAmplitude");
+	PhonationGrid_setNames (me);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;
@@ -1212,6 +1232,15 @@ class_methods (VocalTractGrid, Function)
 	class_methods_end
 }
 
+void VocalTractGrid_setNames (VocalTractGrid me)
+{
+	Thing_setName (my formants, L"formants");
+	Thing_setName (my nasal_formants, L"nasal_formants");
+	Thing_setName (my nasal_antiformants, L"nasal_antiformants");
+	Thing_setName (my formants_amplitudes, L"formants_amplitudes");
+	Thing_setName (my nasal_formants_amplitudes, L"nasal_formants_amplitudes");
+}
+
 VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfNasalFormants,	long numberOfNasalAntiFormants)
 {
@@ -1225,11 +1254,7 @@ VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFor
 		((my formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants)) == NULL) ||
 		((my nasal_formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfNasalFormants))== NULL)) goto end;
 	my options = VocalTractGridPlayOptions_create ();
-	Thing_setName (my formants, L"formants");
-	Thing_setName (my nasal_formants, L"nasal_formants");
-	Thing_setName (my nasal_antiformants, L"nasal_antiformants");
-	Thing_setName (my formants_amplitudes, L"formants_amplitudes");
-	Thing_setName (my nasal_formants_amplitudes, L"nasal_formants_amplitudes");
+	VocalTractGrid_setNames (me);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;
@@ -1693,6 +1718,15 @@ class_methods (CouplingGrid, Function)
 	class_methods_end
 }
 
+void CouplingGrid_setNames (CouplingGrid me)
+{
+	Thing_setName (my tracheal_formants, L"tracheal_formants");
+	Thing_setName (my tracheal_antiformants, L"tracheal_antiformants");
+	Thing_setName (my tracheal_formants_amplitudes, L"tracheal_formants_amplitudes");
+	Thing_setName (my delta_formants, L"delta_formants");
+	Thing_setName (my glottis, L"glottis");	
+}
+
 CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachealFormants, long numberOfTrachealAntiFormants, long numberOfDeltaFormants)
 {
 	CouplingGrid me = new (CouplingGrid);
@@ -1703,11 +1737,7 @@ CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachea
 		((my delta_formants = FormantGrid_createEmpty (tmin, tmax, numberOfDeltaFormants)) == NULL) ||
 		((my glottis = PhonationTier_create (tmin, tmax)) == NULL))  goto end;
 	my options = CouplingGridPlayOptions_create ();
-	Thing_setName (my tracheal_formants, L"tracheal_formants");
-	Thing_setName (my tracheal_antiformants, L"tracheal_antiformants");
-	Thing_setName (my tracheal_formants_amplitudes, L"tracheal_formants_amplitudes");
-	Thing_setName (my delta_formants, L"delta_formants");
-	Thing_setName (my glottis, L"glottis");	
+	CouplingGrid_setNames (me);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;
@@ -1728,6 +1758,11 @@ int FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid thee
 			{
 				RealTier rt = RealTier_updateWithDelta (my formants -> item[itier], delta, thy glottis, pc -> fadeFraction);
 				if (rt == NULL) goto end;
+				if (! RealTier_valuesInRange (rt, 0, NUMundefined))
+				{
+					forget (rt);
+					return Melder_error3 (L"Formant ", Melder_integer (itier), L" coupling gives negative values.");
+				}
 				forget (my formants -> item[itier]);
 				my formants -> item[itier] = rt;
 			}
@@ -1739,6 +1774,11 @@ int FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid thee
 			{
 				RealTier rt = RealTier_updateWithDelta (my bandwidths -> item[itier], delta, thy glottis, pc -> fadeFraction);
 				if (rt == NULL) goto end;
+				if (! RealTier_valuesInRange (rt, 0, NUMundefined))
+				{
+					forget (rt);
+					return Melder_error3 (L"Bandwidth ", Melder_integer (itier), L" coupling gives negative values.");
+				}
 				forget (my bandwidths -> item[itier]);
 				my bandwidths -> item[itier] = rt;
 			}
@@ -1919,6 +1959,14 @@ class_methods (FricationGrid, Function)
 	class_methods_end
 }
 
+void FricationGrid_setNames (FricationGrid me)
+{
+	Thing_setName (my fricationAmplitude, L"fricationAmplitude");
+	Thing_setName (my formants, L"formants");
+	Thing_setName (my bypass, L"bypass");
+	Thing_setName (my formants_amplitudes, L"formants_amplitudes");
+}
+
 FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfFormants)
 {
 	FricationGrid me = new (FricationGrid);
@@ -1929,10 +1977,7 @@ FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfForma
 		((my bypass = IntensityTier_create (tmin, tmax)) == NULL) ||
 		((my formants_amplitudes = formantsAmplitudes_create (tmin, tmax, numberOfFormants)) == NULL)) goto end;
 	my options = FricationGridPlayOptions_create ();
-	Thing_setName (my fricationAmplitude, L"fricationAmplitude");
-	Thing_setName (my formants, L"formants");
-	Thing_setName (my bypass, L"bypass");
-	Thing_setName (my formants_amplitudes, L"formants_amplitudes");
+	FricationGrid_setNames (me);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;
@@ -2146,6 +2191,15 @@ class_methods (KlattGrid, Function)
 	class_methods_end
 }
 
+void KlattGrid_setNames (KlattGrid me)
+{
+	Thing_setName (my phonation, L"phonation");
+	Thing_setName (my vocalTract, L"vocalTract");
+	Thing_setName (my coupling, L"coupling");
+	Thing_setName (my frication, L"frication");
+	Thing_setName (my gain, L"gain");
+}
+
 KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfNasalFormants,	long numberOfNasalAntiFormants,
 	long numberOfTrachealFormants, long numberOfTrachealAntiFormants,
@@ -2162,11 +2216,7 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 		((my options = KlattGridPlayOptions_create ()) == NULL)) goto end;
 
 	KlattGrid_setDefaultPlayOptions (me);
-	Thing_setName (my phonation, L"phonation");
-	Thing_setName (my vocalTract, L"vocalTract");
-	Thing_setName (my coupling, L"coupling");
-	Thing_setName (my frication, L"frication");
-	Thing_setName (my gain, L"gain");
+	KlattGrid_setNames (me);
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;	
@@ -2503,6 +2553,18 @@ int KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid the
 	forget (*fg);
 	*fg = any;
 	return 1;
+}
+
+int KlattGrid_addFormantAndBandwidthTier (KlattGrid me, int formantType, long position)
+{
+	FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
+	return FormantGrid_addFormantAndBandwidthTiers (*fg, position);
+}
+
+void KlattGrid_removeFormantAndBandwidthTier (KlattGrid me, int formantType, long position)
+{
+	FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
+	FormantGrid_removeFormantAndBandwidthTiers (*fg, position);
 }
 
 double KlattGrid_getDeltaFormantAtTime (KlattGrid me, long iformant, double t)

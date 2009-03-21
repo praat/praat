@@ -1,6 +1,6 @@
 /* Graphics_text.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
  * pb 2007/09/29 correct counting of UTF-8 bytes
  * pb 2007/12/09 enums
  * pb 2008/03/24 cairo
+ * pb 2009/03/14 switched kerning off
  */
 
 #include <ctype.h>
@@ -732,10 +733,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				Boolean boldStyle = (lc -> style & bold) != 0;
 				Boolean italicStyle = (lc -> style & italic) != 0;
 				static RGBColor blueColour = { 0, 0, 0xFFFF };
-				ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
-				ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean) };
-				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize, lc -> link ? & blueColour : & my macColour, & boldStyle, & italicStyle };
-				ATSUSetAttributes (style, 5, styleAttributeTags, styleValueSizes, styleValues);
+				Fract kerningOff = FloatToFract (1.0);
+				ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag, kATSUKerningInhibitFactorTag };
+				ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean), sizeof (Fract) };
+				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize, lc -> link ? & blueColour : & my macColour, & boldStyle, & italicStyle, & kerningOff };
+				ATSUSetAttributes (style, 6, styleAttributeTags, styleValueSizes, styleValues);
 				ATSUSetRunStyle (textLayout, style, 0, nchars);
 				/*
 				 * Draw.

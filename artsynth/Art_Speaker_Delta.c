@@ -1,6 +1,6 @@
 /* Art_Speaker_Delta.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1996/06/22
  * pb 2002/07/16 GPL
+ * pb 2009/03/21 modern enums
  */
 
 #include "Art_Speaker_Delta.h"
@@ -35,22 +36,22 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 	/* Lungs. */
 
 	for (itube = 7; itube <= 18; itube ++)
-		delta -> tube [itube]. Dyeq = 120 * f * (1 + art -> art [enumi (Art_MUSCLE, Lungs)]);
+		delta -> tube [itube]. Dyeq = 120 * f * (1 + art -> art [kArt_muscle_LUNGS]);
 
 	/* Glottis. */
 
 	{
 		Delta_Tube t = delta -> tube + 36;
-		t -> Dyeq = f * (5 - 10 * art -> art [enumi (Art_MUSCLE, Interarytenoid)]
-		      + 3 * art -> art [enumi (Art_MUSCLE, PosteriorCricoarytenoid)]
-		      - 3 * art -> art [enumi (Art_MUSCLE, LateralCricoarytenoid)]);   /* 4.38 */
-		t -> k1 = speaker -> lowerCord.k1 * (1 + art -> art [enumi (Art_MUSCLE, Cricothyroid)]);
+		t -> Dyeq = f * (5 - 10 * art -> art [kArt_muscle_INTERARYTENOID]
+		      + 3 * art -> art [kArt_muscle_POSTERIOR_CRICOARYTENOID]
+		      - 3 * art -> art [kArt_muscle_LATERAL_CRICOARYTENOID]);   /* 4.38 */
+		t -> k1 = speaker -> lowerCord.k1 * (1 + art -> art [kArt_muscle_CRICOTHYROID]);
 		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
 	}
 	if (speaker -> cord.numberOfMasses >= 2) {
 		Delta_Tube t = delta -> tube + 37;
 		t -> Dyeq = delta -> tube [36]. Dyeq;
-		t -> k1 = speaker -> upperCord.k1 * (1 + art -> art [enumi (Art_MUSCLE, Cricothyroid)]);
+		t -> k1 = speaker -> upperCord.k1 * (1 + art -> art [kArt_muscle_CRICOTHYROID]);
 		t -> k3 = t -> k1 * (20 / t -> Dz) * (20 / t -> Dz);
 	}
 	if (speaker -> cord.numberOfMasses >= 10) {
@@ -80,7 +81,7 @@ void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta)
 
 	/* Nasopharyngeal port. */
 
-	delta -> tube [65]. Dyeq = f * (18 - 25 * art -> art [enumi (Art_MUSCLE, LevatorPalatini)]);   /* 4.40 */
+	delta -> tube [65]. Dyeq = f * (18 - 25 * art -> art [kArt_muscle_LEVATOR_PALATINI]);   /* 4.40 */
 
 	for (itube = 1; itube <= delta -> numberOfTubes; itube ++) {
 		Delta_Tube t = delta -> tube + itube;

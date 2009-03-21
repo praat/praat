@@ -150,7 +150,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interp
 	Sound thee = Data_copy (me), him = NULL; cherror
 	if (my ny == 1) {
 		spec = Sound_to_Spectrum (me, TRUE); cherror
-		Matrix_formula ((Matrix) spec, formula, interpreter, 0); cherror
+		Matrix_formula ((Matrix) spec, formula, interpreter, NULL); cherror
 		him = Spectrum_to_Sound (spec); cherror
 		NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
 	} else {
@@ -159,7 +159,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interp
 			him = Sound_extractChannel (me, channel); cherror
 			forget (spec);
 			spec = Sound_to_Spectrum (him, TRUE); cherror
-			Matrix_formula ((Matrix) spec, formula, interpreter, 0); cherror
+			Matrix_formula ((Matrix) spec, formula, interpreter, NULL); cherror
 			forget (him);
 			him = Spectrum_to_Sound (spec); cherror
 			NUMdvector_copyElements (his z [1], thy z [channel], 1, thy nx);

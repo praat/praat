@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/09
+ * pb 2009/03/21
  */
 
 #undef FORM
@@ -36,9 +36,10 @@
 #undef RADIOBUTTON
 #undef OPTIONMENU
 #undef OPTION
-#undef ENUM
 #undef RADIOBUTTONS_ENUM
 #undef OPTIONS_ENUM
+#undef RADIO_ENUM
+#undef OPTIONMENU_ENUM
 #undef LIST
 #undef OK
 #undef SET_REAL
@@ -68,7 +69,6 @@
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define ENUM(label,type,def)	UiForm_addEnum (cmd -> dialog, label, & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \

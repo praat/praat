@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2007 Paul Boersma
+ * Copyright (C) 1994-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * pb 2003/06/11 made struct_copy global
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
- * pb 2007/08/13
+ * pb 2009/03/21 modern enums
  */
 
 #include "oo_undef.h"
@@ -35,7 +35,7 @@
 		thy x [i] = my x [i];
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		thy x [i] = my x [i];
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
@@ -53,7 +53,7 @@
 	for (int i = 0; i < n; i ++) thy x [i] = my x [i];
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) thy x [i] = my x [i];
+	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = my x [i];
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
@@ -68,7 +68,7 @@
 		if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-		for (int i = 0; i <= enumlength (setType); i ++) \
+		for (int i = 0; i <= setType##_MAX; i ++) \
 			if (my x [i] && ! (thy x [i] = Melder_strdup (my x [i]))) return 0;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -88,7 +88,7 @@
 		if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0;
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i] && ! (thy x [i] = Melder_wcsdup (my x [i]))) return 0;
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
@@ -108,8 +108,8 @@
 		if (! Type##_copy (& my x [i], & thy x [i])) return 0;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
-		if (! Type##_copy (& my x [i], & thy x [i])) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		if (! Type##_copy (& my x [i], & thy x [i])) { Melder_casual ("struct set copy fail %d", i); return 0; }
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \

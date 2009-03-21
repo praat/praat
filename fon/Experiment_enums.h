@@ -1,6 +1,6 @@
 /* Experiment_enums.h
  *
- * Copyright (C) 2001-2002 Paul Boersma
+ * Copyright (C) 2001-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  */
 
 /*
- * pb 2001/06/11
- * pb 2002/07/16 GPL
+ * pb 2009/03/18
  */
 
-enum_begin (Experiment_RANDOMIZE, CyclicNonRandom)   /* This cannot be called "None" !!! */
-	enum (PermuteAll)
-	enum (PermuteBalanced)
-	enum (PermuteBalancedNoDoublets)
-	enum (WithReplacement)
-enum_end (Experiment_RANDOMIZE)
+enums_begin (kExperiment_randomize, 0)
+	enums_add (kExperiment_randomize, 0, CYCLIC_NON_RANDOM, L"CyclicNonRandom")
+	enums_add (kExperiment_randomize, 1, PERMUTE_ALL, L"PermuteAll")
+	enums_add (kExperiment_randomize, 2, PERMUTE_BALANCED, L"PermuteBalanced")
+	enums_add (kExperiment_randomize, 3, PERMUTE_BALANCED_NO_DOUBLETS, L"PermuteBalancedNoDoublets")
+	enums_add (kExperiment_randomize, 4, WITH_REPLACEMENT, L"WithReplacement")
+enums_end (kExperiment_randomize, 4, PERMUTE_BALANCED_NO_DOUBLETS)
 
 /* End of file Experiment_enums.h */

@@ -119,9 +119,9 @@ void praat_showLogo (int autoPopDown) {
 			XWindowAttributes windowAttributes;
 		#endif
 	#endif
-	if (theCurrentPraat -> batch || ! theLogo.draw) return;
+	if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
 	if (! theLogo.dia) {
-		theLogo.dia = GuiDialog_create (theCurrentPraat -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
+		theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
 		#if gtk
 			theLogo.form = GTK_DIALOG (theLogo.dia) -> vbox;
 		#else
@@ -153,7 +153,7 @@ void praat_showLogo (int autoPopDown) {
 	       windowAttributes. map_state != IsViewable)
 	{
 		XEvent event;
-		XtAppNextEvent (theCurrentPraat -> context, & event);
+		XtAppNextEvent (theCurrentPraatApplication -> context, & event);
 		XtDispatchEvent (& event);
 	}
 	gui_drawingarea_cb_expose (NULL, NULL);   // BUG
@@ -162,7 +162,7 @@ void praat_showLogo (int autoPopDown) {
 
 	#if motif
 	if (autoPopDown)
-		XtAppAddTimeOut (theCurrentPraat -> context, 2000, logo_timeOut, (XtPointer) NULL);
+		XtAppAddTimeOut (theCurrentPraatApplication -> context, 2000, logo_timeOut, (XtPointer) NULL);
 	#endif
 	#endif
 }

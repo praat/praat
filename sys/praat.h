@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/09
+ * pb 2009/03/21
  */
 
 #include "Editor.h"
@@ -142,25 +142,35 @@ typedef struct {
 
 #define praat_MAXNUM_OBJECTS 10000   /* Maximum number of objects in the list. */
 typedef struct {   /* Readonly */
-	int n;	 /* The current number of objects in the list. */
-	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
 	MelderString batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
-	int totalSelection;   /* The total number of selected objects, <= n. */
-	int totalBeingCreated;
 	#if gtk
 		GMainContext *context;
 	#elif motif
 		XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
 	#endif
 	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
-	Graphics graphics;   /* The Graphics associated with the Picture window. */
 	ManPages manPages;
+} structPraatApplication, *PraatApplication;
+typedef struct {   /* Readonly */
+	int n;	 /* The current number of objects in the list. */
+	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
+	int totalSelection;   /* The total number of selected objects, <= n. */
+	int totalBeingCreated;
 	long uniqueId;
-} structPraat, *Praat;
-extern structPraat theForegroundPraat;
-extern Praat theCurrentPraat;
-	/* The global object containing the state of the application; only reachable from interface files. */
+} structPraatObjects, *PraatObjects;
+typedef struct {   /* Readonly */
+	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
+	int font, fontSize, lineType, colour;
+	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC;
+} structPraatPicture, *PraatPicture;
+extern structPraatApplication theForegroundPraatApplication;
+extern PraatApplication theCurrentPraatApplication;
+extern structPraatObjects theForegroundPraatObjects;
+extern PraatObjects theCurrentPraatObjects;
+extern structPraatPicture theForegroundPraatPicture;
+extern PraatPicture theCurrentPraatPicture;
+	/* The global objects containing the state of the application; only reachable from interface files. */
 
 Any praat_onlyObject (void *klas);
 	/* Returns a selected Data of class 'klas'. */
@@ -189,7 +199,8 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		'helpString' may be NULL.
 	INTEGER (name, initialString)
 	NATURAL (name, initialString)
-	DOUBLE (name, initialString)
+	REAL (name, initialString)
+	REAL_OR_UNDEFINED (name, initialString)
 	POSITIVE (name, initialString)
 	WORD (name, initialString)
 	SENTENCE (name, initialString)
@@ -213,9 +224,6 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		The initial value is between 1 and the number of options.
 	OPTION (name)
 		the name is also the title of the button.
-	ENUM (name, enumtype, initialValue)
-		the name is also the string displayed in the label.
-		The initial value is between 0 and enumlength(enumtype).
 	OK
 		this statement is obligatory.
 	SET_XXXXXX (name, value)
@@ -239,7 +247,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define FORM(proc,name,helpTitle) \
 	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *modified) \
 	{ static UiForm dia; if (dia == NULL) { Any radio = 0; (void) radio; \
-	dia = UiForm_create (theCurrentPraat -> topShell, name, DO_##proc, NULL, helpTitle);
+	dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, NULL, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
@@ -254,7 +262,6 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (dia, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define ENUM(label,type,def)	UiForm_addEnum (dia, label, & enum_##type, def);
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \
@@ -302,14 +309,14 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	#define FORM_READ(proc,title,help) \
 	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) { \
 		static UiForm dia; (void) interpreter; (void) dummy; \
-		if (dia == NULL) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
+		if (dia == NULL) dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, NULL, help); \
 		if (sendingForm == NULL && sendingString == NULL) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sendingString == NULL) file = UiFile_getFile (dia); \
 		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) { \
 		static Any dia; (void) interpreter; (void) dummy; \
-		if (dia == NULL) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
+		if (dia == NULL) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, NULL, help); \
 		if (sendingForm == NULL && sendingString == NULL) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sendingString == NULL) file = UiFile_getFile (dia); \
 		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; } {
@@ -335,14 +342,14 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define REQUIRE(c,t)  if (! (c)) return Melder_error1 (t);
 #define NEW(proc)  if (! praat_new1 (proc, NULL)) return 0;
 
-#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraat -> n; IOBJECT ++) if (condition)
-#define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraat -> n; IOBJECT > 0; IOBJECT --) if (condition)
-#define SELECTED  (theCurrentPraat -> list [IOBJECT]. selected)
-#define CLASS  (theCurrentPraat -> list [IOBJECT]. klas)
-#define OBJECT  (theCurrentPraat -> list [IOBJECT]. object)
-#define GRAPHICS  theCurrentPraat -> graphics
-#define FULL_NAME  (theCurrentPraat -> list [IOBJECT]. name)
-#define ID  (theCurrentPraat -> list [IOBJECT]. id)
+#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
+#define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
+#define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. selected)
+#define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
+#define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
+#define GRAPHICS  theCurrentPraatPicture -> graphics
+#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
+#define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_wcscat3 (Melder_integer (ID), L". ", FULL_NAME)
 #define NAMEW  praat_name (IOBJECT)
 #define EVERY(proc)  WHERE (SELECTED) proc;
@@ -397,7 +404,7 @@ void praat_picture_close (void);
 #define INCLUDE_LIBRARY(praat_xxx_init) \
    { extern void praat_xxx_init (void); praat_xxx_init (); }
 #define INCLUDE_MANPAGES(manual_xxx_init) \
-   { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraat -> manPages); }
+   { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraatApplication -> manPages); }
 
 /* For text-only applications that do not want to see that irritating Picture window. */
 /* Works only if called before praat_init. */

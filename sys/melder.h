@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/20
+ * pb 2009/03/14
  */
 
 #include <stdio.h>
@@ -342,6 +342,9 @@ double Melder_allocationSize (void);
 	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
 	since the start of the process. Mainly for debugging purposes.
 */
+
+double Melder_reallocationsInSituCount (void);
+double Melder_movingReallocationsCount (void);
 
 /********** FILES **********/
 

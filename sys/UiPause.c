@@ -174,7 +174,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 	int wasBackgrounding = Melder_backgrounding;
 	structMelderDir dir = { { 0 } };
 	Melder_getDefaultDir (& dir);
-	if (theCurrentPraat -> batch) goto end;
+	if (theCurrentPraatApplication -> batch) goto end;
 	UiFile_hide ();
 	if (wasBackgrounding) praat_foreground ();
 	/*

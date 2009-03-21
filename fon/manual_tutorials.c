@@ -23,15 +23,20 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090309)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090321)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.03# (21 March 2009)")
+//LIST_ITEM (L"\\bu OT learning: the \"Random up, highest down\" update rule.")
+LIST_ITEM (L"\\bu ExperimentMFC: corrected a bug introduced in 5.0.36 that caused Praat to crash if a sound file did not exist.")
+LIST_ITEM (L"\\bu Articulatory synthesis: corrected a bug that could cause Praat to crash when copying Artwords.")
+LIST_ITEM (L"\\bu Macintosh: corrected a bug that could cause poor text alignment in picture.")
 NORMAL (L"##5.1.02# (9 March 2009)")
 LIST_ITEM (L"\\bu Allow pause forms without fields.")
 LIST_ITEM (L"\\bu The value \"undefined\" is disallowed from all fields in dialog windows "
 	"except ##Table: Set numeric value...# and ##TableOfReal: Set value...#.")
 LIST_ITEM (L"\\bu TextGrid: ##List...# and ##Down to Table...#.")
-LIST_ITEM (L"\\bu OT learning: Giorgio Magri's \"All up, one down\" update rule.")
+LIST_ITEM (L"\\bu OT learning: Giorgio Magri's \"Weighted all up, highest down\" update rule.")
 NORMAL (L"##5.1.01# (26 February 2009)")
 LIST_ITEM (L"\\bu Corrected several bugs in Klatt synthesis.")
 NORMAL (L"##5.1# (31 January 2009)")

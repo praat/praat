@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/05
+ * pb 2009/03/14
  */
 
 #include "praat.h"
@@ -50,6 +50,24 @@ static void UiForm_addNetworkFields (UiForm dia) {
 	REAL (L"Leak", L"0.0")
 }
 
+FORM (Create_empty_Network, L"Create empty Network", 0)
+	WORD (L"Name", L"network")
+	UiForm_addNetworkFields (dia);
+	LABEL (L"", L"World coordinates:")
+	REAL (L"left x range", L"0.0")
+	REAL (L"right x range", L"10.0")
+	REAL (L"left y range", L"0.0")
+	REAL (L"right y range", L"10.0")
+	OK
+DO
+	if (! praat_new1 (Network_create_e (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
+		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
+		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
+		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
+		GET_REAL (L"left x range"), GET_REAL (L"right x range"), GET_REAL (L"left y range"), GET_REAL (L"right y range"),
+		0, 0), GET_STRING (L"Name"))) return 0;
+END
+
 FORM (Create_rectangular_Network, L"Create rectangular Network", 0)
 	UiForm_addNetworkFields (dia);
 	LABEL (L"", L"Structure settings:")
@@ -70,6 +88,55 @@ DO
 		GET_REAL (L"left Initial weight range"), GET_REAL (L"right Initial weight range")),
 			L"rectangle_", Melder_integer (GET_INTEGER (L"Number of rows")),
 			L"_", Melder_integer (GET_INTEGER (L"Number of columns")))) return 0;
+END
+
+FORM (Create_rectangular_Network_vertical, L"Create rectangular Network (vertical)", 0)
+	UiForm_addNetworkFields (dia);
+	LABEL (L"", L"Structure settings:")
+	NATURAL (L"Number of rows", L"10")
+	NATURAL (L"Number of columns", L"10")
+	BOOLEAN (L"Bottom row clamped", 1)
+	LABEL (L"", L"Initial state settings:")
+	REAL (L"left Initial weight range", L"-0.1")
+	REAL (L"right Initial weight range", L"0.1")
+	OK
+DO
+	if (! praat_new4 (Network_create_rectangle_vertical_e (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
+		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
+		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
+		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
+		GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"),
+		GET_INTEGER (L"Bottom row clamped"),
+		GET_REAL (L"left Initial weight range"), GET_REAL (L"right Initial weight range")),
+			L"rectangle_", Melder_integer (GET_INTEGER (L"Number of rows")),
+			L"_", Melder_integer (GET_INTEGER (L"Number of columns")))) return 0;
+END
+
+FORM (Network_addConnection, L"Network: Add connection", 0)
+	NATURAL (L"From node", L"1")
+	NATURAL (L"To node", L"2")
+	REAL (L"Weight", L"0.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		Network_addConnection_e (OBJECT, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight")); cherror
+		praat_dataChanged (OBJECT);
+	}
+end:
+END
+
+FORM (Network_addNode, L"Network: Add node", 0)
+	REAL (L"x", L"5.0")
+	REAL (L"y", L"5.0")
+	REAL (L"Activity", L"0.0")
+	BOOLEAN (L"Clamping", 0)
+	OK
+DO
+	WHERE (SELECTED) {
+		Network_addNode_e (OBJECT, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); cherror
+		praat_dataChanged (OBJECT);
+	}
+end:
 END
 
 FORM (Network_draw, L"Draw Network", 0)
@@ -194,11 +261,11 @@ DO
 END
 
 DIRECT (OTGrammar_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -432,7 +499,7 @@ FORM (OTGrammar_learn, L"OTGrammar: Learn", L"OTGrammar & 2 Strings: Learn...")
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -460,7 +527,7 @@ FORM (OTGrammar_learnFromPartialOutputs, L"OTGrammar: Learn from partial adult o
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -495,7 +562,7 @@ FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -523,7 +590,7 @@ FORM (OTGrammar_learnOneFromPartialOutput, L"OTGrammar: Learn one from partial a
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -592,13 +659,13 @@ DO
 END
 
 FORM (OTGrammar_setDecisionStrategy, L"OTGrammar: Set decision strategy", 0)
-	ENUM (L"Decision strategy", OTGrammar_DECISION_STRATEGY, 0)
+	RADIO_ENUM (L"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 	OK
 OTGrammar me = ONLY_OBJECT;
-SET_INTEGER (L"Decision strategy", my decisionStrategy);
+SET_ENUM (L"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	OTGrammar me = ONLY_OBJECT;
-	my decisionStrategy = GET_INTEGER (L"Decision strategy");
+	my decisionStrategy = GET_ENUM (kOTGrammar_decisionStrategy, L"Decision strategy");
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -652,7 +719,7 @@ FORM (OTGrammar_Distributions_learnFromPartialOutputs, L"OTGrammar & Distributio
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	REAL (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -724,7 +791,7 @@ FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", 
 		OPTION (L"EDCD")
 		OPTION (L"EDCD with vacation")
 		OPTION (L"Demote one with vacation")
-		OPTION (L"All up, one down")
+		OPTION (L"Weighted all up, highest down")
 	POSITIVE (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -797,11 +864,11 @@ DO
 END
 
 DIRECT (OTMulti_edit)
-	if (theCurrentPraat -> batch) {
+	if (theCurrentPraatApplication -> batch) {
 		return Melder_error1 (L"Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, ID_AND_FULL_NAME,
+			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -971,13 +1038,13 @@ DO
 END
 
 FORM (OTMulti_setDecisionStrategy, L"OTMulti: Set decision strategy", 0)
-	ENUM (L"Decision strategy", OTGrammar_DECISION_STRATEGY, 0)
+	RADIO_ENUM (L"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 	OK
 OTMulti me = ONLY_OBJECT;
-SET_INTEGER (L"Decision strategy", my decisionStrategy);
+SET_ENUM (L"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	OTMulti me = ONLY_OBJECT;
-	my decisionStrategy = GET_INTEGER (L"Decision strategy");
+	my decisionStrategy = GET_ENUM (kOTGrammar_decisionStrategy, L"Decision strategy");
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -1163,12 +1230,16 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction2 (classOTMulti, 1, classStrings, 1, L"Get outputs...", 0, 0, DO_OTMulti_Strings_generateOptimalForms);
 
 	praat_addMenuCommand (L"Objects", L"New", L"Symmetric networks", 0, 0, 0);
+		praat_addMenuCommand (L"Objects", L"New", L"Create empty Network...", 0, 1, DO_Create_empty_Network);
 		praat_addMenuCommand (L"Objects", L"New", L"Create rectangular Network...", 0, 1, DO_Create_rectangular_Network);
+		praat_addMenuCommand (L"Objects", L"New", L"Create rectangular Network (vertical)...", 0, 1, DO_Create_rectangular_Network_vertical);
 
 	praat_addAction1 (classNetwork, 0, L"Draw...", 0, 0, DO_Network_draw);
 	praat_addAction1 (classNetwork, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 0, DO_Network_getActivity);
 	praat_addAction1 (classNetwork, 0, L"Modify -", 0, 0, 0);
+	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 0, DO_Network_addNode);
+	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 0, DO_Network_addConnection);
 	praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 0, DO_Network_setActivity);
 	praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 0, DO_Network_setClamping);
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 0, DO_Network_spreadActivities);

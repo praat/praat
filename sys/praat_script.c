@@ -75,7 +75,7 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	if (*string >= 'A' && *string <= 'Z') {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor editor = theCurrentPraat -> list [IOBJECT]. editors [ieditor];
+				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor != NULL) {
 					const wchar_t *name = wcschr (editor -> name, ' ') + 1;
 					if (wcsequ (name, string)) return editor;
@@ -85,7 +85,7 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	} else {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor editor = theCurrentPraat -> list [IOBJECT]. editors [ieditor];
+				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor && wcsequ (editor -> name, string)) return editor;
 			}
 		}
@@ -139,30 +139,30 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (command [9] == ' ') Melder_print (command + 10);
 			Melder_print (L"\n");
 		} else if (wcsnequ (command, L"fappendinfo ", 12)) {
-			if (theCurrentPraat != & theForegroundPraat)
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				return Melder_error1 (L"The script command \"fappendinfo\" is not available inside pictures.");
 			structMelderFile file = { 0 };
 			if (! Melder_relativePathToFile (command + 12, & file)) return 0;
 			if (! MelderFile_appendText (& file, Melder_getInfo ())) return 0;
 		} else if (wcsnequ (command, L"unix ", 5)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"unix\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"unix\" is not available inside manuals.");
 			if (! Melder_system (command + 5))
 				return Melder_error3 (L"Unix command \"", command + 5, L"\" returned error status;\n"
 					"if you want to ignore this, use `unix_nocheck' instead of `unix'.");
 		} else if (wcsnequ (command, L"unix_nocheck ", 13)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"unix_nocheck\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"unix_nocheck\" is not available inside manuals.");
 			(void) Melder_system (command + 13); Melder_clearError ();
 		} else if (wcsnequ (command, L"system ", 7)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"system\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"system\" is not available inside manuals.");
 			if (! Melder_system (command + 7))
 				return Melder_error3 (L"System command \"", command + 7, L"\" returned error status;\n"
 					"if you want to ignore this, use `system_nocheck' instead of `system'.");
 		} else if (wcsnequ (command, L"system_nocheck ", 15)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"system_nocheck\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"system_nocheck\" is not available inside manuals.");
 			(void) Melder_system (command + 15); Melder_clearError ();
 		} else if (wcsnequ (command, L"nowarn ", 7)) {
 			int result;
@@ -180,15 +180,15 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
-			if (theCurrentPraat -> batch) return 1;
-			UiPause_begin (theCurrentPraat -> topShell, L"stop or continue", interpreter); iferror return 0;
+			if (theCurrentPraatApplication -> batch) return 1;
+			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter); iferror return 0;
 			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6); iferror return 0;
 			UiPause_end (1, 1, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter); iferror return 0; 
 		} else if (wcsnequ (command, L"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (wcsnequ (command, L"editor", 6)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"editor\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"editor\" is not available inside manuals.");
 			if (command [6] == ' ' && isalpha (command [7])) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 				if (praatP. editor == NULL)
@@ -201,12 +201,12 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 				return Melder_error1 (L"No editor specified.");
 			}
 		} else if (wcsnequ (command, L"endeditor", 9)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"endeditor\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"endeditor\" is not available inside manuals.");
 			praatP. editor = NULL;
 		} else if (wcsnequ (command, L"sendpraat ", 10)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"sendpraat\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"sendpraat\" is not available inside manuals.");
 			wchar_t programName [41], *q = & programName [0];
 			#ifdef macintosh
 				#define SENDPRAAT_TIMEOUT  10
@@ -223,14 +223,14 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (*p == '\0')
 				return Melder_error1 (L"Missing command after `sendpraat'.");
 			#if motif
-			char *result = sendpraat (XtDisplay (theCurrentPraat -> topShell), Melder_peekWcsToUtf8 (programName),
+			char *result = sendpraat (XtDisplay (theCurrentPraatApplication -> topShell), Melder_peekWcsToUtf8 (programName),
 				SENDPRAAT_TIMEOUT, Melder_peekWcsToUtf8 (p));
 			if (result)
 				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", programName, L" not completed.");
 			#endif
 		} else if (wcsnequ (command, L"sendsocket ", 11)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"sendsocket\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"sendsocket\" is not available inside manuals.");
 			wchar_t hostName [61], *q = & hostName [0];
 			const wchar_t *p = command + 11;
 			while (*p == ' ' || *p == '\t') p ++;
@@ -245,8 +245,8 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (result)
 				return Melder_error4 (Melder_peekUtf8ToWcs (result), L"\nMessage to ", hostName, L" not completed.");
 		} else if (wcsnequ (command, L"filedelete ", 11)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"filedelete\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"filedelete\" is not available inside manuals.");
 			const wchar_t *p = command + 11;
 			structMelderFile file = { 0 };
 			while (*p == ' ' || *p == '\t') p ++;
@@ -255,8 +255,8 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (! Melder_relativePathToFile (p, & file)) return 0;
 			MelderFile_delete (& file);
 		} else if (wcsnequ (command, L"fileappend ", 11)) {
-			if (theCurrentPraat != & theForegroundPraat)
-				return Melder_error1 (L"The script command \"fileappend\" is not available inside pictures.");
+			if (theCurrentPraatObjects != & theForegroundPraatObjects)
+				return Melder_error1 (L"The script command \"fileappend\" is not available inside manuals.");
 			const wchar_t *p = command + 11;
 			wchar_t path [256], *q = & path [0];
 			while (*p == ' ' || *p == '\t') p ++;
@@ -310,16 +310,16 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		/* See if command exists and is available; ignore separators. */
 		/* First try loose commands, then fixed commands. */
 
-		if (theCurrentPraat == & theForegroundPraat && praatP. editor != NULL) {
+		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
 			if (! Editor_doMenuCommand (praatP. editor, command, arguments, interpreter)) {
 				return 0;
 			}
-		} else if (theCurrentPraat != & theForegroundPraat &&
+		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (wcsnequ (command, L"Write ", 6) ||
 			 wcsnequ (command, L"Append ", 7) ||
 			 wcsequ (command, L"Quit")))
 		{
-			return Melder_error1 (L"Commands that write files (including Quit) are not available inside pictures.");
+			return Melder_error1 (L"Commands that write files (including Quit) are not available inside manuals.");
 		} else if (! praat_doAction (command, arguments, interpreter)) {
 			if (Melder_hasError ()) {
 				if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
@@ -471,7 +471,7 @@ static int firstPassThroughScript (MelderFile file) {
 	interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	if (Interpreter_readParameters (interpreter, text) > 0) {
 		Any form = Interpreter_createForm (interpreter,
-			praatP.editor ? ((Editor) praatP.editor) -> dialog : theCurrentPraat -> topShell,
+			praatP.editor ? ((Editor) praatP.editor) -> dialog : theCurrentPraatApplication -> topShell,
 			Melder_fileToPath (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
 		UiForm_do (form, false);
@@ -508,7 +508,7 @@ int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interp
 		 */
 		static Any file_dialog;
 		if (! file_dialog)
-			file_dialog = UiInfile_create (theCurrentPraat -> topShell, L"Praat: run script", fileSelectorOkCallback, NULL, 0);
+			file_dialog = UiInfile_create (theCurrentPraatApplication -> topShell, L"Praat: run script", fileSelectorOkCallback, NULL, 0);
 		UiInfile_do (file_dialog);
 	} else {
 		/*

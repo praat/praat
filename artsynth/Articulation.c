@@ -1,6 +1,6 @@
 /* Articulation.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
+ * pb 2009/03/21 modern enums
  */
 
 #include "Articulation.h"
-#include "enum_c.h"
-#include "Articulation_enums.h"
+
 #include "oo_DESTROY.h"
 #include "Articulation_def.h"
 #include "oo_COPY.h"
@@ -47,6 +47,11 @@
 #include "Articulation_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Articulation_def.h"
+
+#include "enums_getText.h"
+#include "Articulation_enums.h"
+#include "enums_getValue.h"
+#include "Articulation_enums.h"
 
 class_methods (Art, Data) {
 	class_method_local (Art, destroy)

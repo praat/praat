@@ -38,10 +38,10 @@
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
 #endif
+
 #include "OTGrammar_enums.h"
 
 #include "OTGrammar_def.h"
-
 #define OTGrammar_methods Data_methods
 oo_CLASS_CREATE (OTGrammar, Data);
 

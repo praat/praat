@@ -22,7 +22,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
  * pb 2008/01/19 NUM##storage
- * pb 2009/02/01
+ * pb 2009/03/21 modern enums
  */
 
 #include "oo_undef.h"
@@ -36,7 +36,7 @@
 		cacput##storage (my x [i], f);
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
@@ -54,7 +54,7 @@
 		cacput##storage (my x [i], f, & enum_##Type);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f, & enum_##Type);
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
@@ -69,7 +69,7 @@
 		cacput##storage (my x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
@@ -87,7 +87,7 @@
 			cacput##storage (my x [i], f);
 
 #define oo_STRINGWx_SET(storage,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f);
 
 #define oo_STRINGWx_VECTOR(storage,x,min,max)  \
@@ -105,7 +105,7 @@
 		Type##_writeCache (& my x [i], f);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= enumlength (setType); i ++) \
+	for (int i = 0; i <= setType##_MAX; i ++) \
 		Type##_writeCache (& my x [i], f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \

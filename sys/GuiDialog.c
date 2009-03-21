@@ -64,7 +64,7 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 	#if gtk
 		// TODO: Even uitvissen wat de rest doet
 		Widget shell = gtk_dialog_new();
-		// g_signal_connect(G_OBJECT(theCurrentPraat -> topShell), "delete-event", goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
+		// g_signal_connect(G_OBJECT(theCurrentPraatApplication -> topShell), "delete-event", goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
 //		if (width == Gui_AUTOMATIC) width = -1;
 //		if (height == Gui_AUTOMATIC) height = -1;
 //		gtk_window_set_default_size(GTK_WINDOW(shell), width, height);

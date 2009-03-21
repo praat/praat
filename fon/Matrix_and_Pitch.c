@@ -68,7 +68,7 @@ int Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
 		for (icand = 1; icand <= frame -> nCandidates; icand ++)
 			m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
 	}
-	if (! Matrix_formula (m, formula, interpreter, 0)) {
+	if (! Matrix_formula (m, formula, interpreter, NULL)) {
 		forget (m);
 		return Melder_error1 (L"(Pitch_formula:) Not performed.");
 	}
