@@ -33,7 +33,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 
 		/* Count only voiced frames.
 		 */
-		if (frequency != 0.0 && frequency < my ceiling) {
+		if (frequency > 0.0 && frequency < my ceiling) {
 			double time = Sampled_indexToX (me, i);
 			if (! RealTier_addPoint (thee, time, frequency)) goto error;
 		}

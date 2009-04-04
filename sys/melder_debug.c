@@ -1,6 +1,6 @@
 /* melder_debug.c
  *
- * Copyright (C) 2000-2008 Paul Boersma
+ * Copyright (C) 2000-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 2002/03/07 GPL
- * pb 2008/04/04
+ * pb 2009/04/04
  */
 
 #include "melder.h"
@@ -59,6 +58,8 @@ the behaviour of that program changes in the following way:
 29: use GSL in NUMinvFisherQ
 30: pitch path finder: use octave jump cost across voiceless parts
 31: Pitch analysis: formant pulling on
+32: show info on file names in ExperimentMFC
+33: trace the Pitch path finder
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

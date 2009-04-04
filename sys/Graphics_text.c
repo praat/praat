@@ -661,13 +661,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			my printf (my file, "(");
 			const char *kars = codes8;
 			while (*kars) {
-				if (*kars == '(' || *kars == ')' || *kars == '\\')
+				if (*kars == '(' || *kars == ')' || *kars == '\\') {
 					my printf (my file, "\\%c", *kars);
-				else if (*kars >= 32 && *kars <= 126)
+				} else if (*kars >= 32 && *kars <= 126) {
 					my printf (my file, "%c", *kars);
-				else
+				} else {
 					my printf (my file, "\\%d%d%d", *(unsigned char*)kars / 64,
 						(*(unsigned char*)kars % 64) / 8, *(unsigned char*)kars % 8);
+				}
 				kars ++;
 			}
 			my printf (my file, ") show\n");

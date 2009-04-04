@@ -1,6 +1,6 @@
 /* longchar.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2006/12/15 stress marks
  * pb 2007/08/08 Longchar_genericizeW
  * pb 2008/02/27 \d- and \D-
+ * pb 2009/03/24 removed bug that caused Longchar_getInfoFromNative to be able to work with uninitialized table
  */
 
 #include "longchar.h"
@@ -675,15 +676,15 @@ wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *g) {
 }
 
 Longchar_Info Longchar_getInfo (char kar1, char kar2) {
-	short position;
 	if (! inited) init ();
-	position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
+	short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
 		0 :   /* Return the 'space' character. */
 		where [kar1 - 32] [kar2 - 32];
 	return & Longchar_database [position];
 }
 
 Longchar_Info Longchar_getInfoFromNative (wchar_t kar) {
+	if (! inited) init ();
 	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (' ', ' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
 }
 

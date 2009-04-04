@@ -1,6 +1,6 @@
 /* PitchEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2009/04/04 
  */
 
 #include "Pitch_to_Sound.h"
@@ -307,7 +308,7 @@ static void draw (PitchEditor me) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;
-			if (f != 0.0 || tright <= my startWindow || tleft >= my endWindow) continue;
+			if ((f > 0.0 && f < pitch -> ceiling) || tright <= my startWindow || tleft >= my endWindow) continue;
 			if (tleft < my startWindow) tleft = my startWindow;
 			if (tright > my endWindow) tright = my endWindow;
 			Graphics_fillRectangle (my graphics, tleft, tright, 0, 1);

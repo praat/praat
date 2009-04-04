@@ -119,14 +119,13 @@ static int readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar
 			 * Relative or absolute file name.
 			 */
 			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
-			#if 1
-				//Melder_error3 (L"Full path name <", file.path, L">");
+			if (Melder_debug == 32) {
 				MelderInfo_open ();
 				MelderInfo_writeLine3 (L"Path name <", pathName, L">");
 				MelderInfo_writeLine3 (L"Root directory <", my rootDirectory.path, L">");
 				MelderInfo_writeLine3 (L"Full path name <", file.path, L">");
 				MelderInfo_close ();
-			#endif
+			}
 		}
 		cherror
 		/*

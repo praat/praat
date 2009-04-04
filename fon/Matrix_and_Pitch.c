@@ -21,30 +21,32 @@
  * pb 2002/07/16 GPL
  * pb 2007/08/12 wchar_t
  * pb 2009/01/18 Interpreter argument to formula
+ * pb 2009/04/04 corrected voiceless frames in Pitch_to_Matrix
  */
 
 #include "Matrix_and_Pitch.h"
 
 Matrix Pitch_to_Matrix (Pitch me) {
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
-	long i;
-	if (thee) for (i = 1; i <= my nx; i ++)
-		thy z [1] [i] = my frame [i]. candidate [1]. frequency;
+	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		double value = my frame [i]. candidate [1]. frequency;
+		thy z [1] [i] = value > 0.0 && value < my ceiling ? my frame [i]. candidate [1]. frequency : 0.0;
+	}
+end:
+	iferror forget (thee);
 	return thee;
 }
 
 Pitch Matrix_to_Pitch (Matrix me) {
-	Pitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, 5000, 2);
-	long i;
-	if (! thee) goto error;
-	for (i = 1; i <= my nx; i ++) {
+	Pitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, 5000, 2); cherror
+	for (long i = 1; i <= my nx; i ++) {
 		Pitch_Frame frame = & thy frame [i];
 		if (my z [1] [i] == 0.0) {
-			if (! Pitch_Frame_init (frame, 1)) goto error;
+			Pitch_Frame_init (frame, 1); cherror
 			frame->candidate[1].frequency = 0.0;   /* Voiceless candidate always present. */
 			frame->candidate[1].strength = 0.4;
 		} else {
-			if (! Pitch_Frame_init (frame, 2)) goto error;
+			Pitch_Frame_init (frame, 2); cherror
 			frame->intensity = 1;
 			frame->candidate[1].frequency = my z [1] [i];
 			frame->candidate[1].strength = 0.9;
@@ -52,32 +54,27 @@ Pitch Matrix_to_Pitch (Matrix me) {
 			frame->candidate[2].strength = 0.4;
 		}
 	}
+end:
+	iferror forget (thee);
 	return thee;
-error:
-	forget (thee);
-	return Melder_errorp ("(Matrix_to_Pitch:) Not performed.");
 }
 
 int Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
-	Matrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		1, my maxnCandidates, my maxnCandidates, 1, 1);
-	long iframe, icand;
-	if (! m) return 0;
-	for (iframe = 1; iframe <= my nx; iframe ++) {
+	Matrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maxnCandidates, my maxnCandidates, 1, 1); cherror
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];
-		for (icand = 1; icand <= frame -> nCandidates; icand ++)
+		for (long icand = 1; icand <= frame -> nCandidates; icand ++)
 			m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
 	}
-	if (! Matrix_formula (m, formula, interpreter, NULL)) {
-		forget (m);
-		return Melder_error1 (L"(Pitch_formula:) Not performed.");
-	}
-	for (iframe = 1; iframe <= my nx; iframe ++) {
+	Matrix_formula (m, formula, interpreter, NULL); cherror
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];
-		for (icand = 1; icand <= frame -> nCandidates; icand ++)
+		for (long icand = 1; icand <= frame -> nCandidates; icand ++)
 			frame -> candidate [icand]. frequency = m -> z [icand] [iframe];
 	}
+end:
 	forget (m);
+	iferror return Melder_error1 (L"(Pitch_formula:) Not performed.");
 	return 1;
 }
 

@@ -471,11 +471,14 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost,
 	double ceiling, int pullFormants)
 {
-	long iframe;
-	int icand, icand1, icand2, maxnCandidates = Pitch_getMaxnCandidates (me), place;
-	double maximum, value;
-	double **delta;
-	int **psi;
+	if (Melder_debug == 33) Melder_casual ("Pitch path finder:\nSilence threshold = %g\nVoicing threshold = %g\nOctave cost = %g\nOctave jump cost = %g\n"
+		"Voiced/unvoiced cost = %g\nCeiling = %g\nPull formants = %d", silenceThreshold, voicingThreshold, octaveCost, octaveJumpCost, voicedUnvoicedCost,
+		ceiling, pullFormants);
+	long maxnCandidates = Pitch_getMaxnCandidates (me);
+	long place;
+	volatile double maximum, value;
+	double **delta = NULL;
+	long **psi = NULL;
 	double ceiling2 = pullFormants ? 2 * ceiling : ceiling;
 	/* Next three lines 20011015 */
 	double timeStepCorrection = 0.01 / my dx;
@@ -483,16 +486,15 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	voicedUnvoicedCost *= timeStepCorrection;
 
 	my ceiling = ceiling;
-	delta = NUMdmatrix (1, my nx, 1, maxnCandidates);
-	psi = NUMimatrix (1, my nx, 1, maxnCandidates);
-	if (! delta || ! psi) goto end;
+	delta = NUMdmatrix (1, my nx, 1, maxnCandidates); cherror
+	psi = NUMlmatrix (1, my nx, 1, maxnCandidates); cherror
 
-	for (iframe = 1; iframe <= my nx; iframe ++) {
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
 		Pitch_Frame frame = & my frame [iframe];
 		double unvoicedStrength = silenceThreshold <= 0 ? 0 :
 			2 - frame->intensity / (silenceThreshold / (1 + voicingThreshold));
 		unvoicedStrength = voicingThreshold + (unvoicedStrength > 0 ? unvoicedStrength : 0);
-		for (icand = 1; icand <= frame->nCandidates; icand ++) {
+		for (long icand = 1; icand <= frame->nCandidates; icand ++) {
 			Pitch_Candidate candidate = & frame->candidate [icand];
 			int voiceless = candidate->frequency == 0 || candidate->frequency > ceiling2;
 			delta [iframe] [icand] = voiceless ? unvoicedStrength :
@@ -504,18 +506,19 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	/* There is a cost for the voiced/unvoiced transition, */
 	/* and a cost for a frequency jump. */
 
-	for (iframe = 2; iframe <= my nx; iframe ++) {
+	for (long iframe = 2; iframe <= my nx; iframe ++) {
 		Pitch_Frame prevFrame = & my frame [iframe - 1], curFrame = & my frame [iframe];
 		double *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
-		int *curPsi = psi [iframe];
-		for (icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
+		long *curPsi = psi [iframe];
+		for (long icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
 			double f2 = curFrame -> candidate [icand2]. frequency;
-			maximum = -1e308;
+			maximum = -1e30;
 			place = 0;
-			for (icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
-				double f1 = prevFrame -> candidate [icand1]. frequency, transitionCost;
-				int previousVoiceless = f1 <= 0 || f1 >= ceiling2;
-				int currentVoiceless = f2 <= 0 || f2 >= ceiling2;
+			for (long icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
+				double f1 = prevFrame -> candidate [icand1]. frequency;
+				double transitionCost;
+				bool previousVoiceless = f1 <= 0 || f1 >= ceiling2;
+				bool currentVoiceless = f2 <= 0 || f2 >= ceiling2;
 				if (currentVoiceless) {
 					if (previousVoiceless) {
 						transitionCost = 0;   // both voiceless
@@ -544,9 +547,13 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 					}
 				}
 				value = prevDelta [icand1] - transitionCost + curDelta [icand2];
+				//if (Melder_debug == 33) Melder_casual ("Frame %ld, current candidate %ld (delta %g), previous candidate %ld (delta %g), "
+				//	"transition cost %g, value %g, maximum %g", iframe, icand2, curDelta [icand2], icand1, prevDelta [icand1], transitionCost, value, maximum);
 				if (value > maximum) {
 					maximum = value;
 					place = icand1;
+				} else if (value == maximum) {
+					if (Melder_debug == 33) Melder_casual ("A tie in frame %ld, current candidate %ld, previous candidate %ld", iframe, icand2, icand1);
 				}
 			}
 			curDelta [icand2] = maximum;
@@ -556,14 +563,19 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 	/* Find the end of the most probable path. */
 
-	maximum = delta [my nx] [place = 1];
-	for (icand = 2; icand <= my frame [my nx]. nCandidates; icand ++)
-		if (delta [my nx] [icand] > maximum)
-			maximum = delta [my nx] [place = icand];
+	place = 1;
+	maximum = delta [my nx] [place];
+	for (long icand = 2; icand <= my frame [my nx]. nCandidates; icand ++) {
+		if (delta [my nx] [icand] > maximum) {
+			place = icand;
+			maximum = delta [my nx] [place];
+		}
+	}
 
 	/* Backtracking: follow the path backwards. */
 
-	for (iframe = my nx; iframe >= 1; iframe --) {
+	for (long iframe = my nx; iframe >= 1; iframe --) {
+		if (Melder_debug == 33) Melder_casual ("Frame %ld: swapping candidates 1 and %ld", iframe, place);
 		Pitch_Frame frame = & my frame [iframe];
 		struct structPitch_Candidate help = frame -> candidate [1];
 		frame -> candidate [1] = frame -> candidate [place];
@@ -573,18 +585,21 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 	/* Pull formants: devoice frames with frequencies between ceiling and ceiling2. */
 
-	if (ceiling2 > ceiling) for (iframe = my nx; iframe >= 1; iframe --) {
-		Pitch_Frame frame = & my frame [iframe];
-		Pitch_Candidate winner = & frame -> candidate [1];
-		double f = winner -> frequency;
-		if (f > ceiling && f <= ceiling2) {
-			for (icand = 2; icand <= frame -> nCandidates; icand ++) {
-				Pitch_Candidate loser = & frame -> candidate [icand];
-				if (loser -> frequency == 0.0) {
-					struct structPitch_Candidate help = * winner;
-					* winner = * loser;
-					* loser = help;
-					break;
+	if (ceiling2 > ceiling) {
+		if (Melder_debug == 33) Melder_casual ("Pulling formants...");
+		for (long iframe = my nx; iframe >= 1; iframe --) {
+			Pitch_Frame frame = & my frame [iframe];
+			Pitch_Candidate winner = & frame -> candidate [1];
+			double f = winner -> frequency;
+			if (f > ceiling && f <= ceiling2) {
+				for (long icand = 2; icand <= frame -> nCandidates; icand ++) {
+					Pitch_Candidate loser = & frame -> candidate [icand];
+					if (loser -> frequency == 0.0) {
+						struct structPitch_Candidate help = * winner;
+						* winner = * loser;
+						* loser = help;
+						break;
+					}
 				}
 			}
 		}
@@ -592,7 +607,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 end:
 	NUMdmatrix_free (delta, 1, 1);
-	NUMimatrix_free (psi, 1, 1);
+	NUMlmatrix_free (psi, 1, 1);
 }
 
 void Pitch_drawInside (Pitch me, Graphics g, double xmin, double xmax, double fmin, double fmax, int speckle, int unit) {
