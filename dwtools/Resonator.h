@@ -2,7 +2,7 @@
 #define _Resonator_h_
 /* Resonator.h
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@
 
 class_create (Filter, Data);
 
-#define Resonator_members Filter_members
+#define Resonator_members Filter_members \
+	int normalisation;
 #define Resonator_methods Filter_methods
 class_create (Resonator, Filter);
 
@@ -55,21 +56,26 @@ class_create (AntiResonator, Filter);
 #define ConstantGainResonator_methods Filter_methods
 class_create (ConstantGainResonator, Filter);
 
+#define Resonator_NORMALISATION_H0 0
+#define Resonator_NORMALISATION_HMAX 1
 
-Resonator Resonator_create (double dT);
+
+Resonator Resonator_create (double dT, int normalisation);
 
 ConstantGainResonator ConstantGainResonator_create (double dT);
 
 AntiResonator AntiResonator_create (double dT);
 
-// Set a,b,c with a = 1-b-c. This makes H(0)=1 (0 dB)
+/*
+	Set a,b,c
+	normalisation == 0: H(0) = 1 -> a = 1 -b - c
+	normalisation == 1: H(Fmax) = 1 -> a = (1 + c)sin(2*pi*F*T)
+*/
 void Filter_setFB (I, double f, double b);
 
 double Filter_getOutput (I, double input);
 
 void Filter_resetMemory (I);
-
-Sound Sound_filterByResonator (Sound me, double f, double b, int anti, int constantGain);
 
 #endif /* _Resonator_h_ */
 

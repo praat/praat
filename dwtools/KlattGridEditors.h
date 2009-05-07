@@ -20,7 +20,7 @@
  */
 
 /*
-  djmw 20090123
+  djmw 20090123, 20090420
 */
 
 #ifndef _KlattGrid_h_
@@ -45,8 +45,6 @@ Thing_declare1 (KlattGrid_realTierEditor);
 	KlattGrid klattgrid;
 #define KlattGrid_realTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (KlattGrid_realTierEditor, RealTierEditor);
-
-int KlattGrid_realTierEditor_init (KlattGrid_realTierEditor, Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
 
 #define KlattGrid_openPhaseTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
 Thing_declare1 (KlattGrid_openPhaseTierEditor);
@@ -111,6 +109,14 @@ Thing_declare1 (KlattGrid_intensityTierEditor);
 Thing_declare2 (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor);
 
 int KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier);
+
+#define KlattGrid_decibelTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
+Thing_declare1 (KlattGrid_decibelTierEditor);
+#define KlattGrid_decibelTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
+#define KlattGrid_decibelTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+Thing_declare2 (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor);
+
+KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
 
 #define KlattGrid_voicingAmplitudeTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
 Thing_declare1 (KlattGrid_voicingAmplitudeTierEditor);

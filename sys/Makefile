@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 20 January 2009
+# Paul Boersma, 7 May 2009
 
 include ../makefile.defs
 CFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../FLAC -I ../mp3
@@ -21,7 +21,7 @@ OBJECTS = enum.o abcio.o lispio.o complex.o \
    praat.o praat_actions.o praat_menuCommands.o praat_picture.o sendpraat.o sendsocket.o \
    praat_script.o praat_statistics.o praat_logo.o \
    praat_objectMenus.o InfoEditor.o ScriptEditor.o ButtonEditor.o Interpreter.o Formula.o \
-   StringsEditor.o \
+   StringsEditor.o DemoEditor.o \
    motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
    GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
    GuiDialog.o GuiRowColumn.o GuiList.o

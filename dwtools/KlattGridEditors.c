@@ -20,6 +20,7 @@
 /*
  * djmw 20090123
  * djmw 20090128 Remove source menu from formant grid editor.
+ * djmw 20090420 dbEditor
  */
  
 #include "Preferences.h"
@@ -130,6 +131,26 @@ int KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, Widget
 }
 
 
+/************************** KlattGrid_DecibelTierEditor *********************************/
+
+class_methods (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor)
+	us -> quantityText = L"Amplitude (dB)", us -> quantityKey = L"Amplitude";
+	us -> rightTickUnits = L" dB";
+	us -> defaultYmin = -30.0, us -> defaultYmax = 30.0;
+	us -> setRangeTitle = L"Set amplitude range...";
+	us -> defaultYminText = L"-30.0", us -> defaultYmaxText = L"30.0";
+	us -> yminText = L"Minimum amplitude (dB)", us -> ymaxText = L"Maximum amplitude (dB)";
+	us -> yminKey = L"Minimum amplitude", us -> ymaxKey = L"Maximum amplitude";
+class_methods_end
+
+KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
+{
+	KlattGrid_decibelTierEditor me = new (KlattGrid_decibelTierEditor);
+	if (me == NULL || ! KlattGrid_intensityTierEditor_init
+		(KlattGrid_decibelTierEditor_as_KlattGrid_intensityTierEditor (me), parent, title, klattgrid, tier)) forget (me);
+	return me;
+}
+
 /************************** KlattGrid_voicingAmplitudeTierEditor *********************************/
 
 class_methods (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor)
@@ -173,6 +194,8 @@ KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEdito
 /************************** KlattGrid_spectralTiltTierEditor *********************************/
 
 class_methods (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor)
+	us -> defaultYmin = -50.0, us -> defaultYmax = 10.0;
+	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
 class_methods_end
 
 KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
@@ -186,6 +209,8 @@ KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (Widget
 /************************** KlattGrid_fricationBypassTierEditor *********************************/
 
 class_methods (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor)
+	us -> defaultYmin = -50.0, us -> defaultYmax = 10.0;
+	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
 class_methods_end
 
 KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
@@ -208,7 +233,6 @@ KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_cr
 	if (me == NULL || ! KlattGrid_intensityTierEditor_init (KlattGrid_fricationAmplitudeTierEditor_as_KlattGrid_intensityTierEditor (me), parent, title, klattgrid, tier)) forget (me);
 	return me;
 }
-
 
 /************************** KlattGrid_openPhaseTierEditor *********************************/
 

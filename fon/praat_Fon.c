@@ -946,7 +946,8 @@ END
 
 FORM (FormantGrid_formula_bandwidths, L"FormantGrid: Formula (bandwidths)", L"Formant: Formula (bandwidths)...")
 	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD (L"formula", L"self / 2 ; sharpen all peaks")
+	LABEL (L"", L"self [] is the FormantGrid itself, so it returns frequencies, not bandwidths!")
+	TEXTFIELD (L"formula", L"self / 10 ; one tenth of the formant frequency")
 	OK
 DO
 	WHERE (SELECTED) {

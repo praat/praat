@@ -28,6 +28,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/01/20 pause forms
+ * pb 2009/05/07 demo window
  */
 
 #include "ScriptEditor.h"
@@ -77,7 +78,7 @@ static void nameChanged (I) {
 
 static void goAway (ScriptEditor me) {
 	if (my interpreter -> running) {
-		Melder_error1 (L"Cannot close the script window while the script is running or paused. Click away the pause window to stop or continue the script.");
+		Melder_error1 (L"Cannot close the script window while the script is running or paused. Please close or continue the pause or demo window.");
 		Melder_flushError (NULL);
 		return;
 	}
@@ -136,7 +137,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 static int menu_cb_go (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
-		return Melder_error1 (L"The script is already running (paused). Click away the pause window to stop or continue the script.");
+		return Melder_error1 (L"The script is already running (paused). Please close or continue the pause or demo window.");
 	wchar_t *text = GuiText_getString (my textWidget);
 	run (me, & text);
 	Melder_free (text);
@@ -146,7 +147,7 @@ static int menu_cb_go (EDITOR_ARGS) {
 static int menu_cb_runSelection (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
-		return Melder_error1 (L"The script is already running (paused). Click away the pause window to stop or continue the script.");
+		return Melder_error1 (L"The script is already running (paused). Please close or continue the pause or demo window.");
 	wchar_t *text = GuiText_getSelection (my textWidget);
 	if (text == NULL) {
 		return Melder_error1 (L"No text selected.");

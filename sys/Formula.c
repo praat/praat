@@ -52,6 +52,8 @@
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/01/20 pause forms moved to UiPause.c
  * pb 2009/02/06 createDirectory
+ * pb 2009/05/04 demoShow
+ * pb 2009/05/05 demoWaitForInput
  */
 
 #include <ctype.h>
@@ -68,6 +70,7 @@
 #include "praatP.h"
 #include "UnicodeData.h"
 #include "UiPause.h"
+#include "DemoEditor.h"
 
 static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
@@ -158,6 +161,8 @@ enum { GEENSYMBOOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
+		DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
+		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		ZERO_NUMAR_, LINEAR_NUMAR_, RANDOM_UNIFORM_NUMAR_, RANDOM_INTEGER_NUMAR_, RANDOM_GAUSS_NUMAR_,
 		NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_,
 	#define HIGH_FUNCTION_N  NUMBER_OF_COLUMNS_
@@ -245,6 +250,8 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
 	L"comment", L"endPause",
+	L"demoShow", L"demoWaitForInput", L"demoClicked", L"demoX", L"demoY", L"demoKeyPressed", L"demoKey$",
+	L"demoShiftKeyPressed", L"demoCommandKeyPressed", L"demoOptionKeyPressed", L"demoExtraControlKeyPressed",
 	L"zero#", L"linear#", L"randomUniform#", L"randomInteger#", L"randomGauss#",
 	L"numberOfRows", L"numberOfColumns",
 
@@ -3377,6 +3384,88 @@ static void do_endPauseForm (void) {
 	pushNumber (buttonClicked);
 end: return;
 }
+static void do_demoShow (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoShow\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	Demo_show ();
+	pushNumber (1);
+end: return;
+}
+static void do_demoWaitForInput (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoWaitForInput\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	Demo_waitForInput ();
+	pushNumber (1);
+end: return;
+}
+static void do_demoClicked (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoClicked\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_clicked ());
+end: return;
+}
+static void do_demoX (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoX\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_x ());
+end: return;
+}
+static void do_demoY (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoY\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_y ());
+end: return;
+}
+static void do_demoKeyPressed (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoKeyPressed\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_keyPressed ());
+end: return;
+}
+static void do_demoKey (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoKey\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	wchar_t *key = Melder_malloc (wchar_t, 2);
+	key [0] = Demo_key ();
+	key [1] = '\0';
+	pushString (key);
+end: return;
+}
+static void do_demoShiftKeyPressed (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoShiftKeyPressed\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_shiftKeyPressed ());
+end: return;
+}
+static void do_demoCommandKeyPressed (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoCommandKeyPressed\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_commandKeyPressed ());
+end: return;
+}
+static void do_demoOptionKeyPressed (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoOptionKeyPressed\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_optionKeyPressed ());
+end: return;
+}
+static void do_demoExtraControlKeyPressed (void) {
+	Stackel n = pop;
+	if (n->content.number != 0)
+		error3 (L"The function \"demoControlKeyPressed\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
+	pushNumber (Demo_extraControlKeyPressed ());
+end: return;
+}
 static long Stackel_getRowNumber (Stackel row, Data thee) {
 	long result;
 	if (row->which == Stackel_NUMBER) {
@@ -4115,7 +4204,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PERCENTSTR_: { do_percentStr ();
 } break; case DELETEFILE_: { do_deleteFile ();
 } break; case CREATEDIRECTORY_: { do_createDirectory ();
-/********** Pause form functions: **********/
+/********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();
 } break; case PAUSE_FORM_ADD_POSITIVE_: { do_pauseFormAddPositive ();
@@ -4130,6 +4219,18 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PAUSE_FORM_ADD_OPTION_: { do_pauseFormAddOption ();
 } break; case PAUSE_FORM_ADD_COMMENT_: { do_pauseFormAddComment ();
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
+/********** Demo window functions: **********/
+} break; case DEMO_SHOW_: { do_demoShow ();
+} break; case DEMO_WAIT_FOR_INPUT_: { do_demoWaitForInput ();
+} break; case DEMO_CLICKED_: { do_demoClicked ();
+} break; case DEMO_X_: { do_demoX ();
+} break; case DEMO_Y_: { do_demoY ();
+} break; case DEMO_KEY_PRESSED_: { do_demoKeyPressed ();
+} break; case DEMO_KEY_: { do_demoKey ();
+} break; case DEMO_SHIFT_KEY_PRESSED_: { do_demoShiftKeyPressed ();
+} break; case DEMO_COMMAND_KEY_PRESSED_: { do_demoCommandKeyPressed ();
+} break; case DEMO_OPTION_KEY_PRESSED_: { do_demoOptionKeyPressed ();
+} break; case DEMO_EXTRA_CONTROL_KEY_PRESSED_: { do_demoExtraControlKeyPressed ();
 /********** **********/
 } break; case TRUE_: {
 	pushNumber (1.0);

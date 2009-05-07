@@ -231,6 +231,16 @@ DO
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
+		short x1DC, x2DC, y1DC, y2DC;
+		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
+		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
+		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
+		double hDC = abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
+		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
+	}
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
 	if (left == right) {
@@ -242,12 +252,18 @@ DO
 		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
 		return Melder_error1 (L"Please change the vertical range.");
 	}
-	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 	theCurrentPraatPicture -> x1NDC = left - xmargin;
 	theCurrentPraatPicture -> x2NDC = right + xmargin;
-	theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
-	theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
-	Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
+		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
+		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	} else {
+		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
+		theCurrentPraatPicture -> y2NDC = top + ymargin;
+	}
 END
 
 FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select outer viewport...")
@@ -277,12 +293,18 @@ DO
 		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
 		return Melder_error1 (L"Please change the vertical range.");
 	}
-	if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 	theCurrentPraatPicture -> x1NDC = left;
 	theCurrentPraatPicture -> x2NDC = right;
-	theCurrentPraatPicture -> y1NDC = 12-bottom;
-	theCurrentPraatPicture -> y2NDC = 12-top;
-	Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		theCurrentPraatPicture -> y1NDC = 12-bottom;
+		theCurrentPraatPicture -> y2NDC = 12-top;
+		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	} else {
+		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		theCurrentPraatPicture -> y1NDC = bottom;
+		theCurrentPraatPicture -> y2NDC = top;
+	}
 END
 
 FORM (ViewportText, L"Praat picture: Viewport text", L"Viewport text...")
@@ -559,7 +581,11 @@ DIRECT (Undo)
 END
 
 DIRECT (Erase_all)
-	Picture_erase (praat_picture);   /* This kills the recording. */
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_erase (praat_picture);   /* This kills the recording. */
+	} else {
+		Graphics_clearWs (GRAPHICS);   // this kills the recording
+	}
 END
 
 /***** "World" MENU *****/
@@ -1473,7 +1499,7 @@ void praat_picture_open (void) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
 	}
-	if (! theCurrentPraatApplication -> batch) {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if motif
 			XtMapWidget (shell);
 			XMapRaised (XtDisplay (shell), XtWindow (shell)); 

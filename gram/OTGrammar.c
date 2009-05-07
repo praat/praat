@@ -1358,18 +1358,23 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 		bool changed = false;
 		long numberOfUp = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTGrammarConstraint constraint = & my constraints [icons];
-			double constraintStep = step * constraint -> plasticity;
 			int winnerMarks = winner -> marks [icons];
 			int loserMarks = loser -> marks [icons];
 			if (winnerMarks > loserMarks) {
-				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-				changed = true;
 				numberOfUp ++;
 			}
 		}
 		if (numberOfUp > 0) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				OTGrammarConstraint constraint = & my constraints [icons];
+				double constraintStep = step * constraint -> plasticity;
+				int winnerMarks = winner -> marks [icons];
+				int loserMarks = loser -> marks [icons];
+				if (winnerMarks > loserMarks) {
+					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
+				}
+			}
 			long crucialLoserMark, winnerMarks = 0, loserMarks = 0;
 			OTGrammarConstraint offendingConstraint;
 			long icons = 1;
@@ -1391,7 +1396,7 @@ static int OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, long
 			offendingConstraint = & my constraints [my index [crucialLoserMark]];
 			double constraintStep = step * offendingConstraint -> plasticity;
 			if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-			offendingConstraint -> ranking -= numberOfUp * constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
+			offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
 		}
 		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
 	}

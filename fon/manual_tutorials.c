@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090404)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090507)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.05# (7 May 2009)")
+LIST_ITEM (L"\\bu KlattGrid update.")
+LIST_ITEM (L"\\bu Undocumented demo window.")
 NORMAL (L"##5.1.04# (4 April 2009)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause a missing text character in EPS files produced by a version of Praat running in batch.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause high values in a Matrix computed from a Pitch.")

@@ -81,8 +81,8 @@ oo_END_CLASS (PhonationGrid)
 #define ooSTRUCT VocalTractGridPlayOptions
 oo_DEFINE_CLASS (VocalTractGridPlayOptions, Data)
 	oo_INT (filterModel)
-	oo_LONG (startFormant)
-	oo_LONG (endFormant)
+	oo_LONG (startOralFormant)
+	oo_LONG (endOralFormant)
 	oo_LONG (startNasalFormant)
 	oo_LONG (endNasalFormant)
 	oo_LONG (startNasalAntiFormant)
@@ -92,11 +92,11 @@ oo_END_CLASS (VocalTractGridPlayOptions)
 
 #define ooSTRUCT VocalTractGrid
 oo_DEFINE_CLASS (VocalTractGrid, Function)
-	oo_OBJECT (FormantGrid, 0, formants)
+	oo_OBJECT (FormantGrid, 0, oral_formants)
 	oo_OBJECT (FormantGrid, 0, nasal_formants)
 	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
 	// for parallel synthesis
-	oo_COLLECTION (Ordered, formants_amplitudes, IntensityTier, 0)
+	oo_COLLECTION (Ordered, oral_formants_amplitudes, IntensityTier, 0)
 	oo_COLLECTION (Ordered, nasal_formants_amplitudes, IntensityTier, 0)
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
@@ -152,8 +152,8 @@ oo_END_CLASS (FricationGridPlayOptions)
 #define ooSTRUCT FricationGrid
 oo_DEFINE_CLASS (FricationGrid, Function)
 	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
-	oo_OBJECT (FormantGrid, 0, formants)
-	oo_COLLECTION (Ordered, formants_amplitudes, RealTier, 0)
+	oo_OBJECT (FormantGrid, 0, frication_formants)
+	oo_COLLECTION (Ordered, frication_formants_amplitudes, RealTier, 0)
 	oo_OBJECT (IntensityTier, 0, bypass) // dB
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (FricationGridPlayOptions, 0, options)

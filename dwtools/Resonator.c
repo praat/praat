@@ -1,6 +1,6 @@
 /* Resonator.c
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +57,25 @@ class_methods (Filter, Data)
 	class_method_local (Filter, resetMemory)
 class_methods_end
 
+static void classResonator_setFB (I, double f, double bw)
+{
+	iam (Resonator);
+	SETBC (f, bw)
+	my a = my normalisation == Resonator_NORMALISATION_H0 ? (1.0 - my b - my c) : (1 + my c) * sin (2.0 * NUMpi * f * my dT);
+}
+
 class_methods (Resonator, Filter)
+	class_method_local (Resonator, setFB)
 class_methods_end
+
+Resonator Resonator_create (double dT, int normalisation)
+{
+	Resonator me = new (Resonator);
+	my a = 1; // all-pass
+	my dT = dT;
+	my normalisation = normalisation;
+	return me;
+}
 
 static void classAntiResonator_setFB (I, double f, double bw)
 {
@@ -125,14 +142,6 @@ class_methods (ConstantGainResonator, Filter)
 	class_method_local (ConstantGainResonator, resetMemory)
 class_methods_end
 
-Resonator Resonator_create (double dT)
-{
-	Resonator me = new (Resonator);
-	my a = 1; // all-pass
-	my dT = dT;
-	return me;
-}
-
 ConstantGainResonator ConstantGainResonator_create (double dT)
 {
 	ConstantGainResonator me = new (ConstantGainResonator);
@@ -165,24 +174,6 @@ void Filter_resetMemory (I)
 {
 	iam (Filter);
 	our resetMemory (me);
-}
-
-Sound Sound_filterByResonator (Sound me, double f, double b, int anti, int constantGain)
-{
-	Sound thee = NULL;
-	Filter r = anti ? (Filter) AntiResonator_create (my dx) : (constantGain ?  (Filter) ConstantGainResonator_create (my dx): (Filter) Resonator_create (my dx));
-	Filter_setFB (r, f, b);
-	thee = Data_copy (me);
-	for (long ic = 1; ic <= my ny; ic++)
-	{
-		Filter_resetMemory (r);
-		for (long is = 1; is <= my nx; is++)
-		{
-			thy z[ic][is] = Filter_getOutput (r, my z[ic][is]);
-		}
-	}
-	Melder_free (r);
-	return thee;
 }
 
 /* End of file Resonator.c */

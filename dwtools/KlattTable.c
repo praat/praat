@@ -463,19 +463,19 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency)
 	
 	for (long i = 1; i <= 8; i++)
 	{
-		my rc[i] = Resonator_create (dT);
+		my rc[i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
 		if (my rc[i] == NULL) goto end;
 		if (i <= 6)
 		{
-			my rp[i] = Resonator_create (dT);
+			my rp[i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
 			if (my rp[i] == NULL) goto end;
 		}
 	}
-	my rnpp = Resonator_create (dT);
-	my rnpc = Resonator_create (dT);
-	my rgl = Resonator_create (dT);
-	my rlp = Resonator_create (dT);
-	my rout = Resonator_create (dT);
+	my rnpp = Resonator_create (dT, Resonator_NORMALISATION_H0);
+	my rnpc = Resonator_create (dT, Resonator_NORMALISATION_H0);
+	my rgl = Resonator_create (dT, Resonator_NORMALISATION_H0);
+	my rlp = Resonator_create (dT, Resonator_NORMALISATION_H0);
+	my rout = Resonator_create (dT, Resonator_NORMALISATION_H0);
 	my rnz = AntiResonator_create (dT);
 end:
 	if (Melder_hasError ()) forget (me);

@@ -42,6 +42,7 @@
 #include "sendpraat.h"
 #include "sendsocket.h"
 #include "UiPause.h"
+#include "DemoEditor.h"
 
 static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *string) {
 	int IOBJECT;
@@ -179,6 +180,10 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		} else if (wcsnequ (command, L"nocheck ", 8)) {
 			(void) praat_executeCommand (interpreter, command + 8);
 			Melder_clearError ();
+		} else if (wcsnequ (command, L"demo ", 5)) {
+			Demo_open (interpreter);
+			(void) praat_executeCommand (interpreter, command + 5);
+			Demo_close ();
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
 			if (theCurrentPraatApplication -> batch) return 1;
 			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter); iferror return 0;
