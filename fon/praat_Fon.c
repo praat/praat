@@ -4331,6 +4331,7 @@ DIRECT (FrequentlyAskedQuestions) Melder_help (L"FAQ (Frequently Asked Questions
 DIRECT (Acknowledgments) Melder_help (L"Acknowledgments"); END
 DIRECT (FormulasTutorial) Melder_help (L"Formulas"); END
 DIRECT (ScriptingTutorial) Melder_help (L"Scripting"); END
+DIRECT (DemoWindow) Melder_help (L"Demo window"); END
 DIRECT (Programming) Melder_help (L"Programming with Praat"); END
 DIRECT (SearchManual) Melder_search (); END
 
@@ -4492,6 +4493,7 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"-- shell help --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Formulas tutorial", 0, 0, DO_FormulasTutorial);
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Scripting tutorial", 0, 0, DO_ScriptingTutorial);
+	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Demo window", 0, 0, DO_DemoWindow);
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Programming", 0, 0, DO_Programming);
 	#ifdef macintosh
 		praat_addMenuCommand (L"Objects", L"Help", L"Praat Intro", 0, '?', DO_Intro);

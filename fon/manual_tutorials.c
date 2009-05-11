@@ -23,12 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090507)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090511)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.06# (11 May 2009)")
+LIST_ITEM (L"\\bu Demo window.")
 NORMAL (L"##5.1.05# (7 May 2009)")
 LIST_ITEM (L"\\bu KlattGrid update.")
-LIST_ITEM (L"\\bu Undocumented demo window.")
 NORMAL (L"##5.1.04# (4 April 2009)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause a missing text character in EPS files produced by a version of Praat running in batch.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause high values in a Matrix computed from a Pitch.")
@@ -1422,7 +1423,7 @@ NORMAL (L"Changes that you make to the data with a Data Editor, "
 	"are immediately reflected in any open type-specific Editors (e.g., a SoundEditor).")
 MAN_END
 
-MAN_BEGIN (L"Intro", L"ppgb", 20070905)
+MAN_BEGIN (L"Intro", L"ppgb", 20090511)
 INTRO (L"This is an introductory tutorial to P\\s{RAAT}, a computer program "
 	"with which you can analyse, synthesize, and manipulate speech, "
 	"and create high-quality pictures for your articles and thesis. "
@@ -1485,6 +1486,7 @@ LIST_ITEM1 (L"\\bu @@Discriminant analysis@")
 LIST_ITEM (L"General:")
 LIST_ITEM1 (L"\\bu @@Printing@")
 LIST_ITEM1 (L"\\bu @@Scripting@")
+LIST_ITEM1 (L"\\bu @@Demo window@")
 ENTRY (L"The authors")
 NORMAL (L"The Praat program was created by Paul Boersma and David Weenink of "
 	"the Institute of Phonetics Sciences of the University of Amsterdam. "

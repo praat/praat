@@ -41,6 +41,7 @@
  * pb 2009/01/19 multiple Continue buttons in pause forms
  * pb 2009/03/09 UI_REAL_OR_UNDEFINED
  * pb 2009/03/21 removed enums
+ * pb 2009/05/09 pink
  */
 
 #include <wctype.h>
@@ -247,6 +248,7 @@ static int colourToValue (UiField me, wchar_t *string) {
 	else if (wcsequ (p, L"teal")) my realValue = Graphics_TEAL;
 	else if (wcsequ (p, L"purple")) my realValue = Graphics_PURPLE;
 	else if (wcsequ (p, L"olive")) my realValue = Graphics_OLIVE;
+	else if (wcsequ (p, L"pink")) my realValue = Graphics_PINK;
 	else if (wcsequ (p, L"silver")) my realValue = Graphics_SILVER;
 	else if (wcsequ (p, L"grey")) my realValue = Graphics_GREY;
 	else { *p = first; return 0; }

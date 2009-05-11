@@ -597,6 +597,7 @@ static bool isCommand (const wchar_t *p) {
 	 */
 	if (p [0] == 'n' && p [1] == 'o' &&
 		(wcsnequ (p + 2, L"warn ", 5) || wcsnequ (p + 2, L"progress ", 9) || wcsnequ (p + 2, L"check ", 6))) return true;
+	if (wcsnequ (p, L"demo ", 5)) return true;
 	/*
 	 * Otherwise, things that start with lower case are formulas.
 	 */
@@ -1080,8 +1081,10 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						Interpreter_numericExpression (me, command2.string + 6 + wcslen (labelName), & value); cherror
 						if (value == 0.0) dojump = FALSE;
 					}
-					ilabel = lookupLabel (me, labelName); cherror
-					if (dojump) lineNumber = my labelLines [ilabel];   /* Loop will add 1. */
+					if (dojump) {
+						ilabel = lookupLabel (me, labelName); cherror
+						lineNumber = my labelLines [ilabel];   /* Loop will add 1. */
+					}
 				} else fail = TRUE;
 				break;
 			case 'h':

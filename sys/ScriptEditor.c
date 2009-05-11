@@ -269,6 +269,7 @@ static int menu_cb_ScriptingTutorial (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); 
 static int menu_cb_ScriptingExamples (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Scripting examples"); return 1; }
 static int menu_cb_PraatScript (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Praat script"); return 1; }
 static int menu_cb_FormulasTutorial (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Formulas"); return 1; }
+static int menu_cb_DemoWindow (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Demo window"); return 1; }
 static int menu_cb_TheHistoryMechanism (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"History mechanism"); return 1; }
 static int menu_cb_InitializationScripts (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Initialization script"); return 1; }
 static int menu_cb_AddingToAFixedMenu (EDITOR_ARGS) { EDITOR_IAM (ScriptEditor); Melder_help (L"Add to fixed menu..."); return 1; }
@@ -298,6 +299,7 @@ static void createHelpMenuItems (ScriptEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Scripting examples", 0, menu_cb_ScriptingExamples);
 	EditorMenu_addCommand (menu, L"Praat script", 0, menu_cb_PraatScript);
 	EditorMenu_addCommand (menu, L"Formulas tutorial", 0, menu_cb_FormulasTutorial);
+	EditorMenu_addCommand (menu, L"Demo window", 0, menu_cb_DemoWindow);
 	EditorMenu_addCommand (menu, L"-- help history --", 0, NULL);
 	EditorMenu_addCommand (menu, L"The History mechanism", 0, menu_cb_TheHistoryMechanism);
 	EditorMenu_addCommand (menu, L"Initialization scripts", 0, menu_cb_InitializationScripts);

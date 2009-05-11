@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/05/07
+ * pb 2009/05/08
  */
 
 #ifndef _Editor_h_
@@ -47,6 +47,9 @@ bool Demo_shiftKeyPressed (void);
 bool Demo_commandKeyPressed (void);
 bool Demo_optionKeyPressed (void);
 bool Demo_extraControlKeyPressed (void);
+/* Shortcuts: */
+bool Demo_input (const wchar_t *keys);
+bool Demo_clickedIn (double left, double right, double bottom, double top);
 
 /* End of file DemoEditor.h */
 #endif

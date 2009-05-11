@@ -38,6 +38,8 @@
  * pb 2008/04/30 new Formula API
  * pb 2008/08/06 axes info
  * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2009/05/08 demo window
+ * pb 2009/05/09 pink
  */
 
 #include "praatP.h"
@@ -337,15 +339,8 @@ END
 
 /***** "Pen" MENU *****/
 
-#if 0
-static Widget praatButton_solidLine, praatButton_dottedLine, praatButton_dashedLine;
-static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
-	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime,
-	praatButton_navy, praatButton_teal, praatButton_purple, praatButton_olive, praatButton_silver, praatButton_grey;
-#endif
-
 static Widget praatButton_lines [3];
-static Widget praatButton_colours [16];
+static Widget praatButton_colours [1+Graphics_MAX_COLOUR];
 
 
 static void updatePenMenu (void) {
@@ -423,6 +418,7 @@ DIRECT (Navy) setColour (Graphics_NAVY); END
 DIRECT (Teal) setColour (Graphics_TEAL); END
 DIRECT (Purple) setColour (Graphics_PURPLE); END
 DIRECT (Olive) setColour (Graphics_OLIVE); END
+DIRECT (Pink) setColour (Graphics_PINK); END
 DIRECT (Silver) setColour (Graphics_SILVER); END
 DIRECT (Grey) setColour (Graphics_GREY); END
 
@@ -1420,6 +1416,7 @@ DIRECT (Picture_settings_report)
 		theCurrentPraatPicture -> colour == Graphics_BLUE ? L"Blue" :
 		theCurrentPraatPicture -> colour == Graphics_MAGENTA ? L"Magenta" :
 		theCurrentPraatPicture -> colour == Graphics_OLIVE ? L"Olive" :
+		theCurrentPraatPicture -> colour == Graphics_PINK ? L"Pink" :
 		theCurrentPraatPicture -> colour == Graphics_NAVY ? L"Navy" :
 		theCurrentPraatPicture -> colour == Graphics_YELLOW ? L"Yellow" :
 		theCurrentPraatPicture -> colour == Graphics_CYAN ? L"Cyan" :
@@ -1742,6 +1739,7 @@ void praat_picture_init (void) {
 	praatButton_colours [Graphics_TEAL] = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
 	praatButton_colours [Graphics_PURPLE] = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
 	praatButton_colours [Graphics_OLIVE] = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
+	praatButton_colours [Graphics_PINK] = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_RADIO_NEXT, DO_Pink);
 	praatButton_colours [Graphics_SILVER] = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
 	praatButton_colours [Graphics_GREY] = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
 

@@ -157,6 +157,9 @@ static void Vowel_newDuration (Vowel me, struct structF0 *f0p, double newDuratio
 static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth);
 // forward declarations end
 
+static struct structF0 f0default = { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
+static struct structF1F2Grid griddefault = { 200, 500, 0, 1, 0, 1, 0.5 };
+
 #define VOWEL_def_h \
 oo_DEFINE_CLASS (Vowel, Function)\
 	oo_OBJECT (PitchTier, 0, pt)\
@@ -275,7 +278,10 @@ static double getRealFromTextWidget (Widget me)
 {
 	double value = NUMundefined;
 	wchar_t *dirty = GuiText_getString (me);
-	if (! Interpreter_numericExpression (NULL, dirty, & value)) value = NUMundefined;
+	if (! Interpreter_numericExpression (NULL, dirty, & value))
+	{
+		Melder_clearError (); value = NUMundefined;
+	}
 	Melder_free (dirty);
 	return value;
 }
@@ -286,14 +292,16 @@ static void VowelEditor_updateF0Info (VowelEditor me)
 	checkF0 (&my f0, &f0);
 	GuiText_setString (my f0TextField, Melder_double (f0));
 	my f0.start = f0;
-	my f0.slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
+	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
+	if (slopeOctPerSec == NUMundefined) slopeOctPerSec = f0default.slopeOctPerSec;
+    my f0.slopeOctPerSec = slopeOctPerSec;
 	GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
 }
 
 static void VowelEditor_updateExtendDuration (VowelEditor me)
 {
 	double extend = getRealFromTextWidget (my extendTextField);
-	if (extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) extend = MINIMUM_SOUND_DURATION;
+	if (extend == NUMundefined || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) extend = MINIMUM_SOUND_DURATION;
 	GuiText_setString (my extendTextField, Melder_double (extend));
 	my extendDuration = extend;
 }
@@ -301,7 +309,7 @@ static void VowelEditor_updateExtendDuration (VowelEditor me)
 static double VowelEditor_updateDurationInfo (VowelEditor me)
 {
 	double duration = getRealFromTextWidget (my durationTextField);
-	if (duration < MINIMUM_SOUND_DURATION) duration = MINIMUM_SOUND_DURATION;
+	if (duration == NUMundefined || duration < MINIMUM_SOUND_DURATION) duration = MINIMUM_SOUND_DURATION;
 	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION(duration)));
 	return duration;
 }
@@ -577,9 +585,6 @@ static struct {
 	int axisOrientation;
 	int speakerType;
 } prefs;
-
-static struct structF0 f0default = { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
-static struct structF1F2Grid griddefault = { 200, 500, 0, 1, 0, 1, 0.5 };
  
 void VowelEditor_prefs (void)
 {
@@ -1024,6 +1029,7 @@ static void checkF1F2 (VowelEditor me, double *f1, double *f2)
 
 static void checkF0 (struct structF0 *f0p, double *f0)
 {
+	if (*f0 == NUMundefined)  *f0 = f0p -> start;
 	if (*f0 > f0p -> maximum) *f0 = f0p -> maximum;
 	if (*f0 < f0p -> minimum) *f0 = f0p -> minimum;
 }

@@ -161,7 +161,8 @@ enum { GEENSYMBOOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
-		DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
+		DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
+		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		ZERO_NUMAR_, LINEAR_NUMAR_, RANDOM_UNIFORM_NUMAR_, RANDOM_INTEGER_NUMAR_, RANDOM_GAUSS_NUMAR_,
 		NUMBER_OF_ROWS_, NUMBER_OF_COLUMNS_,
@@ -250,7 +251,8 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
 	L"comment", L"endPause",
-	L"demoShow", L"demoWaitForInput", L"demoClicked", L"demoX", L"demoY", L"demoKeyPressed", L"demoKey$",
+	L"demoShow", L"demoWaitForInput", L"demoInput", L"demoClickedIn",
+	L"demoClicked", L"demoX", L"demoY", L"demoKeyPressed", L"demoKey$",
 	L"demoShiftKeyPressed", L"demoCommandKeyPressed", L"demoOptionKeyPressed", L"demoExtraControlKeyPressed",
 	L"zero#", L"linear#", L"randomUniform#", L"randomInteger#", L"randomGauss#",
 	L"numberOfRows", L"numberOfColumns",
@@ -3400,6 +3402,34 @@ static void do_demoWaitForInput (void) {
 	pushNumber (1);
 end: return;
 }
+static void do_demoInput (void) {
+	Stackel n = pop;
+	if (n->content.number == 1) {
+		Stackel keys = pop;
+		if (keys->which == Stackel_STRING) {
+			pushNumber (Demo_input (keys->content.string));
+		} else {
+			error3 (L"The argument of \"demoInput\" must be a string (the keys), not ", Stackel_whichText (keys), L".")
+		}
+	} else {
+		error3 (L"The function \"demoInput\" requires 1 argument (keys), not ", Melder_integer (n->content.number), L".")
+	}
+end: return;
+}
+static void do_demoClickedIn (void) {
+	Stackel n = pop;
+	if (n->content.number == 4) {
+		Stackel top = pop, bottom = pop, right = pop, left = pop;
+		if (left->which == Stackel_NUMBER && right->which == Stackel_NUMBER && bottom->which == Stackel_NUMBER && top->which == Stackel_NUMBER) {
+			pushNumber (Demo_clickedIn (left->content.number, right->content.number, bottom->content.number, top->content.number));
+		} else {
+			error1 (L"All arguments of \"demoClickedIn\" must be numbers (the x and y ranges).")
+		}
+	} else {
+		error3 (L"The function \"demoClickedIn\" requires 4 arguments (x and y ranges), not ", Melder_integer (n->content.number), L".")
+	}
+end: return;
+}
 static void do_demoClicked (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
@@ -4222,6 +4252,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 /********** Demo window functions: **********/
 } break; case DEMO_SHOW_: { do_demoShow ();
 } break; case DEMO_WAIT_FOR_INPUT_: { do_demoWaitForInput ();
+} break; case DEMO_INPUT_: { do_demoInput ();
+} break; case DEMO_CLICKED_IN_: { do_demoClickedIn ();
 } break; case DEMO_CLICKED_: { do_demoClicked ();
 } break; case DEMO_X_: { do_demoX ();
 } break; case DEMO_Y_: { do_demoY ();

@@ -3117,6 +3117,150 @@ CODE (L"select sound")
 CODE (L"plus textgrid")
 MAN_END
 
+MAN_BEGIN (L"Demo window", L"ppgb", 20090511)
+INTRO (L"The Demo window is a window in which you can draw and ask for user input. "
+	"You can use it for demonstrations, presentations, simulations and adaptive listening experiments.")
+NORMAL (L"The Demo window is Praat's least visible window: you can create it only through a script. "
+	"Try the following script after selecting Sound object:")
+CODE (L"demo Draw... 0 3 -1 1 yes curve")
+NORMAL (L"You see the Demo window turning up on the screen, with the Sound painted into it. "
+	"It works because the ##Draw...# command is available in the Objects window when you select a Sound. Then try:")
+CODE (L"demo Draw line... 0 -1 3 1")
+NORMAL (L"You see a line drawn from (0 seconds, -1 Pa) to (3 seconds, +1 Pascal) in the waveform. "
+	"It works because the ##Draw line...# command is available in the Picture window. Then try:")
+CODE (L"demo Erase all")
+CODE (L"demo Red")
+CODE (L"demo Axes... 0 100 0 100")
+CODE (L"demo Text... 50 centre 50 half Hello")
+NORMAL (L"You see a text appearing in red, in the centre of the window. "
+	"This works because you are using commands from the Picture window, including the @@Axes...@ command, "
+	"which sets the world coordinates to something else than before (before, the world coordinates were determined by the Sound).")
+NORMAL (L"Now suppose you want the Sound to appear in the top half of the window, "
+	"and some texts in the bottom left and bottom right corners of the window. "
+	"You can use @@Select outer viewport...@ and @@Select inner viewport...@, "
+	"if you know that the size of the Demo window is \"100\" horizontally and \"100\" vertically (rather than 12\\xx12, as the Picture window), "
+	"and that the point (0, 0) lies in the bottom left (rather than the top left, as in the Picture window):")
+CODE (L"demo Erase all")
+CODE (L"demo Black")
+CODE (L"demo Times")
+CODE (L"demo 24")
+CODE (L"demo Select outer viewport... 0 100 50 100")
+CODE (L"demo Draw... 0 0 0 0 yes curve")
+CODE (L"demo Select inner viewport... 0 100 0 100")
+CODE (L"demo Axes... 0 10 0 10")
+CODE (L"demo Text... 0 left 0 bottom Left bottom corner")
+CODE (L"demo Text... 10 right 0 bottom Right bottom corner")
+NORMAL (L"As the title page of a presentation, you could do:")
+CODE (L"demo Erase all")
+CODE (L"demo Select inner viewport... 0 100 0 100")
+CODE (L"demo Axes... 0 100 0 100")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Pink")
+CODE (L"demo Text... 50 centre 50 half This is my title")
+ENTRY (L"Getting user input")
+NORMAL (L"For almost all applications, you will want the user (or the participant in an experiment) to be able to click on things in the Demo window, "
+	"or to control the Demo window by pressing keys. Here is a presentation with two screens:")
+CODE (L"demo Erase all")
+CODE (L"demo Select inner viewport... 0 100 0 100")
+CODE (L"demo Axes... 0 100 0 100")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Pink")
+CODE (L"demo Text... 50 centre 50 half This is the first page")
+CODE (L"#demoWaitForInput ( )")
+CODE (L"demo Erase all")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Text... 50 centre 50 half This is the second page")
+NORMAL (L"In this example, you go from the first to the second screen either by clicking with mouse or by pressing any key. "
+	"You will usually want to be more selctive in your choice of user actions to respond to. "
+	"The function #demoWaitForInput always returns 1, so that you can use it nicely in a loop, in which you can react selectively:")
+CODE (L"label FIRST_SCREEN")
+CODE (L"demo Erase all")
+CODE (L"demo Black")
+CODE (L"demo Times")
+CODE (L"demo 24")
+CODE (L"demo Select inner viewport... 0 100 0 100")
+CODE (L"demo Axes... 0 100 0 100")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Pink")
+CODE (L"demo Text... 50 centre 50 half This is the first page")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"if #demoClicked ( )")
+		CODE2 (L"goto SECOND_SCREEN")
+	CODE1 (L"elsif #demoKeyPressed ( )")
+		CODE2 (L"if ##demoKey\\$ # ( ) = \"\\->\" or demoKey\\$  ( ) = \" \"")
+			CODE3 (L"goto SECOND_SCREEN")
+		CODE2 (L"endif")
+	CODE1 (L"endif")
+CODE (L"endwhile")
+CODE (L"label SECOND_SCREEN")
+CODE (L"demo Erase all")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Text... 50 centre 50 half This is the second page")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"if demoClicked ( )")
+		CODE2 (L"goto END")
+	CODE1 (L"elsif demoKeyPressed ( )")
+		CODE2 (L"if demoKey$ ( ) = \"\\<-\"")
+			CODE3 (L"goto FIRST_SCREEN")
+		CODE2 (L"elsif demoKey$ ( ) = \"\\->\" or demoKey$ ( ) = \" \"")
+			CODE3 (L"goto END")
+		CODE2 (L"endif")
+	CODE1 (L"endif")
+CODE (L"endwhile")
+CODE (L"label END")
+NORMAL (L"This script allows you to use the arrow keys and the space bar to navigate between the two screens. A shorter version is:")
+CODE (L"label FIRST_SCREEN")
+CODE (L"demo Erase all")
+CODE (L"demo Black")
+CODE (L"demo Times")
+CODE (L"demo 24")
+CODE (L"demo Select inner viewport... 0 100 0 100")
+CODE (L"demo Axes... 0 100 0 100")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Pink")
+CODE (L"demo Text... 50 centre 50 half This is the first page")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"goto SECOND_SCREEN #demoInput (\"\\bu\\-> \")")
+CODE (L"endwhile")
+CODE (L"label SECOND_SCREEN")
+CODE (L"demo Erase all")
+CODE (L"demo Paint rectangle... purple 0 100 0 100")
+CODE (L"demo Text... 50 centre 50 half This is the second page")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"goto END demoInput (\"\\bu\\-> \")")
+	CODE1 (L"goto FIRST_SCREEN demoInput (\"\\<-\")")
+CODE (L"endwhile")
+CODE (L"label END")
+NORMAL (L"This uses two tricks, namely the possibility of following the #goto statement by a condition "
+	"and using #demoInput to quickly test for multiple possible inputs (the bullet represents a mouse click).")
+ENTRY (L"Getting click locations")
+NORMAL (L"You can use the functions #demoX and #demoY to see where the user has clicked. "
+	"These function respond in world coordinates. To se ewhether the user has clicked in the sound that occupies the "
+	"upper half of the screne in the above example, you do")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"if demoClicked ( )")
+		CODE2 (L"Select outer viewport... 0 100 50 100")
+		CODE2 (L"Axes... 0 3 -1 1")
+		CODE2 (L"if #demoX ( ) >= 0 and demoX ( ) < 3 and #demoY ( ) >= -1 and demoY ( ) < 1")
+NORMAL (L"The last line can be shortened to:")
+		CODE2 (L"if #demoClickedIn (0, 3, -1, 1)")
+NORMAL (L"Another example of when you want to know the click location is when you test for a click on a button "
+	"that you drew on the screen:")
+CODE (L"demo Paint rectangle... pink 30 70 16 24")
+CODE (L"demo Text... 50 centre 20 half Analyse")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
+ENTRY (L"Miscellaneous")
+NORMAL (L"In the above examples, things will often get drawn to the screen with some delay, "
+	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
+	"use %buffering of graphics. These systems will draw the graphics only just before getting user input. "
+	"This means that #demoWaitForInput is the place where your drawings will typically be painted on the screen. "
+	"If you want painting to happen earlier (e.g. in animations), you can use ##demoShow ( )#.")
+NORMAL (L"To see whether any function keys are pressed (during a mouse click or key press), "
+	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
+	"##demoExtraControlKeyPressed ( )#.")
+MAN_END
+
 }
 
 /* End of file manual_Script.c */

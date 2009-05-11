@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
  djmw 20081119 +TableOfReal_areAllCellsDefined
+ djmw 20090506 + setInner for _drawScatterPlotMatrix
 */
 
 #include <ctype.h>
@@ -1056,6 +1057,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 	}
 	
 	Graphics_setWindow (g, 0, n, 0, n);
+    Graphics_setInner (g);
 	Graphics_line (g, 0, n, n, n);
 	Graphics_line (g, 0, 0, 0, n);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -1091,6 +1093,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 			}
 		}
 	}
+    Graphics_unsetInner (g);
 end:
 	NUMdvector_free (xmin, colb); NUMdvector_free (xmax, colb);
 }
@@ -1125,8 +1128,8 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 		ymin -= tmp; ymax += tmp;
     }
     
-    Graphics_setInner (g);
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+    Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
 	

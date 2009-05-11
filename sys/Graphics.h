@@ -177,8 +177,10 @@ void Graphics_setColour (I, int colour);
 #define Graphics_TEAL  11
 #define Graphics_PURPLE  12
 #define Graphics_OLIVE  13
-#define Graphics_SILVER  14
-#define Graphics_GREY  15
+#define Graphics_PINK  14
+#define Graphics_SILVER  15
+#define Graphics_GREY  16
+#define Graphics_MAX_COLOUR  16
 void Graphics_setGrey (I, double grey);
 #define Graphics_setGray  Graphics_setGrey
 

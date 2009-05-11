@@ -1,6 +1,6 @@
 /* Graphics_colour.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/05/28 GPL
  * pb 2004/09/09 Xwin: highlight2
  * sdk 2008/03/24 cairo
+ * pb 2009/05/09 pink
  */
 
 #include "GraphicsP.h"
@@ -46,6 +47,7 @@ static RGBColour theColours [] = {
 		{ 0x0000, 0x6000, 0x7000 },   /* teal */
 		{ 0x8000, 0x0000, 0x4000 },   /* purple */
 		{ 0x8000, 0x8000, 0x0000 },   /* olive */
+		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
 		{ 0xC000, 0xC000, 0xC000 },   /* silver */
 		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
 
@@ -65,6 +67,7 @@ static RGBColour theMacColours [] = {
 		{ 0x0000, 0x8000, 0x8000 },   /* teal */
 		{ 0x8000, 0x0000, 0x8000 },   /* purple */
 		{ 0x8000, 0x8000, 0x0000 },   /* olive */
+		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
 		{ 0xC000, 0xC000, 0xC000 },   /* silver */
 		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
 #endif
@@ -101,6 +104,7 @@ void _Graphics_setColour (I, int colour) {
 				case Graphics_TEAL:    cairo_set_source_rgb (my cr, 0.0, 0.5, 0.5); break;
 				case Graphics_PURPLE:  cairo_set_source_rgb (my cr, 0.5, 0.0, 0.5); break;
 				case Graphics_OLIVE:   cairo_set_source_rgb (my cr, 0.5, 0.5, 0.0); break;
+				case Graphics_PINK:    cairo_set_source_rgb (my cr, 1.0, 0.75, 0.75); break;
 				case Graphics_SILVER:  cairo_set_source_rgb (my cr, 0.75, 0.75, 0.75); break;
 				case Graphics_GREY:    cairo_set_source_rgb (my cr, 0.5, 0.5, 0.5); break;
 				default:               cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0); break;
@@ -120,6 +124,7 @@ void _Graphics_setColour (I, int colour) {
 				colour == Graphics_TEAL ? teal :
 				colour == Graphics_PURPLE ? purple :
 				colour == Graphics_OLIVE ? olive :
+				colour == Graphics_PINK ? pink :
 				colour == Graphics_SILVER ? grey [75] :
 				colour == Graphics_GREY ? grey [50] :
 				black);
@@ -138,6 +143,7 @@ void _Graphics_setColour (I, int colour) {
 				case Graphics_TEAL: my foregroundColour = RGB (0, 128, 128); break;
 				case Graphics_PURPLE: my foregroundColour = RGB (128, 0, 128); break;
 				case Graphics_OLIVE: my foregroundColour = RGB (128, 128, 0); break;
+				case Graphics_PINK: my foregroundColour = RGB (255, 192, 192); break;
 				case Graphics_SILVER: my foregroundColour = RGB (192, 192, 192); break;
 				case Graphics_GREY: my foregroundColour = RGB (128, 128, 128); break;
 				default: my foregroundColour = RGB (0, 0, 0); break;
@@ -149,7 +155,7 @@ void _Graphics_setColour (I, int colour) {
 			DeleteObject (my brush);
 			my brush = CreateSolidBrush (my foregroundColour);
 		#elif mac
-			my macColour = colour >= 0 && colour <= 15 ? theMacColours [colour] : theBlackColour;
+			my macColour = colour >= 0 && colour <= Graphics_MAX_COLOUR ? theMacColours [colour] : theBlackColour;
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);

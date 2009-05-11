@@ -142,6 +142,10 @@ typedef struct structGuiDrawingArea {
 			if (my keyCallback) {
 				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
 				event. key = kar;
+				if (event. key == VK_LEFT) event. key = 0x2190;
+				if (event. key == VK_RIGHT) event. key = 0x2192;
+				if (event. key == VK_UP) event. key = 0x2191;
+				if (event. key == VK_DOWN) event. key = 0x2193;
 				event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
 				my keyCallback (my keyBoss, & event);
 			}
@@ -183,6 +187,10 @@ typedef struct structGuiDrawingArea {
 			if (my keyCallback) {
 				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
 				event. key = macEvent -> message & charCodeMask;
+				if (event. key == 28) event. key = 0x2190;
+				if (event. key == 29) event. key = 0x2192;
+				if (event. key == 30) event. key = 0x2191;
+				if (event. key == 31) event. key = 0x2193;
 				event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
 				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
 				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
