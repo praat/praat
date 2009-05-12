@@ -4680,6 +4680,24 @@ void XtAppMainLoop (XtAppContext appctxt) {
 			}
 		} else FORWARD_WM_SIZE (window, state, cx, cy, DefWindowProc);
 	}
+	static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
+		Melder_assert (down == true);
+		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		if (me && key >= VK_LEFT && key <= VK_DOWN) {
+			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
+			if (MEMBER (me, Shell)) {
+				Widget drawingArea = _motif_findDrawingArea (me);
+				if (drawingArea) {
+					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+					_GuiWinDrawingArea_handleKey (drawingArea, key);
+				} else {
+					FORWARD_WM_KEYDOWN (window, key, repeat, flags, DefWindowProc);
+				}
+			} else FORWARD_WM_KEYDOWN (window, key, repeat, flags, DefWindowProc);
+		} else {
+			FORWARD_WM_KEYDOWN (window, key, repeat, flags, DefWindowProc);
+		}
+	}
 	static void on_char (HWND window, TCHAR kar, int repeat) {
 		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
@@ -4751,6 +4769,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 			HANDLE_MSG (window, WM_HSCROLL, on_hscroll);
 			HANDLE_MSG (window, WM_VSCROLL, on_vscroll);
 			HANDLE_MSG (window, WM_SIZE, on_size);
+			HANDLE_MSG (window, WM_KEYDOWN, on_key);
 			HANDLE_MSG (window, WM_CHAR, on_char);
 			HANDLE_MSG (window, WM_MOVE, on_move);
 			HANDLE_MSG (window, WM_CTLCOLORBTN, on_ctlColorBtn);

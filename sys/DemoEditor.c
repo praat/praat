@@ -129,15 +129,6 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 static void createChildren (DemoEditor me) {
 	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
-	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_startRecording (my graphics);
-	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
-	//Graphics_setWindow (my graphics, 0, 100, 0, 100);
-	//Graphics_line (my graphics, 0, 100, 100, 0);
 }
 
 class_methods (DemoEditor, Editor) {
@@ -152,6 +143,15 @@ class_methods (DemoEditor, Editor) {
 
 int DemoEditor_init (DemoEditor me, Widget parent) {
 	Editor_init (DemoEditor_as_parent (me), parent, 0, 0, 1024, 768 + Machine_getMenuBarHeight (), NULL, NULL); cherror
+	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_setWindow (my graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_startRecording (my graphics);
+	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
+	//Graphics_setWindow (my graphics, 0, 100, 0, 100);
+	//Graphics_line (my graphics, 0, 100, 100, 0);
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
@@ -175,6 +175,7 @@ void Demo_open (Interpreter interpreter) {
 		if (theDemoEditor == NULL) {
 			theDemoEditor = DemoEditor_create (Melder_topShell);
 			Melder_assert (theDemoEditor != NULL);
+			//GuiWindow_show (theDemoEditor -> dialog);
 			theDemoEditor -> praatPicture = Melder_calloc (structPraatPicture, 1);
 			theCurrentPraatPicture = theDemoEditor -> praatPicture;
 			theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
@@ -208,6 +209,7 @@ void Demo_show (void) {
 
 bool Demo_waitForInput (void) {
 	if (theDemoEditor == NULL) return false;
+	GuiWindow_show (theDemoEditor -> dialog);
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;

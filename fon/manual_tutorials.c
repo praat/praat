@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090511)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090512)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.07# (12 May 2009)")
+LIST_ITEM (L"\\bu Demo window: navigation by arrow keys also on Windows.")
+LIST_ITEM (L"\\bu Demo window: no longer crashes on Linux.")
 NORMAL (L"##5.1.06# (11 May 2009)")
 LIST_ITEM (L"\\bu Demo window.")
 NORMAL (L"##5.1.05# (7 May 2009)")
