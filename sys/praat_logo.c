@@ -1,6 +1,6 @@
 /* praat_logo.c
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/06/10 wchar_t
  * pb 2007/12/09 enums
  * sdk 2008/03/24 GTK
+ * pb 2009/06/02 date updated
  */
 
 #include "praatP.h"
@@ -42,7 +43,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2008");
+	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2009");
 }
 
 static struct {

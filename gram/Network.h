@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/03/14
+ * pb 2009/05/14
  */
 
 #ifndef _Data_h_
@@ -53,7 +53,7 @@ Network Network_create_rectangle_vertical_e (double minimumActivity, double maxi
 	double initialMinimumWeight, double initialMaximumWeight);
 
 void Network_addNode_e (Network me, double x, double y, double activity, bool clamped);
-void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight);
+void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight, double plasticity);
 
 void Network_draw (Network me, Graphics graphics, bool colour);
 
@@ -61,6 +61,8 @@ double Network_getActivity_e (Network me, long inode);
 void Network_setActivity_e (Network me, long inode, double activity);
 void Network_setClamping_e (Network me, long inode, bool clamped);
 
+void Network_zeroActivities (Network me, long nodeMin, long nodeMax);
+void Network_normalizeActivities (Network me, long nodeMin, long nodeMax);
 void Network_spreadActivities (Network me, long numberOfSteps);
 void Network_updateWeights (Network me);
 

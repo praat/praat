@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/14
+ * pb 2009/06/11
  */
 
 #include "praat.h"
@@ -116,10 +116,12 @@ FORM (Network_addConnection, L"Network: Add connection", 0)
 	NATURAL (L"From node", L"1")
 	NATURAL (L"To node", L"2")
 	REAL (L"Weight", L"0.0")
+	REAL (L"Plasticity", L"1.0")
 	OK
 DO
 	WHERE (SELECTED) {
-		Network_addConnection_e (OBJECT, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight")); cherror
+		Network_addConnection_e (OBJECT, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"),
+			GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); cherror
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -152,6 +154,18 @@ FORM (Network_getActivity, L"Network: Get activity", 0)
 DO
 	double activity = Network_getActivity_e (ONLY_OBJECT, GET_INTEGER (L"Node")); cherror
 	Melder_information1 (Melder_double (activity));
+end:
+END
+
+FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
+	INTEGER (L"From node", L"1")
+	INTEGER (L"To node", L"0 (= all)")
+	OK
+DO
+	WHERE (SELECTED) {
+		Network_normalizeActivities (OBJECT, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); cherror
+		praat_dataChanged (OBJECT);
+	}
 end:
 END
 
@@ -194,6 +208,18 @@ DIRECT (Network_updateWeights)
 		Network_updateWeights (OBJECT);
 		praat_dataChanged (OBJECT);
 	}
+END
+
+FORM (Network_zeroActivities, L"Network: Zero activities", 0)
+	INTEGER (L"From node", L"1")
+	INTEGER (L"To node", L"0 (= all)")
+	OK
+DO
+	WHERE (SELECTED) {
+		Network_zeroActivities (OBJECT, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); cherror
+		praat_dataChanged (OBJECT);
+	}
+end:
 END
 
 
@@ -1242,6 +1268,8 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 0, DO_Network_addConnection);
 	praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 0, DO_Network_setActivity);
 	praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 0, DO_Network_setClamping);
+	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 0, DO_Network_zeroActivities);
+	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 0, DO_Network_normalizeActivities);
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 0, DO_Network_spreadActivities);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 0, DO_Network_updateWeights);
 }

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/02/28
+ * pb 2009/06/11
  */
 
 #define ooSTRUCT NetworkNode
@@ -41,6 +41,14 @@ oo_DEFINE_STRUCT (NetworkConnection)
 	oo_LONG (nodeFrom)
 	oo_LONG (nodeTo)
 	oo_DOUBLE (weight)
+	oo_FROM (1)
+		oo_DOUBLE (plasticity)
+	oo_ENDFROM
+	#if OO_READING
+		if (localVersion < 1) {
+			my plasticity = 1.0;
+		}
+	#endif
 
 oo_END_STRUCT (NetworkConnection)
 #undef ooSTRUCT

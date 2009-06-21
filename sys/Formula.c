@@ -3361,20 +3361,20 @@ end: return;
 }
 static void do_endPauseForm (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
-		error1 (L"The function \"endPauseForm\" is not available inside manuals.")
+		error1 (L"The function \"endPause\" is not available inside manuals.")
 	Stackel n = pop;
 	if (n->content.number < 2 || n->content.number > 11)
-		error3 (L"The function \"endPauseForm\" requires 2 to 11 arguments, not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"endPause\" requires 2 to 11 arguments, not ", Melder_integer (n->content.number), L".")
 	Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
-		error3 (L"The last argument of \"endPauseForm\" has to be a number (the default continue button), not ", Stackel_whichText (d), L".")
+		error3 (L"The last argument of \"endPause\" has to be a number (the default continue button), not ", Stackel_whichText (d), L".")
 	int numberOfContinueButtons = n->content.number - 1;
 	Stackel c [1+10] = { 0 };
 	for (int i = numberOfContinueButtons; i >= 1; i --) {
 		c [i] = pop;
 		if (c[i]->which != Stackel_STRING)
 			error5 (L"Each of the first ", Melder_integer (numberOfContinueButtons),
-				L" argument(s) of \"endPauseForm\" has to be a string (a button text), not ", Stackel_whichText (c[i]), L".")
+				L" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (c[i]), L".")
 	}
 	int buttonClicked = UiPause_end (numberOfContinueButtons, d->content.number,
 		c [1] == NULL ? NULL : c[1]->content.string, c [2] == NULL ? NULL : c[2]->content.string,

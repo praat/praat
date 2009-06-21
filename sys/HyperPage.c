@@ -452,6 +452,8 @@ if (! my printing) {
 			theCurrentPraatObjects = my praatObjects;
 			theCurrentPraatPicture = my praatPicture;
 			theCurrentPraatPicture -> graphics = my g;   // has to draw into HyperPage rather than Picture window
+			theCurrentPraatPicture -> font = font;
+			theCurrentPraatPicture -> fontSize = size;
 			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
@@ -523,6 +525,8 @@ if (! my printing) {
 		theCurrentPraatObjects = my praatObjects;
 		theCurrentPraatPicture = my praatPicture;
 		theCurrentPraatPicture -> graphics = my ps;
+		theCurrentPraatPicture -> font = font;
+		theCurrentPraatPicture -> fontSize = size;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Graphics_BLACK;
 		theCurrentPraatPicture -> lineWidth = 1.0;

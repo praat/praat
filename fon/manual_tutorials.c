@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090512)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090602)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.08# (21 June 2009)")
+LIST_ITEM (L"\\bu Removed a bug introduced in 5.1.07 that could cause strange pictures in manual.")
+LIST_ITEM (L"\\bu Macintosh: execute @sendpraat messages immediately instead of waiting for the user to click the jumping Praat icon.")
 NORMAL (L"##5.1.07# (12 May 2009)")
 LIST_ITEM (L"\\bu Demo window: navigation by arrow keys also on Windows.")
 LIST_ITEM (L"\\bu Demo window: no longer crashes on Linux.")

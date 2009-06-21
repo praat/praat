@@ -2791,7 +2791,10 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 			char *buffer;
 			long actualSize;
 			duringAppleEvent = TRUE;
-			AEInteractWithUser (kNoTimeOut, NULL, NULL);
+			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
+			ProcessSerialNumber psn;
+			GetCurrentProcess (& psn);
+			SetFrontProcess (& psn);
 			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, NULL, 0, & actualSize);
 			buffer = malloc (actualSize);
 			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, & buffer [0], actualSize, NULL);
@@ -2810,7 +2813,10 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 			wchar_t *buffer;
 			long actualSize;
 			duringAppleEvent = TRUE;
-			AEInteractWithUser (kNoTimeOut, NULL, NULL);
+			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
+			ProcessSerialNumber psn;
+			GetCurrentProcess (& psn);
+			SetFrontProcess (& psn);
 			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, NULL, 0, & actualSize);
 			buffer = malloc (actualSize);
 			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, & buffer [0], actualSize, NULL);

@@ -20,6 +20,8 @@
 /*
  * pb 2009/02/27 created
  * pb 2009/03/05 setClamping
+ * pb 2009/05/14 zeroActivities, normalizeActivities
+ * pb 2009/06/11 connection plasticities
  */
 
 #include "Network.h"
@@ -51,7 +53,8 @@ static void classNetwork_info (I) {
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (my numberOfConnections));
 }
 
-class_methods (Network, Data)
+class_methods (Network, Data) {
+	us -> version = 1;
 	class_method_local (Network, destroy)
 	class_method_local (Network, info)
 	class_method_local (Network, description)
@@ -62,7 +65,8 @@ class_methods (Network, Data)
 	class_method_local (Network, readText)
 	class_method_local (Network, writeBinary)
 	class_method_local (Network, readBinary)
-class_methods_end
+	class_methods_end
+}
 
 void Network_init_e (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
@@ -150,12 +154,38 @@ void Network_spreadActivities (Network me, long numberOfSteps) {
 	}
 }
 
+void Network_zeroActivities (Network me, long nodeMin, long nodeMax) {
+	if (my numberOfNodes < 1) return;
+	if (nodeMax == 0) { nodeMin = 1; nodeMax = my numberOfNodes; }
+	if (nodeMin < 1) nodeMin = 1;
+	if (nodeMax > my numberOfNodes) nodeMax = my numberOfNodes;
+	for (long inode = nodeMin; inode <= nodeMax; inode ++) {
+		my nodes [inode]. activity = 0.0;
+	}
+}
+
+void Network_normalizeActivities (Network me, long nodeMin, long nodeMax) {
+	if (my numberOfNodes < 1) return;
+	if (nodeMax == 0) { nodeMin = 1; nodeMax = my numberOfNodes; }
+	if (nodeMin < 1) nodeMin = 1;
+	if (nodeMax > my numberOfNodes) nodeMax = my numberOfNodes;
+	if (nodeMax < nodeMin) return;
+	double sum = 0.0;
+	for (long inode = nodeMin; inode <= nodeMax; inode ++) {
+		sum += my nodes [inode]. activity;
+	}
+	double average = sum / (nodeMax - nodeMin + 1);
+	for (long inode = nodeMin; inode <= nodeMax; inode ++) {
+		my nodes [inode]. activity -= average;
+	}	
+}
+
 void Network_updateWeights (Network me) {
 	for (long iconn = 1; iconn <= my numberOfConnections; iconn ++) {
 		NetworkConnection connection = & my connections [iconn];
 		NetworkNode nodeFrom = & my nodes [connection -> nodeFrom];
 		NetworkNode nodeTo = & my nodes [connection -> nodeTo];
-		connection -> weight = (1.0 - my leak) * connection -> weight + my learningRate * nodeFrom -> activity * nodeTo -> activity;
+		connection -> weight += connection -> plasticity * my learningRate * nodeFrom -> activity * nodeTo -> activity - my leak * connection -> weight;
 		if (connection -> weight < my minimumWeight) connection -> weight = my minimumWeight;
 		else if (connection -> weight > my maximumWeight) connection -> weight = my maximumWeight;
 	}
@@ -190,6 +220,7 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 			conn -> nodeFrom = (irow - 1) * numberOfColumns + icol;
 			conn -> nodeTo = conn -> nodeFrom + 1;
 			conn -> weight = NUMrandomUniform (initialMinimumWeight, initialMaximumWeight);
+			conn -> plasticity = 1.0;
 		}
 	}
 	for (long icol = 1; icol <= numberOfColumns; icol ++) {
@@ -198,6 +229,7 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 			conn -> nodeFrom = (irow - 1) * numberOfColumns + icol;
 			conn -> nodeTo = conn -> nodeFrom + numberOfColumns;
 			conn -> weight = NUMrandomUniform (initialMinimumWeight, initialMaximumWeight);
+			conn -> plasticity = 1.0;
 		}
 	}
 	Melder_assert (iconn == my numberOfConnections);
@@ -236,6 +268,7 @@ Network Network_create_rectangle_vertical_e (double minimumActivity, double maxi
 				conn -> nodeFrom = (irow - 1) * numberOfColumns + icol;
 				conn -> nodeTo = irow * numberOfColumns + jcol;
 				conn -> weight = NUMrandomUniform (initialMinimumWeight, initialMaximumWeight);
+				conn -> plasticity = 1.0;
 			}
 		}
 	}
@@ -298,11 +331,12 @@ end:
 	return;
 }
 
-void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight) {
+void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight, double plasticity) {
 	NUMstructvector_append_e (NetworkConnection, & my connections, 1, & my numberOfConnections); cherror
 	my connections [my numberOfConnections]. nodeFrom = nodeFrom;
 	my connections [my numberOfConnections]. nodeTo = nodeTo;
 	my connections [my numberOfConnections]. weight = weight;
+	my connections [my numberOfConnections]. plasticity = plasticity;
 end:
 	return;
 }
