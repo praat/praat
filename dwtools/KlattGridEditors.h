@@ -46,6 +46,8 @@ Thing_declare1 (KlattGrid_realTierEditor);
 #define KlattGrid_realTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (KlattGrid_realTierEditor, RealTierEditor);
 
+int KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
+
 #define KlattGrid_openPhaseTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
 Thing_declare1 (KlattGrid_openPhaseTierEditor);
 #define KlattGrid_openPhaseTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)

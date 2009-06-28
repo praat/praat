@@ -21,8 +21,9 @@
  * djmw 20090123
  * djmw 20090128 Remove source menu from formant grid editor.
  * djmw 20090420 dbEditor
+ * djmw 20090527 Protect FormantGridEditor against empty FormantGrids.
  */
- 
+
 #include "Preferences.h"
 #include "EditorM.h"
 
@@ -362,6 +363,11 @@ KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (Widg
 
 /************************** KlattGrid_formantGridEditor *********************************/
 
+static int FormantGrid_isEmpty (FormantGrid me)
+{
+	return my formants -> size == 0 || my bandwidths -> size == 0;
+}
+
 static void classKlattGrid_formantGridEditor_play (KlattGrid_formantGridEditor me, double tmin, double tmax)
 {
 	KlattGrid_Editor_defaultPlay (my klattgrid, tmin, tmax);
@@ -375,12 +381,12 @@ class_methods_end
 KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (Widget parent, const wchar_t *title, KlattGrid data, int formantType)
 {
 	Melder_assert (data != NULL);
+	FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
+	if (fg == NULL) return Melder_errorp1 (L"Formant type unknown.");
+	if (FormantGrid_isEmpty (*fg)) return Melder_errorp1 (L"Cannot edit an empty formant grid.");
 	KlattGrid_formantGridEditor me = new (KlattGrid_formantGridEditor);
 	if (me == NULL) return NULL;
 	my klattgrid = data;
-	FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (my klattgrid, formantType);
-	if (fg == NULL) goto end;
-end:
 	if (! FormantGridEditor_init (KlattGrid_formantGridEditor_as_FormantGridEditor (me), parent, title, *fg)) forget (me);
 	return me;
 }

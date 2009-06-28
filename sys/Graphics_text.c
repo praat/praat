@@ -557,7 +557,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 							"{ pop pop /%s /%s-Praat PraatEncode }\n"
 							"{ /%s /%s-Praat PraatEncode }\n"
 							"ifelse\n",
-							fontInfo, fontInfo, fontInfo, secondaryFontInfo, fontInfo);
+							secondaryFontInfo, secondaryFontInfo, fontInfo, fontInfo, fontInfo);
 					} else {
 						my printf (my file, "/%s /%s-Praat PraatEncode\n", fontInfo, fontInfo);
 					}

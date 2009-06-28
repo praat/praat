@@ -1,25 +1,25 @@
 /* manual_dwtools.c
- * 
+ *
  * Copyright (C) 1993-2009 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 /*
  djmw 20020313 GPL
- djmw 20090415 Latest modification
+ djmw 20090523 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -57,13 +57,13 @@ static void drawPolsF1F2_log (Graphics g)
 {
 	TableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	if (me != NULL)
-	{	
+	{
 		Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
 		TableOfReal_drawScatterPlot (me, g, 1, 2, 0, 0, -2.9, 2.9,
 			-2.9, 2.9, 10, 1, L"+", 1);
 	}
 	forget (me);
-	Melder_clearError();	
+	Melder_clearError();
 }
 
 static void drawPolsF1F2ConcentrationEllipses (Graphics g)
@@ -74,25 +74,25 @@ static void drawPolsF1F2ConcentrationEllipses (Graphics g)
 		Discriminant d = TableOfReal_to_Discriminant (me);
 		if (d != NULL)
 		{
-			Discriminant_drawConcentrationEllipses (d, g, 1, 0, NULL, 0, 1, 2, 
+			Discriminant_drawConcentrationEllipses (d, g, 1, 0, NULL, 0, 1, 2,
 			-2.9, 2.9, -2.9, 2.9, 12, 1);
 			forget (d);
 		}
 		forget (me);
-	} 
-	Melder_clearError();	
+	}
+	Melder_clearError();
 }
 
 static void drawPolsDiscriminantConfiguration (Graphics g)
 {
-	TableOfReal me = getStandardizedLogFrequencyPolsData (0); 
-	
+	TableOfReal me = getStandardizedLogFrequencyPolsData (0);
+
 	if (me != NULL)
 	{
 		Discriminant d = TableOfReal_to_Discriminant (me);
 		if (d != NULL)
 		{
-			Configuration c = Discriminant_and_TableOfReal_to_Configuration 
+			Configuration c = Discriminant_and_TableOfReal_to_Configuration
 				(d, me, 2);
 			if (c != NULL)
 			{
@@ -122,17 +122,17 @@ static void drawBoxPlot (Graphics g)
 	Graphics_setWindow (g, -1, 2, ymin, ymax);
 	Graphics_setInner (g);
     Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-	
+
 	Graphics_line (g, x - r, lowerWhisker, x + r, lowerWhisker);
-	Graphics_line (g, x, lowerWhisker, x, q25);    
+	Graphics_line (g, x, lowerWhisker, x, q25);
 	Graphics_line (g, x - w, q25, x + w, q25);
 	Graphics_line (g, x - w, q50, x + w, q50);
 	Graphics_line (g, x - w, q75, x + w, q75);
 	Graphics_line (g, x - w, q25, x - w, q75);
 	Graphics_line (g, x + w, q25, x + w, q75);
-	Graphics_line (g, x, q75, x, upperWhisker);    
+	Graphics_line (g, x, q75, x, upperWhisker);
 	Graphics_line (g, x - r, upperWhisker, x + r, upperWhisker);
-	
+
 	y = q75 + 2.5 * hspread;
 	Graphics_text (g, x, y, L"*");
 	Graphics_arrow (g, xar, y, xal1, y);
@@ -142,10 +142,10 @@ static void drawBoxPlot (Graphics g)
 	Graphics_arrow (g, xar, y, xal1, y);
 	Graphics_text (g, xtl, y, L"outlier > %upperOuterFence");
 	y = upperOuterFence;
-	Graphics_setLineType (g, Graphics_DOTTED);	
+	Graphics_setLineType (g, Graphics_DOTTED);
 	Graphics_line (g, -xtl, y, xtl, y);
 	Graphics_text (g, xtl, y, L"%upperOuterFence");
-	y = upperInnerFence;	
+	y = upperInnerFence;
 	Graphics_line (g, -xtl, y, xtl, y);
 	Graphics_text (g, xtl, y, L"%upperInnerFence");
 	Graphics_line (g, x - w, mean, x + w, mean);
@@ -165,10 +165,10 @@ static void drawBoxPlot (Graphics g)
 	Graphics_text (g, xtl, y, L"%q25");
 	y = q50;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%q50");		
+	Graphics_text (g, xtl, y, L"%q50");
 	y = mean;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%mean");		
+	Graphics_text (g, xtl, y, L"%mean");
 	Graphics_unsetInner (g);
 }
 
@@ -254,7 +254,7 @@ NORMAL (L"In general, if we have %k independent significance tests "
 	"%\\al level, we have to adapt the significance level %\\al\\'p of the "
 	"individual test. ")
 NORMAL (L"This results in the following relation between the overall and the "
-	"individual significance level:") 
+	"individual significance level:")
 FORMULA (L"(1 - %\\al\\'p)^^%k%^ = 1 - %\\al.")
 NORMAL (L"This equation can easily be solved for %\\al\\'p:")
 FORMULA (L"%\\al\\'p = 1 - (1-%\\al)^^1/%k^,")
@@ -262,7 +262,7 @@ NORMAL (L"which for small %\\al reduces to:")
 FORMULA (L"%\\al\\'p = %\\al / %k")
 NORMAL (L"This is a very simple recipe: If you want an overall significance "
 	"level %\\al and you perform %k individual tests, simply divide %\\al "
-	"by %k to obtain the significance level for the individual tests.") 
+	"by %k to obtain the significance level for the individual tests.")
 MAN_END
 
 MAN_BEGIN (L"box plot", L"djmw", 20000524)
@@ -361,7 +361,7 @@ NORMAL (L"Each element in the first object is compared with the corresponding "
 	"object in the second object according to its compare method. "
 	"The number of different %categories will be shown in the @@Info window@.")
 MAN_END
- 
+
 MAN_BEGIN (L"Categories: To Confusion", L"djmw", 19960918)
 INTRO (L"A command to compute the @Confusion matrix from two selected "
 	"@Categories objects.")
@@ -553,7 +553,7 @@ CODE (L"To Correlation")
 CODE (L"Draw as numbers... 1 0 decimal 3")
 NORMAL (L"The correlation matrix shows that high correlations exist between some "
 	"formant frequencies and some levels. For example, the correlation "
-	"coefficient between F2 and L2 equals 0.526.")	
+	"coefficient between F2 and L2 equals 0.526.")
 NORMAL (L"In a canonical correlation analysis of the dataset above, we try "
 	"to find the linear "
 	"combination %u__1_ of %F__1_, %F__2_ and %F__3_ that correlates maximally "
@@ -565,7 +565,7 @@ NORMAL (L"In a canonical correlation analysis of the dataset above, we try "
 	"When we express the above with formulas we have:")
 FORMULA (L"%u__1_ = %y__11_%F__1_+%y__12_%F__2_ + %y__13_%F__3_")
 FORMULA (L"%v__1_ = %x__11_%L__1_+%x__12_%L__2_ + %x__13_%L__3_")
-FORMULA (L"\\ro(%u__1_, %v__1_) = maximum, \\ro(%u__2_, %v__2_) = submaximum, ")	
+FORMULA (L"\\ro(%u__1_, %v__1_) = maximum, \\ro(%u__2_, %v__2_) = submaximum, ")
 FORMULA (L"\\ro(%u__2_, %u__1_) = \\ro (%u__2_, %v__1_) = \\ro (%v__2_, %v__1_) "
 	"= \\ro (%v__2_, %u__1_) = 0,")
 NORMAL (L"where the \\ro(%u__i_, %v__i_) are the correlations between the "
@@ -614,7 +614,7 @@ CODE (L"select CCA pols_50males")
 CODE (L"plus TableOfReal pols_50males")
 CODE (L"To TableOfReal (scores)... 3")
 CODE (L"To Correlation")
-CODE (L"Draw as numbers if... 1 0 decimal 2 abs(self) > 1e-14")	 
+CODE (L"Draw as numbers if... 1 0 decimal 2 abs(self) > 1e-14")
 ENTRY (L"5. How to predict one dataset from the other")
 NORMAL (L"@@CCA & TableOfReal: Predict...@")
 NORMAL (L"Additional information can be found in @@Weenink (2003)@.")
@@ -700,7 +700,7 @@ MAN_BEGIN (L"confidence level", L"djmw", 20011105)
 NORMAL (L"The confidence level is the probability value 1-\\al associated "
 	"with a @@confidence interval@, where \\al is the level of significance. "
 	"It can also be expressed as a percentage 100(1-\\al)\\%  and is than "
-	"sometimes called the %%confidence coefficient%.") 
+	"sometimes called the %%confidence coefficient%.")
 MAN_END
 
 MAN_BEGIN (L"Confusion", L"djmw", 20010501)
@@ -818,7 +818,7 @@ DEFINITION (L"defines the approximation that will be used to calculate the "
 	"transformation. According to @@Boomsma (1977)@, Ruben's approximation is "
 	"more accurate than Fisher's.")
 ENTRY (L"Algorithm")
-NORMAL (L"We obtain intervals by the large-sample conservative multiple tests " 
+NORMAL (L"We obtain intervals by the large-sample conservative multiple tests "
 	"with Bonferroni inequality and the Fisher or Ruben transformation. "
 	"We put the upper values of the confidence intervals in the upper "
 	"triangular part of the matrix and the lower values of the confidence "
@@ -841,7 +841,7 @@ NORMAL (L"in which %x__1_ and %x__2_ are the smallest and the largest root from"
 FORMULA (L"%a %x^^2^ + %b %x + %c = 0, with")
 FORMULA (L"%a = 2%N - 3 - %z__%\\al\\'p_^^2^")
 FORMULA (L"%b = - 2 %r\\'p \\Vr((2%N - 3)(2%N - 5))")
-FORMULA (L"%c = (2%N - 5 - %z__%\\al\\'p_^^2^) %r\\'p^^2^ - 2%z__%\\al\\'p_^^2^, and") 
+FORMULA (L"%c = (2%N - 5 - %z__%\\al\\'p_^^2^) %r\\'p^^2^ - 2%z__%\\al\\'p_^^2^, and")
 FORMULA (L"%r\\'p = %r__%ij_ / \\Vr(1 - %r__%ij_^2),")
 MAN_END
 
@@ -857,11 +857,11 @@ NORMAL (L"Since an object of type Covariance contains the mean values (the "
 	"tests on means and variances.")
 MAN_END
 
-MAN_BEGIN (L"Covariance: Difference", L"djmw", 19981222)
+MAN_BEGIN (L"Covariance: Difference", L"djmw", 20090624)
 INTRO (L"You can choose this command after selecting two objects of type @Covariance. ")
 NORMAL (L"We test the hypothesis that the samples that gave rise to the two "
-	"covariance matrices #%M__1_ and #%M__2_, were drawn from the same "
-	"distribution. The test statistic is %L\\'p which is distributed as "
+	"covariance matrices #%M__1_ and #%M__2_, have equal covariances. "
+	"The test statistic is %L\\'p which is distributed as "
 	"a \\ci^2 variate with %p(%p+1)/2 degrees of freedom.")
 FORMULA (L"%L\\'p = %L \\.c (1 \\-- (2%p + 1 \\-- 2 / (%p + 1)) / (6 \\.c ( %N \\-- 1))),")
 NORMAL (L"where, ")
@@ -988,6 +988,19 @@ FORMULA (L"%p = 2 * fisherQ (%f, %ndf__1_, %ndf__2_)")
 NORMAL (L"If %s__2_^2 > %s__1_^2 we use 1/%f to determine the probability.")
 MAN_END
 
+MAN_BEGIN (L"Covariances: Report multivariate mean difference...", L"djmw", 20090627)
+INTRO (L"Reports the probability that the two multivariate means of the selected @@Covariance@s are equal.")
+ENTRY (L"Arguments")
+TAG (L"%%Covariances are equal,")
+DEFINITION (L"determines whether the test is performed as if the two covariance matrices are equal or not.")
+ENTRY (L"Algorithm")
+NORMAL (L"For equal covariance matrices the test is via Hotelling's T^^2^ as described on page 141 of @@Morrison (1990)@. "
+	"The test statistic is %F = (%N__1_+%N__2_-%p-1)/((%N__1_+%N__2_-2)%p)\\.c T^^2^, with %p and %N__1_+%N__2_-%p-1 degrees of freedom.")
+NORMAL (L"If the covariance matrices are not equal, we apply a correction on the number of degrees of freedom as "
+	"proposed by @@Krishnamoorthy & Yu (2004)@. The test statistic in this case is %F = (\\nu-%p+1)/(%p\\nu)\\.c T^^2^, "
+	"with %p and \\nu degrees of freedom. Here \\nu is a corrected number of degrees of freedom. ")
+NORMAL (L"(The test for unequal covariances simplifies to Welch's approximate solution for the univariate t-test with unequal variances.) ")
+MAN_END
 
 MAN_BEGIN (L"Covariance: To TableOfReal (random sampling)...", L"djmw", 20040407)
 INTRO (L"Generate a @TableOfReal object by random sampling from a multi-variate "
@@ -1010,11 +1023,11 @@ LIST_ITEM (L"2. Generate a vector #x whose elements %x__%k_ equal %x__%k_ = "
 LIST_ITEM (L"3. Calculate the vector #y = #%E #x, obtained by multiplying the vector "
 	"#x with the matrix #%E.")
 LIST_ITEM (L"4. Add the centroid to #y and copy the elements of #y to the corresponding row of "
-	"the TableOfReal object.")	
+	"the TableOfReal object.")
 LIST_ITEM (L"5. Repeat steps 2, 3 and 4 until the desired number of data points "
 	"has been reached.")
 LIST_ITEM (L"6. Copy the column labels from the Covariance object to the "
-	"TableOfReal object.") 
+	"TableOfReal object.")
 MAN_END
 
 MAN_BEGIN (L"Covariance & TableOfReal: Extract quantile range...", L"djmw", 20040225)
@@ -1383,7 +1396,7 @@ NORMAL (L"You select a TableOfReal and a Discriminant object together and choose
 	"The following picture shows how the data look in the plane spanned by the "
 	"first two dimensions of this Configuration. The directions in this "
 	"configuration are the eigenvectors from the Discriminant.")
-PICTURE (5, 5, drawPolsDiscriminantConfiguration)		
+PICTURE (5, 5, drawPolsDiscriminantConfiguration)
 NORMAL (L"The following script summarizes:")
 CODE (L"select TableOfReal pols_50males")
 CODE (L"plus Discriminant pols_50males")
@@ -1495,7 +1508,7 @@ DEFINITION (L"When on, the selected %X and %Y-dimension will refer to the eigenv
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
 	"%X and Y-dimension will refer to the original dimensions.")
-ENTRY (L"Algorithm") 
+ENTRY (L"Algorithm")
 NORMAL (L"See @@SSCP: Get sigma ellipse area...")
 MAN_END
 
@@ -1508,7 +1521,7 @@ DEFINITION (L"When on, the selected %X and %Y-dimension will refer to the eigenv
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
 	"%X and Y-dimension will refer to the original dimensions.")
-ENTRY (L"Algorithm") 
+ENTRY (L"Algorithm")
 NORMAL (L"See @@SSCP: Get confidence ellipse area...")
 MAN_END
 
@@ -1540,7 +1553,7 @@ NORMAL (L"where %d__%i_^^2^ is the generalized squared distance function:")
 FORMULA (L"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si__%i_^^-1^ (#%x\\--#%\\mu__%i_) + "
 	"ln determinant (#\\Si__%i_)) / 2 \\-- ln %aprioriProbability__%i_")
 NORMAL (L"that depends on the individual covariance matrix #\\Si__%i_ and the mean "
-	"#%\\mu__%i_ for group %i.") 
+	"#%\\mu__%i_ for group %i.")
 NORMAL (L"When the covariances matrices are %pooled, the squared distance function can be reduced to:")
 FORMULA (L"%d__%i_^^2^(#%x) = ((#%x\\--#%\\mu__%i_)\\'p #\\Si^^-1^ (#%x\\--#%\\mu__%i_) "
 	"\\-- ln %aprioriProbability__%i_,")
@@ -1562,10 +1575,10 @@ DEFINITION (L"specifies the number of eigenvectors taken into account, i.e., det
 ENTRY (L"Precondition")
 NORMAL (L"The number of columns in the TableOfReal must equal the dimension of the "
 	"eigenvectors in the Discriminant.")
-NORMAL (L"See also @@Eigen & TableOfReal: Project...@.") 
+NORMAL (L"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (L"DTW", L"djmw", 20000525)
+MAN_BEGIN (L"DTW", L"djmw", 20090523)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type DTW represents the dynamic time warp structure of "
 	"two objects.")
@@ -1574,7 +1587,8 @@ NORMAL (L"Creation:")
 LIST_ITEM (L"\\bu @@CC: To DTW...@ (from 2 objects with cepstral coefficients)")
 LIST_ITEM (L"\\bu ##Spectrogram: To DTW...# (from 2 Spectrogram objects)")
 NORMAL (L"Query:")
-LIST_ITEM (L"\\bu @@DTW: Get time along path...@")
+LIST_ITEM (L"\\bu @@DTW: Get y time...@")
+LIST_ITEM (L"\\bu @@DTW: Get x time...@")
 MAN_END
 
 MAN_BEGIN (L"DTW: Draw warp (x)...", L"djmw", 20071204)
@@ -1618,9 +1632,10 @@ MAN_BEGIN (L"DTW: Get maximum consecutive steps...", L"djmw", 20050307)
 INTRO (L"Get the maximum number of consecutive steps in the chosen direction along the optimal path from the selected @DTW.")
 MAN_END
 
-MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20040407)
+MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20090523)
 INTRO (L"Queries the selected @DTW object for the time along the minimal path "
-	"given the time along the \"%x-direction\". ")
+	"given the time along the \"%x-direction\". This command is deprecated, the new commands fro querying are "
+	"@@DTW: Get y time...@ and @@DTW: Get x time...@.")
 ENTRY (L"Argument")
 TAG (L"%Time")
 DEFINITION (L"the time along the %x-direction.")
@@ -1863,7 +1878,7 @@ MAN_BEGIN (L"Excitations: To Pattern...", L"djmw", 19960918)
 INTRO (L"A command to convert every selected @Excitations to a @Pattern object.")
 ENTRY (L"Arguments")
 TAG (L"%Join")
-DEFINITION (L"the number of subsequent @Excitation objects to combine into one row of @Pattern. " 
+DEFINITION (L"the number of subsequent @Excitation objects to combine into one row of @Pattern. "
 	"E.g. if an #Excitation has length 26 and %join = 2 then each row of #Pattern "
 	"contains 52 elements. The number of rows in #Pattern will be %%my size% / 2. "
 	"In the conversion process the elements of an #Excitation will be divided by 100.0 in order "
@@ -2110,7 +2125,7 @@ NORMAL (L"An object of type PCA represents the principal components analysis "
 ENTRY (L"Commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"\\bu @@Principal component analysis@ tutorial")
-LIST_ITEM (L"\\bu @@TableOfReal: To PCA@")	
+LIST_ITEM (L"\\bu @@TableOfReal: To PCA@")
 ENTRY (L"Inside a PCA")
 NORMAL (L"With @Inspect you will see that this type contains the same "
 	"attributes as an @Eigen with the following extras:")
@@ -2219,7 +2234,7 @@ MAN_END
 MAN_BEGIN (L"PCA & PCA: To Procrustes...", L"djmw", 20041028)
 INTRO (L"A command to calculate a @Procrustes from the two selected @@PCA@'s.")
 NORMAL (L"Determines the orthogonal @@Procrustes transform@.")
-NORMAL (L"Algorithm 12.4.1 in @@Golub & van Loan (1996)@.") 
+NORMAL (L"Algorithm 12.4.1 in @@Golub & van Loan (1996)@.")
 MAN_END
 
 MAN_BEGIN (L"PCA & TableOfReal: To Configuration...", L"djmw", 19990111)
@@ -2504,7 +2519,7 @@ NORMAL (L"More in depth coverage of regular expressions can be found in "
 	"@@Friedl (1997)@.")
 
 MAN_END
-	
+
 MAN_BEGIN (L"Regular expressions 1. Special characters", L"djmw", 20010718)
 INTRO (L"The following characters are the %meta characters that give special "
 	"meaning to the regular expression search syntax:")
@@ -2517,7 +2532,7 @@ DEFINITION (L"The backslash gives special meaning to the character "
 	"sequences|"
 	"convenience escape sequences@ while \"\\bs1\" is one of the @@Regular "
 	"expressions 8. Substitution special characters|substitution special "
-	"characters@.")	
+	"characters@.")
 LIST_ITEM1 (L"Example: The regex \"aa\\bsn\" tries to match two consecutive "
 	"\"a\"s at the end of a line, inclusive the newline character itself.")
 LIST_ITEM1 (L"Example: \"a\\bs+\" matches \"a+\" and not a series of one or "
@@ -2525,16 +2540,16 @@ LIST_ITEM1 (L"Example: \"a\\bs+\" matches \"a+\" and not a series of one or "
 TAG (L"##\\^ #    the caret is the start of line @@Regular expressions 3. "
 	"Anchors|anchor@ or the negate symbol.")
 LIST_ITEM1 (L"Example: \"\\^ a\" matches \"a\" at the start of a line.")
-LIST_ITEM1 (L"Example: \"[\\^ 0-9]\" matches any non digit.")	
+LIST_ITEM1 (L"Example: \"[\\^ 0-9]\" matches any non digit.")
 TAG (L"##\\$ #    the dollar is the end of line @@Regular expressions 3. "
-	"Anchors|anchor@.")	
+	"Anchors|anchor@.")
 LIST_ITEM1 (L"Example: \"b\\$ \" matches a \"b\" at the end of a line.")
 LIST_ITEM1 (L"Example: \"\\^ b\\$ \" matches the empty line.")
 TAG (L"##{ }#    the open and close curly bracket are used as range @@Regular "
 	"expressions 2. Quantifiers|quantifiers@.")
-LIST_ITEM1 (L"Example: \"a{2,3}\" matches \"aa\" or \"aaa\".")	
+LIST_ITEM1 (L"Example: \"a{2,3}\" matches \"aa\" or \"aaa\".")
 TAG (L"##[ ]#    the open and close square bracket define a character class to "
-	"match a %single character.")	
+	"match a %single character.")
 DEFINITION (L"The \"\\^ \" as the first character following the \"[\" negates "
 	"and the match is for the characters %not listed. "
 	"The \"-\" denotes a range of characters. Inside a \"[  ]\" character "
@@ -2549,39 +2564,39 @@ LIST_ITEM1 (L"Example: A search for \"[][()?<>$^.*?^]\" in the string "
 	"\"[]()?<>$^.*?^\" followed by a replace string \"r\" has the result "
 	"\"rrrrrrrrrrrrr\". Here the search string is %one character class and "
 	"all the meta characters are interpreted as ordinary characters without "
-	"the need to escape them.")	
+	"the need to escape them.")
 TAG (L"##( )#    the open and close parenthesis are used for grouping "
-	"characters (or other regex).")	
+	"characters (or other regex).")
 DEFINITION (L"The groups can be referenced in "
 	"both the search and the @@Regular expressions 8. Substitution special "
 	"characters|substitution@ phase. There also exist some @@Regular "
 	"expressions 4. Special constructs with parenthesis|special constructs "
 	"with parenthesis@.")
-LIST_ITEM1 (L"Example: \"(ab)\\bs1\" matches \"abab\".")	
+LIST_ITEM1 (L"Example: \"(ab)\\bs1\" matches \"abab\".")
 TAG (L"##.#    the dot matches any character except the newline.")
 LIST_ITEM1 (L"Example: \".a\" matches two consecutive characters where "
 	"the last one is \"a\".")
 LIST_ITEM1 (L"Example: \".*\\bs.txt\\$ \" matches all strings that end in "
-	"\".txt\".")	
+	"\".txt\".")
 TAG (L"##*#    the star is the match-zero-or-more @@Regular expressions 2. "
 	"Quantifiers|quantifier@.")
-LIST_ITEM1 (L"Example: \"\\^ .*\\$ \" matches an entire line. ")	
+LIST_ITEM1 (L"Example: \"\\^ .*\\$ \" matches an entire line. ")
 TAG (L"##+#    the plus is the match-one-or-more quantifier.")
 TAG (L"##?#    the question mark is the match-zero-or-one "
 	"quantifier. The question mark is also used in  "
 	"@@Regular expressions 4. Special constructs with parenthesis|special "
 	"constructs with parenthesis@ and in @@Regular expressions 2. "
-	"Quantifiers|changing match behaviour@.")	
-TAG (L"##\\| #    the vertical pipe separates a series of alternatives.")	
-LIST_ITEM1 (L"Example: \"(a|b|c)a\" matches \"aa\" or \"ba\" or \"ca\".")	
+	"Quantifiers|changing match behaviour@.")
+TAG (L"##\\| #    the vertical pipe separates a series of alternatives.")
+LIST_ITEM1 (L"Example: \"(a|b|c)a\" matches \"aa\" or \"ba\" or \"ca\".")
 TAG (L"##< >#    the smaller and greater signs are @@Regular expressions 3. "
-	"Anchors|anchors@ that specify a left or right word boundary.")	
+	"Anchors|anchors@ that specify a left or right word boundary.")
 TAG (L"##-#    the minus indicates a range in a character class (when it is "
 	"not at the first position after the \"[\" opening bracket or the last "
 	"position before the \"]\" closing bracket.")
 LIST_ITEM1 (L"Example: \"[A-Z]\" matches any uppercase character.")
 LIST_ITEM1 (L"Example: \"[A-Z-]\" or \"[-A-Z]\" match any uppercase character "
-	"or \"-\".")	
+	"or \"-\".")
 TAG (L"##&#    the and is the \"substitute complete match\" symbol.")
 MAN_END
 
@@ -2644,13 +2659,13 @@ TAG (L"##(?!#%regex#)#   is a negative look-ahead.")
 DEFINITION (L"Functions like a positive look-ahead, only the "
 	"%regex must %not match.")
 LIST_ITEM (L"Example: \"abc(?!.*abc.*)\" searches for the %last "
-	"occurrence of \"abc\" in a string.") 
+	"occurrence of \"abc\" in a string.")
 TAG (L"##(?i#%regex#)#   is a case insensitive regex.")
 TAG (L"##(?I#%regex#)#   is a case sensitive regex.")
 DEFINITION (L"Default a regex is case sensitive. ")
 LIST_ITEM1 (L"Example: \"(?iaa)\" matches \"aa\", \"aA\", \"Aa\" and \"AA\".")
 TAG (L"##(?n#%regex#)#   matches newlines.")
-TAG (L"##(?N#%regex#)#   doesn't match newlines.") 
+TAG (L"##(?N#%regex#)#   doesn't match newlines.")
 NORMAL (L"All the constructs above do not capture text and cannot be "
 	"referenced, i.e., the parenthesis are not counted. However, you "
 	"can make them capture text by surrounding them with %ordinary "
@@ -2693,7 +2708,7 @@ TAG (L"#\\bsW  %not a \"word\" character: [\\^ a-zA-Z0-9\\_ ].")
 TAG (L"#\\bsB  any character that is %not a word-delimiter.")
 MAN_END
 
-MAN_BEGIN (L"Regular expressions 7. Octal and hexadecimal escapes", L"djmw", 
+MAN_BEGIN (L"Regular expressions 7. Octal and hexadecimal escapes", L"djmw",
 	20010709)
 NORMAL (L"An octal number can be represented by the octal escape \"\\bs0\" "
 	"and maximally three digits from the digit class [0-7]. "
@@ -2701,10 +2716,10 @@ NORMAL (L"An octal number can be represented by the octal escape \"\\bs0\" "
 NORMAL (L"A hexadecimal number can be represented by the octal escape "
 	"\"\\bsx\" or \"\\bsX\"and maximally two characters from the class "
 	"[0-9A-F]. The maximum hexadecimal number should not exceed \\bsxFF. ")
-LIST_ITEM1 (L"Example: \\bs053 and \\bsX2B both specify the \"+\" character.") 
+LIST_ITEM1 (L"Example: \\bs053 and \\bsX2B both specify the \"+\" character.")
 MAN_END
 
-MAN_BEGIN (L"Regular expressions 8. Substitution special characters", L"djmw", 
+MAN_BEGIN (L"Regular expressions 8. Substitution special characters", L"djmw",
 	20010708)
 INTRO (L"The substitution string is mostly interpreted as ordinary text except "
 	"for the @@Regular expressions 5. Special control characters|"
@@ -3059,7 +3074,7 @@ NORMAL (L"to perform a pitch analysis based on a spectral compression model. "
 	"relation with this component. Therefore, when a specific element of the "
 	"central pitch processor is most sensitive at a frequency %f__0_, it receives "
 	"contributions from spectral components in the "
-	"signal at integral multiples of %f__0_.") 
+	"signal at integral multiples of %f__0_.")
 ENTRY (L"Algorithm")
 NORMAL (L"The spectral compression consists of the summation of a sequence of "
 	"harmonically compressed spectra. "
@@ -3074,7 +3089,7 @@ TAG (L"%%Minimum pitch% (default 50 Hz)")
 DEFINITION (L"candidates below this frequency will not be recruited. This parameter "
 	"determines the length of the analysis window.")
 TAG (L"%%Max. number of candidates% (default 15)")
-DEFINITION (L"The maximum number of candidates that will be recruited.")	
+DEFINITION (L"The maximum number of candidates that will be recruited.")
 TAG (L"%%Maximum frequency% (default 1250 Hz)")
 DEFINITION (L"higher frequencies will not be considered.")
 TAG (L"%%Max. number of subharmonics% (default 15)")
@@ -3129,7 +3144,7 @@ LIST_ITEM (L"3. The lengths %l__%i_  of the axes of the ellipse can be obtained 
 	"square root of the %s__i_ multiplied by a scale factor: %l__%i_ = %scaleFactor \\.c "
 	"\\Vr (%s__%i_ ), "
 	"where %scaleFactor = %numberOfSigmas / \\Vr(%numberOfObservations \\-- 1).")
-LIST_ITEM (L"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.") 
+LIST_ITEM (L"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.")
 MAN_END
 
 MAN_BEGIN (L"SSCP: Get confidence ellipse area...", L"djmw", 20000525)
@@ -3147,7 +3162,7 @@ LIST_ITEM (L"     where")
 FORMULA (L"%scaleFactor = \\Vr (%f \\.c %p \\.c (%n \\-- 1) / (%n \\.c (%n \\-- %p))),")
 LIST_ITEM (L"     in which %f = $$@@invFisherQ@$ (1 \\-- %confidenceLevel, %p, %n \\-- %p), "
 	"where %p is the numberOfRows from the SSCP object and %n the %numberOfObservations.")
-LIST_ITEM (L"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.") 
+LIST_ITEM (L"4. The area of the ellipse will be %\\pi\\.c%l__1_\\.c%l__2_.")
 MAN_END
 
 MAN_BEGIN (L"SSCP: Get diagonality (bartlett)...", L"djmw", 20011111)
@@ -3228,7 +3243,7 @@ NORMAL (L"The eigenvectors #x is now")
 FORMULA (L"#x = #S__xx_^^-1^#S__yx_\\'p #y.")
 MAN_END
 
-MAN_BEGIN (L"SSCP: To Covariance...", L"djmw", 19990524)
+MAN_BEGIN (L"SSCP: To Covariance...", L"djmw", 20090624)
 INTRO (L"A command that creates a @Covariance object from each selected @SSCP object.")
 ENTRY (L"Arguments")
 TAG (L"%%Number of constraints")
@@ -3238,9 +3253,9 @@ ENTRY (L"Details")
 NORMAL (L"The relation between the numbers %c__%ij_ in the covariance matrix and the numbers %s__%ij_ in "
 	"the originating SSCP matrix is:")
 FORMULA (L"%c__%ij_ = %s__%ij_ / (%numberOfObservations - %numberOfConstraints)")
-NORMAL (L"Normally %numberOfConstraints will equal 1. However, when the originating SSCP was the "
+NORMAL (L"Normally %numberOfConstraints will equal 1. However, when the SSCP was the "
 	"result of summing %g SSCP objects, as is, for example, the case when you obtained the total "
-	"within-groups SSCP from the individual group SSCP's, %numberOfConstraints  will equal %g.")
+	"within-groups SSCP from pooling the individual group SSCP's, %numberOfConstraints will equal the number of pooled SSCP's,  %g.")
 MAN_END
 
 MAN_BEGIN (L"SSCP & TableOfReal: Extract quantile range...", L"djmw", 20040225)
@@ -3385,7 +3400,7 @@ NORMAL (L"Copy the first three columns to a new table with the same number of "
 CODE (L"Select columns where row... \"1:6 9:11\" self[row,8]>0")
 NORMAL (L"Copy the first six columns and columns 9, 10, and 11 to a new table. "
 	"Copy only elements from rows where the element in column 8 is greater "
-	"than zero.") 
+	"than zero.")
 MAN_END
 
 MAN_BEGIN (L"TableOfReal: Standardize columns", L"djmw", 19990428)
@@ -3775,6 +3790,11 @@ MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
 NORMAL (L"D.E. Johnson (1998), %%Applied Multivariate methods%")
 MAN_END
 
+MAN_BEGIN (L"Krishnamoorthy & Yu (2004)", L"djmw", 20090627)
+NORMAL (L"K. Krishnamoortht & j. Yu (2004), \"Modified Nel and Van der Merwe test for multivariate "
+	"Behrens-Fisher problem\", %%Statistics & Probability Letters% #66, 161-169.")
+MAN_END
+
 MAN_BEGIN (L"Lamel et al. (1986)", L"djmw", 19980123)
 NORMAL (L"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
 	"Development: Design and Analysis of the Acoustic-Phonetic Corpus\", "
@@ -3784,7 +3804,7 @@ MAN_END
 
 MAN_BEGIN (L"Morrison (1990)", L"djmw", 19980123)
 NORMAL (L"D.F. Morrison (1990), %%Multivariate Statistical Methods%, "
-	"McGraw-Hill, New York.") 
+	"McGraw-Hill, New York.")
 MAN_END
 
 MAN_BEGIN (L"Peterson & Barney (1952)", L"djmw", 20020620)
@@ -3816,7 +3836,7 @@ MAN_END
 
 MAN_BEGIN (L"Slaney (1993)", L"djmw", 19980712)
 NORMAL (L"M. Slaney (1993), \"An efficient implementation of the "
-	"Patterson-Holdsworth auditory filterbank\", " 
+	"Patterson-Holdsworth auditory filterbank\", "
 	"%%Apple Computer Technical Report% #35, 41 pages.")
 MAN_END
 

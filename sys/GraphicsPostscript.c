@@ -1,6 +1,6 @@
 /* GraphicsPostscript.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2007/12/09 enums
+ * pb 2009/06/28 East-European characters
  */
 
 #include <math.h>	/* For 'floor' and 'ceil' in BoundingBox. */
@@ -46,16 +47,16 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 	my printf (my file, "/C { 0 360 arc stroke } bind def /FC { 0 360 arc fill } bind def\n");
 	my printf (my file,
 		"/PraatEncoding [\n"
-		"	/.notdef/ccaron/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
-		"	/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
-		"	/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef/.notdef\n"
-		"	/.notdef/.notdef/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesinglright\n"
+		"	/dotlessi/Aogonek/aogonek/Cacute/cacute/Ccaron/ccaron/Dcaron/dcaron/Dbar\n"
+		"	/dbar/Ecaron/ecaron/Eogonek/eogonek/Gcaron/gcaron/Lslash/lslash/Nacute\n"
+		"	/nacute/Ncaron/ncaron/Ohungarumlaut/ohungarumlaut/Rcaron/rcaron/Sacute/sacute/Scaron\n"
+		"	/scaron/Tcaron/space/exclam/quotedbl/numbersign/dollar/percent/ampersand/quotesinglright\n"
 		"	/parenleft/parenright/asterisk/plus/comma/hyphen/period/slash/zero/one\n"
 		"	/two/three/four/five/six/seven/eight/nine/colon/semicolon\n"
 		"	/less/equal/greater/question/at/A/B/C/D/E/F/G/H/I/J/K/L/M/N/O/P/Q/R/S/T/U/V/W/X/Y/Z\n"
 		"	/bracketleft/backslash/bracketright/asciicircum/underscore/quotesinglleft\n"
 		"	/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/braceleft/bar/braceright/asciitilde\n"
-		"	/.notdef/Adieresis/Aring/Ccedilla/Eacute/Ntilde/Odieresis/Udieresis/aacute/agrave/acircumflex\n"
+		"	/Zdot/Adieresis/Aring/Ccedilla/Eacute/Ntilde/Odieresis/Udieresis/aacute/agrave/acircumflex\n"
 		"	/adieresis/atilde/aring/ccedilla/eacute/egrave/ecircumflex/edieresis/iacute/igrave/icircumflex\n");
 	my printf (my file,
 		"	/idieresis/ntilde/oacute/ograve/ocircumflex/odieresis/otilde/uacute/ugrave/ucircumflex/udieresis\n"
@@ -63,12 +64,12 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 		"	/acute/dieresis/notequal/AE/Oslash/infinity/plusminus/lessequal/greaterequal/yen/mu\n"
 		"	/partialdiff/summation/product/pi/integral/ordfeminine/ordmasculine/Omega/ae/oslash\n"
 		"	/questiondown/exclamdown/logicalnot/radical/florin/approxequal/Delta/guillemotleft/guillemotright\n"
-		"	/ellipsis/.notdef/Agrave/Atilde/Otilde/OE/oe/endash/emdash/quotedblleft/quotedblright\n"
+		"	/ellipsis/zdot/Agrave/Atilde/Otilde/OE/oe/endash/emdash/quotedblleft/quotedblright\n"
 		"	/quoteleft/quoteright/divide/lozenge/ydieresis/Ydieresis/fraction/currency\n"
 		"	/guilsinglleft/guilsinglright/fi/fl/daggerdbl/periodcentered/quotesinglbase/quotedblbase\n"
 		"	/perthousand/Acircumflex/Ecircumflex/Aacute/Edieresis/Egrave/Iacute/Icircumflex/Idieresis\n"
-		"	/Igrave/Oacute/Ocircumflex/apple/Ograve/Uacute/Ucircumflex/Ugrave/dotlessi\n"
-		"	/circumflex/tilde/macron/breve/dotaccent/ring/cedilla/hungarumlaut/ogonek/caron ] def\n");
+		"	/Igrave/Oacute/Ocircumflex/apple/Ograve/Uacute/Ucircumflex/Ugrave/tcaron\n"
+		"	/Uhungarumlaut/uhungarumlaut/Uring/uring/Yacute/yacute/Zacute/zacute/Zcaron/zcaron ] def\n");
 	my printf (my file,
 		"/PraatEncode { /font exch def /base exch def\n"
 		"	/basedict base findfont def /new basedict maxlength dict def\n"
@@ -252,7 +253,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsP
 	bottom = (int) floor ((y1inches - my y1wNDC) * 72);
 	my printf (my file, "%%!PS-Adobe-3.0 EPSF-3.0\n");
 	my printf (my file, "%%%%BoundingBox: %d %d %d %d\n", left, bottom, right, top);
-	my printf (my file, "%%%%Creator: Praat Shell 3.8\n");
+	my printf (my file, "%%%%Creator: Praat Shell 5.1\n");
 	/*
 	 * In an EPS file without screen preview, the file name will be visible anyway.
 	 * This leaves us room to show a warning that should keep users from thinking anything is wrong.

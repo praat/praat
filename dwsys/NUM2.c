@@ -31,7 +31,7 @@
  			   NUMinvFisherQ better approximation for p < 0.5
  djmw 20030813 Added NUMmad and NUMstatistics_huber.
  djmw 20030825 Replaced gsl_sf_beta_inc with NUMincompleteBeta
- pb   20030828 Improvements for invFisherQ, ridders, studentP, studentQ, 
+ pb   20030828 Improvements for invFisherQ, ridders, studentP, studentQ,
  	invStudentQ, invChiSquareQ: modifications for 'undefined' return values.
  djmw 20030830 Corrected a bug in NUMtriangularfilter_amplitude
  djmw 20031111 Added NUMdmatrix_transpose, NUMdmatrix_printMatlabForm
@@ -78,7 +78,7 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
- 
+
 extern machar_Table NUMfpp;
 
 struct pdf1_struct { double p; double df; };
@@ -102,7 +102,7 @@ int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce)
 
 int NUMstring_containsPrintableCharacter (wchar_t *s)
 {
-	long i, len; 
+	long i, len;
 	if (s == NULL || ((len = wcslen (s)) == 0)) return 0;
 	for (i = 0; i < len; i++)
 	{
@@ -116,9 +116,9 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 {
 	wchar_t *dup = NULL, *token, *delimiter = L" ,\t";
 	long capacity = 100, n; double *numbers = NULL;
-	
+
 	*numbers_found = n = 0;
-	
+
 	if (((dup = Melder_wcsdup (s)) == NULL) ||
 		((numbers = NUMdvector (1, capacity)) == NULL)) goto end;
 	wchar_t *last;
@@ -126,7 +126,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 	while (token)
 	{
 		double value = wcstod (token, NULL);
-		if (n > capacity) 
+		if (n > capacity)
 		{
 			long newsize = 2 * capacity; double *new;
 			if (! (new = Melder_realloc (numbers, newsize))) goto end;
@@ -159,7 +159,7 @@ int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 {
 	long i;
-	
+
 	for (i = lo; i <= hi; i++)
 	{
 		Melder_free (to[i]);
@@ -188,7 +188,7 @@ static wchar_t *appendNumberToString (wchar_t *s, long number)
 {
 	wchar_t buf[12], *new;
 	long ncharb, nchars = 0;
-	
+
 	ncharb = swprintf (buf, 12, L"%ld", number);
 	if (s != NULL) nchars = wcslen (s);
 	new = Melder_calloc (wchar_t, nchars + ncharb + 1);
@@ -196,13 +196,13 @@ static wchar_t *appendNumberToString (wchar_t *s, long number)
 	if (nchars > 0) wcsncpy (new, s, nchars);
 	wcsncpy (new + nchars, buf, ncharb + 1);
 	return new;
-} 
+}
 
-int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi, 
+int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
 	wchar_t *pre, long number, long increment)
 {
 	long i;
-	
+
 	for (i = lo; i <= hi; i++, number += increment)
 	{
 		wchar_t *new = appendNumberToString (pre, number);
@@ -222,7 +222,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 {
 	int j;
 	unsigned short reg = 0;
-	
+
 	for (j = n; j > 1; j--)
 	{
 		reg = a[j] + b[j] + HIGHBYTE (reg);
@@ -235,9 +235,9 @@ wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 	wchar_t *charp = NULL;
 	char *compileMsg;
 	regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search_regexp), &compileMsg, 0);
-	
+
 	if (compiled_regexp == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
-	
+
 	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToUtf8 (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
 		char *charpA = compiled_regexp -> startp[0];
 		charp = Melder_utf8ToWcs (charpA);
@@ -256,10 +256,10 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 	wchar_t *pos; 	/* current position / start of current match */
 	wchar_t *posp; /* end of previous match */
 	wchar_t *result;
-	
+
 	if (string == NULL || search == NULL || replace == NULL) return NULL;
-	
-	
+
+
 	len_string = wcslen (string);
 	if (len_string == 0) maximumNumberOfReplaces = 1;
 	len_search = wcslen (search);
@@ -269,7 +269,7 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 		To allocate memory for 'result' only once, we have to know how many
 		matches will occur.
 	*/
-	
+
 	pos = string; *nmatches = 0;
 	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
 
@@ -283,57 +283,57 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 		{
 			while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
 			{
-				pos += len_search; 
+				pos += len_search;
 				(*nmatches)++;
 			}
 		}
 	}
-	
+
 	len_replace = wcslen (replace);
 	len_result = len_string + *nmatches * (len_replace - len_search);
 	result = Melder_malloc (wchar_t, len_result + 1);
 	result[len_result] = '\0';
 	if (result == NULL) return NULL;
-	
+
 	pos = posp = string;
 	for (i=1; i <= *nmatches; i++)
 	{
 		pos = wcsstr (pos, search);
-		
-		/* 
+
+		/*
 			Copy gap between end of previous match and start of current.
 		*/
-		
+
 		nchar = (pos - posp);
 		if (nchar > 0)
 		{
 			wcsncpy (result + result_nchar, posp, nchar);
 			result_nchar += nchar;
 		}
-		
+
 		/*
 			Insert the replace string in result.
 		*/
-		
+
 		wcsncpy (result + result_nchar, replace, len_replace);
 		result_nchar += len_replace;
-		
+
 		/*
 			Next search starts after the match.
 		*/
-		
+
 		pos += len_search;
 		posp = pos;
 	}
-	
+
 	/*
 		Copy gap between end of match and end of string.
 	*/
-	
+
 	pos = string + len_string;
 	nchar = pos - posp;
 	if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
-	return result; 
+	return result;
 }
 
 static int expand_buffer (char **bufp, int new_size)
@@ -344,7 +344,7 @@ static int expand_buffer (char **bufp, int new_size)
 	return 1;
 }
 
-char *str_replace_regexp (char *string, regexp *compiledSearchRE, 
+char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
 	long i;
@@ -362,18 +362,18 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 
 	*nmatches = 0;
 	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL) return NULL;
-		
+
 	string_length = strlen (string);
 	replace_length = strlen (replaceRE);
 	if (string_length == 0) maximumNumberOfReplaces = 1;
-	
+
 	i = maximumNumberOfReplaces > 0 ? 0 : - string_length;
-		  
+
 	/*
 		We do not know the size of the replaced string in advance,
-		therefor, we allocate a replace buffer twice the size of the 
+		therefor, we allocate a replace buffer twice the size of the
 		original string. After all replaces have taken place we do a
-		final realloc to the then exactly known size. 
+		final realloc to the then exactly known size.
 		If during the replace, the size of the buffer happens to be too
 		small (this is signalled by the replaceRE function),
 		we double its size and restart the replace.
@@ -381,8 +381,8 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 
 	buf_size = MAX (2 * string_length, 100);
 	if (! expand_buffer (& buf, buf_size)) return 0;
-	
-	pos = posp = string; 
+
+	pos = posp = string;
 	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, prev_char, '\0', NULL, NULL, NULL) && i++ < maximumNumberOfReplaces)
 	{
 		/*
@@ -390,7 +390,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 			of the current match.
 			Check buffer overflow. pos == posp ? '\0' : pos[-1],
 		*/
-		
+
 		pos = compiledSearchRE -> startp[0];
 		nchar = pos - posp;
 		if (nchar > 0 && ! gap_copied)
@@ -403,14 +403,14 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 			strncpy (buf + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
 		}
-		
+
 		gap_copied = 1;
-		
+
 		/*
 			Do the substitution. We can only check afterwards for buffer
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
-				
+
 		if ((SubstituteRE (compiledSearchRE, replaceRE, buf + buf_nchar, buf_size - buf_nchar, &errorType)) == FALSE)
 		{
 			if (errorType == 1) // not enough memory
@@ -426,18 +426,18 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 				goto end;
 			}
 		}
-		
+
 		/*
 			Buffer is not full, get number of characters added;
 		*/
-		
+
 		nchar = strlen (buf + buf_nchar);
 		buf_nchar += nchar;
-		
+
 		/*
 			Update next start position in search string.
 		*/
-		
+
 		posp = pos;
 		pos = compiledSearchRE -> endp[0];
 		if (pos != posp) prev_char = pos[-1];
@@ -446,9 +446,9 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 		(*nmatches)++;
 		// at end of string?
 		// we need this because .* matches at end of a string
-		if (pos - string == string_length) break;	
+		if (pos - string == string_length) break;
 	}
-	
+
 	/*
 		Copy last part of string to destination string
 	*/
@@ -456,17 +456,17 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	nchar = (string + string_length) - pos;
 	buf_size = buf_nchar + nchar + 1;
 	if (! expand_buffer (& buf, buf_size)) goto end;
-	
+
 	strncpy (buf + buf_nchar, pos, nchar);
 	buf[buf_size-1] = '\0';
-	
+
 end:
 
 	if (Melder_hasError ()) Melder_free (buf);
 	return buf;
 }
 
-static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, 
+static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 	const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
@@ -474,10 +474,10 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 	long i, nmatches_sub = 0;
 
 	if (search == NULL || replace == NULL) return NULL;
-	
+
 	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
-	
+
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
@@ -493,7 +493,7 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 			(*nstringmatches)++;
 		}
 	}
-	
+
 end:
 
 	if (Melder_hasError ()) NUMstrings_free (result, lo, hi);
@@ -501,7 +501,7 @@ end:
 }
 
 
-static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, 
+static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	const wchar_t *searchRE, const wchar_t *replaceRE, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
@@ -511,13 +511,13 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	long i, nmatches_sub = 0;
 
 	if (searchRE == NULL || replaceRE == NULL) return NULL;
-				
+
 	compiledRE = CompileRE (Melder_peekWcsToUtf8 (searchRE), &compileMsg, 0);
 	if (compiledRE == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
 
 	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
-	 
+
 	*nmatches = 0; *nstringmatches = 0;
 	for (i = lo; i <= hi; i++)
 	{
@@ -535,12 +535,12 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 			(*nstringmatches)++;
 		}
 	}
-	
+
 end:
-	
+
 	free (compiledRE);
 	if (Melder_hasError ()) NUMstrings_free (result, lo, hi);
-	return result;	
+	return result;
 }
 
 wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
@@ -730,28 +730,28 @@ void NUMaverageColumns (double **a, long rb, long re, long cb, long ce)
 		ave /= n;
 		for (i = rb; i <= re; i++) a[i][j] = ave;
 	}
-	
+
 }
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol, 
+void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 	double *average, double *variance)
 {
 	long i;
 	double eps = 0, mean = 0, var = 0;
-	
+
 	Melder_assert (nr > 0 && nc > 0 && icol > 0 && icol <= nc);
 
 	for (i = 1; i <= nr; i++)
 	{
 		mean += a[i][icol];
 	}
-	
+
 	mean /= nr;
-	
+
 	if (average != NULL) *average = mean;
-	
+
 	if (variance == NULL) return;
-	
+
 	if (nr > 1)
 	{
 		for (i = 1; i <= nr; i++)
@@ -767,7 +767,7 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 	{
 		var = NUMundefined;
 	}
-	
+
 	*variance = var;
 }
 
@@ -778,7 +778,7 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	long i, ndf = nr - 1;
 	double eps1 = 0, eps2 = 0, mean1 = 0, mean2 = 0;
 	double var1 = 0, var2 = 0, covar = 0;
-	
+
 	Melder_assert (icol1 > 0 && icol1 <= nc && icol2 > 0 && icol2 <= nc);
 
 	for (i = 1; i <= nr; i++)
@@ -786,17 +786,17 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 		mean1 += a[i][icol1];
 		mean2 += a[i][icol2];
 	}
-	
+
 	mean1 /= nr;
 	mean2 /= nr;
-	
+
 	if (average1 != NULL) *average1 = mean1;
 	if (average2 != NULL) *average2 = mean2;
 
 	if (variance1 == NULL && variance2 == NULL && covariance == NULL) return;
-	
+
 	if (nr > 1)
-	{	
+	{
 		for (i = 1; i <= nr; i++)
 		{
 			double s1 = a[i][icol1] - mean1;
@@ -818,7 +818,7 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 		var2 = NUMundefined;
 		covar = NUMundefined;
 	}
-	
+
 	if (variance1 != NULL) *variance1 = var1;
 	if (variance2 != NULL) *variance2 = var2;
 	if (covariance != NULL) *covariance = covar;
@@ -949,14 +949,14 @@ void NUMmonotoneRegression (const double x[], long n, double xs[])
 {
 	double sum;
 	double xt = NUMundefined; // Only to stop gcc complaining "may be used unitialized"
-	// 
+	//
 	long i, j, nt;
-	
+
 	for (i = 1; i <= n; i++)
 	{
 		xs[i] = x[i];
 	}
-	
+
 	for (i = 2; i <= n; i++)
 	{
 		if (xs[i] >= xs[i-1]) continue;
@@ -1042,7 +1042,7 @@ void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[])
 {
 	long i, k;
 	double sum;
-	
+
 	for (i=1; i <= n; i++) /* Solve L.y=b */
 	{
 		for (sum = b[i], k = i - 1; k >= 1; k--)
@@ -1068,54 +1068,54 @@ int NUMdeterminant_cholesky (double **a, long n, double *lnd)
 	long i, j, lda = n, info;
 
 	/* Save the diagonal */
-	
+
 	if ((d = NUMdvector (1, n)) == NULL) return 0;
 	for (i = 1; i <= n; i++) d[i] = a[i][i];
 
 	/* Cholesky decomposition in lower, leave upper intact */
-	
+
 	(void) NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &lda, &info);
 	if (info != 0) goto end;
 
 	/* Determinant from diagonal, restore diagonal */
-		
+
 	for (*lnd = 0, i = 1; i <= n; i++)
 	{
 		*lnd += log (a[i][i]);
 		a[i][i] = d[i];
 	}
 	*lnd *= 2; /* because A = L . L' */
-	
+
 end:
 	/* Restore lower from upper */
-	
+
 	for (i = 1; i < n; i++)
 	{
 		for (j = i + 1; j <= n; j++) a[j][i] = a[i][j];
 	}
-	
+
 	NUMdvector_free (d, 1);
 	return info == 0;
 }
 /*
 int NUMdeterminant_cholesky2 (double **a, long n, double *lnd)
 {
-	double *d = NULL; 
+	double *d = NULL;
 	long i, j;
-	
+
 	if ((d = NUMdvector (1, n)) == NULL) return 0;
-	
+
 	if (NUMcholeskyDecomposition(a, n, d))
 	{
 		if (lnd != NULL)
 		{
 			for (*lnd = 0, i = 1; i <= n; i++) *lnd += log (d[i]);
-			*lnd *= 2; 
+			*lnd *= 2;
 		}
-		
+
 		for (i = 2; i <= n; i++)
 		{
-			for (j = 1; j < i; j++) a[i][j] = a[j][i];	
+			for (j = 1; j < i; j++) a[i][j] = a[j][i];
 		}
 	}
 	NUMdvector_free (d, 1);
@@ -1146,7 +1146,7 @@ int NUMinverse_cholesky (double **a, long n, double *lnd)
 		*lnd *= 2; /* because A = L . L' */
 	}
 	/* Get the inverse */
-	
+
 	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
 
 	return info == 0;
@@ -1154,7 +1154,7 @@ int NUMinverse_cholesky (double **a, long n, double *lnd)
 
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long n)
 {
-	long i, j; 
+	long i, j;
 	double chisq = 0;
 
 	for (i = n; i > 0; i--)
@@ -1163,7 +1163,7 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long n)
 		for (j = 1; j <= i; j++)
 		{
 			t += linv[i][j] * (v[j] - m[j]);
-		}	
+		}
 		chisq += t * t;
 	}
 	return chisq;
@@ -1171,22 +1171,22 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long n)
 
 double NUMtrace (double **a, long n)
 {
-	long i; double trace = 0;
-	for (i=1; i <= n; i++) trace += a[i][i];
+	double trace = 0;
+	for (long i = 1; i <= n; i++) trace += a[i][i];
 	return trace;
 }
 
 double NUMtrace2 (double **a1, double **a2, long n)
 {
-	long i, k; double trace = 0;
-	for (i=1; i <= n; i++) for (k=1; k <= n; k++) trace += a1[i][k] * a2[k][i];
+	double trace = 0;
+	for (long i = 1; i <= n; i++) for (long k = 1; k <= n; k++) trace += a1[i][k] * a2[k][i];
 	return trace;
 }
 
 int NUMeigensystem (double **a, long n, double **evec, double eval[])
 {
 	Eigen me = new (Eigen);
-	
+
 	if (me == NULL || ! Eigen_initFromSymmetricMatrix (me, a, n)) goto end;
 	if (evec) NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 	if (eval) NUMdvector_copyElements (my eigenvalues, eval, 1, n);
@@ -1199,9 +1199,9 @@ int NUMdominantEigenvector (double **mns, long n, double *q,
 	double *lambda, double tolerance)
 {
 	long k, l, iter = 0; double val, cval = 0, *z;
-	
+
 	if ((z = NUMdvector (1, n)) == NULL) return 0;
-	
+
 	for (k=1; k <= n; k++)
 	{
 		for (l=1; l <= n; l++) cval += q[k] * mns[k][l] * q[l];
@@ -1222,7 +1222,7 @@ int NUMdominantEigenvector (double **mns, long n, double *q,
 		for (k=1; k <= n; k++)
 		{
 			for (l=1; l <= n; l++) cval += q[k] * mns[k][l] * q[l];
-		}	
+		}
 	} while (fabs(cval - val) > tolerance || ++iter > 30);
 end:
 	*lambda = cval;
@@ -1254,11 +1254,11 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 	long numberOfComponents, double **pc)
 {
 	SVD svd = NULL; long i, j, k; double **mc = NULL;
-	
+
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
-	
+
 	if ((mc = NUMdmatrix_copy (m, 1, nrows, 1, ncols)) == NULL) return 0;
-	
+
 	/*NUMcentreColumns (mc, nrows, ncols);*/
 	if ((svd = SVD_create_d (mc, nrows, ncols)) == NULL) goto end;
 	for (i = 1; i <= nrows; i++)
@@ -1268,11 +1268,11 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 			pc[i][j] = 0;
 			for (k = 1; k <= ncols; k++)
 			{
-				pc[i][j] += svd -> v[k][j] * m[i][k]; 
+				pc[i][j] += svd -> v[k][j] * m[i][k];
 			}
 		}
 	}
-	
+
 end:
 	NUMdmatrix_free (mc, 1, 1);
 	forget (svd);
@@ -1283,10 +1283,10 @@ int NUMpseudoInverse (double **y, long nr, long nc, double **yinv,
 	double tolerance)
 {
 	SVD me; long i, j, k;
-	
+
 	me = SVD_create_d (y, nr, nc);
 	if (me == NULL) return 0;
-	
+
 	(void) SVD_zeroSmallSingularValues (me, tolerance);
 	for (i = 1; i <= nc; i++)
 	{
@@ -1308,20 +1308,20 @@ int NUMsolveEquation (double **a, long nr, long nc, double *b,
 	double tolerance, double *result)
 {
 	SVD me;
-	int status = 0; 
+	int status = 0;
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
-	
+
 	if (nr <= 0 || nc <= 0) return 0;
-	
+
 	me = SVD_create_d (a, nr, nc);
 	if (me == NULL) return 0;
-	
+
 	(void) SVD_zeroSmallSingularValues (me, tol);
-		
+
 	if (SVD_solve (me, b, result)) status = 1;
-	
+
 	forget (me);
-	
+
 	return status;
 }
 
@@ -1332,28 +1332,28 @@ int NUMsolveEquations (double **a, long nr, long nc, double **b,
 	SVD me;
 	double *bt = NULL, *xt;
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
-	int status = 0; long k, j; 
-	
+	int status = 0; long k, j;
+
 	if (nr <= 0 || nc <= 0) return 0;
-	
+
 	me = SVD_create_d (a, nr, nc);
 	if (me == NULL) return 0;
-	
+
 	bt = NUMdvector (1, nr + nc);
 	if (bt == NULL) goto end;
 	xt = & bt[nr];
-	
+
 	(void) SVD_zeroSmallSingularValues (me, tol);
-	
+
 	for (k = 1; k <= ncb; k++)
 	{
 		for (j = 1; j <= nr; j++)
 		{
 			bt[j] = b[j][k];
 		}
-		
+
 		if (! SVD_solve (me, bt, xt)) goto end;
-		
+
 		for (j = 1; j <= nc; j++)
 		{
 			x[j][k] = xt[j];
@@ -1372,13 +1372,13 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc,
 	double *d, double tol, long itermax, double *b)
 {
 	long i, j, l, iter; double difsq, difsqp = 0;
-	
+
 	for (iter=1; iter <= itermax; iter++)
 	{
 		/*
 			Fix all weights except b[j]
 		*/
-		
+
 		for (j=1; j <= nc; j++)
 		{
 			double mjr = 0, mjmj = 0;
@@ -1395,11 +1395,11 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, long nr, long nc,
 			b[j] = mjr / mjmj;
 			if (b[j] < 0) b[j] = 0;
 		}
-		
+
 		/*
 			Calculate t(b) and compare with previous result.
 		*/
-		
+
 		difsq = 0;
 		for (i=1; i <= nr; i++)
 		{
@@ -1433,7 +1433,7 @@ static void nr_func (double x, double *f, double *df, void *data)
 		double t3 = t2 * t2 * my delta[i];
 		*f  += t3;
 		*df += t3 * 2 / t1;
-	} 	
+	}
 }
 
 int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
@@ -1451,7 +1451,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		((delta = NUMdvector (1, n3)) == NULL) ||
 		((ftinvp = NUMdmatrix (1, n3, 1, n3)) == NULL) ||
 		((ptfinv = NUMdmatrix (1, n3, 1, n3)) == NULL) ||
-		((otd = NUMdvector (1, n3)) == NULL) || 
+		((otd = NUMdvector (1, n3)) == NULL) ||
 		((ptfinvc = NUMdmatrix (1, n3, 1, n3)) == NULL) ||
 		((y = NUMdvector (1, n3)) == NULL) ||
 		((w = NUMdvector (1, n3)) == NULL) ||
@@ -1472,19 +1472,19 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			}
 		}
 	}
-	
+
 	/*
 		Get lower triangular decomposition from O'.O and
 		get F'^-1 from it (eq. (2)) (F^-1 not done ????)
 	*/
-	
+
 	(void) NUMlapack_dpotf2 (&uplo, &n3, &ftinv[1][1], &n3, &info);
 	if (info != 0) goto end;
 	ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0;
-	
-/*	
+
+/*
 	if (! NUMcholeskyDecomposition (ftinv, n3, diag)) goto end;
-	
+
 	for (i=1; i <= 3; i++)
 	{
 		ftinv[i][i] = diag[i];
@@ -1493,18 +1493,18 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			ftinv[i][j] = 0;
 		}
 	}
-*/	
+*/
 	/*
 		Construct G and its eigen-decomposition (eq. (4,5))
 		Sort eigenvalues (& eigenvectors) ascending.
 	*/
-	
+
 	b[3][1] = b[1][3] = -0.5; b[2][2] = 1;
-	
+
 	/*
 		G = F^-1 B (F')^-1 (eq. 4)
 	*/
-	
+
 	for (i=1; i <= 3; i++)
 	{
 		for (j=1; j <= 3; j++)
@@ -1512,7 +1512,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			for (k=1; k <= 3; k++)
 			{
 				if (ftinv[k][i] != 0)
-				{ 
+				{
 					for (l=1; l <= 3; l++)
 					{
 						g[i][j] += ftinv[k][i] * b[k][l] * ftinv[l][j];
@@ -1521,20 +1521,20 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			}
 		}
 	}
-	
+
 	/*
 		G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
 	*/
-	
+
 	if (! NUMeigensystem (g, 3, p, delta)) goto end;
-	
+
 	NUMsort_d(3, delta); /* ascending */
-	
+
 	/*
 		Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)    (page 632)
 		Get P'F^-1 from the transpose of (F')^-1 . P
 	*/
-	
+
 	for (i = 1; i <= 3; i++)
 	{
 		for (j = 1; j <= 3; j++)
@@ -1552,7 +1552,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			otd[i] += o[k][i] * d[k];
 		}
 	}
-	
+
 	for (i=1; i <= 3; i++)
 	{
 		for (j=1; j <= 3; j++)
@@ -1560,29 +1560,29 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			ptfinvc[j][i] = ptfinv[j][i] = ftinvp[i][j];
 		}
 	}
-	
+
 	if (! NUMsolveEquation (ftinvp, 3, 3, otd, 1e-6, y)) goto end;
-	
+
 	/*
-		The solution (3 cases) 
+		The solution (3 cases)
 	*/
-	
+
 	if (fabs (y[1]) < eps)
 	{
 		/*
 			Case 1: page 633
 		*/
-		
+
 		t2 = y[2] / (delta[2] - delta[1]);
 		t3 = y[3] / (delta[3] - delta[1]);
 		/* +- */
 		w[1] = sqrt (- delta[1] * (t2 * t2 * delta[2] + t3 * t3 * delta[3]));
 		w[2] = t2 * delta[2];
 		w[3] = t3 * delta[3];
-		
+
 		if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
-		
-		w[1] = -w[1]; 
+
+		w[1] = -w[1];
 		if (fabs (chi[3] / chi[1]) < eps &&
 			! NUMsolveEquation (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
 	}
@@ -1591,7 +1591,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 		/*
 			Case 2: page 633
 		*/
-		
+
 		t1 = y[1] / (delta[1] - delta[2]);
 		t3 = y[3] / (delta[3] - delta[2]);
 		w[1] = t1 * delta[1];
@@ -1601,7 +1601,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			w[2] = sqrt (- delta[2] * t2); /* +- */
 			w[3] = t3 * delta[3];
 			if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
-			w[2] = -w[2]; 
+			w[2] = -w[2];
 			if (fabs (chi[3] / chi[1]) < eps &&
 				! NUMsolveEquation (ptfinvc, 3, 3, w, 1e-6, chi)) goto end;
 		}
@@ -1611,35 +1611,35 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[],
 			/*
 				choose one value for w[2] from an infinite number
 			*/
-			
+
 			w[2] = w[1];
 			w[3] = sqrt (- t1 * t1 * delta[1] * delta[2] - w[2] * w[2]);
 			if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 		}
 	}
-	else 
+	else
 	{
 		/*
 			Case 3: page 634 use Newton-Raphson root finder
 		*/
-		
-		struct nr_struct me; 
+
+		struct nr_struct me;
 		double xlambda, eps = (delta[2] - delta[1]) * 1e-6;
-		
+
 		me.y = y; me.delta = delta;
-		
+
 		if (! NUMnrbis (nr_func, delta[1] + eps, delta[2] - eps, & me,
 			& xlambda)) goto end;
-		
+
 		for (i = 1; i <= 3; i++)
 		{
 			w[i] = y[i] / (1 - xlambda / delta[i]);
 		}
 		if (! NUMsolveEquation (ptfinv, 3, 3, w, 1e-6, chi)) goto end;
 	}
-	
+
 	*alpha = chi[1]; *gamma = chi[3];
-	
+
 end:
 	NUMdmatrix_free (ftinv, 1, 1);
 	NUMdmatrix_free (b, 1, 1);
@@ -1665,9 +1665,9 @@ struct nr2_struct { long m; double delta, alpha, *x, *c; };
 
 static void nr2_func (double b, double *f, double *df, void *data)
 {
-	struct nr2_struct *me = (struct nr2_struct *) data; 
+	struct nr2_struct *me = (struct nr2_struct *) data;
 	long i;
-	
+
 	*df = - 0.5 / my alpha;
 	*f = my delta + *df * b;
 	for (i=1; i <= my m; i++)
@@ -1689,32 +1689,32 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 	double *sqrtc, *c = NULL, *x = NULL;
 	double xqsq = 0, tol = 1e-6,  xCx = 0, bmin, b0, eps;
 	int status = 0;
-	
+
 	if (((u = NUMdmatrix (1, m, 1, m)) == NULL) ||
 		((c = NUMdvector (1, m)) == NULL) ||
 		((x = NUMdvector (1, n)) == NULL) ||
 		((indx = NUMlvector (1, m)) == NULL)) goto end;
-		
+
 	for (j=1; j <= m; j++) t[j] = 0;
-	
+
 	svd = SVD_create_d (f, n, m);
 	if (svd == NULL) goto end;
-	
+
 	if (alpha == 0) /* standard least squares */
 	{
 		if (SVD_solve (svd, phi, t)) status = 1;
 		goto end;
 	}
-	
+
 	/*
 		Step 1: Compute U and C from the eigendecomposition F'F = UCU'
 		Evaluate q, the multiplicity of the smallest eigenvalue in C
 	*/
-	
+
 	sqrtc = svd -> d; ut = svd -> v;
-		
+
 	NUMindexx (sqrtc, m, indx);
-	
+
 	for (j=m; j > 0; j--)
 	{
 		double tmp = sqrtc[ indx[j] ];
@@ -1724,13 +1724,13 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 			u[m-j+1][k] = ut[ indx[j] ][k];
 		}
 	}
-	
+
 	q = 1; while (q < m && (c[m-q] - c[m]) < tol) q++;
-	
+
 	/*
 		step 2: x = U'F'phi
 	*/
-	
+
 	for (i=1; i <= m; i++)
 	{
 		for (j=1; j <= m; j++)
@@ -1741,11 +1741,11 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 			}
 		}
 	}
-	
+
 	/*
 		step 3:
 	*/
-	
+
 	me.m = m;
 	me.delta = delta;
 	me.alpha = alpha;
@@ -1767,7 +1767,7 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 			for (j=1; j <= r; j++)
 			{
 				x[j] /= c[j] - c[m];
-			} 
+			}
 			for (j=1; j <= r+1; j++)
 			{
 				for (k=1; k <= r+1; k++)
@@ -1779,19 +1779,19 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m,
 		}
 		/* else continue with r = m - q */
 	}
-	
+
 	/*
-		step 3a & 3b2, determine interval lower bound for Newton-Raphson 
+		step 3a & 3b2, determine interval lower bound for Newton-Raphson
 		root finder
 	*/
-	
+
 	for (j=1; j <= r; j++)
 	{
 		xCx += x[j] * x[j] / c[j];
 	}
 	bmin = delta > 0 ? - xCx / delta : -2 * sqrt (alpha * xCx);
 	eps = (c[m] - bmin) * tol;
-	
+
 	/*
 		find the root of d(psi(b)/db in interval (bmin, c[m])
 	*/
@@ -1813,27 +1813,27 @@ end:
 	return status;
 }
 
-int NUMProcrustes (double **x, double **y, long nPoints, 
+int NUMProcrustes (double **x, double **y, long nPoints,
 	long nDimensions, double **t, double *v, double *s)
 {
 	SVD svd = NULL;
 	long i, j, k;
 	double **c, **yc = NULL, trace, traceXtJYT, traceYtJY;
 	int orthogonal = v == NULL || s == NULL; /* else similarity transform */
-		
+
 	c = NUMdmatrix (1, nDimensions, 1, nDimensions);
 	if (c == NULL) return 0;
 	yc = NUMdmatrix_copy (y, 1, nPoints, 1, nDimensions);
 	if (yc == NULL) goto end;
-	
+
 	/*
-		Reference: Borg & Groenen (1997), Modern multidimensional scaling, 
+		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
 		Springer
-		1. Calculate C = X'JY (page 346) for similarity transform 
+		1. Calculate C = X'JY (page 346) for similarity transform
 			else X'Y for othogonal (page 341)
 			JY amounts to centering the columns of Y.
 	*/
-	
+
 	if (! orthogonal) NUMcentreColumns (yc, 1, nPoints, 1, nDimensions, NULL);
 	for (i = 1; i <= nDimensions; i++)
 	{
@@ -1845,28 +1845,28 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 			}
 		}
 	}
-	
+
 	/*
 		2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
 	*/
-	
+
 	if (! (svd = SVD_create_d (c, nDimensions, nDimensions))) goto end;
-	
+
 	for (trace = 0, i = 1; i <= nDimensions; i++)
 	{
 		trace += svd -> d[i];
 	}
-	
+
 	if (trace == 0)
 	{
 		(void) Melder_error1 (L"NUMProcrustes: degenerate configuration(s).");
 		goto end;
 	}
-	
+
 	/*
 		3. T = QP'
 	*/
-		
+
 	for (i = 1; i <= nDimensions; i++)
 	{
 		for (j = 1; j <= nDimensions; j++)
@@ -1877,18 +1877,18 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 			}
 		}
 	}
-	
+
 	if (! orthogonal)
 	{
 		double **xc, **yt = NULL;
 		if (! (xc = NUMdmatrix_copy (x, 1, nPoints, 1, nDimensions)) ||
 			! (yt = NUMdmatrix (1, nPoints, 1, nDimensions))) goto oend;
-	
+
 		/*
 			4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 			   First we need YT.
 		*/
-	
+
 		for (i = 1; i <= nPoints; i++)
 		{
 			for (j = 1; j <= nDimensions; j++)
@@ -1899,17 +1899,17 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 				}
 			}
 		}
-	
+
 		/*
 			X'J amount to centering the columns of X
 		*/
-	
+
 		NUMcentreColumns (xc, 1, nPoints, 1, nDimensions, NULL);
-	
+
 		/*
 			tr X'J YT == tr xc' yt
 		*/
-	
+
 		for (traceXtJYT = 0, i = 1; i <= nDimensions; i++)
 		{
 			for (j = 1; j <= nPoints; j++)
@@ -1917,7 +1917,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 				traceXtJYT += xc[j][i] * yt[j][i];
 			}
 		}
-	
+
 		for (traceYtJY = 0, i = 1; i <= nDimensions; i++)
 		{
 			for (j = 1; j <= nPoints; j++)
@@ -1925,9 +1925,9 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 				traceYtJY += y[j][i] * yc[j][i];
 			}
 		}
-	
+
 		*s = traceXtJYT / traceYtJY;
-		
+
 		/*
 			5. Translation vector tr = (X - sYT)'1 / nPoints
 		*/
@@ -1944,7 +1944,7 @@ oend:
 		NUMdmatrix_free (xc, 1, 1);
 		NUMdmatrix_free (yt, 1, 1);
 	}
-	
+
 end:
 
 	forget (svd);
@@ -1958,18 +1958,18 @@ int NUMmspline (double knot[], long nKnots, long order, long i,
 	double x, double *y)
 {
 	long ito = i + order - 1, j, k, nSplines = nKnots - order;
-	double *m; 
-		
+	double *m;
+
 	*y = 0;
-	
+
 	/*
-		Find the interval where x is located. 
-		M-splines of order k have degree k-1. 
+		Find the interval where x is located.
+		M-splines of order k have degree k-1.
 		M-splines are zero outside interval [ knot[i], knot[i+order] ).
 		First and last 'order' knots are equal, i.e.,
 		knot[1] = ... = knot[order] && knot[nKnots-order+1] = ... knot[nKnots].
 	*/
-	
+
 	Melder_assert (nSplines > 0);
 	if (i > nSplines || order < 1) return 0;
 	for (j=order; j <= nKnots-order+1; j++)
@@ -1978,22 +1978,22 @@ int NUMmspline (double knot[], long nKnots, long order, long i,
 	}
 	if (j < i || (j > i + order) || j == order ||
 		j > (nKnots - order + 1)) return 1;
-	
+
 	if (! (m = NUMdvector (i, ito))) return 0;
-	
+
 	/*
 		Calculate M[i](x|1,t) according to eq.2.
 	*/
-	
+
 	for (j=i; j <= ito; j++)
 	{
 		if (x >= knot[j] && x < knot[j+1]) m[j] = 1 / (knot[j+1] - knot[j]);
 	}
-	
+
 	/*
 		Iterate to get M[i](x|k,t)
 	*/
-	
+
 	for (k=2; k <= order; k++)
 	{
 		for (j=i; j <= i + order - k; j++)
@@ -2006,7 +2006,7 @@ int NUMmspline (double knot[], long nKnots, long order, long i,
 			}
 		}
 	}
-	
+
 	*y = m[i];
 	NUMdvector_free (m, i);
 	return 1;
@@ -2016,9 +2016,9 @@ int NUMispline (double aknot[], long nKnots, long order, long i,
 	double x, double *y)
 {
 	long j, m, orderp1 = order + 1; double r;
-	
+
 	*y = 0;
-	
+
 	for (j=orderp1; j <= nKnots-order; j++)
 	{
 		if (x < aknot[j]) break;
@@ -2037,7 +2037,7 @@ int NUMispline (double aknot[], long nKnots, long order, long i,
 	*/
 	for (m=i+1; m <=j; m++)
 	{
-		if (! NUMmspline (aknot, nKnots, orderp1, m, x, &r)) return 0; 
+		if (! NUMmspline (aknot, nKnots, orderp1, m, x, &r)) return 0;
 		*y += (aknot[m+orderp1] - aknot[m]) * r;
 	}
 	*y /= orderp1;
@@ -2060,32 +2060,32 @@ double NUMfactln (int n)
 		(table[n] = NUMlnGamma (n + 1.0));
 }
 
-int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), 
+int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure),
 	double x1, double x2, void *closure, double *root)
 {
 	double df, dx, dxold, fx, fh, fl, tmp, xh, xl, tol;
 	long iter, itermax = 60;
-	 
+
 	(*f) (x1, &fl, &df, closure);
 	if (fl == 0.0)
 	{
 		*root = x1;
 		return 1;
 	}
-	
+
 	(*f) (x2, &fh, &df, closure);
 	if (fh == 0.0)
 	{
 		*root = x2;
 		return 1;
 	}
-	
+
 	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0))
 	{
 		*root = NUMundefined;
 		return Melder_error1 (L"NUMnrbis: root must be bracketed.");
 	}
-	
+
 	if (fl < 0.0)
 	{
 		xl = x1; xh = x2;
@@ -2094,40 +2094,40 @@ int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure),
 	{
 		xh = x1; xl = x2;
 	}
-	
+
 	dxold = fabs (x2 - x1);
 	dx = dxold;
 	*root = 0.5 * (x1 + x2);
 	(*f) (*root, &fx, &df, closure);
-	
+
 	for (iter = 1; iter <= itermax; iter++)
 	{
 		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) ||
 			(fabs (2.0 * fx) > fabs (dxold * df)))
 		{
-			dxold = dx; 
-			dx = 0.5 * (xh - xl); 
+			dxold = dx;
+			dx = 0.5 * (xh - xl);
 			*root = xl + dx;
 			if (xl == *root) return 1;
 		}
 		else
 		{
-			dxold = dx; 
-			dx = fx / df; 
-			tmp = *root; 
+			dxold = dx;
+			dx = fx / df;
+			tmp = *root;
 			*root -= dx;
 			if (tmp == *root) return 1;
 		}
 		tol = NUMfpp -> eps	* (*root == 0 ? 1 : fabs (*root));
 		if (fabs(dx) < tol) return 1;
-		
+
 		(*f) (*root, &fx, &df, closure);
-		
+
 		if (fx < 0.0)
 		{
 			xl = *root;
 		}
-		else 
+		else
 		{
 			xh = *root;
 		}
@@ -2144,7 +2144,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	double x3, x4, d, root = NUMundefined;
 	double f1, f2, f3, f4, tol;
 	long iter, itermax = 100;
-		
+
 	f1 = f (x1, closure);
 	if (f1 == 0.0) return x1;
 	if (f1 == NUMundefined) return NUMundefined;
@@ -2156,19 +2156,19 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		Melder_warning1 (L"NUMridders: root must be bracketed.");
 		return NUMundefined;
 	}
-	
+
 	for (iter = 1; iter <= itermax; iter++)
 	{
 		x3 = 0.5 * (x1 + x2);
 		f3 = f (x3, closure);
 		if (f3 == 0.0) return x3;
 		if (f3 == NUMundefined) return NUMundefined;
-		
+
 		/*
 			New guess:
 			x4 = x3 + (x3 - x1) * sign(f1 - f2) * f3 / sqrt(f3^2 - f1*f2)
 		*/
-		
+
 		d = f3 * f3 - f1 * f2;
 		if (d < 0.0)
 		{
@@ -2178,7 +2178,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 
 		if (d == 0.0)
 		{   /* pb test added because f1 f2 f3 may be 1e-170 or so */
-			tol = NUMfpp -> eps * fabs (x3);	
+			tol = NUMfpp -> eps * fabs (x3);
 			if (iter > 1 && fabs (x3 - root) < tol) return root;
 			root = x3;
 			/*
@@ -2212,7 +2212,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			d = sqrt (d);
 			if (isnan (d))
 			{   /* pb: square root of denormalized small number fails on some computers */
-				tol = NUMfpp -> eps * fabs (x3);	
+				tol = NUMfpp -> eps * fabs (x3);
 				if (iter > 1 && fabs (x3 - root) < tol) return root;
 				root = x3;
 				/*
@@ -2245,7 +2245,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			{
 				d = (x3 - x1) * f3 / d;
 				x4 = f1 - f2 < 0 ? x3 - d : x3 + d;
-				tol = NUMfpp -> eps * fabs (x4);	
+				tol = NUMfpp -> eps * fabs (x4);
 				if (iter > 1 && fabs (x4 - root) < tol) return root;
 				root = x4;
 				f4 = f (x4, closure);
@@ -2349,7 +2349,7 @@ static double studentQ_func (double x, void *voidParams)
 
 double NUMinvStudentQ (double p, double df)
 {
-	struct pdf1_struct params;      
+	struct pdf1_struct params;
 	double pc = p > 0.5 ? 1 - p : p, xmin, xmax = 1, x;
 
 	if (p < 0 || p >= 1) return NUMundefined;
@@ -2377,7 +2377,7 @@ double NUMinvStudentQ (double p, double df)
 
 	return p > 0.5 ? -x : x;
 }
- 
+
 static double chiSquareQ_func (double x, void *voidParams)
 {
 	struct pdf1_struct *params = (struct pdf1_struct *) voidParams;
@@ -2387,9 +2387,9 @@ static double chiSquareQ_func (double x, void *voidParams)
 
 double NUMinvChiSquareQ (double p, double df)
 {
-	struct pdf1_struct params;      
+	struct pdf1_struct params;
 	double xmin, xmax = 1;
- 
+
 	if (p < 0 || p >= 1) return NUMundefined;
 
 	/*
@@ -2403,7 +2403,7 @@ double NUMinvChiSquareQ (double p, double df)
 		xmax *= 2;
 	}
 	xmin = xmax > 1 ? xmax / 2 : 0;
-	
+
 	/*
 		Find zero of f(x) with Ridders' method.
 	*/
@@ -2491,7 +2491,7 @@ double NUMhertzToBark_traunmueller (double hz)
 
 double NUMbarkToHertz_traunmueller (double bark)
 {
-	if (bark < 0 || bark > 26.28) return NUMundefined; 
+	if (bark < 0 || bark > 26.28) return NUMundefined;
 	return 1960* (bark + 0.53) / (26.28 - bark);
 }
 
@@ -2516,7 +2516,7 @@ double NUMhertzToBark_schroeder (double hz)
 
 double NUMbarkToHertz2 (double bark)
 {
-	if (bark < 0) return NUMundefined; 
+	if (bark < 0) return NUMundefined;
 	return 650.0 * sinh (bark / 7.0);
 }
 
@@ -2546,9 +2546,9 @@ double NUMtriangularfilter_amplitude (double fl, double fc, double fh, double f)
 	if (f > fl && f < fh)
 	{
 		a = f < fc ? (f - fl) / (fc - fl) : (fh - f) / (fh - fc);
-		
+
 		/* Normalize such that area under the filter is always 1. ???
-		
+
 		a /= 2 * (fh - fl);*/
 	}
 	return a;
@@ -2572,77 +2572,77 @@ int NUMburg (double x[], long n, double a[], int m, double *xms)
 	long i = 1, j; int status = 0;
 	double p = 0.0;
 	double *b1 , *b2 = NULL, *aa = NULL;
-	
+
 	if (((b1 = NUMdvector (1, n)) == NULL) ||
 		((b2 = NUMdvector (1, n)) == NULL) ||
 		((aa = NUMdvector (1, m)) == NULL)) goto end;
-	
+
 	/* (3) */
-		
+
 	for (j = 1; j <= n; j++)
 	{
 		p += x[j] * x[j];
 	}
-	
+
 	*xms = p / n;
 	if (*xms <= 0) goto end;
-	
+
 	/* (9) */
-	
+
 	b1[1] = x[1];
 	b2[n - 1] = x[n];
 	for (j = 2; j <= n - 1; j++)
 	{
 		b1[j] = b2[j - 1] = x[j];
 	}
-	
+
 	for (i = 1; i <= m; i++)
 	{
 		/* (7) */
-		
+
 		double num = 0.0, denum = 0.0;
 		for (j = 1; j <= n - i; j++)
 		{
 			num += b1[j] * b2[j];
 			denum += b1[j] * b1[j] + b2[j] * b2[j];
 		}
-		
+
 		if (denum <= 0) goto end;
-		
+
 		a[i] = 2.0 * num / denum;
-		
+
 		/* (10) */
-		
+
 		*xms *= 1.0 - a[i] * a[i];
-		
+
 		/* (5) */
-		
+
 		for (j = 1; j <= i - 1; j++)
 		{
 			a[j] = aa[j] - a[i] * aa[i - j];
 		}
-		
+
 		if (i < m)
 		{
-		
+
 			/* (8) */
 			/* Watch out: i -> i+1 */
-		
+
 			for (j = 1; j <= i; j++)
 			{
 				aa[j] = a[j];
 			}
 			for (j = 1; j <= n - i - 1; j++)
 			{
-				b1[j] -= aa[i] * b2[j]; 
+				b1[j] -= aa[i] * b2[j];
 				b2[j] = b2[j + 1] - aa[i] * b1[j + 1];
 			}
 		}
 	}
-	
+
 	status = 1;
-	
-end:	
+
+end:
 	NUMdvector_free (aa, 1);
 	NUMdvector_free (b2, 1);
 	NUMdvector_free (b1, 1);
@@ -2650,15 +2650,15 @@ end:
 	return status;
 }
 
-int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, 
+int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 	double ref, double factor, double floor)
 {
 	double ref_db, factor10 = factor * 10;
 	double max = m[rb][cb], min = max;
 	long i, j;
-	
+
 	Melder_assert (ref > 0 && factor > 0 && rb <= re && cb <= ce);
-	
+
 	for (i=rb; i <= re; i++)
 	{
 		for (j=cb; j <= ce; j++)
@@ -2667,12 +2667,12 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 			else if (m[i][j] < min) min = m[i][j];
 		}
 	}
-	
+
 	if (max < 0 || min < 0) return Melder_error1 (L"NUMdmatrix_to_dBs: all "
 		"matrix elements must be positive.");
 
 	ref_db = factor10 * log10 (ref);
-		
+
 	for (i=rb; i <= re; i++)
 	{
 		for (j=cb; j <= ce; j++)
@@ -2685,7 +2685,7 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 			}
 			m[i][j] = mij;
 		}
-	}	
+	}
 	return 1;
 }
 
@@ -2693,11 +2693,11 @@ double **NUMcosinesTable (long first, long last, long npoints)
 {
 	double **m;
 	long i, j;
-	
+
 	Melder_assert (0 < first && first <= last && npoints > 0);
-	
+
 	if ((m = NUMdmatrix (first, last, 1, npoints)) == NULL) return NULL;
-	
+
 	for (i = first; i <= last; i++)
 	{
 		double f = i * NUMpi / npoints;
@@ -2716,7 +2716,7 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn,
 	long i,k;
 
 	if ((u = NUMdvector (1, n - 1)) == NULL) return 0;
-	
+
 	if (yp1 > 0.99e30)
 	{
 		y2[1] = u[1] = 0.0;
@@ -2726,7 +2726,7 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn,
 		y2[1] = -0.5;
 		u[1] = (3.0 / (x[2] - x[1])) * ((y[2] - y[1]) / (x[2] - x[1]) - yp1);
 	}
-	
+
 	for (i=2; i <= n-1; i++)
 	{
 		sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
@@ -2736,7 +2736,7 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn,
 			(x[i] - x[i-1]);
 		u[i] = (6.0 * u[i] / (x[i+1] - x[i-1]) - sig * u[i-1]) / p;
 	}
-	
+
 	if (ypn > 0.99e30)
 	{
 		qn = un = 0.0;
@@ -2747,15 +2747,15 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn,
 		un = (3.0 / (x[n] - x[n-1])) * (ypn - (y[n] - y[n-1]) /
 			(x[n] - x[n-1]));
 	}
-	
+
 	y2[n] = (un - qn * u[n-1]) / (qn * y2[n-1] + 1.0);
 	for (k=n-1; k >= 1; k--)
 	{
 		y2[k] = y2[k] * y2[k+1] + u[k];
 	}
-	
+
 	NUMdvector_free (u, 1);
-	
+
 	return 1;
 }
 
@@ -2870,23 +2870,23 @@ MACRO_NUMclip (short)
 	*min = xmin; *max = xmax;\
 }
 
-void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce, 
+void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce,
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(double)
 
-void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce, 
+void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce,
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(float)
 
-void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce, 
+void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce,
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(long)
 
-void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce, 
+void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce,
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(int)
 
-void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce, 
+void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce,
 	double *min, double *max)
 MACRO_NUMmatrix_extrema(short)
 
@@ -2919,12 +2919,12 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	return orientation;
 }
 
-int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2, 
+int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
 	double xmin, double ymin, double xmax, double ymax, double *xi, double *yi)
 {
 	double x[6], y[6], t;
 	long i, ni = 0;
-	
+
 	x[1] = x[4] = x[5] = xmin;
 	x[2] = x[3] = xmax;
 	y[1] = y[2] = y[5] = ymin;
@@ -2947,16 +2947,16 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	Combining:
 		y31 x21 - x31 y21 = t (x43 y21 - y43 x21)
 	Therefor at the intersection we have:
-	
+
 		t = (y31 x21 - x31 y21) / (x43 y21 - y43 x21)
-		
+
 	If (x43 y21 - y43 x21) == 0
 		There is no intersection.
 	If (t < 0 || t >= 1)
-		No intersection in the segment l2 
+		No intersection in the segment l2
 		To count intersections in a corner only once we have t < 0 instead of t <= 0!
 */
-	
+
 	for (i = 1; i <= 4; i++)
 	{
 		double denom = (x[i+1] - x[i]) * (y2 - y1) - (y[i+1] - y[i]) * (x2 - x1);
@@ -2978,23 +2978,23 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 }
 
 
-int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, 
+int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
 	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2)
 {
 	int hline, vline, ncrossings = 0, xswap, yswap;
 	double a, b, x, y, t, xc[5], yc[5], xmin, xmax, ymin, ymax;
-	
+
 	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
-	
-	// This test first because we expect the majority of the tested segments to be 
+
+	// This test first because we expect the majority of the tested segments to be
 	// within the rectangle
-	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 && 
+	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
 		xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) return 1;
 
 	// All lines that are completely outside the rectangle
 	if ((xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
 		(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) return 0;
-	
+
 	// At least line spans (part of) the rectangle.
 	// Get extremes in x and y of the line for easy testing further on.
 	if (xl1 < xl2)
@@ -3013,7 +3013,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	{
 		ymin = yl2; ymax = yl1; yswap = 1;
 	}
-	
+
 	if ((hline = (yl1 == yl2)) == true)
 	{
 		if (xmin < xr1) *xo1 = xr1;
@@ -3034,21 +3034,21 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		}
 		return 1;
 	}
-	
+
 	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
 	// Parametrize it as y = ax + b
-	
+
 	a = (yl1 -yl2) / (xl1 - xl2);
 	b = yl1 - a * xl1;
-	
-		
+
+
 	//	To determine the crossings we have to avoid counting the crossings in a corner twice.
 	//	Therefore we test the corners inclusive (..<=..<=..) on the vertical borders of the rectangle
 	//	and exclusive (..<..<) at the horizontal borders.
-	
-	
+
+
 	y = a * xr1 + b; // Crossing at y with left border: x = xr1
-	
+
 	if (y >= yr1 && y <= yr2 && xmin < xr1) // Within vertical range?
 	{
 		ncrossings++;
@@ -3056,9 +3056,9 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		xc[2] = xmax;
 		yc[2] = xl1 > xl2 ? yl1 : yl2;
 	}
-	
+
 	x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
-	
+
 	if (x > xr1 && x < xr2 && ymax > yr2) // Within horizontal range?
 	{
 		ncrossings++;
@@ -3069,9 +3069,9 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 			xc[2] = yl1 < yl2 ? xl1 : xl2;
 		}
 	}
-	
+
 	y = a * xr2 + b; // Crossing at y with right border: x = xr2
-	
+
 	if (y >= yr1 && y <= yr2 && xmax > xr2) // Within vertical range?
 	{
 		ncrossings++;
@@ -3082,10 +3082,10 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 			yc[2] = xl1 < xl2 ? yl1 : yl2;
 		}
 	}
-	
+
 	x = (yr1 - b) / a; // Crossing at x with bottom border: y = yr1
-	
-	if (x > xr1 && x < xr2 && ymin < yr1) 
+
+	if (x > xr1 && x < xr2 && ymin < yr1)
 	{
 		ncrossings++;
 		xc[ncrossings] = x; yc[ncrossings] = yr1;
@@ -3106,11 +3106,11 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		if (ncrossings == 1 &&
 			(xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
 			(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) return 0;
-			
+
 		if ((xc[1] > xc[2] && ! xswap) || (xc[1] < xc[2] && xswap))
 		{
-			t = xc[1]; xc[1] = xc[2]; xc[2] = t;	
-			t = yc[1]; yc[1] = yc[2]; yc[2] = t;	
+			t = xc[1]; xc[1] = xc[2]; xc[2] = t;
+			t = yc[1]; yc[1] = yc[2]; yc[2] = t;
 		}
 		*xo1 = xc[1]; *yo1 = yc[1]; *xo2 = xc[2]; *yo2 = yc[2];
 	}
@@ -3121,18 +3121,18 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	return 1;
 }
 
-void NUMgetEllipseBoundingBox (double a, double b, double cospsi, 
+void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
 	double *width, double *height)
 {
 
 	Melder_assert (cospsi>= -1 && cospsi <= 1);
-		
+
 	if (cospsi == 1)
 	{
 		/*
 			a-axis along x-axis
 		*/
-		
+
 		*width = a;
 		*height = b;
 	}
@@ -3141,7 +3141,7 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
 		/*
 			a-axis along y-axis
 		*/
-		
+
 		*width = b;
 		*height = a;
 	}
@@ -3165,11 +3165,11 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	const double golden = 1 - NUM_goldenSection;
 	const double sqrt_epsilon = sqrt (NUMfpp -> eps);
 	long iter, itermax = 60;
-	
+
 	Melder_assert (tol > 0 && a < b);
-  
+
 	/* First step - golden section */
-	
+
 	v = a + golden * (b - a);
 	fv = (*f)(v, closure);
 	x = v;  w = v;
@@ -3182,7 +3182,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 		double tol_act = sqrt_epsilon * fabs(x) + tol / 3;
 		double new_step; /* Step at this iteration */
 
-       
+
 
 		if (fabs(x - middle_range) + range / 2 <= 2 * tol_act)
 		{
@@ -3190,19 +3190,19 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 		}
 
 		/* Obtain the golden section step */
-		
+
 		new_step = golden * (x < middle_range ? b - x : a - x);
 
 
 		/* Decide if the parabolic interpolation can be tried	*/
-		
+
 		if (fabs(x - w) >= tol_act)
 		{
 			/*
-				Interpolation step is calculated as p/q; 
+				Interpolation step is calculated as p/q;
 				division operation is delayed until last moment.
 			*/
-			
+
 			double p, q, t;
 
 			t = (x - w) * (*fx - fv);
@@ -3225,7 +3225,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 				If p/q is too large then the golden section procedure can
 				reduce [a,b] range.
 			*/
-			
+
 			if( fabs (p) < fabs (new_step * q) &&
 				p > q * (a - x + 2 * tol_act) &&
 				p < q * (b - x - 2 * tol_act))
@@ -3235,14 +3235,14 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 		}
 
 		/* Adjust the step to be not less than tolerance. */
-		
+
 		if (fabs(new_step) < tol_act)
 		{
 			new_step = new_step > 0 ? tol_act : - tol_act;
 		}
 
 		/* Obtain the next approximation to min	and reduce the enveloping range */
-		
+
 		{
 			double t = x + new_step;	/* Tentative point for the min	*/
 			double ft = (*f)(t, closure);
@@ -3252,7 +3252,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 				t would fall within it. If x remains the best, reduce the range
 				so that x falls within it.
 			*/
-						
+
 			if (ft <= *fx)
 			{
 				if( t < x )
@@ -3263,21 +3263,21 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 				{
 					a = x;
 				}
-      
+
 				v = w;  w = x;  x = t;
 				fv = fw;  fw = *fx;  *fx = ft;
 			}
 			else
-			{        		             
+			{
 				if (t < x)
 				{
 					a = t;
-				}                   
+				}
 				else
 				{
 					b = t;
 				}
-      
+
 				if (ft <= fw || w == x)
 				{
 					v = w; w = t;

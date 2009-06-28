@@ -437,10 +437,20 @@ KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, forman
 KlattGrid_ADD_FORMANT(Name,namef,formantType) \
 KlattGrid_REMOVE_FORMANT(Name,namef,formantType)
 
+#define KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA(Name,namef,formantType) \
+KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Frequencies, frequencies, L"if row = 2 then self + 200 else self fi",formantType, L" ") \
+KlattGrid_FORMULA_FORMANT_FBA_VALUE (Name, namef, Bandwidths, bandwidths, L"self / 10 ; 10% of frequency",formantType,L"Warning: self is formant frequency.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Formant,Frequency, frequency, formantType, L"-100.0", (Hz), (value!=NUMundefined), L"Frequency must be defined.") \
+KlattGrid_ADD_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType,  L"-50.0", (Hz), (value!=NUMundefined), L"Bandwidth must be defined.") \
+KlattGrid_REMOVE_FBA_VALUE (Name, namef, Formant, Frequency, frequency, formantType) \
+KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, formantType) \
+KlattGrid_ADD_FORMANT(Name,namef,formantType) \
+KlattGrid_REMOVE_FORMANT(Name,namef,formantType)
+
 KlattGrid_FORMULA_ADD_REMOVE_FBA(Oral,oral f,KlattGrid_ORAL_FORMANTS)
 KlattGrid_FORMULA_ADD_REMOVE_FBA(Nasal,nasal f,KlattGrid_NASAL_FORMANTS)
 KlattGrid_FORMULA_ADD_REMOVE_FB(NasalAnti,nasal antif,KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB(Delta,delta f,KlattGrid_DELTA_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA(Delta,delta f,KlattGrid_DELTA_FORMANTS)
 KlattGrid_FORMULA_ADD_REMOVE_FBA(Tracheal,tracheal f,KlattGrid_TRACHEAL_FORMANTS)
 KlattGrid_FORMULA_ADD_REMOVE_FB(TrachealAnti,tracheal antif,KlattGrid_TRACHEAL_ANTIFORMANTS)
 KlattGrid_FORMULA_ADD_REMOVE_FBA(Frication,frication f,KlattGrid_FRICATION_FORMANTS)

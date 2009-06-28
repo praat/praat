@@ -1,31 +1,31 @@
 # # Makefile of the library "dwtools"
 
-# 
+#
 #  Copyright (C) 1993-2009 David Weenink
-# 
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or (at
 #  your option) any later version.
-# 
+#
 #  This program is distributed in the hope that it will be useful, but
 #  WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #  General Public License for more details.
-# 
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-# 
-# 
-# 
+#
+#
+#
 #  djmw 20030825 Removed dependency on -I ../GSL
 #  djmw 20090417 Latest modification.
 
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL
+CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL -ggdb
 
 all: libdwtools.a
 
@@ -76,6 +76,6 @@ $(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../L
 libdwtools.a: $(OBJECTS)
 	touch libdwtools.a
 	rm libdwtools.a
-	ar cq libdwtools.a $(OBJECTS) 
+	ar cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
-	
+

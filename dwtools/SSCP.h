@@ -1,19 +1,19 @@
 #ifndef _SSCP_h_
 #define _SSCP_h_
 /* SSCP.h
- * 
+ *
  * Copyright (C) 1993-2007 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -104,7 +104,7 @@ Covariance Covariance_create (long dimension);
 
 Correlation Correlation_create (long dimension);
 
-TableOfReal Correlation_confidenceIntervals (Correlation me, 
+TableOfReal Correlation_confidenceIntervals (Correlation me,
 	double confidenceLevel, long numberOfTests, int method);
 /*
 	if (method == 1)
@@ -122,12 +122,12 @@ Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
 
 SSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, 
+void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints,
 	double *chisq, double *probability);
-void Correlation_testDiagonality_bartlett (Correlation me, 
+void Correlation_testDiagonality_bartlett (Correlation me,
 	long numberOfContraints, double *chisq, double *probability);
 /* Test whether matrices are diagonal matrices, Morrison, page 118 */
-	
+
 Correlation SSCP_to_Correlation (I);
 
 Configuration SSCP_to_Configuration (I, long numberOfDimensions);
@@ -137,20 +137,30 @@ Configuration Covariance_to_Configuration (Covariance me, long numberOfDimension
 Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
 
 int Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
+int Covariances_equality (Ordered me, double *prob, double *chisq, double *df);
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	double *probability, double *t, double *ndf);
-		
+
 void Covariance_getSignificanceOfMeansDifference (Covariance me,
-	long index1, long index2, double mu, int paired, int equalVariances, 
+	long index1, long index2, double mu, int paired, int equalVariances,
 	double *probability, double *t, double *ndf);
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, long index, 
+void Covariance_getSignificanceOfOneVariance (Covariance me, long index,
 	double sigmasq, double *probability, double *chisq, long *ndf);
-	
+
 void Covariance_getSignificanceOfVariancesRatio (Covariance me,
-	long index1, long index2, double ratio, double *probability, 
+	long index1, long index2, double ratio, double *probability,
 	double *f, long *ndf);
+
+double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2);
+/* Are the centroids of me and thee different?
+	Assumption: the two covariances are equal. (we pool me and thee, dimension p).
+	Two sample test of Morrison (1990), page 141:
+	T^2 = n1*n2/(n1+n2) (m1-m2)'S^-1(m1-m2) # weighted Mahalanobis distance
+	f = T^2 * (n1+n2-p-1)/((n1+n2-2)*p)
+	f has Fisher distribution with p and n1+n2-p-1 degrees of freedom.
+*/
 
 SSCPs SSCPs_create (void);
 
@@ -159,9 +169,9 @@ SSCP SSCPs_to_SSCP_sum (SSCPs me);
 
 SSCP SSCPs_to_SSCP_pool (SSCPs me);
 
-int SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability, 
+int SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability,
 	double *chisq, long *ndf);
-	
+
 SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
 
 /* For inheritors */
