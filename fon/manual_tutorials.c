@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090628)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090708)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.10# (8 July 2009)")
+LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash if the Demo window was closed after an \"execute\".")
+LIST_ITEM (L"\\bu OTGrammar & PairDistribution: added ##Get minimum number correct...#.")
 NORMAL (L"##5.1.09# (28 June 2009)")
 LIST_ITEM (L"\\bu Made East-European Roman characters available in EPS files.")
 NORMAL (L"##5.1.08# (21 June 2009)")
@@ -2140,14 +2143,14 @@ NORMAL (L"To print an intensity contour, or to put it in an EPS file or on the c
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard.")
 MAN_END
 
-MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20030113)
+MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20090630)
 INTRO (L"You can annotate existing @Sound objects and sound files (@LongSound objects).")
 NORMAL (L"The labelling data will reside in a @TextGrid object. This object is separate "
 	"from the sound, which means that you will often see two objects in the list: a Sound or LongSound, "
 	"and a TextGrid.")
 ENTRY (L"Creating a TextGrid")
 NORMAL (L"You create a new empty TextGrid from the Sound or LongSound with @@Sound: To TextGrid...@ "
-	"or @@LongSound: To TextGrid...@ from the #Annotate menu. In this way, the time domain "
+	"or @@LongSound: To TextGrid...@ from the #Annotate menu (which shows up in the Objects window if you select a Sound or LongSound). In this way, the time domain "
 	"of the @TextGrid will automatically equal that of the sound (if you choose @@Create TextGrid...@ from "
 	"the @@New menu@ instead, you will have to supply the time domain by yourself).")
 NORMAL (L"When you create a TextGrid, you specify the names of the %tiers. For instance, if you want to segment "

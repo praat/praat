@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/07/02
  */
 
 #ifndef _Collection_h_
@@ -43,18 +43,18 @@
 class_create (InterpreterVariable, Thing);
 
 #define Interpreter_MAXNUM_PARAMETERS  400
-#define Interpreter_MAXNUM_LABELS  30
+#define Interpreter_MAXNUM_LABELS  400
 #define Interpreter_MAX_CALL_DEPTH  50
 
 #define Interpreter_members Thing_members \
 	wchar_t *environmentName; \
 	Any editorClass; \
 	int numberOfParameters, numberOfLabels, callDepth; \
-	wchar_t parameters [1+Interpreter_MAXNUM_PARAMETERS] [50]; \
+	wchar_t parameters [1+Interpreter_MAXNUM_PARAMETERS] [100]; \
 	unsigned char types [1+Interpreter_MAXNUM_PARAMETERS]; \
 	wchar_t *arguments [1+Interpreter_MAXNUM_PARAMETERS]; \
 	wchar_t choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100]; \
-	wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [50]; \
+	wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [100]; \
 	long labelLines [1+Interpreter_MAXNUM_LABELS]; \
 	wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100]; \
 	SortedSetOfString variables; \

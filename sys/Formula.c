@@ -3390,7 +3390,7 @@ static void do_demoShow (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		error3 (L"The function \"demoShow\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
-	Demo_show ();
+	Demo_show (theInterpreter);
 	pushNumber (1);
 end: return;
 }
@@ -3398,7 +3398,7 @@ static void do_demoWaitForInput (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		error3 (L"The function \"demoWaitForInput\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
-	Demo_waitForInput ();
+	Demo_waitForInput (theInterpreter);
 	pushNumber (1);
 end: return;
 }

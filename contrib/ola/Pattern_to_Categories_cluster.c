@@ -1,4 +1,3 @@
-
 /* Pattern_to_Categories_cluster.c
  *
  * Copyright (C) 2007-2008 Ola Söder
@@ -16,13 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/Pattern_to_Categories_cluster.c $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: Pattern_to_Categories_cluster.c 137 2008-08-10 17:34:07Z stix $
  */
 
 /*
@@ -54,21 +46,22 @@ Categories Pattern_to_Categories_cluster
 )
 
 {
+    Categories categories = Categories_sequentialNumbers(k);
+    if(k == p->ny)
+        return(categories);
+
     KNN knn = KNN_create();
     if (knn)
     {
-        if (m < 0) m = 1000;
-        if (k > p->ny) k = p->ny;
-        if (k < 1) k = 1;
-        if (s > 1 || s <= 0) s = 0.0001;
-        if (p->ny % k) if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) s = (double) (p->ny / k) / (double) (p->ny / k + 1);
+        if(p->ny % k) 
+            if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) 
+                s = (double) (p->ny / k) / (double) (p->ny / k + 1);
 
         double progress = m;
         double sizes[k + 1];
         long seeds[k];
 
         Pattern centroids = Pattern_create(k, p->nx);
-        Categories categories = Categories_sequentialNumbers(k);
 
         do
         {
@@ -101,9 +94,7 @@ Categories Pattern_to_Categories_cluster
                 seeds[nfriends++] = ys;
 
                 for (long x = 1; x <= centroids->nx; x++)
-                {
                     centroids->z[y][x] = p->z[ys][x];
-                }
             }
             do
             {
@@ -112,9 +103,7 @@ Categories Pattern_to_Categories_cluster
                 Categories interim = KNN_classifyToCategories(knn, p, fws, 1, kOla_FLAT_VOTING);
 
                 for (long x = 1; x <= k; x++)
-                {
                     sizes[x] = 0;
-                }
 
                 for (long yp = 1; yp <= categories->size; yp++)
                 {
@@ -165,7 +154,7 @@ Categories Pattern_to_Categories_cluster
             }
 
             sizes[0] = smin / smax;
-            m--;
+            --m;
         }
         while (sizes[0] < s && m > 0);
 

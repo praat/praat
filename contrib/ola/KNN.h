@@ -20,13 +20,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/KNN.h $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: KNN.h 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20080529 Initial release
  */
@@ -36,8 +29,10 @@
 /////////////////////////////////////////////////////
 
 #include "Data.h"
+#include "Pattern.h"
 #include "Categories.h"
 #include "TableOfReal.h"
+#include "Permutation.h"
 #include "MDS.h"
 
 /////////////////////////////////////////////////////
@@ -45,6 +40,7 @@
 /////////////////////////////////////////////////////
 
 #include "KNN_def.h"
+
 #define KNN_methods Data_methods
 oo_CLASS_CREATE (KNN, Data);
 
@@ -55,6 +51,7 @@ oo_CLASS_CREATE (KNN, Data);
 
 #include "OlaP.h"
 #include "FeatureWeights.h"
+#include "gsl_siman.h"
 
 /////////////////////////////////////////////////////
 // Private definitions and macros                  //
@@ -112,6 +109,12 @@ Categories KNN_classifyToCategories
     int dist            // distance weighting
 );
 
+// Classification - To Categories, threading aux
+void * KNN_classifyToCategoriesAux
+(
+    void * input
+);
+
 // Classification - To TableOfReal
 TableOfReal KNN_classifyToTableOfReal
 (
@@ -120,6 +123,12 @@ TableOfReal KNN_classifyToTableOfReal
     FeatureWeights fws, // feature weights
     long k,             // the number of sought after neighbours
     int dist            // distance weighting
+);
+
+// Classification - To TableOfReal, threading aux
+void * KNN_classifyToTableOfRealAux
+(
+    void * input
 );
 
 // Classification - To TableOfReal, all candidates
@@ -336,6 +345,88 @@ void KNN_shuffleInstances
 (
     KNN me              // Classifier whose instance
                         // base is to be shuffled
+);
+
+// Experimental code
+Permutation KNN_SA_ToPermutation
+(
+    KNN me,             // the classifier being used
+    long tries,         //
+    long iterations,    //
+    double step_size,   //
+    double boltzmann_c, //
+    double temp_start,  //
+    double damping_f,   //
+    double temp_stop    //
+                        //
+);
+
+// Experimental code
+typedef struct
+{
+    Pattern p;
+    long * indices;
+} KNN_SA_t;
+    
+// Experimental code
+double KNN_SA_t_energy
+(
+    void * istruct
+);
+
+// Experimental code
+double KNN_SA_t_metric
+(
+    void * istruct1,
+    void * istruct2
+);
+
+// Experimental code
+void KNN_SA_t_print
+(
+    void * istruct
+);
+
+// Experimental code
+void KNN_SA_t_step
+(
+    const gsl_rng * r,
+    void * istruct,
+    double step_size
+);
+
+// Experimental code
+void KNN_SA_t_copy
+(
+    void * istruct_src,
+    void * istruct_dest
+);
+
+// Experimental code
+void * KNN_SA_t_copy_construct
+(
+    void * istruct
+);
+
+// Experimental code
+KNN_SA_t * KNN_SA_t_create
+(
+    Pattern p
+);
+
+// Experimental code
+void KNN_SA_t_destroy
+(
+    void * istruct
+);
+
+// Experimental code
+void KNN_SA_partition
+(
+    Pattern p,               
+    long i1,                 
+    long i2,                
+    long * result           
 );
 
 #endif /* _KNN_h_ */

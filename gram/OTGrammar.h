@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2008 Paul Boersma
+ * Copyright (C) 1997-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/03/31
+ * pb 2009/07/07
  */
 
 #ifndef _Strings_h_
@@ -140,6 +140,8 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 	long storeHistoryEvery, OTHistory *history_out);
 int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs, double *fractionCorrect);
+int OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistribution thee,
+	double evaluationNoise, long numberOfReplications, long *minimumNumberCorrect);
 int OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions thee, long columnNumber,
 	double evaluationNoise, long numberOfInputs, double *fractionCorrect);
 

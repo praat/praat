@@ -1478,7 +1478,9 @@ end2:
 }
 
 void Interpreter_stop (Interpreter me) {
+Melder_casual ("Interpreter_stop in: %ld", me);
 	my stopped = true;
+Melder_casual ("Interpreter_stop out: %ld", me);
 }
 
 int Interpreter_voidExpression (Interpreter me, const wchar_t *expression) {

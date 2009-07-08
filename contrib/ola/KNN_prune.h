@@ -20,13 +20,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/KNN_prune.h $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: KNN_prune.h 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20080529 Initial release
  */

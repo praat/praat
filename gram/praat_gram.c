@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/06/11
+ * pb 2009/07/07
  */
 
 #include "praat.h"
@@ -806,6 +806,20 @@ DO
 	Melder_informationReal (result, NULL);
 END
 
+FORM (OTGrammar_PairDistribution_getMinimumNumberCorrect, L"OTGrammar & PairDistribution: Get minimum number correct...", 0)
+	REAL (L"Evaluation noise", L"2.0")
+	INTEGER (L"Replications per input", L"1000")
+	OK
+DO
+	OTGrammar grammar = ONLY (classOTGrammar);
+	long result;
+	OTGrammar_PairDistribution_getMinimumNumberCorrect (grammar, ONLY (classPairDistribution),
+		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications per input"), & result);
+	praat_dataChanged (grammar);
+	iferror return 0;
+	Melder_information1 (Melder_integer (result));
+END
+
 FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", L"OT learning 6. Shortcut to OT learning")
 	REAL (L"Evaluation noise", L"2.0")
 	OPTIONMENU (L"Reranking strategy", 3)
@@ -1248,6 +1262,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Learn...", 0, 0, DO_OTGrammar_PairDistribution_learn);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Find positive weights...", 0, 0, DO_OTGrammar_PairDistribution_findPositiveWeights);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Get fraction correct...", 0, 0, DO_OTGrammar_PairDistribution_getFractionCorrect);
+	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Get minimum number correct...", 0, 0, DO_OTGrammar_PairDistribution_getMinimumNumberCorrect);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"List obligatory rankings", 0, 0, DO_OTGrammar_PairDistribution_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, L"Inputs to outputs...", 0, 0, DO_OTGrammar_inputsToOutputs);
 	praat_addAction2 (classOTGrammar, 1, classStrings, 1, L"Learn from partial outputs...", 0, 0, DO_OTGrammar_learnFromPartialOutputs);

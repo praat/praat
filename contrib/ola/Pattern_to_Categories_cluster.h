@@ -20,13 +20,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/Pattern_to_Categories_cluster.h $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: Pattern_to_Categories_cluster.h 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20070529 Initial release
  */
@@ -55,7 +48,7 @@
 // Prototypes                                      //
 /////////////////////////////////////////////////////
 
-// Pattern_to_Categories_cluster                                                                              //
+// Pattern_to_Categories_cluster                                                                            
 Categories Pattern_to_Categories_cluster
 (
     Pattern p,              // source

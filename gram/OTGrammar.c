@@ -63,6 +63,7 @@
  * pb 2008/04/12 split off NUMlinprog
  * pb 2008/05/31 new decision strategy: ExponentialMaximumEntropy
  * pb 2009/03/09 new reranking strategy: Weighted all up, highest down
+ * pb 2009/07/07 OTGrammar_PairDistribution_getMinimumNumberCorrect
  */
 
 #include "OTGrammar.h"
@@ -1970,6 +1971,32 @@ int OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistributio
 end:
 	iferror return Melder_error1 (L"(OTGrammar_PairDistribution_getFractionCorrect:) Not completed.");
 	*fractionCorrect = (double) numberOfCorrect / numberOfInputs;
+	return 1;
+}
+
+int OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistribution thee,
+	double evaluationNoise, long numberOfReplications, long *minimumNumberCorrect)
+{
+	*minimumNumberCorrect = numberOfReplications;
+
+	for (long ipair = 1; ipair <= thy pairs -> size; ipair ++) {
+		PairProbability prob = thy pairs -> item [ipair];
+		if (prob -> weight > 0.0) {
+			long numberOfCorrect = 0;
+			wchar_t *input = prob -> string1, *adultOutput = prob -> string2;
+			long inputTableau = OTGrammar_getTableau (me, input); cherror
+			for (long ireplication = 1; ireplication <= numberOfReplications; ireplication ++) {
+				OTGrammar_newDisharmonies (me, evaluationNoise);
+				OTGrammarCandidate learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];
+				if (wcsequ (learnerCandidate -> output, adultOutput))
+					numberOfCorrect ++;
+			}
+			if (numberOfCorrect < *minimumNumberCorrect)
+				*minimumNumberCorrect = numberOfCorrect;
+		}
+	}
+end:
+	iferror return Melder_error1 (L"(OTGrammar_PairDistribution_getMinimumNumberCorrect:) Not completed.");
 	return 1;
 }
 

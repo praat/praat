@@ -17,18 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/KNN.c $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: KNN.c 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20080529 Initial release
  */
 
 #include "KNN.h"
+#include "KNN_threads.h"
+#include "OlaP.h"
 
 #include "oo_DESTROY.h"
 #include "KNN_def.h"
@@ -75,7 +70,7 @@ class_methods_end
 // Creation                                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-KNN KNN_create ()// a near-dummy function
+KNN KNN_create ()   
 {
     KNN me = new (KNN);
     if (!me)
@@ -151,27 +146,42 @@ int KNN_learn
                 my output = toutput;
                 my nInstances += p->ny;
             }
-            else                            // fail
+            else                                    // fail
             {
                 return(kOla_DIMENSIONALITY_MISMATCH);
             }
             break;
         }
-        if (ordering == kOla_SHUFFLE)            // shuffle the instance base
+        if (ordering == kOla_SHUFFLE)               // shuffle the instance base
         {
             KNN_shuffleInstances(me);
         }
     }
-    else                                    // fail
+    else                                            // fail
     {
         return(kOla_PATTERN_CATEGORIES_MISMATCH);
     }
-    return(kOla_SUCCESS);                        // success
+
+    return(kOla_SUCCESS);                           // success
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Classification - To Categories                                                          //
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct
+{
+        KNN me;
+        Pattern ps;
+        long * output;
+        FeatureWeights fws;
+        long k;
+        int dist;
+        long istart;
+        long istop;
+
+} KNN_input_ToCategories_t;
 
 Categories KNN_classifyToCategories
 (
@@ -181,7 +191,7 @@ Categories KNN_classifyToCategories
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    Pattern ps,         // the pattern to classify
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -191,70 +201,176 @@ Categories KNN_classifyToCategories
 )
 
 {
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
+    int nthreads = KNN_getNumberOfCPUs();
+    long outputindices[ps->ny + 1];
+    long chunksize =  ps->ny / nthreads;
 
+    Melder_assert(nthreads > 0); 
+    Melder_assert(k > 0 && k <= my nInstances);
+
+    if(chunksize < 1)
+    {
+        chunksize = 1;
+        nthreads = ps->ny;
+    }
+
+    long istart = 1;
+    long istop = chunksize;
+ 
+    Categories output = Categories_create();
+    KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
+
+    if(!input)
+        return(NULL);
+
+    for(int i = 0; i < nthreads; ++i)
+    {
+        input[i] = (KNN_input_ToCategories_t *) malloc(sizeof(KNN_input_ToCategories_t));
+        if(!input[i])
+        {
+            while(input[i--])
+                free(input[i]);
+
+            free(input);
+            return(NULL);
+        }
+    }
+
+    for(int i = 0; i < nthreads; ++i)
+    {  
+        input[i]->me = me;
+        input[i]->ps = ps;
+        input[i]->output = outputindices;
+        input[i]->fws = fws;
+        input[i]->k = k;
+        input[i]->dist = dist;
+        input[i]->istart = istart;
+
+        if(istop + chunksize > ps->ny)
+        {  
+            input[i]->istop = ps->ny; 
+            break;
+        }
+        else
+        {  
+            input[i]->istop = istop;
+            istart = istop + 1;
+            istop += chunksize;
+        }
+    }
+ 
+    enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToCategoriesAux, (void **) input, nthreads);
+    for(int i = 0; i < nthreads; ++i)
+        free(input[i]);
+  
+    free(input);
+    if(error)           // Something went very wrong, you ought to inform the user!
+    {
+        free(error);
+        return(NULL);
+    }
+
+    if(output)
+    {
+        Categories_init(output, 0);
+        for (long i = 1; i <= ps->ny; ++i)
+            Collection_addItem(output, Data_copy((my output)->item[outputindices[i]]));
+    }
+    return(output);
+}
+
+void * KNN_classifyToCategoriesAux
+(
+    ///////////////////////////////
+    // Parameters                //
+    ///////////////////////////////
+
+    void * input
+   
+)
+
+{
+    Melder_assert(((KNN_input_ToCategories_t *) input)->istart > 0 &&  
+                  ((KNN_input_ToCategories_t *) input)->istop > 0 &&
+                  ((KNN_input_ToCategories_t *) input)->istart <= ((KNN_input_ToCategories_t *) input)->ps->ny &&
+                  ((KNN_input_ToCategories_t *) input)->istop <= ((KNN_input_ToCategories_t *) input)->ps->ny &&
+                  ((KNN_input_ToCategories_t *) input)->istart <= ((KNN_input_ToCategories_t *) input)->istop);
+    
     long ncollected;
     long ncategories;
-    long indices[k];
-    long freqindices[k];
-    double distances[k];
-    double freqs[k];
-    long outputindices[ps->ny];
-    long noutputindices = 0;
 
-    for (long y = 1; y <= ps->ny; y++)
+    long indices[((KNN_input_ToCategories_t *) input)->k];
+    long freqindices[((KNN_input_ToCategories_t *) input)->k];
+
+    double distances[((KNN_input_ToCategories_t *) input)->k];
+    double freqs[((KNN_input_ToCategories_t *) input)->k];
+ 
+    for (long y = ((KNN_input_ToCategories_t *) input)->istart; y <= ((KNN_input_ToCategories_t *) input)->istop; ++y)
     {
         /////////////////////////////////////////
         // Localizing the k nearest neighbours //
         /////////////////////////////////////////
 
-        ncollected = KNN_kNeighbours(ps, my input, fws, y, k, indices, distances);
+        ncollected = KNN_kNeighbours
+        (
+            ((KNN_input_ToCategories_t *) input)->ps, 
+            ((KNN_input_ToCategories_t *) input)->me->input, 
+            ((KNN_input_ToCategories_t *) input)->fws, y, 
+            ((KNN_input_ToCategories_t *) input)->k, indices, distances
+        );
 
         /////////////////////////////////////////////////
         // Computing frequencies and average distances //
         /////////////////////////////////////////////////
 
-        ncategories = KNN_kIndicesToFrequenciesAndDistances(my output, k, indices, distances, freqs, freqindices);
+        ncategories = KNN_kIndicesToFrequenciesAndDistances
+        (
+            ((KNN_input_ToCategories_t *) input)->me->output, 
+            ((KNN_input_ToCategories_t *) input)->k, 
+            indices, distances, freqs, freqindices
+        );
 
         ////////////////////////
         // Distance weighting //
         ////////////////////////
 
-        switch (dist)
+        switch(((KNN_input_ToCategories_t *) input)->dist)
         {
             case kOla_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(distances[c], MINFLOAT);
+                for (long c = 0; c < ncategories; ++c)
+                    freqs[c] *= 1 / OlaMAX(distances[c], kOla_MINFLOAT);
                 break;
 
             case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(SQUARE(distances[c]), MINFLOAT);
+                for (long c = 0; c < ncategories; ++c)
+                    freqs[c] *= 1 / OlaMAX(OlaSQUARE(distances[c]), kOla_MINFLOAT);
         }
 
         KNN_normalizeFloatArray(freqs, ncategories);
-        outputindices[noutputindices++] = freqindices[KNN_max(freqs, ncategories)];
+        ((KNN_input_ToCategories_t *) input)->output[y] = freqindices[KNN_max(freqs, ncategories)];
     }
 
-    Categories output = Categories_create();
-    if (output)
-    {
-        Categories_init(output, 0);
-        for (long o = 0; o < noutputindices; o++)
-        {
-            Collection_addItem(output, Data_copy((my output)->item[outputindices[o]]));
-        }
-        return(output);
-    }
     return(NULL);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Classification - To TableOfReal                                                         //
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct
+{
+        KNN me;
+        Pattern ps;
+        Categories uniqueCategories;
+        TableOfReal output;
+        FeatureWeights fws;
+        long k;
+        int dist;
+        long istart;
+        long istop;
+
+} KNN_input_ToTableOfReal_t;
 
 TableOfReal KNN_classifyToTableOfReal
 (
@@ -264,7 +380,7 @@ TableOfReal KNN_classifyToTableOfReal
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    Pattern ps,         // source Pattern
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -274,194 +390,168 @@ TableOfReal KNN_classifyToTableOfReal
 )
 
 {
+    int nthreads = KNN_getNumberOfCPUs();
+    long chunksize =  ps->ny / nthreads;
+    Categories uniqueCategories = Categories_selectUniqueItems(my output, 1);
+    long ncategories = Categories_getSize(uniqueCategories);
+   
+    Melder_assert(nthreads > 0);
+    Melder_assert(ncategories > 0);
+    Melder_assert(k > 0 && k <= my nInstances);
+ 
+    if(!ncategories)
+        return(NULL);
 
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
-
-    long ncollected;
-    long ncategories;
-    long indices[k];
-    long freqindices[k];
-    double distances[k];
-    double freqs[k];
-    long outputindices[ps->ny];
-    double tabledata[ps->ny * 4];
-    long noutputindices = 0;
-
-    for (long y = 1; y <= ps->ny; y++)
+    if(chunksize < 1)
     {
-
-        /////////////////////////////////////////
-        // Localizing the k nearest neighbours //
-        /////////////////////////////////////////
-
-        ncollected = KNN_kNeighbours(ps, my input, fws, y, k, indices, distances);
-
-        /////////////////////////////////////////////////
-        // Computing frequencies and average distances //
-        /////////////////////////////////////////////////
-
-        ncategories = KNN_kIndicesToFrequenciesAndDistances(my output, k, indices, distances, freqs, freqindices);
-
-        ////////////////////////
-        // Distance weighting //
-        ////////////////////////
-
-        double freqb[ncategories];
-        for (long c = 0; c < ncategories; c++)
-            freqb[c] = freqs[c];
-
-        switch (dist)
-        {
-            case kOla_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(distances[c], MINFLOAT);
-                break;
-
-            case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(SQUARE(distances[c]), MINFLOAT);
-        }
-
-        KNN_normalizeFloatArray(freqs, ncategories);
-        long max = KNN_max(freqs, ncategories);
-
-        outputindices[noutputindices] = freqindices[max];
-        tabledata[noutputindices * 4] = freqb[max];
-        tabledata[noutputindices * 4 + 1] = distances[max];
-        tabledata[noutputindices * 4 + 2] = freqs[max];
-        tabledata[noutputindices * 4 + 3] = freqb[max] / ncollected;
-
-        noutputindices++;
+        chunksize = 1;
+        nthreads = ps->ny;
     }
 
-    TableOfReal output = TableOfReal_create(noutputindices, 4);
-    if (output)
-    {
-        TableOfReal_setColumnLabel(output, 1, L"n neighbours");
-        TableOfReal_setColumnLabel(output, 2, L"mean distance");
-        TableOfReal_setColumnLabel(output, 3, L"p(w)");
-        TableOfReal_setColumnLabel(output, 4, L"p");
+    long istart = 1;
+    long istop = chunksize;
 
-        for (long yq = 0; yq < noutputindices; yq++)
+    KNN_input_ToTableOfReal_t ** input = (KNN_input_ToTableOfReal_t **) malloc(nthreads * sizeof(KNN_input_ToTableOfReal_t *));
+    
+    if(!input)
+        return(NULL);
+
+    TableOfReal output = TableOfReal_create(ps->ny, ncategories);
+
+    for (long i = 1; i <= ncategories; ++i)
+        TableOfReal_setColumnLabel(output, i,  SimpleString_c(uniqueCategories->item[i]));
+
+    for(int i = 0; i < nthreads; ++i)
+    {
+        input[i] = (KNN_input_ToTableOfReal_t *) malloc(sizeof(KNN_input_ToTableOfReal_t));
+        if(!input[i])
         {
-            TableOfReal_setRowLabel(output, yq + 1, SimpleString_c((my output)->item[outputindices[yq]]));
-            for (long xq = 0; xq < 4; xq++)
-                output->data[yq + 1][xq + 1] = tabledata[yq * 4 + xq];
+            while(input[i--])
+                free(input[i]);
+
+            free(input);
+            return(NULL);
         }
-        return(output);
     }
-    return(NULL);
+
+    for(int i = 0; i < nthreads; ++i)
+    {  
+        input[i]->me = me;
+        input[i]->ps = ps;
+        input[i]->output = output;
+        input[i]->uniqueCategories = uniqueCategories;
+        input[i]->fws = fws;
+        input[i]->k = k;
+        input[i]->dist = dist;
+        input[i]->istart = istart;
+
+        if(istop + chunksize > ps->ny)
+        {  
+            input[i]->istop = ps->ny; 
+            break;
+        }
+        else
+        {  
+            input[i]->istop = istop;
+            istart = istop + 1;
+            istop += chunksize;
+        }
+    }
+ 
+    enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToTableOfRealAux, (void **) input, nthreads);
+    for(int i = 0; i < nthreads; ++i)
+        free(input[i]);
+  
+    free(input);
+    if(error)           // Something went very wrong, you ought to inform the user!
+    {
+        free(error);
+        return(NULL);
+    }
+    return(output);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Classification - To TableOfReal, all candidates                                         //
-/////////////////////////////////////////////////////////////////////////////////////////////
 
-TableOfReal KNN_classifyToTableOfRealAll
+void * KNN_classifyToTableOfRealAux
 (
     ///////////////////////////////
     // Parameters                //
     ///////////////////////////////
 
-    KNN me,             // the classifier being used
-                        //
-    Pattern ps,         // target pattern (where neighbours are sought for)
-                        //
-    FeatureWeights fws, // feature weights
-                        //
-    long k,             // the number of sought after neighbours
-                        //
-    int dist            // distance weighting
+    void * input
+
 )
 
 {
+    long ncategories = Categories_getSize(((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
+    long indices[((KNN_input_ToTableOfReal_t *) input)->k];
+    double distances[((KNN_input_ToTableOfReal_t *) input)->k];
 
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
-
-    long ncollected;
-    long ncategories;
-    long indices[k];
-    long freqindices[k];
-    double distances[k];
-    double freqs[k];
-    long outputindices[k * ps->ny];
-    double tabledata[k * ps->ny * 4];
-    long noutputindices = 0;
-
-    for (long y = 1; y <= ps->ny; y++)
+    for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
+        KNN_kNeighbours(((KNN_input_ToTableOfReal_t *) input)->ps, 
+                        ((KNN_input_ToTableOfReal_t *) input)->me->input, 
+                        ((KNN_input_ToTableOfReal_t *) input)->fws, y, 
+                        ((KNN_input_ToTableOfReal_t *) input)->k, indices, distances);
 
-        /////////////////////////////////////////
-        // Localizing the k nearest neighbours //
-        /////////////////////////////////////////
-
-        ncollected = KNN_kNeighbours(ps, my input, fws, y, k, indices, distances);
-
-        /////////////////////////////////////////////////
-        // Computing frequencies and average distances //
-        /////////////////////////////////////////////////
-
-        ncategories = KNN_kIndicesToFrequenciesAndDistances(my output, k, indices, distances, freqs, freqindices);
-
-        ////////////////////////
-        // Distance weighting //
-        ////////////////////////
-
-        for (long q = 0; q < ncategories; q++)
+        for(long i = 0; i < ((KNN_input_ToTableOfReal_t *) input)->k; ++i)
         {
-            tabledata[(q + noutputindices) * 4] = freqs[q];
-            tabledata[(q + noutputindices) * 4 + 1] = distances[q];
-            tabledata[(q + noutputindices) * 4 + 3] = freqs[q] / ncollected;
+            for(long j = 1; j <= ncategories; ++j)
+                if(FRIENDS(((KNN_input_ToTableOfReal_t *) input)->me->output->item[indices[i]], ((KNN_input_ToTableOfReal_t *) input)->uniqueCategories->item[j])) 
+                    ++((KNN_input_ToTableOfReal_t *) input)->output->data[y][j];
         }
+    }
+ 
+    switch (((KNN_input_ToTableOfReal_t *) input)->dist)
+    {
+        case kOla_DISTANCE_WEIGHTED_VOTING:
+            for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
+            {
+                double sum = 0;
+                for(long c = 1; c <= ncategories; ++c)
+                {
+                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] *= 1 / OlaMAX(distances[c], kOla_MINFLOAT);
+                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
+                } 
+                
+                for(long c = 1; c <= ncategories; ++c)
+                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
 
-        switch (dist)
-        {
-            case kOla_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(distances[c], MINFLOAT);
-                break;
+            }
+            break;
 
-            case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-                for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(SQUARE(distances[c]), MINFLOAT);
-        }
+        case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
+            for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
+            {
+                double sum = 0;
+                for(long c = 1; c <= ncategories; ++c)
+                {
+                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] *= 1 / OlaMAX(OlaSQUARE(distances[c]), kOla_MINFLOAT);
+                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
+                } 
 
-        KNN_normalizeFloatArray(freqs, ncategories);
+                for(long c = 1; c <= ncategories; ++c)
+                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
+            }
+            break;
 
-        for (long q = 0; q < ncategories; q++)
-        {
-            outputindices[q + noutputindices] = freqindices[q];
-            tabledata[(q + noutputindices) * 4 + 2] = freqs[q];
-        }
-        noutputindices += ncategories;
+        case kOla_FLAT_VOTING: 
+            for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
+            {
+                double sum = 0;
+                for(long c = 1; c <= ncategories; ++c)
+                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
+
+                for(long c = 1; c <= ncategories; ++c)
+                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
+            }
+
     }
 
-    TableOfReal output = TableOfReal_create(noutputindices, 4);
-    if (output)
-    {
-        TableOfReal_setColumnLabel(output, 1, L"n neighbours");
-        TableOfReal_setColumnLabel(output, 2, L"mean distance");
-        TableOfReal_setColumnLabel(output, 3, L"p(w)");
-        TableOfReal_setColumnLabel(output, 4, L"p");
-
-        for (long yq = 0; yq < noutputindices; yq++)
-        {
-            TableOfReal_setRowLabel(output, yq + 1, SimpleString_c((my output)->item[outputindices[yq]]));
-            for (long xq = 0; xq < 4; xq++)
-                output->data[yq + 1][xq + 1] = tabledata[yq * 4 + xq];
-        }
-        return(output);
-    }
     return(NULL);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Classification - Folding                                                                //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -473,7 +563,7 @@ Categories KNN_classifyFold
 
     KNN me,             // the classifier being used
                         //
-    Pattern ps,         // target pattern (where neighbours are sought for)
+    Pattern ps,         // source Pattern
                         //
     FeatureWeights fws, // feature weights
                         //
@@ -488,10 +578,13 @@ Categories KNN_classifyFold
 )
 
 {
-    if (begin > end) LONGSWAP(begin, end);// safety-belts
-    if (begin < 1) begin = 1;
-    if (end > ps->ny) end = ps->ny;
-    if (k < 1) k = 1;
+    Melder_assert(k > 0 && k <= ps->ny);
+    Melder_assert(end > 0 && end <= ps->ny);
+    Melder_assert(begin > 0 && begin <= ps->ny);
+
+    if (begin > end) 
+        OlaSWAP(long, begin, end);         
+
     if (k > my nInstances - (end - begin))
         k = my nInstances - (end - begin);
 
@@ -504,7 +597,7 @@ Categories KNN_classifyFold
     long outputindices[ps->ny];
     long noutputindices = 0;
 
-    for (long y = begin; y <= end; y++)
+    for (long y = begin; y <= end; ++y)
     {
         /////////////////////////////////////////
         // Localizing the k nearest neighbours //
@@ -526,12 +619,12 @@ Categories KNN_classifyFold
         {
             case kOla_DISTANCE_WEIGHTED_VOTING:
                 for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(distances[c], MINFLOAT);
+                    freqs[c] *= 1 / OlaMAX(distances[c], kOla_MINFLOAT);
                 break;
 
             case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
                 for (long c = 0; c < ncategories; c++)
-                    freqs[c] *= 1 / MAX(SQUARE(distances[c]), MINFLOAT);
+                    freqs[c] *= 1 / OlaMAX(OlaSQUARE(distances[c]), kOla_MINFLOAT);
         }
 
         KNN_normalizeFloatArray(freqs, ncategories);
@@ -548,7 +641,9 @@ Categories KNN_classifyFold
         }
         return(output);
     }
+
     return(NULL);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -569,27 +664,48 @@ double KNN_evaluate
                         //
     int dist,           // distance weighting
                         //
-    int mode            // TEN_FOLD_CROSS_VALIDATION / LEAVE_ONE_OUT
+    int mode            // kOla_TEN_FOLD_CROSS_VALIDATION / kOla_LEAVE_ONE_OUT
                         //
 )
 
 {
-    if (fws->fweights->numberOfColumns != (my input)->nx) return(kOla_FWEIGHTS_MISMATCH);
-
     double correct = 0;
-    long adder = 1;
+    long adder;
 
-    if (mode == kOla_TEN_FOLD_CROSS_VALIDATION) adder = my nInstances / 10;
+    switch(mode)
+    {
+        case kOla_TEN_FOLD_CROSS_VALIDATION:
+            adder = my nInstances / 10;
+            break;
+
+        case kOla_LEAVE_ONE_OUT:
+            if(my nInstances > 1)
+                adder = 1;
+            else
+                adder = 0;
+            break;
+
+        default:
+            adder = 0;
+    }
+    
+    if(adder ==  0)
+        return(-1);
 
     for (long begin = 1; begin <= my nInstances; begin += adder)
     {
-        Categories c = KNN_classifyFold(me, my input, fws, k, dist, begin, MIN(begin + adder - 1, my nInstances));
+        Categories c = KNN_classifyFold(me, my input, fws, k, dist, begin, OlaMIN(begin + adder - 1, my nInstances));
         for (long y = 1; y <= c->size; y++)
-            if (FRIENDS(c->item[y], (my output)->item[begin + y - 1])) correct++;
+            if (FRIENDS(c->item[y], (my output)->item[begin + y - 1])) 
+                ++correct;
+
         forget(c);
     }
+
     correct /= (double) my nInstances;
+
     return(correct);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -617,11 +733,6 @@ double KNN_evaluateWithTestSet
 )
 
 {
-    if (fws->fweights->numberOfColumns != p->nx) return(kOla_FWEIGHTS_MISMATCH);
-    if (p->ny != c->size) return(kOla_PATTERN_CATEGORIES_MISMATCH);
-    if (p->nx != (my input)->nx) return(kOla_DIMENSIONALITY_MISMATCH);
-    if (p->ny == 0) return(0);
-
     double correct = 0;
     Categories t = KNN_classifyToCategories(me, p, fws, k, dist);
 
@@ -665,7 +776,13 @@ double KNN_modelSearch
 )
 
 {
-    int dists[] = {kOla_SQUARED_DISTANCE_WEIGHTED_VOTING, kOla_DISTANCE_WEIGHTED_VOTING, kOla_FLAT_VOTING};
+    int dists[] = 
+    {
+        kOla_SQUARED_DISTANCE_WEIGHTED_VOTING, 
+        kOla_DISTANCE_WEIGHTED_VOTING, 
+        kOla_FLAT_VOTING
+    };
+
     long max = *k;
     double range = (double) max / 2;
     double pivot = range;
@@ -688,8 +805,8 @@ double KNN_modelSearch
     {
         for (long n = 0; n < nseeds; n++)
         {
-            field[n].k = lround(NUMrandomUniform(MAX(pivot - range, 1), MIN(pivot + range, max)));
-            field[n].dist = lround(NUMrandomUniform(MAX(dpivot - drange, 0), MIN(dpivot + drange, 2)));
+            field[n].k = lround(NUMrandomUniform(OlaMAX(pivot - range, 1), OlaMIN(pivot + range, max)));
+            field[n].dist = lround(NUMrandomUniform(OlaMAX(dpivot - drange, 0), OlaMIN(dpivot + drange, 2)));
             field[n].performance = KNN_evaluate(me, fws, field[n].k, dists[field[n].dist], mode);
         }
 
@@ -706,13 +823,16 @@ double KNN_modelSearch
             best.dist = field[maxindex].dist;
             best.k = field[maxindex].k;
         }
+
         range -= rate;
         drange -= drate;
     }
+
     *k = best.k;
     *dist = dists[best.dist];
 
     return(best.performance);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -733,14 +853,9 @@ double KNN_distanceEuclidean
 )
 
 {
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
-
     double distance = 0;
-    for (long x = 1; x <= ps->nx; x++)
-        distance += SQUARE((ps->z[rows][x] - pt->z[rowt][x]) * fws->fweights->data[1][x]);
+    for (long x = 1; x <= ps->nx; ++x)
+        distance += OlaSQUARE((ps->z[rows][x] - pt->z[rowt][x]) * fws->fweights->data[1][x]);
 
     return(sqrt(distance));
 }
@@ -762,13 +877,8 @@ double KNN_distanceManhattan
 )
 
 {
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
-
     double distance = 0;
-    for (long x = 1; x <= ps->nx; x++)
+    for (long x = 1; x <= ps->nx; ++x)
         distance += fabs(ps->z[rows][x] - pt->z[rowt][x]);
 
     return(distance);
@@ -787,24 +897,17 @@ long KNN_max
 )
 
 {
-    /////////////////////////////////////////////////////////////
-    // No checks are made, the validity of the parameters must //
-    // be ensured by the calling function....                  //
-    /////////////////////////////////////////////////////////////
-
-    long maxc = 1;
     long maxndx = 0;
 
-    while (maxc < ndistances)
-    {
-        if (distances[maxc] > distances[maxndx]) maxndx = maxc;
-        maxc++;
-    }
+    for(long maxc = 1; maxc < ndistances; ++maxc)
+        if (distances[maxc] > distances[maxndx]) 
+            maxndx = maxc;
 
     return(maxndx);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////
 // Locate k neighbours, skip one + disposal of distance                                    //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -838,9 +941,9 @@ long KNN_kNeighboursSkip
 
     double distances[k];
 
-    if (jy > j->ny) jy = j->ny;// safety belt
-    if (k > p->ny) k = p->ny;
-    if (k < 1) k = 1;
+    Melder_assert(jy > 0 && jy <= j->ny);
+    Melder_assert(k > 0 && k <= p->ny);
+    Melder_assert(skipper <= p->ny);
 
     while (dc < k && py <= p->ny)
     {
@@ -849,9 +952,9 @@ long KNN_kNeighboursSkip
 
             distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, py);
             indices[dc] = py;
-            dc++;
+            ++dc;
         }
-        py++;
+        ++py;
     }
 
     maxi = KNN_max(distances, k);
@@ -868,14 +971,16 @@ long KNN_kNeighboursSkip
                 maxi = KNN_max(distances, k);
             }
         }
-        py++;
+        ++py;
     }
-    return(MIN(k, dc));
+    
+    return(OlaMIN(k, dc));
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 // Locate the k nearest neighbours, exclude instances within the range defined  //
-// by [begin ... end]//
+// by [begin ... end]                                                           //
 //////////////////////////////////////////////////////////////////////////////////
 
 long KNN_kNeighboursSkipRange
@@ -922,11 +1027,10 @@ long KNN_kNeighboursSkipRange
                                     //
     long py = 0;                    //
 
-    if (jy > j->ny) jy = j->ny;     // safety belts
-    if (end > j->ny) end = j->ny;   //
-    if (begin < 1) begin = 1;       //
-    if (k > p->ny) k = p->ny;       //
-    if (k < 1) k = 1;               //
+    Melder_assert(jy > 0 && jy <= j->ny);
+    Melder_assert(k > 0 && k <= p->ny);
+    Melder_assert(end > 0 && end <= j->ny);
+    Melder_assert(begin > 0 && begin <= j->ny);
 
     while (dc < k && (end + py) % p->ny + 1 != begin)   // the first k neighbours are the nearest found
     {                                                   // sofar
@@ -935,9 +1039,9 @@ long KNN_kNeighboursSkipRange
         {
             distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, (end + py) % p->ny + 1);
             indices[dc] = (end + py) % p->ny + 1;
-            dc++;
+            ++dc;
         }
-        py++;
+        ++py;
     }
 
     maxi = KNN_max(distances, k);                       // accept only those instances less distant
@@ -953,9 +1057,11 @@ long KNN_kNeighboursSkipRange
                 maxi = KNN_max(distances, k);
             }
         }
-        py++;
+        ++py;
     }
-    return(MIN(k, dc));// return the number of found neighbours
+
+    return(OlaMIN(k, dc)); // return the number of found neighbours
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -985,16 +1091,17 @@ long KNN_kNeighbours
                         // doubles representing the distances to the k
                         // neighbours
                         //
-)
+)   
 
 {
     long maxi;
     long dc = 0;
     long py = 1;
 
-    if (jy > j->ny) jy = j->ny;// safety belt
-    if (k > p->ny) k = p->ny;
-    if (k < 1) k = 1;
+    Melder_assert(jy > 0 && jy <= j->ny);
+    Melder_assert(k > 0 && k <= p->ny);
+    Melder_assert(indices);
+    Melder_assert(distances);
 
     while (dc < k && py <= p->ny)
     {
@@ -1002,9 +1109,9 @@ long KNN_kNeighbours
         {
             distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, py);
             indices[dc] = py;
-            dc++;
+            ++dc;
         }
-        py++;
+        ++py;
     }
 
     maxi = KNN_max(distances, k);
@@ -1020,19 +1127,17 @@ long KNN_kNeighbours
                 maxi = KNN_max(distances, k);
             }
         }
-        py++;
+        ++py;
     }
 
-    long ret = MIN(k, dc);
+    long ret = OlaMIN(k, dc);
     if (ret < 1)
     {
         indices[0] = jy;
         return(0);
     }
     else
-    {
         return(ret);
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1061,14 +1166,13 @@ long KNN_kFriends
 )
 
 {
-    if (jy > j->ny) jy = j->ny;// safety belt
-    if (k > p->ny) k = p->ny;
-    if (k < 1) k = 1;
-
     long maxi;
     long dc = 0;
     long py = 1;
     double distances[k];
+
+    Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
+    Melder_assert(indices);
 
     while (dc < k && py < p->ny)
     {
@@ -1078,7 +1182,7 @@ long KNN_kFriends
             indices[dc] = py;
             dc++;
         }
-        py++;
+        ++py;
     }
 
     maxi = KNN_max(distances, k);
@@ -1094,9 +1198,11 @@ long KNN_kFriends
                 maxi = KNN_max(distances, k);
             }
         }
-        py++;
+        ++py;
     }
-    return(MIN(k,dc));
+
+    return(OlaMIN(k,dc));
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1120,9 +1226,8 @@ double KNN_nearestEnemy
 )
 
 {
-    if (jy > j->ny) jy = j->ny;// safety belt
-
     double distance = KNN_distanceManhattan(j, p, jy, 1);
+    Melder_assert(jy > 0 && jy <= j->ny );
 
     for (long y = 2; y <= p->ny; y++)
     {
@@ -1132,7 +1237,9 @@ double KNN_nearestEnemy
             if (newdist > distance) distance = newdist;
         }
     }
+
     return(distance);
+
 }
 
 
@@ -1159,23 +1266,21 @@ long KNN_friendsAmongkNeighbours
 )
 
 {
-    if (jy > j->ny) jy = j->ny;// safety belt
-    if (k > p->ny) k = p->ny;
-    if (k < 1) k = 1;
-
     double distances[k];
     long indices[k];
     long friends = 0;
+
+    Melder_assert(jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
     long ncollected = KNN_kNeighbours(j, p, fws, jy, k, indices, distances);
     forget(fws);
 
     while (ncollected--)
-    {
         if (FRIENDS(c->item[jy], c->item[indices[ncollected]])) friends++;
-    }
+    
     return(friends);
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1204,31 +1309,30 @@ long KNN_kUniqueEnemies
 )
 
 {
-    if (jy > j->ny) jy = j->ny;// safety belt
-    if (k > p->ny) k = p->ny;
-    if (k < 1) k = 1;
-
     long maxi;
     long dc = 0;
     long py = 1;
     double distances[k];
+
+    Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
+    Melder_assert(indices);
 
     while (dc < k && py <= p->ny)
     {
         if (ENEMIES(c->item[jy], c->item[py]))
         {
             int hasfriend = 0;
-            for (long sc = 0; sc < dc; sc++)
+            for (long sc = 0; sc < dc; ++sc)
                 if (FRIENDS(c->item[py], c->item[indices[sc]])) hasfriend = 1;
 
             if (!hasfriend)
             {
                 distances[dc] = KNN_distanceManhattan(j, p, jy, py);
                 indices[dc] = py;
-                dc++;
+                ++dc;
             }
         }
-        py++;
+        ++py;
     }
 
     maxi = KNN_max(distances, k);
@@ -1237,7 +1341,7 @@ long KNN_kUniqueEnemies
         if (ENEMIES(c->item[jy], c->item[py]))
         {
             int hasfriend = 0;
-            for (long sc = 0; sc < dc; sc++)
+            for (long sc = 0; sc < dc; ++sc)
                 if (FRIENDS(c->item[py], c->item[indices[sc]])) hasfriend = 1;
 
             if (!hasfriend)
@@ -1251,9 +1355,9 @@ long KNN_kUniqueEnemies
                 }
             }
         }
-        py++;
+        ++py;
     }
-    return(MIN(k,dc));
+    return(OlaMIN(k,dc));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1274,22 +1378,17 @@ Dissimilarity KNN_patternToDissimilarity
 
 {
     Dissimilarity output = Dissimilarity_create(p->ny);
-
+    Melder_assert(output);
     if (output)
     {
-        for (long y = 1; y <= p->ny; y++)
-        {
-            for (long x = 1; x <= p->ny; x++)
-            {
+        for (long y = 1; y <= p->ny; ++y)
+            for (long x = 1; x <= p->ny; ++x)
                 output->data[y][x] = KNN_distanceEuclidean(p, p, fws, y, x);
-            }
-        }
+        
         return(output);
     }
-    else
-    {
+    else 
         return(NULL);
-    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1316,12 +1415,12 @@ long KNN_kIndicesToFrequenciesAndDistances
 )
 
 {
-    if (k > c->size) k = c->size;
-    if (k < 1) k = 1;
-
     long ncategories = 0;
+    
+    Melder_assert(k <= c->size && k > 0);
+    Melder_assert(distances && indices && freqs  && freqindices);
 
-    for (long y = 0; y < k; y++)
+    for (long y = 0; y < k; ++y)
     {
         int hasfriend = 0;
         long friend = 0;
@@ -1333,7 +1432,7 @@ long KNN_kIndicesToFrequenciesAndDistances
                 hasfriend = 1;
                 break;
             }
-            friend++;
+            ++friend;
         }
 
         if (!hasfriend)
@@ -1345,7 +1444,7 @@ long KNN_kIndicesToFrequenciesAndDistances
         }
         else
         {
-            freqs[friend]++;
+            ++freqs[friend];
             distances[friend] += (distances[y] - distances[friend]) / (ncategories + 1);
         }
     }
@@ -1369,10 +1468,13 @@ void KNN_normalizeFloatArray
 )
 
 {
+    long c = 0;
     double sum = 0;
-    for (long c = 0; c < n; c++)
-        sum += array[c];
-    for (long c = 0; c < n; c++)
+
+    while(c < n)
+        sum += array[c++];
+
+    while(c--)
         array[c] /= sum;
 }
 
@@ -1401,20 +1503,23 @@ void KNN_removeInstance
         return;
     }
 
-    if (y > my nInstances || y < 1) return;// safety belt
+    Melder_assert(y > 0 && y <= my nInstances);
+    if (y > my nInstances || y < 1) 
+        return;                         // safety belt
 
     Pattern new = Pattern_create(my nInstances - 1, (my input)->nx);
-
+    Melder_assert(new);
     if (new)
     {
         long yt = 1;
-        for (long cy = 1; cy <= my nInstances; cy++)
+        for (long cy = 1; cy <= my nInstances; ++cy)
             if (cy != y)
             {
-                for (long cx = 1; cx <= (my input)->nx; cx++)
+                for (long cx = 1; cx <= (my input)->nx; ++cx)
                     new->z[yt][cx] = (my input)->z[cy][cx];
-                yt++;
+                ++yt;
             }
+
         forget(my input);
         my input = new;
         Collection_removeItem(my output, y);
@@ -1437,12 +1542,12 @@ void KNN_shuffleInstances
 )
 
 {
-
-    if (my nInstances < 2) return;  // It takes atleast two to tango
+    if (my nInstances < 2) 
+        return;                 // It takes atleast two to tango
 
     Pattern new_input = Pattern_create(my nInstances, (my input)->nx);
     Categories new_output = Categories_create();
-
+    Melder_assert(new_input && new_output);
     if (new_input && new_output)
     {
         long y = 1;
@@ -1451,13 +1556,17 @@ void KNN_shuffleInstances
         {
             long pick = (long) lround(NUMrandomUniform(1, my nInstances));
             Collection_addItem(new_output, Data_copy((my output)->item[pick]));
-            for (long x = 1;x <= (my input)->nx; x++)
+
+            for (long x = 1;x <= (my input)->nx; ++x)
                 new_input->z[y][x] = (my input)->z[pick][x];
+
             KNN_removeInstance(me, pick);
-            y++;
+            ++y;
         }
+
         forget(my input);
         forget(my output);
+
         my input = new_input;
         my output = new_output;
         my nInstances  = new_output->size;
@@ -1468,5 +1577,325 @@ void KNN_shuffleInstances
         forget(new_output);
     }
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// KNN to Permutation (experimental)                                                       //
+/////////////////////////////////////////////////////////////////////////////////////////////
+Permutation KNN_SA_ToPermutation
+(
+    ///////////////////////////////
+    // Parameters                //
+    ///////////////////////////////
+
+    KNN me,             // the classifier being used
+                        //
+    long tries,         //
+                        //
+    long iterations,    //
+                        //
+    double step_size,   //
+                        //
+    double boltzmann_c, //
+                        //
+    double temp_start,  //
+                        //
+    double damping_f,   //
+                        //
+    double temp_stop    //
+                        //
+)
+
+{
+    gsl_rng * r;
+    const gsl_rng_type * T;
+
+    KNN_SA_t * istruct = KNN_SA_t_create(my input); 
+    Permutation result = Permutation_create(my nInstances);
+
+    gsl_siman_params_t params = {tries, iterations, step_size, boltzmann_c, temp_start, damping_f, temp_stop};
+
+    gsl_rng_env_setup();
+    T = gsl_rng_default;
+    r = gsl_rng_alloc(T);
+
+    gsl_siman_solve(r, 
+                    istruct, 
+                    KNN_SA_t_energy, 
+                    KNN_SA_t_step, 
+                    KNN_SA_t_metric, 
+                    NULL,                // KNN_SA_t_print, 
+                    KNN_SA_t_copy, 
+                    KNN_SA_t_copy_construct, 
+                    KNN_SA_t_destroy, 
+                    0, 
+                    params);
+
+    for(unsigned long i = 1; i <= my nInstances; ++i)
+        result->p[i] = istruct->indices[i];
+
+    KNN_SA_t_destroy(istruct);
+
+    return(result);
+}
+
+
+double KNN_SA_t_energy
+(
+    ///////////////////////////////
+    // Parameters                //
+    ///////////////////////////////
+
+    void * istruct
+             
+)
+
+{
+    if(((KNN_SA_t *) istruct)->p->ny < 2) 
+        return(0);  
+
+    double eCost = 0;
+    for(long i = 1; i <= ((KNN_SA_t *) istruct)->p->ny; ++i)
+    {
+        /* fast and sloppy version */ 
+       
+        double jDist = 0;
+        double kDist = 0;
+
+        long j = i - 1 > 0 ? i - 1 : ((KNN_SA_t *) istruct)->p->ny;
+        long k = i + 1 <= ((KNN_SA_t *) istruct)->p->ny ? i + 1 : 1;
+
+        for (long x = 1; x <= ((KNN_SA_t *) istruct)->p->nx; ++x)
+        {
+            jDist +=    OlaSQUARE(((KNN_SA_t *) istruct)->p->z[((KNN_SA_t *) istruct)->indices[i]][x] - 
+                        ((KNN_SA_t *) istruct)->p->z[((KNN_SA_t *) istruct)->indices[j]][x]);
+            
+            kDist +=    OlaSQUARE(((KNN_SA_t *) istruct)->p->z[((KNN_SA_t *) istruct)->indices[i]][x] - 
+                        ((KNN_SA_t *) istruct)->p->z[((KNN_SA_t *) istruct)->indices[k]][x]);
+        }   
+        
+        eCost += ((sqrt(jDist) + sqrt(kDist)) / 2 - eCost) / i;
+
+    }
+
+    return(eCost);
+}
+
+double KNN_SA_t_metric
+(
+    void * istruct1,
+    void * istruct2
+)
+
+{
+    double result = 0;
+
+    for(long i = ((KNN_SA_t *) istruct1)->p->ny; i >= 1; --i)
+        if(((KNN_SA_t *) istruct1)->indices[i] !=  ((KNN_SA_t *) istruct2)->indices[i]) 
+            ++result;
+
+    return(result);
+}
+
+void KNN_SA_t_print
+(
+    void * istruct
+)
+
+{
+    Melder_casual("\n");
+    for(long i = 1; i <= ((KNN_SA_t *)istruct)->p->ny; ++i)
+        Melder_casual("%ld,", ((KNN_SA_t *)istruct)->indices[i]);
+    Melder_casual("\n");
+}
+
+void KNN_SA_t_step
+(
+    const gsl_rng * r,
+    void * istruct,
+    double step_size
+)
+
+{
+    long i1 = lround((((KNN_SA_t *) istruct)->p->ny - 1) * gsl_rng_uniform(r)) + 1;
+    long i2 = (i1 + lround(step_size * gsl_rng_uniform(r))) % ((KNN_SA_t *) istruct)->p->ny + 1;
+
+    if(i1 == i2)
+        return;
+
+    if(i1 > i2)
+        OlaSWAP(long, i1, i2);
+
+    long partitions[i2 - i1 + 1];
+
+    KNN_SA_partition(((KNN_SA_t *) istruct)->p, i1, i2, partitions);
+
+    for(long r, l = 1, stop = i2 - i1 + 1; l < stop; ++l)
+    {
+        while(l < stop && partitions[l] == 1)
+            ++l;
+
+        r = l + 1;
+
+        while(r <= stop && partitions[r] == 2)
+            ++r;
+
+        if(r == stop)
+            break;
+        
+        OlaSWAP(long, ((KNN_SA_t *) istruct)->indices[i1], ((KNN_SA_t *) istruct)->indices[i2]); 
+    }
+}
+
+void KNN_SA_t_copy
+(
+    void * istruct_src,
+    void * istruct_dest
+)
+
+{
+    ((KNN_SA_t *) istruct_dest)->p = ((KNN_SA_t *) istruct_src)->p;
+
+    for(long i = 1; i <= ((KNN_SA_t *) istruct_dest)->p->ny; ++i)
+        ((KNN_SA_t *) istruct_dest)->indices[i] = ((KNN_SA_t *) istruct_src)->indices[i];
+}
+
+
+void * KNN_SA_t_copy_construct
+(
+    void * istruct
+)
+
+{
+    KNN_SA_t * result = malloc(sizeof(KNN_SA_t));
+
+    result->p = ((KNN_SA_t *) istruct)->p;
+    result->indices = malloc(sizeof(long) * (result->p->ny + 1));
+
+    for(long i = 1; i <= result->p->ny; ++i)
+        result->indices[i] = ((KNN_SA_t *) istruct)->indices[i];
+
+    return((void *) result);
+}
+
+KNN_SA_t * KNN_SA_t_create
+(
+    Pattern p
+)
+
+{
+    KNN_SA_t * result = malloc(sizeof(KNN_SA_t));
+
+    result->p = p;
+    result->indices = malloc(sizeof(long) * (p->ny + 1));
+
+    for(long i = 1; i <= p->ny; ++i)
+        result->indices[i] = i;
+
+    return(result);
+}
+
+void KNN_SA_t_destroy
+(
+    void * istruct
+)
+
+{
+    free(((KNN_SA_t *) istruct)->indices);
+    free((KNN_SA_t *) istruct);
+}
+
+void KNN_SA_partition
+(
+    ///////////////////////////////
+    // Parameters                //
+    ///////////////////////////////
+
+    Pattern p,              // 
+                            //
+    long i1,                // i1 < i2
+                            //
+    long i2,                //
+                            //
+    long * result           // [0] anv. ej
+                            //
+)
+
+{
+    long c1 = (long) lround(NUMrandomUniform(i1, i2));
+    long c2 = (long) lround(NUMrandomUniform(i1, i2));
+
+    double p1[p->nx + 1]; 
+    double p2[p->nx + 1];
+
+    for(long x = 1; x <= p->nx; ++x)
+    {
+        p1[x] = p->z[c1][x];
+        p2[x] = p->z[c2][x];
+    }
+
+    for(short converging = 1; converging; )
+    {
+        double d1, d2;
+        converging = 0;
+
+        for(long i = i1, j = 1; i <= i2; ++i)
+        {
+            d1 = 0;
+            d2 = 0;
+        
+            for (long x = 1; x <= p->nx; ++x)
+            {
+                d1 += OlaSQUARE(p->z[i][x] - p1[x]);
+                d2 += OlaSQUARE(p->z[i][x] - p2[x]);
+            }
+
+            d1 = sqrt(d1);
+            d2 = sqrt(d2);
+
+            if(d1 < d2)
+            {
+                if(result[j] != 1)
+                {
+                    converging = 1;
+                    result[j] = 1;
+                }
+            }
+            else
+            { 
+                if(result[j] != 2)
+                {
+                    converging = 1;
+                    result[j] = 2;
+                }
+            }
+            ++j;
+        }
+
+        for(long x = 1; x <= p->nx; ++x)
+        {
+            p1[x] = 0;
+            p2[x] = 0;
+        }
+
+        for(long i = i1, j = 1, j1 = 1, j2 = 1; i <= i2; ++i)
+        {
+            if(result[j] == 1)
+            {
+                for(long x = 1; x <= p->nx; ++x)
+                    p1[x] += (p->z[i][x] - p1[x]) / j1;
+                ++j1;
+            }
+            else
+            {
+                for(long x = 1; x <= p->nx; ++x)
+                    p2[x] += (p->z[i][x] - p2[x]) / j2;
+                ++j2;
+            }
+            ++j;
+        }
+    }
+}
+
 
 /* End of file KNN.c */

@@ -1,6 +1,6 @@
 /* KNN_def.h
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2009 Ola Söder
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/KNN_def.h $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: KNN_def.h 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
- * os 20070529 Intial release?
+ * os 20070529 Intial release
+ * os 20090123 Bugfix: Wrong Pattern version caused serialization failure. 
+ *                     Thanks to Paul Boersma for spotting this problem.
  */
 
 #include "Pattern.h"

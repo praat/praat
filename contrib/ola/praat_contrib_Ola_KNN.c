@@ -17,22 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/praat_contrib_Ola_KNN.c $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: praat_contrib_Ola_KNN.c 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20070529 Initial release?
+ * os 20090123 Bugfix: Removed MUX:ing (KNN_learn) incompatible with
+ *                     the scripting engine. Thanks to Paul Boersma 
+ *                     for spotting this problem.
  */
 
-#include "praat.h"
 #include "KNN.h"
+#include "KNN_threads.h"
+#include "KNN_prune.h"
 #include "Pattern_to_Categories_cluster.h"
 #include "FeatureWeights.h"
-#include "KNN_prune.h"
+#include "praat.h"
 
 static wchar_t *QUERY_BUTTON   = L"Query -                ";// vad går detta ut på??
 static wchar_t *MODIFY_BUTTON  = L"Modify -               ";
@@ -49,10 +46,10 @@ FORM (KNN_create, L"Create kNN Classifier", L"kNN classifiers 1. What is a kNN c
 DO
     KNN knn = KNN_create();
     if (!knn)
-    {
         return Melder_error ("There was not enough memory to create the kNN classifier.\n");
-    }
-    if (!praat_new1 (knn, GET_STRING (L"Name"))) return 0;
+    
+    if (!praat_new1(knn, GET_STRING (L"Name"))) 
+        return(0);
 END
 
 FORM (KNN_Pattern_Categories_to_KNN, L"Create kNN classifier", L"kNN classifiers 1. What is a kNN classifier?" )
@@ -93,9 +90,7 @@ DO
         }
     }
     else
-    {
-        return Melder_error ("Failed creating kNN classifier", 0);
-    }
+        return(Melder_error("Failed creating kNN classifier", 0));
 END
 
 
@@ -129,14 +124,10 @@ DO
     double lrate = GET_REAL(L"Learning rate");
 
     if (k < 1 || k > my nInstances)
-    {
         return(Melder_error("Please select a value of k max such that 0 < k max < %d\n", my nInstances + 1));
-    }
 
     if (nseeds < 1)
-    {
         return(Melder_error("The number of seeds must exceed 1"));
-    }
 
     switch (mode)
     {
@@ -188,9 +179,7 @@ DO
     int mode = GET_INTEGER (L"Evaluation method");
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     switch (vt)
     {
@@ -249,9 +238,7 @@ DO
     int mode = GET_INTEGER (L"Evaluation method");
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     switch (vt)
     {
@@ -288,25 +275,17 @@ END
 DIRECT  (KNN_extractInputPatterns)
     KNN me = ONLY(classKNN);
     if (my nInstances > 0)  
-    {
         praat_new1(Data_copy(my input), L"Input Patterns");
-    }
     else
-    {
         return Melder_error ("Instance base is empty", 0);
-    }
 END
 
 DIRECT  (KNN_extractOutputCategories)
     KNN me = ONLY(classKNN);
     if (my nInstances > 0)
-    {
         praat_new1(Data_copy(my output), L"Output Categories");
-    }
     else
-    {
         return Melder_error ("Instance base is empty", 0);
-    }   
 END
 
 FORM (KNN_reset, L"Reset", L"KNN: Reset...")
@@ -322,13 +301,9 @@ END
 DIRECT  (KNN_shuffle)
     KNN me = ONLY(classKNN);
     if (my nInstances > 0)  
-    {
         KNN_shuffleInstances(me);
-    }
     else
-    {
         return Melder_error ("Instance base is empty", 0);
-    }
 END
 
 FORM (KNN_prune, L"Pruning", L"KNN: Prune...")
@@ -348,14 +323,10 @@ DO
     long oldn = my nInstances;
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     if (n <= 0 || n > 1 || r <= 0 || r > 1)
-    {
         return Melder_error ("Please select a pruning degree d such that 0 < d <= 1\n");
-    }
 
     long npruned = KNN_prune_prune(me, n, r, k);
 
@@ -378,9 +349,9 @@ FORM (KNN_learn, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
     RADIO (L"Ordering", 1)
     RADIOBUTTON (L"Random")
     RADIOBUTTON (L"Sequential")
-OK
+    OK
 
-DO
+    DO
     KNN  me = ONLY(classKNN);
     Pattern p = ONLY(classPattern);
     Categories c = ONLY(classCategories);
@@ -409,12 +380,20 @@ DO
 
     switch (result)
     {
-        case kOla_PATTERN_CATEGORIES_MISMATCH:   
+        case kOla_PATTERN_CATEGORIES_MISMATCH:  
             return Melder_error1 (L"The number of Categories must match the number of rows in Pattern");
         case kOla_DIMENSIONALITY_MISMATCH:
             return Melder_error1 (L"The dimensionality of Pattern must match that of the instance base");
     }
 END
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// Evaluation                                                                          //
+/////////////////////////////////////////////////////////////////////////////////////////
+
 
 FORM (KNN_evaluateWithTestSet, L"Evaluation", L"KNN & Pattern & Categories: Evaluate...")
     INTEGER (L"k neighbors", L"1")
@@ -426,7 +405,6 @@ FORM (KNN_evaluateWithTestSet, L"Evaluation", L"KNN & Pattern & Categories: Eval
 
 DO
     KNN  me = ONLY(classKNN);
-
     if (my nInstances < 1)
         return Melder_error ("Instance base is empty", 0);
 
@@ -435,12 +413,9 @@ DO
 
     long k = GET_INTEGER (L"k neighbors");
     int vt = GET_INTEGER (L"Vote weighting");
-    double result;
 
     if (k < 1 || k > my nInstances)
-    {
         return(Melder_error("Please select a value of k such that 0 < k < %d\n", my nInstances + 1));
-    }
 
     switch (vt)
     {
@@ -455,23 +430,19 @@ DO
             break;
     }
 
+    if(p->ny != c->size)
+        return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
+
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+
+
+    double result;
     FeatureWeights fws = FeatureWeights_create(p->nx);
     result = KNN_evaluateWithTestSet(me, p, c, fws, k, vt);
     forget(fws);
 
-    switch (lround(result)) 
-    {
-        case kOla_PATTERN_CATEGORIES_MISMATCH:
-            return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
-        case kOla_DIMENSIONALITY_MISMATCH:
-            return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
-        case kOla_FWEIGHTS_MISMATCH:
-            return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
-        
-        default:
-            Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
-    }   
-
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
 END
 
 FORM (KNN_evaluateWithTestSetAndFeatureWeights, L"Evaluation", L"KNN & Pattern & Categories & FeatureWeights: Evaluate...")
@@ -497,9 +468,7 @@ DO
     double result;
 
     if (k < 1 || k > my nInstances)
-    {
         return(Melder_error("Please select a value of k such that 0 < k < %d\n", my nInstances + 1));
-    }
 
     switch (vt)
     {
@@ -514,21 +483,17 @@ DO
             break;
     }
 
+    if(p->ny != c->size)
+        return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
+
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+
+    if (p->nx != fws->fweights->numberOfColumns)
+        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
+
     result = KNN_evaluateWithTestSet(me, p, c, fws, k, vt);
-
-    switch (lround(result))
-    {
-        case kOla_PATTERN_CATEGORIES_MISMATCH:
-            return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
-        case kOla_DIMENSIONALITY_MISMATCH:
-            return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
-        case kOla_FWEIGHTS_MISMATCH: 
-            return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
-
-        default:
-            Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
-}
-
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
 END
 
 
@@ -548,7 +513,6 @@ FORM (KNN_toCategories, L"Classification", L"KNN & Pattern: To Categories...")
 
 DO
     KNN  me = ONLY(classKNN);
-
     if (my nInstances < 1)
         return Melder_error ("Instance base is empty", 0);
 
@@ -558,9 +522,7 @@ DO
     int vt = GET_INTEGER (L"Vote weighting");
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     switch (vt)
     {
@@ -574,6 +536,9 @@ DO
             vt = kOla_FLAT_VOTING;
             break;
     }
+
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
     praat_new1(KNN_classifyToCategories(me, p, fws, k, vt), L"Output");
@@ -586,9 +551,6 @@ END
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
-    RADIO (L"Output", 1)
-    RADIOBUTTON (L"Winners only")
-    RADIOBUTTON (L"All candidates")
     OK
 
 DO
@@ -601,12 +563,9 @@ DO
 
     long k = GET_INTEGER (L"k neighbors");
     int vt = GET_INTEGER (L"Vote weighting");
-    int ot = GET_INTEGER (L"Output");
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
 
@@ -622,20 +581,11 @@ DO
             vt = kOla_FLAT_VOTING;
             break;
     }
+ 
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
-    switch (ot)
-    {
-        case 1:
-            ot = kOla_TO_TABLEOFREAL;
-            praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
-            break;
-
-        case 2:
-            ot = kOla_TO_TABLEOFREAL_ALL;
-            praat_new1(KNN_classifyToTableOfRealAll(me, p, fws, k, vt), L"Output");
-            break;
-    }
-
+    praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
     forget(fws);
 END
 
@@ -672,11 +622,14 @@ DO
             break;
     }
 
-
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
+
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+
+    if (p->nx != fws->fweights->numberOfColumns)
+        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
 
     praat_new1(KNN_classifyToCategories(me, p, fws, k, vt), L"Output");
 END
@@ -687,9 +640,6 @@ FORM (KNN_toTableOfRealWithFeatureWeights, L"Classification", L"KNN & Pattern & 
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
-    RADIO (L"Output", 1)
-    RADIOBUTTON (L"Winners only")
-    RADIOBUTTON (L"All candidates")
     OK
 
 DO
@@ -703,17 +653,12 @@ DO
 
     long k = GET_INTEGER (L"k neighbors");
     int vt = GET_INTEGER (L"Vote weighting");
-    int ot = GET_INTEGER (L"Output");
 
     if (k < 1 || k > my nInstances)
-    {
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
-    }
 
     if (p->nx != fws->fweights->numberOfColumns)
-    {
         return Melder_error1 (L"The number of features and the number of feature weights must match\n");
-    }
 
     switch (vt)
     {
@@ -728,18 +673,8 @@ DO
             break;
     }
 
-    switch (ot)
-    {
-        case 1:
-            ot = kOla_TO_TABLEOFREAL;
-            praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
-            break;
-
-        case 2:
-            ot = kOla_TO_TABLEOFREAL_ALL;
-            praat_new1(KNN_classifyToTableOfRealAll(me, p, fws, k, vt), L"Output");
-            break;
-    }
+    praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
+    forget(fws);
 END
 
 
@@ -761,14 +696,26 @@ DO
     Pattern p = ONLY(classPattern);
     if (p->nx > 0 && p->ny > 0)
     {
+        long k = GET_INTEGER(L"k clusters");
+        long rs =  GET_INTEGER(L"Maximum number of reseeds");
+        double rc =  GET_REAL(L"Cluster size ratio constraint");
+ 
+        if (k < 1 || k > p->ny)
+            return Melder_error ("Please select a value of k such that 0 < k <= %d\n", p->ny);
+ 
+        if (rs < 0)
+            return Melder_error1 (L"The maximum number of reseeds must not be a negative value\n");
+
+        if (rc > 1 || rc <= 0)
+            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1\n");
+
         FeatureWeights fws = FeatureWeights_create(p->nx);
-        praat_new1(Pattern_to_Categories_cluster(p, fws, GET_INTEGER(L"k clusters"), GET_REAL(L"Cluster size ratio constraint"), GET_INTEGER(L"Maximum number of reseeds")), L"Output");
+
+        praat_new1(Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output");
         forget(fws);
     }
     else
-    {
         return Melder_error ("Pattern is empty", 0);
-    }
 END
 
 FORM (Pattern_to_Categories_clusterWithFeatureWeights, L"k-means clustering", L"Pattern & FeatureWeights: To Categories...")
@@ -781,13 +728,28 @@ DO
     Pattern p = ONLY(classPattern);
     if (p->nx > 0 && p->ny > 0)
     {
-        FeatureWeights fws = ONLY(classFeatureWeights);
-        praat_new1(Pattern_to_Categories_cluster(p, fws, GET_INTEGER(L"k clusters"), GET_REAL(L"Cluster size ratio constraint"), GET_INTEGER(L"Maximum number of reseeds")), L"Output");
+        FeatureWeights fws = ONLY(classFeatureWeights); 
+        
+        long k = GET_INTEGER(L"k clusters");
+        long rs =  GET_INTEGER(L"Maximum number of reseeds");
+        double rc =  GET_REAL(L"Cluster size ratio constraint");
+ 
+        if (p->nx != fws->fweights->numberOfColumns)
+            return Melder_error1 (L"The number of features and the number of feature weights must match\n");
+
+        if (k < 1 || k > p->ny)
+            return Melder_error ("Please select a value of k such that 0 < k <= %d\n", p->ny);
+ 
+        if (rs < 0)
+            return Melder_error1 (L"The maximum number of reseeds must not be a negative value\n");
+
+        if (rc > 1 || rc <= 0)
+            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1\n");
+
+        praat_new1(Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output");
     }   
     else
-    {
         return Melder_error ("Pattern is empty", 0);
-    }
 END
 
 
@@ -808,11 +770,44 @@ END
 
 DIRECT (KNN_patternToDissimilarityWithFeatureWeights)
     Pattern p = ONLY(classPattern);
-    FeatureWeights fws = ONLY(classFeatureWeights);
+    FeatureWeights fws = ONLY(classFeatureWeights);  
+
+    if (p->nx != fws->fweights->numberOfColumns)
+        return Melder_error1 (L"The number of features and the number of feature weights must match\n");
+
     praat_new1(KNN_patternToDissimilarity(p, fws), L"Output");
 END
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// Computation of permutation                                                          //
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+FORM (KNN_SA_computePermutation, L"To Permutation...", L"Pattern & Categories: To FeatureWeights...")
+    
+    NATURAL(L"Tries per step", L"200")
+    NATURAL(L"Iterations", L"10")
+    POSITIVE(L"Step size", L"10")
+    POSITIVE(L"Boltzmann constant", L"1.0")
+    POSITIVE(L"Initial temperature", L"0.002")
+    POSITIVE(L"Damping factor", L"1.005")
+    POSITIVE(L"Final temperature", L"0.000002")
+    OK
+DO
+    KNN me = ONLY(classKNN);
+    
+    long tries = GET_INTEGER(L"Tries per step");
+    long iterations = GET_INTEGER(L"Iterations");
+    double step_size = GET_REAL(L"Step size");
+    double bolzmann_c = GET_REAL(L"Boltzmann constant");
+    double temp_start = GET_REAL(L"Initial temperature");
+    double temp_damp = GET_REAL(L"Damping factor");
+    double temp_stop = GET_REAL(L"Final temperature");
+
+    praat_new1(KNN_SA_ToPermutation(me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop), L"Output");
+
+END
 
 
 
@@ -853,7 +848,6 @@ FORM (FeatureWeights_computeWrapperExt, L"Feature weights", L"KNN & Pattern & Ca
 
 DO
     KNN  me = ONLY(classKNN);
-
     if (my nInstances < 1)
         return Melder_error ("Instance base is empty", 0);
 
@@ -878,6 +872,9 @@ DO
     long k = GET_INTEGER (L"k neighbors");
     if (k < 1 || k > my nInstances)
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+
+    if(p->nx != (my input)->nx)
+        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
     praat_new1(FeatureWeights_computeWrapperExt(me, p, c, k, mode, GET_INTEGER(L"Number of seeds"), GET_REAL(L"Learning rate"), GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization")), L"Output");
 END
@@ -955,14 +952,18 @@ FORM (Pattern_create, L"Create Pattern", 0)
 DO
     if (! praat_new1 (Pattern_create (  GET_INTEGER (L"Number of patterns"),
                                         GET_INTEGER (L"Dimension of a pattern")), 
-                                        GET_STRING (L"Name"))) return 0;
+                                        GET_STRING (L"Name"))) 
+    {
+        return 0;
+    }
 END
 
 FORM (Categories_create, L"Create Categories", 0)
     WORD (L"Name", L"empty")
     OK
 DO
-    if (! praat_new1 (Categories_create (), GET_STRING (L"Name"))) return 0;
+    if (! praat_new1 (Categories_create (), GET_STRING (L"Name"))) 
+        return 0;
 END
 
 FORM (FeatureWeights_create, L"Create FeatureWeights", 0)
@@ -970,10 +971,52 @@ FORM (FeatureWeights_create, L"Create FeatureWeights", 0)
 NATURAL (L"Number of weights", L"1")
 OK
 DO
-    if (! praat_new1 (FeatureWeights_create (GET_INTEGER(L"Number of weights")), GET_STRING (L"Name"))) return 0;
+    if (! praat_new1 (FeatureWeights_create (GET_INTEGER(L"Number of weights")), GET_STRING (L"Name"))) 
+        return 0;
 END
 
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// DEBUG                                                                               //
+/////////////////////////////////////////////////////////////////////////////////////////
+
+// Disabled
+/*
+#ifdef _DEBUG
+
+DIRECT (KNN_debug_KNN_SA_partition)
+    Pattern p = ONLY(classPattern);
+    Pattern output = Pattern_create(p->ny, p->nx);
+    
+    if(!output)
+        return(Melder_error ("Could not create Pattern!\n"));
+
+    long result[p->ny + 1];
+    KNN_SA_partition(p, 1, p->ny, result);
+
+    for(long k = 1, c = 1; k <= output->ny; ++k, ++c)
+        for(long i = 1; i <= p->ny && k <= output->ny; ++i)
+            if(result[i] == c)
+            {
+                for(long j = 1; j <= output->nx; ++j)
+                    output->z[k][j] = p->z[i][j];
+                ++k;
+            }
+
+    praat_new1(output, L"Output");
+
+END
+
+DIRECT (KNN_debug_KNN_getNumberOfCPUs)
+    Melder_information2 (Melder_integer(KNN_getNumberOfCPUs()), L" CPUs available");
+END
+
+DIRECT (KNN_debug_KNN_threadTest)
+    KNN_threadTest();
+END
+
+#endif
+*/
 
 
 
@@ -1039,12 +1082,12 @@ void praat_contrib_Ola_KNN_init (void)
 // Menu //
 //////////
 
-    praat_addMenuCommand (L"Objects", L"New", L"KNN classifiers", 0, 0, 0);
+    praat_addMenuCommand (L"Objects", L"New", L"kNN classifiers", 0, 0, 0);
 
-    praat_addMenuCommand (L"Objects", L"New", L"KNN classifiers", 0, 1, DO_KNN_help);
+    praat_addMenuCommand (L"Objects", L"New", L"kNN classifiers", 0, 1, DO_KNN_help);
     praat_addMenuCommand (L"Objects", L"New", L"-- KNN --", 0, 1, 0);
 
-    praat_addMenuCommand (L"Objects", L"New", L"Create KNN classifier...", 0, 1, DO_KNN_create);
+    praat_addMenuCommand (L"Objects", L"New", L"Create kNN classifier...", 0, 1, DO_KNN_create);
 
     praat_addMenuCommand (L"Objects", L"New", L"Advanced", 0, 1, 0);
     praat_addMenuCommand (L"Objects", L"New", L"Create Pattern...", 0, 2, DO_Pattern_create);
@@ -1056,7 +1099,7 @@ void praat_contrib_Ola_KNN_init (void)
 // Actions //
 /////////////
 
-    praat_addAction1 (classKNN, 0, L"KNN help", 0, 0, DO_KNN_help);
+    praat_addAction1 (classKNN, 0, L"kNN help", 0, 0, DO_KNN_help);
     praat_addAction1 (classKNN, 0, QUERY_BUTTON, 0, 0, 0);
     praat_addAction1 (classKNN, 1, L"Get optimized parameters...", 0, 2, DO_KNN_getOptimumModel);
     praat_addAction1 (classKNN, 1, L"Get accuracy estimate...", 0, 2, DO_KNN_evaluate);
@@ -1071,6 +1114,10 @@ void praat_contrib_Ola_KNN_init (void)
     praat_addAction1 (classKNN, 0, L"Extract output Categories", 0, 1, DO_KNN_extractOutputCategories);
 
     praat_addAction1 (classKNN, 0, L"To FeatureWeights...", 0, 0, DO_FeatureWeights_computeWrapperInt);
+
+ // praat_addAction1 (classKNN, 0, L"To Permutation...", 0, 0, DO_KNN_SA_computePermutation);
+ // praat_addAction2 (classKNN, 1, classFeatureWeights, 1, L"To Permutation...", 0, 0, DO_KNN_evaluateWithFeatureWeights);
+
     praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, L"Learn...", 0, 0, DO_KNN_learn);
     praat_addAction2 (classKNN, 1, classFeatureWeights, 1, L"Evaluate...", 0, 0, DO_KNN_evaluateWithFeatureWeights);
     praat_addAction (classKNN, 1, classPattern, 1, classCategories, 1, L"Evaluate...", 0, 0, DO_KNN_evaluateWithTestSet);
@@ -1090,6 +1137,19 @@ void praat_contrib_Ola_KNN_init (void)
     praat_addAction2 (classPattern, 1, classCategories, 1, L"To FeatureWeights...", 0, 0, DO_FeatureWeights_computeRELIEF);
     praat_addAction2 (classPattern, 1, classCategories, 1, L"To KNN Classifier...", 0, 0, DO_KNN_Pattern_Categories_to_KNN);
 
+///////////
+// DEBUG //
+///////////
+
+/*
+#ifdef _DEBUG
+
+    praat_addAction1 (classKNN, 0, L"_DEBUG: KNN_getNumberOfCPUs", 0, 0, DO_KNN_debug_KNN_getNumberOfCPUs);
+    praat_addAction1 (classKNN, 0, L"_DEBUG: KNN_threadTest", 0, 0, DO_KNN_debug_KNN_threadTest);
+    praat_addAction1 (classPattern, 1, L"_DEBUG: KNN_SA_partition", 0, 1, DO_KNN_debug_KNN_SA_partition);
+
+#endif
+*/
 
 ///////////
 // Hints //
@@ -1099,6 +1159,7 @@ void praat_contrib_Ola_KNN_init (void)
     praat_addAction1 (classPattern, 0, L"& FeatureWeights: To Dissimilarity?", 0, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
 
     praat_addAction1 (classKNN, 0, L"& FeatureWeights: Evaluate?", 0, 0, DO_hint_KNN_and_FeatureWeights_evaluate);
+//  praat_addAction1 (classKNN, 0, L"& FeatureWeights: To Permutation?", 0, 0, DO_hint_Pattern_and_FeatureWeights_to_Dissimilarity);
     praat_addAction1 (classKNN, 0, L"& Pattern: Classify?", 0, 0, DO_hint_KNN_and_Pattern_classify);
     praat_addAction1 (classKNN, 0, L"& Pattern & FeatureWeights: Classify?", 0, 0, DO_hint_KNN_and_Pattern_and_FeatureWeights_classify);
     praat_addAction1 (classKNN, 0, L"& Pattern & Categories: Learn?", 0, 0, DO_hint_KNN_and_Pattern_and_Categories_learn);

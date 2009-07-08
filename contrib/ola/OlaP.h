@@ -1,7 +1,7 @@
-#ifndef _Misc_h_
-#define _Misc_h_
+#ifndef _OlaP_h_
+#define _OlaP_h_
 
-/* Misc.h
+/* OlaP.h
  *
  * Copyright (C) 2007-2008 Ola Söder
  *
@@ -20,13 +20,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/OlaP.h $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: OlaP.h 137 2008-08-10 17:34:07Z stix $
- */
-
 /*
  * os 20080529 Initial release
  */
@@ -35,16 +28,20 @@
 // Macros                              //
 /////////////////////////////////////////
 
-#define LONGARRAYSWAP(a, x, y) {long temp = a[x]; a[x] = a[y]; a[y] = temp;}
-#define LONGSWAP(x, y) {long temp = x; x = y; y = temp;}
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
-#define SQUARE(x) ((x) * (x))				
+#define OlaSWAP(TYPE, X, Y) {TYPE temp = X; X = Y; Y = temp;}
+#define OlaMAX(x,y) ((x) > (y) ? (x) : (y))
+#define OlaMIN(x,y) ((x) < (y) ? (x) : (y))
+#define OlaSQUARE(x) ((x) * (x))			
+
+/////////////////////////////////////////
+// DEBUG                               //
+/////////////////////////////////////////
+
 
 /////////////////////////////////////////
 // Misc defines                        //
 /////////////////////////////////////////
 
-#define MINFLOAT 0.0000000000000000000001
+#define kOla_MINFLOAT 0.0000000000000000000001
 
 #endif /* _Misc_h_ */

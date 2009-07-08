@@ -1,4 +1,3 @@
-
 /* FeatureWeights.c
  *
  * Copyright (C) 2007-2008 Ola Söder
@@ -16,13 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/* $URL: svn://pegasos.dyndns.biz/praat/trunk/kNN/FeatureWeights.c $
- * $Rev: 137 $
- * $Author: stix $
- * $Date: 2008-08-10 19:34:07 +0200 (Sun, 10 Aug 2008) $
- * $Id: FeatureWeights.c 137 2008-08-10 17:34:07Z stix $
  */
 
 /*
@@ -225,8 +217,8 @@ FeatureWeights FeatureWeights_computeWrapperInt
                 {
                     for (long y = 0; y < nseeds; y++)
                     {
-                        cs[y]->fweights->data[1][x] = NUMrandomUniform(MAX(0, cs[nseeds]->fweights->data[1][x] - range),
-                                                      MIN(1, cs[nseeds]->fweights->data[1][x] + range));
+                        cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
+                                                      OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
                         results[y] = KNN_evaluate(me, cs[y], k, d, emode);
                     }
                     for (long q = 0; q < nseeds; q++)
@@ -246,8 +238,8 @@ FeatureWeights FeatureWeights_computeWrapperInt
                 {
                     for (long x = 1; x <= (my input)->nx; x++)
                     {
-                        cs[y]->fweights->data[1][x] = NUMrandomUniform(MAX(0, cs[nseeds]->fweights->data[1][x] - range),
-                                                      MIN(1, cs[nseeds]->fweights->data[1][x] + range));
+                        cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
+                                                      OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
                     }
                     results[y] = KNN_evaluate(me, cs[y], k, d, emode);
                 }
@@ -340,8 +332,8 @@ FeatureWeights FeatureWeights_computeWrapperExt
                 {
                     for (long y = 0; y < nseeds; y++)
                     {
-                        cs[y]->fweights->data[1][x] = NUMrandomUniform(MAX(0, cs[nseeds]->fweights->data[1][x] - range),
-                                                      MIN(1, cs[nseeds]->fweights->data[1][x] + range));
+                        cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
+                                                      OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
                         results[y] = FeatureWeights_evaluate(cs[y], nn, pp, c, k, d);
                     }
                     for (long q = 0; q < nseeds; q++)
@@ -361,8 +353,8 @@ FeatureWeights FeatureWeights_computeWrapperExt
                 {
                     for (long x = 1; x <= pp->nx; x++)
                     {
-                        cs[y]->fweights->data[1][x] = NUMrandomUniform(MAX(0, cs[nseeds]->fweights->data[1][x] - range),
-                                                      MIN(1, cs[nseeds]->fweights->data[1][x] + range));
+                        cs[y]->fweights->data[1][x] = NUMrandomUniform(OlaMAX(0, cs[nseeds]->fweights->data[1][x] - range),
+                                                      OlaMIN(1, cs[nseeds]->fweights->data[1][x] + range));
                     }
                     results[y] = FeatureWeights_evaluate(cs[y], nn, pp, c, k, d);
                 }

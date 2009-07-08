@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/05/08
+ * pb 2009/06/30
  */
 
 #ifndef _Editor_h_
@@ -36,8 +36,8 @@ DemoEditor DemoEditor_create (Widget parent);
 void Demo_open (Interpreter interpreter);
 void Demo_close (void);
 
-void Demo_show (void);
-bool Demo_waitForInput (void);
+void Demo_show (Interpreter interpreter);
+bool Demo_waitForInput (Interpreter interpreter);
 bool Demo_clicked (void);
 double Demo_x (void);
 double Demo_y (void);

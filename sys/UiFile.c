@@ -219,7 +219,7 @@ static void classUiInfile_ok (I) {
 	#endif
 	structMelderFile file;
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-	if (! my okCallback (me, NULL, NULL, my okClosure)) {
+	if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 		Melder_flushError (NULL);
 	} else if (! my shiftKeyPressed) {
@@ -382,7 +382,7 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
 	(void) call;
 	if (w) GuiObject_hide (w);
-	if (! my okCallback (me, NULL, NULL, my okClosure)) {
+	if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
 		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 		Melder_flushError (NULL);
 	}

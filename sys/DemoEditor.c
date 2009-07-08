@@ -21,6 +21,7 @@
  * pb 2009/05/04 created
  * pb 2009/05/06 Demo_waitForInput ()
  * pb 2009/05/08 Demo_input ()
+ * pb 2009/06/30 removed interpreter member (could cause Praat to crash when the editor was closed after an "execute")
  */
 
 #include "DemoEditor.h"
@@ -35,8 +36,7 @@
 	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed; \
 	long x, y; \
 	wchar_t key; \
-	bool waitingForInput, userWantsToClose; \
-	Interpreter interpreter;
+	bool waitingForInput, userWantsToClose, fullScreen;
 #define DemoEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (DemoEditor, Editor);
 
@@ -190,7 +190,6 @@ void Demo_open (Interpreter interpreter) {
 			theCurrentPraatPicture -> y1NDC = 0;
 			theCurrentPraatPicture -> y2NDC = 100;
 		}
-		theDemoEditor -> interpreter = interpreter;
 		theCurrentPraatPicture = theDemoEditor -> praatPicture;
 	#endif
 }
@@ -199,15 +198,15 @@ void Demo_close (void) {
 	theCurrentPraatPicture = & theForegroundPraatPicture;
 }
 
-void Demo_show (void) {
+void Demo_show (Interpreter interpreter) {
 	if (theDemoEditor == NULL) return;
-	Demo_open (theDemoEditor -> interpreter);
+	Demo_open (interpreter);
 	GuiWindow_show (theDemoEditor -> dialog);
 	GuiWindow_drain (theDemoEditor -> shell);
 	Demo_close ();
 }
 
-bool Demo_waitForInput (void) {
+bool Demo_waitForInput (Interpreter interpreter) {
 	if (theDemoEditor == NULL) return false;
 	GuiWindow_show (theDemoEditor -> dialog);
 	theDemoEditor -> clicked = false;
@@ -228,7 +227,7 @@ bool Demo_waitForInput (void) {
 	#endif
 	theDemoEditor -> waitingForInput = false;
 	if (theDemoEditor -> userWantsToClose) {
-		Interpreter_stop (theDemoEditor -> interpreter);
+		Interpreter_stop (interpreter);
 		forget (theDemoEditor);
 		return false;
 	}
