@@ -53,6 +53,7 @@
  djmw 20071202 Melder_warning<n>
  djmw 20080521 Confusion_drawAsnumbers
  djmw 20090109 KlattGrid formulas for formant
+ djmw 20090708 KlattTable <-> Table
 */
 
 #include "praat.h"
@@ -772,16 +773,31 @@ DO
 		GET_INTEGER (L"Number of data points")))
 END
 
-DIRECT (Covariance_difference)
-	Covariance c1 = NULL, c2 = NULL;
-	double chisq, p; long ndf;
-	WHERE (SELECTED && CLASS == classCovariance)
+DIRECT (Covariances_reportEquality)
+	Ordered covars = Ordered_create ();
+	if (covars == NULL) return 0;
+	WHERE (SELECTED)
 	{
-		if (c1) c2 = OBJECT; else c1 = OBJECT;
+		if (! Collection_addItem (covars, OBJECT))
+		{
+			covars -> size = 0; forget (covars); return 0;
+		}
 	}
-	if (! Covariance_difference (c1, c2, &p, &chisq, &ndf)) return 0;
-	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
-		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
+	MelderInfo_open ();
+	{
+		double chisq, p, df;
+		Covariances_equality (covars, 1, &p, &chisq, &df);
+		MelderInfo_writeLine1 (L"Difference between covariance matrices:");
+		MelderInfo_writeLine2 (L"Significance of difference (bartlett) = ", Melder_double (p));
+		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+		Covariances_equality (covars, 2, &p, &chisq, &df);
+		MelderInfo_writeLine2 (L"Significance of difference (wald) = ", Melder_double (p));
+		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+	}
+	MelderInfo_close ();
+	covars -> size = 0; forget (covars);
 END
 
 DIRECT (Covariance_to_Correlation)
@@ -875,10 +891,25 @@ DO
 END
 
 DIRECT (Discriminant_getHomegeneityOfCovariances_box)
-	double chisq, p; long ndf; Discriminant thee = ONLY_OBJECT;
+	Discriminant thee = ONLY_OBJECT;
+	double chisq, p;
+	long ndf;
 	SSCPs_getHomegeneityOfCovariances_box (thy groups, &p, &chisq, &ndf);
 	Melder_information5 (Melder_double (p), L" (=probability, based on chisq = ",
 		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
+END
+
+DIRECT (Discriminant_reportEqualityOfCovariances_wald)
+	Discriminant thee = ONLY_OBJECT;
+	double chisq, prob, df;
+	MelderInfo_open ();
+	Covariances_equality ((Ordered)(thy groups), 2, &prob, &chisq, &df);
+	MelderInfo_writeLine1 (L"Wald test for equality of covariance matrices:");
+	MelderInfo_writeLine2 (L"Chi squared: ", Melder_double (chisq));
+	MelderInfo_writeLine2 (L"Significance: ", Melder_double (prob));
+	MelderInfo_writeLine2 (L"Degrees of freedom: ", Melder_double (df));
+	MelderInfo_writeLine2 (L"Number of matrices: ", Melder_integer (thy groups -> size));
+	MelderInfo_close ();
 END
 
 FORM (Discriminant_getConcentrationEllipseArea, L"Discriminant: Get concentration ellipse area", L"Discriminant: Get concentration ellipse area...")
@@ -2048,6 +2079,21 @@ DO
 	EVERY_TO (KlattTable_to_Sound (OBJECT, GET_REAL (L"Sampling frequency"), GET_INTEGER (L"Synthesis model"),
 		GET_INTEGER (L"Number of formants"), GET_REAL (L"Frame duration"), GET_INTEGER (L"Voicing source"),
 		GET_REAL (L"Flutter percentage"), outputType))
+END
+
+FORM (KlattTable_to_KlattGrid, L"KlattTable: To KlattGrid", 0)
+	POSITIVE (L"Frame duration (s)", L"0.002")
+	OK
+DO
+	EVERY_TO (KlattTable_to_KlattGrid (OBJECT, GET_REAL (L"Frame duration")))
+END
+
+DIRECT (KlattTable_to_Table)
+	EVERY_TO (KlattTable_to_Table (OBJECT))
+END
+
+DIRECT (Table_to_KlattTable)
+	EVERY_TO (Table_to_KlattTable (OBJECT))
 END
 
 /******************* LegendreSeries *********************************/
@@ -3430,6 +3476,10 @@ FORM_READ (Sound_readFromRawFileBE, L"Read Sound from raw 16-bit Little Endian f
 		16000), MelderFile_name (file))) return 0;
 END
 
+FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0)
+	if (! praat_new1 (KlattTable_readFromRawTextFile (file), MelderFile_name (file))) return 0;
+END
+
 FORM_WRITE (Sound_writeToRawFileBE, L"Sound: Write to raw 16-bit Big Endian file", 0, L"raw")
 	if (! Sound_writeToRawFile (ONLY_OBJECT, file, 0, 0, 16, 0)) return 0;
 END
@@ -3791,6 +3841,27 @@ DO
 END
 
 /******************* TableOfReal ****************************/
+
+FORM (TableOfReal_reportMultivariateNormality, L"TableOfReal: Report multivariate normality (Henze-Zirkler)", L"TableOfReal: Report multivariate normality (HZ)...")
+	REAL (L"Beta", L"0.0")
+	OK
+DO
+	TableOfReal t = ONLY (classTableOfReal);
+	long n = t -> numberOfRows, p = t -> numberOfColumns;
+	double prob, wnb, lnmu, lnvar;
+	double beta = GET_REAL (L"Beta");
+	MelderInfo_open ();
+	prob = NUMnormalityTest_HenzeZirkler (t -> data, n, p, &beta, &wnb, &lnmu, &lnvar);
+	MelderInfo_writeLine1 (L"Henze-Zirkler normality test:");
+	MelderInfo_writeLine2 (L"Henze-Zirkler statistic: ", Melder_double (wnb));
+	MelderInfo_writeLine2 (L"Significance of normality: ", Melder_double (prob));
+	MelderInfo_writeLine2 (L"Lognormal mean: ", Melder_double (lnmu));
+	MelderInfo_writeLine2 (L"Lognormal variance: ", Melder_double (lnvar));
+	MelderInfo_writeLine2 (L"Smoothing beta: ", Melder_double (beta));
+	MelderInfo_writeLine2 (L"Sample size: ", Melder_integer (n));
+	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (p));
+	MelderInfo_close ();
+END
 
 DIRECT (TableOfReal_and_Permutation_permuteRows)
 	TableOfReal t = ONLY (classTableOfReal);
@@ -4352,6 +4423,7 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Big Endian file...", L"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
+	praat_addMenuCommand (L"Objects", L"Read", L"Read KlattTable from raw text file...", L"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
 
     praat_addAction1 (classActivation, 0, L"Modify", 0, 0, 0);
     praat_addAction1 (classActivation, 0, L"Formula...", 0, 0,
@@ -4448,10 +4520,11 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classCovariance, 1, L"Get significance of variances ratio...", L"Get significance of one variance...", 1, DO_Covariance_getSignificanceOfVariancesRatio);
 	praat_addAction1 (classCovariance, 1, L"Get fraction variance...", L"Get significance of variances ratio...", 1, DO_Covariance_getFractionVariance);
 	praat_addAction1 (classCovariance, 2, L"Report multivariate mean difference...", L"Get fraction variance...", 1, DO_Covariances_reportMultivariateMeanDifference);
+	praat_addAction1 (classCovariance, 2, L"Difference", L"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
+	praat_addAction1 (classCovariance, 0, L"Report equality of covariances", L"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, DO_Covariances_reportEquality);
 
 	praat_addAction1 (classCovariance, 0, L"To TableOfReal (random sampling)...", 0, 0, DO_Covariance_to_TableOfReal_randomSampling);
 
-	praat_addAction1 (classCovariance, 2, L"Difference", 0, 0, DO_Covariance_difference);
 	praat_addAction1 (classCovariance, 0, L"To Correlation", 0, 0, DO_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, L"To PCA", 0, 0, DO_Covariance_to_PCA);
 
@@ -4489,8 +4562,10 @@ void praat_uvafon_David_init (void)
 		praat_addAction1 (classDiscriminant, 1, L"Get cumulative contribution of components...", 0, 1, DO_Discriminant_getCumulativeContributionOfComponents);
 		praat_addAction1 (classDiscriminant, 1, L"Get partial discrimination probability...", 0, 1,
 			DO_Discriminant_getPartialDiscriminationProbability);
-		praat_addAction1 (classDiscriminant, 1, L"Get homogeneity of covariances (box)", 0, 1,
+		praat_addAction1 (classDiscriminant, 1, L"Get homogeneity of covariances (box)", 0, praat_DEPTH_1 | praat_HIDDEN,
 			DO_Discriminant_getHomegeneityOfCovariances_box);
+		praat_addAction1 (classDiscriminant, 1, L"Report equality of covariance matrices", 0, 1,
+			DO_Discriminant_reportEqualityOfCovariances_wald);
 		praat_addAction1 (classDiscriminant, 1, L"-- ellipses --", 0, 1, 0);
 		praat_addAction1 (classDiscriminant, 1, L"Get sigma ellipse area...", 0, 1, DO_Discriminant_getConcentrationEllipseArea);
 		praat_addAction1 (classDiscriminant, 1, L"Get confidence ellipse area...", 0, 1, DO_Discriminant_getConfidenceEllipseArea);
@@ -4595,6 +4670,8 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classKlattTable, 0, L"KlattTable help", 0, 0, DO_KlattTable_help);
 	praat_addAction1 (classKlattTable, 0, L"To Sound...", 0, 0, DO_KlattTable_to_Sound);
+	praat_addAction1 (classKlattTable, 0, L"To KlattGrid...", 0, 0, DO_KlattTable_to_KlattGrid);
+	praat_addAction1 (classKlattTable, 0, L"To Table", 0, 0, DO_KlattTable_to_Table);
 
 	praat_addAction1 (classLegendreSeries, 0, L"LegendreSeries help", 0, 0, DO_LegendreSeries_help);
 	praat_FunctionTerms_init (classLegendreSeries);
@@ -4797,7 +4874,10 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSVD, 0, L"Extract singular values", 0, 0, DO_SVD_extractSingularValues);
 
 	praat_addAction1 (classTable, 0, L"Scatter plot (ci)...", 0, praat_DEPTH_1|praat_HIDDEN, DO_Table_drawScatterPlotWithConfidenceIntervals);
+	praat_addAction1 (classTable, 0, L"To KlattTable", 0, praat_HIDDEN, DO_Table_to_KlattTable);
 
+	praat_addAction1 (classTableOfReal, 1, L"Report multivariate normality...", L"Get column stdev (label)...",
+		praat_DEPTH_1|praat_HIDDEN, DO_TableOfReal_reportMultivariateNormality);
 	praat_addAction1 (classTableOfReal, 0, L"Append columns", L"Append", 1, DO_TableOfReal_appendColumns);
 	praat_addAction1 (classTableOfReal, 0, L"Multivariate statistics -", 0, 0, 0);
 	praat_addAction1 (classTableOfReal, 0, L"To Discriminant", 0, 1, DO_TableOfReal_to_Discriminant);

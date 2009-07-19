@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20080317 Latest modification.
+ djmw 20090707 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -39,8 +39,8 @@ int NUMstrcmp (const char *s1, const char *s2);
 int NUMwcscmp (const wchar_t *s1, const wchar_t *s2);
 /*
 	Compares strings, accepts NUL-strings (NULL < 'a')
-	return s1 == NULL ? (s2 == NULL ? 0 : - 1) : 
-		(s2 == NULL ? 1 : strcmp (s1, s2)); 
+	return s1 == NULL ? (s2 == NULL ? 0 : - 1) :
+		(s2 == NULL ? 1 : strcmp (s1, s2));
 */
 
 int NUMstring_containsPrintableCharacter (wchar_t *s);
@@ -51,9 +51,9 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
 int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi);
 int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
 void NUMstrings_free (wchar_t **s, long lo, long hi);
-int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi, 
+int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
 	wchar_t *precursor, long number, long increment);
-/* 
+/*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
 		...
@@ -68,51 +68,51 @@ regexp *NUMregexp_compile (const wchar_t *regexp);
 
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp);
 /*
-	Returns a pointer to the first occurrence in 'string' of the 
+	Returns a pointer to the first occurrence in 'string' of the
 	regular expression 'searchRE'. It returns a null pointer if
 	no match is found.
 */
 
-wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, 
-	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, 
+wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
+	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches,
 	long *nstringmatches, int use_regexp);
 /*
 	Searches and replaces in string array of strings.
-	If use_regexp != 0, 'search' and 'replace' will be interpreted 
+	If use_regexp != 0, 'search' and 'replace' will be interpreted
 	as regular expressions. Else these strings are taken literally.
-	
+
 	'maximumNumberOfReplaces' is the maximum number of replaces in EACH string
-	in the array of strings (you can replace ALL occurrences by making this 
+	in the array of strings (you can replace ALL occurrences by making this
 	number <= 0).
 	The totalnumber of matches found is returned in 'nmatches'.
 	The number of strings with at least one match is returned in
 	'nstringmatches'.
 */
 
-wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, 
+wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search,
 	const wchar_t *replace, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-char *str_replace_regexp (char *string, regexp *search_compiled, 
+char *str_replace_regexp (char *string, regexp *search_compiled,
 	const char *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
-	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on 
-	the basis of regular expressions (RE). 
-	If maximumNumberOfReplaces <= 0 the interpreted 'replaceRE' replaces 
+	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
+	the basis of regular expressions (RE).
+	If maximumNumberOfReplaces <= 0 the interpreted 'replaceRE' replaces
 	ALL occurrences.
-	'search_regexp' is an efficient representation of the search RE and 
+	'search_regexp' is an efficient representation of the search RE and
 	is the result of the compileRE-function which must be called first before
 	calling this routine.
 	The number of matches found is returned in 'nmatches'.
 */
-	
+
 void NUMlvector_extrema (long v[], long lo, long hi, double *min, double *max);
 void NUMfvector_extrema (float v[], long lo, long hi, double *min, double *max);
 void NUMivector_extrema (int v[], long lo, long hi, double *min, double *max);
-void NUMdvector_extrema (double v[], long lo, long hi, double *min, 
+void NUMdvector_extrema (double v[], long lo, long hi, double *min,
 	double *max);
 void NUMsvector_extrema (short v[], long lo, long hi, double *min, double *max);
 /*  Function:
@@ -138,15 +138,15 @@ double **NUMdmatrix_transpose (double **m, long nr, long nc);
 	Transpose a nr x nc matrix.
 */
 
-void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce, 
+void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce,
 	double *min, double *max);
-void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce, 
+void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce,
 	double *min, double *max);
-void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce, 
+void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce,
 	double *min, double *max);
-void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce, 
+void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce,
 	double *min, double *max);
-void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce, 
+void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce,
 	double *min, double *max);
 
 
@@ -155,7 +155,7 @@ void NUMfvector_clip (float v[], long lo, long hi, double min, double max);
 void NUMivector_clip (int v[], long lo, long hi, double min, double max);
 void NUMdvector_clip (double v[], long lo, long hi, double min, double max);
 void NUMsvector_clip (short v[], long lo, long hi, double min, double max);
-/* 
+/*
 	Clip array values.
 	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
 */
@@ -197,7 +197,7 @@ void NUMnormalizeColumns (double **a, long nr, long nc, double norm);
 void NUMnormalize (double **a, long nr, long nc, double norm);
 /*
 	Scale all elements of the matrix [1..nr][1..nc] such that
-	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.	
+	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.
 */
 
 void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce);
@@ -208,12 +208,12 @@ void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce);
 void NUMaverageColumns (double **a, long rb, long re, long cb, long ce);
 /* a[i][j] = average[j]) */
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol, 
+void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 	double *average, double *variance);
 /*
 	Get mean and variance of a column.
-	When average and/or variance are NULL, the corresponding output is 
-	NOT given.   
+	When average and/or variance are NULL, the corresponding output is
+	NOT given.
  */
 
 void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
@@ -221,9 +221,22 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	double *covariance);
 /*
 	Get mean and variance of two columns.
-	When average and/or variance are NULL, the corresponding output is 
-	NOT given.   
+	When average and/or variance are NULL, the corresponding output is
+	NOT given.
  */
+
+int NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
+/*
+	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
+	The matrix covar must already be allocated.
+	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
+*/
+
+double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method);
+/*
+	calculate multivariate kurtosis.
+	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
+*/
 
 int NUMmad (double *x, long n, double *location, int wantlocation,
 	double *mad, double *work);
@@ -233,7 +246,7 @@ int NUMmad (double *x, long n, double *location, int wantlocation,
 	asymptotically normal consistency.
 	You either GIVE the median location (if wantlocation = 0) or it
 	will be calculated (if wantlocation = 1);
-	
+
 	work is a working array (1..n) that can be used for efficiency reasons.
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
@@ -251,23 +264,23 @@ int NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 
 void NUMmonotoneRegression (const double x[], long n, double xs[]);
 /*
-	Find numbers xs[1..n] that have a monotone relationship with 
+	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].
-	The xs[i] will be ascending. 
+	The xs[i] will be ascending.
 */
 
 void NUMsort2_fl (long n, float a[], long b[]);
 void NUMsort2_ff (long n, float a[], float b[]);
-void NUMsort2_dl (long n, double a[], long b[]);	
+void NUMsort2_dl (long n, double a[], long b[]);
 void NUMsort2_dd (long n, double a[], double b[]);
 void NUMsort2_ll (long n, long a[], long b[]);
 /*
 	Sorts (inplace) an array a[1..n] into ascending order using the Heapsort algorithm,
-	while making the corresponding rearrangement of the companion 
-	array b[1..n]. A characteristic of heapsort is that it does not conserve 
-	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3. 
+	while making the corresponding rearrangement of the companion
+	array b[1..n]. A characteristic of heapsort is that it does not conserve
+	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
 	It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
-	no g 
+	no g
 */
 
 void NUMindexx_f (const float a[], long n, long indx[]);
@@ -308,41 +321,41 @@ void NUMlocate (double *xx, long n, double x, long *index);
 
 int NUMjacobi (float **a, long n, float d[], float **v, long *nrot);
 /*
-	This version deviates from the NR version. 
+	This version deviates from the NR version.
 	HERE: v[1..n][1..n] is a matrix whose ROWS
-	(and not the columns) contain, on output, the normalized eigenvectors 
+	(and not the columns) contain, on output, the normalized eigenvectors
 	of `a'.
-	Computes all eigenvalues and eigenvectors of a real symmetric 
+	Computes all eigenvalues and eigenvectors of a real symmetric
 	matrix a[1..n][1..n].
-	On output, elements of `a' above the diagonal are destroyed. 
-	d[1..n] returns the eigenvalues of `a'. 
+	On output, elements of `a' above the diagonal are destroyed.
+	d[1..n] returns the eigenvalues of `a'.
 	`nrot' returns the number of Jacobi rotations that were required.
  */
- 
+
 void NUMtred2_f (float **a, long n, float d[], float e[]);
 void NUMtred2 (double **a, long n, double d[], double e[]);
 /*
 	Householder reduction of a real, symmetric matrix a[1..n][1..n]. On output,
 	a is replaced by the orthogonal matrix Q effecting the transformation.
 	d[1..n] returns the diagonal elements of the tridiagonal matrix, and e[1..n]
-	the off-diagonal elements, with e[1] = 0. 
+	the off-diagonal elements, with e[1] = 0.
 */
 
 int NUMtqli_f (float d[], float e[], long n, float **z);
 int NUMtqli (double d[], double e[], long n, double **z);
 /*
-	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues 
+	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues
 	and eigenvectors of a real, symmetric, tridiagonal matrix, or of a real,
-	symmetric matrix previously reduced by NUMtred2 . 
+	symmetric matrix previously reduced by NUMtred2 .
 	On input d[1..n] contains the diagonal elements of the tridiagonal matrix.
-	On output, it returns the eigenvalues. 
+	On output, it returns the eigenvalues.
 	The vector e[1..n] inputs the subdiagonal elements of the tridiagonal
 	matrix, with e[1] arbitrary.
-	On output e is destroyed. 
+	On output e is destroyed.
 	If the eigenvectors of a tridiagonal matrix are desired,
-	the matrix z[1..n][1..n] is input as the identity matrix. 
+	the matrix z[1..n][1..n] is input as the identity matrix.
 	If the eigenvectors of a matrix that has been reduced by NUMtred2 are
-	required, then z is input as the matrix output by NUMtred2. The k-th 
+	required, then z is input as the matrix output by NUMtred2. The k-th
 	column of z returns the normalized eigenvector corresponding to d[k].
 	Returns 0 in case of too many rotations.
 */
@@ -350,21 +363,21 @@ int NUMtqli (double d[], double e[], long n, double **z);
 int NUMgaussj (double **a, long n, double **b, long m);
 
 int NUMgaussj_f (float **a, long n);
-/* 
+/*
 	Calculate inverse of square matrix a[1..n][1..n] (in-place).
 	Method: Gauss-Jordan elimination with full pivoting.
 	Error message in case of singular matrix.
 */
 
 int NUMsvdcmp (double **a, long m, long n, double w[], double **v);
-/* 
-	Given a matrix a[1..m][1..n], this routine computes its singular 
-	value decomposition, A = U.W.V'. The matrix U replaces a on output. 
-	The diagonal matrix of singular values W is output as vector w[1..n]. 
+/*
+	Given a matrix a[1..m][1..n], this routine computes its singular
+	value decomposition, A = U.W.V'. The matrix U replaces a on output.
+	The diagonal matrix of singular values W is output as vector w[1..n].
 	The matrix V (not the transpose V') is output as v[1..n][1..n].
 	Possible errors: no memory or more than 30 iterations.
  */
- 
+
 int NUMsvbksb (double **u, double w[], double **v, long m, long n, double b[], double x[]);
 /*
 	Solves A.X=B for a vector X, where A is specified by the arrays
@@ -377,7 +390,7 @@ int NUMsvbksb (double **u, double w[], double **v, long m, long n, double b[], d
 
 int NUMludcmp (double **a, long n, long *indx, double *d);
 int NUMludcmp_f (float **a, long n, long *indx, float *d);
-/*	Given a matrix a[1..n][1..n], this routine replaces it by the 
+/*	Given a matrix a[1..n][1..n], this routine replaces it by the
 	LU decomposition of a rowwise permutation of itself.
 	a	: matrix [1..n][1..n]
 	n	: dimension of matrix
@@ -397,15 +410,16 @@ void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]);
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-double **NUMcholdc_inverse (double **a, long n, double *d);
-/*
-	Construct inverse matrix from result of Cholesky decomposition
-*/
-
-int NUMinverse_cholesky (double **a, long n, double *lnd);
+int NUMlowerCholeskyInverse (double **a, long n, double *lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
+*/
+
+double **NUMinverseFromLowerCholesky (double **m, long n);
+/*
+	Return the complete matrix inverse (m x m).
+	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
 */
 
 int NUMdeterminant_cholesky (double **a, long n, double *lnd);
@@ -416,7 +430,8 @@ int NUMdeterminant_cholesky (double **a, long n, double *lnd);
 double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long n);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
-	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'.
+	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
+	as calculated by NUMlowerCholeskyInverse
 */
 
 double NUMtrace (double **a, long n);
@@ -433,7 +448,7 @@ int NUMeigensystem (double **a, long n, double **evec, double eval[]);
 	Determines the eigensystem of a real, symmetric matrix[1..][1..n].
 	Returned are: evec[1..n][1..n] with eigenvectors (columnwise) and
 	eval[1..n], the eigenvalues.
-	No eigenvectors or eigenvalues are returned when the function is 
+	No eigenvectors or eigenvalues are returned when the function is
 	called with the corresponding parameter NULL.
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
@@ -442,7 +457,7 @@ int NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, dou
 /*
 	Determines the first dominant eigenvector from a GENERAL matrix
 	mns[1..n][1..].
-	Besides the matrix mns, a first guess for the eigenvector q must 
+	Besides the matrix mns, a first guess for the eigenvector q must
 	be supplied (e.g. 1,0,...,0) and a value for tolerance (iteration
 	stops when fabs(lamda[k] - lambda[k-1]) <= tolerance, where lamda[k] is
 	the eigenvalue at the k-th iteration step.
@@ -479,7 +494,7 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 
 int NUMprincipalComponents (double **a, long n, long nComponents, double **pc);
 /*
-	Determines the principal components of a real symmetric matrix 
+	Determines the principal components of a real symmetric matrix
 	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
 */
 
@@ -519,13 +534,13 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **a, long nr, long nc,
 int NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 	long n, double *alpha, double *gamma);
 /*
-	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n, 
-	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and 
+	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
+	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
 	gamma (Least Squares).
 	The input Vandermonde-matrix o[1..n,1..3] has columns with 1, x[i] and
 	x[i]^2, respectively.
 	The algorithm is according to:
-	Jos M.F. Ten Berge (1983), A generalization of Verhelst's solution for 
+	Jos M.F. Ten Berge (1983), A generalization of Verhelst's solution for
 	a constrained regression problem in ALSCAL and related MDS-algorithms,
 	Psychometrika 48, 631-638.
 */
@@ -533,10 +548,10 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[],
 	double alpha, double delta, double t[]);
 /*
-	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m], 
+	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
 	and delta are fixed numbers.
-	This class of functions is composed of a linear regression function and 
+	This class of functions is composed of a linear regression function and
 	a penalty function for the sum of squared regression weights. It is weakly
 	constrained because the penalty function prohibits a relatively large
 	departure of t't from delta.
@@ -548,10 +563,10 @@ int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doubl
 		alpha >= 0
 */
 
-int NUMProcrustes (double **x, double **y, long nPoints, 
+int NUMProcrustes (double **x, double **y, long nPoints,
 	long nDimensions, double **t, double *v, double *s);
 /*
-	Given two configurations x and y (nPoints x nDimensions), find the 
+	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
 	factor s such that Y = sXT+1v' (1 is the nPoints vector with ones).
 	Solution: see Borg and Groenen (1997), Modern Multidimensional Scaling, pp 340-346.
@@ -559,7 +574,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 	the orthogonal Procrustes transform.
 */
 
-int NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure), 
+int NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure),
 	double x1, double x2, void *closure, double *root);
 /*
 	Find the root of a function between x1 and x2.
@@ -575,13 +590,13 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		root not bracketed.
 */
 
-int NUMmspline (double knot[], long nKnots, long order, long i, double x, 
+int NUMmspline (double knot[], long nKnots, long order, long i, double x,
 	double *y);
 /*
 	Calculates an M-spline for a knot sequence.
 	After Ramsay (1988), Monotone splines in action, Statistical Science 4.
-	
-	M-splines of order k have degree k-1. 
+
+	M-splines of order k have degree k-1.
 	M-splines are zero outside interval [ knot[i], knot[i+order] ).
 	First and last 'order' knots are equal, i.e.,
 	knot[1] = ... = knot[order] && knot[nKnots-order+1] = ... knot[nKnots].
@@ -591,14 +606,14 @@ int NUMmspline (double knot[], long nKnots, long order, long i, double x,
 int NUMispline (double aknot[], long nKnots, long order, long i, double x,
 	double *y);
 /*
-	Calculates an I-spline for simple knot sequences: only one knot at each 
+	Calculates an I-spline for simple knot sequences: only one knot at each
 	interior boundary.
 	After Ramsay (1988), Monotone splines in action, Statistical Science 4.
-	
+
 	I-splines of order k have degree k (because they Integrate an M-spline
 	of degree k-1).
-	In the calculation of the integral of M(x|k,t), M-splines are used that 
-	have two more knots, i.e., M(x|k+1,t). For reasons of efficiency we 
+	In the calculation of the integral of M(x|k,t), M-splines are used that
+	have two more knots, i.e., M(x|k+1,t). For reasons of efficiency we
 	demand that these extra knots are given, i.e., the 'aknot[]' argument
 	contains the knot positions as if the spline to be integrated were an
 	M(x|k+1,t) spline.
@@ -614,7 +629,7 @@ double NUMwilksLambda (double *lambda, long from, long to);
 
 double NUMlnBeta (double a, double b);
 /*
-	Computes the logarithm of the beta function log(B(a,b) subject to 
+	Computes the logarithm of the beta function log(B(a,b) subject to
 	a and b not being negative integers.
 */
 
@@ -632,6 +647,12 @@ double NUMfactln (int n);
 /* Returns ln (n!) */
 
 /***** STATISTICS: PROBABILITY DENSITY FUNCTIONS ********************/
+
+double NUMlogNormalP (double x, double zeta, double sigma);
+/* Area under log normal from 0 to x */
+
+double NUMlogNormalQ (double x, double zeta, double sigma);
+/* Area under log normal from x to +infinity */
 
 double NUMstudentP (double t, double df);
 /*
@@ -681,6 +702,12 @@ double NUMinvFisherQ (double p, double df1, double df2);
 /*
 	Solves NUMfisherQ (f, df1, df2) == p for f, given p, df1, df2
 	Precondition: 0 < p < 1
+*/
+
+double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar);
+/*
+	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
+	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
 */
 
 /******  Frequency in Hz to other frequency reps ****/
@@ -741,30 +768,30 @@ double NUMhertzToBark_schroeder (double hz);
 */
 
 double NUMbladonlindblomfilter_amplitude (double zc, double z);
-/* 
-    Amplitude of filter at dz (barks) from centre frequency. 
+/*
+    Amplitude of filter at dz (barks) from centre frequency.
     dz may be positive and negative.
-	
+
 	The bladonlindblomfilter function is:
-	
+
 	z' = zc - z + 0.474
 	10 log10 F(z') = 15.81 + 7.5 z' - 17.5 sqrt( 1 + z'^2 )
 
-	Reference: Bladon, R.A.W & Lindblom, B., (1980), 
-	"Modeling the judgment of vowel quality differences", JASA 69, 1414-1422. 	
-	The filter has a bandwidth of 1.43 Bark, the maximum occurs at z = zc, 
+	Reference: Bladon, R.A.W & Lindblom, B., (1980),
+	"Modeling the judgment of vowel quality differences", JASA 69, 1414-1422.
+	The filter has a bandwidth of 1.43 Bark, the maximum occurs at z = zc,
 	and the slopes are -10 dB/Bark and +25 dB/Bark.
  */
- 
+
 double NUMsekeyhansonfilter_amplitude (double zc, double z);
-/* 
-    Amplitude of filter at dz (barks) from centre frequency. 
+/*
+    Amplitude of filter at dz (barks) from centre frequency.
     dz may be positive and negative.
-	
+
 	The sekeyhansonfilter function is:
 	z' = zc - z - 0.215
 	10 log10 F(z') = 7 - 7.5 * z' - 17.5 * sqrt( 0.196 + z'^2 )
-	
+
 	Reference: Sekey, A. & Hanson, B.A. (1984),
 	"Improved 1-Bark bandwidth auditory filter", JASA 75, 1902-1904.
 	The filter function has a bandwidth of 1 Bark, the maximum response
@@ -772,20 +799,20 @@ double NUMsekeyhansonfilter_amplitude (double zc, double z);
 	It is an improved version of bladonlindblomfilter.
  */
 
-double NUMtriangularfilter_amplitude (double fl, double fc, double fh, 
+double NUMtriangularfilter_amplitude (double fl, double fc, double fh,
 	double f);
 /*
 	Filterfunction that intermediates in Mel frequency cepstral coefficients
 	calculation.
-	The filter function is 
-	
+	The filter function is
+
 	         (f-fl)/(fc-fl)  fl < f < fc
 	H(z) =   (fh-f)/(fh-fc)  fc < f < fh
 	         0               otherwise
 	Preconditions:
 		0 < fl < fh
  */
- 
+
 double NUMformantfilter_amplitude (double fc, double bw, double f);
 /*
 	Filterfunction with a formant-like shape on a linear freq. scale.
@@ -801,11 +828,11 @@ int NUMburg (double x[], long n, double a[], int m, double *xms);
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
 */
 
-int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, 
+int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 	double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's
-	
+
 	m[i][j] = factor * 10 * log10 (m[i][j] / ref)
 	if (m[i][j] < floor) m[i][j] = floor;
 
@@ -821,10 +848,10 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 double **NUMcosinesTable (long first, long last, long npoints);
 /*
 	Generate table with cosines.
-	
+
 	result[i][j] = cos (i * pi * (j - 1/2) / npoints)
 	i=first..last; j=1..npoints
-	
+
 	Preconditions:
 		1 <= first <= last
 		npoints > 1
@@ -836,11 +863,11 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2
 /*
 	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
-	ypn for the first derivative of the interpolating function at point 
-	1 and n, respectively, this routine returns an array y2[1..n] that 
+	ypn for the first derivative of the interpolating function at point
+	1 and n, respectively, this routine returns an array y2[1..n] that
 	contains the second derivative of the interpolating function at the
 	tabulated point x.
-	If yp1 and/or ypn are greaterequal 10^30, the routine is signaled to 
+	If yp1 and/or ypn are greaterequal 10^30, the routine is signaled to
 	set the corresponding boundary condition for a natuarl spline, with
 	zero second derivative on that boundary.
 */
@@ -861,7 +888,7 @@ double NUMsinc (const double x);
 /*********************** Geometry *************************************/
 
 int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, double x3, double y3);
-/* Traverse points 1, 2 and 3. If we travel counter-clockwise the result will be 1, 
+/* Traverse points 1, 2 and 3. If we travel counter-clockwise the result will be 1,
 	if we travel clockwise the result will be -1 and the result will be 0 if 3 is on the line segment between 1 and 2.
 */
 
@@ -869,16 +896,16 @@ int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, doub
 	double x4, double y4);
 /* Does the line segment from (x1,y1) to (x2,y2) intersect with the line segment from (x3,y3) to (x4,y4)? */
 
-int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2, 
+int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
 	double xmin, double ymin, double xmax, double ymax, double *xi, double *yi);
 /* Get the intersection points of the line through the points (x1,y1) and (x2,y2) with the
 	rectangle with corners (xmin, ymin) and (xmax,ymax).
 	The returned value is the number of intersections found and is either 0 or 1 or 2.
 */
 
-int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, 
+int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
 	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2);
-/*	
+/*
 	Returns in (xo1, yo1) and (xo2, yo2) the coordinates of that piece of the line (xl1, yl1)..(xl2, yl2)
 	that can be drawn within the rectangle with lowerleft corner (xr1, yr1) and upperright (xr2, yr2).
 	Returns 0 if there is nothing to be drawn inside.
@@ -889,9 +916,9 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
 /*
 	Get the width and the height of the bonding box around an ellipse.
 	a and b are the lengths of the long axes.
-	cospsi is the cosine of the angle between the a-axis and the horizontal 
+	cospsi is the cosine of the angle between the a-axis and the horizontal
 	x-axis (cs == 0 when a-axis and x-axis are perpendicular).
-	 
+
 	Parametrisation of the ellipse:
 		x(phi) = a cos(psi) cos(phi) - b sin (psi) sin(phi)
 		y(phi) = a sin(psi) cos(phi) + b cos(psi) sin(phi)  0 <= phi <= 2 pi
@@ -903,7 +930,7 @@ void NUMgetEllipseBoundingBox (double a, double b, double cospsi,
 	where
 		phi1 = arctg ( -b/a tg(psi))
 		phi2 = arctg ( b/a cotg(psi))
-	Special cases are psi = 0 and pi /2 		
+	Special cases are psi = 0 and pi /2
 */
 
 double NUMminimize_brent (double (*f) (double x, void *closure), double a, double b,
@@ -918,7 +945,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	it returns the right range boundary value b.
 
 	Algorithm
-	
+
 	The function makes use of the golden section procedure combined with
 	parabolic interpolation.
 	At every step, the program operates at three abscissae - x, v, and w.
@@ -932,7 +959,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	interpolating parabola whose minimum will be treated as a new
 	approximation to the minimum location if the former falls within
 	[a,b] and reduces the range enveloping minimum more efficient than
-	the golden section procedure. 
+	the golden section procedure.
 	When f(x) has a second derivative positive at the minimum location
 	(not coinciding with a or b) the procedure converges superlinearly
 	at a rate order about 1.324
@@ -979,7 +1006,7 @@ void NUMfft_forward (NUMfft_Table table, double *data);
 	Postconditions:
 		data[1] contains real valued first component (Direct Current)
 		data[2..n-1] even index : real part; odd index: imaginary part of DFT.
-		data[n] contains real valued last component (Nyquist frequency)	
+		data[n] contains real valued last component (Nyquist frequency)
 
 	Output parameters:
 
@@ -1005,8 +1032,8 @@ void NUMfft_forward (NUMfft_Table table, double *data);
 
 		i.e., the ordering of the output array will be for n even
 			r(1),(r(2),i(2)),(r(3),i(3)),...,(r(l-1),i(l-1)),r(l).
-		Or ...., (r(l),i(l)) for n uneven. 
-			
+		Or ...., (r(l),i(l)) for n uneven.
+
  *****  note
              this transform is unnormalized since a call of NUMfft_forward
              followed by a call of NUMfft_backward will multiply the input
@@ -1025,7 +1052,7 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 		data [1] contains real valued first component (Direct Current)
 		data [2..n-1] even index : real part; odd index: imaginary part of DFT.
 		data [n] contains real valued last component (Nyquist frequency)
-		
+
 		table must have been initialised with NUMfft_Table_init_f/d
 
 	Output parameters
@@ -1084,7 +1111,7 @@ int NUMreverseRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. */ 
+int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. */
 int NUMrealft (double *data, long n, int direction);
 
 #endif /* _NUM2_h_ */

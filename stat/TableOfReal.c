@@ -976,7 +976,7 @@ void TableOfReal_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
 	iam (TableOfReal);
 	double datamax, dx = 1, dy = 1;
 	long i, j;
-	int colour = Graphics_inqColour (g);
+	double red, green, blue; Graphics_inqRGBColour (g, & red, & green, & blue);
 	fixRows (me, & rowmin, & rowmax);
 	fixColumns (me, & colmin, & colmax);
 	
@@ -996,7 +996,7 @@ void TableOfReal_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
 			double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
 			if (my data [i] [j] > 0) Graphics_setColour (g, Graphics_WHITE);
 			Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
-			Graphics_setColour (g, colour);
+			Graphics_setRGBColour (g, red, green, blue);
 			Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
 		}
 	}

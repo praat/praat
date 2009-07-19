@@ -1,6 +1,6 @@
 /* Graphics_record.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/08/08 text is saved as UTF-8
  * pb 2008/01/19 removed 16M limitation on number of elements (-> double)
  * sdk 2008/03/24 cairo
+ * pb 2009/07/09 RGB colours
  */
 
 #include "GraphicsP.h"
@@ -301,6 +302,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 			{  double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
+			case SET_RGB_COLOUR:
+			{  double red = get, green = get, blue = get;
+				Graphics_setRGBColour (thee, red, green, blue);
+			} break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);

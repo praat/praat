@@ -40,7 +40,7 @@ LIST_ITEM (L"\\bu @@Multidimensional scaling@")
 LIST_ITEM (L"\\bu @@Discriminant analysis@")
 MAN_END
 
-MAN_BEGIN (L"Difference of two proportions", L"ppgb", 20060506)
+MAN_BEGIN (L"Difference of two proportions", L"ppgb", 20090717)
 INTRO (L"This page explains how you compute the significance of a difference between two proportions "
 	"with a %\\ci^2 (chi-square) test.")
 ENTRY (L"1. Example of normal use")
@@ -51,14 +51,14 @@ NORMAL (L"Suppose that you are interested in proving that for a certain experime
 CODE1 (L"\t\tCorrect\tIncorrect")
 CODE1 (L"\tTask A\t71\t39")
 CODE1 (L"\tTask B\t93\t27")
-NORMAL (L"The null hypothesis is that both tasks are equally difficult and "
-	"and that the probability that the participant performs Task A correctly is equal to "
+NORMAL (L"The null hypothesis is that both tasks are equally difficult for the participant "
+	"and that the probability that she performs Task A correctly is equal to "
 	"the probability that she performs Task B correctly.")
 NORMAL (L"To compute the probability that the observed proportions are at least as different as 93/120 and 71/110 "
 	"if the null hypothesis is true, go to ##Report difference of two proportions# in the @Goodies menu "
 	"and fill in the four values 71, 39, 93, and 27. The resulting two-tailed %p is 0.04300, suggesting "
-	"that the null hypothesis can be rejected and the two tasks are not equally difficult "
-	"(if the possibility that Task A is easier than Task B can be ruled out a priori, "
+	"that the null hypothesis can be rejected and the two tasks are not equally difficult for the participant "
+	"(if the possibility that Task A is easier for her than Task B can be ruled out a priori, "
 	"then the resulting one-tailed %p is 0.02150).")
 ENTRY (L"2. Example of incorrect use: areal features")
 NORMAL (L"An anonymous linguist once proposed that there was a causal relation between blood groups and the incidence "

@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,9 @@
  djmw 20080122 Bug in str_replace_regexp
  djmw 20080317 +NUMsinc
  pb   20080410 FisherQ from gsl
+ djmw 20090630 NUMlogNormalP/Q from gsl
+ djmw 20090707 Rename NUMinverse_cholesky to NUMlowerCholeskyInverse,
+ 	+NUMcovarianceFromColumnCentredMatrix, +NUMmultivariateKurtosis
 */
 
 #include "SVD.h"
@@ -824,6 +827,61 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	if (covariance != NULL) *covariance = covar;
 	if (icol1 == icol2) *covariance = *variance1;
 }
+
+int NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar)
+{
+	if (ndf < 0 || nrows - ndf < 1 || covar == NULL) return 0;
+	for (long i = 1; i <= ncols; i++)
+	{
+		for (long j = i; j <= ncols; j++)
+		{
+			double sum = 0;
+			for (long k = 1; k <= nrows; k++)
+			{
+				sum += x[k][i] * x[k][j];
+			}
+			covar[i][j] = covar[j][i] = sum / (nrows - ndf);
+		}
+	}
+	return 1;
+}
+
+double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method)
+{
+	double kurt = NUMundefined;
+	double *mean = NULL, **covar = NULL;
+
+	if (nrows < 5) return kurt;
+	if (((mean = NUMdvector (1, ncols)) == NULL) ||
+		((covar = NUMdmatrix (1, ncols, 1, ncols)) == NULL)) goto end;
+	NUMcentreColumns (x, 1, nrows, 1, ncols, mean);
+	if (! NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar)) goto end;
+	if (method == 1) // Schott (2001, page 33)
+	{
+		kurt = 0;
+		for (long l = 1; l <= ncols; l++)
+		{
+			double zl = 0, wl, sll2 = covar[l][l] * covar[l][l];
+			for (long j = 1; j <= nrows; j++)
+			{
+				double d = x[j][l] - mean[l], d2 = d * d;
+				zl += d2 * d2;
+			}
+			zl = (zl - 6 * sll2) / (nrows - 4);
+			wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
+			kurt += zl / wl;
+		}
+		kurt = kurt / (3 * ncols) - 1;
+	}
+end:
+	NUMdmatrix_free (covar, 1, 1);
+	NUMdvector_free (mean, 1);
+	return kurt;
+}
+
+
+
+
 /* obsolete 20080121
 
 #define HUBER_MAD NUMmad_f
@@ -1123,7 +1181,7 @@ int NUMdeterminant_cholesky2 (double **a, long n, double *lnd)
 }
 */
 
-int NUMinverse_cholesky (double **a, long n, double *lnd)
+int NUMlowerCholeskyInverse (double **a, long n, double *lnd)
 {
 	char uplo = 'U', diag = 'N';
 	long i, info;
@@ -1150,6 +1208,25 @@ int NUMinverse_cholesky (double **a, long n, double *lnd)
 	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
 
 	return info == 0;
+}
+
+double **NUMinverseFromLowerCholesky (double **m, long n)
+{
+	double **r = NUMdmatrix (1, n, 1, n);
+	if (m == NULL) return NULL;
+	for (long i = 1; i <= n; i++)
+	{
+		for (long j = 1; j <= i; j++)
+		{
+			double sum = 0;
+			for (long k = i; k <= n; k++)
+			{
+				sum += m[k][i] * m[k][j];
+			}
+			r[i][j] = r[j][i] = sum;
+		}
+	}
+	return r;
 }
 
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long n)
@@ -2288,6 +2365,16 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 	return root;
 }
 
+double NUMlogNormalP (double x, double zeta, double sigma)
+{
+	return gsl_cdf_lognormal_P (x, zeta, sigma);
+}
+
+double NUMlogNormalQ (double x, double zeta, double sigma)
+{
+	return gsl_cdf_lognormal_Q (x, zeta, sigma);
+}
+
 double NUMstudentP (double t, double df)
 {
 	double ib;
@@ -2455,6 +2542,69 @@ double NUMlnBeta (double a, double b)
 	gsl_sf_result result;
 	int status = gsl_sf_lnbeta_e (a, b, &result);
 	return status == GSL_SUCCESS ? result.val : NUMundefined;
+}
+
+double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar)
+{
+	long j, k;
+	if (*beta <= 0) *beta = (1.0 / sqrt (2)) * pow ((1.0 + 2 * p ) / 4, 1.0 / (p + 4 )) * pow (n, 1.0 / (p + 4));
+	double p2 = p / 2.0;
+	double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+	double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+	double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
+	double **covar = NULL, *zero = NULL, **x = NULL;
+	double mu, mu2, var, prob = NUMundefined;
+
+	*tnb = *lnmu = *lnvar = NUMundefined;
+
+	if (n < 2 || p < 1) return prob;
+
+	if (((x = NUMdmatrix_copy (data, 1, n, 1, p)) == NULL) ||
+		((zero = NUMdvector (1, p)) == NULL) ||
+		((covar = NUMdmatrix (1, p, 1, p)) == NULL)) goto end;
+
+	NUMcentreColumns (x, 1, n, 1, p, NULL); // x - xmean
+
+	if (! NUMcovarianceFromColumnCentredMatrix (x, n, p, 0, covar)) goto end;
+
+	if (! NUMlowerCholeskyInverse (covar, p, NULL))
+	{
+		*tnb = 4 * n;
+	}
+	else
+	{
+		double djk, djj, sumjk = 0, sumj = 0;
+		double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+		/* Heinze & Wagner (1997), page 3
+			We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
+			So d[j][k]= d[k][j] and d[j][j] = 0
+		*/
+		for (j = 1; j <= n; j++)
+		{
+			for (k = 1; k < j; k++)
+			{
+				djk = NUMmahalanobisDistance_chi (covar, x[j], x[k], p);
+				sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
+			}
+			sumjk += 1; // for k == j
+			djj = NUMmahalanobisDistance_chi (covar, x[j], zero, p);
+			sumj += exp (-b2 * djj);
+		}
+		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+	}
+	mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
+	var = 2.0 * pow (1 + 4 * beta2, -p2)
+		+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
+		- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
+	mu2 = mu * mu;
+	*lnmu = log (sqrt (mu2 * mu2 /(mu2 + var)));
+	*lnvar = sqrt (log ((mu2 + var) / mu2));
+	prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
+end:
+	NUMdmatrix_free (x, 1, 1);
+	NUMdmatrix_free (covar, 1, 1);
+	NUMdvector_free (zero, 1);
+	return prob;
 }
 
 /*************** Hz <--> other freq reps *********************/

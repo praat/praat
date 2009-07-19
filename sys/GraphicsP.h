@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/04/24
+ * pb 2009/07/14
  */
 
 #ifndef _Graphics_h_
@@ -93,8 +93,8 @@ typedef struct {
 	double deltaX, deltaY, scaleX, scaleY; \
 		/* Current coordinate transformation. */ \
 	/* Graphics state. */ \
-	int lineType, colour; \
-	double lineWidth, arrowSize; \
+	int lineType; \
+	double red, green, blue, lineWidth, arrowSize; \
 	int horizontalTextAlignment, verticalTextAlignment; \
 	double textRotation, wrapWidth, secondIndent, textX, textY; \
 	enum kGraphics_font font; \
@@ -151,8 +151,7 @@ int Graphics_init (I);
 	#define xwin 1
 	#define cairo 0
 	#define pango 0
-	extern unsigned long black, white, red, green, blue, cyan, magenta, yellow,
-		maroon, lime, navy, teal, purple, olive, grey [101];
+	extern unsigned long xwinColours [1+Graphics_MAX_COLOUR], xwinGreys [101];
 #elif defined (_WIN32)
 	#include <windowsx.h>
 	#define GraphicsScreen_members Graphics_members \
@@ -172,10 +171,8 @@ int Graphics_init (I);
 	#include <Quickdraw.h>
 	#include <MacWindows.h>
 	#include "macport_off.h"
-	#define MAC_USE_QUARTZ  1
 	#define GraphicsScreen_members Graphics_members \
 		GrafPtr macPort; \
-		MacintoshPattern macPattern; \
 		int macFont, macStyle; \
 		int depth, duringXor; \
 		RGBColor macColour; \
@@ -228,12 +225,12 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 	/* 146 */ SET_DOLLAR_SIGN_IS_CODE, SET_AT_SIGN_IS_LINK,
 	/* 148 */ BUTTON, ROUNDED_RECTANGLE, FILL_ROUNDED_RECTANGLE, FILL_ARC,
 	/* 152 */ INNER_RECTANGLE, CELL_ARRAY8, IMAGE, HIGHLIGHT2, UNHIGHLIGHT2,
-	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW
+	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW, SET_RGB_COLOUR
 };
 
 void _Graphics_text_init (I);
 void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC);
-void _Graphics_setColour (I, int colour);
+void _Graphics_setRGBColour (I, double red, double green, double blue);
 void _Graphics_setGrey (I, double grey);
 void _Graphics_colour_init (I);
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void);

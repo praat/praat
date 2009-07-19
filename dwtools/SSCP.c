@@ -52,6 +52,7 @@
  djmw 20080122 float -> double
  djmw 20081119 TableOfReal_to_SSCP check if numbers are defined
  djmw 20090617 TableOfReal_to_SSCPs_byLabel better warnings for singular cases.
+ djmw 20090629 +Covariances_getMultivariateCentroidDifference, Covariances_equality.
 */
 
 #include "SSCP.h"
@@ -471,6 +472,7 @@ end:
 	return thee;
 }
 
+
 SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 {
 	iam (TableOfReal);
@@ -518,7 +520,7 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 	SSCP_setNumberOfObservations (thee, m);
 
 	/*
-		Covariance = T'T
+		sum of squares and cross products = T'T
 	*/
 
 	for (i = 1; i <= n; i++)
@@ -581,7 +583,7 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 		Get inverse of covari in lower triangular part.
 	*/
 
-	if (! NUMinverse_cholesky (covari, n, &lndet)) goto end;
+	if (! NUMlowerCholeskyInverse (covari, n, &lndet)) goto end;
 
 	for (k = 1; k <= nrows; k++)
 	{
@@ -1246,12 +1248,10 @@ end:
 	return him;
 }
 
-static double traceOfSquaredMatrixProduct (double **s1, double **s2, long n)
+static double **productOfSquareMatrices (double **s1, double **s2, long n)
 {
-	// tr ((s1*s2)^2), s1, s2 are symmetric
-	double trace2, **m = NULL;
-	m = NUMdmatrix (1, n, 1, n);
-	if (m == NULL) return NUMundefined;
+	double **r = NUMdmatrix (1, n, 1, n);
+	if (r == NULL) return NULL;
 	for (long i = 1; i <= n; i++)
 	{
 		for (long j = 1; j <= n; j++)
@@ -1261,31 +1261,21 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, long n)
 			{
 				sum += s1[i][k] * s2[k][j];
 			}
-			m[i][j] = sum;
-		}
-	}
-	trace2 = NUMtrace2 (m, m, n);
-	NUMdmatrix_free (m, 1, 1);
-	return trace2;
-}
-
-static double **NUMinversefromLowerCholesky (double **m, long n)
-{
-	double **r = NUMdmatrix (1, n, 1, n);
-	if (m == NULL) return NULL;
-	for (long i = 1; i <= n; i++)
-	{
-		for (long j = 1; j <= i; j++)
-		{
-			double sum = 0;
-			for (long k = i; k <= n; k++)
-			{
-				sum += m[k][i] * m[k][j];
-			}
-			r[i][j] = r[j][i] = sum;
+			r[i][j] = sum;
 		}
 	}
 	return r;
+}
+
+static double traceOfSquaredMatrixProduct (double **s1, double **s2, long n)
+{
+	// tr ((s1*s2)^2), s1, s2 are symmetric
+	double trace2, **m = NULL;
+	m = productOfSquareMatrices (s1, s2, n);
+	if (m == NULL) return NUMundefined;
+	trace2 = NUMtrace2 (m, m, n);
+	NUMdmatrix_free (m, 1, 1);
+	return trace2;
 }
 
 double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2)
@@ -1322,7 +1312,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		Covariance pool = Covariances_pool (me, thee);
 		if (pool == NULL) return 0;
 		s = NUMdmatrix_copy (my data, 1, p, 1, p);
-		if (s == NULL || ! NUMinverse_cholesky (s, p, &lndet)) goto end1;
+		if (s == NULL || ! NUMlowerCholeskyInverse (s, p, &lndet)) goto end1;
 
 		mahalanobis = NUMmahalanobisDistance_chi (s, my centroid, thy centroid, p);
 		hotelling_tsq = mahalanobis * N1 * N2 / N;
@@ -1356,10 +1346,10 @@ end1:
 			}
 		}
 
-		if (! NUMinverse_cholesky (s, p, &lndet)) goto end1;
+		if (! NUMlowerCholeskyInverse (s, p, &lndet)) goto end1;
 		hotelling_tsq= NUMmahalanobisDistance_chi (s, my centroid, thy centroid, p); // Krishan... formula 2, page 162
 
-		if (((si = NUMinversefromLowerCholesky (s, p)) == NULL)) goto end2;
+		if (((si = NUMinverseFromLowerCholesky (s, p)) == NULL)) goto end2;
 		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1, si, p);
 		if (! NUMdefined (tr_s1sisqr)) goto end2;
 		double tr_s1si = NUMtrace2 (s1, si, p);
@@ -1380,65 +1370,124 @@ end2:
 	return dif;
 }
 
-/* Morrisom page 297 */
-int Covariances_equality (Ordered me, double *prob, double *chisq, double *df)
+/* Schott 2001 */
+void Covariances_equality (Ordered me, int method, double *prob, double *chisq, double *df)
 {
-	long i, j, k, nc = my size, p, ni, ns = 0;
-	double lnd, **s = NULL, m, c1, nsi = 0;
-	Covariance c;
+	long i, j, k, nc = my size, p = 1;
+	double lnd, **s = NULL, m, c1, nsi = 0, ni, nj, ns = 0;
+	Covariance ci, cj;
 
 	*prob = *chisq = *df = NUMundefined;
 
-	if (nc < 2) return 0;
+	if (nc < 2) return;
 
-	c = my item[1];
-	ns = ni = c -> numberOfObservations - 1;
-	nsi = 1 / ni;
-	p = c -> numberOfRows;
-
-	for (i = 2; i <= nc; i++)
+	for (i = 1; i <= nc; i++)
 	{
-		c = my item[i];
-		ni = c -> numberOfObservations - 1;
-		if (c -> numberOfRows != p) return Melder_error3 (L"The dimensions of matrix number ", Melder_integer (i),
+		ci = my item[i];
+		ni = ci -> numberOfObservations - 1;
+		if (i == 1) p = ci -> numberOfRows;
+		if (ci -> numberOfRows != p)
+		{
+			Melder_error3 (L"The dimensions of matrix ", Melder_integer (i),
 			L" differ from the previous one(s).");
-		ns += ni; nsi += 1 / ni;
+			return;
+		}
+		if (ni < p)
+		{
+			Melder_error3 (L"The number of observations in matrix ", Melder_integer (i),
+			L" is less than the number of variables. ");
+			return;
+		}
+		ns += ni; nsi += 1.0 / ni;
 	}
 
 	if ((s = NUMdmatrix (1, p, 1, p)) == NULL) goto end;
 
 	for (i = 1; i <= nc; i++) // pool
 	{
-		c = my item[i];
-		double sf = (c -> numberOfObservations - 1) / ns;
+		ci = my item[i];
+		double sf = (ci -> numberOfObservations - 1.0) / ns;
 		for (j = 1; j <= p; j++)
 		{
 			for (k = 1; k <= p; k++)
 			{
-				s[j][k] += sf * c -> data[j][k];
+				s[j][k] += sf * ci -> data[j][k];
 			}
 		}
 	}
 
-	if (! NUMdeterminant_cholesky (s, p, &lnd)) return Melder_error1 (L"Pooled covariance matrix is singular.");
-
-	m = ns * lnd;
-	for (i = 1; i <= nc; i++)
+	if (method == 1) // bartlett
 	{
-		c = my item[i];
-		if (! NUMdeterminant_cholesky (c -> data, p, &lnd)) return Melder_error3 (L"Covariance matrix ", Melder_integer (i), L" is singular.");
-		m -= (c -> numberOfObservations - 1) * lnd;
-	}
+		if (! NUMdeterminant_cholesky (s, p, &lnd))
+		{
+			Melder_error1 (L"Pooled covariance matrix is singular.");
+			return;
+		}
 
-	c1 = 1 - (2 * p * p - 3 * p - 1) / (6 * (p + 1) * (nc - 1)) * (nsi - 1 / ns);
-	*chisq = m * c1;
-	*df = 0.5 * (nc - 1) * p * (p + 1);
+		m = ns * lnd;
+		for (i = 1; i <= nc; i++)
+		{
+			ci = my item[i];
+			if (! NUMdeterminant_cholesky (ci -> data, p, &lnd))
+			{
+				Melder_error3 (L"Covariance matrix ", Melder_integer (i), L" is singular.");
+				return;
+			}
+			m -= (ci -> numberOfObservations - 1) * lnd;
+		}
+
+		c1 = 1.0 - (2.0 * p * p - 3 * p - 1) / (6.0 * (p + 1) * (nc - 1)) * (nsi - 1 / ns);
+
+		*df = (nc - 1) * p * (p + 1) / 2;
+		*chisq = m * c1;
+	}
+	else if (method == 2) // Schott (2001) Wald 1
+	{
+		/* sum(i, ni/n *tr((si*s^-1)^2)- sum(i,sum(j, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1))) =
+			sum(i=1..k, (ni/n -(ni/n)^2) tr((si*s^-1)^2)
+				- 2 * sum (i=1..k, sum(j=1..i-1, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1)))
+		*/
+		double trace_ii, trace_ij, trace = 0;
+		double **si = NULL, **s1 = NULL, **s2 = NULL;
+		if (! NUMlowerCholeskyInverse (s, p, NULL)) goto end;
+		if (((si = NUMinverseFromLowerCholesky (s, p)) == NULL)) goto end;
+		for (i = 1; i <= nc; i++)
+		{
+			ci = my item[i];
+			ni = ci -> numberOfObservations - 1;
+			s1 = productOfSquareMatrices (ci -> data, si, p);
+			if (s1 != NULL)
+			{
+				trace_ii = NUMtrace2 (s1, s1, p);
+				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
+				for (j = i + 1; j <= nc; j++)
+				{
+					cj = my item[j];
+					nj = cj -> numberOfObservations - 1;
+					s2 = productOfSquareMatrices (cj -> data, si, p);
+					if (s2 != NULL)
+					{
+						trace_ij = NUMtrace2 (s1, s2, p);
+						trace -= 2 * (ni / ns) * (nj / ns) * trace_ij;
+					}
+					NUMdmatrix_free (s2, 1, 1);
+					if (Melder_hasError ()) break;
+				}
+			}
+			NUMdmatrix_free (s1, 1, 1);
+			if (Melder_hasError ()) break;
+		}
+		NUMdmatrix_free (si, 1, 1);
+		if (Melder_hasError ()) goto end;
+		*df = (nc - 1) * p * (p + 1) / 2;
+		*chisq = (ns / 2) * trace;
+	}
+	else return;
+
 	*prob = NUMchiSquareQ (*chisq, *df);
 end:
 	NUMdmatrix_free (s, 1, 1);
-	return Melder_hasError ();
 }
-
 
 int Covariance_difference (Covariance me, Covariance thee, double *prob,
 	double *chisq, long *ndf)
@@ -1466,7 +1515,7 @@ int Covariance_difference (Covariance me, Covariance thee, double *prob,
 	}
 
 	if (((linv = NUMdmatrix_copy (thy data, 1, p, 1, p)) == NULL) ||
-		(! NUMinverse_cholesky (linv, p, & ln_thee)) ||
+		(! NUMlowerCholeskyInverse (linv, p, & ln_thee)) ||
 		! NUMdeterminant_cholesky (my data, p, &ln_me)) goto end;
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the

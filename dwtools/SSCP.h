@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020327 GPL
- djmw 20070620 Latest modification.
+ djmw 20090629 Latest modification.
 */
 
 #ifndef _TableOfReal_extensions_h_
@@ -137,7 +137,6 @@ Configuration Covariance_to_Configuration (Covariance me, long numberOfDimension
 Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
 
 int Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
-int Covariances_equality (Ordered me, double *prob, double *chisq, double *df);
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	double *probability, double *t, double *ndf);
@@ -160,6 +159,13 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	T^2 = n1*n2/(n1+n2) (m1-m2)'S^-1(m1-m2) # weighted Mahalanobis distance
 	f = T^2 * (n1+n2-p-1)/((n1+n2-2)*p)
 	f has Fisher distribution with p and n1+n2-p-1 degrees of freedom.
+*/
+
+void Covariances_equality (Ordered me, int method, double *prob, double *chisq, double *df);
+/*
+	Equality of covariance.
+	method = 1 : Bartlett (Morrison, 1990)
+	method = 2 : Wald (Schott, 2001)
 */
 
 SSCPs SSCPs_create (void);

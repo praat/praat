@@ -582,7 +582,8 @@ void FFNet_drawTopology (FFNet me, Graphics g)
 void FFNet_drawActivation (FFNet me, Graphics g)
 {
     long i, j, node = 1, maxNumOfUnits = my nUnitsInLayer[0];
-    int dxIsFixed = 1, colour = Graphics_inqColour (g);
+    int dxIsFixed = 1;
+	double red, green, blue; Graphics_inqRGBColour (g, & red, & green, & blue);
     double r1, dx, dy = 1.0 / (my nLayers + 1);
 
     Graphics_setInner (g);
@@ -593,7 +594,6 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 	}
     dx = 1.0 / maxNumOfUnits;
     r1 = dx / 2; /* May touch when neighbouring activities are both 1 (very rare). */
-	Graphics_setColour (g, colour);
     for (i = 0; i <= my nLayers; i++, node++)
     {
 		double dx2 = dx, x2WC, y2WC = dy / 2 + i * dy;
@@ -614,7 +614,7 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 	    	x2WC += dx2;
 		}
     }
-    Graphics_setColour (g, Graphics_BLACK);
+    Graphics_setRGBColour (g, red, green, blue);
     Graphics_unsetInner (g);
 }
 

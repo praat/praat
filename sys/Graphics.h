@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/03/24
+ * pb 2009/07/09
  */
 
 #ifndef _Thing_h_
@@ -161,6 +161,8 @@ void Graphics_setLineType (I, int lineType);
 void Graphics_setLineWidth (I, double lineWidth);
 void Graphics_setArrowSize (I, double arrorSize);
 
+typedef struct { double red, green, blue; } Graphics_Colour;
+#define Graphics_Color Graphics_Colour
 void Graphics_setColour (I, int colour);
 #define Graphics_setColor  Graphics_setColour
 #define Graphics_BLACK  0
@@ -183,6 +185,8 @@ void Graphics_setColour (I, int colour);
 #define Graphics_MAX_COLOUR  16
 void Graphics_setGrey (I, double grey);
 #define Graphics_setGray  Graphics_setGrey
+void Graphics_setRGBColour (I, double red, double green, double blue);
+#define Graphics_setRGBColor Graphics_setRGBColour
 
 void Graphics_inqViewport (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
@@ -192,7 +196,8 @@ int Graphics_inqFontStyle (I);
 int Graphics_inqLineType (I);
 double Graphics_inqLineWidth (I);
 double Graphics_inqArrowSize (I);
-int Graphics_inqColour (I);
+void Graphics_inqRGBColour (I, double *red, double *green, double *blue);
+#define Graphics_inqRGBColor Graphics_inqRGBColour
 
 void Graphics_contour (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);

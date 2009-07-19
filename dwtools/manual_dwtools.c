@@ -994,12 +994,18 @@ ENTRY (L"Arguments")
 TAG (L"%%Covariances are equal,")
 DEFINITION (L"determines whether the test is performed as if the two covariance matrices are equal or not.")
 ENTRY (L"Algorithm")
-NORMAL (L"For equal covariance matrices the test is via Hotelling's T^^2^ as described on page 141 of @@Morrison (1990)@. "
+NORMAL (L"For equal covariance matrices the test is via Hotelling's T^^2^ as described in @@Morrison (1990)|Morrison (1990,@ page 141). "
 	"The test statistic is %F = (%N__1_+%N__2_-%p-1)/((%N__1_+%N__2_-2)%p)\\.c T^^2^, with %p and %N__1_+%N__2_-%p-1 degrees of freedom.")
 NORMAL (L"If the covariance matrices are not equal, we apply a correction on the number of degrees of freedom as "
 	"proposed by @@Krishnamoorthy & Yu (2004)@. The test statistic in this case is %F = (\\nu-%p+1)/(%p\\nu)\\.c T^^2^, "
 	"with %p and \\nu degrees of freedom. Here \\nu is a corrected number of degrees of freedom. ")
 NORMAL (L"(The test for unequal covariances simplifies to Welch's approximate solution for the univariate t-test with unequal variances.) ")
+MAN_END
+
+MAN_BEGIN (L"Covariances: Report equality", L"djmw", 20090701)
+INTRO (L"Reports the probability that the selected @@Covariance@ matrices are equal.")
+NORMAL (L"We use the Bartlett test and the Wald test. According to @@Schott (2001)@, "
+	"both tests are overly sensitive to violations of normality.")
 MAN_END
 
 MAN_BEGIN (L"Covariance: To TableOfReal (random sampling)...", L"djmw", 20040407)
@@ -3281,6 +3287,22 @@ NORMAL (L"You can perform these t-tests in Praat by first transforming the "
 	"latter object.")
 MAN_END
 
+MAN_BEGIN (L"TableOfReal: Report multivariate normality (HZ)...", L"djmw", 20090701)
+INTRO (L"Report about multivariate normality according to Henze-Zirkler.")
+ENTRY (L"Arguments")
+TAG (L"%%Beta,")
+DEFINITION (L"determines the smoothing. For the default (%beta=0), the smoothing parameter will be determined automatically.")
+ENTRY (L"Remarks")
+NORMAL (L"According to @@Henze & Wagner (1997)@, this test has:")
+LIST_ITEM (L"\\bu affine invariance,")
+LIST_ITEM (L"\\bu consistency against each fixed nonnormal alternative distribution,")
+LIST_ITEM (L"\\bu asymptotic power against contiguous alternatives of order \\Vr (%n),")
+LIST_ITEM (L"\\bu feasibility for any dimension and any sample size.")
+NORMAL (L"In the default case, %beta wil be determined as:")
+FORMULA (L"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ n^^1/(%p+4)^,")
+NORMAL (L"where %n is the number of rows and %p the number of columns of the table.")
+MAN_END
+
 MAN_BEGIN (L"TableOfReal: Change row labels...", L"djmw", 20010822)
 INTRO (L"Changes the row labels of the selected @TableOfReal object according "
 	"to the specification in the search and replace fields.")
@@ -3775,6 +3797,11 @@ NORMAL (L"D.J. Hermes (1988), \"Measurement of pitch by subharmonic "
 	"summation\", %%J.Acoust.Soc.Am.% #83, 257-264.")
 MAN_END
 
+MAN_BEGIN (L"Henze & Wagner (1997)", L"djmw", 20090630)
+NORMAL (L"N. Henze & T. Wagner (1997), \"A New Approach to the BHEP Tests for Multivariate Normality\", "
+	" %%Journal of Multivariate Analysis% #62, 1-23.")
+MAN_END
+
 MAN_BEGIN (L"Irino & Patterson (1996)", L"djmw", 19980123)
 NORMAL (L"T. Irino & R.D. Patterson (1996), \"A time-domain, level-dependent "
 	"auditory filter: The gammachirp\", %%J.Acoust.Soc.Am.% #101, 412-419.")
@@ -3827,6 +3854,11 @@ MAN_END
 MAN_BEGIN (L"Sakoe & Chiba (1978)", L"djmw", 20050302)
 NORMAL (L"H. Sakoe & S. Chiba (1978), \"Dynamic programming algorithm optimization for spoken word recognition\", "
 	"%%Trans. on ASSP% #26, 43-49.")
+MAN_END
+
+MAN_BEGIN (L"Schott (2001)", L"djmw", 20090629)
+NORMAL (L"J. R. Schott (2001), \"Some tests for the equality of covariance matrices\", "
+	"%%Journal of Statistical Planning and Inference #94, 25–36.")
 MAN_END
 
 MAN_BEGIN (L"Shepard (1964)", L"djmw", 19980114)

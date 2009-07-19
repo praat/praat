@@ -120,7 +120,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				if (left < clipx1) left = clipx1;
 				if (right > clipx2) right = clipx2;
 				#if xwin
-					XSetForeground (my display, my gc, grey [value <= 0 ? 0 : value >= 100 ? 100 : value]);
+					XSetForeground (my display, my gc, xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : value]);
 					XFillRectangle (my display, my window, my gc, left, top,
 						right - left + 1, bottom - top + 1);
 				#elif win
@@ -212,7 +212,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			unsigned char *imageData;
 			long bytesPerRow;
 			bool useQuartzForImages = my useQuartz && 1;
-			if (useQuartzForImages && MAC_USE_QUARTZ) {
+			if (useQuartzForImages) {
 				bytesPerRow = (clipx2 - clipx1) * 4;
 				imageData = Melder_malloc (unsigned char, bytesPerRow * (clipy1 - clipy2));
 				Melder_assert (imageData != NULL);
@@ -263,18 +263,18 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#elif xwin
 			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \
-				if (mayOptimize) *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]; \
+				if (mayOptimize) *pixelAddress ++ = xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]; \
 				else XPutPixel (image, xDC - clipx1, yDC - clipy2, \
-					grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]);
+					xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]);
 		#elif win
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
 			#define ROW_START_ADDRESS \
-				(useQuartzForImages && MAC_USE_QUARTZ ? (imageData + (yDC - clipy2) * bytesPerRow) : \
+				(useQuartzForImages ? (imageData + (yDC - clipy2) * bytesPerRow) : \
 				(offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling))
 			#define PUT_PIXEL \
-				if (useQuartzForImages && MAC_USE_QUARTZ) { \
+				if (useQuartzForImages) { \
 					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
@@ -370,7 +370,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
-			if (useQuartzForImages && MAC_USE_QUARTZ) {
+			if (useQuartzForImages) {
 				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceUserRGB);
 				Melder_assert (colourSpace != NULL);
 				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL, imageData, bytesPerRow * (clipy1 - clipy2), NULL);
@@ -413,7 +413,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			DeleteBitmap (bitmap);
 		#elif mac
 			cleanUp:
-			if (useQuartzForImages && MAC_USE_QUARTZ) {
+			if (useQuartzForImages) {
 				Melder_free (imageData);
 			} else {
 				UnlockPixels (offscreenPixMap);
@@ -692,7 +692,7 @@ static void _cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			my printf (my file, ">\n");*/
 		my printf (my file, "grestore\n");
 	}
-	_Graphics_setColour (me, my colour);
+	_Graphics_setRGBColour (me, my red, my green, my blue);
 }
 
 static void cellArrayOrImage (I, double **z_float, unsigned char **z_byte,

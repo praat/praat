@@ -88,8 +88,8 @@ an elegant implementation.
 9. Further re-writes have been carried out to remove all global references.
 All parameters are passed around in structures.
 
-10. The facility to use a sampled natural excitation waveform has been 
-implemented. Naturalness of the resulting synthetic speech can be greatly 
+10. The facility to use a sampled natural excitation waveform has been
+implemented. Naturalness of the resulting synthetic speech can be greatly
 improved by using the glottal excitation waveform from a natural speaker,
 especially if it is the speaker on whose voice the synthesis is actually
 based. This may be obtained indirectly by inverse-filtering a vowel.
@@ -102,7 +102,7 @@ in comp.speech/sources.
 when compiling on a PC
 
 13. Various minor modifications to ensure correct compilation using
-Microsoft C 7.0 (tested) and Borland C (untested). 
+Microsoft C 7.0 (tested) and Borland C (untested).
 
 14. Modified random number generation for noise production as
 previously it was dependent on the size of the "long" type.
@@ -115,7 +115,7 @@ parameters (usually) represents 10ms of audio output, although this
 figure can be adjusted down to 1ms per frame. The parameters in each
 frame are described below. To avoid confusion, note that the cascade
 and parallel branch of the synthesizer duplicate some of the control
-parameters. 
+parameters.
 
 f0	This is the fundamental frequency (pitch) of the utterance
 	in this case it is specified in steps of 0.1 Hz, hence 100Hz
@@ -126,44 +126,44 @@ av    	Amplitude of voicing for the cascade branch of the
 
 f1    	First formant frequency in 200-1300 Hz.
 
-b1    	Cascade branch bandwidth of first formant in the range 40-1000 Hz. 
+b1    	Cascade branch bandwidth of first formant in the range 40-1000 Hz.
 
-f2     	Second formant frequency in the range 550 - 3000 Hz.	
+f2     	Second formant frequency in the range 550 - 3000 Hz.
 
-b2      Cascade branch bandwidth of second  formant in the range 40-1000 Hz. 
+b2      Cascade branch bandwidth of second  formant in the range 40-1000 Hz.
 
 f3      Third formant frequency in the range 1200-4999 Hz.
 
-b3      Cascade branch bandwidth of third formant in the range 40-1000 Hz. 
+b3      Cascade branch bandwidth of third formant in the range 40-1000 Hz.
 
 f4      Fourth formant frequency in 1200-4999 Hz.
 
-b4      Cascade branch bandwidth of fourth formant in the range 40-1000 Hz. 
+b4      Cascade branch bandwidth of fourth formant in the range 40-1000 Hz.
 
 f5      Fifth formant frequency in the range 1200-4999 Hz.
 
-b5      Cascade branch bandwidth of fifth formant in the range 40-1000 Hz. 
+b5      Cascade branch bandwidth of fifth formant in the range 40-1000 Hz.
 
 f6      Sixth formant frequency in the range 1200-4999 Hz.
 
-b6      Cascade branch bandwidth of sixth formant in the range 40-2000 Hz. 
+b6      Cascade branch bandwidth of sixth formant in the range 40-2000 Hz.
 
 fnz  	Frequency of the nasal zero in the range 248-528 Hz.
 	(cascade branch only) 	An implementation of a Klatt cascade-parallel formant synthesizer.
-	A re-implementation in C of Dennis Klatt's Fortran code, by: 
+	A re-implementation in C of Dennis Klatt's Fortran code, by:
 
 		Jon Iles (j.p.iles@cs.bham.ac.uk)
 		Nick Ing-Simmons (nicki@lobby.ti.com)
 
-	This code is a slightly modified version of the code of 
+	This code is a slightly modified version of the code of
 
 
-bnz   	Bandwidth of the nasal zero in the range 40-1000 Hz 
+bnz   	Bandwidth of the nasal zero in the range 40-1000 Hz
 	(cascade branch only)
 
-fnp   	Frequency of the nasal pole in the range 248-528 Hz 
+fnp   	Frequency of the nasal pole in the range 248-528 Hz
 
-bnp   	Bandwidth of the nasal pole in the range 40-1000 Hz 
+bnp   	Bandwidth of the nasal pole in the range 40-1000 Hz
 
 ah    	Amplitude of aspiration 0-70 dB.
 
@@ -225,7 +225,7 @@ Command Line Options
 
 -i <filename> sets input filename.
 
--o <outfile> sets output filename. 
+-o <outfile> sets output filename.
    If output filename not specified, stdout is used.
 
 -q quiet - print no messages.
@@ -286,7 +286,7 @@ reverses the byte ordering in the raw binary output file. It is also
 worth noting that the above example reduces the quality of the output,
 as the sampling rate is being halved and the number of bits per sample
 is being halved. Ideally output should be at 16kHz with 16 bits per
-sample. 
+sample.
 
 
 Notes
@@ -313,10 +313,10 @@ References
 ----------
 
 (1) @article{klatt1980,
-     AUTHOR = {Klatt,D.H.},  
-     JOURNAL = {Journal of the Acoustic Society of America},  
-     PAGES = {971--995},  
-     TITLE = {Software for a cascade/parallel formant synthesizer},  
+     AUTHOR = {Klatt,D.H.},
+     JOURNAL = {Journal of the Acoustic Society of America},
+     PAGES = {971--995},
+     TITLE = {Software for a cascade/parallel formant synthesizer},
      VOLUME = {67},
      NUMBER = {3},
      MONTH = {March},
@@ -337,9 +337,9 @@ References
 (3) Dr. David Williams  at
 
 Sensimetrics Corporation,
-64 Sidney Street, 
-Cambridge, 
-MA  02139.  
+64 Sidney Street,
+Cambridge,
+MA  02139.
 Fax: (617) 225-0470
 Tel: (617) 225-2442
 e-mail sensimetrics@sens.com
@@ -348,14 +348,15 @@ e-mail sensimetrics@sens.com
 /*
   djmw 20081019 first implementation.
   djmw 20081128 Parallel section: rnp filters dif(source)+frication instead of source only.
+  djmw 20090708 +Table_to_KlattTable, KlattTable_to_Table
 */
 
 #include "KlattTable.h"
 #include "Resonator.h"
 
 #define CASCADE_PARALLEL 1         /* Type of synthesis model */
-#define ALL_PARALLEL     2 
-#define NPAR		 40        /* Number of control parameters */
+#define ALL_PARALLEL     2
+#define KlattTable_NPAR	40        /* Number of control parameters */
 #define MAX_SAM          20000     /* Maximum sample rate */
 #define TRUE             1
 #define FALSE            0
@@ -381,21 +382,22 @@ typedef struct KlattFrame
 	long BNPhz;	/* Nasal pole bw in Hz,             40 to 1000 */
 	long ah;	/* Amp of aspiration in dB,         0 to   70 */
 	long Kopen;	/* # of samples in open period,     10 to   65 */
-	long Aturb;	/* Breathiness in voicing,          0 to   80 */        
-	long TLTdb;	/* Voicing spectral tilt in dB,     0 to   24 */        
-	long AF;	/* Amp of frication in dB,          0 to   80 */        
+	long Aturb;	/* Breathiness in voicing,          0 to   80 */
+	long TLTdb;	/* Voicing spectral tilt in dB,     0 to   24 */
+	long AF;	/* Amp of frication in dB,          0 to   80 */
 	long Kskew;	/* Skewness of alternate periods,   0 to   40 in sample#/2 */
-	long ANP;	/* Amp of par nasal pole in dB,     0 to   80 */        
-	long AB;	/* Amp of bypass fric. in dB,       0 to   80 */        
-	long AVpdb;	/* Amp of voicing,  par in dB,      0 to   70 */        
-	long Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */        
+	long ANP;	/* Amp of par nasal pole in dB,     0 to   80 */
+	long AB;	/* Amp of bypass fric. in dB,       0 to   80 */
+	long AVpdb;	/* Amp of voicing,  par in dB,      0 to   70 */
+	long Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
  } *KlattFrame;
 
 static wchar_t *columnNames = L"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
+static wchar_t *columnNamesA[KlattTable_NPAR+1] = {L"", L"f0", L"av", L"f1", L"b1", L"f2", L"b2", L"f3", L"b3", L"f4", L"b4", L"f5", L"b5", L"f6", L"b6", L"fnz", L"bnz", L"fnp", L"bnp", L"ah", L"kopen", L"aturb", L"tilt", L"af", L"skew", L"a1", L"b1p", L"a2", L"b2p", L"a3", L"b3p", L"a4", L"b4p", L"a5", L"b5p", L"a6", L"b6p", L"anp", L"ab", L"avp", L"gain"};
 
-static double DBtoLIN (long dB) 
+static double DBtoLIN (long dB)
 {
-	static double amptable[88] = 
+	static double amptable[88] =
 	{   0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 13.0, 14.0,
@@ -430,7 +432,7 @@ typedef struct KlattGlobal
 	long nmod;        /* Position in period to begin noise amp. modul */
 	long Kopen;       /* # of samples in open period,     10 to   65 */
 	long Kskew;       /* Skewness of alternate periods,   0 to   40 in sample#/2 */
-	double TLTdb;       /* Voicing spectral tilt in dB,     0 to   24 */        
+	double TLTdb;       /* Voicing spectral tilt in dB,     0 to   24 */
 	long nrand;       /* Varible used by random number generator      */
 	double pulse_shape_a;  /* Makes waveshape of glottal pulse when open   */
 	double pulse_shape_b;  /* Makes waveshape of glottal pulse when open   */
@@ -454,13 +456,40 @@ typedef struct KlattGlobal
 	AntiResonator rnz;
 } *KlattGlobal;
 
+KlattTable KlattTable_readFromRawTextFile (MelderFile fs)
+{
+	Matrix thee = Matrix_readFromRawTextFile (fs);
+	if (thee == NULL) return NULL;
+
+	if (thy nx != KlattTable_NPAR) return Melder_errorp3 (L"A KlattTable needs ", Melder_integer (KlattTable_NPAR), L" columns.");
+
+	KlattTable me = new (KlattTable);
+	if (me == NULL || ! Table_initWithColumnNames (me, thy ny, columnNames)) goto end;
+	for (long irow = 1; irow <= thy ny; irow++)
+	{
+		for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++)
+		{
+			double val = thy z[irow][jcol];
+			if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) // bw == 0?
+			{
+				val = thy z[irow][jcol - 1] / 10;
+			}
+			if (! Table_setNumericValue ((Table) me, irow, jcol, val)) goto end;
+		}
+	}
+end:
+	forget (thee);
+	if (Melder_hasError ()) forget (me);
+	return me;
+}
+
 static KlattGlobal KlattGlobal_create (double samplingFrequency)
 {
 	KlattGlobal me = (KlattGlobal) _Melder_calloc (1, sizeof(struct KlattGlobal));
-	
+
 	my samrate = samplingFrequency;
 	double dT = 1.0 / my samrate;
-	
+
 	for (long i = 1; i <= 8; i++)
 	{
 		my rc[i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
@@ -495,7 +524,7 @@ static void KlattGlobal_free (KlattGlobal me)
 	Melder_free (my rgl);
 	Melder_free (my rlp);
 	Melder_free (my rout);
-	Melder_free (me);	
+	Melder_free (me);
 }
 
 static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFormants, int glottalSource,
@@ -511,7 +540,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 		203,230,-235,-286,23,107,92,-91,38,464,443,176,98,-784,-2449,
 		-1891,-1045,-1600,-1462,-1384,-1261,-949,-730
 	};
-	
+
 	my nspfr = my samrate * frameDuration; /* average number of samples per frame */
 	my synthesis_model = synthesisModel;
 	my nfcascade = numberOfFormants;
@@ -521,7 +550,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 	my sample_factor = (float) SAMPLE_FACTOR;
 	my outsl = outputType;
 	my f0_flutter = flutter;
-	
+
 	my FLPhz = 0.0950 * my samrate; // depends on samplingFrequency ????
 	my BLPhz = 0.0630 * my samrate;
 	Filter_setFB (my rlp, my FLPhz, my BLPhz);
@@ -550,18 +579,18 @@ KlattTable KlattTable_create (double frameDuration, double totalDuration)
 	return me;
 }
 
-//static void frame_init(KlattGlobal_ptr globals, KlattFrame_ptr frame) 
+//static void frame_init(KlattGlobal_ptr globals, KlattFrame_ptr frame)
 static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee)
 {
 	double amp_parFNP, amp_parF[7] = {0, 0.4, 0.15, 0.06, 0.04, 0.022, 0.03};
 	long i;
 
-	my F0hz10 = thy F0hz10; 
+	my F0hz10 = thy F0hz10;
 	my original_f0 = my F0hz10 / 10;
 	my Kopen = thy Kopen;
 	my Kskew = thy Kskew;
 	my TLTdb = thy TLTdb;
-	
+
 	my Aturb = thy Aturb;
 	my AVdb = thy AVdb;
 	my AVdb -= 7;
@@ -600,7 +629,7 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee)
 		Filter_setFB (my rp[i], thy Fhz[i], thy Bphz[i]);
 		my rp[i] -> a *= amp_parF[i] * DBtoLIN (thy A[i]);
 	}
-	
+
 	Filter_setFB (my rnpp, thy FNPhz, thy BNPhz);
 	my rnpp -> a *= amp_parFNP;
 
@@ -612,7 +641,7 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee)
 /*
 This function adds F0 flutter, as specified in:
 
-"Analysis, synthesis and perception of voice quality variations among 
+"Analysis, synthesis and perception of voice quality variations among
 female and male talkers" D.H. Klatt and L.C. Klatt JASA 87(2) February 1990.
 
 Flutter is added by applying a quasi-random element constructed from three
@@ -632,16 +661,16 @@ static void KlattFrame_flutter (KlattGlobal me)
 	time_count++;
 }
 
-/* 
-  Random number generator (return a number between -8191 and +8191) 
-  Noise spectrum is tilted down by soft low-pass filter having a pole near 
-    the origin in the z-plane, i.e. output = input + (0.75 * lastoutput) 
+/*
+  Random number generator (return a number between -8191 and +8191)
+  Noise spectrum is tilted down by soft low-pass filter having a pole near
+    the origin in the z-plane, i.e. output = input + (0.75 * lastoutput)
 */
-static float KlattGlobal_gen_noise (KlattGlobal me) 
+static float KlattGlobal_gen_noise (KlattGlobal me)
 {
 	static double nlast = 0;
 	double noise;
-	
+
 	my nrand = ((rand()%(int)(((8191)+1)-(-8191)))+(-8191));
 	noise = my nrand + (0.75 * nlast);
  	nlast = noise;
@@ -650,18 +679,18 @@ static float KlattGlobal_gen_noise (KlattGlobal me)
 }
 
 /*
-Generate a low pass filtered train of impulses as an approximation of 
-a natural excitation waveform. Low-pass filter the differentiated impulse 
-with a critically-damped second-order filter, time constant proportional 
+Generate a low pass filtered train of impulses as an approximation of
+a natural excitation waveform. Low-pass filter the differentiated impulse
+with a critically-damped second-order filter, time constant proportional
 to Kopen.
 */
-static float KlattGlobal_impulsive_source (KlattGlobal me) 
+static float KlattGlobal_impulsive_source (KlattGlobal me)
 {
 	static double doublet[] = {0.0, 13000000.0, -13000000.0};
 	static double vwave;
-	
+
 	vwave = my nper < 3 ? doublet[my nper] : 0;
-  
+
 	return Filter_getOutput (my rgl, vwave);
 }
 
@@ -669,18 +698,18 @@ static float KlattGlobal_impulsive_source (KlattGlobal me)
 Vwave is the differentiated glottal flow waveform, there is a weak
 spectral zero around 800 Hz, magic constants a,b reset pitch synchronously.
 */
-static float KlattGlobal_natural_source (KlattGlobal me) 
+static float KlattGlobal_natural_source (KlattGlobal me)
 {
 	static double vwave = 0;
 	double lgtemp = 0;
 
-	if (my nper < my nopen) 
+	if (my nper < my nopen)
 	{
 		my pulse_shape_a -= my pulse_shape_b;
 		vwave += my pulse_shape_a;
 		lgtemp = vwave * 0.028;
 	}
-	else 
+	else
 	{
  		vwave = 0.0;
 	}
@@ -735,7 +764,7 @@ static float KlattGlobal_sampled_source (KlattGlobal me)
   portion of the voicing cycle "nopen".
 
   Let integral of dV/dt have no net dc flow --> a = (b * nopen) / 3
- 
+
   Let maximum of dUg(n)/dn be constant --> b = gain / (nopen * nopen)
   meaning as nopen gets bigger, V has bigger peak proportional to n
 
@@ -762,25 +791,25 @@ static float KlattGlobal_sampled_source (KlattGlobal me)
   This minimum has larger amplitude than the maximum.
   b = 6*gain/(N^2-N), b approx 6*gain/N^2. With a maximum gain of 32767 we arrive at
   b= 196602 / (N^2-N) Their value is 20*log10(1920000/196602) = 19.79 dB too high!
-  The noise is in the range [-8192,8192], 
+  The noise is in the range [-8192,8192],
 */
 
-static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) 
+static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 {
 	long temp;
 	double temp1;
 	static long skew;
-	static short B0[224] = 
+	static short B0[224] =
 	{
 		1200,1142,1088,1038, 991, 948, 907, 869, 833, 799, 768, 738, 710, 683, 658,
 		634, 612, 590, 570, 551, 533, 515, 499, 483, 468, 454, 440, 427, 415, 403,
 		391, 380, 370, 360, 350, 341, 332, 323, 315, 307, 300, 292, 285, 278, 272,
 		265, 259, 253, 247, 242, 237, 231, 226, 221, 217, 212, 208, 204, 199, 195,
 		192, 188, 184, 180, 177, 174, 170, 167, 164, 161, 158, 155, 153, 150, 147,
-		145, 142, 140, 137, 135, 133, 131, 128, 126, 124, 122, 120, 119, 117, 115, 
+		145, 142, 140, 137, 135, 133, 131, 128, 126, 124, 122, 120, 119, 117, 115,
 		113,111, 110, 108, 106, 105, 103, 102, 100, 99, 97, 96, 95, 93, 92, 91, 90,
 		88, 87, 86, 85, 84, 83, 82, 80, 79, 78, 77, 76, 75, 75, 74, 73, 72, 71,
-		70, 69, 68, 68, 67, 66, 65, 64, 64, 63, 62, 61, 61, 60, 59, 59, 58, 57, 
+		70, 69, 68, 68, 67, 66, 65, 64, 64, 63, 62, 61, 61, 60, 59, 59, 58, 57,
 		57, 56, 56, 55, 55, 54, 54, 53, 53, 52, 52, 51, 51, 50, 50, 49, 49, 48, 48,
 		47, 47, 46, 46, 45, 45, 44, 44, 43, 43, 42, 42, 41, 41, 41, 41, 40, 40,
 		39, 39, 38, 38, 38, 38, 37, 37, 36, 36, 36, 36, 35, 35, 35, 35, 34, 34,33,
@@ -788,7 +817,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 		28, 28, 28, 28, 27, 27
 	};
 
-	if (my F0hz10 > 0) 
+	if (my F0hz10 > 0)
 	{
 		/* T0 is 4* the number of samples in one pitch period */
 
@@ -800,7 +829,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 		/* Duration of period before amplitude modulation */
 
 		my nmod = my T0;
-		if (my AVdb > 0) 
+		if (my AVdb > 0)
 		{
 			my nmod >>= 1;
 		}
@@ -824,7 +853,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 			Melder_warning1 (L"Glottal open period cannot exceed T0, truncated");
 		}
 
-		if (my nopen < 40) 
+		if (my nopen < 40)
 		{
 			/* F0 max = 1000 Hz */
 			my nopen = 40;
@@ -848,21 +877,21 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 
 		temp1 = my nopen * 0.00833;
 		my rgl -> a *= temp1 * temp1;
- 
+
 		/* Truncate skewness so as not to exceed duration of closed phase of glottal period. */
 
 		temp = my T0 - my nopen;
-		if (my Kskew > temp) 
+		if (my Kskew > temp)
 		{
-			Melder_information5 (L"Kskew duration=", Melder_integer (my Kskew), L" > glottal closed period=", 
+			Melder_information5 (L"Kskew duration=", Melder_integer (my Kskew), L" > glottal closed period=",
 					Melder_integer (my T0 - my nopen), L" truncate");
 			my Kskew = temp;
 		}
-		if (skew >= 0) 
+		if (skew >= 0)
 		{
 			skew = my Kskew;
 		}
-		else 
+		else
 		{
 			skew = - my Kskew;
 		}
@@ -872,7 +901,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 		my T0 = my T0 + skew;
 		skew = - skew;
 	}
-	else 
+	else
 	{
 		my T0 = 4;                     /* Default for f0 undefined */
 		my amp_voice = 0.0;
@@ -884,7 +913,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 
 	/* Reset these pars pitch synchronously or at update rate if f0=0 */
 
-	if ((my T0 != 4) || (my ns == 0)) 
+	if ((my T0 != 4) || (my ns == 0))
 	{
 		/* Set one-pole low-pass filter that tilts glottal source */
 
@@ -894,7 +923,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me)
 }
 
 // This is Klatt80 with improved source model.
-static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) 
+static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 {
 	double temp, outbypas, out;
 	long i, n4;
@@ -923,13 +952,13 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 
 		frics = my amp_frica * noise;
 
-		/* 
-			Compute voicing waveform. Run glottal source simulation at 4 
-			times normal sample rate to minimize quantization noise in 
+		/*
+			Compute voicing waveform. Run glottal source simulation at 4
+			times normal sample rate to minimize quantization noise in
 			period of female voice.
 		*/
 
-		for (n4 = 0; n4 < 4; n4++) 
+		for (n4 = 0; n4 < 4; n4++)
 		{
 			switch(my glsource)
  			{
@@ -937,7 +966,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 				voice = KlattGlobal_impulsive_source (me);
 				break;
 			case NATURAL:
-				voice = KlattGlobal_natural_source (me);	
+				voice = KlattGlobal_natural_source (me);
 				break;
  			case SAMPLED:
 				voice = KlattGlobal_sampled_source (me);
@@ -954,7 +983,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 
  			/*
 				Low-pass filter voicing waveform before downsampling from 4*samrate
-				to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate 
+				to samrate samples/sec.  Resonator f=.09*samrate, bw=.06*samrate
 			*/
 
 			voice = Filter_getOutput (my rlp, voice);
@@ -972,13 +1001,13 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 		voice = (voice * my onemd) + (vlast * my decay);
 		vlast = voice;
 
-		/* 
-		Add breathiness during glottal open phase. Amount of breathiness 
-		determined by parameter Aturb Use nrand rather than noise because 
-		noise is low-passed. 
+		/*
+		Add breathiness during glottal open phase. Amount of breathiness
+		determined by parameter Aturb Use nrand rather than noise because
+		noise is low-passed.
 		*/
 
-		if (my nper < my nopen) 
+		if (my nper < my nopen)
 		{
 			voice += my amp_breth * my nrand;
 		}
@@ -998,14 +1027,14 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 
 		/*
 		Cascade vocal tract, excited by laryngeal sources.
-		Nasal antiresonator, then formants FNP, F5, F4, F3, F2, F1 
+		Nasal antiresonator, then formants FNP, F5, F4, F3, F2, F1
 		*/
 
 		if(my synthesis_model != ALL_PARALLEL)
 		{
 			out = Filter_getOutput (my rnz, glotout); /* anti resonator */
 			out = Filter_getOutput (my rnpc, out);
-			
+
 			for (i = 8; i > 0; i--)
 			{
 				if (my nfcascade >= i)
@@ -1017,17 +1046,17 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 		else
 		{
 			/* we are not using the cascade tract, set out to zero */
-			out = 0; 
+			out = 0;
 		}
 
  		/* Excite parallel F1 and FNP by voicing waveform */
 
 		sourc = par_glotout;        /* Source is voicing plus aspiration */
 
-		/*  
-		Standard parallel vocal tract Formants F6,F5,F4,F3,F2, 
-		outputs added with alternating sign. Sound sourc for other 
-		parallel resonators is frication plus first difference of 
+		/*
+		Standard parallel vocal tract Formants F6,F5,F4,F3,F2,
+		outputs added with alternating sign. Sound sourc for other
+		parallel resonators is frication plus first difference of
 		voicing waveform.
 
 		In Klatt80:
@@ -1040,12 +1069,12 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 
 		Problem: The source signal is already v'[n], and we are differentiating here again ???
 		*/
-		
+
 		out += Filter_getOutput (my rp[1], sourc);
-		
+
 		sourc = frics + par_glotout - glotlast; // diff
 		glotlast = par_glotout;
-		
+
 		out += Filter_getOutput (my rnpp, sourc);
 
 		for (i = 6; i >= 2; i--)
@@ -1060,7 +1089,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 		out = outbypas - out;
 
 
-		if (my outsl != 0) 
+		if (my outsl != 0)
 		{
 			switch (my outsl)
 			{
@@ -1070,7 +1099,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 			case 2:
 				out = aspiration;
 				break;
-			case 3: 
+			case 3:
 				out = frics;
 				break;
 			case 4:
@@ -1100,8 +1129,77 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output)
 		{
 			temp =  32767.0;
 		}
-		*output++ = temp;	
+		*output++ = temp;
 	}
+}
+
+static int KlattTable_checkLimits (KlattTable me)
+{
+	long nviolations_upper[KlattTable_NPAR+1] = { 0 }, nviolations_lower[KlattTable_NPAR+1] = { 0 };
+	long irow, j, nv = 0;
+	long lower[KlattTable_NPAR+1] = { 0, // dummy
+		10, 0,  // f0, av
+		200, 40, 550, 40, 1200, 40, 1200, 40, 1200, 40, 1200, 40, // f1,b1 -- f6,b6
+		248, 40, 248, 40, // fnz, bnz, fnp, bnp
+		0, 0, 0, 0, 0, 0, // ah, kopen, aturb, tilt, af, skew
+		0, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40, // a1,b1p -- a6,b6p
+		0, 0, 0, 0 // anp, ab, avp, gain
+	};
+	long upper[KlattTable_NPAR+1] = { 0, // dummy
+		10000, 70,   // f0, av
+		1300, 1000, 3000, 1000, 4999, 1000, 4999, 1000, 6999, 1000, 7000, 1000,  // f1,b1 -- f6,b6
+		528, 1000, 528, 1000, // fnz, bnz, fnp, bnp
+		70, 60, 80, 24, 80, 40,  // ah, kopen, aturb, tilt, af, skew
+		80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, 80, 1000, // a1,b1p -- a6,b6p
+		80, 80, 70, 80  // anp, ab, avp, gain
+	};
+
+	for (irow = 1; irow <= my rows -> size; irow++)
+	{
+		for (j = 1; j <= KlattTable_NPAR; j++)
+		{
+			long val = Table_getNumericValue ((Table) me, irow, j);
+			if (val < lower[j])
+			{
+				nviolations_lower[j]++; nv++;
+			}
+			else if (val > upper[j])
+			{
+				nviolations_upper[j]++; nv++;
+			}
+		}
+	}
+	if (nv > 0)
+	{
+		MelderInfo_open ();
+		MelderInfo_writeLine3 (L"Diagnostics for KlattTable \"", Thing_getName (me), L"\":");
+		MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my rows -> size));
+		for (j = 1; j <= KlattTable_NPAR; j++)
+		{
+			if (nviolations_lower[j] > 0)
+			{
+				if (nviolations_upper[j] > 0)
+				{
+					MelderInfo_writeLine9 (columnNamesA[j], L": ",
+						Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (nviolations_lower[j]), L"; ",
+						Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
+				}
+				else
+				{
+					MelderInfo_writeLine5 (columnNamesA[j], L": ",
+						Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (lower[j]));
+				}
+			}
+			else if (nviolations_upper[j] > 0)
+			{
+				MelderInfo_writeLine5 (columnNamesA[j], L": ",
+					Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
+			}
+		}
+		MelderInfo_close ();
+		return 0;
+	}
+	return 1;
 }
 
 Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int glottalSource, double flutter, int outputType)
@@ -1110,22 +1208,26 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 	KlattGlobal thee = NULL;
 	KlattFrame frame = NULL;
 	short *iwave = NULL;
-	long numberOfSamples = 1, jcol, par[NPAR+1];
-	
+	long numberOfSamples = 1, jcol, par[KlattTable_NPAR+1];
+
+	if (! KlattTable_checkLimits (me))
+	{
+		Melder_warning1 (L"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
+	}
 	if (((thee = KlattGlobal_create (samplingFrequency)) == NULL) ||
 		((frame = KlattFrame_create ()) == NULL) ||
 		((iwave = NUMsvector (0, MAX_SAM)) == NULL)) goto end;
-		
+
 	thy samrate = samplingFrequency;
-	
+
 	KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, flutter, outputType);
-	
+
 	him = Sound_createSimple (1, frameDuration * my rows -> size, samplingFrequency);
 	if (him == NULL) goto end;
-	
+
 	for (long irow = 1 ; irow <= my rows -> size; irow++)
 	{
-		for (jcol = 1; jcol <= NPAR; jcol++)
+		for (jcol = 1; jcol <= KlattTable_NPAR; jcol++)
 		{
 			par[jcol] = Table_getNumericValue ((Table) me, irow, jcol);
 		}
@@ -1152,17 +1254,17 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 		frame ->  AVpdb = par[jcol++];  frame ->  Gain0 = par[jcol++];;
 		frame ->  Fhz[7] = 6500;        frame ->  Bhz[7] = 600;
 		frame ->  Fhz[8] = 7500;        frame ->  Bhz[8] = 600;
-	
+
 		KlattGlobal_getFrame (thee, frame);
 
 		KlattGlobal_synthesizeFrame (thee, iwave);
-		
+
 		for (long isam = 0; isam < thy nspfr; isam++)
 		{
 			his z[1][numberOfSamples++] = iwave[isam] / 32768.0;
-		}		
+		}
 	}
-	
+
 end:
 	NUMsvector_free (iwave, 0);
 	KlattGlobal_free (thee);
@@ -1175,8 +1277,8 @@ end:
 KlattTable KlattTable_createExample (void)
 {
 	long nrows = 1376;
-	struct klatt_params { 
-		short p[40]; 
+	struct klatt_params {
+		short p[40];
 	} klatt_data [1376] = {
 		{ 1000,0,542,0,1372,0,2634,0,3737,0,5740,0,6914,0,0,0,200,30,0,60,0,0,0,0,0,52,0,56,0,71,0,66,0,80,0,80,0,0,0,60 },
 		{ 1000,0,542,0,1372,0,2634,0,3737,0,5740,0,6914,0,0,0,200,30,0,60,0,0,0,0,0,52,0,56,0,71,0,66,0,80,0,80,0,0,0,60 },
@@ -2559,20 +2661,37 @@ KlattTable KlattTable_createExample (void)
 	if (! Table_initWithColumnNames (me, nrows, columnNames)) goto end;
 	for (long irow = 1; irow <= nrows; irow++)
 	{
-		for (long jcol = 1; jcol <= NPAR; jcol++)
+		for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++)
 		{
 			double val = klatt_data[irow-1].p[jcol-1];
 			if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) // bw == 0?
 			{
-				val = klatt_data[irow-1].p[jcol] / 10; 
+				val = klatt_data[irow-1].p[jcol] / 10;
 			}
 			if (!Table_setNumericValue ((Table) me, irow, jcol, val)) goto end;
 		}
 	}
-	
+
 end:
 	if (Melder_hasError ()) forget (me);
 	return me;
+}
+
+KlattTable Table_to_KlattTable (Table me)
+{
+	if (my numberOfColumns != KlattTable_NPAR) return Melder_errorp3 (L"A KlattTable needs ", Melder_integer (KlattTable_NPAR), L" columns.");
+	KlattTable thee = Data_copy (me);
+	if (thee == NULL) return NULL;
+	Thing_overrideClass (thee, classKlattTable);
+	return thee;
+}
+
+Table KlattTable_to_Table (KlattTable me)
+{
+	Table thee = Data_copy (me);
+	if (thee == NULL) return NULL;
+	Thing_overrideClass (thee, classTable);
+	return thee;
 }
 
 /* End of file KlattTable.c */

@@ -133,15 +133,26 @@ void Graphics_clearWs (I) {
 			FillRect (my dc, & rect, GetStockBrush (WHITE_BRUSH));
 			/*if (my window) SendMessage (my window, WM_ERASEBKGND, (WPARAM) my dc, 0);*/
 		#elif mac
-			Rect r;
-			RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
-			SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
-			SetPort (my macPort);
-			RGBForeColor (& white);
-			PaintRect (& r);
-			RGBForeColor (& black);
-			if (my drawingArea) GuiMac_clipOff ();
+			if (my useQuartz) {
+				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				CGContextSetAlpha (my macGraphicsContext, 1.0);
+				CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
+				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				CGContextSetRGBFillColor (my macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+				CGContextFillRect (my macGraphicsContext, CGRectMake (my x1DC, shellHeight - my y1DC, my x2DC - my x1DC, my y1DC - my y2DC));
+				QDEndCGContext (my macPort, & my macGraphicsContext);
+			} else { // QuickDraw
+				Rect r;
+				RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
+				if (my drawingArea) GuiMac_clipOn (my drawingArea);
+				SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
+				SetPort (my macPort);
+				RGBForeColor (& white);
+				PaintRect (& r);
+				RGBForeColor (& black);
+				if (my drawingArea) GuiMac_clipOff ();
+			}
 		#endif
 	}
 }
@@ -270,7 +281,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 	#elif mac
 		(void) voidDisplay;
 		my macPort = (GrafPtr) voidWindow;
-		GetQDGlobalsBlack (& my macPattern);
 		my macColour = theBlackColour;
 		my resolution = resolution;
 		my depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */

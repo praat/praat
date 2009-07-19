@@ -391,13 +391,13 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 				lc -> code = info -> psEncoding;
 			} else {
-				lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? lc -> kar : info -> macEncoding;
+				lc -> code = my useQuartz && ! my duringXor ? lc -> kar : info -> macEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
 						info = Longchar_getInfo ('s', 'w');
 						lc -> kar = info -> unicode;
-						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz && ! my duringXor ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
 						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
@@ -405,14 +405,14 @@ static void charSize (I, _Graphics_widechar *lc) {
 					} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
 						info = Longchar_getInfo ('l', ' ');
 						lc -> kar = info -> unicode;
-						lc -> code = my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz && ! my duringXor ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
 						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
 						lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
 					}
 				}
-				if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
+				if (my useQuartz && ! my duringXor) {
 					ATSFontRef atsuiFont =
 						lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 						lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -692,7 +692,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		#elif mac
 			long font = lc -> font.integer;
 			int needBitmappedIPA = font == 0;
-			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
+			if (my useQuartz && ! my duringXor) {
 				ATSFontRef atsuiFont =
 					lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 					lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -733,11 +733,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				Fixed fontSize = lc -> size << 16;
 				Boolean boldStyle = (lc -> style & bold) != 0;
 				Boolean italicStyle = (lc -> style & italic) != 0;
-				static RGBColor blueColour = { 0, 0, 0xFFFF };
+				static RGBColor blueColour = { 0, 0, 0xFFFF }, whiteColour = { 0xFFFF, 0xFFFF, 0xFFFF };
 				Fract kerningOff = FloatToFract (1.0);
 				ATSUAttributeTag styleAttributeTags [] = { kATSUFontTag, kATSUSizeTag, kATSUColorTag, kATSUQDBoldfaceTag, kATSUQDItalicTag, kATSUKerningInhibitFactorTag };
 				ByteCount styleValueSizes [] = { sizeof (ATSUFontID), sizeof (Fixed), sizeof (RGBColor), sizeof (Boolean), sizeof (Boolean), sizeof (Fract) };
-				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize, lc -> link ? & blueColour : & my macColour, & boldStyle, & italicStyle, & kerningOff };
+				ATSUAttributeValuePtr styleValues [] = { & atsuiFont, & fontSize,
+					lc -> link ? & blueColour : my duringXor ? & whiteColour : & my macColour, & boldStyle, & italicStyle, & kerningOff };
 				ATSUSetAttributes (style, 6, styleAttributeTags, styleValueSizes, styleValues);
 				ATSUSetRunStyle (textLayout, style, 0, nchars);
 				/*
@@ -746,7 +747,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				CGContextSaveGState (my macGraphicsContext);
 				CGContextTranslateCTM (my macGraphicsContext, xDC, shellHeight - yDC);
 				CGContextRotateCTM (my macGraphicsContext, my textRotation * NUMpi / 180.0);
+				if (my duringXor) {
+					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
+				}
 				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
+				if (my duringXor) {
+					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
+					//CGContextSynchronize (my macGraphicsContext);
+				}
 				Melder_assert (err == 0);
 				CGContextRestoreGState (my macGraphicsContext);
 				return;
@@ -763,9 +771,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			// TODO: Paul; waarom hier niet void Graphics_setColour (I, int colour) ?
 
 			#if gtk 
-				if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
+				if (lc -> link) _Graphics_setRGBColour (me, 0.0, 0.0, 1.0);
 			#elif xwin
-				if (lc -> link) XSetForeground (my display, my gc, blue);
+				if (lc -> link) XSetForeground (my display, my gc, xwinColours [Graphics_BLUE]);
 			#elif win
 			#elif mac
 				if (lc -> link) ForeColor (blueColor);
@@ -877,7 +885,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			 */
 
 			#if xwin || gtk
-				if (lc -> link) _Graphics_setColour (me, my colour);
+				if (lc -> link) _Graphics_setRGBColour (me, my red, my green, my blue);
 			#elif win
 			#elif mac
 				if (lc -> link) RGBForeColor (& my macColour);
@@ -1209,7 +1217,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		default:                 dy = 0; break;
 	}
 	#if mac
-		if (my screen && ((GraphicsScreen) me) -> useQuartz && my drawingArea && ! ((GraphicsScreen) me) -> duringXor && MAC_USE_QUARTZ) {
+		if (my screen && ((GraphicsScreen) me) -> useQuartz && ! ((GraphicsScreen) me) -> duringXor) {
 			QDBeginCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
 			shellHeight = GuiMac_clipOn_graphicsContext (((GraphicsScreen) me) -> drawingArea, ((GraphicsScreen) me) -> macGraphicsContext);
 		}
@@ -1320,7 +1328,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
 	}
 	#if mac
-		if (my screen && ((GraphicsScreen) me) -> useQuartz && my drawingArea && ! ((GraphicsScreen) me) -> duringXor && MAC_USE_QUARTZ) {
+		if (my screen && ((GraphicsScreen) me) -> useQuartz && ! ((GraphicsScreen) me) -> duringXor) {
 			CGContextSynchronize (((GraphicsScreen) me) -> macGraphicsContext);
 			//ATSUDisposeTextLayout (textLayout);
 			//ATSUDisposeStyle (style);

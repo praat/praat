@@ -23,9 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090708)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090719)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.11# (19 July 2009)")
 NORMAL (L"##5.1.10# (8 July 2009)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash if the Demo window was closed after an \"execute\".")
 LIST_ITEM (L"\\bu OTGrammar & PairDistribution: added ##Get minimum number correct...#.")

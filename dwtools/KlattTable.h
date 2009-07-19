@@ -21,9 +21,10 @@
 
 /*
  djmw 20081018 Initial version
+ djmw 20090708 latest modification
 */
 
-#ifndef _Table_h
+#ifndef _TableOfReal_h
 	#include "Table.h"
 #endif
 #ifndef _Sound_h
@@ -36,29 +37,29 @@ class_create (KlattTable, Table);
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration);
 /*
-f0  (08)	This is the fundamental frequency (pitch) of the utterance. 
+f0  (08)	This is the fundamental frequency (pitch) of the utterance.
 		In this case it is specified in steps of 0.1 Hz, hence 100Hz
 		will be represented by a value of 1000.
 av  (08)	Amplitude of voicing for the cascade branch of the
 		synthesizer in dB0. Range 0-70, value usually 60 for a vowel sound.
 f1  (08)	First formant frequency in 200-1300 Hz.
-b1  (08)	Cascade branch bandwidth of first formant in the range 40-1000 Hz. 
-f2  (08)	Second formant frequency in the range 550 - 3000 Hz.	
-b2  (08)	Cascade branch bandwidth of second  formant in the range 40-1000 Hz. 
+b1  (08)	Cascade branch bandwidth of first formant in the range 40-1000 Hz.
+f2  (08)	Second formant frequency in the range 550 - 3000 Hz.
+b2  (08)	Cascade branch bandwidth of second  formant in the range 40-1000 Hz.
 f3  (08)	Third formant frequency in the range 1200-4999 Hz.
-b3  (08)	Cascade branch bandwidth of third formant in the range 40-1000 Hz. 
+b3  (08)	Cascade branch bandwidth of third formant in the range 40-1000 Hz.
 f4  (08)	Fourth formant frequency in 1200-4999 Hz.
-b4  (08)	Cascade branch bandwidth of fourth formant in the range 40-1000 Hz. 
+b4  (08)	Cascade branch bandwidth of fourth formant in the range 40-1000 Hz.
 f5  (08)	Fifth formant frequency in the range 1200-4999 Hz.
-b5  (08)	Cascade branch bandwidth of fifth formant in the range 40-1000 Hz. 
+b5  (08)	Cascade branch bandwidth of fifth formant in the range 40-1000 Hz.
 f6  (08)	Sixth formant frequency in the range 1200-4999 Hz.
-b6  (08)	Cascade branch bandwidth of sixth formant in the range 40-2000 Hz. 
+b6  (08)	Cascade branch bandwidth of sixth formant in the range 40-2000 Hz.
 fnz (08)	Frequency of the nasal zero in the range 248-528 Hz.
-			(cascade branch only) 
-bnz (08)	Bandwidth of the nasal zero in the range 40-1000 Hz 
 			(cascade branch only)
-fnp (08)	Frequency of the nasal pole in the range 248-528 Hz 
-bnp (08)	Bandwidth of the nasal pole in the range 40-1000 Hz 
+bnz (08)	Bandwidth of the nasal zero in the range 40-1000 Hz
+			(cascade branch only)
+fnp (08)	Frequency of the nasal pole in the range 248-528 Hz
+bnp (08)	Bandwidth of the nasal pole in the range 40-1000 Hz
 ah  (08)	Amplitude of aspiration 0-70 dB.
 kopen (-8) 	Open quotient of voicing waveform, range 0-60, usually 30.
 			Will influence the gravelly or smooth quality of the voice.
@@ -103,5 +104,10 @@ double flutter, int outputType);
 Sound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
 
 KlattTable KlattTable_createExample (void);
+
+KlattTable Table_to_KlattTable (Table me);
+Table KlattTable_to_Table (KlattTable me);
+
+KlattTable KlattTable_readFromRawTextFile (MelderFile fs);
 
 #endif /* _KlattTable_h_ */

@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * pb 2008/01/19 double
  * sdk 2008/03/24 cairo
+ * pb 2009/07/10 fillArea Quartz
  */
 
 #include "GraphicsP.h"
@@ -204,7 +205,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 			}
 			DEFAULT
 		#elif mac
-			if (my useQuartz && my drawingArea && ! my duringXor && MAC_USE_QUARTZ) {
+			if (my useQuartz && ! my duringXor) {
 				QDBeginCGContext (my macPort, & my macGraphicsContext);
 				//CGContextSetAlpha (my macGraphicsContext, 1.0);
 				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
@@ -226,7 +227,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 					CGContextAddLineToPoint (my macGraphicsContext, xyDC [i + i], shellHeight - xyDC [i + i + 1]);
 				}
 				CGContextStrokePath (my macGraphicsContext);
-				CGContextSynchronize (my macGraphicsContext);
+				//CGContextSynchronize (my macGraphicsContext);
 				QDEndCGContext (my macPort, & my macGraphicsContext);
 				return;
 			}
@@ -298,19 +299,36 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 			FillPath (my dc);
 			DEFAULT
 		#elif mac
-			PolyHandle macpolygon;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
-			SetPort (my macPort);
-			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
-			macpolygon = OpenPoly ();
-			MoveTo (xyDC [0], xyDC [1]);
-			for (long i = 1; i < numberOfPoints; i ++)
-				LineTo (xyDC [i + i], xyDC [i + i + 1]);
-			ClosePoly ();
-			PaintPoly (macpolygon);
-			KillPoly (macpolygon);
-			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (my drawingArea) GuiMac_clipOff ();
+			if (my useQuartz) {
+				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				CGContextSetAlpha (my macGraphicsContext, 1.0);
+				CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
+				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				CGContextSetRGBFillColor (my macGraphicsContext, my macColour.red / 65536.0, my macColour.green / 65536.0, my macColour.blue / 65536.0, 1.0);
+				CGContextBeginPath (my macGraphicsContext);
+				CGContextMoveToPoint (my macGraphicsContext, xyDC [0], shellHeight - xyDC [1]);
+				for (long i = 1; i < numberOfPoints; i ++) {
+					CGContextAddLineToPoint (my macGraphicsContext, xyDC [i + i], shellHeight - xyDC [i + i + 1]);
+				}
+				CGContextFillPath (my macGraphicsContext);
+				//CGContextSynchronize (my macGraphicsContext);
+				QDEndCGContext (my macPort, & my macGraphicsContext);
+			} else {   // QuickDraw
+				PolyHandle macpolygon;
+				if (my drawingArea) GuiMac_clipOn (my drawingArea);
+				SetPort (my macPort);
+				if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
+				macpolygon = OpenPoly ();
+				MoveTo (xyDC [0], xyDC [1]);
+				for (long i = 1; i < numberOfPoints; i ++)
+					LineTo (xyDC [i + i], xyDC [i + i + 1]);
+				ClosePoly ();
+				PaintPoly (macpolygon);
+				KillPoly (macpolygon);
+				if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& theBlackColour);
+				if (my drawingArea) GuiMac_clipOff ();
+			}
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
@@ -410,14 +428,25 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 			Rectangle (my dc, x1DC, y2DC, x2DC + 1, y1DC + 1);
 			DEFAULT
 		#elif mac
-			Rect rect;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
-			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-			SetPort (my macPort);
-			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
-			PaintRect (& rect);  /* FillRect (& r, & my macPattern); */
-			if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (my drawingArea) GuiMac_clipOff ();
+			if (my useQuartz) {
+				QDBeginCGContext (my macPort, & my macGraphicsContext);
+				CGContextSetAlpha (my macGraphicsContext, 1.0);
+				CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
+				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				CGContextSetRGBFillColor (my macGraphicsContext, my macColour.red / 65536.0, my macColour.green / 65536.0, my macColour.blue / 65536.0, 1.0);
+				CGContextFillRect (my macGraphicsContext, CGRectMake (x1DC, shellHeight - y1DC, x2DC - x1DC, y1DC - y2DC));
+				QDEndCGContext (my macPort, & my macGraphicsContext);
+			} else {   // QuickDraw
+				Rect rect;
+				if (my drawingArea) GuiMac_clipOn (my drawingArea);
+				SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
+				SetPort (my macPort);
+				if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& my macColour);
+				PaintRect (& rect);
+				if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0) RGBForeColor (& theBlackColour);
+				if (my drawingArea) GuiMac_clipOff ();
+			}
 		#else
 			short xyDC [10];
 			xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -656,22 +685,23 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			int width, height;
 			width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			XSetForeground (my display, my gc, grey [10]);
+			XSetForeground (my display, my gc, xwinGreys [10]);
 			XDrawRectangle (my display, my window, my gc, x1DC, y2DC, width, height);
 			x1DC ++, x2DC --, y1DC --, y2DC ++;
 			width = x2DC - x1DC, height = y1DC - y2DC;
-			if (width <= 0 || height <= 0) { _Graphics_setColour (me, my colour); return; }
-			XSetForeground (my display, my gc, grey [30]);
-			XDrawLine (my display, my window, my gc, x1DC + 1, y1DC, x2DC - 1, y1DC);
-			XDrawLine (my display, my window, my gc, x2DC, y1DC, x2DC, y2DC - 1);
-			XSetForeground (my display, my gc, white);
-			XDrawLine (my display, my window, my gc, x1DC, y1DC, x1DC, y2DC);
-			XDrawLine (my display, my window, my gc, x1DC, y2DC, x2DC, y2DC);
-			if (width >= 2 && height >= 2) {
-				XSetForeground (my display, my gc, grey [65]);
-				XFillRectangle (my display, my window, my gc, x1DC + 1, y2DC + 1, width - 1, height - 1);
+			if (width > 0 && height > 0) {
+				XSetForeground (my display, my gc, xwinGreys [30]);
+				XDrawLine (my display, my window, my gc, x1DC + 1, y1DC, x2DC - 1, y1DC);
+				XDrawLine (my display, my window, my gc, x2DC, y1DC, x2DC, y2DC - 1);
+				XSetForeground (my display, my gc, xwinColours [Graphics_WHITE]);
+				XDrawLine (my display, my window, my gc, x1DC, y1DC, x1DC, y2DC);
+				XDrawLine (my display, my window, my gc, x1DC, y2DC, x2DC, y2DC);
+				if (width >= 2 && height >= 2) {
+					XSetForeground (my display, my gc, xwinGreys [65]);
+					XFillRectangle (my display, my window, my gc, x1DC + 1, y2DC + 1, width - 1, height - 1);
+				}
 			}
-			_Graphics_setColour (me, my colour);
+			_Graphics_setRGBColour (me, my red, my green, my blue);
 		#elif win
 			RECT rect;
 			rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;

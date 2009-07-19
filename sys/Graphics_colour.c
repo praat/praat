@@ -22,6 +22,7 @@
  * pb 2004/09/09 Xwin: highlight2
  * sdk 2008/03/24 cairo
  * pb 2009/05/09 pink
+ * pb 2009/07/09 RGB colours
  */
 
 #include "GraphicsP.h"
@@ -32,6 +33,26 @@
 	typedef struct { unsigned short red, green, blue; } RGBColour;
 #endif
 
+#if mac
+static RGBColour theColours [] = {
+		{ 0x0000, 0x0000, 0x0000 },   /* black */
+		{ 0xFFFF, 0xFFFF, 0xFFFF },   /* white */
+		{ 0xFF00, 0x0000, 0x0000 },   /* red */
+		{ 0x0000, 0x8000, 0x0000 },   /* green */
+		{ 0x0000, 0x0000, 0xFFFF },   /* blue */
+		{ 0x0000, 0xFFFF, 0xFFFF },   /* cyan */
+		{ 0xFFFF, 0x0000, 0xFFFF },   /* magenta */
+		{ 0xFFFF, 0xFFFF, 0x0000 },   /* yellow */
+		{ 0x8000, 0x0000, 0x0000 },   /* maroon */
+		{ 0x0000, 0xFFFF, 0x0000 },   /* lime */
+		{ 0x0000, 0x0000, 0x8000 },   /* navy */
+		{ 0x0000, 0x8000, 0x8000 },   /* teal */
+		{ 0x8000, 0x0000, 0x8000 },   /* purple */
+		{ 0x8000, 0x8000, 0x0000 },   /* olive */
+		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
+		{ 0xC000, 0xC000, 0xC000 },   /* silver */
+		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
+#else
 static RGBColour theColours [] = {
 		{ 0x0000, 0x0000, 0x0000 },   /* black */
 		{ 0xFFFF, 0xFFFF, 0xFFFF },   /* white */
@@ -50,104 +71,44 @@ static RGBColour theColours [] = {
 		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
 		{ 0xC000, 0xC000, 0xC000 },   /* silver */
 		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
-
-#if mac
-static RGBColour theMacColours [] = {
-		{ 0x0000, 0x0000, 0x0000 },   /* black */
-		{ 0xFFFF, 0xFFFF, 0xFFFF },   /* white */
-		{ 0xFF00, 0x0000, 0x0000 },   /* red */
-		{ 0x0000, 0x8000, 0x0000 },   /* green */
-		{ 0x0000, 0x0000, 0xFFFF },   /* blue */
-		{ 0x0000, 0xFFFF, 0xFFFF },   /* cyan */
-		{ 0xFFFF, 0x0000, 0xFFFF },   /* magenta */
-		{ 0xFFFF, 0xFFFF, 0x0000 },   /* yellow */
-		{ 0x8000, 0x0000, 0x0000 },   /* maroon */
-		{ 0x0000, 0xFFFF, 0x0000 },   /* lime */
-		{ 0x0000, 0x0000, 0x8000 },   /* navy */
-		{ 0x0000, 0x8000, 0x8000 },   /* teal */
-		{ 0x8000, 0x0000, 0x8000 },   /* purple */
-		{ 0x8000, 0x8000, 0x0000 },   /* olive */
-		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
-		{ 0xC000, 0xC000, 0xC000 },   /* silver */
-		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
 #endif
 
 #if xwin
-	unsigned long black, white, red, green, blue, cyan, magenta, yellow,
-		maroon, lime, navy, teal, purple, olive, pink, grey [101];
+	unsigned long xwinColours [1+Graphics_MAX_COLOUR], xwinGreys [101];
 #elif mac
 	#include "macport_on.h"
 	#include <LowMem.h>
-	static RGBColor theBlackColour = { 0, 0, 0 };
 #endif
 
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void _Graphics_setColour (I, int colour) {
+void _Graphics_setRGBColour (I, double red, double green, double blue) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if gtk
 			if (my cr == NULL) return;
-			switch (colour) {
-				case Graphics_WHITE:   cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0); break;
-				case Graphics_RED:     cairo_set_source_rgb (my cr, 1.0, 0.0, 0.0); break;
-				case Graphics_GREEN:   cairo_set_source_rgb (my cr, 0.0, 0.5, 0.0); break;
-				case Graphics_BLUE:    cairo_set_source_rgb (my cr, 0.0, 0.0, 1.0); break;
-				case Graphics_CYAN:    cairo_set_source_rgb (my cr, 0.0, 1.0, 1.0); break;
-				case Graphics_MAGENTA: cairo_set_source_rgb (my cr, 1.0, 0.0, 1.0); break;
-				case Graphics_YELLOW:  cairo_set_source_rgb (my cr, 1.0, 1.0, 0.0); break;
-				case Graphics_MAROON:  cairo_set_source_rgb (my cr, 0.5, 0.0, 0.0); break;
-				case Graphics_LIME:    cairo_set_source_rgb (my cr, 0.0, 1.0, 0.0); break;
-				case Graphics_NAVY:    cairo_set_source_rgb (my cr, 0.0, 0.0, 0.5); break;
-				case Graphics_TEAL:    cairo_set_source_rgb (my cr, 0.0, 0.5, 0.5); break;
-				case Graphics_PURPLE:  cairo_set_source_rgb (my cr, 0.5, 0.0, 0.5); break;
-				case Graphics_OLIVE:   cairo_set_source_rgb (my cr, 0.5, 0.5, 0.0); break;
-				case Graphics_PINK:    cairo_set_source_rgb (my cr, 1.0, 0.75, 0.75); break;
-				case Graphics_SILVER:  cairo_set_source_rgb (my cr, 0.75, 0.75, 0.75); break;
-				case Graphics_GREY:    cairo_set_source_rgb (my cr, 0.5, 0.5, 0.5); break;
-				default:               cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0); break;
-			}
+			cairo_set_source_rgb (my cr, red, green, blue);
 		#elif xwin
-			XSetForeground (my display, my gc,
-				colour == Graphics_WHITE ? white :
-				colour == Graphics_RED ? red :
-				colour == Graphics_GREEN ? green :
-				colour == Graphics_BLUE ? blue :
-				colour == Graphics_CYAN ? cyan :
-				colour == Graphics_MAGENTA ? magenta :
-				colour == Graphics_YELLOW ? yellow :
-				colour == Graphics_MAROON ? maroon :
-				colour == Graphics_LIME ? lime :
-				colour == Graphics_NAVY ? navy :
-				colour == Graphics_TEAL ? teal :
-				colour == Graphics_PURPLE ? purple :
-				colour == Graphics_OLIVE ? olive :
-				colour == Graphics_PINK ? pink :
-				colour == Graphics_SILVER ? grey [75] :
-				colour == Graphics_GREY ? grey [50] :
-				black);
-		#elif win
-			switch (colour) {
-				case Graphics_WHITE: my foregroundColour = RGB (255, 255, 255); break;
-				case Graphics_RED: my foregroundColour = RGB (255, 0, 0); break;
-				case Graphics_GREEN: my foregroundColour = RGB (0, 128, 0); break;
-				case Graphics_BLUE: my foregroundColour = RGB (0, 0, 255); break;
-				case Graphics_CYAN: my foregroundColour = RGB (0, 255, 255); break;
-				case Graphics_MAGENTA: my foregroundColour = RGB (255, 0, 255); break;
-				case Graphics_YELLOW: my foregroundColour = RGB (255, 255, 0); break;
-				case Graphics_MAROON: my foregroundColour = RGB (128, 0, 0); break;
-				case Graphics_LIME: my foregroundColour = RGB (0, 255, 0); break;
-				case Graphics_NAVY: my foregroundColour = RGB (0, 0, 128); break;
-				case Graphics_TEAL: my foregroundColour = RGB (0, 128, 128); break;
-				case Graphics_PURPLE: my foregroundColour = RGB (128, 0, 128); break;
-				case Graphics_OLIVE: my foregroundColour = RGB (128, 128, 0); break;
-				case Graphics_PINK: my foregroundColour = RGB (255, 192, 192); break;
-				case Graphics_SILVER: my foregroundColour = RGB (192, 192, 192); break;
-				case Graphics_GREY: my foregroundColour = RGB (128, 128, 128); break;
-				default: my foregroundColour = RGB (0, 0, 0); break;
+			/*
+			 * Find the nearest of the 17 colours.
+			 */
+			double smallestDistance = 1e6;
+			int closest = -1;
+			for (int colour = 0; colour <= Graphics_MAX_COLOUR; colour ++) {
+				double distance =
+					fabs (red - theColours [colour]. red / 65535.0) +
+					fabs (green - theColours [colour]. green / 65535.0) +
+					fabs (blue - theColours [colour]. blue / 65535.0);
+				if (distance < smallestDistance) {
+					smallestDistance = distance;
+					closest = colour;
+				}
 			}
+			XSetForeground (my display, my gc, xwinColours [closest]);
+		#elif win
+			my foregroundColour = RGB (red * 255, green * 255, blue * 255);
 			SelectPen (my dc, GetStockPen (BLACK_PEN));
 			DeleteObject (my pen);
 			my pen = CreatePen (PS_SOLID, 0, my foregroundColour);
@@ -155,25 +116,34 @@ void _Graphics_setColour (I, int colour) {
 			DeleteObject (my brush);
 			my brush = CreateSolidBrush (my foregroundColour);
 		#elif mac
-			my macColour = colour >= 0 && colour <= Graphics_MAX_COLOUR ? theMacColours [colour] : theBlackColour;
+			my macColour. red = red * 65535;
+			my macColour. green = green * 65535;
+			my macColour. blue = blue * 65535;
+			// postpone till drawing
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
-		if (my languageLevel == 1)
-			my printf (my file, "%f setgray\n",
-				colour == Graphics_BLACK ? 0.0 :
-				colour == Graphics_WHITE ? 1.0 :
-				colour == Graphics_RED || colour == Graphics_GREEN || colour == Graphics_BLUE ? 0.5 : 0.8);
-		else
-			my printf (my file, "%.6g %.6g %.6g setrgbcolor\n",
-				theColours [colour]. red / 65536.0, theColours [colour]. green / 65536.0, theColours [colour]. blue / 65536.0);
+		my printf (my file, "%.6g %.6g %.6g setrgbcolor\n", red, green, blue);
 	}
 }
 
 void Graphics_setColour (I, int colour) {
 	iam (Graphics);
-	_Graphics_setColour (me, my colour = colour);
+	if (colour >= 0 && colour <= Graphics_MAX_COLOUR) {
+		my red = theColours [colour]. red / 65536.0;
+		my green = theColours [colour]. green / 65536.0;
+		my blue = theColours [colour]. blue / 65536.0;
+	} else {
+		my red = my green = my blue = 0.0;
+	}
+	_Graphics_setRGBColour (me, my red, my green, my blue);
 	if (my recording) { op (SET_COLOUR, 1); put (colour); }
+}
+
+void Graphics_setRGBColour (I, double red, double green, double blue) {
+	iam (Graphics);
+	_Graphics_setRGBColour (me, red, green, blue);
+	if (my recording) { op (SET_RGB_COLOUR, 3); put (red); put (green); put (blue); }
 }
 
 void _Graphics_setGrey (I, double fgrey) {
@@ -187,7 +157,7 @@ void _Graphics_setGrey (I, double fgrey) {
 		#elif xwin
 			int igrey = (int) floor (100 * fgrey + 0.5);
 			if (igrey < 0) igrey = 0; else if (igrey > 100) igrey = 100;
-			XSetForeground (my display, my gc, grey [igrey]);
+			XSetForeground (my display, my gc, xwinGreys [igrey]);
 		#elif win
 			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
 			my foregroundColour = RGB (lightness, lightness, lightness);
@@ -198,24 +168,13 @@ void _Graphics_setGrey (I, double fgrey) {
 			DeleteObject (my brush);
 			my brush = CreateSolidBrush (my foregroundColour);
 		#elif mac
-			SetPort (my macPort);
-			my macColour = theBlackColour;
-			if (my depth == 1&&0) {   /* Black and white screen or printer. */
-				static MacintoshPattern pat10 = { 0x22, 0, 0x88, 0, 0x22, 0, 0x88, 0 };
-				MacintoshPattern pattern, *macPattern =
-					fgrey <= 0.0 ? GetQDGlobalsBlack (& pattern) :
-					fgrey >= 1.0 ? GetQDGlobalsWhite (& pattern) :
-					fgrey < 0.25 ? GetQDGlobalsDarkGray (& pattern) :
-					fgrey < 0.50 ? GetQDGlobalsGray (& pattern) :
-					fgrey < 0.75 ? GetQDGlobalsLightGray (& pattern) :
-						& pat10;
-					PenPat (macPattern);   /* For drawing lines and text. */
-					my macPattern = *macPattern;   /* For filling. */
-			} else {   /* Colour or grey screen. */
-				RGBColor rgb;
-				if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
-				rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (fgrey * 65535.0);
-				RGBForeColor (& rgb);
+			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
+			my macColour. red = my macColour. green = my macColour. blue = fgrey * 65535;
+			if (my useQuartz) {
+			} else {   // QuickDraw
+				/* Superfluous? */
+				SetPort (my macPort);
+				//RGBForeColor (& my macColour);
 			}
 		#endif
 	} else if (my postScript) {
@@ -227,6 +186,7 @@ void _Graphics_setGrey (I, double fgrey) {
 
 void Graphics_setGrey (I, double grey) {
 	iam (Graphics);
+	my red = my green = my blue = grey;
 	_Graphics_setGrey (me, grey);
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
@@ -245,10 +205,10 @@ static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		#elif xwin
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			XSetForeground (my display, my gc, pink ^ white);
+			XSetForeground (my display, my gc, xwinColours [Graphics_PINK] ^ xwinColours [Graphics_WHITE]);
 			XSetFunction (my display, my gc, GXxor);
 			XFillRectangle (my display, my window, my gc, x1DC, y2DC, width, height);
-			XSetForeground (my display, my gc, black);
+			XSetForeground (my display, my gc, xwinColours [Graphics_BLACK]);
 			XSetFunction (my display, my gc, GXcopy);
 		#elif win
 			static HBRUSH highlightBrush;
@@ -308,13 +268,13 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 			cairo_set_line_width (my cr, (double) line);
 			cairo_stroke (my cr);
 		#elif xwin
-			XSetForeground (my display, my gc, pink ^ white);
+			XSetForeground (my display, my gc, xwinColours [Graphics_PINK] ^ xwinColours [Graphics_WHITE]);
 			XSetFunction (my display, my gc, GXxor);
 			XFillRectangle (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
 			XFillRectangle (my display, my window, my gc, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
 			XFillRectangle (my display, my window, my gc, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
 			XFillRectangle (my display, my window, my gc, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
-			XSetForeground (my display, my gc, black);
+			XSetForeground (my display, my gc, xwinColours [Graphics_BLACK]);
 			XSetFunction (my display, my gc, GXcopy);
 		#elif win
 			static HBRUSH highlightBrush;
@@ -377,27 +337,24 @@ void Graphics_xorOn (I, int colour) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if xwin
-			XSetForeground (my display, my gc, (
-				colour == Graphics_WHITE ? white :
-				colour == Graphics_RED ? red :
-				colour == Graphics_GREEN ? green :
-				colour == Graphics_BLUE ? blue :
-				colour == Graphics_CYAN ? cyan :
-				colour == Graphics_MAGENTA ? magenta :
-				colour == Graphics_YELLOW ? yellow : black) ^ white);
+			XSetForeground (my display, my gc, xwinColours [colour] ^ xwinColours [Graphics_WHITE]);
 			XSetFunction (my display, my gc, GXxor);
 		#elif win
 			SetROP2 (my dc, R2_XORPEN);
-			_Graphics_setColour (me,
-				colour == Graphics_GREEN ? Graphics_MAGENTA : colour == Graphics_MAGENTA ? Graphics_GREEN :
-				colour == Graphics_WHITE ? Graphics_BLACK : colour == Graphics_BLACK ? Graphics_WHITE :
-				colour == Graphics_RED ? Graphics_CYAN : colour == Graphics_CYAN ? Graphics_RED :
-				colour == Graphics_BLUE ? Graphics_YELLOW : Graphics_BLUE);
+			if (colour >= 0 && colour <= Graphics_MAX_COLOUR) {
+				_Graphics_setRGBColour (me, theColours [colour]. red / 65536.0, theColours [colour]. green / 65536.0, theColours [colour]. blue / 65536.0);
+			} else {
+				_Graphics_setRGBColour (me, 0.0, 0.0, 0.0);
+			}
 			my duringXor = TRUE;
 		#elif mac
-			SetPort (my macPort);
-			PenMode (patXor);
-			TextMode (srcXor);
+			if (my useQuartz && 0) {
+				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
+			} else {
+				SetPort (my macPort);
+				PenMode (patXor);
+				TextMode (srcXor);
+			}
 			my duringXor = TRUE;
 		#endif
 	}
@@ -409,16 +366,20 @@ void Graphics_xorOff (I) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if xwin
-			XSetForeground (my display, my gc, black);
+			XSetForeground (my display, my gc, xwinColours [Graphics_BLACK]);
 			XSetFunction (my display, my gc, GXcopy);
 		#elif win
 			SetROP2 (my dc, R2_COPYPEN);
-			_Graphics_setColour (me, my colour);
+			_Graphics_setRGBColour (me, my red, my green, my blue);
 			my duringXor = FALSE;
 		#elif mac
-			SetPort (my macPort);
-			PenMode (patCopy);
-			TextMode (srcOr);
+			if (my useQuartz && 0) {
+				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
+			} else {
+				SetPort (my macPort);
+				PenMode (patCopy);
+				TextMode (srcOr);
+			}
 			my duringXor = FALSE;
 		#endif
 	}
@@ -426,7 +387,12 @@ void Graphics_xorOff (I) {
 }
 #endif
 
-int Graphics_inqColour (I) { iam (Graphics); return my colour; }
+void Graphics_inqRGBColour (I, double *red, double *green, double *blue) {
+	iam (Graphics);
+	*red = my red;
+	*green = my green;
+	*blue = my blue;
+}
 
 #if xwin
 static unsigned long getPixel (GraphicsScreen me, const char *colour) {
@@ -440,31 +406,33 @@ void _Graphics_colour_init (I) {
 	static int inited;
 	if (! inited) {
 		int igrey;
-		black = BlackPixel (my display, my xscreen);
-		white = WhitePixel (my display, my xscreen);
-		red = getPixel (me, "red");
-		green = getPixel (me, "green");
-		blue = getPixel (me, "blue");
-		cyan = getPixel (me, "cyan");
-		magenta = getPixel (me, "magenta");
-		yellow = getPixel (me, "yellow");
-		maroon = getPixel (me, "maroon");
-		lime = getPixel (me, "lime green");
-		navy = getPixel (me, "navy");
-		teal = getPixel (me, "steel blue");
-		purple = getPixel (me, "purple");
-		olive = getPixel (me, "olive drab");
-		pink = getPixel (me, "pink");
+		xwinColours [Graphics_BLACK] = BlackPixel (my display, my xscreen);
+		xwinColours [Graphics_WHITE] = WhitePixel (my display, my xscreen);
+		xwinColours [Graphics_RED] = getPixel (me, "red");
+		xwinColours [Graphics_GREEN] = getPixel (me, "green");
+		xwinColours [Graphics_BLUE] = getPixel (me, "blue");
+		xwinColours [Graphics_CYAN] = getPixel (me, "cyan");
+		xwinColours [Graphics_MAGENTA] = getPixel (me, "magenta");
+		xwinColours [Graphics_YELLOW] = getPixel (me, "yellow");
+		xwinColours [Graphics_MAROON] = getPixel (me, "maroon");
+		xwinColours [Graphics_GREEN] = getPixel (me, "lime green");
+		xwinColours [Graphics_NAVY] = getPixel (me, "navy");
+		xwinColours [Graphics_TEAL] = getPixel (me, "steel blue");
+		xwinColours [Graphics_PURPLE] = getPixel (me, "purple");
+		xwinColours [Graphics_OLIVE] = getPixel (me, "olive drab");
+		xwinColours [Graphics_PINK] = getPixel (me, "pink");
 		for (igrey = 0; igrey <= 100; igrey ++) {
 			char string [10];
 			sprintf (string, "grey%d", igrey);
-			grey [igrey] = getPixel (me, string);
+			xwinGreys [igrey] = getPixel (me, string);
 		}
+		xwinColours [Graphics_SILVER] = xwinGreys [75];
+		xwinColours [Graphics_GREY] = xwinGreys [50];
 		inited = 1;
 	}
-	XSetWindowBackground (my display, my window, white);
-	values. foreground = black;
-	values. background = white;
+	XSetWindowBackground (my display, my window, xwinColours [Graphics_WHITE]);
+	values. foreground = xwinColours [Graphics_BLACK];
+	values. background = xwinColours [Graphics_WHITE];
 	my text.gc = my gc = XCreateGC (my display, my window, GCForeground | GCBackground, & values);
 }
 #endif
