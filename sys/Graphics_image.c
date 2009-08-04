@@ -31,6 +31,9 @@
 	#include "macport_on.h"
 	#include <QDOffscreen.h>
 	static RGBColor theBlackColour = { 0, 0, 0 };
+	void _mac_releaseDataCallback (void *info, const void *data, size_t size) {
+		Melder_free (data);
+	}
 #endif
 
 #define wdx(x)  ((x) * my scaleX + my deltaX)
@@ -66,6 +69,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	#endif
 	if (x2DC <= x1DC || y1DC <= y2DC) return;
 	/* Clip by the intersection of the world window and the outline of the cells. */
+	//Melder_casual ("clipy1 %d clipy2 %d", clipy1, clipy2);
 	if (clipx1 < x1DC) clipx1 = x1DC;
 	if (clipx2 > x2DC) clipx2 = x2DC;
 	if (clipy1 > y1DC) clipy1 = y1DC;
@@ -210,11 +214,14 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			 * Quartz requirements.
 			 */
 			unsigned char *imageData;
-			long bytesPerRow;
+			long bytesPerRow, numberOfRows;
 			bool useQuartzForImages = my useQuartz && 1;
 			if (useQuartzForImages) {
 				bytesPerRow = (clipx2 - clipx1) * 4;
-				imageData = Melder_malloc (unsigned char, bytesPerRow * (clipy1 - clipy2));
+				Melder_assert (bytesPerRow > 0);
+				numberOfRows = clipy1 - clipy2;
+				Melder_assert (numberOfRows > 0);
+				imageData = Melder_malloc (unsigned char, bytesPerRow * numberOfRows);
 				Melder_assert (imageData != NULL);
 			} else {
 				GetGWorld (& savePort, & saveDevice);
@@ -271,7 +278,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
 		#elif mac
 			#define ROW_START_ADDRESS \
-				(useQuartzForImages ? (imageData + (yDC - clipy2) * bytesPerRow) : \
+				(useQuartzForImages ? (imageData + (clipy1 - 1 - yDC) * bytesPerRow) : \
 				(offscreenPixels + (yDC - clipy2) * offscreenRowBytes / undersampling))
 			#define PUT_PIXEL \
 				if (useQuartzForImages) { \
@@ -371,19 +378,44 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
 			if (useQuartzForImages) {
+				CGImageRef image;
 				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceUserRGB);
 				Melder_assert (colourSpace != NULL);
-				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL, imageData, bytesPerRow * (clipy1 - clipy2), NULL);
-				Melder_assert (dataProvider != NULL);
-				CGImageRef image = CGImageCreate (clipx2 - clipx1, clipy1 - clipy2, 8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
+				if (1) {
+					CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,
+						imageData,
+						bytesPerRow * numberOfRows,
+						_mac_releaseDataCallback   // we need this because we cannot release the image data immediately after drawing,
+							// because in PDF files the imageData has to stay available through EndPage
+					);
+					Melder_assert (dataProvider != NULL);
+					image = CGImageCreate (clipx2 - clipx1, numberOfRows,
+						8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, NULL, false, kCGRenderingIntentDefault);
+					CGDataProviderRelease (dataProvider);
+				} else if (0) {
+					Melder_assert (CGBitmapContextCreate != NULL);
+					CGContextRef bitmaptest = CGBitmapContextCreate (imageData, 100, 100,
+						8, 800, colourSpace, 0);
+					Melder_assert (bitmaptest != NULL);
+					CGContextRef bitmap = CGBitmapContextCreate (NULL/*imageData*/, clipx2 - clipx1, numberOfRows,
+						8, bytesPerRow, colourSpace, kCGImageAlphaLast);
+					Melder_assert (bitmap != NULL);
+					image = CGBitmapContextCreateImage (bitmap);
+					// release bitmap?
+				} else if (0) {
+					CFStringRef path = CFStringCreateWithCString (NULL, "/Users/pboersma/Desktop/paul.jpg", kCFStringEncodingUTF8);
+					CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+					CFRelease (path);
+					CGDataProviderRef dataProvider = CGDataProviderCreateWithURL (url);
+					Melder_assert (dataProvider != NULL);
+					image = CGImageCreateWithJPEGDataProvider (dataProvider, NULL, true, kCGRenderingIntentDefault);
+					CGDataProviderRelease (dataProvider);
+				}
 				Melder_assert (image != NULL);
-				CGDataProviderRelease (dataProvider);
+				GraphicsQuartz_initDraw (me);
+				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
+				GraphicsQuartz_exitDraw (me);
 				CGColorSpaceRelease (colourSpace);
-				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
-				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, shellHeight - clipy1, clipx2 - clipx1, clipy1 - clipy2), image);
-				CGContextSynchronize (my macGraphicsContext);
-				QDEndCGContext (my macPort, & my macGraphicsContext);
 				CGImageRelease (image);
 			} else {
 				SetGWorld (savePort, saveDevice);
@@ -414,7 +446,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#elif mac
 			cleanUp:
 			if (useQuartzForImages) {
-				Melder_free (imageData);
+				//Melder_free (imageData);
 			} else {
 				UnlockPixels (offscreenPixMap);
 				DisposeGWorld (offscreenWorld);
@@ -426,9 +458,11 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		return;
 	#elif mac
 		end:
-		RGBForeColor (& theBlackColour);
-		SetPort (my macPort);
-		RGBForeColor (& theBlackColour);
+		if (my macPort != NULL) {
+			RGBForeColor (& theBlackColour);
+			SetPort (my macPort);
+			RGBForeColor (& theBlackColour);
+		}
 	#endif
 	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
 }

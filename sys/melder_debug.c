@@ -60,6 +60,7 @@ the behaviour of that program changes in the following way:
 31: Pitch analysis: formant pulling on
 32: show info on file names in ExperimentMFC
 33: trace the Pitch path finder
+34: trace memory allocation and deallocation
 1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
 
 (negative values are for David)

@@ -228,7 +228,7 @@ static void drawNow (FunctionEditor me) {
 
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
-	Graphics_setGrey (my graphics, 0.75);
+	Graphics_setRGBColour (my graphics, 1.0, 1.0, 0.9);
 	Graphics_fillRectangle (my graphics, MARGIN, my width - MARGIN, my height - TOP_MARGIN - space, my height);
 	Graphics_fillRectangle (my graphics, 0, MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my graphics, my width - MARGIN, my width, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);

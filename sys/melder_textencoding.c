@@ -464,7 +464,7 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	}
 	if (sizeNeeded > bufferSize [ibuffer]) {
 		sizeNeeded = sizeNeeded * 1.61803 + 100;
-		buffer [ibuffer] = Melder_malloc (char, sizeNeeded);
+		buffer [ibuffer] = Melder_realloc (buffer [ibuffer], sizeNeeded * sizeof (char));
 		bufferSize [ibuffer] = sizeNeeded;
 	}
 	Melder_wcsToUtf8_inline (text, buffer [ibuffer]);

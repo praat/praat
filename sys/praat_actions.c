@@ -27,6 +27,7 @@
  * pb 2007/10/17 removed a bug that caused a crash in praat_show/hideAction if class2 or class3 was NULL
  * pb 2007/12/26 Gui
  * pb 2009/01/18 arguments to UiForm callbacks
+ * pb 2009/08/03 repaired a memory leak in praat_removeAction
  */
 
 #include "praatP.h"
@@ -317,6 +318,7 @@ int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t 
 			class3 ? L" & ": L"", ((Data_Table) class3) -> _className,
 			L": ", title, L"\" not found.");
 	}
+	Melder_free (theActions [found]. title);
 	theNumberOfActions --;
 	for (i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
 	return 1;

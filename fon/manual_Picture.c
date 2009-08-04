@@ -286,19 +286,19 @@ ENTRY (L"See also")
 NORMAL (L"@@Special symbols@")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols", L"ppgb", 20070825)
+MAN_BEGIN (L"Phonetic symbols", L"ppgb", 20090804)
 NORMAL (L"To draw phonetic symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can then use backslash sequences as described in:")
+	"You can either type the symbols directly (if your computer has an input method for them), or use backslash sequences as described in:")
 LIST_ITEM (L"\\bu @@Phonetic symbols: consonants")
 LIST_ITEM (L"\\bu @@Phonetic symbols: vowels")
 LIST_ITEM (L"\\bu @@Phonetic symbols: diacritics")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: consonants", L"ppgb", 20070825)
+MAN_BEGIN (L"Phonetic symbols: consonants", L"ppgb", 20090804)
 NORMAL (L"To draw phonetic symbols for consonants in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can then use the backslash sequences in the following table.")
+	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following table.")
 PICTURE (6.0, 7.0, draw_IPA_consonant_chart)
 NORMAL (L"Other consonant symbols:")
 LIST_ITEM (L"\\l~ \\bsl~ (%%l with tilde%): velarized %l")
@@ -313,10 +313,10 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20081121)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20090804)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can then use the backslash sequences in the following list.")
+	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following list.")
 NORMAL (L"In line:")
 LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")
 LIST_ITEM (L"\\\'1 \\bs\'1 primary stress")
@@ -354,10 +354,10 @@ LIST_ITEM (L"\\ep\\N^ \\ep\\bsN\\^  (%%combining breve%): short")
 LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20070825)
+MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20090804)
 NORMAL (L"To draw phonetic symbols for vowels in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
-	"You can then use the backslash sequences in the following table.")
+	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following table.")
 PICTURE (6.0, 5.0, draw_IPA_vowel_chart)
 NORMAL (L"Other vowel symbols are:")
 LIST_ITEM (L"\\sr \\bssr (%%schwa with right hook%): rhotacized schwa")
@@ -744,26 +744,40 @@ ENTRY (L"1. Printing on Macintosh")
 NORMAL (L"If you are on a Mac and a PostScript printer is available, "
 	"Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
-	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
+	"Praat also supports non-PostScript printers, such as most colour inkjet printers.")
 #elif defined (_WIN32)
 ENTRY (L"1. Printing on Windows")
 NORMAL (L"If you are on a Windows computer and a PostScript printer is available, "
 	"Praat will usually write direct PostScript commands to that printer "
 	"(see @@PostScript settings...@ if you want to switch this off). "
-	"P\\s{RAAT} also supports non-PostScript printers, such as most colour inkjet printers.")
+	"Praat also supports non-PostScript printers, such as most colour inkjet printers.")
 #endif
+#if defined (macintosh)
+ENTRY (L"2. Indirect printing with PDF")
+NORMAL (L"If you don't have a PostScript printer, and you still want PostScript quality, "
+	"you can save the picture to a PDF file (@@Write to PDF file...@). "
+	"You can then view this file with the freely available "
+	"Acrobat^\\re Reader^\\tm program, and print from there.")
+#else
 ENTRY (L"2. Indirect printing with GhostView")
 NORMAL (L"If you don't have a PostScript printer, and you still want PostScript quality, "
 	"you can save the picture to an EPS file (@@Write to EPS file...@). "
 	"You can then view this file with the freely available "
 	"GhostView^\\tm program, which you can download from ##http://pages.cs.wisc.edu/~ghost/#.")
+#endif
 ENTRY (L"3. Indirect printing with your word processor")
+#if defined (macintosh)
+NORMAL (L"If you save your picture to a PDF file, you will be able to include it as a picture in your favourite "
+	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). This works on the Mac only. See @@Write to PDF file...@.")
+#else
 NORMAL (L"If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
 	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). See @@Write to EPS file...@.")
 NORMAL (L"If you don't have a PostScript printer, you could again use GhostView^\\tm to print your document "
 	"to any printer, after you printed your document to a PostScript file. You can do the same if you are "
 	"the lucky owner of Adobe^\\re Acrobat^\\tm Distiller^\\tm, which is more reliable than GhostView "
 	"but is also expensive.")
+#endif
+#ifndef macintosh
 ENTRY (L"4. Creating a PDF file")
 NORMAL (L"If you have Distiller or GhostView, you can print the entire Word^\\tm or LaTeX document to a PostScript file, "
 	"and convert this to a PDF file, which anyone in the world can view and print with the free Adobe^\\re Acrobat^\\tm Reader program.")
@@ -772,10 +786,6 @@ NORMAL (L"Note: when creating a PDF file on Windows if you have Acrobat, ##do no
 	"also, ##do not use \"Print to PDF\"# from your Microsoft Word File menu; otherwise, "
 	"your EPS files will not show in the PDF file.")
 #endif
-#ifdef macintosh
-NORMAL (L"Note: when creating a PDF file on MacOS X, ##do not use \"Save as PDF...\"# in your printing dialog, "
-	"but choose Adobe PDF as your printer or save the document to a PostScript file and convert it with "
-	"Distiller or GhostView; otherwise, your EPS files will not show in the PDF file.")
 #endif
 #ifdef _WIN32
 ENTRY (L"Indirect printing without PostScript")
@@ -783,9 +793,9 @@ NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @
 	"will print fine, though not as nicely as EPS files.")
 #endif
 #ifdef macintosh
-ENTRY (L"Indirect printing without PostScript")
+ENTRY (L"Indirect printing without PDF")
 NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Mac PICT file...@ "
-	"will print fine, though not as nicely as EPS files.")
+	"will print fine, though not as nicely as PDF files.")
 #endif
 MAN_END
 
@@ -913,7 +923,7 @@ ENTRY (L"Usage")
 NORMAL (L"You can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
-MAN_BEGIN (L"Write to EPS file...", L"ppgb", 20041130)
+MAN_BEGIN (L"Write to EPS file...", L"ppgb", 20090804)
 INTRO (L"A command in the File menu of the @@Picture window@.")
 NORMAL (L"It saves the picture to an @@Encapsulated PostScript@ (EPS) file, "
 	"which can be imported by many other programs, such as Microsoft^\\re Word^\\tm.")
@@ -927,18 +937,11 @@ NORMAL (L"EPS pictures imported in Word for Windows will show correctly only on 
 	"To print EPS pictures on non-PostScript printers, use a Linux or Macintosh computer.")
 #endif
 #ifdef macintosh
-ENTRY (L"The big limitation")
-NORMAL (L"If you have MacOS X 10.3 or higher, you are lucky. "
-	"These system versions can write EPS (and other PostScript files) to non-PostScript printers, such as most inkjet printers. "
-	"With older system versions, however, EPS pictures imported in Word for Macintosh will show correctly only on PostScript printers, "
-	"or with GhostView, or in PDF files created by Adobe^\\re Acrobat^\\tm Distiller^\\tm.")
-#endif
-#ifdef macintosh
 ENTRY (L"Usage")
-NORMAL (L"To import an EPS file in Word 5.1, choose ##File...# or ##Picture...# from the #Insert menu. "
-	"To do it in Word X, choose #Insert \\-> #Picture \\-> ##From file...#. "
+NORMAL (L"To import an EPS file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
 	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
-NORMAL (L"Word will show you a screen preview in a mediocre quality, but you will see the high-quality PostScript version when you print.")
+NORMAL (L"(In Word versions from 2001 or older, Word will show you a screen preview in a mediocre quality, "
+	"but you will see the high-quality PostScript version when you print.)")
 #endif
 #ifdef _WIN32
 ENTRY (L"Usage")
@@ -952,13 +955,22 @@ NORMAL (L"Though all the contents of the Picture window are written to the EPS f
 	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
 ENTRY (L"Settings")
 NORMAL (L"The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
-#ifdef macintosh
-ENTRY (L"Technical information")
-NORMAL (L"On the Macintosh, the EPS file will consist of PostScript text (for the printer, in the `data fork') "
-	"plus a bitmapped screen preview (in the `resource fork'). The screen preview is lost if you transfer the EPS file "
-	"to a Windows or Unix computer, although an EPS picture imported in a Word for Macintosh document retains its preview "
-	"when the Word document is transferred to a Windows computer.")
-#endif
+MAN_END
+
+MAN_BEGIN (L"Write to PDF file...", L"ppgb", 20090804)
+INTRO (L"A command in the File menu of the @@Picture window@, on Macintosh only.")
+NORMAL (L"It saves the picture to a PDF file, "
+	"which can be imported by several other programs, such as Microsoft^\\re Word^\\tm on the Mac.")
+ENTRY (L"PDF = PostScript = highest possible quality!")
+NORMAL (L"With PDF pictures you can use high-quality graphics in your word-processor documents. "
+	"The quality is higher than if you use @@Copy to clipboard@.")
+NORMAL (L"On Windows or Linux, use @@Write to EPS file...@ instead.")
+ENTRY (L"Usage")
+NORMAL (L"To import a PDF file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
+	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
+ENTRY (L"Behaviour")
+NORMAL (L"Though all the contents of the Picture window are written to the PDF file, "
+	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
 MAN_END
 
 MAN_BEGIN (L"Write to Praat picture file...", L"ppgb", 20041130)

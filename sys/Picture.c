@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/11/30 erased Graphics_printf
  * sdk 2008/05/09 Picture_selfExpose
+ * pb 2009/07/22 Picture_writeToPdfFile
  */
 
 #include "melder.h"
@@ -499,18 +500,42 @@ static PicHandle copyToPict_screenImage (Picture me) {
 	forget (offScreen);
 	return pict;
 }
+static size_t appendBytes (void *info, const void *buffer, size_t count) {
+    CFDataAppendBytes ((CFMutableDataRef) info, buffer, count);
+    return count;
+}
 void Picture_copyToClipboard (Picture me) {
-	PicHandle pict = copyToPict (me);
-	if (! pict) Melder_flushError (NULL);
-	HLock ((Handle) pict);
-	{
-		ScrapRef scrap;
-		ClearCurrentScrap ();
-		GetCurrentScrap (& scrap);
-		PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
+	if (0) {
+		#if 0
+		static CGDataConsumerCallbacks callbacks = { appendBytes, NULL };
+		CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
+        CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
+		int resolution = 200;
+		CGRect rect = CGRectMake (0, 0, (my selx2 - my selx1) * resolution, (my sely1 - my sely2) * resolution);
+		CGContextRef context = CGPDFContextCreate (consumer, & rect, NULL);
+		//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
+		Graphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
+		Graphics_play (my graphics, graphics);
+		forget (graphics);
+		PasteboardRef clipboard = NULL;
+		PasteboardCreate (kPasteboardClipboard, & clipboard);
+		PasteboardClear (clipboard);
+		PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
+		CFRelease (clipboard);
+		#endif
+	} else {
+		PicHandle pict = copyToPict (me);
+		if (! pict) Melder_flushError (NULL);
+		HLock ((Handle) pict);
+		{
+			ScrapRef scrap;
+			ClearCurrentScrap ();
+			GetCurrentScrap (& scrap);
+			PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
+		}
+		HUnlock ((Handle) pict);
+		KillPicture (pict);
 	}
-	HUnlock ((Handle) pict);
-	KillPicture (pict);
 }
 void Picture_copyToClipboard_screenImage (Picture me) {
 	PicHandle pict = copyToPict_screenImage (me);
@@ -675,6 +700,16 @@ int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int u
 	}
 	#endif
 
+	return 1;
+}
+
+int Picture_writeToPdfFile (Picture me, MelderFile file) {
+	Graphics graphics = Graphics_create_pdffile (file, 300,
+		my selx1, my selx2, my sely1, my sely2);
+	if (graphics == NULL)
+		return Melder_error3 (L"Cannot create PDF file ", MelderFile_messageName (file), L".");
+	Graphics_play (my graphics, graphics);
+	forget (graphics);
 	return 1;
 }
 

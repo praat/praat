@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/07/09
+ * pb 2009/07/22
  */
 
 #ifndef _Thing_h_
@@ -35,6 +35,10 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification);
 Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	double xmin, double xmax, double ymin, double ymax, bool includeFonts, bool useSilipaPS);
+Graphics Graphics_create_pdffile (MelderFile file, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches);
+Graphics Graphics_create_pdf (void *context, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches);
 Graphics Graphics_create_postscriptprinter (void);
 Graphics Graphics_create_screenPrinter (void *display, unsigned long window);
 Graphics Graphics_create_screen (void *display, unsigned long window, int resolution);

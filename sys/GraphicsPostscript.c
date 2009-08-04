@@ -42,8 +42,6 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 	my printf (my file, "%%%%BeginResource: procset (ppgb GraphicsPostscript procs) 1.0 0\n");
 	my printf (my file, "/N { newpath } bind def /M { newpath moveto } bind def /L { rlineto } bind def\n");
 	my printf (my file, "/F { 10 { 1 exch rlineto } repeat } bind def\n");
-	if (my languageLevel == 1)
-		my printf (my file, "/FONT { exch findfont exch scalefont setfont } bind def\n");
 	my printf (my file, "/C { 0 360 arc stroke } bind def /FC { 0 360 arc fill } bind def\n");
 	my printf (my file,
 		"/PraatEncoding [\n"
@@ -84,10 +82,7 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 	 */
 	my printf (my file, "%%%%BeginSetup\n");
 	my printf (my file, "%d %d { dup mul exch dup mul add 1.0 exch sub } setscreen\n", my spotsDensity, my spotsAngle);
-	if (my languageLevel == 1)
-		my printf (my file, "/languagelevel where {pop languagelevel 1 ne {true setstrokeadjust} if} if\n");
-	else
-		my printf (my file, "true setstrokeadjust\n");
+	my printf (my file, "true setstrokeadjust\n");
 	my printf (my file, "%%%%EndSetup\n");
 }
 

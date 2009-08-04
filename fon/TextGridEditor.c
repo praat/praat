@@ -1497,11 +1497,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		}
 		if (! cursorAtBoundary) {
 			double dy = Graphics_dyMMtoWC (my graphics, 1.5);
-			#ifdef macintosh
-			Graphics_setColour (my graphics, Graphics_GREEN);
-			#else
 			Graphics_setGrey (my graphics, 0.8);
-			#endif
 			Graphics_setLineWidth (my graphics, 5.0);
 			Graphics_line (my graphics, my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics, 1.0);

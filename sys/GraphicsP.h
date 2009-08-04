@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/07/14
+ * pb 2009/07/24
  */
 
 #ifndef _Graphics_h_
@@ -234,6 +234,11 @@ void _Graphics_setRGBColour (I, double red, double green, double blue);
 void _Graphics_setGrey (I, double grey);
 void _Graphics_colour_init (I);
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
+
+#ifdef macintosh
+	void GraphicsQuartz_initDraw (GraphicsScreen me);
+	void GraphicsQuartz_exitDraw (GraphicsScreen me);
+#endif
 
 /* End of file GraphicsP.h */
 #endif

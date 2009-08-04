@@ -24,15 +24,27 @@
  * pb 2007/08/14 underscores for names _Melder_malloc and _Melder_calloc
  * pb 2007/12/05 Melder_wcsequ_firstCharacterCaseInsensitive
  * pb 2009/03/14 counting reallocs moving and in situ
+ * pb 2009/07/31 tracing by Melder_debug 34
  */
 
 #include "melder.h"
 #include <wctype.h>
+#ifdef macintosh
+	#include <execinfo.h>
+#endif
+
+static void backTrace (void) {
+	#ifdef macintoshxxx
+		void *callstack [9];
+		int frames = backtrace (callstack, 9);
+		char **strs = backtrace_symbols (callstack, frames);
+		for (int i = 0; i < frames; i ++) { fprintf (stderr, " %s", strs [i]); }
+		free (strs);
+ 	#endif
+}
 
 static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,
 	totalNumberOfMovingReallocs = 0, totalNumberOfReallocsInSitu = 0;
-
-#define TRACE_MALLOC  0
 
 void * _Melder_malloc (unsigned long size) {
 	void *result;
@@ -41,22 +53,18 @@ void * _Melder_malloc (unsigned long size) {
 	result = malloc (size);
 	if (result == NULL)
 		return Melder_errorp ("Out of memory: there is not enough room for another %ld bytes.", size);
+	if (Melder_debug == 34) { Melder_casual ("Melder_malloc\t%ld\t%ld\t1", result, size); backTrace (); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("malloc %ld", size);
-	#endif
 	return result;
 }
 
 void _Melder_free (void **ptr) {
 	if (*ptr == NULL) return;
 	free (*ptr);
+	if (Melder_debug == 34) { Melder_casual ("Melder_free\t%ld\t?\t?", *ptr); backTrace (); }
 	*ptr = NULL;
 	totalNumberOfDeallocations += 1;
-	#if TRACE_MALLOC
-		Melder_casual ("free");
-	#endif
 }
 
 void * Melder_realloc (void *ptr, long size) {
@@ -67,6 +75,7 @@ void * Melder_realloc (void *ptr, long size) {
 	if (result == NULL)
 		return Melder_errorp ("Out of memory. Could not extend room to %ld bytes.", size);
 	if (ptr == NULL) {   /* Is it like malloc? */
+		if (Melder_debug == 34) { Melder_casual ("Melder_realloc\t%ld\t%ld\t1", result, size); backTrace (); }
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 	} else if (result != ptr) {   /* Did realloc do a malloc-and-free? */
@@ -77,9 +86,6 @@ void * Melder_realloc (void *ptr, long size) {
 	} else {
 		totalNumberOfReallocsInSitu += 1;
 	}
-	#if TRACE_MALLOC
-		Melder_casual ("realloc %ld", size);
-	#endif
 	return result;
 }
 
@@ -95,11 +101,9 @@ void * _Melder_calloc (long nelem, long elsize) {
 	if (result == NULL)
 		return Melder_errorp ("Out of memory: "
 			"there is not enough room for %ld more elements whose sizes are %ld bytes each.", nelem, elsize);
+	if (Melder_debug == 34) { Melder_casual ("Melder_calloc\t%ld\t%ld\t%ld", result, nelem, elsize); backTrace (); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += nelem * elsize;
-	#if TRACE_MALLOC
-		Melder_casual ("calloc %ld %ld", nelem, elsize);
-	#endif
 	return result;
 }
 
@@ -112,11 +116,9 @@ char * Melder_strdup (const char *string) {
 	if (result == NULL)
 		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
 	strcpy (result, string);
+	if (Melder_debug == 34) { Melder_casual ("Melder_strdup\t%ld\t%ld\t1", result, size); backTrace (); }
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("strdup %ld", size);
-	#endif
 	return result;
 }
 
@@ -129,11 +131,9 @@ wchar_t * Melder_wcsdup (const wchar_t *string) {
 	if (result == NULL)
 		return Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
 	wcscpy (result, string);
+	if (Melder_debug == 34) { Melder_casual ("Melder_wcsdup\t%ld\t%ld\t4", result, size); backTrace (); }
 	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	#if TRACE_MALLOC
-		Melder_casual ("wcsdup %ld", size);
-	#endif
+	totalAllocationSize += size * sizeof (wchar_t);
 	return result;
 }
 

@@ -113,7 +113,9 @@ typedef struct structGuiDrawingArea {
 #elif win || mac
 	void _GuiWinMacDrawingArea_destroy (Widget widget) {
 		iam_drawingarea;
-		_GuiNativeControl_destroy (widget);
+		#if win
+			DestroyWindow (widget -> window);
+		#endif
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
 	#if win

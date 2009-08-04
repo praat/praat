@@ -391,13 +391,13 @@ static void charSize (I, _Graphics_widechar *lc) {
 					lc -> width = strlen (ipaSerifRegular24 [info -> psEncoding - 32] [0]);
 				lc -> code = info -> psEncoding;
 			} else {
-				lc -> code = my useQuartz && ! my duringXor ? lc -> kar : info -> macEncoding;
+				lc -> code = my useQuartz ? lc -> kar : info -> macEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
 						info = Longchar_getInfo ('s', 'w');
 						lc -> kar = info -> unicode;
-						lc -> code = my useQuartz && ! my duringXor ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
 						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
@@ -405,14 +405,14 @@ static void charSize (I, _Graphics_widechar *lc) {
 					} else if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_L_WITH_MIDDLE_TILDE) {
 						info = Longchar_getInfo ('l', ' ');
 						lc -> kar = info -> unicode;
-						lc -> code = my useQuartz && ! my duringXor ? info -> unicode : info -> macEncoding;
+						lc -> code = my useQuartz ? info -> unicode : info -> macEncoding;
 						for (lc2 = lc + 1; lc2 -> kar != '\0'; lc2 ++) { }
 						lc2 [1]. kar = '\0';
 						while (lc2 - lc > 0) { lc2 [0] = lc2 [-1]; lc2 --; }
 						lc [1]. kar = UNICODE_COMBINING_TILDE_OVERLAY;
 					}
 				}
-				if (my useQuartz && ! my duringXor) {
+				if (my useQuartz) {
 					ATSFontRef atsuiFont =
 						lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 						lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -631,8 +631,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 	}
 }
 
-static int shellHeight;
-
 static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 	const wchar_t *codes, const char *codes8, const MelderUtf16 *codes16, int nchars, int width)
 {
@@ -692,7 +690,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		#elif mac
 			long font = lc -> font.integer;
 			int needBitmappedIPA = font == 0;
-			if (my useQuartz && ! my duringXor) {
+			if (my useQuartz) {
 				ATSFontRef atsuiFont =
 					lc -> font.integer == theTimesFont ? theTimesAtsuiFont :
 					lc -> font.integer == theHelveticaFont ? theHelveticaAtsuiFont :
@@ -745,15 +743,18 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				 * Draw.
 				 */
 				CGContextSaveGState (my macGraphicsContext);
-				CGContextTranslateCTM (my macGraphicsContext, xDC, shellHeight - yDC);
+				CGContextTranslateCTM (my macGraphicsContext, xDC, yDC);
+
+				if (my yIsZeroAtTheTop) CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
 				CGContextRotateCTM (my macGraphicsContext, my textRotation * NUMpi / 180.0);
 				if (my duringXor) {
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
-				}
-				err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0 /*xDC << 16*/, 0 /*(shellHeight - yDC) << 16*/);
-				if (my duringXor) {
+					CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+					err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
-					//CGContextSynchronize (my macGraphicsContext);
+					CGContextSetAllowsAntialiasing (my macGraphicsContext, true);
+				} else {
+					err = ATSUDrawText (textLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
 				}
 				Melder_assert (err == 0);
 				CGContextRestoreGState (my macGraphicsContext);
@@ -1217,9 +1218,8 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		default:                 dy = 0; break;
 	}
 	#if mac
-		if (my screen && ((GraphicsScreen) me) -> useQuartz && ! ((GraphicsScreen) me) -> duringXor) {
-			QDBeginCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
-			shellHeight = GuiMac_clipOn_graphicsContext (((GraphicsScreen) me) -> drawingArea, ((GraphicsScreen) me) -> macGraphicsContext);
+		if (my screen && ((GraphicsScreen) me) -> useQuartz) {
+			GraphicsQuartz_initDraw ((GraphicsScreen) me);
 		}
 	#endif
 	if (my textRotation) {
@@ -1328,11 +1328,8 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		my textY = (( my yIsZeroAtTheTop ? y + dy : y - dy ) - my deltaY) / my scaleY;
 	}
 	#if mac
-		if (my screen && ((GraphicsScreen) me) -> useQuartz && ! ((GraphicsScreen) me) -> duringXor) {
-			CGContextSynchronize (((GraphicsScreen) me) -> macGraphicsContext);
-			//ATSUDisposeTextLayout (textLayout);
-			//ATSUDisposeStyle (style);
-			QDEndCGContext (((GraphicsScreen) me) -> macPort, & ((GraphicsScreen) me) -> macGraphicsContext);
+		if (my screen && ((GraphicsScreen) me) -> useQuartz) {
+			GraphicsQuartz_exitDraw ((GraphicsScreen) me);
 		}
 	#endif
 }

@@ -326,6 +326,7 @@ static int NativeButton_preferredHeight (Widget me) {
 
 Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name) {
 	Widget me = Melder_calloc (struct structWidget, 1);
+	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%ld\t%ld\t%ld\n", (long) me, 1L, (long) sizeof (struct structWidget));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -2328,7 +2329,9 @@ void XtDestroyWidget (Widget me) {
 			_motif_removeShell (me);
 		} break;
 		case xmListWidgetClass: _GuiWinMacList_destroy (me); break;
-		case xmDrawingAreaWidgetClass:
+		case xmDrawingAreaWidgetClass: {
+			_GuiWinMacDrawingArea_destroy (me);
+		} break;
 		case xmRowColumnWidgetClass:
 		case xmFormWidgetClass:
 		case xmBulletinBoardWidgetClass: {

@@ -37,7 +37,8 @@
  * pb 2007/12/13 Melder_writeToConsole
  * pb 2007/12/18 Gui
  * sdk 2008/01/22 GTK
- * pb 2009/09/20 removed pause
+ * pb 2009/01/20 removed pause
+ * pb 2009/07/31 
  */
 
 #include <math.h>
@@ -155,11 +156,6 @@ void Melder_casual (const char *format, ...) {
 	va_list arg;
 	va_start (arg, format);
 	vsprintf (Melder_buffer1, format, arg);
-	#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
-	if (! Melder_batch) {
-		MessageBox (NULL, Melder_peekUtf8ToWcs (Melder_buffer1), L"Casual info", MB_OK);
-	} else
-	#endif
 	fprintf (stderr, "%s\n", Melder_buffer1);
 	va_end (arg);
 }

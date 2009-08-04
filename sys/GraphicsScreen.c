@@ -1,6 +1,6 @@
 /* GraphicsScreen.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/08/01 reintroduced yIsZeroAtTheTop
  * sdk 2008/03/24 cairo
  * sdk 2008/05/09 cairo
+ * pb 2009/07/24 quartz
  */
 
 #include "GraphicsP.h"
@@ -62,7 +63,10 @@ static void destroy (I) {
 		 * not even with GetDC.
 		 */
 	#elif mac
-		/* Nothing. */
+		if (my macPort == NULL) {
+			CGContextEndPage (my macGraphicsContext);
+			CGContextRelease (my macGraphicsContext);
+		}
 	#endif
 	inherited (GraphicsScreen) destroy (me);
 }
@@ -367,7 +371,7 @@ static void cb_move (GUI_ARGS) {
 	Graphics_updateWs ((Graphics) me);
 }
 static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
-	return _GraphicsMac_tryToInitializeAtsuiFonts ();
+	return Melder_systemVersion < 0x1040 ? false : _GraphicsMac_tryToInitializeAtsuiFonts ();
 }
 #endif
 
@@ -403,12 +407,72 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
 	#elif motif
 		XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+			XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 		Graphics_setWsViewport ((Graphics) me,
 			marginWidth, width - marginWidth, marginHeight, height - marginHeight);
 	#endif
 	#ifdef macintosh
 		XtAddCallback (w, XmNmoveCallback, cb_move, (XtPointer) me);
+	#endif
+	return (Graphics) me;
+}
+
+Graphics Graphics_create_pdffile (MelderFile file, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches)
+{
+	GraphicsScreen me = new (GraphicsScreen);
+	my screen = true;
+	my yIsZeroAtTheTop = true;
+	#ifdef macintosh
+		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+	#endif
+	if (! Graphics_init (me)) return NULL;
+	my resolution = resolution;
+	#ifdef macintosh
+		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, Melder_peekWcsToCfstring (file -> path), kCFURLPOSIXPathStyle, false);
+		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
+		CFStringRef key = Melder_peekWcsToCfstring (L"Creator");
+		CFStringRef value = Melder_peekWcsToCfstring (L"Praat");
+		CFIndex numberOfValues = 1;
+		CFDictionaryRef dictionary = CFDictionaryCreate (NULL, (const void **) & key, (const void **) & value, numberOfValues,
+			& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
+		my macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
+		CFRelease (url);
+		my x1DC = my x1DCmin = 0;
+		my x2DC = my x2DCmax = 7.5 * resolution;
+		my y1DC = my y1DCmin = 0;
+		my y2DC = my y2DCmax = 11.0 * resolution;
+		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
+		CGContextBeginPage (my macGraphicsContext, & rect);
+		CGContextScaleCTM (my macGraphicsContext, 72.0/resolution, 72.0/resolution);
+		CGContextTranslateCTM (my macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
+		CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+	#endif
+	return (Graphics) me;
+}
+Graphics Graphics_create_pdf (void *context, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches)
+{
+	GraphicsScreen me = new (GraphicsScreen);
+	my screen = true;
+	my yIsZeroAtTheTop = true;
+	#ifdef macintosh
+		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+	#endif
+	if (! Graphics_init (me)) return NULL;
+	my resolution = resolution;
+	#ifdef macintosh
+		my macGraphicsContext = context;
+		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
+		my x1DC = my x1DCmin = 0;
+		my x2DC = my x2DCmax = 7.5 * resolution;
+		my y1DC = my y1DCmin = 0;
+		my y2DC = my y2DCmax = 11.0 * resolution;
+		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
+		CGContextBeginPage (my macGraphicsContext, & rect);
+		CGContextScaleCTM (my macGraphicsContext, 72.0/resolution, 72.0/resolution);
+		CGContextTranslateCTM (my macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
+		CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
 	#endif
 	return (Graphics) me;
 }
@@ -428,6 +492,25 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	void *Graphics_x_getGC (I) {
 		iam (GraphicsScreen);
 		return my gc;
+	}
+#endif
+
+#if mac
+	void GraphicsQuartz_initDraw (GraphicsScreen me) {
+		if (my macPort) {
+			QDBeginCGContext (my macPort, & my macGraphicsContext);
+			//CGContextSetAlpha (my macGraphicsContext, 1.0);
+			//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+			int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+			CGContextTranslateCTM (my macGraphicsContext, 0, shellHeight);
+			CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+		}
+	}
+	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
+		if (my macPort) {
+			CGContextSynchronize (my macGraphicsContext);
+			QDEndCGContext (my macPort, & my macGraphicsContext);
+		}
 	}
 #endif
 

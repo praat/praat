@@ -493,6 +493,22 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const w
 	return 1;
 }
 
+static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+	static Any dia;
+	(void) interpreter;
+	(void) dummy;
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to PDF file",
+		DO_Picture_writeToPdfFile, NULL, NULL);
+	if (sendingForm == NULL && sendingString == NULL) {
+		UiOutfile_do (dia, L"praat.pdf");
+	} else { MelderFile file; structMelderFile file2 = { 0 };
+		if (sendingString == NULL) file = UiFile_getFile (dia);
+		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
+		return Picture_writeToPdfFile (praat_picture, file);
+	}
+	return 1;
+}
+
 static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
 	static Any dia;
 	(void) interpreter;
@@ -1627,7 +1643,12 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
-	praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
+	#if defined (macintosh)
+		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 0, DO_Picture_writeToEpsFile);
+	#else
+		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
+	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
 	#if defined (macintosh)

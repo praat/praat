@@ -1961,7 +1961,7 @@ static void draw_analysis (TimeSoundAnalysisEditor me) {
 	if (my pitch.show) {
 		double pitchCursor_overt = NUMundefined, pitchCursor_hidden = NUMundefined;
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, pitchViewFrom_hidden, pitchViewTo_hidden);
-		Graphics_setColour (my graphics, Graphics_NAVY);
+		Graphics_setColour (my graphics, Graphics_BLUE);
 		if (my pitch.data) {
 			if (my startSelection == my endSelection)
 				pitchCursor_hidden = Pitch_getValueAtTime (my pitch.data, my startSelection, my pitch.unit, 1);

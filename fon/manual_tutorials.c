@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090719)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090804)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.12# (4 August 2009)")
+LIST_ITEM (L"Macintosh: the Picture window can save to PDF file (you need MacOS 10.4 or up).")
+LIST_ITEM (L"Macintosh: corrected a bug that caused Praat to crash at start-up on MacOS 10.3.")
 NORMAL (L"##5.1.11# (19 July 2009)")
 NORMAL (L"##5.1.10# (8 July 2009)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash if the Demo window was closed after an \"execute\".")
