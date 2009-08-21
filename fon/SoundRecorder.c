@@ -1429,8 +1429,8 @@ static void createHelpMenuItems (SoundRecorder me, EditorMenu menu) {
 class_methods (SoundRecorder, Editor) {
 	class_method (destroy)
 	class_method (createChildren)
-	us -> editable = FALSE;
-	us -> scriptable = FALSE;
+	us -> editable = false;
+	us -> scriptable = false;
 	class_method (createMenus)
 	class_method (createHelpMenuItems)
 	class_methods_end

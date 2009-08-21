@@ -56,7 +56,7 @@ static Collection theOpenTextEditors = NULL;
 
 /***** TextEditor methods *****/
 
-static void destroy (I) {
+static void classTextEditor_destroy (I) {
 	iam (TextEditor);
 	forget (my openDialog);
 	forget (my saveDialog);
@@ -68,7 +68,7 @@ static void destroy (I) {
 	inherited (TextEditor) destroy (me);
 }
 
-static void nameChanged (I) {
+static void classTextEditor_nameChanged (I) {
 	iam (TextEditor);
 	if (our fileBased) {
 		int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
@@ -321,7 +321,7 @@ static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
 	closeDocument (me);
 }
 
-static void goAway (TextEditor me) {
+static void classTextEditor_goAway (TextEditor me) {
 	if (our fileBased && my dirty) {
 		if (! my dirtyCloseDialog) {
 			my dirtyCloseDialog = GuiDialog_create (my shell, 150, 70, 290, Gui_AUTOMATIC, L"Text changed", NULL, NULL, GuiDialog_MODAL);
@@ -374,20 +374,16 @@ static int menu_cb_erase (EDITOR_ARGS) {
 }
 
 static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
-	wchar_t *text = GuiText_getString (my textWidget);
 	long left, right;
+	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	long i;
 	*firstLine = 1;
-	GuiText_getSelectionPosition (my textWidget, & left, & right);
 	/*
 	 * Cycle through the text in order to see how many linefeeds we pass.
 	 */
 	for (i = 0; i < left; i ++) {
 		if (text [i] == '\n') {
 			(*firstLine) ++;
-			#if defined (_WIN32)
-				left --, right --;   /* Correction for linefeed/return combinations. */
-			#endif
 		}
 	}
 	Melder_assert (left <= (long) wcslen (text));
@@ -396,14 +392,104 @@ static int getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 	for (; i < right; i ++) {
 		if (text [i] == '\n') {
 			(*lastLine) ++;
-			#if defined (_WIN32)
-				left --, right --;   /* Correction for linefeed/return combinations. */
-			#endif
 		}
 	}
 	Melder_assert (right <= (long) wcslen (text));
 	Melder_free (text);
 	return TRUE;
+}
+
+static wchar_t *theFindString = NULL, *theReplaceString = NULL;
+static void do_find (TextEditor me) {
+	long left, right;
+	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
+	wchar_t *location = wcsstr (text + right, theFindString);
+	if (location != NULL) {
+		long index = location - text;
+		GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
+		GuiText_scrollToSelection (my textWidget);
+	} else {
+		/* Try from the start of the document. */
+		location = wcsstr (text, theFindString);
+		if (location != NULL) {
+			long index = location - text;
+			GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
+			GuiText_scrollToSelection (my textWidget);
+		} else {
+			Melder_beep ();
+		}
+	}
+	Melder_free (text);
+}
+
+static void do_replace (TextEditor me) {
+	long left, right;
+	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
+	wchar_t *selection = GuiText_getSelection (my textWidget);
+	if (! Melder_wcsequ (selection, theFindString)) {
+		Melder_free (text);
+		do_find (me);
+		return;
+	}
+	wchar_t *newText = Melder_calloc (wchar_t, wcslen (text) - wcslen (selection) + wcslen (theReplaceString) + 1);
+	wcsncpy (newText, text, left);
+	wcscpy (newText + left, theReplaceString);
+	wcscpy (newText + left + wcslen (theReplaceString), text + right);
+	GuiText_setString (my textWidget, newText);
+	GuiText_setSelection (my textWidget, left, left + wcslen (theReplaceString));
+	GuiText_scrollToSelection (my textWidget);
+	Melder_free (text);
+	Melder_free (newText);
+}
+
+static int menu_cb_find (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	EDITOR_FORM (L"Find", 0)
+		LABEL (L"", L"Find:")
+		TEXTFIELD (L"findString", L"")
+	EDITOR_OK
+		if (theFindString != NULL) SET_STRING (L"findString", theFindString);
+	EDITOR_DO
+		Melder_free (theFindString);
+		theFindString = Melder_wcsdup (GET_STRING (L"findString"));
+		do_find (me);
+	EDITOR_END
+}
+
+static int menu_cb_findAgain (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	do_find (me);
+	return 1;
+}
+
+static int menu_cb_replace (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	EDITOR_FORM (L"Find", 0)
+		LABEL (L"", L"This is a \"slow\" find-and-replace method;")
+		LABEL (L"", L"if the selected text is identical to the Find string,")
+		LABEL (L"", L"the selected text will be replaced by the Replace string;")
+		LABEL (L"", L"otherwise, the next occurrence of the Find string will be selected.")
+		LABEL (L"", L"So you typically need two clicks on Apply to get a text replaced.")
+		LABEL (L"", L"Find:")
+		TEXTFIELD (L"findString", L"")
+		LABEL (L"", L"Replace with:")
+		TEXTFIELD (L"replaceString", L"")
+	EDITOR_OK
+		if (theFindString != NULL) SET_STRING (L"findString", theFindString);
+		if (theReplaceString != NULL) SET_STRING (L"replaceString", theReplaceString);
+	EDITOR_DO
+		Melder_free (theFindString);
+		theFindString = Melder_wcsdup (GET_STRING (L"findString"));
+		Melder_free (theReplaceString);
+		theReplaceString = Melder_wcsdup (GET_STRING (L"replaceString"));
+		do_replace (me);
+	EDITOR_END
+}
+
+static int menu_cb_replaceAgain (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	do_replace (me);
+	return 1;
 }
 
 static int menu_cb_whereAmI (EDITOR_ARGS) {
@@ -452,10 +538,6 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 			right ++;
 		}
 		Melder_free (text);
-		#if defined (_WIN32)
-			left += lineToGo - 1;
-			right += lineToGo - 1;
-		#endif
 		GuiText_setSelection (my textWidget, left, right);
 		GuiText_scrollToSelection (my textWidget);
 	EDITOR_END
@@ -494,7 +576,7 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenus (TextEditor me) {
+static void classTextEditor_createMenus (TextEditor me) {
 	inherited (TextEditor) createMenus (TextEditor_as_Editor (me));
 	if (our fileBased) {
 		Editor_addCommand (me, L"File", L"New", 'N', menu_cb_new);
@@ -518,7 +600,12 @@ static void createMenus (TextEditor me) {
 	Editor_addCommand (me, L"Edit", L"Paste", 'V', menu_cb_paste);
 	Editor_addCommand (me, L"Edit", L"Erase", 0, menu_cb_erase);
 	Editor_addMenu (me, L"Search", 0);
-	if (our fileBased) Editor_addCommand (me, L"Search", L"Where am I?", 0, menu_cb_whereAmI);
+	Editor_addCommand (me, L"Search", L"Find...", 'F', menu_cb_find);
+	Editor_addCommand (me, L"Search", L"Find again", 'G', menu_cb_findAgain);
+	Editor_addCommand (me, L"Search", L"Replace...", GuiMenu_SHIFT + 'F', menu_cb_replace);
+	Editor_addCommand (me, L"Search", L"Replace again", GuiMenu_SHIFT + 'G', menu_cb_replaceAgain);
+	Editor_addCommand (me, L"Search", L"-- line --", 0, NULL);
+	Editor_addCommand (me, L"Search", L"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (me, L"Search", L"Go to line...", 'L', menu_cb_goToLine);
 	#ifdef macintosh
 		Editor_addMenu (me, L"Font", 0);
@@ -540,25 +627,26 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	}
 }
 
-static void createChildren (TextEditor me) {
+static void classTextEditor_createChildren (TextEditor me) {
 	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
 }
 
-static void clear (TextEditor me) {
+static void classTextEditor_clear (TextEditor me) {
 	(void) me;
 }
 
-class_methods (TextEditor, Editor)
-	class_method (destroy)
-	class_method (nameChanged)
-	class_method (goAway)
-	class_method (createChildren)
-	class_method (createMenus)
+class_methods (TextEditor, Editor) {
+	class_method_local (TextEditor, destroy)
+	class_method_local (TextEditor, nameChanged)
+	class_method_local (TextEditor, goAway)
+	class_method_local (TextEditor, createChildren)
+	class_method_local (TextEditor, createMenus)
 	us -> createMenuItems_query = NULL;
 	us -> fileBased = true;
-	class_method (clear)
-class_methods_end
+	class_method_local (TextEditor, clear)
+	class_methods_end
+}
 
 int TextEditor_init (TextEditor me, Widget parent, const wchar_t *initialText) {
 	Editor_init (TextEditor_as_parent (me), parent, 0, 0, 600, 400, NULL, NULL); cherror

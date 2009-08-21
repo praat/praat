@@ -54,6 +54,7 @@
  djmw 20080521 Confusion_drawAsnumbers
  djmw 20090109 KlattGrid formulas for formant
  djmw 20090708 KlattTable <-> Table
+ djmw 20090818 Thing_recognizeClassesByName: added classCepstrum, classIndex, classKlattTable
 */
 
 #include "praat.h"
@@ -4390,10 +4391,10 @@ void praat_uvafon_David_init (void)
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 
     Thing_recognizeClassesByName (classActivation, classBarkFilter,
-		classCategories, classCCA,
+		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries,classClassificationTable, classConfusion,
     	classCorrelation, classCovariance, classDiscriminant, classDTW,
-		classEigen, classExcitations, classFormantFilter,
+		classEigen, classExcitations, classFormantFilter, classIndex, classKlattTable,
 		classPermutation,
 		classISpline, classLegendreSeries,
 		classMelFilter,

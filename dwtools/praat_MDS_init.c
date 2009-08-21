@@ -1,6 +1,6 @@
 /* praat_MDS_init.c
  *
- * Copyright (C) 1992-2008 David Weenink
+ * Copyright (C) 1992-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  djmw 20061218 Introduction of Melder_information<12...9>
  djmw 20070902 Melder_new<1...>
  djmw 20071011 REQUIRE requires L"".
+ djmw 20090818 Thing_recognizeClassesByName: added classAffineTransform, classScalarProduct, classWeight
 */
 
 #include <math.h>
@@ -53,7 +54,7 @@ extern void praat_TableOfReal_init2  (void *klas);
 /* Tests */
 
 /*
-	Sort row 1 ascending and store in row 3 
+	Sort row 1 ascending and store in row 3
 	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
 	Make an index for row 1 and store in row 6
 */
@@ -62,19 +63,19 @@ static int TabelOfReal_testSorting (I, long rowtoindex)
 	iam (TableOfReal);
 	long i, nr = my numberOfRows, nc = my numberOfColumns;
 	long *index = NUMlvector (1, nc);
-	
+
 	if (index == NULL) return 0;
 	if (nr < 6) return Melder_error1 (L"TabelOfReal_sort2: we want at least 6 rows!!");
-	if (rowtoindex < 1 || rowtoindex > 2) 
+	if (rowtoindex < 1 || rowtoindex > 2)
 		return Melder_error1 (L"TabelOfReal_sort2: rowtoindex <= 2");
 
-	/* Copy 1->3 and sort 3 inplace */	
+	/* Copy 1->3 and sort 3 inplace */
 	NUMdvector_copyElements (my data[1], my data[3], 1, nc);
 	NUMsort_d (nc, my data[3]);
 
-	/* Copy 1->4 and 2->5, sort 4+5 in parallel */	
-	NUMdvector_copyElements (my data[1], my data[4], 1, nc);	
-	NUMdvector_copyElements (my data[2], my data[5], 1, nc);	
+	/* Copy 1->4 and 2->5, sort 4+5 in parallel */
+	NUMdvector_copyElements (my data[1], my data[4], 1, nc);
+	NUMdvector_copyElements (my data[2], my data[5], 1, nc);
 	NUMsort2_dd (nc, my data[4], my data[5]);
 
 	/* make index */
@@ -90,7 +91,7 @@ FORM (TabelOfReal_testSorting, L"TabelOfReal: Sort and index", L"")
 DO
 	if (! TabelOfReal_testSorting (ONLY_OBJECT, GET_INTEGER (L"Row to index"))) return 0;
 END
-	
+
 /************************* examples ***************************************/
 
 FORM (Dissimilarity_createLetterRExample, L"Create letter R example", L"Create letter R example...")
@@ -98,17 +99,17 @@ FORM (Dissimilarity_createLetterRExample, L"Create letter R example", L"Create l
 	REAL (L"Noise range", L"32.5")
 	OK
 DO
-	(void) praat_new1 (Dissimilarity_createLetterRExample 
+	(void) praat_new1 (Dissimilarity_createLetterRExample
 		(GET_REAL (L"Noise range")), NULL);
 END
 
-FORM (INDSCAL_createCarrollWishExample, 
+FORM (INDSCAL_createCarrollWishExample,
 	L"Create INDSCAL Carroll & Wish example...",
 	L"Create INDSCAL Carroll & Wish example...")
 	REAL (L"Noise standard deviation", L"0.0")
 	OK
 DO
-	(void) praat_new1 (INDSCAL_createCarrollWishExample 
+	(void) praat_new1 (INDSCAL_createCarrollWishExample
 		(GET_REAL (L"Noise standard deviation")), NULL);
 END
 
@@ -144,7 +145,7 @@ DO
 	REQUIRE (xmin < xmax && ymin < ymax, L"Required: xmin < xmax and ymin < ymax.")
 	praat_picture_open ();
 	drawSplines (GRAPHICS, xmin, xmax, ymin, ymax, GET_INTEGER (L"Spline type"),
-		GET_INTEGER (L"Order"), GET_STRING (L"Interior knots"), 
+		GET_INTEGER (L"Order"), GET_STRING (L"Interior knots"),
 		GET_INTEGER (L"Garnish"));
 	praat_picture_close ();
 END
@@ -160,11 +161,11 @@ END
 
 
 DIRECT (AffineTransform_help)
-	Melder_help (L"AffineTransform"); 
+	Melder_help (L"AffineTransform");
 END
 
 DIRECT (AffineTransform_invert)
-	EVERY_CHECK (praat_new2 (AffineTransform_invert (OBJECT), NAMEW, L"_inverse"))	 
+	EVERY_CHECK (praat_new2 (AffineTransform_invert (OBJECT), NAMEW, L"_inverse"))
 END
 
 FORM (AffineTransform_getTransformationElement, L"AffineTransform: Get transformation element", L"Procrustes")
@@ -201,7 +202,7 @@ END
 /***************** Configuration ***************************************/
 
 DIRECT (Configuration_help)
-	Melder_help (L"Configuration"); 
+	Melder_help (L"Configuration");
 END
 
 static void Configuration_draw_addCommonFields (void *dia)
@@ -225,7 +226,7 @@ DO
 	EVERY_DRAW (Configuration_draw (OBJECT, GRAPHICS,
 		GET_INTEGER (L"Horizontal dimension"), GET_INTEGER (L"Vertical dimension"),
 		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
-		GET_REAL (L"right Vertical range"), GET_INTEGER (L"Label size"), 
+		GET_REAL (L"right Vertical range"), GET_INTEGER (L"Label size"),
 		GET_INTEGER (L"Use row labels"), GET_STRING (L"Label"),
 		GET_INTEGER (L"Garnish")))
 END
@@ -362,8 +363,8 @@ FORM (Configurations_to_Procrustes, L"Configuration & Configuration: To Procrust
 	OK
 DO
 	Configuration c1 = NULL, c2 = NULL;
-	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }	
-	if (! praat_new3 (Configurations_to_Procrustes (c1, c2, GET_INTEGER (L"Orthogonal transform")), 
+	WHERE (SELECTED) { if (c1) c2 = OBJECT; else c1 = OBJECT; }
+	if (! praat_new3 (Configurations_to_Procrustes (c1, c2, GET_INTEGER (L"Orthogonal transform")),
 		Thing_getName (c2), L"_to_", Thing_getName (c1))) return 0;
 END
 
@@ -375,9 +376,9 @@ DO
 	Configuration c1 = NULL, c2 = NULL;
 	WHERE (SELECTED && CLASS == classConfiguration)
 	{
-		if (c1) c2 = OBJECT; 
+		if (c1) c2 = OBJECT;
 		else c1 = OBJECT;
-	}	
+	}
 	NEW (Configurations_to_AffineTransform_congruence (c1, c2,
 		GET_INTEGER (L"Maximum number of iterations"),
 		GET_REAL (L"Tolerance")))
@@ -396,7 +397,7 @@ DIRECT (Configuration_Weight_to_Similarity_cc)
 END
 
 DIRECT (Configuration_and_AffineTransform_to_Configuration)
-	NEW (Configuration_and_AffineTransform_to_Configuration 
+	NEW (Configuration_and_AffineTransform_to_Configuration
 		(ONLY (classConfiguration), ONLY_GENERIC (classAffineTransform)))
 END
 
@@ -450,7 +451,7 @@ FORM (ContingencyTable_to_Configuration_ca, L"ContingencyTable: To Configuration
 	RADIOBUTTON (L"Row points and column points symmetric")
 	OK
 DO
-	EVERY_TO (ContingencyTable_to_Configuration_ca (OBJECT, 
+	EVERY_TO (ContingencyTable_to_Configuration_ca (OBJECT,
 		GET_INTEGER (L"Number of dimensions"),
 		GET_INTEGER (L"Scaling of final configuration")))
 END
@@ -473,7 +474,7 @@ FORM (Correlation_to_Configuration, L"Correlation: To Configuration", 0)
 	NATURAL (L"Number of dimensions", L"2")
 	OK
 DO
-	EVERY_TO (Correlation_to_Configuration (OBJECT, 
+	EVERY_TO (Correlation_to_Configuration (OBJECT,
 		GET_INTEGER (L"Number of dimensions")))
 END
 
@@ -481,7 +482,7 @@ END
 /************************* Similarity ***************************************/
 
 DIRECT (Similarity_help)
-	Melder_help (L"Similarity"); 
+	Melder_help (L"Similarity");
 END
 
 FORM (Similarity_to_Dissimilarity, L"Similarity: To Dissimilarity", L"Similarity: To Dissimilarity...")
@@ -542,7 +543,7 @@ FORM (Dissimilarity_Configuration_kruskal, L"Dissimilarity & Configuration: To C
 	OK
 DO
 	Configuration conf = ONLY (classConfiguration);
-	if (! praat_new2 (Dissimilarity_Configuration_kruskal 
+	if (! praat_new2 (Dissimilarity_Configuration_kruskal
 		(ONLY (classDissimilarity), conf,
 		GET_INTEGER (L"Handling of ties"), GET_INTEGER (L"Stress calculation"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
@@ -553,10 +554,10 @@ FORM (Dissimilarity_Configuration_absolute_mds, L"Dissimilarity & Configuration:
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds 
-		(dissimilarity, ONLY (classConfiguration), NULL, 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds
+		(dissimilarity, ONLY (classConfiguration), NULL,
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_s_absolute")) return 0;
@@ -566,10 +567,10 @@ FORM (Dissimilarity_Configuration_ratio_mds, L"Dissimilarity & Configuration: To
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds 
-		(dissimilarity, ONLY (classConfiguration), NULL, 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds
+		(dissimilarity, ONLY (classConfiguration), NULL,
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_s_ratio")) return 0;
@@ -579,10 +580,10 @@ FORM (Dissimilarity_Configuration_interval_mds, L"Dissimilarity & Configuration:
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds 
-		(dissimilarity, ONLY (classConfiguration), NULL, 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds
+		(dissimilarity, ONLY (classConfiguration), NULL,
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_s_interval")) return 0;
@@ -595,10 +596,10 @@ FORM (Dissimilarity_Configuration_monotone_mds, L"Dissimilarity & Configuration:
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds 
-		(dissimilarity, ONLY (classConfiguration), NULL, 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds
+		(dissimilarity, ONLY (classConfiguration), NULL,
 		GET_INTEGER (L"Handling of ties"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
@@ -612,11 +613,11 @@ FORM (Dissimilarity_Configuration_ispline_mds, L"Dissimilarity & Configuration: 
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds 
-		(dissimilarity, ONLY (classConfiguration), NULL, 
-		GET_INTEGER (L"Number of interior knots"), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds
+		(dissimilarity, ONLY (classConfiguration), NULL,
+		GET_INTEGER (L"Number of interior knots"),
 		GET_INTEGER (L"Order of I-spline"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
@@ -627,10 +628,10 @@ FORM (Dissimilarity_Configuration_Weight_absolute_mds, L"Dissimilarity & Configu
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds 
-		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_absolute_mds
+		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_sw_absolute")) return 0;
@@ -640,10 +641,10 @@ FORM (Dissimilarity_Configuration_Weight_ratio_mds, L"Dissimilarity & Configurat
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds 
-		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ratio_mds
+		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_sw_ratio")) return 0;
@@ -653,16 +654,16 @@ FORM (Dissimilarity_Configuration_Weight_interval_mds, L"Dissimilarity & Configu
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds 
-		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_interval_mds
+		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_sw_interval")) return 0;
 END
 
-FORM (Dissimilarity_Configuration_Weight_monotone_mds, 
+FORM (Dissimilarity_Configuration_Weight_monotone_mds,
 	L"Dissimilarity & Configuration & Weight: To Configuration (monotone mds)",
 	L"Dissimilarity & Configuration & Weight: To Configuration...")
 	RADIO (L"Handling of ties", 1)
@@ -671,17 +672,17 @@ FORM (Dissimilarity_Configuration_Weight_monotone_mds,
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds 
-		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_monotone_mds
+		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight),
 		GET_INTEGER (L"Handling of ties"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_sw_monotone")) return 0;
 END
 
-FORM (Dissimilarity_Configuration_Weight_ispline_mds, 
+FORM (Dissimilarity_Configuration_Weight_ispline_mds,
 	L"Dissimilarity & Configuration & Weight: To Configuration (i-spline mds)",
 	L"Dissimilarity & Configuration & Weight: To Configuration...")
 	LABEL (L"", L"Spline smoothing")
@@ -690,18 +691,18 @@ FORM (Dissimilarity_Configuration_Weight_ispline_mds,
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds 
-		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight), 
-		GET_INTEGER (L"Number of interior knots"), 
+	if (! praat_new2 (Dissimilarity_Configuration_Weight_ispline_mds
+		(dissimilarity, ONLY (classConfiguration), ONLY (classWeight),
+		GET_INTEGER (L"Number of interior knots"),
 		GET_INTEGER (L"Order of I-spline"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_sw_ispline")) return 0;
 END
 
-FORM (Dissimilarity_Configuration_getStress, L"Dissimilarity & Configuration: Get stress", 
+FORM (Dissimilarity_Configuration_getStress, L"Dissimilarity & Configuration: Get stress",
 	L"Dissimilarity & Configuration: get stress")
 	RADIO (L"Handling of ties", 1)
 	RADIOBUTTON (L"Primary approach")
@@ -711,19 +712,19 @@ FORM (Dissimilarity_Configuration_getStress, L"Dissimilarity & Configuration: Ge
 	RADIOBUTTON (L"Formula2 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k]-dbar)^2))")
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_getStress 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_getStress
+		(ONLY (classDissimilarity), ONLY (classConfiguration),
 		GET_INTEGER (L"Handling of ties"), GET_INTEGER (L"Stress calculation"))));
 END
 
-FORM (Dissimilarity_Configuration_absolute_stress, 
+FORM (Dissimilarity_Configuration_absolute_stress,
 	L"Dissimilarity & Configuration: Get stress (absolute mds)",
 	L"Dissimilarity & Configuration: Get stress (absolute mds)...")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_absolute_stress
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER (L"Stress measure"))));
 END
 
@@ -733,22 +734,22 @@ FORM (Dissimilarity_Configuration_ratio_stress, L"Dissimilarity & Configuration:
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ratio_stress
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_interval_stress, 
+FORM (Dissimilarity_Configuration_interval_stress,
 	L"Dissimilarity & Configuration: Get stress (interval mds)",
 	L"Dissimilarity & Configuration: Get stress (interval mds)...")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_interval_stress
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_monotone_stress, 
+FORM (Dissimilarity_Configuration_monotone_stress,
 	L"Dissimilarity & Configuration: Get stress (monotone mds)",
 	L"Dissimilarity & Configuration: Get stress (monotone mds)...")
 	RADIO (L"Handling of ties", 1)
@@ -758,12 +759,12 @@ FORM (Dissimilarity_Configuration_monotone_stress,
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_monotone_stress
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GET_INTEGER (L"Handling of ties"), GET_INTEGER (L"Stress measure"))));
 END
 
 
-FORM (Dissimilarity_Configuration_ispline_stress, 
+FORM (Dissimilarity_Configuration_ispline_stress,
 	L"Dissimilarity & Configuration: Get stress (i-spline mds)",
 	L"Dissimilarity & Configuration: Get stress (i-spline mds)...")
 	INTEGER (L"Number of interior knots", L"1")
@@ -771,47 +772,47 @@ FORM (Dissimilarity_Configuration_ispline_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
-		GET_INTEGER (L"Number of interior knots"), 
-		GET_INTEGER (L"Order of I-spline"), 
+		GET_INTEGER (L"Number of interior knots"),
+		GET_INTEGER (L"Order of I-spline"),
 		GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_Weight_absolute_stress, 
+FORM (Dissimilarity_Configuration_Weight_absolute_stress,
 	L"Dissimilarity & Configuration & Weight: Get stress (absolute mds)",
 	L"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_absolute_stress 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_absolute_stress
+		(ONLY (classDissimilarity), ONLY (classConfiguration),
 		ONLY (classWeight), GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_Weight_ratio_stress, 
+FORM (Dissimilarity_Configuration_Weight_ratio_stress,
 	L"Dissimilarity & Configuration & Weight: Get stress (ratio mds)",
 	L"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ratio_stress
-		(ONLY (classDissimilarity), ONLY (classConfiguration), 
+		(ONLY (classDissimilarity), ONLY (classConfiguration),
 		ONLY (classWeight), GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_Weight_interval_stress, 
+FORM (Dissimilarity_Configuration_Weight_interval_stress,
 	L"Dissimilarity & Configuration & Weight: Get stress (interval mds)",
 	L"Dissimilarity & Configuration & Weight: Get stress (interval mds)...")
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_interval_stress 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_interval_stress
+		(ONLY (classDissimilarity), ONLY (classConfiguration),
 		ONLY (classWeight), GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_Weight_monotone_stress, 
+FORM (Dissimilarity_Configuration_Weight_monotone_stress,
 	L"Dissimilarity & Configuration & Weight: Get stress (monotone mds)",
 	L"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...")
 	RADIO (L"Handling of ties", 1)
@@ -820,14 +821,14 @@ FORM (Dissimilarity_Configuration_Weight_monotone_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_monotone_stress 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), 
-		ONLY (classWeight), GET_INTEGER (L"Handling of ties"), 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_monotone_stress
+		(ONLY (classDissimilarity), ONLY (classConfiguration),
+		ONLY (classWeight), GET_INTEGER (L"Handling of ties"),
 		GET_INTEGER (L"Stress measure"))));
 END
 
 
-FORM (Dissimilarity_Configuration_Weight_ispline_stress, 
+FORM (Dissimilarity_Configuration_Weight_ispline_stress,
 	L"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)",
 	L"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...")
 	INTEGER (L"Number of interior knots", L"1")
@@ -835,21 +836,21 @@ FORM (Dissimilarity_Configuration_Weight_ispline_stress,
 	Dissimilarity_and_Configuration_getStress_addCommonFields (dia, radio);
 	OK
 DO
-	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress 
+	Melder_information1 (Melder_double (Dissimilarity_Configuration_Weight_ispline_stress
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
-		GET_INTEGER (L"Number of interior knots"), 
-		GET_INTEGER (L"Order of I-spline"), 
+		GET_INTEGER (L"Number of interior knots"),
+		GET_INTEGER (L"Order of I-spline"),
 		GET_INTEGER (L"Stress measure"))));
 END
 
-FORM (Dissimilarity_Configuration_drawShepardDiagram, L"Dissimilarity & Configuration: Draw Shepard diagram", 	
+FORM (Dissimilarity_Configuration_drawShepardDiagram, L"Dissimilarity & Configuration: Draw Shepard diagram",
 	L"Dissimilarity & Configuration: Draw Shepard diagram...")
 	Dissimilarity_Configuration_drawDiagram_addCommonFields (dia);
 	OK
 DO
 	praat_picture_open ();
 	Dissimilarity_Configuration_drawShepardDiagram (ONLY (classDissimilarity),
-		ONLY (classConfiguration), GRAPHICS, 
+		ONLY (classConfiguration), GRAPHICS,
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
 		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
@@ -857,30 +858,30 @@ DO
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_Configuration_drawAbsoluteRegression, 
+FORM (Dissimilarity_Configuration_drawAbsoluteRegression,
 	L"Dissimilarity & Configuration: Draw regression (absolute mds)",
 	L"Dissimilarity & Configuration: Draw regression (absolute mds)...")
 	Dissimilarity_Configuration_drawDiagram_addCommonFields (dia);
 	OK
 DO
 	praat_picture_open ();
-	Dissimilarity_Configuration_Weight_drawAbsoluteRegression 
+	Dissimilarity_Configuration_Weight_drawAbsoluteRegression
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
-		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), 
+		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 		GET_INTEGER (L"Garnish"));
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_Configuration_drawRatioRegression, 
+FORM (Dissimilarity_Configuration_drawRatioRegression,
 	L"Dissimilarity & Configuration: Draw regression (ratio mds)",
 	L"Dissimilarity & Configuration: Draw regression (ratio mds)...")
 	Dissimilarity_Configuration_drawDiagram_addCommonFields (dia);
 	OK
 DO
 	praat_picture_open ();
-	Dissimilarity_Configuration_Weight_drawRatioRegression 
+	Dissimilarity_Configuration_Weight_drawRatioRegression
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
@@ -888,14 +889,14 @@ DO
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_Configuration_drawIntervalRegression, 
+FORM (Dissimilarity_Configuration_drawIntervalRegression,
 	L"Dissimilarity & Configuration: Draw regression (interval mds)",
 	L"Dissimilarity & Configuration: Draw regression (interval mds)...")
 	Dissimilarity_Configuration_drawDiagram_addCommonFields (dia);
 	OK
 DO
 	praat_picture_open ();
-	Dissimilarity_Configuration_Weight_drawIntervalRegression 
+	Dissimilarity_Configuration_Weight_drawIntervalRegression
 		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
@@ -903,7 +904,7 @@ DO
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_Configuration_drawMonotoneRegression, 
+FORM (Dissimilarity_Configuration_drawMonotoneRegression,
 	L"Dissimilarity & Configuration: Draw regression (monotone mds)",
 	L"Dissimilarity & Configuration: Draw regression (monotone mds)...")
 	RADIO (L"Handling of ties", 1)
@@ -913,8 +914,8 @@ FORM (Dissimilarity_Configuration_drawMonotoneRegression,
 	OK
 DO
 	praat_picture_open ();
-	Dissimilarity_Configuration_Weight_drawMonotoneRegression 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, 
+	Dissimilarity_Configuration_Weight_drawMonotoneRegression
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL,
 		GRAPHICS, GET_INTEGER (L"Handling of ties"),
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
@@ -922,7 +923,7 @@ DO
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_Configuration_drawISplineRegression, 
+FORM (Dissimilarity_Configuration_drawISplineRegression,
 	L"Dissimilarity & Configuration: Draw regression (i-spline mds)",
 	L"Dissimilarity & Configuration: Draw regression (i-spline mds)...")
 	INTEGER (L"Number of interior knots", L"1")
@@ -931,18 +932,18 @@ FORM (Dissimilarity_Configuration_drawISplineRegression,
 	OK
 DO
 	praat_picture_open ();
-	Dissimilarity_Configuration_Weight_drawISplineRegression 
-		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS, 
-		GET_INTEGER (L"Number of interior knots"), 
+	Dissimilarity_Configuration_Weight_drawISplineRegression
+		(ONLY (classDissimilarity), ONLY (classConfiguration), NULL, GRAPHICS,
+		GET_INTEGER (L"Number of interior knots"),
 		GET_INTEGER (L"Order of I-spline"),
 		GET_REAL (L"left Proximity range"), GET_REAL (L"right Proximity range"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
-		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), 
+		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 		GET_INTEGER (L"Garnish"));
 	praat_picture_close ();
 END
 
-FORM (Dissimilarity_kruskal, L"Dissimilarity: To Configuration (kruskal)", 
+FORM (Dissimilarity_kruskal, L"Dissimilarity: To Configuration (kruskal)",
 	L"Dissimilarity: To Configuration (kruskal)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -961,12 +962,12 @@ DO
 		 GET_INTEGER (L"Number of dimensions"),
 		GET_INTEGER (L"Distance metric"), GET_INTEGER (L"Handling of ties"),
 		GET_INTEGER (L"Stress calculation"), GET_REAL (L"Tolerance"),
-		GET_INTEGER (L"Maximum number of iterations"), 
+		GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions")),
 		dissimilarity -> name)) return 0;
 END
 
-FORM (Dissimilarity_absolute_mds, L"Dissimilarity: To Configuration (absolute mds)", 
+FORM (Dissimilarity_absolute_mds, L"Dissimilarity: To Configuration (absolute mds)",
 	L"Dissimilarity: To Configuration (absolute mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -975,14 +976,14 @@ FORM (Dissimilarity_absolute_mds, L"Dissimilarity: To Configuration (absolute md
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Weight_absolute_mds (dissimilarity, NULL, 
+	if (! praat_new2 (Dissimilarity_Weight_absolute_mds (dissimilarity, NULL,
 		GET_INTEGER (L"Number of dimensions"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"), showProgress),
 		dissimilarity -> name, L"_absolute")) return 0;
 END
 
-FORM (Dissimilarity_ratio_mds, L"Dissimilarity: To Configuration (ratio mds)", 
+FORM (Dissimilarity_ratio_mds, L"Dissimilarity: To Configuration (ratio mds)",
 	L"Dissimilarity: To Configuration (ratio mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -998,7 +999,7 @@ DO
 		dissimilarity -> name, L"_ratio")) return 0;
 END
 
-FORM (Dissimilarity_interval_mds, L"Dissimilarity: To Configuration (interval mds)", 
+FORM (Dissimilarity_interval_mds, L"Dissimilarity: To Configuration (interval mds)",
 	L"Dissimilarity: To Configuration (interval mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1014,7 +1015,7 @@ DO
 		dissimilarity -> name, L"_interval")) return 0;
 END
 
-FORM (Dissimilarity_monotone_mds, L"Dissimilarity: To Configuration (monotone mds)", 
+FORM (Dissimilarity_monotone_mds, L"Dissimilarity: To Configuration (monotone mds)",
 	L"Dissimilarity: To Configuration (monotone mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1034,7 +1035,7 @@ DO
 		dissimilarity -> name, L"_monotone")) return 0;
 END
 
-FORM (Dissimilarity_ispline_mds, L"Dissimilarity: To Configuration (i-spline mds)", 
+FORM (Dissimilarity_ispline_mds, L"Dissimilarity: To Configuration (i-spline mds)",
 	L"Dissimilarity: To Configuration (i-spline mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1048,7 +1049,7 @@ DO
 	int showProgress = 1;
 	long niknots = GET_INTEGER (L"Number of interior knots");
 	long order = GET_INTEGER (L"Order of I-spline");
-	REQUIRE (order > 0 || niknots > 0, 
+	REQUIRE (order > 0 || niknots > 0,
 		L"Order-zero spline must at least have 1 interior knot.")
 	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, NULL,
 		GET_INTEGER (L"Number of dimensions"),
@@ -1058,7 +1059,7 @@ DO
 		dissimilarity -> name, L"_ispline")) return 0;
 END
 
-FORM (Dissimilarity_Weight_ispline_mds, L"Dissimilarity & Weight: To Configuration (i-spline mds)", 
+FORM (Dissimilarity_Weight_ispline_mds, L"Dissimilarity & Weight: To Configuration (i-spline mds)",
 	L"Dissimilarity & Weight: To Configuration (i-spline mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1072,9 +1073,9 @@ DO
 	int showProgress = 1;
 	long niknots = GET_INTEGER (L"Number of interior knots");
 	long order = GET_INTEGER (L"Order of I-spline");
-	REQUIRE (order > 0 || niknots > 0, 
+	REQUIRE (order > 0 || niknots > 0,
 		L"Order-zero spline must at least have 1 interior knot.")
-	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_ispline_mds (dissimilarity,
 		ONLY (classWeight),
 		GET_INTEGER (L"Number of dimensions"), niknots, order,
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
@@ -1082,7 +1083,7 @@ DO
 		dissimilarity -> name, L"_ispline")) return 0;
 END
 
-FORM (Dissimilarity_Weight_absolute_mds, L"Dissimilarity & Weight: To Configuration (absolute mds)", 
+FORM (Dissimilarity_Weight_absolute_mds, L"Dissimilarity & Weight: To Configuration (absolute mds)",
 	L"Dissimilarity & Weight: To Configuration (absolute mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1099,7 +1100,7 @@ DO
 		dissimilarity -> name, L"_absolute")) return 0;
 END
 
-FORM (Dissimilarity_Weight_ratio_mds, L"Dissimilarity & Weight: To Configuration (ratio mds)", 
+FORM (Dissimilarity_Weight_ratio_mds, L"Dissimilarity & Weight: To Configuration (ratio mds)",
 	L"Dissimilarity & Weight: To Configuration (ratio mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1108,7 +1109,7 @@ FORM (Dissimilarity_Weight_ratio_mds, L"Dissimilarity & Weight: To Configuration
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Weight_ratio_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_ratio_mds (dissimilarity,
 		ONLY (classWeight),
 		GET_INTEGER (L"Number of dimensions"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
@@ -1116,7 +1117,7 @@ DO
 		dissimilarity -> name, L"_absolute")) return 0;
 END
 
-FORM (Dissimilarity_Weight_interval_mds, L"Dissimilarity & Weight: To Configuration (interval mds)", 
+FORM (Dissimilarity_Weight_interval_mds, L"Dissimilarity & Weight: To Configuration (interval mds)",
 	L"Dissimilarity & Weight: To Configuration (interval mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1125,7 +1126,7 @@ FORM (Dissimilarity_Weight_interval_mds, L"Dissimilarity & Weight: To Configurat
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Weight_interval_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_interval_mds (dissimilarity,
 		ONLY (classWeight),
 		GET_INTEGER (L"Number of dimensions"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Maximum number of iterations"),
@@ -1133,7 +1134,7 @@ DO
 		dissimilarity -> name, L"_absolute")) return 0;
 END
 
-FORM (Dissimilarity_Weight_monotone_mds, L"Dissimilarity & Weight: To Configuration (monotone mds)", 
+FORM (Dissimilarity_Weight_monotone_mds, L"Dissimilarity & Weight: To Configuration (monotone mds)",
 	L"Dissimilarity & Weight: To Configuration (monotone mds)...")
 	LABEL (L"", L"Configuration")
 	NATURAL (L"Number of dimensions", L"2")
@@ -1143,9 +1144,9 @@ FORM (Dissimilarity_Weight_monotone_mds, L"Dissimilarity & Weight: To Configurat
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
-	Dissimilarity dissimilarity = ONLY (classDissimilarity); 
+	Dissimilarity dissimilarity = ONLY (classDissimilarity);
 	int showProgress = 1;
-	if (! praat_new2 (Dissimilarity_Weight_monotone_mds (dissimilarity, 
+	if (! praat_new2 (Dissimilarity_Weight_monotone_mds (dissimilarity,
 		ONLY (classWeight),
 		GET_INTEGER (L"Number of dimensions"),
 		GET_INTEGER (L"Handling of ties"),
@@ -1171,7 +1172,7 @@ FORM (Distance_to_ScalarProduct, L"Distance: To ScalarProduct", L"Distance: To S
 	BOOLEAN (L"Make sum of squares equal 1.0", 1)
 	OK
 DO
-	EVERY_TO (Distance_to_ScalarProduct (OBJECT, 
+	EVERY_TO (Distance_to_ScalarProduct (OBJECT,
 		GET_INTEGER (L"Make sum of squares equal 1.0")))
 END
 
@@ -1193,7 +1194,7 @@ DO
 	WHERE (SELECTED) (void) Collection_addItem (distances, OBJECT);
 	Distances_indscal (distances, GET_INTEGER (L"Number of dimensions"),
 		GET_INTEGER (L"Normalize scalar products"), GET_REAL (L"Tolerance"),
-		GET_INTEGER (L"Maximum number of iterations"), 
+		GET_INTEGER (L"Maximum number of iterations"),
 		GET_INTEGER (L"Number of repetitions"),
 		1, &cresult, &wresult);
 	distances -> size = 0; forget (distances);
@@ -1214,10 +1215,10 @@ FORM (Distance_and_Configuration_drawScatterDiagram, L"Distance & Configuration:
 DO
 	praat_picture_open ();
 	Distance_and_Configuration_drawScatterDiagram (ONLY (classDistance),
-		ONLY (classConfiguration), GRAPHICS, GET_REAL (L"Minimum x-distance"), 
+		ONLY (classConfiguration), GRAPHICS, GET_REAL (L"Minimum x-distance"),
 		GET_REAL (L"Maximum x-distance"),
 		GET_REAL (L"Minimum y-distance"), GET_REAL (L"Maximum y-distance"),
-		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), 
+		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 		GET_INTEGER (L"Garnish"));
 	praat_picture_close ();
 END
@@ -1262,7 +1263,7 @@ DO
 			(void) Collection_addItem (distances, OBJECT);
 		}
 	}
-	Distances_Configuration_vaf (distances, configuration, 
+	Distances_Configuration_vaf (distances, configuration,
 		GET_INTEGER (L"Normalize scalar products"), &vaf);
 	distances -> size = 0;
 	forget (distances);
@@ -1285,7 +1286,7 @@ DO
 	Distances_Configuration_Salience_vaf (distances, ONLY (classConfiguration),
 		ONLY (classSalience), GET_INTEGER (L"Normalize scalar products"), &vaf);
 	Melder_information1 (Melder_double (vaf));
-	distances -> size = 0; 
+	distances -> size = 0;
 	forget (distances);
 END
 
@@ -1297,7 +1298,7 @@ FORM (Dissimilarity_Configuration_Salience_vaf, L"Dissimilarity & Configuration 
 	BOOLEAN (L"Normalize scalar products", 1)
 	OK
 DO
-	Dissimilarities dissimilarities = Dissimilarities_create(); 
+	Dissimilarities dissimilarities = Dissimilarities_create();
 	double vaf;
 	WHERE (SELECTED)
 	{
@@ -1306,17 +1307,17 @@ DO
 			(void) Collection_addItem (dissimilarities, OBJECT);
 		}
 	}
-	Dissimilarities_Configuration_Salience_vaf (dissimilarities, 
+	Dissimilarities_Configuration_Salience_vaf (dissimilarities,
 		ONLY (classConfiguration),
 		ONLY (classSalience), GET_INTEGER (L"Handling of ties"),
 		GET_INTEGER (L"Normalize scalar products"), &vaf);
 	Melder_information1 (Melder_double (vaf));
-	dissimilarities -> size = 0; 
+	dissimilarities -> size = 0;
 	forget (dissimilarities);
 END
 
 FORM (Distance_Configuration_Salience_indscal,
-	L"Distance & Configuration & Salience: To Configuration (indscal)", 
+	L"Distance & Configuration & Salience: To Configuration (indscal)",
 	L"Distance & Configuration & Salience: To Configuration (indscal)...")
 	BOOLEAN (L"Normalize scalar products", 1)
 	LABEL (L"", L"Minimization parameters")
@@ -1324,10 +1325,10 @@ FORM (Distance_Configuration_Salience_indscal,
 	NATURAL (L"Maximum number of iterations", L"100")
 	OK
 DO
-	Distances distances = Distances_create(); 
-	int showprocess = 1; 
+	Distances distances = Distances_create();
+	int showprocess = 1;
 	double vaf;
-	Configuration cresult; 
+	Configuration cresult;
 	Salience wresult;
 	WHERE (SELECTED)
 	{
@@ -1336,7 +1337,7 @@ DO
 			(void) Collection_addItem (distances, OBJECT);
 		}
 	}
-	Distances_Configuration_Salience_indscal (distances, 
+	Distances_Configuration_Salience_indscal (distances,
 		ONLY (classConfiguration), ONLY (classSalience),
 		GET_INTEGER (L"Normalize scalar products"), GET_REAL (L"Tolerance"),
 		GET_INTEGER (L"Maximum number of iterations"), showprocess, &cresult,
@@ -1359,7 +1360,7 @@ DO
 	WHERE (SELECTED) (void) Collection_addItem (me, OBJECT);
 	Distances_to_Configuration_ytl (me, GET_INTEGER (L"Number of dimensions"),
 		GET_INTEGER (L"Normalize scalar products"), &cresult, &wresult);
-	my size = 0; 
+	my size = 0;
 	forget (me);
 	if (! praat_new1 (cresult, NULL)) return 0;
 	if (GET_INTEGER (L"Salience object"))
@@ -1376,7 +1377,7 @@ FORM (Dissimilarity_Distance_monotoneRegression, L"Dissimilarity & Distance: Mon
 	OK
 DO
 	Dissimilarity dissimilarity = ONLY (classDissimilarity);
-	if (! praat_new1 (Dissimilarity_Distance_monotoneRegression (dissimilarity, 
+	if (! praat_new1 (Dissimilarity_Distance_monotoneRegression (dissimilarity,
 		ONLY (classDistance),
 		GET_INTEGER (L"Handling of ties")), dissimilarity -> name)) return 0;
 END
@@ -1391,18 +1392,18 @@ FORM (Distance_Dissimilarity_drawShepardDiagram, L"Distance & Dissimilarity: Dra
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (Proximity_Distance_drawScatterDiagram 
+	EVERY_DRAW (Proximity_Distance_drawScatterDiagram
 		(ONLY (classDissimilarity), ONLY (classDistance), GRAPHICS,
 		GET_REAL (L"Minimum dissimilarity"), GET_REAL (L"Maximum dissimilarity"),
 		GET_REAL (L"left Distance range"), GET_REAL (L"right Distance range"),
-		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), 
+		GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 		GET_INTEGER (L"Garnish")))
 END
-	
+
 DIRECT (MDS_help)
 	Melder_help (L"Multidimensional scaling");
 END
-	
+
 
 /************************* Salience ***************************************/
 
@@ -1424,14 +1425,14 @@ FORM (Covariance_to_Configuration, L"Covariance: To Configuration", 0)
 	NATURAL (L"Number of dimensions", L"2")
 	OK
 DO
-	EVERY_TO (Covariance_to_Configuration (OBJECT, 
+	EVERY_TO (Covariance_to_Configuration (OBJECT,
 		GET_INTEGER (L"Number of dimensions")))
 END
 
 /********* Procrustes ***************************/
 
 DIRECT (Procrustes_help)
-	Melder_help (L"Procrustes"); 
+	Melder_help (L"Procrustes");
 END
 
 DIRECT (Procrustes_getScale)
@@ -1449,28 +1450,28 @@ DIRECT (TableOfReal_to_Similarity)
 	EVERY_TO (TableOfReal_to_Similarity (OBJECT))
 END
 
-DIRECT (TableOfReal_to_Distance) 
-	EVERY_TO (TableOfReal_to_Distance (OBJECT)) 
+DIRECT (TableOfReal_to_Distance)
+	EVERY_TO (TableOfReal_to_Distance (OBJECT))
 END
 
-DIRECT (TableOfReal_to_Salience) 
-	EVERY_TO (TableOfReal_to_Salience (OBJECT)) 
+DIRECT (TableOfReal_to_Salience)
+	EVERY_TO (TableOfReal_to_Salience (OBJECT))
 END
 
-DIRECT (TableOfReal_to_Weight) 
-	EVERY_TO (TableOfReal_to_Weight (OBJECT)) 
+DIRECT (TableOfReal_to_Weight)
+	EVERY_TO (TableOfReal_to_Weight (OBJECT))
 END
 
-DIRECT (TableOfReal_to_ScalarProduct) 
-	EVERY_TO (TableOfReal_to_ScalarProduct (OBJECT)) 
+DIRECT (TableOfReal_to_ScalarProduct)
+	EVERY_TO (TableOfReal_to_ScalarProduct (OBJECT))
 END
 
-DIRECT (TableOfReal_to_Configuration) 
-	EVERY_TO (TableOfReal_to_Configuration (OBJECT)) 
+DIRECT (TableOfReal_to_Configuration)
+	EVERY_TO (TableOfReal_to_Configuration (OBJECT))
 END
 
-DIRECT (TableOfReal_to_ContingencyTable) 
-EVERY_TO (TableOfReal_to_ContingencyTable (OBJECT)) 
+DIRECT (TableOfReal_to_ContingencyTable)
+EVERY_TO (TableOfReal_to_ContingencyTable (OBJECT))
 END
 
 /********************** TableOfReal ***************************************/
@@ -1553,15 +1554,15 @@ static void praat_TableOfReal_extras (void *klas)
 void praat_uvafon_MDS_init (void);
 void praat_uvafon_MDS_init (void)
 {
-	Thing_recognizeClassesByName (classProcrustes,
+	Thing_recognizeClassesByName (classAffineTransform, classProcrustes,
 		classContingencyTable, classDissimilarity,
 		classSimilarity, classConfiguration, classDistance,
-		classSalience, NULL);
+		classSalience, classScalarProduct, classWeight, NULL);
 	Thing_recognizeClassByOtherName (classProcrustes, L"Procrustus");
-		
+
     praat_addMenuCommand (L"Objects", L"New", L"Multidimensional scaling", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"MDS tutorial", 0, 1, DO_MDS_help);
-    praat_addMenuCommand (L"Objects", L"New", L"-- MDS --", 0, 1, 0);		
+    praat_addMenuCommand (L"Objects", L"New", L"-- MDS --", 0, 1, 0);
     praat_addMenuCommand (L"Objects", L"New", L"Create letter R example...", 0, 1, DO_Dissimilarity_createLetterRExample);
     praat_addMenuCommand (L"Objects", L"New", L"Create INDSCAL Carroll Wish example...", 0, 1, DO_INDSCAL_createCarrollWishExample);
     praat_addMenuCommand (L"Objects", L"New", L"Create Configuration...", 0, 1, DO_Configuration_create);
@@ -1585,7 +1586,7 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classConfiguration, 0, L"Draw one sigma ellipse...", L"Draw...", 1, DO_Configuration_drawOneSigmaEllipse);
 	praat_addAction1 (classConfiguration, 0, L"Draw confidence ellipses...", L"Draw sigma ellipses...", 1, DO_Configuration_drawConfidenceEllipses);
 	praat_addAction1 (classConfiguration, 0, L"Draw one confidence ellipse...", L"Draw sigma ellipses...", 1, DO_Configuration_drawOneConfidenceEllipse);
-		
+
 		praat_addAction1 (classConfiguration, 0, L"Randomize", L"Normalize table...", 1, DO_Configuration_randomize);
 		praat_addAction1 (classConfiguration, 0, L"Normalize...", L"Randomize", 1, DO_Configuration_normalize);
 		praat_addAction1 (classConfiguration, 0, L"Centralize", L"Randomize", 1, DO_Configuration_centralize);
@@ -1600,7 +1601,7 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classConfiguration, 0, L"To Similarity (cc)", 0, 0, DO_Configuration_to_Similarity_cc);
 
 	praat_addAction1 (classConfiguration, 0, L"Match configurations - ", 0, 0, 0);
-	praat_addAction1 (classConfiguration, 2, L"To Procrustes...", 0, 1, DO_Configurations_to_Procrustes);	
+	praat_addAction1 (classConfiguration, 2, L"To Procrustes...", 0, 1, DO_Configurations_to_Procrustes);
 	praat_addAction1 (classConfiguration, 2, L"To AffineTransform (congruence)...", 0, 1, DO_Configurations_to_AffineTransform_congruence);
 
 	praat_addAction1 (classConfusion, 0, L"To ContingencyTable", L"To Matrix", 0, DO_Confusion_to_ContingencyTable);
@@ -1614,7 +1615,7 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classContingencyTable, 1, L"-- statistics --", L"Get value...", 1, 0);
 	praat_addAction1 (classContingencyTable, 1, L"Get chi squared probability", L"-- statistics --", 1, DO_ContingencyTable_chisqProbability);
 	praat_addAction1 (classContingencyTable, 1, L"Get Cramer's statistic", L"Get chi squared probability", 1, DO_ContingencyTable_cramersStatistic);
-	praat_addAction1 (classContingencyTable, 1, L"Get contingency coefficient", L"Get Cramer's statistic", 1, 
+	praat_addAction1 (classContingencyTable, 1, L"Get contingency coefficient", L"Get Cramer's statistic", 1,
 		DO_ContingencyTable_contingencyCoefficient);
 	praat_addAction1 (classContingencyTable, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classContingencyTable, 1, L"To Configuration (ca)...", 0, 0, DO_ContingencyTable_to_Configuration_ca);
@@ -1672,7 +1673,7 @@ void praat_uvafon_MDS_init (void)
 
 	praat_TableOfReal_init2 (classScalarProduct);
 	praat_TableOfReal_extras (classScalarProduct);
-   
+
 	praat_TableOfReal_extras (classTableOfReal);
 	praat_addAction1 (classTableOfReal, 1, L"Centre rows", L"Normalize table...", 1, DO_TableOfReal_centreRows);
 	praat_addAction1 (classTableOfReal, 1, L"Centre columns", L"Centre rows", 1, DO_TableOfReal_centreColumns);
@@ -1689,8 +1690,8 @@ void praat_uvafon_MDS_init (void)
 		praat_addAction1 (classTableOfReal, 0, L"To ContingencyTable", 0, 1, DO_TableOfReal_to_ContingencyTable);
 
 	praat_TableOfReal_init2 (classWeight);
-	
-			
+
+
 /****** 2 classes ********************************************************/
 
 	praat_Configuration_and_AffineTransform_init (classAffineTransform);
@@ -1709,7 +1710,7 @@ void praat_uvafon_MDS_init (void)
 
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"Draw Shepard diagram...", 0, 1, DO_Dissimilarity_Configuration_drawShepardDiagram);
-	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"-- draw regressions --", 0, 1, 0);	
+	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"-- draw regressions --", 0, 1, 0);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"Draw monotone regression...", 0, 1, DO_Dissimilarity_Configuration_drawMonotoneRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"Draw i-spline regression...", 0, 1, DO_Dissimilarity_Configuration_drawISplineRegression);
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, L"Draw interval regression...", 0, 1, DO_Dissimilarity_Configuration_drawIntervalRegression);
@@ -1739,31 +1740,31 @@ void praat_uvafon_MDS_init (void)
 
 	praat_addAction2 (classDistance, 1, classDissimilarity, 1, L"Draw Shepard diagram...", 0, 0, DO_Distance_Dissimilarity_drawShepardDiagram);
 	praat_addAction2 (classDissimilarity, 1, classDistance, 1, L"Monotone regression...", 0, 0, DO_Dissimilarity_Distance_monotoneRegression);
-		
+
 /****** 3 classes ********************************************************/
 
 
-	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, 0, 0, 0); 
-	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, L"Get VAF...", 0, 1, DO_Dissimilarity_Configuration_Salience_vaf); 
+	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction3 (classDissimilarity, 0, classConfiguration, 1, classSalience, 1, L"Get VAF...", 0, 1, DO_Dissimilarity_Configuration_Salience_vaf);
 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, QUERY_BUTTON, 0, 0, 0); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (monotone mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_monotone_stress); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (i-spline mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ispline_stress); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (interval mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_interval_stress); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (ratio mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ratio_stress); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (absolute mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_absolute_stress); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, ANALYSE_BUTTON, 0, 0, 0); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (monotone mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_monotone_mds); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (i-spline mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ispline_mds); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (interval mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_interval_mds); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (ratio mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ratio_mds); 
-	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (absolute mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_absolute_mds); 
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (monotone mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_monotone_stress);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (i-spline mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ispline_stress);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (interval mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_interval_stress);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (ratio mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ratio_stress);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"Get stress (absolute mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_absolute_stress);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, ANALYSE_BUTTON, 0, 0, 0);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (monotone mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_monotone_mds);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (i-spline mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ispline_mds);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (interval mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_interval_mds);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (ratio mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_ratio_mds);
+	praat_addAction3 (classDissimilarity, 1, classConfiguration, 1, classWeight, 1, L"To Configuration (absolute mds)...", 0, 1, DO_Dissimilarity_Configuration_Weight_absolute_mds);
 
 
-	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, 0, 0, 0); 
-	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"Get VAF...", 0, 1, DO_Distance_Configuration_Salience_vaf); 
-	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"Analyse", 0, 0, 0); 
-	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"To Configuration (indscal)...", 0, 0, DO_Distance_Configuration_Salience_indscal); 
+	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"Get VAF...", 0, 1, DO_Distance_Configuration_Salience_vaf);
+	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"Analyse", 0, 0, 0);
+	praat_addAction3 (classDistance, 0, classConfiguration, 1, classSalience, 1, L"To Configuration (indscal)...", 0, 0, DO_Distance_Configuration_Salience_indscal);
 
 
 	INCLUDE_MANPAGES (manual_MDS_init)

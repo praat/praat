@@ -156,6 +156,7 @@ typedef struct {   /* Readonly */
 	int n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
 	int totalSelection;   /* The total number of selected objects, <= n. */
+	int numberOfSelected [1 + 1000];   /* For each (readable) class. */
 	int totalBeingCreated;
 	long uniqueId;
 } structPraatObjects, *PraatObjects;

@@ -93,7 +93,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 	#elif motif
 		#if win || mac
 			(void) parent;
-			Widget shell = XmCreateShell (NULL, "Praatwulg", NULL, 0);
+			Widget shell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		#else
 			Widget shell = XtAppCreateShell (NULL, "Praatwulg", applicationShellWidgetClass, XtDisplay (parent), NULL, 0);
 			/*Widget shell = XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, NULL);*/

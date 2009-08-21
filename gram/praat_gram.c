@@ -1167,7 +1167,7 @@ END
 
 void praat_uvafon_gram_init (void);
 void praat_uvafon_gram_init (void) {
-	Thing_recognizeClassesByName (classNetwork, classOTGrammar, classOTMulti, NULL);
+	Thing_recognizeClassesByName (classNetwork, classOTGrammar, classOTHistory, classOTMulti, NULL);
 	Thing_recognizeClassByOtherName (classOTGrammar, L"OTCase");
 
 	praat_addMenuCommand (L"Objects", L"New", L"Constraint grammars", 0, 0, 0);

@@ -403,8 +403,8 @@ class_methods (RunnerMFC, Editor)
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (createChildren)
-	us -> editable = FALSE;
-	us -> scriptable = FALSE;
+	us -> editable = false;
+	us -> scriptable = false;
 class_methods_end
 
 RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experiments) {

@@ -76,18 +76,33 @@ Any Thing_new (void *table) {
 
 static int numberOfReadableClasses = 0;
 static void *readableClasses [1 + 1000];
+static void _Thing_addOneReadableClass (Thing_Table readableClass) {
+	if (++ numberOfReadableClasses > 1000)
+		Melder_fatal ("(Thing_recognizeClassesByName:) Too many (1001) readable classes.");
+	readableClasses [numberOfReadableClasses] = readableClass;
+	readableClass -> sequentialUniqueIdOfReadableClass = numberOfReadableClasses;
+}
 void Thing_recognizeClassesByName (void *readableClass, ...) {
 	va_list arg;
 	void *klas;
-	if (! readableClass) return;
+	if (readableClass == NULL) return;
 	va_start (arg, readableClass);
-	readableClasses [++ numberOfReadableClasses] = readableClass;
+	_Thing_addOneReadableClass ((Thing_Table) readableClass);
 	while ((klas = va_arg (arg, void*)) != NULL) {
-		if (++ numberOfReadableClasses > 1000)
-			Melder_fatal ("(Thing_recognizeClassesByName:) Too many (1001) readable classes.");
-		readableClasses [numberOfReadableClasses] = klas;
+		_Thing_addOneReadableClass ((Thing_Table) klas);
 	}
 	va_end (arg);
+}
+
+long Thing_listReadableClasses (void) {
+	Melder_clearInfo ();
+	MelderInfo_open ();
+	for (long iclass = 1; iclass <= numberOfReadableClasses; iclass ++) {
+		Thing_Table klas = readableClasses [iclass];
+		MelderInfo_writeLine3 (Melder_integer (klas -> sequentialUniqueIdOfReadableClass), L"\t", klas -> _className);
+	}
+	MelderInfo_close ();
+	return numberOfReadableClasses;
 }
 
 static int numberOfAliases = 0;

@@ -1708,7 +1708,7 @@ LIST_ITEM (L"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (L"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20080515)
+MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20090809)
 INTRO (L"In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY (L"Numeric variables")
 NORMAL (L"Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
@@ -1767,6 +1767,8 @@ NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"if you want to know what they are on your computer, try to #echo them in a script window. "
 	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file. "
 	"Finally, we have $$praatVersion\\$ $, which is \"" xstr(PRAAT_VERSION_STR) "\" for the current version of Praat.")
+NORMAL (L"To check whether a variable exists, you can use the function")
+CODE (L"%variableExists (%variableName\\$ )")
 MAN_END
 /*
 form Convert from WAV to AIFF
@@ -2172,7 +2174,7 @@ DEFINITION (L"stops the execution of the script while sending an error message t
 NORMAL (L"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20080106)
+MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20090809)
 LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
 LIST_ITEM (L"@@Scripting 6.2. Writing to the Info window@ (echo, print, printtab, printline)")
 LIST_ITEM (L"@@Scripting 6.3. Query commands@ (Get, Count)")
@@ -2350,7 +2352,7 @@ NORMAL (L"The string variable \"mean\\$ \" now contains the entire string \"150 
 NORMAL (L"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20010821)
+MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20090809)
 INTRO (L"You can read from and write to text files from a Praat script.")
 ENTRY (L"Reading a file")
 NORMAL (L"You can check the availability of a file for reading with the function")
@@ -2383,9 +2385,14 @@ NORMAL (L"where $$text\\$ $ is any string variable and $$%fileName$ is an unquot
 NORMAL (L"To append the contents of an existing string at the end of an existing text file, you use")
 CODE (L"text\\$  ##>># %fileName")
 NORMAL (L"If the file does not yet exist, it is created first.")
-NORMAL (L"You can delete an existing file with")
+NORMAL (L"You can create a directory with")
+CODE (L"#createDirectory (%directoryName\\$ )")
+NORMAL (L"If the directory already exists, this command does nothing.")
+NORMAL (L"You can delete an existing file with the function")
+CODE (L"#deleteFile (%fileName\\$ )")
+NORMAL (L"or with the directive")
 CODE (L"#filedelete %fileName")
-NORMAL (L"If the file does not exist, #filedelete does nothing.")
+NORMAL (L"If the file does not exist, these commands do nothing.")
 NORMAL (L"The simplest way to append text to a file is by using #fileappend:")
 CODE (L"#fileappend out.txt Hello world!")
 ENTRY (L"Example: writing a table of squares")
@@ -2396,7 +2403,7 @@ CODE (L"The square of 3 is 9")
 CODE (L"...")
 CODE (L"The square of 100 is 10000")
 NORMAL (L"We can do this by collecting each line in a variable:")
-CODE (L"filedelete squares.txt")
+CODE (L"deleteFile (\"squares.txt\")")
 CODE (L"for i to 100")
 CODE (L"   square = i * i")
 CODE (L"   fileappend squares.txt The square of 'i' is 'square''newline\\$ '")
@@ -3117,7 +3124,7 @@ CODE (L"select sound")
 CODE (L"plus textgrid")
 MAN_END
 
-MAN_BEGIN (L"Demo window", L"ppgb", 20090512)
+MAN_BEGIN (L"Demo window", L"ppgb", 20090821)
 INTRO (L"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations and adaptive listening experiments.")
 NORMAL (L"The Demo window is Praat's least visible window: you can create it only through a script. "
@@ -3235,7 +3242,7 @@ NORMAL (L"This uses two tricks, namely the possibility of following the #goto st
 	"and using #demoInput to quickly test for multiple possible inputs (the bullet represents a mouse click).")
 ENTRY (L"Getting click locations")
 NORMAL (L"You can use the functions #demoX and #demoY to see where the user has clicked. "
-	"These function respond in world coordinates. To se ewhether the user has clicked in the sound that occupies the "
+	"These function respond in world coordinates. To see whether the user has clicked in the sound that occupies the "
 	"upper half of the screne in the above example, you do")
 CODE (L"while demoWaitForInput ( )")
 	CODE1 (L"if demoClicked ( )")
@@ -3250,6 +3257,13 @@ CODE (L"demo Paint rounded rectangle... pink 30 70 16 24")
 CODE (L"demo Text... 50 centre 20 half Analyse")
 CODE (L"while demoWaitForInput ( )")
 	CODE1 (L"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
+ENTRY (L"Full-screen viewing")
+NORMAL (L"When you click in the \"zoom box\" (the green button in the title bar of the Demo window on the Mac), "
+	"the Demo window will zoom out very strongly: it will fill up the whole screen. The menu bar becomes invisible, "
+	"although you can still make it temporarily visible and accessible by moving the mouse to the upper edge of the screen. "
+	"The Dock also becomes invisible, although you can make it temporarily visible and accessible by moving the mouse to the edge "
+	"of the screen (the left, bottom, or right edge, depending on where your Dock normally is). "
+	"When you click the zoom box again, the Demo window is restored to its original size. See also Tips and Tricks below.")
 ENTRY (L"Miscellaneous")
 NORMAL (L"In the above examples, things will often get drawn to the screen with some delay, "
 	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "
@@ -3259,6 +3273,16 @@ NORMAL (L"In the above examples, things will often get drawn to the screen with 
 NORMAL (L"To see whether any function keys are pressed (during a mouse click or key press), "
 	"you can use ##demoShiftKeyPressed ( )#, ##demoCommandKeyPressed ( )#, ##demoOptionKeyPressed ( )#, and "
 	"##demoExtraControlKeyPressed ( )#.")
+NORMAL (L"To put some text in the title bar of the Demo window, try")
+CODE (L"#demoWindowTitle (\"This is the title of my presentation\")")
+ENTRY (L"Tips and Tricks")
+NORMAL (L"If you resize the Demo window with the handle in the bottom left, or if you zoom the window out to the full screen, "
+	"you may see that the relative positions of the contents of the window will change. Also, clicking on buttons and in parts "
+	"of the window may yield unexpected %x and %y values. It is therefore advisable to resize the window only if you are on a page "
+	"that you can get out of by pressing a key, or by clicking anywhere in the window without using #demoX, #demoY or #demoClickedIn.")
+NORMAL (L"If you click away the Demo window while it is waiting for input, you get a message saying \"You interrupted the script...\". "
+	"If you do not want to see this message, you should make sure that the user can reach the end of the script, for instance by "
+	"pressing the \\-> key on the last page. To make sure the user sees that the script has ended, you could end it with ##demo Erase all#.")
 MAN_END
 
 }

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/07/22
+ * pb 2009/08/06
  */
 
 /* A self-recording picture inside a Motif DrawingArea widget.
@@ -122,11 +122,11 @@ void Picture_print (Picture me);
 void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int rotation, double magnification);
 #ifdef macintosh
 	int Picture_writeToMacPictFile (Picture me, MelderFile file);
-	void Picture_copyToClipboard (Picture me);
+	void Picture_copyToClipboard (Picture me, int version);   // 1 = QuickDraw, 2 = Quartz
 	void Picture_copyToClipboard_screenImage (Picture me);
 #endif
 #ifdef _WIN32
-	void Picture_copyToClipboard (Picture me);
+	void Picture_copyToClipboard (Picture me, int version);
 	int Picture_writeToWindowsMetafile (Picture me, MelderFile file);
 #endif
 

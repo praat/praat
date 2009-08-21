@@ -574,12 +574,18 @@ END
 	}
 #endif
 
-#if defined (_WIN32) || defined (macintosh)
+#if defined (_WIN32)
 	DIRECT (Copy_picture_to_clipboard)
-		Picture_copyToClipboard (praat_picture);
+		Picture_copyToClipboard (praat_picture, 1);
 	END
 #endif
 #if defined (macintosh)
+	DIRECT (Copy_picture_to_clipboard)
+		Picture_copyToClipboard (praat_picture, 2);
+	END
+	DIRECT (Copy_picture_to_old_style_clipboard)
+		Picture_copyToClipboard (praat_picture, 1);
+	END
 	DIRECT (Copy_screen_image_to_clipboard)
 		Picture_copyToClipboard_screenImage (praat_picture);
 	END
@@ -954,6 +960,19 @@ DO
 		Graphics_setGrey (GRAPHICS, realColour);
 	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
+	Graphics_unsetInner (GRAPHICS);
+	praat_picture_close ();
+END
+
+FORM (InsertPictureFromFile, L"Praat picture: Insert picture from file", L"Insert picture from file...")
+	LABEL (L"", L"File name:")
+	TEXTFIELD (L"fileName", L"~/Desktop/paul.jpg")
+	dia_rectangle (dia);
+	OK
+DO
+	praat_picture_open ();
+	Graphics_setInner (GRAPHICS);
+	Graphics_imageFromFile (GRAPHICS, GET_STRING (L"fileName"), GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -1623,40 +1642,49 @@ void praat_picture_init (void) {
 		helpMenu = GuiMenuBar_addMenu (menuBar, L"Help", 0);
 	}
 
-	praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
 	praat_addMenuCommand (L"Picture", L"File", L"Picture info", 0, 0, DO_Picture_settings_report);
 	praat_addMenuCommand (L"Picture", L"File", L"Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
-	praat_addMenuCommand (L"Picture", L"File", L"-- read & write --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"File", L"-- read --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"File", L"Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
 	praat_addMenuCommand (L"Picture", L"File", L"Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);
 	#ifdef _WIN32
 	praat_addMenuCommand (L"Picture", L"File", L"Read from old Windows praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldWindowsPraatPictureFile);
 	#endif
+	praat_addMenuCommand (L"Picture", L"File", L"-- write --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
-	#ifdef macintosh
-	praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, 0, DO_Picture_writeToMacPictFile);
-	praat_addMenuCommand (L"Picture", L"File", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
-	praat_addMenuCommand (L"Picture", L"File", L"Copy screen image to clipboard", 0, 0, DO_Copy_screen_image_to_clipboard);
-	#endif
 	#ifdef _WIN32
 	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
-	praat_addMenuCommand (L"Picture", L"File", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif
-	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
 	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 0, DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write old", 0, 0, NULL);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, 1, DO_Picture_writeToMacPictFile);
+			praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 1, DO_Picture_writeToEpsFile);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_silipa);
 	#else
+		praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
 		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
 	#endif
-	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
-	praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
+	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
 	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"File", L"Page setup...", 0, 0, DO_Page_setup);
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"Print...", 0, 'P', DO_Print);
 
 	praat_addMenuCommand (L"Picture", L"Edit", L"Undo", 0, 'Z', DO_Undo);
+	#if defined (macintosh) || defined (_WIN32)
+		praat_addMenuCommand (L"Picture", L"Edit", L"-- clipboard --", 0, 0, 0);
+		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
+		#ifdef macintosh
+			praat_addMenuCommand (L"Picture", L"Edit", L"Copy old", 0, 0, NULL);
+				praat_addMenuCommand (L"Picture", L"Edit", L"Copy to pre-10.4 clipboard", 0, 1, DO_Copy_picture_to_old_style_clipboard);
+				praat_addMenuCommand (L"Picture", L"Edit", L"Copy screen image to clipboard", 0, 1, DO_Copy_screen_image_to_clipboard);
+		#endif
+	#endif
 	praat_addMenuCommand (L"Picture", L"Edit", L"-- erase --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Edit", L"Erase all", 0, 'E', DO_Erase_all);
 
@@ -1716,6 +1744,10 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle...", 0, 0, DO_PaintCircle);
 	praat_addMenuCommand (L"Picture", L"World", L"Draw circle (mm)...", 0, 0, DO_DrawCircle_mm);
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle (mm)...", 0, 0, DO_PaintCircle_mm);
+	#if defined (macintosh)
+		praat_addMenuCommand (L"Picture", L"World", L"-- picture --", 0, 0, 0);
+		praat_addMenuCommand (L"Picture", L"World", L"Insert picture from file...", 0, 0, DO_InsertPictureFromFile);
+	#endif
 	praat_addMenuCommand (L"Picture", L"World", L"-- axes --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"World", L"Axes...", 0, 0, DO_Axes);
 	praat_addMenuCommand (L"Picture", L"World", L"Measure", 0, 0, 0);

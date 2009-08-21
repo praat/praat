@@ -24,6 +24,7 @@
  * pb 2008/01/19 removed 16M limitation on number of elements (-> double)
  * sdk 2008/03/24 cairo
  * pb 2009/07/09 RGB colours
+ * pb 2009/08/10 image from file
  */
 
 #include "GraphicsP.h"
@@ -306,6 +307,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 			{  double red = get, green = get, blue = get;
 				Graphics_setRGBColour (thee, red, green, blue);
 			} break;
+			case IMAGE_FROM_FILE:
+			{  double x1 = get, x2 = get, y1 = get, y2 = get; long length = get; char *text_utf8 = sget (length);
+				Graphics_imageFromFile (thee, Melder_peekUtf8ToWcs (text_utf8), x1, x2, y1, y2);
+			}  break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);

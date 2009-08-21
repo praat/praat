@@ -123,7 +123,7 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			union {
 				struct { Widget horizontalBar, verticalBar, clipWindow, workWindow; } scrolledWindow;
 				struct { XtCallbackList moveCallbacks; } drawingArea;
-				struct { int active, isDialog;
+				struct { bool active, isDialog, canFullScreen;
 					unsigned long lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
 				struct { unsigned char acceleratorChar; int acceleratorModifiers; } pushButton;
 				struct { int inBar; } cascadeButton;

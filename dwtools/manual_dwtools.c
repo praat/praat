@@ -3817,8 +3817,8 @@ MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
 NORMAL (L"D.E. Johnson (1998), %%Applied Multivariate methods%")
 MAN_END
 
-MAN_BEGIN (L"Krishnamoorthy & Yu (2004)", L"djmw", 20090627)
-NORMAL (L"K. Krishnamoortht & j. Yu (2004), \"Modified Nel and Van der Merwe test for multivariate "
+MAN_BEGIN (L"Krishnamoorthy & Yu (2004)", L"djmw", 20090813)
+NORMAL (L"K. Krishnamoortht & J. Yu (2004), \"Modified Nel and Van der Merwe test for multivariate "
 	"Behrens-Fisher problem\", %%Statistics & Probability Letters% #66, 161-169.")
 MAN_END
 

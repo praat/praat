@@ -29,6 +29,7 @@
  * pb 2007/10/09 removed char
  * pb 2008/04/04 Thing_infoWithId
  * pb 2009/03/21 modern enums
+ * pb 2009/08/17 readable-class IDs
  */
 
 /* The root class of all objects. */
@@ -136,6 +137,7 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 		Calls to this routine should preferably be put in the beginning of main ().
 */
 void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
+long Thing_listReadableClasses (void);
 
 Any Thing_newFromClassNameA (const char *className);
 Any Thing_newFromClassName (const wchar_t *className);
@@ -289,6 +291,7 @@ void Thing_swap (I, thou);
 	wchar_t *name;
 #define Thing_methods \
 	long version; \
+	long sequentialUniqueIdOfReadableClass; \
 	void (*destroy) (I); \
 	void (*info) (I); \
 	void (*nameChanged) (I);

@@ -256,11 +256,10 @@ static int menu_cb_viewHistory (EDITOR_ARGS) {
 		length --;
 	}
 	long first = 0, last = 0;
-	GuiText_getSelectionPosition (my textWidget, & first, & last);
+	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & first, & last);
+	Melder_free (text);
 	GuiText_replace (my textWidget, first, last, history);
-	#if defined (UNIX) || defined (macintosh)
-		GuiText_setSelection (my textWidget, first, first + length);
-	#endif
+	GuiText_setSelection (my textWidget, first, first + length);
 	return 1;
 }
 
@@ -314,7 +313,7 @@ class_methods (ScriptEditor, TextEditor) {
 	class_method (goAway)
 	class_method (createMenus)
 	class_method (createHelpMenuItems)
-	us -> scriptable = FALSE;
+	us -> scriptable = false;
 	class_methods_end
 }
 

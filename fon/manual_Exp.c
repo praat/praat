@@ -52,19 +52,19 @@ LIST_ITEM (L"@@ExperimentMFC 6. Responses are sounds")
 LIST_ITEM (L"@@ExperimentMFC 7. Running multiple experiments")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20051205)
-NORMAL (L"With Praat, you can do simple experiments on identification and discrimination. "
+MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20090821)
+NORMAL (L"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
 	"`Simple' means that for identification, the subject hears a sound and has to click on one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
 	"For discrimination, you can have simple same-different choices, or more intricate things like AXB, 4I-oddity, and so on.")
-NORMAL (L"The advantage of using Praat for this is that it is free, it works on Windows, Unix, and Macintosh, "
+NORMAL (L"The advantage of using Praat's ExperimentMFC for this is that it is free, it works on Windows, Unix, and Macintosh, "
 	"and the whole experiment (experiment file plus sound files) is portable across computers "
 	"(you can run it from a CD, for instance). Because of the limited possibilities, "
 	"it is also quite easy to set up the experiment. Just read the description below.")
-NORMAL (L"If you require more from your experiment design, you use a dedicated program like Presentation or E-prime instead of Praat. "
-	"With these programs, you can measure reaction times as well, or you can let the stimulus depend on the subject's previous responses. "
-	"If you do not need those extra capabilities, you can use the simpler method of Praat. "
-	"My estimation is that that is fine for 90 percent of the perception experiments that phoneticians perform.")
+NORMAL (L"If you require more from your experiment design, you can use Praat's @@Demo window@; "
+	"with that less simple method you could for instance let the stimulus depend on the subject's previous responses. "
+	"Alternatively, you could use a dedicated program like Presentation or E-prime instead of Praat; "
+	"with these programs, you can measure reaction times as well.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 2. The first example", L"ppgb", 20051205)
@@ -525,7 +525,7 @@ INTRO (L"The @@ExperimentMFC 2.1. The experiment file|example experiment@ contai
 CODE (L"oopsButton = 0 0 0 0 \"\" \"\"")
 NORMAL (L"This means that that experiment did not have an oops button. "
 	"To add an oops button in the lower left corner of the screen, you do something likw")
-CODE (L"okButton = 0.05 0.2 0.05 0.15 \"oops\" \"\"")
+CODE (L"oopsButton = 0.05 0.2 0.05 0.15 \"oops\" \"\"")
 NORMAL (L"If you supply a right edge (here 0.2) that is greater than the left edge (here 0.05), "
 	"Praat will know that you want to show an oops button.")
 NORMAL (L"If you include an oops button, it will become visible to the participant for every stimulus except the first, "

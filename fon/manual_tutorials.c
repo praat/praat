@@ -23,9 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090804)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090821)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.13# (21 August 2009)")
+LIST_ITEM (L"Script window: #Find and #Replace.")
+LIST_ITEM (L"Picture window (and therefore Demo window!): @@Insert picture from file...@ (MacOS 10.4 and up).")
+LIST_ITEM (L"@@Demo window@: full screen (on the Mac).")
+LIST_ITEM (L"Scripting: faster object selection (scripts no longer slow down when there are many objects in the list).")
+LIST_ITEM (L"Scripting: $$variableExists$.")
+LIST_ITEM (L"Macintosh: PDF clipboard (MacOS 10.4 and up).")
 NORMAL (L"##5.1.12# (4 August 2009)")
 LIST_ITEM (L"Macintosh: the Picture window can save to PDF file (you need MacOS 10.4 or up).")
 LIST_ITEM (L"Macintosh: corrected a bug that caused Praat to crash at start-up on MacOS 10.3.")

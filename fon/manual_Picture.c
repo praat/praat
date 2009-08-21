@@ -834,6 +834,34 @@ ENTRY (L"Usage")
 NORMAL (L"With the ##Text...# command, you can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
+MAN_BEGIN (L"Insert picture from file...", L"ppgb", 20090811)
+INTRO (L"A command in the #World menu of the @@Picture window@, on Macintosh only.")
+ENTRY (L"Purpose")
+NORMAL (L"To draw a JPEG, TIFF or PNG picture into the Picture window (or into the Demo window).")
+ENTRY (L"Settings")
+TAG (L"%%File name")
+DEFINITION (L"the name of the picture file (JPEG, TIFF or PNG). If you use this command in a script, "
+	"you can use a relative path name such as $$pictures/myface.jpg$ or $$~/Desktop/hello.jpg$.")
+TAG (L"%%From x, To x")
+DEFINITION (L"The horizontal location (in world coordinates) where the picture will appear. "
+	"Use the @@Axes...@ command to set world coordinates if they have not been set implicitly by an earlier #Draw or #Paint command. "
+	"If you set %%From x% and %%To x% to the same value, the picture will be horizontally centred around this %x value "
+	"and obtain a width that preserves the aspect ratio (width-to-height ratio) of the original picture.")
+TAG (L"%%From y, To y")
+DEFINITION (L"The vertical location (in world coordinates) where the picture will appear. "
+	"Use the @@Axes...@ command to set world coordinates if they have not been set implicitly by an earlier #Draw or #Paint command. "
+	"If you set %%From y% and %%To y% to the same value, the picture will be vertically centred around this %y value "
+	"and obtain a height that preserves the aspect ratio (width-to-height ratio) of the original picture.")
+ENTRY (L"Behaviour")
+NORMAL (L"From the description above, you see that if %%From x% is unequal to %%To x% and %%From y% is unequal to %%To y%, "
+	"the picture will probably obtain an aspect ratio different from the original picture. "
+	"To preserve the aspect ratio, either make %%To x% equal to %%From x% or make %%To y equal to %%From y%.")
+NORMAL (L"To show the picture on the same number of pixels as the original, make %%To x% equal to %%From x% and %%To y% equal to %%From y%. "
+	"Praat will then show the picture with the original width and height (in pixels), centred around the given %x and %y values.")
+ENTRY (L"Usage")
+NORMAL (L"You will usually use this in a script, and often in a script that runs the @@Demo window@.")
+MAN_END
+
 MAN_BEGIN (L"Text left/right/top/bottom...", L"ppgb", 19970330)
 INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")

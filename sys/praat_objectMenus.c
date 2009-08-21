@@ -302,6 +302,10 @@ DO
 	}
 END
 
+DIRECT (praat_listReadableTypesOfObjects)
+	Thing_listReadableClasses ();
+END
+
 FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions")
 	INTEGER (L"left Row 1", L"71")
 	INTEGER (L"right Row 1", L"39")
@@ -594,6 +598,7 @@ void praat_addMenus (Widget bar) {
 	#endif
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Calculator...", 0, 'U', DO_praat_calculator);
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
+	praat_addMenuCommand (L"Objects", L"Goodies", L"List readable types of objects...", 0, 0, DO_praat_listReadableTypesOfObjects);
 	button = praat_addMenuCommand (L"Objects", L"Praat", L"Preferences", 0, praat_UNHIDABLE, 0);
 	#if gtk
 		if (button) preferencesMenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (button));

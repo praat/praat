@@ -271,7 +271,7 @@ class_methods (OTGrammarEditor, HyperPage) {
 	class_method (createMenus)
 	class_method (createHelpMenuItems)
 	class_method (draw)
-	us -> editable = TRUE;
+	us -> editable = true;
 	class_method (goToPage)
 	class_methods_end
 }

@@ -66,6 +66,7 @@
 
 #if mac
 	#include "macport_on.h"
+	#include <Movies.h>
 #endif
 
 /*
@@ -1229,9 +1230,11 @@ static void _GuiNativizeWidget (Widget me) {
 				SetWindowLong (my window, GWL_USERDATA, (long) me);
 			#elif mac
 				Rect r = my rect;
+				if (wcsstr (my name, L"fullscreen")) {
+					my motiff.shell.canFullScreen = true;
+				}
 				OffsetRect (& r, 0, 22);
-				CreateNewWindow (kDocumentWindowClass,
-					kWindowCloseBoxAttribute +
+				CreateNewWindow (kDocumentWindowClass, kWindowCloseBoxAttribute +
 					( theDialogHint ? 0 : kWindowCollapseBoxAttribute + kWindowResizableAttribute + kWindowFullZoomAttribute),
 					& r, & my nat.window.ptr);
 				SetWRefCon (my nat.window.ptr, (long) me);   /* So we can find the widget from the event with GetWRefCon (). */
@@ -2325,6 +2328,8 @@ void XtDestroyWidget (Widget me) {
 				DestroyWindow (natWindow);
 			#elif mac
 				DisposeWindow (my nat.window.ptr);
+				if (my motiff.shell.canFullScreen)
+					SetSystemUIMode (kUIModeNormal, 0);   // BUG: assumes there can be only one fullscreenable window
 			#endif
 			_motif_removeShell (me);
 		} break;
@@ -4055,7 +4060,19 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 			if (shell) {
 				int oldWidth = shell -> width, oldHeight = shell -> height, newWidth, newHeight;
 				Rect bounds;
-				ZoomWindow (macvenster, part, 1);
+				if (shell -> motiff.shell.canFullScreen) {
+					if (part == inZoomOut) {
+						SetSystemUIMode (kUIModeAllSuppressed, 0);
+						Point size = { 3000, 4000 };
+						ZoomWindowIdeal (macvenster, inZoomOut, & size);
+					} else {
+						SetSystemUIMode (kUIModeNormal, 0);
+						Point size = { 900, 1440 };
+						ZoomWindowIdeal (macvenster, inZoomIn, & size);
+					}
+				} else {
+					ZoomWindow (macvenster, part, 1);
+				}
 				GetWindowPortBounds (macvenster, & bounds);
 				newWidth = bounds.right - bounds.left;
 				newHeight = bounds.bottom - bounds.top;

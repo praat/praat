@@ -302,7 +302,7 @@ static void createHelpMenuItems (ButtonEditor me, EditorMenu menu) {
 }
 
 class_methods (ButtonEditor, HyperPage) {
-	us -> scriptable = FALSE;
+	us -> scriptable = false;
 	class_method (createChildren)
 	class_method (createHelpMenuItems)
 	class_method (draw)

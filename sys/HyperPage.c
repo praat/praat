@@ -1072,7 +1072,7 @@ class_methods (HyperPage, Editor) {
 	class_method (destroy)
 	class_method (dataChanged)
 	class_method (draw)
-	us -> editable = FALSE;
+	us -> editable = false;
 	class_method (createMenus)
 	class_method (createChildren)
 	class_method (defaultHeaders)

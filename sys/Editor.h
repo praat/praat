@@ -76,7 +76,7 @@ Widget EditorMenu_getMenuWidget (EditorMenu me);
 	void *publish2Closure;
 #define Editor__methods(Klas) Thing_methods \
 	void (*goAway) (Klas me); \
-	int editable, scriptable; \
+	bool hasMenuBar, canFullScreen, editable, scriptable; \
 	void (*createMenuItems_file) (Klas me, EditorMenu menu); \
 	void (*createMenuItems_edit) (Klas me, EditorMenu menu); \
 	void (*createMenuItems_query) (Klas me, EditorMenu menu); \

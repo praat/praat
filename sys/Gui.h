@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * 2008/03/24
+ * 2009/08/09
  */
 
 #ifdef USE_GTK
@@ -497,8 +497,8 @@ Widget GuiText_createShown (Widget parent, int left, int right, int top, int bot
 void GuiText_copy (Widget widget);
 void GuiText_cut (Widget widget);
 wchar_t * GuiText_getSelection (Widget widget);
-void GuiText_getSelectionPosition (Widget widget, long *first, long *last);
-wchar_t *GuiText_getString (Widget widget);
+wchar_t * GuiText_getString (Widget widget);
+wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, long *last);
 void GuiText_paste (Widget widget);
 void GuiText_redo (Widget widget);
 void GuiText_remove (Widget widget);
@@ -511,6 +511,8 @@ void GuiText_setString (Widget widget, const wchar_t *text);
 void GuiText_undo (Widget widget);
 void GuiText_updateChangeCountAfterSave (Widget widget);
 
+/* GuiWindow creation flags: */
+#define GuiWindow_FULLSCREEN  1
 Widget GuiWindow_create (Widget parentOfShell, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
 	// returns a Form widget that has a new Shell parent.

@@ -50,8 +50,8 @@ static void clear (InfoEditor me) {
 
 class_methods (InfoEditor, TextEditor) {
 	class_method (destroy)
-	us -> scriptable = FALSE;
-	us -> fileBased = FALSE;
+	us -> scriptable = false;
+	us -> fileBased = false;
 	class_method (clear)
 	class_methods_end
 }

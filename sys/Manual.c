@@ -564,7 +564,7 @@ static int hasHistory = TRUE, isOrdered = TRUE;
 
 class_methods (Manual, HyperPage) {
 	class_method (destroy)
-	us -> scriptable = FALSE;
+	us -> scriptable = false;
 	class_method (draw)
 	class_method (createChildren)
 	class_method (createMenus)

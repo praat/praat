@@ -29,6 +29,7 @@
  * pb 2008/03/20 split off Help menu
  * sdk 2008/03/24 GTK
  * pb 2009/01/18 arguments to UiForm callbacks
+ * pb 2009/08/19 allow editor windows without menu bar (requested by DemoEditor)
  */
 
 #include <time.h>
@@ -236,7 +237,7 @@ int Editor_doMenuCommand (Editor me, const wchar_t *commandTitle, const wchar_t 
 
 /********** class Editor **********/
 
-static void destroy (I) {
+static void classEditor_destroy (I) {
 	iam (Editor);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
@@ -263,7 +264,7 @@ static void destroy (I) {
 	inherited (Editor) destroy (me);
 }
 
-static void info (I) {
+static void classEditor_info (I) {
 	iam (Editor);
 	MelderInfo_writeLine2 (L"Editor type: ", Thing_className (me));
 	MelderInfo_writeLine2 (L"Editor name: ", my name ? my name : L"<no name>");
@@ -275,21 +276,21 @@ static void info (I) {
 	}
 }
 
-static void nameChanged (I) {
+static void classEditor_nameChanged (I) {
 	iam (Editor);
 	if (my name)
 		GuiWindow_setTitle (my shell, my name);
 }
 
-static void goAway (Editor me) { forget (me); }
+static void classEditor_goAway (Editor me) { forget (me); }
 
-static void save (Editor me) {
+static void classEditor_save (Editor me) {
 	if (! my data) return;
 	forget (my previousData);
 	my previousData = Data_copy (my data);
 }
 
-static void restore (Editor me) {
+static void classEditor_restore (Editor me) {
 	if (my data && my previousData)   /* Swap contents of my data and my previousData. */
 		Thing_swap (my data, my previousData);
 }
@@ -346,12 +347,12 @@ end:
 	return 1;
 }
 
-static void createMenuItems_file (Editor me, EditorMenu menu) {
+static void classEditor_createMenuItems_file (Editor me, EditorMenu menu) {
 	(void) me;
 	(void) menu;
 }
 
-static void createMenuItems_edit (Editor me, EditorMenu menu) {
+static void classEditor_createMenuItems_edit (Editor me, EditorMenu menu) {
 	(void) me;
 	if (my data)
 		my undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
@@ -369,11 +370,11 @@ static int menu_cb_info (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_query (Editor me, EditorMenu menu) {
+static void classEditor_createMenuItems_query (Editor me, EditorMenu menu) {
 	our createMenuItems_query_info (me, menu);
 }
 
-static void createMenuItems_query_info (Editor me, EditorMenu menu) {
+static void classEditor_createMenuItems_query_info (Editor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Editor info", 0, menu_cb_settingsReport);
 	EditorMenu_addCommand (menu, L"Settings report", Editor_HIDDEN, menu_cb_settingsReport);
 	if (my data) {
@@ -384,7 +385,7 @@ static void createMenuItems_query_info (Editor me, EditorMenu menu) {
 	}
 }
 
-static void createMenus (Editor me) {
+static void classEditor_createMenus (Editor me) {
 	EditorMenu menu = Editor_addMenu (me, L"File", 0);
 	our createMenuItems_file (me, menu);
 	if (our editable) {
@@ -397,77 +398,79 @@ static void createMenus (Editor me) {
 	}
 }
 
-static void createHelpMenuItems (Editor me, EditorMenu menu) {
+static void classEditor_createHelpMenuItems (Editor me, EditorMenu menu) {
 	(void) me;
 	(void) menu;
 }
 
-static void createChildren (Editor me) {
+static void classEditor_createChildren (Editor me) {
 	(void) me;
 }
 
-static void dataChanged (Editor me) {
+static void classEditor_dataChanged (Editor me) {
 	(void) me;
 }
 
-static void clipboardChanged (Editor me, Any clipboard) {
+static void classEditor_clipboardChanged (Editor me, Any clipboard) {
 	(void) me;
 	(void) clipboard;
 }
 
-static void form_pictureWindow (Editor me, EditorCommand cmd) {
+static void classEditor_form_pictureWindow (Editor me, EditorCommand cmd) {
 	(void) me;
 	LABEL (L"", L"Picture window:")
 	BOOLEAN (L"Erase first", 1);
 }
-static void ok_pictureWindow (Editor me, EditorCommand cmd) {
+static void classEditor_ok_pictureWindow (Editor me, EditorCommand cmd) {
 	(void) me;
 	SET_INTEGER (L"Erase first", preferences.picture.eraseFirst);
 }
-static void do_pictureWindow (Editor me, EditorCommand cmd) {
+static void classEditor_do_pictureWindow (Editor me, EditorCommand cmd) {
 	(void) me;
 	preferences.picture.eraseFirst = GET_INTEGER (L"Erase first");
 }
 
-static void form_pictureMargins (Editor me, EditorCommand cmd) {
+static void classEditor_form_pictureMargins (Editor me, EditorCommand cmd) {
 	(void) me;
 	Any radio = 0;
 	LABEL (L"", L"Margins:")
 	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, DEFAULT);
 }
-static void ok_pictureMargins (Editor me, EditorCommand cmd) {
+static void classEditor_ok_pictureMargins (Editor me, EditorCommand cmd) {
 	(void) me;
 	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, preferences.picture.writeNameAtTop);
 }
-static void do_pictureMargins (Editor me, EditorCommand cmd) {
+static void classEditor_do_pictureMargins (Editor me, EditorCommand cmd) {
 	(void) me;
 	preferences.picture.writeNameAtTop = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
 }
 
 class_methods (Editor, Thing) {
-	class_method (destroy)
-	class_method (info)
-	class_method (nameChanged)
-	class_method (goAway)
-	us -> editable = TRUE;
-	us -> scriptable = TRUE;
-	class_method (createMenuItems_file)
-	class_method (createMenuItems_edit)
-	class_method (createMenuItems_query)
-	class_method (createMenuItems_query_info)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
-	class_method (createChildren)
-	class_method (dataChanged)
-	class_method (save)
-	class_method (restore)
-	class_method (clipboardChanged)
-	class_method (form_pictureWindow)
-	class_method (ok_pictureWindow)
-	class_method (do_pictureWindow)
-	class_method (form_pictureMargins)
-	class_method (ok_pictureMargins)
-	class_method (do_pictureMargins)
+	class_method_local (Editor, destroy)
+	class_method_local (Editor, info)
+	class_method_local (Editor, nameChanged)
+	class_method_local (Editor, goAway)
+	us -> hasMenuBar = true;
+	us -> canFullScreen = false;
+	us -> editable = true;
+	us -> scriptable = true;
+	class_method_local (Editor, createMenuItems_file)
+	class_method_local (Editor, createMenuItems_edit)
+	class_method_local (Editor, createMenuItems_query)
+	class_method_local (Editor, createMenuItems_query_info)
+	class_method_local (Editor, createMenus)
+	class_method_local (Editor, createHelpMenuItems)
+	class_method_local (Editor, createChildren)
+	class_method_local (Editor, dataChanged)
+	class_method_local (Editor, save)
+	class_method_local (Editor, restore)
+	class_method_local (Editor, clipboardChanged)
+	class_method_local (Editor, form_pictureWindow)
+	class_method_local (Editor, ok_pictureWindow)
+	class_method_local (Editor, do_pictureWindow)
+	class_method_local (Editor, form_pictureMargins)
+	class_method_local (Editor, ok_pictureMargins)
+	class_method_local (Editor, do_pictureMargins)
 	class_methods_end
 }
 
@@ -492,25 +495,27 @@ int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, 
 	if (height < 0) height += screenHeight;
 	if (width > screenWidth - 10) width = screenWidth - 10;
 	if (height > screenHeight - 10) height = screenHeight - 10;
-	if (x > 0)
+	if (x > 0) {
 		right = (left = x) + width;
-	else if (x < 0)
+	} else if (x < 0) {
 		left = (right = screenWidth + x) - width;
-	else /* Randomize. */
+	} else { /* Randomize. */
 		right = (left = NUMrandomInteger (4, screenWidth - width - 4)) + width;
-	if (y > 0)
+	}
+	if (y > 0) {
 		bottom = (top = y) + height;
-	else if (y < 0)
+	} else if (y < 0) {
 		top = (bottom = screenHeight + y) - height;
-	else /* Randomize. */
+	} else { /* Randomize. */
 		bottom = (top = NUMrandomInteger (4, screenHeight - height - 4)) + height;
+	}
 	#ifndef _WIN32
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
 	my parent = parent;   /* Probably praat.topShell */
-	my dialog = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, 0);
-	if (! my dialog) return 0;
+	my dialog = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, our canFullScreen ? GuiWindow_FULLSCREEN : 0);
+	if (my dialog == NULL) return 0;
 	my shell = GuiObject_parent (my dialog);   /* Note that GuiObject_parent (my shell) will be NULL! */
 	//Melder_casual ("my parent %ld my dialog %ld my shell %ld", my parent, my dialog, my shell);
 	Thing_setName (me, title);
@@ -518,26 +523,27 @@ int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, 
 
 	/* Create menus. */
 
-	my menus = Ordered_create ();
-	my menuBar = Gui_addMenuBar (my dialog);
-	our createMenus (me);
-	Melder_clearError ();   /* FIXME: to protect against CategoriesEditor */
-	EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
-	our createHelpMenuItems (me, helpMenu);
-	EditorMenu_addCommand (helpMenu, L"-- search --", 0, NULL);
-	my searchButton = EditorMenu_addCommand (helpMenu, L"Search manual...", 'M', menu_cb_searchManual);
-	if (our scriptable) {
-		Editor_addCommand (me, L"File", L"New editor script", 0, menu_cb_newScript);
-		Editor_addCommand (me, L"File", L"Open editor script...", 0, menu_cb_openScript);
-		Editor_addCommand (me, L"File", L"-- after script --", 0, 0);
+	if (our hasMenuBar) {
+		my menus = Ordered_create ();
+		my menuBar = Gui_addMenuBar (my dialog);
+		our createMenus (me);
+		Melder_clearError ();   /* FIXME: to protect against CategoriesEditor */
+		EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
+		our createHelpMenuItems (me, helpMenu);
+		EditorMenu_addCommand (helpMenu, L"-- search --", 0, NULL);
+		my searchButton = EditorMenu_addCommand (helpMenu, L"Search manual...", 'M', menu_cb_searchManual);
+		if (our scriptable) {
+			Editor_addCommand (me, L"File", L"New editor script", 0, menu_cb_newScript);
+			Editor_addCommand (me, L"File", L"Open editor script...", 0, menu_cb_openScript);
+			Editor_addCommand (me, L"File", L"-- after script --", 0, 0);
+		}
+		/*
+		 * Add the scripted commands.
+		 */
+		praat_addCommandsToEditor (me);
+		Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
+		GuiObject_show (my menuBar);
 	}
-	/*
-	 * Add the scripted commands.
-	 */
-	praat_addCommandsToEditor (me);
-
-	Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
-	GuiObject_show (my menuBar);
 
 	our createChildren (me);
 	GuiObject_show (my dialog);

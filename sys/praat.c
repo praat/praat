@@ -163,9 +163,13 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 }
 
 int praat_selection (void *klas) {
-	int result = 0, IOBJECT;
-	WHERE (SELECTED && (klas == NULL || CLASS == klas)) result += 1;
-	return result;
+	if (klas == NULL) return theCurrentPraatObjects -> totalSelection;
+	//int result = 0, IOBJECT;
+	//WHERE (SELECTED && CLASS == klas) result += 1;
+	//return result;
+	long readableClassId = ((Thing_Table) klas) -> sequentialUniqueIdOfReadableClass;
+	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", ((Thing_Table) klas) -> _className);
+	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
 
 int praat_selectionGeneric (void *klas) {
@@ -178,6 +182,9 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = FALSE;
 	theCurrentPraatObjects -> totalSelection -= 1;
+	long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+	Melder_assert (readableClassId != 0);
+	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		GuiList_deselectItem (praatList_objects, IOBJECT);
 	}
@@ -189,6 +196,11 @@ void praat_select (int IOBJECT) {
 	if (SELECTED) return;
 	SELECTED = TRUE;
 	theCurrentPraatObjects -> totalSelection += 1;
+	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
+	Melder_assert (object != NULL);
+	long readableClassId = object -> methods -> sequentialUniqueIdOfReadableClass;
+	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", object -> methods -> _className);
+	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		GuiList_selectItem (praatList_objects, IOBJECT);
 	}
@@ -441,13 +453,21 @@ void praat_updateSelection (void) {
 static void gui_cb_list (void *void_me, GuiListEvent event) {
 	(void) event; (void) void_me;
 	int IOBJECT, first = TRUE;
-	WHERE (1) SELECTED = FALSE;
+	WHERE (SELECTED) {
+		SELECTED = FALSE;
+		long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
+		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
+	}
 	theCurrentPraatObjects -> totalSelection = 0;
 	long numberOfSelected, *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
 	if (selected != NULL) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = TRUE;
+			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
+			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? L"\nselect " : L"\nplus ");
 			UiHistory_write (FULL_NAME);
 			first = FALSE;

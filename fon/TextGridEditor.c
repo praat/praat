@@ -699,9 +699,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			/*
 			 * Divide up the label text into left, mid and right, depending on where the text selection is.
 			 */
-			wchar_t *text = GuiText_getString (my text);
 			long left, right;
-			GuiText_getSelectionPosition (my text, & left, & right);
+			wchar_t *text = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
 			text [right] = '\0';
 			midNewInterval = TextInterval_create (t1, t2, text + left);
@@ -972,8 +971,7 @@ static int findInTier (TextGridEditor me) {
 static void do_find (TextGridEditor me) {
 	if (my findString) {
 		long left, right;
-		wchar_t *label = GuiText_getString (my text);
-		GuiText_getSelectionPosition (my text, & left, & right);
+		wchar_t *label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		wchar_t *position = wcsstr (label + right, my findString);   /* CRLF BUG? */
 		if (position) {
 			GuiText_setSelection (my text, position - label, position - label + wcslen (my findString));
@@ -1056,12 +1054,10 @@ static int checkSpellingInTier (TextGridEditor me) {
 static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		long left, right, position = 0;
-		wchar_t *label, *notAllowed;
-		GuiText_getSelectionPosition (my text, & left, & right);
-		position = right;
-		label = GuiText_getString (my text);
-		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
+		long left, right;
+		wchar_t *label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
+		long position = right;
+		wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
 			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		} else {
@@ -1075,12 +1071,10 @@ static int menu_cb_CheckSpelling (EDITOR_ARGS) {
 static int menu_cb_CheckSpellingInInterval (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
-		long left, right, position = 0;
-		wchar_t *label, *notAllowed;
-		GuiText_getSelectionPosition (my text, & left, & right);
-		position = right;
-		label = GuiText_getString (my text);
-		notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
+		long left, right;
+		wchar_t *label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
+		long position = right;
+		wchar_t *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label, & position);
 		if (notAllowed) {
 			GuiText_setSelection (my text, position, position + wcslen (notAllowed));
 		}

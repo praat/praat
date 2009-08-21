@@ -31,7 +31,7 @@
 #include "longchar.h"
 
 static void defaultError (wchar_t *message) {
-	Melder_writeToConsole (wcsstr (message, L"You interrupted") ? L"User interrupt: " : L"Error: ", true);
+	Melder_writeToConsole (wcsstr (message, L"You interrupted ") ? L"User interrupt: " : L"Error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
 }

@@ -504,9 +504,8 @@ static size_t appendBytes (void *info, const void *buffer, size_t count) {
     CFDataAppendBytes ((CFMutableDataRef) info, buffer, count);
     return count;
 }
-void Picture_copyToClipboard (Picture me) {
-	if (0) {
-		#if 0
+void Picture_copyToClipboard (Picture me, int version) {
+	if (version == 2) {
 		static CGDataConsumerCallbacks callbacks = { appendBytes, NULL };
 		CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
         CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
@@ -522,8 +521,7 @@ void Picture_copyToClipboard (Picture me) {
 		PasteboardClear (clipboard);
 		PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
 		CFRelease (clipboard);
-		#endif
-	} else {
+	} else if (version == 1) {
 		PicHandle pict = copyToPict (me);
 		if (! pict) Melder_flushError (NULL);
 		HLock ((Handle) pict);
@@ -629,7 +627,8 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	forget (pictGraphics);
 	return metafile;
 }
-void Picture_copyToClipboard (Picture me) {
+void Picture_copyToClipboard (Picture me, int version) {
+	(void) version;   // we assume the existence of enhanced metafiles
 	HENHMETAFILE metafile = copyToMetafile (me);
 	if (! metafile) Melder_flushError (NULL);
 	OpenClipboard (NULL);

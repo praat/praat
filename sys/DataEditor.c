@@ -419,7 +419,7 @@ class_methods (DataSubEditor, Editor) {
 	class_method_local (DataSubEditor, createHelpMenuItems)
 	class_method_local (DataSubEditor, countFields)
 	class_method_local (DataSubEditor, showMembers)
-	us -> scriptable = FALSE;
+	us -> scriptable = false;
 	class_methods_end
 }
 

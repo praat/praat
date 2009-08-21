@@ -1,6 +1,6 @@
 /* Graphics_image.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2007/04/25 better image drawing on the Mac
  * pb 2007/08/03 Quartz
  * pb 2008/01/19 double
+ * pb 2009/08/10 image from file
  */
 
 #include "GraphicsP.h"
@@ -31,7 +32,9 @@
 	#include "macport_on.h"
 	#include <QDOffscreen.h>
 	static RGBColor theBlackColour = { 0, 0, 0 };
-	void _mac_releaseDataCallback (void *info, const void *data, size_t size) {
+	static void _mac_releaseDataCallback (void *info, const void *data, size_t size) {
+		(void) info;
+		(void) size;
 		Melder_free (data);
 	}
 #endif
@@ -402,14 +405,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 					Melder_assert (bitmap != NULL);
 					image = CGBitmapContextCreateImage (bitmap);
 					// release bitmap?
-				} else if (0) {
-					CFStringRef path = CFStringCreateWithCString (NULL, "/Users/pboersma/Desktop/paul.jpg", kCFStringEncodingUTF8);
-					CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
-					CFRelease (path);
-					CGDataProviderRef dataProvider = CGDataProviderCreateWithURL (url);
-					Melder_assert (dataProvider != NULL);
-					image = CGImageCreateWithJPEGDataProvider (dataProvider, NULL, true, kCGRenderingIntentDefault);
-					CGDataProviderRelease (dataProvider);
 				}
 				Melder_assert (image != NULL);
 				GraphicsQuartz_initDraw (me);
@@ -768,5 +763,61 @@ void Graphics_image (I, double **z, long ix1, long ix2, double x1WC, double x2WC
 void Graphics_image8 (I, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
 { cellArrayOrImage (void_me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+
+void Graphics_imageFromFile (I, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
+	iam (Graphics);
+	short x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
+	short width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
+	if (my screen) {
+		iam (GraphicsScreen);
+		#if mac
+			if (my useQuartz) {
+				structMelderFile file;
+				if (Melder_relativePathToFile (relativeFileName, & file)) {
+					char utf8 [500];
+					Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8);
+					CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
+					CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+					CFRelease (path);
+					CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
+					//CGDataProviderRef dataProvider = CGDataProviderCreateWithURL (url);
+					CFRelease (url);
+					if (imageSource != NULL) {
+					//if (dataProvider != NULL) {
+						CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+						//CGImageRef image = CGImageCreateWithJPEGDataProvider (dataProvider, NULL, true, kCGRenderingIntentDefault);
+						CFRelease (imageSource);
+						//CGDataProviderRelease (dataProvider);
+						if (image != NULL) {
+							if (x1 == x2 && y1 == y2) {
+								width = CGImageGetWidth (image), x1DC -= width / 2, x2DC = x1DC + width;
+								height = CGImageGetHeight (image), y2DC -= height / 2, y1DC = y2DC + height;
+							} else if (x1 == x2) {
+								width = height * (double) CGImageGetWidth (image) / (double) CGImageGetHeight (image);
+								x1DC -= width / 2, x2DC = x1DC + width;
+							} else if (y1 == y2) {
+								height = width * (double) CGImageGetHeight (image) / (double) CGImageGetWidth (image);
+								y2DC -= height / 2, y1DC = y2DC + height;
+							}
+							GraphicsQuartz_initDraw (me);
+							CGContextSaveGState (my macGraphicsContext);
+							CGContextTranslateCTM (my macGraphicsContext, 0, y1DC);
+							CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+							CGContextDrawImage (my macGraphicsContext, CGRectMake (x1DC, 0, width, height), image);
+							CGContextRestoreGState (my macGraphicsContext);
+							GraphicsQuartz_exitDraw (me);
+							CGImageRelease (image);
+						}
+					}
+				}
+			}
+		#endif
+	}
+	if (my recording) {
+		char *txt_utf8 = Melder_peekWcsToUtf8 (relativeFileName);
+		int length = strlen (txt_utf8) / sizeof (double) + 1;
+		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
+	}
+}
 
 /* End of file Graphics_image.c */

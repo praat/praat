@@ -42,6 +42,7 @@
  * pb 2009/03/09 UI_REAL_OR_UNDEFINED
  * pb 2009/03/21 removed enums
  * pb 2009/05/09 pink
+ * pb 2009/08/21 better message for "You interrupted"
  */
 
 #include <wctype.h>
@@ -608,9 +609,11 @@ static void UiForm_okOrApply (I, Widget button, int hide) {
 		}
 	} else {
 		/*
-		 * If a solution has already been suggested, do not add anything more.
+		 * If a solution has already been suggested, or the "error" was actually a conscious user action, do not add anything more.
 		 */
-		if (! wcsstr (Melder_getError (), L"Please ") && ! wcsstr (Melder_getError (), L"You could ")) {
+		if (! wcsstr (Melder_getError (), L"Please ") && ! wcsstr (Melder_getError (), L"You could ") &&
+			! wcsstr (Melder_getError (), L"You interrupted "))
+		{
 			/*
 			 * Otherwise, show a generic message.
 			 */

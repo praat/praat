@@ -89,6 +89,7 @@ void Graphics_image (I, double **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (I, unsigned char **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
+void Graphics_imageFromFile (I, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (I, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (I, double x1, double x2, double y1, double y2);
 void Graphics_fillRectangle (I, double x1, double x2, double y1, double y2);

@@ -742,20 +742,21 @@ void GuiText_cut (Widget widget) {
 
 wchar_t * GuiText_getSelection (Widget widget) {
 	#if gtk
+		// first = gtk_text_iter_get_offset (& start);
+		// last = gtk_text_iter_get_offset (& end);
 		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
-			long start, end;
-			GuiText_getSelectionPosition (widget, &start, &end);
+			gint start, end;
+			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), & start, & end); 
 			if (end <= start) return NULL;
 			return Melder_utf8ToWcs (gtk_editable_get_chars (GTK_EDITABLE (widget), start, end));
-                } else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
+		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
-
-			if (gtk_text_buffer_get_has_selection(textBuffer)) {
+			if (gtk_text_buffer_get_has_selection (textBuffer)) {
 				GtkTextIter start, end;
 				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-				gchar *text = gtk_text_buffer_get_text(textBuffer, &start, &end, TRUE);
+				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE);
 				wchar_t *temp =  Melder_utf8ToWcs (text);
-				g_free(text);
+				g_free (text);
 				return temp;
 			}
 		}
@@ -788,50 +789,32 @@ wchar_t * GuiText_getSelection (Widget widget) {
 	#endif
 }
 
-void GuiText_getSelectionPosition (Widget widget, long *first, long *last) {
-	*first = *last = 0;
-	#if gtk
-		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
-			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), (gint *) & first, (gint *) & last); 
-                } else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
-			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
-
-			if (gtk_text_buffer_get_has_selection(textBuffer)) {
-				GtkTextIter start, end;
-				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-				*first = gtk_text_iter_get_offset(& start);
-				*last = gtk_text_iter_get_offset(& end);
-			}
-                }
-	#elif win
-		NativeText_getSelectionRange (widget, first, last);
-		/* BUG: not corrected for CR/LF versus LF. */
-	#elif mac
-		NativeText_getSelectionRange (widget, first, last);
-	#elif motif
-		XmTextPosition first_motif, last_motif;
-		if (! XmTextGetSelectionPosition (widget, & first_motif, & last_motif))
-			first_motif = last_motif = XmTextGetInsertionPosition (widget);
-		*first = first_motif;
-		*last = last_motif;
-	#endif
+wchar_t * GuiText_getString (Widget widget) {
+	long first, last;
+	return GuiText_getStringAndSelectionPosition (widget, & first, & last);
 }
 
-wchar_t *GuiText_getString (Widget widget) {
+wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, long *last) {
 	#if gtk
 		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
-                        return Melder_utf8ToWcs(gtk_entry_get_text(GTK_ENTRY(widget)));
-                } else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
-			wchar_t *temp;
-                        GtkTextBuffer *textBuffer;
-                        GtkTextIter start, end;
-                        gchar *text;
-                        textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
-                        gtk_text_buffer_get_start_iter (textBuffer, & start);
-                        gtk_text_buffer_get_end_iter (textBuffer, & end);
-			text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE); // TODO: Hidden chars ook maar doen he?
-			temp = Melder_utf8ToWcs(text);
-                	g_free(text);
+			gint first_gint, last_gint;
+			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), & first_gint, & last_gint);
+			*first = first_gint;
+			*last = last_gint;
+			return Melder_utf8ToWcs (gtk_entry_get_text (GTK_ENTRY (widget)));
+		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
+			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
+			GtkTextIter start, end;
+			gtk_text_buffer_get_start_iter (textBuffer, & start);
+			gtk_text_buffer_get_end_iter (textBuffer, & end);
+			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE); // TODO: Hidden chars ook maar doen he?
+			wchar_t *temp = Melder_utf8ToWcs (text);
+			g_free (text);
+			if (gtk_text_buffer_get_has_selection (textBuffer)) {
+				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
+				*first = gtk_text_iter_get_offset (& start);
+				*last = gtk_text_iter_get_offset (& end);
+			}
 			return temp;
 		}
 		return NULL;
@@ -839,12 +822,25 @@ wchar_t *GuiText_getString (Widget widget) {
 		long length = NativeText_getLength (widget);
 		wchar_t *result = Melder_malloc (wchar_t, length + 1);
 		NativeText_getText (widget, result, length);
+		NativeText_getSelectionRange (widget, first, last);
+		#if win
+			long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
+			for (long i = 0; i < *first; i ++) if (result [i] == 13) numberOfLeadingLineBreaks ++;
+			for (long i = *first; i < *last; i ++) if (result [i] == 13) numberOfSelectedLineBreaks ++;
+			*first -= numberOfLeadingLineBreaks;
+			*last -= numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
+		#endif
 		Melder_killReturns_inlineW (result);
 		return result;
 	#elif motif
 		char *textUtf8 = XmTextGetString (widget);
 		wchar_t *result = Melder_8bitToWcs (textUtf8, kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1);
 		XtFree (textUtf8);
+		XmTextPosition first_motif, last_motif;
+		if (! XmTextGetSelectionPosition (widget, & first_motif, & last_motif))
+			first_motif = last_motif = XmTextGetInsertionPosition (widget);
+		*first = first_motif;
+		*last = last_motif;
 		return result;
 	#endif
 }
@@ -930,7 +926,7 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 		 * We DON'T replace any text without selecting it, so we can deselect any other text,
 		 * thus allowing ourselves to select [from_pos, to_pos] and use the REPLACESEL message.
 		 */
-		Edit_SetSel (widget -> window, from_pos, to_pos);
+		GuiText_setSelection (widget, from_pos, to_pos);
 		Edit_ReplaceSel (widget -> window, winText);
 		Melder_free (winText);
 	#elif mac
@@ -996,9 +992,11 @@ void GuiText_scrollToSelection (Widget widget) {
 			TXNShowSelection (my macMlteObject, false);
 		}
 	#elif motif
-		long left, right;
-		GuiText_getSelectionPosition (widget, & left, & right);
+		XmTextPosition left, right;
+		if (! XmTextGetSelectionPosition (widget, & left, & right))
+			left = right = XmTextGetInsertionPosition (widget);
 		XmTextShowPosition (widget, left);
+		(void) right;
 	#endif
 }
 
@@ -1029,6 +1027,15 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 	#if gtk
 		gtk_editable_select_region (GTK_EDITABLE (widget), first, last);
 	#elif win
+		/* 'first' and 'last' are the positions of the selection in the text when separated by LF alone. */
+		/* We have to convert this to the positions that the selection has in a text separated by CR/LF sequences. */
+		wchar_t *text = GuiText_getString (widget);
+		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
+		for (long i = 0; i < first; i ++) if (text [i] == '\n') numberOfLeadingLineBreaks ++;
+			for (long i = first; i < last; i ++) if (text [i] == 13) numberOfSelectedLineBreaks ++;
+		first += numberOfLeadingLineBreaks;
+		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
+		Melder_free (text);
 		Edit_SetSel (widget -> window, first, last);
 	#elif mac
 		iam_text;
