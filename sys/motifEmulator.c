@@ -2857,7 +2857,7 @@ Widget XtInitialize (void *dum1, const char *name,
 		AEInstallEventHandler (kCoreEventClass, kAEOpenDocuments, NewAEEventHandlerUPP (_motif_processOpenDocumentsMessage), 0, false);
 		AEInstallEventHandler (758934755, 0, NewAEEventHandlerUPP (_motif_processSignalA), 0, false);
 		AEInstallEventHandler (758934756, 0, NewAEEventHandlerUPP (_motif_processSignalW), 0, false);
-		USE_QUESTION_MARK_HELP_MENU = 1;
+		//USE_QUESTION_MARK_HELP_MENU = 1;
 		theUserFocusEventTarget = GetUserFocusEventTarget ();
 	#elif win
 	{

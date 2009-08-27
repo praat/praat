@@ -1439,8 +1439,9 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 	if (duration == NULL) goto end;	
 	if (! RealTier_addPoint (duration, (my xmin + my xmax) / 2,
 		formantRatio * durationFactor)) goto end;
-	
-	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration, MAX_T);
+
+	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration,
+		0.8 * Pitch_getMinimum (pitch, 0.0, 0.0, kPitch_unit_HERTZ, false));
 	if (thee == NULL) goto end;
 	
 	/* Resample to the original sampling frequency */

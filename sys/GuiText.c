@@ -1030,6 +1030,11 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 		/* 'first' and 'last' are the positions of the selection in the text when separated by LF alone. */
 		/* We have to convert this to the positions that the selection has in a text separated by CR/LF sequences. */
 		wchar_t *text = GuiText_getString (widget);
+		if (first < 0) first = 0;
+		if (last < 0) last = 0;
+		long length = wcslen (text);
+		if (first >= length) first = length;
+		if (last >= length) last = length;
 		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
 		for (long i = 0; i < first; i ++) if (text [i] == '\n') numberOfLeadingLineBreaks ++;
 			for (long i = first; i < last; i ++) if (text [i] == 13) numberOfSelectedLineBreaks ++;
