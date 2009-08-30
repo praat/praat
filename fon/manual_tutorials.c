@@ -23,11 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090827)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090830)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.15# (30 August 2009)")
+LIST_ITEM (L"\\bu Corrected a bug in @@Sound: Change gender...@ introduced in 5.1.14.")
 NORMAL (L"##5.1.14# (27 August 2009)")
-LIST_ITEM (L"\\bu Windows: corrected a bug that caused Praat to crash during tab navigation.")
+LIST_ITEM (L"\\bu Windows: corrected a bug introduced in 5.1.13 that caused Praat to crash during tab navigation.")
 LIST_ITEM (L"\\bu Made @@Sound: Change gender...@ compatible with elephant calls (i.e. very low F0).")
 NORMAL (L"##5.1.13# (21 August 2009)")
 LIST_ITEM (L"\\bu Script window: #Find and #Replace.")

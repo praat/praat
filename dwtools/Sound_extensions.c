@@ -1441,7 +1441,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		formantRatio * durationFactor)) goto end;
 
 	thee = Sound_Point_Pitch_Duration_to_Sound (sound, pulses, pitchTier, duration,
-		0.8 * Pitch_getMinimum (pitch, 0.0, 0.0, kPitch_unit_HERTZ, false));
+		0.8 / Pitch_getMinimum (pitch, 0.0, 0.0, kPitch_unit_HERTZ, false));
 	if (thee == NULL) goto end;
 	
 	/* Resample to the original sampling frequency */
