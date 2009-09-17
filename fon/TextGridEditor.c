@@ -670,7 +670,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 
 	if (intervalTier) {
 		TextInterval rightNewInterval = NULL, midNewInterval = NULL;
-		bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1), t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
+		bool t1IsABoundary = IntervalTier_hasTime (intervalTier, t1);
+		bool t2IsABoundary = IntervalTier_hasTime (intervalTier, t2);
 		if (t1 == t2 && t1IsABoundary) {
 			Melder_error3 (L"Cannot add a boundary at ", Melder_fixed (t1, 6), L" seconds, because there is already a boundary there.");
 			Melder_flushError (NULL);
@@ -680,7 +681,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			Melder_flushError (NULL);
 			return 0;
 		}
-		long iinterval = IntervalTier_timeToIndex (intervalTier, t1), iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
+		long iinterval = IntervalTier_timeToIndex (intervalTier, t1);
+		long iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
 		if (iinterval == 0 || iinterval2 == 0) {
 			return 0;   // selection is outside time domain of intervals
 		}
@@ -743,8 +745,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			 * Find the last time before t on another tier.
 			 */
 			double tlast = interval -> xmin, tmin, tmax;
-			int jtier;
-			for (jtier = 1; jtier <= ntiers; jtier ++) if (jtier != itier) {
+			for (int jtier = 1; jtier <= ntiers; jtier ++) if (jtier != itier) {
 				_TextGridEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
 				if (tmin > tlast) {
 					tlast = tmin;

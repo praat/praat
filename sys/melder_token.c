@@ -46,11 +46,11 @@ static wchar_t *theMelderToken, *theMelderTokenLast;
 wchar_t *Melder_firstToken (const wchar_t *string) {
 	Melder_free (theMelderToken);
 	theMelderToken = Melder_wcsdup (string);
-	return wcstok (theMelderToken, L" \t\n\r", & theMelderTokenLast);
+	return Melder_wcstok (theMelderToken, L" \t\n\r", & theMelderTokenLast);
 }
 
 wchar_t *Melder_nextToken (void) {
-	return wcstok (NULL, L" \t\n\r", & theMelderTokenLast);
+	return Melder_wcstok (NULL, L" \t\n\r", & theMelderTokenLast);
 }
 
 wchar_t ** Melder_getTokens (const wchar_t *string, long *n) {

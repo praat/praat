@@ -400,7 +400,7 @@ NORMAL (L"This example would draw the texts \"Dani\\e\"l's Dutch vowel triangle\
 	"and the texts \"u\" and \"\\o/\" at the appropriate positions inside the drawing area.")
 MAN_END
 
-MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20041130)   /* Not Unix. */
+MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20090913)   /* Not Unix. */
 INTRO (L"A command in the File menu of the @@Picture window@.")
 NORMAL (L"It copies the selected part of the picture to the clipboard. "
 	"You can then `Paste' it into any program that knows pictures.")
@@ -409,9 +409,17 @@ NORMAL (L"Though all the picture data will be written to the clipboard, "
 	"only the part that corresponds to the selected part of the Picture window (the %viewport) will be visible.")
 #if defined (macintosh)
 ENTRY (L"Usage")
-NORMAL (L"If you have a PostScript printer, you will want to use @@Write to EPS file...@ instead. "
-	"If the picture is too large, e.g. a spectrogram that does not seem to fit into the clipboard, "
-	"you can try @@Write to Mac PICT file...@ instead.")
+NORMAL (L"On MacOS X 10.4 and higher, the picture will be put on the clipboard in two versions: a PDF version and a QuickDraw version. "
+	"The PDF version will be used by programs that know how to handle PDF pictures, such as Microsoft^\\re Word\\tm 2008; "
+	"the quality of the picture will then be exactly as good as when you use @@Write to PDF file...@ and read in the resulting PDF file. "
+	"Please realize that Word will convert the PDF picture to a mediocre 300-dpi bitmap if you save the document as a ##.doc# file; "
+	"therefore, you should save the document as a ##.docx# file instead. "
+	"If you cannot work with ##.docx# files (for instance because your publisher does not accept that file type yet), "
+	"you can consider using @@Write to EPS file...@ instead.")
+NORMAL (L"Older programs, such as Microsoft^\\re Word\\tm 2001, use the QuickDraw version of the clipboard. "
+	"This will not show international (Czech, Russian, Korean, Arabic) characters, but phonetic symbols will show up correctly. "
+	"Also, the quality of the picture is less; @@Write to EPS file...@ will probably produce better results.")
+NORMAL (L"On MacOS X 10.3 and lower, no PDF version is included in the clipboard.")
 #endif
 #if defined (_WIN32)
 ENTRY (L"Usage")
@@ -643,22 +651,23 @@ NORMAL (L"The line type used by @@Draw inner box@ (solid), "
 NORMAL (L"The commands in the @Margins menu will always draw in black.")
 MAN_END
 
-MAN_BEGIN (L"Picture window", L"ppgb", 20041130)
+MAN_BEGIN (L"Picture window", L"ppgb", 20090913)
 INTRO (L"One of the two main windows in P\\s{RAAT}.")
 TAG (L"File menu")
 LIST_ITEM (L"\\bu @@Read from Praat picture file...@, @@Write to Praat picture file...")
-#if defined (macintosh)
-LIST_ITEM (L"\\bu @@Copy to clipboard@, @@Write to Mac PICT file...@")
-#elif defined (_WIN32)
-LIST_ITEM (L"\\bu @@Copy to clipboard@, @@Write to Windows metafile...@")
-#else
-LIST_ITEM (L"\\bu @@Copy to clipboard@")
-#endif
 LIST_ITEM (L"\\bu @@PostScript settings...")
+#if defined (macintosh)
+	LIST_ITEM (L"\\bu @@Write to PDF file...")
+#endif
 LIST_ITEM (L"\\bu @@Write to EPS file...")
+#if defined (_WIN32)
+	LIST_ITEM (L"\\bu @@Write to Windows metafile...@")
+#endif
 LIST_ITEM (L"\\bu @@Print...")
 TAG (L"Edit menu")
-LIST_ITEM (L"\\bu @@Undo@, @@Erase all")
+LIST_ITEM (L"\\bu @@Undo@")
+LIST_ITEM (L"\\bu @@Copy to clipboard@")
+LIST_ITEM (L"\\bu @@Erase all@")
 TAG (L"@Margins menu")
 LIST_ITEM (L"\\bu @@Draw inner box")
 LIST_ITEM (L"\\bu @@Text left/right/top/bottom...")
@@ -723,7 +732,7 @@ NORMAL (L"With this command, you send your entire picture immediately to the pri
 	"See the @Printing tutorial for details.")
 MAN_END
 
-MAN_BEGIN (L"Printing", L"ppgb", 20071016)
+MAN_BEGIN (L"Printing", L"ppgb", 20090904)
 NORMAL (L"The best results will be obtained on PostScript printers, since these have built-in "
 	"facilities for images (e.g. spectrograms) and rotated text. "
 	"However, the printed page will look reasonable on colour inkjet printers as well.")
@@ -789,13 +798,13 @@ NORMAL (L"Note: when creating a PDF file on Windows if you have Acrobat, ##do no
 #endif
 #ifdef _WIN32
 ENTRY (L"Indirect printing without PostScript")
-NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Windows metafile...@ "
+NORMAL (L"On Windows, pictures included in your word processor via @@Copy to clipboard@ or @@Write to Windows metafile...@ "
 	"will print fine, though not as nicely as EPS files.")
 #endif
 #ifdef macintosh
 ENTRY (L"Indirect printing without PDF")
-NORMAL (L"Pictures included in your word processor via @@Copy to clipboard@ or @@Write to Mac PICT file...@ "
-	"will print fine, though not as nicely as PDF files.")
+NORMAL (L"On MacOS X 10.4 and higher, pictures included in your word processor via @@Copy to clipboard@ "
+	"will print just as nicely as PDF files.")
 #endif
 MAN_END
 
@@ -985,20 +994,24 @@ ENTRY (L"Settings")
 NORMAL (L"The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
 MAN_END
 
-MAN_BEGIN (L"Write to PDF file...", L"ppgb", 20090804)
+MAN_BEGIN (L"Write to PDF file...", L"ppgb", 20090813)
 INTRO (L"A command in the File menu of the @@Picture window@, on Macintosh only.")
 NORMAL (L"It saves the picture to a PDF file, "
-	"which can be imported by several other programs, such as Microsoft^\\re Word^\\tm on the Mac.")
+	"which can be imported by several other programs, such as Microsoft^\\re Word\\tm 2008 on the Mac.")
 ENTRY (L"PDF = PostScript = highest possible quality!")
 NORMAL (L"With PDF pictures you can use high-quality graphics in your word-processor documents. "
-	"The quality is higher than if you use @@Copy to clipboard@.")
+	"The quality is the same as if you use @@Copy to clipboard@.")
 NORMAL (L"On Windows or Linux, use @@Write to EPS file...@ instead.")
-ENTRY (L"Usage")
-NORMAL (L"To import a PDF file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
-	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
 ENTRY (L"Behaviour")
 NORMAL (L"Though all the contents of the Picture window are written to the PDF file, "
 	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
+ENTRY (L"Usage")
+NORMAL (L"To import a PDF file in Word 2008, choose #Insert \\-> #Picture \\-> ##From file...#. "
+	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
+NORMAL (L"Please note that if you save the Word document as a ##.doc# file, Word will convert the PDF picture into a mediocre 300-dpi bitmap; "
+	"therefore, you should save the document as a ##.docx# file instead. If you cannot use ##.docx# files "
+	"(for instance because your publisher does not support these yet), you may use @@Write to EPS file...@; "
+	"the quality will be the same, but you cannot use Czech, Russian, Korean or Arabic characters in EPS files.")
 MAN_END
 
 MAN_BEGIN (L"Write to Praat picture file...", L"ppgb", 20041130)
@@ -1008,25 +1021,6 @@ ENTRY (L"Usage")
 NORMAL (L"With the help of this command, you can transfer the contents of the picture window between computers or even between platforms, "
 	"for instance from a Macintosh to a Windows computer.")
 MAN_END
-
-#ifdef macintosh
-MAN_BEGIN (L"Write to Mac PICT file...", L"ppgb", 20041130)
-INTRO (L"A command in the File menu of the @@Picture window@.")
-NORMAL (L"It saves the selected part of the picture in an \"extended PICT2\" format, "
-	"which can be imported by many programs on the Mac, like MacDraw^\\tm "
-	"(Microsoft^\\re Word^\\tm 5.1 unfortunately rounds the high resolution down to screen pixels).")
-ENTRY (L"Behaviour")
-NORMAL (L"Though all the picture data will be written to the PICT file, "
-	"only the part that you selected in the Picture window (the %viewport) may become visible in the other program.")
-ENTRY (L"Usage")
-NORMAL (L"You will not use this command very often, "
-	"because it is usually easier to copy the selection to the clipboard with the @@Copy to clipboard@ command, "
-	"and `Paste' it into the other program. You may use a PICT file instead of the clipboard if the clipboard is too large "
-	"for the other program to read, or if you want to transfer the picture to another computer.")
-NORMAL (L"If you have a PostScript printer (or MacOS X 10.3 with %any printer), you would use @@Write to EPS file...@ instead "
-	"for best printing results.")
-MAN_END
-#endif
 
 #ifdef _WIN32
 MAN_BEGIN (L"Write to Windows metafile...", L"ppgb", 20041130)

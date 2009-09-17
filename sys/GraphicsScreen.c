@@ -43,6 +43,9 @@
 #elif mac
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
+	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
+		return Melder_systemVersion < 0x1040 ? false : _GraphicsMac_tryToInitializeAtsuiFonts ();
+	}
 #endif
 
 static void destroy (I) {
@@ -289,7 +292,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 		my resolution = resolution;
 		my depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
 		if (my useQuartz) {
-			(void) my macGraphicsContext;
+			(void) my macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
 		}
 		_Graphics_text_init (me);
 	#endif
@@ -327,6 +330,9 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	my printer = true;
+	#ifdef macintosh
+		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+	#endif
 	if (! Graphics_init (me)) return 0;
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
@@ -369,9 +375,6 @@ static void cb_move (GUI_ARGS) {
 	Graphics_setWsViewport ((Graphics) me, marginWidth /* Left x value in widget coordinates */,
 		width - marginWidth, marginHeight, height - marginHeight);
 	Graphics_updateWs ((Graphics) me);
-}
-static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
-	return Melder_systemVersion < 0x1040 ? false : _GraphicsMac_tryToInitializeAtsuiFonts ();
 }
 #endif
 
@@ -501,8 +504,12 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 			QDBeginCGContext (my macPort, & my macGraphicsContext);
 			//CGContextSetAlpha (my macGraphicsContext, 1.0);
 			//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-			int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
-			CGContextTranslateCTM (my macGraphicsContext, 0, shellHeight);
+			if (my drawingArea != NULL) {
+				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
+				CGContextTranslateCTM (my macGraphicsContext, 0, shellHeight);
+			} else if (my printer) {
+				CGContextTranslateCTM (my macGraphicsContext, 0, my y2DC - my y1DC);
+			}
 			CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
 		}
 	}

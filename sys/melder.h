@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/03/14
+ * pb 2009/09/04
  */
 
 #include <stdio.h>
@@ -252,6 +252,7 @@ int Melder_strcmp (const char *string1, const char *string2);   // regards null 
 int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2);   // regards null string as empty string
 int Melder_strncmp (const char *string1, const char *string2, unsigned long n);
 int Melder_wcsncmp (const wchar_t *string1, const wchar_t *string2, unsigned long n);
+wchar_t * Melder_wcstok (wchar_t *string, const wchar_t *delimiter, wchar_t **last);   // circumvents platforms where wcstok has only two arguments
 wchar_t * Melder_wcsdecompose (const wchar_t *string);
 wchar_t * Melder_wcsprecompose (const wchar_t *string);
 wchar_t * Melder_wcsExpandBackslashSequences (const wchar_t *string);

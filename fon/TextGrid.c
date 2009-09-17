@@ -361,7 +361,7 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 	 */
 	if (tierNames && tierNames [0]) {
 		wcscpy (nameBuffer, tierNames);
-		for (tierName = wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = wcstok (NULL, L" ", & last)) {
+		for (tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
 			IntervalTier tier = IntervalTier_create (tmin, tmax);
 			if (! tier || ! Collection_addItem (my tiers, tier)) { forget (me); return NULL; }
 			Thing_setName (tier, tierName);
@@ -373,9 +373,8 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 	 */
 	if (pointTiers && pointTiers [0]) {
 		wcscpy (nameBuffer, pointTiers);
-		for (tierName = wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = wcstok (NULL, L" ", & last)) {
-			long itier;
-			for (itier = 1; itier <= my tiers -> size; itier ++) {
+		for (tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
+			for (long itier = 1; itier <= my tiers -> size; itier ++) {
 				if (wcsequ (tierName, Thing_getName (my tiers -> item [itier]))) {
 					TextTier tier = TextTier_create (tmin, tmax);
 					if (! tier) { forget (me); return NULL; }

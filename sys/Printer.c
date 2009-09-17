@@ -482,6 +482,9 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			MelderInfo_close ();
 		}
 		CFRelease (supportedFormats);
+		if (Melder_systemVersion >= 0x1040) {
+			isPostScriptDriver = FALSE;   // because we have something better: we'll be sending PDF
+		}
 		thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
 		if (thePrinter. postScript) {
 			CFStringRef strings [1];

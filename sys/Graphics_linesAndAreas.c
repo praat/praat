@@ -29,9 +29,13 @@
  * sdk 2008/03/24 cairo
  * pb 2009/07/10 fillArea Quartz
  * pb 2009/07/27 quartz
+ * pb 2009/09/04 FUNCTIONS_ARE_CLIPPED (compiler flag)
  */
 
 #include "GraphicsP.h"
+
+/* Normally on, because e.g. the intensity contour in the Sound window should not run through the play buttons: */
+#define FUNCTIONS_ARE_CLIPPED  1
 
 #define POSTSCRIPT_MAXPATH  1000
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
@@ -1214,11 +1218,11 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 			short value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
 			if (my yIsZeroAtTheTop) { \
-				if (value > clipy1) value = clipy1; \
-				if (value < clipy2) value = clipy2; \
+				if (FUNCTIONS_ARE_CLIPPED && value > clipy1) value = clipy1; \
+				if (FUNCTIONS_ARE_CLIPPED && value < clipy2) value = clipy2; \
 			} else { \
-				if (value < clipy1) value = clipy1; \
-				if (value > clipy2) value = clipy2; \
+				if (FUNCTIONS_ARE_CLIPPED && value < clipy1) value = clipy1; \
+				if (FUNCTIONS_ARE_CLIPPED && value > clipy2) value = clipy2; \
 			} \
 			xyDC [i + i + 1] = value; \
 		} \

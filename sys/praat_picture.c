@@ -40,6 +40,7 @@
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/05/08 demo window
  * pb 2009/05/09 pink
+ * pb 2009/09/04 demo window can Undo
  */
 
 #include "praatP.h"
@@ -576,15 +577,15 @@ END
 
 #if defined (_WIN32)
 	DIRECT (Copy_picture_to_clipboard)
-		Picture_copyToClipboard (praat_picture, 1);
+		Picture_copyToClipboard (praat_picture);
 	END
 #endif
 #if defined (macintosh)
 	DIRECT (Copy_picture_to_clipboard)
-		Picture_copyToClipboard (praat_picture, 2);
+		Picture_copyToClipboard (praat_picture);
 	END
-	DIRECT (Copy_picture_to_old_style_clipboard)
-		Picture_copyToClipboard (praat_picture, 1);
+	DIRECT (Copy_picture_to_QuickDraw_clipboard)
+		Picture_copyToQuickDrawClipboard (praat_picture);
 	END
 	DIRECT (Copy_screen_image_to_clipboard)
 		Picture_copyToClipboard_screenImage (praat_picture);
@@ -595,6 +596,9 @@ END
 
 DIRECT (Undo)
 	Graphics_undoGroup (GRAPHICS);
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
+		Graphics_play (GRAPHICS, GRAPHICS);
+	}
 	Graphics_updateWs (GRAPHICS);
 END
 
@@ -1528,9 +1532,7 @@ void praat_picture_exit (void) {
 }
 
 void praat_picture_open (void) {
-	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-		Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
-	}
+	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if motif
 			XtMapWidget (shell);
@@ -1550,13 +1552,12 @@ void praat_picture_open (void) {
 	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
 	Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize);
 	Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour);
-	/*if (theCurrentPraat == & theForegroundPraat)*/ {
-		Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
-		/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
-		double x1WC, x2WC, y1WC, y2WC;
-		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-		Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
-	}
+
+	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
+	/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
+	double x1WC, x2WC, y1WC, y2WC;
+	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
 }
 
 void praat_picture_close (void) {
@@ -1657,8 +1658,8 @@ void praat_picture_init (void) {
 	#endif
 	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Write old", 0, 0, NULL);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, 1, DO_Picture_writeToMacPictFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write EPS file", 0, 0, NULL);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToMacPictFile);
 			praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
 			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 1, DO_Picture_writeToEpsFile);
 			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
@@ -1676,14 +1677,14 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Print...", 0, 'P', DO_Print);
 
 	praat_addMenuCommand (L"Picture", L"Edit", L"Undo", 0, 'Z', DO_Undo);
-	#if defined (macintosh) || defined (_WIN32)
+	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"Edit", L"-- clipboard --", 0, 0, 0);
 		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
-		#ifdef macintosh
-			praat_addMenuCommand (L"Picture", L"Edit", L"Copy old", 0, 0, NULL);
-				praat_addMenuCommand (L"Picture", L"Edit", L"Copy to pre-10.4 clipboard", 0, 1, DO_Copy_picture_to_old_style_clipboard);
-				praat_addMenuCommand (L"Picture", L"Edit", L"Copy screen image to clipboard", 0, 1, DO_Copy_screen_image_to_clipboard);
-		#endif
+		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to QuickDraw clipboard", 0, praat_HIDDEN + praat_DEPTH_1, DO_Copy_picture_to_QuickDraw_clipboard);
+		praat_addMenuCommand (L"Picture", L"Edit", L"Copy screen image to clipboard", 0, praat_HIDDEN + praat_DEPTH_1, DO_Copy_screen_image_to_clipboard);
+	#elif defined (_WIN32)
+		praat_addMenuCommand (L"Picture", L"Edit", L"-- clipboard --", 0, 0, 0);
+		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif
 	praat_addMenuCommand (L"Picture", L"Edit", L"-- erase --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Edit", L"Erase all", 0, 'E', DO_Erase_all);

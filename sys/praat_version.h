@@ -1,5 +1,5 @@
-#define PRAAT_VERSION_STR 5.1.15
-#define PRAAT_VERSION_NUM 5115
+#define PRAAT_VERSION_STR 5.1.16
+#define PRAAT_VERSION_NUM 5116
 #define PRAAT_YEAR 2009
-#define PRAAT_MONTH August
-#define PRAAT_DAY 30
+#define PRAAT_MONTH September
+#define PRAAT_DAY 17
