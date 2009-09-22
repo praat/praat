@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/09/21
+ * pb 2009/09/21
  */
 
 #ifndef _Editor_h_
@@ -65,7 +65,7 @@ Thing_declare1 (FunctionEditor);
 	bool group, enableUpdates; \
 	int nrect; \
 	struct { double left, right, bottom, top; } rect [8]; \
-	double marker [1 + 3], playCursor; \
+	double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory; \
 	int numberOfMarkers;
 #define FunctionEditor__methods(Klas) Editor__methods(Klas) \
 	void (*draw) (Klas me); \

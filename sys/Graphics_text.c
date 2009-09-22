@@ -374,7 +374,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					my font == kGraphics_font_HELVETICA ? theHelveticaAtsuiFont :
 					my font == kGraphics_font_COURIER ? theCourierAtsuiFont : theTimesAtsuiFont;
 				Melder_assert (atsuiFont != 0);
-				lc -> font.integer = (int) atsuiFont;
+				lc -> font.integer = (int) atsuiFont;   // BUG: not 64-bit compatible
 				lc -> code = lc -> kar;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;

@@ -1,6 +1,6 @@
 /* FunctionEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/11/30 erased Graphics_printf
  * pb 2007/12/27 Gui
  * pb 2008/03/20 split off Help menu
+ * pb 2009/09/21 Zoom Back
  */
 
 #include "FunctionEditor.h"
@@ -228,7 +229,7 @@ static void drawNow (FunctionEditor me) {
 
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
-	Graphics_setRGBColour (my graphics, 1.0, 1.0, 0.9);
+	Graphics_setRGBColour (my graphics, 0.8, 0.8, 0.8);
 	Graphics_fillRectangle (my graphics, MARGIN, my width - MARGIN, my height - TOP_MARGIN - space, my height);
 	Graphics_fillRectangle (my graphics, 0, MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my graphics, my width - MARGIN, my width, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
@@ -535,6 +536,9 @@ static void gui_button_cb_zoomOut (I, GuiButtonEvent event) {
 
 static void do_zoomToSelection (FunctionEditor me) {
 	if (my endSelection > my startSelection) {
+		my startZoomHistory = my startWindow;   // remember for Zoom Back
+		my endZoomHistory = my endWindow;   // remember for Zoom Back
+		//Melder_casual ("Zoomed in to %f ~ %f seconds.", my startSelection, my endSelection);
 		my startWindow = my startSelection;
 		my endWindow = my endSelection;
 		our updateText (me);
@@ -548,6 +552,23 @@ static void gui_button_cb_zoomToSelection (I, GuiButtonEvent event) {
 	(void) event;
 	iam (FunctionEditor);
 	do_zoomToSelection (me);
+}
+
+static void do_zoomBack (FunctionEditor me) {
+	if (my endZoomHistory > my startZoomHistory) {
+		my startWindow = my startZoomHistory;
+		my endWindow = my endZoomHistory;
+		our updateText (me);
+		updateScrollBar (me);
+		/*Graphics_updateWs (my graphics);*/ drawNow (me);
+		updateGroup (me);
+	}
+}
+
+static void gui_button_cb_zoomBack (I, GuiButtonEvent event) {
+	(void) event;
+	iam (FunctionEditor);
+	do_zoomBack (me);
 }
 
 static int menu_cb_showAll (EDITOR_ARGS) {
@@ -571,6 +592,12 @@ static int menu_cb_zoomOut (EDITOR_ARGS) {
 static int menu_cb_zoomToSelection (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_zoomToSelection (me);
+	return 1;
+}
+
+static int menu_cb_zoomBack (EDITOR_ARGS) {
+	EDITOR_IAM (FunctionEditor);
+	do_zoomBack (me);
 	return 1;
 }
 
@@ -940,6 +967,7 @@ static void createMenuItems_view_timeDomain (FunctionEditor me, EditorMenu menu)
 	EditorMenu_addCommand (menu, L"Zoom in", 'I', menu_cb_zoomIn);
 	EditorMenu_addCommand (menu, L"Zoom out", 'O', menu_cb_zoomOut);
 	EditorMenu_addCommand (menu, L"Zoom to selection", 'N', menu_cb_zoomToSelection);
+	EditorMenu_addCommand (menu, L"Zoom back", 'B', menu_cb_zoomBack);
 	EditorMenu_addCommand (menu, L"Scroll page back", GuiMenu_PAGE_UP, menu_cb_pageUp);
 	EditorMenu_addCommand (menu, L"Scroll page forward", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 }
@@ -1126,6 +1154,9 @@ static void createChildren (FunctionEditor me) {
 	x += BUTTON_WIDTH + BUTTON_SPACING;
 	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
 		L"sel", gui_button_cb_zoomToSelection, me, 0);
+	x += BUTTON_WIDTH + BUTTON_SPACING;
+	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+		L"bak", gui_button_cb_zoomBack, me, 0);
 
 	/***** Create scroll bar. *****/
 

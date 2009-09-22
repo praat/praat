@@ -1,6 +1,6 @@
 /* Sound_files.c
  *
- * Copyright (C) 1992-2008 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2009 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2007/10/05 removed FSSpec
  * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sample rates between 32768 and 65535 Hertz
  * pb 2008/01/19 double
+ * pb 2009/09/21 made stereo movies readable
  */
 
 /*
@@ -300,7 +301,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 Sound Sound_readFromMovieFile (MelderFile file) {
 	Sound me = NULL;
 #if (defined (macintosh) || defined (_WIN32)) && ! defined (DONT_INCLUDE_QUICKTIME)
-	int debug = 0;
+	int debug = Melder_debug == 35;
 	FSSpec fspec;
 	short refNum = 0, resourceID = 0;
 	OSErr err = noErr;
@@ -374,7 +375,8 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	input. format = (*hSoundDescription) -> dataFormat;
 	output. format = kSoundNotCompressed;
 	input. numChannels = (*hSoundDescription) -> numChannels;
-	output. numChannels = 1;
+	if (debug) Melder_casual ("File number of channels: %d", input. numChannels);
+	output. numChannels = input. numChannels;
 	input. sampleSize = (*hSoundDescription) -> sampleSize;
 	output. sampleSize = 16;
 	input. sampleRate = output. sampleRate = (*hSoundDescription) -> sampleRate;
@@ -390,7 +392,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	err = SoundConverterSetInfo (soundConverter, siDecompressionParams, decompressionAtom);
 	if (err != noErr && err != siUnknownInfoType)
 		error1 (L"Don't like that decompression.")
-	outputBufferSize = my nx * 2;
+	outputBufferSize = my ny * my nx * 2;
 	if (debug) Melder_casual ("Before SoundConverterGetBufferSizes:\n"
 		"   outputBufferSize = %ld", outputBufferSize);
 	SoundConverterGetBufferSizes (soundConverter, outputBufferSize, & numberOfInputFrames,
@@ -431,7 +433,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 		Melder_error1 (L"Cannot end sound conversion.");
 		goto end;
 	}*/
-	if (numberOfOutputBytes != my nx * 2)
+	if (numberOfOutputBytes != my ny * my nx * 2)
 		error5 (L"Promised ", Melder_integer (my nx), L" samples, but got ", Melder_integer (numberOfOutputBytes / 2), L" after conversion.")
 	for (long channel = 1; channel <= my ny; channel ++) {
 		for (isamp = my nx; isamp > 0; isamp --) {

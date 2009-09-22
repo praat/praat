@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090917)
+MAN_BEGIN (L"What's new?", L"ppgb", 20090922)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.17# (22 September 2009)")
+LIST_ITEM (L"\\bu Made more stereo movies readable.")
+LIST_ITEM (L"\\bu Editor windows now have a ##Zoom Back# button.")
 NORMAL (L"##5.1.16# (17 September 2009)")
 LIST_ITEM (L"\\bu Macintosh: corrected a bug that caused incorrect phonetic symbols if Charis SIL was available but SIL Doulos IPA93 was not.")
 NORMAL (L"##5.1.15# (30 August 2009)")
