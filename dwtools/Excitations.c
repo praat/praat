@@ -1,6 +1,6 @@
 /* Excitations.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020813 GPL header
  djmw 20071009 wchar_t
  djmw 20071017 Melder_error<n>
+ djmw 20090914 getItem modified
 */
 
 #include "Excitations.h"
@@ -40,7 +41,7 @@ static int readBinary (I, FILE *f)
 	return inherited (Ordered) readBinary (me, f);
 }
 */
-	
+
 class_methods (Excitations, Ordered)
 class_methods_end
 
@@ -53,15 +54,15 @@ Excitations Excitations_create (long initialCapacity)
 
 Pattern Excitations_to_Pattern (Excitations me, long join)
 {
-    long i, j, r = 0, c = 1; 
-	Pattern thee = NULL; 
+    long i, j, r = 0, c = 1;
+	Pattern thee = NULL;
 	Matrix m;
 
 	Melder_assert (my size > 0);
 	m = my item[1];
     if (join < 1) join = 1;
 	if ((my size % join) != 0) return Melder_errorp1 (L"Excitations_to_Pattern:"
-		"number of rows is not a multiple of join."); 
+		"number of rows is not a multiple of join.");
 	if (! (thee = Pattern_create (my size / join, join * m->nx))) return thee;
 	for (i = 1; i <= my size; i++)
 	{
@@ -94,10 +95,12 @@ TableOfReal Excitations_to_TableOfReal (Excitations me)
 
 Any Excitations_getItem (Excitations me, long item)
 {
-	Excitation thee = NULL;
-	if (item < 1 || item > my size ||
-		! (thee = Data_copy (my item[item]))) return thee;
+	Excitation thee;
+	if (item < 1 || item > my size) return Melder_errorp1 (L"Not a valid element number.");
+	thee = Data_copy (my item[item]);
+	if ((thee = Data_copy (my item[item])) == NULL) return NULL;
 	Thing_setName (thee, Thing_getName (my item[item]));
 	return thee;
 }
+
 /* End of file Excitations.c */

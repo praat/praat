@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/05/14
+ * pb 2009/09/29
  */
 
 #ifndef _Data_h_
@@ -59,6 +59,8 @@ void Network_draw (Network me, Graphics graphics, bool colour);
 
 double Network_getActivity_e (Network me, long inode);
 void Network_setActivity_e (Network me, long inode, double activity);
+double Network_getWeight_e (Network me, long iconn);
+void Network_setWeight_e (Network me, long iconn, double weight);
 void Network_setClamping_e (Network me, long inode, bool clamped);
 
 void Network_zeroActivities (Network me, long nodeMin, long nodeMax);

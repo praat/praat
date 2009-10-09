@@ -107,7 +107,7 @@ end:
 
 double Network_getActivity_e (Network me, long inode) {
 	double activity = NUMundefined;
-	if (inode < 0 || inode > my numberOfNodes)
+	if (inode <= 0 || inode > my numberOfNodes)
 		error4 (L"Node number (", Melder_integer (inode), L" out of the range 1..", Melder_integer (my numberOfNodes))
 	activity = my nodes [inode]. activity;
 end:
@@ -116,15 +116,33 @@ end:
 }
 
 void Network_setActivity_e (Network me, long inode, double activity) {
-	if (inode < 0 || inode > my numberOfNodes)
+	if (inode <= 0 || inode > my numberOfNodes)
 		error5 (L"(Network: Set activity:) Node number (", Melder_integer (inode), L") out of the range 1..", Melder_integer (my numberOfNodes), L".")
 	my nodes [inode]. activity = activity;
 end:
 	iferror Melder_error1 (L"Network: activity not set.");
 }
 
+double Network_getWeight_e (Network me, long iconn) {
+	double weight = NUMundefined;
+	if (iconn <= 0 || iconn > my numberOfConnections)
+		error4 (L"Connection number (", Melder_integer (iconn), L" out of the range 1..", Melder_integer (my numberOfConnections))
+	weight = my connections [iconn]. weight;
+end:
+	iferror Melder_error1 (L"Network: weight not gotten.");
+	return weight;
+}
+
+void Network_setWeight_e (Network me, long iconn, double weight) {
+	if (iconn <= 0 || iconn > my numberOfConnections)
+		error4 (L"(Network: Set weight:) Connection number (", Melder_integer (iconn), L" out of the range 1..", Melder_integer (my numberOfConnections))
+	my connections [iconn]. weight = weight;
+end:
+	iferror Melder_error1 (L"Network: weight not set.");
+}
+
 void Network_setClamping_e (Network me, long inode, bool clamped) {
-	if (inode < 0 || inode > my numberOfNodes)
+	if (inode <= 0 || inode > my numberOfNodes)
 		error5 (L"(Network: Set clamping:) Node number (", Melder_integer (inode), L") out of the range 1..", Melder_integer (my numberOfNodes), L".")
 	my nodes [inode]. clamped = clamped;
 end:
@@ -223,8 +241,8 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 			conn -> plasticity = 1.0;
 		}
 	}
-	for (long icol = 1; icol <= numberOfColumns; icol ++) {
-		for (long irow = 1; irow <= numberOfRows - 1; irow ++) {
+	for (long irow = 1; irow <= numberOfRows - 1; irow ++) {
+		for (long icol = 1; icol <= numberOfColumns; icol ++) {
 			NetworkConnection conn = & my connections [++ iconn];
 			conn -> nodeFrom = (irow - 1) * numberOfColumns + icol;
 			conn -> nodeTo = conn -> nodeFrom + numberOfColumns;

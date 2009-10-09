@@ -125,7 +125,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 	if (((dup = Melder_wcsdup (s)) == NULL) ||
 		((numbers = NUMdvector (1, capacity)) == NULL)) goto end;
 	wchar_t *last;
-	token = Melder_wcstok (dup, delimiter, & last);
+	token = wcstok (dup, delimiter, & last);
 	while (token)
 	{
 		double value = wcstod (token, NULL);
@@ -136,7 +136,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 			numbers = new; capacity = newsize;
 		}
 		numbers[++n] = value;
-		token = Melder_wcstok (NULL, delimiter, & last);
+		token = wcstok (NULL, delimiter, & last);
 	}
 end:
 	*numbers_found = n;

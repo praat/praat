@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20081119 Latest modification.
+ djmw 20091006 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
@@ -44,7 +44,7 @@ int TableOfReal_to_Pattern_and_Categories(I, long fromrow, long torow, long from
 	Pattern *p, Categories *c);
 
 TableOfReal TableOfReal_transpose (I);
-	
+
 Strings TableOfReal_extractRowLabels (I);
 
 Strings TableOfReal_extractColumnLabels (I);
@@ -73,10 +73,10 @@ void TableOfReal_getColumnExtrema (I, long col, double *min, double *max);
 
 void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, wchar_t *greys, int garnish);	
+	double interbarsFraction, wchar_t *greys, int garnish);
 
-void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, 
-	long rowe, double xmin, double xmax, double ymin, double ymax, 
+void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
+	long rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, int useRowLabels, wchar_t *label, int garnish);
 
 void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, double fractionWhite);
@@ -84,15 +84,18 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, dou
 void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax, long colmin, long colmax,
 	double ymin, double ymax, int garnish);
 
-void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1, 
-	long colx2, long coly2, double xmin, double xmax, 
+void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
+	long colx2, long coly2, double xmin, double xmax,
 	double ymin, double ymax, int vectype, int labelsize, int garnish);
-	
-void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax, 
-	double ymin, double ymax, double sv_splitfactor, int labelsize, 
+
+void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
+	double ymin, double ymax, double sv_splitfactor, int labelsize,
 	int garnish);
-	
-long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels, 
+
+void TableOfReal_drawColumnAsDistribution (I, Graphics g, int column, double minimum, double maximum, long nBins,
+	double freqMin, double freqMax, int cumulative, int garnish);
+
+long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	int use_regexp);
 /*
 	Find number of labels that match search description.
@@ -104,36 +107,36 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels);
 int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin);
 /*
 	rowOrigin ==  1 copy from row
-	rowOrigin ==  0 do nothing 
+	rowOrigin ==  0 do nothing
 	rowOrigin == -1 copy from column
-	
+
 	columnOrigin ==  1 copy from column
-	columnOrigin ==  0 do nothing 
+	columnOrigin ==  0 do nothing
 	columnOrigin == -1 copy from row
 */
 
 void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column);
 
-int TableOfReal_setSequentialColumnLabels (I, long from, long to, 
+int TableOfReal_setSequentialColumnLabels (I, long from, long to,
 	wchar_t *precursor, long number, long increment);
-int TableOfReal_setSequentialRowLabels (I, long from, long to, 
+int TableOfReal_setSequentialRowLabels (I, long from, long to,
 	wchar_t *precursor, long number, long increment);
 
 int TableOfReal_hasRowLabels (I);
 int TableOfReal_hasColumnLabels (I);
 
-int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
-int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 /*
 	Change all row/column labels. The 'search' and 'replace' string are
 	interpreted as regular expressions when 'use_regexp' != 0.
 	'maximumNumberOfReplaces' is the maximum number of replaces in EACH string
-	in the array of strings (you can replace ALL occurrences by making this 
-	number <= 0) 
+	in the array of strings (you can replace ALL occurrences by making this
+	number <= 0)
 	The totalnumber of matches found is returned in 'nmatches'.
 	The number of strings with at least one match is returned in
 	'nstringmatches'.
@@ -175,7 +178,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats);
 */
 
 TableOfReal TableOfReal_bootstrap (TableOfReal me);
-/* Produce new table with the same number of entries, but randomly 
+/* Produce new table with the same number of entries, but randomly
 selected with replacement. */
 TableOfReal TableOfReal_randomizeRows (TableOfReal me);
 /* Produce new table with randimezed rows */

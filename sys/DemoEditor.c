@@ -217,7 +217,7 @@ void Demo_show (Interpreter interpreter) {
 
 bool Demo_waitForInput (Interpreter interpreter) {
 	if (theDemoEditor == NULL) return false;
-	GuiWindow_show (theDemoEditor -> dialog);
+	//GuiWindow_show (theDemoEditor -> dialog);
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;

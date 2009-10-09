@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20090922)
+MAN_BEGIN (L"What's new?", L"ppgb", 20091009)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.18# (9 October 2009)")
+LIST_ITEM (L"\\bu The @@Demo window@ is less often automatically moved to the front "
+	"(in order to allow it to pop up other editor windows).")
+LIST_ITEM (L"\\bu @@DTW & TextGrid: To TextGrid (warp times)@: corrected a bug that could "
+	"lead to an incorrect end time of the last interval in new IntervalTiers.")
 NORMAL (L"##5.1.17# (22 September 2009)")
 LIST_ITEM (L"\\bu Made more stereo movies readable.")
 LIST_ITEM (L"\\bu Editor windows now have a ##Zoom Back# button.")

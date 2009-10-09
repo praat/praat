@@ -18,7 +18,7 @@
  */
 
 /*
- djmw 20000202 17 typos in F1-3,L1-3 table corrected 
+ djmw 20000202 17 typos in F1-3,L1-3 table corrected
  djmw 20030707 Changed TableOfReal_drawVectors interface.
  djmw 20031030 Added TableOfReal_appendColumns
  djmw 20031216 Interface change in TableOfReal_choleskyDecomposition
@@ -42,10 +42,12 @@
  djmw 20071202 Melder_warning<n>
  djmw 20080122 float -> double
  djmw 20081119 +TableOfReal_areAllCellsDefined
- djmw 20090506 + setInner for _drawScatterPlotMatrix
+ djmw 20090506 +setInner for _drawScatterPlotMatrix
+ djmw 20091009 +TableOfReal_drawColumnAsDistribution
 */
 
 #include <ctype.h>
+#include "Matrix_extensions.h"
 #include "NUMclapack.h"
 #include "NUM2.h"
 #include "SVD.h"
@@ -74,7 +76,7 @@ int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce)
 
 	invalid_columns = NUMlvector (1, my numberOfColumns);
 	if (invalid_columns == NULL) return 0;
-	
+
 	for (i = rb; i <= re; i++)
 	{
 		for (j = cb; j <= ce; j++)
@@ -108,7 +110,7 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 	if ( myrow < 1 ||  myrow > my  numberOfRows ||
 		thyrow < 1 || thyrow > thy numberOfRows ||
 		my numberOfColumns != thy numberOfColumns) return 0;
-	
+
 	if (my rowLabels[myrow] != NULL && thy rowLabels[thyrow] != my rowLabels[myrow])
 	{
 		Melder_free (thy rowLabels[thyrow]);
@@ -123,7 +125,7 @@ int TableOfReal_hasRowLabels (I)
 {
 	iam (TableOfReal);
 	long i;
-	
+
 	if (my rowLabels == NULL) return 0;
 	for (i = 1; i <= my numberOfRows; i++)
 	{
@@ -136,7 +138,7 @@ int TableOfReal_hasColumnLabels (I)
 {
 	iam (TableOfReal);
 	long i;
-	
+
 	if (my columnLabels == NULL) return 0;
 	for (i = 1; i <= my numberOfColumns; i++)
 	{
@@ -148,7 +150,7 @@ int TableOfReal_hasColumnLabels (I)
 TableOfReal TableOfReal_createIrisDataset (void)
 {
 	TableOfReal me = NULL;
-	long i, j; 
+	long i, j;
 	float iris[150][4] = {
 	5.1,3.5,1.4,0.2,4.9,3.0,1.4,0.2,4.7,3.2,1.3,0.2,4.6,3.1,1.5,0.2,5.0,3.6,1.4,0.2,
 	5.4,3.9,1.7,0.4,4.6,3.4,1.4,0.3,5.0,3.4,1.5,0.2,4.4,2.9,1.4,0.2,4.9,3.1,1.5,0.1,
@@ -179,11 +181,11 @@ TableOfReal TableOfReal_createIrisDataset (void)
 	7.4,2.8,6.1,1.9,7.9,3.8,6.4,2.0,6.4,2.8,5.6,2.2,6.3,2.8,5.1,1.5,6.1,2.6,5.6,1.4,
 	7.7,3.0,6.1,2.3,6.3,3.4,5.6,2.4,6.4,3.1,5.5,1.8,6.0,3.0,4.8,1.8,6.9,3.1,5.4,2.1,
 	6.7,3.1,5.6,2.4,6.9,3.1,5.1,2.3,5.8,2.7,5.1,1.9,6.8,3.2,5.9,2.3,6.7,3.3,5.7,2.5,
-	6.7,3.0,5.2,2.3,6.3,2.5,5.0,1.9,6.5,3.0,5.2,2.0,6.2,3.4,5.4,2.3,5.9,3.0,5.1,1.8	
+	6.7,3.0,5.2,2.3,6.3,2.5,5.0,1.9,6.5,3.0,5.2,2.0,6.2,3.4,5.4,2.3,5.9,3.0,5.1,1.8
 	};
 
 	if (! (me = TableOfReal_create (150, 4))) return NULL;
-	
+
 	TableOfReal_setColumnLabel (me, 1, L"sl");
 	TableOfReal_setColumnLabel (me, 2, L"sw");
 	TableOfReal_setColumnLabel (me, 3, L"pl");
@@ -204,25 +206,25 @@ Strings TableOfReal_extractRowLabels (I)
 	iam (TableOfReal);
 	Strings thee = new (Strings);
 	long i, n = my numberOfRows;
-	
+
 	if (thee == NULL) return NULL;
 	if (n < 1) return thee;
-	
+
 	thy strings = NUMpvector (1, n);
 	if (thy strings == NULL) goto end;
 	thy numberOfStrings = n;
-	
+
 	for (i = 1; i <= n; i++)
 	{
 		wchar_t *label = my rowLabels[i] ? my rowLabels[i] : L"?";
 		thy strings[i] = Melder_wcsdup (label);
-		if (thy strings[i] == NULL) goto end; 
+		if (thy strings[i] == NULL) goto end;
 	}
 
 end:
 
 	if (Melder_hasError()) forget (thee);
-	return thee;	
+	return thee;
 }
 
 
@@ -231,25 +233,25 @@ Strings TableOfReal_extractColumnLabels (I)
 	iam (TableOfReal);
 	Strings thee = new (Strings);
 	long i, n = my numberOfColumns;
-		
+
 	if (thee == NULL) return NULL;
 	if (n < 1) return thee;
-	
+
 	thy strings = NUMpvector (1, n);
 	if (thy strings == NULL) goto end;
 	thy numberOfStrings = n;
-	
+
 	for (i = 1; i <= n; i++)
 	{
 		wchar_t *label = my columnLabels[i] ? my columnLabels[i] : L"?";
 		thy strings[i] = Melder_wcsdup (label);
-		if (thy strings[i] == NULL) goto end; 
+		if (thy strings[i] == NULL) goto end;
 	}
 
 end:
 
 	if (Melder_hasError()) forget (thee);
-	return thee;	
+	return thee;
 }
 
 TableOfReal TableOfReal_transpose (I)
@@ -257,7 +259,7 @@ TableOfReal TableOfReal_transpose (I)
 	iam (TableOfReal);
 	TableOfReal thee;
 	long i, j;
-	
+
 	thee = TableOfReal_create (my numberOfColumns, my numberOfRows);
 	if (thee == NULL) return NULL;
 
@@ -268,10 +270,10 @@ TableOfReal TableOfReal_transpose (I)
 			thy data[j][i] = my data[i][j];
 		}
 	}
-		
-	if (! NUMstrings_copyElements (my rowLabels, thy columnLabels, 
+
+	if (! NUMstrings_copyElements (my rowLabels, thy columnLabels,
 		1, my numberOfRows) ||
-		! NUMstrings_copyElements (my columnLabels, thy rowLabels, 
+		! NUMstrings_copyElements (my columnLabels, thy rowLabels,
 		1, my numberOfColumns)) forget (thee);
 	return thee;
 }
@@ -309,11 +311,11 @@ int TableOfReal_to_Pattern_and_Categories (I, long fromrow, long torow, long fro
 	}
 	nrow = torow - fromrow + 1;
 	ncol = tocol - fromcol + 1;
-	
+
 	*c = NULL;
 	if (! (*p = Pattern_create (nrow, ncol)) ||
 		! (*c = Categories_create ())) goto end;
-	
+
 	for (row=1, i=fromrow; i <= torow; i++, row++)
 	{
 		wchar_t *s = my rowLabels[i] ? my rowLabels[i] : L"?";
@@ -324,7 +326,7 @@ int TableOfReal_to_Pattern_and_Categories (I, long fromrow, long torow, long fro
 			(*p)->z[row][col] = my data[i][j];
 		}
 	}
-	
+
 end:
 
 	if (Melder_hasError ())
@@ -354,12 +356,12 @@ void TableOfReal_getColumnExtrema (I, long col, double *min, double *max)
 
 void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, wchar_t *greys, int garnish)	
+	double interbarsFraction, wchar_t *greys, int garnish)
 {
 	iam (TableOfReal);
 	long i, j, irow, nrows, ncols, ngreys;
 	double *irows, *igreys, grey, bar_width = 1, xb, dx, x1, x2, y1, y2;
-	
+
 	if (colb >= cole)
 	{
 		colb = 1; cole = my numberOfColumns;
@@ -369,14 +371,14 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 		    Melder_warning1 (L"Invalid columns");
 			return;
 	}
-	
+
 	irows = NUMstring_to_numbers (rows, &nrows);
 	if (irows == NULL)
 	{
 		 Melder_warning1 (L"No rows!");
 		 return;
 	}
-	
+
 	for (i = 1; i <= nrows; i++)
 	{
 		irow = irows[i];
@@ -400,27 +402,27 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 			}
 		}
 	}
-	
+
 	igreys = NUMstring_to_numbers (greys, &ngreys);
 	if (igreys == NULL)
 	{
 		 Melder_warning1 (L"No greys!");
 		 return;
 	}
- 
+
     Graphics_setWindow (g, 0, 1, ymin, ymax);
     Graphics_setInner (g);
-	
-	ncols = cole - colb + 1;	
-	bar_width /= ncols * nrows + 2 * xoffsetFraction + (ncols - 1) * interbarsFraction + 
+
+	ncols = cole - colb + 1;
+	bar_width /= ncols * nrows + 2 * xoffsetFraction + (ncols - 1) * interbarsFraction +
 		ncols * (nrows -1) * interbarFraction;
     dx = (interbarsFraction + nrows + (nrows -1) * interbarFraction) * bar_width;
 
 	for (i = 1; i <= nrows; i++)
 	{
 		irow = irows[i];
-		xb = xoffsetFraction * bar_width + (i - 1) * (1 + interbarFraction) * bar_width;  
-	
+		xb = xoffsetFraction * bar_width + (i - 1) * (1 + interbarFraction) * bar_width;
+
 		x1 = xb;
 		grey = i <= ngreys ? igreys[i] : igreys[ngreys];
     	for (j = colb; j <= cole; j++)
@@ -438,9 +440,9 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 			x1 += dx;
     	}
 	}
-	
+
     Graphics_unsetInner (g);
-	
+
 	if (garnish)
 	{
 		xb = (xoffsetFraction + 0.5 * (nrows + (nrows - 1) * interbarFraction)) * bar_width;
@@ -454,11 +456,11 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, l
 	}
 
 end:
-	
+
 	NUMdvector_free (irows, 1);
 }
 
-void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax, 
+void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double sv_splitfactor, int labelsize, int garnish)
 {
 	iam (TableOfReal);
@@ -467,18 +469,18 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 	double *x = NULL, *y = NULL;
 	long i, numberOfZeroed;
 	long nr = my numberOfRows, nc = my numberOfColumns, nmin;
-	long nPoints = nr + nc; 
+	long nPoints = nr + nc;
 	int fontsize = Graphics_inqFontSize (g);
 
 	svd = SVD_create (nr, nc);
 	if (svd == NULL) goto end;
-	
+
 	NUMdmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
 	NUMcentreColumns (svd -> u, 1, nr, 1, nc, NULL);
-	
-	if (! SVD_compute (svd)) goto end; 	
+
+	if (! SVD_compute (svd)) goto end;
 	numberOfZeroed = SVD_zeroSmallSingularValues (svd, 0);
-	
+
 	nmin = MIN (nr, nc) - numberOfZeroed;
 	if (nmin < 2)
 	{
@@ -505,17 +507,17 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 			x[nr + i] = svd -> v[i][1] * lambda1;
 			y[nr + i] = svd -> v[i][2] * lambda2;
 	}
-		
+
 	if (xmax <= xmin) NUMdvector_extrema (x, 1, nPoints, &xmin, &xmax);
 	if (xmax <= xmin) { xmax += 1; xmin -= 1; }
 	if (ymax <= ymin) NUMdvector_extrema (y, 1, nPoints, &ymin, &ymax);
 	if (ymax <= ymin) { ymax += 1; ymin -= 1; }
-	
-    Graphics_setWindow (g, xmin, xmax, ymin, ymax);	
+
+    Graphics_setWindow (g, xmin, xmax, ymin, ymax);
     Graphics_setInner (g);
-	if (labelsize > 0) Graphics_setFontSize (g, labelsize);			
+	if (labelsize > 0) Graphics_setFontSize (g, labelsize);
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	
+
 	for (i = 1; i <= nPoints; i++)
 	{
 		wchar_t *label;
@@ -531,18 +533,18 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 		}
 		Graphics_text (g, x[i], y[i], label);
 	}
-	
+
     Graphics_unsetInner (g);
-	
+
 	if (garnish)
 	{
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, 1, 1, 0);
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 	}
-	
+
 	if (labelsize > 0) Graphics_setFontSize (g, fontsize);
-				
+
 end:
 	forget (svd);
 	NUMdvector_free (x, 1);
@@ -552,9 +554,9 @@ end:
 /*
 	Draw a box plot of data[1..ndata]. The vertical center line of the plot
 	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
-	All drawing outside [ymin, ymax] is clipped. 
+	All drawing outside [ymin, ymax] is clipped.
 */
-static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata, 
+static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	double x, double r, double w, double ymin, double ymax)
 {
 	double lowerOuterFence, lowerInnerFence, mean;
@@ -565,48 +567,48 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 
 	Melder_assert (r > 0 && w > 0);
 	if (ndata < 3) return;
-	
+
 	/*
 		Sort the data (increasing: data[1] <= ... <= data[ndata]).
-		Get the median (q50) and the upper and lower quartile points 
+		Get the median (q50) and the upper and lower quartile points
 		(q25 and q75).
 		Now q25 and q75 are the lower and upper hinges, respectively.
 		The fances can be calcultaed from q25 and q75.
-		The spread is defined as the interquartile range or midrange 
+		The spread is defined as the interquartile range or midrange
 		|q75 - q25|.
 		The fences are defined as:
 		(lower/upper) innerfence = (lower/upper) hinge +/- 1.5 hspread
 		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
 	*/
-		
+
 	NUMsort_d (ndata, data);
 
 	if (ymax <= ymin)
 	{
 		ymin = data[1]; ymax = data[ndata];
-	}		
+	}
 	if (data[1] > ymax || data[ndata] < ymin) return;
 
 	for (mean=0, i=1; i <= ndata; i++) mean += data[i];
 	mean /= ndata;
-			
+
 	q25 = NUMquantile (ndata, data, 0.25);
 	q50 = NUMquantile (ndata, data, 0.5);
 	q75 = NUMquantile (ndata, data, 0.75);
-		
+
 	hspread = fabs (q75 - q25);
 	lowerOuterFence = q25 - 3.0 * hspread;
 	lowerInnerFence = q25 - 1.5 * hspread;
 	upperInnerFence = q75 + 1.5 * hspread;
 	upperOuterFence = q75 + 3.0 * hspread;
-		
+
 	/*
 		Decide whether there are outliers that have to be drawn.
 		First process data from below (data are sorted).
 	*/
-	
+
 	i = 1; ie = ndata;
-	while (i <= ie && data[i] < ymin) i++;			
+	while (i <= ie && data[i] < ymin) i++;
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	while (i <= ie && data[i] < lowerOuterFence)
 	{
@@ -618,12 +620,12 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	}
 	lowerWhisker = data[i] < q25 ? data[i] : lowerInnerFence;
 	if (lowerWhisker > ymax) return;
-		
+
 	/*
 		Next process data from above.
 	*/
-		
-	i = ndata; ie = i;				
+
+	i = ndata; ie = i;
 	while (i >= ie && data[i] > ymax) i--;
 	while (i >= ie && data[i] > upperOuterFence)
 	{
@@ -635,13 +637,13 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	}
 	upperWhisker = data[i] > q75 ? data[i] : upperInnerFence;
 	if (upperWhisker < ymin) return;
-		
+
 	/*
-		Determine what parts of the "box" have to be drawn within the 
+		Determine what parts of the "box" have to be drawn within the
 		range [ymin, ymax].
 		Horizontal lines first.
 	*/
-		
+
 	y1 = lowerWhisker;
 	if (ymax > y1 && ymin < y1)
 		Graphics_line (g, x - r, y1, x + r, y1);
@@ -657,31 +659,31 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	y1 = upperWhisker;
 	if (ymax > y1 && ymin < y1)
 		Graphics_line (g, x - r, y1, x + r, y1);
-		
+
 	/*
 		Extension: draw the mean too.
 	*/
-		
+
 	y1 = mean;
 	if (ymax > y1 && ymin < y1)
 	{
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, x - w, y1, x + w, y1);
-		Graphics_setLineType (g, lineType); 
+		Graphics_setLineType (g, lineType);
 	}
-		
+
 	/*
 		Now process the vertical lines.
 	*/
 
-	y1 = lowerWhisker; y2 = q25; 	
+	y1 = lowerWhisker; y2 = q25;
 	if (ymax > y1 && ymin < y2)
 	{
 		y1 = MAX (y1, ymin);
 		y2 = MIN (y2, ymax);
 		Graphics_line (g, x, y1, x, y2);
 	}
-	y1 = q25; y2 = q75; 	
+	y1 = q25; y2 = q75;
 	if (ymax > y1 && ymin < y2)
 	{
 		y1 = MAX (y1, ymin);
@@ -689,7 +691,7 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 		Graphics_line (g, x - w, y1, x - w, y2);
 		Graphics_line (g, x + w, y1, x + w, y2);
 	}
-	y1 = q75; y2 = upperWhisker; 	
+	y1 = q75; y2 = upperWhisker;
 	if (ymax > y1 && ymin < y2)
 	{
 		y1 = MAX (y1, ymin);
@@ -698,11 +700,11 @@ static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata,
 	}
 }
 
-void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax, 
+void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax,
 	long colmin, long colmax, double ymin, double ymax, int garnish)
 {
-	iam (TableOfReal); 
-	double *data = NULL; 
+	iam (TableOfReal);
+	double *data = NULL;
 	long i, j, numberOfRows;
 
 	if (rowmax < rowmin || rowmax < 1)
@@ -718,20 +720,20 @@ void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax,
 		colmin = 1;
 		colmax = my numberOfColumns;
 	}
-	if (colmin < 1) colmin = 1; 
+	if (colmin < 1) colmin = 1;
 	if (colmax > my numberOfColumns) colmax = my numberOfColumns;
-	if (ymax <= ymin) NUMdmatrix_extrema (my data, rowmin, rowmax, 
+	if (ymax <= ymin) NUMdmatrix_extrema (my data, rowmin, rowmax,
 		colmin, colmax, &ymin, &ymax);
 	if ((data = NUMdvector (1, numberOfRows)) == NULL) return;
-	
-    Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);	
+
+    Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
     Graphics_setInner (g);
-	
+
 	for (j = colmin; j <= colmax; j++)
 	{
-		double x = j, r = 0.05, w = 0.2, t; 
+		double x = j, r = 0.05, w = 0.2, t;
 		long ndata = 0;
-		
+
 		for (i = 1; i <= numberOfRows; i++)
 		{
 			if ((t = my data[rowmin+i-1][j]) != NUMundefined) data[++ndata] = t;
@@ -769,7 +771,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels)
 	{
 		if (my numberOfColumns != thy numberOfColumns) return 0;
 		if (my columnLabels == thy columnLabels) return 1;
-		for (i=1; i <= my numberOfColumns; i++) 
+		for (i=1; i <= my numberOfColumns; i++)
 		{
 			if (NUMwcscmp (my columnLabels[i], thy columnLabels[i])) return 0;
 		}
@@ -781,7 +783,7 @@ int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin)
 {
 	iam (TableOfReal);
 	thouart (TableOfReal);
-	
+
 	if (rowOrigin == 1)
 	{
 		if (my numberOfRows != thy numberOfRows ||
@@ -807,11 +809,11 @@ int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin)
 
 void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column)
 {
-	iam (TableOfReal); 
-	thouart (Collection); 
-	long i; 
+	iam (TableOfReal);
+	thouart (Collection);
+	long i;
 	wchar_t *name;
-	
+
 	if (row)
 	{
 		Melder_assert (my numberOfRows == thy size);
@@ -843,18 +845,18 @@ int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 	iam (TableOfReal);
 	Categories c = NULL;
 	long i;
-	if (my numberOfRows != thy size) return Melder_error5 
+	if (my numberOfRows != thy size) return Melder_error5
 		(L"The number of items in ", Thing_messageName(me), L"and ", Thing_messageName(thee), L" must be equal.");
-		
-	/* 
+
+	/*
 		If anything goes wrong we must leave the Table intact.
-		We first copy the Categories, swap the labels 
+		We first copy the Categories, swap the labels
 		and then delete the newly created categories.
 	*/
-	
+
 	c = Data_copy (thee);
 	if (c == NULL) return 0;
-	
+
 	for (i=1; i <= my numberOfRows; i++)
 	{
 		SimpleString s = c -> item[i];
@@ -862,7 +864,7 @@ int TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 		s -> string = my rowLabels[i];
 		my rowLabels[i] = t;
 	}
-	
+
 	forget (c);
 	return 1;
 }
@@ -871,7 +873,7 @@ void TableOfReal_centreColumns_byRowLabel (I)
 {
 	iam (TableOfReal); wchar_t *label = my rowLabels[1];
 	long i, index = 1;
-		
+
 	for (i=2; i <= my numberOfRows; i++)
 	{
 		wchar_t *li = my rowLabels[i];
@@ -975,8 +977,8 @@ void TableOfReal_normalizeTable (I, double norm)
 
 double TableOfReal_getTableNorm (I)
 {
-	iam (TableOfReal); 
-	double sumsq = 0; 
+	iam (TableOfReal);
+	double sumsq = 0;
 	long i, j;
 	for (i = 1; i <= my numberOfRows; i++)
 	{
@@ -992,7 +994,7 @@ int TableOfReal_checkPositive (I)
 {
 	iam (TableOfReal);
 	long i, j, negative = 0;
-	
+
 	for (i = 1; i <= my numberOfRows; i++)
 	{
 		for (j = 1; j <= my numberOfColumns; j++)
@@ -1000,7 +1002,7 @@ int TableOfReal_checkPositive (I)
 			if (my data[i][j] < 0) { negative ++; break; }
 		}
 	}
-	return negative == 0 ? 1 : 
+	return negative == 0 ? 1 :
 		Melder_error2 (L"All matrix entries should be positive for ", Thing_messageName(me));
 }
 
@@ -1015,28 +1017,28 @@ void NUMdmatrix_getColumnExtrema (double **a, long rowb, long rowe, long icol, d
 		double t = a[i][icol];
 		if (t > *max) *max = t;
 		else if (t < *min) *min = t;
-	} 
+	}
 }
 
-void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, 
+void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 	double fractionWhite)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	double *xmin = NULL, *xmax = NULL;
 	long i, j, k, m = my numberOfRows, n;
-	
+
 	if (colb == 0 && cole == 0)
 	{
 		colb = 1; cole = my numberOfColumns;
 	}
 	else if (cole < colb || colb < 1 || cole > my numberOfColumns) return;
-	
+
 	n = cole - colb + 1;
 	if (n == 1) return;
-		
+
 	if (! (xmin = NUMdvector (colb, cole)) ||
 		! (xmax = NUMdvector (colb, cole))) goto end;
-	
+
 	for (j=colb; j <= cole; j++)
 	{
 		xmin[j] = xmax[j] = my data[1][j];
@@ -1055,13 +1057,13 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 		if (extra == 0) extra = 0.5;
 		xmin[j] -= extra; xmax[j] += extra;
 	}
-	
+
 	Graphics_setWindow (g, 0, n, 0, n);
     Graphics_setInner (g);
 	Graphics_line (g, 0, n, n, n);
 	Graphics_line (g, 0, 0, 0, n);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	
+
 	for (i=1; i <= n; i++)
 	{
 		long xcol, ycol = colb + i - 1; wchar_t *mark, label[20];
@@ -1083,10 +1085,10 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole,
 			{
 				for (k=1; k <= m; k++)
 				{
-					double x = j - 1 + (my data[k][xcol] - xmin[xcol]) / 
+					double x = j - 1 + (my data[k][xcol] - xmin[xcol]) /
 						(xmax[xcol] - xmin[xcol]);
-					double y = n - i + (my data[k][ycol] - xmin[ycol]) / 
-						(xmax[ycol] - xmin[ycol]); 
+					double y = n - i + (my data[k][ycol] - xmin[ycol]) /
+						(xmax[ycol] - xmin[ycol]);
 					mark = EMPTY_STRING (my rowLabels[k]) ? L"+" : my rowLabels[k];
 					Graphics_text (g, x, y, mark);
 				}
@@ -1098,15 +1100,15 @@ end:
 	NUMdvector_free (xmin, colb); NUMdvector_free (xmax, colb);
 }
 
-void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, 
-	long rowe, double xmin, double xmax, double ymin, double ymax, 
+void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
+	long rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, int useRowLabels, wchar_t *label, int garnish)
 {
-    iam (TableOfReal); 
+    iam (TableOfReal);
 	double tmp, m = my numberOfRows, n = my numberOfColumns;
     long i, noLabel = 0;
 	int fontSize = Graphics_inqFontSize (g);
-    
+
     if (icx < 1 || icx > n || icy < 1 || icy > n) return;
     if (rowb < 1) rowb = 1;
     if (rowe > m) rowe = m;
@@ -1114,7 +1116,7 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
     {
     	rowb = 1; rowe = m;
     }
-    
+
     if (xmax == xmin)
     {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
@@ -1127,16 +1129,16 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 		tmp = ymax - ymin == 0 ? 0.5 : 0.0;
 		ymin -= tmp; ymax += tmp;
     }
-    
+
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);
     Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	
+
     for (i=rowb; i <= rowe; i++)
     {
     	double x = my data[i][icx], y = my data[i][icy];
-		
+
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
 			((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
 		{
@@ -1149,10 +1151,10 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 			Graphics_text (g, x, y, plotLabel);
 		}
 	}
-	
+
 	Graphics_setFontSize (g, fontSize);
     Graphics_unsetInner (g);
-	
+
     if (garnish)
     {
 		Graphics_drawInnerBox (g);
@@ -1216,7 +1218,7 @@ TableOfReal TablesOfReal_sum (I)
 			return Melder_errorp5 (L"TablesOfReal_sum: dimensions or labels differ for items 1 and ", Melder_integer(i), L" in ", Thing_messageName(thee), Thing_messageName(him));
 		}
 		for (j=1; j <= thy numberOfRows; j++)
-			for (k=1; k <= thy numberOfColumns; k++) thy data[j][k] += his data[j][k]; 
+			for (k=1; k <= thy numberOfColumns; k++) thy data[j][k] += his data[j][k];
 	}
 	return thee;
 }
@@ -1239,47 +1241,47 @@ double TableOfReal_getColumnQuantile (I, long col, double quantile)
 {
 	iam (TableOfReal); long i, m = my numberOfRows;
 	double *values, r;
-	
+
 	if (col < 1 || col > my numberOfColumns) return NUMundefined;
-	
+
 	if (! (values = NUMdvector (1, m))) return NUMundefined;
-	
+
 	for (i=1; i <= m; i++)
 	{
 		values[i] = my data[i][col];
 	}
-	
+
 	NUMsort_d (m, values);
 	r = NUMquantile (m, values, quantile);
-	
+
 	NUMdvector_free (values, 1);
-	
+
 	return r;
 }
 
 static TableOfReal TableOfReal_createPolsVanNieropData (int choice, int include_levels)
 {
-	Table table; 
+	Table table;
 	TableOfReal thee = NULL;
 	long i, j, ib, nrows, ncols = include_levels ? 6 : 3;
-	
+
 	table = Table_createFromPolsVanNieropData ();
 	if (table == NULL) return NULL;
-	
+
 	/* Default: Pols 50 males, first part of the table. */
-	
+
 	nrows = 50 * 12;
 	ib = 1;
-	
+
 	if (choice == 2) /* Van Nierop 25 females */
 	{
 		ib = nrows + 1;
 		nrows = 25 * 12;
 	}
-	
+
 	thee = TableOfReal_create (nrows, ncols);
 	if (thee == NULL) goto end;
-	
+
 	for (i = 1; i <= nrows; i++)
 	{
 		TableRow row = table -> rows -> item[ib + i - 1];
@@ -1318,19 +1320,19 @@ TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels)
 
 TableOfReal TableOfReal_createFromWeeninkData (int option)
 {
-	Table table; 
+	Table table;
 	TableOfReal thee = NULL;
 	long i, ib, j, nvowels = 12, ncols = 3, nrows = 10 * nvowels;
-	
+
 	table = Table_createFromWeeninkData ();
 	if (table == NULL) return NULL;
 
-	ib = option == 1 ? 1 : option == 2 ? 11 : 21; /* m f c*/ 
+	ib = option == 1 ? 1 : option == 2 ? 11 : 21; /* m f c*/
 	ib = (ib -1) * nvowels + 1;
-	
+
 	thee = TableOfReal_create (nrows, ncols);
 	if (thee == NULL) goto end;
-	
+
 	for (i = 1; i <= nrows; i++)
 	{
 		TableRow row = table -> rows -> item[ib + i - 1];
@@ -1354,7 +1356,7 @@ TableOfReal TableOfReal_randomizeRows (TableOfReal me)
 {
 	TableOfReal thee = NULL;
 	Permutation p = NULL, pp = NULL;
-	
+
 	p = Permutation_create (my numberOfRows);
 	if (p == NULL) return NULL;
 	pp = Permutation_permuteRandomly (p, 0, 0);
@@ -1388,32 +1390,32 @@ TableOfReal TableOfReal_bootstrap (TableOfReal me)
 
 	/*
 		Select randomly from table with replacement. Because of replacement
-		you do not get back the original data set. A random fraction, 
+		you do not get back the original data set. A random fraction,
 		typically 1/e (37%) are replaced by duplicates.
 	*/
-	
+
 	for (i = 1; i <= my numberOfRows; i++)
 	{
 		long p = NUMrandomInteger (1, my numberOfRows);
-		NUMdvector_copyElements (my data[p], thy data[i], 
+		NUMdvector_copyElements (my data[p], thy data[i],
 			1, my numberOfColumns);
 		if (my rowLabels[p])
 		{
 			TableOfReal_setRowLabel (thee, i, my rowLabels[p]);
 		}
-	}	
+	}
 
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }
 
-int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp)
 {
 	iam (TableOfReal);
-	wchar_t ** rowLabels = strs_replace (my rowLabels, 1, my numberOfRows, 
-		search, replace, maximumNumberOfReplaces, nmatches, 
+	wchar_t ** rowLabels = strs_replace (my rowLabels, 1, my numberOfRows,
+		search, replace, maximumNumberOfReplaces, nmatches,
 		nstringmatches, use_regexp);
 	if (rowLabels == NULL) return 0;
 	NUMstrings_free (my rowLabels, 1, my numberOfRows);
@@ -1421,13 +1423,13 @@ int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace,
 	return 1;
 }
 
-int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp)
 {
 	iam (TableOfReal);
-	wchar_t ** columnLabels = strs_replace (my columnLabels, 1, my numberOfColumns, 
-		search, replace, maximumNumberOfReplaces, nmatches, 
+	wchar_t ** columnLabels = strs_replace (my columnLabels, 1, my numberOfColumns,
+		search, replace, maximumNumberOfReplaces, nmatches,
 		nstringmatches, use_regexp);
 	if (columnLabels == NULL) return 0;
 	NUMstrings_free (my columnLabels, 1, my numberOfColumns);
@@ -1435,20 +1437,20 @@ int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace,
 	return 1;
 }
 
-long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels, 
+long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	int use_regexp)
 {
 	iam (TableOfReal);
 	long i, nmatches = 0, numberOfLabels = my numberOfRows;
 	wchar_t **labels = my rowLabels;
 	regexp *compiled_regexp = NULL;
-	
+
 	if (search == NULL || wcslen (search) == 0) return 0;
 	if (columnLabels)
 	{
 		numberOfLabels = my numberOfColumns;
 		labels = my columnLabels;
-	}	
+	}
 	if (use_regexp)
 	{
 		char *compileMsg;
@@ -1460,7 +1462,7 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 		if (labels[i] == NULL) continue;
 		if (use_regexp)
 		{
-			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToUtf8 (labels[i]), NULL, 0, 
+			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToUtf8 (labels[i]), NULL, 0,
 				'\0', '\0', NULL, NULL, NULL)) nmatches++;
 		}
 		else if (wcsequ (labels[i], search)) nmatches++;
@@ -1469,8 +1471,8 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	return nmatches;
 }
 
-void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1, 
-	long colx2, long coly2, double xmin, double xmax, 
+void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
+	long colx2, long coly2, double xmin, double xmax,
 	double ymin, double ymax, int vectype, int labelsize, int garnish)
 {
 	iam (TableOfReal);
@@ -1488,7 +1490,7 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 		Melder_warning3 (L"The index in the \"To\" column(s) must be in range [1, ", Melder_integer (nx), L"].");
 		return;
 	}
- 
+
 	if (xmin >= xmax)
 	{
 		NUMdmatrix_extrema (my data, 1, ny, colx1, colx1, &min, &max);
@@ -1519,14 +1521,14 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
-	if (labelsize > 0) Graphics_setFontSize (g, labelsize);			
+	if (labelsize > 0) Graphics_setFontSize (g, labelsize);
 	for (i = 1; i <= ny; i++)
 	{
 		float x1 = my data[i][colx1];
-		float y1 = my data[i][coly1];	 
+		float y1 = my data[i][coly1];
 		float x2 = my data[i][colx2];
 		float y2 = my data[i][coly2];
-		wchar_t *mark = EMPTY_STRING (my rowLabels[i]) ? L"" : my rowLabels[i];	 
+		wchar_t *mark = EMPTY_STRING (my rowLabels[i]) ? L"" : my rowLabels[i];
 		if (vectype == Graphics_LINE)
 			Graphics_line (g, x1, y1, x2, y2);
 		else if (vectype == Graphics_TWOWAYARROW)
@@ -1534,7 +1536,7 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 			Graphics_arrow (g, x1, y1, x2, y2);
 			Graphics_arrow (g, x2, y2, x1, y1);
 		}
-		else /*if (vectype == Graphics_ARROW) */	
+		else /*if (vectype == Graphics_ARROW) */
 			Graphics_arrow (g, x1, y1, x2, y2);
 		if (labelsize <= 0) continue;
 		Graphics_text (g, x1, y1, mark);
@@ -1550,6 +1552,16 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1,
 	}
 }
 
+void TableOfReal_drawColumnAsDistribution (I, Graphics g, int column, double minimum, double maximum, long nBins,
+	double freqMin, double freqMax, int cumulative, int garnish)
+{
+	iam (TableOfReal);
+	Matrix thee = TableOfReal_to_Matrix (me);
+	Matrix_drawDistribution (thee, g,  column-0.5, column+0.5, 0, 0,
+		minimum, maximum, nBins, freqMin,  freqMax,  cumulative,  garnish);
+	forget (thee);
+}
+
 TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 {
 	iam (TableOfReal);
@@ -1558,15 +1570,15 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 	long i, j;
 
 	if (my rowLabels == NULL) return NULL;
-	
+
 	NUMlvector_extrema (index, 1, my numberOfRows, &min, &max);
 	if (min < 1 || max > my numberOfRows) return Melder_errorp
 		("TableOfReal_sortRowsByIndex: one or more indices out of range [1, %d].",
 		my numberOfRows);
-	
+
 	thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 	if (thee == NULL) return NULL;
-	
+
 	for (i = 1; i <= my numberOfRows; i++)
 	{
 		long    myindex = reverse ? i : index[i];
@@ -1574,32 +1586,32 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 		wchar_t   *mylabel = my rowLabels[myindex];
 		double  *mydata = my data[myindex];
 		double *thydata = thy data[thyindex];
-		
+
 		/*
 			Copy the row label
 		*/
-		
+
 		if (mylabel != NULL)
 		{
 			thy rowLabels[i] = Melder_wcsdup (mylabel);
 			if (thy rowLabels[i] == NULL) goto end;
 		}
-		
+
 		/*
 			Copy the row values
 		*/
-		
+
 		for (j = 1; j <= my numberOfColumns; j++)
 		{
 			thydata[j] = mydata[j];
 		}
 	}
-	
+
 	/*
 		Copy column labels.
 	*/
-	
-	(void) NUMstrings_copyElements (my columnLabels, thy columnLabels, 
+
+	(void) NUMstrings_copyElements (my columnLabels, thy columnLabels,
 		1, my numberOfColumns);
 end:
 
@@ -1609,9 +1621,9 @@ end:
 
 long *TableOfReal_getSortedIndexFromRowLabels (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	long *index = NUMlvector (1, my numberOfRows);
-	
+
 	if (index == NULL) return NULL;
 	NUMindexx_s (my rowLabels, my numberOfRows, index);
 	return index;
@@ -1619,13 +1631,13 @@ long *TableOfReal_getSortedIndexFromRowLabels (I)
 
 TableOfReal TableOfReal_sortOnlyByRowLabels (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	TableOfReal thee = NULL;
 	Permutation index = NULL;
-	
+
 	index = TableOfReal_to_Permutation_sortRowLabels (me);
 	if (index == NULL) return NULL;
-	
+
 	thee = TableOfReal_and_Permutation_permuteRows (me, index);
 
 	forget (index);
@@ -1636,7 +1648,7 @@ static void NUMmedianizeColumns (double **a, long rb, long re, long cb, long ce)
 {
 	long i, j, k, n = re - rb + 1;
 	double *tmp, median;
-	
+
 	if (n < 2) return;
 	tmp = NUMdvector (1, n);
 	if (tmp == NULL) return;
@@ -1672,7 +1684,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 
 	index = TableOfReal_getSortedIndexFromRowLabels (me);
 	if (index == NULL) return NULL;
-	
+
 	sorted = TableOfReal_sortRowsByIndex (me, index, 0);
 	if (sorted == NULL) goto end;
 
@@ -1692,9 +1704,9 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 			label = li; indexi = i;
 		}
 	}
-		
+
 	NUMstatsColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns, stats);
-	
+
 	if (expand != 0)
 	{
 		/*
@@ -1716,7 +1728,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats)
 		}
 		if (! NUMstrings_copyElements (sorted -> columnLabels, thy columnLabels, 1, my numberOfColumns)) goto end;
 	}
-	
+
 end:
 	forget (sorted);
 	NUMlvector_free (index, 1);
@@ -1728,38 +1740,38 @@ TableOfReal TableOfReal_rankColumns (I)
 {
 	iam (TableOfReal);
 	TableOfReal thee = Data_copy (me);
-	
+
 	if (thee == NULL) return NULL;
-	if (! NUMrankColumns (thy data, 1, thy numberOfRows, 
+	if (! NUMrankColumns (thy data, 1, thy numberOfRows,
 		1, thy numberOfColumns)) forget (thee);
-	return thee;	
+	return thee;
 }
-	
-int TableOfReal_setSequentialColumnLabels (I, long from, long to, 
+
+int TableOfReal_setSequentialColumnLabels (I, long from, long to,
 	wchar_t *precursor, long number, long increment)
 {
 	iam (TableOfReal);
-	
+
 	if (from == 0) from = 1;
 	if (to == 0) to = my numberOfColumns;
 	if (from < 1 || from > my numberOfColumns || to < from ||
-		to > my numberOfColumns) return Melder_error2 
+		to > my numberOfColumns) return Melder_error2
 			(L"TableOfReal_setSequentialColumnLabels: wrong column indices for ", Thing_messageName(me));
-	return NUMstrings_setSequentialNumbering (my columnLabels, from, to, 
+	return NUMstrings_setSequentialNumbering (my columnLabels, from, to,
 		precursor, number, increment);
 }
-	
-int TableOfReal_setSequentialRowLabels (I, long from, long to, 
+
+int TableOfReal_setSequentialRowLabels (I, long from, long to,
 	wchar_t *precursor, long number, long increment)
 {
 	iam (TableOfReal);
-	
+
 	if (from == 0) from = 1;
 	if (to == 0) to = my numberOfRows;
 	if (from < 1 || from > my numberOfRows || to < from ||
-		to > my numberOfRows) return Melder_error2 
+		to > my numberOfRows) return Melder_error2
 			(L"TableOfReal_setSequentialRowLabels: wrong row indices for ", Thing_messageName(me));
-	return NUMstrings_setSequentialNumbering (my rowLabels, from, to, 
+	return NUMstrings_setSequentialNumbering (my rowLabels, from, to,
 		precursor, number, increment);
 }
 
@@ -1769,8 +1781,8 @@ TableOfReal TableOfReal_to_TableOfReal (I)
 	iam (TableOfReal);
 	TableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 	if (thee == NULL) return NULL;
-	
-	NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 
+
+	NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows,
 		1, my numberOfColumns);
 	if (! TableOfReal_copyLabels (me, thee, 1, 1)) forget (thee);
 	return thee;
@@ -1815,12 +1827,12 @@ TableOfReal TableOfReal_appendColumns (I, thou)
 	long i, ncols = my numberOfColumns + thy numberOfColumns;
 	long labeldiffs = 0;
 
-	if (my numberOfRows != thy numberOfRows) return Melder_errorp4 (Thing_messageName(me), L" and ", 
+	if (my numberOfRows != thy numberOfRows) return Melder_errorp4 (Thing_messageName(me), L" and ",
 		Thing_messageName(thee), L" must have an equal number of rows.");
 	/* Stricter label checking???
 		append only if
 		  (my rowLabels[i] == thy rowlabels[i], i=1..my numberOfRows) or
-		  (my rowLabels[i] == 'empty', i=1..my numberOfRows)  or 
+		  (my rowLabels[i] == 'empty', i=1..my numberOfRows)  or
 		  (thy rowLabels[i] == 'empty', i=1..my numberOfRows);
 		'empty':  NULL or \w*
 	*/
@@ -1848,11 +1860,11 @@ end:
 	return him;
 }
 
-Any TableOfReal_appendColumnsMany (Collection me) 
+Any TableOfReal_appendColumnsMany (Collection me)
 {
 	TableOfReal him = NULL, thee;
 	long itab, irow, icol, nrow, ncol;
-	
+
 	if (my size == 0) return Melder_errorp1 (L"No tables selected.");
 	thee = my item [1];
 	nrow = thy numberOfRows;
@@ -1867,7 +1879,7 @@ Any TableOfReal_appendColumnsMany (Collection me)
 			goto end;
 		}
 	}
-	if ((him = Thing_new (thy methods)) == NULL || 
+	if ((him = Thing_new (thy methods)) == NULL ||
 		! TableOfReal_init (him, nrow, ncol)) goto end;
 	/* Unsafe: new attributes not initialized. */
 	for (irow = 1; irow <= nrow; irow++)
@@ -1891,7 +1903,7 @@ Any TableOfReal_appendColumnsMany (Collection me)
 		}
 	}
 	Melder_assert (ncol == his numberOfColumns);
-	
+
 end:
 
 	if (Melder_hasError ()) forget (him);

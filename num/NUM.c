@@ -590,11 +590,11 @@ int NUM_viterbi_multi (
 	long *icand = NULL, jcomb;
 	parm.indices = NULL;
 
-	if (ntrack > ncand) return Melder_error ("(NUMviterbin:) "
-		"Number of tracks (%d) should not exceed number of candidates (%ld).", ntrack, ncand);
+	if (ntrack > ncand) return Melder_error5 (L"(NUM_viterbi_multi:) "
+		"Number of tracks (", Melder_integer (ntrack), L") should not exceed number of candidates (", Melder_integer (ncand), L").");
 	ncomb = NUMcombinations (ncand, ntrack);
-	if (ncomb > 10000000) return Melder_error ("(NUMviterbin:) "
-		"Unrealistically high number of combinations (%ld).", ncomb);
+	if (ncomb > 10000000) return Melder_error3 (L"(NUM_viterbi_multi:) "
+		"Unrealistically high number of combinations (", Melder_integer (ncomb), L").");
 	parm. ntrack = ntrack;
 	parm. ncomb = ncomb;
 

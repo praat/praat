@@ -939,7 +939,7 @@ if (my usePortAudio) {
 	attributes. attr. sampled_attr. duration. u. samples = my numberOfSamples;   /* BUG ? times 2 */
 	if (! my audio)
 		my audio = AOpenAudio (NULL, & my status);
-	if (my status) return cancelPlay16 (), Melder_error ("Cannot open audio. Check audio server (\"man aserver\").");
+	if (my status) return cancelPlay16 (), Melder_error1 (L"Cannot open audio. Check audio server (\"man aserver\").");
 	my bucket = ACreateSBucket (my audio, ASDataFormatMask | ASBitsPerSampleMask |
 		ASSamplingRateMask | ASChannelsMask | ASDurationMask, & attributes, & my status);
 	if (my status) return cancelPlay16 (), Melder_error1 (L"Cannot create sound bucket.");
@@ -1045,7 +1045,7 @@ if (my usePortAudio) {
 
 	ioctl (audio_fd, AUDIO_GET_SAMPLE_RATE, & oldSampleRate);
 	if (sampleRate != oldSampleRate && ioctl (audio_fd, AUDIO_SET_SAMPLE_RATE, sampleRate) == -1)
-		return cancelPlay16 (), Melder_error ("Cannot set the sampling frequency to %ld Hz.", sampleRate);
+		return cancelPlay16 (), Melder_error3 (L"Cannot set the sampling frequency to ", Melder_integer (sampleRate), L" Hz.");
 
 	while (bytesLeft) {
 		int dbytes = bytesLeft > 262144 ? 262144 : bytesLeft;
@@ -1165,7 +1165,7 @@ if (my usePortAudio) {
 	if (ioctl (my audio_fd, SNDCTL_DSP_SPEED, (my val = my sampleRate, & my val)) == -1 ||    /* Error? */
 	    my val != my sampleRate)   /* Has sound card overridden our sampling frequency? */
 	{
-		return cancelPlay16 (), Melder_error ("Cannot set sampling frequency to %d.", my sampleRate);
+		return cancelPlay16 (), Melder_error3 (L"Cannot set sampling frequency to ", Melder_integer (my sampleRate), L" Hz.");
 	}
 
 	theStartingTime = Melder_clock ();

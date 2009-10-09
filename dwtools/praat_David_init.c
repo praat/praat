@@ -54,7 +54,9 @@
  djmw 20080521 Confusion_drawAsnumbers
  djmw 20090109 KlattGrid formulas for formant
  djmw 20090708 KlattTable <-> Table
- djmw 20090818 Thing_recognizeClassesByName: added classCepstrum, classIndex, classKlattTable
+ djmw 20090822 Thing_recognizeClassesByName: added classCepstrum, classIndex, classKlattTable
+ djmw 20090914 Excitation to Excitations crashed because of NULL reference
+ djmw 20090927 TableOfReal_drawRow(s)asHistogram
 */
 
 #include "praat.h"
@@ -113,6 +115,7 @@ extern machar_Table NUMfpp;
 #include "Pitch_extensions.h"
 #include "Sound_and_FilterBank.h"
 #include "Sound_to_Pitch2.h"
+#include "Sound_to_SPINET.h"
 #include "TableOfReal_and_SVD.h"
 #include "VowelEditor.h"
 
@@ -1559,8 +1562,7 @@ DIRECT (Excitation_to_Excitations)
 	if (! e) return 0;
 	WHERE_DOWN (SELECTED)
 	{
-		(void) Collection_addItem (e, OBJECT);
-		OBJECT = NULL; praat_removeObject (IOBJECT);
+		(void) Collection_addItem (e, Data_copy (OBJECT));
 	}
 	praat_show();
 	NEW (e)
@@ -1589,8 +1591,8 @@ DIRECT (Excitations_addItem)
 	WHERE (SELECTED && CLASS == classExcitations) e = OBJECT;
 	WHERE_DOWN (SELECTED && CLASS == classExcitation)
 	{
-		(void) Collection_addItem (e, OBJECT);
-		OBJECT = NULL; praat_removeObject (IOBJECT); praat_show();
+		(void) Collection_addItem (e, Data_copy (OBJECT));
+		praat_show();
 	}
 	praat_show();
 END
@@ -1602,7 +1604,7 @@ DO
 	WHERE (SELECTED && CLASS == classExcitations)
 	{
 		Excitation me = Excitations_getItem (OBJECT, GET_INTEGER (L"Item number"));
-		if (! praat_new1 (me, Thing_getName (me))) return 0;
+		if (me == NULL || ! praat_new1 (me, Thing_getName (me))) return 0;
 	}
 END
 
@@ -3973,6 +3975,82 @@ DO
 		GET_INTEGER (L"Label size"), GET_INTEGER (L"Garnish")))
 END
 
+FORM (TableOfReal_drawVectors, L"Draw vectors", L"TableOfReal: Draw vectors...")
+	LABEL (L"", L"From (x1, y1) to (x2, y2)")
+	NATURAL (L"left From columns (x1, y1)", L"1")
+	NATURAL (L"right From columns (x1, y1)", L"2")
+	NATURAL (L"left To columns (x2, y2)", L"3")
+	NATURAL (L"right To columns (x2, y2)", L"4")
+	LABEL (L"", L"Select the drawing area")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	RADIO (L"Vector type", 1)
+	RADIOBUTTON (L"Arrow")
+	RADIOBUTTON (L"Double arrow")
+	RADIOBUTTON (L"Line")
+	INTEGER (L"Label size", L"10")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawVectors (OBJECT, GRAPHICS,
+		GET_INTEGER (L"left From columns"), GET_INTEGER (L"right From columns"),
+		GET_INTEGER (L"left To columns"), GET_INTEGER (L"right To columns"),
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_INTEGER (L"Vector type"), GET_INTEGER (L"Label size"),
+		GET_INTEGER (L"Garnish")))
+END
+
+FORM (TableOfReal_drawRowAsHistogram, L"Draw row as histogram", L"TableOfReal: Draw rows as histogram...")
+	LABEL (L"", L"Select from the table")
+	WORD (L"Row number", L"1")
+	INTEGER (L"left Column range", L"0")
+    INTEGER (L"right Column range", L"0")
+    LABEL (L"", L"Vertical drawing range")
+    REAL (L"left Vertical range", L"0.0")
+    REAL (L"right Vertical range", L"0.0")
+    LABEL (L"", L"Offset and distance in units of 'bar width'")
+    REAL (L"Horizontal offset", L"0.5")
+    REAL (L"Distance between bars", L"1.0")
+    WORD (L"Grey value (1=white)", L"0.7")
+    BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawRowsAsHistogram (OBJECT, GRAPHICS, GET_STRING (L"Row number"),
+		GET_INTEGER (L"left Column range"), GET_INTEGER (L"right Column range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_REAL (L"Horizontal offset"), 0,
+		GET_REAL (L"Distance between bars"), GET_STRING (L"Grey value"),
+		GET_INTEGER (L"Garnish")))
+END
+
+FORM (TableOfReal_drawRowsAsHistogram, L"Draw rows as histogram", L"TableOfReal: Draw rows as histogram...")
+	LABEL (L"", L"Select from the table")
+	SENTENCE (L"Row numbers", L"1 2")
+	INTEGER (L"left Column range", L"0")
+    INTEGER (L"right Column range", L"0")
+    LABEL (L"", L"Vertical drawing range")
+    REAL (L"left Vertical range", L"0.0")
+    REAL (L"right Vertical range", L"0.0")
+    LABEL (L"", L"Offset and distance in units of 'bar width'")
+    REAL (L"Horizontal offset", L"1.0")
+    REAL (L"Distance between bar groups", L"1.0")
+    REAL (L"Distance between bars", L"0.0")
+    SENTENCE (L"Grey values (1=white)", L"1 1")
+    BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawRowsAsHistogram (OBJECT, GRAPHICS,
+		GET_STRING (L"Row numbers"),
+		GET_INTEGER (L"left Column range"), GET_INTEGER (L"right Column range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_REAL (L"Horizontal offset"), GET_REAL (L"Distance between bars"),
+		GET_REAL (L"Distance between bar groups"), GET_STRING (L"Grey values"),
+		GET_INTEGER (L"Garnish")))
+END
+
 FORM (TableOfReal_drawBoxPlots, L"TableOfReal: Draw box plots", L"TableOfReal: Draw box plots...")
 	INTEGER (L"From row", L"0")
 	INTEGER (L"To row", L"0")
@@ -3987,6 +4065,22 @@ DO
 		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 		GET_INTEGER (L"From column"), GET_INTEGER (L"To column"),
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish")))
+END
+
+FORM (TableOfReal_drawColumnAsDistribution, L"TableOfReal: Draw column as distribution", L"TableOfReal: Draw column as distribution...")
+	NATURAL (L"Column", L"1")
+    REAL (L"Minimum value", L"0.0")
+    REAL (L"Maximum value", L"0.0")
+    LABEL (L"", L"Display of the distribution")
+    NATURAL (L"Number of bins", L"10")
+    REAL (L"Minimum frequency", L"0.0")
+    REAL (L"Maximum frequency", L"0.0")
+    BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	EVERY_DRAW (TableOfReal_drawColumnAsDistribution (OBJECT, GRAPHICS, GET_INTEGER (L"Column"),
+		GET_REAL (L"Minimum value"), GET_REAL (L"Maximum value"),GET_INTEGER (L"Number of bins"),
+		GET_REAL (L"Minimum frequency"), GET_REAL (L"Maximum frequency"), 0, GET_INTEGER (L"Garnish")))
 END
 
 FORM (TableOfReal_to_Configuration_lda, L"TableOfReal: To Configuration (lda)", L"TableOfReal: To Configuration (lda)...")
@@ -4399,7 +4493,7 @@ void praat_uvafon_David_init (void)
 		classISpline, classLegendreSeries,
 		classMelFilter,
 		classMSpline, classPattern, classPCA, classPolynomial, classRoots,
-		classSimpleString, classStringsIndex, classSSCP, classSVD, NULL);
+		classSimpleString, classStringsIndex, classSPINET, classSSCP, classSVD, NULL);
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 
@@ -4908,6 +5002,10 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, L"Draw scatter plot matrix...", L"Draw scatter plot...", 1, DO_TableOfReal_drawScatterPlotMatrix);
 	praat_addAction1 (classTableOfReal, 0, L"Draw box plots...", L"Draw scatter plot matrix...", 1, DO_TableOfReal_drawBoxPlots);
 	praat_addAction1 (classTableOfReal, 0, L"Draw biplot...", L"Draw box plots...", 1, DO_TableOfReal_drawBiplot);
+	praat_addAction1 (classTableOfReal, 0, L"Draw vectors...", L"Draw box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawVectors);
+	praat_addAction1 (classTableOfReal, 1, L"Draw row as histogram...", L"Draw biplot...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowAsHistogram);
+	praat_addAction1 (classTableOfReal, 1, L"Draw rows as histogram...", L"Draw row as histogram...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowsAsHistogram);
+	praat_addAction1 (classTableOfReal, 1, L"Draw column as distribution...", L"Draw rows as histogram...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawColumnAsDistribution);
 
 	praat_addAction2 (classStrings, 1, classPermutation, 1, L"Permute strings", 0, 0, DO_Strings_and_Permutation_permuteStrings);
 

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/07/07
+ * pb 2009/09/29
  */
 
 #include "praat.h"
@@ -157,6 +157,15 @@ DO
 end:
 END
 
+FORM (Network_getWeight, L"Network: Get weight", 0)
+	NATURAL (L"Connection", L"1")
+	OK
+DO
+	double weight = Network_getWeight_e (ONLY_OBJECT, GET_INTEGER (L"Connection")); cherror
+	Melder_information1 (Melder_double (weight));
+end:
+END
+
 FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
 	INTEGER (L"From node", L"1")
 	INTEGER (L"To node", L"0 (= all)")
@@ -176,6 +185,18 @@ FORM (Network_setActivity, L"Network: Set activity", 0)
 DO
 	WHERE (SELECTED) {
 		Network_setActivity_e (OBJECT, GET_INTEGER (L"Node"), GET_REAL (L"Activity")); cherror
+		praat_dataChanged (OBJECT);
+	}
+end:
+END
+
+FORM (Network_setWeight, L"Network: Set weight", 0)
+	NATURAL (L"Connection", L"1")
+	REAL (L"Weight", L"1.0")
+	OK
+DO
+	WHERE (SELECTED) {
+		Network_setWeight_e (OBJECT, GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); cherror
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -1278,6 +1299,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Draw...", 0, 0, DO_Network_draw);
 	praat_addAction1 (classNetwork, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 0, DO_Network_getActivity);
+	praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 0, DO_Network_getWeight);
 	praat_addAction1 (classNetwork, 0, L"Modify -", 0, 0, 0);
 	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 0, DO_Network_addNode);
 	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 0, DO_Network_addConnection);
@@ -1286,6 +1308,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 0, DO_Network_zeroActivities);
 	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 0, DO_Network_normalizeActivities);
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 0, DO_Network_spreadActivities);
+	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 0, DO_Network_setWeight);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 0, DO_Network_updateWeights);
 }
 
