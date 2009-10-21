@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/10/21
  */
 
 #ifndef _Collection_h_
@@ -49,6 +49,7 @@ Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames
 int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
+Table Tables_append (Collection me);
 int Table_appendRow (Table me);
 int Table_appendColumn (Table me, const wchar_t *label);
 int Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label);
@@ -108,11 +109,9 @@ bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum);
 int Table_formula (Table me, long column, const wchar_t *formula, Interpreter interpreter);
 int Table_formula_columnRange (Table me, long column1, long column2, const wchar_t *expression, Interpreter interpreter);
 
-Table Tables_append (I, thou);
-Table Tables_appendMany (Collection me);
-
 void Table_sortRows (Table me, long *columns, long numberOfColumns);
 int Table_sortRows_string (Table me, const wchar_t *columns_string);
+void Table_randomizeRows (Table me);
 
 void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish);

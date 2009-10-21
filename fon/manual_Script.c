@@ -2760,7 +2760,7 @@ LIST_ITEM (L"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM (L"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
-MAN_BEGIN (L"Scripting 8.1. The sendpraat subroutine", L"ppgb", 20050822)
+MAN_BEGIN (L"Scripting 8.1. The sendpraat subroutine", L"ppgb", 20091020)
 INTRO (L"A subroutine for sending messages to a %running P\\s{RAAT}. "
 	"Also a Unix, MacOS, or DOS console program with the same purpose.")
 ENTRY (L"Syntax")
@@ -2774,8 +2774,6 @@ TAG (L"%program")
 DEFINITION (L"the name of a running program that uses the Praat shell, e.g. \"Praat\" or \"ALS\". "
 	"The first letter may be specified as lower or upper case; it will be converted to lower case for Unix "
 	"and to upper case for Macintosh and Windows.")
-TAG (L"%message")
-DEFINITION (L"a sequence of Praat shell lines (commands and directives).")
 TAG (L"%timeOut (Unix and Macintosh only)")
 DEFINITION (L"the number of seconds that sendpraat will wait for an answer "
 	"before writing an error message. A %timeOut of 0 means that "
@@ -2807,7 +2805,7 @@ ENTRY (L"Example 3: executing a large script file")
 NORMAL (L"Sometimes, it may be unpractical to send a large script directly to #sendpraat. "
 	"Fortunately, the receiving program knows the #execute directive:")
 CODE (L"char message [100], *errorMessage;")
-CODE (L"strcpy (message, \"doAll.praat 20\");")
+CODE (L"strcpy (message, \"execute doAll.praat 20\");")
 CODE (L"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
 NORMAL (L"This causes the program #Praat to execute the script ##doAll.praat# with an argument of \"20\".")
 ENTRY (L"How to download")

@@ -613,13 +613,12 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 				(int) (fromAngle * 64.0), (int) (arcAngle * 64.0));
 			xwinRevertLine (me);
 		#elif win
-			int startAngle = 90 - (int) fromAngle;
-			int arcAngle = (int) fromAngle - (int) toAngle;
+			int arcAngle = (int) toAngle - (int) fromAngle;
 			POINT pt;
-			if (arcAngle > 0) arcAngle -= 360;
+			if (arcAngle < 0.0) arcAngle += 360;
 			winPrepareLine (me);
-			MoveToEx (my dc, xDC + rDC * sin (NUMpi / 180 * fromAngle), yDC + rDC * cos (NUMpi / 180 * fromAngle), & pt);
-			AngleArc (my dc, xDC, yDC, rDC, fromAngle, toAngle - fromAngle);
+			MoveToEx (my dc, xDC + rDC * cos (NUMpi / 180 * fromAngle), yDC - rDC * sin (NUMpi / 180 * fromAngle), & pt);
+			AngleArc (my dc, xDC, yDC, rDC, fromAngle, arcAngle);
 			DEFAULT
 		#elif mac
 			if (my useQuartz) {

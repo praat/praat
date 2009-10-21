@@ -164,18 +164,9 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 
 int praat_selection (void *klas) {
 	if (klas == NULL) return theCurrentPraatObjects -> totalSelection;
-	//int result = 0, IOBJECT;
-	//WHERE (SELECTED && CLASS == klas) result += 1;
-	//return result;
 	long readableClassId = ((Thing_Table) klas) -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", ((Thing_Table) klas) -> _className);
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
-}
-
-int praat_selectionGeneric (void *klas) {
-	int result = 0, IOBJECT;
-	WHERE (SELECTED && Thing_subclass (CLASS, klas)) result += 1;
-	return result;
 }
 
 void praat_deselect (int IOBJECT) {

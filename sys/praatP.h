@@ -95,8 +95,6 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace);
 
 int praat_selection (void *klas);
 	/* How many objects of this class (excluding subclasses) are currently selected? */
-int praat_selectionGeneric (void *klas);
-	/* How many objects of this class (including subclasses) are currently selected? */
 
 /* Used by praat.c; defined in praat_picture.c.
 */

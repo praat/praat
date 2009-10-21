@@ -49,6 +49,7 @@
  * pb 2008/01/02 Table_drawRowFromDistribution
  * pb 2008/04/30 new Formula API
  * pb 2009/01/18 Interpreter argument in formula
+ * pb 2009/10/21 Table_randomizeRows
  */
 
 #include <ctype.h>
@@ -1084,6 +1085,53 @@ end:
 	NUMlvector_free (columns, 1);
 	iferror return 0;
 	return 1;
+}
+
+void Table_randomizeRows (Table me) {
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		long jrow = NUMrandomInteger (irow, my rows -> size);
+		TableRow tmp = my rows -> item [irow];
+		my rows -> item [irow] = my rows -> item [jrow];
+		my rows -> item [jrow] = tmp;
+	}
+}
+
+Table Tables_append (Collection me) {
+	Table him = NULL, thee;
+	if (my size == 0) return Melder_errorp1 (L"Cannot add zero tables.");
+	thee = my item [1];
+	long nrow = thy rows -> size;
+	long ncol = thy numberOfColumns;
+	Table firstTable = thee;
+	for (long itab = 2; itab <= my size; itab ++) {
+		thee = my item [itab];
+		nrow += thy rows -> size;
+		if (thy numberOfColumns != ncol) error1 (L"Numbers of columns do not match.")
+		for (long icol = 1; icol <= ncol; icol ++) {
+			if (! Melder_wcsequ (thy columnHeaders [icol]. label, firstTable -> columnHeaders [icol]. label)) {
+				error13 (L"The header of column ", Melder_integer (icol), L" of ", Thing_messageName (thee),
+					L" (", thy columnHeaders [icol]. label, L") does not match the header of column ", Melder_integer (icol),
+					L" of ", Thing_messageName (firstTable), L" (", firstTable -> columnHeaders [icol]. label, L").")
+			}
+		}
+	}
+	him = Table_createWithoutColumnNames (nrow, ncol); cherror
+	for (long icol = 1; icol <= ncol; icol ++) {
+		Table_setColumnLabel (him, icol, thy columnHeaders [icol]. label); cherror
+	}
+	nrow = 0;
+	for (long itab = 1; itab <= my size; itab ++) {
+		thee = my item [itab];
+		for (long irow = 1; irow <= thy rows -> size; irow ++) {
+			nrow ++;
+			for (long icol = 1; icol <= ncol; icol ++) {
+				Table_setStringValue (him, nrow, icol, Table_getStringValue (thee, irow, icol));
+			}
+		}
+	}
+end:
+	iferror { forget (him); Melder_error1 (L"Tables not appended."); }
+	return him;
 }
 
 int Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label) {

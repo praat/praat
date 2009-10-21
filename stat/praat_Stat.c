@@ -206,6 +206,17 @@ END
 
 /***** TABLE *****/
 
+DIRECT (Tables_append)
+	Collection me = Collection_create (classTable, 10);
+	if (! me) return 0;
+	WHERE (SELECTED)
+		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
+	if (! praat_new1 (Tables_append (me), L"appended")) {
+		my size = 0; forget (me); return 0;
+	}
+	my size = 0; forget (me);
+END
+
 FORM (Table_appendColumn, L"Table: Append column", 0)
 	WORD (L"Label", L"newcolumn")
 	OK
@@ -946,6 +957,13 @@ DO
 end:
 END
 
+DIRECT (Table_randomizeRows)
+	WHERE (SELECTED) {
+		Table_randomizeRows (OBJECT);
+		praat_dataChanged (OBJECT);
+	}
+END
+
 FORM (Table_sortRows, L"Table: Sort rows", 0)
 	LABEL (L"", L"One or more column labels for sorting:")
 	TEXTFIELD (L"columnLabels", L"dialect gender name")
@@ -1604,6 +1622,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, L"Formula...", 0, 1, DO_Table_formula);
 		praat_addAction1 (classTable, 0, L"Formula (column range)...", 0, 1, DO_Table_formula_columnRange);
 		praat_addAction1 (classTable, 0, L"Sort rows...", 0, 1, DO_Table_sortRows);
+		praat_addAction1 (classTable, 0, L"Randomize rows", 0, 1, DO_Table_randomizeRows);
 		praat_addAction1 (classTable, 0, L"-- structure --", 0, 1, 0);
 		praat_addAction1 (classTable, 0, L"Append row", 0, 1, DO_Table_appendRow);
 		praat_addAction1 (classTable, 0, L"Append column...", 0, 1, DO_Table_appendColumn);
@@ -1621,6 +1640,8 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classTable, 0, L"Analyse -      ", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"To linear regression", 0, 1, DO_Table_to_LinearRegression);
 		praat_addAction1 (classTable, 0, L"To logistic regression...", 0, 1, DO_Table_to_LogisticRegression);
+	praat_addAction1 (classTable, 0, L"Synthesize -     ", 0, 0, 0);
+		praat_addAction1 (classTable, 0, L"Append", 0, 1, DO_Tables_append);
 	praat_addAction1 (classTable, 0, L"Generate -      ", 0, 0, 0);
 		praat_addAction1 (classTable, 1, L"Draw row from distribution...", 0, 1, DO_Table_drawRowFromDistribution);
 	praat_addAction1 (classTable, 0, L"Extract -     ", 0, 0, 0);

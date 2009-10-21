@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20091009)
+MAN_BEGIN (L"What's new?", L"ppgb", 20091021)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.19# (21 October 2009)")
+LIST_ITEM (L"\\bu Table: Randomize rows")
+LIST_ITEM (L"\\bu Tables: Append (vertically)")
+LIST_ITEM (L"\\bu Scripting: corrected a bug that could cause Praat to crash if the name of a field in a form contained a colon.")
+LIST_ITEM (L"\\bu Windows: corrected arc drawing.")
 NORMAL (L"##5.1.18# (9 October 2009)")
 LIST_ITEM (L"\\bu The @@Demo window@ is less often automatically moved to the front "
 	"(in order to allow it to pop up other editor windows).")
@@ -2713,7 +2718,7 @@ NORMAL (L"The resulting sound will have a fairly straight intensity contour. You
 	"acoustic result with an @Intensity or @IntensityTier object.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20080425)
+MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20091012)
 INTRO (L"As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference "
 	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
 NORMAL (L"We use the same @PitchTier throughout, to model a falling intonation contour:")
@@ -2738,7 +2743,7 @@ CODE (L"Rename... source")
 NORMAL (L"The ten sounds are generated in a loop:")
 CODE (L"#for i #from 1 #to 10")
 CODE (L"   f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
-CODE (L"   Create FormantGrid... filter 0.0 0.5 9 0 1000 0 100")
+CODE (L"   Create FormantGrid... filter 0.0 0.5 9 800 1000 60 80")
 CODE (L"   Remove formant points between... 1 0.0 0.5")
 CODE (L"   Add formant point... 1 0.05 100")
 CODE (L"   Add bandwidth point... 1 0.05 50")

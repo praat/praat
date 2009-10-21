@@ -43,6 +43,7 @@
  * pb 2009/03/21 removed enums
  * pb 2009/05/09 pink
  * pb 2009/08/21 better message for "You interrupted"
+ * pb 2010/10/15 corrected colon removal
  */
 
 #include <wctype.h>
@@ -115,8 +116,8 @@ static UiField UiField_create (int type, const wchar_t *name) {
 	/*
 	 * Strip parentheses and colon off parameter name.
 	 */
-	p = wcschr (shortName, ':');   /*  */
-	if (p) *p = '\0';
+	//p = wcschr (shortName, ':');   /* ppgb 20101015: no idea why this used to be here */
+	//if (p) *p = '\0';
 	if ((p = wcschr (shortName, '(')) != NULL) {
 		*p = '\0';
 		if (p - shortName > 0 && p [-1] == ' ') p [-1] = '\0';
@@ -1170,7 +1171,7 @@ int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interprete
 	return UiForm_parseString (cmd -> dialog, arguments, interpreter);
 }
 
-static UiField findField_lenient (UiForm me, const wchar_t *fieldName) {
+static UiField findField (UiForm me, const wchar_t *fieldName) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		if (wcsequ (fieldName, my field [ifield] -> name)) return my field [ifield];
 	return NULL;
@@ -1180,15 +1181,11 @@ static void fatalField (UiForm dia) {
 	Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (dia -> name));
 }
 
-static UiField findField (UiForm me, const wchar_t *fieldName) {
-	UiField result = findField_lenient (me, fieldName);
-	if (result == NULL) fatalField (me);
-	return result;
-}
-
 void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_setReal:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			if (value == Melder_atof (field -> stringDefaultValue)) {
@@ -1217,7 +1214,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 				s = L"black";
 			GuiText_setString (field -> text, s);
 		} break; default: {
-			fatalField (me);
+			Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (my name));
 		}
 	}
 }
@@ -1225,6 +1222,8 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_setInteger:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: {
 			if (value == wcstol (field -> stringDefaultValue, NULL, 10)) {
@@ -1263,6 +1262,8 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_setString:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	if (value == NULL) value = L"";   /* Accept NULL strings. */
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
@@ -1317,7 +1318,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 }
 
 static UiField findField_check (UiForm me, const wchar_t *fieldName) {
-	UiField result = findField_lenient (me, fieldName);
+	UiField result = findField (me, fieldName);
 	if (result == NULL) {
 		Melder_error3 (L"Cannot find field \"", fieldName, L"\" in form.\n"
 			"The script may have changed while the form was open.\n"
@@ -1329,6 +1330,8 @@ static UiField findField_check (UiForm me, const wchar_t *fieldName) {
 double UiForm_getReal (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_getReal:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
 			return field -> realValue;
@@ -1358,6 +1361,8 @@ end:
 long UiForm_getInteger (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_getInteger:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: case UI_RADIO:
 			case UI_OPTIONMENU: case UI_LIST:
@@ -1391,6 +1396,8 @@ end:
 wchar_t * UiForm_getString (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_getString:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			return field -> stringValue;
