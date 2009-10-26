@@ -524,7 +524,7 @@ void _GuiText_init (void) {
 	#if mac
 		//short font;
 		TXNMacOSPreferredFontDescription defaults = { 0 };
-		//GetFNum ("\pMonaco", & font);
+		//GetFNum ("\006Monaco", & font);
 		//defaults. fontID = font;
 		defaults. pointSize = 0x000B0000;
 		defaults. fontStyle = kTXNDefaultFontStyle;

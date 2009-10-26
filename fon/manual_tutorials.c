@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20091021)
+MAN_BEGIN (L"What's new?", L"ppgb", 20091026)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.20# (26 October 2009)")
+LIST_ITEM (L"\\bu Editor windows: repaired the Synchronized Zoom And Scroll preference.")
 NORMAL (L"##5.1.19# (21 October 2009)")
 LIST_ITEM (L"\\bu Table: Randomize rows")
 LIST_ITEM (L"\\bu Tables: Append (vertically)")

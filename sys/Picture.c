@@ -505,49 +505,45 @@ static size_t appendBytes (void *info, const void *buffer, size_t count) {
     return count;
 }
 void Picture_copyToClipboard (Picture me) {
-	if (Melder_systemVersion < 0x1040) {
-		Picture_copyToQuickDrawClipboard (me);
-	} else {
-		/*
-		 * Find the clipboard and clear it.
-		 */
-		PasteboardRef clipboard = NULL;
-		PasteboardCreate (kPasteboardClipboard, & clipboard);
-		PasteboardClear (clipboard);
-		/*
-		 * Add a PDF flavour to the clipboard.
-		 */
-		static CGDataConsumerCallbacks callbacks = { appendBytes, NULL };
-		CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
-		CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
-		int resolution = 600;
-		CGRect rect = CGRectMake (0, 0, (my selx2 - my selx1) * resolution, (my sely1 - my sely2) * resolution);
-		CGContextRef context = CGPDFContextCreate (consumer, & rect, NULL);
-		//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
-		Graphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
-		Graphics_play (my graphics, graphics);
-		forget (graphics);
-		PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
+	/*
+	 * Find the clipboard and clear it.
+	 */
+	PasteboardRef clipboard = NULL;
+	PasteboardCreate (kPasteboardClipboard, & clipboard);
+	PasteboardClear (clipboard);
+	/*
+	 * Add a PDF flavour to the clipboard.
+	 */
+	static CGDataConsumerCallbacks callbacks = { appendBytes, NULL };
+	CFDataRef data = CFDataCreateMutable (kCFAllocatorDefault, 0);
+	CGDataConsumerRef consumer = CGDataConsumerCreate ((void *) data, & callbacks);
+	int resolution = 600;
+	CGRect rect = CGRectMake (0, 0, (my selx2 - my selx1) * resolution, (my sely1 - my sely2) * resolution);
+	CGContextRef context = CGPDFContextCreate (consumer, & rect, NULL);
+	//my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES)
+	Graphics graphics = Graphics_create_pdf (context, resolution, my selx1, my selx2, my sely1, my sely2);
+	Graphics_play (my graphics, graphics);
+	forget (graphics);
+	PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
+	CFRelease (data);
+	/*
+	 * Add a PICT flavour to the clipboard.
+	 */
+	PicHandle pict = copyToPict (me);
+	if (pict != NULL) {
+		HLock ((Handle) pict);
+		data = CFDataCreate (kCFAllocatorDefault, (void *) *pict, GetHandleSize ((Handle) pict));
+		HUnlock ((Handle) pict);
+		KillPicture (pict);
+		PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePICT, data, kPasteboardFlavorNoFlags);
 		CFRelease (data);
-		/*
-		 * Add a PICT flavour to the clipboard.
-		 */
-		PicHandle pict = copyToPict (me);
-		if (pict != NULL) {
-			HLock ((Handle) pict);
-			data = CFDataCreate (kCFAllocatorDefault, (void *) *pict, GetHandleSize ((Handle) pict));
-			HUnlock ((Handle) pict);
-			KillPicture (pict);
-			PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePICT, data, kPasteboardFlavorNoFlags);
-			CFRelease (data);
-		} else {
-			Melder_flushError (NULL);
-		}
-		/*
-		 * Forget the clipboard.
-		 */
-		CFRelease (clipboard);
+	} else {
+		Melder_flushError (NULL);
 	}
+	/*
+	 * Forget the clipboard.
+	 */
+	CFRelease (clipboard);
 }
 void Picture_copyToQuickDrawClipboard (Picture me) {
 	PicHandle pict = copyToPict (me);

@@ -19,7 +19,7 @@
 
 /*
  djmw 20020313 GPL
- djmw 20090523 Latest modification
+ djmw 20091026 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -2909,6 +2909,40 @@ NORMAL (L"The shifting of formant frequencies is done via manipulation of the sa
 	"duration and pitch are restored. After this, the sound is resampled "
 	"to 44100 Hz (by sinc interpolation)."
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
+MAN_END
+
+MAN_BEGIN (L"Sound: Draw parts...", L"djmw", 20090927)
+INTRO (L"A command to draw selected parts of a @Sound.")
+ENTRY (L"Arguments")
+NORMAL (L"The standard arguments of ##Sound: Draw...# with two extras.")
+TAG (L"%%Number of bisections%,")
+DEFINITION (L"determines the precision of the start and end times of all selected intervals. "
+	"If you select %%numberOfBisections% = 0, start and end times are always at @@Get time from sample number...|sample numbers@. This means that selected intervals are separated from not selected intervals by one @@sampling period@. "
+	"If you select a %%numberOfBisections% > 0, we try to find a more precise time where the selected and not selected parts meet.")
+TAG (L"%%Formula%,")
+DEFINITION (L"determines the selection of the sound that will be drawn.")
+ENTRY (L"Examples")
+NORMAL (L"Draw the second half of a sound:")
+CODE (L"Draw parts... 0 0 -1 1 n Curve 10 x > xmin + (xmax - xmin) / 2")
+NORMAL (L"Draw amplitudes larger than zero:")
+CODE (L"Draw parts... 0 0 -1 1 n Curve 10 self>0")
+NORMAL (L"Mark clipped parts of a sound with red colour: ")
+CODE (L"Red")
+CODE (L"Draw parts... 0 0 -1 1 n Curve 10 abs(self)>1")
+CODE (L"Black")
+CODE (L"Draw parts... 0 0 -1 1 y Curve 10 not (abs(self)>1)")
+NORMAL (L"Mark parts where pitch is smaller than 100 Hz with red colour.")
+CODE (L"s = selected (\"Sound\")")
+CODE (L"p = To Pitch... 0 75 600")
+CODE (L"pt = Down to PitchTier")
+CODE (L"select s")
+CODE (L"Red")
+CODE (L"Draw parts... 0 0 -1 1 yes Curve 10 Object_'pt'(x) < 100")
+CODE (L"Black")
+CODE (L"Draw parts... 0 0 -1 1 yes  Curve 10 not (Object_'pt'(x) < 100)")
+ENTRY (L"Warning")
+NORMAL (L"Please do not use formulas with references to column numbers, the 'col' variable, in combination with %%numberOfBisections > 0%.")
+
 MAN_END
 
 MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20080314)

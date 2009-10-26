@@ -40,8 +40,11 @@
  djmw 20080320 +Sound_fade.
  djmw 20080530 +Sound_localAverage
  pb 20090926 Correction in Sound_and_Pitch_changeGender_old
+ djmw 20091023 Added Sound_drawIntervals
+ djmw 20091028 Sound_drawIntervals -> Sound_drawParts + polyline draw
 */
 
+#include "Formula.h"
 #include "Intensity_extensions.h"
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
@@ -1728,6 +1731,300 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 
 	if (Melder_hasError ()) forget (thee);
 	return thee;
+}
+
+// if formula contains refs to col and row surprising thing may happen;
+int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
+	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y);
+int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
+	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y)
+{
+	struct Formula_Result result;
+
+	if (left)
+	{
+		*x = Matrix_columnToX (me, isample);
+		*y = my z[ichannel][isample];
+	}
+	else
+	{
+		*x = Matrix_columnToX (me, isample + 1);
+		*y = my z[ichannel][isample+1];
+	}
+	if ((left && right) || (!left && !right)) return 0; // xor, something wrong
+
+	if (numberOfBisections < 1) return 1;
+
+	long channel, nx = 3;
+	double xmid, dx = my dx / 2;
+	double xleft = Matrix_columnToX (me, isample);
+	double xright = xleft + my dx; // !!
+	double xmin = xleft - dx / 2;
+	double xmax = xmin + nx * dx;
+	long istep = 1;
+
+	Sound thee = Sound_create (my ny, xmin, xmax, nx, dx, xleft);
+	if (thee == NULL) return 0;
+
+	for (channel = 1; channel <= my ny; channel++)
+	{
+		thy z[channel][1] = my z[channel][isample]; thy z[channel][3] = my z[channel][isample+1];
+	}
+
+	if (! Formula_compile (interpreter, thee, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return 0;
+
+	// bisection to find optimal x and y
+	do
+	{
+		xmid = (xleft + xright) / 2;
+
+		for (channel = 1; channel <= my ny; channel++)
+		{
+			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
+		}
+
+		// Thy dimensions haven't changed only xmin,xmax and dx; It seems we don't have to recompile.
+		if (! Formula_run (ichannel, 2, & result)) return 0;
+		bool current = result.result.numericResult;
+
+		dx /= 2;
+		if ((left && current) || (! left && ! current))
+		{
+			xleft = xmid;
+			left = current;
+			for (channel = 1; channel <= my ny; channel++)
+			{
+				thy z[channel][1] = thy z[channel][2];
+			}
+			thy x1 = xleft;
+		}
+		else if ((left && ! current) || (!left && current))
+		{
+			xright = xmid;
+			right = current;
+			for (channel = 1; channel <= my ny; channel++)
+			{
+				thy z[channel][3] = thy z[channel][2];
+			}
+		}
+		else
+		{
+			// we should not even be here.
+			break;
+		}
+
+		thy xmin = xleft - dx / 2;
+		thy xmax = xright + dx / 2;
+		thy dx = dx;
+		istep ++;
+	} while (istep < numberOfBisections);
+
+	*x = xmid;
+	*y = thy z[ichannel][2];
+	forget (thee);
+	return 1;
+}
+
+
+// if formula contains refs to col and row surprising thing may happen;
+int Sound_findIntermediatePoint_int (Sound me, long ichannel, long isample, const wchar_t *formula,
+	Interpreter interpreter, int interpolation, long npoints_inbetween, double *x, double *y);
+int Sound_findIntermediatePoint_int (Sound me, long ichannel, long isample, const wchar_t *formula,
+	Interpreter interpreter, int interpolation, long npoints_inbetween, double *x, double *y)
+{
+	struct Formula_Result result;
+
+	*x = Matrix_columnToX (me, isample);
+	*y = my z[ichannel][isample];
+
+	if (isample == my nx) return 1; // cannot occur we can only draw 'to' this point not 'from'
+	if (npoints_inbetween < 1) return 1;
+
+	long ix, nx = npoints_inbetween + 2;
+	double dx = my dx / nx;
+	double x1 = Matrix_columnToX (me, isample);
+	double xmin = x1 - dx / 2;
+	double xmax = xmin + nx * dx;
+
+	Sound thee = Sound_create (my ny, xmin, xmax, nx, dx, x1);
+	if (thee == NULL) return 1;
+
+	for (long channel = 1; channel <= my ny; channel++)
+	{
+		for (ix = 1; ix <= nx; ix++)
+		{
+			double x = x1 + (ix - 1) * dx;
+	   	    thy z[channel][ix] = Vector_getValueAtX (me, x, channel, interpolation);
+		}
+	}
+
+	if (! Formula_compile (interpreter, thee, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE)) return 0;
+	bool current, at_start = true;
+	ix = 0;
+	do
+	{
+		ix++;
+		if (! Formula_run (ichannel, ix, & result)) return 0;
+		current =  result.result.numericResult;
+		if (ix == 1) at_start = current;
+	} while (current == at_start && ix < nx);
+	if (current == at_start) ix = 1; // might be at start and end of sound
+	*x = x1 + (ix - 1) * dx;
+	*y = thy z[ichannel][ix];
+	forget (thee);
+	return 1;
+}
+
+void Sound_drawParts (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
+	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter)
+{
+	long ixmin, ixmax, ix;
+	struct Formula_Result result;
+
+	if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
+
+	/*
+	 * Automatic domain.
+	 */
+	if (tmin == tmax) {
+		tmin = my xmin;
+		tmax = my xmax;
+	}
+	/*
+	 * Domain expressed in sample numbers.
+	 */
+	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
+	/*
+	 * Automatic vertical range.
+	 */
+	if (minimum == maximum) {
+		Matrix_getWindowExtrema (me, ixmin, ixmax, 1, my ny, & minimum, & maximum);
+		if (minimum == maximum) {
+			minimum -= 1.0;
+			maximum += 1.0;
+		}
+	}
+	/*
+	 * Set coordinates for drawing.
+	 */
+	Graphics_setInner (g);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		Graphics_setWindow (g, tmin, tmax,
+			minimum - (my ny - channel) * (maximum - minimum),
+			maximum + (channel - 1) * (maximum - minimum));
+		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				if (! Formula_run (channel, ix, & result)) return;
+				if (result.result.numericResult)
+				{
+					double x = Sampled_indexToX (me, ix);
+					double y = my z [channel] [ix];
+					double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
+					if (y > maximum) y = maximum;
+					if (left < tmin) left = tmin;
+					if (right > tmax) right = tmax;
+					Graphics_line (g, left, y, right, y);
+					Graphics_line (g, left, y, left, minimum);
+					Graphics_line (g, right, y, right, minimum);
+				}
+			}
+		} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				if (! Formula_run (channel, ix, & result)) return;
+				if (result.result.numericResult)
+				{
+					double x = Sampled_indexToX (me, ix);
+					double y = my z[channel][ix];
+					if (y > maximum) y = maximum;
+					if (y < minimum) y = minimum;
+					Graphics_line (g, x, 0, x, y);
+				}
+			}
+		} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
+			for (ix = ixmin; ix <= ixmax; ix ++) {
+				if (! Formula_run (channel, ix, & result)) return;
+				if (result.result.numericResult)
+				{
+					double x = Sampled_indexToX (me, ix);
+					Graphics_fillCircle_mm (g, x, my z [channel] [ix], 1.0);
+				}
+			}
+		} else
+		{
+			/*
+			 * The default: draw as a curve.
+			 */
+			 bool current = true, previous = true;
+			 long istart = ixmin;
+			 double xb = Sampled_indexToX (me, ixmin), yb = my z[channel][ixmin], xe, ye;
+			 for (ix = ixmin; ix <= ixmax; ix++)
+			 {
+				if (! Formula_run (channel, ix, & result)) return;
+				current = result.result.numericResult; // true means draw
+				if (previous && ! current) // leaving drawing segment
+				{
+					if (ix != 1)
+					{
+						if (ix - istart > 1)
+						{
+							xe = Matrix_columnToX (me, istart);
+							ye = my z[channel][istart];
+							Graphics_line (g, xb, yb, xe, ye);
+							xb = xe; xe = Matrix_columnToX (me, ix-1);
+							Graphics_function (g, my z[channel], istart, ix - 1, xb, xe);
+							xb = xe; yb = my z[channel][ix - 1];
+						}
+						Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
+						Graphics_line (g, xb, yb, xe, ye);
+						if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
+
+					}
+				}
+				else if (current && ! previous) // entry drawing segment
+				{
+					istart = ix;
+					Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xb, &yb);
+					xe = Sampled_indexToX (me, ix), ye = my z[channel][ix];
+					Graphics_line (g, xb, yb, xe, ye);
+					xb = xe; yb = ye;
+					if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
+				}
+				else if (previous && current && ix == ixmax)
+				{
+					xe = Matrix_columnToX (me, istart);
+					ye = my z[channel][istart];
+					Graphics_line (g, xb, yb, xe, ye);
+					xb = xe; xe = Matrix_columnToX (me, ix);
+					Graphics_function (g, my z[channel], istart, ix, xb, xe);
+					xb = xe; yb = my z[channel][ix];
+				}
+				previous = current;
+			 }
+		}
+	}
+
+	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+	Graphics_unsetInner (g);
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
+		Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
+		Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
+		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
+			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+		}
+		if (my ny == 2) {
+			Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
+			Graphics_markRight (g, minimum, 1, 1, 0, NULL);
+			Graphics_markRight (g, maximum, 1, 1, 0, NULL);
+			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
+				Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+			}
+		}
+	}
 }
 
 /* End of file Sound_extensions.c */

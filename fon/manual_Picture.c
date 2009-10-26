@@ -400,7 +400,7 @@ NORMAL (L"This example would draw the texts \"Dani\\e\"l's Dutch vowel triangle\
 	"and the texts \"u\" and \"\\o/\" at the appropriate positions inside the drawing area.")
 MAN_END
 
-MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20090913)   /* Not Unix. */
+MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20091031)   /* Not Unix. */
 INTRO (L"A command in the File menu of the @@Picture window@.")
 NORMAL (L"It copies the selected part of the picture to the clipboard. "
 	"You can then `Paste' it into any program that knows pictures.")
@@ -409,17 +409,16 @@ NORMAL (L"Though all the picture data will be written to the clipboard, "
 	"only the part that corresponds to the selected part of the Picture window (the %viewport) will be visible.")
 #if defined (macintosh)
 ENTRY (L"Usage")
-NORMAL (L"On MacOS X 10.4 and higher, the picture will be put on the clipboard in two versions: a PDF version and a QuickDraw version. "
+NORMAL (L"The picture will be put on the clipboard in two versions: a PDF version and a QuickDraw version. "
 	"The PDF version will be used by programs that know how to handle PDF pictures, such as Microsoft^\\re Word\\tm 2008; "
 	"the quality of the picture will then be exactly as good as when you use @@Write to PDF file...@ and read in the resulting PDF file. "
 	"Please realize that Word will convert the PDF picture to a mediocre 300-dpi bitmap if you save the document as a ##.doc# file; "
 	"therefore, you should save the document as a ##.docx# file instead. "
 	"If you cannot work with ##.docx# files (for instance because your publisher does not accept that file type yet), "
 	"you can consider using @@Write to EPS file...@ instead.")
-NORMAL (L"Older programs, such as Microsoft^\\re Word\\tm 2001, use the QuickDraw version of the clipboard. "
+NORMAL (L"Older programs, such as Microsoft^\\re Word\\tm 2004, use the QuickDraw version of the clipboard. "
 	"This will not show international (Czech, Russian, Korean, Arabic) characters, but phonetic symbols will show up correctly. "
 	"Also, the quality of the picture is less; @@Write to EPS file...@ will probably produce better results.")
-NORMAL (L"On MacOS X 10.3 and lower, no PDF version is included in the clipboard.")
 #endif
 #if defined (_WIN32)
 ENTRY (L"Usage")
@@ -732,7 +731,7 @@ NORMAL (L"With this command, you send your entire picture immediately to the pri
 	"See the @Printing tutorial for details.")
 MAN_END
 
-MAN_BEGIN (L"Printing", L"ppgb", 20090904)
+MAN_BEGIN (L"Printing", L"ppgb", 20091031)
 NORMAL (L"The best results will be obtained on PostScript printers, since these have built-in "
 	"facilities for images (e.g. spectrograms) and rotated text. "
 	"However, the printed page will look reasonable on colour inkjet printers as well.")
@@ -777,7 +776,7 @@ NORMAL (L"If you don't have a PostScript printer, and you still want PostScript 
 ENTRY (L"3. Indirect printing with your word processor")
 #if defined (macintosh)
 NORMAL (L"If you save your picture to a PDF file, you will be able to include it as a picture in your favourite "
-	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). This works on the Mac only. See @@Write to PDF file...@.")
+	"word processor (Microsoft^\\re Word^\\tm 2008, LaTeX...). This works on the Mac only. See @@Write to PDF file...@.")
 #else
 NORMAL (L"If you save your picture to an EPS file, you will be able to include it as a picture in your favourite "
 	"word processor (Microsoft^\\re Word^\\tm, LaTeX...). See @@Write to EPS file...@.")
@@ -803,7 +802,7 @@ NORMAL (L"On Windows, pictures included in your word processor via @@Copy to cli
 #endif
 #ifdef macintosh
 ENTRY (L"Indirect printing without PDF")
-NORMAL (L"On MacOS X 10.4 and higher, pictures included in your word processor via @@Copy to clipboard@ "
+NORMAL (L"Pictures included in your word processor (post-2006 versions) via @@Copy to clipboard@ "
 	"will print just as nicely as PDF files.")
 #endif
 MAN_END
@@ -994,7 +993,7 @@ ENTRY (L"Settings")
 NORMAL (L"The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
 MAN_END
 
-MAN_BEGIN (L"Write to PDF file...", L"ppgb", 20090813)
+MAN_BEGIN (L"Write to PDF file...", L"ppgb", 20091031)
 INTRO (L"A command in the File menu of the @@Picture window@, on Macintosh only.")
 NORMAL (L"It saves the picture to a PDF file, "
 	"which can be imported by several other programs, such as Microsoft^\\re Word\\tm 2008 on the Mac.")
@@ -1010,7 +1009,8 @@ NORMAL (L"To import a PDF file in Word 2008, choose #Insert \\-> #Picture \\-> #
 	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
 NORMAL (L"Please note that if you save the Word document as a ##.doc# file, Word will convert the PDF picture into a mediocre 300-dpi bitmap; "
 	"therefore, you should save the document as a ##.docx# file instead. If you cannot use ##.docx# files "
-	"(for instance because your publisher does not support these yet), you may use @@Write to EPS file...@; "
+	"(for instance because your publisher does not support these yet, or because you still use Word 2004), "
+	"you may use @@Write to EPS file...@; "
 	"the quality will be the same, but you cannot use Czech, Russian, Korean or Arabic characters in EPS files.")
 MAN_END
 

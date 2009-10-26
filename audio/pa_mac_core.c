@@ -72,6 +72,8 @@
 //# include <libkern/OSAtomic.h>  ppgb
 //#endif  ppgb
 
+#include <Components.h>
+
 #include "pa_mac_core.h"
 #include "pa_mac_core_utilities.h"
 #include "pa_mac_core_blocking.h"

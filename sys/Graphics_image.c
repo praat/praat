@@ -382,7 +382,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#elif mac
 			if (useQuartzForImages) {
 				CGImageRef image;
-				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceUserRGB);
+				CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
 				Melder_assert (colourSpace != NULL);
 				if (1) {
 					CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,

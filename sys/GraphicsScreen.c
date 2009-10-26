@@ -44,7 +44,7 @@
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
-		return Melder_systemVersion < 0x1040 ? false : _GraphicsMac_tryToInitializeAtsuiFonts ();
+		return _GraphicsMac_tryToInitializeAtsuiFonts ();
 	}
 #endif
 

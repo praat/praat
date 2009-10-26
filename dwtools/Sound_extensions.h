@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2009 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20080530 Latest modification
+ djmw 20091023 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -59,13 +59,13 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
  *	littleEndian: if littleEndian != 0 then little-endian else big-endian
  *	unSigned	: if unSigned != 0 then unsigned else signed
  *	skipNBytes	: start reading after this number of bytes (skipNBytes >= 0 )
- */  
+ */
 
 Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 /*
 */
 
-int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, 
+int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian,
 	int nBitsCoding, int unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);
@@ -90,15 +90,15 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency);
 Sound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
 	double firstFrequency, long numberOfComponents, double frequencyDistance,
 	int scaleAmplitudes);
-	
+
 Sound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency,
-	double firstFrequency, long numberOfComponents, long mistunedComponent, 
+	double firstFrequency, long numberOfComponents, long mistunedComponent,
 	double mistuningFraction, int scaleAmplitudes);
-	
+
 Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
 	long gamma, double frequency, double bandwidth, double initialPhase, double addition,
 	int scaleAmplitudes);
-	
+
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
 
@@ -111,10 +111,10 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 
 Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyFraction, long m);
-	
+
 Sound Sound_createFromWindowFunction (double effectiveTime, double samplingFrequency, int windowType);
 /* 1; rect 2:hamming 3: bartlet 4: welch 5: hanning 6:gaussian */
-	
+
 Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth);
 
 void Sounds_multiply (Sound me, Sound thee);
@@ -139,11 +139,11 @@ void Sound_scale_dB (Sound me, double level_dB);
 	The reference value is an amplitude of 1.
 	All amplitudes are multiplied by a scale factor which is
 		10^(level_dB/10) / extremum,
-	where extremum is the maximum of the absolute values the signal values. 
+	where extremum is the maximum of the absolute values the signal values.
 */
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal);
-/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2 
+/* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2
 	channel = 0 (all), 1 (left), 2 (right).
 */
 
@@ -152,19 +152,22 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 #define FROM_BOTTOM_TO_TOP 2
 #define FROM_TOP_TO_BOTTOM 3
 
-void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, 
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax,
 	int direction, int garnish);
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
-Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, 
+void Sound_drawParts (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
+	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter);
+
+Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio,
 	double formantFrequenciesRatio, double durationRatio);
-Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, 
+Sound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio,
 	double formantFrequenciesRatio, double durationRatio);
 
-Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
+Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, 
+Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
 
 PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
@@ -178,21 +181,21 @@ int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *fo
 Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
-	double pitchRangeMultiplier, // any number 
+	double pitchRangeMultiplier, // any number
 	double durationMultiplier); // > 0
 
-Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, 
+Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
-	double pitchRangeMultiplier, // any number 
+	double pitchRangeMultiplier, // any number
 	double durationMultiplier); // > 0
 
 /* Outphased */
-Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, 
+Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
 	double new_pitch, double pitchRangeFactor, double durationFactor);
-	
-TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep, 
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, 
+
+TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	wchar_t *silentLabel, wchar_t *soundingLabel);
 
 #endif /* _Sound_extensions_h_ */

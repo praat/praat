@@ -29,6 +29,7 @@
  * pb 2007/12/27 Gui
  * pb 2008/03/20 split off Help menu
  * pb 2009/09/21 Zoom Back
+ * pb 2009/10/26 repaired the synchronizedZoomAndScroll preference
  */
 
 #include "FunctionEditor.h"
@@ -64,7 +65,7 @@
 
 static struct {
 	int shellWidth, shellHeight;
-	bool groupWindow;
+	bool synchronizedZoomAndScroll;
 	double arrowScrollStep;
 	struct { bool drawSelectionTimes, drawSelectionHairs; } picture;
 } preferences;
@@ -72,7 +73,7 @@ static struct {
 void FunctionEditor_prefs (void) {
 	Preferences_addInt (L"FunctionEditor.shellWidth", & preferences.shellWidth, 700);
 	Preferences_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight, 440);
-	Preferences_addBool (L"FunctionEditor.groupWindow", & preferences.groupWindow, true);
+	Preferences_addBool (L"FunctionEditor.synchronizedZoomAndScroll", & preferences.synchronizedZoomAndScroll, true);
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
@@ -112,11 +113,10 @@ static void updateScrollBar (FunctionEditor me) {
 }
 
 static void updateGroup (FunctionEditor me) {
-	int i;
 	if (! my group) return;
-	for (i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
+	for (int i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
 		FunctionEditor thee = group [i];
-		if (preferences.groupWindow) {
+		if (preferences.synchronizedZoomAndScroll) {
 			thy startWindow = my startWindow;
 			thy endWindow = my endWindow;
 		}
@@ -405,14 +405,14 @@ static int menu_cb_preferences (EDITOR_ARGS) {
 		POSITIVE (L"Arrow scroll step (s)", L"0.05")
 		our prefs_addFields (me, cmd);
 	EDITOR_OK
-		SET_INTEGER (L"Synchronize zoom and scroll", 2 - preferences.groupWindow)
+		SET_INTEGER (L"Synchronize zoom and scroll", preferences.synchronizedZoomAndScroll)
 		SET_REAL (L"Arrow scroll step", my arrowScrollStep)
 		our prefs_setValues (me, cmd);
 	EDITOR_DO
-		int oldGroupWindow = preferences.groupWindow;
-		preferences.groupWindow = 2 - GET_INTEGER (L"Synchronize zoom and scroll");
+		bool oldSynchronizedZoomAndScroll = preferences.synchronizedZoomAndScroll;
+		preferences.synchronizedZoomAndScroll = GET_INTEGER (L"Synchronize zoom and scroll");
 		preferences.arrowScrollStep = my arrowScrollStep = GET_REAL (L"Arrow scroll step");
-		if (oldGroupWindow == FALSE && preferences.groupWindow == TRUE) {
+		if (! oldSynchronizedZoomAndScroll && preferences.synchronizedZoomAndScroll) {
 			updateGroup (me);
 		}
 		our prefs_getValues (me, cmd);
@@ -488,7 +488,9 @@ static void do_showAll (FunctionEditor me) {
 	our updateText (me);
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
-	updateGroup (me);
+	if (preferences.synchronizedZoomAndScroll) {
+		updateGroup (me);
+	}
 }
 
 static void gui_button_cb_showAll (I, GuiButtonEvent event) {
@@ -504,7 +506,9 @@ static void do_zoomIn (FunctionEditor me) {
 	our updateText (me);
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
-	updateGroup (me);
+	if (preferences.synchronizedZoomAndScroll) {
+		updateGroup (me);
+	}
 }
 
 static void gui_button_cb_zoomIn (I, GuiButtonEvent event) {
@@ -525,7 +529,9 @@ static void do_zoomOut (FunctionEditor me) {
 	our updateText (me);
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
-	updateGroup (me);
+	if (preferences.synchronizedZoomAndScroll) {
+		updateGroup (me);
+	}
 }
 
 static void gui_button_cb_zoomOut (I, GuiButtonEvent event) {
@@ -544,7 +550,9 @@ static void do_zoomToSelection (FunctionEditor me) {
 		our updateText (me);
 		updateScrollBar (me);
 		/*Graphics_updateWs (my graphics);*/ drawNow (me);
-		updateGroup (me);
+		if (preferences.synchronizedZoomAndScroll) {
+			updateGroup (me);
+		}
 	}
 }
 
@@ -561,7 +569,9 @@ static void do_zoomBack (FunctionEditor me) {
 		our updateText (me);
 		updateScrollBar (me);
 		/*Graphics_updateWs (my graphics);*/ drawNow (me);
-		updateGroup (me);
+		if (preferences.synchronizedZoomAndScroll) {
+			updateGroup (me);
+		}
 	}
 }
 
@@ -889,7 +899,7 @@ static void gui_cb_scroll (GUI_ARGS) {
 		our updateText (me);
 		/*Graphics_clearWs (my graphics);*/
 		drawNow (me);   /* Do not wait for expose event. */
-		if (! my group || ! preferences.groupWindow) return;
+		if (! my group || ! preferences.synchronizedZoomAndScroll) return;
 		for (i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
 			group [i] -> startWindow = my startWindow;
 			group [i] -> endWindow = my endWindow;
@@ -911,7 +921,7 @@ static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 		i = 1; while (group [i]) i ++; group [i] = me;
 		if (++ nGroup == 1) { Graphics_updateWs (my graphics); return; }
 		i = 1; while (group [i] == NULL || group [i] == me) i ++; thee = group [i];
-		if (preferences.groupWindow) {
+		if (preferences.synchronizedZoomAndScroll) {
 			my startWindow = thy startWindow;
 			my endWindow = thy endWindow;
 		}

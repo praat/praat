@@ -1172,7 +1172,7 @@ static void _GuiNativizeWidget (Widget me) {
 				NativeScrollBar_set (me);
 			#elif mac
 				my nat.control.handle = NewControl (my macWindow, & my rect,
-					"\p", false, 0, 0, 0, scrollBarProc, (long) me);
+					"\000", false, 0, 0, 0, scrollBarProc, (long) me);
 				Melder_assert (my nat.control.handle);
 				my isControl = TRUE;
 			#endif
@@ -2509,9 +2509,9 @@ static void mapWidget (Widget me) {
 			 * Set text, sensitivity, submenu. BUGS: should also set toggle state and accelerator text.
 			 */
 			if (my widgetClass == xmSeparatorWidgetClass) {
-				InsertMenuItem (my nat.entry.handle, "\p-", my nat.entry.item - 1);
+				InsertMenuItem (my nat.entry.handle, (unsigned char *) "\001-", my nat.entry.item - 1);
 			} else {
-				InsertMenuItem (my nat.entry.handle, "\p ", my nat.entry.item - 1);
+				InsertMenuItem (my nat.entry.handle, (unsigned char *) "\001 ", my nat.entry.item - 1);
 				SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, Melder_peekWcsToCfstring (my name));
 				if (my insensitive) DisableMenuItem (my nat.entry.handle, my nat.entry.item);
 				if (mac_text [mac_text [0]] == ':')
@@ -2959,7 +2959,7 @@ void XtVaGetValues (Widget me, ...) {
 	#if mac
 		Str255 ptext;
 	#endif
-	int resource;
+	unsigned int resource;
 	va_list arg;
 	va_start (arg, me);
 	while ((resource = va_arg (arg, int)) != 0) switch (resource) {

@@ -30,7 +30,7 @@
 #include "melder.h"
 #include <wctype.h>
 #ifdef macintosh
-	#include <execinfo.h>
+	//#include <execinfo.h>
 #endif
 
 static void backTrace (void) {

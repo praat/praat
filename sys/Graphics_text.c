@@ -453,7 +453,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					(lc -> style & Graphics_ITALIC ? italic : 0) +
 					(lc -> style & Graphics_BOLD ? bold : 0);
 				if (lc -> font.integer == 0 && ! ipaInited && Melder_debug != 15) {   /* SIL Doulos IPA not initialized. */
-					GetFNum ("\pSILDoulos IPA93", & theIpaTimesFont);   /* May be 0. */
+					GetFNum ("\017SILDoulos IPA93", & theIpaTimesFont);   /* May be 0. */
 					ipaInited = TRUE;
 					if (theIpaTimesFont != 0) {
 						ipaAvailable = TRUE;
@@ -1827,13 +1827,13 @@ void _Graphics_text_init (I) {   /* BUG: should be done as late as possible. */
 		iam (GraphicsScreen);
 		#if mac
 			if (! thePalatinoFont) {
-				GetFNum ("\pTimes", & theTimesFont);
-				GetFNum ("\pHelvetica", & theHelveticaFont);
-				GetFNum ("\pCourier", & theCourierFont);
-				GetFNum ("\pSymbol", & theSymbolFont);
-				GetFNum ("\pPalatino", & thePalatinoFont);
+				GetFNum ("\005Times", & theTimesFont);
+				GetFNum ("\011Helvetica", & theHelveticaFont);
+				GetFNum ("\007Courier", & theCourierFont);
+				GetFNum ("\006Symbol", & theSymbolFont);
+				GetFNum ("\008Palatino", & thePalatinoFont);
 				if (! thePalatinoFont) thePalatinoFont = theTimesFont;
-				GetFNum ("\pZapf Dingbats", & theZapfDingbatsFont);
+				GetFNum ("\015Zapf Dingbats", & theZapfDingbatsFont);
 				if (! theZapfDingbatsFont) theZapfDingbatsFont = theTimesFont;
 				if (! theTimesFont || ! theHelveticaFont || ! theCourierFont || ! theSymbolFont) {
 					Melder_fatal ("Praat cannot start up because it cannot find one or more of the fonts Times, Helvetica, Courier and Symbol. "

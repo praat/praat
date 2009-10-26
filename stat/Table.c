@@ -1109,8 +1109,8 @@ Table Tables_append (Collection me) {
 		if (thy numberOfColumns != ncol) error1 (L"Numbers of columns do not match.")
 		for (long icol = 1; icol <= ncol; icol ++) {
 			if (! Melder_wcsequ (thy columnHeaders [icol]. label, firstTable -> columnHeaders [icol]. label)) {
-				error13 (L"The header of column ", Melder_integer (icol), L" of ", Thing_messageName (thee),
-					L" (", thy columnHeaders [icol]. label, L") does not match the header of column ", Melder_integer (icol),
+				error13 (L"The label of column ", Melder_integer (icol), L" of ", Thing_messageName (thee),
+					L" (", thy columnHeaders [icol]. label, L") does not match the label of column ", Melder_integer (icol),
 					L" of ", Thing_messageName (firstTable), L" (", firstTable -> columnHeaders [icol]. label, L").")
 			}
 		}

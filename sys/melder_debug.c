@@ -62,7 +62,7 @@ the behaviour of that program changes in the following way:
 33: trace the Pitch path finder
 34: trace memory allocation and deallocation
 35: debugging on for QuickTime movie file opening
-1264: Mac: Sound_recordFixedTime uses microphone "\pFW Solo (1264)"
+1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)
 
