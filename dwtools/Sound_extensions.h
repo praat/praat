@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20091023 Latest modification
+ djmw 20091126 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -156,7 +156,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 	int direction, int garnish);
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
-void Sound_drawParts (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
+void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter);
 
 Sound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio,

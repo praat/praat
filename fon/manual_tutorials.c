@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20091026)
+MAN_BEGIN (L"What's new?", L"ppgb", 20091130)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.21# (30 November 2009)")
+LIST_ITEM (L"\\bu @@Sound: Draw where...@")
+LIST_ITEM (L"\\bu ##Matrix: Draw contours...# and ##LogisticRegression: Draw boundary...# support reversed axes.")
+LIST_ITEM (L"\\bu Sound window: ##Move frequency cursor to...#.")
 NORMAL (L"##5.1.20# (26 October 2009)")
 LIST_ITEM (L"\\bu Editor windows: repaired the Synchronized Zoom And Scroll preference.")
 NORMAL (L"##5.1.19# (21 October 2009)")

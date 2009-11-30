@@ -75,8 +75,9 @@ static void updateFontMenu (void) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
 		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;
 		#if gtk
-//			if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font])))
-				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [praat_font]), TRUE);
+			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
+				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [i]), theCurrentPraatPicture -> font == i);
+			}
 		#elif motif
 			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
 				XmToggleButtonGadgetSetState (praatButton_fonts [i], theCurrentPraatPicture -> font == i, 0);
@@ -347,8 +348,12 @@ static Widget praatButton_colours [1+Graphics_MAX_COLOUR];
 static void updatePenMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 	#if gtk
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_lines[praat_lineType]), TRUE);
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_colours[praat_colour]), TRUE);
+		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
+			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_lines [i]), theCurrentPraatPicture -> lineType == i);
+		}
+		for (int i = Graphics_BLACK; i <= Graphics_GREY; i ++) {
+			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_colours [i]), theCurrentPraatPicture -> colour == i);
+		}
 	#elif motif
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			XmToggleButtonGadgetSetState (praatButton_lines [i], theCurrentPraatPicture -> lineType == i, 0);

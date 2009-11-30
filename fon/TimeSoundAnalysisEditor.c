@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,7 @@
  * pb 2007/09/21 split Query menu
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
  * pb 2007/11/30 erased Graphics_printf
+ * pb 2009/11/30 Move frequency cursor to...
  */
 
 #include <time.h>
@@ -666,6 +667,23 @@ static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 		Melder_double (my spectrogram.cursor), L" Hz)");
 	MelderInfo_close ();
 	return 1;
+}
+
+static int menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	if (! my spectrogram.show)
+		return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+	EDITOR_FORM (L"Move frequency cursor to", 0)
+		REAL (L"Frequency (Hz)", L"0.0")
+	EDITOR_OK
+		SET_REAL (L"Frequency", my spectrogram.cursor)
+	EDITOR_DO
+		double frequency = GET_REAL (L"Frequency");
+		//if (frequency < my spectrogram.viewFrom + 1e-12) frequency = my spectrogram.viewFrom;
+		//if (frequency > my spectrogram.viewTo - 1e-12) frequency = my spectrogram.viewTo;
+		my spectrogram.cursor = frequency;
+		FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
+	EDITOR_END
 }
 
 static Sound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax) {
@@ -1619,6 +1637,9 @@ static void createMenus_analysis (TimeSoundAnalysisEditor me) {
 	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
 	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", GuiMenu_F7, menu_cb_getSpectralPowerAtCursorCross);
+	EditorMenu_addCommand (menu, L"-- spectrum select --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveFrequencyCursorTo/* dummy */);
+	EditorMenu_addCommand (menu, L"Move frequency cursor to...", 0, menu_cb_moveFrequencyCursorTo);
 	our createMenuItems_spectrum_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);

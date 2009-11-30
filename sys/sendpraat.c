@@ -1,9 +1,9 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* December 24, 2007 */
+/* November 15, 2009 */
 
 /*
- * The sendpraat subroutine (Unix with X Window; Windows; Macintosh) sends a message
+ * The sendpraat subroutine (Unix with X Window but not GTK; Windows; Macintosh) sends a message
  * to a running program that uses the Praat shell.
  * The sendpraat program does the same from a Unix command shell,
  * from a Windows or DOS console, or from a MacOS X terminal window.
@@ -45,6 +45,12 @@
 	#define xwin 0
 	#define win 0
 	#define mac 1
+#elif defined (USE_GTK)
+	#include <sys/types.h>
+	#include <wchar.h>
+	#define xwin 0
+	#define win 0
+	#define mac 0
 #else   /* Assume we are on Unix. */
 	#include <sys/types.h>
 	#include <signal.h>

@@ -30,6 +30,7 @@
  * pb 2008/01/19 double
  * pb 2008/04/30 new Formula API
  * pb 2009/01/18 Interpreter argument to formula
+ * pb 2009/11/23 support for drawing with reversed axes
  */
 
 #include "Matrix.h"
@@ -330,14 +331,17 @@ void Matrix_drawOneContour (I, Graphics g, double xmin, double xmax, double ymin
 	double height)
 {
 	iam (Matrix);
+	bool xreversed = xmin > xmax, yreversed = ymin > ymax;
+	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
+	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
+	if (xreversed) { double temp = xmin; xmin = xmax; xmax = temp; }
+	if (yreversed) { double temp = ymin; ymin = ymax; ymax = temp; }
 	long ixmin, ixmax, iymin, iymax;
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-	if (xmin >= xmax || ymin >= ymax) return;
+	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
-	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
 	Graphics_contour (g, my z,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
@@ -352,8 +356,8 @@ void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, 
 	iam (Matrix);
 	double border [1 + 8];
 	long ixmin, ixmax, iymin, iymax, iborder;
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
+	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
@@ -361,7 +365,7 @@ void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, 
 	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
 	for (iborder = 1; iborder <= 8; iborder ++)
 		border [iborder] = minimum + iborder * (maximum - minimum) / (8 + 1);
-	if (xmin >= xmax || ymin >= ymax) return;
+	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_altitude (g, my z,

@@ -468,6 +468,8 @@ void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar_t *method)
 {
 	long ixmin, ixmax, ix;
+	bool treversed = tmin > tmax;
+	if (treversed) { double temp = tmin; tmin = tmax; tmax = temp; }
 	/*
 	 * Automatic domain.
 	 */
@@ -494,7 +496,7 @@ void Sound_draw (Sound me, Graphics g,
 	 */
 	Graphics_setInner (g);
 	for (long channel = 1; channel <= my ny; channel ++) {
-		Graphics_setWindow (g, tmin, tmax,
+		Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax,
 			minimum - (my ny - channel) * (maximum - minimum),
 			maximum + (channel - 1) * (maximum - minimum));
 		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
@@ -527,7 +529,7 @@ void Sound_draw (Sound me, Graphics g,
 				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 		}
 	}
-	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+	Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax, minimum, maximum);
 	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -541,7 +543,7 @@ void Sound_draw (Sound me, Graphics g,
 			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
 		}
 		if (my ny == 2) {
-			Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
+			Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
 			Graphics_markRight (g, minimum, 1, 1, 0, NULL);
 			Graphics_markRight (g, maximum, 1, 1, 0, NULL);
 			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {

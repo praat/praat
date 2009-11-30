@@ -1588,7 +1588,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 {
 	VocalTractGridPlayOptions pv = thy options;
 	CouplingGridPlayOptions pc = coupling -> options;
-	Sound f1 = NULL, vocalTract = NULL, trachea = NULL, nasal = NULL, him = NULL, me_diff;
+	Sound f1 = NULL, vocalTract = NULL, trachea = NULL, nasal = NULL, him = NULL, me_diff = NULL;
 	FormantGrid oral_formants = thy oral_formants;
 	int alternatingSign = 0; // 0: no alternating signs in parallel adding of filter outputs, 1/-1 start sign
 	int useOpenGlottisInfo = pc -> openglottis && coupling -> glottis && coupling -> glottis -> points -> size > 0;

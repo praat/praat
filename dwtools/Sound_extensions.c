@@ -41,7 +41,8 @@
  djmw 20080530 +Sound_localAverage
  pb 20090926 Correction in Sound_and_Pitch_changeGender_old
  djmw 20091023 Added Sound_drawIntervals
- djmw 20091028 Sound_drawIntervals -> Sound_drawParts + polyline draw
+ djmw 20091028 Sound_drawIntervals -> Sound_drawParts + Graphics_function
+ djmw 20091126 Sound_drawParts -> Sound_drawWheres
 */
 
 #include "Formula.h"
@@ -1565,21 +1566,21 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 
 	if (t > my xmax)
 	{
+		t = my xmax;
 		if (inout <= 0) // fade in
 		{
 			Melder_warning1 (L"The start time of the fade-in is after the end time of the sound. The fade-in will not happen.");
 			return;
 		}
-		t = my xmax;
 	}
 	else if (t < my xmin)
 	{
+		t = my xmin;
 		if (inout > 0)// fade  out
 		{
 			Melder_warning1 (L"The start time of the fade-out is before the start time of the sound. The fade-out will not happen.");
 			return;
 		}
-		t = my xmin;
 	}
 	if (fadeTime < 0)
 	{
@@ -1733,10 +1734,15 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 	return thee;
 }
 
-// if formula contains refs to col and row surprising thing may happen;
-int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
-	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y);
-int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
+/*
+	 Given sample numbers isample and isample+1, where the formula evaluates to the booleans left and right, respectively.
+	 We want to find the point in this interval where the formula switches from true to false.
+	 The x-value of the best point is approximated by a number of bisections.
+	 It is essential that the intermediate interpolated y-values are always between the values at points isample and isample+1.
+	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscilations may occur.
+	 (may be leave out the interpolation and just use Vector_VALUE_INTERPOLATION_LINEAR only?)
+*/
+static int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
 	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y)
 {
 	struct Formula_Result result;
@@ -1759,11 +1765,9 @@ int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool 
 	double xmid, dx = my dx / 2;
 	double xleft = Matrix_columnToX (me, isample);
 	double xright = xleft + my dx; // !!
-	double xmin = xleft - dx / 2;
-	double xmax = xmin + nx * dx;
 	long istep = 1;
 
-	Sound thee = Sound_create (my ny, xmin, xmax, nx, dx, xleft);
+	Sound thee = Sound_create (my ny, my xmin, my xmax, nx, dx, xleft); // my domain !
 	if (thee == NULL) return 0;
 
 	for (channel = 1; channel <= my ny; channel++)
@@ -1825,57 +1829,7 @@ int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool 
 	return 1;
 }
 
-
-// if formula contains refs to col and row surprising thing may happen;
-int Sound_findIntermediatePoint_int (Sound me, long ichannel, long isample, const wchar_t *formula,
-	Interpreter interpreter, int interpolation, long npoints_inbetween, double *x, double *y);
-int Sound_findIntermediatePoint_int (Sound me, long ichannel, long isample, const wchar_t *formula,
-	Interpreter interpreter, int interpolation, long npoints_inbetween, double *x, double *y)
-{
-	struct Formula_Result result;
-
-	*x = Matrix_columnToX (me, isample);
-	*y = my z[ichannel][isample];
-
-	if (isample == my nx) return 1; // cannot occur we can only draw 'to' this point not 'from'
-	if (npoints_inbetween < 1) return 1;
-
-	long ix, nx = npoints_inbetween + 2;
-	double dx = my dx / nx;
-	double x1 = Matrix_columnToX (me, isample);
-	double xmin = x1 - dx / 2;
-	double xmax = xmin + nx * dx;
-
-	Sound thee = Sound_create (my ny, xmin, xmax, nx, dx, x1);
-	if (thee == NULL) return 1;
-
-	for (long channel = 1; channel <= my ny; channel++)
-	{
-		for (ix = 1; ix <= nx; ix++)
-		{
-			double x = x1 + (ix - 1) * dx;
-	   	    thy z[channel][ix] = Vector_getValueAtX (me, x, channel, interpolation);
-		}
-	}
-
-	if (! Formula_compile (interpreter, thee, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE)) return 0;
-	bool current, at_start = true;
-	ix = 0;
-	do
-	{
-		ix++;
-		if (! Formula_run (ichannel, ix, & result)) return 0;
-		current =  result.result.numericResult;
-		if (ix == 1) at_start = current;
-	} while (current == at_start && ix < nx);
-	if (current == at_start) ix = 1; // might be at start and end of sound
-	*x = x1 + (ix - 1) * dx;
-	*y = thy z[ichannel][ix];
-	forget (thee);
-	return 1;
-}
-
-void Sound_drawParts (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
+void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter)
 {
 	long ixmin, ixmax, ix;
@@ -1963,7 +1917,7 @@ void Sound_drawParts (Sound me, Graphics g, double tmin, double tmax, double min
 				current = result.result.numericResult; // true means draw
 				if (previous && ! current) // leaving drawing segment
 				{
-					if (ix != 1)
+					if (ix != ixmin)
 					{
 						if (ix - istart > 1)
 						{

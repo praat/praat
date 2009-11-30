@@ -1,10 +1,10 @@
 # Makefile of the library "sys"
-# Paul Boersma, 7 May 2009
+# Paul Boersma, 15 November 2009
 
 include ../makefile.defs
 CFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../FLAC -I ../mp3
 
-OBJECTS = enum.o abcio.o lispio.o complex.o \
+OBJECTS = abcio.o lispio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
    melder_token.o melder_files.o melder_audio.o melder_audiofiles.o \
    melder_debug.o melder_sysenv.o melder_info.o melder_quantity.o \

@@ -2013,7 +2013,8 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 0, L"Sound help", 0, 0, DO_Sound_help);
 	praat_addAction1 (classSound, 1, L"Edit", 0, 0, DO_Sound_edit);
 	praat_addAction1 (classSound, 0, L"Play", 0, 0, DO_Sound_play);
-	praat_addAction1 (classSound, 0, L"Draw...", 0, 0, DO_Sound_draw);
+	praat_addAction1 (classSound, 1, L"Draw -          ", 0, 0, 0);
+		praat_addAction1 (classSound, 0, L"Draw...", 0, 1, DO_Sound_draw);
 	praat_addAction1 (classSound, 1, L"Query -          ", 0, 0, 0);
 		praat_TimeFunction_query_init (classSound);
 		praat_addAction1 (classSound, 1, L"Get number of channels", 0, 1, DO_Sound_getNumberOfChannels);

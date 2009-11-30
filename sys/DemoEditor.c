@@ -221,7 +221,7 @@ bool Demo_waitForInput (Interpreter interpreter) {
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
-	#ifndef CONSOLE_APPLICATION
+	#if ! defined (CONSOLE_APPLICATION) && ! defined (USE_GTK)
 		int wasBackgrounding = Melder_backgrounding;
 		structMelderDir dir = { { 0 } };
 		Melder_getDefaultDir (& dir);

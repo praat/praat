@@ -309,17 +309,25 @@ end:
 	return thee;
 }
 
-void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xmin, double xmax,
-	long coly, double ymin, double ymax, bool garnish)
+static inline double NUMmin2 (double a, double b) {
+	return a < b ? a : b;
+}
+
+static inline double NUMmax2 (double a, double b) {
+	return a > b ? a : b;
+}
+
+void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xleft, double xright,
+	long coly, double ybottom, double ytop, bool garnish)
 {
 	RegressionParameter parmx = my parameters -> item [colx], parmy = my parameters -> item [coly];
-	if (xmin == xmax) {
-		xmin = parmx -> minimum;
-		xmax = parmx -> maximum;
+	if (xleft == xright) {
+		xleft = parmx -> minimum;
+		xright = parmx -> maximum;
 	}
-	if (ymin == ymax) {
-		ymin = parmy -> minimum;
-		ymax = parmy -> maximum;
+	if (ybottom == ytop) {
+		ybottom = parmy -> minimum;
+		ytop = parmy -> maximum;
 	}
 	double intercept = my intercept;
 	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
@@ -329,29 +337,28 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 		}
 	}
 	Graphics_setInner (graphics);
-	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
-	double bottom = (intercept + parmy -> value * ymin) / - parmx -> value;
-	double top = (intercept + parmy -> value * ymax) / - parmx -> value;
-	double left = (intercept + parmx -> value * xmin) / - parmy -> value;
-	double right = (intercept + parmx -> value * xmax) / - parmy -> value;
-	if ((bottom <= xmin || bottom >= xmax) && (top <= xmin || top >= xmax) &&
-	    (left <= ymin || left >= ymax) && (right <= ymin || right >= ymax))
-	{
-		(void) 0;   // Draw nothing.
-	} else if (bottom >= xmin && bottom <= xmax) {
-		if (top >= xmin && top <= xmax)
-			Graphics_line (graphics, bottom, ymin, top, ymax);
-		else if (left > right)
-			Graphics_line (graphics, bottom, ymin, xmin, left);
-		else
-			Graphics_line (graphics, bottom, ymin, xmax, right);
-	} else if (left >= ymin && left <= ymax) {
-		if (right >= ymin && right <= ymax)
-			Graphics_line (graphics, xmin, left, xmax, right);
-		else
-			Graphics_line (graphics, xmin, left, top, ymax);
-	} else {
-		Graphics_line (graphics, top, ymax, xmax, right);
+	Graphics_setWindow (graphics, xleft, xright, ybottom, ytop);
+	double xbottom = (intercept + parmy -> value * ybottom) / - parmx -> value;
+	double xtop = (intercept + parmy -> value * ytop) / - parmx -> value;
+	double yleft = (intercept + parmx -> value * xleft) / - parmy -> value;
+	double yright = (intercept + parmx -> value * xright) / - parmy -> value;
+	double xmin = NUMmin2 (xleft, xright), xmax = NUMmax2 (xleft, xright);
+	double ymin = NUMmin2 (yleft, yright), ymax = NUMmax2 (yleft, yright);
+	if (xbottom >= xmin && xbottom <= xmax) {   // line goes through bottom?
+		if (xtop >= xmin && xtop <= xmax)   // line goes through top?
+			Graphics_line (graphics, xbottom, ybottom, xtop, ytop);   // draw from bottom to top
+		else if (yleft >= ymin && yleft <= ymax)   // line goes through left?
+			Graphics_line (graphics, xbottom, ybottom, xleft, yleft);   // draw from bottom to left
+		else if (yright >= ymin && yright <= ymax)   // line goes through right?
+			Graphics_line (graphics, xbottom, ybottom, xright, yright);   // draw from bottom to right
+	} else if (yleft >= ymin && yleft <= ymax) {   // line goes through left?
+		if (yright >= ymin && yright <= ymax)   // line goes through right?
+			Graphics_line (graphics, xleft, yleft, xright, yright);   // draw from left to right
+		else if (xtop >= xmin && xtop <= xmax)   // line goes through top?
+			Graphics_line (graphics, xleft, yleft, xtop, ytop);   // draw from left to top
+	} else if (xtop >= xmin && xtop <= xmax) {   // line goes through top?
+		if (yright >= ymin && yright <= ymax)   // line goes through right?
+			Graphics_line (graphics, xtop, ytop, xright, yright);   // draw from top to right
 	}
 	Graphics_unsetInner (graphics);
 	if (garnish) {

@@ -3249,7 +3249,7 @@ DO
 END
 
 
-FORM (Sound_drawParts, L"Sound: Draw parts", L"Sound: Draw parts...")
+FORM (Sound_drawWhere, L"Sound: Draw where", L"Sound: Draw where...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range", L"0.0 (= all)")
 	REAL (L"left Vertical range", L"0.0")
@@ -3261,16 +3261,12 @@ FORM (Sound_drawParts, L"Sound: Draw parts", L"Sound: Draw parts...")
 		OPTION (L"Bars")
 		OPTION (L"Poles")
 		OPTION (L"Speckles")
-	LABEL (L"", L"Precision at interval borders")
-	INTEGER (L"Number of bisections (0-16)", L"10")
-	LABEL (L"", L"Formula:")
+	LABEL (L"", L"Draw only those parts where the following condition holds:")
 	TEXTFIELD (L"Formula", L"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
-	long numberOfBisections = GET_INTEGER (L"Number of bisections");
-	if (numberOfBisections < 0) numberOfBisections = 0;
-	if (numberOfBisections > 16) numberOfBisections = 16;
-	EVERY_DRAW (Sound_drawParts (OBJECT, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"),
+	long numberOfBisections = 10;
+	EVERY_DRAW (Sound_drawWhere (OBJECT, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"),
 	GET_STRING (L"Drawing method"), numberOfBisections, GET_STRING (L"Formula"), interpreter))
 END
 
@@ -4936,7 +4932,7 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
 
-	praat_addAction1 (classSound, 0, L"Draw parts...", L"Draw...", praat_HIDDEN, DO_Sound_drawParts);
+	praat_addAction1 (classSound, 0, L"Draw where...", L"Draw...", 1, DO_Sound_drawWhere);
 
 	praat_addAction1 (classSound, 0, L"To Pitch (shs)...", L"To Pitch (cc)...", 1, DO_Sound_to_Pitch_shs);
 	praat_addAction1 (classSound, 0, L"Fade in...", L"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeIn);

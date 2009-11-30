@@ -1,6 +1,6 @@
 /* Vector.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/01/27 multiple channels
  * pb 2007/01/28 new getVector and getFunction1
  * pb 2008/01/19 double
+ * pb 2009/11/23 support for drawing with reversed axes
  */
 
 #include "Vector.h"
@@ -408,6 +409,9 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	double defaultDy, const wchar_t *method)
 {
 	iam (Vector);
+	bool xreversed = *pxmin > *pxmax, yreversed = *pymin > *pymax;
+	if (xreversed) { double temp = *pxmin; *pxmin = *pxmax; *pxmax = temp; }
+	if (yreversed) { double temp = *pymin; *pymin = *pymax; *pymax = temp; }
 	long ixmin, ixmax, ix;
 	/*
 	 * Automatic domain.
@@ -434,7 +438,7 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	 * Set coordinates for drawing.
 	 */
 	Graphics_setInner (g);
-	Graphics_setWindow (g, *pxmin, *pxmax, *pymin, *pymax);
+	Graphics_setWindow (g, xreversed ? *pxmax : *pxmin, xreversed ? *pxmin : *pxmax, yreversed ? *pymax : *pymin, yreversed ? *pymin : *pymax);
 	if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
 			double x = Sampled_indexToX (me, ix);

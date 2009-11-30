@@ -1,17 +1,17 @@
 /* manual_KlattGrid.c
- * 
+ *
  * Copyright (C) 2009 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -23,7 +23,7 @@ void manual_KlattGrid (ManPages me);
 void manual_KlattGrid (ManPages me)
 {
 
-MAN_BEGIN (L"KlattGrid", L"djmw", 20090421)
+MAN_BEGIN (L"KlattGrid", L"djmw", 20091119)
 INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source and the filter, and the interaction between source and filter. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
 NORMAL (L"The following drawing represents a cascade synthesizer with six oral formants, one nasal formant, "
 	"one nasal antiformant, one tracheal formant, one tracheal antiformant and six frication formants. ")
@@ -105,7 +105,7 @@ NORMAL (L"The following script will produce raw frication noise. Because we do n
 CODE (L"Create KlattGrid... kg 0 1 6 1 1 6  1 1 1")
 CODE (L"Add frication amplitude point... 0.5 80")
 CODE (L"Add frication bypass point... 0.5 0")
-CODE (L"To Sound (special)... 0 0 44100 y n y y y y \"Power in tiers\" y y y")
+CODE (L"To Sound (special)... 0 0 44100 y n y y y y \"Powers in tiers\" y y y")
 CODE (L"... Cascade 1 5 1 1 1 1 1 1 1 1 1 1 1 1 1 0 y")
 ENTRY (L"Changes")
 NORMAL (L"In praat versions before 5.1.05 the values for the %%oral / nasal / tracheal formant amplitudes% and"
