@@ -20,10 +20,12 @@
  */
 
 /*
- * pb 2009/03/21
+ * pb 2009/12/14
  */
 
-#include "Thing.h"
+#ifndef _Graphics_h_
+	#include "Graphics.h"
+#endif
 #include "Gui.h"
 #include "Ui_decl.h"
 #ifndef _Interpreter_h_
@@ -147,14 +149,16 @@ void UiForm_do (I, bool modified);
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (I, const wchar_t *fieldName);	/* Real, Positive. */
-long UiForm_getInteger (I, const wchar_t *fieldName);	/* Integer, Natural, Boolean, Radio, List. */
-wchar_t * UiForm_getString (I, const wchar_t *fieldName);	/* Word, Sentence, Text, Radio, List. */
+double UiForm_getReal (I, const wchar_t *fieldName);	/* Real, Positive */
+long UiForm_getInteger (I, const wchar_t *fieldName);	/* Integer, Natural, Boolean, Radio, List */
+wchar_t * UiForm_getString (I, const wchar_t *fieldName);	/* Word, Sentence, Text, Radio, List */
+Graphics_Colour UiForm_getColour (I, const wchar_t *fieldName);   /* Colour */
 MelderFile UiForm_getFile (I, const wchar_t *fieldName); /* FileIn, FileOut */
 
 double UiForm_getReal_check (I, const wchar_t *fieldName);
 long UiForm_getInteger_check (I, const wchar_t *fieldName);
 wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
+Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 
 int UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
 

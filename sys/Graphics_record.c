@@ -187,7 +187,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_TEXT_ROTATION: Graphics_setTextRotation (thee, get); break;
 			case SET_LINE_TYPE: Graphics_setLineType (thee, (int) get); break;
 			case SET_LINE_WIDTH: Graphics_setLineWidth (thee, get); break;
-			case SET_COLOUR: Graphics_setColour (thee, (int) get); break;
+			case SET_STANDARD_COLOUR: Graphics_setStandardColour (thee, (int) get); break;
 			case SET_GREY: Graphics_setGrey (thee, get); break;
 			case MARK_GROUP: Graphics_markGroup (thee); break;
 			case ELLIPSE: {

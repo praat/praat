@@ -279,20 +279,25 @@ void UiInfile_do (I) {
 			NavDialogRun (dialogRef);
 			err = NavDialogGetReply (dialogRef, & reply);
 			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-					Melder_machToFile (& machFile, & my file);
-				structMelderFile file;
-				MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-				if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
-					Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-					Melder_flushError (NULL);
+				SInt32 numberOfSelectedFiles;
+				AECountItems (& reply. selection, & numberOfSelectedFiles);
+				//Melder_casual ("%d selected files.", numberOfSelectedFiles);
+				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
+					AEKeyword keyWord;
+					DescType typeCode;
+					Size actualSize = 0;
+					FSRef machFile;
+					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
+						Melder_machToFile (& machFile, & my file);
+					structMelderFile file;
+					MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+					if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
+						Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+						Melder_flushError (NULL);
+					}
+					UiHistory_write (L" ");
+					UiHistory_write (Melder_fileToPath (& file));
 				}
-				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPath (& file));
 				NavDisposeReply (& reply);
 			}
 			NavDialogDispose (dialogRef);

@@ -23,26 +23,21 @@
  * sdk 2008/03/24 cairo
  * pb 2009/05/09 pink
  * pb 2009/07/09 RGB colours
+ * pb 2009/12/10 colours identical on all platforms
+ * pb 2009/12/14 Graphics_standardColourToRGBColour
  */
 
 #include "GraphicsP.h"
 
-#if mac
-	typedef struct RGBColor RGBColour;
-#else
-	typedef struct { unsigned short red, green, blue; } RGBColour;
-#endif
-
-#if mac
-static RGBColour theColours [] = {
+static struct { unsigned short red, green, blue; } theColours [] = {
 		{ 0x0000, 0x0000, 0x0000 },   /* black */
 		{ 0xFFFF, 0xFFFF, 0xFFFF },   /* white */
-		{ 0xFF00, 0x0000, 0x0000 },   /* red */
-		{ 0x0000, 0x8000, 0x0000 },   /* green */
-		{ 0x0000, 0x0000, 0xFFFF },   /* blue */
-		{ 0x0000, 0xFFFF, 0xFFFF },   /* cyan */
-		{ 0xFFFF, 0x0000, 0xFFFF },   /* magenta */
-		{ 0xFFFF, 0xFFFF, 0x0000 },   /* yellow */
+		{ 0xDD6B, 0x08C2, 0x06A2 },   /* red */
+		{ 0x0000, 0x8000, 0x11B0 },   /* green */
+		{ 0x0000, 0x0000, 0xD400 },   /* blue */
+		{ 0x0241, 0xAB54, 0xEAFF },   /* cyan */
+		{ 0xF2D7, 0x0856, 0x84EC },   /* magenta */
+		{ 0xFC00, 0xF37D, 0x052F },   /* yellow */
 		{ 0x8000, 0x0000, 0x0000 },   /* maroon */
 		{ 0x0000, 0xFFFF, 0x0000 },   /* lime */
 		{ 0x0000, 0x0000, 0x8000 },   /* navy */
@@ -52,26 +47,34 @@ static RGBColour theColours [] = {
 		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
 		{ 0xC000, 0xC000, 0xC000 },   /* silver */
 		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
-#else
-static RGBColour theColours [] = {
-		{ 0x0000, 0x0000, 0x0000 },   /* black */
-		{ 0xFFFF, 0xFFFF, 0xFFFF },   /* white */
-		{ 0xDD6B, 0x08C2, 0x06A2 },   /* red */
-		{ 0x0000, 0x8000, 0x11B0 },   /* green */
-		{ 0x0000, 0x0000, 0xD400 },   /* blue */
-		{ 0x0241, 0xAB54, 0xEAFF },   /* cyan */
-		{ 0xF2D7, 0x0856, 0x84EC },   /* magenta */
-		{ 0xFC00, 0xF37D, 0x052F },   /* yellow */
-		{ 0x7000, 0x0000, 0x0000 },   /* maroon */
-		{ 0x0000, 0xFFFF, 0x0000 },   /* lime */
-		{ 0x0000, 0x0000, 0x7000 },   /* navy */
-		{ 0x0000, 0x6000, 0x7000 },   /* teal */
-		{ 0x8000, 0x0000, 0x4000 },   /* purple */
-		{ 0x8000, 0x8000, 0x0000 },   /* olive */
-		{ 0xFFFF, 0xC000, 0xC000 },   /* pink */
-		{ 0xC000, 0xC000, 0xC000 },   /* silver */
-		{ 0x8000, 0x8000, 0x8000 } };   /* grey */
-#endif
+static wchar_t *theColourNames [] = { L"black", L"white", L"red", L"green", L"blue", L"cyan", L"magenta", L"yellow",
+	L"maroon", L"lime", L"navy", L"teal", L"purple", L"olive", L"silver", L"grey" };
+
+void Graphics_standardColourToRGBColour (int standardColour, double *red, double *green, double *blue) {
+	if (standardColour <= 0 || standardColour > Graphics_MAX_COLOUR) {
+		*red = *green = *blue = 0.0;
+		return;
+	}
+	*red = theColours [standardColour]. red / 65535.0;
+	*green = theColours [standardColour]. green / 65535.0;
+	*blue = theColours [standardColour]. blue / 65535.0;
+}
+
+Graphics_Colour Graphics_standardColourToRGBColour_struct (int standardColour)  {
+	Graphics_Colour colour;
+	if (standardColour <= 0 || standardColour > Graphics_MAX_COLOUR) {
+		colour. red = colour. green = colour. blue = 0.0;
+		return colour;
+	}
+	colour. red = theColours [standardColour]. red / 65535.0;
+	colour. green = theColours [standardColour]. green / 65535.0;
+	colour. blue = theColours [standardColour]. blue / 65535.0;
+	return colour;
+}
+
+wchar_t * Graphics_getStandardColourName (int standardColour) {
+	return standardColour < 0 || standardColour > Graphics_MAX_COLOUR ? L"(unknown)" : theColourNames [standardColour];
+}
 
 #if xwin
 	unsigned long xwinColours [1+Graphics_MAX_COLOUR], xwinGreys [101];
@@ -127,23 +130,16 @@ void _Graphics_setRGBColour (I, double red, double green, double blue) {
 	}
 }
 
-void Graphics_setColour (I, int colour) {
-	iam (Graphics);
-	if (colour >= 0 && colour <= Graphics_MAX_COLOUR) {
-		my red = theColours [colour]. red / 65536.0;
-		my green = theColours [colour]. green / 65536.0;
-		my blue = theColours [colour]. blue / 65536.0;
-	} else {
-		my red = my green = my blue = 0.0;
-	}
-	_Graphics_setRGBColour (me, my red, my green, my blue);
-	if (my recording) { op (SET_COLOUR, 1); put (colour); }
-}
-
 void Graphics_setRGBColour (I, double red, double green, double blue) {
 	iam (Graphics);
 	_Graphics_setRGBColour (me, red, green, blue);
 	if (my recording) { op (SET_RGB_COLOUR, 3); put (red); put (green); put (blue); }
+}
+
+void Graphics_setRGBColour_struct (I, Graphics_Colour colour) {
+	iam (Graphics);
+	_Graphics_setRGBColour (me, colour. red, colour. green, colour. blue);
+	if (my recording) { op (SET_RGB_COLOUR, 3); put (colour. red); put (colour. green); put (colour. blue); }
 }
 
 void _Graphics_setGrey (I, double fgrey) {
@@ -189,6 +185,19 @@ void Graphics_setGrey (I, double grey) {
 	my red = my green = my blue = grey;
 	_Graphics_setGrey (me, grey);
 	if (my recording) { op (SET_GREY, 1); put (grey); }
+}
+
+void Graphics_setStandardColour (I, int standardColour) {
+	iam (Graphics);
+	if (standardColour > 0 && standardColour <= Graphics_MAX_COLOUR) {
+		my red = theColours [standardColour]. red / 65535.0;
+		my green = theColours [standardColour]. green / 65535.0;
+		my blue = theColours [standardColour]. blue / 65535.0;
+	} else {
+		my red = my green = my blue = 0.0;
+	}
+	_Graphics_setRGBColour (me, my red, my green, my blue);
+	if (my recording) { op (SET_STANDARD_COLOUR, 1); put (standardColour); }
 }
 
 static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
@@ -392,6 +401,15 @@ void Graphics_inqRGBColour (I, double *red, double *green, double *blue) {
 	*red = my red;
 	*green = my green;
 	*blue = my blue;
+}
+
+Graphics_Colour Graphics_inqRGBColour_struct (I) {
+	iam (Graphics);
+	Graphics_Colour colour;
+	colour. red = my red;
+	colour. green = my green;
+	colour. blue = my blue;
+	return colour;
 }
 
 #if xwin

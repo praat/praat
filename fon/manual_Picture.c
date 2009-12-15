@@ -638,16 +638,32 @@ NORMAL (L"If you draw a Sound to an amplitude range between -1 and 1, "
 	"will give you a horizontal mark \"0\" and a horizontal dotted line at a y position of 0.")
 MAN_END
 
-MAN_BEGIN (L"Pen menu", L"ppgb", 20061122)
+MAN_BEGIN (L"Pen menu", L"ppgb", 20091215)
 INTRO (L"One of the menus of the @@Picture window@.")
 ENTRY (L"Purpose")
-NORMAL (L"To choose the line type and colour "
-	"to be used in subsequent drawing of lines and painted areas.")
+NORMAL (L"To choose the line type and @colour "
+	"to be used in subsequent drawing of lines and text.")
 ENTRY (L"Behaviour")
 NORMAL (L"The line type used by @@Draw inner box@ (solid), "
 	"and the line type of the dotted lines in the ##Mark...# commands "
 	"will not be affected.")
 NORMAL (L"The commands in the @Margins menu will always draw in black.")
+MAN_END
+
+MAN_BEGIN (L"Colour", L"ppgb", 20091215)
+INTRO (L"In windows that pop up when you choose ##Colour...# from the @@Pen menu@ "
+	"or any of the #Paint commands in the ##World menu#, you can see the following field:")
+CODE (L"Colour (0-1, name, or {r,g,b})")
+NORMAL (L"This means that you can specify here a colour in any of three ways:")
+TAG (L"%%a grey value between 0 and 1")
+DEFINITION (L"a value of 0 means black, 1 means white, 0.5 means grey, 0.75 means silver, and so on.")
+TAG (L"%%a colour name")
+DEFINITION (L"you can choose from Black, White, Red, Green, Blue, Yellow, Cyan, Magenta, Maroon, Lime, Navy, Teal, "
+	"Purple, Olive, Pink, Silver, Grey, i.e. from any of the colours in the Pen menu. "
+	"You can write these either with a capital (Red) or in lowercase (red).")
+TAG (L"%%an RGB colour")
+DEFINITION (L"you can specify a red-green-blue value as three values between 0 and 1, enclosed within braces "
+	"and separated by commas, e.g. {0.8,0.1,0.2} is something reddish.")
 MAN_END
 
 MAN_BEGIN (L"Picture window", L"ppgb", 20090913)
@@ -880,13 +896,13 @@ NORMAL (L"The text will be centred along the side. "
 	"and written up and down, respectively.")
 MAN_END
 
-MAN_BEGIN (L"Undo", L"ppgb", 20041108)
+MAN_BEGIN (L"Undo", L"ppgb", 20091215)
 INTRO (L"One of the commands in the #Edit menu of the @@Picture window@.")
 NORMAL (L"It erases your most recently created drawing, which could have come from a command in the Objects window "
 	"or from one of the drawing commands in the World and @Margins menus.")
 ENTRY (L"Behaviour")
 NORMAL (L"This command will erase some drawings, but it will not change your settings in the #Pen and #Font menus "
-	"(line type, line width, font, font size, and colour).")
+	"(line type, line width, font, font size, and @colour).")
 NORMAL (L"The world window will be what it was after the latest-but-one drawing, "
 	"so that you can use the @Margins menu as if the latest drawing had never happened.")
 MAN_END

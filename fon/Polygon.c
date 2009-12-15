@@ -1,6 +1,6 @@
 /* Polygon.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/06/21 tex
  * pb 2007/10/01 canWriteAsEncoding
  * pb 2008/01/19 double
+ * pb 2009/12/14 RGB colours
  */
 
 #include "Polygon.h"
@@ -329,17 +330,12 @@ void Polygon_draw (I, Graphics g, double xmin, double xmax, double ymin, double 
 	Graphics_unsetInner (g);
 }
 
-void Polygon_paint (I, Graphics g, double realColour, double xmin, double xmax, double ymin, double ymax) {
+void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax) {
 	iam (Polygon);
-	int integerColour = floor (realColour);
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	if (integerColour)
-		Graphics_setColour (g, integerColour);
-	else
-		Graphics_setGrey (g, realColour);
+	Graphics_setRGBColour_struct (g, colour);
 	Graphics_fillArea (g, my numberOfPoints, & my x [1], & my y [1]);
-	if (! integerColour) Graphics_setGrey (g, 0);
 	Graphics_unsetInner (g);
 }
 
@@ -347,10 +343,9 @@ void Polygon_drawCircles (I, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm)
 {
 	iam (Polygon);
-	long i;
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (i = 1; i <= my numberOfPoints; i ++)
+	for (long i = 1; i <= my numberOfPoints; i ++)
 		Graphics_circle_mm (g, my x [i], my y [i], diameter_mm);
 	Graphics_unsetInner (g);
 }
@@ -359,10 +354,9 @@ void Polygon_paintCircles (I, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter)
 {
 	iam (Polygon);
-	long i;
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (i = 1; i <= my numberOfPoints; i ++)
+	for (long i = 1; i <= my numberOfPoints; i ++)
 		Graphics_fillCircle_mm (g, my x [i], my y [i], diameter);
 	Graphics_unsetInner (g);
 }
@@ -372,11 +366,11 @@ void Polygons_drawConnection (I, thou, Graphics g,
 {
 	iam (Polygon); thouart (Polygon);
 	double w2 = 0.5 * (1 - relativeLength), w1 = 1 - w2;
-	long n = my numberOfPoints, i;
+	long n = my numberOfPoints;
 	if (thy numberOfPoints < n) n = thy numberOfPoints;
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (i = 1; i <= n; i ++) {
+	for (long i = 1; i <= n; i ++) {
 		double x1 = my x [i], x2 = thy x [i], y1 = my y [i], y2 = thy y [i];
 		double dummy = w1 * x1 + w2 * x2;
 		x2 = w1 * x2 + w2 * x1;

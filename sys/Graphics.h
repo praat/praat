@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/07/22
+ * pb 2009/12/14
  */
 
 #ifndef _Thing_h_
@@ -167,9 +167,9 @@ void Graphics_setLineWidth (I, double lineWidth);
 void Graphics_setArrowSize (I, double arrorSize);
 
 typedef struct { double red, green, blue; } Graphics_Colour;
-#define Graphics_Color Graphics_Colour
-void Graphics_setColour (I, int colour);
-#define Graphics_setColor  Graphics_setColour
+void Graphics_setRGBColour (I, double red, double green, double blue);
+void Graphics_setRGBColour_struct (I, Graphics_Colour colour);
+void Graphics_setGrey (I, double grey);
 #define Graphics_BLACK  0
 #define Graphics_WHITE  1
 #define Graphics_RED  2
@@ -188,10 +188,11 @@ void Graphics_setColour (I, int colour);
 #define Graphics_SILVER  15
 #define Graphics_GREY  16
 #define Graphics_MAX_COLOUR  16
-void Graphics_setGrey (I, double grey);
-#define Graphics_setGray  Graphics_setGrey
-void Graphics_setRGBColour (I, double red, double green, double blue);
-#define Graphics_setRGBColor Graphics_setRGBColour
+void Graphics_standardColourToRGBColour (int standardColour, double *red, double *green, double *blue);
+Graphics_Colour Graphics_standardColourToRGBColour_struct (int standardColour);
+wchar_t * Graphics_getStandardColourName (int standardColour);
+void Graphics_setStandardColour (I, int standardColour);
+#define Graphics_setColour Graphics_setStandardColour
 
 void Graphics_inqViewport (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
@@ -202,7 +203,7 @@ int Graphics_inqLineType (I);
 double Graphics_inqLineWidth (I);
 double Graphics_inqArrowSize (I);
 void Graphics_inqRGBColour (I, double *red, double *green, double *blue);
-#define Graphics_inqRGBColor Graphics_inqRGBColour
+Graphics_Colour Graphics_inqRGBColour_struct (I);
 
 void Graphics_contour (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);

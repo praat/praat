@@ -43,7 +43,8 @@
  * pb 2009/03/21 removed enums
  * pb 2009/05/09 pink
  * pb 2009/08/21 better message for "You interrupted"
- * pb 2010/10/15 corrected colon removal
+ * pb 2009/10/15 corrected colon removal
+ * pb 2009/12/14 colours
  */
 
 #include <wctype.h>
@@ -81,7 +82,7 @@
 #define UiField_members Thing_members \
 	int type; \
 	const wchar_t *formLabel; \
-	double realValue, realDefaultValue; \
+	double realValue, realDefaultValue, redValue, greenValue, blueValue; \
 	long integerValue, integerDefaultValue; \
 	wchar_t *stringValue; const wchar_t *stringDefaultValue; \
 	char *stringValueA; \
@@ -232,29 +233,38 @@ static void UiField_setDefault (UiField me) {
 
 static int colourToValue (UiField me, wchar_t *string) {
 	wchar_t *p = string;
-	int first;
 	while (*p == ' ' || *p == '\t') p ++;
-	first = *p;
-	*p = tolower (*p);
-	if (wcsequ (p, L"black")) my realValue = Graphics_BLACK;
-	else if (wcsequ (p, L"white")) my realValue = Graphics_WHITE;
-	else if (wcsequ (p, L"red")) my realValue = Graphics_RED;
-	else if (wcsequ (p, L"green")) my realValue = Graphics_GREEN;
-	else if (wcsequ (p, L"blue")) my realValue = Graphics_BLUE;
-	else if (wcsequ (p, L"yellow")) my realValue = Graphics_YELLOW;
-	else if (wcsequ (p, L"cyan")) my realValue = Graphics_CYAN;
-	else if (wcsequ (p, L"magenta")) my realValue = Graphics_MAGENTA;
-	else if (wcsequ (p, L"maroon")) my realValue = Graphics_MAROON;
-	else if (wcsequ (p, L"lime")) my realValue = Graphics_LIME;
-	else if (wcsequ (p, L"navy")) my realValue = Graphics_NAVY;
-	else if (wcsequ (p, L"teal")) my realValue = Graphics_TEAL;
-	else if (wcsequ (p, L"purple")) my realValue = Graphics_PURPLE;
-	else if (wcsequ (p, L"olive")) my realValue = Graphics_OLIVE;
-	else if (wcsequ (p, L"pink")) my realValue = Graphics_PINK;
-	else if (wcsequ (p, L"silver")) my realValue = Graphics_SILVER;
-	else if (wcsequ (p, L"grey")) my realValue = Graphics_GREY;
-	else { *p = first; return 0; }
-	*p = first;
+	int first = *p;
+	if (first == '{') {
+		my redValue = Melder_atof (++ p);
+		p = wcschr (p, ',');
+		if (p == NULL) return 0;
+		my greenValue = Melder_atof (++ p);
+		p = wcschr (p, ',');
+		if (p == NULL) return 0;
+		my blueValue = Melder_atof (++ p);
+	} else {
+		*p = tolower (*p);
+		if (wcsequ (p, L"black")) Graphics_standardColourToRGBColour (Graphics_BLACK, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"white")) Graphics_standardColourToRGBColour (Graphics_WHITE, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"red")) Graphics_standardColourToRGBColour (Graphics_RED, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"green")) Graphics_standardColourToRGBColour (Graphics_GREEN, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"blue")) Graphics_standardColourToRGBColour (Graphics_BLUE, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"yellow")) Graphics_standardColourToRGBColour (Graphics_YELLOW, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"cyan")) Graphics_standardColourToRGBColour (Graphics_CYAN, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"magenta")) Graphics_standardColourToRGBColour (Graphics_MAGENTA, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"maroon")) Graphics_standardColourToRGBColour (Graphics_MAROON, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"lime")) Graphics_standardColourToRGBColour (Graphics_LIME, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"navy")) Graphics_standardColourToRGBColour (Graphics_NAVY, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"teal")) Graphics_standardColourToRGBColour (Graphics_TEAL, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"purple")) Graphics_standardColourToRGBColour (Graphics_PURPLE, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"olive")) Graphics_standardColourToRGBColour (Graphics_OLIVE, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"pink")) Graphics_standardColourToRGBColour (Graphics_PINK, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"silver")) Graphics_standardColourToRGBColour (Graphics_SILVER, & my redValue, & my greenValue, & my blueValue);
+		else if (wcsequ (p, L"grey")) Graphics_standardColourToRGBColour (Graphics_GREY, & my redValue, & my greenValue, & my blueValue);
+		else { *p = first; return 0; }
+		*p = first;
+	}
 	return 1;
 }
 
@@ -312,9 +322,8 @@ static int UiField_widgetToValue (UiField me) {
 		} break; case UI_BOOLEAN: {
 			my integerValue = GuiCheckButton_getValue (my toggle);
 		} break; case UI_RADIO: {
-			int i;
 			my integerValue = 0;
-			for (i = 1; i <= my options -> size; i ++) {
+			for (int i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
 				if (GuiRadioButton_getValue (b -> toggle))
 					my integerValue = i;
@@ -322,13 +331,12 @@ static int UiField_widgetToValue (UiField me) {
 			if (my integerValue == 0)
 				return Melder_error3 (L"No option chosen for `", my name, L"'.");
 		} break; case UI_OPTIONMENU: {
-			int i;
 			my integerValue = 0;
 			#if gtk
 				// TODO: Graag even een check :)
 				my integerValue = gtk_combo_box_get_active (GTK_COMBO_BOX (my cascadeButton)) + 1;
 			#elif motif
-			for (i = 1; i <= my options -> size; i ++) {
+			for (int i = 1; i <= my options -> size; i ++) {
 				UiOption b = my options -> item [i];
 				if (XmToggleButtonGetState (b -> toggle))
 					my integerValue = i;
@@ -348,17 +356,19 @@ static int UiField_widgetToValue (UiField me) {
 			}
 		} break; case UI_COLOUR: {
 			wchar_t *string = GuiText_getString (my text);
-			if (colourToValue (me, string))
+			if (colourToValue (me, string)) {
 				;
-			else if (! Interpreter_numericExpression (NULL, string, & my realValue)) { Melder_free (string); return 0; }
-			Melder_free (string);
+			} else if (Interpreter_numericExpression (NULL, string, & my redValue)) {
+				my greenValue = my blueValue = my redValue;
+				Melder_free (string);
+			} else {
+				Melder_free (string);
+				return 0;
+			}
 		}
 	}
 	return 1;
 }
-
-static wchar_t *colourNames [] = { L"black", L"white", L"red", L"green", L"blue", L"cyan", L"magenta", L"yellow",
-	L"maroon", L"lime", L"navy", L"teal", L"purple", L"olive", L"silver", L"grey" };
 
 static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter interpreter) {
 	switch (my type) {
@@ -421,11 +431,13 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 			wchar_t *string2 = Melder_wcsdup (string);
 			if (colourToValue (me, string2)) {
 				;
-			} else if (! Interpreter_numericExpression (interpreter, string2, & my realValue)) {
+			} else if (Interpreter_numericExpression (interpreter, string2, & my redValue)) {
+				my greenValue = my blueValue = my redValue;
+				Melder_free (string2);
+			} else {
 				Melder_free (string2);
 				return 0;
 			}
-			Melder_free (string2);
 		} break; default: {
 			return 0;
 		}
@@ -471,8 +483,8 @@ static void UiField_valueToHistory (UiField me, int isLast) {
 			int integerValue = floor (my realValue);
 			if (integerValue != my realValue) {
 				UiHistory_write (Melder_single (my realValue));
-			} else if (integerValue >= 0 && integerValue <= 15) {
-				UiHistory_write (colourNames [integerValue]);
+			} else if (integerValue >= 0 && integerValue <= Graphics_MAX_COLOUR) {
+				UiHistory_write (Graphics_getStandardColourName (integerValue));
 			} else {
 				UiHistory_write (L"black");
 			}
@@ -1208,8 +1220,8 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 			int integerValue = floor (value);
 			if (integerValue != value)
 				s = Melder_single (value);
-			else if (integerValue >= 0 && integerValue <= 15)
-				s = colourNames [integerValue];
+			else if (integerValue >= 0 && integerValue <= Graphics_MAX_COLOUR)
+				s = Graphics_getStandardColourName (integerValue);
 			else
 				s = L"black";
 			GuiText_setString (field -> text, s);
@@ -1333,7 +1345,7 @@ double UiForm_getReal (I, const wchar_t *fieldName) {
 	if (field == NULL) Melder_fatal ("(UiForm_getReal:) No field \"%s\" in dialog \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			return field -> realValue;
 		} break; default: {
 			fatalField (me);
@@ -1346,7 +1358,7 @@ double UiForm_getReal_check (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField_check (me, fieldName); cherror
 	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			return field -> realValue;
 		} break; default: {
 			Melder_error3 (L"Cannot find a real value in field \"", fieldName, L"\" in the form.\n"
@@ -1434,6 +1446,48 @@ end:
 	return NULL;
 }
 
+Graphics_Colour UiForm_getColour (I, const wchar_t *fieldName) {
+	iam (UiForm);
+	UiField field = findField (me, fieldName);
+	if (field == NULL) Melder_fatal ("(UiForm_getColour:) No field \"%s\" in dialog \"%s\".",
+		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
+	switch (field -> type) {
+		case UI_COLOUR: {
+			Graphics_Colour colour;
+			colour. red = field -> redValue;
+			colour. green = field -> greenValue;
+			colour. blue = field -> blueValue;
+			return colour;
+		} break; default: {
+			fatalField (me);
+		}
+	}
+	Graphics_Colour black = { 0.0, 0.0, 0.0 };
+	return black;
+}
+
+Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName) {
+	iam (UiForm);
+	UiField field = findField_check (me, fieldName); cherror
+	switch (field -> type) {
+		case UI_COLOUR: {
+			Graphics_Colour colour;
+			colour. red = field -> redValue;
+			colour. green = field -> greenValue;
+			colour. blue = field -> blueValue;
+			return colour;
+		} break; default: {
+			Melder_error3 (L"Cannot find a real value in field \"", fieldName, L"\" in the form.\n"
+				"The script may have changed while the form was open.\n"
+				"Please click Cancel in the form and try again.");
+		}
+	}
+end:
+	(void) 0;
+	Graphics_Colour black = { 0.0, 0.0, 0.0 };
+	return black;
+}
+
 int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 	iam (UiForm);
 	static MelderString lowerCaseFieldName = { 0 };
@@ -1451,7 +1505,7 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 			case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> integerValue;
-			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_COLOUR: {
+			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> realValue;
 			} break; case UI_RADIO: case UI_OPTIONMENU: {
@@ -1474,6 +1528,8 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_wcsdup (field -> stringValue);
+			} break; case UI_COLOUR: {
+				// to be implemented
 			} break; default: {
 			}
 		}

@@ -406,6 +406,7 @@ static void setColour (int colour) {
 	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
 	theCurrentPraatPicture -> colour = colour;
+	Graphics_inqRGBColour (GRAPHICS, & theCurrentPraatPicture -> red, & theCurrentPraatPicture -> green, & theCurrentPraatPicture -> blue);
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
 	}
@@ -427,6 +428,23 @@ DIRECT (Olive) setColour (Graphics_OLIVE); END
 DIRECT (Pink) setColour (Graphics_PINK); END
 DIRECT (Silver) setColour (Graphics_SILVER); END
 DIRECT (Grey) setColour (Graphics_GREY); END
+
+FORM (Colour, L"Praat picture: Colour", 0)
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.0")
+	OK
+DO
+	praat_picture_open ();
+	Graphics_Colour colour = GET_COLOUR (L"Colour");
+	Graphics_setRGBColour_struct (GRAPHICS, colour);
+	praat_picture_close ();
+	theCurrentPraatPicture -> colour = -1;
+	theCurrentPraatPicture -> red = colour. red;
+	theCurrentPraatPicture -> green = colour. green;
+	theCurrentPraatPicture -> blue = colour. blue;
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		updatePenMenu ();
+	}
+END
 
 /***** "File" MENU *****/
 
@@ -804,21 +822,14 @@ DO
 END
 
 FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
 	OK
 DO
-	double realColour = GET_REAL (L"Colour");
-	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	if (integerColour)
-		Graphics_setColour (GRAPHICS, integerColour);
-	else
-		Graphics_setGrey (GRAPHICS, realColour);
-	Graphics_fillRectangle (GRAPHICS,
-		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
-	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
+	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_fillRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -837,22 +848,15 @@ DO
 END
 
 FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
 	POSITIVE (L"Radius (mm)", L"3.0")
 	OK
 DO
-	double realColour = GET_REAL (L"Colour");
-	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	if (integerColour)
-		Graphics_setColour (GRAPHICS, integerColour);
-	else
-		Graphics_setGrey (GRAPHICS, realColour);
-	Graphics_fillRoundedRectangle (GRAPHICS,
-		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
-	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
+	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_fillRoundedRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -886,21 +890,14 @@ DO
 END
 
 FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
 	OK
 DO
-	double realColour = GET_REAL (L"Colour");
-	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	if (integerColour)
-		Graphics_setColour (GRAPHICS, integerColour);
-	else
-		Graphics_setGrey (GRAPHICS, realColour);
-	Graphics_fillEllipse (GRAPHICS,
-		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
-	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
+	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_fillEllipse (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -919,22 +916,16 @@ DO
 END
 
 FORM (PaintCircle, L"Praat picture: Paint circle", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	REAL (L"Centre x", L"0")
 	REAL (L"Centre y", L"0")
 	POSITIVE (L"Radius (along x)", L"1.0")
 	OK
 DO
-	double realColour = GET_REAL (L"Colour");
-	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	if (integerColour)
-		Graphics_setColour (GRAPHICS, integerColour);
-	else
-		Graphics_setGrey (GRAPHICS, realColour);
+	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
-	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -953,22 +944,16 @@ DO
 END
 
 FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	REAL (L"Centre x", L"0.0")
 	REAL (L"Centre y", L"0.0")
 	POSITIVE (L"Diameter (mm)", L"5.0")
 	OK
 DO
-	double realColour = GET_REAL (L"Colour");
-	int integerColour = floor (realColour);
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	if (integerColour)
-		Graphics_setColour (GRAPHICS, integerColour);
-	else
-		Graphics_setGrey (GRAPHICS, realColour);
+	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
-	if (! integerColour) Graphics_setGrey (GRAPHICS, 0);
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
 END
@@ -1468,6 +1453,9 @@ DIRECT (Picture_settings_report)
 		theCurrentPraatPicture -> colour == Graphics_PURPLE ? L"Purple" :
 		theCurrentPraatPicture -> colour == Graphics_LIME ? L"Lime" :
 		L"(unknown)");
+	MelderInfo_writeLine2 (L"Red: ", Melder_double (theCurrentPraatPicture -> red));
+	MelderInfo_writeLine2 (L"Green: ", Melder_double (theCurrentPraatPicture -> green));
+	MelderInfo_writeLine2 (L"Blue: ", Melder_double (theCurrentPraatPicture -> blue));
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	MelderInfo_writeLine2 (L"Axis left: ", Melder_double (x1WC));
@@ -1556,7 +1544,7 @@ void praat_picture_open (void) {
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);
 	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
 	Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize);
-	Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour);
+	Graphics_setRGBColour (GRAPHICS, theCurrentPraatPicture -> red, theCurrentPraatPicture -> green, theCurrentPraatPicture -> blue);
 
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
@@ -1594,6 +1582,9 @@ void praat_picture_init (void) {
 	static MelderString itemTitle_search = { 0 };
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 	theCurrentPraatPicture -> colour = Graphics_BLACK;
+	theCurrentPraatPicture -> red = 0.0;
+	theCurrentPraatPicture -> green = 0.0;
+	theCurrentPraatPicture -> blue = 0.0;
 	theCurrentPraatPicture -> lineWidth = 1.0;
 	theCurrentPraatPicture -> arrowSize = 1.0;
 	theCurrentPraatPicture -> x1NDC = 0.0;
@@ -1801,6 +1792,7 @@ void praat_picture_init (void) {
 	praatButton_colours [Graphics_PINK] = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_RADIO_NEXT, DO_Pink);
 	praatButton_colours [Graphics_SILVER] = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
 	praatButton_colours [Graphics_GREY] = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
+	praat_addMenuCommand (L"Picture", L"Pen", L"Colour...", 0, 0, DO_Colour);
 
 	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_RADIO_FIRST, DO_10);
 	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_RADIO_NEXT,  DO_12);

@@ -3537,14 +3537,14 @@ END
 DIRECT (Polygon_help) Melder_help (L"Polygon"); END
 
 FORM (Polygon_paint, L"Polygon: Paint", 0)
-	COLOUR (L"Colour (0-1 or name)", L"0.5")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	REAL (L"Xmin", L"0.0")
 	REAL (L"Xmax", L"0.0 (= all)")
 	REAL (L"Ymin", L"0.0")
 	REAL (L"Ymax", L"0.0 (= all)")
 	OK
 DO
-	EVERY_DRAW (Polygon_paint (OBJECT, GRAPHICS, GET_REAL (L"Colour"),
+	EVERY_DRAW (Polygon_paint (OBJECT, GRAPHICS, GET_COLOUR (L"Colour"),
 		GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax")))
 END
 

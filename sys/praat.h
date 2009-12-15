@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/21
+ * pb 2009/12/08
  */
 
 #include "Editor.h"
@@ -163,7 +163,7 @@ typedef struct {   /* Readonly */
 typedef struct {   /* Readonly */
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
 	int font, fontSize, lineType, colour;
-	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC;
+	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC, red, green, blue;
 } structPraatPicture, *PraatPicture;
 extern structPraatApplication theForegroundPraatApplication;
 extern PraatApplication theCurrentPraatApplication;
@@ -328,6 +328,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	GET_REAL (name)
 	GET_INTEGER (name)
 	GET_STRING (name)
+	GET_COLOUR (name)
 	GET_FILE (name)
 	REQUIRE (condition, errorMessage)
 		returns 0 if condition false.
@@ -339,6 +340,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
 #define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
+#define GET_COLOUR(name)  UiForm_getColour (dia, name)
 #define GET_FILE(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) return Melder_error1 (t);
 #define NEW(proc)  if (! praat_new1 (proc, NULL)) return 0;

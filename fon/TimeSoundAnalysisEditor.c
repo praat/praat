@@ -679,8 +679,6 @@ static int menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
 		SET_REAL (L"Frequency", my spectrogram.cursor)
 	EDITOR_DO
 		double frequency = GET_REAL (L"Frequency");
-		//if (frequency < my spectrogram.viewFrom + 1e-12) frequency = my spectrogram.viewFrom;
-		//if (frequency > my spectrogram.viewTo - 1e-12) frequency = my spectrogram.viewTo;
 		my spectrogram.cursor = frequency;
 		FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	EDITOR_END
@@ -1201,6 +1199,36 @@ static int menu_cb_getIntensity (EDITOR_ARGS) {
 	return 1;
 }
 
+static int menu_cb_getMinimumIntensity (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	double tmin, tmax;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	if (! my intensity.show)
+		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+	if (! my intensity.data) {
+		TimeSoundAnalysisEditor_computeIntensity (me);
+		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+	}
+	double intensity = Vector_getMinimum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
+	Melder_information4 (Melder_double (intensity), L" dB (minimum intensity ", FunctionEditor_partString_locative (part), L")");
+	return 1;
+}
+
+static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	double tmin, tmax;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	if (! my intensity.show)
+		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+	if (! my intensity.data) {
+		TimeSoundAnalysisEditor_computeIntensity (me);
+		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+	}
+	double intensity = Vector_getMaximum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
+	Melder_information4 (Melder_double (intensity), L" dB (maximum intensity ", FunctionEditor_partString_locative (part), L")");
+	return 1;
+}
+
 /***** FORMANT MENU *****/
 
 static int menu_cb_showFormants (EDITOR_ARGS) {
@@ -1674,6 +1702,8 @@ static void createMenus_analysis (TimeSoundAnalysisEditor me) {
 	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
 	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
 	EditorMenu_addCommand (menu, L"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
+	EditorMenu_addCommand (menu, L"Get minimum intensity", GuiMenu_F8 + GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
+	EditorMenu_addCommand (menu, L"Get maximum intensity", GuiMenu_F8 + GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
 	our createMenuItems_intensity_picture (me, menu);
 	EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
