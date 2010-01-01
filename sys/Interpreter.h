@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/07/02
+ * pb 2009/12/22
  */
 
 #ifndef _Collection_h_
@@ -68,7 +68,7 @@ Interpreter Interpreter_createFromEnvironment (Any editor);
 int Melder_includeIncludeFiles (wchar_t **text);
 int Interpreter_readParameters (Interpreter me, wchar_t *text);
 Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *fileName,
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure);
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure);
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
 int Interpreter_run (Interpreter me, wchar_t *text);   /* Destroys 'text'. */

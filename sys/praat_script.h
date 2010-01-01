@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/12/22
  */
 
 #ifndef _Interpreter_h_
@@ -31,8 +31,8 @@ int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments);
 int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments);
 int praat_executeScriptFromText (wchar_t *text);
 int praat_executeScriptFromDialog (Any dia);
-int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter_dummy, void *dummy);
-int DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter_dummy, void *dummy);
+int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
+int DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
 int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar_t *script);
 
 /* End of file praat_script.h */

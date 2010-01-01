@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/20
+ * pb 2009/12/22
  */
 
 #ifndef _Collection_h_
@@ -183,9 +183,9 @@ int Editor_init (Editor me, Widget parent, int x, int y , int width, int height,
 
 void Editor_save (Editor me, const wchar_t *text);   /* For Undo. */
 
-Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle);
+Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter);
-Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle);
+Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle);
 int Editor_doMenuCommand (Editor me, const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);

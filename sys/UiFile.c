@@ -27,6 +27,7 @@
  * pb 2007/03/23 new Editor API
  * pb 2007/05/30 wchar_t
  * pb 2009/01/18 arguments to UiForm callbacks
+ * pb 2009/12/22 invokingButtonTitle
  */
 
 #if defined (macintosh)
@@ -63,8 +64,8 @@
 	EditorCommand command; \
 	Widget parent, dialog, warning; \
 	structMelderFile file; \
-	const wchar_t *helpTitle; \
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure); \
+	const wchar_t *invokingButtonTitle, *helpTitle; \
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
 	void *okClosure; \
 	int shiftKeyPressed;
 #ifdef macintosh
@@ -201,7 +202,8 @@ void UiFile_hide (void) {
 
 /********** READING A FILE **********/
 
-#define UiInfile_members UiFile_members
+#define UiInfile_members UiFile_members \
+	bool allowMultipleFiles;
 #define UiInfile_methods UiFile_methods
 class_create (UiInfile, UiFile);
 
@@ -217,17 +219,17 @@ static void classUiInfile_ok (I) {
 		if (inDirMask) XmStringFree (inDirMask);
 		XtVaGetValues (my dialog, XmNdirMask, & inDirMask, NULL);
 	#endif
-	structMelderFile file;
-	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-	if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
-		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+	UiHistory_write (L"\n");
+	UiHistory_write (my invokingButtonTitle);
+	UiHistory_write (L" ");
+	UiHistory_write (my file. path);
+	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 		Melder_flushError (NULL);
 	} else if (! my shiftKeyPressed) {
 		GuiObject_hide (my dialog);
 	}
 	//my shiftKeyPressed = 0;   // BUG (perhaps), but "me" can have been deleted
-	UiHistory_write (L" ");
-	UiHistory_write (file. path);
 }
 #endif
 
@@ -238,12 +240,15 @@ class_methods (UiInfile, UiFile)
 class_methods_end
 
 Any UiInfile_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure, const wchar_t *helpTitle)
+	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
+	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles)
 {
 	UiInfile me = new (UiInfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
+	my invokingButtonTitle = invokingButtonTitle;
 	my helpTitle = helpTitle;
+	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me, parent, title);
 	return me;
 }
@@ -252,17 +257,19 @@ void UiInfile_do (I) {
 	iam (UiInfile);
 	#if gtk
 		if (gtk_dialog_run (GTK_DIALOG (my dialog)) == GTK_RESPONSE_ACCEPT) {
-			structMelderFile file;
 			char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (my dialog));
 			Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
 			g_free (filename);
-			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-			if (! my okCallback (me, NULL, NULL, my okClosure)) {
+			UiHistory_write (L"\n");
+			UiHistory_write (my invokingButtonTitle);
+			UiHistory_write (L" ");
+			UiHistory_write (Melder_fileToPath (& my file));
+			structMelderFile file;
+			MelderFile_copy (& my file, & file);
+			if (! my okCallback (me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
 			}
-			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPath (& file));
 			/* TODO: IMHO mag deze code wel gedeeld worden tussen de verschillende platfromen
 			 * met een platform afhankelijke run/fetch methode. */
 		}
@@ -273,6 +280,7 @@ void UiInfile_do (I) {
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
 		dialogOptions. optionFlags |= kNavDontAutoTranslate;
+		if (! my allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
 		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
 		if (err == noErr) {
 			NavReplyRecord reply;
@@ -289,14 +297,18 @@ void UiInfile_do (I) {
 					FSRef machFile;
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & my file);
+					UiHistory_write (L"\n");
+					UiHistory_write (my invokingButtonTitle);
+					UiHistory_write (L" ");
+					UiHistory_write (Melder_fileToPath (& my file));
 					structMelderFile file;
-					MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-					if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
+					MelderFile_copy (& my file, & file);
+					if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
 						Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 						Melder_flushError (NULL);
+						break;
 					}
-					UiHistory_write (L" ");
-					UiHistory_write (Melder_fileToPath (& file));
+					// BUG if my okCallback deletes me and there are multiple files
 				}
 				NavDisposeReply (& reply);
 			}
@@ -308,17 +320,32 @@ void UiInfile_do (I) {
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
 		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
+		openFileName. hInstance = NULL;
 		openFileName. lpstrFilter = L"All Files\0*.*\0";
 		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
+		openFileName. lpstrCustomFilter = NULL;
+		openFileName. nMaxCustFilter = 0;
 		openFileName. lpstrFile = fullFileName;
 		openFileName. nMaxFile = 3000;
+		openFileName. lpstrFileTitle = NULL;
+		openFileName. nMaxFileTitle = 0;
+		openFileName. lpstrInitialDir = NULL;
 		openFileName. lpstrTitle = my name;
-		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
+			| (my allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
+		openFileName. lpstrDefExt = NULL;
+		openFileName. lpfnHook = NULL;
+		openFileName. lpTemplateName = NULL;
+		openFileName. pvReserved = NULL;
+		openFileName. dwReserved = 0;
+		openFileName. FlagsEx = 0;
 		OSVERSIONINFO osVersionInfo;
 		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
     	osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 	    GetVersionEx (& osVersionInfo);
 		bool hasFileInfoTipsBug = osVersionInfo. dwMajorVersion == 5, infoTipsWereVisible = false, extensionsWereVisible = false;   // XP-only bug.
+//Melder_warning4 (L"Major ", Melder_integer (osVersionInfo. dwMajorVersion), L", minor ", Melder_integer (osVersionInfo. dwMinorVersion));
+		hasFileInfoTipsBug &= 0;
 		if (hasFileInfoTipsBug) {
 			SHELLFLAGSTATE settings = { 0 };
 			SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
@@ -334,23 +361,53 @@ void UiInfile_do (I) {
 		if (GetOpenFileNameW (& openFileName)) {
 			#if 0
 				MelderInfo_open ();
-				for (int i = 0; i < strlen (fullFileName); i ++) {
-					char buffer [2];
+				for (int i = 0; i < 300; i ++) {
+					wchar_t buffer [2];
 					buffer [0] = fullFileName [i];
 					buffer [1] = 0;
-					MelderInfo_writeLine3 (Melder_integer (fullFileName [i]), " ", buffer);
+					MelderInfo_writeLine3 (Melder_integer (fullFileName [i]), L" ", buffer);
 				}
 				MelderInfo_close ();
 			#endif
-			Melder_pathToFile (fullFileName, & my file);
-			structMelderFile file;
-			MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-			if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
-				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-				Melder_flushError (NULL);
+			int firstFileNameLength = wcslen (fullFileName);
+			if (fullFileName [firstFileNameLength + 1] == '\0') {
+				/*
+				 * The user selected one file.
+				 */
+				Melder_pathToFile (fullFileName, & my file);
+				UiHistory_write (L"\n");
+				UiHistory_write (my invokingButtonTitle);
+				UiHistory_write (L" ");
+				UiHistory_write (Melder_fileToPath (& my file));
+				structMelderFile file;
+				MelderFile_copy (& my file, & file);
+				if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+					Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+					Melder_flushError (NULL);
+				}
+			} else {
+				/*
+				 * The user selected multiple files.
+				 * 'fullFileName' is a directory name; the file names follow.
+				 */
+				structMelderDir dir;
+				Melder_pathToDir (fullFileName, & dir);
+				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
+					MelderDir_getFile (& dir, p, & my file);
+					UiHistory_write (L"\n");
+					UiHistory_write (my invokingButtonTitle);
+					UiHistory_write (L" ");
+					UiHistory_write (Melder_fileToPath (& my file));
+					structMelderFile file;
+					MelderFile_copy (& my file, & file);
+					if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+						Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+						Melder_flushError (NULL);
+						break;
+					}
+					// BUG if my okCallback deletes me
+				}
 			}
-			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPath (& file));
 		}
 		if (hasFileInfoTipsBug) {
 			if (infoTipsWereVisible | ! extensionsWereVisible) {
@@ -387,11 +444,13 @@ static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
 	iam (UiFile);
 	(void) call;
 	if (w) GuiObject_hide (w);
-	if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
+	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
 		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 		Melder_flushError (NULL);
 	}
 	GuiObject_hide (my dialog);
+	UiHistory_write (L"\n");
+	UiHistory_write (my invokingButtonTitle);
 	UiHistory_write (L" ");
 	UiHistory_write (my file. path);
 }
@@ -419,13 +478,12 @@ static void classUiOutfile_ok (I) {
 			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
 			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
 		}
-		wchar_t *message = Melder_wcscat3 (L"A file with the name ", MelderFile_messageName (& my file),
+		const wchar_t *message = Melder_wcscat3 (L"A file with the name ", MelderFile_messageName (& my file),
 				L" already exists.\nDo you want to replace it?");
 		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
 		XtManageChild (my warning);
 	} else {
 		UiFile_ok_ok (NULL, me, NULL);
-	
 	}
 	#endif
 }
@@ -451,11 +509,12 @@ static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
 #endif
 #endif
 Any UiOutfile_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure, const wchar_t *helpTitle)
+	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	UiOutfile me = new (UiOutfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
+	my invokingButtonTitle = invokingButtonTitle;
 	my helpTitle = helpTitle;
 	UiFile_init (me, parent, title);
 	#ifdef UNIX
@@ -481,14 +540,16 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 	return me;
 }
 
-static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure) {
+static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	EditorCommand command = (EditorCommand) closure;
+	(void) invokingButtonTitle;
+	(void) modified;
 	return command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter);
 }
 
-Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle) {
+Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
 	Editor editor = (Editor) cmd -> editor;
-	UiOutfile dia = UiOutfile_create (editor -> dialog, title, commonOutfileCallback, cmd, helpTitle);
+	UiOutfile dia = UiOutfile_create (editor -> dialog, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
@@ -554,10 +615,12 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 						*p = CFStringGetCharacterAtIndex (fileName, i);
 					*p = '\0';
 				}
-				if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
+				if (! my okCallback ((UiForm) me, NULL, NULL, NULL, false, my okClosure)) {
 					Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 					Melder_flushError (NULL);
 				}
+				UiHistory_write (L"\n");
+				UiHistory_write (my invokingButtonTitle);
 				UiHistory_write (L" ");
 				UiHistory_write (Melder_fileToPath (& my file));
 				NavDisposeReply (& reply);
@@ -600,10 +663,12 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 				return;
 			}
 			Melder_pathToFile (fullFileName, & my file);
-			if (! my okCallback ((UiForm) me, NULL, NULL, my okClosure)) {
+			if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
 				Melder_flushError (NULL);
 			}
+			UiHistory_write (L"\n");
+			UiHistory_write (my invokingButtonTitle);
 			UiHistory_write (L" ");
 			UiHistory_write (Melder_fileToPath (& my file));
 		}

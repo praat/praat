@@ -48,6 +48,7 @@
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/01/20 pause forms
  * pb 2009/03/17 split up structPraat
+ * pb 2009/12/22 invokingButtonTitle
  */
 
 #include <ctype.h>
@@ -302,12 +303,11 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 	return npar;
 }
 
-Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, void *), void *okClosure) {
-	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL);
-	int ipar;
+Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure) {
+	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
 	if (path) UiForm_addText (form, L"$file", path);
-	for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		/*
 		 * Convert underscores to spaces.
 		 */
@@ -361,8 +361,7 @@ Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, 
 }
 
 int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
-	int ipar;
-	for (ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
 		wchar_t parameter [100], *p;
 		/*
 		 * Strip parentheses and colon off parameter name.
@@ -426,11 +425,11 @@ end:
 }
 
 int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments) {
-	int ipar, size = my numberOfParameters;
+	int size = my numberOfParameters;
 	long length = wcslen (arguments);
 	while (size >= 1 && my parameters [size] [0] == '\0')
 		size --;   /* Ignore fields without a variable name (button, comment). */
-	for (ipar = 1; ipar <= size; ipar ++) {
+	for (int ipar = 1; ipar <= size; ipar ++) {
 		wchar_t *p = my parameters [ipar];
 		/*
 		 * Ignore buttons and comments again.
@@ -446,7 +445,7 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 		p = my parameters [ipar];
 		if (*p != '\0' && p [wcslen (p) - 1] == ':') p [wcslen (p) - 1] = '\0';
 	}
-	for (ipar = 1; ipar < size; ipar ++) {
+	for (int ipar = 1; ipar < size; ipar ++) {
 		int ichar = 0;
 		/*
 		 * Ignore buttons and comments again. The buttons will keep their labels as "arguments".
@@ -491,7 +490,7 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 	/*
 	 * Convert booleans and choices to numbers.
 	 */
-	for (ipar = 1; ipar <= size; ipar ++) {
+	for (int ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_BOOLEAN) {
 			wchar_t *arg = & my arguments [ipar] [0];
 			if (wcsequ (arg, L"1") || wcsequ (arg, L"yes") || wcsequ (arg, L"on") ||

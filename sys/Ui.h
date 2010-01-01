@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/14
+ * pb 2009/12/24
  */
 
 #ifndef _Graphics_h_
@@ -43,8 +43,8 @@
 		  (topShell,   // The parent Widget of the dialog window.
 			L"Create a new person",   // The window title.
 			DO_Person_create,   // The routine to call when the user clicks OK.
-			NULL,   // The second argument to this routine (first is 'dia').
-			   // Normally the creator/owner, if dynamic.
+			NULL,   // The last argument to the OK routine (also for the other buttons). Could be a ScriptEditor, or an EditorCommand, or an Interpreter, or NULL.
+			L"Create person...",   // The invoking button title.
 			L"Create person...");   // The help string; may be NULL.
 		UiForm_addNatural (dia, L"Age (years)", L"18");
 		UiForm_addPositive (dia, L"Length (metres)", L"1.68 (average)");
@@ -77,8 +77,8 @@
 
 /* The following routines work on the screen and from batch. */
 Any UiForm_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure,
-	const wchar_t *helpTitle);
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue);
@@ -163,12 +163,12 @@ Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 int UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
 
 Any UiInfile_create (Widget parent, const wchar_t *title,
-  int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure,
-  const wchar_t *helpTitle);
+  int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles);
 
 Any UiOutfile_create (Widget parent, const wchar_t *title,
-  int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *okClosure,
-  const wchar_t *helpTitle);
+  int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 void UiInfile_do (Any dia);
 

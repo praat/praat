@@ -44,6 +44,7 @@
  * pb 2008/11/01 praatcon -a
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2009/03/17 split up theCurrentPraat into Application, Objects and Picture
+ * pb 2009/12/22 invokingButtonTitle
  */
 
 #include "melder.h"
@@ -807,7 +808,7 @@ END
 
 static void gui_cb_quit (GUI_ARGS) {
 	(void) w; (void) void_me; (void) call;
-	DO_Quit (NULL, NULL, NULL, NULL);
+	DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
@@ -886,7 +887,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, NULL, NULL, NULL);
+		DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
 		return 0;
 	}
 #endif
@@ -947,7 +948,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Printer_prefs ();   // Paper size, printer command...
 	TextEditor_prefs ();   // Font size...
 
-	int iarg_batchName = 1;
+	unsigned int iarg_batchName = 1;
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		/*
 		 * Running the Praat shell from the Unix command line,
@@ -955,8 +956,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 *    <programName> <scriptFileName>
 		 */
 		if (argc > iarg_batchName
-			&& (int) argv [iarg_batchName] [0] == '-'
-			&& (int) argv [iarg_batchName] [1] == 'a'
+			&& argv [iarg_batchName] [0] == '-'
+			&& argv [iarg_batchName] [1] == 'a'
 			&& argv [iarg_batchName] [2] == '\0')
 		{
 			Melder_consoleIsAnsi = true;
@@ -965,7 +966,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		//fprintf (stdout, "Console <%d> <%s>", Melder_consoleIsAnsi, argv [1]);
 		bool hasCommandLineInput =
 			argc > iarg_batchName
-			&& (int) argv [iarg_batchName] [0] == '-'
+			&& argv [iarg_batchName] [0] == '-'
 			&& argv [iarg_batchName] [1] == '\0';
 		MelderString_copy (& theCurrentPraatApplication -> batchName,
 			hasCommandLineInput ? L""
@@ -990,14 +991,14 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		}
 
 		/* Take from 'title' ("myProg 3.2" becomes "myProg") or from command line ("/ifa/praat" becomes "praat"). */
-		sprintf (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
+		strcpy (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
 	#else
 		#if defined (_WIN32)
 			MelderString_copy (& theCurrentPraatApplication -> batchName,
 				argv [3] ? Melder_peekUtf8ToWcs (argv [3]) : L"");   /* The command line. */
 		#endif
 		Melder_batch = FALSE;   /* PRAAT.EXE on Windows is always interactive. */
-		sprintf (truncatedTitle, title && title [0] ? title : "praat");
+		strcpy (truncatedTitle, title && title [0] ? title : "praat");
 	#endif
 	theCurrentPraatApplication -> batch = Melder_batch;
 

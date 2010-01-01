@@ -105,7 +105,7 @@ END
 
 DIRECT (LongSound_help) Melder_help (L"LongSound"); END
 
-FORM_READ (LongSound_open, L"Open long sound file", 0)
+FORM_READ (LongSound_open, L"Open long sound file", 0, true)
 	if (! praat_new1 (LongSound_open (file), MelderFile_name (file))) return 0;
 END
 
@@ -1079,14 +1079,14 @@ DO
 	}
 END
 
-FORM_READ (Sound_read2FromStereoFile, L"Read two Sounds from stereo file", 0)
+FORM_READ (Sound_read2FromStereoFile, L"Read two Sounds from stereo file", 0, true)
 	Sound left, right;
 	if (! Sound_read2FromSoundFile (file, & left, & right)) return 0;
 	if (! praat_new1 (left, L"left")) return 0;
 	if (right) { if (! praat_new1 (right, L"right")) return 0; }
 END
 
-FORM_READ (Sound_readFromRawAlawFile, L"Read Sound from raw Alaw file", 0)
+FORM_READ (Sound_readFromRawAlawFile, L"Read Sound from raw Alaw file", 0, true)
 	if (! praat_new1 (Sound_readFromRawAlawFile (file), MelderFile_name (file))) return 0;
 END
 

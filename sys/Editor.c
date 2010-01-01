@@ -100,7 +100,7 @@ class_methods (EditorMenu, Thing) {
 
 static void commonCallback (GUI_ARGS) {
 	GUI_IAM (EditorCommand);
-	if (my editor && ((Editor) my editor) -> methods -> scriptable) {
+	if (my editor && ((Editor) my editor) -> methods -> scriptable && ! wcsstr (my itemTitle, L"...")) {
 		UiHistory_write (L"\n");
 		UiHistory_write (my itemTitle);
 	}
@@ -113,7 +113,7 @@ Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long fl
 	EditorCommand me = new (EditorCommand);
 	my editor = menu -> editor;
 	my menu = menu;
-	if (! (my itemTitle = Melder_wcsdup (itemTitle))) { forget (me); return NULL; }
+	if ((my itemTitle = Melder_wcsdup (itemTitle)) == NULL) { forget (me); return NULL; }
 	my itemWidget =
 		commandCallback == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
 		flags & Editor_HIDDEN ? NULL :

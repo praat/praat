@@ -1,0 +1,12 @@
+# File: makefile.defs.linux.motif
+
+# System: Linux with Motif
+# Paul Boersma, 16 December 2009
+
+CC = gcc -std=gnu99 -DUNIX -Dlinux -I /usr/local/include -I /usr/X11R6/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
+
+LIBS = /usr/local/lib/libXm.a -L /usr/local/lib -L /usr/X11R6/lib -lXp -lXft -lpng -lXt -lX11 -lm -lpthread -lasound
+
+RANLIB = ls
+ICON =
+MAIN_ICON =

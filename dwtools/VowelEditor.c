@@ -481,7 +481,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 {
 	int it, imark = 1, glt = Graphics_inqLineType (g);
 	double glw = Graphics_inqLineWidth (g), x1, y1, x2, y2, t1, t2;
-	double red, green, blue; Graphics_inqRGBColour (g, & red, & green, & blue);
+	Graphics_Colour colour = Graphics_inqColour (g);
 	long nfp = my points -> size;
 	FormantPoint fp = my points -> item[1], fpn = my points -> item[nfp];
 
@@ -543,7 +543,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 		Graphics_setArrowSize (g, gas);
 	}
 	Graphics_unsetInner (g);
-	Graphics_setRGBColour (g, red, green, blue);
+	Graphics_setColour (g, colour);
 	Graphics_setLineType (g, glt);
 	Graphics_setLineWidth (g, glw);
 }

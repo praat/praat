@@ -237,9 +237,11 @@ int Printer_pageSetup (void) {
 	return 1;
 }
 
-static int DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, void *dummy) {
+static int DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
+	(void) invokingButtonTitle;
+	(void) modified;
 	(void) dummy;
 	#if defined (_WIN32) || defined (macintosh)
 		thePrinter. allowDirectPostScript = GET_INTEGER (L"Allow direct PostScript");
@@ -272,7 +274,7 @@ int Printer_postScriptSettings (void) {
 	static Any dia;
 	if (dia == NULL) {
 		Any radio;
-		dia = UiForm_create (theCurrentPraatApplication -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...");
+		dia = UiForm_create (theCurrentPraatApplication -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...", L"PostScript settings...");
 		#if defined (_WIN32) || defined (macintosh)
 			BOOLEAN (L"Allow direct PostScript", TRUE);
 		#endif

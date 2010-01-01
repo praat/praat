@@ -2125,7 +2125,7 @@ DIRECT (LegendreSeries_to_Polynomial)
 END
 /********************* LongSound **************************************/
 
-FORM_READ (LongSounds_appendToExistingSoundFile, L"LongSound: Append to existing sound file", 0)
+FORM_READ (LongSounds_appendToExistingSoundFile, L"LongSound: Append to existing sound file", 0, false)
 	if (! pr_LongSounds_appendToExistingSoundFile (file)) return 0;
 END
 
@@ -3492,17 +3492,17 @@ DO
 		pitchrf, GET_REAL (L"Duration factor")))
 END
 
-FORM_READ (Sound_readFromRawFileLE, L"Read Sound from raw Little Endian file", 0)
+FORM_READ (Sound_readFromRawFileLE, L"Read Sound from raw Little Endian file", 0, true)
 	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0,
 		16000), MelderFile_name (file))) return 0;
 END
 
-FORM_READ (Sound_readFromRawFileBE, L"Read Sound from raw 16-bit Little Endian file", 0)
+FORM_READ (Sound_readFromRawFileBE, L"Read Sound from raw 16-bit Little Endian file", 0, true)
 	if (! praat_new1 (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0,
 		16000), MelderFile_name (file))) return 0;
 END
 
-FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0)
+FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0, true)
 	if (! praat_new1 (KlattTable_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 

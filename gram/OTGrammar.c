@@ -1498,7 +1498,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				long icons;
 				Graphics_setWindow (graphics, 0, numberOfData, 50, 150);
 				for (icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
-					Graphics_setColour (graphics, icons + 1);
+					Graphics_setGrey (graphics, (double) icons / 14);
 					Graphics_line (graphics, idatum, my constraints [icons]. ranking,
 						idatum, my constraints [icons]. ranking+1);
 				}
@@ -1919,7 +1919,7 @@ int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
 				Graphics_setWindow (graphics, 0, numberOfData, 50, 150);
 				for (long icons = 1; icons <= 14 && icons <= my numberOfConstraints; icons ++) {
-					Graphics_setColour (graphics, icons + 1);
+					Graphics_setGrey (graphics, (double) icons / 14);
 					Graphics_line (graphics, idatum, my constraints [icons]. ranking,
 						idatum, my constraints [icons]. ranking+1);
 				}

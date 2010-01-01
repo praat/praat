@@ -380,7 +380,7 @@ static int readFromFile (MelderFile file) {
 	return result;
 }
 
-FORM_READ (Data_readFromFile, L"Read Object(s) from file", 0)
+FORM_READ (Data_readFromFile, L"Read Object(s) from file", 0, true)
 	if (! readFromFile (file)) return 0;
 END
 
@@ -521,7 +521,7 @@ void praat_addFixedButtons (Widget form) {
 }
 
 static void searchProc (void) {
-	DO_SearchManual (NULL, NULL, NULL, NULL);
+	DO_SearchManual (NULL, NULL, NULL, NULL, false, NULL);
 }
 
 static MelderString itemTitle_about = { 0 };

@@ -217,9 +217,9 @@ static int goToPage (ButtonEditor me, const wchar_t *title) {
 				UiHistory_write (action -> title);
 			}
 			if (action -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL)) Melder_flushError ("Command not executed.");
+				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
 			} else {
-				if (! action -> callback (NULL, NULL, NULL, FALSE)) Melder_flushError ("Command not executed.");
+				if (! action -> callback (NULL, NULL, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
 			}
 			praat_updateSelection ();
 		} break;
@@ -232,9 +232,9 @@ static int goToPage (ButtonEditor me, const wchar_t *title) {
 				UiHistory_write (menuCommand -> title);
 			}
 			if (menuCommand -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL)) Melder_flushError ("Command not executed.");
+				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
 			} else {
-				if (! menuCommand -> callback (NULL, NULL, NULL, FALSE)) Melder_flushError ("Command not executed.");
+				if (! menuCommand -> callback (NULL, NULL, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
 			}
 			praat_updateSelection ();
 		} break;

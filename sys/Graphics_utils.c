@@ -97,7 +97,8 @@ void Graphics_drawInnerBox (I) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	Graphics_setInner (me);
 	Graphics_setWindow (me, 0, 1, 0, 1);
 	Graphics_setLineType (me, Graphics_DRAWN);
@@ -108,14 +109,14 @@ void Graphics_drawInnerBox (I) {
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
 	Graphics_setLineWidth (me, lineWidth);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_textLeft (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int vert = farr ? Graphics_TOP : Graphics_BOTTOM;
-	double red = my red, green = my green, blue = my blue;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, 0, 1);
 	Graphics_setTextRotation (me, 90);
@@ -125,14 +126,14 @@ void Graphics_textLeft (I, bool farr, const wchar_t *text) {
 	if (! farr) Graphics_unsetInner (me);
 	Graphics_setTextRotation (me, 0);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_textRight (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int vert = farr ? Graphics_TOP : Graphics_BOTTOM;
-	double red = my red, green = my green, blue = my blue;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, vert);
 	Graphics_setWindow (me, 0, 1, 0, 1);
@@ -142,13 +143,13 @@ void Graphics_textRight (I, bool farr, const wchar_t *text) {
 	if (! farr) Graphics_unsetInner (me);
 	Graphics_setTextRotation (me, 0);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_textBottom (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
-	double red = my red, green = my green, blue = my blue;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, 0, 1);
 	if (farr) {
@@ -161,13 +162,13 @@ void Graphics_textBottom (I, bool farr, const wchar_t *text) {
 		Graphics_unsetInner (me);
 	}
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_textTop (I, bool farr, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
-	double red = my red, green = my green, blue = my blue;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, 0, 1);
 	if (farr) {
@@ -180,14 +181,15 @@ void Graphics_textTop (I, bool farr, const wchar_t *text) {
 		Graphics_unsetInner (me);
 	}
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksLeft (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
@@ -215,14 +217,15 @@ void Graphics_marksLeft (I, int numberOfMarks, bool haveNumbers, bool haveTicks,
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksRight (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
@@ -250,14 +253,15 @@ void Graphics_marksRight (I, int numberOfMarks, bool haveNumbers, bool haveTicks
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksBottom (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
@@ -286,14 +290,15 @@ void Graphics_marksBottom (I, int numberOfMarks, bool haveNumbers, bool haveTick
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksTop (I, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarks < 2) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
@@ -321,7 +326,7 @@ void Graphics_marksTop (I, int numberOfMarks, bool haveNumbers, bool haveTicks, 
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 #define MAXNUM_MARKS_PER_DECADE  7
@@ -340,7 +345,8 @@ void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, bool haveNumb
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, py1, py2;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
 	if (y1 > 300 || y2 > 300) return;
@@ -373,14 +379,15 @@ void Graphics_marksLeftLogarithmic (I, int numberOfMarksPerDecade, bool haveNumb
 	}
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1, x2, y1, y2);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, py1, py2;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
 	if (y1 > 300 || y2 > 300) return;
@@ -413,14 +420,15 @@ void Graphics_marksRightLogarithmic (I, int numberOfMarksPerDecade, bool haveNum
 	}
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1, x2, y1, y2);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, px1, px2;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
 	if (x1 > 300 || x2 > 300) return;
@@ -453,14 +461,15 @@ void Graphics_marksTopLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbe
 	}
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1, x2, y1, y2);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1 = my x1WC, x2 = my x2WC, y1 = my y1WC, y2 = my y2WC, px1, px2;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (numberOfMarksPerDecade < 1) numberOfMarksPerDecade = 1;
 	if (numberOfMarksPerDecade > MAXNUM_MARKS_PER_DECADE) numberOfMarksPerDecade = MAXNUM_MARKS_PER_DECADE;
 	if (x1 > 300 || x2 > 300) return;
@@ -493,14 +502,15 @@ void Graphics_marksBottomLogarithmic (I, int numberOfMarksPerDecade, bool haveNu
 	}
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1, x2, y1, y2);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markLeft (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
@@ -522,14 +532,15 @@ void Graphics_markLeft (I, double position, bool hasNumber, bool hasTick, bool h
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markRight (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_LEFT, Graphics_HALF);
@@ -551,14 +562,15 @@ void Graphics_markRight (I, double position, bool hasNumber, bool hasTick, bool 
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markTop (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
@@ -580,14 +592,15 @@ void Graphics_markTop (I, double position, bool hasNumber, bool hasTick, bool ha
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markBottom (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
@@ -609,14 +622,15 @@ void Graphics_markBottom (I, double position, bool hasNumber, bool hasTick, bool
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markLeftLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (position <= 0) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
@@ -639,14 +653,15 @@ void Graphics_markLeftLogarithmic (I, double position, bool hasNumber, bool hasT
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markRightLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (position <= 0) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
@@ -669,14 +684,15 @@ void Graphics_markRightLogarithmic (I, double position, bool hasNumber, bool has
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markTopLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (position <= 0) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
@@ -699,14 +715,15 @@ void Graphics_markTopLogarithmic (I, double position, bool hasNumber, bool hasTi
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_markBottomLogarithmic (I, double position, bool hasNumber, bool hasTick, bool hasDottedLine, const wchar_t *text) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	if (position <= 0) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0, 1);
@@ -729,14 +746,15 @@ void Graphics_markBottomLogarithmic (I, double position, bool hasNumber, bool ha
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksLeftEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, first, last;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	distance *= units;
 	first = ceil (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
 	last = floor (( y1WC < y2WC ? y2WC : y1WC) / distance + 1e-5);
@@ -766,14 +784,15 @@ void Graphics_marksLeftEvery (I, double units, double distance, bool haveNumbers
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksRightEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, first, last;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	distance *= units;
 	first = ceil (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
 	last = floor (( y1WC < y2WC ? y2WC : y1WC) / distance + 1e-5);
@@ -804,14 +823,15 @@ void Graphics_marksRightEvery (I, double units, double distance, bool haveNumber
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksBottomEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, first, last;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	distance *= units;
 	first = ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last = floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
@@ -841,14 +861,15 @@ void Graphics_marksBottomEvery (I, double units, double distance, bool haveNumbe
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_marksTopEvery (I, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	iam (Graphics);
 	double x1WC = my x1WC, x2WC = my x2WC, y1WC = my y1WC, y2WC = my y2WC;
 	int lineType = my lineType, first, last;
-	double lineWidth = my lineWidth, red = my red, green = my green, blue = my blue;
+	double lineWidth = my lineWidth;
+	Graphics_Colour colour = my colour;
 	distance *= units;
 	first = ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
 	last = floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
@@ -878,7 +899,7 @@ void Graphics_marksTopEvery (I, double units, double distance, bool haveNumbers,
 	Graphics_unsetInner (me);
 	Graphics_setWindow (me, x1WC, x2WC, y1WC, y2WC);
 	Graphics_setLineType (me, lineType);
-	Graphics_setRGBColour (me, red, green, blue);
+	Graphics_setColour (me, colour);
 }
 
 void Graphics_mark (I, double x, double y, double size_mm, const wchar_t *markString) {

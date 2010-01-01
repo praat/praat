@@ -236,6 +236,7 @@ void _GuiText_handleValueChanged (Widget widget) {
 			iam_text;
 			if (my editable) {
 				_GuiMac_clipOnParent (widget);
+				//Melder_casual ("char code %d", charCode);
 				if (isTextControl (widget)) {
 					CallNextEventHandler (eventHandlerCallRef, eventRef);
 				} else if (isMLTE (me)) {

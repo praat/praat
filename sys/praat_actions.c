@@ -28,6 +28,7 @@
  * pb 2007/12/26 Gui
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/08/03 repaired a memory leak in praat_removeAction
+ * pb 2009/12/22 invokingButtonTitle
  */
 
 #include "praatP.h"
@@ -95,23 +96,23 @@ static int lookUpMatchingAction (void *class1, void *class2, void *class3, void 
 }
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (void *class1, int n1,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (void *class1, int n1, void *class2, int n2,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
 	int i, position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
@@ -231,7 +232,7 @@ static void updateDynamicMenu (void) {
 int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
 	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script)
 {
-	int i, position, found;
+	long position;
 	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
 	Melder_assert (className1 && className2 && className3 && title && after && script);
 	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
@@ -249,16 +250,16 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	/*
 	 * If the button already exists, remove it.
 	 */
-	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (found) {
 		theNumberOfActions --;
-		for (i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+		for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
 	}
 
 	/* Determine the position of the new command.
 	 */
 	if (wcslen (after)) {   /* Search for existing command with same selection. */
-		int found = lookUpMatchingAction (class1, class2, class3, NULL, after);
+		long found = lookUpMatchingAction (class1, class2, class3, NULL, after);
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
@@ -276,7 +277,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 
 	/* Make room for insertion.
 	 */
-	for (i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
+	for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
 	memset (& theActions [position], 0, sizeof (struct structPraat_Command));
 
 	/* Insert new command.
@@ -309,9 +310,9 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 }
 
 int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3, found, i;
+	int n1, n2, n3;
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
 		return Melder_error9 (L"(praat_removeAction:) Action command \"", ((Data_Table) class1) -> _className,
 			class2 ? L" & ": L"", ((Data_Table) class2) -> _className,
@@ -320,7 +321,7 @@ int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t 
 	}
 	Melder_free (theActions [found]. title);
 	theNumberOfActions --;
-	for (i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+	for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
 	return 1;
 }
 
@@ -338,9 +339,9 @@ int praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cla
 }
 
 int praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3, found;
+	int n1, n2, n3;
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
 		return Melder_error9 (L"(praat_hideAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
 			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
@@ -368,9 +369,9 @@ int praat_hideAction_classNames (const wchar_t *className1, const wchar_t *class
 }
 
 int praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3, found;
+	int n1, n2, n3;
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 	if (! found) {
 		return Melder_error9 (L"(praat_showAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
 			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
@@ -417,8 +418,7 @@ static int compareActions (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortActions (void) {
-	long i;
-	for (i = 1; i <= theNumberOfActions; i ++)
+	for (long i = 1; i <= theNumberOfActions; i ++)
 		theActions [i]. sortingTail = i;
 	qsort (& theActions [1], theNumberOfActions, sizeof (struct structPraat_Command), compareActions);
 }
@@ -433,10 +433,10 @@ static const wchar_t *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
 }
 static int allowExecutionHook (void *closure) {
-	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) closure;
+	int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
-	long i, numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
-	for (i = 1; i <= theNumberOfActions; i ++) {
+	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
+	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			int sel1, sel2 = 0, sel3 = 0, sel4 = 0;
@@ -472,23 +472,30 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) void_me;
-	for (int i = 1; i <= theNumberOfActions; i ++) {
+	int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
+	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
-			if (my title) {
+			if (my title != NULL && ! wcsstr (my title, L"...")) {
 				UiHistory_write (L"\n");
 				UiHistory_write (my title);
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, callback);
-			if (! callback (NULL, NULL, NULL, (XtPointer) modified))
+			if (! callback (NULL, NULL, NULL, my title, modified, NULL))
 				Melder_flushError ("Command not executed.");
 			Ui_setAllowExecutionHook (NULL, NULL);
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			UiHistory_write (L"\nexecute");
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL))
+			if (my title != NULL && ! wcsstr (my title, L"...")) {
+				UiHistory_write (L"\nexecute ");
+				UiHistory_write (my script);
+			} else {
+				UiHistory_write (L"\nexecute \"");
+				UiHistory_write (my script);
+				UiHistory_write (L"\"");
+			}
+			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL))
 				Melder_flushError ("Script not executed.");
 			praat_updateSelection (); return;
 		}
@@ -859,7 +866,7 @@ int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interprete
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	if (! theActions [i]. callback (NULL, arguments, interpreter, NULL))
+	if (! theActions [i]. callback (NULL, arguments, interpreter, NULL, false, NULL))
 		return 0;
 	return 1;
 }

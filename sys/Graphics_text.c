@@ -792,9 +792,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			// TODO: Paul; waarom hier niet void Graphics_setColour (I, int colour) ?
 
 			#if gtk 
-				if (lc -> link) _Graphics_setRGBColour (me, 0.0, 0.0, 1.0);
+				if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
 			#elif xwin
-				if (lc -> link) XSetForeground (my display, my gc, xwinColours [Graphics_BLUE]);
+				if (lc -> link) XSetForeground (my display, my gc, xwinColour_BLUE);
 			#elif win
 			#elif mac
 				if (lc -> link) ForeColor (blueColor);
@@ -905,7 +905,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			 */
 
 			#if xwin || gtk
-				if (lc -> link) _Graphics_setRGBColour (me, my red, my green, my blue);
+				if (lc -> link) _Graphics_setColour (me, my colour);
 			#elif win
 			#elif mac
 				if (lc -> link) RGBForeColor (& my macColour);

@@ -334,7 +334,7 @@ void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double x
 	iam (Polygon);
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	Graphics_setRGBColour_struct (g, colour);
+	Graphics_setColour (g, colour);
 	Graphics_fillArea (g, my numberOfPoints, & my x [1], & my y [1]);
 	Graphics_unsetInner (g);
 }

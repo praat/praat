@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20091215)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100101)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.23# (1 January 2010)")
+LIST_ITEM (L"\\bu Allowed multiple files to be selected with e.g. @@Read from file...@.")
+LIST_ITEM (L"\\bu Demo window: guarded against handling the Demo window from two scripts at a time.")
 NORMAL (L"##5.1.22# (15 December 2009)")
 LIST_ITEM (L"\\bu Picture window: millions of @@colour|colours@ instead of just twelve.")
 LIST_ITEM (L"\\bu Sound window: ##Move frequency cursor to...#")

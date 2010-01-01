@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/12/08
+ * pb 2009/12/22
  */
 
 #include "Editor.h"
@@ -65,20 +65,20 @@ extern void praat_run (void);
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure));
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
 /* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
 void praat_addAction1 (void *class1, int n1,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure));
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction2 (void *class1, int n1, void *class2, int n2,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure));
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure));
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure));
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure));
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files.
@@ -124,7 +124,7 @@ int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t 
 	/* 'title' may be NULL; reference-copied. */
 
 Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *));
+	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *));
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -162,8 +162,9 @@ typedef struct {   /* Readonly */
 } structPraatObjects, *PraatObjects;
 typedef struct {   /* Readonly */
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
-	int font, fontSize, lineType, colour;
-	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC, red, green, blue;
+	int font, fontSize, lineType;
+	Graphics_Colour colour;
+	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;
 extern structPraatApplication theForegroundPraatApplication;
 extern PraatApplication theCurrentPraatApplication;
@@ -246,9 +247,9 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
  */
 
 #define FORM(proc,name,helpTitle) \
-	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *modified) \
+	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *buttonClosure) \
 	{ static UiForm dia; if (dia == NULL) { Any radio = 0; (void) radio; \
-	dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, NULL, helpTitle);
+	dia = UiForm_create (theCurrentPraatApplication -> topShell, name, DO_##proc, buttonClosure, invokingButtonTitle, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
 #define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (dia, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
@@ -282,16 +283,16 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
 #define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
-#define DO  UiForm_do (dia, modified != NULL); } else if (sendingForm == NULL) { \
+#define DO  UiForm_do (dia, modified); } else if (sendingForm == NULL) { \
 	if (! UiForm_parseString (dia, sendingString, interpreter)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
-#define DO_ALTERNATIVE(alternative)  UiForm_do (dia, modified != NULL); } else if (sendingForm == NULL) { \
+#define DO_ALTERNATIVE(alternative)  UiForm_do (dia, modified); } else if (sendingForm == NULL) { \
 	if (! UiForm_parseString (dia, sendingString, interpreter)) { wchar_t *parkedError = Melder_wcsdup (Melder_getError ()); Melder_clearError (); \
-	int result = DO_##alternative (NULL, sendingString, interpreter, modified); \
+	int result = DO_##alternative (NULL, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
 #define END  (void) 0; } } iferror return 0; praat_updateSelection (); return 1; }
-#define DIRECT(proc)  static int DO_##proc (UiForm dummy1, const wchar_t *dummy2, Interpreter dummy3, void *dummy4) { \
-	(void) dummy1; (void) dummy2; (void) dummy3; (void) dummy4; { int IOBJECT = 0; (void) IOBJECT; {
+#define DIRECT(proc)  static int DO_##proc (UiForm dummy1, const wchar_t *dummy2, Interpreter dummy3, const wchar_t *dummy4, bool dummy5, void *dummy6) { \
+	(void) dummy1; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; { int IOBJECT = 0; (void) IOBJECT; {
 
 #ifdef UNIX_newFileSelector
 	#define FORM_READ(proc,title,help) \
@@ -307,17 +308,17 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		DO \
 			MelderFile file = GET_FILE (L"outfile");
 #else
-	#define FORM_READ(proc,title,help) \
-	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) { \
-		static UiForm dia; (void) interpreter; (void) dummy; \
-		if (dia == NULL) dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, NULL, help); \
+	#define FORM_READ(proc,title,help,allowMult) \
+	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+		static UiForm dia; (void) interpreter; (void) modified; (void) okClosure; \
+		if (dia == NULL) dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help, allowMult); \
 		if (sendingForm == NULL && sendingString == NULL) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sendingString == NULL) file = UiFile_getFile (dia); \
 		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
-	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) { \
-		static Any dia; (void) interpreter; (void) dummy; \
-		if (dia == NULL) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, NULL, help); \
+	static int DO_##proc (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *okClosure) { \
+		static Any dia; (void) interpreter; (void) modified; (void) okClosure; \
+		if (dia == NULL) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, DO_##proc, okClosure, invokingButtonTitle, help); \
 		if (sendingForm == NULL && sendingString == NULL) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2 = { 0 }; (void) IOBJECT; \
 		if (sendingString == NULL) file = UiFile_getFile (dia); \
 		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; } {

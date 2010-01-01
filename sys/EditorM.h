@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/21
+ * pb 2009/12/22
  */
 
 #undef FORM
@@ -90,7 +90,7 @@
 #define EDITOR_ARGS  Any void_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
-	cmd -> dialog = UiForm_createE (cmd, title, helpTitle);
+	cmd -> dialog = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);
 #define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sendingForm == NULL && sendingString == NULL) {
 #define EDITOR_DO  UiForm_do (cmd -> dialog, false); } else if (sendingForm == NULL) { \
 	if (! UiForm_parseStringE (cmd, sendingString, interpreter)) return 0; } else {
@@ -98,7 +98,7 @@
 
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> dialog == NULL) { \
-		cmd -> dialog = UiOutfile_createE (cmd, title, helpTitle); \
+		cmd -> dialog = UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
 		} if (sendingForm == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \

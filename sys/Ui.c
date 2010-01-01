@@ -45,6 +45,7 @@
  * pb 2009/08/21 better message for "You interrupted"
  * pb 2009/10/15 corrected colon removal
  * pb 2009/12/14 colours
+ * pb 2009/12/22 invokingButtonTitle
  */
 
 #include <wctype.h>
@@ -82,9 +83,10 @@
 #define UiField_members Thing_members \
 	int type; \
 	const wchar_t *formLabel; \
-	double realValue, realDefaultValue, redValue, greenValue, blueValue; \
+	double realValue, realDefaultValue; \
 	long integerValue, integerDefaultValue; \
 	wchar_t *stringValue; const wchar_t *stringDefaultValue; \
+	Graphics_Colour colourValue; \
 	char *stringValueA; \
 	Ordered options; \
 	long numberOfStrings; \
@@ -234,34 +236,35 @@ static void UiField_setDefault (UiField me) {
 static int colourToValue (UiField me, wchar_t *string) {
 	wchar_t *p = string;
 	while (*p == ' ' || *p == '\t') p ++;
+	*p = tolower (*p);
 	int first = *p;
 	if (first == '{') {
-		my redValue = Melder_atof (++ p);
+		my colourValue. red = Melder_atof (++ p);
 		p = wcschr (p, ',');
 		if (p == NULL) return 0;
-		my greenValue = Melder_atof (++ p);
+		my colourValue. green = Melder_atof (++ p);
 		p = wcschr (p, ',');
 		if (p == NULL) return 0;
-		my blueValue = Melder_atof (++ p);
+		my colourValue. blue = Melder_atof (++ p);
 	} else {
 		*p = tolower (*p);
-		if (wcsequ (p, L"black")) Graphics_standardColourToRGBColour (Graphics_BLACK, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"white")) Graphics_standardColourToRGBColour (Graphics_WHITE, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"red")) Graphics_standardColourToRGBColour (Graphics_RED, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"green")) Graphics_standardColourToRGBColour (Graphics_GREEN, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"blue")) Graphics_standardColourToRGBColour (Graphics_BLUE, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"yellow")) Graphics_standardColourToRGBColour (Graphics_YELLOW, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"cyan")) Graphics_standardColourToRGBColour (Graphics_CYAN, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"magenta")) Graphics_standardColourToRGBColour (Graphics_MAGENTA, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"maroon")) Graphics_standardColourToRGBColour (Graphics_MAROON, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"lime")) Graphics_standardColourToRGBColour (Graphics_LIME, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"navy")) Graphics_standardColourToRGBColour (Graphics_NAVY, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"teal")) Graphics_standardColourToRGBColour (Graphics_TEAL, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"purple")) Graphics_standardColourToRGBColour (Graphics_PURPLE, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"olive")) Graphics_standardColourToRGBColour (Graphics_OLIVE, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"pink")) Graphics_standardColourToRGBColour (Graphics_PINK, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"silver")) Graphics_standardColourToRGBColour (Graphics_SILVER, & my redValue, & my greenValue, & my blueValue);
-		else if (wcsequ (p, L"grey")) Graphics_standardColourToRGBColour (Graphics_GREY, & my redValue, & my greenValue, & my blueValue);
+		if (wcsequ (p, L"black")) my colourValue = Graphics_BLACK;
+		else if (wcsequ (p, L"white")) my colourValue = Graphics_WHITE;
+		else if (wcsequ (p, L"red")) my colourValue = Graphics_RED;
+		else if (wcsequ (p, L"green")) my colourValue = Graphics_GREEN;
+		else if (wcsequ (p, L"blue")) my colourValue = Graphics_BLUE;
+		else if (wcsequ (p, L"yellow")) my colourValue = Graphics_YELLOW;
+		else if (wcsequ (p, L"cyan")) my colourValue = Graphics_CYAN;
+		else if (wcsequ (p, L"magenta")) my colourValue = Graphics_MAGENTA;
+		else if (wcsequ (p, L"maroon")) my colourValue = Graphics_MAROON;
+		else if (wcsequ (p, L"lime")) my colourValue = Graphics_LIME;
+		else if (wcsequ (p, L"navy")) my colourValue = Graphics_NAVY;
+		else if (wcsequ (p, L"teal")) my colourValue = Graphics_TEAL;
+		else if (wcsequ (p, L"purple")) my colourValue = Graphics_PURPLE;
+		else if (wcsequ (p, L"olive")) my colourValue = Graphics_OLIVE;
+		else if (wcsequ (p, L"pink")) my colourValue = Graphics_PINK;
+		else if (wcsequ (p, L"silver")) my colourValue = Graphics_SILVER;
+		else if (wcsequ (p, L"grey")) my colourValue = Graphics_GREY;
 		else { *p = first; return 0; }
 		*p = first;
 	}
@@ -358,8 +361,8 @@ static int UiField_widgetToValue (UiField me) {
 			wchar_t *string = GuiText_getString (my text);
 			if (colourToValue (me, string)) {
 				;
-			} else if (Interpreter_numericExpression (NULL, string, & my redValue)) {
-				my greenValue = my blueValue = my redValue;
+			} else if (Interpreter_numericExpression (NULL, string, & my colourValue. red)) {
+				my colourValue. green = my colourValue. blue = my colourValue. red;
 				Melder_free (string);
 			} else {
 				Melder_free (string);
@@ -431,8 +434,8 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 			wchar_t *string2 = Melder_wcsdup (string);
 			if (colourToValue (me, string2)) {
 				;
-			} else if (Interpreter_numericExpression (interpreter, string2, & my redValue)) {
-				my greenValue = my blueValue = my redValue;
+			} else if (Interpreter_numericExpression (interpreter, string2, & my colourValue. red)) {
+				my colourValue. green = my colourValue. blue = my colourValue. red;
 				Melder_free (string2);
 			} else {
 				Melder_free (string2);
@@ -443,53 +446,6 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 		}
 	}
 	return 1;
-}
-
-static void UiField_valueToHistory (UiField me, int isLast) {
-	UiHistory_write (L" ");
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-			UiHistory_write (Melder_double (my realValue));
-		} break; case UI_INTEGER: case UI_NATURAL: {
-			UiHistory_write (Melder_integer (my integerValue));
-		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-			if (isLast == FALSE && (my stringValue [0] == '\0' || wcschr (my stringValue, ' '))) {
-				UiHistory_write (L"\"");
-				UiHistory_write (my stringValue);
-				UiHistory_write (L"\"");
-			} else {
-				UiHistory_write (my stringValue);
-			}
-		} break; case UI_BOOLEAN: {
-			UiHistory_write (my integerValue ? L"yes" : L"no");
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
-			UiOption b = my options -> item [my integerValue];
-			if (isLast == FALSE && (b -> name [0] == '\0' || wcschr (b -> name, ' '))) {
-				UiHistory_write (L"\"");
-				UiHistory_write (b -> name);
-				UiHistory_write (L"\"");
-			} else {
-				UiHistory_write (b -> name);
-			}
-		} break; case UI_LIST: {
-			if (isLast == FALSE && (my strings [my integerValue] [0] == '\0' || wcschr (my strings [my integerValue], ' '))) {
-				UiHistory_write (L"\"");
-				UiHistory_write (my strings [my integerValue]);
-				UiHistory_write (L"\"");
-			} else {
-				UiHistory_write (my strings [my integerValue]);
-			}
-		} break; case UI_COLOUR: {
-			int integerValue = floor (my realValue);
-			if (integerValue != my realValue) {
-				UiHistory_write (Melder_single (my realValue));
-			} else if (integerValue >= 0 && integerValue <= Graphics_MAX_COLOUR) {
-				UiHistory_write (Graphics_getStandardColourName (integerValue));
-			} else {
-				UiHistory_write (L"black");
-			}
-		}
-	}
 }
 
 /***** History mechanism. *****/
@@ -512,11 +468,11 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 #define UiForm_members Thing_members \
 	EditorCommand command; \
 	Widget parent, shell, dialog; \
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure); \
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
 	int (*applyCallback) (Any dia, void *closure); \
 	int (*cancelCallback) (Any dia, void *closure); \
 	void *buttonClosure; \
-	const wchar_t *helpTitle; \
+	const wchar_t *invokingButtonTitle, *helpTitle; \
 	int numberOfContinueButtons, defaultContinueButton, clickedContinueButton; \
 	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	int numberOfFields; \
@@ -530,10 +486,10 @@ class_create_opaque (UiForm, Thing);
 
 static void classUiForm_destroy (I) {
 	iam (UiForm);
-	int ifield;
-	for (ifield = 1; ifield <= my numberOfFields; ifield ++)
+	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		forget (my field [ifield]);
 	if (my dialog) GuiObject_destroy (GuiObject_parent (my dialog));
+	Melder_free (my invokingButtonTitle);
 	Melder_free (my helpTitle);
 	inherited (UiForm) destroy (me);
 }
@@ -602,16 +558,61 @@ static void UiForm_okOrApply (I, Widget button, int hide) {
 			}
 		}
 	}
-	if (my okCallback (me, NULL, NULL, my buttonClosure)) {
+	if (my okCallback (me, NULL, NULL, NULL, false, my buttonClosure)) {
 		/*
 		 * Write everything to history. Before destruction!
 		 */
 		if (! my isPauseForm) {
+			UiHistory_write (L"\n");
+			UiHistory_write (my invokingButtonTitle);
 			int size = my numberOfFields;
 			while (size >= 1 && my field [size] -> type == UI_LABEL)
 				size --;   /* Ignore trailing fields without a value. */
-			for (int ifield = 1; ifield <= size; ifield ++)
-				UiField_valueToHistory (my field [ifield], ifield == size);
+			for (int ifield = 1; ifield <= size; ifield ++) {
+				UiField field = my field [ifield];
+				switch (field -> type) {
+					case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+						UiHistory_write (L" ");
+						UiHistory_write (Melder_double (field -> realValue));
+					} break; case UI_INTEGER: case UI_NATURAL: {
+						UiHistory_write (L" ");
+						UiHistory_write (Melder_integer (field -> integerValue));
+					} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+						if (ifield < size && (field -> stringValue [0] == '\0' || wcschr (field -> stringValue, ' '))) {
+							UiHistory_write (L" \"");
+							UiHistory_write (field -> stringValue);   // BUG: should double any double quotes
+							UiHistory_write (L"\"");
+						} else {
+							UiHistory_write (L" ");
+							UiHistory_write (field -> stringValue);
+						}
+					} break; case UI_BOOLEAN: {
+						UiHistory_write (field -> integerValue ? L" yes" : L" no");
+					} break; case UI_RADIO: case UI_OPTIONMENU: {
+						UiOption b = field -> options -> item [field -> integerValue];
+						if (ifield < size && (b -> name [0] == '\0' || wcschr (b -> name, ' '))) {
+							UiHistory_write (L" \"");
+							UiHistory_write (b -> name);
+							UiHistory_write (L"\"");
+						} else {
+							UiHistory_write (L" ");
+							UiHistory_write (b -> name);
+						}
+					} break; case UI_LIST: {
+						if (ifield < size && (field -> strings [field -> integerValue] [0] == '\0' || wcschr (field -> strings [field -> integerValue], ' '))) {
+							UiHistory_write (L" \"");
+							UiHistory_write (field -> strings [field -> integerValue]);
+							UiHistory_write (L"\"");
+						} else {
+							UiHistory_write (L" ");
+							UiHistory_write (field -> strings [field -> integerValue]);
+						}
+					} break; case UI_COLOUR: {
+						UiHistory_write (L" ");
+						UiHistory_write (Graphics_Colour_name (field -> colourValue));
+					}
+				}
+			}
 		}
 		if (hide) {
 			GuiObject_hide (my dialog);
@@ -668,15 +669,16 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 }
 
 Any UiForm_create (Widget parent, const wchar_t *title,
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure), void *buttonClosure,
-	const wchar_t *helpTitle)
+	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	UiForm me = new (UiForm);
 	my parent = parent;
 	Thing_setName (me, title);
-	my helpTitle = Melder_wcsdup (helpTitle);
 	my okCallback = okCallback;
 	my buttonClosure = buttonClosure;
+	my invokingButtonTitle = Melder_wcsdup (invokingButtonTitle);
+	my helpTitle = Melder_wcsdup (helpTitle);
 	return me;
 }
 
@@ -705,16 +707,18 @@ void UiForm_setPauseForm (I,
 	my cancelCallback = cancelCallback;
 }
 
-static int commonOkCallback (UiForm dia, const wchar_t *dummy, Interpreter interpreter, void *closure) {
+static int commonOkCallback (UiForm dia, const wchar_t *dummy, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	EditorCommand cmd = (EditorCommand) closure;
 	(void) dia;
 	(void) dummy;
+	(void) invokingButtonTitle;
+	(void) modified;
 	return cmd -> commandCallback (cmd -> editor, cmd, cmd -> dialog, NULL, interpreter);
 }
 
-Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *helpTitle) {
+Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
 	Editor editor = (Editor) cmd -> editor;
-	UiForm dia = UiForm_create (editor -> dialog, title, commonOkCallback, cmd, helpTitle);
+	UiForm dia = UiForm_create (editor -> dialog, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
@@ -839,8 +843,6 @@ Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue) {
 	thy stringDefaultValue = Melder_wcsdup (defaultValue);
 	return thee;
 }
-
-Widget Gui_addRadioButton (Widget parent, const char *title, int x1, int x2, int y1, int y2, unsigned long flags);
 
 #define DIALOG_X  150
 #define DIALOG_Y  70
@@ -1176,7 +1178,7 @@ int UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter) {
 		if (! UiField_stringToValue (my field [size], arguments, interpreter))
 			return Melder_error3 (L"Don't understand contents of field \"", my field [size] -> name, L"\".");
 	}
-	return my okCallback (me, NULL, interpreter, my buttonClosure);
+	return my okCallback (me, NULL, interpreter, NULL, false, my buttonClosure);
 }
 
 int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter) {
@@ -1216,15 +1218,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 				GuiText_setString (field -> text, s);
 			}
 		} break; case UI_COLOUR: {
-			const wchar_t *s;
-			int integerValue = floor (value);
-			if (integerValue != value)
-				s = Melder_single (value);
-			else if (integerValue >= 0 && integerValue <= Graphics_MAX_COLOUR)
-				s = Graphics_getStandardColourName (integerValue);
-			else
-				s = L"black";
-			GuiText_setString (field -> text, s);
+			GuiText_setString (field -> text, Melder_double (value));   // some grey value
 		} break; default: {
 			Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (my name));
 		}
@@ -1453,17 +1447,12 @@ Graphics_Colour UiForm_getColour (I, const wchar_t *fieldName) {
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_COLOUR: {
-			Graphics_Colour colour;
-			colour. red = field -> redValue;
-			colour. green = field -> greenValue;
-			colour. blue = field -> blueValue;
-			return colour;
+			return field -> colourValue;
 		} break; default: {
 			fatalField (me);
 		}
 	}
-	Graphics_Colour black = { 0.0, 0.0, 0.0 };
-	return black;
+	return Graphics_BLACK;
 }
 
 Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName) {
@@ -1471,11 +1460,7 @@ Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName) {
 	UiField field = findField_check (me, fieldName); cherror
 	switch (field -> type) {
 		case UI_COLOUR: {
-			Graphics_Colour colour;
-			colour. red = field -> redValue;
-			colour. green = field -> greenValue;
-			colour. blue = field -> blueValue;
-			return colour;
+			return field -> colourValue;
 		} break; default: {
 			Melder_error3 (L"Cannot find a real value in field \"", fieldName, L"\" in the form.\n"
 				"The script may have changed while the form was open.\n"
@@ -1483,9 +1468,7 @@ Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName) {
 		}
 	}
 end:
-	(void) 0;
-	Graphics_Colour black = { 0.0, 0.0, 0.0 };
-	return black;
+	return Graphics_BLACK;
 }
 
 int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {

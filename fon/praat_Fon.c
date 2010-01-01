@@ -1470,7 +1470,7 @@ END
 
 /***** INTERVALTIER, rest in praat_TextGrid_init.c *****/
 
-FORM_READ (IntervalTier_readFromXwaves, L"Read IntervalTier from Xwaves", 0)
+FORM_READ (IntervalTier_readFromXwaves, L"Read IntervalTier from Xwaves", 0, true)
 	if (! praat_new1 (IntervalTier_readFromXwaves (file), MelderFile_name (file))) return 0;
 END
 
@@ -2144,11 +2144,11 @@ DO
 	EVERY_TO (Matrix_power (OBJECT, GET_INTEGER (L"Power")))
 END
 
-FORM_READ (Matrix_readFromRawTextFile, L"Read Matrix from raw text file", 0)
+FORM_READ (Matrix_readFromRawTextFile, L"Read Matrix from raw text file", 0, true)
 	if (! praat_new1 (Matrix_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 
-FORM_READ (Matrix_readAP, L"Read Matrix from LVS AP file", 0)
+FORM_READ (Matrix_readAP, L"Read Matrix from LVS AP file", 0, true)
 	if (! praat_new1 (Matrix_readAP (file), MelderFile_name (file))) return 0;
 END
 
@@ -4040,7 +4040,7 @@ DIRECT (Strings_randomize)
 	}
 END
 
-FORM_READ (Strings_readFromRawTextFile, L"Read Strings from raw text file", 0)
+FORM_READ (Strings_readFromRawTextFile, L"Read Strings from raw text file", 0, true)
 	if (! praat_new1 (Strings_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 
@@ -4088,7 +4088,7 @@ END
 
 /***** TEXTTIER, rest in praat_TextGrid_init.c *****/
 
-FORM_READ (TextTier_readFromXwaves, L"Read TextTier from Xwaves", 0)
+FORM_READ (TextTier_readFromXwaves, L"Read TextTier from Xwaves", 0, true)
 	if (! praat_new1 (TextTier_readFromXwaves (file), MelderFile_name (file))) return 0;
 END
 

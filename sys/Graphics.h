@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/14
+ * pb 2009/12/20
  */
 
 #ifndef _Thing_h_
@@ -115,7 +115,18 @@ void Graphics_mark (I, double x, double y, double size_mm, const wchar_t *markSt
 void Graphics_button (I, double x1, double x2, double y1, double y2);
 void Graphics_innerRectangle (I, double x1, double x2, double y1, double y2);
 
-void Graphics_xorOn (I, int colour);
+typedef struct { double red, green, blue; } Graphics_Colour;
+extern Graphics_Colour Graphics_BLACK, Graphics_WHITE, Graphics_RED, Graphics_GREEN, Graphics_BLUE,
+	Graphics_CYAN, Graphics_MAGENTA, Graphics_YELLOW, Graphics_MAROON, Graphics_LIME, Graphics_NAVY, Graphics_TEAL,
+	Graphics_PURPLE, Graphics_OLIVE, Graphics_PINK, Graphics_SILVER, Graphics_GREY;
+const wchar_t * Graphics_Colour_name (Graphics_Colour colour);
+static inline bool Graphics_Colour_equal (Graphics_Colour colour1, Graphics_Colour colour2) {
+	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
+}
+void Graphics_setColour (I, Graphics_Colour colour);
+void Graphics_setGrey (I, double grey);
+
+void Graphics_xorOn (I, Graphics_Colour colour);
 void Graphics_xorOff (I);
 void Graphics_highlight (I, double x1, double x2, double y1, double y2);
 void Graphics_unhighlight (I, double x1, double x2, double y1, double y2);
@@ -166,34 +177,6 @@ void Graphics_setLineType (I, int lineType);
 void Graphics_setLineWidth (I, double lineWidth);
 void Graphics_setArrowSize (I, double arrorSize);
 
-typedef struct { double red, green, blue; } Graphics_Colour;
-void Graphics_setRGBColour (I, double red, double green, double blue);
-void Graphics_setRGBColour_struct (I, Graphics_Colour colour);
-void Graphics_setGrey (I, double grey);
-#define Graphics_BLACK  0
-#define Graphics_WHITE  1
-#define Graphics_RED  2
-#define Graphics_GREEN  3
-#define Graphics_BLUE  4
-#define Graphics_CYAN  5
-#define Graphics_MAGENTA  6
-#define Graphics_YELLOW  7
-#define Graphics_MAROON  8
-#define Graphics_LIME  9
-#define Graphics_NAVY  10
-#define Graphics_TEAL  11
-#define Graphics_PURPLE  12
-#define Graphics_OLIVE  13
-#define Graphics_PINK  14
-#define Graphics_SILVER  15
-#define Graphics_GREY  16
-#define Graphics_MAX_COLOUR  16
-void Graphics_standardColourToRGBColour (int standardColour, double *red, double *green, double *blue);
-Graphics_Colour Graphics_standardColourToRGBColour_struct (int standardColour);
-wchar_t * Graphics_getStandardColourName (int standardColour);
-void Graphics_setStandardColour (I, int standardColour);
-#define Graphics_setColour Graphics_setStandardColour
-
 void Graphics_inqViewport (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
 int Graphics_inqFont (I);
@@ -202,8 +185,7 @@ int Graphics_inqFontStyle (I);
 int Graphics_inqLineType (I);
 double Graphics_inqLineWidth (I);
 double Graphics_inqArrowSize (I);
-void Graphics_inqRGBColour (I, double *red, double *green, double *blue);
-Graphics_Colour Graphics_inqRGBColour_struct (I);
+Graphics_Colour Graphics_inqColour (I);
 
 void Graphics_contour (I, double **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);

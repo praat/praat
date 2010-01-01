@@ -608,15 +608,15 @@ DO
 	}
 END
 
-FORM_READ (Table_readFromTableFile, L"Read Table from table file", 0)
+FORM_READ (Table_readFromTableFile, L"Read Table from table file", 0, true)
 	if (! praat_new1 (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
 END
 
-FORM_READ (Table_readFromCommaSeparatedFile, L"Read Table from comma-separated file", 0)
+FORM_READ (Table_readFromCommaSeparatedFile, L"Read Table from comma-separated file", 0, true)
 	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
 END
 
-FORM_READ (Table_readFromTabSeparatedFile, L"Read Table from tab-separated file", 0)
+FORM_READ (Table_readFromTabSeparatedFile, L"Read Table from tab-separated file", 0, true)
 	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
 END
 
@@ -1309,7 +1309,7 @@ DO
 	}
 END
 
-FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, L"Read TableOfReal from headerless spreadsheet file", 0)
+FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, L"Read TableOfReal from headerless spreadsheet file", 0, true)
 	if (! praat_new1 (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
 END
 

@@ -73,7 +73,7 @@ static Widget praatButton_fonts [1 + kGraphics_font_MAX];
 static void updateFontMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
-		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;
+		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;   // we no longer have New Century Schoolbook
 		#if gtk
 			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
 				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [i]), theCurrentPraatPicture -> font == i);
@@ -342,7 +342,9 @@ END
 /***** "Pen" MENU *****/
 
 static Widget praatButton_lines [3];
-static Widget praatButton_colours [1+Graphics_MAX_COLOUR];
+static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
+	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
+	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
 
 
 static void updatePenMenu (void) {
@@ -358,9 +360,23 @@ static void updatePenMenu (void) {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			XmToggleButtonGadgetSetState (praatButton_lines [i], theCurrentPraatPicture -> lineType == i, 0);
 		}
-		for (int i = Graphics_BLACK; i <= Graphics_GREY; i ++) {
-			XmToggleButtonGadgetSetState (praatButton_colours [i], theCurrentPraatPicture -> colour == i, 0);
-		}
+		XmToggleButtonGadgetSetState (praatButton_black, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK), 0);
+		XmToggleButtonGadgetSetState (praatButton_white, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE), 0);
+		XmToggleButtonGadgetSetState (praatButton_red, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED), 0);
+		XmToggleButtonGadgetSetState (praatButton_green, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN), 0);
+		XmToggleButtonGadgetSetState (praatButton_blue, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE), 0);
+		XmToggleButtonGadgetSetState (praatButton_yellow, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW), 0);
+		XmToggleButtonGadgetSetState (praatButton_cyan, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN), 0);
+		XmToggleButtonGadgetSetState (praatButton_magenta, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA), 0);
+		XmToggleButtonGadgetSetState (praatButton_maroon, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON), 0);
+		XmToggleButtonGadgetSetState (praatButton_lime, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME), 0);
+		XmToggleButtonGadgetSetState (praatButton_navy, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY), 0);
+		XmToggleButtonGadgetSetState (praatButton_teal, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL), 0);
+		XmToggleButtonGadgetSetState (praatButton_purple, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE), 0);
+		XmToggleButtonGadgetSetState (praatButton_olive, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE), 0);
+		XmToggleButtonGadgetSetState (praatButton_pink, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK), 0);
+		XmToggleButtonGadgetSetState (praatButton_silver, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER), 0);
+		XmToggleButtonGadgetSetState (praatButton_grey, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY), 0);
 	#endif
 	}
 }
@@ -401,12 +417,11 @@ DO
 	theCurrentPraatPicture -> arrowSize = arrowSize;
 END
 
-static void setColour (int colour) {
+static void setColour (Graphics_Colour colour) {
 	praat_picture_open ();
 	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
 	theCurrentPraatPicture -> colour = colour;
-	Graphics_inqRGBColour (GRAPHICS, & theCurrentPraatPicture -> red, & theCurrentPraatPicture -> green, & theCurrentPraatPicture -> blue);
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
 	}
@@ -433,14 +448,11 @@ FORM (Colour, L"Praat picture: Colour", 0)
 	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.0")
 	OK
 DO
-	praat_picture_open ();
 	Graphics_Colour colour = GET_COLOUR (L"Colour");
-	Graphics_setRGBColour_struct (GRAPHICS, colour);
+	praat_picture_open ();
+	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
-	theCurrentPraatPicture -> colour = -1;
-	theCurrentPraatPicture -> red = colour. red;
-	theCurrentPraatPicture -> green = colour. green;
-	theCurrentPraatPicture -> blue = colour. blue;
+	theCurrentPraatPicture -> colour = colour;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
 	}
@@ -448,11 +460,11 @@ END
 
 /***** "File" MENU *****/
 
-FORM_READ (Picture_readFromPraatPictureFile, L"Read picture from praat picture file", 0)
+FORM_READ (Picture_readFromPraatPictureFile, L"Read picture from praat picture file", 0, false)
 	return Picture_readFromPraatPictureFile (praat_picture, file);
 END
 
-FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat picture file", 0)
+FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat picture file", 0, false)
 	int result;
 	Graphics_setWsWindow (GRAPHICS, 0, 2, -1, 1);
 	result = Picture_readFromPraatPictureFile (praat_picture, file);
@@ -461,17 +473,18 @@ FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat pi
 END
 
 #ifdef _WIN32
-FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat picture file", 0)
+FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat picture file", 0, false)
 	return Picture_readFromOldWindowsPraatPictureFile (praat_picture, file);
 END
 #endif
 
-static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
+	(void) modified;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to EPS file",
-		DO_Picture_writeToEpsFile, NULL, NULL);
+		DO_Picture_writeToEpsFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -485,12 +498,13 @@ static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sending
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
-static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
+	(void) modified;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
-		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
+		DO_Picture_writeToFontlessEpsFile_xipa, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -501,12 +515,13 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wch
 	return 1;
 }
 
-static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
+	(void) modified;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
-		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
+		DO_Picture_writeToFontlessEpsFile_silipa, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -517,12 +532,13 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const w
 	return 1;
 }
 
-static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
+	(void) modified;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to PDF file",
-		DO_Picture_writeToPdfFile, NULL, NULL);
+		DO_Picture_writeToPdfFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.pdf");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -533,12 +549,13 @@ static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sending
 	return 1;
 }
 
-static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
+	(void) modified;
 	(void) dummy;
 	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Praat picture file",
-		DO_Picture_writeToPraatPictureFile, NULL, NULL);
+		DO_Picture_writeToPraatPictureFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -564,12 +581,13 @@ DIRECT (Print)
 END
 
 #ifdef macintosh
-	static int DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+	static int DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 		static Any dia;
 		(void) interpreter;
+		(void) modified;
 		(void) dummy;
 		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Mac PICT file",
-			DO_Picture_writeToMacPictFile, NULL, NULL);
+			DO_Picture_writeToMacPictFile, NULL, invokingButtonTitle, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.pict");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -581,12 +599,13 @@ END
 	}
 #endif
 #ifdef _WIN32
-	static int DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *dummy) {
+	static int DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 		static Any dia;
 		(void) interpreter;
+		(void) modified;
 		(void) dummy;
 		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Windows metafile",
-			DO_Picture_writeToWindowsMetafile, NULL, NULL);
+			DO_Picture_writeToWindowsMetafile, NULL, invokingButtonTitle, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
@@ -828,7 +847,7 @@ FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
@@ -855,7 +874,7 @@ FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillRoundedRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
@@ -896,7 +915,7 @@ FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillEllipse (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
@@ -924,7 +943,7 @@ FORM (PaintCircle, L"Praat picture: Paint circle", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
@@ -952,7 +971,7 @@ FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
 DO
 	praat_picture_open ();
 	Graphics_setInner (GRAPHICS);
-	Graphics_setRGBColour_struct (GRAPHICS, GET_COLOUR (L"Colour"));
+	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	Graphics_unsetInner (GRAPHICS);
 	praat_picture_close ();
@@ -1434,28 +1453,10 @@ DIRECT (Picture_settings_report)
 		L"(unknown)");
 	MelderInfo_writeLine2 (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
 	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
-	MelderInfo_writeLine2 (L"Colour: ",
-		theCurrentPraatPicture -> colour == Graphics_WHITE ? L"White" :
-		theCurrentPraatPicture -> colour == Graphics_BLACK ? L"Black" :
-		theCurrentPraatPicture -> colour == Graphics_GREY ? L"Grey" :
-		theCurrentPraatPicture -> colour == Graphics_SILVER ? L"Silver" :
-		theCurrentPraatPicture -> colour == Graphics_TEAL ? L"Teal" :
-		theCurrentPraatPicture -> colour == Graphics_RED ? L"Red" :
-		theCurrentPraatPicture -> colour == Graphics_GREEN ? L"Green" :
-		theCurrentPraatPicture -> colour == Graphics_BLUE ? L"Blue" :
-		theCurrentPraatPicture -> colour == Graphics_MAGENTA ? L"Magenta" :
-		theCurrentPraatPicture -> colour == Graphics_OLIVE ? L"Olive" :
-		theCurrentPraatPicture -> colour == Graphics_PINK ? L"Pink" :
-		theCurrentPraatPicture -> colour == Graphics_NAVY ? L"Navy" :
-		theCurrentPraatPicture -> colour == Graphics_YELLOW ? L"Yellow" :
-		theCurrentPraatPicture -> colour == Graphics_CYAN ? L"Cyan" :
-		theCurrentPraatPicture -> colour == Graphics_MAROON ? L"Maroon" :
-		theCurrentPraatPicture -> colour == Graphics_PURPLE ? L"Purple" :
-		theCurrentPraatPicture -> colour == Graphics_LIME ? L"Lime" :
-		L"(unknown)");
-	MelderInfo_writeLine2 (L"Red: ", Melder_double (theCurrentPraatPicture -> red));
-	MelderInfo_writeLine2 (L"Green: ", Melder_double (theCurrentPraatPicture -> green));
-	MelderInfo_writeLine2 (L"Blue: ", Melder_double (theCurrentPraatPicture -> blue));
+	MelderInfo_writeLine2 (L"Colour: ", Graphics_Colour_name (theCurrentPraatPicture -> colour));
+	MelderInfo_writeLine2 (L"Red: ", Melder_double (theCurrentPraatPicture -> colour. red));
+	MelderInfo_writeLine2 (L"Green: ", Melder_double (theCurrentPraatPicture -> colour. green));
+	MelderInfo_writeLine2 (L"Blue: ", Melder_double (theCurrentPraatPicture -> colour. blue));
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	MelderInfo_writeLine2 (L"Axis left: ", Melder_double (x1WC));
@@ -1544,7 +1545,7 @@ void praat_picture_open (void) {
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);
 	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
 	Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize);
-	Graphics_setRGBColour (GRAPHICS, theCurrentPraatPicture -> red, theCurrentPraatPicture -> green, theCurrentPraatPicture -> blue);
+	Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour);
 
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	/* The following will dump the axes to the PostScript file after Erase all. BUG: should be somewhere else. */
@@ -1582,9 +1583,6 @@ void praat_picture_init (void) {
 	static MelderString itemTitle_search = { 0 };
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 	theCurrentPraatPicture -> colour = Graphics_BLACK;
-	theCurrentPraatPicture -> red = 0.0;
-	theCurrentPraatPicture -> green = 0.0;
-	theCurrentPraatPicture -> blue = 0.0;
 	theCurrentPraatPicture -> lineWidth = 1.0;
 	theCurrentPraatPicture -> arrowSize = 1.0;
 	theCurrentPraatPicture -> x1NDC = 0.0;
@@ -1775,24 +1773,24 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Pen", L"Line width...", 0, 0, DO_Line_width);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- colour --", 0, 0, 0);
-	praatButton_colours [Graphics_BLACK] = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_RADIO_FIRST, DO_Black);
-	praatButton_colours [Graphics_WHITE] = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_RADIO_NEXT, DO_White);
-	praatButton_colours [Graphics_RED] = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_RADIO_NEXT, DO_Red);
-	praatButton_colours [Graphics_GREEN] = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_RADIO_NEXT, DO_Green);
-	praatButton_colours [Graphics_BLUE] = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_RADIO_NEXT, DO_Blue);
-	praatButton_colours [Graphics_YELLOW] = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_RADIO_NEXT, DO_Yellow);
-	praatButton_colours [Graphics_CYAN] = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_RADIO_NEXT, DO_Cyan);
-	praatButton_colours [Graphics_MAGENTA] = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_RADIO_NEXT, DO_Magenta);
-	praatButton_colours [Graphics_MAROON] = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_RADIO_NEXT, DO_Maroon);
-	praatButton_colours [Graphics_LIME] = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_RADIO_NEXT, DO_Lime);
-	praatButton_colours [Graphics_NAVY] = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_RADIO_NEXT, DO_Navy);
-	praatButton_colours [Graphics_TEAL] = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
-	praatButton_colours [Graphics_PURPLE] = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
-	praatButton_colours [Graphics_OLIVE] = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
-	praatButton_colours [Graphics_PINK] = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_RADIO_NEXT, DO_Pink);
-	praatButton_colours [Graphics_SILVER] = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
-	praatButton_colours [Graphics_GREY] = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Colour...", 0, 0, DO_Colour);
+	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_RADIO_FIRST, DO_Black);
+	praatButton_white = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_RADIO_NEXT, DO_White);
+	praatButton_red = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_RADIO_NEXT, DO_Red);
+	praatButton_green = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_RADIO_NEXT, DO_Green);
+	praatButton_blue = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_RADIO_NEXT, DO_Blue);
+	praatButton_yellow = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_RADIO_NEXT, DO_Yellow);
+	praatButton_cyan = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_RADIO_NEXT, DO_Cyan);
+	praatButton_magenta = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_RADIO_NEXT, DO_Magenta);
+	praatButton_maroon = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_RADIO_NEXT, DO_Maroon);
+	praatButton_lime = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_RADIO_NEXT, DO_Lime);
+	praatButton_navy = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_RADIO_NEXT, DO_Navy);
+	praatButton_teal = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
+	praatButton_purple = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
+	praatButton_olive = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
+	praatButton_pink = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_RADIO_NEXT, DO_Pink);
+	praatButton_silver = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
+	praatButton_grey = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
 
 	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_RADIO_FIRST, DO_10);
 	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_RADIO_NEXT,  DO_12);

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2009/12/22
  */
 
 #include "praat.h"
@@ -50,7 +50,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_saveMenuCommands (FILE *f);
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, void *), int x, int y);
+void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands (void);
 
@@ -61,7 +61,7 @@ typedef struct structPraat_Command {
 	void *class1, *class2, *class3, *class4;   /* Selected classes. */
 	short n1, n2, n3, n4;   /* Number of selected objects of each class; 0 means "any number" */
 	const wchar_t *title;   /* Button text = command text. */
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure);   /* Multi-purpose. */
+	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);   /* Multi-purpose. */
 		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */

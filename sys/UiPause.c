@@ -29,10 +29,12 @@ static Any thePauseFormRadio = NULL;
 static int thePauseForm_clicked = 0;
 static int theEventLoopDepth = 0;
 
-static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure) {
+static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	(void) sendingForm;
 	(void) sendingString;
 	(void) interpreter;
+	(void) invokingButtonTitle;
+	(void) modified;
 	/* BUG: should also restore praatP. editor. */
 	/*
 	 * Get the data from the pause form.
@@ -53,7 +55,7 @@ int UiPause_begin (Widget topShell, const wchar_t *title, Interpreter interprete
 	forget (thePauseForm);   // in case an earlier build-up of another pause window was interrupted
 	thePauseForm = UiForm_create (topShell, Melder_wcscat2 (L"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
-		NULL); cherror
+		NULL, NULL); cherror
 end:
 	iferror return 0;
 	return 1;
@@ -207,6 +209,8 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 			error1 (L"You interrupted the script.");
 			//Melder_flushError (NULL);
 			//Melder_clearError ();
+		} else {
+			//Melder_casual ("Clicked %d", thePauseForm_clicked);
 		}
 	#endif
 end:

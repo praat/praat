@@ -583,7 +583,7 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 {
     long i, j, node = 1, maxNumOfUnits = my nUnitsInLayer[0];
     int dxIsFixed = 1;
-	double red, green, blue; Graphics_inqRGBColour (g, & red, & green, & blue);
+	Graphics_Colour colour = Graphics_inqColour (g);
     double r1, dx, dy = 1.0 / (my nLayers + 1);
 
     Graphics_setInner (g);
@@ -614,7 +614,7 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 	    	x2WC += dx2;
 		}
     }
-    Graphics_setRGBColour (g, red, green, blue);
+    Graphics_setColour (g, colour);
     Graphics_unsetInner (g);
 }
 

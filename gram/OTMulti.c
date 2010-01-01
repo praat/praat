@@ -384,7 +384,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 					double meanRanking = sumOfRankings / numberOfDrawnConstraints;
 					Graphics_setWindow (graphics, 0, numberOfData, meanRanking - 50, meanRanking + 50);
 					for (long icons = 1; icons <= numberOfDrawnConstraints; icons ++) {
-						Graphics_setColour (graphics, icons + 1);
+						Graphics_setGrey (graphics, (double) icons / numberOfDrawnConstraints);
 						Graphics_line (graphics, idatum, my constraints [icons]. ranking,
 							idatum, my constraints [icons]. ranking+1);
 					}

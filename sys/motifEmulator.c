@@ -1,6 +1,6 @@
 /* motifEmulator.c
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
  * pb 2007/12/26 extractions to Gui*.c
  * pb 2007/12/30 extractions to Gui*.c
  * pb 2008/10/05 better tab navigation
+ * pb 2010/01/04 implement forward delete on Mac
  */
 #ifndef UNIX
 
@@ -3772,6 +3773,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 	if (event -> modifiers & cmdKey) modifiers |= _motif_COMMAND_MASK;
 	if (event -> modifiers & optionKey) modifiers |= _motif_OPTION_MASK;
 	if (event -> modifiers & shiftKey) modifiers |= _motif_SHIFT_MASK;
+	//Melder_casual ("char code %d, modifiers %d", charCode, event -> modifiers);
 	if (charCode < 32) {
 		if (charCode == 13) {   /* User pressed Return. */
 			/*
@@ -3911,7 +3913,9 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			_motif_processKeyboardEquivalent (GuiMenu_DELETE, modifiers, event);
 			return true;
 		}
-		return true;   /* BUG: we should implement a forward delete (or selection removal) in the text widget (IM V-192). */
+		/*
+		 * Otherwise, hand it to a text widget (forward delete).
+		 */
 	}
 	/*
 	 * If the Command key is pressed with a printable character, this is always a menu shortcut.

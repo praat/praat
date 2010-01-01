@@ -56,18 +56,16 @@ static int compareMenuCommands (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortMenuCommands (void) {
-	long i;
-	for (i = 1; i <= theNumberOfCommands; i ++)
+	for (long i = 1; i <= theNumberOfCommands; i ++)
 		theCommands [i]. sortingTail = i;
 	qsort (& theCommands [1], theNumberOfCommands, sizeof (struct structPraat_Command), compareMenuCommands);
 }
 
-static int lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
+static long lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
 /*
  * A menu command is fully specified by its environment (window + menu) and its title.
  */
-	int i;
-	for (i = 1; i <= theNumberOfCommands; i ++) {
+	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		const wchar_t *tryWindow = theCommands [i]. window;
 		const wchar_t *tryMenu = theCommands [i]. menu;
 		const wchar_t *tryTitle = theCommands [i]. title;
@@ -79,22 +77,29 @@ static int lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *menu
 }
 
 static void do_menu (I, unsigned long modified) {
-	int (*callback) (UiForm, const wchar_t *, Interpreter, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, void *)) void_me;
+	int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
 	Melder_assert (callback != NULL);
-	for (int i = 1; i <= theNumberOfCommands; i ++) {
+	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my callback == callback) {
-			if (my title && ! wcsequ (my title, L"History to script...")) {
+			if (my title != NULL && ! wcsstr (my title, L"...")) {
 				UiHistory_write (L"\n");
 				UiHistory_write (my title);
 			}
-			if (! callback (NULL, NULL, NULL, (XtPointer) modified))
+			if (! callback (NULL, NULL, NULL, my title, modified, NULL))
 				Melder_flushError ("Command not executed.");
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
-			UiHistory_write (L"\nexecute");
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL))
+			if (my title != NULL && ! wcsstr (my title, L"...")) {
+				UiHistory_write (L"\nexecute ");
+				UiHistory_write (my script);
+			} else {
+				UiHistory_write (L"\nexecute \"");
+				UiHistory_write (my script);
+				UiHistory_write (L"\"");
+			}
+			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL))
 				Melder_flushError ("Script not executed.");
 			praat_updateSelection (); return;
 		}
@@ -147,9 +152,9 @@ static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 }
 
 Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, void *))
+	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
-	int i, position;
+	long position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
 	unsigned long motifFlags = 0;
 	if (flags > 7) {
@@ -170,7 +175,7 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 	/* Determine the position of the new command.
 	 */
 	if (after) {   /* Search for existing command with same selection. */
-		int found = lookUpMatchingMenuCommand (window, menu, after);
+		long found = lookUpMatchingMenuCommand (window, menu, after);
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
@@ -194,7 +199,7 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 
 	/* Make room for insertion.
 	 */
-	for (i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
+	for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
 	memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
 
 	/* Insert new command.
@@ -220,7 +225,7 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 		if (depth == 0) {
 			parent = windowMenuToWidget (window, menu);   /* Not a subitem: in the top menu. */
 		} else {
-			for (i = position - 1; i > 0; i --) {
+			for (long i = position - 1; i > 0; i --) {
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
 						#if gtk
@@ -255,7 +260,7 @@ if (! parent) return NULL;
 int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
 	const wchar_t *after, int depth, const wchar_t *script)
 {
-	int i, position;
+	long position;
 
 	Melder_assert (window && menu && title && after && script);
 	if (wcslen (script) && ! wcslen (title))
@@ -264,7 +269,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	/* Determine the position of the new command.
 	 */
 	if (wcslen (after)) {   /* Search for existing command with same selection. */
-		int found = lookUpMatchingMenuCommand (window, menu, after);
+		long found = lookUpMatchingMenuCommand (window, menu, after);
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
@@ -285,7 +290,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 
 	/* Make room for insertion.
 	 */
-	for (i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
+	for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
 	memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
 
 	/* Insert new command.
@@ -320,7 +325,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 		if (depth == 0) {
 			parent = windowMenuToWidget (window, menu);   /* Not a subitem: in the top menu. */
 		} else {
-			for (i = position - 1; i > 0; i --) {
+			for (long i = position - 1; i > 0; i --) {
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
 						#if motif
@@ -349,12 +354,10 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 }
 
 int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
-	int found;
-	praat_Command command;
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
-	found = lookUpMatchingMenuCommand (window, menu, title);
+	long found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
-	command = & theCommands [found];
+	praat_Command command = & theCommands [found];
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = TRUE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
@@ -364,12 +367,10 @@ int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wch
 }
 
 int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
-	int found;
-	praat_Command command;
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
-	found = lookUpMatchingMenuCommand (window, menu, title);
+	long found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
-	command = & theCommands [found];
+	praat_Command command = & theCommands [found];
 	if (command -> hidden) {
 		command -> hidden = FALSE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
@@ -379,10 +380,10 @@ int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wch
 }
 
 void praat_saveMenuCommands (FILE *f) {
-	long i, id, maxID = 0;
-	for (i = 1; i <= theNumberOfCommands; i ++) if (theCommands [i]. uniqueID > maxID) maxID = theCommands [i]. uniqueID;
-	for (id = 1; id <= maxID; id ++)   /* Sorted. */
-		for (i = 1; i <= theNumberOfCommands; i ++) {
+	long maxID = 0;
+	for (long i = 1; i <= theNumberOfCommands; i ++) if (theCommands [i]. uniqueID > maxID) maxID = theCommands [i]. uniqueID;
+	for (long id = 1; id <= maxID; id ++)   /* Sorted. */
+		for (long i = 1; i <= theNumberOfCommands; i ++) {
 			praat_Command me = & theCommands [i];
 			if (my uniqueID == id && ! my hidden && my window && my menu && my title) {
 				fwprintf (f, L"Add menu command... \"%ls\" \"%ls\" \"%ls\" \"%ls\" %d %ls\n",
@@ -390,7 +391,7 @@ void praat_saveMenuCommands (FILE *f) {
 				break;
 			}
 		}
-	for (i = 1; i <= theNumberOfCommands; i ++) {
+	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
 			fwprintf (f, L"%ls menu command... \"%ls\" \"%ls\" %ls\n",
@@ -400,7 +401,7 @@ void praat_saveMenuCommands (FILE *f) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, void *), int x, int y) {
+void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_wcsdup (L"Objects");
 	my title = title;
@@ -418,7 +419,7 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 }
 
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive) {
-	int i;
+	long i;
 	for (i = 1; i <= theNumberOfCommands; i ++)
 		if (wcsequ (theCommands [i]. title, title)) break;   /* Search. */
 	theCommands [i]. executable = sensitive;
@@ -430,7 +431,7 @@ int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Inter
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
 		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	if (! theCommands [i]. callback (NULL, arguments, interpreter, NULL))
+	if (! theCommands [i]. callback (NULL, arguments, interpreter, NULL, false, NULL))
 		return 0;
 	return 1;
 }

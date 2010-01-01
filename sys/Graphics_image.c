@@ -721,7 +721,7 @@ static void _cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			my printf (my file, ">\n");*/
 		my printf (my file, "grestore\n");
 	}
-	_Graphics_setRGBColour (me, my red, my green, my blue);
+	_Graphics_setColour (me, my colour);
 }
 
 static void cellArrayOrImage (I, double **z_float, unsigned char **z_byte,

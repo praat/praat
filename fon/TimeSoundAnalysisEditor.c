@@ -2048,7 +2048,8 @@ static void draw_analysis (TimeSoundAnalysisEditor me) {
 	if (my intensity.show) {
 		double intensityCursor = NUMundefined;
 		int intensityCursorVisible;
-		int textColour, alignment;
+		Graphics_Colour textColour;
+		int alignment;
 		double y;
 		if (! my pitch.show) textColour = Graphics_GREEN, alignment = Graphics_LEFT, y = my endWindow;
 		else if (! my spectrogram.show && ! my formant.show) textColour = Graphics_GREEN, alignment = Graphics_RIGHT, y = my startWindow;

@@ -78,7 +78,7 @@ void Matrix_scatterPlot (I, Any g, long icx, long icy,
 void Matrix_drawAsSquares (I, Any g, double xmin, double xmax, double ymin, double ymax, int garnish)
 {
     iam (Matrix);
-	double red, green, blue; Graphics_inqRGBColour (g, & red, & green, & blue);
+	Graphics_Colour colour = Graphics_inqColour (g);
     long i, j, ixmin, ixmax, iymin, iymax, nx, ny;
     double dx, dy, min, max, wAbsMax;
 
@@ -103,7 +103,7 @@ void Matrix_drawAsSquares (I, Any g, double xmin, double xmax, double ymin, doub
 	    	double y1WC = y - d * dy / 2, y2WC = y + d * dy / 2;
 			if (my z[i][j] > 0) Graphics_setColour (g, Graphics_WHITE);
 	    	Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
-	    	Graphics_setRGBColour (g, red, green, blue);
+	    	Graphics_setColour (g, colour);
 	    	Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
 		}
     }

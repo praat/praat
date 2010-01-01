@@ -85,10 +85,12 @@ static void goAway (ScriptEditor me) {
 	inherited (ScriptEditor) goAway (ScriptEditor_as_parent (me));
 }
 
-static int args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, I) {
+static int args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified_dummy, I) {
 	iam (ScriptEditor);
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
+	(void) invokingButtonTitle;
+	(void) modified_dummy;
 	structMelderFile file = { 0 };
 	wchar_t *text = GuiText_getString (my textWidget);
 	if (my name) {
@@ -240,7 +242,7 @@ static int menu_cb_clearHistory (EDITOR_ARGS) {
 	return 1;
 }
 
-static int menu_cb_viewHistory (EDITOR_ARGS) {
+static int menu_cb_pasteHistory (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	wchar_t *history = UiHistory_get ();
 	if (history == NULL || history [0] == '\0')
@@ -285,7 +287,7 @@ static void createMenus (ScriptEditor me) {
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"-- history --", 0, 0);
 	Editor_addCommand (me, L"Edit", L"Clear history", 0, menu_cb_clearHistory);
-	Editor_addCommand (me, L"Edit", L"Paste history", 'H', menu_cb_viewHistory);
+	Editor_addCommand (me, L"Edit", L"Paste history", 'H', menu_cb_pasteHistory);
 	Editor_addMenu (me, L"Run", 0);
 	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_go);
 	Editor_addCommand (me, L"Run", L"Run selection", 'T', menu_cb_runSelection);

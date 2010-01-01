@@ -187,7 +187,28 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case SET_TEXT_ROTATION: Graphics_setTextRotation (thee, get); break;
 			case SET_LINE_TYPE: Graphics_setLineType (thee, (int) get); break;
 			case SET_LINE_WIDTH: Graphics_setLineWidth (thee, get); break;
-			case SET_STANDARD_COLOUR: Graphics_setStandardColour (thee, (int) get); break;
+			case SET_STANDARD_COLOUR:   // only used in old Praat picture files
+			{  int standardColour = (int) get;
+				Graphics_Colour colour =
+					standardColour == 0 ? Graphics_BLACK :
+					standardColour == 1 ? Graphics_WHITE :
+					standardColour == 2 ? Graphics_RED :
+					standardColour == 3 ? Graphics_GREEN :
+					standardColour == 4 ? Graphics_BLUE :
+					standardColour == 5 ? Graphics_CYAN :
+					standardColour == 6 ? Graphics_MAGENTA :
+					standardColour == 7 ? Graphics_YELLOW :
+					standardColour == 8 ? Graphics_MAROON :
+					standardColour == 9 ? Graphics_LIME :
+					standardColour == 10 ? Graphics_NAVY :
+					standardColour == 11 ? Graphics_TEAL :
+					standardColour == 12 ? Graphics_PURPLE :
+					standardColour == 13 ? Graphics_OLIVE :
+					standardColour == 14 ? Graphics_PINK :
+					standardColour == 15 ? Graphics_SILVER :
+					Graphics_GREY;
+				Graphics_setColour (thee, colour);
+			} break;
 			case SET_GREY: Graphics_setGrey (thee, get); break;
 			case MARK_GROUP: Graphics_markGroup (thee); break;
 			case ELLIPSE: {
@@ -221,7 +242,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_unhighlight (thee, x1, x2, y1, y2);
 			}  break;
 #if motif
-			case XOR_ON: Graphics_xorOn (thee, get); break;
+			case XOR_ON:
+			{  Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
+				Graphics_xorOn (thee, colour);
+			}  break;
 			case XOR_OFF: Graphics_xorOff (thee); break;
 #endif
 			case RECTANGLE_MM:
@@ -304,8 +328,8 @@ void Graphics_play (Graphics me, Graphics thee) {
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
 			case SET_RGB_COLOUR:
-			{  double red = get, green = get, blue = get;
-				Graphics_setRGBColour (thee, red, green, blue);
+			{  Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
+				Graphics_setColour (thee, colour);
 			} break;
 			case IMAGE_FROM_FILE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get; long length = get; char *text_utf8 = sget (length);

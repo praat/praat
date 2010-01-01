@@ -139,10 +139,12 @@ static void closeDocument (TextEditor me) {
 	forget (me);
 }
 
-static int cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, I) {
+static int cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
 	iam (TextEditor);
 	(void) sendingString;
 	(void) interpreter;
+	(void) invokingButtonTitle;
+	(void) modified;
 	MelderFile file = UiFile_getFile (sendingForm);
 	if (! openDocument (me, file)) return 0;
 	return 1;
@@ -154,14 +156,16 @@ static void cb_showOpen (EditorCommand cmd, UiForm sendingForm, const wchar_t *s
 	(void) sendingString;
 	(void) interpreter;
 	if (! my openDialog)
-		my openDialog = UiInfile_create (my dialog, L"Open", cb_open_ok, me, 0);
+		my openDialog = UiInfile_create (my dialog, L"Open", cb_open_ok, me, NULL, NULL, false);
 	UiInfile_do (my openDialog);
 }
 
-static int cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, I) {
+static int cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
 	iam (TextEditor);
 	(void) sendingString;
 	(void) interpreter;
+	(void) invokingButtonTitle;
+	(void) modified;
 	MelderFile file = UiFile_getFile (sendingForm);
 	if (! saveDocument (me, file)) return 0;
 	return 1;
@@ -171,7 +175,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	wchar_t defaultName [300];
 	if (! my saveDialog)
-		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, 0);
+		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, NULL, NULL);
 	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 	return 1;

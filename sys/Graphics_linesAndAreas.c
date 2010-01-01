@@ -771,7 +771,7 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 				XSetForeground (my display, my gc, xwinGreys [30]);
 				XDrawLine (my display, my window, my gc, x1DC + 1, y1DC, x2DC - 1, y1DC);
 				XDrawLine (my display, my window, my gc, x2DC, y1DC, x2DC, y2DC - 1);
-				XSetForeground (my display, my gc, xwinColours [Graphics_WHITE]);
+				XSetForeground (my display, my gc, xwinColour_WHITE);
 				XDrawLine (my display, my window, my gc, x1DC, y1DC, x1DC, y2DC);
 				XDrawLine (my display, my window, my gc, x1DC, y2DC, x2DC, y2DC);
 				if (width >= 2 && height >= 2) {
@@ -779,7 +779,7 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 					XFillRectangle (my display, my window, my gc, x1DC + 1, y2DC + 1, width - 1, height - 1);
 				}
 			}
-			_Graphics_setRGBColour (me, my red, my green, my blue);
+			_Graphics_setColour (me, my colour);
 		#elif win
 			RECT rect;
 			rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;

@@ -72,13 +72,13 @@
  ****************/
 
 #if defined(__APPLE__)
-//#   include <libkern/OSAtomic.h> ppgb
+#   include <libkern/OSAtomic.h>
     /* Here are the memory barrier functions. Mac OS X only provides
        full memory barriers, so the three types of barriers are the same,
        however, these barriers are superior to compiler-based ones. */
-#   define PaUtil_FullMemoryBarrier()  /*OSMemoryBarrier() ppgb */
-#   define PaUtil_ReadMemoryBarrier()  /*OSMemoryBarrier() ppgb */
-#   define PaUtil_WriteMemoryBarrier() /*OSMemoryBarrier() ppgb */
+#   define PaUtil_FullMemoryBarrier()  OSMemoryBarrier()
+#   define PaUtil_ReadMemoryBarrier()  OSMemoryBarrier()
+#   define PaUtil_WriteMemoryBarrier() OSMemoryBarrier()
 #elif defined(__GNUC__)
     /* GCC >= 4.1 has built-in intrinsics. We'll use those */
 #   if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1)

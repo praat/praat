@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/14
+ * pb 2009/12/20
  */
 
 #ifndef _Graphics_h_
@@ -94,7 +94,8 @@ typedef struct {
 		/* Current coordinate transformation. */ \
 	/* Graphics state. */ \
 	int lineType; \
-	double red, green, blue, lineWidth, arrowSize; \
+	Graphics_Colour colour; \
+	double lineWidth, arrowSize; \
 	int horizontalTextAlignment, verticalTextAlignment; \
 	double textRotation, wrapWidth, secondIndent, textX, textY; \
 	enum kGraphics_font font; \
@@ -151,7 +152,7 @@ int Graphics_init (I);
 	#define xwin 1
 	#define cairo 0
 	#define pango 0
-	extern unsigned long xwinColours [1+Graphics_MAX_COLOUR], xwinGreys [101];
+	extern unsigned long xwinColour_BLACK, xwinColour_WHITE, xwinColour_PINK, xwinColour_BLUE, xwinGreys [101];
 #elif defined (_WIN32)
 	#include <windowsx.h>
 	#define GraphicsScreen_members Graphics_members \
@@ -230,7 +231,7 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 
 void _Graphics_text_init (I);
 void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC);
-void _Graphics_setRGBColour (I, double red, double green, double blue);
+void _Graphics_setColour (I, Graphics_Colour colour);
 void _Graphics_setGrey (I, double grey);
 void _Graphics_colour_init (I);
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
