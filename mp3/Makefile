@@ -24,7 +24,7 @@ OBJECTS = mp3.o \
 
 TEST = test.o
 
-$(OBJECTS): *.h
+$(OBJECTS): *.h ../sys/*.h
 
 test: $(TEST) libmp3.a
 

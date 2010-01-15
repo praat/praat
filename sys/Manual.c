@@ -200,13 +200,13 @@ static void draw (Manual me) {
 static void print (I, Graphics graphics) {
 	iam (Manual);
 	ManPages manPages = my data;
-	int numberOfPages = manPages -> pages -> size, savePage = my path, ipage;
+	long numberOfPages = manPages -> pages -> size, savePage = my path;
 	my ps = graphics;
 	Graphics_setDollarSignIsCode (my ps, TRUE);
 	Graphics_setAtSignIsLink (my ps, TRUE);
 	my printing = TRUE;
 	HyperPage_initSheetOfPaper ((HyperPage) me);
-	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
+	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages -> item [ipage];
 		if (my printPagesStartingWith == NULL ||
 		    Melder_stringMatchesCriterion (page -> title, kMelder_string_STARTS_WITH, my printPagesStartingWith))

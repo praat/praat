@@ -41,7 +41,8 @@
  * pb 2007/12/26 extractions to Gui*.c
  * pb 2007/12/30 extractions to Gui*.c
  * pb 2008/10/05 better tab navigation
- * pb 2010/01/04 implement forward delete on Mac
+ * pb 2010/01/04 Mac: implement forward delete
+ * pb 2010/01/08 Mac: support Command-`
  */
 #ifndef UNIX
 
@@ -3956,6 +3957,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 		/*
 		 * After executing a menu shortcut, do not send the key to a text widget as well.
 		 */
+		if (kar == '`') return false;   // Command-` means "cycle through Praat's windows"
 		return true;
 	}
 	if (_GuiMacText_tryToHandleKey (nextHandler, eventRef, text, keyCode, charCode, event)) return true;

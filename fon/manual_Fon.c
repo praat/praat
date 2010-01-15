@@ -1690,7 +1690,7 @@ SCRIPT (4.5, 4,
 	"Text bottom... yes Time (normalized)\n"
 	"Text left... yes Glottal flow derivative\n"
 )
-NORMAL (L"Aother setting is the %%open phase%. If it is 0.70, the glottis will be open during 70 percent of a period. "
+NORMAL (L"Another setting is the %%open phase%. If it is 0.70, the glottis will be open during 70 percent of a period. "
 	"Suppose that the PointProcess has a pulse at time 0, at time 1, at time 2, and so on. The pulses at times 1 and 2 will then be turned "
 	"into glottal flows starting at times 0.30 and 1.30:")
 SCRIPT (4.5, 2.5,

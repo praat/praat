@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  djmw 20020313 GPL
- djmw 20091126 Latest modification
+ djmw 20100107 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -1042,6 +1042,40 @@ INTRO (L"Extract those rows from the selected @TableOfReal object whose Mahalano
 	"quantile range.")
 MAN_END
 
+MAN_BEGIN (L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20100106)
+INTRO (L"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
+	"selected @Covariance object.")
+ENTRY (L"Arguments")
+TAG (L"%%Use table centroid%")
+DEFINITION (L"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
+ENTRY (L"Explanation")
+NORMAL (L"The Mahalanobis distance is defined as")
+FORMULA (L"%d = \\Vr((#%x - #mean)\\'p #S^^-1^ (#%x - #mean)),")
+NORMAL (L"where #%x is a vector, #mean is the average and #S is the covariance matrix. ")
+NORMAL (L"It is the multivariate form of the distance measured in units of standard deviation.")
+ENTRY (L"Example")
+NORMAL (L"Count the number of items that are within 1, 2, 3, 4 and 5 standard deviations from the mean.")
+NORMAL (L"We first create a table with only one column and 10000 rows and fill it with numbers drawn from "
+	"a normal distribution with mean zero and standard deviation one. Its covariance matrix, of course, is "
+	"one dimensional. We next create a table with Mahalanobis distances.")
+CODE (L"n = 100000")
+CODE (L"t0 = Create TableOfReal... table n 1")
+CODE (L"Formula...  randomGauss(0,1)")
+CODE (L"c = To Covariance")
+CODE (L"plus t0")
+CODE (L"ts = To TableOfReal (mahalanobis, 0)")
+CODE (L"")
+CODE (L"for nsigma to 5")
+CODE1 (L"select ts")
+CODE1 (L"Extract rows where...  self < nsigma")
+CODE1 (L"nr = Get number of rows")
+CODE1 (L"nrp = nr / n * 100")
+CODE1 (L"expect = (1 - 2 * gaussQ (nsigma)) * 100")
+CODE1 (L"printline 'nsigma'-sigma: 'nrp:4'%, 'expect:4'%")
+CODE1 (L"Remove")
+CODE (L"endfor")
+MAN_END
+
 MAN_BEGIN (L"Create ChebyshevSeries...", L"djmw", 20040407)
 INTRO (L"A command to create a @ChebyshevSeries from a list of coefficients.")
 ENTRY (L"Arguments")
@@ -1582,6 +1616,37 @@ ENTRY (L"Precondition")
 NORMAL (L"The number of columns in the TableOfReal must equal the dimension of the "
 	"eigenvectors in the Discriminant.")
 NORMAL (L"See also @@Eigen & TableOfReal: Project...@.")
+MAN_END
+
+MAN_BEGIN (L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20100107)
+INTRO (L"Calculate Mahalanobis distances for the selected @TableOfReal with respect to one group in the "
+	"selected @Discriminant object.")
+ENTRY (L"Arguments")
+TAG (L"%%Group label%,")
+DEFINITION (L"defines which group mean to use for the distance calculation.")
+TAG (L"%%Pool covariance matrices%,")
+DEFINITION (L"when on use a pooled covariance matrix instead of the group covariance matrix.")
+ENTRY (L"Algorithm")
+NORMAL (L"See @@Covariance & TableOfReal: To TableOfReal (mahalanobis)...@.")
+ENTRY (L"Example")
+NORMAL (L"Calculate the number of datapoints that are within the one-sigma elipses of two different groups, i.e. "
+	"the number of data points that are in the overlapping area. ")
+NORMAL (L"Suppose the group labels are \\o/ and \\yc.")
+CODE (L"t = Create TableOfReal (Pols 1973)... no")
+CODE (L"Formula... log10(self)")
+CODE (L"d = To Discriminant")
+CODE (L"select t")
+CODE (L"plus d")
+CODE (L"t1 = To TableOfReal (mahalanobis)... \\bso/ no")
+CODE (L"select t")
+CODE (L"plus d")
+CODE (L"t2 = To TableOfReal (mahalanobis)... \\bsyc no")
+NORMAL (L"Now we count when both the t1 and t2 values are smaller than 1 (sigma):")
+CODE (L"Copy... tr")
+CODE (L"Formula... Object_'t1'[] < 1 and Object_'t2'[] < 1")
+CODE (L"Extract rows where column... 1 \"equal to\" 1")
+CODE (L"no = Get number of rows")
+
 MAN_END
 
 MAN_BEGIN (L"DTW", L"djmw", 20090523)

@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
  * pb 2007/11/30 erased Graphics_printf
  * pb 2009/11/30 Move frequency cursor to...
+ * pb 2010/01/15 corrected checking of "Show pitch" menu item (and so on) when the command is called from a script
  */
 
 #include <time.h>
@@ -566,6 +567,9 @@ static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 static int menu_cb_showSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.spectrogram.show = my spectrogram.show = ! my spectrogram.show;
+	#if motif
+		XmToggleButtonGadgetSetState (my spectrogramToggle, my spectrogram.show, False);   // in case we're called from a script
+	#endif
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -782,6 +786,9 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 static int menu_cb_showPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pitch.show = my pitch.show = ! my pitch.show;
+	#if motif
+		XmToggleButtonGadgetSetState (my pitchToggle, my pitch.show, False);   // in case we're called from a script
+	#endif
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1067,6 +1074,9 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 static int menu_cb_showIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.intensity.show = my intensity.show = ! my intensity.show;
+	#if motif
+		XmToggleButtonGadgetSetState (my intensityToggle, my intensity.show, False);   // in case we're called from a script
+	#endif
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1234,6 +1244,9 @@ static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 static int menu_cb_showFormants (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.formant.show = my formant.show = ! my formant.show;
+	#if motif
+		XmToggleButtonGadgetSetState (my formantToggle, my formant.show, False);   // in case we're called from a script
+	#endif
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1454,6 +1467,9 @@ static int menu_cb_getBandwidth (EDITOR_ARGS) {
 static int menu_cb_showPulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pulses.show = my pulses.show = ! my pulses.show;
+	#if motif
+		XmToggleButtonGadgetSetState (my pulsesToggle, my pulses.show, False);   // in case we're called from a script
+	#endif
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }

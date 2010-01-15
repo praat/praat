@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 2000
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20100106 Latest modification.
 */
 
 #ifndef _Graphics_h_
@@ -74,15 +74,15 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 double Discriminant_getLnDeterminant_group (Discriminant me, long group);
 double Discriminant_getLnDeterminant_total (Discriminant me);
 
-void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discriminantDirections, 
-	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, 
+void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, int discriminantDirections,
+	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize,
 	int poolCovarianceMatrices, int garnish);
 
-void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, 
+void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 	double scale, int confidence, wchar_t *label, int discriminantDirections,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax,
 	int fontSize, int garnish);
-	
+
 TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice);
 
 TableOfReal Discriminant_extractGroupCentroids (Discriminant me);
@@ -100,12 +100,15 @@ Configuration Discriminant_and_TableOfReal_to_Configuration
 ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
 	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,
 	int useAprioriProbabilities);
-	
+
 ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
 	(Discriminant me, TableOfReal thee, int poolCovarianceMatrices,
 	int useAprioriProbabilities, double alpha, double minProb,
 	TableOfReal *displacements);
-	
+
+TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices);
+/* Mahalanobis distance with respect to group mean */
+
 Discriminant TableOfReal_to_Discriminant (I);
 
 Configuration TableOfReal_to_Configuration_lda (TableOfReal me,

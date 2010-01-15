@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
+ djmw 20100107 +Discriminant_and_TableOfReal_mahalanobis
 */
 
 #include "Discriminant.h"
@@ -108,11 +109,11 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 
 long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label)
 {
-	long i; SSCPs groups = my groups; wchar_t *name;
+	wchar_t *name;
 
-	for (i=1; i <= my numberOfGroups; i++)
+	for (long i = 1; i <= my numberOfGroups; i++)
 	{
-		if ((name = Thing_getName (groups -> item[i])) && wcsequ (name, label))
+		if ((name = Thing_getName (my groups -> item[i])) && wcsequ (name, label))
 			return i;
 	}
 	return 0;
@@ -637,6 +638,35 @@ static double mahalanobisDistanceSq (double **li, long n, double *v, double *m,
 		chisq += t * t;
 	}
 	return chisq;
+}
+
+TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, long group, bool poolCovarianceMatrices)
+{
+	TableOfReal him = NULL;
+	SSCP pool = NULL;
+	Covariance covg = NULL, cov = NULL;
+
+	if (group < 1 || group > my numberOfGroups) return Melder_errorp1 (L"Group does not exist.");
+
+	if (((pool = SSCPs_to_SSCP_pool (my groups)) == NULL) ||
+		((covg = SSCP_to_Covariance (pool, my numberOfGroups)) == NULL) ||
+		((cov = SSCP_to_Covariance (my groups -> item[group], 1)) == NULL)) goto end;
+
+	if (poolCovarianceMatrices) // use group mean instead of overall mean!
+	{
+		NUMdvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
+		him = Covariance_and_TableOfReal_mahalanobis (covg, thee, false);
+	}
+	else
+	{
+		him = Covariance_and_TableOfReal_mahalanobis (cov, thee, false);
+	}
+end:
+	forget (pool);
+	forget (cov);
+	forget (covg);
+	if (Melder_hasError ()) forget (him);
+	return him;
 }
 
 ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable

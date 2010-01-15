@@ -1,6 +1,6 @@
 /* Eigen_and_TableOfReal.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@ TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 	long numberOfComponents)
 {
 	iam (Eigen);
-	thouart (TableOfReal); 
+	thouart (TableOfReal);
 	TableOfReal him;
 
 	if (numberOfComponents == 0) numberOfComponents = my numberOfEigenvalues;
-		
+
 	him = TableOfReal_create (thy numberOfRows, numberOfComponents);
 	if (him != NULL)
 	{
-		if (! Eigen_and_TableOfReal_project_into (me, thee, from, 
+		if (! Eigen_and_TableOfReal_project_into (me, thee, from,
 			thy numberOfColumns, & him, 1, numberOfComponents) ||
-			! NUMstrings_copyElements (thy rowLabels, his rowLabels, 
+			! NUMstrings_copyElements (thy rowLabels, his rowLabels,
 				1, thy numberOfRows)) forget (him);
 	}
 	return him;
@@ -55,7 +55,7 @@ int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	iam (Eigen);
 	long i, j, k, thee_ncols = thee_to - thee_from + 1;
 	long his_ncols = his_to - his_from + 1;
-	
+
 	if (thee_from < 1 || thee_to > thy numberOfColumns ||
 		his_from < 1 || his_to > his numberOfColumns) return Melder_error1
 		(L"Column selection not correct.");
@@ -87,9 +87,9 @@ int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee)
 {
 	Eigen him = new (Eigen);
-	
+
 	if (him == NULL) return NULL;
-	
+
 	if (my numberOfColumns != thy numberOfColumns) return Melder_errorp
 		("TablesOfReal_to_Eigen: Number of columns must be equal.");
 

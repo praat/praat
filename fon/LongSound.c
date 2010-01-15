@@ -1,6 +1,6 @@
 /* LongSound.c
  *
- * Copyright (C) 1992-2008 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2010 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
  * Erez Volk 2007/06/04 MP3 reading
  * pb 2007/12/05 prefs
  * pb 2008/01/19 double
+ * pb 2010/01/10 MP3 precision warning
  */
 
 #include "LongSound.h"
@@ -234,6 +235,8 @@ static int LongSound_init (LongSound me, MelderFile file) {
 		mp3f_set_callback (my mp3f, _LongSound_MP3_convert, me);
 		if (! mp3f_analyze (my mp3f))
 			return Melder_error1 (L"Unable to analyze MP3 file.");
+		Melder_warning1 (L"Time measurements in MP3 files can be off by several tens of milliseconds. "
+			"Please convert to WAV file if you need time precision or annotation.");
 	}
 end:
 	iferror return 0;

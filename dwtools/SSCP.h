@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020327 GPL
- djmw 20090629 Latest modification.
+ djmw 20100106 Latest modification.
 */
 
 #ifndef _TableOfReal_extensions_h_
@@ -82,6 +82,13 @@ TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance 
 	Select from a TableOfReal the rows whose Mahalanobis distance to the centroid
 	(from the SSCP) is in the quantile [qlow, qhigh].
 */
+
+TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid);
+/*
+	Calculate the Mahalanobis distance: sqrt ((x-m)'S**-1 (x-m))
+	use the m-vector (centroid) from the covariance unless useTableColumnMeans is true.
+*/
+
 
 Covariance TableOfReal_to_Covariance (I);
 

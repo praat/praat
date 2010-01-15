@@ -3,7 +3,7 @@
 
 /* Eigen_and_TableOfReal.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 	#include "TableOfReal.h"
 #endif
 
-TableOfReal Eigen_and_TableOfReal_project (I, thou, long from, 
+TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 	long numberOfComponents);
 /*
 	Purpose: project the rows of the TableOfReal (thee) starting at index 'from'
@@ -43,8 +43,8 @@ TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	Any void_pointer_to_him, long his_from, long his_to);
 /*
-	Purpose: project the rows of the TableOfReal (thee) on the 
-	eigenspace (me). Result in existing TableOfReal (him). 
+	Purpose: project the rows of the TableOfReal (thee) on the
+	eigenspace (me). Result in existing TableOfReal (him).
 */
 
 Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee);

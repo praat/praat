@@ -1005,7 +1005,7 @@ FLAC_API FLAC__bool FLAC__format_picture_is_legal(const FLAC__StreamMetadata_Pic
 
 // pb 20080502
 #ifdef _WIN32
-	#include "melder.h"
+	#include "../sys/melder.h"
 	#define fopen(filename,mode)  _wfopen (Melder_peekWcsToUtf16 (Melder_peekUtf8ToWcs (filename)), L"" mode)
 #endif
 

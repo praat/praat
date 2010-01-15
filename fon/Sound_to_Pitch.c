@@ -389,8 +389,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			} else {
 				/* Try the place of the weakest candidate so far. */
 				double weakest = 2;
-				int iweak;
-				for (iweak = 2; iweak <= thy maxnCandidates; iweak ++) {
+				for (int iweak = 2; iweak <= thy maxnCandidates; iweak ++) {
 					/* High frequencies are to be favoured */
 					/* if we want to analyze a perfectly periodic signal correctly. */
 					double localStrength = pitchFrame->candidate[iweak].strength - octaveCost *

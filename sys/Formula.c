@@ -307,16 +307,15 @@ static int languageNameCompare (const void *first, const void *second) {
 
 static int Formula_hasLanguageName (const wchar_t *f) {
 	static int *index;
-	int tok;
 	if (index == NULL) {
 		index = NUMivector (1, hoogsteInvoersymbool);
-		for (tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
+		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
 			index [tok] = tok;
 		}
 		qsort (& index [1], hoogsteInvoersymbool, sizeof (int), languageNameCompare);
 	}
 	if (index == NULL) {   /* Linear search. */
-		for (tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
+		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
 			if (wcsequ (f, Formula_instructionNames [tok])) return tok;
 		}
 	} else {   /* Binary search. */
@@ -1294,11 +1293,11 @@ static int parsePowerFactor (void) {
 			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
 			if (! pas (HAAKJEOPENEN_)) return 0;
 			int symbol = nieuwlees;
-			if (symbol == NUMERIC_VARIABLE_) {
+			if (symbol == NUMERIC_VARIABLE_) {   // an existing variable
 				nieuwontleed (VARIABLE_REFERENCE_);
 				InterpreterVariable loopVariable = lexan [ilexan]. content.variable;
 				parse [iparse]. content.variable = loopVariable;
-			} else if (symbol == VARIABLE_NAME_) {
+			} else if (symbol == VARIABLE_NAME_) {   // a new variable
 				InterpreterVariable loopVariable = Interpreter_lookUpVariable (theInterpreter, lexan [ilexan]. content.string);
 				nieuwontleed (VARIABLE_REFERENCE_);
 				parse [iparse]. content.variable = loopVariable;
@@ -1888,7 +1887,15 @@ static void Stackel_cleanUp (Stackel me) {
 static Stackel theStack;
 static int w, wmax;   /* w = stack pointer; */
 #define pop  & theStack [w --]
-static void pushNumber (double x) {
+static inline void pushNumber (double x) {
+	/* inline runs 10 to 20 percent faster on i386; here's the test script:
+		stopwatch
+		Create Sound from formula... test mono 0 100 44100 1/2 * (2*pi*377*x)
+		t = stopwatch
+		echo 't'
+	 * Mac: 0.75 -> 0.67 seconds
+	 * Win: 1.10 -> 0.90 seconds (20100107)
+	 */
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
@@ -2439,13 +2446,12 @@ end: return;
 static void do_min (void) {
 	Stackel n = pop, last;
 	double result;
-	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) error1 (L"The function \"min\" requires at least one argument.")
 	last = pop;
 	if (last->which != Stackel_NUMBER) error3 (L"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (last), L".")
 	result = last->content.number;
-	for (j = n->content.number - 1; j > 0; j --) {
+	for (int j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			error3 (L"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (previous), L".")
@@ -2458,13 +2464,12 @@ end: return;
 static void do_max (void) {
 	Stackel n = pop, last;
 	double result;
-	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) error1 (L"The function \"max\" requires at least one argument.")
 	last = pop;
 	if (last->which != Stackel_NUMBER) error3 (L"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (last), L".")
 	result = last->content.number;
-	for (j = n->content.number - 1; j > 0; j --) {
+	for (int j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) error3 (L"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (previous), L".")
 		result = result == NUMundefined || previous->content.number == NUMundefined ? NUMundefined :
@@ -2476,14 +2481,13 @@ end: return;
 static void do_imin (void) {
 	Stackel n = pop, last;
 	double minimum, result;
-	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) error1 (L"The function \"imin\" requires at least one argument.")
 	last = pop;
 	if (last->which != Stackel_NUMBER) error3 (L"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (last), L".")
 	minimum = last->content.number;
 	result = n->content.number;
-	for (j = n->content.number - 1; j > 0; j --) {
+	for (int j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) error3 (L"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (previous), L".")
 		if (minimum == NUMundefined || previous->content.number == NUMundefined) {
@@ -2500,14 +2504,13 @@ end: return;
 static void do_imax (void) {
 	Stackel n = pop, last;
 	double maximum, result;
-	int j;
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->content.number < 1) error1 (L"The function \"imax\" requires at least one argument.")
 	last = pop;
 	if (last->which != Stackel_NUMBER) error3 (L"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (last), L".")
 	maximum = last->content.number;
 	result = n->content.number;
-	for (j = n->content.number - 1; j > 0; j --) {
+	for (int j = n->content.number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER) error3 (L"The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (previous), L".")
 		if (maximum == NUMundefined || previous->content.number == NUMundefined) {

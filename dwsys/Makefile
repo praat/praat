@@ -1,11 +1,11 @@
 # makefile for library "dwsys".
 # David Weenink 20061222
-# djmw 20080130 Latest modification.
 # djmw 20090607 Added -O0 to remove optimization for the numerical routines (especially NUMcblas.c)
+# djmw 20100109 Remove -O0, gcc-4.4 is save now
 
 include ../makefile.defs
 
-CFLAGS = -I ../stat -I ../num -I ../sys -I ../GSL -I ../kar -O0
+CFLAGS = -I ../stat -I ../num -I ../sys -I ../GSL -I ../kar
 
 all: libdwsys.a
 
@@ -28,4 +28,4 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	rm libdwsys.a
 	ar cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
-	
+

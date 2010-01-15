@@ -1,6 +1,6 @@
 /* SSCP.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@
  djmw 20081119 TableOfReal_to_SSCP check if numbers are defined
  djmw 20090617 TableOfReal_to_SSCPs_byLabel better warnings for singular cases.
  djmw 20090629 +Covariances_getMultivariateCentroidDifference, Covariances_equality.
+ djmw 20100106 +Covariance_and_TableOfReal_mahalanobis.
 */
 
 #include "SSCP.h"
@@ -559,89 +560,93 @@ TableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, thou,
 	return him;
 }
 
-TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, thou,
-	double qlow, double qhigh)
+TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool useTableCentroid)
 {
 	thouart (TableOfReal);
 	TableOfReal him = NULL;
-	long i, j, k, nrows = thy numberOfRows, n = my numberOfRows, nsel;
-	double *d = NULL, *ds = NULL, d2, t, **covari = NULL, lndet, low, high;
+	double lndet, **covari = NULL, *centroid = NULL;
 
-	if (qlow >= qhigh)
-	{
-		qlow = 0; qhigh = 1;
-	}
-	if (qhigh > 1 || qlow < 0) return Melder_errorp1 (L"0 <= lowerQuantile < higherQuantile <= 1.");
-	if (n != thy numberOfColumns) return Melder_errorp1 (L"Dimensions");
-	if (((d = NUMdvector (1, nrows)) == NULL) ||
-		((covari = NUMdmatrix_copy (my data, 1, n, 1, n)) == NULL)) goto end;
+	if (((him = TableOfReal_create (thy numberOfRows, 1)) == NULL) ||
+		((centroid = NUMdvector_copy (my centroid, 1, thy numberOfColumns)) == NULL) ||
+		((covari = NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfRows)) == NULL)) goto end;
 
 	/*
 		Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
 		(x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =
 			(L**-1.(x-m))' . (L**-1.(x-m))
-		Get inverse of covari in lower triangular part.
 	*/
 
-	if (! NUMlowerCholeskyInverse (covari, n, &lndet)) goto end;
+	// Get inverse of covari in lower triangular part.
+	if (! NUMlowerCholeskyInverse (covari, my numberOfRows, &lndet)) goto end;
 
-	for (k = 1; k <= nrows; k++)
+	if (useTableCentroid)
 	{
-		for (d2 = 0, i = n; i > 0; i--)
+		for (long icol = 1; icol <= thy numberOfColumns; icol++)
 		{
-			for (t = 0, j = 1; j <= i; j++)
-			{
-				t += covari[i][j] * (thy data[k][j] - my centroid[j]);
-			}
-			d2 += t * t;
+			double mean = 0;
+			for (long irow = 1; irow <= thy numberOfRows; irow++) { mean += thy data[irow][icol]; }
+			centroid[icol] = mean / thy numberOfRows;
 		}
-		d[k] = sqrt (d2);
 	}
 
-	if ((ds = NUMdvector_copy (d, 1, nrows)) == NULL) goto end;
+	for (long k = 1; k <= thy numberOfRows; k++)
+	{
+		his data[k][1] = sqrt (NUMmahalanobisDistance_chi (covari, thy data[k], centroid, my numberOfRows));
+		if (thy rowLabels[k] != NULL) TableOfReal_setRowLabel (him, k, thy rowLabels[k]);
+	}
+	TableOfReal_setColumnLabel (him, 1, L"d");
+end:
+	NUMdmatrix_free (covari, 1, 1);
+	NUMdvector_free (centroid, 1);
+	if (Melder_hasError ()) forget (him);
+	return him;
+}
 
-	NUMsort_d (nrows, ds);
 
-	/*
-		Get upper and lower quantiles.
-	*/
-	low  = NUMquantile (nrows, ds, qlow);
-	high = NUMquantile (nrows, ds, qhigh);
+TableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, thou,
+	double qlow, double qhigh)
+{
+	thouart (TableOfReal);
+	double low, high;
+	long nsel = 0, i, k;
+
+	TableOfReal r = NULL, him = Covariance_and_TableOfReal_mahalanobis (me, thee, false);
+	if (him == NULL) goto end;
+
+	low = TableOfReal_getColumnQuantile (him, 1, qlow);
+	high = TableOfReal_getColumnQuantile (him, 1, qhigh);
 
 	/*
 		Count the number filtered.
 		nsel = (qhigh - qlow) * nrows is sometimes one off
 	*/
 
-	for (nsel = 0, i = 1; i <= nrows; i++)
+	for (i = 1; i <= thy numberOfRows; i++)
 	{
-		if (low <= d[i] && d[i] <= high) nsel++;
+		if (low <= his data[i][1] && his data[i][1] < high) nsel++;
 	}
 
 	if (nsel < 1) return Melder_errorp1 (L"Not enough data in quantile interval.");
 
-	him = TableOfReal_create (nsel, thy numberOfColumns);
-	if (him == NULL ||
-		((his columnLabels = NUMstrings_copy (thy columnLabels, 1,
-			thy numberOfColumns)) == NULL)) goto end;
+	r = TableOfReal_create (nsel, thy numberOfColumns);
+	if (r == NULL ||
+		((r -> columnLabels = NUMstrings_copy (thy columnLabels, 1, thy numberOfColumns)) == NULL)) goto end;
 
-
-	for (k = 0, i = 1; i <= nrows; i++)
+	for (k = 0, i = 1; i <= thy numberOfRows; i++)
 	{
-		if (low <= d[i] && d[i] <= high)
+		if (low <= his data[i][1] && his data[i][1] < high)
 		{
 			k++;
-			if (! TableOfReal_copyOneRowWithLabel (thee, him, i, k)) goto end;
+			if (! TableOfReal_copyOneRowWithLabel (thee, r, i, k)) goto end;
 		}
 	}
 
 end:
-
-	NUMdvector_free (d, 1); NUMdvector_free (ds, 1);
-	NUMdmatrix_free (covari, 1, 1);
-	if (Melder_hasError()) forget (him);
-	return him;
+	forget (him);
+	if (Melder_hasError ()) forget (r);
+	return r;
 }
+
 
 Covariance TableOfReal_to_Covariance (I)
 {
@@ -983,7 +988,8 @@ SSCP SSCPs_to_SSCP_pool (SSCPs me)
 
 	for (k = 2; k <= my size; k++)
 	{
-		SSCP t = my item[k]; long no = t -> numberOfObservations;
+		SSCP t = my item[k];
+		long no = t -> numberOfObservations;
 
 		if (t -> numberOfRows != thy numberOfRows)
 		{

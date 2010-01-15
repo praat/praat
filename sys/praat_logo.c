@@ -1,6 +1,6 @@
 /* praat_logo.c
  *
- * Copyright (C) 1996-2009 Paul Boersma
+ * Copyright (C) 1996-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/12/09 enums
  * sdk 2008/03/24 GTK
  * pb 2009/06/02 date updated
+ * pb 2010/01/10 date and authorship updated
  */
 
 #include "praatP.h"
@@ -43,7 +44,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_text (g, 0.5, 0.6, Melder_peekUtf8ToWcs (praatP.title));
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
-	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2009");
+	Graphics_text (g, 0.5, 0.25, L"\\s{Built on the} %%Praat shell%\\s{,\\co Paul Boersma, 1992-2010");
 }
 
 static struct {
@@ -98,17 +99,13 @@ static void gui_cb_goAway (I) {
 
 void praat_showLogo (int autoPopDown) {
 	#if gtk
-		const gchar * authors [4];
-		authors [0] = "Paul Boersma";
-		authors [1] = "David Weenink";
-		authors [2] = "Stefan de Konink";
-		authors [3] = NULL;
+		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
 
-		Widget dialog = gtk_about_dialog_new();
+		Widget dialog = gtk_about_dialog_new ();
 //		gtk_about_dialog_set_version (dialog, xstr(PRAAT_VERSION_STR));
 //		gtk_about_dialog_set_copyright (dialog, "Copyright (C) 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
-		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://praat.org");
+		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");
 		gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
 		g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
 

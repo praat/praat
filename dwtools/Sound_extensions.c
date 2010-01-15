@@ -43,6 +43,7 @@
  djmw 20091023 Added Sound_drawIntervals
  djmw 20091028 Sound_drawIntervals -> Sound_drawParts + Graphics_function
  djmw 20091126 Sound_drawParts -> Sound_drawWheres
+ djmw 20091211 Sound_fade: removed erroneous warning
 */
 
 #include "Formula.h"
@@ -1623,7 +1624,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 		return;
 	}
 	if (iend > my nx) iend = my nx;
-	if (iend - istart + 1 > numberOfSamples)
+	if (iend - istart + 1 >= numberOfSamples)
 	{
 		numberOfSamples = iend - istart + 1;
 	}
@@ -1787,7 +1788,7 @@ static int Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample
 			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
 		}
 
-		// Thy dimensions haven't changed only xmin,xmax and dx; It seems we don't have to recompile.
+		// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
 		if (! Formula_run (ichannel, 2, & result)) return 0;
 		bool current = result.result.numericResult;
 

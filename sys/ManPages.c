@@ -494,19 +494,18 @@ static struct stylesInfo {
 /* CODE5: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" }
 };
 
-static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, MelderString *buffer) {
-	int inList = FALSE, inItalic = FALSE, inBold = FALSE;
-	int inSub = FALSE, inCode = FALSE, inSuper = FALSE, ul = FALSE, inSmall = FALSE;
-	int wordItalic = FALSE, wordBold = FALSE, wordCode = FALSE, letterSuper = FALSE;
-	ManPage_Paragraph paragraph;
-	for (paragraph = paragraphs; paragraph -> type != 0; paragraph ++) {
+static int writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragraph paragraphs, MelderString *buffer) {
+	bool inList = false, inItalic = false, inBold = false;
+	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
+	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
+	for (ManPage_Paragraph paragraph = paragraphs; paragraph -> type != 0; paragraph ++) {
 		const wchar_t *p = paragraph -> text;
 		int type = paragraph -> type, inTable;
-		int isListItem = type == kManPage_type_LIST_ITEM ||
+		bool isListItem = type == kManPage_type_LIST_ITEM ||
 			(type >= kManPage_type_LIST_ITEM1 && type <= kManPage_type_LIST_ITEM3);
-		int isTag = type == kManPage_type_TAG ||
+		bool isTag = type == kManPage_type_TAG ||
 			(type >= kManPage_type_TAG1 && type <= kManPage_type_TAG3);
-		int isDefinition = type == kManPage_type_DEFINITION ||
+		bool isDefinition = type == kManPage_type_DEFINITION ||
 			(type >= kManPage_type_DEFINITION1 && type <= kManPage_type_DEFINITION3);
 		/*int isCode = type == kManPage_type_CODE ||
 			(type >= kManPage_type_CODE1 && type <= kManPage_type_CODE5);*/
@@ -515,7 +514,26 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, Me
 		 * We do not recognize pictures yet.
 		 */
 		if (! p) {
-			MelderString_append1 (buffer, L"<p><font size=-2>[sorry, no pictures yet in the web version of this manual]</font></p>\n");
+			#ifdef macintoshxxx
+				if (type == kManPage_type_PICTURE) {
+					Graphics graphics = Graphics_create_pdffile (file, 75, 0.0, paragraph -> width, 0.0, paragraph -> height);
+					if (graphics == NULL)
+						return Melder_error3 (L"Cannot create PDF file ", MelderFile_messageName (file), L".");
+					Graphics_setFont (graphics, kGraphics_font_TIMES);
+					Graphics_setFontStyle (graphics, 0);
+					Graphics_setFontSize (graphics, 12);
+					Graphics_setWrapWidth (graphics, 0);
+					Graphics_setViewport (graphics, 0.0, paragraph -> width, 0.0, paragraph -> height);
+					paragraph -> draw (graphics);
+					Graphics_setViewport (graphics, 0, 1, 0, 1);
+					Graphics_setWindow (graphics, 0, 1, 0, 1);
+					Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
+					forget (graphics);
+					//MelderString_append3
+				}
+			#else
+				MelderString_append1 (buffer, L"<p><font size=-2>[sorry, no pictures yet in the web version of this manual]</font></p>\n");
+			#endif
 			continue;
 		}
 
@@ -685,13 +703,14 @@ static void writeParagraphsAsHtml (ManPages me, ManPage_Paragraph paragraphs, Me
 		MelderString_append2 (buffer, stylesInfo [paragraph -> type]. htmlOut, L"\n");
 	}
 	if (inList) { MelderString_append1 (buffer, ul ? L"</ul>\n" : L"</dl>\n"); inList = FALSE; }
+	return 1;
 }
 
 static const wchar_t *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
-static void writePageAsHtml (ManPages me, long ipage, MelderString *buffer) {
+static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderString *buffer) {
 	ManPage page = my pages -> item [ipage];
 	ManPage_Paragraph paragraphs = page -> paragraphs;
 	MelderString_append3 (buffer, L"<html><head><meta name=\"robots\" content=\"index,follow\">\n"
@@ -700,7 +719,7 @@ static void writePageAsHtml (ManPages me, long ipage, MelderString *buffer) {
 		L"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		L"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title, L"\n</b></font></table></table>\n");
-	writeParagraphsAsHtml (me, paragraphs, buffer);
+	writeParagraphsAsHtml (me, file, paragraphs, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		long ilink, jlink, lastParagraph = 0;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
@@ -744,7 +763,7 @@ static void writePageAsHtml (ManPages me, long ipage, MelderString *buffer) {
 int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	writePageAsHtml (me, ipage, & buffer);
+	writePageAsHtml (me, file, ipage, & buffer);
 	if (! MelderFile_writeText (file, buffer.string)) return 0;
 	return 1;
 }
@@ -762,9 +781,9 @@ int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 		wcscat (fileName, L".html");
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		writePageAsHtml (me, ipage, & buffer);
 		structMelderFile file = { 0 };
 		MelderDir_getFile (& dir, fileName, & file);
+		writePageAsHtml (me, & file, ipage, & buffer);
 		oldText = MelderFile_readText (& file);
 		Melder_clearError ();
 		if (oldText == NULL || wcscmp (buffer.string, oldText)) {

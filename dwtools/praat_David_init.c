@@ -1,6 +1,6 @@
 /* praat_David_init.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@
  djmw 20090914 Excitation to Excitations crashed because of NULL reference
  djmw 20090927 TableOfReal_drawRow(s)asHistogram
  djmw 20091023 Sound_draw_selectedIntervals
+ djmw 20091230 Covariance_and_TableOfReal_mahalanobis
 */
 
 #include "praat.h"
@@ -813,6 +814,14 @@ DIRECT (Covariance_to_PCA)
 	EVERY_TO (SSCP_to_PCA (OBJECT))
 END
 
+FORM (Covariance_and_TableOfReal_mahalanobis, L"Covariance & TableOfReal: To TableOfReal (mahalanobis)", L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...")
+	BOOLEAN (L"Centroid from table", 0)
+	OK
+DO
+	NEW (Covariance_and_TableOfReal_mahalanobis (ONLY (classCovariance), ONLY (classTableOfReal),
+		GET_INTEGER (L"Centroid from table")))
+END
+
 /********************** Discriminant **********************************/
 
 DIRECT (Discriminant_help)
@@ -861,6 +870,18 @@ DO
 		(d,	t, GET_INTEGER (L"Pool covariance matrices"),
 		GET_INTEGER (L"Use apriori probabilities")),
 		Thing_getName (d), L"_", Thing_getName (t))) return 0;
+END
+
+FORM (Discriminant_and_TableOfReal_mahalanobis, L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...")
+	SENTENCE (L"Group label", L"")
+	BOOLEAN (L"Pool covariance matrices", 0)
+	OK
+DO
+	Discriminant d = ONLY (classDiscriminant);
+	long group = Discriminant_groupLabelToIndex (d, GET_STRING (L"Group label"));
+	REQUIRE (group > 0, L"Group label does not exist.")
+	NEW (Discriminant_and_TableOfReal_mahalanobis (d, ONLY(classTableOfReal), group,
+		GET_INTEGER (L"Pool covariance matrices")))
 END
 
 FORM (Discriminant_getWilksLambda, L"Discriminant: Get Wilks' lambda", L"Discriminant: Get Wilks' lambda...")
@@ -4646,6 +4667,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classCovariance, 0, L"To Correlation", 0, 0, DO_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, L"To PCA", 0, 0, DO_Covariance_to_PCA);
 
+	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, L"To TableOfReal (mahalanobis)...", 0, 0, DO_Covariance_and_TableOfReal_mahalanobis);
+
 	praat_addAction1 (classClassificationTable, 0, L"ClassificationTable help", 0, 0, DO_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, L"To Confusion", 0, 0, DO_ClassificationTable_to_Confusion);
@@ -4721,6 +4744,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, L"To Configuration...", 0, 0, DO_Discriminant_and_TableOfReal_to_Configuration);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, L"To ClassificationTable...", 0, 0,
 		DO_Discriminant_and_TableOfReal_to_ClassificationTable);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, L"To TableOfReal (mahalanobis)...", 0, 0, DO_Discriminant_and_TableOfReal_mahalanobis);
+
 
 	praat_addAction1 (classDTW, 0, L"DTW help", 0, 0, DO_DTW_help);
 	praat_addAction1 (classDTW, 0, L"Draw", 0, 0, 0);

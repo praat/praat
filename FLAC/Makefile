@@ -1,9 +1,10 @@
 # Makefile for FLAC library
 # Erez Volk, March 2007
+# pb 20100108: include sys/melder.h
 
 include ../makefile.defs
 
-CFLAGS = -DFLAC__NOASM -I .
+CFLAGS = -DFLAC__NOASM -I ../sys
 
 # EREZ ?
 # On non-Intel, also define -DFLAC__CPU_UNKNOWN
@@ -37,7 +38,7 @@ OBJECTS = \
  
 TEST = 
 
-$(OBJECTS): *.h
+$(OBJECTS): *.h ../sys/melder.h
 
 test: $(TEST)  libFLAC.a
 

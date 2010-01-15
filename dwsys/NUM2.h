@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2009 David Weenink
+ * Copyright (C) 1997-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20090707 Latest modification.
+ djmw 20100107 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -432,6 +432,9 @@ double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long n);
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
 	as calculated by NUMlowerCholeskyInverse
+	Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
+		(x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =
+			(L**-1.(x-m))' . (L**-1.(x-m))
 */
 
 double NUMtrace (double **a, long n);

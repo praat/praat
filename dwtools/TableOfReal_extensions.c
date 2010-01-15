@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1244,9 +1244,9 @@ double TableOfReal_getColumnQuantile (I, long col, double quantile)
 
 	if (col < 1 || col > my numberOfColumns) return NUMundefined;
 
-	if (! (values = NUMdvector (1, m))) return NUMundefined;
+	if ((values = NUMdvector (1, m)) == NULL) return NUMundefined;
 
-	for (i=1; i <= m; i++)
+	for (i = 1; i <= m; i++)
 	{
 		values[i] = my data[i][col];
 	}

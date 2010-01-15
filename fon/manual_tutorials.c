@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100101)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100115)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.24# (15 January 2010)")
+LIST_ITEM (L"\\bu Formulas run 10 to 20 percent faster.")
+LIST_ITEM (L"\\bu Macintosh: support for forward delete key and Command-`.")
 NORMAL (L"##5.1.23# (1 January 2010)")
 LIST_ITEM (L"\\bu Allowed multiple files to be selected with e.g. @@Read from file...@.")
 LIST_ITEM (L"\\bu Demo window: guarded against handling the Demo window from two scripts at a time.")

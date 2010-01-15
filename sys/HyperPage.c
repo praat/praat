@@ -518,6 +518,7 @@ if (! my printing) {
 	if (my x < 0) my x = 0;
 	Graphics_setWrapWidth (my ps, 0);
 	{
+		if (my praatApplication == NULL) my praatApplication = Melder_calloc (structPraatApplication, 1);
 		if (my praatObjects == NULL) my praatObjects = Melder_calloc (structPraatObjects, 1);
 		if (my praatPicture == NULL) my praatPicture = Melder_calloc (structPraatPicture, 1);
 		theCurrentPraatApplication = my praatApplication;
@@ -538,10 +539,18 @@ if (! my printing) {
 		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Melder_progressOff ();
 		Melder_warningOff ();
+		structMelderDir saveDir = { { 0 } };
+		Melder_getDefaultDir (& saveDir);
+		if (! MelderDir_isNull (& my rootDirectory)) Melder_setDefaultDir (& my rootDirectory);
 		Interpreter_run (interpreter, text);
+		Melder_setDefaultDir (& saveDir);
 		Melder_warningOn ();
 		Melder_progressOn ();
 		iferror Melder_clearError ();
+		Graphics_setLineType (my ps, Graphics_DRAWN);
+		Graphics_setLineWidth (my ps, 1.0);
+		Graphics_setArrowSize (my ps, 1.0);
+		Graphics_setColour (my ps, Graphics_BLACK);
 		theCurrentPraatApplication = & theForegroundPraatApplication;
 		theCurrentPraatObjects = & theForegroundPraatObjects;
 		theCurrentPraatPicture = & theForegroundPraatPicture;
