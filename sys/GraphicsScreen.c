@@ -1,6 +1,6 @@
 /* GraphicsScreen.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * sdk 2008/03/24 cairo
  * sdk 2008/05/09 cairo
  * pb 2009/07/24 quartz
+ * fb 2010/02/23 cairo & clipping on updateWs()
  */
 
 #include "GraphicsP.h"
@@ -51,7 +52,10 @@
 static void destroy (I) {
 	iam (GraphicsScreen);
 	#if cairo
-		if (my cr) cairo_destroy (my cr);
+		if (my cr) {
+			cairo_destroy (my cr);
+			my cr = NULL;
+		}
 	#elif xwin
 		XFreeGC (my display, my gc);
 	#elif win
@@ -195,6 +199,12 @@ void Graphics_updateWs (I) {
 				rect.height = my y1DC - my y2DC;
 			}
 
+			if (my cr && my drawingArea) {  // update clipping rectangle to new graphics size
+				cairo_reset_clip(my cr);
+				cairo_rectangle(my cr, rect.x, rect.y, rect.width, rect.height);
+				cairo_clip(my cr);
+			}
+			
 			gdk_window_invalidate_rect (window, & rect, true);
 			gdk_window_process_updates (window, true);
 		#elif xwin
@@ -225,7 +235,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 	#if cairo
 		_Graphics_text_init (me);
 		my resolution = 100;
-		my cr = NULL;
+		my cr = gdk_cairo_create(GDK_DRAWABLE(GTK_WIDGET(voidDisplay)->window));
 	#elif xwin
 		if (! inited) {
 			display = (Display *) voidDisplay;
@@ -404,6 +414,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#endif
 
 	#if gtk
+		// fb: is really the request meant or rather the actual size, aka allocation?
 		gtk_widget_size_request (my drawingArea, &realsize);
 		// HIER WAS IK
 		//	g_debug("--> %d %d", realsize.width, realsize.height);

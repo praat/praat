@@ -1,36 +1,9 @@
-# # Makefile of the library "dwtools"
-
-#
-#  Copyright (C) 1993-2009 David Weenink
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or (at
-#  your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful, but
-#  WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-#
-#
-#
-#  djmw 20030825 Removed dependency on -I ../GSL
-#  djmw 20090417 Latest modification.
-
+# Makefile of the library "dwtools"
+# David Weenink, 22 February 2010
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL -ggdb
-
-all: libdwtools.a
-
-clean:
-	rm *.o
+CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -70,8 +43,13 @@ OBJECTS = Activation.o AffineTransform.o \
 	VowelEditor.o \
 	praat_MDS_init.o praat_KlattGrid_init.o praat_David_init.o
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h
+.PHONY: all clean
 
+all: libdwtools.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libdwtools.a
 
 libdwtools.a: $(OBJECTS)
 	touch libdwtools.a
@@ -79,3 +57,4 @@ libdwtools.a: $(OBJECTS)
 	ar cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h

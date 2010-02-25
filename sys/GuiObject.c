@@ -1,6 +1,6 @@
 /* GuiObject.c
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2007/12/28 _GuiObject_position: allow the combination of fixed height and automatic position
  * sdk 2008/03/24 GTK
  * sdk 2008/07/01 GTK get sizes
+ * fb 2010/02/23 GTK
  */
 
 #include "GuiP.h"
@@ -118,7 +119,7 @@ void GuiObject_destroy (Widget me) {
 long GuiObject_getHeight (Widget me) {
 	long height = 0;
 	#if gtk
-		gtk_widget_get_size_request (me, NULL, & height);
+		height = me->allocation.height;
 	#elif win || mac
 		height = my height;
 	#elif motif
@@ -132,7 +133,7 @@ long GuiObject_getHeight (Widget me) {
 long GuiObject_getWidth (Widget me) {
 	long width = 0;
 	#if gtk
-		gtk_widget_get_size_request (me, & width, NULL);
+		width = me->allocation.width;
 	#elif win || mac
 		width = my width;
 	#elif motif
@@ -146,6 +147,7 @@ long GuiObject_getWidth (Widget me) {
 long GuiObject_getX (Widget me) {
 	long x = 0;
 	#if gtk
+		x = me->allocation.x;
 	#elif win || mac
 		x = my x;
 	#elif motif
@@ -159,6 +161,7 @@ long GuiObject_getX (Widget me) {
 long GuiObject_getY (Widget me) {
 	long y = 0;
 	#if gtk
+		y = me->allocation.y;
 	#elif win || mac
 		y = my y;
 	#elif motif
@@ -216,9 +219,11 @@ Widget GuiObject_parent (Widget me) {
 void GuiObject_setSensitive (Widget me, bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (me, sensitive); // BUG in GTK+ be careful!
-							 // http://bugzilla.gnome.org/show_bug.cgi?id=56070
+							 // fixed as of 2.18.2: https://bugzilla.gnome.org/show_bug.cgi?id=56070#c157
+		/*
 		gtk_widget_hide (me);
 		gtk_widget_show (me);   // BUG: only do these two if visible
+		*/
 	#else
 		XtSetSensitive (me, sensitive);
 	#endif
@@ -241,6 +246,9 @@ void GuiObject_show (Widget me) {
 
 void GuiObject_size (Widget me, long width, long height) {
 	#if gtk
+		if (width == Gui_AUTOMATIC || width <= 0) width = -1;
+		if (height == Gui_AUTOMATIC || height <= 0) height = -1;
+		gtk_widget_set_size_request (me, width, height);
 	#elif motif
 		if (width != Gui_AUTOMATIC) {
 			if (height != Gui_AUTOMATIC) {

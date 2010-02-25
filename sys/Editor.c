@@ -1,6 +1,6 @@
 /* Editor.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * sdk 2008/03/24 GTK
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/08/19 allow editor windows without menu bar (requested by DemoEditor)
+ * fb 2010/02/23 GTK
  */
 
 #include <time.h>
@@ -308,7 +309,7 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
 	else wcscpy (my undoText, L"Undo?");
 	#if gtk
-		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
+		gtk_label_set_label (GTK_LABEL(gtk_bin_get_child(GTK_BIN(my undoButton))), Melder_peekWcsToUtf8 (my undoText));
 	#elif motif
 		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
 		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, text_utf8), NULL);
@@ -482,9 +483,18 @@ static void gui_window_cb_goAway (I) {
 extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	#if gtk
-		GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (parent)));
-		int screenWidth = gdk_screen_get_width (screen);
-		int screenHeight = gdk_screen_get_height (screen);
+		int screenWidth, screenHeight;
+		{
+			Widget parent_win = gtk_widget_get_ancestor(parent, GTK_TYPE_WINDOW);
+			GdkScreen *screen;
+			if (parent_win) {
+				screen = gtk_window_get_screen(GTK_WINDOW(parent_win));
+			} else {
+				screen = gdk_screen_get_default();
+			}
+			screenWidth = gdk_screen_get_width (screen);
+			screenHeight = gdk_screen_get_height (screen);
+		}
 	#elif motif
 		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
 		int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
@@ -606,7 +616,7 @@ void Editor_save (Editor me, const wchar_t *text) {
 	GuiObject_setSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
 	#if gtk
-		gtk_label_set_label (GTK_LABEL (my undoButton), Melder_peekWcsToUtf8 (my undoText));
+		gtk_label_set_label (GTK_LABEL(gtk_bin_get_child(GTK_BIN(my undoButton))), Melder_peekWcsToUtf8 (my undoText));
 	#elif motif
 		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
 		XtVaSetValues (my undoButton, motif_argXmString (XmNlabelString, text_utf8), NULL);

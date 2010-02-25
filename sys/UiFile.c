@@ -266,7 +266,7 @@ void UiInfile_do (I) {
 			UiHistory_write (Melder_fileToPath (& my file));
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);
-			if (! my okCallback (me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+			if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
 				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 				Melder_flushError (NULL);
 			}
@@ -564,7 +564,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 		Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
 		g_free (filename);
 		MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-		if (! my okCallback (me, NULL, NULL, my okClosure)) {
+		if (! my okCallback ((UiForm) me, NULL, NULL, NULL, false, my okClosure)) {
 			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
 			Melder_flushError (NULL);
 		}

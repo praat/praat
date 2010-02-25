@@ -1680,7 +1680,6 @@ Table Table_readFromTableFile (MelderFile file) {
 	Table me = NULL;
 	wchar_t *string = MelderFile_readText (file); cherror
 	long nrow, ncol, nelements;
-
 	/*
 	 * Count columns.
 	 */

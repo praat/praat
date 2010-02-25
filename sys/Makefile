@@ -1,8 +1,9 @@
 # Makefile of the library "sys"
-# Paul Boersma, 15 November 2009
+# Paul Boersma, 22 February 2010
 
 include ../makefile.defs
-CFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../FLAC -I ../mp3
+
+CFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../audio/FLAC -I ../audio/mp3
 
 OBJECTS = abcio.o lispio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
@@ -26,11 +27,18 @@ OBJECTS = abcio.o lispio.o complex.o \
    GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
    GuiDialog.o GuiRowColumn.o GuiList.o
 
+.PHONY: all clean
+
 all: libsys.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libsys.a
+
 libsys.a: $(OBJECTS)
 	touch libsys.a
 	rm libsys.a
 	ar cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../audio/*.h ../FLAC/*.h ../mp3/mp3.h
+$(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../audio/*.h ../audio/FLAC/*.h ../audio/mp3/mp3.h

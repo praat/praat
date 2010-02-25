@@ -1,11 +1,18 @@
 # Makefile of the library "kar"
-# Paul Boersma, December 15, 2006
+# Paul Boersma, 22 February 2010
 
 include ../makefile.defs
 
 OBJECTS = ipaSerifRegularPS.o ipaSerifRegular24.o longchar.o
 
+.PHONY: all clean
+
 all: libkar.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libkar.a
+
 libkar.a: $(OBJECTS)
 	touch libkar.a
 	rm libkar.a

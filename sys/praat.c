@@ -811,6 +811,12 @@ static void gui_cb_quit (GUI_ARGS) {
 	DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
+#if gtk
+static void gui_cb_quit_gtk (void *p) {
+  DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
+}
+#endif
+
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
@@ -1137,7 +1143,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		sprintf (objectWindowTitle, "%s Objects", praatP.title);
 		#if gtk
 			g_set_application_name (title);
-			theCurrentPraatApplication -> topShell = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit, NULL, 0);
+			theCurrentPraatApplication -> topShell = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
 			theCurrentPraatApplication -> context = g_main_context_default ();
 			GuiObject_show (GuiObject_parent (theCurrentPraatApplication -> topShell));
 		#else

@@ -36,6 +36,15 @@ Widget Gui_addMenuBar (Widget form) {
 	#if gtk
 		menuBar = gtk_menu_bar_new ();
 		gtk_box_pack_start (GTK_BOX (form), menuBar, FALSE, FALSE, 0);
+		
+		// we need an accelerator group for each window we're creating accelerated menus on
+		Widget topwin = gtk_widget_get_toplevel(form);
+		GtkAccelGroup *ag = gtk_accel_group_new();
+		gtk_window_add_accel_group(GTK_WINDOW(topwin), ag);
+		// unfortunately, menu-bars don't fiddle with accel-groups, so we need a way
+		// to pass it to the sub-menus created upon this bar for their items to have
+		// access to the accel-group
+		g_object_set_data(menuBar, "accel-group", ag);
 	#elif motif
 		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
 		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);

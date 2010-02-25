@@ -720,7 +720,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			/*
 			 * Merge mid with left interval.
 			 */
-			Melder_assert (interval -> xmin == t1);
+			if (interval -> xmin != t1);
+				Melder_fatal ("Boundary unequal: %.17g versus %.17g.", interval -> xmin, t1);
 			interval -> xmax = t2;
 			TextInterval_setText (interval, Melder_wcscat2 (interval -> text, midNewInterval -> text));
 			forget (midNewInterval);
@@ -728,7 +729,8 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			/*
 			 * Merge mid and right interval.
 			 */
-			Melder_assert (interval -> xmax == t2);
+			if (interval -> xmax != t2)
+				Melder_fatal ("Boundary unequal: %.17g versus %.17g.", interval -> xmax, t2);
 			interval -> xmax = t1;
 			Melder_assert (rightNewInterval -> xmin == t2);
 			Melder_assert (rightNewInterval -> xmax == t2);

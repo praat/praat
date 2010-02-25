@@ -1,14 +1,22 @@
 # Makefile of the library "gram"
-# Paul Boersma, 1 March 2009
+# Paul Boersma, 22 February 2010
 
 include ../makefile.defs
+
 CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
 
 OBJECTS = Network.o \
    OTGrammar.o OTGrammarEditor.o manual_gram.o praat_gram.o OTMulti.o OTMultiEditor.o \
    OTGrammar_ex_metrics.o OTGrammar_ex_NoCoda.o OTGrammar_ex_NPA.o OTGrammar_ex_tongueRoot.o
 
+.PHONY: all clean
+
 all: libgram.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libgram.a
+
 libgram.a: $(OBJECTS)
 	touch libgram.a
 	rm libgram.a

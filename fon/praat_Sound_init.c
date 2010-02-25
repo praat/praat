@@ -1,6 +1,6 @@
 /* praat_Sound_init.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/03/30
+ * pb 2010/02/19
  */
 
 #include "praat.h"
@@ -1819,17 +1819,15 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 
 static Any soundFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 16) return NULL;
-	if ((strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) ||
-	    (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) ||
-	    strnequ (header, ".snd", 4) ||
-	    strnequ (header, "NIST_1A", 7) ||
-	    strnequ (header, "fLaC", 4) || /* Erez Volk, March 2007 */
-	    mp3_recognize (nread, header) /* Erez Volk, May 2007 */
-	    #ifdef macintosh
-	    	|| MelderFile_getMacType (file) == 'Sd2f'
-	    #endif
-	    )
-		return Sound_readFromSoundFile (file);
+	if (strnequ (header, "FORM", 4) && strnequ (header + 8, "AIF", 3)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "RIFF", 4) && (strnequ (header + 8, "WAVE", 4) || strnequ (header + 8, "CDDA", 4))) return Sound_readFromSoundFile (file);
+	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
+	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
+	if (wcsstr (MelderFile_name (file), L".mp3") && mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+	#ifdef macintosh
+		if (MelderFile_getMacType (file) == 'Sd2f') return Sound_readFromSoundFile (file);
+	#endif
 	return NULL;
 }
 

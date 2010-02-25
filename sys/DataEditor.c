@@ -168,6 +168,10 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	
 	#if motif
 	if (XtIsManaged (my fieldData [i]. text)) {
+	#elif gtk
+	gboolean visible;
+	g_object_get(G_OBJECT(my fieldData[i].text), "visible", &visible, NULL);
+	if (visible) {
 	#endif
 		int type = my fieldData [i]. description -> type;
 		wchar_t *text;
@@ -273,7 +277,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			default: break;
 		}
 		Melder_free (text);
-	#if motif
+	#if motif || gtk
 	}
 	#endif
 	}
@@ -363,13 +367,13 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 static void classDataSubEditor_createChildren (DataSubEditor me) {
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
+	#if motif
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Change", gui_button_cb_change, me, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_cb_cancel, me, 0);
-
-	#if motif
+	
 	Widget scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
@@ -389,17 +393,42 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
 	GuiObject_show (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
-
 	Widget form = XmCreateForm (scrolledWindow, "list", NULL, 0);
+	
+	#elif gtk
+	Widget outerBox = gtk_vbox_new(0, 0);
+	Widget buttonBox = gtk_hbutton_box_new();
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_START);
+	gtk_box_pack_start(GTK_BOX(outerBox), buttonBox, 0, 0, 3);
+	
+	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Change", gui_button_cb_change, me, 0);
+	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
+	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Cancel", gui_button_cb_cancel, me, 0);
+	
+	Widget scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+	
+	Widget form = gtk_vbox_new(0, 3);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledWindow), form);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(outerBox), scrolledWindow, 1, 1, 3);
+	gtk_container_add(GTK_CONTAINER(my dialog), outerBox);
+	
+	GuiObject_show(outerBox);
+	GuiObject_show(buttonBox);
+	GuiObject_show(scrolledWindow);
+	#endif
+	
 	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
 		y = Gui_TOP_DIALOG_SPACING + (i - 1) * ROW_HEIGHT;
-		my fieldData [i]. label = GuiLabel_create (form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   /* No fixed x value: sometimes indent. */
-		my fieldData [i]. button = GuiButton_create (form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
+		my fieldData[i].label = GuiLabel_create(form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   /* No fixed x value: sometimes indent. */
+		my fieldData[i].button = GuiButton_create(form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
 			L"Open", gui_button_cb_open, me, 0);
-		my fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
+		my fieldData[i].text = GuiText_create(form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
 	}
+	
 	GuiObject_show (form);
-	#endif
 }
 
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); return 1; }

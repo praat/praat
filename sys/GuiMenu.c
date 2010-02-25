@@ -40,6 +40,10 @@ Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget
 	#if gtk
 		*menuTitle = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		menu = gtk_menu_new ();
+		GtkAccelGroup *ag = GTK_IS_MENU_BAR (bar) ?
+			g_object_get_data (bar, "accel-group") :
+			gtk_menu_get_accel_group (GTK_MENU (bar));
+		gtk_menu_set_accel_group (GTK_MENU (menu), ag);
 		if (flags & GuiMenu_INSENSITIVE)
 			gtk_widget_set_sensitive (menu, FALSE);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (*menuTitle), menu);
@@ -109,6 +113,7 @@ Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags, Wid
 #endif
 
 #if gtk
+	#include <gdk/gdkkeysyms.h>
 	static GSList *group = NULL;
 #endif
 
@@ -150,68 +155,93 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 			XmToggleButtonGadgetSetState (button, True, False);
 		#endif
 	if (accelerator) {
-		static char *acceleratorStrings [] = { "",
-			"Left", "Right", "Up", "Down", "Pause", "Delete", "Insert", "BackSpace",
-			"Tab", "Return", "Home", "End", "Return", "Page_Up", "Page_Down", "Escape",
-			"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-			"", "", "" };
-		static char *acceleratorTexts [] = { "",
-			" <-", " ->", "UP", "DOWN", "Pause", "Delete", "Insert", "Backspace",
-			"Tab", "Enter", "Home", "End", "Enter", "PageUp", "PageDown", "Esc",
-			"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-			"", "", "" };
-		char acceleratorString [100], acceleratorText [100];
 		/*
 		 * For printable characters, the Command key is assumed.
 		 */
 		if (accelerator >= 32)
 			flags |= GuiMenu_COMMAND;
-		/*
-		 * Build the Motif accelerator string and the text that will appear in the menu item.
-		 */
-		acceleratorString [0] = '\0';
-		acceleratorText [0] = '\0';
-		if (flags & GuiMenu_COMMAND) {
-			strcat (acceleratorString, "Ctrl ");
-			strcat (acceleratorText, "Ctrl-");
-		}
-		if (flags & GuiMenu_SHIFT) {
-			strcat (acceleratorString, "Shift ");
-			strcat (acceleratorText, "Shift-");
-		}
-		if (flags & GuiMenu_OPTION) {
-			strcat (acceleratorString, "Mod1 ");
-			strcat (acceleratorText, "Alt-");
-		}
-		/*
-		 * Delete the final space, if it exists.
-		 */
-		if (acceleratorString [0])
-			acceleratorString [strlen (acceleratorString) - 1] = '\0';
-
-		strcat (acceleratorString, "<Key>");
-		if (accelerator < 32) {
-			strcat (acceleratorString, acceleratorStrings [accelerator]);
-			strcat (acceleratorText, acceleratorTexts [accelerator]);
-		} else if (accelerator == '?') {
-			strcat (acceleratorString, "question");
-			strcat (acceleratorText, "?");
-		} else if (accelerator == '[') {
-			strcat (acceleratorString, "bracketleft");
-			strcat (acceleratorText, "[");
-		} else if (accelerator == ']') {
-			strcat (acceleratorString, "bracketright");
-			strcat (acceleratorText, "]");
-		} else {
-			static char single [2] = " ";
-			single [0] = accelerator;
-			strcat (acceleratorString, single);
-			strcat (acceleratorText, single);
-		}
+		
 		#if gtk
-// TODO: Even uitzoeken hoe dit 'accel_path' werkt
-//			gtk_menu_item_set_accel_path (GTK_MENU_ITEM (button), ...);
+			static const guint acceleratorKeys[] = { 0,
+				GDK_Left, GDK_Right, GDK_Up, GDK_Down, GDK_Pause, GDK_Delete, GDK_Insert, GDK_BackSpace,
+				GDK_Tab, GDK_Return, GDK_Home, GDK_End, GDK_Return, GDK_Page_Up, GDK_Page_Down, GDK_Escape,
+				GDK_F1, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12,
+				0, 0, 0 };
+
+			GdkModifierType modifiers = 0;
+			if (flags & GuiMenu_COMMAND) modifiers |= GDK_CONTROL_MASK;
+			if (flags & GuiMenu_SHIFT)   modifiers |= GDK_SHIFT_MASK;
+			if (flags & GuiMenu_OPTION)  modifiers |= GDK_MOD1_MASK;
+
+			guint key;
+			if (accelerator < 32) {
+				key = acceleratorKeys[accelerator];
+			} else {
+				// gdk key symbols in the ASCII range are equal to ASCII
+				key = accelerator;
+			}
+
+			GtkAccelGroup *ag = gtk_menu_get_accel_group(GTK_MENU(menu));
+
+			if (key != 0)
+				gtk_widget_add_accelerator (button, toggle ? "toggled" : "activate",
+					ag, accelerator, modifiers, GTK_ACCEL_VISIBLE);
+
 		#elif motif
+			static char *acceleratorStrings [] = { "",
+				"Left", "Right", "Up", "Down", "Pause", "Delete", "Insert", "BackSpace",
+				"Tab", "Return", "Home", "End", "Return", "Page_Up", "Page_Down", "Escape",
+				"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+				"", "", "" };
+			static char *acceleratorTexts [] = { "",
+				" <-", " ->", "UP", "DOWN", "Pause", "Delete", "Insert", "Backspace",
+				"Tab", "Enter", "Home", "End", "Enter", "PageUp", "PageDown", "Esc",
+				"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+				"", "", "" };
+
+			char acceleratorString [100], acceleratorText [100];
+			/*
+			* Build the Motif accelerator string and the text that will appear in the menu item.
+			*/
+			acceleratorString [0] = '\0';
+			acceleratorText [0] = '\0';
+			if (flags & GuiMenu_COMMAND) {
+				strcat (acceleratorString, "Ctrl ");
+				strcat (acceleratorText, "Ctrl-");
+			}
+			if (flags & GuiMenu_SHIFT) {
+				strcat (acceleratorString, "Shift ");
+				strcat (acceleratorText, "Shift-");
+			}
+			if (flags & GuiMenu_OPTION) {
+				strcat (acceleratorString, "Mod1 ");
+				strcat (acceleratorText, "Alt-");
+			}
+			/*
+			* Delete the final space, if it exists.
+			*/
+			if (acceleratorString [0]) {
+				acceleratorString [strlen (acceleratorString) - 1] = '\0';
+			}
+			strcat (acceleratorString, "<Key>");
+			if (accelerator < 32) {
+				strcat (acceleratorString, acceleratorStrings [accelerator]);
+				strcat (acceleratorText, acceleratorTexts [accelerator]);
+			} else if (accelerator == '?') {
+				strcat (acceleratorString, "question");
+				strcat (acceleratorText, "?");
+			} else if (accelerator == '[') {
+				strcat (acceleratorString, "bracketleft");
+				strcat (acceleratorText, "[");
+			} else if (accelerator == ']') {
+				strcat (acceleratorString, "bracketright");
+				strcat (acceleratorText, "]");
+			} else {
+				static char single [2] = " ";
+				single [0] = accelerator;
+				strcat (acceleratorString, single);
+				strcat (acceleratorText, single);
+			}
 			if (acceleratorString [0]) {
 				XtVaSetValues (button, XmNaccelerator, acceleratorString, NULL);
 			}

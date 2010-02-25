@@ -1,6 +1,6 @@
 /* praat_picture.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
  * pb 2009/05/08 demo window
  * pb 2009/05/09 pink
  * pb 2009/09/04 demo window can Undo
+ * fb 2010/02/20 GTK
  */
 
 #include "praatP.h"
@@ -353,9 +354,27 @@ static void updatePenMenu (void) {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_lines [i]), theCurrentPraatPicture -> lineType == i);
 		}
-		for (int i = Graphics_BLACK; i <= Graphics_GREY; i ++) {
-			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_colours [i]), theCurrentPraatPicture -> colour == i);
-		}
+		#define _set_active(c1, c2) \
+				gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_ ## c1), \
+		                                   Graphics_Colour_equal(theCurrentPraatPicture->colour, Graphics_ ## c2));
+		_set_active(black, BLACK);
+		_set_active(white, WHITE);
+		_set_active(red, RED);
+		_set_active(green, GREEN);
+		_set_active(blue, BLUE);
+		_set_active(yellow, YELLOW);
+		_set_active(cyan, CYAN);
+		_set_active(magenta, MAGENTA);
+		_set_active(maroon, MAROON);
+		_set_active(lime, LIME);
+		_set_active(navy, NAVY);
+		_set_active(teal, TEAL);
+		_set_active(purple, PURPLE);
+		_set_active(olive, OLIVE);
+		_set_active(pink, PINK);
+		_set_active(silver, SILVER);
+		_set_active(grey, GREY);
+		#undef _set_active
 	#elif motif
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
 			XmToggleButtonGadgetSetState (praatButton_lines [i], theCurrentPraatPicture -> lineType == i, 0);

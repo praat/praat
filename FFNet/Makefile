@@ -1,16 +1,9 @@
 # Makefile of the library "FFNet"
-# David Weenink 19990223
-# djmw 20081011 Latest modification.
-
+# David Weenink, 22 February 2010
 
 include ../makefile.defs
 
 CFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
-
-all: libFFNet.a
-
-clean:
-	rm *.o
 
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_Pattern.o \
@@ -18,10 +11,18 @@ OBJECTS = FFNet.o \
 	FFNet_Pattern_Categories.o \
 	praat_FFNet_init.o manual_FFNet.o
 
-$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h
+.PHONY: all clean
+
+all: libFFNet.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libFFNet.a
 
 libFFNet.a: $(OBJECTS)
 	touch libFFNet.a
 	rm libFFNet.a
 	ar cq libFFNet.a $(OBJECTS)
 	$(RANLIB) libFFNet.a
+
+$(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h

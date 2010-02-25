@@ -34,6 +34,7 @@
  * pb 2007/12/05 prefs
  * pb 2008/01/19 double
  * pb 2010/01/10 MP3 precision warning
+ * fb 2010/02/25 corrected a bug that could cause LongSound_playPart to crash with an assertion on error
  */
 
 #include "LongSound.h"
@@ -567,11 +568,11 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				thy numberOfSamples * sizeof (short) * my numberOfChannels);
 			if (! MelderAudio_play16 (thy resampledBuffer, my sampleRate, thy silenceBefore + thy numberOfSamples + thy silenceAfter,
 			    my numberOfChannels, melderPlayCallback, thee))
-				Melder_flushError (NULL);
+				goto err;
 		} else {
 			if (! MelderAudio_play16 (my buffer + (i1 - my imin) * my numberOfChannels, my sampleRate,
 			   thy numberOfSamples, my numberOfChannels, melderPlayCallback, thee))
-				Melder_flushError (NULL);
+				goto err;
 		}
 	} else {
 		long newSampleRate = my sampleRate < 11025 ? 11025 : my sampleRate < 22050 ? 22050 : 44100;
@@ -611,8 +612,12 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		}
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
 		if (! MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee))
-			Melder_flushError (NULL);
+			goto err;
 	}
+	return;
+err:
+	Melder_flushError (NULL);
+	Melder_free (thy resampledBuffer);
 }
 
 int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {

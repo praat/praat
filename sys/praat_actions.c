@@ -212,8 +212,8 @@ static void deleteDynamicMenu (void) {
 
 			// RFC: Beter? Nog beter?
 			#if gtk
-				praat_writeMenu = GuiMenuBar_addMenu (praatP.menuBar, L"Write", 0);
-				praat_writeMenuTitle = praat_writeMenu;
+				praat_writeMenu = gtk_menu_new();
+				gtk_menu_item_set_submenu(GTK_MENU_ITEM(praat_writeMenuTitle), praat_writeMenu);
 			#elif motif
 				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
 				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
@@ -621,6 +621,8 @@ void praat_actions_show (void) {
 			#if gtk
 				praat_dynamicMenu = gtk_vbutton_box_new ();
 				gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);
+				Widget *viewport = gtk_bin_get_child (GTK_BIN (praat_dynamicMenuWindow));
+				gtk_container_add (GTK_CONTAINER (viewport), praat_dynamicMenu);
 			#elif motif
 				praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
 			#endif
@@ -774,14 +776,13 @@ void praat_actions_createWriteMenu (Widget bar) {
 	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
 	// TODO: writeMenu -> writeMenuTitle gedaan
 	#if gtk
-		praat_writeMenu = GuiMenuBar_addMenu (bar, L"Write", GuiMenu_INSENSITIVE);
-		praat_writeMenuTitle = praat_writeMenu;
+		praat_writeMenu = GuiMenuBar_addMenu2 (bar, L"Write", GuiMenu_INSENSITIVE, &praat_writeMenuTitle);
 	#elif motif
 		praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
-		GuiObject_setSensitive (praat_writeMenuTitle, False);
 		praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
 		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 	#endif
+	GuiObject_setSensitive (praat_writeMenuTitle, False);
 }
 
 void praat_actions_init (void) {

@@ -608,6 +608,7 @@ static void gtk_error (wchar_t *message) {
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_ERROR,
 					 GTK_BUTTONS_OK,
+					 "%s",
 					 Melder_peekWcsToUtf8 (message));
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
@@ -618,6 +619,7 @@ static void gtk_warning (wchar_t *message) {
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_WARNING,
 					 GTK_BUTTONS_OK,
+					 "%s",
 					 Melder_peekWcsToUtf8 (message));
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);

@@ -385,12 +385,13 @@ static int Formula_lexan (void) {
 			oudkar;
 			nieuwtok (NUMBER_)
 			tokgetal (Melder_atof (token.string));
-		} else if ((kar >= 'a' && kar <= 'z') || (kar == '.' && theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z'
+		} else if ((kar >= 'a' && kar <= 'z') || kar >= 192 || (kar == '.' &&
+				((theExpression [ikar + 1] >= 'a' && theExpression [ikar + 1] <= 'z') || theExpression [ikar + 1] >= 192)
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_)))) {
 			int tok;
 			bool isString = false, isArray = false;
 			stokaan;
-			do stokkar while ((kar >= 'A' && kar <= 'Z') || (kar >= 'a' && kar <= 'z') || (kar >= '0' && kar <= '9') || kar == '_' || kar == '.');
+			do stokkar while ((kar >= 'A' && kar <= 'Z') || (kar >= 'a' && kar <= 'z') || kar >= 192 || (kar >= '0' && kar <= '9') || kar == '_' || kar == '.');
 			if (kar == '$') {
 				stokkar
 				isString = true;

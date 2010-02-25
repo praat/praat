@@ -1,6 +1,6 @@
 /* GuiList.c
  *
- * Copyright (C) 1993-2009 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2007/12/26 abstraction from Motif
  * pb 2009/01/31 NUMlvector_free has to be followed by assigning a NULL
+ * fb 2010/02/23 GTK
  */
 
 #include "GuiP.h"
@@ -519,12 +520,13 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 			*numberOfSelectedPositions = n;
 			selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
 			Melder_assert (selectedPositions != NULL);
-			g_list_first (list);
-			do {
-				gint *index = gtk_tree_path_get_indices (list -> data);
+			
+			GList *l;
+			for (l = g_list_first(list); l != NULL; l = g_list_next(l)) {
+				gint *index = gtk_tree_path_get_indices (l -> data);
 				selectedPositions [ipos] = index [0] + 1;
 				ipos ++;
-			} while (g_list_next (list) != NULL);
+			}
 			g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
 			g_list_free (list);
 
@@ -533,6 +535,8 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 			// But requires a structure + function
 			// Structure must contain the iterator (ipos) and
 			// selectedPositions
+			// fb: don't think that using the above function would be nicer,
+			//     the code is not that confusing  -- 20100223
 		}
 		return selectedPositions;
 	#elif win

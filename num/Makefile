@@ -1,12 +1,19 @@
 # Makefile of the library "num"
-# Paul Boersma, April 12, 2008
+# Paul Boersma, 22 February 2010
 
 include ../makefile.defs
 CFLAGS = -I ../GSL -I glpk -I ../sys -I ../dwsys
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o NUMlinprog.o
 
+.PHONY: all clean
+
 all: libnum.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libnum.a
+
 libnum.a: $(OBJECTS)
 	touch libnum.a
 	rm libnum.a

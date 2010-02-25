@@ -1,6 +1,6 @@
 /* FunctionEditor.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2009/09/21 Zoom Back
  * pb 2009/10/26 repaired the synchronizedZoomAndScroll preference
+ * fb 2010/02/24 GTK
  */
 
 #include "FunctionEditor.h"
@@ -94,10 +95,9 @@ static int group_equalDomain (double tmin, double tmax) {
 
 static void updateScrollBar (FunctionEditor me) {
 /* We cannot call this immediately after creation. */
-	int slider_size = (my endWindow - my startWindow) /
-		(my tmax - my tmin) * maximumScrollBarValue - 1, increment, page_increment;
-	int value = (my startWindow - my tmin) / (my tmax - my tmin) *
-		maximumScrollBarValue + 1;
+	int slider_size = (my endWindow - my startWindow) / (my tmax - my tmin) * maximumScrollBarValue - 1;
+	int increment, page_increment;
+	int value = (my startWindow - my tmin) / (my tmax - my tmin) * maximumScrollBarValue + 1;
 	if (slider_size < 1) slider_size = 1;
 	if (value > maximumScrollBarValue - slider_size)
 		value = maximumScrollBarValue - slider_size;
@@ -107,7 +107,13 @@ static void updateScrollBar (FunctionEditor me) {
 	#endif
 	increment = slider_size / SCROLL_INCREMENT_FRACTION + 1;
 	page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1;
-	#if motif
+	#if gtk
+	GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(my scrollBar));
+	adj->page_size = slider_size;
+	gtk_adjustment_set_value(adj, value);
+	gtk_adjustment_changed(adj);
+	gtk_range_set_increments(GTK_RANGE(my scrollBar), increment, page_increment);
+	#elif motif
 	XmScrollBarSetValues (my scrollBar, value, slider_size, increment, page_increment, False);
 	#endif
 }
@@ -226,7 +232,6 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Be responsive: update the markers now.
 	 */
-
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
 	Graphics_setGrey (my graphics, 0.8);
@@ -882,14 +887,17 @@ static int menu_cb_moveEright (EDITOR_ARGS) {
 
 /********** GUI CALLBACKS **********/
 
-static void gui_cb_scroll (GUI_ARGS) {
+#if gtk
+static void gui_cb_scroll(GtkRange *rng, gpointer void_me) {
+	iam (FunctionEditor);
+	double value = gtk_range_get_value(GTK_RANGE(rng));
+#elif motif
+static void gui_cb_scroll(GUI_ARGS) {
 	GUI_IAM (FunctionEditor);
 	int value, slider, incr, pincr;
-	double shift;
-	#if motif
 	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
-	#endif
-	shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
+#endif
+	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
 	if (shift != 0.0) {
 		int i;
 		my startWindow += shift;
@@ -1119,14 +1127,27 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (FunctionEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	Dimension marginWidth = 10, marginHeight = 10;
-	#if motif
+	#if gtk
+	// no additional margin within the drawing area
+	marginWidth = 0;
+	marginHeight = 0;
+	#elif motif
 	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	#endif
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	#if gtk
+	// width and height are exact for the drawing area
+	my width = event->width;
+	my height = event->height;
+	#else
 	my width = event -> width - marginWidth - marginWidth + 111;
 	my height = event -> height - marginHeight - marginHeight + 111;
+	#endif
 	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
+	#if gtk
+	// updateWs() also resizes the cairo clipping context to the new window size
+	#endif
 	Graphics_updateWs (my graphics);
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
@@ -1141,64 +1162,116 @@ static void createChildren (FunctionEditor me) {
 
 	#if gtk
 		form = my dialog;
+		Widget hctl_box = gtk_hbox_new(FALSE, BUTTON_SPACING);
+		gtk_box_pack_end(GTK_BOX(form), hctl_box, FALSE, FALSE, 0);
+		Widget leftbtn_box = gtk_hbox_new(TRUE, 3);
+		gtk_box_pack_start(GTK_BOX(hctl_box), leftbtn_box, FALSE, FALSE, 0);
+
+		/***** Create zoom buttons. *****/
+
+		gtk_box_pack_start(GTK_BOX(leftbtn_box),
+			GuiButton_create(NULL, 0, 0, 0, 0, L"all", gui_button_cb_showAll, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(leftbtn_box),
+			GuiButton_create(NULL, 0, 0, 0, 0, L"in", gui_button_cb_zoomIn, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(leftbtn_box),
+			GuiButton_create(NULL, 0, 0, 0, 0, L"out", gui_button_cb_zoomOut, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(leftbtn_box),
+			GuiButton_create(NULL, 0, 0, 0, 0, L"sel", gui_button_cb_zoomToSelection, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(leftbtn_box),
+			GuiButton_create(NULL, 0, 0, 0, 0, L"bak", gui_button_cb_zoomBack, me, 0), TRUE, TRUE, 0);
+		
+		GuiObject_show(leftbtn_box);
 	#elif motif
-	form = XmCreateForm (my dialog, "buttons", NULL, 0);
-	XtVaSetValues (form,
-		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-		XmNbottomAttachment, XmATTACH_FORM,
-		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
-		NULL);
+		form = XmCreateForm (my dialog, "buttons", NULL, 0);
+		XtVaSetValues (form,
+			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
+			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
+			XmNbottomAttachment, XmATTACH_FORM,
+			XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
+			NULL);
+
+		/***** Create zoom buttons. *****/
+
+		GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+			L"all", gui_button_cb_showAll, me, 0);
+		x += BUTTON_WIDTH + BUTTON_SPACING;
+		GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+			L"in", gui_button_cb_zoomIn, me, 0);
+		x += BUTTON_WIDTH + BUTTON_SPACING;
+		GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+			L"out", gui_button_cb_zoomOut, me, 0);
+		x += BUTTON_WIDTH + BUTTON_SPACING;
+		GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+			L"sel", gui_button_cb_zoomToSelection, me, 0);
+		x += BUTTON_WIDTH + BUTTON_SPACING;
+		GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
+			L"bak", gui_button_cb_zoomBack, me, 0);
 	#endif
-
-	/***** Create zoom buttons. *****/
-
-	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
-		L"all", gui_button_cb_showAll, me, 0);
-	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
-		L"in", gui_button_cb_zoomIn, me, 0);
-	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
-		L"out", gui_button_cb_zoomOut, me, 0);
-	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
-		L"sel", gui_button_cb_zoomToSelection, me, 0);
-	x += BUTTON_WIDTH + BUTTON_SPACING;
-	GuiButton_createShown (form, x, x + BUTTON_WIDTH, -6 - Machine_getScrollBarWidth (), -4,
-		L"bak", gui_button_cb_zoomBack, me, 0);
 
 	/***** Create scroll bar. *****/
 
-	#if motif
-	my scrollBar = XtVaCreateManagedWidget ("scrollBar",
-		xmScrollBarWidgetClass, form,
-		XmNorientation, XmHORIZONTAL,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, x += BUTTON_WIDTH + BUTTON_SPACING,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 80 + BUTTON_SPACING,
-		XmNbottomAttachment, XmATTACH_FORM,
-		XmNheight, Machine_getScrollBarWidth (),
-		XmNminimum, 1,
-		XmNmaximum, maximumScrollBarValue,
-		XmNvalue, 1,
-		XmNsliderSize, maximumScrollBarValue - 1,
-		NULL);
+	#if gtk
+		GtkAdjustment *adj = gtk_adjustment_new(1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
+		my scrollBar = gtk_hscrollbar_new(adj);
+		GuiObject_show(my scrollBar);
+		gtk_box_pack_start(GTK_BOX(hctl_box), my scrollBar, TRUE, TRUE, 3);
+	#elif motif
+		my scrollBar = XtVaCreateManagedWidget ("scrollBar",
+			xmScrollBarWidgetClass, form,
+			XmNorientation, XmHORIZONTAL,
+			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, x += BUTTON_WIDTH + BUTTON_SPACING,
+			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 80 + BUTTON_SPACING,
+			XmNbottomAttachment, XmATTACH_FORM,
+			XmNheight, Machine_getScrollBarWidth (),
+			XmNminimum, 1,
+			XmNmaximum, maximumScrollBarValue,
+			XmNvalue, 1,
+			XmNsliderSize, maximumScrollBarValue - 1,
+			NULL);
 	#endif
 
 	/***** Create Group button. *****/
 
-	my groupButton = GuiCheckButton_createShown (form, -80, 0, - Machine_getScrollBarWidth () - 5, -4,
-		L"Group", gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
+	#if gtk
+		my groupButton = GuiCheckButton_create(NULL, 0, 0, 0, 0, L"Group",
+			gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
+		gtk_box_pack_start(GTK_BOX(hctl_box), my groupButton, FALSE, FALSE, 0);
+		gtk_widget_show_all(hctl_box);
+	#else
+		my groupButton = GuiCheckButton_createShown (form, -80, 0, - Machine_getScrollBarWidth () - 5, -4,
+			L"Group", gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
+	#endif
 
 	/***** Create drawing area. *****/
 
-	my drawingArea = GuiDrawingArea_createShown (form, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+	#if gtk
+		my drawingArea = GuiDrawingArea_create (NULL, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+		
+		// turn off double-buffering, otherwise the reaction to the expose-events gets
+		// delayed by one event (TODO: figure out, why)
+		gtk_widget_set_double_buffered(my drawingArea, FALSE);
+		
+		// turn off clearing window to background colour before an expose event
+		// gtk_widget_set_app_paintable(my drawingArea, FALSE);
+		
+		gtk_box_pack_start(GTK_BOX(form), my drawingArea, TRUE, TRUE, 0);
+		GuiObject_show(my drawingArea);
+	#else
+		my drawingArea = GuiDrawingArea_createShown (form, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+	#endif
 
 	/***** Create optional text field. *****/
 
 	if (our hasText) {
-		my text = GuiText_createShown (form, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
+		#if gtk
+			my text = GuiText_create(NULL, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
+			gtk_box_pack_start(form, my text, FALSE, FALSE, 3);
+			GuiObject_show(my text);
+		#else
+			my text = GuiText_createShown (form, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
+		#endif
 		/*
 		 * X Toolkit 4:184,461 says: "you should never call XtSetKeyboardFocus",
 		 * "since it interferes with the keyboard traversal code".
@@ -1207,7 +1280,9 @@ static void createChildren (FunctionEditor me) {
 		 * Our simple and natural desire is that all keyboard input shall go to the only text widget
 		 * in the window (in our Motif emulator, this is the automatic behaviour).
 		 */
-		#ifdef UNIX
+		#if gtk
+			gtk_widget_grab_focus(my text);
+		#elif defined(UNIX)
 			#if motif
 			XtSetKeyboardFocus (form, my text);
 			#endif
@@ -1624,14 +1699,17 @@ int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title,
 		Melder_assert (XtWindow (my drawingArea));
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-Graphics_setFontSize (my graphics, 10);
+	Graphics_setFontSize (my graphics, 10);
 
+// This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-	#if motif
+	#if gtk
+		g_signal_connect(G_OBJECT(my scrollBar), "value-changed", G_CALLBACK(gui_cb_scroll), me);
+	#elif motif
 		XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 		XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	#endif

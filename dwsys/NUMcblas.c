@@ -1440,7 +1440,7 @@ static double dlamc3_ (double *a, double *b)
 
    ===================================================================== */
 {
-	double ret_val;
+	volatile double ret_val;
 
 	ret_val = *a + *b;
 	return ret_val;

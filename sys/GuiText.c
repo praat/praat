@@ -1,6 +1,6 @@
 /* GuiText.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2007/12/25 Gui
  * sdk 2007/12/27 first GTK version
  * pb 2008/10/05 better implicit selection (namely, none)
+ * fb 2010/02/23 GTK
  */
 
 #include "GuiP.h"
@@ -589,7 +590,8 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_container_add (GTK_CONTAINER (parent), my widget);
+		if (parent)
+			gtk_container_add (GTK_CONTAINER (parent), my widget);
 //		g_signal_connect (G_OBJECT (my widget), "destroy",
 //			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
 //		g_signal_connect (GTK_EDITABLE (my widget), "changed",
@@ -1066,7 +1068,7 @@ void GuiText_setString (Widget widget, const wchar_t *text) {
 		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			gchar *new = Melder_peekWcsToUtf8 (text);
-			gtk_text_buffer_set_text (textBuffer, new, g_utf8_strlen (new, -1));   // TODO: lengte in bytes?
+			gtk_text_buffer_set_text (textBuffer, new, strlen (new));   // length in bytes!
 		}
 	#elif win
 		const wchar_t *from;

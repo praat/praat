@@ -282,6 +282,7 @@ int Data_readText (I, MelderReadText text) {
 Any Data_readFromTextFile (MelderFile file) {
 	Data me = NULL;
 	wchar_t *klas = NULL;
+Melder_casual ("Data_readFromTextFile 1");
 	MelderReadText text = MelderReadText_createFromFile (file); cherror
 	wchar_t *line = MelderReadText_readLine (text);
 	if (line == NULL) error1 (L"No lines.")
@@ -302,6 +303,7 @@ end:
 	Melder_free (klas);
 	MelderReadText_delete (text);
 	iferror forget (me);
+Melder_casual ("Data_readFromTextFile 2");
 	return me;
 }
 

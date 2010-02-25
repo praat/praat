@@ -1,6 +1,6 @@
 /* GuiButton.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb & sdk 2007/12/25 gtk
+ * fb 2010/02/23 GTK
  */
 
 #include "GuiP.h"
@@ -142,11 +143,11 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		_GuiObject_setUserData (my widget, me);
 //		_GuiObject_position (my widget, left, right, top, bottom);
 
-
 		/* TODO: dit moet eigenlijk netter, problemen zijn er al met focus van
 		 * dialogbox */
-		gtk_container_add (GTK_CONTAINER (parent), my widget);
-		
+		// TODO: use gtk_box_pack_start(GTK_BOX(parent), my widget, FALSE, FALSE, ?)
+		if (parent)
+			gtk_container_add (GTK_CONTAINER (parent), my widget);
 		
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkButton_destroyCallback), me);

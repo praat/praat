@@ -1,6 +1,6 @@
 /* GuiCheckButton.c
  *
- * Copyright (C) 1993-2008 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2007/12/26 extracted from Motif
  * sdk 2007/12/27 gtk
  * sdk 2008/03/24 gtk
+ * fb 2010/02/23 gtk
  */
 
 #include "GuiP.h"
@@ -110,7 +111,8 @@ Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int b
 		my widget = gtk_check_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_container_add (GTK_CONTAINER (parent), my widget);
+		if (parent)
+			gtk_container_add (GTK_CONTAINER (parent), my widget);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 			G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my widget), "toggled",   // gtk_check_button inherits from gtk_toggle_button

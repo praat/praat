@@ -30,6 +30,7 @@
  * pb 2009/07/10 fillArea Quartz
  * pb 2009/07/27 quartz
  * pb 2009/09/04 FUNCTIONS_ARE_CLIPPED (compiler flag)
+ * fb 2010/02/24 cairo
  */
 
 #include "GraphicsP.h"
@@ -63,6 +64,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		if (my cr == NULL) return;
 		double dotted_line[] = { 0, 6 };
 		double rounded_line[] = { 2, 6 };
+		cairo_save(my cr);
 		switch (my lineType) {
 			case Graphics_DOTTED:
 				cairo_set_dash (my cr, dotted_line, 2, 0.0);
@@ -81,7 +83,8 @@ static void psRevertLine (GraphicsPostscript me) {
 	}
 	static void cairoRevertLine (GraphicsScreen me) {
 		if (my cr == NULL) return;
-		cairo_set_line_cap (my cr, CAIRO_LINE_CAP_BUTT);
+		// cairo_set_line_cap (my cr, CAIRO_LINE_CAP_BUTT);
+		cairo_restore(my cr);
 	}
 #elif xwin
 	static void xwinPrepareLine (GraphicsScreen me) {
@@ -189,11 +192,11 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 			if (my cr == NULL) return;	
 			int i;
 			cairoPrepareLine (me);
-			cairo_new_path (my cr);
+			// cairo_new_path (my cr); // move_to() automatically creates a new path
 			cairo_move_to (my cr, (double) xyDC [0], (double) xyDC [1]);
 			for (i = 1; i < numberOfPoints; i ++)
 				cairo_line_to (my cr, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
-			cairo_close_path (my cr);
+			// cairo_close_path (my cr);
 			cairo_stroke (my cr);
 			cairoRevertLine (me);
 		#elif xwin
@@ -302,7 +305,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 		iam (GraphicsScreen);
 		#if cairo
 			if (my cr == NULL) return;
-			cairo_new_path (my cr);
+			// cairo_new_path (my cr); // move_to() automatically creates a new path
 			cairo_move_to (my cr, xyDC [0], xyDC [1]);
 			for (long i = 1; i < numberOfPoints; i ++)
 				cairo_line_to (my cr, xyDC [i + i], xyDC [i + i + 1]);
@@ -383,6 +386,7 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			if (width <= 0 || height <= 0) return;
 			cairoPrepareLine (me);
 			cairo_rectangle (my cr, x1DC, y2DC, width, height);
+			cairo_stroke(my cr);
 			cairoRevertLine (me);
 		#elif xwin
 			int width = x2DC - x1DC, height = y1DC - y2DC;
@@ -493,7 +497,9 @@ static void circle (I, double xDC, double yDC, double rDC) {
 		#if cairo
 			if (my cr == NULL) return;
 			cairoPrepareLine (me);
-			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI); // TODO: This is my lucky guess.
+			cairo_new_path(my cr);
+			cairo_arc (my cr, xDC, yDC, rDC, 0.0, 2 * M_PI);
+			cairo_stroke(my cr);
 			cairoRevertLine (me);
 		#elif xwin
 			xwinPrepareLine (me);
@@ -540,7 +546,14 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		#if cairo
 			if (my cr == NULL) return;
 			cairoPrepareLine (me);
-			cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
+			cairo_new_path(my cr);
+			cairo_save(my cr);
+			cairo_translate(my cr, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+			cairo_scale(my cr, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+			cairo_arc(my cr, 0.0, 0.0, 1.0, 0.0, 2 * M_PI);
+			cairo_restore(my cr);
+			cairo_stroke(my cr);
+			// cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
 			// xc, yc, radius(!), angle1, angle2
 			cairoRevertLine (me);
 		#elif xwin
@@ -603,7 +616,9 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 			double arcAngle = toAngle - fromAngle;
 			if (arcAngle < 0.0) arcAngle += 360.0;
 			cairoPrepareLine (me);
+			cairo_new_path(my cr);
 			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, fromAngle * (M_PI / 180.0), toAngle * (M_PI / 180.0));
+			cairo_stroke(my cr);
 			cairoRevertLine (me);
 		#elif xwin
 			double arcAngle = toAngle - fromAngle;
@@ -659,8 +674,9 @@ static void fillCircle (I, short xDC, short yDC, short rDC) {
 		iam (GraphicsScreen);
 		#if cairo
 			if (my cr == NULL) return;
-			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, 0.0, 2 * M_PI);
-			cairo_fill (my cr);		
+			cairo_new_path(my cr);
+			cairo_arc (my cr, xDC, yDC, rDC, 0, 2 * M_PI);
+			cairo_fill (my cr);
 		#elif xwin
 			XFillArc (my display, my window, my gc, xDC - rDC, yDC - rDC, 2 * rDC, 2 * rDC, 0 * 64, 360 * 64L);
 		#elif win
@@ -705,7 +721,12 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		{
 		#if cairo
 			if (my cr == NULL) return;	
-			cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
+			cairo_new_path(my cr);
+			cairo_save(my cr);
+			cairo_translate(my cr, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+			cairo_scale(my cr, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+			cairo_arc(my cr, 0.0, 0.0, 1.0, 0.0, 2 * M_PI);
+			cairo_restore(my cr);
 			cairo_fill (my cr);
 		#elif xwin
 			XFillArc (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y1DC - y2DC, 0 * 64, 360 * 64);
@@ -759,7 +780,55 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		iam (GraphicsScreen);
 		ORDER_DC
 		{
-		#if xwin
+		#if cairo
+			int width, height;
+			width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width <= 0 || height <= 0) return;
+			
+			cairo_save(my cr);
+			if (my drawingArea) {
+				// TODO: clip to drawing area?
+				#define min(a, b) (a < b) ? a : b
+				#define max(a, b) (a > b) ? a : b
+				int w, h;
+				gdk_drawable_get_size(GDK_DRAWABLE(my drawingArea->window), &w, &h);
+				cairo_rectangle(my cr, 0, 0, w, h);
+				cairo_clip(my cr);
+			}
+			// SetPort (my macPort);
+			
+			cairo_set_source_rgb(my cr, 0.1 * 255, 0.1 * 255, 0.1 * 255);
+			cairo_rectangle(my cr, x1DC - 1, y2DC - 1, x2DC, y1DC);
+			cairo_stroke(my cr);
+			
+			if (width > 2 && height > 2) {
+				// rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.3 * 65535.0); RGBForeColor (& rgb);
+				cairo_set_source_rgb(my cr, 0.3 * 255, 0.3 * 255, 0.3 * 255);
+				cairo_move_to(my cr, x1DC, y1DC - 2);
+				cairo_line_to(my cr, x2DC - 2, y1DC - 2);
+				cairo_stroke(my cr);
+				cairo_move_to(my cr, x2DC - 2, y1DC - 2);
+				cairo_line_to(my cr, x2DC - 2, y2DC);
+				cairo_stroke(my cr);
+				
+				cairo_set_source_rgb(my cr, 1.0, 1.0, 1.0);
+				cairo_move_to(my cr, x1DC, y1DC - 2);
+				cairo_line_to(my cr, x1DC, y2DC);
+				cairo_stroke(my cr);
+				cairo_move_to(my cr, x1DC, y2DC);
+				cairo_line_to(my cr, x2DC - 2, y2DC);
+				cairo_stroke(my cr);
+				if (width > 4 && height > 4) {
+					// rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.65 * 65535.0); RGBForeColor (& rgb);
+					cairo_set_source_rgb(my cr, 0.65 * 255, 0.65 * 255, 0.65 * 255);
+					cairo_rectangle(my cr, x1DC + 1, y2DC + 1, x2DC - 2, y1DC - 2);
+					cairo_fill(my cr);
+				}
+			}
+			
+			// RGBForeColor (& theBlackColour);
+			cairo_restore(my cr);
+		#elif xwin
 			int width, height;
 			width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
@@ -995,6 +1064,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 				cairo_move_to (my cr, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
 				cairo_line_to (my cr, xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
 			}
+			cairo_stroke(my cr);
 		#elif xwin
 			XSegment *s = (void *) xyDC;
 			int nleft = (int) numberOfPoints / 2;

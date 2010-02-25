@@ -1,6 +1,6 @@
 /* Graphics_image.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/08/03 Quartz
  * pb 2008/01/19 double
  * pb 2009/08/10 image from file
+ * fb 2010/02/24 GTK
  */
 
 #include "GraphicsP.h"
@@ -42,7 +43,7 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-#if cairo
+#if 0 && cairo
 static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC,
@@ -50,7 +51,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	short clipx1, short clipx2, short clipy1, short clipy2, int interpolate)
 {
 }
-#elif motif
+#elif 1 || motif
 static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC,
@@ -91,7 +92,14 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		unsigned int cellHeight = (unsigned int) (- (int) dy) + 1;
 		long ix, iy;
 		short *lefts = NUMsvector (ix1, ix2 + 1);
-		#if win
+		#if cairo
+		cairo_pattern_t *grey[100];
+		int igrey;
+		for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++) {
+			double v = igrey / ((double)(sizeof(grey)/sizeof(*grey)) - 1.0);
+			grey[igrey] = cairo_pattern_create_rgb(v, v, v);
+		}
+		#elif win
 			int igrey;
 			static HBRUSH greyBrush [256];
 			RECT rect;
@@ -126,7 +134,10 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				if (right < clipx1 || left > clipx2) continue;
 				if (left < clipx1) left = clipx1;
 				if (right > clipx2) right = clipx2;
-				#if xwin
+				#if cairo
+					cairo_set_source(my cr, grey[value <= 0 ? 0 : value >= sizeof(grey)/sizeof(*grey) ? sizeof(grey)/sizeof(*grey) : value]);
+					cairo_rectangle(my cr, left, top, right - left, bottom - top);
+				#elif xwin
 					XSetForeground (my display, my gc, xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : value]);
 					XFillRectangle (my display, my window, my gc, left, top,
 						right - left + 1, bottom - top + 1);
@@ -146,13 +157,31 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			}
 		}
 		NUMsvector_free (lefts, ix1);
+		
+		#if cairo
+			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++)
+				cairo_pattern_destroy(grey[igrey]);
+			cairo_paint(my cr);
+		#endif
 	} else {
 		short xDC, yDC;
 		long undersampling = 1;
 		/*
 		 * Prepare for off-screen bitmap drawing.
 		 */
-		#if xwin
+		#if cairo
+			short arrayWidth = clipx2 - clipx1;
+			short arrayHeight = clipy1 - clipy2;
+			// We're creating an alpha-only surface here
+			// The grey values are reversed as to 
+			cairo_surface_t *sfc = cairo_image_surface_create(CAIRO_FORMAT_A8, arrayWidth, arrayHeight);
+			unsigned char *bits = cairo_image_surface_get_data(sfc);
+			int scanLineLength = cairo_image_surface_get_stride(sfc);
+			unsigned char grey[100];
+			int igrey;
+			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++)
+				grey[igrey] = 255 - (unsigned char)(igrey * 255.0 / (sizeof(grey)/sizeof(*grey) - 1));
+		#elif xwin
 			int mayOptimize;
 			short arrayWidth = clipx2 - clipx1;
 			short arrayHeight = clipy1 - clipy2;
@@ -269,7 +298,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#if cairo
 			// Kan dit niet beter met een cairo_image_surface_create ()
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
-			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (int) value];
+			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (unsigned char)value];
 		#elif xwin
 			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \
@@ -374,7 +403,19 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		/*
 		 * Copy the bitmap to the screen.
 		 */
-		#if xwin
+		#if cairo
+			cairo_matrix_t clip_trans;
+			cairo_matrix_init_identity(&clip_trans);
+			cairo_matrix_scale(&clip_trans, 1, -1);		// we painted in the reverse y-direction
+			cairo_matrix_translate(&clip_trans, -clipx1, -clipy1);
+			cairo_pattern_t *bitmap_pattern = cairo_pattern_create_for_surface(sfc);
+			cairo_pattern_set_matrix(bitmap_pattern, &clip_trans);
+			cairo_save(my cr);
+			cairo_set_source(my cr, bitmap_pattern);
+			cairo_paint(my cr);
+			cairo_restore(my cr);
+			cairo_pattern_destroy(bitmap_pattern);
+		#elif xwin
 			XPutImage (my display, my window, my gc, image, 0, 0, clipx1, clipy2, arrayWidth, arrayHeight);
 		#elif win
 			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
@@ -432,7 +473,9 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		/*
 		 * Clean up.
 		 */
-		#if xwin
+		#if cairo
+			cairo_surface_destroy(sfc);
+		#elif xwin
 			end:
 			if (data) free (data);
 			if (image) { image -> data = NULL; XDestroyImage (image); }

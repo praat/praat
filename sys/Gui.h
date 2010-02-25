@@ -457,6 +457,10 @@ void GuiList_setDoubleClickCallback (Widget me, void (*callback) (void *boss, Gu
 
 Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags);
 Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle);
+#if gtk
+Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags, Widget *button);
+#endif
+
 /* Flags is a combination of the above defines. */
 
 Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,

@@ -1,14 +1,9 @@
-# Makefile for library glpk.
-# Paul Boersma, April 11, 2008
+# Makefile for library "num/glpk"
+# Paul Boersma, 22 February 2010
 
 include ../../makefile.defs
 
 CFLAGS = 
-
-all: libglpk.a
-
-clean:
-	rm *.o
 
 OBJECTS = glpapi01.o glpapi02.o glpapi03.o glpapi04.o glpapi05.o glpapi06.o \
    glpapi07.o glpapi08.o glpapi09.o glpapi10.o glpapi11.o glpapi12.o glpapi13.o \
@@ -27,7 +22,13 @@ OBJECTS = glpapi01.o glpapi02.o glpapi03.o glpapi04.o glpapi05.o glpapi06.o \
    glpscf.o glpscg.o glpspm.o glpspx01.o glpspx02.o \
    glpsql.o glpssx01.o glpssx02.o glptsp.o
 
-$(OBJECTS): *.h
+.PHONY: all clean
+
+all: libglpk.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libglpk.a
 
 libglpk.a: $(OBJECTS)
 	touch libglpk.a
@@ -35,4 +36,4 @@ libglpk.a: $(OBJECTS)
 	ar cq libglpk.a $(OBJECTS)
 	$(RANLIB) libglpk.a
 
-# end of Makefile
+$(OBJECTS): *.h

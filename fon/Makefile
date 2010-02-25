@@ -1,8 +1,9 @@
 # Makefile of the library "fon"
-# Paul Boersma, 27 February 2009
+# Paul Boersma, 22 February 2010
 
 include ../makefile.defs
-CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../FLAC -I ../mp3
+
+CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../audio/FLAC -I ../audio/mp3
 
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o Matrix.o Vector.o Polygon.o PointProcess.o \
@@ -36,11 +37,18 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    manual_sound.o manual_pitch.o manual_spectrum.o manual_formant.o manual_annotation.o \
    praat_Sound_init.o praat_TextGrid_init.o praat_Fon.o
 
+.PHONY: all clean
+
 all: libfon.a
+
+clean:
+	$(RM) $(OBJECTS)
+	$(RM) libfon.a
+
 libfon.a: $(OBJECTS)
 	touch libfon.a
 	rm libfon.a
 	ar cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
-$(OBJECTS): *.h ../num/NUM.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../FLAC/*.h ../mp3/mp3.h
+$(OBJECTS): *.h ../num/NUM.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../audio/FLAC/*.h ../audio/mp3/mp3.h
