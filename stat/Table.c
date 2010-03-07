@@ -1,6 +1,6 @@
 /* Table.c
  *
- * Copyright (C) 2002-2009 Paul Boersma
+ * Copyright (C) 2002-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
  * pb 2008/04/30 new Formula API
  * pb 2009/01/18 Interpreter argument in formula
  * pb 2009/10/21 Table_randomizeRows
+ * pb 2010/03/04 Wilcoxon rank sum
  */
 
 #include <ctype.h>
@@ -1498,6 +1499,78 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 			difference + standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
 	}
 	return difference;
+}
+
+double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2,
+	double *out_rankSum, double *out_significanceFromZero)
+{
+	if (out_rankSum) *out_rankSum = NUMundefined;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
+	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	if (groupColumn < 1 || groupColumn > my numberOfColumns) return NUMundefined;
+	Table_numericize (me, column);
+	long n1 = 0, n2 = 0;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [groupColumn]. string != NULL) {
+			if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+				n1 ++;
+			} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+				n2 ++;
+			}
+		}
+	}
+	long n = n1 + n2;
+	if (n1 < 1 || n2 < 1 || n < 3) return NUMundefined;
+	Table ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
+	long jrow = 0;
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = my rows -> item [irow];
+		if (row -> cells [groupColumn]. string != NULL) {
+			if (wcsequ (row -> cells [groupColumn]. string, group1)) {
+				Table_setNumericValue (ranks, ++ jrow, 1, 1.0);
+				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
+			} else if (wcsequ (row -> cells [groupColumn]. string, group2)) {
+				Table_setNumericValue (ranks, ++ jrow, 1, 2.0);
+				Table_setNumericValue (ranks, jrow, 2, row -> cells [column]. number);
+			}
+		}
+	}
+	Table_numericize (ranks, 1);
+	Table_numericize (ranks, 2);
+	Table_numericize (ranks, 3);
+	long columns [1+1] = { 0, 2 };   // we're gonna sort by column 2
+	Table_sortRows (ranks, columns, 1);   // we sort by one column only
+	double totalNumberOfTies3 = 0.0;
+	for (long irow = 1; irow <= ranks -> rows -> size; irow ++) {
+		TableRow row = ranks -> rows -> item [irow];
+		double value = row -> cells [2]. number;
+		long rowOfLastTie = irow + 1;
+		for (; rowOfLastTie <= ranks -> rows -> size; rowOfLastTie ++) {
+			TableRow row2 = ranks -> rows -> item [rowOfLastTie];
+			double value2 = row2 -> cells [2]. number;
+			if (value2 != value) break;
+		}
+		rowOfLastTie --;
+		double averageRank = 0.5 * ((double) irow + (double) rowOfLastTie);
+		for (long jrow = irow; jrow <= rowOfLastTie; jrow ++) {
+			Table_setNumericValue (ranks, jrow, 3, averageRank);
+		}
+		long numberOfTies = rowOfLastTie - irow + 1;
+		totalNumberOfTies3 += (double) (numberOfTies - 1) * (double) numberOfTies * (double) (numberOfTies + 1);
+	}
+	Table_numericize (ranks, 3);
+	double maximumRankSum = (double) n1 * (double) n2, rankSum = 0.0;
+	for (long irow = 1; irow <= ranks -> rows -> size; irow ++) {
+		TableRow row = ranks -> rows -> item [irow];
+		if (row -> cells [1]. number == 1.0) rankSum += row -> cells [3]. number;
+	}
+	rankSum -= 0.5 * (double) n1 * ((double) n1 + 1.0);
+	double stdev = sqrt (maximumRankSum * ((double) n + 1.0 - totalNumberOfTies3 / n / (n - 1)) / 12.0);
+	if (out_rankSum) *out_rankSum = rankSum;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMgaussQ (fabs (rankSum - 0.5 * maximumRankSum) / stdev);
+	forget (ranks);
+	return rankSum / maximumRankSum;
 }
 
 double Table_getFisherF (Table me, long col1, long col2);

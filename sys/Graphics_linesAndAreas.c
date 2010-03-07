@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2009/07/27 quartz
  * pb 2009/09/04 FUNCTIONS_ARE_CLIPPED (compiler flag)
  * fb 2010/02/24 cairo
+ * fb 2010/03/01 cairo
  */
 
 #include "GraphicsP.h"
@@ -553,8 +554,6 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			cairo_arc(my cr, 0.0, 0.0, 1.0, 0.0, 2 * M_PI);
 			cairo_restore(my cr);
 			cairo_stroke(my cr);
-			// cairo_arc (my cr, x1DC, y2DC, x2DC - x1DC, 0.0, 2 * M_PI); // TODO: This is my lucky guess. BUG
-			// xc, yc, radius(!), angle1, angle2
 			cairoRevertLine (me);
 		#elif xwin
 			xwinPrepareLine (me);
@@ -612,12 +611,10 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my cr == NULL) return;	
-			double arcAngle = toAngle - fromAngle;
-			if (arcAngle < 0.0) arcAngle += 360.0;
+			if (my cr == NULL) return;
 			cairoPrepareLine (me);
 			cairo_new_path(my cr);
-			cairo_arc (my cr, xDC - rDC, yDC - rDC, rDC, fromAngle * (M_PI / 180.0), toAngle * (M_PI / 180.0));
+			cairo_arc (my cr, xDC, yDC, rDC, -toAngle * (M_PI / 180.0), -fromAngle * (M_PI / 180.0));
 			cairo_stroke(my cr);
 			cairoRevertLine (me);
 		#elif xwin
@@ -787,9 +784,7 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			
 			cairo_save(my cr);
 			if (my drawingArea) {
-				// TODO: clip to drawing area?
-				#define min(a, b) (a < b) ? a : b
-				#define max(a, b) (a > b) ? a : b
+				// clip to drawing area
 				int w, h;
 				gdk_drawable_get_size(GDK_DRAWABLE(my drawingArea->window), &w, &h);
 				cairo_rectangle(my cr, 0, 0, w, h);
@@ -802,7 +797,6 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 			cairo_stroke(my cr);
 			
 			if (width > 2 && height > 2) {
-				// rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.3 * 65535.0); RGBForeColor (& rgb);
 				cairo_set_source_rgb(my cr, 0.3 * 255, 0.3 * 255, 0.3 * 255);
 				cairo_move_to(my cr, x1DC, y1DC - 2);
 				cairo_line_to(my cr, x2DC - 2, y1DC - 2);
@@ -819,7 +813,6 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 				cairo_line_to(my cr, x2DC - 2, y2DC);
 				cairo_stroke(my cr);
 				if (width > 4 && height > 4) {
-					// rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.65 * 65535.0); RGBForeColor (& rgb);
 					cairo_set_source_rgb(my cr, 0.65 * 255, 0.65 * 255, 0.65 * 255);
 					cairo_rectangle(my cr, x1DC + 1, y2DC + 1, x2DC - 2, y1DC - 2);
 					cairo_fill(my cr);

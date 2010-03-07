@@ -38,7 +38,8 @@
  * pb 2007/12/18 Gui
  * sdk 2008/01/22 GTK
  * pb 2009/01/20 removed pause
- * pb 2009/07/31 
+ * pb 2009/07/31
+ * fb 2010/02/26 GTK
  */
 
 #include <math.h>
@@ -169,9 +170,13 @@ void Melder_progressOn (void) { theProgressDepth ++; }
 #ifndef CONSOLE_APPLICATION
 static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label1, Widget label2, Widget cancelButton) {
 	#if gtk
-		// TODO: Something, what?
-	#else
-	#if defined (macintosh)
+		// Wait for all pending events to be processed. If someone knows how to inspect GTK's
+		// event queue for specific events, dump the code here, please.
+		// Until then, the button click attaches a g_object data key named "pressed" to the cancelButton
+		// which is this function reads out in order to tell whether interruption has occured
+		while (gtk_events_pending())
+			gtk_main_iteration();
+	#elif defined (macintosh)
 	{
 		EventRecord event;
 		(void) cancelButton;
@@ -241,11 +246,77 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 			GuiLabel_setString (label1, message);
 			GuiLabel_setString (label2, L"");
 		}
-		XmScaleSetValue (scale, floor (progress * 1000.0));
-		XmUpdateDisplay (dia);
+		#if gtk
+			// update progress bar
+			gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(scale), progress);
+			while (gtk_events_pending())
+				gtk_main_iteration();
+			// check whether cancelButton has the "pressed" key set
+			if (g_object_steal_data(G_OBJECT(cancelButton), "pressed"))
+				return 0;
+		#else
+			XmScaleSetValue (scale, floor (progress * 1000.0));
+			XmUpdateDisplay (dia);
+		#endif
 	}
-	#endif
 	return 1;
+}
+
+#if gtk
+static void progress_dia_close(void *wid) {
+	g_object_set_data(G_OBJECT(*(Widget *)wid), "pressed", (gpointer)1);
+}
+static void progress_cancel_btn_press(void *wid, GuiButtonEvent event) {
+	(void)event;
+	g_object_set_data(G_OBJECT(*(Widget *)wid), "pressed", (gpointer)1);
+}
+#endif
+
+static void _Melder_dia_init (Widget *dia, Widget *scale, Widget *label1, Widget *label2, Widget *cancelButton) {
+	*dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Work in progress",
+		#if gtk
+			progress_dia_close, cancelButton,
+		#else
+			NULL, NULL,
+		#endif
+		0);
+	
+	#if gtk
+		Widget form = GTK_DIALOG (*dia) -> vbox;
+		Widget buttons = GTK_DIALOG (*dia) -> action_area;
+	#elif motif
+		Widget form = *dia;    /* TODO: Kan dit ook met een define? */
+		Widget buttons = *dia;
+	#endif
+	
+	*label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
+	*label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
+	
+	#if gtk
+		*scale = gtk_progress_bar_new();
+		gtk_container_add(GTK_CONTAINER(form), *scale);
+		GuiObject_show(*scale);
+	#elif motif
+		*scale = XmCreateScale (*dia, "scale", NULL, 0);
+		XtVaSetValues (*scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
+			XmNorientation, XmHORIZONTAL,
+			#if ! defined (macintosh)
+				XmNscaleHeight, 20,
+			#endif
+			NULL);
+		GuiObject_show (*scale);
+	#endif
+	
+	#if ! defined (macintosh)
+		*cancelButton = GuiButton_createShown (buttons, 0, 400, 170, Gui_AUTOMATIC,
+			L"Interrupt",
+			#if gtk
+				progress_cancel_btn_press, cancelButton,
+			#else
+				NULL, NULL,
+			#endif
+			0);
+	#endif
 }
 #endif
 
@@ -259,37 +330,8 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
-			if (dia == NULL) {
-				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
-					L"Work in progress", NULL, NULL, 0);
-
-				#if gtk
-					Widget form = GTK_DIALOG (dia) -> vbox;
-					Widget buttons = GTK_DIALOG (dia) -> action_area;
-				#elif motif
-					Widget form = dia;    /* TODO: Kan dit ook met een define? */
-					Widget buttons = dia;
-				#endif
-
-				label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
-				label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
-				#if gtk
-					// TODO: Progressbar ofzo?
-				#elif motif
-					scale = XmCreateScale (dia, "scale", NULL, 0);
-					XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
-						XmNorientation, XmHORIZONTAL,
-						#if ! defined (macintosh)
-							XmNscaleHeight, 20,
-						#endif
-						NULL);
-					GuiObject_show (scale);
-					#if ! defined (macintosh)
-						cancelButton = GuiButton_createShown (buttons, 0, 400, 170, Gui_AUTOMATIC,
-							L"Interrupt", NULL, NULL, 0);
-					#endif
-				#endif
-			}
+			if (dia == NULL)
+				_Melder_dia_init(&dia, &scale, &label1, &label2, &cancelButton);
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
 			if (! interruption) Melder_error1 (L"Interrupted!");
 			lastTime = now;
@@ -360,37 +402,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
 			if (dia == NULL) {
-				dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC,
-					L"Work in progress", NULL, NULL, 0);
-
-                #if gtk
-                        Widget form = GTK_DIALOG (dia) -> vbox;
-                        Widget buttons = GTK_DIALOG (dia) -> action_area;
-                #elif motif
-                        Widget form = dia;    /* TODO: Kan dit ook met een define? */
-                        Widget buttons = dia;
-                #endif
-
-
-				label1 = GuiLabel_createShown (dia, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
-				label2 = GuiLabel_createShown (dia, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
-
-				#if gtk
-					// TODO: Wat hier?
-				#elif motif
-					scale = XmCreateScale (dia, "scale", NULL, 0);
-					XtVaSetValues (scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
-						XmNorientation, XmHORIZONTAL,
-						#if ! defined (macintosh) && ! defined (_WIN32)
-							XmNscaleHeight, 20,
-						#endif
-						NULL);
-					GuiObject_show (scale);
-					#if ! defined (macintosh)
-						cancelButton = GuiButton_createShown (dia, 0, 400, 170, Gui_AUTOMATIC,
-							L"Interrupt", NULL, NULL, 0);
-					#endif
-				#endif
+				_Melder_dia_init(&dia, &scale, &label1, &label2, &cancelButton);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
 				GuiObject_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);

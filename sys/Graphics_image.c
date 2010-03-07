@@ -65,7 +65,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	double dx = (double) (x2DC - x1DC) / (double) nx;   /* Horizontal pixels per cell. Positive. */
 	double dy = (double) (y2DC - y1DC) / (double) ny;   /* Vertical pixels per cell. Negative. */
 	#if gtk
-		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
+		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
 	#elif xwin
 		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
 	#elif win || mac
@@ -93,12 +93,12 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		long ix, iy;
 		short *lefts = NUMsvector (ix1, ix2 + 1);
 		#if cairo
-		cairo_pattern_t *grey[100];
-		int igrey;
-		for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++) {
-			double v = igrey / ((double)(sizeof(grey)/sizeof(*grey)) - 1.0);
-			grey[igrey] = cairo_pattern_create_rgb(v, v, v);
-		}
+			cairo_pattern_t *grey[256];
+			int igrey;
+			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++) {
+				double v = igrey / ((double)(sizeof(grey)/sizeof(*grey)) - 1.0);
+				grey[igrey] = cairo_pattern_create_rgb(v, v, v);
+			}
 		#elif win
 			int igrey;
 			static HBRUSH greyBrush [256];
@@ -137,6 +137,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				#if cairo
 					cairo_set_source(my cr, grey[value <= 0 ? 0 : value >= sizeof(grey)/sizeof(*grey) ? sizeof(grey)/sizeof(*grey) : value]);
 					cairo_rectangle(my cr, left, top, right - left, bottom - top);
+					cairo_fill(my cr);
 				#elif xwin
 					XSetForeground (my display, my gc, xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : value]);
 					XFillRectangle (my display, my window, my gc, left, top,
@@ -172,12 +173,12 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#if cairo
 			short arrayWidth = clipx2 - clipx1;
 			short arrayHeight = clipy1 - clipy2;
-			// We're creating an alpha-only surface here
-			// The grey values are reversed as to 
+			// We're creating an alpha-only surface here (size is 1/4 compared to RGB24 and ARGB)
+			// The grey values are reversed as we let the foreground colour shine though instead of blackening
 			cairo_surface_t *sfc = cairo_image_surface_create(CAIRO_FORMAT_A8, arrayWidth, arrayHeight);
 			unsigned char *bits = cairo_image_surface_get_data(sfc);
 			int scanLineLength = cairo_image_surface_get_stride(sfc);
-			unsigned char grey[100];
+			unsigned char grey[256];
 			int igrey;
 			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++)
 				grey[igrey] = 255 - (unsigned char)(igrey * 255.0 / (sizeof(grey)/sizeof(*grey) - 1));
@@ -298,7 +299,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#if cairo
 			// Kan dit niet beter met een cairo_image_surface_create ()
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
-			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 100 ? 100 : (unsigned char)value];
+			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 255 ? 255 : (int)value];
 		#elif xwin
 			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \

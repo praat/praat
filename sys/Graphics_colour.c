@@ -1,6 +1,6 @@
 /* Graphics_colour.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2009/12/10 colours identical on all platforms
  * pb 2009/12/14 Graphics_standardColourToRGBColour
  * pb 2009/12/20 gotten rid of numbered standard colours
+ * fb 2010/03/01 fix cairo in highlight2()
  */
 
 #include "GraphicsP.h"
@@ -238,21 +239,21 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 		iam (GraphicsScreen);
 		#if gtk
 			if (my cr == NULL) return;
-			int line = x1DC_inner - x1DC, width = (x2DC - x1DC) - line, height = (y1DC - y2DC) - line;
-			double half = line / 2;
-			if (width <= 0 || height <= 0) return;
+			cairo_save(my cr);
 			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
-			//g_debug("RECT %d %d %d %d", x1DC, x2DC, y1DC, y2DC);
-			cairo_rectangle (my cr,  (double) (x1DC + half), (double) (y2DC + half), width, height);
-			cairo_set_line_width (my cr, (double) line);
-			cairo_stroke (my cr);
+			cairo_rectangle(my cr, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			cairo_rectangle(my cr, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			cairo_rectangle(my cr, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			cairo_rectangle(my cr, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+			cairo_fill(my cr);
+			cairo_restore(my cr);
 		#elif xwin
 			XSetForeground (my display, my gc, xwinColour_PINK ^ xwinColour_WHITE);
 			XSetFunction (my display, my gc, GXxor);
-			XFillRectangle (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
-			XFillRectangle (my display, my window, my gc, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
-			XFillRectangle (my display, my window, my gc, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
-			XFillRectangle (my display, my window, my gc, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
+			XFillRectangle (my display, my window, my gc, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			XFillRectangle (my display, my window, my gc, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			XFillRectangle (my display, my window, my gc, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			XFillRectangle (my display, my window, my gc, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
 			XSetForeground (my display, my gc, xwinColour_BLACK);
 			XSetFunction (my display, my gc, GXcopy);
 		#elif win

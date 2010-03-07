@@ -31,6 +31,7 @@
  * Stefan de Konink 2007/12/02 big-endian Linux
  * pb 2008/01/19 double
  * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
+ * fb 2010/02/26 fix resource leak fd_mixer in case of error during init
  */
 
 #include <errno.h>
@@ -199,7 +200,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		#elif defined (linux)
 			#define min(a,b) a > b ? b : a
 			int dev_mask;
-			int fd_mixer;
+			int fd_mixer = -1;
 			int val;
 		#endif
 	#endif
@@ -429,6 +430,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				}
 			}
 			close(fd_mixer);
+			fd_mixer = -1;
 		#endif
 	}
 
@@ -752,6 +754,7 @@ error:
 		#elif defined (_WIN32)
 			if (hWaveIn != 0) waveInClose (hWaveIn);
 		#else
+			if (fd_mixer != -1) close(fd_mixer);
 			if (fd != -1) close (fd);
 		#endif
 	}

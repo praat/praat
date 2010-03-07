@@ -423,7 +423,7 @@ bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
 			kar -= 0x10000;
 			my string [my length] = 0xD800 | (kar >> 10);
 			my length ++;
-			my string [my length] = 0xDC00 | (kar & 0x3ff);
+			my string [my length] = 0xDC00 | (kar & 0x3FF);
 			my length ++;
 		} else {
 			my string [my length] = '?';

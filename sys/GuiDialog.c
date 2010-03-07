@@ -40,6 +40,15 @@ typedef struct structGuiDialog {
 } *GuiDialog;
 
 #if gtk
+	static gboolean _GuiGtkDialog_deleteCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+		(void) event;
+		iam (GuiDialog);
+		if (my goAwayCallback == NULL)
+			return FALSE;
+		my goAwayCallback (my goAwayBoss);
+		gtk_widget_hide (widget);
+		return TRUE;
+	}
 #elif motif
 	static void _GuiMotifDialog_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -72,7 +81,7 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 				gtk_window_set_destroy_with_parent (GTK_WINDOW (shell), TRUE);
 			}
 		}
-		g_signal_connect(G_OBJECT(shell), "delete-event", goAwayCallback ? gtk_widget_hide_on_delete : gtk_widget_destroy, NULL);
+		g_signal_connect(G_OBJECT(shell), "delete-event", G_CALLBACK(_GuiGtkDialog_deleteCallback), me);
 		if (width == Gui_AUTOMATIC) width = -1;
 		if (height == Gui_AUTOMATIC) height = -1;
 		gtk_window_set_default_size (GTK_WINDOW (shell), width, height);

@@ -1,6 +1,6 @@
 /* melder_textencoding.c
  *
- * Copyright (C) 2007-2008 Paul Boersma
+ * Copyright (C) 2007-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/12/09 made MelderFile_writeCharacter compatible with the ISO Latin-1 preference
  * pb 2007/12/09 made MelderFile_readText ignore null bytes
  * pb 2008/11/05 split off from melder_encodings.c
+ * pb 2010/03/07 support for Unicode values above 0xFFFF
  */
 
 #include "melder.h"
@@ -294,9 +295,19 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 			} else if (kar <= 0xEF) {
 				unsigned long kar2 = * p ++, kar3 = * p ++;
 				* q ++ = ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F);
-			} else if (kar <= 0xF4) {   // BUG on Windows
+			} else if (kar <= 0xF4) {
 				unsigned long kar2 = * p ++, kar3 = * p ++, kar4 = * p ++;
-				* q ++ = ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
+				kar = ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
+				if (sizeof (wchar_t) == 2) {
+					/*
+					 * Convert to UTF-16 surrogate pair.
+					 */
+					kar -= 0x10000;
+					* q ++ = 0xD800 | (kar >> 10);
+					* q ++ = 0xDC00 | (kar & 0x3FF);
+				} else {
+					* q ++ = kar;
+				}
 			}
 		}
 	} else if (inputEncoding == kMelder_textInputEncoding_ISO_LATIN1) {
@@ -366,7 +377,17 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
 			unsigned char kar4 = textA [++ i];
 			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
-			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F));
+			unsigned long character = ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
+			if (sizeof (wchar_t) == 2) {
+				/*
+				 * Convert to UTF-16 surrogate pair.
+				 */
+				character -= 0x10000;
+				MelderString_appendCharacter (& buffers [ibuffer], 0xD800 | (character >> 10));
+				MelderString_appendCharacter (& buffers [ibuffer], 0xDC00 | (character & 0x3FF));
+			} else {
+				MelderString_appendCharacter (& buffers [ibuffer], character);
+			}
 		} else {
 			MelderString_appendCharacter (& buffers [ibuffer], '?');
 		}
@@ -421,7 +442,7 @@ static unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
 void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 	long n = wcslen (wcs), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
-		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) wcs [i] : wcs [i];
+		unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) wcs [i] : wcs [i];   // crucial cast: prevents sign extension
 		if (kar <= 0x00007F) {
 			#ifdef _WIN32
 				if (kar == '\n') utf8 [j ++] = 13;
@@ -431,10 +452,29 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 			utf8 [j ++] = 0xC0 | (kar >> 6);
 			utf8 [j ++] = 0x80 | (kar & 0x00003F);
 		} else if (kar <= 0x00FFFF) {
-			utf8 [j ++] = 0xE0 | (kar >> 12);
-			utf8 [j ++] = 0x80 | ((kar >> 6) & 0x00003F);
-			utf8 [j ++] = 0x80 | (kar & 0x00003F);
-		} else {   // BUG: should interpret UTF-16 on Windows
+			if (sizeof (wchar_t) == 2) {
+				if ((kar & 0xF800) == 0xD800) {
+					if (kar > 0xDBFF)
+						Melder_fatal ("Incorrect Unicode value (first surrogate member %lX).", kar);
+					unsigned long kar2 = (unsigned short) wcs [++ i];   // crucial cast: prevents sign extension
+					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+						Melder_fatal ("Incorrect Unicode value (second surrogate member %lX).", kar2);
+					kar = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;   // decode UTF-16
+					utf8 [j ++] = 0xF0 | (kar >> 18);
+					utf8 [j ++] = 0x80 | ((kar >> 12) & 0x00003F);
+					utf8 [j ++] = 0x80 | ((kar >> 6) & 0x00003F);
+					utf8 [j ++] = 0x80 | (kar & 0x00003F);
+				} else {
+					utf8 [j ++] = 0xE0 | (kar >> 12);
+					utf8 [j ++] = 0x80 | ((kar >> 6) & 0x00003F);
+					utf8 [j ++] = 0x80 | (kar & 0x00003F);
+				}
+			} else {
+				utf8 [j ++] = 0xE0 | (kar >> 12);
+				utf8 [j ++] = 0x80 | ((kar >> 6) & 0x00003F);
+				utf8 [j ++] = 0x80 | (kar & 0x00003F);
+			}
+		} else {
 			utf8 [j ++] = 0xF0 | (kar >> 18);
 			utf8 [j ++] = 0x80 | ((kar >> 12) & 0x00003F);
 			utf8 [j ++] = 0x80 | ((kar >> 6) & 0x00003F);

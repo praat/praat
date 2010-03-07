@@ -39,6 +39,7 @@
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2010/01/20 Reopen from disk
  * pb 2010/01/20 guard against Find Again before Find
+ * fb 2010/02/26 tell Undo/Redo buttons to GuiText for (de)sensitivization
  */
 
 #include "TextEditor.h"
@@ -649,6 +650,8 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 static void classTextEditor_createChildren (TextEditor me) {
 	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
+	GuiText_setUndoItem(my textWidget, Editor_getMenuCommand(TextEditor_as_Editor(me), L"Edit", L"Undo")->itemWidget);
+	GuiText_setRedoItem(my textWidget, Editor_getMenuCommand(TextEditor_as_Editor(me), L"Edit", L"Redo")->itemWidget);
 }
 
 static void classTextEditor_clear (TextEditor me) {

@@ -759,6 +759,31 @@ DO
 end:
 END
 
+FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wilcoxon rank sum)", 0)
+	WORD (L"Column", L"salary")
+	WORD (L"Group column", L"gender")
+	SENTENCE (L"Group 1", L"F")
+	SENTENCE (L"Group 2", L"M")
+	OK
+DO
+	Table me = ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
+	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
+	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
+	double areaUnderCurve, rankSum, significanceFromZero;
+	areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
+		& rankSum, & significanceFromZero);
+	MelderInfo_open ();
+	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+	MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+	MelderInfo_writeLine2 (L"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : L"(both equal)");
+	MelderInfo_writeLine2 (L"Area under curve: ", Melder_double (areaUnderCurve));
+	MelderInfo_writeLine2 (L"Rank sum: ", Melder_double (rankSum));
+	MelderInfo_writeLine3 (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
+	MelderInfo_close ();
+end:
+END
+
 FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
 	WORD (L"Column", L"salary")
 	WORD (L"Group column", L"gender")
@@ -1614,6 +1639,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, L"Report difference (Student t)...", 0, 1, DO_Table_reportDifference_studentT);
 		praat_addAction1 (classTable, 1, L"Report group mean (Student t)...", 0, 1, DO_Table_reportGroupMean_studentT);
 		praat_addAction1 (classTable, 1, L"Report group difference (Student t)...", 0, 1, DO_Table_reportGroupDifference_studentT);
+		praat_addAction1 (classTable, 1, L"Report group difference (Wilcoxon rank sum)...", 0, 1, DO_Table_reportGroupDifference_wilcoxonRankSum);
 		praat_addAction1 (classTable, 1, L"Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, L"Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
 	praat_addAction1 (classTable, 0, L"Modify -        ", 0, 0, 0);

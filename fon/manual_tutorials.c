@@ -1,6 +1,6 @@
 /* manual_tutorials.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100125)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100307)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (L"##5.1.26# (25 January 2010)")
+NORMAL (L"##5.1.27# (7 March 2010)")
+LIST_ITEM (L"\\bu Table: Wilcoxon rank sum test.")
+LIST_ITEM (L"\\bu Unicode: support for unicode values above 0xFFFF.")
+LIST_ITEM (L"\\bu Logistic regression: corrected a bug by which a boundary would sometimes not be drawn.")
+NORMAL (L"##5.1.26# (25 February 2010)")
 LIST_ITEM (L"\\bu Experimental GTK version with the help of Franz Brau\\sse.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash if sound playing failed twice.")
 NORMAL (L"##5.1.25# (20 January 2010)")

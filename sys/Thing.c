@@ -1,6 +1,6 @@
 /* Thing.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/06/11 wchar_t
  * pb 2008/04/04 Thing_infoWithId
  * pb 2008/07/20 wchar_t
+ * fb 2010/02/26 fix possible null pointer dereference
  */
 
 #include <stdarg.h>
@@ -187,9 +188,9 @@ int Thing_member (I, void *klas) {
 
 void * _Thing_check (I, void *klas, const char *fileName, int line) {
 	Thing me = void_me;   /* NOT the macro `iam (Thing);' because that would be recursive. */
-	Thing_Table table = my methods;
 	if (! me) Melder_fatal ("(_Thing_check:) NULL object passed to a function\n"
 		"in file %.100s at line %d.", fileName, line);
+	Thing_Table table = my methods;
 	while (table != klas && table != NULL) table = table -> _parent;
 	if (! table)
 		Melder_fatal ("(_Thing_check:) Object of wrong class (%.50s) passed to a function\n"

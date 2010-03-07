@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2009 Paul Boersma
+ * Copyright (C) 2002-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/10/21
+ * pb 2010/03/04
  */
 
 #ifndef _Collection_h_
@@ -102,6 +102,8 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2, double significanceLevel,
 	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
+double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2,
+	double *out_rankSum, double *out_significanceFromZero);
 double Table_getVarianceRatio (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum);

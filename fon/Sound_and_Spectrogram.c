@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2007/01/01 compatible with stereo sounds
  * pb 2007/12/06 enums
  * pb 2008/01/19 double
+ * pb 2010/02/26 fixed a message
  */
 
 #include "Sound_and_Spectrogram.h"
@@ -153,7 +154,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 			for (j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
 
 			Melder_progress4 (iframe / (numberOfTimes + 1.0),
-				L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of %ld", Melder_integer (numberOfTimes)); cherror
+				L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (numberOfTimes)); cherror
 
 			/* Compute Fast Fourier Transform of the frame. */
 

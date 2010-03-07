@@ -1,6 +1,6 @@
 /* abcio.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
  * pb 2007/07/21 MelderReadString
  * pb 2007/08/14 check for NULL pointer before Melder_isValidAscii
  * pb 2009/03/18 modern enums
+ * fb 2010/02/26 UTF-16 via bin(get|put)utf16()...
+ * pb 2010/03/05 ...and acknowledge that wchar_t can be 2 bytes
  */
 
 #include "melder.h"
@@ -39,7 +41,7 @@
 
 /********** ASCII I/O **********/
 
-#define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xffff : 0xffffffff)
+#define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xFFFF : 0xFFFFFFFF)
 
 static long getInteger (MelderReadText me) {
 	if (! MelderReadText_isValid (me)) return 0;
@@ -1215,17 +1217,31 @@ char * bingets4 (FILE *f) {
 wchar_t * bingetw1 (FILE *f) {
 	wchar_t *result = NULL;
 	unsigned short length = bingetu1 (f);
-	if (length == 0xff) {
+	if (length == 0xFF) {
 		length = bingetu1 (f);
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
-			result [i] = bingetu2 (f);
+			if (sizeof (wchar_t) == 2) {
+				result [i] = bingetu2 (f);
+			} else {
+				unsigned short kar = bingetu2 (f);
+				if ((kar & 0xF800) == 0xD800) {
+					if (kar > 0xDBFF)
+						return Melder_errorp ("(bingetw1:) Incorrect Unicode value (first surrogate member %hX).", kar);
+					unsigned short kar2 = bingetu2 (f);
+					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+						return Melder_errorp ("(bingetw1:) Incorrect Unicode value (second surrogate member %hX).", kar2);
+					result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+				} else {
+					result [i] = kar;
+				}
+			}
 		}
 	} else {
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
@@ -1239,17 +1255,31 @@ wchar_t * bingetw1 (FILE *f) {
 wchar_t * bingetw2 (FILE *f) {
 	wchar_t *result = NULL;
 	unsigned short length = bingetu2 (f);
-	if (length == 0xffff) {
+	if (length == 0xFFFF) {
 		length = bingetu2 (f);
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
-			result [i] = bingetu2 (f);
+			if (sizeof (wchar_t) == 2) {
+				result [i] = bingetu2 (f);
+			} else {
+				unsigned short kar = bingetu2 (f);
+				if ((kar & 0xF800) == 0xD800) {
+					if (kar > 0xDBFF)
+						return Melder_errorp ("(bingetw2:) Incorrect Unicode value (first surrogate member %hX).", kar);
+					unsigned short kar2 = bingetu2 (f);
+					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+						return Melder_errorp ("(bingetw2:) Incorrect Unicode value (second surrogate member %hX).", kar2);
+					result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+				} else {
+					result [i] = kar;
+				}
+			}
 		}
 	} else {
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
@@ -1263,17 +1293,31 @@ wchar_t * bingetw2 (FILE *f) {
 wchar_t * bingetw4 (FILE *f) {
 	wchar_t *result = NULL;
 	unsigned long length = bingetu4 (f);
-	if (length == 0xffffffff) {
+	if (length == 0xFFFFFFFF) {
 		length = bingetu4 (f);
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
-			result [i] = bingetu2 (f);
+			if (sizeof (wchar_t) == 2) {
+				result [i] = bingetu2 (f);
+			} else {
+				unsigned short kar = bingetu2 (f);
+				if ((kar & 0xF800) == 0xD800) {
+					if (kar > 0xDBFF)
+						return Melder_errorp ("(bingetw4:) Incorrect Unicode value (first surrogate member %hX).", kar);
+					unsigned short kar2 = bingetu2 (f);
+					if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+						return Melder_errorp ("(bingetw4:) Incorrect Unicode value (second surrogate member %hX).", kar2);
+					result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+				} else {
+					result [i] = kar;
+				}
+			}
 		}
 	} else {
 		result = Melder_malloc (wchar_t, length + 1);
-		if (! result)
+		if (result == NULL)
 			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
@@ -1299,6 +1343,24 @@ void binputs4 (const char *s, FILE *f) {
 	binputu4 (length, f); if (s) fwrite (s, 1, length, f);
 }
 
+inline static void binpututf16 (wchar_t character, FILE *f) {
+	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+		binputu2 (character, f);
+		return;
+	} else {   // wchar_t is UTF-32.
+		MelderUtf32 kar = character;
+		if (kar <= 0xFFFF) {
+			binputu2 (character, f);
+		} else if (kar <= 0x10FFFF) {
+			kar -= 0x10000;
+			binputu2 (0xD800 | (kar >> 10), f);
+			binputu2 (0xDC00 | (kar & 0x3FF), f);
+		} else {
+			Melder_fatal ("Impossible Unicode value.");
+		}
+	}
+}
+
 void binputw1 (const wchar_t *s, FILE *f) {
 	if (s == NULL) {
 		binputu1 (0, f);
@@ -1310,10 +1372,10 @@ void binputw1 (const wchar_t *s, FILE *f) {
 				binputu1 (s [i], f);
 			}
 		} else {
-			binputu1 (0xff, f);
+			binputu1 (0xFF, f);
 			binputu1 (length, f);
 			for (unsigned long i = 0; i < length; i ++) {
-				binputu2 (s [i], f);   // BUG: should be UTF-16.
+				binpututf16 (s [i], f);
 			}
 		}
 	}
@@ -1329,11 +1391,11 @@ void binputw2 (const wchar_t *s, FILE *f) {
 			}
 		}
 	} else {
-		binputu2 (0xffff, f);
+		binputu2 (0xFFFF, f);
 		binputu2 (length, f);
 		if (s != NULL) {
 			for (unsigned long i = 0; i < length; i ++) {
-				binputu2 (s [i], f);   // BUG: should be UTF-16.
+				binpututf16 (s [i], f);
 			}
 		}
 	}
@@ -1349,11 +1411,11 @@ void binputw4 (const wchar_t *s, FILE *f) {
 			}
 		}
 	} else {
-		binputu4 (0xffffffff, f);
+		binputu4 (0xFFFFFFFF, f);
 		binputu4 (length, f);
 		if (s != NULL) {
 			for (unsigned long i = 0; i < length; i ++) {
-				binputu2 (s [i], f);   // BUG: should be UTF-16.
+				binpututf16 (s [i], f);
 			}
 		}
 	}

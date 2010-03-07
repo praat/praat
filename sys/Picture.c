@@ -1,6 +1,6 @@
 /* Picture.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/11/30 erased Graphics_printf
  * sdk 2008/05/09 Picture_selfExpose
  * pb 2009/07/22 Picture_writeToPdfFile
+ * fb 2010/03/01 cairo fix for black 1px borders
  */
 
 #include "melder.h"
@@ -145,21 +146,29 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (Picture);
 #if gtk
 //	g_debug("EXPOSE DRAWING AREA");
+	
+	// save old cairo contexts
+	cairo_t *cgr = Graphics_x_getCR(my graphics);
+	cairo_t *csgr = Graphics_x_getCR(my selectionGraphics);
+	
+	// set new cairo contexts
 	Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
 	Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	// - Graphics_x_setCR(my graphics, Graphics_x_getCR(my selectionGraphics));
 	// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
 	cairo_rectangle (Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
-	cairo_clip_preserve (Graphics_x_getCR (my graphics));
+	cairo_clip (Graphics_x_getCR (my graphics));
 	drawMarkers (me);
 	Graphics_play (my graphics, my graphics);
 	drawSelection (me, 1);
 //	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
 //	cairo_fill(Graphics_x_getCR (my graphics));
+	cairo_destroy(Graphics_x_getCR(my selectionGraphics));
 	cairo_destroy (Graphics_x_getCR (my graphics));
 
-	/* Voorkomt problemen! */
-	Graphics_x_setCR (my graphics, NULL);
-	Graphics_x_setCR (my selectionGraphics, NULL);
+	// restore old cairo contexts
+	Graphics_x_setCR (my graphics, cgr);
+	Graphics_x_setCR (my selectionGraphics, csgr);
 
 //	test+=0.1;
 //	if (test > 3) test = 0.1;

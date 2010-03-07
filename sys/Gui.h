@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2009 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * 2009/08/09
+ * 2010/02/26
  */
 
 #ifdef USE_GTK
@@ -510,8 +510,10 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 void GuiText_scrollToSelection (Widget widget);
 void GuiText_setChangeCallback (Widget widget, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
 void GuiText_setFontSize (Widget widget, int size);
+void GuiText_setRedoItem (Widget widget, Widget item);
 void GuiText_setSelection (Widget widget, long first, long last);
 void GuiText_setString (Widget widget, const wchar_t *text);
+void GuiText_setUndoItem (Widget widget, Widget item);
 void GuiText_undo (Widget widget);
 void GuiText_updateChangeCountAfterSave (Widget widget);
 

@@ -47,6 +47,7 @@
  * pb 2009/12/14 colours
  * pb 2009/12/22 invokingButtonTitle
  * fb 2010/02/23 GTK
+ * fb 2010/03/01 GTK
  */
 
 #include <wctype.h>
@@ -1080,6 +1081,9 @@ void UiForm_finish (I) {
 	if (my helpTitle) {
 		my helpButton = GuiButton_createShown (buttons, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 			L"Help", gui_button_cb_help, me, 0);
+		#if gtk
+			gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(buttons), my helpButton, TRUE);
+		#endif
 	}
 	if (my numberOfFields > 1 || (my numberOfFields > 0 && my field [1] -> type != UI_LABEL)) {
 		if (my isPauseForm) {
@@ -1092,6 +1096,9 @@ void UiForm_finish (I) {
 				HELP_BUTTON_X + HELP_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING + STANDARDS_BUTTON_WIDTH,
 				y, Gui_AUTOMATIC, L"Standards", gui_button_cb_revert, me, 0);
 		}
+		#if gtk
+		 gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(buttons), my revertButton, TRUE);
+		#endif
 	}
 	if (my isPauseForm) {
 		x = HELP_BUTTON_X + REVERT_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING;

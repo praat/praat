@@ -343,7 +343,9 @@ void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, 
 	double yleft = (intercept + parmx -> value * xleft) / - parmy -> value;
 	double yright = (intercept + parmx -> value * xright) / - parmy -> value;
 	double xmin = NUMmin2 (xleft, xright), xmax = NUMmax2 (xleft, xright);
-	double ymin = NUMmin2 (yleft, yright), ymax = NUMmax2 (yleft, yright);
+	double ymin = NUMmin2 (ybottom, ytop), ymax = NUMmax2 (ybottom, ytop);
+	//Melder_casual ("LogisticRegression_drawBoundary: %f %f %f %f %f %f %f %f",
+	//	xmin, xmax, xbottom, xtop, ymin, ymax, yleft, yright);
 	if (xbottom >= xmin && xbottom <= xmax) {   // line goes through bottom?
 		if (xtop >= xmin && xtop <= xmax)   // line goes through top?
 			Graphics_line (graphics, xbottom, ybottom, xtop, ytop);   // draw from bottom to top
