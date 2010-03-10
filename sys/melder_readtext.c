@@ -1,6 +1,6 @@
 /* melder_readtext.c
  *
- * Copyright (C) 2008 Paul Boersma
+ * Copyright (C) 2008-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2008/11/04 split off from melder_strings.c and melder_encodings.c
+ * pb 2010/03/09 support Unicode values above 0xFFFF
  */
 
 #include "melder.h"
@@ -221,7 +222,7 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 						length --;
 						unsigned long kar2 = bingetu2 (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = 0x10000 + ((kar1 - 0xD800) << 10) + (kar2 - 0xDC00);
+							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
 						} else {
 							text [i] = '?';
 						}
@@ -247,7 +248,7 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 						length --;
 						unsigned long kar2 = bingetu2LE (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = 0x10000 + ((kar1 - 0xD800) << 10) + (kar2 - 0xDC00);
+							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
 						} else {
 							text [i] = '?';
 						}

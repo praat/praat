@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/09/04
+ * pb 2010/03/08
  */
 
 #include <stdio.h>
@@ -288,6 +288,10 @@ extern wchar_t Melder_decodeMacRoman [256];
 extern wchar_t Melder_decodeWindowsLatin1 [256];
 
 long Melder_killReturns_inlineW (wchar_t *text);
+
+unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines);
+unsigned long wcslen_utf16 (const wchar_t *wcs, bool expandNewlines);
+unsigned long wcslen_utf32 (const wchar_t *wcs, bool expandNewlines);
 
 int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding);
 wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding);

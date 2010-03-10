@@ -1,6 +1,6 @@
 /* melder_strings.c
  *
- * Copyright (C) 2006-2007 Paul Boersma
+ * Copyright (C) 2006-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/08/07 MelderUtf16
  * pb 2007/09/22 bug removed: an extra character of room in *_appendCharacter
  * pb 2007/10/06 removed MelderStringA
+ * pb 2010/03/09 support Unicode values above 0xFFFF
  */
 
 #include "melder.h"

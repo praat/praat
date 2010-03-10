@@ -27,7 +27,7 @@
  * pb 2007/12/09 made MelderFile_writeCharacter compatible with the ISO Latin-1 preference
  * pb 2007/12/09 made MelderFile_readText ignore null bytes
  * pb 2008/11/05 split off from melder_encodings.c
- * pb 2010/03/07 support for Unicode values above 0xFFFF
+ * pb 2010/03/08 support for Unicode values above 0xFFFF
  */
 
 #include "melder.h"
@@ -395,7 +395,7 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 	return buffers [ibuffer]. string;
 }
 
-static unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
+unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
 	long length = 0;
 	for (const wchar_t *p = & wcs [0]; *p != '\0'; p ++) {
 		if (sizeof (wchar_t) == 2) {
@@ -433,6 +433,36 @@ static unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines) {
 			} else {
 				Melder_assert (kar <= 0x10FFFF);
 				length += 4;
+			}
+		}
+	}
+	return length;
+}
+
+unsigned long wcslen_utf16 (const wchar_t *wcs, bool expandNewlines) {
+	long length = 0;
+	for (const wchar_t *p = & wcs [0]; *p != '\0'; p ++) {
+		if (sizeof (wchar_t) == 2) {
+			unsigned short kar = *p;
+			#ifdef _WIN32
+				if (expandNewlines && kar == '\n') length ++;
+			#else
+				(void) expandNewlines;
+			#endif
+			length ++;
+		} else {
+			unsigned long kar = *p;
+			if (kar <= 0x00007F) {
+				#ifdef _WIN32
+					if (expandNewlines && kar == '\n') length ++;
+				#else
+					(void) expandNewlines;
+				#endif
+				length ++;
+			} else if (kar >= 0x10000) {
+				length += 2;
+			} else {
+				length += 1;
 			}
 		}
 	}

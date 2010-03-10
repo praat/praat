@@ -655,12 +655,20 @@ static void motif_fatal (wchar_t *message) {
 }
 static void motif_error (wchar_t *messageW) {
 	DialogRef dialog;
-	static UniChar messageU [2000+1];
+	static UniChar messageU [4000+1];
 	int messageLength = wcslen (messageW);
+	int j = 0;
 	for (int i = 0; i < messageLength; i ++) {
-		messageU [i] = messageW [i];   // BUG: should convert to UTF16
+		unsigned long kar = messageW [i];
+		if (kar <= 0xFFFF) {
+			messageU [j ++] = kar;
+		} else if (kar <= 0x10FFFF) {
+			kar -= 0x10000;
+			messageU [j ++] = 0xD800 | (kar >> 10);
+			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
+		}
 	}
-	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
+	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
 	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
 	CFRelease (messageCF);
 	RunStandardAlert (dialog, NULL, NULL);
@@ -668,12 +676,20 @@ static void motif_error (wchar_t *messageW) {
 }
 static void motif_warning (wchar_t *messageW) {
 	DialogRef dialog;
-	static UniChar messageU [2000+1];
+	static UniChar messageU [4000+1];
 	int messageLength = wcslen (messageW);
+	int j = 0;
 	for (int i = 0; i < messageLength; i ++) {
-		messageU [i] = messageW [i];   // BUG: should convert to UTF16
+		unsigned long kar = messageW [i];
+		if (kar <= 0xFFFF) {
+			messageU [j ++] = kar;
+		} else if (kar <= 0x10FFFF) {
+			kar -= 0x10000;
+			messageU [j ++] = 0xD800 | (kar >> 10);
+			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
+		}
 	}
-	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
+	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
 	CreateStandardAlert (kAlertNoteAlert, messageCF, NULL, NULL, & dialog);
 	CFRelease (messageCF);
 	RunStandardAlert (dialog, NULL, NULL);

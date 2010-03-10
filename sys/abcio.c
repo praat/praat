@@ -27,8 +27,8 @@
  * pb 2007/07/21 MelderReadString
  * pb 2007/08/14 check for NULL pointer before Melder_isValidAscii
  * pb 2009/03/18 modern enums
- * fb 2010/02/26 UTF-16 via bin(get|put)utf16()...
- * pb 2010/03/05 ...and acknowledge that wchar_t can be 2 bytes
+ * fb 2010/02/26 UTF-16 via bin(get|put)utf16()
+ * pb 2010/03/09 more support for Unicode values above 0xFFFF
  */
 
 #include "melder.h"

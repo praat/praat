@@ -37,6 +37,7 @@
  * fb 2010/02/23 GTK
  * fb 2010/02/26 GTK & GuiText_set(Undo|Redo)Item() & history for GTK
  * fb 2010/03/02 history: merge same events together
+ * pb 2010/03/09 support Unicode values above 0xFFFF
  */
 
 #include "GuiP.h"
@@ -472,18 +473,37 @@ static void NativeText_getText (Widget widget, wchar_t *buffer, long length) {
 			CFRange range = { 0, length };
 			CFStringGetCharacters (cfString, range, macText);
 			CFRelease (cfString);
+			long j = 0;
 			for (long i = 0; i < length; i ++) {
-				buffer [i] = macText [i];
+				unsigned long kar = macText [i];
+				if (kar < 0xD800 || kar > 0xDFFF) {
+					buffer [j ++] = kar;
+				} else {
+					Melder_assert (kar >= 0xD800 && kar <= 0xDBFF);
+					unsigned long kar1 = macText [++ i];
+					Melder_assert (kar1 >= 0xDC00 && kar1 <= 0xDFFF);
+					buffer [j ++] = 0x10000 + ((kar & 0x3FF) << 10) + (kar1 & 0x3FF);
+				}
 			}
-			buffer [length] = '\0';
+			buffer [j] = '\0';
 			Melder_free (macText);
 		} else if (isMLTE (me)) {
 			#if 1
 				Handle han;
 				TXNGetDataEncoded (my macMlteObject, 0, length, & han, kTXNUnicodeTextData);
+				long j = 0;
 				for (long i = 0; i < length; i ++) {
-					buffer [i] = ((UniChar *) *han) [i];
+					unsigned long kar = ((UniChar *) *han) [i];
+					if (kar < 0xD800 || kar > 0xDFFF) {
+						buffer [j ++] = kar;
+					} else {
+						Melder_assert (kar >= 0xD800 && kar <= 0xDBFF);
+						unsigned long kar1 = ((UniChar *) *han) [++ i];
+						Melder_assert (kar1 >= 0xDC00 && kar1 <= 0xDFFF);
+						buffer [j ++] = 0x10000 + ((kar & 0x3FF) << 10) + (kar1 & 0x3FF);
+					}
 				}
+				buffer [j] = '\0';
 				DisposeHandle (han);
 			#else
 				long dataSize = TXNDataSize (my macMlteObject);
@@ -510,7 +530,7 @@ static void NativeText_getText (Widget widget, wchar_t *buffer, long length) {
 			#endif
 		}
 	#endif
-	buffer [length] = '\0';
+	buffer [length] = '\0';   // superfluous?
 }
 
 /*
@@ -1142,18 +1162,27 @@ wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, lon
 			return temp;
 		}
 		return NULL;
-	#elif win || mac
+	#elif win
 		long length = NativeText_getLength (widget);
 		wchar_t *result = Melder_malloc (wchar_t, length + 1);
 		NativeText_getText (widget, result, length);
 		NativeText_getSelectionRange (widget, first, last);
-		#if win
-			long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
-			for (long i = 0; i < *first; i ++) if (result [i] == 13) numberOfLeadingLineBreaks ++;
-			for (long i = *first; i < *last; i ++) if (result [i] == 13) numberOfSelectedLineBreaks ++;
-			*first -= numberOfLeadingLineBreaks;
-			*last -= numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
-		#endif
+		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
+		for (long i = 0; i < *first; i ++)
+			if (result [i] == 13)
+				numberOfLeadingLineBreaks ++;
+		for (long i = *first; i < *last; i ++)
+			if (result [i] == 13)
+				numberOfSelectedLineBreaks ++;
+		*first -= numberOfLeadingLineBreaks;
+		*last -= numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
+		Melder_killReturns_inlineW (result);
+		return result;
+	#elif mac
+		long length = NativeText_getLength (widget);   // UTF-16 length; should be enough for UTF-32 buffer
+		wchar_t *result = Melder_malloc (wchar_t, length + 1);
+		NativeText_getText (widget, result, length);
+		NativeText_getSelectionRange (widget, first, last);
 		Melder_killReturns_inlineW (result);
 		return result;
 	#elif motif
@@ -1457,22 +1486,35 @@ void GuiText_setString (Widget widget, const wchar_t *text) {
 		Melder_free (winText);
 	#elif mac
 		iam_text;
-		long length = wcslen (text);
-		UniChar *macText;
-		macText = Melder_malloc (UniChar, length + 1);
+		long length_utf32 = wcslen (text), length_utf16 = wcslen_utf16 (text, false);
+		UniChar *macText = Melder_malloc (UniChar, length_utf16 + 1);
 		Melder_assert (widget -> widgetClass == xmTextWidgetClass);
 		/*
-		 * Replace all LF with CR.
+		 * Convert from UTF-32 to UTF-16 and replace all LF with CR.
 		 */
-		for (long i = 0; i <= length; i ++) {
-			macText [i] = text [i] == '\n' ? 13 : text [i];
+		long j = 0;
+		for (long i = 0; i < length_utf32; i ++) {
+			MelderUtf32 kar = text [i];
+			if (kar == '\n') {   // LF
+				macText [j ++] = 13;   // CR
+			} else if (kar <= 0xFFFF) {
+				macText [j ++] = kar;
+			} else {
+				Melder_assert (kar <= 0x10FFFF);
+				kar -= 0x10000;
+				macText [j ++] = 0xD800 | (kar >> 10);   // first UTF-16 surrogate character
+				macText [j ++] = 0xDC00 | (kar & 0x3FF);   // second UTF-16 surrogate character
+			}
 		}
+		macText [j] = '\0';
+		if (j != length_utf16)
+			Melder_fatal ("GuiText_setString: incorrect number of UTF-16 words (%ld instead of %ld): <<%ls>>.", j, length_utf16, text);
 		if (isTextControl (widget)) {
-			CFStringRef cfString = CFStringCreateWithCharacters (NULL, macText, length);
+			CFStringRef cfString = CFStringCreateWithCharacters (NULL, macText, length_utf16);
 			SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString);
 			CFRelease (cfString);
 		} else if (isMLTE (me)) {
-			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText, length*2, 0, NativeText_getLength (widget));
+			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText, length_utf16*2, 0, NativeText_getLength (widget));
 		}
 		Melder_free (macText);
 		if (widget -> managed) {

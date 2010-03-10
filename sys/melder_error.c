@@ -67,7 +67,6 @@ static void appendErrorW (const wchar_t *message) {
 	int length = wcslen (errors), messageLength = wcslen (message);
 	if (length + messageLength > 2000) return;
 	wcscpy (errors + length, message);
-	//wcscpy (errors + length + messageLength, L"\n");
 }
 
 bool Melder_error1 (const wchar_t *s1) {

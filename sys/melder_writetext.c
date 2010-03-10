@@ -1,6 +1,6 @@
 /* melder_writetext.c
  *
- * Copyright (C) 2007-2008 Paul Boersma
+ * Copyright (C) 2007-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/12/09 made MelderFile_writeCharacter compatible with the ISO Latin-1 preference
  * pb 2007/12/09 made MelderFile_readText ignore null bytes
  * pb 2008/11/05 split off from melder_encodings.c
+ * pb 2010/03/09 support Unicode values above 0xFFFF
  */
 
 #include "melder.h"
@@ -141,7 +142,7 @@ int MelderFile_writeText (MelderFile file, const wchar_t *text) {
 		}
 		funlockfile (f);
 	} else {
-		binputu2 (0xfeff, f);
+		binputu2 (0xFEFF, f);   // Byte Order Mark
 		long n = wcslen (text);
 		for (long i = 0; i < n; i ++) {
 			if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
@@ -229,19 +230,51 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 			binputu2 (0xfeff, f);
 			unsigned long n = wcslen (oldText);
 			for (unsigned long i = 0; i < n; i ++) {
-				wchar_t kar = oldText [i];
-				#ifdef _WIN32
-					if (kar == '\n') binputu2 (13, f);
-				#endif
-				binputu2 (kar, f);   // BUG: should be UTF-16.
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+					wchar_t kar = oldText [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					binputu2 (kar, f);
+				} else {   // wchar_t is UTF-32.
+					unsigned long kar = oldText [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					if (kar <= 0xFFFF) {
+						binputu2 (kar, f);
+					} else if (kar <= 0x10FFFF) {
+						kar -= 0x10000;
+						binputu2 (0xD800 | (kar >> 10), f);
+						binputu2 (0xDC00 | (kar & 0x3ff), f);
+					} else {
+						binputu2 ('?', f);
+					}
+				}
 			}
 			n = wcslen (text);
 			for (unsigned long i = 0; i < n; i ++) {
-				wchar_t kar = text [i];
-				#ifdef _WIN32
-					if (kar == '\n') binputu2 (13, f);
-				#endif
-				binputu2 (kar, f);   // BUG: should be UTF-16.
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+					unsigned short kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					binputu2 (kar, f);
+				} else {   // wchar_t is UTF-32.
+					unsigned long kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					if (kar <= 0xFFFF) {
+						binputu2 (kar, f);
+					} else if (kar <= 0x10FFFF) {
+						kar -= 0x10000;
+						binputu2 (0xD800 | (kar >> 10), f);
+						binputu2 (0xDC00 | (kar & 0x3ff), f);
+					} else {
+						binputu2 ('?', f);
+					}
+				}
 			}
 			if (fclose (f))
 				return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
@@ -252,17 +285,49 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 		unsigned long n = wcslen (text);
 		for (unsigned long i = 0; i < n; i ++) {
 			if (type == 1) {
-				wchar_t kar = text [i];
-				#ifdef _WIN32
-					if (kar == '\n') binputu2 (13, f);
-				#endif
-				binputu2 (kar, f);
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+					unsigned short kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					binputu2 (kar, f);
+				} else {   // wchar_t is UTF-32.
+					unsigned long kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2 (13, f);
+					#endif
+					if (kar <= 0xFFFF) {
+						binputu2 (kar, f);
+					} else if (kar <= 0x10FFFF) {
+						kar -= 0x10000;
+						binputu2 (0xD800 | (kar >> 10), f);
+						binputu2 (0xDC00 | (kar & 0x3ff), f);
+					} else {
+						binputu2 ('?', f);
+					}
+				}
 			} else {
-				wchar_t kar = text [i];
-				#ifdef _WIN32
-					if (kar == '\n') binputu2LE (13, f);
-				#endif
-				binputu2LE (kar, f);
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+					unsigned short kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2LE (13, f);
+					#endif
+					binputu2LE (kar, f);
+				} else {   // wchar_t is UTF-32.
+					unsigned long kar = text [i];
+					#ifdef _WIN32
+						if (kar == '\n') binputu2LE (13, f);
+					#endif
+					if (kar <= 0xFFFF) {
+						binputu2LE (kar, f);
+					} else if (kar <= 0x10FFFF) {
+						kar -= 0x10000;
+						binputu2LE (0xD800 | (kar >> 10), f);
+						binputu2LE (0xDC00 | (kar & 0x3ff), f);
+					} else {
+						binputu2LE ('?', f);
+					}
+				}
 			}
 		}
 		if (fclose (f))
@@ -292,9 +357,28 @@ static void _MelderFile_write (MelderFile file, const wchar_t *string) {
 				putc (0xC0 | (kar >> 6), f);
 				putc (0x80 | (kar & 0x00003F), f);
 			} else if (kar <= 0x00FFFF) {
-				putc (0xE0 | (kar >> 12), f);
-				putc (0x80 | ((kar >> 6) & 0x00003F), f);
-				putc (0x80 | (kar & 0x00003F), f);
+				if (sizeof (wchar_t) == 2) {
+					if ((kar & 0xF800) == 0xD800) {
+						if (kar > 0xDBFF)
+							Melder_fatal ("Incorrect Unicode value (first surrogate member %lX).", kar);
+						unsigned long kar2 = (unsigned short) string [++ i];   // crucial cast: prevents sign extension
+						if (kar2 < 0xDC00 || kar2 > 0xDFFF)
+							Melder_fatal ("Incorrect Unicode value (second surrogate member %lX).", kar2);
+						kar = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;   // decode UTF-16
+						putc (0xF0 | (kar >> 18), f);
+						putc (0x80 | ((kar >> 12) & 0x00003F), f);
+						putc (0x80 | ((kar >> 6) & 0x00003F), f);
+						putc (0x80 | (kar & 0x00003F), f);
+					} else {
+						putc (0xE0 | (kar >> 12), f);
+						putc (0x80 | ((kar >> 6) & 0x00003F), f);
+						putc (0x80 | (kar & 0x00003F), f);
+					}
+				} else {
+					putc (0xE0 | (kar >> 12), f);
+					putc (0x80 | ((kar >> 6) & 0x00003F), f);
+					putc (0x80 | (kar & 0x00003F), f);
+				}
 			} else {
 				putc (0xF0 | (kar >> 18), f);
 				putc (0x80 | ((kar >> 12) & 0x00003F), f);
@@ -306,7 +390,19 @@ static void _MelderFile_write (MelderFile file, const wchar_t *string) {
 		for (unsigned long i = 0; i < length; i ++) {
 			unsigned long kar = sizeof (wchar_t) == 2 ? (unsigned short) string [i] : string [i];
 			if (kar == '\n' && file -> requiresCRLF) binputu2 (13, f);
-			binputu2 (kar, f);   // BUG: should be UTF-16
+			if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+				binputu2 (kar, f);
+			} else {   // wchar_t is UTF-32.
+				if (kar <= 0xFFFF) {
+					binputu2 (kar, f);
+				} else if (kar <= 0x10FFFF) {
+					kar -= 0x10000;
+					binputu2 (0xD800 | (kar >> 10), f);
+					binputu2 (0xDC00 | (kar & 0x3ff), f);
+				} else {
+					binputu2 ('?', f);
+				}
+			}
 		}
 	}
 }
@@ -325,9 +421,28 @@ void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
 			putc (0xC0 | (kar >> 6), f);
 			putc (0x80 | (kar & 0x00003F), f);
 		} else if (kar <= 0x00FFFF) {
-			putc (0xE0 | (kar >> 12), f);
-			putc (0x80 | ((kar >> 6) & 0x00003F), f);
-			putc (0x80 | (kar & 0x00003F), f);
+			if (sizeof (wchar_t) == 2) {
+				if ((kar & 0xF800) == 0xD800) {
+					static unsigned long buffer;   // NOT REENTRANT
+					if (kar >= 0xD800 && kar <= 0xDBFF) {
+						buffer = kar;
+					} else {
+						kar = (((buffer & 0x3FF) << 10) | (kar & 0x3FF)) + 0x10000;   // decode UTF-16
+						putc (0xF0 | (kar >> 18), f);
+						putc (0x80 | ((kar >> 12) & 0x00003F), f);
+						putc (0x80 | ((kar >> 6) & 0x00003F), f);
+						putc (0x80 | (kar & 0x00003F), f);
+					}
+				} else {
+					putc (0xE0 | (kar >> 12), f);
+					putc (0x80 | ((kar >> 6) & 0x00003F), f);
+					putc (0x80 | (kar & 0x00003F), f);
+				}
+			} else {
+				putc (0xE0 | (kar >> 12), f);
+				putc (0x80 | ((kar >> 6) & 0x00003F), f);
+				putc (0x80 | (kar & 0x00003F), f);
+			}
 		} else {
 			putc (0xF0 | (kar >> 18), f);
 			putc (0x80 | ((kar >> 12) & 0x00003F), f);
@@ -336,7 +451,19 @@ void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
 		}
 	} else {
 		if (kar == '\n' && file -> requiresCRLF) binputu2 (13, f);
-		binputu2 (kar, f);
+		if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
+			binputu2 (kar, f);
+		} else {   // wchar_t is UTF-32.
+			if (kar <= 0xFFFF) {
+				binputu2 (kar, f);
+			} else if (kar <= 0x10FFFF) {
+				kar -= 0x10000;
+				binputu2 (0xD800 | (kar >> 10), f);
+				binputu2 (0xDC00 | (kar & 0x3ff), f);
+			} else {
+				binputu2 ('?', f);
+			}
+		}
 	}
 }
 
