@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat -I ../GSL
+CFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \

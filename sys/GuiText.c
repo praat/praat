@@ -37,7 +37,7 @@
  * fb 2010/02/23 GTK
  * fb 2010/02/26 GTK & GuiText_set(Undo|Redo)Item() & history for GTK
  * fb 2010/03/02 history: merge same events together
- * pb 2010/03/09 support Unicode values above 0xFFFF
+ * pb 2010/03/11 support Unicode values above 0xFFFF
  */
 
 #include "GuiP.h"
@@ -1119,6 +1119,10 @@ wchar_t * GuiText_getSelection (Widget widget) {
 		/*
 		 * Zoom in on selection.
 		 */
+		#if mac
+			for (long i = 0; i < start; i ++) if (result [i] > 0xFFFF) { start --; end --; }
+			for (long i = start; i < end; i ++) if (result [i] > 0xFFFF) { end --; }
+		#endif
 		length = end - start;
 		memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
 		result [length] = '\0';
@@ -1168,12 +1172,8 @@ wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, lon
 		NativeText_getText (widget, result, length);
 		NativeText_getSelectionRange (widget, first, last);
 		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
-		for (long i = 0; i < *first; i ++)
-			if (result [i] == 13)
-				numberOfLeadingLineBreaks ++;
-		for (long i = *first; i < *last; i ++)
-			if (result [i] == 13)
-				numberOfSelectedLineBreaks ++;
+		for (long i = 0; i < *first; i ++) if (result [i] == 13) numberOfLeadingLineBreaks ++;
+		for (long i = *first; i < *last; i ++) if (result [i] == 13) numberOfSelectedLineBreaks ++;
 		*first -= numberOfLeadingLineBreaks;
 		*last -= numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
 		Melder_killReturns_inlineW (result);
@@ -1182,7 +1182,9 @@ wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, lon
 		long length = NativeText_getLength (widget);   // UTF-16 length; should be enough for UTF-32 buffer
 		wchar_t *result = Melder_malloc (wchar_t, length + 1);
 		NativeText_getText (widget, result, length);
-		NativeText_getSelectionRange (widget, first, last);
+		NativeText_getSelectionRange (widget, first, last);   // 'first' and 'last' are expressed in UTF-16 words
+		for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+		for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 		Melder_killReturns_inlineW (result);
 		return result;
 	#elif motif
@@ -1321,6 +1323,7 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 		 */
 		if (my widget -> managed) _GuiMac_clipOnParent (widget);
 		if (isTextControl (widget)) {
+			// BUG: this is not UTF-32-savvy; this is acceptable because it isn't used in Praat
 			long oldLength = NativeText_getLength (widget);
 			wchar_t *totalText = Melder_malloc (wchar_t, oldLength - (to_pos - from_pos) + length + 1);
 			wchar_t *oldText = Melder_malloc (wchar_t, oldLength + 1);
@@ -1333,8 +1336,16 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 			Melder_free (oldText);
 			Melder_free (totalText);
 		} else if (isMLTE (me)) {
+			long oldLength = NativeText_getLength (widget);
+			wchar_t *oldText = Melder_malloc (wchar_t, oldLength + 1);
+			NativeText_getText (widget, oldText, oldLength);
+			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+			for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+			for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+			from_pos += numberOfLeadingHighUnicodeValues;
+			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
 			const UniChar *macText_utf16 = Melder_peekWcsToUtf16 (macText);
-			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText_utf16, length*2, from_pos, to_pos);
+			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText_utf16, wcslen_utf16 (macText, 0) * 2, from_pos, to_pos);
 		}
 		Melder_free (macText);
 		if (widget -> managed) {
@@ -1442,13 +1453,25 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 		if (last >= length) last = length;
 		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
 		for (long i = 0; i < first; i ++) if (text [i] == '\n') numberOfLeadingLineBreaks ++;
-			for (long i = first; i < last; i ++) if (text [i] == 13) numberOfSelectedLineBreaks ++;
+		for (long i = first; i < last; i ++) if (text [i] == '\n') numberOfSelectedLineBreaks ++;
 		first += numberOfLeadingLineBreaks;
 		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
 		Melder_free (text);
 		Edit_SetSel (widget -> window, first, last);
 	#elif mac
 		iam_text;
+		wchar_t *text = GuiText_getString (widget);
+		if (first < 0) first = 0;
+		if (last < 0) last = 0;
+		long length = wcslen (text);
+		if (first >= length) first = length;
+		if (last >= length) last = length;
+		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		first += numberOfLeadingHighUnicodeValues;
+		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
+		Melder_free (text);
 		if (isTextControl (widget)) {
 			ControlEditTextSelectionRec rec = { first, last };
 			SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec);

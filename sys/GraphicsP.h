@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/20
+ * pb 2010/03/11
  */
 
 #ifndef _Graphics_h_
@@ -29,7 +29,8 @@
 
 typedef struct {
 	unsigned char link, rightToLeft;
-	short style, size, code, baseline;
+	short style, size, baseline;
+	unsigned long code;
 	wchar_t kar;
 	double width;
 	union { long integer; const char *string; } font;

@@ -443,8 +443,8 @@ unsigned long wcslen_utf16 (const wchar_t *wcs, bool expandNewlines) {
 	long length = 0;
 	for (const wchar_t *p = & wcs [0]; *p != '\0'; p ++) {
 		if (sizeof (wchar_t) == 2) {
-			unsigned short kar = *p;
 			#ifdef _WIN32
+				unsigned short kar = *p;
 				if (expandNewlines && kar == '\n') length ++;
 			#else
 				(void) expandNewlines;

@@ -326,7 +326,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			} else {
 				SIZE extent;
 				wchar_t code;
-				lc -> code = font == kGraphics_font_IPATIMES || font == kGraphics_font_TIMES || font == kGraphics_font_HELVETICA || font == kGraphics_font_COURIER ? lc -> kar : info -> winEncoding;
+				lc -> code = font == kGraphics_font_IPATIMES || font == kGraphics_font_TIMES || font == kGraphics_font_HELVETICA || font == kGraphics_font_COURIER ? (unsigned short) lc -> kar : info -> winEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
@@ -348,7 +348,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					}
 				}
 				SelectFont (my dc, fontInfo);
-				GetTextExtentPoint32W (my dc, (code = lc -> code, & code), 1, & extent);
+				GetTextExtentPoint32W (my dc, (code = (unsigned short) lc -> code, & code), 1, & extent);   // UTF-32 BUG
 				lc -> width = extent. cx;
 			}
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
@@ -404,9 +404,18 @@ static void charSize (I, _Graphics_widechar *lc) {
 					OSStatus err = ATSUCreateTextLayout (& textLayout);
 					Melder_assert (err == 0);
 				}
-				MelderUtf16 code16 = lc -> kar;
-				OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16, kATSUFromTextBeginning, kATSUToTextEnd, 1);
-				Melder_assert (err == 0);
+				MelderUtf16 code16 [2];
+				if (lc -> kar <= 0xFFFF) {
+					code16 [0] = lc -> kar;
+					OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
+					Melder_assert (err == 0);
+				} else {
+					MelderUtf32 kar = lc -> kar - 0x10000;
+					code16 [0] = 0xD800 + (kar >> 10);
+					code16 [1] = 0xDC00 + (kar & 0x3FF);
+					OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
+					Melder_assert (err == 0);
+				}
 				static ATSUFontFallbacks fontFallbacks = NULL;
 				if (fontFallbacks == NULL) {
 					ATSUCreateFontFallbacks (& fontFallbacks);
@@ -727,8 +736,18 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
 					Melder_assert (err == 0);
 				}
-				OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-				Melder_assert (err == 0);
+				bool hasHighUnicodeValues = false;
+				for (long i = 0; i < nchars; i ++) {
+					hasHighUnicodeValues |= codes [i] > 0xFFFF;
+				}
+				if (hasHighUnicodeValues) {
+					nchars = wcslen_utf16 (codes, 0);
+					OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, Melder_peekWcsToUtf16 (codes), kATSUFromTextBeginning, kATSUToTextEnd, nchars);
+					Melder_assert (err == 0);
+				} else {
+					OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars);
+					Melder_assert (err == 0);
+				}
 				static ATSUFontFallbacks fontFallbacks = NULL;
 				if (fontFallbacks == NULL) {
 					ATSUCreateFontFallbacks (& fontFallbacks);
@@ -768,13 +787,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				if (my duringXor) {
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 					CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-					err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
+					OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
+					Melder_assert (err == 0);
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 					CGContextSetAllowsAntialiasing (my macGraphicsContext, true);
 				} else {
-					err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
+					OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
+					Melder_assert (err == 0);
 				}
-				Melder_assert (err == 0);
 				CGContextRestoreGState (my macGraphicsContext);
 				return;
 			}

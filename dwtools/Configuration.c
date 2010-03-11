@@ -1,17 +1,17 @@
 /* Configuration.c
- * 
- * Copyright (C) 1993-2008 David Weenink
- * 
+ *
+ * Copyright (C) 1993-2010 David Weenink
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -29,6 +29,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar_t
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20100302 Extra test in Configuration_rotate
  */
 
 #include <ctype.h>
@@ -81,13 +82,13 @@ class_methods (Configuration, TableOfReal)
 class_methods_end
 
 
-Configuration Configuration_create (long numberOfPoints, 
+Configuration Configuration_create (long numberOfPoints,
 	long numberOfDimensions)
 {
 	Configuration me = new (Configuration);
-	
+
 	if (me == NULL) return NULL;
-	
+
 	if (! TableOfReal_init (me, numberOfPoints, numberOfDimensions) ||
 		! (my w = NUMdvector (1, numberOfDimensions)) ||
 		! TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1) ||
@@ -110,8 +111,7 @@ void Configuration_setMetric (Configuration me, long metric)
 
 void Configuration_setDefaultWeights (Configuration me)
 {
-	long i;
-	for (i = 1; i <= my numberOfColumns; i++)
+	for (long i = 1; i <= my numberOfColumns; i++)
 	{
 		my w[i] = 1;
 	}
@@ -119,8 +119,7 @@ void Configuration_setDefaultWeights (Configuration me)
 
 void Configuration_setSqWeights (Configuration me, const double weight[])
 {
-	long i;
-	for (i = 1; i <= my numberOfColumns; i++)
+	for (long i = 1; i <= my numberOfColumns; i++)
 	{
 		my w[i] = sqrt (weight[i]);
 	}
@@ -137,39 +136,36 @@ void Configuration_normalize (Configuration me, double sumsq, int columns)
 	else
 	{
 		if (sumsq <= 0) sumsq = my numberOfRows;
-		NUMnormalize (my data, my numberOfRows, my numberOfColumns, 
+		NUMnormalize (my data, my numberOfRows, my numberOfColumns,
 			sqrt (sumsq));
 	}
 }
 
 void Configuration_randomize (Configuration me)
 {
-	long i, j;
-	
-	for (i = 1; i <= my numberOfRows; i++)
+	for (long i = 1; i <= my numberOfRows; i++)
 	{
-		for (j = 1; j <= my numberOfColumns; j++)
+		for (long j = 1; j <= my numberOfColumns; j++)
 		{
 			my data[i][j] = NUMrandomUniform (-1, 1);
 		}
 	}
 }
 
-void Configuration_rotate (Configuration me, long dimension1, long dimension2, 
+void Configuration_rotate (Configuration me, long dimension1, long dimension2,
 	double angle_degrees)
 {
-	long i; 
 	double f = NUMpi * (2 - angle_degrees / 180);
 	double cosa = cos (f), sina = sin (f);
 
-	if (dimension1 == dimension2) return;
-	
+	if (dimension1 == dimension2 || angle_degrees == 0) return;
+
 	if (dimension1 > dimension2)
 	{
 		long dt = dimension1; dimension1 = dimension2; dimension2 = dt;
 	}
 	if (dimension1 < 1 || dimension2 > my numberOfColumns) return;
-	for (i = 1; i <= my numberOfRows; i++)
+	for (long i = 1; i <= my numberOfRows; i++)
 	{
 		double x1 = my data[i][dimension1], x2 = my data[i][dimension2];
 		my data[i][dimension1] =   cosa * x1 + sina * x2;
@@ -179,11 +175,9 @@ void Configuration_rotate (Configuration me, long dimension1, long dimension2,
 
 void Configuration_invertDimension (Configuration me, int dimension)
 {
-	long i;
-	
 	if (dimension < 1 || dimension > my numberOfColumns) return;
-	
-	for (i=1; i <= my numberOfRows; i++)
+
+	for (long i = 1; i <= my numberOfRows; i++)
 	{
 		my data[i][dimension] = - my data[i][dimension];
 	}
@@ -192,12 +186,12 @@ void Configuration_invertDimension (Configuration me, int dimension)
 
 static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers)
 {
-	double sum4, mean, v4; 
-	long i, j;
-	
-	for (v4 = 0, j = 1; j <= nc; j++)
+	double v4 = 0;
+
+	for (long j = 1; j <= nc; j++)
 	{
-		for (sum4 = 0, mean = 0, i = 1; i <= nr; i++)
+		double sum4 = 0, mean = 0;
+		for (long i = 1; i <= nr; i++)
 		{
 			double sq = a[i][j] * a[i][j];
 			sum4 += sq * sq;
@@ -215,28 +209,28 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers)
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static int NUMvarimax (double **xm, double **ym, long nr, long nc, 
-	int normalizeRows, int quartimax, long maximumNumberOfIterations, 
+static int NUMvarimax (double **xm, double **ym, long nr, long nc,
+	int normalizeRows, int quartimax, long maximumNumberOfIterations,
 	double tolerance)
 {
 	long numberOfIterations = 0, i, j, c1, c2;
 	double varianceSq, varianceSq_old, *u = NULL, *v = NULL, *norm = NULL;
 
 	Melder_assert (nr > 0 && nc > 0);
-	
+
 	NUMdmatrix_copyElements (xm, ym, 1, nr, 1, nc);
-	
+
 	if (nc == 1) return 1;
 	if (nc == 2) maximumNumberOfIterations = 1;
-	
+
 	if (! (u = NUMdvector (1, nr)) ||
 		! (v = NUMdvector (1, nr))) goto end;
-	
+
 	/*
 		Normalize sum of squares of each row to one.
-		After rotation we have to rescale. 
+		After rotation we have to rescale.
 	*/
-		
+
 	if (normalizeRows)
 	{
 		if (! (norm = NUMdvector (1, nr))) goto end;
@@ -254,21 +248,21 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc,
 			}
 		}
 	}
-	
+
 	/*
 		Initial squared "variance".
 	*/
-	
+
 	varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
-	
+
 	if (varianceSq == 0) goto end;
-	
+
 	/*
 		Treat columns pairwise.
 	*/
-	
-	do 
-	{	
+
+	do
+	{
 		for (c1 = 1; c1 <= nc; c1++)
 		{
 			for (c2 = c1 + 1; c2 <= nc; c2++)
@@ -281,18 +275,18 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc,
 					um += u[i];
 					v[i] = 2 * x * y;
 					vm += v[i];
-				}	
+				}
 				um /= nr; vm /= nr;
 				if (quartimax || nr == 1) um = vm = 0;
-				
+
 				/*
 					In the paper just before equation (1):
 					a = 2n u'v, b = n(u'u-v'v), c = sqrt(a^2+b^2)
 					w = -sign(a) sqrt((b+c) / 2c)
 					Tricks: multiplication with n drops out!
-						a's multiplication by 2 outside the loop.			
+						a's multiplication by 2 outside the loop.
 				*/
-				
+
 				for (a = b = 0, i = 1; i <= nr; i++)
 				{
 					double ui = u[i] - um, vi = v[i] - vm;
@@ -305,17 +299,17 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc,
 				t11 = t22 = cost = sqrt (0.5 + 0.5 * w);
 				t12 = sint = sqrt (0.5 - 0.5 * w);
 				t21 = -sint;
-				
+
 				/*
-					Prevent permutations: when w < 0, i.e., a > 0, 
+					Prevent permutations: when w < 0, i.e., a > 0,
 						swap columns of T:
 				*/
-				
+
 				if (w < 0)
 				{
 					t11 = sint; t12 = t21 = cost; t22 = -sint;
 				}
-				
+
 				/*
 					Rotate in the plane spanned by c1 and c2.
 				*/
@@ -328,14 +322,14 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc,
 				}
 			}
 		}
-		
+
 		numberOfIterations++;
 		varianceSq_old = varianceSq;
 		varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
-		
+
 	} while (fabs(varianceSq_old - varianceSq) / varianceSq_old > tolerance &&
 		numberOfIterations < maximumNumberOfIterations);
-		
+
 	if (normalizeRows)
 	{
 		for (i = 1; i <= nr; i++)
@@ -343,7 +337,7 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc,
 			for (j = 1; j <= nc; j++) ym[i][j] *= norm[i];
 		}
 	}
-	
+
 end:
 
 	if (normalizeRows) NUMdvector_free (norm, 1);
@@ -356,19 +350,19 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 	int quartimax, long maximumNumberOfIterations, double tolerance)
 {
 	Configuration thee = Data_copy (me);
-	
+
 	if (! thee) return NULL;
-	
-	if (! NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, 
+
+	if (! NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns,
 		normalizeRows, quartimax, maximumNumberOfIterations, tolerance))
 			forget (thee);
-	
+
 	return thee;
 }
 
 
 
-Configuration Configuration_congruenceRotation (Configuration me, 
+Configuration Configuration_congruenceRotation (Configuration me,
 	Configuration thee, long maximumNumberOfIterations, double tolerance)
 {
 	Configuration him = NULL;
@@ -377,9 +371,9 @@ Configuration Configuration_congruenceRotation (Configuration me,
 	at = Configurations_to_AffineTransform_congruence (me, thee,
 		maximumNumberOfIterations, tolerance);
 	if (at == NULL) return NULL;
-	
+
 	him = Configuration_and_AffineTransform_to_Configuration (me, at);
-	
+
 	forget (at);
 	if (Melder_hasError ()) forget (him);
 	return him;
@@ -389,11 +383,11 @@ Configuration Configuration_congruenceRotation (Configuration me,
 
 int Configuration_rotateToPrincipalDirections (Configuration me)
 {
-	double **m = NUMdmatrix_copy (my data, 1, my numberOfRows, 
+	double **m = NUMdmatrix_copy (my data, 1, my numberOfRows,
 		1, my numberOfColumns);
 	if (m == NULL) return 0;
-	
-	if (! NUMdmatrix_into_principalComponents (my data, my numberOfRows, 
+
+	if (! NUMdmatrix_into_principalComponents (my data, my numberOfRows,
 		my numberOfColumns, my numberOfColumns, m))
 	{
 		 NUMdmatrix_free (m, 1, 1); return 0;
@@ -403,32 +397,32 @@ int Configuration_rotateToPrincipalDirections (Configuration me)
 	return 1;
 }
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, 
-	int yCoordinate, double xmin, double xmax, double ymin, double ymax, 
+void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
+	int yCoordinate, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, int useRowLabels, wchar_t *label, int garnish)
 {
 	long i, nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 	double *x = NULL, *y = NULL;
 	int fontSize = Graphics_inqFontSize (g), noLabel = 0;
-	
-	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || 
+
+	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions ||
 		yCoordinate > numberOfDimensions)) return;
 	if (numberOfDimensions == 1) xCoordinate = 1;
 	if (labelSize == 0) labelSize = fontSize;
-	if (! (x = NUMdvector (1, nPoints)) || 
+	if (! (x = NUMdvector (1, nPoints)) ||
 		! (y = NUMdvector (1, nPoints))) goto end;
-		
+
 	for (i = 1; i <= nPoints; i++)
 	{
 		x[i] = my data[i][xCoordinate] * my w[xCoordinate];
-		y[i] = numberOfDimensions > 1 ? 
+		y[i] = numberOfDimensions > 1 ?
 			my data[i][yCoordinate] * my w[yCoordinate] : 0;
 	}
 	if (xmax <= xmin) NUMdvector_extrema (x, 1, nPoints, &xmin, &xmax);
 	if (xmax <= xmin) { xmax += 1; xmin -= 1; }
 	if (ymax <= ymin) NUMdvector_extrema (y, 1, nPoints, &ymin, &ymax);
 	if (ymax <= ymin) { ymax += 1; ymin -= 1; }
-    Graphics_setWindow (g, xmin, xmax, ymin, ymax);	
+    Graphics_setWindow (g, xmin, xmax, ymin, ymax);
     Graphics_setInner (g);
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
@@ -460,10 +454,10 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 				Graphics_textLeft (g, 1, my columnLabels[yCoordinate]);
     	}
 	}
-	
-	if (noLabel > 0) Melder_warning5 (L"Configuration_draw: ", Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows), 
+
+	if (noLabel > 0) Melder_warning5 (L"Configuration_draw: ", Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows),
 		L" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
-	
+
 end:
 
 	NUMdvector_free (x, 1);
@@ -471,14 +465,14 @@ end:
 }
 
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, 
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish)
 {
 	SSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
 
 	if (sscps == NULL) return;
-	
+
 	SSCPs_drawConcentrationEllipses (sscps, g, scale, confidence, label,
 			d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 
@@ -487,27 +481,27 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 
 Configuration TableOfReal_to_Configuration (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	Configuration thee;
 
 	thee = Configuration_create (my numberOfRows, my numberOfColumns);
 	if (thee == NULL) return NULL;
 
-	NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 
+	NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows,
 		1, my numberOfColumns);
 	if (! TableOfReal_copyLabels (me, thee, 1, 1)) forget (thee);
 	return thee;
 }
 
-Configuration TableOfReal_to_Configuration_pca (TableOfReal me, 
+Configuration TableOfReal_to_Configuration_pca (TableOfReal me,
 	long numberOfDimensions)
 {
-	Configuration thee = NULL; 
-	PCA pca= NULL; 
+	Configuration thee = NULL;
+	PCA pca= NULL;
 
 	if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns)
 		numberOfDimensions = my numberOfColumns;
-		
+
 	if ((pca = TableOfReal_to_PCA (me)) == NULL) return NULL;
 
 	thee = PCA_and_TableOfReal_to_Configuration (pca, me, numberOfDimensions);
@@ -552,7 +546,7 @@ Configuration Configuration_createLetterRExample (int choice)
 		-0.35920781945385832, -0.62766325578928184, -0.60389363590825562};
 	double *x, *y;
 	Configuration me = Configuration_create (32, 2);
-		
+
 	if (me == NULL) return NULL;
 
 	if (choice == 2)
@@ -565,7 +559,7 @@ Configuration Configuration_createLetterRExample (int choice)
 		x = x1; y = y1;
 		Thing_setName (me, L"R");
 	}
-		
+
 	for (i = 1; i <= 32; i++)
 	{
 		wchar_t s[20];
@@ -584,12 +578,12 @@ Configuration Configuration_createCarrollWishExample (void)
 	double  y[10] = {0,  1, 1, 1,  0, 0, 0, -1, -1, -1};
 	wchar_t *label[] = { L"", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H", L"I"};
 	Configuration me = Configuration_create (nObjects, 2);
-	
+
 	if (me == NULL) return NULL;
-	
+
 	for (i = 1; i <= nObjects; i++)
 	{
-		my data[i][1] = x[i]; 
+		my data[i][1] = x[i];
 		my data[i][2] = y[i];
 		TableOfReal_setRowLabel (me, i, label[i]);
 	}
@@ -610,7 +604,7 @@ Configurations Configurations_create (void)
 
 /*
 	19980404 djmw added Configuration_varimax
-	
+
 	BUGS:
 		19980319 djmw Configuration_to_TableOfReal: corrected memory leak
 		19981026 djmw Configuration_draw: hor. and. vert. dotted line through

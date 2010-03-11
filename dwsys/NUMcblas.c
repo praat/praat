@@ -1,16 +1,17 @@
 /* NUMcblas.c
-	
+
 	-- LAPACK helper routines  -- Univ. of Tennessee, Univ. of
 	California Berkeley, NAG Ltd., Courant Institute, Argonne National Lab,
 	and Rice University October 31, 1999 -- translated by f2c (version
 	19990503)
-	
+
 	Adapted by David Weenink 20021201
 */
 
 /*
  djmw 20020813 GPL header
  djmw 20071201 Latest modification
+ pb 20100120 dlamc3_: declare volatile double ret_val to prevent optimization!
 */
 
 
@@ -271,7 +272,7 @@ int NUMblas_dgemm (char *transa, char *transb, long *m, long *n, long *k, double
 #define a_ref(a_1,a_2) a[(a_2)*a_dim1 + a_1]
 #define b_ref(a_1,a_2) b[(a_2)*b_dim1 + a_1]
 #define c___ref(a_1,a_2) c__[(a_2)*c_dim1 + a_1]
-	/* 
+	/*
 	   Set NOTA and NOTB as true if A and B respectively are not transposed
 	   and set NROWA, NCOLA and NROWB as the number of rows and columns of A
 	   and the number of rows of B respectively. Parameter adjustments */
@@ -982,7 +983,7 @@ double NUMblas_dlamch (char *cmach)
 
 static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 {
-	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ. 
+	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
 
@@ -1009,10 +1010,10 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 
 	   Further Details ===============
 
-	   The routine is based on the routine ENVRON by Malcolm and incorporates 
+	   The routine is based on the routine ENVRON by Malcolm and incorporates
 	   suggestions by Gentleman and Marovich. See
 
-	   Malcolm M. A. (1972) Algorithms to reveal properties of floating-point 
+	   Malcolm M. A. (1972) Algorithms to reveal properties of floating-point
 	   arithmetic. Comms. of the ACM, 15, 949-951.
 
 	   Gentleman W. M. and Marovich S. B. (1974) More on algorithms that
@@ -1091,7 +1092,7 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 		c = dlamc3_ (&c, &d__1);
 		lbeta = (long) (c + qtr);
 
-		/* Now determine whether rounding or chopping occurs, by adding a bit 
+		/* Now determine whether rounding or chopping occurs, by adding a bit
 		   less than beta/2 and a bit more than beta/2 to a. */
 
 		b = (double) lbeta;
@@ -1130,7 +1131,7 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 
 		/* Now find the mantissa, t. It should be the integer part of log to
 		   the base beta of a, however it is safer to determine t by
-		   powering.  So we find t as the smallest positive integer for which 
+		   powering.  So we find t as the smallest positive integer for which
 		   fl( beta**t + 1.0 ) = 1.0. */
 
 		lt = 0;
@@ -1162,7 +1163,7 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, double *rmin, long *emax,
 	double *rmax)
 {
-	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ. 
+	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
 
@@ -1189,13 +1190,13 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 	   occurs.
 
 	   RMIN (output) DOUBLE PRECISION The smallest normalized number for the
-	   machine, given by BASE**( EMIN - 1 ), where BASE is the floating point 
+	   machine, given by BASE**( EMIN - 1 ), where BASE is the floating point
 	   value of BETA.
 
 	   EMAX (output) INTEGER The maximum exponent before overflow occurs.
 
 	   RMAX (output) DOUBLE PRECISION The largest positive number for the
-	   machine, given by BASE**EMAX * ( 1 - EPS ), where BASE is the floating 
+	   machine, given by BASE**EMAX * ( 1 - EPS ), where BASE is the floating
 	   point value of BETA.
 
 	   Further Details ===============
@@ -1296,7 +1297,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 			leps = a;
 		}
 
-		/* Computation of EPS complete. Now find EMIN.  Let A = + or - 1, and 
+		/* Computation of EPS complete. Now find EMIN.  Let A = + or - 1, and
 		   + or - (1 + BASE**(-3)). Keep dividing A by BETA until (gradual)
 		   underflow occurs. This is detected when we cannot recover the
 		   previous A. */
@@ -1397,7 +1398,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 
 		ieee = ieee || lieee1;
 
-		/* Compute RMIN by successive division by BETA. We could compute RMIN 
+		/* Compute RMIN by successive division by BETA. We could compute RMIN
 		   as BASE**( EMIN - 1 ), but some machines underflow during this
 		   computation. */
 
@@ -1448,7 +1449,7 @@ static double dlamc3_ (double *a, double *b)
 
 static int dlamc4_ (long *emin, double *start, long *base)
 {
-	/* -- LAPACK auxiliary routine (version 2.0) -- Univ. of Tennessee, Univ. 
+	/* -- LAPACK auxiliary routine (version 2.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
 
@@ -1461,7 +1462,7 @@ static int dlamc4_ (long *emin, double *start, long *base)
 	   EMIN (output) EMIN The minimum exponent before (gradual) underflow,
 	   computed by
 
-	   setting A = START and dividing by BASE until the previous A can not be 
+	   setting A = START and dividing by BASE until the previous A can not be
 	   recovered.
 
 	   START (input) DOUBLE PRECISION The starting point for determining
@@ -1529,7 +1530,7 @@ static int dlamc4_ (long *emin, double *start, long *base)
 
 static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, double *rmax)
 {
-	/* 
+	/*
 	   First compute LEXP and UEXP, two powers of 2 that bound abs(EMIN). We
 	   then assume that EMAX + abs(EMIN) will sum approximately to the bound
 	   that is closest to abs(EMIN). (EMAX is the exponent of the required
@@ -1583,7 +1584,7 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 		expsum = uexp << 1;
 	}
 
-	/* EXPSUM is the exponent range, approximately equal to EMAX - EMIN + 1 . 
+	/* EXPSUM is the exponent range, approximately equal to EMAX - EMIN + 1 .
 	 */
 
 	*emax = expsum + *emin - 1;
@@ -1600,7 +1601,7 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 		   used in the representation of numbers, which is possible, (e.g.
 		   Cray machines) or the mantissa has an implicit bit, (e.g. IEEE
 		   machines, Dec Vax machines), which is perhaps the most likely. We
-		   have to assume the last alternative. If this is true, then we need 
+		   have to assume the last alternative. If this is true, then we need
 		   to reduce EMAX by one because there must be some way of
 		   representing zero in an implicit-bit system. On machines like
 		   Cray, we are reducing EMAX by one unnecessarily. */
@@ -3684,7 +3685,7 @@ long NUMblas_idamax (long *n, double *dx, long *incx)
 
 	/* finds the index of element having max. absolute value. jack
 	   dongarra, linpack, 3/11/78. modified 3/93 to return if incx .le. 0.
-	   modified 12/3/93, array(1) declarations changed to array(*) Parameter 
+	   modified 12/3/93, array(1) declarations changed to array(*) Parameter
 	   adjustments */
 	--dx;
 	/* Function Body */

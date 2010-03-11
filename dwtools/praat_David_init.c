@@ -59,6 +59,7 @@
  djmw 20090927 TableOfReal_drawRow(s)asHistogram
  djmw 20091023 Sound_draw_selectedIntervals
  djmw 20091230 Covariance_and_TableOfReal_mahalanobis
+ djmw 20100212 Standardize on Window length
 */
 
 #include "praat.h"
@@ -3311,7 +3312,7 @@ DO
 END
 
 FORM (Sound_to_BarkFilter, L"Sound: To BarkFilter", L"Sound: To BarkFilter...")
-	POSITIVE (L"Analysis window duration (s)", L"0.015")
+	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
 	POSITIVE (L"Position of first filter (bark)", L"1.0")
@@ -3319,13 +3320,13 @@ FORM (Sound_to_BarkFilter, L"Sound: To BarkFilter", L"Sound: To BarkFilter...")
 	REAL (L"Maximum frequency (bark)", L"0");
 	OK
 DO
-	EVERY_TO (Sound_to_BarkFilter (OBJECT, GET_REAL (L"Analysis window duration"),
+	EVERY_TO (Sound_to_BarkFilter (OBJECT, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")))
 END
 
 FORM (Sound_to_FormantFilter, L"Sound: To FormantFilter", L"Sound: To FormantFilter...")
-	POSITIVE (L"Analysis window duration (s)", L"0.015")
+	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
 	POSITIVE (L"Position of first filter (Hz)", L"100.0")
@@ -3337,7 +3338,7 @@ FORM (Sound_to_FormantFilter, L"Sound: To FormantFilter", L"Sound: To FormantFil
 	REAL (L"Maximum pitch (Hz)", L"600.0")
 	OK
 DO
-	EVERY_TO (Sound_to_FormantFilter (OBJECT, GET_REAL (L"Analysis window duration"),
+	EVERY_TO (Sound_to_FormantFilter (OBJECT, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters"),
 		GET_REAL (L"Relative bandwidth"), GET_REAL (L"Minimum pitch"),
@@ -3345,7 +3346,7 @@ DO
 END
 
 FORM (Sound_to_MelFilter, L"Sound: To MelFilter", L"Sound: To MelFilter...")
-	POSITIVE (L"Analysis window duration (s)", L"0.015")
+	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
 	POSITIVE (L"Position of first filter (mel)", L"100.0")
@@ -3353,7 +3354,7 @@ FORM (Sound_to_MelFilter, L"Sound: To MelFilter", L"Sound: To MelFilter...")
 	REAL (L"Maximum frequency (mel)", L"0.0");
 	OK
 DO
-	EVERY_TO (Sound_to_MelFilter (OBJECT, GET_REAL (L"Analysis window duration"),
+	EVERY_TO (Sound_to_MelFilter (OBJECT, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")))
 END
@@ -3446,7 +3447,7 @@ END
 
 FORM (Sound_to_Pitch_SPINET, L"Sound: To SPINET", L"Sound: To SPINET...")
 	POSITIVE (L"Time step (s)", L"0.005")
-	POSITIVE (L"Analysis window duration (s)", L"0.040")
+	POSITIVE (L"Window length (s)", L"0.040")
 	LABEL (L"", L"Gammatone filter bank")
 	POSITIVE (L"Minimum filter frequency (Hz)", L"70.0")
 	POSITIVE (L"Maximum filter frequency (Hz)", L"5000.0")
@@ -3459,7 +3460,7 @@ DO
 	double fmax = GET_REAL (L"Maximum filter frequency");
 	REQUIRE (fmax > fmin, L"Maximum frequency must be larger than minimum frequency.")
 	EVERY_TO (Sound_to_Pitch_SPINET (OBJECT, GET_REAL (L"Time step"),
-		GET_REAL (L"Analysis window duration"),
+		GET_REAL (L"Window length"),
 		fmin, fmax, GET_INTEGER (L"Number of filters"),
 		GET_REAL (L"Ceiling"), GET_INTEGER (L"Max. number of candidates")))
 END

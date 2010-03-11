@@ -1,6 +1,6 @@
 /* KlattGrid.c
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
   djmw 20090311 Add RealTier_valuesInRange
   djmw 20090312 Add klattGrid_addFormantAndBandwidthTier
   djmw 20090326 Changed DBSPL_to_A into DB_to_A for bypass and formant amplitudes.
+  djmw 20100223 Removed gsl dependency
 */
 
 #include "FormantGrid_extensions.h"
@@ -35,7 +36,6 @@
 #include "PitchTier_to_Sound.h"
 #include "PitchTier_to_PointProcess.h"
 #include "NUM2.h"
-#include "gsl_poly.h"
 #include "Sound_to_Formant.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
@@ -79,12 +79,12 @@ Sound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency);
 
 /*	Amplitude scaling: maximum amplitude (-1,+1) corresponds to 91 dB */
 
-static double NUMinterpolateLinear (double x1, double y1, double x2, double y2, double x)
+/*static double NUMinterpolateLinear (double x1, double y1, double x2, double y2, double x)
 {
 	if (y1 == y2) return y1;
 	if (x1 == x2) return NUMundefined;
 	return (y2 - y1) * (x - x1) / (x2 - x1) + y1;
-}
+}*/
 
 static void rel_to_abs (double *w, double *ws, long n, double d)
 {
@@ -117,7 +117,7 @@ static int RealTier_valuesInRange (I, double min, double max)
 	}
 	return 1;
 }
-
+/*
 static RealTier RealTier_copyInterval (I, double t1, double t2, int interpolateBorders)
 {
 	iam (RealTier);
@@ -159,7 +159,7 @@ end:
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }
-
+*/
 static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double maximumPeriod)
 {
 	double period = NUMundefined;
@@ -347,7 +347,7 @@ static Sound _Sound_diff (Sound me, int scale)
 	return thee;
 }
 
-static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
+/*static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
 {
 	double pval = 0, dx = my dx;
 	for (long i = 1; i <= my nx; i++)
@@ -356,7 +356,7 @@ static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
 		my z[1][i] += (val - pval) / dx; // dx makes amplitude of dz/dt independent of sampling.
 		pval = val;
 	}
-}
+}*/
 
 typedef struct connections { long numberOfConnections; double *x, *y;} *connections;
 
@@ -864,7 +864,7 @@ static double get_collisionPoint_x (double n, double m, double collisionPhase)
 	{
 		double b = m - a;
 		double c = - n, y1, y2;
-		int nroots = gsl_poly_solve_quadratic (a, b, c, &y1, &y2);
+		long nroots = NUMsolveQuadraticEquation (a, b, c, &y1, &y2);
 		if (nroots == 2) y = y2;
 		else if (nroots == 1) y = y1;
 	}

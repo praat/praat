@@ -1,9 +1,11 @@
 #!/usr/bin/python
 #
-# djmw 20080323 
+# djmw 20080323
 #
 #  Makes the directory structure of gsl flat by renaming all files and references by #include
 #  E.g. the file 'd/a.c' will be renamed as: gsl_d__a.c
+# djmw 20100223 New makefile layout
+#
 
 import os, sys, glob, re, time, shutil
 
@@ -18,10 +20,10 @@ gslconfigh = 'gsl__config.h'
 
 print >> log, date
 
-dirs = ['blas', 'block', 'bspline', 'cblas', 'cdf', 'combination', 'complex', 'const', 
+dirs = ['blas', 'block', 'bspline', 'cblas', 'cdf', 'combination', 'complex', 'const',
 	'deriv', 'dht', 'diff', 'doc', 'eigen', 'err', 'fft', 'fit', 'gsl', 'histogram', 'ieee-utils',
-	'integration', 'linalg', 'matrix', 'min', 'monte', 'multifit', 'multimin', 
-	'multiroots', 'ntuple', 'ode-initval', 'permutation', 'poly', 'qrng', 'randist', 'rng', 'roots', 
+	'integration', 'linalg', 'matrix', 'min', 'monte', 'multifit', 'multimin',
+	'multiroots', 'ntuple', 'ode-initval', 'permutation', 'poly', 'qrng', 'randist', 'rng', 'roots',
 	'siman', 'sort', 'specfunc', 'statistics', 'sum', 'sys', 'vector', 'wavelet']
 
 # left out: utils test
@@ -32,7 +34,7 @@ iname = 3
 icount = 4
 ihrep = 5
 # per file: [type inmakefile indist renamed_as ntimesincluded headerreplacement]
-# type = c h 
+# type = c h
 
 def write_to_file (todir, basename, multilinetext):
 	f = open (todir + basename, 'w')
@@ -45,7 +47,7 @@ def dict_from_list (dict, dir, list, type = 'c', inmake = 'y', indist = 'y'):
 		if dir == 'gsl':
 			newname = item
 		dict[dir + '/' + item] = [type, inmake, indist, newname, 0 , '']
-		
+
 def get_all_files (dirs):
 	files = {'./config.h': ['h', 'n', 'y', gslconfigh, 0, ''], \
 		'./templates_on.h':['h', 'n', 'y', 'templates_on.h', 0, ''], \
@@ -59,7 +61,7 @@ def get_all_files (dirs):
 def quoted_include_get_newname (dict, key):
 	if dict.has_key(key):
 		dict[key][imake] = 'n'
-		if dict[key][ihrep]: 
+		if dict[key][ihrep]:
 			newname = dict[key][ihrep]
 			dict['gsl/' + newname][icount] += 1
 			print >> log, 'Corrected an include header error ' + key  + ' ' + newname
@@ -115,7 +117,7 @@ def process_files (dict):
 			write_to_file (todir, file_out_name, output_lines)
 		else:
 			dict[key][imake] = 'n'
-	return dict	
+	return dict
 
 def gen_make_objects (dict, suffix, endofline):
 	make_objects = ''
@@ -156,14 +158,17 @@ include ../makefile.defs
 
 CFLAGS = -I ../sys -I ../dwsys
 
+OBJECTS = """ + make_objects + """
+
+.PHONY: all clean
+
 all: libgsl.a
 
 clean:
-	rm *.o
+	$(RM) $(OBJECTS)
+	$(RM) libgsl.a
 
-OBJECTS = """ + make_objects + """
-
-$(OBJECTS): *.h ../sys/*.h  ../dwsys/*.h	
+$(OBJECTS): *.h ../sys/*.h  ../dwsys/*.h
 
 libgsl.a: $(OBJECTS)
 	touch libgsl.a
@@ -171,7 +176,7 @@ libgsl.a: $(OBJECTS)
 	ar cq libgsl.a $(OBJECTS)
 	$(RANLIB) libgsl.a
 
-# end of Makefile	
+# end of Makefile
 """
 	write_to_file (todir, 'Makefile', makefile)
 
@@ -189,7 +194,7 @@ def preprocessing (current_gsl_version):
 			print >> log, '----------- gsl__config.h created ------------------'
 	copy_file (fromdir,todir, 'templates_on.h')
 	copy_file (fromdir,todir, 'templates_off.h')
-	print >> log, """	
+	print >> log, """
 Post/Preprocesing
 The layout of config.h/gsl__config.h varies from one version of gsl to the other
 Do it by hand in """ + todir + """gsl__config.h:
@@ -244,7 +249,7 @@ Replace the #define "haves" with
 #else
   #define HAVE_DECL_FEENABLEEXCEPT 0
 #endif
-# 3.Inlines: 
+# 3.Inlines:
 #undef HAVE_INLINE
 #ifdef sgi
   #define inline
@@ -259,30 +264,30 @@ Replace the #define "haves" with
 #else
   #define HAVE_DECL_ISNAN 0
 #endif
-# 4. 
+# 4.
 #if defined(linux)
   #define HAVE_GNUX86_IEEE_INTERFACE 1
 #endif
- #undef HAVE_GNUSPARC_IEEE_INTERFACE 
- #undef HAVE_GNUM68K_IEEE_INTERFACE 
- #undef HAVE_GNUPPC_IEEE_INTERFACE 
- #undef HAVE_SUNOS4_IEEE_INTERFACE 
- #undef HAVE_SOLARIS_IEEE_INTERFACE 
- #undef HAVE_HPUX11_IEEE_INTERFACE 
- #undef HAVE_HPUX_IEEE_INTERFACE 
- #undef HAVE_TRU64_IEEE_INTERFACE 
- #undef HAVE_IRIX_IEEE_INTERFACE 
- #undef HAVE_AIX_IEEE_INTERFACE 
- #undef HAVE_FREEBSD_IEEE_INTERFACE 
- #undef HAVE_OS2EMX_IEEE_INTERFACE 
- #undef HAVE_NETBSD_IEEE_INTERFACE 
- #undef HAVE_OPENBSD_IEEE_INTERFACE 
- #undef HAVE_DARWIN_IEEE_INTERFACE 
+ #undef HAVE_GNUSPARC_IEEE_INTERFACE
+ #undef HAVE_GNUM68K_IEEE_INTERFACE
+ #undef HAVE_GNUPPC_IEEE_INTERFACE
+ #undef HAVE_SUNOS4_IEEE_INTERFACE
+ #undef HAVE_SOLARIS_IEEE_INTERFACE
+ #undef HAVE_HPUX11_IEEE_INTERFACE
+ #undef HAVE_HPUX_IEEE_INTERFACE
+ #undef HAVE_TRU64_IEEE_INTERFACE
+ #undef HAVE_IRIX_IEEE_INTERFACE
+ #undef HAVE_AIX_IEEE_INTERFACE
+ #undef HAVE_FREEBSD_IEEE_INTERFACE
+ #undef HAVE_OS2EMX_IEEE_INTERFACE
+ #undef HAVE_NETBSD_IEEE_INTERFACE
+ #undef HAVE_OPENBSD_IEEE_INTERFACE
+ #undef HAVE_DARWIN_IEEE_INTERFACE
  #undef HAVE_DARWIN86_IEEE_INTERFACE
- 
+
  #define GSL_DISABLE_DEPRECATED 1
 
-By hand: Corrected in the fromdir/specfun/coupling.c: 
+By hand: Corrected in the fromdir/specfun/coupling.c:
 #if ! defined (GSL_DISABLE_DEPRECATED)
   gsl_sf_coupling_6j_INCORRECT_e ....
 #endif
@@ -306,18 +311,18 @@ def post_processing (current_gsl_version):
 	if current_gsl_version == '1.10':
 		here = todir + '/'
 		correct_missing_prototypes (here + 'gsl_matrix_complex_double.h', 235, \
-			'int gsl_matrix_complex_isnonneg (const gsl_matrix_complex * m);')	
+			'int gsl_matrix_complex_isnonneg (const gsl_matrix_complex * m);')
 		correct_missing_prototypes (here + 'gsl_matrix_complex_float.h', 235, \
-			'int gsl_matrix_complex_float_isnonneg (const gsl_matrix_complex_float * m);')	
+			'int gsl_matrix_complex_float_isnonneg (const gsl_matrix_complex_float * m);')
 		correct_missing_prototypes (here + 'gsl_matrix_complex_long_double.h', 235, \
-			'int gsl_matrix_complex_long_double_isnonneg (const gsl_matrix_complex_long_double * m);')	
+			'int gsl_matrix_complex_long_double_isnonneg (const gsl_matrix_complex_long_double * m);')
 		correct_missing_prototypes (here + 'gsl_vector_complex_double.h', 181, \
-			'int gsl_vector_complex_isnonneg (const gsl_vector_complex * v);')	
+			'int gsl_vector_complex_isnonneg (const gsl_vector_complex * v);')
 		correct_missing_prototypes (here + 'gsl_vector_complex_float.h', 181, \
-			'int gsl_vector_complex_float_isnonneg (const gsl_vector_complex_float * v);')	
+			'int gsl_vector_complex_float_isnonneg (const gsl_vector_complex_float * v);')
 		correct_missing_prototypes (here + 'gsl_vector_complex_long_double.h', 181, \
-			'int gsl_vector_complex_long_double_isnonneg (const gsl_vector_complex_long_double * v);')	
-	
+			'int gsl_vector_complex_long_double_isnonneg (const gsl_vector_complex_long_double * v);')
+
 def remove_double_header_files (dict):
 	num = 0
 	for key,val in dict.items():
@@ -337,7 +342,7 @@ def remove_double_header_files (dict):
 				dict[key][ihrep] = base
 				print >> log, 'Also in gsl/: ' + key
 	return num
-		
+
 def exclude_test_files (dict):
 	starts_with_test = re.compile (r'^test')
 	for key in dict.keys ():
@@ -356,7 +361,7 @@ def print_file_selection (dict, type = 'c', inmake = 'n', indist = 'y'):
 	for key in keyss:
 		print >> log, '%3d %s' % (selection[key], key)
 	return len (keyss)
-	
+
 preprocessing (version)
 files = get_all_files (dirs)
 exclude_test_files (files)

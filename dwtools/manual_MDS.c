@@ -1,6 +1,6 @@
 /* manual_MDS.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ static void drawLetterRConfigurationExample (Graphics g)
 	Configuration me = Configuration_createLetterRExample (1);
 	if (me == NULL) return;
 	Graphics_setWindow (g, -6, 4, -7, 5);
-	Configuration_draw (me, g, 1, 2, -6, 4, -7, 5, 0, 1, L"", 1); 
+	Configuration_draw (me, g, 1, 2, -6, 4, -7, 5, 0, 1, L"", 1);
 	forget (me);
 }
 
@@ -56,7 +56,7 @@ static void drawLetterRShepard (Graphics g)
 		Configuration c = Configuration_createLetterRExample (2);
 		if (c != NULL)
 		{
-			Dissimilarity_Configuration_drawShepardDiagram 
+			Dissimilarity_Configuration_drawShepardDiagram
 				(d, c, g, 0, 200, 0, 2.2, 1, L"+", 1);
 			forget (c);
 		}
@@ -72,7 +72,7 @@ static void drawLetterRRegression (Graphics g)
 		Configuration c = Configuration_createLetterRExample (2);
 		if (c != NULL)
 		{
-			Dissimilarity_Configuration_drawMonotoneRegression 
+			Dissimilarity_Configuration_drawMonotoneRegression
 				(d, c, g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, L"+", 1);
 			forget (c);
 		}
@@ -85,7 +85,7 @@ static void drawCarrollWishConfigurationExample (Graphics g)
 	Configuration me = Configuration_createCarrollWishExample ();
 	if (me == NULL) return;
 	Graphics_setWindow (g, -2, 2, -2, 2);
-	Configuration_draw (me, g, 1, 2, -2, 2, -2, 2, 0, 1, L"", 1); 
+	Configuration_draw (me, g, 1, 2, -2, 2, -2, 2, 0, 1, L"", 1);
 	forget (me);
 }
 
@@ -263,14 +263,14 @@ INTRO (L"Changes all coordinates of the points #%x__%i_ in the @Configuration ac
 LIST_ITEM (L"%x__%ij_ = randomUniform (-1, 1)")
 MAN_END
 
-MAN_BEGIN (L"Configuration: Rotate...", L"djmw", 20040407)
+MAN_BEGIN (L"Configuration: Rotate...", L"djmw", 20100303)
 INTRO (L"Rotates the @Configuration in a plane around the origin.")
 NORMAL (L"Settings")
 TAG (L"%%Dimension 1%, %%Dimension 2%")
-DEFINITION (L"the dimensions that span the plane.")
-TAG (L"%Angle")
-DEFINITION (L"the clockwise rotation angle in degrees w.r.t. the direction vector "
-	"of the lowest of the two dimensions.")
+DEFINITION (L"the dimensions that span the plane. The order of dimension 1 and dimension 2 is not important: "
+	"the lowest number always determines the first dimension.")
+TAG (L"%%Angle%,")
+DEFINITION (L"the counter-clockwise rotation angle in degrees.")
 MAN_END
 
 MAN_BEGIN (L"Configuration: Rotate (pc)", L"djmw", 19971201)
@@ -514,7 +514,7 @@ NORMAL (L"The %%congruence coefficient% is a better measure of the similarity "
 	"go wrong with correlation coefficients: two configurations #X and #Y with three points each, have "
 	"distances %d__12_(#X) = 1, %d__13_(#X) = 2, %d__23_(#X) = 3 and "
 	"%d__12_(#Y) = 2, %d__13_(#Y) = 3, %d__23_(#Y) = 4. "
-	"These distances have a correlation coefficient of 1. " 
+	"These distances have a correlation coefficient of 1. "
 	"However, in #X the three points lie on a straight line and in #Y the "
 	"points form a triangle. This unwanted situation occurs because "
 	"in the calculation of the correlation coefficient the mean is subtracted "
@@ -526,7 +526,7 @@ NORMAL (L"The %%congruence coefficient% is a better measure of the similarity "
 	"not with respect to the centroid position (the \"mean\").")
 NORMAL (L"For further information on how well one number can assess the "
 	"similarity between two configurations see @@Borg & Groenen (1997)@ "
-	"section 19.7.")	
+	"section 19.7.")
 MAN_END
 
 MAN_BEGIN (L"ContingencyTable", L"djmw", 19971216)
@@ -1084,7 +1084,7 @@ INTRO (L"A command that creates a @Configuration object from a @Dissimilarity "
 	"configuration for the minimization process.")
 MAN_END
 
-MAN_BEGIN (L"Dissimilarity & Configuration: To Configuration (i-spline mds)...", 
+MAN_BEGIN (L"Dissimilarity & Configuration: To Configuration (i-spline mds)...",
 	L"djmw", 19980119)
 INTRO (L"A command that creates a @Configuration object from a @Dissimilarity "
 	"object. The selected Configuration object serves as a starting "
@@ -1417,7 +1417,7 @@ MAN_END
 
 MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20010409)
 INTRO (L"This tutorial describes how you can use P\\s{RAAT} to "
-	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")	
+	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")
 NORMAL (L"MDS helps us to represent %dissimilarities between objects as "
 	"%distances in a %%Euclidean space%. In effect, the more dissimilar two "
 	"objects are, the larger the distance between the objects in the Euclidean "

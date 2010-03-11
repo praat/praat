@@ -23,12 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100307)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100311)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.29# (11 March 2010)")
+LIST_ITEM (L"\\bu Full support for unicode values above 0xFFFF on Macintosh.")
+NORMAL (L"##5.1.28# (10 March 2010)")
+LIST_ITEM (L"\\bu TextGrid window: removed a recently introduced bug that could cause Praat to crash when inserting a boundary.")
 NORMAL (L"##5.1.27# (7 March 2010)")
 LIST_ITEM (L"\\bu Table: Wilcoxon rank sum test.")
-LIST_ITEM (L"\\bu Unicode: support for unicode values above 0xFFFF.")
 LIST_ITEM (L"\\bu Logistic regression: corrected a bug by which a boundary would sometimes not be drawn.")
 NORMAL (L"##5.1.26# (25 February 2010)")
 LIST_ITEM (L"\\bu Experimental GTK version with the help of Franz Brau\\sse.")

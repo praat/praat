@@ -1,6 +1,6 @@
 /* praat_LPC_init.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  djmw 20070902 Melder_error<1...>
  djmw 20071011 REQUIRE requires L"".
  djmw 20080313 Cepstrum_formula
+ djmw 20100212 Analysis window length is now "Window length"
 */
 
 #include <math.h>
@@ -122,7 +123,7 @@ DO
 	NEW (Cepstrumc_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"),
 		GET_REAL (L"Log energy weight"), GET_REAL (L"Regression weight"),
 		GET_REAL (L"Regression weight log energy"),
-		GET_REAL (L"Window for regression coefficients"), 
+		GET_REAL (L"Window for regression coefficients"),
 		GET_INTEGER (L"Match begin positions"), GET_INTEGER(L"Match end positions"),
 		GET_INTEGER(L"Slope constraints")))
 END
@@ -167,7 +168,7 @@ FORM (LPC_drawGain, L"LPC: Draw gain", L"LPC: Draw gain...")
     BOOLEAN (L"Garnish", 1)
 	OK
 DO
-    EVERY_DRAW (LPC_drawGain (OBJECT, GRAPHICS, 
+    EVERY_DRAW (LPC_drawGain (OBJECT, GRAPHICS,
     	GET_REAL (L"From time"), GET_REAL (L"To time"),
     	GET_REAL (L"Minimum gain"), GET_REAL (L"Maximum gain"),
 		GET_INTEGER(L"Garnish")))
@@ -270,7 +271,7 @@ static void Sound_to_LPC_addCommonFields (void *dia) {
 	LABEL (L"", L"Click Help for more details.")
 	LABEL (L"", L"")
 	NATURAL (L"Prediction order", L"16")
-	POSITIVE (L"Analysis window duration (s)", L"0.025")
+	POSITIVE (L"Window length (s)", L"0.025")
 	POSITIVE (L"Time step (s)", L"0.005")
 	REAL (L"Pre-emphasis frequency (Hz)", L"50.0")
 }
@@ -281,7 +282,7 @@ static int Sound_to_LPC_checkCommonFields (void * dia,
 	double *preemphasisFrequency)
 {
 	*predictionOrder = GET_INTEGER (L"Prediction order");
-	*analysisWindowDuration = GET_REAL (L"Analysis window duration");
+	*analysisWindowDuration = GET_REAL (L"Window length");
 	*timeStep = GET_REAL (L"Time step");
 	*preemphasisFrequency = GET_REAL (L"Pre-emphasis frequency");
 	if (*preemphasisFrequency < 0.0) {
@@ -340,7 +341,7 @@ END
 
 FORM (Sound_to_MFCC, L"Sound: To MFCC", L"Sound: To MFCC...")
 	NATURAL (L"Number of coefficients", L"12")
-	POSITIVE (L"Analysis window duration (s)", L"0.015")
+	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
 	POSITIVE (L"Position of first filter (mel)", L"100.0")
@@ -350,8 +351,8 @@ FORM (Sound_to_MFCC, L"Sound: To MFCC", L"Sound: To MFCC...")
 DO
 	long p = GET_INTEGER (L"Number of coefficients");
 	REQUIRE (p < 25, L"Number of coefficients must be < 25.")
-	EVERY_TO (Sound_to_MFCC (OBJECT, p, GET_REAL (L"Analysis window duration"),
-		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"), 
+	EVERY_TO (Sound_to_MFCC (OBJECT, p, GET_REAL (L"Window length"),
+		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")))
 END
 
@@ -377,7 +378,7 @@ DIRECT (LPC_and_Sound_filterInverse)
 END
 
 FORM (LPC_and_Sound_to_LPC_robust, L"Robust LPC analysis", L"LPC & Sound: To LPC (robust)...")
-	POSITIVE (L"Analysis width (s)", L"0.025")
+	POSITIVE (L"Window length (s)", L"0.025")
 	POSITIVE (L"Pre-emphasis frequency (Hz)", L"50.0")
 	POSITIVE (L"Number of std. dev.", L"1.5")
 	NATURAL (L"Maximum number of iterations", L"5")
@@ -386,9 +387,9 @@ FORM (LPC_and_Sound_to_LPC_robust, L"Robust LPC analysis", L"LPC & Sound: To LPC
 	OK
 DO
 	Sound sound = ONLY (classSound);
-	LPC lpc = ONLY (classLPC);	
+	LPC lpc = ONLY (classLPC);
 	if (! praat_new2 (LPC_and_Sound_to_LPC_robust (lpc, sound,
-		GET_REAL (L"Analysis width"), GET_REAL (L"Pre-emphasis frequency"), 
+		GET_REAL (L"Window length"), GET_REAL (L"Pre-emphasis frequency"),
 		GET_REAL (L"Number of std. dev."), GET_INTEGER (L"Maximum number of iterations"),
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Variable location")),
 			lpc -> name, L"_r")) return 0;
@@ -398,7 +399,7 @@ void praat_uvafon_LPC_init (void);
 void praat_uvafon_LPC_init (void)
 {
 	Thing_recognizeClassesByName (classCepstrumc, classLPC, classLFCC, classMFCC, NULL);
-	
+
 	praat_addAction1 (classCepstrum, 0, L"Cepstrum help", 0, 0, DO_Cepstrum_help);
 	praat_addAction1 (classCepstrum, 0, L"Draw...", 0, 0, DO_Cepstrum_draw);
 	praat_addAction1 (classCepstrum, 0, L"Formula...", 0, 0, DO_Cepstrum_formula);
@@ -411,14 +412,14 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classCepstrumc, 2, L"To DTW...", 0, 0, DO_Cepstrumc_to_DTW);
 	praat_addAction1 (classCepstrumc, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, L"To Matrix", 0, 0, DO_Cepstrumc_to_Matrix);
-	
+
 	praat_addAction1 (classFormant, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, L"To LPC...", 0, 0, DO_Formant_to_LPC);
-	
+
 	praat_addAction1 (classLFCC, 0, L"LFCC help", 0, 0, DO_LFCC_help);
 	praat_CC_init (classLFCC);
 	praat_addAction1 (classLFCC, 0, L"To LPC...", 0, 0, DO_LFCC_to_LPC);
-	
+
 	praat_addAction1 (classLPC, 0, L"LPC help", 0, 0, DO_LPC_help);
 	praat_addAction1 (classLPC, 0, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction1 (classLPC, 0, L"Draw gain...", 0, 1, DO_LPC_drawGain);
@@ -428,7 +429,7 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classLPC, 1, L"Get sampling interval", 0, 1, DO_LPC_getSamplingInterval);
 	praat_addAction1 (classLPC, 1, L"Get number of coefficients...", 0, 1, DO_LPC_getNumberOfCoefficients);
 	praat_addAction1 (classLPC, 0, L"Extract", 0, 0, 0);
-	
+
 	praat_addAction1 (classLPC, 0, L"To Spectrum (slice)...", 0, 0, DO_LPC_to_Spectrum);
 	praat_addAction1 (classLPC, 0, L"To VocalTract (slice)...", 0, 0, DO_LPC_to_VocalTract);
 	praat_addAction1 (classLPC, 0, L"To Polynomial (slice)...", 0, 0, DO_LPC_to_Polynomial);
@@ -438,7 +439,7 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classLPC, 0, L"To Formant (keep all)", 0, 0, DO_LPC_to_Formant_keep_all);
 	praat_addAction1 (classLPC, 0, L"To LFCC...", 0, 0, DO_LPC_to_LFCC);
 	praat_addAction1 (classLPC, 0, L"To Spectrogram...", 0, 0, DO_LPC_to_Spectrogram);
-	
+
 	praat_addAction2 (classLPC, 1, classSound, 1, L"Analyse", 0, 0, 0);
 	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter...", 0, 0, DO_LPC_and_Sound_filter);
 	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter (inverse)", 0, 0, DO_LPC_and_Sound_filterInverse);
@@ -453,7 +454,7 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw", 0, DO_VocalTract_getLength);
 
 	INCLUDE_MANPAGES (manual_LPC_init)
-	
+
 }
 
 /* End of file praat_LPC_init.c */

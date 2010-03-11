@@ -1,6 +1,6 @@
 /* Sound_extensions.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@
 #include "Intensity_extensions.h"
 #include "Sound_extensions.h"
 #include "Sound_and_Spectrum.h"
+#include "Spectrum_extensions.h"
 #include "Sound_to_Intensity.h"
 #include "Sound_to_Pitch.h"
 #include "Vector.h"

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20100107 Latest modification.
+ djmw 20100223 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -508,6 +508,13 @@ int NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolera
 	Returns a [1..nc][1..nr] matrix
 */
 
+long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);
+/*
+	Finds the real roots of ax^2 + bx + c = 0.
+	The number of real roots is returned and their locations in x1 and x2.
+	If only one root found it is stored in x1.
+	If no roots found then x1 and x2 will not be changed.
+*/
 
 int NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, double *x);
 /*
