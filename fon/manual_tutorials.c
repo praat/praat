@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100311)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100325)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.30# (25 March 2010)")
+//LIST_ITEM (L"\\bu @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@.")
+LIST_ITEM (L"\\bu Scripting: $$createDirectory ()$ can now work with absolute paths.")
+LIST_ITEM (L"\\bu PointProcess: made it impossible to add a point where there is already a point.")
 NORMAL (L"##5.1.29# (11 March 2010)")
 LIST_ITEM (L"\\bu Full support for unicode values above 0xFFFF on Macintosh.")
 NORMAL (L"##5.1.28# (10 March 2010)")
@@ -1392,7 +1396,7 @@ MAN_BEGIN (L"File menu", L"ppgb", 20021204)
 INTRO (L"One of the menus in all @editors, in the @manual, and in the @@Picture window@.")
 MAN_END
 
-MAN_BEGIN (L"Filtering", L"ppgb", 20080427)
+MAN_BEGIN (L"Filtering", L"ppgb", 20100324)
 INTRO (L"This tutorial describes the use of filtering techniques in P\\s{RAAT}. "
 	"It assumes you are familiar with the @Intro.")
 ENTRY (L"Frequency-domain filtering")
@@ -1422,7 +1426,7 @@ LIST_ITEM (L"\\bu @@Sound: De-emphasize (in-line)...@")
 ENTRY (L"Convolution")
 NORMAL (L"A Finite Impulse Response (FIR) filter can be described as a sampled sound. "
 	"Filtering with such a filter amounts to a %#convolution of the original sound and the filter:")
-LIST_ITEM (L"\\bu @@Sounds: Convolve@")
+LIST_ITEM (L"\\bu @@Sounds: Convolve...@")
 ENTRY (L"Described elsewhere")
 NORMAL (L"Described in the @@Source-filter synthesis@ tutorial:")
 LIST_ITEM (L"\\bu @@Sound & Formant: Filter@")
@@ -2797,7 +2801,7 @@ NORMAL (L"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20050713)
+MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20100324)
 ENTRY (L"1. How to extract the %filter from an existing speech sound")
 NORMAL (L"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -2900,10 +2904,12 @@ CODE (L"#select Sound source")
 CODE (L"#plus FormantGrid filter")
 CODE (L"Filter")
 NORMAL (L"Finally, you could just know the %%impulse response% of your filter (in a @Sound object). "
-	"You then select both Sound objects, and choose @@Sounds: Convolve@:")
+	"You then select both Sound objects, and choose @@Sounds: Convolve...@:")
 CODE (L"#select Sound source")
 CODE (L"#plus Sound filter")
-CODE (L"Convolve")
+CODE (L"Convolve... integral")
+NORMAL (L"As a last step, you may want to bring the resulting sound within the [-1; +1] range:")
+CODE (L"Scale peak... 0.99")
 ENTRY (L"4. How to manipulate the filter")
 NORMAL (L"You can hardly change the values in an @LPC object in a meaningful way: "
 	"you would have to manually change its rather opaque data with the help of @Inspect.")

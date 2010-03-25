@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2010/03/25
  */
 
 /* Sound inherits from Vector */
@@ -130,7 +130,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee);
 		result -> z [1] [i + my nx + round (silenceDuration / my dx)] == thy z [1] [i]
 */
  
-Sound Sounds_convolve (Sound me, Sound thee);
+Sound Sounds_convolve (Sound me, Sound thee, bool sum);
 /*
 	Function:
 		convolve two Sounds.
@@ -146,7 +146,7 @@ Sound Sounds_convolve (Sound me, Sound thee);
 			result -> z [1] [i] == result -> dx *
 				sum (j = 1..i, my z [1] [j] * thy z [1] [i - j + 1])
 */
-Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize);
+Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize);
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
 double Sound_getEnergy (Sound me, double xmin, double xmax);

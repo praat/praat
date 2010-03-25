@@ -808,16 +808,22 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 	sa. nLength = sizeof (SECURITY_ATTRIBUTES);
 	sa. lpSecurityDescriptor = NULL;
 	sa. bInheritHandle = FALSE;
-	swprintf (file. path, 260, L"%ls\\%ls", parent -> path, dirName);
+	if (wcschr (dirName, ':') || dirName [0] == '/' && dirName [1] == '/') {
+		swprintf (file. path, 260, L"%ls", dirName);   // absolute path
+	} else {
+		swprintf (file. path, 260, L"%ls/%ls", parent -> path, dirName);   // relative path
+	}
 	if (! CreateDirectoryW (file. path, & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   /* Ignore if directory already exists. */
 		return Melder_error3 (L"Cannot create directory ", MelderFile_messageName (& file), L".");
 	return 1;
 #else
 	structMelderFile file = { 0 };
-	if (parent -> path [0] == '/' && parent -> path [1] == '\0') {
-		swprintf (file. path, 260, L"/%ls", dirName);
+	if (dirName [0] == '/') {
+		swprintf (file. path, 260, L"%ls", dirName);   // absolute path
+	} else if (parent -> path [0] == '/' && parent -> path [1] == '\0') {
+		swprintf (file. path, 260, L"/%ls", dirName);   // relative path in root directory
 	} else {
-		swprintf (file. path, 260, L"%ls/%ls", parent -> path, dirName);
+		swprintf (file. path, 260, L"%ls/%ls", parent -> path, dirName);   // relative path
 	}
 	char utf8path [1000];
 	Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8path);

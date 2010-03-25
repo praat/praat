@@ -2352,12 +2352,19 @@ NORMAL (L"The string variable \"mean\\$ \" now contains the entire string \"150 
 NORMAL (L"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20090809)
+MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20100314)
 INTRO (L"You can read from and write to text files from a Praat script.")
 ENTRY (L"Reading a file")
 NORMAL (L"You can check the availability of a file for reading with the function")
-CODE (L"#fileReadable (fileName\\$ )")
-NORMAL (L"which returns #true if the file exists and can be read, and #false otherwise.")
+CODE (L"#fileReadable (%%fileName\\$ %)")
+NORMAL (L"which returns 1 (true) if the file exists and can be read, and 0 (false) otherwise. "
+	"Note that %%fileName\\$ % is taken relatively to the directory where the script is saved; "
+	"for instance, if your script is in the directory ##Paolo/project1#, then the file name "
+	"\"hello.wav\" refers to ##Paolo/project1/hello.wav#, the file name \"yesterday/hello.wav\" "
+	"refers to ##Paolo/project1/yesterday/hello.wav#, and the file name \"../project2/hello.wav\" "
+	"refers to ##Paola/project2/hello.wav# (\"..\" goes one directory up). "
+	"You can also use full path names such as \"C:/Documents and Settings/Paolo/project1/hello.wav\" "
+	"on Windows and \"/Users/Paolo/project1/hello.wav\" on the Mac.")
 NORMAL (L"To read the contents of an existing text file into a string variable, you use")
 CODE (L"text\\$  ##<# %fileName")
 NORMAL (L"where $$text\\$ $ is any string variable and $$%fileName$ is an unquoted string. "
@@ -2372,10 +2379,10 @@ NORMAL (L"However, this script will fail if the file ##height.inf# does not exis
 	"value in case the file does not exist:")
 CODE (L"fileName\\$  = \"height.inf\"")
 CODE (L"if fileReadable (fileName\\$ )")
-CODE (L"   height\\$  < 'fileName\\$ '")
-CODE (L"   height = 'height\\$ '")
+CODE1 (L"height\\$  < 'fileName\\$ '")
+CODE1 (L"height = 'height\\$ '")
 CODE (L"else")
-CODE (L"   height = 180")
+CODE1 (L"height = 180")
 CODE (L"endif")
 ENTRY (L"Writing a file")
 NORMAL (L"To write the contents of an existing string into a new text file, you use")
@@ -2386,10 +2393,14 @@ NORMAL (L"To append the contents of an existing string at the end of an existing
 CODE (L"text\\$  ##>># %fileName")
 NORMAL (L"If the file does not yet exist, it is created first.")
 NORMAL (L"You can create a directory with")
-CODE (L"#createDirectory (%directoryName\\$ )")
-NORMAL (L"If the directory already exists, this command does nothing.")
+CODE (L"#createDirectory (%%directoryName\\$ %)")
+NORMAL (L"where, as with file names, %%directoryName\\$ % can be relative to the directory of the script "
+	"(e.g. \"data\", or \"yesterday/data\", or \"../project2/yesterday/data\") "
+	"or an absolute path (e.g. \"C:/Documents and Settings/Paolo/project1/yesterday/data\" on Windows "
+	"or \"/Users/Paolo/project1/yesterday/data\" on the Mac). "
+	"If the directory already exists, this command does nothing.")
 NORMAL (L"You can delete an existing file with the function")
-CODE (L"#deleteFile (%fileName\\$ )")
+CODE (L"#deleteFile (%%fileName\\$ %)")
 NORMAL (L"or with the directive")
 CODE (L"#filedelete %fileName")
 NORMAL (L"If the file does not exist, these commands do nothing.")
@@ -2405,15 +2416,15 @@ CODE (L"The square of 100 is 10000")
 NORMAL (L"We can do this by collecting each line in a variable:")
 CODE (L"deleteFile (\"squares.txt\")")
 CODE (L"for i to 100")
-CODE (L"   square = i * i")
-CODE (L"   fileappend squares.txt The square of 'i' is 'square''newline\\$ '")
+CODE1 (L"square = i * i")
+CODE1 (L"fileappend squares.txt The square of 'i' is 'square''newline\\$ '")
 CODE (L"endfor")
 NORMAL (L"Note that we delete the file before appending to it, "
 	"in order that we do not append to an already existing file.")
 NORMAL (L"If you put the name of the file into a variable, make sure to surround it "
 	"with double quotes when using #fileappend, since the file name may contain spaces "
 	"and is not at the end of the line:")
-CODE (L"name\\$  = \"Hard disk:Desktop Folder:squares.text\"")
+CODE (L"name\\$  = \"C:/Documents and Settings/Paul Boersma/Desktop/squares.text\"")
 CODE (L"filedelete 'name\\$ '")
 CODE (L"for i to 100")
 CODE1 (L"square = i * i")

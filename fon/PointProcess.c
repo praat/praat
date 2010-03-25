@@ -1,6 +1,6 @@
 /* PointProcess.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/10/01 can write as encoding
  * pb 2008/09/20 shiftX
  * pb 2008/09/23 scaleX
+ * pb 2010/03/24 make sure that addPoint cannot add a point where there is already a point
  */
 
 #include "PointProcess.h"
@@ -220,10 +221,12 @@ int PointProcess_addPoint (PointProcess me, double t) {
 	if (my nt == 0 || t >= my t [my nt]) {   /* Special case that often occurs in practice. */
 		my t [++ my nt] = t;
 	} else {
-		long left = PointProcess_getLowIndex (me, t), i;
-		for (i = my nt; i > left; i --) my t [i + 1] = my t [i];
-		my nt ++;
-		my t [left + 1] = t;
+		long left = PointProcess_getLowIndex (me, t);
+		if (left == 0 || my t [left] != t) {
+			for (long i = my nt; i > left; i --) my t [i + 1] = my t [i];
+			my nt ++;
+			my t [left + 1] = t;
+		}
 	}
 	return 1;
 }

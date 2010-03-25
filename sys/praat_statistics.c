@@ -101,6 +101,19 @@ void praat_memoryInfo (void) {
 		Melder_integer (statistics.batchSessions), L" batch");
 	MelderInfo_writeLine3 (L"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), L" bytes");
 	MelderInfo_writeLine2 (L"\nNumber of actions: ", Melder_integer (praat_getNumberOfActions ()));
+	#ifdef macintosh
+		CGDirectDisplayID screen = CGMainDisplayID ();
+		CGSize screenSize_mm = CGDisplayScreenSize (screen);
+		double diagonal_mm = sqrt (screenSize_mm. width * screenSize_mm. width + screenSize_mm. height * screenSize_mm. height);
+		double diagonal_inch = diagonal_mm / 25.4;
+		MelderInfo_writeLine9 (L"\nScreen size: ", Melder_double (screenSize_mm. width), L" x ", Melder_double (screenSize_mm. height),
+			L" mm (diagonal ", Melder_fixed (diagonal_mm, 1), L" mm = ", Melder_fixed (diagonal_inch, 1), L" inch)");
+		size_t screenWidth_pixels = CGDisplayPixelsWide (screen);
+		size_t screenHeight_pixels = CGDisplayPixelsHigh (screen);
+		MelderInfo_writeLine5 (L"Screen \"resolution\": ", Melder_integer (screenWidth_pixels), L" x ", Melder_integer (screenHeight_pixels), L" pixels");
+		double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
+		MelderInfo_writeLine3 (L"Screen resolution: ", Melder_fixed (resolution, 1), L" pixels/inch");
+	#endif
 	MelderInfo_close ();
 }
 

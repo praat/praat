@@ -1,6 +1,6 @@
 /* manual_sound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,9 @@ NORMAL (L"Enhancement:")
 LIST_ITEM (L"\\bu @@Sound: Lengthen (overlap-add)...@: lengthen by a constant factor")
 LIST_ITEM (L"\\bu @@Sound: Deepen band modulation...@: strenghten intensity modulations in each critical band")
 NORMAL (L"Combination:")
-LIST_ITEM (L"\\bu @@Sounds: Convolve")
+LIST_ITEM (L"\\bu @@Sounds: Convolve...")
+LIST_ITEM (L"\\bu @@Sounds: Cross-correlate...")
+LIST_ITEM (L"\\bu @@Sound: Autocorrelate...")
 LIST_ITEM (L"\\bu @@Sounds: Concatenate")
 NORMAL (L"Synthesis")
 LIST_ITEM (L"\\bu @@Source-filter synthesis@ tutorial")
@@ -1099,15 +1101,67 @@ NORMAL (L"If the resulting sound does not fit into memory, use one of the "
 	"commands in the @@Write menu@. See @@How to concatenate sound files@.")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Convolve", L"ppgb", 19980323)
+MAN_BEGIN (L"Sounds: Convolve...", L"ppgb & djmw", 20100325)
 INTRO (L"A command to convolve two @Sound objects with each other.")
-NORMAL (L"The convolution of two time signals %A(%t) and %B(%t) is defined as")
-FORMULA (L"(%A * %B) (%t) \\=3 \\in %A(%\\ta) %B(%t-%\\ta) %d%\\ta")
-NORMAL (L"Convolution is commutative, i.e. the convolution of %A and %B equals the convolution of %B and %A.")
+NORMAL (L"The convolution %f*%g of two time signals %f(%t) and %g(%t) is defined as:")
+FORMULA (L"(%f * %g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
+NORMAL (L"Convolution is a commutative operation, i.e. %f*%g equals %g*%f. "
+	"This means that the order in which you put the two Sounds in the object list does not matter: you get the same result.")
+ENTRY (L"Stereo sounds")
+NORMAL (L"If both Sounds have more than one channel, the two Sounds have to have the same number of channels; "
+	"each channel of the resulting Sound is then computed as the convolution of the corresponding channels "
+	"of the original Sounds. If one of the original Sounds has multiple channels and the other Sound has only one channel, "
+	"the resulting Sound will have multiple channels; each of these is computed as the convolution of "
+	"the corresponding channel of the multiple-channel original and the single channel of the single-channel original. "
+	"This allows you filter a stereo Sound with a mono impulse response, for instance.")
+ENTRY (L"Setting")
+TAG (L"%%Scaling")
+DEFINITION (L"It is impossible to get the amplitude of the resulting Sound correct for all purposes. "
+	"This is because if both input Sounds are expressed in units of Pa, "
+	"the resulting Sound should ideally be expressed in Pa^^2^s (according to the above formula), "
+	"but you will nevertheless see that Praat expresses it in Pa, because Sounds cannot be expressed otherwise. "
+	"If you want to filter a pulse train with a finite-impulse-response filter "
+	"and expect the amplitudes of each resulting period to be equal to the amplitude of the filter, "
+	"you can modify the above formula by setting the scaling to #sum instead of #integral; "
+	"the resulting sound is then divided by %%\\Det%, the sampling period of the sound.")
 ENTRY (L"Algorithm")
-NORMAL (L"Since convolution in the time domain amounts to multiplication in the frequency domain, "
-	"both sounds are FFT-ed, the resulting spectra are multiplied, and the resulting product spectrum "
-	"is FFT-ed back to give the convoluted sound.")
+NORMAL (L"The computation makes use of the fact that convolution in the time domain corresponds to multiplication in the frequency domain: "
+	"we first calculate the spectra of the two (zero-padded) sounds by Fourier transformation, "
+	"then multiply the two spectra with each other, "
+	"and finally Fourier-transform the result of this multiplication back to the time domain.")
+MAN_END
+
+MAN_BEGIN (L"Sounds: Cross-correlate...", L"djmw & ppgb", 20100325)
+INTRO (L"A command to compute the cross-correlation of two selected @@Sound@s. ")
+NORMAL (L"The cross-correlation of two signals %f(%t) and %g(%t) is defined as a function of the lag time %\\ta:")
+FORMULA (L"cross-corr (%f, %g)(%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt")
+NORMAL (L"Cross-correlation is a symmetric function: cross-corr (%g, %f)(%\\ta) = cross-corr (%f, %g)(-%\\ta).")
+NORMAL (L"The normalized cross-correlation of two signals %f(%t) and %g(%t) is defined as")
+FORMULA (L"norm-cross-corr (%f, %g)(%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt / \\Vr ((\\in %f^^2^(%t) %dt) (\\in %g^^2^(%t) %dt))")
+ENTRY (L"Setting")
+TAG (L"%%Normalize%")
+DEFINITION (L"when on, the result is normalized, i.e. divided by the square root of the product of the energies of the two sounds.")
+ENTRY (L"Algorithm")
+NORMAL (L"The cross-correlation procedure is performed fast in the frequency domain.")
+ENTRY (L"Scaling")
+NORMAL (L"Since a Sound is expressed in units of Pa, "
+	"the cross-correlation should be expressed in Pa^^2^s (while the normalized cross-correlation should be dimensionless), "
+	"but it is actually again in Pa (because that is the unit of sound pressure).")
+MAN_END
+
+MAN_BEGIN (L"Sound: Autocorrelate...", L"djmw & ppgb", 20100325)
+INTRO (L"A command to compute the autocorrelation of a selected @@Sound@.")
+ENTRY (L"Setting")
+TAG (L"%%Normalize%")
+DEFINITION (L"when on, the result is normalized, i.e. divided by the energy of the sound. ")
+ENTRY (L"Algorithm")
+NORMAL (L"The autocorrelation is calculated as the @@Sounds: Cross-correlate...|cross-correlation@ of a sound with itself. "
+	"It is a function of the lag time %\\ta.")
+NORMAL (L"The autocorrelation is symmetric: autocorr (-%\\ta) = autocorr (%\\ta).")
+ENTRY (L"Scaling")
+NORMAL (L"Since a Sound is expressed in units of Pa, "
+	"the autocorrelation should be expressed in Pa^^2^s (while the normalized autocorrelation should be dimensionless), "
+	"but it is actually again in Pa (because that is the unit of sound pressure).")
 MAN_END
 
 }

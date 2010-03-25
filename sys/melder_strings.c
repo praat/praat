@@ -27,6 +27,7 @@
  */
 
 #include "melder.h"
+#include "UnicodeData.h"
 #define my  me ->
 #define FREE_THRESHOLD_BYTES 10000
 
@@ -427,7 +428,7 @@ bool MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
 			my string [my length] = 0xDC00 | (kar & 0x3FF);
 			my length ++;
 		} else {
-			my string [my length] = '?';
+			my string [my length] = UNICODE_REPLACEMENT_CHARACTER;
 			my length ++;
 		}
 	}

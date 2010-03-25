@@ -57,9 +57,10 @@ int Gui_getResolution (Widget widget) {
 	if (resolution == 0) {
 		#if defined (macintosh)
 			(void) widget;
-			CGSize size = CGDisplayScreenSize (kCGDirectMainDisplay);
-			resolution = floor (25.4 * (double) CGDisplayPixelsWide (kCGDirectMainDisplay) / size.width + 0.5);
-			//resolution = 100;
+			CGDirectDisplayID display = CGMainDisplayID ();
+			CGSize size = CGDisplayScreenSize (display);
+			resolution = floor (25.4 * (double) CGDisplayPixelsWide (display) / size.width + 0.5);
+			//resolution = 72;
 		#elif defined (_WIN32)
 			(void) widget;
 			resolution = 100;
@@ -73,7 +74,7 @@ int Gui_getResolution (Widget widget) {
 				resolution = floor (25.4 * width_pixels / width_mm + 0.5);
 				//Melder_casual ("Gui_getResolution: display width %g %g %d", width_pixels, width_mm, resolution);
 			#else
-				Melder_fatal ("Gui_getResolution: unknown framework.");
+				Melder_fatal ("Gui_getResolution: unknown platform.");
 			#endif
 		#endif
 	}

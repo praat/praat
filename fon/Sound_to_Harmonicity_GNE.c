@@ -158,7 +158,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 	for (row = 2; row <= nenvelopes; row ++) {
 		for (col = 1; col <= row - 1; col ++) {
 			double ccmax;
-			crossCorrelation = Sounds_crossCorrelate (envelope [row], envelope [col], -3.1e-4, 3.1e-4, TRUE);
+			crossCorrelation = Sounds_crossCorrelate_short (envelope [row], envelope [col], -3.1e-4, 3.1e-4, TRUE);
 			/*
 			 * Step 5: the maximum of each correlation function
 			 */

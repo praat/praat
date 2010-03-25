@@ -160,9 +160,9 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
  	rewind (f);
 	if (length >= 2) {
 		int firstByte = fgetc (f), secondByte = fgetc (f);
-		if (firstByte == 0xfe && secondByte == 0xff) {
+		if (firstByte == 0xFE && secondByte == 0xFF) {
 			type = 1;   // big-endian 16-bit
-		} else if (firstByte == 0xff && secondByte == 0xfe) {
+		} else if (firstByte == 0xFF && secondByte == 0xFE) {
 			type = 2;   // little-endian 16-bit
 		}
 	}
@@ -224,10 +224,10 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
 							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
 						} else {
-							text [i] = '?';
+							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}
 					} else if (kar1 < 0xE000) {
-						text [i] = '?';
+						text [i] = UNICODE_REPLACEMENT_CHARACTER;
 					} else if (kar1 <= 0xFFFF) {
 						text [i] = kar1;
 					} else {
@@ -250,10 +250,10 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
 							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
 						} else {
-							text [i] = '?';
+							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}
 					} else if (kar1 < 0xE000) {
-						text [i] = '?';
+						text [i] = UNICODE_REPLACEMENT_CHARACTER;
 					} else if (kar1 <= 0xFFFF) {
 						text [i] = kar1;
 					} else {

@@ -359,24 +359,24 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 		if (kar <= 0x7F) {
 			MelderString_appendCharacter (& buffers [ibuffer], kar);
 		} else if (kar <= 0xC1) {
-			MelderString_appendCharacter (& buffers [ibuffer], '?');
+			MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 		} else if (kar <= 0xDF) {
 			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x1F) << 6) | (kar2 & 0x3F));
 		} else if (kar <= 0xEF) {
 			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			unsigned char kar3 = textA [++ i];
-			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			MelderString_appendCharacter (& buffers [ibuffer], ((kar & 0x0F) << 12) | ((kar2 & 0x3F) << 6) | (kar3 & 0x3F));
 		} else if (kar <= 0xF4) {
 			unsigned char kar2 = textA [++ i];
-			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar2 == '\0' || ! (kar2 & 0x80) || (kar2 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			unsigned char kar3 = textA [++ i];
-			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar3 == '\0' || ! (kar3 & 0x80) || (kar3 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			unsigned char kar4 = textA [++ i];
-			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], '?');
+			if (kar4 == '\0' || ! (kar4 & 0x80) || (kar4 & 0x40)) MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 			unsigned long character = ((kar & 0x07) << 18) | ((kar2 & 0x3F) << 12) | ((kar3 & 0x3F) << 6) | (kar4 & 0x3F);
 			if (sizeof (wchar_t) == 2) {
 				/*
@@ -389,7 +389,7 @@ wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 				MelderString_appendCharacter (& buffers [ibuffer], character);
 			}
 		} else {
-			MelderString_appendCharacter (& buffers [ibuffer], '?');
+			MelderString_appendCharacter (& buffers [ibuffer], UNICODE_REPLACEMENT_CHARACTER);
 		}
 	}
 	return buffers [ibuffer]. string;

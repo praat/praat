@@ -3270,7 +3270,6 @@ DO
 		! praat_new1 (sound, GET_STRING (L"Name"))) return 0;
 END
 
-
 FORM (Sound_drawWhere, L"Sound: Draw where", L"Sound: Draw where...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range", L"0.0 (= all)")

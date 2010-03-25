@@ -83,7 +83,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 		if (! (gammaTone = Sound_createGammaTone (0, 0.1, samplingFrequency,
 				thy gamma, b, f[i], 0, 0, 0)) ||
 			/* filtering can be made 30% faster by taking Spectrum(me) outside the loop */
-			! (filtered = Sounds_convolve (me, gammaTone))) { forget (gammaTone); goto cleanup; }
+			! (filtered = Sounds_convolve (me, gammaTone, true))) { forget (gammaTone); goto cleanup; }
 		/*
 			To energy measure: weigh with broad-band transfer function  
 		*/

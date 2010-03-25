@@ -147,7 +147,7 @@ Cochleagram Sound_to_Cochleagram_edb
 		double midFrequency_Bark = (ifreq - 0.5) * dfreq;
 		double midFrequency_Hertz = Excitation_barkToHertz (midFrequency_Bark);
 		Sound gammatone = createGammatone (midFrequency_Hertz, 1 / my dx);
-		Sound basil = Sounds_convolve (me, gammatone);
+		Sound basil = Sounds_convolve (me, gammatone, true);
 		forget (gammatone);
 
 		/* Stage 4: detection = rectify + integrate + low-pass 500 Hz. */

@@ -23,6 +23,7 @@
 */
 
 #include "ManPagesM.h"
+#include "Sound_extensions.h"
 #include "TableOfReal_extensions.h"
 #ifndef _Configuration_h_
 	#include "Configuration.h"
@@ -3203,13 +3204,14 @@ TAG (L"%Ceiling (default 500 Hz)")
 DEFINITION (L"candidates above this frequency will be ignored.")
 MAN_END
 
-MAN_BEGIN (L"Spectra: Multiply", L"djmw", 20031023)
+MAN_BEGIN (L"Spectra: Multiply", L"djmw", 20100318)
 INTRO (L"Returns a new Spectrum object that is the product of the two selected "
 	"@Spectrum objects.")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Conjugate", L"djmw", 20031023)
 INTRO (L"Reverses the sign of the complex part of the selected @Spectrum object(s).")
+NORMAL (L"For real signals, conjugation in the spectral domain amounts to time-inversion in the time domain.")
 MAN_END
 
 MAN_BEGIN (L"SSCP", L"djmw", 19981103)

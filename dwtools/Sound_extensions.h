@@ -198,4 +198,27 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	wchar_t *silentLabel, wchar_t *soundingLabel);
 
+Sound Sounds_crossCorrelate_long (Sound me, Sound thee, bool normalize);
+/*
+  Calculate the cross-correlation of two sounds f:me and g:thee as:
+  	cross_corr(f(t),g(t))(tau) = Integral (f(t)*g(t+tau)*dt)
+  	Spectrum: Conj(F).G
+  Preconditions:
+  	my dx == thy dx
+  	my dy == thy dy == 1
+  Postconditions
+	his dx == my dx (== thy dx)
+	his xmin == - (thy xmax - thy xmin)
+	his xmax == thy xmax - thy xmin
+	his nx == floor ((his xmax - his xmin)* samplingFrequency + 0.5)
+  	his x1 == his xmin + 0.5 * his dx
+  	his z[1] == cross-correlation
+  	if normalized
+  		his z[1] /= (sqrt (sum2me * dx) * sqrt (sum2thee * dx)),
+  		where sum2me = sum(i=1..my nx, my z[1][i]^2) and sum2thee = sum(i=1..thy nx, thy z[1][i]^2)
+  	endif
+*/
+
+Sound Sound_autoCorrelate (Sound me, bool normalize);
+
 #endif /* _Sound_extensions_h_ */

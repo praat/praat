@@ -452,6 +452,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 			& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
 		my macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
 		CFRelease (url);
+		CFRelease (dictionary);
 		my x1DC = my x1DCmin = 0;
 		my x2DC = my x2DCmax = 7.5 * resolution;
 		my y1DC = my y1DCmin = 0;

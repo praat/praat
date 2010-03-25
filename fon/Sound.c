@@ -423,38 +423,40 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	return him;
 }
 
-Sound Sounds_convolve (Sound me, Sound thee) {
+Sound Sounds_convolve (Sound me, Sound thee, bool sum) {
 	Sound him = NULL;
-	long numberOfChannels = my ny == 1 && thy ny == 1 ? 1 : 2;
+	if (my ny > 1 && thy ny > 1 && my ny != thy ny)
+		return Melder_errorp ("Sounds_convolve: the numbers of channels of the two sounds have to be equal or 1.");
+	long numberOfChannels = my ny > thy ny ? my ny : thy ny;
 	long n1 = my nx, n2 = thy nx;
-	long n3 = n1 + n2 - 1, nfft = 1, i;
-	double *data1 = NULL, *data2 = NULL, scale;
+	long n3 = n1 + n2 - 1, nfft = 1;
+	double *data1 = NULL, *data2 = NULL;
 	if (my dx != thy dx)
-		return Melder_errorp ("Sounds_convolve: sampling frequencies do not match.");
+		return Melder_errorp ("Sounds_convolve: the sampling frequencies of the two sounds have to be equal.");
 	while (nfft < n3) nfft *= 2;
 	data1 = NUMdvector (1, nfft); cherror
 	data2 = NUMdvector (1, nfft); cherror
 	him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
+	double scale = sum ? 1.0 / nfft : my dx / nfft;
 	for (long channel = 1; channel <= numberOfChannels; channel ++) {
 		double *a = my z [my ny == 1 ? 1 : channel];
-		for (i = n1; i > 0; i --) data1 [i] = a [i];
-		if (channel > 1) for (i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
+		for (long i = n1; i > 0; i --) data1 [i] = a [i];
+		for (long i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
 		a = thy z [thy ny == 1 ? 1 : channel];
-		for (i = n2; i > 0; i --) data2 [i] = a [i];
-		if (channel > 1) for (i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
+		for (long i = n2; i > 0; i --) data2 [i] = a [i];
+		for (long i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
 		NUMrealft (data1, nfft, 1); cherror
 		NUMrealft (data2, nfft, 1); cherror
 		data2 [1] *= data1 [1];
 		data2 [2] *= data1 [2];
-		for (i = 3; i <= nfft; i += 2) {
+		for (long i = 3; i <= nfft; i += 2) {
 			double temp = data1 [i] * data2 [i] - data1 [i + 1] * data2 [i + 1];
 			data2 [i + 1] = data1 [i] * data2 [i + 1] + data1 [i + 1] * data2 [i];
 			data2 [i] = temp;
 		}
 		NUMrealft (data2, nfft, -1); cherror
-		scale = 1.0 / nfft;
 		a = him -> z [channel];
-		for (i = 1; i <= n3; i ++)
+		for (long i = 1; i <= n3; i ++)
 			a [i] = data2 [i] * scale;
 	}
 end:
@@ -859,7 +861,7 @@ void Sound_reverse (Sound me, double tmin, double tmax) {
 	}
 }
 
-Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize) {
+Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize) {
 	Sound him = NULL;
 	double dt, dphase, t1;
 	long i1, i2, nt, i;

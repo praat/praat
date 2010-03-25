@@ -284,6 +284,16 @@ DO
 	}
 END
 
+FORM (Sound_autoCorrelate, L"Sound: autocorrelate", L"Sound: Autocorrelate...")
+ 	BOOLEAN (L"Normalize", 0)
+ 	OK
+DO
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new2 (Sound_autoCorrelate (me, GET_INTEGER (L"Normalize")), L"ac_", my name)) return 0;
+	}
+END
+
 DIRECT (Sounds_combineToStereo)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
@@ -380,13 +390,26 @@ DIRECT (Sound_convertToStereo)
 	}
 END
 
-DIRECT (Sounds_convolve)
+DIRECT (Sounds_convolve_old)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	if (! praat_new3 (Sounds_convolve (sound1, sound2),
+	if (! praat_new3 (Sounds_convolve (sound1, sound2, true),
 		wcschr (theCurrentPraatObjects -> list [i1]. name, ' ') + 1, L"_", wcschr (theCurrentPraatObjects -> list [i2]. name, ' ') + 1)) return 0;
+END
+
+FORM (Sounds_convolve, L"Sounds: Convolve", L"Sounds: Convolve...")
+	RADIO (L"Scaling", 1)
+		RADIOBUTTON (L"integral")
+		RADIOBUTTON (L"sum")
+	OK
+DO
+	Sound sound1 = NULL, sound2 = NULL;
+	WHERE (SELECTED) { if (sound1) sound2 = OBJECT; else sound1 = OBJECT; }
+	Melder_assert (sound1 && sound2);
+	if (! praat_new3 (Sounds_convolve (sound1, sound2, GET_INTEGER (L"Scaling") - 1),
+		sound1 -> name, L"_", sound2 -> name)) return 0;
 END
 
 static int common_Sound_create (void *dia, Interpreter interpreter, bool allowStereo) {
@@ -498,7 +521,7 @@ DO
 		GET_STRING (L"Name"))) return 0;
 END
 
-FORM (Sounds_crossCorrelate, L"Cross-correlate", 0)
+FORM (Sounds_crossCorrelate_short, L"Cross-correlate (short)", 0)
 	REAL (L"From lag (s)", L"-0.1")
 	REAL (L"To lag (s)", L"0.1")
 	BOOLEAN (L"Normalize", 1)
@@ -506,7 +529,7 @@ FORM (Sounds_crossCorrelate, L"Cross-correlate", 0)
 DO
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
-	if (! praat_new4 (Sounds_crossCorrelate (s1, s2, GET_REAL (L"From lag"), GET_REAL (L"To lag"),
+	if (! praat_new4 (Sounds_crossCorrelate_short (s1, s2, GET_REAL (L"From lag"), GET_REAL (L"To lag"),
 		GET_INTEGER (L"Normalize")), L"cc_", s1 -> name, L"_", s2 -> name)) return 0;
 END
 
@@ -2142,11 +2165,13 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Filter (de-emphasis)...", 0, 1, DO_Sound_filter_deemphasis);
 	praat_addAction1 (classSound, 0, L"Combine sounds -", 0, 0, 0);
 		praat_addAction1 (classSound, 2, L"Combine to stereo", 0, 1, DO_Sounds_combineToStereo);
-		praat_addAction1 (classSound, 2, L"Convolve", 0, 1, DO_Sounds_convolve);
 		praat_addAction1 (classSound, 0, L"Concatenate", 0, 1, DO_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, L"Concatenate recoverably", 0, 1, DO_Sounds_concatenateRecoverably);
+		praat_addAction1 (classSound, 2, L"Convolve", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sounds_convolve_old);
+		praat_addAction1 (classSound, 2, L"Convolve...", 0, 1, DO_Sounds_convolve);
+		praat_addAction1 (classSound, 2, L"Cross-correlate...", 0, 1, DO_Sounds_crossCorrelate_short);
+		//praat_addAction1 (classSound, 0, L"Autocorrelate...", 0, 1, DO_Sound_autoCorrelate);
 		praat_addAction1 (classSound, 2, L"To ParamCurve", 0, 1, DO_Sounds_to_ParamCurve);
-		praat_addAction1 (classSound, 2, L"Cross-correlate...", 0, 1, DO_Sounds_crossCorrelate);
 
 	praat_addAction2 (classLongSound, 0, classSound, 0, L"Write to WAV file...", 0, 0, DO_LongSound_Sound_writeToWavFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, L"Write to AIFF file...", 0, 0, DO_LongSound_Sound_writeToAiffFile);

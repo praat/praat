@@ -32,6 +32,7 @@
 
 #include "melder.h"
 #include "Preferences.h"
+#include "UnicodeData.h"
 #include "abcio.h"
 
 #if defined (macintosh)
@@ -93,19 +94,19 @@ void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 				unsigned long kar2 = ptr [++ i];
 				if (kar2 == 0) {   // string exhausted?
 					// Melder_fatal ("Detected a bare (final) high surrogate in UTF-16.");
-					Melder_fwriteUnicodeAsUtf8 ('?', f);
+					Melder_fwriteUnicodeAsUtf8 (UNICODE_REPLACEMENT_CHARACTER, f);
 					return;
 				}
 				if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
 					Melder_fwriteUnicodeAsUtf8 (0x10000 + ((kar1 - 0xD800) << 10) + (kar2 - 0xDC00), f);
 				} else {
 					// Melder_fatal ("Detected a bare high surrogate in UTF-16.");
-					Melder_fwriteUnicodeAsUtf8 ('?', f);
+					Melder_fwriteUnicodeAsUtf8 (UNICODE_REPLACEMENT_CHARACTER, f);
 					i --;   // try to interpret the next character in the normal way
 				}
 			} else if (kar1 < 0xE000) {
 				// Melder_fatal ("Detected a bare low surrogate in UTF-16.");
-				Melder_fwriteUnicodeAsUtf8 ('?', f);
+				Melder_fwriteUnicodeAsUtf8 (UNICODE_REPLACEMENT_CHARACTER, f);
 			} else if (kar1 <= 0xFFFF) {
 				Melder_fwriteUnicodeAsUtf8 (kar1, f);   // a character from the Basic Multilingual Plane
 			} else {
@@ -163,7 +164,7 @@ int MelderFile_writeText (MelderFile file, const wchar_t *text) {
 					binputu2 (0xD800 | (kar >> 10), f);
 					binputu2 (0xDC00 | (kar & 0x3ff), f);
 				} else {
-					binputu2 ('?', f);
+					binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 				}
 			}
 		}
@@ -248,7 +249,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 						binputu2 (0xD800 | (kar >> 10), f);
 						binputu2 (0xDC00 | (kar & 0x3ff), f);
 					} else {
-						binputu2 ('?', f);
+						binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 					}
 				}
 			}
@@ -272,7 +273,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 						binputu2 (0xD800 | (kar >> 10), f);
 						binputu2 (0xDC00 | (kar & 0x3ff), f);
 					} else {
-						binputu2 ('?', f);
+						binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 					}
 				}
 			}
@@ -303,7 +304,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 						binputu2 (0xD800 | (kar >> 10), f);
 						binputu2 (0xDC00 | (kar & 0x3ff), f);
 					} else {
-						binputu2 ('?', f);
+						binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 					}
 				}
 			} else {
@@ -325,7 +326,7 @@ int MelderFile_appendText (MelderFile file, const wchar_t *text) {
 						binputu2LE (0xD800 | (kar >> 10), f);
 						binputu2LE (0xDC00 | (kar & 0x3ff), f);
 					} else {
-						binputu2LE ('?', f);
+						binputu2LE (UNICODE_REPLACEMENT_CHARACTER, f);
 					}
 				}
 			}
@@ -400,7 +401,7 @@ static void _MelderFile_write (MelderFile file, const wchar_t *string) {
 					binputu2 (0xD800 | (kar >> 10), f);
 					binputu2 (0xDC00 | (kar & 0x3ff), f);
 				} else {
-					binputu2 ('?', f);
+					binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 				}
 			}
 		}
@@ -461,7 +462,7 @@ void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
 				binputu2 (0xD800 | (kar >> 10), f);
 				binputu2 (0xDC00 | (kar & 0x3ff), f);
 			} else {
-				binputu2 ('?', f);
+				binputu2 (UNICODE_REPLACEMENT_CHARACTER, f);
 			}
 		}
 	}

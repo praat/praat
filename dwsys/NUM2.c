@@ -56,7 +56,7 @@
  djmw 20090630 NUMlogNormalP/Q from gsl
  djmw 20090707 Rename NUMinverse_cholesky to NUMlowerCholeskyInverse,
  	+NUMcovarianceFromColumnCentredMatrix, +NUMmultivariateKurtosis
- djmw 20100223 +NUMsolveQuadraticEquation
+ djmw 20100311 +NUMsolveQuadraticEquation
 */
 
 #include "SVD.h"
@@ -75,8 +75,8 @@
 #include "gsl_sf_gamma.h"
 #include "gsl_sf_erf.h"
 #include "gsl_sf_trig.h"
-#include "gsl_cdf.h"
 #include "gsl_poly.h"
+#include "gsl_cdf.h"
 
 #define my me ->
 
