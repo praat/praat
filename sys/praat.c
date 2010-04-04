@@ -72,7 +72,7 @@
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
 #define WINDOW_WIDTH 490
-#define WINDOW_HEIGHT 610
+#define WINDOW_HEIGHT 620
 
 structPraatApplication theForegroundPraatApplication;
 PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;

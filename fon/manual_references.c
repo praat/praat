@@ -1,6 +1,6 @@
 /* manual_references.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,15 +57,43 @@ NORMAL (L"Paul Boersma (2000): \"Learning a grammar in Functional Phonology.\" "
 NORMAL (L"An extended version is chapter 14 of @@Boersma (1998)@.")
 MAN_END
 
+MAN_BEGIN (L"Boersma (2009a)", L"ppgb", 20100330)
+NORMAL (L"Paul Boersma (2009): \"Should jitter be measured by peak picking or by waveform matching?\" "
+	"%%Folia Phoniatrica et Logopaedica% #61: 305\\--308.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+MAN_END
+
+MAN_BEGIN (L"Boersma (2009b)", L"ppgb", 20100330)
+NORMAL (L"Paul Boersma (2009b): \"Some correct error-driven versions of the Constraint Demotion algorithm.\" "
+	"%%Linguistic Inquiry% #40: 667\\--686.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+MAN_END
+
+MAN_BEGIN (L"Boersma & Escudero (2008)", L"ppgb", 20100331)
+NORMAL (L"Paul Boersma & Paola Escudero (2009): \"Learning to perceive a smaller L2 vowel inventory: "
+	"an Optimality Theory account.\" In Peter Avery, Elan Dresher & Keren Rice (eds.), "
+	"%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271\\--301.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+MAN_END
+
 MAN_BEGIN (L"Boersma & Hayes (2001)", L"ppgb", 20020511)
 NORMAL (L"Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Learning Algorithm.\" "
 	"%%Linguistic Inquiry% #32: 45\\--86.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Kovacic (2006)", L"ppgb", 20061203)
 NORMAL (L"Paul Boersma & Gordana Kovacic (2006): "
 	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
 	"%%Journal of the Acoustical Society of America% #119: 1805\\--1816.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+MAN_END
+
+MAN_BEGIN (L"Boersma & Pater (2008)", L"ppgb", 20100331)
+NORMAL (L"Paul Boersma & Joe Pater (2008): "
+	"\"Convergence properties of a gradual learning algorithm for Harmonic Grammar.\" "
+	"%%Rutgers Optimality Archive% #970, http://ruccs.rutgers.edu/roa.html.")
+NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Childers (1978)", L"ppgb", 20030515)
@@ -85,6 +113,12 @@ MAN_END
 
 MAN_BEGIN (L"Fant (1960)", L"ppgb", 19980201)
 NORMAL (L"Gunnar Fant (1960): %%Acoustic Theory of Speech Production.% Mouton, The Hague.")
+MAN_END
+
+MAN_BEGIN (L"Fischer (2005)", L"ppgb", 20100331)
+NORMAL (L"Markus Fischer (2005): \"A Robbins-Monro type learning algorithm for an entropy maximizing version "
+	"of stochastic Optimality Theory.\" Master’s thesis, Humboldt University, Berlin. "
+	"[%%Rutgers Optimality Archive% #767, http://roa.rutgers.edu/]")
 MAN_END
 
 MAN_BEGIN (L"Flanagan & Landgraf (1968)", L"ppgb", 19980201)
@@ -162,6 +196,10 @@ NORMAL (L"Eric Moulines & Francis Charpentier (1990): Pitch-synchronous waveform
 	"%%Speech Communication% #9: 453\\--467.")
 MAN_END
 
+MAN_BEGIN (L"Pater (2008)", L"ppgb", 20100331)
+NORMAL (L"Joe Pater (2008): \"Gradual learning and convergence.\" %%Linguistic Inquiry% #39: 334\\--345.")
+MAN_END
+
 MAN_BEGIN (L"Pater, Potts & Bhatt (2007)", L"ppgb", 20080331)
 NORMAL (L"Joe Pater, Christopher Potts & Rajesh Bhatt (2007): Harmonic Grammar with linear programming. "
 	"Manuscript, University of Massachusetts, Amherst. %%Rutgers Optimality Archive% #872.")
@@ -192,12 +230,23 @@ NORMAL (L"Frank Rosenblatt (1962): "
 	"%%Principles of neurodynamics; perceptrons and the theory of brain mechanisms%. Washington: Spartan Books.")
 MAN_END
 
-MAN_BEGIN (L"Smolensky & Legendre (2006)", L"ppgb", 20070423)
-NORMAL (L"Paul Smolensky & G\\e'raldine Legendre (1993): %%The harmonic mind.% "
+MAN_BEGIN (L"Smolensky (1986)", L"ppgb", 20100331)
+NORMAL (L"Paul Smolensky (1986): \"Information processing in dynamical systems: foundations of Harmony Theory.\" "
+	"In @@Rumelhart & McClelland (1986)@, pp. 194\\--281.")
+MAN_END
+
+MAN_BEGIN (L"Rumelhart & McClelland (1986)", L"ppgb", 20100331)
+NORMAL (L"David Rumelhart, James L. McClelland, and the PDP Research Group (eds., 1986): "
+	"%%Parallel Distributed Processing: explorations in the microstructure of cognition%. MIT Press, Cambridge.")
+MAN_END
+
+MAN_BEGIN (L"Smolensky & Legendre (2006)", L"ppgb", 20100331)
+NORMAL (L"Paul Smolensky & G\\e'raldine Legendre (2006): %%The harmonic mind.% "
 	"MIT Press.")
 NORMAL (L"These two books contain all material on connectionism by Smolensky and colleagues from the late eighties on, "
 	"with extensive editing to make it into a coherent work, plus much new material.")
 NORMAL (L"This book can be seen in many respects as the predecessor of @@Prince & Smolensky (1993)@.")
+NORMAL (L"If you want to read a single chapter, I recommend @@Soderstrom, Mathis & Smolensky (2006)@.")
 MAN_END
 
 MAN_BEGIN (L"Soderstrom, Mathis & Smolensky (2006)", L"ppgb", 20070423)
@@ -206,7 +255,7 @@ NORMAL (L"Melanie Soderstrom, Donald Mathis & Paul Smolensky (2006): "
 	"In @@Smolensky & Legendre (2006)@, pp. 403\\--471.")
 MAN_END
 
-MAN_BEGIN (L"Tesar & Smolensky (1998)", L"ppgb", 19991019)
+MAN_BEGIN (L"Tesar & Smolensky (1998)", L"ppgb", 20100331)
 NORMAL (L"Bruce Tesar & Paul Smolensky (1998): \"Learnability in Optimality Theory.\" "
 	"%%Linguistic Inquiry% #29: 229\\--268.")
 NORMAL (L"The first version of the constraint-demotion algorithm appeared in:")
@@ -214,10 +263,11 @@ NORMAL (L"Bruce Tesar & Paul Smolensky (1993): \"The learnability of Optimality 
 	"an algorithm and some basic complexity results\", "
 	"ms. Department of Computer Science & Institute of Cognitive Science, University of Colorado at Boulder. "
 	"Available as Rutgers Optimality Archive #2, http://ruccs.rutgers.edu/roa.html")
-NORMAL (L"The Error-Driven Constraint Demotion algorithm can be found in:")
+NORMAL (L"The Error-Driven Constraint Demotion algorithm (EDCD) can be found in:")
 NORMAL (L"Bruce Tesar & Paul Smolensky (1996): \"Learnability in Optimality Theory (long version)\". "
  	"Technical Report ##96-3#, Department of Cognitive Science, Johns Hopkins University, Baltimore. "
 	"Available as Rutgers Optimality Archive #156, http://ruccs.rutgers.edu/roa.html")
+NORMAL (L"A corrected version of EDCD appeared in @@Boersma (2009b)@.")
 MAN_END
 
 MAN_BEGIN (L"Willems (1986)", L"ppgb", 20021215)

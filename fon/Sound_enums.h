@@ -1,6 +1,6 @@
 /* Sound_enums.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/07
+ * pb 2010/03/31
  */
 
 enums_begin (kSound_windowShape, 0)
@@ -35,5 +35,18 @@ enums_begin (kSound_windowShape, 0)
 	enums_add (kSound_windowShape, 10, KAISER_1, L"Kaiser1")
 	enums_add (kSound_windowShape, 11, KAISER_2, L"Kaiser2")
 enums_end (kSound_windowShape, 11, RECTANGULAR)
+
+enums_begin (kSounds_convolve_scaling, 1)
+	enums_add (kSounds_convolve_scaling, 1, INTEGRAL, L"integral")
+	enums_add (kSounds_convolve_scaling, 2, SUM, L"sum")
+	enums_add (kSounds_convolve_scaling, 3, NORMALIZE, L"normalize")
+	enums_add (kSounds_convolve_scaling, 4, PEAK_099, L"peak 0.99")
+enums_end (kSounds_convolve_scaling, 4, PEAK_099)
+
+enums_begin (kSounds_convolve_signalOutsideTimeDomain, 1)
+	enums_add (kSounds_convolve_signalOutsideTimeDomain, 1, ZERO, L"zero")
+	enums_add (kSounds_convolve_signalOutsideTimeDomain, 2, SIMILAR, L"similar")
+	//enums_add (kSounds_convolve_signalOutsideTimeDomain, 3, PERIODIC, L"periodic")
+enums_end (kSounds_convolve_signalOutsideTimeDomain, 2, ZERO)
 
 /* End of file Sound_enums.h */

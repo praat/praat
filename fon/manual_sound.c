@@ -110,7 +110,7 @@ MAN_END
 MAN_BEGIN (L"Create Sound from tone complex...", L"ppgb", 20060202)
 INTRO (L"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Name")
 DEFINITION (L"the name of the resulting Sound object.")
 TAG (L"%%Start time%, %%End time% (s)")
@@ -381,7 +381,7 @@ MAN_END
 
 MAN_BEGIN (L"Sound: Deepen band modulation...", L"ppgb", 20030916)
 INTRO (L"A command to enhance the fast spectral changes, like %F__2_ movements, in each selected @Sound object.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Enhancement (dB)")
 DEFINITION (L"the maximum increase in the level within each critical band. The standard value is 20 dB.")
 TAG (L"%%From frequency% (Hz)")
@@ -396,7 +396,7 @@ DEFINITION (L"the frequency %f__%fast_ above which the intensity modulations in 
 TAG (L"%%Band smoothing% (Hz)")
 DEFINITION (L"the degree of overlap of each band into its adjacent bands. Prevents %ringing. The standard value is 100 Hz.")
 ENTRY (L"Algorithm")
-NORMAL (L"Suppose we have the standard settings of the arguments. The resulting sound will composed of the unfiltered part of the original sound, "
+NORMAL (L"Suppose the settings have their standard values. The resulting sound will composed of the unfiltered part of the original sound, "
 	"plus all manipulated bands.")
 NORMAL (L"First, the resulting sound becomes the original sound, stop-band filtered between 300 and 8000 Hz: "
 	"after a forward Fourier transform, all values in the @Spectrum at frequencies between 0 and 200 Hz and "
@@ -899,7 +899,7 @@ MAN_END
 
 MAN_BEGIN (L"Sound: Lengthen (overlap-add)...", L"ppgb", 20030916)
 INTRO (L"A command to convert each selected @Sound object into a longer new @Sound object.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Minimum frequency% (Hz)")
 DEFINITION (L"the minimum pitch used in the periodicity analysis. The standard value is 75 Hz. For the voice of a young child, set this to 150 Hz."
 	"The shortest voiceless interval in the decomposition is taken as 1.5 divided by %%minimum frequency%.")
@@ -915,9 +915,9 @@ MAN_END
 MAN_BEGIN (L"audio control panel", L"ppgb", 20050822)
 INTRO (L"Your system's way of controlling where sounds will be played, and how loud.")
 NORMAL (L"On Windows, double-click the loudspeaker icon in the Start bar. "
-	"On MacOS X, go to System Preferences, then to Sound, then to Output Volume "
+	"On MacOS X, go to ##System Preferences#, then to #Sound, then to ##Output Volume# "
 	"(you can put a loudspeaker icon in OSX's menu bar here). "
-	"On HP-UX, try the ##Use internal loudspeaker...# preference in Praat's Preferences menu.")
+	"On HP-UX, try the ##Use internal loudspeaker...# preference in Praat's #Preferences menu.")
 MAN_END
 
 MAN_BEGIN (L"Sound: Play", L"ppgb", 20050822)
@@ -966,7 +966,7 @@ MAN_BEGIN (L"Sound: Resample...", L"ppgb", 20040330)
 INTRO (L"A command that creates new @Sound objects from the selected Sounds.")
 ENTRY (L"Purpose")
 NORMAL (L"High-precision resampling from any sampling frequency to any other sampling frequency.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Sampling frequency")
 DEFINITION (L"the new sampling frequency, in Hertz.")
 TAG (L"%Precision")
@@ -1056,7 +1056,7 @@ NORMAL (L"The size of the recording buffer determines how many seconds of sound 
 	"with ##Sound input prefs...# from the Preferences menu.")
 NORMAL (L"If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
 	"In such a case, you can still write the sound to disk with one of the Write commands in the File menu. "
-	"You can then open such a long sound file in P\\s{RAAT} with @@Open long sound file...@ from the Read menu.")
+	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Read menu.")
 #ifdef sgi
 ENTRY (L"Recording sounds on SGI")
 NORMAL (L"On SGI (Indigo, Indy, O2), you can record from microphone, line input, or digital input. "
@@ -1068,7 +1068,7 @@ ENTRY (L"Recording sounds on MacOS X")
 NORMAL (L"You can record from the combined microphone / line input. On some computers, these are separate.")
 NORMAL (L"Note that in MacOS X you cannot record from the internal CD. This is because the system provides you with something better. "
 	"If you open the CD in the Finder, you will see the audio tracks as AIFC files! "
-	"To open these audio tracks in P\\s{RAAT}, use @@Read from file...@ or @@Open long sound file...@.")
+	"To open these audio tracks in Praat, use @@Read from file...@ or @@Open long sound file...@.")
 #endif
 #ifdef _WIN32
 ENTRY (L"Recording sounds in Windows")
@@ -1101,67 +1101,407 @@ NORMAL (L"If the resulting sound does not fit into memory, use one of the "
 	"commands in the @@Write menu@. See @@How to concatenate sound files@.")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Convolve...", L"ppgb & djmw", 20100325)
-INTRO (L"A command to convolve two @Sound objects with each other.")
-NORMAL (L"The convolution %f*%g of two time signals %f(%t) and %g(%t) is defined as:")
-FORMULA (L"(%f * %g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
-NORMAL (L"Convolution is a commutative operation, i.e. %f*%g equals %g*%f. "
-	"This means that the order in which you put the two Sounds in the object list does not matter: you get the same result.")
-ENTRY (L"Stereo sounds")
+MAN_BEGIN (L"Sounds: Convolve...", L"ppgb & djmw", 20100404)
+INTRO (L"A command available in the #Combine menu when you select two @Sound objects. "
+	"This command convolves two selected @Sound objects with each other. "
+	"As a result, a new Sound will appear in the list of objects; "
+	"this new Sound is the %convolution of the two original Sounds.")
+ENTRY (L"Settings")
+TAG (L"%%Amplitude scaling")
+DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
+	"(see @@Sound: Scale peak...@).")
+TAG (L"%%Signal outside time domain is...")
+DEFINITION (L"Here you can choose whether outside their time domains the sounds are considered to be #zero "
+	"(the standard value), or #similar to the sounds within the time domains. "
+	"This is explained in 4 below.")
+ENTRY (L"1. Convolution as an integral")
+NORMAL (L"The convolution %f*%g of two continuous time signals %f(%t) and %g(%t) is defined as the #integral")
+FORMULA (L"(%f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
+NORMAL (L"If %f and %g are sampled signals (as Sounds are in Praat), with the same @@sampling period@ %%\\Det%, "
+	"the definition is discretized as")
+FORMULA (L"(%f*%g) [%t] \\=3 \\su__%\\ta_ %f[%\\ta] %g[%t-%\\ta] %%\\Det%")
+NORMAL (L"where %\\ta and %t-%\\ta are the discrete times at which %f and %g are defined, respectively.")
+NORMAL (L"Convolution is a commutative operation, i.e. %g*%f equals %f*%g. "
+	"This means that the order in which you put the two Sounds in the object list does not matter: you get the same result either way.")
+ENTRY (L"2. Convolution as a sum")
+NORMAL (L"You can see in the formula above that if both input Sounds are expressed in units of Pa, "
+	"the resulting Sound should ideally be expressed in Pa^^2^s. "
+	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
+NORMAL (L"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
+	"For this reason, Praat considers a different definition of convolution as well, namely as the #sum")
+FORMULA (L"(%f*%g) [%t] \\=3 \\su__\\ta_ %f[%\\ta] %g[%t-%\\ta]")
+NORMAL (L"The sum definition is appropriate if you want to filter a pulse train with a finite-impulse-response filter "
+	"and expect the amplitudes of each resulting period to be equal to the amplitude of the filter. Thus, the pulse train")
+SCRIPT (5, 3,
+	L"Create Sound from formula... peaks mono 0 0.6 1000 x*(col mod 100 = 0)\n"
+	"Draw... 0 0 0 0.6 yes curve\n"
+	"Remove"
+)
+NORMAL (L"(made with ##@@Create Sound from formula...@ peaks mono 0 0.6 1000 x*(col mod 100 = 0)#), "
+	"convolved with the `leaky integrator' filter")
+SCRIPT (5, 3,
+	L"Create Sound from formula... leak mono 0 1 1000 exp(-x/0.1)\n"
+	"Draw... 0 0 0 1 yes curve\n"
+	"Remove"
+)
+NORMAL (L"(made with ##@@Create Sound from formula...@ leak mono 0 1 1000 exp(-x/0.1)#), "
+	"yields the convolution")
+SCRIPT (5, 3,
+	L"Create Sound from formula... peaks mono 0 0.6 1000 x*(col mod 100 = 0)\n"
+	"Create Sound from formula... leak mono 0 1 1000 exp(-x/0.1)\n"
+	"plus Sound peaks\n"
+	"Convolve... sum zero\n"
+	"Draw... 0 0 0 0.8523 yes curve\n"
+	"plus Sound peaks\n"
+	"plus Sound leak\n"
+	"Remove"
+)
+NORMAL (L"The difference between the integral and sum definitions is that in the sum definition "
+	"the resulting sound is divided by %%\\Det%.")
+ENTRY (L"3. Normalized convolution")
+NORMAL (L"The %%normalized convolution% is defined as")
+FORMULA (L"(normalized %f*%g) (%t) \\=3 \\in %f(%\\ta) %g(%t-%\\ta) %d%\\ta "
+	"/ \\Vr (\\in %f^^2^(%\\ta) %%d\\ta% \\in %g^^2^(%\\ta) %%d\\ta%)")
+ENTRY (L"4. Shape scaling")
+NORMAL (L"The boundaries of the integral in 1 are -\\oo and +\\oo. "
+	"However, %f and %g are Sound objects in Praat and therefore have finite time domains. "
+	"If %f runs from %t__1_ to %t__2_ and is assumed to be #zero before %t__1_ and after %t__2_, and "
+	"%g runs from %t__3_ to %t__4_ and is assumed to be zero outside that domain, "
+	"then the convolution will be zero before %t__1_ + %t__3_ and after %t__2_ + %t__4_, "
+	"while between %t__1_ + %t__3_ and %t__2_ + %t__4_ it is")
+FORMULA (L"(%f*%g) (%t) = \\in__%%t%1_^^%%t%2^ %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
+NORMAL (L"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
+	"but the argument of %g runs from (%t__1_ + %t__3_) - %t__2_ to (%t__2_ + %t__4_) - %t__1_, "
+	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
+	"This means that the integration is performed over two equal stretches of time during which %g must be taken zero, "
+	"namely a time stretch before %t__3_ and a time stretch after %t__4_, both of duration %t__2_ - %t__1_ "
+	"(equivalent equations can be formulated that rely on two stretches of %t__4_ - %t__3_ of zeroes in %f rather than in %g, "
+	"or on a stretch of %t__2_ - %t__1_ of zeroes in %g and a stretch of %t__4_ - %t__3_ of zeroes in %f.")
+NORMAL (L"If you consider the sounds outside their time domains as #similar to what they are within their time domains, instead of #zero, "
+	"the discretized formula in 1 should be based on the average over the jointly defined values of %f[%\\ta] and %g[%t-%\\ta], "
+	"without counting any multiplications of values outside the time domains. "
+	"Suppose that %f is defined on the time domain [0, 1.2] with the value of 1 everywhere, "
+	"and %g is defined on the time domain [0, 3] with the value 1 everywhere. "
+	"Their convolution under the assumption that they are #zero elsewhere is then")
+SCRIPT (5, 3,
+	L"Create Sound from formula... short mono 0 1.2 1000 1\n"
+	"Create Sound from formula... long mono 0 3 1000 1\n"
+	"plus Sound short\n"
+	"Convolve... integral zero\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound short\n"
+	"plus Sound long\n"
+	"Remove"
+)
+NORMAL (L"but under the assumption that the sounds are #similar (i.e. 1) elsewhere, their convolution should be")
+SCRIPT (5, 3,
+	L"Create Sound from formula... short mono 0 1.2 1000 1\n"
+	"Create Sound from formula... long mono 0 3 1000 1\n"
+	"plus Sound short\n"
+	"Convolve... integral similar\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound short\n"
+	"plus Sound long\n"
+	"Remove"
+)
+NORMAL (L"i.e. a constant value of 1.2. This is what you get by choosing the #similar option; "
+	"if %f is shorter than %g, the first and last parts of the convolution will be divided by a straight line of duration %t__2_ - %t__1_ "
+	"to compensate for the fact that the convolution has been computed over fewer values of %f and %g there.")
+ENTRY (L"5. Behaviour")
+NORMAL (L"The start time of the resulting Sound will be the sum of the start times of the original Sounds, "
+	"the end time of the resulting Sound will be the sum of the end times of the original Sounds, "
+	"the time of the first sample of the resulting Sound will be the sum of the first samples of the original Sounds, "
+	"the time of the last sample of the resulting Sound will be the sum of the last samples of the original Sounds, "
+	"and the number of samples in the resulting Sound will be the sum of the numbers of samples of the original Sounds minus 1.")
+ENTRY (L"6. Behaviour for stereo and other multi-channel sounds")
+NORMAL (L"You can convolve e.g. a 10-channel sound either with another 10-channel sound or with a 1-channel (mono) sound.")
 NORMAL (L"If both Sounds have more than one channel, the two Sounds have to have the same number of channels; "
 	"each channel of the resulting Sound is then computed as the convolution of the corresponding channels "
-	"of the original Sounds. If one of the original Sounds has multiple channels and the other Sound has only one channel, "
+	"of the original Sounds. For instance, if you convolve two 10-channel sounds, "
+	"the resulting sound will have 10 channels, and its 9th channel will be the convolution of the 9th channels "
+	"of the two original sounds.")
+NORMAL (L"If one of the original Sounds has multiple channels and the other Sound has only one channel, "
 	"the resulting Sound will have multiple channels; each of these is computed as the convolution of "
 	"the corresponding channel of the multiple-channel original and the single channel of the single-channel original. "
-	"This allows you filter a stereo Sound with a mono impulse response, for instance.")
-ENTRY (L"Setting")
-TAG (L"%%Scaling")
-DEFINITION (L"It is impossible to get the amplitude of the resulting Sound correct for all purposes. "
-	"This is because if both input Sounds are expressed in units of Pa, "
-	"the resulting Sound should ideally be expressed in Pa^^2^s (according to the above formula), "
-	"but you will nevertheless see that Praat expresses it in Pa, because Sounds cannot be expressed otherwise. "
-	"If you want to filter a pulse train with a finite-impulse-response filter "
-	"and expect the amplitudes of each resulting period to be equal to the amplitude of the filter, "
-	"you can modify the above formula by setting the scaling to #sum instead of #integral; "
-	"the resulting sound is then divided by %%\\Det%, the sampling period of the sound.")
-ENTRY (L"Algorithm")
+	"For instance, if you convolve a 10-channel sound with a mono sound, "
+	"the resulting sound will have 10 channels, and its 9th channel will be the convolution of the mono sound "
+	"with the 9th channel of the original 10-channel sound.")
+NORMAL (L"The amplitude scaling factor will be the same for all channels, so that the relative amplitude of the channels "
+	"will be preserved in the resulting sound. For the #normalize scaling, for instance, the norm of %f in the formula above "
+	"is taken over all channels of %f. For the ##peak 0.99# scaling, the resulting sound will typically have an absolute peak "
+	"of 0.99 in only one channel, and lower absolute peaks in the other channels.")
+ENTRY (L"7. Algorithm")
 NORMAL (L"The computation makes use of the fact that convolution in the time domain corresponds to multiplication in the frequency domain: "
-	"we first calculate the spectra of the two (zero-padded) sounds by Fourier transformation, "
+	"we first pad %f with a stretch of %t__4_ - %t__3_ of zeroes and %g with a stretch of %t__2_ - %t__1_ of zeroes (see 4 above), "
+	"so that both sounds obtain a duration of (%t__2_ - %t__1_) + (%t__4_ - %t__3_); "
+	"we then calculate the spectra of the two zero-padded sounds by Fourier transformation, "
 	"then multiply the two spectra with each other, "
-	"and finally Fourier-transform the result of this multiplication back to the time domain.")
+	"and finally Fourier-transform the result of this multiplication back to the time domain; "
+	"the result will again have a duration of (%t__2_ - %t__1_) + (%t__4_ - %t__3_).")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Cross-correlate...", L"djmw & ppgb", 20100325)
-INTRO (L"A command to compute the cross-correlation of two selected @@Sound@s. ")
-NORMAL (L"The cross-correlation of two signals %f(%t) and %g(%t) is defined as a function of the lag time %\\ta:")
-FORMULA (L"cross-corr (%f, %g)(%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt")
-NORMAL (L"Cross-correlation is a symmetric function: cross-corr (%g, %f)(%\\ta) = cross-corr (%f, %g)(-%\\ta).")
-NORMAL (L"The normalized cross-correlation of two signals %f(%t) and %g(%t) is defined as")
-FORMULA (L"norm-cross-corr (%f, %g)(%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt / \\Vr ((\\in %f^^2^(%t) %dt) (\\in %g^^2^(%t) %dt))")
-ENTRY (L"Setting")
-TAG (L"%%Normalize%")
-DEFINITION (L"when on, the result is normalized, i.e. divided by the square root of the product of the energies of the two sounds.")
-ENTRY (L"Algorithm")
-NORMAL (L"The cross-correlation procedure is performed fast in the frequency domain.")
-ENTRY (L"Scaling")
-NORMAL (L"Since a Sound is expressed in units of Pa, "
-	"the cross-correlation should be expressed in Pa^^2^s (while the normalized cross-correlation should be dimensionless), "
-	"but it is actually again in Pa (because that is the unit of sound pressure).")
+MAN_BEGIN (L"Sounds: Cross-correlate...", L"djmw & ppgb", 20100404)
+INTRO (L"A command available in the #Combine menu when you select two @Sound objects. "
+	"This command cross-correlates two selected @Sound objects with each other. "
+	"As a result, a new Sound will appear in the list of objects; "
+	"this new Sound is the %cross-correlation of the two original Sounds.")
+ENTRY (L"Settings")
+TAG (L"%%Amplitude scaling")
+DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
+	"(see @@Sound: Scale peak...@).")
+TAG (L"%%Signal outside time domain is...")
+DEFINITION (L"Here you can choose whether outside their time domains the sounds are considered to be #zero "
+	"(the standard value), or #similar to the sounds within the time domains. "
+	"This is explained in 4 below.")
+ENTRY (L"1. Cross-correlation as an integral")
+NORMAL (L"The cross-correlation of two continuous time signals %f(%t) and %g(%t) is a function of the lag time %\\ta, "
+	"and defined as the #integral")
+FORMULA (L"cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %dt")
+NORMAL (L"If %f and %g are sampled signals (as Sounds are in Praat), with the same @@sampling period@ %%\\Det%, "
+	"the definition is discretized as")
+FORMULA (L"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta] %%\\Det%")
+NORMAL (L"where %\\ta and %t+%\\ta are the discrete times at which %f and %g are defined, respectively.")
+NORMAL (L"Cross-correlation is not a commutative operation, i.e. cross-corr (%g, %f) equals the time reversal of cross-corr (%f, %g). "
+	"This means that the order in which you put the two Sounds in the object list does matter: "
+	"the two results are each other's time reversals.")
+ENTRY (L"2. Cross-correlation as a sum")
+NORMAL (L"You can see in the formula above that if both input Sounds are expressed in units of Pa, "
+	"the resulting Sound should ideally be expressed in Pa^^2^s. "
+	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
+NORMAL (L"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
+	"For this reason, Praat considers a different definition of cross-correlation as well, namely as the #sum")
+FORMULA (L"cross-corr (%f, %g) [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
+NORMAL (L"The difference between the integral and sum definitions is that in the sum definition "
+	"the resulting sound is divided by %%\\Det%.")
+ENTRY (L"3. Normalized cross-correlation")
+NORMAL (L"The %%normalized cross-correlation% is defined as")
+FORMULA (L"norm-cross-corr (%f, %g) (%\\ta) \\=3 \\in %f(%t) %g(%t+%\\ta) %d%t "
+	"/ \\Vr (\\in %f^^2^(%t) %%dt% \\in %g^^2^(%t) %%dt%)")
+ENTRY (L"4. Shape scaling")
+NORMAL (L"The boundaries of the integral in 1 are -\\oo and +\\oo. "
+	"However, %f and %g are Sound objects in Praat and therefore have finite time domains. "
+	"If %f runs from %t__1_ to %t__2_ and is assumed to be #zero before %t__1_ and after %t__2_, and "
+	"%g runs from %t__3_ to %t__4_ and is assumed to be zero outside that domain, "
+	"then the cross-correlation will be zero before %t__3_ - %t__2_ and after %t__4_ - %t__1_, "
+	"while between %t__3_ - %t__2_ and %t__4_ - %t__1_ it is")
+FORMULA (L"cross-corr (%f, %g) (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %g(%t+%\\ta) %d%t")
+NORMAL (L"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
+	"but the argument of %g runs from %t__1_ + (%t__3_ - %t__2_) to %t__2_ + (%t__4_ - %t__1_), "
+	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
+	"This means that the integration is performed over two equal stretches of time during which %g must be taken zero, "
+	"namely a time stretch before %t__3_ and a time stretch after %t__4_, both of duration %t__2_ - %t__1_ "
+	"(equivalent equations can be formulated that rely on two stretches of %t__4_ - %t__3_ of zeroes in %f rather than in %g, "
+	"or on a stretch of %t__2_ - %t__1_ of zeroes in %g and a stretch of %t__4_ - %t__3_ of zeroes in %f.")
+NORMAL (L"If you consider the sounds outside their time domains as #similar to what they are within their time domains, instead of #zero, "
+	"the discretized formula in 1 should be based on the average over the jointly defined values of %f[%\\ta] and %g[%t-%\\ta], "
+	"without counting any multiplications of values outside the time domains. "
+	"Suppose that %f is defined on the time domain [0, 1.2] with the value of 1 everywhere, "
+	"and %g is defined on the time domain [0, 3] with the value 1 everywhere. "
+	"Their cross-correlation under the assumption that they are #zero elsewhere is then")
+SCRIPT (5, 3,
+	L"Create Sound from formula... short mono 0 1.2 1000 1\n"
+	"Create Sound from formula... long mono 0 3 1000 1\n"
+	"plus Sound short\n"
+	"Cross-correlate... integral zero\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound short\n"
+	"plus Sound long\n"
+	"Remove"
+)
+NORMAL (L"but under the assumption that the sounds are #similar (i.e. 1) elsewhere, their cross-correlation should be")
+SCRIPT (5, 3,
+	L"Create Sound from formula... short mono 0 1.2 1000 1\n"
+	"Create Sound from formula... long mono 0 3 1000 1\n"
+	"plus Sound short\n"
+	"Cross-correlate... integral similar\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound short\n"
+	"plus Sound long\n"
+	"Remove"
+)
+NORMAL (L"i.e. a constant value of 1.2. This is what you get by choosing the #similar option; "
+	"if %f is shorter than %g, the first and last parts of the cross-correlation will be divided by a straight line of duration %t__2_ - %t__1_ "
+	"to compensate for the fact that the cross-correlation has been computed over fewer values of %f and %g there.")
+ENTRY (L"5. Behaviour")
+NORMAL (L"The start time of the resulting Sound will be the start time of %f minus the end time of %g, "
+	"the end time of the resulting Sound will be the end time of %f minus the start time of %g, "
+	"the time of the first sample of the resulting Sound will be the first sample of %f minus the last sample of %g, "
+	"the time of the last sample of the resulting Sound will be the last sample of %f minus the first sample of %g, "
+	"and the number of samples in the resulting Sound will be the sum of the numbers of samples of %f and %g minus 1.")
+ENTRY (L"6. Behaviour for stereo and other multi-channel sounds")
+NORMAL (L"You can cross-correlate e.g. a 10-channel sound either with another 10-channel sound or with a 1-channel (mono) sound.")
+NORMAL (L"If both Sounds have more than one channel, the two Sounds have to have the same number of channels; "
+	"each channel of the resulting Sound is then computed as the cross-correlation of the corresponding channels "
+	"of the original Sounds. For instance, if you cross-correlate two 10-channel sounds, "
+	"the resulting sound will have 10 channels, and its 9th channel will be the cross-correlation of the 9th channels "
+	"of the two original sounds.")
+NORMAL (L"If one of the original Sounds has multiple channels and the other Sound has only one channel, "
+	"the resulting Sound will have multiple channels; each of these is computed as the cross-correlation of "
+	"the corresponding channel of the multiple-channel original and the single channel of the single-channel original. "
+	"For instance, if you cross-correlate a 10-channel sound with a mono sound, "
+	"the resulting sound will have 10 channels, and its 9th channel will be the cross-correlation of the mono sound "
+	"with the 9th channel of the original 10-channel sound.")
+NORMAL (L"The amplitude scaling factor will be the same for all channels, so that the relative amplitude of the channels "
+	"will be preserved in the resulting sound. For the #normalize scaling, for instance, the norm of %f in the formula above "
+	"is taken over all channels of %f. For the ##peak 0.99# scaling, the resulting sound will typically have an absolute peak "
+	"of 0.99 in only one channel, and lower absolute peaks in the other channels.")
+ENTRY (L"7. Algorithm")
+NORMAL (L"The computation makes use of the fact that cross-correlation in the time domain corresponds to multiplication "
+	"of the time-reversal of %f with %g in the frequency domain: "
+	"we first pad %f with a stretch of %t__4_ - %t__3_ of zeroes and %g with a stretch of %t__2_ - %t__1_ of zeroes (see 4 above), "
+	"so that both sounds obtain a duration of (%t__2_ - %t__1_) + (%t__4_ - %t__3_); "
+	"we then calculate the spectra of the two zero-padded sounds by Fourier transformation, "
+	"then multiply the complex conjugate of the spectrum of %f with the spectrum of %g, "
+	"and finally Fourier-transform the result of this multiplication back to the time domain; "
+	"the result will again have a duration of (%t__2_ - %t__1_) + (%t__4_ - %t__3_).")
 MAN_END
 
-MAN_BEGIN (L"Sound: Autocorrelate...", L"djmw & ppgb", 20100325)
-INTRO (L"A command to compute the autocorrelation of a selected @@Sound@.")
-ENTRY (L"Setting")
-TAG (L"%%Normalize%")
-DEFINITION (L"when on, the result is normalized, i.e. divided by the energy of the sound. ")
+MAN_BEGIN (L"Sound: Autocorrelate...", L"djmw & ppgb", 20100404)
+INTRO (L"A command available in the #Periodicity menu when you select one or more @Sound objects. "
+	"This command autocorrelates the selected @Sound object. "
+	"As a result, a new Sound will appear in the list of objects; "
+	"this new Sound is the %autocorrelation of the original Sound.")
+ENTRY (L"Settings")
+TAG (L"%%Amplitude scaling")
+DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
+	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
+	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
+	"(see @@Sound: Scale peak...@).")
+TAG (L"%%Signal outside time domain is...")
+DEFINITION (L"Here you can choose whether outside its time domain the sound is considered to be #zero "
+	"(the standard value), or #similar to the sound within the time domain. "
+	"This is explained in 4 below.")
+//DEFINITION (L"Here you can choose whether outside its time domain the sound is considered to be #zero "
+//	"(the standard value), or #similar to the sound within the time domain, or #periodic, i.e. that "
+//	"outside the time domain the waveforms is a repetition of the waveform within the time domain. "
+//	"This is explained in 4 below.")
+ENTRY (L"1. Autocorrelation as an integral")
+NORMAL (L"The autocorrelation of a continuous time signal %f(%t) is a function of the lag time %\\ta, "
+	"and defined as the #integral")
+FORMULA (L"%R__%f_ (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %dt")
+NORMAL (L"If %f is a sampled signal (as Sounds are in Praat), with @@sampling period@ %%\\Det%, "
+	"the definition is discretized as")
+FORMULA (L"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %f[%t+%\\ta] %%\\Det%")
+NORMAL (L"where %\\ta and %t+%\\ta are the discrete times at which %f is defined.")
+NORMAL (L"The autocorrelation is symmetric: %R__%f_ (-%\\ta) = %R__%f_ (%\\ta).")
+ENTRY (L"2. Autocorrelation as a sum")
+NORMAL (L"You can see in the formula above that if the input Sound is expressed in units of Pa, "
+	"the resulting Sound should ideally be expressed in Pa^^2^s. "
+	"Nevertheless, Praat will express it in Pa, because Sounds cannot be expressed otherwise.")
+NORMAL (L"This basically means that it is impossible to get the amplitude of the resulting Sound correct for all purposes. "
+	"For this reason, Praat considers a different definition of autocorrelation as well, namely as the #sum")
+FORMULA (L"%R__%f_ [%\\ta] \\=3 \\su__%t_ %f[%t] %g[%t+%\\ta]")
+NORMAL (L"The difference between the integral and sum definitions is that in the sum definition "
+	"the resulting sound is divided by %%\\Det%.")
+ENTRY (L"3. Normalized autocorrelation")
+NORMAL (L"The %%normalized autocorrelation% is defined as")
+FORMULA (L"norm-autocorr (%f) (%\\ta) \\=3 \\in %f(%t) %f(%t+%\\ta) %d%t / \\in %f^^2^(%t) %%dt%")
+ENTRY (L"4. Shape scaling")
+NORMAL (L"The boundaries of the integral in 1 are -\\oo and +\\oo. "
+	"However, %f is a Sound object in Praat and therefore has a finite time domain. "
+	"If %f runs from %t__1_ to %t__2_ and is assumed to be #zero before %t__1_ and after %t__2_, "
+	"then the autocorrelation will be zero before %t__1_ - %t__2_ and after %t__2_ - %t__1_, "
+	"while between %t__1_ - %t__2_ and %t__2_ - %t__1_ it is")
+FORMULA (L"%R__%f_ (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %f(%t+%\\ta) %d%t")
+NORMAL (L"In this formula, the argument of the first %f runs from %t__1_ to %t__2_, "
+	"but the argument of the second %f runs from %t__1_ + (%t__1_ - %t__2_) to %t__2_ + (%t__2_ - %t__1_), "
+	"i.e. from %t__1_ - (%t__2_ - %t__1_) to %t__2_ + (%t__2_ - %t__1_). "
+	"This means that the integration is performed over two equal stretches of time during which %f must be taken zero, "
+	"namely a time stretch before %t__1_ and a time stretch after %t__2_, both of duration %t__2_ - %t__1_.")
+NORMAL (L"If you consider the sound outside its time domains as #similar to what it is within its time domain, instead of #zero, "
+	"the discretized formula in 1 should be based on the average over the jointly defined values of %f[%\\ta] and %f[%t-%\\ta], "
+	"without counting any multiplications of values outside the time domain. "
+	"Suppose that %f is defined on the time domain [0, 1.2] with the value of 1 everywhere. "
+	"Its autocorrelation under the assumption that it is #zero elsewhere is then")
+SCRIPT (5, 3,
+	L"Create Sound from formula... sound mono 0 1.2 1000 1\n"
+	"Autocorrelate... integral zero\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound sound\n"
+	"Remove"
+)
+NORMAL (L"but under the assumption that the sound is #similar (i.e. 1) elsewhere, its autocorrelation should be")
+SCRIPT (5, 3,
+	L"Create Sound from formula... sound mono 0 1.2 1000 1\n"
+	"Autocorrelate... integral similar\n"
+	"Draw... 0 0 0 1.5 yes curve\n"
+	"One mark left... 1.2 yes yes yes\n"
+	"plus Sound sound\n"
+	"Remove"
+)
+NORMAL (L"i.e. a constant value of 1.2. This is what you get by choosing the #similar option; "
+	"the autocorrelation will be divided by a triangular function "
+	"to compensate for the fact that the autocorrelation has been computed over fewer values closer to the edges; "
+	"this procedure is followed in all autocorrelation-based pitch computations in Praat (see @@Sound: To Pitch...@). "
+	"For examples, see @@Boersma (1993)@.")
+ENTRY (L"5. Behaviour")
+NORMAL (L"The start time of the resulting Sound will be the start time of %f minus the end time of %f, "
+	"the end time of the resulting Sound will be the end time of %f minus the start time of %f, "
+	"the time of the first sample of the resulting Sound will be the first sample of %f minus the last sample of %f, "
+	"the time of the last sample of the resulting Sound will be the last sample of %f minus the first sample of %f, "
+	"and the number of samples in the resulting Sound will be twice the number of samples of %f, minus 1.")
+ENTRY (L"6. Behaviour for stereo and other multi-channel sounds")
+NORMAL (L"If the selected Sound has more than one channel, each channel of the resulting Sound is computed "
+	"as the cross-correlation of the corresponding channel "
+	"of the original Sound. For instance, if you autocorrelate a 10-channel sound, "
+	"the resulting sound will again have 10 channels, and its 9th channel will be the autocorrelation of the 9th channel "
+	"of the original sound.")
+NORMAL (L"The amplitude scaling factor will be the same for all channels, so that the relative amplitude of the channels "
+	"will be preserved in the resulting sound. For the #normalize scaling, for instance, the squared norm of %f in the formula above "
+	"is taken over all channels of %f. For the ##peak 0.99# scaling, the resulting sound will typically have an absolute peak "
+	"of 0.99 in only one channel, and lower absolute peaks in the other channels.")
 ENTRY (L"Algorithm")
-NORMAL (L"The autocorrelation is calculated as the @@Sounds: Cross-correlate...|cross-correlation@ of a sound with itself. "
-	"It is a function of the lag time %\\ta.")
-NORMAL (L"The autocorrelation is symmetric: autocorr (-%\\ta) = autocorr (%\\ta).")
-ENTRY (L"Scaling")
-NORMAL (L"Since a Sound is expressed in units of Pa, "
-	"the autocorrelation should be expressed in Pa^^2^s (while the normalized autocorrelation should be dimensionless), "
-	"but it is actually again in Pa (because that is the unit of sound pressure).")
+NORMAL (L"The autocorrelation is calculated as the @@Sounds: Cross-correlate...|cross-correlation@ of a sound with itself.")
+MAN_END
+
+MAN_BEGIN (L"Sound: Scale peak...", L"ppgb", 20100328)
+INTRO (L"A command available in the #Modify menu when you select one or more @Sound objects. "
+	"With this command you multiply the amplitude of each Sound in such a way that its absolute peak becomes "
+	"the ##new absolute peak# that you specify (see Settings).")
+ENTRY (L"Settings")
+TAG (L"##New absolute peak")
+DEFINITION (L"the new absolute peak of the Sound. The standard value is 0.99: this maximizes the audibility of the Sound "
+	"(sounds with lower amplitude are weaker) without distorting it "
+	"(sounds with absolute peaks above 1 are clipped when they are played).")
+ENTRY (L"Examples")
+NORMAL (L"The absolute peak of the following sound is 0.033:")
+SCRIPT (6.0, 3.0,
+	L"Create Sound from formula... 033 mono 0 0.1 10000 -0.02*(sin(2*pi*205*x)+sin(2*pi*5*x))+0.007\n"
+	"Draw... 0 0 -0.033 0.0247 yes curve\n"
+	"Remove"
+)
+NORMAL (L"This sound will play rather weakly. To make it louder, you can do ##Scale peak...# with a ##new absolute peak# of 0.99. "
+	"Praat will then multiply the waveform by 30, changing the sound to the following:")
+SCRIPT (6.0, 3.0,
+	L"Create Sound from formula... 033 mono 0 0.1 10000 -0.6*(sin(2*pi*205*x)+sin(2*pi*5*x))+0.21\n"
+	"Draw... 0 0 -0.99 0.741 yes curve\n"
+	"Remove"
+)
+NORMAL (L"The absolute peak is now 0.99, and the sound will play loudly.")
+NORMAL (L"The reverse is also possible. The absolute peak of the following sound is 19.8:")
+SCRIPT (6.0, 3.0,
+	L"Create Sound from formula... 033 mono 0 0.1 10000 12*(sin(2*pi*305*x)+sin(2*pi*5*x))-4.2\n"
+	"Draw... 0 0 -15.28 19.8 yes curve\n"
+	"Remove"
+)
+NORMAL (L"This sound will not play correctly: all samples with an amplitude outside the [-1;+1] range will be clipped to -1 or +1. "
+	"To make this sound nicer to play, you can again do ##Scale peak...# with a ##new absolute peak# of 0.99. "
+	"Praat will then divide the waveform by 20, changing the sound to the following:")
+SCRIPT (6.0, 3.0,
+	L"Create Sound from formula... 033 mono 0 0.1 10000 0.6*(sin(2*pi*305*x)+sin(2*pi*5*x))-0.21\n"
+	"Draw... 0 0 -0.764 0.99 yes curve\n"
+	"Remove"
+)
+NORMAL (L"The absolute peak is now 0.99, and the sound will play without distortion.")
 MAN_END
 
 }

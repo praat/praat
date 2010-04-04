@@ -1,6 +1,6 @@
 /* manual_pitch.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ MAN_BEGIN (L"Harmonicity: Get maximum...", L"ppgb", 20030916)
 INTRO (L"A @query to the selected @Harmonicity object.")
 ENTRY (L"Return value")
 NORMAL (L"the maximum value, expressed in dB.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time% (s), %%To time% (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
 	"If %%To time% is not greater than %%From time%, the entire time domain of the Harmonicity object is considered.")
@@ -151,7 +151,7 @@ INTRO (L"A @query to the selected @Harmonicity object to .")
 ENTRY (L"Return value")
 NORMAL (L"an estimate (in dB) of the value at a specified time. "
 	"If this time is outside the time domain or outside the samples of the Harmonicity, the result is @undefined.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which the value is to be evaluated.")
 TAG (L"%%Interpolation")
@@ -231,7 +231,7 @@ MAN_END
 
 MAN_BEGIN (L"Pitch: Draw...", L"ppgb", 19960910)
 INTRO (L"A command for drawing the selected @Pitch objects into the @@Picture window@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time% (seconds), %%To time% (seconds)")
 DEFINITION (L"the time domain along the horizontal axis. "
 	"If these are both zero, the time domain of the #Pitch itself is taken (autowindowing).")
@@ -437,7 +437,7 @@ MAN_END
 
 MAN_BEGIN (L"PitchTier: Add point...", L"ppgb", 20010410)
 INTRO (L"A command to add a point to each selected @PitchTier.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
 TAG (L"%Pitch (Hz)")
@@ -584,7 +584,7 @@ NORMAL (L"to perform a short-term HNR analysis.")
 ENTRY (L"Algorithm")
 NORMAL (L"The algorithm performs an acoustic periodicity detection on the basis of an "
 	"accurate autocorrelation method, as described in @@Boersma (1993)@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Time step% (standard value: 0.01 s)")
 DEFINITION (L"the measurement interval (frame duration), in seconds.")
 TAG (L"%%Minimum pitch% (standard value: 75 Hz)")
@@ -609,15 +609,15 @@ NORMAL (L"to perform a short-term HNR analysis.")
 ENTRY (L"Algorithm")
 NORMAL (L"The algorithm performs an acoustic periodicity detection on the basis of a "
 	"forward cross-correlation analysis. "
-	"For information on the arguments, see @@Sound: To Harmonicity (ac)...@.")
+	"For information on the settings, see @@Sound: To Harmonicity (ac)...@.")
 MAN_END
 
 MAN_BEGIN (L"Sound: To Pitch...", L"ppgb", 20030916)
 INTRO (L"A command that creates a @Pitch object from every selected @Sound object.")
 ENTRY (L"Purpose")
 NORMAL (L"to perform a pitch analysis, optimized for speech.")
-ENTRY (L"Arguments")
-NORMAL (L"The arguments that control the recruitment of the candidates are:")
+ENTRY (L"Settings")
+NORMAL (L"The settings that control the recruitment of the candidates are:")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"P\\s{RAAT} will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
@@ -656,8 +656,8 @@ NORMAL (L"The algorithm performs an acoustic periodicity detection on the basis 
 	"function on the basis of a windowed signal, you should divide the autocorrelation function of the "
 	"windowed signal by the autocorrelation function of the window:")
 NORMAL (L"%r__%x_ (%\\ta) \\~~ %r__%xw_ (%\\ta) / %r__%w_ (%\\ta)")
-ENTRY (L"Arguments")
-NORMAL (L"The arguments that control the recruitment of the candidates are:")
+ENTRY (L"Settings")
+NORMAL (L"The settings that control the recruitment of the candidates are:")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"P\\s{RAAT} will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
@@ -674,7 +674,7 @@ DEFINITION (L"if %off, the window is a Hanning window with a physical length of 
 	"If %on, the window is a Gaussian window with a physical length of  6 / (%%pitch floor%), "
 	"i.e. twice the effective length.")
 NORMAL (L"A post-processing algorithm seeks the cheapest path through the candidates. "
-	"The arguments that determine the cheapest path are:")
+	"The settings that determine the cheapest path are:")
 TAG (L"%%Pitch ceiling% (standard value: 600 Hz)")
 DEFINITION (L"candidates above this frequency will be ignored.")
 TAG (L"%%Silence threshold% (standard value: 0.03)")
@@ -707,7 +707,7 @@ NORMAL (L"to perform a pitch analysis based on a cross-correlation method.")
 ENTRY (L"Algorithm")
 NORMAL (L"The algorithm performs an acoustic periodicity detection on the basis of a "
 	"forward cross-correlation analysis.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
 	"P\\s{RAAT} will use a time step of 0.25 / (%%pitch floor%), e.g. 0.00333333 seconds if the pitch floor is 75 Hz; "
@@ -719,7 +719,7 @@ DEFINITION (L"candidates below this frequency will not be recruited. "
 NORMAL (L"Note that if you set the time step to zero, the analysis windows for consecutive measurements "
 	"will overlap appreciably: P\\s{RAAT} will always compute 4 pitch values "
 	"within one window length, i.e., the degree of %oversampling is 4.")
-NORMAL (L"The other arguments are the same as for @@Sound: To Pitch (ac)...@.")
+NORMAL (L"The other settings are the same as for @@Sound: To Pitch (ac)...@.")
 ENTRY (L"Usage")
 NORMAL (L"The preferred method for speech is @@Sound: To Pitch...@. "
 	"The command described here is mainly for experimenting, "

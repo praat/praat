@@ -1,6 +1,6 @@
 /* manual_Picture.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -482,7 +482,7 @@ INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To draw a specified number of marks per decade "
 	"into the @margins around the drawing area, along a logarithmic axis.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Marks per decade")
 DEFINITION (L"the number of marks that will be drawn for every decade.")
 TAG (L"%%Write numbers")
@@ -537,7 +537,7 @@ MAN_BEGIN (L"Marks left/right/top/bottom...", L"ppgb", 19970330)
 INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To draw any number of equally spaced marks into the @margins around the drawing area.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Number of marks%")
 DEFINITION (L"the number of equally spaced marks (2 or more) that will be drawn; "
 	"there will always be marks at the beginning and end of the domain or range.")
@@ -562,7 +562,7 @@ MAN_BEGIN (L"Marks left/right/top/bottom every...", L"ppgb", 19970330)
 INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To draw a number of equally spaced marks into the @margins around the drawing area.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Units")
 DEFINITION (L"the units, relative to the standard units, "
 	"for writing the numbers; for example, if you want time in milliseconds "
@@ -587,7 +587,7 @@ INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To draw one mark into one of the four @margins "
 	"around the drawing area, along a logarithmic axis.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Position")
 DEFINITION (L"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the logarithmic domain or range of your latest drawing "
@@ -615,7 +615,7 @@ MAN_BEGIN (L"One mark left/right/top/bottom...", L"ppgb", 19970330)
 INTRO (L"Four of the commands in the #Margins menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To draw one mark into one of the four @margins around the drawing area.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Position")
 DEFINITION (L"the %x (for top or bottom) or %y (for left or right) position of the mark, "
 	"expressed in the domain or range of your latest drawing "
@@ -704,7 +704,7 @@ MAN_END
 MAN_BEGIN (L"PostScript settings...", L"ppgb", 20040925)
 INTRO (L"One of the commands in the File menus of many windows. "
 	"The PostScript settings influence @Printing and writing to @@Encapsulated PostScript@ files.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Allow direct PostScript printing% (Windows and Macintosh only)")
 DEFINITION (L"this determines whether Praat prints explicit PostScript commands to your printer "
 	"if it is a PostScript printer. This is what you will usually want. However, if you find "
@@ -842,7 +842,7 @@ ENTRY (L"Purpose")
 NORMAL (L"To write text inside the drawing area.")
 ENTRY (L"Scope")
 NORMAL (L"This works with all the drawings that leave @margins around themselves.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%x")
 DEFINITION (L"horizontal position, expressed in the horizontal domain of your latest drawing.")
 TAG (L"%y")
@@ -950,7 +950,7 @@ INTRO (L"One of the commands in the #Select menu of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To write text inside the viewport, at nine different places, "
 	"with a rotation between 0 to 360 degrees.")
-ENTRY (L"Arguments:")
+ENTRY (L"Settings:")
 TAG (L"%%Horizontal alignment")
 DEFINITION (L"determines the horizontal alignment of the text:")
 LIST_ITEM (L"    \\bu %Left means pushed against the left edge of the viewport;")
@@ -965,7 +965,7 @@ TAG (L"%%Text")
 DEFINITION (L"will be drawn in the current font and font size "
 	"that you set with the @@Font menu@.")
 ENTRY (L"Behaviour")
-NORMAL (L"For rotated text, the alignment arguments will not only determine "
+NORMAL (L"For rotated text, the alignment settings will not only determine "
 	"the position inside the viewport, "
 	"but also the alignment in the rotated coordinate system. "
 	"This gives surprises now and then; "

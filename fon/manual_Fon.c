@@ -106,7 +106,7 @@ MAN_END
 MAN_BEGIN (L"Remove points between...", L"ppgb", 20080427)
 INTRO (L"A command to remove some points from every selected time-based tier object "
 	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time% (s), %%To time% (s)")
 DEFINITION (L"the times between which you want to remove all points.")
 ENTRY (L"Behaviour")
@@ -249,7 +249,7 @@ MAN_END
 
 MAN_BEGIN (L"Distributions: To Strings...", L"ppgb", 19971022)
 INTRO (L"A command to create a @Strings object from every selected @Distributions object.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Column number")
 DEFINITION (L"the column (in the #Distributions object) that contains the distribution that you are "
 	"interested in. Often the #Distributions object will only contain a single distribution, "
@@ -296,7 +296,7 @@ MAN_END
 MAN_BEGIN (L"DurationTier: Add point...", L"ppgb", 20030216)
 INTRO (L"A command to add a point to each selected @DurationTier. "
 	"For an example, see @@Create DurationTier...@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
 TAG (L"%%Relative duration")
@@ -308,7 +308,7 @@ MAN_END
 
 MAN_BEGIN (L"DurationTier: Get target duration...", L"ppgb", 19991016)
 INTRO (L"A @query to the selected @DurationTier for the target duration of a specified time range.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time% (s), %%To time% (s)")
 DEFINITION (L"the start and end of the time range. If %fromTime or %toTime is outside the time domain "
 	"of the Duration object, there will be .")
@@ -601,7 +601,7 @@ MAN_BEGIN (L"Intensity: Get value at time...", L"ppgb", 20030916)
 INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the intensity (in dB) at a specified time. If %time is outside the frames of the Intensity, the result is 0.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which the value is to be evaluated.")
 TAG (L"%%Interpolation")
@@ -679,7 +679,7 @@ MAN_END
 
 MAN_BEGIN (L"IntensityTier: Add point...", L"ppgb", 20010410)
 INTRO (L"A command to add a point to each selected @IntensityTier.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
 TAG (L"%Intensity (dB)")
@@ -1079,7 +1079,7 @@ MAN_END
 
 MAN_BEGIN (L"Matrix: Draw as squares...", L"ppgb", 19980319)
 INTRO (L"A command to draw a @Matrix object into the @@Picture window@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Xmin, %Xmax")
 DEFINITION (L"the windowing domain in the %x direction. Elements outside will not be drawn. "
 	"%Autowindowing: if (%Xmin \\>_ %Xmax), the entire %x domain [%x__%min_, %x__%max_] of the Matrix is used.")
@@ -1153,7 +1153,7 @@ Dit staat allemaal in de on-line handleiding, dus je hoeft niet te gokken!
 
 MAN_BEGIN (L"Matrix: Set value...", L"ppgb", 19980319)
 INTRO (L"A command to change the value of one cell in each selected @Matrix object.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Row number")
 DEFINITION (L"the number of the row of the cell whose value you want to change.")
 TAG (L"%%Column number")
@@ -1332,7 +1332,7 @@ MAN_END
 MAN_BEGIN (L"PairDistribution: To Stringses...", L"ppgb", 20030916)
 INTRO (L"A command to generate a number of string pairs from the selected @PairDistribution object. "
 	"This command will create two aligned @Strings objects of equal size.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Number (standard: 1000)")
 DEFINITION (L"the number of the strings in either resulting Strings object.")
 TAG (L"%%Name of first Strings% (standard: \"input\")")
@@ -1513,7 +1513,7 @@ FORMULA (L"%jitter = \\su__%i=2_^^%N-1^ |2%T__%i_ - %T__%i-1_ - %T__%i+1_|  /  \
 NORMAL (L"where %T__%i_ is the %%i%th interval and %N is the number of intervals. "
 	"If no sequences of three intervals can be found whose durations "
 	"are between %%Shortest period% and %%Longest period%, the result is @undefined.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Shortest period% (seconds)")
 DEFINITION (L"the shortest possible interval that will be considered. For intervals %T__%i_ shorter than this, "
 	"the (%i-1)st, %%i%th, and (%i+1)st terms in the formula are taken as zero. "
@@ -1584,7 +1584,7 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove point...", L"ppgb", 20021212)
 INTRO (L"A command to remove a point from every selected @PointProcess.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Index")
 DEFINITION (L"the index of the point that is to be removed.")
 ENTRY (L"Behaviour")
@@ -1594,7 +1594,7 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove point near...", L"ppgb", 20021212)
 INTRO (L"A command to remove a point from every selected @PointProcess.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (seconds)")
 DEFINITION (L"the time around which a point is to be removed.")
 ENTRY (L"Behaviour")
@@ -1604,7 +1604,7 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove points...", L"ppgb", 20021212)
 INTRO (L"A command to remove a range of points from every selected @PointProcess.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From index% (\\>_ 1)")
 DEFINITION (L"the first index of the range of points that are to be removed.")
 TAG (L"%%To index%")
@@ -1615,7 +1615,7 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove points between...", L"ppgb", 20021212)
 INTRO (L"A command to remove a range of points from every selected @PointProcess.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time% (seconds)")
 DEFINITION (L"the start of the domain from which all points are to be removed.")
 TAG (L"%%To time% (seconds)")
@@ -1763,7 +1763,7 @@ SCRIPT (4.5, 2.5,
 NORMAL (L"These curves have moved 2.646 percent of a period to the right. At time 1, "
 	"the glottal flow curve turns from a convex polynomial into a concave exponential, "
 	"and the derivative still has its minimum there.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Sampling frequency")
 DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
 TAG (L"%%Adaptation factor")
@@ -1783,7 +1783,7 @@ INTRO (L"A command to convert every selected @PointProcess into a @Sound.")
 ENTRY (L"Algorithm")
 NORMAL (L"A pulse is generated at every point in the point process. This pulse is filtered at the Nyquist frequency "
 	"of the resulting #Sound by converting it into a sampled #sinc function.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Sampling frequency")
 DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
 TAG (L"%%Adaptation factor")
@@ -1978,7 +1978,7 @@ MAN_END
 
 MAN_BEGIN (L"TableOfReal: Set value...", L"ppgb", 19980105)
 INTRO (L"A command to change the value of one table cell in each selected @TableOfReal object.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Row number")
 DEFINITION (L"the number of the row of the cell whose value you want to change.")
 TAG (L"%%Column number")

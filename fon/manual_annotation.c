@@ -1,6 +1,6 @@
 /* manual_annotation.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ void manual_annotation_init (ManPages me) {
 
 MAN_BEGIN (L"Create TextGrid...", L"ppgb", 20060714)
 INTRO (L"A command to create a @TextGrid from scratch.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Start time% (seconds)")
 DEFINITION (L"the start time, usually 0 seconds.")
 TAG (L"%%End time% (seconds)")
@@ -113,7 +113,7 @@ MAN_END
 MAN_BEGIN (L"PointProcess: To TextGrid...", L"ppgb", 19980113)
 INTRO (L"A command to create an empty @TextGrid from every selected @PointProcess.")
 NORMAL (L"The only information in the PointProcess that is used, is its starting and finishing times.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Tier names")
 DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
 TAG (L"%%Point tiers")
@@ -128,7 +128,7 @@ MAN_END
 MAN_BEGIN (L"PointProcess: To TextGrid (vuv)...", L"ppgb", 19980210)
 INTRO (L"A command to create a @TextGrid with voiced/unvoiced information "
 	"from every selected @PointProcess.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Maximum period% (s)")
 DEFINITION (L"the maximum interval that will be consider part of a larger voiced interval.")
 TAG (L"%%Mean period% (s)")
@@ -155,7 +155,7 @@ MAN_END
 
 MAN_BEGIN (L"Sound: To TextGrid...", L"ppgb", 19980730)
 INTRO (L"A command to create a @TextGrid without any labels, copying the time domain from the selected @Sound.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Tier names")
 DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
 TAG (L"%%Point tiers")
@@ -254,7 +254,7 @@ MAN_END
 MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 19980630)
 INTRO (L"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Tier number")
 DEFINITION (L"the number (1, 2, 3...) of the tier whose labels you want to investigate.")
 TAG (L"%%Label text")
@@ -418,7 +418,7 @@ MAN_END
 
 MAN_BEGIN (L"TextTier: Add point...", L"ppgb", 19980324)
 INTRO (L"A command to add a point to each selected @TextTier.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
 TAG (L"%Text")

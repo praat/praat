@@ -1,6 +1,6 @@
 /* manual_Exp.c
  *
- * Copyright (C) 2001-2006 Paul Boersma
+ * Copyright (C) 2001-2009 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ void manual_Exp_init (ManPages me);
 void manual_Exp_init (ManPages me) {
 
 MAN_BEGIN (L"ExperimentMFC", L"ppgb", 20051205)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}, "
+INTRO (L"One of the @@types of objects@ in Praat, "
 	"for running a Multiple Forced Choice listening experiment.")
 LIST_ITEM (L"@@ExperimentMFC 1. When to use Praat")
 LIST_ITEM (L"@@ExperimentMFC 2. The first example")

@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2010/03/25
  */
 
 /* Matrix inherits from Sampled */
@@ -159,6 +159,7 @@ double Matrix_getValueAtXY (I, double x, double y);
 */
 
 double Matrix_getSum (I);
+double Matrix_getNorm (I);
 
 double Matrix_columnToX (I, double column);   /* Return my x1 + (column - 1) * my dx.	 */
 

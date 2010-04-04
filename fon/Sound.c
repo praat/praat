@@ -1,6 +1,6 @@
 /* Sound.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/01/28 more stereo
  * pb 2007/03/17 domain quantity
  * pb 2007/12/07 enums
+ * pb 2010/03/26 Sounds_convolve, Sounds_crossCorrelate, Sound_autocorrelate
  */
 
 #include "Sound.h"
@@ -423,7 +424,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	return him;
 }
 
-Sound Sounds_convolve (Sound me, Sound thee, bool sum) {
+Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	Sound him = NULL;
 	if (my ny > 1 && thy ny > 1 && my ny != thy ny)
 		return Melder_errorp ("Sounds_convolve: the numbers of channels of the two sounds have to be equal or 1.");
@@ -437,7 +438,6 @@ Sound Sounds_convolve (Sound me, Sound thee, bool sum) {
 	data1 = NUMdvector (1, nfft); cherror
 	data2 = NUMdvector (1, nfft); cherror
 	him = Sound_create (numberOfChannels, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
-	double scale = sum ? 1.0 / nfft : my dx / nfft;
 	for (long channel = 1; channel <= numberOfChannels; channel ++) {
 		double *a = my z [my ny == 1 ? 1 : channel];
 		for (long i = n1; i > 0; i --) data1 [i] = a [i];
@@ -456,14 +456,209 @@ Sound Sounds_convolve (Sound me, Sound thee, bool sum) {
 		}
 		NUMrealft (data2, nfft, -1); cherror
 		a = him -> z [channel];
-		for (long i = 1; i <= n3; i ++)
-			a [i] = data2 [i] * scale;
+		for (long i = 1; i <= n3; i ++) {
+			a [i] = data2 [i];
+		}
+	}
+	switch (signalOutsideTimeDomain) {
+		case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			// do nothing
+		} break;
+		case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			for (long channel = 1; channel <= numberOfChannels; channel ++) {
+				double *a = his z [channel];
+				double edge = n1 < n2 ? n1 : n2;
+				for (long i = 1; i < edge; i ++) {
+					double factor = edge / i;
+					a [i] *= factor;
+					a [n3 + 1 - i] *= factor;
+				}
+			}
+		} break;
+		//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
+			// do nothing
+		//} break;
+		default: Melder_fatal ("Sounds_convolve: unimplemented outside-time-domain strategy %d", signalOutsideTimeDomain);
+	}
+	switch (scaling) {
+		case kSounds_convolve_scaling_INTEGRAL: {
+			Vector_multiplyByScalar (him, my dx / nfft);
+		} break;
+		case kSounds_convolve_scaling_SUM: {
+			Vector_multiplyByScalar (him, 1.0 / nfft);
+		} break;
+		case kSounds_convolve_scaling_NORMALIZE: {
+			double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
+			if (normalizationFactor != 0.0) {
+				Vector_multiplyByScalar (him, 1.0 / nfft / normalizationFactor);
+			}
+		} break;
+		case kSounds_convolve_scaling_PEAK_099: {
+			Vector_scale (him, 0.99);
+		} break;
+		default: Melder_fatal ("Sounds_convolve: unimplemented scaling %d", scaling);
 	}
 end:
 	NUMdvector_free (data1, 1);
 	NUMdvector_free (data2, 1);
 	iferror forget (him);
 	return him;
+}
+
+Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	Sound him = NULL;
+	if (my ny > 1 && thy ny > 1 && my ny != thy ny)
+		return Melder_errorp ("Sounds_crossCorrelate: the numbers of channels of the two sounds have to be equal or 1.");
+	long numberOfChannels = my ny > thy ny ? my ny : thy ny;
+	long n1 = my nx, n2 = thy nx;
+	long n3 = n1 + n2 - 1, nfft = 1;
+	double *data1 = NULL, *data2 = NULL;
+	if (my dx != thy dx)
+		return Melder_errorp ("Sounds_crossCorrelate: the sampling frequencies of the two sounds have to be equal.");
+	while (nfft < n3) nfft *= 2;
+	data1 = NUMdvector (1, nfft); cherror
+	data2 = NUMdvector (1, nfft); cherror
+	double my_xlast = my x1 + (n1 - 1) * my dx;
+	him = Sound_create (numberOfChannels, thy xmin - my xmax, thy xmax - my xmin, n3, my dx, thy x1 - my_xlast); cherror
+	for (long channel = 1; channel <= numberOfChannels; channel ++) {
+		double *a = my z [my ny == 1 ? 1 : channel];
+		for (long i = n1; i > 0; i --) data1 [i] = a [i];
+		for (long i = n1 + 1; i <= nfft; i ++) data1 [i] = 0.0;
+		a = thy z [thy ny == 1 ? 1 : channel];
+		for (long i = n2; i > 0; i --) data2 [i] = a [i];
+		for (long i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
+		NUMrealft (data1, nfft, 1); cherror
+		NUMrealft (data2, nfft, 1); cherror
+		data2 [1] *= data1 [1];
+		data2 [2] *= data1 [2];
+		for (long i = 3; i <= nfft; i += 2) {
+			double temp = data1 [i] * data2 [i] + data1 [i + 1] * data2 [i + 1];   // reverse me by taking the conjugate of data1
+			data2 [i + 1] = data1 [i] * data2 [i + 1] - data1 [i + 1] * data2 [i];   // reverse me by taking the conjugate of data1
+			data2 [i] = temp;
+		}
+		NUMrealft (data2, nfft, -1); cherror
+		a = him -> z [channel];
+		for (long i = 1; i < n1; i ++) {
+			a [i] = data2 [i + (nfft - (n1 - 1))];   // data for the first part ("negative lags") is at the end of data2
+		}
+		for (long i = 1; i <= n2; i ++) {
+			a [i + (n1 - 1)] = data2 [i];   // data for the second part ("positive lags") is at the beginning of data2
+		}
+	}
+	switch (signalOutsideTimeDomain) {
+		case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			// do nothing
+		} break;
+		case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			for (long channel = 1; channel <= numberOfChannels; channel ++) {
+				double *a = his z [channel];
+				double edge = n1 < n2 ? n1 : n2;
+				for (long i = 1; i < edge; i ++) {
+					double factor = edge / i;
+					a [i] *= factor;
+					a [n3 + 1 - i] *= factor;
+				}
+			}
+		} break;
+		//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
+			// do nothing
+		//} break;
+		default: Melder_fatal ("Sounds_crossCorrelate: unimplemented outside-time-domain strategy %d", signalOutsideTimeDomain);
+	}
+	switch (scaling) {
+		case kSounds_convolve_scaling_INTEGRAL: {
+			Vector_multiplyByScalar (him, my dx / nfft);
+		} break;
+		case kSounds_convolve_scaling_SUM: {
+			Vector_multiplyByScalar (him, 1.0 / nfft);
+		} break;
+		case kSounds_convolve_scaling_NORMALIZE: {
+			double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (thee);
+			if (normalizationFactor != 0.0) {
+				Vector_multiplyByScalar (him, 1.0 / nfft / normalizationFactor);
+			}
+		} break;
+		case kSounds_convolve_scaling_PEAK_099: {
+			Vector_scale (him, 0.99);
+		} break;
+		default: Melder_fatal ("Sounds_crossCorrelate: unimplemented scaling %d", scaling);
+	}
+end:
+	NUMdvector_free (data1, 1);
+	NUMdvector_free (data2, 1);
+	iferror forget (him);
+	return him;
+}
+
+Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	Sound thee = NULL;
+	long numberOfChannels = my ny, n1 = my nx, n2 = n1 + n1 - 1, nfft = 1;
+	while (nfft < n2) nfft *= 2;
+	double *data = NUMdvector (1, nfft); cherror
+	double my_xlast = my x1 + (n1 - 1) * my dx;
+	thee = Sound_create (numberOfChannels, my xmin - my xmax, my xmax - my xmin, n2, my dx, my x1 - my_xlast); cherror
+	for (long channel = 1; channel <= numberOfChannels; channel ++) {
+		double *a = my z [channel];
+		for (long i = n1; i > 0; i --) data [i] = a [i];
+		for (long i = n1 + 1; i <= nfft; i ++) data [i] = 0.0;
+		NUMrealft (data, nfft, 1); cherror
+		data [1] *= data [1];
+		data [2] *= data [2];
+		for (long i = 3; i <= nfft; i += 2) {
+			data [i] = data [i] * data [i] + data [i + 1] * data [i + 1];
+			data [i + 1] = 0.0;   // reverse me by taking the conjugate of data1
+		}
+		NUMrealft (data, nfft, -1); cherror
+		a = thy z [channel];
+		for (long i = 1; i < n1; i ++) {
+			a [i] = data [i + (nfft - (n1 - 1))];   // data for the first part ("negative lags") is at the end of data
+		}
+		for (long i = 1; i <= n1; i ++) {
+			a [i + (n1 - 1)] = data [i];   // data for the second part ("positive lags") is at the beginning of data
+		}
+	}
+	switch (signalOutsideTimeDomain) {
+		case kSounds_convolve_signalOutsideTimeDomain_ZERO: {
+			// do nothing
+		} break;
+		case kSounds_convolve_signalOutsideTimeDomain_SIMILAR: {
+			for (long channel = 1; channel <= numberOfChannels; channel ++) {
+				double *a = thy z [channel];
+				double edge = n1;
+				for (long i = 1; i < edge; i ++) {
+					double factor = edge / i;
+					a [i] *= factor;
+					a [n2 + 1 - i] *= factor;
+				}
+			}
+		} break;
+		//case kSounds_convolve_signalOutsideTimeDomain_PERIODIC: {
+			// do nothing
+		//} break;
+		default: Melder_fatal ("Sounds_autoCorrelate: unimplemented outside-time-domain strategy %d", signalOutsideTimeDomain);
+	}
+	switch (scaling) {
+		case kSounds_convolve_scaling_INTEGRAL: {
+			Vector_multiplyByScalar (thee, my dx / nfft);
+		} break;
+		case kSounds_convolve_scaling_SUM: {
+			Vector_multiplyByScalar (thee, 1.0 / nfft);
+		} break;
+		case kSounds_convolve_scaling_NORMALIZE: {
+			double normalizationFactor = Matrix_getNorm (me) * Matrix_getNorm (me);
+			if (normalizationFactor != 0.0) {
+				Vector_multiplyByScalar (thee, 1.0 / nfft / normalizationFactor);
+			}
+		} break;
+		case kSounds_convolve_scaling_PEAK_099: {
+			Vector_scale (thee, 0.99);
+		} break;
+		default: Melder_fatal ("Sounds_autoCorrelate: unimplemented scaling %d", scaling);
+	}
+end:
+	NUMdvector_free (data, 1);
+	iferror forget (thee);
+	return thee;
 }
 
 void Sound_draw (Sound me, Graphics g,

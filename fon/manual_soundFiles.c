@@ -1,6 +1,6 @@
 /* manual_soundFiles.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -371,7 +371,7 @@ MAN_END
 
 MAN_BEGIN (L"LongSound: To TextGrid...", L"ppgb", 19980730)
 INTRO (L"A command to create a @TextGrid without any labels, copying the time domain from the selected @LongSound.")
-NORMAL (L"See @@Sound: To TextGrid...@ for the arguments.")
+NORMAL (L"See @@Sound: To TextGrid...@ for the settings.")
 MAN_END
 
 MAN_BEGIN (L"LongSound: View", L"ppgb", 19980730)

@@ -23,11 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100325)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100404)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.31# (4 April 2010)")
+LIST_ITEM (L"\\bu @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@, with full documentation.")
+LIST_ITEM (L"\\bu More query commands for IntensityTier.")
 NORMAL (L"##5.1.30# (25 March 2010)")
-//LIST_ITEM (L"\\bu @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@.")
 LIST_ITEM (L"\\bu Scripting: $$createDirectory ()$ can now work with absolute paths.")
 LIST_ITEM (L"\\bu PointProcess: made it impossible to add a point where there is already a point.")
 NORMAL (L"##5.1.29# (11 March 2010)")
@@ -605,7 +607,7 @@ NORMAL (L"##4.3.22# (8 September 2005)")
 LIST_ITEM (L"\\bu Macintosh: variable scroll bar size (finally, 7 years since System 8.5).")
 NORMAL (L"##4.3.21# (1 September 2005)")
 LIST_ITEM (L"\\bu Macintosh: error message if any of the fonts Times, Helvetica, Courier and Symbol are unavailable at start-up.")
-LIST_ITEM (L"\\bu Renamed \"Control\" menu to \"Praat\" on all systems (as on the Mac), "
+LIST_ITEM (L"\\bu Renamed \"Control\" menu to \"Praat\" on all platforms (as on the Mac), "
 	"to reflect the fact that no other programs than Praat have used the Praat shell for five years.")
 LIST_ITEM (L"\\bu Script editor: Undo and Redo buttons (only on the Mac for now).")
 LIST_ITEM (L"\\bu Manual: corrected a bug that sometimes caused Praat to crash when trying to print.")
@@ -882,7 +884,7 @@ ENTRY (L"Praat 3.9, 18 October 2000")
 	LIST_ITEM (L"\\bu SoundRecorder writes to 16-bit AIFC, WAV, NeXT/Sun, and NIST mono and stereo files.")
 	LIST_ITEM (L"\\bu Sound & LongSound: write part or whole to mono or stereo audio file.")
 	LIST_ITEM (L"\\bu Read Sound from raw Alaw file.")
-	LIST_ITEM (L"\\bu Artword & Speaker (& Sound) movie: real time on all systems.")
+	LIST_ITEM (L"\\bu Artword & Speaker (& Sound) movie: real time on all platforms.")
 	NORMAL (L"Scripting:")
 	LIST_ITEM (L"\\bu @@Formulas 4. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
 		"and their inverse functions.")
@@ -911,7 +913,7 @@ ENTRY (L"Praat 3.8, 12 January 1999")
 	NORMAL (L"Phonology library")
 	LIST_ITEM (L"\\bu 25-page OT learning tutorial.")
 	LIST_ITEM (L"\\bu Made the OT learner 14 times as fast.")
-	NORMAL (L"Systems")
+	NORMAL (L"Platforms")
 	LIST_ITEM (L"\\bu May 23: Windows beta version.")
 	LIST_ITEM (L"\\bu April 24: Windows alpha version.")
 	NORMAL (L"Files")
@@ -993,7 +995,7 @@ ENTRY (L"Praat 3.6, 27 October 1997")
 	NORMAL (L"Scripting:")
 	LIST_ITEM (L"\\bu Programmable @@Praat script@ language: variables, expressions, control structures, "
 		"procedures, complete dialog box, exchange of information with Info window, continuation lines.")
-	LIST_ITEM (L"\\bu Use system-independent relative file paths in @@Praat script@.")
+	LIST_ITEM (L"\\bu Use platform-independent relative file paths in @@Praat script@.")
 	LIST_ITEM (L"\\bu @ScriptEditor: Run selection.")
 	NORMAL (L"Graphics:")
 	LIST_ITEM (L"\\bu Rotation and scaling while printing the @@Picture window@.")
@@ -1136,7 +1138,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20100225)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20100330)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1153,7 +1155,7 @@ LIST_ITEM (L"Stefan de Konink and Franz Brau\\sse: port to GTK.")
 LIST_ITEM (L"Erez Volk: adaptation of FLAC and MAD.")
 LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
 LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")
-LIST_ITEM (L"Darryl Purnell from Pretoria created the first version of audio for Praat for Linux.")
+LIST_ITEM (L"Darryl Purnell created the first version of audio for Praat for Linux.")
 NORMAL (L"We included the following freely available software libraries in Praat (sometimes with adaptations):")
 LIST_ITEM (L"IPA font for Unix (XIPA) by Fukui Rei (GPL).")
 LIST_ITEM (L"GNU Scientific Library (GSL) by Gerard Jungman and Brian Gough (GPL).")
@@ -1166,7 +1168,7 @@ LIST_ITEM (L"Public domain LAPACK by Univ. of Tennessee, Univ. of California Ber
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (L"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
 NORMAL (L"For technical support and advice:")
-LIST_ITEM (L"Ton Wempe, Dirk-Jan Vet.")
+LIST_ITEM (L"Ton Wempe, Dirk Jan Vet.")
 NORMAL (L"For their financial support during the development of Praat:")
 LIST_ITEM (L"Netherlands Organization for Scientific Research (NWO) (1996\\--1999).")
 LIST_ITEM (L"Nederlandse Taalunie (2006\\--2008).")
@@ -1285,7 +1287,7 @@ NORMAL (L"#Question: what algorithm is used for formant analysis?")
 NORMAL (L"Answer: see @@Sound: To Formant (burg)...@.")
 MAN_END
 
-MAN_BEGIN (L"FAQ: How to cite Praat", L"ppgb", 20050227)
+MAN_BEGIN (L"FAQ: How to cite Praat", L"ppgb", 20100401)
 NORMAL (L"#Question: how do I cite Praat in my articles?")
 NORMAL (L"Answer: nowadays most journals allow you to cite computer programs and web sites. "
 	"The style approved by the American Psychological Association, "
@@ -1294,8 +1296,8 @@ NORMAL (L"Answer: nowadays most journals allow you to cite computer programs and
 #define xstr(s) str(s)
 #define str(s) #s
 NORMAL (L"Boersma, Paul & Weenink, David (" xstr(PRAAT_YEAR) "). "
-	"Praat: doing phonetics by computer (Version " xstr(PRAAT_VERSION_STR) ") [Computer program]. "
-	"Retrieved " xstr(PRAAT_MONTH) " " xstr(PRAAT_DAY) ", " xstr(PRAAT_YEAR) ", from http://www.praat.org/")
+	"Praat: doing phonetics by computer [Computer program]. "
+	"Version " xstr(PRAAT_VERSION_STR) ", retrieved " xstr(PRAAT_DAY) " " xstr(PRAAT_MONTH) " " xstr(PRAAT_YEAR) " from http://www.praat.org/")
 NORMAL (L"If the journal does not allow you to cite a web site, then try:")
 NORMAL (L"Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
 	"%%Glot International% ##5:9/10#, 341-345.")
@@ -2360,7 +2362,7 @@ NORMAL (L"If you select one or more @objects in this list, "
 	"will appear in the @@Dynamic menu@.")
 ENTRY (L"How to select objects")
 NORMAL (L"To select one object (and deselect all the others), click on the object.")
-NORMAL (L"To extend the selection, drag the mouse (Unix, Windows) or use Shift-click (all systems).")
+NORMAL (L"To extend the selection, drag the mouse (Unix, Windows) or use Shift-click (all platforms).")
 NORMAL (L"To change the selection of one object (without changing the others), "
 	"use Control-click (Unix, Windows) or Command-click (Macintosh).")
 MAN_END
@@ -2374,12 +2376,12 @@ NORMAL (L"Most of the %feel is Macintosh: only one window active simultaneously.
 ENTRY (L"The Praat shell on Windows^\\re 95 and NT")
 NORMAL (L"Most of the look and feel is Windows, though all windows are separate overlapping windows, "
 	"instead of children of a large application window.")
-ENTRY (L"The Praat shell on the X Window system")
+ENTRY (L"The Praat shell on the X Window platform")
 NORMAL (L"From every computer with OSF/Motif, you can run the Praat shell on every X server in the world. "
 	"If your program is %praat, you just type:")
 CODE (L"praat -motif")
 NORMAL (L"With this command, you will always get the same old Motif look and feel.")
-NORMAL (L"Many systems, however, have their own favoured look and feel. "
+NORMAL (L"Many platforms, however, have their own favoured look and feel. "
 	"For this reason, the Praat shell recognizes several client computers: if you just type")
 CODE (L"praat")
 NORMAL (L"(or double-click on the %praat icon), "
@@ -2441,7 +2443,7 @@ NORMAL (L"Many X Windows applications work with %%client-side% resource files, "
 	"which describe the fonts etc. that they need. "
 	"However, as the fonts are server-dependent, changing to a different X server "
 	"will often require you to change the resource file %%on the client side%, "
-	"unless you only use fonts that are available on all systems (like Helvetica and Times). "
+	"unless you only use fonts that are available on all platforms (like Helvetica and Times). "
 	"However, your application may not adhere to any native look-and-feel strategy then. "
 	"Incorporating all resource files into the application, as done in the Praat shell, "
 	"solves this problem. Locally, you just type $praat, and across a network you use "
@@ -2622,7 +2624,7 @@ MAN_END
 
 MAN_BEGIN (L"Resource fork", L"ppgb", 20030316)
 INTRO (L"One of the two %forks of a Macintosh file (the other is the %%data fork%). "
-	"If a Macintosh file is moved to another system directly, the resource fork is lost. "
+	"If a Macintosh file is moved to another platform directly, the resource fork is lost. "
 	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
 MAN_END
 

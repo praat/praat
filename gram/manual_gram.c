@@ -1,6 +1,6 @@
 /* manual_gram.c
  *
- * Copyright (C) 1997-2006 Paul Boersma
+ * Copyright (C) 1997-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2006/01/05
  */
 
 #include "ManPagesM.h"
@@ -108,7 +104,7 @@ static void draw_Infant_swtI (Graphics g) {
 void manual_gram_init (ManPages me);
 void manual_gram_init (ManPages me) {
 
-MAN_BEGIN (L"Constraints", L"ppgb", 20021105)
+MAN_BEGIN (L"constraints", L"ppgb", 20021105)
 INTRO (L"In @@Optimality Theory@, the `rules' that an output form has to satisfy. Since there can be many constraints "
 	"and these constraints can conflict with each other, the constraints are %violable and the highest-ranked constraints "
 	"have the largest say in determining the optimal output.")
@@ -181,7 +177,7 @@ MAN_END
 
 MAN_BEGIN (L"OT learning", L"ppgb", 20070423)
 INTRO (L"This tutorial describes how you can draw Optimality-Theoretic and Harmonic-Grammar tableaus and "
-	"simulate Optimality-Theoretic and Harmonic-Grammar learning with P\\s{RAAT}.")
+	"simulate Optimality-Theoretic and Harmonic-Grammar learning with Praat.")
 NORMAL (L"You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
 LIST_ITEM (L"1. @@OT learning 1. Kinds of grammars|Kinds of grammars@ (ordinal and stochastic, @OTGrammar)")
 LIST_ITEM (L"2. @@OT learning 2. The grammar|The grammar@")
@@ -203,7 +199,7 @@ LIST_ITEM (L"6. @@OT learning 6. Shortcut to grammar learning|Shortcut to gramma
 LIST_ITEM (L"7. @@OT learning 7. Learning from overt forms|Learning from overt forms@")
 MAN_END
 
-MAN_BEGIN (L"OT learning 1. Kinds of grammars", L"ppgb", 20070424)
+MAN_BEGIN (L"OT learning 1. Kinds of grammars", L"ppgb", 20100330)
 INTRO (L"This is chapter 1 of the @@OT learning@ tutorial.")
 NORMAL (L"According to @@Prince & Smolensky (1993)@, an @@Optimality Theory|Optimality-Theoretic@ (@OT) grammar "
 	"consists of a number of ranked @constraints. "
@@ -221,35 +217,39 @@ NORMAL (L"In HG, weighting is %additive, i.e., a candidate that only violates a 
 	"has a harmony of -100 and will therefore beat a candidate that violates both a constraint %B with a weight of 70 "
 	"and a constraint %C with a weight of 40 and therefore has a harmony of only -110. Also, two violations of constraint %B "
 	"(harmony 2 * -70 = -140) are worse than one violation of constraint %A (harmony -100).")
-ENTRY (L"Ordinal OT grammars")
+ENTRY (L"1. Ordinal OT grammars")
 NORMAL (L"Because only the ranking order of the constraints plays a role in evaluating the output candidates, "
 	"Prince & Smolensky took an OT grammar to contain no absolute ranking values, i.e., they accepted only an ordinal relation "
 	"between the constraint rankings. For such a grammar, @@Tesar & Smolensky (1998)@ devised an on-line learning algorithm "
 	"(Error-Driven Constraint Demotion, EDCD) that changes the ranking order "
-	"whenever the form produced by the learner is different from the adult form. Such a learning step "
+	"whenever the form produced by the learner is different from the adult form "
+	"(a corrected version of the algorithm can be found in @@Boersma (2009b)@). Such a learning step "
 	"can sometimes lead to a large change in the behaviour of the grammar.")
-ENTRY (L"Stochastic OT grammars")
+ENTRY (L"2. Stochastic OT grammars")
 NORMAL (L"The EDCD algorithm is fast and convergent. As a model of language acquisition, however, its drawbacks are that it "
 	"is extremely sensitive to errors in the learning data and that it does not show realistic gradual learning curves. "
-	"For these reasons, @@Boersma (1997)@ / @@Boersma (1998)@ / @@Boersma (2000)@ "
-	"proposed stochastic OT grammars "
-	"in which every constraint has a %%ranking value% along a continuous ranking scale, "
+	"For these reasons, @@Boersma (1997)@ "
+	"proposed stochastic OT grammars in which every constraint has a %%ranking value% along a continuous ranking scale, "
 	"and a small amount of %noise is added to this ranking value at evaluation time. "
 	"The associated error-driven on-line learning algorithm (Gradual Learning Algorithm, GLA) effects small changes in the "
 	"ranking values of the constraints with every learning step. An added virtue of the GLA is that it can learn "
-	"languages with optionality and variation, which was something that EDCD could not do.")
+	"languages with optionality and variation, which was something that EDCD could not do. "
+	"For how this algorithm works on some traditional phonological problems, see @@Boersma & Hayes (2001)@.")
 NORMAL (L"Ordinal OT grammars can be seen as a special case of the more general stochastic OT grammars: "
 	"they have integer ranking values (%strata) and zero evaluation noise. "
 	"In Praat, therefore, every constraint is taken to have a ranking value, "
 	"so that you can do stochastic as well as ordinal OT.")
-ENTRY (L"Harmonic Grammars")
-NORMAL (L"@@J\\a\"ger (2003)@ devised an on-line learning algorithm for Harmonic (or MaxEnt = Maximum Entropy) Grammars, "
-	"by applying Stochastic Gradient Ascent to MaxEnt grammars. This algorithm is convergent. "
-	"It effects small changes in the weights of the constraints with every learning step. "
-	"As EDCD, it is guaranteed to converge upon a correct grammar (if there exists one that handles the data), "
-	"and as the GLA, it can learn languages with optionality and variation. "
-	"The only drawback is that HG has little support among phonologists, "
-	"because many think that human grammars work with strict ranking.")
+ENTRY (L"3. Categorical Harmonic Grammars")
+NORMAL (L"@@J\\a\"ger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ devised an on-line learning algorithm "
+	"for Harmonic Grammars (stochastic gradient ascent). As proven by @@Fischer (2005)@, "
+	"this algorithm is guaranteed to converge upon a correct grammar, if there exists one that handles the data.")
+ENTRY (L"4. Stochastic Harmonic Grammars")
+NORMAL (L"There are two kinds of stochastic models of HG, namely MaxEnt (= Maximum Entropy) grammars "
+	"(@@Smolensky (1986)@, @@J\\a\"ger (2003)@), in which the probablity of a candidate winning depends on its harmony, "
+	"and Noisy HG (@@Boersma & Escudero (2008)@, @@Boersma & Pater (2008)@), in which noise is added to constraint weights "
+	"at evaluation time, as in Stochastic OT.")
+NORMAL (L"The algorithm by @@J\\a\"ger (2003)@ and @@Soderstrom, Mathis & Smolensky (2006)@ "
+	"can learn languages with optionality and variation (@@Boersma & Pater (2008)@).")
 ENTRY (L"The OTGrammar object")
 NORMAL (L"An OT grammar is implemented as an @OTGrammar object. "
 	"In an OTGrammar object, you specify all the constraints, all the possible inputs and all their possible outputs.")
@@ -700,7 +700,7 @@ NORMAL (L"In this way, we have created two Strings objects, which together form 
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 4. Learning an ordinal grammar", L"ppgb", 20070725)
+MAN_BEGIN (L"OT learning 4. Learning an ordinal grammar", L"ppgb", 20100331)
 NORMAL (L"With the data from a tongue-root-harmony language with five completely ranked constraints, "
 	"we can have a throw at learning this language, starting with a grammar in which all the constraints "
 	"are ranked at the same height, or randomly ranked, or with articulatory constraints outranking "
@@ -720,12 +720,13 @@ PICTURE (4.0, 1.5, draw_Infant_swtI)
 NORMAL (L"The adult form is very different: [\\swti]. The cause of the discrepancy is in the order of "
 	"the constraints *[atr / lo] and *[rtr / hi], which militate against [\\sw] and [\\ic], respectively. "
 	"Simply reversing the rankings of these two constraints would solve the problem in this case. "
-	"More generally, @@Tesar & Smolensky (1998)@ prove that demoting all the constraints that cause the "
+	"More generally, @@Tesar & Smolensky (1998)@ claim that demoting all the constraints that cause the "
 	"adult form to lose into the stratum just below the highest-ranked constraint "
 	"violated in the learner's form (here, moving *[atr / lo] just below *[rtr / hi] "
 	"into the same stratum as P\\s{ARSE} (rtr)), "
 	"will guarantee convergence to the target grammar, "
-	"%%if there is no variation in the data%.")
+	"%%if there is no variation in the data% (Tesar & Smolensky's algorithm is actually incorrect, "
+	"but can be repaired easily, as shown by @@Boersma (2009b)@).")
 NORMAL (L"But Tesar & Smolensky's algorithm cannot be used for variable data, since all constraints would be "
 	"tumbling down, exchanging places and producing wildly different grammars at each learning step. "
 	"Since language data do tend to be variable, we need a gradual and balanced learning algorithm, "
@@ -815,20 +816,21 @@ NORMAL (L"With this grammar, all the error rates are below 0.2 percent. We see t
 NORMAL (L"If we have three constraints obligatorily ranked as A >> B >> C in the adult grammar, with ranking differences of 8 between "
 	"A and B and between B and C in the learner's grammar (giving an error rate of 0.2\\% ), the ranking A >> C has a chance of less than 1 in 100 million "
 	"to be reversed at evaluation time. This relativity of error rates is an empirical prediction of our stochastic OT grammar model.")
-NORMAL (L"Our Harmonic Grammars with constraint noise are slightly different in that respect, "
-	"but are capable of learning a constraint ranking for any language that can be generated from an ordinal ranking; "
-	"although this has not been proved yet, the algorithm by @@J\\a\"ger (2003)@ turns out to learn all 10,000 languages "
-	"that I generated from 11 constraints, 11 tableaus, 11 candidates per tableau, and between 0 and 3 violations per cell "
-	"(randomly distributed). Under the same conditions, the GLA failed to converge on 1.5 percent of the languages "
-	"(failures of the GLA on ordinal grammars were discovered first by Joe Pater). "
-	"The algorithm for HG is the same as the GLA described above, except that the learning step of each constraint is multiplied by "
+NORMAL (L"Our Harmonic Grammars with constraint noise (Noisy HG) are slightly different in that respect, "
+	"but are capable of learning a constraint ranking for any language that can be generated from an ordinal ranking. "
+	"As proved by @@Boersma & Pater (2008)@, the same learning rule as was devised for MaxEnt grammars by @@J\\a\"ger (2003)@ "
+	"is able to learn all languages generated by %nonnoisy HG grammars as well; "
+	"the GLA, by contrast, failed to converge on 0.4 percent of randomly generated OT languages "
+	"(failures of the GLA on ordinal grammars were discovered first by @@Pater (2008)@). "
+	"This learning rule for HG and MaxEnt is the same as the GLA described above, "
+	"except that the learning step of each constraint is multiplied by "
 	"the difference of the number of violations of this constraint between the correct form and the incorrect winner; "
 	"this multiplication is crucial (without it, stochastic gradient ascent is not guaranteed to converge), "
-	"as was noted by J\\a\"ger. The same procedure for updating weights occurs "
+	"as was noted by J\\a\"ger for MaxEnt. The same procedure for updating weights occurs "
 	"in @@Soderstrom, Mathis & Smolensky (2006)@, who propose "
 	"an incremental version (formulas 21 and 35d) of the harmony version (formulas 14 and 18) "
 	"of the learning equation for Boltzmann machines (formula 13). "
-	"The differences between the three implementations is that in Praat the evaluation noise (or %temperature) is in the constraint rankings, "
+	"The differences between the three implementations is that in Stochastic OT and Noisy HG the evaluation noise (or %temperature) is in the constraint rankings, "
 	"in MaxEnt it is in the candidate probabilities, and in Boltzmann machines it is in the activities (i.e. the constraint violations). "
 	"The upate procedure is also similar to that of the %perceptron, a neural network invented by @@Rosenblatt (1962)@ "
 	"for classifying continuous inputs.")
@@ -957,18 +959,18 @@ NORMAL (L"In Tesar & Smolensky's view, the underlying form can be trivially comp
 	"since the surface form %contains enough information. For instance, the surface form /(\\si \\si\\'^) \\si/ must "
 	"lead to the underlying form \\|f\\si \\si \\si\\|f if all parentheses and stress marks are removed. Since "
 	"@@McCarthy & Prince (1995)@, this %containment view of surface representations has been abandoned. "
-	"In P\\s{RAAT}, therefore, the underlying form is not trivially computed from the surface form, "
+	"In Praat, therefore, the underlying form is not trivially computed from the surface form, "
 	"but all the tableaus are scanned for the surface form that violates the least high-ranked constraints (in the usual "
 	"OT sense), as long as it contains the given overt form. For instance, if I\\s{AMBIC} >> A\\s{LL}F\\s{EET}R\\s{IGHT} "
 	">> T\\s{ROCHAIC} >> A\\s{LL}F\\s{EET}L\\s{EFT}, the overt form [\\si \\si\\'^ \\si] occurs in two candidates: "
 	"the surface form /(\\si \\si\\'^) \\si/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f, and "
 	"the surface form /\\si (\\si\\'^ \\si)/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f. The best candidate "
 	"is the surface form /(\\si \\si\\'^) \\si/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f. Hence, "
-	"P\\s{RAAT}'s version of Robust Interpretive Parsing will map the overt form [\\si \\si\\'^ \\si] to the underlying form "
+	"Praat's version of Robust Interpretive Parsing will map the overt form [\\si \\si\\'^ \\si] to the underlying form "
 	"\\|f\\si \\si \\si\\|f (the 'winning tableau') and to the surface form /(\\si \\si\\'^) \\si/ (to be sure, "
 	"this is the same result as in Tesar & Smolensky's "
 	"version, but crucial differences between the two versions will appear when faithfulness constraints are involved).")
-NORMAL (L"In P\\s{RAAT}, you can do interpretive parsing. For example, create a grammar with ##Create metrics grammar...# "
+NORMAL (L"In Praat, you can do interpretive parsing. For example, create a grammar with ##Create metrics grammar...# "
 	"from the @@New menu@. Then choose ##Get interpretive parse...# from the #Query submenu and supply \"[L1 L L]\" for the "
 	"overt form, which means a sequence of three light syllables with a main stress on the first. The Info window will show you "
 	"the optimal underlying and surface forms, given the current constraint ranking.")
@@ -980,7 +982,7 @@ NORMAL (L"Now that the learning child can convert an overt form to an underlying
 	"But from the underlying form \\|f\\si \\si \\si\\|f, the learner will derive /\\si (\\si \\si\\'^)/ as her own surface form. "
 	"The two surface forms are different, so that the learner can take action by reranking one or more constraints, "
 	"perhaps with EDCD or GLA.")
-NORMAL (L"In P\\s{RAAT}, you can learn from partial forms. Select the metrics grammar and choose ##Learn from one partial output...#, "
+NORMAL (L"In Praat, you can learn from partial forms. Select the metrics grammar and choose ##Learn from one partial output...#, "
 	"and supply \"[L1 L L]\". If you do this several times, you will see that the winner for the tableau \"|L L L|\" will become one of "
 	"the two forms with overt part \"[L1 L L]\".")
 NORMAL (L"To run a whole simulation, you supply a @Distributions object with one column, perhaps from a text file. The following "
@@ -1018,11 +1020,11 @@ CODE (L"\"[H L1 L H]\" 1")
 CODE (L"\"[H H1 L H]\" 1")
 CODE (L"\"[H L H1 H]\" 1")
 CODE (L"\"[H H H1 H]\" 1")
-NORMAL (L"Read this file into P\\s{RAAT} with @@Read from file...@. A @Distributions object then appears in the object list. "
+NORMAL (L"Read this file into Praat with @@Read from file...@. A @Distributions object then appears in the object list. "
 	"Click @@Distributions: To Strings...|To Strings...@, then OK. A @Strings object containing 1000 strings, drawn randomly "
 	"from the distribution, with relative frequencies as in the text file, will appear in the list. Click @Inspect to check the contents.")
 NORMAL (L"You can now select the @OTGrammar together with the @Strings and choose ##Learn from partial outputs...#. "
-	"A thousand times, P\\s{RAAT} will construct a surface form from the overt form by interpretive parsing, "
+	"A thousand times, Praat will construct a surface form from the overt form by interpretive parsing, "
 	"and also construct the underlying form in the same way, from which it will construct another surface form by evaluating the "
 	"tableau. Whenever the two surface forms are not identical, some constraints will be reranked. In the current implementation, "
 	"the disharmonies for interpretive parsing and for production are the same, i.e., "
@@ -1188,7 +1190,7 @@ MAN_END
 MAN_BEGIN (L"OTGrammar: Input to output...", L"ppgb", 20030916)
 INTRO (L"A command to ask the selected @OTGrammar object to evaluate the candidates associated with a specified input form.")
 NORMAL (L"See @@OT learning 2.8. Asking for one output@ for tutorial information.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Input form")
 DEFINITION (L"the input form whose surface form you want to know. If this string is not in the list "
 	"of the possible inputs of the selected OTGrammar, you will get an error message.")
@@ -1201,7 +1203,7 @@ MAN_BEGIN (L"OTGrammar: Input to outputs...", L"ppgb", 20030916)
 INTRO (L"A command to ask the selected @OTGrammar object to evaluate a number of times the candidates associated "
 	"with a specified input form. The result is a @Distributions object.")
 NORMAL (L"See @@OT learning 2.9. Output distributions@ for tutorial information and examples.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Trials (standard value: 1000)")
 DEFINITION (L"the number of evaluations that you want to perform.")
 TAG (L"%Noise (standard value: 2.0)")
@@ -1244,17 +1246,17 @@ MAN_END
 MAN_BEGIN (L"OTGrammar & Strings: Inputs to outputs...", L"ppgb", 19981230)
 INTRO (L"An action that creates a @Strings object from a selected @OTGrammar and a selected @Strings.")
 NORMAL (L"The selected Strings object is considered as a list of inputs to the OTGrammar grammar.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Noise")
 DEFINITION (L"the standard deviation of the noise that will be temporarily added to the ranking value at each evaluation.")
 NORMAL (L"The resulting Strings object will contain the output string of the grammar for each of the input strings.")
 NORMAL (L"See @@OT learning 3.2. Data from another grammar@.")
 MAN_END
 
-MAN_BEGIN (L"OTGrammar & 2 Strings: Learn...", L"ppgb", 20011120)
+MAN_BEGIN (L"OTGrammar & 2 Strings: Learn...", L"ppgb", 20100331)
 INTRO (L"Causes the selected @OTGrammar object to process a number of input/output pairs "
-	"according to the Gradual Learning Algorithm "
-	"by @@Boersma (1998)@ and @@Boersma (2000)@. See @@OT learning 4. Learning an ordinal grammar@ "
+	"according to the Gradual Learning Algorithm by @@Boersma (1997)@ and @@Boersma & Hayes (2001)@ "
+	"or with any other reranking strategies. See @@OT learning 4. Learning an ordinal grammar@ "
 	"and @@OT learning 5. Learning a stochastic grammar@.")
 MAN_END
 

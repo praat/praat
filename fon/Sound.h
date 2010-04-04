@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/25
+ * pb 2010/03/26
  */
 
 /* Sound inherits from Vector */
@@ -130,7 +130,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee);
 		result -> z [1] [i + my nx + round (silenceDuration / my dx)] == thy z [1] [i]
 */
  
-Sound Sounds_convolve (Sound me, Sound thee, bool sum);
+Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 /*
 	Function:
 		convolve two Sounds.
@@ -146,7 +146,9 @@ Sound Sounds_convolve (Sound me, Sound thee, bool sum);
 			result -> z [1] [i] == result -> dx *
 				sum (j = 1..i, my z [1] [j] * thy z [1] [i - j + 1])
 */
+Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tmax, int normalize);
+Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax);
 double Sound_getEnergy (Sound me, double xmin, double xmax);

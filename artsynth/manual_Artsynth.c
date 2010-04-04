@@ -67,7 +67,7 @@ MAN_BEGIN (L"Artword & Speaker: To Sound...", L"ppgb", 20040331)
 INTRO (L"A command to synthesize a @Sound object from the selected @Speaker and the selected @Artword.")
 NORMAL (L"This is the command that performs the actual articulatory synthesis. "
 	"See @@Articulatory synthesis@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Sampling frequency% (Hz)")
 DEFINITION (L"the number of times per second that the equilibrium widths and lengths and the tensions of the muscles "
 	"are recomputed from the Artword. This will also be the sampling frequency of the resulting sound and "
@@ -102,7 +102,7 @@ ENTRY (L"Time resolution")
 NORMAL (L"To capture the microscopic pressure changes in the glottis, you will want maximum time resolution. "
 	"For a female speaker, you could set %%sampling frequency% to 550750 Hz, and %oversampling to 1.")
 ENTRY (L"Tube numbers")
-NORMAL (L"Here are the tube numbers that you can use for the %width, %pressure, and %velocity arguments:")
+NORMAL (L"Here are the tube numbers that you can use for the %width, %pressure, and %velocity settings:")
 LIST_ITEM (L"1..23: lungs (from bottom to top)")
 LIST_ITEM (L"24..29: bronchi (from bottom to top)")
 LIST_ITEM (L"30..35: trachea (from bottom to top)")
@@ -129,7 +129,7 @@ MAN_END
 MAN_BEGIN (L"Create Artword...", L"ppgb", 20030916)
 INTRO (L"A command to create an @Artword object with all muscle activities set to zero. "
 	"See @@Articulatory synthesis@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Name")
 DEFINITION (L"the name that you give to the created object. The standard name is \"speaker\", "
 	"but if you work with multiple Speaker objects, give them sensible names to reduce confusion.")
@@ -137,7 +137,7 @@ MAN_END
 
 MAN_BEGIN (L"Create Speaker...", L"ppgb", 20030916)
 INTRO (L"A command to create a @Speaker object. See @@Articulatory synthesis@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Name")
 DEFINITION (L"the name that you give to the created object. The standard name is \"artword\", "
 	"but you should give it a more sensible name, possibly something that represents the utterance "

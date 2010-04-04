@@ -293,11 +293,19 @@ double Matrix_getValueAtXY (I, double x, double y) {
 double Matrix_getSum (I) {
 	iam (Matrix);
 	double sum = 0.0;
-	long row, col;
-	for (row = 1; row <= my ny; row ++)
-		for (col = 1; col <= my nx; col ++)
+	for (long row = 1; row <= my ny; row ++)
+		for (long col = 1; col <= my nx; col ++)
 			sum += my z [row] [col];
 	return sum;
+}
+
+double Matrix_getNorm (I) {
+	iam (Matrix);
+	double sum = 0.0;
+	for (long row = 1; row <= my ny; row ++)
+		for (long col = 1; col <= my nx; col ++)
+			sum += my z [row] [col] * my z [row] [col];
+	return sqrt (sum);
 }
 
 void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, double ymax,

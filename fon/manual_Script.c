@@ -1,6 +1,6 @@
 /* manual_Script.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ MAN_END
 MAN_BEGIN (L"Add action command...", L"ppgb", 20060920)
 INTRO (L"One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to the dynamic menu in the Object window.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 NORMAL (L"See @@Add to dynamic menu...@.")
 ENTRY (L"Usage")
 NORMAL (L"You can use this command in your @@initialization script@ or in @@plug-ins@.")
@@ -43,7 +43,7 @@ MAN_END
 MAN_BEGIN (L"Add menu command...", L"ppgb", 20060920)
 INTRO (L"One of the hidden commands in the Praat menu of the @@Object window@. "
 	"With this command, you add a button to any of the fixed menus in the Object or Picture window.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 NORMAL (L"See @@Add to fixed menu...@.")
 ENTRY (L"Usage")
 NORMAL (L"You can use this command in your @@initialization script@ or in @@plug-ins@.")
@@ -56,7 +56,7 @@ INTRO (L"A command in the File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to the dynamic menu in the @@Object window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
 	"Clicking the button will invoke the specified @@Praat script@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Class 1")
 DEFINITION (L"the name of the class of the object to be selected. "
 	"For instance, if a button should only appear if the user selects a Sound, this would be \"Sound\".")
@@ -112,7 +112,7 @@ MAN_BEGIN (L"Add to fixed menu...", L"ppgb", 20060920)
 INTRO (L"A command in the File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Window")
 DEFINITION (L"the name of the window (\"Objects\" or \"Picture\") that contains the menu that you want to change.")
 TAG (L"%Menu")

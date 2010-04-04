@@ -184,10 +184,10 @@ static void draw (Manual me) {
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
-		swprintf (signature, 100, L"\\co %ls, %ls %ld, %ld",
+		swprintf (signature, 100, L"\\co %ls, %ld %ls %ld",
 			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
 			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
-			month [imonth], date % 100, date / 10000);
+			date % 100, month [imonth], date / 10000);
 		HyperPage_any (me, L"", my font, my fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
 		HyperPage_any (me, signature, my font, my fontSize, Graphics_ITALIC, 0.0,

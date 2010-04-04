@@ -1,6 +1,6 @@
-/* manual_Voice.c
+/* manual_voice.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,30 +145,31 @@ NORMAL (L"For a signal that can be assumed periodic (i.e., a sustained vowel), "
 	"For more information, see the @Harmonicity manual page.")
 MAN_END
 
-MAN_BEGIN (L"Voice 5. Comparison with other programs", L"ppgb", 20060111)
+MAN_BEGIN (L"Voice 5. Comparison with other programs", L"ppgb", 20100330)
 INTRO (L"Voicing, jitter, and shimmer measurements made by P\\s{RAAT} cannot always be compared directly with those made by other "
 	"programs such as MDVP. The causes are the voicing decision strategy and the accuracy of period and peak determination.")
 ENTRY (L"5.1. Voicing decisions: slightly different")
 NORMAL (L"Different programs use very different methods for deciding whether an irregular part of the signal is voiced or not. "
-	"A comparison of @@Boersma (1993)@ for P\\s{RAAT} and @@Deliyski (1993)@ for MDVP leads to the "
-	"following considerations. Both P\\s{RAAT} and MDVP use an autocorrelation method for "
+	"A comparison of @@Boersma (1993)@ for Praat and @@Deliyski (1993)@ for MDVP leads to the "
+	"following considerations. Both Praat and MDVP use an autocorrelation method for "
 	"pitch analysis, but MDVP quantizes the amplitudes into the values -1, 0, and +1 before computing "
-	"the autocorrelation, whereas P\\s{RAAT} uses the original amplitude. Also, P\\s{RAAT} corrects "
+	"the autocorrelation, whereas Praat uses the original amplitude. Also, Praat corrects "
 	"the autocorrelation function by dividing it by the autocorrelation function of the window, "
-	"unlike any other program. Lastly, P\\s{RAAT} uses sinc interpolation to compute an accurate "
+	"unlike any other program. Lastly, Praat uses sinc interpolation to compute an accurate "
 	"estimate of the height of the autocorrelation peaks, unlike any other program. "
 	"All three of these differences (and there are more) influence the measurement of the height "
 	"of the autocorrelation peak at 1/F0. This height is generally taken as a criterion for voicing: "
 	"if it is more than the %%voicing threshold% (which you can change with @@Pitch settings...@, "
 	"the frame is considered voiced, otherwise voiceless. "
-	"In P\\s{RAAT}, the standard voicing threshold is 0.45, in MDVP it is 0.29, which suggests that MDVP "
+	"In Praat, the standard voicing threshold is 0.45, in MDVP it is 0.29, which suggests that MDVP "
 	"tends to regard more frames as voiced than P\\s{RAAT}. But the difference between these two numbers "
 	"may partly be explained by the fact that MDVP does not correct the autocorrelation function and that MDVP "
 	"does not do an accurate sinc interpolation: both of these properties cause "
 	"the measured height of the peak at 1/F0 (in MDVP) to be lower than the real height, as explained by @@Boersma (1993)@.")
 ENTRY (L"5.2. Jitter measurements: sometimes very different")
 NORMAL (L"The jitter measures in various programs may yield different results, with Praat often giving much lower values than MDVP, "
-	"especially for noisy sounds. I will now explain where the difference comes from.")
+	"especially for noisy sounds. I will now explain where the difference comes from. "
+	"A more elaborate explanation with pictures is given in @@Boersma (2009a)@.")
 NORMAL (L"If a sound is computer-generated as a glottal source signal with a random period duration variation of 1 percent (around a constant F0), "
 	"then filtered with the characteristics of a vocal tract configuration corresponding to a sustained vowel, "
 	"both Praat and MDVP will measure this sound as having a \"jitter\" of 1 percent. "
@@ -185,7 +186,7 @@ NORMAL (L"If a sound is computer-generated as a glottal source signal with a con
 	"whereas MDVP will measure this sound as having a \"jitter\" of 0.6 percent. "
 	"In other words, Praat will tell you that there is almost no jitter, "
 	"whereas MDVP will tell you that the jitter is of an almost pathological level. "
-	"The relevant curves can be seen in my paper \"Stemmen meten met Praat\", "
+	"The relevant curves can be seen in my papers \"Stemmen meten met Praat\" and @@Boersma (2009a)@, "
 	"and the numbers are confirmed by Deliyski, Shaw & Evans (Journal of Voice, 2005: 23).")
 NORMAL (L"One can see that Praat's \"jitter\" measure attempts to separate the influence of period duration variation "
 	"(which it reports as \"jitter\") from the influence of additive noise (which is does not report as \"jitter\"), "
@@ -195,7 +196,8 @@ NORMAL (L"The difference between Praat's and MDVP's jitter measures is due to a 
 	"Praat uses %%waveform-matching%, in which the duration of a period is determined by looking for best matching wave shapes "
 	"(a \"cross-correlation\" maximum). MDVP uses %%peak-picking% instead, where the duration of a period is determined by "
 	"measuring the time difference between two locally highest peaks in the wave form. The waveform-matching method "
-	"averages away much of the influence of additive noise, whereas peak-picking is highly sensitive to additive noise.")
+	"averages away much of the influence of additive noise, whereas peak-picking is highly sensitive to additive noise. "
+	"For detailed illustrations, see @@Boersma (2009a)@.")
 MAN_END
 
 MAN_BEGIN (L"Voice 6. Automating voice analysis with a script", L"ppgb", 20061028)
@@ -253,4 +255,4 @@ INTRO (L"A command in the #Pulses menu that will write to the Info window an ext
 MAN_END
 }
 
-/* End of file manual_Voice.c */
+/* End of file manual_voice.c */

@@ -1,6 +1,6 @@
 /* manual_spectrum.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2008 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ MAN_BEGIN (L"Ltas: Get frequency of maximum...", L"ppgb", 20030916)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the frequency (in Hertz) associated with the maximum energy density.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From frequency% (s), %%To frequency% (s)")
 DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
 	"If %%To frequency% is not greater than %%From frequency%, "
@@ -222,7 +222,7 @@ MAN_BEGIN (L"Ltas: Get minimum...", L"ppgb", 20030916)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the minimum value (in dB) within a specified frequency range.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From frequency% (s), %%To frequency% (s)")
 DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
 	"If %%To frequency% is not greater than %%From frequency%, "
@@ -244,7 +244,7 @@ MAN_BEGIN (L"Ltas: Get standard deviation...", L"ppgb", 19991016)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the standard deviation (in dB) of the LTAS within a specified frequency domain.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From frequency% (s), %%To frequency% (s)")
 DEFINITION (L"the frequency window. Values outside this domain are ignored. "
 	"If %%To frequency% is not greater than %%From frequency%, the entire frequency domain of the Ltas is considered.")
@@ -262,7 +262,7 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the value (in dB) at a specified frequency. "
 	"If %frequency is outside the bands of the Ltas, the result is 0.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Frequency (s)")
 DEFINITION (L"the time at which the value is to be evaluated.")
 TAG (L"%%Interpolation")
@@ -286,7 +286,7 @@ INTRO (L"A command that creates a @Spectrogram from every selected @Sound object
 	"It performs a %%short-term spectral analysis%, which means that for a number of time points in the Sound, "
 	"Praat computes an approximation of the spectrum at that time. Each such spectrum is called an %%analysis frame%.")
 NORMAL (L"For tutorial information, see @@Intro 3. Spectral analysis@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Window length")
 DEFINITION (L"the duration of the analysis window. If this is 0.005 seconds, Praat uses for each frame "
 	"the part of the sound that lies between 0.0025 seconds before and 0.0025 seconds after the centre of that frame "
@@ -526,7 +526,7 @@ MAN_END
 
 MAN_BEGIN (L"Spectrogram: Paint...", L"ppgb", 20030916)
 INTRO (L"A command to draw the selected @Spectrogram object(s) into the @@Picture window@ in shades of grey.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From time%, %%To time% (seconds)")
 DEFINITION (L"the time domain along the %x axis.")
 TAG (L"%%From frequency%, %%To frequency% (Hertz)")
@@ -591,7 +591,7 @@ MAN_BEGIN (L"Spectrum: Filter (pass Hann band)...", L"ppgb", 20030916)
 INTRO (L"A command to modify every selected @Spectrum object.")
 NORMAL (L"The complex values in the #Spectrum are multiplied by real-valued sine shapes and straight lines, according to the following figure:")
 PICTURE (5, 3, draw_SpectrumPassHann)
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From frequency% (standard value: 500 Hz)")
 DEFINITION (L"the lower edge of the pass band (%f__1_ in the figure). The value zero is special: the filter then acts as a low-pass filter.")
 TAG (L"%%To frequency% (standard value: 1000 Hz)")
@@ -611,7 +611,7 @@ MAN_BEGIN (L"Spectrum: Filter (stop Hann band)...", L"ppgb", 20030916)
 INTRO (L"A command to modify every selected @Spectrum object.")
 NORMAL (L"The complex values in the #Spectrum are multiplied by real-valued sine shapes and straight lines, according to the following figure:")
 PICTURE (5, 3, draw_SpectrumStopHann)
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%From frequency% (standard value: 500 Hz)")
 DEFINITION (L"the lower edge of the stop band (%f__1_ in the figure). The value zero is special: the filter then acts as a high-pass filter.")
 TAG (L"%%To frequency% (standard value: 1000 Hz)")
@@ -641,7 +641,7 @@ NORMAL (L"In this formula, %f__%c_ is the spectral centre of gravity (see @@Spec
 	"Thus, the %%n%th central moment is the average of (%f \\-- %f__%c_)^%n over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Moment")
 DEFINITION (L"the number %n in the formulas above. A number of 3 gives you the third central spectral moment. "
 	"It is not impossible to ask for fractional moments, e.g. %n = 1.5.")
