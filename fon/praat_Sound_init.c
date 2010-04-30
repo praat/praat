@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/02/19
+ * pb 2010/04/27
  */
 
 #include "praat.h"
@@ -1864,7 +1864,7 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
-	if (wcsstr (MelderFile_name (file), L".mp3") && mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+	if ((wcsstr (MelderFile_name (file), L".mp3") || wcsstr (MelderFile_name (file), L".MP3")) && mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	#ifdef macintosh
 		if (MelderFile_getMacType (file) == 'Sd2f') return Sound_readFromSoundFile (file);
 	#endif

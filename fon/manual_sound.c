@@ -1001,13 +1001,13 @@ CODE (L"Set value at sample number... 100 1/2")
 NORMAL (L"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (L"SoundEditor", L"ppgb", 20030312)
+MAN_BEGIN (L"SoundEditor", L"ppgb", 20100404)
 INTRO (L"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (L"The markers")
-NORMAL (L"To set the cursor, use the left mouse button. A horizontal line will also be shown; "
-	"this line crosses the cursor line at the sound's function value. "
-	"This function value is the sinc-interpolated value, and is generally different from the "
+NORMAL (L"To set the cursor, use the left mouse button. A short horizontal line will also be shown at the left edge (in cyan); "
+	"the extension of this line crosses the cursor line at the sound's function value (seen as a cyan dot). "
+	"This function value (shown at the left in cyan) is the sinc-interpolated value, and is generally different from the "
 	"value that you would expect when looking at the linearly interpolated version of the sampled sound.")
 NORMAL (L"To select a part of the time domain, use the @@time selection@ mechanism.")
 ENTRY (L"Playing")
@@ -1020,11 +1020,11 @@ NORMAL (L"To perform analyses on the selection, or save it to a file, "
 	"by clicking on the button that will copy the selection to the List of Objects; "
 	"the resulting Sound will be called \"Sound untitled\".")
 ENTRY (L"Editing")
-LIST_ITEM (L"\\bu Cut: cut the selection to the clipboard.")
-LIST_ITEM (L"\\bu Copy: copy the selection to the clipboard.")
-LIST_ITEM (L"\\bu Paste: paste the clipboard to the cursor.")
-LIST_ITEM (L"\\bu Zero: set the selected samples to zero.")
-LIST_ITEM (L"\\bu Reverse: reverse the selected part of the sound.")
+LIST_ITEM (L"\\bu Cut: cut the selection to the clipboard, for later pasting into the same or another Sound.")
+LIST_ITEM (L"\\bu Copy selection to Sound clipboard: copy the selection to the clipboard, for later pasting into the same or another Sound.")
+LIST_ITEM (L"\\bu Paste after selection: paste the clipboard to the cursor or after the selection.")
+LIST_ITEM (L"\\bu Set selection to zero: set the selected samples to zero.")
+LIST_ITEM (L"\\bu Reverse selection: reverse the selected part of the sound.")
 NORMAL (L"You can undo these commands with Undo (Command-Z).")
 ENTRY (L"The Group button")
 NORMAL (L"To synchronize a SoundEditor window with other windows that show a time signal, "

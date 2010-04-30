@@ -1,6 +1,6 @@
 /* Interpreter.c
  *
- * Copyright (C) 1993-2009 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
  * pb 2009/01/20 pause forms
  * pb 2009/03/17 split up structPraat
  * pb 2009/12/22 invokingButtonTitle
+ * pb 2010/04/30 guard against leading nonbreaking spaces
  */
 
 #include <ctype.h>
@@ -58,6 +59,7 @@ extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 #include "praat_version.h"
+#include "UnicodeData.h"
 
 #define Interpreter_WORD 1
 #define Interpreter_REAL 2
@@ -668,7 +670,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 	lines = NUMpvector (1, numberOfLines); cherror
 	for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += wcslen (command) + 1 + chopped) {
 		int length;
-		while (*command == ' ' || *command == '\t') command ++;
+		while (*command == ' ' || *command == '\t' || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
 		length = wcslen (command);
 		/*
 		 * Chop trailing spaces?

@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100404)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100430)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.32# (30 April 2010)")
+LIST_ITEM (L"\\bu Scripting: command ##Expand include files#.")
+LIST_ITEM (L"\\bu Scripting: accept lines that start with non-breaking spaces (as may occur in scripts copied from the web manual).")
+LIST_ITEM (L"\\bu Sound files: accept MP3 files with extension written in capitals.")
+LIST_ITEM (L"\\bu Linux audio recording: corrected input choice (microphone, line).")
 NORMAL (L"##5.1.31# (4 April 2010)")
 LIST_ITEM (L"\\bu @@Sounds: Convolve...@, @@Sounds: Cross-correlate...@, @@Sound: Autocorrelate...@, with full documentation.")
 LIST_ITEM (L"\\bu More query commands for IntensityTier.")
@@ -1103,13 +1108,6 @@ ENTRY (L"To do")
 	LIST_ITEM (L"\\bu Improve scrolling and add selection in hyperpages.")
 	LIST_ITEM (L"\\bu Segment spectrograph?") /* Ton Wempe, Jul 16 1996 */
 	LIST_ITEM (L"\\bu Phoneme-to-articulation conversion??") /* Mirjam Ernestus, Jul 1 1996 */
-ENTRY (L"Known bugs in all editions")
-	LIST_ITEM (L"\\bu (small) No navigation by tabs.")
-	LIST_ITEM (L"\\bu (small) Tabs in texts should be considered spaces.")
-ENTRY (L"Known bugs in the Macintosh version")
-	LIST_ITEM (L"\\bu (small) Pause window modal.")
-	LIST_ITEM (L"\\bu (small) Cascade buttons grey after suspend+resume during progress window.")
-	LIST_ITEM (L"\\bu Movie window cannot be closed.")
 ENTRY (L"Known bugs in the Windows version")
 	LIST_ITEM (L"\\bu Cannot stand infinitesimal zooming in SpectrogramEditor.")
 	LIST_ITEM (L"\\bu Clipboards with greys sometimes become black-and-white after use of colour.")
@@ -2803,7 +2801,7 @@ NORMAL (L"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20100324)
+MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20100407)
 ENTRY (L"1. How to extract the %filter from an existing speech sound")
 NORMAL (L"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -2909,7 +2907,7 @@ NORMAL (L"Finally, you could just know the %%impulse response% of your filter (i
 	"You then select both Sound objects, and choose @@Sounds: Convolve...@:")
 CODE (L"#select Sound source")
 CODE (L"#plus Sound filter")
-CODE (L"Convolve... integral")
+CODE (L"Convolve... integral zero")
 NORMAL (L"As a last step, you may want to bring the resulting sound within the [-1; +1] range:")
 CODE (L"Scale peak... 0.99")
 ENTRY (L"4. How to manipulate the filter")

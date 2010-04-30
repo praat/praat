@@ -1,6 +1,6 @@
 /* Sound_audio.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2008/01/19 double
  * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
  * fb 2010/02/26 fix resource leak fd_mixer in case of error during init
+ * pb 2010/04/20 Sound_recordFixedTime for Linux: repair 
  */
 
 #include <errno.h>
@@ -348,47 +349,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				Melder_error1 (L"(Sound_record:) Cannot open /dev/mixer.");
 				goto error;
 			}
-			
-
-			if (ioctl(fd_mixer, SOUND_MIXER_READ_RECMASK, &dev_mask) == -1) {
-				Melder_error1 (L"(Sound_record:) Cannot access /dev/mixer.");
-				goto error;
-			}
-			/*		printf("%d %d %d\n", dev_mask, (dev_mask&SOUND_MASK_LINE), (dev_mask&SOUND_MASK_MIC));*/
-			if (inputSource == 2) {
-				/*  AUDIO_LINE_IN */
-				if (dev_mask&SOUND_MASK_LINE) {
-					dev_mask = SOUND_MASK_LINE;
-				} else {
-					Melder_error1 (L"(Sound_record:) Can't set LINE as recording device");
-					goto error;
-				}
-				
-			} else {
-				/*  AUDIO_MICROPHONE */
-				if (dev_mask&SOUND_MASK_MIC) {
-					dev_mask = SOUND_MASK_MIC;
-				} else {
-					Melder_error1 (L"(Sound_record:) Can't set MIC as recording device");
-					goto error;
-				}
-
-			}
-			/*		printf("%d\n", dev_mask);*/
+			dev_mask = inputSource == 1 ? SOUND_MASK_MIC : SOUND_MASK_LINE;
 			if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
 				Melder_error1 (L"(Sound_record:) Can't set recording device in mixer");		
+				goto error;
 			}
-			if (ioctl(fd_mixer, SOUND_MIXER_READ_RECSRC, &dev_mask) == -1) {
-				Melder_error1 (L"(Sound_record:) Can't read recording device from mixer");		
-			} else {
-				/*			printf("%x\n",dev_mask);*/
-				if (dev_mask&SOUND_MASK_MIC) {
-					inputSource = 1;				
-				} else if (dev_mask&SOUND_MASK_LINE) {
-					inputSource = 2;
-					
-				}
-			} 
 		#endif
 	}
 
