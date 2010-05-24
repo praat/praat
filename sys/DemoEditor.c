@@ -175,7 +175,12 @@ DemoEditor DemoEditor_create (Widget parent) {
 
 int Demo_open (void) {
 	#ifndef CONSOLE_APPLICATION
-		if (Melder_batch) return 0;
+		if (Melder_batch) {
+			/*
+			 * Batch scripts have to be able to run demos.
+			 */
+			//Melder_batch = 0;
+		}
 		if (theDemoEditor == NULL) {
 			theDemoEditor = DemoEditor_create (Melder_topShell);
 			Melder_assert (theDemoEditor != NULL);

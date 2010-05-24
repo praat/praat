@@ -57,6 +57,7 @@
  djmw 20090707 Rename NUMinverse_cholesky to NUMlowerCholeskyInverse,
  	+NUMcovarianceFromColumnCentredMatrix, +NUMmultivariateKurtosis
  djmw 20100311 +NUMsolveQuadraticEquation
+ djmw 20100426 replace wcstok by Melder_wcstok
 */
 
 #include "SVD.h"
@@ -127,7 +128,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 	if (((dup = Melder_wcsdup (s)) == NULL) ||
 		((numbers = NUMdvector (1, capacity)) == NULL)) goto end;
 	wchar_t *last;
-	token = wcstok (dup, delimiter, & last);
+	token = Melder_wcstok (dup, delimiter, & last);
 	while (token)
 	{
 		double value = wcstod (token, NULL);
@@ -138,7 +139,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 			numbers = new; capacity = newsize;
 		}
 		numbers[++n] = value;
-		token = wcstok (NULL, delimiter, & last);
+		token = Melder_wcstok (NULL, delimiter, & last);
 	}
 end:
 	*numbers_found = n;

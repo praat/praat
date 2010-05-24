@@ -524,13 +524,11 @@ static int menu_cb_showAnalyses (EDITOR_ARGS) {
 		SET_INTEGER (L"Show pulses", my pulses.show)
 		SET_REAL (L"Longest analysis", my longestAnalysis)
 	EDITOR_DO
-		#if motif
-		XmToggleButtonGadgetSetState (my spectrogramToggle, preferences.spectrogram.show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"), False);
-		XmToggleButtonGadgetSetState (my pitchToggle, preferences.pitch.show = my pitch.show = GET_INTEGER (L"Show pitch"), False);
-		XmToggleButtonGadgetSetState (my intensityToggle, preferences.intensity.show = my intensity.show = GET_INTEGER (L"Show intensity"), False);
-		XmToggleButtonGadgetSetState (my formantToggle, preferences.formant.show = my formant.show = GET_INTEGER (L"Show formants"), False);
-		XmToggleButtonGadgetSetState (my pulsesToggle, preferences.pulses.show = my pulses.show = GET_INTEGER (L"Show pulses"), False);
-		#endif
+		GuiMenuItem_check (my spectrogramToggle, preferences.spectrogram.show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"));
+		GuiMenuItem_check (my pitchToggle, preferences.pitch.show = my pitch.show = GET_INTEGER (L"Show pitch"));
+		GuiMenuItem_check (my intensityToggle, preferences.intensity.show = my intensity.show = GET_INTEGER (L"Show intensity"));
+		GuiMenuItem_check (my formantToggle, preferences.formant.show = my formant.show = GET_INTEGER (L"Show formants"));
+		GuiMenuItem_check (my pulsesToggle, preferences.pulses.show = my pulses.show = GET_INTEGER (L"Show pulses"));
 		preferences.longestAnalysis = my longestAnalysis = GET_REAL (L"Longest analysis");
 		FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	EDITOR_END
@@ -567,9 +565,7 @@ static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 static int menu_cb_showSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.spectrogram.show = my spectrogram.show = ! my spectrogram.show;
-	#if motif
-		XmToggleButtonGadgetSetState (my spectrogramToggle, my spectrogram.show, False);   // in case we're called from a script
-	#endif
+	GuiMenuItem_check (my spectrogramToggle, my spectrogram.show);   // in case we're called from a script
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -786,9 +782,7 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 static int menu_cb_showPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pitch.show = my pitch.show = ! my pitch.show;
-	#if motif
-		XmToggleButtonGadgetSetState (my pitchToggle, my pitch.show, False);   // in case we're called from a script
-	#endif
+	GuiMenuItem_check (my pitchToggle, my pitch.show);   // in case we're called from a script
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1074,9 +1068,7 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 static int menu_cb_showIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.intensity.show = my intensity.show = ! my intensity.show;
-	#if motif
-		XmToggleButtonGadgetSetState (my intensityToggle, my intensity.show, False);   // in case we're called from a script
-	#endif
+	GuiMenuItem_check (my intensityToggle, my intensity.show);   // in case we're called from a script
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1244,9 +1236,7 @@ static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 static int menu_cb_showFormants (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.formant.show = my formant.show = ! my formant.show;
-	#if motif
-		XmToggleButtonGadgetSetState (my formantToggle, my formant.show, False);   // in case we're called from a script
-	#endif
+	GuiMenuItem_check (my formantToggle, my formant.show);   // in case we're called from a script
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1467,9 +1457,7 @@ static int menu_cb_getBandwidth (EDITOR_ARGS) {
 static int menu_cb_showPulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pulses.show = my pulses.show = ! my pulses.show;
-	#if motif
-		XmToggleButtonGadgetSetState (my pulsesToggle, my pulses.show, False);   // in case we're called from a script
-	#endif
+	GuiMenuItem_check (my pulsesToggle, my pulses.show);   // in case we're called from a script
 	FunctionEditor_redraw (TimeSoundAnalysisEditor_as_FunctionEditor (me));
 	return 1;
 }
@@ -1956,11 +1944,11 @@ static void draw_analysis (TimeSoundAnalysisEditor me) {
 
 	if (my endWindow - my startWindow > my longestAnalysis) {
 		Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
-		Graphics_setFontSize (my graphics, 9);
+		Graphics_setFontSize (my graphics, 10);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text3 (my graphics, 0.5, 0.67, L"To see the analyses, zoom in to at most ", Melder_half (my longestAnalysis), L" seconds,");
 		Graphics_text (my graphics, 0.5, 0.33, L"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.");
-		Graphics_setFontSize (my graphics, 10);
+		Graphics_setFontSize (my graphics, 12);
 		return;
 	}
 	TimeSoundAnalysisEditor_computeSpectrogram (me);

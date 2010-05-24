@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* November 15, 2009 */
+/* 24 May 2010 */
 
 /*
  * The sendpraat subroutine (Unix with X Window but not GTK; Windows; Macintosh) sends a message
@@ -12,6 +12,7 @@
  *
  * On Windows NT, 2000, and XP, this version works only with Praat version 4.3.28 and higher.
  * On Macintosh, this version works only with Praat version 3.8.75 and higher.
+ * On GTK-Linux, this version works only with Praat version 5.1.33 and higher.
  */
 
 /*******************************************************************
@@ -27,6 +28,7 @@
 	#include <stdio.h>
 	#include <wchar.h>
 	#define xwin 0
+	#define gtk 0
 	#define win 1
 	#define mac 0
 #elif defined (macintosh) || defined (__MACH__)
@@ -43,12 +45,21 @@
 	#endif
 	#include <MacErrors.h>
 	#define xwin 0
+	#define gtk 0
 	#define win 0
 	#define mac 1
 #elif defined (USE_GTK)
 	#include <sys/types.h>
+	#include <signal.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <unistd.h>
+	#include <ctype.h>
 	#include <wchar.h>
+	#include <gtk/gtk.h>
 	#define xwin 0
+	#define gtk 1
 	#define win 0
 	#define mac 0
 #else   /* Assume we are on Unix. */
@@ -61,6 +72,7 @@
 	#include <wchar.h>
 	#include <X11/Intrinsic.h>
 	#define xwin 1
+	#define gtk 0
 	#define win 0
 	#define mac 0
 #endif
@@ -91,7 +103,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 
 static char errorMessage [1000];
 static wchar_t errorMessageW [1000];
-#if xwin
+#if xwin || gtk
 	static long theTimeOut;
 	static void handleCompletion (int message) { (void) message; }
 	static void handleTimeOut (int message) { (void) message; sprintf (errorMessage, "Timed out after %ld seconds.", theTimeOut); }
@@ -99,7 +111,7 @@ static wchar_t errorMessageW [1000];
 
 char *sendpraat (void *display, const char *programName, long timeOut, const char *text) {
 	char nativeProgramName [100];
-	#if xwin
+	#if xwin || gtk
 		char *home, pidFileName [256], messageFileName [256];
 		FILE *pidFile;
 		long pid, wid = 0;
@@ -125,7 +137,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	 * Handle case differences.
 	 */
 	strcpy (nativeProgramName, programName);
-	#if xwin
+	#if xwin || gtk
 		nativeProgramName [0] = tolower (nativeProgramName [0]);
 	#else
 		nativeProgramName [0] = toupper (nativeProgramName [0]);
@@ -139,7 +151,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
 	 */
-	#if xwin
+	#if xwin || gtk
 		if ((home = getenv ("HOME")) == NULL) {
 			sprintf (errorMessage, "HOME environment variable not set.");
 			return errorMessage;
@@ -159,17 +171,17 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	/*
 	 * Write the message file (Unix and Windows only).
 	 */
-	#if xwin || win
+	#if xwin || gtk || win
 	{
 		FILE *messageFile;
 		if ((messageFile = fopen (messageFileName, "w")) == NULL) {
 			sprintf (errorMessage, "Cannot create message file \"%s\" "
-				"(no privilege to write to directory, or disk full).\n", messageFileName);
+				"(no privilege to write to directory, or disk full, or program is not called %s).\n", messageFileName, programName);
 			return errorMessage;
 		}
-		#if xwin
+		#if xwin || gtk
 			if (timeOut)
-				fprintf (messageFile, "#%ld\n", getpid ());   /* Write own process ID for callback. */
+				fprintf (messageFile, "#%ld\n", (long) getpid ());   /* Write own process ID for callback. */
 		#endif
 		fprintf (messageFile, "%s", text);
 		fclose (messageFile);
@@ -179,7 +191,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	/*
 	 * Where shall we send the message?
 	 */
-	#if xwin
+	#if xwin || gtk
 		/*
 		 * Get the process ID and the window ID of a running Praat-shell program.
 		 */
@@ -251,7 +263,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
 			event. xclient. format = 8;   /* No byte swaps. */
 			strcpy (& event. xclient.data.b [0], "SENDPRAAT");
-			if(! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
+			if (! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
 				if (! displaySupplied) XCloseDisplay (display);
 				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
 					"The program %s may have been started by a different user, "
@@ -259,6 +271,59 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 				return errorMessage;
 			}
 			if (! displaySupplied) XCloseDisplay (display);
+		} else {
+			/*
+			 * Use interrupt mechanism.
+			 */
+			if (kill (pid, SIGUSR1)) {
+				sprintf (errorMessage, "Cannot send message to %s (process %ld). "
+					"The program %s may have been started by a different user, "
+					"or may have crashed.", programName, pid, programName);
+				return errorMessage;
+			}
+		}
+		/*
+		 * Wait for the running program to notify us of completion,
+		 * but do not wait for more than 'timeOut' seconds.
+		 */
+		if (timeOut) {
+			signal (SIGALRM, handleTimeOut);
+			alarm (timeOut);
+			theTimeOut = timeOut;   /* Hand an argument to handleTimeOut () in a static variable. */
+			errorMessage [0] = '\0';
+			pause ();
+			if (errorMessage [0] != '\0') return errorMessage;
+		}
+	#elif gtk
+		/*
+		 * Be ready to receive notification of completion.
+		 */
+		if (timeOut)
+			signal (SIGUSR2, handleCompletion);
+		/*
+		 * Notify running program.
+		 */
+		if (wid != 0) {
+			/*
+			 * Notify main window.
+			 */
+			g_type_init ();
+			//GdkDisplay *display = gdk_display_get_default ();   // there is no default display!
+			GdkDisplay *display = gdk_display_open (":0.0");
+			//fprintf (stderr, "opened display %ld\n", (long) display);
+			GdkEventClient gevent;
+			gevent. type = GDK_CLIENT_EVENT;
+			gevent. window = 0;
+			gevent. send_event = 1;
+			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. data_format = 8;
+			//fprintf(stderr, "sending event to window %ld (%d)\n", wid, (int) sizeof (long));
+			if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
+				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
+					"The program %s may have been started by a different user, "
+					"or may have crashed.", programName, wid, programName);
+				return errorMessage;
+			}
 		} else {
 			/*
 			 * Use interrupt mechanism.
@@ -328,7 +393,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 
 wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text) {
 	wchar_t nativeProgramName [100];
-	#if xwin
+	#if xwin || gtk
 		char *home, pidFileName [256], messageFileName [256];
 		FILE *pidFile;
 		long pid, wid = 0;
@@ -354,7 +419,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	 * Handle case differences.
 	 */
 	wcscpy (nativeProgramName, programName);
-	#if xwin
+	#if xwin || gtk
 		nativeProgramName [0] = tolower (nativeProgramName [0]);
 	#else
 		nativeProgramName [0] = toupper (nativeProgramName [0]);
@@ -368,7 +433,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
 	 */
-	#if xwin
+	#if xwin || gtk
 		if ((home = getenv ("HOME")) == NULL) {
 			swprintf (errorMessageW, 1000, L"HOME environment variable not set.");
 			return errorMessageW;
@@ -388,7 +453,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	/*
 	 * Write the message file (Unix and Windows only).
 	 */
-	#if xwin
+	#if xwin || gtk
 		FILE *messageFile;
 		if ((messageFile = fopen (messageFileName, "w")) == NULL) {
 			swprintf (errorMessageW, 1000, L"Cannot create message file \"%s\" "
@@ -413,7 +478,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	/*
 	 * Where shall we send the message?
 	 */
-	#if xwin
+	#if xwin || gtk
 		/*
 		 * Get the process ID and the window ID of a running Praat-shell program.
 		 */
@@ -516,6 +581,59 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			pause ();
 			if (errorMessageW [0] != '\0') return errorMessageW;
 		}
+	#elif gtk
+		/*
+		 * Be ready to receive notification of completion.
+		 */
+		if (timeOut)
+			signal (SIGUSR2, handleCompletion);
+		/*
+		 * Notify running program.
+		 */
+		if (wid != 0) {
+			/*
+			 * Notify main window.
+			 */
+			g_type_init ();
+			//GdkDisplay *display = gdk_display_get_default ();   // there is no default display!
+			GdkDisplay *display = gdk_display_open (":0.0");
+			//fprintf (stderr, "opened display %ld\n", (long) display);
+			GdkEventClient gevent;
+			gevent. type = GDK_CLIENT_EVENT;
+			gevent. window = 0;
+			gevent. send_event = 1;
+			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+			gevent. data_format = 8;
+			//fprintf(stderr, "sending event to window %ld (%d)\n", wid, (int) sizeof (long));
+			if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
+				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
+					"The program %ls may have been started by a different user, "
+					"or may have crashed.", programName, wid, programName);
+				return errorMessageW;
+			}
+		} else {
+			/*
+			 * Use interrupt mechanism.
+			 */
+			if (kill (pid, SIGUSR1)) {
+				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (process %ld). "
+					"The program %ls may have been started by a different user, "
+					"or may have crashed.", programName, pid, programName);
+				return errorMessageW;
+			}
+		}
+		/*
+		 * Wait for the running program to notify us of completion,
+		 * but do not wait for more than 'timeOut' seconds.
+		 */
+		if (timeOut) {
+			signal (SIGALRM, handleTimeOut);
+			alarm (timeOut);
+			theTimeOut = timeOut;   /* Hand an argument to handleTimeOut () in a static variable. */
+			errorMessageW [0] = '\0';
+			pause ();
+			if (errorMessageW [0] != '\0') return errorMessageW;
+		}
 	#elif win
 		/*
 		 * Notify the running program by sending a WM_USER message to its main window.
@@ -570,6 +688,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 cc -o sendpraat -framework CoreServices -framework ApplicationServices -I/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
  * or else
 cc -o sendpraat -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
+ *
+ * To compile on GTK-Linux:
+cc -std=gnu99 -o sendpraat -DUSE_GTK `pkg-config --cflags --libs gtk+-2.0` sendpraat.c
 */
 int main (int argc, char **argv) {
 	int iarg, line, length = 0;

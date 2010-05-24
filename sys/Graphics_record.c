@@ -64,17 +64,17 @@ error:
 
 /***** RECORD AND PLAY *****/
 
-int Graphics_startRecording (I) {
+bool Graphics_startRecording (I) {
 	iam (Graphics);
-	int wasRecording = my recording;
-	my recording = 1;
+	bool wasRecording = my recording;
+	my recording = true;
 	return wasRecording;
 }
 
-int Graphics_stopRecording (I) {
+bool Graphics_stopRecording (I) {
 	iam (Graphics);
-	int wasRecording = my recording;
-	my recording = 0;
+	bool wasRecording = my recording;
+	my recording = false;
 	return wasRecording;
 }
 
@@ -82,9 +82,9 @@ int Graphics_stopRecording (I) {
 // ook een bounding box van events kan worden meegeven.
 void Graphics_play (Graphics me, Graphics thee) {
 	double *p = my record, *endp = p + my irecord;
-	int wasRecording = my recording;
+	bool wasRecording = my recording;
 	if (! p) return;
-	my recording = 0;   /* Temporarily, in case me == thee. */
+	my recording = false;   /* Temporarily, in case me == thee. */
 	while (p < endp) {
 		#define get  (* ++ p)
 		#define mget(n)  (p += n, p - n)

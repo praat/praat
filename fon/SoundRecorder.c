@@ -756,7 +756,7 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	iam (SoundRecorder);
 	if (my recording) return;
 	my nsamp = 0;
-	my recording = TRUE;
+	my recording = true;
 	my lastLeftMaximum = 0;
 	my lastRightMaximum = 0;
 	if (! my synchronous) {
@@ -807,7 +807,7 @@ end:
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	iferror { my recording = FALSE; Melder_flushError ("Cannot record."); }
+	iferror { my recording = false; Melder_flushError ("Cannot record."); }
 }
 
 static void gui_button_cb_stop (I, GuiButtonEvent event) {

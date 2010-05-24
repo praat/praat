@@ -101,6 +101,11 @@ class_methods (EditorMenu, Thing) {
 
 static void commonCallback (GUI_ARGS) {
 	GUI_IAM (EditorCommand);
+	#if gtk
+		if (G_OBJECT_TYPE (w) == GTK_TYPE_RADIO_MENU_ITEM && ! gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (w))) {
+			return;
+		}
+	#endif
 	if (my editor && ((Editor) my editor) -> methods -> scriptable && ! wcsstr (my itemTitle, L"...")) {
 		UiHistory_write (L"\n");
 		UiHistory_write (my itemTitle);
@@ -484,17 +489,15 @@ extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	#if gtk
 		int screenWidth, screenHeight;
-		{
-			Widget parent_win = gtk_widget_get_ancestor(parent, GTK_TYPE_WINDOW);
-			GdkScreen *screen;
-			if (parent_win) {
-				screen = gtk_window_get_screen(GTK_WINDOW(parent_win));
-			} else {
-				screen = gdk_screen_get_default();
-			}
-			screenWidth = gdk_screen_get_width (screen);
-			screenHeight = gdk_screen_get_height (screen);
+		Widget parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+		GdkScreen *screen;
+		if (parent_win) {
+			screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
+		} else {
+			screen = gdk_screen_get_default ();
 		}
+		screenWidth = gdk_screen_get_width (screen);
+		screenHeight = gdk_screen_get_height (screen);
 	#elif motif
 		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
 		int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
@@ -558,7 +561,7 @@ int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, 
 	our createChildren (me);
 	GuiObject_show (my dialog);
 	#if gtk
-		GuiWindow_show (my shell);
+		GuiWindow_show (my dialog);
 	#elif motif
 		XtRealizeWidget (my shell);
 	#endif
@@ -569,12 +572,12 @@ int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, 
 void Editor_raise (Editor me) {
 	#if gtk
 		// TODO: Wellicht dat my shell geen GDK_WINDOW is...
-		gdk_window_raise (GDK_WINDOW (my shell)); 
+		gdk_window_show (GDK_DRAWABLE (my shell -> window));
 	#elif motif
 		XMapRaised (XtDisplay (my shell), XtWindow (my shell));
 	#endif
 }
- 
+
 void Editor_dataChanged (Editor me, Any data) {
 	/*if (data) my data = data; BUG */
 	(void) data;

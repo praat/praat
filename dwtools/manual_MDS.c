@@ -395,7 +395,7 @@ MAN_END
 MAN_BEGIN (L"Configuration & Configuration: To Procrustes...", L"djmw", 20011008)
 INTRO (L"A command that creates a @Procrustes object from two selected "
 	"@Configuration objects.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%%Orthogonal transform%")
 DEFINITION (L"determines whether or not a translation and a scaling are allowed in the transform.")
 NORMAL (L"We calculate the @@Procrustes transform@ that transforms the second "
@@ -1806,7 +1806,7 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize columns...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the columns in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%Norm")
 DEFINITION (L"determines the sum of the squared elements in each column after "
 	"normalization.")
@@ -1818,7 +1818,7 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize rows...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the rows in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%Norm")
 DEFINITION (L"determines the sum of the squared elements in each row after "
 	"normalization.")
@@ -1830,7 +1830,7 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize table...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the elements in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%Norm")
 DEFINITION (L"determines the sum of the squared elements after normalization.")
 ENTRY (L"Algorithm")

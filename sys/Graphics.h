@@ -229,8 +229,8 @@ void *Graphics_x_getCR (I);
 void Graphics_x_setCR (I, void *cr);
 void *Graphics_x_getGC (I);
 
-int Graphics_startRecording (I);
-int Graphics_stopRecording (I);
+bool Graphics_startRecording (I);
+bool Graphics_stopRecording (I);
 void Graphics_play (Graphics from, Graphics to);
 int Graphics_writeRecordings (I, FILE *f);
 int Graphics_readRecordings (I, FILE *f);

@@ -40,6 +40,7 @@
  * pb 2010/01/20 Reopen from disk
  * pb 2010/01/20 guard against Find Again before Find
  * fb 2010/02/26 tell Undo/Redo buttons to GuiText for (de)sensitivization
+ * pb 2010/05/16 correct order and types in Font menu
  */
 
 #include "TextEditor.h"
@@ -565,13 +566,11 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
-	#if motif
-	if (my fontSizeButton_10) XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
-	if (my fontSizeButton_12) XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
-	if (my fontSizeButton_14) XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
-	if (my fontSizeButton_18) XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
-	if (my fontSizeButton_24) XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
-	#endif
+	if (my fontSizeButton_10) GuiMenuItem_check (my fontSizeButton_10, my fontSize == 10);
+	if (my fontSizeButton_12) GuiMenuItem_check (my fontSizeButton_12, my fontSize == 12);
+	if (my fontSizeButton_14) GuiMenuItem_check (my fontSizeButton_14, my fontSize == 14);
+	if (my fontSizeButton_18) GuiMenuItem_check (my fontSizeButton_18, my fontSize == 18);
+	if (my fontSizeButton_24) GuiMenuItem_check (my fontSizeButton_24, my fontSize == 24);
 }
 static void setFontSize (TextEditor me, int fontSize) {
 	GuiText_setFontSize (my textWidget, fontSize);
@@ -629,12 +628,12 @@ static void classTextEditor_createMenus (TextEditor me) {
 	Editor_addCommand (me, L"Search", L"Go to line...", 'L', menu_cb_goToLine);
 	#ifdef macintosh
 		Editor_addMenu (me, L"Font", 0);
-		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, menu_cb_10);
-		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, menu_cb_12);
-		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, menu_cb_14);
-		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, menu_cb_18);
-		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, menu_cb_24);
 		Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
+		my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKBUTTON, menu_cb_10);
+		my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKBUTTON, menu_cb_12);
+		my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKBUTTON, menu_cb_14);
+		my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKBUTTON, menu_cb_18);
+		my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKBUTTON, menu_cb_24);
 	#endif
 }
 
@@ -650,8 +649,8 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 static void classTextEditor_createChildren (TextEditor me) {
 	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
-	GuiText_setUndoItem(my textWidget, Editor_getMenuCommand(TextEditor_as_Editor(me), L"Edit", L"Undo")->itemWidget);
-	GuiText_setRedoItem(my textWidget, Editor_getMenuCommand(TextEditor_as_Editor(me), L"Edit", L"Redo")->itemWidget);
+	GuiText_setUndoItem (my textWidget, Editor_getMenuCommand (TextEditor_as_Editor (me), L"Edit", L"Undo") -> itemWidget);
+	GuiText_setRedoItem (my textWidget, Editor_getMenuCommand (TextEditor_as_Editor (me), L"Edit", L"Redo") -> itemWidget);
 }
 
 static void classTextEditor_clear (TextEditor me) {

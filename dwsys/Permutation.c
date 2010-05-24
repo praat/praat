@@ -1,6 +1,6 @@
 /* Permutation.c
  *
- * Copyright (C) 2005-2007 David Weenink
+ * Copyright (C) 2005-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20050722 Latest modification.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20100521 Next and Previous
 */
 
 #include <time.h>
@@ -59,7 +60,7 @@ int Permutation_checkInvariant (Permutation me)
 	long i;
 	Permutation thee = Data_copy (me);
 	if (thee == NULL) return 0;
-	
+
 	NUMsort_l (thy numberOfElements, thy p);
 	for (i = 1; i <= my numberOfElements; i++)
 	{
@@ -119,7 +120,7 @@ Permutation Permutation_create (long numberOfElements)
 void Permutation_sort (Permutation me)
 {
 	long i;
-	
+
     for (i = 1; i <= my numberOfElements; i++)
     {
     	my p[i] = i;
@@ -134,10 +135,10 @@ int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 	if (blocksize < 1 || blocksize > my numberOfElements) return Melder_error
 		("%s: Blocksize must be in [1, %d] range.", proc, my numberOfElements / 2);
 	if (from < 0 || from + blocksize - 1 > my numberOfElements || to < 0 || to + blocksize - 1 > my numberOfElements)
-		return Melder_error3	(L"Start and finish positions of the two blocks must be in [1,", 
+		return Melder_error3	(L"Start and finish positions of the two blocks must be in [1,",
 			Melder_integer(my numberOfElements), L"] range.");
 	if (from == to) return 1;
-	
+
 	for (i = 1; i <= blocksize; i++)
 	{
 		long tmp = my p[from + i - 1];
@@ -150,9 +151,9 @@ int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 int Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 {
 	long i, n;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return 0;
-	
+
 	if (n == 1) return 1;
 	for (i = from; i < to; i++)
 	{
@@ -177,10 +178,10 @@ Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 {
 	long i, n;
 	Permutation thee;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	step = (step - 1) % n + 1;
-	
+
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
 	for (i = from; i <= to; i++)
@@ -196,9 +197,9 @@ Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame)
 {
 	long tmp, newpos, n;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return 0;
-	
+
 	newpos = NUMrandomInteger (from, to);
 	if (newpos == pos && forbidsame)
 	{
@@ -209,7 +210,7 @@ int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, 
 		}
 		while ((newpos = NUMrandomInteger (from, to)) == pos) ;
 	}
-	
+
 	tmp = my p[pos]; my p[pos] = my p[newpos]; my p[newpos] = tmp;
 	return 1;
 }
@@ -220,7 +221,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 {
 	long iblock, first, j, nrest, n, nblocks;
 	Permutation thee, pblocks = NULL;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 
 	if (blocksize == 1 || (blocksize >= n && permuteWithinBlocks))
@@ -231,26 +232,26 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
 	if (blocksize >= n) return thee;
-	
+
 	nblocks  = n / blocksize;
 	if ((nrest = n % blocksize) != 0) return Melder_errorp3 (L"It is not possible to fit an integer number of blocks "
 		"in the range.\n(The last block is only of size ", Melder_integer (nrest), L").");
-	
+
 	pblocks = Permutation_create (nblocks);
 	if (pblocks == NULL) goto end;
-	
+
 	if (! Permutation_permuteRandomly_inline (pblocks, 1, nblocks)) goto end;
-	
+
 	for (first = from, iblock = 1; iblock <= nblocks; iblock++, first += blocksize)
 	{
 		/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */
 		long blocktomove = Permutation_getValueAtIndex (pblocks, iblock);
-		
+
 		for (j = 1; j <= blocksize; j++)
 		{
 			thy p[first - 1 + j] = my p[from - 1 + (blocktomove - 1) * blocksize + j];
 		}
-		
+
 		if (permuteWithinBlocks)
 		{
 			long last = first + blocksize - 1;
@@ -271,18 +272,18 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 {
 	long i, n, *occupied = NULL, nblocks, nrest, posinblock;
 	Permutation thee = NULL;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	nblocks = n / blocksize;
 	if ((nrest = n % blocksize) != 0) return Melder_errorp5 (L"There is not an integer number of blocks in the range.\n"
 			"(The last block is only of size ", Melder_integer (nrest), L" instead of ", Melder_integer (blocksize), L").");
 	if (offset >= blocksize) return Melder_errorp1 (L"Offset must be smaller than blocksize.");
-	
+
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
-	
+
 	if (nblocks == 1) return thee;
-	
+
 	occupied = NUMlvector (1, blocksize);
 	if (occupied == NULL) goto end;
 
@@ -291,10 +292,10 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 	for (i = 1; i <= n; i++)
 	{
 		long index, rblock = (i - 1) % nblocks + 1;
-		
+
 		posinblock += offset;
 		if (posinblock > blocksize) posinblock -= blocksize;
-		
+
 		if (i % nblocks == 1)
 		{
 			long count = blocksize;
@@ -303,7 +304,7 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 				posinblock++; count--;
 				if (posinblock > blocksize) posinblock -= blocksize;
 			}
-			occupied[posinblock] = 1;	
+			occupied[posinblock] = 1;
 		}
 		index = from - 1 + (rblock - 1) * blocksize + posinblock;
 		thy p[from - 1 + i] = my p[index];
@@ -315,7 +316,7 @@ end:
 }
 
 long Permutation_getValueAtIndex (Permutation me, long i)
-{ 
+{
     return i > 0 && i <= my numberOfElements ? my p[i] : -1;
 }
 
@@ -346,7 +347,7 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 {
 	long i, n;
 	Permutation thee = NULL;
-	
+
 	if (! _Permutation_checkRange (me, &from, &to, &n)) return NULL;
 	thee = Data_copy (me);
 	if (thee == NULL) return NULL;
@@ -355,6 +356,78 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 		thy p[from + i - 1] = my p[to - i + 1];
 	}
 	return thee;
+}
+
+/* Replaces p with the next permutation (in the standard lexicographical ordering.
+   Adapted from the GSL library
+*/
+int Permutation_next_inline (Permutation me)
+{
+
+	long size = my numberOfElements, i, j, k, tmp;
+	long *p = & my p[1];
+
+	if (size < 2) return 0;
+
+	i = size - 2;
+
+	while ((p[i] > p[i + 1]) && (i != 0)) { i--; }
+
+	if ((i == 0) && (p[0] > p[1])) return 0;
+
+	k = i + 1;
+
+	for (j = i + 2; j < size; j++ )
+    {
+		if ((p[j] > p[i]) && (p[j] < p[k])) { k = j; }
+    }
+
+	tmp = p[i]; p[i] = p[k]; p[k] = tmp;
+
+	for (j = i + 1; j <= ((size + i) / 2); j++)
+    {
+		tmp = p[j];
+		p[j] = p[size + i - j];
+		p[size + i - j] = tmp;
+    }
+
+	return 1;
+}
+
+/* Replaces p with the previous permutation (in the standard lexicographical ordering.
+   Adapted from the GSL library
+*/
+
+int Permutation_previous_inline (Permutation me)
+{
+	long size = my numberOfElements, i, j, k, tmp;
+	long *p = & my p[1];
+
+	if (size < 2) return 0;
+
+	i = size - 2;
+
+	while ((p[i] < p[i + 1]) && (i != 0)) { i--; }
+
+	if ((i == 0) && (p[0] < p[1])) return 0;
+
+	k = i + 1;
+
+	for (j = i + 2; j < size; j++ )
+    {
+		if ((p[j] < p[i]) && (p[j] > p[k])) { k = j; }
+    }
+
+	tmp = p[i]; p[i] = p[k]; p[k] = tmp;
+
+	for (j = i + 1; j <= ((size + i) / 2); j++)
+    {
+		tmp = p[j];
+		p[j] = p[size + i - j];
+		p[size + i - j] = tmp;
+    }
+
+	return 1;
 }
 
 /* End of Permutation.c */

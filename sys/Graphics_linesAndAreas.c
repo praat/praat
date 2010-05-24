@@ -32,6 +32,7 @@
  * pb 2009/09/04 FUNCTIONS_ARE_CLIPPED (compiler flag)
  * fb 2010/02/24 cairo
  * fb 2010/03/01 cairo
+ * pb 2010/05/13 support for XOR mode via GDK
  */
 
 #include "GraphicsP.h"
@@ -61,31 +62,36 @@ static void psRevertLine (GraphicsPostscript me) {
 }
 
 #if cairo
+	static void gdkPrepareLine (GraphicsScreen me) {
+		gdk_gc_set_line_attributes (my gc, my lineWidth,
+			my lineType >= Graphics_DOTTED ? GDK_LINE_ON_OFF_DASH : GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	}
+	static void gdkRevertLine (GraphicsScreen me) {
+		if (my lineType >= Graphics_DOTTED) {
+			gdk_gc_set_line_attributes (my gc, my lineWidth, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+		}
+	}
 	static void cairoPrepareLine (GraphicsScreen me) {
 		if (my cr == NULL) return;
-		double dotted_line[] = { 0, 6 };
-		double rounded_line[] = { 2, 6 };
-		cairo_save(my cr);
+		double dotted_line [] = { 2, 2 };
+		double dashed_line [] = { 6, 2 };
+		cairo_save (my cr);
 		switch (my lineType) {
 			case Graphics_DOTTED:
-				cairo_set_dash (my cr, dotted_line, 2, 0.0);
+				cairo_set_dash (my cr, dotted_line, 2, 1.0);
 				break;
-			case  Graphics_DASHED:
-				cairo_set_dash (my cr, rounded_line, 2, 0.0);
+			case Graphics_DASHED:
+				cairo_set_dash (my cr, dashed_line, 2, 1.0);
 				break;
-			// TODO: What else?
 		}
-		if (my lineType >= Graphics_DOTTED) {
-			cairo_set_dash (my cr, dotted_line, 2, 0.0);
-			cairo_set_line_width (my cr, my lineWidth == 1.0 ? 0.0 : my lineWidth); // TODO: Why 1.0?
-		} else if (my lineWidth != 1.0) {
-			cairo_set_line_width (my cr, my lineWidth);
-		}
+		cairo_set_line_width (my cr, my lineWidth);
 	}
 	static void cairoRevertLine (GraphicsScreen me) {
 		if (my cr == NULL) return;
-		// cairo_set_line_cap (my cr, CAIRO_LINE_CAP_BUTT);
-		cairo_restore(my cr);
+		if (my lineType >= Graphics_DOTTED) {
+			cairo_set_dash (my cr, NULL, 0, 0);
+		}
+		cairo_restore (my cr);
 	}
 #elif xwin
 	static void xwinPrepareLine (GraphicsScreen me) {
@@ -190,16 +196,24 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my cr == NULL) return;	
-			int i;
-			cairoPrepareLine (me);
-			// cairo_new_path (my cr); // move_to() automatically creates a new path
-			cairo_move_to (my cr, (double) xyDC [0], (double) xyDC [1]);
-			for (i = 1; i < numberOfPoints; i ++)
-				cairo_line_to (my cr, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
-			// cairo_close_path (my cr);
-			cairo_stroke (my cr);
-			cairoRevertLine (me);
+			if (my duringXor) {
+				gdkPrepareLine (me);
+				for (long i = 0; i < numberOfPoints - 1; i ++) {
+					gdk_draw_line (my window, my gc, xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
+				}
+				gdkRevertLine (me);
+			} else {
+				if (my cr == NULL) return;
+				cairoPrepareLine (me);
+				// cairo_new_path (my cr); // move_to() automatically creates a new path
+				cairo_move_to (my cr, (double) xyDC [0], (double) xyDC [1]);
+				for (long i = 1; i < numberOfPoints; i ++) {
+					cairo_line_to (my cr, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
+				}
+				// cairo_close_path (my cr);
+				cairo_stroke (my cr);
+				cairoRevertLine (me);
+			}
 		#elif xwin
 			XPoint *p = (void *) xyDC;
 			int nleft = (int) numberOfPoints;
@@ -496,12 +510,18 @@ static void circle (I, double xDC, double yDC, double rDC) {
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
-			if (my cr == NULL) return;
-			cairoPrepareLine (me);
-			cairo_new_path(my cr);
-			cairo_arc (my cr, xDC, yDC, rDC, 0.0, 2 * M_PI);
-			cairo_stroke(my cr);
-			cairoRevertLine (me);
+			if (my duringXor) {
+				gdkPrepareLine (me);
+				gdk_draw_arc (my window, my gc, FALSE, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
+				gdkRevertLine (me);
+			} else {
+				if (my cr == NULL) return;
+				cairoPrepareLine (me);
+				cairo_new_path(my cr);
+				cairo_arc (my cr, xDC, yDC, rDC, 0.0, 2 * M_PI);
+				cairo_stroke(my cr);
+				cairoRevertLine (me);
+			}
 		#elif xwin
 			xwinPrepareLine (me);
 			XDrawArc (my display, my window, my gc, xDC - rDC, yDC - rDC, 2 * rDC, 2 * rDC, 0 * 64, 360 * 64L);
@@ -778,49 +798,44 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		ORDER_DC
 		{
 		#if cairo
-			int width, height;
-			width = x2DC - x1DC, height = y1DC - y2DC;
-			if (width <= 0 || height <= 0) return;
+			if (x2DC <= x1DC || y1DC <= y2DC) return;
 			
-			cairo_save(my cr);
-			if (my drawingArea) {
+			cairo_save (my cr);
+			if (my drawingArea && 0) {
 				// clip to drawing area
 				int w, h;
-				gdk_drawable_get_size(GDK_DRAWABLE(my drawingArea->window), &w, &h);
-				cairo_rectangle(my cr, 0, 0, w, h);
-				cairo_clip(my cr);
+				gdk_drawable_get_size (my window, & w, & h);
+				cairo_rectangle (my cr, 0, 0, w, h);
+				cairo_clip (my cr);
 			}
-			// SetPort (my macPort);
+			cairo_set_line_width (my cr, 1.0);
+			double left = x1DC - 0.5, right = x2DC - 0.5, top = y2DC + 0.5, bottom = y1DC + 0.5;
+			double width = right - left, height = bottom - top;
+			cairo_set_source_rgb (my cr, 0.1, 0.1, 0.1);   // dark grey
+			cairo_rectangle (my cr, left, top, width, height);
+			cairo_stroke (my cr);
 			
-			cairo_set_source_rgb(my cr, 0.1 * 255, 0.1 * 255, 0.1 * 255);
-			cairo_rectangle(my cr, x1DC - 1, y2DC - 1, x2DC, y1DC);
-			cairo_stroke(my cr);
-			
-			if (width > 2 && height > 2) {
-				cairo_set_source_rgb(my cr, 0.3 * 255, 0.3 * 255, 0.3 * 255);
-				cairo_move_to(my cr, x1DC, y1DC - 2);
-				cairo_line_to(my cr, x2DC - 2, y1DC - 2);
-				cairo_stroke(my cr);
-				cairo_move_to(my cr, x2DC - 2, y1DC - 2);
-				cairo_line_to(my cr, x2DC - 2, y2DC);
-				cairo_stroke(my cr);
+			left ++, right --, top ++, bottom --, width -= 2, height -= 2;
+			if (width > 0 && height > 0) {
+				cairo_set_source_rgb (my cr, 0.3, 0.3, 0.3);
+				cairo_move_to (my cr, left + 1, bottom);
+				cairo_line_to (my cr, right, bottom);
+				cairo_line_to (my cr, right, top + 1);
+				cairo_stroke (my cr);
 				
-				cairo_set_source_rgb(my cr, 1.0, 1.0, 1.0);
-				cairo_move_to(my cr, x1DC, y1DC - 2);
-				cairo_line_to(my cr, x1DC, y2DC);
-				cairo_stroke(my cr);
-				cairo_move_to(my cr, x1DC, y2DC);
-				cairo_line_to(my cr, x2DC - 2, y2DC);
-				cairo_stroke(my cr);
-				if (width > 4 && height > 4) {
-					cairo_set_source_rgb(my cr, 0.65 * 255, 0.65 * 255, 0.65 * 255);
-					cairo_rectangle(my cr, x1DC + 1, y2DC + 1, x2DC - 2, y1DC - 2);
-					cairo_fill(my cr);
+				cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
+				cairo_move_to (my cr, left, bottom);
+				cairo_line_to (my cr, left, top);
+				cairo_line_to (my cr, right, top);
+				cairo_stroke (my cr);
+				left += 0.5, right -= 0.5, top += 0.5, bottom -= 0.5, width -= 1, height -= 1;
+				if (width > 0 && height > 0) {
+					cairo_set_source_rgb (my cr, 0.65, 0.65, 0.65);
+					cairo_rectangle (my cr, left, top, width, height);
+					cairo_fill (my cr);
 				}
 			}
-			
-			// RGBForeColor (& theBlackColour);
-			cairo_restore(my cr);
+			cairo_restore (my cr);
 		#elif xwin
 			int width, height;
 			width = x2DC - x1DC, height = y1DC - y2DC;
@@ -946,12 +961,10 @@ static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y
 
 void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* Base 0. */
 	iam (Graphics);
-	short *xyDC;
-	long i;
-	if (! numberOfPoints) return;
-	xyDC = Melder_malloc (short, 2 * numberOfPoints);
+	if (numberOfPoints == 0) return;
+	short *xyDC = Melder_malloc (short, 2 * numberOfPoints);
 	if (! xyDC) return;
-	for (i = 0; i < numberOfPoints; i ++) {
+	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}

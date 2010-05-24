@@ -1146,7 +1146,7 @@ LIST_ITEM (L"2. The command ##Read from old Praat picture file...# in the #File 
 LIST_ITEM (L"3. In the Praat program, the action ##Sound: Write to Sesam file...#. Writes a file format in common use "
 	"in the Netherlands on Vax machines. In the Dutch phonetics departments, the plugs were pulled from the Vaxes in 1994.")
 LIST_ITEM (L"4. In the Praat program, the action ##Sound: To Cochleagram (edb)...#. Needed by one person in 1994. "
-	"An interesting, but undocumented procedure (De Boer's gamma-tone filter bank plus Meddis & Hewitt's "
+	"An interesting, but undocumented procedure (De Boer's gammatone filter bank plus Meddis & Hewitt's "
 	"synapse model), which does not create a normally interpretable Cochleagram object.")
 MAN_END
 

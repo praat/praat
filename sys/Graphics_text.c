@@ -1,6 +1,6 @@
 /* Graphics_text.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
  * pb 2008/03/24 cairo
  * pb 2009/03/14 switched kerning off
  * pb 2009/09/17 made Quartz part resistant against missing QuickDraw IPA font
+ * pb 2010/05/13 support for XOR mode via GDK
  */
 
 #include <ctype.h>
@@ -237,42 +238,55 @@ static void charSize (I, _Graphics_widechar *lc) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
-			if (my cr == NULL) return;
-			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-			int font, size, style;
-			int normalSize = my fontSize * my resolution / 72.0;
-			int smallSize = (3 * normalSize + 2) / 4;
-			size = lc -> size < 100 ? smallSize : normalSize;
-			cairo_text_extents_t extents;
+		#if cairo
+			if (my duringXor) {
+				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+				int normalSize = my fontSize * my resolution / 72.0;
+				int smallSize = (3 * normalSize + 2) / 4;
+				int size = lc -> size < 100 ? smallSize : normalSize;
+				lc -> width = 10;
+				lc -> baseline *= my fontSize * 0.01;
+				lc -> code = lc -> kar;
+				lc -> font.string = NULL;
+				lc -> font.integer = 0;
+				lc -> size = size;
+			} else {
+				if (my cr == NULL) return;
+				Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
+				int font, size, style;
+				int normalSize = my fontSize * my resolution / 72.0;
+				int smallSize = (3 * normalSize + 2) / 4;
+				size = lc -> size < 100 ? smallSize : normalSize;
+				cairo_text_extents_t extents;
 
-			enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
-			enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
+				enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
+				enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 
-			cairo_set_font_size (my cr, size);
-			
-			font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+				cairo_set_font_size (my cr, size);
+				
+				font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
+					   info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
+					   info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
 
-			switch (font) {
-				case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
-				case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times New Roman", slant, weight); break;
-				case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
-				case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
-				case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
-				case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
-				case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
-				default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
+				switch (font) {
+					case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
+					case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times New Roman", slant, weight); break;
+					case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
+					case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
+					case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
+					case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
+					case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
+					default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
+				}
+				wchar_t buffer [2] = { lc -> kar, 0 };
+				cairo_text_extents (my cr, Melder_peekWcsToUtf8 (buffer), & extents);
+				lc -> width = extents.x_advance;
+				lc -> baseline *= my fontSize * 0.01;
+				lc -> code = lc -> kar;
+				lc -> font.string = NULL;
+				lc -> font.integer = font;
+				lc -> size = size;
 			}
-			wchar_t buffer [2] = { lc -> kar, 0 };
-			cairo_text_extents (my cr, Melder_peekWcsToUtf8 (buffer), & extents);
-			lc -> width = extents.x_advance;
-			lc -> baseline *= my fontSize * 0.01;
-			lc -> code = lc -> kar;
-			lc -> font.string = NULL;
-			lc -> font.integer = font;
-			lc -> size = size;
 		#elif xwin
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
@@ -713,9 +727,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		if (lc -> link) my printf (my file, "0 0 0 setrgbcolor\n");
 	} else if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
-			if (my cr == NULL) return;
-			// TODO!
+		#if cairo
+			if (my duringXor) {
+			} else {
+				if (my cr == NULL) return;
+				// TODO!
+			}
 			int font = lc -> font.integer;
 			int needBitmappedIPA = 0;
 		#elif xwin
@@ -811,8 +828,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 
 			// TODO: Paul; waarom hier niet void Graphics_setColour (I, int colour) ?
 
-			#if gtk 
-				if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
+			#if cairo
+				if (my duringXor) {
+				} else {
+					if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
+				}
 			#elif xwin
 				if (lc -> link) XSetForeground (my display, my gc, xwinColour_BLUE);
 			#elif win
@@ -823,22 +843,30 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			 * The most common case: a native font.
 			 */
 			if (! needBitmappedIPA) {
-				#if gtk
-					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
-					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
-					cairo_set_font_size (my cr, lc -> size);
-					switch (font) {
-						case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
-						case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times", slant, weight); break;
-						case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
-						case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
-						case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
-						case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
-						case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
-						default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
+				#if cairo
+					if (my duringXor) {
+						static GdkFont *font = NULL;
+						if (font == NULL) {
+							font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+						}
+						gdk_draw_text_wc (my window, font, my gc, xDC, yDC, codes, nchars);
+					} else {
+						enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
+						enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
+						cairo_set_font_size (my cr, lc -> size);
+						switch (font) {
+							case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
+							case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times", slant, weight); break;
+							case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
+							case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
+							case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
+							case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
+							case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
+							default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
+						}
+						cairo_move_to (my cr, xDC, yDC);
+						cairo_show_text (my cr, Melder_peekWcsToUtf8 (codes));
 					}
-					cairo_move_to (my cr, xDC, yDC);
-					cairo_show_text (my cr, Melder_peekWcsToUtf8 (codes));
 				#elif xwin
 					XSetFont (my display, my text.gc, font);
 					XDrawString (my display, my text.window, my text.gc, xDC, yDC, (char *) codes8, nchars);
@@ -899,9 +927,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						int jrow = yDC - 18 + irow;
 						for (icol = 0; icol < ncol; icol ++) {
 							if (row [icol] == '#')
-								#if gtk
-									cairo_move_to(my cr, xDC, jrow);
-									cairo_line_to(my cr, xDC, jrow);
+								#if cairo
+									if (my duringXor) {
+									} else {
+										cairo_move_to (my cr, xDC, jrow);
+										cairo_line_to (my cr, xDC, jrow);
+									}
 								#elif xwin
 									XDrawPoint (my display, my window, my gc, xDC, jrow);
 								#elif win
@@ -916,15 +947,23 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					}
 					xDC += overstrike ? 10 : ncol;
 				}
-				#if gtk
-					cairo_stroke(my cr);
+				#if cairo
+					if (my duringXor) {
+					} else {
+						cairo_stroke (my cr);
+					}
 				#endif
 			}
 			/*
 			 * Back to normal colour.
 			 */
 
-			#if xwin || gtk
+			#if cairo
+				if (my duringXor) {
+				} else {
+					if (lc -> link) _Graphics_setColour (me, my colour);
+				}
+			#elif xwin
 				if (lc -> link) _Graphics_setColour (me, my colour);
 			#elif win
 			#elif mac
@@ -950,9 +989,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 							if (row [icol] == '#') {
 								int xp = xDC + (int) (cosa * dx1 + sina * dy1);
 								int yp = yDC - (int) (sina * dx1 - cosa * dy1);
-								#if gtk
-									cairo_move_to (my cr, xp, yp);
-									cairo_line_to (my cr, xp, yp);
+								#if cairo
+									if (my duringXor) {
+									} else {
+										cairo_move_to (my cr, xp, yp);
+										cairo_line_to (my cr, xp, yp);
+									}
 								#elif xwin
 									XDrawPoint (my display, my window, my gc, xp, yp);
 								#elif win
@@ -968,8 +1010,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					}
 					dx1 += ncol;
 				}
-				#if gtk
-					cairo_stroke(my cr);
+				#if cairo
+					if (my duringXor) {
+					} else {
+						cairo_stroke (my cr);
+					}
 				#endif
 			} else {
 				/*

@@ -102,11 +102,11 @@ void praat_showLogo (int autoPopDown) {
 		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
 
 		Widget dialog = gtk_about_dialog_new ();
-//		gtk_about_dialog_set_version (dialog, xstr(PRAAT_VERSION_STR));
-//		gtk_about_dialog_set_copyright (dialog, "Copyright (C) 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), "5.1.33");
+		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "Copyright (C) 1992-2010 by Paul Boersma and David Weenink");
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");
-		gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
+		//gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
 		g_signal_connect (GTK_DIALOG (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
 
 		gtk_dialog_run (GTK_DIALOG (dialog));

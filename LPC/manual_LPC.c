@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2006 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ void manual_LPC_init (ManPages me)
 
 MAN_BEGIN (L"CC: Paint...", L"djmw", 20040407)
 INTRO (L"A command to paint the cepstral coefficients in shades of grey.")
-ENTRY (L"ss")
+ENTRY (L"Settings")
 TAG (L"%%From coefficient, To coefficient")
 DEFINITION (L"the range of coefficients that will be represented.")
 MAN_END
@@ -170,7 +170,7 @@ NORMAL (L"The root finder is Laguerre's method followed by root polishing, see @
 	"et al. (1992)@.")
 ENTRY (L"Warning")
 LIST_ITEM (L"\\bu The formant values can be very inaccurate if you did not resample the Sound "
-	"before the LPC-analysis (consult the @@Source-filter synthesis@ tutorial).") 
+	"before the LPC-analysis (consult the @@Source-filter synthesis@ tutorial).")
 LIST_ITEM (L"\\bu The results of the root finder may not always be accurate when more than 30 "
 	"roots have to be found.")
 MAN_END

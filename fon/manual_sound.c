@@ -229,7 +229,7 @@ LIST_ITEM (L"\\bu @@Record mono Sound...@ (from microphone or line input, with t
 LIST_ITEM (L"\\bu @@Record stereo Sound...@")
 LIST_ITEM (L"\\bu @@Create Sound from formula...@")
 LIST_ITEM (L"\\bu @@Create Sound from tone complex...")
-LIST_ITEM (L"\\bu @@Create Sound from gamma-tone...")
+LIST_ITEM (L"\\bu @@Create Sound from gammatone...")
 LIST_ITEM (L"\\bu @@Create Sound from Shepard tone...")
 NORMAL (L"Reading and writing:")
 LIST_ITEM (L"\\bu @@Sound files")

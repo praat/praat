@@ -1445,6 +1445,11 @@ static void prepareDraw (TextGridEditor me) {
 }
 
 static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
+	#if gtk || defined (macintosh)
+		bool platformUsesAntiAliasing = true;
+	#else
+		bool platformUsesAntiAliasing = false;
+	#endif
 	short x1DC, x2DC, yDC;
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals -> size;
 	Graphics_WCtoDC (my graphics, my startWindow, 0.0, & x1DC, & yDC);
@@ -1495,7 +1500,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		if (! cursorAtBoundary) {
 			double dy = Graphics_dyMMtoWC (my graphics, 1.5);
 			Graphics_setGrey (my graphics, 0.8);
-			Graphics_setLineWidth (my graphics, 5.0);
+			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics, 1.0);
 			Graphics_setColour (my graphics, Graphics_BLUE);
@@ -1518,15 +1523,15 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
 			int selected = ( my selectedTier == itier && tmin == my startSelection );
 			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLUE);
-			Graphics_setLineWidth (my graphics, 5.0);
+			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, tmin, 0.0, tmin, 1.0);
-			Graphics_setLineWidth (my graphics, 1.0);
 
 			/*
 			 * Show alignment with cursor.
 			 */
 			if (tmin == my startSelection) {
 				Graphics_setColour (my graphics, Graphics_YELLOW);
+				Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 2.0 : 1.0);
 				Graphics_line (my graphics, tmin, 0.0, tmin, 1.0);
 			}
 		}
@@ -1551,6 +1556,11 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 }
 
 static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
+	#if gtk || defined (macintosh)
+		bool platformUsesAntiAliasing = true;
+	#else
+		bool platformUsesAntiAliasing = false;
+	#endif
 	int ipoint, npoint = tier -> points -> size;
 	Graphics_setPercentSignIsItalic (my graphics, my useTextStyles);
 	Graphics_setNumberSignIsBold (my graphics, my useTextStyles);
@@ -1569,7 +1579,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		if (! cursorAtPoint) {
 			double dy = Graphics_dyMMtoWC (my graphics, 1.5);
 			Graphics_setGrey (my graphics, 0.8);
-			Graphics_setLineWidth (my graphics, 5.0);
+			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, my startSelection, 0.0, my startSelection, 1.0);
 			Graphics_setLineWidth (my graphics, 1.0);
 			Graphics_setColour (my graphics, Graphics_BLUE);
@@ -1584,7 +1594,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		if (t >= my startWindow && t <= my endWindow) {
 			int selected = ( itier == my selectedTier && t == my startSelection );
 			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLUE);
-			Graphics_setLineWidth (my graphics, 5.0);
+			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, t, 0.0, t, 0.2);
 			Graphics_line (my graphics, t, 0.8, t, 1);
 			Graphics_setLineWidth (my graphics, 1.0);
@@ -1600,6 +1610,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 			 */
 			if (my startSelection == my endSelection && t == my startSelection) {
 				Graphics_setColour (my graphics, Graphics_YELLOW);
+				Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 2.0 : 1.0);
 				Graphics_line (my graphics, t, 0.0, t, 0.2);
 				Graphics_line (my graphics, t, 0.8, t, 1.0);
 			}
@@ -1660,7 +1671,7 @@ static void draw (TextGridEditor me) {
 		 */
 		Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLACK);
 		Graphics_setFont (my graphics, oldFont);
-		Graphics_setFontSize (my graphics, oldFontSize * 1.5);
+		Graphics_setFontSize (my graphics, 14);
 		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
 		Graphics_text2 (my graphics, my startWindow, 0.5, selected ? L"\\pf " : L"", Melder_integer (itier));
 		Graphics_setFontSize (my graphics, oldFontSize);
@@ -1812,7 +1823,6 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		}
 	}
 
-	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
@@ -1823,7 +1833,6 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	}
 	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
 	Graphics_xorOff (my graphics);
-	#endif
 
 	/*
 	 * The simplest way to cancel the dragging operation, is to drag outside the window.
@@ -2014,7 +2023,6 @@ static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPres
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
-	#if motif
 	while (Graphics_mouseStillDown (my graphics)) {
 		Graphics_getMouseLocation (my graphics, & x, & y);
 		if (x < my startWindow) x = my startWindow;
@@ -2024,7 +2032,6 @@ static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPres
 			break;
 		}
 	}
-	#endif
 
 	if (nearBoundaryOrPoint) {
 		/*
@@ -2068,9 +2075,7 @@ static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPres
 		my selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (TextGridEditor_as_FunctionEditor (me));
 		Editor_broadcastChange (TextGridEditor_as_Editor (me));
-		#if motif
 		if (drag) Graphics_waitMouseUp (my graphics);
-		#endif
 		return FunctionEditor_NO_UPDATE_NEEDED;
 	} else {
 		/*
@@ -2082,9 +2087,7 @@ static int click (TextGridEditor me, double xclick, double yWC, int shiftKeyPres
 		}
 		my selectedTier = iClickedTier;
 	}
-	#if motif
 	if (drag) Graphics_waitMouseUp (my graphics);
-	#endif
 	return FunctionEditor_UPDATE_NEEDED;
 }
 

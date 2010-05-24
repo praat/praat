@@ -23,9 +23,32 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100430)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100524)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.33# (24 May 2010)")
+LIST_ITEM (L"\\bu GTK alpha version.")
+LIST_ITEM (L"\\bu Abolished resolution independence: the Sound window now looks the same on all platforms, "
+	"and the Demo window has the same relative font size on your screen and on the video projector.")
+LIST_ITEM (L"\\bu GTK: support for asynchronous audio output.")
+LIST_ITEM (L"\\bu GTK: sound plays once rather than three times in Sound and other windows.")
+LIST_ITEM (L"\\bu GTK: can click more than once in the manual.")
+LIST_ITEM (L"\\bu GTK: correct pink selections in Sound and other windows.")
+LIST_ITEM (L"\\bu GTK: correct dragging in TextGrid, Manipulation, and tier windows.")
+LIST_ITEM (L"\\bu GTK: a working TextGrid window.")
+LIST_ITEM (L"\\bu GTK: no automatic triple click in the manual (and many other windows).")
+LIST_ITEM (L"\\bu GTK: moving cursor while sound is playing in Sound and other windows.")
+LIST_ITEM (L"\\bu GTK: correct colours of the rectangles in Sound and other windows.")
+LIST_ITEM (L"\\bu GTK: a working Group button.")
+LIST_ITEM (L"\\bu GTK: correct font menus, font size menus, colour menus, line type menus.")
+LIST_ITEM (L"\\bu GTK: scrolling in the manual (and many other windows).")
+LIST_ITEM (L"\\bu GTK: erase old texts in manual windows.")
+LIST_ITEM (L"\\bu GTK: made Picture window come back when drawing.")
+LIST_ITEM (L"\\bu GTK: Info window is fronted automatically.")
+LIST_ITEM (L"\\bu GTK: support sendpraat.")
+//LIST_ITEM (L"\\bu GTK: working Buttons editor.")
+//LIST_ITEM (L"\\bu GTK: working vowel editor.")
+//LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.32# (30 April 2010)")
 LIST_ITEM (L"\\bu Scripting: command ##Expand include files#.")
 LIST_ITEM (L"\\bu Scripting: accept lines that start with non-breaking spaces (as may occur in scripts copied from the web manual).")
@@ -1136,7 +1159,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20100330)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20100523)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1149,7 +1172,7 @@ LIST_ITEM (L"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
 	"@VowelEditor, "
 	"and adaptation of GSL, LAPACK, fftpack, and regular expressions.")
-LIST_ITEM (L"Stefan de Konink and Franz Brau\\sse: port to GTK.")
+LIST_ITEM (L"Stefan de Konink and Franz Brau\\sse: major help in port to GTK.")
 LIST_ITEM (L"Erez Volk: adaptation of FLAC and MAD.")
 LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
 LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")
@@ -2459,7 +2482,7 @@ LIST_ITEM (L"\\bu @@Record mono Sound...@")
 LIST_ITEM (L"\\bu @@Record stereo Sound...@")
 LIST_ITEM (L"\\bu @@Create Sound from formula...@")
 LIST_ITEM (L"\\bu @@Create Sound from tone complex...")
-LIST_ITEM (L"\\bu @@Create Sound from gamma-tone...")
+LIST_ITEM (L"\\bu @@Create Sound from gammatone...")
 LIST_ITEM (L"\\bu @@Create Sound from Shepard tone...")
 LIST_ITEM (L"\\bu @@Create Matrix...@ (from a formula)")
 LIST_ITEM (L"\\bu @@Create simple Matrix...@ (from a formula)")

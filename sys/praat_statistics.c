@@ -100,7 +100,8 @@ void praat_memoryInfo (void) {
 	MelderInfo_writeLine5 (L"   Sessions: ", Melder_integer (statistics.interactiveSessions), L" interactive, ",
 		Melder_integer (statistics.batchSessions), L" batch");
 	MelderInfo_writeLine3 (L"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), L" bytes");
-	MelderInfo_writeLine3 (L"\nMemory addressing: ", Melder_integer (sizeof (void *) * 8), L" bits");
+	MelderInfo_writeLine9 (L"\nMemory addressing: short ", Melder_integer (sizeof (short) * 8), L" bits, int ", Melder_integer (sizeof (int) * 8), L" bits, long ",
+		Melder_integer (sizeof (long) * 8), L" bits, pointer ", Melder_integer (sizeof (void *) * 8), L" bits");
 	MelderInfo_writeLine2 (L"\nNumber of actions: ", Melder_integer (praat_getNumberOfActions ()));
 	#ifdef macintosh
 		CGDirectDisplayID screen = CGMainDisplayID ();

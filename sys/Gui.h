@@ -20,7 +20,7 @@
  */
 
 /*
- * 2010/02/26
+ * 2010/05/15
  */
 
 #ifdef USE_GTK
@@ -466,8 +466,8 @@ Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags, Wid
 Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure);
 /* Flags is a combination of the above defines. */
-
 Widget GuiMenu_addSeparator (Widget menu);
+void GuiMenuItem_check (Widget menuItem, bool check);
 
 /* GuiRadioButton creation flags: */
 #define GuiRadioButton_SET  1

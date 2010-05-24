@@ -1,6 +1,6 @@
 /* Gui.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/12/30 Gui
  * sdk 2008/02/08 GTK
  * sdk 2008/03/24 GDK
+ * pb 2010/05/14 resolution always 72 pixels/inch
  */
 
 #include "Gui.h"
@@ -78,6 +79,7 @@ int Gui_getResolution (Widget widget) {
 			#endif
 		#endif
 	}
+	return 100;   // in conformance with most other applications; and so that fonts always look the same size in the Demo window
 	return resolution;
 }
 

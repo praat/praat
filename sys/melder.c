@@ -616,7 +616,7 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 
 #if gtk
 static void gtk_error (wchar_t *message) {
-	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
+	Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell),
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_ERROR,
 					 GTK_BUTTONS_OK,
@@ -627,7 +627,7 @@ static void gtk_error (wchar_t *message) {
 }
 
 static void gtk_warning (wchar_t *message) {
-	Widget dialog = gtk_message_dialog_new (GTK_WINDOW(Melder_topShell),
+	Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell),
 					 GTK_DIALOG_DESTROY_WITH_PARENT,
 					 GTK_MESSAGE_WARNING,
 					 GTK_BUTTONS_OK,
@@ -747,11 +747,7 @@ static void motif_warning (wchar_t *message) {
 void MelderGui_create (void *appContext, void *parent) {
 	extern void gui_information (wchar_t *);
 	Melder_appContext = appContext;
-	#if gtk
-		Melder_topShell = (Widget) GuiObject_parent (parent);
-	#else
-		Melder_topShell = (Widget) parent;
-	#endif
+	Melder_topShell = (Widget) parent;
 	Melder_setInformationProc (gui_information);
 	#if gtk
 		Melder_setWarningProc (gtk_warning);

@@ -1,6 +1,6 @@
 /* manual_FFNet.c
  *
- * Copyright (C) 1994-2004 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  djmw 20020408 GPL
- djmw 20041123 Latest modification
+ djmw 20100401 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -83,7 +83,7 @@ INTRO (L"During the learning phase the weights in the FFNet will be modified. "
 	"the output unit with the correct category, hopefully, will have the largest output value.")
 ENTRY (L"How does learning take place?")
 NORMAL (L"The FFNet uses a %supervised learning algorithm: besides the input pattern, "
-	"the neural net also needs to know to what category the pattern belongs. " 
+	"the neural net also needs to know to what category the pattern belongs. "
 	"Learning proceeds as follows: a pattern is presented at the inputs. "
 	"The pattern will be transformed in its passage through the layers of the network until it "
 	"reaches the output layer. The units in the output layer all belong to a different category. "
@@ -222,7 +222,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet: Draw weights...", L"djmw", 20040422)
 INTRO (L"Draws the weights in a layer of the selected @FFNet feedforward neural net.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Layer number%")
 DEFINITION (L"determines the layer.")
 TAG (L"%Garnish")
@@ -236,7 +236,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet: Draw cost history...", L"djmw", 19970218)
 INTRO (L"You can choose this command after selecting 1 or more @FFNet's.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Iteration range%")
 DEFINITION (L"determine the horizontal range of the plot.")
 TAG (L"%%Cost range%")
@@ -250,7 +250,7 @@ MAN_END
 MAN_BEGIN (L"FFNet: Extract weights...", L"djmw", 20040422)
 INTRO (L"Extract all the weights, from all the units in the specified layer of the selected "
 	"@FFNet, to a @TableOfReal.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Layer number%")
 DEFINITION (L"determines the layer.")
 ENTRY (L"Behaviour")
@@ -276,7 +276,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet: Get number of hidden units...", L"djmw", 20040420)
 INTRO (L"Queries the selected @FFNet for the number of units in a hidden layer.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%%Hidden layer number%")
 DEFINITION (L"determines the layer that is queried.")
 ENTRY (L"Layer numbering")
@@ -287,7 +287,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet: Get number of hidden weights...", L"djmw", 20040420)
 INTRO (L"Queries the selected @FFNet for the number of weights in a hidden layer.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%%Hidden layer number%")
 DEFINITION (L"determines the layer that is queried.")
 MAN_END
@@ -296,7 +296,7 @@ MAN_BEGIN (L"FFNet: Reset...", L"djmw", 20040420)
 INTRO (L"You can choose this command after selecting 1 or more @FFNet's.")
 ENTRY (L"WARNING")
 NORMAL (L"This command destroys all previous learning.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"determines the upper limit of  the [-%range, +%range] interval from "
 	"which new weights will be randomly selected.")
@@ -307,7 +307,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet: Select biases...", L"djmw", 20040422)
 INTRO (L"Selects only the biases in one particular layer as subject for modification during learning of the @FFNet.")
-ENTRY (L"Argument")
+ENTRY (L"Settings")
 TAG (L"%%Layer number%")
 DEFINITION (L"determines the layer whose biases will be modified.")
 ENTRY (L"Behaviour")
@@ -317,7 +317,7 @@ NORMAL (L"This command induces very specific behaviour during a following learni
 MAN_END
 
 #define FFNet_Create_COMMON_HELP_INOUT \
-ENTRY (L"Arguments")\
+ENTRY (L"Settings")\
 TAG (L"%%Number of inputs%")\
 DEFINITION (L"the dimension of the input of the neural net.")\
 TAG (L"%%Number of outputs (\\>_ 1)%")\
@@ -345,7 +345,7 @@ MAN_BEGIN (L"Create iris example...", L"djmw", 20040423)
 INTRO (L"A @FFNet feedforward neural net will be created together with two other objects: "
 	"a @Pattern and a @Categories. The Pattern will contain the observations in the @@iris data set@, "
 	"and the Categories will contain the 3 different iris species categorized by numbers.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 FFNet_Create_COMMON_HELP_HIDDEN
 NORMAL (L"For this simple data you can leave both hidden layers empty.")
 
@@ -390,7 +390,7 @@ INTRO (L"Create a new @FFNet feedforward neural network. "
 	"The number of inputs of the newly created FFNet will be equal to the number of "
 	"columns in the @Pattern and the number of outputs "
 	"will be equal to the number of unique categories in the @Categories.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 FFNet_Create_COMMON_HELP_HIDDEN
 MAN_END
 
@@ -407,7 +407,7 @@ MAN_END
 
 MAN_BEGIN (L"FFNet & Pattern & Categories: Learn...", L"djmw", 20040511)
 INTRO (L"You can choose this command after selecting one @Pattern, one @Categories and one @FFNet.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Maximum number of epochs%")
 DEFINITION (L"the maximum number of times that the complete #Pattern dataset will be presented to the neural net.")
 TAG (L"%%Tolerance of minimizer%")

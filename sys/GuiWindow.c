@@ -76,6 +76,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk
+		(void) parent;
 		Widget shell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		g_signal_connect (G_OBJECT (shell), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me);
 		g_signal_connect (G_OBJECT (shell), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
@@ -102,7 +103,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 		if (x != Gui_AUTOMATIC) XtVaSetValues (shell, XmNx, x, NULL);
 		if (y != Gui_AUTOMATIC) XtVaSetValues (shell, XmNy, y, NULL);
 		if (width != Gui_AUTOMATIC) XtVaSetValues (shell, XmNwidth, (Dimension) width, NULL);
-		if (height != Gui_AUTOMATIC) XtVaSetValues (shell, XmNheight, (Dimension) height, NULL);			
+		if (height != Gui_AUTOMATIC) XtVaSetValues (shell, XmNheight, (Dimension) height, NULL);
 		if (goAwayCallback) {
 			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
 			XmAddWMProtocols (shell, & atom, 1);
@@ -119,7 +120,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 
 void GuiWindow_show (Widget widget) {
 	#if gtk
-		gtk_widget_show (widget);
+		gtk_window_present (GTK_WINDOW (GuiObject_parent (widget)));
 	#elif motif
 		XtManageChild (widget);
 		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));
@@ -162,10 +163,8 @@ void GuiWindow_drain (Widget me) {
 		 * that such a thing takes five seconds when the graphics is
 		 * a simple Graphics_function () of e.g. noise.
 		 */
-		{
-			static Rect bounds = { -32768, -32768, 32767, 32767 };
-			QDAddRectToDirtyRegion (GetWindowPort (my macWindow), & bounds);
-		}
+		static Rect bounds = { -32768, -32768, 32767, 32767 };
+		QDAddRectToDirtyRegion (GetWindowPort (my macWindow), & bounds);
 	#else
 		(void) me;
 	#endif

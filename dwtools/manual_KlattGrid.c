@@ -144,13 +144,13 @@ DEFINITION (L"determines whether breathiness is included in the synthesis.")
 
 MAN_BEGIN (L"KlattGrid: To Sound (phonation)...", L"djmw", 20090122)
 INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 PhonationGrid_to_Sound_COMMON_PARAMETERS_HELP
 MAN_END
 
 MAN_BEGIN (L"KlattGrid: Play special...", L"djmw", 20090421)
 INTRO (L"A command to play part of a @@KlattGrid@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Time range%")
 DEFINITION (L"determines the part of the sound's domain that you want to hear. If both argument equal zero the complete sound is played. ")
 TAG (L"%%Sampling frequency% (Hz)")
@@ -169,7 +169,7 @@ MAN_END
 
 MAN_BEGIN (L"KlattGrid: To Sound (special)...", L"djmw", 20090415)
 INTRO (L"A command to synthesize a Sound from the selected @@KlattGrid@.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Time range%")
 DEFINITION (L"determines the part of the domain that you want to save as a sound. If both argument equal zero the complete sound is created. ")
 TAG (L"%%Sampling frequency% (Hz)")

@@ -26,10 +26,13 @@
  * pb 2009/12/10 colours identical on all platforms
  * pb 2009/12/14 Graphics_standardColourToRGBColour
  * pb 2009/12/20 gotten rid of numbered standard colours
- * fb 2010/03/01 fix cairo in highlight2()
+ * fb 2010/03/01 fix cairo in highlight2 ()
+ * pb 2010/05/12 highlighting in GDK instead of Cairo because of the availability of a XOR mode
+ * pb 2010/05/12 xorOn in GDK instead of Cairo because of the availability of a XOR mode
  */
 
 #include "GraphicsP.h"
+#include <stdint.h>
 
 Graphics_Colour
 	Graphics_BLACK = { 0.0, 0.0, 0.0 },
@@ -87,7 +90,7 @@ void _Graphics_setColour (I, Graphics_Colour colour) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
+		#if cairo
 			if (my cr == NULL) return;
 			cairo_set_source_rgb (my cr, colour. red, colour. green, colour. blue);
 		#elif xwin
@@ -130,10 +133,10 @@ void _Graphics_setGrey (I, double fgrey) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
+		#if cairo
 			if (my cr == NULL) return;
-			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
-			cairo_set_source_rgb (my cr, lightness, lightness, lightness);
+			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
+			cairo_set_source_rgb (my cr, fgrey, fgrey, fgrey);
 		#elif xwin
 			int igrey = (int) floor (100 * fgrey + 0.5);
 			if (igrey < 0) igrey = 0; else if (igrey > 100) igrey = 100;
@@ -175,13 +178,22 @@ static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
+		#if cairo
 			if (my cr == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
-			cairo_rectangle (my cr, x1DC, y2DC, width, height);
-			cairo_fill (my cr);
+			gdk_gc_set_function (my gc, GDK_XOR);
+			GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
+			gdk_gc_set_rgb_fg_color (my gc, & pinkXorWhite);
+			gdk_draw_rectangle (my window, my gc, TRUE, x1DC, y2DC, width, height);
+			gdk_gc_set_rgb_fg_color (my gc, & black);
+			gdk_gc_set_function (my gc, GDK_COPY);
+			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my cr, CAIRO_OPERATOR_BITXOR);   // this blend mode doesn't exist
+			//cairo_rectangle (my cr, x1DC, y2DC, width, height);
+			//cairo_fill (my cr);
+			//cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0);
+			//cairo_set_operator (my cr, CAIRO_OPERATOR_OVER);
 		#elif xwin
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
@@ -224,9 +236,7 @@ void Graphics_highlight (I, double x1WC, double x2WC, double y1WC, double y2WC) 
 
 void Graphics_unhighlight (I, double x1WC, double x2WC, double y1WC, double y2WC) {
 	iam (Graphics);
-	#if motif
-		highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
-	#endif
+	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 	if (my recording)
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
@@ -237,16 +247,17 @@ static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if gtk
+		#if cairo
 			if (my cr == NULL) return;
-			cairo_save(my cr);
-			cairo_set_source_rgba (my cr, 1.0, 0.0, 0.0, 0.5);
-			cairo_rectangle(my cr, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-			cairo_rectangle(my cr, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-			cairo_rectangle(my cr, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-			cairo_rectangle(my cr, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
-			cairo_fill(my cr);
-			cairo_restore(my cr);
+			cairo_save (my cr);
+			cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
+			cairo_rectangle (my cr, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			cairo_rectangle (my cr, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			cairo_rectangle (my cr, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			cairo_rectangle (my cr, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+			cairo_fill (my cr);
+			cairo_restore (my cr);
 		#elif xwin
 			XSetForeground (my display, my gc, xwinColour_PINK ^ xwinColour_WHITE);
 			XSetFunction (my display, my gc, GXxor);
@@ -304,25 +315,32 @@ void Graphics_unhighlight2 (I, double x1WC, double x2WC, double y1WC, double y2W
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
 	iam (Graphics);
-	#if motif
+	#if ! cairo
 		highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
 	#endif
 	if (my recording)
 		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
-#if motif
 void Graphics_xorOn (I, Graphics_Colour colour) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			GdkColor colourXorWhite = { 0,
+				(uint16_t) (colour. red * 65535.0) ^ 0xFFFF,
+				(uint16_t) (colour. green * 65535.0) ^ 0xFFFF,
+				(uint16_t) (colour. blue * 65535.0) ^ 0xFFFF };
+			gdk_gc_set_rgb_fg_color (my gc, & colourXorWhite);
+			gdk_gc_set_function (my gc, GDK_XOR);
+			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
+		#elif xwin
 			XSetForeground (my display, my gc, xwinColour_MAGENTA ^ xwinColour_WHITE);
 			XSetFunction (my display, my gc, GXxor);
 		#elif win
 			SetROP2 (my dc, R2_XORPEN);
 			_Graphics_setColour (me, colour);
-			my duringXor = TRUE;
 		#elif mac
 			if (my useQuartz) {
 				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
@@ -331,8 +349,8 @@ void Graphics_xorOn (I, Graphics_Colour colour) {
 				PenMode (patXor);
 				TextMode (srcXor);
 			}
-			my duringXor = TRUE;
 		#endif
+		my duringXor = true;
 	}
 	if (my recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
 }
@@ -341,13 +359,18 @@ void Graphics_xorOff (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
+			gdk_gc_set_rgb_fg_color (my gc, & black);
+			gdk_gc_set_function (my gc, GDK_COPY);
+			//cairo_set_source_rgba (my cr, 0.0, 0.0, 0.0, 1.0);
+			//cairo_set_operator (my cr, CAIRO_OPERATOR_OVER);
+		#elif xwin
 			XSetForeground (my display, my gc, xwinColour_BLACK);
 			XSetFunction (my display, my gc, GXcopy);
 		#elif win
 			SetROP2 (my dc, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
-			my duringXor = FALSE;
 		#elif mac
 			if (my useQuartz) {
 				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
@@ -356,12 +379,11 @@ void Graphics_xorOff (I) {
 				PenMode (patCopy);
 				TextMode (srcOr);
 			}
-			my duringXor = FALSE;
 		#endif
+		my duringXor = false;
 	}
 	if (my recording) { op (XOR_OFF, 0); }
 }
-#endif
 
 Graphics_Colour Graphics_inqColour (I) {
 	iam (Graphics);

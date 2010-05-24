@@ -69,7 +69,7 @@ typedef struct structGuiDrawingArea {
 		// TODO: that helps agains the damaged regions outside the rect where the
 		// Graphics drawing is done, but where does that margin come from in the
 		// first place?? Additionally this causes even more flickering
-//	gdk_window_clear_area(widget->window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
+	//gdk_window_clear_area(widget->window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my exposeCallback) {
 			struct structGuiDrawingAreaExposeEvent event = { widget, 0 };
 			event. x = expose -> area. x;
@@ -90,6 +90,7 @@ typedef struct structGuiDrawingArea {
 		iam (GuiDrawingArea);
 		if (my clickCallback) {
 			struct structGuiDrawingAreaClickEvent event = { widget, 0 };
+			//Melder_casual("event type %ld", (long)e->type);
 			switch (e -> type) {
 				case GDK_BUTTON_PRESS:
 					event. type = BUTTON_PRESS;
@@ -101,7 +102,7 @@ typedef struct structGuiDrawingArea {
 					break;
 				case GDK_MOTION_NOTIFY:
 					event. type = MOTION_NOTIFY;
-					event.button =
+					event. button =
 						((GdkEventMotion *) e) -> state & GDK_BUTTON1_MASK ? 1 :
 						((GdkEventMotion *) e) -> state & GDK_BUTTON2_MASK ? 2 :
 						((GdkEventMotion *) e) -> state & GDK_BUTTON3_MASK ? 3 :
@@ -115,8 +116,7 @@ typedef struct structGuiDrawingArea {
 			event. x = ((GdkEventButton *) e) -> x;
 			event. y = ((GdkEventButton *) e) -> y;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
-			
-			if (event.button != 0) {
+			if (e -> type == GDK_BUTTON_PRESS || 1) {
 				my clickCallback (my clickBoss, & event);
 				return TRUE;
 			}
@@ -359,7 +359,7 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 		*/
 
 		_GuiObject_setUserData (my widget, me);
-		GuiObject_size(my widget, right - left, bottom - top);
+		GuiObject_size (my widget, right - left, bottom - top);
 	#elif win
 		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
 		_GuiObject_setUserData (my widget, me);

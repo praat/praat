@@ -412,7 +412,6 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 	/*
 	 * Drag.
 	 */
-	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	while (Graphics_mouseStillDown (my graphics)) {
@@ -424,7 +423,6 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 		drawWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
 	}
 	Graphics_xorOff (my graphics);
-	#endif
 
 	/*
 	 * Dragged inside window?

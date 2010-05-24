@@ -60,6 +60,7 @@
  djmw 20091023 Sound_draw_selectedIntervals
  djmw 20091230 Covariance_and_TableOfReal_mahalanobis
  djmw 20100212 Standardize on Window length
+ djmw 20100511 Categories_getNumberOfCategories
 */
 
 #include "praat.h"
@@ -239,6 +240,11 @@ DIRECT (Categories_edit)
 	else
 		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
 			FULL_NAME, OBJECT), IOBJECT)) return 0;
+END
+
+DIRECT (Categories_getNumberOfCategories)
+	Categories c1 = ONLY_OBJECT;
+	Melder_information2 (Melder_integer (c1 -> size), L" categories");
 END
 
 DIRECT (Categories_getNumberOfDifferences)
@@ -2827,6 +2833,18 @@ end:
 	if (! praat_new2 (thee, L"multiply", Melder_integer(np))) return 0;
 END
 
+DIRECT (Permutations_next)
+	Permutation p = ONLY_OBJECT;
+	Permutation_next_inline (p);
+	praat_dataChanged (p);
+END
+
+DIRECT (Permutations_previous)
+	Permutation p = ONLY_OBJECT;
+	Permutation_previous_inline (p);
+	praat_dataChanged (p);
+END
+
 FORM (Pitches_to_DTW, L"Pitches: To DTW", L"Pitches: To DTW...")
 	REAL (L"Voiced-unvoiced costs", L"24.0")
 	REAL (L"Time costs weight", L"10.0")
@@ -2853,7 +2871,7 @@ END
 
 /******************* Polygon & Categories *************************************/
 
-FORM (Polygon_translate, L"Polygon: Translate", 0)
+FORM (Polygon_translate, L"Polygon: Translate", L"Polygon: Translate...")
 	REAL (L"X", L"0.0")
 	REAL (L"Y", L"0.0")
 	OK
@@ -2861,8 +2879,10 @@ DO
 	Polygon_translate (ONLY(classPolygon), GET_REAL (L"X"), GET_REAL (L"Y"));
 END
 
-FORM (Polygon_rotate, L"Polygon: Rotate", 0)
+FORM (Polygon_rotate, L"Polygon: Rotate", L"Polygon: Rotate...")
+	LABEL (L"", L"Rotate counterclockwise over the")
 	REAL (L"Angle (degrees)", L"0.0")
+	LABEL (L"", L"With respect to the point")
 	REAL (L"X", L"0.0")
 	REAL (L"Y", L"0.0")
 	OK
@@ -3110,7 +3130,7 @@ static void Sound_create_addCommonFields (void *dia)
 {
 	REAL (L"Starting time (s)", L"0.0")
 	REAL (L"Finishing time (s)", L"0.1")
-	POSITIVE (L"Sampling frequency (Hz)", L"22050.0")
+	POSITIVE (L"Sampling frequency (Hz)", L"44100.0")
 }
 
 static int Sound_create_checkCommonFields (void *dia, double *startingTime, double *finishingTime,
@@ -3215,7 +3235,7 @@ DO
 		GET_REAL (L"Multiply pitch range by"), GET_REAL (L"Multiply duration")), NULL)) return 0;
 END
 
-FORM (Sound_createFromGammaTone, L"Create a gamma-tone", L"Create Sound from gamma-tone...")
+FORM (Sound_createFromGammaTone, L"Create a gammatone", L"Create Sound from gammatone...")
 	WORD (L"Name", L"gammatone")
 	Sound_create_addCommonFields (dia);
 	INTEGER (L"Gamma", L"4")
@@ -3464,6 +3484,44 @@ DO
 		GET_REAL (L"Ceiling"), GET_INTEGER (L"Max. number of candidates")))
 END
 
+FORM (Sound_to_Polygon, L"Sound: To Polygon", L"Sound: To Polygon...")
+	OPTIONMENU (L"Channel", 1)
+		OPTION (L"Left")
+		OPTION (L"Right")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	REAL (L"Connect at", L"0.0")
+	OK
+DO
+	Sound me = ONLY (classSound);
+	long channel = GET_INTEGER (L"Channel");
+	if (channel > my ny) channel = 1;
+	NEW (Sound_to_Polygon (me, channel, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_REAL (L"Connect at")))
+END
+
+FORM (Sounds_to_Polygon_enclosed, L"Sounds: To Polygon (enclosed)", L"Sounds: To Polygon (enclosed)...")
+	OPTIONMENU (L"Channel", 1)
+		OPTION (L"Left")
+		OPTION (L"Right")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	WHERE (SELECTED)
+	{
+		if (s1) s2 = OBJECT; else s1 = OBJECT;
+	}
+	long channel = GET_INTEGER (L"Channel");
+	NEW (Sounds_to_Polygon_enclosed (s1, s2, channel, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range")))
+END
+
 FORM (Sound_filterByGammaToneFilter4, L"Sound: Filter (gammatone)", L"Sound: Filter (gammatone)...")
 	POSITIVE (L"Centre frequency (Hz)", L"1000.0")
 	POSITIVE (L"Bandwidth (Hz)", L"150.0")
@@ -3511,6 +3569,41 @@ DO
 	EVERY_TO (Sound_changeGender_old (OBJECT, minimumPitch, maximumPitch,
 		GET_REAL (L"Formant shift ratio"), GET_REAL (L"New pitch median"),
 		pitchrf, GET_REAL (L"Duration factor")))
+END
+
+FORM (Sound_paintWhere, L"Sound paint where", L"Sound: Paint where...")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	REAL (L"Fill from level", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	LABEL (L"", L"Paint only those parts where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; always")
+	OK
+DO
+	long numberOfBisections = 10;
+	EVERY_DRAW (Sound_paintWhere (OBJECT, GRAPHICS, GET_COLOUR (L"Colour"),
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_REAL (L"Fill from level"),
+		GET_INTEGER (L"Garnish"), numberOfBisections, GET_STRING (L"Formula"), interpreter))
+END
+
+FORM (Sounds_paintEnclosed, L"Sounds paint enclosed", L"Sounds: Paint enclosed...")
+	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
+	EVERY_DRAW (Sounds_paintEnclosed (s1, s2, GRAPHICS, GET_COLOUR (L"Colour"),
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish")))
 END
 
 FORM_READ (Sound_readFromRawFileLE, L"Read Sound from raw Little Endian file", 0, true)
@@ -4548,8 +4641,9 @@ void praat_uvafon_David_init (void)
     	praat_addMenuCommand (L"Objects", L"New", L"Create ChebyshevSeries...", 0, 1, DO_ChebyshevSeries_create);
     	praat_addMenuCommand (L"Objects", L"New", L"Create MSpline...", 0, 1, DO_MSpline_create);
     	praat_addMenuCommand (L"Objects", L"New", L"Create ISpline...", 0, 1, DO_ISpline_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gamma-tone...", 1, DO_Sound_createFromShepardTone);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gammatone...", L"Create Sound from tone complex...", 1, DO_Sound_createFromGammaTone);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_createFromGammaTone);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gammatone...", 1, DO_Sound_createFromShepardTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
@@ -4580,6 +4674,7 @@ void praat_uvafon_David_init (void)
 
     praat_addAction1 (classCategories, 0, L"Edit", 0, 0, DO_Categories_edit);
     praat_addAction1 (classCategories, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classCategories, 1, L"Get number of categories", QUERY_BUTTON, 1, DO_Categories_getNumberOfCategories);
     praat_addAction1 (classCategories, 2, L"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, DO_Categories_difference);
      praat_addAction1 (classCategories, 2, L"Get number of differences", QUERY_BUTTON, 1, DO_Categories_getNumberOfDifferences);
       praat_addAction1 (classCategories, 2, L"Get fraction different", QUERY_BUTTON, 1, DO_Categories_getFractionDifferent);
@@ -4903,6 +4998,9 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classPermutation, 1, L"Sort", 0, 1, DO_Permutation_sort);
 	praat_addAction1 (classPermutation, 1, L"Swap blocks...", 0, 1, DO_Permutation_swapBlocks);
 	praat_addAction1 (classPermutation, 1, L"Swap one from range...", 0, 1, DO_Permutation_swapOneFromRange);
+	praat_addAction1 (classPermutation, 0, L"-- sequential permutations --", 0, 1, 0);
+	praat_addAction1 (classPermutation, 0, L"Next", 0, 1, DO_Permutations_next);
+	praat_addAction1 (classPermutation, 0, L"Previous", 0, 1, DO_Permutations_previous);
 	praat_addAction1 (classPermutation, 1, L"Permute randomly...", 0, 0, DO_Permutation_permuteRandomly);
 	praat_addAction1 (classPermutation, 1, L"Permute randomly (blocks)...", 0, 0, DO_Permutation_permuteBlocksRandomly);
 	praat_addAction1 (classPermutation, 1, L"Interleave...", 0, 0, DO_Permutation_interleave);
@@ -4958,6 +5056,10 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
 
 	praat_addAction1 (classSound, 0, L"Draw where...", L"Draw...", 1, DO_Sound_drawWhere);
+//	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_paintWhere);
+	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", 1, DO_Sound_paintWhere);
+//	praat_addAction1 (classSound, 2, L"Paint enclosed...", L"Paint where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_paintEnclosed);
+	praat_addAction1 (classSound, 2, L"Paint enclosed...", L"Paint where...", 1, DO_Sounds_paintEnclosed);
 
 	praat_addAction1 (classSound, 0, L"To Pitch (shs)...", L"To Pitch (cc)...", 1, DO_Sound_to_Pitch_shs);
 	praat_addAction1 (classSound, 0, L"Fade in...", L"Multiply by window...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeIn);
@@ -4970,13 +5072,15 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classSound, 0, L"To MelFilter...", L"To BarkFilter...", 1, DO_Sound_to_MelFilter);
 
+	praat_addAction1 (classSound, 0, L"To Polygon...", L"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_Polygon);
+	praat_addAction1 (classSound, 2, L"To Polygon (enclosed)...", L"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
+
 	praat_addAction1 (classSound, 0, L"Filter (gammatone)...", L"Filter (formula)...", 1, DO_Sound_filterByGammaToneFilter4);
 
 	praat_addAction1 (classSound, 0, L"Change gender...", L"Deepen band modulation...", 1, DO_Sound_changeGender);
 
 	praat_addAction1 (classSound, 0, L"Change speaker...", L"Deepen band modulation...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_changeSpeaker);
 	praat_addAction1 (classSound, 0, L"To KlattGrid (simple)...", L"To Manipulation...", 1, DO_Sound_to_KlattGrid_simple);
-
 	praat_addAction2 (classSound, 1, classPitch, 1, L"To FormantFilter...", 0, 0, DO_Sound_and_Pitch_to_FormantFilter);
 
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change gender...", 0, 0, DO_Sound_and_Pitch_changeGender);

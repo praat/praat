@@ -1,8 +1,25 @@
-/* manual_Permutation.c */
-/* David Weenink, 9 juli 2005 */
+/* manual_Permutation.c
+ *
+ * Copyright (C) 2005-2010 David Weenink
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 /*
-	20050721 Latest modification
+  20050709 djmw
+  20050721 Latest modification
 */
 #include "ManPagesM.h"
 
@@ -46,7 +63,7 @@ MAN_END
 
 MAN_BEGIN (L"Create Permutation...", L"djmw", 20050709)
 INTRO (L"A command to create a @Permutation of the numbers 1,2, ..., %numberOfElements.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%Name")
 DEFINITION (L"determines the name of the new permutation.")
 TAG (L"%%Number of elements%")
@@ -74,7 +91,7 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Reverse...", L"djmw", 20050709)
 INTRO (L"Reverse the elements in the given range.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"defines the range of elements that will be reversed.")
 ENTRY (L"Examples")
@@ -84,7 +101,7 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Swap one from range...", L"djmw", 20050709)
 INTRO (L"An element, randomly chosen from a range, will be permuted with an element at a given index position.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"defines the range of indices from which one will be randomly chosen.")
 TAG (L"%%Index%")
@@ -100,7 +117,7 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20050709)
 INTRO (L"Generates a random permutation for the elements in the given range.")
-ENTRY (L"Arguments")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"defines the range of elements that will be permuted.")
 ENTRY (L"Example")
@@ -109,7 +126,7 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Permute randomly (blocks)...", L"djmw", 20050709)
 INTRO (L"Generates a new @Permutation by randomly permuting blocks of size %blocksize.")
-ENTRY (L"Parameters")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"defines the range of elements whose blocks will be permuted.")
 TAG (L"%%Block size")
@@ -133,7 +150,7 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Swap blocks...", L"djmw", 20050722)
 INTRO (L"A command to swap blocks in the selected @Permutation.")
-ENTRY (L"Parameters")
+ENTRY (L"Settings")
 TAG (L"%From, %To")
 DEFINITION (L"define the two starting positions from where elements are to be swapped. The blocks may overlap.")
 TAG (L"%%Block size")
@@ -158,7 +175,7 @@ NORMAL (L"If the offset differs from zero and equals 1 for example, we start wit
 	"and the number of blocks is not exhausted the next element will be the first from the next block. When the last block is reached, "
 	"we start the same cycle again with the next lower element in the first block (which by the way need not be the second element, "
 	"see also example 4).")
-ENTRY (L"Parameters")
+ENTRY (L"Settings")
 TAG (L"%%Range%")
 DEFINITION (L"defines the range of elements that will be permuted.")
 TAG (L"%%Block size%")
@@ -173,9 +190,23 @@ NORMAL (L"3. With range [0,0], a block size of 3, and an offset of 2, the permut
 NORMAL (L"4. With range [0,0], a block size of 4, and an offset of 1, the permutation ((1,2,3,4),(5,6,7,8)) will generate (1,6,3,8,2,7,4,5).")
 MAN_END
 
+MAN_BEGIN (L"Permutation: Next", L"djmw", 20100521)
+NORMAL (L"Get the next @@Permutation|permutation@ in lexicographic order. Starting with the identity permutation and "
+	"repeatedly applying this function will iterate through all possible permutations. If no further permutation "
+	"is available the current permutation will not change. ")
+ENTRY (L"Examples")
+NORMAL (L"If we start with (1,2,3,4) successively applying Next will generate the following sequence (1,2,4,3), (1,3,2,4), (1,3,4,2), (1,4,2,3), (1,4,3,2), etc.")
+MAN_END
+
+MAN_BEGIN (L"Permutation: Previous", L"djmw", 20100521)
+NORMAL (L"Get the previous @@Permutation|permutation@ in lexicographic order. If no further permutation "
+	"is available the current permutation will not change. ")
+NORMAL (L"This Previous operation follows the opposite order of @@Permutation: Next@.")
+MAN_END
+
 MAN_BEGIN (L"Permutation: Rotate...", L"djmw", 20050714)
 INTRO (L"A circular shift of all elements within the given range.")
-ENTRY (L"Parameters")
+ENTRY (L"Settings")
 TAG (L"%%Range")
 DEFINITION (L"defines the range of elements that will be circularly permuted.")
 TAG (L"%%Step size")
@@ -226,7 +257,7 @@ MAN_END
 
 MAN_BEGIN (L"Strings: To Permutation...", L"djmw", 20050721)
 INTRO (L"Generates a @Permutation with the same number of elements as the @Strings.")
-ENTRY (L"Parameter")
+ENTRY (L"Settings")
 TAG (L"%Sort")
 DEFINITION (L"determines whether the Permutation will have an element ordering that can be used to sort the Strings alphabetically.")
 ENTRY (L"Example")
@@ -270,7 +301,7 @@ MAN_END
 MAN_BEGIN (L"Index: To Permutation...", L"djmw", 20050725)
 INTRO (L"Generates a @Permutation from the selected @Index by randomly permuting blocks of equivalent elements.")
 NORMAL (L"Suppose your data consists of groups of equivalent elements and the number of elements in the groups are not equal. You want to make random ordering of your data such that the elements in a group stay together. The following example shows you how.")
-ENTRY (L"Parameter")
+ENTRY (L"Settings")
 TAG (L"%%Permute within classes")
 DEFINITION (L"determines whether the elements within a class will be randomly permuted.")
 ENTRY (L"Example")
@@ -333,5 +364,6 @@ CODE (L"1")
 NORMAL (L"Note that all classes stay intact and may have zero references like for example the \"tot morgen\" class. ")
 MAN_END
 }
-/* End of file manual_David.c */
+
+/* End of file manual_Permutation.c */
 

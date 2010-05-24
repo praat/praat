@@ -45,6 +45,7 @@
  djmw 20091126 Sound_drawParts -> Sound_drawWheres
  djmw 20091211 Sound_fade: removed erroneous warning
  djmw 20100318 Cross-correlation, convolution and autocorrelation
+ djmw 20100325 -Cross-correlation, convolution and autocorrelation
 */
 
 #include "Formula.h"
@@ -58,6 +59,7 @@
 #include "Pitch_extensions.h"
 #include "Pitch_to_PitchTier.h"
 #include "Pitch_to_PointProcess.h"
+#include "Polygon_extensions.h"
 #include "TextGrid_extensions.h"
 #include "DurationTier.h"
 #include "Manipulation.h"
@@ -1737,6 +1739,56 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 	return thee;
 }
 
+static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum)
+{
+	Graphics_drawInnerBox (g);
+	Graphics_textBottom (g, 1, L"Time (s)");
+	Graphics_marksBottom (g, 2, 1, 1, 0);
+	Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
+	Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
+	Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
+	if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0))
+	{
+		Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
+	}
+	if (my ny == 2)
+	{
+		Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
+		Graphics_markRight (g, minimum, 1, 1, 0, NULL);
+		Graphics_markRight (g, maximum, 1, 1, 0, NULL);
+		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0))
+		{
+			Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+		}
+	}
+}
+
+static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, double *minimum, double *maximum, long *ixmin, long *ixmax)
+{
+	/*
+	 * Automatic domain.
+	 */
+	if (*tmin == *tmax)
+	{
+		*tmin = my xmin;
+		*tmax = my xmax;
+	}
+	/*
+	 * Domain expressed in sample numbers.
+	 */
+	Matrix_getWindowSamplesX (me, *tmin, *tmax, ixmin, ixmax);
+	/*
+	 * Automatic vertical range.
+	 */
+	if (*minimum == *maximum) {
+		Matrix_getWindowExtrema (me, *ixmin, *ixmax, 1, my ny, minimum, maximum);
+		if (*minimum == *maximum) {
+			*minimum -= 1.0;
+			*maximum += 1.0;
+		}
+	}
+}
+
 /*
 	 Given sample numbers isample and isample+1, where the formula evaluates to the booleans left and right, respectively.
 	 We want to find the point in this interval where the formula switches from true to false.
@@ -1840,27 +1892,8 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 
 	if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
 
-	/*
-	 * Automatic domain.
-	 */
-	if (tmin == tmax) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
-	/*
-	 * Domain expressed in sample numbers.
-	 */
-	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
-	/*
-	 * Automatic vertical range.
-	 */
-	if (minimum == maximum) {
-		Matrix_getWindowExtrema (me, ixmin, ixmax, 1, my ny, & minimum, & maximum);
-		if (minimum == maximum) {
-			minimum -= 1.0;
-			maximum += 1.0;
-		}
-	}
+	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
+
 	/*
 	 * Set coordinates for drawing.
 	 */
@@ -1963,25 +1996,104 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
 	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
 	Graphics_unsetInner (g);
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
-		Graphics_markLeft (g, minimum, 1, 1, 0, NULL);
-		Graphics_markLeft (g, maximum, 1, 1, 0, NULL);
-		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-			Graphics_markLeft (g, 0.0, 1, 1, 1, NULL);
-		}
-		if (my ny == 2) {
-			Graphics_setWindow (g, tmin, tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
-			Graphics_markRight (g, minimum, 1, 1, 0, NULL);
-			Graphics_markRight (g, maximum, 1, 1, 0, NULL);
-			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
-				Graphics_markRight (g, 0.0, 1, 1, 1, NULL);
+
+	if (garnish) _Sound_garnish (me, g, tmin, tmax, minimum, maximum);
+}
+
+void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+	double minimum, double maximum, double level, bool garnish, long numberOfBisections, const wchar_t *formula, Interpreter interpreter)
+{
+	long ixmin, ixmax;
+	struct Formula_Result result;
+
+	if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
+
+	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
+
+	Graphics_setColour (g, colour);
+	Graphics_setInner (g);
+	for (long channel = 1; channel <= my ny; channel++)
+	{
+		Graphics_setWindow (g, tmin, tmax,
+			minimum - (my ny - channel) * (maximum - minimum),
+			maximum + (channel - 1) * (maximum - minimum));
+		bool current, previous = true, fill = false; // fill only when leaving area
+		double tmini = tmin, tmaxi = tmax, xe, ye;
+		long ix = ixmin;
+		do
+		{
+			if (! Formula_run (channel, ix, & result)) return;
+			current = result.result.numericResult;
+			if (ix == ixmin) { previous = current; }
+			if (previous != current)
+			{
+				Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
+				if (current) // entering painting area
+				{
+					tmini = xe;
+				}
+				else //leaving painting area
+				{
+					tmaxi = xe;
+					fill = true;
+				}
+				if (! Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true)) return;
 			}
-		}
+			if (ix == ixmax && current) { tmaxi = tmax; fill = true; }
+			if (fill)
+			{
+				Polygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
+				if (him == NULL) return;
+				Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
+				forget (him);
+				fill = false;
+			}
+			previous = current;
+		} while (++ix <= ixmax);
 	}
+	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+	Graphics_unsetInner (g);
+	if (garnish) _Sound_garnish (me, g, tmin, tmax, minimum, maximum);
+	Melder_clearError ();
+}
+
+void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+	double minimum, double maximum, bool garnish)
+{
+	long ixmin, ixmax, numberOfChannels = my ny > thy ny ? my ny : thy ny;
+	double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;
+	double min2 = min1, max2 = max1, tmin2 = tmin1, tmax2 = tmax1;
+	double xmin = my xmin > thy xmin ? my xmin : thy xmin;
+	double xmax = my xmax < thy xmax ? my xmax : thy xmax;
+	if (xmax <= xmin) return;
+	if (tmin >= tmax)
+	{
+		tmin = xmin;
+		tmax = xmax;
+	}
+	_Sound_getWindowExtrema (thee, &tmin1, &tmax1, &min1, &max1, &ixmin, &ixmax);
+	_Sound_getWindowExtrema (me,   &tmin2, &tmax2, &min2, &max2, &ixmin, &ixmax);
+	minimum = min1 < min2 ? min1 : min2;
+	maximum = max1 > max2 ? max1 : max2;
+
+	Graphics_setColour (g, colour);
+	Graphics_setInner (g);
+	for (long channel = 1; channel <= numberOfChannels; channel++)
+	{
+		Polygon him = Sounds_to_Polygon_enclosed (me, thee, channel, tmin, tmax, minimum, maximum);
+		if (him == NULL) break;
+		Graphics_setWindow (g, tmin, tmax,
+			minimum - (numberOfChannels - channel) * (maximum - minimum),
+			maximum + (channel - 1) * (maximum - minimum));
+		Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
+		forget (him);
+	}
+	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+	if (garnish && (my ny == 2 || thy ny == 2)) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+	Graphics_unsetInner (g);
+	if (garnish) _Sound_garnish (my ny == 2 ? me : thee, g, tmin, tmax, minimum, maximum);
+	Melder_clearError ();
 }
 
 /* End of file Sound_extensions.c */

@@ -133,7 +133,7 @@ static void gui_cb_menu (GUI_ARGS) {
 		// TODO: Dit implementeert het gedrag van Motif, en impliceert dat een toggled Call alleen een
 		// 'naar positief' is en niet de terug toggle 'naar negatief'.
 		if (G_OBJECT_TYPE(w) == GTK_TYPE_RADIO_MENU_ITEM && !gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w))) { 
-			g_debug("Gotcha!");
+			//g_debug("Gotcha!");
 			return;
 		}
 	#elif motif

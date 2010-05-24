@@ -38,6 +38,7 @@
  * fb 2010/02/26 GTK & GuiText_set(Undo|Redo)Item() & history for GTK
  * fb 2010/03/02 history: merge same events together
  * pb 2010/03/11 support Unicode values above 0xFFFF
+ * pb 2010/05/14 GTK changedCallback
  */
 
 #include "GuiP.h"
@@ -811,41 +812,41 @@ void _GuiText_exit (void) {
  */
 
 #if gtk
-	static void _GuiGtkEntry_history_delete_cb(GtkEditable *ed, gint from, gint to, gpointer void_me) {
-		iam(GuiText);
+	static void _GuiGtkEntry_history_delete_cb (GtkEditable *ed, gint from, gint to, gpointer void_me) {
+		iam (GuiText);
 		if (my history_change) return;
 		
-		history_add(me, gtk_editable_get_chars(GTK_EDITABLE(ed), from, to), from, to, 1);
+		history_add (me, gtk_editable_get_chars (GTK_EDITABLE (ed), from, to), from, to, 1);
 	}
 	
-	static void _GuiGtkEntry_history_insert_cb(GtkEditable *ed, gchar *utf8_text, gint len, gint *from, gpointer void_me) {
-		(void)ed;
-		iam(GuiText);
+	static void _GuiGtkEntry_history_insert_cb (GtkEditable *ed, gchar *utf8_text, gint len, gint *from, gpointer void_me) {
+		(void) ed;
+		iam (GuiText);
 		if (my history_change) return;
 		
-		gchar *text = malloc(sizeof(gchar) * (len + 1));
-		strcpy(text, utf8_text);
-		history_add(me, text, *from, *from + len, 0);
+		gchar *text = malloc (sizeof (gchar) * (len + 1));
+		strcpy (text, utf8_text);
+		history_add (me, text, *from, *from + len, 0);
 	}
 	
-	static void _GuiGtkTextBuf_history_delete_cb(GtkTextBuffer *buffer, GtkTextIter *from, GtkTextIter *to, gpointer void_me) {
-		iam(GuiText);
+	static void _GuiGtkTextBuf_history_delete_cb (GtkTextBuffer *buffer, GtkTextIter *from, GtkTextIter *to, gpointer void_me) {
+		iam (GuiText);
 		if (my history_change) return;
 		
-		int from_pos = gtk_text_iter_get_offset(from);
-		int to_pos = gtk_text_iter_get_offset(to);
-		history_add(me, gtk_text_buffer_get_text(buffer, from, to, FALSE), from_pos, to_pos, 1);
+		int from_pos = gtk_text_iter_get_offset (from);
+		int to_pos = gtk_text_iter_get_offset (to);
+		history_add (me, gtk_text_buffer_get_text (buffer, from, to, FALSE), from_pos, to_pos, 1);
 	}
 	
-	static void _GuiGtkTextBuf_history_insert_cb(GtkTextBuffer *buffer, GtkTextIter *from, gchar *utf8_text, gint len, gpointer void_me) {
-		(void)buffer;
-		iam(GuiText);
+	static void _GuiGtkTextBuf_history_insert_cb (GtkTextBuffer *buffer, GtkTextIter *from, gchar *utf8_text, gint len, gpointer void_me) {
+		(void) buffer;
+		iam (GuiText);
 		if (my history_change) return;
 		
-		int from_pos = gtk_text_iter_get_offset(from);
-		gchar *text = malloc(sizeof(gchar) * (len + 1));
-		strcpy(text, utf8_text);
-		history_add(me, text, from_pos, from_pos + len, 0);
+		int from_pos = gtk_text_iter_get_offset (from);
+		gchar *text = malloc (sizeof (gchar) * (len + 1));
+		strcpy (text, utf8_text);
+		history_add (me, text, from_pos, from_pos + len, 0);
 	}
 	
 	static void _GuiGtkEntry_valueChangedCallback (Widget widget, gpointer void_me) {
@@ -858,15 +859,15 @@ void _GuiText_exit (void) {
 		}
 	}
 	
-	static void _GuiGtkEntry_destroyCallback(Widget widget, gpointer void_me) {
-		(void)widget;
-		iam(GuiText);
-		if (my undo_item) g_object_unref(my undo_item);
-		if (my redo_item) g_object_unref(my redo_item);
+	static void _GuiGtkEntry_destroyCallback (Widget widget, gpointer void_me) {
+		(void) widget;
+		iam (GuiText);
+		if (my undo_item) g_object_unref (my undo_item);
+		if (my redo_item) g_object_unref (my redo_item);
 		my undo_item = NULL;
 		my redo_item = NULL;
-		history_clear(me);
-		Melder_free(me);
+		history_clear (me);
+		Melder_free (me);
 	}
 #elif win
 #elif mac
@@ -921,8 +922,8 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 			gtk_container_add (GTK_CONTAINER (parent), my widget);
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
-//		g_signal_connect (GTK_EDITABLE (my widget), "changed",
-//			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
+		g_signal_connect (GTK_EDITABLE (my widget), "changed",
+			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
 		// TODO: First input focus verhaal? *check*
 	#elif win
 		my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, flags & GuiText_SCROLLED ? L"scrolledText" : L"text");
@@ -1394,12 +1395,11 @@ void GuiText_setChangeCallback (Widget widget, void (*changeCallback) (void *bos
 
 void GuiText_setFontSize (Widget widget, int size) {
 	#if gtk
-		GtkRcStyle *modStyle = gtk_widget_get_modifier_style(widget);
-		PangoFontDescription *fontDesc = (modStyle->font_desc != NULL) ? modStyle->font_desc
-			: pango_font_description_copy(widget->style->font_desc);
-		pango_font_description_set_absolute_size(fontDesc, size * PANGO_SCALE);
-		modStyle->font_desc = fontDesc;
-		gtk_widget_modify_style(widget, modStyle);
+		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (widget);
+		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc : pango_font_description_copy (widget -> style -> font_desc);
+		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
+		modStyle -> font_desc = fontDesc;
+		gtk_widget_modify_style (widget, modStyle);
 	#elif win
 	#elif mac
 		iam_text;
@@ -1418,11 +1418,11 @@ void GuiText_setRedoItem(Widget widget, Widget item) {
 	#if gtk
 		iam_text;
 		if (my redo_item)
-			g_object_unref(my redo_item);
+			g_object_unref (my redo_item);
 		my redo_item = item;
 		if (my redo_item) {
-			g_object_ref(my redo_item);
-			GuiObject_setSensitive(my redo_item, history_has_redo(me));
+			g_object_ref (my redo_item);
+			GuiObject_setSensitive (my redo_item, history_has_redo (me));
 		}
 	#elif win
 	#elif mac
@@ -1436,7 +1436,7 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
 			gtk_editable_select_region (GTK_EDITABLE (widget), first, last);
 		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
-			GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			GtkTextIter from_it, to_it;
 			gtk_text_buffer_get_iter_at_offset(buffer, &from_it, first);
 			gtk_text_buffer_get_iter_at_offset(buffer, &to_it, last);

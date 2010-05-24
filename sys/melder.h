@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/08
+ * pb 2010/05/14
  */
 
 #include <stdio.h>
@@ -38,6 +38,7 @@
 #include <stddef.h>
 #include <wchar.h>
 #include <stdbool.h>
+#include <stdint.h>
 bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2);
 #include "enums.h"
 

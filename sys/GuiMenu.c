@@ -27,7 +27,7 @@
  * sdk 2008/03/24 GTK
  */
 
-#include "Gui.h"
+#include "GuiP.h"
 
 Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags) {
 	Widget menu = NULL, menuTitle;
@@ -40,9 +40,7 @@ Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget
 	#if gtk
 		*menuTitle = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		menu = gtk_menu_new ();
-		GtkAccelGroup *ag = GTK_IS_MENU_BAR (bar) ?
-			g_object_get_data (bar, "accel-group") :
-			gtk_menu_get_accel_group (GTK_MENU (bar));
+		GtkAccelGroup *ag = GTK_IS_MENU_BAR (bar) ? g_object_get_data (G_OBJECT (bar), "accel-group") : gtk_menu_get_accel_group (GTK_MENU (bar));
 		gtk_menu_set_accel_group (GTK_MENU (menu), ag);
 		if (flags & GuiMenu_INSENSITIVE)
 			gtk_widget_set_sensitive (menu, FALSE);
@@ -69,7 +67,7 @@ void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
 	gint w, h;
 	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
 
-	if (GTK_WIDGET(menu)->requisition.width < button->allocation.width)
+	if (GTK_WIDGET (menu) -> requisition. width < button->allocation.width)
 		gtk_widget_set_size_request(GTK_WIDGET(menu), button->allocation.width, -1);
 
 	gdk_window_get_origin (button->window, px, py);
@@ -88,7 +86,7 @@ static gint button_press (GtkWidget *widget, GdkEvent *event)
 	
 	if (event->type == GDK_BUTTON_PRESS) {
 		GdkEventButton *bevent = (GdkEventButton *) event;
-		gtk_menu_popup (GTK_MENU(widget), NULL, NULL, (GtkMenuPositionFunc) set_position, NULL, bevent->button, bevent->time);
+		gtk_menu_popup (GTK_MENU (widget), NULL, NULL, (GtkMenuPositionFunc) set_position, NULL, bevent->button, bevent->time);
 		return TRUE;
 	}
 	return FALSE;
@@ -117,6 +115,21 @@ Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags, Wid
 	static GSList *group = NULL;
 #endif
 
+void GuiMenuItem_check (Widget menuItem, bool check) {
+	#if gtk
+		gulong handlerId = (gulong) g_object_get_data (G_OBJECT (menuItem), "handlerId");
+		void (*commandCallback) (Widget, XtPointer, XtPointer) = g_object_get_data (G_OBJECT (menuItem), "commandCallback");
+		void *commandClosure = g_object_get_data (G_OBJECT (menuItem), "commandClosure");
+		//Melder_casual ("GuiMenuItem_check %ld %ld %ld", handlerId, commandCallback, commandClosure);
+		g_signal_handler_disconnect (G_OBJECT (menuItem), handlerId);
+		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuItem), check);
+		handlerId = g_signal_connect (G_OBJECT (menuItem), "toggled", G_CALLBACK (commandCallback), (gpointer) commandClosure);
+		g_object_set_data (G_OBJECT (menuItem), "handlerId", (gpointer) handlerId);
+	#elif motif
+		XmToggleButtonGadgetSetState (menuItem, check, False);
+	#endif
+}
+
 Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure)
 {
@@ -130,6 +143,7 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 			if (flags & (GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT)) {
 				button = gtk_radio_menu_item_new_with_label (group, Melder_peekWcsToUtf8 (title));
 				group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (button));
+				//Melder_casual ("Created a radio menu item with title %ls, group %ld", title, group);
 			} else {
 				button = gtk_check_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 			}
@@ -250,7 +264,12 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 	}
 	#if gtk
 		if (commandCallback != NULL) {
-			g_signal_connect (G_OBJECT (button), toggle ? "toggled" : "activate", G_CALLBACK (commandCallback), (gpointer) closure);
+			gulong handlerId = g_signal_connect (G_OBJECT (button),
+				toggle ? "toggled" : "activate",
+				G_CALLBACK (commandCallback), (gpointer) closure);
+			g_object_set_data (G_OBJECT (button), "handlerId", (gpointer) handlerId);
+			g_object_set_data (G_OBJECT (button), "commandCallback", (gpointer) commandCallback);
+			g_object_set_data (G_OBJECT (button), "commandClosure", (gpointer) closure);
 		} else {
 			gtk_widget_set_sensitive (button, FALSE);
 		}

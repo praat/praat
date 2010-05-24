@@ -1,6 +1,6 @@
 /* HyperPage.c
  *
- * Copyright (C) 1996-2009 Paul Boersma
+ * Copyright (C) 1996-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2008/11/24 prevented crash by Melder_malloc (replaced with Melder_calloc)
  * pb 2009/03/17 split up structPraat
+ * pb 2010/05/14 GTK
  */
 
 #include <ctype.h>
@@ -606,6 +607,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	(void) event;
 	if (my g == NULL) return;   // Could be the case in the very beginning.
 	#if gtk
+		//Melder_assert (Graphics_x_getCR (my g) != NULL);
 		Graphics_x_setCR (my g, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
 	#endif
 	initScreen (me);
@@ -620,6 +622,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		updateVerticalScrollBar (me);
 	}
 	#if gtk
+		cairo_destroy (Graphics_x_getCR (my g));
 		Graphics_x_setCR (my g, NULL);
 	#endif
 }
@@ -627,6 +630,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;   // Could be the case in the very beginning.
+if (gtk && event -> type != BUTTON_PRESS) return;
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = my links -> item [ilink];
@@ -700,13 +704,11 @@ static int menu_cb_font (EDITOR_ARGS) {
 }
 
 static void updateSizeMenu (HyperPage me) {
-	#if motif
-		XmToggleButtonGadgetSetState (my fontSizeButton_10, my fontSize == 10, 0);
-		XmToggleButtonGadgetSetState (my fontSizeButton_12, my fontSize == 12, 0);
-		XmToggleButtonGadgetSetState (my fontSizeButton_14, my fontSize == 14, 0);
-		XmToggleButtonGadgetSetState (my fontSizeButton_18, my fontSize == 18, 0);
-		XmToggleButtonGadgetSetState (my fontSizeButton_24, my fontSize == 24, 0);
-	#endif
+	GuiMenuItem_check (my fontSizeButton_10, my fontSize == 10);
+	GuiMenuItem_check (my fontSizeButton_12, my fontSize == 12);
+	GuiMenuItem_check (my fontSizeButton_14, my fontSize == 14);
+	GuiMenuItem_check (my fontSizeButton_18, my fontSize == 18);
+	GuiMenuItem_check (my fontSizeButton_24, my fontSize == 24);
 }
 static void setFontSize (HyperPage me, int fontSize) {
 	prefs_fontSize = my fontSize = fontSize;
@@ -756,7 +758,13 @@ static int menu_cb_searchForPage (EDITOR_ARGS) {
  */
 
 static void createVerticalScrollBar (HyperPage me, Widget parent) {
-	#if motif
+	#if gtk
+		int maximumScrollBarValue = (int) (PAGE_HEIGHT * 5);
+		GtkObject *adj = gtk_adjustment_new (1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
+		my verticalScrollBar = gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
+		GuiObject_show (my verticalScrollBar);
+		gtk_box_pack_end (GTK_BOX (parent), my verticalScrollBar, false, false, 3);
+	#elif motif
 		// TODO: Kan dit niet een algemele gui klasse worden?
 		my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 			xmScrollBarWidgetClass, parent, XmNorientation, XmVERTICAL,
@@ -779,22 +787,41 @@ static void updateVerticalScrollBar (HyperPage me)
 	Dimension width, height, marginWidth, marginHeight;
 	int sliderSize;
 	#if motif
-	XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+		XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height,
+			XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	#endif
 	sliderSize = 25 /*height / resolution * 5*/;   /* Don't change slider unless you clip value! */
-	#if motif
+	#if gtk
+		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my verticalScrollBar));
+		adj -> page_size = sliderSize;
+		//gtk_adjustment_set_value (adj, value);
+		gtk_adjustment_changed (adj);
+		gtk_range_set_increments (GTK_RANGE (my verticalScrollBar), 1, sliderSize - 1);
+	#elif motif
 		XmScrollBarSetValues (my verticalScrollBar, my top, sliderSize, 1, sliderSize - 1, False);
 	#endif
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
+#if gtk
+static void gui_cb_verticalScroll (GtkRange *rng, gpointer void_me) {
+	iam (HyperPage);
+	double value = gtk_range_get_value (GTK_RANGE (rng));
+	if (value != my top) {
+		my top = value;
+		Graphics_clearWs (my g);
+		initScreen (me);
+		our draw (me);   /* Do not wait for expose event. */
+		updateVerticalScrollBar (me);
+	}
+}
+#else
 static void gui_cb_verticalScroll (GUI_ARGS) {
 	GUI_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	#if motif
-	// TODO: deze heb ik ook al eerder gezien...
-	XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
+		// TODO: deze heb ik ook al eerder gezien...
+		XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
 	#endif
 	if (value != my top) {
 		my top = value;
@@ -804,6 +831,7 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 		updateVerticalScrollBar (me);
 	}
 }
+#endif
 
 static int menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
@@ -925,12 +953,13 @@ static void createMenus (HyperPage me) {
 	}
 
 	Editor_addMenu (me, L"Font", 0);
-	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_RADIO_FIRST, menu_cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_RADIO_NEXT, menu_cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_RADIO_NEXT, menu_cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_RADIO_NEXT, menu_cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_RADIO_NEXT, menu_cb_24);
 	Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
+	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKBUTTON, menu_cb_10);
+	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKBUTTON, menu_cb_12);
+	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKBUTTON, menu_cb_14);
+	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKBUTTON, menu_cb_18);
+	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKBUTTON, menu_cb_24);
+	Editor_addCommand (me, L"Font", L"-- font --", 0, NULL);
 	Editor_addCommand (me, L"Font", L"Font...", 0, menu_cb_font);
 }
 
@@ -991,21 +1020,20 @@ static void createChildren (HyperPage me) {
 			L"1 >", gui_button_cb_nextPage, me, 0);
 	}
 	#if gtk
-		// TODO: GuiScrollWindow.c
-		Widget scrollWindow = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollWindow), 0, 0, 0, 0,
+		Widget scrollBox = gtk_hbox_new (false, 0);
+		gtk_box_pack_end (GTK_BOX (my dialog), scrollBox, true, true, 0);
+		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
-		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), my drawingArea);
-		gtk_container_add (GTK_CONTAINER (my dialog), scrollWindow);
-		GuiObject_show(my drawingArea);
-		GuiObject_show(scrollWindow);
+		gtk_box_pack_start (GTK_BOX (scrollBox), my drawingArea, true, true, 0);
+		createVerticalScrollBar (me, scrollBox);
+		GuiObject_show (my drawingArea);
+		GuiObject_show (scrollBox);
 	#elif motif
-	/***** Create scroll bar. *****/
+		/***** Create scroll bar. *****/
 
-	createVerticalScrollBar (me, my dialog);
+		createVerticalScrollBar (me, my dialog);
 
-	/***** Create drawing area. *****/
+		/***** Create drawing area. *****/
 		my drawingArea = GuiDrawingArea_createShown (my dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
 	#endif
@@ -1024,14 +1052,16 @@ int HyperPage_init (HyperPage me, Widget parent, const wchar_t *title, Any data)
 	if (prefs_font != kGraphics_font_TIMES && prefs_font != kGraphics_font_HELVETICA)
 		prefs_font = kGraphics_font_TIMES;   // Ensure Unicode compatibility.
 	my font = prefs_font;
-	setFontSize (me, prefs_fontSize);
+	setFontSize (me, prefs_fontSize);	
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-	#if motif
+	#if gtk
+		g_signal_connect (G_OBJECT (my verticalScrollBar), "value-changed", G_CALLBACK (gui_cb_verticalScroll), me);
+	#elif motif
 		XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
 		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
 	#endif

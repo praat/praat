@@ -1,6 +1,6 @@
 /* praat_FFNet_init.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  djmw 20080902 Melder_error<1...>
  djmw 20071011 REQUIRE requires L"".
  djmw 20071024 Use MelderString_append in FFNet_createNameFromTopology
+ djmw 20100511 FFNet query outputs
 */
 
 #include <math.h>
@@ -41,7 +42,7 @@
 #include "FFNet_Pattern_Activation.h"
 #include "FFNet_Pattern_Categories.h"
 
-/* Routines to be removed sometime in the future: 
+/* Routines to be removed sometime in the future:
 20040422, 2.4.04: FFNet_drawWeightsToLayer  use FFNet_drawWeights
 20040422, 2.4.04: FFNet_weightsToMatrix use FFNet_extractWeights
 */
@@ -104,7 +105,7 @@ FORM (FFNet_create, L"Create FFNet", L"Create FFNet...")
 DO
 	FFNet thee;
 	long numberOfInputs, numberOfOutputs, numberOfHidden1, numberOfHidden2;
-	if (! FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs, 
+	if (! FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs,
 		&numberOfHidden1, &numberOfHidden2)) return 0;
 	thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 0);
 	if (thee == NULL)
@@ -122,7 +123,7 @@ FORM (FFNet_create_linearOutputs, L"Create FFNet", L"Create FFNet (linear output
 DO
 	FFNet thee;
 	long numberOfInputs, numberOfOutputs, numberOfHidden1, numberOfHidden2;
-	if (! FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs, 
+	if (! FFNet_create_checkCommonFields (dia, &numberOfInputs, &numberOfOutputs,
 		&numberOfHidden1, &numberOfHidden2)) return 0;
 	thee = FFNet_create (numberOfInputs, numberOfHidden1, numberOfHidden2, numberOfOutputs, 1);
 	if (thee == NULL)
@@ -159,9 +160,37 @@ DO
 	FFNet  me = ONLY(classFFNet);
 	long layerNumber = GET_INTEGER (L"Hidden layer number");
 	long numberOfUnits = 0;
-	
+
 	if (layerNumber > 0 && layerNumber <= my nLayers - 1) numberOfUnits = my nUnitsInLayer[layerNumber];
 	Melder_information2 (Melder_integer (numberOfUnits), L" units");
+END
+
+FORM (FFNet_getCategoryOfOutputUnit, L"FFNet: Get category of output unit", L"")
+	NATURAL (L"Output unit", L"1")
+	OK
+DO
+	FFNet me = ONLY_OBJECT;
+	Categories c = my outputCategories;
+	long unit = GET_INTEGER (L"Output unit");
+	if (unit > c -> size) return Melder_error3 (L"Output unit cannot be larger than ", Melder_integer (c -> size), L".");
+	SimpleString ss = c -> item[unit];
+	Melder_information1 (ss -> string);
+END
+
+FORM (FFNet_getOutputUnitOfCategory, L"FFNet: Get output unit of category", L"")
+	SENTENCE (L"Category", L"u")
+	OK
+DO
+	FFNet me = ONLY_OBJECT;
+	Categories c = my outputCategories;
+	wchar_t *category = GET_STRING (L"Category");
+	long index = 0;
+	for (long i = 1; i <= c -> size; i++)
+	{
+		SimpleString s = c -> item[i];
+		if (Melder_wcsequ (s -> string, category)) { index = i; break;};
+	}
+	Melder_information1 (Melder_integer (index));
 END
 
 FORM (FFNet_getNumberOfHiddenWeights, L"FFNet: Get number of hidden weights", L"FFNet: Get number of hidden weights...")
@@ -170,7 +199,7 @@ FORM (FFNet_getNumberOfHiddenWeights, L"FFNet: Get number of hidden weights", L"
 DO
 	FFNet  me = ONLY(classFFNet);
 	long layerNumber = GET_INTEGER (L"Hidden layer number");
-	long numberOfWeights = 0;	
+	long numberOfWeights = 0;
 	if (layerNumber > 0 && layerNumber <= my nLayers - 1)
 	{
 		numberOfWeights = my nUnitsInLayer[layerNumber] * (my nUnitsInLayer[layerNumber - 1]+1);
@@ -191,7 +220,7 @@ FORM (Pattern_create, L"Create Pattern", 0)
     NATURAL (L"Number of patterns", L"1")
     OK
 DO
-	if (! praat_new1 (Pattern_create (GET_INTEGER (L"Number of patterns"), 
+	if (! praat_new1 (Pattern_create (GET_INTEGER (L"Number of patterns"),
 		GET_INTEGER (L"Dimension of a pattern")), GET_STRING (L"Name"))) return 0;
 END
 
@@ -270,7 +299,7 @@ FORM (FFNet_drawWeights, L"FFNet: Draw weights", L"FFNet: Draw weights...")
     BOOLEAN (L"Garnish", 1)
     OK
 DO
-    EVERY_DRAW (FFNet_drawWeights (OBJECT, GRAPHICS, 
+    EVERY_DRAW (FFNet_drawWeights (OBJECT, GRAPHICS,
 		GET_INTEGER (L"Layer number"), GET_INTEGER (L"Garnish")))
 END
 
@@ -350,12 +379,12 @@ DO
     praat_picture_open ();
 	FFNet_Eigen_drawDecisionPlaneInEigenspace(ONLY (classFFNet), ONLY (classPCA),
 		GRAPHICS, GET_INTEGER (L"Unit number"), GET_INTEGER (L"Layer number"),
-		GET_INTEGER (L"Horizontal eigenvector number"), 
+		GET_INTEGER (L"Horizontal eigenvector number"),
 		GET_INTEGER (L"Vertical eigenvector number"), GET_REAL (L"left Horizontal range"),
 		GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
 		GET_REAL (L"right Vertical range"));
     praat_picture_close ();
-	
+
 END
 
 /************************* FFNet && Categories **********************************/
@@ -424,7 +453,7 @@ FORM (FFNet_Pattern_Activation_getCosts_total, L"FFNet & Pattern & Activation: G
 	RADIOBUTTON (L"Minimum-cross-entropy")
 	OK
 DO
-	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_total (ONLY (classFFNet), 
+	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_total (ONLY (classFFNet),
 		ONLY (classPattern), ONLY (classActivation), GET_INTEGER (L"Cost function"))));
 END
 
@@ -434,7 +463,7 @@ FORM (FFNet_Pattern_Activation_getCosts_average, L"FFNet & Pattern & Activation:
 	RADIOBUTTON (L"Minimum-cross-entropy")
 	OK
 DO
-	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_average (ONLY (classFFNet), 
+	Melder_information1 (Melder_double (FFNet_Pattern_Activation_getCosts_average (ONLY (classFFNet),
 		ONLY (classPattern), ONLY (classActivation), GET_INTEGER (L"Cost function"))));
 END
 
@@ -454,7 +483,7 @@ DO
     p.momentum = GET_REAL (L"Momentum");
     return FFNet_Pattern_Activation_learnSD (ONLY (classFFNet), ONLY (classPattern),
     	ONLY (classActivation), GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), & p, GET_INTEGER (L"Cost function")); 
+		GET_REAL (L"Tolerance of minimizer"), & p, GET_INTEGER (L"Cost function"));
 END
 
 FORM (FFNet_Pattern_Activation_learnSM, L"FFNet & Pattern & Activation: Learn", 0)
@@ -465,11 +494,11 @@ FORM (FFNet_Pattern_Activation_learnSM, L"FFNet & Pattern & Activation: Learn", 
 	RADIOBUTTON (L"Minimum-cross-entropy")
     OK
 DO
-    return FFNet_Pattern_Activation_learnSM (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classActivation), 
+    return FFNet_Pattern_Activation_learnSM (ONLY (classFFNet),
+		ONLY (classPattern), ONLY (classActivation),
 		GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), NULL, 
-		GET_INTEGER (L"Cost function")); 
+		GET_REAL (L"Tolerance of minimizer"), NULL,
+		GET_INTEGER (L"Cost function"));
 END
 
 /*********** FFNet Pattern Categories **********************************/
@@ -480,7 +509,7 @@ FORM (FFNet_Pattern_Categories_getCosts_total, L"FFNet & Pattern & Categories: G
 	RADIOBUTTON (L"Minimum-cross-entropy")
 	OK
 DO
-	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_total (ONLY (classFFNet), 
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_total (ONLY (classFFNet),
 		ONLY (classPattern), ONLY (classCategories), GET_INTEGER (L"Cost function"))));
 END
 
@@ -490,7 +519,7 @@ FORM (FFNet_Pattern_Categories_getCosts_average, L"FFNet & Pattern & Categories:
 	RADIOBUTTON (L"Minimum-cross-entropy")
 	OK
 DO
-	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_average (ONLY (classFFNet), 
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_average (ONLY (classFFNet),
 		ONLY (classPattern), ONLY (classCategories), GET_INTEGER (L"Cost function"))));
 END
 
@@ -499,14 +528,14 @@ FORM (Pattern_Categories_to_FFNet, L"Pattern & Categories: To FFNet", L"Pattern 
     INTEGER (L"Number of units in hidden layer 2", L"0")
     OK
 DO
-	Pattern p = ONLY (classPattern); 
+	Pattern p = ONLY (classPattern);
 	Categories uniq = NULL, l = ONLY (classCategories);
-	long numberOfOutputs; 
+	long numberOfOutputs;
 	FFNet ffnet = NULL;
 	long nHidden1 = GET_INTEGER (L"Number of units in hidden layer 1");
 	long nHidden2 = GET_INTEGER (L"Number of units in hidden layer 2");
 	MelderString ffnetName = { 0 };
-	
+
 	if (nHidden1 < 1) nHidden1 = 0;
  	if (nHidden2 < 1) nHidden2 = 0;
 	uniq = Categories_selectUniqueItems (l, 1);
@@ -519,7 +548,7 @@ DO
 		return Melder_error1 (L"There are not enough categories in the Categories.\n"
 			"Please try again with more categories in the Categories.");
 	}
-	
+
     ffnet = FFNet_create (p -> nx, nHidden1, nHidden2, numberOfOutputs, 0);
 	if (ffnet == NULL)
 	{
@@ -546,10 +575,10 @@ FORM (FFNet_Pattern_Categories_learnSM, L"FFNet & Pattern & Categories: Learn", 
 	RADIOBUTTON (L"Minimum-cross-entropy")
     OK
 DO
-	if (! FFNet_Pattern_Categories_learnSM (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classCategories), 
+	if (! FFNet_Pattern_Categories_learnSM (ONLY (classFFNet),
+		ONLY (classPattern), ONLY (classCategories),
 		GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), NULL, 
+		GET_REAL (L"Tolerance of minimizer"), NULL,
 		GET_INTEGER (L"Cost function"))) return 0;
 END
 
@@ -567,28 +596,28 @@ DO
 	struct structSteepestDescentMinimizer_parameters p;
 	p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
-    return FFNet_Pattern_Categories_learnSD (ONLY (classFFNet), 
-		ONLY (classPattern), ONLY (classCategories), 
+    return FFNet_Pattern_Categories_learnSD (ONLY (classFFNet),
+		ONLY (classPattern), ONLY (classCategories),
 		GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), &p, 
-		GET_INTEGER (L"Cost function")); 
+		GET_REAL (L"Tolerance of minimizer"), &p,
+		GET_INTEGER (L"Cost function"));
 END
 
 void praat_uvafon_FFNet_init (void);
 void praat_uvafon_FFNet_init (void)
 {
 	Thing_recognizeClassesByName (classFFNet, NULL);
-	
+
     praat_addMenuCommand (L"Objects", L"New", L"Neural nets", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Feedforward neural networks", 0, 1, DO_FFNet_help);
-    praat_addMenuCommand (L"Objects", L"New", L"-- FFNet --", 0, 1, 0);		
+    praat_addMenuCommand (L"Objects", L"New", L"-- FFNet --", 0, 1, 0);
     praat_addMenuCommand (L"Objects", L"New", L"Create iris example...", 0, 1, DO_FFNet_createIrisExample);
     praat_addMenuCommand (L"Objects", L"New", L"Create FFNet...", 0, 1, DO_FFNet_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Advanced", 0, 1, 0);
     praat_addMenuCommand (L"Objects", L"New", L"Create Pattern...", 0, 2, DO_Pattern_create);
     praat_addMenuCommand (L"Objects", L"New", L"Create Categories...", 0, 2, DO_Categories_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create FFNet (linear outputs)...", 0, 2, DO_FFNet_create_linearOutputs);
-        
+
 	praat_addAction1 (classFFNet, 0, L"FFNet help", 0, 0, DO_FFNet_help);
 	praat_addAction1 (classFFNet, 0, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction1 (classFFNet, 0, L"Draw topology", 0, 1, DO_FFNet_drawTopology);
@@ -600,9 +629,11 @@ void praat_uvafon_FFNet_init (void)
 		praat_addAction1 (classFFNet, 1, L"Get number of outputs", 0, 2, DO_FFNet_getNumberOfOutputs);
 		praat_addAction1 (classFFNet, 1, L"Get number of hidden units...", 0, 2, DO_FFNet_getNumberOfHiddenUnits);
 		praat_addAction1 (classFFNet, 1, L"Get number of inputs", 0, 2, DO_FFNet_getNumberOfInputs);
-		praat_addAction1 (classFFNet, 0, L"-- FFNet weights --", 0, 2, 0);
 		praat_addAction1 (classFFNet, 1, L"Get number of hidden weights...", 0, 2, DO_FFNet_getNumberOfHiddenWeights);
 		praat_addAction1 (classFFNet, 1, L"Get number of output weights", 0, 2, DO_FFNet_getNumberOfOutputWeights);
+		praat_addAction1 (classFFNet, 1, L"Get category of output unit...", 0, 2, DO_FFNet_getCategoryOfOutputUnit);
+		praat_addAction1 (classFFNet, 1, L"Get output unit of category...", 0, 2, DO_FFNet_getOutputUnitOfCategory);
+		praat_addAction1 (classFFNet, 0, L"-- FFNet weights --", 0, 1, 0);
 		praat_addAction1 (classFFNet, 1, L"Get minimum", 0, 1, DO_FFNet_getMinimum);
 	praat_addAction1 (classFFNet, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classFFNet, 1, L"Reset...", 0, 1, DO_FFNet_reset);
@@ -613,35 +644,35 @@ void praat_uvafon_FFNet_init (void)
 	praat_addAction1 (classFFNet, 0, L"Weights to Matrix...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_FFNet_weightsToMatrix);
 	praat_addAction1 (classFFNet, 0, L"& Pattern: Classify?", 0, 0, DO_hint_FFNet_and_Pattern_classify);
 	praat_addAction1 (classFFNet, 0, L"& Pattern & Categories: Learn?", 0, 0, DO_hint_FFNet_and_Pattern_and_Categories_learn);
-	
+
 	praat_addAction2 (classFFNet, 1, classActivation, 1, L"Analyse", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classActivation, 1, L"To Categories...", 0, 0, DO_FFNet_Activation_to_Categories);
-	
+
 	praat_addAction2 (classFFNet, 1, classEigen, 1, L"Draw", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classEigen, 1, L"Draw hyperplane intersections", 0, 0, DO_FFNet_Eigen_drawIntersection);
-	
+
 	praat_addAction2 (classFFNet, 1, classCategories, 1, L"Analyse", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classCategories, 1, L"To Activation", 0, 0, DO_FFNet_Categories_to_Activation);
-	
+
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, L"Modify", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classMatrix, 1, L"Weights from Matrix...", 0, 0, DO_FFNet_weightsFromMatrix);
-	
+
 	praat_addAction2 (classFFNet, 1, classPattern, 1, L"Draw", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classPattern, 1, L"Draw activation...", 0, 0, DO_FFNet_Pattern_drawActivation);
 	praat_addAction2 (classFFNet, 1, classPattern, 1, L"Analyse", 0, 0, 0);
 	praat_addAction2 (classFFNet, 1, classPattern, 1, L"To Categories...", 0, 0, DO_FFNet_Pattern_to_Categories);
 	praat_addAction2 (classFFNet, 1, classPattern, 1, L"To Activation...", 0, 0, DO_FFNet_Pattern_to_Activation);
-		
+
 	praat_addAction2 (classFFNet, 1, classPCA, 1, L"Draw decision plane...", 0, 0, DO_FFNet_PCA_drawDecisionPlaneInEigenspace);
-	
+
 	praat_addAction2 (classPattern, 1, classCategories, 1, L"To FFNet...", 0, 0, DO_Pattern_Categories_to_FFNet);
-	
+
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, L"Get total costs...", 0, 0, DO_FFNet_Pattern_Activation_getCosts_total);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, L"Get average costs...", 0, 0, DO_FFNet_Pattern_Activation_getCosts_average);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, L"Learn", 0, 0, 0);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, L"Learn...", 0, 0, DO_FFNet_Pattern_Activation_learnSM);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classActivation, 1, L"Learn slow...", 0, 0, DO_FFNet_Pattern_Activation_learnSD);
-	
+
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, L"Get total costs...", 0, 0, DO_FFNet_Pattern_Categories_getCosts_total);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, L"Get average costs...", 0, 0, DO_FFNet_Pattern_Categories_getCosts_average);
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, L"Learn", 0, 0, 0);
@@ -649,5 +680,5 @@ void praat_uvafon_FFNet_init (void)
 	praat_addAction3 (classFFNet, 1, classPattern, 1, classCategories, 1, L"Learn slow...", 0, 0, DO_FFNet_Pattern_Categories_learnSD);
 
     INCLUDE_MANPAGES (manual_FFNet_init)
-	
+
 }

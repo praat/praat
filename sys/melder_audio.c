@@ -1,6 +1,6 @@
 /* melder_audio.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
  * pb 2008/06/01 removed SPEXLAB audio server
  * pb 2008/06/10 made PortAudio and foreground playing optional
  * pb 2008/07/03 DirectSound
+ * pb 2010/05/09 GTK
  */
 
 #include "melder.h"
@@ -196,12 +197,15 @@ static double theStartingTime = 0.0;
 static struct MelderPlay {
 	const short *buffer;
 	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
-	int asynchronicity, numberOfChannels;
+	unsigned int asynchronicity;
+	int numberOfChannels;
 	bool explicit, fakeMono;
 	int (*callback) (void *closure, long samplesPlayed);
 	void *closure;
 	#if motif
-		XtWorkProcId workProcId;
+		XtWorkProcId workProcId_motif;
+	#elif gtk
+		gint workProcId_gtk;
 	#endif
 	bool usePortAudio, blocking, supports_paComplete;
 	PaStream *stream;
@@ -245,9 +249,7 @@ bool MelderAudio_stopWasExplicit (void) {
  * 3. After asynchronous play, by the workProc.
  * 4. After interruption of asynchronicity 3 by MelderAudio_stopPlaying ().
  */
-static Boolean flush (void) {
-
-#if motif
+static bool flush (void) {
 	struct MelderPlay *me = & thePlay;
 	if (my usePortAudio) {
 		if (my stream != NULL) Pa_CloseStream (my stream), my stream = NULL;
@@ -321,24 +323,23 @@ static Boolean flush (void) {
 		my callback (my closure, my samplesPlayed);
 	my callback = 0;
 	my closure = 0;
-
-#endif
-	return True;   /* Remove workProc if called from workProc. */
+	return true;   /* Remove workProc if called from workProc. */
 }
 
 int MelderAudio_stopPlaying (bool explicit) {
 	struct MelderPlay *me = & thePlay;
 	my explicit = explicit;
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return 0;
+	(void) flush ();
 	#if motif
-		(void) flush ();
-		XtRemoveWorkProc (thePlay. workProcId);
+		XtRemoveWorkProc (thePlay. workProcId_motif);
+	#elif gtk
+		gtk_idle_remove (thePlay. workProcId_gtk);
 	#endif
 	return 1;
 }
 
-#if motif
-static Boolean workProc (XtPointer closure) {
+static bool workProc (void *closure) {
 	struct MelderPlay *me = & thePlay;
 	if (my usePortAudio) {
 		if (my blocking) {
@@ -502,10 +503,19 @@ static Boolean workProc (XtPointer closure) {
 	#endif
 	}
 	(void) closure;
-	return False;
+	return false;
+}
+#if motif
+static Boolean workProc_motif (XtPointer closure) {
+	return workProc ((void *) closure);
+}
+#elif gtk
+static gint workProc_gtk (gpointer closure) {
+	return ! workProc ((void *) closure);
 }
 #endif
 
+#if defined (HPUX) || defined (sun) || defined (linux)
 static void cancelPlay16 (void) {
 	struct MelderPlay *me = & thePlay;
 	#if defined (sgi)
@@ -525,6 +535,7 @@ static void cancelPlay16 (void) {
 	#endif
 	MelderAudio_isPlaying = 0;
 }
+#endif
 
 #if defined (macintosh)
 # define FloatToUnsigned(f)  \
@@ -708,7 +719,9 @@ if (my usePortAudio) {
 			Pa_StopStream (my stream);
 		} else {
 			#if motif
-				my workProcId = XtAppAddWorkProc (0, workProc, 0);
+				my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+			#elif gtk
+				my workProcId_gtk = gtk_idle_add (workProc_gtk, NULL);
 			#endif
 			return 1;
 		}
@@ -773,7 +786,9 @@ if (my usePortAudio) {
 			Pa_AbortStream (my stream);
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			#if motif
-				my workProcId = XtAppAddWorkProc (0, workProc, 0);
+				my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+			#elif gtk
+				my workProcId_gtk = gtk_idle_add (workProc_gtk, NULL);
 			#endif
 			return 1;
 		}
@@ -824,7 +839,7 @@ if (my usePortAudio) {
 				my explicit = MelderAudio_EXPLICIT, interrupted = 1;
 		}
 	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, (XtPointer) me);
+		my workProcId_motif = XtAppAddWorkProc (Melder_appContext, workProc_motif, (XtPointer) me);
 		return 1;
 	}
 	flush ();
@@ -917,7 +932,7 @@ if (my usePortAudio) {
 			SndDisposeChannel (my soundChannel, 0), my soundChannel = NULL;
 			my samplesPlayed = my numberOfSamples;
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-			my workProcId = XtAppAddWorkProc (0, workProc, 0);
+			my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
 			return 1;
 		}
 	}
@@ -1003,7 +1018,7 @@ if (my usePortAudio) {
 				{ my explicit = MelderAudio_EXPLICIT; break; }
 		}
 	} else {
-		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+		my workProcId_motif = XtAppAddWorkProc (Melder_appContext, workProc_motif, NULL);
 		return 1;
 	}
 	#if 0
@@ -1114,7 +1129,7 @@ if (my usePortAudio) {
 			}
 		}
 	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+		my workProcId_motif = XtAppAddWorkProc (Melder_appContext, workProc_motif, NULL);
 		return 1;
 	}
 	flush ();
@@ -1148,12 +1163,11 @@ if (my usePortAudio) {
 		 * and notified us of this by overriding our number of channels.
 		 */
 		if (my numberOfChannels == 1 && my val == 2) {
-			long isamp;
 			short *newBuffer;
 			my fakeMono = true;
 			if ((newBuffer = NUMsvector (0, 2 * numberOfSamples - 1)) == NULL)
 				return cancelPlay16 (), Melder_error1 (L"Cannot fake mono.");
-			for (isamp = 0; isamp < numberOfSamples; isamp ++) {
+			for (long isamp = 0; isamp < numberOfSamples; isamp ++) {
 				newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 			}
 			my buffer = (const short *) newBuffer;
@@ -1202,13 +1216,13 @@ if (my usePortAudio) {
 		}
 	} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 		#if motif
-			my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+			my workProcId_motif = XtAppAddWorkProc (Melder_appContext, workProc_motif, NULL);
+		#elif gtk
+			my workProcId_gtk = gtk_idle_add (workProc_gtk, NULL);
 		#endif
 		return 1;
 	}
-	#if motif
-		flush ();
-	#endif
+	flush ();
 	return 1;
 }
 #elif defined (_WIN32)
@@ -1288,7 +1302,7 @@ if (my usePortAudio) {
 			}
 		}
 	} else {
-		my workProcId = XtAppAddWorkProc (0, workProc, 0);
+		my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
 		return 1;
 	}
 	flush ();

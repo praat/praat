@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/11
+ * pb 2010/05/12
  */
 
 #ifndef _Graphics_h_
@@ -103,7 +103,7 @@ typedef struct {
 	int fontSize, fontStyle; \
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript; \
 	int dollarSignIsCode, atSignIsLink; \
-	int recording; \
+	bool recording, duringXor; \
 	long irecord, nrecord; \
 	double *record; \
 	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */ \
@@ -127,6 +127,9 @@ int Graphics_init (I);
 
 #if defined (USE_GTK)
 	#define GraphicsScreen_members Graphics_members \
+		GdkDisplay *display; \
+		GdkDrawable *window; \
+		GdkGC *gc; \
 		cairo_t *cr;
 	#define mac 0
 	#define win 0
@@ -162,7 +165,7 @@ int Graphics_init (I);
 		COLORREF foregroundColour; \
 		HPEN pen; \
 		HBRUSH brush; \
-		int duringXor, fatNonSolid;
+		bool fatNonSolid;
 	#define mac 0
 	#define win 1
 	#define xwin 0
@@ -176,7 +179,7 @@ int Graphics_init (I);
 	#define GraphicsScreen_members Graphics_members \
 		GrafPtr macPort; \
 		int macFont, macStyle; \
-		int depth, duringXor; \
+		int depth; \
 		RGBColor macColour; \
 		bool useQuartz; \
 		CGContextRef macGraphicsContext;

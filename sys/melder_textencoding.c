@@ -286,7 +286,7 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 	}
 	if (inputEncoding == kMelder_textInputEncoding_UTF8) {
 		while (*p != '\0') {
-			unsigned long kar = * p ++;
+			uint32_t kar = * p ++;
 			if (kar <= 0x7F) {
 				* q ++ = kar;
 			} else if (kar <= 0xDF) {

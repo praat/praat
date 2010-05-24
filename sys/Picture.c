@@ -148,8 +148,9 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 //	g_debug("EXPOSE DRAWING AREA");
 	
 	// save old cairo contexts
-	cairo_t *cgr = Graphics_x_getCR(my graphics);
-	cairo_t *csgr = Graphics_x_getCR(my selectionGraphics);
+	cairo_t *cgr = Graphics_x_getCR (my graphics);
+	Melder_assert (cgr != NULL);
+	cairo_t *csgr = Graphics_x_getCR (my selectionGraphics);
 	
 	// set new cairo contexts
 	Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
@@ -163,7 +164,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	drawSelection (me, 1);
 //	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
 //	cairo_fill(Graphics_x_getCR (my graphics));
-	cairo_destroy(Graphics_x_getCR(my selectionGraphics));
+	cairo_destroy (Graphics_x_getCR (my selectionGraphics));
 	cairo_destroy (Graphics_x_getCR (my graphics));
 
 	// restore old cairo contexts
@@ -263,7 +264,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 			my selectionInProgress = 0;
 		}
 	}
-#elif motif
+#else
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
 
 	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
@@ -751,27 +752,30 @@ void Picture_print (Picture me) {
 void Picture_setSelection
 	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, Boolean notify)
 {
-	#if gtk
-		Picture_selfExpose (me);
-	#else
-		if (my drawingArea) drawSelection (me, 0);   /* Unselect. */
-	#endif
+	if (my drawingArea) {
+		#if gtk
+			short x1, x2, y1, y2;
+			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+		#else
+			drawSelection (me, 0);   /* Unselect. */
+		#endif
+	}
 	my selx1 = x1NDC;
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
-	#if gtk
-		if (my drawingArea) {
+	if (my drawingArea) {
+		#if gtk
 			short x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-
-//			g_debug("%d %d %d %d", x1, y1, x2 - x1, y2 - y1);
 			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
-		}
-	#else
-		if (my drawingArea) drawSelection (me, 1);   /* Select. */
-	#endif
+		#else
+			drawSelection (me, 1);   /* Select. */
+		#endif
+	}
 
 	if (notify && my selectionChangedCallback)
 		my selectionChangedCallback (me, my selectionChangedClosure,

@@ -31,6 +31,7 @@
  * pb 2009/09/21 Zoom Back
  * pb 2009/10/26 repaired the synchronizedZoomAndScroll preference
  * fb 2010/02/24 GTK
+ * pb 2010/05/14 abolished resolution independence
  */
 
 #include "FunctionEditor.h"
@@ -41,16 +42,8 @@
 #define maximumScrollBarValue  2000000000
 #define RELATIVE_PAGE_INCREMENT  0.8
 #define SCROLL_INCREMENT_FRACTION  20
-#if defined (UNIX)
-	#define space 30
-	#define MARGIN  107
-#elif defined (macintosh)
-	#define space 25
-	#define MARGIN  93
-#else
-	#define space 25
-	#define MARGIN  93
-#endif
+#define space 30
+#define MARGIN 107
 #define BOTTOM_MARGIN  2
 #define TOP_MARGIN  3
 #define TEXT_HEIGHT  50
@@ -85,9 +78,8 @@ static int nGroup = 0;
 static FunctionEditor group [1 + maxGroup];
 
 static int group_equalDomain (double tmin, double tmax) {
-	int i;
 	if (nGroup == 0) return 1;
-	for (i = 1; i <= maxGroup; i ++)
+	for (int i = 1; i <= maxGroup; i ++)
 		if (group [i])
 			return tmin == group [i] -> tmin && tmax == group [i] -> tmax;
 	return 0;   /* Should not occur. */
@@ -103,18 +95,18 @@ static void updateScrollBar (FunctionEditor me) {
 		value = maximumScrollBarValue - slider_size;
 	if (value < 1) value = 1;
 	#if motif
-	XtVaSetValues (my scrollBar, XmNmaximum, maximumScrollBarValue, NULL);
+		XtVaSetValues (my scrollBar, XmNmaximum, maximumScrollBarValue, NULL);
 	#endif
 	increment = slider_size / SCROLL_INCREMENT_FRACTION + 1;
 	page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1;
 	#if gtk
-	GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(my scrollBar));
-	adj->page_size = slider_size;
-	gtk_adjustment_set_value(adj, value);
-	gtk_adjustment_changed(adj);
-	gtk_range_set_increments(GTK_RANGE(my scrollBar), increment, page_increment);
+		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my scrollBar));
+		adj -> page_size = slider_size;
+		gtk_adjustment_set_value (adj, value);
+		gtk_adjustment_changed (adj);
+		gtk_range_set_increments (GTK_RANGE (my scrollBar), increment, page_increment);
 	#elif motif
-	XmScrollBarSetValues (my scrollBar, value, slider_size, increment, page_increment, False);
+		XmScrollBarSetValues (my scrollBar, value, slider_size, increment, page_increment, False);
 	#endif
 }
 
@@ -234,7 +226,7 @@ static void drawNow (FunctionEditor me) {
 	 */
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
-	Graphics_setGrey (my graphics, 0.8);
+	Graphics_setGrey (my graphics, 0.85);
 	Graphics_fillRectangle (my graphics, MARGIN, my width - MARGIN, my height - TOP_MARGIN - space, my height);
 	Graphics_fillRectangle (my graphics, 0, MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my graphics, my width - MARGIN, my width, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
@@ -340,7 +332,7 @@ static void drawNow (FunctionEditor me) {
 	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	/*
-	 * Red dashed marker lines.
+	 * Red dotted marker lines.
 	 */
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_RED);
@@ -888,15 +880,10 @@ static int menu_cb_moveEright (EDITOR_ARGS) {
 /********** GUI CALLBACKS **********/
 
 #if gtk
-static void gui_cb_scroll(GtkRange *rng, gpointer void_me) {
+static void gui_cb_scroll (GtkRange *rng, gpointer void_me) {
 	iam (FunctionEditor);
-	double value = gtk_range_get_value(GTK_RANGE(rng));
-#elif motif
-static void gui_cb_scroll(GUI_ARGS) {
-	GUI_IAM (FunctionEditor);
-	int value, slider, incr, pincr;
-	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
-#endif
+	if (my graphics == NULL) return;   // ignore events during creation
+	double value = gtk_range_get_value (GTK_RANGE (rng));
 	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
 	if (shift != 0.0) {
 		int i;
@@ -918,6 +905,34 @@ static void gui_cb_scroll(GUI_ARGS) {
 		}
 	}
 }
+#else
+static void gui_cb_scroll (GUI_ARGS) {
+	GUI_IAM (FunctionEditor);
+	if (my graphics == NULL) return;   // ignore events during creation
+	int value, slider, incr, pincr;
+	XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
+	double shift = my tmin + (value - 1) * (my tmax - my tmin) / maximumScrollBarValue - my startWindow;
+	if (shift != 0.0) {
+		int i;
+		my startWindow += shift;
+		if (my startWindow < my tmin + 1e-12) my startWindow = my tmin;
+		my endWindow += shift;
+		if (my endWindow > my tmax - 1e-12) my endWindow = my tmax;
+		our updateText (me);
+		/*Graphics_clearWs (my graphics);*/
+		drawNow (me);   /* Do not wait for expose event. */
+		if (! my group || ! preferences.synchronizedZoomAndScroll) return;
+		for (i = 1; i <= maxGroup; i ++) if (group [i] && group [i] != me) {
+			group [i] -> startWindow = my startWindow;
+			group [i] -> endWindow = my endWindow;
+			FunctionEditor_updateText (group [i]);
+			updateScrollBar (group [i]);
+			Graphics_clearWs (group [i] -> graphics);
+			drawNow (group [i]);
+		}
+	}
+}
+#endif
 
 static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 	iam (FunctionEditor);
@@ -1059,6 +1074,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (FunctionEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+if (gtk && event -> type != BUTTON_PRESS) return;
 	double xWC, yWC;
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	Graphics_setWindow (my graphics, 0, my width, 0, my height);
@@ -1128,25 +1144,19 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	Dimension marginWidth = 10, marginHeight = 10;
 	#if gtk
-	// no additional margin within the drawing area
-	marginWidth = 0;
-	marginHeight = 0;
+		// no additional margin within the drawing area
+		marginWidth = 0;
+		marginHeight = 0;
 	#elif motif
-	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
 	#endif
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
-	#if gtk
-	// width and height are exact for the drawing area
-	my width = event->width;
-	my height = event->height;
-	#else
-	my width = event -> width - marginWidth - marginWidth + 111;
+	my width = event -> width - marginWidth - marginWidth + 21;
 	my height = event -> height - marginHeight - marginHeight + 111;
-	#endif
 	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	#if gtk
-	// updateWs() also resizes the cairo clipping context to the new window size
+		// updateWs() also resizes the cairo clipping context to the new window size
 	#endif
 	Graphics_updateWs (my graphics);
 
@@ -1162,25 +1172,25 @@ static void createChildren (FunctionEditor me) {
 
 	#if gtk
 		form = my dialog;
-		Widget hctl_box = gtk_hbox_new(FALSE, BUTTON_SPACING);
-		gtk_box_pack_end(GTK_BOX(form), hctl_box, FALSE, FALSE, 0);
-		Widget leftbtn_box = gtk_hbox_new(TRUE, 3);
-		gtk_box_pack_start(GTK_BOX(hctl_box), leftbtn_box, FALSE, FALSE, 0);
+		Widget hctl_box = gtk_hbox_new (FALSE, BUTTON_SPACING);
+		gtk_box_pack_end (GTK_BOX (form), hctl_box, FALSE, FALSE, 0);
+		Widget leftbtn_box = gtk_hbox_new (TRUE, 3);
+		gtk_box_pack_start (GTK_BOX (hctl_box), leftbtn_box, FALSE, FALSE, 0);
 
 		/***** Create zoom buttons. *****/
 
-		gtk_box_pack_start(GTK_BOX(leftbtn_box),
-			GuiButton_create(NULL, 0, 0, 0, 0, L"all", gui_button_cb_showAll, me, 0), TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(leftbtn_box),
-			GuiButton_create(NULL, 0, 0, 0, 0, L"in", gui_button_cb_zoomIn, me, 0), TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(leftbtn_box),
-			GuiButton_create(NULL, 0, 0, 0, 0, L"out", gui_button_cb_zoomOut, me, 0), TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(leftbtn_box),
-			GuiButton_create(NULL, 0, 0, 0, 0, L"sel", gui_button_cb_zoomToSelection, me, 0), TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(leftbtn_box),
-			GuiButton_create(NULL, 0, 0, 0, 0, L"bak", gui_button_cb_zoomBack, me, 0), TRUE, TRUE, 0);
-		
-		GuiObject_show(leftbtn_box);
+		gtk_box_pack_start (GTK_BOX (leftbtn_box),
+			GuiButton_create (NULL, 0, 0, 0, 0, L"all", gui_button_cb_showAll, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (leftbtn_box),
+			GuiButton_create (NULL, 0, 0, 0, 0, L"in", gui_button_cb_zoomIn, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (leftbtn_box),
+			GuiButton_create (NULL, 0, 0, 0, 0, L"out", gui_button_cb_zoomOut, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (leftbtn_box),
+			GuiButton_create (NULL, 0, 0, 0, 0, L"sel", gui_button_cb_zoomToSelection, me, 0), TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (leftbtn_box),
+			GuiButton_create (NULL, 0, 0, 0, 0, L"bak", gui_button_cb_zoomBack, me, 0), TRUE, TRUE, 0);
+
+		GuiObject_show (leftbtn_box);
 	#elif motif
 		form = XmCreateForm (my dialog, "buttons", NULL, 0);
 		XtVaSetValues (form,
@@ -1211,10 +1221,11 @@ static void createChildren (FunctionEditor me) {
 	/***** Create scroll bar. *****/
 
 	#if gtk
-		GtkAdjustment *adj = gtk_adjustment_new(1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
-		my scrollBar = gtk_hscrollbar_new(adj);
-		GuiObject_show(my scrollBar);
-		gtk_box_pack_start(GTK_BOX(hctl_box), my scrollBar, TRUE, TRUE, 3);
+		GtkObject *adj = gtk_adjustment_new (1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
+		my scrollBar = gtk_hscrollbar_new (GTK_ADJUSTMENT (adj));
+		g_signal_connect (G_OBJECT (my scrollBar), "value-changed", G_CALLBACK (gui_cb_scroll), me);
+		GuiObject_show (my scrollBar);
+		gtk_box_pack_start (GTK_BOX (hctl_box), my scrollBar, TRUE, TRUE, 3);
 	#elif motif
 		my scrollBar = XtVaCreateManagedWidget ("scrollBar",
 			xmScrollBarWidgetClass, form,
@@ -1228,47 +1239,29 @@ static void createChildren (FunctionEditor me) {
 			XmNvalue, 1,
 			XmNsliderSize, maximumScrollBarValue - 1,
 			NULL);
+		XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
+		XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	#endif
 
 	/***** Create Group button. *****/
 
 	#if gtk
-		my groupButton = GuiCheckButton_create(NULL, 0, 0, 0, 0, L"Group",
+		my groupButton = GuiCheckButton_create (NULL, 0, 0, 0, 0, L"Group",
 			gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
-		gtk_box_pack_start(GTK_BOX(hctl_box), my groupButton, FALSE, FALSE, 0);
-		gtk_widget_show_all(hctl_box);
+		gtk_box_pack_start (GTK_BOX (hctl_box), my groupButton, FALSE, FALSE, 0);
+		gtk_widget_show_all (hctl_box);
 	#else
 		my groupButton = GuiCheckButton_createShown (form, -80, 0, - Machine_getScrollBarWidth () - 5, -4,
 			L"Group", gui_checkbutton_cb_group, me, group_equalDomain (my tmin, my tmax) ? GuiCheckButton_SET : 0);
-	#endif
-
-	/***** Create drawing area. *****/
-
-	#if gtk
-		my drawingArea = GuiDrawingArea_create (NULL, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
-		
-		// turn off double-buffering, otherwise the reaction to the expose-events gets
-		// delayed by one event (TODO: figure out, why)
-		gtk_widget_set_double_buffered(my drawingArea, FALSE);
-		
-		// turn off clearing window to background colour before an expose event
-		// gtk_widget_set_app_paintable(my drawingArea, FALSE);
-		
-		gtk_box_pack_start(GTK_BOX(form), my drawingArea, TRUE, TRUE, 0);
-		GuiObject_show(my drawingArea);
-	#else
-		my drawingArea = GuiDrawingArea_createShown (form, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
 	#endif
 
 	/***** Create optional text field. *****/
 
 	if (our hasText) {
 		#if gtk
-			my text = GuiText_create(NULL, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
-			gtk_box_pack_start(form, my text, FALSE, FALSE, 3);
-			GuiObject_show(my text);
+			my text = GuiText_create (NULL, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
+			gtk_box_pack_start (GTK_BOX (form), my text, FALSE, FALSE, 3);
+			GuiObject_show (my text);
 		#else
 			my text = GuiText_createShown (form, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
 		#endif
@@ -1281,13 +1274,31 @@ static void createChildren (FunctionEditor me) {
 		 * in the window (in our Motif emulator, this is the automatic behaviour).
 		 */
 		#if gtk
-			gtk_widget_grab_focus(my text);
-		#elif defined(UNIX)
-			#if motif
+			gtk_widget_grab_focus (my text);   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)
+		#elif motif && defined (UNIX)
 			XtSetKeyboardFocus (form, my text);
-			#endif
 		#endif
 	}
+
+	/***** Create drawing area. *****/
+
+	#if gtk
+		my drawingArea = GuiDrawingArea_create (NULL, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+		
+		// turn off double-buffering, otherwise the reaction to the expose-events gets
+		// delayed by one event (TODO: figure out, why)
+		gtk_widget_set_double_buffered (my drawingArea, FALSE);
+		
+		// turn off clearing window to background colour before an expose event
+		// gtk_widget_set_app_paintable (my drawingArea, FALSE);
+		
+		gtk_box_pack_start (GTK_BOX (form), my drawingArea, TRUE, TRUE, 0);
+		GuiObject_show (my drawingArea);
+	#else
+		my drawingArea = GuiDrawingArea_createShown (form, 0, 0, our hasText ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+	#endif
 
 	GuiObject_show (form);
 }
@@ -1329,8 +1340,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	 */
 	double xleft, xright;
 	if (x1 > x2) xleft = x2, xright = x1; else xleft = x1, xright = x2;
-	#if motif
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
 	Graphics_text1 (my graphics, xleft, 1.0, Melder_fixed (xleft, 6));
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_TOP);
@@ -1340,7 +1350,6 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_text1 (my graphics, xright, 0.0, Melder_fixed (xright, 6));
 	Graphics_xorOff (my graphics);
-	#endif
 }
 
 static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyPressed) {
@@ -1437,7 +1446,6 @@ static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyP
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
-	#if motif
 	while (Graphics_mouseStillDown (my graphics)) {
 		Graphics_getMouseLocation (my graphics, & x, & y);
 		if (x < my startWindow) x = my startWindow;
@@ -1447,7 +1455,6 @@ static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyP
 			break;
 		}
 	}
-	#endif
 	if (drag) {
 		if (! shiftKeyPressed) {
 			anchorForDragging = xbegin;
@@ -1483,7 +1490,6 @@ static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyP
 		/*
 		 * Drag for the new selection.
 		 */
-		#if motif
 		while (Graphics_mouseStillDown (my graphics)) {
 			double xold = x, x1, x2;
 			Graphics_getMouseLocation (my graphics, & x, & y);
@@ -1511,7 +1517,6 @@ static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyP
 			 */
 			drawWhileDragging (me, anchorForDragging, x);
 		} ;
-		#endif
 		/*
 		 * Set the new selection.
 		 */
@@ -1571,7 +1576,6 @@ static int playCallback (Any void_me, int phase, double tmin, double tmax, doubl
 	(void) tmin;
 	Graphics_inqViewport (my graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (me);
-	#if motif
 	Graphics_xorOn (my graphics, Graphics_MAGENTA);
 	/*
 	 * Undraw the play cursor at its old location.
@@ -1591,7 +1595,6 @@ static int playCallback (Any void_me, int phase, double tmin, double tmax, doubl
 		Graphics_setLineWidth (my graphics, 1.0);
 	}
 	Graphics_xorOff (my graphics);
-	#endif
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
 	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.
@@ -1699,7 +1702,7 @@ int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title,
 		Melder_assert (XtWindow (my drawingArea));
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setFontSize (my graphics, 10);
+	Graphics_setFontSize (my graphics, 12);
 
 // This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
@@ -1707,12 +1710,6 @@ event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-	#if gtk
-		g_signal_connect(G_OBJECT(my scrollBar), "value-changed", G_CALLBACK(gui_cb_scroll), me);
-	#elif motif
-		XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
-		XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
-	#endif
 	our updateText (me);
 	if (group_equalDomain (my tmin, my tmax))
 		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
@@ -1743,10 +1740,10 @@ void FunctionEditor_enableUpdates (FunctionEditor me, bool enable) {
 }
 
 void FunctionEditor_ungroup (FunctionEditor me) {
-	int i = 1;
 	if (! my group) return;
 	my group = false;
 	GuiCheckButton_setValue (my groupButton, false);
+	int i = 1;
 	while (group [i] != me) i ++;
 	group [i] = NULL;
 	nGroup --;

@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,4 +87,6 @@ Permutation Permutation_invert (Permutation me);
 Permutation Permutation_reverse (Permutation me, long from, long to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
+int Permutation_next_inline (Permutation me);
+int Permutation_previous_inline (Permutation me);
 #endif /* _Permutation_h_ */

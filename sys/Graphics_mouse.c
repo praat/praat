@@ -1,6 +1,6 @@
 /* Graphics_mouse.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,14 @@
 /*
  * pb 2000/09/21
  * pb 2002/03/07 GPL
+ * pb 2010/05/10 GTK
  */
 
 #include "GraphicsP.h"
 #include "Gui.h"
 
-#if motif
-
-#if xwin
-	static int mouseDown = TRUE;
+#if cairo || xwin
+	static bool mouseDown = true;
 #endif
 
 /*
@@ -40,9 +39,10 @@
 int Graphics_mouseStillDown (I) {
 	iam (Graphics);
 	if (my screen) {
-		#if xwin
+		iam (GraphicsScreen);
+		#if cairo || xwin
 			if (mouseDown) return TRUE;
-			else { mouseDown = TRUE; return FALSE; }
+			else { mouseDown = true; return FALSE; }
 		#elif win
 			return motif_win_mouseStillDown ();
 		#elif mac
@@ -57,11 +57,22 @@ void Graphics_getMouseLocation (I, double *xWC, double *yWC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if xwin
+		#if cairo
+			GdkEvent *gevent = gdk_display_get_event (my display);
+			if (gevent != NULL) {
+				if (gevent -> type == GDK_BUTTON_RELEASE) {
+					mouseDown = false;
+				}
+				gdk_event_free (gevent);
+			}
+			gint xDC, yDC;
+			gdk_window_get_pointer (my window, & xDC, & yDC, NULL);
+			Graphics_DCtoWC (me, xDC, yDC, xWC, yWC);
+		#elif xwin
 			XEvent event;
 			XButtonEvent *button;
 			XMaskEvent (my display, ButtonReleaseMask | ButtonMotionMask | ExposureMask, & event);
-			if (event. type == ButtonRelease) mouseDown = FALSE;
+			if (event. type == ButtonRelease) mouseDown = false;
 			button = (XButtonEvent *) & event;
 			Graphics_DCtoWC (me, button -> x, button -> y, xWC, yWC);
 		#elif win
@@ -84,6 +95,5 @@ void Graphics_waitMouseUp (I) {
 		Graphics_getMouseLocation (me, & xWC, & yWC);
 	}
 }
-#endif
 
 /* End of file Graphics_mouse.c */

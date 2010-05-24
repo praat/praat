@@ -75,15 +75,9 @@ static void updateFontMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
 		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;   // we no longer have New Century Schoolbook
-		#if gtk
-			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
-				gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_fonts [i]), theCurrentPraatPicture -> font == i);
-			}
-		#elif motif
-			for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
-				XmToggleButtonGadgetSetState (praatButton_fonts [i], theCurrentPraatPicture -> font == i, 0);
-			}
-		#endif
+		for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
+			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
+		}
 	}
 }
 static void setFont (int font) {
@@ -105,39 +99,15 @@ DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		#if gtk
-			switch (theCurrentPraatPicture -> fontSize) {
-				case 10:
-//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_10)))
-						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_10), TRUE);
-					break;
-				case 12:
-//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_12)))
-						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_12), TRUE);
-					break;
-				case 14:
-//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_14)))
-						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_14), TRUE);
-					break;
-				case 18:
-//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_18)))
-						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_18), TRUE);
-					break;
-				case 24:
-//					if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(praatButton_24)))
-						gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_24), TRUE);
-					break;
-			}
-		#elif motif
-			XmToggleButtonGadgetSetState (praatButton_10, theCurrentPraatPicture -> fontSize == 10, 0);
-			XmToggleButtonGadgetSetState (praatButton_12, theCurrentPraatPicture -> fontSize == 12, 0);
-			XmToggleButtonGadgetSetState (praatButton_14, theCurrentPraatPicture -> fontSize == 14, 0);
-			XmToggleButtonGadgetSetState (praatButton_18, theCurrentPraatPicture -> fontSize == 18, 0);
-			XmToggleButtonGadgetSetState (praatButton_24, theCurrentPraatPicture -> fontSize == 24, 0);
-		#endif
+		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
+		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
+		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14);
+		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18);
+		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24);
 	}
 }
 static void setFontSize (int fontSize) {
+	//Melder_casual("Praat picture: set font size %d", fontSize);
 	praat_picture_open ();
 	Graphics_setFontSize (GRAPHICS, fontSize);
 	praat_picture_close ();
@@ -187,14 +157,8 @@ END
 static Widget praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		#if gtk
-//			gtk_check_menu_item_set_active((praat_mouseSelectsInnerViewport ?
-//			                                  GTK_CHECK_MENU_ITEM(praatButton_innerViewport) :
-//							  GTK_CHECK_MENU_ITEM(praatButton_outerViewport)), TRUE);
-		#elif motif
-			XmToggleButtonGadgetSetState (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0, 0);
-			XmToggleButtonGadgetSetState (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1, 0);
-		#endif
+		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
+		GuiMenuItem_check (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1);
 	}
 }
 
@@ -350,53 +314,26 @@ static Widget praatButton_black, praatButton_white, praatButton_red, praatButton
 
 static void updatePenMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-	#if gtk
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
-			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (praatButton_lines [i]), theCurrentPraatPicture -> lineType == i);
+			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
 		}
-		#define _set_active(c1, c2) \
-				gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(praatButton_ ## c1), \
-		                                   Graphics_Colour_equal(theCurrentPraatPicture->colour, Graphics_ ## c2));
-		_set_active(black, BLACK);
-		_set_active(white, WHITE);
-		_set_active(red, RED);
-		_set_active(green, GREEN);
-		_set_active(blue, BLUE);
-		_set_active(yellow, YELLOW);
-		_set_active(cyan, CYAN);
-		_set_active(magenta, MAGENTA);
-		_set_active(maroon, MAROON);
-		_set_active(lime, LIME);
-		_set_active(navy, NAVY);
-		_set_active(teal, TEAL);
-		_set_active(purple, PURPLE);
-		_set_active(olive, OLIVE);
-		_set_active(pink, PINK);
-		_set_active(silver, SILVER);
-		_set_active(grey, GREY);
-		#undef _set_active
-	#elif motif
-		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
-			XmToggleButtonGadgetSetState (praatButton_lines [i], theCurrentPraatPicture -> lineType == i, 0);
-		}
-		XmToggleButtonGadgetSetState (praatButton_black, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK), 0);
-		XmToggleButtonGadgetSetState (praatButton_white, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE), 0);
-		XmToggleButtonGadgetSetState (praatButton_red, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED), 0);
-		XmToggleButtonGadgetSetState (praatButton_green, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN), 0);
-		XmToggleButtonGadgetSetState (praatButton_blue, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE), 0);
-		XmToggleButtonGadgetSetState (praatButton_yellow, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW), 0);
-		XmToggleButtonGadgetSetState (praatButton_cyan, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN), 0);
-		XmToggleButtonGadgetSetState (praatButton_magenta, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA), 0);
-		XmToggleButtonGadgetSetState (praatButton_maroon, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON), 0);
-		XmToggleButtonGadgetSetState (praatButton_lime, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME), 0);
-		XmToggleButtonGadgetSetState (praatButton_navy, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY), 0);
-		XmToggleButtonGadgetSetState (praatButton_teal, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL), 0);
-		XmToggleButtonGadgetSetState (praatButton_purple, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE), 0);
-		XmToggleButtonGadgetSetState (praatButton_olive, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE), 0);
-		XmToggleButtonGadgetSetState (praatButton_pink, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK), 0);
-		XmToggleButtonGadgetSetState (praatButton_silver, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER), 0);
-		XmToggleButtonGadgetSetState (praatButton_grey, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY), 0);
-	#endif
+		GuiMenuItem_check (praatButton_black, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
+		GuiMenuItem_check (praatButton_white, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
+		GuiMenuItem_check (praatButton_red, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
+		GuiMenuItem_check (praatButton_green, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
+		GuiMenuItem_check (praatButton_blue, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
+		GuiMenuItem_check (praatButton_yellow, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
+		GuiMenuItem_check (praatButton_cyan, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
+		GuiMenuItem_check (praatButton_magenta, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
+		GuiMenuItem_check (praatButton_maroon, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
+		GuiMenuItem_check (praatButton_lime, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
+		GuiMenuItem_check (praatButton_navy, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
+		GuiMenuItem_check (praatButton_teal, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
+		GuiMenuItem_check (praatButton_purple, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
+		GuiMenuItem_check (praatButton_olive, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
+		GuiMenuItem_check (praatButton_pink, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
+		GuiMenuItem_check (praatButton_silver, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
+		GuiMenuItem_check (praatButton_grey, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
 	}
 }
 static void setLineType (int lineType) {
@@ -1547,7 +1484,9 @@ void praat_picture_exit (void) {
 void praat_picture_open (void) {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
-		#if motif
+		#if gtk
+			gtk_widget_show (shell);
+		#elif motif
 			XtMapWidget (shell);
 			XMapRaised (XtDisplay (shell), XtWindow (shell)); 
 		#endif
@@ -1613,9 +1552,9 @@ void praat_picture_init (void) {
 		char pictureWindowTitle [100];
 		// Ook al eerder gezien... Migreren naar UI?
 		#if gtk
-	                GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (GuiObject_parent (theCurrentPraatApplication -> topShell)));
-	                int screenWidth = gdk_screen_get_width (screen);
-//	                int screenHeight = gdk_screen_get_height (screen);
+			GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (theCurrentPraatApplication -> topShell));
+			int screenWidth = gdk_screen_get_width (screen);
+//	        int screenHeight = gdk_screen_get_height (screen);
 		#elif motif
 			int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraatApplication -> topShell)));
 		#endif
@@ -1793,30 +1732,30 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- colour --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Colour...", 0, 0, DO_Colour);
-	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_RADIO_FIRST, DO_Black);
-	praatButton_white = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_RADIO_NEXT, DO_White);
-	praatButton_red = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_RADIO_NEXT, DO_Red);
-	praatButton_green = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_RADIO_NEXT, DO_Green);
-	praatButton_blue = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_RADIO_NEXT, DO_Blue);
-	praatButton_yellow = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_RADIO_NEXT, DO_Yellow);
-	praatButton_cyan = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_RADIO_NEXT, DO_Cyan);
-	praatButton_magenta = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_RADIO_NEXT, DO_Magenta);
-	praatButton_maroon = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_RADIO_NEXT, DO_Maroon);
-	praatButton_lime = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_RADIO_NEXT, DO_Lime);
-	praatButton_navy = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_RADIO_NEXT, DO_Navy);
-	praatButton_teal = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_RADIO_NEXT, DO_Teal);
-	praatButton_purple = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_RADIO_NEXT, DO_Purple);
-	praatButton_olive = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_RADIO_NEXT, DO_Olive);
-	praatButton_pink = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_RADIO_NEXT, DO_Pink);
-	praatButton_silver = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_RADIO_NEXT, DO_Silver);
-	praatButton_grey = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_RADIO_NEXT, DO_Grey);
+	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_CHECKBUTTON, DO_Black);
+	praatButton_white = praat_addMenuCommand (L"Picture", L"Pen", L"White", 0, praat_CHECKBUTTON, DO_White);
+	praatButton_red = praat_addMenuCommand (L"Picture", L"Pen", L"Red", 0, praat_CHECKBUTTON, DO_Red);
+	praatButton_green = praat_addMenuCommand (L"Picture", L"Pen", L"Green", 0, praat_CHECKBUTTON, DO_Green);
+	praatButton_blue = praat_addMenuCommand (L"Picture", L"Pen", L"Blue", 0, praat_CHECKBUTTON, DO_Blue);
+	praatButton_yellow = praat_addMenuCommand (L"Picture", L"Pen", L"Yellow", 0, praat_CHECKBUTTON, DO_Yellow);
+	praatButton_cyan = praat_addMenuCommand (L"Picture", L"Pen", L"Cyan", 0, praat_CHECKBUTTON, DO_Cyan);
+	praatButton_magenta = praat_addMenuCommand (L"Picture", L"Pen", L"Magenta", 0, praat_CHECKBUTTON, DO_Magenta);
+	praatButton_maroon = praat_addMenuCommand (L"Picture", L"Pen", L"Maroon", 0, praat_CHECKBUTTON, DO_Maroon);
+	praatButton_lime = praat_addMenuCommand (L"Picture", L"Pen", L"Lime", 0, praat_CHECKBUTTON, DO_Lime);
+	praatButton_navy = praat_addMenuCommand (L"Picture", L"Pen", L"Navy", 0, praat_CHECKBUTTON, DO_Navy);
+	praatButton_teal = praat_addMenuCommand (L"Picture", L"Pen", L"Teal", 0, praat_CHECKBUTTON, DO_Teal);
+	praatButton_purple = praat_addMenuCommand (L"Picture", L"Pen", L"Purple", 0, praat_CHECKBUTTON, DO_Purple);
+	praatButton_olive = praat_addMenuCommand (L"Picture", L"Pen", L"Olive", 0, praat_CHECKBUTTON, DO_Olive);
+	praatButton_pink = praat_addMenuCommand (L"Picture", L"Pen", L"Pink", 0, praat_CHECKBUTTON, DO_Pink);
+	praatButton_silver = praat_addMenuCommand (L"Picture", L"Pen", L"Silver", 0, praat_CHECKBUTTON, DO_Silver);
+	praatButton_grey = praat_addMenuCommand (L"Picture", L"Pen", L"Grey", 0, praat_CHECKBUTTON, DO_Grey);
 
-	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_RADIO_FIRST, DO_10);
-	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_RADIO_NEXT,  DO_12);
-	praatButton_14 = praat_addMenuCommand (L"Picture", L"Font", L"14", 0, praat_RADIO_NEXT, DO_14);
-	praatButton_18 = praat_addMenuCommand (L"Picture", L"Font", L"18", 0, praat_RADIO_NEXT, DO_18);
-	praatButton_24 = praat_addMenuCommand (L"Picture", L"Font", L"24", 0, praat_RADIO_NEXT, DO_24);
 	praat_addMenuCommand (L"Picture", L"Font", L"Font size...", 0, 0, DO_Font_size);
+	praatButton_10 = praat_addMenuCommand (L"Picture", L"Font", L"10", 0, praat_CHECKBUTTON, DO_10);
+	praatButton_12 = praat_addMenuCommand (L"Picture", L"Font", L"12", 0, praat_CHECKBUTTON, DO_12);
+	praatButton_14 = praat_addMenuCommand (L"Picture", L"Font", L"14", 0, praat_CHECKBUTTON, DO_14);
+	praatButton_18 = praat_addMenuCommand (L"Picture", L"Font", L"18", 0, praat_CHECKBUTTON, DO_18);
+	praatButton_24 = praat_addMenuCommand (L"Picture", L"Font", L"24", 0, praat_CHECKBUTTON, DO_24);
 	praat_addMenuCommand (L"Picture", L"Font", L"-- font ---", 0, 0, 0);
 	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (L"Picture", L"Font", L"Times", 0, praat_RADIO_FIRST, DO_Times);
 	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (L"Picture", L"Font", L"Helvetica", 0, praat_RADIO_NEXT, DO_Helvetica);
@@ -1868,7 +1807,7 @@ void praat_picture_init (void) {
 		GuiObject_show (scrollWindow);
 		GuiObject_show (dialog);
 		#if gtk
-			GuiWindow_show (shell);
+			GuiWindow_show (dialog);
 		#elif motif
 			XtRealizeWidget (shell);
 		#endif

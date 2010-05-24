@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 	long i, j, k, numberOfFrames;
 	double firstTime, b = 1.02, samplingFrequency = 1 / my dx;
 	double *f = NULL, *bw = NULL, *aex = NULL, *ain = NULL;
-	
+
 	if (timeStep < my dx) timeStep = my dx;
 	if (maximumFrequencyHz > samplingFrequency / 2) maximumFrequencyHz = samplingFrequency / 2;
-			
+
 	if (! Sampled_shortTermAnalysis (me, windowDuration, timeStep, &numberOfFrames, &firstTime) ||
 		! (thee = SPINET_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime,
 			minimumFrequencyHz, maximumFrequencyHz, nFilters,
@@ -57,19 +57,19 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 		! (frame = Sound_createSimple (1, windowDuration, samplingFrequency)) ||
 		! (f = NUMdvector (1, nFilters)) || ! (bw = NUMdvector (1, nFilters)) ||
 		! (aex = NUMdvector (1, nFilters)) || ! (ain = NUMdvector (1, nFilters))) goto cleanup;
-				
+
 	/*
 		Cochlear filterbank: gammatone
 	*/
-	
+
 	for (i=1; i <= nFilters; i++)
 	{
 		f[i] = NUMerbToHertz (thy y1 + (i - 1) * thy dy);
 		bw[i] = 2 * NUMpi * b * (f[i] * (6.23e-6 * f[i] + 93.39e-3) + 28.52);
 	}
-	
+
 	Melder_progress1 (0.0, L"SPINET analysis");
-	
+
 	for (i=1; i <= nFilters; i++)
 	{
 		Sound gammaTone = NULL, filtered = NULL;
@@ -85,7 +85,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			/* filtering can be made 30% faster by taking Spectrum(me) outside the loop */
 			! (filtered = Sounds_convolve (me, gammaTone, kSounds_convolve_scaling_SUM, kSounds_convolve_signalOutsideTimeDomain_ZERO))) { forget (gammaTone); goto cleanup; }
 		/*
-			To energy measure: weigh with broad-band transfer function  
+			To energy measure: weigh with broad-band transfer function
 		*/
 		for (j=1; j <= numberOfFrames; j++)
 		{
@@ -95,7 +95,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 		}
 		forget (filtered); forget (gammaTone);
 		if (! Melder_progress5 ((double)i / nFilters, L"SPINET: filter ", Melder_integer (i), L" from ",
-			Melder_integer (nFilters), L".")) goto cleanup;		
+			Melder_integer (nFilters), L".")) goto cleanup;
 	}
 
 	/*
@@ -107,11 +107,11 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 		for (k=1; k <= nFilters; k++)
 		{
 			double fr = (f[k] - f[i]) / bw[i];
-			aex[i] += fgamma (fr / thy excitationErbProportion, thy gamma);	
+			aex[i] += fgamma (fr / thy excitationErbProportion, thy gamma);
 			ain[i] += fgamma (fr / thy inhibitionErbProportion, thy gamma);
 		}
 	}
-	
+
 	/*
 		On-center off-surround interactions
 	*/

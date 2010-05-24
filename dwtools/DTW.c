@@ -1,6 +1,6 @@
 /* DTW.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  djmw 20080122 float -> double
  djmw 20081123 DTW_and_Sounds_checkDomains did not swap sounds correctly.
  djmw 20091009 Removed a bug in DTW_Path_recode that could cause two identical x and y times in succesion at the end.
+ djmw 20100504 extra check in DTW_Path_makeIndex
 */
 
 #include "DTW.h"
@@ -203,10 +204,9 @@ int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx)
 	my ny = ny;
 	my nx = nx;
 	my nxy = 2 * (ny > nx ? ny : nx) + 2; // maximum number of points
-	if ((my xytimes = NUMstructvector (DTW_Path_xytime, 1, my nxy)) == NULL) return 0;
-	if ((my yindex = NUMstructvector (DTW_Path_Index, 1, my ny)) == NULL) return 0;
-	if ((my xindex = NUMstructvector (DTW_Path_Index, 1, my nx)) == NULL) return 0;
-	return 1;
+	return ((my xytimes = NUMstructvector (DTW_Path_xytime, 1, my nxy)) != NULL) &&
+		((my yindex = NUMstructvector (DTW_Path_Index, 1, my ny)) != NULL) &&
+		((my xindex = NUMstructvector (DTW_Path_Index, 1, my nx)) != NULL);
 }
 
 static void DTW_Path_makeIndex (DTW me, int xory)
@@ -240,7 +240,7 @@ static void DTW_Path_makeIndex (DTW me, int xory)
 		xlow = x1 + (j - 1 - 0.5) * dx;
 		xhigh = xlow + dx;
 
-		if (xlow - xy_x2 > -eps) // i.e. xlow >= xy_x2
+		if (xlow - xy_x2 > -eps && i < thy nxy) // i.e. xlow >= xy_x2
 		{
 			i++;
 			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
@@ -248,7 +248,7 @@ static void DTW_Path_makeIndex (DTW me, int xory)
 
 		index[j].ibegin = i - 1;
 
-		while (xhigh - xy_x2 > eps) // i.e. xhigh > xy_x2
+		while (xhigh - xy_x2 > eps && i < thy nxy) // i.e. xhigh > xy_x2
 		{
 			i++;
 			xy_x2 = xory == DTW_X ? thy xytimes[i].x : thy xytimes[i].y;
@@ -534,12 +534,10 @@ Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c)
 {
 	DTW me = new (DTW);
-	if (me == NULL) return NULL;
-	if (! Matrix_init (me, tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p)) goto end;
-	if ((my path = NUMstructvector (DTW_Path, 1, ntc + ntp - 1)) == NULL) goto end;
-	(void) DTW_Path_Query_init (& my pathQuery, ntp, ntc);
-end:
-	if (Melder_hasError()) forget (me);
+	if ((me == NULL) ||
+		(! Matrix_init (me, tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p)) ||
+		((my path = NUMstructvector (DTW_Path, 1, ntc + ntp - 1)) == NULL) ||
+		(! DTW_Path_Query_init (& my pathQuery, ntp, ntc))) forget (me);
 	return me;
 }
 
