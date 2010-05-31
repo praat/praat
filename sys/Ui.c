@@ -491,7 +491,9 @@ static void classUiForm_destroy (I) {
 	iam (UiForm);
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 		forget (my field [ifield]);
-	if (my dialog) GuiObject_destroy (GuiObject_parent (my dialog));
+	if (my dialog) {
+		GuiObject_destroy (GuiObject_parent (my dialog));
+	}
 	Melder_free (my invokingButtonTitle);
 	Melder_free (my helpTitle);
 	inherited (UiForm) destroy (me);
@@ -912,16 +914,14 @@ void UiForm_finish (I) {
 	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, gui_dialog_cb_close, me, 0);
 
 	#if gtk
-		form = gtk_vbox_new(FALSE, 0);
-		{
-			Widget scroll_win = gtk_scrolled_window_new(NULL, NULL);
-			gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll_win), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-			gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll_win), form);
-			gtk_container_add(GTK_CONTAINER(GTK_DIALOG(my dialog)->vbox), scroll_win);
-			gtk_widget_show(scroll_win);
-		}
+		form = gtk_vbox_new (FALSE, 0);
+		Widget scroll_win = gtk_scrolled_window_new (NULL, NULL);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll_win), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW(scroll_win), form);
+		gtk_container_add (GTK_CONTAINER (my dialog), scroll_win);
+		gtk_widget_show (scroll_win);
 		gtk_widget_show(form);
-		buttons = GTK_DIALOG(my dialog) -> action_area;
+		buttons = GTK_DIALOG (GuiObject_parent (my dialog)) -> action_area;
 	#else
 		form = my dialog;
 		buttons = my dialog;
@@ -1544,4 +1544,3 @@ int UiForm_getClickedContinueButton (UiForm me) {
 }
 
 /* End of file Ui.c */
-

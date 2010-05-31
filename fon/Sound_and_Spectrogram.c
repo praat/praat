@@ -69,6 +69,8 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	nsamp_window = (long) floor (physicalAnalysisWidth / my dx);
 	halfnsamp_window = nsamp_window / 2 - 1;
 	nsamp_window = halfnsamp_window * 2;
+	if (nsamp_window < 1)
+		return Melder_errorp ("(Sound_to_Spectrogram:) Your analysis window is too short: less than two samples.");
 	if (physicalAnalysisWidth > duration)
 		return Melder_errorp ("(Sound_to_Spectrogram:) Your sound is too short:\n"
 			"it should be at least as long as %s.",
@@ -102,8 +104,11 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 			0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz)); cherror
 
 	frame = NUMdvector (1, nsampFFT); cherror
+	Melder_assert (frame != NULL);
 	spec = NUMdvector (1, nsampFFT); cherror
+	Melder_assert (spec != NULL);
 	window = NUMdvector (1, nsamp_window); cherror
+	Melder_assert (window != NULL);
 	NUMfft_Table_init (& fftTable, nsampFFT); cherror
 
 	Melder_progress1 (0.0, L"Sound to Spectrogram...");

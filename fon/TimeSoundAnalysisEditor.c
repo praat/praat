@@ -1946,8 +1946,8 @@ static void draw_analysis (TimeSoundAnalysisEditor me) {
 		Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
 		Graphics_setFontSize (my graphics, 10);
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text3 (my graphics, 0.5, 0.67, L"To see the analyses, zoom in to at most ", Melder_half (my longestAnalysis), L" seconds,");
-		Graphics_text (my graphics, 0.5, 0.33, L"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.");
+		Graphics_text3 (my graphics, 0.5, 0.67, L"(To see the analyses, zoom in to at most ", Melder_half (my longestAnalysis), L" seconds,");
+		Graphics_text (my graphics, 0.5, 0.33, L"or raise the \"longest analysis\" setting with \"Show analyses\" in the View menu.)");
 		Graphics_setFontSize (my graphics, 12);
 		return;
 	}
@@ -2044,8 +2044,10 @@ static void draw_analysis (TimeSoundAnalysisEditor me) {
 			}
 		} else {
 			Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+			Graphics_setFontSize (my graphics, 10);
 			Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (pitchViewFrom_hidden + pitchViewTo_hidden),
 				L"(Cannot show pitch contour. Zoom out or change bottom of pitch range in pitch settings.)");
+			Graphics_setFontSize (my graphics, 12);
 		}
 		Graphics_setColour (my graphics, Graphics_BLACK);
 	}

@@ -48,7 +48,7 @@ int Machine_getMenuBarHeight (void) {
 		26,   /* Solaris */
 		26,   /* HP */
 		26,   /* Sun4 */
-		34,   /* Mac */
+		36,   /* Mac */
 		0,    /* Win32 */
 		30    /* Linux */
 	};

@@ -253,6 +253,7 @@ static void classEditor_destroy (I) {
 	forget (my menus);
 	if (my shell) {
 		#if gtk
+			Melder_assert (GTK_IS_WIDGET (my shell));
 			gtk_widget_destroy (my shell);
 		#elif motif
 			#if defined (UNIX)

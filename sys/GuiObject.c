@@ -119,7 +119,7 @@ void GuiObject_destroy (Widget me) {
 long GuiObject_getHeight (Widget me) {
 	long height = 0;
 	#if gtk
-		height = me->allocation.height;
+		height = my allocation.height;
 	#elif win || mac
 		height = my height;
 	#elif motif
@@ -133,7 +133,7 @@ long GuiObject_getHeight (Widget me) {
 long GuiObject_getWidth (Widget me) {
 	long width = 0;
 	#if gtk
-		width = me->allocation.width;
+		width = my allocation.width;
 	#elif win || mac
 		width = my width;
 	#elif motif
@@ -147,7 +147,7 @@ long GuiObject_getWidth (Widget me) {
 long GuiObject_getX (Widget me) {
 	long x = 0;
 	#if gtk
-		x = me->allocation.x;
+		x = my allocation.x;
 	#elif win || mac
 		x = my x;
 	#elif motif
@@ -161,7 +161,7 @@ long GuiObject_getX (Widget me) {
 long GuiObject_getY (Widget me) {
 	long y = 0;
 	#if gtk
-		y = me->allocation.y;
+		y = my allocation.y;
 	#elif win || mac
 		y = my y;
 	#elif motif
@@ -189,7 +189,12 @@ void GuiObject_move (Widget me, long x, long y) {
 
 void GuiObject_hide (Widget me) {
 	#if gtk
-		gtk_widget_hide (GTK_WIDGET (me));
+		Widget parent = gtk_widget_get_parent (me);
+		if (parent != NULL && GTK_IS_DIALOG (parent)) {   // I am the top vbox of a dialog
+			gtk_widget_hide (parent);
+		} else {
+			gtk_widget_hide (GTK_WIDGET (me));
+		}
 	#else
 		XtUnmanageChild (me);
 		#if win

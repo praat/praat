@@ -86,7 +86,7 @@
 #if mac
 	void motif_mac_defaultFont (void) {
 		TextFont (systemFont);
-		TextSize (12);
+		TextSize (13);
 		TextFace (0);
 	}
 	static BitMap theScreenBits;
@@ -322,7 +322,7 @@ static int NativeToggleButton_preferredWidth (Widget me) {
 
 static int NativeButton_preferredHeight (Widget me) {
 	(void) me;
-	return win ? 22 : ( my parent -> rowColumnType == XmMENU_BAR ? 26 : 20 );
+	return win ? 22 : ( my parent -> rowColumnType == XmMENU_BAR ? 28 : 20 );
 }
 
 /***** WIDGET *****/
@@ -1138,7 +1138,7 @@ static void _GuiNativizeWidget (Widget me) {
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
 						my isControl = TRUE;
-						_GuiNativeControl_setFont (me, 12);
+						_GuiNativeControl_setFont (me, 13);
 						_GuiNativeControl_setTitle (me);
 					} else {
 						my nat.control.isPopup = true;

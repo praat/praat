@@ -263,6 +263,7 @@ static int menu_cb_pasteHistory (EDITOR_ARGS) {
 	Melder_free (text);
 	GuiText_replace (my textWidget, first, last, history);
 	GuiText_setSelection (my textWidget, first, first + length);
+	GuiText_scrollToSelection (my textWidget);
 	return 1;
 }
 

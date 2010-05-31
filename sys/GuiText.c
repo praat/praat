@@ -39,6 +39,7 @@
  * fb 2010/03/02 history: merge same events together
  * pb 2010/03/11 support Unicode values above 0xFFFF
  * pb 2010/05/14 GTK changedCallback
+ * pb 2010/05/30 GTK selections
  */
 
 #include "GuiP.h"
@@ -125,7 +126,7 @@ typedef struct structGuiText {
  * (It is true that Windows itself stores the global text focus, but this is not always a text widget;
  *  we want it to always be a text widget, e.g. in the TextGrid editor it is always the text widget,
  *  never the drawing area, that receives key strokes. In Motif, we will have to program this text
- *  preference explicitly, see the discussion in FunctionEditor.c.)
+ *  preference explicitly; see the discussion in FunctionEditor.c.)
  */
 
 void _GuiText_handleFocusReception (Widget widget) {
@@ -815,7 +816,6 @@ void _GuiText_exit (void) {
 	static void _GuiGtkEntry_history_delete_cb (GtkEditable *ed, gint from, gint to, gpointer void_me) {
 		iam (GuiText);
 		if (my history_change) return;
-		
 		history_add (me, gtk_editable_get_chars (GTK_EDITABLE (ed), from, to), from, to, 1);
 	}
 	
@@ -823,7 +823,6 @@ void _GuiText_exit (void) {
 		(void) ed;
 		iam (GuiText);
 		if (my history_change) return;
-		
 		gchar *text = malloc (sizeof (gchar) * (len + 1));
 		strcpy (text, utf8_text);
 		history_add (me, text, *from, *from + len, 0);
@@ -832,7 +831,6 @@ void _GuiText_exit (void) {
 	static void _GuiGtkTextBuf_history_delete_cb (GtkTextBuffer *buffer, GtkTextIter *from, GtkTextIter *to, gpointer void_me) {
 		iam (GuiText);
 		if (my history_change) return;
-		
 		int from_pos = gtk_text_iter_get_offset (from);
 		int to_pos = gtk_text_iter_get_offset (to);
 		history_add (me, gtk_text_buffer_get_text (buffer, from, to, FALSE), from_pos, to_pos, 1);
@@ -842,15 +840,13 @@ void _GuiText_exit (void) {
 		(void) buffer;
 		iam (GuiText);
 		if (my history_change) return;
-		
 		int from_pos = gtk_text_iter_get_offset (from);
 		gchar *text = malloc (sizeof (gchar) * (len + 1));
 		strcpy (text, utf8_text);
 		history_add (me, text, from_pos, from_pos + len, 0);
 	}
 	
-	static void _GuiGtkEntry_valueChangedCallback (Widget widget, gpointer void_me) {
-		// TODO: ugh!
+	static void _GuiGtkText_valueChangedCallback (Widget widget, gpointer void_me) {
 		iam (GuiText);
 		Melder_assert (me != NULL);
 		if (my changeCallback != NULL) {
@@ -859,7 +855,7 @@ void _GuiText_exit (void) {
 		}
 	}
 	
-	static void _GuiGtkEntry_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkText_destroyCallback (Widget widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiText);
 		if (my undo_item) g_object_unref (my undo_item);
@@ -893,38 +889,38 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 	#if gtk
 		if (flags & GuiText_SCROLLED) {
 			GtkWrapMode ww;
+			Widget scrolled = gtk_scrolled_window_new (NULL, NULL);
+			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my widget = gtk_text_view_new ();
+			gtk_container_add (GTK_CONTAINER (scrolled), my widget);
+			gtk_widget_show (scrolled);
 			gtk_text_view_set_editable (GTK_TEXT_VIEW (my widget), (flags & GuiText_NONEDITABLE) == 0);
 			if ((flags & GuiText_WORDWRAP) != 0) 
 				ww = GTK_WRAP_WORD_CHAR;
 			else
 				ww = GTK_WRAP_NONE;
 			gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (my widget), ww);
-			GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(my widget));
-			g_signal_connect(G_OBJECT(buffer), "delete-range", G_CALLBACK(_GuiGtkTextBuf_history_delete_cb), me);
-			g_signal_connect(G_OBJECT(buffer), "insert-text", G_CALLBACK(_GuiGtkTextBuf_history_insert_cb), me);
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my widget));
+			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me);
+			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me);
+			g_signal_connect (G_OBJECT (buffer), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
+			gtk_container_add (GTK_CONTAINER (parent), scrolled);
 		} else {
 			my widget = gtk_entry_new ();
 			gtk_editable_set_editable (GTK_EDITABLE (my widget), (flags & GuiText_NONEDITABLE) == 0);
-			g_signal_connect(G_OBJECT(my widget), "delete-text", G_CALLBACK(_GuiGtkEntry_history_delete_cb), me);
-			g_signal_connect(G_OBJECT(my widget), "insert-text", G_CALLBACK(_GuiGtkEntry_history_insert_cb), me);
+			g_signal_connect (G_OBJECT (my widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me);
+			g_signal_connect (G_OBJECT (my widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me);
+			g_signal_connect (GTK_EDITABLE (my widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
+			gtk_container_add (GTK_CONTAINER (parent), my widget);
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		
 		my prev = NULL;
 		my next = NULL;
 		my history_change = 0;
 		my undo_item = NULL;
 		my redo_item = NULL;
-		
-		if (parent)
-			gtk_container_add (GTK_CONTAINER (parent), my widget);
-		g_signal_connect (G_OBJECT (my widget), "destroy",
-			G_CALLBACK (_GuiGtkEntry_destroyCallback), me);
-		g_signal_connect (GTK_EDITABLE (my widget), "changed",
-			G_CALLBACK (_GuiGtkEntry_valueChangedCallback), me);
-		// TODO: First input focus verhaal? *check*
+		g_signal_connect (G_OBJECT (my widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
 	#elif win
 		my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, flags & GuiText_SCROLLED ? L"scrolledText" : L"text");
 		_GuiObject_setUserData (my widget, me);
@@ -1020,7 +1016,7 @@ Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, 
 		}
 		XtAddCallback (my widget, XmNvalueChangedCallback, _GuiMotifText_valueChangedCallback, me);
 		// TODO: for history functions, a XmNmodifyVerifyCallback needs to be added, which calls history_add()
-		#endif
+	#endif
 	
 	return my widget;
 }
@@ -1092,50 +1088,56 @@ wchar_t * GuiText_getSelection (Widget widget) {
 		if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
 			gint start, end;
 			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), & start, & end); 
-			if (end <= start) return NULL;
-			return Melder_utf8ToWcs (gtk_editable_get_chars (GTK_EDITABLE (widget), start, end));
+			if (end > start) {   // at least one character selected?
+				gchar *text = gtk_editable_get_chars (GTK_EDITABLE (widget), start, end);
+				wchar_t *result = Melder_utf8ToWcs (text);
+				g_free (text);
+				return result;
+			}
 		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
-			if (gtk_text_buffer_get_has_selection (textBuffer)) {
+			if (gtk_text_buffer_get_has_selection (textBuffer)) {   // at least one character selected?
 				GtkTextIter start, end;
 				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
 				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE);
-				wchar_t *temp =  Melder_utf8ToWcs (text);
+				wchar_t *result = Melder_utf8ToWcs (text);
 				g_free (text);
-				return temp;
+				return result;
 			}
 		}
-		return NULL;
 	#elif win || mac
-		long length, start, end;
-		wchar_t *result;
+		long start, end;
 		NativeText_getSelectionRange (widget, & start, & end);
-		if (end <= start) return NULL;
-		/*
-		 * Get all text.
-		 */
-		length = NativeText_getLength (widget);
-		result = Melder_malloc (wchar_t, length + 1);
-		NativeText_getText (widget, result, length);
-		/*
-		 * Zoom in on selection.
-		 */
-		#if mac
-			for (long i = 0; i < start; i ++) if (result [i] > 0xFFFF) { start --; end --; }
-			for (long i = start; i < end; i ++) if (result [i] > 0xFFFF) { end --; }
-		#endif
-		length = end - start;
-		memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
-		result [length] = '\0';
-		result = Melder_realloc (result, (length + 1) * sizeof (wchar_t));   /* Optional. */
-		Melder_killReturns_inlineW (result);   /* AFTER zooming! */
-		return result;
+		if (end > start) {   // at least one character selected?
+			/*
+			 * Get all text.
+			 */
+			long length = NativeText_getLength (widget);
+			wchar_t *result = Melder_malloc (wchar_t, length + 1);
+			NativeText_getText (widget, result, length);
+			/*
+			 * Zoom in on selection.
+			 */
+			#if mac
+				for (long i = 0; i < start; i ++) if (result [i] > 0xFFFF) { start --; end --; }
+				for (long i = start; i < end; i ++) if (result [i] > 0xFFFF) { end --; }
+			#endif
+			length = end - start;
+			memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
+			result [length] = '\0';
+			result = Melder_realloc (result, (length + 1) * sizeof (wchar_t));   /* Optional. */
+			Melder_killReturns_inlineW (result);   /* AFTER zooming! */
+			return result;
+		}
 	#elif motif
 		char *selectionUtf8 = XmTextGetSelection (widget);
-		wchar_t *selection = Melder_8bitToWcs (selectionUtf8, kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1);
-		XtFree (selectionUtf8);
-		return selection;
+		if (selectionUtf8 != NULL) {   // at least one character selected?
+			wchar_t *result = Melder_8bitToWcs (selectionUtf8, kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1);
+			XtFree (selectionUtf8);
+			return result;
+		}
 	#endif
+	return NULL;   // zero characters selected
 }
 
 wchar_t * GuiText_getString (Widget widget) {
@@ -1157,14 +1159,12 @@ wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, lon
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
 			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE); // TODO: Hidden chars ook maar doen he?
-			wchar_t *temp = Melder_utf8ToWcs (text);
+			wchar_t *result = Melder_utf8ToWcs (text);
 			g_free (text);
-			if (gtk_text_buffer_get_has_selection (textBuffer)) {
-				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-				*first = gtk_text_iter_get_offset (& start);
-				*last = gtk_text_iter_get_offset (& end);
-			}
-			return temp;
+			gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
+			*first = gtk_text_iter_get_offset (& start);
+			*last = gtk_text_iter_get_offset (& end);
+			return result;
 		}
 		return NULL;
 	#elif win
@@ -1279,16 +1279,15 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 			gint from_pos_gint = from_pos;
 			gtk_editable_insert_text (GTK_EDITABLE (widget), new, g_utf8_strlen (new, -1), & from_pos_gint);
 		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
-			GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(widget));
+			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(widget));
 			GtkTextIter from_it, to_it;
-			gtk_text_buffer_get_iter_at_offset(buffer, &from_it, from_pos);
-			gtk_text_buffer_get_iter_at_offset(buffer, &to_it, to_pos);
-			gtk_text_buffer_delete_interactive(buffer, &from_it, &to_it,
-				gtk_text_view_get_editable(GTK_TEXT_VIEW(widget)));
-			gtk_text_buffer_insert_interactive(buffer, &from_it, new, g_utf8_strlen (new, -1),
-				gtk_text_view_get_editable(GTK_TEXT_VIEW(widget)));
+			gtk_text_buffer_get_iter_at_offset (buffer, & from_it, from_pos);
+			gtk_text_buffer_get_iter_at_offset (buffer, & to_it, to_pos);
+			gtk_text_buffer_delete_interactive (buffer, & from_it, & to_it,
+				gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
+			gtk_text_buffer_insert_interactive (buffer, & from_it, new, g_utf8_strlen (new, -1),
+				gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
 		}
-		// TODO: Wat is dit lelijk... en fout was het ook nog!
 	#elif win
 		const wchar_t *from;
 		wchar_t *winText = Melder_malloc (wchar_t, 2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */
@@ -1364,11 +1363,12 @@ void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *
 
 void GuiText_scrollToSelection (Widget widget) {
 	#if gtk
-		GtkTextBuffer *textBuffer;
+		GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 		GtkTextIter start, end;
-		textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 		gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
-		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (widget), & start, 0.0, TRUE, 0.0, 0.0); 
+		//GtkTextMark *mark = gtk_text_buffer_create_mark (textBuffer, NULL, & start, true);
+		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (widget), & start, 0.1, false, 0.0, 0.0); 
+		//gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (widget), mark, 0.1, false, 0.0, 0.0); 
 	#elif win
 		Edit_ScrollCaret (widget -> window);
 	#elif mac
@@ -1438,9 +1438,9 @@ void GuiText_setSelection (Widget widget, long first, long last) {
 		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			GtkTextIter from_it, to_it;
-			gtk_text_buffer_get_iter_at_offset(buffer, &from_it, first);
-			gtk_text_buffer_get_iter_at_offset(buffer, &to_it, last);
-			gtk_text_buffer_select_range(buffer, &from_it, &to_it);
+			gtk_text_buffer_get_iter_at_offset (buffer, & from_it, first);
+			gtk_text_buffer_get_iter_at_offset (buffer, & to_it, last);
+			gtk_text_buffer_select_range (buffer, & from_it, & to_it);
 		}
 	#elif win
 		/* 'first' and 'last' are the positions of the selection in the text when separated by LF alone. */
@@ -1493,7 +1493,12 @@ void GuiText_setString (Widget widget, const wchar_t *text) {
 		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			gchar *new = Melder_peekWcsToUtf8 (text);
-			gtk_text_buffer_set_text (textBuffer, new, strlen (new));   // length in bytes!
+			//gtk_text_buffer_set_text (textBuffer, new, strlen (new));   // length in bytes!
+			GtkTextIter start, end;
+			gtk_text_buffer_get_start_iter (textBuffer, & start);
+			gtk_text_buffer_get_end_iter (textBuffer, & end);
+			gtk_text_buffer_delete_interactive (textBuffer, & start, & end, gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
+			gtk_text_buffer_insert_interactive (textBuffer, & start, new, g_utf8_strlen (new, -1), gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
 		}
 	#elif win
 		const wchar_t *from;

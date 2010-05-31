@@ -410,7 +410,7 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 	if (theCurrentPraatApplication -> batch) {
 		my button = NULL;
 	} else {
-		Widget button = my button = GuiButton_create (parent, x, x + 76, Gui_AUTOMATIC, -y,
+		Widget button = my button = GuiButton_create (parent, x, x + 82, Gui_AUTOMATIC, -y,
 			title, gui_button_cb_menu, callback, 0);
 		GuiObject_setSensitive (button, false);
 		GuiObject_show (button);

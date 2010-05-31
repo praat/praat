@@ -91,7 +91,7 @@ Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
 		ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
 		macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
 		macFontStyleRecord. font = systemFont;
-		macFontStyleRecord. size = 12;
+		macFontStyleRecord. size = 13;
 		macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
 		CreateStaticTextControl (my widget -> macWindow, & my widget -> rect, NULL, & macFontStyleRecord, & my widget -> nat.control.handle);
 		Melder_assert (my widget -> nat.control.handle != NULL);

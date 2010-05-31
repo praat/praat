@@ -39,7 +39,7 @@
 #if win
 	#define CELL_HEIGHT  15
 #elif mac
-	#define CELL_HEIGHT  16
+	#define CELL_HEIGHT  18
 	#define USE_MAC_LISTBOX_CONTROL  0
 #endif
 
@@ -248,7 +248,7 @@ typedef struct structGuiList {
 				ATSUTextLayout textLayout;
 				ATSUStyle style;
 				ATSUCreateStyle (& style);
-				Fixed fontSize = 12 << 16;
+				Fixed fontSize = 13 << 16;
 				Boolean boldStyle = 0;
 				Boolean italicStyle = 0;
 				ATSUAttributeTag styleAttributeTags [] = { kATSUSizeTag, kATSUQDBoldfaceTag, kATSUQDItalicTag };
@@ -709,9 +709,9 @@ void GuiList_insertItem (Widget widget, const wchar_t *itemText, long position) 
 void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position) {
 	#if gtk
 		GtkTreeIter iter;
-		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW(widget));
+		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
 		if (gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, (gint) (position - 1))) {
-			gtk_list_store_set(GTK_LIST_STORE(tree_model), COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
+			gtk_list_store_set (GTK_LIST_STORE (tree_model), COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
 		}
 /*
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);

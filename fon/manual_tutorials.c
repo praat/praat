@@ -23,9 +23,19 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100524)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100531)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.34# (31 May 2010)")
+//LIST_ITEM (L"\\bu GTK beta version.")
+LIST_ITEM (L"\\bu Sound window: corrected a bug that caused Praat to crash if the analysis window was shorter than 2 samples.")
+LIST_ITEM (L"\\bu GTK: scrolling in the Info window and script window.")
+LIST_ITEM (L"\\bu GTK: script editor: implemented searching, replacing, and change dialogs.")
+//LIST_ITEM (L"\\bu GTK: list of objects: multiple selection, working Rename button.")
+//LIST_ITEM (L"\\bu GTK: working radio buttons.")
+//LIST_ITEM (L"\\bu GTK: working Buttons editor.")
+//LIST_ITEM (L"\\bu GTK: working vowel editor.")
+//LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.33# (24 May 2010)")
 LIST_ITEM (L"\\bu GTK alpha version.")
 LIST_ITEM (L"\\bu Abolished resolution independence: the Sound window now looks the same on all platforms, "
@@ -46,9 +56,6 @@ LIST_ITEM (L"\\bu GTK: erase old texts in manual windows.")
 LIST_ITEM (L"\\bu GTK: made Picture window come back when drawing.")
 LIST_ITEM (L"\\bu GTK: Info window is fronted automatically.")
 LIST_ITEM (L"\\bu GTK: support sendpraat.")
-//LIST_ITEM (L"\\bu GTK: working Buttons editor.")
-//LIST_ITEM (L"\\bu GTK: working vowel editor.")
-//LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.32# (30 April 2010)")
 LIST_ITEM (L"\\bu Scripting: command ##Expand include files#.")
 LIST_ITEM (L"\\bu Scripting: accept lines that start with non-breaking spaces (as may occur in scripts copied from the web manual).")

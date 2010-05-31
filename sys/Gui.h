@@ -20,7 +20,7 @@
  */
 
 /*
- * 2010/05/15
+ * 2010/05/29
  */
 
 #ifdef USE_GTK
@@ -387,6 +387,7 @@ Widget GuiRow_createShown (Widget parent, unsigned long flags);
 Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
 void GuiDialog_show (Widget widget);
+Widget GuiDialog_getButtonArea (Widget widget);
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1
