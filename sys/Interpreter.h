@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2009 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2010/06/03
  */
 
 #ifndef _Collection_h_
@@ -43,7 +43,7 @@
 class_create (InterpreterVariable, Thing);
 
 #define Interpreter_MAXNUM_PARAMETERS  400
-#define Interpreter_MAXNUM_LABELS  400
+#define Interpreter_MAXNUM_LABELS  1000
 #define Interpreter_MAX_CALL_DEPTH  50
 
 #define Interpreter_members Thing_members \

@@ -27,7 +27,7 @@ void manual_Manual_init (ManPages me);
 void manual_Manual_init (ManPages me) {
 
 MAN_BEGIN (L"Manual", L"ppgb", 20061020)
-INTRO (L"The documentation system for the P\\s{RAAT} program.")
+INTRO (L"The documentation system for the Praat program.")
 NORMAL (L"You will get a manual window every time you choose anything from a #Help menu or press a #Help button.")
 ENTRY (L"How to find what you are looking for")
 NORMAL (L"You can navigate the manual in several ways:")
@@ -59,7 +59,7 @@ MAN_END
 
 MAN_BEGIN (L"ManPages", L"ppgb", 20070225)
 INTRO (L"You can create a documentation or education system with files that you and others "
-	"can read into P\\s{RAAT} (with the @@Read from file...@ command). "
+	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
 ENTRY (L"Example 1: a single document")
 NORMAL (L"If you create a single ManPages text file, it will look like a manual with a single page. "
@@ -144,7 +144,7 @@ NORMAL (L"For a paragraph that should be connected with the following paragraph 
 NORMAL (L"For a paragraph with a blank left margin, you use the type <definition>.")
 NORMAL (L"For a paragraph with an embedded script (a picture), you use the type <script> (see below).")
 ENTRY (L"Special symbols and styles")
-NORMAL (L"You can use all of P\\s{RAAT}'s @@special symbols@ and @@text styles@, "
+NORMAL (L"You can use all of Praat's @@special symbols@ and @@text styles@, "
 	"except that some %single text-style symbols have different meanings:")
 LIST_ITEM (L"\\bu A single percent sign introduces a word in italic: $$\\% pot$ gives %pot.")
 LIST_ITEM (L"\\bu A single number sign introduces a word in bold: $$\\# pot$ gives #pot.")

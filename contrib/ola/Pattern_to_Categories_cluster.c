@@ -1,6 +1,6 @@
 /* Pattern_to_Categories_cluster.c
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2008 Ola So"der, 2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,10 @@
  */
 
 /*
- * os 20070529 Initial release
+ * os 20070529 initial release
+ * pb 20100606 removed some array-creations-on-the-stack
+ * pb 20100606 corrected some arrary-index-out-of-bounds errors
+ * pb 20100606 corrected some memory leaks
  */
 
 #include "Pattern_to_Categories_cluster.h"
@@ -46,133 +49,139 @@ Categories Pattern_to_Categories_cluster
 )
 
 {
-    Categories categories = Categories_sequentialNumbers(k);
-    if(k == p->ny)
-        return(categories);
+    Categories categories = NULL, output = NULL;
+    KNN knn = NULL;
+    Pattern centroids = NULL;
+    double *sizes = NULL, *beta = NULL;
+    long *seeds = NULL;
 
-    KNN knn = KNN_create();
-    if (knn)
+	categories = Categories_sequentialNumbers (k); cherror
+    if (k == p->ny)
+        return categories;
+
+    knn = KNN_create(); cherror
+    if(p->ny % k) 
+        if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) 
+            s = (double) (p->ny / k) / (double) (p->ny / k + 1);
+
+    double progress = m;
+    sizes = NUMdvector (0, k); cherror
+    seeds = NUMlvector (0, k); cherror
+
+    centroids = Pattern_create (k, p->nx);
+    beta = NUMdvector (0, centroids->nx);
+
+    do
     {
-        if(p->ny % k) 
-            if (s > (double) (p->ny / k) / (double) (p->ny / k + 1)) 
-                s = (double) (p->ny / k) / (double) (p->ny / k + 1);
+        double delta;
+        long nfriends  = 0;
+        if (!Melder_progress1(1 - (progress - m) / progress, L"")) break;
 
-        double progress = m;
-        double sizes[k + 1];
-        long seeds[k];
+        for (long y = 1; y <= centroids->ny; y++)
+        {
+            int friend = 1;
+            long ys = (long) lround(NUMrandomUniform(1, p->ny));
 
-        Pattern centroids = Pattern_create(k, p->nx);
+            if (nfriends)
+            {
+                while (friend)
+                {
+                    ys = (long) lround(NUMrandomUniform(1, p->ny));
+                    for (long fc = 0; fc < nfriends; fc++)
+                    {
+                        friend = 0;
+                        Melder_assert (fc < k);
+                        if (seeds [fc] == ys)
+                        {
+                            friend = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+			Melder_assert (nfriends <= k);
+            seeds [nfriends++] = ys;
 
+            for (long x = 1; x <= centroids->nx; x++)
+                centroids->z[y][x] = p->z[ys][x];
+        }
         do
         {
-            double delta;
-            long nfriends  = 0;
-            if (!Melder_progress1(1 - (progress - m) / progress, L"")) break;
-
-            for (long y = 1; y <= centroids->ny; y++)
-            {
-                int friend = 1;
-                long ys = (long) lround(NUMrandomUniform(1, p->ny));
-
-                if (nfriends)
-                {
-                    while (friend)
-                    {
-                        ys = (long) lround(NUMrandomUniform(1, p->ny));
-                        for (long fc = 0; fc < nfriends; fc++)
-                        {
-                            friend = 0;
-                            if (seeds[fc] == ys)
-                            {
-                                friend = 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                seeds[nfriends++] = ys;
-
-                for (long x = 1; x <= centroids->nx; x++)
-                    centroids->z[y][x] = p->z[ys][x];
-            }
-            do
-            {
-                delta = 0;
-                KNN_learn(knn, centroids, categories, kOla_REPLACE, kOla_SEQUENTIAL);
-                Categories interim = KNN_classifyToCategories(knn, p, fws, 1, kOla_FLAT_VOTING);
-
-                for (long x = 1; x <= k; x++)
-                    sizes[x] = 0;
-
-                for (long yp = 1; yp <= categories->size; yp++)
-                {
-                    double alfa = 1;
-                    double beta[centroids->nx];
-
-                    for (long x = 1; x <= centroids->nx; x++)
-                    {
-                        beta[x] = centroids->z[yp][x];
-                    }
-
-                    for (long ys = 1; ys <= interim->size; ys++)
-                    {
-                        if (FRIENDS(categories->item[yp], interim->item[ys]))
-                        {
-                            for (long x = 1; x <= p->nx; x++)
-                            {
-                                if (alfa == 1)
-                                {
-                                    centroids->z[yp][x] = p->z[ys][x];
-                                }
-                                else
-                                {
-                                    centroids->z[yp][x] += (p->z[ys][x] - centroids->z[yp][x]) / alfa;
-                                }
-                            }
-                            sizes[yp]++;
-                            alfa++;
-                        }
-                    }
-
-                    for (long x = 1; x <= centroids->nx; x++)
-                    {
-                        delta += fabs(beta[x] - centroids->z[yp][x]);
-                    }
-                }
-                forget(interim);
-            }
-            while (delta);
-
-            double smax = sizes[1];
-            double smin = sizes[1];
+            delta = 0;
+            KNN_learn (knn, centroids, categories, kOla_REPLACE, kOla_SEQUENTIAL);
+            Categories interim = KNN_classifyToCategories (knn, p, fws, 1, kOla_FLAT_VOTING);
 
             for (long x = 1; x <= k; x++)
+                sizes [x] = 0;
+
+            for (long yp = 1; yp <= categories->size; yp++)
             {
-                if (smax < sizes[x]) smax = sizes[x];
-                if (smin > sizes[x]) smin = sizes[x];
+                double alfa = 1;
+                Melder_assert (yp <= centroids->ny);
+
+                for (long x = 1; x <= centroids->nx; x++)
+                {
+                    beta[x] = centroids->z[yp][x];
+                }
+
+                for (long ys = 1; ys <= interim->size; ys++)
+                {
+                    if (FRIENDS(categories->item[yp], interim->item[ys]))
+                    {
+                        for (long x = 1; x <= p->nx; x++)
+                        {
+                        	Melder_assert (ys <= p->ny);
+                            if (alfa == 1)
+                            {
+                                centroids->z[yp][x] = p->z[ys][x];
+                            }
+                            else
+                            {
+                                centroids->z[yp][x] += (p->z[ys][x] - centroids->z[yp][x]) / alfa;
+                            }
+                        }
+                        Melder_assert (yp <= k);
+                        sizes [yp] ++;
+                        alfa++;
+                    }
+                }
+
+                for (long x = 1; x <= centroids->nx; x++)
+                {
+                    delta += fabs (beta[x] - centroids->z[yp][x]);
+                }
             }
-
-            sizes[0] = smin / smax;
-            --m;
+            forget (interim);
         }
-        while (sizes[0] < s && m > 0);
+        while (delta);
 
-        Melder_progress1(1.0, NULL);
+        double smax = sizes [1];
+        double smin = sizes [1];
 
-        Categories output = KNN_classifyToCategories(knn, p, fws, 1, kOla_FLAT_VOTING);
+        for (long x = 1; x <= k; x++)
+        {
+            if (smax < sizes [x]) smax = sizes [x];
+            if (smin > sizes [x]) smin = sizes [x];
+        }
 
-        forget(centroids);
-        forget(categories);
-        forget(knn);
-
-        return(output);
+        sizes [0] = smin / smax;
+        --m;
     }
-    else
-    {
-        return(NULL);
-    }
+    while (sizes[0] < s && m > 0);
+
+    Melder_progress1(1.0, NULL);
+
+    output = KNN_classifyToCategories (knn, p, fws, 1, kOla_FLAT_VOTING); cherror
+
+end:
+    forget (centroids);
+    forget (categories);
+    forget (knn);
+    NUMdvector_free (sizes, 0);
+    NUMdvector_free (beta, 0);
+    NUMlvector_free (seeds, 0);
+    iferror return NULL;
+    return output;
 }
 
 /* End of file Pattern_to_Categories_cluster.c */
-

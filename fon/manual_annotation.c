@@ -37,7 +37,7 @@ DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers
 MAN_END
 
 MAN_BEGIN (L"IntervalTier", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+INTRO (L"One of the @@types of objects@ in Praat. "
 	"An IntervalTier represents a series of contiguous intervals in time. "
 	"Each interval contains a a string.")
 ENTRY (L"Creating a IntervalTier object in Praat")
@@ -168,7 +168,7 @@ NORMAL (L"If %%Tier names% is \"a b c\", and \"Point tiers\" is \"b\", "
 MAN_END
 
 MAN_BEGIN (L"SpellingChecker", L"ppgb", 20080622)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. For checking the spelling in texts and @TextGrid objects.")
+INTRO (L"One of the @@types of objects@ in Praat. For checking the spelling in texts and @TextGrid objects.")
 ENTRY (L"1. How to create a SpellingChecker object")
 NORMAL (L"You normally read in a SpellignChecker with @@Read from file...@ from the Read menu.")
 ENTRY (L"2. How to check the spelling of a @TextGrid")
@@ -216,7 +216,7 @@ DEFINITION (L"a space-separated list of suffixes that make a word correct even i
 MAN_END
 
 MAN_BEGIN (L"TextGrid", L"ppgb", 20040413)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}, used for %annotation (segmentation and labelling). "
+INTRO (L"One of the @@types of objects@ in Praat, used for %annotation (segmentation and labelling). "
 	"For tutorial information, see @@Intro 7. Annotation@.")
 ENTRY (L"Description")
 NORMAL (L"A #TextGrid object consists of a number of %tiers. There are two kinds of tiers: "
@@ -373,7 +373,7 @@ NORMAL (L"You can check the spelling of the intervals in your tiers by including
 MAN_END
 
 MAN_BEGIN (L"TextTier", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"A TextTier object represents a marked point process, i.e., it contains a series of (%time, %text) points, "
 	"sorted by time.")
 NORMAL (L"Each point is marked with a text string. Though this is a system-independent ASCII text string, "
@@ -445,7 +445,7 @@ INTRO (L"A command to merge all selected @TextTier and @IntervalTier objects int
 MAN_END
 
 MAN_BEGIN (L"WordList", L"ppgb", 19991129)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+INTRO (L"One of the @@types of objects@ in Praat. "
 	"An object of class WordList contains a sorted list of strings in a system-independent format. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
 ENTRY (L"1. How to create a WordList object")

@@ -1,6 +1,6 @@
 /* OTMulti.c
  *
- * Copyright (C) 2005-2009 Paul Boersma
+ * Copyright (C) 2005-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2007/11/14 drawTableau: corrected direction of arrows for positive satisfactions
  * pb 2008/04/14 OTMulti_getConstraintIndexFromName
  * pb 2009/03/18 modern enums
+ * pb 2010/06/05 corrected colours
  */
 
 #include "OTMulti.h"
@@ -470,6 +471,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 	long numberOfOptimalCandidates, numberOfOptimalCandidates1, numberOfOptimalCandidates2;
 	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
 	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
+	Graphics_Colour colour = Graphics_inqColour (g);
 	wchar_t text [200];
 	int bidirectional = form1 [0] != '\0' && form2 [0] != '\0';
 	winner = OTMulti_getWinner (me, form1, form2);
@@ -610,7 +612,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			Graphics_setFontSize (g, (int) ((bidirectional ? 1.2 : 1.5) * fontSize));
 			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
 			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, bidirectional ? L"\\Vr" : L"\\pf");
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
 		if (candidateIsOptimal1) {
@@ -618,7 +620,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates1 > 1) Graphics_setColour (g, Graphics_RED);
 			Graphics_text (g, x + margin + fingerWidth, y + descent - Graphics_dyMMtoWC (g, 0.5) * fontSize / 12.0, L"\\pf");
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
 		if (candidateIsOptimal2) {
@@ -628,7 +630,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			Graphics_setTextRotation (g, 180);
 			Graphics_text (g, x + margin + fingerWidth * 2, y + descent - Graphics_dyMMtoWC (g, 0.0) * fontSize / 12.0, L"\\pf");
 			Graphics_setTextRotation (g, 0);
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
 		Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
@@ -646,7 +648,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 				x += width;
 			}
-			Graphics_setGrey (g, 0.0);
+			Graphics_setColour (g, colour);
 		}
 		/*
 		 * Draw cell marks.
@@ -720,7 +722,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 				}
 			}
 			Graphics_text (g, x + 0.5 * width, y + descent, markString);
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			Graphics_line (g, x, y, x, y + rowHeight);
 			Graphics_line (g, x, y + rowHeight, x + width, y + rowHeight);
 			x += width;

@@ -855,6 +855,11 @@ static int menu_cb_moveBright (EDITOR_ARGS) {
 	my startSelection += my arrowScrollStep;
 	if (my startSelection > my tmax - 1e-12)
 		my startSelection = my tmax;
+	if (my startSelection > my endSelection) {
+		double dummy = my startSelection;
+		my startSelection = my endSelection;
+		my endSelection = dummy;
+	}
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	return 1;
 }
@@ -864,6 +869,11 @@ static int menu_cb_moveEleft (EDITOR_ARGS) {
 	my endSelection -= my arrowScrollStep;
 	if (my endSelection < my tmin + 1e-12)
 		my endSelection = my tmin;
+	if (my startSelection > my endSelection) {
+		double dummy = my startSelection;
+		my startSelection = my endSelection;
+		my endSelection = dummy;
+	}
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
 	return 1;
 }

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/05/14
+ * pb 2010/06/10
  */
 
 #include <stdio.h>
@@ -279,8 +279,8 @@ int Melder_getOutputEncoding (void);
 #define kMelder_textOutputEncoding_ISO_LATIN1  0x4C415401
 #define kMelder_textOutputEncoding_FLAC  0x464C4143
 
-typedef unsigned short MelderUtf16;
-typedef unsigned int MelderUtf32;
+typedef uint16_t MelderUtf16;
+typedef uint32_t MelderUtf32;
 
 bool Melder_isValidAscii (const wchar_t *string);
 bool Melder_strIsValidUtf8 (const char *string);

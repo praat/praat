@@ -1,18 +1,20 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 24 May 2010 */
+/* 1 June 2010 */
 
 /*
- * The sendpraat subroutine (Unix with X Window but not GTK; Windows; Macintosh) sends a message
+ * The sendpraat subroutine (Unix with X11 or GTK; Windows; Macintosh) sends a message
  * to a running program that uses the Praat shell.
  * The sendpraat program does the same from a Unix command shell,
  * from a Windows or DOS console, or from a MacOS X terminal window.
  *
- * New versions: http://www.praat.org or http://www.fon.hum.uva.nl/praat/sendpraat.html
+ * Newer versions of sendpraat may be found at http://www.praat.org or http://www.fon.hum.uva.nl/praat/sendpraat.html
  *
- * On Windows NT, 2000, and XP, this version works only with Praat version 4.3.28 and higher.
- * On Macintosh, this version works only with Praat version 3.8.75 and higher.
- * On GTK-Linux, this version works only with Praat version 5.1.33 and higher.
+ * On X11 (with Motif), this version works with Praat version 3.6 (October 1997) or newer.
+ * On Windows NT, 2000, and XP, this version works only with Praat version 4.3.28 (November 2005) or newer.
+ * On Macintosh, this version works only with Praat version 3.8.75 (October 2000) or newer.
+ * On GTK, this version works only with Praat version 5.1.33 (May 2010) or newer.
+ * Newer versions of Praat may respond faster or more reliably.
  */
 
 /*******************************************************************
@@ -84,7 +86,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 /*
  * Parameters:
- * 'display' is the Display pointer, which will be available if you call sendpraat from an X Window program.
+ * 'display' is the Display or GdKDisplay pointer, which will be available if you call sendpraat from an X11 or GTK program.
  *    If 'display' is NULL, sendpraat will open the display by itself, and close it after use.
  *    On Windows and Macintosh, sendpraat ignores the 'display' parameter.
  * 'programName' is the name of the program that receives the message.
@@ -146,7 +148,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	/*
 	 * If the text is going to be sent in a file, create its name.
 	 * The file is going to be written into the preferences directory of the receiving program.
-	 * On X Window, the name will be something like /home/jane/.praat-dir/message.
+	 * On Unix, the name will be something like /home/jane/.praat-dir/message.
 	 * On Windows, the name will be something like C:\Documents and Settings\Jane\Praat\Message.txt,
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
@@ -233,7 +235,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	/*
 	 * Send the message.
 	 */
-	#if xwin
+	#if xwin || gtk
 		/*
 		 * Be ready to receive notification of completion.
 		 */
@@ -246,31 +248,57 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			/*
 			 * Notify main window.
 			 */
-			XEvent event;
-			int displaySupplied = display != NULL;
-			if (! displaySupplied) {
-				display = XOpenDisplay (NULL);
-				if (display == NULL) {
-					sprintf (errorMessage, "Cannot open display %s.", XDisplayName (NULL));
+			#if xwin
+				XEvent event;
+				int displaySupplied = display != NULL;
+				if (! displaySupplied) {
+					display = XOpenDisplay (NULL);
+					if (display == NULL) {
+						sprintf (errorMessage, "Cannot open display %s.", XDisplayName (NULL));
+						return errorMessage;
+					}
+				}
+				event. type = ClientMessage;
+				event. xclient. serial = 0;
+				event. xclient. send_event = True;
+				event. xclient. display = display;
+				event. xclient. window = (Window) wid;
+				event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
+				event. xclient. format = 8;   /* No byte swaps. */
+				strcpy (& event. xclient.data.b [0], "SENDPRAAT");
+				if (! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
+					if (! displaySupplied) XCloseDisplay (display);
+					sprintf (errorMessage, "Cannot send message to %s (window %ld). "
+						"The program %s may have been started by a different user, "
+						"or may have crashed.", programName, wid, programName);
 					return errorMessage;
 				}
-			}
-			event. type = ClientMessage;
-			event. xclient. serial = 0;
-			event. xclient. send_event = True;
-			event. xclient. display = display;
-			event. xclient. window = (Window) wid;
-			event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
-			event. xclient. format = 8;   /* No byte swaps. */
-			strcpy (& event. xclient.data.b [0], "SENDPRAAT");
-			if (! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
 				if (! displaySupplied) XCloseDisplay (display);
-				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
-					"The program %s may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
-				return errorMessage;
-			}
-			if (! displaySupplied) XCloseDisplay (display);
+			#elif gtk
+				GdkEventClient gevent;
+				g_type_init ();
+				int displaySupplied = display != NULL;
+				if (! displaySupplied) {
+					display = gdk_display_open (":0.0");   /* GdkDisplay* */
+					if (display == NULL) {
+						sprintf (errorMessage, "Cannot open display :0.0.");
+						return errorMessage;
+					}
+				}
+				gevent. type = GDK_CLIENT_EVENT;
+				gevent. window = 0;
+				gevent. send_event = 1;
+				gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+				gevent. data_format = 8;
+				if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
+					if (! displaySupplied) gdk_display_close (display);
+					sprintf (errorMessage, "Cannot send message to %s (window %ld). "
+						"The program %s may have been started by a different user, "
+						"or may have crashed.", programName, wid, programName);
+					return errorMessage;
+				}
+				if (! displaySupplied) gdk_display_close (display);
+			#endif
 		} else {
 			/*
 			 * Use interrupt mechanism.
@@ -307,23 +335,6 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			/*
 			 * Notify main window.
 			 */
-			g_type_init ();
-			//GdkDisplay *display = gdk_display_get_default ();   // there is no default display!
-			GdkDisplay *display = gdk_display_open (":0.0");
-			//fprintf (stderr, "opened display %ld\n", (long) display);
-			GdkEventClient gevent;
-			gevent. type = GDK_CLIENT_EVENT;
-			gevent. window = 0;
-			gevent. send_event = 1;
-			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
-			gevent. data_format = 8;
-			//fprintf(stderr, "sending event to window %ld (%d)\n", wid, (int) sizeof (long));
-			if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
-				sprintf (errorMessage, "Cannot send message to %s (window %ld). "
-					"The program %s may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
-				return errorMessage;
-			}
 		} else {
 			/*
 			 * Use interrupt mechanism.
@@ -428,7 +439,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	/*
 	 * If the text is going to be sent in a file, create its name.
 	 * The file is going to be written into the preferences directory of the receiving program.
-	 * On X Window, the name will be something like /home/jane/.praat-dir/message.
+	 * On Unix, the name will be something like /home/jane/.praat-dir/message.
 	 * On Windows, the name will be something like C:\Documents and Settings\Jane\Praat\Message.txt,
 	 * or C:\Windows\Praat\Message.txt on older systems.
 	 * On Macintosh, the text is NOT going to be sent in a file.
@@ -520,7 +531,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	/*
 	 * Send the message.
 	 */
-	#if xwin
+	#if xwin || gtk
 		/*
 		 * Be ready to receive notification of completion.
 		 */
@@ -533,84 +544,57 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			/*
 			 * Notify main window.
 			 */
-			XEvent event;
-			int displaySupplied = display != NULL;
-			if (! displaySupplied) {
-				display = XOpenDisplay (NULL);
-				if (display == NULL) {
-					swprintf (errorMessageW, 1000, L"Cannot open display %s.", XDisplayName (NULL));
+			#if xwin
+				XEvent event;
+				int displaySupplied = display != NULL;
+				if (! displaySupplied) {
+					display = XOpenDisplay (NULL);
+					if (display == NULL) {
+						swprintf (errorMessageW, 1000, L"Cannot open display %s.", XDisplayName (NULL));
+						return errorMessageW;
+					}
+				}
+				event. type = ClientMessage;
+				event. xclient. serial = 0;
+				event. xclient. send_event = True;
+				event. xclient. display = display;
+				event. xclient. window = (Window) wid;
+				event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
+				event. xclient. format = 8;   /* No byte swaps. */
+				strcpy (& event. xclient.data.b [0], "SENDPRAAT");
+				if (! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
+					if (! displaySupplied) XCloseDisplay (display);
+					swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
+						"The program %ls may have been started by a different user, "
+						"or may have crashed.", programName, wid, programName);
 					return errorMessageW;
 				}
-			}
-			event. type = ClientMessage;
-			event. xclient. serial = 0;
-			event. xclient. send_event = True;
-			event. xclient. display = display;
-			event. xclient. window = (Window) wid;
-			event. xclient. message_type = XInternAtom (display, "SENDPRAAT", False);
-			event. xclient. format = 8;   /* No byte swaps. */
-			strcpy (& event. xclient.data.b [0], "SENDPRAAT");
-			if(! XSendEvent (display, (Window) wid, True, KeyPressMask, & event)) {
 				if (! displaySupplied) XCloseDisplay (display);
-				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
-					"The program %ls may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
-				return errorMessageW;
-			}
-			if (! displaySupplied) XCloseDisplay (display);
-		} else {
-			/*
-			 * Use interrupt mechanism.
-			 */
-			if (kill (pid, SIGUSR1)) {
-				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (process %ld). "
-					"The program %ls may have been started by a different user, "
-					"or may have crashed.", programName, pid, programName);
-				return errorMessageW;
-			}
-		}
-		/*
-		 * Wait for the running program to notify us of completion,
-		 * but do not wait for more than 'timeOut' seconds.
-		 */
-		if (timeOut) {
-			signal (SIGALRM, handleTimeOut);
-			alarm (timeOut);
-			theTimeOut = timeOut;   /* Hand an argument to handleTimeOut () in a static variable. */
-			errorMessageW [0] = '\0';
-			pause ();
-			if (errorMessageW [0] != '\0') return errorMessageW;
-		}
-	#elif gtk
-		/*
-		 * Be ready to receive notification of completion.
-		 */
-		if (timeOut)
-			signal (SIGUSR2, handleCompletion);
-		/*
-		 * Notify running program.
-		 */
-		if (wid != 0) {
-			/*
-			 * Notify main window.
-			 */
-			g_type_init ();
-			//GdkDisplay *display = gdk_display_get_default ();   // there is no default display!
-			GdkDisplay *display = gdk_display_open (":0.0");
-			//fprintf (stderr, "opened display %ld\n", (long) display);
-			GdkEventClient gevent;
-			gevent. type = GDK_CLIENT_EVENT;
-			gevent. window = 0;
-			gevent. send_event = 1;
-			gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
-			gevent. data_format = 8;
-			//fprintf(stderr, "sending event to window %ld (%d)\n", wid, (int) sizeof (long));
-			if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
-				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
-					"The program %ls may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
-				return errorMessageW;
-			}
+			#elif gtk
+				GdkEventClient gevent;
+				int displaySupplied = display != NULL;
+				g_type_init ();
+				if (! displaySupplied) {
+					display = gdk_display_open (":0.0");   /* GdkDisplay* */
+					if (display == NULL) {
+						swprintf (errorMessageW, 1000, L"Cannot open display :0.0.");
+						return errorMessageW;
+					}
+				}
+				gevent. type = GDK_CLIENT_EVENT;
+				gevent. window = 0;
+				gevent. send_event = 1;
+				gevent. message_type = gdk_atom_intern_static_string ("SENDPRAAT");
+				gevent. data_format = 8;
+				if (! gdk_event_send_client_message_for_display (display, (GdkEvent *) & gevent, wid)) {
+					if (! displaySupplied) gdk_display_close (display);
+					swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
+						"The program %ls may have been started by a different user, "
+						"or may have crashed.", programName, wid, programName);
+					return errorMessageW;
+				}
+				if (! displaySupplied) gdk_display_close (display);
+			#endif
 		} else {
 			/*
 			 * Use interrupt mechanism.

@@ -23,10 +23,10 @@ void manual_voice_init (ManPages me);
 void manual_voice_init (ManPages me) {
 
 MAN_BEGIN (L"Voice", L"ppgb", 20061028)
-INTRO (L"This tutorial describes how you can do voice analysis with P\\s{RAAT}. "
+INTRO (L"This tutorial describes how you can do voice analysis with Praat. "
 	"To understand this tutorial, you have to be familiar with the @Intro, "
 	"which describes the more general features of the @SoundEditor window.")
-NORMAL (L"Most of P\\s{RAAT}'s voice analysis methods start from the glottal pulses that are visible in the @SoundEditor window "
+NORMAL (L"Most of Praat's voice analysis methods start from the glottal pulses that are visible in the @SoundEditor window "
 	"as blue vertical lines through the waveform. If you do not see these lines, "
 	"choose @@Show pulses@ from the #Pulses menu. If your sound is long, you may have to zoom in "
 	"in order to see the separate pulses. You may notice that for some sounds, the time location of the pulses "
@@ -51,7 +51,7 @@ MAN_END
 
 MAN_BEGIN (L"Voice 1. Voice breaks", L"ppgb", 20030916)
 INTRO (L"Normal voices can easily maintain phonation for some time when saying [a]. "
-	"Some pathological voices have trouble with it. This can be measured in P\\s{RAAT} "
+	"Some pathological voices have trouble with it. This can be measured in Praat "
 	"in two ways.")
 ENTRY (L"Fraction of locally unvoiced pitch frames")
 NORMAL (L"This is the fraction of pitch frames that are analysed as unvoiced (MDVP calls it DUV). If the pitch floor is 75 Hz, "
@@ -104,7 +104,7 @@ NORMAL (L"This is the five-point Period Perturbation Quotient, "
 	"MDVP calls this parameter %PPQ, and gives 0.840\\%  as a threshold for pathology.")
 ENTRY (L"Jitter (ddp)")
 NORMAL (L"This is the average absolute difference between consecutive differences between consecutive periods, divided by the average period. "
-	"This is P\\s{RAAT}'s original ##Get jitter#. The value is three times RAP.")
+	"This is Praat's original ##Get jitter#. The value is three times RAP.")
 MAN_END
 
 MAN_BEGIN (L"Voice 3. Shimmer", L"ppgb", 20030521)
@@ -133,7 +133,7 @@ NORMAL (L"This is the 11-point Amplitude Perturbation Quotient, "
 	"MDVP calls this parameter %APQ, and gives 3.070\\%  as a threshold for pathology.")
 ENTRY (L"Shimmer (ddp)")
 NORMAL (L"This is the average absolute difference between consecutive differences between the amplitudes of consecutive periods. "
-	"This is P\\s{RAAT}'s original ##Get shimmer#. The value is three times APQ3.")
+	"This is Praat's original ##Get shimmer#. The value is three times APQ3.")
 MAN_END
 
 MAN_BEGIN (L"Voice 4. Additive noise", L"ppgb", 20021206)
@@ -146,7 +146,7 @@ NORMAL (L"For a signal that can be assumed periodic (i.e., a sustained vowel), "
 MAN_END
 
 MAN_BEGIN (L"Voice 5. Comparison with other programs", L"ppgb", 20100330)
-INTRO (L"Voicing, jitter, and shimmer measurements made by P\\s{RAAT} cannot always be compared directly with those made by other "
+INTRO (L"Voicing, jitter, and shimmer measurements made by Praat cannot always be compared directly with those made by other "
 	"programs such as MDVP. The causes are the voicing decision strategy and the accuracy of period and peak determination.")
 ENTRY (L"5.1. Voicing decisions: slightly different")
 NORMAL (L"Different programs use very different methods for deciding whether an irregular part of the signal is voiced or not. "
@@ -162,7 +162,7 @@ NORMAL (L"Different programs use very different methods for deciding whether an 
 	"if it is more than the %%voicing threshold% (which you can change with @@Pitch settings...@, "
 	"the frame is considered voiced, otherwise voiceless. "
 	"In Praat, the standard voicing threshold is 0.45, in MDVP it is 0.29, which suggests that MDVP "
-	"tends to regard more frames as voiced than P\\s{RAAT}. But the difference between these two numbers "
+	"tends to regard more frames as voiced than Praat. But the difference between these two numbers "
 	"may partly be explained by the fact that MDVP does not correct the autocorrelation function and that MDVP "
 	"does not do an accurate sinc interpolation: both of these properties cause "
 	"the measured height of the peak at 1/F0 (in MDVP) to be lower than the real height, as explained by @@Boersma (1993)@.")
@@ -187,7 +187,7 @@ NORMAL (L"If a sound is computer-generated as a glottal source signal with a con
 	"In other words, Praat will tell you that there is almost no jitter, "
 	"whereas MDVP will tell you that the jitter is of an almost pathological level. "
 	"The relevant curves can be seen in my papers \"Stemmen meten met Praat\" and @@Boersma (2009a)@, "
-	"and the numbers are confirmed by Deliyski, Shaw & Evans (Journal of Voice, 2005: 23).")
+	"and the numbers are confirmed by Deliyski, Shaw & Evans (%%Journal of Voice%, 2005: 23).")
 NORMAL (L"One can see that Praat's \"jitter\" measure attempts to separate the influence of period duration variation "
 	"(which it reports as \"jitter\") from the influence of additive noise (which is does not report as \"jitter\"), "
 	"and that MDVP's \"jitter\" measure combines the influence of period duration variation with the influence of additive noise "

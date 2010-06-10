@@ -1,6 +1,6 @@
 /* KNN.c
  *
- * Copyright (C) 2008 Ola Söder
+ * Copyright (C) 2008 Ola So"der, 2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /*
- * os 20080529 Initial release
+ * os 20080529 initial release
+ * pb 20100606 removed some array-creations-on-the-stack
  */
 
 #include "KNN.h"
@@ -202,7 +203,7 @@ Categories KNN_classifyToCategories
 
 {
     int nthreads = KNN_getNumberOfCPUs();
-    long outputindices[ps->ny + 1];
+    long *outputindices = NUMlvector (0, ps->ny);
     long chunksize =  ps->ny / nthreads;
 
     Melder_assert(nthreads > 0); 
@@ -216,7 +217,7 @@ Categories KNN_classifyToCategories
 
     long istart = 1;
     long istop = chunksize;
- 
+
     Categories output = Categories_create();
     KNN_input_ToCategories_t ** input = (KNN_input_ToCategories_t **) malloc(nthreads * sizeof(KNN_input_ToCategories_t *));
 
@@ -260,6 +261,7 @@ Categories KNN_classifyToCategories
     }
  
     enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToCategoriesAux, (void **) input, nthreads);
+    //void *error = KNN_classifyToCategoriesAux (input [0]);
     for(int i = 0; i < nthreads; ++i)
         free(input[i]);
   
@@ -276,6 +278,7 @@ Categories KNN_classifyToCategories
         for (long i = 1; i <= ps->ny; ++i)
             Collection_addItem(output, Data_copy((my output)->item[outputindices[i]]));
     }
+	NUMlvector_free (outputindices, 0);
     return(output);
 }
 
@@ -299,11 +302,11 @@ void * KNN_classifyToCategoriesAux
     long ncollected;
     long ncategories;
 
-    long indices[((KNN_input_ToCategories_t *) input)->k];
-    long freqindices[((KNN_input_ToCategories_t *) input)->k];
+    long *indices = NUMlvector (0, ((KNN_input_ToCategories_t *) input)->k);
+    long *freqindices = NUMlvector (0, ((KNN_input_ToCategories_t *) input)->k);
 
-    double distances[((KNN_input_ToCategories_t *) input)->k];
-    double freqs[((KNN_input_ToCategories_t *) input)->k];
+    double *distances = NUMdvector (0, ((KNN_input_ToCategories_t *) input)->k);
+    double *freqs = NUMdvector (0, ((KNN_input_ToCategories_t *) input)->k);
  
     for (long y = ((KNN_input_ToCategories_t *) input)->istart; y <= ((KNN_input_ToCategories_t *) input)->istop; ++y)
     {
@@ -350,6 +353,10 @@ void * KNN_classifyToCategoriesAux
         ((KNN_input_ToCategories_t *) input)->output[y] = freqindices[KNN_max(freqs, ncategories)];
     }
 
+	NUMlvector_free (indices, 0);
+	NUMlvector_free (freqindices, 0);
+	NUMdvector_free (distances, 0);
+	NUMdvector_free (freqs, 0);
     return(NULL);
 
 }
@@ -483,9 +490,9 @@ void * KNN_classifyToTableOfRealAux
 )
 
 {
-    long ncategories = Categories_getSize(((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
-    long indices[((KNN_input_ToTableOfReal_t *) input)->k];
-    double distances[((KNN_input_ToTableOfReal_t *) input)->k];
+    long ncategories = Categories_getSize (((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
+    long *indices = NUMlvector (0, ((KNN_input_ToTableOfReal_t *) input)->k);
+    double *distances = NUMdvector (0, ((KNN_input_ToTableOfReal_t *) input)->k);
 
     for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
@@ -547,7 +554,8 @@ void * KNN_classifyToTableOfRealAux
             }
 
     }
-
+	NUMlvector_free (indices, 0);
+	NUMdvector_free (distances, 0);
     return(NULL);
 }
 
@@ -590,11 +598,11 @@ Categories KNN_classifyFold
 
     long ncollected;
     long ncategories;
-    long indices[k];
-    long freqindices[k];
-    double distances[k];
-    double freqs[k];
-    long outputindices[ps->ny];
+    long *indices = NUMlvector (0, k);
+    long *freqindices = NUMlvector (0, k);
+    double *distances = NUMdvector (0, k);
+    double *freqs = NUMdvector (0, k);
+    long *outputindices = NUMlvector (0, ps->ny);
     long noutputindices = 0;
 
     for (long y = begin; y <= end; ++y)
@@ -641,7 +649,11 @@ Categories KNN_classifyFold
         }
         return(output);
     }
-
+	NUMlvector_free (indices, 0);
+	NUMlvector_free (freqindices, 0);
+	NUMdvector_free (distances, 0);
+	NUMdvector_free (freqs, 0);
+	NUMlvector_free (outputindices, 0);
     return(NULL);
 
 }
@@ -791,7 +803,7 @@ double KNN_modelSearch
     double drange = 1;
     double drate = rate / range;
 
-    typedef struct
+    typedef struct structsoil
     {
         double performance;
         long dist;
@@ -799,7 +811,7 @@ double KNN_modelSearch
     } soil;
 
     soil best = {0, lround(dpivot), lround(dpivot)};
-    soil field[nseeds];
+    soil *field = NUMstructvector (soil, 0, nseeds - 1);
 
     while (range > 0)
     {
@@ -831,6 +843,7 @@ double KNN_modelSearch
     *k = best.k;
     *dist = dists[best.dist];
 
+	NUMstructvector_free (soil, field, 0);
     return(best.performance);
 
 }
@@ -939,7 +952,7 @@ long KNN_kNeighboursSkip
     long dc = 0;
     long py = 1;
 
-    double distances[k];
+    double *distances = NUMdvector (0, k - 1);
 
     Melder_assert(jy > 0 && jy <= j->ny);
     Melder_assert(k > 0 && k <= p->ny);
@@ -974,6 +987,7 @@ long KNN_kNeighboursSkip
         ++py;
     }
     
+	NUMdvector_free (distances, 0);
     return(OlaMIN(k, dc));
 
 }
@@ -1169,7 +1183,7 @@ long KNN_kFriends
     long maxi;
     long dc = 0;
     long py = 1;
-    double distances[k];
+    double *distances = NUMdvector (0, k - 1);
 
     Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
     Melder_assert(indices);
@@ -1201,6 +1215,7 @@ long KNN_kFriends
         ++py;
     }
 
+	NUMdvector_free (distances, 0);
     return(OlaMIN(k,dc));
 
 }
@@ -1266,8 +1281,8 @@ long KNN_friendsAmongkNeighbours
 )
 
 {
-    double distances[k];
-    long indices[k];
+    double *distances = NUMdvector (0, k - 1);
+    long *indices = NUMlvector (0, k - 1);
     long friends = 0;
 
     Melder_assert(jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
@@ -1279,6 +1294,8 @@ long KNN_friendsAmongkNeighbours
     while (ncollected--)
         if (FRIENDS(c->item[jy], c->item[indices[ncollected]])) friends++;
     
+	NUMdvector_free (distances, 0);
+	NUMlvector_free (indices, 0);
     return(friends);
 
 }
@@ -1312,10 +1329,12 @@ long KNN_kUniqueEnemies
     long maxi;
     long dc = 0;
     long py = 1;
-    double distances[k];
+    double *distances = NUMdvector (0, k - 1);
 
-    Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
-    Melder_assert(indices);
+    Melder_assert (jy <= j->ny);
+	Melder_assert (k <= p->ny);
+	Melder_assert (k > 0);
+    Melder_assert (indices != NULL);
 
     while (dc < k && py <= p->ny)
     {
@@ -1357,6 +1376,7 @@ long KNN_kUniqueEnemies
         }
         ++py;
     }
+	NUMdvector_free (distances, 0);
     return(OlaMIN(k,dc));
 }
 
@@ -1825,8 +1845,8 @@ void KNN_SA_partition
     long c1 = (long) lround(NUMrandomUniform(i1, i2));
     long c2 = (long) lround(NUMrandomUniform(i1, i2));
 
-    double p1[p->nx + 1]; 
-    double p2[p->nx + 1];
+    double *p1 = NUMdvector (1, p->nx); 
+    double *p2 = NUMdvector (1, p->nx);
 
     for(long x = 1; x <= p->nx; ++x)
     {
@@ -1895,6 +1915,8 @@ void KNN_SA_partition
             ++j;
         }
     }
+    NUMdvector_free (p1, 1);
+    NUMdvector_free (p2, 1);
 }
 
 

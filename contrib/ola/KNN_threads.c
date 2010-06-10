@@ -185,7 +185,8 @@ void * KNN_threadDistribution
         */
 #endif
 	}
-	return((function)(input[0]));
+	void *result = function (input [0]);
+	return result;
 }
 
 

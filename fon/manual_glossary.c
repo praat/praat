@@ -123,9 +123,9 @@ MAN_END
 
 MAN_BEGIN (L"frequency", L"ppgb", 20030314)
 INTRO (L"Frequency is how often something happens in a certain time, for instance "
-	"the number of times the P\\s{RAAT} home page www.praat.org is visited every day.")
-NORMAL (L"In P\\s{RAAT}, frequency is the number of vibration cycles per second. "
-	"Although one can sometimes see the abbreviation %cps, P\\s{RAAT} always uses Hz (short for %Hertz), "
+	"the number of times the Praat home page www.praat.org is visited every day.")
+NORMAL (L"In Praat, frequency is the number of vibration cycles per second. "
+	"Although one can sometimes see the abbreviation %cps, Praat always uses Hz (short for %Hertz), "
 	"which means the same.")
 NORMAL (L"Unfortunately, there are two very distinct kinds of vibrations in speech analysis. "
 	"For pitch, frequency is the number of glottal cycles per second, and for spectral analysis, "
@@ -133,11 +133,11 @@ NORMAL (L"Unfortunately, there are two very distinct kinds of vibrations in spee
 	"acoustic phonetician goes into the understanding of the difference between the ideas behind F0 and F1, "
 	"and many years can be spent on understanding the influence they have on each other in production, "
 	"acoustics, perception, or measurement...")
-NORMAL (L"In order to prevent confusion, P\\s{RAAT} always requires frequency to be expressed in Hz. "
+NORMAL (L"In order to prevent confusion, Praat always requires frequency to be expressed in Hz. "
 	"So if you want to supply a sampling frequency of 20 kiloHertz (20 kHz), you fill in 20000 or 2e4 or 20e3. "
 	"If you want to switch off pre-emphasis in some spectral analysis, you supply 1 GigaHertz (GHz) "
 	"for its \"from-frequency\", by typing 1e9.")
-NORMAL (L"In P\\s{RAAT} editor windows, frequency usually runs from bottom to top, since time already has to run "
+NORMAL (L"In Praat editor windows, frequency usually runs from bottom to top, since time already has to run "
 	"from left to right. This goes for spectrograms, pitch contours, and formant contours. "
 	"In spectral slices, frequency runs from left to right, since these have no time axis.")
 MAN_END
@@ -190,7 +190,7 @@ NORMAL (L"Of course, with a sampling frequency of 22050 Hz we could also represe
 MAN_END
 
 MAN_BEGIN (L"objects", L"ppgb", 20030528)
-INTRO (L"The things that contain the data in the P\\s{RAAT} program.")
+INTRO (L"The things that contain the data in the Praat program.")
 NORMAL (L"The objects are visible in the @@List of Objects@ in the @@Object window@.")
 NORMAL (L"Most objects are contained in memory: they are %not files! "
 	"Therefore, you may want to save them with one of the commands from the @@Write menu@ "
@@ -400,7 +400,7 @@ MAN_END
 
 MAN_BEGIN (L"spectro-temporal representation", L"ppgb", 20030314)
 INTRO (L"A representation (of a sound signal, for instance) as some sort of intensity as a function "
-	"of @time and @frequency. In P\\s{RAAT}, we have the @Spectrogram, which is acoustic energy density as a "
+	"of @time and @frequency. In Praat, we have the @Spectrogram, which is acoustic energy density as a "
 	"function of time in seconds and frequency in Hz, and the @Cochleagram, which is basilar membrane "
 	"excitation as a function of time in seconds and frequency in Bark.")
 NORMAL (L"For tutorial information, see @@Intro 3.1. Viewing a spectrogram@.")
@@ -427,12 +427,12 @@ MAN_END
 
 MAN_BEGIN (L"time", L"ppgb", 20030314)
 INTRO (L"In normal life, time is how late the watch says it is.")
-NORMAL (L"In P\\s{RAAT}, this definition is largely irrelevant. "
+NORMAL (L"In Praat, this definition is largely irrelevant. "
 	"Sound files rarely tell us the absolute time of recording. "
-	"So when you read a sound file into P\\s{RAAT} and click #Edit, you will see "
+	"So when you read a sound file into Praat and click #Edit, you will see "
 	"that the Sound starts at a time of 0 seconds, and if its duration is 3.5 seconds, "
 	"you will see that the Sound finishes at a time of 3.5 seconds.")
-NORMAL (L"Besides sounds, many other types of objects in P\\s{RAAT} have a time scale as well: "
+NORMAL (L"Besides sounds, many other types of objects in Praat have a time scale as well: "
 	"spectrograms, pitch contours, formant contours, point processes, and so on. None of these "
 	"are required to have a time domain that starts at 0 seconds. In the Sound editor window, for example, "
 	"you can select the part that runs from 1.4. to 1.7 seconds, and \"extract\" it to the Objects window "
@@ -440,14 +440,14 @@ NORMAL (L"Besides sounds, many other types of objects in P\\s{RAAT} have a time 
 	"and an end time of 1.7 seconds, as you can see when you click #Edit. "
 	"Spectrograms and pitch contours that you create from this sound will also have a time domain "
 	"from 1.4 to 1.7 seconds. This time domain is preserved if you save these objects to a text file "
-	"or to a binary file and read them into P\\s{RAAT} again later. Only if you save the Sound object "
+	"or to a binary file and read them into Praat again later. Only if you save the Sound object "
 	"to an audio file (WAV, AIFF), the time information is not preserved in that file; "
-	"if you read such an audio file into P\\s{RAAT} again, the time domain of the new Sound object "
+	"if you read such an audio file into Praat again, the time domain of the new Sound object "
 	"will run from 0 to 0.3 seconds.")
-NORMAL (L"In order to prevent confusion, P\\s{RAAT} always requires times to be expressed in seconds. "
+NORMAL (L"In order to prevent confusion, Praat always requires times to be expressed in seconds. "
 	"So if you want to supply a window length of 5 milliseconds (5 ms), you fill in 0.005 or 5e-3. "
 	"For 83.2 microseconds (83.2 \\mus), you say 0.0000832, or better 83.2e-6 or 8.32e-5.")
-NORMAL (L"On a clock, time runs around in circles. In P\\s{RAAT}'s editor windows, time runs from left to right. "
+NORMAL (L"On a clock, time runs around in circles. In Praat's editor windows, time runs from left to right. "
 	"You can often see only a part of the time scale in the window. "
 	"To see another part, you %scroll backward or forward.")
 MAN_END

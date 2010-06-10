@@ -667,7 +667,7 @@ DEFINITION (L"you can specify a red-green-blue value as three values between 0 a
 MAN_END
 
 MAN_BEGIN (L"Picture window", L"ppgb", 20090913)
-INTRO (L"One of the two main windows in P\\s{RAAT}.")
+INTRO (L"One of the two main windows in Praat.")
 TAG (L"File menu")
 LIST_ITEM (L"\\bu @@Read from Praat picture file...@, @@Write to Praat picture file...")
 LIST_ITEM (L"\\bu @@PostScript settings...")
@@ -1032,7 +1032,7 @@ MAN_END
 
 MAN_BEGIN (L"Write to Praat picture file...", L"ppgb", 20041130)
 INTRO (L"A command in the File menu of the @@Picture window@.")
-NORMAL (L"It saves a picture in a format that can be imported into P\\s{RAAT} later with @@Read from Praat picture file...@.")
+NORMAL (L"It saves a picture in a format that can be imported into Praat later with @@Read from Praat picture file...@.")
 ENTRY (L"Usage")
 NORMAL (L"With the help of this command, you can transfer the contents of the picture window between computers or even between platforms, "
 	"for instance from a Macintosh to a Windows computer.")

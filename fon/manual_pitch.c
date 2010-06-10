@@ -30,7 +30,7 @@ NORMAL (L"For an example, see @@Source-filter synthesis@.")
 MAN_END
 
 MAN_BEGIN (L"Harmonicity", L"ppgb", 20030610)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"A Harmonicity object represents the degree of acoustic periodicity, "
 	"also called Harmonics-to-Noise Ratio (HNR). "
 	"Harmonicity is expressed in dB: "
@@ -171,7 +171,7 @@ DEFINITION (L"the frame whose value is to be looked up.")
 MAN_END
 
 MAN_BEGIN (L"Pitch", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. For tutorial information, see @@Intro 4. Pitch analysis@.")
+INTRO (L"One of the @@types of objects@ in Praat. For tutorial information, see @@Intro 4. Pitch analysis@.")
 NORMAL (L"A Pitch object represents periodicity candidates as a function of time. "
 	"It does not mind whether this periodicity refers to acoustics, "
 	"perception, or vocal-cord vibration. "
@@ -341,7 +341,7 @@ LIST_ITEM (L"4. The voiced/unvoiced information in the Pitch is used to remove a
 MAN_END
 
 MAN_BEGIN (L"PitchEditor", L"ppgb", 20030316)
-INTRO (L"One of the @Editors in P\\s{RAAT}, for viewing and modifying a @Pitch object.")
+INTRO (L"One of the @Editors in Praat, for viewing and modifying a @Pitch object.")
 ENTRY (L"What the Pitch editor shows")
 NORMAL (L"In the window of the PitchEditor, you will see the following features:")
 LIST_ITEM (L"\\bu Digits between 0 and 9 scattered all over the drawing area. Their locations represent "
@@ -382,7 +382,7 @@ NORMAL (L"To change the ceiling, but not the path, choose `Change ceiling...' fr
 MAN_END
 
 MAN_BEGIN (L"PitchTier", L"ppgb", 20050831)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+INTRO (L"One of the @@types of objects@ in Praat. "
 	"A PitchTier object represents a time-stamped pitch contour, "
 	"i.e. it contains a number of (%time, %pitch) points, without voiced/unvoiced information. "
 	"For instance, if your PitchTier contains two points, namely 150 Hz at a time of 0.5 seconds and "
@@ -547,7 +547,7 @@ NORMAL (L"Points are generated along the entire time domain of the #PitchTier, "
 MAN_END
 
 MAN_BEGIN (L"PitchTierEditor", L"ppgb", 20030316)
-INTRO (L"One of the @Editors in P\\s{RAAT}, for viewing and manipulating a @PitchTier object, "
+INTRO (L"One of the @Editors in Praat, for viewing and manipulating a @PitchTier object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (L"Objects")
 NORMAL (L"The editor shows:")
@@ -620,14 +620,14 @@ ENTRY (L"Settings")
 NORMAL (L"The settings that control the recruitment of the candidates are:")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
-	"P\\s{RAAT} will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
-	"in this example, P\\s{RAAT} computes 100 pitch values per second.")
+	"Praat will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
+	"in this example, Praat computes 100 pitch values per second.")
 TAG (L"%%Pitch floor% (standard value: 75 Hz)")
 DEFINITION (L"candidates below this frequency will not be recruited. "
 	"This parameter determines the length of the analysis window: it will be 3 longest periods long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be 3/75 = 0.04 seconds long.")
 NORMAL (L"Note that if you set the time step to zero, the analysis windows for consecutive measurements "
-	"will overlap appreciably: P\\s{RAAT} will always compute 4 pitch values "
+	"will overlap appreciably: Praat will always compute 4 pitch values "
 	"within one window length, i.e., the degree of %oversampling is 4.")
 NORMAL (L"A post-processing algorithm seeks the cheapest path through the candidates. "
 	"The argument that determines the cheapest path is:")
@@ -660,14 +660,14 @@ ENTRY (L"Settings")
 NORMAL (L"The settings that control the recruitment of the candidates are:")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
-	"P\\s{RAAT} will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
-	"in this example, P\\s{RAAT} computes 100 pitch values per second.")
+	"Praat will use a time step of 0.75 / (%%pitch floor%), e.g. 0.01 seconds if the pitch floor is 75 Hz; "
+	"in this example, Praat computes 100 pitch values per second.")
 TAG (L"%%Pitch floor% (standard value: 75 Hz)")
 DEFINITION (L"candidates below this frequency will not be recruited. "
 	"This parameter determines the effective length of the analysis window: it will be 3 longest periods long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be effectively 3/75 = 0.04 seconds long.")
 NORMAL (L"Note that if you set the time step to zero, the analysis windows for consecutive measurements "
-	"will overlap appreciably: P\\s{RAAT} will always compute 4 pitch values "
+	"will overlap appreciably: Praat will always compute 4 pitch values "
 	"within one window length, i.e., the degree of %oversampling is 4.")
 TAG (L"%%Very accurate% (standard value: %off)")
 DEFINITION (L"if %off, the window is a Hanning window with a physical length of  3 / (%%pitch floor%). "
@@ -710,14 +710,14 @@ NORMAL (L"The algorithm performs an acoustic periodicity detection on the basis 
 ENTRY (L"Settings")
 TAG (L"%%Time step% (standard value: 0.0)")
 DEFINITION (L"the measurement interval (frame duration), in seconds. If you supply 0, "
-	"P\\s{RAAT} will use a time step of 0.25 / (%%pitch floor%), e.g. 0.00333333 seconds if the pitch floor is 75 Hz; "
-	"in this example, P\\s{RAAT} computes 300 pitch values per second.")
+	"Praat will use a time step of 0.25 / (%%pitch floor%), e.g. 0.00333333 seconds if the pitch floor is 75 Hz; "
+	"in this example, Praat computes 300 pitch values per second.")
 TAG (L"%%Pitch floor% (standard value: 75 Hz)")
 DEFINITION (L"candidates below this frequency will not be recruited. "
 	"This parameter determines the length of the analysis window: it will be 1 longest period long, "
 	"i.e., if the pitch floor is 75 Hz, the window will be 1/75 = 0.01333333 seconds long.")
 NORMAL (L"Note that if you set the time step to zero, the analysis windows for consecutive measurements "
-	"will overlap appreciably: P\\s{RAAT} will always compute 4 pitch values "
+	"will overlap appreciably: Praat will always compute 4 pitch values "
 	"within one window length, i.e., the degree of %oversampling is 4.")
 NORMAL (L"The other settings are the same as for @@Sound: To Pitch (ac)...@.")
 ENTRY (L"Usage")

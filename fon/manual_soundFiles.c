@@ -24,7 +24,7 @@ void manual_soundFiles_init (ManPages me) {
 
 MAN_BEGIN (L"Sound files", L"ppgb", 20070602)
 INTRO (L"This tutorial describes the sound files that you can read "
-	"and write with P\\s{RAAT}. It assumes you are familiar with the @Intro.")
+	"and write with Praat. It assumes you are familiar with the @Intro.")
 NORMAL (L"You can read this tutorial sequentially with the help of the \"< 1\" and \"1 >\" buttons.")
 LIST_ITEM (L"1. @@Sound files 1. General structure|General structure@")
 LIST_ITEM1 (L"1.1. @@Sound files 1.1. Sampling|Sampling@ (sampling frequency)")
@@ -342,7 +342,7 @@ LIST_ITEM (L"\\bu @@Write to FLAC file...@")
 MAN_END
 
 MAN_BEGIN (L"LongSound", L"ppgb", 20040113)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. See the @@Sound files@ tutorial.")
+INTRO (L"One of the @@types of objects@ in Praat. See the @@Sound files@ tutorial.")
 NORMAL (L"A LongSound object gives you the ability to view and label "
 	"a sound file that resides on disk. You will want to use it for sounds "
 	"that are too long to read into memory as a @Sound object (typically, a few minutes).")
@@ -379,7 +379,7 @@ INTRO (L"A command to view the selected @LongSound object in a @LongSoundEditor.
 MAN_END
 
 MAN_BEGIN (L"LongSoundEditor", L"ppgb", 20041124)
-INTRO (L"One of the @Editors in P\\s{RAAT}, for viewing a @LongSound object.")
+INTRO (L"One of the @Editors in Praat, for viewing a @LongSound object.")
 NORMAL (L"This viewer allows you:")
 LIST_ITEM (L"\\bu to view and hear parts of the sound as it is on disk;")
 LIST_ITEM (L"\\bu to copy a selected part as a @Sound object to the list of objects, so that you "

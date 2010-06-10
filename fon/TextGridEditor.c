@@ -667,6 +667,7 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 	int ntiers = grid -> tiers -> size;
 	if (itier < 1 || itier > ntiers) return 0;
 	_AnyTier_identifyClass (grid -> tiers -> item [itier], & intervalTier, & textTier);
+	Melder_assert (t1 <= t2);
 
 	if (intervalTier) {
 		TextInterval rightNewInterval = NULL, midNewInterval = NULL;

@@ -186,7 +186,7 @@ MAN_END
 
 MAN_BEGIN (L"ButtonEditor", L"ppgb", 20060920)
 INTRO (L"An editor for viewing, hiding, showing, removing, and executing the commands "
-	"in the fixed and dynamic menus of the P\\s{RAAT} program. To open it, choose ##Buttons...# "
+	"in the fixed and dynamic menus of the Praat program. To open it, choose ##Buttons...# "
 	"from the #Praat menu of the @@Object window@.")
 ENTRY (L"What the button editor shows")
 NORMAL (L"The button editor gives a list of:")
@@ -1130,7 +1130,7 @@ NORMAL (L"The first version, which accesses the contents directly, is not only t
 MAN_END
 
 MAN_BEGIN (L"Hidden commands", L"ppgb", 20060920)
-NORMAL (L"Some commands in P\\s{RAAT}'s fixed and dynamic menus are hidden by default. "
+NORMAL (L"Some commands in Praat's fixed and dynamic menus are hidden by default. "
 	"You can still call hidden commands from scripts, run them by clicking on them in a @ButtonEditor, "
 	"or make them visible with the help of the @ButtonEditor.")
 NORMAL (L"To hide commands that are visible by default, use the @ButtonEditor.")
@@ -2624,8 +2624,8 @@ NORMAL (L"On Unix or MacOS X, you call Praat scripts from the command line like 
 CODE (L"> /people/mietta/praat doit.praat 50 hallo")
 NORMAL (L"or")
 CODE (L"> /Applications/Praat.app/Contents/MacOS/Praat doit.praat 50 hallo")
-NORMAL (L"This opens P\\s{RAAT}, runs the script ##doit.praat# with arguments \"50\" and \"hallo\", "
-	"and closes P\\s{RAAT}.")
+NORMAL (L"This opens Praat, runs the script ##doit.praat# with arguments \"50\" and \"hallo\", "
+	"and closes Praat.")
 NORMAL (L"You also have the possibility of running the program interactively from the command line:")
 CODE (L"> /people/mietta/praat -")
 NORMAL (L"You can then type in any of the fixed and dynamic commands, and commands that handle object selection, "
@@ -2772,7 +2772,7 @@ LIST_ITEM (L"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
 MAN_BEGIN (L"Scripting 8.1. The sendpraat subroutine", L"ppgb", 20091020)
-INTRO (L"A subroutine for sending messages to a %running P\\s{RAAT}. "
+INTRO (L"A subroutine for sending messages to a %running Praat. "
 	"Also a Unix, MacOS, or DOS console program with the same purpose.")
 ENTRY (L"Syntax")
 LIST_ITEM (L"##sendpraat (void *#%display##, const char *#%program##, long #%timeOut##, char *#%text##);")
@@ -2829,7 +2829,7 @@ NORMAL (L"To start a program from the command line instead and sending it a mess
 MAN_END
 
 MAN_BEGIN (L"Scripting 8.2. The sendpraat program", L"ppgb", 20050822)
-INTRO (L"A Unix or DOS console program for sending messages to a %running P\\s{RAAT} program.")
+INTRO (L"A Unix or DOS console program for sending messages to a %running Praat program.")
 ENTRY (L"Syntax")
 CODE (L"#sendpraat [%timeOut] %program %message...")
 NORMAL (L"For the meaning of the arguments, see @@Scripting 8.1. The sendpraat subroutine|the sendpraat subroutine@.")

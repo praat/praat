@@ -86,7 +86,7 @@ void manual_spectrum_init (ManPages me);
 void manual_spectrum_init (ManPages me) {
 
 MAN_BEGIN (L"Ltas", L"ppgb", 20070320)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. "
+INTRO (L"One of the @@types of objects@ in Praat. "
 	"#Ltas is short for Long-Term Average Spectrum.")
 NORMAL (L"An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency, "
 	"expressed in dB/Hz relative to 2\\.c10^^-5^ Pa. ")
@@ -400,7 +400,7 @@ TAG (L"%Fast")
 DEFINITION (L"determines whether zeroes are appended to the sound such that the number of samples is a power of two. "
 	"This can appreciably speed up the Fourier transform.")
 ENTRY (L"Mathematical procedure")
-NORMAL (L"For the Fourier transform, the P\\s{RAAT}-defined @@time domain@ of the @Sound is ignored. "
+NORMAL (L"For the Fourier transform, the Praat-defined @@time domain@ of the @Sound is ignored. "
 	"Instead, its time domain is considered to run from %t=0 to %t=%T, "
 	"where %t=0 is supposed to be aligned with the first sample, "
 	"and %T is the total duration of the samples, i.e. %%N%\\De%t, "
@@ -431,7 +431,7 @@ NORMAL (L"If %N is even, there will be %N+1 frequency samples. For instance, if 
 	"Together, the frequency samples again span the frequency domain of the spectrum, "
 	"which runs from -%F to +%F, where %F = 16,384\\De%f = 0.5/\\De%t, the Nyquist frequency.")
 ENTRY (L"Storage")
-NORMAL (L"In a @Spectrum object, P\\s{RAAT} stores the real and imaginary parts of the complex spectrum separately. "
+NORMAL (L"In a @Spectrum object, Praat stores the real and imaginary parts of the complex spectrum separately. "
 	"The real part is equal to the cosine transform:")
 FORMULA (L"re %X(%f) = \\in__0_^^%T^ %x(%t) cos (2%%\\pift%) %dt")
 NORMAL (L"The imaginary part is equal to the reverse of the sine transform:")
@@ -483,7 +483,7 @@ it removes the contour. I tested it. It works.
 MAN_END
 
 MAN_BEGIN (L"Spectrogram", L"ppgb", 20070321)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. For tutorial information, see @@Intro 3. Spectral analysis@.")
+INTRO (L"One of the @@types of objects@ in Praat. For tutorial information, see @@Intro 3. Spectral analysis@.")
 NORMAL (L"A Spectrogram object represents  an acoustic time-frequency representation of a sound: "
 	"the @@power spectral density@ %PSD (%f, %t), expressed in Pa^2/Hz. "
 	"It is sampled into a number of points centred around equally spaced times %t__%i_ "
@@ -562,7 +562,7 @@ NORMAL (L"The Spectrum will be constructed from one frame of the Spectrogram, "
 MAN_END
 
 MAN_BEGIN (L"Spectrum", L"ppgb", 20041123)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. A Spectrum object represents "
+INTRO (L"One of the @@types of objects@ in Praat. A Spectrum object represents "
 	"the complex spectrum as a function of frequency. "
 	"If the spectrum was created from a sound (which is expressed in units of Pascal), "
 	"the complex values are expressed in units Pa/Hz (Pascal per Hertz). "
@@ -778,7 +778,7 @@ NORMAL (L"The values are computed as the sum of the squares of the real and imag
 MAN_END
 
 MAN_BEGIN (L"SpectrumEditor", L"ppgb", 20030316)
-INTRO (L"One of the @editors in P\\s{RAAT}. It allows you to view, "
+INTRO (L"One of the @editors in Praat. It allows you to view, "
 	"zoom, and play a @Spectrum object.")
 NORMAL (L"Clicking on one of the (maximally) 8 rectangles above or below the drawing area "
 	"lets you play a @Sound that is synthesized from a band-filtered part of the @Spectrum. "

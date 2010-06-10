@@ -274,18 +274,20 @@ END
 
 DIRECT  (KNN_extractInputPatterns)
     KNN me = ONLY(classKNN);
-    if (my nInstances > 0)  
-        praat_new1(Data_copy(my input), L"Input Patterns");
-    else
+    if (my nInstances > 0) {
+        if (! praat_new1 (Data_copy(my input), L"Input Patterns")) return 0;
+    } else {
         return Melder_error ("Instance base is empty", 0);
+	}
 END
 
 DIRECT  (KNN_extractOutputCategories)
     KNN me = ONLY(classKNN);
-    if (my nInstances > 0)
-        praat_new1(Data_copy(my output), L"Output Categories");
-    else
+    if (my nInstances > 0) {
+        if (! praat_new1 (Data_copy(my output), L"Output Categories")) return 0;
+    } else {
         return Melder_error ("Instance base is empty", 0);
+	}
 END
 
 FORM (KNN_reset, L"Reset", L"KNN: Reset...")
@@ -541,7 +543,11 @@ DO
         return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
-    praat_new1(KNN_classifyToCategories(me, p, fws, k, vt), L"Output");
+	if (! fws) return 0;
+    if (! praat_new1 (KNN_classifyToCategories (me, p, fws, k, vt), L"Output")) {
+		forget (fws);
+		return 0;
+	}
     forget(fws);
 END
 
@@ -568,6 +574,7 @@ DO
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
+	if (! fws) return 0;
 
     switch (vt)
     {
@@ -585,7 +592,10 @@ DO
     if(p->nx != (my input)->nx)
         return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
-    praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
+    if (! praat_new1 (KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output")) {
+		forget (fws);
+		return 0;
+	}
     forget(fws);
 END
 
@@ -631,7 +641,7 @@ DO
     if (p->nx != fws->fweights->numberOfColumns)
         return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
 
-    praat_new1(KNN_classifyToCategories(me, p, fws, k, vt), L"Output");
+    if (! praat_new1 (KNN_classifyToCategories(me, p, fws, k, vt), L"Output")) return 0;
 END
 
 FORM (KNN_toTableOfRealWithFeatureWeights, L"Classification", L"KNN & Pattern & FeatureWeights: To TableOfReal...")
@@ -673,7 +683,10 @@ DO
             break;
     }
 
-    praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output");
+    if (! praat_new1(KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output")) {
+		forget (fws);
+		return 0;
+	}
     forget(fws);
 END
 
@@ -693,29 +706,33 @@ FORM (Pattern_to_Categories_cluster, L"k-means clustering", L"Pattern: To Catego
     OK
 
 DO
-    Pattern p = ONLY(classPattern);
+    Pattern p = ONLY (classPattern);
     if (p->nx > 0 && p->ny > 0)
     {
-        long k = GET_INTEGER(L"k clusters");
-        long rs =  GET_INTEGER(L"Maximum number of reseeds");
-        double rc =  GET_REAL(L"Cluster size ratio constraint");
+        long k = GET_INTEGER (L"k clusters");
+        long rs =  GET_INTEGER (L"Maximum number of reseeds");
+        double rc =  GET_REAL (L"Cluster size ratio constraint");
  
         if (k < 1 || k > p->ny)
-            return Melder_error ("Please select a value of k such that 0 < k <= %d\n", p->ny);
+            return Melder_error ("Please select a value of k such that 0 < k <= %ld.", p->ny);
  
         if (rs < 0)
-            return Melder_error1 (L"The maximum number of reseeds must not be a negative value\n");
+            return Melder_error1 (L"The maximum number of reseeds must not be a negative value.");
 
         if (rc > 1 || rc <= 0)
-            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1\n");
+            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
 
         FeatureWeights fws = FeatureWeights_create(p->nx);
+		if (! fws) return 0;
 
-        praat_new1(Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output");
+        if (! praat_new1 (Pattern_to_Categories_cluster (p, fws, k, rc, rs), L"Output")) {
+			forget (fws);
+			return 0;
+		}
         forget(fws);
     }
     else
-        return Melder_error ("Pattern is empty", 0);
+        return Melder_error ("Pattern is empty.", 0);
 END
 
 FORM (Pattern_to_Categories_clusterWithFeatureWeights, L"k-means clustering", L"Pattern & FeatureWeights: To Categories...")
@@ -738,15 +755,15 @@ DO
             return Melder_error1 (L"The number of features and the number of feature weights must match\n");
 
         if (k < 1 || k > p->ny)
-            return Melder_error ("Please select a value of k such that 0 < k <= %d\n", p->ny);
+            return Melder_error ("Please select a value of k such that 0 < k <= %ld.", p->ny);
  
         if (rs < 0)
-            return Melder_error1 (L"The maximum number of reseeds must not be a negative value\n");
+            return Melder_error1 (L"The maximum number of reseeds must not be a negative value.");
 
         if (rc > 1 || rc <= 0)
-            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1\n");
+            return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
 
-        praat_new1(Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output");
+        if (! praat_new1 (Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output")) return 0;
     }   
     else
         return Melder_error ("Pattern is empty", 0);
@@ -764,7 +781,11 @@ END
 DIRECT (KNN_patternToDissimilarity)
     Pattern p = ONLY(classPattern);
     FeatureWeights fws = FeatureWeights_create(p->nx);
-    praat_new1(KNN_patternToDissimilarity(p, fws), L"Output");
+	if (! fws) return 0;
+    if (! praat_new1 (KNN_patternToDissimilarity(p, fws), L"Output")) {
+		forget (fws);
+		return 0;
+	}
     forget(fws);
 END
 
@@ -775,7 +796,7 @@ DIRECT (KNN_patternToDissimilarityWithFeatureWeights)
     if (p->nx != fws->fweights->numberOfColumns)
         return Melder_error1 (L"The number of features and the number of feature weights must match\n");
 
-    praat_new1(KNN_patternToDissimilarity(p, fws), L"Output");
+    if (! praat_new1 (KNN_patternToDissimilarity(p, fws), L"Output")) return 0;
 END
 
 
@@ -805,7 +826,7 @@ DO
     double temp_damp = GET_REAL(L"Damping factor");
     double temp_stop = GET_REAL(L"Final temperature");
 
-    praat_new1(KNN_SA_ToPermutation(me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop), L"Output");
+    if (! praat_new1 (KNN_SA_ToPermutation(me, tries, iterations, step_size, bolzmann_c, temp_start, temp_damp, temp_stop), L"Output")) return 0;
 
 END
 
@@ -828,7 +849,7 @@ DO
     if (p->ny != c->size)
         return Melder_error ("The number of rows in the Pattern object must equal the number of categories in the Categories object", 0);
 
-    praat_new1(FeatureWeights_compute(p, c, GET_INTEGER(L"Number of neighbors")), L"Output");
+    if (! praat_new1(FeatureWeights_compute(p, c, GET_INTEGER(L"Number of neighbors")), L"Output")) return 0;
 END
 
 FORM (FeatureWeights_computeWrapperExt, L"Feature weights", L"KNN & Pattern & Categories: To FeatureWeights..")
@@ -876,7 +897,8 @@ DO
     if(p->nx != (my input)->nx)
         return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
 
-    praat_new1(FeatureWeights_computeWrapperExt(me, p, c, k, mode, GET_INTEGER(L"Number of seeds"), GET_REAL(L"Learning rate"), GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization")), L"Output");
+    if (! praat_new1(FeatureWeights_computeWrapperExt(me, p, c, k, mode, GET_INTEGER(L"Number of seeds"),
+		GET_REAL(L"Learning rate"), GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization")), L"Output")) return 0;
 END
 
 FORM (FeatureWeights_computeWrapperInt, L"Feature weights", L"KNN: To FeatureWeights...")
@@ -932,7 +954,8 @@ DO
     if (k < 1 || k > my nInstances)
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
 
-    praat_new1(FeatureWeights_computeWrapperInt(me, k, mode, GET_INTEGER(L"Number of seeds"), GET_REAL(L"Learning rate"), GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization"), emode), L"Output");
+    if (! praat_new1(FeatureWeights_computeWrapperInt(me, k, mode, GET_INTEGER(L"Number of seeds"), GET_REAL(L"Learning rate"),
+		GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization"), emode), L"Output")) return 0;
 END
 
 

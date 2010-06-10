@@ -29,6 +29,7 @@
  * fb 2010/03/01 fix cairo in highlight2 ()
  * pb 2010/05/12 highlighting in GDK instead of Cairo because of the availability of a XOR mode
  * pb 2010/05/12 xorOn in GDK instead of Cairo because of the availability of a XOR mode
+ * pb 2010/06/05 set my colour in setColour
  */
 
 #include "GraphicsP.h"
@@ -125,6 +126,7 @@ void _Graphics_setColour (I, Graphics_Colour colour) {
 
 void Graphics_setColour (I, Graphics_Colour colour) {
 	iam (Graphics);
+	my colour = colour;
 	_Graphics_setColour (me, colour);
 	if (my recording) { op (SET_RGB_COLOUR, 3); put (colour. red); put (colour. green); put (colour. blue); }
 }

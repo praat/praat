@@ -93,7 +93,7 @@ extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	static short int theTimesFont, theHelveticaFont, theCourierFont, theSymbolFont,
 		thePalatinoFont, theIpaTimesFont, theZapfDingbatsFont;
 	static ATSFontRef theTimesAtsuiFont, theHelveticaAtsuiFont, theCourierAtsuiFont, theSymbolAtsuiFont,
-		thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theZapfDingbatsAtsuiFont, theArabicAtsuiFont;
+		thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theIpaPalatinoAtsuiFont, theZapfDingbatsAtsuiFont, theArabicAtsuiFont;
 	static RGBColor theBlackColour = { 0, 0, 0 }, theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
 #endif
 
@@ -227,7 +227,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		font == kGraphics_font_COURIER ? L"Courier New" :
 		font == kGraphics_font_PALATINO ? L"Book Antiqua" :
 		font == kGraphics_font_SYMBOL ? L"Symbol" :
-		font == kGraphics_font_IPATIMES ? ( charisAvailable ? L"Charis SIL" : doulosAvailable ? L"Doulos SIL" : L"Times New Roman" ) :
+		font == kGraphics_font_IPATIMES ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
 		font == kGraphics_font_DINGBATS ? L"Wingdings" :
 		L"");
 	return CreateFontIndirectW (& spec);
@@ -380,7 +380,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> font.string = NULL;   // This erases font.integer!
 				ATSFontRef atsuiFont =
 					info -> alphabet == Longchar_SYMBOL ? theSymbolAtsuiFont :
-					info -> alphabet == Longchar_PHONETIC ? theIpaTimesAtsuiFont :
+					info -> alphabet == Longchar_PHONETIC ? ( my font == kGraphics_font_TIMES && lc -> style == 0 ? theIpaTimesAtsuiFont : theIpaPalatinoAtsuiFont ) :
 					lc -> kar == '/' ? thePalatinoAtsuiFont :   /* Override Courier. */
 					info -> alphabet == Longchar_DINGBATS ? theZapfDingbatsAtsuiFont:
 					saveFont == kGraphics_font_COURIER ? theCourierAtsuiFont :
@@ -418,7 +418,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					OSStatus err = ATSUCreateTextLayout (& textLayout);
 					Melder_assert (err == 0);
 				}
-				MelderUtf16 code16 [2];
+				uint16_t code16 [2];
 				if (lc -> kar <= 0xFFFF) {
 					code16 [0] = lc -> kar;
 					OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
@@ -1870,15 +1870,17 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 			"Praat will have limited capabilities for international text.");
 		return false;
 	}
-	theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Charis SIL"), kATSOptionFlagsDefault);
+	theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
+	theIpaPalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Charis SIL"), kATSOptionFlagsDefault);
 	if (! theIpaTimesAtsuiFont) {
-		theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
-		if (! theIpaTimesAtsuiFont) {
-			theIpaTimesAtsuiFont = theTimesAtsuiFont;
-			Melder_assert (theIpaTimesAtsuiFont != 0);
+		if (theIpaPalatinoAtsuiFont) {
+			theIpaTimesAtsuiFont = theIpaPalatinoAtsuiFont;
+		} else {
 			Melder_warning1 (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
 				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
 		}
+	} else if (! theIpaPalatinoAtsuiFont) {
+		theIpaPalatinoAtsuiFont = theIpaTimesAtsuiFont;
 	}
 	Melder_assert (theTimesAtsuiFont != 0);
 	ATSUFindFontFromName (NULL, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);

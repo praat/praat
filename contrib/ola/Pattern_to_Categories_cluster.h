@@ -1,6 +1,3 @@
-#ifndef _Pattern_to_Categories_cluster_h_
-#define _Pattern_to_Categories_cluster_h_
-
 /* Pattern_to_Categories_cluster.h
  *
  * Copyright (C) 2007-2008 Ola Söder
@@ -34,15 +31,20 @@
 // Praat datatypes                                 //
 /////////////////////////////////////////////////////
 
-#include "Pattern.h"
-#include "Categories.h"
+#ifndef _Pattern_h_
+	#include "Pattern.h"
+#endif
+#ifndef _Categories_h_
+	#include "Categories.h"
+#endif
 
 /////////////////////////////////////////////////////
 // Miscs                                           //
 /////////////////////////////////////////////////////
 
-#include "FeatureWeights.h"
-#include "KNN.h"
+#ifndef _FeatureWeights_h_
+	#include "FeatureWeights.h"
+#endif
 
 /////////////////////////////////////////////////////
 // Prototypes                                      //
@@ -57,5 +59,3 @@ Categories Pattern_to_Categories_cluster
     double s,               // clustersize constraint 0 < s <= 1
     long m                  // reseed maximum
 );
-
-#endif

@@ -1,6 +1,6 @@
 /* FeatureWeights.c
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2008 Ola So"der, 2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * os 20070529 Initial release
+ * pb 20100606 removed some array-creations-on-the-stack
  */
 
 #include "FeatureWeights.h"
@@ -185,11 +186,11 @@ FeatureWeights FeatureWeights_computeWrapperInt
     double pivot = 0.5;
     double range = 0.5;
     double progress = 1 / range;
-    double results[nseeds + 1];
+    double *results = NUMdvector (0, nseeds);
 
     if (me)
     {
-        FeatureWeights cs[nseeds + 1];
+        FeatureWeights *cs = NUMpvector (0, nseeds);
         for (long y = 0; y <= nseeds; y++)
         {
             cs[y] = FeatureWeights_create((my input)->nx);
@@ -259,10 +260,13 @@ FeatureWeights FeatureWeights_computeWrapperInt
 
         for (long y = 0; y < nseeds; y++)
             forget(cs[y]);
+        NUMpvector_free (cs, 0);
 
         Melder_progress1(1.0, NULL);
+  		NUMdvector_free (results, 0);
         return(cs[nseeds]);
     }
+    NUMdvector_free (results, 0);
     return(NULL);
 }
 
@@ -300,11 +304,11 @@ FeatureWeights FeatureWeights_computeWrapperExt
     double pivot = 0.5;
     double range = 0.5;
     double progress = 1 / range;
-    double results[nseeds + 1];
+    double *results = NUMdvector (0, nseeds);
 
     if (nn)
     {
-        FeatureWeights cs[nseeds + 1];
+        FeatureWeights *cs = NUMpvector (0, nseeds);
         for (long y = 0; y <= nseeds; y++)
         {
             cs[y] = FeatureWeights_create(pp->nx);
@@ -374,10 +378,13 @@ FeatureWeights FeatureWeights_computeWrapperExt
 
         for (long y = 0; y < nseeds; y++)
             forget(cs[y]);
+		NUMpvector_free (cs, 0);
 
         Melder_progress1(1.0, NULL);
+    	NUMdvector_free (results, 0);
         return(cs[nseeds]);
     }
+    NUMdvector_free (results, 0);
     return(NULL);
 }
 
@@ -456,7 +463,7 @@ FeatureWeights FeatureWeights_computeRELIEF
         // Normalization               //
         /////////////////////////////////
 
-        double min[p->nx], max[p->nx];
+        double *min = NUMdvector (0, p->nx - 1), *max = NUMdvector (0, p->nx - 1);
         for (long x = 1; x <= p->nx; x++)
         {
             max[x] = p->z[1][x];
@@ -472,7 +479,7 @@ FeatureWeights FeatureWeights_computeRELIEF
             }
         }
 
-        double alfa[p->nx];
+        double *alfa = NUMdvector (0, p->nx - 1);
         for (long x = 1; x <= p->nx; x++)
         {
             alfa[x] = max[x] - min[x];
@@ -497,11 +504,12 @@ FeatureWeights FeatureWeights_computeRELIEF
         // Computing prior class probs //
         /////////////////////////////////
 
-        double priors[c->size];// Worst-case allocations
-        long classes[c->size];//
-        long enemies[c->size];//
-        long friends[c->size];//
+        double *priors = NUMdvector (0, c->size - 1);// Worst-case allocations
+        long *classes = NUMlvector (0, c->size - 1);//
+        long *enemies = NUMlvector (0, c->size - 1);//
+        long *friends = NUMlvector (0, c->size - 1);//
         long nclasses = FeatureWeights_computePriors(c, classes, priors);
+		Melder_assert (nclasses >= 2);
 
         /////////////////////////////////
         // Updating the w.vector       //
@@ -516,7 +524,7 @@ FeatureWeights FeatureWeights_computeRELIEF
 
             if (nfriends && nenemies)
             {
-                double classps[nenemies];
+                double *classps = NUMdvector (0, nenemies - 1);
                 for (long eq = 0; eq < nenemies; eq++)
                     for (long iq = 0; iq < nclasses; iq++)
                         if (FRIENDS(c->item[enemies[eq]], c->item[classes[iq]]))
@@ -542,9 +550,17 @@ FeatureWeights FeatureWeights_computeRELIEF
 
                     (my fweights)->data[1][x] = (my fweights)->data[1][x] - p1 + p2;
                 }
+                NUMdvector_free (classps, 0);
             }
         }
         Melder_progress1(1.0, NULL);
+        NUMdvector_free (min, 0);
+        NUMdvector_free (max, 0);
+        NUMdvector_free (alfa, 0);
+        NUMdvector_free (priors, 0);
+        NUMlvector_free (classes, 0);
+        NUMlvector_free (enemies, 0);
+        NUMlvector_free (friends, 0);
         forget(p);
         return(me);
     }

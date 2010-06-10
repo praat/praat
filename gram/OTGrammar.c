@@ -1,6 +1,6 @@
 /* OTGrammar.c
  *
- * Copyright (C) 1997-2009 Paul Boersma
+ * Copyright (C) 1997-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@
  * pb 2008/05/31 new decision strategy: ExponentialMaximumEntropy
  * pb 2009/03/09 new reranking strategy: Weighted all up, highest down
  * pb 2009/07/07 OTGrammar_PairDistribution_getMinimumNumberCorrect
+ * pb 2010/06/05 corrected colours
  */
 
 #include "OTGrammar.h"
@@ -682,6 +683,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 	OTGrammarTableau tableau;
 	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
 	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
+	Graphics_Colour colour = Graphics_inqColour (g);
 	wchar_t text [200];
 	itab = OTGrammar_getTableau (me, input);
 	if (! itab) {
@@ -795,7 +797,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 			Graphics_setFontSize (g, (int) (1.5 * fontSize));
 			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
 			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"\\pf");
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			Graphics_setFontSize (g, (int) fontSize);
 		}
 		Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
@@ -812,7 +814,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 				Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 			x += width;
 		}
-		Graphics_setGrey (g, 0.0);
+		Graphics_setColour (g, colour);
 		/*
 		 * Draw cell marks.
 		 */
@@ -858,7 +860,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 					wcscat (markString, L"+");
 			}
 			Graphics_text (g, x + 0.5 * width, y + descent, markString);
-			Graphics_setColour (g, Graphics_BLACK);
+			Graphics_setColour (g, colour);
 			if (constraint -> tiedToTheLeft)
 				Graphics_setLineType (g, Graphics_DOTTED);
 			Graphics_line (g, x, y, x, y + rowHeight);
