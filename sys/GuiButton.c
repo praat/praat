@@ -20,6 +20,7 @@
 /*
  * pb & sdk 2007/12/25 gtk
  * fb 2010/02/23 GTK
+ * pb 2010/06/14 HandleControlClick
  */
 
 #include "GuiP.h"
@@ -84,7 +85,7 @@ typedef struct structGuiButton {
 		void _GuiMacButton_handleClick (Widget widget, EventRecord *macEvent) {
 			iam_button;
 			_GuiMac_clipOnParent (widget);
-			bool pushed = TrackControl (widget -> nat.control.handle, macEvent -> where, NULL);
+			bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
 			GuiMac_clipOff ();
 			if (pushed && my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };

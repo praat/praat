@@ -1492,13 +1492,13 @@ void GuiText_setString (Widget widget, const wchar_t *text) {
 			gtk_entry_set_text (GTK_ENTRY (widget), Melder_peekWcsToUtf8 (text));
 		} else if (G_OBJECT_TYPE (widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
-			gchar *new = Melder_peekWcsToUtf8 (text);
-			//gtk_text_buffer_set_text (textBuffer, new, strlen (new));   // length in bytes!
+			gchar *textUtf8 = Melder_peekWcsToUtf8 (text);
+			//gtk_text_buffer_set_text (textBuffer, textUtf8, strlen (textUtf8));   // length in bytes!
 			GtkTextIter start, end;
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
 			gtk_text_buffer_delete_interactive (textBuffer, & start, & end, gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
-			gtk_text_buffer_insert_interactive (textBuffer, & start, new, g_utf8_strlen (new, -1), gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
+			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
 		}
 	#elif win
 		const wchar_t *from;

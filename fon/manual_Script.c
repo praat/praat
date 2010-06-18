@@ -2303,10 +2303,10 @@ CODE (L"#execute \"fill attributes.praat\" \"Navy blue\" With holes")
 NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20081207)
+MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20100613)
 NORMAL (L"With the @Info button and several commands in the #Query menus, "
-	"you write to the @@Info window@ (if your program is run from the @@Scripting 6.9. Calling from the command line|command line@, "
-	"the text goes to %stdout instead).")
+	"you write to the @@Info window@ (if your program is run from the command line, "
+	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
 NORMAL (L"The following commands allow you to write to the Info window from a script only:")
 TAG (L"#echo %text")
 DEFINITION (L"clears the Info window and writes some text to it:")
@@ -2582,7 +2582,7 @@ MAN_END
 
 MAN_BEGIN (L"Scripting 6.8. Messages to the user", L"ppgb", 20041027)
 NORMAL (L"If the user makes a mistake (e.g. types conflicting settings into your form window), "
-	"you can use the #exit directive (@@Scripting 5.8. Quitting|\\SS5.7@) "
+	"you can use the #exit directive (@@Scripting 5.8. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
 CODE (L"form My analysis")
 CODE1 (L"real Starting_time_(s) 0.0")
@@ -2613,7 +2613,7 @@ CODE (L"nocheck Remove")
 NORMAL (L"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20081207)
+MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20100613)
 INTRO (L"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -2635,8 +2635,8 @@ ENTRY (L"Command lines on Windows")
 NORMAL (L"On Windows, you call Praat scripts from the command line like this:")
 CODE (L"e:\\bspraatcon.exe e:\\bsdoit.praat 50 hallo")
 NORMAL (L"Note that you use the program ##praatcon.exe# instead of ##praat.exe#. "
-	"The script will write to the console output, and its output "
-	"can be used in pipes (in UTF-16 Little Endian encoding; use ##praatcon -a# if you want to use ISO Latin-1 encoding instead).")
+	"The script will write to the console output in UTF-16 Little Endian encoding. "
+	"If you want to use ISO Latin-1 encoding instead, or if you want to use praatcon's output in a pipe or redirect it to a file, use ##praatcon -a# instead.")
 ENTRY (L"How to get arguments into the script")
 NORMAL (L"In the above example, the script ##doit.praat# requires two arguments. In the script ##doit.praat#, "
 	"you use #form and #endform to receive these arguments. See @@Scripting 6.1. Arguments to the script@. "

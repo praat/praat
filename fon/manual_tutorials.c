@@ -23,24 +23,29 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100610)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100618)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.36# (18 June 2010)")
+//LIST_ITEM (L"\\bu GTK beta version.")
+LIST_ITEM (L"\\bu Mac: live scrolling.")
+LIST_ITEM (L"\\bu Demo window: the Demo window can now run from the command line.")
+LIST_ITEM (L"\\bu Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.")
+LIST_ITEM (L"\\bu GTK: script window accepts Unicode again.")
+//LIST_ITEM (L"\\bu GTK: list of objects: multiple selection, working Rename button.")
+//LIST_ITEM (L"\\bu GTK: working radio buttons.")
+//LIST_ITEM (L"\\bu GTK: working Buttons editor.")
+//LIST_ITEM (L"\\bu GTK: working vowel editor.")
+//LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.35# (10 June 2010)")
 LIST_ITEM (L"\\bu TextGrid window: removed a very old bug that could lead to reversed intervals and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.")
 LIST_ITEM (L"\\bu Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is \"Times\" and the font is nonbold and nonitalic, "
 	"because Doulos SIL matches Times New Roman better.")
 LIST_ITEM (L"\\bu kNN: made Ola S\\o\"der's k-nearest-neighbours classification compatible with Windows.")
 NORMAL (L"##5.1.34# (31 May 2010)")
-//LIST_ITEM (L"\\bu GTK beta version.")
 LIST_ITEM (L"\\bu Sound window: corrected a bug that caused Praat to crash if the analysis window was shorter than 2 samples.")
 LIST_ITEM (L"\\bu GTK: scrolling in the Info window and script window.")
 LIST_ITEM (L"\\bu GTK: script editor: implemented searching, replacing, and change dialogs.")
-//LIST_ITEM (L"\\bu GTK: list of objects: multiple selection, working Rename button.")
-//LIST_ITEM (L"\\bu GTK: working radio buttons.")
-//LIST_ITEM (L"\\bu GTK: working Buttons editor.")
-//LIST_ITEM (L"\\bu GTK: working vowel editor.")
-//LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.33# (24 May 2010)")
 LIST_ITEM (L"\\bu GTK alpha version.")
 LIST_ITEM (L"\\bu Abolished resolution independence: the Sound window now looks the same on all platforms, "

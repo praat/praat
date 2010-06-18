@@ -23,6 +23,7 @@
  * sdk 2008/03/24 gtk
  * fb 2010/02/23 gtk
  * pb 2010/05/15 prevented procreation of valueChanged events in GuiCheckButton_setValue
+ * pb 2010/06/14 HandleControlClick
  */
 
 #include "GuiP.h"
@@ -78,7 +79,7 @@ typedef struct structGuiCheckButton {
 		void _GuiMacCheckButton_handleClick (Widget widget, EventRecord *macEvent) {
 			iam_checkbutton;
 			_GuiMac_clipOnParent (widget);
-			bool clicked = TrackControl (widget -> nat.control.handle, macEvent -> where, NULL);
+			bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
 			GuiMac_clipOff ();
 			if (clicked) {
 				if (my valueChangedCallback != NULL) {

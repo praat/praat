@@ -264,7 +264,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 			colourMap = DefaultColormap (display, xscreen);
 			double width_pixels = DisplayWidth (display, xscreen);
 			double width_mm = DisplayWidthMM (display, xscreen);
-			resolution = floor (25.4 * width_pixels / width_mm + 0.5);
+			//resolution = floor (25.4 * width_pixels / width_mm + 0.5);
 			//Melder_casual ("display width %g %g %d", width_pixels, width_mm, resolution);
 			//resolution = 100;
 			/*if (resolution >= 90) resolution = 100; else resolution = 75;*/

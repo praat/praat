@@ -695,7 +695,7 @@ void praat_actions_show (void) {
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)
 						#if gtk
-							GuiObject_show(my button);
+							GuiObject_show (my button);
 						#elif motif
 							buttons [nbuttons ++] = my button;
 						#endif
@@ -869,6 +869,7 @@ praat_Command praat_getAction (long i)
 	{ return i < 0 || i > theNumberOfActions ? NULL : & theActions [i]; }
 
 void praat_background (void) {
+	if (Melder_batch) return;
 	if (Melder_backgrounding) return;
 	deleteDynamicMenu ();
 	praat_list_background ();
@@ -877,6 +878,7 @@ void praat_background (void) {
 }
 
 void praat_foreground (void) {
+	if (Melder_batch) return;
 	if (! Melder_backgrounding) return;
 	Melder_backgrounding = FALSE;
 	praat_list_foreground ();

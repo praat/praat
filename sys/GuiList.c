@@ -21,6 +21,7 @@
  * pb 2007/12/26 abstraction from Motif
  * pb 2009/01/31 NUMlvector_free has to be followed by assigning a NULL
  * fb 2010/02/23 GTK
+ * pb 2010/06/14 HandleControlClick
  */
 
 #include "GuiP.h"
@@ -124,7 +125,7 @@ typedef struct structGuiList {
 		void _GuiMacList_handleControlClick (Widget widget, EventRecord *macEvent) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
-			bool pushed = TrackControl (widget -> nat.control.handle, macEvent -> where, NULL);
+			bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
 			GuiMac_clipOff ();
 			if (pushed && my selectionChangedCallback) {
 				struct structGuiListEvent event = { widget };
@@ -308,7 +309,7 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 
 		liststore = gtk_list_store_new (N_COLUMNS, G_TYPE_STRING);
 		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
-		g_object_unref(liststore); // Destroys the widget after the list is destroyed
+		g_object_unref (liststore);   // Destroys the widget after the list is destroyed
 
 		_GuiObject_setUserData (my widget, me); /* nog een functie die je niet moet vergeten */
 
@@ -427,7 +428,7 @@ Widget GuiList_createShown (Widget parent, int left, int right, int top, int bot
 
 void GuiList_deleteAllItems (Widget widget) {
 	#if gtk
-		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(widget)));
+		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
 		gtk_list_store_clear (list_store);
 	#elif win
 		ListBox_ResetContent (widget -> window);
@@ -444,9 +445,9 @@ void GuiList_deleteAllItems (Widget widget) {
 void GuiList_deleteItem (Widget widget, long position) {
 	#if gtk
 		GtkTreeIter iter;
-		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW(widget));
+		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
 		if (gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, (gint) (position - 1))) {
-			gtk_list_store_remove (GTK_LIST_STORE(tree_model), & iter);
+			gtk_list_store_remove (GTK_LIST_STORE (tree_model), & iter);
 		}
 	#elif win
 		ListBox_DeleteString (widget -> window, position - 1);

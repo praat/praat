@@ -43,6 +43,7 @@
  * pb 2008/10/05 better tab navigation
  * pb 2010/01/04 Mac: implement forward delete
  * pb 2010/01/08 Mac: support Command-`
+ * pb 2010/06/14 Mac: live scrolling
  */
 #ifndef UNIX
 
@@ -1174,7 +1175,7 @@ static void _GuiNativizeWidget (Widget me) {
 				NativeScrollBar_set (me);
 			#elif mac
 				my nat.control.handle = NewControl (my macWindow, & my rect,
-					"\000", false, 0, 0, 0, scrollBarProc, (long) me);
+					"\000", false, 0, 0, 0, kControlScrollBarLiveProc, (long) me);
 				Melder_assert (my nat.control.handle);
 				my isControl = TRUE;
 			#endif
@@ -3534,10 +3535,11 @@ static pascal void _motif_scrollBarAction (ControlHandle maccontrol, short part)
 	if (my value < my minimum) my value = my minimum;
 	if (my value > my maximum - my sliderSize) my value = my maximum - my sliderSize;
 	SetControl32BitValue (maccontrol, my value);
-	if (part == kControlIndicatorPart)
+	if (part == kControlIndicatorPart) {
 		_Gui_callCallbacks (me, & my motiff.scrollBar.dragCallbacks, (XtPointer) (long) part);
-	else
+	} else {
 		_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, (XtPointer) (long) part);
+	}
 }
 #endif
 
@@ -4142,19 +4144,14 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 								_GuiMacCheckButton_handleClick (control, event);
 							}
 						} break;
+						case kControlIndicatorPart:   // live scrolling
 						case kControlUpButtonPart:
 						case kControlDownButtonPart:
 						case kControlPageUpPart:
 						case kControlPageDownPart: {
 							static ControlActionUPP theControlActionUPP;
 							if (! theControlActionUPP) theControlActionUPP = NewControlActionUPP (_motif_scrollBarAction);
-							TrackControl (maccontrol, event -> where, theControlActionUPP);
-						} break;
-						case kControlIndicatorPart: {
-							if (TrackControl (maccontrol, event -> where, NULL)) {
-								control -> value = GetControl32BitValue (maccontrol);
-								_Gui_callCallbacks (control, & control -> motiff.scrollBar.valueChangedCallbacks, (XtPointer) (long) controlPart);
-							}
+							HandleControlClick (maccontrol, event -> where, event -> modifiers, theControlActionUPP);
 						} break;
 						case kControlEditTextPart: _GuiMacText_handleClick (control, event); break;
 						default: break;

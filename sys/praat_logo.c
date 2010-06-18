@@ -29,6 +29,7 @@
 
 #include "praatP.h"
 #include "Picture.h"
+#include "praat_version.h"
 
 static void logo_defaultDraw (Graphics g) {
 	Graphics_setColour (g, Graphics_MAGENTA);
@@ -102,7 +103,9 @@ void praat_showLogo (int autoPopDown) {
 		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
 
 		Widget dialog = gtk_about_dialog_new ();
-		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), "5.1.33");
+		#define xstr(s) str(s)
+		#define str(s) #s
+		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), xstr (PRAAT_VERSION_STR));
 		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "Copyright (C) 1992-2010 by Paul Boersma and David Weenink");
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");

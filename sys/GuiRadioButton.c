@@ -21,6 +21,7 @@
  * pb 2007/12/26 extracted from Motif
  * sdk 2007/12/27 gtk
  * pb 2010/05/15 prevented procreation of valueChanged events in GuiRadioButton_setValue
+ * pb 2010/06/14 HandleControlClick
  */
 
 #include "GuiP.h"
@@ -76,7 +77,7 @@ typedef struct structGuiRadioButton {
 		void _GuiMacRadioButton_handleClick (Widget widget, EventRecord *macEvent) {
 			iam_radiobutton;
 			_GuiMac_clipOnParent (widget);
-			bool clicked = TrackControl (widget -> nat.control.handle, macEvent -> where, NULL);
+			bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
 			GuiMac_clipOff ();
 			if (clicked) {
 				if (widget -> parent -> radioBehavior) {
