@@ -36,7 +36,7 @@
 #include "longchar.h"
 #include "machine.h"
 
-#define BUTTON_WIDTH  200
+#define BUTTON_WIDTH  240
 
 #define praat_MAXNUM_LOOSE_COMMANDS  5000
 static long theNumberOfActions = 0;

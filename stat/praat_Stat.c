@@ -1,6 +1,6 @@
 /* praat_Stat.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2010/06/23
  */
 
 #include "praat.h"
@@ -710,14 +710,15 @@ DO
 	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double difference, t, significance, lowerLimit, upperLimit;
+	double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 	difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
-		& t, & significance, & lowerLimit, & upperLimit);
+		& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
 		L" and column ", Table_messageColumn (me, column2), L":");
 	MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
 	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
+	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
@@ -741,14 +742,15 @@ DO
 	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
-	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
-		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
 	MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
 	MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
+	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
@@ -796,14 +798,15 @@ DO
 	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group = GET_STRING (L"Group");
-	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
-		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
 	MelderInfo_writeLine3 (L" of column ", Table_messageColumn (me, groupColumn), L":");
 	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
@@ -822,13 +825,14 @@ DO
 	Table me = ONLY_OBJECT;
 	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double mean, tFromZero, significanceFromZero, lowerLimit, upperLimit;
+	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getMean_studentT (me, column, unconfidence,
-		& tFromZero, & significanceFromZero, & lowerLimit, & upperLimit);
+		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 	MelderInfo_open ();
 	MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
 	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
 	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),

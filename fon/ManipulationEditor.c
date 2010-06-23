@@ -87,17 +87,15 @@ void ManipulationEditor_prefs (void) {
 }
 
 static void updateMenus (ManipulationEditor me) {
-	#if motif
-	XmToggleButtonSetState (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES, False);
-	XmToggleButtonSetState (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM, False);
-	XmToggleButtonSetState (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC, False);
-	XmToggleButtonSetState (my synthPitchButton, my synthesisMethod == Manipulation_PITCH, False);
-	XmToggleButtonSetState (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM, False);
-	XmToggleButtonSetState (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH, False);
-	XmToggleButtonSetState (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM, False);
-	XmToggleButtonSetState (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD, False);
-	XmToggleButtonSetState (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC, False);
-	#endif
+	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
+	GuiMenuItem_check (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM);
+	GuiMenuItem_check (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC);
+	GuiMenuItem_check (my synthPitchButton, my synthesisMethod == Manipulation_PITCH);
+	GuiMenuItem_check (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM);
+	GuiMenuItem_check (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH);
+	GuiMenuItem_check (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
+	GuiMenuItem_check (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD);
+	GuiMenuItem_check (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC);
 }
 
 /*

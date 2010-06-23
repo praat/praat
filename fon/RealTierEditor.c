@@ -270,7 +270,7 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 	/*
 	 * Perform the default action: move cursor.
 	 */
-	my startSelection = my endSelection = xWC;
+	//my startSelection = my endSelection = xWC;
 	if (my sound.data) {
 		if (yWC < 1 - SOUND_HEIGHT) {   /* Clicked in tier area? */
 			yWC /= 1 - SOUND_HEIGHT;

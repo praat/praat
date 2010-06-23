@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/04
+ * pb 2010/06/23
  */
 
 #ifndef _Collection_h_
@@ -95,13 +95,13 @@ double Table_getCorrelation_pearsonR (Table me, long column1, long column2, doub
 double Table_getCorrelation_kendallTau (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getMean_studentT (Table me, long column, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getDifference_studentT (Table me, long column1, long column2, double significanceLevel,
-	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit);
+	double *out_t, double *out_numberOfDegreesOfFreedom, double *out_significance, double *out_lowerLimit, double *out_upperLimit);
 double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const wchar_t *group1, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit);
 double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2,
 	double *out_rankSum, double *out_significanceFromZero);
 double Table_getVarianceRatio (Table me, long column1, long column2, double significanceLevel,

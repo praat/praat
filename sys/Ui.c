@@ -873,7 +873,7 @@ void UiForm_finish (I) {
 	int size = my numberOfFields;
 	int dialogHeight = 0, x = Gui_LEFT_DIALOG_SPACING, y;
 	int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
-	int dialogWidth = 480, dialogCentre = dialogWidth / 2, fieldX = dialogCentre + Gui_LABEL_SPACING / 2;
+	int dialogWidth = 520, dialogCentre = dialogWidth / 2, fieldX = dialogCentre + Gui_LABEL_SPACING / 2;
 	int labelWidth = fieldX - Gui_LABEL_SPACING - x, fieldWidth = labelWidth, halfFieldWidth = fieldWidth / 2 - 6;
 
 	#if gtk

@@ -51,6 +51,7 @@
  * pb 2009/01/18 Interpreter argument in formula
  * pb 2009/10/21 Table_randomizeRows
  * pb 2010/03/04 Wilcoxon rank sum
+ * pb 2010/06/23 report number of degrees of freedom in t-tests
  */
 
 #include <ctype.h>
@@ -1327,9 +1328,10 @@ double Table_getCorrelation_kendallTau (Table me, long column1, long column2, do
 }
 
 double Table_getDifference_studentT (Table me, long column1, long column2, double significanceLevel,
-	double *out_t, double *out_significance, double *out_lowerLimit, double *out_upperLimit)
+	double *out_t, double *out_numberOfDegreesOfFreedom, double *out_significance, double *out_lowerLimit, double *out_upperLimit)
 {
 	if (out_t) *out_t = NUMundefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
 	if (out_significance) *out_significance = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
@@ -1346,6 +1348,7 @@ double Table_getDifference_studentT (Table me, long column1, long column2, doubl
 	}
 	double meanDifference = sum / n;
 	long degreesOfFreedom = n - 1;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	if (degreesOfFreedom >= 1 && (out_t || out_significance || out_lowerLimit || out_upperLimit)) {
 		double sumOfSquares = 0.0;
 		for (long irow = 1; irow <= n; irow ++) {
@@ -1366,44 +1369,48 @@ double Table_getDifference_studentT (Table me, long column1, long column2, doubl
 }
 
 double Table_getMean_studentT (Table me, long column, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
 	double mean = 0.0, var = 0.0, standardError;
-	long n = my rows -> size, irow;
+	long n = my rows -> size;
 	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
 	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
 	if (n < 1) return NUMundefined;
 	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+	long degreesOfFreedom = n - 1;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	Table_numericize (me, column);
-	for (irow = 1; irow <= n; irow ++) {
+	for (long irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows -> item [irow];
 		mean += row -> cells [column]. number;
 	}
 	mean /= n;
 	if (n >= 2 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
-		for (irow = 1; irow <= n; irow ++) {
+		for (long irow = 1; irow <= n; irow ++) {
 			TableRow row = my rows -> item [irow];
 			double diff = row -> cells [column]. number - mean;
 			var += diff * diff;
 		}
-		standardError = sqrt (var / (n - 1) / n);
+		standardError = sqrt (var / degreesOfFreedom / n);
 		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
 		if (out_significanceFromZero) *out_significanceFromZero =
-			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, n - 1);
+			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, degreesOfFreedom);
 		if (out_lowerLimit) *out_lowerLimit =
-			mean - standardError * NUMinvStudentQ (significanceLevel, n - 1);
+			mean - standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
 		if (out_upperLimit) *out_upperLimit =
-			mean + standardError * NUMinvStudentQ (significanceLevel, n - 1);
+			mean + standardError * NUMinvStudentQ (significanceLevel, degreesOfFreedom);
 	}
 	return mean;
 }
 
 double Table_getGroupMean_studentT (Table me, long column, long groupColumn, const wchar_t *group, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
 	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
 	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
@@ -1423,6 +1430,7 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 	if (n < 1) return NUMundefined;
 	double mean = sum / n;
 	long degreesOfFreedom = n - 1;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
 		double sumOfSquares = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
@@ -1447,9 +1455,10 @@ double Table_getGroupMean_studentT (Table me, long column, long groupColumn, con
 }
 
 double Table_getGroupDifference_studentT (Table me, long column, long groupColumn, const wchar_t *group1, const wchar_t *group2, double significanceLevel,
-	double *out_tFromZero, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
+	double *out_tFromZero, double *out_numberOfDegreesOfFreedom, double *out_significanceFromZero, double *out_lowerLimit, double *out_upperLimit)
 {
 	if (out_tFromZero) *out_tFromZero = NUMundefined;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = NUMundefined;
 	if (out_significanceFromZero) *out_significanceFromZero = NUMundefined;
 	if (out_lowerLimit) *out_lowerLimit = NUMundefined;
 	if (out_upperLimit) *out_upperLimit = NUMundefined;
@@ -1471,10 +1480,11 @@ double Table_getGroupDifference_studentT (Table me, long column, long groupColum
 		}
 	}
 	if (n1 < 1 || n2 < 1) return NUMundefined;
+	long degreesOfFreedom = n1 + n2 - 2;
+	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	double mean1 = sum1 / n1;
 	double mean2 = sum2 / n2;
 	double difference = mean1 - mean2;
-	long degreesOfFreedom = n1 + n2 - 2;
 	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
 		double sumOfSquares = 0.0;
 		for (long irow = 1; irow <= my rows -> size; irow ++) {

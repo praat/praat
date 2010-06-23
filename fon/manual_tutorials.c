@@ -23,20 +23,25 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100618)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100623)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (L"##5.1.36# (18 June 2010)")
+NORMAL (L"##5.1.37# (23 June 2010)")
 //LIST_ITEM (L"\\bu GTK beta version.")
-LIST_ITEM (L"\\bu Mac: live scrolling.")
-LIST_ITEM (L"\\bu Demo window: the Demo window can now run from the command line.")
-LIST_ITEM (L"\\bu Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.")
-LIST_ITEM (L"\\bu GTK: script window accepts Unicode again.")
+LIST_ITEM (L"\\bu PitchTier window and similar windows: can drag multiple points simultaneously.")
+LIST_ITEM (L"\\bu Table: %t-tests report the number of degrees of freedom.")
+LIST_ITEM (L"\\bu GTK: correct progress bar again.")
+LIST_ITEM (L"\\bu GTK: correct behaviour of Synth menu in manipulation window.")
 //LIST_ITEM (L"\\bu GTK: list of objects: multiple selection, working Rename button.")
 //LIST_ITEM (L"\\bu GTK: working radio buttons.")
 //LIST_ITEM (L"\\bu GTK: working Buttons editor.")
 //LIST_ITEM (L"\\bu GTK: working vowel editor.")
 //LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
+NORMAL (L"##5.1.36# (18 June 2010)")
+LIST_ITEM (L"\\bu Mac: live scrolling.")
+LIST_ITEM (L"\\bu Demo window: the Demo window can now run from the command line.")
+LIST_ITEM (L"\\bu Motif: corrected a bug introduced in 5.1.33 whereby things in the Picture window could be placed incorrectly.")
+LIST_ITEM (L"\\bu GTK: script window accepts Unicode again.")
 NORMAL (L"##5.1.35# (10 June 2010)")
 LIST_ITEM (L"\\bu TextGrid window: removed a very old bug that could lead to reversed intervals and to crashes when you inserted a boundary after using Shift-arrow and Command-arrow.")
 LIST_ITEM (L"\\bu Graphics: Praat now uses Doulos SIL instead of Charis SIL if your font setting is \"Times\" and the font is nonbold and nonitalic, "

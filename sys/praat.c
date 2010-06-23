@@ -76,8 +76,8 @@
 
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
-#define WINDOW_WIDTH 490
-#define WINDOW_HEIGHT 620
+#define WINDOW_WIDTH 520
+#define WINDOW_HEIGHT 630
 
 structPraatApplication theForegroundPraatApplication;
 PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
@@ -1234,14 +1234,14 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			raLeft = gtk_vbox_new (FALSE, 0);
 			gtk_container_add (GTK_CONTAINER (raHoriz), raLeft);
 		#else
-			GuiLabel_createShown (raLeft, 3, -210, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
+			GuiLabel_createShown (raLeft, 3, -250, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
 		#endif
-		praatList_objects = GuiList_create (raLeft, 0, -210, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
+		praatList_objects = GuiList_create (raLeft, 0, -250, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
 		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
 		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, NULL);
 		GuiObject_show (praatList_objects);
 		praat_addFixedButtons (raLeft);
-		praat_actions_createDynamicMenu (raHoriz, 210);
+		praat_actions_createDynamicMenu (raHoriz, 250);
 		#if gtk
 			GuiObject_show (raLeft);
 			GuiObject_show (raHoriz);
