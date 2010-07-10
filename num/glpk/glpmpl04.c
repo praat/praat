@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -289,9 +290,9 @@ void open_input(MPL *mpl, char *file)
       memset(mpl->context, ' ', CONTEXT_SIZE);
       mpl->c_ptr = 0;
       xassert(mpl->in_fp == NULL);
-      mpl->in_fp = fopen(file, "r");
+      mpl->in_fp = xfopen(file, "r");
       if (mpl->in_fp == NULL)
-         mpl_error(mpl, "unable to open %s - %s", file, strerror(errno));
+         mpl_error(mpl, "unable to open %s - %s", file, xerrmsg());
       mpl->in_file = file;
       /* scan the very first character */
       get_char(mpl);
@@ -309,11 +310,13 @@ void open_input(MPL *mpl, char *file)
 int read_char(MPL *mpl)
 {     int c;
       xassert(mpl->in_fp != NULL);
-      c = fgetc(mpl->in_fp);
-      if (ferror(mpl->in_fp))
-         mpl_error(mpl, "read error on %s - %s", mpl->in_file,
-            strerror(errno));
-      if (feof(mpl->in_fp)) c = EOF;
+      c = xfgetc(mpl->in_fp);
+      if (c < 0)
+      {  if (xferror(mpl->in_fp))
+            mpl_error(mpl, "read error on %s - %s", mpl->in_file,
+               xerrmsg());
+         c = EOF;
+      }
       return c;
 }
 
@@ -324,7 +327,7 @@ int read_char(MPL *mpl)
 
 void close_input(MPL *mpl)
 {     xassert(mpl->in_fp != NULL);
-      fclose(mpl->in_fp);
+      xfclose(mpl->in_fp);
       mpl->in_fp = NULL;
       mpl->in_file = NULL;
       return;
@@ -340,48 +343,29 @@ void open_output(MPL *mpl, char *file)
 {     xassert(mpl->out_fp == NULL);
       if (file == NULL)
       {  file = "<stdout>";
-         mpl->out_fp = stdout;
+         mpl->out_fp = (void *)stdout;
       }
       else
-      {  mpl->out_fp = fopen(file, "w");
+      {  mpl->out_fp = xfopen(file, "w");
          if (mpl->out_fp == NULL)
-            mpl_error(mpl, "unable to create %s - %s", file,
-               strerror(errno));
+            mpl_error(mpl, "unable to create %s - %s", file, xerrmsg());
       }
       mpl->out_file = xmalloc(strlen(file)+1);
       strcpy(mpl->out_file, file);
-      mpl->out_buf = xmalloc(OUTBUF_SIZE);
-      mpl->out_cnt = 0;
       return;
 }
 
 /*----------------------------------------------------------------------
 -- write_char - write next character to output text file.
 --
--- This routine writes a next ASCII character to the output text file.
--- Note that line buffering is used, i.e. characters are stored in the
--- output buffer until the new-line control character is passed, which
--- causes actual writing data from the buffer to the output file. */
+-- This routine writes an ASCII character to the output text file. */
 
 void write_char(MPL *mpl, int c)
 {     xassert(mpl->out_fp != NULL);
-      xassert(mpl->out_cnt < OUTBUF_SIZE);
-      if (c == '\n')
-      {  /* flush the output buffer */
-         mpl->out_buf[mpl->out_cnt] = '\0';
-         if (mpl->out_fp == stdout)
-            xprintf("%s\n", mpl->out_buf);
-         else
-            fprintf(mpl->out_fp, "%s\n", mpl->out_buf);
-         mpl->out_cnt = 0;
-      }
+      if (mpl->out_fp == (void *)stdout)
+         xprintf("%c", c);
       else
-      {  /* store the character to the output buffer */
-         mpl->out_buf[mpl->out_cnt++] = (char)c;
-         if (mpl->out_cnt == OUTBUF_SIZE)
-            mpl_error(mpl, "write error on %s - output buffer overflow",
-               mpl->out_file);
-      }
+         xfprintf(mpl->out_fp, "%c", c);
       return;
 }
 
@@ -409,12 +393,11 @@ void write_text(MPL *mpl, char *fmt, ...)
 
 void flush_output(MPL *mpl)
 {     xassert(mpl->out_fp != NULL);
-      if (mpl->out_cnt > 0) write_char(mpl, '\n');
-      if (mpl->out_fp != stdout)
-      {  fflush(mpl->out_fp);
-         if (ferror(mpl->out_fp))
+      if (mpl->out_fp != (void *)stdout)
+      {  xfflush(mpl->out_fp);
+         if (xferror(mpl->out_fp))
             mpl_error(mpl, "write error on %s - %s", mpl->out_file,
-               strerror(errno));
+               xerrmsg());
       }
       return;
 }
@@ -575,12 +558,8 @@ MPL *mpl_initialize(void)
       mpl->in_file = NULL;
       mpl->out_fp = NULL;
       mpl->out_file = NULL;
-      mpl->out_buf = NULL;
-      mpl->out_cnt = 0;
-#if 1 /* 14/VII-2006 */
       mpl->prt_fp = NULL;
       mpl->prt_file = NULL;
-#endif
       /* solver interface segment */
       if (setjmp(mpl->jump)) xassert(mpl != mpl);
       mpl->phase = 0;
@@ -699,7 +678,11 @@ done: /* return to the calling program */
 --     processing. */
 
 int mpl_read_data(MPL *mpl, char *file)
+#if 0 /* 02/X-2008 */
 {     if (mpl->phase != 1)
+#else
+{     if (!(mpl->phase == 1 || mpl->phase == 2))
+#endif
          xfault("mpl_read_data: invalid call sequence\n");
       if (file == NULL)
          xfault("mpl_read_data: no input filename specified\n");
@@ -1273,6 +1256,33 @@ int mpl_has_solve_stmt(MPL *mpl)
       return mpl->flag_s;
 }
 
+#if 1 /* 15/V-2010 */
+void mpl_put_row_soln(MPL *mpl, int i, int stat, double prim,
+      double dual)
+{     /* store row (constraint/objective) solution components */
+      xassert(mpl->phase == 3);
+      xassert(1 <= i && i <= mpl->m);
+      mpl->row[i]->stat = stat;
+      mpl->row[i]->prim = prim;
+      mpl->row[i]->dual = dual;
+      return;
+}
+#endif
+
+#if 1 /* 15/V-2010 */
+void mpl_put_col_soln(MPL *mpl, int j, int stat, double prim,
+      double dual)
+{     /* store column (variable) solution components */
+      xassert(mpl->phase == 3);
+      xassert(1 <= j && j <= mpl->n);
+      mpl->col[j]->stat = stat;
+      mpl->col[j]->prim = prim;
+      mpl->col[j]->dual = dual;
+      return;
+}
+#endif
+
+#if 0 /* 15/V-2010 */
 /*----------------------------------------------------------------------
 -- mpl_put_col_value - store column value.
 --
@@ -1293,9 +1303,10 @@ void mpl_put_col_value(MPL *mpl, int j, double val)
       if (!(1 <= j && j <= mpl->n))
          xfault(
          "mpl_put_col_value: j = %d; column number out of range\n", j);
-      mpl->col[j]->value = val;
+      mpl->col[j]->prim = val;
       return;
 }
+#endif
 
 /*----------------------------------------------------------------------
 -- mpl_postsolve - postsolve model.
@@ -1398,15 +1409,12 @@ void mpl_terminate(MPL *mpl)
       rng_delete_rand(mpl->rand);
       if (mpl->row != NULL) xfree(mpl->row);
       if (mpl->col != NULL) xfree(mpl->col);
-      if (mpl->in_fp != NULL) fclose(mpl->in_fp);
-      if (mpl->out_fp != NULL && mpl->out_fp != stdout)
-         fclose(mpl->out_fp);
+      if (mpl->in_fp != NULL) xfclose(mpl->in_fp);
+      if (mpl->out_fp != NULL && mpl->out_fp != (void *)stdout)
+         xfclose(mpl->out_fp);
       if (mpl->out_file != NULL) xfree(mpl->out_file);
-      if (mpl->out_buf != NULL) xfree(mpl->out_buf);
-#if 1 /* 14/VII-2006 */
-      if (mpl->prt_fp != NULL) fclose(mpl->prt_fp);
+      if (mpl->prt_fp != NULL) xfclose(mpl->prt_fp);
       if (mpl->prt_file != NULL) xfree(mpl->prt_file);
-#endif
       if (mpl->mod_file != NULL) xfree(mpl->mod_file);
       xfree(mpl->mpl_buf);
       xfree(mpl);

@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@
 ***********************************************************************/
 
 #include "glpapi.h"
-#define xfault xerror
 
 /***********************************************************************
 *  NAME
@@ -145,7 +145,7 @@ int glp_get_num_cols(glp_prob *lp)
 const char *glp_get_row_name(glp_prob *lp, int i)
 {     char *name;
       if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_row_name: i = %d; row number out of range\n",
+         xerror("glp_get_row_name: i = %d; row number out of range\n",
             i);
       name = lp->row[i]->name;
       return name;
@@ -169,7 +169,7 @@ const char *glp_get_row_name(glp_prob *lp, int i)
 const char *glp_get_col_name(glp_prob *lp, int j)
 {     char *name;
       if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_col_name: j = %d; column number out of range\n"
+         xerror("glp_get_col_name: j = %d; column number out of range\n"
             , j);
       name = lp->col[j]->name;
       return name;
@@ -197,7 +197,7 @@ const char *glp_get_col_name(glp_prob *lp, int j)
 
 int glp_get_row_type(glp_prob *lp, int i)
 {     if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_row_type: i = %d; row number out of range\n",
+         xerror("glp_get_row_type: i = %d; row number out of range\n",
             i);
       return lp->row[i]->type;
 }
@@ -220,7 +220,7 @@ int glp_get_row_type(glp_prob *lp, int i)
 double glp_get_row_lb(glp_prob *lp, int i)
 {     double lb;
       if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_row_lb: i = %d; row number out of range\n", i);
+         xerror("glp_get_row_lb: i = %d; row number out of range\n", i);
       switch (lp->row[i]->type)
       {  case GLP_FR:
          case GLP_UP:
@@ -253,7 +253,7 @@ double glp_get_row_lb(glp_prob *lp, int i)
 double glp_get_row_ub(glp_prob *lp, int i)
 {     double ub;
       if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_row_ub: i = %d; row number out of range\n", i);
+         xerror("glp_get_row_ub: i = %d; row number out of range\n", i);
       switch (lp->row[i]->type)
       {  case GLP_FR:
          case GLP_LO:
@@ -290,7 +290,7 @@ double glp_get_row_ub(glp_prob *lp, int i)
 
 int glp_get_col_type(glp_prob *lp, int j)
 {     if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_col_type: j = %d; column number out of range\n"
+         xerror("glp_get_col_type: j = %d; column number out of range\n"
             , j);
       return lp->col[j]->type;
 }
@@ -313,7 +313,7 @@ int glp_get_col_type(glp_prob *lp, int j)
 double glp_get_col_lb(glp_prob *lp, int j)
 {     double lb;
       if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_col_lb: j = %d; column number out of range\n",
+         xerror("glp_get_col_lb: j = %d; column number out of range\n",
             j);
       switch (lp->col[j]->type)
       {  case GLP_FR:
@@ -347,7 +347,7 @@ double glp_get_col_lb(glp_prob *lp, int j)
 double glp_get_col_ub(glp_prob *lp, int j)
 {     double ub;
       if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_col_ub: j = %d; column number out of range\n",
+         xerror("glp_get_col_ub: j = %d; column number out of range\n",
             j);
       switch (lp->col[j]->type)
       {  case GLP_FR:
@@ -382,7 +382,7 @@ double glp_get_col_ub(glp_prob *lp, int j)
 
 double glp_get_obj_coef(glp_prob *lp, int j)
 {     if (!(0 <= j && j <= lp->n))
-         xfault("glp_get_obj_coef: j = %d; column number out of range\n"
+         xerror("glp_get_obj_coef: j = %d; column number out of range\n"
             , j);
       return j == 0 ? lp->c0 : lp->col[j]->coef;
 }
@@ -435,7 +435,7 @@ int glp_get_mat_row(glp_prob *lp, int i, int ind[], double val[])
 {     GLPAIJ *aij;
       int len;
       if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_mat_row: i = %d; row number out of range\n",
+         xerror("glp_get_mat_row: i = %d; row number out of range\n",
             i);
       len = 0;
       for (aij = lp->row[i]->ptr; aij != NULL; aij = aij->r_next)
@@ -476,7 +476,7 @@ int glp_get_mat_col(glp_prob *lp, int j, int ind[], double val[])
 {     GLPAIJ *aij;
       int len;
       if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_mat_col: j = %d; column number out of range\n",
+         xerror("glp_get_mat_col: j = %d; column number out of range\n",
             j);
       len = 0;
       for (aij = lp->col[j]->ptr; aij != NULL; aij = aij->c_next)

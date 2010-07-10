@@ -13,7 +13,7 @@
 *  OF THE ORIGINAL FORTRAN SUBROUTINES: ALAN GEORGE AND JOSEPH LIU,
 *  UNIVERSITY OF WATERLOO, WATERLOO, ONTARIO, CANADA.
 *
-*  The translation was made by Andrew Makhorin <mao@mai2.rcnet.ru>.
+*  The translation was made by Andrew Makhorin <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by

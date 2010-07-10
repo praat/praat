@@ -1704,9 +1704,16 @@ MAN_BEGIN (L"DTW: Get maximum consecutive steps...", L"djmw", 20050307)
 INTRO (L"Get the maximum number of consecutive steps in the chosen direction along the optimal path from the selected @DTW.")
 MAN_END
 
+MAN_BEGIN (L"DTW: Get distance (weighted)", L"djmw", 20100628)
+INTRO (L"Queries the selected @DTW object for the weighted distance along the minimum path.")
+ENTRY (L"Algorithm")
+NORMAL (L"If the distance matrix has %%nx% cells along the %%x%-direction, %%ny% cells along the %%y%-direction and the "
+	"sum of the distances along the minimum path is %%S%, the weighted distance is given by %%S%/(%nx+%ny). ")
+MAN_END
+
 MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20090523)
 INTRO (L"Queries the selected @DTW object for the time along the minimal path "
-	"given the time along the \"%x-direction\". This command is deprecated, the new commands fro querying are "
+	"given the time along the \"%x-direction\". This command is deprecated, the new commands for querying are "
 	"@@DTW: Get y time...@ and @@DTW: Get x time...@.")
 ENTRY (L"Settings")
 TAG (L"%Time")

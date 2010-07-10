@@ -1,9 +1,10 @@
 # test_Permutation.praat
-# djmw 20050710, 20070820
+# djmw 20050710, 20070820, 20100525
 
 call test_600_12
 call rotate
 call invert
+call sequence
 procedure rotate
   printline Rotate
   for i to 20
@@ -61,18 +62,40 @@ endproc
 
 procedure test_600_12
   printline test_600_12
-  Create Permutation... 600 600 y
-  p = selected ("Permutation")
-  Interleave... 0 0 12 1
-  pin = selected ("Permutation")
-  Invert
-  pininv = selected ("Permutation")
-  plus pin
-  Multiply
-  pm = selected ("Permutation")
+  .p = Create Permutation... 600 600 y
+  .pin = Interleave... 0 0 12 1
+  .pininv = Invert
+  plus .pin
+  .pm = Multiply
   for l to 600
       pkil = Get value... l
       assert pkil = l; l='l'
   endfor
+  plus .pin
+  plus .pininv
+  plus .p
+  Remove
   printline o.k.
 endproc  
+
+procedure sequence
+  print Sequences 
+  .n = 4
+  .np = 4*3*2
+  Create Permutation... ps .n y
+  for .j to .np 
+    for .i to .j
+      Next
+    endfor
+    for .i to .j
+      Previous
+    endfor
+    for .i to .n
+      .val = Get value... .i
+      assert .val = .i
+    endfor
+    print .
+  endfor
+  Remove
+  print  o.k. 
+endproc

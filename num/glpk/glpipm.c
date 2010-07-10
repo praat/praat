@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,101 +23,15 @@
 ***********************************************************************/
 
 #include "glpipm.h"
-#include "glplib.h"
 #include "glpmat.h"
-
-/*----------------------------------------------------------------------
--- ipm_main - solve LP with primal-dual interior-point method.
---
--- *Synopsis*
---
--- #include "glpipm.h"
--- int ipm_main(int m, int n, int A_ptr[], int A_ind[], double A_val[],
---    double b[], double c[], double x[], double y[], double z[]);
---
--- *Description*
---
--- The routine ipm_main is a *tentative* implementation of primal-dual
--- interior point method for solving linear programming problems.
---
--- The routine ipm_main assumes the following *standard* formulation of
--- LP problem to be solved:
---
---    minimize
---
---       F = c[0] + c[1]*x[1] + c[2]*x[2] + ... + c[n]*x[n]
---
---    subject to linear constraints
---
---       a[1,1]*x[1] + a[1,2]*x[2] + ... + a[1,n]*x[n] = b[1]
---       a[2,1]*x[1] + a[2,2]*x[2] + ... + a[2,n]*x[n] = b[2]
---             . . . . . .
---       a[m,1]*x[1] + a[m,2]*x[2] + ... + a[m,n]*x[n] = b[m]
---
---    and non-negative variables
---
---       x[1] >= 0, x[2] >= 0, ..., x[n] >= 0
---
--- where:
--- F                    is objective function;
--- x[1], ..., x[n]      are (structural) variables;
--- c[0]                 is constant term of the objective function;
--- c[1], ..., c[n]      are objective coefficients;
--- a[1,1], ..., a[m,n]  are constraint coefficients;
--- b[1], ..., b[n]      are right-hand sides.
---
--- The parameter m is the number of rows (constraints).
---
--- The parameter n is the number of columns (variables).
---
--- The arrays A_ptr, A_ind, and A_val specify the mxn constraint matrix
--- A in storage-by-rows format. These arrays are not changed on exit.
---
--- The array b specifies the vector of right-hand sides b, which should
--- be stored in locations b[1], ..., b[m]. This array is not changed on
--- exit.
---
--- The array c specifies the vector of objective coefficients c, which
--- should be stored in locations c[1], ..., c[n], and the constant term
--- of the objective function, which should be stored in location c[0].
--- This array is not changed on exit.
---
--- The solution is three vectors x, y, and z, which are stored by the
--- routine in the arrays x, y, and z, respectively. These vectors
--- correspond to the best primal-dual point found during optimization.
--- They are approximate solution of the following system (which is the
--- Karush-Kuhn-Tucker optimality conditions):
---
---    A*x      = b      (primal feasibility condition)
---    A'*y + z = c      (dual feasibility condition)
---    x'*z     = 0      (primal-dual complementarity condition)
---    x >= 0, z >= 0    (non-negativity condition)
---
--- where:
--- x[1], ..., x[n]      are primal (structural) variables;
--- y[1], ..., y[m]      are dual variables (Lagrange multipliers) for
---                      equality constraints;
--- z[1], ..., z[n]      are dual variables (Lagrange multipliers) for
---                      non-negativity constraints.
---
--- *Returns*
---
--- The routine ipm_main returns one of the following codes:
---
--- 0 - optimal solution found;
--- 1 - problem has no feasible (primal or dual) solution;
--- 2 - no convergence;
--- 3 - iterations limit exceeded;
--- 4 - numeric instability on solving Newtonian system.
---
--- In case of non-zero return code the routine returns the best point,
--- which has been reached during optimization. */
 
 #define ITER_MAX 100
 /* maximal number of iterations */
 
-struct dsa
-{     /* working area used by interior-point routines */
+struct csa
+{     /* common storage area */
+      /*--------------------------------------------------------------*/
+      /* LP data */
       int m;
       /* number of rows (equality constraints) */
       int n;
@@ -124,27 +39,34 @@ struct dsa
       int *A_ptr; /* int A_ptr[1+m+1]; */
       int *A_ind; /* int A_ind[A_ptr[m+1]]; */
       double *A_val; /* double A_val[A_ptr[m+1]]; */
-      /* mxn matrix A in storage-by-rows format */
+      /* mxn-matrix A in storage-by-rows format */
       double *b; /* double b[1+m]; */
-      /* m-vector b of right hand-sides */
+      /* m-vector b of right-hand sides */
       double *c; /* double c[1+n]; */
       /* n-vector c of objective coefficients; c[0] is constant term of
          the objective function */
+      /*--------------------------------------------------------------*/
+      /* LP solution */
       double *x; /* double x[1+n]; */
       double *y; /* double y[1+m]; */
       double *z; /* double z[1+n]; */
       /* current point in primal-dual space; the best point on exit */
+      /*--------------------------------------------------------------*/
+      /* control parameters */
+      const glp_iptcp *parm;
+      /*--------------------------------------------------------------*/
+      /* working arrays and variables */
       double *D; /* double D[1+n]; */
-      /* nxn diagonal matrix D = X*inv(Z), where X = diag(x[j]) and
+      /* diagonal nxn-matrix D = X*inv(Z), where X = diag(x[j]) and
          Z = diag(z[j]) */
       int *P; /* int P[1+m+m]; */
-      /* mxm permutation matrix P used to minimize fill-in in Cholesky
+      /* permutation mxm-matrix P used to minimize fill-in in Cholesky
          factorization */
       int *S_ptr; /* int S_ptr[1+m+1]; */
       int *S_ind; /* int S_ind[S_ptr[m+1]]; */
       double *S_val; /* double S_val[S_ptr[m+1]]; */
       double *S_diag; /* double S_diag[1+m]; */
-      /* mxm symmetric matrix S = P*A*D*A'*P' whose upper triangular
+      /* symmetric mxm-matrix S = P*A*D*A'*P' whose upper triangular
          part without diagonal elements is stored in S_ptr, S_ind, and
          S_val in storage-by-rows format, diagonal elements are stored
          in S_diag */
@@ -152,7 +74,7 @@ struct dsa
       int *U_ind; /* int U_ind[U_ptr[m+1]]; */
       double *U_val; /* double U_val[U_ptr[m+1]]; */
       double *U_diag; /* double U_diag[1+m]; */
-      /* mxm upper triangular matrix U defining Cholesky factorization
+      /* upper triangular mxm-matrix U defining Cholesky factorization
          S = U'*U; its non-diagonal elements are stored in U_ptr, U_ind,
          U_val in storage-by-rows format, diagonal elements are stored
          in U_diag */
@@ -218,99 +140,114 @@ struct dsa
          which x and z are still non-negative */
 };
 
-/*----------------------------------------------------------------------
--- initialize - allocate and initialize working area.
---
--- This routine allocates and initializes the working area used by all
--- interior-point method routines. */
+/***********************************************************************
+*  initialize - allocate and initialize common storage area
+*
+*  This routine allocates and initializes the common storage area (CSA)
+*  used by interior-point method routines. */
 
-static void initialize(struct dsa *dsa, int m, int n, int A_ptr[],
-      int A_ind[], double A_val[], double b[], double c[], double x[],
-      double y[], double z[])
-{     int i;
-      dsa->m = m;
-      dsa->n = n;
-      dsa->A_ptr = A_ptr;
-      dsa->A_ind = A_ind;
-      dsa->A_val = A_val;
-      xprintf("lpx_interior: A has %d non-zeros\n", A_ptr[m+1]-1);
-      dsa->b = b;
-      dsa->c = c;
-      dsa->x = x;
-      dsa->y = y;
-      dsa->z = z;
-      dsa->D = xcalloc(1+n, sizeof(double));
+static void initialize(struct csa *csa)
+{     int m = csa->m;
+      int n = csa->n;
+      int i;
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Matrix A has %d non-zeros\n", csa->A_ptr[m+1]-1);
+      csa->D = xcalloc(1+n, sizeof(double));
       /* P := I */
-      dsa->P = xcalloc(1+m+m, sizeof(int));
-      for (i = 1; i <= m; i++) dsa->P[i] = dsa->P[m+i] = i;
+      csa->P = xcalloc(1+m+m, sizeof(int));
+      for (i = 1; i <= m; i++) csa->P[i] = csa->P[m+i] = i;
       /* S := A*A', symbolically */
-      dsa->S_ptr = xcalloc(1+m+1, sizeof(int));
-      dsa->S_ind = adat_symbolic(m, n, dsa->P, dsa->A_ptr, dsa->A_ind,
-         dsa->S_ptr);
-      xprintf("lpx_interior: S has %d non-zeros (upper triangle)\n",
-         dsa->S_ptr[m+1]-1 + m);
-      /* determine P using minimal degree algorithm */
-      xprintf("lpx_interior: minimal degree ordering...\n");
-      min_degree(m, dsa->S_ptr, dsa->S_ind, dsa->P);
-      /* S = P*A*A'*P', symbolically */
-      xfree(dsa->S_ind);
-      dsa->S_ind = adat_symbolic(m, n, dsa->P, dsa->A_ptr, dsa->A_ind,
-         dsa->S_ptr);
-      dsa->S_val = xcalloc(dsa->S_ptr[m+1], sizeof(double));
-      dsa->S_diag = xcalloc(1+m, sizeof(double));
+      csa->S_ptr = xcalloc(1+m+1, sizeof(int));
+      csa->S_ind = adat_symbolic(m, n, csa->P, csa->A_ptr, csa->A_ind,
+         csa->S_ptr);
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Matrix S = A*A' has %d non-zeros (upper triangle)\n",
+            csa->S_ptr[m+1]-1 + m);
+      /* determine P using specified ordering algorithm */
+      if (csa->parm->ord_alg == GLP_ORD_NONE)
+      {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Original ordering is being used\n");
+         for (i = 1; i <= m; i++)
+            csa->P[i] = csa->P[m+i] = i;
+      }
+      else if (csa->parm->ord_alg == GLP_ORD_QMD)
+      {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Minimum degree ordering (QMD)...\n");
+         min_degree(m, csa->S_ptr, csa->S_ind, csa->P);
+      }
+      else if (csa->parm->ord_alg == GLP_ORD_AMD)
+      {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Approximate minimum degree ordering (AMD)...\n");
+         amd_order1(m, csa->S_ptr, csa->S_ind, csa->P);
+      }
+      else if (csa->parm->ord_alg == GLP_ORD_SYMAMD)
+      {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Approximate minimum degree ordering (SYMAMD)...\n")
+               ;
+         symamd_ord(m, csa->S_ptr, csa->S_ind, csa->P);
+      }
+      else
+         xassert(csa != csa);
+      /* S := P*A*A'*P', symbolically */
+      xfree(csa->S_ind);
+      csa->S_ind = adat_symbolic(m, n, csa->P, csa->A_ptr, csa->A_ind,
+         csa->S_ptr);
+      csa->S_val = xcalloc(csa->S_ptr[m+1], sizeof(double));
+      csa->S_diag = xcalloc(1+m, sizeof(double));
       /* compute Cholesky factorization S = U'*U, symbolically */
-      xprintf("lpx_interior: computing Cholesky factorization...\n");
-      dsa->U_ptr = xcalloc(1+m+1, sizeof(int));
-      dsa->U_ind = chol_symbolic(m, dsa->S_ptr, dsa->S_ind, dsa->U_ptr);
-      xprintf("lpx_interior: U has %d non-zeros\n",
-         dsa->U_ptr[m+1]-1 + m);
-      dsa->U_val = xcalloc(dsa->U_ptr[m+1], sizeof(double));
-      dsa->U_diag = xcalloc(1+m, sizeof(double));
-      dsa->iter = 0;
-      dsa->obj = 0.0;
-      dsa->rpi = 0.0;
-      dsa->rdi = 0.0;
-      dsa->gap = 0.0;
-      dsa->phi = 0.0;
-      dsa->mu = 0.0;
-      dsa->rmu = 0.0;
-      dsa->rmu0 = 0.0;
-      dsa->phi_min = xcalloc(1+ITER_MAX, sizeof(double));
-      dsa->best_iter = 0;
-      dsa->best_x = xcalloc(1+n, sizeof(double));
-      dsa->best_y = xcalloc(1+m, sizeof(double));
-      dsa->best_z = xcalloc(1+n, sizeof(double));
-      dsa->best_obj = 0.0;
-      dsa->dx_aff = xcalloc(1+n, sizeof(double));
-      dsa->dy_aff = xcalloc(1+m, sizeof(double));
-      dsa->dz_aff = xcalloc(1+n, sizeof(double));
-      dsa->alfa_aff_p = 0.0;
-      dsa->alfa_aff_d = 0.0;
-      dsa->mu_aff = 0.0;
-      dsa->sigma = 0.0;
-      dsa->dx_cc = xcalloc(1+n, sizeof(double));
-      dsa->dy_cc = xcalloc(1+m, sizeof(double));
-      dsa->dz_cc = xcalloc(1+n, sizeof(double));
-      dsa->dx = dsa->dx_aff;
-      dsa->dy = dsa->dy_aff;
-      dsa->dz = dsa->dz_aff;
-      dsa->alfa_max_p = 0.0;
-      dsa->alfa_max_d = 0.0;
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Computing Cholesky factorization S = L*L'...\n");
+      csa->U_ptr = xcalloc(1+m+1, sizeof(int));
+      csa->U_ind = chol_symbolic(m, csa->S_ptr, csa->S_ind, csa->U_ptr);
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Matrix L has %d non-zeros\n", csa->U_ptr[m+1]-1 + m);
+      csa->U_val = xcalloc(csa->U_ptr[m+1], sizeof(double));
+      csa->U_diag = xcalloc(1+m, sizeof(double));
+      csa->iter = 0;
+      csa->obj = 0.0;
+      csa->rpi = 0.0;
+      csa->rdi = 0.0;
+      csa->gap = 0.0;
+      csa->phi = 0.0;
+      csa->mu = 0.0;
+      csa->rmu = 0.0;
+      csa->rmu0 = 0.0;
+      csa->phi_min = xcalloc(1+ITER_MAX, sizeof(double));
+      csa->best_iter = 0;
+      csa->best_x = xcalloc(1+n, sizeof(double));
+      csa->best_y = xcalloc(1+m, sizeof(double));
+      csa->best_z = xcalloc(1+n, sizeof(double));
+      csa->best_obj = 0.0;
+      csa->dx_aff = xcalloc(1+n, sizeof(double));
+      csa->dy_aff = xcalloc(1+m, sizeof(double));
+      csa->dz_aff = xcalloc(1+n, sizeof(double));
+      csa->alfa_aff_p = 0.0;
+      csa->alfa_aff_d = 0.0;
+      csa->mu_aff = 0.0;
+      csa->sigma = 0.0;
+      csa->dx_cc = xcalloc(1+n, sizeof(double));
+      csa->dy_cc = xcalloc(1+m, sizeof(double));
+      csa->dz_cc = xcalloc(1+n, sizeof(double));
+      csa->dx = csa->dx_aff;
+      csa->dy = csa->dy_aff;
+      csa->dz = csa->dz_aff;
+      csa->alfa_max_p = 0.0;
+      csa->alfa_max_d = 0.0;
       return;
 }
 
-/*----------------------------------------------------------------------
--- A_by_vec - compute y = A*x.
---
--- This routine computes the matrix-vector product y = A*x, where A is
--- the constraint matrix. */
+/***********************************************************************
+*  A_by_vec - compute y = A*x
+*
+*  This routine computes matrix-vector product y = A*x, where A is the
+*  constraint matrix. */
 
-static void A_by_vec(struct dsa *dsa, double x[], double y[])
+static void A_by_vec(struct csa *csa, double x[], double y[])
 {     /* compute y = A*x */
-      int m = dsa->m;
-      int *A_ptr = dsa->A_ptr;
-      int *A_ind = dsa->A_ind;
-      double *A_val = dsa->A_val;
+      int m = csa->m;
+      int *A_ptr = csa->A_ptr;
+      int *A_ind = csa->A_ind;
+      double *A_val = csa->A_val;
       int i, t, beg, end;
       double temp;
       for (i = 1; i <= m; i++)
@@ -322,19 +259,19 @@ static void A_by_vec(struct dsa *dsa, double x[], double y[])
       return;
 }
 
-/*----------------------------------------------------------------------
--- AT_by_vec - compute y = A'*x.
---
--- This routine computes the matrix-vector product y = A'*x, where A' is
--- a matrix transposed to the constraint matrix A. */
+/***********************************************************************
+*  AT_by_vec - compute y = A'*x
+*
+*  This routine computes matrix-vector product y = A'*x, where A' is a
+*  matrix transposed to the constraint matrix A. */
 
-static void AT_by_vec(struct dsa *dsa, double x[], double y[])
+static void AT_by_vec(struct csa *csa, double x[], double y[])
 {     /* compute y = A'*x, where A' is transposed to A */
-      int m = dsa->m;
-      int n = dsa->n;
-      int *A_ptr = dsa->A_ptr;
-      int *A_ind = dsa->A_ind;
-      double *A_val = dsa->A_val;
+      int m = csa->m;
+      int n = csa->n;
+      int *A_ptr = csa->A_ptr;
+      int *A_ind = csa->A_ind;
+      double *A_val = csa->A_val;
       int i, j, t, beg, end;
       double temp;
       for (j = 1; j <= n; j++) y[j] = 0.0;
@@ -347,47 +284,47 @@ static void AT_by_vec(struct dsa *dsa, double x[], double y[])
       return;
 }
 
-/*----------------------------------------------------------------------
--- decomp_NE - numeric factorization of matrix S = P*A*D*A'*P'.
---
--- This routine implements numeric phase of Cholesky factorization of
--- the matrix S = P*A*D*A'*P', which is a permuted matrix of the normal
--- equation system. Matrix D is assumed to be already computed */
+/***********************************************************************
+*  decomp_NE - numeric factorization of matrix S = P*A*D*A'*P'
+*
+*  This routine implements numeric phase of Cholesky factorization of
+*  the matrix S = P*A*D*A'*P', which is a permuted matrix of the normal
+*  equation system. Matrix D is assumed to be already computed. */
 
-static void decomp_NE(struct dsa *dsa)
-{     adat_numeric(dsa->m, dsa->n, dsa->P, dsa->A_ptr, dsa->A_ind,
-         dsa->A_val, dsa->D, dsa->S_ptr, dsa->S_ind, dsa->S_val,
-         dsa->S_diag);
-      chol_numeric(dsa->m, dsa->S_ptr, dsa->S_ind, dsa->S_val,
-         dsa->S_diag, dsa->U_ptr, dsa->U_ind, dsa->U_val, dsa->U_diag);
+static void decomp_NE(struct csa *csa)
+{     adat_numeric(csa->m, csa->n, csa->P, csa->A_ptr, csa->A_ind,
+         csa->A_val, csa->D, csa->S_ptr, csa->S_ind, csa->S_val,
+         csa->S_diag);
+      chol_numeric(csa->m, csa->S_ptr, csa->S_ind, csa->S_val,
+         csa->S_diag, csa->U_ptr, csa->U_ind, csa->U_val, csa->U_diag);
       return;
 }
 
-/*----------------------------------------------------------------------
--- solve_NE - solve normal equation system.
---
--- This routine solves the normal equation system
---
---    A*D*A'*y = h.
---
--- It is assumed that the matrix A*D*A' has been previously factorized
--- by the routine decomp_NE.
---
--- On entry the array y contains the vector of right-hand sides h. On
--- exit this array contains the computed vector of unknowns y.
---
--- Once the vector y has been computed the routine checks for numeric
--- stability. If the residual vector
---
---    r = A*D*A'*y - h
---
--- is relatively small, the routine returns zero, otherwise non-zero is
--- returned. */
+/***********************************************************************
+*  solve_NE - solve normal equation system
+*
+*  This routine solves the normal equation system:
+*
+*     A*D*A'*y = h.
+*
+*  It is assumed that the matrix A*D*A' has been previously factorized
+*  by the routine decomp_NE.
+*
+*  On entry the array y contains the vector of right-hand sides h. On
+*  exit this array contains the computed vector of unknowns y.
+*
+*  Once the vector y has been computed the routine checks for numeric
+*  stability. If the residual vector:
+*
+*     r = A*D*A'*y - h
+*
+*  is relatively small, the routine returns zero, otherwise non-zero is
+*  returned. */
 
-static int solve_NE(struct dsa *dsa, double y[])
-{     int m = dsa->m;
-      int n = dsa->n;
-      int *P = dsa->P;
+static int solve_NE(struct csa *csa, double y[])
+{     int m = csa->m;
+      int n = csa->n;
+      int *P = csa->P;
       int i, j, ret = 0;
       double *h, *r, *w;
       /* save vector of right-hand sides h */
@@ -400,9 +337,9 @@ static int solve_NE(struct dsa *dsa, double y[])
       w = xcalloc(1+m, sizeof(double));
       for (i = 1; i <= m; i++) w[i] = y[P[i]];
       /* w := inv(U')*w */
-      ut_solve(m, dsa->U_ptr, dsa->U_ind, dsa->U_val, dsa->U_diag, w);
+      ut_solve(m, csa->U_ptr, csa->U_ind, csa->U_val, csa->U_diag, w);
       /* w := inv(U)*w */
-      u_solve(m, dsa->U_ptr, dsa->U_ind, dsa->U_val, dsa->U_diag, w);
+      u_solve(m, csa->U_ptr, csa->U_ind, csa->U_val, csa->U_diag, w);
       /* y := P'*w */
       for (i = 1; i <= m; i++) y[i] = w[P[m+i]];
       xfree(w);
@@ -410,11 +347,11 @@ static int solve_NE(struct dsa *dsa, double y[])
       r = xcalloc(1+m, sizeof(double));
       /* w := A'*y */
       w = xcalloc(1+n, sizeof(double));
-      AT_by_vec(dsa, y, w);
+      AT_by_vec(csa, y, w);
       /* w := D*w */
-      for (j = 1; j <= n; j++) w[j] *= dsa->D[j];
+      for (j = 1; j <= n; j++) w[j] *= csa->D[j];
       /* r := A*w */
-      A_by_vec(dsa, w, r);
+      A_by_vec(csa, w, r);
       xfree(w);
       /* r := r - h */
       for (i = 1; i <= m; i++) r[i] -= h[i];
@@ -430,51 +367,53 @@ static int solve_NE(struct dsa *dsa, double y[])
       return ret;
 }
 
-/*----------------------------------------------------------------------
--- solve_NS - solve Newtonian system.
---
--- This routine solves the Newtonian system:
---
---    A*dx               = p
---          A'*dy +   dz = q
---    Z*dx        + X*dz = r
---
--- where X = diag(x[j]), Z = diag(z[j]), by reducing it to the normal
--- equation system:
---
---    (A*inv(Z)*X*A')*dy = A*inv(Z)*(X*q-r)+p
---
--- (it is assumed that the matrix A*inv(Z)*X*A' has been factorized by
--- means of the decomp_NE routine).
---
--- Once vector dy has been computed the routine computes vectors dx and
--- dz as follows:
---
---    dx = inv(Z)*(X*(A'*dy-q)+r)
---
---    dz = inv(X)*(r-Z*dx)
---
--- The routine solve_NS returns a code reported by the routine solve_NE
--- which solves the normal equation system. */
+/***********************************************************************
+*  solve_NS - solve Newtonian system
+*
+*  This routine solves the Newtonian system:
+*
+*     A*dx               = p
+*
+*           A'*dy +   dz = q
+*
+*     Z*dx        + X*dz = r
+*
+*  where X = diag(x[j]), Z = diag(z[j]), by reducing it to the normal
+*  equation system:
+*
+*     (A*inv(Z)*X*A')*dy = A*inv(Z)*(X*q-r)+p
+*
+*  (it is assumed that the matrix A*inv(Z)*X*A' has been factorized by
+*  the routine decomp_NE).
+*
+*  Once vector dy has been computed the routine computes vectors dx and
+*  dz as follows:
+*
+*     dx = inv(Z)*(X*(A'*dy-q)+r)
+*
+*     dz = inv(X)*(r-Z*dx)
+*
+*  The routine solve_NS returns the same code which was reported by the
+*  routine solve_NE (see above). */
 
-static int solve_NS(struct dsa *dsa, double p[], double q[], double r[],
+static int solve_NS(struct csa *csa, double p[], double q[], double r[],
       double dx[], double dy[], double dz[])
-{     int m = dsa->m;
-      int n = dsa->n;
-      double *x = dsa->x;
-      double *z = dsa->z;
+{     int m = csa->m;
+      int n = csa->n;
+      double *x = csa->x;
+      double *z = csa->z;
       int i, j, ret;
       double *w = dx;
       /* compute the vector of right-hand sides A*inv(Z)*(X*q-r)+p for
          the normal equation system */
       for (j = 1; j <= n; j++)
          w[j] = (x[j] * q[j] - r[j]) / z[j];
-      A_by_vec(dsa, w, dy);
+      A_by_vec(csa, w, dy);
       for (i = 1; i <= m; i++) dy[i] += p[i];
       /* solve the normal equation system to compute vector dy */
-      ret = solve_NE(dsa, dy);
+      ret = solve_NE(csa, dy);
       /* compute vectors dx and dz */
-      AT_by_vec(dsa, dy, dx);
+      AT_by_vec(csa, dy, dx);
       for (j = 1; j <= n; j++)
       {  dx[j] = (x[j] * (dx[j] - q[j]) + r[j]) / z[j];
          dz[j] = (r[j] - z[j] * dx[j]) / x[j];
@@ -482,66 +421,66 @@ static int solve_NS(struct dsa *dsa, double p[], double q[], double r[],
       return ret;
 }
 
-/*----------------------------------------------------------------------
--- initial_point - choose initial point using Mehrotra's heuristic.
---
--- This routine chooses a starting point using a heuristic proposed in
--- the paper:
---
--- S. Mehrotra. On the implementation of a primal-dual interior point
--- method. SIAM J. on Optim., 2(4), pp. 575-601, 1992.
---
--- The starting point x in the primal space is chosen as a solution of
--- the following least squares problem:
---
---    minimize    ||x||
---
---    subject to  A*x = b
---
--- which can be computed explicitly as follows:
---
---    x = A'*inv(A*A')*b
---
--- Similarly, the starting point (y, z) in the dual space is chosen as
--- a solution of the following least squares problem:
---
---    minimize    ||z||
---
---    subject to  A'*y + z = c
---
--- which can be computed explicitly as follows:
---
---    y = inv(A*A')*A*c
---
---    z = c - A'*y
---
--- However, some components of the vectors x and z may be non-positive
--- or close to zero, so the routine uses a Mehrotra's heuristic to find
--- a more appropriate starting point. */
+/***********************************************************************
+*  initial_point - choose initial point using Mehrotra's heuristic
+*
+*  This routine chooses a starting point using a heuristic proposed in
+*  the paper:
+*
+*  S. Mehrotra. On the implementation of a primal-dual interior point
+*  method. SIAM J. on Optim., 2(4), pp. 575-601, 1992.
+*
+*  The starting point x in the primal space is chosen as a solution of
+*  the following least squares problem:
+*
+*     minimize    ||x||
+*
+*     subject to  A*x = b
+*
+*  which can be computed explicitly as follows:
+*
+*     x = A'*inv(A*A')*b
+*
+*  Similarly, the starting point (y, z) in the dual space is chosen as
+*  a solution of the following least squares problem:
+*
+*     minimize    ||z||
+*
+*     subject to  A'*y + z = c
+*
+*  which can be computed explicitly as follows:
+*
+*     y = inv(A*A')*A*c
+*
+*     z = c - A'*y
+*
+*  However, some components of the vectors x and z may be non-positive
+*  or close to zero, so the routine uses a Mehrotra's heuristic to find
+*  a more appropriate starting point. */
 
-static void initial_point(struct dsa *dsa)
-{     int m = dsa->m;
-      int n = dsa->n;
-      double *b = dsa->b;
-      double *c = dsa->c;
-      double *x = dsa->x;
-      double *y = dsa->y;
-      double *z = dsa->z;
-      double *D = dsa->D;
+static void initial_point(struct csa *csa)
+{     int m = csa->m;
+      int n = csa->n;
+      double *b = csa->b;
+      double *c = csa->c;
+      double *x = csa->x;
+      double *y = csa->y;
+      double *z = csa->z;
+      double *D = csa->D;
       int i, j;
       double dp, dd, ex, ez, xz;
       /* factorize A*A' */
       for (j = 1; j <= n; j++) D[j] = 1.0;
-      decomp_NE(dsa);
+      decomp_NE(csa);
       /* x~ = A'*inv(A*A')*b */
       for (i = 1; i <= m; i++) y[i] = b[i];
-      solve_NE(dsa, y);
-      AT_by_vec(dsa, y, x);
+      solve_NE(csa, y);
+      AT_by_vec(csa, y, x);
       /* y~ = inv(A*A')*A*c */
-      A_by_vec(dsa, c, y);
-      solve_NE(dsa, y);
+      A_by_vec(csa, c, y);
+      solve_NE(csa, y);
       /* z~ = c - A'*y~ */
-      AT_by_vec(dsa, y,z);
+      AT_by_vec(csa, y,z);
       for (j = 1; j <= n; j++) z[j] = c[j] - z[j];
       /* use Mehrotra's heuristic in order to choose more appropriate
          starting point with positive components of vectors x and z */
@@ -570,61 +509,61 @@ static void initial_point(struct dsa *dsa)
       return;
 }
 
-/*----------------------------------------------------------------------
--- basic_info - perform basic computations at the current point.
---
--- This routine computes the following quantities at the current point:
---
--- value of the objective function:
---
---    F = c'*x + c[0]
---
--- relative primal infeasibility:
---
---    rpi = ||A*x-b|| / (1+||b||)
---
--- relative dual infeasibility:
---
---    rdi = ||A'*y+z-c|| / (1+||c||)
---
--- primal-dual gap (a relative difference between the primal and the
--- dual objective function values):
---
---    gap = |c'*x-b'*y| / (1+|c'*x|)
---
--- merit function:
---
---    phi = ||A*x-b|| / max(1,||b||) + ||A'*y+z-c|| / max(1,||c||) +
---
---        + |c'*x-b'*y| / max(1,||b||,||c||)
---
--- duality measure:
---
---    mu = x'*z / n
---
--- the ratio of infeasibility to mu:
---
---    rmu = max(||A*x-b||,||A'*y+z-c||) / mu
---
--- where ||*|| denotes euclidian norm, *' denotes transposition */
+/***********************************************************************
+*  basic_info - perform basic computations at the current point
+*
+*  This routine computes the following quantities at the current point:
+*
+*  1) value of the objective function:
+*
+*     F = c'*x + c[0]
+*
+*  2) relative primal infeasibility:
+*
+*     rpi = ||A*x-b|| / (1+||b||)
+*
+*  3) relative dual infeasibility:
+*
+*     rdi = ||A'*y+z-c|| / (1+||c||)
+*
+*  4) primal-dual gap (relative difference between the primal and the
+*     dual objective function values):
+*
+*     gap = |c'*x-b'*y| / (1+|c'*x|)
+*
+*  5) merit function:
+*
+*     phi = ||A*x-b|| / max(1,||b||) + ||A'*y+z-c|| / max(1,||c||) +
+*
+*         + |c'*x-b'*y| / max(1,||b||,||c||)
+*
+*  6) duality measure:
+*
+*     mu = x'*z / n
+*
+*  7) the ratio of infeasibility to mu:
+*
+*     rmu = max(||A*x-b||,||A'*y+z-c||) / mu
+*
+*  where ||*|| denotes euclidian norm, *' denotes transposition. */
 
-static void basic_info(struct dsa *dsa)
-{     int m = dsa->m;
-      int n = dsa->n;
-      double *b = dsa->b;
-      double *c = dsa->c;
-      double *x = dsa->x;
-      double *y = dsa->y;
-      double *z = dsa->z;
+static void basic_info(struct csa *csa)
+{     int m = csa->m;
+      int n = csa->n;
+      double *b = csa->b;
+      double *c = csa->c;
+      double *x = csa->x;
+      double *y = csa->y;
+      double *z = csa->z;
       int i, j;
       double norm1, bnorm, norm2, cnorm, cx, by, *work, temp;
       /* compute value of the objective function */
       temp = c[0];
       for (j = 1; j <= n; j++) temp += c[j] * x[j];
-      dsa->obj = temp;
+      csa->obj = temp;
       /* norm1 = ||A*x-b|| */
       work = xcalloc(1+m, sizeof(double));
-      A_by_vec(dsa, x, work);
+      A_by_vec(csa, x, work);
       norm1 = 0.0;
       for (i = 1; i <= m; i++)
          norm1 += (work[i] - b[i]) * (work[i] - b[i]);
@@ -635,10 +574,10 @@ static void basic_info(struct dsa *dsa)
       for (i = 1; i <= m; i++) bnorm += b[i] * b[i];
       bnorm = sqrt(bnorm);
       /* compute relative primal infeasibility */
-      dsa->rpi = norm1 / (1.0 + bnorm);
+      csa->rpi = norm1 / (1.0 + bnorm);
       /* norm2 = ||A'*y+z-c|| */
       work = xcalloc(1+n, sizeof(double));
-      AT_by_vec(dsa, y, work);
+      AT_by_vec(csa, y, work);
       norm2 = 0.0;
       for (j = 1; j <= n; j++)
          norm2 += (work[j] + z[j] - c[j]) * (work[j] + z[j] - c[j]);
@@ -649,7 +588,7 @@ static void basic_info(struct dsa *dsa)
       for (j = 1; j <= n; j++) cnorm += c[j] * c[j];
       cnorm = sqrt(cnorm);
       /* compute relative dual infeasibility */
-      dsa->rdi = norm2 / (1.0 + cnorm);
+      csa->rdi = norm2 / (1.0 + cnorm);
       /* by = b'*y */
       by = 0.0;
       for (i = 1; i <= m; i++) by += b[i] * y[i];
@@ -657,112 +596,116 @@ static void basic_info(struct dsa *dsa)
       cx = 0.0;
       for (j = 1; j <= n; j++) cx += c[j] * x[j];
       /* compute primal-dual gap */
-      dsa->gap = fabs(cx - by) / (1.0 + fabs(cx));
+      csa->gap = fabs(cx - by) / (1.0 + fabs(cx));
       /* compute merit function */
-      dsa->phi = 0.0;
-      dsa->phi += norm1 / (bnorm > 1.0 ? bnorm : 1.0);
-      dsa->phi += norm2 / (cnorm > 1.0 ? cnorm : 1.0);
+      csa->phi = 0.0;
+      csa->phi += norm1 / (bnorm > 1.0 ? bnorm : 1.0);
+      csa->phi += norm2 / (cnorm > 1.0 ? cnorm : 1.0);
       temp = 1.0;
       if (temp < bnorm) temp = bnorm;
       if (temp < cnorm) temp = cnorm;
-      dsa->phi += fabs(cx - by) / temp;
+      csa->phi += fabs(cx - by) / temp;
       /* compute duality measure */
       temp = 0.0;
       for (j = 1; j <= n; j++) temp += x[j] * z[j];
-      dsa->mu = temp / (double)n;
+      csa->mu = temp / (double)n;
       /* compute the ratio of infeasibility to mu */
-      dsa->rmu = (norm1 > norm2 ? norm1 : norm2) / dsa->mu;
+      csa->rmu = (norm1 > norm2 ? norm1 : norm2) / csa->mu;
       return;
 }
 
-/*----------------------------------------------------------------------
--- make_step - compute next point using Mehrotra's technique.
---
--- This routine computes the next point using the predictor-corrector
--- technique proposed in the paper:
---
--- S. Mehrotra. On the implementation of a primal-dual interior point
--- method. SIAM J. on Optim., 2(4), pp. 575-601, 1992.
---
--- At first the routine computes so called affine scaling (predictor)
--- direction (dx_aff,dy_aff,dz_aff) which is a solution of the system:
---
---    A*dx_aff                       = b - A*x
---              A'*dy_aff +   dz_aff = c - A'*y - z
---    Z*dx_aff            + X*dz_aff = - X*Z*e
---
--- where (x,y,z) is the current point, X = diag(x[j]), Z = diag(z[j]),
--- e = (1,...,1)'.
---
--- Then the routine computes the centering parameter sigma, using the
--- following Mehrotra's heuristic:
---
---    alfa_aff_p = inf{0 <= alfa <= 1 | x+alfa*dx_aff >= 0}
---
---    alfa_aff_d = inf{0 <= alfa <= 1 | z+alfa*dz_aff >= 0}
---
---    mu_aff = (x+alfa_aff_p*dx_aff)'*(z+alfa_aff_d*dz_aff)/n
---
---    sigma = (mu_aff/mu)^3
---
--- where alfa_aff_p is the maximal stepsize along the affine scaling
--- direction in the primal space, alfa_aff_d is the maximal stepsize
--- along the same direction in the dual space.
---
--- After determining sigma the routine computes so called centering
--- (corrector) direction (dx_cc,dy_cc,dz_cc) which is the solution of
--- the system:
---
---    A*dx_cc                     = 0
---             A'*dy_cc +   dz_cc = 0
---    Z*dx_cc           + X*dz_cc = sigma*mu*e - X*Z*e
---
--- Finally, the routine computes the combined direction
---
---    (dx,dy,dz) = (dx_aff,dy_aff,dz_aff) + (dx_cc,dy_cc,dz_cc)
---
--- and determines maximal primal and dual stepsizes along the combined
--- direction:
---
---    alfa_max_p = inf{0 <= alfa <= 1 | x+alfa*dx >= 0}
---
---    alfa_max_d = inf{0 <= alfa <= 1 | z+alfa*dz >= 0}
---
--- In order to prevent the next point to be too close to the boundary
--- of the positive ortant, the routine decreases maximal stepsizes:
---
---    alfa_p = gamma_p * alfa_max_p
---
---    alfa_d = gamma_d * alfa_max_d
---
--- where gamma_p and gamma_d are scaling factors, and computes the next
--- point:
---
---    x_new = x + alfa_p * dx
---
---    y_new = y + alfa_d * dy
---
---    z_new = z + alfa_d * dz
---
--- which becomes the current point on the next iteration. */
+/***********************************************************************
+*  make_step - compute next point using Mehrotra's technique
+*
+*  This routine computes the next point using the predictor-corrector
+*  technique proposed in the paper:
+*
+*  S. Mehrotra. On the implementation of a primal-dual interior point
+*  method. SIAM J. on Optim., 2(4), pp. 575-601, 1992.
+*
+*  At first, the routine computes so called affine scaling (predictor)
+*  direction (dx_aff,dy_aff,dz_aff) which is a solution of the system:
+*
+*     A*dx_aff                       = b - A*x
+*
+*               A'*dy_aff +   dz_aff = c - A'*y - z
+*
+*     Z*dx_aff            + X*dz_aff = - X*Z*e
+*
+*  where (x,y,z) is the current point, X = diag(x[j]), Z = diag(z[j]),
+*  e = (1,...,1)'.
+*
+*  Then, the routine computes the centering parameter sigma, using the
+*  following Mehrotra's heuristic:
+*
+*     alfa_aff_p = inf{0 <= alfa <= 1 | x+alfa*dx_aff >= 0}
+*
+*     alfa_aff_d = inf{0 <= alfa <= 1 | z+alfa*dz_aff >= 0}
+*
+*     mu_aff = (x+alfa_aff_p*dx_aff)'*(z+alfa_aff_d*dz_aff)/n
+*
+*     sigma = (mu_aff/mu)^3
+*
+*  where alfa_aff_p is the maximal stepsize along the affine scaling
+*  direction in the primal space, alfa_aff_d is the maximal stepsize
+*  along the same direction in the dual space.
+*
+*  After determining sigma the routine computes so called centering
+*  (corrector) direction (dx_cc,dy_cc,dz_cc) which is the solution of
+*  the system:
+*
+*     A*dx_cc                     = 0
+*
+*              A'*dy_cc +   dz_cc = 0
+*
+*     Z*dx_cc           + X*dz_cc = sigma*mu*e - X*Z*e
+*
+*  Finally, the routine computes the combined direction
+*
+*     (dx,dy,dz) = (dx_aff,dy_aff,dz_aff) + (dx_cc,dy_cc,dz_cc)
+*
+*  and determines maximal primal and dual stepsizes along the combined
+*  direction:
+*
+*     alfa_max_p = inf{0 <= alfa <= 1 | x+alfa*dx >= 0}
+*
+*     alfa_max_d = inf{0 <= alfa <= 1 | z+alfa*dz >= 0}
+*
+*  In order to prevent the next point to be too close to the boundary
+*  of the positive ortant, the routine decreases maximal stepsizes:
+*
+*     alfa_p = gamma_p * alfa_max_p
+*
+*     alfa_d = gamma_d * alfa_max_d
+*
+*  where gamma_p and gamma_d are scaling factors, and computes the next
+*  point:
+*
+*     x_new = x + alfa_p * dx
+*
+*     y_new = y + alfa_d * dy
+*
+*     z_new = z + alfa_d * dz
+*
+*  which becomes the current point on the next iteration. */
 
-static int make_step(struct dsa *dsa)
-{     int m = dsa->m;
-      int n = dsa->n;
-      double *b = dsa->b;
-      double *c = dsa->c;
-      double *x = dsa->x;
-      double *y = dsa->y;
-      double *z = dsa->z;
-      double *dx_aff = dsa->dx_aff;
-      double *dy_aff = dsa->dy_aff;
-      double *dz_aff = dsa->dz_aff;
-      double *dx_cc = dsa->dx_cc;
-      double *dy_cc = dsa->dy_cc;
-      double *dz_cc = dsa->dz_cc;
-      double *dx = dsa->dx;
-      double *dy = dsa->dy;
-      double *dz = dsa->dz;
+static int make_step(struct csa *csa)
+{     int m = csa->m;
+      int n = csa->n;
+      double *b = csa->b;
+      double *c = csa->c;
+      double *x = csa->x;
+      double *y = csa->y;
+      double *z = csa->z;
+      double *dx_aff = csa->dx_aff;
+      double *dy_aff = csa->dy_aff;
+      double *dz_aff = csa->dz_aff;
+      double *dx_cc = csa->dx_cc;
+      double *dy_cc = csa->dy_cc;
+      double *dz_cc = csa->dz_cc;
+      double *dx = csa->dx;
+      double *dy = csa->dy;
+      double *dz = csa->dz;
       int i, j, ret = 0;
       double temp, gamma_p, gamma_d, *p, *q, *r;
       /* allocate working arrays */
@@ -770,50 +713,50 @@ static int make_step(struct dsa *dsa)
       q = xcalloc(1+n, sizeof(double));
       r = xcalloc(1+n, sizeof(double));
       /* p = b - A*x */
-      A_by_vec(dsa, x, p);
+      A_by_vec(csa, x, p);
       for (i = 1; i <= m; i++) p[i] = b[i] - p[i];
       /* q = c - A'*y - z */
-      AT_by_vec(dsa, y,q);
+      AT_by_vec(csa, y,q);
       for (j = 1; j <= n; j++) q[j] = c[j] - q[j] - z[j];
       /* r = - X * Z * e */
       for (j = 1; j <= n; j++) r[j] = - x[j] * z[j];
       /* solve the first Newtonian system */
-      if (solve_NS(dsa, p, q, r, dx_aff, dy_aff, dz_aff))
+      if (solve_NS(csa, p, q, r, dx_aff, dy_aff, dz_aff))
       {  ret = 1;
          goto done;
       }
       /* alfa_aff_p = inf{0 <= alfa <= 1 | x + alfa*dx_aff >= 0} */
       /* alfa_aff_d = inf{0 <= alfa <= 1 | z + alfa*dz_aff >= 0} */
-      dsa->alfa_aff_p = dsa->alfa_aff_d = 1.0;
+      csa->alfa_aff_p = csa->alfa_aff_d = 1.0;
       for (j = 1; j <= n; j++)
       {  if (dx_aff[j] < 0.0)
          {  temp = - x[j] / dx_aff[j];
-            if (dsa->alfa_aff_p > temp) dsa->alfa_aff_p = temp;
+            if (csa->alfa_aff_p > temp) csa->alfa_aff_p = temp;
          }
          if (dz_aff[j] < 0.0)
          {  temp = - z[j] / dz_aff[j];
-            if (dsa->alfa_aff_d > temp) dsa->alfa_aff_d = temp;
+            if (csa->alfa_aff_d > temp) csa->alfa_aff_d = temp;
          }
       }
       /* mu_aff = (x+alfa_aff_p*dx_aff)' * (z+alfa_aff_d*dz_aff) / n */
       temp = 0.0;
       for (j = 1; j <= n; j++)
-         temp += (x[j] + dsa->alfa_aff_p * dx_aff[j]) *
-                 (z[j] + dsa->alfa_aff_d * dz_aff[j]);
-      dsa->mu_aff = temp / (double)n;
+         temp += (x[j] + csa->alfa_aff_p * dx_aff[j]) *
+                 (z[j] + csa->alfa_aff_d * dz_aff[j]);
+      csa->mu_aff = temp / (double)n;
       /* sigma = (mu_aff/mu)^3 */
-      temp = dsa->mu_aff / dsa->mu;
-      dsa->sigma = temp * temp * temp;
+      temp = csa->mu_aff / csa->mu;
+      csa->sigma = temp * temp * temp;
       /* p = 0 */
       for (i = 1; i <= m; i++) p[i] = 0.0;
       /* q = 0 */
       for (j = 1; j <= n; j++) q[j] = 0.0;
       /* r = sigma * mu * e - X * Z * e */
       for (j = 1; j <= n; j++)
-         r[j] = dsa->sigma * dsa->mu - dx_aff[j] * dz_aff[j];
+         r[j] = csa->sigma * csa->mu - dx_aff[j] * dz_aff[j];
       /* solve the second Newtonian system with the same coefficients
          but with altered right-hand sides */
-      if (solve_NS(dsa, p, q, r, dx_cc, dy_cc, dz_cc))
+      if (solve_NS(csa, p, q, r, dx_cc, dy_cc, dz_cc))
       {  ret = 1;
          goto done;
       }
@@ -823,15 +766,15 @@ static int make_step(struct dsa *dsa)
       for (j = 1; j <= n; j++) dz[j] = dz_aff[j] + dz_cc[j];
       /* alfa_max_p = inf{0 <= alfa <= 1 | x + alfa*dx >= 0} */
       /* alfa_max_d = inf{0 <= alfa <= 1 | z + alfa*dz >= 0} */
-      dsa->alfa_max_p = dsa->alfa_max_d = 1.0;
+      csa->alfa_max_p = csa->alfa_max_d = 1.0;
       for (j = 1; j <= n; j++)
       {  if (dx[j] < 0.0)
          {  temp = - x[j] / dx[j];
-            if (dsa->alfa_max_p > temp) dsa->alfa_max_p = temp;
+            if (csa->alfa_max_p > temp) csa->alfa_max_p = temp;
          }
          if (dz[j] < 0.0)
          {  temp = - z[j] / dz[j];
-            if (dsa->alfa_max_d > temp) dsa->alfa_max_d = temp;
+            if (csa->alfa_max_d > temp) csa->alfa_max_d = temp;
          }
       }
       /* determine scale factors (not implemented yet) */
@@ -839,13 +782,13 @@ static int make_step(struct dsa *dsa)
       gamma_d = 0.90;
       /* compute the next point */
       for (j = 1; j <= n; j++)
-      {  x[j] += gamma_p * dsa->alfa_max_p * dx[j];
+      {  x[j] += gamma_p * csa->alfa_max_p * dx[j];
          xassert(x[j] > 0.0);
       }
       for (i = 1; i <= m; i++)
-         y[i] += gamma_d * dsa->alfa_max_d * dy[i];
+         y[i] += gamma_d * csa->alfa_max_d * dy[i];
       for (j = 1; j <= n; j++)
-      {  z[j] += gamma_d * dsa->alfa_max_d * dz[j];
+      {  z[j] += gamma_d * csa->alfa_max_d * dz[j];
          xassert(z[j] > 0.0);
       }
 done: /* free working arrays */
@@ -855,129 +798,346 @@ done: /* free working arrays */
       return ret;
 }
 
-/*----------------------------------------------------------------------
--- terminate - deallocate working area.
---
--- This routine frees all memory allocated to the working area used by
--- all interior-point method routines. */
+/***********************************************************************
+*  terminate - deallocate common storage area
+*
+*  This routine frees all memory allocated to the common storage area
+*  used by interior-point method routines. */
 
-static void terminate(struct dsa *dsa)
-{     xfree(dsa->D);
-      xfree(dsa->P);
-      xfree(dsa->S_ptr);
-      xfree(dsa->S_ind);
-      xfree(dsa->S_val);
-      xfree(dsa->S_diag);
-      xfree(dsa->U_ptr);
-      xfree(dsa->U_ind);
-      xfree(dsa->U_val);
-      xfree(dsa->U_diag);
-      xfree(dsa->phi_min);
-      xfree(dsa->best_x);
-      xfree(dsa->best_y);
-      xfree(dsa->best_z);
-      xfree(dsa->dx_aff);
-      xfree(dsa->dy_aff);
-      xfree(dsa->dz_aff);
-      xfree(dsa->dx_cc);
-      xfree(dsa->dy_cc);
-      xfree(dsa->dz_cc);
+static void terminate(struct csa *csa)
+{     xfree(csa->D);
+      xfree(csa->P);
+      xfree(csa->S_ptr);
+      xfree(csa->S_ind);
+      xfree(csa->S_val);
+      xfree(csa->S_diag);
+      xfree(csa->U_ptr);
+      xfree(csa->U_ind);
+      xfree(csa->U_val);
+      xfree(csa->U_diag);
+      xfree(csa->phi_min);
+      xfree(csa->best_x);
+      xfree(csa->best_y);
+      xfree(csa->best_z);
+      xfree(csa->dx_aff);
+      xfree(csa->dy_aff);
+      xfree(csa->dz_aff);
+      xfree(csa->dx_cc);
+      xfree(csa->dy_cc);
+      xfree(csa->dz_cc);
       return;
 }
 
-/*----------------------------------------------------------------------
--- ipm_main - main interior-point method routine.
---
--- This is a main routine of the primal-dual interior-point method. */
+/***********************************************************************
+*  ipm_main - main interior-point method routine
+*
+*  This is a main routine of the primal-dual interior-point method.
+*
+*  The routine ipm_main returns one of the following codes:
+*
+*  0 - optimal solution found;
+*  1 - problem has no feasible (primal or dual) solution;
+*  2 - no convergence;
+*  3 - iteration limit exceeded;
+*  4 - numeric instability on solving Newtonian system.
+*
+*  In case of non-zero return code the routine returns the best point,
+*  which has been reached during optimization. */
 
-int ipm_main(int m, int n, int A_ptr[], int A_ind[], double A_val[],
-      double b[], double c[], double x[], double y[], double z[])
-{     struct dsa _dsa, *dsa = &_dsa;
+static int ipm_main(struct csa *csa)
+{     int m = csa->m;
+      int n = csa->n;
       int i, j, status;
       double temp;
-      /* allocate and initialize working area */
-      xassert(m > 0);
-      xassert(n > 0);
-      initialize(dsa, m, n, A_ptr, A_ind, A_val, b, c, x, y, z);
       /* choose initial point using Mehrotra's heuristic */
-      xprintf("lpx_interior: guessing initial point...\n");
-      initial_point(dsa);
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Guessing initial point...\n");
+      initial_point(csa);
       /* main loop starts here */
-      xprintf("Optimization begins...\n");
+      if (csa->parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Optimization begins...\n");
       for (;;)
       {  /* perform basic computations at the current point */
-         basic_info(dsa);
+         basic_info(csa);
          /* save initial value of rmu */
-         if (dsa->iter == 0) dsa->rmu0 = dsa->rmu;
+         if (csa->iter == 0) csa->rmu0 = csa->rmu;
          /* accumulate values of min(phi[k]) and save the best point */
-         xassert(dsa->iter <= ITER_MAX);
-         if (dsa->iter == 0 || dsa->phi_min[dsa->iter-1] > dsa->phi)
-         {  dsa->phi_min[dsa->iter] = dsa->phi;
-            dsa->best_iter = dsa->iter;
-            for (j = 1; j <= n; j++) dsa->best_x[j] = dsa->x[j];
-            for (i = 1; i <= m; i++) dsa->best_y[i] = dsa->y[i];
-            for (j = 1; j <= n; j++) dsa->best_z[j] = dsa->z[j];
-            dsa->best_obj = dsa->obj;
+         xassert(csa->iter <= ITER_MAX);
+         if (csa->iter == 0 || csa->phi_min[csa->iter-1] > csa->phi)
+         {  csa->phi_min[csa->iter] = csa->phi;
+            csa->best_iter = csa->iter;
+            for (j = 1; j <= n; j++) csa->best_x[j] = csa->x[j];
+            for (i = 1; i <= m; i++) csa->best_y[i] = csa->y[i];
+            for (j = 1; j <= n; j++) csa->best_z[j] = csa->z[j];
+            csa->best_obj = csa->obj;
          }
          else
-            dsa->phi_min[dsa->iter] = dsa->phi_min[dsa->iter-1];
+            csa->phi_min[csa->iter] = csa->phi_min[csa->iter-1];
          /* display information at the current point */
-         xprintf("%3d: obj = %17.9e; rpi = %8.1e; rdi = %8.1e; gap = %8"
-            ".1e\n", dsa->iter, dsa->obj, dsa->rpi, dsa->rdi, dsa->gap);
+         if (csa->parm->msg_lev >= GLP_MSG_ON)
+            xprintf("%3d: obj = %17.9e; rpi = %8.1e; rdi = %8.1e; gap ="
+               " %8.1e\n", csa->iter, csa->obj, csa->rpi, csa->rdi,
+               csa->gap);
          /* check if the current point is optimal */
-         if (dsa->rpi < 1e-8 && dsa->rdi < 1e-8 && dsa->gap < 1e-8)
-         {  xprintf("OPTIMAL SOLUTION FOUND\n");
+         if (csa->rpi < 1e-8 && csa->rdi < 1e-8 && csa->gap < 1e-8)
+         {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+               xprintf("OPTIMAL SOLUTION FOUND\n");
             status = 0;
             break;
          }
-         /* check if the problem has no feasible solutions */
-         temp = 1e5 * dsa->phi_min[dsa->iter];
+         /* check if the problem has no feasible solution */
+         temp = 1e5 * csa->phi_min[csa->iter];
          if (temp < 1e-8) temp = 1e-8;
-         if (dsa->phi >= temp)
-         {  xprintf("PROBLEM HAS NO FEASIBLE PRIMAL/DUAL SOLUTION\n");
+         if (csa->phi >= temp)
+         {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+               xprintf("PROBLEM HAS NO FEASIBLE PRIMAL/DUAL SOLUTION\n")
+                  ;
             status = 1;
             break;
          }
          /* check for very slow convergence or divergence */
-         if (((dsa->rpi >= 1e-8 || dsa->rdi >= 1e-8) && dsa->rmu /
-               dsa->rmu0 >= 1e6) ||
-               (dsa->iter >= 30 && dsa->phi_min[dsa->iter] >= 0.5 *
-               dsa->phi_min[dsa->iter - 30]))
-         {  xprintf("NO CONVERGENCE; SEARCH TERMINATED\n");
+         if (((csa->rpi >= 1e-8 || csa->rdi >= 1e-8) && csa->rmu /
+               csa->rmu0 >= 1e6) ||
+               (csa->iter >= 30 && csa->phi_min[csa->iter] >= 0.5 *
+               csa->phi_min[csa->iter - 30]))
+         {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+               xprintf("NO CONVERGENCE; SEARCH TERMINATED\n");
             status = 2;
             break;
          }
          /* check for maximal number of iterations */
-         if (dsa->iter == ITER_MAX)
-         {  xprintf("ITERATIONS LIMIT EXCEEDED; SEARCH TERMINATED\n");
+         if (csa->iter == ITER_MAX)
+         {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+               xprintf("ITERATION LIMIT EXCEEDED; SEARCH TERMINATED\n");
             status = 3;
             break;
          }
          /* start the next iteration */
-         dsa->iter++;
+         csa->iter++;
          /* factorize normal equation system */
-         for (j = 1; j <= n; j++) dsa->D[j] = dsa->x[j] / dsa->z[j];
-         decomp_NE(dsa);
+         for (j = 1; j <= n; j++) csa->D[j] = csa->x[j] / csa->z[j];
+         decomp_NE(csa);
          /* compute the next point using Mehrotra's predictor-corrector
             technique */
-         if (make_step(dsa))
-         {  xprintf("NUMERIC INSTABILITY; SEARCH TERMINATED\n");
+         if (make_step(csa))
+         {  if (csa->parm->msg_lev >= GLP_MSG_ALL)
+               xprintf("NUMERIC INSTABILITY; SEARCH TERMINATED\n");
             status = 4;
             break;
          }
       }
       /* restore the best point */
       if (status != 0)
-      {  for (j = 1; j <= n; j++) dsa->x[j] = dsa->best_x[j];
-         for (i = 1; i <= m; i++) dsa->y[i] = dsa->best_y[i];
-         for (j = 1; j <= n; j++) dsa->z[j] = dsa->best_z[j];
-         xprintf("The best point %17.9e was reached on iteration %d\n",
-            dsa->best_obj, dsa->best_iter);
+      {  for (j = 1; j <= n; j++) csa->x[j] = csa->best_x[j];
+         for (i = 1; i <= m; i++) csa->y[i] = csa->best_y[i];
+         for (j = 1; j <= n; j++) csa->z[j] = csa->best_z[j];
+         if (csa->parm->msg_lev >= GLP_MSG_ALL)
+            xprintf("Best point %17.9e was reached on iteration %d\n",
+               csa->best_obj, csa->best_iter);
       }
-      /* deallocate working area */
-      terminate(dsa);
       /* return to the calling program */
       return status;
+}
+
+/***********************************************************************
+*  NAME
+*
+*  ipm_solve - core LP solver based on the interior-point method
+*
+*  SYNOPSIS
+*
+*  #include "glpipm.h"
+*  int ipm_solve(glp_prob *P, const glp_iptcp *parm);
+*
+*  DESCRIPTION
+*
+*  The routine ipm_solve is a core LP solver based on the primal-dual
+*  interior-point method.
+*
+*  The routine assumes the following standard formulation of LP problem
+*  to be solved:
+*
+*     minimize
+*
+*        F = c[0] + c[1]*x[1] + c[2]*x[2] + ... + c[n]*x[n]
+*
+*     subject to linear constraints
+*
+*        a[1,1]*x[1] + a[1,2]*x[2] + ... + a[1,n]*x[n] = b[1]
+*
+*        a[2,1]*x[1] + a[2,2]*x[2] + ... + a[2,n]*x[n] = b[2]
+*
+*              . . . . . .
+*
+*        a[m,1]*x[1] + a[m,2]*x[2] + ... + a[m,n]*x[n] = b[m]
+*
+*     and non-negative variables
+*
+*        x[1] >= 0, x[2] >= 0, ..., x[n] >= 0
+*
+*  where:
+*  F                    is the objective function;
+*  x[1], ..., x[n]      are (structural) variables;
+*  c[0]                 is a constant term of the objective function;
+*  c[1], ..., c[n]      are objective coefficients;
+*  a[1,1], ..., a[m,n]  are constraint coefficients;
+*  b[1], ..., b[n]      are right-hand sides.
+*
+*  The solution is three vectors x, y, and z, which are stored by the
+*  routine in the arrays x, y, and z, respectively. These vectors
+*  correspond to the best primal-dual point found during optimization.
+*  They are approximate solution of the following system (which is the
+*  Karush-Kuhn-Tucker optimality conditions):
+*
+*     A*x      = b      (primal feasibility condition)
+*
+*     A'*y + z = c      (dual feasibility condition)
+*
+*     x'*z     = 0      (primal-dual complementarity condition)
+*
+*     x >= 0, z >= 0    (non-negativity condition)
+*
+*  where:
+*  x[1], ..., x[n]      are primal (structural) variables;
+*  y[1], ..., y[m]      are dual variables (Lagrange multipliers) for
+*                       equality constraints;
+*  z[1], ..., z[n]      are dual variables (Lagrange multipliers) for
+*                       non-negativity constraints.
+*
+*  RETURNS
+*
+*  0  LP has been successfully solved.
+*
+*  GLP_ENOCVG
+*     No convergence.
+*
+*  GLP_EITLIM
+*     Iteration limit exceeded.
+*
+*  GLP_EINSTAB
+*     Numeric instability on solving Newtonian system.
+*
+*  In case of non-zero return code the routine returns the best point,
+*  which has been reached during optimization. */
+
+int ipm_solve(glp_prob *P, const glp_iptcp *parm)
+{     struct csa _dsa, *csa = &_dsa;
+      int m = P->m;
+      int n = P->n;
+      int nnz = P->nnz;
+      GLPROW *row;
+      GLPCOL *col;
+      GLPAIJ *aij;
+      int i, j, loc, ret, *A_ind, *A_ptr;
+      double dir, *A_val, *b, *c, *x, *y, *z;
+      xassert(m > 0);
+      xassert(n > 0);
+      /* allocate working arrays */
+      A_ptr = xcalloc(1+m+1, sizeof(int));
+      A_ind = xcalloc(1+nnz, sizeof(int));
+      A_val = xcalloc(1+nnz, sizeof(double));
+      b = xcalloc(1+m, sizeof(double));
+      c = xcalloc(1+n, sizeof(double));
+      x = xcalloc(1+n, sizeof(double));
+      y = xcalloc(1+m, sizeof(double));
+      z = xcalloc(1+n, sizeof(double));
+      /* prepare rows and constraint coefficients */
+      loc = 1;
+      for (i = 1; i <= m; i++)
+      {  row = P->row[i];
+         xassert(row->type == GLP_FX);
+         b[i] = row->lb * row->rii;
+         A_ptr[i] = loc;
+         for (aij = row->ptr; aij != NULL; aij = aij->r_next)
+         {  A_ind[loc] = aij->col->j;
+            A_val[loc] = row->rii * aij->val * aij->col->sjj;
+            loc++;
+         }
+      }
+      A_ptr[m+1] = loc;
+      xassert(loc-1 == nnz);
+      /* prepare columns and objective coefficients */
+      if (P->dir == GLP_MIN)
+         dir = +1.0;
+      else if (P->dir == GLP_MAX)
+         dir = -1.0;
+      else
+         xassert(P != P);
+      c[0] = dir * P->c0;
+      for (j = 1; j <= n; j++)
+      {  col = P->col[j];
+         xassert(col->type == GLP_LO && col->lb == 0.0);
+         c[j] = dir * col->coef * col->sjj;
+      }
+      /* allocate and initialize the common storage area */
+      csa->m = m;
+      csa->n = n;
+      csa->A_ptr = A_ptr;
+      csa->A_ind = A_ind;
+      csa->A_val = A_val;
+      csa->b = b;
+      csa->c = c;
+      csa->x = x;
+      csa->y = y;
+      csa->z = z;
+      csa->parm = parm;
+      initialize(csa);
+      /* solve LP with the interior-point method */
+      ret = ipm_main(csa);
+      /* deallocate the common storage area */
+      terminate(csa);
+      /* determine solution status */
+      if (ret == 0)
+      {  /* optimal solution found */
+         P->ipt_stat = GLP_OPT;
+         ret = 0;
+      }
+      else if (ret == 1)
+      {  /* problem has no feasible (primal or dual) solution */
+         P->ipt_stat = GLP_NOFEAS;
+         ret = 0;
+      }
+      else if (ret == 2)
+      {  /* no convergence */
+         P->ipt_stat = GLP_INFEAS;
+         ret = GLP_ENOCVG;
+      }
+      else if (ret == 3)
+      {  /* iteration limit exceeded */
+         P->ipt_stat = GLP_INFEAS;
+         ret = GLP_EITLIM;
+      }
+      else if (ret == 4)
+      {  /* numeric instability on solving Newtonian system */
+         P->ipt_stat = GLP_INFEAS;
+         ret = GLP_EINSTAB;
+      }
+      else
+         xassert(ret != ret);
+      /* store row solution components */
+      for (i = 1; i <= m; i++)
+      {  row = P->row[i];
+         row->pval = row->lb;
+         row->dval = dir * y[i] * row->rii;
+      }
+      /* store column solution components */
+      P->ipt_obj = P->c0;
+      for (j = 1; j <= n; j++)
+      {  col = P->col[j];
+         col->pval = x[j] * col->sjj;
+         col->dval = dir * z[j] / col->sjj;
+         P->ipt_obj += col->coef * col->pval;
+      }
+      /* free working arrays */
+      xfree(A_ptr);
+      xfree(A_ind);
+      xfree(A_val);
+      xfree(b);
+      xfree(c);
+      xfree(x);
+      xfree(y);
+      xfree(z);
+      return ret;
 }
 
 /* eof */

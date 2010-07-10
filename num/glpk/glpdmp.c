@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,11 +23,17 @@
 ***********************************************************************/
 
 #include "glpdmp.h"
-#define xfault xerror
 
-#define _GLPDMP_DEBUG 0
+#if 1 /* 29/VIII-2008 */
+/* some processors need data to be properly aligned; the macro
+   align_datasize enlarges the specified size of a data item to provide
+   a proper alignment of immediately following data */
 
-#if _GLPDMP_DEBUG
+#define align_datasize(size) ((((size) + 7) / 8) * 8)
+/* 8 bytes is sufficient in both 32- and 64-bit environments */
+#endif
+
+#ifdef GLP_DEBUG
 struct info
 {     DMP *pool;
       int size;
@@ -54,7 +61,7 @@ struct info
 DMP *dmp_create_pool(void)
 {     DMP *pool;
       int k;
-#if _GLPDMP_DEBUG
+#ifdef GLP_DEBUG
       xprintf("dmp_create_pool: warning: debug mode enabled\n");
 #endif
       pool = xmalloc(sizeof(DMP));
@@ -94,18 +101,18 @@ DMP *dmp_create_pool(void)
 void *dmp_get_atom(DMP *pool, int size)
 {     void *atom;
       int k;
-#if _GLPDMP_DEBUG
+#ifdef GLP_DEBUG
       int orig_size = size;
 #endif
       if (!(1 <= size && size <= 256))
-         xfault("dmp_get_atom: size = %d; invalid atom size\n", size);
+         xerror("dmp_get_atom: size = %d; invalid atom size\n", size);
 #if 0
       if (!(pool->size == 0 || pool->size == size))
-         xfault("dmp_get_atom: size = %d; wrong atom size\n", size);
+         xerror("dmp_get_atom: size = %d; wrong atom size\n", size);
 #endif
       /* adjust the size to provide the proper data alignment */
       size = align_datasize(size);
-#if _GLPDMP_DEBUG
+#ifdef GLP_DEBUG
       size += align_datasize(sizeof(struct info));
 #endif
       /* adjust the size to make it multiple of 8 bytes, if needed */
@@ -136,7 +143,7 @@ void *dmp_get_atom(DMP *pool, int size)
       /* increase the number of atoms which are currently in use */
       pool->count.lo++;
       if (pool->count.lo == 0) pool->count.hi++;
-#if _GLPDMP_DEBUG
+#ifdef GLP_DEBUG
       ((struct info *)atom)->pool = pool;
       ((struct info *)atom)->size = orig_size;
       atom = (char *)atom + align_datasize(sizeof(struct info));
@@ -168,21 +175,21 @@ void *dmp_get_atom(DMP *pool, int size)
 void dmp_free_atom(DMP *pool, void *atom, int size)
 {     int k;
       if (!(1 <= size && size <= 256))
-         xfault("dmp_free_atom: size = %d; invalid atom size\n", size);
+         xerror("dmp_free_atom: size = %d; invalid atom size\n", size);
 #if 0
       if (!(pool->size == 0 || pool->size == size))
-         xfault("dmp_free_atom: size = %d; wrong atom size\n", size);
+         xerror("dmp_free_atom: size = %d; wrong atom size\n", size);
 #endif
       if (pool->count.lo == 0 && pool->count.hi == 0)
-         xfault("dmp_free_atom: pool allocation error\n");
-#if _GLPDMP_DEBUG
+         xerror("dmp_free_atom: pool allocation error\n");
+#ifdef GLP_DEBUG
       atom = (char *)atom - align_datasize(sizeof(struct info));
       xassert(((struct info *)atom)->pool == pool);
       xassert(((struct info *)atom)->size == size);
 #endif
       /* adjust the size to provide the proper data alignment */
       size = align_datasize(size);
-#if _GLPDMP_DEBUG
+#ifdef GLP_DEBUG
       size += align_datasize(sizeof(struct info));
 #endif
       /* adjust the size to make it multiple of 8 bytes, if needed */
@@ -207,7 +214,7 @@ void dmp_free_atom(DMP *pool, void *atom, int size)
 *  SYNOPSIS
 *
 *  #include "glpdmp.h"
-*  xlong_t dmp_in_use(DMP *pool);
+*  glp_long dmp_in_use(DMP *pool);
 *
 *  DESCRIPTION
 *
@@ -219,7 +226,7 @@ void dmp_free_atom(DMP *pool, void *atom, int size)
 *
 *  The routine returns the number of atoms which are still in use. */
 
-xlong_t dmp_in_use(DMP *pool)
+glp_long dmp_in_use(DMP *pool)
 {     return
          pool->count;
 }

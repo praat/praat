@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@
 ***********************************************************************/
 
 #include "glpapi.h"
-#define xfault xerror
 
 /***********************************************************************
 *  NAME
@@ -40,9 +40,9 @@
 
 void glp_set_rii(glp_prob *lp, int i, double rii)
 {     if (!(1 <= i && i <= lp->m))
-         xfault("glp_set_rii: i = %d; row number out of range\n", i);
+         xerror("glp_set_rii: i = %d; row number out of range\n", i);
       if (rii <= 0.0)
-         xfault("glp_set_rii: i = %d; rii = %g; invalid scale factor\n",
+         xerror("glp_set_rii: i = %d; rii = %g; invalid scale factor\n",
             i, rii);
       if (lp->valid && lp->row[i]->rii != rii)
       {  GLPAIJ *aij;
@@ -74,9 +74,9 @@ void glp_set_rii(glp_prob *lp, int i, double rii)
 
 void glp_set_sjj(glp_prob *lp, int j, double sjj)
 {     if (!(1 <= j && j <= lp->n))
-         xfault("glp_set_sjj: j = %d; column number out of range\n", j);
+         xerror("glp_set_sjj: j = %d; column number out of range\n", j);
       if (sjj <= 0.0)
-         xfault("glp_set_sjj: j = %d; sjj = %g; invalid scale factor\n",
+         xerror("glp_set_sjj: j = %d; sjj = %g; invalid scale factor\n",
             j, sjj);
       if (lp->valid && lp->col[j]->sjj != sjj && lp->col[j]->stat ==
          GLP_BS)
@@ -103,7 +103,7 @@ void glp_set_sjj(glp_prob *lp, int j, double sjj)
 
 double glp_get_rii(glp_prob *lp, int i)
 {     if (!(1 <= i && i <= lp->m))
-         xfault("glp_get_rii: i = %d; row number out of range\n", i);
+         xerror("glp_get_rii: i = %d; row number out of range\n", i);
       return lp->row[i]->rii;
 }
 
@@ -123,7 +123,7 @@ double glp_get_rii(glp_prob *lp, int i)
 
 double glp_get_sjj(glp_prob *lp, int j)
 {     if (!(1 <= j && j <= lp->n))
-         xfault("glp_get_sjj: j = %d; column number out of range\n", j);
+         xerror("glp_get_sjj: j = %d; column number out of range\n", j);
       return lp->col[j]->sjj;
 }
 

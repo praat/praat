@@ -344,16 +344,57 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				goto error;
 			}
 		#elif defined (linux)
-			fd_mixer = open("/dev/mixer", O_WRONLY);		
+			fd_mixer = open ("/dev/mixer", O_WRONLY);		
 			if (fd_mixer == -1) {
 				Melder_error1 (L"(Sound_record:) Cannot open /dev/mixer.");
 				goto error;
 			}
+			#if 0
 			dev_mask = inputSource == 1 ? SOUND_MASK_MIC : SOUND_MASK_LINE;
-			if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
+			if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
 				Melder_error1 (L"(Sound_record:) Can't set recording device in mixer");		
 				goto error;
 			}
+			#else
+		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECMASK, &dev_mask) == -1) {
+			Melder_error ("(Sound_record:) Cannot access /dev/mixer.");						goto error;
+		}
+		/*		printf("%d %d %d\n", dev_mask, (dev_mask&SOUND_MASK_LINE), (dev_mask&SOUND_MASK_MIC));*/
+		if (inputSource == 2) {
+			/*  AUDIO_LINE_IN */
+			if (dev_mask&SOUND_MASK_LINE) {
+				dev_mask = SOUND_MASK_LINE;
+			} else {
+				Melder_error ("(Sound_record:) Can't set LINE as recording device");
+				goto error;
+			}
+			
+		} else {
+			/*  AUDIO_MICROPHONE */
+			if (dev_mask&SOUND_MASK_MIC) {
+				dev_mask = SOUND_MASK_MIC;
+			} else {
+				Melder_error ("(Sound_record:) Can't set MIC as recording device");
+				goto error;
+			}
+
+		}
+		/*		printf("%d\n", dev_mask);*/
+		if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
+			Melder_error ("(Sound_record:) Can't set recording device in mixer");		
+		}
+		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECSRC, &dev_mask) == -1) {
+			Melder_error ("(Sound_record:) Can't read recording device from mixer");		
+		} else {
+			/*			printf("%x\n",dev_mask);*/
+			if (dev_mask&SOUND_MASK_MIC) {
+				inputSource = 1;				
+			} else if (dev_mask&SOUND_MASK_LINE) {
+				inputSource = 2;
+				
+			}
+		} 
+			#endif
 		#endif
 	}
 
@@ -394,7 +435,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 					goto error;				
 				}
 			}
-			close(fd_mixer);
+			close (fd_mixer);
 			fd_mixer = -1;
 		#endif
 	}
@@ -448,7 +489,8 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				goto error;
 			}
 		#elif defined (linux)
-			if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate) == -1) {
+			int sampleRate_int = (int) sampleRate;
+			if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate_int) == -1) {
 				Melder_error3 (L"(Sound_record:) Cannot set sampling frequency to ", Melder_integer (sampleRate), L" Hertz.");
 				goto error;
 			}
@@ -657,7 +699,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			else {
 				long bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
 				while (bytesLeft) {
+					//Melder_casual ("Reading %ld bytes", bytesLeft > 4000 ? 4000 : bytesLeft);
 					dbytes = read (fd, & ((char *) buffer) [2 + bytesRead], bytesLeft > 4000 ? 4000 : bytesLeft);
+					//Melder_casual("Read %ld bytes", dbytes);
 					if (dbytes <= 0) break;
 					bytesLeft -= dbytes;
 					bytesRead += dbytes;
@@ -719,7 +763,7 @@ error:
 		#elif defined (_WIN32)
 			if (hWaveIn != 0) waveInClose (hWaveIn);
 		#else
-			if (fd_mixer != -1) close(fd_mixer);
+			if (fd_mixer != -1) close (fd_mixer);
 			if (fd != -1) close (fd);
 		#endif
 	}

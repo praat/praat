@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,19 +22,14 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef _GLPMPL_H
-#define _GLPMPL_H
+#ifndef GLPMPL_H
+#define GLPMPL_H
 
 #include "glpavl.h"
-#include "glpdmp.h"
 #include "glprng.h"
 
 typedef struct MPL MPL;
-#if 0
-typedef struct STRING STRING;
-#else
 typedef char STRING;
-#endif
 typedef struct SYMBOL SYMBOL;
 typedef struct TUPLE TUPLE;
 typedef struct ARRAY ELEMSET;
@@ -53,18 +49,17 @@ typedef struct DOMAIN_BLOCK DOMAIN_BLOCK;
 typedef struct DOMAIN_SLOT DOMAIN_SLOT;
 typedef struct SET SET;
 typedef struct WITHIN WITHIN;
+typedef struct GADGET GADGET;
 typedef struct PARAMETER PARAMETER;
 typedef struct CONDITION CONDITION;
 typedef struct VARIABLE VARIABLE;
 typedef struct CONSTRAINT CONSTRAINT;
-#if 1 /* 11/II-2008 */
 typedef struct TABLE TABLE;
 typedef struct TABARG TABARG;
 typedef struct TABFLD TABFLD;
 typedef struct TABIN TABIN;
 typedef struct TABOUT TABOUT;
 typedef struct TABDCA TABDCA;
-#endif
 typedef union OPERANDS OPERANDS;
 typedef struct ARG_LIST ARG_LIST;
 typedef struct CODE CODE;
@@ -143,9 +138,7 @@ struct MPL
 #define T_ELSE          211   /* else */
 #define T_IF            212   /* if */
 #define T_IN            213   /* in */
-#if 1 /* 21/VII-2006 */
 #define T_INFINITY      214   /* Infinity */
-#endif
 #define T_INTER         215   /* inter */
 #define T_LESS          216   /* less */
 #define T_MOD           217   /* mod */
@@ -181,13 +174,9 @@ struct MPL
 #define T_RBRACKET      247   /* ] */
 #define T_LBRACE        248   /* { */
 #define T_RBRACE        249   /* } */
-#if 1 /* 14/VII-2006 */
 #define T_APPEND        250   /* >> */
-#endif
-#if 1 /* 11/II-2008 */
 #define T_TILDE         251   /* ~ */
 #define T_INPUT         252   /* <- */
-#endif
       int imlen;
       /* length of the current token */
       char *image; /* char image[MAX_LENGTH+1]; */
@@ -280,11 +269,9 @@ struct MPL
       /* if this flag is set, the postsolving phase is in effect */
       STATEMENT *stmt;
       /* model statement being currently executed */
-#if 1 /* 11/II-2008 */
       TABDCA *dca;
       /* pointer to table driver communication area for table statement
          currently executed */
-#endif
       int m;
       /* number of rows in the problem, m >= 0 */
       int n;
@@ -299,26 +286,26 @@ struct MPL
          of the problem, 1 <= j <= n */
       /*--------------------------------------------------------------*/
       /* input/output segment */
-      FILE *in_fp;
+      XFILE *in_fp;
       /* stream assigned to the input text file */
       char *in_file;
       /* name of the input text file */
-      FILE *out_fp;
+      XFILE *out_fp;
       /* stream assigned to the output text file used to write all data
          produced by display and printf statements; NULL means the data
-         should be sent to stdout via the routine print */
+         should be sent to stdout via the routine xprintf */
       char *out_file;
       /* name of the output text file */
+#if 0 /* 08/XI-2009 */
       char *out_buf; /* char out_buf[OUTBUF_SIZE] */
       /* buffer to accumulate output data */
       int out_cnt;
       /* count of data bytes stored in the output buffer */
-#if 1 /* 14/VII-2006 */
-      FILE *prt_fp;
+#endif
+      XFILE *prt_fp;
       /* stream assigned to the print text file; may be NULL */
       char *prt_file;
       /* name of the output print file */
-#endif
       /*--------------------------------------------------------------*/
       /* solver interface segment */
       jmp_buf jump;
@@ -335,182 +322,6 @@ struct MPL
       char *mpl_buf; /* char mpl_buf[255+1]; */
       /* working buffer used by some interface routines */
 };
-
-#define create_slice          _glp_mpl_create_slice
-#define expand_slice          _glp_mpl_expand_slice
-#define slice_dimen           _glp_mpl_slice_dimen
-#define slice_arity           _glp_mpl_slice_arity
-#define fake_slice            _glp_mpl_fake_slice
-#define delete_slice          _glp_mpl_delete_slice
-#define is_number             _glp_mpl_is_number
-#define is_symbol             _glp_mpl_is_symbol
-#define is_literal            _glp_mpl_is_literal
-#define read_number           _glp_mpl_read_number
-#define read_symbol           _glp_mpl_read_symbol
-#define read_slice            _glp_mpl_read_slice
-#define select_set            _glp_mpl_select_set
-#define simple_format         _glp_mpl_simple_format
-#define matrix_format         _glp_mpl_matrix_format
-#define set_data              _glp_mpl_set_data
-#define select_parameter      _glp_mpl_select_parameter
-#define set_default           _glp_mpl_set_default
-#define read_value            _glp_mpl_read_value
-#define plain_format          _glp_mpl_plain_format
-#define tabular_format        _glp_mpl_tabular_format
-#define tabbing_format        _glp_mpl_tabbing_format
-#define parameter_data        _glp_mpl_parameter_data
-#define data_section          _glp_mpl_data_section
-
-#define fp_add                _glp_mpl_fp_add
-#define fp_sub                _glp_mpl_fp_sub
-#define fp_less               _glp_mpl_fp_less
-#define fp_mul                _glp_mpl_fp_mul
-#define fp_div                _glp_mpl_fp_div
-#define fp_idiv               _glp_mpl_fp_idiv
-#define fp_mod                _glp_mpl_fp_mod
-#define fp_power              _glp_mpl_fp_power
-#define fp_exp                _glp_mpl_fp_exp
-#define fp_log                _glp_mpl_fp_log
-#define fp_log10              _glp_mpl_fp_log10
-#define fp_sqrt               _glp_mpl_fp_sqrt
-#define fp_sin                _glp_mpl_fp_sin
-#define fp_cos                _glp_mpl_fp_cos
-#define fp_atan               _glp_mpl_fp_atan
-#define fp_atan2              _glp_mpl_fp_atan2
-#define fp_round              _glp_mpl_fp_round
-#define fp_trunc              _glp_mpl_fp_trunc
-#define fp_irand224           _glp_mpl_fp_irand224
-#define fp_uniform01          _glp_mpl_fp_uniform01
-#define fp_uniform            _glp_mpl_uniform
-#define fp_normal01           _glp_mpl_fp_normal01
-#define fp_normal             _glp_mpl_fp_normal
-#define create_string         _glp_mpl_create_string
-#define copy_string           _glp_mpl_copy_string
-#define compare_strings       _glp_mpl_compare_strings
-#define fetch_string          _glp_mpl_fetch_string
-#define delete_string         _glp_mpl_delete_string
-#define create_symbol_num     _glp_mpl_create_symbol_num
-#define create_symbol_str     _glp_mpl_create_symbol_str
-#define copy_symbol           _glp_mpl_copy_symbol
-#define compare_symbols       _glp_mpl_compare_symbols
-#define delete_symbol         _glp_mpl_delete_symbol
-#define format_symbol         _glp_mpl_format_symbol
-#define concat_symbols        _glp_mpl_concat_symbols
-#define create_tuple          _glp_mpl_create_tuple
-#define expand_tuple          _glp_mpl_expand_tuple
-#define tuple_dimen           _glp_mpl_tuple_dimen
-#define copy_tuple            _glp_mpl_copy_tuple
-#define compare_tuples        _glp_mpl_compare_tuples
-#define build_subtuple        _glp_mpl_build_subtuple
-#define delete_tuple          _glp_mpl_delete_tuple
-#define format_tuple          _glp_mpl_format_tuple
-#define create_elemset        _glp_mpl_create_elemset
-#define find_tuple            _glp_mpl_find_tuple
-#define add_tuple             _glp_mpl_add_tuple
-#define check_then_add        _glp_mpl_check_then_add
-#define copy_elemset          _glp_mpl_copy_elemset
-#define delete_elemset        _glp_mpl_delete_elemset
-#define arelset_size          _glp_mpl_arelset_size
-#define arelset_member        _glp_mpl_arelset_member
-#define create_arelset        _glp_mpl_create_arelset
-#define set_union             _glp_mpl_set_union
-#define set_diff              _glp_mpl_set_diff
-#define set_symdiff           _glp_mpl_set_symdiff
-#define set_inter             _glp_mpl_set_inter
-#define set_cross             _glp_mpl_set_cross
-#define constant_term         _glp_mpl_constant_term
-#define single_variable       _glp_mpl_single_variable
-#define copy_formula          _glp_mpl_copy_formula
-#define delete_formula        _glp_mpl_delete_formula
-#define linear_comb           _glp_mpl_linear_comb
-#define remove_constant       _glp_mpl_remove_constant
-#define reduce_terms          _glp_mpl_reduce_terms
-#define delete_value          _glp_mpl_delete_value
-#define create_array          _glp_mpl_create_array
-#define find_member           _glp_mpl_find_member
-#define add_member            _glp_mpl_add_member
-#define delete_array          _glp_mpl_delete_array
-#define assign_dummy_index    _glp_mpl_assign_dummy_index
-#define update_dummy_indices  _glp_mpl_update_dummy_indices
-#define enter_domain_block    _glp_mpl_enter_domain_block
-#define eval_within_domain    _glp_mpl_eval_within_domain
-#define loop_within_domain    _glp_mpl_loop_within_domain
-#define out_of_domain         _glp_mpl_out_of_domain
-#define get_domain_tuple      _glp_mpl_get_domain_tuple
-#define clean_domain          _glp_mpl_clean_domain
-#define check_elem_set        _glp_mpl_check_elem_set
-#define take_member_set       _glp_mpl_take_member_set
-#define eval_member_set       _glp_mpl_eval_member_set
-#define eval_whole_set        _glp_mpl_eval_whole_set
-#define clean_set             _glp_mpl_clean_set
-#define check_value_num       _glp_mpl_check_value_num
-#define take_member_num       _glp_mpl_take_member_num
-#define eval_member_num       _glp_mpl_eval_member_num
-#define check_value_sym       _glp_mpl_check_value_sym
-#define take_member_sym       _glp_mpl_take_member_sym
-#define eval_member_sym       _glp_mpl_eval_member_sym
-#define eval_whole_par        _glp_mpl_eval_whole_par
-#define clean_parameter       _glp_mpl_clean_parameter
-#define take_member_var       _glp_mpl_take_member_var
-#define eval_member_var       _glp_mpl_eval_member_var
-#define eval_whole_var        _glp_mpl_eval_whole_var
-#define clean_variable        _glp_mpl_clean_variable
-#define take_member_con       _glp_mpl_take_member_con
-#define eval_member_con       _glp_mpl_eval_member_con
-#define eval_whole_con        _glp_mpl_eval_whole_con
-#define clean_constraint      _glp_mpl_clean_constraint
-#define eval_numeric          _glp_mpl_eval_numeric
-#define eval_symbolic         _glp_mpl_eval_symbolic
-#define eval_logical          _glp_mpl_eval_logical
-#define eval_tuple            _glp_mpl_eval_tuple
-#define eval_elemset          _glp_mpl_eval_elemset
-#define is_member             _glp_mpl_is_member
-#define eval_formula          _glp_mpl_eval_formula
-#define clean_code            _glp_mpl_clean_code
-#define execute_check         _glp_mpl_execute_check
-#define clean_check           _glp_mpl_clean_check
-#define execute_display       _glp_mpl_execute_display
-#define clean_display         _glp_mpl_clean_display
-#define execute_printf        _glp_mpl_execute_printf
-#define clean_printf          _glp_mpl_clean_printf
-#define execute_for           _glp_mpl_execute_for
-#define clean_for             _glp_mpl_clean_for
-#define execute_statement     _glp_mpl_execute_statement
-#define clean_statement       _glp_mpl_clean_statement
-
-#define alloc_content         _glp_mpl_alloc_content
-#define generate_model        _glp_mpl_generate_model
-#define build_problem         _glp_mpl_build_problem
-#define postsolve_model       _glp_mpl_postsolve_model
-#define clean_model           _glp_mpl_clean_model
-#define open_input            _glp_mpl_open_input
-#define read_char             _glp_mpl_read_char
-#define close_input           _glp_mpl_close_input
-#define open_output           _glp_mpl_open_output
-#define write_char            _glp_mpl_write_char
-#define write_text            _glp_mpl_write_text
-#define flush_output          _glp_mpl_flush_output
-#define mpl_error             _glp_mpl_error
-#define warning               _glp_mpl_warning
-#define mpl_initialize        _glp_mpl_initialize
-#define mpl_read_model        _glp_mpl_read_model
-#define mpl_read_data         _glp_mpl_read_data
-#define mpl_generate          _glp_mpl_generate
-#define mpl_get_prob_name     _glp_mpl_get_prob_name
-#define mpl_get_num_rows      _glp_mpl_get_num_rows
-#define mpl_get_num_cols      _glp_mpl_get_num_cols
-#define mpl_get_row_name      _glp_mpl_get_row_name
-#define mpl_get_row_kind      _glp_mpl_get_row_kind
-#define mpl_get_row_bnds      _glp_mpl_get_row_bnds
-#define mpl_get_mat_row       _glp_mpl_get_mat_row
-#define mpl_get_row_c0        _glp_mpl_get_row_c0
-#define mpl_get_col_name      _glp_mpl_get_col_name
-#define mpl_get_col_kind      _glp_mpl_get_col_kind
-#define mpl_get_col_bnds      _glp_mpl_get_col_bnds
-#define mpl_has_solve_stmt    _glp_mpl_has_solve_stmt
-#define mpl_put_col_value     _glp_mpl_put_col_value
-#define mpl_postsolve         _glp_mpl_postsolve
-#define mpl_terminate         _glp_mpl_terminate
 
 /**********************************************************************/
 /* * *                  PROCESSING MODEL SECTION                  * * */
@@ -752,11 +563,9 @@ CONSTRAINT *constraint_statement(MPL *mpl);
 CONSTRAINT *objective_statement(MPL *mpl);
 /* parse objective statement */
 
-#if 1 /* 11/II-2008 */
 #define table_statement _glp_mpl_table_statement
 TABLE *table_statement(MPL *mpl);
 /* parse table statement */
-#endif
 
 #define solve_statement _glp_mpl_solve_statement
 void *solve_statement(MPL *mpl);
@@ -807,9 +616,11 @@ struct SLICE /* see TUPLE */
 };
 #endif
 
+#define create_slice _glp_mpl_create_slice
 SLICE *create_slice(MPL *mpl);
 /* create slice */
 
+#define expand_slice _glp_mpl_expand_slice
 SLICE *expand_slice
 (     MPL *mpl,
       SLICE *slice,           /* destroyed */
@@ -817,42 +628,52 @@ SLICE *expand_slice
 );
 /* append new component to slice */
 
+#define slice_dimen _glp_mpl_slice_dimen
 int slice_dimen
 (     MPL *mpl,
       SLICE *slice            /* not changed */
 );
 /* determine dimension of slice */
 
+#define slice_arity _glp_mpl_slice_arity
 int slice_arity
 (     MPL *mpl,
       SLICE *slice            /* not changed */
 );
 /* determine arity of slice */
 
+#define fake_slice _glp_mpl_fake_slice
 SLICE *fake_slice(MPL *mpl, int dim);
 /* create fake slice of all asterisks */
 
+#define delete_slice _glp_mpl_delete_slice
 void delete_slice
 (     MPL *mpl,
       SLICE *slice            /* destroyed */
 );
 /* delete slice */
 
+#define is_number _glp_mpl_is_number
 int is_number(MPL *mpl);
 /* check if current token is number */
 
+#define is_symbol _glp_mpl_is_symbol
 int is_symbol(MPL *mpl);
 /* check if current token is symbol */
 
+#define is_literal _glp_mpl_is_literal
 int is_literal(MPL *mpl, char *literal);
 /* check if current token is given symbolic literal */
 
+#define read_number _glp_mpl_read_number
 double read_number(MPL *mpl);
 /* read number */
 
+#define read_symbol _glp_mpl_read_symbol
 SYMBOL *read_symbol(MPL *mpl);
 /* read symbol */
 
+#define read_slice _glp_mpl_read_slice
 SLICE *read_slice
 (     MPL *mpl,
       char *name,             /* not changed */
@@ -860,12 +681,14 @@ SLICE *read_slice
 );
 /* read slice */
 
+#define select_set _glp_mpl_select_set
 SET *select_set
 (     MPL *mpl,
       char *name              /* not changed */
 );
 /* select set to saturate it with elemental sets */
 
+#define simple_format _glp_mpl_simple_format
 void simple_format
 (     MPL *mpl,
       SET *set,               /* not changed */
@@ -874,6 +697,7 @@ void simple_format
 );
 /* read set data block in simple format */
 
+#define matrix_format _glp_mpl_matrix_format
 void matrix_format
 (     MPL *mpl,
       SET *set,               /* not changed */
@@ -883,15 +707,18 @@ void matrix_format
 );
 /* read set data block in matrix format */
 
+#define set_data _glp_mpl_set_data
 void set_data(MPL *mpl);
 /* read set data */
 
+#define select_parameter _glp_mpl_select_parameter
 PARAMETER *select_parameter
 (     MPL *mpl,
       char *name              /* not changed */
 );
 /* select parameter to saturate it with data */
 
+#define set_default _glp_mpl_set_default
 void set_default
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -899,6 +726,7 @@ void set_default
 );
 /* set default parameter value */
 
+#define read_value _glp_mpl_read_value
 MEMBER *read_value
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -906,6 +734,7 @@ MEMBER *read_value
 );
 /* read value and assign it to parameter member */
 
+#define plain_format _glp_mpl_plain_format
 void plain_format
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -913,6 +742,7 @@ void plain_format
 );
 /* read parameter data block in plain format */
 
+#define tabular_format _glp_mpl_tabular_format
 void tabular_format
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -921,15 +751,18 @@ void tabular_format
 );
 /* read parameter data block in tabular format */
 
+#define tabbing_format _glp_mpl_tabbing_format
 void tabbing_format
 (     MPL *mpl,
       SYMBOL *altval          /* not changed */
 );
 /* read parameter data block in tabbing format */
 
+#define parameter_data _glp_mpl_parameter_data
 void parameter_data(MPL *mpl);
 /* read parameter data */
 
+#define data_section _glp_mpl_data_section
 void data_section(MPL *mpl);
 /* read data section */
 
@@ -937,57 +770,75 @@ void data_section(MPL *mpl);
 /* * *                   FLOATING-POINT NUMBERS                   * * */
 /**********************************************************************/
 
+#define fp_add _glp_mpl_fp_add
 double fp_add(MPL *mpl, double x, double y);
 /* floating-point addition */
 
+#define fp_sub _glp_mpl_fp_sub
 double fp_sub(MPL *mpl, double x, double y);
 /* floating-point subtraction */
 
+#define fp_less _glp_mpl_fp_less
 double fp_less(MPL *mpl, double x, double y);
 /* floating-point non-negative subtraction */
 
+#define fp_mul _glp_mpl_fp_mul
 double fp_mul(MPL *mpl, double x, double y);
 /* floating-point multiplication */
 
+#define fp_div _glp_mpl_fp_div
 double fp_div(MPL *mpl, double x, double y);
 /* floating-point division */
 
+#define fp_idiv _glp_mpl_fp_idiv
 double fp_idiv(MPL *mpl, double x, double y);
 /* floating-point quotient of exact division */
 
+#define fp_mod _glp_mpl_fp_mod
 double fp_mod(MPL *mpl, double x, double y);
 /* floating-point remainder of exact division */
 
+#define fp_power _glp_mpl_fp_power
 double fp_power(MPL *mpl, double x, double y);
 /* floating-point exponentiation (raise to power) */
 
+#define fp_exp _glp_mpl_fp_exp
 double fp_exp(MPL *mpl, double x);
 /* floating-point base-e exponential */
 
+#define fp_log _glp_mpl_fp_log
 double fp_log(MPL *mpl, double x);
 /* floating-point natural logarithm */
 
+#define fp_log10 _glp_mpl_fp_log10
 double fp_log10(MPL *mpl, double x);
 /* floating-point common (decimal) logarithm */
 
+#define fp_sqrt _glp_mpl_fp_sqrt
 double fp_sqrt(MPL *mpl, double x);
 /* floating-point square root */
 
+#define fp_sin _glp_mpl_fp_sin
 double fp_sin(MPL *mpl, double x);
 /* floating-point trigonometric sine */
 
+#define fp_cos _glp_mpl_fp_cos
 double fp_cos(MPL *mpl, double x);
 /* floating-point trigonometric cosine */
 
+#define fp_atan _glp_mpl_fp_atan
 double fp_atan(MPL *mpl, double x);
 /* floating-point trigonometric arctangent */
 
+#define fp_atan2 _glp_mpl_fp_atan2
 double fp_atan2(MPL *mpl, double y, double x);
 /* floating-point trigonometric arctangent */
 
+#define fp_round _glp_mpl_fp_round
 double fp_round(MPL *mpl, double x, double n);
 /* round floating-point value to n fractional digits */
 
+#define fp_trunc _glp_mpl_fp_trunc
 double fp_trunc(MPL *mpl, double x, double n);
 /* truncate floating-point value to n fractional digits */
 
@@ -995,57 +846,61 @@ double fp_trunc(MPL *mpl, double x, double n);
 /* * *              PSEUDO-RANDOM NUMBER GENERATORS               * * */
 /**********************************************************************/
 
+#define fp_irand224 _glp_mpl_fp_irand224
 double fp_irand224(MPL *mpl);
 /* pseudo-random integer in the range [0, 2^24) */
 
+#define fp_uniform01 _glp_mpl_fp_uniform01
 double fp_uniform01(MPL *mpl);
 /* pseudo-random number in the range [0, 1) */
 
+#define fp_uniform _glp_mpl_uniform
 double fp_uniform(MPL *mpl, double a, double b);
 /* pseudo-random number in the range [a, b) */
 
+#define fp_normal01 _glp_mpl_fp_normal01
 double fp_normal01(MPL *mpl);
 /* Gaussian random variate with mu = 0 and sigma = 1 */
 
+#define fp_normal _glp_mpl_fp_normal
 double fp_normal(MPL *mpl, double mu, double sigma);
 /* Gaussian random variate with specified mu and sigma */
 
-#if 0
 /**********************************************************************/
-/* * *                SEGMENTED CHARACTER STRINGS                 * * */
+/* * *                         DATE/TIME                          * * */
 /**********************************************************************/
 
-#define STRSEG_SIZE 12
-/* number of characters in one segment of the string */
+#define fn_gmtime _glp_mpl_fn_gmtime
+double fn_gmtime(MPL *mpl);
+/* obtain the current calendar time (UTC) */
 
-struct STRING
-{     /* segment of character string; the string itself is associated
-         with its first segment */
-      char seg[STRSEG_SIZE];
-      /* up to STRSEG_SIZE characters; the end of string is indicated
-         by '\0' as usual; thus, if this segment doesn't contain '\0',
-         there must be a next segment */
-      STRING *next;
-      /* the next segment of string */
-};
-#else
+#define fn_str2time _glp_mpl_fn_str2time
+double fn_str2time(MPL *mpl, const char *str, const char *fmt);
+/* convert character string to the calendar time */
+
+#define fn_time2str _glp_mpl_fn_time2str
+void fn_time2str(MPL *mpl, char *str, double t, const char *fmt);
+/* convert the calendar time to character string */
+
 /**********************************************************************/
 /* * *                     CHARACTER STRINGS                      * * */
 /**********************************************************************/
-#endif
 
+#define create_string _glp_mpl_create_string
 STRING *create_string
 (     MPL *mpl,
       char buf[MAX_LENGTH+1]  /* not changed */
 );
 /* create character string */
 
+#define copy_string _glp_mpl_copy_string
 STRING *copy_string
 (     MPL *mpl,
       STRING *str             /* not changed */
 );
 /* make copy of character string */
 
+#define compare_strings _glp_mpl_compare_strings
 int compare_strings
 (     MPL *mpl,
       STRING *str1,           /* not changed */
@@ -1053,6 +908,7 @@ int compare_strings
 );
 /* compare one character string with another */
 
+#define fetch_string _glp_mpl_fetch_string
 char *fetch_string
 (     MPL *mpl,
       STRING *str,            /* not changed */
@@ -1060,6 +916,7 @@ char *fetch_string
 );
 /* extract content of character string */
 
+#define delete_string _glp_mpl_delete_string
 void delete_string
 (     MPL *mpl,
       STRING *str             /* destroyed */
@@ -1078,21 +935,25 @@ struct SYMBOL
       /* abstract value of symbol (used only if str != NULL) */
 };
 
+#define create_symbol_num _glp_mpl_create_symbol_num
 SYMBOL *create_symbol_num(MPL *mpl, double num);
 /* create symbol of numeric type */
 
+#define create_symbol_str _glp_mpl_create_symbol_str
 SYMBOL *create_symbol_str
 (     MPL *mpl,
       STRING *str             /* destroyed */
 );
 /* create symbol of abstract type */
 
+#define copy_symbol _glp_mpl_copy_symbol
 SYMBOL *copy_symbol
 (     MPL *mpl,
       SYMBOL *sym             /* not changed */
 );
 /* make copy of symbol */
 
+#define compare_symbols _glp_mpl_compare_symbols
 int compare_symbols
 (     MPL *mpl,
       SYMBOL *sym1,           /* not changed */
@@ -1100,18 +961,21 @@ int compare_symbols
 );
 /* compare one symbol with another */
 
+#define delete_symbol _glp_mpl_delete_symbol
 void delete_symbol
 (     MPL *mpl,
       SYMBOL *sym             /* destroyed */
 );
 /* delete symbol */
 
+#define format_symbol _glp_mpl_format_symbol
 char *format_symbol
 (     MPL *mpl,
       SYMBOL *sym             /* not changed */
 );
 /* format symbol for displaying or printing */
 
+#define concat_symbols _glp_mpl_concat_symbols
 SYMBOL *concat_symbols
 (     MPL *mpl,
       SYMBOL *sym1,           /* destroyed */
@@ -1132,9 +996,11 @@ struct TUPLE
       /* the next component of n-tuple */
 };
 
+#define create_tuple _glp_mpl_create_tuple
 TUPLE *create_tuple(MPL *mpl);
 /* create n-tuple */
 
+#define expand_tuple _glp_mpl_expand_tuple
 TUPLE *expand_tuple
 (     MPL *mpl,
       TUPLE *tuple,           /* destroyed */
@@ -1142,18 +1008,21 @@ TUPLE *expand_tuple
 );
 /* append symbol to n-tuple */
 
+#define tuple_dimen _glp_mpl_tuple_dimen
 int tuple_dimen
 (     MPL *mpl,
       TUPLE *tuple            /* not changed */
 );
 /* determine dimension of n-tuple */
 
+#define copy_tuple _glp_mpl_copy_tuple
 TUPLE *copy_tuple
 (     MPL *mpl,
       TUPLE *tuple            /* not changed */
 );
 /* make copy of n-tuple */
 
+#define compare_tuples _glp_mpl_compare_tuples
 int compare_tuples
 (     MPL *mpl,
       TUPLE *tuple1,          /* not changed */
@@ -1161,6 +1030,7 @@ int compare_tuples
 );
 /* compare one n-tuple with another */
 
+#define build_subtuple _glp_mpl_build_subtuple
 TUPLE *build_subtuple
 (     MPL *mpl,
       TUPLE *tuple,           /* not changed */
@@ -1168,12 +1038,14 @@ TUPLE *build_subtuple
 );
 /* build subtuple of given n-tuple */
 
+#define delete_tuple _glp_mpl_delete_tuple
 void delete_tuple
 (     MPL *mpl,
       TUPLE *tuple            /* destroyed */
 );
 /* delete n-tuple */
 
+#define format_tuple _glp_mpl_format_tuple
 char *format_tuple
 (     MPL *mpl,
       int c,
@@ -1195,9 +1067,11 @@ struct ELEMSET /* see ARRAY */
          elemental set */
 #endif
 
+#define create_elemset _glp_mpl_create_elemset
 ELEMSET *create_elemset(MPL *mpl, int dim);
 /* create elemental set */
 
+#define find_tuple _glp_mpl_find_tuple
 MEMBER *find_tuple
 (     MPL *mpl,
       ELEMSET *set,           /* not changed */
@@ -1205,6 +1079,7 @@ MEMBER *find_tuple
 );
 /* check if elemental set contains given n-tuple */
 
+#define add_tuple _glp_mpl_add_tuple
 MEMBER *add_tuple
 (     MPL *mpl,
       ELEMSET *set,           /* modified */
@@ -1212,6 +1087,7 @@ MEMBER *add_tuple
 );
 /* add new n-tuple to elemental set */
 
+#define check_then_add _glp_mpl_check_then_add
 MEMBER *check_then_add
 (     MPL *mpl,
       ELEMSET *set,           /* modified */
@@ -1219,27 +1095,33 @@ MEMBER *check_then_add
 );
 /* check and add new n-tuple to elemental set */
 
+#define copy_elemset _glp_mpl_copy_elemset
 ELEMSET *copy_elemset
 (     MPL *mpl,
       ELEMSET *set            /* not changed */
 );
 /* make copy of elemental set */
 
+#define delete_elemset _glp_mpl_delete_elemset
 void delete_elemset
 (     MPL *mpl,
       ELEMSET *set            /* destroyed */
 );
 /* delete elemental set */
 
+#define arelset_size _glp_mpl_arelset_size
 int arelset_size(MPL *mpl, double t0, double tf, double dt);
 /* compute size of "arithmetic" elemental set */
 
+#define arelset_member _glp_mpl_arelset_member
 double arelset_member(MPL *mpl, double t0, double tf, double dt, int j);
 /* compute member of "arithmetic" elemental set */
 
+#define create_arelset _glp_mpl_create_arelset
 ELEMSET *create_arelset(MPL *mpl, double t0, double tf, double dt);
 /* create "arithmetic" elemental set */
 
+#define set_union _glp_mpl_set_union
 ELEMSET *set_union
 (     MPL *mpl,
       ELEMSET *X,             /* destroyed */
@@ -1247,6 +1129,7 @@ ELEMSET *set_union
 );
 /* union of two elemental sets */
 
+#define set_diff _glp_mpl_set_diff
 ELEMSET *set_diff
 (     MPL *mpl,
       ELEMSET *X,             /* destroyed */
@@ -1254,6 +1137,7 @@ ELEMSET *set_diff
 );
 /* difference between two elemental sets */
 
+#define set_symdiff _glp_mpl_set_symdiff
 ELEMSET *set_symdiff
 (     MPL *mpl,
       ELEMSET *X,             /* destroyed */
@@ -1261,6 +1145,7 @@ ELEMSET *set_symdiff
 );
 /* symmetric difference between two elemental sets */
 
+#define set_inter _glp_mpl_set_inter
 ELEMSET *set_inter
 (     MPL *mpl,
       ELEMSET *X,             /* destroyed */
@@ -1268,6 +1153,7 @@ ELEMSET *set_inter
 );
 /* intersection of two elemental sets */
 
+#define set_cross _glp_mpl_set_cross
 ELEMSET *set_cross
 (     MPL *mpl,
       ELEMSET *X,             /* destroyed */
@@ -1296,8 +1182,11 @@ struct ELEMVAR
       double temp;
       /* working quantity used in operations on linear forms; normally
          it contains floating-point zero */
-      double value;
-      /* value of this elemental variable provided by the solver */
+#if 1 /* 15/V-2010 */
+      int stat;
+      double prim, dual;
+      /* solution components provided by the solver */
+#endif
 };
 
 /**********************************************************************/
@@ -1317,27 +1206,32 @@ struct FORMULA
       /* the next term of linear form */
 };
 
+#define constant_term _glp_mpl_constant_term
 FORMULA *constant_term(MPL *mpl, double coef);
 /* create constant term */
 
+#define single_variable _glp_mpl_single_variable
 FORMULA *single_variable
 (     MPL *mpl,
       ELEMVAR *var            /* referenced */
 );
 /* create single variable */
 
+#define copy_formula _glp_mpl_copy_formula
 FORMULA *copy_formula
 (     MPL *mpl,
       FORMULA *form           /* not changed */
 );
 /* make copy of linear form */
 
+#define delete_formula _glp_mpl_delete_formula
 void delete_formula
 (     MPL *mpl,
       FORMULA *form           /* destroyed */
 );
 /* delete linear form */
 
+#define linear_comb _glp_mpl_linear_comb
 FORMULA *linear_comb
 (     MPL *mpl,
       double a, FORMULA *fx,  /* destroyed */
@@ -1345,6 +1239,7 @@ FORMULA *linear_comb
 );
 /* linear combination of two linear forms */
 
+#define remove_constant _glp_mpl_remove_constant
 FORMULA *remove_constant
 (     MPL *mpl,
       FORMULA *form,          /* destroyed */
@@ -1352,6 +1247,7 @@ FORMULA *remove_constant
 );
 /* remove constant term from linear form */
 
+#define reduce_terms _glp_mpl_reduce_terms
 FORMULA *reduce_terms
 (     MPL *mpl,
       FORMULA *form           /* destroyed */
@@ -1378,6 +1274,11 @@ struct ELEMCON
       /* lower bound */
       double ubnd;
       /* upper bound */
+#if 1 /* 15/V-2010 */
+      int stat;
+      double prim, dual;
+      /* solution components provided by the solver */
+#endif
 };
 
 /**********************************************************************/
@@ -1410,6 +1311,7 @@ union VALUE
       ELEMCON *con;  /* reference */
 };
 
+#define delete_value _glp_mpl_delete_value
 void delete_value
 (     MPL *mpl,
       int type,
@@ -1467,9 +1369,11 @@ struct MEMBER
       /* generic value assigned to the member */
 };
 
+#define create_array _glp_mpl_create_array
 ARRAY *create_array(MPL *mpl, int type, int dim);
 /* create array */
 
+#define find_member _glp_mpl_find_member
 MEMBER *find_member
 (     MPL *mpl,
       ARRAY *array,           /* not changed */
@@ -1477,6 +1381,7 @@ MEMBER *find_member
 );
 /* find array member with given n-tuple */
 
+#define add_member _glp_mpl_add_member
 MEMBER *add_member
 (     MPL *mpl,
       ARRAY *array,           /* modified */
@@ -1484,6 +1389,7 @@ MEMBER *add_member
 );
 /* add new member to array */
 
+#define delete_array _glp_mpl_delete_array
 void delete_array
 (     MPL *mpl,
       ARRAY *array            /* destroyed */
@@ -1551,6 +1457,7 @@ struct DOMAIN_SLOT
       /* the next slot in the same domain block */
 };
 
+#define assign_dummy_index _glp_mpl_assign_dummy_index
 void assign_dummy_index
 (     MPL *mpl,
       DOMAIN_SLOT *slot,      /* modified */
@@ -1558,12 +1465,14 @@ void assign_dummy_index
 );
 /* assign new value to dummy index */
 
+#define update_dummy_indices _glp_mpl_update_dummy_indices
 void update_dummy_indices
 (     MPL *mpl,
       DOMAIN_BLOCK *block     /* not changed */
 );
 /* update current values of dummy indices */
 
+#define enter_domain_block _glp_mpl_enter_domain_block
 int enter_domain_block
 (     MPL *mpl,
       DOMAIN_BLOCK *block,    /* not changed */
@@ -1572,6 +1481,7 @@ int enter_domain_block
 );
 /* enter domain block */
 
+#define eval_within_domain _glp_mpl_eval_within_domain
 int eval_within_domain
 (     MPL *mpl,
       DOMAIN *domain,         /* not changed */
@@ -1580,6 +1490,7 @@ int eval_within_domain
 );
 /* perform evaluation within domain scope */
 
+#define loop_within_domain _glp_mpl_loop_within_domain
 void loop_within_domain
 (     MPL *mpl,
       DOMAIN *domain,         /* not changed */
@@ -1587,6 +1498,7 @@ void loop_within_domain
 );
 /* perform iterations within domain scope */
 
+#define out_of_domain _glp_mpl_out_of_domain
 void out_of_domain
 (     MPL *mpl,
       char *name,             /* not changed */
@@ -1594,12 +1506,14 @@ void out_of_domain
 );
 /* raise domain exception */
 
+#define get_domain_tuple _glp_mpl_get_domain_tuple
 TUPLE *get_domain_tuple
 (     MPL *mpl,
       DOMAIN *domain          /* not changed */
 );
 /* obtain current n-tuple from domain */
 
+#define clean_domain _glp_mpl_clean_domain
 void clean_domain(MPL *mpl, DOMAIN *domain);
 /* clean domain */
 
@@ -1630,6 +1544,8 @@ struct SET
       /* pseudo-code for computing assigned value; can be NULL */
       CODE *option;
       /* pseudo-code for computing default value; can be NULL */
+      GADGET *gadget;
+      /* plain set used to initialize the array of sets; can be NULL */
       int data;
       /* data status flag:
          0 - no data are provided in the data section
@@ -1647,6 +1563,15 @@ struct WITHIN
       /* the next entry for the same set or parameter */
 };
 
+struct GADGET
+{     /* plain set used to initialize the array of sets with data */
+      SET *set;
+      /* pointer to plain set; cannot be NULL */
+      int ind[20]; /* ind[dim+dimen]; */
+      /* permutation of integers 1, 2, ..., dim+dimen */
+};
+
+#define check_elem_set _glp_mpl_check_elem_set
 void check_elem_set
 (     MPL *mpl,
       SET *set,               /* not changed */
@@ -1655,6 +1580,7 @@ void check_elem_set
 );
 /* check elemental set assigned to set member */
 
+#define take_member_set _glp_mpl_take_member_set
 ELEMSET *take_member_set      /* returns reference, not value */
 (     MPL *mpl,
       SET *set,               /* not changed */
@@ -1662,6 +1588,7 @@ ELEMSET *take_member_set      /* returns reference, not value */
 );
 /* obtain elemental set assigned to set member */
 
+#define eval_member_set _glp_mpl_eval_member_set
 ELEMSET *eval_member_set      /* returns reference, not value */
 (     MPL *mpl,
       SET *set,               /* not changed */
@@ -1669,9 +1596,11 @@ ELEMSET *eval_member_set      /* returns reference, not value */
 );
 /* evaluate elemental set assigned to set member */
 
+#define eval_whole_set _glp_mpl_eval_whole_set
 void eval_whole_set(MPL *mpl, SET *set);
 /* evaluate model set over entire domain */
 
+#define clean_set _glp_mpl_clean_set
 void clean_set(MPL *mpl, SET *set);
 /* clean model set */
 
@@ -1735,6 +1664,7 @@ struct CONDITION
       /* the next entry for the same parameter */
 };
 
+#define check_value_num _glp_mpl_check_value_num
 void check_value_num
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1743,6 +1673,7 @@ void check_value_num
 );
 /* check numeric value assigned to parameter member */
 
+#define take_member_num _glp_mpl_take_member_num
 double take_member_num
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1750,6 +1681,7 @@ double take_member_num
 );
 /* obtain numeric value assigned to parameter member */
 
+#define eval_member_num _glp_mpl_eval_member_num
 double eval_member_num
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1757,6 +1689,7 @@ double eval_member_num
 );
 /* evaluate numeric value assigned to parameter member */
 
+#define check_value_sym _glp_mpl_check_value_sym
 void check_value_sym
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1765,6 +1698,7 @@ void check_value_sym
 );
 /* check symbolic value assigned to parameter member */
 
+#define take_member_sym _glp_mpl_take_member_sym
 SYMBOL *take_member_sym       /* returns value, not reference */
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1772,6 +1706,7 @@ SYMBOL *take_member_sym       /* returns value, not reference */
 );
 /* obtain symbolic value assigned to parameter member */
 
+#define eval_member_sym _glp_mpl_eval_member_sym
 SYMBOL *eval_member_sym       /* returns value, not reference */
 (     MPL *mpl,
       PARAMETER *par,         /* not changed */
@@ -1779,9 +1714,11 @@ SYMBOL *eval_member_sym       /* returns value, not reference */
 );
 /* evaluate symbolic value assigned to parameter member */
 
+#define eval_whole_par _glp_mpl_eval_whole_par
 void eval_whole_par(MPL *mpl, PARAMETER *par);
 /* evaluate model parameter over entire domain */
 
+#define clean_parameter _glp_mpl_clean_parameter
 void clean_parameter(MPL *mpl, PARAMETER *par);
 /* clean model parameter */
 
@@ -1817,6 +1754,7 @@ struct VARIABLE
       /* array of members, which are assigned elemental variables */
 };
 
+#define take_member_var _glp_mpl_take_member_var
 ELEMVAR *take_member_var      /* returns reference */
 (     MPL *mpl,
       VARIABLE *var,          /* not changed */
@@ -1824,6 +1762,7 @@ ELEMVAR *take_member_var      /* returns reference */
 );
 /* obtain reference to elemental variable */
 
+#define eval_member_var _glp_mpl_eval_member_var
 ELEMVAR *eval_member_var      /* returns reference */
 (     MPL *mpl,
       VARIABLE *var,          /* not changed */
@@ -1831,9 +1770,11 @@ ELEMVAR *eval_member_var      /* returns reference */
 );
 /* evaluate reference to elemental variable */
 
+#define eval_whole_var _glp_mpl_eval_whole_var
 void eval_whole_var(MPL *mpl, VARIABLE *var);
 /* evaluate model variable over entire domain */
 
+#define clean_variable _glp_mpl_clean_variable
 void clean_variable(MPL *mpl, VARIABLE *var);
 /* clean model variable */
 
@@ -1871,6 +1812,7 @@ struct CONSTRAINT
       /* array of members, which are assigned elemental constraints */
 };
 
+#define take_member_con _glp_mpl_take_member_con
 ELEMCON *take_member_con      /* returns reference */
 (     MPL *mpl,
       CONSTRAINT *con,        /* not changed */
@@ -1878,6 +1820,7 @@ ELEMCON *take_member_con      /* returns reference */
 );
 /* obtain reference to elemental constraint */
 
+#define eval_member_con _glp_mpl_eval_member_con
 ELEMCON *eval_member_con      /* returns reference */
 (     MPL *mpl,
       CONSTRAINT *con,        /* not changed */
@@ -1885,13 +1828,14 @@ ELEMCON *eval_member_con      /* returns reference */
 );
 /* evaluate reference to elemental constraint */
 
+#define eval_whole_con _glp_mpl_eval_whole_con
 void eval_whole_con(MPL *mpl, CONSTRAINT *con);
 /* evaluate model constraint over entire domain */
 
+#define clean_constraint _glp_mpl_clean_constraint
 void clean_constraint(MPL *mpl, CONSTRAINT *con);
 /* clean model constraint */
 
-#if 1 /* 11/II-2008 */
 /**********************************************************************/
 /* * *                        DATA TABLES                         * * */
 /**********************************************************************/
@@ -2025,7 +1969,6 @@ void mpl_tab_drv_write(MPL *mpl);
 
 #define mpl_tab_drv_close _glp_mpl_tab_drv_close
 void mpl_tab_drv_close(MPL *mpl);
-#endif
 
 /**********************************************************************/
 /* * *                        PSEUDO-CODE                         * * */
@@ -2069,7 +2012,28 @@ union OPERANDS
          /* model variable, which contains member to be taken */
          ARG_LIST *list;
          /* list of subscripts; NULL for 0-dimensional variable */
+#if 1 /* 15/V-2010 */
+         int suff;
+         /* suffix specified: */
+#define DOT_NONE        0x00  /* none     (means variable itself) */
+#define DOT_LB          0x01  /* .lb      (lower bound) */
+#define DOT_UB          0x02  /* .ub      (upper bound) */
+#define DOT_STATUS      0x03  /* .status  (status) */
+#define DOT_VAL         0x04  /* .val     (primal value) */
+#define DOT_DUAL        0x05  /* .dual    (dual value) */
+#endif
       } var;
+#if 1 /* 15/V-2010 */
+      /*--------------------------------------------------------------*/
+      struct                  /* O_MEMCON */
+      {  CONSTRAINT *con;
+         /* model constraint, which contains member to be taken */
+         ARG_LIST *list;
+         /* list of subscripys; NULL for 0-dimensional constraint */
+         int suff;
+         /* suffix specified (see O_MEMVAR above) */
+      } con;
+#endif
       /*--------------------------------------------------------------*/
       ARG_LIST *list;         /* O_TUPLE, O_MAKE, n-ary operations */
       /* list of operands */
@@ -2115,91 +2079,89 @@ struct CODE
 #define O_MEMSYM        305   /* take member of symbolic parameter */
 #define O_MEMSET        306   /* take member of set */
 #define O_MEMVAR        307   /* take member of variable */
-#define O_TUPLE         308   /* make n-tuple */
-#define O_MAKE          309   /* make elemental set of n-tuples */
-#define O_SLICE         310   /* define domain block (dummy op) */
+#define O_MEMCON        308   /* take member of constraint */
+#define O_TUPLE         309   /* make n-tuple */
+#define O_MAKE          310   /* make elemental set of n-tuples */
+#define O_SLICE         311   /* define domain block (dummy op) */
                               /* 0-ary operations --------------------*/
-#define O_IRAND224      311   /* pseudo-random in [0, 2^24-1] */
-#define O_UNIFORM01     312   /* pseudo-random in [0, 1) */
-#define O_NORMAL01      313   /* gaussian random, mu = 0, sigma = 1 */
+#define O_IRAND224      312   /* pseudo-random in [0, 2^24-1] */
+#define O_UNIFORM01     313   /* pseudo-random in [0, 1) */
+#define O_NORMAL01      314   /* gaussian random, mu = 0, sigma = 1 */
+#define O_GMTIME        315   /* current calendar time (UTC) */
                               /* unary operations --------------------*/
-#define O_CVTNUM        314   /* conversion to numeric */
-#define O_CVTSYM        315   /* conversion to symbolic */
-#define O_CVTLOG        316   /* conversion to logical */
-#define O_CVTTUP        317   /* conversion to 1-tuple */
-#define O_CVTLFM        318   /* conversion to linear form */
-#define O_PLUS          319   /* unary plus */
-#define O_MINUS         320   /* unary minus */
-#define O_NOT           321   /* negation (logical "not") */
-#define O_ABS           322   /* absolute value */
-#define O_CEIL          323   /* round upward ("ceiling of x") */
-#define O_FLOOR         324   /* round downward ("floor of x") */
-#define O_EXP           325   /* base-e exponential */
-#define O_LOG           326   /* natural logarithm */
-#define O_LOG10         327   /* common (decimal) logarithm */
-#define O_SQRT          328   /* square root */
-#define O_SIN           329   /* trigonometric sine */
-#define O_COS           330   /* trigonometric cosine */
-#define O_ATAN          331   /* trigonometric arctangent */
-#define O_ROUND         332   /* round to nearest integer */
-#define O_TRUNC         333   /* truncate to nearest integer */
-#if 1 /* 15/VII-2006 */
-#define O_CARD          334   /* cardinality of set */
-#define O_LENGTH        335   /* length of symbolic value */
-#endif
+#define O_CVTNUM        316   /* conversion to numeric */
+#define O_CVTSYM        317   /* conversion to symbolic */
+#define O_CVTLOG        318   /* conversion to logical */
+#define O_CVTTUP        319   /* conversion to 1-tuple */
+#define O_CVTLFM        320   /* conversion to linear form */
+#define O_PLUS          321   /* unary plus */
+#define O_MINUS         322   /* unary minus */
+#define O_NOT           323   /* negation (logical "not") */
+#define O_ABS           324   /* absolute value */
+#define O_CEIL          325   /* round upward ("ceiling of x") */
+#define O_FLOOR         326   /* round downward ("floor of x") */
+#define O_EXP           327   /* base-e exponential */
+#define O_LOG           328   /* natural logarithm */
+#define O_LOG10         329   /* common (decimal) logarithm */
+#define O_SQRT          330   /* square root */
+#define O_SIN           331   /* trigonometric sine */
+#define O_COS           332   /* trigonometric cosine */
+#define O_ATAN          333   /* trigonometric arctangent */
+#define O_ROUND         334   /* round to nearest integer */
+#define O_TRUNC         335   /* truncate to nearest integer */
+#define O_CARD          336   /* cardinality of set */
+#define O_LENGTH        337   /* length of symbolic value */
                               /* binary operations -------------------*/
-#define O_ADD           336   /* addition */
-#define O_SUB           337   /* subtraction */
-#define O_LESS          338   /* non-negative subtraction */
-#define O_MUL           339   /* multiplication */
-#define O_DIV           340   /* division */
-#define O_IDIV          341   /* quotient of exact division */
-#define O_MOD           342   /* remainder of exact division */
-#define O_POWER         343   /* exponentiation (raise to power) */
-#define O_ATAN2         344   /* trigonometric arctangent */
-#define O_ROUND2        345   /* round to n fractional digits */
-#define O_TRUNC2        346   /* truncate to n fractional digits */
-#define O_UNIFORM       347   /* pseudo-random in [a, b) */
-#define O_NORMAL        348   /* gaussian random, given mu and sigma */
-#define O_CONCAT        349   /* concatenation */
-#define O_LT            350   /* comparison on 'less than' */
-#define O_LE            351   /* comparison on 'not greater than' */
-#define O_EQ            352   /* comparison on 'equal to' */
-#define O_GE            353   /* comparison on 'not less than' */
-#define O_GT            354   /* comparison on 'greater than' */
-#define O_NE            355   /* comparison on 'not equal to' */
-#define O_AND           356   /* conjunction (logical "and") */
-#define O_OR            357   /* disjunction (logical "or") */
-#define O_UNION         358   /* union */
-#define O_DIFF          359   /* difference */
-#define O_SYMDIFF       360   /* symmetric difference */
-#define O_INTER         361   /* intersection */
-#define O_CROSS         362   /* cross (Cartesian) product */
-#define O_IN            363   /* test on 'x in Y' */
-#define O_NOTIN         364   /* test on 'x not in Y' */
-#define O_WITHIN        365   /* test on 'X within Y' */
-#define O_NOTWITHIN     366   /* test on 'X not within Y' */
-#if 1 /* 15/VII-2006 */
-#define O_SUBSTR        367   /* substring */
-#endif
+#define O_ADD           338   /* addition */
+#define O_SUB           339   /* subtraction */
+#define O_LESS          340   /* non-negative subtraction */
+#define O_MUL           341   /* multiplication */
+#define O_DIV           342   /* division */
+#define O_IDIV          343   /* quotient of exact division */
+#define O_MOD           344   /* remainder of exact division */
+#define O_POWER         345   /* exponentiation (raise to power) */
+#define O_ATAN2         346   /* trigonometric arctangent */
+#define O_ROUND2        347   /* round to n fractional digits */
+#define O_TRUNC2        348   /* truncate to n fractional digits */
+#define O_UNIFORM       349   /* pseudo-random in [a, b) */
+#define O_NORMAL        350   /* gaussian random, given mu and sigma */
+#define O_CONCAT        351   /* concatenation */
+#define O_LT            352   /* comparison on 'less than' */
+#define O_LE            353   /* comparison on 'not greater than' */
+#define O_EQ            354   /* comparison on 'equal to' */
+#define O_GE            355   /* comparison on 'not less than' */
+#define O_GT            356   /* comparison on 'greater than' */
+#define O_NE            357   /* comparison on 'not equal to' */
+#define O_AND           358   /* conjunction (logical "and") */
+#define O_OR            359   /* disjunction (logical "or") */
+#define O_UNION         360   /* union */
+#define O_DIFF          361   /* difference */
+#define O_SYMDIFF       362   /* symmetric difference */
+#define O_INTER         363   /* intersection */
+#define O_CROSS         364   /* cross (Cartesian) product */
+#define O_IN            365   /* test on 'x in Y' */
+#define O_NOTIN         366   /* test on 'x not in Y' */
+#define O_WITHIN        367   /* test on 'X within Y' */
+#define O_NOTWITHIN     368   /* test on 'X not within Y' */
+#define O_SUBSTR        369   /* substring */
+#define O_STR2TIME      370   /* convert string to time */
+#define O_TIME2STR      371   /* convert time to string */
                               /* ternary operations ------------------*/
-#define O_DOTS          368   /* build "arithmetic" set */
-#define O_FORK          369   /* if-then-else */
-#if 1 /* 15/VII-2006 */
-#define O_SUBSTR3       370   /* substring */
-#endif
+#define O_DOTS          372   /* build "arithmetic" set */
+#define O_FORK          373   /* if-then-else */
+#define O_SUBSTR3       374   /* substring */
                               /* n-ary operations --------------------*/
-#define O_MIN           371   /* minimal value (n-ary) */
-#define O_MAX           372   /* maximal value (n-ary) */
+#define O_MIN           375   /* minimal value (n-ary) */
+#define O_MAX           376   /* maximal value (n-ary) */
                               /* iterated operations -----------------*/
-#define O_SUM           373   /* summation */
-#define O_PROD          374   /* multiplication */
-#define O_MINIMUM       375   /* minimum */
-#define O_MAXIMUM       376   /* maximum */
-#define O_FORALL        377   /* conjunction (A-quantification) */
-#define O_EXISTS        378   /* disjunction (E-quantification) */
-#define O_SETOF         379   /* compute elemental set */
-#define O_BUILD         380   /* build elemental set */
+#define O_SUM           377   /* summation */
+#define O_PROD          378   /* multiplication */
+#define O_MINIMUM       379   /* minimum */
+#define O_MAXIMUM       380   /* maximum */
+#define O_FORALL        381   /* conjunction (A-quantification) */
+#define O_EXISTS        382   /* disjunction (E-quantification) */
+#define O_SETOF         383   /* compute elemental set */
+#define O_BUILD         384   /* build elemental set */
       OPERANDS arg;
       /* operands that participate in the operation */
       int type;
@@ -2245,27 +2207,35 @@ struct CODE
       /* resultant value in generic format */
 };
 
+#define eval_numeric _glp_mpl_eval_numeric
 double eval_numeric(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to determine numeric value */
 
+#define eval_symbolic _glp_mpl_eval_symbolic
 SYMBOL *eval_symbolic(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to determine symbolic value */
 
+#define eval_logical _glp_mpl_eval_logical
 int eval_logical(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to determine logical value */
 
+#define eval_tuple _glp_mpl_eval_tuple
 TUPLE *eval_tuple(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to construct n-tuple */
 
+#define eval_elemset _glp_mpl_eval_elemset
 ELEMSET *eval_elemset(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to construct elemental set */
 
+#define is_member _glp_mpl_is_member
 int is_member(MPL *mpl, CODE *code, TUPLE *tuple);
 /* check if n-tuple is in set specified by pseudo-code */
 
+#define eval_formula _glp_mpl_eval_formula
 FORMULA *eval_formula(MPL *mpl, CODE *code);
 /* evaluate pseudo-code to construct linear form */
 
+#define clean_code _glp_mpl_clean_code
 void clean_code(MPL *mpl, CODE *code);
 /* clean pseudo-code */
 
@@ -2308,8 +2278,10 @@ struct DISPLAY1
          CODE *code;
       } u;
       /* item to be displayed */
+#if 0 /* 15/V-2010 */
       ARG_LIST *list;
       /* optional subscript list (for constraint/objective only) */
+#endif
       DISPLAY1 *next;
       /* the next entry for the same statement */
 };
@@ -2322,13 +2294,11 @@ struct PRINTF
       /* pseudo-code for computing format string */
       PRINTF1 *list;
       /* printf list; can be empty */
-#if 1 /* 14/VII-2006 */
       CODE *fname;
       /* pseudo-code for computing filename to redirect the output;
          NULL means the output goes to stdout */
       int app;
       /* if this flag is set, the output is appended */
-#endif
 };
 
 struct PRINTF1
@@ -2369,9 +2339,7 @@ struct STATEMENT
          PARAMETER *par;
          VARIABLE *var;
          CONSTRAINT *con;
-#if 1 /* 11/II-2008 */
          TABLE *tab;
-#endif
          void *slv; /* currently not used (set to NULL) */
          CHECK *chk;
          DISPLAY *dpy;
@@ -2384,7 +2352,6 @@ struct STATEMENT
          order as they appear in the model section */
 };
 
-#if 1 /* 11/II-2008 */
 #define execute_table _glp_mpl_execute_table
 void execute_table(MPL *mpl, TABLE *tab);
 /* execute table statement */
@@ -2396,35 +2363,44 @@ void free_dca(MPL *mpl);
 #define clean_table _glp_mpl_clean_table
 void clean_table(MPL *mpl, TABLE *tab);
 /* clean table statement */
-#endif
 
+#define execute_check _glp_mpl_execute_check
 void execute_check(MPL *mpl, CHECK *chk);
 /* execute check statement */
 
+#define clean_check _glp_mpl_clean_check
 void clean_check(MPL *mpl, CHECK *chk);
 /* clean check statement */
 
+#define execute_display _glp_mpl_execute_display
 void execute_display(MPL *mpl, DISPLAY *dpy);
 /* execute display statement */
 
+#define clean_display _glp_mpl_clean_display
 void clean_display(MPL *mpl, DISPLAY *dpy);
 /* clean display statement */
 
+#define execute_printf _glp_mpl_execute_printf
 void execute_printf(MPL *mpl, PRINTF *prt);
 /* execute printf statement */
 
+#define clean_printf _glp_mpl_clean_printf
 void clean_printf(MPL *mpl, PRINTF *prt);
 /* clean printf statement */
 
+#define execute_for _glp_mpl_execute_for
 void execute_for(MPL *mpl, FOR *fur);
 /* execute for statement */
 
+#define clean_for _glp_mpl_clean_for
 void clean_for(MPL *mpl, FOR *fur);
 /* clean for statement */
 
+#define execute_statement _glp_mpl_execute_statement
 void execute_statement(MPL *mpl, STATEMENT *stmt);
 /* execute specified model statement */
 
+#define clean_statement _glp_mpl_clean_statement
 void clean_statement(MPL *mpl, STATEMENT *stmt);
 /* clean specified model statement */
 
@@ -2432,18 +2408,23 @@ void clean_statement(MPL *mpl, STATEMENT *stmt);
 /* * *              GENERATING AND POSTSOLVING MODEL              * * */
 /**********************************************************************/
 
+#define alloc_content _glp_mpl_alloc_content
 void alloc_content(MPL *mpl);
 /* allocate content arrays for all model objects */
 
+#define generate_model _glp_mpl_generate_model
 void generate_model(MPL *mpl);
 /* generate model */
 
+#define build_problem _glp_mpl_build_problem
 void build_problem(MPL *mpl);
 /* build problem instance */
 
+#define postsolve_model _glp_mpl_postsolve_model
 void postsolve_model(MPL *mpl);
 /* postsolve model */
 
+#define clean_model _glp_mpl_clean_model
 void clean_model(MPL *mpl);
 /* clean model content */
 
@@ -2451,24 +2432,31 @@ void clean_model(MPL *mpl);
 /* * *                        INPUT/OUTPUT                        * * */
 /**********************************************************************/
 
+#define open_input _glp_mpl_open_input
 void open_input(MPL *mpl, char *file);
 /* open input text file */
 
+#define read_char _glp_mpl_read_char
 int read_char(MPL *mpl);
 /* read next character from input text file */
 
+#define close_input _glp_mpl_close_input
 void close_input(MPL *mpl);
 /* close input text file */
 
+#define open_output _glp_mpl_open_output
 void open_output(MPL *mpl, char *file);
 /* open output text file */
 
+#define write_char _glp_mpl_write_char
 void write_char(MPL *mpl, int c);
 /* write next character to output text file */
 
+#define write_text _glp_mpl_write_text
 void write_text(MPL *mpl, char *fmt, ...);
 /* format and write text to output text file */
 
+#define flush_output _glp_mpl_flush_output
 void flush_output(MPL *mpl);
 /* finalize writing data to output text file */
 
@@ -2490,66 +2478,103 @@ void flush_output(MPL *mpl);
 #define MPL_INT         422   /* integer */
 #define MPL_BIN         423   /* binary */
 
+#define mpl_error _glp_mpl_error
 void mpl_error(MPL *mpl, char *fmt, ...);
 /* print error message and terminate model processing */
 
+#define warning _glp_mpl_warning
 void warning(MPL *mpl, char *fmt, ...);
 /* print warning message and continue model processing */
 
+#define mpl_initialize _glp_mpl_initialize
 MPL *mpl_initialize(void);
 /* create and initialize translator database */
 
+#define mpl_read_model _glp_mpl_read_model
 int mpl_read_model(MPL *mpl, char *file, int skip_data);
 /* read model section and optional data section */
 
+#define mpl_read_data _glp_mpl_read_data
 int mpl_read_data(MPL *mpl, char *file);
 /* read data section */
 
+#define mpl_generate _glp_mpl_generate
 int mpl_generate(MPL *mpl, char *file);
 /* generate model */
 
+#define mpl_get_prob_name _glp_mpl_get_prob_name
 char *mpl_get_prob_name(MPL *mpl);
 /* obtain problem (model) name */
 
+#define mpl_get_num_rows _glp_mpl_get_num_rows
 int mpl_get_num_rows(MPL *mpl);
 /* determine number of rows */
 
+#define mpl_get_num_cols _glp_mpl_get_num_cols
 int mpl_get_num_cols(MPL *mpl);
 /* determine number of columns */
 
+#define mpl_get_row_name _glp_mpl_get_row_name
 char *mpl_get_row_name(MPL *mpl, int i);
 /* obtain row name */
 
+#define mpl_get_row_kind _glp_mpl_get_row_kind
 int mpl_get_row_kind(MPL *mpl, int i);
 /* determine row kind */
 
+#define mpl_get_row_bnds _glp_mpl_get_row_bnds
 int mpl_get_row_bnds(MPL *mpl, int i, double *lb, double *ub);
 /* obtain row bounds */
 
+#define mpl_get_mat_row _glp_mpl_get_mat_row
 int mpl_get_mat_row(MPL *mpl, int i, int ndx[], double val[]);
 /* obtain row of the constraint matrix */
 
+#define mpl_get_row_c0 _glp_mpl_get_row_c0
 double mpl_get_row_c0(MPL *mpl, int i);
 /* obtain constant term of free row */
 
+#define mpl_get_col_name _glp_mpl_get_col_name
 char *mpl_get_col_name(MPL *mpl, int j);
 /* obtain column name */
 
+#define mpl_get_col_kind _glp_mpl_get_col_kind
 int mpl_get_col_kind(MPL *mpl, int j);
 /* determine column kind */
 
+#define mpl_get_col_bnds _glp_mpl_get_col_bnds
 int mpl_get_col_bnds(MPL *mpl, int j, double *lb, double *ub);
 /* obtain column bounds */
 
+#define mpl_has_solve_stmt _glp_mpl_has_solve_stmt
 int mpl_has_solve_stmt(MPL *mpl);
 /* check if model has solve statement */
 
+#if 1 /* 15/V-2010 */
+#define mpl_put_row_soln _glp_mpl_put_row_soln
+void mpl_put_row_soln(MPL *mpl, int i, int stat, double prim,
+      double dual);
+/* store row (constraint/objective) solution components */
+#endif
+
+#if 1 /* 15/V-2010 */
+#define mpl_put_col_soln _glp_mpl_put_col_soln
+void mpl_put_col_soln(MPL *mpl, int j, int stat, double prim,
+      double dual);
+/* store column (variable) solution components */
+#endif
+
+#if 0 /* 15/V-2010 */
+#define mpl_put_col_value _glp_mpl_put_col_value
 void mpl_put_col_value(MPL *mpl, int j, double val);
 /* store column value */
+#endif
 
+#define mpl_postsolve _glp_mpl_postsolve
 int mpl_postsolve(MPL *mpl);
 /* postsolve model */
 
+#define mpl_terminate _glp_mpl_terminate
 void mpl_terminate(MPL *mpl);
 /* free all resources used by translator */
 

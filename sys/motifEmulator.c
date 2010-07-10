@@ -1220,7 +1220,9 @@ static void _GuiNativizeWidget (Widget me) {
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 1,   /* For border. */
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 16, NULL);   /* For scroll bar. */
 			XtAddCallback (my motiff.scrolledWindow.verticalBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
+			XtAddCallback (my motiff.scrolledWindow.verticalBar, XmNdragCallback, cb_scroll, (XtPointer) me);
 			XtAddCallback (my motiff.scrolledWindow.horizontalBar, XmNvalueChangedCallback, cb_scroll, (XtPointer) me);
+			XtAddCallback (my motiff.scrolledWindow.horizontalBar, XmNdragCallback, cb_scroll, (XtPointer) me);
 		} break;
 		case xmShellWidgetClass: {
 			#if win

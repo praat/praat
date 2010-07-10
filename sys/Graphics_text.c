@@ -42,6 +42,7 @@
  * pb 2009/03/14 switched kerning off
  * pb 2009/09/17 made Quartz part resistant against missing QuickDraw IPA font
  * pb 2010/05/13 support for XOR mode via GDK
+ * pb 2010/06/29 Mac: handle missing phonetic fonts better
  */
 
 #include <ctype.h>
@@ -1878,6 +1879,8 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 		} else {
 			Melder_warning1 (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
 				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
+			theIpaTimesAtsuiFont = theTimesAtsuiFont;
+			theIpaPalatinoAtsuiFont = thePalatinoAtsuiFont;
 		}
 	} else if (! theIpaPalatinoAtsuiFont) {
 		theIpaPalatinoAtsuiFont = theIpaTimesAtsuiFont;

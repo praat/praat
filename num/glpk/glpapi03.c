@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -22,7 +23,6 @@
 ***********************************************************************/
 
 #include "glpapi.h"
-#define xfault xerror
 
 /***********************************************************************
 *  NAME
@@ -93,7 +93,7 @@ int glp_find_row(glp_prob *lp, const char *name)
 {     AVLNODE *node;
       int i = 0;
       if (lp->r_tree == NULL)
-         xfault("glp_find_row: row name index does not exist\n");
+         xerror("glp_find_row: row name index does not exist\n");
       if (!(name == NULL || name[0] == '\0' || strlen(name) > 255))
       {  node = avl_find_node(lp->r_tree, name);
          if (node != NULL)
@@ -121,7 +121,7 @@ int glp_find_col(glp_prob *lp, const char *name)
 {     AVLNODE *node;
       int j = 0;
       if (lp->c_tree == NULL)
-         xfault("glp_find_col: column name index does not exist\n");
+         xerror("glp_find_col: column name index does not exist\n");
       if (!(name == NULL || name[0] == '\0' || strlen(name) > 255))
       {  node = avl_find_node(lp->c_tree, name);
          if (node != NULL)

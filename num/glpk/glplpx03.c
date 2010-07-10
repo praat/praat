@@ -1,11 +1,14 @@
-/* glplpx03.c (control parameters and statistics routines) */
+/* glplpx03.c (OPB format) */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Author: Oscar Gustafsson <oscarg@isy.liu.se>.
+*
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,451 +24,279 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#define _GLPSTD_ERRNO
+#define _GLPSTD_STDIO
 #include "glpapi.h"
-#define xfault xerror
-
-/*----------------------------------------------------------------------
--- lpx_reset_parms - reset control parameters to default values.
---
--- *Synopsis*
---
--- #include "glplpx.h"
--- void lpx_reset_parms(LPX *lp);
---
--- *Description*
---
--- The routine lpx_reset_parms resets all control parameters associated
--- with an LP problem object, which the parameter lp points to, to their
--- default values. */
-
-void lpx_reset_parms(LPX *lp)
-{     struct LPXCPS *cps = lp->cps;
-      cps->msg_lev  = 3;
-      cps->scale    = 1;
-      cps->dual     = 0;
-      cps->price    = 1;
-      cps->relax    = 0.07;
-      cps->tol_bnd  = 1e-7;
-      cps->tol_dj   = 1e-7;
-      cps->tol_piv  = 1e-9;
-      cps->round    = 0;
-      cps->obj_ll   = -DBL_MAX;
-      cps->obj_ul   = +DBL_MAX;
-      cps->it_lim   = -1;
-      lp->it_cnt   = 0;
-      cps->tm_lim   = -1.0;
-      cps->out_frq  = 200;
-      cps->out_dly  = 0.0;
-      cps->branch   = 2;
-      cps->btrack   = 3;
-      cps->tol_int  = 1e-5;
-      cps->tol_obj  = 1e-7;
-      cps->mps_info = 1;
-      cps->mps_obj  = 2;
-      cps->mps_orig = 0;
-      cps->mps_wide = 1;
-      cps->mps_free = 0;
-      cps->mps_skip = 0;
-      cps->lpt_orig = 0;
-      cps->presol = 0;
-      cps->binarize = 0;
-      cps->use_cuts = 0;
-      cps->mip_gap = 0.0;
-      return;
-}
-
-/*----------------------------------------------------------------------
--- lpx_set_int_parm - set (change) integer control parameter.
---
--- *Synopsis*
---
--- #include "glplpx.h"
--- void lpx_set_int_parm(LPX *lp, int parm, int val);
---
--- *Description*
---
--- The routine lpx_set_int_parm sets (changes) the current value of an
--- integer control parameter parm. The parameter val specifies a new
--- value of the control parameter. */
-
-void lpx_set_int_parm(LPX *lp, int parm, int val)
-{     struct LPXCPS *cps = lp->cps;
-      switch (parm)
-      {  case LPX_K_MSGLEV:
-            if (!(0 <= val && val <= 3))
-               xfault("lpx_set_int_parm: MSGLEV = %d; invalid value\n",
-                  val);
-            cps->msg_lev = val;
-            break;
-         case LPX_K_SCALE:
-            if (!(0 <= val && val <= 3))
-               xfault("lpx_set_int_parm: SCALE = %d; invalid value\n",
-                  val);
-            cps->scale = val;
-            break;
-         case LPX_K_DUAL:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: DUAL = %d; invalid value\n",
-                  val);
-            cps->dual = val;
-            break;
-         case LPX_K_PRICE:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: PRICE = %d; invalid value\n",
-                  val);
-            cps->price = val;
-            break;
-         case LPX_K_ROUND:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: ROUND = %d; invalid value\n",
-                  val);
-            cps->round = val;
-            break;
-         case LPX_K_ITLIM:
-            cps->it_lim = val;
-            break;
-         case LPX_K_ITCNT:
-            lp->it_cnt = val;
-            break;
-         case LPX_K_OUTFRQ:
-            if (!(val > 0))
-               xfault("lpx_set_int_parm: OUTFRQ = %d; invalid value\n",
-                  val);
-            cps->out_frq = val;
-            break;
-         case LPX_K_BRANCH:
-            if (!(val == 0 || val == 1 || val == 2 || val == 3))
-               xfault("lpx_set_int_parm: BRANCH = %d; invalid value\n",
-                  val);
-            cps->branch = val;
-            break;
-         case LPX_K_BTRACK:
-            if (!(val == 0 || val == 1 || val == 2 || val == 3))
-               xfault("lpx_set_int_parm: BTRACK = %d; invalid value\n",
-                  val);
-            cps->btrack = val;
-            break;
-         case LPX_K_MPSINFO:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: MPSINFO = %d; invalid value\n",
-                  val);
-            cps->mps_info = val;
-            break;
-         case LPX_K_MPSOBJ:
-            if (!(val == 0 || val == 1 || val == 2))
-               xfault("lpx_set_int_parm: MPSOBJ = %d; invalid value\n",
-                  val);
-            cps->mps_obj = val;
-            break;
-         case LPX_K_MPSORIG:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: MPSORIG = %d; invalid value\n",
-                  val);
-            cps->mps_orig = val;
-            break;
-         case LPX_K_MPSWIDE:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: MPSWIDE = %d; invalid value\n",
-                  val);
-            cps->mps_wide = val;
-            break;
-         case LPX_K_MPSFREE:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: MPSFREE = %d; invalid value\n",
-                  val);
-            cps->mps_free = val;
-            break;
-         case LPX_K_MPSSKIP:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: MPSSKIP = %d; invalid value\n",
-                  val);
-            cps->mps_skip = val;
-            break;
-         case LPX_K_LPTORIG:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: LPTORIG = %d; invalid value\n",
-                  val);
-            cps->lpt_orig = val;
-            break;
-         case LPX_K_PRESOL:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: PRESOL = %d; invalid value\n",
-                  val);
-            cps->presol = val;
-            break;
-         case LPX_K_BINARIZE:
-            if (!(val == 0 || val == 1))
-               xfault("lpx_set_int_parm: BINARIZE = %d; invalid value\n"
-                  , val);
-            cps->binarize = val;
-            break;
-         case LPX_K_USECUTS:
-            if (val & ~LPX_C_ALL)
-            xfault("lpx_set_int_parm: USECUTS = 0x%X; invalid value\n",
-                  val);
-            cps->use_cuts = val;
-            break;
-         case LPX_K_BFTYPE:
-#if 0
-            if (!(1 <= val && val <= 3))
-               xfault("lpx_set_int_parm: BFTYPE = %d; invalid value\n",
-                  val);
-            cps->bf_type = val;
-#else
-            {  glp_bfcp parm;
-               glp_get_bfcp(lp, &parm);
-               switch (val)
-               {  case 1:
-                     parm.type = GLP_BF_FT; break;
-                  case 2:
-                     parm.type = GLP_BF_BG; break;
-                  case 3:
-                     parm.type = GLP_BF_GR; break;
-                  default:
-                     xfault("lpx_set_int_parm: BFTYPE = %d; invalid val"
-                        "ue\n", val);
-               }
-               glp_set_bfcp(lp, &parm);
-            }
+#if 0 /* 24/XII-2009; by mao */
+#include "glpipp.h"
 #endif
-            break;
-         default:
-            xfault("lpx_set_int_parm: parm = %d; invalid parameter\n",
-               parm);
-      }
-      return;
-}
 
 /*----------------------------------------------------------------------
--- lpx_get_int_parm - query integer control parameter.
+-- lpx_write_pb - write problem data in (normalized) OPB format.
 --
 -- *Synopsis*
 --
 -- #include "glplpx.h"
--- int lpx_get_int_parm(LPX *lp, int parm);
+-- int lpx_write_pb(LPX *lp, const char *fname, int normalized,
+--    int binarize);
+--
+-- *Description*
+--
+-- The routine lpx_write_pb writes problem data in OPB format
+-- to an output text file whose name is the character string fname.
+-- If normalized is non-zero the output will be generated in a
+-- normalized form with sequentially numbered variables, x1, x2 etc.
+-- If binarize, any integer variable will be repalzec by binary ones,
+-- see ipp_binarize
 --
 -- *Returns*
 --
--- The routine lpx_get_int_parm returns the current value of an integer
--- control parameter parm. */
+-- If the operation was successful, the routine returns zero. Otherwise
+-- the routine prints an error message and returns non-zero. */
 
-int lpx_get_int_parm(LPX *lp, int parm)
-{     struct LPXCPS *cps = lp->cps;
-      int val = 0;
-      switch (parm)
-      {  case LPX_K_MSGLEV:
-            val = cps->msg_lev; break;
-         case LPX_K_SCALE:
-            val = cps->scale; break;
-         case LPX_K_DUAL:
-            val = cps->dual; break;
-         case LPX_K_PRICE:
-            val = cps->price; break;
-         case LPX_K_ROUND:
-            val = cps->round; break;
-         case LPX_K_ITLIM:
-            val = cps->it_lim; break;
-         case LPX_K_ITCNT:
-            val = lp->it_cnt; break;
-         case LPX_K_OUTFRQ:
-            val = cps->out_frq; break;
-         case LPX_K_BRANCH:
-            val = cps->branch; break;
-         case LPX_K_BTRACK:
-            val = cps->btrack; break;
-         case LPX_K_MPSINFO:
-            val = cps->mps_info; break;
-         case LPX_K_MPSOBJ:
-            val = cps->mps_obj; break;
-         case LPX_K_MPSORIG:
-            val = cps->mps_orig; break;
-         case LPX_K_MPSWIDE:
-            val = cps->mps_wide; break;
-         case LPX_K_MPSFREE:
-            val = cps->mps_free; break;
-         case LPX_K_MPSSKIP:
-            val = cps->mps_skip; break;
-         case LPX_K_LPTORIG:
-            val = cps->lpt_orig; break;
-         case LPX_K_PRESOL:
-            val = cps->presol; break;
-         case LPX_K_BINARIZE:
-            val = cps->binarize; break;
-         case LPX_K_USECUTS:
-            val = cps->use_cuts; break;
-         case LPX_K_BFTYPE:
-#if 0
-            val = cps->bf_type; break;
+#if 1 /* 24/XII-2009; by mao (disabled, because IPP was removed) */
+int lpx_write_pb(LPX *lp, const char *fname, int normalized,
+      int binarize)
+{     xassert(lp == lp);
+      xassert(fname == fname);
+      xassert(normalized == normalized);
+      xassert(binarize == binarize);
+      xprintf("lpx_write_pb: sorry, currently this operation is not ava"
+         "ilable\n");
+      return 1;
+}
 #else
-            {  glp_bfcp parm;
-               glp_get_bfcp(lp, &parm);
-               switch (parm.type)
-               {  case GLP_BF_FT:
-                     val = 1; break;
-                  case GLP_BF_BG:
-                     val = 2; break;
-                  case GLP_BF_GR:
-                     val = 3; break;
-                  default:
-                     xassert(lp != lp);
-               }
+int lpx_write_pb(LPX *lp, const char *fname, int normalized,
+      int binarize)
+{
+  FILE* fp;
+  int m,n,i,j,k,o,nonfree=0, obj_dir, dbl, *ndx, row_type, emptylhs=0;
+  double coeff, *val, bound, constant/*=0.0*/;
+  char* objconstname = "dummy_one";
+  char* emptylhsname = "dummy_zero";
+
+  /* Variables needed for possible binarization */
+  /*LPX* tlp;*/
+  IPP *ipp = NULL;
+  /*tlp=lp;*/
+
+  if(binarize) /* Transform integer variables to binary ones */
+    {
+      ipp = ipp_create_wksp();
+      ipp_load_orig(ipp, lp);
+      ipp_binarize(ipp);
+      lp = ipp_build_prob(ipp);
+    }
+  fp = fopen(fname, "w");
+
+  if(fp!= NULL)
+    {
+      xprintf(
+          "lpx_write_pb: writing problem in %sOPB format to `%s'...\n",
+              (normalized?"normalized ":""), fname);
+
+      m = glp_get_num_rows(lp);
+      n = glp_get_num_cols(lp);
+      for(i=1;i<=m;i++)
+        {
+          switch(glp_get_row_type(lp,i))
+            {
+            case GLP_LO:
+            case GLP_UP:
+            case GLP_FX:
+              {
+                nonfree += 1;
+                break;
+              }
+            case GLP_DB:
+              {
+                nonfree += 2;
+                break;
+              }
             }
-            break;
-#endif
-         default:
-            xfault("lpx_get_int_parm: parm = %d; invalid parameter\n",
-               parm);
-      }
-      return val;
-}
+        }
+      constant=glp_get_obj_coef(lp,0);
+      fprintf(fp,"* #variables = %d #constraints = %d\n",
+         n + (constant == 0?1:0), nonfree + (constant == 0?1:0));
+      /* Objective function */
+      obj_dir = glp_get_obj_dir(lp);
+      fprintf(fp,"min: ");
+      for(i=1;i<=n;i++)
+        {
+          coeff = glp_get_obj_coef(lp,i);
+          if(coeff != 0.0)
+            {
+              if(obj_dir == GLP_MAX)
+                coeff=-coeff;
+              if(normalized)
+                fprintf(fp, " %d x%d", (int)coeff, i);
+              else
+                fprintf(fp, " %d*%s", (int)coeff,
+                  glp_get_col_name(lp,i));
 
-/*----------------------------------------------------------------------
--- lpx_set_real_parm - set (change) real control parameter.
---
--- *Synopsis*
---
--- #include "glplpx.h"
--- void lpx_set_real_parm(LPX *lp, int parm, double val);
---
--- *Description*
---
--- The routine lpx_set_real_parm sets (changes) the current value of
--- a real (floating point) control parameter parm. The parameter val
--- specifies a new value of the control parameter. */
-
-void lpx_set_real_parm(LPX *lp, int parm, double val)
-{     struct LPXCPS *cps = lp->cps;
-      switch (parm)
-      {  case LPX_K_RELAX:
-            if (!(0.0 <= val && val <= 1.0))
-               xfault("lpx_set_real_parm: RELAX = %g; invalid value\n",
-                  val);
-            cps->relax = val;
-            break;
-         case LPX_K_TOLBND:
-            if (!(DBL_EPSILON <= val && val <= 0.001))
-               xfault("lpx_set_real_parm: TOLBND = %g; invalid value\n",
-                  val);
-#if 0
-            if (cps->tol_bnd > val)
-            {  /* invalidate the basic solution */
-               lp->p_stat = LPX_P_UNDEF;
-               lp->d_stat = LPX_D_UNDEF;
             }
-#endif
-            cps->tol_bnd = val;
-            break;
-         case LPX_K_TOLDJ:
-            if (!(DBL_EPSILON <= val && val <= 0.001))
-               xfault("lpx_set_real_parm: TOLDJ = %g; invalid value\n",
-                  val);
-#if 0
-            if (cps->tol_dj > val)
-            {  /* invalidate the basic solution */
-               lp->p_stat = LPX_P_UNDEF;
-               lp->d_stat = LPX_D_UNDEF;
+        }
+      if(constant)
+        {
+          if(normalized)
+            fprintf(fp, " %d x%d", (int)constant, n+1);
+          else
+            fprintf(fp, " %d*%s", (int)constant, objconstname);
+        }
+      fprintf(fp,";\n");
+
+      if(normalized && !binarize)  /* Name substitution */
+        {
+          fprintf(fp,"* Variable name substitution:\n");
+          for(j=1;j<=n;j++)
+            {
+              fprintf(fp, "* x%d = %s\n", j, glp_get_col_name(lp,j));
             }
+          if(constant)
+            fprintf(fp, "* x%d = %s\n", n+1, objconstname);
+        }
+
+      ndx = xcalloc(1+n, sizeof(int));
+      val = xcalloc(1+n, sizeof(double));
+
+      /* Constraints */
+      for(j=1;j<=m;j++)
+        {
+          row_type=glp_get_row_type(lp,j);
+          if(row_type!=GLP_FR)
+            {
+              if(row_type == GLP_DB)
+                {
+                  dbl=2;
+                  row_type = GLP_UP;
+                }
+              else
+                {
+                  dbl=1;
+                }
+              k=glp_get_mat_row(lp, j, ndx, val);
+              for(o=1;o<=dbl;o++)
+                {
+                  if(o==2)
+                    {
+                      row_type = GLP_LO;
+                    }
+                  if(k==0) /* Empty LHS */
+                    {
+                      emptylhs = 1;
+                      if(normalized)
+                        {
+                          fprintf(fp, "0 x%d ", n+2);
+                        }
+                      else
+                        {
+                          fprintf(fp, "0*%s ", emptylhsname);
+                        }
+                    }
+
+                  for(i=1;i<=k;i++)
+                    {
+                      if(val[i] != 0.0)
+                        {
+
+                          if(normalized)
+                            {
+                              fprintf(fp, "%d x%d ",
+              (row_type==GLP_UP)?(-(int)val[i]):((int)val[i]), ndx[i]);
+                            }
+                          else
+                            {
+                              fprintf(fp, "%d*%s ", (int)val[i],
+                                      glp_get_col_name(lp,ndx[i]));
+                            }
+                        }
+                    }
+                  switch(row_type)
+                    {
+                    case GLP_LO:
+                      {
+                        fprintf(fp, ">=");
+                        bound = glp_get_row_lb(lp,j);
+                        break;
+                      }
+                    case GLP_UP:
+                      {
+                        if(normalized)
+                          {
+                            fprintf(fp, ">=");
+                            bound = -glp_get_row_ub(lp,j);
+                          }
+                        else
+                          {
+                            fprintf(fp, "<=");
+                            bound = glp_get_row_ub(lp,j);
+                          }
+
+                        break;
+                      }
+                    case GLP_FX:
+                      {
+                        fprintf(fp, "=");
+                        bound = glp_get_row_lb(lp,j);
+                        break;
+                      }
+                    }
+                  fprintf(fp," %d;\n",(int)bound);
+                }
+            }
+        }
+      xfree(ndx);
+      xfree(val);
+
+      if(constant)
+        {
+          xprintf(
+        "lpx_write_pb: adding constant objective function variable\n");
+
+          if(normalized)
+            fprintf(fp, "1 x%d = 1;\n", n+1);
+          else
+            fprintf(fp, "1*%s = 1;\n", objconstname);
+        }
+      if(emptylhs)
+        {
+          xprintf(
+            "lpx_write_pb: adding dummy variable for empty left-hand si"
+            "de constraint\n");
+
+          if(normalized)
+            fprintf(fp, "1 x%d = 0;\n", n+2);
+          else
+            fprintf(fp, "1*%s = 0;\n", emptylhsname);
+        }
+
+    }
+  else
+    {
+      xprintf("Problems opening file for writing: %s\n", fname);
+      return(1);
+    }
+  fflush(fp);
+  if (ferror(fp))
+    {  xprintf("lpx_write_pb: can't write to `%s' - %s\n", fname,
+               strerror(errno));
+    goto fail;
+    }
+  fclose(fp);
+
+
+  if(binarize)
+    {
+      /* delete the resultant problem object */
+      if (lp != NULL) lpx_delete_prob(lp);
+      /* delete MIP presolver workspace */
+      if (ipp != NULL) ipp_delete_wksp(ipp);
+      /*lp=tlp;*/
+    }
+  return 0;
+ fail: if (fp != NULL) fclose(fp);
+  return 1;
+}
 #endif
-            cps->tol_dj = val;
-            break;
-         case LPX_K_TOLPIV:
-            if (!(DBL_EPSILON <= val && val <= 0.001))
-               xfault("lpx_set_real_parm: TOLPIV = %g; invalid value\n",
-                  val);
-            cps->tol_piv = val;
-            break;
-         case LPX_K_OBJLL:
-            cps->obj_ll = val;
-            break;
-         case LPX_K_OBJUL:
-            cps->obj_ul = val;
-            break;
-         case LPX_K_TMLIM:
-            cps->tm_lim = val;
-            break;
-         case LPX_K_OUTDLY:
-            cps->out_dly = val;
-            break;
-         case LPX_K_TOLINT:
-            if (!(DBL_EPSILON <= val && val <= 0.001))
-               xfault("lpx_set_real_parm: TOLINT = %g; invalid value\n",
-                  val);
-            cps->tol_int = val;
-            break;
-         case LPX_K_TOLOBJ:
-            if (!(DBL_EPSILON <= val && val <= 0.001))
-               xfault("lpx_set_real_parm: TOLOBJ = %g; invalid value\n",
-                  val);
-            cps->tol_obj = val;
-            break;
-         case LPX_K_MIPGAP:
-            if (val < 0.0)
-               xfault("lpx_set_real_parm: MIPGAP = %g; invalid value\n",
-                  val);
-            cps->mip_gap = val;
-            break;
-         default:
-            xfault("lpx_set_real_parm: parm = %d; invalid parameter\n",
-               parm);
-      }
-      return;
-}
-
-/*----------------------------------------------------------------------
--- lpx_get_real_parm - query real control parameter.
---
--- *Synopsis*
---
--- #include "glplpx.h"
--- double lpx_get_real_parm(LPX *lp, int parm);
---
--- *Returns*
---
--- The routine lpx_get_real_parm returns the current value of a real
--- (floating point) control parameter parm. */
-
-double lpx_get_real_parm(LPX *lp, int parm)
-{     struct LPXCPS *cps = lp->cps;
-      double val = 0.0;
-      switch (parm)
-      {  case LPX_K_RELAX:
-            val = cps->relax;
-            break;
-         case LPX_K_TOLBND:
-            val = cps->tol_bnd;
-            break;
-         case LPX_K_TOLDJ:
-            val = cps->tol_dj;
-            break;
-         case LPX_K_TOLPIV:
-            val = cps->tol_piv;
-            break;
-         case LPX_K_OBJLL:
-            val = cps->obj_ll;
-            break;
-         case LPX_K_OBJUL:
-            val = cps->obj_ul;
-            break;
-         case LPX_K_TMLIM:
-            val = cps->tm_lim;
-            break;
-         case LPX_K_OUTDLY:
-            val = cps->out_dly;
-            break;
-         case LPX_K_TOLINT:
-            val = cps->tol_int;
-            break;
-         case LPX_K_TOLOBJ:
-            val = cps->tol_obj;
-            break;
-         case LPX_K_MIPGAP:
-            val = cps->mip_gap;
-            break;
-         default:
-            xfault("lpx_get_real_parm: parm = %d; invalid parameter\n",
-               parm);
-      }
-      return val;
-}
 
 /* eof */

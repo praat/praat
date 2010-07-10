@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -51,8 +52,7 @@ struct worka
 #define f(x) ((x) - floor(x))
 /* compute fractional part of x */
 
-static void gen_cut(glp_tree *tree, struct worka *worka, int j,
-      IOSPOOL *pool)
+static void gen_cut(glp_tree *tree, struct worka *worka, int j)
 {     /* this routine tries to generate Gomory's mixed integer cut for
          specified structural variable x[m+j] of integer kind, which is
          basic and has fractional value in optimal solution to current
@@ -214,7 +214,13 @@ skip:    ;
          if (fabs(val[k]) > 1e+03) goto fini;
       }
       /* add the cut to the cut pool for further consideration */
-      ios_add_cut_row(tree, pool, len, ind, val, GLP_LO, rhs);
+#if 0
+      ios_add_cut_row(tree, pool, GLP_RF_GMI, len, ind, val, GLP_LO,
+         rhs);
+#else
+      glp_ios_add_row(tree, NULL, GLP_RF_GMI, 0, len, ind, val, GLP_LO,
+         rhs);
+#endif
 fini: return;
 }
 
@@ -227,7 +233,7 @@ static int fcmp(const void *p1, const void *p2)
       return 0;
 }
 
-void ios_gmi_gen(glp_tree *tree, IOSPOOL *pool)
+void ios_gmi_gen(glp_tree *tree)
 {     /* main routine to generate Gomory's cuts */
       glp_prob *mip = tree->mip;
       int m = mip->m;
@@ -259,10 +265,10 @@ void ios_gmi_gen(glp_tree *tree, IOSPOOL *pool)
       qsort(&var[1], nv, sizeof(struct var), fcmp);
       /* try to generate cuts by one for each variable in the list, but
          not more than MAXCUTS cuts */
-      size = pool->size;
+      size = glp_ios_pool_size(tree);
       for (k = 1; k <= nv; k++)
-      {  if (pool->size - size >= MAXCUTS) break;
-         gen_cut(tree, worka, var[k].j, pool);
+      {  if (glp_ios_pool_size(tree) - size >= MAXCUTS) break;
+         gen_cut(tree, worka, var[k].j);
       }
       /* free working arrays */
       xfree(var);

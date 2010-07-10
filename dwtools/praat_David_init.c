@@ -710,8 +710,8 @@ DO
 		GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
 		GET_REAL (L"Value"), GET_INTEGER (L"Paired"),
 		GET_INTEGER (L"Equal variances"), &p, &t , &ndf);
-	Melder_information5 (Melder_double (p), L" (=probability, based on t = ",
-		Melder_double (t), L"and ndf = ", Melder_integer (ndf));
+	Melder_information6 (Melder_double (p), L" (=probability, based on t = ",
+		Melder_double (t), L"and ndf = ", Melder_integer (ndf), L")");
 END
 
 FORM (Covariance_getSignificanceOfOneVariance, L"Covariance: Get significance of one variance", L"Covariance: Get significance of one variance...")

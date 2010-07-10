@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,10 +22,10 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef _GLPDMP_H
-#define _GLPDMP_H
+#ifndef GLPDMP_H
+#define GLPDMP_H
 
-#include "glplib.h"
+#include "glpenv.h"
 
 typedef struct DMP DMP;
 
@@ -50,7 +51,7 @@ struct DMP
       int used;
       /* number of bytes used in the most recently allocated memory
          block */
-      xlong_t count;
+      glp_long count;
       /* number of atoms which are currently in use */
 };
 
@@ -67,7 +68,7 @@ void dmp_free_atom(DMP *pool, void *atom, int size);
 /* return atom to dynamic memory pool */
 
 #define dmp_in_use _glp_dmp_in_use
-xlong_t dmp_in_use(DMP *pool);
+glp_long dmp_in_use(DMP *pool);
 /* determine how many atoms are still in use */
 
 #define dmp_delete_pool _glp_dmp_delete_pool

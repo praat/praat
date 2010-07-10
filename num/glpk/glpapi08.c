@@ -1,11 +1,12 @@
-/* glpapi08.c (mixed integer programming routines) */
+/* glpapi08.c (interior-point method routines) */
 
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,500 +22,368 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include "glpios.h"
-#define xfault xerror
+#include "glpapi.h"
+#include "glpipm.h"
+#include "glpnpp.h"
 
 /***********************************************************************
 *  NAME
 *
-*  glp_set_col_kind - set (change) column kind
+*  glp_interior - solve LP problem with the interior-point method
 *
 *  SYNOPSIS
 *
-*  void glp_set_col_kind(glp_prob *mip, int j, int kind);
+*  int glp_interior(glp_prob *P, const glp_iptcp *parm);
 *
-*  DESCRIPTION
+*  The routine glp_interior is a driver to the LP solver based on the
+*  interior-point method.
 *
-*  The routine glp_set_col_kind sets (changes) the kind of j-th column
-*  (structural variable) as specified by the parameter kind:
+*  The interior-point solver has a set of control parameters. Values of
+*  the control parameters can be passed in a structure glp_iptcp, which
+*  the parameter parm points to.
 *
-*  GLP_CV - continuous variable;
-*  GLP_IV - integer variable;
-*  GLP_BV - binary variable. */
-
-void glp_set_col_kind(glp_prob *mip, int j, int kind)
-{     GLPCOL *col;
-      if (!(1 <= j && j <= mip->n))
-         xfault("glp_set_col_kind: j = %d; column number out of range\n"
-            , j);
-      col = mip->col[j];
-      switch (kind)
-      {  case GLP_CV:
-            col->kind = GLP_CV;
-            break;
-         case GLP_IV:
-            col->kind = GLP_IV;
-            break;
-         case GLP_BV:
-            col->kind = GLP_IV;
-            if (!(col->type == GLP_DB && col->lb == 0.0 && col->ub ==
-               1.0)) glp_set_col_bnds(mip, j, GLP_DB, 0.0, 1.0);
-            break;
-         default:
-            xfault("glp_set_col_kind: j = %d; kind = %d; invalid column"
-               " kind\n", j, kind);
-      }
-      return;
-}
-
-/***********************************************************************
-*  NAME
+*  Currently this routine implements an easy variant of the primal-dual
+*  interior-point method based on Mehrotra's technique.
 *
-*  glp_get_col_kind - retrieve column kind
-*
-*  SYNOPSIS
-*
-*  int glp_get_col_kind(glp_prob *mip, int j);
+*  This routine transforms the original LP problem to an equivalent LP
+*  problem in the standard formulation (all constraints are equalities,
+*  all variables are non-negative), calls the routine ipm_main to solve
+*  the transformed problem, and then transforms an obtained solution to
+*  the solution of the original problem.
 *
 *  RETURNS
 *
-*  The routine glp_get_col_kind returns the kind of j-th column, i.e.
-*  the kind of corresponding structural variable, as follows:
-*
-*  GLP_CV - continuous variable;
-*  GLP_IV - integer variable;
-*  GLP_BV - binary variable */
-
-int glp_get_col_kind(glp_prob *mip, int j)
-{     GLPCOL *col;
-      int kind;
-      if (!(1 <= j && j <= mip->n))
-         xfault("glp_get_col_kind: j = %d; column number out of range\n"
-            , j);
-      col = mip->col[j];
-      kind = col->kind;
-      switch (kind)
-      {  case GLP_CV:
-            break;
-         case GLP_IV:
-            if (col->type == GLP_DB && col->lb == 0.0 && col->ub == 1.0)
-               kind = GLP_BV;
-            break;
-         default:
-            xassert(kind != kind);
-      }
-      return kind;
-}
-
-/***********************************************************************
-*  NAME
-*
-*  glp_get_num_int - retrieve number of integer columns
-*
-*  SYNOPSIS
-*
-*  int glp_get_num_int(glp_prob *mip);
-*
-*  RETURNS
-*
-*  The routine glp_get_num_int returns the current number of columns,
-*  which are marked as integer. */
-
-int glp_get_num_int(glp_prob *mip)
-{     GLPCOL *col;
-      int j, count = 0;
-      for (j = 1; j <= mip->n; j++)
-      {  col = mip->col[j];
-         if (col->kind == GLP_IV) count++;
-      }
-      return count;
-}
-
-/***********************************************************************
-*  NAME
-*
-*  glp_get_num_bin - retrieve number of binary columns
-*
-*  SYNOPSIS
-*
-*  int glp_get_num_bin(glp_prob *mip);
-*
-*  RETURNS
-*
-*  The routine glp_get_num_bin returns the current number of columns,
-*  which are marked as binary. */
-
-int glp_get_num_bin(glp_prob *mip)
-{     GLPCOL *col;
-      int j, count = 0;
-      for (j = 1; j <= mip->n; j++)
-      {  col = mip->col[j];
-         if (col->kind == GLP_IV && col->type == GLP_DB && col->lb ==
-            0.0 && col->ub == 1.0) count++;
-      }
-      return count;
-}
-
-/***********************************************************************
-*  NAME
-*
-*  glp_intopt - solve MIP problem with the branch-and-bound method
-*
-*  SYNOPSIS
-*
-*  int glp_intopt(glp_prob *mip, const glp_iocp *parm);
-*
-*  DESCRIPTION
-*
-*  The routine glp_intopt is a driver to the MIP solver based on the
-*  branch-and-bound method.
-*
-*  On entry the problem object should contain optimal solution to LP
-*  relaxation (which can be obtained with the routine glp_simplex).
-*
-*  The MIP solver has a set of control parameters. Values of the control
-*  parameters can be passed in a structure glp_iocp, which the parameter
-*  parm points to.
-*
-*  The parameter parm can be specified as NULL, in which case the MIP
-*  solver uses default settings.
-*
-*  RETURNS
-*
-*  0  The MIP problem instance has been successfully solved. This code
+*  0  The LP problem instance has been successfully solved. This code
 *     does not necessarily mean that the solver has found optimal
 *     solution. It only means that the solution process was successful.
 *
-*  GLP_EBOUND
-*     Unable to start the search, because some double-bounded variables
-*     have incorrect bounds or some integer variables have non-integer
-*     (fractional) bounds.
-*
-*  GLP_EROOT
-*     Unable to start the search, because optimal basis for initial LP
-*     relaxation is not provided.
-*
 *  GLP_EFAIL
-*     The search was prematurely terminated due to the solver failure.
+*     The problem has no rows/columns.
 *
-*  GLP_ETMLIM
-*     The search was prematurely terminated, because the time limit has
-*     been exceeded.
+*  GLP_ENOCVG
+*     Very slow convergence or divergence.
 *
-*  GLP_ESTOP
-*     The search was prematurely terminated by application. */
+*  GLP_EITLIM
+*     Iteration limit exceeded.
+*
+*  GLP_EINSTAB
+*     Numerical instability on solving Newtonian system. */
 
-int glp_intopt(glp_prob *mip, const glp_iocp *parm)
-{     glp_iocp _parm;
-      int m = mip->m;
-      int n = mip->n;
-      glp_tree *tree;
+static void transform(NPP *npp)
+{     /* transform LP to the standard formulation */
+      NPPROW *row, *prev_row;
+      NPPCOL *col, *prev_col;
+      for (row = npp->r_tail; row != NULL; row = prev_row)
+      {  prev_row = row->prev;
+         if (row->lb == -DBL_MAX && row->ub == +DBL_MAX)
+            npp_free_row(npp, row);
+         else if (row->lb == -DBL_MAX)
+            npp_leq_row(npp, row);
+         else if (row->ub == +DBL_MAX)
+            npp_geq_row(npp, row);
+         else if (row->lb != row->ub)
+         {  if (fabs(row->lb) < fabs(row->ub))
+               npp_geq_row(npp, row);
+            else
+               npp_leq_row(npp, row);
+         }
+      }
+      for (col = npp->c_tail; col != NULL; col = prev_col)
+      {  prev_col = col->prev;
+         if (col->lb == -DBL_MAX && col->ub == +DBL_MAX)
+            npp_free_col(npp, col);
+         else if (col->lb == -DBL_MAX)
+            npp_ubnd_col(npp, col);
+         else if (col->ub == +DBL_MAX)
+         {  if (col->lb != 0.0)
+               npp_lbnd_col(npp, col);
+         }
+         else if (col->lb != col->ub)
+         {  if (fabs(col->lb) < fabs(col->ub))
+            {  if (col->lb != 0.0)
+                  npp_lbnd_col(npp, col);
+            }
+            else
+               npp_ubnd_col(npp, col);
+            npp_dbnd_col(npp, col);
+         }
+         else
+            npp_fixed_col(npp, col);
+      }
+      for (row = npp->r_head; row != NULL; row = row->next)
+         xassert(row->lb == row->ub);
+      for (col = npp->c_head; col != NULL; col = col->next)
+         xassert(col->lb == 0.0 && col->ub == +DBL_MAX);
+      return;
+}
+
+int glp_interior(glp_prob *P, const glp_iptcp *parm)
+{     glp_iptcp _parm;
+      GLPROW *row;
+      GLPCOL *col;
+      NPP *npp = NULL;
+      glp_prob *prob = NULL;
       int i, j, ret;
-      if (mip->tree != NULL)
-         xfault("glp_intopt: problem object is already used by the MIP "
-            "solver\n");
-      if (parm == NULL)
-         glp_init_iocp(&_parm);
-      else
-         memcpy(&_parm, parm, sizeof(glp_iocp));
-      parm = &_parm;
       /* check control parameters */
+      if (parm == NULL)
+         glp_init_iptcp(&_parm), parm = &_parm;
       if (!(parm->msg_lev == GLP_MSG_OFF ||
             parm->msg_lev == GLP_MSG_ERR ||
             parm->msg_lev == GLP_MSG_ON  ||
-            parm->msg_lev == GLP_MSG_ALL ||
-            parm->msg_lev == GLP_MSG_DBG))
-         xfault("glp_intopt: msg_lev = %d; invalid parameter\n",
+            parm->msg_lev == GLP_MSG_ALL))
+         xerror("glp_interior: msg_lev = %d; invalid parameter\n",
             parm->msg_lev);
-      if (!(parm->br_tech == GLP_BR_FFV ||
-            parm->br_tech == GLP_BR_LFV ||
-            parm->br_tech == GLP_BR_MFV ||
-            parm->br_tech == GLP_BR_DTH))
-         xfault("glp_intopt: br_tech = %d; invalid parameter\n",
-            parm->br_tech);
-      if (!(parm->bt_tech == GLP_BT_DFS ||
-            parm->bt_tech == GLP_BT_BFS ||
-            parm->bt_tech == GLP_BT_BLB ||
-            parm->bt_tech == GLP_BT_BPH))
-         xfault("glp_intopt: bt_tech = %d; invalid parameter\n",
-            parm->bt_tech);
-      if (!(0.0 < parm->tol_int && parm->tol_int < 1.0))
-         xfault("glp_intopt: tol_int = %g; invalid parameter\n",
-            parm->tol_int);
-      if (!(0.0 < parm->tol_obj && parm->tol_obj < 1.0))
-         xfault("glp_intopt: tol_obj = %g; invalid parameter\n",
-            parm->tol_obj);
-      if (parm->tm_lim < 0)
-         xfault("glp_intopt: tm_lim = %d; invalid parameter\n",
-            parm->tm_lim);
-      if (parm->out_frq < 0)
-         xfault("glp_intopt: out_frq = %d; invalid parameter\n",
-            parm->out_frq);
-      if (parm->out_dly < 0)
-         xfault("glp_intopt: out_dly = %d; invalid parameter\n",
-            parm->out_dly);
-      if (!(0 <= parm->cb_size && parm->cb_size <= 256))
-         xfault("glp_intopt: cb_size = %d; invalid parameter\n",
-            parm->cb_size);
-      if (!(parm->pp_tech == GLP_PP_NONE ||
-            parm->pp_tech == GLP_PP_ROOT ||
-            parm->pp_tech == GLP_PP_ALL))
-         xfault("glp_intopt: pp_tech = %d; invalid parameter\n",
-            parm->pp_tech);
-      if (parm->mip_gap < 0.0)
-         xfault("glp_intopt: mip_gap = %g; invalid parameter\n",
-            parm->mip_gap);
-      if (!(parm->mir_cuts == GLP_ON || parm->mir_cuts == GLP_OFF))
-         xfault("glp_intopt: mir_cuts = %d; invalid parameter\n",
-            parm->mir_cuts);
-      if (!(parm->gmi_cuts == GLP_ON || parm->gmi_cuts == GLP_OFF))
-         xfault("glp_intopt: gmi_cuts = %d; invalid parameter\n",
-            parm->gmi_cuts);
-      /* integer solution is currently undefined */
-      mip->mip_stat = GLP_UNDEF;
-      mip->mip_obj = 0.0;
+      if (!(parm->ord_alg == GLP_ORD_NONE ||
+            parm->ord_alg == GLP_ORD_QMD ||
+            parm->ord_alg == GLP_ORD_AMD ||
+            parm->ord_alg == GLP_ORD_SYMAMD))
+         xerror("glp_interior: ord_alg = %d; invalid parameter\n",
+            parm->ord_alg);
+      /* interior-point solution is currently undefined */
+      P->ipt_stat = GLP_UNDEF;
+      P->ipt_obj = 0.0;
       /* check bounds of double-bounded variables */
-      for (i = 1; i <= m; i++)
-      {  GLPROW *row = mip->row[i];
+      for (i = 1; i <= P->m; i++)
+      {  row = P->row[i];
          if (row->type == GLP_DB && row->lb >= row->ub)
          {  if (parm->msg_lev >= GLP_MSG_ERR)
-               xprintf("glp_intopt: row %d: lb = %g, ub = %g; incorrect"
-                  " bounds\n", i, row->lb, row->ub);
+               xprintf("glp_interior: row %d: lb = %g, ub = %g; incorre"
+                  "ct bounds\n", i, row->lb, row->ub);
             ret = GLP_EBOUND;
             goto done;
          }
       }
-      for (j = 1; j <= n; j++)
-      {  GLPCOL *col = mip->col[j];
+      for (j = 1; j <= P->n; j++)
+      {  col = P->col[j];
          if (col->type == GLP_DB && col->lb >= col->ub)
          {  if (parm->msg_lev >= GLP_MSG_ERR)
-               xprintf("glp_intopt: column %d: lb = %g, ub = %g; incorr"
-                  "ect bounds\n", j, col->lb, col->ub);
+               xprintf("glp_interior: column %d: lb = %g, ub = %g; inco"
+                  "rrect bounds\n", j, col->lb, col->ub);
             ret = GLP_EBOUND;
             goto done;
          }
       }
-      /* bounds of all integer variables must be integral */
-      for (j = 1; j <= n; j++)
-      {  GLPCOL *col = mip->col[j];
-         if (col->kind != GLP_IV) continue;
-         if (col->type == GLP_LO || col->type == GLP_DB)
-         {  if (col->lb != floor(col->lb))
-            {  if (parm->msg_lev >= GLP_MSG_ERR)
-                  xprintf("glp_intopt: integer column %d has non-intege"
-                     "r lower bound %g\n", j, col->lb);
-               ret = GLP_EBOUND;
-               goto done;
-            }
-         }
-         if (col->type == GLP_UP || col->type == GLP_DB)
-         {  if (col->ub != floor(col->ub))
-            {  if (parm->msg_lev >= GLP_MSG_ERR)
-                  xprintf("glp_intopt: integer column %d has non-intege"
-                     "r upper bound %g\n", j, col->ub);
-               ret = GLP_EBOUND;
-               goto done;
-            }
-         }
-         if (col->type == GLP_FX)
-         {  if (col->lb != floor(col->lb))
-            {  if (parm->msg_lev >= GLP_MSG_ERR)
-                  xprintf("glp_intopt: integer column %d has non-intege"
-                     "r fixed value %g\n", j, col->lb);
-               ret = GLP_EBOUND;
-               goto done;
-            }
-         }
-      }
-      /* optimal solution to LP relaxation must be known */
-      if (glp_get_status(mip) != GLP_OPT)
+      /* transform LP to the standard formulation */
+      if (parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Original LP has %d row(s), %d column(s), and %d non-z"
+            "ero(s)\n", P->m, P->n, P->nnz);
+      npp = npp_create_wksp();
+      npp_load_prob(npp, P, GLP_OFF, GLP_IPT, GLP_ON);
+      transform(npp);
+      prob = glp_create_prob();
+      npp_build_prob(npp, prob);
+      if (parm->msg_lev >= GLP_MSG_ALL)
+         xprintf("Working LP has %d row(s), %d column(s), and %d non-ze"
+            "ro(s)\n", prob->m, prob->n, prob->nnz);
+#if 1
+      /* currently empty problem cannot be solved */
+      if (!(prob->m > 0 && prob->n > 0))
       {  if (parm->msg_lev >= GLP_MSG_ERR)
-            xprintf("glp_intopt: optimal basis to initial LP relaxation"
-               " not provided\n");
-         ret = GLP_EROOT;
+            xprintf("glp_interior: unable to solve empty problem\n");
+         ret = GLP_EFAIL;
          goto done;
       }
-      /* it seems all is ok */
-      if (parm->msg_lev >= GLP_MSG_ALL)
-         xprintf("Integer optimization begins...\n");
-      /* create the branch-and-bound tree */
-      tree = ios_create_tree(mip, parm);
-#if 0
-      if (parm->msg_lev >= GLP_MSG_ALL && tree->int_obj)
-         xprintf("Objective function is integral\n");
 #endif
-      /* try to solve the problem */
-      ret = ios_driver(tree);
-      /* analyze exit code reported by the mip driver */
-      switch (ret)
-      {  case 0:
-            if (tree->mip->mip_stat == GLP_FEAS)
-            {  if (parm->msg_lev >= GLP_MSG_ALL)
-                  xprintf("INTEGER OPTIMAL SOLUTION FOUND\n");
-               tree->mip->mip_stat = GLP_OPT;
-            }
-            else
-            {  if (parm->msg_lev >= GLP_MSG_ALL)
-                  xprintf("PROBLEM HAS NO INTEGER FEASIBLE SOLUTION\n");
-               tree->mip->mip_stat = GLP_NOFEAS;
-            }
-            break;
-         case GLP_ETMLIM:
-            if (parm->msg_lev >= GLP_MSG_ALL)
-               xprintf("TIME LIMIT EXCEEDED; SEARCH TERMINATED\n");
-            break;
-         case GLP_EFAIL:
-            if (parm->msg_lev >= GLP_MSG_ERR)
-               xprintf("glp_intopt: cannot solve current LP relaxation "
-                  "\n");
-            break;
-         case GLP_ESTOP:
-            if (parm->msg_lev >= GLP_MSG_ALL)
-               xprintf("SEARCH TERMINATED BY APPLICATION\n");
-            break;
-         default:
-            xassert(ret != ret);
+      /* scale the resultant LP */
+      {  ENV *env = get_env_ptr();
+         int term_out = env->term_out;
+         env->term_out = GLP_OFF;
+         glp_scale_prob(prob, GLP_SF_EQ);
+         env->term_out = term_out;
       }
-      /* delete the branch-and-bound tree */
-      ios_delete_tree(tree);
-done: /* return to the application program */
+      /* warn about dense columns */
+      if (parm->msg_lev >= GLP_MSG_ON && prob->m >= 200)
+      {  int len, cnt = 0;
+         for (j = 1; j <= prob->n; j++)
+         {  len = glp_get_mat_col(prob, j, NULL, NULL);
+            if ((double)len >= 0.20 * (double)prob->m) cnt++;
+         }
+         if (cnt == 1)
+            xprintf("WARNING: PROBLEM HAS ONE DENSE COLUMN\n");
+         else if (cnt > 0)
+            xprintf("WARNING: PROBLEM HAS %d DENSE COLUMNS\n", cnt);
+      }
+      /* solve the transformed LP */
+      ret = ipm_solve(prob, parm);
+      /* postprocess solution from the transformed LP */
+      npp_postprocess(npp, prob);
+      /* and store solution to the original LP */
+      npp_unload_sol(npp, P);
+done: /* free working program objects */
+      if (npp != NULL) npp_delete_wksp(npp);
+      if (prob != NULL) glp_delete_prob(prob);
+      /* return to the application program */
       return ret;
 }
 
 /***********************************************************************
 *  NAME
 *
-*  glp_init_iocp - initialize integer optimizer control parameters
+*  glp_init_iptcp - initialize interior-point solver control parameters
 *
 *  SYNOPSIS
 *
-*  void glp_init_iocp(glp_iocp *parm);
+*  void glp_init_iptcp(glp_iptcp *parm);
 *
 *  DESCRIPTION
 *
-*  The routine glp_init_iocp initializes control parameters, which are
-*  used by the integer optimizer, with default values.
+*  The routine glp_init_iptcp initializes control parameters, which are
+*  used by the interior-point solver, with default values.
 *
-*  Default values of the control parameters are stored in a glp_iocp
+*  Default values of the control parameters are stored in the glp_iptcp
 *  structure, which the parameter parm points to. */
 
-void glp_init_iocp(glp_iocp *parm)
+void glp_init_iptcp(glp_iptcp *parm)
 {     parm->msg_lev = GLP_MSG_ALL;
-      parm->br_tech = GLP_BR_DTH;
-      parm->bt_tech = GLP_BT_BLB;
-      parm->tol_int = 1e-5;
-      parm->tol_obj = 1e-7;
-      parm->tm_lim = INT_MAX;
-      parm->out_frq = 5000;
-      parm->out_dly = 10000;
-      parm->cb_func = NULL;
-      parm->cb_info = NULL;
-      parm->cb_size = 0;
-      parm->pp_tech = GLP_PP_ALL;
-      parm->mip_gap = 0.0;
-      parm->mir_cuts = GLP_OFF;
-      parm->gmi_cuts = GLP_OFF;
-      parm->fn_sol = NULL;
+      parm->ord_alg = GLP_ORD_AMD;
       return;
 }
 
 /***********************************************************************
 *  NAME
 *
-*  glp_mip_status - retrieve status of MIP solution
+*  glp_ipt_status - retrieve status of interior-point solution
 *
 *  SYNOPSIS
 *
-*  int glp_mip_status(glp_prob *mip);
+*  int glp_ipt_status(glp_prob *lp);
 *
 *  RETURNS
 *
-*  The routine lpx_mip_status reports the status of MIP solution found
-*  by the branch-and-bound solver as follows:
+*  The routine glp_ipt_status reports the status of solution found by
+*  the interior-point solver as follows:
 *
-*  GLP_UNDEF  - MIP solution is undefined;
-*  GLP_OPT    - MIP solution is integer optimal;
-*  GLP_FEAS   - MIP solution is integer feasible but its optimality
-*               (or non-optimality) has not been proven, perhaps due to
-*               premature termination of the search;
-*  GLP_NOFEAS - problem has no integer feasible solution (proven by the
-*               solver). */
+*  GLP_UNDEF  - interior-point solution is undefined;
+*  GLP_OPT    - interior-point solution is optimal;
+*  GLP_INFEAS - interior-point solution is infeasible;
+*  GLP_NOFEAS - no feasible solution exists. */
 
-int glp_mip_status(glp_prob *mip)
-{     int mip_stat = mip->mip_stat;
-      return mip_stat;
+int glp_ipt_status(glp_prob *lp)
+{     int ipt_stat = lp->ipt_stat;
+      return ipt_stat;
 }
 
 /***********************************************************************
 *  NAME
 *
-*  glp_mip_obj_val - retrieve objective value (MIP solution)
+*  glp_ipt_obj_val - retrieve objective value (interior point)
 *
 *  SYNOPSIS
 *
-*  double glp_mip_obj_val(glp_prob *mip);
+*  double glp_ipt_obj_val(glp_prob *lp);
 *
 *  RETURNS
 *
-*  The routine glp_mip_obj_val returns value of the objective function
-*  for MIP solution. */
+*  The routine glp_ipt_obj_val returns value of the objective function
+*  for interior-point solution. */
 
-double glp_mip_obj_val(glp_prob *mip)
-{     struct LPXCPS *cps = mip->cps;
+double glp_ipt_obj_val(glp_prob *lp)
+{     /*struct LPXCPS *cps = lp->cps;*/
       double z;
-      z = mip->mip_obj;
-      if (cps->round && fabs(z) < 1e-9) z = 0.0;
+      z = lp->ipt_obj;
+      /*if (cps->round && fabs(z) < 1e-9) z = 0.0;*/
       return z;
 }
 
 /***********************************************************************
 *  NAME
 *
-*  glp_mip_row_val - retrieve row value (MIP solution)
+*  glp_ipt_row_prim - retrieve row primal value (interior point)
 *
 *  SYNOPSIS
 *
-*  double glp_mip_row_val(glp_prob *mip, int i);
+*  double glp_ipt_row_prim(glp_prob *lp, int i);
 *
 *  RETURNS
 *
-*  The routine glp_mip_row_val returns value of the auxiliary variable
-*  associated with i-th row. */
+*  The routine glp_ipt_row_prim returns primal value of the auxiliary
+*  variable associated with i-th row. */
 
-double glp_mip_row_val(glp_prob *mip, int i)
-{     struct LPXCPS *cps = mip->cps;
-      double mipx;
-      if (!(1 <= i && i <= mip->m))
-         xfault("glp_mip_row_val: i = %d; row number out of range\n", i)
-            ;
-      mipx = mip->row[i]->mipx;
-      if (cps->round && fabs(mipx) < 1e-9) mipx = 0.0;
-      return mipx;
+double glp_ipt_row_prim(glp_prob *lp, int i)
+{     /*struct LPXCPS *cps = lp->cps;*/
+      double pval;
+      if (!(1 <= i && i <= lp->m))
+         xerror("glp_ipt_row_prim: i = %d; row number out of range\n",
+            i);
+      pval = lp->row[i]->pval;
+      /*if (cps->round && fabs(pval) < 1e-9) pval = 0.0;*/
+      return pval;
 }
 
 /***********************************************************************
 *  NAME
 *
-*  glp_mip_col_val - retrieve column value (MIP solution)
+*  glp_ipt_row_dual - retrieve row dual value (interior point)
 *
 *  SYNOPSIS
 *
-*  double glp_mip_col_val(glp_prob *mip, int j);
+*  double glp_ipt_row_dual(glp_prob *lp, int i);
 *
 *  RETURNS
 *
-*  The routine glp_mip_col_val returns value of the structural variable
-*  associated with j-th column. */
+*  The routine glp_ipt_row_dual returns dual value (i.e. reduced cost)
+*  of the auxiliary variable associated with i-th row. */
 
-double glp_mip_col_val(glp_prob *mip, int j)
-{     struct LPXCPS *cps = mip->cps;
-      double mipx;
-      if (!(1 <= j && j <= mip->n))
-         xfault("glp_mip_col_val: j = %d; column number out of range\n",
-            j);
-      mipx = mip->col[j]->mipx;
-      if (cps->round && fabs(mipx) < 1e-9) mipx = 0.0;
-      return mipx;
+double glp_ipt_row_dual(glp_prob *lp, int i)
+{     /*struct LPXCPS *cps = lp->cps;*/
+      double dval;
+      if (!(1 <= i && i <= lp->m))
+         xerror("glp_ipt_row_dual: i = %d; row number out of range\n",
+            i);
+      dval = lp->row[i]->dval;
+      /*if (cps->round && fabs(dval) < 1e-9) dval = 0.0;*/
+      return dval;
+}
+
+/***********************************************************************
+*  NAME
+*
+*  glp_ipt_col_prim - retrieve column primal value (interior point)
+*
+*  SYNOPSIS
+*
+*  double glp_ipt_col_prim(glp_prob *lp, int j);
+*
+*  RETURNS
+*
+*  The routine glp_ipt_col_prim returns primal value of the structural
+*  variable associated with j-th column. */
+
+double glp_ipt_col_prim(glp_prob *lp, int j)
+{     /*struct LPXCPS *cps = lp->cps;*/
+      double pval;
+      if (!(1 <= j && j <= lp->n))
+         xerror("glp_ipt_col_prim: j = %d; column number out of range\n"
+            , j);
+      pval = lp->col[j]->pval;
+      /*if (cps->round && fabs(pval) < 1e-9) pval = 0.0;*/
+      return pval;
+}
+
+/***********************************************************************
+*  NAME
+*
+*  glp_ipt_col_dual - retrieve column dual value (interior point)
+*
+*  SYNOPSIS
+*
+*  #include "glplpx.h"
+*  double glp_ipt_col_dual(glp_prob *lp, int j);
+*
+*  RETURNS
+*
+*  The routine glp_ipt_col_dual returns dual value (i.e. reduced cost)
+*  of the structural variable associated with j-th column. */
+
+double glp_ipt_col_dual(glp_prob *lp, int j)
+{     /*struct LPXCPS *cps = lp->cps;*/
+      double dval;
+      if (!(1 <= j && j <= lp->n))
+         xerror("glp_ipt_col_dual: j = %d; column number out of range\n"
+            , j);
+      dval = lp->col[j]->dval;
+      /*if (cps->round && fabs(dval) < 1e-9) dval = 0.0;*/
+      return dval;
 }
 
 /* eof */

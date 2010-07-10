@@ -878,6 +878,7 @@ void UiForm_finish (I) {
 
 	#if gtk
 		Widget form, buttons;
+		int numberOfRows = 0, row = 0;
 	#else
 		Widget form, buttons; // Define?
 	#endif
@@ -909,18 +910,18 @@ void UiForm_finish (I) {
 					- 10 :
 				#endif
 			textFieldHeight;
+		#if gtk
+			numberOfRows += wcsnequ (thy name, L"right ", 6);
+		#endif
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
 	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, gui_dialog_cb_close, me, 0);
 
 	#if gtk
-		form = gtk_vbox_new (FALSE, 0);
-		Widget scroll_win = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scroll_win), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW(scroll_win), form);
-		gtk_container_add (GTK_CONTAINER (my dialog), scroll_win);
-		gtk_widget_show (scroll_win);
-		gtk_widget_show(form);
+		form = gtk_table_new (numberOfRows, 3, false);
+		gtk_table_set_col_spacing (GTK_TABLE (form), 0, 5);
+		gtk_container_add (GTK_CONTAINER (my dialog), form);
+		gtk_widget_show (form);
 		buttons = GTK_DIALOG (GuiObject_parent (my dialog)) -> action_area;
 	#else
 		form = my dialog;
@@ -947,26 +948,47 @@ void UiForm_finish (I) {
 				if (wcsnequ (field -> name, L"left ", 5)) {
 					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
-					GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+					Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
+					#if gtk
+						gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					#endif
 					field -> text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
+					#if gtk
+						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 1, 2, row, row + 1);
+					#endif
 				} else if (wcsnequ (field -> name, L"right ", 6)) {
 					field -> text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						y, Gui_AUTOMATIC, 0);
+					#if gtk
+						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 2, 3, row, row + 1);
+						row += 1;
+					#endif
 				} else {
 					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					GuiLabel_createShown (form, x, x + labelWidth,
+					Widget label = GuiLabel_createShown (form, x, x + labelWidth,
 						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
+					#if gtk
+						gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					#endif
 					field -> text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
 						y, Gui_AUTOMATIC, 0);
+					#if gtk
+						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 1, 3, row, row + 1);
+						row += 1;
+					#endif
 				}
 			} break;
 			case UI_TEXT:
 			{
 				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, Gui_AUTOMATIC, 0);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 0, 3, row, row + 1);
+					row += 1;
+				#endif
 			} break;
 			case UI_LABEL:
 			{
@@ -974,6 +996,10 @@ void UiForm_finish (I) {
 				field -> text = GuiLabel_createShown (form,
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 0, 3, row, row + 1);
+					row += 1;
+				#endif
 			} break;
 			case UI_RADIO:
 			{
@@ -986,12 +1012,18 @@ void UiForm_finish (I) {
 				#endif
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
+				Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					Widget column = gtk_vbox_new (true, 0);
+				#else
+					Widget column = form;
+				#endif
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					button -> toggle = GuiRadioButton_createShown (form,
+					button -> toggle = GuiRadioButton_createShown (column,
 						fieldX, dialogWidth /* allow to extend into the margin */,
 						y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
 						theFinishBuffer.string, gui_radiobutton_cb_toggled, field, 0);
@@ -1002,6 +1034,11 @@ void UiForm_finish (I) {
 					group = GuiRadioButton_getGroup(button -> toggle);
 					#endif
 				}
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), column, 1, 3, row, row + 1);
+					gtk_widget_show (column);
+					row += 1;
+				#endif
 			} break; 
 			case UI_OPTIONMENU:
 			{
@@ -1012,8 +1049,11 @@ void UiForm_finish (I) {
 				Widget bar, box;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
+				Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+				#endif
 
 				#if motif
 					bar = XmCreateMenuBar (form, "UiOptionMenu", NULL, 0);
@@ -1025,8 +1065,9 @@ void UiForm_finish (I) {
 				#endif
 				// TODO: dit wil natuurlijk heel graag in GuiComboBox.c ;)
 				#if gtk
-					field -> cascadeButton = gtk_combo_box_new_text();
-					gtk_container_add (GTK_CONTAINER (form), field -> cascadeButton);
+					field -> cascadeButton = gtk_combo_box_new_text ();
+					gtk_table_attach_defaults (GTK_TABLE (form), field -> cascadeButton, 1, 3, row, row + 1);
+					row += 1;
 				#elif motif
 					box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
 					XtVaSetValues (bar, XmNwidth, fieldWidth + 8, NULL);
@@ -1056,21 +1097,30 @@ void UiForm_finish (I) {
 				field -> toggle = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, y, Gui_AUTOMATIC,
 					theFinishBuffer.string, NULL, NULL, 0);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), field -> toggle, 1, 3, row, row + 1);
+					row += 1;
+				#endif
 			} break;
 			case UI_LIST:
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
-				#if motif
 				appendColon ();
-				GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
+				Widget label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
 				#endif
 				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
 				for (long i = 1; i <= field -> numberOfStrings; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
 				GuiObject_show (field -> list);
+				#if gtk
+					gtk_table_attach_defaults (GTK_TABLE (form), gtk_widget_get_parent (field -> list), 1, 3, row, row + 1);
+					row += 1;
+				#endif
 			} break;
 		}
 	}
@@ -1097,7 +1147,7 @@ void UiForm_finish (I) {
 				y, Gui_AUTOMATIC, L"Standards", gui_button_cb_revert, me, 0);
 		}
 		#if gtk
-		 gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(buttons), my revertButton, TRUE);
+			gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (buttons), my revertButton, TRUE);
 		#endif
 	}
 	if (my isPauseForm) {

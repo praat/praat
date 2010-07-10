@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef _GLPBFX_H
-#define _GLPBFX_H
+#ifndef GLPBFX_H
+#define GLPBFX_H
 
 #include "glpgmp.h"
 
-#ifndef _GLPBFX_DEFINED
-#define _GLPBFX_DEFINED
-typedef struct { int foo_; } BFX;
+#ifndef GLPBFX_DEFINED
+#define GLPBFX_DEFINED
+typedef struct { double _opaque_bfx; } BFX;
 #endif
 
 #define bfx_create_binv       _glp_bfx_create_binv

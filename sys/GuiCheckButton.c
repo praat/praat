@@ -116,7 +116,7 @@ Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int b
 		my widget = gtk_check_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		if (parent) {
+		if (parent && GTK_IS_BOX (parent)) {
 			gtk_container_add (GTK_CONTAINER (parent), my widget);
 		}
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my widget), (flags & GuiCheckButton_SET) != 0);

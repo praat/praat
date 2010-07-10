@@ -267,19 +267,19 @@ static void createChildren (ButtonEditor me) {
 	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
 	inherited (ButtonEditor) createChildren (ButtonEditor_as_parent (me));
-	my button1 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	my button1 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Objects", gui_radiobutton_cb_objects, me, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
-	my button2 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	my button2 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Picture", gui_radiobutton_cb_picture, me, 0);
 	x += BUTTON_WIDTH + 5;
-	my button3 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	my button3 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Editors", gui_radiobutton_cb_editors, me, 0);
 	x += BUTTON_WIDTH + 5;
-	my button4 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+	my button4 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
 		L"Actions A-M", gui_radiobutton_cb_actionsAM, me, 0);
 	x += BUTTON_WIDTH + 35;
-	my button5 = GuiRadioButton_createShown (my dialog, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+	my button5 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
 		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, me, 0);
 	
 	#if gtk

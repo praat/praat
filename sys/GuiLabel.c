@@ -65,14 +65,15 @@ Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
 		my widget = gtk_label_new (Melder_peekWcsToUtf8 (labelText));
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-		gtk_box_pack_start (GTK_BOX (parent), my widget, FALSE, FALSE, 0);
+		if (GTK_IS_BOX (parent)) {
+			gtk_box_pack_start (GTK_BOX (parent), my widget, FALSE, FALSE, 0);
+		}
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
-		gtk_label_set_justify (GTK_LABEL (my widget), flags);
-
-		/*if (flags & GuiLabel_RIGHT) gtk_misc_set_alignment (GTK_MISC(my widget), 1.0f, 0.5f);
-		else*/ if (flags & GuiLabel_CENTRE) gtk_misc_set_alignment (GTK_MISC(my widget), 0.5f, 0.5f);
-		else gtk_misc_set_alignment (GTK_MISC(my widget), 0.0f, 0.5f);
+		//gtk_label_set_justify (GTK_LABEL (my widget),
+		//	flags & GuiLabel_RIGHT ? GTK_JUSTIFY_RIGHT : flags & GuiLabel_CENTRE ? GTK_JUSTIFY_CENTER : GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment (GTK_MISC (my widget),
+			flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 	#elif win
 		my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
 		_GuiObject_setUserData (my widget, me);

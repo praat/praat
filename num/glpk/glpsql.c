@@ -5,9 +5,10 @@
 *
 *  Author: Heinrich Schuchardt <xypron.glpk@gmx.de>.
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -27,21 +28,25 @@
 #include <config.h>
 #endif
 
-#define _GLPSTD_STDIO
 #include "glpmpl.h"
 #include "glpsql.h"
 
 #ifdef ODBC_DLNAME
 #define HAVE_ODBC
 #define libodbc ODBC_DLNAME
-#define h_odbc (lib_link_env()->h_odbc)
+#define h_odbc (get_env_ptr()->h_odbc)
 #endif
 
 #ifdef MYSQL_DLNAME
 #define HAVE_MYSQL
 #define libmysql MYSQL_DLNAME
-#define h_mysql (lib_link_env()->h_mysql)
+#define h_mysql (get_env_ptr()->h_mysql)
 #endif
+
+static void *db_iodbc_open_int(TABDCA *dca, int mode, const char
+      **sqllines);
+static void *db_mysql_open_int(TABDCA *dca, int mode, const char
+      **sqllines);
 
 /**********************************************************************/
 
@@ -52,6 +57,108 @@
 
 #define SQL_FDLEN_MAX 255
 /* maximal field length */
+
+/***********************************************************************
+*  NAME
+*
+*  args_concat - concatenate arguments
+*
+*  SYNOPSIS
+*
+*  static char **args_concat(TABDCA *dca);
+*
+*  DESCRIPTION
+*
+*  The arguments passed in dca are SQL statements. A SQL statement may
+*  be split over multiple arguments. The last argument of a SQL
+*  statement will be terminated with a semilocon. Each SQL statement is
+*  merged into a single zero terminated string. Boundaries between
+*  arguments are replaced by space.
+*
+*  RETURNS
+*
+*  Buffer with SQL statements */
+
+static char **args_concat(TABDCA *dca)
+{
+   const char  *arg;
+   int          i;
+   int          j;
+   int          j0;
+   int          j1;
+   int          len;
+   int          lentot;
+   int          narg;
+   int          nline = 0;
+   void        *ret;
+   char       **sqllines = NULL;
+
+   narg = mpl_tab_num_args(dca);
+   /* The SQL statements start with argument 3. */
+   if (narg < 3)
+      return NULL;
+   /* Count the SQL statements */
+   for (j = 3; j <= narg; j++)
+   {
+      arg = mpl_tab_get_arg(dca, j);
+      len = strlen(arg);
+      if (arg[len-1] == ';' || j == narg)
+        nline ++;
+   }
+   /* Allocate string buffer. */
+   sqllines = (char **) xmalloc((nline+1) * sizeof(char **));
+   /* Join arguments */
+   sqllines[0] = NULL;
+   j0     = 3;
+   i      = 0;
+   lentot = 0;
+   for (j = 3; j <= narg; j++)
+   {
+      arg = mpl_tab_get_arg(dca, j);
+      len = strlen(arg);
+      lentot += len;
+      if (arg[len-1] == ';' || j == narg)
+      {  /* Join arguments for a single SQL statement */
+         sqllines[i] = xmalloc(lentot+1);
+         sqllines[i+1] = NULL;
+         sqllines[i][0] = 0x00;
+         for (j1 = j0; j1 <= j; j1++)
+         {  if(j1>j0)
+               strcat(sqllines[i], " ");
+            strcat(sqllines[i], mpl_tab_get_arg(dca, j1));
+         }
+         len = strlen(sqllines[i]);
+         if (sqllines[i][len-1] == ';')
+            sqllines[i][len-1] = 0x00;
+         j0 = j+1;
+         i++;
+         lentot = 0;
+      }
+   }
+   return sqllines;
+}
+
+/***********************************************************************
+*  NAME
+*
+*  free_buffer - free multiline string buffer
+*
+*  SYNOPSIS
+*
+*  static void free_buffer(char **buf);
+*
+*  DESCRIPTION
+*
+*  buf is a list of strings terminated by NULL.
+*  The memory for the strings and for the list is released. */
+
+static void free_buffer(char **buf)
+{  int i;
+
+   for(i = 0; buf[i] != NULL; i++)
+      xfree(buf[i]);
+   xfree(buf);
+}
 
 static int db_escaped_string_length(const char* from)
 /* length of escaped string */
@@ -222,7 +329,7 @@ int db_iodbc_close(TABDCA *dca, void *link)
 
 #else
 
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WOE32__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WOE__)
 #include <windows.h>
 #endif
 
@@ -231,13 +338,13 @@ int db_iodbc_close(TABDCA *dca, void *link)
 
 struct db_odbc
 {
-   int              mode;         //'R' = Read, 'W' = Write
-   SQLHDBC          hdbc;         //connection handle
-   SQLHENV          henv;         //environment handle
-   SQLHSTMT         hstmt;        //statement handle
-   SQLSMALLINT      nresultcols;  // columns in result
+   int              mode;         /*'R' = Read, 'W' = Write*/
+   SQLHDBC          hdbc;         /*connection handle*/
+   SQLHENV          henv;         /*environment handle*/
+   SQLHSTMT         hstmt;        /*statement handle*/
+   SQLSMALLINT      nresultcols;  /* columns in result*/
    SQLULEN          collen[SQL_FIELD_MAX+1];
-   SQLINTEGER       outlen[SQL_FIELD_MAX+1];
+   SQLLEN           outlen[SQL_FIELD_MAX+1];
    SQLSMALLINT      coltype[SQL_FIELD_MAX+1];
    SQLCHAR          data[SQL_FIELD_MAX+1][SQL_FDLEN_MAX+1];
    SQLCHAR          colname[SQL_FIELD_MAX+1][SQL_FDLEN_MAX+1];
@@ -536,7 +643,44 @@ static void extract_error(
 static int is_numeric(
     SQLSMALLINT coltype);
 
+/***********************************************************************
+*  NAME
+*
+*  db_iodbc_open - open connection to ODBC data base
+*
+*  SYNOPSIS
+*
+*  #include "glpsql.h"
+*  void *db_iodbc_open(TABDCA *dca, int mode);
+*
+*  DESCRIPTION
+*
+*  The routine db_iodbc_open opens a connection to an ODBC data base.
+*  It then executes the sql statements passed.
+*
+*  In the case of table read the SELECT statement is executed.
+*
+*  In the case of table write the INSERT statement is prepared.
+*  RETURNS
+*
+*  The routine returns a pointer to data storage area created. */
 void *db_iodbc_open(TABDCA *dca, int mode)
+{  void  *ret;
+   char **sqllines;
+
+   sqllines = args_concat(dca);
+   if (sqllines == NULL)
+   {  xprintf("Missing arguments in table statement.\n"
+              "Please, supply table driver, dsn, and query.\n");
+      return NULL;
+   }
+   ret = db_iodbc_open_int(dca, mode, (const char **) sqllines);
+   free_buffer(sqllines);
+   return ret;
+}
+
+static void *db_iodbc_open_int(TABDCA *dca, int mode, const char
+   **sqllines)
 {
    struct db_odbc    *sql;
    SQLRETURN          ret;
@@ -545,7 +689,7 @@ void *db_iodbc_open(TABDCA *dca, int mode)
    SQLSMALLINT        colnamelen;
    SQLSMALLINT        nullable;
    SQLSMALLINT        scale;
-   char              *arg;
+   const char        *arg;
    int                narg;
    int                i, j;
    int                total;
@@ -579,7 +723,8 @@ void *db_iodbc_open(TABDCA *dca, int mode)
 
    dsn = (SQLCHAR FAR *) mpl_tab_get_arg(dca, 2);
    /* allocate an environment handle */
- ret = dl_SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &(sql->henv));
+   ret = dl_SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE,
+      &(sql->henv));
    /* set attribute to enable application to run as ODBC 3.0
       application */
    ret = dl_SQLSetEnvAttr(sql->henv, SQL_ATTR_ODBC_VERSION,
@@ -587,10 +732,10 @@ void *db_iodbc_open(TABDCA *dca, int mode)
    /* allocate a connection handle */
    ret = dl_SQLAllocHandle(SQL_HANDLE_DBC, sql->henv, &(sql->hdbc));
    /* connect */
- ret = dl_SQLDriverConnect(sql->hdbc, NULL, dsn, SQL_NTS, NULL, 0, NULL,
-      SQL_DRIVER_COMPLETE);
+   ret = dl_SQLDriverConnect(sql->hdbc, NULL, dsn, SQL_NTS, NULL, 0,
+      NULL, SQL_DRIVER_COMPLETE);
    if (SQL_SUCCEEDED(ret))
-   {
+   {  /* output information about data base connection */
       xprintf("Connected to ");
       dl_SQLGetInfo(sql->hdbc, SQL_DBMS_NAME, (SQLPOINTER)info,
          sizeof(info), NULL);
@@ -603,23 +748,24 @@ void *db_iodbc_open(TABDCA *dca, int mode)
       xprintf("%s\n", info);
    }
    else
-   {
+   {  /* describe error */
       xprintf("Failed to connect\n");
       extract_error("SQLDriverConnect", sql->hdbc, SQL_HANDLE_DBC);
       dl_SQLFreeHandle(SQL_HANDLE_DBC, sql->hdbc);
       dl_SQLFreeHandle(SQL_HANDLE_ENV, sql->henv);
+      xfree(sql);
       return NULL;
    }
    /* set AUTOCOMMIT on*/
    ret = dl_SQLSetConnectAttr(sql->hdbc, SQL_ATTR_AUTOCOMMIT,
-      (SQLPOINTER)SQL_AUTOCOMMIT_ON, SQL_NTS);
+      (SQLPOINTER)SQL_AUTOCOMMIT_ON, 0);
    /* allocate a statement handle */
    ret = dl_SQLAllocHandle(SQL_HANDLE_STMT, sql->hdbc, &(sql->hstmt));
 
    /* initialization queries */
-   for (j = 3; j < narg; j++)
+   for(j = 0; sqllines[j+1] != NULL; j++)
    {
-      sql->query = (SQLCHAR *) mpl_tab_get_arg(dca, j);
+      sql->query = (SQLCHAR *) sqllines[j];
       xprintf("%s\n", sql->query);
       ret = dl_SQLExecDirect(sql->hstmt, sql->query, SQL_NTS);
       switch (ret)
@@ -644,9 +790,9 @@ void *db_iodbc_open(TABDCA *dca, int mode)
    }
 
    if ( sql->mode == 'R' )
-   {
-      sql->nf = mpl_tab_num_flds(dca);
-      arg = (char *) mpl_tab_get_arg(dca, narg);
+   {  sql->nf = mpl_tab_num_flds(dca);
+      for(j = 0; sqllines[j] != NULL; j++)
+         arg = sqllines[j];
       total = strlen(arg);
       if (total > 7 && 0 == strncmp(arg, "SELECT ", 7))
       {
@@ -663,7 +809,7 @@ void *db_iodbc_open(TABDCA *dca, int mode)
          SQL_SUCCESS)
       {
          xprintf("db_iodbc_open: Query\n\"%s\"\nfailed.\n", sql->query);
-         extract_error("SQLDriverConnect", sql->hdbc, SQL_HANDLE_STMT);
+         extract_error("SQLExecDirect", sql->hstmt, SQL_HANDLE_STMT);
          dl_SQLFreeHandle(SQL_HANDLE_STMT, sql->hstmt);
          dl_SQLDisconnect(sql->hdbc);
          dl_SQLFreeHandle(SQL_HANDLE_DBC, sql->hdbc);
@@ -677,9 +823,8 @@ void *db_iodbc_open(TABDCA *dca, int mode)
       ret = dl_SQLNumResultCols(sql->hstmt, &sql->nresultcols);
       total = sql->nresultcols;
       if (total > SQL_FIELD_MAX)
-      {
-    xprintf("db_iodbc_open: Too many fields (> %d) in query.\n\"%s\"\n",
-         SQL_FIELD_MAX, sql->query);
+      {  xprintf("db_iodbc_open: Too many fields (> %d) in query.\n"
+            "\"%s\"\n", SQL_FIELD_MAX, sql->query);
          dl_SQLFreeHandle(SQL_HANDLE_STMT, sql->hstmt);
          dl_SQLDisconnect(sql->hdbc);
          dl_SQLFreeHandle(SQL_HANDLE_DBC, sql->hdbc);
@@ -688,27 +833,25 @@ void *db_iodbc_open(TABDCA *dca, int mode)
          return NULL;
       }
       for (i = 1; i <= total; i++)
-      {
-      /* return a set of attributes for a column */
-   ret = dl_SQLDescribeCol(sql->hstmt, (SQLSMALLINT) i, sql->colname[i],
-            SQL_FDLEN_MAX,
+      {  /* return a set of attributes for a column */
+         ret = dl_SQLDescribeCol(sql->hstmt, (SQLSMALLINT) i,
+            sql->colname[i], SQL_FDLEN_MAX,
             &colnamelen, &(sql->coltype[i]), &(sql->collen[i]), &scale,
             &nullable);
-      sql->isnumeric[i] = is_numeric(sql->coltype[i]);
-      /* bind columns to program vars, converting all types to CHAR */
-     dl_SQLBindCol(sql->hstmt, i, SQL_CHAR, sql->data[i], SQL_FDLEN_MAX,
-         &(sql->outlen[i]));
-      for (j = sql->nf; j >= 1; j--)
-         {
-            if (strcmp(mpl_tab_get_name(dca, j), sql->colname[i]) == 0)
+         sql->isnumeric[i] = is_numeric(sql->coltype[i]);
+         /* bind columns to program vars, converting all types to CHAR*/
+         dl_SQLBindCol(sql->hstmt, i, SQL_CHAR, sql->data[i],
+            SQL_FDLEN_MAX, &(sql->outlen[i]));
+         for (j = sql->nf; j >= 1; j--)
+         {  if (strcmp(mpl_tab_get_name(dca, j), sql->colname[i]) == 0)
             break;
          }
          sql->ref[i] = j;
       }
    }
    else if ( sql->mode == 'W' )
-   {
-      arg = (char *) mpl_tab_get_arg(dca, narg);
+   {  for(j = 0; sqllines[j] != NULL; j++)
+         arg = sqllines[j];
       if (  NULL != strchr(arg, '?') )
       {
          total = strlen(arg);
@@ -721,8 +864,6 @@ void *db_iodbc_open(TABDCA *dca, int mode)
       }
       xprintf("%s\n", sql->query);
    }
-
-
    return sql;
 }
 
@@ -744,27 +885,35 @@ int db_iodbc_read(TABDCA *dca, void *link)
    if (ret== SQL_ERROR)
       return -1;
    if (ret== SQL_NO_DATA_FOUND)
-      return -1; //EOF
+      return -1; /*EOF*/
    for (i=1; i <= sql->nresultcols; i++)
    {
-      len = sql->outlen[i];
-      if (len > SQL_FDLEN_MAX)
-         len = SQL_FDLEN_MAX;
-      strncpy(buf, (const char *) sql->data[i], len);
-      buf[len] = 0x00;
-      if (0 != (sql->isnumeric[i]))
+      if (sql->ref[i] > 0)
       {
-         strspx(buf); // remove spaces
-         xassert(str2num(buf, &num) == 0);
-         if (sql->ref[i] > 0)
-            mpl_tab_set_num(dca, sql->ref[i], num);
-         }
-           else
+         len = sql->outlen[i];
+         if (len != SQL_NULL_DATA)
          {
-         if (sql->ref[i] > 0)
-            mpl_tab_set_str(dca, sql->ref[i], strtrim(buf));
+            if (len > SQL_FDLEN_MAX)
+               len = SQL_FDLEN_MAX;
+            else if (len < 0)
+               len = 0;
+            strncpy(buf, (const char *) sql->data[i], len);
+            buf[len] = 0x00;
+            if (0 != (sql->isnumeric[i]))
+            {  strspx(buf); /* remove spaces*/
+               if (str2num(buf, &num) != 0)
+               {  xprintf("'%s' cannot be converted to a number.\n",
+                     buf);
+                  return 1;
+               }
+               mpl_tab_set_num(dca, sql->ref[i], num);
+            }
+            else
+            {  mpl_tab_set_str(dca, sql->ref[i], strtrim(buf));
+            }
          }
-         }
+      }
+   }
    return 0;
 }
 
@@ -823,18 +972,15 @@ int db_iodbc_write(TABDCA *dca, void *link)
                         xassert(dca != dca);
          }
    }
-   strcat(query, part);
+   if (part != NULL)
+      strcat(query, part);
    if (dl_SQLExecDirect(sql->hstmt, (SQLCHAR *) query, SQL_NTS)
       != SQL_SUCCESS)
    {
       xprintf("db_iodbc_write: Query\n\"%s\"\nfailed.\n", query);
       extract_error("SQLExecDirect", sql->hdbc, SQL_HANDLE_DBC);
-      dl_SQLFreeHandle(SQL_HANDLE_STMT, sql->hstmt);
-      dl_SQLDisconnect(sql->hdbc);
-      dl_SQLFreeHandle(SQL_HANDLE_DBC, sql->hdbc);
-      dl_SQLFreeHandle(SQL_HANDLE_ENV, sql->henv);
-      xfree(sql->query);
-         xfree(sql);
+      xfree(query);
+      xfree(template);
       return 1;
       }
 
@@ -849,7 +995,6 @@ int db_iodbc_close(TABDCA *dca, void *link)
 
    sql = (struct db_odbc *) link;
    xassert(sql != NULL);
-
    /* Commit */
    if ( sql->mode == 'W' )
       dl_SQLEndTran(SQL_HANDLE_ENV, sql->henv, SQL_COMMIT);
@@ -945,7 +1090,7 @@ int db_mysql_close(TABDCA *dca, void *link)
 
 #else
 
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WOE32__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WOE__)
 #include <windows.h>
 #endif
 
@@ -959,9 +1104,9 @@ int db_mysql_close(TABDCA *dca, void *link)
 
 struct db_mysql
 {
-   int              mode;  //'R' = Read, 'W' = Write
-   MYSQL           *con;   //connection
-   MYSQL_RES       *res;    //result
+   int              mode;  /*'R' = Read, 'W' = Write*/
+   MYSQL           *con;   /*connection*/
+   MYSQL_RES       *res;    /*result*/
    int              nf;
    /* number of fields in the csv file */
    int              ref[1+SQL_FIELD_MAX];
@@ -1099,7 +1244,45 @@ MYSQL_RES * STDCALL dl_mysql_use_result(MYSQL *mysql)
       return (*fn)(mysql);
 }
 
+/***********************************************************************
+*  NAME
+*
+*  db_mysql_open - open connection to ODBC data base
+*
+*  SYNOPSIS
+*
+*  #include "glpsql.h"
+*  void *db_mysql_open(TABDCA *dca, int mode);
+*
+*  DESCRIPTION
+*
+*  The routine db_mysql_open opens a connection to a MySQL data base.
+*  It then executes the sql statements passed.
+*
+*  In the case of table read the SELECT statement is executed.
+*
+*  In the case of table write the INSERT statement is prepared.
+*  RETURNS
+*
+*  The routine returns a pointer to data storage area created. */
+
 void *db_mysql_open(TABDCA *dca, int mode)
+{  void  *ret;
+   char **sqllines;
+
+   sqllines = args_concat(dca);
+   if (sqllines == NULL)
+   {  xprintf("Missing arguments in table statement.\n"
+              "Please, supply table driver, dsn, and query.\n");
+      return NULL;
+   }
+   ret = db_mysql_open_int(dca, mode, (const char **) sqllines);
+   free_buffer(sqllines);
+   return ret;
+}
+
+static void *db_mysql_open_int(TABDCA *dca, int mode, const char
+   **sqllines)
 {
    struct db_mysql *sql = NULL;
    char            *arg = NULL;
@@ -1109,13 +1292,13 @@ void *db_mysql_open(TABDCA *dca, int mode)
    char            *value;
    char            *query;
    char            *dsn;
-// "Server=[server_name];Database=[database_name];UID=[username];
-// PWD=[password];Port=[port]"
-   char            *server   = NULL;        // Server
-   char            *user     = NULL;        // UID
-   char            *password = NULL;        // PWD
-   char            *database = NULL;        // Database
-   unsigned int     port = 0;               // Port
+/* "Server=[server_name];Database=[database_name];UID=[username];*/
+/* PWD=[password];Port=[port]"*/
+   char            *server   = NULL;        /* Server */
+   char            *user     = NULL;        /* UID */
+   char            *password = NULL;        /* PWD */
+   char            *database = NULL;        /* Database */
+   unsigned int     port = 0;               /* Port */
    int              narg;
    int              i, j, total;
 
@@ -1147,14 +1330,14 @@ void *db_mysql_open(TABDCA *dca, int mode)
    if (narg < 3 )
       xprintf("MySQL driver: string list too short \n");
 
-   // get connection string
+   /* get connection string*/
    dsn = (char *) mpl_tab_get_arg(dca, 2);
-      // copy connection string
+      /* copy connection string*/
    i = strlen(dsn);
    i++;
    arg = xmalloc(i * sizeof(char));
    strcpy(arg, dsn);
-   //tokenize connection string
+   /*tokenize connection string*/
    for (i = 1, keyword = strtok (arg, "="); (keyword != NULL);
       keyword = strtok (NULL, "="), i++)
    {
@@ -1178,22 +1361,21 @@ void *db_mysql_open(TABDCA *dca, int mode)
       else if (0 == strcmp(keyword, "Port"))
              port = (unsigned int) atol(value);
    }
-   // Connect to database
+   /* Connect to database */
    sql->con = dl_mysql_init(NULL);
   if (!dl_mysql_real_connect(sql->con, server, user, password, database,
       port, NULL, 0))
    {
-           xprintf("db_mysql_open: Connect failed\n");
-         xprintf( dl_mysql_error(sql->con));
-           xfree(arg);
-         xfree(sql);
-           return NULL;
-      }
+      xprintf("db_mysql_open: Connect failed\n");
+      xprintf("%s\n", dl_mysql_error(sql->con));
+      xfree(arg);
+      xfree(sql);
+      return NULL;
+   }
    xfree(arg);
 
-   for (j = 3; j < narg; j++)
-   {
-      query = (char *) mpl_tab_get_arg(dca, j);
+   for(j = 0; sqllines[j+1] != NULL; j++)
+   {  query = (char *) sqllines[j];
       xprintf("%s\n", query);
       if (dl_mysql_query(sql->con, query))
       {
@@ -1206,9 +1388,9 @@ void *db_mysql_open(TABDCA *dca, int mode)
    }
 
    if ( sql->mode == 'R' )
-   {
-      sql->nf = mpl_tab_num_flds(dca);
-      arg = (char *) mpl_tab_get_arg(dca, narg);
+   {  sql->nf = mpl_tab_num_flds(dca);
+      for(j = 0; sqllines[j] != NULL; j++)
+         arg = (char *) sqllines[j];
       total = strlen(arg);
       if (total > 7 && 0 == strncmp(arg, "SELECT ", 7))
       {
@@ -1234,12 +1416,11 @@ void *db_mysql_open(TABDCA *dca, int mode)
       sql->res = dl_mysql_use_result(sql->con);
       if (sql->res)
       {
-         // create references between query results and table fields
+         /* create references between query results and table fields*/
          total = dl_mysql_num_fields(sql->res);
          if (total > SQL_FIELD_MAX)
-         {
-    xprintf("db_mysql_open: Too many fields (> %d) in query.\n\"%s\"\n",
-               SQL_FIELD_MAX, query);
+         {  xprintf("db_mysql_open: Too many fields (> %d) in query.\n"
+               "\"%s\"\n", SQL_FIELD_MAX, query);
             xprintf("%s\n",dl_mysql_error(sql->con));
             dl_mysql_close(sql->con);
             xfree(query);
@@ -1280,8 +1461,8 @@ void *db_mysql_open(TABDCA *dca, int mode)
       }
    }
    else if ( sql->mode == 'W' )
-   {
-      arg = (char *) mpl_tab_get_arg(dca, narg);
+   {  for(j = 0; sqllines[j] != NULL; j++)
+         arg = (char *) sqllines[j];
       if (  NULL != strchr(arg, '?') )
       {
          total = strlen(arg);
@@ -1289,19 +1470,15 @@ void *db_mysql_open(TABDCA *dca, int mode)
          strcpy (query, arg);
          }
       else
-      {
          query = db_generate_insert_stmt(dca);
-      }
       sql->query = query;
       xprintf("%s\n", query);
    }
-
    return sql;
 }
 
 int db_mysql_read(TABDCA *dca, void *link)
-{
-   struct db_mysql *sql;
+{  struct db_mysql *sql;
    char            buf[255+1];
    char            **row;
    unsigned long   *lengths;
@@ -1321,34 +1498,36 @@ int db_mysql_read(TABDCA *dca, void *link)
       return 1;
    }
    if (NULL==(row = (char **)dl_mysql_fetch_row(sql->res))) {
-       return -1; //EOF
+       return -1; /*EOF*/
    }
    lengths = dl_mysql_fetch_lengths(sql->res);
    fields = dl_mysql_fetch_fields(sql->res);
    num_fields = dl_mysql_num_fields(sql->res);
    for (i=1; i <= num_fields; i++)
    {
-      len = (size_t) lengths[i-1];
-      if (len > 255)
-         len = 255;
-      strncpy(buf, (const char *) row[i-1], len);
-      buf[len] = 0x00;
-      if (0 != (fields[i-1].flags & NUM_FLAG))
-      {
-         strspx(buf); // remove spaces
-         xassert(str2num(buf, &num) == 0);
-         if (sql->ref[i] > 0)
-            mpl_tab_set_num(dca, sql->ref[i], num);
+      if (row[i-1] != NULL)
+      {  len = (size_t) lengths[i-1];
+         if (len > 255)
+            len = 255;
+         strncpy(buf, (const char *) row[i-1], len);
+         buf[len] = 0x00;
+         if (0 != (fields[i-1].flags & NUM_FLAG))
+         {  strspx(buf); /* remove spaces*/
+            if (str2num(buf, &num) != 0)
+            {  xprintf("'%s' cannot be converted to a number.\n", buf);
+               return 1;
+            }
+            if (sql->ref[i] > 0)
+               mpl_tab_set_num(dca, sql->ref[i], num);
          }
-           else
-         {
-         if (sql->ref[i] > 0)
-            mpl_tab_set_str(dca, sql->ref[i], strtrim(buf));
+         else
+         {  if (sql->ref[i] > 0)
+               mpl_tab_set_str(dca, sql->ref[i], strtrim(buf));
          }
-         }
-   return 0;
+      }
    }
-
+   return 0;
+}
 
 int db_mysql_write(TABDCA *dca, void *link)
 {
@@ -1405,17 +1584,14 @@ int db_mysql_write(TABDCA *dca, void *link)
                         xassert(dca != dca);
          }
    }
-   strcat(query, part);
+   if (part != NULL)
+      strcat(query, part);
    if (dl_mysql_query(sql->con, query))
    {
       xprintf("db_mysql_write: Query\n\"%s\"\nfailed.\n", query);
       xprintf("%s\n",dl_mysql_error(sql->con));
-      dl_mysql_close(sql->con);
       xfree(query);
       xfree(template);
-      xfree(sql->query);
-           xfree(sql);
-      dca->link = NULL;
       return 1;
       }
 

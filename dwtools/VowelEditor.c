@@ -1434,6 +1434,7 @@ static void createChildren (VowelEditor me)
 
 	#if gtk
 	form = my dialog; /* TODO: ?? */
+	Widget vbox = gtk_vbox_new
 	#elif motif
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
@@ -1447,12 +1448,15 @@ static void createChildren (VowelEditor me)
 	// Three buttons on a row: Play, Reverse, Publish
 	left = 10; right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM +10; bottom_widgets_bottom = bottom = -STATUS_INFO;
+	#if gtk
+
+	#elif motif
 	my playButton = GuiButton_createShown (form, left, right, top, bottom, L"Play", gui_button_cb_play, me, 0);
 	left = right + 10; right = left + button_width;
 	my reverseButton = GuiButton_createShown (form, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, me, 0);
 	left = right + 10; right = left + button_width;
 	my publishButton = GuiButton_createShown (form, left, right, top, bottom, L"Publish", gui_button_cb_publish, me, 0);
-
+	#endif
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing

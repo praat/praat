@@ -437,6 +437,7 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 #endif
 
 /********** Improving extrema **********/
+#pragma mark Improving extrema
 
 struct improve_params {
 	int depth;

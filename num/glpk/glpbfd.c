@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,14 +22,47 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include "glpbfd.h"
-#include "glplib.h"
-#define xfault xerror
+typedef struct BFD BFD;
+
+#define GLPBFD_PRIVATE
+#include "glpapi.h"
+#include "glpfhv.h"
+#include "glplpf.h"
 
 /* CAUTION: DO NOT CHANGE THE LIMIT BELOW */
 
 #define M_MAX 100000000 /* = 100*10^6 */
 /* maximal order of the basis matrix */
+
+struct BFD
+{     /* LP basis factorization */
+      int valid;
+      /* factorization is valid only if this flag is set */
+      int type;
+      /* factorization type:
+         GLP_BF_FT - LUF + Forrest-Tomlin
+         GLP_BF_BG - LUF + Schur compl. + Bartels-Golub
+         GLP_BF_GR - LUF + Schur compl. + Givens rotation */
+      FHV *fhv;
+      /* LP basis factorization (GLP_BF_FT) */
+      LPF *lpf;
+      /* LP basis factorization (GLP_BF_BG, GLP_BF_GR) */
+      int lu_size;      /* luf.sv_size */
+      double piv_tol;   /* luf.piv_tol */
+      int piv_lim;      /* luf.piv_lim */
+      int suhl;         /* luf.suhl */
+      double eps_tol;   /* luf.eps_tol */
+      double max_gro;   /* luf.max_gro */
+      int nfs_max;      /* fhv.hh_max */
+      double upd_tol;   /* fhv.upd_tol */
+      int nrs_max;      /* lpf.n_max */
+      int rs_size;      /* lpf.v_size */
+      /* internal control parameters */
+      int upd_lim;
+      /* the factorization update limit */
+      int upd_cnt;
+      /* the factorization update count */
+};
 
 /***********************************************************************
 *  NAME
@@ -53,7 +87,7 @@ BFD *bfd_create_it(void)
 {     BFD *bfd;
       bfd = xmalloc(sizeof(BFD));
       bfd->valid = 0;
-      bfd->type = BFD_TFT;
+      bfd->type = GLP_BF_FT;
       bfd->fhv = NULL;
       bfd->lpf = NULL;
       bfd->lu_size = 0;
@@ -62,13 +96,33 @@ BFD *bfd_create_it(void)
       bfd->suhl = 1;
       bfd->eps_tol = 1e-15;
       bfd->max_gro = 1e+10;
-      bfd->nfs_max = 50;
+      bfd->nfs_max = 100;
       bfd->upd_tol = 1e-6;
-      bfd->nrs_max = 50;
+      bfd->nrs_max = 100;
       bfd->rs_size = 1000;
       bfd->upd_lim = -1;
       bfd->upd_cnt = 0;
       return bfd;
+}
+
+/**********************************************************************/
+
+void bfd_set_parm(BFD *bfd, const void *_parm)
+{     /* change LP basis factorization control parameters */
+      const glp_bfcp *parm = _parm;
+      xassert(bfd != NULL);
+      bfd->type = parm->type;
+      bfd->lu_size = parm->lu_size;
+      bfd->piv_tol = parm->piv_tol;
+      bfd->piv_lim = parm->piv_lim;
+      bfd->suhl = parm->suhl;
+      bfd->eps_tol = parm->eps_tol;
+      bfd->max_gro = parm->max_gro;
+      bfd->nfs_max = parm->nfs_max;
+      bfd->upd_tol = parm->upd_tol;
+      bfd->nrs_max = parm->nrs_max;
+      bfd->rs_size = parm->rs_size;
+      return;
 }
 
 /***********************************************************************
@@ -122,31 +176,28 @@ int bfd_factorize(BFD *bfd, int m, const int bh[], int (*col)
       (void *info, int j, int ind[], double val[]), void *info)
 {     LUF *luf;
       int nov, ret;
-      if (m < 1)
-         xfault("bfd_factorize: m = %d; invalid parameter\n", m);
-      if (m > M_MAX)
-         xfault("bfd_factorize: m = %d; matrix too big\n", m);
+      xassert(bfd != NULL);
+      xassert(1 <= m && m <= M_MAX);
       /* invalidate the factorization */
       bfd->valid = 0;
       /* create the factorization, if necessary */
       nov = 0;
       switch (bfd->type)
-      {  case BFD_TFT:
+      {  case GLP_BF_FT:
             if (bfd->lpf != NULL)
                lpf_delete_it(bfd->lpf), bfd->lpf = NULL;
             if (bfd->fhv == NULL)
                bfd->fhv = fhv_create_it(), nov = 1;
             break;
-         case BFD_TBG:
-         case BFD_TGR:
+         case GLP_BF_BG:
+         case GLP_BF_GR:
             if (bfd->fhv != NULL)
                fhv_delete_it(bfd->fhv), bfd->fhv = NULL;
             if (bfd->lpf == NULL)
                bfd->lpf = lpf_create_it(), nov = 1;
             break;
          default:
-            xfault("bfd_factorize: bfd->type = %d; invalid factorizatio"
-               "n type\n", bfd->type);
+            xassert(bfd != bfd);
       }
       /* set control parameters specific to LUF */
       if (bfd->fhv != NULL)
@@ -191,11 +242,11 @@ int bfd_factorize(BFD *bfd, int m, const int bh[], int (*col)
          {  case 0:
                /* set the Schur complement update type */
                switch (bfd->type)
-               {  case BFD_TBG:
+               {  case GLP_BF_BG:
                      /* Bartels-Golub update */
                      bfd->lpf->scf->t_opt = SCF_TBG;
                      break;
-                  case BFD_TGR:
+                  case GLP_BF_GR:
                      /* Givens rotation update */
                      bfd->lpf->scf->t_opt = SCF_TGR;
                      break;
@@ -244,8 +295,8 @@ done: /* return to the calling program */
 *  the routine stores elements of the vector x in the same locations. */
 
 void bfd_ftran(BFD *bfd, double x[])
-{     if (!bfd->valid)
-         xfault("bfd_ftran: the factorization is not valid\n");
+{     xassert(bfd != NULL);
+      xassert(bfd->valid);
       if (bfd->fhv != NULL)
          fhv_ftran(bfd->fhv, x);
       else if (bfd->lpf != NULL)
@@ -277,8 +328,8 @@ void bfd_ftran(BFD *bfd, double x[])
 *  the routine stores elements of the vector x in the same locations. */
 
 void bfd_btran(BFD *bfd, double x[])
-{     if (!bfd->valid)
-         xfault("bfd_btran: the factorization is not valid\n");
+{     xassert(bfd != NULL);
+      xassert(bfd->valid);
       if (bfd->fhv != NULL)
          fhv_btran(bfd->fhv, x);
       else if (bfd->lpf != NULL)
@@ -339,8 +390,8 @@ void bfd_btran(BFD *bfd, double x[])
 int bfd_update_it(BFD *bfd, int j, int bh, int len, const int ind[],
       const double val[])
 {     int ret;
-      if (!bfd->valid)
-         xfault("bfd_update_it: the factorization is not valid\n");
+      xassert(bfd != NULL);
+      xassert(bfd->valid);
       /* try to update the factorization */
       if (bfd->fhv != NULL)
       {  switch (fhv_update_it(bfd->fhv, j, len, ind, val))
@@ -392,6 +443,15 @@ done: /* return to the calling program */
       return ret;
 }
 
+/**********************************************************************/
+
+int bfd_get_count(BFD *bfd)
+{     /* determine factorization update count */
+      xassert(bfd != NULL);
+      xassert(bfd->valid);
+      return bfd->upd_cnt;
+}
+
 /***********************************************************************
 *  NAME
 *
@@ -409,8 +469,11 @@ done: /* return to the calling program */
 *  object. */
 
 void bfd_delete_it(BFD *bfd)
-{     if (bfd->fhv != NULL) fhv_delete_it(bfd->fhv);
-      if (bfd->lpf != NULL) lpf_delete_it(bfd->lpf);
+{     xassert(bfd != NULL);
+      if (bfd->fhv != NULL)
+         fhv_delete_it(bfd->fhv);
+      if (bfd->lpf != NULL)
+         lpf_delete_it(bfd->lpf);
       xfree(bfd);
       return;
 }

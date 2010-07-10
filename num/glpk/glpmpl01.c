@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -547,7 +548,23 @@ CODE *make_code(MPL *mpl, int op, OPERANDS *arg, int type, int dim)
             }
             code->arg.var.var = arg->var.var;
             code->arg.var.list = arg->var.list;
+#if 1 /* 15/V-2010 */
+            code->arg.var.suff = arg->var.suff;
+#endif
             break;
+#if 1 /* 15/V-2010 */
+         case O_MEMCON:
+            for (e = arg->con.list; e != NULL; e = e->next)
+            {  xassert(e->x != NULL);
+               xassert(e->x->up == NULL);
+               e->x->up = code;
+               code->vflag |= e->x->vflag;
+            }
+            code->arg.con.con = arg->con.con;
+            code->arg.con.list = arg->con.list;
+            code->arg.con.suff = arg->con.suff;
+            break;
+#endif
          case O_TUPLE:
          case O_MAKE:
             for (e = arg->list; e != NULL; e = e->next)
@@ -565,6 +582,7 @@ CODE *make_code(MPL *mpl, int op, OPERANDS *arg, int type, int dim)
          case O_IRAND224:
          case O_UNIFORM01:
          case O_NORMAL01:
+         case O_GMTIME:
             code->vflag = 1;
             break;
          case O_CVTNUM:
@@ -630,6 +648,8 @@ CODE *make_code(MPL *mpl, int op, OPERANDS *arg, int type, int dim)
          case O_WITHIN:
          case O_NOTWITHIN:
          case O_SUBSTR:
+         case O_STR2TIME:
+         case O_TIME2STR:
             /* binary operation */
             xassert(arg->arg.x != NULL);
             xassert(arg->arg.x->up == NULL);
@@ -886,6 +906,7 @@ ARG_LIST *subscript_list(MPL *mpl)
       return list;
 }
 
+#if 1 /* 15/V-2010 */
 /*----------------------------------------------------------------------
 -- object_reference - parse reference to named object.
 --
@@ -896,12 +917,18 @@ ARG_LIST *subscript_list(MPL *mpl)
 -- <primary expression> ::= <set name> [ <subscript list> ]
 -- <primary expression> ::= <parameter name>
 -- <primary expression> ::= <parameter name> [ <subscript list> ]
--- <primary expression> ::= <variable name>
+-- <primary expression> ::= <variable name> <suffix>
 -- <primary expression> ::= <variable name> [ <subscript list> ]
+--                          <suffix>
+-- <primary expression> ::= <constraint name> <suffix>
+-- <primary expression> ::= <constraint name> [ <subscript list> ]
+--                          <suffix>
 -- <dummy index> ::= <symbolic name>
 -- <set name> ::= <symbolic name>
 -- <parameter name> ::= <symbolic name>
--- <variable name> ::= <symbolic name> */
+-- <variable name> ::= <symbolic name>
+-- <constraint name> ::= <symbolic name>
+-- <suffix> ::= <empty> | .lb | .ub | .status | .val | .dual */
 
 CODE *object_reference(MPL *mpl)
 {     AVLNODE *node;
@@ -914,7 +941,7 @@ CODE *object_reference(MPL *mpl)
       OPERANDS arg;
       CODE *code;
       char *name;
-      int dim;
+      int dim, suff;
       /* find the object in the symbolic name table */
       xassert(mpl->token == T_NAME);
       node = avl_find_node(mpl->tree, mpl->image);
@@ -953,9 +980,9 @@ CODE *object_reference(MPL *mpl)
          case A_CONSTRAINT:
             /* model constraint or objective */
             con = (CONSTRAINT *)avl_get_node_link(node);
-            mpl_error(mpl, "invalid reference to %s %s",
-               con->type == A_CONSTRAINT ? "constraint" : "objective",
-               mpl->image);
+            name = con->name;
+            dim = con->dim;
+            break;
          default:
             xassert(node != node);
       }
@@ -978,6 +1005,32 @@ CODE *object_reference(MPL *mpl)
          if (dim != 0)
             mpl_error(mpl, "%s must be subscripted", name);
          list = create_arg_list(mpl);
+      }
+      /* parse optional suffix */
+      if (!mpl->flag_s && avl_get_node_type(node) == A_VARIABLE)
+         suff = DOT_NONE;
+      else
+         suff = DOT_VAL;
+      if (mpl->token == T_POINT)
+      {  get_token(mpl /* . */);
+         if (mpl->token != T_NAME)
+            mpl_error(mpl, "invalid use of period");
+         if (!(avl_get_node_type(node) == A_VARIABLE ||
+               avl_get_node_type(node) == A_CONSTRAINT))
+            mpl_error(mpl, "%s cannot have a suffix", name);
+         if (strcmp(mpl->image, "lb") == 0)
+            suff = DOT_LB;
+         else if (strcmp(mpl->image, "ub") == 0)
+            suff = DOT_UB;
+         else if (strcmp(mpl->image, "status") == 0)
+            suff = DOT_STATUS;
+         else if (strcmp(mpl->image, "val") == 0)
+            suff = DOT_VAL;
+         else if (strcmp(mpl->image, "dual") == 0)
+            suff = DOT_DUAL;
+         else
+            mpl_error(mpl, "suffix .%s invalid", mpl->image);
+         get_token(mpl /* suffix */);
       }
       /* generate pseudo-code to take value of the object */
       switch (avl_get_node_type(node))
@@ -1002,26 +1055,35 @@ CODE *object_reference(MPL *mpl)
                code = make_code(mpl, O_MEMNUM, &arg, A_NUMERIC, 0);
             break;
          case A_VARIABLE:
+            if (!mpl->flag_s && (suff == DOT_STATUS || suff == DOT_VAL
+               || suff == DOT_DUAL))
+               mpl_error(mpl, "invalid reference to status, primal value, o"
+                  "r dual value of variable %s above solve statement",
+                  var->name);
             arg.var.var = var;
             arg.var.list = list;
-#if 0 /* 01/VIII-2004 */
-            code = make_code(mpl, O_MEMVAR, &arg, A_FORMULA, 0);
-#else
-            if (!mpl->flag_s)
-            {  /* variable is referenced above solve statement */
-               code = make_code(mpl, O_MEMVAR, &arg, A_FORMULA, 0);
-            }
-            else
-            {  /* variable is referenced below solve statement */
-               code = make_code(mpl, O_MEMVAR, &arg, A_NUMERIC, 0);
-            }
-#endif
+            arg.var.suff = suff;
+            code = make_code(mpl, O_MEMVAR, &arg, suff == DOT_NONE ?
+               A_FORMULA : A_NUMERIC, 0);
+            break;
+         case A_CONSTRAINT:
+            if (!mpl->flag_s && (suff == DOT_STATUS || suff == DOT_VAL
+               || suff == DOT_DUAL))
+               mpl_error(mpl, "invalid reference to status, primal value, o"
+                  "r dual value of %s %s above solve statement",
+                  con->type == A_CONSTRAINT ? "constraint" : "objective"
+                  , con->name);
+            arg.con.con = con;
+            arg.con.list = list;
+            arg.con.suff = suff;
+            code = make_code(mpl, O_MEMCON, &arg, A_NUMERIC, 0);
             break;
          default:
             xassert(node != node);
       }
       return code;
 }
+#endif
 
 /*----------------------------------------------------------------------
 -- numeric_argument - parse argument passed to built-in function.
@@ -1101,6 +1163,9 @@ CODE *elemset_argument(MPL *mpl, char *func)
 -- <primary expression> ::= length ( <arg> )
 -- <primary expression> ::= substr ( <arg> , <arg> )
 -- <primary expression> ::= substr ( <arg> , <arg> , <arg> )
+-- <primary expression> ::= str2time ( <arg> , <arg> )
+-- <primary expression> ::= time2str ( <arg> , <arg> )
+-- <primary expression> ::= gmtime ( )
 -- <arg list> ::= <arg>
 -- <arg list> ::= <arg list> , <arg> */
 
@@ -1155,6 +1220,12 @@ CODE *function_reference(MPL *mpl)
          op = O_LENGTH;
       else if (strcmp(mpl->image, "substr") == 0)
          op = O_SUBSTR;
+      else if (strcmp(mpl->image, "str2time") == 0)
+         op = O_STR2TIME;
+      else if (strcmp(mpl->image, "time2str") == 0)
+         op = O_TIME2STR;
+      else if (strcmp(mpl->image, "gmtime") == 0)
+         op = O_GMTIME;
       else
          mpl_error(mpl, "function %s unknown", mpl->image);
       /* save symbolic name of the function */
@@ -1183,8 +1254,8 @@ CODE *function_reference(MPL *mpl)
          }
       }
       else if (op == O_IRAND224 || op == O_UNIFORM01 || op ==
-         O_NORMAL01)
-      {  /* Irand224, Uniform01, and Normal01 need no arguments */
+         O_NORMAL01 || op == O_GMTIME)
+      {  /* Irand224, Uniform01, Normal01, gmtime need no arguments */
          if (mpl->token != T_RIGHT)
             mpl_error(mpl, "%s needs no arguments", func);
       }
@@ -1261,6 +1332,50 @@ CODE *function_reference(MPL *mpl)
          else
             mpl_error(mpl, "syntax error in argument for %s", func);
       }
+      else if (op == O_STR2TIME)
+      {  /* str2time needs two arguments, both symbolic */
+         /* parse the first argument */
+         arg.arg.x = symbolic_argument(mpl, func);
+         /* check a token that follows the first argument */
+         if (mpl->token == T_COMMA)
+            ;
+         else if (mpl->token == T_RIGHT)
+            mpl_error(mpl, "%s needs two arguments", func);
+         else
+            mpl_error(mpl, "syntax error in argument for %s", func);
+         get_token(mpl /* , */);
+         /* parse the second argument */
+         arg.arg.y = symbolic_argument(mpl, func);
+         /* check a token that follows the second argument */
+         if (mpl->token == T_COMMA)
+            mpl_error(mpl, "%s needs two argument", func);
+         else if (mpl->token == T_RIGHT)
+            ;
+         else
+            mpl_error(mpl, "syntax error in argument for %s", func);
+      }
+      else if (op == O_TIME2STR)
+      {  /* time2str needs two arguments, numeric and symbolic */
+         /* parse the first argument */
+         arg.arg.x = numeric_argument(mpl, func);
+         /* check a token that follows the first argument */
+         if (mpl->token == T_COMMA)
+            ;
+         else if (mpl->token == T_RIGHT)
+            mpl_error(mpl, "%s needs two arguments", func);
+         else
+            mpl_error(mpl, "syntax error in argument for %s", func);
+         get_token(mpl /* , */);
+         /* parse the second argument */
+         arg.arg.y = symbolic_argument(mpl, func);
+         /* check a token that follows the second argument */
+         if (mpl->token == T_COMMA)
+            mpl_error(mpl, "%s needs two argument", func);
+         else if (mpl->token == T_RIGHT)
+            ;
+         else
+            mpl_error(mpl, "syntax error in argument for %s", func);
+      }
       else
       {  /* other functions need one argument */
          if (op == O_CARD)
@@ -1278,7 +1393,7 @@ CODE *function_reference(MPL *mpl)
             mpl_error(mpl, "syntax error in argument for %s", func);
       }
       /* make pseudo-code to call the built-in function */
-      if (op == O_SUBSTR || op == O_SUBSTR3)
+      if (op == O_SUBSTR || op == O_SUBSTR3 || op == O_TIME2STR)
          code = make_code(mpl, op, &arg, A_SYMBOLIC, 0);
       else
          code = make_code(mpl, op, &arg, A_NUMERIC, 0);
@@ -1798,6 +1913,29 @@ void close_scope(MPL *mpl, DOMAIN *domain)
 --
 -- Note that parsing "integrand" depends on the iterated operator. */
 
+#if 1 /* 07/IX-2008 */
+static void link_up(CODE *code)
+{     /* if we have something like sum{(i+1,j,k-1) in E} x[i,j,k],
+         where i and k are dummy indices defined out of the iterated
+         expression, we should link up pseudo-code for computing i+1
+         and k-1 to pseudo-code for computing the iterated expression;
+         this is needed to invalidate current value of the iterated
+         expression once i or k have been changed */
+      DOMAIN_BLOCK *block;
+      DOMAIN_SLOT *slot;
+      for (block = code->arg.loop.domain->list; block != NULL;
+         block = block->next)
+      {  for (slot = block->list; slot != NULL; slot = slot->next)
+         {  if (slot->code != NULL)
+            {  xassert(slot->code->up == NULL);
+               slot->code->up = code;
+            }
+         }
+      }
+      return;
+}
+#endif
+
 CODE *iterated_expression(MPL *mpl)
 {     CODE *code;
       OPERANDS arg;
@@ -1885,6 +2023,9 @@ err:           mpl_error(mpl, "integrand following %s{...} has invalid type"
       }
       /* close the scope of the indexing expression */
       close_scope(mpl, arg.loop.domain);
+#if 1 /* 07/IX-2008 */
+      link_up(code);
+#endif
       return code;
 }
 
@@ -1938,6 +2079,9 @@ CODE *set_expression(MPL *mpl)
          /* generate pseudo-code to build the resultant set */
          code = make_code(mpl, O_BUILD, &arg, A_ELEMSET,
             domain_arity(mpl, arg.loop.domain));
+#if 1 /* 07/IX-2008 */
+         link_up(code);
+#endif
       }
       return code;
 }
@@ -2608,6 +2752,12 @@ CODE *expression_10(MPL *mpl)
       switch (op)
       {  case O_EQ:
          case O_NE:
+#if 1 /* 02/VIII-2008 */
+         case O_LT:
+         case O_LE:
+         case O_GT:
+         case O_GE:
+#endif
             if (!(x->type == A_NUMERIC || x->type == A_SYMBOLIC))
                error_preceding(mpl, opstr);
             get_token(mpl /* <rho> */);
@@ -2620,6 +2770,7 @@ CODE *expression_10(MPL *mpl)
                y = make_unary(mpl, O_CVTSYM, y, A_SYMBOLIC, 0);
             x = make_binary(mpl, op, x, y, A_LOGICAL, 0);
             break;
+#if 0 /* 02/VIII-2008 */
          case O_LT:
          case O_LE:
          case O_GT:
@@ -2636,6 +2787,7 @@ CODE *expression_10(MPL *mpl)
                error_following(mpl, opstr);
             x = make_binary(mpl, op, x, y, A_LOGICAL, 0);
             break;
+#endif
          case O_IN:
          case O_NOTIN:
             if (x->type == A_NUMERIC)
@@ -2823,6 +2975,7 @@ SET *set_statement(MPL *mpl)
       set->within = NULL;
       set->assign = NULL;
       set->option = NULL;
+      set->gadget = NULL;
       set->data = 0;
       set->array = NULL;
       get_token(mpl /* <symbolic name> */);
@@ -2902,8 +3055,9 @@ SET *set_statement(MPL *mpl)
          }
          else if (mpl->token == T_ASSIGN)
          {  /* assignment expression */
-            if (!(set->assign == NULL && set->option == NULL))
-err:           mpl_error(mpl, "at most one := or default allowed");
+            if (!(set->assign == NULL && set->option == NULL &&
+                  set->gadget == NULL))
+err:           mpl_error(mpl, "at most one := or default/data allowed");
             get_token(mpl /* := */);
             /* parse an expression that follows ':=' */
             set->assign = expression_9(mpl);
@@ -2934,6 +3088,76 @@ err:           mpl_error(mpl, "at most one := or default allowed");
                   "imension %d rather than %d",
                   set->dimen, set->option->dim);
          }
+#if 1 /* 12/XII-2008 */
+         else if (is_keyword(mpl, "data"))
+         {  /* gadget to initialize the set by data from plain set */
+            GADGET *gadget;
+            AVLNODE *node;
+            int i, k, fff[20];
+            if (!(set->assign == NULL && set->gadget == NULL)) goto err;
+            get_token(mpl /* data */);
+            set->gadget = gadget = alloc(GADGET);
+            /* set name must follow the keyword 'data' */
+            if (mpl->token == T_NAME)
+               ;
+            else if (is_reserved(mpl))
+               mpl_error(mpl, "invalid use of reserved keyword %s",
+                  mpl->image);
+            else
+               mpl_error(mpl, "set name missing where expected");
+            /* find the set in the symbolic name table */
+            node = avl_find_node(mpl->tree, mpl->image);
+            if (node == NULL)
+               mpl_error(mpl, "%s not defined", mpl->image);
+            if (avl_get_node_type(node) != A_SET)
+err1:          mpl_error(mpl, "%s not a plain set", mpl->image);
+            gadget->set = avl_get_node_link(node);
+            if (gadget->set->dim != 0) goto err1;
+            if (gadget->set == set)
+               mpl_error(mpl, "set cannot be initialized by itself");
+            /* check and set dimensions */
+            if (set->dim >= gadget->set->dimen)
+err2:          mpl_error(mpl, "dimension of %s too small", mpl->image);
+            if (set->dimen == 0)
+               set->dimen = gadget->set->dimen - set->dim;
+            if (set->dim + set->dimen > gadget->set->dimen)
+               goto err2;
+            else if (set->dim + set->dimen < gadget->set->dimen)
+               mpl_error(mpl, "dimension of %s too big", mpl->image);
+            get_token(mpl /* set name */);
+            /* left parenthesis must follow the set name */
+            if (mpl->token == T_LEFT)
+               get_token(mpl /* ( */);
+            else
+               mpl_error(mpl, "left parenthesis missing where expected");
+            /* parse permutation of component numbers */
+            for (k = 0; k < gadget->set->dimen; k++) fff[k] = 0;
+            k = 0;
+            for (;;)
+            {  if (mpl->token != T_NUMBER)
+                  mpl_error(mpl, "component number missing where expected");
+               if (str2int(mpl->image, &i) != 0)
+err3:             mpl_error(mpl, "component number must be integer between "
+                     "1 and %d", gadget->set->dimen);
+               if (!(1 <= i && i <= gadget->set->dimen)) goto err3;
+               if (fff[i-1] != 0)
+                  mpl_error(mpl, "component %d multiply specified", i);
+               gadget->ind[k++] = i, fff[i-1] = 1;
+               xassert(k <= gadget->set->dimen);
+               get_token(mpl /* number */);
+               if (mpl->token == T_COMMA)
+                  get_token(mpl /* , */);
+               else if (mpl->token == T_RIGHT)
+                  break;
+               else
+                  mpl_error(mpl, "syntax error in data attribute");
+            }
+            if (k < gadget->set->dimen)
+               mpl_error(mpl, "there are must be %d components rather than "
+                  "%d", gadget->set->dimen, k);
+            get_token(mpl /* ) */);
+         }
+#endif
          else
             mpl_error(mpl, "syntax error in set statement");
       }
@@ -3101,9 +3325,11 @@ bin:     {  if (binary_used)
                   temp->next);
                temp->next = cond;
             }
+#if 0 /* 13/VIII-2008 */
             if (par->type == A_SYMBOLIC &&
                !(cond->rho == O_EQ || cond->rho == O_NE))
                mpl_error(mpl, "inequality restriction not allowed");
+#endif
             get_token(mpl /* rho */);
             /* parse an expression that follows relational operator */
             cond->code = expression_5(mpl);
@@ -4066,12 +4292,14 @@ CHECK *check_statement(MPL *mpl)
       return chk;
 }
 
+#if 1 /* 15/V-2010 */
 /*----------------------------------------------------------------------
 -- display_statement - parse display statement.
 --
 -- This routine parses display statement using the syntax:
 --
 -- <display statement> ::= display <domain> : <display list> ;
+-- <display statement> ::= display <domain> <display list> ;
 -- <domain> ::= <empty>
 -- <domain> ::= <indexing expression>
 -- <display list> ::= <display entry>
@@ -4085,9 +4313,7 @@ CHECK *check_statement(MPL *mpl)
 -- <display entry> ::= <variable name> [ <subscript list> ]
 -- <display entry> ::= <constraint name>
 -- <display entry> ::= <constraint name> [ <subscript list> ]
--- <display entry> ::= <expression 13>
---
--- If <domain> is omitted, colon following it may also be omitted. */
+-- <display entry> ::= <expression 13> */
 
 DISPLAY *display_statement(MPL *mpl)
 {     DISPLAY *dpy;
@@ -4100,12 +4326,7 @@ DISPLAY *display_statement(MPL *mpl)
       get_token(mpl /* display */);
       /* parse optional indexing expression */
       if (mpl->token == T_LBRACE)
-      {  dpy->domain = indexing_expression(mpl);
-#if 0
-         if (mpl->token != T_COLON)
-            mpl_error(mpl, "colon missing where expected");
-#endif
-      }
+         dpy->domain = indexing_expression(mpl);
       /* skip optional colon */
       if (mpl->token == T_COLON) get_token(mpl /* : */);
       /* parse display list */
@@ -4113,7 +4334,6 @@ DISPLAY *display_statement(MPL *mpl)
       {  /* create new display entry */
          entry = alloc(DISPLAY1);
          entry->type = 0;
-         entry->list = NULL;
          entry->next = NULL;
          /* and append it to the display list */
          if (dpy->list == NULL)
@@ -4128,8 +4348,7 @@ DISPLAY *display_statement(MPL *mpl)
             get_token(mpl /* <symbolic name> */);
             next_token = mpl->token;
             unget_token(mpl);
-            if (!(next_token == T_COMMA || next_token == T_SEMICOLON ||
-                  next_token == T_LBRACKET))
+            if (!(next_token == T_COMMA || next_token == T_SEMICOLON))
             {  /* symbolic name begins expression */
                goto expr;
             }
@@ -4137,48 +4356,36 @@ DISPLAY *display_statement(MPL *mpl)
             node = avl_find_node(mpl->tree, mpl->image);
             if (node == NULL)
                mpl_error(mpl, "%s not defined", mpl->image);
-if (next_token == T_LBRACKET && avl_get_node_type(node) != A_CONSTRAINT)
-            {  /* symbolic name begins expression */
-               goto expr;
-            }
             entry->type = avl_get_node_type(node);
             switch (avl_get_node_type(node))
             {  case A_INDEX:
-entry->u.slot = (DOMAIN_SLOT *)avl_get_node_link(node);
+                  entry->u.slot =
+                     (DOMAIN_SLOT *)avl_get_node_link(node);
                   break;
                case A_SET:
-entry->u.set = (SET *)avl_get_node_link(node);
+                  entry->u.set = (SET *)avl_get_node_link(node);
                   break;
                case A_PARAMETER:
-entry->u.par = (PARAMETER *)avl_get_node_link(node);
+                  entry->u.par = (PARAMETER *)avl_get_node_link(node);
                   break;
                case A_VARIABLE:
-entry->u.var = (VARIABLE *)avl_get_node_link(node);
+                  entry->u.var = (VARIABLE *)avl_get_node_link(node);
+                  if (!mpl->flag_s)
+                     mpl_error(mpl, "invalid reference to variable %s above"
+                        " solve statement", entry->u.var->name);
                   break;
                case A_CONSTRAINT:
-entry->u.con = (CONSTRAINT *)avl_get_node_link(node);
+                  entry->u.con = (CONSTRAINT *)avl_get_node_link(node);
+                  if (!mpl->flag_s)
+                     mpl_error(mpl, "invalid reference to %s %s above solve"
+                        " statement",
+                        entry->u.con->type == A_CONSTRAINT ?
+                        "constraint" : "objective", entry->u.con->name);
                   break;
                default:
                   xassert(node != node);
             }
             get_token(mpl /* <symbolic name> */);
-            /* parse optional subscript list for constraint */
-            if (mpl->token == T_LBRACKET)
-            {  CONSTRAINT *con;
-               xassert(entry->type == A_CONSTRAINT);
-               con = entry->u.con;
-               if (con->dim == 0)
-                  mpl_error(mpl, "%s cannot be subscripted", con->name);
-               get_token(mpl /* [ */);
-               entry->list = subscript_list(mpl);
-               if (con->dim != arg_list_len(mpl, entry->list))
-                  mpl_error(mpl,
-                     "%s must have %d subscript%s rather than %d",
-                     con->name, con->dim, con->dim == 1 ? "" : "s",
-                     arg_list_len(mpl, entry->list));
-               xassert(mpl->token == T_RBRACKET);
-               get_token(mpl /* ] */);
-            }
          }
          else
 expr:    {  /* display entry is expression */
@@ -4199,6 +4406,7 @@ expr:    {  /* display entry is expression */
       get_token(mpl /* ; */);
       return dpy;
 }
+#endif
 
 /*----------------------------------------------------------------------
 -- printf_statement - parse printf statement.

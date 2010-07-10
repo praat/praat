@@ -393,6 +393,7 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
 	GuiObject_show (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
+	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
 	Widget form = XmCreateForm (scrolledWindow, "list", NULL, 0);
 	
 	#elif gtk

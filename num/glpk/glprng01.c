@@ -11,7 +11,7 @@
 *  Note that all changes concern only external names, so this modified
 *  version produces exactly the same results as the original version.
 *
-*  Changes were made by Andrew Makhorin <mao@mai2.rcnet.ru>.
+*  Changes were made by Andrew Makhorin <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include "glplib.h"
+#include "glpenv.h"
 #include "glprng.h"
 
 #if 0

@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -21,9 +22,11 @@
 *  along with GLPK. If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include "glplib.h"
+#include "glpenv.h"
 #include "glpmat.h"
 #include "glpqmd.h"
+#include "amd.h"
+#include "colamd.h"
 
 /*----------------------------------------------------------------------
 -- check_fvs - check sparse vector in full-vector storage format.
@@ -111,7 +114,7 @@ done: if (flag != NULL) xfree(flag);
 -- 2 - the number of columns (n) is negative;
 -- 3 - A_ptr[1] is not 1;
 -- 4 - some column index is out of range;
--- 5 - some column index is duplicate. */
+-- 5 - some column indices are duplicate. */
 
 int check_pattern(int m, int n, int A_ptr[], int A_ind[])
 {     int i, j, ptr, ret, *flag = NULL;
@@ -483,6 +486,84 @@ void min_degree(int n, int A_ptr[], int A_ind[], int P_per[])
       xfree(nbrhd);
       xfree(qsize);
       xfree(qlink);
+      return;
+}
+
+/**********************************************************************/
+
+void amd_order1(int n, int A_ptr[], int A_ind[], int P_per[])
+{     /* approximate minimum degree ordering (AMD) */
+      int k, ret;
+      double Control[AMD_CONTROL], Info[AMD_INFO];
+      /* get the default parameters */
+      amd_defaults(Control);
+#if 0
+      /* and print them */
+      amd_control(Control);
+#endif
+      /* make all indices 0-based */
+      for (k = 1; k < A_ptr[n+1]; k++) A_ind[k]--;
+      for (k = 1; k <= n+1; k++) A_ptr[k]--;
+      /* call the ordering routine */
+      ret = amd_order(n, &A_ptr[1], &A_ind[1], &P_per[1], Control, Info)
+         ;
+#if 0
+      amd_info(Info);
+#endif
+      xassert(ret == AMD_OK || ret == AMD_OK_BUT_JUMBLED);
+      /* retsore 1-based indices */
+      for (k = 1; k <= n+1; k++) A_ptr[k]++;
+      for (k = 1; k < A_ptr[n+1]; k++) A_ind[k]++;
+      /* patch up permutation matrix */
+      memset(&P_per[n+1], 0, n * sizeof(int));
+      for (k = 1; k <= n; k++)
+      {  P_per[k]++;
+         xassert(1 <= P_per[k] && P_per[k] <= n);
+         xassert(P_per[n+P_per[k]] == 0);
+         P_per[n+P_per[k]] = k;
+      }
+      return;
+}
+
+/**********************************************************************/
+
+static void *allocate(size_t n, size_t size)
+{     void *ptr;
+      ptr = xcalloc(n, size);
+      memset(ptr, 0, n * size);
+      return ptr;
+}
+
+static void release(void *ptr)
+{     xfree(ptr);
+      return;
+}
+
+void symamd_ord(int n, int A_ptr[], int A_ind[], int P_per[])
+{     /* approximate minimum degree ordering (SYMAMD) */
+      int k, ok;
+      int stats[COLAMD_STATS];
+      /* make all indices 0-based */
+      for (k = 1; k < A_ptr[n+1]; k++) A_ind[k]--;
+      for (k = 1; k <= n+1; k++) A_ptr[k]--;
+      /* call the ordering routine */
+      ok = symamd(n, &A_ind[1], &A_ptr[1], &P_per[1], NULL, stats,
+         allocate, release);
+#if 0
+      symamd_report(stats);
+#endif
+      xassert(ok);
+      /* restore 1-based indices */
+      for (k = 1; k <= n+1; k++) A_ptr[k]++;
+      for (k = 1; k < A_ptr[n+1]; k++) A_ind[k]++;
+      /* patch up permutation matrix */
+      memset(&P_per[n+1], 0, n * sizeof(int));
+      for (k = 1; k <= n; k++)
+      {  P_per[k]++;
+         xassert(1 <= P_per[k] && P_per[k] <= n);
+         xassert(P_per[n+P_per[k]] == 0);
+         P_per[n+P_per[k]] = k;
+      }
       return;
 }
 

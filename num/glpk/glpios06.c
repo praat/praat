@@ -3,9 +3,10 @@
 /***********************************************************************
 *  This code is part of GLPK (GNU Linear Programming Kit).
 *
-*  Copyright (C) 2000, 01, 02, 03, 04, 05, 06, 07, 08 Andrew Makhorin,
-*  Department for Applied Informatics, Moscow Aviation Institute,
-*  Moscow, Russia. All rights reserved. E-mail: <mao@mai2.rcnet.ru>.
+*  Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008,
+*  2009, 2010 Andrew Makhorin, Department for Applied Informatics,
+*  Moscow Aviation Institute, Moscow, Russia. All rights reserved.
+*  E-mail: <mao@gnu.org>.
 *
 *  GLPK is free software: you can redistribute it and/or modify it
 *  under the terms of the GNU General Public License as published by
@@ -293,8 +294,6 @@ void *ios_mir_init(glp_tree *tree)
       int m = mip->m;
       int n = mip->n;
       struct MIR *mir;
-      if (tree->parm->msg_lev >= GLP_MSG_ALL)
-         xprintf("MIR cuts enabled\n");
 #if _MIR_DEBUG
       xprintf("ios_mir_init: warning: debug mode enabled\n");
 #endif
@@ -1183,7 +1182,7 @@ static void subst_aux_vars(glp_tree *tree, struct MIR *mir)
       return;
 }
 
-static void add_cut(glp_tree *tree, struct MIR *mir, IOSPOOL *pool)
+static void add_cut(glp_tree *tree, struct MIR *mir)
 {     /* add constructed cut inequality to the cut pool */
       int m = mir->m;
       int n = mir->n;
@@ -1196,7 +1195,13 @@ static void add_cut(glp_tree *tree, struct MIR *mir, IOSPOOL *pool)
          xassert(m+1 <= k && k <= m+n);
          len++, ind[len] = k - m, val[len] = mir->cut_vec->val[j];
       }
-      ios_add_cut_row(tree, pool, len, ind, val, GLP_UP, mir->cut_rhs);
+#if 0
+      ios_add_cut_row(tree, pool, GLP_RF_MIR, len, ind, val, GLP_UP,
+         mir->cut_rhs);
+#else
+      glp_ios_add_row(tree, NULL, GLP_RF_MIR, 0, len, ind, val, GLP_UP,
+         mir->cut_rhs);
+#endif
       xfree(ind);
       xfree(val);
       return;
@@ -1305,7 +1310,7 @@ static int aggregate_row(glp_tree *tree, struct MIR *mir)
 done: return ret;
 }
 
-void ios_mir_gen(glp_tree *tree, void *gen, IOSPOOL *pool)
+void ios_mir_gen(glp_tree *tree, void *gen)
 {     /* main routine to generate MIR cuts */
       glp_prob *mip = tree->mip;
       struct MIR *mir = gen;
@@ -1375,7 +1380,7 @@ loop:    ;
             check_cut_row(mir, r_best);
 #endif
             /* add constructed cut inequality to the cut pool */
-            add_cut(tree, mir, pool);
+            add_cut(tree, mir);
          }
          /* reset bound substitution flags */
          {  int j, k;
