@@ -22,9 +22,13 @@
  * sdk 2008/03/24 GTK
  * sdk 2008/07/01 GTK resize callback
  * fb 2010/02/23 GTK
+ * pb 2010/07/13 GTK key event
  */
 
 #include "GuiP.h"
+#if gtk
+	#include "gdk/gdkkeysyms.h"
+#endif
 #define my  me ->
 #define my  me ->
 #define iam(x)  x me = (x) void_me
@@ -64,12 +68,12 @@ typedef struct structGuiDrawingArea {
 			my activateCallback (my activateBoss, & event);
 		}*/
 //	}
-	static gboolean  _GuiGtkDrawingArea_exposeCallback (Widget widget, GdkEventExpose *expose, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_exposeCallback (Widget widget, GdkEventExpose *expose, gpointer void_me) {
 		iam (GuiDrawingArea);
 		// TODO: that helps agains the damaged regions outside the rect where the
 		// Graphics drawing is done, but where does that margin come from in the
 		// first place?? Additionally this causes even more flickering
-	//gdk_window_clear_area(widget->window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
+		//gdk_window_clear_area(widget->window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my exposeCallback) {
 			struct structGuiDrawingAreaExposeEvent event = { widget, 0 };
 			event. x = expose -> area. x;
@@ -81,11 +85,6 @@ typedef struct structGuiDrawingArea {
 		}
 		return FALSE;			// let GTK+ handle redrawing
 	}
-	// "button-press-event" and "button-release-event" send a GdkEventButton,
-	// but "motion-notify-event" sends a GdkEventMotion, so we cannot generally
-	// assume to receive a GdkEventButton (in contrast, the motion-event does
-	// not contain a field "button", the pressed mouse-button is part of the
-	// "state" bitfield)
 	static gboolean _GuiGtkDrawingArea_clickCallback (Widget widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my clickCallback) {
@@ -123,7 +122,34 @@ typedef struct structGuiDrawingArea {
 		}
 		return FALSE;
 	}
-	static gboolean  _GuiGtkDrawingArea_resizeCallback(Widget widget, GtkAllocation *allocation, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_keyCallback (Widget widget, GdkEvent *gevent, gpointer void_me) {
+		iam (GuiDrawingArea);
+		//Melder_casual ("_GuiGtkDrawingArea_keyCallback");
+		if (my keyCallback && gevent -> type == GDK_KEY_PRESS) {
+			struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
+			GdkEventKey *gkeyEvent = (GdkEventKey *) gevent;
+			event. key = gkeyEvent -> keyval;
+			/*
+			 * Translate with the help of /usr/include/gtk-2.0/gdk/gdkkeysyms.h
+			 */
+			if (event. key == GDK_Escape) event. key = 27;
+			if (event. key == GDK_Left) event. key = 0x2190;
+			if (event. key == GDK_Up) event. key = 0x2191;
+			if (event. key == GDK_Right) event. key = 0x2192;
+			if (event. key == GDK_Down) event. key = 0x2193;
+			event. shiftKeyPressed = (gkeyEvent -> state & GDK_SHIFT_MASK) != 0;
+			event. commandKeyPressed = (gkeyEvent -> state & GDK_CONTROL_MASK) != 0;
+			event. optionKeyPressed = (gkeyEvent -> state & GDK_MOD1_MASK) != 0;
+			event. extraControlKeyPressed = false;
+			my keyCallback (my keyBoss, & event);
+			/*
+			 * FIXME: here we should empty the type-ahead buffer
+			 */
+			return TRUE;
+		}
+		return FALSE;   // if the drawing area has no keyCallback, the system will send the key press to a text field.
+	}
+	static gboolean _GuiGtkDrawingArea_resizeCallback(Widget widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my resizeCallback) {
 			struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
@@ -328,6 +354,12 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 	my resizeBoss = boss;
 	#if gtk
 		my widget = gtk_drawing_area_new ();
+		GdkEventMask mask = GDK_EXPOSURE_MASK; // receive exposure events
+		mask |= GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK; // receive click events
+		mask |= GDK_BUTTON_MOTION_MASK;        // receive motion notifies when a button is pressed
+		mask |= GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK;
+		mask |= GDK_POINTER_MOTION_HINT_MASK;  // receive fewer motion notify events (the cb might take time)
+		gtk_widget_set_events (my widget, mask);
 		// TODO: maybe make this a composite widget and use connect_after for expose?
 		// see http://library.gnome.org/devel/gdk/stable/gdk-Windows.html#COMPOSITED-WINDOWS
 		g_signal_connect (G_OBJECT(my widget), "expose-event",
@@ -340,14 +372,13 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
 		g_signal_connect (G_OBJECT (my widget), "motion-notify-event",
 			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
+		if (parent != NULL) {
+			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (parent)), "key-press-event",
+				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
+		}
 		g_signal_connect (G_OBJECT (my widget), "size-allocate",
 			G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
 		
-		GdkEventMask mask = GDK_EXPOSURE_MASK; // receive exposure events
-		mask |= GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK; // receive click events
-		mask |= GDK_BUTTON_MOTION_MASK;        // receive motion notifies when a button is pressed
-		mask |= GDK_POINTER_MOTION_HINT_MASK;  // receive fewer motion notify events (the cb might take time)
-		gtk_widget_set_events (my widget, mask);
 //		g_signal_connect (GTK_WIDGET (my widget), "activate",
 //			G_CALLBACK (_GuiGtkDrawingArea_activateCallback), me);
 

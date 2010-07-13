@@ -23,17 +23,24 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100710)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100713)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.40# (13 July 2010)")
+LIST_ITEM (L"\\bu GTK: working Demo window (drawing, clicks, keys).")
+LIST_ITEM (L"\\bu GTK: pause forms.")
+LIST_ITEM (L"\\bu GTK: manual pages: receive a white background, for compatibility with dark-background themes.")
+LIST_ITEM (L"\\bu GTK: in settings windows, better alignment of labels to radio groups.")
+LIST_ITEM (L"\\bu GTK: rotated text.")
+//LIST_ITEM (L"\\bu GTK: working vowel editor.")
+//LIST_ITEM (L"\\bu GTK: Picture window: front when drawing.")
+//LIST_ITEM (L"\\bu GTK: correct scrolling in manuals.")
 NORMAL (L"##5.1.39# (10 July 2010)")
 LIST_ITEM (L"\\bu GTK beta version.")
 LIST_ITEM (L"\\bu Linux: made ##Sound: Record fixed time...# work correctly (the sampling frequency was wrong).")
 LIST_ITEM (L"\\bu GTK: list of objects: multiple selection, working Rename button.")
 LIST_ITEM (L"\\bu GTK: running a script no longer deselects all objects at the start.")
 LIST_ITEM (L"\\bu GTK: working Buttons editor.")
-//LIST_ITEM (L"\\bu GTK: working vowel editor.")
-//LIST_ITEM (L"\\bu GTK: Picture window: front after hiding.")
 LIST_ITEM (L"\\bu GTK: correctly laid out settings windows.")
 NORMAL (L"##5.1.38# (2 July 2010)")
 LIST_ITEM (L"\\bu Linux: made ##Sound: Record fixed time...# work correctly (the sampling frequency was wrong).")

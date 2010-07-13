@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/20
+ * pb 2010/07/11
  */
 
 #ifndef _Thing_h_
@@ -231,6 +231,7 @@ void *Graphics_x_getGC (I);
 
 bool Graphics_startRecording (I);
 bool Graphics_stopRecording (I);
+void Graphics_clearRecording (I);
 void Graphics_play (Graphics from, Graphics to);
 int Graphics_writeRecordings (I, FILE *f);
 int Graphics_readRecordings (I, FILE *f);

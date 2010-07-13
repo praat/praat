@@ -1,6 +1,6 @@
 /* Graphics_record.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * sdk 2008/03/24 cairo
  * pb 2009/07/09 RGB colours
  * pb 2009/08/10 image from file
+ * pb 2010/07/11 Graphics_clearRecording ()
  */
 
 #include "GraphicsP.h"
@@ -76,6 +77,15 @@ bool Graphics_stopRecording (I) {
 	bool wasRecording = my recording;
 	my recording = false;
 	return wasRecording;
+}
+
+void Graphics_clearRecording (I) {
+	iam (Graphics);
+	if (my record) {
+		Melder_free (my record);
+		my irecord = 0;
+		my nrecord = 0;
+	}
 }
 
 // TODO: Paul, ik zou er een enorme fan van zijn als bij deze functie

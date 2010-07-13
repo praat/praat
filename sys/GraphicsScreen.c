@@ -26,6 +26,7 @@
  * pb 2009/07/24 quartz
  * fb 2010/02/23 cairo & clipping on updateWs()
  * pb 2010/05/13 support XOR mode
+ * pb 2010/07/13 split erasure of recording off from Graphics_clearWs
  */
 
 #include "GraphicsP.h"
@@ -115,10 +116,6 @@ void Graphics_flushWs (I) {
 
 void Graphics_clearWs (I) {
 	iam (Graphics);
-
-	/* Suggestie: voor screen plaatsen, dan kan gtk gewoon 'updaten' */
-	if (my record) { Melder_free (my record); my irecord = 0; my nrecord = 0; }
-	
 	if (my screen) {
 		iam (GraphicsScreen);
 		#if cairo
@@ -138,16 +135,15 @@ void Graphics_clearWs (I) {
 				rect.height = my y1DC - my y2DC;
 			}
 			if (my cr == NULL) {
-				gdk_window_clear (my window);
-				gdk_window_invalidate_rect (my window, & rect, true);   // BUG: it seems weird that this is necessary.
+				//Melder_casual("Clear and null");
+				//gdk_window_clear (my window);
+				//gdk_window_invalidate_rect (my window, & rect, true);   // BUG: it seems weird that this is necessary.
 			} else {
-				//gdk_window_clear (my window);   // BUG: this seems not to be enough. Why?
-				//return;
-//Melder_casual("Clear but not null");
+				//Melder_casual("Clear and not null");
 				cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
-				// TODO: cairo_rectangle (my gc, 0, 0, GTK_WIDGET(I)->allocation.width, GTK_WIDGET(I)->allocation.height); ?
 				cairo_rectangle (my cr, rect.x, rect.y, rect.width, rect.height);
 				cairo_fill (my cr);
+				cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0);
 			}
 		#elif xwin
 			XClearArea (my display, my window, 0, 0, 0, 0, False);

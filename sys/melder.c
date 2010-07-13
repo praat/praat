@@ -398,9 +398,9 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
 		{
 			if (dia == NULL) {
-				_Melder_dia_init(&dia, &scale, &label1, &label2, &cancelButton);
+				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
-				GuiObject_show (dia);
+				GuiDialog_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);

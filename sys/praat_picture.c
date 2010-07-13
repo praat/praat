@@ -42,6 +42,7 @@
  * pb 2009/05/09 pink
  * pb 2009/09/04 demo window can Undo
  * fb 2010/02/20 GTK
+ * pb 2010/07/13 GTK: attempts to front the window
  */
 
 #include "praatP.h"
@@ -604,7 +605,8 @@ DIRECT (Erase_all)
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		Picture_erase (praat_picture);   /* This kills the recording. */
 	} else {
-		Graphics_clearWs (GRAPHICS);   // this kills the recording
+		Graphics_clearRecording (GRAPHICS);
+		Graphics_clearWs (GRAPHICS);
 	}
 END
 
@@ -1485,10 +1487,10 @@ void praat_picture_open (void) {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
-			gtk_widget_show (shell);
+			gtk_window_present (GTK_WINDOW (shell));
 		#elif motif
 			XtMapWidget (shell);
-			XMapRaised (XtDisplay (shell), XtWindow (shell)); 
+			XMapRaised (XtDisplay (shell), XtWindow (shell));
 		#endif
 		Picture_unhighlight (praat_picture);
 	}

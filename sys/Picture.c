@@ -381,6 +381,7 @@ void Picture_highlight (Picture me) {
 }
 
 void Picture_erase (Picture me) {
+	Graphics_clearRecording (my graphics);
 	Graphics_clearWs (my graphics);
 	if (my drawingArea) {
 		drawMarkers (me);

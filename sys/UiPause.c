@@ -1,6 +1,6 @@
 /* UiPause.c
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2009/01/20 created
+ * pb 2010/07/13 GTK
  */
 
 #include "UiPause.h"
@@ -191,12 +192,16 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 		thePauseForm_clicked = 0;
 		Melder_assert (theEventLoopDepth == 0);
 		theEventLoopDepth ++;
-		#if ! gtk
-		do {
-			XEvent event;
-			XtAppNextEvent (Melder_appContext, & event);
-			XtDispatchEvent (& event);
-		} while (! thePauseForm_clicked);
+		#if gtk
+			do {
+				gtk_main_iteration ();
+			} while (! thePauseForm_clicked);
+		#else
+			do {
+				XEvent event;
+				XtAppNextEvent (Melder_appContext, & event);
+				XtDispatchEvent (& event);
+			} while (! thePauseForm_clicked);
 		#endif
 		theEventLoopDepth --;
 		if (wasBackgrounding) praat_background ();

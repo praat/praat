@@ -43,6 +43,7 @@
  * pb 2009/09/17 made Quartz part resistant against missing QuickDraw IPA font
  * pb 2010/05/13 support for XOR mode via GDK
  * pb 2010/06/29 Mac: handle missing phonetic fonts better
+ * pb 2010/07/13 cairo: rotated text
  */
 
 #include <ctype.h>
@@ -826,9 +827,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			/*
 			 * Unrotated text could be a link. If so, it will be blue.
 			 */
-
-			// TODO: Paul; waarom hier niet void Graphics_setColour (I, int colour) ?
-
 			#if cairo
 				if (my duringXor) {
 				} else {
@@ -1021,7 +1019,29 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				/*
 				 * Rotated native font.
 				 */
-				#if win
+				#if cairo
+					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
+					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
+					cairo_set_font_size (my cr, lc -> size);
+					switch (font) {
+						case kGraphics_font_HELVETICA: cairo_select_font_face (my cr, "Helvetica", slant, weight); break;
+						case kGraphics_font_TIMES:     cairo_select_font_face (my cr, "Times", slant, weight); break;
+						case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
+						case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
+						case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
+						case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
+						case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
+						default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
+					}
+					cairo_save (my cr);
+					cairo_translate (my cr, xDC, yDC);
+					//cairo_scale (my cr, 1, -1);
+					cairo_rotate (my cr, - my textRotation * NUMpi / 180.0);
+					cairo_move_to (my cr, 0, 0);
+					cairo_show_text (my cr, Melder_peekWcsToUtf8 (codes));
+					cairo_restore (my cr);
+					return;
+				#elif win
 					if (1) {
 						SelectPen (my dc, my pen), SelectBrush (my dc, my brush);
 						if (lc -> link) SetTextColor (my dc, RGB (0, 0, 255)); else SetTextColor (my dc, my foregroundColour);

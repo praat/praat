@@ -1,6 +1,6 @@
 /* DemoEditor.c
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2009/06/30 removed interpreter member (could cause Praat to crash when the editor was closed after an "execute")
  * pb 2009/08/21 Demo_windowTitle ()
  * pb 2009/12/25 error messages if the user tries to handle the Demo window while it is waiting for input
+ * pb 2010/07/13 GTK
  */
 
 #include "DemoEditor.h"
@@ -93,6 +94,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+if (gtk && event -> type != BUTTON_PRESS) return;
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -131,6 +133,9 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 static void createChildren (DemoEditor me) {
 	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, 0, 0, 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+	#if gtk
+		gtk_widget_set_double_buffered (my drawingArea, FALSE);
+	#endif
 }
 
 class_methods (DemoEditor, Editor) {
@@ -238,16 +243,22 @@ bool Demo_waitForInput (Interpreter interpreter) {
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
-	#if ! defined (CONSOLE_APPLICATION) && ! defined (USE_GTK)
+	#if ! defined (CONSOLE_APPLICATION)
 		int wasBackgrounding = Melder_backgrounding;
 		structMelderDir dir = { { 0 } };
 		Melder_getDefaultDir (& dir);
 		if (wasBackgrounding) praat_foreground ();
-		do {
-			XEvent event;
-			XtAppNextEvent (Melder_appContext, & event);
-			XtDispatchEvent (& event);
-		} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+		#if defined (USE_GTK)
+			do {
+				gtk_main_iteration ();
+			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+		#else
+			do {
+				XEvent event;
+				XtAppNextEvent (Melder_appContext, & event);
+				XtDispatchEvent (& event);
+			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+		#endif
 		if (wasBackgrounding) praat_background ();
 		Melder_setDefaultDir (& dir);
 	#endif

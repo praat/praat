@@ -911,7 +911,7 @@ void UiForm_finish (I) {
 				#endif
 			textFieldHeight;
 		#if gtk
-			numberOfRows += wcsnequ (thy name, L"right ", 6);
+			numberOfRows += wcsnequ (thy name, L"left ", 5);
 		#endif
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
@@ -1016,29 +1016,23 @@ void UiForm_finish (I) {
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
 					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
-					Widget column = gtk_vbox_new (true, 0);
-				#else
-					Widget column = form;
 				#endif
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
-					button -> toggle = GuiRadioButton_createShown (column,
+					button -> toggle = GuiRadioButton_createShown (form,
 						fieldX, dialogWidth /* allow to extend into the margin */,
 						y + (ibutton - 1) * (Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING), Gui_AUTOMATIC,
 						theFinishBuffer.string, gui_radiobutton_cb_toggled, field, 0);
 					#if gtk
-					if (group != NULL) {
-						GuiRadioButton_setGroup(button -> toggle, group);
-					} 
-					group = GuiRadioButton_getGroup(button -> toggle);
+						if (group != NULL) {
+							GuiRadioButton_setGroup (button -> toggle, group);
+						} 
+						group = GuiRadioButton_getGroup (button -> toggle);
+						gtk_table_attach_defaults (GTK_TABLE (form), button -> toggle, 1, 3, row, row + 1);
+						row += 1;
 					#endif
 				}
-				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), column, 1, 3, row, row + 1);
-					gtk_widget_show (column);
-					row += 1;
-				#endif
 			} break; 
 			case UI_OPTIONMENU:
 			{

@@ -1434,7 +1434,7 @@ static void createChildren (VowelEditor me)
 
 	#if gtk
 	form = my dialog; /* TODO: ?? */
-	Widget vbox = gtk_vbox_new
+	//Widget vbox = gtk_vbox_new
 	#elif motif
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,

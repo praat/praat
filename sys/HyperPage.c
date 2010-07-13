@@ -606,10 +606,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (HyperPage);
 	(void) event;
 	if (my g == NULL) return;   // Could be the case in the very beginning.
-	#if gtk
-		//Melder_assert (Graphics_x_getCR (my g) != NULL);
-		Graphics_x_setCR (my g, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
-	#endif
+	Graphics_clearWs (my g);
 	initScreen (me);
 	our draw (me);
 	if (my entryHint && my entryPosition) {
@@ -621,10 +618,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		our draw (me);
 		updateVerticalScrollBar (me);
 	}
-	#if gtk
-		cairo_destroy (Graphics_x_getCR (my g));
-		Graphics_x_setCR (my g, NULL);
-	#endif
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
@@ -819,8 +812,9 @@ static void gui_cb_verticalScroll (GtkRange *rng, gpointer void_me) {
 static void gui_cb_verticalScroll (GUI_ARGS) {
 	GUI_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
-	#if motif
-		// TODO: deze heb ik ook al eerder gezien...
+	#if gtk
+		double value = gtk_range_get_value (GTK_RANGE (w));
+	#elif motif
 		XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
 	#endif
 	if (value != my top) {
@@ -837,8 +831,11 @@ static int menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
-	#if motif
-		// TODO: something like Gui get value...?
+	#if	gtk
+		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
+		sliderSize = 1;
+		pincr = PAGE_HEIGHT * 5 - 1;
+	#elif motif
 		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
 	#endif
 	value -= pincr;
@@ -857,7 +854,11 @@ static int menu_cb_pageDown (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return 0;
-	#if motif
+	#if	gtk
+		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
+		sliderSize = 1;
+		pincr = PAGE_HEIGHT * 5 - 1;
+	#elif motif
 		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
 	#endif
 	value += pincr;
@@ -1024,6 +1025,7 @@ static void createChildren (HyperPage me) {
 		gtk_box_pack_end (GTK_BOX (my dialog), scrollBox, true, true, 0);
 		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
+		gtk_widget_set_double_buffered (my drawingArea, FALSE);
 		gtk_box_pack_start (GTK_BOX (scrollBox), my drawingArea, true, true, 0);
 		createVerticalScrollBar (me, scrollBox);
 		GuiObject_show (my drawingArea);

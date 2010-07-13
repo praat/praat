@@ -84,7 +84,9 @@ static void classUiFile_destroy (I) {
 		#if motif
 			XtUnrealizeWidget (XtParent (my dialog));
 		#endif
-		GuiObject_destroy (my dialog);
+		#ifndef lesstif
+			GuiObject_destroy (my dialog);
+		#endif
 	#endif
 	if (me == currentUiFile) currentUiFile = NULL;   /* Undangle. */
 	inherited (UiFile) destroy (me);
