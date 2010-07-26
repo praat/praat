@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 26 July 2010
 
 include ../makefile.defs
 
@@ -25,7 +25,7 @@ OBJECTS = abcio.o lispio.o complex.o \
    StringsEditor.o DemoEditor.o \
    motifEmulator.o GuiText.o GuiWindow.o Gui.o GuiObject.o GuiDrawingArea.o \
    GuiMenu.o GuiButton.o GuiLabel.o GuiCheckButton.o GuiRadioButton.o \
-   GuiDialog.o GuiRowColumn.o GuiList.o
+   GuiDialog.o GuiRowColumn.o GuiList.o GuiFileSelect.o
 
 .PHONY: all clean
 

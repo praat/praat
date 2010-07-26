@@ -151,7 +151,10 @@ int GuiWindow_setDirty (Widget shell, int dirty) {
 }
 
 void GuiWindow_drain (Widget me) {
-	#if mac
+	#if gtk
+		//gdk_window_flush (gtk_widget_get_window (me));
+		gdk_flush ();
+	#elif mac
 		QDFlushPortBuffer (GetWindowPort (my macWindow), NULL);
 		/*
 		 * The following TRICK cost me half a day to work out.

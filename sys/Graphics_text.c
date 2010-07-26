@@ -276,7 +276,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
 					case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
 					case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
-					case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
+					case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "Doulos SIL", slant, weight); break;
 					case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
 					default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
 				}
@@ -859,7 +859,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 							case kGraphics_font_COURIER:   cairo_select_font_face (my cr, "Courier", slant, weight); break;
 							case kGraphics_font_PALATINO:  cairo_select_font_face (my cr, "Palatino", slant, weight); break;
 							case kGraphics_font_SYMBOL:    cairo_select_font_face (my cr, "Symbol", slant, weight); break;
-							case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "IPA Times", slant, weight); break;
+							case kGraphics_font_IPATIMES:  cairo_select_font_face (my cr, "Doulos SIL", slant, weight); break;
 							case kGraphics_font_DINGBATS:  cairo_select_font_face (my cr, "Dingbats", slant, weight); break;
 							default:                       cairo_select_font_face (my cr, "Sans", slant, weight); break;
 						}

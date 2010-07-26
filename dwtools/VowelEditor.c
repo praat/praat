@@ -1,6 +1,6 @@
 /* VowelEditor.c
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -484,6 +484,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	Graphics_Colour colour = Graphics_inqColour (g);
 	long nfp = my points -> size;
 	FormantPoint fp = my points -> item[1], fpn = my points -> item[nfp];
+	double tm, markLength = 0.01;
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0, 1, 0, 1);
@@ -493,7 +494,6 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	x1 = GETX(fp->formant[1]); y1 = GETY(fp->formant[0]); t1 = fp->time;
 	for (it = 2; it <= nfp; it++)
 	{
-		double tm, markLength = 0.01;
 		fp = my points -> item[it];
 		x2 = GETX(fp->formant[1]); y2 = GETY(fp->formant[0]); t2 = fp->time;
 		Graphics_setLineWidth (g, 3);
@@ -640,6 +640,7 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 	forget (thee);
 	if (te == NULL) return 0;
 	thee = Table_collapseRows (te, L"IPA", L"", L"F1 F2", L"", L"", L"");
+	forget (te);
 	if (thee == NULL) return 0;
 
 	forget (my marks);
@@ -1287,10 +1288,9 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	long iskipped = 0;
 	struct structGuiButtonEvent gb_event = { 0 };
 	Graphics_setInner (my g);
-	#if motif
+
 	Graphics_getMouseLocation (my g, & x, & y);
 	checkXY (&x, &y);
-	#endif
 
 	if (event->shiftKeyPressed)
 	{
@@ -1317,7 +1317,6 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 		}
 	}
 
-	#if motif
 	Graphics_xorOn (my g, Graphics_BLUE);
 	while (Graphics_mouseStillDown (my g))
 	{
@@ -1347,7 +1346,6 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event)
 	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 
 	Graphics_xorOff (my g);
-	#endif
 
 end:
 	Graphics_unsetInner (my g);
@@ -1390,6 +1388,10 @@ static void destroy (I)
 	forget (my source);
 	forget (my target);
 	forget (my vowel);
+	forget (my f3);
+	forget (my b3);
+	forget (my f4);
+	forget (my b4);
 	inherited (VowelEditor) destroy (me);
 }
 
@@ -1426,16 +1428,78 @@ static void createHelpMenuItems (VowelEditor me, EditorMenu menu) {
 
 static void createChildren (VowelEditor me)
 {
-	double button_width = 60, text_width = 95, status_info_width = 290;
-	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 	Widget form;
 
 	// Origin is top left!
 
-	#if gtk
-	form = my dialog; /* TODO: ?? */
-	//Widget vbox = gtk_vbox_new
-	#elif motif
+#if gtk
+	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
+	form = my dialog;
+	Widget table = gtk_table_new (nrows, ncols, TRUE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 4);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 4);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 4);
+	gtk_container_add (GTK_CONTAINER(form), table);
+
+	itop = nrows - 3; ibottom = itop + 2;
+
+	ileft = iright; iright = ileft + 1;
+	my playButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Play", gui_button_cb_play, me, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my playButton, ileft, iright, itop, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my reverseButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Reverse", gui_button_cb_reverse, me, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my reverseButton, ileft, iright, itop, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my publishButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Publish", gui_button_cb_publish, me, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my publishButton, ileft, iright, itop, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my durationLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Duration (s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my durationLabel, ileft, iright, itop, itop + 1);
+	my durationTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my durationTextField, ileft, iright, itop + 1, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my extendLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Extend (s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my extendLabel, ileft, iright, itop, itop + 1);
+	my extendTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my extendTextField, ileft, iright, itop + 1, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my f0Label = GuiLabel_create (NULL, 0, 0, 0, 0, L"Start F0 (Hz):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my f0Label, ileft, iright, itop, itop + 1);
+	my f0TextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my f0TextField, ileft, iright, itop + 1, ibottom);
+
+	ileft = iright; iright = ileft + 1;
+	my f0SlopeLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"F0 slope (oct/s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my f0SlopeLabel, ileft, iright, itop, itop + 1);
+	my f0SlopeTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my f0SlopeTextField, ileft, iright, itop + 1, ibottom);
+
+	itop = nrows - 1; ibottom = itop + 1;
+	ileft = 0; iright = ileft + 3;
+	my startInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my startInfo, ileft, iright, itop, ibottom);
+
+	ileft = iright + 1; iright = ileft + 3;
+	my endInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), my endInfo, ileft, iright, itop, ibottom);
+
+	my drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0, gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+
+	gtk_widget_set_double_buffered (my drawingArea, FALSE);
+	gtk_table_attach_defaults (GTK_TABLE (table), my drawingArea, 0, ncols, 0, nrows - 3);
+
+	gtk_widget_show_all (form);
+
+#elif motif
+
+	double button_width = 60, text_width = 95, status_info_width = 290;
+	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
+
 	form = XmCreateForm (my dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -1443,20 +1507,15 @@ static void createChildren (VowelEditor me)
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget?? */
 		NULL);
-	#endif
 
 	// Three buttons on a row: Play, Reverse, Publish
 	left = 10; right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM +10; bottom_widgets_bottom = bottom = -STATUS_INFO;
-	#if gtk
-
-	#elif motif
 	my playButton = GuiButton_createShown (form, left, right, top, bottom, L"Play", gui_button_cb_play, me, 0);
 	left = right + 10; right = left + button_width;
 	my reverseButton = GuiButton_createShown (form, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, me, 0);
 	left = right + 10; right = left + button_width;
 	my publishButton = GuiButton_createShown (form, left, right, top, bottom, L"Publish", gui_button_cb_publish, me, 0);
-	#endif
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
@@ -1498,7 +1557,10 @@ static void createChildren (VowelEditor me)
 	my width = GuiObject_getWidth (my drawingArea);
 
 	GuiObject_show (form);
+
+#endif
 }
+
 
 static void dataChanged (VowelEditor me)
 {

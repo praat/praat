@@ -27,7 +27,7 @@
 
 #include "GuiP.h"
 #include "NUM.h"
-#define my  me ->
+#undef iam
 #define iam(x)  x me = (x) void_me
 #if win || mac
 	#define iam_list \

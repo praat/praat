@@ -164,6 +164,7 @@ enum { GEENSYMBOOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
+		CHOOSE_READ_FILESTR_, CHOOSE_WRITE_FILESTR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
@@ -254,6 +255,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
 	L"comment", L"endPause",
+	L"chooseReadFile$", L"chooseWriteFile$",
 	L"demoWindowTitle", L"demoShow", L"demoWaitForInput", L"demoInput", L"demoClickedIn",
 	L"demoClicked", L"demoX", L"demoY", L"demoKeyPressed", L"demoKey$",
 	L"demoShiftKeyPressed", L"demoCommandKeyPressed", L"demoOptionKeyPressed", L"demoExtraControlKeyPressed",
@@ -3395,17 +3397,55 @@ static void do_endPauseForm (void) {
 	pushNumber (buttonClicked);
 end: return;
 }
+static void do_chooseReadFileStr (void) {
+	Stackel n = pop;
+	if (n->content.number == 1) {
+		Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			SortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->content.string, false); cherror
+			if (fileNames == NULL) {
+				wchar_t *result = Melder_wcsdup (L""); cherror
+				pushString (result);
+			} else {
+				SimpleString fileName = fileNames -> item [1];
+				wchar_t *result = Melder_wcsdup (fileName -> string); cherror
+				pushString (result);
+			}
+		} else {
+			error3 (L"The argument of \"chooseReadFile$\" must be a string (the title), not ", Stackel_whichText (title), L".")
+		}
+	} else {
+		error3 (L"The function \"chooseReadFile$\" requires 1 argument (a title), not ", Melder_integer (n->content.number), L".")
+	}
+end: return;
+}
+static void do_chooseWriteFileStr (void) {
+	Stackel n = pop;
+	if (n->content.number == 2) {
+		Stackel defaultName = pop, title = pop;
+		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
+			wchar_t *result = GuiFileSelect_getOutfileName (NULL, title->content.string, defaultName->content.string); cherror
+			if (result == NULL) { result = Melder_wcsdup (L""); cherror }
+			pushString (result);
+		} else {
+			error1 (L"The arguments of \"chooseWriteFile$\" must be two strings (the title and the default name).")
+		}
+	} else {
+		error3 (L"The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", Melder_integer (n->content.number), L".")
+	}
+end: return;
+}
 static void do_demoWindowTitle (void) {
 	Stackel n = pop;
 	if (n->content.number == 1) {
-		Stackel keys = pop;
-		if (keys->which == Stackel_STRING) {
-			Demo_windowTitle (keys->content.string); cherror
+		Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			Demo_windowTitle (title->content.string); cherror
 		} else {
-			error3 (L"The argument of \"do_demoWindowTitle\" must be a string (the title), not ", Stackel_whichText (keys), L".")
+			error3 (L"The argument of \"demoWindowTitle\" must be a string (the title), not ", Stackel_whichText (title), L".")
 		}
 	} else {
-		error3 (L"The function \"do_demoWindowTitle\" requires 1 argument (a title), not ", Melder_integer (n->content.number), L".")
+		error3 (L"The function \"demoWindowTitle\" requires 1 argument (a title), not ", Melder_integer (n->content.number), L".")
 	}
 	pushNumber (1);
 end: return;
@@ -4284,6 +4324,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PAUSE_FORM_ADD_OPTION_: { do_pauseFormAddOption ();
 } break; case PAUSE_FORM_ADD_COMMENT_: { do_pauseFormAddComment ();
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
+} break; case CHOOSE_READ_FILESTR_: { do_chooseReadFileStr ();
+} break; case CHOOSE_WRITE_FILESTR_: { do_chooseWriteFileStr ();
 /********** Demo window functions: **********/
 } break; case DEMO_WINDOW_TITLE_: { do_demoWindowTitle ();
 } break; case DEMO_SHOW_: { do_demoShow ();

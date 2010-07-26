@@ -1,6 +1,6 @@
 /* praat_gram.c
  *
- * Copyright (C) 1997-2009 Paul Boersma
+ * Copyright (C) 1997-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/09/29
+ * pb 2010/07/15
  */
 
 #include "praat.h"
@@ -440,6 +440,23 @@ DO
 	REQUIRE (icand <= my tableaus [itab]. numberOfCandidates, L"'Candidate number' should not exceed number of candidates for this tableau.")
 	REQUIRE (icons <= my numberOfConstraints, L"'Constraint number' should not exceed number of constraints.")
 	Melder_information1 (Melder_integer (my tableaus [itab]. candidates [icand]. marks [icons]));
+END
+
+FORM (OTGrammar_compareCandidates, L"Compare candidates", 0)
+	NATURAL (L"Tableau number 1", L"1")
+	NATURAL (L"Candidate number 1", L"1")
+	NATURAL (L"Tableau number 2", L"1")
+	NATURAL (L"Candidate number 2", L"2")
+	OK
+DO
+	OTGrammar me = ONLY_OBJECT;
+	long itab1 = GET_INTEGER (L"Tableau number 1"), icand1 = GET_INTEGER (L"Candidate number 1");
+	long itab2 = GET_INTEGER (L"Tableau number 2"), icand2 = GET_INTEGER (L"Candidate number 2");
+	REQUIRE (itab1 <= my numberOfTableaus, L"'Tableau number 1' should not exceed number of tableaus.")
+	REQUIRE (itab2 <= my numberOfTableaus, L"'Tableau number 2' should not exceed number of tableaus.")
+	REQUIRE (icand1 <= my tableaus [itab1]. numberOfCandidates, L"'Candidate number 1' should not exceed number of candidates for this tableau.")
+	REQUIRE (icand2 <= my tableaus [itab2]. numberOfCandidates, L"'Candidate number 1' should not exceed number of candidates for this tableau.")
+	Melder_information1 (Melder_integer (OTGrammar_compareCandidates (me, itab1, icand1, itab2, icand2)));
 END
 
 FORM (OTGrammar_getRankingValue, L"Get ranking value", 0)
@@ -1216,6 +1233,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classOTGrammar, 1, L"Get number of violations...", 0, 1, DO_OTGrammar_getNumberOfViolations);
 	praat_addAction1 (classOTGrammar, 1, L"-- parse --", 0, 1, 0);
 	praat_addAction1 (classOTGrammar, 1, L"Get winner...", 0, 1, DO_OTGrammar_getWinner);
+	praat_addAction1 (classOTGrammar, 1, L"Compare candidates...", 0, 1, DO_OTGrammar_compareCandidates);
 	praat_addAction1 (classOTGrammar, 1, L"Get number of optimal candidates...", 0, 1, DO_OTGrammar_getNumberOfOptimalCandidates);
 	praat_addAction1 (classOTGrammar, 1, L"Is candidate grammatical...", 0, 1, DO_OTGrammar_isCandidateGrammatical);
 	praat_addAction1 (classOTGrammar, 1, L"Is candidate singly grammatical...", 0, 1, DO_OTGrammar_isCandidateSinglyGrammatical);

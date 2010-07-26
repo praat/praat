@@ -1,6 +1,6 @@
 /* UiFile.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,178 +28,42 @@
  * pb 2007/05/30 wchar_t
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/12/22 invokingButtonTitle
+ * pb 2010/07/21 erased Motif stuff
+ * bp 2010/07/26 split off GuiFileSelect.c
  */
 
-#if defined (macintosh)
-	#define DIALOG_WIDTH  310
-	#define LABEL_WIDTH  150
-	#define FIELD_X  160
-	#define FIELD_WIDTH  150
-#else
-	#define DIALOG_WIDTH  410
-	#define LABEL_WIDTH  200
-	#define FIELD_X  210
-	#define FIELD_WIDTH  200
-#endif
-
-#if defined (UNIX)
-	#include <dirent.h>
-	#include <sys/stat.h>
-#endif
-
-#if defined (_WIN32)
-	#include <shlobj.h>
-#endif
-
-#include <ctype.h>
-#include "longchar.h"
-#include "Gui.h"
-#include "Collection.h"
 #include "UiP.h"
 #include "Editor.h"
-#include "Graphics.h"   /* colours. */
-#include "machine.h"
 
 #define UiFile_members Thing_members \
 	EditorCommand command; \
-	Widget parent, dialog, warning; \
+	Widget parent; \
 	structMelderFile file; \
 	const wchar_t *invokingButtonTitle, *helpTitle; \
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
 	void *okClosure; \
 	int shiftKeyPressed;
-#ifdef macintosh
-	#define UiFile_methods Thing_methods
-#else
-	#define UiFile_methods Thing_methods  void (* ok) (I);
-#endif
+#define UiFile_methods Thing_methods
 class_create (UiFile, Thing);
-
-static UiFile currentUiFile = NULL;
-	/* Currently open file selector (or the last one opened). */
 
 static void classUiFile_destroy (I) {
 	iam (UiFile);
-	#ifdef UNIX
-		#if motif
-			XtUnrealizeWidget (XtParent (my dialog));
-		#endif
-		#ifndef lesstif
-			GuiObject_destroy (my dialog);
-		#endif
-	#endif
-	if (me == currentUiFile) currentUiFile = NULL;   /* Undangle. */
 	inherited (UiFile) destroy (me);
 }
 
-#ifndef macintosh
-static void classUiFile_ok (I) { (void) void_me; }
-#endif
-
 class_methods (UiFile, Thing)
 	class_method_local (UiFile, destroy)
-	#ifndef macintosh
-	class_method_local (UiFile, ok)
-	#endif
 class_methods_end
-
-#ifdef UNIX
-#if motif
-static void UiFile_ok (Widget w, XtPointer void_me, XtPointer call) {
-	iam (UiFile);
-	char *fileName;
-	int motifBug;
-	(void) w;
-	XmStringGetLtoR (((XmSelectionBoxCallbackStruct *) call) -> value, (XmStringCharSet) XmSTRING_DEFAULT_CHARSET, & fileName);
-	my shiftKeyPressed = ((XButtonPressedEvent *) ((XmSelectionBoxCallbackStruct *) call) -> event) -> state & ShiftMask;
-	/* Work around a Motif BUG. */
-	/* Activating the 'OK' button with a directory chosen should perform the actions */
-	/* of the 'Filter' button. */
-	/* This is only the first occurrence of this work-around in this file. */
-	motifBug = fileName [strlen (fileName) - 1] == '/';
-	if (motifBug) {
-		XmString dirMask;
-		XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
-		XmFileSelectionDoSearch (my dialog, dirMask);
-		XmStringFree (dirMask);
-	} else {
-		Melder_pathToFile (Melder_peekUtf8ToWcs (fileName), & my file);
-		our ok (me);
-	}
-	XtFree (fileName);
-}
-static void UiFile_cancel (Widget w, XtPointer void_me, XtPointer call) {
-	(void) void_me;
-	(void) call;
-	XtUnmanageChild (w);
-}
-static void UiFile_help (Widget w, XtPointer void_me, XtPointer call) {
-	iam (UiFile);
-	(void) w;
-	(void) void_me;
-	(void) call;
-	if (my helpTitle) Melder_help (my helpTitle);
-}
-#endif
-#endif
-
-#ifdef UNIX
-/*static int isFile (const char *name) {
-	struct stat statBuf;
-	stat (name, & statBuf);
-	return (S_ISREG (statBuf. st_mode)) != 0;
-}
-static int isDirectory (const char *name) {
-	struct stat statBuf;
-	stat (name, & statBuf);
-	return (S_ISDIR (statBuf. st_mode)) != 0;
-}*/
-#endif
 
 static void UiFile_init (I, Widget parent, const wchar_t *title) {
 	iam (UiFile);
 	my parent = parent;
-	#ifdef UNIX
-		if (my parent) {
-			#if gtk
-				my dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL,
-									 GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL,
-									 GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-
-				gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (my dialog), TRUE);
-			#elif motif
-				my dialog = XmCreateFileSelectionDialog (my parent, "FSB dialog", NULL, 0);
-			#endif
-		}
-		if (my dialog) {
-			#if motif
-				XtVaSetValues (my dialog,
-					motif_argXmString (XmNdialogTitle, Melder_peekWcsToUtf8 (title)),
-					XmNautoUnmanage, False, XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL, NULL);
-				XtVaSetValues (XtParent (my dialog), XmNdeleteResponse, XmUNMAP, NULL);
-				XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST),
-					XmNvisibleItemCount, 20, NULL);
-				XtVaSetValues (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
-					XmNvisibleItemCount, 20, NULL);
-				XtAddCallback (my dialog, XmNokCallback, UiFile_ok, (XtPointer) me);
-				XtAddCallback (my dialog, XmNcancelCallback, UiFile_cancel, (XtPointer) me);
-				XtAddCallback (my dialog, XmNhelpCallback, UiFile_help, (XtPointer) me);
-			#endif
-		}
-	#endif
 	Thing_setName (me, title);
 }
 
 MelderFile UiFile_getFile (I) {
 	iam (UiFile);
 	return & my file;
-}
-
-void UiFile_hide (void) {
-	if (currentUiFile) {
-		GuiObject_hide (currentUiFile -> dialog);
-		currentUiFile = NULL;
-	}
 }
 
 /********** READING A FILE **********/
@@ -209,36 +73,7 @@ void UiFile_hide (void) {
 #define UiInfile_methods UiFile_methods
 class_create (UiInfile, UiFile);
 
-#if defined (UNIX)
-#if motif
-static XmString inDirMask;
-#endif
-	/* Set when users clicks 'OK'. */
-	/* Used just before managing dialog. */
-static void classUiInfile_ok (I) {
-	iam (UiFile);
-	#if motif
-		if (inDirMask) XmStringFree (inDirMask);
-		XtVaGetValues (my dialog, XmNdirMask, & inDirMask, NULL);
-	#endif
-	UiHistory_write (L"\n");
-	UiHistory_write (my invokingButtonTitle);
-	UiHistory_write (L" ");
-	UiHistory_write (my file. path);
-	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
-		Melder_flushError (NULL);
-	} else if (! my shiftKeyPressed) {
-		GuiObject_hide (my dialog);
-	}
-	//my shiftKeyPressed = 0;   // BUG (perhaps), but "me" can have been deleted
-}
-#endif
-
 class_methods (UiInfile, UiFile)
-	#ifdef UNIX
-	class_method_local (UiInfile, ok)
-	#endif
 class_methods_end
 
 Any UiInfile_create (Widget parent, const wchar_t *title,
@@ -257,180 +92,26 @@ Any UiInfile_create (Widget parent, const wchar_t *title,
 
 void UiInfile_do (I) {
 	iam (UiInfile);
-	#if gtk
-		if (gtk_dialog_run (GTK_DIALOG (my dialog)) == GTK_RESPONSE_ACCEPT) {
-			char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (my dialog));
-			Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
-			g_free (filename);
-			UiHistory_write (L"\n");
-			UiHistory_write (my invokingButtonTitle);
-			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPath (& my file));
-			structMelderFile file;
-			MelderFile_copy (& my file, & file);
-			if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-				Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-				Melder_flushError (NULL);
-			}
-			/* TODO: IMHO mag deze code wel gedeeld worden tussen de verschillende platfromen
-			 * met een platform afhankelijke run/fetch methode. */
+	SortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
+	if (infileNames == NULL) {
+		if (Melder_hasError ()) Melder_flushError (NULL);
+		return;   // usually cancelled
+	}
+	for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
+		SimpleString infileName = infileNames -> item [ifile];
+		Melder_pathToFile (infileName -> string, & my file);
+		UiHistory_write (L"\n");
+		UiHistory_write (my invokingButtonTitle);
+		UiHistory_write (L" ");
+		UiHistory_write (infileName -> string);
+		structMelderFile file;
+		MelderFile_copy (& my file, & file);
+		if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+			Melder_flushError (NULL);
 		}
-		gtk_widget_hide(my dialog);
-	#elif defined (macintosh)
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		if (! my allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (err == noErr && reply. validRecord) {
-				SInt32 numberOfSelectedFiles;
-				AECountItems (& reply. selection, & numberOfSelectedFiles);
-				//Melder_casual ("%d selected files.", numberOfSelectedFiles);
-				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
-					AEKeyword keyWord;
-					DescType typeCode;
-					Size actualSize = 0;
-					FSRef machFile;
-					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-						Melder_machToFile (& machFile, & my file);
-					UiHistory_write (L"\n");
-					UiHistory_write (my invokingButtonTitle);
-					UiHistory_write (L" ");
-					UiHistory_write (Melder_fileToPath (& my file));
-					structMelderFile file;
-					MelderFile_copy (& my file, & file);
-					if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-						Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-						Melder_flushError (NULL);
-						break;
-					}
-					// BUG if my okCallback deletes me and there are multiple files
-				}
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-	#elif defined (_WIN32)
-		static OPENFILENAMEW openFileName, dummy;
-		static wchar_t fullFileName [3000+2];
-		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
-		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-		openFileName. hInstance = NULL;
-		openFileName. lpstrFilter = L"All Files\0*.*\0";
-		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
-		openFileName. lpstrCustomFilter = NULL;
-		openFileName. nMaxCustFilter = 0;
-		openFileName. lpstrFile = fullFileName;
-		openFileName. nMaxFile = 3000;
-		openFileName. lpstrFileTitle = NULL;
-		openFileName. nMaxFileTitle = 0;
-		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = my name;
-		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
-			| (my allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
-		openFileName. lpstrDefExt = NULL;
-		openFileName. lpfnHook = NULL;
-		openFileName. lpTemplateName = NULL;
-		openFileName. pvReserved = NULL;
-		openFileName. dwReserved = 0;
-		openFileName. FlagsEx = 0;
-		OSVERSIONINFO osVersionInfo;
-		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
-    	osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-	    GetVersionEx (& osVersionInfo);
-		bool hasFileInfoTipsBug = osVersionInfo. dwMajorVersion == 5, infoTipsWereVisible = false, extensionsWereVisible = false;   // XP-only bug.
-//Melder_warning4 (L"Major ", Melder_integer (osVersionInfo. dwMajorVersion), L", minor ", Melder_integer (osVersionInfo. dwMinorVersion));
-		hasFileInfoTipsBug &= 0;
-		if (hasFileInfoTipsBug) {
-			SHELLFLAGSTATE settings = { 0 };
-			SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
-			infoTipsWereVisible = settings. fShowInfoTip != 0;
-			extensionsWereVisible = settings. fShowExtensions != 0;
-			if (infoTipsWereVisible | ! extensionsWereVisible) {
-				SHELLSTATE state = { 0 };
-				state. fShowInfoTip = 0;
-				state. fShowExtensions = /*1*/ extensionsWereVisible;
-				SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
-			}
-		}
-		if (GetOpenFileNameW (& openFileName)) {
-			#if 0
-				MelderInfo_open ();
-				for (int i = 0; i < 300; i ++) {
-					wchar_t buffer [2];
-					buffer [0] = fullFileName [i];
-					buffer [1] = 0;
-					MelderInfo_writeLine3 (Melder_integer (fullFileName [i]), L" ", buffer);
-				}
-				MelderInfo_close ();
-			#endif
-			int firstFileNameLength = wcslen (fullFileName);
-			if (fullFileName [firstFileNameLength + 1] == '\0') {
-				/*
-				 * The user selected one file.
-				 */
-				Melder_pathToFile (fullFileName, & my file);
-				UiHistory_write (L"\n");
-				UiHistory_write (my invokingButtonTitle);
-				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPath (& my file));
-				structMelderFile file;
-				MelderFile_copy (& my file, & file);
-				if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-					Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-					Melder_flushError (NULL);
-				}
-			} else {
-				/*
-				 * The user selected multiple files.
-				 * 'fullFileName' is a directory name; the file names follow.
-				 */
-				structMelderDir dir;
-				Melder_pathToDir (fullFileName, & dir);
-				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
-					MelderDir_getFile (& dir, p, & my file);
-					UiHistory_write (L"\n");
-					UiHistory_write (my invokingButtonTitle);
-					UiHistory_write (L" ");
-					UiHistory_write (Melder_fileToPath (& my file));
-					structMelderFile file;
-					MelderFile_copy (& my file, & file);
-					if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-						Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-						Melder_flushError (NULL);
-						break;
-					}
-					// BUG if my okCallback deletes me
-				}
-			}
-		}
-		if (hasFileInfoTipsBug) {
-			if (infoTipsWereVisible | ! extensionsWereVisible) {
-				SHELLSTATE state = { 0 };
-				state. fShowInfoTip = infoTipsWereVisible;
-				state. fShowExtensions = extensionsWereVisible;
-				SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
-			}
-		}
-	#else
-		#if motif
-			XmString dirMask;
-			if (inDirMask != NULL)
-				XtVaSetValues (my dialog, XmNdirMask, inDirMask, NULL);
-			XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
-			XmFileSelectionDoSearch (my dialog, dirMask);
-			XmStringFree (dirMask);
-		#endif
-		GuiDialog_show (my dialog);
-		currentUiFile = (UiFile) me;
-	#endif
+	}
+	forget (infileNames);
 }
 
 /********** WRITING A FILE **********/
@@ -441,75 +122,9 @@ void UiInfile_do (I) {
 #define UiOutfile_methods UiFile_methods
 class_create (UiOutfile, UiFile);
 
-#ifdef UNIX
-static void UiFile_ok_ok (Widget w, XtPointer void_me, XtPointer call) {
-	iam (UiFile);
-	(void) call;
-	if (w) GuiObject_hide (w);
-	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-		Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
-		Melder_flushError (NULL);
-	}
-	GuiObject_hide (my dialog);
-	UiHistory_write (L"\n");
-	UiHistory_write (my invokingButtonTitle);
-	UiHistory_write (L" ");
-	UiHistory_write (my file. path);
-}
-#if motif
-static XmString outDirMask;
-#endif
-	/* Set when users clicks 'OK'. */
-	/* Used just before managing dialog. */
-static void classUiOutfile_ok (I) {
-	iam (UiFile);
-
-	#if gtk
-		UiFile_ok_ok (NULL, me, NULL);
-	#elif motif
-		if (outDirMask) XmStringFree (outDirMask);
-		XtVaGetValues (my dialog, XmNdirMask, & outDirMask, NULL);
-	if (MelderFile_exists (& my file)) {
-		if (! my warning) {
-			my warning = XmCreateWarningDialog (my dialog, "fileExists", NULL, 0);
-			XtVaSetValues (my warning,
-				motif_argXmString (XmNdialogTitle, "File exists"),
-				XmNautoUnmanage, True,
-				XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-				motif_argXmString (XmNokLabelString, "Overwrite"), NULL);
-			XtUnmanageChild (XmMessageBoxGetChild (my warning, XmDIALOG_HELP_BUTTON));
-			XtAddCallback (my warning, XmNokCallback, UiFile_ok_ok, me);
-		}
-		const wchar_t *message = Melder_wcscat3 (L"A file with the name ", MelderFile_messageName (& my file),
-				L" already exists.\nDo you want to replace it?");
-		XtVaSetValues (my warning, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
-		XtManageChild (my warning);
-	} else {
-		UiFile_ok_ok (NULL, me, NULL);
-	}
-	#endif
-}
-#endif
-
 class_methods (UiOutfile, UiFile)
-	#ifdef UNIX
-	class_method_local (UiOutfile, ok)
-	#endif
 class_methods_end
 
-#ifdef UNIX
-#if motif
-static void defaultAction_cb (Widget w, XtPointer void_me, XtPointer call) {
-	iam (UiOutfile);
-	XmString dirMask;
-	(void) w;
-	(void) call;
-	XtVaGetValues (my dialog, XmNdirMask, & dirMask, NULL);
-	XmFileSelectionDoSearch (my dialog, dirMask);
-	XmStringFree (dirMask);
-}
-#endif
-#endif
 Any UiOutfile_create (Widget parent, const wchar_t *title,
 	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
@@ -519,24 +134,6 @@ Any UiOutfile_create (Widget parent, const wchar_t *title,
 	my invokingButtonTitle = invokingButtonTitle;
 	my helpTitle = helpTitle;
 	UiFile_init (me, parent, title);
-	#ifdef UNIX
-		if (my dialog) {
-			#if gtk
-				gtk_file_chooser_set_action(GTK_FILE_CHOOSER(my dialog), GTK_FILE_CHOOSER_ACTION_SAVE);
-			#elif motif
-			XtUnmanageChild (XtParent (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST)));
-			XtUnmanageChild (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_LIST_LABEL));
-			/* Work around a Motif BUG. */
-			/* A double-click in the directory list often activated the 'OK' button, */
-			/* instead of the 'Filter' button. */
-			/* This is the second occurrence of this work-around in this file. */
-			XtRemoveAllCallbacks (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
-				XmNdefaultActionCallback);
-			XtAddCallback (XmFileSelectionBoxGetChild (my dialog, XmDIALOG_DIR_LIST),
-				XmNdefaultActionCallback, defaultAction_cb, me);
-			#endif
-		}
-	#endif
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
 	return me;
@@ -558,160 +155,24 @@ Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *i
 
 void UiOutfile_do (I, const wchar_t *defaultName) {
 	iam (UiOutfile);
-	#if gtk
-	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(my dialog), Melder_peekWcsToUtf8(defaultName)); // TODO: Waarom krijg ik hier geen fullpath?
-	if (gtk_dialog_run (GTK_DIALOG (my dialog)) == GTK_RESPONSE_ACCEPT) {
-		structMelderFile file;
-		char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (my dialog));
-		Melder_pathToFile (Melder_peekUtf8ToWcs (filename), & my file);
-		g_free (filename);
-		MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-		if (! my okCallback ((UiForm) me, NULL, NULL, NULL, false, my okClosure)) {
-			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
-			Melder_flushError (NULL);
-		}
-		UiHistory_write (L" ");
-		UiHistory_write (Melder_fileToPath (& file));
-		/* TODO: IMHO mag deze code wel gedeeld worden tussen de verschillende platfromen
-		 * met een platform afhankelijke run/fetch methode. */
+	wchar_t *outfileName = GuiFileSelect_getOutfileName (my parent, my name, defaultName);
+	if (outfileName == NULL) return;   // cancelled
+	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
+		Melder_flushError ("Dialog `%s' cancelled.", my name);
+		return;
 	}
-	gtk_widget_hide(my dialog);
-
-	#elif defined (macintosh)
-		const wchar_t *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
-		OSStatus err;
-		NavDialogRef dialogRef;
-		NavDialogCreationOptions dialogOptions;
-		NavGetDefaultDialogCreationOptions (& dialogOptions);
-		dialogOptions. windowTitle = Melder_peekWcsToCfstring (my name);
-		dialogOptions. message = Melder_peekWcsToCfstring (my name);
-		dialogOptions. saveFileName = Melder_peekWcsToCfstring (lastSlash ? lastSlash + 1 : defaultName);
-		dialogOptions. optionFlags |= kNavNoTypePopup;
-		err = NavCreatePutFileDialog (& dialogOptions, 0, 0, NULL, NULL, & dialogRef);
-		if (err == noErr) {
-			NavReplyRecord reply;
-			NavDialogRun (dialogRef);
-			err = NavDialogGetReply (dialogRef, & reply);
-			if (Melder_debug == 19) {
-				Melder_casual ("err %d %d", err, reply. validRecord);
-			}
-			if (err == noErr && reply. validRecord) {
-				AEKeyword keyWord;
-				DescType typeCode;
-				Size actualSize = 0;
-				FSRef machFile;
-				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
-					CFStringRef fileName = NavDialogGetSaveFileName (dialogRef);   // "Get", therefore it's not ours.
-					/*
-					 * machFile contains the directory as e.g. "/" or "/Users/jane"; in the latter (most usual) case, append a slash.
-					 */
-					char directoryPath [1000];
-					FSRefMakePath (& machFile, (unsigned char *) directoryPath, 999);
-					if (! (directoryPath [0] == '/' && directoryPath [1] == '\0'))
-						strcat (directoryPath, "/");
-					Melder_8bitToWcs_inline (directoryPath, my file. path, kMelder_textInputEncoding_UTF8);
-					int dirLength = wcslen (my file. path);
-					int n = CFStringGetLength (fileName);
-					wchar_t *p = my file. path + dirLength;
-					for (int i = 0; i < n; i ++, p ++)
-						*p = CFStringGetCharacterAtIndex (fileName, i);
-					*p = '\0';
-				}
-				if (! my okCallback ((UiForm) me, NULL, NULL, NULL, false, my okClosure)) {
-					Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
-					Melder_flushError (NULL);
-				}
-				UiHistory_write (L"\n");
-				UiHistory_write (my invokingButtonTitle);
-				UiHistory_write (L" ");
-				UiHistory_write (Melder_fileToPath (& my file));
-				NavDisposeReply (& reply);
-			}
-			NavDialogDispose (dialogRef);
-		}
-	#elif defined (_WIN32)
-		OPENFILENAMEW openFileName;
-		static wchar_t customFilter [100+2];
-		static wchar_t fullFileName [300+2];
-		long n = wcslen (defaultName);
-		for (long i = 0; i <= n; i ++) {
-			fullFileName [i] = defaultName [i];
-		}
-		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = my parent ? (HWND) XtWindow (my parent) : NULL;
-		openFileName. lpstrFilter = NULL;   /* like *.txt */
-		openFileName. lpstrCustomFilter = customFilter;
-		openFileName. nMaxCustFilter = 100;
-		openFileName. lpstrFile = fullFileName;
-		openFileName. nMaxFile = 300;
-		openFileName. lpstrFileTitle = NULL;
-		openFileName. lpstrInitialDir = NULL;
-		openFileName. lpstrTitle = my name;
-		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
-		openFileName. lpstrDefExt = NULL;
-		SHELLFLAGSTATE settings = { 0 };
-		SHGetSettings (& settings, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS);
-		bool infoTipsWereVisible = settings. fShowInfoTip != 0;
-		bool extensionsWereVisible = settings. fShowExtensions != 0;
-		if (infoTipsWereVisible || ! extensionsWereVisible) {
-			SHELLSTATE state = { 0 };
-			state. fShowInfoTip = 0;
-			state. fShowExtensions = /*1*/ extensionsWereVisible;
-			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
-		}
-		if (GetSaveFileNameW (& openFileName)) {
-			if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-				Melder_flushError ("Dialog `%s' cancelled.", my name);
-				return;
-			}
-			Melder_pathToFile (fullFileName, & my file);
-			if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-				Melder_error3 (L"File ", MelderFile_messageName (& my file), L" not finished.");
-				Melder_flushError (NULL);
-			}
-			UiHistory_write (L"\n");
-			UiHistory_write (my invokingButtonTitle);
-			UiHistory_write (L" ");
-			UiHistory_write (Melder_fileToPath (& my file));
-		}
-		if (infoTipsWereVisible || ! extensionsWereVisible) {
-			SHELLSTATE state = { 0 };
-			state. fShowInfoTip = infoTipsWereVisible;
-			state. fShowExtensions = extensionsWereVisible;
-			SHGetSetSettings (& state, SSF_SHOWINFOTIP | SSF_SHOWEXTENSIONS, TRUE);
-		}
-	#else
-		#if motif
-		XmString xmDirMask, xmDirSpec;
-		char *dirMask, *dirSpecc, dirSpec [1000];
-		int length;
-		#if 1
-			if (outDirMask)
-				XtVaSetValues (my dialog, XmNdirMask, outDirMask, NULL);
-		#endif
-		XtVaGetValues (my dialog, XmNdirMask, & xmDirMask, NULL);
-		XtVaGetValues (my dialog, XmNdirSpec, & xmDirSpec, NULL);
-		XmStringGetLtoR (xmDirMask, XmSTRING_DEFAULT_CHARSET, & dirMask);
-		XmStringGetLtoR (xmDirSpec, XmSTRING_DEFAULT_CHARSET, & dirSpecc);
-		#if 1
-			XmFileSelectionDoSearch (my dialog, xmDirMask);
-		#endif
-		strcpy (dirSpec, dirMask);
-		length = strlen (dirSpec);
-		if (dirSpec [length - 1] == '*') dirSpec [length - 1] = '\0';
-		char defaultNameUtf8 [300];
-		Melder_wcsTo8bitFileRepresentation_inline (defaultName, defaultNameUtf8);
-		strcat (dirSpec, defaultNameUtf8);
-		XtVaSetValues (my dialog, motif_argXmString (XmNdirSpec, dirSpec), NULL);
-		XmStringFree (xmDirMask);
-		XmStringFree (xmDirSpec);
-		XtFree (dirMask);
-		XtFree (dirSpecc);
-		XtManageChild (my dialog);
-		XMapRaised (XtDisplay (XtParent (my dialog)), XtWindow (XtParent (my dialog)));
-		#endif
-		currentUiFile = (UiFile) me;
-	#endif
+	Melder_pathToFile (outfileName, & my file);
+	structMelderFile file;
+	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
+	UiHistory_write (L"\n");
+	UiHistory_write (my invokingButtonTitle);
+	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
+		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+		Melder_flushError (NULL);
+	}
+	UiHistory_write (L" ");
+	UiHistory_write (outfileName);
+	Melder_free (outfileName);
 }
 
 /* End of file UiFile.c */

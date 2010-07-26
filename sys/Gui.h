@@ -20,7 +20,7 @@
  */
 
 /*
- * 2010/05/29
+ * 2010/07/26
  */
 
 #ifdef USE_GTK
@@ -31,8 +31,8 @@
 	#define motif 1
 #endif
 
-#ifndef _melder_h_
-	#include "melder.h"
+#ifndef _Collection_h_
+	#include "Collection.h"
 #endif
 
 #define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
@@ -388,6 +388,9 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
 void GuiDialog_show (Widget widget);
 Widget GuiDialog_getButtonArea (Widget widget);
+
+SortedSetOfString GuiFileSelect_getInfileNames (Widget parent, const wchar_t *title, bool allowMultipleFiles);
+wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, const wchar_t *defaultName);
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1

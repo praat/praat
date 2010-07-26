@@ -341,6 +341,9 @@ int MelderAudio_stopPlaying (bool explicit) {
 
 static bool workProc (void *closure) {
 	struct MelderPlay *me = & thePlay;
+static n = 0;
+n ++;
+Melder_casual("workProc %ld", n);
 	if (my usePortAudio) {
 		if (my blocking) {
 			if (my samplesLeft > 0) {

@@ -2473,7 +2473,7 @@ CODE (L"time = stopwatch")
 CODE (L"echo 'a' 'time:3'")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20080121)
+MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20100726)
 INTRO (L"You can temporarily halt a Praat script:")
 TAG (L"#pause %text")
 DEFINITION (L"suspends execution of the script, and allows the user to interrupt it. "
@@ -2561,6 +2561,20 @@ CODE (L"for i to 20")
 	CODE1 (L"printline 'quality'")
 CODE (L"endfor")
 NORMAL (L"In this example, the 0 at the end of #endPause means that there is no default button.")
+ENTRY (L"File selection")
+NORMAL (L"If you want the user to choose a file name for opening or saving, do")
+CODE (L"fileName\\$  = ##chooseReadFile\\$ # (\"Open a table file\")")
+CODE (L"if fileName\\$  <> \"\"")
+	CODE1 (L"table = Read Table from tab-separated file... \'fileName\\$ \'")
+CODE (L"endif")
+NORMAL (L"or")
+CODE (L"select mySound")
+CODE (L"fileName\\$  = ##chooseWriteFile\\$ # (\"Save as a WAV file\", \"mySound.wav\")")
+CODE (L"if fileName\\$  <> \"\"")
+	CODE1 (L"Write to WAV file... \'fileName\\$ \'")
+CODE (L"endif")
+NORMAL (L"In these examples, the first argument is the title of the file selector window "
+	"and the second argument is the default file name that will appear in the text field of the file selector window.")
 MAN_END
 
 MAN_BEGIN (L"Scripting 6.7. Sending a message to another program", L"ppgb", 20021218)

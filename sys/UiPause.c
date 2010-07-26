@@ -20,6 +20,7 @@
 /*
  * pb 2009/01/20 created
  * pb 2010/07/13 GTK
+ * pb 2010/07/26 removed UiFile_hide
  */
 
 #include "UiPause.h"
@@ -178,7 +179,6 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 	structMelderDir dir = { { 0 } };
 	Melder_getDefaultDir (& dir);
 	if (theCurrentPraatApplication -> batch) goto end;
-	UiFile_hide ();
 	if (wasBackgrounding) praat_foreground ();
 	/*
 	 * Put the pause form on the screen.
