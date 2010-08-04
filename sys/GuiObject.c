@@ -27,7 +27,6 @@
 
 #include "GuiP.h"
 #include "machine.h"
-#define my  me ->
 
 static int _Gui_defaultHeight (Widget me) {
 	#if motif
@@ -223,12 +222,7 @@ Widget GuiObject_parent (Widget me) {
 
 void GuiObject_setSensitive (Widget me, bool sensitive) {
 	#if gtk
-		gtk_widget_set_sensitive (me, sensitive); // BUG in GTK+ be careful!
-							 // fixed as of 2.18.2: https://bugzilla.gnome.org/show_bug.cgi?id=56070#c157
-		/*
-		gtk_widget_hide (me);
-		gtk_widget_show (me);   // BUG: only do these two if visible
-		*/
+		gtk_widget_set_sensitive (me, sensitive);
 	#else
 		XtSetSensitive (me, sensitive);
 	#endif
@@ -236,16 +230,25 @@ void GuiObject_setSensitive (Widget me, bool sensitive) {
 
 void GuiObject_show (Widget me) {
 	#if gtk
-		gtk_widget_show (me);
-	#else
+		Widget parent = gtk_widget_get_parent (me);
+		if (GTK_IS_WINDOW (parent)) {
+			// I am a window's vbox
+			gtk_widget_show (me);
+			gtk_window_present (GTK_WINDOW (parent));
+		} else if (GTK_IS_DIALOG (parent)) {
+			// I am a dialog's vbox, and therefore automatically shown
+			gtk_window_present (GTK_WINDOW (parent));
+		} else {
+			gtk_widget_show (me);
+		}
+	#elif win || mac
 		XtManageChild (me);
-		#if win
-			// nothing, because the scrolled window is not a widget
-		#elif mac || motif
-			if (XtClass (me) == xmListWidgetClass) {
-				XtManageChild (GuiObject_parent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
-			}
-		#endif
+		Widget parent = my parent;
+		if (parent -> widgetClass == xmShellWidgetClass) {
+			XMapRaised (XtDisplay (parent), XtWindow (parent));
+		} else if (mac && my widgetClass == xmListWidgetClass) {
+			XtManageChild (parent);   // the containing scrolled window; BUG if created with XmScrolledList?
+		}
 	#endif
 }
 

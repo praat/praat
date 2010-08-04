@@ -189,7 +189,7 @@ int Demo_open (void) {
 		if (theDemoEditor == NULL) {
 			theDemoEditor = DemoEditor_create (Melder_topShell);
 			Melder_assert (theDemoEditor != NULL);
-			//GuiWindow_show (theDemoEditor -> dialog);
+			//GuiObject_show (theDemoEditor -> dialog);
 			theDemoEditor -> praatPicture = Melder_calloc (structPraatPicture, 1);
 			theCurrentPraatPicture = theDemoEditor -> praatPicture;
 			theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
@@ -226,7 +226,7 @@ int Demo_windowTitle (const wchar_t *title) {
 int Demo_show (void) {
 	if (theDemoEditor == NULL) return 0;
 	if (! Demo_open ()) return 0;
-	GuiWindow_show (theDemoEditor -> dialog);
+	GuiObject_show (theDemoEditor -> dialog);
 	GuiWindow_drain (theDemoEditor -> shell);
 	Demo_close ();
 	return 1;
@@ -239,7 +239,7 @@ bool Demo_waitForInput (Interpreter interpreter) {
 			"Please click or type into the Demo window or close it.");
 		return false;
 	}
-	//GuiWindow_show (theDemoEditor -> dialog);
+	//GuiObject_show (theDemoEditor -> dialog);
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
@@ -248,7 +248,7 @@ bool Demo_waitForInput (Interpreter interpreter) {
 		structMelderDir dir = { { 0 } };
 		Melder_getDefaultDir (& dir);
 		if (wasBackgrounding) praat_foreground ();
-		#if defined (USE_GTK)
+		#if gtk
 			do {
 				gtk_main_iteration ();
 			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);

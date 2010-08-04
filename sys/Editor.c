@@ -31,6 +31,7 @@
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/08/19 allow editor windows without menu bar (requested by DemoEditor)
  * fb 2010/02/23 GTK
+ * pb 2010/07/29 removed GuiWindow_show
  */
 
 #include <time.h>
@@ -489,16 +490,15 @@ static void gui_window_cb_goAway (I) {
 extern void praat_addCommandsToEditor (Editor me);
 int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	#if gtk
-		int screenWidth, screenHeight;
-		Widget parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
-		GdkScreen *screen;
-		if (parent_win) {
-			screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
-		} else {
-			screen = gdk_screen_get_default ();
+		GdkScreen *screen = gdk_screen_get_default ();
+		if (parent != NULL) {
+			Widget parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+			if (parent_win != NULL) {
+				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
+			}
 		}
-		screenWidth = gdk_screen_get_width (screen);
-		screenHeight = gdk_screen_get_height (screen);
+		int screenWidth = gdk_screen_get_width (screen);
+		int screenHeight = gdk_screen_get_height (screen);
 	#elif motif
 		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
 		int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
@@ -561,22 +561,11 @@ int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, 
 
 	our createChildren (me);
 	GuiObject_show (my dialog);
-	#if gtk
-		GuiWindow_show (my dialog);
-	#elif motif
-		XtRealizeWidget (my shell);
-	#endif
-
 	return 1;
 }
 
 void Editor_raise (Editor me) {
-	#if gtk
-		// TODO: Wellicht dat my shell geen GDK_WINDOW is...
-		gdk_window_show (GDK_DRAWABLE (my shell -> window));
-	#elif motif
-		XMapRaised (XtDisplay (my shell), XtWindow (my shell));
-	#endif
+	GuiObject_show (my dialog);
 }
 
 void Editor_dataChanged (Editor me, Any data) {

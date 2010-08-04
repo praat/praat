@@ -1,6 +1,6 @@
 /* motifEmulator_resources.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/12/30
+ * pb 2010/12/30
  */
 
 motif_RESOURCE (XmNaccelerator)   /* XmLabel */
@@ -46,8 +46,6 @@ motif_RESOURCE (XmNlabelString)   /* XmLabel, XmRowColumn */
 motif_RESOURCE (XmNleftAttachment)   /* XmForm Constraint */
 motif_RESOURCE (XmNleftOffset)   /* XmForm Constraint */
 motif_RESOURCE (XmNleftPosition)   /* XmForm Constraint */
-motif_RESOURCE (XmNmarginHeight)   /* XmLabel, XmDrawingArea, XmRowColumn */
-motif_RESOURCE (XmNmarginWidth)   /* XmLabel, XmDrawingArea, XmRowColumn */
 motif_RESOURCE (XmNmaximum)   /* XmScrollBar, XmScale */
 motif_RESOURCE (XmNmenuHelpWidget)   /* XmRowColumn */
 motif_RESOURCE (XmNminimum)   /* XmScrollBar, XmScale */

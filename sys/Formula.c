@@ -1,6 +1,6 @@
 /* Formula.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@
  * pb 2009/08/09 variableExists
  * pb 2009/08/21 demoWindowTitle
  * pb 2009/12/25 error checking for Demo commands (should yield an error if the Demo window is waiting for input)
+ * pb 2010/07/26 chooseReadFile$, chooseWriteFile$
  */
 
 #include <ctype.h>
@@ -3032,7 +3033,7 @@ static void do_fixedStr (void) {
 		wchar_t *result = Melder_wcsdup (Melder_fixed (value->content.number, precision->content.number));
 		pushString (result);
 	} else {
-		error5 (L"The function \"fixed$\" requires two numbers, not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
+		error5 (L"The function \"fixed$\" requires two numbers (value and precision), not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
 	}
 end: return;
 }
@@ -3042,7 +3043,7 @@ static void do_percentStr (void) {
 		wchar_t *result = Melder_wcsdup (Melder_percent (value->content.number, precision->content.number));
 		pushString (result);
 	} else {
-		error5 (L"The function \"percent$\" requires two numbers, not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
+		error5 (L"The function \"percent$\" requires two numbers (value and precision), not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
 	}
 end: return;
 }
@@ -3403,7 +3404,7 @@ static void do_chooseReadFileStr (void) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
 			SortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->content.string, false); cherror
-			if (fileNames == NULL) {
+			if (fileNames -> size == 0) {
 				wchar_t *result = Melder_wcsdup (L""); cherror
 				pushString (result);
 			} else {
@@ -3411,6 +3412,7 @@ static void do_chooseReadFileStr (void) {
 				wchar_t *result = Melder_wcsdup (fileName -> string); cherror
 				pushString (result);
 			}
+			forget (fileNames);
 		} else {
 			error3 (L"The argument of \"chooseReadFile$\" must be a string (the title), not ", Stackel_whichText (title), L".")
 		}

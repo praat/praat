@@ -21,6 +21,7 @@
  * pb 2007/12/30
  * fb 2010/02/23 gtk
  * pb 2010/05/29 repaired memory leak; made dialog front on show
+ * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include "GuiP.h"
@@ -112,15 +113,6 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 			XmNautoUnmanage, False, NULL);
 	#endif
 	return my widget;
-}
-
-void GuiDialog_show (Widget widget) {
-	#if gtk
-		gtk_window_present (GTK_WINDOW (GuiObject_parent (widget)));
-	#elif motif
-		XtManageChild (widget);
-		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));
-	#endif
 }
 
 Widget GuiDialog_getButtonArea (Widget widget) {

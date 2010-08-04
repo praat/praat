@@ -132,7 +132,7 @@ wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, con
 		static structMelderFile file;
 		Widget dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL,
 			GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL,
-			GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+			GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
 		if (file. path [0] != '\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (file. path));

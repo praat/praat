@@ -25,6 +25,7 @@
  * sdk 2008/03/24 GTK
  * pb 2009/06/02 date updated
  * pb 2010/01/10 date and authorship updated
+ * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include "praatP.h"
@@ -142,7 +143,7 @@ void praat_showLogo (int autoPopDown) {
 	}
 
 	GuiObject_show (theLogo.form);
-	GuiDialog_show (theLogo.dia);
+	GuiObject_show (theLogo.dia);
 	
 	/*
 	 * Do not wait for the first expose event before drawing:

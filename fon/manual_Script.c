@@ -1369,7 +1369,7 @@ NORMAL (L"In scripts, the command ##%%Run script...#% is automatically replaced 
 	"by the script directive #execute.")
 MAN_END
 
-MAN_BEGIN (L"Scripting", L"ppgb", 20081208)
+MAN_BEGIN (L"Scripting", L"ppgb", 20100804)
 INTRO (L"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1405,6 +1405,7 @@ LIST_ITEM (L"@@Scripting 8. Controlling Praat from another program")
 LIST_ITEM1 (L"@@Scripting 8.1. The sendpraat subroutine")
 LIST_ITEM1 (L"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM1 (L"@@Scripting 8.3. The sendpraat directive")
+LIST_ITEM (L"@@Scripting 9. Turning a script into a stand-alone program")
 NORMAL (L"Also see the @@scripting examples@.")
 MAN_END
 
@@ -2885,6 +2886,32 @@ CODE (L"...'newline\\$ ' Remove")
 NORMAL (L"The first $$newline\\$ $ is superfluous, but this format seems to read nicely.")
 MAN_END
 
+MAN_BEGIN (L"Scripting 9. Turning a script into a stand-alone program", L"ppgb", 20100804)
+INTRO (L"You can turn your script into a double-clickable stand-alone program by including it into Praat's #main procedure. "
+	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
+NORMAL (L"These stand-alone programs do not show the Objects window and the Picture window; "
+	"therefore, you will usually want to use @@Demo window@ commands in your script. Here is an example:")
+CODE (L"\\# include \"praat.h\"")
+CODE (L"")
+CODE (L"wchar_t myScript [ ] = L\"\"")
+CODE1 (L"\"demo Text... 0.5 centre 0.5 half Hello world\\bsn\"")
+CODE1 (L"\"demoWaitForInput ( )\\bsn\"")
+CODE (L";")
+CODE (L"")
+CODE (L"int main (int argc, char *argv [ ]) {")
+CODE1 (L"praat_setStandAloneScriptText (myScript);")
+CODE1 (L"praat_init (\"Hello\", argc, argv);")
+CODE1 (L"INCLUDE_LIBRARY (praat_uvafon_init)")
+CODE1 (L"praat_run ();")
+CODE1 (L"return 0;")
+CODE (L"}")
+NORMAL (L"The script in this example raises the Demo window, writes \"Hello world\" in the middle of the window, "
+	"waits until the user clicks the mouse or presses a key, and then closes.")
+NORMAL (L"Note that Praat is distributed under the General Public License (GPL). This means that if you distribute "
+	"a Praat-based stand-alone program, you have to make it open source under the GPL as well.")
+NORMAL (L"See also @@Programming with Praat@.")
+MAN_END
+
 MAN_BEGIN (L"ScriptEditor", L"ppgb", 20070225)
 INTRO (L"An aid to @@scripting@.")
 NORMAL (L"The #ScriptEditor is a text editor that allows you to edit, save, and run "
@@ -3147,11 +3174,12 @@ CODE (L"select sound")
 CODE (L"plus textgrid")
 MAN_END
 
-MAN_BEGIN (L"Demo window", L"ppgb", 20090821)
+MAN_BEGIN (L"Demo window", L"ppgb", 20100804)
 INTRO (L"The Demo window is a window in which you can draw and ask for user input. "
-	"You can use it for demonstrations, presentations, simulations and adaptive listening experiments.")
+	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
+	"and stand-alone programs (see @@Scripting 9. Turning a script into a stand-alone program@).")
 NORMAL (L"The Demo window is Praat's least visible window: you can create it only through a script. "
-	"Try the following script after selecting Sound object:")
+	"Try the following script after selecting a Sound object:")
 CODE (L"demo Draw... 0 3 -1 1 yes curve")
 NORMAL (L"You see the Demo window turning up on the screen, with the Sound painted into it. "
 	"It works because the ##Draw...# command is available in the Objects window when you select a Sound. Then try:")
@@ -3200,8 +3228,8 @@ CODE (L"#demoWaitForInput ( )")
 CODE (L"demo Erase all")
 CODE (L"demo Paint rectangle... purple 0 100 0 100")
 CODE (L"demo Text... 50 centre 50 half This is the second page")
-NORMAL (L"In this example, you go from the first to the second screen either by clicking with mouse or by pressing any key. "
-	"You will usually want to be more selctive in your choice of user actions to respond to. "
+NORMAL (L"In this example, you go from the first to the second screen either by clicking with the mouse or by pressing any key. "
+	"You will usually want to be more selective in your choice of user actions to respond to. "
 	"The function #demoWaitForInput always returns 1, so that you can use it nicely in a loop, in which you can react selectively:")
 CODE (L"label FIRST_SCREEN")
 CODE (L"demo Erase all")

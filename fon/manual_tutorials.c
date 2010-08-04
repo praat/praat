@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20100726)
+MAN_BEGIN (L"What's new?", L"ppgb", 20100804)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.43# (4 August 2010)")
+LIST_ITEM (L"\\bu Scripting: support for stand-alone programs; see @@Scripting 9. Turning a script into a stand-alone program@.")
+LIST_ITEM (L"\\bu Table: allow drawing of ellipses even if irrelevant columns contain undefined data.")
+LIST_ITEM (L"\\bu Linux/GTK: correct resizing of Table window.")
+LIST_ITEM (L"\\bu Linux/GTK: prevented multiple storing of Picture window selection in scripting history.")
 NORMAL (L"##5.1.42# (26 July 2010)")
 LIST_ITEM (L"\\bu Scripting: allow file selector windows; see @@Scripting 6.6. Controlling the user@.")
 LIST_ITEM (L"\\bu Linux: multiple file selection.")

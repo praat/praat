@@ -1152,17 +1152,9 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (FunctionEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-	Dimension marginWidth = 10, marginHeight = 10;
-	#if gtk
-		// no additional margin within the drawing area
-		marginWidth = 0;
-		marginHeight = 0;
-	#elif motif
-		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	#endif
-	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
-	my width = event -> width - marginWidth - marginWidth + 21;
-	my height = event -> height - marginHeight - marginHeight + 111;
+	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
+	my width = event -> width + 21;
+	my height = event -> height + 111;
 	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
 	Graphics_setViewport (my graphics, 0, my width, 0, my height);
 	#if gtk

@@ -43,6 +43,7 @@
  * pb 2009/09/04 demo window can Undo
  * fb 2010/02/20 GTK
  * pb 2010/07/13 GTK: attempts to front the window
+ * pb 2010/07/29 removed GuiWindow_show (and window comes to the front!)
  */
 
 #include "praatP.h"
@@ -1808,11 +1809,6 @@ void praat_picture_init (void) {
 		#endif
 		GuiObject_show (scrollWindow);
 		GuiObject_show (dialog);
-		#if gtk
-			GuiWindow_show (dialog);
-		#elif motif
-			XtRealizeWidget (shell);
-		#endif
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0

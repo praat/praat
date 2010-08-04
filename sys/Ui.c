@@ -870,6 +870,8 @@ static void appendColon (void) {
 
 void UiForm_finish (I) {
 	iam (UiForm);
+	if (! my parent && ! my isPauseForm) return;
+
 	int size = my numberOfFields;
 	int dialogHeight = 0, x = Gui_LEFT_DIALOG_SPACING, y;
 	int textFieldHeight = Gui_TEXTFIELD_HEIGHT;
@@ -883,7 +885,6 @@ void UiForm_finish (I) {
 		Widget form, buttons; // Define?
 	#endif
 
-	if (! my parent) return;
 	/*
 		Compute height. Cannot leave this to the default geometry management system.
 	*/
@@ -1188,7 +1189,7 @@ void UiForm_do (I, bool modified) {
 	/*XtRemoveCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	/* This is the only place where this callback is installed. Moved from UiForm_close ppgb950613. */
 	/*XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
-	GuiDialog_show (my dialog);
+	GuiObject_show (my dialog);
 	if (modified)
 		UiForm_okOrApply (me, NULL, true);
 }

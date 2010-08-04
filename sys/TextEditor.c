@@ -41,6 +41,7 @@
  * pb 2010/01/20 guard against Find Again before Find
  * fb 2010/02/26 tell Undo/Redo buttons to GuiText for (de)sensitivization
  * pb 2010/05/16 correct order and types in Font menu
+ * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include "TextEditor.h"
@@ -239,7 +240,7 @@ static int menu_cb_open (EDITOR_ARGS) {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				L"Save & Open", gui_button_cb_saveAndOpen, cmd, 0);
 		}
-		GuiDialog_show (my dirtyOpenDialog);
+		GuiObject_show (my dirtyOpenDialog);
 	} else {
 		cb_showOpen (cmd, sendingForm, sendingString, interpreter);
 	}
@@ -300,7 +301,7 @@ static int menu_cb_new (EDITOR_ARGS) {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				L"Save & New", gui_button_cb_saveAndNew, cmd, 0);
 		}
-		GuiDialog_show (my dirtyNewDialog);
+		GuiObject_show (my dirtyNewDialog);
 	} else {
 		newDocument (me);
 	}
@@ -383,7 +384,7 @@ static void classTextEditor_goAway (TextEditor me) {
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
 				L"Save & Close", gui_button_cb_saveAndClose, me, 0);
 		}
-		GuiDialog_show (my dirtyCloseDialog);
+		GuiObject_show (my dirtyCloseDialog);
 	} else {
 		closeDocument (me);
 	}
@@ -464,7 +465,7 @@ static void do_find (TextEditor me) {
 		GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
-			GuiWindow_show (my dialog);
+			GuiObject_show (my dialog);
 		#endif
 	} else {
 		/* Try from the start of the document. */
@@ -474,7 +475,7 @@ static void do_find (TextEditor me) {
 			GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
-				GuiWindow_show (my dialog);
+				GuiObject_show (my dialog);
 			#endif
 		} else {
 			Melder_beep ();
@@ -497,7 +498,7 @@ static void do_replace (TextEditor me) {
 	GuiText_setSelection (my textWidget, left, left + wcslen (theReplaceString));
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
-		GuiWindow_show (my dialog);
+		GuiObject_show (my dialog);
 	#endif
 }
 

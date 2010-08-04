@@ -777,11 +777,10 @@ static void updateVerticalScrollBar (HyperPage me)
 /* We cannot call this immediately after creation. */
 /* This has to be called after changing 'my topParagraph'. */
 {
-	Dimension width, height, marginWidth, marginHeight;
+	Dimension width, height;
 	int sliderSize;
 	#if motif
-		XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height,
-			XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+		XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height, NULL);
 	#endif
 	sliderSize = 25 /*height / resolution * 5*/;   /* Don't change slider unless you clip value! */
 	#if gtk
@@ -969,13 +968,9 @@ static void createMenus (HyperPage me) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;
-	Dimension marginWidth = 10, marginHeight = 10;
-	#if motif
-		XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	#endif
-	Graphics_setWsViewport (my g, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
-	Graphics_setWsWindow (my g, 0.0, my rightMargin = (event -> width - 2 * marginWidth) / resolution,
-		PAGE_HEIGHT - (event -> height - 2 * marginHeight) / resolution, PAGE_HEIGHT);
+	Graphics_setWsViewport (my g, 0, event -> width, 0, event -> height);
+	Graphics_setWsWindow (my g, 0.0, my rightMargin = event -> width / resolution,
+		PAGE_HEIGHT - event -> height / resolution, PAGE_HEIGHT);
 	Graphics_updateWs (my g);
 	updateVerticalScrollBar (me);
 }

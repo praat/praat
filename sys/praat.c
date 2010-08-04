@@ -46,6 +46,7 @@
  * pb 2009/03/17 split up theCurrentPraat into Application, Objects and Picture
  * pb 2009/12/22 invokingButtonTitle
  * pb 2010/05/24 sendpraat for GTK
+ * pb 2010/07/29 removed GuiWindow_show
  */
 
 #include "melder.h"
@@ -937,19 +938,20 @@ String theXtLanguageProc (Display *display, String xnl, XtPointer client_data) {
 }
 #endif
 #endif
-	
+
+static wchar_t * thePraatStandAloneScriptText = NULL;
+
+void praat_setStandAloneScriptText (wchar_t *text) {
+	thePraatStandAloneScriptText = text;
+}
+
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 	#if defined (UNIX)
 		FILE *f;
-		//setlocale (LC_ALL, "en_US");
-		#if gtk
-			gtk_init (& argc, & argv);
-			gtk_set_locale ();
-			setlocale (LC_ALL, "en_US.utf8");
-		#elif motif
-			XtSetLanguageProc (NULL, theXtLanguageProc, NULL);
-		#endif
+		gtk_init (& argc, & argv);
+		gtk_set_locale ();
+		setlocale (LC_ALL, "en_US.utf8");
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
@@ -1005,7 +1007,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			: argc > iarg_batchName && argv [iarg_batchName] [0] != '-' /* funny Mac test */ ? Melder_peekUtf8ToWcs (argv [iarg_batchName])
 			: L"");
 
-		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != '\0';
+		Melder_batch = theCurrentPraatApplication -> batchName.string [0] != '\0' || thePraatStandAloneScriptText != NULL;
 
 		#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			if (! Melder_batch) {
@@ -1247,12 +1249,6 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			GuiObject_show (raHoriz);
 		#endif
 		GuiObject_show (Raam);
-		
-		#if gtk
-			gtk_widget_show (theCurrentPraatApplication -> topShell);
-		#else
-			XtRealizeWidget (theCurrentPraatApplication -> topShell);
-		#endif
 		#ifdef UNIX
 			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
 				#if gtk
@@ -1371,7 +1367,10 @@ void praat_run (void) {
 	Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 
 	if (Melder_batch) {
-		if (doingCommandLineInterface) {
+		if (thePraatStandAloneScriptText != NULL) {
+			praat_executeScriptFromText (thePraatStandAloneScriptText);
+			praat_exit (0);
+		} else if (doingCommandLineInterface) {
 			if (praat_executeCommandFromStandardInput (praatP.title)) {
 				praat_exit (0);
 			} else {
@@ -1424,65 +1423,30 @@ void praat_run (void) {
 			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell), "client-event", G_CALLBACK (cb_userMessage), NULL);
 			gtk_main ();
 		#else
-
-		#if defined (_WIN32)
-			if (theCurrentPraatApplication -> batchName.string [0] != '\0') {
-				wchar_t text [500];
-				/*
-				 * The user dropped a file on the Praat icon, while Praat was not running yet.
-				 * Windows may have enclosed the path between quotes;
-				 * this is especially likely to happen if the path contains spaces (which is usual).
-				 * And sometimes, Windows prepends a space before the quote.
-				 * Peel all that off.
-				 */
-				wchar_t *s = theCurrentPraatApplication -> batchName.string;
-				swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
-				long l = wcslen (text);
-				if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
-				//Melder_error3 (L"command <<", text, L">>");
-				//Melder_flushError (NULL);
-				if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG
+			#if defined (_WIN32)
+				if (theCurrentPraatApplication -> batchName.string [0] != '\0') {
+					wchar_t text [500];
+					/*
+					 * The user dropped a file on the Praat icon, while Praat was not running yet.
+					 * Windows may have enclosed the path between quotes;
+					 * this is especially likely to happen if the path contains spaces (which is usual).
+					 * And sometimes, Windows prepends a space before the quote.
+					 * Peel all that off.
+					 */
+					wchar_t *s = theCurrentPraatApplication -> batchName.string;
+					swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
+					long l = wcslen (text);
+					if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
+					//Melder_error3 (L"command <<", text, L">>");
+					//Melder_flushError (NULL);
+					if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG
+				}
+			#endif
+			for (;;) {
+				XEvent event;
+				XtAppNextEvent (theCurrentPraatApplication -> context, & event);
+				XtDispatchEvent (& event);
 			}
-		#endif
-
-		for (;;) {
-			XEvent event;
-			#if defined (UNIX)
-				if (haveMessage) {
-					if ((f = Melder_fopen (& messageFile, "r")) != NULL) {
-						long pid;
-						int narg = fscanf (f, "#%ld", & pid);
-						fclose (f);
-						if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-							Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
-							Melder_flushError (NULL);
-						}
-						if (narg) kill (pid, SIGUSR2);
-					} else {
-						Melder_clearError ();
-					}
-					haveMessage = FALSE;
-				}
-			#endif
-			XtAppNextEvent (theCurrentPraatApplication -> context, & event);
-			#if defined (UNIX)
-				if (event. type == ClientMessage && event. xclient.send_event && strnequ (& event. xclient.data.b [0], "SENDPRAAT", 9)) {
-					if ((f = Melder_fopen (& messageFile, "r")) != NULL) {
-						long pid;
-						int narg = fscanf (f, "#%ld", & pid);
-						fclose (f);
-						if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-							Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
-							Melder_flushError (NULL);
-						}
-						if (narg) kill (pid, SIGUSR2);
-					} else {
-						Melder_clearError ();
-					}
-				}
-			#endif
-			XtDispatchEvent (& event);
-		}
 		#endif
 	}
 }

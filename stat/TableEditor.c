@@ -235,6 +235,12 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	// TODO: implement selection
 }
 
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (TableEditor);
+	if (my graphics == NULL) return;
+	Graphics_updateWs (my graphics);
+}
+
 static void createChildren (TableEditor me) {
 	Table table = my data;
 	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
@@ -260,11 +266,6 @@ static void createChildren (TableEditor me) {
 	#else
 		my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
 	#endif
-	#ifdef UNIX
-		#if motif
-		XtSetKeyboardFocus (form, my text);   /* See FunctionEditor.c for the rationale behind this. */
-		#endif
-	#endif
 	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
 
 	/***** Create drawing area. *****/
@@ -275,7 +276,7 @@ static void createChildren (TableEditor me) {
 		GuiObject_show(table_container);
 		
 		my drawingArea = GuiDrawingArea_create(NULL, 0, 0, 0, 0,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, me, 0);
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, 0);
 		
 		// need to turn off double buffering, otherwise we receive the expose events
 		// delayed by one event, see also FunctionEditor.c

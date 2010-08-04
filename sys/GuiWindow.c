@@ -1,6 +1,6 @@
 /* GuiWindow.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,12 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2007/06/19 wchar_t
  * pb 2007/12/30 extraction
+ * pb 2010/07/29 removed GuiWindow_show
  */
 
 #include "GuiP.h"
 #include "UnicodeData.h"
-#define my  me ->
+#undef iam
 #define iam(x)  x me = (x) void_me
 
 typedef struct structGuiWindow {
@@ -116,15 +117,6 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 		XtVaSetValues (my widget, XmNdialogStyle, XmDIALOG_MODELESS, XmNautoUnmanage, False, NULL);
 	#endif
 	return my widget;
-}
-
-void GuiWindow_show (Widget widget) {
-	#if gtk
-		gtk_window_present (GTK_WINDOW (GuiObject_parent (widget)));
-	#elif motif
-		XtManageChild (widget);
-		XMapRaised (XtDisplay (GuiObject_parent (widget)), XtWindow (GuiObject_parent (widget)));
-	#endif
 }
 
 void GuiWindow_setTitle (Widget shell, const wchar_t *title) {

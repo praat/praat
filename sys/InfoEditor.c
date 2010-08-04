@@ -1,6 +1,6 @@
 /* InfoEditor.c
  *
- * Copyright (C) 2004-2008 Paul Boersma
+ * Copyright (C) 2004-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/06/09 more wchar_t
  * pb 2007/12/31 Gui
  * sdk 2008/03/24 Gui
+ * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include "TextEditor.h"
@@ -64,7 +65,7 @@ void gui_information (wchar_t *message) {
 		Thing_setName (theInfoEditor, L"Praat Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);
-	GuiWindow_show (theInfoEditor -> dialog);
+	GuiObject_show (theInfoEditor -> dialog);
 	GuiWindow_drain (theInfoEditor -> shell);
 }
 

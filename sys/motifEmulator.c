@@ -44,6 +44,8 @@
  * pb 2010/01/04 Mac: implement forward delete
  * pb 2010/01/08 Mac: support Command-`
  * pb 2010/06/14 Mac: live scrolling
+ * pb 2010/07/30 Mac: in calling CreatePopupButtonControl, have -12345 as the menu item
+ *              (Apple's special number for delayed menu attachment); needed for stand-alone Praat demo window
  */
 #ifndef UNIX
 
@@ -1143,7 +1145,8 @@ static void _GuiNativizeWidget (Widget me) {
 						_GuiNativeControl_setTitle (me);
 					} else {
 						my nat.control.isPopup = true;
-						CreatePopupButtonControl (my macWindow, & my rect, NULL, 1, false,
+						//Melder_casual("my macWindow %ld, %d-%d x %d-%d", my macWindow, my rect.left, my rect.right, my rect.top, my rect.bottom);
+						CreatePopupButtonControl (my macWindow, & my rect, NULL, -12345, false,
 							0, teFlushLeft, 0, & my nat.control.handle);
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
@@ -1746,8 +1749,6 @@ static void _motif_setValues (Widget me, va_list arg) {
 		case XmNleftPosition: my leftPosition = va_arg (arg, int);
 			attach = True;
 			break;
-		case XmNmarginHeight: (void) va_arg (arg, int); break;
-		case XmNmarginWidth: (void) va_arg (arg, int); break;
 		case XmNmaximum:
 			my maximum = va_arg (arg, int);
 			if (MEMBER (me, ScrollBar)) scrollset = True;
@@ -3075,10 +3076,6 @@ void XtVaGetValues (Widget me, ...) {
 		case XmNsliderSize:
 			Melder_assert (my widgetClass == xmScrollBarWidgetClass);
 			*va_arg (arg, int *) = my sliderSize;
-			break;
-		case XmNmarginWidth: *va_arg (arg, int *) = 0; break;
-		case XmNmarginHeight:
-			*va_arg (arg, int *) = 0;
 			break;
 		case XmNdeleteResponse:
 			Melder_assert (my widgetClass == xmShellWidgetClass);

@@ -1,6 +1,6 @@
 /* Collection.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2007/10/01 make sure that names are encodable when writing
  * pb 2008/03/19 removed SortedSetOfFloat
  * pb 2008/07/20 wchar_t
+ * pb 2010/07/28 tiny corrections (like a memory leak if out of memory...)
  */
 
 #include "Collection.h"
@@ -35,8 +36,13 @@
 
 static void classCollection_destroy (I) {
 	iam (Collection);
-	if (my item) { long i; for (i = 1; i <= my size; i ++) forget (my item [i]); }
-	if (my item) { my item ++; Melder_free (my item); }
+	if (my item != NULL) {
+		for (long i = 1; i <= my size; i ++) {
+			forget (my item [i]);
+		}
+		my item ++;   // base 1
+		Melder_free (my item);
+	}
 	inherited (Collection) destroy (me);
 }
 
@@ -47,29 +53,29 @@ static void classCollection_info (I) {
 
 static int classCollection_copy (I, thou) {
 	iam (Collection); thouart (Collection);
-	thy item = NULL;   /* Kill shallow copy of item. */
-	if (! inherited (Collection) copy (me, thee)) return 0;
+	thy item = NULL;   // kill shallow copy of item
+	if (! inherited (Collection) copy (me, thee)) return 0;   // optimize around cherror
 	thy itemClass = my itemClass;
 	thy _capacity = my _capacity;
 	thy size = my size;
-	if (! (thy item = Melder_calloc (void *, my _capacity))) return 0;   /* Filled with NULL. */
-	thy item --;   /* Base 1. */
-	for (long i = 1; i <= my size; i ++) {   /* Try to copy the items themselves. */
-		if (! Thing_member (my item [i], classData))
-			return Melder_error3 (L"Collection::copy: "
-				"cannot copy item of class ", Thing_className (my item [i]), L".");
-		if (! (thy item [i] = Data_copy (my item [i]))) return 0;
-		/* Copy the names of the items (but Data_copy does that). */
-		/* if (! Thing_getName (thy item [i]))
-			Thing_setName (thy item [i], Thing_getName (my item [i])); */
+	thy item = Melder_calloc (void *, my _capacity); cherror   // filled with NULL
+	thy item --;   // immediately turn from base-0 into base-1
+	for (long i = 1; i <= my size; i ++) {
+		Thing item = my item [i];
+		if (! Thing_member (item, classData))
+			error3 (L"Collection::copy: cannot copy item of class ", Thing_className (item), L".")
+		thy item [i] = Data_copy (item); cherror
 	}
+end:
+	// thy item is NULL or base-1
+	iferror return 0;
 	return 1;
 }
 
 static bool classCollection_equal (I, thou) {
 	iam (Collection); thouart (Collection);
-	if (! inherited (Collection) equal (me, thee)) return 0;
-	if (my size != thy size) return 0;
+	if (! inherited (Collection) equal (me, thee)) return false;
+	if (my size != thy size) return false;
 	for (long i = 1; i <= my size; i ++) {
 		if (! Thing_member (my item [i], classData))
 			return Melder_error3 (L"Collection::equal: "
@@ -97,10 +103,9 @@ static bool classCollection_canWriteAsEncoding (I, int encoding) {
 
 static int classCollection_writeText (I, MelderFile file) {
 	iam (Collection);
-	long i;
 	texputi4 (file, my size, L"size", 0,0,0,0,0);
 	texputintro (file, L"item []: ", my size ? NULL : L"(empty)", 0,0,0,0);
-	for (i = 1; i <= my size; i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
 		texputintro (file, L"item [", Melder_integer (i), L"]:", 0,0,0);
@@ -179,9 +184,8 @@ end:
 
 static int classCollection_writeBinary (I, FILE *f) {
 	iam (Collection);
-	long i;
 	binputi4 (my size, f);
-	for (i = 1; i <= my size; i ++) {
+	for (long i = 1; i <= my size; i ++) {
 		Thing thing = my item [i];
 		Thing_Table table = thing -> methods;
 		if (! Thing_member (thing, classData) || ! Data_canWriteBinary (thing))
@@ -198,9 +202,9 @@ static int classCollection_writeBinary (I, FILE *f) {
 static int classCollection_readBinary (I, FILE *f) {
 	iam (Collection);
 	if (Thing_version < 0) {
-		long size = bingeti4 (f), i;
+		long size = bingeti4 (f);
 		if (size < 0 || ! Collection_init (me, NULL, size)) return 0;
-		for (i = 1; i <= size; i ++) {
+		for (long i = 1; i <= size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2 ||
 				! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
@@ -213,10 +217,9 @@ static int classCollection_readBinary (I, FILE *f) {
 			if (strcmp (name, "?")) Thing_setName (my item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
-		long i, size;
-		size = bingeti4 (f);
+		long size = bingeti4 (f);
 		if (! Collection_init (me, NULL, size)) return 0;
-		for (i = 1; i <= size; i ++) {
+		for (long i = 1; i <= size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
 			char *klas = bingets1 (f);
 			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
@@ -266,8 +269,9 @@ int Collection_init (I, void *itemClass, long initialCapacity) {
 	my itemClass = itemClass;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
 	my size = 0;
-	if (! (my item = Melder_calloc (void *, my _capacity))) return 0;
-	my item --;   /* Base 1. */
+	my item = Melder_calloc (void *, my _capacity);
+	if (my item == NULL) return 0;   // optimize around cherror
+	my item --;   // base 1
 	return 1;
 }
 
@@ -279,7 +283,6 @@ Any Collection_create (void *itemClass, long initialCapacity) {
 
 int _Collection_insertItem (I, Any data, long pos) {
 	iam (Collection);
-	long i;
 	if (my size >= my _capacity) {
 		Any *dum = (Any *) Melder_realloc (my item + 1, 2 * my _capacity * sizeof (Any));
 		if (! dum) return Melder_error1 (L"Collection_insert: out of memory.");
@@ -287,17 +290,16 @@ int _Collection_insertItem (I, Any data, long pos) {
 		my _capacity *= 2;
 	}
 	my size ++;
-	for (i = my size; i > pos; i --) my item [i] = my item [i - 1];
+	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
 	my item [pos] = data;
 	return 1;
 }
 
 int Collection_addItem (I, Any data) {
 	iam (Collection);
-	long index;
-	Melder_assert (data);
-	index = our position (me, data);
-	if (index) {
+	Melder_assert (data != NULL);
+	long index = our position (me, data);
+	if (index != 0) {
 		return _Collection_insertItem (me, data, index);
 	} else {
 		forget (data);   /* Could not insert; I am owner, so I must dispose of the data!!! */
@@ -307,37 +309,32 @@ int Collection_addItem (I, Any data) {
 
 void Collection_removeItem (I, long pos) {
 	iam (Collection);
-	long i;
 	Melder_assert (pos >= 1 && pos <= my size);
 	forget (my item [pos]);
-	for (i = pos; i < my size; i ++) my item [i] = my item [i + 1];
+	for (long i = pos; i < my size; i ++) my item [i] = my item [i + 1];
 	my size --;
 }
 
 void Collection_undangleItem (I, Any item) {
 	iam (Collection);
-	long i, j;
-	for (i = my size; i > 0; i --) if (my item [i] == item) {
-		for (j = i; j < my size; j ++) my item [j] = my item [j + 1];
+	for (long i = my size; i > 0; i --) if (my item [i] == item) {
+		for (long j = i; j < my size; j ++) my item [j] = my item [j + 1];
 		my size --;
 	}
 }
 
 Any Collection_subtractItem (I, long pos) {
 	iam (Collection);
-	Any result;
-	long i;
 	Melder_assert (pos >= 1 && pos <= my size);
-	result = my item [pos];
-	for (i = pos; i < my size; i ++) my item [i] = my item [i + 1];
+	Any result = my item [pos];
+	for (long i = pos; i < my size; i ++) my item [i] = my item [i + 1];
 	my size --;
 	return result;
 }
 
 void Collection_removeAllItems (I) {
 	iam (Collection);
-	long i;
-	for (i = 1; i <= my size; i ++) forget (my item [i]);
+	for (long i = 1; i <= my size; i ++) forget (my item [i]);
 	my size = 0;
 }
 
@@ -350,11 +347,10 @@ void Collection_shrinkToFit (I) {
 Any Collections_merge (I, thou) {
 	iam (Collection); thouart (Collection);
 	Collection him;
-	long i;
 	if (my methods != thy methods) return Melder_errorp5 (L"(Collections_merge:) "
 		"Objects are of different class (", Thing_className (me), L" and ", Thing_className (thee), L").");
 	if (! (him = Data_copy (me))) goto error;
-	for (i = 1; i <= thy size; i ++) {
+	for (long i = 1; i <= thy size; i ++) {
 		Data tmp = Data_copy (thy item [i]);
 		if (! tmp || ! Collection_addItem (him, tmp)) { forget (tmp); goto error; }
 	}
@@ -366,8 +362,9 @@ error:
 
 /********** class Ordered **********/
 
-class_methods (Ordered, Collection)
-class_methods_end
+class_methods (Ordered, Collection) {
+	class_methods_end
+}
 
 int Ordered_init (I, void *itemClass, long initialMaximumLength) {
 	iam (Ordered);
@@ -377,7 +374,7 @@ int Ordered_init (I, void *itemClass, long initialMaximumLength) {
 
 Any Ordered_create (void) {
 	Ordered me = new (Ordered);
-	if (! me || ! Ordered_init (me, NULL, 10)) return NULL;
+	if (! me || ! Ordered_init (me, NULL, 10)) forget (me);
 	return me;
 }
 
@@ -392,11 +389,10 @@ int Ordered_addItemPos (I, Any data, long position) {
 
 static long classSorted_position (I, Any data) {
 	iam (Sorted);
-	long left, right;
 	if (my size == 0 || our compare (data, my item [my size]) >= 0) return my size + 1;
 	if (our compare (data, my item [1]) < 0) return 1;
 	/* Binary search. */
-	left = 1, right = my size;
+	long left = 1, right = my size;
 	while (left < right - 1) {
 		long mid = (left + right) / 2;
 		if (our compare (data, my item [mid]) >= 0) left = mid; else right = mid;
@@ -411,10 +407,11 @@ static int classSorted_compare (Any data1, Any data2) {
 	return 0;   /* All are equal. */
 }
 
-class_methods (Sorted, Collection)
+class_methods (Sorted, Collection) {
 	class_method_local (Sorted, position)
 	class_method_local (Sorted, compare)
-class_methods_end
+	class_methods_end
+}
 
 int Sorted_init (I, void *itemClass, long initialCapacity) {
 	iam (Sorted);
@@ -436,14 +433,12 @@ void Sorted_sort (I) {
 
 static long classSortedSet_position (I, Any data) {
 	iam (SortedSet);
-	int where;
-	long left = 1, right = my size;
-
 	if (my size == 0) return 1;   /* Empty set? 'data' is going to be the first item. */
-	where = our compare (data, my item [my size]);   /* Compare with last item. */
+	int where = our compare (data, my item [my size]);   /* Compare with last item. */
 	if (where > 0) return my size + 1;   /* Insert at end. */
 	if (where == 0) return 0;
 	if (our compare (data, my item [1]) < 0) return 1;   /* Compare with first item. */
+	long left = 1, right = my size;
 	while (left < right - 1) {
 		long mid = (left + right) / 2;
 		if (our compare (data, my item [mid]) >= 0)
@@ -457,9 +452,10 @@ static long classSortedSet_position (I, Any data) {
 	return right;
 }
 
-class_methods (SortedSet, Sorted)
+class_methods (SortedSet, Sorted) {
 	class_method_local (SortedSet, position)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSet_init (Any me, void *itemClass, long initialCapacity) {
 	return Sorted_init (me, itemClass, initialCapacity);
@@ -479,15 +475,16 @@ static int classSortedSetOfInt_compare (I, thou) {
 	return 0;
 }
 
-class_methods (SortedSetOfInt, SortedSet)
+class_methods (SortedSetOfInt, SortedSet) {
 	class_method_local (SortedSetOfInt, compare)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSetOfInt_init (I) { iam (SortedSetOfInt); return SortedSet_init (me, classSimpleInt, 10); }
 
 SortedSetOfInt SortedSetOfInt_create (void) {
 	SortedSetOfInt me = new (SortedSetOfInt);
-	if (! me || ! SortedSetOfInt_init (me)) { forget (me); return NULL; }
+	if (! me || ! SortedSetOfInt_init (me)) forget (me);
 	return me;
 }
 
@@ -500,15 +497,16 @@ static int classSortedSetOfShort_compare (I, thou) {
 	return 0;
 }
 
-class_methods (SortedSetOfShort, SortedSet)
+class_methods (SortedSetOfShort, SortedSet) {
 	class_method_local (SortedSetOfShort, compare)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSetOfShort_init (I) { iam (SortedSetOfShort); return SortedSet_init (me, classSimpleShort, 10); }
 
 SortedSetOfShort SortedSetOfShort_create (void) {
 	SortedSetOfShort me = new (SortedSetOfShort);
-	if (! me || ! SortedSetOfShort_init (me)) { forget (me); return NULL; }
+	if (! me || ! SortedSetOfShort_init (me)) forget (me);
 	return me;
 }
 
@@ -521,15 +519,16 @@ static int classSortedSetOfLong_compare (I, thou) {
 	return 0;
 }
 
-class_methods (SortedSetOfLong, SortedSet)
+class_methods (SortedSetOfLong, SortedSet) {
 	class_method_local (SortedSetOfLong, compare)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSetOfLong_init (I) { iam (SortedSetOfLong); return SortedSet_init (me, classSimpleLong, 10); }
 
 SortedSetOfLong SortedSetOfLong_create (void) {
 	SortedSetOfLong me = new (SortedSetOfLong);
-	if (! me || ! SortedSetOfLong_init (me)) { forget (me); return NULL; }
+	if (! me || ! SortedSetOfLong_init (me)) forget (me);
 	return me;
 }
 
@@ -542,15 +541,16 @@ static int classSortedSetOfDouble_compare (I, thou) {
 	return 0;
 }
 
-class_methods (SortedSetOfDouble, SortedSet)
+class_methods (SortedSetOfDouble, SortedSet) {
 	class_method_local (SortedSetOfDouble, compare)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSetOfDouble_init (I) { iam (SortedSetOfDouble); return SortedSet_init (me, classSimpleDouble, 10); }
 
 SortedSetOfDouble SortedSetOfDouble_create (void) {
 	SortedSetOfDouble me = new (SortedSetOfDouble);
-	if (! me || ! SortedSetOfDouble_init (me)) { forget (me); return NULL; }
+	if (! me || ! SortedSetOfDouble_init (me)) forget (me);
 	return me;
 }
 
@@ -561,15 +561,16 @@ static int classSortedSetOfString_compare (I, thou) {
 	return wcscmp (my string, thy string);
 }
 
-class_methods (SortedSetOfString, SortedSet)
+class_methods (SortedSetOfString, SortedSet) {
 	class_method_local (SortedSetOfString, compare)
-class_methods_end
+	class_methods_end
+}
 
 int SortedSetOfString_init (I) { iam (SortedSetOfString); return SortedSet_init (me, classSimpleString, 10); }
 
 SortedSetOfString SortedSetOfString_create (void) {
 	SortedSetOfString me = new (SortedSetOfString);
-	if (! me || ! SortedSetOfString_init (me)) { forget (me); return NULL; }
+	if (! me || ! SortedSetOfString_init (me)) forget (me);
 	return me;
 }
 
@@ -619,9 +620,10 @@ static int classCyclic_compare (I, thou) {
 	return 0;
 }
 
-class_methods (Cyclic, Collection)
+class_methods (Cyclic, Collection) {
 	class_method_local (Cyclic, compare)
-class_methods_end
+	class_methods_end
+}
 
 int Cyclic_init (Any me, void *itemClass, long initialCapacity) {
 	return Collection_init (me, itemClass, initialCapacity);
@@ -629,21 +631,19 @@ int Cyclic_init (Any me, void *itemClass, long initialCapacity) {
 
 static void cycleLeft (I) {
 	iam (Cyclic);
-	Data help;
-	long i;
 	if (my size == 0) return;
-	help = my item [1];
-	for (i = 1; i < my size; i ++) my item [i] = my item [i + 1];
+	Data help = my item [1];
+	for (long i = 1; i < my size; i ++) my item [i] = my item [i + 1];
 	my item [my size] = help;
 }
 
 void Cyclic_unicize (I) {
 	iam (Cyclic);
-	long lowest = 1, i;
 	if (my size <= 1) return;
-	for (i = 1; i <= my size; i ++)
+	long lowest = 1;
+	for (long i = 1; i <= my size; i ++)
 		if (our compare (my item [i], my item [lowest]) < 0) lowest = i;
-	for (i = 1; i < lowest; i ++)
+	for (long i = 1; i < lowest; i ++)
 		cycleLeft (me);
 }
 

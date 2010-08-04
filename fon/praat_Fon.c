@@ -150,13 +150,13 @@ Graphics Movie_create (const wchar_t *title, int width, int height) {
 	if (! graphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		GuiDialog_show (dialog);
+		GuiObject_show (dialog);
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
 	GuiWindow_setTitle (GuiObject_parent (dialog), title);
 	GuiObject_size (GuiObject_parent (dialog), width + 2, height + 2);
 	GuiObject_size (drawingArea, width, height);
-	GuiDialog_show (dialog);
+	GuiObject_show (dialog);
 	return graphics;
 }
 

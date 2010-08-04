@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2010/07/30
  */
 
 #include "Editor.h"
@@ -60,8 +60,9 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-extern void praat_init (const char *title, unsigned int argc, char **argv);
-extern void praat_run (void);
+void praat_init (const char *title, unsigned int argc, char **argv);
+void praat_run (void);
+void praat_setStandAloneScriptText (wchar_t *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
 	const wchar_t *title, const wchar_t *after, unsigned long flags,

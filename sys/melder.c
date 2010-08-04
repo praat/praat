@@ -40,6 +40,7 @@
  * pb 2009/01/20 removed pause
  * fb 2010/02/26 GTK
  * pb 2010/06/22 GTK: correct hiding and showing again
+ * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include <math.h>
@@ -233,7 +234,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 		GuiObject_hide (dia);
 	} else {
 		if (progress <= 0.0) progress = 0.0;
-		GuiDialog_show (dia);   // TODO: prevent raising to the front
+		GuiObject_show (dia);   // TODO: prevent raising to the front
 		wchar_t *newline = wcschr (message, '\n');
 		if (newline != NULL) {
 			static MelderString buffer = { 0 };
@@ -400,7 +401,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 			if (dia == NULL) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
-				GuiDialog_show (dia);
+				GuiObject_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);

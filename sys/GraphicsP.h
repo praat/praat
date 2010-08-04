@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/05/12
+ * pb 2010/07/30
  */
 
 #ifndef _Graphics_h_
@@ -125,7 +125,7 @@ int Graphics_init (I);
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
 #define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
 
-#if defined (USE_GTK)
+#if defined (UNIX)
 	#define GraphicsScreen_members Graphics_members \
 		GdkDisplay *display; \
 		GdkDrawable *window; \
@@ -133,30 +133,8 @@ int Graphics_init (I);
 		cairo_t *cr;
 	#define mac 0
 	#define win 0
-	#define xwin 0
 	#define cairo 1
 	#define pango 1
-#elif defined (UNIX)
-	#define GraphicsScreen_members Graphics_members \
-		Display *display; \
-		int xscreen; \
-		Window rootWindow; \
-		Visual *visual; \
-		unsigned int depth; \
-		int bitsPerPixel, pad; \
-		Colormap colourMap; \
-		Window window; \
-		GC gc; \
-		struct { \
-			Window window; \
-			GC gc; \
-		} text;
-	#define mac 0
-	#define win 0
-	#define xwin 1
-	#define cairo 0
-	#define pango 0
-	extern unsigned long xwinColour_BLACK, xwinColour_WHITE, xwinColour_PINK, xwinColour_BLUE, xwinGreys [101];
 #elif defined (_WIN32)
 	#include <windowsx.h>
 	#define GraphicsScreen_members Graphics_members \
@@ -168,7 +146,6 @@ int Graphics_init (I);
 		bool fatNonSolid;
 	#define mac 0
 	#define win 1
-	#define xwin 0
 	#define cairo 0
 	#define pango 0
 #elif defined (macintosh)
@@ -185,7 +162,6 @@ int Graphics_init (I);
 		CGContextRef macGraphicsContext;
 	#define mac 1
 	#define win 0
-	#define xwin 0
 	#define cairo 0
 	#define pango 0
 #endif

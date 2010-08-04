@@ -1,6 +1,6 @@
 /* main_Praat.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/07/14
+ * pb 2010/08/02
  */
 
 #include "praat.h"
@@ -30,15 +30,11 @@ static void logo (Graphics g) {
 	Graphics_setFont (g, kGraphics_font_TIMES);
 	Graphics_setFontSize (g, 45);
 	Graphics_setColour (g, Graphics_MAROON);
-	#if defined (macintosh)
-		Graphics_text (g, 0.375, 0.66, L"P");
-		Graphics_text (g, 0.447, 0.66, L"\\s{R}");
-		Graphics_text (g, 0.515, 0.66, L"\\s{A}");
-		Graphics_text (g, 0.580, 0.66, L"\\s{A}");
-		Graphics_text (g, 0.635, 0.66, L"\\s{T}");
-	#else
-		Graphics_text (g, 0.5, 0.66, L"P\\s{RAAT}");
-	#endif
+	Graphics_text (g, 0.385, 0.66, L"P");
+	Graphics_text (g, 0.448, 0.66, L"\\s{R}");
+	Graphics_text (g, 0.510, 0.66, L"\\s{A}");
+	Graphics_text (g, 0.575, 0.66, L"\\s{A}");
+	Graphics_text (g, 0.628, 0.66, L"\\s{T}");
 	Graphics_setFontSize (g, 15);
 	Graphics_text (g, 0.5, 0.55, L"%%doing phonetics by computer");
 	#define xstr(s) str(s)
@@ -52,8 +48,14 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }
 
+static wchar_t testScript [] = L""
+	"demo Text... 0.5 centre 0.5 half Hello world\n"
+	"demoWaitForInput ( )\n"
+;
+
 int main (int argc, char *argv []) {
 	praat_setLogo (130, 80, logo);
+	//praat_setStandAloneScriptText (testScript);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
 	INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)

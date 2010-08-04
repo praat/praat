@@ -387,17 +387,16 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
  */
 static void cb_move (GUI_ARGS) {
 	iam (GraphicsScreen);
-	Dimension width, height, marginWidth, marginHeight;
-	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Dimension width, height;
+	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height, NULL);
 
 	/* The four values returned are probably equal to the previous ones.
 	 * However, the following call forces a new computation of the device coordinates
 	 * by widgetToWindowCoordinates ().
 	 */
 
-	Graphics_setWsViewport ((Graphics) me, marginWidth /* Left x value in widget coordinates */,
-		width - marginWidth, marginHeight, height - marginHeight);
+	Graphics_setWsViewport ((Graphics) me, 0 /* Left x value in widget coordinates */,
+		width, 0, height);
 	Graphics_updateWs ((Graphics) me);
 }
 #endif
@@ -407,7 +406,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#if gtk
 		GtkRequisition realsize;
 	#elif motif
-		Dimension width, height, marginWidth, marginHeight;
+		Dimension width, height;
 	#endif
 
 	my drawingArea = w;   /* Now !!!!!!!!!! */
@@ -434,10 +433,8 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 		//	g_debug("--> %d %d", realsize.width, realsize.height);
 		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
 	#elif motif
-		XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
-			XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-		Graphics_setWsViewport ((Graphics) me,
-			marginWidth, width - marginWidth, marginHeight, height - marginHeight);
+		XtVaGetValues (w, XmNwidth, & width, XmNheight, & height, NULL);
+		Graphics_setWsViewport ((Graphics) me, 0, width, 0, height);
 	#endif
 	#ifdef macintosh
 		XtAddCallback (w, XmNmoveCallback, cb_move, (XtPointer) me);

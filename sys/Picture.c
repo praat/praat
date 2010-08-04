@@ -262,6 +262,11 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	
 		if (event->type == BUTTON_RELEASE) {
 			my selectionInProgress = 0;
+			if (my selectionChangedCallback) {
+				//Melder_casual ("selectionChangedCallback from gui_drawingarea_cb_click");
+				my selectionChangedCallback (me, my selectionChangedClosure,
+					my selx1, my selx2, my sely1, my sely2);
+			}
 		}
 	}
 #else
@@ -296,6 +301,9 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 			} else {
 				Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
 					0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), False);
+				#if gtk
+					Graphics_flushWs (my graphics);
+				#endif
 			}
 			oldix = ix; oldiy = iy;
 		}
@@ -303,10 +311,12 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		ix = 1 + floor (xWC * SQUARES / SIDE);
 		iy = SQUARES - floor (yWC * SQUARES / SIDE);
 	}
-#endif
-	if (my selectionChangedCallback)
+	if (my selectionChangedCallback) {
+		//Melder_casual ("selectionChangedCallback from gui_drawingarea_cb_click");
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
+	}
+#endif
 }
 
 Picture Picture_create (Widget drawingArea, Boolean sensitive) {
@@ -778,9 +788,11 @@ void Picture_setSelection
 		#endif
 	}
 
-	if (notify && my selectionChangedCallback)
+	if (notify && my selectionChangedCallback) {
+		//Melder_casual ("selectionChangedCallback from Picture_setSelection");
 		my selectionChangedCallback (me, my selectionChangedClosure,
 			my selx1, my selx2, my sely1, my sely2);
+	}
 }
 
 void Picture_background (Picture me) { my backgrounding = TRUE; }

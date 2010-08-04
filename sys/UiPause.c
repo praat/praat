@@ -178,7 +178,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 	int wasBackgrounding = Melder_backgrounding;
 	structMelderDir dir = { { 0 } };
 	Melder_getDefaultDir (& dir);
-	if (theCurrentPraatApplication -> batch) goto end;
+	//if (theCurrentPraatApplication -> batch) goto end;
 	if (wasBackgrounding) praat_foreground ();
 	/*
 	 * Put the pause form on the screen.

@@ -1642,7 +1642,7 @@ void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish)
 {
-	long n = my rows -> size, irow;
+	long n = my rows -> size;
 	int saveFontSize = Graphics_inqFontSize (g);
 	if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
 	Table_numericize (me, xcolumn);
@@ -1660,7 +1660,7 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, fontSize);
-	for (irow = 1; irow <= n; irow ++) {
+	for (long irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows -> item [irow];
 		const wchar_t *mark = row -> cells [markColumn]. string;
 		if (mark)
@@ -1695,10 +1695,14 @@ void Table_drawEllipse (Table me, Graphics g, long xcolumn, long ycolumn,
 		if (! Table_getExtrema (me, ycolumn, & ymin, & ymax)) return;
 		if (ymin == ymax) ymin -= 0.5, ymax += 0.5;
 	}
-	tableOfReal = Table_to_TableOfReal (me, 0); cherror
+	tableOfReal = TableOfReal_create (my rows -> size, 2); cherror
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		tableOfReal -> data [irow] [1] = Table_getNumericValue (me, irow, xcolumn);
+		tableOfReal -> data [irow] [2] = Table_getNumericValue (me, irow, ycolumn);
+	}
 	sscp = TableOfReal_to_SSCP (tableOfReal, 0, 0, 0, 0); cherror
 	SSCP_drawConcentrationEllipse (sscp, g, numberOfSigmas, 0,
-		xcolumn, ycolumn, xmin, xmax, ymin, ymax, garnish);
+		1, 2, xmin, xmax, ymin, ymax, garnish);
 end:
 	forget (tableOfReal);
 	forget (sscp);

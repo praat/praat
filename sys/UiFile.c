@@ -94,8 +94,8 @@ void UiInfile_do (I) {
 	iam (UiInfile);
 	SortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
 	if (infileNames == NULL) {
-		if (Melder_hasError ()) Melder_flushError (NULL);
-		return;   // usually cancelled
+		Melder_flushError (NULL);
+		return;
 	}
 	for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
 		SimpleString infileName = infileNames -> item [ifile];

@@ -1232,15 +1232,9 @@ end:
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (SoundRecorder);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-	Dimension marginWidth = 10, marginHeight = 10;
-	#if motif
-	XtVaGetValues (event -> widget, XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
-	#endif
-	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
-	long width = event -> width - marginWidth - marginWidth;
-	long height = event -> height - marginHeight - marginHeight;
-	Graphics_setWsWindow (my graphics, 0, width, 0, height);
-	Graphics_setViewport (my graphics, 0, width, 0, height);
+	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
+	Graphics_setWsWindow (my graphics, 0, event -> width, 0, event -> height);
+	Graphics_setViewport (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_updateWs (my graphics);
 }
 
