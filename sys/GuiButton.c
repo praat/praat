@@ -21,6 +21,7 @@
  * pb & sdk 2007/12/25 gtk
  * fb 2010/02/23 GTK
  * pb 2010/06/14 HandleControlClick
+ * pb 2010/08/10 removed Motif
  */
 
 #include "GuiP.h"
@@ -109,28 +110,6 @@ typedef struct structGuiButton {
 			return false;
 		}
 	#endif
-#else
-	static void _GuiMotifButton_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
-		iam (GuiButton);
-		Melder_free (me);
-	}
-	static void _GuiMotifButton_activateCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiButton);
-		struct structGuiButtonEvent event = { widget, 0 };
-		XButtonPressedEvent *xevent = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
-		if (xevent -> type == ButtonPress) {
-			event. shiftKeyPressed = ( xevent -> state & ShiftMask ) != 0;
-			event. commandKeyPressed = ( xevent -> state & ControlMask ) != 0;
-			event. optionKeyPressed = ( xevent -> state & Mod1Mask ) != 0;
-			event. extraControlKeyPressed = false;
-		} else {
-			(void) 0;   // ignore modifier keys for Enter
-		}
-		if (my activateCallback != NULL) {
-			my activateCallback (my activateBoss, & event);
-		}
-	}
 #endif
 
 Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom,
@@ -201,18 +180,6 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 		if (flags & GuiButton_CANCEL) {
 			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 		}
-	#elif motif
-		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (buttonText), xmPushButtonWidgetClass, parent, XmNalignment, XmALIGNMENT_CENTER, NULL);
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifButton_destroyCallback, me);
-		XtAddCallback (my widget, XmNactivateCallback, _GuiMotifButton_activateCallback, me);
-		if (flags & GuiButton_DEFAULT) {
-			XtVaSetValues (parent, XmNdefaultButton, my widget, NULL);
-		}
-		if (flags & GuiButton_CANCEL) {
-			XtVaSetValues (parent, XmNcancelButton, my widget, NULL);
-		}
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
 		GuiObject_setSensitive (my widget, false);
@@ -236,9 +203,6 @@ void GuiButton_setString (Widget widget, const wchar_t *text) {
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup (text);
 		_GuiNativeControl_setTitle (widget);
-	#elif motif
-		char *text_utf8 = Melder_peekWcsToUtf8 (text);
-		XtVaSetValues (widget, XtVaTypedArg, XmNlabelString, XmRString, text_utf8, strlen (text_utf8), NULL);
 	#endif
 }
 

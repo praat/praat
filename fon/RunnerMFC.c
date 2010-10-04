@@ -405,6 +405,9 @@ RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experim
 	Editor_init (RunnerMFC_as_parent (me), parent, 0, 0, 2000, 2000, title, NULL); cherror
 	my experiments = experiments;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	#if gtk
+		gtk_widget_set_double_buffered (my drawingArea, FALSE);
+	#endif
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);

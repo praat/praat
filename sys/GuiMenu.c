@@ -199,7 +199,7 @@ Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
 
 			if (key != 0)
 				gtk_widget_add_accelerator (button, toggle ? "toggled" : "activate",
-					ag, accelerator, modifiers, GTK_ACCEL_VISIBLE);
+					ag, key, modifiers, GTK_ACCEL_VISIBLE);
 
 		#elif motif
 			static char *acceleratorStrings [] = { "",

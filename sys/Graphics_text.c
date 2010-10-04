@@ -418,19 +418,19 @@ static void charSize (I, _Graphics_widechar *lc) {
 				static ATSUTextLayout textLayout;
 				if (textLayout == NULL) {
 					OSStatus err = ATSUCreateTextLayout (& textLayout);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout: unknown MacOS error %d.", (int) err);
 				}
 				uint16_t code16 [2];
 				if (lc -> kar <= 0xFFFF) {
 					code16 [0] = lc -> kar;
 					OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 1);   // BUG: not 64-bit
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation low Unicode: unknown MacOS error %d.", (int) err);
 				} else {
 					MelderUtf32 kar = lc -> kar - 0x10000;
 					code16 [0] = 0xD800 + (kar >> 10);
 					code16 [1] = 0xDC00 + (kar & 0x3FF);
 					OSStatus err = ATSUSetTextPointerLocation (textLayout, & code16 [0], kATSUFromTextBeginning, kATSUToTextEnd, 2);   // BUG: not 64-bit
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation high Unicode: unknown MacOS error %d.", (int) err);
 				}
 				static ATSUFontFallbacks fontFallbacks = NULL;
 				if (fontFallbacks == NULL) {
@@ -753,7 +753,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				static ATSUTextLayout theAtsuiTextLayout;
 				if (theAtsuiTextLayout == NULL) {
 					OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error %d.", (int) err);
 				}
 				bool hasHighUnicodeValues = false;
 				for (long i = 0; i < nchars; i ++) {
@@ -762,10 +762,10 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				if (hasHighUnicodeValues) {
 					nchars = wcslen_utf16 (codes, 0);
 					OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, Melder_peekWcsToUtf16 (codes), kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues true: unknown MacOS error %d.", (int) err);
 				} else {
 					OSStatus err = ATSUSetTextPointerLocation (theAtsuiTextLayout, codes16, kATSUFromTextBeginning, kATSUToTextEnd, nchars);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUSetTextPointerLocation hasHighUnicodeValues false: unknown MacOS error %d.", (int) err);
 				}
 				static ATSUFontFallbacks fontFallbacks = NULL;
 				if (fontFallbacks == NULL) {
@@ -807,12 +807,12 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 					CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
 					OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUDrawText during Xor: unknown MacOS error %d.", (int) err);
 					CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 					CGContextSetAllowsAntialiasing (my macGraphicsContext, true);
 				} else {
 					OSStatus err = ATSUDrawText (theAtsuiTextLayout, kATSUFromTextBeginning, kATSUToTextEnd, 0, 0);
-					Melder_assert (err == 0);
+					if (err != 0) Melder_fatal ("Graphics_text/ATSUDrawText: unknown MacOS error %d.", (int) err);
 				}
 				CGContextRestoreGState (my macGraphicsContext);
 				return;
