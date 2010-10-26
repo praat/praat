@@ -210,8 +210,8 @@ INTRO (L"The pitch floor is the bottom of the pitch range in the Sound window (s
 NORMAL (L"To change the pitch floor, choose @@Pitch settings...@.")
 MAN_END
 
-MAN_BEGIN (L"power spectral density", L"ppgb", 20070320)
-INTRO (L"The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa^2/s.")
+MAN_BEGIN (L"power spectral density", L"ppgb", 20101026)
+INTRO (L"The average power in a sound during a certain time range and in a certain frequency range, expressed in Pa^2/Hz.")
 ENTRY (L"Mathematical definition")
 NORMAL (L"The %%complex spectrum% of a sound %x(%t) in the time range (%t__1_, %t__2_) is")
 FORMULA (L"%X(%f) \\=3 \\in__%%t%1_^^%%t%2^ %x(%t) e^^-2%\\pi%ift^ %dt")

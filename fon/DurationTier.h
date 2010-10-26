@@ -2,7 +2,7 @@
 #define _DurationTier_h_
 /* DurationTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1997/04/07
- * pb 2002/07/16 GPL
+ * pb 2010/10/19
  */
 
 #ifndef _RealTier_h_
@@ -40,7 +39,7 @@ class_create (DurationTier, RealTier);
 DurationTier DurationTier_create (double tmin, double tmax);
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish);
+	double ymin, double ymax, const wchar_t *method, int garnish);
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me);
 

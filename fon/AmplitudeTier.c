@@ -25,6 +25,7 @@
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
  * pb 2008/01/19 double
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "AmplitudeTier.h"
@@ -42,9 +43,9 @@ end:
 }
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish)
+	double ymin, double ymax, const wchar_t *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, L"Sound pressure (Pa)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Sound pressure (Pa)");
 }
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {

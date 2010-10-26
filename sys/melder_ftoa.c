@@ -1,6 +1,6 @@
 /* melder_ftoa.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2006/12/29 removed future bug
  * pb 2007/11/30 Melder_float
  * pb 2008/01/06 Mac: use strtod instead of wcstod for speed
+ * pb 2010/10/16 Melder_naturalLogarithm
  */
 
 #include "melder.h"
@@ -39,7 +40,7 @@
 #define NUMBER_OF_BUFFERS  32
 	/* = maximum number of arguments to a function call */
 #define MAXIMUM_NUMERIC_STRING_LENGTH  386
-	/* = sign + 308 + point + 60 + E + sign + 3 + null byte + (\.c10^^ - 1) + 4 extra */
+	/* = sign + 308 + point + 60 + e + sign + 3 + null byte + (\.c10^^ - 1) + 4 extra */
 
 static wchar_t buffers [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
@@ -198,6 +199,31 @@ const wchar_t * Melder_float (const wchar_t *number) {
 		while (*n >= '0' && *n <= '9') *(b++) = *(n++);
 		*(b++) = '^';
 		while (*n != '\0') *(b++) = *(n++); *b = '\0';
+	}
+	return buffers [ibuffer];
+}
+
+const wchar_t * Melder_naturalLogarithm (double lnNumber) {
+	if (lnNumber == NUMundefined) return L"--undefined--";
+	if (lnNumber == -INFINITY) return L"0";
+	double log10Number = lnNumber * NUMlog10e;
+	if (log10Number < -41) {
+		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+		long ceiling = ceil (log10Number);
+		double remainder = log10Number - ceiling;
+		double remainder10 = pow (10, remainder);
+		while (remainder10 < 1.0) {
+			remainder10 *= 10;
+			ceiling --;
+		}
+		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", remainder10);
+		if (wcstod (buffers [ibuffer], NULL) != remainder10) {
+			swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", remainder10);
+			if (wcstod (buffers [ibuffer], NULL) != remainder10) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", remainder10);
+		}
+		swprintf (buffers [ibuffer] + wcslen (buffers [ibuffer]), 100, L"e-%ld", ceiling);
+	} else {
+		return Melder_double (exp (lnNumber));
 	}
 	return buffers [ibuffer];
 }

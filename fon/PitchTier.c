@@ -1,6 +1,6 @@
 /* PitchTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2006/12/08 info
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "PitchTier.h"
@@ -56,9 +57,9 @@ end:
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish)
+	double fmin, double fmax, int garnish, const wchar_t *method)
 {
-	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, L"Frequency (Hz)");
+	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, L"Frequency (Hz)");
 }
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {

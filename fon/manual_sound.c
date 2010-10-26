@@ -379,7 +379,7 @@ NORMAL (L"where \\De%t is the sampling period of the sound. Every sample %x__%i_
 FORMULA (L"%x__%i_ = %x__%i_ + %\\al %x__%i-1_")
 MAN_END
 
-MAN_BEGIN (L"Sound: Deepen band modulation...", L"ppgb", 20030916)
+MAN_BEGIN (L"Sound: Deepen band modulation...", L"ppgb", 20101026)
 INTRO (L"A command to enhance the fast spectral changes, like %F__2_ movements, in each selected @Sound object.")
 ENTRY (L"Settings")
 TAG (L"%Enhancement (dB)")
@@ -396,6 +396,8 @@ DEFINITION (L"the frequency %f__%fast_ above which the intensity modulations in 
 TAG (L"%%Band smoothing% (Hz)")
 DEFINITION (L"the degree of overlap of each band into its adjacent bands. Prevents %ringing. The standard value is 100 Hz.")
 ENTRY (L"Algorithm")
+NORMAL (L"This algorithm was inspired by @@Nagarajan, Wang, Merzenich, Schreiner, Johnston, Jenkins, Miller & Tallal (1998)@, "
+	"but not identical to it. Now follows the description.")
 NORMAL (L"Suppose the settings have their standard values. The resulting sound will composed of the unfiltered part of the original sound, "
 	"plus all manipulated bands.")
 NORMAL (L"First, the resulting sound becomes the original sound, stop-band filtered between 300 and 8000 Hz: "

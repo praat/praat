@@ -137,7 +137,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 	}
 }
 
-static int menu_cb_go (EDITOR_ARGS) {
+static int menu_cb_run (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
 		return Melder_error1 (L"The script is already running (paused). Please close or continue the pause or demo window.");
@@ -309,7 +309,7 @@ static void createMenus (ScriptEditor me) {
 	Editor_addCommand (me, L"Edit", L"-- expand --", 0, 0);
 	Editor_addCommand (me, L"Edit", L"Expand include files", 0, menu_cb_expandIncludeFiles);
 	Editor_addMenu (me, L"Run", 0);
-	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_go);
+	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_run);
 	Editor_addCommand (me, L"Run", L"Run selection", 'T', menu_cb_runSelection);
 }
 

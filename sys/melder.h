@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/06/10
+ * pb 2010/10/16
  */
 
 #include <stdio.h>
@@ -73,6 +73,7 @@ const wchar_t * Melder_percent (double value, int precision);
 	/* "--undefined--" or, if precision is 3: "0" or "34.400%" of "0.014%" or "0.001%" or "0.0000007%" */
 const wchar_t * Melder_float (const wchar_t *number);
 	/* turns 1e+4 into 10^^4, or -1.23456e-78 into -1.23456\.c10^^-78 */
+const wchar_t * Melder_naturalLogarithm (double lnNumber);   // turns -10000 into "1.135483865315339e-4343"
 
 /********** STRING TO NUMBER CONVERSION **********/
 

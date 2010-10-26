@@ -539,7 +539,7 @@ LIST_ITEM (L"\\bu @@Remove points between...")
 LIST_ITEM (L"\\bu ##FormantTier: Add point...#")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Formant (burg)...", L"ppgb", 20031003)
+MAN_BEGIN (L"Sound: To Formant (burg)...", L"ppgb", 20101007)
 INTRO (L"A command that creates a @Formant object from every selected @Sound object. "
 	"It performs a short-term spectral analysis, approximating the spectrum of each "
 	"analysis frame by a number of formants.")
@@ -555,7 +555,8 @@ DEFINITION (L"for most analyses of human speech, you will want to extract 5 form
 	"This, in combination with the %%Maximum formant% argument, is the only way "
 	"in which this procedure will give you results compatible with how people "
 	"tend to interpret formants for vowels, i.e. in terms of "
-	"vowel height (F1) and vowel place (F2).")
+	"vowel height (F1) and vowel place (F2). Otherwise, the %%Maximum number of formants% can be any multiple of 0.5, "
+	"you can choose 4, 4.5, 5, 5.5, 6, and so on (see below).")
 TAG (L"%%Maximum formant% (Hertz)")
 DEFINITION (L"the ceiling of the formant search range. It is crucial that you set this argument to a value suitable for your speaker. "
 	"The standard value of 5500 Hz is suitable for an average adult female. For a male, use 5000 Hz; "
@@ -587,11 +588,16 @@ NORMAL (L"The sound will be resampled to a sampling frequency of twice the value
 	"After this, pre-emphasis is applied with the algorithm described at @@Sound: Pre-emphasize (in-line)...@. "
 	"For each analysis window, Praat applies a Gaussian-like window, "
 	"and computes the LPC coefficients with the algorithm by Burg, as given by @@Childers (1978)@ "
-	"and @@Press et al. (1992)@.")
-NORMAL (L"This algorithm can initially find formants at very low or high frequencies. "
+	"and @@Press et al. (1992)@. The number of \"poles\" that this algorithm computes is twice the %%Maximum number of formants%; "
+	"that's why you can set the %%Maximum number of formants% to any multiple of 0.5).")
+NORMAL (L"The algorithm will initially find %%Maximum number of formants% formants in the whole range between 0 Hz "
+	"and %%Maximum formant%. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) "
+	"or very high frequencies (near %%Maximum formant%). Such low or high \"formants\" tend to be artefacts of the LPC algorithm, "
+	"i.e., the algorithm tends to use them to match the spectral slope if that slope differs from the 6 dB/octave assumption. "
+	"Therefore, such low or high \"formants\" cannot usually be associated with the vocal tract resonances that you are looking for. "
 	"In order for you to be able to identify the traditional F1 and F2, "
 	"all formants below 50 Hz and all formants above %%Maximum formant% minus 50 Hz, "
-	"are removed. If you don't want this, you may experiment with @@Sound: To Formant (keep all)...@ instead. "
+	"are therefore removed. If you don't want this removal, you may experiment with @@Sound: To Formant (keep all)...@ instead. "
 	"If you prefer an algorithm that always yields the requested number of formants, nicely distributed "
 	"across the frequency domain, you may try the otherwise rather unreliable Split-Levinson procedure @@Sound: To Formant (sl)...@.")
 MAN_END

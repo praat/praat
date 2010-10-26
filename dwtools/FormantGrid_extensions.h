@@ -30,7 +30,7 @@
 	#include "Graphics.h"
 #endif
 
-void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish);
+void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const wchar_t *method);
 
 void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position);
 int FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position);

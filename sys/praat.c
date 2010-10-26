@@ -949,8 +949,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 	#if defined (UNIX)
 		FILE *f;
-		gtk_init (& argc, & argv);
-		gtk_set_locale ();
+		gtk_init_check (& argc, & argv);
+		//gtk_set_locale ();
 		setlocale (LC_ALL, "en_US.utf8");
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!

@@ -196,6 +196,12 @@ NORMAL (L"Eric Moulines & Francis Charpentier (1990): Pitch-synchronous waveform
 	"%%Speech Communication% #9: 453\\--467.")
 MAN_END
 
+MAN_BEGIN (L"Nagarajan, Wang, Merzenich, Schreiner, Johnston, Jenkins, Miller & Tallal (1998)", L"ppgb", 20101026)
+NORMAL (L"Srikantan S. Nagarajan, Xiaoqin Wang, Michael M. Merzenich, Christoph E. Schreiner, Paul Johnston, William M. Jenkins, "
+	"Steven Miller & Paula Tallal (1998): Speech modifications algorithms used for training language learning-impaired children. "
+	"%%IEEE Transactions on Rehabilitation Engineering% ##6(3)#: 257\\--268.")
+MAN_END
+
 MAN_BEGIN (L"Pater (2008)", L"ppgb", 20100331)
 NORMAL (L"Joe Pater (2008): \"Gradual learning and convergence.\" %%Linguistic Inquiry% #39: 334\\--345.")
 MAN_END

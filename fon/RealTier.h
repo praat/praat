@@ -88,7 +88,7 @@ double RealTier_getStandardDeviation_points (I, double tmin, double tmax);
 
 int RealTier_addPoint (I, double t, double value);
 void RealTier_draw (I, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish, const wchar_t *quantity);
+	double ymin, double ymax, int garnish, const wchar_t *method, const wchar_t *quantity);
 TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wchar_t *valueLabel);
 
 int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically);

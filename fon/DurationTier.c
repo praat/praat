@@ -1,6 +1,6 @@
 /* DurationTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2006/12/08 info
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "DurationTier.h"
@@ -52,9 +53,9 @@ end:
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish)
+	double ymin, double ymax, const wchar_t *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, L"Relative duration");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Relative duration");
 }
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me) {

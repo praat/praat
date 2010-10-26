@@ -1887,7 +1887,7 @@ END
 
 /****************** FormantGrid  *********************************/
 
-FORM (FormantGrid_draw, L"FormantGrid: Draw", 0)
+FORM (old_FormantGrid_draw, L"FormantGrid: Draw", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0 (=all)")
 	REAL (L"left Frequency range (Hz)", L"0.0")
@@ -1899,7 +1899,27 @@ DO
 	EVERY_DRAW (FormantGrid_draw (OBJECT, GRAPHICS,
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-		GET_INTEGER (L"Bandwidths"), GET_INTEGER (L"Garnish")))
+		GET_INTEGER (L"Bandwidths"), GET_INTEGER (L"Garnish"), L"lines and speckles"))
+END
+
+FORM (FormantGrid_draw, L"FormantGrid: Draw", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0 (=all)")
+	REAL (L"left Frequency range (Hz)", L"0.0")
+	REAL (L"right Frequency range (Hz)", L"0.0 (=auto)")
+	BOOLEAN (L"Bandwidths", false)
+	BOOLEAN (L"Garnish", true)
+	LABEL (L"", L"")
+	OPTIONMENU (L"Drawing method", 1)
+		OPTION (L"lines")
+		OPTION (L"speckles")
+		OPTION (L"lines and speckles")
+	OK
+DO_ALTERNATIVE (old_FormantGrid_draw)
+	EVERY_DRAW (FormantGrid_draw (OBJECT, GRAPHICS,
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_INTEGER (L"Bandwidths"), GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method")))
 END
 
 /****************** FunctionTerms  *********************************/

@@ -546,8 +546,14 @@ static int goToPage (Manual me, const wchar_t *title) {
 		structMelderDir saveDir = { { 0 } };
 		Melder_getDefaultDir (& saveDir);
 		Melder_setDefaultDir (& manPages -> rootDirectory);
+		void praat_background (void);   // BUG
+		void praat_foreground (void);   // BUG
+		praat_background ();
 		if (! praat_executeScriptFromFileNameWithArguments (title + 3)) {
+			praat_foreground ();
 			Melder_flushError (NULL);
+		} else {
+			praat_foreground ();
 		}
 		Melder_setDefaultDir (& saveDir);
 		return 0;

@@ -1,6 +1,6 @@
 /* IntensityTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "IntensityTier.h"
@@ -41,9 +42,9 @@ end:
 }
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish)
+	double ymin, double ymax, const wchar_t *method, int garnish)
 {
-	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, L"Intensity (dB)");
+	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Intensity (dB)");
 }
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {

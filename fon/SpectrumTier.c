@@ -1,6 +1,6 @@
 /* SpectrumTier.c
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2007/03/29 created
  * pb 2007/08/12 wchar_t
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "Ltas_to_SpectrumTier.h"
@@ -50,9 +51,9 @@ end:
 }
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish)
+	double pmin, double pmax, int garnish, const wchar_t *method)
 {
-	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, L"Power spectral density (dB)");
+	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, L"Power spectral density (dB)");
 }
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity) {

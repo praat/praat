@@ -284,7 +284,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		dt_window = duration;
 		nsamp_window = my nx;
 	}
-	thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2); cherror
+	thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2); cherror   // e.g. 11 poles -> maximally 6 formants
 	window = NUMdvector (1, nsamp_window); cherror
 	frame = NUMdvector (1, nsamp_window); cherror
 	if (which == 1) { cof = NUMdvector (1, numberOfPoles); cherror }

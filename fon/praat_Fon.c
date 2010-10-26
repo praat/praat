@@ -1,6 +1,6 @@
 /* praat_Fon.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/10/28
+ * pb 2010/10/19
  */
 
 #include "praat.h"
@@ -2277,8 +2277,7 @@ DIRECT (Pitch_difference)
 END
 
 FORM (Pitch_draw, L"Pitch: Draw", L"Pitch: Draw...")
-	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
-	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	praat_dia_timeRange (dia);
 	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
 	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
 	BOOLEAN (L"Garnish", 1)
@@ -2673,7 +2672,7 @@ END
 
 /***** PITCH & PITCHTIER *****/
 
-FORM (PitchTier_Pitch_draw, L"PitchTier & Pitch: Draw", 0)
+FORM (old_PitchTier_Pitch_draw, L"PitchTier & Pitch: Draw", 0)
 	praat_dia_timeRange (dia);
 	REAL (L"From frequency (Hz)", L"0.0")
 	REAL (L"To frequency (Hz)", L"500.0")
@@ -2689,7 +2688,32 @@ DO
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
 		GET_INTEGER (L"Line type for non-periodic intervals") - 1,
-		GET_INTEGER (L"Garnish"));
+		GET_INTEGER (L"Garnish"), L"lines and speckles");
+	praat_picture_close ();
+END
+
+FORM (PitchTier_Pitch_draw, L"PitchTier & Pitch: Draw", 0)
+	praat_dia_timeRange (dia);
+	REAL (L"From frequency (Hz)", L"0.0")
+	REAL (L"To frequency (Hz)", L"500.0")
+	RADIO (L"Line type for non-periodic intervals", 2)
+		RADIOBUTTON (L"Normal")
+		RADIOBUTTON (L"Dotted")
+		RADIOBUTTON (L"Blank")
+	BOOLEAN (L"Garnish", 1)
+	LABEL (L"", L"")
+	OPTIONMENU (L"Drawing method", 1)
+		OPTION (L"lines")
+		OPTION (L"speckles")
+		OPTION (L"lines and speckles")
+	OK
+DO_ALTERNATIVE (old_PitchTier_Pitch_draw)
+	praat_picture_open ();
+	PitchTier_Pitch_draw (ONLY (classPitchTier), ONLY (classPitch), GRAPHICS,
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
+		GET_INTEGER (L"Line type for non-periodic intervals") - 1,
+		GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method"));
 	praat_picture_close ();
 END
 
@@ -2767,20 +2791,41 @@ DO
 	EVERY_TO (PitchTier_downto_TableOfReal (OBJECT, GET_INTEGER (L"Unit") - 1))
 END
 
-FORM (PitchTier_draw, L"PitchTier: Draw", 0)
+FORM (old_PitchTier_draw, L"PitchTier: Draw", 0)
 	praat_dia_timeRange (dia);
-	REAL (L"Minimum frequency (Hz)", L"0.0")
-	POSITIVE (L"Maximum frequency (Hz)", L"500.0")
+	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	double minimumFrequency = GET_REAL (L"Minimum frequency");
-	double maximumFrequency = GET_REAL (L"Maximum frequency");
+	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
+	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
 	REQUIRE (maximumFrequency > minimumFrequency,
 		L"Maximum frequency must be greater than minimum frequency.")
 	EVERY_DRAW (PitchTier_draw (OBJECT, GRAPHICS,
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), minimumFrequency, maximumFrequency,
-		GET_INTEGER (L"Garnish")))
+		GET_INTEGER (L"Garnish"), L"lines and speckles"))
+END
+
+FORM (PitchTier_draw, L"PitchTier: Draw", 0)
+	praat_dia_timeRange (dia);
+	REAL (STRING_FROM_FREQUENCY_HZ, L"0.0")
+	POSITIVE (STRING_TO_FREQUENCY_HZ, L"500.0")
+	BOOLEAN (L"Garnish", 1)
+	LABEL (L"", L"")
+	OPTIONMENU (L"Drawing method", 1)
+		OPTION (L"lines")
+		OPTION (L"speckles")
+		OPTION (L"lines and speckles")
+	OK
+DO_ALTERNATIVE (old_PitchTier_draw)
+	double minimumFrequency = GET_REAL (STRING_FROM_FREQUENCY);
+	double maximumFrequency = GET_REAL (STRING_TO_FREQUENCY);
+	REQUIRE (maximumFrequency > minimumFrequency,
+		L"Maximum frequency must be greater than minimum frequency.")
+	EVERY_DRAW (PitchTier_draw (OBJECT, GRAPHICS,
+		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), minimumFrequency, maximumFrequency,
+		GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method")))
 END
 
 DIRECT (PitchTier_edit)
@@ -3893,7 +3938,7 @@ DIRECT (SpectrumTier_downto_Table)
 	EVERY_TO (SpectrumTier_downto_Table (OBJECT, true, true, true))
 END
 
-FORM (SpectrumTier_draw, L"SpectrumTier: Draw", 0)
+FORM (old_SpectrumTier_draw, L"SpectrumTier: Draw", 0)   // 2010/10/19
 	REAL (L"left Frequency range (Hz)", L"0.0")
 	REAL (L"right Frequency range (Hz)", L"10000.0")
 	REAL (L"left Power range (dB)", L"20.0")
@@ -3904,7 +3949,26 @@ DO
 	EVERY_DRAW (SpectrumTier_draw (OBJECT, GRAPHICS,
 		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
 		GET_REAL (L"left Power range"), GET_REAL (L"right Power range"),
-		GET_INTEGER (L"Garnish")))
+		GET_INTEGER (L"Garnish"), L"lines and speckles"))
+END
+
+FORM (SpectrumTier_draw, L"SpectrumTier: Draw", 0)
+	REAL (L"left Frequency range (Hz)", L"0.0")
+	REAL (L"right Frequency range (Hz)", L"10000.0")
+	REAL (L"left Power range (dB)", L"20.0")
+	REAL (L"right Power range (dB)", L"80.0")
+	BOOLEAN (L"Garnish", 1)
+	LABEL (L"", L"")
+	OPTIONMENU (L"Drawing method", 1)
+		OPTION (L"lines")
+		OPTION (L"speckles")
+		OPTION (L"lines and speckles")
+	OK
+DO_ALTERNATIVE (old_SpectrumTier_draw)
+	EVERY_DRAW (SpectrumTier_draw (OBJECT, GRAPHICS,
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_REAL (L"left Power range"), GET_REAL (L"right Power range"),
+		GET_INTEGER (L"Garnish"), GET_STRING (L"Drawing method")))
 END
 
 FORM (SpectrumTier_list, L"SpectrumTier: List", 0)

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101004)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101026)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.1.45# (26 October 2010)")
+LIST_ITEM (L"\\bu Linux/GTK: allow Praat to run without an X display.")
+LIST_ITEM (L"\\bu Sounds are played synchronously in scripts run from ManPages with \\bsSC.")
 NORMAL (L"##5.1.44# (4 October 2010)")
 LIST_ITEM (L"\\bu Linux/GTK: visibility of ExperimentMFC window.")
 LIST_ITEM (L"\\bu Linux/GTK: keyboard shortcuts.")

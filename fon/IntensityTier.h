@@ -2,7 +2,7 @@
 #define _IntensityTier_h_
 /* IntensityTier.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2005/05/26
+ * pb 2010/10/19
  */
 
 #ifndef _RealTier_h_
@@ -45,7 +45,7 @@ class_create (IntensityTier, RealTier);
 IntensityTier IntensityTier_create (double tmin, double tmax);
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish);
+	double ymin, double ymax, const wchar_t *method, int garnish);
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity);
 IntensityTier Intensity_downto_IntensityTier (Intensity me);

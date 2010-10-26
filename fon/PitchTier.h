@@ -2,7 +2,7 @@
 #define _PitchTier_h_
 /* PitchTier.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2003/11/20
+ * pb 2010/10/19
  */
 
 #ifndef _RealTier_h_
@@ -51,13 +51,13 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, double factor);
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish);
+	double fmin, double fmax, int garnish, const wchar_t *method);
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
 void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemitones);
 
-int PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile fs);
-int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile fs);
+int PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);
+int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file);
 
 /* End of file PitchTier.h */
 #endif

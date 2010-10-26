@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1998/03/19
  * pb 2002/07/16 GPL
+ * pb 2010/10/19 allow drawing without speckles
  */
 
 #include "Pitch_to_PitchTier.h"
@@ -77,11 +78,11 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 }
 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish)
+	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const wchar_t *method)
 {
 	long n = my points -> size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {
-		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish);
+		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method);
 		return;
 	}
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
