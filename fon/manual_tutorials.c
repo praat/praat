@@ -23,9 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101026)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101029)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2# (29 October 2010)")
 NORMAL (L"##5.1.45# (26 October 2010)")
 LIST_ITEM (L"\\bu Linux/GTK: allow Praat to run without an X display.")
 LIST_ITEM (L"\\bu Sounds are played synchronously in scripts run from ManPages with \\bsSC.")
@@ -1188,16 +1189,10 @@ ENTRY (L"To do")
 ENTRY (L"Known bugs in the Windows version")
 	LIST_ITEM (L"\\bu Cannot stand infinitesimal zooming in SpectrogramEditor.")
 	LIST_ITEM (L"\\bu Clipboards with greys sometimes become black-and-white after use of colour.")
-ENTRY (L"Known bugs in the Unix versions")
-	LIST_ITEM (L"\\bu (small) Motif messaging windows should have no parent and be modeless.")
 ENTRY (L"Known bugs in the Linux version")
 	LIST_ITEM (L"\\bu Sounds shorter than 200 ms do not always play (workaround: add zeroes in prefs).")
 	LIST_ITEM (L"\\bu Keyboard shortcuts do not work if NumLock is on.")
-	LIST_ITEM (L"\\bu Progress window does not always disappear.")
-ENTRY (L"Known bugs in the Solaris version")
-	LIST_ITEM (L"\\bu (serious for some) File names run out of the window in some Motif versions.")
-ENTRY (L"Known bugs in the HP version")
-	LIST_ITEM (L"\\bu (serious for some) Sound recording should be from audioserver instead of local.")
+	LIST_ITEM (L"\\bu Keyboard shortcut \"tab\" does not work.")
 MAN_END
 /*
    BUGBASE
