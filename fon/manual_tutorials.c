@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101029)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101104)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.01# (4 November 2010)")
+LIST_ITEM (L"\\bu Scripting: support for numeric @@Scripting 5.6. Arrays|arrays@.")
 NORMAL (L"##5.2# (29 October 2010)")
 NORMAL (L"##5.1.45# (26 October 2010)")
 LIST_ITEM (L"\\bu Linux/GTK: allow Praat to run without an X display.")

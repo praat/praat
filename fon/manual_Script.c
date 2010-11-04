@@ -2117,24 +2117,21 @@ CODE (L"#procedure squareNumber  .number .squareVariableName\\$ ")
 CODE (L"#endproc")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.6. Arrays", L"ppgb", 20020624)
-NORMAL (L"Quote substitution allows you to simulate arrays of variables:")
+MAN_BEGIN (L"Scripting 5.6. Arrays", L"ppgb", 20101104)
+NORMAL (L"You can use arrays of numeric variables:")
 CODE (L"#for i #from 1 #to 5")
-CODE (L"   square'i' = i * i")
+CODE (L"   square [i] = i * i")
 CODE (L"#endfor")
-NORMAL (L"After this, the variables %square1, %square2, %square3, %square4, and %square5 contain "
+NORMAL (L"After this, the variables %square [1], %square [2], %square [3], %square [4], and %square [5] contain "
 	"the values 1, 4, 9, 16, and 25, respectively.")
 NORMAL (L"You can use any number of variables in a script, but you can also use Matrix or Sound objects for arrays.")
-NORMAL (L"You can substitute variables with the usual single quotes, as in $$'square3'$. "
+NORMAL (L"You can substitute variables with the usual single quotes, as in $$'square[3]'$, without spaces. "
 	"If the index is also a variable, however, you may need a dummy variable:")
 CODE (L"#echo Some squares:")
 CODE (L"#for i #from 1 #to 5")
-CODE (L"   #hop = square'i'")
+CODE (L"   #hop = square [i]")
 CODE (L"   #printline The square of 'i' is 'hop'")
 CODE (L"#endfor")
-NORMAL (L"The reason for this is that the following line would not work, because of the required "
-	"double substitution:")
-CODE (L"#print The square of 'i' is 'square'i''")
 MAN_END
 
 MAN_BEGIN (L"Scripting 5.7. Including other scripts", L"ppgb", 20080530)

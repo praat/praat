@@ -32,7 +32,8 @@
  * pb 2008/01/19 double
  * pb 2008/07/07 split zero padding between silenceBefore and silenceAfter
  * fb 2010/02/26 fix resource leak fd_mixer in case of error during init
- * pb 2010/04/20 Sound_recordFixedTime for Linux: repair 
+ * pb 2010/04/20 Sound_recordFixedTime for Linux: repair
+ * pb 2010/11/02 Sound_recordFixedTime for Linux: repair bug from 1998
  */
 
 #include <errno.h>
@@ -349,52 +350,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				Melder_error1 (L"(Sound_record:) Cannot open /dev/mixer.");
 				goto error;
 			}
-			#if 0
 			dev_mask = inputSource == 1 ? SOUND_MASK_MIC : SOUND_MASK_LINE;
-			if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
+			if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1) {
 				Melder_error1 (L"(Sound_record:) Can't set recording device in mixer");		
 				goto error;
 			}
-			#else
-		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECMASK, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Cannot access /dev/mixer.");						goto error;
-		}
-		/*		printf("%d %d %d\n", dev_mask, (dev_mask&SOUND_MASK_LINE), (dev_mask&SOUND_MASK_MIC));*/
-		if (inputSource == 2) {
-			/*  AUDIO_LINE_IN */
-			if (dev_mask&SOUND_MASK_LINE) {
-				dev_mask = SOUND_MASK_LINE;
-			} else {
-				Melder_error ("(Sound_record:) Can't set LINE as recording device");
-				goto error;
-			}
-			
-		} else {
-			/*  AUDIO_MICROPHONE */
-			if (dev_mask&SOUND_MASK_MIC) {
-				dev_mask = SOUND_MASK_MIC;
-			} else {
-				Melder_error ("(Sound_record:) Can't set MIC as recording device");
-				goto error;
-			}
-
-		}
-		/*		printf("%d\n", dev_mask);*/
-		if (ioctl(fd_mixer, SOUND_MIXER_WRITE_RECSRC, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Can't set recording device in mixer");		
-		}
-		if (ioctl(fd_mixer, SOUND_MIXER_READ_RECSRC, &dev_mask) == -1) {
-			Melder_error ("(Sound_record:) Can't read recording device from mixer");		
-		} else {
-			/*			printf("%x\n",dev_mask);*/
-			if (dev_mask&SOUND_MASK_MIC) {
-				inputSource = 1;				
-			} else if (dev_mask&SOUND_MASK_LINE) {
-				inputSource = 2;
-				
-			}
-		} 
-			#endif
 		#endif
 	}
 
@@ -424,13 +384,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			val = (int)((min(2-2*balance,1))*val) | ((int)((min(2*balance,1))*val) << 8);
 			if (inputSource == 1) {			
 				/* MIC */		       
-				if (ioctl (fd_mixer, MIXER_WRITE(SOUND_MIXER_MIC), &val) == -1) {
+				if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_MIC), & val) == -1) {
 					Melder_error1 (L"(Sound_record:) Cannot set gain and balance.");
 					goto error;				
 				}
 			} else {
 				/* LINE */
-				if (ioctl (fd_mixer, MIXER_WRITE(SOUND_MIXER_LINE), &val) == -1) {
+				if (ioctl (fd_mixer, MIXER_WRITE (SOUND_MIXER_LINE), & val) == -1) {
 					Melder_error1 (L"(Sound_record:) Cannot set gain and balance.");
 					goto error;				
 				}

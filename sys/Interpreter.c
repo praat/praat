@@ -1256,7 +1256,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				p ++;
 				while (*p == ' ' || *p == '\t') p ++;   /* Go to first token after assignment or I/O symbol. */
 				if (*p == '\0') {
-					if (withFile)
+					if (withFile != 0)
 						error3 (L"Missing file name after variable ", command2.string, L".")
 					else
 						error3 (L"Missing expression after variable ", command2.string, L".")
@@ -1330,6 +1330,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				 * Try to assign to a numeric variable.
 				 */
 				double value;
+				wchar_t *variableName = command2.string;
 				int typeOfAssignment = 0;   /* Plain assignment. */
 				if (*p == '\0') {
 					/*
@@ -1338,33 +1339,48 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					praat_executeCommand (me, command2.string); cherror
 					goto end;
 				}
+				wchar_t *endOfVariable = p;
+				while (*p == ' ' || *p == '\t') p ++;
 				if (*p == '=' || ((*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=')) {
 					/*
-					 * This must be an assignment (though: "echo= ..." ???)
+					 * This must be an assignment (though: "echo = ..." ???)
 					 */
 					typeOfAssignment = *p == '+' ? 1 : *p == '-' ? 2 : *p == '*' ? 3 : *p == '/' ? 4 : 0;
-					*p = '\0';   /* Close variable name. */
-				} else {
-					wchar_t *endOfVariable = p;
-					p ++;
+					*endOfVariable = '\0';   // Close variable name. FIXME: this can be any weird character, e.g. hallo&
+				} else if (*p == '[') {
+					/*
+					 * This must be an assignment to an indexed numeric variable.
+					 */
+					static MelderString index = { 0 };
+					MelderString_empty (& index);
+					*endOfVariable = '\0';
+					p ++;   // skip opening bracket
+					while (*p != ']' && *p != '\n' && *p != '\0') {
+						MelderString_appendCharacter (& index, *p);
+						p ++;
+					}
+					if (*p != ']')
+						error1 (L"Missing closing bracket (]) in indexed variable.")
+					Interpreter_numericExpression (me, index.string, & value); cherror
+					static MelderString indexedVariableName = { 0 };
+					MelderString_copy (& indexedVariableName, command2.string);
+					MelderString_append3 (& indexedVariableName, L"[", Melder_double (value), L"]");
+					variableName = indexedVariableName.string;
+					p ++;   // skip closing bracket
 					while (*p == ' ' || *p == '\t') p ++;
 					if (*p == '=' || ((*p == '+' || *p == '-' || *p == '*' || *p == '/') && p [1] == '=')) {
-						/*
-						 * This must be an assignment (though: "echo = ..." ???)
-						 */
 						typeOfAssignment = *p == '+' ? 1 : *p == '-' ? 2 : *p == '*' ? 3 : *p == '/' ? 4 : 0;
-						*endOfVariable = '\0';   // Close variable name. FIXME: this can be any weird character, e.g. hallo&
-					} else {
-						/*
-						 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
-						 */
-						praat_executeCommand (me, command2.string); cherror
-						goto end;
 					}
+				} else {
+					/*
+					 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
+					 */
+					praat_executeCommand (me, variableName); cherror
+					goto end;
 				}
 				p += typeOfAssignment == 0 ? 1 : 2;
 				while (*p == ' ' || *p == '\t') p ++;			
-				if (*p == '\0') error3 (L"Missing expression after variable ", command2.string, L".")
+				if (*p == '\0') error3 (L"Missing expression after variable ", variableName, L".")
 				/*
 				 * Three classes of assignments:
 				 *    var = formula
@@ -1408,14 +1424,15 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * Use an existing variable, or create a new one.
 					 */
-					InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); cherror
+					//Melder_casual ("looking up variable %ls", variableName);
+					InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); cherror
 					var -> numericValue = value;
 				} else {
 					/*
 					 * Modify an existing variable.
 					 */
-					InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
-					if (var == NULL) error3 (L"Unknown variable ", command2.string, L".")
+					InterpreterVariable var = Interpreter_hasVariable (me, variableName); cherror
+					if (var == NULL) error3 (L"Unknown variable ", variableName, L".")
 					if (var -> numericValue == NUMundefined) {
 						/* Keep it that way. */
 					} else {

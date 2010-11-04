@@ -58,6 +58,7 @@
  * pb 2009/08/21 demoWindowTitle
  * pb 2009/12/25 error checking for Demo commands (should yield an error if the Demo window is waiting for input)
  * pb 2010/07/26 chooseReadFile$, chooseWriteFile$
+ * pb 2010/11/03 indexed variables
  */
 
 #include <ctype.h>
@@ -217,7 +218,7 @@ enum { GEENSYMBOOL_,
 
 	STRING_,
 	NUMERIC_VARIABLE_, STRING_VARIABLE_, NUMERIC_ARRAY_VARIABLE_, STRING_ARRAY_VARIABLE_,
-	VARIABLE_NAME_,
+	VARIABLE_NAME_, INDEXED_NUMERIC_VARIABLE_, INDEXED_STRING_VARIABLE_,
 	END_
 	#define hoogsteSymbool END_
 };
@@ -286,7 +287,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"_square",
 	L"_string",
 	L"a numeric variable", L"a string variable", L"a numeric array variable", L"a string array variable",
-	L"a variable name",
+	L"a variable name", L"an indexed numeric variable", L"an indexed string variable",
 	L"the end of the formula"
 };
 
@@ -540,6 +541,14 @@ static int Formula_lexan (void) {
 				if (theExpression [jkar] == '(') {
 					return Melder_error3 (
 						L"Unknown function " L_LEFT_GUILLEMET, token.string, L_RIGHT_GUILLEMET L" in formula.");
+				} else if (theExpression [jkar] == '[' && ! isArray) {
+					if (isString) {
+						nieuwtok (INDEXED_STRING_VARIABLE_)
+					} else {
+						nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+					}
+					lexan [itok]. content.string = Melder_wcsdup (token.string);
+					numberOfStringConstants ++;
 				} else {
 					InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 					if (var == NULL) {
@@ -776,6 +785,30 @@ static int parsePowerFactor (void) {
 	if (symbol == NUMERIC_VARIABLE_ || symbol == STRING_VARIABLE_) {
 		nieuwontleed (symbol);
 		parse [iparse]. content.variable = lexan [ilexan]. content.variable;
+		return 1;
+	}
+
+	if (symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_) {
+		wchar_t *var = lexan [ilexan]. content.string;   // Save before incrementing ilexan.
+		if (nieuwlees == RECHTEHAAKOPENEN_) {
+			int n = 0;
+			if (nieuwlees != RECHTEHAAKSLUITEN_) {
+				oudlees;
+				if (! parseExpression ()) return 0;
+				n ++;
+				while (nieuwlees == KOMMA_) {
+					if (! parseExpression ()) return 0;
+					n ++;
+				}
+				oudlees;
+				if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+			}
+			nieuwontleed (NUMBER_); parsenumber (n);
+			nieuwontleed (symbol);
+		} else {
+			Melder_fatal ("Formula:parsePowerFactor (indexed variable): No '['; cannot happen.");
+		}
+		parse [iparse]. content.string = var;
 		return 1;
 	}
 
@@ -1780,7 +1813,7 @@ static void Formula_print (FormulaInstruction f) {
 			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, Melder_double (f [i]. content.variable -> numericValue));
 		else if (symbol == STRING_VARIABLE_)
 			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
-		else if (symbol == STRING_ || symbol == VARIABLE_NAME_)
+		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
 			Melder_casual ("%d %ls \"%ls\"", i, instructionName, f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
 		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
@@ -2646,6 +2679,28 @@ static void do_numericArrayElement (void) {
 	if (row > array -> numericArrayValue. numberOfRows)
 		error1 (L"Row index out of bounds.")
 	pushNumber (array -> numericArrayValue. data [row] [column]);
+end: return;
+}
+static void do_indexedNumericVariable (void) {
+	Stackel n = pop;
+	Melder_assert (n -> which == Stackel_NUMBER);
+	int nindex = n -> content.number;
+	if (nindex < 1) error1 (L"Indexed variables require at least one index.")
+	wchar_t *indexedVariableName = parse [programPointer]. content.string;
+	static MelderString totalVariableName = { 0 };
+	MelderString_copy (& totalVariableName, indexedVariableName);
+	MelderString_append (& totalVariableName, L"[");
+	w -= nindex;
+	for (int iindex = 1; iindex <= nindex; iindex ++) {
+		Stackel index = & theStack [w + iindex];
+		if (index -> which != Stackel_NUMBER)
+			error3 (L"In indexed variables, the index has to be a number, not ", Stackel_whichText (index), L".")
+		MelderString_append2 (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+	}
+	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
+	if (var == NULL)
+		error3 (L"Undefined indexed variable " L_LEFT_GUILLEMET, totalVariableName.string, L_RIGHT_GUILLEMET L".")
+	pushNumber (var -> numericValue);
 end: return;
 }
 static void do_length (void) {
@@ -4404,6 +4459,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	w -= 2;
 	//Melder_casual ("total %f", theStack[w].content.number);
 } break; case NUMERIC_ARRAY_ELEMENT_: { do_numericArrayElement ();
+} break; case INDEXED_NUMERIC_VARIABLE_: { do_indexedNumericVariable ();
+//} break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
 } break; case VARIABLE_REFERENCE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushVariable (var);
