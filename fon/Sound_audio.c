@@ -281,7 +281,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				else
 					#ifdef linux
 						Melder_error1 (L"(Sound_record:) Cannot open audio device.\n"
-							"Consult /usr/doc/HOWTO/Sound-HOWTO.");
+							"Please switch on PortAudio in the Sound Recording Preferences.");
 					#else
 						Melder_error1 (L"(Sound_record:) Cannot open audio device.");
 					#endif

@@ -1175,7 +1175,7 @@ int IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 	fprintf (f, "separator ;\nnfields 1\n#\n");
 	for (iinterval = 1; iinterval <= my intervals -> size; iinterval ++) {
 		TextInterval interval = (TextInterval) my intervals -> item [iinterval];
-		fprintf (f, "\t%.5f 26\t%s\n", interval -> xmax, Melder_peekWcsToUtf8 (interval -> text));
+		fprintf (f, "\t%.6f 26\t%s\n", interval -> xmax, Melder_peekWcsToUtf8 (interval -> text));
 	}
 	if (! Melder_fclose (file, f)) return 0;
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);

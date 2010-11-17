@@ -29,6 +29,7 @@
 #include "PairDistribution.h"
 #include "Table.h"
 #include "TableEditor.h"
+#include "UnicodeData.h"
 
 static wchar_t formatBuffer [32] [40];
 static int formatIndex = 0;
@@ -665,9 +666,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest tau that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest tau that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -693,9 +694,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest r that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest r that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -722,9 +723,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -754,9 +755,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -810,9 +811,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END
@@ -836,9 +837,9 @@ DO
 	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
 	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest value that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest value that cannot be rejected with p = ", Melder_double (unconfidence), L")");
+		L" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
 end:
 END

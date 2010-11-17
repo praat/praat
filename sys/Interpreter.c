@@ -1351,20 +1351,30 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					/*
 					 * This must be an assignment to an indexed numeric variable.
 					 */
-					static MelderString index = { 0 };
-					MelderString_empty (& index);
 					*endOfVariable = '\0';
-					p ++;   // skip opening bracket
-					while (*p != ']' && *p != '\n' && *p != '\0') {
-						MelderString_appendCharacter (& index, *p);
-						p ++;
-					}
-					if (*p != ']')
-						error1 (L"Missing closing bracket (]) in indexed variable.")
-					Interpreter_numericExpression (me, index.string, & value); cherror
 					static MelderString indexedVariableName = { 0 };
 					MelderString_copy (& indexedVariableName, command2.string);
-					MelderString_append3 (& indexedVariableName, L"[", Melder_double (value), L"]");
+					MelderString_appendCharacter (& indexedVariableName, '[');
+					for (;;) {
+						p ++;   // skip opening bracket or comma
+						static MelderString index = { 0 };
+						MelderString_empty (& index);
+						int depth = 0;
+						while ((depth > 0 || (*p != ',' && *p != ']')) && *p != '\n' && *p != '\0') {
+							MelderString_appendCharacter (& index, *p);
+							if (*p == '[') depth ++;
+							else if (*p == ']') depth --;
+							p ++;
+						}
+						if (*p == '\n' || *p == '\0')
+							error1 (L"Missing closing bracket (]) in indexed variable.")
+						Interpreter_numericExpression (me, index.string, & value); cherror
+						MelderString_append (& indexedVariableName, Melder_double (value));
+						MelderString_appendCharacter (& indexedVariableName, *p);
+						if (*p == ']') {
+							break;
+						}
+					}
 					variableName = indexedVariableName.string;
 					p ++;   // skip closing bracket
 					while (*p == ' ' || *p == '\t') p ++;

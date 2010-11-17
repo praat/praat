@@ -35,6 +35,7 @@
  * pb 2008/01/19 double
  * pb 2010/01/10 MP3 precision warning
  * fb 2010/02/25 corrected a bug that could cause LongSound_playPart to crash with an assertion on error
+ * pb 2010/11/07 no longer do an assertion on thy resampledBuffer
  */
 
 #include "LongSound.h"
@@ -562,7 +563,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		thy silenceAfter = (long) (my sampleRate * MelderAudio_getOutputSilenceAfter ());
 		if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
 		if (thy silenceBefore > 0 || thy silenceAfter > 0) {
-			Melder_assert (thy resampledBuffer == NULL);
+			Melder_free (thy resampledBuffer);   // just in case
 			thy resampledBuffer = Melder_calloc (short, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
 			memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels], & my buffer [(i1 - my imin) * my numberOfChannels],
 				thy numberOfSamples * sizeof (short) * my numberOfChannels);
@@ -590,7 +591,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		thy i2 = newN - 1;
 		thy silenceBefore = silenceBefore;
 		thy silenceAfter = silenceAfter;
-		Melder_assert (thy resampledBuffer == NULL);
+		Melder_free (thy resampledBuffer);   // just in case
 		thy resampledBuffer = resampledBuffer;
 		if (my numberOfChannels == 1) {
 			for (i = 0; i < newN; i ++) {

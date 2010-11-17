@@ -1149,7 +1149,7 @@ if (my usePortAudio) {
 	/* O_NDELAY option added by Rafael Laboissiere, May 19, 2005 */
 	if ((my audio_fd = open ("/dev/dsp", O_WRONLY | (Melder_debug == 16 ? 0 : O_NDELAY))) == -1)
 		return cancelPlay16 (), Melder_error1 (errno == EBUSY ? L"Audio device already in use." :
-			L"Cannot open audio device.\nConsult /usr/doc/HOWTO/Sound-HOWTO.");
+			L"Cannot open audio device.\nPlease switch on PortAudio in the Sound Playing Preferences.");
 	fcntl (my audio_fd, F_SETFL, 0);   /* Added by Rafael Laboissiere, May 19, 2005 */
 	if (ioctl (my audio_fd, SNDCTL_DSP_SETFMT,   /* Changed SND_DSP_SAMPLESIZE to SNDCTL_DSP_SETFMT; Stefan de Konink, Nov 29, 2007 */
 		(my val = fmt, & my val)) == -1 ||   /* Error? */

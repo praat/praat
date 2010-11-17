@@ -1,6 +1,6 @@
 /* TextGridEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@
  * pb 2008/03/18 renamed: "convert to backslash trigraphs/Unicode"
  * pb 2008/03/20 split off Help menu
  * pb 2008/09/23 info: selectedTier
+ * pb 2010/11/10 correctedIinterval2
  */
 
 #include "TextGridEditor.h"
@@ -683,11 +684,14 @@ static int insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doubl
 			return 0;
 		}
 		long iinterval = IntervalTier_timeToIndex (intervalTier, t1);
+		//Melder_casual ("iinterval %ld, t = %f", iinterval, t1);
 		long iinterval2 = t1 == t2 ? iinterval : IntervalTier_timeToIndex (intervalTier, t2);
+		//Melder_casual ("iinterval2 %ld, t = %f", iinterval2, t2);
 		if (iinterval == 0 || iinterval2 == 0) {
 			return 0;   // selection is outside time domain of intervals
 		}
-		if (iinterval2 > iinterval + 1 || (iinterval2 > iinterval && ! t2IsABoundary)) {
+		long correctedIinterval2 = t2IsABoundary && iinterval2 == intervalTier -> intervals -> size ? iinterval2 + 1 : iinterval2;
+		if (correctedIinterval2 > iinterval + 1 || (correctedIinterval2 > iinterval && ! t2IsABoundary)) {
 			return 0;   // selection straddles a boundary
 		}
 		TextInterval interval = intervalTier -> intervals -> item [iinterval];

@@ -1,19 +1,11 @@
 # File: makefile.defs.linux.gtk
 
 # System: Linux
-# Paul Boersma, 30 July 2010
+# Paul Boersma, 14 November 2010
 
-# pkg-config --cflags gtk+-2.0
-# would suggest
-# -D_REENTRANT -pthread -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/directfb -I/usr/include/libpng12 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
+CC = gcc -std=gnu99 -DUNIX -Dlinux `pkg-config --cflags gtk+-2.0` -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
 
-CC = gcc -std=gnu99 -DUNIX -Dlinux -D_REENTRANT -pthread -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -Wimplicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
-
-# pkg-config --libs gtk+-2.0
-# would suggest
-# -pthread -lgtk-x11-2.0 -lgdk-x11-2.0 -latk-1.0 -lpangoft2-1.0 -lgdk_pixbuf-2.0 -lm -lpangocairo-1.0 -lcairo -lgio-2.0 -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0
-
-LIBS = -pthread -lgtk-x11-2.0 -lm -lasound
+LIBS = `pkg-config --libs gtk+-2.0` -lm -lasound
 
 RANLIB = ls
 ICON =

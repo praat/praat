@@ -43,15 +43,6 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-#if 0 && cairo
-static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
-	long ix1, long ix2, short x1DC, short x2DC,
-	long iy1, long iy2, short y1DC, short y2DC,
-	double minimum, double maximum,
-	short clipx1, short clipx2, short clipy1, short clipy2, int interpolate)
-{
-}
-#elif 1 || motif
 static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, short x1DC, short x2DC,
 	long iy1, long iy2, short y1DC, short y2DC,
@@ -64,7 +55,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ny = iy2 - iy1 + 1;   /* The number of cells along the vertical axis. */
 	double dx = (double) (x2DC - x1DC) / (double) nx;   /* Horizontal pixels per cell. Positive. */
 	double dy = (double) (y2DC - y1DC) / (double) ny;   /* Vertical pixels per cell. Negative. */
-	#if gtk
+	#if cairo
 		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
 	#elif xwin
 		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
@@ -72,6 +63,8 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
 	#endif
 	if (x2DC <= x1DC || y1DC <= y2DC) return;
+	if (Melder_debug == 36)
+		Melder_casual ("scale %f", scale);
 	/* Clip by the intersection of the world window and the outline of the cells. */
 	//Melder_casual ("clipy1 %d clipy2 %d", clipy1, clipy2);
 	if (clipx1 < x1DC) clipx1 = x1DC;
@@ -173,15 +166,18 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		#if cairo
 			short arrayWidth = clipx2 - clipx1;
 			short arrayHeight = clipy1 - clipy2;
+			if (Melder_debug == 36)
+				Melder_casual ("arrayWidth %f, arrayHeight %f", (double) arrayWidth, (double) arrayHeight);
 			// We're creating an alpha-only surface here (size is 1/4 compared to RGB24 and ARGB)
-			// The grey values are reversed as we let the foreground colour shine though instead of blackening
-			cairo_surface_t *sfc = cairo_image_surface_create(CAIRO_FORMAT_A8, arrayWidth, arrayHeight);
-			unsigned char *bits = cairo_image_surface_get_data(sfc);
-			int scanLineLength = cairo_image_surface_get_stride(sfc);
-			unsigned char grey[256];
-			int igrey;
-			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++)
-				grey[igrey] = 255 - (unsigned char)(igrey * 255.0 / (sizeof(grey)/sizeof(*grey) - 1));
+			// The grey values are reversed as we let the foreground colour shine through instead of blackening
+			cairo_surface_t *sfc = cairo_image_surface_create (/*CAIRO_FORMAT_A8*/ CAIRO_FORMAT_RGB24, arrayWidth, arrayHeight);
+			unsigned char *bits = cairo_image_surface_get_data (sfc);
+			int scanLineLength = cairo_image_surface_get_stride (sfc);
+			unsigned char grey [256];
+			if (Melder_debug == 36)
+				Melder_casual ("image surface address %ld, bits address %ld, scanLineLength %d, numberOfGreys %d", sfc, bits, scanLineLength, sizeof(grey)/sizeof(*grey));
+			for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey++)
+				grey [igrey] = 255 - (unsigned char) (igrey * 255.0 / (sizeof (grey) / sizeof (*grey) - 1));
 		#elif xwin
 			int mayOptimize;
 			short arrayWidth = clipx2 - clipx1;
@@ -297,9 +293,16 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		 * Draw into the bitmap.
 		 */
 		#if cairo
-			// Kan dit niet beter met een cairo_image_surface_create ()
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
-			#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 255 ? 255 : (int)value];
+			//#define PUT_PIXEL *pixelAddress ++ = grey [value <= 0 ? 0 : value >= 255 ? 255 : (int) value];
+			#define PUT_PIXEL \
+				if (1) { \
+					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = 0; \
+				}
 		#elif xwin
 			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
 			#define PUT_PIXEL \
@@ -505,8 +508,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	#endif
 	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
 }
-
-#endif
 
 #define INTERPOLATE_IN_POSTSCRIPT  TRUE
 

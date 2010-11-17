@@ -1101,7 +1101,7 @@ static int initialize (SoundRecorder me) {
 					return Melder_error1 (L"(SoundRecorder:) Audio device already in use.");
 				else
 					return Melder_error1 (L"(SoundRecorder:) Cannot open audio device.\n"
-						"Consult /usr/doc/HOWTO/Sound-HOWTO.");
+						"Please switch on PortAudio in the Sound Recording Preferences.");
 			}
 			ioctl (my fd, SNDCTL_DSP_RESET, NULL);
 			ioctl (my fd, SNDCTL_DSP_SPEED, & sampleRate);
