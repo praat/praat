@@ -30,7 +30,7 @@ NORMAL (L"These commands are only available if the right kinds of objects are se
 MAN_END
 
 MAN_BEGIN (L"Add action command...", L"ppgb", 20060920)
-INTRO (L"One of the hidden commands in the Praat menu of the @@Object window@. "
+INTRO (L"One of the hidden commands in the #Praat menu of the @@Object window@. "
 	"With this command, you add a button to the dynamic menu in the Object window.")
 ENTRY (L"Settings")
 NORMAL (L"See @@Add to dynamic menu...@.")
@@ -41,7 +41,7 @@ NORMAL (L"Normally, however, if you want to add a command to the dynamic menu, "
 MAN_END
 
 MAN_BEGIN (L"Add menu command...", L"ppgb", 20060920)
-INTRO (L"One of the hidden commands in the Praat menu of the @@Object window@. "
+INTRO (L"One of the hidden commands in the #Praat menu of the @@Object window@. "
 	"With this command, you add a button to any of the fixed menus in the Object or Picture window.")
 ENTRY (L"Settings")
 NORMAL (L"See @@Add to fixed menu...@.")
@@ -52,7 +52,7 @@ NORMAL (L"Normally, however, if you want to add a command to a fixed menu, "
 MAN_END
 
 MAN_BEGIN (L"Add to dynamic menu...", L"ppgb", 20060920)
-INTRO (L"A command in the File menu of the @ScriptEditor.")
+INTRO (L"A command in the #File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to the dynamic menu in the @@Object window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
 	"Clicking the button will invoke the specified @@Praat script@.")
@@ -109,7 +109,7 @@ NORMAL (L"To add a dynamic button from a script (perhaps your @@initialization s
 MAN_END
 
 MAN_BEGIN (L"Add to fixed menu...", L"ppgb", 20060920)
-INTRO (L"A command in the File menu of the @ScriptEditor.")
+INTRO (L"A command in the #File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
 ENTRY (L"Settings")
@@ -117,9 +117,9 @@ TAG (L"%Window")
 DEFINITION (L"the name of the window (\"Objects\" or \"Picture\") that contains the menu that you want to change.")
 TAG (L"%Menu")
 DEFINITION (L"the title of the menu that you want to change. If %window is \"Objects\", you can specify "
-	"the Praat, New, Read, Help, Goodies, or Preferences menu (for the Write menu, which depends on the objects selected, "
+	"the #Praat, #New, #Read, #Help, #Goodies, or #Preferences menu (for the #Write menu, which depends on the objects selected, "
 	"you would use @@Add to dynamic menu...@ instead). If %window is \"Picture\", you can specify "
-	"the File, Edit, Margins, World, Select, Pen, Font, or Help menu.")
+	"the #File, #Edit, #Margins, #World, #Select, #Pen, #Font, or #Help menu.")
 TAG (L"%Command")
 DEFINITION (L"the title of the new menu button. To get a separator line instead of a command text, "
 	"you specify a unique string that starts with a hyphen ('-'); the @ButtonEditor contains many examples of this.")
@@ -264,7 +264,7 @@ INTRO (L"A command in the @Goodies submenu of the @@Praat menu@ of the @@Object 
 MAN_END
 
 MAN_BEGIN (L"Clear history", L"ppgb", 20000927)
-INTRO (L"A command in the Edit menu of the @ScriptEditor for clearing the remembered history. "
+INTRO (L"A command in the #Edit menu of the @ScriptEditor for clearing the remembered history. "
 	"See @@History mechanism@.")
 MAN_END
 
@@ -448,7 +448,7 @@ NORMAL (L"For instance, suppose you want to create a Sound that contains exactly
 	"You can create such a Sound by choosing @@Create Sound from formula...@ from the @@New menu@, "
 	"then typing")
 CODE (L"10000/44100")
-NORMAL (L"into the ##%%Finishing time#% field.")
+NORMAL (L"into the ##End time# field.")
 NORMAL (L"Into text fields in settings windows, you can only type text directly; there is no way "
 	"to use string expressions (except if you use scripts; see @@Formulas 1.9. Formulas in scripts@).")
 MAN_END
@@ -459,13 +459,13 @@ ENTRY (L"Creating a Sound from a formula")
 NORMAL (L"Choose @@Create Sound from formula...@ and type the following into the #%Formula field:")
 CODE (L"1/2 * sin (2 * pi * 377 * x)")
 NORMAL (L"When you click OK, a new @Sound object will appear in the list. "
-	"After you click #%Edit and zoom in a couple of times, you will see that the sound is a sine wave "
+	"After you click #Edit and zoom in a couple of times, you will see that the sound is a sine wave "
 	"with a frequency of 377 Hertz (cycles per second). This worked because the %x in the formula represents the time, "
 	"i.e. the formula was applied to every sample separately, with a different value of %x for each sample.")
 ENTRY (L"Creating a Matrix from a formula")
 NORMAL (L"Choose @@Create simple Matrix...@ and type the following into the #%Formula field:")
 CODE (L"8")
-NORMAL (L"When you click OK, a new @Matrix object will appear in the list. When you click Info, "
+NORMAL (L"When you click OK, a new @Matrix object will appear in the list. When you click #Info, "
 	"you will see that it is a matrix with 10 rows and 10 columns, and that all the 100 cells contain the value 8 "
 	"(you can see this because both the minimum and the maximum are reported as being 8).")
 NORMAL (L"A more interesting example is the formula")
@@ -479,14 +479,14 @@ MAN_END
 
 MAN_BEGIN (L"Formulas 1.8. Formulas for modification", L"ppgb", 20021204)
 INTRO (L"Analogously to the formulas that you can use for creating new objects (see the previous page), "
-	"you can use formulas for modifying existing objects. You do this with the command ##%Formula...%# that you "
+	"you can use formulas for modifying existing objects. You do this with the command ##Formula...# that you "
 	"can find in the @Modify menu when you select an object.")
 ENTRY (L"Modifying a Sound with a formula")
 NORMAL (L"Record a sound with your microphone and talk very lowly. If you don't know how to record a sound in Praat, "
 	"consult the @Intro. Once the Sound objetc is in the list, click #%Play. The result will sound very soft. "
-	"Then choose ##%%Formula...#% from the #%Modify menu and type")
+	"Then choose ##Formula...# from the #Modify menu and type")
 CODE (L"self * 3")
-NORMAL (L"Click OK, then click #%Play again. The sound is much louder now. You have multiplied the amplitude of every sample "
+NORMAL (L"Click OK, then click #Play again. The sound is much louder now. You have multiplied the amplitude of every sample "
 	"in the sound with a factor of 3.")
 ENTRY (L"Replacing the contents of a Sound with a formula")
 NORMAL (L"If you don't use $self in your formula, the formula does not refer to the existing contents of the Sound. Hence, the formula ")
@@ -555,7 +555,7 @@ CODE (L"x2 = x * x")
 CODE (L"echo The square of 'x' is 'x2'.")
 NORMAL (L"This is an example of a simple @@Praat script@; it assigns the results of the numeric formulas $$99$ and $$x * x$ "
 	"to the numeric variables %x and %x2. Note that the formula $$x * x$ itself refers to the variable %x. "
-	"To run (execute) this script, type Command-R or choose #%Run from the %#Run menu. "
+	"To run (execute) this script, type Command-R or choose #Run from the #Run menu. "
 	"Praat will then write the following text into the Info window:")
 CODE (L"The square of 99 is 9801.")
 NORMAL (L"For more information on scripts, see the @Scripting tutorial.")
@@ -570,7 +570,7 @@ NORMAL (L"This script assigns the results of four string expressions to the four
 	"%%previous\\$ %, %%famous\\$ %, and %%newCapital\\$ %. The dollar sign is the notation for a string variable or "
 	"for a function whose result is a string (like ##left\\$ #). Note that the formula in the fourth line refers to three existing "
 	"variables.")
-NORMAL (L"To see what the new name of the capital will be, choose #%Run.")
+NORMAL (L"To see what the new name of the capital will be, choose #Run.")
 ENTRY (L"Example: numeric expressions in settings in scripts")
 NORMAL (L"As in real settings windows, you can use numeric expressions in all numeric fields. "
 	"The example of two pages back becomes:")
@@ -1160,18 +1160,18 @@ INTRO (L"The easiest way to do @@scripting@. "
 	"that popped up as a result of those commands.")
 ENTRY (L"Viewing the history")
 NORMAL (L"To view your history, you first open a @ScriptEditor with @@New Praat script@ or @@Open Praat script...@. "
-	"You then choose @@Paste history@ from the Edit menu.")
+	"You then choose @@Paste history@ from the #Edit menu.")
 ENTRY (L"Recording a macro")
 NORMAL (L"To record a sequence of mouse clicks for later re-use, "
 	"perform the following steps:")
-LIST_ITEM (L"1. Choose @@Clear history@ from the Edit menu. "
+LIST_ITEM (L"1. Choose @@Clear history@ from the #Edit menu. "
 	"This makes the history mechanism forget all previous clicks.")
 LIST_ITEM (L"2. Perform the actions that you want to record.")
-LIST_ITEM (L"3. Choose @@Paste history@ from the Edit menu. Because you cleared the history "
+LIST_ITEM (L"3. Choose @@Paste history@ from the #Edit menu. Because you cleared the history "
 	"before you started, the resulting script contains only the actions "
 	"that you performed in step 2. "
 	"You can now already re-run the actions that you performed in step 2.")
-LIST_ITEM (L"4. You can save the recorded actions to a script file by choosing #Save from the File menu.")
+LIST_ITEM (L"4. You can save the recorded actions to a script file by choosing #Save from the #File menu.")
 LIST_ITEM (L"5. You can put this script file under a button in the @@dynamic menu@ "
 	"by choosing @@Add to dynamic menu...@ from the File menu, "
 	"or under a button in a fixed menu by choosing @@Add to fixed menu...@. "
@@ -1233,7 +1233,7 @@ INTRO (L"A command in the @@Praat menu@ for editing an existing @@Praat script@.
 MAN_END
 
 MAN_BEGIN (L"Paste history", L"ppgb", 20050822)
-INTRO (L"A command in the Edit menu of a @ScriptEditor, for inserting the history of commands. "
+INTRO (L"A command in the #Edit menu of a @ScriptEditor, for inserting the history of commands. "
 	"See @@History mechanism@.")
 MAN_END
 
@@ -1547,8 +1547,8 @@ NORMAL (L"Instead of these complete path names, you can use %relative path names
 ENTRY (L"How to supply arguments automatically")
 NORMAL (L"If you dislike manually copying arguments from settings windows into your script, "
 	"you can use the @@history mechanism@ to automate this process: "
-	"choose @@Clear history@ from the Edit menu in your @ScriptEditor, "
-	"click your command button, edit the arguments, and click OK. The command will be executed. "
+	"choose @@Clear history@ from the #Edit menu in your @ScriptEditor, "
+	"click your command button, edit the arguments, and click #OK. The command will be executed. "
 	"Then choose @@Paste history@, and the command line, including the arguments (with correct quotes), "
 	"appears in a the ScriptEditor. You can build a new script on the basis of this line.")
 MAN_END
@@ -1855,8 +1855,8 @@ DEFINITION (L"the statements between the matching preceding #repeat and the #unt
 NORMAL (L"The following script measures the number of trials it takes me to throw 12 with two dice:")
 CODE (L"throws = 0")
 CODE (L"#repeat")
-CODE (L"   eyes = randomInteger (1, 6) + randomInteger (1, 6)")
-CODE (L"   throws = throws + 1")
+	CODE1 (L"eyes = randomInteger (1, 6) + randomInteger (1, 6)")
+	CODE1 (L"throws = throws + 1")
 CODE (L"#until eyes = 12")
 CODE (L"#echo It took me 'throws' trials to throw 12 with two dice.")
 NORMAL (L"The statements in the #repeat/#until loop are executed at least once.")
@@ -1868,16 +1868,16 @@ TAG (L"#endwhile")
 DEFINITION (L"execution jumps back to the matching preceding #while line, which is then evaluated again.")
 NORMAL (L"The following script forces the number %x into the range [0; 2\\pi):")
 CODE (L"#while x < 0")
-CODE (L"   x = x + 2 * pi")
+	CODE1 (L"x = x + 2 * pi")
 CODE (L"#endwhile")
 CODE (L"#while x >= 2 * pi")
-CODE (L"   x = x - 2 * pi")
+	CODE1 (L"x = x - 2 * pi")
 CODE (L"#endwhile")
 NORMAL (L"If the expression evaluates to zero or %false to begin with, the statements between #while and #endwhile "
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20081209)
+MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20101119)
 NORMAL (L"Sometimes in a Praat script, you will want to perform the same thing more than once. "
 	"In @@Scripting 5.4. Loops|\\SS5.4@ we saw how %loops can help there. "
 	"In this section we will see how %procedures (also called %subroutines) can help us.")
@@ -2073,7 +2073,9 @@ NORMAL (L"This is the final version of the script. It works because Praat knows 
 	"so that Praat knows that by these variable names you actually mean to refer to %%playOctave.frequency% and %%playOctave.octaveHigher%.")
 NORMAL (L"It is advisable that you use such \"local\" variable names for all %parameters of a procedure, "
 	"i.e. for the variables listed after the #procedure word (e.g. %%.frequency%), "
-	"as well as for all variables that you create in the procedure body (e.g. %%.octaveHigher%).")
+	"as well as for all variables that you create in the procedure body (e.g. %%.octaveHigher%). "
+	"In this way, you make sure that you don't inadvertently use a variable name that is also used outside the procedure "
+	"and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.")
 ENTRY (L"Numeric and string arguments")
 NORMAL (L"For numeric arguments you can use numeric expressions:")
 CODE (L"#call playOctave 400+100")
@@ -2117,13 +2119,15 @@ CODE (L"#procedure squareNumber  .number .squareVariableName\\$ ")
 CODE (L"#endproc")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.6. Arrays", L"ppgb", 20101104)
-NORMAL (L"You can use arrays of numeric variables:")
+MAN_BEGIN (L"Scripting 5.6. Arrays", L"ppgb", 20101118)
+NORMAL (L"You can use arrays of numeric and string variables:")
 CODE (L"#for i #from 1 #to 5")
-CODE (L"   square [i] = i * i")
+	CODE1 (L"square [i] = i * i")
+	CODE1 (L"text\\$  [i] = mid\\$  (\"hello\", i)")
 CODE (L"#endfor")
-NORMAL (L"After this, the variables %square [1], %square [2], %square [3], %square [4], and %square [5] contain "
-	"the values 1, 4, 9, 16, and 25, respectively.")
+NORMAL (L"After this, the variables %square [1], %square [2], %square [3], %square [4], %square [5], "
+	"%%text\\$ % [1], %%text\\$ % [2], %%text\\$ % [3], %%text\\$ % [4], and %%text\\$ % [5] contain "
+	"the values 1, 4, 9, 16, 25, \"h\", \"e\", \"l\", \"l\", and \"o\", respectively.")
 NORMAL (L"You can use any number of variables in a script, but you can also use Matrix or Sound objects for arrays.")
 NORMAL (L"You can substitute variables with the usual single quotes, as in $$'square[3]'$, without spaces. "
 	"If the index is also a variable, however, you may need a dummy variable:")
@@ -2377,10 +2381,10 @@ NORMAL (L"However, this script will fail if the file ##height.inf# does not exis
 	"value in case the file does not exist:")
 CODE (L"fileName\\$  = \"height.inf\"")
 CODE (L"if fileReadable (fileName\\$ )")
-CODE1 (L"height\\$  < 'fileName\\$ '")
-CODE1 (L"height = 'height\\$ '")
+	CODE1 (L"height\\$  < 'fileName\\$ '")
+	CODE1 (L"height = 'height\\$ '")
 CODE (L"else")
-CODE1 (L"height = 180")
+	CODE1 (L"height = 180")
 CODE (L"endif")
 ENTRY (L"Writing a file")
 NORMAL (L"To write the contents of an existing string into a new text file, you use")
@@ -2597,11 +2601,11 @@ NORMAL (L"If the user makes a mistake (e.g. types conflicting settings into your
 	"you can use the #exit directive (@@Scripting 5.8. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
 CODE (L"form My analysis")
-CODE1 (L"real Starting_time_(s) 0.0")
-CODE1 (L"real Finishing_time_(s) 1.0")
+	CODE1 (L"real Starting_time_(s) 0.0")
+	CODE1 (L"real Finishing_time_(s) 1.0")
 CODE (L"endform")
 CODE (L"if finishing_time <= starting_time")
-CODE1 (L"#exit The finishing time should exceed 'starting_time' seconds.")
+	CODE1 (L"#exit The finishing time should exceed 'starting_time' seconds.")
 CODE (L"endif")
 CODE (L"\\#  Proceed with the analysis...")
 NORMAL (L"For things that should not normally go wrong, you can use the #assert directive:")
@@ -2609,9 +2613,9 @@ CODE (L"power = Get power")
 CODE (L"assert power > 0")
 NORMAL (L"This is the same as:")
 CODE (L"if (power > 0) = undefined")
-CODE1 (L"exit Assertion failed in line xx (undefined): power > 0")
+	CODE1 (L"exit Assertion failed in line xx (undefined): power > 0")
 CODE (L"elsif not (power > 0)")
-CODE1 (L"exit Assertion failed in line xx (false): power > 0")
+	CODE1 (L"exit Assertion failed in line xx (false): power > 0")
 CODE (L"endif")
 NORMAL (L"You can prevent Praat from issuing warning messages:")
 CODE (L"nowarn Write to WAV file... hello.wav")
@@ -2682,7 +2686,7 @@ CODE (L"finish = 0.7")
 CODE (L"Read from file... 'sound\\$ '.aifc")
 CODE (L"Edit")
 CODE (L"#editor Sound 'sound\\$ '")
-CODE (L"   Zoom... start finish")
+	CODE1 (L"Zoom... start finish")
 CODE (L"#endeditor")
 CODE (L"Play")
 NORMAL (L"This script reads a sound file from disk, pops up an editor for the resulting object, "
@@ -2690,7 +2694,7 @@ NORMAL (L"This script reads a sound file from disk, pops up an editor for the re
 	"and returns to the Praat shell to play the entire sound.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20081112)
+MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20101119)
 NORMAL (L"This section will show how you can permanently extend the functionality of an editor.")
 NORMAL (L"As an example, consider the following problem: you want to see a graphic representation "
 	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
@@ -2706,37 +2710,37 @@ CODE2 (L"Extract windowed selection... slice Kaiser2 2 no")
 CODE1 (L"#endeditor")
 CODE1 (L"To Spectrum... yes")
 CODE1 (L"Edit")
-NORMAL (L"If you choose Run from the Run menu in the ScriptEditor, a region of 40 milliseconds around the "
+NORMAL (L"If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the "
 	"current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects, "
 	"after applying a double Kaiser window (total length 80 ms). Thus, a Sound named \"slice\" will appear in the list. "
 	"Subsequently, a Spectrum object also called \"slice\" will appear in the list, and a SpectrumEditor titled "
 	"\"Spectrum slice\" will finally appear on your screen.")
 LIST_ITEM (L"5. Save the script to disk, e.g. as /us/miep/spectrum.praat. The title of the ScriptEditor will change accordingly.")
-LIST_ITEM (L"6. Since you will want this script to be available in all future SoundEditors, you choose ##Add to menu...# from the File menu. "
-	"For the %Window, you specify \"SoundEditor\" (this is preset). For the %Menu, you may want to choose \"Spec.\" "
+LIST_ITEM (L"6. Since you will want this script to be available in all future SoundEditors, you choose ##Add to menu...# from the #File menu. "
+	"For the %Window, you specify \"SoundEditor\" (this is preset). For the %Menu, you may want to choose \"Spectrum\" "
 	"instead of the preset value (\"File\"). For the name of the %Command, you type something like \"Show spectrum at cursor\" "
-	"(instead of \"Do it...\"). Then you click OK.")
+	"(instead of \"Do it...\"). Then you click #OK.")
 NORMAL (L"The command will be visible in every SoundEditor that you create from now on. "
-	"To see this, close the one visible SoundEditor, select the original Sound, choose Edit again, and inspect the \"Spec.\" menu. "
+	"To see this, close the one visible SoundEditor, select the original Sound, choose #Edit again, and inspect the #Spectrum menu. "
 	"You can now view the spectrum around the cursor just by choosing this menu command.")
 NORMAL (L"After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
 	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
-	"by choosing #Buttons from the Preferences submenu of the @@Praat menu@.")
+	"by choosing #Buttons from the #Preferences submenu of the @@Praat menu@.")
 ENTRY (L"Improving your script")
 NORMAL (L"The above spectrum-viewing example has a number of disadvantages. It clutters the object list with a number "
 	"of indiscriminable Sounds and Spectra called \"slice\", and the spectrum is shown up to the Nyquist frequency "
 	"while we may just be interested in the lower 5000 Hz. Furthermore, the original selection in the SoundEditor is lost.")
-NORMAL (L"To improve the script, we open it again with ##Open editor script...# from the File menu in the SoundEditor. After every change, "
-	"we can run it with Run from the Run menu again; alternatively, we could save it (with Save from the File menu) and choose our new "
+NORMAL (L"To improve the script, we open it again with ##Open editor script...# from the #File menu in the SoundEditor. After every change, "
+	"we can run it with #Run from the #Run menu again; alternatively, we could save it (with #Save from the #File menu) and choose our new "
 	"\"Show spectrum at cursor\" button (this button will always run the version on disk, never the one viewed in a ScriptEditor).")
 NORMAL (L"To zoom in on the first 5000 Hz, we add the following code at the end of our script:")
 CODE (L"#editor Spectrum slice")
-CODE1 (L"Zoom... 0 5000")
+	CODE1 (L"Zoom... 0 5000")
 NORMAL (L"To get rid of the \"Sound slice\", we can add:")
 CODE (L"#endeditor")
-CODE (L"select Sound slice")
+CODE (L"#select Sound slice")
 CODE (L"Remove")
-NORMAL (L"Note that #endeditor is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
+NORMAL (L"Note that #$endeditor is needed to change from the environment of a SpectrumEditor to the environment of the object & picture windows.")
 NORMAL (L"If you now choose the \"Show spectrum at cursor\" button for several cursor positions, you will notice that all those editors have the same name. "
 	"To remedy the ambiguity of the line $$#editor Spectrum slice$, we give each slice a better name. For example, if the cursor was at "
 	"635 milliseconds, the slice could be named \"635ms\". We can achieve this by changing the extraction in the following way:")
@@ -2744,33 +2748,33 @@ CODE (L"milliseconds = round (cursor*1000)")
 CODE (L"Extract windowed selection... 'milliseconds'ms Kaiser2 2 no")
 NORMAL (L"The names of the Sound and Spectrum objects will now have more chance of being unique. Two lines will have to be edited trivially.")
 NORMAL (L"Finally, we will reset the selection to the original. At the top of the script, we add two lines to remember the positions of the selection markers:")
-CODE (L"begin = Get begin of selection")
+CODE (L"start = Get start of selection")
 CODE (L"end = Get end of selection")
 NORMAL (L"At the bottom, we reset the selection:")
 CODE (L"#editor")
-CODE1 (L"Select... begin end")
-NORMAL (L"Note that the #editor directive if not followed by the name of an editor, returns the script to the original environment.")
+CODE1 (L"Select... start end")
+NORMAL (L"Note that the #$editor directive if not followed by the name of an editor, returns the script to the original environment.")
 NORMAL (L"The complete script is:")
-CODE1 (L"begin = Get begin of selection")
-CODE1 (L"end = Get end of selection")
-CODE1 (L"cursor = Get cursor")
-CODE1 (L"Select... cursor-0.02 cursor+0.02")
-CODE1 (L"\\#  Create a name. E.g. \"670ms\" means at 670 milliseconds.")
-CODE1 (L"milliseconds = round (cursor*1000)")
-CODE1 (L"Extract windowed selection... 'milliseconds'ms Kaiser2 2 no")
+	CODE1 (L"start = Get start of selection")
+	CODE1 (L"end = Get end of selection")
+	CODE1 (L"cursor = Get cursor")
+	CODE1 (L"Select... cursor-0.02 cursor+0.02")
+	CODE1 (L"\\#  Create a name. E.g. \"670ms\" means at 670 milliseconds.")
+	CODE1 (L"milliseconds = round (cursor*1000)")
+	CODE1 (L"Extract windowed selection... 'milliseconds'ms Kaiser2 2 no")
 CODE (L"#endeditor")
 CODE (L"To Spectrum... yes")
 CODE (L"Edit")
 CODE (L"#editor Spectrum 'milliseconds'ms")
-CODE1 (L"Zoom... 0 5000")
+	CODE1 (L"Zoom... 0 5000")
 CODE (L"#endeditor")
-CODE (L"select Sound 'milliseconds'ms")
+CODE (L"#select Sound 'milliseconds'ms")
 CODE (L"Remove")
 CODE (L"#editor")
-CODE1 (L"Select... begin end")
+	CODE1 (L"Select... start end")
 NORMAL (L"This script is useful as it stands. It is good enough for safe use. For instance, if the created Sound object has the same name "
 	"as an already existing Sound object, it will be the newly created Sound object that will be removed in the $Remove line, "
-	"because #select always selects the most recently created object in case of ambiguity.")
+	"because #$select always selects the most recently created object in case of ambiguity.")
 MAN_END
 
 MAN_BEGIN (L"sendpraat", L"ppgb", 20000927)
@@ -2891,16 +2895,16 @@ NORMAL (L"These stand-alone programs do not show the Objects window and the Pict
 CODE (L"\\# include \"praat.h\"")
 CODE (L"")
 CODE (L"wchar_t myScript [ ] = L\"\"")
-CODE1 (L"\"demo Text... 0.5 centre 0.5 half Hello world\\bsn\"")
-CODE1 (L"\"demoWaitForInput ( )\\bsn\"")
+	CODE1 (L"\"demo Text... 0.5 centre 0.5 half Hello world\\bsn\"")
+	CODE1 (L"\"demoWaitForInput ( )\\bsn\"")
 CODE (L";")
 CODE (L"")
 CODE (L"int main (int argc, char *argv [ ]) {")
-CODE1 (L"praat_setStandAloneScriptText (myScript);")
-CODE1 (L"praat_init (\"Hello\", argc, argv);")
-CODE1 (L"INCLUDE_LIBRARY (praat_uvafon_init)")
-CODE1 (L"praat_run ();")
-CODE1 (L"return 0;")
+	CODE1 (L"praat_setStandAloneScriptText (myScript);")
+	CODE1 (L"praat_init (\"Hello\", argc, argv);")
+	CODE1 (L"INCLUDE_LIBRARY (praat_uvafon_init)")
+	CODE1 (L"praat_run ();")
+	CODE1 (L"return 0;")
 CODE (L"}")
 NORMAL (L"The script in this example raises the Demo window, writes \"Hello world\" in the middle of the window, "
 	"waits until the user clicks the mouse or presses a key, and then closes.")
@@ -2911,23 +2915,23 @@ MAN_END
 
 MAN_BEGIN (L"ScriptEditor", L"ppgb", 20070225)
 INTRO (L"An aid to @@scripting@.")
-NORMAL (L"The #ScriptEditor is a text editor that allows you to edit, save, and run "
-	"any @@Praat script@. You could type such a script from scratch, "
-	"but it is easier to use the @@History mechanism@, which automatically records "
+NORMAL (L"The ScriptEditor is a text editor that allows you to edit, save, and run "
+	"any @@Praat script@. You can type such a script from scratch, "
+	"but it is sometimes easier to use the @@History mechanism@, which automatically records "
 	"all your commands and mouse clicks, and which can paste these directly "
-	"into a #ScriptEditor.")
+	"into a ScriptEditor.")
 NORMAL (L"To add a script as a button to a fixed or dynamic menu, "
 	"use @@Add to fixed menu...@ or @@Add to dynamic menu...@ from the @@File menu@.")
 ENTRY (L"Example 1")
 NORMAL (L"In this example, we create a fixed button that will play a 1-second sine wave with a specified frequency.")
 NORMAL (L"First, we create a ScriptEditor by choosing @@New Praat script@ from the @@Praat menu@. "
-	"Then, we choose @@Clear history@ from the Edit menu in the ScriptEditor. "
+	"Then, we choose @@Clear history@ from the #Edit menu in the ScriptEditor. "
 	"We then perform some actions that will create a sine wave, play it, and remove it:")
 LIST_ITEM (L"1. Choose ##Create Sound from formula...# from the @@New menu@ and type the formula of a sine wave (i.e. "
 	"remove the \"randomGauss\" term).")
 LIST_ITEM (L"2. Click #Play in the dynamic menu.")
 LIST_ITEM (L"3. Click the fixed #Remove button.")
-NORMAL (L"We then choose @@Paste history@ from the Edit menu in the ScriptEditor (or type Command-H). "
+NORMAL (L"We then choose @@Paste history@ from the #Edit menu in the ScriptEditor (or type Command-H). "
 	"The text will now contain at least the following lines (delete any other lines):")
 CODE (L"Create Sound from formula... sine Mono 0 1 44100 1/2*sin(2*pi*377*x)")
 CODE (L"Play")
@@ -2936,7 +2940,7 @@ NORMAL (L"We can run this script again by choosing #Run from the #Run menu (or t
 	"However, this always plays a sine with a frequency of 377 Hz, so we will add the variable \"Frequency\" "
 	"to the script, which then looks like:")
 CODE (L"#form Play a sine wave")
-CODE (L"   #positive Frequency")
+	CODE1 (L"#positive Frequency")
 CODE (L"#endform")
 CODE (L"Create Sound from formula... sine'frequency' Mono 0 1 44100 1/2*sin(2*pi*frequency*x)")
 CODE (L"Play")
@@ -2948,8 +2952,8 @@ NORMAL (L"When we choose #Run, the ScriptEditor will ask us to supply a value fo
 NORMAL (L"It is advisable to supply a standard value for each argument in your script. "
 	"If the duration should be variable, too, the final script could look like:")
 CODE (L"#form Play a sine wave")
-CODE (L"   #positive Frequency 440")
-CODE (L"   #positive Duration 1")
+	CODE1 (L"#positive Frequency 440")
+	CODE1 (L"#positive Duration 1")
 CODE (L"#endform")
 CODE (L"Create Sound from formula... sine'frequency' Mono 0 'Duration' 44100 0.9*sin(2*pi*frequency*x)")
 CODE (L"Play")
@@ -2961,7 +2965,7 @@ NORMAL (L"If this script is useful to you, you may want to put a button for it i
 	"in the ##Sound# submenu:")
 LIST_ITEM (L"1. Save the script to a file, with #Save from the #File menu. The file name that you supply, will "
 	"be shown in the title bar of the ScriptEditor window.")
-LIST_ITEM (L"2. Choose @@Add to fixed menu...@ from the #%File menu. Supply #Objects for the %window, "
+LIST_ITEM (L"2. Choose @@Add to fixed menu...@ from the #File menu. Supply #Objects for the %window, "
 	"#New for the %menu, \"Play sine wave...\" for the %command, "
 	"##Create Sound from formula...# for %%after command%, and \"1\" for the depth (because it is supposed to be in a submenu); "
 	"the %script argument has already been set to the file name that you supplied in step 1.")
@@ -3004,9 +3008,9 @@ NORMAL (L"In a Praat script, this value is simply represented as \"undefined\". 
 CODE (L"select Pitch hallo")
 CODE (L"meanPitch = Get mean... 0.1 0.2 Hertz Parabolic")
 CODE (L"if meanPitch = undefined")
-CODE (L"  \\#  Take some exceptional action.")
+	CODE1 (L"\\#  Take some exceptional action.")
 CODE (L"else")
-CODE (L"  \\#  Take the normal action.")
+	CODE1 (L"\\#  Take the normal action.")
 CODE (L"endif")
 ENTRY (L"Details for hackers")
 NORMAL (L"In text files, this value is written as ##--undefined--#. "
@@ -3032,13 +3036,13 @@ INTRO (L"\"I wish to have a list of time markers in one column and F0 in the oth
 CODE (L"echo Time:    Pitch:")
 CODE (L"numberOfFrames = Get number of frames")
 CODE (L"for iframe to numberOfFrames")
-CODE1 (L"time = Get time from frame... iframe")
-CODE1 (L"pitch = Get value in frame... iframe Hertz")
-CODE1 (L"if pitch = undefined")
-CODE2 (L"printline 'time:6' .")
-CODE1 (L"else")
-CODE2 (L"printline 'time:6' 'pitch:3'")
-CODE1 (L"endif")
+	CODE1 (L"time = Get time from frame... iframe")
+	CODE1 (L"pitch = Get value in frame... iframe Hertz")
+	CODE1 (L"if pitch = undefined")
+		CODE2 (L"printline 'time:6' .")
+	CODE1 (L"else")
+		CODE2 (L"printline 'time:6' 'pitch:3'")
+	CODE1 (L"endif")
 CODE (L"endfor")
 NORMAL (L"If you want to see this in a text file, you can copy and paste from the Info window, or save the Info window, "
 	"or add a line to the script like")
@@ -3061,12 +3065,12 @@ CODE (L"To Intensity... 75 0.001")
 CODE (L"Rename... intensity")
 CODE (L"echo Here are the results:")
 CODE (L"for i to (tmax-tmin)/0.01")
-CODE1 (L"time = tmin + i * 0.01")
-CODE1 (L"select Pitch pitch")
-CODE1 (L"pitch = Get value at time... time Hertz Linear")
-CODE1 (L"select Intensity intensity")
-CODE1 (L"intensity = Get value at time... time Cubic")
-CODE1 (L"printline 'time:2' 'pitch:3' 'intensity:3'")
+	CODE1 (L"time = tmin + i * 0.01")
+	CODE1 (L"select Pitch pitch")
+	CODE1 (L"pitch = Get value at time... time Hertz Linear")
+	CODE1 (L"select Intensity intensity")
+	CODE1 (L"intensity = Get value at time... time Cubic")
+	CODE1 (L"printline 'time:2' 'pitch:3' 'intensity:3'")
 CODE (L"endfor")
 MAN_END
 
@@ -3081,14 +3085,14 @@ CODE (L"endTime = Get end time")
 CODE (L"numberOfTimeSteps = (endTime - startTime) / 0.05")
 CODE (L"echo   tmin     tmax    mean   fmin   fmax  stdev")
 CODE (L"for step to numberOfTimeSteps")
-CODE1 (L"tmin = startTime + (step - 1) * 0.05")
-CODE1 (L"tmax = tmin + 0.05")
-CODE1 (L"mean = Get mean... tmin tmax Hertz")
-CODE1 (L"minimum = Get minimum... tmin tmax Hertz Parabolic")
-CODE1 (L"maximum = Get maximum... tmin tmax Hertz Parabolic")
-CODE1 (L"stdev = Get standard deviation... tmin tmax Hertz")
-CODE1 (L"printline 'tmin:6' 'tmax:6' 'mean:2'")
-CODE1 (L"... 'minimum:2' 'maximum:2' 'stdev:2'")
+	CODE1 (L"tmin = startTime + (step - 1) * 0.05")
+	CODE1 (L"tmax = tmin + 0.05")
+	CODE1 (L"mean = Get mean... tmin tmax Hertz")
+	CODE1 (L"minimum = Get minimum... tmin tmax Hertz Parabolic")
+	CODE1 (L"maximum = Get maximum... tmin tmax Hertz Parabolic")
+	CODE1 (L"stdev = Get standard deviation... tmin tmax Hertz")
+	CODE1 (L"printline 'tmin:6' 'tmax:6' 'mean:2'")
+	CODE1 (L"... 'minimum:2' 'maximum:2' 'stdev:2'")
 CODE (L"endfor")
 ENTRY (L"Notes")
 NORMAL (L"One should not cut the sound up into pieces of 50 ms and then do ##To Pitch...# on each of them, "
@@ -3096,12 +3100,12 @@ NORMAL (L"One should not cut the sound up into pieces of 50 ms and then do ##To 
 	"This is because the analysis requires a window of 40 ms (or so) for every pitch frame. "
 	"Instead, one typically does the analysis on the whole sound, then queries the resulting large Pitch object. "
 	"In that way, the information loss of windowing only affects the two 20 ms edges of the whole sound.")
-NORMAL (L"The example writes lines to the Info window. If you want to write to a file instead, "
+NORMAL (L"The example writes lines to the #Info window. If you want to write to a file instead, "
 	"you start with something like")
-CODE1 (L"filedelete ~/results/out.txt")
+	CODE1 (L"filedelete ~/results/out.txt")
 NORMAL (L"and add lines in the following way:")
-CODE1 (L"fileappend ~/results/out.txt 'tmin:6' 'tmax:6' 'mean:2'")
-CODE1 (L"... 'minimum:2' 'maximum:2' 'stdev:2''newline\\$ '")
+	CODE1 (L"fileappend ~/results/out.txt 'tmin:6' 'tmax:6' 'mean:2'")
+	CODE1 (L"... 'minimum:2' 'maximum:2' 'stdev:2''newline\\$ '")
 MAN_END
 
 MAN_BEGIN (L"Script for creating a frequency sweep", L"ppgb", 20070225)
@@ -3122,12 +3126,12 @@ NORMAL (L"You can create an Intensity contour and look for the first frame that 
 CODE (L"To Intensity... 100 0")
 CODE (L"n = Get number of frames")
 CODE (L"for i to n")
-CODE1 (L"intensity = Get value in frame... i")
-CODE1 (L"if intensity > 40")
-CODE2 (L"time = Get time from frame... i")
-CODE2 (L"echo Onset of sound at: 'time:3' seconds.")
-CODE2 (L"exit")
-CODE1 (L"endif")
+	CODE1 (L"intensity = Get value in frame... i")
+	CODE1 (L"if intensity > 40")
+		CODE2 (L"time = Get time from frame... i")
+		CODE2 (L"echo Onset of sound at: 'time:3' seconds.")
+		CODE2 (L"exit")
+	CODE1 (L"endif")
 CODE (L"endfor")
 NORMAL (L"Since the intensity is computed with rather long windows, the result may be 0.01 or 0.02 seconds "
 	"before the actual start of sound.")
@@ -3146,7 +3150,7 @@ MAN_END
 MAN_BEGIN (L"Script for analysing pitch with a TextGrid", L"ppgb", 20051112)
 INTRO (L"\"I want the mean pitch of every interval that has a non-empty label on tier 5.\"")
 CODE (L"if numberOfSelected (\"Sound\") <> 1 or numberOfSelected (\"TextGrid\") <> 1")
-CODE1 (L"exit Please select a Sound and a TextGrid first.")
+	CODE1 (L"exit Please select a Sound and a TextGrid first.")
 CODE (L"endif")
 CODE (L"sound = selected (\"Sound\")")
 CODE (L"textgrid = selected (\"TextGrid\")")
@@ -3157,15 +3161,15 @@ CODE (L"pitch = selected (\"Pitch\")")
 CODE (L"select textgrid")
 CODE (L"n = Get number of intervals... 5")
 CODE (L"for i to n")
-CODE1 (L"tekst\\$  = Get label of interval... 5 i")
-CODE1 (L"if tekst\\$  <> \"\"")
-CODE2 (L"t1 = Get starting point... 5 i")
-CODE2 (L"t2 = Get end point... 5 i")
-CODE2 (L"select pitch")
-CODE2 (L"f0 = Get mean... t1 t2 Hertz")
-CODE2 (L"printline 't1:3' 't2:3' 'f0:0' 'tekst\\$ '")
-CODE2 (L"select textgrid")
-CODE1 (L"endif")
+	CODE1 (L"tekst\\$  = Get label of interval... 5 i")
+	CODE1 (L"if tekst\\$  <> \"\"")
+		CODE2 (L"t1 = Get starting point... 5 i")
+		CODE2 (L"t2 = Get end point... 5 i")
+		CODE2 (L"select pitch")
+		CODE2 (L"f0 = Get mean... t1 t2 Hertz")
+		CODE2 (L"printline 't1:3' 't2:3' 'f0:0' 'tekst\\$ '")
+		CODE2 (L"select textgrid")
+	CODE1 (L"endif")
 CODE (L"endfor")
 CODE (L"select sound")
 CODE (L"plus textgrid")

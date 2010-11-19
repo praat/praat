@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101117)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101119)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.03# (19 November 2010)")
+LIST_ITEM (L"\\bu Scripting: support for string arrays.")
 NORMAL (L"##5.2.02# (17 November 2010)")
 LIST_ITEM (L"\\bu TextGrid window: corrected a bug that caused Praat to crash (instead of doing nothing) when you tried to add boundaries "
 	"if the selection ran from the penultimate interval to the end of the TextGrid.")

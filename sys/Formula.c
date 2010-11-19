@@ -2703,6 +2703,29 @@ static void do_indexedNumericVariable (void) {
 	pushNumber (var -> numericValue);
 end: return;
 }
+static void do_indexedStringVariable (void) {
+	Stackel n = pop;
+	Melder_assert (n -> which == Stackel_NUMBER);
+	int nindex = n -> content.number;
+	if (nindex < 1) error1 (L"Indexed variables require at least one index.")
+	wchar_t *indexedVariableName = parse [programPointer]. content.string;
+	static MelderString totalVariableName = { 0 };
+	MelderString_copy (& totalVariableName, indexedVariableName);
+	MelderString_append (& totalVariableName, L"[");
+	w -= nindex;
+	for (int iindex = 1; iindex <= nindex; iindex ++) {
+		Stackel index = & theStack [w + iindex];
+		if (index -> which != Stackel_NUMBER)
+			error3 (L"In indexed variables, the index has to be a number, not ", Stackel_whichText (index), L".")
+		MelderString_append2 (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+	}
+	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
+	if (var == NULL)
+		error3 (L"Undefined indexed variable " L_LEFT_GUILLEMET, totalVariableName.string, L_RIGHT_GUILLEMET L".")
+	wchar_t *result = Melder_wcsdup (var -> stringValue);
+	pushString (result);
+end: return;
+}
 static void do_length (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
@@ -4460,7 +4483,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	//Melder_casual ("total %f", theStack[w].content.number);
 } break; case NUMERIC_ARRAY_ELEMENT_: { do_numericArrayElement ();
 } break; case INDEXED_NUMERIC_VARIABLE_: { do_indexedNumericVariable ();
-//} break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
+} break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
 } break; case VARIABLE_REFERENCE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushVariable (var);
