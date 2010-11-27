@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,33 +65,39 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
  *  preEmphasisFrequency >= 0;
  *
  * Burg method: see Numerical recipes Chapter 13.
- * 
+ *
  * Marple method: see Marple, L. (1980), A new autoregressive spectrum analysis
  *		algorithm, IEEE Trans. on ASSP 28, 441-453.
  *	tol1 : stop iteration when E(m) / E(0) < tol1
  *	tol2 : stop iteration when (E(m)-E(m-1)) / E(m-1) < tol2,
  */
- 
+
+int LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel);
 Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
-	
+
 	filter:
 		given e & a, determine x;
 		x(n) = e(n) - Sum (k=1, m, a(k)x(n-k))
 	useGain determines whether the LPC-gain is used in the synthesis.
 */
 
-void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound out, Sound source);
+int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time);
+
 Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
-	
+
 	filter inverse:
 		given x & a, determine e;
 		e(n) = x(n) + Sum (k=1, m, a(k)x(n-k))
 */
+
+Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
+int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
 
 #endif /* _Sound_and_LPC_h_ */

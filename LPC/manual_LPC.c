@@ -19,7 +19,7 @@
 
 /*
  djmw 20020422 GPL + removed "C syntax" part of manpage
- djmw 20071120 Latest modification
+ djmw 20101009 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -286,6 +286,16 @@ NORMAL (L"In #Z-domain notation: #O(%z) = #H(%z) \\.c #E(%z), where "
 	"and, #O(%z) the filter output (the new Sound that will appear in the List of objects).")
 MAN_END
 
+MAN_BEGIN (L"LPC & Sound: Filter with filter at time...", L"djmw", 20101009)
+INTRO (L"Filters the selected @Sound with a static filter that is formed by the filter coefficients "
+	"from only one @LPC frame.")
+ENTRY (L"Settings")
+TAG (L"%%Channel%,")
+DEFINITION (L"determines the sound channel to be filtered.")
+TAG (L"%%Use filter at time (s)%,")
+DEFINITION (L"determines which LPC frame will be chosen to filter the sound. ")
+MAN_END
+
 MAN_BEGIN (L"LPC & Sound: Filter (inverse)", L"djmw", 19970126)
 INTRO (L"A command that creates a new Sound object from one @Sound and one @LPC "
 	"object which have been selected together.")
@@ -297,6 +307,17 @@ NORMAL (L"In Z-domain notation: #E(%z) = #O(%z) / #H(%z), where "
 	"input Sound. (Selecting this newly generated Sound and the LPC, choosing the option "
 	"`Filter...' generates a Sound that is identical to the Sound that originated "
 	"the LPC.)")
+MAN_END
+
+
+MAN_BEGIN (L"LPC & Sound: Filter (inverse) with filter at time...", L"djmw", 20101009)
+INTRO (L"%%Inverse% filters the selected @Sound with a static inverse filter that is formed by the filter coefficients "
+	"from only one @LPC frame.")
+ENTRY (L"Settings")
+TAG (L"%%Channel%,")
+DEFINITION (L"determines the sound channel to be filtered.")
+TAG (L"%%Use filter at time (s)%,")
+DEFINITION (L"determines which LPC frame will be chosen to inverse filter the sound. ")
 MAN_END
 
 MAN_BEGIN (L"MFCC", L"djmw", 20010411)

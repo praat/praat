@@ -23,6 +23,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20100521 Next and Previous
+ djmw 20100818 Permutation_permuteTwoItems/Numbers
 */
 
 #include <time.h>
@@ -125,6 +126,32 @@ void Permutation_sort (Permutation me)
     {
     	my p[i] = i;
     }
+}
+
+int Permutation_swapPositions (Permutation me, long i1, long i2)
+{
+	if (i1 < 1 || i1 > my numberOfElements ||
+		i2 < 1 || i2 > my numberOfElements) return 0;
+	long tmp = my p[i1];
+	my p[i1] = my p[i2];
+	my p[i2] = tmp;
+	return 1;
+}
+
+int Permutation_swapNumbers (Permutation me, long i1, long i2)
+{
+	long ip = 0;
+	if (i1 < 1 || i1 > my numberOfElements ||
+		i2 < 1 || i2 > my numberOfElements) return 0;
+	if (i1 == i2) return 1;
+	for (long i = 1; i <= my numberOfElements; i++)
+	{
+		if (my p[i] == i1) { my p[i] = i2; ip++; }
+		else if (my p[i] == i2) { my p[i] = i1; ip++; }
+		if (ip == 2) break;
+	}
+	Melder_assert (ip == 2);
+	return 1;
 }
 
 int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)

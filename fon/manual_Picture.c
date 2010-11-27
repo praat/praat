@@ -447,34 +447,26 @@ INTRO (L"A command in the #Edit menu of the @@Picture window@.")
 NORMAL (L"It erases all your drawings.")
 MAN_END
 
-MAN_BEGIN (L"Font menu", L"ppgb", 20070815)
+MAN_BEGIN (L"Font menu", L"ppgb", 20101125)
 INTRO (L"One of the menus of the @@Picture window@.")
-NORMAL (L"It allows you to choose the default font of the text "
-	"to be used in subsequent drawing, and its size (character height).")
+NORMAL (L"It allows you to choose the font of the text "
+	"to be used in subsequent drawing, as well as its size (character height).")
 ENTRY (L"Sizes")
 NORMAL (L"You can choose any of the sizes 10, 12, 14, 18, or 24 directly from this menu, "
 	"or fill in any other size in the ##Font size...# form.")
-TAG (L"Unix:")
-DEFINITION (L"the font size will be rounded to the nearest size available on Xwindows, "
-	"which is one from 10, 12, 14, 18, or 24 points; "
-	"PostScript-printing a picture where you specified a font size of 100, however, "
-	"will still give the correct 100-point character height.")
-TAG (L"Macintosh and Windows:")
-DEFINITION (L"all sizes are drawn correctly (what you see on the screen "
-	"is what you get on your printer).")
 NORMAL (L"The widths of the margins depend on the current font size, "
 	"so if you want to change the font size, "
 	"do so before making your drawing.")
 ENTRY (L"Fonts")
-NORMAL (L"With these commands, you set the font in which subsequent text will de drawn: "
+NORMAL (L"With these commands, you set the font in which subsequent text will be drawn: "
 	"Times, Helvetica, Palatino, or Courier.")
 NORMAL (L"You can mix the Symbol and IPA alphabets with the normal Roman alphabets "
 	"and use sequences of backslash + digraph for @@special symbols@ (see also @@phonetic symbols@).")
 NORMAL (L"For instance, you can get an \\e\" by typing \\bse\\\" , or a \\ss by typing \\bsss; "
 	"you can get an \\ep by typing \\bsep, or a \\ct, which is a turned c, by typing \\bsct.")
-NORMAL (L"If you print to a PostScript printer, all fonts will be correct.")
 ENTRY (L"Styles")
-NORMAL (L"You can use all graphical @@text styles@ in the Picture window.")
+NORMAL (L"There are no commands in the menu for text styles (bold, italic), "
+	"but you can still use them in the Picture window: see @@text styles@.")
 MAN_END
 
 MAN_BEGIN (L"Logarithmic marks left/right/top/bottom...", L"ppgb", 19970330)

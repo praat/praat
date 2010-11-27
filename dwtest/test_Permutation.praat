@@ -1,10 +1,12 @@
 # test_Permutation.praat
-# djmw 20050710, 20070820, 20100525
+# djmw 20050710, 20070820, 20100525, 20100819
 
 call test_600_12
 call rotate
 call invert
 call sequence
+call swap
+
 procedure rotate
   printline Rotate
   for i to 20
@@ -97,5 +99,32 @@ procedure sequence
     print .
   endfor
   Remove
-  print  o.k. 
+  printline  o.k. 
+endproc
+ 
+procedure swap
+  print Swap positions
+   .p = Create Permutation... id 10 y
+   for .i to 10
+    for .j to 10
+      select .p
+      .ps = Copy... swap
+      Swap positions... .i .j
+      for .k to 10
+        select .p
+        .pk = Get value... .k
+        select .ps
+       .psk = Get value... .k
+       	if .k <> .i and .k <> .j
+           assert .pk = .psk
+        endif
+      endfor
+      select .ps
+      Remove
+     print .
+    endfor
+  endfor
+  select .p
+  Remove
+  printline o.k.
 endproc

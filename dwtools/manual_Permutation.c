@@ -19,7 +19,7 @@
 
 /*
   20050709 djmw
-  20100521 Latest modification
+  20100818 Latest modification
 */
 #include "ManPagesM.h"
 
@@ -46,6 +46,8 @@ LIST_ITEM (L"\\bu @@Permutation: Get index...|Get index...@")
 NORMAL (L"Modification:")
 LIST_ITEM (L"\\bu @@Permutation: Sort|Sort@")
 LIST_ITEM (L"\\bu @@Permutation: Swap blocks...|Swap blocks...@")
+LIST_ITEM (L"\\bu @@Permutation: Swap positions...|Swap positions...@")
+LIST_ITEM (L"\\bu @@Permutation: Swap numbers...|Swap numbers...@")
 LIST_ITEM (L"\\bu @@Permutation: Swap one from range...|Swap one from range...@")
 NORMAL (L"Permutations:")
 LIST_ITEM (L"\\bu @@Permutation: Permute randomly...|Permute randomly...@")
@@ -162,6 +164,24 @@ NORMAL (L"1. Swap two blocks: with %from = 1, %to = 4, and %blocksize = 2, the p
 NORMAL (L"2. Swap two elements: with %from = 1, %to = 4, and %blocksize = 1, the permutation (1,2,3,4,5) will be modified to (4,2,3,1,5).")
 NORMAL (L"3. Swap two overlapping blocks: with %from = 1, %to = 3, and %blocksize = 3, the permutation (1,2,3,4,5) will be modified to "
 	"(3,4,5,2,1).")
+MAN_END
+
+MAN_BEGIN (L"Permutation: Swap positions...", L"djmw", 20100823)
+INTRO (L"Swaps the contents of two positions in the selected @@Permutation@.")
+ENTRY (L"Settings")
+TAG (L"%%First position%, %%Second position%")
+DEFINITION (L"define the two positions from where elements have to be swapped. The order of these positions is not important.")
+ENTRY (L"Example")
+NORMAL (L"With positions 1 and 3, the permutation (1,3,4,2,5) changes to (4,3,1,2,5).")
+MAN_END
+
+MAN_BEGIN (L"Permutation: Swap numbers...", L"djmw", 20100823)
+INTRO (L"Swaps two numbers in the selected @@Permutation@.")
+ENTRY (L"Settings")
+TAG (L"%%First number%, %%Second number%")
+DEFINITION (L"define the two numbers that have to be swapped. The order of these numbers is not important.")
+ENTRY (L"Example")
+NORMAL (L"With numbers 1 and 3, the permutation (1,3,4,2,5) changes to (3,1,4,2,5).")
 MAN_END
 
 MAN_BEGIN (L"Permutation: Interleave...", L"djmw", 20050714)

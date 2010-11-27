@@ -1196,7 +1196,7 @@ int NUMlowerCholeskyInverse (double **a, long n, double *lnd)
 	(void) NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &n, &info);
 	if (info != 0) return 0;
 
-	/* Determinant from diagonal, restore diagonal */
+	/* Determinant from diagonal, diagonal is now sqrt (a[i][i]) ! */
 
 	if (lnd != NULL)
 	{
@@ -1206,6 +1206,7 @@ int NUMlowerCholeskyInverse (double **a, long n, double *lnd)
 		}
 		*lnd *= 2; /* because A = L . L' */
 	}
+
 	/* Get the inverse */
 
 	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
@@ -1232,19 +1233,29 @@ double **NUMinverseFromLowerCholesky (double **m, long n)
 	return r;
 }
 
-double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long n)
+double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long nr, long n)
 {
 	long i, j;
-	double chisq = 0;
-
-	for (i = n; i > 0; i--)
+	double t, chisq = 0;
+	if (nr == 1) // 1xn matrix
 	{
-		double t = 0;
-		for (j = 1; j <= i; j++)
+		for (j = 1; j <= n; j++)
 		{
-			t += linv[i][j] * (v[j] - m[j]);
+			t = linv[1][j] * (v[j] - m[j]);
+			chisq += t * t;
 		}
-		chisq += t * t;
+	}
+	else // nxn matrix
+	{
+		for (i = n; i > 0; i--)
+		{
+			t = 0;
+			for (j = 1; j <= i; j++)
+			{
+				t += linv[i][j] * (v[j] - m[j]);
+			}
+			chisq += t * t;
+		}
 	}
 	return chisq;
 }
@@ -2591,11 +2602,11 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 		{
 			for (k = 1; k < j; k++)
 			{
-				djk = NUMmahalanobisDistance_chi (covar, x[j], x[k], p);
+				djk = NUMmahalanobisDistance_chi (covar, x[j], x[k], p, p);
 				sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 			}
 			sumjk += 1; // for k == j
-			djj = NUMmahalanobisDistance_chi (covar, x[j], zero, p);
+			djj = NUMmahalanobisDistance_chi (covar, x[j], zero, p, p);
 			sumj += exp (-b2 * djj);
 		}
 		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
@@ -3451,6 +3462,21 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	}
 	Melder_warning3 (L"NUMminimize_brent: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
 	return x;
+}
+
+/*
+	probs is probability vector, i.e. all 0 <= probs[i] <= 1 and sum(i=1;i=nprobs, probs[i])= 1
+	p is a probability
+*/
+long NUMgetIndexFromProbability (double *probs, long nprobs, double p)
+{
+	long index = 1;
+	double psum = probs[index];
+	while (p > psum && index < nprobs)
+	{
+		psum += probs[++index];
+	}
+	return index;
 }
 
 #undef MAX

@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  djmw 20040629 Strings_append now accepts an Ordered of Strings.
  djmw 20050714 Permutations
  djmw 20050724 Index
+ djmw 20101007 Latest modification
 */
 #ifndef _Collection_h_
 	#include "Collection.h"
@@ -46,8 +47,8 @@ Strings Strings_createFixedLength (long numberOfStrings);
 
 Strings Strings_append (Ordered me);
 
-Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
 int Strings_setString (Strings me, wchar_t *new, long index);
@@ -62,6 +63,9 @@ void _Strings_unlink (Strings me);
 /* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */
 
 StringsIndex Strings_to_StringsIndex (Strings me);
+StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
+/* Construct the index with strings in classes, index[i]=0 when my strings[i] doesn't occur in classes */
+
 
 Strings StringsIndex_to_Strings (StringsIndex me);
 

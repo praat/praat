@@ -147,7 +147,7 @@ static Sound VowelEditor_createTarget (VowelEditor me);
 static void VowelEditor_Vowel_reverseFormantTier (VowelEditor me);
 static void VowelEditor_shiftF1F2 (VowelEditor me, double f1_st, double f2_st);
 static int VowelEditor_setSource (VowelEditor me);
-static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType);
+static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType, int fontSize);
 static int VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4);
 static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3,
 	double *f4, double *b4);
@@ -605,7 +605,7 @@ void VowelEditor_prefs (void)
 	Preferences_addInt (L"VowelEditor.speakerType", &prefs.speakerType, 1);
 }
 
-static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
+static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType, int fontSize)
 {
 	Table thee = NULL, te = NULL;
 	wchar_t *Type[4] = { L"", L"m", L"w", L"c" };
@@ -642,10 +642,19 @@ static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType)
 	thee = Table_collapseRows (te, L"IPA", L"", L"F1 F2", L"", L"", L"");
 	forget (te);
 	if (thee == NULL) return 0;
-
-	forget (my marks);
-	my marks = thee;
-	return 1;
+	if (Table_appendColumn (thee, L"fontSize"))
+	{
+		for (long i = 1; i <= thy rows -> size; i++)
+		{
+			if (! Table_setNumericValue (thee, i, thy numberOfColumns, fontSize)) goto end;
+		}
+		forget (my marks);
+		my marks = thee;
+		return 1;
+	}
+end:
+	forget (thee);
+	return 0;
 }
 
 static int VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4)
@@ -711,7 +720,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g)
 	Graphics_rectangle (g, 0, 1, 0, 1);
 	Graphics_setLineWidth (g, 1);
 	Graphics_setGrey (g, 0.5);
-
+	int fontSize = Graphics_inqFontSize (g);
 	// draw the markers
 	if (thee != NULL)
 	{
@@ -723,10 +732,14 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g)
 			if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max)
 			{
 				VowelEditor_getXYFromF1F2 (me, f1, f2, &x1, &y1);
+				int size = Table_getNumericValue (thee, i, thy numberOfColumns);
+				Graphics_setFontSize (g, size);
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 				Graphics_text (g, x1, y1, label);
 			}
 		}
 	}
+	Graphics_setFontSize (g, fontSize);
 	// Draw the line F1=F2
 	//
 	VowelEditor_getXYFromF1F2 (me, my f2min, my f2min, &x1, &y1);
@@ -969,9 +982,10 @@ static int menu_cb_showVowelMarks (EDITOR_ARGS)
 		OPTION (L"Man")
 		OPTION (L"Woman")
 		OPTION (L"Child")
+		NATURAL (L"Font size (points)", L"14")
 	EDITOR_OK
 	EDITOR_DO
-		if (! VowelEditor_setMarks (me, GET_INTEGER (L"Data set"), GET_INTEGER (L"Speaker"))) return 0;
+		if (! VowelEditor_setMarks (me, GET_INTEGER (L"Data set"), GET_INTEGER (L"Speaker"), GET_INTEGER (L"Font size"))) return 0;
 		Graphics_updateWs (my g);
 	EDITOR_END
 }
@@ -1388,10 +1402,8 @@ static void destroy (I)
 	forget (my source);
 	forget (my target);
 	forget (my vowel);
-	forget (my f3);
-	forget (my b3);
-	forget (my f4);
-	forget (my b4);
+	forget (my f3); forget (my b3);
+	forget (my f4); forget (my b4);
 	inherited (VowelEditor) destroy (me);
 }
 
@@ -1625,7 +1637,7 @@ VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
 	my axisOrientation = prefs.axisOrientation;
 	my speakerType = prefs.speakerType;
 	my soundFollowsMouse = prefs.soundFollowsMouse;
-	if (! VowelEditor_setMarks (me, 2, my speakerType)) goto end;
+	if (! VowelEditor_setMarks (me, 2, my speakerType, 14)) goto end;
 	if (! VowelEditor_setF3F4 (me, prefs.f3, prefs.b3, prefs.f4, prefs.b4)) goto end;
 	my maximumDuration = BUFFER_SIZE_SEC;
 	my extendDuration = 0.05;

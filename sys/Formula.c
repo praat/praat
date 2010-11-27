@@ -59,6 +59,7 @@
  * pb 2009/12/25 error checking for Demo commands (should yield an error if the Demo window is waiting for input)
  * pb 2010/07/26 chooseReadFile$, chooseWriteFile$
  * pb 2010/11/03 indexed variables
+ * pb 2010/11/26 chooseDirectory$
  */
 
 #include <ctype.h>
@@ -166,7 +167,7 @@ enum { GEENSYMBOOL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
 		PAUSE_FORM_ADD_COMMENT_, END_PAUSE_FORM_,
-		CHOOSE_READ_FILESTR_, CHOOSE_WRITE_FILESTR_,
+		CHOOSE_READ_FILESTR_, CHOOSE_WRITE_FILESTR_, CHOOSE_DIRECTORYSTR_,
 		DEMO_WINDOW_TITLE_, DEMO_SHOW_, DEMO_WAIT_FOR_INPUT_, DEMO_INPUT_, DEMO_CLICKED_IN_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
@@ -257,7 +258,7 @@ static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
 	L"comment", L"endPause",
-	L"chooseReadFile$", L"chooseWriteFile$",
+	L"chooseReadFile$", L"chooseWriteFile$", L"chooseDirectory$",
 	L"demoWindowTitle", L"demoShow", L"demoWaitForInput", L"demoInput", L"demoClickedIn",
 	L"demoClicked", L"demoX", L"demoY", L"demoKeyPressed", L"demoKey$",
 	L"demoShiftKeyPressed", L"demoCommandKeyPressed", L"demoOptionKeyPressed", L"demoExtraControlKeyPressed",
@@ -3515,6 +3516,22 @@ static void do_chooseWriteFileStr (void) {
 	}
 end: return;
 }
+static void do_chooseDirectoryStr (void) {
+	Stackel n = pop;
+	if (n->content.number == 1) {
+		Stackel title = pop;
+		if (title->which == Stackel_STRING) {
+			wchar_t *result = GuiFileSelect_getDirectoryName (NULL, title->content.string); cherror
+			if (result == NULL) { result = Melder_wcsdup (L""); cherror }
+			pushString (result);
+		} else {
+			error1 (L"The argument of \"chooseDirectory$\" must be a string (the title).")
+		}
+	} else {
+		error3 (L"The function \"chooseDirectory$\" requires 1 argument (a title), not ", Melder_integer (n->content.number), L".")
+	}
+end: return;
+}
 static void do_demoWindowTitle (void) {
 	Stackel n = pop;
 	if (n->content.number == 1) {
@@ -4406,6 +4423,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case END_PAUSE_FORM_: { do_endPauseForm ();
 } break; case CHOOSE_READ_FILESTR_: { do_chooseReadFileStr ();
 } break; case CHOOSE_WRITE_FILESTR_: { do_chooseWriteFileStr ();
+} break; case CHOOSE_DIRECTORYSTR_: { do_chooseDirectoryStr ();
 /********** Demo window functions: **********/
 } break; case DEMO_WINDOW_TITLE_: { do_demoWindowTitle ();
 } break; case DEMO_SHOW_: { do_demoShow ();

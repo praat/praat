@@ -19,7 +19,7 @@
 
 /*
  djmw 20020313 GPL
- djmw 20100325 Latest modification
+ djmw 20101101 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -858,6 +858,31 @@ NORMAL (L"Since an object of type Covariance contains the mean values (the "
 	"tests on means and variances.")
 MAN_END
 
+MAN_BEGIN (L"Create simple Covariance...", L"djmw", 20101124)
+INTRO (L"Create a @@Covariance@ matrix with its centroid.")
+ENTRY (L"Settings")
+TAG (L"%%Dimension%,")
+DEFINITION (L"defines the size of the covariance matrix, i.e. its number of rows and columns.")
+TAG (L"%%Variances%,")
+DEFINITION (L"define the variances per dimension, i.e. the elements on the diagonal of the matrix. If the number of "
+	"elements given is less than %%dimension% the last input number will be repeated. E.g. if %%dimension% is 3 and we "
+	"only input one value, all three variances will be made equal to this value.")
+TAG (L"%%Centroid%,")
+DEFINITION (L"defines the centroid. As above the last input value may be repeated if less than %%dimension% numbers are input.")
+TAG (L"%%Number of observations%,")
+DEFINITION (L"defines the number of observations. ")
+MAN_END
+
+MAN_BEGIN (L"Covariance: Set value...", L"djmw", 20101124)
+INTRO (L"Input @@Covariance@ matrix cell values.")
+ENTRY (L"Constraints on input values")
+TAG (L"A covariance matrix is a %%symmetric% matrix: values input at cell [%i,%j] will be automatically input at "
+	"cell [%j,%i] too.")
+TAG (L"All values on the diagonal must be positive numbers.")
+TAG (L"The absolute value of an off-diagonal element at cell [%i,%j] must be smaller than the corresponding diagonal "
+	"elements at cells [%i,%i] and [%j,%j].")
+MAN_END
+
 MAN_BEGIN (L"Covariance: Difference", L"djmw", 20090624)
 INTRO (L"You can choose this command after selecting two objects of type @Covariance. ")
 NORMAL (L"We test the hypothesis that the samples that gave rise to the two "
@@ -1009,7 +1034,7 @@ NORMAL (L"We use the Bartlett test and the Wald test. According to @@Schott (200
 	"both tests are overly sensitive to violations of normality.")
 MAN_END
 
-MAN_BEGIN (L"Covariance: To TableOfReal (random sampling)...", L"djmw", 20040407)
+MAN_BEGIN (L"Covariance: To TableOfReal (random sampling)...", L"djmw", 20101101)
 INTRO (L"Generate a @TableOfReal object by random sampling from a multi-variate "
 	"normal distribution whose @Covariance matrix is the selected object.")
 ENTRY (L"Settings")
@@ -1018,7 +1043,7 @@ DEFINITION (L"determines the number of data points that will be generated. Each 
 	"data point occupies one row in the generated table.")
 ENTRY (L"Algorithm")
 NORMAL (L"The algorithm proceeds as follows:")
-LIST_ITEM (L"1. Calculate the eigenvalues $v__%i_ and "
+LIST_ITEM (L"1. Diagonalize the covariance matrix: calculate the eigenvalues $v__%i_ and "
 	"eigenvectors %#e__%i_ of the %m \\xx %m Covariance matrix. "
 	"In general there will also be %m of these. Let #%E be the %m \\xx %m matrix "
 	"with eigenvector %#e__%j_ in column %j (%j=1..%m).")
@@ -1027,7 +1052,7 @@ LIST_ITEM (L"2. Generate a vector #x whose elements %x__%k_ equal %x__%k_ = "
 	"Each  %x__%k_ is a random deviate drawn from a Gaussian distribution with "
 	"mean zero and standard deviation equal to the square root of the corresponding "
 	"eigenvalue %v__%k_.")
-LIST_ITEM (L"3. Calculate the vector #y = #%E #x, obtained by multiplying the vector "
+LIST_ITEM (L"3. Rotate back: calculate the vector #y = #%E #x, obtained by multiplying the vector "
 	"#x with the matrix #%E.")
 LIST_ITEM (L"4. Add the centroid to #y and copy the elements of #y to the corresponding row of "
 	"the TableOfReal object.")
@@ -1035,6 +1060,8 @@ LIST_ITEM (L"5. Repeat steps 2, 3 and 4 until the desired number of data points 
 	"has been reached.")
 LIST_ITEM (L"6. Copy the column labels from the Covariance object to the "
 	"TableOfReal object.")
+NORMAL (L"In case the covariance matrix is diagonal, the algorithm is much simpler: we can skip "
+	"the first and third step.")
 MAN_END
 
 MAN_BEGIN (L"Covariance & TableOfReal: Extract quantile range...", L"djmw", 20040225)
@@ -2477,9 +2504,9 @@ FORMULA (L"%z__%k_ = %r e^^%i %k %\\fi^, where,")
 FORMULA (L"%\\fi = \\pi / (%numberOfFrequencies \\-- 1) and %r = 1.")
 MAN_END
 
-MAN_BEGIN (L"Principal component analysis", L"djmw", 19990323)
+MAN_BEGIN (L"Principal component analysis", L"djmw", 20101110)
 INTRO (L"This tutorial describes how you can perform principal component "
-       "analysis with the P\\s{RAAT}.")
+       "analysis with P\\s{RAAT}.")
 NORMAL (L"Principal component analysis (PCA) involves a mathematical procedure "
 	"that transforms a number of (possibly) correlated variables into a "
 	"(smaller) number of uncorrelated variables called %%principal "
@@ -3536,20 +3563,24 @@ NORMAL (L"You can perform these t-tests in Praat by first transforming the "
 	"latter object.")
 MAN_END
 
-MAN_BEGIN (L"TableOfReal: Report multivariate normality (HZ)...", L"djmw", 20090701)
-INTRO (L"Report about multivariate normality according to Henze-Zirkler.")
-ENTRY (L"Settings")
-TAG (L"%%Beta,")
-DEFINITION (L"determines the smoothing. For the default (%beta=0), the smoothing parameter will be determined automatically.")
-ENTRY (L"Remarks")
-NORMAL (L"According to @@Henze & Wagner (1997)@, this test has:")
+MAN_BEGIN (L"BHEP multivariate normality test", L"djmw", 20101124)
+INTRO (L"The Baringhaus–Henze–Epps–Pulley multivariate normality test.")
+NORMAL (L"According to @@Henze & Wagner (1997)@ the test has:")
 LIST_ITEM (L"\\bu affine invariance,")
 LIST_ITEM (L"\\bu consistency against each fixed nonnormal alternative distribution,")
 LIST_ITEM (L"\\bu asymptotic power against contiguous alternatives of order \\Vr (%n),")
 LIST_ITEM (L"\\bu feasibility for any dimension and any sample size.")
-NORMAL (L"In the default case, %beta wil be determined as:")
-FORMULA (L"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ n^^1/(%p+4)^,")
-NORMAL (L"where %n is the number of rows and %p the number of columns of the table.")
+NORMAL (L"The test depends on a smoothing parameter %%h% that can be chosen in various ways:")
+NORMAL (L"@@Henze & Wagner (1997)@ recommend %h = 1.41, while")
+NORMAL (L"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for short tailed alternatives and "
+" %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
+MAN_END
+
+MAN_BEGIN (L"TableOfReal: Report multivariate normality (BHEP)...", L"djmw", 20090701)
+INTRO (L"Report about multivariate normality according to the @@BHEP multivariate normality test@.")
+ENTRY (L"Settings")
+TAG (L"%%Smooting parameter%,")
+DEFINITION (L"determines the smoothing parameter %h. ")
 MAN_END
 
 MAN_BEGIN (L"TableOfReal: Change row labels...", L"djmw", 20010822)

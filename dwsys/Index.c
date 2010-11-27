@@ -1,6 +1,6 @@
 /* Index.c
  *
- * Copyright (C) 2005-2007 David Weenink
+ * Copyright (C) 2005-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class_methods_end
 int Index_init (I, long numberOfElements)
 {
 	iam (Index);
-	
+
     my classes = Ordered_create ();
     if (my classes == NULL) return 0;
     my numberOfElements = numberOfElements;
@@ -83,7 +83,7 @@ Index Index_extractPart (I, long from, long to)
 	iam (Index);
 	Index thee;
 	long i;
-	
+
 	if (from == 0) from = 1;
 	if (to == 0) to = my numberOfElements;
 	if (to < from || from < 1 || to > my numberOfElements) return Melder_errorp
@@ -122,13 +122,20 @@ StringsIndex StringsIndex_create (long numberOfElements)
 int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)
 {
 	long i;
-	
+
 	for (i = 1; i <= my classes -> size; i++)
 	{
 		SimpleString ss = my classes -> item[i];
 		if (NUMwcscmp (ss -> string, classLabel) == 0) return i;
 	}
 	return 0;
+}
+
+long StringsIndex_countItems (StringsIndex me, int iclass)
+{
+	long sum = 0;
+	for (long i = 1; i <= my numberOfElements; i++) if (my classIndex[i] == iclass) sum++;
+	return sum;
 }
 
 /* End of Index.c */

@@ -1,6 +1,6 @@
 /* SSCP_def.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,22 @@
 oo_DEFINE_CLASS (SSCP, TableOfReal)
 
 	oo_DOUBLE (numberOfObservations)
-	oo_DOUBLE_VECTOR (centroid, my numberOfRows)
-	
+	oo_DOUBLE_VECTOR (centroid, my numberOfColumns)
+	/*
+		The following definitions are only needed when we want to use many big diagonal or
+		almost diagonal matrices like for example in a GaussianMixture,
+		or for efficiently calculating many times a distance like a'S^(-1)a
+	*/
+	#if !oo_READING && !oo_WRITING
+		oo_LONG (expansionNumberOfRows)
+		oo_INT (dataChanged)
+		oo_DOUBLE_MATRIX (expansion, my expansionNumberOfRows, my numberOfColumns)
+		oo_DOUBLE (lnd)
+		oo_DOUBLE_MATRIX (lowerCholesky, my numberOfColumns, my numberOfColumns)
+		oo_OBJECT (PCA, 0, pca)
+	#endif
 oo_END_CLASS (SSCP)
 
 #undef ooSTRUCT
-/* End of file SSCP_def.h */	
+
+/* End of file SSCP_def.h */

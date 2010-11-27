@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20061218 To Melder_information<x> format
  djmw 20070103 Sound interface changes
  djmw 20080122 float -> double
+ djmw 20101008 New LPC_Frame_filterInverse interface.
 */
 
 #include "Sound_and_LPC.h"
@@ -49,37 +50,37 @@ static int huber_struct_init (struct huber_struct *hs, double windowDuration,
 	long p,	double samplingFrequency, double location, int wantlocation)
 {
 	long n;
-		
+
 	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	if (hs -> e == NULL) return 0;
 	n = hs -> e -> nx;
 	hs -> n = n;
 	hs -> p = p;
-	
+
 	hs -> w = NUMdvector (1, n);
 	if (hs -> w == NULL) return 0;
-	
+
 	hs -> work = NUMdvector (1, n);
 	if (hs -> work == NULL) return 0;
-	
+
 	hs -> a = NUMdvector (1, p);
 	if (hs -> a == NULL) return 0;
-	
+
 	hs -> covar = NUMdmatrix (1, p, 1, p);
 	if (hs -> covar == NULL) return 0;
-	
+
 	hs -> c = NUMdvector (1, p);
 	if (hs -> c == NULL) return 0;
-	
+
 	hs -> svd = SVD_create (p, p);
 	if (hs -> svd == NULL) return 0;
-	
+
 	hs -> wantlocation = wantlocation;
 	if (! wantlocation) hs -> location = location;
-	
+
 	hs -> wantscale = 1;
-	
-	return 1;	
+
+	return 1;
 }
 
 static void huber_struct_destroy (struct huber_struct *hs)
@@ -98,11 +99,11 @@ static void huber_struct_getWeights (struct huber_struct *hs, double *e)
 	double ks = hs -> k * hs -> scale;
 	double *w = hs -> w;
 	long i;
-	
+
 	for (i = 1 ; i <= hs -> n; i++)
 	{
 		double ei = e[i] - hs -> location;
-		w[i] = ei > -ks && ei < ks ? 1 : ks / fabs (ei);	
+		w[i] = ei > -ks && ei < ks ? 1 : ks / fabs (ei);
 	}
 }
 
@@ -110,7 +111,7 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 {
 	long i, j, k, p = hs -> p, n = hs -> n;
 	double tmp, *w = hs -> w, **covar = hs -> covar, *c = hs -> c;
-		
+
 	for (i = 1; i <= p; i++)
 	{
 		for (j = i; j <= p; j++)
@@ -122,7 +123,7 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 			}
 			covar[i][j] = covar[j][i] = tmp;
 		}
-		
+
 		tmp = 0;
 		for (k = p + 1; k <= n; k++)
 		{
@@ -130,7 +131,7 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 		}
 		c[i] = -tmp;
 	}
-		
+
 }
 
 static int huber_struct_solvelpc (struct huber_struct *hs)
@@ -146,12 +147,12 @@ static int huber_struct_solvelpc (struct huber_struct *hs)
 			my u[i][j] = covar[i][j];
 		}
 	}
-	
+
 	SVD_setTolerance (me, hs -> tol_svd);
 	if (! SVD_compute (me)) return 0;
-	
+
 	nzeros = SVD_zeroSmallSingularValues (me, 0);
-	
+
 	if (! SVD_solve (me, hs -> c, hs -> a)) return 0;
 
 	return 1;
@@ -161,7 +162,7 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 	LPC_Frame him, void *huber)
 {
 	struct huber_struct *hs = (struct huber_struct *) huber;
-	long p = my nCoefficients > his nCoefficients ? his nCoefficients : 
+	long p = my nCoefficients > his nCoefficients ? his nCoefficients :
 						my nCoefficients;
 	long i, n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
 	double *e = hs -> e -> z[1], *s = thy z[1];
@@ -170,21 +171,24 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 	hs -> iter = 0;
 	hs -> scale = 1e38;
 	hs -> p = p;
-	
+
 	do
 	{
-		LPC_Frame_and_Sound_filterInverse (him, thee, hs -> e);
-		
+		Sound hse = hs -> e;
+		for (long i = 1; i <= thy nx; i++) hse -> z[1][i] = thy z[1][i];
+		LPC_Frame_and_Sound_filterInverse (him, hse, 1);
+		//LPC_Frame_and_Sound_filterInverse (him, thee, hs -> e);
+
 		s0 = hs -> scale;
-		
-		if (! NUMstatistics_huber (e, n, &(hs -> location), 
-			hs -> wantlocation, &(hs -> scale), hs -> wantscale, 
+
+		if (! NUMstatistics_huber (e, n, &(hs -> location),
+			hs -> wantlocation, &(hs -> scale), hs -> wantscale,
 			hs -> k, hs -> tol, hs -> work)) return 0;
 
 		huber_struct_getWeights (hs, e);
-		
+
 		huber_struct_getWeightedCovars (hs, s);
-		
+
 		/* Solve C a = [-] c */
 		if (! huber_struct_solvelpc (hs))
 		{
@@ -193,16 +197,16 @@ int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
 			return 0;
 		}
 		for (i = 1; i <= p; i++) his a[i] = hs -> a[i];
-		
+
 		(hs -> iter)++;
 	} while ((hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
-	
+
 	return 1;
 }
 
 
 LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
-	double preEmphasisFrequency, double k, int itermax, double tol, 
+	double preEmphasisFrequency, double k, int itermax, double tol,
 	int wantlocation)
 {
 	struct huber_struct struct_huber;
@@ -234,7 +238,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	{
 		return Melder_errorp1 (L"Incorrect retrieved analysis width");
 	}
-	
+
 	sound = (Sound) Data_copy (me);
 	if (sound == NULL) goto end;
 	sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
@@ -250,7 +254,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	struct_huber.tol = tol;
 	struct_huber.tol = tol_svd;
 	struct_huber.itermax = itermax;
-	
+
 	Melder_progress1 (0.0, L"LPC analysis");
 
 	Sound_preEmphasis (sound, preEmphasisFrequency);
@@ -259,23 +263,23 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	{
 		LPC_Frame lpc = & thy frame[i], lpcto = & his frame[i];
 		double t = Sampled_indexToX (thee, i);
-		
+
 		Sound_into_Sound (sound, sframe, t - windowDuration / 2);
 		(void) Vector_subtractMean (sframe);
 		Sounds_multiply (sframe, window);
-		
+
 		if (! LPC_Frames_and_Sound_huber (lpc, sframe, lpcto, & struct_huber))
 		{
 			frameErrorCount++;
 		}
-		
+
 		iter += struct_huber.iter;
-		
+
 		if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
 			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) goto end;
 	}
-	
-	if (frameErrorCount) Melder_warning5 (L"Results of ", Melder_integer (frameErrorCount), 
+
+	if (frameErrorCount) Melder_warning5 (L"Results of ", Melder_integer (frameErrorCount),
 		L" frame(s) out of ", Melder_integer (nFrames), L" could not be optimised.");
 
 end:
@@ -284,7 +288,7 @@ end:
 	forget (sound); forget (sframe); forget (window);
 	huber_struct_destroy (&struct_huber);
 	if (Melder_hasError ()) forget (him);
-	
+
 	MelderInfo_writeLine4 (L"Number of iterations: ", Melder_integer (iter),
 		L"\n   Average per frame: ", Melder_double (((double) iter)/nFrames));
 	return him;

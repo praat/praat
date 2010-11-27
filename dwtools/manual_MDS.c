@@ -146,7 +146,7 @@ LIST_ITEM (L"The sum of squared coordinates in the configuration space is one fo
 	"each dimension, i.e., the configuration always has unit variance in each dimension.")
 MAN_END
 
-MAN_BEGIN (L"Configuration", L"djmw", 19980909)
+MAN_BEGIN (L"Configuration", L"djmw", 20101102)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type Configuration represents the positions of a number "
 	"of labelled points in a multidimensional space.")
@@ -208,7 +208,7 @@ DEFINITION (L"determines the way distances between points are measured. In gener
 	"the distance between points #x__%i_ and #x__%j_ is:")
 FORMULA (L"%d__%ij_ = "
 	"(\\su__%k=1..%numberOfDimensions_ %w__%k_ |%x__%ik_ \\-- "
-	"%x__%jk_|^^%metric^))^^1/%metric^")
+	"%x__%jk_|^^%metric^)^^1/%metric^")
 DEFINITION (L"For Euclidean distances %metric is 2.")
 TAG (L"%w [1..%numberOfDimensions]")
 DEFINITION (L"weight given to each dimension in the distance calculation.")
@@ -1357,7 +1357,7 @@ NORMAL (L"You can create an example @Dissimilarity object with the @@Create "
 	"##Multidimensional scaling# option in the #New menu.")
 MAN_END
 
-MAN_BEGIN (L"MDS models", L"djmw", 20070821)
+MAN_BEGIN (L"MDS models", L"djmw", 20101109)
 INTRO (L"Multidimensional scaling (MDS) models are defined by specifying "
 	"how given @Dissimilarity data, %\\de__%ij_, are "
 	"mapped into distances of an %m-dimensional MDS @Configuration %#X. "
@@ -1370,10 +1370,10 @@ INTRO (L"Multidimensional scaling (MDS) models are defined by specifying "
 	"called @stress.")
 ENTRY (L"Representation functions")
 NORMAL (L"In the application of MDS we try to find a configuration #X such that "
-	"the following relations are sasatisfieds well as possible:")
+	"the following relations are satisfied as well as possible:")
 FORMULA (L"%f(%\\de__%ij_) \\~~ %d__%ij_(#X)")
-NORMAL (L"The numbers that result from applying %f on %\\de__%ij_ are sometimes "
-	"called @disparities %d\\d'__%ij_. In most applications of MDS, besides "
+NORMAL (L"The numbers that result from applying  %f on  %\\de__%ij_ are sometimes "
+	"called @disparities %d\\'p__%ij_. In most applications of MDS, besides "
 	"the configuration #X, also the function %f is not "
 	"completely specified, i.e., the exact parameters of %f are unknown and "
 	"must also be estimated during the analysis. If no particular %f can be "
@@ -1403,8 +1403,8 @@ DEFINITION (L"If %\\de__%ij_ = %\\de__%kl_ and no particular constraint is invol
 	"approach% to ties requires that if %\\de__%ij_ = %\\de__%kl_, then also %d__%ij_(#X) = %d__%kl_(#X).")
 NORMAL (L"More information on all aspects of multidimensional scaling can be found in: "
 	"@@Borg & Groenen (1997)@ and @@Ramsay (1988)@.")
-NORMAL (L"The most important types and the conversions between them are shown in the "
-	"following figure.")
+NORMAL (L"The most important object types used in Praat for MDS and the conversions between these types are "
+	"shown in the following figure.")
 PICTURE (6, 6, drawMDSClassRelations)
 MAN_END
 

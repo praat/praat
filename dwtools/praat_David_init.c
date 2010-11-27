@@ -560,6 +560,10 @@ DIRECT (ClassificationTable_to_Confusion)
 	EVERY_TO (ClassificationTable_to_Confusion (OBJECT))
 END
 
+DIRECT (ClassificationTable_to_Correlation_columns)
+	EVERY_TO (ClassificationTable_to_Correlation_columns (OBJECT))
+END
+
 DIRECT (ClassificationTable_to_Strings_maximumProbability)
 	EVERY_TO (ClassificationTable_to_Strings_maximumProbability (OBJECT))
 END
@@ -676,6 +680,27 @@ END
 
 DIRECT (Covariance_help)
 	Melder_help (L"Covariance");
+END
+
+FORM (Covariance_createSimple, L"Create simple Covariance", L"Create simple Covariance...")
+	WORD (L"Name", L"c")
+	NATURAL (L"Dimension", L"2")
+	SENTENCE (L"Variances", L"1.0 1.0")
+	SENTENCE (L"Centroid", L"0.0 0.0")
+	POSITIVE (L"Number of observations", L"100.0")
+	OK
+DO
+	if (! praat_new1 (Covariance_createSimple (GET_INTEGER (L"Dimension"), GET_STRING (L"Variances"),
+		GET_STRING (L"Centroid"), GET_REAL (L"Number of observations")), GET_STRING (L"Name"))) return 0;
+END
+
+FORM (Covariance_getProbabilityAtPosition, L"Covariance: Get probability at position", 0)
+	SENTENCE (L"Position", L"10.0 20.0")
+	OK
+DO
+	wchar_t *position = GET_STRING (L"Position");
+	double p = Covariance_getProbabilityAtPosition_string (ONLY_OBJECT, position);
+	Melder_information4 (Melder_double (p), L" (= probability at position ", position, L")");
 END
 
 FORM (Covariance_getSignificanceOfOneMean, L"Covariance: Get significance of one mean", L"Covariance: Get significance of one mean...")
@@ -2730,6 +2755,23 @@ DO
 	praat_dataChanged (ONLY_OBJECT);
 END
 
+FORM (Permutation_swapPositions, L"Permutation: Swap positions", L"Permutation: Swap positions...")
+	NATURAL (L"First position", L"1")
+	NATURAL (L"Second position", L"2")
+	OK
+DO
+	if (! Permutation_swapPositions (ONLY_OBJECT, GET_INTEGER (L"First position"), GET_INTEGER (L"Second position"))) return 0;
+	praat_dataChanged (ONLY_OBJECT);
+END
+
+FORM (Permutation_swapNumbers, L"Permutation: Swap numbers", L"Permutation: Swap numbers...")
+	NATURAL (L"First number", L"1")
+	NATURAL (L"Second number", L"2")
+	OK
+DO
+	if (! Permutation_swapNumbers (ONLY_OBJECT, GET_INTEGER (L"First number"), GET_INTEGER (L"Second number"))) return 0;
+	praat_dataChanged (ONLY_OBJECT);
+END
 
 FORM (Permutation_swapOneFromRange, L"Permutation: Swap one from range", L"Permutation: Swap one from range...")
 	LABEL (L"", L"A randomly chosen element from ")
@@ -4002,24 +4044,23 @@ END
 
 /******************* TableOfReal ****************************/
 
-FORM (TableOfReal_reportMultivariateNormality, L"TableOfReal: Report multivariate normality (Henze-Zirkler)", L"TableOfReal: Report multivariate normality (HZ)...")
-	REAL (L"Beta", L"0.0")
+FORM (TableOfReal_reportMultivariateNormality, L"TableOfReal: Report multivariate normality (BHEP)", L"TableOfReal: Report multivariate normality (BHEP)...")
+	REAL (L"Smoothing parameter", L"0.0")
 	OK
 DO
-	TableOfReal t = ONLY (classTableOfReal);
-	long n = t -> numberOfRows, p = t -> numberOfColumns;
-	double prob, wnb, lnmu, lnvar;
-	double beta = GET_REAL (L"Beta");
+	TableOfReal me = ONLY (classTableOfReal);
+	double tnb, lnmu, lnvar;
+	double h = GET_REAL (L"Smoothing parameter");
+	double prob = TableOfReal_normalityTest_BHEP (me, &h, &tnb, &lnmu, &lnvar);
 	MelderInfo_open ();
-	prob = NUMnormalityTest_HenzeZirkler (t -> data, n, p, &beta, &wnb, &lnmu, &lnvar);
-	MelderInfo_writeLine1 (L"Henze-Zirkler normality test:");
-	MelderInfo_writeLine2 (L"Henze-Zirkler statistic: ", Melder_double (wnb));
+	MelderInfo_writeLine1 (L"Baringhaus–Henze–Epps–Pulley normality test:");
 	MelderInfo_writeLine2 (L"Significance of normality: ", Melder_double (prob));
+	MelderInfo_writeLine2 (L"BHEP statistic: ", Melder_double (tnb));
 	MelderInfo_writeLine2 (L"Lognormal mean: ", Melder_double (lnmu));
 	MelderInfo_writeLine2 (L"Lognormal variance: ", Melder_double (lnvar));
-	MelderInfo_writeLine2 (L"Smoothing beta: ", Melder_double (beta));
-	MelderInfo_writeLine2 (L"Sample size: ", Melder_integer (n));
-	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (p));
+	MelderInfo_writeLine2 (L"Smoothing: ", Melder_double (h));
+	MelderInfo_writeLine2 (L"Sample size: ", Melder_integer (my numberOfRows));
+	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (my numberOfColumns));
 	MelderInfo_close ();
 END
 
@@ -4225,19 +4266,18 @@ DO
 END
 
 FORM (TableOfReal_drawColumnAsDistribution, L"TableOfReal: Draw column as distribution", L"TableOfReal: Draw column as distribution...")
-	NATURAL (L"Column", L"1")
-    REAL (L"Minimum value", L"0.0")
-    REAL (L"Maximum value", L"0.0")
-    LABEL (L"", L"Display of the distribution")
+	NATURAL (L"Column number", L"1")
+    REAL (L"left Value range", L"0.0")
+    REAL (L"right Value range", L"0.0")
+    REAL (L"left Frequency range", L"0.0")
+    REAL (L"right frequency range", L"0.0")
     NATURAL (L"Number of bins", L"10")
-    REAL (L"Minimum frequency", L"0.0")
-    REAL (L"Maximum frequency", L"0.0")
     BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawColumnAsDistribution (OBJECT, GRAPHICS, GET_INTEGER (L"Column"),
-		GET_REAL (L"Minimum value"), GET_REAL (L"Maximum value"),GET_INTEGER (L"Number of bins"),
-		GET_REAL (L"Minimum frequency"), GET_REAL (L"Maximum frequency"), 0, GET_INTEGER (L"Garnish")))
+	EVERY_DRAW (TableOfReal_drawColumnAsDistribution (OBJECT, GRAPHICS, GET_INTEGER (L"Column number"),
+		GET_REAL (L"left Value range"), GET_REAL (L"right Value range"),GET_INTEGER (L"Number of bins"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right frequency range"), 0, GET_INTEGER (L"Garnish")))
 END
 
 FORM (TableOfReal_to_Configuration_lda, L"TableOfReal: To Configuration (lda)", L"TableOfReal: To Configuration (lda)...")
@@ -4615,6 +4655,34 @@ static void praat_SSCP_extract_init (void *klas)
 	praat_addAction1 (klas, 1, L"Extract centroid", EXTRACT_BUTTON, 1, DO_SSCP_extractCentroid);
 }
 
+FORM (SSCP_setValue, L"Covariance: Set value", L"Covariance: Set value...")
+	NATURAL (L"Row number", L"1")
+	NATURAL (L"Column number", L"1")
+	REAL (L"New value", L"1.0")
+	OK
+DO
+	if (! SSCP_setValue (ONLY_GENERIC (classSSCP), GET_INTEGER (L"Row number"), GET_INTEGER (L"Column number"),
+		GET_REAL (L"New value"))) return 0;
+END
+
+FORM (SSCP_setCentroid, L"", 0)
+	NATURAL (L"Element number", L"1")
+	REAL (L"New value", L"1.0")
+	OK
+DO
+	if (! SSCP_setCentroid (ONLY_GENERIC (classSSCP), GET_INTEGER (L"Element number"), GET_REAL (L"New value"))) return 0;
+END
+
+void praat_SSCP_as_TableOfReal_init (void *klas)
+{
+	praat_TableOfReal_init (klas);
+	praat_removeAction (klas, NULL, NULL, L"Set value...");
+	praat_addAction1 (klas, 1, L"Set centroid...", L"Formula...", 1, DO_SSCP_setCentroid);
+	praat_addAction1 (klas, 1, L"Set value...", L"Formula...", 1, DO_SSCP_setValue);
+	praat_addAction1 (klas, 0, L"To TableOfReal", L"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
+
+}
+
 void praat_TableOfReal_init2  (void *klas)
 {
 	praat_TableOfReal_init (klas);
@@ -4654,6 +4722,7 @@ void praat_uvafon_David_init (void)
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 
+	praat_addMenuCommand (L"Objects", L"New", L"Create simple Covariance...", L"Create simple Matrix...", 1, DO_Covariance_createSimple);
  praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
     praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
     	praat_addMenuCommand (L"Objects", L"New", L"Create Polynomial...", 0, 1, DO_Polynomial_create);
@@ -4764,9 +4833,10 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction1 (classCovariance, 0, L"Covariance help", 0, 0,
 		DO_Covariance_help);
-    praat_TableOfReal_init2 (classCovariance);
+    praat_SSCP_as_TableOfReal_init (classCovariance);
 	praat_SSCP_query_init (classCovariance);
 	praat_SSCP_extract_init (classCovariance);
+	praat_addAction1 (classCovariance, 1, L"Get probability at position...", L"Get value...", 1, DO_Covariance_getProbabilityAtPosition);
 	praat_addAction1 (classCovariance, 1, L"Get diagonality (bartlett)...", L"Get ln(determinant)", 1, DO_SSCP_testDiagonality_bartlett);
 	praat_addAction1 (classCovariance, 1, L"Get significance of one mean...", L"Get diagonality (bartlett)...", 1, DO_Covariance_getSignificanceOfOneMean);
 	praat_addAction1 (classCovariance, 1, L"Get significance of means difference...", L"Get significance of one mean...", 1, DO_Covariance_getSignificanceOfMeansDifference);
@@ -4787,6 +4857,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classClassificationTable, 0, L"ClassificationTable help", 0, 0, DO_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
 	praat_addAction1 (classClassificationTable, 0, L"To Confusion", 0, 0, DO_ClassificationTable_to_Confusion);
+	praat_addAction1 (classClassificationTable, 0, L"To Correlation (columns)", 0, 0, DO_ClassificationTable_to_Correlation_columns);
 	praat_addAction1 (classClassificationTable, 0, L"To Strings (max. prob.)", 0, 0, DO_ClassificationTable_to_Strings_maximumProbability);
 
 	praat_addAction1 (classCorrelation, 0, L"Correlation help", 0, 0, DO_Correlation_help);
@@ -5017,6 +5088,8 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classPermutation, 1, L"Sort", 0, 1, DO_Permutation_sort);
 	praat_addAction1 (classPermutation, 1, L"Swap blocks...", 0, 1, DO_Permutation_swapBlocks);
+	praat_addAction1 (classPermutation, 1, L"Swap numbers...", 0, 1, DO_Permutation_swapNumbers);
+	praat_addAction1 (classPermutation, 1, L"Swap positions...", 0, 1, DO_Permutation_swapPositions);
 	praat_addAction1 (classPermutation, 1, L"Swap one from range...", 0, 1, DO_Permutation_swapOneFromRange);
 	praat_addAction1 (classPermutation, 0, L"-- sequential permutations --", 0, 1, 0);
 	praat_addAction1 (classPermutation, 0, L"Next", 0, 1, DO_Permutations_next);
@@ -5179,7 +5252,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, L"Draw vectors...", L"Draw box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawVectors);
 	praat_addAction1 (classTableOfReal, 1, L"Draw row as histogram...", L"Draw biplot...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowAsHistogram);
 	praat_addAction1 (classTableOfReal, 1, L"Draw rows as histogram...", L"Draw row as histogram...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawRowsAsHistogram);
-	praat_addAction1 (classTableOfReal, 1, L"Draw column as distribution...", L"Draw rows as histogram...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_drawColumnAsDistribution);
+	praat_addAction1 (classTableOfReal, 1, L"Draw column as distribution...", L"Draw rows as histogram...", praat_DEPTH_1, DO_TableOfReal_drawColumnAsDistribution);
 
 	praat_addAction2 (classStrings, 1, classPermutation, 1, L"Permute strings", 0, 0, DO_Strings_and_Permutation_permuteStrings);
 
@@ -5192,6 +5265,7 @@ void praat_uvafon_David_init (void)
 
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_LIBRARY (praat_KlattGrid_init)
+	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)
 }

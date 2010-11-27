@@ -47,6 +47,7 @@
 */
 
 #include <ctype.h>
+#include "SSCP.h"
 #include "Matrix_extensions.h"
 #include "NUMclapack.h"
 #include "NUM2.h"
@@ -1556,9 +1557,11 @@ void TableOfReal_drawColumnAsDistribution (I, Graphics g, int column, double min
 	double freqMin, double freqMax, int cumulative, int garnish)
 {
 	iam (TableOfReal);
+	if (column < 1 || column > my numberOfColumns) return;
 	Matrix thee = TableOfReal_to_Matrix (me);
 	Matrix_drawDistribution (thee, g,  column-0.5, column+0.5, 0, 0,
 		minimum, maximum, nBins, freqMin,  freqMax,  cumulative,  garnish);
+	if (garnish && my columnLabels[column] != NULL) Graphics_textBottom (g, 1, my columnLabels[column]);
 	forget (thee);
 }
 
@@ -1908,6 +1911,64 @@ end:
 
 	if (Melder_hasError ()) forget (him);
 	return him;
+}
+
+double TableOfReal_normalityTest_BHEP (I, double *h, double *tnb, double *lnmu, double *lnvar)
+{
+	iam (TableOfReal);
+	long n = my numberOfRows, p = my numberOfColumns;
+	double beta = *h > 0 ? NUMsqrt1_2 / *h :
+		NUMsqrt1_2 * pow ((1.0 + 2 * p ) / 4, 1.0 / (p + 4 )) * pow (n, 1.0 / (p + 4));
+	double p2 = p / 2.0;
+	double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+	double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+	double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
+	double mu, mu2, var, prob = NUMundefined;
+
+	if (*h <= 0) *h = NUMsqrt1_2 / beta;
+
+	*tnb = *lnmu = *lnvar = NUMundefined;
+
+	if (n < 2 || p < 1) return prob;
+
+	Covariance thee = TableOfReal_to_Covariance (me);
+	if (thee == NULL) goto end;
+	if (! SSCP_expandLowerCholesky (thee))
+	{
+		*tnb = 4 * n;
+	}
+	else
+	{
+		double djk, djj, sumjk = 0, sumj = 0;
+		double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+		/* Heinze & Wagner (1997), page 3
+			We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
+			So d[j][k]= d[k][j] and d[j][j] = 0
+		*/
+		for (long j = 1; j <= n; j++)
+		{
+			for (long k = 1; k < j; k++)
+			{
+				djk = NUMmahalanobisDistance_chi (thy lowerCholesky, my data[j], my data[k], p, p);
+				sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
+			}
+			sumjk += 1; // for k == j
+			djj = NUMmahalanobisDistance_chi (thy lowerCholesky, my data[j], thy centroid, p, p);
+			sumj += exp (-b2 * djj);
+		}
+		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+	}
+	mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
+	var = 2.0 * pow (1 + 4 * beta2, -p2)
+		+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
+		- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
+	mu2 = mu * mu;
+	*lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
+	*lnvar = sqrt (log ((mu2 + var) / mu2));
+	prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
+end:
+	forget (thee);
+	return prob;
 }
 
 #undef EMPTY_STRING

@@ -348,6 +348,7 @@ Widget GuiDialog_getButtonArea (Widget widget);
 
 SortedSetOfString GuiFileSelect_getInfileNames (Widget parent, const wchar_t *title, bool allowMultipleFiles);
 wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, const wchar_t *defaultName);
+wchar_t * GuiFileSelect_getDirectoryName (Widget parent, const wchar_t *title);
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1

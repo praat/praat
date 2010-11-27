@@ -427,11 +427,11 @@ int NUMdeterminant_cholesky (double **a, long n, double *lnd);
 	ln(determinant) of a symmetric p.s.d. matrix
 */
 
-double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long n);
+double NUMmahalanobisDistance_chi (double **l, double *v, double *m, long nr, long nc);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
-	as calculated by NUMlowerCholeskyInverse
+	as calculated by NUMlowerCholeskyInverse or 1-row for a diagonal matrix (nr =1)
 	Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
 		(x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =
 			(L**-1.(x-m))' . (L**-1.(x-m))
@@ -1123,5 +1123,7 @@ int NUMreverseRealFastFourierTransform (double  *data, long n);
 */
 int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. */
 int NUMrealft (double *data, long n, int direction);
+
+long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 
 #endif /* _NUM2_h_ */

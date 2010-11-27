@@ -21,7 +21,7 @@
 
 /*
  djmw 20020327 GPL
- djmw 20100106 Latest modification.
+ djmw 20101102 Latest modification.
 */
 
 #ifndef _TableOfReal_extensions_h_
@@ -36,7 +36,13 @@
 
 #define SSCP_members TableOfReal_members \
 	double numberOfObservations;	\
-	double *centroid;
+	double *centroid; \
+	long expansionNumberOfRows; \
+	int dataChanged; \
+	double **expansion; \
+	double lnd; \
+	double **lowerCholesky; \
+	PCA pca;
 #define SSCP_methods TableOfReal_methods
 class_create (SSCP, TableOfReal);
 
@@ -56,7 +62,7 @@ class_create (Correlation, SSCP);
 #define SSCPs_methods Ordered_methods
 class_create (SSCPs, Ordered);
 
-int SSCP_init (I, long dimension);
+int SSCP_init (I, long dimension, long storage);
 
 SSCP SSCP_create (long dimension);
 
@@ -64,6 +70,9 @@ void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confi
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 void SSCP_setNumberOfObservations (I, double numberOfObservations);
+int SSCP_setCentroid (I, long component, double value); // only SSCP & Covariance
+int SSCP_setValue (I, long row, long col, double value); // only SSCP & Covariance
+
 double SSCP_getNumberOfObservations (I);
 double SSCP_getDegreesOfFreedom (I);
 double SSCP_getTotalVariance (I);
@@ -101,13 +110,40 @@ TableOfReal SSCP_extractCentroid (I);
 TableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData);
 /* Generate a table with data based on the covariance matrix */
 
+void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
+/*
+	A convenience function to avoid the calculation of the PCA each time we want to generate a random vector
+	The PCA must be the result of a previous SSCP_to_PCA call !
+	The covariance matrix must not be singular or diagonal!
+	Returns the random sampled vector in vec (which must be of size my numberOfColumns).
+	Preconditions:
+		1. Covariance may not be in diagonal representation (1 row)
+		2. Dimensions of me and PCA agree
+		3. vec is of length my numberOfColumns
+		4. buf, a vector of length my numberOfColumns, is needed so the routine cannot fail
+*/
+
 SSCPs TableOfReal_to_SSCPs_byLabel (I);
 
 PCA SSCP_to_PCA (I);
 
+int SSCP_expandPCA (I);
+void SSCP_unExpandPCA (I);
+
 CCA SSCP_to_CCA (I, long ny);
 
 Covariance Covariance_create (long dimension);
+Covariance Covariance_createSimple (long dimension, wchar_t *variances, wchar_t *centroid, long numberOfObservations);
+Covariance Covariance_create_reduceStorage (long dimension, long storage);
+/*
+	storage 0 or >= dimension: complete matrix
+	storage 1: only diagonal
+	storage 2: diagonal + 1 off-diagonal [i,i+1]
+	storage 3: diagonal + off-diagonal [i,i+1] + off-diagonal [i,i+2]
+    ....
+    storage dimension : complete matrix
+    See also SSCP_expand () for usage.
+*/
 
 Correlation Correlation_create (long dimension);
 
@@ -124,6 +160,14 @@ TableOfReal Correlation_confidenceIntervals (Correlation me,
 	values of confidence intervals in lower part of resulting table.
 	Diagonal values are 1 (and represent both upper and lower c.i.).
 */
+
+/* Precondition ||vector|| = 1 */
+void Covariance_getMarginalDensityParameters (Covariance me, double *vector, double *mu, double *stdev);
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, double *vector, double x);
+
+double Covariance_getProbabilityAtPosition_string (Covariance me, wchar_t *xpos);
+double Covariance_getProbabilityAtPosition (Covariance me, double *x);
+/* evaluate the pdf(x,mu,Sigma) at x */
 
 Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
 
@@ -185,13 +229,39 @@ SSCP SSCPs_to_SSCP_pool (SSCPs me);
 int SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability,
 	double *chisq, long *ndf);
 
+SSCP SSCP_toTwoDimensions (I, double *v1, double *v2);
 SSCPs SSCPs_toTwoDimensions (SSCPs me, double *v1, double *v2);
+SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
 
 /* For inheritors */
 
 void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
+
+void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confidence,
+	double *xmin, double *xmax, double *ymin, double *ymax);
+
+int SSCP_expand (I);
+/*
+	Expand a reduced storage SSCP. For efficiency reasons, the expanded matrix is kept in memory.
+	Successive calls to SSCP_expand don't change anything unless
+	Before using one of the Covariance functions defined here on a reduced matrix we
+	first have to expand it to normal size.
+
+	Covariance me = Covariance_create_reduceStorage (dimension, 1); // diagonal only
+	...
+	if (! SSCP_expand (me)) Melder_error (..)
+	PCA thee = SSCP_to_PCA (me);
+*/
+
+void SSCP_unExpand (I);
+/* Use only if the memory is really needed! */
+
+int SSCP_expandLowerCholesky (I); // create lower square root of covariance matrix
+void SSCP_unExpandLowerCholesky (I);
+int SSCP_expandPCA (I);
+void SSCP_unExpandPCA (I);
 
 #endif /* _SSCP_h_ */
 

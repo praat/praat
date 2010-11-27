@@ -21,6 +21,7 @@
 
 /*
  djmw 20050706
+ djmw 20100818 Latest modification
 */
 
 #ifndef _Data_h_
@@ -68,6 +69,8 @@ int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, 
 int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize);
 /* Swap two blocks */
 
+int Permutation_swapPositions (Permutation me, long i1, long i2);
+int Permutation_swapNumbers (Permutation me, long i1, long i2);
 Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
 
 Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,

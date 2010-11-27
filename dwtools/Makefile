@@ -1,5 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
+# djmw 20101105 Latest modification
 
 include ../makefile.defs
 
@@ -18,11 +19,13 @@ OBJECTS = Activation.o AffineTransform.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o FormantGrid_extensions.o \
+	GaussianMixture.o \
+	HMM.o \
 	Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	MelFilter_and_MFCC.o MFCC.o \
-	manual_dwtools.o manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
+	manual_dwtools.o  manual_HMM.o manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
@@ -41,7 +44,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
 	VowelEditor.o \
-	praat_MDS_init.o praat_KlattGrid_init.o praat_David_init.o
+	praat_MDS_init.o praat_HMM_init.o praat_KlattGrid_init.o praat_David_init.o
 
 .PHONY: all clean
 

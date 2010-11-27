@@ -41,6 +41,7 @@
  * fb 2010/02/26 GTK
  * pb 2010/06/22 GTK: correct hiding and showing again
  * pb 2010/07/29 removed GuiDialog_show
+ * pb 2010/11/26 even Unix now has a GUI fatal window
  */
 
 #include <math.h>
@@ -611,52 +612,14 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 
 #ifndef CONSOLE_APPLICATION
 
-#if gtk
-static void gtk_error (wchar_t *message) {
-	Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell),
-					 GTK_DIALOG_DESTROY_WITH_PARENT,
-					 GTK_MESSAGE_ERROR,
-					 GTK_BUTTONS_OK,
-					 "%s",
-					 Melder_peekWcsToUtf8 (message));
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-}
-
-static void gtk_warning (wchar_t *message) {
-	Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell),
-					 GTK_DIALOG_DESTROY_WITH_PARENT,
-					 GTK_MESSAGE_WARNING,
-					 GTK_BUTTONS_OK,
-					 "%s",
-					 Melder_peekWcsToUtf8 (message));
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-}
-#endif
-
-#ifdef macintosh
-static void motif_fatal (wchar_t *message) {
+#if defined (macintosh)
+static void mac_message (int macAlertType, wchar_t *messageW) {
 	DialogRef dialog;
-	static UniChar messageU [2000+1];
-	int messageLength = wcslen (message);
-	for (int i = 0; i < messageLength; i ++) {
-		messageU [i] = message [i];   // BUG: should convert to UTF16
-	}
-	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, messageLength);
-	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
-	CFRelease (messageCF);
-	RunStandardAlert (dialog, NULL, NULL);
-//messageU[0] = * (UniChar *) 0;
-	SysError (11);
-}
-static void motif_error (wchar_t *messageW) {
-	DialogRef dialog;
-	static UniChar messageU [4000+1];
+	static UniChar messageU [4000];
 	int messageLength = wcslen (messageW);
 	int j = 0;
-	for (int i = 0; i < messageLength; i ++) {
-		unsigned long kar = messageW [i];
+	for (int i = 0; i < messageLength && j <= 4000 - 2; i ++) {
+		uint32_t kar = messageW [i];
 		if (kar <= 0xFFFF) {
 			messageU [j ++] = kar;
 		} else if (kar <= 0x10FFFF) {
@@ -666,96 +629,62 @@ static void motif_error (wchar_t *messageW) {
 		}
 	}
 	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-	CreateStandardAlert (kAlertStopAlert, messageCF, NULL, NULL, & dialog);
+	CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
 	CFRelease (messageCF);
 	RunStandardAlert (dialog, NULL, NULL);
-	XmUpdateDisplay (0);
 }
-static void motif_warning (wchar_t *messageW) {
-	DialogRef dialog;
-	static UniChar messageU [4000+1];
-	int messageLength = wcslen (messageW);
-	int j = 0;
-	for (int i = 0; i < messageLength; i ++) {
-		unsigned long kar = messageW [i];
-		if (kar <= 0xFFFF) {
-			messageU [j ++] = kar;
-		} else if (kar <= 0x10FFFF) {
-			kar -= 0x10000;
-			messageU [j ++] = 0xD800 | (kar >> 10);
-			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
-		}
-	}
-	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-	CreateStandardAlert (kAlertNoteAlert, messageCF, NULL, NULL, & dialog);
-	CFRelease (messageCF);
-	RunStandardAlert (dialog, NULL, NULL);
-	XmUpdateDisplay (0);
-}
-#elif defined (_WIN32)
-static void motif_fatal (wchar_t *message) {
-	MessageBox (NULL, message, L"Fatal error", MB_OK);
-}
-static void motif_error (wchar_t *message) {
-	MessageBox (NULL, message, L"Message", MB_OK);
-}
-static void motif_warning (wchar_t *message) {
-	MessageBox (NULL, message, L"Warning", MB_OK);
-}
-#elif motif
-static Widget makeMessage (unsigned char dialogType, const char *resourceName, const char *title) {
-	Arg arg [1];
-	arg [0]. name = XmNautoUnmanage; arg [0]. value = True;
-	Widget dialog = XmCreateMessageDialog (Melder_topShell, (char *) resourceName, arg, 1);
-	XtVaSetValues (dialog,
-		XmNdialogStyle, XmDIALOG_FULL_APPLICATION_MODAL,
-		XmNdialogType, dialogType,
-		NULL);
-	XtVaSetValues (XtParent (dialog), XmNtitle, title, XmNdeleteResponse, XmUNMAP, NULL);
-	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_CANCEL_BUTTON));
-	XtUnmanageChild (XmMessageBoxGetChild (dialog, XmDIALOG_HELP_BUTTON));
-	return dialog;
-}
-static void motif_error (wchar_t *messageW) {
-	static Widget dia = NULL;
-	static char messageA [2000+1];
-	int messageLength = wcslen (messageW);
-	if (dia == NULL)
-		dia = makeMessage (XmDIALOG_ERROR, "error", "Message");
-	for (int i = 0; i <= messageLength; i ++) {
-		messageA [i] = messageW [i];
-	}
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, messageA), NULL);
-	XtManageChild (dia);
-	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
-}
-static void motif_warning (wchar_t *message) {
-	static Widget dia = NULL;
-	if (dia == NULL)
-		dia = makeMessage (XmDIALOG_WARNING, "warning", "Warning");
-	XtVaSetValues (dia, motif_argXmString (XmNmessageString, Melder_peekWcsToUtf8 (message)), NULL);
-	XtManageChild (dia);
-	XMapRaised (XtDisplay (XtParent (dia)), XtWindow (XtParent (dia)));   /* Because the delete response is UNMAP. */
-}
-#endif
 #endif
 
-#ifndef CONSOLE_APPLICATION
+static void gui_fatal (wchar_t *message) {
+	#if gtk
+		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	#elif defined (macintosh)
+		mac_message (kAlertStopAlert, message);
+		SysError (11);
+	#elif defined (_WIN32)
+		MessageBox (NULL, message, L"Fatal error", MB_OK);
+	#endif
+}
+
+static void gui_error (wchar_t *message) {
+	#if gtk
+		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	#elif defined (macintosh)
+		mac_message (kAlertStopAlert, message);
+		XmUpdateDisplay (0);
+	#elif defined (_WIN32)
+		MessageBox (NULL, message, L"Message", MB_OK);
+	#endif
+}
+
+static void gui_warning (wchar_t *message) {
+	#if gtk
+		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+	#elif defined (macintosh)
+		mac_message (kAlertNoteAlert, message);
+		XmUpdateDisplay (0);
+	#elif defined (_WIN32)
+		MessageBox (NULL, message, L"Warning", MB_OK);
+	#endif
+}
+
 void MelderGui_create (void *appContext, void *parent) {
-	extern void gui_information (wchar_t *);
+	extern void gui_information (wchar_t *);   // BUG: no prototype
 	Melder_appContext = appContext;
 	Melder_topShell = (Widget) parent;
 	Melder_setInformationProc (gui_information);
-	#if gtk
-		Melder_setWarningProc (gtk_warning);
-		Melder_setErrorProc (gtk_error);
-	#elif motif
-		Melder_setWarningProc (motif_warning);
-		Melder_setErrorProc (motif_error);
-		#if defined (macintosh) || defined (_WIN32)
-			Melder_setFatalProc (motif_fatal);
-		#endif
-	#endif
+	Melder_setFatalProc (gui_fatal);
+	Melder_setErrorProc (gui_error);
+	Melder_setWarningProc (gui_warning);
 }
 #endif
 

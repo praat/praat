@@ -373,8 +373,36 @@ DO
 		GET_INTEGER (L"Use LPC gain")))
 END
 
+FORM (LPC_and_Sound_filterWithFilterAtTime, L"LPC & Sound: Filter with one filter at time",
+	  L"LPC & Sound: Filter with filter at time...")
+	OPTIONMENU (L"Channel", 2)
+		OPTION (L"Both")
+		OPTION (L"Left")
+		OPTION (L"Right")
+	REAL (L"Use filter at time (s)", L"0.0")
+	OK
+DO
+	long channel = GET_INTEGER (L"Channel") - 1;
+	NEW (LPC_and_Sound_filterWithFilterAtTime (ONLY(classLPC) , ONLY(classSound), channel,
+		GET_REAL (L"Use filter at time")))
+END
+
 DIRECT (LPC_and_Sound_filterInverse)
 	NEW (LPC_and_Sound_filterInverse (ONLY(classLPC) , ONLY(classSound)))
+END
+
+FORM (LPC_and_Sound_filterInverseWithFilterAtTime, L"LPC & Sound: Filter (inverse) with filter at time",
+	L"LPC & Sound: Filter (inverse) with filter at time...")
+	OPTIONMENU (L"Channel", 2)
+		OPTION (L"Both")
+		OPTION (L"Left")
+		OPTION (L"Right")
+	REAL (L"Use filter at time (s)", L"0.0")
+	OK
+DO
+	long channel = GET_INTEGER (L"Channel") - 1;
+	NEW (LPC_and_Sound_filterInverseWithFilterAtTime (ONLY(classLPC) , ONLY(classSound), channel,
+		GET_REAL (L"Use filter at time")))
 END
 
 FORM (LPC_and_Sound_to_LPC_robust, L"Robust LPC analysis", L"LPC & Sound: To LPC (robust)...")
@@ -444,6 +472,9 @@ void praat_uvafon_LPC_init (void)
 	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter...", 0, 0, DO_LPC_and_Sound_filter);
 	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter (inverse)", 0, 0, DO_LPC_and_Sound_filterInverse);
 	praat_addAction2 (classLPC, 1, classSound, 1, L"To LPC (robust)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_LPC_and_Sound_to_LPC_robust);
+	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter with filter at time...", 0, 0, DO_LPC_and_Sound_filterWithFilterAtTime);
+	praat_addAction2 (classLPC, 1, classSound, 1, L"Filter (inverse) with filter at time...", 0, 0, DO_LPC_and_Sound_filterInverseWithFilterAtTime);
+
 
 	praat_addAction1 (classSound, 0, L"To LPC (autocorrelation)...", L"To Formant (sl)...", 1, DO_Sound_to_LPC_auto);
 	praat_addAction1 (classSound, 0, L"To LPC (covariance)...", L"To LPC (autocorrelation)...", 1, DO_Sound_to_LPC_covar);

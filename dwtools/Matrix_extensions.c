@@ -34,9 +34,9 @@ void Matrix_scatterPlot (I, Any g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
     double size_mm, const wchar_t *mark, int garnish)
 {
-    iam (Matrix); 
+    iam (Matrix);
     long i, ix = labs (icx), iy = labs (icy);
-    
+
     if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) return;
     if (xmax <= xmin)
     {
@@ -123,7 +123,7 @@ void Matrix_scale (I, int choice)
 {
 	iam (Matrix); double min, max, extremum;
 	long i, j, nZero = 0;
-	
+
 	if (choice == 2) /* by row */
 	{
 		for (i = 1; i <= my ny; i++)
@@ -167,32 +167,32 @@ void Matrix_scale (I, int choice)
 
 Any Matrix_transpose (I)
 {
-	iam (Matrix); 
+	iam (Matrix);
 	long i, j;
 	Matrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1,
 		my xmin, my xmax, my nx, my dx, my x1);
-		
+
 	if (thee == NULL) return NULL;
-	
+
 	for (i = 1; i <= my ny; i++)
 	{
 		for (j=1; j <= my nx; j++)
-		{ 
+		{
 			thy z[j][i] = my z[i][j];
 		}
 	}
 	return thee;
-	
+
 }
 
 void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, long nBins,
 	double freqMin, double freqMax, int cumulative, int garnish)
 {
-	iam (Matrix); 
+	iam (Matrix);
 	long i, j, ixmin, ixmax, iymin, iymax, nxy = 0, *freq = NULL;
 	double binWidth, fi = 0;
-	
+
 	if (nBins <= 0) return;
 	if (xmax <= xmin)
 	{
@@ -203,23 +203,23 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 		ymin = my ymin; ymax = my ymax;
 	}
 	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
-		Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) 
+		Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0)
 			return;
-	if (maximum <= minimum) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, 
+	if (maximum <= minimum) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin,
 		iymax, & minimum, & maximum);
 	if (maximum <= minimum)
 	{
 		minimum -= 1.0; maximum += 1.0;
 	}
-	
-	/* 
+
+	/*
 		Count the numbers per bin and the total
 	*/
-	
+
 	if (nBins < 1) nBins = 10;
 	if ((freq = NUMlvector (1, nBins)) == NULL) return;
 	binWidth = (maximum - minimum) / nBins;
-	for (i = iymin; i <= iymax; i++) 
+	for (i = iymin; i <= iymax; i++)
 	{
 		for (j = ixmin; j <= ixmax; j++)
 		{
@@ -230,7 +230,7 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 			}
 		}
 	}
-		
+
 	if (freqMax <= freqMin)
 	{
 		if (cumulative)
@@ -242,31 +242,31 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 			NUMlvector_extrema (freq, 1, nBins, & freqMin, & freqMax);
 			if (freqMax <= freqMin)
 			{
-				freqMin = freqMin > 1 ? freqMin-1: 0; 
+				freqMin = freqMin > 1 ? freqMin-1: 0;
 				freqMax += 1.0;
 			}
 		}
 	}
-	
+
 	Graphics_setInner (g);
 	Graphics_setWindow (g, minimum, maximum, freqMin, freqMax);
-	
+
 	for (i = 1; i <= nBins; i++)
 	{
 		double ftmp = freq[i];
 		fi = cumulative ? fi + freq[i] / nxy : freq[i];
 		ftmp = fi;
 		if (ftmp > freqMax) ftmp = freqMax;
-		if (ftmp > freqMin) Graphics_rectangle (g, minimum + (i-1) * 
+		if (ftmp > freqMin) Graphics_rectangle (g, minimum + (i-1) *
 			binWidth, minimum + i * binWidth, freqMin, ftmp);
-	}	
+	}
     Graphics_unsetInner (g);
     if (garnish)
     {
     	Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
     	Graphics_marksLeft (g, 2, 1, 1, 0);
-    	if (! cumulative) Graphics_textLeft (g, 0, L"number/bin");
+    	if (! cumulative) Graphics_textLeft (g, 1, L"Number/bin");
     }
 	NUMlvector_free (freq, 1);
 }
@@ -277,30 +277,30 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 	iam (Matrix);
 	long i, ix, iymin, iymax, ny;
 	double *y;
-	
+
 	if (x < my xmin || x > my xmax) return;
 	ix = Matrix_xToNearestColumn (me, x);
-	
+
 	if (ymax <= ymin)
 	{
 		ymin = my ymin;
 		ymax = my ymax;
 	}
-	
+
 	ny = Matrix_getWindowSamplesY (me, ymin, ymax, &iymin, &iymax);
 	if (ny < 1) return;
-	
+
 	if (max <= min)
 	{
 		Matrix_getWindowExtrema (me, ix, ix, iymin, iymax, &min, &max);
 	}
-	if (max <= min) 
-	{ 
+	if (max <= min)
+	{
 		min -= 0.5; max += 0.5;
 	}
 	y = NUMdvector (iymin, iymax);
 	if (y == NULL) return;
-	
+
 	Graphics_setWindow (g, ymin, ymax, min, max);
 	Graphics_setInner (g);
 
@@ -309,15 +309,15 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 		y[i] = my z[i][ix];
 	}
 	Graphics_function (g, y, iymin, iymax, Matrix_rowToY (me, iymin),
-		 Matrix_rowToY (me, iymax)); 
-	Graphics_unsetInner (g);	
-	NUMdvector_free (y, 1);	
+		 Matrix_rowToY (me, iymax));
+	Graphics_unsetInner (g);
+	NUMdvector_free (y, 1);
 }
 
 Matrix Matrix_solveEquation (I, double tolerance)
 {
 	iam (Matrix); Matrix thee = NULL; int status = 0;
-	long i, j, m = my ny, n = my nx - 1; 
+	long i, j, m = my ny, n = my nx - 1;
 	double **u = NULL, *b = NULL, *x = NULL;
 	double tol = tolerance ? tolerance : NUMeps * m;
 

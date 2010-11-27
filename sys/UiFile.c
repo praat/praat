@@ -155,7 +155,7 @@ Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *i
 
 void UiOutfile_do (I, const wchar_t *defaultName) {
 	iam (UiOutfile);
-	wchar_t *outfileName = GuiFileSelect_getOutfileName (my parent, my name, defaultName);
+	wchar_t *outfileName = GuiFileSelect_getOutfileName (NULL, my name, defaultName);
 	if (outfileName == NULL) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError ("Dialog `%s' cancelled.", my name);
