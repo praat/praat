@@ -34,11 +34,11 @@
 Thing_declare1 (StringsEditor);
 
 #define StringsEditor__members(Klas) Editor__members(Klas) \
-	Widget list, text;
+	GuiObject list, text;
 #define StringsEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (StringsEditor, Editor);
 
-StringsEditor StringsEditor_create (Widget parent, const wchar_t *title, Any data);
+StringsEditor StringsEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 /* End of file StringsEditor.h */
 #endif

@@ -133,7 +133,7 @@ void SSCP_unExpandPCA (I);
 CCA SSCP_to_CCA (I, long ny);
 
 Covariance Covariance_create (long dimension);
-Covariance Covariance_createSimple (long dimension, wchar_t *variances, wchar_t *centroid, long numberOfObservations);
+Covariance Covariance_createSimple (wchar_t *covars, wchar_t *centroid, long numberOfObservations);
 Covariance Covariance_create_reduceStorage (long dimension, long storage);
 /*
 	storage 0 or >= dimension: complete matrix

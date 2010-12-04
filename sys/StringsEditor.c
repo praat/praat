@@ -127,7 +127,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 	Editor_broadcastChange (StringsEditor_as_Editor (me));
 }
 
-static void gui_list_cb_doubleClick (Widget widget, void *void_me, long item) {
+static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item) {
 	(void) widget;
 	iam (StringsEditor);
 	Strings strings = my data;
@@ -159,7 +159,7 @@ class_methods (StringsEditor, Editor) {
 	class_methods_end
 }
 
-StringsEditor StringsEditor_create (Widget parent, const wchar_t *title, Any data) {
+StringsEditor StringsEditor_create (GuiObject parent, const wchar_t *title, Any data) {
 	StringsEditor me = new (StringsEditor); cherror
 	Editor_init (StringsEditor_as_parent (me), parent, 20, 40, 600, 600, title, data); cherror
 	updateList (me);

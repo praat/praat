@@ -191,7 +191,7 @@ TableOfReal TableOfReal_createIrisDataset (void)
 	TableOfReal_setColumnLabel (me, 2, L"sw");
 	TableOfReal_setColumnLabel (me, 3, L"pl");
 	TableOfReal_setColumnLabel (me, 4, L"pw");
-	for (i=1; i <= 150; i++)
+	for (i = 1; i <= 150; i++)
 	{
 		int kind = (i - 1) / 50 + 1;
 		wchar_t *label = kind == 1 ? L"1" : kind == 2 ? L"2" : L"3";
@@ -1454,16 +1454,16 @@ long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
 	}
 	if (use_regexp)
 	{
-		char *compileMsg;
-		compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
-		if (compiled_regexp == NULL) return Melder_error1 (Melder_utf8ToWcs (compileMsg));
+		wchar_t *compileMsg;
+		compiled_regexp = CompileRE (search, &compileMsg, 0);
+		if (compiled_regexp == NULL) return Melder_error1 (compileMsg);
 	}
 	for (i = 1; i <= numberOfLabels; i++)
 	{
 		if (labels[i] == NULL) continue;
 		if (use_regexp)
 		{
-			if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToUtf8 (labels[i]), NULL, 0,
+			if (ExecRE (compiled_regexp, NULL, labels[i], NULL, 0,
 				'\0', '\0', NULL, NULL, NULL)) nmatches++;
 		}
 		else if (wcsequ (labels[i], search)) nmatches++;

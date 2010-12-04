@@ -1330,9 +1330,9 @@ INTRO (L"An executable text that consists of menu commands and action commands."
 NORMAL (L"See the @Scripting tutorial.")
 MAN_END
 
-MAN_BEGIN (L"preferences directory", L"ppgb", 20070129)
+MAN_BEGIN (L"preferences directory", L"ppgb", 20101204)
 INTRO (L"The Praat preferences directory is the directory where Praat saves the @@preferences file@ and the @@buttons file@, "
-	"and where you can install @@plug-ins@. "
+	"and where you can install @@plug-ins@ and save the preferences of your scripts (in your subdirectory of the #apps subdirectory). "
 	"If the preferences directory does not exist, it will automatically be created when you start Praat.")
 ENTRY (L"Unix")
 NORMAL (L"If your home directory is ##/people/miep/#, your Praat preferences directory will be ##/people/miep/.praat-dir/#.")
@@ -2905,7 +2905,7 @@ CODE (L"...'newline\\$ ' Remove")
 NORMAL (L"The first $$newline\\$ $ is superfluous, but this format seems to read nicely.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 9. Turning a script into a stand-alone program", L"ppgb", 20100804)
+MAN_BEGIN (L"Scripting 9. Turning a script into a stand-alone program", L"ppgb", 20101204)
 INTRO (L"You can turn your script into a double-clickable stand-alone program by including it into Praat's #main procedure. "
 	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
 NORMAL (L"These stand-alone programs do not show the Objects window and the Picture window; "
@@ -2929,6 +2929,13 @@ NORMAL (L"The script in this example raises the Demo window, writes \"Hello worl
 NORMAL (L"Note that Praat is distributed under the General Public License (GPL). This means that if you distribute "
 	"a Praat-based stand-alone program, you have to make it open source under the GPL as well.")
 NORMAL (L"See also @@Programming with Praat@.")
+ENTRY (L"Details")
+NORMAL (L"Your program can save its preferences in a directory of its choice, "
+	"e.g. in ##'preferencesDirectory\\$ '/../GuineaPigAnalyzer# if your program is called GuineaPigAnalyzer. "
+	"If you want to be less conspicuous and like to use the Praat preferences directory instead, "
+	"please use the ##apps# subdirectory, in this way:")
+CODE (L"createDirectory (preferencesDirectory\\$  + \"/apps\")")
+CODE (L"createDirectory (preferencesDirectory\\$  + \"/apps/GuineaPigAnalyzer\")")
 MAN_END
 
 MAN_BEGIN (L"ScriptEditor", L"ppgb", 20070225)
@@ -3193,7 +3200,7 @@ CODE (L"select sound")
 CODE (L"plus textgrid")
 MAN_END
 
-MAN_BEGIN (L"Demo window", L"ppgb", 20100804)
+MAN_BEGIN (L"Demo window", L"ppgb", 20101204)
 INTRO (L"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9. Turning a script into a stand-alone program@).")
@@ -3353,6 +3360,12 @@ NORMAL (L"If you resize the Demo window with the handle in the bottom left, or i
 NORMAL (L"If you click away the Demo window while it is waiting for input, you get a message saying \"You interrupted the script...\". "
 	"If you do not want to see this message, you should make sure that the user can reach the end of the script, for instance by "
 	"pressing the \\-> key on the last page. To make sure the user sees that the script has ended, you could end it with ##demo Erase all#.")
+NORMAL (L"Your demo can save its preferences in a directory of its choice, "
+	"e.g. in ##'preferencesDirectory\\$ '/../GuineaPigAnalyzer# if your demo is called GuineaPigAnalyzer. "
+	"If you want to be less conspicuous and like to use the Praat preferences directory instead, "
+	"please use the ##apps# subdirectory, in this way:")
+CODE (L"createDirectory (preferencesDirectory\\$  + \"/apps\")")
+CODE (L"createDirectory (preferencesDirectory\\$  + \"/apps/GuineaPigAnalyzer\")")
 MAN_END
 
 }

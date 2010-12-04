@@ -306,8 +306,8 @@ static void createMenus (ScriptEditor me) {
 	Editor_addCommand (me, L"Edit", L"-- history --", 0, 0);
 	Editor_addCommand (me, L"Edit", L"Clear history", 0, menu_cb_clearHistory);
 	Editor_addCommand (me, L"Edit", L"Paste history", 'H', menu_cb_pasteHistory);
-	Editor_addCommand (me, L"Edit", L"-- expand --", 0, 0);
-	Editor_addCommand (me, L"Edit", L"Expand include files", 0, menu_cb_expandIncludeFiles);
+	Editor_addCommand (me, L"Convert", L"-- expand --", 0, 0);
+	Editor_addCommand (me, L"Convert", L"Expand include files", 0, menu_cb_expandIncludeFiles);
 	Editor_addMenu (me, L"Run", 0);
 	Editor_addCommand (me, L"Run", L"Run", 'R', menu_cb_run);
 	Editor_addCommand (me, L"Run", L"Run selection", 'T', menu_cb_runSelection);
@@ -339,7 +339,7 @@ class_methods (ScriptEditor, TextEditor) {
 	class_methods_end
 }
 
-ScriptEditor ScriptEditor_createFromText (Widget parent, Any voidEditor, const wchar_t *initialText) {
+ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any voidEditor, const wchar_t *initialText) {
 	Editor editor = (Editor) voidEditor;
 	ScriptEditor me = new (ScriptEditor); cherror
 	if (editor != NULL) {
@@ -357,7 +357,7 @@ end:
 	return me;
 }
 
-ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script) {
+ScriptEditor ScriptEditor_createFromScript (GuiObject parent, Any voidEditor, Script script) {
 	if (theScriptEditors) {
 		for (long ieditor = 1; ieditor <= theScriptEditors -> size; ieditor ++) {
 			ScriptEditor editor = theScriptEditors -> item [ieditor];

@@ -76,7 +76,7 @@ int GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double n
 */
 
 #define GaussianMixture_LIKELIHOOD 0
-#define GaussianMixture_MDL 1
+#define GaussianMixture_MML 1
 #define GaussianMixture_BIC 2
 #define GaussianMixture_AIC 3
 #define GaussianMixture_AICC 4

@@ -39,12 +39,12 @@ Thing_declare1 (ArtwordEditor);
 #define ArtwordEditor__members(Klas) Editor__members(Klas) \
 	Graphics graphics; \
 	int feature; \
-	Widget list, drawingArea, radio, time, value; \
-	Widget button [1 + kArt_muscle_MAX];
+	GuiObject list, drawingArea, radio, time, value; \
+	GuiObject button [1 + kArt_muscle_MAX];
 #define ArtwordEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (ArtwordEditor, Editor);
 
-ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data);
+ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data);
 
 /* End of file ArtwordEditor.h */
 #endif

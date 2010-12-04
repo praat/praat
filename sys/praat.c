@@ -122,7 +122,7 @@ static structMelderFile buttons4File = { 0 }, buttons5File = { 0 };
 	static structMelderFile messageFile = { 0 };   /* Like C:\Windows\myProg\Message.txt */
 #endif
 
-static Widget praatList_objects;
+static GuiObject praatList_objects;
 
 /***** selection *****/
 
@@ -1026,6 +1026,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 
 		/* Take from 'title' ("myProg 3.2" becomes "myProg") or from command line ("/ifa/praat" becomes "praat"). */
 		strcpy (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
+		//Melder_fatal ("<%s>", argv [0]);
 	#else
 		#if defined (_WIN32)
 			MelderString_copy (& theCurrentPraatApplication -> batchName,
@@ -1064,8 +1065,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 * Get the program's private directory:
 	 *    "/u/miep/myProg-dir" (Unix)
 	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
-	 *    "C:\Windows\MyProg" (Windows 95)
-	 *    "C:\Documents and Settings\Miep\MyProg" (Windows XP)
+	 *    "C:\Documents and Settings\Miep\MyProg" (Windows)
 	 * and construct a preferences-file name and a script-buttons-file name like
 	 *    /u/miep/.myProg-dir/prefs   (Unix)
 	 *    /u/miep/.myProg-dir/script_buttons
@@ -1073,8 +1073,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs
 	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons
 	 * or
-	 *    C:\Windows\MyProg\Preferences.ini
-	 *    C:\Windows\MyProg\Buttons.ini
+	 *    C:\Documents and Settings\Miep\MyProg\Preferences.ini
+	 *    C:\Documents and Settings\Miep\MyProg\Buttons.ini
 	 * On Unix, also create names for process-id and message files.
 	 */
 	{
@@ -1152,7 +1152,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	praat_actions_init ();
 	praat_menuCommands_init ();
 
-	Widget raam = NULL;
+	GuiObject raam = NULL;
 	if (Melder_batch) {
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			MelderString_empty (& theCurrentPraatApplication -> batchName);
@@ -1202,9 +1202,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addMenus (NULL);
 		praat_addFixedButtons (NULL);
 	} else {
-		Widget Raam = NULL;
+		GuiObject Raam = NULL;
 		#if gtk
-			Widget raHoriz, raLeft; /* I want to have more possibilities for GTK widgets */
+			GuiObject raHoriz, raLeft; /* I want to have more possibilities for GTK widgets */
 		#else
 			#define raHoriz Raam 
 			#define raLeft Raam 
@@ -1307,7 +1307,7 @@ void praat_run (void) {
 
 	praat_addMenus2 ();
 	#ifdef macintosh
-		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_HIDDEN, DO_Quit);
+		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_HIDDEN, DO_Quit);   // the Quit command is needed for scripts, not for the GUI
 	#else
 		praat_addMenuCommand (L"Objects", L"Praat", L"-- quit --", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
@@ -1365,6 +1365,8 @@ void praat_run (void) {
 	}
 	forget (directoryNames);
 	Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
+
+	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText != NULL) {

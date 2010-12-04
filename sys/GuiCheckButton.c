@@ -24,6 +24,7 @@
  * fb 2010/02/23 gtk
  * pb 2010/05/15 prevented procreation of valueChanged events in GuiCheckButton_setValue
  * pb 2010/06/14 HandleControlClick
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
@@ -39,7 +40,7 @@
 #endif
 
 typedef struct structGuiCheckButton {
-	Widget widget;
+	GuiObject widget;
 	void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event);
 	void *valueChangedBoss;
 	#if gtk
@@ -48,12 +49,12 @@ typedef struct structGuiCheckButton {
 } *GuiCheckButton;
 
 #if gtk
-	static void _GuiGtkCheckButton_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkCheckButton_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiCheckButton);
 		Melder_free (me);
 	}
-	static void _GuiGtkCheckButton_valueChangedCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkCheckButton_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiCheckButton);
 		struct structGuiCheckButtonEvent event = { widget };
 		if (my valueChangedCallback != NULL) {
@@ -61,13 +62,13 @@ typedef struct structGuiCheckButton {
 		}
 	}
 #elif win || mac
-	void _GuiWinMacCheckButton_destroy (Widget widget) {
+	void _GuiWinMacCheckButton_destroy (GuiObject widget) {
 		iam_checkbutton;
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
 	#if win
-		void _GuiWinCheckButton_handleClick (Widget widget) {
+		void _GuiWinCheckButton_handleClick (GuiObject widget) {
 			iam_checkbutton;
 			if (my valueChangedCallback != NULL) {
 				struct structGuiCheckButtonEvent event = { widget };
@@ -75,7 +76,7 @@ typedef struct structGuiCheckButton {
 			}
 		}
 	#elif mac
-		void _GuiMacCheckButton_handleClick (Widget widget, EventRecord *macEvent) {
+		void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_checkbutton;
 			_GuiMac_clipOnParent (widget);
 			bool clicked = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
@@ -88,24 +89,9 @@ typedef struct structGuiCheckButton {
 			}
 		}
 	#endif
-#else
-	static void _GuiMotifCheckButton_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiCheckButton);
-		(void) widget;
-		(void) call;
-		Melder_free (me);
-	}
-	static void _GuiMotifCheckButton_valueChangedCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiCheckButton);
-		(void) call;
-		struct structGuiCheckButtonEvent event = { widget };
-		if (my valueChangedCallback != NULL) {
-			my valueChangedCallback (my valueChangedBoss, & event);
-		}
-	}
 #endif
 
-Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
 	GuiCheckButton me = Melder_calloc (struct structGuiCheckButton, 1);
@@ -156,29 +142,19 @@ Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int b
 		if (flags & GuiCheckButton_INSENSITIVE) {
 			GuiObject_setSensitive (my widget, false);
 		}
-	#elif motif
-		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (buttonText), xmToggleButtonWidgetClass, parent,
-			XmNindicatorType, XmN_OF_MANY,   // a check box, not a radio button
-			XmNset, (flags & GuiCheckButton_SET) != 0,
-			XmNsensitive, (flags & GuiCheckButton_INSENSITIVE) == 0,
-			NULL);
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifCheckButton_destroyCallback, me);
-		XtAddCallback (my widget, XmNvalueChangedCallback, _GuiMotifCheckButton_valueChangedCallback, me);
 	#endif
 	return my widget;
 }
 
-Widget GuiCheckButton_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiCheckButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
-	Widget me = GuiCheckButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
+	GuiObject me = GuiCheckButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
 	GuiObject_show (me);
 	return me;
 }
 
-bool GuiCheckButton_getValue (Widget widget) {
+bool GuiCheckButton_getValue (GuiObject widget) {
 	bool value = false;
 	#if gtk
 		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));   // gtk_check_button inherits from gtk_toggle_button
@@ -186,27 +162,23 @@ bool GuiCheckButton_getValue (Widget widget) {
 		value = (Button_GetState (widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
 		value = GetControlValue (widget -> nat.control.handle);
-	#elif motif
-		value = XmToggleButtonGetState (widget);
 	#endif
 	return value;
 }
 
-void GuiCheckButton_setValue (Widget widget, bool value) {
+void GuiCheckButton_setValue (GuiObject widget, bool value) {
 	/*
 	 * The value should be set without calling the valueChanged callback.
 	 */
 	#if gtk
 		iam_checkbutton;
 		g_signal_handler_disconnect (GTK_TOGGLE_BUTTON (my widget), my valueChangedHandlerId);
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), value);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my widget), value);
 		my valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
 	#elif win
 		Button_SetCheck (widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac
 		SetControlValue (widget -> nat.control.handle, value);
-	#elif motif
-		XmToggleButtonSetState (widget, value, False);
 	#endif
 }
 

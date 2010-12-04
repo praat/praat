@@ -607,21 +607,6 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 	return him;
 }
 
-void LPC_Frame_and_Sound_filterInverse2 (LPC_Frame me, Sound out, Sound source)
-{
-	long i, j, m, n = out -> nx > source -> nx ? source -> nx : out -> nx;
-	double *e = source -> z[1], *x = out -> z[1];
-
-	for (i = 1; i <= n; i++)
-	{
-		m = i > my nCoefficients ? my nCoefficients : i - 1;
-		for (e[i] = x[i], j = 1; j <= m; j++)
-		{
-			e[i] += my a[j] * x[i-j];
-		}
-	}
-}
-
 int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time)
 {
 	long frameIndex = Sampled_xToNearestIndex (me, time);

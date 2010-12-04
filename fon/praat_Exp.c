@@ -132,7 +132,7 @@ void praat_uvafon_Exp_init (void) {
 	praat_addAction1 (classExperimentMFC, 0, L"Run", 0, 0, DO_ExperimentMFC_run);
 	praat_addAction1 (classExperimentMFC, 0, L"Extract results", 0, 0, DO_ExperimentMFC_extractResults);
 
-	praat_addAction1 (classResultsMFC, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classResultsMFC, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classResultsMFC, 1, L"Get number of trials", 0, 1, DO_ResultsMFC_getNumberOfTrials);
 	praat_addAction1 (classResultsMFC, 1, L"Get stimulus...", 0, 1, DO_ResultsMFC_getStimulus);
 	praat_addAction1 (classResultsMFC, 1, L"Get response...", 0, 1, DO_ResultsMFC_getResponse);

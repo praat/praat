@@ -377,7 +377,7 @@ class_methods (PitchEditor, FunctionEditor) {
 	class_methods_end
 }
 
-PitchEditor PitchEditor_create (Widget parent, const wchar_t *title, Pitch pitch) {
+PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch) {
 	PitchEditor me = new (PitchEditor); cherror
 	FunctionEditor_init (PitchEditor_as_parent (me), parent, title, pitch); cherror
 end:

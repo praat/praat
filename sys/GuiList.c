@@ -23,6 +23,7 @@
  * fb 2010/02/23 GTK
  * pb 2010/06/14 HandleControlClick
  * pb 2010/07/05 blockSelectionChangedCallback
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
@@ -46,7 +47,7 @@
 #endif
 
 typedef struct structGuiList {
-	Widget widget;
+	GuiObject widget;
 	bool allowMultipleSelection, blockSelectionChangedCallback;
 	void (*selectionChangedCallback) (void *boss, GuiListEvent event);
 	void *selectionChangedBoss;
@@ -56,9 +57,8 @@ typedef struct structGuiList {
 		GtkListStore *liststore;
 	#elif win
 	#elif mac
-		Widget scrolled;
+		GuiObject scrolled;
 		ListHandle macListHandle;
-	#elif motif
 	#endif
 } *GuiList;
 
@@ -76,7 +76,7 @@ typedef struct structGuiList {
 		}
 	}
 #elif win || mac
-	void _GuiWinMacList_destroy (Widget widget) {
+	void _GuiWinMacList_destroy (GuiObject widget) {
 		iam_list;
 		#if win
 			DestroyWindow (widget -> window);
@@ -91,7 +91,7 @@ typedef struct structGuiList {
 		#endif
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-	void _GuiWinMacList_map (Widget widget) {
+	void _GuiWinMacList_map (GuiObject widget) {
 		iam_list;
 		#if win
 			ShowWindow (widget -> window, SW_SHOW);
@@ -110,7 +110,7 @@ typedef struct structGuiList {
 		#endif
 	}
 	#if win
-		void _GuiWinList_handleClick (Widget widget) {
+		void _GuiWinList_handleClick (GuiObject widget) {
 			iam_list;
 			if (my selectionChangedCallback != NULL) {
 				struct structGuiListEvent event = { widget };
@@ -118,13 +118,13 @@ typedef struct structGuiList {
 			}
 		}
 	#elif mac
-		void _GuiMacList_activate (Widget widget, bool activate) {
+		void _GuiMacList_activate (GuiObject widget, bool activate) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
 			LActivate (activate, my macListHandle);
 			GuiMac_clipOff ();
 		}
-		void _GuiMacList_handleControlClick (Widget widget, EventRecord *macEvent) {
+		void _GuiMacList_handleControlClick (GuiObject widget, EventRecord *macEvent) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
 			bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
@@ -134,7 +134,7 @@ typedef struct structGuiList {
 				my selectionChangedCallback (my selectionChangedBoss, & event);
 			}
 		}
-		void _GuiMacList_handleClick (Widget widget, EventRecord *macEvent) {
+		void _GuiMacList_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
 			bool doubleClick = LClick (macEvent -> where, macEvent -> modifiers, my macListHandle);
@@ -148,11 +148,11 @@ typedef struct structGuiList {
 				my doubleClickCallback (my doubleClickBoss, & event);
 			}
 		}
-		void _GuiMacList_move (Widget widget) {
+		void _GuiMacList_move (GuiObject widget) {
 			iam_list;
 			(** my macListHandle). rView = widget -> rect;
 		}
-		void _GuiMacList_resize (Widget widget) {
+		void _GuiMacList_resize (GuiObject widget) {
 			iam_list;
 			(** my macListHandle). rView = widget -> rect;
 			SetPortWindowPort (widget -> macWindow);
@@ -160,12 +160,12 @@ typedef struct structGuiList {
 			if (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass)
 				_Gui_manageScrolledWindow (widget -> parent);
 		}
-		void _GuiMacList_shellResize (Widget widget) {
+		void _GuiMacList_shellResize (GuiObject widget) {
 			iam_list;
 			(** my macListHandle). rView = widget -> rect;
 			(** my macListHandle). cellSize. h = widget -> width;
 		}
-		void _GuiMacList_update (Widget widget, RgnHandle visRgn) {
+		void _GuiMacList_update (GuiObject widget, RgnHandle visRgn) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
 			if (widget -> isControl) {
@@ -176,35 +176,11 @@ typedef struct structGuiList {
 			GuiMac_clipOff ();
 		}
 	#endif
-#elif motif
-	static void _GuiMotifList_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
-		iam (GuiList);
-		Melder_free (me);
-	}
-	static void _GuiMotifList_selectionChangedCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) call;
-		iam (GuiList);
-		Melder_assert (me != NULL);
-		if (my selectionChangedCallback != NULL) {
-			struct structGuiListEvent event = { widget };
-			my selectionChangedCallback (my selectionChangedBoss, & event);
-		}
-	}
-	static void _GuiMotifList_defaultActionCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) call;
-		iam (GuiList);
-		Melder_assert (me != NULL);
-		if (my doubleClickCallback != NULL) {
-			struct structGuiListEvent event = { widget };
-			my doubleClickCallback (my doubleClickBoss, & event);
-		}
-	}
 #endif
 
 #if mac
 	static pascal void mac_listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
-		Widget widget = (Widget) GetListRefCon (handle);
+		GuiObject widget = (GuiObject) GetListRefCon (handle);
 		(void) cell;
 		switch (message) {
 			case lDrawMsg:
@@ -294,7 +270,7 @@ enum {
 };
 #endif
 
-Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
+GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
 	GuiList me = Melder_calloc (struct structGuiList, 1);
 	my allowMultipleSelection = allowMultipleSelection;
 	#if gtk
@@ -304,7 +280,7 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		GtkListStore *liststore = NULL;
 
 		liststore = gtk_list_store_new (1, G_TYPE_STRING);   // 1 column, of type String (this is a vararg list)
-		Widget scrolled = gtk_scrolled_window_new (NULL, NULL);
+		GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
 		gtk_container_add (GTK_CONTAINER (scrolled), my widget);
@@ -407,29 +383,17 @@ Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, 
 		if (allowMultipleSelection)
 			SetListSelectionFlags (my macListHandle, lExtendDrag | lNoRect);
 		XtVaSetValues (my widget, XmNwidth, right > 0 ? right - left + 100 : 530, NULL);
-	#elif motif
-		my widget = XmCreateScrolledList (parent, "list", NULL, 0);
-		_GuiObject_setUserData (my widget, me);
-		XtVaSetValues (my widget, XmNselectionPolicy, allowMultipleSelection ? XmEXTENDED_SELECT : XmBROWSE_SELECT, NULL);
-		_GuiObject_position (XtParent (my widget), left, right, top, bottom);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifList_destroyCallback, me);
-		if (allowMultipleSelection) {
-			XtAddCallback (my widget, XmNextendedSelectionCallback, _GuiMotifList_selectionChangedCallback, me);
-		} else {
-			XtAddCallback (my widget, XmNbrowseSelectionCallback, _GuiMotifList_selectionChangedCallback, me);
-		}
-		XtAddCallback (my widget, XmNdefaultActionCallback, _GuiMotifList_defaultActionCallback, me);
 	#endif
 	return my widget;
 }
 
-Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
-	Widget widget = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection, header);
+GuiObject GuiList_createShown (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
+	GuiObject widget = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection, header);
 	GuiObject_show (widget);
 	return widget;
 }
 
-void GuiList_deleteAllItems (Widget widget) {
+void GuiList_deleteAllItems (GuiObject widget) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -443,12 +407,10 @@ void GuiList_deleteAllItems (Widget widget) {
 		_GuiMac_clipOnParent (widget);
 		LDelRow (0, 0, my macListHandle);
 		GuiMac_clipOff ();
-	#elif motif
-		XmListDeleteAllItems (widget);
 	#endif
 }
 
-void GuiList_deleteItem (Widget widget, long position) {
+void GuiList_deleteItem (GuiObject widget, long position) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -467,12 +429,10 @@ void GuiList_deleteItem (Widget widget, long position) {
 		GuiMac_clipOff ();
 		long n = (** my macListHandle). dataBounds. bottom;
 		XtVaSetValues (widget, XmNheight, n * CELL_HEIGHT, NULL);
-	#elif motif
-		XmListDeletePos (widget, position);
 	#endif
 }
 
-void GuiList_deselectAllItems (Widget widget) {
+void GuiList_deselectAllItems (GuiObject widget) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -488,12 +448,10 @@ void GuiList_deselectAllItems (Widget widget) {
 		_GuiMac_clipOnParent (widget);
 		for (long i = 0; i < n; i ++) { cell.v = i; LSetSelect (false, cell, my macListHandle); }
 		GuiMac_clipOff ();
-	#elif motif
-		XmListDeselectAllItems (widget);
 	#endif
 }
 
-void GuiList_deselectItem (Widget widget, long position) {
+void GuiList_deselectItem (GuiObject widget, long position) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -518,12 +476,10 @@ void GuiList_deselectItem (Widget widget, long position) {
 		_GuiMac_clipOnParent (widget);
 		LSetSelect (false, cell, my macListHandle);
 		GuiMac_clipOff ();
-	#elif motif
-		XmListDeselectPos (widget, position);
 	#endif
 }
 
-long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositions) {
+long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPositions) {
 	*numberOfSelectedPositions = 0;
 	long *selectedPositions = NULL;
 	#if gtk
@@ -593,21 +549,11 @@ long * GuiList_getSelectedPositions (Widget widget, long *numberOfSelectedPositi
 			NUMlvector_free (selectedPositions, 1);
 			selectedPositions = NULL;
 		}
-	#elif motif
-		int position_count, *position_list;
-		if (! XmListGetSelectedPos (widget, & position_list, & position_count)) return NULL;
-		*numberOfSelectedPositions = position_count;
-		selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
-		Melder_assert (selectedPositions != NULL);
-		for (long ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
-			selectedPositions [ipos] = position_list [ipos - 1];
-		}
-		XtFree ((XtPointer) position_list);
 	#endif
 	return selectedPositions;
 }
 
-long GuiList_getBottomPosition (Widget widget) {
+long GuiList_getBottomPosition (GuiObject widget) {
 	#if gtk
 		// TODO
 		return 1;
@@ -620,8 +566,8 @@ long GuiList_getBottomPosition (Widget widget) {
 	#elif mac
 		iam_list;
 		Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		Widget clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
-		Widget workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
+		GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
+		GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
 		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
 		long visible = (clipWindow -> rect.bottom - clipWindow -> rect.top - 5) / CELL_HEIGHT + 1;
 		long n = (** my macListHandle). dataBounds. bottom;
@@ -630,14 +576,10 @@ long GuiList_getBottomPosition (Widget widget) {
 		if (bottom < 1) bottom = 1;
 		if (bottom > n) bottom = n;
 		return bottom;
-	#elif motif
-		int top, visible;
-		XtVaGetValues (widget, XmNtopItemPosition, & top, XmNvisibleItemCount, & visible, NULL);
-		return top + visible - 1;
 	#endif
 }
 
-long GuiList_getNumberOfItems (Widget widget) {
+long GuiList_getNumberOfItems (GuiObject widget) {
 	long numberOfItems = 0;
 	#if gtk
 		GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
@@ -647,15 +589,11 @@ long GuiList_getNumberOfItems (Widget widget) {
 	#elif mac
 		iam_list;
 		numberOfItems = (** my macListHandle). dataBounds. bottom;
-	#elif motif
-		int itemCount;
-		XtVaGetValues (widget, XmNitemCount, & itemCount, NULL);
-		numberOfItems = itemCount;
 	#endif
 	return numberOfItems;
 }
 
-long GuiList_getTopPosition (Widget widget) {
+long GuiList_getTopPosition (GuiObject widget) {
 	#if gtk
 		// TODO
 		return 1;
@@ -668,21 +606,17 @@ long GuiList_getTopPosition (Widget widget) {
 	#elif mac
 		iam_list;
 		Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		Widget clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
-		Widget workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
+		GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
+		GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
 		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
 		if (top < 1) top = 1;
 		long n = (** my macListHandle). dataBounds. bottom;
 		if (top > n) top = 0;
 		return top;
-	#elif motif
-		int topPosition;
-		XtVaGetValues (widget, XmNtopItemPosition, & topPosition, NULL);
-		return topPosition;
 	#endif
 }
 
-void GuiList_insertItem (Widget widget, const wchar_t *itemText, long position) {
+void GuiList_insertItem (GuiObject widget, const wchar_t *itemText, long position) {
 	/*
 	 * 'position' is the position of the new item in the list after insertion:
 	 * a value of 1 therefore puts the new item at the top of the list;
@@ -716,14 +650,10 @@ void GuiList_insertItem (Widget widget, const wchar_t *itemText, long position) 
 		(** my macListHandle). visible. bottom = n + 1;
 		_GuiMac_clipOffInvalid (widget);
 		XtVaSetValues (widget, XmNheight, (n + 1) * CELL_HEIGHT, NULL);
-	#elif motif
-		XmString itemText_xmstring = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
-		XmListAddItemUnselected (widget, itemText_xmstring, position);   // Xm knows the '0' trick
-		XmStringFree (itemText_xmstring);
 	#endif
 }
 
-void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position) {
+void GuiList_replaceItem (GuiObject widget, const wchar_t *itemText, long position) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -755,14 +685,10 @@ void GuiList_replaceItem (Widget widget, const wchar_t *itemText, long position)
 		LSetCell (itemText_utf8, strlen (itemText_utf8), cell, my macListHandle);
 		LDraw (cell, my macListHandle);
 		GuiMac_clipOff ();
-	#elif motif
-		XmString itemText_xmstring = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
-		XmListReplaceItemsPos (widget, & itemText_xmstring, 1, position);
-		XmStringFree (itemText_xmstring);
 	#endif
 }
 
-void GuiList_selectItem (Widget widget, long position) {
+void GuiList_selectItem (GuiObject widget, long position) {
 	#if gtk
 		iam_list;
 		my blockSelectionChangedCallback = true;
@@ -799,21 +725,10 @@ void GuiList_selectItem (Widget widget, long position) {
 		cell.v = position - 1; 
 		LSetSelect (true, cell, my macListHandle);
 		GuiMac_clipOff ();
-	#elif motif
-		/*
-		 * The following hack is necessary in order to ensure
-		 * that already selected items are not deselected.
-		 */
-		unsigned char selectionPolicy;
-		XtVaGetValues (widget, XmNselectionPolicy, & selectionPolicy, NULL);
-		bool hackNeeded = ( selectionPolicy == XmEXTENDED_SELECT );
-		if (hackNeeded) XtVaSetValues (widget, XmNselectionPolicy, XmMULTIPLE_SELECT, NULL);
-		XmListSelectPos (widget, position, False);
-		if (hackNeeded) XtVaSetValues (widget, XmNselectionPolicy, XmEXTENDED_SELECT, NULL);
 	#endif
 }
 
-void GuiList_setDoubleClickCallback (Widget widget, void (*callback) (void *boss, GuiListEvent event), void *boss) {
+void GuiList_setDoubleClickCallback (GuiObject widget, void (*callback) (void *boss, GuiListEvent event), void *boss) {
 	GuiList me = _GuiObject_getUserData (widget);
 	if (me != NULL) {
 		my doubleClickCallback = callback;
@@ -821,7 +736,7 @@ void GuiList_setDoubleClickCallback (Widget widget, void (*callback) (void *boss
 	}
 }
 
-void GuiList_setSelectionChangedCallback (Widget widget, void (*callback) (void *boss, GuiListEvent event), void *boss) {
+void GuiList_setSelectionChangedCallback (GuiObject widget, void (*callback) (void *boss, GuiListEvent event), void *boss) {
 	GuiList me = _GuiObject_getUserData (widget);
 	if (me != NULL) {
 		my selectionChangedCallback = callback;
@@ -829,7 +744,7 @@ void GuiList_setSelectionChangedCallback (Widget widget, void (*callback) (void 
 	}
 }
 
-void GuiList_setTopPosition (Widget widget, long topPosition) {
+void GuiList_setTopPosition (GuiObject widget, long topPosition) {
 	//Melder_casual ("Set top position %ld", topPosition);
 	#if gtk
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
@@ -845,8 +760,6 @@ void GuiList_setTopPosition (Widget widget, long topPosition) {
 		//GuiMac_clipOff ();
 		//my scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
 		XtVaSetValues (widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, NULL);
-	#elif motif
-		XmListSetPos (widget, topPosition);
 	#endif
 }
 

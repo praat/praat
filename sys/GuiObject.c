@@ -23,13 +23,14 @@
  * sdk 2008/03/24 GTK
  * sdk 2008/07/01 GTK get sizes
  * fb 2010/02/23 GTK
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
 #include "machine.h"
 
-static int _Gui_defaultHeight (Widget me) {
-	#if motif
+static int _Gui_defaultHeight (GuiObject me) {
+	#if win || mac
 	WidgetClass klas = XtClass (me);
 	if (klas == xmLabelWidgetClass) return Gui_LABEL_HEIGHT;
 	if (klas == xmPushButtonWidgetClass) return Gui_PUSHBUTTON_HEIGHT;
@@ -44,7 +45,7 @@ static int _Gui_defaultHeight (Widget me) {
 	return 100;
 }
 
-void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
+void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom) {
 	#if gtk
 		// TODO: ...nog even te creatief
 	#else
@@ -89,7 +90,7 @@ void _GuiObject_position (Widget me, int left, int right, int top, int bottom) {
 	#endif
 }
 
-void * _GuiObject_getUserData (Widget me) {
+void * _GuiObject_getUserData (GuiObject me) {
 	void *userData = NULL;
 	#if gtk
 		userData = (void *) g_object_get_data (G_OBJECT (me), "praat");
@@ -99,7 +100,7 @@ void * _GuiObject_getUserData (Widget me) {
 	return userData;
 }
 
-void _GuiObject_setUserData (Widget me, void *userData) {
+void _GuiObject_setUserData (GuiObject me, void *userData) {
 	#if gtk
 		g_object_set_data (G_OBJECT (me), "praat", userData);
 	#else
@@ -107,7 +108,7 @@ void _GuiObject_setUserData (Widget me, void *userData) {
 	#endif
 }
 
-void GuiObject_destroy (Widget me) {
+void GuiObject_destroy (GuiObject me) {
 	#if gtk
 		gtk_widget_destroy (me);
 	#else
@@ -115,65 +116,49 @@ void GuiObject_destroy (Widget me) {
 	#endif
 }
 
-long GuiObject_getHeight (Widget me) {
+long GuiObject_getHeight (GuiObject me) {
 	long height = 0;
 	#if gtk
 		height = my allocation.height;
 	#elif win || mac
 		height = my height;
-	#elif motif
-		Dimension height_motif;
-		XtVaGetValues (me, XmNheight, & height_motif, NULL);
-		height = height_motif;
 	#endif
 	return height;
 }
 
-long GuiObject_getWidth (Widget me) {
+long GuiObject_getWidth (GuiObject me) {
 	long width = 0;
 	#if gtk
 		width = my allocation.width;
 	#elif win || mac
 		width = my width;
-	#elif motif
-		Dimension width_motif;
-		XtVaGetValues (me, XmNwidth, & width_motif, NULL);
-		width = width_motif;
 	#endif
 	return width;
 }
 
-long GuiObject_getX (Widget me) {
+long GuiObject_getX (GuiObject me) {
 	long x = 0;
 	#if gtk
 		x = my allocation.x;
 	#elif win || mac
 		x = my x;
-	#elif motif
-		Position x_motif;
-		XtVaGetValues (me, XmNx, & x_motif, NULL);
-		x = x_motif;
 	#endif
 	return x;
 }
 
-long GuiObject_getY (Widget me) {
+long GuiObject_getY (GuiObject me) {
 	long y = 0;
 	#if gtk
 		y = my allocation.y;
 	#elif win || mac
 		y = my y;
-	#elif motif
-		Position y_motif;
-		XtVaGetValues (me, XmNy, & y_motif, NULL);
-		y = y_motif;
 	#endif
 	return y;
 }
 
-void GuiObject_move (Widget me, long x, long y) {
+void GuiObject_move (GuiObject me, long x, long y) {
 	#if gtk
-	#elif motif
+	#elif win || mac
 		if (x != Gui_AUTOMATIC) {
 			if (y != Gui_AUTOMATIC) {
 				XtVaSetValues (me, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
@@ -186,9 +171,9 @@ void GuiObject_move (Widget me, long x, long y) {
 	#endif
 }
 
-void GuiObject_hide (Widget me) {
+void GuiObject_hide (GuiObject me) {
 	#if gtk
-		Widget parent = gtk_widget_get_parent (me);
+		GuiObject parent = gtk_widget_get_parent (me);
 		if (parent != NULL && GTK_IS_DIALOG (parent)) {   // I am the top vbox of a dialog
 			gtk_widget_hide (parent);
 		} else {
@@ -202,25 +187,19 @@ void GuiObject_hide (Widget me) {
 			if (my widgetClass == xmListWidgetClass) {
 				XtUnmanageChild (my parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 			}
-		#elif motif
-			if (XtClass (me) == xmListWidgetClass) {
-				XtUnmanageChild (XtParent (me));   // the containing scrolled window; BUG if created with XmScrolledList?
-			}
 		#endif
 	#endif
 }
 
-Widget GuiObject_parent (Widget me) {
+GuiObject GuiObject_parent (GuiObject me) {
 	#if gtk
 		return gtk_widget_get_parent (me);
 	#elif win || mac
 		return my parent;
-	#elif motif
-		return XtParent (me);
 	#endif
 }
 
-void GuiObject_setSensitive (Widget me, bool sensitive) {
+void GuiObject_setSensitive (GuiObject me, bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (me, sensitive);
 	#else
@@ -228,9 +207,9 @@ void GuiObject_setSensitive (Widget me, bool sensitive) {
 	#endif
 }
 
-void GuiObject_show (Widget me) {
+void GuiObject_show (GuiObject me) {
 	#if gtk
-		Widget parent = gtk_widget_get_parent (me);
+		GuiObject parent = gtk_widget_get_parent (me);
 		if (GTK_IS_WINDOW (parent)) {
 			// I am a window's vbox
 			gtk_widget_show (me);
@@ -243,7 +222,7 @@ void GuiObject_show (Widget me) {
 		}
 	#elif win || mac
 		XtManageChild (me);
-		Widget parent = my parent;
+		GuiObject parent = my parent;
 		if (parent -> widgetClass == xmShellWidgetClass) {
 			XMapRaised (XtDisplay (parent), XtWindow (parent));
 		} else if (mac && my widgetClass == xmListWidgetClass) {
@@ -252,12 +231,12 @@ void GuiObject_show (Widget me) {
 	#endif
 }
 
-void GuiObject_size (Widget me, long width, long height) {
+void GuiObject_size (GuiObject me, long width, long height) {
 	#if gtk
 		if (width == Gui_AUTOMATIC || width <= 0) width = -1;
 		if (height == Gui_AUTOMATIC || height <= 0) height = -1;
 		gtk_widget_set_size_request (me, width, height);
-	#elif motif
+	#elif win || mac
 		if (width != Gui_AUTOMATIC) {
 			if (height != Gui_AUTOMATIC) {
 				XtVaSetValues (me, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible

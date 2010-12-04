@@ -37,7 +37,7 @@
 #include "machine.h"
 
 #define RunnerMFC__members(Klas) Editor__members(Klas) \
-	Widget drawingArea; \
+	GuiObject drawingArea; \
 	Ordered experiments; \
 	long iexperiment; \
 	Graphics graphics; \
@@ -400,7 +400,7 @@ class_methods (RunnerMFC, Editor)
 	us -> scriptable = false;
 class_methods_end
 
-RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experiments) {
+RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments) {
 	RunnerMFC me = new (RunnerMFC); cherror
 	Editor_init (RunnerMFC_as_parent (me), parent, 0, 0, 2000, 2000, title, NULL); cherror
 	my experiments = experiments;

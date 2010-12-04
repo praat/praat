@@ -23,6 +23,7 @@
  * sdk 2008/07/01 GTK resize callback
  * fb 2010/02/23 GTK
  * pb 2010/07/13 GTK key event
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
@@ -41,7 +42,7 @@
 #endif
 
 typedef struct structGuiDrawingArea {
-	Widget widget;
+	GuiObject widget;
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event);
 	void *exposeBoss;
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event);
@@ -53,7 +54,7 @@ typedef struct structGuiDrawingArea {
 } *GuiDrawingArea;
 
 #if gtk
-	static void _GuiGtkDrawingArea_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkDrawingArea_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiDrawingArea);
 		Melder_free (me);
@@ -67,7 +68,7 @@ typedef struct structGuiDrawingArea {
 			my activateCallback (my activateBoss, & event);
 		}*/
 //	}
-	static gboolean _GuiGtkDrawingArea_exposeCallback (Widget widget, GdkEventExpose *expose, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_exposeCallback (GuiObject widget, GdkEventExpose *expose, gpointer void_me) {
 		iam (GuiDrawingArea);
 		// TODO: that helps agains the damaged regions outside the rect where the
 		// Graphics drawing is done, but where does that margin come from in the
@@ -84,7 +85,7 @@ typedef struct structGuiDrawingArea {
 		}
 		return FALSE;			// let GTK+ handle redrawing
 	}
-	static gboolean _GuiGtkDrawingArea_clickCallback (Widget widget, GdkEvent *e, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_clickCallback (GuiObject widget, GdkEvent *e, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my clickCallback) {
 			struct structGuiDrawingAreaClickEvent event = { widget, 0 };
@@ -121,7 +122,7 @@ typedef struct structGuiDrawingArea {
 		}
 		return FALSE;
 	}
-	static gboolean _GuiGtkDrawingArea_keyCallback (Widget widget, GdkEvent *gevent, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_keyCallback (GuiObject widget, GdkEvent *gevent, gpointer void_me) {
 		iam (GuiDrawingArea);
 		//Melder_casual ("_GuiGtkDrawingArea_keyCallback");
 		if (my keyCallback && gevent -> type == GDK_KEY_PRESS) {
@@ -148,7 +149,7 @@ typedef struct structGuiDrawingArea {
 		}
 		return FALSE;   // if the drawing area has no keyCallback, the system will send the key press to a text field.
 	}
-	static gboolean _GuiGtkDrawingArea_resizeCallback(Widget widget, GtkAllocation *allocation, gpointer void_me) {
+	static gboolean _GuiGtkDrawingArea_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		iam (GuiDrawingArea);
 		if (my resizeCallback) {
 			struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
@@ -162,7 +163,7 @@ typedef struct structGuiDrawingArea {
 	}
 
 #elif win || mac
-	void _GuiWinMacDrawingArea_destroy (Widget widget) {
+	void _GuiWinMacDrawingArea_destroy (GuiObject widget) {
 		iam_drawingarea;
 		#if win
 			DestroyWindow (widget -> window);
@@ -170,7 +171,7 @@ typedef struct structGuiDrawingArea {
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
 	#if win
-		void _GuiWinDrawingArea_update (Widget widget) {
+		void _GuiWinDrawingArea_update (GuiObject widget) {
 			iam_drawingarea;
 			PAINTSTRUCT paintStruct;
 			BeginPaint (widget -> window, & paintStruct);
@@ -180,7 +181,7 @@ typedef struct structGuiDrawingArea {
 			}
 			EndPaint (widget -> window, & paintStruct);
 		}
-		void _GuiWinDrawingArea_handleClick (Widget widget, int x, int y) {
+		void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
 			iam_drawingarea;
 			if (my clickCallback) {
 				struct structGuiDrawingAreaClickEvent event = { widget, 0 };
@@ -190,7 +191,7 @@ typedef struct structGuiDrawingArea {
 				my clickCallback (my clickBoss, & event);
 			}
 		}
-		void _GuiWinDrawingArea_handleKey (Widget widget, TCHAR kar) {   // TODO: event?
+		void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
 			iam_drawingarea;
 			if (my keyCallback) {
 				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
@@ -203,7 +204,7 @@ typedef struct structGuiDrawingArea {
 				my keyCallback (my keyBoss, & event);
 			}
 		}
-		void _GuiWinDrawingArea_shellResize (Widget widget) {
+		void _GuiWinDrawingArea_shellResize (GuiObject widget) {
 			iam_drawingarea;
 			if (my resizeCallback) {
 				struct structGuiDrawingAreaResizeEvent event = { widget };
@@ -213,7 +214,7 @@ typedef struct structGuiDrawingArea {
 			}
 		}
 	#elif mac
-		void _GuiMacDrawingArea_update (Widget widget) {
+		void _GuiMacDrawingArea_update (GuiObject widget) {
 			iam_drawingarea;
 			if (my exposeCallback) {
 				struct structGuiDrawingAreaExposeEvent event = { widget };
@@ -222,7 +223,7 @@ typedef struct structGuiDrawingArea {
 				GuiMac_clipOff ();
 			}
 		}
-		void _GuiMacDrawingArea_handleClick (Widget widget, EventRecord *macEvent) {
+		void _GuiMacDrawingArea_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_drawingarea;
 			if (my clickCallback) {
 				struct structGuiDrawingAreaClickEvent event = { widget, 0 };
@@ -235,7 +236,7 @@ typedef struct structGuiDrawingArea {
 				my clickCallback (my clickBoss, & event);
 			}
 		}
-		bool _GuiMacDrawingArea_tryToHandleKey (Widget widget, EventRecord *macEvent) {
+		bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent) {
 			iam_drawingarea;
 			if (my keyCallback) {
 				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
@@ -253,7 +254,7 @@ typedef struct structGuiDrawingArea {
 			}
 			return false;
 		}
-		void _GuiMacDrawingArea_shellResize (Widget widget) {
+		void _GuiMacDrawingArea_shellResize (GuiObject widget) {
 			iam_drawingarea;
 			if (my resizeCallback) {
 				struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
@@ -263,79 +264,9 @@ typedef struct structGuiDrawingArea {
 			}
 		}
 	#endif
-#else
-	static void _GuiMotifDrawingArea_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
-		iam (GuiDrawingArea);
-		Melder_free (me);
-	}
-	static void _GuiMotifDrawingArea_exposeCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiDrawingArea);
-		XEvent *xevent = ((XmDrawingAreaCallbackStruct *) call) -> event;
-		if (xevent -> xexpose. count) return;   // BUG: always, or only in ArtwordEditor, FunctionEditor, HyperPage, RunnerMFC, TableEditor...?
-		if (my exposeCallback) {
-			struct structGuiDrawingAreaExposeEvent event = { widget, 0 };
-			event. x = xevent -> xexpose. x;
-			event. y = xevent -> xexpose. y;
-			event. width = xevent -> xexpose. width;
-			event. height = xevent -> xexpose. height;
-			my exposeCallback (my exposeBoss, & event);
-		}
-	}
-	static void _GuiMotifDrawingArea_inputCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiDrawingArea);
-		XEvent *xevent = ((XmDrawingAreaCallbackStruct *) call) -> event;
-		if (xevent -> type == ButtonPress) {
-			if (my clickCallback) {
-				struct structGuiDrawingAreaClickEvent event = { widget, 0 };
-				event. x = xevent -> xbutton.x;
-				event. y = xevent -> xbutton.y;
-				event. shiftKeyPressed = (xevent -> xbutton.state & ShiftMask) != 0;
-				event. commandKeyPressed = (xevent -> xbutton.state & ControlMask) != 0;
-				event. optionKeyPressed = (xevent -> xbutton.state & Mod1Mask) != 0;
-				event. extraControlKeyPressed = false;
-				unsigned char map [4];
-				XGetPointerMapping (XtDisplay (widget), map, 3);
-				bool leftHanded = ( map [0] == 3 );
-				if (Melder_debug == 24) {
-					Melder_casual ("GuiDrawingArea::_motif_inputCallback: button %d left-handed %d state %ld",
-						xevent -> xbutton.button, leftHanded, xevent -> xbutton.state);
-				}
-				event. button =
-					xevent -> xbutton.button == Button1 ? 1 :
-					xevent -> xbutton.button == Button2 ? ( leftHanded ? 3 : 2 ) :
-					( leftHanded ? 2 : 3 );
-				my clickCallback (my clickBoss, & event);
-			}
-		} else if (xevent -> type == KeyPress) {
-			if (my keyCallback) {
-				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
-				char key;
-				XLookupString (& xevent -> xkey, & key, 1, NULL, NULL);
-				event. key = key;
-				event. shiftKeyPressed = (xevent -> xkey.state & ShiftMask) != 0;
-				event. commandKeyPressed = (xevent -> xkey.state & ControlMask) != 0;
-				event. optionKeyPressed = (xevent -> xkey.state & Mod1Mask) != 0;
-				event. extraControlKeyPressed = false;
-				my keyCallback (my keyBoss, & event);
-			}
-		}
-	}
-	static void _GuiMotifDrawingArea_resizeCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		iam (GuiDrawingArea);
-		(void) call;
-		if (my resizeCallback != NULL) {
-			struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
-			Dimension width, height;
-			XtVaGetValues (widget, XmNwidth, & width, XmNheight, & height, NULL);
-			event. width = width;
-			event. height = height;
-			my resizeCallback (my resizeBoss, & event);
-		}
-	}
 #endif
 
-Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
@@ -402,27 +333,18 @@ Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int b
 		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
-	#elif motif
-		my widget = XtVaCreateWidget ("drawingArea", xmDrawingAreaWidgetClass, parent, NULL);
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		if (flags & GuiDrawingArea_BORDER) XtVaSetValues (my widget, XmNborderWidth, 1, NULL);   // TODO: marginWidth & marginHeight
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifDrawingArea_destroyCallback, me);
-		XtAddCallback (my widget, XmNexposeCallback, _GuiMotifDrawingArea_exposeCallback, me);
-		XtAddCallback (my widget, XmNinputCallback, _GuiMotifDrawingArea_inputCallback, me);
-		XtAddCallback (my widget, XmNresizeCallback, _GuiMotifDrawingArea_resizeCallback, me);
 	#endif
 	return my widget;
 }
 
-Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiDrawingArea_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags)
 {
-	Widget me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
+	GuiObject me = GuiDrawingArea_create (parent, left, right, top, bottom, exposeCallback, clickCallback, keyCallback, resizeCallback, boss, flags);
 	#if gtk
 		gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (me));
 	#endif
@@ -430,7 +352,7 @@ Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, 
 	return me;
 }
 
-void GuiDrawingArea_setExposeCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss) {
+void GuiDrawingArea_setExposeCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss) {
 	GuiDrawingArea me = _GuiObject_getUserData (widget);
 	if (me != NULL) {
 		my exposeCallback = callback;
@@ -438,7 +360,7 @@ void GuiDrawingArea_setExposeCallback (Widget widget, void (*callback) (void *bo
 	}
 }
 
-void GuiDrawingArea_setClickCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss) {
+void GuiDrawingArea_setClickCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss) {
 	GuiDrawingArea me = _GuiObject_getUserData (widget);
 	if (me != NULL) {
 		my clickCallback = callback;

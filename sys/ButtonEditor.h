@@ -30,7 +30,7 @@
 #define ButtonEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
 Thing_declare1 (ButtonEditor);
 
-ButtonEditor ButtonEditor_create (Widget parent);
+ButtonEditor ButtonEditor_create (GuiObject parent);
 
 /* End of file ButtonEditor.h */
 #endif

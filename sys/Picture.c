@@ -38,7 +38,7 @@
 #include "site.h"
 
 struct structPicture {
-	Widget drawingArea;
+	GuiObject drawingArea;
 	Any graphics, selectionGraphics;
 	Boolean sensitive;
 	double selx1, selx2, sely1, sely2;   /* Selection in NDC co-ordinates. */
@@ -319,7 +319,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 #endif
 }
 
-Picture Picture_create (Widget drawingArea, Boolean sensitive) {
+Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
 	Picture me = Melder_calloc (struct structPicture, 1);
 	if (! me) return NULL;
 	#if gtk

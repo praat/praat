@@ -33,6 +33,11 @@
 /* Number of text capturing parentheses allowed. */
 
 #include <wchar.h>
+#if defined (macintosh) || defined (linux)
+	#define regularExp_CHAR wchar_t
+#else
+	#define regularExp_CHAR unsigned short
+#endif
 
 #define NSUBEXP 50
 
@@ -40,19 +45,19 @@
    pointers to matched text.  `program' is the actual compiled regex code. */
 
 typedef struct regexp {
-   char *startp [NSUBEXP];  /* Captured text starting locations. */
-   char *endp   [NSUBEXP];  /* Captured text ending locations. */
-   char *extentpBW;         /* Points to the maximum extent of text scanned by
+   regularExp_CHAR *startp [NSUBEXP];  /* Captured text starting locations. */
+   regularExp_CHAR *endp   [NSUBEXP];  /* Captured text ending locations. */
+   regularExp_CHAR *extentpBW;         /* Points to the maximum extent of text scanned by
                                ExecRE in front of the string to achieve a match
                                (needed because of positive look-behind.) */
-   char *extentpFW;         /* Points to the maximum extent of text scanned by
+   regularExp_CHAR *extentpFW;         /* Points to the maximum extent of text scanned by
                                ExecRE to achieve a match (needed because of
                                positive look-ahead.) */
    int   top_branch;        /* Zero-based index of the top branch that matches.
                                Used by syntax highlighting only. */
-   char  match_start;       /* Internal use only. */
-   char  anchor;            /* Internal use only. */
-   char  program [1];       /* Unwarranted chumminess with compiler. */
+   regularExp_CHAR  match_start;       /* Internal use only. */
+   regularExp_CHAR  anchor;            /* Internal use only. */
+   regularExp_CHAR  program [1];       /* Unwarranted chumminess with compiler. */
 } regexp;
 
 /* Flags for CompileRE default settings (Markus Schwarzenberg) */
@@ -66,8 +71,8 @@ typedef enum {
 /* Compiles a regular expression into the internal format used by `ExecRE'. */
    
 regexp * CompileRE (
-   const char  *exp,         /* String containing the regex specification. */
-   char **errorText,   /* Text of any error message produced. */
+   const regularExp_CHAR  *exp,         /* String containing the regex specification. */
+   regularExp_CHAR **errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
 /* Match a `regexp' structure against a string. */
@@ -79,18 +84,18 @@ int ExecRE (
                                    implement back references across regular
                                    expressions for use in syntax
                                    highlighting.*/
-   const char   *string,              /* Text to search within. */
-   const char   *end,                 /* Pointer to the end of `string'.  If NULL will
+   const regularExp_CHAR   *string,              /* Text to search within. */
+   const regularExp_CHAR   *end,                 /* Pointer to the end of `string'.  If NULL will
                                    scan from `string' until '\0' is found. */
    int     reverse,             /* Backward search. */
-   char    prev_char,           /* Character immediately prior to `string'.  Set
+   regularExp_CHAR    prev_char,           /* Character immediately prior to `string'.  Set
                                    to '\n' or '\0' if true beginning of text. */
-   char    succ_char,           /* Character immediately after `end'.  Set
+   regularExp_CHAR    succ_char,           /* Character immediately after `end'.  Set
                                    to '\n' or '\0' if true beginning of text. */
-   const char   *delimiters,    /* Word delimiters to use (NULL for default) */
-   const char   *look_behind_to,/* Boundary for look-behind; defaults to
+   const regularExp_CHAR   *delimiters,    /* Word delimiters to use (NULL for default) */
+   const regularExp_CHAR   *look_behind_to,/* Boundary for look-behind; defaults to
                                    "string" if NULL */
-   const char   *match_till);   /* Boundary to where match can extend.
+   const regularExp_CHAR   *match_till);   /* Boundary to where match can extend.
                                    \0 is assumed to be the boundary if not
                                    set. Lookahead can cross the boundary. */
 
@@ -99,8 +104,8 @@ int ExecRE (
 
 int SubstituteRE (
    const regexp *prog,
-   const char   *source,
-   char   *dest,
+   const regularExp_CHAR   *source,
+   regularExp_CHAR   *dest,
    int     max,
    int *errorType); // djmw 20080110 0: ok; 1: is not enough memory
 
@@ -109,7 +114,7 @@ int SubstituteRE (
    delimiters. */
 
 void SetREDefaultWordDelimiters (
-   char *delimiters);
+   regularExp_CHAR *delimiters);
 
 /* Enable (or disable) brace counting quantifiers, e.g. `(foo){0,3}'. */
 

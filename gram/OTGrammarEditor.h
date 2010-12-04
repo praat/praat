@@ -33,7 +33,7 @@
 #define OTGrammarEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
 Thing_declare1 (OTGrammarEditor);
 
-OTGrammarEditor OTGrammarEditor_create (Widget parent, const wchar_t *title, OTGrammar ot);
+OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar_t *title, OTGrammar ot);
 
 /* End of file OTGrammarEditor.h */
 #endif

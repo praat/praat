@@ -52,7 +52,7 @@ static void logo_defaultDraw (Graphics g) {
 static struct {
 	double width_mm, height_mm;
 	void (*draw) (Graphics g);
-	Widget dia, form, drawingArea;
+	GuiObject dia, form, drawingArea;
 	Graphics graphics;
 } theLogo = { 90, 40, logo_defaultDraw };
 
@@ -103,7 +103,7 @@ void praat_showLogo (int autoPopDown) {
 	#if gtk
 		static const gchar *authors [3] = { "Paul Boersma", "David Weenink", NULL };
 
-		Widget dialog = gtk_about_dialog_new ();
+		GuiObject dialog = gtk_about_dialog_new ();
 		#define xstr(s) str(s)
 		#define str(s) #s
 		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), xstr (PRAAT_VERSION_STR));

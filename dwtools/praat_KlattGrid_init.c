@@ -934,7 +934,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 #define KlattGrid_DELTA_FORMANTS 7
 */
 	praat_addAction1 (classKlattGrid, 0, L"KlattGrid help", 0, 0, DO_KlattGrid_help);
-	praat_addAction1 (classKlattGrid, 0, L"Edit phonation -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Edit phonation -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Edit pitch tier", 0, 1, DO_KlattGrid_editPitchTier);
 	praat_addAction1 (classKlattGrid, 0, L"Edit voicing amplitude tier", 0, 1, DO_KlattGrid_editVoicingAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, L"Edit flutter tier", 0, 1, DO_KlattGrid_editFlutterTier);
@@ -947,7 +947,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"Edit aspiration amplitude tier", 0, 1, DO_KlattGrid_editAspirationAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, L"Edit breathiness amplitude tier", 0, 1, DO_KlattGrid_editBreathinessAmplitudeTier);
 
-	praat_addAction1 (classKlattGrid, 0, L"Edit filters -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Edit filters -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Edit oral formant grid", 0, 1, DO_KlattGrid_editOralFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, L"Edit nasal formant grid", 0, 1, DO_KlattGrid_editNasalFormantGrid);
 	praat_addAction1 (classKlattGrid, 0, L"Edit nasal antiformant grid", 0, 1, DO_KlattGrid_editNasalAntiFormantGrid);
@@ -971,13 +971,13 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"To Sound (special)...", 0, 0, DO_KlattGrid_to_Sound_special);
 	praat_addAction1 (classKlattGrid, 0, L"To Sound (phonation)...", 0, 0, DO_KlattGrid_to_Sound_phonation);
 
-	praat_addAction1 (classKlattGrid, 0, L"Draw -     ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Draw -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Draw synthesizer...", 0, 1, DO_KlattGrid_draw);
 	praat_addAction1 (classKlattGrid, 0, L"Draw vocal tract...", 0, 1, DO_KlattGrid_drawVocalTract);
 	praat_addAction1 (classKlattGrid, 0, L"Draw phonation", 0, 1, DO_KlattGrid_drawPhonation);
 	praat_addAction1 (classKlattGrid, 0, L"Draw frication", 0, 1, DO_KlattGrid_drawFrication);
 
-	praat_addAction1 (classKlattGrid, 0, L"Query phonation -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Query phonation -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 1, L"Get pitch at time...", 0, 1, DO_KlattGrid_getPitchAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get voicing amplitude at time...", 0, 1, DO_KlattGrid_getVoicingAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get flutter at time...", 0, 1, DO_KlattGrid_getFlutterAtTime);
@@ -990,7 +990,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 1, L"Get aspiration amplitude at time...", 0, 1, DO_KlattGrid_getAspirationAmplitudeAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get breathiness amplitude at time...", 0, 1, DO_KlattGrid_getBreathinessAmplitudeAtTime);
 
-	praat_addAction1 (classKlattGrid, 0, L"Query filters -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Query filters -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 1, L"Get formant at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getFormantAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get bandwidth at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getBandwidthAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get amplitude at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getAmplitudeAtTime);
@@ -1025,7 +1025,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 1, L"Get frication bypass at time...", 0, 1, DO_KlattGrid_getFricationBypassAtTime);
 	praat_addAction1 (classKlattGrid, 1, L"Get frication amplitude at time...", 0, 1, DO_KlattGrid_getFricationAmplitudeAtTime);
 
-	praat_addAction1 (classKlattGrid, 0, L"Modify phonation -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Modify phonation -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Add pitch point...", 0, 1, DO_KlattGrid_addPitchPoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add voicing amplitude point...", 0, 1, DO_KlattGrid_addVoicingAmplitudePoint);
 	praat_addAction1 (classKlattGrid, 0, L"Add flutter point...", 0, 1, DO_KlattGrid_addFlutterPoint);
@@ -1054,7 +1054,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	KlattGrid_REMOVE_POINTS_ACTION (AspirationAmplitude, aspiration amplitude)
 	KlattGrid_REMOVE_POINTS_ACTION (BreathinessAmplitude, breathiness amplitude)
 
-	praat_addAction1 (classKlattGrid, 0, L"Modify vocal tract - ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Modify vocal tract -", 0, 0, 0);
 
 #define KlattGrid_MODIFY_ACTION_FBA(Name,namef) \
 	praat_addAction1 (classKlattGrid, 0, L"Formula (" #namef "ormant frequencies)...", 0, 1, DO_KlattGrid_formula##Name##FormantFrequencies); \
@@ -1104,7 +1104,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"Remove delta formant points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeDeltaFormantPoints);
 	praat_addAction1 (classKlattGrid, 0, L"Remove delta bandwidth points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeDeltaBandwidthPoints);
 
-	praat_addAction1 (classKlattGrid, 0, L"Modify frication - ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Modify frication -", 0, 0, 0);
 	KlattGrid_MODIFY_ACTION_FBA (Frication, frication f)
 	praat_addAction1 (classKlattGrid, 0, L"-- frication modify separator --", 0, 1, 0);
 
@@ -1118,7 +1118,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 #undef KlattGrid_MODIFY_ACTION_FB
 #undef KlattGrid_MODIFY_ACTION_FBA
 
-	praat_addAction1 (classKlattGrid, 0, L"Extract phonation -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract phonation -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Extract pitch tier", 0, 1, DO_KlattGrid_extractPitchTier);
 	praat_addAction1 (classKlattGrid, 0, L"Extract voicing amplitude tier", 0, 1, DO_KlattGrid_extractVoicingAmplitudeTier);
 	praat_addAction1 (classKlattGrid, 0, L"Extract flutter tier", 0, 1, DO_KlattGrid_extractFlutterTier);
@@ -1138,7 +1138,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 #define KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Name,name) \
 	praat_addAction1 (classKlattGrid, 0, L"Extract " #name " formant amplitude tier...", 0, 1, DO_KlattGrid_extract##Name##FormantAmplitudeTier);
 
-	praat_addAction1 (classKlattGrid, 0, L"Extract filters -          ", 0, 0, 0);
+	praat_addAction1 (classKlattGrid, 0, L"Extract filters -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Extract formant grid...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_extractFormantGrid); // deprecated
 	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Oral,oral f)
 	praat_addAction1 (classKlattGrid, 0, L"Extract amplitude tier...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_extractAmplitudeTier); // deprecated

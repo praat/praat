@@ -27,11 +27,11 @@
 	#include <Shlobj.h>
 #endif
 
-SortedSetOfString GuiFileSelect_getInfileNames (Widget parent, const wchar_t *title, bool allowMultipleFiles) {
+SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar_t *title, bool allowMultipleFiles) {
 	SortedSetOfString me = SortedSetOfString_create (); cherror
 	#if gtk
 		(void) parent;
-		Widget dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
@@ -131,12 +131,12 @@ end:
 	return me;
 }
 
-wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, const wchar_t *defaultName) {
+wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, const wchar_t *defaultName) {
 	wchar_t *outfileName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
-		Widget dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_do_overwrite_confirmation (GTK_FILE_CHOOSER (dialog), TRUE);
 		if (file. path [0] != '\0') {
@@ -224,12 +224,12 @@ wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, con
 	return outfileName;
 }
 
-wchar_t * GuiFileSelect_getDirectoryName (Widget parent, const wchar_t *title) {
+wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title) {
 	wchar_t *directoryName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
-		Widget dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, "Choose", GTK_RESPONSE_ACCEPT, NULL);
 		if (file. path [0] != '\0') {
 			gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (file. path));

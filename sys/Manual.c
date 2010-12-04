@@ -586,7 +586,7 @@ class_methods (Manual, HyperPage) {
 	class_methods_end
 }
 
-int Manual_init (Manual me, Widget parent, const wchar_t *title, Any data) {
+int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data) {
 	ManPages manPages = data;
 	wchar_t windowTitle [101];
 	long i;
@@ -615,7 +615,7 @@ end:
 	return 1;
 }
 
-Manual Manual_create (Widget parent, const wchar_t *title, Any data) {
+Manual Manual_create (GuiObject parent, const wchar_t *title, Any data) {
 	Manual me = new (Manual); cherror
 	Manual_init (me, parent, title, data); cherror
 end:

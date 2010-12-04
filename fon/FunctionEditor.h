@@ -55,13 +55,13 @@ Thing_declare1 (FunctionEditor);
 	\
 	Graphics graphics;   /* Used in the 'draw' method. */ \
 	short width, height;   /* Size of drawing area in pixels. */ \
-	Widget text;   /* Optional text at top. */ \
+	GuiObject text;   /* Optional text at top. */ \
 	int shiftKeyPressed;   /* Information for the 'play' method. */ \
 	int playingCursor, playingSelection;   /* Information for end of play. */ \
 	struct FunctionEditor_picture picture; \
 	\
 	/* Private attributes: */ \
-	Widget drawingArea, scrollBar, groupButton, bottomArea; \
+	GuiObject drawingArea, scrollBar, groupButton, bottomArea; \
 	bool group, enableUpdates; \
 	int nrect; \
 	struct { double left, right, bottom, top; } rect [8]; \
@@ -143,7 +143,7 @@ Thing_declare2 (FunctionEditor, Editor);
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title, Any data);
+int FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar_t *title, Any data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.

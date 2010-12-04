@@ -1507,7 +1507,7 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
 void praat_TableOfReal_init (void *klas) {
 	praat_addAction1 (klas, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
-	praat_addAction1 (klas, 0, L"Draw -                 ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Draw as numbers...", 0, 1, DO_TableOfReal_drawAsNumbers);
 		praat_addAction1 (klas, 0, L"Draw as numbers if...", 0, 1, DO_TableOfReal_drawAsNumbers_if);
 		praat_addAction1 (klas, 0, L"Draw as squares...", 0, 1, DO_TableOfReal_drawAsSquares);	
@@ -1516,7 +1516,7 @@ void praat_TableOfReal_init (void *klas) {
 		praat_addAction1 (klas, 0, L"Draw horizontal lines...", 0, 1, DO_TableOfReal_drawHorizontalLines);
 		praat_addAction1 (klas, 0, L"Draw left and right lines...", 0, 1, DO_TableOfReal_drawLeftAndRightLines);
 		praat_addAction1 (klas, 0, L"Draw top and bottom lines...", 0, 1, DO_TableOfReal_drawTopAndBottomLines);
-	praat_addAction1 (klas, 0, L"Query -                ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Query -", 0, 0, 0);
 		praat_addAction1 (klas, 1, L"Get number of rows", 0, 1, DO_TableOfReal_getNumberOfRows);
 		praat_addAction1 (klas, 1, L"Get number of columns", 0, 1, DO_TableOfReal_getNumberOfColumns);
 		praat_addAction1 (klas, 1, L"Get row label...", 0, 1, DO_TableOfReal_getRowLabel);
@@ -1532,7 +1532,7 @@ void praat_TableOfReal_init (void *klas) {
 			praat_addAction1 (klas, 1, L"Get column stdev (index)...", 0, 1, DO_TableOfReal_getColumnStdev_index);
 			praat_addAction1 (klas, 1, L"Get column stdev (label)...", 0, 1, DO_TableOfReal_getColumnStdev_label);
 		}
-	praat_addAction1 (klas, 0, L"Modify -               ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Formula...", 0, 1, DO_TableOfReal_formula);
 		praat_addAction1 (klas, 0, L"Set value...", 0, 1, DO_TableOfReal_setValue);
 		praat_addAction1 (klas, 0, L"Sort by label...", 0, 1, DO_TableOfReal_sortByLabel);
@@ -1547,7 +1547,7 @@ void praat_TableOfReal_init (void *klas) {
 		praat_addAction1 (klas, 0, L"Set row label (label)...", 0, 1, DO_TableOfReal_setRowLabel_label);
 		praat_addAction1 (klas, 0, L"Set column label (index)...", 0, 1, DO_TableOfReal_setColumnLabel_index);
 		praat_addAction1 (klas, 0, L"Set column label (label)...", 0, 1, DO_TableOfReal_setColumnLabel_label);
-	praat_addAction1 (klas, 0, L"Synthesize -     ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Synthesize -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Append", 0, 1, DO_TablesOfReal_append);
 	praat_addAction1 (klas, 0, L"Extract part -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Extract row ranges...", 0, 1, DO_TableOfReal_extractRowRanges);
@@ -1561,7 +1561,7 @@ void praat_TableOfReal_init (void *klas) {
 	praat_addAction1 (klas, 0, L"Extract -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Extract row labels as Strings", 0, 1, DO_TableOfReal_extractRowLabelsAsStrings);
 		praat_addAction1 (klas, 0, L"Extract column labels as Strings", 0, 1, DO_TableOfReal_extractColumnLabelsAsStrings);
-	praat_addAction1 (klas, 0, L"Convert -     ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Convert -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"To Table...", 0, 1, DO_TableOfReal_to_Table);
 		praat_addAction1 (klas, 0, L"To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
 }
@@ -1601,7 +1601,7 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classPairDistribution, 0, L"PairDistribution help", 0, 0, DO_PairDistribution_help);
 	praat_addAction1 (classPairDistribution, 0, L"To Table", 0, 0, DO_PairDistribution_to_Table);
 	praat_addAction1 (classPairDistribution, 1, L"To Stringses...", 0, 0, DO_PairDistribution_to_Stringses);
-	praat_addAction1 (classPairDistribution, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classPairDistribution, 0, L"Query -", 0, 0, 0);
 		praat_addAction1 (classPairDistribution, 1, L"Get number of pairs", 0, 1, DO_PairDistribution_getNumberOfPairs);
 		praat_addAction1 (classPairDistribution, 1, L"Get string1...", 0, 1, DO_PairDistribution_getString1);
 		praat_addAction1 (classPairDistribution, 1, L"Get string2...", 0, 1, DO_PairDistribution_getString2);
@@ -1609,17 +1609,17 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classPairDistribution, 1, L"-- get fraction correct --", 0, 1, 0);
 		praat_addAction1 (classPairDistribution, 1, L"Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
 		praat_addAction1 (classPairDistribution, 1, L"Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
-	praat_addAction1 (classPairDistribution, 0, L"Modify -          ", 0, 0, 0);
+	praat_addAction1 (classPairDistribution, 0, L"Modify -", 0, 0, 0);
 	praat_addAction1 (classPairDistribution, 1, L"Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classTable, 0, L"Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, L"Write to table file...", 0, 0, DO_Table_writeToTableFile);
 	praat_addAction1 (classTable, 1, L"Edit", 0, 0, DO_Table_edit);
-	praat_addAction1 (classTable, 0, L"Draw -                ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Scatter plot...", 0, 1, DO_Table_scatterPlot);
 		praat_addAction1 (classTable, 0, L"Scatter plot (mark)...", 0, 1, DO_Table_scatterPlot_mark);
 		praat_addAction1 (classTable, 0, L"Draw ellipse (standard deviation)...", 0, 1, DO_Table_drawEllipse);
-	praat_addAction1 (classTable, 0, L"Query -                ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Query -", 0, 0, 0);
 		praat_addAction1 (classTable, 1, L"List...", 0, 1, DO_Table_list);
 		praat_addAction1 (classTable, 1, L"-- get structure --", 0, 1, 0);
 		praat_addAction1 (classTable, 1, L"Get number of rows", 0, 1, DO_Table_getNumberOfRows);
@@ -1647,7 +1647,7 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 1, L"Report group difference (Wilcoxon rank sum)...", 0, 1, DO_Table_reportGroupDifference_wilcoxonRankSum);
 		praat_addAction1 (classTable, 1, L"Report correlation (Pearson r)...", 0, 1, DO_Table_reportCorrelation_pearsonR);
 		praat_addAction1 (classTable, 1, L"Report correlation (Kendall tau)...", 0, 1, DO_Table_reportCorrelation_kendallTau);
-	praat_addAction1 (classTable, 0, L"Modify -        ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Set string value...", 0, 1, DO_Table_setStringValue);
 		praat_addAction1 (classTable, 0, L"Set numeric value...", 0, 1, DO_Table_setNumericValue);
 		praat_addAction1 (classTable, 0, L"Formula...", 0, 1, DO_Table_formula);
@@ -1668,14 +1668,14 @@ void praat_uvafon_Stat_init (void) {
 		praat_addAction1 (classTable, 0, L"-- set --", 0, 1, 0);
 		praat_addAction1 (classTable, 0, L"Set column label (index)...", 0, 1, DO_Table_setColumnLabel_index);
 		praat_addAction1 (classTable, 0, L"Set column label (label)...", 0, 1, DO_Table_setColumnLabel_label);
-	praat_addAction1 (classTable, 0, L"Analyse -      ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Analyse -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"To linear regression", 0, 1, DO_Table_to_LinearRegression);
 		praat_addAction1 (classTable, 0, L"To logistic regression...", 0, 1, DO_Table_to_LogisticRegression);
-	praat_addAction1 (classTable, 0, L"Synthesize -     ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Synthesize -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Append", 0, 1, DO_Tables_append);
-	praat_addAction1 (classTable, 0, L"Generate -      ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Generate -", 0, 0, 0);
 		praat_addAction1 (classTable, 1, L"Draw row from distribution...", 0, 1, DO_Table_drawRowFromDistribution);
-	praat_addAction1 (classTable, 0, L"Extract -     ", 0, 0, 0);
+	praat_addAction1 (classTable, 0, L"Extract -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Extract rows where column (number)...", 0, 1, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, L"Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, L"Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);

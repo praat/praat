@@ -27,13 +27,13 @@
 #include "Strings_extensions.h"
 #include "TableOfReal.h"
 
-#undef praat_HIDDEN
-#define praat_HIDDEN 0
+//#undef praat_HIDDEN
+//#define praat_HIDDEN 0
 
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENU (L"Criterion based on", 1) \
-	OPTION (L"Maximum likelihood") \
-	OPTION (L"Description length") \
+	OPTION (L"Likelihood") \
+	OPTION (L"Message length") \
 	OPTION (L"Bayes information") \
 	OPTION (L"Akaike information") \
 	OPTION (L"Akaike corrected") \
@@ -104,6 +104,16 @@ DO
 		GET_INTEGER (L"X-dimension"), GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 		GET_INTEGER (L"Number of points"), GET_INTEGER (L"Number of bins"), GET_INTEGER (L"Garnish")))
+END
+
+DIRECT (GaussianMixture_getNumberOfComponents)
+	GaussianMixture me = ONLY_OBJECT;
+	Melder_information2 (Melder_integer (my numberOfComponents), L" (= number of components)");
+END
+
+DIRECT (GaussianMixture_getDimensionOfComponent)
+	GaussianMixture me = ONLY_OBJECT;
+	Melder_information2 (Melder_integer (my dimension), L" (= dimension of component)");
 END
 
 FORM (GaussianMixture_getProbabilityAtPosition, L"GaussianMixture: Get probability at position", 0)
@@ -648,7 +658,7 @@ void praat_HMM_init (void)
 	Thing_recognizeClassesByName (classHMM, classHMM_State, classHMM_Observation,
 		classHMM_ObservationSequence, classHMM_StateSequence, classGaussianMixture, NULL);
 
-	praat_addMenuCommand (L"Objects", L"New", L"Markov models -", 0, praat_HIDDEN, 0);
+	praat_addMenuCommand (L"Objects", L"New", L"Markov models", 0, praat_HIDDEN, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Create HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create continuous HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createContinuousModel);
@@ -656,11 +666,13 @@ void praat_HMM_init (void)
 	praat_addAction1 (classGaussianMixture, 0, L"GaussianMixture help", 0, 0, DO_GaussianMixture_help);
 	praat_addAction1 (classGaussianMixture, 0, L"Draw concentration ellipses...", 0, 0, DO_GaussianMixture_drawConcentrationEllipses);
 	praat_addAction1 (classGaussianMixture, 0, L"Draw marginal pdf...", 0, 0, DO_GaussianMixture_drawMarginalPdf);
-	praat_addAction1 (classGaussianMixture, 0, L"Query      - ", 0, 0, 0);
+	praat_addAction1 (classGaussianMixture, 0, L"Query -", 0, 0, 0);
+	praat_addAction1 (classGaussianMixture, 1, L"Get number of components", 0, 1, DO_GaussianMixture_getNumberOfComponents);
+	praat_addAction1 (classGaussianMixture, 1, L"Get dimension of component", 0, 1, DO_GaussianMixture_getDimensionOfComponent);
 	praat_addAction1 (classGaussianMixture, 1, L"Get probability at position...", 0, 1, DO_GaussianMixture_getProbabilityAtPosition);
-	praat_addAction1 (classGaussianMixture, 0, L"Modify      - ", 0, 0, 0);
+	praat_addAction1 (classGaussianMixture, 0, L"Modify -", 0, 0, 0);
 	praat_addAction1 (classGaussianMixture, 1, L"Split component...", 0, 1, DO_GaussianMixture_splitComponent);
-	praat_addAction1 (classGaussianMixture, 0, L"Extract     - ", 0, 0, 0);
+	praat_addAction1 (classGaussianMixture, 0, L"Extract -", 0, 0, 0);
 	praat_addAction1 (classGaussianMixture, 0, L"Extract mixing probabilities", 0, 1, DO_GaussianMixture_extractMixingProbabilities);
 	praat_addAction1 (classGaussianMixture, 0, L"Extract component...", 0, 1, DO_GaussianMixture_extractComponent);
 	praat_addAction1 (classGaussianMixture, 0, L"Extract centroids", 0, 1, DO_GaussianMixture_extractCentroids);
@@ -684,7 +696,7 @@ void praat_HMM_init (void)
 
 	praat_addAction1 (classHMM, 0, L"HMM help ", 0, 0, DO_HMM_help);
 	praat_addAction1 (classHMM, 0, L"Draw...", 0, 0, DO_HMM_draw);
-	praat_addAction1 (classHMM, 0, L"Query      - ", 0, 0, 0);
+	praat_addAction1 (classHMM, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classHMM, 1, L"Get transition probability...", 0, 1, DO_HMM_getTransitionProbability);
 	praat_addAction1 (classHMM, 1, L"Get emission probability...", 0, 1, DO_HMM_getEmissionProbability);
 	praat_addAction1 (classHMM, 1, L"Get start probability...", 0, 1, DO_HMM_getStartProbability);
@@ -698,12 +710,12 @@ void praat_HMM_init (void)
 	praat_addAction1 (classHMM, 0, L"--- multiple HMMs ----", 0, 1, 0);
 	praat_addAction1 (classHMM, 2, L"Get cross-entropy...", 0, 1, DO_HMM_and_HMM_getCrossEntropy);
 
-	praat_addAction1 (classHMM, 0, L"Modify     - ", 0, 0, 0);
+	praat_addAction1 (classHMM, 0, L"Modify -", 0, 0, 0);
 	praat_addAction1 (classHMM, 1, L"Set transition probabilities...", 0, 1, DO_HMM_setTransitionProbabilities);
 	praat_addAction1 (classHMM, 1, L"Set emission probabilities...", 0, 1, DO_HMM_setEmissionProbabilities);
 	praat_addAction1 (classHMM, 1, L"Set start probabilities...", 0, 1, DO_HMM_setStartProbabilities);
 
-	praat_addAction1 (classHMM, 0, L"Extract     - ", 0, 0, 0);
+	praat_addAction1 (classHMM, 0, L"Extract -", 0, 0, 0);
 	praat_addAction1 (classHMM, 0, L"Extract transition probabilities", 0, 1, DO_HMM_extractTransitionProbabilities);
 	praat_addAction1 (classHMM, 0, L"Extract emission probabilities", 0, 1, DO_HMM_extractEmissionProbabilities);
 

@@ -1900,6 +1900,14 @@ static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
 	return Sound_readFromKayFile (file);
 }
 
+static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
+	wchar_t *fileName = MelderFile_name (file);
+	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
+	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
+	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
+	return Sound_readFromBdfFile (file, isBdfFile);
+}
+
 /***** override play and record buttons in manuals *****/
 
 static Sound melderSound, melderSoundFromFile, last;
@@ -1949,6 +1957,7 @@ void praat_uvafon_Sound_init (void) {
 	Data_recognizeFileType (sesamFileRecognizer);
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);
+	Data_recognizeFileType (bdfFileRecognizer);
 
 	SoundRecorder_prefs ();
 	FunctionEditor_prefs ();
@@ -1985,7 +1994,7 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classLongSound, 0, L"LongSound help", 0, 0, DO_LongSound_help);
 	praat_addAction1 (classLongSound, 1, L"View", 0, 0, DO_LongSound_view);
 	praat_addAction1 (classLongSound, 0, L"Play part...", 0, 0, DO_LongSound_playPart);
-	praat_addAction1 (classLongSound, 1, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classLongSound, 1, L"Query -", 0, 0, 0);
 		praat_TimeFunction_query_init (classLongSound);
 		praat_addAction1 (classLongSound, 1, L"Sampling", 0, 1, 0);
 		praat_addAction1 (classLongSound, 1, L"Get number of samples", 0, 2, DO_LongSound_getNumberOfSamples);
@@ -2051,9 +2060,9 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 0, L"Sound help", 0, 0, DO_Sound_help);
 	praat_addAction1 (classSound, 1, L"Edit", 0, 0, DO_Sound_edit);
 	praat_addAction1 (classSound, 0, L"Play", 0, 0, DO_Sound_play);
-	praat_addAction1 (classSound, 1, L"Draw -          ", 0, 0, 0);
+	praat_addAction1 (classSound, 1, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"Draw...", 0, 1, DO_Sound_draw);
-	praat_addAction1 (classSound, 1, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classSound, 1, L"Query -", 0, 0, 0);
 		praat_TimeFunction_query_init (classSound);
 		praat_addAction1 (classSound, 1, L"Get number of channels", 0, 1, DO_Sound_getNumberOfChannels);
 		praat_addAction1 (classSound, 1, L"Query time sampling", 0, 1, 0);
@@ -2090,7 +2099,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 1, L"Get energy in air", 0, 1, DO_Sound_getEnergyInAir);
 		praat_addAction1 (classSound, 1, L"Get power in air", 0, 1, DO_Sound_getPowerInAir);
 		praat_addAction1 (classSound, 1, L"Get intensity (dB)", 0, 1, DO_Sound_getIntensity_dB);
-	praat_addAction1 (classSound, 0, L"Modify -          ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classSound);
 		praat_addAction1 (classSound, 0, L"-- modify generic --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Reverse", 0, 1, DO_Sound_reverse);
@@ -2115,7 +2124,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Filter with one formant (in-line)...", 0, 2, DO_Sound_filterWithOneFormantInline);
 		praat_addAction1 (classSound, 0, L"Pre-emphasize (in-line)...", 0, 2, DO_Sound_preemphasizeInline);
 		praat_addAction1 (classSound, 0, L"De-emphasize (in-line)...", 0, 2, DO_Sound_deemphasizeInline);
-	praat_addAction1 (classSound, 0, L"Annotate -   ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Annotate -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"Annotation tutorial", 0, 1, DO_AnnotationTutorial);
 		praat_addAction1 (classSound, 0, L"-- to text grid --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"To TextGrid...", 0, 1, DO_Sound_to_TextGrid);
@@ -2123,7 +2132,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"To TextTier", 0, 1, DO_Sound_to_TextTier);
 		praat_addAction1 (classSound, 0, L"To IntervalTier", 0, 1, DO_Sound_to_IntervalTier);
 	praat_addAction1 (classSound, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classSound, 0, L"Periodicity -        ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Periodicity -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"To Pitch...", 0, 1, DO_Sound_to_Pitch);
 		praat_addAction1 (classSound, 0, L"To Pitch (ac)...", 0, 1, DO_Sound_to_Pitch_ac);
 		praat_addAction1 (classSound, 0, L"To Pitch (cc)...", 0, 1, DO_Sound_to_Pitch_cc);
@@ -2151,14 +2160,14 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"To Formant (hack)", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"To Formant (keep all)...", 0, 2, DO_Sound_to_Formant_keepAll);
 		praat_addAction1 (classSound, 0, L"To Formant (sl)...", 0, 2, DO_Sound_to_Formant_willems);
-	praat_addAction1 (classSound, 0, L"Points -          ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Points -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"To PointProcess (extrema)...", 0, 1, DO_Sound_to_PointProcess_extrema);
 		praat_addAction1 (classSound, 0, L"To PointProcess (zeroes)...", 0, 1, DO_Sound_to_PointProcess_zeroes);
 	praat_addAction1 (classSound, 0, L"To Intensity...", 0, 0, DO_Sound_to_Intensity);
 	praat_addAction1 (classSound, 0, L"Manipulate", 0, 0, 0);
 	praat_addAction1 (classSound, 0, L"To Manipulation...", 0, 0, DO_Sound_to_Manipulation);
 	praat_addAction1 (classSound, 0, L"Synthesize", 0, 0, 0);
-	praat_addAction1 (classSound, 0, L"Convert -       ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Convert -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"Convert to mono", 0, 1, DO_Sound_convertToMono);
 		praat_addAction1 (classSound, 0, L"Convert to stereo", 0, 1, DO_Sound_convertToStereo);
 		praat_addAction1 (classSound, 0, L"Extract all channels", 0, 1, DO_Sound_extractAllChannels);
@@ -2172,7 +2181,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Deepen band modulation...", 0, 1, DO_Sound_deepenBandModulation);
 		praat_addAction1 (classSound, 0, L"-- cast --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Down to Matrix", 0, 1, DO_Sound_to_Matrix);
-	praat_addAction1 (classSound, 0, L"Filter -       ", 0, 0, 0);
+	praat_addAction1 (classSound, 0, L"Filter -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"Filtering tutorial", 0, 1, DO_FilteringTutorial);
 		praat_addAction1 (classSound, 0, L"-- frequency-domain filter --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Filter (pass Hann band)...", 0, 1, DO_Sound_filter_passHannBand);

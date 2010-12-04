@@ -36,8 +36,8 @@ Thing_declare1 (Manual);
 #define Manual__members(Klas) HyperPage__members(Klas) \
 	long path, numberOfParagraphs; \
 	struct structManPage_Paragraph *paragraphs; \
-	Widget searchText; \
-	Widget homeButton, recordButton, playButton, publishButton; \
+	GuiObject searchText; \
+	GuiObject homeButton, recordButton, playButton, publishButton; \
 	int numberOfMatches; \
 	long matches [1 + 20], fromPage, toPage; \
 	int suppressLinksHither; \
@@ -45,8 +45,8 @@ Thing_declare1 (Manual);
 #define Manual__methods(Klas) HyperPage__methods(Klas)
 Thing_declare2 (Manual, HyperPage);
 
-int Manual_init (Manual me, Widget parent, const wchar_t *title, Any data);
-Manual Manual_create (Widget parent, const wchar_t *title, Any data);
+int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data);
+Manual Manual_create (GuiObject parent, const wchar_t *title, Any data);
 
 void Manual_search (Manual me, const wchar_t *query);
 

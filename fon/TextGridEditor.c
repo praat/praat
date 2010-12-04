@@ -64,7 +64,7 @@
 	enum kGraphics_horizontalAlignment alignment; \
 	wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE]; \
 	int showNumberOf, greenMethod; \
-	Widget extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+	GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
 #define TextGridEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
 Thing_declare2 (TextGridEditor, TimeSoundAnalysisEditor);
 
@@ -2304,7 +2304,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 
 /********** EXPORTED **********/
 
-TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextGrid grid, Any sound, Any spellingChecker) {
+TextGridEditor TextGridEditor_create (GuiObject parent, const wchar_t *title, TextGrid grid, Any sound, Any spellingChecker) {
 	TextGridEditor me = new (TextGridEditor); cherror
 	my spellingChecker = spellingChecker;   // Set in time.
 

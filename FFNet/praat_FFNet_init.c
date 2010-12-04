@@ -48,10 +48,10 @@
 */
 
 
-static wchar_t *QUERY_BUTTON   = L"Query -                ";
-static wchar_t *DRAW_BUTTON     = L"Draw -                 ";
-static wchar_t *MODIFY_BUTTON  = L"Modify -               ";
-static wchar_t *EXTRACT_BUTTON = L"Extract - ";
+static wchar_t *QUERY_BUTTON   = L"Query -";
+static wchar_t *DRAW_BUTTON     = L"Draw -";
+static wchar_t *MODIFY_BUTTON  = L"Modify -";
+static wchar_t *EXTRACT_BUTTON = L"Extract -";
 
 /**************** New FFNet ***************************/
 

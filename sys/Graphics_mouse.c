@@ -26,7 +26,7 @@
 #include "GraphicsP.h"
 #include "Gui.h"
 
-#if cairo || xwin
+#if cairo
 	static bool mouseDown = true;
 #endif
 
@@ -40,7 +40,7 @@ int Graphics_mouseStillDown (I) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if cairo || xwin
+		#if cairo
 			if (mouseDown) return TRUE;
 			else { mouseDown = true; return FALSE; }
 		#elif win
@@ -68,13 +68,6 @@ void Graphics_getMouseLocation (I, double *xWC, double *yWC) {
 			gint xDC, yDC;
 			gdk_window_get_pointer (my window, & xDC, & yDC, NULL);
 			Graphics_DCtoWC (me, xDC, yDC, xWC, yWC);
-		#elif xwin
-			XEvent event;
-			XButtonEvent *button;
-			XMaskEvent (my display, ButtonReleaseMask | ButtonMotionMask | ExposureMask, & event);
-			if (event. type == ButtonRelease) mouseDown = false;
-			button = (XButtonEvent *) & event;
-			Graphics_DCtoWC (me, button -> x, button -> y, xWC, yWC);
 		#elif win
 			POINT pos;
 			if (! GetCursorPos (& pos)) { Melder_warning1 (L"Cannot get cursor position."); return; }

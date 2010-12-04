@@ -69,9 +69,9 @@ static Picture praat_picture;
 /***** "Font" MENU: font part *****/
 
 #if 0
-static Widget praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
+static GuiObject praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
 #endif
-static Widget praatButton_fonts [1 + kGraphics_font_MAX];
+static GuiObject praatButton_fonts [1 + kGraphics_font_MAX];
 
 static void updateFontMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
@@ -98,7 +98,7 @@ DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 
 /***** "Font" MENU: size part *****/
 
-static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
+static GuiObject praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
@@ -156,7 +156,7 @@ END
 
 /***** "Select" MENU *****/
 
-static Widget praatButton_innerViewport, praatButton_outerViewport;
+static GuiObject praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
@@ -308,8 +308,8 @@ END
 
 /***** "Pen" MENU *****/
 
-static Widget praatButton_lines [3];
-static Widget praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
+static GuiObject praatButton_lines [3];
+static GuiObject praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
 
@@ -1465,9 +1465,9 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 
 /***** Public functions. *****/
 
-static Widget shell, fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
+static GuiObject shell, fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
 
-Widget praat_picture_resolveMenu (const wchar_t *menu) {
+GuiObject praat_picture_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"File") ? fileMenu :
 		wcsequ (menu, L"Edit") ? editMenu :
@@ -1539,7 +1539,7 @@ void praat_picture_editor_close (void) {
 }
 
 void praat_picture_init (void) {
-	Widget dialog, scrollWindow, menuBar, drawingArea = NULL;
+	GuiObject dialog, scrollWindow, menuBar, drawingArea = NULL;
 	int margin, width, height, resolution, x;
 	static MelderString itemTitle_search = { 0 };
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;

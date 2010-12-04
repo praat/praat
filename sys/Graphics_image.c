@@ -55,13 +55,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	long ny = iy2 - iy1 + 1;   /* The number of cells along the vertical axis. */
 	double dx = (double) (x2DC - x1DC) / (double) nx;   /* Horizontal pixels per cell. Positive. */
 	double dy = (double) (y2DC - y1DC) / (double) ny;   /* Vertical pixels per cell. Negative. */
-	#if cairo
-		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
-	#elif xwin
-		double scale = 100.0 / (maximum - minimum), offset = 100.0 + minimum * scale;
-	#elif win || mac
-		double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
-	#endif
+	double scale = 255.0 / (maximum - minimum), offset = 255.0 + minimum * scale;
 	if (x2DC <= x1DC || y1DC <= y2DC) return;
 	if (Melder_debug == 36)
 		Melder_casual ("scale %f", scale);
@@ -131,10 +125,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 					cairo_set_source(my cr, grey[value <= 0 ? 0 : value >= sizeof(grey)/sizeof(*grey) ? sizeof(grey)/sizeof(*grey) : value]);
 					cairo_rectangle(my cr, left, top, right - left, bottom - top);
 					cairo_fill(my cr);
-				#elif xwin
-					XSetForeground (my display, my gc, xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : value]);
-					XFillRectangle (my display, my window, my gc, left, top,
-						right - left + 1, bottom - top + 1);
 				#elif win
 					rect. left = left; rect. right = right;
 					FillRect (my dc, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
@@ -178,26 +168,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				Melder_casual ("image surface address %ld, bits address %ld, scanLineLength %d, numberOfGreys %d", sfc, bits, scanLineLength, sizeof(grey)/sizeof(*grey));
 			for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey++)
 				grey [igrey] = 255 - (unsigned char) (igrey * 255.0 / (sizeof (grey) / sizeof (*grey) - 1));
-		#elif xwin
-			int mayOptimize;
-			short arrayWidth = clipx2 - clipx1;
-			short arrayHeight = clipy1 - clipy2;
-			long numberOfPads = (arrayWidth * my bitsPerPixel - 1) / my pad + 1;
-			long rowBytes = numberOfPads * (my pad / 8);
-			char *data = malloc (rowBytes * arrayHeight);
-			XImage *image = XCreateImage (my display, my visual, my depth,
-				ZPixmap, 0, data, arrayWidth, arrayHeight, my pad, rowBytes);
-			if (! data || ! image) goto end;
-			mayOptimize =
-				#if defined (sgi) || defined (HPUX)   /* Optimization. */
-					/* Check if server's characteristics are the same as the Iris's, */
-					/* and whether we have 8-bit colour. */
-					/* If we stand the following test, we may be sitting at a usual SGI server. */
-					image -> bits_per_pixel == 8 && image -> depth == 8 &&
-						image -> byte_order == MSBFirst && image -> bitmap_bit_order == MSBFirst;
-				#else
-					FALSE;
-				#endif
 		#elif win
 			short bitmapWidth = clipx2 - clipx1, bitmapHeight = clipy1 - clipy2;
 			int igrey;
@@ -303,12 +273,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
 				}
-		#elif xwin
-			#define ROW_START_ADDRESS  ((unsigned char *) image -> data + (yDC - clipy2) * image -> bytes_per_line)
-			#define PUT_PIXEL \
-				if (mayOptimize) *pixelAddress ++ = xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]; \
-				else XPutPixel (image, xDC - clipx1, yDC - clipy2, \
-					xwinGreys [value <= 0 ? 0 : value >= 100 ? 100 : (int) value]);
 		#elif win
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
@@ -419,8 +383,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			cairo_paint(my cr);
 			cairo_restore(my cr);
 			cairo_pattern_destroy(bitmap_pattern);
-		#elif xwin
-			XPutImage (my display, my window, my gc, image, 0, 0, clipx1, clipy2, arrayWidth, arrayHeight);
 		#elif win
 			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
@@ -479,10 +441,6 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		 */
 		#if cairo
 			cairo_surface_destroy(sfc);
-		#elif xwin
-			end:
-			if (data) free (data);
-			if (image) { image -> data = NULL; XDestroyImage (image); }
 		#elif win
 			DeleteBitmap (bitmap);
 		#elif mac

@@ -124,7 +124,7 @@ int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t 
 	/* 'class2' and 'class3' may be NULL. */
 	/* 'title' may be NULL; reference-copied. */
 
-Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+GuiObject praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
 	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *));
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be NULL. */
 
@@ -150,7 +150,7 @@ typedef struct {   /* Readonly */
 	#elif motif
 		XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
 	#endif
-	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
+	GuiObject topShell;   /* The application shell: parent of editors and standard dialogs. */
 	ManPages manPages;
 } structPraatApplication, *PraatApplication;
 typedef struct {   /* Readonly */

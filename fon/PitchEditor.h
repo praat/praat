@@ -37,7 +37,7 @@ Thing_declare1 (PitchEditor);
 #define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
 Thing_declare2 (PitchEditor, FunctionEditor);
 
-PitchEditor PitchEditor_create (Widget parent, const wchar_t *title, Pitch pitch);
+PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch);
 
 /* End of file PitchEditor.h */
 #endif

@@ -2195,7 +2195,7 @@ class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
+int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
 	if (! TimeSoundEditor_init (TimeSoundAnalysisEditor_as_parent (me), parent, title, data, sound, ownSound)) return 0;
 	my longestAnalysis = preferences.longestAnalysis;
 	if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)

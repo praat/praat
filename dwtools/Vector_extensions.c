@@ -34,7 +34,7 @@ void Vector_draw_special (I, Graphics g, double *pxmin, double *pxmax, double *p
 {
 	iam (Vector);
 	long ixmin, ixmax, ix;
-	int vertical = direction != 0 && strequ (direction, "v");
+	int vertical = direction != 0 && streq (direction, "v");
 	
 	/*
 	 * Automatic domain.

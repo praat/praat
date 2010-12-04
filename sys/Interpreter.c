@@ -305,7 +305,7 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 	return npar;
 }
 
-Any Interpreter_createForm (Interpreter me, Widget parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure) {
+Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure) {
 	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
 	if (path) UiForm_addText (form, L"$file", path);

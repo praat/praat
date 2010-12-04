@@ -85,7 +85,7 @@ unsigned long Melder_systemVersion;
 
 #ifndef CONSOLE_APPLICATION
 	void *Melder_appContext;   /* XtAppContext* */
-	void *Melder_topShell;   /* Widget */
+	void *Melder_topShell;   /* GuiObject */
 #endif
 
 static void defaultHelp (const wchar_t *query) {
@@ -170,7 +170,7 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static int waitWhileProgress (double progress, const wchar_t *message, Widget dia, Widget scale, Widget label1, Widget label2, Widget cancelButton) {
+static int waitWhileProgress (double progress, const wchar_t *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
 	#if gtk
 		// Wait for all pending events to be processed. If someone knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
@@ -209,7 +209,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 				/*
 				 * Ignore all mouse-down messages, except click in Interrupt button.
 				 */
-				Widget me = (Widget) GetWindowLong (event. hwnd, GWL_USERDATA);
+				GuiObject me = (GuiObject) GetWindowLong (event. hwnd, GWL_USERDATA);
 				if (me == cancelButton) {
 					XtUnmanageChild (dia);
 					return 0;
@@ -266,15 +266,15 @@ static int waitWhileProgress (double progress, const wchar_t *message, Widget di
 
 #if gtk
 static void progress_dia_close (void *wid) {
-	g_object_set_data (G_OBJECT (* (Widget *) wid), "pressed", (gpointer) 1);
+	g_object_set_data (G_OBJECT (* (GuiObject *) wid), "pressed", (gpointer) 1);
 }
 static void progress_cancel_btn_press (void *wid, GuiButtonEvent event) {
 	(void) event;
-	g_object_set_data (G_OBJECT (* (Widget *) wid), "pressed", (gpointer) 1);
+	g_object_set_data (G_OBJECT (* (GuiObject *) wid), "pressed", (gpointer) 1);
 }
 #endif
 
-static void _Melder_dia_init (Widget *dia, Widget *scale, Widget *label1, Widget *label2, Widget *cancelButton) {
+static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label1, GuiObject *label2, GuiObject *cancelButton) {
 	*dia = GuiDialog_create (Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Work in progress",
 		#if gtk
 			progress_dia_close, cancelButton,
@@ -283,8 +283,8 @@ static void _Melder_dia_init (Widget *dia, Widget *scale, Widget *label1, Widget
 		#endif
 		0);
 	
-	Widget form = *dia;
-	Widget buttons = GuiDialog_getButtonArea (*dia);
+	GuiObject form = *dia;
+	GuiObject buttons = GuiDialog_getButtonArea (*dia);
 	
 	*label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 	*label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
@@ -322,7 +322,7 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
-		static Widget dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL;
+		static GuiObject dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
@@ -393,7 +393,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
-		static Widget dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL, drawingArea = NULL;
+		static GuiObject dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL, drawingArea = NULL;
 		clock_t now = clock ();
 		static Any graphics = NULL;
 		if (progress <= 0.0 || progress >= 1.0 ||
@@ -500,10 +500,10 @@ int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_strin
 		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
-		char *place = NULL, *errorMessage;
-		regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (criterion), & errorMessage, 0);
+		wchar_t *place = NULL, *errorMessage;
+		regexp *compiled_regexp = CompileRE (criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;
-		if (ExecRE (compiled_regexp, NULL, Melder_peekWcsToUtf8 (value), NULL, 0, '\0', '\0', NULL, NULL, NULL))
+		if (ExecRE (compiled_regexp, NULL, value, NULL, 0, '\0', '\0', NULL, NULL, NULL))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);
 		return place != NULL;
@@ -637,7 +637,7 @@ static void mac_message (int macAlertType, wchar_t *messageW) {
 
 static void gui_fatal (wchar_t *message) {
 	#if gtk
-		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -651,7 +651,7 @@ static void gui_fatal (wchar_t *message) {
 
 static void gui_error (wchar_t *message) {
 	#if gtk
-		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -665,7 +665,7 @@ static void gui_error (wchar_t *message) {
 
 static void gui_warning (wchar_t *message) {
 	#if gtk
-		Widget dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -680,7 +680,7 @@ static void gui_warning (wchar_t *message) {
 void MelderGui_create (void *appContext, void *parent) {
 	extern void gui_information (wchar_t *);   // BUG: no prototype
 	Melder_appContext = appContext;
-	Melder_topShell = (Widget) parent;
+	Melder_topShell = (GuiObject) parent;
 	Melder_setInformationProc (gui_information);
 	Melder_setFatalProc (gui_fatal);
 	Melder_setErrorProc (gui_error);

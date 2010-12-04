@@ -292,7 +292,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 {
 	iam (OrderedOfString);
 	regexp *compiled_search = NULL;
-	char *compileMsg, *rA;
+	regularExp_CHAR *compileMsg;
 	wchar_t *r;
 	long i;
 
@@ -300,8 +300,8 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 	
 	if (use_regexp)
 	{			
-		compiled_search = CompileRE (Melder_peekWcsToUtf8 (search), &compileMsg, 0);
-		if (compiled_search == NULL) return Melder_error1 (Melder_utf8ToWcs (compileMsg));
+		compiled_search = CompileRE (search, &compileMsg, 0);
+		if (compiled_search == NULL) return Melder_error1 (compileMsg);
 	}
 	for (i = 1; i <= my size; i++)
 	{
@@ -309,11 +309,9 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 		long nmatches_sub;
 		
 		if (use_regexp) {
-			rA = str_replace_regexp (Melder_peekWcsToUtf8 (ss -> string), compiled_search, 
-				Melder_peekWcsToUtf8 (replace), maximumNumberOfReplaces, &nmatches_sub);
-			if (rA == NULL) goto end;
-			r = Melder_utf8ToWcs (rA);
-			Melder_free (rA);
+			r = str_replace_regexp (ss -> string, compiled_search, 
+				replace, maximumNumberOfReplaces, &nmatches_sub);
+			if (r == NULL) goto end;
 		}
 		else r = str_replace_literal (ss -> string, search, replace,
 			maximumNumberOfReplaces, &nmatches_sub);

@@ -31,12 +31,12 @@
 Thing_declare1 (SoundEditor);
 
 #define SoundEditor__members(Klas) TimeSoundAnalysisEditor__members(Klas) \
-	Widget cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
+	GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
 	double maxBuffer;
 #define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
 Thing_declare2 (SoundEditor, TimeSoundAnalysisEditor);
 
-SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data);
+SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 /* End of file SoundEditor.h */
 #endif

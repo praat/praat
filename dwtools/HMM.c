@@ -20,6 +20,7 @@
 #include "Distributions_and_Strings.h"
 #include "HMM.h"
 #include "Index.h"
+#include "Interpreter.h"
 #include "NUM2.h"
 #include "Strings_extensions.h"
 
@@ -50,10 +51,14 @@
 */
 
 // helpers
+int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b,
+	double *x1, double *y1, double *x2, double *y2);
 int HMM_Observation_init (I, wchar_t *label, long numberOfComponents, long dimension, long storage);
 HMM_Observation HMM_Observation_create (wchar_t *label, long numberOfComponents, long dimension, long storage);
 
-
+long HMM_and_HMM_ObservationSequence_getLongestSequence (HMM me, HMM_ObservationSequence thee, long symbolNumber);
+long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos);
+long Strings_getLongestSequence (Strings me, wchar_t *string, long *pos);
 int HMM_State_init (I, wchar_t *label);
 HMM_State HMM_State_create (wchar_t *label);
 
@@ -86,12 +91,19 @@ static double *NUMwstring_to_probs (wchar_t *prob_string, long nwanted)
 
 	for (wchar_t *token = Melder_firstToken (prob_string); token != NULL && ip <= nwanted; token = Melder_nextToken (), ip++)
 	{
-		double prob = Melder_atof (token);
+		double prob;
+		if (! Interpreter_numericExpression (NULL, token, &prob))
+		{
+			Melder_error5 (L"Item ", Melder_integer (ip), L" \"", token, L"\"is not a number.");
+			goto end;
+		}
 		p[ip] = prob;
 		psum += prob;
 	}
 	ip--;
 	for (long i = 1; i <= ip; i++) p[i] /= psum; // to probabilities
+end:
+	if (Melder_hasError ()) NUMdvector_free (p, 1);
 	return p;
 }
 
@@ -287,28 +299,6 @@ end:
 	return me;
 }
 
-int HMM_BaumWelch_increaseCapacity (HMM_BaumWelch me, long factor)
-{
-	long new_capacity = factor * my capacity;
-	double **alpha = NULL, **beta = NULL, *scale = NULL, ***xi = NULL, **gamma = NULL;
-	if (((alpha = NUMdmatrix (1, my numberOfStates, 1, new_capacity)) == NULL) ||
-		((beta = NUMdmatrix (1, my numberOfStates, 1, new_capacity)) == NULL) ||
-		((scale = NUMdvector (1, new_capacity)) == NULL) ||
-		((xi = NUMpvector (1, new_capacity)) == NULL) ||
-		((gamma = NUMdmatrix (1, my numberOfStates, 1, new_capacity)) == NULL)) goto end;
-	for (long it = 1; it <= new_capacity; it++)
-	{
-		xi[it] = NUMdmatrix (1, my numberOfStates, 1, my numberOfStates);
-		if (my xi[it] == NULL) goto end;
-	}
-	// copy data etc...
-end:
-	if (Melder_hasError ())
-	{
-	}
-	return 1;
-}
-
 void HMM_BaumWelch_getGamma (HMM_BaumWelch me)
 {
 	for (long it = 1; it <= my numberOfTimes; it++)
@@ -419,6 +409,7 @@ StringsIndex HMM_ObservationSequence_to_StringsIndex (HMM_ObservationSequence me
 long HMM_and_HMM_ObservationSequence_getLongestSequence (HMM me, HMM_ObservationSequence thee, long symbolNumber)
 {
 	StringsIndex si = HMM_and_HMM_ObservationSequence_to_StringsIndex (me, thee);
+	return 0;
 }
 
 class_methods (HMM_ObservationSequences, Collection)
@@ -426,7 +417,7 @@ class_methods (HMM_ObservationSequences, Collection)
 	class_methods_end
 }
 
-HMM_ObservationSequences HMM_ObservationSequences_create ()
+HMM_ObservationSequences HMM_ObservationSequences_create (void)
 {
 	HMM_ObservationSequences me = new (HMM_ObservationSequences);
 	if ((me == NULL) || ! Collection_init (me, classHMM_ObservationSequence, 10000)) forget (me);
@@ -500,7 +491,7 @@ class_methods (HMM, Data)
 	class_methods_end
 }
 
-int HMM_init (HMM me, long numberOfStates, long numberOfObservationSymbols, int leftToRight)
+static int HMM_init (HMM me, long numberOfStates, long numberOfObservationSymbols, int leftToRight)
 {
 	my numberOfStates = numberOfStates;
 	my numberOfObservationSymbols = numberOfObservationSymbols;
@@ -541,7 +532,13 @@ void HMM_setDefaultStates (HMM me)
 HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream)
 {
-
+	(void) leftToRight;
+	(void) numberOfStates;
+	(void) numberOfObservationSymbols;
+	(void) numberOfFeatureStreams;
+	(void) dimensionOfStream;
+	(void) numberOfGaussiansforStream;
+	return NULL;
 }
 
 HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
@@ -700,6 +697,7 @@ int HMM_setEmissionProbabilities (HMM me, long state_number, wchar_t *emission_p
 	if (state_number > my states -> size) return Melder_error1 (L"State number too large.");
 	if (my notHidden) return Melder_error1 (L"The emission probs of this model are fixed.");
 	double *p = NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols);
+	if (p == NULL) return 0;
 	for (long i = 1; i <= my numberOfObservationSymbols; i++)
 	{
 		my emissionProbs[state_number][i] = p[i];

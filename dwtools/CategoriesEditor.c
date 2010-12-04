@@ -849,7 +849,7 @@ static void createHelpMenuItems (CategoriesEditor me, EditorMenu menu)
 // origin is at top left.
 static void createChildren (CategoriesEditor me)
 {
-	Widget vertScrollBar;
+	GuiObject vertScrollBar;
 	double menuBarOffset = 40;
 	double button_width = 90, button_height = menuBarOffset, list_width = 260, list_height = 200, list_bottom;
 	double delta_x = 15, delta_y = menuBarOffset / 2, text_button_height = button_height / 2;
@@ -929,7 +929,7 @@ class_methods (CategoriesEditor, Editor) {
 	class_methods_end
 }
 
-CategoriesEditor CategoriesEditor_create (Widget parent, const wchar_t *title, Any data)
+CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar_t *title, Any data)
 {
 	CategoriesEditor me = new (CategoriesEditor);
 

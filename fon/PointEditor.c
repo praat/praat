@@ -247,7 +247,7 @@ class_methods (PointEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-PointEditor PointEditor_create (Widget parent, const wchar_t *title, PointProcess point, Sound sound) {
+PointEditor PointEditor_create (GuiObject parent, const wchar_t *title, PointProcess point, Sound sound) {
 	PointEditor me = new (PointEditor); cherror
 	if (sound) {
 		my monoSound = Sound_convertToMono (sound); cherror

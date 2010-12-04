@@ -45,7 +45,7 @@ Thing_declare1 (ClassEditor);
 #define DataEditor__parents(Klas) ClassEditor__parents(Klas) Thing_inherit (Klas, ClassEditor)
 Thing_declare1 (DataEditor);
 
-DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data);
+DataEditor DataEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 /* End of file DataEditor.h */
 #endif

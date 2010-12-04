@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/08/02
+ * pb 2010/11/30
  */
 
 #include "praat.h"
@@ -48,14 +48,21 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }
 
-static wchar_t testScript [] = L""
+static wchar_t testScript1 [] = L""
 	"demo Text... 0.5 centre 0.5 half Hello world\n"
 	"demoWaitForInput ( )\n"
 ;
 
+static wchar_t testScript2 [] = L""
+	"Create Sound from formula... test mono 0.0 1.0 44100 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)\n"
+	"Play\n"
+	"Remove\n"
+	"echo Finished\n"
+;
+
 int main (int argc, char *argv []) {
 	praat_setLogo (130, 80, logo);
-	//praat_setStandAloneScriptText (testScript);
+	//praat_setStandAloneScriptText (testScript2);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)
 	INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)

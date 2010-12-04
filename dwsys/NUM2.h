@@ -96,8 +96,8 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search,
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-char *str_replace_regexp (char *string, regexp *search_compiled,
-	const char *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
+wchar_t *str_replace_regexp (wchar_t *string, regexp *search_compiled,
+	const wchar_t *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
 	the basis of regular expressions (RE).

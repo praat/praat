@@ -37,7 +37,7 @@
 
 #define UiFile_members Thing_members \
 	EditorCommand command; \
-	Widget parent; \
+	GuiObject parent; \
 	structMelderFile file; \
 	const wchar_t *invokingButtonTitle, *helpTitle; \
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
@@ -55,7 +55,7 @@ class_methods (UiFile, Thing)
 	class_method_local (UiFile, destroy)
 class_methods_end
 
-static void UiFile_init (I, Widget parent, const wchar_t *title) {
+static void UiFile_init (I, GuiObject parent, const wchar_t *title) {
 	iam (UiFile);
 	my parent = parent;
 	Thing_setName (me, title);
@@ -76,7 +76,7 @@ class_create (UiInfile, UiFile);
 class_methods (UiInfile, UiFile)
 class_methods_end
 
-Any UiInfile_create (Widget parent, const wchar_t *title,
+Any UiInfile_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles)
 {
@@ -125,7 +125,7 @@ class_create (UiOutfile, UiFile);
 class_methods (UiOutfile, UiFile)
 class_methods_end
 
-Any UiOutfile_create (Widget parent, const wchar_t *title,
+Any UiOutfile_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	UiOutfile me = new (UiOutfile);

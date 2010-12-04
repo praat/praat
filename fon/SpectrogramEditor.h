@@ -38,7 +38,7 @@ Thing_declare1 (SpectrogramEditor);
 #define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
 Thing_declare2 (SpectrogramEditor, FunctionEditor);
 
-SpectrogramEditor SpectrogramEditor_create (Widget parent, const wchar_t *title, Any data);
+SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 /* End of file SpectrogramEditor.h */
 #endif

@@ -44,7 +44,7 @@
 
 #define ButtonEditor__members(Klas) HyperPage__members(Klas) \
 	int show; \
-	Widget button1, button2, button3, button4, button5;
+	GuiObject button1, button2, button3, button4, button5;
 #define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
 Thing_declare2 (ButtonEditor, HyperPage);
 
@@ -310,7 +310,7 @@ class_methods (ButtonEditor, HyperPage) {
 	class_methods_end
 }
 
-ButtonEditor ButtonEditor_create (Widget parent) {
+ButtonEditor ButtonEditor_create (GuiObject parent) {
 	ButtonEditor me = new (ButtonEditor); cherror
 	HyperPage_init (ButtonEditor_as_parent (me), parent, L"Buttons", NULL); cherror
 	which (me, 1);

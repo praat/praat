@@ -750,7 +750,7 @@ static int menu_cb_searchForPage (EDITOR_ARGS) {
  * The 'pageIncrement' is sliderSize - 1.
  */
 
-static void createVerticalScrollBar (HyperPage me, Widget parent) {
+static void createVerticalScrollBar (HyperPage me, GuiObject parent) {
 	#if gtk
 		int maximumScrollBarValue = (int) (PAGE_HEIGHT * 5);
 		GtkObject *adj = gtk_adjustment_new (1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
@@ -1016,7 +1016,7 @@ static void createChildren (HyperPage me) {
 			L"1 >", gui_button_cb_nextPage, me, 0);
 	}
 	#if gtk
-		Widget scrollBox = gtk_hbox_new (false, 0);
+		GuiObject scrollBox = gtk_hbox_new (false, 0);
 		gtk_box_pack_end (GTK_BOX (my dialog), scrollBox, true, true, 0);
 		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
@@ -1036,7 +1036,7 @@ static void createChildren (HyperPage me) {
 	#endif
 }
 
-int HyperPage_init (HyperPage me, Widget parent, const wchar_t *title, Any data) {
+int HyperPage_init (HyperPage me, GuiObject parent, const wchar_t *title, Any data) {
 	resolution = Gui_getResolution (parent);
 	Editor_init (HyperPage_as_parent (me), parent, 0, 0, 6 * resolution + 30, 800, title, data); cherror
 	#if motif

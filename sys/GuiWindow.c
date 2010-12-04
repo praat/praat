@@ -25,6 +25,7 @@
  * pb 2007/06/19 wchar_t
  * pb 2007/12/30 extraction
  * pb 2010/07/29 removed GuiWindow_show
+ * pb 2010/11/28 removed explicit Motif
  */
 
 #include "GuiP.h"
@@ -33,20 +34,20 @@
 #define iam(x)  x me = (x) void_me
 
 typedef struct structGuiWindow {
-	Widget widget;
+	GuiObject widget;
 	void (*goAwayCallback) (void *boss);
 	void *goAwayBoss;
 } *GuiWindow;
 
 #if gtk
-	static gboolean _GuiWindow_destroyCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+	static gboolean _GuiWindow_destroyCallback (GuiObject widget, GdkEvent *event, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
 		Melder_free (me);
 		return TRUE;
 	}
 
-	static gboolean _GuiWindow_goAwayCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+	static gboolean _GuiWindow_goAwayCallback (GuiObject widget, GdkEvent *event, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
 		if (my goAwayCallback != NULL) {
@@ -54,14 +55,14 @@ typedef struct structGuiWindow {
 		}
 		return TRUE;
 	}
-#elif motif
-	static void _GuiMotifWindow_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
+#elif win || mac
+	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiWindow);
 		//Melder_casual ("destroying window widget");
 		Melder_free (me);
 	}
-	static void _GuiMotifWindow_goAwayCallback (Widget widget, XtPointer void_me, XtPointer call) {
+	static void _GuiMotifWindow_goAwayCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiWindow);
 		if (my goAwayCallback != NULL) {
@@ -70,7 +71,7 @@ typedef struct structGuiWindow {
 	}
 #endif
 
-Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
+GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
 	GuiWindow me = Melder_calloc (struct structGuiWindow, 1);
@@ -78,7 +79,7 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 	my goAwayBoss = goAwayBoss;
 	#if gtk
 		(void) parent;
-		Widget shell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		GuiObject shell = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		g_signal_connect (G_OBJECT (shell), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me);
 		g_signal_connect (G_OBJECT (shell), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
 
@@ -92,14 +93,9 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 		my widget = gtk_vbox_new (FALSE, 0);
 		gtk_container_add (GTK_CONTAINER (shell), my widget);
 		_GuiObject_setUserData (my widget, me);
-	#elif motif
-		#if win || mac
-			(void) parent;
-			Widget shell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
-		#else
-			Widget shell = XtAppCreateShell (NULL, "Praatwulg", applicationShellWidgetClass, XtDisplay (parent), NULL, 0);
-			/*Widget shell = XtVaCreateWidget ("picture", topLevelShellWidgetClass, widget, NULL);*/
-		#endif
+	#elif win || mac
+		(void) parent;
+		GuiObject shell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
 		if (x != Gui_AUTOMATIC) XtVaSetValues (shell, XmNx, x, NULL);
 		if (y != Gui_AUTOMATIC) XtVaSetValues (shell, XmNy, y, NULL);
@@ -119,19 +115,17 @@ Widget GuiWindow_create (Widget parent, int x, int y, int width, int height,
 	return my widget;
 }
 
-void GuiWindow_setTitle (Widget shell, const wchar_t *title) {
+void GuiWindow_setTitle (GuiObject shell, const wchar_t *title) {
 	#if gtk
 		gtk_window_set_title (GTK_WINDOW (shell), Melder_peekWcsToUtf8 (title));
 	#elif mac
 		SetWindowTitleWithCFString (shell -> nat.window.ptr, Melder_peekWcsToCfstring (title));
 	#elif win
 		SetWindowText (shell -> window, title);
-	#elif motif
-		XtVaSetValues (shell, XmNtitle, Melder_peekWcsToUtf8 (title), XmNiconName, Melder_peekWcsToUtf8 (title), NULL);
 	#endif
 }
 
-int GuiWindow_setDirty (Widget shell, int dirty) {
+int GuiWindow_setDirty (GuiObject shell, int dirty) {
 	#if mac
 		SetWindowModified (shell -> nat.window.ptr, dirty);
 		return 1;
@@ -142,7 +136,7 @@ int GuiWindow_setDirty (Widget shell, int dirty) {
 	#endif
 }
 
-void GuiWindow_drain (Widget me) {
+void GuiWindow_drain (GuiObject me) {
 	#if gtk
 		//gdk_window_flush (gtk_widget_get_window (me));
 		gdk_flush ();

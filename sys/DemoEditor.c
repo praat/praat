@@ -33,7 +33,7 @@
 #include "UnicodeData.h"
 
 #define DemoEditor__members(Klas) Editor__members(Klas) \
-	Widget drawingArea; \
+	GuiObject drawingArea; \
 	Graphics graphics; \
 	void *praatPicture; \
 	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed; \
@@ -150,7 +150,7 @@ class_methods (DemoEditor, Editor) {
 	class_methods_end
 }
 
-int DemoEditor_init (DemoEditor me, Widget parent) {
+int DemoEditor_init (DemoEditor me, GuiObject parent) {
 	Editor_init (DemoEditor_as_parent (me), parent, 0, 0, 1024, 768, L"", NULL); cherror
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setColour (my graphics, Graphics_WHITE);
@@ -172,7 +172,7 @@ end:
 	return 1;
 }
 
-DemoEditor DemoEditor_create (Widget parent) {
+DemoEditor DemoEditor_create (GuiObject parent) {
 	DemoEditor me = new (DemoEditor);
 	if (! me || ! DemoEditor_init (me, parent)) { forget (me); return NULL; }
 	return me;

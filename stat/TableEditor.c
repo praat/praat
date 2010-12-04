@@ -39,7 +39,7 @@
 
 #define TableEditor__members(Klas) Editor__members(Klas) \
 	long topRow, leftColumn, selectedRow, selectedColumn; \
-	Widget text, drawingArea, horizontalScrollBar, verticalScrollBar; \
+	GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar; \
 	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS]; \
 	Graphics graphics;
 #define TableEditor__methods(Klas) Editor__methods(Klas) \
@@ -243,7 +243,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 
 static void createChildren (TableEditor me) {
 	Table table = my data;
-	Widget form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
+	GuiObject form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
 
 	#if gtk
 		form = my dialog;
@@ -271,7 +271,7 @@ static void createChildren (TableEditor me) {
 	/***** Create drawing area. *****/
 	
 	#if gtk
-		Widget table_container = gtk_table_new(2, 2, FALSE);
+		GuiObject table_container = gtk_table_new(2, 2, FALSE);
 		gtk_box_pack_start(GTK_BOX(form), table_container, TRUE, TRUE, 3);
 		GuiObject_show(table_container);
 		
@@ -408,7 +408,7 @@ static gui_cb_scroll(vertical, value) {
 } gui_cb_scroll_end
 
 #if gtk
-static gboolean gui_cb_drawing_area_scroll(Widget w, GdkEventScroll *event, gpointer void_me) {
+static gboolean gui_cb_drawing_area_scroll(GuiObject w, GdkEventScroll *event, gpointer void_me) {
 	iam(TableEditor);
 	double hv = gtk_range_get_value(GTK_RANGE(my horizontalScrollBar));
 	double hi = gtk_range_get_adjustment(GTK_RANGE(my horizontalScrollBar))->step_increment;
@@ -432,7 +432,7 @@ static gboolean gui_cb_drawing_area_scroll(Widget w, GdkEventScroll *event, gpoi
 }
 #endif
 
-TableEditor TableEditor_create (Widget parent, const wchar_t *title, Table table) {
+TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table) {
 	TableEditor me = new (TableEditor); cherror
 	Editor_init (TableEditor_as_parent (me), parent, 0, 0, 700, 500, title, table); cherror
 	#if motif

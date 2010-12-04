@@ -111,7 +111,7 @@ enum { GEENSYMBOOL_,
 	/* Operatoren met boolean resultaat. */
 	OR_, AND_, NOT_, EQ_, NE_, LE_, LT_, GE_, GT_,
 	/* Operatoren met reeel resultaat. */
-	ADD_, SUB_, MUL_, RDIV_, IDIV_, MOD_, POWER_, MINUS_,
+	ADD_, SUB_, MUL_, RDIV_, IDIV_, MOD_, POWER_, CALL_, MINUS_,
 
 /* Then, the symbols after which "-" is binary. */
 
@@ -230,7 +230,7 @@ enum { GEENSYMBOOL_,
 static wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"if", L"then", L"else", L"(", L"[", L",", L"from", L"to",
 	L"or", L"and", L"not", L"=", L"<>", L"<=", L"<", L">=", L">",
-	L"+", L"-", L"*", L"/", L"div", L"mod", L"^", L"_neg",
+	L"+", L"-", L"*", L"/", L"div", L"mod", L"^", L"_call", L"_neg",
 	L"endif", L"fi", L")", L"]",
 	L"a number", L"pi", L"e", L"undefined",
 	L"xmin", L"xmax", L"ymin", L"ymax", L"nx", L"ny", L"dx", L"dy",
@@ -409,7 +409,7 @@ static int Formula_lexan (void) {
 			oudkar;
 			/*
 			 * 'token' now contains a word, possibly ending in a dollar or number sign;
-			 * it could be a variable name or a function name, or both!
+			 * it could be a variable name, a function name, both, or a procedure name.
 			 * Try a language or function name first.
 			 */
 			tok = Formula_hasLanguageName (token.string);
@@ -695,6 +695,17 @@ static int Formula_lexan (void) {
 			nieuwtok (END_)
 		} else if (kar == '^') {
 			nieuwtok (POWER_)
+		} else if (kar == '@') {
+			do {
+				nieuwkar;
+			} while (kar == ' ' || kar == '\t');
+			stokaan;
+			do stokkar while ((kar >= 'A' && kar <= 'Z') || (kar >= 'a' && kar <= 'z') || kar >= 192 || (kar >= '0' && kar <= '9') || kar == '_' || kar == '.');
+			stokuit;
+			oudkar;
+			nieuwtok (CALL_)
+			lexan [itok]. content.string = Melder_wcsdup (token.string);
+			numberOfStringConstants ++;
 		} else if (kar == '\"') {
 			/*
 			 * String constant.
@@ -1264,6 +1275,27 @@ static int parsePowerFactor (void) {
 		return 1;
 	}
 
+	if (symbol == CALL_) {
+		wchar_t *procedureName = lexan [ilexan]. content.string;   // reference copy!
+		int n = 0;
+		if (! pas (HAAKJEOPENEN_)) return 0;
+		if (nieuwlees != HAAKJESLUITEN_) {
+			oudlees;
+			if (! parseExpression ()) return 0;
+			n ++;
+			while (nieuwlees == KOMMA_) {
+				if (! parseExpression ()) return 0;
+				n ++;
+			}
+			oudlees;
+			if (! pas (HAAKJESLUITEN_)) return 0;
+		}
+		nieuwontleed (NUMBER_); parsenumber (n);
+		nieuwontleed (CALL_);
+		parse [iparse]. content.string = procedureName;
+		return 1;
+	}
+
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
 		if (symbol >= LOW_FUNCTION_STRNUM && symbol <= HIGH_FUNCTION_STRNUM) {
 			if (! pas (HAAKJEOPENEN_)) return 0;
@@ -1828,6 +1860,8 @@ static void Formula_print (FormulaInstruction f) {
 				Melder_casual ("%d %ls", i, instructionName);
 			}
 		}
+		else if (symbol == CALL_)
+			Melder_casual ("%d %ls %ls", i, instructionName, f [i]. content.string);
 		else
 			Melder_casual ("%d %ls", i, instructionName);
 	} while (symbol != END_);
@@ -2887,24 +2921,17 @@ end: return;
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string);
-		Melder_killReturns_inline (sA);
-		Melder_killReturns_inline (tA);
-		char *errorMessage;
-		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
+		wchar_t *errorMessage;
+		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
-		} else if (ExecRE (compiled_regexp, NULL, sA, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
-			char *place = compiled_regexp -> startp [0];
+		} else if (ExecRE (compiled_regexp, NULL, s->content.string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
+			wchar_t *place = compiled_regexp -> startp [0];
+			pushNumber (place - s->content.string + 1);
 			free (compiled_regexp);
-			long numberOfCharacters = 0;
-			for (char *p = sA; place - p > 0; p ++) if ((unsigned char) *p <= 127 || (unsigned char) *p >= 0xC2) numberOfCharacters ++;
-			pushNumber (numberOfCharacters + 1);
 		} else {
 			pushNumber (FALSE);
 		}
-		Melder_free (sA);
-		Melder_free (tA);
 	} else {
 		error7 (L"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
 			L"\" requires two strings, not ", Stackel_whichText (s), L" and ", Stackel_whichText (t), L".")
@@ -2925,25 +2952,16 @@ end: return;
 static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		char *sA = Melder_wcsToUtf8 (s->content.string), *tA = Melder_wcsToUtf8 (t->content.string), *uA = Melder_wcsToUtf8 (u->content.string);
-		Melder_killReturns_inline (sA);
-		Melder_killReturns_inline (tA);
-		Melder_killReturns_inline (uA);
-		char *errorMessage;
-		regexp *compiled_regexp = CompileRE (tA, & errorMessage, 0);
+		wchar_t *errorMessage;
+		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			wchar_t *result = Melder_wcsdup (L""); cherror
 			pushString (result);
 		} else {
 			long numberOfMatches;
-			char *resultA = str_replace_regexp (sA, compiled_regexp, uA, x->content.number, & numberOfMatches); cherror
-			wchar_t *result = Melder_utf8ToWcs (resultA ? resultA : ""); cherror
-			Melder_free (resultA);
+			wchar_t *result = str_replace_regexp (s->content.string, compiled_regexp, u->content.string, x->content.number, & numberOfMatches); cherror
 			pushString (result);
 		}
-		Melder_free (sA);
-		Melder_free (tA);
-		Melder_free (uA);
 	} else {
 		error1 (L"The function \"replace_regex$\" requires three strings and a number.")
 	}

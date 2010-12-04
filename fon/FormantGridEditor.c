@@ -496,7 +496,7 @@ class_methods (FormantGridEditor, FunctionEditor) {
 	class_methods_end
 }
 
-int FormantGridEditor_init (FormantGridEditor me, Widget parent, const wchar_t *title, FormantGrid data) {
+int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_t *title, FormantGrid data) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classFormantGrid));
 	FunctionEditor_init (FormantGridEditor_as_FunctionEditor (me), parent, title, data); cherror
@@ -513,7 +513,7 @@ end:
 	return 1;
 }
 
-FormantGridEditor FormantGridEditor_create (Widget parent, const wchar_t *title, FormantGrid data) {
+FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data) {
 	FormantGridEditor me = new (FormantGridEditor); cherror
 	FormantGridEditor_init (me, parent, title, data); cherror
 end:

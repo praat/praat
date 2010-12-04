@@ -47,8 +47,8 @@ Thing_declare1 (TimeSoundEditor);
 	bool ownSound; \
 	struct TimeSoundEditor_sound sound; \
 	struct { LongSound data; } longSound; \
-	Widget drawButton, publishButton, publishPreserveButton, publishWindowButton; \
-	Widget writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+	GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton; \
+	GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 #define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
 	void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
 	void (*updateMenuItems_file) (Klas me);
@@ -56,7 +56,7 @@ Thing_declare2 (TimeSoundEditor, FunctionEditor);
 
 void TimeSoundEditor_prefs (void);
 
-int TimeSoundEditor_init (TimeSoundEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
+int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 

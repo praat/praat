@@ -28,7 +28,7 @@
 	#include "Interpreter_decl.h"
 #endif
 
-int UiPause_begin (Widget topShell, const wchar_t *title, Interpreter interpreter);
+int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter);
 
 int UiPause_real (const wchar_t *label, const wchar_t *defaultValue);
 int UiPause_positive (const wchar_t *label, const wchar_t *defaultValue);

@@ -239,15 +239,13 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = NULL;
-	char *compileMsg;
-	regexp *compiled_regexp = CompileRE (Melder_peekWcsToUtf8 (search_regexp), &compileMsg, 0);
+	wchar_t *compileMsg;
+	regexp *compiled_regexp = CompileRE (search_regexp, &compileMsg, 0);
 
-	if (compiled_regexp == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
+	if (compiled_regexp == NULL) return Melder_errorp1 (compileMsg);
 
-	if (ExecRE(compiled_regexp, NULL, Melder_peekWcsToUtf8 (string), NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
-		char *charpA = compiled_regexp -> startp[0];
-		charp = Melder_utf8ToWcs (charpA);
-		Melder_free (charpA);
+	if (ExecRE(compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
+		charp = compiled_regexp -> startp[0];
 	}
 
 	free (compiled_regexp);
@@ -297,7 +295,7 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 
 	len_replace = wcslen (replace);
 	len_result = len_string + *nmatches * (len_replace - len_search);
-	result = Melder_malloc (wchar_t, len_result + 1);
+	result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
 	result[len_result] = '\0';
 	if (result == NULL) return NULL;
 
@@ -342,16 +340,16 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 	return result;
 }
 
-static int expand_buffer (char **bufp, int new_size)
+static int expand_buffer (wchar_t **bufp, int new_size)
 {
-	char *tbuf = (char *) Melder_realloc (*bufp, new_size);
+	wchar_t *tbuf = (wchar_t *) Melder_realloc (*bufp, new_size * sizeof (wchar_t));
 	if (tbuf == NULL) return 0;
 	*bufp = tbuf;
 	return 1;
 }
 
-char *str_replace_regexp (char *string, regexp *compiledSearchRE,
-	const char *replaceRE, long maximumNumberOfReplaces, long *nmatches)
+wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
+	const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
 	long i;
 	int buf_size; 					/* inclusive nul-byte */
@@ -361,16 +359,16 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	int gap_copied = 0;
 	int nchar, reverse = 0;
 	int errorType;
-	char prev_char = '\0';
-	char *pos; 	/* current position in 'string' / start of current match */
-	char *posp; /* end of previous match */
-	char *buf = NULL;
+	wchar_t prev_char = '\0';
+	wchar_t *pos; 	/* current position in 'string' / start of current match */
+	wchar_t *posp; /* end of previous match */
+	wchar_t *buf = NULL;
 
 	*nmatches = 0;
 	if (string == NULL || compiledSearchRE == NULL || replaceRE == NULL) return NULL;
 
-	string_length = strlen (string);
-	replace_length = strlen (replaceRE);
+	string_length = wcslen (string);
+	replace_length = wcslen (replaceRE);
 	if (string_length == 0) maximumNumberOfReplaces = 1;
 
 	i = maximumNumberOfReplaces > 0 ? 0 : - string_length;
@@ -406,7 +404,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 				buf_size *= 2;
 				if (! expand_buffer (& buf, buf_size)) goto end;
 			}
-			strncpy (buf + buf_nchar, posp, nchar);
+			wcsncpy (buf + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
 		}
 
@@ -437,7 +435,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 			Buffer is not full, get number of characters added;
 		*/
 
-		nchar = strlen (buf + buf_nchar);
+		nchar = wcslen (buf + buf_nchar);
 		buf_nchar += nchar;
 
 		/*
@@ -463,7 +461,7 @@ char *str_replace_regexp (char *string, regexp *compiledSearchRE,
 	buf_size = buf_nchar + nchar + 1;
 	if (! expand_buffer (& buf, buf_size)) goto end;
 
-	strncpy (buf + buf_nchar, pos, nchar);
+	wcsncpy (buf + buf_nchar, pos, nchar);
 	buf[buf_size-1] = '\0';
 
 end:
@@ -512,14 +510,14 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	long *nmatches, long *nstringmatches)
 {
 	regexp *compiledRE;
-	char *compileMsg;
+	wchar_t *compileMsg;
 	wchar_t **result = NULL;
 	long i, nmatches_sub = 0;
 
 	if (searchRE == NULL || replaceRE == NULL) return NULL;
 
-	compiledRE = CompileRE (Melder_peekWcsToUtf8 (searchRE), &compileMsg, 0);
-	if (compiledRE == NULL) return Melder_errorp1 (Melder_peekUtf8ToWcs (compileMsg));
+	compiledRE = CompileRE (searchRE, &compileMsg, 0);
+	if (compiledRE == NULL) return Melder_errorp1 (compileMsg);
 
 	result = (wchar_t **) NUMpvector (lo, hi);
 	if (result == NULL) goto end;
@@ -529,12 +527,9 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	{
 		/* Treat a NULL as an empty string */
 		wchar_t *string = from[i] == NULL ? L"" : from[i];
-		char *resultA = str_replace_regexp (Melder_peekWcsToUtf8 (string), compiledRE, Melder_peekWcsToUtf8 (replaceRE),
+		result [i] = str_replace_regexp (string, compiledRE, replaceRE,
 			maximumNumberOfReplaces, &nmatches_sub);
-		if (resultA == NULL) goto end;
-		result [i] = Melder_utf8ToWcs (resultA);
-		Melder_free (resultA);
-		if (result[i] == NULL) goto end;
+		if (result [i] == NULL) goto end;
 		if (nmatches_sub > 0)
 		{
 			*nmatches += nmatches_sub;

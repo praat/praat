@@ -33,7 +33,7 @@
 
 #define OTMultiEditor__members(Klas) HyperPage__members(Klas) \
 	const wchar_t *form1, *form2; \
-	Widget form1Text, form2Text; \
+	GuiObject form1Text, form2Text; \
 	long selectedConstraint;
 #define OTMultiEditor__methods(Klas) HyperPage__methods(Klas)
 Thing_declare2 (OTMultiEditor, HyperPage);
@@ -268,7 +268,7 @@ class_methods (OTMultiEditor, HyperPage) {
 	class_methods_end
 }
 
-OTMultiEditor OTMultiEditor_create (Widget parent, const wchar_t *title, OTMulti grammar) {
+OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar) {
 	OTMultiEditor me = new (OTMultiEditor); cherror
 	my data = grammar;
 	my form1 = Melder_wcsdup (L"");

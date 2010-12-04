@@ -50,8 +50,8 @@ extern machar_Table NUMfpp;
 
 wchar_t *GaussianMixture_criterionText (int criterion)
 {
-	wchar_t *criterionText[6] =  { L"(1/n)*LLH", L"(1/n)*MDL", L"(1/n)*BIC", L"(1/n)*AIC", L"(1/n)*AICc", L"(1/n)*CD_LLH" };
-	return criterion >= 0 && criterion < 6 ? criterionText[criterion] : L"(1/n)*ln(p)";
+	wchar_t *criterionText[6] =  { L"(1/n)*LLH", L"(1/n)*MML", L"(1/n)*BIC", L"(1/n)*AIC", L"(1/n)*AICc", L"(1/n)*CD_LLH" };
+	return criterion >= 0 && criterion < 7 ? criterionText[criterion] : L"(1/n)*ln(p)";
 }
 
 void GaussianMixture_removeComponent (GaussianMixture me, long component);
@@ -60,6 +60,7 @@ int GaussianMixture_and_TableOfReal_getProbabilities (GaussianMixture me, TableO
 int GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *lnp);
 double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long numberOfRows, int onlyLikelyhood);
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, double **p, long numberOfRows);
+long GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
 
 static void NUMdvector_scaleAsProbabilities (double *v, long n)
 {
@@ -866,26 +867,6 @@ end:
 	return 1;
 }
 
-double GaussianMixture_getHarmony (GaussianMixture me, long component, double **p, long numberOfRows)
-{
-	double icb = 1, ice = my numberOfComponents, harmony = 0;
-	if (component > 0 && component <= my numberOfComponents) { icb = ice = component; }
-	for (long i = 1; i <= numberOfRows; i++)
-	{
-		double rowsum = 0;
-		for (long ic = 1; ic <= my numberOfComponents; ic ++)
-		{
-			rowsum += my mixingProbabilities[ic] * p[i][ic];
-		}
-		for (long ic = icb; ic <= ice; ic++)
-		{
-			double pa = my mixingProbabilities[ic] * p[i][ic];
-			if (rowsum > 0) harmony += pa * log (pa) / rowsum;
-		}
-	}
-	return harmony / numberOfRows;
-}
-
 int GaussianMixture_splitComponent (GaussianMixture me, long component)
 {
 	if (component < 1 || component > my numberOfComponents) return 0;
@@ -1177,7 +1158,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, long 
 	}
 
 	double npars = GaussianMixture_getNumberOfParametersInComponent (me), np = npars * my numberOfComponents;
-	if (criterion == GaussianMixture_MDL)
+	if (criterion == GaussianMixture_MML)
 	{
 		/* Equation (15) in
 			Mario A.T. Figueiredo, and Anil K. Jain, Unsupervised Learning of Finite Mixture Models :

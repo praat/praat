@@ -32,18 +32,7 @@
 #include "GraphicsP.h"
 #include "Printer.h"
 
-#if xwin
-	static int inited;
-	static Display *display;
-	static int xscreen;
-	static Window rootWindow;
-	static Visual *visual;
-	static unsigned int depth;
-	static Colormap colourMap;
-	static int theBitsPerPixel;
-	static int thePad;
-#elif win
-#elif mac
+#if mac
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
@@ -61,11 +50,6 @@ static void destroy (I) {
 		if (my cr != NULL) {
 			cairo_destroy (my cr);
 			my cr = NULL;
-		}
-	#elif xwin
-		if (my gc != NULL) {
-			XFreeGC (my display, my gc);
-			my gc = NULL;
 		}
 	#elif win
 		if (my dc != NULL) {
@@ -104,8 +88,6 @@ void Graphics_flushWs (I) {
 			gdk_flush ();
 			// TODO: een aanroep die de eventuele grafische buffer ledigt,
 			// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
-		#elif xwin
-			XFlush (my display);
 		#elif win
 			/*GdiFlush ();*/
 		#elif mac
@@ -145,8 +127,6 @@ void Graphics_clearWs (I) {
 				cairo_fill (my cr);
 				cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0);
 			}
-		#elif xwin
-			XClearArea (my display, my window, 0, 0, 0, 0, False);
 		#elif win
 			RECT rect;
 			rect. left = rect. top = 0;
@@ -218,8 +198,6 @@ void Graphics_updateWs (I) {
 			gdk_window_clear (my window);
 			gdk_window_invalidate_rect (my window, & rect, true);
 			//gdk_window_process_updates (window, true);
-		#elif xwin
-			XClearArea (my display, my window, 0, 0, 0, 0, True);
 		#elif win
 			//clear (me); // lll
 			if (my window) InvalidateRect (my window, NULL, TRUE);
@@ -250,44 +228,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 		my window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
 		my gc = gdk_gc_new (my window);
 		my cr = gdk_cairo_create (my window);
-	#elif xwin
-		if (! inited) {
-			display = (Display *) voidDisplay;
-			xscreen = DefaultScreen (display);
-			rootWindow = RootWindow (display, xscreen);
-			visual = DefaultVisual (display, xscreen);
-			depth = DefaultDepth (display, xscreen);
-			colourMap = DefaultColormap (display, xscreen);
-			double width_pixels = DisplayWidth (display, xscreen);
-			double width_mm = DisplayWidthMM (display, xscreen);
-			//resolution = floor (25.4 * width_pixels / width_mm + 0.5);
-			//Melder_casual ("display width %g %g %d", width_pixels, width_mm, resolution);
-			//resolution = 100;
-			/*if (resolution >= 90) resolution = 100; else resolution = 75;*/
-			/*Melder_casual ("nformats %d, depth %d, pad %d", ((_XPrivDisplay) display) -> nformats, depth, BitmapPad (display));*/
-			for (int i = 0; i < ((_XPrivDisplay) display) -> nformats; i ++) {
-				ScreenFormat *format = & ((_XPrivDisplay) display) -> pixmap_format [i];
-				/*Melder_casual ("depth %d, bpp %d, pad %d", format -> depth, format -> bits_per_pixel,
-					format -> scanline_pad);*/
-				if (format -> depth == depth) {
-					theBitsPerPixel = format -> bits_per_pixel;
-					thePad = format -> scanline_pad;
-				}
-			}
-			inited = 1;
-		}
-		my display = display;
-		my xscreen = xscreen;
-		my rootWindow = rootWindow;
-		my visual = visual;
-		my depth = depth;
-		my colourMap = colourMap;
-		my resolution = resolution;
-		my bitsPerPixel = theBitsPerPixel;
-		my pad = thePad;
-		my text. window = my window = (Window) voidWindow;
-		_Graphics_colour_init (me);
-		XSetLineAttributes (my display, my gc, 0, LineSolid, CapButt, JoinBevel);
 	#elif win
 		if (my printer) {
 			my dc = (HDC) voidWindow;
@@ -511,13 +451,6 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	void Graphics_x_setCR (I, void *cr) {
 		iam (GraphicsScreen);
 		my cr = cr;
-	}
-#endif
-
-#if xwin
-	void *Graphics_x_getGC (I) {
-		iam (GraphicsScreen);
-		return my gc;
 	}
 #endif
 

@@ -30,8 +30,8 @@
 #define DemoEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
 Thing_declare1 (DemoEditor);
 
-int DemoEditor_init (DemoEditor me, Widget parent);
-DemoEditor DemoEditor_create (Widget parent);
+int DemoEditor_init (DemoEditor me, GuiObject parent);
+DemoEditor DemoEditor_create (GuiObject parent);
 
 int Demo_open (void);
 void Demo_close (void);

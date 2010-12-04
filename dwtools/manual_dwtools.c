@@ -858,17 +858,16 @@ NORMAL (L"Since an object of type Covariance contains the mean values (the "
 	"tests on means and variances.")
 MAN_END
 
-MAN_BEGIN (L"Create simple Covariance...", L"djmw", 20101124)
+MAN_BEGIN (L"Create simple Covariance...", L"djmw", 20101125)
 INTRO (L"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (L"Settings")
-TAG (L"%%Dimension%,")
-DEFINITION (L"defines the size of the covariance matrix, i.e. its number of rows and columns.")
-TAG (L"%%Variances%,")
-DEFINITION (L"define the variances per dimension, i.e. the elements on the diagonal of the matrix. If the number of "
-	"elements given is less than %%dimension% the last input number will be repeated. E.g. if %%dimension% is 3 and we "
-	"only input one value, all three variances will be made equal to this value.")
+TAG (L"%%Covariances%,")
+DEFINITION (L"define the covariances. Because a covariance matrix is a symmetric matrix, only the upper triangular "
+	"part of the matrix has to be input (row-wise). If your covariance matrix is "
+	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
+	"row of the covariance matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
 TAG (L"%%Centroid%,")
-DEFINITION (L"defines the centroid. As above the last input value may be repeated if less than %%dimension% numbers are input.")
+DEFINITION (L"defines the centroid. ")
 TAG (L"%%Number of observations%,")
 DEFINITION (L"defines the number of observations. ")
 MAN_END

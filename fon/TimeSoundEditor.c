@@ -539,7 +539,7 @@ class_methods (TimeSoundEditor, FunctionEditor) {
 	class_methods_end
 }
 
-int TimeSoundEditor_init (TimeSoundEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
+int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
 	my ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {

@@ -145,13 +145,13 @@ static void gui_cb_menu (GUI_ARGS) {
 	do_menu (void_me, modified);
 }
 
-static Widget windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
+static GuiObject windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 	return
 		wcsequ (window, L"Picture") ? praat_picture_resolveMenu (menu) :
 		wcsequ (window, L"Objects") ? praat_objects_resolveMenu (menu) : NULL;
 }
 
-Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+GuiObject praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
 	const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
 	long position;
@@ -215,7 +215,7 @@ Widget praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const w
 	theCommands [position]. unhidable = unhidable;
 
 	if (! theCurrentPraatApplication -> batch) {
-		Widget parent = NULL;
+		GuiObject parent = NULL;
 
 		/* WHERE TO PUT IT?
 		 * Determine parent menu widget.
@@ -315,7 +315,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	}
 
 	if (! theCurrentPraatApplication -> batch) {
-		Widget parent = NULL;
+		GuiObject parent = NULL;
 
 		/* WHERE TO PUT IT?
 		 * Determine parent menu widget.
@@ -401,7 +401,7 @@ void praat_saveMenuCommands (FILE *f) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
+void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_wcsdup (L"Objects");
 	my title = title;
@@ -410,7 +410,7 @@ void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*cal
 	if (theCurrentPraatApplication -> batch) {
 		my button = NULL;
 	} else {
-		Widget button = my button = GuiButton_create (parent, x, x + 82, Gui_AUTOMATIC, -y,
+		GuiObject button = my button = GuiButton_create (parent, x, x + 82, Gui_AUTOMATIC, -y,
 			title, gui_button_cb_menu, callback, 0);
 		GuiObject_setSensitive (button, false);
 		GuiObject_show (button);

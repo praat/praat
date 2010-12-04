@@ -74,11 +74,7 @@ extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	#define HAS_FI_AND_FL_LIGATURES  ( my postScript == TRUE )
 #endif
 
-#if xwin
-	static XFontStruct * fontInfos [1 + kGraphics_font_DINGBATS] [5] [1 + Graphics_BOLD_ITALIC];
-	#define IPA_ID  -16012112   /* Magic number. */
-	static struct { Window window; GC gc; Pixmap pixmap; XImage *image; } rotate;
-#elif win
+#if win
 	#define win_MAXIMUM_FONT_SIZE  500
 	static HFONT screenFonts [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static HFONT printerFonts [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
@@ -99,84 +95,7 @@ extern char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	static RGBColor theBlackColour = { 0, 0, 0 }, theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
 #endif
 
-#if xwin
-static XFontStruct * loadFont (I, int font, int size, int style) {
-	iam (GraphicsScreen);
-	XFontStruct *fontInfo;
-	char name [100];
-	/*
-	 * An Xwindows font name looks like this:
-	 * -foundry-                     // Replaced with a wild card: *
-	 * family-                       // times-, courier-, etc
-	 * weight-                       // medium-, bold-
-	 * slant-                        // r-, i- (italic), o- (oblique)
-	 * setWidth--                    // Always normal--
-	 * pixels-                       // Wildcarded because of resolution independence: *-
-	 * height_decipoints-            // 100-, 120-, 140-, 180-, 240-
-	 * horizontalResolution_dpi-     // 75- or 100-
-	 * verticalResolution_dpi-       // 75- or 100-
-	 * spacing-                      // m- for Courier, else p-
-	 * averageWidth_decipixel-       // Wildcarded: *-
-	 * characterSet                  // iso8859-1 or adobe-fontspecific
-	 */
-	sprintf (name, "-*-%s-%s-normal--*-%d0-%d-%d-%s-*-%s",
-		font == kGraphics_font_TIMES ? "times" :
-		font == kGraphics_font_COURIER ? "courier" :
-		font == kGraphics_font_PALATINO ? "palatino" :
-		font == kGraphics_font_IPATIMES ? "xipadontusebecausethishasthewrongencoding" :
-		font == kGraphics_font_DINGBATS ? "itc zapf dingbats" :
-		font == kGraphics_font_SYMBOL ? "symbol" : "helvetica",
-		font == kGraphics_font_SYMBOL || font == kGraphics_font_DINGBATS ? "medium-r" :
-		style == Graphics_BOLD ? "bold-r" :
-		style == Graphics_ITALIC ?
-			font == kGraphics_font_TIMES || font == kGraphics_font_PALATINO ? "medium-i" : "medium-o" :
-		style == Graphics_BOLD_ITALIC ?
-			font == kGraphics_font_TIMES || font == kGraphics_font_PALATINO ? "bold-i" : "bold-o" : "medium-r",
-		size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
-		font == kGraphics_font_PALATINO || font == kGraphics_font_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
-		font == kGraphics_font_PALATINO || font == kGraphics_font_DINGBATS ? 100 : my resolution < 100 ? 75 : 100,
-		"*" /*font == kGraphics_font_COURIER ? "m" : "p"*/,
-		font == kGraphics_font_SYMBOL || font == kGraphics_font_IPATIMES || font == kGraphics_font_DINGBATS ?
-			"adobe-fontspecific" : "iso8859-1");
-	fontInfo = XLoadQueryFont (my display, name);
-	if (! fontInfo) {
-		/*
-		 * Font not available. Is likely to happen with SIL Doulos IPA.
-		 * For SIL Doulos IPA, we have a replacement in the form of Praat-internal bitmaps,
-		 * encoded in the same way as the TeX-xipa-Praat PostScript font (so that xwin encoding equals ps encoding for IPA).
-		 */
-		if (font == kGraphics_font_IPATIMES) {
-			int ichar;
-			Melder_casual ("Font \"%s\" not found. Using bitmaps instead.", name);
-			fontInfo = Melder_calloc (XFontStruct, 1);
-			fontInfo -> fid = (Font) IPA_ID; 
-			fontInfo -> min_char_or_byte2 = 33;
-			fontInfo -> max_char_or_byte2 = 255;
-			fontInfo -> per_char = Melder_calloc (XCharStruct, 255 - 33 + 1);
-			for (ichar = 33; ichar <= 255; ichar ++) {
-				int overstrike = ipaSerifRegular24 [ichar - 32] [0] [0] == 'o';
-				if (overstrike)
-					fontInfo -> per_char [ichar - 33]. lbearing = strlen (ipaSerifRegular24 [ichar - 32] [0]);
-				else
-					fontInfo -> per_char [ichar - 33]. width = strlen (ipaSerifRegular24 [ichar - 32] [0]);
-			}
-		} else {
-			Melder_casual ("Font \"%s\" not found. Trying Courier instead.", name);
-			sprintf (name, "-*-courier-medium-r-normal--*-%d0-%d-%d-*-*-iso8859-1",
-				size == 0 ? 10 : size == 1 ? 12 : size == 2 ? 14 : size == 3 ? 18 : 24,
-				my resolution < 100 ? 75 : 100, my resolution < 100 ? 75 : 100);
-			fontInfo = XLoadQueryFont (my display, name);
-			if (! fontInfo) {
-				Melder_casual ("Praat requires the Adobe fonts Times, Helvetica, Courier and Symbol.");
-				Melder_casual ("Praat may now crash.");
-				return NULL;
-			}
-		}
-	}
-	fontInfos [font] [size] [style] = fontInfo;
-	return fontInfo;
-}
-#elif win
+#if win
 static bool charisAvailable = false, doulosAvailable = false;
 static int CALLBACK fontFuncEx_charis (const LOGFONTW *oldLogFont, const TEXTMETRICW *oldTextMetric, unsigned long fontType, LPARAM lparam) {
 	const LPENUMLOGFONTW logFont = (LPENUMLOGFONTW) oldLogFont; (void) oldTextMetric; (void) fontType; (void) lparam;
@@ -289,28 +208,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> font.integer = font;
 				lc -> size = size;
 			}
-		#elif xwin
-			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
-			int font, size, style;
-			XFontStruct *fontInfo;
-			XCharStruct *charInfo;
-			int normalSize = my fontSize < 11 ? 0 : my fontSize < 13 ? 1 :
-			                 my fontSize < 16 ? 2 : my fontSize < 21 ? 3 : 4;
-			int smallSize = normalSize == 0 ? 0 : normalSize - 1;
-			font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
-			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
-			size = lc -> size < 100 ? smallSize : normalSize;
-			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);
-			fontInfo = fontInfos [font] [size] [style];
-			if (! fontInfo &&
-			    (fontInfo = fontInfos [font] [size] [style] = loadFont (me, font, size, style)) == NULL) return;
-			charInfo = & fontInfo -> per_char [info -> xwinEncoding - fontInfo -> min_char_or_byte2];
-			lc -> width = charInfo -> width;
-			lc -> baseline *= my fontSize * 0.01;
-			lc -> code = info -> xwinEncoding;
-			lc -> font.string = 0;
-			lc -> font.integer = (long) fontInfo -> fid;
 		#elif win
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
@@ -737,9 +634,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			int font = lc -> font.integer;
 			int needBitmappedIPA = 0;
-		#elif xwin
-			Font font = (Font) lc -> font.integer;
-			int needBitmappedIPA = (long) font == IPA_ID;
 		#elif win
 			int font = lc -> font.integer;
 			int needBitmappedIPA = font == kGraphics_font_IPATIMES && ! ipaAvailable;
@@ -832,8 +726,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				} else {
 					if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
 				}
-			#elif xwin
-				if (lc -> link) XSetForeground (my display, my gc, xwinColour_BLUE);
 			#elif win
 			#elif mac
 				if (lc -> link) ForeColor (blueColor);
@@ -866,9 +758,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						cairo_move_to (my cr, xDC, yDC);
 						cairo_show_text (my cr, Melder_peekWcsToUtf8 (codes));
 					}
-				#elif xwin
-					XSetFont (my display, my text.gc, font);
-					XDrawString (my display, my text.window, my text.gc, xDC, yDC, (char *) codes8, nchars);
 				#elif win
 					if (my duringXor) {
 						int descent = (1.0/216) * my fontSize * my resolution;
@@ -932,8 +821,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 										cairo_move_to (my cr, xDC, jrow);
 										cairo_line_to (my cr, xDC, jrow);
 									}
-								#elif xwin
-									XDrawPoint (my display, my window, my gc, xDC, jrow);
 								#elif win
 									SetPixel (my dc, xDC, jrow, my foregroundColour);
 								#elif mac
@@ -962,8 +849,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				} else {
 					if (lc -> link) _Graphics_setColour (me, my colour);
 				}
-			#elif xwin
-				if (lc -> link) _Graphics_setColour (me, my colour);
 			#elif win
 			#elif mac
 				if (lc -> link) RGBForeColor (& my macColour);
@@ -994,8 +879,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 										cairo_move_to (my cr, xp, yp);
 										cairo_line_to (my cr, xp, yp);
 									}
-								#elif xwin
-									XDrawPoint (my display, my window, my gc, xp, yp);
 								#elif win
 									SetPixel (my dc, xp, yp, my foregroundColour);
 								#elif mac
@@ -1065,16 +948,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ix, iy /*, baseline = 1 + ascent * 2*/;
 				double cosa, sina;
-				#if xwin
-					unsigned int height = 2 + (ascent + descent) * 2;
-					if (! rotate.pixmap) {
-						/* Create an off-screen bitmap in the "server". */
-						rotate.pixmap = XCreatePixmap (my display, my rootWindow, 1000, 200, 1);
-						if (! rotate.pixmap) return;
-						if (! rotate.gc) rotate.gc = XCreateGC (my display, rotate.pixmap, 0, NULL);
-						rotate.image = XGetImage (my display, rotate.pixmap, 0, 0, 1000, 200, AllPlanes, XYPixmap);
-					}
-				#elif win
+				#if win
 					int maxWidth = 1000, maxHeight = 600;   /* BUG: printer??? */
 					int baseline = maxHeight / 4, top = baseline - ascent - 1, bottom = baseline + descent + 1;
 					static int inited = 0;
@@ -1110,20 +984,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					/*offscreenPixels = (unsigned char *) GetPixBaseAddr (offscreenPixMap);*/
 				#endif
 				width += 4;   /* Leave room for slant. */
-				#if xwin
-					/* Clear the entire pixmap with "white". */
-					XSetForeground (my display, rotate.gc, 0);
-					XFillRectangle (my display, rotate.pixmap, rotate.gc, 0, 0, width, 200);
-
-					/* Draw the text in "black". */
-					XSetForeground (my display, rotate.gc, 1);
-					XSetFont (my display, rotate.gc, font);
-					XDrawString (my display, rotate.pixmap, rotate.gc, 0, 100, (char *) codes8, nchars);
-
-					/* Copy bitmap from "server" to "client". */
-					XGetSubImage (my display, rotate.pixmap, 0, 100 - ascent, width, height, AllPlanes, XYPixmap,
-						rotate.image, 0, 0);
-				#elif win
+				#if win
 					SelectPen (dc, GetStockPen (WHITE_PEN));
 					SelectBrush (dc, GetStockBrush (WHITE_BRUSH));
 					SetTextAlign (dc, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
@@ -1148,17 +1009,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				else { double a = my textRotation * NUMpi / 180.0; cosa = cos (a); sina = sin (a); }
 				for (ix = 0; ix < width; ix ++) {
 					double dx1 = ix;
-					#if xwin
-						for (iy = 0; iy < height; iy ++) {
-							Pixel pixel = XGetPixel (rotate.image, ix, iy);
-							if (pixel == 1) {   /* "Black". */
-								double dy1 = iy - ascent;   /* Translate, rotate, translate. */
-								int xp = xDC + (int) (cosa * dx1 + sina * dy1);
-								int yp = yDC - (int) (sina * dx1 - cosa * dy1);
-								XDrawPoint (my display, my window, my gc, xp, yp);
-							}
-						}
-					#elif win
+					#if win
 						for (iy = top; iy <= bottom; iy ++) {
 							if (GetPixel (dc, ix, iy) == RGB (0, 0, 0)) {   /* Black? */
 								int dy1 = iy - baseline;   /* Translate, rotate, translate. */

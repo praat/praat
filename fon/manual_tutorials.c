@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101127)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101204)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.05# (4 December 2010)")
+LIST_ITEM (L"\\bu Regular expressions: better Unicode support.")
+LIST_ITEM (L"\\bu Scripting window: command ##Convert to C string#.")
 NORMAL (L"##5.2.04# (27 November 2010)")
 LIST_ITEM (L"\\bu Scripting: allow directory (folder) selector windows; see @@Scripting 6.6. Controlling the user@.")
 NORMAL (L"##5.2.03# (19 November 2010)")

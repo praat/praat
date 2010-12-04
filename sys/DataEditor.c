@@ -62,7 +62,7 @@ static int stringLengths [] = { 0,
 	33, 33, 8, 6, 60, 60, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
-	Widget label, button, text;
+	GuiObject label, button, text;
 	void *address;
 	Data_Description description;
 	long minimum, maximum, min2, max2;
@@ -74,7 +74,7 @@ typedef struct structDataSubEditor_FieldData {
 	DataEditor root; \
 	void *address; \
 	Data_Description description; \
-	Widget scrollBar; \
+	GuiObject scrollBar; \
 	int irow, topField, numberOfFields; \
 	struct structDataSubEditor_FieldData fieldData [1 + MAXNUM_ROWS];
 #define DataSubEditor__methods(Klas) Editor__methods(Klas) \
@@ -374,7 +374,7 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_cb_cancel, me, 0);
 	
-	Widget scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
+	GuiObject scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
@@ -394,11 +394,11 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 	GuiObject_show (scrolledWindow);
 	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
 	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
-	Widget form = XmCreateForm (scrolledWindow, "list", NULL, 0);
+	GuiObject form = XmCreateForm (scrolledWindow, "list", NULL, 0);
 	
 	#elif gtk
-	Widget outerBox = gtk_vbox_new(0, 0);
-	Widget buttonBox = gtk_hbutton_box_new();
+	GuiObject outerBox = gtk_vbox_new(0, 0);
+	GuiObject buttonBox = gtk_hbutton_box_new();
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_START);
 	gtk_box_pack_start(GTK_BOX(outerBox), buttonBox, 0, 0, 3);
 	
@@ -408,9 +408,9 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_cb_cancel, me, 0);
 	
-	Widget scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+	GuiObject scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
 	
-	Widget form = gtk_vbox_new(0, 3);
+	GuiObject form = gtk_vbox_new(0, 3);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledWindow), form);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_box_pack_start(GTK_BOX(outerBox), scrolledWindow, 1, 1, 3);
@@ -923,7 +923,7 @@ class_methods (DataEditor, ClassEditor) {
 	class_methods_end
 }
 
-DataEditor DataEditor_create (Widget parent, const wchar_t *title, Any data) {
+DataEditor DataEditor_create (GuiObject parent, const wchar_t *title, Any data) {
 	DataEditor me = NULL;
 	Data_Table klas = ((Data) data) -> methods;
 	if (klas -> description == NULL) error3

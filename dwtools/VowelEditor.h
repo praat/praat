@@ -80,15 +80,15 @@ Thing_declare1 (VowelEditor);
 	struct structF0 f0; \
 	double maximumDuration, extendDuration; \
 	Sound source, target; \
-	Widget drawingArea, playButton, reverseButton, publishButton; \
-	Widget f0Label, f0TextField, f0SlopeLabel, f0SlopeTextField; \
-	Widget durationLabel, durationTextField, extendLabel, extendTextField; \
-	Widget startInfo, endInfo; \
+	GuiObject drawingArea, playButton, reverseButton, publishButton; \
+	GuiObject f0Label, f0TextField, f0SlopeLabel, f0SlopeTextField; \
+	GuiObject durationLabel, durationTextField, extendLabel, extendTextField; \
+	GuiObject startInfo, endInfo; \
 	struct structF1F2Grid grid;
 #define VowelEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (VowelEditor, Editor);
 
-VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data);
+VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 void VowelEditor_prefs (void);
 

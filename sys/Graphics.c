@@ -52,7 +52,7 @@ static void widgetToWindowCoordinates (I) {
 		if (my screen) {
 			iam (GraphicsScreen);
 			if (my drawingArea) {
-				Widget widget = my drawingArea;
+				GuiObject widget = my drawingArea;
 				int shellX = 0, shellY = 0;
 				do {
 					int x = GuiObject_getX (widget), y = GuiObject_getY (widget);

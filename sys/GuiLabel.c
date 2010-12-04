@@ -1,6 +1,6 @@
 /* GuiLabel.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb & sdk 2007/12/28 gtk
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
@@ -34,30 +35,24 @@
 #endif
 
 typedef struct structGuiLabel {
-	Widget widget;
+	GuiObject widget;
 } *GuiLabel;
 
 #if gtk
-	static void _GuiGtkLabel_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkLabel_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiLabel);
 		Melder_free (me);
 	}
 #elif win || mac
-	void _GuiWinMacLabel_destroy (Widget widget) {
+	void _GuiWinMacLabel_destroy (GuiObject widget) {
 		iam_label;
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-#else
-	static void _GuiMotifButton_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
-		(void) widget; (void) call;
-		iam (GuiLabel);
-		Melder_free (me);
-	}
 #endif
 
-Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags)
 {
 	GuiLabel me = Melder_calloc (struct structGuiLabel, 1);
@@ -100,34 +95,25 @@ Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
 		my widget -> isControl = true;
 		_GuiNativeControl_setTitle (my widget);
 		_GuiObject_position (my widget, left, right, top, bottom);
-	#elif motif
-		my widget = XtVaCreateWidget (Melder_peekWcsToUtf8 (labelText), xmLabelWidgetClass, parent,
-			XmNalignment, ( flags & GuiLabel_RIGHT ? XmALIGNMENT_END : flags & GuiLabel_CENTRE ? XmALIGNMENT_CENTER : XmALIGNMENT_BEGINNING ), NULL);
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifButton_destroyCallback, me);
 	#endif
 	return my widget;
 }
 
-Widget GuiLabel_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiLabel_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags)
 {
-	Widget me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
+	GuiObject me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
 	GuiObject_show (me);
 	return me;
 }
 
-void GuiLabel_setString (Widget widget, const wchar_t *text) {
+void GuiLabel_setString (GuiObject widget, const wchar_t *text) {
 	#if gtk
 		gtk_label_set_text (GTK_LABEL (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup (text);
 		_GuiNativeControl_setTitle (widget);
-	#elif motif
-		char *text_utf8 = Melder_peekWcsToUtf8 (text);
-		XtVaSetValues (widget, XtVaTypedArg, XmNlabelString, XmRString, text_utf8, strlen (text_utf8), NULL);
 	#endif
 }
 

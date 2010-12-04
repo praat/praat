@@ -34,11 +34,11 @@ Thing_declare1 (CategoriesEditor);
 #define CategoriesEditor__members(Klas) Editor__members(Klas)				\
 	CommandHistory history;									\
 	int position;											\
-	Widget list, text, outOfView, undo, redo;				\
-	Widget remove, insert, insertAtEnd, replace, moveUp, moveDown;
+	GuiObject list, text, outOfView, undo, redo;				\
+	GuiObject remove, insert, insertAtEnd, replace, moveUp, moveDown;
 #define CategoriesEditor__methods(Klas) Editor__methods(Klas)
 Thing_declare2 (CategoriesEditor, Editor);
 
-CategoriesEditor CategoriesEditor_create (Widget parent, const wchar_t *title, Any data);
+CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 #endif /* _CategoriesEditor_h_ */

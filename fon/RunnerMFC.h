@@ -33,7 +33,7 @@
 #define RunnerMFC__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
 Thing_declare1 (RunnerMFC);
 
-RunnerMFC RunnerMFC_create (Widget parent, const wchar_t *title, Ordered experiments);
+RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments);
 
 /* End of file RunnerMFC.h */
 #endif

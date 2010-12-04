@@ -40,7 +40,7 @@ Thing_declare1 (AmplitudeTierEditor);
 #define AmplitudeTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (AmplitudeTierEditor, RealTierEditor);
 
-AmplitudeTierEditor AmplitudeTierEditor_create (Widget parent, const wchar_t *title,
+AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar_t *title,
 	AmplitudeTier amplitude, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

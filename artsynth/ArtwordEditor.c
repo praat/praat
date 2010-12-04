@@ -178,7 +178,7 @@ class_methods (ArtwordEditor, Editor) {
 	class_methods_end
 }
 
-ArtwordEditor ArtwordEditor_create (Widget parent, const wchar_t *title, Artword data) {
+ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data) {
 	ArtwordEditor me = new (ArtwordEditor);
 	if (! me || ! Editor_init (ArtwordEditor_as_parent (me), parent, 20, 40, 650, 600, title, data))
 		return NULL;

@@ -33,6 +33,6 @@
 extern int (*theAllowExecutionHookHint) (void *closure);
 extern void *theAllowExecutionClosureHint;
 typedef struct structUiFileSelector *UiFileSelector;
-UiFileSelector UiFileSelector_create (Widget parent, const char *label, int direction, const char *defaultValue);
+UiFileSelector UiFileSelector_create (GuiObject parent, const char *label, int direction, const char *defaultValue);
 
 /* End of file UiP.h */

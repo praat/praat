@@ -44,9 +44,9 @@ Thing_declare1 (ScriptEditor);
 #define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
 Thing_declare2 (ScriptEditor, TextEditor);
 
-ScriptEditor ScriptEditor_createFromText (Widget parent, Any editor, const wchar_t *initialText);
+ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any editor, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */
-ScriptEditor ScriptEditor_createFromScript (Widget parent, Any voidEditor, Script script);
+ScriptEditor ScriptEditor_createFromScript (GuiObject parent, Any voidEditor, Script script);
 
 int ScriptEditors_dirty (void);   /* Are there any modified and unsaved scripts? Ask before quitting the program. */
 

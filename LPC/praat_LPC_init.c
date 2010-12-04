@@ -49,8 +49,8 @@
 #include "Sound_to_MFCC.h"
 #include "Cepstrum_and_Spectrum.h"
 
-static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
-static wchar_t *QUERY_BUTTON   = L"Query -                ";
+static wchar_t *DRAW_BUTTON    = L"Draw -";
+static wchar_t *QUERY_BUTTON   = L"Query -";
 
 extern void praat_CC_init (void *klas);
 extern void praat_TimeFrameSampled_query_init (void *klas);

@@ -50,7 +50,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_saveMenuCommands (FILE *f);
-void praat_addFixedButtonCommand (Widget parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
+void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands (void);
 
@@ -78,7 +78,7 @@ typedef struct structPraat_Command {
 		toggled,
 		phase,
 		unhidable;
-	Widget button;
+	GuiObject button;
 	const wchar_t *window, *menu;
 	const wchar_t *script;   /* If 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand. */
 	const wchar_t *after;   /* Title of previous command, often NULL. */
@@ -107,7 +107,7 @@ void praat_picture_prefsChanged (void);
    (after reading the prefs file).
    Picture window will update the font menu.
 */
-Widget praat_picture_resolveMenu (const wchar_t *menu);
+GuiObject praat_picture_resolveMenu (const wchar_t *menu);
 void praat_picture_background (void);
 void praat_picture_foreground (void);
 
@@ -136,9 +136,9 @@ praat_Command praat_getMenuCommand (long i);
 
 /* Communication with praat_actions.c: */
 void praat_actions_show (void);
-void praat_actions_createWriteMenu (Widget bar);
+void praat_actions_createWriteMenu (GuiObject bar);
 void praat_actions_init (void);   /* Creates space for action commands. */
-void praat_actions_createDynamicMenu (Widget form, int leftOffset);
+void praat_actions_createDynamicMenu (GuiObject form, int leftOffset);
 void praat_saveAddedActions (FILE *f);
 int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   /* 0 = not found or error */
 long praat_getNumberOfActions (void);   /* For ButtonEditor. */
@@ -151,9 +151,9 @@ void praat_statistics_exit (void);   /* At exit time. */
 void praat_memoryInfo (void);
 
 /* Communication with praat_objectMenus.c: */
-Widget praat_objects_resolveMenu (const wchar_t *menu);
-void praat_addFixedButtons (Widget form);
-void praat_addMenus (Widget bar);
+GuiObject praat_objects_resolveMenu (const wchar_t *menu);
+void praat_addFixedButtons (GuiObject form);
+void praat_addMenus (GuiObject bar);
 void praat_addMenus2 (void);
 
 void praat_cleanUpName (wchar_t *name);
@@ -162,7 +162,7 @@ void praat_list_renameAndSelect (int position, const wchar_t *name);
 extern struct PraatP {
 	int dontUsePictureWindow;   /* See praat_dontUsePictureWindow (). */
 	char *title;
-	Widget topBar, menuBar;
+	GuiObject topBar, menuBar;
 	int phase;
 	Any editor;   /* Scripting environment. */
 } praatP;

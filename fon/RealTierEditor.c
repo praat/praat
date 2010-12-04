@@ -416,7 +416,7 @@ class_methods (RealTierEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-int RealTierEditor_init (RealTierEditor me, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
+int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
 	TimeSoundEditor_init (RealTierEditor_as_parent (me), parent, title, data, sound, ownSound); cherror

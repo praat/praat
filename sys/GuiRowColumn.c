@@ -1,6 +1,6 @@
 /* GuiRowColumn.c
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  * pb 2007/12/30
+ * pb 2010/11/28 removed Motif
  */
 
 #include "GuiP.h"
@@ -33,50 +34,33 @@
 #endif
 
 typedef struct structGuiRowColumn {
-	Widget widget;
+	GuiObject widget;
 } *GuiRowColumn;
 
-#if gtk
-#elif motif
-	static void _GuiMotifRowColumn_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
+#if win || mac
+	static void _GuiMotifRowColumn_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiRowColumn);
 		Melder_free (me);
 	}
 #endif
 
-Widget GuiColumn_createShown (Widget parent, unsigned long flags) {
+GuiObject GuiColumn_createShown (GuiObject parent, unsigned long flags) {
 	GuiRowColumn me = Melder_calloc (struct structGuiRowColumn, 1);
 	#if gtk
 	#elif win || mac
 		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmVERTICAL, NULL);
 		_GuiObject_setUserData (my widget, me);
 		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
-	#elif motif
-		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent,
-			XmNorientation, XmVERTICAL,
-			XmNisAligned, False,
-			XmNpacking, (flags & Gui_HOMOGENEOUS) != 0 ? XmPACK_COLUMN : XmPACK_TIGHT,
-			NULL);
-		_GuiObject_setUserData (my widget, me);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
 	#endif
 	return my widget;
 }
 
-Widget GuiRow_createShown (Widget parent, unsigned long flags) {
+GuiObject GuiRow_createShown (GuiObject parent, unsigned long flags) {
 	GuiRowColumn me = Melder_calloc (struct structGuiRowColumn, 1);
 	#if gtk
 	#elif win || mac
 		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmHORIZONTAL, NULL);
-		_GuiObject_setUserData (my widget, me);
-		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
-	#elif motif
-		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent,
-			XmNorientation, XmHORIZONTAL,
-			XmNisAligned, False,
-			XmNpacking, (flags & Gui_HOMOGENEOUS) != 0 ? XmPACK_COLUMN : XmPACK_TIGHT,
-			NULL);
 		_GuiObject_setUserData (my widget, me);
 		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
 	#endif

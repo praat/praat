@@ -44,9 +44,9 @@
 	#define mac 1
 #endif
 
-void _GuiObject_position (Widget me, int left, int right, int top, int bottom);
-void * _GuiObject_getUserData (Widget me);
-void _GuiObject_setUserData (Widget me, void *userData);
+void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom);
+void * _GuiObject_getUserData (GuiObject me);
+void _GuiObject_setUserData (GuiObject me, void *userData);
 
 #if gtk
 #elif motif
@@ -76,14 +76,14 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			struct { XtCallbackProc proc; XtPointer closure; } pairs [MAXNUM_CALLBACKS];
 		} XtCallbackList;
 
-		struct structWidget {
+		struct structGuiObject {
 			long magicNumber;
 			unsigned long widgetClass;
-			Widget parent, previousSibling, nextSibling, firstChild;
+			GuiObject parent, previousSibling, nextSibling, firstChild;
 			wchar_t *name;
 			bool inMenu, nativized, managed, insensitive;
-			Widget textFocus;   /* For shells. */
-			Widget shell;   /* My shell ancestor. */
+			GuiObject textFocus;   /* For shells. */
+			GuiObject shell;   /* My shell ancestor. */
 
 			/* Native. */
 
@@ -91,7 +91,7 @@ void _GuiObject_setUserData (Widget me, void *userData);
 				HWND window;
 				union {
 					/* XtShell: */
-					struct { Widget menuBar; int uniqueItemID, duringMoveWindow; } shell;
+					struct { GuiObject menuBar; int uniqueItemID, duringMoveWindow; } shell;
 
 					/* XmPushButton (if in menu), XmToggleButton (if in menu), XmCascadeButton (if in menu): */
 					struct { HMENU handle; int id; } entry;
@@ -121,7 +121,7 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			/* Motif */
 
 			union {
-				struct { Widget horizontalBar, verticalBar, clipWindow, workWindow; } scrolledWindow;
+				struct { GuiObject horizontalBar, verticalBar, clipWindow, workWindow; } scrolledWindow;
 				struct { XtCallbackList moveCallbacks; } drawingArea;
 				struct { bool active, isDialog, canFullScreen;
 					unsigned long lowAccelerators [8]; XtCallbackProc goAwayCallback; XtPointer goAwayClosure; } shell;
@@ -137,11 +137,11 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			bool isRadioButton;   /* For radio buttons and check buttons. */
 			int radioBehavior, rowColumnType;   /* For row-columns. */
 			int orientation;   /* For row-columns and scroll bars. */
-			Widget defaultButton, cancelButton;   /* For forms and shells. */
+			GuiObject defaultButton, cancelButton;   /* For forms and shells. */
 			int dialogStyle;   /* For forms and shells. */
-			Widget messageText;   /* For message boxes. */
+			GuiObject messageText;   /* For message boxes. */
 			bool autoUnmanage;   /* For bulletin boards. */
-			Widget subMenuId, popUpButton;   /* For cascade buttons and their menus. */
+			GuiObject subMenuId, popUpButton;   /* For cascade buttons and their menus. */
 			long increment, pageIncrement, sliderSize;   /* For scroll bars. */
 			long minimum, maximum, value;   /* For scales and scroll bars. */
 
@@ -157,7 +157,7 @@ void _GuiObject_setUserData (Widget me, void *userData);
 		#define my  me ->
 
 		extern struct Gui {
-			Widget textFocus;
+			GuiObject textFocus;
 			bool duringUpdate;
 			#if win
 				HINSTANCE instance;   /* First argument of WinMain. */
@@ -166,106 +166,106 @@ void _GuiObject_setUserData (Widget me, void *userData);
 			#endif
 		} theGui;
 
-		void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call);
+		void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call);
 		#if mac
-			void _GuiMac_clipOnParent (Widget me);
-			void _GuiMac_clipOffValid (Widget me);
-			void _GuiMac_clipOffInvalid (Widget me);
+			void _GuiMac_clipOnParent (GuiObject me);
+			void _GuiMac_clipOffValid (GuiObject me);
+			void _GuiMac_clipOffInvalid (GuiObject me);
 		#elif win
 			wchar_t * _GuiWin_getDrawingAreaClassName (void);
 		#endif
-		Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name);
-		void _Gui_invalidateWidget (Widget me);
-		void _Gui_validateWidget (Widget me);
-		void _Gui_manageScrolledWindow (Widget me);
-		void _GuiNativeControl_check (Widget me, Boolean value);
-		void _GuiNativeControl_destroy (Widget me);
-		void _GuiNativeControl_setFont (Widget me, int size);
-		void _GuiNativeControl_setTitle (Widget me);
-		void _GuiNativeControl_show (Widget me);
-		void _GuiNativeControl_hide (Widget me);
-		void _GuiNativeControl_setSensitive (Widget me);
+		GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_t *name);
+		void _Gui_invalidateWidget (GuiObject me);
+		void _Gui_validateWidget (GuiObject me);
+		void _Gui_manageScrolledWindow (GuiObject me);
+		void _GuiNativeControl_check (GuiObject me, Boolean value);
+		void _GuiNativeControl_destroy (GuiObject me);
+		void _GuiNativeControl_setFont (GuiObject me, int size);
+		void _GuiNativeControl_setTitle (GuiObject me);
+		void _GuiNativeControl_show (GuiObject me);
+		void _GuiNativeControl_hide (GuiObject me);
+		void _GuiNativeControl_setSensitive (GuiObject me);
 		wchar_t * _GuiWin_expandAmpersands (const wchar_t *title);
 
 		/********** GuiButton.c **********/
-		void _GuiWinMacButton_destroy (Widget widget);
+		void _GuiWinMacButton_destroy (GuiObject widget);
 		#if win
-			void _GuiWinButton_handleClick (Widget widget);
-			bool _GuiWinButton_tryToHandleShortcutKey (Widget widget);
+			void _GuiWinButton_handleClick (GuiObject widget);
+			bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget);
 		#elif mac
-			void _GuiMacButton_handleClick (Widget widget, EventRecord *macEvent);
-			bool _GuiMacButton_tryToHandleShortcutKey (Widget widget, EventRecord *macEvent);
+			void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent);
+			bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent);
 		#endif
 
 		/********** GuiCheckButton.c **********/
-		void _GuiWinMacCheckButton_destroy (Widget widget);
+		void _GuiWinMacCheckButton_destroy (GuiObject widget);
 		#if win
-			void _GuiWinCheckButton_handleClick (Widget widget);
+			void _GuiWinCheckButton_handleClick (GuiObject widget);
 		#elif mac
-			void _GuiMacCheckButton_handleClick (Widget widget, EventRecord *macEvent);
+			void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent);
 		#endif
 
 		/********** GuiDrawingArea.c **********/
-		void _GuiWinMacDrawingArea_destroy (Widget widget);
+		void _GuiWinMacDrawingArea_destroy (GuiObject widget);
 		#if win
-			void _GuiWinDrawingArea_update (Widget widget);
-			void _GuiWinDrawingArea_handleClick (Widget widget, int x, int y);
-			void _GuiWinDrawingArea_handleKey (Widget widget, TCHAR kar);
-			void _GuiWinDrawingArea_shellResize (Widget widget);
+			void _GuiWinDrawingArea_update (GuiObject widget);
+			void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y);
+			void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar);
+			void _GuiWinDrawingArea_shellResize (GuiObject widget);
 		#elif mac
-			void _GuiMacDrawingArea_update (Widget widget);
-			void _GuiMacDrawingArea_handleClick (Widget widget, EventRecord *macEvent);
-			bool _GuiMacDrawingArea_tryToHandleKey (Widget widget, EventRecord *macEvent);
-			void _GuiMacDrawingArea_shellResize (Widget widget);
+			void _GuiMacDrawingArea_update (GuiObject widget);
+			void _GuiMacDrawingArea_handleClick (GuiObject widget, EventRecord *macEvent);
+			bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent);
+			void _GuiMacDrawingArea_shellResize (GuiObject widget);
 		#endif
 
 		/********** GuiLabel.c **********/
-		void _GuiWinMacLabel_destroy (Widget widget);
+		void _GuiWinMacLabel_destroy (GuiObject widget);
 
 		/********** GuiList.c **********/
-		void _GuiWinMacList_destroy (Widget widget);
-		void _GuiWinMacList_map (Widget widget);
+		void _GuiWinMacList_destroy (GuiObject widget);
+		void _GuiWinMacList_map (GuiObject widget);
 		#if win
-			void _GuiWinList_destroy (Widget widget);
-			void _GuiWinList_handleClick (Widget widget);
+			void _GuiWinList_destroy (GuiObject widget);
+			void _GuiWinList_handleClick (GuiObject widget);
 		#elif mac
-			void _GuiMacList_activate (Widget widget, bool activate);
-			void _GuiMacList_handleClick (Widget widget, EventRecord *event);
-			void _GuiMacList_handleControlClick (Widget widget, EventRecord *event);
-			void _GuiMacList_move (Widget widget);
-			void _GuiMacList_resize (Widget widget);
-			void _GuiMacList_shellResize (Widget widget);
-			void _GuiMacList_update (Widget widget, RgnHandle visRgn);
+			void _GuiMacList_activate (GuiObject widget, bool activate);
+			void _GuiMacList_handleClick (GuiObject widget, EventRecord *event);
+			void _GuiMacList_handleControlClick (GuiObject widget, EventRecord *event);
+			void _GuiMacList_move (GuiObject widget);
+			void _GuiMacList_resize (GuiObject widget);
+			void _GuiMacList_shellResize (GuiObject widget);
+			void _GuiMacList_update (GuiObject widget, RgnHandle visRgn);
 		#endif
 
 		/********** GuiRadioButton.c **********/
-		void _GuiWinMacRadioButton_destroy (Widget widget);
+		void _GuiWinMacRadioButton_destroy (GuiObject widget);
 		#if win
-			void _GuiWinRadioButton_handleClick (Widget widget);
+			void _GuiWinRadioButton_handleClick (GuiObject widget);
 		#elif mac
-			void _GuiMacRadioButton_handleClick (Widget widget, EventRecord *macEvent);
+			void _GuiMacRadioButton_handleClick (GuiObject widget, EventRecord *macEvent);
 		#endif
 
 		/********** GuiText.c **********/
-		void _GuiWinMacText_destroy (Widget widget);
-		void _GuiWinMacText_map (Widget widget);
-		void _GuiText_handleFocusReception (Widget widget);
-		void _GuiText_handleFocusLoss (Widget widget);
+		void _GuiWinMacText_destroy (GuiObject widget);
+		void _GuiWinMacText_map (GuiObject widget);
+		void _GuiText_handleFocusReception (GuiObject widget);
+		void _GuiText_handleFocusLoss (GuiObject widget);
 		#if mac
 		void _GuiMac_clearTheTextFocus (void);
 		#endif
-		void _GuiText_setTheTextFocus (Widget widget);
-		void _GuiText_handleValueChanged (Widget widget);
-		void _GuiText_unmanage (Widget widget);
+		void _GuiText_setTheTextFocus (GuiObject widget);
+		void _GuiText_handleValueChanged (GuiObject widget);
+		void _GuiText_unmanage (GuiObject widget);
 		#if mac
-			void _GuiMacText_move (Widget widget);
-			void _GuiMacText_shellResize (Widget widget);
-			void _GuiMacText_resize (Widget widget);
-			void _GuiMacText_update (Widget widget);
-			int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget widget, unsigned char keyCode, unsigned char charCode, EventRecord *event);
-			int _GuiMacText_tryToHandleReturnKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget widget, EventRecord *event);
-			int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, Widget widget, unsigned char charCode, EventRecord *event);
-			void _GuiMacText_handleClick (Widget widget, EventRecord *event);
+			void _GuiMacText_move (GuiObject widget);
+			void _GuiMacText_shellResize (GuiObject widget);
+			void _GuiMacText_resize (GuiObject widget);
+			void _GuiMacText_update (GuiObject widget);
+			int _GuiMacText_tryToHandleKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, unsigned char keyCode, unsigned char charCode, EventRecord *event);
+			int _GuiMacText_tryToHandleReturnKey (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, EventRecord *event);
+			int _GuiMacText_tryToHandleClipboardShortcut (EventHandlerCallRef eventHandlerCallRef, EventRef eventRef, GuiObject widget, unsigned char charCode, EventRecord *event);
+			void _GuiMacText_handleClick (GuiObject widget, EventRecord *event);
 			void _GuiMac_makeTextCaretBlink (void);
 		#endif
 		void _GuiText_init (void);

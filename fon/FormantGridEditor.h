@@ -51,9 +51,9 @@ Thing_declare1 (FormantGridEditor);
 	bool hasSourceMenu;
 Thing_declare2 (FormantGridEditor, FunctionEditor);
 
-int FormantGridEditor_init (FormantGridEditor me, Widget parent, const wchar_t *title, FormantGrid data);
+int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_t *title, FormantGrid data);
 
-FormantGridEditor FormantGridEditor_create (Widget parent, const wchar_t *title, FormantGrid data);
+FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data);
 
 void FormantGridEditor_prefs (void);
 

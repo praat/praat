@@ -1169,14 +1169,14 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 }
 
 static void createChildren (FunctionEditor me) {
-	Widget form;
+	GuiObject form;
 	int x = BUTTON_X;
 
 	#if gtk
 		form = my dialog;
-		Widget hctl_box = gtk_hbox_new (FALSE, BUTTON_SPACING);
+		GuiObject hctl_box = gtk_hbox_new (FALSE, BUTTON_SPACING);
 		gtk_box_pack_end (GTK_BOX (form), hctl_box, FALSE, FALSE, 0);
-		Widget leftbtn_box = gtk_hbox_new (TRUE, 3);
+		GuiObject leftbtn_box = gtk_hbox_new (TRUE, 3);
 		gtk_box_pack_start (GTK_BOX (hctl_box), leftbtn_box, FALSE, FALSE, 0);
 
 		/***** Create zoom buttons. *****/
@@ -1692,7 +1692,7 @@ class_methods (FunctionEditor, Editor) {
 	class_methods_end
 }
 
-int FunctionEditor_init (FunctionEditor me, Widget parent, const wchar_t *title, Any data) {
+int FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar_t *title, Any data) {
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
 	my tmax = ((Function) data) -> xmax;
 	Editor_init (FunctionEditor_as_parent (me), parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data); cherror

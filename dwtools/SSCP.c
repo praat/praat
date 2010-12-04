@@ -59,6 +59,7 @@
 
 #include "SSCP.h"
 #include "Eigen.h"
+#include "Interpreter.h"
 #include "NUMclapack.h"
 #include "NUMlapack.h"
 #include "NUM2.h"
@@ -83,6 +84,8 @@
 #include "oo_DESCRIPTION.h"
 #include "SSCP_def.h"
 
+#undef MAX
+#undef MIN
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define TOVEC(x) (&(x) - 1)
@@ -507,63 +510,6 @@ end:
 	return thee;
 }
 
-TableOfReal Covariance_to_TableOfReal_randomSampling2 (Covariance me,
-	long numberOfData)
-{
-	TableOfReal thee = NULL;
-	PCA pca = NULL;
-	long i, j, k, ncols = my numberOfColumns;
-	double *stdev = NULL, *tmp = NULL;
-
-	if (numberOfData <= 0) numberOfData = my numberOfObservations;
-
-	if ((pca = SSCP_to_PCA (me)) == NULL) return NULL;
-	if ((thee = TableOfReal_create (numberOfData, ncols)) == NULL) goto end;
-	if ((stdev = NUMdvector (1, ncols)) == NULL) goto end;
-	if ((tmp = NUMdvector (1, ncols)) == NULL) goto end;
-
-	for (j = 1;j <= ncols; j++)
-	{
-		stdev[j] = sqrt (pca -> eigenvalues[j]);
-	}
-	for (i = 1; i <= numberOfData; i++)
-	{
-		/*
-			Generate the multi-normal vector elements
-		*/
-		for (j=1; j <= ncols; j++)
-		{
-			tmp[j] = NUMrandomGauss (0, stdev[j]);
-		}
-		/*
-			Rotate back
-		*/
-		for (j=1; j <= ncols; j++)
-		{
-			for (k=1; k <= ncols; k++)
-			{
-				thy data[i][j] += tmp[k] * pca -> eigenvectors[k][j];
-			}
-		}
-		/*
-			Restore the centroid
-		*/
-		for (j=1; j <= ncols; j++) thy data[i][j] += my centroid[j];
-	}
-
-	/*
-		Set column labels
-	*/
-
-	NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, ncols);
-
-end:
-	forget (pca);
-	NUMdvector_free (tmp, 1); NUMdvector_free (stdev, 1);
-	return thee;
-}
-
-
 SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole)
 {
 	iam (TableOfReal);
@@ -887,6 +833,7 @@ int SSCP_setCentroid (I, long component, double value)
 	iam (SSCP);
 	if (component < 1 || component > my numberOfColumns) return Melder_error1 (L"Illegal component number.");
 	my centroid[component] = value;
+	return 1;
 }
 
 CCA SSCP_to_CCA (I, long ny)
@@ -1304,30 +1251,71 @@ Covariance Covariance_create_reduceStorage (long dimension, long storage)
 	return me;
 }
 
-Covariance Covariance_createSimple (long dimension, wchar_t *variances, wchar_t *centroid, long numberOfObservations)
+Covariance Covariance_createSimple (wchar_t *covars, wchar_t *centroid, long numberOfObservations)
 {
+	long dimension = Melder_countTokens (centroid);
+	long ncovars = Melder_countTokens (covars);
+	long ncovars_wanted = dimension * (dimension + 1) / 2;
+	if (ncovars != ncovars_wanted) return Melder_errorp1 (L"The number of covariance matrix elements and the number of "
+		"centroid elements are not in concordance. There should be d(d+1)/2 covariance values and d centroid values.");
+
 	Covariance me = Covariance_create (dimension);
 	if (me == NULL) return me;
 
-	long inum = 1;
-	for (wchar_t *token = Melder_firstToken (variances); token != NULL && inum <= dimension; token = Melder_nextToken (), inum++)
+	// Construct the full covariance matrix from the upper-diagonal elements
+
+	long inum = 1, irow = 1, icol, nmissing, inumc;
+	for (wchar_t *token = Melder_firstToken (covars); token != NULL && inum <= ncovars_wanted; token = Melder_nextToken (), inum++)
 	{
-		double number = Melder_atof (token);
-		if (number <= 0) { Melder_error1 (L"Variances must be positive numbers."); goto end; }
-		my data[inum][inum] = number;
+		double number;
+		nmissing = (irow - 1) * irow / 2;
+		inumc = inum + nmissing;
+		irow = (inumc - 1) / dimension + 1;
+		icol = ((inumc - 1) % dimension) + 1;
+		if (! Interpreter_numericExpression (NULL, token, &number))
+		{
+			Melder_error5 (L"Covariance: item ", Melder_integer (inum), L" \"", token, L"\"is not a number.");
+			goto end;
+		}
+		my data[irow][icol] = my data[icol][irow] = number;
+		if (icol == dimension) irow++;
 	}
-	inum--;
-	for (long i = inum; i <= dimension; i++) { my data[i][i] = my data[inum][inum]; } // repeat last number given
+
+	// Check if a valid covariance, first check variances then covariances
+
+	for (long irow = 1; irow <= dimension; irow++)
+	{
+		if (my data[irow][irow] <= 0)
+		{
+			Melder_error1 (L"The variances, i.e. the diagonal matrix elements, must all be positive numbers.");
+			goto end;
+		}
+	}
+	for (long irow = 1; irow <= dimension; irow++)
+	{
+		for (long icol = irow + 1; icol <= dimension; icol++)
+		{
+			if (fabs (my data[irow][icol] / sqrt (my data[irow][irow] * my data[icol][icol])) > 1)
+			{
+				nmissing = (irow - 1) * irow / 2;
+				inum = (irow - 1) * dimension + icol - nmissing;
+				Melder_error7 (L"The covariance in cell [", Melder_integer(irow), L",", Melder_integer(icol), L"], i.e. input item ", Melder_integer(inum), L" is too large.");
+				goto end;
+			}
+		}
+	}
 
 	inum = 1;
 	for (wchar_t *token = Melder_firstToken (centroid); token != NULL && inum <= dimension; token = Melder_nextToken (), inum++)
 	{
-		double number = Melder_atof (token);
+		double number;
+		if (! Interpreter_numericExpression (NULL, token, &number))
+		{
+			Melder_error5 (L"Centroid: item ", Melder_integer (inum), L" \"", token, L"\"is not a number.");
+			goto end;
+		}
 		my centroid[inum] = number;
 	}
-	inum--;
-	for (long i = inum; i <= dimension; i++) { my centroid[i] = my centroid[inum]; } // repeat last number given
-
 	my numberOfObservations = numberOfObservations;
 end:
 	if (Melder_hasError ()) forget (me);

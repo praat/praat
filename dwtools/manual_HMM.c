@@ -148,18 +148,18 @@ MAN_END
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENU (L"Criterion based on", 1) \
 	OPTION (L"Maximum likelihood") \
-	OPTION (L"Description length") \
+	OPTION (L"Minimum message length") \
 	OPTION (L"Bayes information") \
 	OPTION (L"Akaike information") \
 	OPTION (L"Akaike corrected") \
 	OPTION (L"Complete-data ML")
 
-MAN_BEGIN (L"GaussianMixture & TableOfReal: Get likelihood value...", L"djmw", 20101123)
+MAN_BEGIN (L"GaussianMixture & TableOfReal: Get likelihood value...", L"djmw", 20101125)
 INTRO (L"Calculates how well the @GaussianMixture model fits the data according to a criterion.")
 ENTRY (L"Settings")
 TAG (L"%%Maximum likelihood%")
 FORMULA (L"ML = \\Si__%i=1..%n_ log (\\Si__%m=1..%k_ \\al__%k_ %p__%%ik%_)")
-TAG (L"%%Description length%")
+TAG (L"%%Minimum message length%")
 FORMULA (L"DL = ML - 0.5(N\\.c\\Si__%m=1..%k_ log(%n\\al__%m_/12) -%k\\.clog(%n/12) -%k(%N+1))")
 TAG (L"%%Bayes information%")
 FORMULA (L"BIC = 2\\.cML - k\\.cN\\.clog(n)")

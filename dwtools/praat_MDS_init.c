@@ -1,6 +1,6 @@
 /* praat_MDS_init.c
  *
- * Copyright (C) 1992-2009 David Weenink
+ * Copyright (C) 1992-2010 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@
 
 void praat_TableOfReal_init (void *klas);
 
-static wchar_t *QUERY_BUTTON   = L"Query -                ";
-static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
-static wchar_t *ANALYSE_BUTTON = L"Analyse -              ";
-static wchar_t *CONFIGURATION_BUTTON = L"To Configuration -     ";
+static wchar_t *QUERY_BUTTON   = L"Query -";
+static wchar_t *DRAW_BUTTON    = L"Draw -";
+static wchar_t *ANALYSE_BUTTON = L"Analyse -";
+static wchar_t *CONFIGURATION_BUTTON = L"To Configuration -";
 extern void praat_TableOfReal_init2  (void *klas);
 
 /* Tests */
@@ -1600,15 +1600,15 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classConfiguration, 0, L"To Configuration (varimax)...", 0, 0, DO_Configuration_varimax);
 	praat_addAction1 (classConfiguration, 0, L"To Similarity (cc)", 0, 0, DO_Configuration_to_Similarity_cc);
 
-	praat_addAction1 (classConfiguration, 0, L"Match configurations - ", 0, 0, 0);
+	praat_addAction1 (classConfiguration, 0, L"Match configurations -", 0, 0, 0);
 	praat_addAction1 (classConfiguration, 2, L"To Procrustes...", 0, 1, DO_Configurations_to_Procrustes);
 	praat_addAction1 (classConfiguration, 2, L"To AffineTransform (congruence)...", 0, 1, DO_Configurations_to_AffineTransform_congruence);
 
 	praat_addAction1 (classConfusion, 0, L"To ContingencyTable", L"To Matrix", 0, DO_Confusion_to_ContingencyTable);
-	praat_addAction1 (classConfusion, 0, L"To Proximity -       ", L"Analyse", 0, 0);
-		praat_addAction1 (classConfusion, 0, L"To Dissimilarity (pdf)...", L"To Proximity -       ", 1, DO_Confusion_to_Dissimilarity_pdf);
-		praat_addAction1 (classConfusion, 0, L"To Similarity...", L"To Proximity -       ", 1, DO_Confusion_to_Similarity);
-		praat_addAction1 (classConfusion, 0, L"Sum", L"Synthesize -     ", 1, DO_Confusions_sum);
+	praat_addAction1 (classConfusion, 0, L"To Proximity -", L"Analyse", 0, 0);
+		praat_addAction1 (classConfusion, 0, L"To Dissimilarity (pdf)...", L"To Proximity -", 1, DO_Confusion_to_Dissimilarity_pdf);
+		praat_addAction1 (classConfusion, 0, L"To Similarity...", L"To Proximity -", 1, DO_Confusion_to_Similarity);
+		praat_addAction1 (classConfusion, 0, L"Sum", L"Synthesize -", 1, DO_Confusions_sum);
 
 
 	praat_TableOfReal_init2 (classContingencyTable);
@@ -1627,7 +1627,6 @@ void praat_uvafon_MDS_init (void)
 	praat_TableOfReal_init2 (classDissimilarity);
 	praat_TableOfReal_extras (classDissimilarity);
 	praat_addAction1 (classDissimilarity, 0, L"Get additive constant", L"Get table norm", 1, DO_Dissimilarity_getAdditiveConstant);
-	praat_addAction1 (classDissimilarity, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classDissimilarity, 0, CONFIGURATION_BUTTON, 0, 0, 0);
 		praat_addAction1 (classDissimilarity, 1, L"To Configuration (monotone mds)...", 0, 1, DO_Dissimilarity_monotone_mds);
 		praat_addAction1 (classDissimilarity, 1, L"To Configuration (i-spline mds)...", 0, 1, DO_Dissimilarity_ispline_mds);
@@ -1644,7 +1643,7 @@ void praat_uvafon_MDS_init (void)
 
 	praat_TableOfReal_init2 (classDistance);
 	praat_TableOfReal_extras (classDistance);
-	praat_addAction1 (classDistance, 0, L"Analyse", 0, 0, 0);
+	praat_addAction1 (classDistance, 0, L"Analyse -", 0, 0, 0);
 	praat_addAction1 (classDistance, 0, CONFIGURATION_BUTTON, 0, 0, 0);
 		praat_addAction1 (classDistance, 0, L"To Configuration (indscal)...", 0, 1, DO_Distances_indscal);
 		praat_addAction1 (classDistance, 0, L"-- linear scaling --", 0, 1, 0);
@@ -1667,7 +1666,7 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classSimilarity, 0, L"Similarity help", 0, 0, DO_Similarity_help);
 	praat_TableOfReal_init2 (classSimilarity);
 	praat_TableOfReal_extras (classSimilarity);
-	praat_addAction1 (classSimilarity, 0, L"Analyse", 0, 0, 0);
+	praat_addAction1 (classSimilarity, 0, L"Analyse -", 0, 0, 0);
 	praat_addAction1 (classSimilarity, 0, L"To Dissimilarity...", 0, 0, DO_Similarity_to_Dissimilarity);
 
 
@@ -1678,7 +1677,7 @@ void praat_uvafon_MDS_init (void)
 	praat_addAction1 (classTableOfReal, 1, L"Centre rows", L"Normalize table...", 1, DO_TableOfReal_centreRows);
 	praat_addAction1 (classTableOfReal, 1, L"Centre columns", L"Centre rows", 1, DO_TableOfReal_centreColumns);
 	praat_addAction1 (classTableOfReal, 1, L"Double centre", L"Centre columns", 1, DO_TableOfReal_doubleCentre);
-	praat_addAction1 (classTableOfReal, 0, L"Cast -         ", 0, 0, 0);
+	praat_addAction1 (classTableOfReal, 0, L"Cast -", 0, 0, 0);
 		praat_addAction1 (classTableOfReal, 0, L"To Confusion", 0, 1, DO_TableOfReal_to_Confusion);
 		praat_addAction1 (classTableOfReal, 0, L"To Dissimilarity", 0, 1, DO_TableOfReal_to_Dissimilarity);
 		praat_addAction1 (classTableOfReal, 0, L"To Similarity", 0, 1, DO_TableOfReal_to_Similarity);

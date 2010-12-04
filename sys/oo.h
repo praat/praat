@@ -310,10 +310,10 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
 
-#define oo_WIDGET(x)  Widget x;
-#define oo_WIDGET_ARRAY(x,cap,n)  Widget x [cap];
-#define oo_WIDGET_SET(x,setType)  Widget x [1 + setType##_MAX];
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  Widget *x;
+#define oo_WIDGET(x)  GuiObject x;
+#define oo_WIDGET_ARRAY(x,cap,n)  GuiObject x [cap];
+#define oo_WIDGET_SET(x,setType)  GuiObject x [1 + setType##_MAX];
+#define oo_WIDGET_VECTOR_FROM(x,min,max)  GuiObject *x;
 
 #define oo_OBJECT(Class,version,x)  Class x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  Class x;

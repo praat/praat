@@ -57,7 +57,7 @@ class_methods (IntensityTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-IntensityTierEditor IntensityTierEditor_create (Widget parent, const wchar_t *title, IntensityTier intensity, Sound sound, int ownSound) {
+IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar_t *title, IntensityTier intensity, Sound sound, int ownSound) {
 	IntensityTierEditor me = new (IntensityTierEditor);
 	if (! me || ! RealTierEditor_init (IntensityTierEditor_as_parent (me), parent, title, (RealTier) intensity, sound, ownSound))
 		{ forget (me); return NULL; }

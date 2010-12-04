@@ -204,6 +204,27 @@ NORMAL (L"When you select one or more objects, you can perform on them the actio
 	"or in the @@Write menu@. You can choose hidden actions with the help of the @ButtonEditor.")
 MAN_END
 
+MAN_BEGIN (L"overlap-add", L"ppgb", 20070816)
+INTRO (L"A method for manipulating the pitch and duration of an acoustic speech signal. "
+	"This method was realized by @@Moulines & Charpentier (1990)@, "
+	"who called it Time-Domain Pitch-Synchronous Overlap-and-Add (TD-PSOLA). "
+	"Nowadays, PSOLA\\tm and TD-PSOLA\\tm are trademarks owned by France Telecom^\\re.")
+ENTRY (L"Overlap-add synthesis")
+NORMAL (L"When a @Sound is created from a @Manipulation object, the following steps are performed:")
+LIST_ITEM (L"1. From the @PitchTier, new points are generated along the entire time domain, "
+	"with the method of @@PitchTier: To PointProcess@.")
+LIST_ITEM (L"2. The period information in the original pulses (available in the Manipulation object) "
+	"is used to remove from the new pulses all points that lie within voiceless intervals "
+	"(i.e., places where the distance between adjacent points in the original pulses is greater than 20 ms).")
+LIST_ITEM (L"3. The voiceless parts are copied from the source Sound to the target Sound, "
+	"re-using some parts if the local duration is greater than 1.")
+LIST_ITEM (L"4. For each target point, we look up the nearest source point. A piece of the source Sound, "
+	"centred around the source point, is copied to the target Sound at a location determined by "
+	"the target point, using a bell-shaped window whose left-hand half-length is the minimum "
+	"of the left-hand periods adjacent to the source and target points "
+	"(and analogously for the right-hand half-length).")
+MAN_END
+
 MAN_BEGIN (L"pitch floor", L"ppgb", 20060914)
 INTRO (L"The pitch floor is the bottom of the pitch range in the Sound window (see the @Intro). "
 	"The standard setting is 75 Hertz; pitch values below this pitch floor will not be computed or shown by Praat.")
@@ -234,27 +255,6 @@ FORMULA (L"PSD__dB_(%f) = 10 log__10_ { PSD(%f) / %%P__ref_%^2 }")
 NORMAL (L"Since the argument of the logarithm is in units of Hz^^-1^, this spectral measure can loosely be said "
 	"to be in units of `dB/Hz'. In Praat, this logarithmic power spectral density is the quantity stored in an @Ltas; "
 	"it is also the quantity shown in pictures of a @Spectrum and a @Spectrogram.")
-MAN_END
-
-MAN_BEGIN (L"overlap-add", L"ppgb", 20070816)
-INTRO (L"A method for manipulating the pitch and duration of an acoustic speech signal. "
-	"This method was realized by @@Moulines & Charpentier (1990)@, "
-	"who called it Time-Domain Pitch-Synchronous Overlap-and-Add (TD-PSOLA). "
-	"Nowadays, PSOLA\\tm and TD-PSOLA\\tm are trademarks owned by France Telecom^\\re.")
-ENTRY (L"Overlap-add synthesis")
-NORMAL (L"When a @Sound is created from a @Manipulation object, the following steps are performed:")
-LIST_ITEM (L"1. From the @PitchTier, new points are generated along the entire time domain, "
-	"with the method of @@PitchTier: To PointProcess@.")
-LIST_ITEM (L"2. The period information in the original pulses (available in the Manipulation object) "
-	"is used to remove from the new pulses all points that lie within voiceless intervals "
-	"(i.e., places where the distance between adjacent points in the original pulses is greater than 20 ms).")
-LIST_ITEM (L"3. The voiceless parts are copied from the source Sound to the target Sound, "
-	"re-using some parts if the local duration is greater than 1.")
-LIST_ITEM (L"4. For each target point, we look up the nearest source point. A piece of the source Sound, "
-	"centred around the source point, is copied to the target Sound at a location determined by "
-	"the target point, using a bell-shaped window whose left-hand half-length is the minimum "
-	"of the left-hand periods adjacent to the source and target points "
-	"(and analogously for the right-hand half-length).")
 MAN_END
 
 MAN_BEGIN (L"quantile algorithm", L"ppgb", 19980101)

@@ -32,18 +32,18 @@ Thing_declare1 (TextEditor);
 
 #define TextEditor__members(Klas) Editor__members(Klas) \
 	structMelderFile file; \
-	Widget textWidget; \
+	GuiObject textWidget; \
 	Any openDialog, saveDialog, printDialog, findDialog; \
 	int dirty, fontSize; \
-	Widget dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
-	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+	GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
+	GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 #define TextEditor__methods(Klas) Editor__methods(Klas) \
 	bool fileBased; \
 	void (*clear) (Klas me);
 Thing_declare2 (TextEditor, Editor);
 
-int TextEditor_init (TextEditor me, Widget parent, const wchar_t *initialText);
-TextEditor TextEditor_create (Widget parent, const wchar_t *initialText);
+int TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText);
+TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */
 void TextEditor_showOpen (TextEditor me);
 

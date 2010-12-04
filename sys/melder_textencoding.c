@@ -265,6 +265,17 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 	wchar_t *q = & wcs [0];
 	if (inputEncoding == 0)
 		inputEncoding = preferences. inputEncoding;
+	/*
+	 * In case the preferences weren't initialized yet, use the platform defaults:
+	 */
+	if (inputEncoding == 0)
+		#if defined (macintosh)
+			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_MACROMAN;
+		#elif defined (_WIN32)
+			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1;
+		#else
+			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1;
+		#endif
 	if (inputEncoding == kMelder_textInputEncoding_UTF8 ||
 	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1 ||
 	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1 ||

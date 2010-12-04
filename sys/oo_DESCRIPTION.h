@@ -340,12 +340,12 @@
 #undef oo_STRUCT_VECTOR
 #define oo_STRUCT_VECTOR(Type,x,n)  { L"" #x, structwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (struct struct##Type), L"" #Type, Type##_description, 1, 0, L"" #n },
 
-#define oo_WIDGET(x)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Widget) },
-#define oo_WIDGET_ARRAY(x,cap,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Widget), 0, 0, - cap, 0, L"" #n },
-#define oo_WIDGET_SET(x,setType)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Widget), 0, 0, 3, (void *) setType##_getText, (void *) setType##_getValue },
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Widget), 0, 0, 1, L"" #min, L"" #max },
+#define oo_WIDGET(x)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (GuiObject) },
+#define oo_WIDGET_ARRAY(x,cap,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (GuiObject), 0, 0, - cap, 0, L"" #n },
+#define oo_WIDGET_SET(x,setType)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (GuiObject), 0, 0, 3, (void *) setType##_getText, (void *) setType##_getValue },
+#define oo_WIDGET_VECTOR_FROM(x,min,max)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (GuiObject), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_WIDGET_VECTOR
-#define oo_WIDGET_VECTOR(Type,x,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Widget), 0, 0, 1, 0, #n },
+#define oo_WIDGET_VECTOR(Type,x,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (GuiObject), 0, 0, 1, 0, #n },
 
 #define oo_OBJECT(Type,version,x)  { L"" #x, objectwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (Type), L"" #Type, & theStruct##Type },
 #define oo_COLLECTION(Type,x,ItemType,version)  { L"" #x, collectionwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (struct struct##ItemType), L"" #Type, & theStruct##Type, 0, (const wchar_t *) & theStruct##ItemType },

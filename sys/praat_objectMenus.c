@@ -119,9 +119,9 @@ END
 
 /********** The fixed menus. **********/
 
-static Widget praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
+static GuiObject praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
 
-Widget praat_objects_resolveMenu (const wchar_t *menu) {
+GuiObject praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
@@ -488,10 +488,10 @@ void praat_show (void) {
 
 /********** Menu descriptions. **********/
 
-void praat_addFixedButtons (Widget form) {
+void praat_addFixedButtons (GuiObject form) {
 // Het is bagger, ik weet het, maar kom maar met een betere oplossing... bijvoorkeur zonder #defines
 #if gtk
-	Widget buttons1 = NULL, buttons2 = NULL, buttons3 = NULL;
+	GuiObject buttons1 = NULL, buttons2 = NULL, buttons3 = NULL;
 	if (form) {
 		buttons1 = gtk_hbutton_box_new ();
 		buttons2 = gtk_hbutton_box_new ();
@@ -543,8 +543,8 @@ static int cb_openDocument (MelderFile file) {
 	return 0;
 }
 
-void praat_addMenus (Widget bar) {
-	Widget button;
+void praat_addMenus (GuiObject bar) {
+	GuiObject button;
 
 	Melder_setSearchProc (searchProc);
 

@@ -45,7 +45,7 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 #ifdef macintosh
 	Graphics Graphics_create_port (void *display, unsigned long port, int resolution);
 #endif
-Graphics Graphics_create_xmdrawingarea (/* Widget */ void *drawingArea);
+Graphics Graphics_create_xmdrawingarea (/* GuiObject */ void *drawingArea);
 
 int Graphics_getResolution (I);
 

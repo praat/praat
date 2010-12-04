@@ -122,7 +122,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event);
 static void gui_button_cb_reverse (I, GuiButtonEvent event);
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event);
 // helpers
-static double getRealFromTextWidget (Widget me);
+static double getRealFromTextWidget (GuiObject me);
 static double getCoordinate (double fmin, double fmax, double f);
 static double getF0 (struct structF0 *f0p, double time);
 static void checkF1F2 (VowelEditor me, double *f1, double *f2);
@@ -277,7 +277,7 @@ static void appendF1F2F0 (MelderString *statusInfo, wchar_t *intro, double f1, d
 	MelderString_append7 (statusInfo, intro, REPRESENTNUMBER(f1,1), komma, REPRESENTNUMBER(f2,2), komma, REPRESENTNUMBER(f0,3), ending);
 }
 
-static double getRealFromTextWidget (Widget me)
+static double getRealFromTextWidget (GuiObject me)
 {
 	double value = NUMundefined;
 	wchar_t *dirty = GuiText_getString (me);
@@ -1440,14 +1440,14 @@ static void createHelpMenuItems (VowelEditor me, EditorMenu menu) {
 
 static void createChildren (VowelEditor me)
 {
-	Widget form;
+	GuiObject form;
 
 	// Origin is top left!
 
 #if gtk
 	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
 	form = my dialog;
-	Widget table = gtk_table_new (nrows, ncols, TRUE);
+	GuiObject table = gtk_table_new (nrows, ncols, TRUE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 4);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 4);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 4);
@@ -1617,7 +1617,7 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 	return thee;
 }
 
-VowelEditor VowelEditor_create (Widget parent, const wchar_t *title, Any data)
+VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = new (VowelEditor);
 	if (me == NULL || ! Editor_init (VowelEditor_as_parent (me), parent, 20, 40, 650, 650, title, data)) goto end;

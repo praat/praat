@@ -30,7 +30,7 @@ oo_DEFINE_STRUCT (OTConstraint)
 	oo_FROM (2)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
-	#if OO_READING
+	#if oo_READING
 		if (localVersion < 2) {
 			my plasticity = 1.0;
 		}

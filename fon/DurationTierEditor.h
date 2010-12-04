@@ -40,7 +40,7 @@ Thing_declare1 (DurationTierEditor);
 #define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (DurationTierEditor, RealTierEditor);
 
-DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title,
+DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title,
 	DurationTier duration, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

@@ -35,7 +35,7 @@
 #define TextGridEditor__parents(Klas) TimeSoundAnalysisEditor__parents(Klas) Thing_inherit (Klas, TimeSoundAnalysisEditor)
 Thing_declare1 (TextGridEditor);
 
-TextGridEditor TextGridEditor_create (Widget parent, const wchar_t *title, TextGrid grid,
+TextGridEditor TextGridEditor_create (GuiObject parent, const wchar_t *title, TextGrid grid,
 	Any sound,   /* 'sound' could be a Sound or a LongSound */
 	Any spellingChecker);
 

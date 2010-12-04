@@ -36,18 +36,18 @@
 #endif
 
 typedef struct structGuiDialog {
-	Widget widget;
+	GuiObject widget;
 	void (*goAwayCallback) (void *boss);
 	void *goAwayBoss;
 } *GuiDialog;
 
 #if gtk
-	static void _GuiGtkDialog_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkDialog_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiDialog);
 		Melder_free (me);
 	}
-	static gboolean _GuiGtkDialog_goAwayCallback (Widget widget, GdkEvent *event, gpointer void_me) {
+	static gboolean _GuiGtkDialog_goAwayCallback (GuiObject widget, GdkEvent *event, gpointer void_me) {
 		(void) event;
 		iam (GuiDialog);
 		if (my goAwayCallback != NULL) {
@@ -55,13 +55,13 @@ typedef struct structGuiDialog {
 		}
 		return TRUE;   // signal handled (don't destroy dialog)
 	}
-#elif motif
-	static void _GuiMotifDialog_destroyCallback (Widget widget, XtPointer void_me, XtPointer call) {
+#elif win || mac
+	static void _GuiMotifDialog_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiDialog);
 		Melder_free (me);
 	}
-	static void _GuiMotifDialog_goAwayCallback (Widget widget, XtPointer void_me, XtPointer call) {
+	static void _GuiMotifDialog_goAwayCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiDialog);
 		if (my goAwayCallback != NULL) {
@@ -70,16 +70,16 @@ typedef struct structGuiDialog {
 	}
 #endif
 
-Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
+GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
 	GuiDialog me = Melder_calloc (struct structGuiDialog, 1);
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk
-		Widget shell = gtk_dialog_new ();
+		GuiObject shell = gtk_dialog_new ();
 		if (parent) {
-			Widget toplevel = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+			GuiObject toplevel = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
 			if (toplevel) {
 				gtk_window_set_transient_for (GTK_WINDOW (shell), GTK_WINDOW (toplevel));
 				gtk_window_set_destroy_with_parent (GTK_WINDOW (shell), TRUE);
@@ -94,8 +94,8 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 		GuiWindow_setTitle (shell, title);
 		my widget = GTK_DIALOG (shell) -> vbox;
 		g_signal_connect (G_OBJECT (my widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me);
-	#elif motif
-		Widget shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
+	#elif win || mac
+		GuiObject shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, NULL);
 		if (goAwayCallback) {
 			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
@@ -115,9 +115,9 @@ Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
 	return my widget;
 }
 
-Widget GuiDialog_getButtonArea (Widget widget) {
+GuiObject GuiDialog_getButtonArea (GuiObject widget) {
 	#if gtk
-		Widget shell = GuiObject_parent (widget);
+		GuiObject shell = GuiObject_parent (widget);
 		Melder_assert (GTK_IS_DIALOG (shell));
 		return GTK_DIALOG (shell) -> action_area;
 	#else

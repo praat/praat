@@ -35,11 +35,11 @@ Thing_declare1 (PointEditor);
 
 #define PointEditor__members(Klas) TimeSoundEditor__members(Klas) \
 	Sound monoSound; \
-	Widget addPointAtDialog;
+	GuiObject addPointAtDialog;
 #define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
 Thing_declare2 (PointEditor, TimeSoundEditor);
 
-PointEditor PointEditor_create (Widget parent, const wchar_t *title,
+PointEditor PointEditor_create (GuiObject parent, const wchar_t *title,
 	PointProcess point, Sound sound);
 /*
 	'sound' may be NULL.

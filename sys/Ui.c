@@ -94,7 +94,7 @@
 	Ordered options; \
 	long numberOfStrings; \
 	const wchar_t **strings; \
-	Widget text, toggle, list, cascadeButton; \
+	GuiObject text, toggle, list, cascadeButton; \
 	int y;
 #define UiField_methods Thing_methods
 class_create (UiField, Thing);
@@ -137,7 +137,7 @@ static UiField UiField_create (int type, const wchar_t *name) {
 /***** class UiOption: radio buttons and menu options *****/
 
 #define UiOption_members Thing_members \
-	Widget toggle;
+	GuiObject toggle;
 #define UiOption_methods Thing_methods
 class_create (UiOption, Thing);
 
@@ -172,7 +172,7 @@ Any UiRadio_addButton (I, const wchar_t *label) {
 
 #if motif
 // TODO: Ik denk dat dit Native GTK gedrag is (als dit alleen het label update)
-static void cb_optionChanged (Widget w, XtPointer void_me, XtPointer call) {
+static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	iam (UiField);
 	int i;
 	(void) call;
@@ -470,7 +470,7 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 
 #define UiForm_members Thing_members \
 	EditorCommand command; \
-	Widget parent, shell, dialog; \
+	GuiObject parent, shell, dialog; \
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
 	int (*applyCallback) (Any dia, void *closure); \
 	int (*cancelCallback) (Any dia, void *closure); \
@@ -480,7 +480,7 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	int numberOfFields; \
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS]; \
-	Widget okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
+	GuiObject okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	bool destroyWhenUnmanaged, isPauseForm; \
 	int (*allowExecutionHook) (void *closure); \
 	void *allowExecutionClosure;
@@ -534,7 +534,7 @@ int UiForm_widgetsToValues (I) {
 	return 1;
 }
 
-static void UiForm_okOrApply (I, Widget button, int hide) {
+static void UiForm_okOrApply (I, GuiObject button, int hide) {
 	iam (UiForm);
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_error3 (L"Cannot execute dialog `", my name, L"'.");
@@ -673,7 +673,7 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 	Melder_help (my helpTitle);
 }
 
-Any UiForm_create (Widget parent, const wchar_t *title,
+Any UiForm_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
@@ -879,10 +879,10 @@ void UiForm_finish (I) {
 	int labelWidth = fieldX - Gui_LABEL_SPACING - x, fieldWidth = labelWidth, halfFieldWidth = fieldWidth / 2 - 6;
 
 	#if gtk
-		Widget form, buttons;
+		GuiObject form, buttons;
 		int numberOfRows = 0, row = 0;
 	#else
-		Widget form, buttons; // Define?
+		GuiObject form, buttons; // Define?
 	#endif
 
 	/*
@@ -949,7 +949,7 @@ void UiForm_finish (I) {
 				if (wcsnequ (field -> name, L"left ", 5)) {
 					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
 					appendColon ();
-					Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
+					GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
 					#if gtk
 						gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
@@ -968,7 +968,7 @@ void UiForm_finish (I) {
 				} else {
 					MelderString_copy (& theFinishBuffer, field -> formLabel);
 					appendColon ();
-					Widget label = GuiLabel_createShown (form, x, x + labelWidth,
+					GuiObject label = GuiLabel_createShown (form, x, x + labelWidth,
 						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
 					#if gtk
@@ -1013,7 +1013,7 @@ void UiForm_finish (I) {
 				#endif
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
+				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
 					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
@@ -1041,10 +1041,10 @@ void UiForm_finish (I) {
 				#if defined (macintosh)
 					ylabel += 2;
 				#endif
-				Widget bar, box;
+				GuiObject bar, box;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				Widget label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
+				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
 					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
@@ -1102,7 +1102,7 @@ void UiForm_finish (I) {
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				appendColon ();
-				Widget label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
+				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
 					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);

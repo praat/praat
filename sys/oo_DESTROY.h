@@ -137,7 +137,7 @@
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
 			XtDestroyWidget (my x [i]); \
-		NUMvector_free (sizeof (Widget), my x, min, 0); \
+		NUMvector_free (sizeof (GuiObject), my x, min, 0); \
 	}
 
 

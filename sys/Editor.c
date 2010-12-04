@@ -36,7 +36,6 @@
 
 #include <time.h>
 #include "ScriptEditor.h"
-#include "ButtonEditor.h"
 #include "machine.h"
 #include "EditorM.h"
 #include "praat_script.h"
@@ -81,7 +80,7 @@ class_methods (EditorCommand, Thing) {
 #define EditorMenu_members Thing_members \
 	Any editor; \
 	const wchar_t *menuTitle; \
-	Widget menuWidget; \
+	GuiObject menuWidget; \
 	Ordered commands;
 #define EditorMenu_methods Thing_methods
 class_create_opaque (EditorMenu, Thing);
@@ -114,7 +113,7 @@ static void commonCallback (GUI_ARGS) {
 	if (! my commandCallback (my editor, me, NULL, NULL, NULL)) Melder_flushError (NULL);
 }
 
-Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
+GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter))
 {
 	EditorCommand me = new (EditorCommand);
@@ -130,7 +129,7 @@ Widget EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long fl
 	return my itemWidget;
 }
 
-/*Widget EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
+/*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
 EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 	EditorMenu me = new (EditorMenu);
@@ -142,9 +141,9 @@ EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 	return me;
 }
 
-/*Widget EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
+/*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-Widget Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
+GuiObject Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter))
 {
 	Editor me = (Editor) editor;
@@ -166,7 +165,7 @@ static int Editor_scriptCallback (I, EditorCommand cmd, UiForm sendingForm, cons
 	return DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
-Widget Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
+GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	const wchar_t *script)
 {
 	Editor me = (Editor) editor;
@@ -488,11 +487,11 @@ static void gui_window_cb_goAway (I) {
 }
 
 extern void praat_addCommandsToEditor (Editor me);
-int Editor_init (Editor me, Widget parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
+int Editor_init (Editor me, GuiObject parent, int x, int y, int width, int height, const wchar_t *title, Any data) {
 	#if gtk
 		GdkScreen *screen = gdk_screen_get_default ();
 		if (parent != NULL) {
-			Widget parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+			GuiObject parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
 			if (parent_win != NULL) {
 				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
 			}

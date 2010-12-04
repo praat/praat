@@ -40,7 +40,7 @@ Thing_declare1 (PitchTierEditor);
 #define PitchTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (PitchTierEditor, RealTierEditor);
 
-PitchTierEditor PitchTierEditor_create (Widget parent, const wchar_t *title,
+PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar_t *title,
 	PitchTier pitch, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

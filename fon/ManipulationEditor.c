@@ -1281,7 +1281,7 @@ class_methods (ManipulationEditor, FunctionEditor) {
 	class_methods_end
 }
 
-ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana) {
+ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar_t *title, Manipulation ana) {
 	ManipulationEditor me = new (ManipulationEditor);
 	if (! me || ! FunctionEditor_init (ManipulationEditor_as_parent (me), parent, title, ana)) return NULL;
 

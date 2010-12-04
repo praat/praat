@@ -41,8 +41,8 @@
 #define praat_MAXNUM_LOOSE_COMMANDS  5000
 static long theNumberOfActions = 0;
 static struct structPraat_Command *theActions;
-static Widget praat_writeMenuTitle, praat_writeMenu, praat_writeMenuSeparator;
-static Widget praat_dynamicMenu, praat_dynamicMenuWindow;
+static GuiObject praat_writeMenuTitle, praat_writeMenu, praat_writeMenuSeparator;
+static GuiObject praat_dynamicMenu, praat_dynamicMenuWindow;
 
 static void fixSelectionSpecification (void **class1, int *n1, void **class2, int *n2, void **class3, int *n3) {
 /*
@@ -522,7 +522,7 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 void praat_actions_show (void) {
 	long i;
 	#if motif
-		Widget buttons [1000], writeButtons [50];
+		GuiObject buttons [1000], writeButtons [50];
 	#endif
 
 	/* The selection has changed;
@@ -603,7 +603,7 @@ void praat_actions_show (void) {
 
 	/* Create a new column of buttons in the dynamic menu. */
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
-		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
+		GuiObject currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
 		#if motif
 			int nbuttons = 0, nwriteButtons = 0;
@@ -612,7 +612,7 @@ void praat_actions_show (void) {
 			#if gtk
 				praat_dynamicMenu = gtk_vbutton_box_new ();
 				gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);
-				Widget viewport = gtk_bin_get_child (GTK_BIN (praat_dynamicMenuWindow));
+				GuiObject viewport = gtk_bin_get_child (GTK_BIN (praat_dynamicMenuWindow));
 				gtk_container_add (GTK_CONTAINER (viewport), praat_dynamicMenu);
 			#elif motif
 				praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
@@ -629,7 +629,7 @@ void praat_actions_show (void) {
 				 * but only if this exists (umbrella against stray submenu specifications).
 				 */
 				if (! my button) {
-					Widget parent = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu;
+					GuiObject parent = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu;
 					if (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
 						parent = praat_writeMenu;
 						if (! praat_writeMenuSeparator) {
@@ -726,7 +726,7 @@ void praat_actions_show (void) {
 							/* Dit soort onzin zou eigenlijk in GuiButton moeten */
 							gtk_button_set_alignment (GTK_BUTTON (my button), 0.0f, 0.5f);
 						#elif motif
-							Widget cascadeButton;
+							GuiObject cascadeButton;
 							my button = XmCreateMenuBar (praat_dynamicMenu, "dynamicSubmenuBar", 0, 0);
 							currentSubmenu1 = GuiMenuBar_addMenu2 (my button, my title, 0, & cascadeButton);
 						#endif
@@ -760,7 +760,7 @@ void praat_actions_show (void) {
 	}
 }
 
-void praat_actions_createWriteMenu (Widget bar) {
+void praat_actions_createWriteMenu (GuiObject bar) {
 	if (theCurrentPraatApplication -> batch) return;
 	// RFC: korter dus beter?
 	// Vraag: ik zie dat er twee keer een Menu Write wordt gedaan. Waar is dat goed voor?
@@ -780,7 +780,7 @@ void praat_actions_init (void) {
 	theActions = Melder_calloc (struct structPraat_Command, praat_MAXNUM_LOOSE_COMMANDS + 1);
 }
 
-void praat_actions_createDynamicMenu (Widget form, int width) {
+void praat_actions_createDynamicMenu (GuiObject form, int width) {
 	if (theCurrentPraatApplication -> batch) return;
 	// Kan dit bovenstaande niet met een #if constructie?
 	// Wat doet dit?

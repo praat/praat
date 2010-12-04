@@ -41,19 +41,19 @@ Thing_declare1 (ManipulationEditor);
 	DurationTier previousDuration; \
 	double soundmin, soundmax; \
 	int synthesisMethod; \
-	Widget synthPulsesButton, synthPulsesHumButton; \
-	Widget synthPulsesLpcButton; \
-	Widget synthPitchButton, synthPitchHumButton; \
-	Widget synthPulsesPitchButton, synthPulsesPitchHumButton; \
-	Widget synthOverlapAddNodurButton, synthOverlapAddButton; \
-	Widget synthPitchLpcButton; \
+	GuiObject synthPulsesButton, synthPulsesHumButton; \
+	GuiObject synthPulsesLpcButton; \
+	GuiObject synthPitchButton, synthPitchHumButton; \
+	GuiObject synthPulsesPitchButton, synthPulsesPitchHumButton; \
+	GuiObject synthOverlapAddNodurButton, synthOverlapAddButton; \
+	GuiObject synthPitchLpcButton; \
 	struct { int units, draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
 	struct { double minimum, maximum, cursor;  } duration; \
 	Graphics_Viewport inset;
 #define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
 Thing_declare2 (ManipulationEditor, FunctionEditor);
 
-ManipulationEditor ManipulationEditor_create (Widget parent, const wchar_t *title, Manipulation ana);
+ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar_t *title, Manipulation ana);
 
 void ManipulationEditor_prefs (void);
 

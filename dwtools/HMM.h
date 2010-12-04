@@ -95,7 +95,7 @@ StringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_Observ
 TableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationSequence me, int probabilities);
 TableOfReal HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (HMM me, HMM_ObservationSequence thee, int probabilities);
 
-HMM_ObservationSequences HMM_ObservationSequences_create ();
+HMM_ObservationSequences HMM_ObservationSequences_create (void);
 long HMM_ObservationSequence_getNumberOfObservations (HMM_ObservationSequence me);
 long HMM_ObservationSequences_getLongestSequence (HMM_ObservationSequences me);
 
@@ -111,6 +111,8 @@ HMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSy
 HMM HMM_createSimple (int leftToRight, wchar_t *states_string, wchar_t *symbols_string);
 HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfMixtureComponentsPerSymbol, long componentDimension, long componentStorage);
+HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
+	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream);
 HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
 void HMM_draw (HMM me, Graphics g, int garnish);
 int HMM_addObservation (HMM me, thou);

@@ -313,6 +313,7 @@ Sound Sound_readFromSesamFile (MelderFile file);   /* 12 bit SESAM/LVS */
 Sound Sound_readFromBellLabsFile (MelderFile file);   /* 16 bit */
 Sound Sound_readFromRawAlawFile (MelderFile file);
 Sound Sound_readFromMovieFile (MelderFile file);
+Sound Sound_readFromBdfFile (MelderFile file, bool isBdfFile);   // isBdfFile: false = EDF, true = BDF
 
 Sound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate);
 /*

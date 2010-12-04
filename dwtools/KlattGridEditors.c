@@ -57,7 +57,7 @@ class_methods (KlattGrid_realTierEditor, RealTierEditor)
 	class_method_local (KlattGrid_realTierEditor, play)
 class_methods_end
 
-int KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier data)
+int KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data)
 {
 	my klattgrid = klattgrid;
 	return RealTierEditor_init (KlattGrid_realTierEditor_as_RealTierEditor (me), parent, title, data, NULL, 0);
@@ -96,7 +96,7 @@ class_methods (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor)
 	class_methods_end
 }
 
-KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid) {
+KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid) {
 	KlattGrid_pitchTierEditor me = new (KlattGrid_pitchTierEditor);
 	if (me == NULL) return NULL;
 	RealTier tier = (RealTier) klattgrid -> phonation -> pitch;
@@ -126,7 +126,7 @@ class_methods (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum intensity", us -> ymaxKey = L"Maximum intensity";
 class_methods_end
 
-int KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
+int KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
 {
 	return  KlattGrid_realTierEditor_init (KlattGrid_intensityTierEditor_as_KlattGrid_realTierEditor (me), parent, title, klattgrid, tier);
 }
@@ -144,7 +144,7 @@ class_methods (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor)
 	us -> yminKey = L"Minimum amplitude", us -> ymaxKey = L"Maximum amplitude";
 class_methods_end
 
-KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
+KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
 {
 	KlattGrid_decibelTierEditor me = new (KlattGrid_decibelTierEditor);
 	if (me == NULL || ! KlattGrid_intensityTierEditor_init
@@ -157,7 +157,7 @@ KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (Widget parent, c
 class_methods (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor)
 class_methods_end
 
-KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_voicingAmplitudeTierEditor me = new (KlattGrid_voicingAmplitudeTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> voicingAmplitude;
@@ -171,7 +171,7 @@ KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create
 class_methods (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor)
 class_methods_end
 
-KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_aspirationAmplitudeTierEditor me = new (KlattGrid_aspirationAmplitudeTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> aspirationAmplitude;
@@ -184,7 +184,7 @@ KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_
 class_methods (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor)
 class_methods_end
 
-KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_breathinessAmplitudeTierEditor me = new (KlattGrid_breathinessAmplitudeTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> breathinessAmplitude;
@@ -199,7 +199,7 @@ class_methods (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor)
 	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
 class_methods_end
 
-KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_spectralTiltTierEditor me = new (KlattGrid_spectralTiltTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> spectralTilt;
@@ -214,7 +214,7 @@ class_methods (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEdito
 	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
 class_methods_end
 
-KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_fricationBypassTierEditor me = new (KlattGrid_fricationBypassTierEditor);
 	RealTier tier = (RealTier) klattgrid -> frication -> bypass;
@@ -227,7 +227,7 @@ KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (
 class_methods (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor)
 class_methods_end
 
-KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_fricationAmplitudeTierEditor me = new (KlattGrid_fricationAmplitudeTierEditor);
 	RealTier tier = (RealTier) klattgrid -> frication -> fricationAmplitude;
@@ -248,7 +248,7 @@ class_methods (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_openPhaseTierEditor me = new (KlattGrid_openPhaseTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> openPhase;
@@ -269,7 +269,7 @@ class_methods (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_collisionPhaseTierEditor me = new (KlattGrid_collisionPhaseTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> collisionPhase;
@@ -290,7 +290,7 @@ class_methods (KlattGrid_power1TierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_power1TierEditor me = new (KlattGrid_power1TierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> power1;
@@ -311,7 +311,7 @@ class_methods (KlattGrid_power2TierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_power2TierEditor me = new (KlattGrid_power2TierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> power2;
@@ -332,7 +332,7 @@ class_methods (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_flutterTierEditor me = new (KlattGrid_flutterTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> flutter;
@@ -353,7 +353,7 @@ class_methods (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor)
 	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
 class_methods_end
 
-KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (Widget parent, const wchar_t *title, KlattGrid klattgrid)
+KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
 	KlattGrid_doublePulsingTierEditor me = new (KlattGrid_doublePulsingTierEditor);
 	RealTier tier = (RealTier) klattgrid -> phonation -> doublePulsing;
@@ -378,7 +378,7 @@ class_methods (KlattGrid_formantGridEditor, FormantGridEditor)
 	class_method_local (KlattGrid_formantGridEditor, play)
 class_methods_end
 
-KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (Widget parent, const wchar_t *title, KlattGrid data, int formantType)
+KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (GuiObject parent, const wchar_t *title, KlattGrid data, int formantType)
 {
 	Melder_assert (data != NULL);
 	FormantGrid *fg = KlattGrid_getAddressOfFormantGrid (data, formantType);

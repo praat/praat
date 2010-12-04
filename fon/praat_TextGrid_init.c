@@ -1320,7 +1320,7 @@ void praat_uvafon_TextGrid_init (void) {
 	praat_addAction1 (classTextGrid, 1, L"& Pitch: Draw?", 0, 1, DO_info_TextGrid_Pitch_draw);
 	praat_addAction1 (classTextGrid, 0, L"List...", 0, 0, DO_TextGrid_list);
 	praat_addAction1 (classTextGrid, 0, L"Down to Table...", 0, 0, DO_TextGrid_downto_Table);
-	praat_addAction1 (classTextGrid, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classTextGrid, 0, L"Query -", 0, 0, 0);
 		praat_TimeFunction_query_init (classTextGrid);
 		praat_addAction1 (classTextGrid, 1, L"-- query tiers --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Get number of tiers", 0, 1, DO_TextGrid_getNumberOfTiers);
@@ -1342,7 +1342,7 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 1, L"Get nearest index from time...", 0, 1, DO_TextGrid_getNearestIndexFromTime);
 		praat_addAction1 (classTextGrid, 1, L"-- query labels --", 0, 1, 0);
 		praat_addAction1 (classTextGrid, 1, L"Count labels...", 0, 1, DO_TextGrid_countLabels);
-	praat_addAction1 (classTextGrid, 0, L"Modify -        ", 0, 0, 0);
+	praat_addAction1 (classTextGrid, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (classTextGrid, 0, L"Convert to backslash trigraphs", 0, 1, DO_TextGrid_genericize);
 		praat_addAction1 (classTextGrid, 0, L"Genericize", 0, praat_HIDDEN + praat_DEPTH_1, DO_TextGrid_genericize);   // hidden 2007
 		praat_addAction1 (classTextGrid, 0, L"Convert to Unicode", 0, 1, DO_TextGrid_nativize);
@@ -1370,10 +1370,10 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 0, L"Merge", 0, 0, DO_TextGrids_merge);
 
 	praat_addAction1 (classTextTier, 0, L"TextTier help", 0, 0, DO_TextTier_help);
-	praat_addAction1 (classTextTier, 0, L"Query -          ", 0, 0, 0);
+	praat_addAction1 (classTextTier, 0, L"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classTextTier);
 		praat_addAction1 (classTextTier, 0, L"Get label of point...", 0, 1, DO_TextTier_getLabelOfPoint);
-	praat_addAction1 (classTextTier, 0, L"Modify -          ", 0, 0, 0);
+	praat_addAction1 (classTextTier, 0, L"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classTextTier);
 		praat_addAction1 (classTextTier, 0, L"Add point...", 0, 1, DO_TextTier_addPoint);
 	praat_addAction1 (classTextTier, 0, L"Analyse", 0, 0, 0);
@@ -1399,7 +1399,7 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction2 (classLabel, 1, classSound, 1, L"To TextGrid", 0, 0, DO_Label_Sound_to_TextGrid);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1, L"Edit", 0, 0, DO_TextGrid_LongSound_edit);
 	praat_addAction2 (classLongSound, 1, classTextGrid, 1, L"Scale times", 0, 0, DO_TextGrid_LongSound_scaleTimes);
-	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Draw -           ", 0, 0, 0);
+	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Draw -", 0, 0, 0);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Draw...", 0, 1, DO_TextGrid_Pitch_draw);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Draw logarithmic...", 0, 1, DO_TextGrid_Pitch_drawLogarithmic);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Draw semitones...", 0, 1, DO_TextGrid_Pitch_drawSemitones);
@@ -1424,7 +1424,7 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, L"To PitchTier...", 0, 0, DO_Pitch_TextTier_to_PitchTier);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Edit", 0, 0, DO_TextGrid_edit);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Draw...", 0, 0, DO_TextGrid_Sound_draw);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract -       ", 0, 0, 0);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract -", 0, 0, 0);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract all intervals...", 0, praat_DEPTH_1, DO_TextGrid_Sound_extractAllIntervals);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract non-empty intervals...", 0, praat_DEPTH_1, DO_TextGrid_Sound_extractNonemptyIntervals);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract intervals...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_TextGrid_Sound_extractIntervals);

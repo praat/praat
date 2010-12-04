@@ -54,7 +54,7 @@ class_methods (DurationTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-DurationTierEditor DurationTierEditor_create (Widget parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
+DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
 	DurationTierEditor me = new (DurationTierEditor);
 	if (! me || ! RealTierEditor_init (DurationTierEditor_as_parent (me), parent, title, (RealTier) duration, sound, ownSound))
 		{ forget (me); return NULL; }

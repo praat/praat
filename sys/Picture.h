@@ -54,7 +54,7 @@
 
 typedef struct structPicture *Picture;
 
-Picture Picture_create (Widget drawingArea, Boolean sensitive);
+Picture Picture_create (GuiObject drawingArea, Boolean sensitive);
 /*
 	Function:
 		create an empty self-recording picture inside 'drawingArea'.

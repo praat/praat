@@ -49,7 +49,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-int RealTierEditor_init (RealTierEditor me, Widget parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
+int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
 /*
 	'Sound' may be NULL;
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,

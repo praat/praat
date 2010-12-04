@@ -213,14 +213,14 @@ end:
 	return 1;
 }
 
-Sound Sound_readFromSesamFile (MelderFile fs) {
+Sound Sound_readFromSesamFile (MelderFile file) {
 	Sound me = NULL;
-	FILE *f = Melder_fopen (fs, "rb");
+	FILE *f = Melder_fopen (file, "rb");
 	long header [1 + 128];
 	double samplingFrequency;
-	long numberOfSamples, i;
+	long numberOfSamples;
 	if (! f) return 0;
-	for (i = 1; i <= 128; i ++) header [i] = bingeti4LE (f);
+	for (long i = 1; i <= 128; i ++) header [i] = bingeti4LE (f);
 	/* Try SESAM header. */
 	samplingFrequency = header [126];
 	numberOfSamples = header [127];
@@ -233,12 +233,86 @@ Sound Sound_readFromSesamFile (MelderFile fs) {
 			samplingFrequency < 10.0 || samplingFrequency > 100000000.0) {
 		fclose (f);
 		return Melder_errorp3 (L"(Sound_readFromSesamFile:) "
-			"File ", MelderFile_messageName (fs), L" is not a correct SESAM or LVS file.");
+			"File ", MelderFile_messageName (file), L" is not a correct SESAM or LVS file.");
 	}
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (! me) return NULL;
-	for (i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2LE (f) * (1.0 / 2048);   /* 12 bits. */
-	if (fclose (f) == EOF) return Melder_errorp3 (L"Error reading file ", MelderFile_messageName (fs), L".");
+	for (long i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2LE (f) * (1.0 / 2048);   /* 12 bits. */
+	if (fclose (f) == EOF) return Melder_errorp3 (L"Error reading file ", MelderFile_messageName (file), L".");
+	return me;
+}
+
+Sound Sound_readFromBdfFile (MelderFile file, bool isBdfFile) {
+	Sound me = NULL;
+	FILE *f = Melder_fopen (file, "rb");
+	char buffer [81];
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	fread (buffer, 1, 80, f); buffer [80] = '\0';
+	Melder_casual ("Local subject identification: \"%s\"", buffer);
+	fread (buffer, 1, 80, f); buffer [80] = '\0';
+	Melder_casual ("Local recording identification: \"%s\"", buffer);
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	Melder_casual ("Start date of recording: \"%s\"", buffer);
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	Melder_casual ("Start time of recording: \"%s\"", buffer);
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	long numberOfBytesInHeaderRecord = atol (buffer);
+	Melder_casual ("Number of bytes in header record: %ld", numberOfBytesInHeaderRecord);
+	fread (buffer, 1, 44, f); buffer [44] = '\0';
+	Melder_casual ("Version of data format: \"%s\"", buffer);
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	long numberOfDataRecords = atol (buffer);
+	Melder_casual ("Number of data records: %ld", numberOfDataRecords);
+	fread (buffer, 1, 8, f); buffer [8] = '\0';
+	double durationOfDataRecord = atof (buffer);
+	Melder_casual ("Duration of a data record: \"%f\"", durationOfDataRecord);
+	fread (buffer, 1, 4, f); buffer [4] = '\0';
+	long numberOfChannels = atol (buffer);
+	Melder_casual ("Number of channels in data record: %ld", numberOfChannels);
+	if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
+		error5 (L"(Read from BDF file:) Number of bytes in header record (", Melder_integer (numberOfBytesInHeaderRecord),
+			L") doesn't match number of channels (", Melder_integer (numberOfChannels), L").")
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 16, f); buffer [16] = '\0';   // labels of the channels
+	}
+	double samplingFrequency = NUMundefined;
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 80, f); buffer [80] = '\0';   // transducer type
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical dimension of channels
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical minimum in units of physical dimension
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical maximum in units of physical dimension
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // digital minimum
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // digital maximum
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 80, f); buffer [80] = '\0';   // prefiltering
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 8, f); buffer [8] = '\0';   // number of samples in each data record
+		long numberOfSamplesPerDataRecord = atol (buffer);
+		if (samplingFrequency == NUMundefined) {
+			samplingFrequency = numberOfSamplesPerDataRecord / durationOfDataRecord;
+		}
+		if (numberOfSamplesPerDataRecord / durationOfDataRecord != samplingFrequency)
+			error7 (L"(Read from BDF file:) Number of samples per data record in channel ", Melder_integer (ichannel),
+				L" (", Melder_integer (numberOfSamplesPerDataRecord),
+				L") doesn't match sampling frequency of channel 1 (", Melder_integer (numberOfChannels), L").")
+	}
+	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
+		fread (buffer, 1, 32, f); buffer [32] = '\0';   // reserved
+	}
+	me = Sound_createSimple (numberOfChannels, numberOfDataRecords * durationOfDataRecord, samplingFrequency);
+end:
 	return me;
 }
 
@@ -246,52 +320,42 @@ Sound Sound_readFromSesamFile (MelderFile fs) {
 Sound Sound_readFromMacSoundFile (MelderFile file) {
 	Sound me = NULL;
 	FSRef fsRef;
-	int path;
-	Handle han;
-	long numberOfSamples;
-	double samplingFrequency;
-	SoundHeader *header;
-	unsigned const char *from;
-	double *to;
-	long i;
 	Melder_fileToMach (file, & fsRef);
-	path = FSOpenResFile (& fsRef, fsRdPerm);   /* Open resource fork; there are the sounds. */
+	int path = FSOpenResFile (& fsRef, fsRdPerm);   /* Open resource fork; there are the sounds. */
 	if (path == -1)
 		return Melder_errorp ("(Sound_readFromMacSoundFile:) Error opening resource fork.");
 	if (Count1Resources ('snd ') == 0) {   /* Are there really any sounds in this file? */
 		CloseResFile (path);
 		return Melder_errorp ("(Sound_readFromMacSoundFile:) No sound resources found.");
 	}
-	han = Get1IndResource ('snd ', 1);   /* Take the first sound from this file. */
+	Handle han = Get1IndResource ('snd ', 1);   /* Take the first sound from this file. */
 	if (! han) {
 		CloseResFile (path);
 		return Melder_errorp ("(Sound_readFromMacSoundFile:) Sound too large.");
 	}
 	DetachResource (han);   /* Release the sound's binding with the Resource Map. */
 	CloseResFile (path);   /* Remove the Resource Map; the sound is ours now. */
+	SndResourcePtr p = (SndResourcePtr) *han;
+	if (p -> formatType != 1 ||
+		 p -> numberOfSynthesizers != 1 ||
+		 p -> resourceIDOfSynthesizer != sampledSynth ||
+		 p -> numberOfSoundCommands != 1 ||
+		 p -> itsSndCommand. cmd != bufferCmd + dataOffsetFlag ||
+		 p -> itsSndCommand. param2 != 20 ||
+		 p -> itsSndHeader. samplePtr != NULL)
 	{
-		SndResourcePtr p = (SndResourcePtr) *han;
-		if (p -> formatType != 1 ||
-			 p -> numberOfSynthesizers != 1 ||
-			 p -> resourceIDOfSynthesizer != sampledSynth ||
-			 p -> numberOfSoundCommands != 1 ||
-			 p -> itsSndCommand. cmd != bufferCmd + dataOffsetFlag ||
-			 p -> itsSndCommand. param2 != 20 ||
-			 p -> itsSndHeader. samplePtr != NULL)
-		{
-			DisposeHandle (han);
-			return Melder_errorp ("(Sound_readFromMacSoundFile:) Sound has an unknown format.");
-		}
+		DisposeHandle (han);
+		return Melder_errorp ("(Sound_readFromMacSoundFile:) Sound has an unknown format.");
 	}
-	header = & (**(SndResourceHandle) han).itsSndHeader;
-	numberOfSamples = header -> length;
-	samplingFrequency = (unsigned long) header -> sampleRate / 65536.0;
+	SoundHeader *header = & (**(SndResourceHandle) han).itsSndHeader;
+	long numberOfSamples = header -> length;
+	double samplingFrequency = (unsigned long) header -> sampleRate / 65536.0;
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (me == NULL) return NULL;
 	header = & (**(SndResourceHandle) han).itsSndHeader;   /* Do not move memory. */
-	from = (unsigned const char *) & header -> sampleArea - 1;
-	to = my z [1];
-	for (i = 1; i <= numberOfSamples; i ++)
+	unsigned const char *from = (unsigned const char *) & header -> sampleArea - 1;
+	double *to = my z [1];
+	for (long i = 1; i <= numberOfSamples; i ++)
 		to [i] = (from [i] - 128) * (1.0 / 128);
 	DisposeHandle (han);
 	return me;

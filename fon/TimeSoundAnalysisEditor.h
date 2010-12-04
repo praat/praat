@@ -133,7 +133,7 @@ Thing_declare1 (TimeSoundAnalysisEditor);
 	struct FunctionEditor_intensity intensity; \
 	struct FunctionEditor_formant formant; \
 	struct FunctionEditor_pulses pulses; \
-	Widget spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+	GuiObject spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 #define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
 	struct { struct { \
 		struct { bool garnish; } spectrogram; \
@@ -155,7 +155,7 @@ Thing_declare1 (TimeSoundAnalysisEditor);
 	void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
 Thing_declare2 (TimeSoundAnalysisEditor, TimeSoundEditor);
 
-int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, Widget parent, const wchar_t *title, Any data, Any sound, bool ownSound);
+int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

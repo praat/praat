@@ -31,9 +31,9 @@
 #include "FeatureWeights.h"
 #include "praat.h"
 
-static wchar_t *QUERY_BUTTON   = L"Query -                ";// vad går detta ut på??
-static wchar_t *MODIFY_BUTTON  = L"Modify -               ";
-static wchar_t *EXTRACT_BUTTON = L"Extract - ";
+static wchar_t *QUERY_BUTTON   = L"Query -";
+static wchar_t *MODIFY_BUTTON  = L"Modify -";
+static wchar_t *EXTRACT_BUTTON = L"Extract -";
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

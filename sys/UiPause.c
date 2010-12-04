@@ -51,7 +51,7 @@ static int thePauseFormCancelCallback (Any dia, void *closure) {
 	thePauseForm_clicked = -1;
 	return 1;
 }
-int UiPause_begin (Widget topShell, const wchar_t *title, Interpreter interpreter) {
+int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter) {
 	if (theEventLoopDepth > 0)
 		error1 (L"Praat cannot have more than one pause form at a time.")
 	forget (thePauseForm);   // in case an earlier build-up of another pause window was interrupted

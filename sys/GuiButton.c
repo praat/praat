@@ -37,18 +37,18 @@
 #endif
 
 typedef struct structGuiButton {
-	Widget widget;
+	GuiObject widget;
 	void (*activateCallback) (void *boss, GuiButtonEvent event);
 	void *activateBoss;
 } *GuiButton;
 
 #if gtk
-	static void _GuiGtkButton_destroyCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkButton_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiButton);
 		Melder_free (me);
 	}
-	static void _GuiGtkButton_activateCallback (Widget widget, gpointer void_me) {
+	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiButton);
 		struct structGuiButtonEvent event = { widget, 0 };
 		if (my activateCallback != NULL) {
@@ -56,7 +56,7 @@ typedef struct structGuiButton {
 		}
 	}
 #elif win || mac
-	void _GuiWinMacButton_destroy (Widget widget) {
+	void _GuiWinMacButton_destroy (GuiObject widget) {
 		iam_button;
 		if (widget == widget -> shell -> defaultButton)
 			widget -> shell -> defaultButton = NULL;   // remove dangling reference
@@ -66,14 +66,14 @@ typedef struct structGuiButton {
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
 	#if win
-		void _GuiWinButton_handleClick (Widget widget) {
+		void _GuiWinButton_handleClick (GuiObject widget) {
 			iam_button;
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
 				my activateCallback (my activateBoss, & event);
 			}
 		}
-		bool _GuiWinButton_tryToHandleShortcutKey (Widget widget) {
+		bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 			iam_button;
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
@@ -83,7 +83,7 @@ typedef struct structGuiButton {
 			return false;
 		}
 	#elif mac
-		void _GuiMacButton_handleClick (Widget widget, EventRecord *macEvent) {
+		void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_button;
 			_GuiMac_clipOnParent (widget);
 			bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
@@ -99,7 +99,7 @@ typedef struct structGuiButton {
 				my activateCallback (my activateBoss, & event);
 			}
 		}
-		bool _GuiMacButton_tryToHandleShortcutKey (Widget widget, EventRecord *macEvent) {
+		bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
 			iam_button;
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
@@ -112,7 +112,7 @@ typedef struct structGuiButton {
 	#endif
 #endif
 
-Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*activateCallback) (void *boss, GuiButtonEvent event), void *activateBoss, unsigned long flags)
 {
 	GuiButton me = Melder_calloc (struct structGuiButton, 1);
@@ -188,15 +188,15 @@ Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom
 	return my widget;
 }
 
-Widget GuiButton_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
 {
-	Widget me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
+	GuiObject me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
 	GuiObject_show (me);
 	return me;
 }
 
-void GuiButton_setString (Widget widget, const wchar_t *text) {
+void GuiButton_setString (GuiObject widget, const wchar_t *text) {
 	#if gtk
 		gtk_button_set_label (GTK_BUTTON (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac

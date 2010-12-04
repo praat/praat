@@ -443,7 +443,7 @@ class_methods (SoundEditor, TimeSoundAnalysisEditor) {
 	class_methods_end
 }
 
-SoundEditor SoundEditor_create (Widget parent, const wchar_t *title, Any data) {
+SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data) {
 	SoundEditor me = new (SoundEditor);
 	Melder_assert (data != NULL);
 	/*

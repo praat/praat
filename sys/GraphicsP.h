@@ -51,7 +51,7 @@ typedef struct {
 		/* A boolean for whether we are a high-resolution metafile or clipboard. */ \
 	bool yIsZeroAtTheTop; \
 		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */ \
-	Widget drawingArea; \
+	GuiObject drawingArea; \
 		/* Also used as a boolean. */ \
 	int resolution; \
 		/* Dots per inch. */ \

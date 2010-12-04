@@ -122,9 +122,9 @@ static const int BACKGROUND_WINDOWS_ARE_ACTIVE = 0;   /* 0 = Mac, 1 = Motif. */
 #endif
 
 #if win
-	static void _motif_update (Widget me, void *event);
+	static void _motif_update (GuiObject me, void *event);
 #elif mac
-	static void _motif_update (Widget me, EventRecord *event);
+	static void _motif_update (GuiObject me, EventRecord *event);
 #endif
 
 /********** Resource names. **********/
@@ -177,7 +177,7 @@ int HeightOfScreen (int screen) {
 
 /********** X Toolkit **********/
 
-void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call) {
+void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call) {
 	int i; for (i = 0; i < MAXNUM_CALLBACKS; i ++)
 		if (callbacks -> pairs [i]. proc) callbacks -> pairs [i]. proc (w, callbacks -> pairs [i]. closure, call);
 }
@@ -195,7 +195,7 @@ void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call) {
 #endif
 
 /* When dispatching events to widgets, we must translate from the identifier of a Macintosh
- * screen object (Window, Control, menu item) to a Widget.
+ * screen object (Window, Control, menu item) to a GuiObject.
  * Mac windows and controls have RefCon fields in their WindowRecord or ControlRecord,
  * so we put a reference to the widget in the appropriate RefCon field at window or control creation time.
  * Instead of RefCons, the menus are remembered here:
@@ -205,7 +205,7 @@ void _Gui_callCallbacks (Widget w, XtCallbackList *callbacks, XtPointer call) {
 #elif mac
 	#define MAXIMUM_NUMBER_OF_MENUS  32767
 #endif
-static Widget theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
+static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
 static int (*theOpenDocumentCallback) (MelderFile file);
 static int (*theQuitApplicationCallback) (void);
 #if win
@@ -217,26 +217,26 @@ static int (*theQuitApplicationCallback) (void);
 	#define MAXIMUM_MENU_ITEM_ID  32767
 	static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   /* We can freely use and reuse the item ids 4001..32767 */
 #elif mac
-	static Widget theMenuBar;   /* There is only one menu bar on the Macintosh. */
+	static GuiObject theMenuBar;   /* There is only one menu bar on the Macintosh. */
 	static int theHelpMenuOffset;   /* The number of items in the global help menu before we add the first item. */
 	static int (*theUserMessageCallbackA) (char *message);
 	static int (*theUserMessageCallbackW) (wchar_t *message);
 #endif
 
-static Widget theApplicationShell;   /* For global menus. */
+static GuiObject theApplicationShell;   /* For global menus. */
 #define MAXIMUM_NUMBER_OF_SHELLS  1000
-static Widget theShells [MAXIMUM_NUMBER_OF_SHELLS];   /* For XmUpdateDisplay and suspend events. */
+static GuiObject theShells [MAXIMUM_NUMBER_OF_SHELLS];   /* For XmUpdateDisplay and suspend events. */
 static int theBackground = False;   /* Set by suspend and resume events; used by Motif-style activation methods. */
 static int theDialogHint = False;   /* Should the shell that is currently being created, have dialog or document looks? */
 long numberOfWidgets = 0;
 long Gui_getNumberOfMotifWidgets (void) { return numberOfWidgets; }
 
-static void _motif_addShell (Widget me) {
+static void _motif_addShell (GuiObject me) {
 	int i;
 	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
 		if (theShells [i] == NULL) { theShells [i] = me; break; }
 }
-static void _motif_removeShell (Widget me) {
+static void _motif_removeShell (GuiObject me) {
 	int i;
 	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++)
 		if (theShells [i] == me) { theShells [i] = NULL; break; }
@@ -259,11 +259,11 @@ static XtPointer theTimeOutClosures [10];
 	static unsigned long theTimeOutIntervals [10];
 #endif
 
-static void Native_move (Widget w, int dx, int dy);   /* Forward. */
+static void Native_move (GuiObject w, int dx, int dy);   /* Forward. */
 
-static void cb_scroll (Widget scrollBar, XtPointer closure, XtPointer call) {
-	Widget scrolledWindow = (Widget) closure;
-	Widget workWindow = scrolledWindow -> motiff.scrolledWindow.workWindow;
+static void cb_scroll (GuiObject scrollBar, XtPointer closure, XtPointer call) {
+	GuiObject scrolledWindow = (GuiObject) closure;
+	GuiObject workWindow = scrolledWindow -> motiff.scrolledWindow.workWindow;
 	int previousShift, newShift, distance;
 	int horizontal = scrolledWindow -> motiff.scrolledWindow.horizontalBar == scrollBar;
 	(void) call;
@@ -289,7 +289,7 @@ static void cb_scroll (Widget scrollBar, XtPointer closure, XtPointer call) {
 
 /* These are like the toolkit's query_geometry methods: */
 
-static int Native_titleWidth (Widget me) {
+static int Native_titleWidth (GuiObject me) {
 	#if win
 		if (my parent -> window) {
 			HDC dc = GetDC (my parent -> window);
@@ -310,29 +310,29 @@ static int Native_titleWidth (Widget me) {
 	#endif
 }
 
-static int NativeLabel_preferredWidth (Widget me) {
+static int NativeLabel_preferredWidth (GuiObject me) {
 	return Native_titleWidth (me) + 10;
 }
 
-static int NativeButton_preferredWidth (Widget me) {
+static int NativeButton_preferredWidth (GuiObject me) {
 	int width = Native_titleWidth (me) + ( win ? 10 : ( my parent -> rowColumnType == XmMENU_BAR ? 10 : 28 ) );
 	return width < 41 ? 41 : width;
 }
 
-static int NativeToggleButton_preferredWidth (Widget me) {
+static int NativeToggleButton_preferredWidth (GuiObject me) {
 	return Native_titleWidth (me) + 25;
 }
 
-static int NativeButton_preferredHeight (Widget me) {
+static int NativeButton_preferredHeight (GuiObject me) {
 	(void) me;
 	return win ? 22 : ( my parent -> rowColumnType == XmMENU_BAR ? 28 : 20 );
 }
 
 /***** WIDGET *****/
 
-Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *name) {
-	Widget me = Melder_calloc (struct structWidget, 1);
-	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%ld\t%ld\t%ld\n", (long) me, 1L, (long) sizeof (struct structWidget));
+GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_t *name) {
+	GuiObject me = Melder_calloc (struct structGuiObject, 1);
+	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%ld\t%ld\t%ld\n", (long) me, 1L, (long) sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -347,7 +347,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 	} else if (parent -> firstChild == NULL) {
 		parent -> firstChild = me;
 	} else {
-		Widget lastChild = parent -> firstChild;
+		GuiObject lastChild = parent -> firstChild;
 		while (lastChild -> nextSibling) lastChild = lastChild -> nextSibling;
 		lastChild -> nextSibling = me;
 		my previousSibling = lastChild;
@@ -536,11 +536,11 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 	static Rect _motif_wideRect = { -32768, -32768, 32767, 32767 };
 	static Rect _motif_clipRect;
 
-	void _GuiMac_clipOnParent (Widget me) {
+	void _GuiMac_clipOnParent (GuiObject me) {
 		/* The 'clipRect' will be the intersection of the rects of all its ancestors,
 		 * stopping before a shell and making side steps at scrolled windows.
 		 */
-		Widget parent;
+		GuiObject parent;
 		Rect clipRect = _motif_wideRect;
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
@@ -566,7 +566,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 
 	void GuiMac_clipOff (void) { ClipRect (& _motif_wideRect); }
 
-	void _GuiMac_clipOffValid (Widget me) {
+	void _GuiMac_clipOffValid (GuiObject me) {
 		Rect clipRect = _motif_clipRect;
 		if (my rect. left > clipRect. left) clipRect. left = my rect. left;
 		if (my rect. right < clipRect. right) clipRect. right = my rect. right;
@@ -577,7 +577,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		ClipRect (& _motif_wideRect);
 	}
 
-	void _GuiMac_clipOffInvalid (Widget me) {
+	void _GuiMac_clipOffInvalid (GuiObject me) {
 		Rect clipRect = _motif_clipRect;
 		if (my rect. left > clipRect. left) clipRect. left = my rect. left;
 		if (my rect. right < clipRect. right) clipRect. right = my rect. right;
@@ -588,8 +588,8 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		ClipRect (& _motif_wideRect);
 	}
 
-	void GuiMac_clipOn (Widget me) {
-		Widget parent;
+	void GuiMac_clipOn (GuiObject me) {
+		GuiObject parent;
 		Rect clipRect = my rect;
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
@@ -609,8 +609,8 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 		SetPortWindowPort (my macWindow);
 		ClipRect (& clipRect);
 	}
-	int GuiMac_clipOn_graphicsContext (Widget me, void *graphicsContext) {
-		Widget parent;
+	int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext) {
+		GuiObject parent;
 		Rect clipRect = my rect;
 		for (parent = my parent; ! MEMBER (parent, Shell); parent = parent -> parent) {
 			Rect *parentRect = & parent -> rect;
@@ -635,7 +635,7 @@ Widget _Gui_initializeWidget (int widgetClass, Widget parent, const wchar_t *nam
 
 /***** NATIVE *****/
 
-void _GuiNativeControl_check (Widget me, Boolean value) {
+void _GuiNativeControl_check (GuiObject me, Boolean value) {
 	#if win
 		Button_SetCheck (my window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac
@@ -643,7 +643,7 @@ void _GuiNativeControl_check (Widget me, Boolean value) {
 	#endif
 }
 
-void _GuiNativeControl_destroy (Widget me) {
+void _GuiNativeControl_destroy (GuiObject me) {
 	#if win
 		DestroyWindow (my window);
 	#elif mac
@@ -653,7 +653,7 @@ void _GuiNativeControl_destroy (Widget me) {
 	#endif
 }
 
-void _GuiNativeControl_show (Widget me) {
+void _GuiNativeControl_show (GuiObject me) {
 	#if win
 		ShowWindow (my window, SW_SHOW);
 	#elif mac
@@ -666,7 +666,7 @@ void _GuiNativeControl_show (Widget me) {
 	#endif
 }
 
-void _GuiNativeControl_hide (Widget me) {
+void _GuiNativeControl_hide (GuiObject me) {
 	#if win
 		ShowWindow (my window, SW_HIDE);
 	#elif mac
@@ -676,7 +676,7 @@ void _GuiNativeControl_hide (Widget me) {
 	#endif
 }
 
-void _GuiNativeControl_setFont (Widget me, int size) {
+void _GuiNativeControl_setFont (GuiObject me, int size) {
 	#if win
 	#elif mac
 		ControlFontStyleRec fontStyle;
@@ -687,7 +687,7 @@ void _GuiNativeControl_setFont (Widget me, int size) {
 	#endif
 }
 
-void _GuiNativeControl_setSensitive (Widget me) {
+void _GuiNativeControl_setSensitive (GuiObject me) {
 	#if win
 		EnableWindow (my window, ! my insensitive);
 	#elif mac
@@ -705,7 +705,7 @@ wchar_t * _GuiWin_expandAmpersands (const wchar_t *title) {
 	return buffer;
 }
 
-void _GuiNativeControl_setTitle (Widget me) {
+void _GuiNativeControl_setTitle (GuiObject me) {
 	#if win
 		HDC dc = GetDC (my window);
 		SelectPen (dc, GetStockPen (NULL_PEN));
@@ -725,7 +725,7 @@ void _GuiNativeControl_setTitle (Widget me) {
 			if (IsControlVisible (my nat.control.handle))
 				Draw1Control (my nat.control.handle);
 		} else if (my nat.control.isPopup) {
-			Widget menu = my subMenuId, item;
+			GuiObject menu = my subMenuId, item;
 			if (menu) for (item = menu -> firstChild; item; item = item -> nextSibling) {
 				if (wcsequ (item -> name, my name)) {
 					SetControlValue (my nat.control.handle, item -> nat.entry.item);
@@ -739,7 +739,7 @@ void _GuiNativeControl_setTitle (Widget me) {
 	#endif
 }
 
-static int _XmScrollBar_check (Widget me) {
+static int _XmScrollBar_check (GuiObject me) {
 	if (my maximum < my minimum)
 		Melder_warning5 (L"XmScrollBar: maximum (", Melder_integer (my maximum), L") less than minimum (", Melder_integer (my minimum), L").");
 	else if (my sliderSize > my maximum - my minimum)
@@ -754,7 +754,7 @@ static int _XmScrollBar_check (Widget me) {
 	return 0;
 }
 
-static void NativeScrollBar_set (Widget me) {
+static void NativeScrollBar_set (GuiObject me) {
 	if (! _XmScrollBar_check (me)) return;
 	#if win
 	{
@@ -790,11 +790,11 @@ static void NativeScrollBar_set (Widget me) {
 	#endif
 }
 
-static void NativeMenuItem_delete (Widget me) {
+static void NativeMenuItem_delete (GuiObject me) {
 	#if win
 		RemoveMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND);
 	#elif mac
-		Widget subview;
+		GuiObject subview;
 		DeleteMenuItem (my nat.entry.handle, my nat.entry.item);
 		for (subview = my parent -> firstChild; subview; subview = subview -> nextSibling) {
 			if (subview -> managed && ! MEMBER (subview, PulldownMenu) &&
@@ -805,13 +805,13 @@ static void NativeMenuItem_delete (Widget me) {
 	#endif
 }
 
-static int NativeMenuItem_getPosition (Widget me) {
+static int NativeMenuItem_getPosition (GuiObject me) {
 	int position = 1;
 	#if win
 		/*
 		 * The following routine could also be used for Mac.
 		 */
-		Widget sibling;
+		GuiObject sibling;
 		for (sibling = my parent -> firstChild; sibling; sibling = sibling -> nextSibling) {
 			if (sibling == me) break;
 			if (sibling -> managed && ! MEMBER (sibling, PulldownMenu))
@@ -833,7 +833,7 @@ static int NativeMenuItem_getPosition (Widget me) {
 		 *
 		 * "incremental" means that all previous sibling items must have valid item numbers.
 		 */
-		Widget prev = my previousSibling;
+		GuiObject prev = my previousSibling;
 		/*
 		 * However, there may also be sibling pulldown menus. These have no item number (the associated cascade buttons have).
 		 * Also, unmanaged items are not in the native menu structure, so these have no item number either.
@@ -860,7 +860,7 @@ static int NativeMenuItem_getPosition (Widget me) {
 	return position;
 }
 
-static void NativeMenuItem_check (Widget me, Boolean value) {
+static void NativeMenuItem_check (GuiObject me, Boolean value) {
 	#if win
 		if (! my managed) return;
 		CheckMenuItem (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( value ? MF_CHECKED : MF_UNCHECKED ));
@@ -870,7 +870,7 @@ static void NativeMenuItem_check (Widget me, Boolean value) {
 	#endif
 }
 
-static void NativeMenuItem_setSensitive (Widget me) {
+static void NativeMenuItem_setSensitive (GuiObject me) {
 	#if win
 		if (! my managed) return;
 		EnableMenuItem (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | ( my insensitive ? MF_GRAYED : MF_ENABLED ));
@@ -881,7 +881,7 @@ static void NativeMenuItem_setSensitive (Widget me) {
 	#endif
 }
 
-static void NativeMenuItem_setText (Widget me) {
+static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 	#if win
 		static MelderString title = { 0 };
@@ -947,7 +947,7 @@ static void NativeMenuItem_setText (Widget me) {
  * On Win, we use SetWindowLong (window, GWL_USERDATA, widget).
  */
 
-static void _GuiNativizeWidget (Widget me) {
+static void _GuiNativizeWidget (GuiObject me) {
 	if (my nativized) return;
 	if (my inMenu) {
 		if (MEMBER (me, PulldownMenu)) {
@@ -1039,7 +1039,7 @@ static void _GuiNativizeWidget (Widget me) {
 				 * All other menu bars are at the top of their own windows.
 				 * This is Motif style, and only works well for Macintoshes with large screens.
 				 */
-				if ((Widget) GetWRefCon (my macWindow) == theApplicationShell && theMenuBar == NULL) {
+				if ((GuiObject) GetWRefCon (my macWindow) == theApplicationShell && theMenuBar == NULL) {
 					theMenuBar = me;
 				} else {
 					my widgetClass = xmRowColumnWidgetClass;   /* !!!!!!!!!!!!! */
@@ -1055,7 +1055,7 @@ static void _GuiNativizeWidget (Widget me) {
 				my nat.menu.id = id;
 				theMenus [my nat.menu.id] = me;   /* Instead of UserData fields. */
 				if (MEMBER (my parent, MenuBar)) {
-					Widget menu;
+					GuiObject menu;
 					UINT beforeID = -1;
 					my nat.menu.handle = CreatePopupMenu ();
 					/*
@@ -1104,7 +1104,7 @@ static void _GuiNativizeWidget (Widget me) {
 						CreateNewMenu (my nat.menu.id, 0, & my nat.menu.handle);
 						SetMenuTitleWithCFString (my nat.menu.handle, Melder_peekWcsToCfstring (my name));
 						for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) {
-							Widget menu = theMenus [id];
+							GuiObject menu = theMenus [id];
 							if (menu && wcsequ (menu -> name, L"Help")) {
 								beforeID = id;
 								break;
@@ -1264,13 +1264,13 @@ static void _GuiNativizeWidget (Widget me) {
 	my nativized = True;
 }
 
-static Widget createWidget (int widgetClass, Widget parent, const char *name) {
-	Widget me = _Gui_initializeWidget (widgetClass, parent, Melder_peekUtf8ToWcs (name));
+static GuiObject createWidget (int widgetClass, GuiObject parent, const char *name) {
+	GuiObject me = _Gui_initializeWidget (widgetClass, parent, Melder_peekUtf8ToWcs (name));
 	_GuiNativizeWidget (me);
 	return me;
 }
 
-void _Gui_invalidateWidget (Widget me) {
+void _Gui_invalidateWidget (GuiObject me) {
 	if (! my managed) return;   /* Should be: visible. */
 	if (MEMBER (me, Shell) /*||
 		 my widgetClass == xmRowColumnWidgetClass ||
@@ -1282,7 +1282,7 @@ void _Gui_invalidateWidget (Widget me) {
 	#endif
 }
 
-void _Gui_validateWidget (Widget me) {
+void _Gui_validateWidget (GuiObject me) {
 	if (! my managed) return;   /* Should be: visible. */
 	if (MEMBER (me, Shell)) return;
 	#if mac
@@ -1291,7 +1291,7 @@ void _Gui_validateWidget (Widget me) {
 	#endif
 }
 
-static void Native_move (Widget me, int dx, int dy) {
+static void Native_move (GuiObject me, int dx, int dy) {
 /* Native_move () changes the native attributes and visual position of the widget:
  * No Motif attributes (such as 'x' and 'y') are changed.
  * Usage:
@@ -1319,7 +1319,7 @@ static void Native_move (Widget me, int dx, int dy) {
 	 * On Mac, the 'rect' attribute is changed, as is the position information in the Mac object.
 	 * Native_move () calls itself with the same arguments for all the widget's children.
 	 */
-	Widget child;
+	GuiObject child;
 	if ((dx == 0 && dy == 0) || MEMBER (me, MenuBar) || (my parent && MEMBER (my parent, PulldownMenu))) return;
 	if (! my isControl)
 		_Gui_invalidateWidget (me);   /* At old position. BUG: clipping may be wrong because parent may have moved;
@@ -1357,8 +1357,8 @@ static void Native_move (Widget me, int dx, int dy) {
  * hideControls and reshowControls are only called by shellResizeWidget,
  * but they must be defined separately because they are recursive.
  */
-static void reshowControls (Widget me) {
-	Widget child;
+static void reshowControls (GuiObject me) {
+	GuiObject child;
 	if (my widgetClass == xmPulldownMenuWidgetClass) return;
 	for (child = my firstChild; child; child = child -> nextSibling) {
 		if (child -> isControl) {
@@ -1380,8 +1380,8 @@ static void reshowControls (Widget me) {
 		}
 	}
 }
-static void hideControls (Widget me) {
-	Widget child;
+static void hideControls (GuiObject me) {
+	GuiObject child;
 	if (my widgetClass == xmPulldownMenuWidgetClass) return;
 	for (child = my firstChild; child; child = child -> nextSibling) {
 		if (child -> isControl) {
@@ -1395,8 +1395,8 @@ static void hideControls (Widget me) {
 }
 #endif
 
-static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
-	Widget child;
+static void shellResizeWidget (GuiObject me, int dx, int dy, int dw, int dh) {
+	GuiObject child;
 	#if win
 	Melder_assert (! my shell || ! my shell -> nat.shell.duringMoveWindow);
 		if (my window && ! MEMBER (me, Shell)) {
@@ -1484,8 +1484,8 @@ static void shellResizeWidget (Widget me, int dx, int dy, int dw, int dh) {
 	#endif
 }
 
-static void resizeWidget (Widget me, int dw, int dh) {
-	Widget child;
+static void resizeWidget (GuiObject me, int dw, int dh) {
+	GuiObject child;
 	#if win
 		if (my window && ! MEMBER (me, Shell)) {
 			MoveWindow (my window, my x, my y, my width, my height, TRUE);
@@ -1572,7 +1572,7 @@ static void resizeWidget (Widget me, int dw, int dh) {
 	}
 }
 
-static void _motif_setValues (Widget me, va_list arg) {
+static void _motif_setValues (GuiObject me, va_list arg) {
 	int resource;
 	Boolean move = False, resize = False, attach = False, scrollset = False;
 	char *text;
@@ -1701,7 +1701,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			/* Have to kill my own bar first. */
 			XtDestroyWidget (my motiff.scrolledWindow.horizontalBar);
 			/* Then replace by new bar. */
-			my motiff.scrolledWindow.horizontalBar = va_arg (arg, Widget);
+			my motiff.scrolledWindow.horizontalBar = va_arg (arg, GuiObject);
 			/* Make sure it is in the right position. */
 			XtVaSetValues (my motiff.scrolledWindow.horizontalBar, XmNorientation, XmHORIZONTAL,
 				XmNleftAttachment, XmATTACH_FORM, XmNbottomAttachment, XmATTACH_FORM,
@@ -1755,7 +1755,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			else if (MEMBER (me, Scale)) _Gui_invalidateWidget (me);
 			break;
 		case XmNmenuHelpWidget:
-			(void) va_arg (arg, Widget);
+			(void) va_arg (arg, GuiObject);
 			break;
 		case XmNminimum:
 			my minimum = va_arg (arg, int);
@@ -1811,7 +1811,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			break;
 		case XmNsubMenuId:
 			Melder_assert (MEMBER (me, CascadeButton));
-			my subMenuId = va_arg (arg, Widget);
+			my subMenuId = va_arg (arg, GuiObject);
 			my subMenuId -> popUpButton = me;
 			if (my inMenu) {
 				#if win
@@ -1879,7 +1879,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 			/* Have to kill my own bar first. */
 			XtDestroyWidget (my motiff.scrolledWindow.verticalBar);
 			/* Then replace by new bar. */
-			my motiff.scrolledWindow.verticalBar = va_arg (arg, Widget);
+			my motiff.scrolledWindow.verticalBar = va_arg (arg, GuiObject);
 			/* Make sure it is in the right position. */
 			XtVaSetValues (my motiff.scrolledWindow.verticalBar, XmNorientation, XmVERTICAL,
 				XmNtopAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
@@ -1959,7 +1959,7 @@ static void _motif_setValues (Widget me, va_list arg) {
 }
 
 #if mac
-static Widget _motif_findSubwidget (Widget me, int x, int y) {
+static GuiObject _motif_findSubwidget (GuiObject me, int x, int y) {
 	if (! my managed) return NULL;
 	if (my firstChild == NULL && my parent != NULL) {
 		Rect *rect;
@@ -1971,10 +1971,10 @@ static Widget _motif_findSubwidget (Widget me, int x, int y) {
 		else
 			return NULL;
 	} else {
-		Widget child = my firstChild;
+		GuiObject child = my firstChild;
 		for (child = my firstChild; child != NULL; child = child -> nextSibling) {
 			if (! MEMBER (child, Shell)) {
-				Widget result = _motif_findSubwidget (child, x, y);
+				GuiObject result = _motif_findSubwidget (child, x, y);
 				if (result) return result;
 			}
 		}
@@ -1983,9 +1983,9 @@ static Widget _motif_findSubwidget (Widget me, int x, int y) {
 }
 #endif
 
-void _Gui_manageScrolledWindow (Widget me) {
+void _Gui_manageScrolledWindow (GuiObject me) {
 	int workWidth, workHeight, horzAutomatic, vertAutomatic;
-	Widget clipWindow, workWindow, horzBar = my motiff.scrolledWindow.horizontalBar, vertBar = my motiff.scrolledWindow.verticalBar;
+	GuiObject clipWindow, workWindow, horzBar = my motiff.scrolledWindow.horizontalBar, vertBar = my motiff.scrolledWindow.verticalBar;
 	Melder_assert (my widgetClass == xmScrolledWindowWidgetClass);
 	clipWindow = my motiff.scrolledWindow.clipWindow;
 	workWindow = my motiff.scrolledWindow.workWindow;
@@ -2040,12 +2040,12 @@ void _Gui_manageScrolledWindow (Widget me) {
 	}
 }
 
-static void _motif_manage (Widget me) {
-	Widget child;
+static void _motif_manage (GuiObject me) {
+	GuiObject child;
 	int x = 2, y = 2;
 	int width = 0, height = 0, dw, dh;
 	#if mac
-		Widget helpMenu = NULL;
+		GuiObject helpMenu = NULL;
 	#endif
 	/*if (my widgetClass == xmScrolledWindowWidgetClass) return;   /* Ignore. */
 
@@ -2118,7 +2118,7 @@ static void _motif_manage (Widget me) {
 			 */
 			#if 0
 			if (MEMBER3 (me, RowColumn, Form, ScrolledWindow)) {
-				Widget child2;
+				GuiObject child2;
 				for (child2 = my firstChild; child2; child2 = child2 -> nextSibling) if (child2 != child && child2 -> managed) {
 					int cdx = 0, cdy = 0, cdw = 0, cdh = 0;
 					if (child2 -> widgetClass == xmShellWidgetClass) continue;
@@ -2181,7 +2181,7 @@ static void xt_addCallback (XtCallbackList *callbacks, XtCallbackProc proc, XtPo
 	Melder_assert (i < MAXNUM_CALLBACKS);   /* Will always fail if we arrive here. */
 }
 
-void XtAddCallback (Widget me, int kind, XtCallbackProc proc, XtPointer closure) {
+void XtAddCallback (GuiObject me, int kind, XtCallbackProc proc, XtPointer closure) {
 	switch (kind) {
 		case XmNactivateCallback:
 			my activateCallback = proc; my activateClosure = closure;
@@ -2275,8 +2275,8 @@ void XtRemoveTimeOut (XtIntervalId id) {
 	#endif
 }
 
-void XtDestroyWidget (Widget me) {
-	Widget subview = my firstChild;
+void XtDestroyWidget (GuiObject me) {
+	GuiObject subview = my firstChild;
 	/*
 	 * Prevent subsequent messages.
 	 */
@@ -2305,7 +2305,7 @@ void XtDestroyWidget (Widget me) {
 		return;
 	}
 	while (subview) {
-		Widget nextSibling = subview -> nextSibling;   /* Save... */
+		GuiObject nextSibling = subview -> nextSibling;   /* Save... */
 		//if (subview -> widgetClass != xmShellWidgetClass)   /* FIX instead of Xm's being_destroyed mark. */   // removed 20090105
 			XtDestroyWidget (subview);
 		subview = nextSibling;   /* ...because we can't dereference dead subview. */
@@ -2440,13 +2440,13 @@ void XtDestroyWidget (Widget me) {
 	numberOfWidgets --;
 }
 
-Boolean XtIsManaged (Widget me) { return my managed; }
+Boolean XtIsManaged (GuiObject me) { return my managed; }
 
-Boolean XtIsShell (Widget me) {
+Boolean XtIsShell (GuiObject me) {
 	return my widgetClass == xmShellWidgetClass;
 }
 
-void XtMapWidget (Widget me) {
+void XtMapWidget (GuiObject me) {
 	switch (my widgetClass) {
 		case xmShellWidgetClass:
 			#if win
@@ -2461,8 +2461,8 @@ void XtMapWidget (Widget me) {
 	}
 }
 
-static void mapWidget (Widget me) {
-	Widget child;
+static void mapWidget (GuiObject me) {
+	GuiObject child;
 	Melder_assert (my widgetClass != xmPulldownMenuWidgetClass);
 	if (my inMenu) {
 		#if win
@@ -2486,7 +2486,7 @@ static void mapWidget (Widget me) {
 				} break;
 			}
 		#elif mac
-			Widget sibling;
+			GuiObject sibling;
 			int item;
 			/*
 			 * Insert a native menu item.
@@ -2601,7 +2601,7 @@ static void mapWidget (Widget me) {
 		if (child -> managed) mapWidget (child);
 }
 
-void XtManageChild (Widget me) {
+void XtManageChild (GuiObject me) {
 	if (my managed) return;
 
 	if (MEMBER (me, ScrolledWindow)) {
@@ -2631,7 +2631,7 @@ void XtManageChild (Widget me) {
 		mapWidget (me);
 	} else {
 		int visible = True;
-		Widget widget;
+		GuiObject widget;
 		for (widget = me; widget != NULL; widget = widget -> parent) {
 			if (! widget -> managed &&   /* If a parent is invisible, so are its children. */
 					! MEMBER (widget, PulldownMenu))   /* The exception: "shown" even if not popped up. */
@@ -2647,12 +2647,12 @@ void XtManageChild (Widget me) {
 	if (MEMBER2 (me, Text, List) && MEMBER (my parent, ScrolledWindow)) XtManageChild (my parent);
 }
 
-void XtManageChildren (WidgetList children, Cardinal num_children) {
+void XtManageChildren (GuiObjectList children, Cardinal num_children) {
 	Cardinal i;
 	for (i = 0; i < num_children; i ++) XtManageChild (children [i]);
 }
 
-void XtSetSensitive (Widget me, Boolean value) {
+void XtSetSensitive (GuiObject me, Boolean value) {
 	if (my insensitive != value) return;
 	my insensitive = ! value;
 	if (! my parent) return;
@@ -2696,7 +2696,7 @@ void XtSetSensitive (Widget me, Boolean value) {
 	}
 }
 
-void XtUnmanageChild (Widget me) {
+void XtUnmanageChild (GuiObject me) {
 	if (! my managed) return;
 	if (my inMenu) {
 		if (! MEMBER (me, PulldownMenu)) NativeMenuItem_delete (me);
@@ -2746,7 +2746,7 @@ void XtUnmanageChild (Widget me) {
 	}
 }
 
-void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
+void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 	Cardinal i;
 	for (i = 0; i < num_children; i ++) XtUnmanageChild (children [i]);
 }
@@ -2845,7 +2845,7 @@ void XtUnmanageChildren (WidgetList children, Cardinal num_children) {
 	static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 
-Widget XtInitialize (void *dum1, const char *name,
+GuiObject XtInitialize (void *dum1, const char *name,
 	void *dum2, int dum3, unsigned int *argc, char **argv)
 {
 	(void) dum1;
@@ -2930,7 +2930,7 @@ Widget XtInitialize (void *dum1, const char *name,
 	return theApplicationShell = XmCreateShell (NULL, name, NULL, 0);
 }
 
-Widget XtVaAppInitialize (XtAppContext *dum1, const char *name,
+GuiObject XtVaAppInitialize (XtAppContext *dum1, const char *name,
 	void *dum2, int dum3, unsigned int *argc, char **argv, void *dum4, void *dum5)
 {
 	(void) dum1;
@@ -2939,8 +2939,8 @@ Widget XtVaAppInitialize (XtAppContext *dum1, const char *name,
 	return XtInitialize (0, name, dum2, dum3, argc, argv);
 }
 
-Widget XtVaCreateManagedWidget (const char *name, int widgetClass, Widget parent, ...) {
-	Widget me;
+GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...) {
+	GuiObject me;
 	va_list arg;
 	va_start (arg, parent);
 	me = createWidget (widgetClass, parent, name);
@@ -2950,8 +2950,8 @@ Widget XtVaCreateManagedWidget (const char *name, int widgetClass, Widget parent
 	return me;
 }
 
-Widget XtVaCreateWidget (const char *name, int widgetClass, Widget parent, ...) {
-	Widget me;
+GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...) {
+	GuiObject me;
 	va_list arg;
 	va_start (arg, parent);
 	me = createWidget (widgetClass, parent, name);
@@ -2960,7 +2960,7 @@ Widget XtVaCreateWidget (const char *name, int widgetClass, Widget parent, ...) 
 	return me;
 }
 
-void XtVaGetValues (Widget me, ...) {
+void XtVaGetValues (GuiObject me, ...) {
 	char *text;
 	#if mac
 		Str255 ptext;
@@ -3023,7 +3023,7 @@ void XtVaGetValues (Widget me, ...) {
 			break;
 		case XmNsubMenuId:
 			Melder_assert (my widgetClass == xmCascadeButtonWidgetClass);
-			*va_arg (arg, Widget *) = my subMenuId;
+			*va_arg (arg, GuiObject *) = my subMenuId;
 			break;
 		case XmNdialogStyle:
 			Melder_assert (my widgetClass == xmFormWidgetClass ||
@@ -3082,8 +3082,8 @@ void XtVaGetValues (Widget me, ...) {
 			*va_arg (arg, int *) = my deleteResponse;
 			break;
 		case XmNcolumns: *va_arg (arg, int *) = 40; break;
-		case XmNhorizontalScrollBar: *va_arg (arg, Widget *) = my motiff.scrolledWindow.horizontalBar; break;
-		case XmNverticalScrollBar: *va_arg (arg, Widget *) = my motiff.scrolledWindow.verticalBar; break;
+		case XmNhorizontalScrollBar: *va_arg (arg, GuiObject *) = my motiff.scrolledWindow.horizontalBar; break;
+		case XmNverticalScrollBar: *va_arg (arg, GuiObject *) = my motiff.scrolledWindow.verticalBar; break;
 		default: {
 			if (resource < 0 || resource >= sizeof motif_resourceNames / sizeof (char *))
 				Melder_flushError ("(XtVaGetValues:) Resource out of range (%d).", resource);
@@ -3096,14 +3096,14 @@ void XtVaGetValues (Widget me, ...) {
 	va_end (arg);
 }
 
-void XtVaSetValues (Widget me, ...) {
+void XtVaSetValues (GuiObject me, ...) {
 	va_list arg;
 	va_start (arg, me);
 	_motif_setValues (me, arg);
 	va_end (arg);
 }
 
-Window XtWindow (Widget me) {
+Window XtWindow (GuiObject me) {
 	#if mac
 		return (Window) my macWindow;
 	#elif win
@@ -3113,7 +3113,7 @@ Window XtWindow (Widget me) {
 
 /***** MOTIF *****/
 
-void XmAddWMProtocolCallback (Widget me, Atom protocol, XtCallbackProc callback, char *closure) {
+void XmAddWMProtocolCallback (GuiObject me, Atom protocol, XtCallbackProc callback, char *closure) {
 	if (protocol == 'delw') {
 		my motiff.shell.goAwayCallback = callback;
 		my motiff.shell.goAwayClosure = closure;
@@ -3123,119 +3123,119 @@ void XmAddWMProtocolCallback (Widget me, Atom protocol, XtCallbackProc callback,
 	}
 }
 
-void XmAddWMProtocols (Widget shell, Atom *protocols, Cardinal num_protocols) {
+void XmAddWMProtocols (GuiObject shell, Atom *protocols, Cardinal num_protocols) {
 	(void) shell;
 	(void) protocols;
 	(void) num_protocols;
 }
 
-Widget XmCreateBulletinBoard (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateBulletinBoard (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmBulletinBoardWidgetClass, parent, name);
 }
 
-Widget XmCreateBulletinBoardDialog (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget shell = XmCreateDialogShell (parent, name, dum1, dum2);
+GuiObject XmCreateBulletinBoardDialog (GuiObject parent, const char *name, ArgList dum1, int dum2) {
+	GuiObject shell = XmCreateDialogShell (parent, name, dum1, dum2);
 	return XmCreateBulletinBoard (shell, name, dum1, dum2);
 }
 
-Widget XmCreateCascadeButton (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateCascadeButton (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmCascadeButtonWidgetClass, parent, name);
 }
 
-Widget XmCreateCascadeButtonGadget (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateCascadeButtonGadget (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmCascadeButtonGadgetClass, parent, name);
 }
 
-Widget XmCreateDialogShell (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget shell;
+GuiObject XmCreateDialogShell (GuiObject parent, const char *name, ArgList dum1, int dum2) {
+	GuiObject shell;
 	theDialogHint = True;
 	shell = XmCreateShell (parent, name, dum1, dum2);
 	theDialogHint = False;
 	return shell;
 }
 
-Widget XmCreateForm (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateForm (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmFormWidgetClass, parent, name);
 }
 
-Widget XmCreateFormDialog (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget shell = XmCreateDialogShell (parent, name, dum1, dum2);
+GuiObject XmCreateFormDialog (GuiObject parent, const char *name, ArgList dum1, int dum2) {
+	GuiObject shell = XmCreateDialogShell (parent, name, dum1, dum2);
 	return XmCreateForm (shell, name, dum1, dum2);
 }
 
-Widget XmCreateMenuBar (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateMenuBar (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmMenuBarWidgetClass, parent, name);
 }
 
-Widget XmCreatePulldownMenu (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreatePulldownMenu (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmPulldownMenuWidgetClass, parent, name);
 }
 
-Widget XmCreateRadioBox (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget result = createWidget (xmRowColumnWidgetClass, parent, name);
+GuiObject XmCreateRadioBox (GuiObject parent, const char *name, ArgList dum1, int dum2) {
+	GuiObject result = createWidget (xmRowColumnWidgetClass, parent, name);
 	(void) dum1;
 	(void) dum2;
 	XtVaSetValues (result, XmNradioBehavior, True, NULL);
 	return result;
 }
 
-Widget XmCreateRowColumn (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateRowColumn (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmRowColumnWidgetClass, parent, name);
 }
 
-Widget XmCreateScale (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateScale (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmScaleWidgetClass, parent, name);
 }
 
-Widget XmCreateScrollBar (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateScrollBar (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmScrollBarWidgetClass, parent, name);
 }
 
-Widget XmCreateScrolledWindow (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateScrolledWindow (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmScrolledWindowWidgetClass, parent, name);
 }
 
-Widget XmCreateSeparator (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateSeparator (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmSeparatorWidgetClass, parent, name);
 }
 
-Widget XmCreateSeparatorGadget (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateSeparatorGadget (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmSeparatorWidgetClass, parent, name);
 }
 
-Widget XmCreateShell (Widget parent, const char *name, ArgList dum1, int dum2) {
-	Widget me = createWidget (xmShellWidgetClass, parent, name);
+GuiObject XmCreateShell (GuiObject parent, const char *name, ArgList dum1, int dum2) {
+	GuiObject me = createWidget (xmShellWidgetClass, parent, name);
 	(void) dum1;
 	(void) dum2;
 	_motif_addShell (me);
 	return me;
 }
 
-Widget XmCreateToggleButtonGadget (Widget parent, const char *name, ArgList dum1, int dum2) {
+GuiObject XmCreateToggleButtonGadget (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmToggleButtonWidgetClass, parent, name);
@@ -3248,12 +3248,12 @@ Atom XmInternAtom (Display *display, String name, Boolean only_if_exists) {
 	return 0;
 }
 
-void XmScaleGetValue (Widget me, int *value_return) {
+void XmScaleGetValue (GuiObject me, int *value_return) {
 	Melder_assert (my widgetClass == xmScaleWidgetClass);
 	*value_return = my value;
 }
 
-void XmScaleSetValue (Widget me, int value) {
+void XmScaleSetValue (GuiObject me, int value) {
 	Melder_assert (my widgetClass == xmScaleWidgetClass);
 	my value = value;
 	#if win
@@ -3264,7 +3264,7 @@ void XmScaleSetValue (Widget me, int value) {
 	_motif_update (me, 0);
 }
 
-void XmScrollBarGetValues (Widget me, int *value, int *sliderSize,
+void XmScrollBarGetValues (GuiObject me, int *value, int *sliderSize,
 	int *increment, int *pageIncrement)
 {
 	Melder_assert (my widgetClass == xmScrollBarWidgetClass);
@@ -3274,7 +3274,7 @@ void XmScrollBarGetValues (Widget me, int *value, int *sliderSize,
 	*pageIncrement = my pageIncrement;
 }
 
-void XmScrollBarSetValues (Widget me, int value, int sliderSize,
+void XmScrollBarSetValues (GuiObject me, int value, int sliderSize,
 	int increment, int pageIncrement, Boolean notify)
 {
 	Melder_assert (my widgetClass == xmScrollBarWidgetClass);
@@ -3290,7 +3290,7 @@ void XmScrollBarSetValues (Widget me, int value, int sliderSize,
 	if (notify)	_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, NULL);
 }
 
-Boolean XmToggleButtonGadgetGetState (Widget me) {
+Boolean XmToggleButtonGadgetGetState (GuiObject me) {
 	Melder_assert (MEMBER (me, ToggleButton));
 	Melder_assert (my inMenu);
 	#if mac
@@ -3302,7 +3302,7 @@ Boolean XmToggleButtonGadgetGetState (Widget me) {
 	#endif
 }
 
-void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
+void XmToggleButtonGadgetSetState (GuiObject me, Boolean value, Boolean notify) {
 	Melder_assert (MEMBER (me, ToggleButton));
 	Melder_assert (my inMenu);
 	NativeMenuItem_check (me, value);
@@ -3310,8 +3310,8 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 }
 
 #if mac
-	static void _motif_update (Widget me, EventRecord *event) {
-		Widget subview;
+	static void _motif_update (GuiObject me, EventRecord *event) {
+		GuiObject subview;
 		RgnHandle visRgn;
 		if (! my managed || my inMenu) return;
 		for (subview = my firstChild; subview != NULL; subview = subview -> nextSibling) {
@@ -3382,13 +3382,13 @@ void XmToggleButtonGadgetSetState (Widget me, Boolean value, Boolean notify) {
 		DisposeRgn (visRgn);
 	}
 #elif win
-	static void _motif_update (Widget me, void *event) { (void) me; (void) event; }
+	static void _motif_update (GuiObject me, void *event) { (void) me; (void) event; }
 #endif
 
 #if mac
 static void _motif_processUpdateEvent (EventRecord *event) {
 	WindowPtr macwindow = (WindowPtr) event -> message;
-	Widget shell = (Widget) GetWRefCon (macwindow);
+	GuiObject shell = (GuiObject) GetWRefCon (macwindow);
 	Rect rect;
 	int right, bottom;
 	if (! shell) return;
@@ -3410,14 +3410,14 @@ static void _motif_processUpdateEvent (EventRecord *event) {
 }
 #endif
 
-void XmUpdateDisplay (Widget displayDummy) {
+void XmUpdateDisplay (GuiObject displayDummy) {
 	/*
 	 * Send update messages to all shells.
 	 */
 	int i;
 	(void) displayDummy;
 	for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
-		Widget shell = theShells [i];
+		GuiObject shell = theShells [i];
 		#if mac
 			if (shell && shell -> managed) {
 				RgnHandle updateRegion = NewRgn ();
@@ -3447,9 +3447,9 @@ void XmUpdateDisplay (Widget displayDummy) {
 /***** EVENT *****/
 
 static long numberOfTextWidgets = 0, textWidgetLocation = 0;
-static Widget nextTextWidget = NULL;
-static void _motif_inspectTextWidgets (Widget me, Widget text) {
-	for (Widget sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
+static GuiObject nextTextWidget = NULL;
+static void _motif_inspectTextWidgets (GuiObject me, GuiObject text) {
+	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
 		if (MEMBER (sub, Text)) {
 			numberOfTextWidgets ++;
@@ -3461,8 +3461,8 @@ static void _motif_inspectTextWidgets (Widget me, Widget text) {
 		}
 	}
 }
-static void _motif_getLocatedTextWidget (Widget me) {
-	for (Widget sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
+static void _motif_getLocatedTextWidget (GuiObject me) {
+	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
 		if (MEMBER (sub, Text)) {
 			numberOfTextWidgets ++;
@@ -3474,7 +3474,7 @@ static void _motif_getLocatedTextWidget (Widget me) {
 		}
 	}
 }
-static Widget _motif_getNextTextWidget (Widget shell, Widget text, bool backward) {
+static GuiObject _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool backward) {
 	numberOfTextWidgets = 0;
 	textWidgetLocation = 0;
 	_motif_inspectTextWidgets (shell, text);
@@ -3496,7 +3496,7 @@ static Widget _motif_getNextTextWidget (Widget shell, Widget text, bool backward
 }
 
 #if win
-static void on_scroll (Widget me, UINT part, int pos) {
+static void on_scroll (GuiObject me, UINT part, int pos) {
 	if (my maximum == my minimum) return;
 	switch (part) {
 		case SB_LINEUP: my value -= my increment; break;
@@ -3521,7 +3521,7 @@ static void on_scroll (Widget me, UINT part, int pos) {
 }
 #elif mac
 static pascal void _motif_scrollBarAction (ControlHandle maccontrol, short part) {
-	Widget me = (Widget) GetControlReference (maccontrol);
+	GuiObject me = (GuiObject) GetControlReference (maccontrol);
 	if (me == NULL || part == 0) return;
 	switch (part) {
 		case kControlUpButtonPart: my value -= my increment; break;
@@ -3543,9 +3543,9 @@ static pascal void _motif_scrollBarAction (ControlHandle maccontrol, short part)
 #endif
 
 #if mac
-static void _motif_activateControls (Widget me, Boolean act) {
+static void _motif_activateControls (GuiObject me, Boolean act) {
 	ControlHandle macControl;
-	Widget control;
+	GuiObject control;
 	UInt16 numberOfControls, icontrol;
 	Melder_assert (MEMBER (me, Shell));
 	Melder_assert (my nat.window.rootControl);
@@ -3553,7 +3553,7 @@ static void _motif_activateControls (Widget me, Boolean act) {
 	SetPortWindowPort (my macWindow);
 	for (icontrol = 1; icontrol <= numberOfControls; icontrol ++) {
 		GetIndexedSubControl (my nat.window.rootControl, icontrol, & macControl);
-		control = (Widget) GetControlReference (macControl);
+		control = (GuiObject) GetControlReference (macControl);
 		if (control && control -> magicNumber == 15111959 && control -> managed) {
 			_GuiMac_clipOnParent (control);
 			HiliteControl (macControl, act && ! control -> insensitive ? 0 : 255 );
@@ -3562,7 +3562,7 @@ static void _motif_activateControls (Widget me, Boolean act) {
 	}
 }
 
-static void _motif_activateGrowIcon (Widget me, Boolean act) {
+static void _motif_activateGrowIcon (GuiObject me, Boolean act) {
 	if (! my motiff.shell.isDialog) {
 		WindowPtr macwindow = my nat.window.ptr;
 		Rect portRect, rect;
@@ -3580,7 +3580,7 @@ static void _motif_activateGrowIcon (Widget me, Boolean act) {
 	}
 }
 
-static void _motif_activateText (Widget me, Boolean act) {
+static void _motif_activateText (GuiObject me, Boolean act) {
 	if (act) {
 		_GuiText_setTheTextFocus (my textFocus);
 	} else {
@@ -3588,8 +3588,8 @@ static void _motif_activateText (Widget me, Boolean act) {
 	}
 }
 
-static void _motif_activateRest (Widget me, Boolean act) {
-	Widget sub;
+static void _motif_activateRest (GuiObject me, Boolean act) {
+	GuiObject sub;
 	if (! my managed) return;
 	SetPortWindowPort (my macWindow);
 	for (sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
@@ -3621,7 +3621,7 @@ static void _motif_processActivateEvent (EventRecord *event) {
 	WindowPtr macwindow = (WindowPtr) event -> message;
 	int act = event -> modifiers & 1;
 	if (GetWindowKind (macwindow) >= userKind) {
-		Widget shell = (Widget) GetWRefCon (macwindow);
+		GuiObject shell = (GuiObject) GetWRefCon (macwindow);
 		if (! shell) return;
 
 		Melder_assert (GetWindowKind (macwindow) == userKind);
@@ -3633,9 +3633,8 @@ static void _motif_processActivateEvent (EventRecord *event) {
 			 * Bypass the Mac activation scheme if Motif style is on.
 			 * Deactivate all other shells.
 			 */
-			int i;
-			for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
-				Widget otherShell = theShells [i];
+			for (int i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
+				GuiObject otherShell = theShells [i];
 				if (otherShell && otherShell -> managed && otherShell != shell) {
 					otherShell -> motiff.shell.active = ! act;
 					_motif_activateControls (otherShell, ! act);
@@ -3656,10 +3655,10 @@ static void _motif_processOsEvent (EventRecord *event) {
 	} else if (messageKind == suspendResumeMessage && 0) {
 		//Melder_fatal ("_motif_processOsEvent -- suspendResumeMessage");
 		WindowPtr frontWindow = FrontWindow ();
-		int act = event -> message & resumeFlag ? true : false, i;
+		int act = event -> message & resumeFlag ? true : false;
 		theBackground = ! act;
-		for (i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
-			Widget shell = theShells [i];
+		for (int i = 0; i < MAXIMUM_NUMBER_OF_SHELLS; i ++) {
+			GuiObject shell = theShells [i];
 			if (! shell || ! shell -> managed) continue;
 			if (BACKGROUND_WINDOWS_ARE_ACTIVE) {
 				if (theGui.modalDialog && theGui.modalDialog != shell -> nat.window.ptr) continue;
@@ -3679,18 +3678,18 @@ static void _motif_processHighLevelEvent (EventRecord *event) {
 	AEProcessAppleEvent (event);
 }
 
-static Widget _motif_findDrawingArea (Widget me) {
-	Widget sub;
+static GuiObject _motif_findDrawingArea (GuiObject me) {
+	GuiObject sub;
 	if (my widgetClass == xmDrawingAreaWidgetClass) return me;
 	for (sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
 		if (sub -> widgetClass != xmShellWidgetClass) {   /* Only in same mac window. */
-			Widget drawingArea = _motif_findDrawingArea (sub);
+			GuiObject drawingArea = _motif_findDrawingArea (sub);
 			if (drawingArea) return drawingArea;
 		}
 	return NULL;   /* No DrawingArea found. */
 }
 
-static int _motif_shell_processKeyboardEquivalent (Widget shell, unsigned char kar, int modifiers, EventRecord *event) {
+static int _motif_shell_processKeyboardEquivalent (GuiObject shell, unsigned char kar, int modifiers, EventRecord *event) {
 	WindowPtr macWindow;
 	int imenu;
 	if (! shell) return 0;
@@ -3729,7 +3728,7 @@ static int _motif_shell_processKeyboardEquivalent (Widget shell, unsigned char k
 		}
 	}
 	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> macWindow == macWindow) {
-		Widget child;
+		GuiObject child;
 		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
 			if ((child -> widgetClass == xmPushButtonWidgetClass || child -> widgetClass == xmToggleButtonWidgetClass) &&
 					child -> motiff.pushButton.acceleratorChar == kar &&
@@ -3753,7 +3752,7 @@ static void _motif_processKeyboardEquivalent (unsigned char kar, int modifiers, 
 	 * First try to send the key command to the active shell.
 	 * If that fails, try to send the key command to the application shell.
 	 */
-	if (! _motif_shell_processKeyboardEquivalent ((Widget) GetWRefCon (FrontWindow ()), kar, modifiers, event))
+	if (! _motif_shell_processKeyboardEquivalent ((GuiObject) GetWRefCon (FrontWindow ()), kar, modifiers, event))
 		_motif_shell_processKeyboardEquivalent (theApplicationShell, kar, modifiers, event);
 }
 
@@ -3763,13 +3762,13 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 	 * It has to find this out fast, so it cannot go through all the menu structures for each key-down.
 	 * Therefore, every shell maintains a bit list of which of the lower accelerators are used.
 	 */
-	Widget shell = (Widget) GetWRefCon (FrontWindow ());
+	GuiObject shell = (GuiObject) GetWRefCon (FrontWindow ());
 	if (shell == NULL) {
 		// Probably a system window such as an error dialog or file selection dialog.
 		//CallNextEventHandler (nextHandler, eventRef);
 		return false;
 	}
-	Widget text = theGui.textFocus;
+	GuiObject text = theGui.textFocus;
 	unsigned char charCode = event -> message & charCodeMask, keyCode = (event -> message & keyCodeMask) >> 8;
 	int modifiers = 0;
 	if (event -> modifiers & cmdKey) modifiers |= _motif_COMMAND_MASK;
@@ -3839,7 +3838,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 			 * Next, try tab navigation.
 			 */
 			if (text) {
-				Widget nextTextWidget = _motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
+				GuiObject nextTextWidget = _motif_getNextTextWidget (shell, text, modifiers & _motif_SHIFT_MASK);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
 					GuiText_setSelection (nextTextWidget, 0, 10000000);
@@ -3965,7 +3964,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 
 	/* Last chance: try drawingArea. */
 	if (shell) {
-		Widget drawingArea = _motif_findDrawingArea (shell);
+		GuiObject drawingArea = _motif_findDrawingArea (shell);
 		if (drawingArea && _GuiMacDrawingArea_tryToHandleKey (drawingArea, event)) {
 			return true;
 		}
@@ -3975,7 +3974,7 @@ static bool _motif_processKeyDownEvent (EventHandlerCallRef nextHandler, EventRe
 
 static void mac_processMenuChoice (long choice, EventRecord *event) {
 	int macMenuID = HiWord (choice), macMenuItem = LoWord (choice);
-	Widget menu, item;
+	GuiObject menu, item;
 	if (macMenuID == 0) return;
 	menu = theMenus [macMenuID == kHMHelpMenuID ? MAXIMUM_NUMBER_OF_MENUS : macMenuID];
 	if (menu == NULL) return;
@@ -4023,7 +4022,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 		} break;
 		case inGoAway: {
 			if (TrackGoAway (macvenster, event -> where)) {
-				Widget shell = (Widget) GetWRefCon (macvenster);
+				GuiObject shell = (GuiObject) GetWRefCon (macvenster);
 				int deleteResponse;
 				if (! shell) return;
 				deleteResponse = shell -> deleteResponse;   /* Save this, in case the callback should kill the widget (XmDO_NOTHING). */
@@ -4051,7 +4050,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 			GetRegionBounds (greyRegion, & greyBounds);
 			newSize = GrowWindow (macvenster, event -> where, & greyBounds);
 			if (newSize != 0) {
-				Widget shell = (Widget) GetWRefCon (macvenster);
+				GuiObject shell = (GuiObject) GetWRefCon (macvenster);
 				int oldWidth, oldHeight, newWidth, newHeight;
 				if (! shell) return;
 				oldWidth = shell -> width, oldHeight = shell -> height;
@@ -4063,7 +4062,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 			}
 		} break;
 		case inZoomIn: case inZoomOut: {
-			Widget shell = (Widget) GetWRefCon (macvenster);
+			GuiObject shell = (GuiObject) GetWRefCon (macvenster);
 			if (shell) {
 				int oldWidth = shell -> width, oldHeight = shell -> height, newWidth, newHeight;
 				Rect bounds;
@@ -4102,7 +4101,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 				GlobalToLocal (& event -> where);
 				maccontrol = FindControlUnderMouse (event -> where, macvenster, & controlPart);
 				if (maccontrol) {
-					Widget control = (Widget) GetControlReference (maccontrol);
+					GuiObject control = (GuiObject) GetControlReference (maccontrol);
 					if (! control) return;
 					if (control -> magicNumber != 15111959 || ! control -> managed) goto LABEL_clickedOutsideControl;
 					event -> message = controlPart;
@@ -4115,7 +4114,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 							if (control -> widgetClass == xmPushButtonWidgetClass) {
 								_GuiMacButton_handleClick (control, event);
 							} else if (control -> widgetClass == xmCascadeButtonWidgetClass) {   /* Cascade button. */
-								Widget menu = control -> subMenuId;
+								GuiObject menu = control -> subMenuId;
 								if (menu && ! control -> insensitive) {
 									Point pos;
 									long choice = 0;
@@ -4156,9 +4155,9 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						default: break;
 					}
 				} else {   /* Clicked in content region, but not in a control. */
-					Widget shell, clicked;
+					GuiObject shell, clicked;
 					LABEL_clickedOutsideControl:
-					shell = (Widget) GetWRefCon (macvenster);
+					shell = (GuiObject) GetWRefCon (macvenster);
 					if (! shell) return;
 					clicked = _motif_findSubwidget (shell, event -> where. h, event -> where. v);
 					if (clicked) {
@@ -4174,7 +4173,7 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 						} else if (clicked -> widgetClass == xmDrawingAreaWidgetClass) {
 							_GuiMacDrawingArea_handleClick (clicked, event);
 						} else if (clicked -> widgetClass == xmCascadeButtonWidgetClass && 0) {
-							Widget menu = clicked -> subMenuId;
+							GuiObject menu = clicked -> subMenuId;
 							if (menu && ! clicked -> insensitive) {
 								Point pos;
 								long choice = 0;
@@ -4292,14 +4291,12 @@ void XtAppNextEvent (XtAppContext appContext, XEvent *xevent) {
 
 #if win
 
-static int win_shell_processKeyboardEquivalent (Widget me, int kar, int modifiers) {
-	int imenu;
-	for (imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
-		Widget child;
-		for (child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling)
+static int win_shell_processKeyboardEquivalent (GuiObject me, int kar, int modifiers) {
+	for (int imenu = 1; imenu <= MAXIMUM_NUMBER_OF_MENUS; imenu ++) if (theMenus [imenu] && theMenus [imenu] -> shell == me) {
+		for (GuiObject child = theMenus [imenu] -> firstChild; child != NULL; child = child -> nextSibling) {
 			if ((child -> widgetClass == xmPushButtonWidgetClass || child -> widgetClass == xmToggleButtonWidgetClass) &&
 					child -> motiff.pushButton.acceleratorChar == kar &&
-					child -> motiff.pushButton.acceleratorModifiers == modifiers)
+					child -> motiff.pushButton.acceleratorModifiers == modifiers) {
 				if (child -> activateCallback && ! child -> insensitive) {
 					child -> activateCallback (child, child -> activateClosure, 0);
 					return 1;
@@ -4308,11 +4305,13 @@ static int win_shell_processKeyboardEquivalent (Widget me, int kar, int modifier
 					_Gui_callCallbacks (child, & child -> motiff.toggleButton.valueChangedCallbacks, 0);
 					return 1;
 				}
+			}
+		}
 	}
 	return 0;
 }
 
-static int win_processKeyboardEquivalent (Widget me, int kar, int modifiers) {
+static int win_processKeyboardEquivalent (GuiObject me, int kar, int modifiers) {
 	/*
 	 * First try to send the key command to the active shell.
 	 * If that fails, try to send the key command to the application shell.
@@ -4322,12 +4321,11 @@ static int win_processKeyboardEquivalent (Widget me, int kar, int modifiers) {
 	return 0;
 }
 
-	static Widget _motif_findDrawingArea (Widget me) {
-		Widget sub;
+	static GuiObject _motif_findDrawingArea (GuiObject me) {
 		if (my widgetClass == xmDrawingAreaWidgetClass) return me;
-		for (sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
+		for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling)
 			if (! MEMBER (sub, Shell)) {   /* Only in same top window. */
-				Widget drawingArea = _motif_findDrawingArea (sub);
+				GuiObject drawingArea = _motif_findDrawingArea (sub);
 				if (drawingArea) return drawingArea;
 			}
 		return NULL;   /* No DrawingArea found. */
@@ -4357,7 +4355,7 @@ void XtDispatchEvent (XEvent *xevent) {
 {
 	int kar = LOWORD (message -> wParam);
 	int modifiers = 0;
-	Widget me = (Widget) GetWindowLong (message -> hwnd, GWL_USERDATA);
+	GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
 	if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 	if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
 	if (GetKeyState (VK_SHIFT) < 0) modifiers |= _motif_SHIFT_MASK;
@@ -4379,7 +4377,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			message -> message == WM_SYSKEYDOWN && GetKeyState (VK_CONTROL) < 0)
 		{
 			int kar = LOWORD (message -> wParam);
-			Widget me = (Widget) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
 			int modifiers = 0;
 			if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 			if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
@@ -4477,9 +4475,9 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Catch character messages to push buttons and toggle buttons:
 			 * divert them to a drawing area, if possible.
 			 */
-			Widget me = (Widget) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
 			if (me && MEMBER2 (me, PushButton, ToggleButton)) {
-				Widget drawingArea = _motif_findDrawingArea (my shell);
+				GuiObject drawingArea = _motif_findDrawingArea (my shell);
 				if (drawingArea) {
 					_GuiWinDrawingArea_handleKey (drawingArea, kar);   // TODO: event -> key?
 					return;
@@ -4489,7 +4487,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Next, try tab navigation.
 			 */
 			if (me && MEMBER (me, Text) && kar == 9) {
-				Widget nextTextWidget = _motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
+				GuiObject nextTextWidget = _motif_getNextTextWidget (my shell, me, GetKeyState (VK_SHIFT) < 0);
 				if (nextTextWidget != NULL) {
 					_GuiText_setTheTextFocus (nextTextWidget);
 					GuiText_setSelection (nextTextWidget, 0, 10000000);
@@ -4501,7 +4499,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Catch mouse-down messages to cascade buttons:
 			 * post the associated menu, if any.
 			 */
-			Widget me = (Widget) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
 			if (me && MEMBER (me, CascadeButton) && my subMenuId) {
 				RECT rect;
 				GetWindowRect (my window, & rect);
@@ -4548,11 +4546,11 @@ void XtAppMainLoop (XtAppContext appctxt) {
 	}
 
 	static void on_close (HWND window) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			if (my widgetClass == xmShellWidgetClass) {
 				int deleteResponse = my deleteResponse;   /* Save this, in case the callback should kill the widget (XmDO_NOTHING). */
-				Widget parent = my parent;
+				GuiObject parent = my parent;
 				if (my motiff.shell.goAwayCallback)
 					my motiff.shell.goAwayCallback (me, my motiff.shell.goAwayClosure, NULL);
 				if (deleteResponse == XmDESTROY) {
@@ -4574,11 +4572,11 @@ void XtAppMainLoop (XtAppContext appctxt) {
 			} else FORWARD_WM_CLOSE (window, DefWindowProc);
 		} else FORWARD_WM_CLOSE (window, DefWindowProc);
 	}
-	static Widget findItem (Widget menu, int id) {
-		Widget child = menu -> firstChild;
+	static GuiObject findItem (GuiObject menu, int id) {
+		GuiObject child = menu -> firstChild;
 		for (child = menu -> firstChild; child != NULL; child = child -> nextSibling) {
 			if (child -> widgetClass == xmPulldownMenuWidgetClass) {
-				Widget result = findItem (child, id);
+				GuiObject result = findItem (child, id);
 				if (result) return result;
 			} else {
 				Melder_assert (MEMBER4 (child, PushButton, ToggleButton, CascadeButton, Separator));
@@ -4588,10 +4586,10 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		return NULL;
 	}
 	static void on_command (HWND window, int id, HWND controlWindow, UINT codeNotify) {
-		Widget parent = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (parent) {
 			if (controlWindow) {
-				Widget control = (Widget) GetWindowLong (controlWindow, GWL_USERDATA);
+				GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
 				if (control) {
 					switch (control -> widgetClass) {
 						/*
@@ -4634,13 +4632,13 @@ void XtAppMainLoop (XtAppContext appctxt) {
 					}
 				} else FORWARD_WM_COMMAND (window, id, controlWindow, codeNotify, DefWindowProc);
 			} else {   // menu choice
-				Widget menuBar = NULL;
+				GuiObject menuBar = NULL;
 				if (MEMBER (parent, Shell))
 					menuBar = parent -> nat.shell.menuBar;
 				else if (MEMBER (parent, RowColumn))
 					menuBar = parent;
 				if (menuBar) {
-					Widget item = findItem (menuBar, id);
+					GuiObject item = findItem (menuBar, id);
 					if (item) {
 						if (item -> widgetClass == xmPushButtonWidgetClass) {
 							if (item -> activateCallback)
@@ -4658,7 +4656,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		(void) window;
 	}
 	static void on_lbuttonDown (HWND window, BOOL doubleClick, int x, int y, UINT flags) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			if (MEMBER (me, DrawingArea)) {
 				_GuiWinDrawingArea_handleClick (me, x, y);
@@ -4666,7 +4664,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 	}
 	static void on_paint (HWND window) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			if (my widgetClass == xmDrawingAreaWidgetClass) {
 				_GuiWinDrawingArea_update (me);
@@ -4674,25 +4672,25 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		} else FORWARD_WM_PAINT (window, DefWindowProc);
 	}
 	static void on_hscroll (HWND window, HWND controlWindow, UINT code, int pos) {
-		Widget parent = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (parent) {
-			Widget control = (Widget) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
 			if (control) {
 				on_scroll (control, code, pos);
 			} else FORWARD_WM_HSCROLL (window, controlWindow, code, pos, DefWindowProc);
 		} else FORWARD_WM_HSCROLL (window, controlWindow, code, pos, DefWindowProc);
 	}
 	static void on_vscroll (HWND window, HWND controlWindow, UINT code, int pos) {
-		Widget parent = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (parent) {
-			Widget control = (Widget) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
 			if (control) {
 				on_scroll (control, code, pos);
 			} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 		} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 	}
 	static void on_size (HWND window, UINT state, int cx, int cy) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me && MEMBER (me, Shell) && (state == SIZE_RESTORED || state == SIZE_MAXIMIZED)) {
 			int oldWidth = my width, oldHeight = my height;
 			int newWidth = cx;
@@ -4710,13 +4708,13 @@ void XtAppMainLoop (XtAppContext appctxt) {
 	}
 	static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 		Melder_assert (down == true);
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me && key >= VK_LEFT && key <= VK_DOWN) {
 			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
-				Widget drawingArea = _motif_findDrawingArea (me);
+				GuiObject drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
-					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+					GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
 					_GuiWinDrawingArea_handleKey (drawingArea, key);
 				} else {
 					FORWARD_WM_KEYDOWN (window, key, repeat, flags, DefWindowProc);
@@ -4727,13 +4725,13 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		}
 	}
 	static void on_char (HWND window, TCHAR kar, int repeat) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me) {
 			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
-				Widget drawingArea = _motif_findDrawingArea (me);
+				GuiObject drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
-					Widget textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
+					GuiObject textFocus = drawingArea -> shell -> textFocus;   // BUG: ignore?
 					_GuiWinDrawingArea_handleKey (drawingArea, kar);
 				} else {
 					FORWARD_WM_CHAR (window, kar, repeat, DefWindowProc);
@@ -4744,7 +4742,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		}
 	}
 	static void on_move (HWND window, int x, int y) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		/*if (me && MEMBER (me, Shell)) {
 			my x = x - ( my motiff.shell.isDialog ? GetSystemMetrics (SM_CXFIXEDFRAME) : GetSystemMetrics (SM_CXSIZEFRAME) );
 			my y = y - GetSystemMetrics (SM_CYCAPTION) - ( my motiff.shell.isDialog ? GetSystemMetrics (SM_CYFIXEDFRAME) :
@@ -4753,10 +4751,10 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		FORWARD_WM_MOVE (window, x, y, DefWindowProc);
 	}
 	static HBRUSH on_ctlColorStatic (HWND window, HDC hdc, HWND controlWindow, int type) {
-		Widget parent = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		(void) type;
 		if (parent) {
-			Widget control = (Widget) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
 			if (control) {
 				SetBkMode (hdc, TRANSPARENT);
 				return GetStockBrush (LTGRAY_BRUSH);
@@ -4765,10 +4763,10 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		return FORWARD_WM_CTLCOLORSTATIC (window, hdc, controlWindow, DefWindowProc);
 	}
 	static HBRUSH on_ctlColorBtn (HWND window, HDC hdc, HWND controlWindow, int type) {
-		Widget parent = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		(void) type;
 		if (parent) {
-			Widget control = (Widget) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
 			if (control) {
 				SetBkMode (hdc, TRANSPARENT);
 				return GetStockBrush (LTGRAY_BRUSH);
@@ -4777,7 +4775,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		return FORWARD_WM_CTLCOLORBTN (window, hdc, controlWindow, DefWindowProc);
 	}
 	static void on_activate (HWND window, UINT state, HWND hActive, BOOL minimized) {
-		Widget me = (Widget) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
 		if (me && my widgetClass == xmShellWidgetClass) {
 			if (state == WA_INACTIVE || minimized) {
 				_GuiText_handleFocusLoss (my textFocus);

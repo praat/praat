@@ -40,7 +40,7 @@ Thing_declare1 (IntensityTierEditor);
 #define IntensityTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (IntensityTierEditor, RealTierEditor);
 
-IntensityTierEditor IntensityTierEditor_create (Widget parent, const wchar_t *title,
+IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar_t *title,
 	IntensityTier intensity, Sound sound, int ownSound);
 /*
 	'sound' may be NULL.

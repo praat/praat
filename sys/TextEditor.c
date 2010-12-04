@@ -42,6 +42,7 @@
  * fb 2010/02/26 tell Undo/Redo buttons to GuiText for (de)sensitivization
  * pb 2010/05/16 correct order and types in Font menu
  * pb 2010/07/29 removed GuiDialog_show
+ * pb 2010/12/03 command "Convert to C string"
  */
 
 #include "TextEditor.h"
@@ -226,7 +227,7 @@ static int menu_cb_open (EDITOR_ARGS) {
 			GuiLabel_createShown (my dirtyOpenDialog,
 				Gui_LEFT_DIALOG_SPACING, Gui_AUTOMATIC, Gui_TOP_DIALOG_SPACING, Gui_AUTOMATIC,
 				L"The text has changed! Save changes?", 0);
-			Widget buttonArea = GuiDialog_getButtonArea (my dirtyOpenDialog);
+			GuiObject buttonArea = GuiDialog_getButtonArea (my dirtyOpenDialog);
 			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
@@ -287,7 +288,7 @@ static int menu_cb_new (EDITOR_ARGS) {
 			GuiLabel_createShown (my dirtyNewDialog,
 				Gui_LEFT_DIALOG_SPACING, Gui_AUTOMATIC, Gui_TOP_DIALOG_SPACING, Gui_AUTOMATIC,
 				L"The text has changed! Save changes?", 0);
-			Widget buttonArea = GuiDialog_getButtonArea (my dirtyNewDialog);
+			GuiObject buttonArea = GuiDialog_getButtonArea (my dirtyNewDialog);
 			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
@@ -370,7 +371,7 @@ static void classTextEditor_goAway (TextEditor me) {
 			GuiLabel_createShown (my dirtyCloseDialog,
 				Gui_LEFT_DIALOG_SPACING, Gui_AUTOMATIC, Gui_TOP_DIALOG_SPACING, Gui_AUTOMATIC,
 				L"The text has changed! Save changes?", 0);
-			Widget buttonArea = GuiDialog_getButtonArea (my dirtyCloseDialog);
+			GuiObject buttonArea = GuiDialog_getButtonArea (my dirtyCloseDialog);
 			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
@@ -603,6 +604,41 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static int menu_cb_convertToCString (EDITOR_ARGS) {
+	EDITOR_IAM (TextEditor);
+	wchar_t *text = GuiText_getString (my textWidget);
+	wchar_t buffer [2] = L" ";
+	wchar_t *hex [16] = { L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L"A", L"B", L"C", L"D", L"E", L"F" };
+	MelderInfo_open ();
+	MelderInfo_write1 (L"\"");
+	for (wchar_t *p = & text [0]; *p != '\0'; p ++) {
+		if (*p == '\n') {
+			MelderInfo_write1 (L"\\n\"\n\"");
+		} else if (*p == '\t') {
+			MelderInfo_write1 (L"   ");
+		} else if (*p == '\"') {
+			MelderInfo_write1 (L"\\\"");
+		} else if (*p == '\\') {
+			MelderInfo_write1 (L"\\\\");
+		} else if (*p < 0 || *p > 127) {
+			uint32_t kar = *p;
+			if (kar <= 0xFFFF) {
+				MelderInfo_write5 (L"\\u", hex [kar >> 12], hex [(kar >> 8) & 0x0000000F], hex [(kar >> 4) & 0x0000000F], hex [kar & 0x0000000F]);
+			} else {
+				MelderInfo_write9 (L"\\U", hex [kar >> 28], hex [(kar >> 24) & 0x0000000F], hex [(kar >> 20) & 0x0000000F], hex [(kar >> 16) & 0x0000000F],
+					hex [(kar >> 12) & 0x0000000F], hex [(kar >> 8) & 0x0000000F], hex [(kar >> 4) & 0x0000000F], hex [kar & 0x0000000F]);
+			}
+		} else {
+			buffer [0] = *p;
+			MelderInfo_write1 (& buffer [0]);
+		}
+	}
+	MelderInfo_write1 (L"\"");
+	MelderInfo_close ();
+	Melder_free (text);
+	return 1;
+}
+
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
@@ -666,6 +702,8 @@ static void classTextEditor_createMenus (TextEditor me) {
 	Editor_addCommand (me, L"Search", L"-- line --", 0, NULL);
 	Editor_addCommand (me, L"Search", L"Where am I?", 0, menu_cb_whereAmI);
 	Editor_addCommand (me, L"Search", L"Go to line...", 'L', menu_cb_goToLine);
+	Editor_addMenu (me, L"Convert", 0);
+	Editor_addCommand (me, L"Convert", L"Convert to C string", 0, menu_cb_convertToCString);
 	#ifdef macintosh
 		Editor_addMenu (me, L"Font", 0);
 		Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
@@ -709,7 +747,7 @@ class_methods (TextEditor, Editor) {
 	class_methods_end
 }
 
-int TextEditor_init (TextEditor me, Widget parent, const wchar_t *initialText) {
+int TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText) {
 	Editor_init (TextEditor_as_parent (me), parent, 0, 0, 600, 400, NULL, NULL); cherror
 	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
@@ -728,7 +766,7 @@ end:
 	return 1;
 }
 
-TextEditor TextEditor_create (Widget parent, const wchar_t *initialText) {
+TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText) {
 	TextEditor me = new (TextEditor);
 	if (! me || ! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
 	return me;

@@ -35,7 +35,7 @@
 #define SoundRecorder__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
 Thing_declare1 (SoundRecorder);
 
-SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, void *applicationContext);
+SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void *applicationContext);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window

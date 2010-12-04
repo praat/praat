@@ -44,7 +44,7 @@ oo_DEFINE_STRUCT (NetworkConnection)
 	oo_FROM (1)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
-	#if OO_READING
+	#if oo_READING
 		if (localVersion < 1) {
 			my plasticity = 1.0;
 		}

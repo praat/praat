@@ -123,15 +123,16 @@ extern machar_Table NUMfpp;
 #include "TableOfReal_and_SVD.h"
 #include "VowelEditor.h"
 
-static wchar_t *QUERY_BUTTON   = L"Query -                ";
-static wchar_t *DRAW_BUTTON    = L"Draw -                 ";
-static wchar_t *MODIFY_BUTTON  = L"Modify -               ";
+static wchar_t *QUERY_BUTTON   = L"Query -";
+static wchar_t *DRAW_BUTTON    = L"Draw -";
+static wchar_t *MODIFY_BUTTON  = L"Modify -";
 static wchar_t *EXTRACT_BUTTON = L"Extract -";
 
 extern void praat_TimeFunction_query_init (void *klas);
 extern void praat_TimeFrameSampled_query_init (void *klas);
 extern void praat_TableOfReal_init (void *klas);
 void praat_TableOfReal_init2  (void *klas);
+void praat_SSCP_as_TableOfReal_init (void *klas);
 
 void praat_CC_init (void *klas);
 void DTW_constraints_addCommonFields (void *dia);
@@ -684,14 +685,13 @@ END
 
 FORM (Covariance_createSimple, L"Create simple Covariance", L"Create simple Covariance...")
 	WORD (L"Name", L"c")
-	NATURAL (L"Dimension", L"2")
-	SENTENCE (L"Variances", L"1.0 1.0")
+	SENTENCE (L"Covariances", L"1.0 0.0 1.0")
 	SENTENCE (L"Centroid", L"0.0 0.0")
 	POSITIVE (L"Number of observations", L"100.0")
 	OK
 DO
-	if (! praat_new1 (Covariance_createSimple (GET_INTEGER (L"Dimension"), GET_STRING (L"Variances"),
-		GET_STRING (L"Centroid"), GET_REAL (L"Number of observations")), GET_STRING (L"Name"))) return 0;
+	if (! praat_new1 (Covariance_createSimple (GET_STRING (L"Covariances"), GET_STRING (L"Centroid"),
+		GET_REAL (L"Number of observations")), GET_STRING (L"Name"))) return 0;
 END
 
 FORM (Covariance_getProbabilityAtPosition, L"Covariance: Get probability at position", 0)
@@ -4610,7 +4610,7 @@ static void praat_FunctionTerms_init (void *klas)
 		praat_addAction1 (klas, 1, L"Get x of minimum...", 0, 1, DO_FunctionTerms_getXOfMinimum);
 		praat_addAction1 (klas, 1, L"Get maximum...", 0, 1, DO_FunctionTerms_getMaximum);
 		praat_addAction1 (klas, 1, L"Get x of maximum...", 0, 1, DO_FunctionTerms_getXOfMaximum);
-	praat_addAction1 (klas, 0, L"Modify -               ", 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (klas, 1, L"Set domain...", 0, 1, DO_FunctionTerms_setDomain);
 		praat_addAction1 (klas, 1, L"Set coefficient...", 0, 1, DO_FunctionTerms_setCoefficient);
 	praat_addAction1 (klas, 0, L"Analyse", 0, 0, 0);
@@ -4814,7 +4814,7 @@ void praat_uvafon_David_init (void)
 		DO_Confusion_help);
     praat_TableOfReal_init2 (classConfusion);
 	praat_removeAction (classConfusion, NULL, NULL, L"Draw as numbers...");
-	praat_addAction1 (classConfusion, 0, L"Draw as numbers...", L"Draw -                 ", 1, DO_Confusion_drawAsNumbers);
+	praat_addAction1 (classConfusion, 0, L"Draw as numbers...", L"Draw -", 1, DO_Confusion_drawAsNumbers);
 	praat_addAction1 (classConfusion, 0, L"-- confusion statistics --", L"Get value...", 1, 0);
 	praat_addAction1 (classConfusion, 1, L"Get fraction correct", L"-- confusion statistics --", 1, DO_Confusion_getFractionCorrect);
 	praat_addAction1 (classConfusion, 1, L"Get row sum...", L"Get fraction correct", 1, DO_TableOfReal_getRowSum);

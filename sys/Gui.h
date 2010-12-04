@@ -35,7 +35,7 @@
 	#include "Collection.h"
 #endif
 
-#define GUI_ARGS  Widget w, XtPointer void_me, XtPointer call
+#define GUI_ARGS  GuiObject w, XtPointer void_me, XtPointer call
 
 #define GUI_IAM(klas)  (void) w; (void) void_me; (void) call; iam (klas);
 
@@ -66,13 +66,15 @@
 	#include <gdk/gdk.h>
 	#include <cairo/cairo.h>
 	typedef GMainContext *AppContext;
-	typedef GtkWidget *Widget;
 	typedef void *XtPointer;
 	typedef gint Dimension;
 	typedef gboolean Boolean;
 	#define True 1
 	#define False 0
+	typedef GtkWidget *GuiObject;
 #elif motif
+	typedef struct structGuiObject *GuiObject;   // Opaque
+
 	#if defined (macintosh)
 		#include "macport_on.h"
 		#include <Carbon/Carbon.h>
@@ -116,12 +118,11 @@
 	 * Definitions of Xt types.
 	 */
 	typedef void *XtPointer;
-	typedef struct structWidget *Widget;   // Opaque
-	typedef Widget *WidgetList;
+	typedef GuiObject *GuiObjectList;
 	typedef void *XtAppContext;
 	typedef XtAppContext Context;
 	typedef long XtWorkProcId, XtIntervalId;
-	typedef void (*XtCallbackProc) (Widget w, XtPointer client_data, XtPointer call_data);
+	typedef void (*XtCallbackProc) (GuiObject w, XtPointer client_data, XtPointer call_data);
 	typedef Boolean (*XtWorkProc) (XtPointer client_data);
 	typedef void (*XtTimerCallbackProc) (XtPointer, XtIntervalId *);
 	typedef unsigned long WidgetClass;
@@ -131,7 +132,7 @@
 	/*
 	 * Declarations of Xt functions.
 	 */
-	void XtAddCallback (Widget w, int kind, XtCallbackProc proc, XtPointer closure);
+	void XtAddCallback (GuiObject w, int kind, XtCallbackProc proc, XtPointer closure);
 	XtIntervalId XtAppAddTimeOut (XtAppContext appContext, unsigned long interval,
 		XtTimerCallbackProc timerProc, XtPointer closure);
 	XtWorkProcId XtAppAddWorkProc (XtAppContext appContext, XtWorkProc workProc, XtPointer closure);
@@ -139,30 +140,30 @@
 	void XtAppNextEvent (XtAppContext appContext, XEvent *event);
 	#define XtCalloc  Melder_calloc
 	#define XtClass(w)  (w) -> widgetClass
-	void XtDestroyWidget (Widget w);
+	void XtDestroyWidget (GuiObject w);
 	void XtDispatchEvent (XEvent *event);
 	#define XtDisplay(w)  0
-	Widget XtInitialize (void *dum1, const char *name,
+	GuiObject XtInitialize (void *dum1, const char *name,
 		void *dum2, int dum3, unsigned int *argc, char **argv);
-	Boolean XtIsManaged (Widget w);
-	Boolean XtIsShell (Widget w);
-	void XtManageChild (Widget w);
-	void XtManageChildren (WidgetList children, Cardinal num_children);
-	void XtMapWidget (Widget w);
+	Boolean XtIsManaged (GuiObject w);
+	Boolean XtIsShell (GuiObject w);
+	void XtManageChild (GuiObject w);
+	void XtManageChildren (GuiObjectList children, Cardinal num_children);
+	void XtMapWidget (GuiObject w);
 	void XtNextEvent (XEvent *event);
 	void XtRemoveTimeOut (XtIntervalId id);
 	void XtRemoveWorkProc (XtWorkProcId id);
-	void XtSetKeyboardFocus (Widget tree, Widget descendant);
-	void XtSetSensitive (Widget w, Boolean value);
-	void XtUnmanageChild (Widget self);
-	void XtUnmanageChildren (WidgetList children, Cardinal num_children);
-	Widget XtVaAppInitialize (XtAppContext *appContext, const char *name,
+	void XtSetKeyboardFocus (GuiObject tree, GuiObject descendant);
+	void XtSetSensitive (GuiObject w, Boolean value);
+	void XtUnmanageChild (GuiObject self);
+	void XtUnmanageChildren (GuiObjectList children, Cardinal num_children);
+	GuiObject XtVaAppInitialize (XtAppContext *appContext, const char *name,
 		void *dum1, int dum2, unsigned int *argc, char **argv, void *dum3, void *dum4);
-	Widget XtVaCreateWidget (const char *name, int widgetClass, Widget parent, ...);
-	Widget XtVaCreateManagedWidget (const char *name, int widgetClass, Widget parent, ...);
-	void XtVaGetValues (Widget w, ...);
-	void XtVaSetValues (Widget w, ...);
-	Window XtWindow (Widget w);
+	GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...);
+	GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...);
+	void XtVaGetValues (GuiObject w, ...);
+	void XtVaSetValues (GuiObject w, ...);
+	Window XtWindow (GuiObject w);
 	long Gui_getNumberOfMotifWidgets (void);
 
 	/*
@@ -218,44 +219,44 @@
 	/*
 	 * Declarations of Xm functions.
 	 */
-	void XmAddWMProtocolCallback (Widget shell, Atom protocol, XtCallbackProc callback, char *closure);
-	void XmAddWMProtocols (Widget shell, Atom *protocols, Cardinal num_protocols);   /* does nothing */
-	Widget XmCreateBulletinBoard (Widget, const char *, ArgList, int);  
-	Widget XmCreateBulletinBoardDialog (Widget, const char *, ArgList, int);  
-	Widget XmCreateCascadeButton (Widget, const char *, ArgList, int);
-	Widget XmCreateCascadeButtonGadget (Widget, const char *, ArgList, int);
-	Widget XmCreateDialogShell (Widget, const char *, ArgList, int);
-	Widget XmCreateForm (Widget, const char *, ArgList, int);
-	Widget XmCreateFormDialog (Widget, const char *, ArgList, int);
-	Widget XmCreateMenuBar (Widget, const char *, ArgList, int);
-	Widget XmCreatePulldownMenu (Widget, const char *, ArgList, int);   
-	Widget XmCreateRadioBox (Widget, const char *, ArgList, int);
-	Widget XmCreateRowColumn (Widget, const char *, ArgList, int);
-	Widget XmCreateScale (Widget, const char *, ArgList, int);
-	Widget XmCreateScrolledWindow (Widget, const char *, ArgList, int);
-	Widget XmCreateScrollBar (Widget, const char *, ArgList, int);
-	Widget XmCreateSeparator (Widget, const char *, ArgList, int);
-	Widget XmCreateSeparatorGadget (Widget, const char *, ArgList, int);
-	Widget XmCreateShell (Widget, const char *, ArgList, int);
-	Widget XmCreateToggleButton (Widget, const char *, ArgList, int);
-	Widget XmCreateToggleButtonGadget (Widget, const char *, ArgList, int);   
+	void XmAddWMProtocolCallback (GuiObject shell, Atom protocol, XtCallbackProc callback, char *closure);
+	void XmAddWMProtocols (GuiObject shell, Atom *protocols, Cardinal num_protocols);   /* does nothing */
+	GuiObject XmCreateBulletinBoard (GuiObject, const char *, ArgList, int);  
+	GuiObject XmCreateBulletinBoardDialog (GuiObject, const char *, ArgList, int);  
+	GuiObject XmCreateCascadeButton (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateCascadeButtonGadget (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateDialogShell (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateForm (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateFormDialog (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateMenuBar (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreatePulldownMenu (GuiObject, const char *, ArgList, int);   
+	GuiObject XmCreateRadioBox (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateRowColumn (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateScale (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateScrolledWindow (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateScrollBar (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateSeparator (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateSeparatorGadget (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateShell (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateToggleButton (GuiObject, const char *, ArgList, int);
+	GuiObject XmCreateToggleButtonGadget (GuiObject, const char *, ArgList, int);   
 	Atom XmInternAtom (Display *display, String name, Boolean only_if_exists);
-	void XmScaleGetValue (Widget widget, int *value_return);
-	void XmScaleSetValue (Widget widget, int value);
-	void XmScrollBarGetValues (Widget me, int *value, int *sliderSize, int *increment, int *pageIncrement);
-	void XmScrollBarSetValues (Widget me, int value, int sliderSize, int increment, int pageIncrement, Boolean notify);
-	Boolean XmToggleButtonGadgetGetState (Widget widget);
+	void XmScaleGetValue (GuiObject widget, int *value_return);
+	void XmScaleSetValue (GuiObject widget, int value);
+	void XmScrollBarGetValues (GuiObject me, int *value, int *sliderSize, int *increment, int *pageIncrement);
+	void XmScrollBarSetValues (GuiObject me, int value, int sliderSize, int increment, int pageIncrement, Boolean notify);
+	Boolean XmToggleButtonGadgetGetState (GuiObject widget);
 	#define XmToggleButtonGetState XmToggleButtonGadgetGetState
-	void XmToggleButtonGadgetSetState (Widget widget, Boolean value, Boolean notify);
+	void XmToggleButtonGadgetSetState (GuiObject widget, Boolean value, Boolean notify);
 	#define XmToggleButtonSetState XmToggleButtonGadgetSetState
-	void XmUpdateDisplay (Widget dummy);
+	void XmUpdateDisplay (GuiObject dummy);
 
 	#if defined (macintosh)
 		#define motif_argXmString(r,t)  r, t
 		void motif_mac_defaultFont (void);
-		void GuiMac_clipOn (Widget widget);   /* Clip to the inner area of a drawingArea (for drawing);
+		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
 			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
-		int GuiMac_clipOn_graphicsContext (Widget me, void *graphicsContext);
+		int GuiMac_clipOn_graphicsContext (GuiObject me, void *graphicsContext);
 		void GuiMac_clipOff (void);
 		void motif_mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message));
 		void motif_mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message));
@@ -307,150 +308,150 @@
 #define GuiMenu_F11  27
 #define GuiMenu_F12  28
 
-Widget Gui_addMenuBar (Widget form);
-int Gui_getResolution (Widget widget);
+GuiObject Gui_addMenuBar (GuiObject form);
+int Gui_getResolution (GuiObject widget);
 
 /* GuiButton creation flags: */
 #define GuiButton_DEFAULT  1
 #define GuiButton_CANCEL  2
 #define GuiButton_INSENSITIVE  4
 typedef struct structGuiButtonEvent {
-	Widget button;
+	GuiObject button;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiButtonEvent;
-Widget GuiButton_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *boss, unsigned long flags);
-Widget GuiButton_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *boss, unsigned long flags);
-void GuiButton_setString (Widget widget, const wchar_t *text);   // rarely used
+void GuiButton_setString (GuiObject widget, const wchar_t *text);   // rarely used
 
 /* GuiCheckButton creation flags: */
 #define GuiCheckButton_SET  1
 #define GuiCheckButton_INSENSITIVE  2
 typedef struct structGuiCheckButtonEvent {
-	Widget toggle;
+	GuiObject toggle;
 } *GuiCheckButtonEvent;
-Widget GuiCheckButton_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags);
-Widget GuiCheckButton_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiCheckButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags);
-bool GuiCheckButton_getValue (Widget widget);
-void GuiCheckButton_setValue (Widget widget, bool value);
+bool GuiCheckButton_getValue (GuiObject widget);
+void GuiCheckButton_setValue (GuiObject widget, bool value);
 
-Widget GuiColumn_createShown (Widget parent, unsigned long flags);
-Widget GuiRow_createShown (Widget parent, unsigned long flags);
+GuiObject GuiColumn_createShown (GuiObject parent, unsigned long flags);
+GuiObject GuiRow_createShown (GuiObject parent, unsigned long flags);
 
 /* GuiDialog creation flags: */
 #define GuiDialog_MODAL  1
-Widget GuiDialog_create (Widget parent, int x, int y, int width, int height,
+GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
-Widget GuiDialog_getButtonArea (Widget widget);
+GuiObject GuiDialog_getButtonArea (GuiObject widget);
 
-SortedSetOfString GuiFileSelect_getInfileNames (Widget parent, const wchar_t *title, bool allowMultipleFiles);
-wchar_t * GuiFileSelect_getOutfileName (Widget parent, const wchar_t *title, const wchar_t *defaultName);
-wchar_t * GuiFileSelect_getDirectoryName (Widget parent, const wchar_t *title);
+SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar_t *title, bool allowMultipleFiles);
+wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, const wchar_t *defaultName);
+wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title);
 
 /* GuiDrawingArea creation flags: */
 #define GuiDrawingArea_BORDER  1
 enum mouse_events { MOTION_NOTIFY = 1, BUTTON_PRESS, BUTTON_RELEASE };
 typedef struct structGuiDrawingAreaExposeEvent {
-	Widget widget;
+	GuiObject widget;
 	int x, y, width, height;
 } *GuiDrawingAreaExposeEvent;
 typedef struct structGuiDrawingAreaClickEvent {
-	Widget widget;
+	GuiObject widget;
 	int x, y;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 	int button;
 	enum mouse_events type;
 } *GuiDrawingAreaClickEvent;
 typedef struct structGuiDrawingAreaKeyEvent {
-	Widget widget;
+	GuiObject widget;
 	wchar_t key;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiDrawingAreaKeyEvent;
 typedef struct structGuiDrawingAreaResizeEvent {
-	Widget widget;
+	GuiObject widget;
 	int width, height;
 } *GuiDrawingAreaResizeEvent;
-Widget GuiDrawingArea_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags);
-Widget GuiDrawingArea_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiDrawingArea_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags);
-void GuiDrawingArea_setExposeCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
-void GuiDrawingArea_setClickCallback (Widget widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss);
+void GuiDrawingArea_setExposeCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
+void GuiDrawingArea_setClickCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss);
 
 /* GuiLabel creation flags: */
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
-Widget GuiLabel_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags);
-Widget GuiLabel_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiLabel_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags);
-void GuiLabel_setString (Widget widget, const wchar_t *text);
+void GuiLabel_setString (GuiObject widget, const wchar_t *text);
 
 typedef struct structGuiListEvent {
-	Widget list;
+	GuiObject list;
 } *GuiListEvent;
-Widget GuiList_create (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
-Widget GuiList_createShown (Widget parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
-void GuiList_deleteAllItems (Widget me);
-void GuiList_deleteItem (Widget me, long position);
-void GuiList_deselectAllItems (Widget me);
-void GuiList_deselectItem (Widget me, long position);
-long GuiList_getBottomPosition (Widget me);
-long GuiList_getNumberOfItems (Widget me);
-long * GuiList_getSelectedPositions (Widget me, long *numberOfSelected);
-long GuiList_getTopPosition (Widget me);
-void GuiList_insertItem (Widget me, const wchar_t *itemText, long position);
-void GuiList_replaceItem (Widget me, const wchar_t *itemText, long position);
-void GuiList_setTopPosition (Widget me, long topPosition);
-void GuiList_selectItem (Widget me, long position);
-void GuiList_setSelectionChangedCallback (Widget me, void (*callback) (void *boss, GuiListEvent event), void *boss);
-void GuiList_setDoubleClickCallback (Widget me, void (*callback) (void *boss, GuiListEvent event), void *boss);
+GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
+GuiObject GuiList_createShown (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
+void GuiList_deleteAllItems (GuiObject me);
+void GuiList_deleteItem (GuiObject me, long position);
+void GuiList_deselectAllItems (GuiObject me);
+void GuiList_deselectItem (GuiObject me, long position);
+long GuiList_getBottomPosition (GuiObject me);
+long GuiList_getNumberOfItems (GuiObject me);
+long * GuiList_getSelectedPositions (GuiObject me, long *numberOfSelected);
+long GuiList_getTopPosition (GuiObject me);
+void GuiList_insertItem (GuiObject me, const wchar_t *itemText, long position);
+void GuiList_replaceItem (GuiObject me, const wchar_t *itemText, long position);
+void GuiList_setTopPosition (GuiObject me, long topPosition);
+void GuiList_selectItem (GuiObject me, long position);
+void GuiList_setSelectionChangedCallback (GuiObject me, void (*callback) (void *boss, GuiListEvent event), void *boss);
+void GuiList_setDoubleClickCallback (GuiObject me, void (*callback) (void *boss, GuiListEvent event), void *boss);
 
-Widget GuiMenuBar_addMenu (Widget bar, const wchar_t *title, long flags);
-Widget GuiMenuBar_addMenu2 (Widget bar, const wchar_t *title, long flags, Widget *menuTitle);
+GuiObject GuiMenuBar_addMenu (GuiObject bar, const wchar_t *title, long flags);
+GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, GuiObject *menuTitle);
 #if gtk
-Widget GuiMenuBar_addMenu3 (Widget parent, const wchar_t *title, long flags, Widget *button);
+GuiObject GuiMenuBar_addMenu3 (GuiObject parent, const wchar_t *title, long flags, GuiObject *button);
 #endif
 
 /* Flags is a combination of the above defines. */
 
-Widget GuiMenu_addItem (Widget menu, const wchar_t *title, long flags,
-	void (*commandCallback) (Widget, XtPointer, XtPointer), const void *closure);
+GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
+	void (*commandCallback) (GuiObject, XtPointer, XtPointer), const void *closure);
 /* Flags is a combination of the above defines. */
-Widget GuiMenu_addSeparator (Widget menu);
-void GuiMenuItem_check (Widget menuItem, bool check);
+GuiObject GuiMenu_addSeparator (GuiObject menu);
+void GuiMenuItem_check (GuiObject menuItem, bool check);
 
 /* GuiRadioButton creation flags: */
 #define GuiRadioButton_SET  1
 #define GuiRadioButton_INSENSITIVE  2
 typedef struct structGuiRadioButtonEvent {
-	Widget toggle;
+	GuiObject toggle;
 } *GuiRadioButtonEvent;
-Widget GuiRadioButton_create (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiRadioButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
-Widget GuiRadioButton_createShown (Widget parent, int left, int right, int top, int bottom,
+GuiObject GuiRadioButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
-bool GuiRadioButton_getValue (Widget widget);
-void GuiRadioButton_setValue (Widget widget, bool value);
+bool GuiRadioButton_getValue (GuiObject widget);
+void GuiRadioButton_setValue (GuiObject widget, bool value);
 
 #if gtk
-void * GuiRadioButton_getGroup (Widget widget);
-void GuiRadioButton_setGroup (Widget widget, void *group);
+void * GuiRadioButton_getGroup (GuiObject widget);
+void GuiRadioButton_setGroup (GuiObject widget, void *group);
 #endif
 
 typedef struct structGuiTextEvent {
-	Widget text;
+	GuiObject text;
 } *GuiTextEvent;
 
 /* GuiText creation flags: */
@@ -458,34 +459,34 @@ typedef struct structGuiTextEvent {
 #define GuiText_MULTILINE  2
 #define GuiText_WORDWRAP  4
 #define GuiText_NONEDITABLE  8
-Widget GuiText_create (Widget parent, int left, int right, int top, int bottom, unsigned long flags);
-Widget GuiText_createShown (Widget parent, int left, int right, int top, int bottom, unsigned long flags);
-void GuiText_copy (Widget widget);
-void GuiText_cut (Widget widget);
-wchar_t * GuiText_getSelection (Widget widget);
-wchar_t * GuiText_getString (Widget widget);
-wchar_t * GuiText_getStringAndSelectionPosition (Widget widget, long *first, long *last);
-void GuiText_paste (Widget widget);
-void GuiText_redo (Widget widget);
-void GuiText_remove (Widget widget);
-void GuiText_replace (Widget widget, long from_pos, long to_pos, const wchar_t *value);
-void GuiText_scrollToSelection (Widget widget);
-void GuiText_setChangeCallback (Widget widget, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
-void GuiText_setFontSize (Widget widget, int size);
-void GuiText_setRedoItem (Widget widget, Widget item);
-void GuiText_setSelection (Widget widget, long first, long last);
-void GuiText_setString (Widget widget, const wchar_t *text);
-void GuiText_setUndoItem (Widget widget, Widget item);
-void GuiText_undo (Widget widget);
-void GuiText_updateChangeCountAfterSave (Widget widget);
+GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiObject GuiText_createShown (GuiObject parent, int left, int right, int top, int bottom, unsigned long flags);
+void GuiText_copy (GuiObject widget);
+void GuiText_cut (GuiObject widget);
+wchar_t * GuiText_getSelection (GuiObject widget);
+wchar_t * GuiText_getString (GuiObject widget);
+wchar_t * GuiText_getStringAndSelectionPosition (GuiObject widget, long *first, long *last);
+void GuiText_paste (GuiObject widget);
+void GuiText_redo (GuiObject widget);
+void GuiText_remove (GuiObject widget);
+void GuiText_replace (GuiObject widget, long from_pos, long to_pos, const wchar_t *value);
+void GuiText_scrollToSelection (GuiObject widget);
+void GuiText_setChangeCallback (GuiObject widget, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
+void GuiText_setFontSize (GuiObject widget, int size);
+void GuiText_setRedoItem (GuiObject widget, GuiObject item);
+void GuiText_setSelection (GuiObject widget, long first, long last);
+void GuiText_setString (GuiObject widget, const wchar_t *text);
+void GuiText_setUndoItem (GuiObject widget, GuiObject item);
+void GuiText_undo (GuiObject widget);
+void GuiText_updateChangeCountAfterSave (GuiObject widget);
 
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
-Widget GuiWindow_create (Widget parentOfShell, int x, int y, int width, int height,
+GuiObject GuiWindow_create (GuiObject parentOfShell, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
 	// returns a Form widget that has a new Shell parent.
-void GuiWindow_setTitle (Widget shell, const wchar_t *title);
-int GuiWindow_setDirty (Widget shell, int dirty);
+void GuiWindow_setTitle (GuiObject shell, const wchar_t *title);
+int GuiWindow_setDirty (GuiObject shell, int dirty);
 /*
 	Purpose: like on MacOSX you get this little dot in the red close button,
 		and the window proxy icon dims.
@@ -494,26 +495,26 @@ int GuiWindow_setDirty (Widget shell, int dirty);
 		the point of this is that you can use a different user feedback strategy, like appending
 		the text "(modified)" to the window title, if this feature is not supported.
 */
-void GuiWindow_setFile (Widget shell, MelderFile file);
+void GuiWindow_setFile (GuiObject shell, MelderFile file);
 /*
 	Purpose: set the window title, and (on MacOS X) the window proxy icon and the window path menu.
 */
-void GuiWindow_drain (Widget me);
+void GuiWindow_drain (GuiObject me);
 /*
 	Purpose: drain the double graphics buffer.
 */
 
-void GuiObject_destroy (Widget me);
-long GuiObject_getHeight (Widget me);
-long GuiObject_getWidth (Widget me);
-long GuiObject_getX (Widget me);
-long GuiObject_getY (Widget me);
-void GuiObject_hide (Widget me);
-void GuiObject_move (Widget me, long x, long y);
-Widget GuiObject_parent (Widget w);
-void GuiObject_setSensitive (Widget me, bool sensitive);
-void GuiObject_show (Widget me);
-void GuiObject_size (Widget me, long width, long height);
+void GuiObject_destroy (GuiObject me);
+long GuiObject_getHeight (GuiObject me);
+long GuiObject_getWidth (GuiObject me);
+long GuiObject_getX (GuiObject me);
+long GuiObject_getY (GuiObject me);
+void GuiObject_hide (GuiObject me);
+void GuiObject_move (GuiObject me, long x, long y);
+GuiObject GuiObject_parent (GuiObject w);
+void GuiObject_setSensitive (GuiObject me, bool sensitive);
+void GuiObject_show (GuiObject me);
+void GuiObject_size (GuiObject me, long width, long height);
 
 /********** EVENTS **********/
 

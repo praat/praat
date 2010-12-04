@@ -86,6 +86,8 @@ PaError PaAlsa_GetStreamOutputCard( PaStream *s, int *card );
  */
 PaError PaAlsa_SetNumPeriods( int numPeriods );
 
+PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );
+
 #ifdef __cplusplus
 }
 #endif
