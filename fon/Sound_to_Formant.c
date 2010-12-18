@@ -1,6 +1,6 @@
 /* Sound_to_Formant.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2006/05/10 better handling of NULL from Polynomial_to_Roots
  * pb 2007/01/26 made compatible with stereo Sounds
  * pb 2007/03/30 changed float to double (against compiler warnings)
+ * pb 2010/12/13 removed some style bugs
  */
 
 #include "Sound_to_Formant.h"
@@ -34,9 +35,10 @@
 static int burg (double sample [], long nsamp_window, double cof [], int nPoles,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
-	double a0;
 	Polynomial polynomial = NULL;
 	Roots roots = NULL;
+//start:
+	double a0;
 	int i, iformant;
 
 	NUMburg (sample, nsamp_window, cof, nPoles, & a0);
@@ -240,14 +242,13 @@ static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 }
 
 void Formant_sort (Formant me) {
-	long iframe;
-	for (iframe = 1; iframe <= my nx; iframe ++) {
+	for (long iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
-		long i, j, n = frame -> nFormants;
-		for (i = 1; i < n; i ++) {
+		long n = frame -> nFormants;
+		for (long i = 1; i < n; i ++) {
 			double min = frame -> formant [i]. frequency;
 			long imin = i;
-			for (j = i + 1; j <= n; j ++)
+			for (long j = i + 1; j <= n; j ++)
 				if (frame -> formant [j]. frequency < min) {
 					min = frame -> formant [j]. frequency;
 					imin = j;
@@ -268,12 +269,12 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 {
 	Formant thee = NULL;
 	double *frame = NULL, *window = NULL, *cof = NULL;
+//start:
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
-	double dt_window = 2 * halfdt_window;
+	double dt_window = 2.0 * halfdt_window;
 	long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
 	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
-	long iframe, i, j;
 
 	if (nsamp_window < numberOfPoles + 1)
 		return Melder_errorp ("(Sound_to_Formant:) Window too short.");
@@ -295,15 +296,12 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	Sound_preEmphasis (me, preemphasisFrequency);
 
 	/* Gaussian window. */
-	for (i = 1; i <= nsamp_window; i ++) {
+	for (long i = 1; i <= nsamp_window; i ++) {
 		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
-		for (i = 1; i <= nsamp_window; i ++)
-			window [i] = (exp (-48.0 * (i - imid) * (i - imid) /
-							(nsamp_window + 1) / (nsamp_window + 1)) - edge) /
-						(1 - edge);
+		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1 - edge);
 	}
 
-	for (iframe = 1; iframe <= nFrames; iframe ++) {
+	for (long iframe = 1; iframe <= nFrames; iframe ++) {
 		double t = Sampled_indexToX (thee, iframe);
 		long leftSample = Sampled_xToLowIndex (me, t);
 		long rightSample = leftSample + 1;
@@ -312,7 +310,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		double maximumIntensity = 0.0;
 		if (startSample < 1) startSample = 1;
 		if (endSample > my nx) endSample = my nx;
-		for (i = startSample; i <= endSample; i ++) {
+		for (long i = startSample; i <= endSample; i ++) {
 			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
 			if (value * value > maximumIntensity) {
 				maximumIntensity = value * value;
@@ -323,7 +321,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		if (maximumIntensity == 0.0) continue;   /* Burg cannot stand all zeroes. */
 
 		/* Copy a pre-emphasized window to a frame. */
-		for (j = 1, i = startSample; j <= nsamp_window; j ++)
+		for (long j = 1, i = startSample; j <= nsamp_window; j ++)
 			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
 
 		if ((which == 1 && ! burg (frame, endSample - startSample + 1, cof, numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin)) ||

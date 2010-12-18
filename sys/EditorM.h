@@ -1,6 +1,6 @@
 /* EditorM.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2010/12/07
  */
 
 #undef FORM
@@ -29,6 +29,8 @@
 #undef NATURAL
 #undef WORD
 #undef SENTENCE
+#undef COLOUR
+#undef CHANNEL
 #undef BOOLEAN
 #undef LABEL
 #undef TEXTFIELD
@@ -62,6 +64,8 @@
 #define NATURAL(label,def)	UiForm_addNatural (cmd -> dialog, label, def);
 #define WORD(label,def)		UiForm_addWord (cmd -> dialog, label, def);
 #define SENTENCE(label,def)	UiForm_addSentence (cmd -> dialog, label, def);
+#define COLOUR(label,def)	UiForm_addColour (cmd -> dialog, label, def);
+#define CHANNEL(label,def)	UiForm_addChannel (cmd -> dialog, label, def);
 #define BOOLEAN(label,def)	UiForm_addBoolean (cmd -> dialog, label, def);
 #define LABEL(name,label)	UiForm_addLabel (cmd -> dialog, name, label);
 #define TEXTFIELD(name,def)	UiForm_addText (cmd -> dialog, name, def);

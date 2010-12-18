@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/07/30
+ * pb 2010/12/07
  */
 
 #include "Editor.h"
@@ -207,6 +207,8 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 	POSITIVE (name, initialString)
 	WORD (name, initialString)
 	SENTENCE (name, initialString)
+	COLOUR (name, initialString)
+	CHANNEL (name, initialString)
 		the name is also the string displayed in the label.
 	BOOLEAN (name, initialValue)
 		the name is also the title of the check box;
@@ -279,6 +281,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define FILE_IN(label)		UiForm_addFileIn (dia, label);
 #define FILE_OUT(label,def)	UiForm_addFileOut (dia, label, def);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
+#define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define OK UiForm_finish (dia); } if (sendingForm == NULL && sendingString == NULL) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);

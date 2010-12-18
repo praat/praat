@@ -56,6 +56,7 @@
 #include "Praat_tests.h"
 #include "Sound_and_Spectrogram.h"
 #include "Sound_and_Spectrum.h"
+#include "Sound_PointProcess.h"
 #include "SpectrogramEditor.h"
 #include "Spectrum_and_Spectrogram.h"
 #include "Spectrum_to_Excitation.h"
@@ -3537,6 +3538,16 @@ DO
 		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), sound -> name)) return 0;
 END
 
+FORM (Sound_PointProcess_to_SoundEnsemble_correlate, L"Sound & PointProcess: To SoundEnsemble (correlate)", 0)
+	REAL (L"From time (s)", L"-0.1")
+	REAL (L"To time (s)", L"1.0")
+	OK
+DO
+	Sound sound = ONLY (classSound);
+	PointProcess point = ONLY (classPointProcess);
+	if (! praat_new1 (Sound_PointProcess_to_SoundEnsemble_correlate (sound, point, GET_REAL (L"From time"), GET_REAL (L"To time")), point -> name)) return 0;
+END
+
 /***** POLYGON *****/
 
 FORM (Polygon_draw, L"Polygon: Draw", 0)
@@ -5207,6 +5218,8 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Analyse", 0, 0, 0);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To AmplitudeTier (period)...", 0, 0, DO_PointProcess_Sound_to_AmplitudeTier_period);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Ltas...", 0, 0, DO_PointProcess_Sound_to_Ltas);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Ltas (only harmonics)...", 0, 0, DO_PointProcess_Sound_to_Ltas_harmonics);
+praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, L"To Sound ensemble...", 0, 0, DO_Sound_PointProcess_to_SoundEnsemble_correlate);
 
 	praat_addAction4 (classDurationTier, 1, classPitchTier, 1, classPointProcess, 1, classSound, 1, L"To Sound...", 0, 0, DO_Sound_Point_Pitch_Duration_to_Sound);
 

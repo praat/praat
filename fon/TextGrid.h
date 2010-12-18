@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/03/09
+ * pb 2010/12/08
  */
 
 #ifndef _AnyTier_h_
@@ -31,12 +31,6 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
@@ -82,6 +76,9 @@ long IntervalTier_hasBoundary (IntervalTier me, double t);
 PointProcess IntervalTier_getStartingPoints (IntervalTier me, const wchar_t *text);
 PointProcess IntervalTier_getEndPoints (IntervalTier me, const wchar_t *text);
 PointProcess IntervalTier_getCentrePoints (IntervalTier me, const wchar_t *text);
+PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
 PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
 PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
 int IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
@@ -99,17 +96,7 @@ TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preser
 
 TextGrid Label_to_TextGrid (Label me, double duration);
 TextGrid Label_Function_to_TextGrid (Label me, Any function);
-void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
-	int showBoundaries, int useTextStyles, int garnish);
-Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
-Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	long itier, int which_Melder_STRING, const wchar_t *text, int preserveTimes);
-void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
-	long itier, double tmin, double tmax, double fmin, double fmax,
-	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int yscale);
-void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
+
 TextTier PointProcess_upto_TextTier (PointProcess me, const wchar_t *text);
 TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const wchar_t *label);
 TableOfReal IntervalTier_downto_TableOfReal_any (IntervalTier me);

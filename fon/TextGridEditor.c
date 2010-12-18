@@ -50,6 +50,7 @@
 #include "EditorM.h"
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"
+#include "TextGrid_Sound.h"
 
 #include "enums_getText.h"
 #include "TextGridEditor_enums.h"

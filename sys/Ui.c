@@ -48,6 +48,7 @@
  * pb 2009/12/22 invokingButtonTitle
  * fb 2010/02/23 GTK
  * fb 2010/03/01 GTK
+ * pb 2010/12/07 channel
  */
 
 #include <wctype.h>
@@ -74,14 +75,15 @@
 #define UI_WORD  6
 #define UI_SENTENCE  7
 #define UI_COLOUR  8
+#define UI_CHANNEL  9
 	#define UI_LABELLEDTEXT_MIN  UI_REAL
-	#define UI_LABELLEDTEXT_MAX  UI_COLOUR
-#define UI_LABEL  9
-#define UI_TEXT  10
-#define UI_BOOLEAN  11
-#define UI_RADIO  12
-#define UI_OPTIONMENU  13
-#define UI_LIST  14
+	#define UI_LABELLEDTEXT_MAX  UI_CHANNEL
+#define UI_LABEL  10
+#define UI_TEXT  11
+#define UI_BOOLEAN  12
+#define UI_RADIO  13
+#define UI_OPTIONMENU  14
+#define UI_LIST  15
 
 #define UiField_members Thing_members \
 	int type; \
@@ -208,7 +210,7 @@ Any UiOptionMenu_addButton (I, const wchar_t *label) {
 static void UiField_setDefault (UiField me) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
-			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT:
+			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
 		{
 			GuiText_setString (my text, my stringDefaultValue);
 		} break; case UI_BOOLEAN: {
@@ -303,12 +305,18 @@ static int UiField_widgetToValue (UiField me) {
 				return Melder_error3 (L"`", my name, L"' has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.0.");
-		} break; case UI_INTEGER: case UI_NATURAL: {
+		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			wchar_t *dirty = GuiText_getString (my text);
-			double realValue;
-			if (! Interpreter_numericExpression (NULL, dirty, & realValue)) { Melder_free (dirty); return 0; }
+			if (my type == UI_CHANNEL && (wcsequ (dirty, L"Left") || wcsequ (dirty, L"Mono"))) {
+				my integerValue = 1;
+			} else if (my type == UI_CHANNEL && (wcsequ (dirty, L"Right") || wcsequ (dirty, L"Stereo"))) {
+				my integerValue = 2;
+			} else {
+				double realValue;
+				if (! Interpreter_numericExpression (NULL, dirty, & realValue)) { Melder_free (dirty); return 0; }
+				my integerValue = floor (realValue + 0.5);
+			}
 			Melder_free (dirty);
-			my integerValue = floor (realValue + 0.5);
 			if (my integerValue == wcstol (my stringDefaultValue, NULL, 10)) {
 				GuiText_setString (my text, my stringDefaultValue);
 			} else {
@@ -386,12 +394,20 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 				return Melder_error3 (L"`", my name, L"' has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
 				return Melder_error3 (L"`", my name, L"' must be greater than 0.");
-		} break; case UI_INTEGER: case UI_NATURAL: {
+		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (wcsspn (string, L" \t") == wcslen (string))
 				return Melder_error3 (L"Argument `", my name, L"' empty.");
-			double realValue;
-			if (! Interpreter_numericExpression (interpreter, string, & realValue)) return 0;
-			my integerValue = floor (realValue + 0.5);
+			if (my type == UI_CHANNEL && (wcsequ (string, L"All") || wcsequ (string, L"Average"))) {
+				my integerValue = 0;
+			} else if (my type == UI_CHANNEL && (wcsequ (string, L"Left") || wcsequ (string, L"Mono"))) {
+				my integerValue = 1;
+			} else if (my type == UI_CHANNEL && (wcsequ (string, L"Right") || wcsequ (string, L"Stereo"))) {
+				my integerValue = 2;
+			} else {
+				double realValue;
+				if (! Interpreter_numericExpression (interpreter, string, & realValue)) return 0;
+				my integerValue = floor (realValue + 0.5);
+			}
 			if (my type == UI_NATURAL && my integerValue < 1)
 				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
@@ -579,7 +595,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 					case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 						UiHistory_write (L" ");
 						UiHistory_write (Melder_double (field -> realValue));
-					} break; case UI_INTEGER: case UI_NATURAL: {
+					} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 						UiHistory_write (L" ");
 						UiHistory_write (Melder_integer (field -> integerValue));
 					} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
@@ -849,6 +865,14 @@ Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue) {
 	return thee;
 }
 
+Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue) {
+	iam (UiForm);
+	UiField thee = UiForm_addField (me, UI_CHANNEL, label);
+	if (thee == NULL) return NULL;
+	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	return thee;
+}
+
 #define DIALOG_X  150
 #define DIALOG_Y  70
 #define HELP_BUTTON_WIDTH  60
@@ -941,6 +965,7 @@ void UiForm_finish (I) {
 			case UI_WORD:
 			case UI_SENTENCE:
 			case UI_COLOUR:
+			case UI_CHANNEL:
 			{
 				int ylabel = y;
 				#if defined (macintosh)
@@ -1293,7 +1318,7 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 	if (field == NULL) Melder_fatal ("(UiForm_setInteger:) No field \"%s\" in dialog \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: {
+		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (value == wcstol (field -> stringDefaultValue, NULL, 10)) {
 				GuiText_setString (field -> text, field -> stringDefaultValue);
 			} else {
@@ -1335,7 +1360,7 @@ void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *value) {
 	if (value == NULL) value = L"";   /* Accept NULL strings. */
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
-			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT:
+			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
 		{
 			GuiText_setString (field -> text, value);
 		} break; case UI_LABEL: {
@@ -1432,7 +1457,7 @@ long UiForm_getInteger (I, const wchar_t *fieldName) {
 	if (field == NULL) Melder_fatal ("(UiForm_getInteger:) No field \"%s\" in dialog \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: case UI_RADIO:
+		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
 			case UI_OPTIONMENU: case UI_LIST:
 		{
 			return field -> integerValue;
@@ -1447,7 +1472,7 @@ long UiForm_getInteger_check (I, const wchar_t *fieldName) {
 	iam (UiForm);
 	UiField field = findField_check (me, fieldName); cherror
 	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: case UI_RADIO:
+		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
 			case UI_OPTIONMENU: case UI_LIST:
 		{
 			return field -> integerValue;
@@ -1547,7 +1572,7 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 			if (*p == ' ') *p = '_';
 		}
 		switch (field -> type) {
-			case UI_INTEGER: case UI_NATURAL: case UI_BOOLEAN: {
+			case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> integerValue;
 			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {

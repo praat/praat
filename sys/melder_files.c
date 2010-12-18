@@ -1,6 +1,6 @@
 /* melder_files.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
  * pb 2007/08/12 more wchar_t
  * pb 2007/10/05 FSFindFolder
  * pb 2008/11/01 warn after finding final tabs (not just spaces) in file names
+ * pb 2010/12/14 more high Unicode compatibility
  */
 
 #if defined (UNIX) || defined __MWERKS__
@@ -71,6 +72,7 @@
 	#include <sys/stat.h>
 	#define UNIX
 	#include <unistd.h>
+	#include "UnicodeData.h"
 #endif
 
 static wchar_t theShellDirectory [256];
@@ -97,11 +99,21 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) 
 			So we first convert to UTF-16, then turn into CFString, then decompose, then convert to UTF-8.
 		*/
 		UniChar unipath [260];
-		long n = wcslen (wcs);
-		for (long i = 0; i <= n; i ++) {
-			unipath [i] = wcs [i];   // Including null byte. BUG: should split into genuine UTF-16.
+		long n = wcslen (wcs), n_utf16 = 0;
+		for (long i = 0; i < n; i ++) {
+			uint32_t kar = wcs [i];
+			if (kar <= 0xFFFF) {
+				unipath [n_utf16 ++] = kar;   // including null byte
+			} else if (kar <= 0x10FFFF) {
+				kar -= 0x10000;
+				unipath [n_utf16 ++] = 0xD800 | (kar >> 10);
+				unipath [n_utf16 ++] = 0xDC00 | (kar & 0x3FF);
+			} else {
+				unipath [n_utf16 ++] = UNICODE_REPLACEMENT_CHARACTER;
+			}
 		}
-		CFStringRef cfpath = CFStringCreateWithCharacters (NULL, unipath, n);
+		unipath [n_utf16] = '\0';
+		CFStringRef cfpath = CFStringCreateWithCharacters (NULL, unipath, n_utf16);
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (NULL, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormD);   // Mac requires decomposed characters.
@@ -115,17 +127,26 @@ void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8) 
 #if ! defined (_WIN32)
 void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath) {
 	#if defined (macintosh)
-		long n = strlen (path);
 		CFStringRef cfpath = CFStringCreateWithCString (NULL, path, kCFStringEncodingUTF8);
 		Melder_assert (cfpath != 0);
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (NULL, 0, cfpath);
 		CFRelease (cfpath);
 		CFStringNormalize (cfpath2, kCFStringNormalizationFormC);   // Praat requires composed characters.
-		n = CFStringGetLength (cfpath2);
-		for (long i = 0; i < n; i ++) {
-			wpath [i] = CFStringGetCharacterAtIndex (cfpath2, i);   // BUG: should be UTF-16.
+		long n_utf16 = CFStringGetLength (cfpath2);
+		long n_wcs = 0;
+		for (long i = 0; i < n_utf16; i ++) {
+			uint32_t kar = CFStringGetCharacterAtIndex (cfpath2, i);
+			if (kar >= 0xD800 && kar <= 0xDBFF) {
+				uint32_t kar2 = CFStringGetCharacterAtIndex (cfpath2, ++ i);
+				if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+					kar = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+				} else {
+					kar = UNICODE_REPLACEMENT_CHARACTER;
+				}
+			}
+			wpath [n_wcs ++] = kar;
 		}
-		wpath [n] = '\0';
+		wpath [n_wcs] = '\0';
 		CFRelease (cfpath2);
 	#else
 		Melder_8bitToWcs_inline (path, wpath, kMelder_textInputEncoding_UTF8);

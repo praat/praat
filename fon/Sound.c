@@ -217,7 +217,7 @@ end:
 }
 
 Sound Sound_extractChannel (Sound me, long channel) {
-	if (channel <= 0 || channel > my ny) return Melder_errorp ("Cannot extract channel %ls.", Melder_integer (my ny));
+	if (channel <= 0 || channel > my ny) return Melder_errorp ("Cannot extract channel %ls.", Melder_integer (channel));
 	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
 	for (long i = 1; i <= my nx; i ++) {
 		thy z [1] [i] = my z [channel] [i];

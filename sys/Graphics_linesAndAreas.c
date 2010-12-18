@@ -75,6 +75,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		if (my cr == NULL) return;
 		double dotted_line [] = { 2, 2 };
 		double dashed_line [] = { 6, 2 };
+		double dashed_dotted_line [] = { 6, 2, 2, 2 };
 		cairo_save (my cr);
 		switch (my lineType) {
 			case Graphics_DOTTED:
@@ -82,6 +83,9 @@ static void psRevertLine (GraphicsPostscript me) {
 				break;
 			case Graphics_DASHED:
 				cairo_set_dash (my cr, dashed_line, 2, 1.0);
+				break;
+			case Graphics_DASHED_DOTTED:
+				cairo_set_dash (my cr, dashed_dotted_line, 4, 1.0);
 				break;
 		}
 		cairo_set_line_width (my cr, my lineWidth);
@@ -105,14 +109,14 @@ static void psRevertLine (GraphicsPostscript me) {
 			LOGBRUSH brush;
 			brush. lbStyle = BS_SOLID;
 			brush. lbColor = my foregroundColour;
-			brush. lbHatch = my lineType == Graphics_DRAWN ? 0 : my lineType == Graphics_DOTTED ? PS_DOT : PS_DASH;
+			brush. lbHatch = my lineType == Graphics_DRAWN ? 0 : my lineType == Graphics_DOTTED ? PS_DOT : my lineType == Graphics_DASHED ? PS_DASH : PS_DASHDOT;
 			newPen = ExtCreatePen (PS_GEOMETRIC, lineWidth_pixels, & brush, 0, NULL);
 		} else {
 			/*newPen = CreatePen (my lineType == Graphics_DRAWN ? PS_SOLID :
-				my lineType == Graphics_DOTTED ? PS_DOT : PS_DASH,
+				my lineType == Graphics_DOTTED ? PS_DOT : my lineType == Graphics_DASHED ? PS_DASH : PS_DASHDOT,
 				my fatNonSolid ? 1 : lineWidth_pixels, my foregroundColour);*/
 			LOGPEN pen;
-			pen. lopnStyle = my lineType == Graphics_DRAWN ? PS_SOLID : my lineType == Graphics_DOTTED ? PS_DOT : PS_DASH;
+			pen. lopnStyle = my lineType == Graphics_DRAWN ? PS_SOLID : my lineType == Graphics_DOTTED ? PS_DOT : my lineType == Graphics_DASHED ? PS_DASH : PS_DASHDOT;
 			pen. lopnWidth. x = my fatNonSolid ? 1 : lineWidth_pixels;
 			pen. lopnWidth. y = 0;
 			pen. lopnColor = my foregroundColour | 0x02000000;
@@ -133,14 +137,19 @@ static void psRevertLine (GraphicsPostscript me) {
 		}
 		double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 		CGContextSetLineWidth (my macGraphicsContext, lineWidth_pixels);
-		float lengths [2];
+		float lengths [4];
 		if (my lineType == Graphics_DOTTED)
 			lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2,
 			lengths [1] = my resolution > 192 ? my resolution / 75.0 + lineWidth_pixels : 2;
 		if (my lineType == Graphics_DASHED)
 			lengths [0] = my resolution > 192 ? my resolution / 25 : 6,
 			lengths [1] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
-		CGContextSetLineDash (my macGraphicsContext, 0.0, my lineType == Graphics_DRAWN ? NULL : lengths, my lineType == 0 ? 0 : 2);
+		if (my lineType == Graphics_DASHED_DOTTED)
+			lengths [0] = my resolution > 192 ? my resolution / 25 : 6,
+			lengths [1] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
+			lengths [2] = my resolution > 192 ? my resolution / 100.0 : 2;
+			lengths [3] = my resolution > 192 ? my resolution / 50.0 + lineWidth_pixels : 2;
+		CGContextSetLineDash (my macGraphicsContext, 0.0, my lineType == Graphics_DRAWN ? NULL : lengths, my lineType == 0 ? 0 : my lineType == Graphics_DASHED_DOTTED ? 4 : 2);
 	}
 	static void quartzRevertLine (GraphicsScreen me) {
 		if (my duringXor) {
@@ -158,8 +167,9 @@ static void psRevertLine (GraphicsPostscript me) {
 		MacintoshPattern pattern;
 		short lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
 		SetPort (my macPort);
-		if (my lineType == Graphics_DOTTED) PenPat (GetQDGlobalsGray (& pattern));
+		if (my lineType == Graphics_DOTTED) PenPat (GetQDGlobalsLightGray (& pattern));
 		if (my lineType == Graphics_DASHED) PenPat (GetQDGlobalsDarkGray (& pattern));
+		if (my lineType == Graphics_DASHED_DOTTED) PenPat (GetQDGlobalsGray (& pattern));
 		if (! lineWidth_pixels) lineWidth_pixels = 1;
 		PenSize (lineWidth_pixels, lineWidth_pixels);
 		if (my macColour.red != 0 || my macColour.green != 0 || my macColour.blue != 0)

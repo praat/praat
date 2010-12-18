@@ -1,6 +1,6 @@
 /* Sound_files.c
  *
- * Copyright (C) 1992-2009 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2010 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,80 +242,6 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 	return me;
 }
 
-Sound Sound_readFromBdfFile (MelderFile file, bool isBdfFile) {
-	Sound me = NULL;
-	FILE *f = Melder_fopen (file, "rb");
-	char buffer [81];
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	fread (buffer, 1, 80, f); buffer [80] = '\0';
-	Melder_casual ("Local subject identification: \"%s\"", buffer);
-	fread (buffer, 1, 80, f); buffer [80] = '\0';
-	Melder_casual ("Local recording identification: \"%s\"", buffer);
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	Melder_casual ("Start date of recording: \"%s\"", buffer);
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	Melder_casual ("Start time of recording: \"%s\"", buffer);
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	long numberOfBytesInHeaderRecord = atol (buffer);
-	Melder_casual ("Number of bytes in header record: %ld", numberOfBytesInHeaderRecord);
-	fread (buffer, 1, 44, f); buffer [44] = '\0';
-	Melder_casual ("Version of data format: \"%s\"", buffer);
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	long numberOfDataRecords = atol (buffer);
-	Melder_casual ("Number of data records: %ld", numberOfDataRecords);
-	fread (buffer, 1, 8, f); buffer [8] = '\0';
-	double durationOfDataRecord = atof (buffer);
-	Melder_casual ("Duration of a data record: \"%f\"", durationOfDataRecord);
-	fread (buffer, 1, 4, f); buffer [4] = '\0';
-	long numberOfChannels = atol (buffer);
-	Melder_casual ("Number of channels in data record: %ld", numberOfChannels);
-	if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
-		error5 (L"(Read from BDF file:) Number of bytes in header record (", Melder_integer (numberOfBytesInHeaderRecord),
-			L") doesn't match number of channels (", Melder_integer (numberOfChannels), L").")
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 16, f); buffer [16] = '\0';   // labels of the channels
-	}
-	double samplingFrequency = NUMundefined;
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 80, f); buffer [80] = '\0';   // transducer type
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical dimension of channels
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical minimum in units of physical dimension
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical maximum in units of physical dimension
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // digital minimum
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // digital maximum
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 80, f); buffer [80] = '\0';   // prefiltering
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 8, f); buffer [8] = '\0';   // number of samples in each data record
-		long numberOfSamplesPerDataRecord = atol (buffer);
-		if (samplingFrequency == NUMundefined) {
-			samplingFrequency = numberOfSamplesPerDataRecord / durationOfDataRecord;
-		}
-		if (numberOfSamplesPerDataRecord / durationOfDataRecord != samplingFrequency)
-			error7 (L"(Read from BDF file:) Number of samples per data record in channel ", Melder_integer (ichannel),
-				L" (", Melder_integer (numberOfSamplesPerDataRecord),
-				L") doesn't match sampling frequency of channel 1 (", Melder_integer (numberOfChannels), L").")
-	}
-	for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-		fread (buffer, 1, 32, f); buffer [32] = '\0';   // reserved
-	}
-	me = Sound_createSimple (numberOfChannels, numberOfDataRecords * durationOfDataRecord, samplingFrequency);
-end:
-	return me;
-}
-
 #ifdef macintosh
 Sound Sound_readFromMacSoundFile (MelderFile file) {
 	Sound me = NULL;
@@ -520,17 +446,17 @@ end:
 	return me;
 }
 
-Sound Sound_readFromBellLabsFile (MelderFile fs) {
+Sound Sound_readFromBellLabsFile (MelderFile file) {
 	Sound me = NULL;
 	FILE *f = NULL;
 	char tag [200], *endOfTag, *lines = NULL, *psamples, *pfrequency;
-	long numberOfSamples = 0, tagLength, headerLength, i;
+	unsigned long numberOfSamples = 0, tagLength, headerLength, i;
 	double samplingFrequency = 0.0;
 
 	/*
 	 * Check existence and permissions of file.
 	 */
-	if ((f = Melder_fopen (fs, "rb")) == NULL) goto error;
+	if ((f = Melder_fopen (file, "rb")) == NULL) goto error;
 
 	/*
 	 * Check identity of file: first line is "SIG", second line contains a number.
@@ -575,7 +501,8 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 	 * Read samples.
 	 */
 	fseek (f, tagLength + headerLength, SEEK_SET);
-	for (i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2 (f) * (1.0 / 32768); /* 16 bits Big-Endian. */
+	for (i = 1; i <= numberOfSamples; i ++)
+		my z [1] [i] = bingeti2 (f) * (1.0 / 32768); /* 16-bits Big-Endian. */
 
 	if (fclose (f) != 0)
 		{ Melder_error1 (L"Error reading file."); goto error; }
@@ -584,72 +511,70 @@ Sound Sound_readFromBellLabsFile (MelderFile fs) {
 error:
 	if (f) fclose (f);
 	Melder_free (lines);
-	return Melder_errorp3 (L"(Sound_readFromBellLabsFile:) File ", MelderFile_messageName (fs), L" not read.");
+	return Melder_errorp3 (L"(Sound_readFromBellLabsFile:) File ", MelderFile_messageName (file), L" not read.");
 }
 
 static Sound readError (MelderFile file) {
 	return Melder_errorp3 (L"(Sound_readFrom...File:) Cannot read file ", MelderFile_messageName (file), L".");
 }
 
-Sound Sound_readFromKayFile (MelderFile fs) {
+Sound Sound_readFromKayFile (MelderFile file) {
 	Sound me = NULL;
-	long i;
 	char data [100];
 	double samplingFrequency;
-	long chunkSize, numberOfSamples;
+	unsigned long chunkSize, numberOfSamples;
 	FILE *f;
 
-	if ((f = Melder_fopen (fs, "rb")) == NULL) return 0;
+	if ((f = Melder_fopen (file, "rb")) == NULL) return 0;
 
 	/* Read header of KAY file: 12 bytes. */
 
-	if (fread (data, 1, 12, f) < 12) return readError (fs);
+	if (fread (data, 1, 12, f) < 12) return readError (file);
 	if (! strnequ (data, "FORMDS16", 8)) {
 		fclose (f);
-		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" is not a KAY DS-16 file.");
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" is not a KAY DS-16 file.");
 	}
 
 	/* HEDR chunk */
 
-	if (fread (data, 1, 4, f) < 4) return readError (fs);
+	if (fread (data, 1, 4, f) < 4) return readError (file);
 	if (! strnequ (data, "HEDR", 4)) {
 		fclose (f);
-		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain HEDR chunk.");
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain HEDR chunk.");
 	}
-	chunkSize = bingeti4LE (f);
+	chunkSize = bingetu4LE (f);
 	if (chunkSize & 1) ++ chunkSize;
-	if (fread (data, 1, chunkSize - 12, f) < chunkSize - 12) return readError (fs);
-	samplingFrequency = bingeti4LE (f);
-	numberOfSamples = bingeti4LE (f);
-	if (samplingFrequency <= 0 || samplingFrequency > 1e7 ||
-	    numberOfSamples <= 0 || numberOfSamples >= 1000000000) {
+	if (fread (data, 1, chunkSize - 12, f) < chunkSize - 12) return readError (file);
+	samplingFrequency = bingetu4LE (f);
+	numberOfSamples = bingetu4LE (f);
+	if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000) {
 		fclose (f);
-		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" is not a correct Kay file.");
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" is not a correct Kay file.");
 	}
-	if (fread (data, 1, 4, f) < 4) return readError (fs);   /* Absolute extrema A/B. */
+	if (fread (data, 1, 4, f) < 4) return readError (file);   /* Absolute extrema A/B. */
 
 	/* SD chunk */
 
-	if (fread (data, 1, 4, f) < 4) return readError (fs);
+	if (fread (data, 1, 4, f) < 4) return readError (file);
 	while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
 		if (feof (f)) {
 			fclose (f);
-			return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain readable SD chunk.");
+			return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain readable SD chunk.");
 		}
-		chunkSize = bingeti4LE (f);
+		chunkSize = bingetu4LE (f);
 		if (chunkSize & 1) ++ chunkSize;
-		if (fread (data, 1, chunkSize, f) < chunkSize) return readError (fs);
-		if (fread (data, 1, 4, f) < 4) return readError (fs);
+		if (fread (data, 1, chunkSize, f) < chunkSize) return readError (file);
+		if (fread (data, 1, 4, f) < 4) return readError (file);
 	}
-	chunkSize = bingeti4LE (f);
+	chunkSize = bingetu4LE (f);
 	if (chunkSize != numberOfSamples * 2) {
 		fclose (f);
-		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (fs), L" does not contain readable SD chunk.");
+		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain readable SD chunk.");
 	}
 
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (! me) return NULL;
-	for (i = 1; i <= numberOfSamples; i ++)
+	for (unsigned long i = 1; i <= numberOfSamples; i ++)
 		my z [1] [i] = bingeti2LE (f) / 32768.0;
 	fclose (f);
 	return me;

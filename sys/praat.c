@@ -47,6 +47,7 @@
  * pb 2009/12/22 invokingButtonTitle
  * pb 2010/05/24 sendpraat for GTK
  * pb 2010/07/29 removed GuiWindow_show
+ * pb 2010/12/08 can read Collections created from multiple objects read from one file (e.g. a labelled sound file)
  */
 
 #include "melder.h"
@@ -78,7 +79,7 @@
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
 #define WINDOW_WIDTH 520
-#define WINDOW_HEIGHT 630
+#define WINDOW_HEIGHT 700
 
 structPraatApplication theForegroundPraatApplication;
 PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
@@ -325,8 +326,9 @@ bool praat_new1 (I, const wchar_t *myName) {
 		bool result = true;
 		for (long idata = 1; idata <= list -> size; idata ++) {
 			Data object = list -> item [idata];
-			Melder_assert (object -> name != NULL);
-			result &= praat_new1 (object, object -> name) ? true : false;   // Recurse.
+			const wchar_t *name = object -> name ? object -> name : myName;
+			Melder_assert (name != NULL);
+			result &= praat_new1 (object, name) ? true : false;   // Recurse.
 		}
 		list -> size = 0;   // Disown.
 		forget (list);
@@ -948,10 +950,11 @@ void praat_setStandAloneScriptText (wchar_t *text) {
 void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 	#if defined (UNIX)
-		FILE *f;
 		gtk_init_check (& argc, & argv);
 		//gtk_set_locale ();
-		setlocale (LC_ALL, "en_US.utf8");
+		setlocale (LC_ALL, "C");
+		//setlocale (LC_ALL, "en_US.utf8");
+		//setlocale (LC_ALL, "en_US");
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
@@ -1125,6 +1128,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			 * Messages from "sendpraat" are caught very early this way,
 			 * though they will be responded to much later.
 			 */
+			FILE *f;
 			if ((f = Melder_fopen (& pidFile, "w")) != NULL) {
 				fprintf (f, "%ld", (long) getpid ());
 				fclose (f);
@@ -1250,6 +1254,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		GuiObject_show (Raam);
 		#ifdef UNIX
+		{
+			FILE *f;
 			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
 				#if gtk
 					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (theCurrentPraatApplication -> topShell -> window)));
@@ -1260,6 +1266,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			} else {
 				Melder_clearError ();
 			}
+		}
 		#endif
 		#ifdef UNIX
 			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);

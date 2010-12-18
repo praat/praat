@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/24
+ * pb 2010/12/07
  */
 
 #ifndef _Graphics_h_
@@ -64,11 +64,15 @@
 }
 	Real, Positive, Integer, Natural, Word, and Sentence
 		show a label (name) and an editable text field (value).
-	Radio shows a label (name) and has RadioButton children.
+	Radio shows a label (name) and has Button children.
+	OptionMenu shows a label (name) and has Button children in a menu.
 	Label only shows its value.
 	Text only shows an editable text field (value).
 	Boolean shows a labeled toggle button which is on (1) or off (0).
-	RadioButton does the same inside a radio box.
+	Button does the same inside a radio box or option menu.
+	List shows a scrollable list.
+	Colour shows a label (name) and an editable text field for a grey value between 0 and 1, a colour name, ar {r,g,b}.
+	Channel shows a label (name) and an editable text field for a natural number or the text Left or Right.
 	As shown in the example, Real, Positive, Integer, Natural, and Word may contain extra text;
 	this text is considered as comments and is erased as soon as you click OK.
 	When you click "Standards", the standard values (including comments)
@@ -95,6 +99,7 @@ Any UiForm_addOptionMenu (I, const wchar_t *label, int defaultValue);
 	Any UiOptionMenu_addButton (I, const wchar_t *label);
 Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t **strings, long defaultValue);
 Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue);
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
 void UiForm_setPauseForm (I,

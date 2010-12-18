@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/11/05
+ * pb 2010/12/08
  */
 
 #include "praat.h"
@@ -28,6 +28,7 @@
 #include "SpellingChecker.h"
 #include "TextGridEditor.h"
 #include "TextGrid_extensions.h"
+#include "TextGrid_Sound.h"
 #include "WordList.h"
 
 void praat_dia_timeRange (Any dia);
@@ -876,7 +877,7 @@ DO
 	if (! interval) return 0;
 	Melder_informationReal (interval -> xmin, L"seconds");
 END
-	
+
 FORM (TextGrid_getEndPoint, L"TextGrid: Get end point", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	NATURAL (STRING_INTERVAL_NUMBER, L"1")
@@ -1050,6 +1051,45 @@ DO
 	WHERE (SELECTED) {
 		if (! TextGrid_removeBoundaryAtTime (OBJECT, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time"))) return 0;
 		praat_dataChanged (OBJECT);
+	}
+END
+
+FORM (TextGrid_getCentrePoints, L"TextGrid: Get centre points", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Get centre points where label", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	wchar_t *text = GET_STRING (L"...the text");
+	WHERE (SELECTED) {
+		if (! praat_new3 (TextGrid_getCentrePoints (OBJECT, GET_INTEGER (STRING_TIER_NUMBER),
+			GET_ENUM (kMelder_string, L"Get centre points where label"), text), NAMEW, L"_", text)) return 0;
+	}
+END
+
+FORM (TextGrid_getEndPoints, L"TextGrid: Get end points", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Get end points where label", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	wchar_t *text = GET_STRING (L"...the text");
+	WHERE (SELECTED) {
+		if (! praat_new3 (TextGrid_getEndPoints (OBJECT, GET_INTEGER (STRING_TIER_NUMBER),
+			GET_ENUM (kMelder_string, L"Get end points where label"), text), NAMEW, L"_", text)) return 0;
+	}
+END
+
+FORM (TextGrid_getStartingPoints, L"TextGrid: Get starting points", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Get starting points where label", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	wchar_t *text = GET_STRING (L"...the text");
+	WHERE (SELECTED) {
+		if (! praat_new3 (TextGrid_getStartingPoints (OBJECT, GET_INTEGER (STRING_TIER_NUMBER),
+			GET_ENUM (kMelder_string, L"Get starting points where label"), text), NAMEW, L"_", text)) return 0;
 	}
 END
 
@@ -1366,6 +1406,9 @@ void praat_uvafon_TextGrid_init (void) {
 praat_addAction1 (classTextGrid, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 1, L"Extract tier...", 0, 0, DO_TextGrid_extractTier);
 	praat_addAction1 (classTextGrid, 1, L"Extract part...", 0, 0, DO_TextGrid_extractPart);
+	praat_addAction1 (classTextGrid, 1, L"Get starting points...", 0, 0, DO_TextGrid_getStartingPoints);
+	praat_addAction1 (classTextGrid, 1, L"Get end points...", 0, 0, DO_TextGrid_getEndPoints);
+	praat_addAction1 (classTextGrid, 1, L"Get centre points...", 0, 0, DO_TextGrid_getCentrePoints);
 praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 0, L"Merge", 0, 0, DO_TextGrids_merge);
 

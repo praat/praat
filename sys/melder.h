@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/10/16
+ * pb 2010/12/07
  */
 
 #include <stdio.h>
@@ -70,7 +70,7 @@ const wchar_t * Melder_fixed (double value, int precision);   // "--undefined--"
 const wchar_t * Melder_fixedExponent (double value, int exponent, int precision);
 	/* if exponent is -2 and precision is 2:   67E-2, 0.00024E-2 */
 const wchar_t * Melder_percent (double value, int precision);
-	/* "--undefined--" or, if precision is 3: "0" or "34.400%" of "0.014%" or "0.001%" or "0.0000007%" */
+	/* "--undefined--" or, if precision is 3: "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%" */
 const wchar_t * Melder_float (const wchar_t *number);
 	/* turns 1e+4 into 10^^4, or -1.23456e-78 into -1.23456\.c10^^-78 */
 const wchar_t * Melder_naturalLogarithm (double lnNumber);   // turns -10000 into "1.135483865315339e-4343"
@@ -815,18 +815,20 @@ long Melder_killReturns_inline (char *text);
 
 /********** AUDIO **********/
 
-#if defined (macintosh) || defined (_WIN32)
+#if defined (macintosh) || defined (_WIN32) || defined (linux)
 	#define kMelderAudio_inputUsesPortAudio_DEFAULT  true
 		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
 		// Win: in order to allow recording for over 64 megabytes (paMME)
+		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
 #else
 	#define kMelderAudio_inputUsesPortAudio_DEFAULT  false
 #endif
 void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio);
 bool MelderAudio_getInputUsesPortAudio (void);
-#if defined (macintosh)
+#if defined (macintosh) || defined (linux)
 	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
 		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
+		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
 #else
 	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false
 		// Win: in order to reduce the long latencies of paMME and to avoid the incomplete implementation of paDirectSound

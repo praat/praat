@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 December 2010
 
 include ../makefile.defs
 
@@ -8,7 +8,7 @@ CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../
 OBJECTS = Transition.o Distributions_and_Transition.o \
    Function.o Sampled.o Matrix.o Vector.o Polygon.o PointProcess.o \
    Matrix_and_PointProcess.o Matrix_and_Polygon.o AnyTier.o RealTier.o \
-   Sound.o LongSound.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o ParamCurve.o \
+   Sound.o LongSound.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o Sound_PointProcess.o ParamCurve.o \
    Pitch.o Harmonicity.o Intensity.o Matrix_and_Pitch.o Sound_to_Pitch.o \
    Sound_to_Intensity.o Sound_to_Harmonicity.o Sound_to_Harmonicity_GNE.o Sound_to_PointProcess.o \
    Pitch_to_PointProcess.o Pitch_to_Sound.o Pitch_Intensity.o \
@@ -17,7 +17,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    Spectrum.o Ltas.o Spectrogram.o SpectrumTier.o Ltas_to_SpectrumTier.o \
    Formant.o Image.o Sound_to_Formant.o Sound_and_Spectrogram.o \
    Sound_and_Spectrum.o Spectrum_and_Spectrogram.o Spectrum_to_Formant.o \
-   FormantTier.o TextGrid.o Label.o FormantGrid.o \
+   FormantTier.o TextGrid.o TextGrid_Sound.o Label.o FormantGrid.o \
    Excitation.o Cochleagram.o Cochleagram_and_Excitation.o Excitation_to_Formant.o \
    Sound_to_Cochleagram.o Spectrum_to_Excitation.o \
    VocalTract.o VocalTract_to_Spectrum.o \

@@ -748,6 +748,12 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		Interpreter_addNumericVariable (me, L"windows", 0);
 		Interpreter_addNumericVariable (me, L"unix", 0);
 	#endif
+	Interpreter_addNumericVariable (me, L"left", 1);   // to accommodate scripts from before Praat 5.2.06
+	Interpreter_addNumericVariable (me, L"right", 2);   // to accommodate scripts from before Praat 5.2.06
+	Interpreter_addNumericVariable (me, L"mono", 1);   // to accommodate scripts from before Praat 5.2.06
+	Interpreter_addNumericVariable (me, L"stereo", 2);   // to accommodate scripts from before Praat 5.2.06
+	Interpreter_addNumericVariable (me, L"all", 0);   // to accommodate scripts from before Praat 5.2.06
+	Interpreter_addNumericVariable (me, L"average", 0);   // to accommodate scripts from before Praat 5.2.06
 	#define xstr(s) str(s)
 	#define str(s) #s
 	Interpreter_addStringVariable (me, L"praatVersion$", L"" xstr(PRAAT_VERSION_STR));
@@ -1141,10 +1147,13 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 				break;
 			case 'p':
 				if (wcsnequ (command2.string, L"procedure ", 10)) {
-					long iline;
-					for (iline = lineNumber + 1; iline <= numberOfLines; iline ++)
-						if (wcsnequ (lines [iline], L"endproc", 7) && wordEnd (lines [iline] [7]))
-							{ lineNumber = iline; break; }   /* Go after 'endproc'. */
+					long iline = lineNumber + 1;
+					for (; iline <= numberOfLines; iline ++) {
+						if (wcsnequ (lines [iline], L"endproc", 7) && wordEnd (lines [iline] [7])) {
+							lineNumber = iline;
+							break;
+						}   /* Go after 'endproc'. */
+					}
 					if (iline > numberOfLines) error1 (L"Unmatched 'proc'.")
 				} else if (wcsnequ (command2.string, L"print", 5)) {
 					/*

@@ -1,6 +1,6 @@
 /* TimeSoundEditor.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/19 info
  * pb 2007/09/22 Draw visible sound
+ * pb 2010/12/08 
  */
 
 #include "TimeSoundEditor.h"
@@ -422,8 +423,6 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	int fits = sound ? TRUE : LongSound_haveWindow (longSound, my startWindow, my endWindow);
 	int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
-	double cursorFunctionValue = longSound ? 0.0 :
-		Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), Vector_CHANNEL_AVERAGE, 70);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	iferror {
 		int outOfMemory = wcsstr (Melder_getError (), L"memory") != NULL;
@@ -447,6 +446,8 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		return;
 	}
 	for (int ichan = 1; ichan <= nchan; ichan ++) {
+		double cursorFunctionValue = longSound ? 0.0 :
+			Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70);
 		/*
 		 * BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
 		 */

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/07/11
+ * pb 2010/12/17
  */
 
 #ifndef _Thing_h_
@@ -174,6 +174,7 @@ void Graphics_setLineType (I, int lineType);
 #define Graphics_DRAWN  0
 #define Graphics_DOTTED  1
 #define Graphics_DASHED  2
+#define Graphics_DASHED_DOTTED  3
 void Graphics_setLineWidth (I, double lineWidth);
 void Graphics_setArrowSize (I, double arrorSize);
 

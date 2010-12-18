@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/04/27
+ * pb 2010/12/08
  */
 
 #include "praat.h"
@@ -39,7 +39,7 @@
 #include "SoundEditor.h"
 #include "SoundRecorder.h"
 #include "SpectrumEditor.h"
-#include "TextGrid.h"
+#include "TextGrid_Sound.h"
 #include "mp3.h"
 
 #ifndef LONG_MAX
@@ -415,9 +415,9 @@ DO
 		s1 -> name, L"_", s2 -> name)) return 0;
 END
 
-static int common_Sound_create (void *dia, Interpreter interpreter, bool allowStereo) {
+static int common_Sound_create (void *dia, Interpreter interpreter, bool allowMultipleChannels) {
 	Sound sound = NULL;
-	long channels = allowStereo ? GET_INTEGER (L"Channels") : 1;
+	long numberOfChannels = allowMultipleChannels ? GET_INTEGER (L"Number of channels") : 1;
 	double startTime = GET_REAL (L"Start time");
 	double endTime = GET_REAL (L"End time");
 	double samplingFrequency = GET_REAL (L"Sampling frequency");
@@ -453,7 +453,7 @@ static int common_Sound_create (void *dia, Interpreter interpreter, bool allowSt
 			return Melder_error1 (L"Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
-	sound = Sound_create (channels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
+	sound = Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
 		startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	if (sound == NULL) {
 		if (wcsstr (Melder_getError (), L"memory")) {
@@ -491,9 +491,7 @@ END
 
 FORM (Sound_createFromFormula, L"Create Sound from formula", L"Create Sound from formula...")
 	WORD (L"Name", L"sineWithNoise")
-	OPTIONMENU (L"Channels", 1)
-		OPTION (L"Mono")
-		OPTION (L"Stereo")
+	CHANNEL (L"Number of channels (e.g. 2 = stereo)", L"1")
 	REAL (L"Start time (s)", L"0.0")
 	REAL (L"End time (s)", L"1.0")
 	REAL (L"Sampling frequency (Hz)", L"44100")
@@ -647,6 +645,18 @@ DIRECT (Sound_extractAllChannels)
 				if (! praat_new3 (Sound_extractChannel (me, channel), my name, L"_", Melder_integer (channel))) return 0;
 			}
 		}
+	}
+END
+
+FORM (Sound_extractChannel, L"Sound: Extract channel", 0)
+	CHANNEL (L"Channel (number, Left, or Right)", L"1")
+	OK
+DO
+	long channel = GET_INTEGER (L"Channel");
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new3 (Sound_extractChannel (me, channel),
+			my name, L"_", Melder_integer (channel))) return 0;
 	}
 END
 
@@ -836,16 +846,13 @@ DO
 END
 
 FORM (Sound_getMean, L"Sound: Get mean", L"Sound: Get mean...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"All")
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel", L"0 (= all)")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (old_Sound_getMean)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getMean (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channel), L"Pascal");
 END
@@ -875,9 +882,7 @@ DO
 END
 
 FORM (Sound_getNearestZeroCrossing, L"Sound: Get nearest zero crossing", L"Sound: Get nearest zero crossing...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel (number, Left, or Right)", L"1")
 	REAL (L"Time (s)", L"0.5")
 	OK
 DO_ALTERNATIVE (old_Sound_getNearestZeroCrossing)
@@ -937,16 +942,13 @@ DO
 END
 
 FORM (Sound_getStandardDeviation, L"Sound: Get standard deviation", L"Sound: Get standard deviation...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Average")
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel", L"0 (= average)")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0 (= all)")
 	OK
 DO_ALTERNATIVE (old_Sound_getStandardDeviation)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getStandardDeviation (me,
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channel), L"Pascal");
@@ -1000,16 +1002,13 @@ DO
 END
 
 FORM (Sound_getValueAtIndex, L"Sound: Get value at sample number", L"Sound: Get value at sample number...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Average")
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel", L"0 (= average)")
 	INTEGER (L"Sample number", L"100")
 	OK
 DO_ALTERNATIVE (old_Sound_getValueAtIndex)
 	Sound me = ONLY (classSound);
 	long sampleIndex = GET_INTEGER (L"Sample number");
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (sampleIndex < 1 || sampleIndex > my nx ? NUMundefined :
 		Sampled_getValueAtSample (me, sampleIndex, channel, 0), L"Pascal");
@@ -1030,10 +1029,7 @@ DO
 END
 
 FORM (Sound_getValueAtTime, L"Sound: Get value at time", L"Sound: Get value at time...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Average")
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel", L"0 (= average)")
 	REAL (L"Time (s)", L"0.5")
 	RADIO (L"Interpolation", 4)
 		RADIOBUTTON (L"Nearest")
@@ -1044,7 +1040,7 @@ FORM (Sound_getValueAtTime, L"Sound: Get value at time", L"Sound: Get value at t
 	OK
 DO_ALTERNATIVE (old_Sound_getValueAtTime)
 	Sound me = ONLY (classSound);
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	if (channel > my ny) channel = 1;
 	Melder_informationReal (Vector_getValueAtX (ONLY (classSound), GET_REAL (L"Time"),
 		channel, GET_INTEGER (L"Interpolation") - 1), L"Pascal");
@@ -1284,10 +1280,7 @@ DO
 END
 
 FORM (Sound_setValueAtIndex, L"Sound: Set value at sample number", L"Sound: Set value at sample number...")
-	OPTIONMENU (L"Channel", 2)
-		OPTION (L"Both")
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel", L"0 (= all)")
 	NATURAL (L"Sample number", L"100")
 	REAL (L"New value", L"0")
 	OK
@@ -1297,7 +1290,7 @@ DO_ALTERNATIVE (old_Sound_setValueAtIndex)
 		long index = GET_INTEGER (L"Sample number");
 		if (index > my nx)
 			return Melder_error3 (L"The sample number should not exceed the number of samples, which is ", Melder_integer (my nx), L".");
-		long channel = GET_INTEGER (L"Channel") - 1;
+		long channel = GET_INTEGER (L"Channel");
 		if (channel > my ny) channel = 1;
 		if (channel > 0) {
 			my z [channel] [index] = GET_REAL (L"New value");
@@ -1562,9 +1555,7 @@ DO
 END
 
 FORM (Sound_to_PointProcess_extrema, L"Sound: To PointProcess (extrema)", 0)
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel (number, Left, or Right)", L"1")
 	BOOLEAN (L"Include maxima", 1)
 	BOOLEAN (L"Include minima", 0)
 	RADIO (L"Interpolation", 4)
@@ -1603,9 +1594,7 @@ DO
 END
 
 FORM (Sound_to_PointProcess_zeroes, L"Get zeroes", 0)
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel (number, Left, or Right)", L"1")
 	BOOLEAN (L"Include raisers", 1)
 	BOOLEAN (L"Include fallers", 0)
 	OK
@@ -1905,7 +1894,13 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
 	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
-	return Sound_readFromBdfFile (file, isBdfFile);
+	TextGrid textGrid;
+	Sound sound;
+	if (! TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound)) return NULL;
+	Collection collection = Collection_create (classData, 2);
+	Collection_addItem (collection, sound);
+	Collection_addItem (collection, textGrid);
+	return collection;
 }
 
 /***** override play and record buttons in manuals *****/
@@ -2171,8 +2166,9 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Convert to mono", 0, 1, DO_Sound_convertToMono);
 		praat_addAction1 (classSound, 0, L"Convert to stereo", 0, 1, DO_Sound_convertToStereo);
 		praat_addAction1 (classSound, 0, L"Extract all channels", 0, 1, DO_Sound_extractAllChannels);
-		praat_addAction1 (classSound, 0, L"Extract left channel", 0, 1, DO_Sound_extractLeftChannel);
-		praat_addAction1 (classSound, 0, L"Extract right channel", 0, 1, DO_Sound_extractRightChannel);
+		praat_addAction1 (classSound, 0, L"Extract left channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractLeftChannel);
+		praat_addAction1 (classSound, 0, L"Extract right channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);
+		praat_addAction1 (classSound, 0, L"Extract channel...", 0, 1, DO_Sound_extractChannel);
 		praat_addAction1 (classSound, 0, L"Extract part...", 0, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, L"Resample...", 0, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, L"-- enhance --", 0, 1, 0);

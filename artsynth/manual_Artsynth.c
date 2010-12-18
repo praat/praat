@@ -23,7 +23,7 @@ void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
 MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20070830)
-INTRO (L"This is a description of the articulatory synthesis package in P\\s{RAAT}. "
+INTRO (L"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
 	"For examples of how to synthesize utterances, consult http://www.fon.hum.uva.nl/paul/diss/ch5/.")
@@ -45,7 +45,7 @@ NORMAL (L"8. Select the Speaker and the Artword and click #Movie; "
 	"you will see a closing-and-opening gesture of the mouth.")
 NORMAL (L"9. Select the Speaker and the Artword and click ##To Sound...# "
 	"(see @@Artword & Speaker: To Sound...@).")
-NORMAL (L"10. Just click %OK; the synthesis starts.")
+NORMAL (L"10. Just click #OK; the synthesis starts.")
 NORMAL (L"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2006 computer, 12 seconds. "
 	"If this is too slow for you, click %Interrupt. "
 	"Otherwise, you can watch the vibrating vocal cords "
@@ -68,41 +68,41 @@ INTRO (L"A command to synthesize a @Sound object from the selected @Speaker and 
 NORMAL (L"This is the command that performs the actual articulatory synthesis. "
 	"See @@Articulatory synthesis@.")
 ENTRY (L"Settings")
-TAG (L"%%Sampling frequency% (Hz)")
+TAG (L"##Sampling frequency (Hz)")
 DEFINITION (L"the number of times per second that the equilibrium widths and lengths and the tensions of the muscles "
 	"are recomputed from the Artword. This will also be the sampling frequency of the resulting sound and "
 	"of the optional resulting tube widths, air pressures, and air velocities. The standard value is 22050 Hz.")
-TAG (L"%Oversampling")
+TAG (L"##Oversampling")
 DEFINITION (L"the number of times that the aerodynamic quantities and the state of the tube walls "
 	"will be recomputed during each sample period. The standard value is 25.")
-TAG (L"%%Width 1%, %%Width 2%, %%Width 3")
+TAG (L"##Width 1#, ##Width 2#, ##Width 3#")
 DEFINITION (L"the numbers (see below) of the tubes whose widths you want to monitor. "
-	"E.g., if %%Width 1% is 36, the synthesizer will create a Sound object named \"width36\", "
+	"E.g., if ##Width 1# is 36, the synthesizer will create a Sound object named $$width36$, "
 	"which contains the width of tube 36 (the lower glottis) as a function of time, expressed in metres. "
-	"To prevent the creation of a \"width\" object, specify \"0\" (the standard value).")
-TAG (L"%%Pressure 1%, %%Pressure 2%, %%Pressure 3")
+	"To prevent the creation of a $$width$ object, specify $$0$ (the standard value).")
+TAG (L"##Pressure 1#, ##Pressure 2#, ##Pressure 3#")
 DEFINITION (L"the numbers (see below) of the tubes whose air pressures you want to monitor. "
-	"E.g., if %%Pressure 3% is 37, the synthesizer will create a Sound object named \"pressure37\", "
+	"E.g., if ##Pressure 3# is 37, the synthesizer will create a Sound object named $$pressure37$, "
 	"which contains the air pressure of tube 37 (the upper glottis) as a function of time, expressed in Pascal. "
-	"To prevent the creation of a \"pressure\" object, specify \"0\" (the standard value).")
-TAG (L"%%Velocity 1%, %%Velocity 2%, %%Velocity 3")
+	"To prevent the creation of a $$pressure$ object, specify $$0$ (the standard value).")
+TAG (L"##Velocity 1#, ##Velocity 2#, ##Velocity 3")
 DEFINITION (L"the numbers (see below) of the tubes whose air velocities you want to monitor. "
-	"E.g., if %%Velocity 1% is 60, the synthesizer will create a Sound object named \"velocity60\", "
+	"E.g., if ##Velocity 1# is 60, the synthesizer will create a Sound object named $velocity60, "
 	"which contains the air velocity of tube 60 (in the mouth) as a function of time, expressed in metres per second. "
-	"To prevent the creation of a \"velocity\" object, specify \"0\" (the standard value).")
+	"To prevent the creation of a $velocity object, specify $0 (the standard value).")
 ENTRY (L"Stability")
-NORMAL (L"The internal sampling frequency for the aerodynamics is the specified %%sampling rate%, "
-	"multiplied by the specified %oversampling. With the standard settings, this is 22050 times 25 = 550750 Hz.")
+NORMAL (L"The internal sampling frequency for the aerodynamics is the specified ##Sampling frequency#, "
+	"multiplied by the specified #Oversampling. With the standard settings, this is 22050 times 25 = 550750 Hz.")
 NORMAL (L"To ensure the stability of the synthesis, this internal sampling frequency should not be less than the "
-	"velocity of sound (353 m/s) divided by the length of the shortest tube. For the standard \"Female\", "
-	"\"Male\", and \"Child\" speakers, the shortest tube is the upper glottis, which has a length "
+	"velocity of sound (353 m/s) divided by the length of the shortest tube. For the standard #Female, "
+	"#Male, and #Child speakers, the shortest tube is the upper glottis, which has a length "
 	"of 0.7, 1.0, and 0.3 millimetres, respectively. The minimum internal sampling frequencies, therefore, "
 	"are 504286, 353000, and 1176667 Hertz, respectively.")
 ENTRY (L"Time resolution")
 NORMAL (L"To capture the microscopic pressure changes in the glottis, you will want maximum time resolution. "
-	"For a female speaker, you could set %%sampling frequency% to 550750 Hz, and %oversampling to 1.")
+	"For a female speaker, you could set ##Sampling frequency# to 550750 Hz, and #Oversampling to 1.")
 ENTRY (L"Tube numbers")
-NORMAL (L"Here are the tube numbers that you can use for the %width, %pressure, and %velocity settings:")
+NORMAL (L"Here are the tube numbers that you can use for the #Width, #Pressure, and #Velocity settings:")
 LIST_ITEM (L"1..23: lungs (from bottom to top)")
 LIST_ITEM (L"24..29: bronchi (from bottom to top)")
 LIST_ITEM (L"30..35: trachea (from bottom to top)")
@@ -121,30 +121,34 @@ LIST_ITEM (L"\\bu The nasopharyngeal branch is at tubes 50, 51, and 65. They are
 LIST_ITEM (L"\\bu For a one-mass model of the vocal cords, tube 36 is connected to 38.")
 LIST_ITEM (L"\\bu For a 10-mass model, tubes 32..35 are replaced with 79..86, so that "
 	"tube 31 is connected to 79, and 86 is connected to 36.")
-LIST_ITEM (L"\\bu A glottal shunt will be implemented if the speaker's \"shunt.Dx\" attribute is not zero. "
+LIST_ITEM (L"\\bu A glottal shunt will be implemented if the speaker's $$shunt.Dx$ attribute is not zero. "
 	"A branch is then made from tubes 34 and 35 (or 85 and 86) to 87, "
 	"and from tube 89 to 38 and 39.")
 MAN_END
 
-MAN_BEGIN (L"Create Artword...", L"ppgb", 20030916)
+MAN_BEGIN (L"Create Artword...", L"ppgb", 20101212)
 INTRO (L"A command to create an @Artword object with all muscle activities set to zero. "
 	"See @@Articulatory synthesis@.")
 ENTRY (L"Settings")
-TAG (L"%Name")
-DEFINITION (L"the name that you give to the created object. The standard name is \"speaker\", "
-	"but if you work with multiple Speaker objects, give them sensible names to reduce confusion.")
-MAN_END
-
-MAN_BEGIN (L"Create Speaker...", L"ppgb", 20030916)
-INTRO (L"A command to create a @Speaker object. See @@Articulatory synthesis@.")
-ENTRY (L"Settings")
-TAG (L"%Name")
-DEFINITION (L"the name that you give to the created object. The standard name is \"artword\", "
+TAG (L"##Name")
+DEFINITION (L"the name that you give to the created object. The standard name is $$hallo$, "
 	"but you should give it a more sensible name, possibly something that represents the utterance "
 	"that it is supposed to generate.")
-TAG (L"%Duration (seconds)")
+TAG (L"##Duration (seconds)")
 DEFINITION (L"the duration of the resulting Artword. Should be as long as the utterance that "
 	"you want to generate with it. The standard value is 1 second.")
+MAN_END
+
+MAN_BEGIN (L"Create Speaker...", L"ppgb", 20101212)
+INTRO (L"A command to create a @Speaker object. See @@Articulatory synthesis@.")
+ENTRY (L"Settings")
+TAG (L"##Name")
+DEFINITION (L"the name that you give to the created object. The standard name is \"speaker\", "
+	"but if you work with multiple Speaker objects, give them sensible names to reduce confusion.")
+TAG (L"##Kind of speaker")
+DEFINITION (L"Choose from #Female, #Male, or #Child. The only difference is a relative size.")
+TAG (L"##Number of tubes in glottis")
+DEFINITION (L"Choose from #1, #2, or #10. See @@Artword & Speaker: To Sound...@ for details.")
 MAN_END
 
 MAN_BEGIN (L"Create Vocal Tract from phone...", L"ppgb", 19960908)
@@ -159,7 +163,7 @@ NORMAL (L"The area function of the resulting VocalTract is taken from the Russia
 MAN_END
 
 MAN_BEGIN (L"Speaker", L"ppgb", 19980201)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. See @@Articulatory synthesis@.")
+INTRO (L"One of the @@types of objects@ in Praat. See @@Articulatory synthesis@.")
 ENTRY (L"Speaker commands")
 LIST_ITEM (L"\\bu @@Create Speaker...")
 LIST_ITEM (L"\\bu @@Artword & Speaker: To Sound...@: articulatory synthesis")

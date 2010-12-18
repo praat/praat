@@ -106,7 +106,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 		praat_show ();
 	} else if (islower (command [0])) {   /* All directives start with a lower-case letter. */
 		if (wcsnequ (command, L"select ", 7)) {
-			if (wcsnequ (command + 7, L"all", 3)) {
+			if (wcsnequ (command + 7, L"all", 3) && (command [10] == '\0' || command [10] == ' ' || command [10] == '\t')) {
 				praat_selectAll ();
 				praat_show ();
 			} else {

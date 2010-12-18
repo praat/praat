@@ -44,6 +44,7 @@
  * fb 2010/02/20 GTK
  * pb 2010/07/13 GTK: attempts to front the window
  * pb 2010/07/29 removed GuiWindow_show (and window comes to the front!)
+ * pb 2010/12/17 dashed-dotted lines
  */
 
 #include "praatP.h"
@@ -350,6 +351,7 @@ static void setLineType (int lineType) {
 DIRECT (Solid_line) setLineType (Graphics_DRAWN); END
 DIRECT (Dotted_line) setLineType (Graphics_DOTTED); END
 DIRECT (Dashed_line) setLineType (Graphics_DASHED); END
+DIRECT (Dashed_dotted_line) setLineType (Graphics_DASHED_DOTTED); END
 
 FORM (Line_width, L"Praat picture: Line width", 0)
 	POSITIVE (L"Line width", L"1.0")
@@ -1409,6 +1411,7 @@ DIRECT (Picture_settings_report)
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? L"Solid" :
 		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? L"Dotted" :
 		theCurrentPraatPicture -> lineType == Graphics_DASHED ? L"Dashed" :
+		theCurrentPraatPicture -> lineType == Graphics_DASHED_DOTTED ? L"Dashed-dotted" :
 		L"(unknown)");
 	MelderInfo_writeLine2 (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
 	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
@@ -1730,6 +1733,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Pen", L"Plain line", 0, praat_RADIO_NEXT | praat_HIDDEN, DO_Solid_line);
 	praatButton_lines [Graphics_DOTTED] = praat_addMenuCommand (L"Picture", L"Pen", L"Dotted line", 0, praat_RADIO_NEXT, DO_Dotted_line);
 	praatButton_lines [Graphics_DASHED] = praat_addMenuCommand (L"Picture", L"Pen", L"Dashed line", 0, praat_RADIO_NEXT, DO_Dashed_line);
+	praatButton_lines [Graphics_DASHED_DOTTED] = praat_addMenuCommand (L"Picture", L"Pen", L"Dashed-dotted line", 0, praat_RADIO_NEXT, DO_Dashed_dotted_line);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- line width --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Line width...", 0, 0, DO_Line_width);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);

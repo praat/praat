@@ -452,10 +452,10 @@ static int _LongSound_haveSamples (LongSound me, long imin, long imax) {
 			 */
 			long nshift = (imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
-			memmove (my buffer + shift, my buffer, nshift * sizeof (short));
+				memmove (my buffer + shift, my buffer, nshift * sizeof (short));
 			#else
-			for (i = nshift - 1; i >= 0; i --)
-				my buffer [i + shift] = my buffer [i];
+				for (i = nshift - 1; i >= 0; i --)
+					my buffer [i + shift] = my buffer [i];
 			#endif
 			if (! _LongSound_readSamples (me, my buffer, imin, my imin - 1)) return 0;
 		} else {
@@ -464,10 +464,10 @@ static int _LongSound_haveSamples (LongSound me, long imin, long imax) {
 			 */
 			long nshift = (my imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
-			memmove (my buffer + shift, my buffer, nshift * sizeof (short));
+				memmove (my buffer + shift, my buffer, nshift * sizeof (short));
 			#else
-			for (i = nshift - 1; i >= 0; i --)
-				my buffer [i + shift] = my buffer [i];
+				for (i = nshift - 1; i >= 0; i --)
+					my buffer [i + shift] = my buffer [i];
 			#endif
 			if (! _LongSound_readSamples (me, my buffer, imin, my imin - 1)) return 0;
 			if (! _LongSound_readSamples (me, my buffer + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax)) return 0;
@@ -478,10 +478,10 @@ static int _LongSound_haveSamples (LongSound me, long imin, long imax) {
 		 */
 		long nshift = (my imax - imin + 1) * my numberOfChannels, shift = (imin - my imin) * my numberOfChannels;
 		#if USE_MEMMOVE
-		memmove (my buffer, my buffer + shift, nshift * sizeof (short));
+			memmove (my buffer, my buffer + shift, nshift * sizeof (short));
 		#else
-		for (i = 0; i < nshift; i ++)
-			my buffer [i] = my buffer [i + shift];
+			for (i = 0; i < nshift; i ++)
+				my buffer [i] = my buffer [i + shift];
 		#endif
 		if (! _LongSound_readSamples (me, my buffer + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax)) return 0;
 	}

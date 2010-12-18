@@ -1,5 +1,5 @@
 #ifndef _ArtwordEditor_h_
-#define _ArtwordEditor_h
+#define _ArtwordEditor_h_
 /* ArtwordEditor.h
  *
  * Copyright (C) 1992-2009 Paul Boersma
