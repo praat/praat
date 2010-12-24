@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/07
+ * pb 2010/12/21
  */
 
 #include <stdio.h>
@@ -903,7 +903,8 @@ wchar_t * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc
 #define Melder_FLAC_COMPRESSION 15
 #define Melder_MPEG_COMPRESSION 16
 int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
-int MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
+void MelderFile_writeAudioFileHeader16_e (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
+#define MelderFile_writeAudioFileHeader16_ch(a,b,c,d,e) do{MelderFile_writeAudioFileHeader16_e(a,b,c,d,e);cherror}while(0)
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
@@ -913,17 +914,14 @@ int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *enco
  * The data start at 'startOfData' bytes from the start of the file.
  */
 int Melder_bytesPerSamplePoint (int encoding);
-int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding,
-	double *leftBuffer, double *rightBuffer, long numberOfSamples);
-/* If rightBuffer is NULL, reads mono data or averaged stereo data into leftBuffer.
- * If rightBuffer exists, read mono data into leftBuffer or stereo data into leftBuffer and rightBuffer.
- * Buffers are base-1.
+int Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, long numberOfSamples);
+/* Reads channels into buffer [ichannel], which are base-1.
  */
 int Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, long numberOfSamples);
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-int MelderFile_writeFloatToAudio (MelderFile file, int encoding, const double *left, long nleft, const double *right, long nright, int warnIfClipped);
+int MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, long numberOfSamples, int warnIfClipped);
 int MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
 
 void Melder_audioTrigger (void);

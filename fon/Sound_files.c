@@ -176,41 +176,11 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 		}
 		return me;
 	}
-	Melder_readAudioToFloat (f, numberOfChannels, encoding, my z [1], numberOfChannels == 1 ? NULL : my z [2], numberOfSamples); cherror
+	Melder_readAudioToFloat (f, numberOfChannels, encoding, my z, numberOfSamples); cherror
 end:
 	if (f) fclose (f);
 	iferror { Melder_error3 (L"(Sound_readFromSoundFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
 	return me;
-}
-
-int Sound_read2FromSoundFile (MelderFile file, Sound *return_left, Sound *return_right) {
-	Sound left = NULL, right = NULL;
-	int numberOfChannels, encoding, fileType;
-	double sampleRate;
-	long startOfData, numberOfSamples;
-	FILE *f = NULL;
-	MelderFile_open (file); cherror
-	f = file -> filePointer;
-	fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples); cherror
-	if (fileType == 0)
-		error1 (L"Can only read AIFF/C, WAV, NeXT/Sun, and NIST files.")
-	if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE) {
-		fclose (f);
-		return Melder_error1 (L"(Sound_read2FromSoundFile:) Cannot unshorten two channels.");
-	}
-	if (fseek (f, startOfData, SEEK_SET) == EOF)   /* Start from beginning of sample data. */
-		error1 (L"No data in audio file.")
-	left = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); cherror
-	if (numberOfChannels == 2) {
-		right = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); cherror
-	}
-	Melder_readAudioToFloat (f, numberOfChannels, encoding, left -> z [1], right ? right -> z [1] : NULL, numberOfSamples); cherror
-end:
-	if (f) fclose (f);
-	iferror { Melder_error3 (L"(Sound_read2FromSoundFile:) File ", MelderFile_messageName (file), L" not read."); forget (left); forget (right); }
-	*return_left = left;
-	*return_right = right;
-	return 1;
 }
 
 Sound Sound_readFromSesamFile (MelderFile file) {
@@ -589,7 +559,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 	numberOfSamples = ftell (f);
 	rewind (f);
 	me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); cherror
-	Melder_readAudioToFloat (f, 1, Melder_ALAW, my z [1], NULL, numberOfSamples); cherror
+	Melder_readAudioToFloat (f, 1, Melder_ALAW, my z, numberOfSamples); cherror
 end:
 	Melder_fclose (file, f);
 	iferror { Melder_error3 (L"(Sound_readFromRawAlawFile:) File ", MelderFile_messageName (file), L" not read."); forget (me); }
@@ -597,14 +567,13 @@ end:
 }
 
 int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
+//start:
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-	if (file -> filePointer) {
-		MelderFile_writeAudioFileHeader16 (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
-		MelderFile_writeFloatToAudio (file, Melder_defaultAudioFileEncoding16 (audioFileType),
-			& my z [1] [1], my nx, my ny > 1 ? & my z [2] [1] : NULL, my ny > 1 ? my nx : 0, TRUE);
-	}
+	MelderFile_writeAudioFileHeader16_ch (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
+	MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding16 (audioFileType), my z, my nx, TRUE);
+end:
 	MelderFile_close (file);
-	iferror return 0;
+	iferror return Melder_error3 (L"16-bit sound file ", MelderFile_messageName (file), L" not written.");
 	return 1;
 }
 
@@ -743,8 +712,7 @@ int Sound_writeToKayFile (Sound me, MelderFile file) {
 	fwrite ("SDA_", 1, 4, f);
 	binputi4LE (my nx * 2, f);   /* Chunk size. */
 
-	MelderFile_writeFloatToAudio (file, Melder_LINEAR_16_LITTLE_ENDIAN,
-		& my z [1] [1], my nx, NULL, 0, TRUE); cherror
+	MelderFile_writeFloatToAudio (file, my ny, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, TRUE); cherror
 end:
 	Melder_fclose (file, f);
 	file -> filePointer = previous;
@@ -758,8 +726,7 @@ int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 	if (! f) return 0;
 	file -> filePointer = f;
 	MelderFile_setMacTypeAndCreator (file, 'BINA', 'PpgB');
-	MelderFile_writeFloatToAudio (file, encoding,
-		& my z [1] [1], my nx, my ny > 1 ? & my z [2] [1] : NULL, my ny > 1 ? my nx : 0, TRUE); cherror
+	MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE); cherror
 end:
 	Melder_fclose (file, f);
 	file -> filePointer = previous;

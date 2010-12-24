@@ -97,7 +97,7 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 		Allocate a stereo buffer of size (2 * the smallest)!
 		WE SUPPOSE THAT SMALL IS LARGE ENOUGH.
 		Read the same number of samples from both files, despite
-		eventual differences in internal buffer size. 
+		potential differences in internal buffer size. 
 	*/
 	
 	buffer = NUMsvector (1, nchannels * nbuf);
@@ -106,8 +106,12 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", 
 		Melder_winAudioFileExtension (audioFileType));
 	if (! file -> filePointer) goto end;
-	MelderFile_writeAudioFileHeader16 (file, audioFileType, 
-		my sampleRate, nx, nchannels);	
+	MelderFile_writeAudioFileHeader16_e (file, audioFileType, 
+		my sampleRate, nx, nchannels);
+	if (Melder_hasError ())
+	{
+		goto end;
+	}
 
 	for (i = 1; i <= numberOfReads; i++)
 	{
@@ -294,8 +298,8 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 			Sound sound = (Sound) data;
 			if (file -> filePointer)
 			{
-				MelderFile_writeFloatToAudio (file, Melder_defaultAudioFileEncoding16 (audioFileType),
-					& sound -> z[1][1], sound -> nx, sound -> ny == 1 ? NULL : & sound -> z[2][1], sound -> nx, TRUE);
+				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding16 (audioFileType),
+					sound -> z, sound -> nx, TRUE);
 			}
 		}
 		else
@@ -311,7 +315,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 	*/
 
 	MelderFile_rewind (file);
-	(void) MelderFile_writeAudioFileHeader16 (file, audioFileType,
+	MelderFile_writeAudioFileHeader16_e (file, audioFileType,
 		 sampleRate, numberOfSamples, numberOfChannels);
 	if (Melder_hasError ())
 	{

@@ -216,33 +216,13 @@ end:
 	return him;
 }
 
-Sound Sound_extractChannel (Sound me, long channel) {
-	if (channel <= 0 || channel > my ny) return Melder_errorp ("Cannot extract channel %ls.", Melder_integer (channel));
-	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
-	for (long i = 1; i <= my nx; i ++) {
-		thy z [1] [i] = my z [channel] [i];
-	}
-end:
-	iferror forget (thee);
-	return thee;
-}
-
-Sound Sound_extractLeftChannel (Sound me) {
-	if (my ny != 2) return Melder_errorp ("Sound not stereo. Left channel not extracted.");
-	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
-	for (long i = 1; i <= my nx; i ++) {
-		thy z [1] [i] = my z [1] [i];
-	}
-end:
-	iferror forget (thee);
-	return thee;
-}
-
-Sound Sound_extractRightChannel (Sound me) {
-	if (my ny != 2) return Melder_errorp ("Sound not stereo. Right channel not extracted.");
-	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
-	for (long i = 1; i <= my nx; i ++) {
-		thy z [1] [i] = my z [2] [i];
+Sound Sound_extractChannel (Sound me, long ichan) {
+	Sound thee = NULL;
+//start:
+	if (ichan <= 0 || ichan > my ny) error3 (L"Cannot extract channel ", Melder_integer (ichan), L".");
+	thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long isamp = 1; isamp <= my nx; isamp ++) {
+		thy z [1] [isamp] = my z [ichan] [isamp];
 	}
 end:
 	iferror forget (thee);

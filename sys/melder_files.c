@@ -979,7 +979,7 @@ void MelderFile_close (MelderFile me) {
 			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
 			FLAC__stream_encoder_delete (my flacEncoder);
 		}
-	} else if (my filePointer) {
+	} else if (my filePointer != NULL) {
 		Melder_fclose (me, my filePointer);
 	}
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */

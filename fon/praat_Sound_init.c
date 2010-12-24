@@ -635,15 +635,8 @@ END
 DIRECT (Sound_extractAllChannels)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (my ny == 1) {
-			if (! praat_new2 (Data_copy (me), my name, L"_mono")) return 0;
-		} else if (my ny == 2) {
-			if (! praat_new2 (Sound_extractLeftChannel (me), my name, L"_left")) return 0;
-			if (! praat_new2 (Sound_extractRightChannel (me), my name, L"_right")) return 0;
-		} else {
-			for (long channel = 1; channel <= my ny; channel ++) {
-				if (! praat_new3 (Sound_extractChannel (me, channel), my name, L"_", Melder_integer (channel))) return 0;
-			}
+		for (long channel = 1; channel <= my ny; channel ++) {
+			if (! praat_new3 (Sound_extractChannel (me, channel), my name, L"_ch", Melder_integer (channel))) return 0;
 		}
 	}
 END
@@ -656,14 +649,14 @@ DO
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
 		if (! praat_new3 (Sound_extractChannel (me, channel),
-			my name, L"_", Melder_integer (channel))) return 0;
+			my name, L"_ch", Melder_integer (channel))) return 0;
 	}
 END
 
 DIRECT (Sound_extractLeftChannel)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new2 (Sound_extractLeftChannel (me), my name, L"_left")) return 0;
+		if (! praat_new2 (Sound_extractChannel (me, 1), my name, L"_left")) return 0;
 	}
 END
 
@@ -688,7 +681,7 @@ END
 DIRECT (Sound_extractRightChannel)
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		if (! praat_new2 (Sound_extractRightChannel (me), my name, L"_right")) return 0;
+		if (! praat_new2 (Sound_extractChannel (me, 2), my name, L"_right")) return 0;
 	}
 END
 
@@ -1115,11 +1108,22 @@ DO
 	}
 END
 
-FORM_READ (Sound_read2FromStereoFile, L"Read two Sounds from stereo file", 0, true)
-	Sound left, right;
-	if (! Sound_read2FromSoundFile (file, & left, & right)) return 0;
-	if (! praat_new1 (left, L"left")) return 0;
-	if (right) { if (! praat_new1 (right, L"right")) return 0; }
+FORM_READ (Sound_readSeparateChannelsFromSoundFile, L"Read separate channels from sound file", 0, true)
+	Sound sound = Sound_readFromSoundFile (file);
+	if (sound == NULL) return 0;
+	wchar_t name [300];
+	wcscpy (name, MelderFile_name (file));
+	wchar_t *lastPeriod = wcsrchr (name, '.');
+	if (lastPeriod != NULL) {
+		*lastPeriod = '\0';
+	}
+	for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
+		if (! praat_new3 (Sound_extractChannel (sound, ichan), name, L"_ch", Melder_integer (ichan))) {
+			forget (sound);
+			return 0;
+		}
+	}
+	forget (sound);
 END
 
 FORM_READ (Sound_readFromRawAlawFile, L"Read Sound from raw Alaw file", 0, true)
@@ -1976,7 +1980,8 @@ void praat_uvafon_Sound_init (void) {
 
 	praat_addMenuCommand (L"Objects", L"Read", L"-- read sound --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Read", L"Open long sound file...", 0, 'L', DO_LongSound_open);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read two Sounds from stereo file...", 0, 0, DO_Sound_read2FromStereoFile);
+	praat_addMenuCommand (L"Objects", L"Read", L"Read two Sounds from stereo file...", 0, praat_HIDDEN, DO_Sound_readSeparateChannelsFromSoundFile);   // grandfathered 2010
+	praat_addMenuCommand (L"Objects", L"Read", L"Read separate channels from sound file...", 0, 0, DO_Sound_readSeparateChannelsFromSoundFile);
 	praat_addMenuCommand (L"Objects", L"Read", L"Read from special sound file", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw Alaw file...", 0, 1, DO_Sound_readFromRawAlawFile);
 
@@ -2166,8 +2171,8 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Convert to mono", 0, 1, DO_Sound_convertToMono);
 		praat_addAction1 (classSound, 0, L"Convert to stereo", 0, 1, DO_Sound_convertToStereo);
 		praat_addAction1 (classSound, 0, L"Extract all channels", 0, 1, DO_Sound_extractAllChannels);
-		praat_addAction1 (classSound, 0, L"Extract left channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractLeftChannel);
-		praat_addAction1 (classSound, 0, L"Extract right channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);
+		praat_addAction1 (classSound, 0, L"Extract left channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractLeftChannel);   // hidden December 2010
+		praat_addAction1 (classSound, 0, L"Extract right channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);   // hidden December 2010
 		praat_addAction1 (classSound, 0, L"Extract channel...", 0, 1, DO_Sound_extractChannel);
 		praat_addAction1 (classSound, 0, L"Extract part...", 0, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, L"Resample...", 0, 1, DO_Sound_resample);

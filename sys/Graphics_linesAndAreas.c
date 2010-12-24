@@ -1234,8 +1234,12 @@ void Graphics_function (I, double yWC [], long ix1, long ix2, double x1WC, doubl
 
 void Graphics_function16 (I, short yWC [], int stagger, long ix1, long ix2, double x1WC, double x2WC) {
 	iam (Graphics);
-	if (stagger) {
+	if (stagger == 1) {
 		#define STAGGER(i)  ((i) + (i))
+		MACRO_Graphics_function (short)
+		#undef STAGGER
+	} else if (stagger > 1) {
+		#define STAGGER(i)  ((stagger + 1) * (i))
 		MACRO_Graphics_function (short)
 		#undef STAGGER
 	} else {

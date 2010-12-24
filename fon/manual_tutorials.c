@@ -23,12 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101218)
+MAN_BEGIN (L"What's new?", L"ppgb", 20101224)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.07# (24 December 2010)")
+LIST_ITEM (L"\\bu Support for reading and writing multi-channel sound files (i.e. two-channel above stereo).")
 NORMAL (L"##5.2.06# (18 December 2010)")
 LIST_ITEM (L"\\bu Picture window: a new (the fourth) line type, namely dashed-dotted.")
-LIST_ITEM (L"\\bu Full support for multi-channel sounds (i.e. above two-channel stereo).")
+LIST_ITEM (L"\\bu Support for analysing and drawing multi-channel sounds (i.e. above two-channel stereo).")
 LIST_ITEM (L"\\bu Can read some EEG files (BioSemi 24-bit BDF) as a Sound and a TextGrid object.")
 LIST_ITEM (L"\\bu Linux: compatibility with computers without English language support.")
 LIST_ITEM (L"\\bu Macintosh: support for high-plane (i.e. very uncommon) Unicode characters in file names (as already existed on Unix and Windows).")

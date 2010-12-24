@@ -1449,24 +1449,33 @@ static void createChildren (SoundRecorder me) {
 	#endif
 }
 
-static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
-	if (my fakeMono) {
-		long nsamp = my nsamp / 2;
-		MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-		if (file -> filePointer) {
-			MelderFile_writeAudioFileHeader16 (file, audioFileType, theControlPanel. sampleRate, nsamp, 1);
-			if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
-				for (long i = 0; i < nsamp; i ++)
-					binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
-			} else {
-				for (long i = 0; i < nsamp; i ++)
-					binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
-			}
+static void writeFakeMonoFile_e (SoundRecorder me, MelderFile file, int audioFileType) {
+	//file -> filePointer = NULL;
+//start:
+	long nsamp = my nsamp / 2;
+	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+	if (file -> filePointer) {
+		MelderFile_writeAudioFileHeader16_ch (file, audioFileType, theControlPanel. sampleRate, nsamp, 1);
+		if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
+			for (long i = 0; i < nsamp; i ++)
+				binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+		} else {
+			for (long i = 0; i < nsamp; i ++)
+				binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 		}
-		MelderFile_close (file);
+	}
+end:
+	MelderFile_close (file);
+}
+
+static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
+//start:
+	if (my fakeMono) {
+		writeFakeMonoFile_e (me, file, audioFileType); cherror
 	} else {
 		MelderFile_writeAudioFile16 (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels);
 	}
+end:
 	iferror return Melder_error1 (L"Audio file not written.");
 	return 1;
 }

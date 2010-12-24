@@ -29,6 +29,7 @@
  * pb 2009/03/18 modern enums
  * fb 2010/02/26 UTF-16 via bin(get|put)utf16()
  * pb 2010/03/09 more support for Unicode values above 0xFFFF
+ * pb 2010/12/23 corrected bingeti3 and bingeti3LE for 64-bit systems
  */
 
 #include "melder.h"
@@ -684,14 +685,12 @@ int bingete2 (FILE *f, int min, int max, const wchar_t *type) {
 }
 
 long bingeti3 (FILE *f) {
-	unsigned long result;
+	uint32_t result;
 	unsigned char bytes [3]; fread (bytes, 1, 3, f);
-	result =
-		((unsigned long) bytes [0] << 16) |
-		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [2];
-	if ((bytes [0] & 128) != 0)
-		result |= 0xFF000000;
-	return result;
+	result = ((uint32_t) bytes [0] << 16) | ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [2];
+	if ((bytes [0] & 128) != 0)   // is the 24-bit sign bit on?
+		result |= 0xFF000000;   // extend negative sign to 32 bits
+	return (long) (int32_t) result;   // first convert signedness, then perhaps extend sign to 64 bits!
 }
 
 long bingeti4 (FILE *f) {
@@ -733,14 +732,12 @@ unsigned int bingetu2LE (FILE *f) {
 }
 
 long bingeti3LE (FILE *f) {
-	unsigned long result;
+	uint32_t result;
 	unsigned char bytes [3]; fread (bytes, 1, 3, f);
-	result =
-		((unsigned long) bytes [2] << 16) |
-		((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];
-	if ((bytes [2] & 128) != 0)
-		result |= 0xFF000000;
-	return result;
+	result = ((uint32_t) bytes [2] << 16) | ((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
+	if ((bytes [2] & 128) != 0)   // is the 24-bit sign bit on?
+		result |= 0xFF000000;   // extend negative sign to 32 bits
+	return (long) (int32_t) result;   // first convert signedness, then perhaps extend sign to 64 bits!
 }
 
 long bingeti4LE (FILE *f) {

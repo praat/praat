@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/26
+ * pb 2010/12/22
  */
 
 /* Sound inherits from Vector */
@@ -80,7 +80,7 @@ Sound Sound_createSimple (long numberOfChannels, double duration, double samplin
 	Postconditions:
 		thy xmin == 0.0;
 		thy xmax == duration;
-		thy nx == floor (duration * samplingFrequency + 0.5);
+		thy nx == round (duration * samplingFrequency);
 		thy dx == 1 / samplingFrequency;
 		thy x1 == 0.5 * thy dx;		// Centre of first sampling period.
 		thy ymin = 1.0;
@@ -93,9 +93,7 @@ Sound Sound_createSimple (long numberOfChannels, double duration, double samplin
 
 Sound Sound_convertToMono (Sound me);
 Sound Sound_convertToStereo (Sound me);
-Sound Sound_extractChannel (Sound me, long channel);
-Sound Sound_extractLeftChannel (Sound me);
-Sound Sound_extractRightChannel (Sound me);
+Sound Sound_extractChannel (Sound me, long ichannel);
 Sound Sounds_combineToStereo (Sound me, Sound thee);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
@@ -157,7 +155,7 @@ double Sound_getEnergyInAir (Sound me);
 double Sound_getPowerInAir (Sound me);
 double Sound_getIntensity_dB (Sound me);
 
-double Sound_getNearestZeroCrossing (Sound me, double position, long channel);
+double Sound_getNearestZeroCrossing (Sound me, double position, long ichannel);
 void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing);
 
 Sound Sound_createFromToneComplex (double startingTime, double endTime,
@@ -303,8 +301,6 @@ int Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
 int Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
 
 Sound Sound_readFromSoundFile (MelderFile file);   /* AIFF, WAV, NeXT/Sun, or NIST */
-int Sound_read2FromSoundFile (MelderFile file, Sound *left, Sound *right);   /* AIFF, WAV, NeXT/Sun, or NIST */
-	/* If the file contains mono sound, return only 'left' ('*right' will be NULL). */
 #ifdef macintosh
 	Sound Sound_readFromMacSoundFile (MelderFile file);   /* 8 bit */
 #endif
