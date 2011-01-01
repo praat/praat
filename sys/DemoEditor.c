@@ -190,7 +190,7 @@ int Demo_open (void) {
 			theDemoEditor = DemoEditor_create (Melder_topShell);
 			Melder_assert (theDemoEditor != NULL);
 			//GuiObject_show (theDemoEditor -> dialog);
-			theDemoEditor -> praatPicture = Melder_calloc (structPraatPicture, 1);
+			theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 			theCurrentPraatPicture = theDemoEditor -> praatPicture;
 			theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
 			theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;

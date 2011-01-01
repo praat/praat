@@ -1,6 +1,6 @@
 /* manual_Manual.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,24 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/05/28
- */
-
 #include "ManPagesM.h"
 
 void manual_Manual_init (ManPages me);
 void manual_Manual_init (ManPages me) {
 
-MAN_BEGIN (L"Manual", L"ppgb", 20061020)
+MAN_BEGIN (L"Manual", L"ppgb", 20110101)
 INTRO (L"The documentation system for the Praat program.")
 NORMAL (L"You will get a manual window every time you choose anything from a #Help menu or press a #Help button.")
 ENTRY (L"How to find what you are looking for")
 NORMAL (L"You can navigate the manual in several ways:")
-LIST_ITEM (L"\\bu To go to the Intro, use the #H button.")
-LIST_ITEM (L"\\bu To go to the information behind a %link (a piece of blue text), #click on it.")
-LIST_ITEM (L"\\bu To go forward and backward through a tutorial with numbered pages, use \"1 >\" and \"< 1\".")
+LIST_ITEM (L"\\bu To go to the Intro, use the #Home button.")
+LIST_ITEM (L"\\bu To go to the information behind a %link (a piece of blue text), just click on it.")
+LIST_ITEM (L"\\bu To go forward and backward through a tutorial with numbered pages, use ##1 ># and ##< 1#.")
 LIST_ITEM (L"\\bu To %revisit previous pages, use the #< and #> buttons.")
 LIST_ITEM (L"\\bu To browse %alphabetically, use the horizontal scroll bar and the buttons "
-	"named \"< 1\" and \"1 >\", or the ##Search for page (list)...# command in the ##Go to# menu.")
+	"named ##< 1# and ##1 >#, or the ##Search for page (list)...# command in the ##Go to# menu.")
 LIST_ITEM (L"\\bu To find a page with a %%known title%, use the ##Search for page...# command.")
-NORMAL (L"The fastest way to find what you want is often the #Search button.")
+NORMAL (L"The fastest way to find what you want is usually the #Search button.")
 ENTRY (L"Search")
 NORMAL (L"In the text field after the Search button, you can type strings, separated by spaces. "
 	"When you press the #Return (or #Enter) key, or click the #Search button, "
@@ -57,7 +53,7 @@ ENTRY (L"Your own manual pages")
 NORMAL (L"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (L"ManPages", L"ppgb", 20070225)
+MAN_BEGIN (L"ManPages", L"ppgb", 20110101)
 INTRO (L"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -240,6 +236,8 @@ NORMAL (L"3. The ##Copy last played to list# button copies the latest sound to t
 	"a sound that you played with the #Play button, "
 	"or a sound that you played by clicking on a sound link, "
 	"whichever occurred most recently.")
+ENTRY (L"And beyond")
+NORMAL (L"If you need even more flexibility than ManPages offer you, consider using the @@Demo window@ instead.")
 MAN_END
 
 }

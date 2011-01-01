@@ -830,7 +830,7 @@ Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double 
 	for (i = 1; i <= n; i ++) {
 		wchar_t output [100];
 		OTMulti_generateOptimalForm (me, forms -> strings [i], L"", output, evaluationNoise); cherror
-		outputs -> strings [i] = Melder_wcsdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
 	}
 end:
 	iferror { forget (outputs); return Melder_errorp ("(OTMulti_Strings_generateOptimalForms:) Not performed."); }
@@ -844,7 +844,7 @@ Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wc
 	for (long i = 1; i <= numberOfTrials; i ++) {
 		wchar_t output [100];
 		OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise); cherror
-		outputs -> strings [i] = Melder_wcsdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
 	}
 end:
 	iferror return Melder_errorp ("(OTMulti_generateOptimalForms:) Not performed.");
@@ -875,7 +875,7 @@ Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const w
 	iout = 0;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		if (OTMulti_candidateMatches (me, icand, form1, form2)) {
-			thy rowLabels [++ iout] = Melder_wcsdup (my candidates [icand]. string);
+			thy rowLabels [++ iout] = Melder_wcsdup_e (my candidates [icand]. string); cherror
 			index [icand] = iout;
 		}
 	}

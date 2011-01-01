@@ -51,7 +51,7 @@ static void countVowelViolations (int *marks, int ncons, int v) {
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
 	wchar_t buffer [100];
 	swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-	my output = Melder_wcsdup (buffer);
+	my output = Melder_wcsdup_e (buffer); iferror return;
 	my marks = NUMivector (1, my numberOfConstraints = ncons); iferror return;
 	/*
 	 * Count vowel-gesture violations.
@@ -68,16 +68,16 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 	int icons, ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
 	OTGrammar me = new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = ncons); cherror
-	my constraints [1]. name = Melder_wcsdup (L"*[rtr / hi]"); cherror
-	my constraints [2]. name = Melder_wcsdup (L"*[atr / lo]"); cherror
-	my constraints [3]. name = Melder_wcsdup (L"P\\s{ARSE}\n(rtr)"); cherror
-	my constraints [4]. name = Melder_wcsdup (L"P\\s{ARSE}\n(atr)"); cherror
-	my constraints [5]. name = Melder_wcsdup (L"*G\\s{ESTURE}\n(contour)"); cherror
+	my constraints [1]. name = Melder_wcsdup_e (L"*[rtr / hi]"); cherror
+	my constraints [2]. name = Melder_wcsdup_e (L"*[atr / lo]"); cherror
+	my constraints [3]. name = Melder_wcsdup_e (L"P\\s{ARSE}\n(rtr)"); cherror
+	my constraints [4]. name = Melder_wcsdup_e (L"P\\s{ARSE}\n(atr)"); cherror
+	my constraints [5]. name = Melder_wcsdup_e (L"*G\\s{ESTURE}\n(contour)"); cherror
 	if (ncons == 9) {
-		my constraints [6]. name = Melder_wcsdup (L"*[rtr / mid]"); cherror
-		my constraints [7]. name = Melder_wcsdup (L"*[rtr / lo]"); cherror
-		my constraints [8]. name = Melder_wcsdup (L"*[atr / mid]"); cherror
-		my constraints [9]. name = Melder_wcsdup (L"*[atr / hi]"); cherror
+		my constraints [6]. name = Melder_wcsdup_e (L"*[rtr / mid]"); cherror
+		my constraints [7]. name = Melder_wcsdup_e (L"*[rtr / lo]"); cherror
+		my constraints [8]. name = Melder_wcsdup_e (L"*[atr / mid]"); cherror
+		my constraints [9]. name = Melder_wcsdup_e (L"*[atr / hi]"); cherror
 	}
 	if (equal_random_infant_Wolof == 1) {   /* equal? */
 		for (icons = 1; icons <= ncons; icons ++)
@@ -116,7 +116,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		OTGrammarTableau tableau = & my tableaus [itab];
 		wchar_t buffer [100];
 		swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-		tableau -> input = Melder_wcsdup (buffer); cherror
+		tableau -> input = Melder_wcsdup_e (buffer); cherror
 		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates = 4); cherror
 		/*
 		 * Generate the four tongue-root variants as output candidates.

@@ -152,10 +152,10 @@ Sound PointProcess_to_Sound_phonation
 		 * Determine the amplitude of this peak.
 		 */
 		amplitude /= period * openPhase;
-		if (it <= 2 || my t [it - 2] < my t [it - 1] - maximumPeriod) {
+		if (it == 1 || my t [it - 1] < my t [it] - maximumPeriod) {
+			amplitude *= adaptFactor * adaptFactor;
+		} else if (it == 2 || my t [it - 2] < my t [it - 1] - maximumPeriod) {
 			amplitude *= adaptFactor;
-			if (it == 1 || my t [it - 1] < my t [it] - maximumPeriod)
-				amplitude *= adaptFactor;
 		}
 		/*
 		 * Fill in the samples to the left of the current point.

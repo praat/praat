@@ -338,10 +338,10 @@ short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *)) { return
 short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
 short texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
 short texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
-char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
-char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
-wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
-wchar_t *texgetw4 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
+char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8_e (getString (text)); }
+char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8_e (getString (text)); }
+wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup_e (getString (text)); }
+wchar_t *texgetw4 (MelderReadText text) { return Melder_wcsdup_e (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
@@ -1181,9 +1181,9 @@ void binputc16 (dcomplex z, FILE *f) {
 
 char * bingets1 (FILE *f) {
 	unsigned int length = bingetu1 (f);
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(bingets1:) Out of memory. Cannot create string of length %d.", length);
+		return Melder_errorp ("(bingets1:) Cannot create string of length %d.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
@@ -1192,9 +1192,9 @@ char * bingets1 (FILE *f) {
 #if 0
 char * bingets2 (FILE *f) {
 	unsigned int length = bingetu2 (f);
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(bingets2:) Out of memory. Cannot create string of length %d.", length);
+		return Melder_errorp ("(bingets2:) Cannot create string of length %d.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
@@ -1203,9 +1203,9 @@ char * bingets2 (FILE *f) {
 
 char * bingets4 (FILE *f) {
 	unsigned long length = bingetu4 (f);
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(bingets4:) Out of memory. Cannot create string of length %ld.", length);
+		return Melder_errorp ("(bingets4:) Cannot create string of length %ld.", length);
 	if (fread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
@@ -1216,9 +1216,9 @@ wchar_t * bingetw1 (FILE *f) {
 	unsigned short length = bingetu1 (f);
 	if (length == 0xFF) {
 		length = bingetu1 (f);
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw1:) Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			if (sizeof (wchar_t) == 2) {
 				result [i] = bingetu2 (f);
@@ -1237,9 +1237,9 @@ wchar_t * bingetw1 (FILE *f) {
 			}
 		}
 	} else {
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw1:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw1:) Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
 		}
@@ -1254,9 +1254,9 @@ wchar_t * bingetw2 (FILE *f) {
 	unsigned short length = bingetu2 (f);
 	if (length == 0xFFFF) {
 		length = bingetu2 (f);
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw2:) Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			if (sizeof (wchar_t) == 2) {
 				result [i] = bingetu2 (f);
@@ -1275,9 +1275,9 @@ wchar_t * bingetw2 (FILE *f) {
 			}
 		}
 	} else {
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw2:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw2:) Cannot create string of length %ld.", length);
 		for (unsigned short i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
 		}
@@ -1292,9 +1292,9 @@ wchar_t * bingetw4 (FILE *f) {
 	unsigned long length = bingetu4 (f);
 	if (length == 0xFFFFFFFF) {
 		length = bingetu4 (f);
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw4:) Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
 			if (sizeof (wchar_t) == 2) {
 				result [i] = bingetu2 (f);
@@ -1313,9 +1313,9 @@ wchar_t * bingetw4 (FILE *f) {
 			}
 		}
 	} else {
-		result = Melder_malloc (wchar_t, length + 1);
+		result = Melder_malloc_e (wchar_t, length + 1);
 		if (result == NULL)
-			return Melder_errorp ("(bingetw4:) Out of memory. Cannot create string of length %ld.", length);
+			return Melder_errorp ("(bingetw4:) Cannot create string of length %ld.", length);
 		for (unsigned long i = 0; i < length; i ++) {
 			result [i] = bingetu1 (f);
 		}
@@ -1429,8 +1429,8 @@ void binputw4 (const wchar_t *s, FILE *f) {
 CACHE * memopen (size_t nbytes) {
 	CACHE *me;
 	if (nbytes < 1) return NULL;
-	if (! (me = Melder_malloc (CACHE, 1))) return NULL;
-	if (! (my base = Melder_malloc (unsigned char, nbytes))) { Melder_free (me); return NULL; }
+	if (! (me = Melder_malloc_e (CACHE, 1))) return NULL;
+	if (! (my base = Melder_malloc_e (unsigned char, nbytes))) { Melder_free (me); return NULL; }
 	my max = my base + nbytes;
 	my ptr = my base;
 	return me;
@@ -1957,9 +1957,9 @@ void cacputc16 (dcomplex z, CACHE *f) {
 
 char * cacgets1 (CACHE *f) {
 	unsigned int length = (unsigned char) * f -> ptr ++;
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(cacgets1:) Out of memory. Cannot create a string of length %d.", length);
+		return Melder_errorp ("(cacgets1:) Cannot create a string of length %d.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
@@ -1967,9 +1967,9 @@ char * cacgets1 (CACHE *f) {
 
 char * cacgets2 (CACHE *f) {
 	unsigned int length = cacgetu2 (f);
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(cacgets2:) Out of memory. Cannot create a string of length %d.", length);
+		return Melder_errorp ("(cacgets2:) Cannot create a string of length %d.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;
@@ -1977,9 +1977,9 @@ char * cacgets2 (CACHE *f) {
 
 char * cacgets4 (CACHE *f) {
 	unsigned long length = cacgetu4 (f);
-	char *result = Melder_malloc (char, length + 1);
+	char *result = Melder_malloc_e (char, length + 1);
 	if (! result)
-		return Melder_errorp ("(cacgets4:) Out of memory. Cannot create a string of length %ld.", length);
+		return Melder_errorp ("(cacgets4:) Cannot create a string of length %ld.", length);
 	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
 	result [length] = 0;   /* Trailing null byte. */
 	return result;

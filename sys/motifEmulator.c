@@ -331,7 +331,7 @@ static int NativeButton_preferredHeight (GuiObject me) {
 /***** WIDGET *****/
 
 GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_t *name) {
-	GuiObject me = Melder_calloc (struct structGuiObject, 1);
+	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
 	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%ld\t%ld\t%ld\n", (long) me, 1L, (long) sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
@@ -356,7 +356,7 @@ GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_
 	/*
 	 * Copy the name into my name.
 	 */
-	my name = Melder_wcsdup (name);
+	my name = Melder_wcsdup_f (name);
 
 	/*
 	 * I am in the same shell as my parent, so I inherit my parent's "shell" attribute.
@@ -1731,7 +1731,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 			Melder_assert (MEMBER2 (me, CascadeButton, PushButton));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_utf8ToWcs (text);
+			my name = Melder_utf8ToWcs_e (text);   // BUG cherror
 			if (my inMenu) {
 				NativeMenuItem_setText (me);
 			} else if (MEMBER (me, CascadeButton) && my motiff.cascadeButton.inBar) {
@@ -1844,7 +1844,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 			Melder_assert (MEMBER (me, Scale));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_utf8ToWcs (text);
+			my name = Melder_utf8ToWcs_e (text); // BUG cherror
 			_Gui_invalidateWidget (me);
 			break;
 		case XmNtopAttachment:
@@ -2979,7 +2979,7 @@ void XtVaGetValues (GuiObject me, ...) {
 			Melder_assert (my widgetClass == xmShellWidgetClass);
 			#if mac
 				GetWTitle (my nat.window.ptr, ptext);
-				text = Melder_malloc (char, ptext [0] + 1);
+				text = Melder_malloc_f (char, ptext [0] + 1);
 				strncpy (text, (char *) ptext + 1, ptext [0]);
 				text [ptext [0]] = 0;
 				*va_arg (arg, char **) = text;
@@ -2990,14 +2990,14 @@ void XtVaGetValues (GuiObject me, ...) {
 		case XmNlabelString:
 		case XmNtitleString:
 			Melder_assert (my widgetClass == xmCascadeButtonWidgetClass || my widgetClass == xmScaleWidgetClass);
-			text = Melder_wcsToUtf8 (my name);
+			text = Melder_wcsToUtf8_e (my name); // BUG cherror
 			*va_arg (arg, char **) = text;
 			break;
 		case XmNdialogTitle:
 			Melder_assert (my widgetClass == xmFormWidgetClass || my widgetClass == xmBulletinBoardWidgetClass);
 			#if mac
 				GetWTitle (my macWindow, ptext);
-				text = Melder_malloc (char, ptext [0] + 1);
+				text = Melder_malloc_f (char, ptext [0] + 1);
 				strncpy (text, (char *) ptext + 1, ptext [0]);
 				text [ptext [0]] = 0;
 				*va_arg (arg, char **) = text;
@@ -4532,7 +4532,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		sprintf (commandShowString, "%d", commandShow);
 		argv [1] = & instanceString [0];
 		argv [2] = & commandShowString [0];
-		argv [3] = Melder_wcsToUtf8 (GetCommandLineW ());
+		argv [3] = Melder_wcsToUtf8_e (GetCommandLineW ());   // it's OK to ignore the possiiblity of low memory
 		if (argv [3] [0] == '\"') {
 			argv [3] ++;   // skip quote
 			while (argv [3] [0] != '\"') { argv [3] ++; }

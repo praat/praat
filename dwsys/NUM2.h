@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20100223 Latest modification.
+ djmw 20101209 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -36,7 +36,6 @@
 #define NUMeps 2.2e-16
 
 int NUMstrcmp (const char *s1, const char *s2);
-int NUMwcscmp (const wchar_t *s1, const wchar_t *s2);
 /*
 	Compares strings, accepts NUL-strings (NULL < 'a')
 	return s1 == NULL ? (s2 == NULL ? 0 : - 1) :

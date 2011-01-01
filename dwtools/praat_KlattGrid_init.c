@@ -465,7 +465,7 @@ KlattGrid_FORMULA_ADD_REMOVE_FBA(Frication,frication f,KlattGrid_FRICATION_FORMA
 DIRECT (KlattGrid_extractPointProcess_glottalClosures)
 	WHERE (SELECTED)
 	{
-		if (! praat_new1 (KlattGrid_extractPointProcess_glottalClosures (OBJECT), NAMEW)) return 0;
+		if (! praat_new1 (KlattGrid_extractPointProcess_glottalClosures (OBJECT), NAME)) return 0;
 	}
 END
 
@@ -780,7 +780,7 @@ DO
 		KlattGrid thee = OBJECT;
 		KlattGrid_setDefaultPlayOptions (thee);
 		KlattGrid_PlayOptions_getCommonFields (dia, 1, thee);
-		if (! praat_new1 (KlattGrid_to_Sound (thee), NAMEW)) return 0;
+		if (! praat_new1 (KlattGrid_to_Sound (thee), NAME)) return 0;
 	}
 END
 
@@ -789,7 +789,7 @@ DIRECT (KlattGrid_to_Sound)
 	{
 		KlattGrid thee = OBJECT;
 		KlattGrid_setDefaultPlayOptions (thee);
-		if (! praat_new1 (KlattGrid_to_Sound (thee), NAMEW)) return 0;
+		if (! praat_new1 (KlattGrid_to_Sound (thee), NAME)) return 0;
 	}
 END
 
@@ -816,7 +816,7 @@ DO
 		KlattGrid thee = OBJECT;
 		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
 		thy options -> samplingFrequency = GET_REAL (L"Sampling frequency");
-		if (! praat_new2 (KlattGrid_to_Sound_phonation (thee), NAMEW, L"_phonation")) return 0;
+		if (! praat_new2 (KlattGrid_to_Sound_phonation (thee), NAME, L"_phonation")) return 0;
 	}
 END
 

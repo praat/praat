@@ -126,7 +126,7 @@ int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)
 	for (i = 1; i <= my classes -> size; i++)
 	{
 		SimpleString ss = my classes -> item[i];
-		if (NUMwcscmp (ss -> string, classLabel) == 0) return i;
+		if (Melder_wcscmp (ss -> string, classLabel) == 0) return i;
 	}
 	return 0;
 }

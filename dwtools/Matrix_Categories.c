@@ -36,7 +36,7 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee)
 	
 	for (i = 1; i <= my ny; i++)
 	{
-		if (! (his rowLabels[i] = Melder_wcsdup (OrderedOfString_itemAtIndex_c (thee, i)))) goto end;
+		if (! (his rowLabels[i] = Melder_wcsdup_e (OrderedOfString_itemAtIndex_c (thee, i)))) goto end;
 	}
 		
 	for (i = 1; i <= my ny; i++)

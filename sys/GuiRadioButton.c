@@ -101,7 +101,7 @@ typedef struct structGuiRadioButton {
 GuiObject GuiRadioButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
-	GuiRadioButton me = Melder_calloc (struct structGuiRadioButton, 1);
+	GuiRadioButton me = Melder_calloc_f (struct structGuiRadioButton, 1);
 	my valueChangedCallback = valueChangedCallback;
 	my valueChangedBoss = valueChangedBoss;
 	#if gtk

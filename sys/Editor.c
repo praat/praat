@@ -119,7 +119,7 @@ GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long
 	EditorCommand me = new (EditorCommand);
 	my editor = menu -> editor;
 	my menu = menu;
-	if ((my itemTitle = Melder_wcsdup (itemTitle)) == NULL) { forget (me); return NULL; }
+	if ((my itemTitle = Melder_wcsdup_e (itemTitle)) == NULL) { forget (me); return NULL; }
 	my itemWidget =
 		commandCallback == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
 		flags & Editor_HIDDEN ? NULL :
@@ -134,7 +134,7 @@ GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long
 EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
 	EditorMenu me = new (EditorMenu);
 	my editor = editor;
-	if (! (my menuTitle = Melder_wcsdup (menuTitle))) { forget (me); return NULL; }
+	if (! (my menuTitle = Melder_wcsdup_e (menuTitle))) { forget (me); return NULL; }
 	my menuWidget = GuiMenuBar_addMenu (((Editor) editor) -> menuBar, menuTitle, flags);
 	Collection_addItem (((Editor) editor) -> menus, me);
 	my commands = Ordered_create ();
@@ -176,17 +176,17 @@ GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const w
 			EditorCommand cmd = new (EditorCommand);
 			cmd -> editor = me;
 			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_wcsdup (itemTitle);
+			cmd -> itemTitle = Melder_wcsdup_f (itemTitle);
 			cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd);
 			Collection_addItem (menu -> commands, cmd);
 			cmd -> commandCallback = Editor_scriptCallback;
 			if (wcslen (script) == 0) {
-				cmd -> script = Melder_wcsdup (L"");
+				cmd -> script = Melder_wcsdup_f (L"");
 			} else {
 				structMelderFile file = { 0 };
 				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_wcsdup (Melder_fileToPath (& file));
+				cmd -> script = Melder_wcsdup_f (Melder_fileToPath (& file));
 			}
 			return cmd -> itemWidget;
 		}

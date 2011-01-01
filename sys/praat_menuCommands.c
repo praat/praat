@@ -35,7 +35,7 @@ static long theNumberOfCommands = 0;
 static struct structPraat_Command *theCommands;
 
 void praat_menuCommands_init (void) {
-	theCommands = Melder_calloc (struct structPraat_Command, praat_MAXNUM_FIXED_COMMANDS + 1);
+	theCommands = Melder_calloc_f (struct structPraat_Command, praat_MAXNUM_FIXED_COMMANDS + 1);
 }
 
 static int compareMenuCommands (const void *void_me, const void *void_thee) {
@@ -204,9 +204,9 @@ GuiObject praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, cons
 
 	/* Insert new command.
 	 */
-	theCommands [position]. window = Melder_wcsdup (window);
-	theCommands [position]. menu = Melder_wcsdup (menu);
-	theCommands [position]. title = Melder_wcsdup (title);
+	theCommands [position]. window = Melder_wcsdup_f (window);
+	theCommands [position]. menu = Melder_wcsdup_f (menu);
+	theCommands [position]. title = Melder_wcsdup_f (title);
 	theCommands [position]. depth = depth;
 	theCommands [position]. callback = callback;   /* NULL for a separator or cascade button. */
 	theCommands [position]. executable = callback != NULL;
@@ -295,20 +295,20 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 
 	/* Insert new command.
 	 */
-	theCommands [position]. window = Melder_wcsdup (window);
-	theCommands [position]. menu = Melder_wcsdup (menu);
-	theCommands [position]. title = wcslen (title) ? Melder_wcsdup (title) : NULL;   /* Allow old-fashioned untitled separators. */
+	theCommands [position]. window = Melder_wcsdup_f (window);
+	theCommands [position]. menu = Melder_wcsdup_f (menu);
+	theCommands [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   /* Allow old-fashioned untitled separators. */
 	theCommands [position]. depth = depth;
 	theCommands [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
 	theCommands [position]. executable = wcslen (script) != 0;
 	if (wcslen (script) == 0) {
-		theCommands [position]. script = Melder_wcsdup (L"");   /* Empty string, which will be needed to signal origin. */
+		theCommands [position]. script = Melder_wcsdup_f (L"");   /* Empty string, which will be needed to signal origin. */
 	} else {
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (script, & file);
-		theCommands [position]. script = Melder_wcsdup (Melder_fileToPath (& file));
+		theCommands [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
 	}
-	theCommands [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
+	theCommands [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
 	if (praatP.phase >= praat_READING_BUTTONS) {
 		static long uniqueID = 0;
 		theCommands [position]. uniqueID = ++ uniqueID;
@@ -403,7 +403,7 @@ void praat_saveMenuCommands (FILE *f) {
 
 void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
-	my window = Melder_wcsdup (L"Objects");
+	my window = Melder_wcsdup_f (L"Objects");
 	my title = title;
 	my callback = callback;
 	my unhidable = TRUE;

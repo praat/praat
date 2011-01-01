@@ -320,7 +320,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 }
 
 Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
-	Picture me = Melder_calloc (struct structPicture, 1);
+	Picture me = Melder_calloc_e (struct structPicture, 1);
 	if (! me) return NULL;
 	#if gtk
 		my selectionInProgress = 0;

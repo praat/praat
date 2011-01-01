@@ -65,7 +65,7 @@ wchar_t * Thing_className (I) { iam (Thing); return our _className; }
 
 Any Thing_new (void *table) {
 	Thing_Table us = table;
-	Thing me = (Thing) _Melder_calloc (1, us -> _size);
+	Thing me = (Thing) _Melder_calloc_e (1, us -> _size);
 	if (! me) return Melder_errorp ("(Thing_new:) Out of memory.");
 	theTotalNumberOfThings += 1;
 	my methods = us;
@@ -228,7 +228,7 @@ void Thing_setName (I, const wchar_t *name) {
 	iam (Thing);
 	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
 		Melder_free (my name);
-		my name = Melder_wcsdup (name);
+		my name = Melder_wcsdup_f (name);
 	}
 	our nameChanged (me);
 }

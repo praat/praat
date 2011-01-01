@@ -23,11 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20101224)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110101)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.08# (1 January 2011)")
+LIST_ITEM (L"\\bu Improved manual.")
+LIST_ITEM (L"\\bu Improved memory allocation on 32-bit platforms: "
+	"less probability of crashes when you approach the 2 GB memory limit gradually, and a new \"low on memory; save your work now\" warning.")
+LIST_ITEM (L"\\bu Removed IntervalTier and TextTier datatypes from Praat (old scripts that use them will continue to work).")
 NORMAL (L"##5.2.07# (24 December 2010)")
-LIST_ITEM (L"\\bu Support for reading and writing multi-channel sound files (i.e. two-channel above stereo).")
+LIST_ITEM (L"\\bu Support for reading and writing multi-channel sound files (i.e. above two-channel stereo).")
 NORMAL (L"##5.2.06# (18 December 2010)")
 LIST_ITEM (L"\\bu Picture window: a new (the fourth) line type, namely dashed-dotted.")
 LIST_ITEM (L"\\bu Support for analysing and drawing multi-channel sounds (i.e. above two-channel stereo).")
@@ -1051,7 +1056,7 @@ ENTRY (L"Praat 3.7, 24 March 1998")
 	LIST_ITEM (L"\\bu In all FunctionEditors: drag to get a selection.")
 	NORMAL (L"Phonetics library:")
 	LIST_ITEM (L"\\bu Many new query (#Get) commands for @Sound, @Intensity, @Harmonicity, @Pitch, "
-		"@Formant, @Ltas, @PitchTier, @IntensityTier, @DurationTier, @FormantTier.")
+		"@Formant, @Ltas, @PitchTier, @IntensityTier, @DurationTier, #FormantTier.")
 	LIST_ITEM (L"\\bu Many new modification commands.")
 	LIST_ITEM (L"\\bu Many new interpolations.")
 	LIST_ITEM (L"\\bu Sound enhancements: @@Sound: Lengthen (overlap-add)...@, @@Sound: Deepen band modulation...@")
@@ -2460,93 +2465,6 @@ NORMAL (L"To change the selection of one object (without changing the others), "
 	"use Control-click (Unix, Windows) or Command-click (Macintosh).")
 MAN_END
 
-MAN_BEGIN (L"Look and feel", L"ppgb", 20030528)
-INTRO (L"This page is about how you see the Praat shell and work with it in an interactive session.")
-ENTRY (L"The Praat shell on Macintosh^\\re")
-NORMAL (L"Most of the %look is Macintosh: rounded buttons, a menu bar at the top. "
-	"Some of the look is Motif^\\tm: a menu bar in every window.")
-NORMAL (L"Most of the %feel is Macintosh: only one window active simultaneously.")
-ENTRY (L"The Praat shell on Windows^\\re 95 and NT")
-NORMAL (L"Most of the look and feel is Windows, though all windows are separate overlapping windows, "
-	"instead of children of a large application window.")
-ENTRY (L"The Praat shell on the X Window platform")
-NORMAL (L"From every computer with OSF/Motif, you can run the Praat shell on every X server in the world. "
-	"If your program is %praat, you just type:")
-CODE (L"praat -motif")
-NORMAL (L"With this command, you will always get the same old Motif look and feel.")
-NORMAL (L"Many platforms, however, have their own favoured look and feel. "
-	"For this reason, the Praat shell recognizes several client computers: if you just type")
-CODE (L"praat")
-NORMAL (L"(or double-click on the %praat icon), "
-	"the Praat shell assumes that the X server matches the client computer.")
-NORMAL (L"The following client computers are recognized: SGI, Sun, HP. On other computers (Linux, IBM RS6000), "
-	"typing $praat will give the same look and feel as typing $$praat -motif$.")
-ENTRY (L"The Praat shell on SGI")
-NORMAL (L"On a Silicon Graphics^\\re Iris^\\tm computer, typing")
-CODE (L"praat")
-NORMAL (L"or double-clicking the %praat icon, will give you either of the following look-and-feel styles:")
-LIST_ITEM (L"\\bu the native SGI \"Indigo Magic\" style, with lighting buttons and user-controllable "
-	"color schemes, if available;")
-LIST_ITEM (L"\\bu the plain Motif style, if color schemes are not available (to find this out, "
-	"the Praat shell checks the existence of the color-scheme browser %%/usr/sbin/schemebr% "
-	"on the client side).")
-NORMAL (L"You can force the Praat shell to use the SGI style with")
-CODE (L"praat -sgi")
-NORMAL (L"or the Motif style with")
-CODE (L"praat -motif")
-ENTRY (L"The Praat shell on Sun")
-NORMAL (L"On a Sun computer, typing")
-CODE (L"praat")
-NORMAL (L"will give you the look and feel of Sun4, Solaris, or the Common Desktop Environment (CDE). "
-	"These styles use non-standard fonts for their menus, buttons, and texts. Whether CDE is "
-	"available, is determined by checking the existence of %%/usr/dt/bin/dtaction%.")
-NORMAL (L"You can force any of these styles with $$praat -solaris$, $$praat -sun4$, or $$praat -cde$.")
-ENTRY (L"The Praat shell on HP")
-NORMAL (L"On a Hewlett-Packard computer, typing")
-CODE (L"praat")
-NORMAL (L"will give you the look and feel of the HP version of the Common Desktop Environment. "
-	"If you do not have that, try $$praat -motif$.")
-ENTRY (L"Running the Praat shell across a network")
-NORMAL (L"Like most X programs, you can run the Praat program across a network, "
-	"with the executable running on the %client computer, "
-	"and yourself sitting at a computer that acts as an %%X server%. For this to work, "
-	"you will have to take care of two things:")
-LIST_ITEM (L"\\bu Tell the client computer to use the server %display. If you use %telnet "
-	"(but not %rlogin), this will be done automatically for you, because %telnet "
-	"propagates the DISPLAY environment variable. "
-	"Otherwise, if you are sitting at %%indigo3.uni-franeker.nl%, "
-	"you type the following line to your remote login shell:")
-CODE (L"    setenv DISPLAY indigo3.uni-franeker.nl:0")
-LIST_ITEM (L"\\bu Your X server should grant the client computer access to its display. "
-	"This may sometimes be automatic (e.g., if the server allows the whole world to connect to it). "
-	"Otherwise, if the client is %%distant1.uni-harderwijk.nl%, you type the following line to your "
-	"local shell:")
-CODE (L"    xhost +distant1.uni-harderwijk.nl")
-NORMAL (L"Finally, you type $$praat -motif$ to your remote login shell, "
-	"and the two windows will appear on your screen.")
-NORMAL (L"If you run the Praat shell from an SGI client across a network on an X server "
-	"(a PC or Sun, for example), "
-	"the normal $praat command will probably work and give you the native SGI look and feel. "
-	"This works because the SGI style only uses fonts that are available everywhere.")
-NORMAL (L"If your X server is a Sun with Solaris, you can probably use the Motif, and Solaris or CDE styles.")
-NORMAL (L"Likewise, if you run %praat from a different machine on a HP X server, you may try $$praat -hp$.")
-NORMAL (L"If you run %praat from a Sun client on an X server, you will probably use $$praat -motif$.")
-ENTRY (L"Resource files?")
-NORMAL (L"Many X Windows applications work with %%client-side% resource files, "
-	"which describe the fonts etc. that they need. "
-	"However, as the fonts are server-dependent, changing to a different X server "
-	"will often require you to change the resource file %%on the client side%, "
-	"unless you only use fonts that are available on all platforms (like Helvetica and Times). "
-	"However, your application may not adhere to any native look-and-feel strategy then. "
-	"Incorporating all resource files into the application, as done in the Praat shell, "
-	"solves this problem. Locally, you just type $praat, and across a network you use "
-	"one of the explicit look-and-feel options.")
-NORMAL (L"In the Praat shell, the user-controllability of window sizes and fonts, "
-	"which is sometimes expressed by editing resource files, "
-	"is implemented by a hidden mechanism, which remembers across sessions "
-	"the changes made by the user while the application is running.")
-MAN_END
-
 MAN_BEGIN (L"New menu", L"ppgb", 20080427)
 INTRO (L"The ##New menu# is one of the menus in the @@Object window@. "
 	"You use this menu to create new objects from scratch. It contains the following commands:")
@@ -2769,7 +2687,7 @@ LIST_ITEM (L"@@Source-filter synthesis 3. The ba-da continuum")
 LIST_ITEM (L"@@Source-filter synthesis 4. Using existing sounds")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20080425)
+MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20101231)
 INTRO (L"Creating a glottal source signal for speech synthesis involves creating a @PointProcess, "
 	"which is a series of time points that should represent the exact moments of glottal closure.")
 NORMAL (L"You may want to start with creating a well-defined pitch contour. "
@@ -2779,36 +2697,86 @@ NORMAL (L"You may want to start with creating a well-defined pitch contour. "
 	"you may want to name the PitchTier \"source\" and have it start at 0 seconds and end at 0.5 seconds. "
 	"Once the PitchTier exists and is selected, you can #Edit it to add pitch points (pitch targets) to it at certain times "
 	"(or you choose @@PitchTier: Add point...@ from the #Modify menu repeatedly). "
-	"You could add a pitch point of 300 Hz at time 0.0 and a pitch point of 200 Hz at time 1.0. "
-	"In a script, it would look like this):")
-CODE (L"Create PitchTier... source 0 0.5")
-CODE (L"Add point... 0 300")
-CODE (L"Add point... 0.5 200")
-NORMAL (L"If the PitchTier window, you can see that the pitch curve falls linearly "
-	"from 300 to 200 Hz during its time domain. You can hear the falling pitch by clicking on the rectangles in the PitchTier window "
+	"You could add a pitch point of 150 Hz at time 0.0 and a pitch point of 100 Hz at time 0.5. "
+	"In the PitchTier window, you can see that the pitch curve falls linearly "
+	"from 150 to 100 Hz during its time domain:")
+SCRIPT (4.5, 2.5,
+	L"Create PitchTier... source 0 0.5\n"
+	"Add point... 0.0 150\n"
+	"Add point... 0.5 100\n"
+	"Draw... 0 0 0 200 yes lines and speckles\n"
+	"Text top... no %%An F0 linearly falling between two points\n"
+	"One mark left... 100 yes yes no\n"
+	"Remove\n"
+)
+NORMAL (L"You can hear the falling pitch by clicking on the rectangles in the PitchTier window "
 	"(or by clicking ##Play pulses#, #Hum, or ##Play sine# in the Objects window).")
 NORMAL (L"From this PitchTier, you can create a @PointProcess with @@PitchTier: To PointProcess@. "
 	"The resulting PointProcess now represents a series of glottal pulses. To make some parts of this "
 	"point process voiceless, you can use @@PointProcess: Remove points between...@. "
 	"It is advisable to make the very beginning and end of this point process voiceless, so that the filtered sound "
-	"will not start or end abruptly. A script version could look like this:")
-CODE (L"Remove points between... 0 0.02")
-CODE (L"Remove points between... 0.24 0.31")
-CODE (L"Remove points between... 0.48 0.5")
-NORMAL (L"In this example, the first and last 20 ms are devoiced, and a stretch of 70 ms in the middle "
-	"is made voiceless as well, perhaps because you want to simulate a voiceless plosive there.")
+	"will not start or end abruptly. In the following example, the first and last 20 ms are devoiced, "
+	"and a stretch of 70 ms in the middle "
+	"is made voiceless as well, perhaps because you want to simulate a voiceless plosive there:")
+SCRIPT (4.5, 2.5,
+	L"pitchTier = Create PitchTier... source 0 0.5\n"
+	"Add point... 0.0 150\n"
+	"Add point... 0.5 100\n"
+	"pulses = To PointProcess\n"
+	"Remove points between... 0 0.02\n"
+	"Remove points between... 0.24 0.31\n"
+	"Remove points between... 0.48 0.5\n"
+	"Draw... 0 0 yes\n"
+	"Text top... no %%The times of the glottal pulses\n"
+	"One mark bottom... 0.24 yes yes no\n"
+	"One mark bottom... 0.31 yes yes no\n"
+	"plus pitchTier\n"
+	"Remove\n"
+)
 NORMAL (L"Now that we have a glottal point process (a glottal pulse train), the only thing left "
 	"is to turn it into a sound by choosing @@PointProcess: To Sound (phonation)...@. "
-	"If you use the standard settings of this command, the result will be a @Sound with "
+	"If you use the standard settings of this command (but with ##Adaptation factor# set to 0.6), the result will be a @Sound with "
 	"reasonable glottal flow derivatives centred around each of the original pulses in the point process. "
-	"You can check this by selecting the Sound and choosing #Edit. "
-	"You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch "
-	"is (realistically) somewhat smaller than the amplitudes of the following wave shapes.")
+	"You can check this by selecting the Sound and choosing #Edit:")
+SCRIPT (4.5, 2.5,
+	L"pitchTier = Create PitchTier... source 0 0.5\n"
+	"Add point... 0.0 150\n"
+	"Add point... 0.5 100\n"
+	"pulses = To PointProcess\n"
+	"Remove points between... 0 0.02\n"
+	"Remove points between... 0.24 0.31\n"
+	"Remove points between... 0.48 0.5\n"
+	"source = To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0\n"
+	"Draw... 0 0 0 0 yes curve\n"
+	"Text top... no %%The source waveform\n"
+	"One mark bottom... 0.24 yes yes no\n"
+	"One mark bottom... 0.31 yes yes no\n"
+	"plus pitchTier\n"
+	"plus pulses\n"
+	"Remove\n"
+)
+NORMAL (L"You will also see that the amplitude of the first two glottal wave shapes of every voiced stretch "
+	"is (realistically) somewhat smaller than the amplitudes of the following wave shapes; "
+	"This is the result of setting ##Adaptation factor# to 0.6.")
 NORMAL (L"What you have now is what we call a %%glottal source signal%. It does two things: it contains information on the glottal flow, "
 	"and it already takes into account one aspect of the %filter, namely the radiation at the lips. "
 	"This combination is standard procedure in acoustic synthesis.")
 NORMAL (L"The glottal source signal sounds as a voice without a vocal tract. "
 	"The following section describes how you add vocal-tract resonances, i.e. the %filter.")
+ENTRY (L"Automation")
+NORMAL (L"In a clean Praat script, the procedure described above will look as follows:")
+CODE (L"pitchTier = Create PitchTier... source 0 0.5")
+CODE (L"Add point... 0.0 150")
+CODE (L"Add point... 0.5 100")
+CODE (L"pulses = To PointProcess")
+CODE (L"Remove points between... 0 0.02")
+CODE (L"Remove points between... 0.24 0.31")
+CODE (L"Remove points between... 0.48 0.5")
+CODE (L"source = To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0")
+CODE (L"select pitchTier")
+CODE (L"plus pulses")
+CODE (L"Remove")
+CODE (L"select source")
 MAN_END
 
 MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20080427)
@@ -3030,7 +2998,7 @@ INTRO (L"A command in the Spectrogram menu of the @SoundEditor and @TextGridEdit
 	"See @@Intro 3.2. Configuring the spectrogram@.")
 MAN_END
 
-MAN_BEGIN (L"Types of objects", L"ppgb", 20080427)
+MAN_BEGIN (L"Types of objects", L"ppgb", 20101230)
 INTRO (L"Praat contains the following types of objects and @Editors. "
 	"For an introduction and tutorials, see @Intro.")
 NORMAL (L"General purpose:")
@@ -3066,7 +3034,7 @@ LIST_ITEM (L"\\bu @Excitation: excitation pattern of basilar membrane")
 LIST_ITEM (L"\\bu @Excitations: an ensemble of #Excitation objects")
 LIST_ITEM (L"\\bu @Cochleagram: excitation pattern as a function of time")
 NORMAL (L"Labelling and segmentation (see @@Intro 7. Annotation@):")
-LIST_ITEM (L"\\bu @TextGrid (@TextGridEditor), @IntervalTier, @TextTier")
+LIST_ITEM (L"\\bu @TextGrid (@TextGridEditor)")
 NORMAL (L"Listening experiments:")
 LIST_ITEM (L"\\bu @ExperimentMFC")
 NORMAL (L"Manipulation of sound:")

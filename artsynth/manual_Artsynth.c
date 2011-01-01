@@ -22,13 +22,13 @@
 void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
-MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20070830)
+MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20110101)
 INTRO (L"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
 	"For examples of how to synthesize utterances, consult http://www.fon.hum.uva.nl/paul/diss/ch5/.")
 ENTRY (L"How to start (after reading the @Intro)")
-NORMAL (L"We are going to have the synthesizer say [apa]. We need a @Speaker and an @Artword object.")
+NORMAL (L"We are going to have the synthesizer say [\\swp\\sw]. We need a @Speaker and an @Artword object.")
 NORMAL (L"1. Create a speaker with @@Create Speaker...@ from the @@New menu@.")
 NORMAL (L"2. Create an articulation word of 0.5 seconds with @@Create Artword...@.")
 NORMAL (L"3. Edit the Artword by selecting it and clicking #Edit.")
@@ -46,8 +46,8 @@ NORMAL (L"8. Select the Speaker and the Artword and click #Movie; "
 NORMAL (L"9. Select the Speaker and the Artword and click ##To Sound...# "
 	"(see @@Artword & Speaker: To Sound...@).")
 NORMAL (L"10. Just click #OK; the synthesis starts.")
-NORMAL (L"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2006 computer, 12 seconds. "
-	"If this is too slow for you, click %Interrupt. "
+NORMAL (L"11. If you are sitting at a 1997 computer, this will last for 5 minutes or so; at a 2010 computer, 6 seconds. "
+	"If this is too slow for you, click #Interrupt. "
 	"Otherwise, you can watch the vibrating vocal cords "
 	"and the changing vocal-tract shape.")
 NORMAL (L"12. You can play, view, and analyse the resulting @Sound as you would any other. "
@@ -56,7 +56,7 @@ NORMAL (L"12. You can play, view, and analyse the resulting @Sound as you would 
 MAN_END
 
 MAN_BEGIN (L"Artword", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. See @@Articulatory synthesis@.")
+INTRO (L"One of the @@types of objects@ in Praat. See @@Articulatory synthesis@.")
 NORMAL (L"An object of class Artword object represents the activities of several speech muscles as functions of time.")
 ENTRY (L"Artword commands")
 LIST_ITEM (L"\\bu @@Create Artword...@: creates an Artword with relaxed muscles")
@@ -170,7 +170,7 @@ LIST_ITEM (L"\\bu @@Artword & Speaker: To Sound...@: articulatory synthesis")
 MAN_END
 
 MAN_BEGIN (L"VocalTract", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"A VocalTract object represents the area function of the vocal tract, expressed in m^2, "
 	"running from the glottis to the lips.")
 MAN_END

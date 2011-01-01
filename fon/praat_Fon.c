@@ -1499,7 +1499,7 @@ FORM (Ltas_computeTrendLine, L"Ltas: Compute trend line", L"Ltas: Compute trend 
 DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Ltas_computeTrendLine (OBJECT, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range")),
-			NAMEW, L"_trend")) return 0;
+			NAME, L"_trend")) return 0;
 	}
 END
 
@@ -1743,7 +1743,7 @@ FORM (Ltas_subtractTrendLine, L"Ltas: Subtract trend line", L"Ltas: Subtract tre
 DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Ltas_subtractTrendLine (OBJECT, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range")),
-			NAMEW, L"_fit")) return 0;
+			NAME, L"_fit")) return 0;
 	}
 END
 

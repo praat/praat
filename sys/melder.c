@@ -42,11 +42,13 @@
  * pb 2010/06/22 GTK: correct hiding and showing again
  * pb 2010/07/29 removed GuiDialog_show
  * pb 2010/11/26 even Unix now has a GUI fatal window
+ * pb 2010/12/30 messageFund
  */
 
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
+#include <assert.h>
 #include "melder.h"
 #include "longchar.h"
 #include "regularExp.h"
@@ -172,7 +174,7 @@ void Melder_progressOn (void) { theProgressDepth ++; }
 #ifndef CONSOLE_APPLICATION
 static int waitWhileProgress (double progress, const wchar_t *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
 	#if gtk
-		// Wait for all pending events to be processed. If someone knows how to inspect GTK's
+		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
 		// Until then, the button click attaches a g_object data key named "pressed" to the cancelButton
 		// which this function reads out in order to tell whether interruption has occurred
@@ -181,14 +183,32 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 	#elif defined (macintosh)
 	{
 		EventRecord event;
-		(void) cancelButton;
-		// BUG: key events are handled somewhat earlier nowadays, so the next trick does not really ignore key events (and menu commands).
-		// Dangerous!
-		while (GetNextEvent (keyDownMask, & event)) {
-			if ((event.modifiers & cmdKey) && (event.message & charCodeMask) == '.') {
-				FlushEvents (everyEvent, 0);
-				XtUnmanageChild (dia);
-				return 0;
+		while (GetNextEvent (mDownMask, & event)) {
+			WindowPtr macWindow;
+			int part = FindWindow (event. where, & macWindow);
+			if (part == inContent) {
+				if (GetWindowKind (macWindow) == userKind) {
+					SetPortWindowPort (macWindow);
+					GlobalToLocal (& event. where);
+					ControlPartCode controlPart;
+					ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
+					if (macControl) {
+						GuiObject control = (GuiObject) GetControlReference (macControl);
+						if (control == cancelButton) {
+							FlushEvents (everyEvent, 0);
+							XtUnmanageChild (dia);
+							return 0;
+						} else {
+							break;
+						}
+					} else {
+						XtDispatchEvent ((XEvent *) & event);
+					}
+				} else {
+					XtDispatchEvent ((XEvent *) & event);
+				}
+			} else {
+				XtDispatchEvent ((XEvent *) & event);
 			}
 		}
 		do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
@@ -282,13 +302,13 @@ static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label
 			NULL, NULL,
 		#endif
 		0);
-	
+
 	GuiObject form = *dia;
 	GuiObject buttons = GuiDialog_getButtonArea (*dia);
-	
+
 	*label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
 	*label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
-	
+
 	#if gtk
 		*scale = gtk_progress_bar_new ();
 		gtk_container_add (GTK_CONTAINER (form), *scale);
@@ -303,8 +323,8 @@ static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label
 			NULL);
 		GuiObject_show (*scale);
 	#endif
-	
-	#if ! defined (macintosh)
+
+	#if ! defined (macintoshXXX)
 		*cancelButton = GuiButton_createShown (buttons, 0, 400, 170, Gui_AUTOMATIC,
 			L"Interrupt",
 			#if gtk
@@ -635,7 +655,11 @@ static void mac_message (int macAlertType, wchar_t *messageW) {
 }
 #endif
 
+#define theMessageFund_SIZE  100000
+static char * theMessageFund = NULL;
+
 static void gui_fatal (wchar_t *message) {
+	free (theMessageFund);
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
@@ -650,6 +674,10 @@ static void gui_fatal (wchar_t *message) {
 }
 
 static void gui_error (wchar_t *message) {
+	bool memoryIsLow = wcsstr (message, L"Out of memory");
+	if (memoryIsLow) {
+		free (theMessageFund);
+	}
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
@@ -661,6 +689,22 @@ static void gui_error (wchar_t *message) {
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Message", MB_OK);
 	#endif
+	if (memoryIsLow) {
+		theMessageFund = malloc (theMessageFund_SIZE);
+		if (theMessageFund == NULL) {
+			#if gtk
+				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+				gtk_dialog_run (GTK_DIALOG (dialog));
+				gtk_widget_destroy (dialog);
+			#elif defined (macintosh)
+				mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+				XmUpdateDisplay (0);
+			#elif defined (_WIN32)
+				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
+			#endif
+		}
+	}
 }
 
 static void gui_warning (wchar_t *message) {
@@ -679,6 +723,8 @@ static void gui_warning (wchar_t *message) {
 
 void MelderGui_create (void *appContext, void *parent) {
 	extern void gui_information (wchar_t *);   // BUG: no prototype
+	theMessageFund = malloc (theMessageFund_SIZE);
+	assert (theMessageFund != NULL);
 	Melder_appContext = appContext;
 	Melder_topShell = (GuiObject) parent;
 	Melder_setInformationProc (gui_information);
@@ -696,8 +742,8 @@ int Melder_record (double duration) {
 	return theMelder. record (duration);
 }
 
-int Melder_recordFromFile (MelderFile fs) {
-	return theMelder. recordFromFile (fs);
+int Melder_recordFromFile (MelderFile file) {
+	return theMelder. recordFromFile (file);
 }
 
 void Melder_play (void) {

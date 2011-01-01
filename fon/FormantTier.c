@@ -242,14 +242,13 @@ int FormantTier_getMaxNumFormants (FormantTier me) {
 	
 TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths) {
 	TableOfReal thee = NULL;
-	int maximumNumberOfFormants = FormantTier_getMaxNumFormants (me), iformant, icol;
-	long ipoint;
-
+//start:
+	int maximumNumberOfFormants = FormantTier_getMaxNumFormants (me);
 	thee = TableOfReal_create (my points -> size, 1 +
 		( includeFormants ? maximumNumberOfFormants : 0 ) +
 		( includeBandwidths ? maximumNumberOfFormants : 0 )); cherror
 	TableOfReal_setColumnLabel (thee, 1, L"Time");
-	for (icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
+	for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 		wchar_t label [4];
 		if (includeFormants) {
 			swprintf (label, 4, L"F%d", iformant);
@@ -260,10 +259,10 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 			TableOfReal_setColumnLabel (thee, ++ icol, label); cherror
 		}
 	}
-	for (ipoint = 1; ipoint <= my points -> size; ipoint ++) {
+	for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 		FormantPoint point = my points -> item [ipoint];
 		thy data [ipoint] [1] = point -> time;
-		for (icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
+		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 			if (includeFormants) thy data [ipoint] [++ icol] = point -> formant [iformant-1];
 			if (includeBandwidths) thy data [ipoint] [++ icol] = point -> bandwidth [iformant-1];
 		}
@@ -326,7 +325,9 @@ Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 
 Sound Sound_Formant_filter (Sound me, Formant formant) {
 	Sound thee = NULL;
-	FormantTier tier = Formant_downto_FormantTier (formant); cherror
+	FormantTier tier = NULL;
+//start:
+	tier = Formant_downto_FormantTier (formant); cherror
 	thee = Sound_FormantTier_filter (me, tier); cherror
 end:
 	forget (tier);
@@ -335,7 +336,9 @@ end:
 
 Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 	Sound thee = NULL;
-	FormantTier tier = Formant_downto_FormantTier (formant); cherror
+	FormantTier tier = NULL;
+//start:
+	tier = Formant_downto_FormantTier (formant); cherror
 	thee = Sound_FormantTier_filter_noscale (me, tier); cherror
 end:
 	forget (tier);

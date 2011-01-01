@@ -78,12 +78,14 @@ class_methods (PairDistribution, Data) {
 }
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
-	PairProbability me = new (PairProbability);
-	if (! me) return NULL;
-	my string1 = Melder_wcsdup (string1);
-	my string2 = Melder_wcsdup (string2);
+	PairProbability me = NULL;
+//start:
+	me = new (PairProbability); cherror
+	my string1 = Melder_wcsdup_e (string1); cherror
+	my string2 = Melder_wcsdup_e (string2); cherror
 	my weight = weight;
-	if (Melder_hasError ()) forget (me);
+end:
+	iferror forget (me);
 	return me;
 }
 
@@ -142,8 +144,8 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 		prob = my pairs -> item [iin];
 		if (! prob -> string1 || ! prob -> string2)
 			error3 (L"No string in probability pair ", Melder_integer (iin), L".")
-		(*strings1) -> strings [iout] = Melder_wcsdup (prob -> string1); cherror
-		(*strings2) -> strings [iout] = Melder_wcsdup (prob -> string2); cherror
+		(*strings1) -> strings [iout] = Melder_wcsdup_e (prob -> string1); cherror
+		(*strings2) -> strings [iout] = Melder_wcsdup_e (prob -> string2); cherror
 	}
 end:
 	iferror { forget (*strings1); forget (*strings2);

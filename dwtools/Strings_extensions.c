@@ -65,7 +65,7 @@ Strings Strings_append (Ordered me)
 		for (j = 1; j <= s -> numberOfStrings; j++, index++)
 		{
 			if (s -> strings[j] == NULL) continue;
-			thy strings [index] = Melder_wcsdup (s -> strings[j]);
+			thy strings [index] = Melder_wcsdup_e (s -> strings[j]);
 			if (thy strings[index] == NULL) goto end;
 		}
 	}
@@ -128,7 +128,7 @@ int Strings_setString (Strings me, wchar_t *new, long index)
 	if (index < 1 || index > my numberOfStrings) return Melder_error3
 		(L"Index must be in range [1, ", Melder_integer (my numberOfStrings), L"].");
 
-	s = Melder_wcsdup (new);
+	s = Melder_wcsdup_f (new);
 	if (my strings[index]) Melder_free (my strings[index]);
 	my strings[index] = s;
 	return 1;
@@ -145,7 +145,7 @@ Strings strings_to_Strings (wchar_t **strings, long from, long to)
 	for (i = from, k = 1; i <= to; i++, k++)
 	{
 		if (strings[i] &&
-			((thy strings[k]  = Melder_wcsdup (strings[i])) == NULL)) goto end;
+			((thy strings[k]  = Melder_wcsdup_e (strings[i])) == NULL)) goto end;
 	}
 end:
 	if (Melder_hasError ()) forget (thee);
@@ -201,7 +201,7 @@ Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
 	{
 		long index = thy p[i];
 		if (my strings[index] != NULL &&
-			(his strings[i] = Melder_wcsdup (my strings[index])) == NULL) break;
+			(his strings[i] = Melder_wcsdup_e (my strings[index])) == NULL) break;
 	}
 
 	if (Melder_hasError ()) forget (him);
@@ -230,7 +230,7 @@ StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
 		for (long i = 1; i <= numberOfClasses; i++)
 		{
 			SimpleString ss = his classes -> item[i];
-			if (NUMwcscmp (stringsj, ss -> string) == 0) { index = i; break; }
+			if (Melder_wcscmp (stringsj, ss -> string) == 0) { index = i; break; }
 		}
 		his classIndex[j] = index;
 	}
@@ -258,7 +258,7 @@ StringsIndex Strings_to_StringsIndex (Strings me)
 	{
 		long index = sorted -> p[i];
 		wchar_t *stringsi = my strings[index];
-		if (i == 1 || NUMwcscmp (strings, stringsi) != 0)
+		if (i == 1 || Melder_wcscmp (strings, stringsi) != 0)
 		{
 			numberOfClasses++;
 			if ((him = SimpleString_create (stringsi)) == NULL) goto end;
@@ -286,7 +286,7 @@ Strings StringsIndex_to_Strings (StringsIndex me)
 	for (i = 1; i <= thy numberOfStrings; i++)
 	{
 		SimpleString s = my classes -> item[my classIndex[i]];
-		thy strings[i] = Melder_wcsdup (s -> string);
+		thy strings[i] = Melder_wcsdup_e (s -> string);
 		if (thy strings[i] == NULL) break;
 	}
 	if (Melder_hasError ()) forget (thee);

@@ -39,13 +39,13 @@ double * _Graphics_check (Graphics me, long number) {
 	long nrecord = my nrecord;
 	if (nrecord == 0) {
 		nrecord = 1000;
-		record = Melder_malloc (double, 1 + nrecord);
+		record = Melder_malloc_e (double, 1 + nrecord);
 		if (record == NULL) goto error;
 		my record = record; my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
-		record = Melder_realloc (record, (1 + nrecord) * sizeof (double));
+		record = Melder_realloc_e (record, (1 + nrecord) * sizeof (double));
 		if (record == NULL) goto error;
 		my record = record; my nrecord = nrecord;
 	}
@@ -179,7 +179,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
 				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
 				 */
-				double **z = Melder_malloc (double *, nrow);
+				double **z = Melder_malloc_f (double *, nrow);
 				z [0] = p + 1;
 				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;
@@ -316,7 +316,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
 				 * This works because the data is a packed array of double, just as Graphics_image expects.
 				 */
-				double **z = Melder_malloc (double *, nrow);
+				double **z = Melder_malloc_f (double *, nrow);
 				z [0] = p + 1;
 				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
 				p += nrow * ncol;

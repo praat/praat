@@ -1,6 +1,6 @@
 /* manual_formant.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,23 +25,24 @@ void manual_formant_init (ManPages me) {
 MAN_BEGIN (L"Create FormantGrid...", L"ppgb", 20080425)
 INTRO (L"A command in the @@New menu@ to create an empty @FormantGrid object.")
 ENTRY (L"Settings")
-TAG (L"%%Start time% (s), %%End time% (s)")
+TAG (L"##Start time (s)")
+TAG (L"##End time (s)")
 DEFINITION (L"the @@time domain@ of the resulting FormantGrid.")
-TAG (L"%%Number of formants% (e.g. 10)")
+TAG (L"##Number of formants# (e.g. 10)")
 DEFINITION (L"the number of formants in the resulting FormantGrid. For instance, if you set this to 10, "
 	"the resulting FormantGrid will contain 10 formant tiers (for F1 through F10) "
 	"and 10 bandwidth tiers (for B1 through B10). Each of these 20 tiers will contain one point.")
-TAG (L"%%Initial first formant% (e.g. 550 Hz)")
+TAG (L"##Initial first formant# (e.g. 550 Hz)")
 DEFINITION (L"the frequency value of the single formant point in the first formant tier. "
 	"Because of @@constant extrapolation@, F1 will have this value throughout the time domain.")
-TAG (L"%%Initial formant spacing% (e.g. 1100 Hz)")
+TAG (L"##Initial formant spacing# (e.g. 1100 Hz)")
 DEFINITION (L"the difference between the frequency values of the points in adjacent formant tiers. "
 	"For instance, the example values mentioned here cause F2 to be 1650 Hz throughout the time domain; "
 	"F3 will be 2750 Hz, F4 will be 3850 Hz, and so on.")
-TAG (L"%%Initial first bandwidth% (e.g. 60 Hz)")
+TAG (L"##Initial first bandwidth# (e.g. 60 Hz)")
 DEFINITION (L"the value of the single bandwidth point in the first bandwidth tier. "
 	"Because of @@constant extrapolation@, B1 will have this value throughout the time domain.")
-TAG (L"%%Initial bandwidth spacing% (e.g. 50 Hz)")
+TAG (L"##Initial bandwidth spacing# (e.g. 50 Hz)")
 DEFINITION (L"the difference between the values of the points in adjacent bandwidth tiers. "
 	"For instance, the example values mentioned here cause B2 to be 110 Hz throughout the time domain; "
 	"B3 will be 160 Hz, B4 will be 210 Hz, and so on.")
@@ -102,12 +103,13 @@ ENTRY (L"Behaviour")
 NORMAL (L"Every formant value is drawn as one or two short line segments, connected, if possible, "
 	"with a line segment of the corresponding formant values in the adjacent frames.")
 ENTRY (L"Settings")
-TAG (L"%%From time% (s), %%To time% (s)")
-DEFINITION (L"the time domain of the drawing. If %%To time% is not greater than %%From time%, "
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
+DEFINITION (L"the time domain of the drawing. If ##To time# is not greater than ##From time#, "
 	"the entire formant contour is drawn.")
-TAG (L"%%Maximum frequency% (Hz)")
+TAG (L"##Maximum frequency (Hz)")
 DEFINITION (L"the height of the %y axis. For speech, 5000 Hz is a usual value.")
-TAG (L"%%Garnish")
+TAG (L"##Garnish")
 DEFINITION (L"determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
 	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 ENTRY (L"Usage")
@@ -133,12 +135,12 @@ MAN_END
 MAN_BEGIN (L"Formant: Get bandwidth at time...", L"ppgb", 19991016)
 INTRO (L"A @query to the selected @Formant object for the bandwidth of the specified formant at the specified time.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%Time% (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which to evaluate the bandwidth.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
 ENTRY (L"Return value")
 NORMAL (L"the estimated bandwidth in Hertz or Bark. "
 	"If %Time is not within half a frame width of any frame centre, or "
@@ -157,15 +159,16 @@ INTRO (L"A @query to ask the selected @Formant object for the maximum value of t
 ENTRY (L"Return value")
 NORMAL (L"the maximum, in Hertz or Bark.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%Interpolation")
-DEFINITION (L"the interpolation method (none or parabolic). See @@vector peak interpolation@.")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None or #Parabolic). See @@vector peak interpolation@.")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get mean...", L"ppgb", 19991016)
@@ -173,13 +176,14 @@ INTRO (L"A @query to ask the selected @Formant object for the mean value of the 
 ENTRY (L"Return value")
 NORMAL (L"the mean, in Hertz or Bark.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the mean into a script variable:")
 CODE (L"select Formant hallo")
@@ -192,21 +196,22 @@ INTRO (L"A @query to ask the selected @Formant object for the minimum value of t
 ENTRY (L"Return value")
 NORMAL (L"the minimum, in Hertz or Bark.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%Interpolation")
-DEFINITION (L"the interpolation method (none or parabolic). See @@vector peak interpolation@.")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None or #Parabolic). See @@vector peak interpolation@.")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get number of formants", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the number of formants in a specified frame.")
-ENTRY (L"Argument")
-TAG (L"%%Frame number")
+ENTRY (L"Setting")
+TAG (L"##Frame number")
 DEFINITION (L"the frame number whose formant count is sought.")
 ENTRY (L"Return value")
 NORMAL (L"the number of formants.")
@@ -218,16 +223,17 @@ INTRO (L"A @query to ask the selected @Formant object for an estimation of the s
 ENTRY (L"Return value")
 NORMAL (L"the quantile, in Hertz or Bark.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%Quantile")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Quantile")
 DEFINITION (L"the fraction (between 0 and 1) of the values of the underlying distribution expected to lie below the result. "
-	"For instance, if %Quantile is 0.10, the algorithm estimates the formant value below which 10\\%  of all formant values "
+	"For instance, if #Quantile is 0.10, the algorithm estimates the formant value below which 10\\%  of all formant values "
 	"are expected to lie. To get an estimate of the %median of the underlying distribution, specify a quantile of 0.50.")
 ENTRY (L"Algorithm")
 NORMAL (L"First, the available formant values within the selected time domain are collected in an array. "
@@ -241,28 +247,30 @@ INTRO (L"A @query to ask the selected @Formant object for the standard deviation
 ENTRY (L"Return value")
 NORMAL (L"the standard deviation, in Hertz or Bark.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get time of maximum...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the time associated with the maximum value "
 	"of a specified formant within a specified time domain.")
-ENTRY (L"Argument")
-TAG (L"%%Formant number")
+ENTRY (L"Settings")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored, except for interpolation. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%Interpolation")
-DEFINITION (L"the interpolation method (None or Parabolic). See @@vector peak interpolation@.")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None or #Parabolic). See @@vector peak interpolation@.")
 ENTRY (L"Return value")
 NORMAL (L"the time expressed in seconds. If no relevant formants are found, the value is @undefined.")
 MAN_END
@@ -270,16 +278,17 @@ MAN_END
 MAN_BEGIN (L"Formant: Get time of minimum...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the time associated with the minimum value "
 	"of a specified formant within a specified time domain.")
-ENTRY (L"Argument")
-TAG (L"%%Formant number")
+ENTRY (L"Settings")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored, except for interpolation. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the formant contour is considered.")
-TAG (L"%Units")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%Interpolation")
-DEFINITION (L"the interpolation method (None or Parabolic). See @@vector peak interpolation@.")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the formant contour is considered.")
+TAG (L"##Units")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None or #Parabolic). See @@vector peak interpolation@.")
 ENTRY (L"Return value")
 NORMAL (L"the time expressed in seconds. If no relevant formants are found, the value is @undefined.")
 MAN_END
@@ -287,21 +296,21 @@ MAN_END
 MAN_BEGIN (L"Formant: Get value at time...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the frequency of the specified formant at the specified time.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
-TAG (L"%%Time% (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which to evaluate the formant frequency.")
-TAG (L"%Units)")
-DEFINITION (L"the units of the result (Hertz or Bark).")
-TAG (L"%%Interpolation")
+TAG (L"##Units)")
+DEFINITION (L"the units of the result (#Hertz or #Bark).")
+TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method, see @@vector value interpolation@. "
 	"Always Linear.")
 ENTRY (L"Return value")
 NORMAL (L"the bandwidth in Hertz or Bark. "
-	"If %Time is not within half a frame width of any frame centre, or "
-	"if the specified %%Formant number% is greater than the number of formants in the frame, "
+	"If #Time is not within half a frame width of any frame centre, or "
+	"if ##Formant number# is greater than the number of formants in the frame, "
 	"the value is @undefined; "
-	"otherwise, the formant is considered to belong to the frame whose centre is nearest to the specified time.")
+	"otherwise, the formant is considered to belong to the frame whose centre is nearest to #Time.")
 ENTRY (L"Algorithm")
 NORMAL (L"If possible (i.e. if the adjacent frame has enough formants), "
 	"a linear interpolation is performed between the centre of the frame and the centre of the adjacent frame. "
@@ -313,16 +322,17 @@ INTRO (L"A command to draw the selected @Formant objects to the @@Picture window
 ENTRY (L"Behaviour")
 NORMAL (L"Every formant value is drawn as a small circle, filled with the current colour.")
 ENTRY (L"Settings")
-TAG (L"%%From time% (s), %%To time% (s)")
-DEFINITION (L"the time domain of the drawing. If %%To time% is not greater than %%From time%, "
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
+DEFINITION (L"the time domain of the drawing. If ##To time# is not greater than ##From time#, "
 	"the entire formant contour is drawn.")
-TAG (L"%%Maximum frequency% (Hz)")
+TAG (L"##Maximum frequency (Hz)")
 DEFINITION (L"the height of the %y axis. For speech, 5000 Hz is a usual value.")
-TAG (L"%%Dynamic range% (dB)")
+TAG (L"##Dynamic range (dB)")
 DEFINITION (L"determines the signal intensity (as stored in each formant frame) below which "
 	"no formants will be drawn. If zero, all formants will be drawn. The standard value is 30 dB, "
 	"which would mean that formants in frames with intensities less than the maximum intensity minus 30 dB will not be drawn.")
-TAG (L"%%Garnish")
+TAG (L"##Garnish")
 DEFINITION (L"determines whether axes, numbers, and texts (\"Time\", \"Formant frequency\") will be drawn in the margins around the picture. "
 	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 MAN_END
@@ -344,25 +354,25 @@ NORMAL (L"This command only makes sense if the whole of the formant contour make
 ENTRY (L"Settings")
 NORMAL (L"To be able to interpret the settings, you should know that the aim of the procedure is "
 	"to minimize the sum of the %costs associated with the three tracks.")
-TAG (L"%%Number of tracks")
+TAG (L"##Number of tracks")
 DEFINITION (L"the number of formant tracks that the procedure must find. If this number is 3, "
 	"the procedure will try to find tracks for F1, F2, and F3; if the Formant object contains "
 	"a frame with less than three formants, the tracking procedure will fail.")
-TAG (L"%%Reference F1% (Hertz)")
+TAG (L"##Reference F1 (Hz)")
 DEFINITION (L"the preferred value near which the first track wants to be. "
 	"For average (i.e. adult female) speakers, this value will be around "
 	"the average F1 for vowels of female speakers, i.e. 550 Hz.")
-TAG (L"%%Reference F2% (Hertz)")
+TAG (L"##Reference F2 (Hz)")
 DEFINITION (L"the preferred value near which the second track wants to be. "
 	"A good value will be around "
 	"the average F2 for vowels of female speakers, i.e. 1650 Hz.")
-TAG (L"%%Reference F3% (Hertz)")
+TAG (L"##Reference F3 (Hz)")
 DEFINITION (L"the preferred value near which the third track wants to be. "
 	"A good value will be around "
 	"the average F3 for vowels of female speakers, i.e. 2750 Hz. "
 	"This argument will be ignored if you choose to have fewer than three tracks, "
 	"i.e., if you are only interested in F1 and F2.")
-TAG (L"%%Reference F4% (Hertz)")
+TAG (L"##Reference F4 (Hz)")
 DEFINITION (L"the preferred value near which the fourth track wants to be. "
 	"A good value may be around 3850 Hz, but you will usually not want to "
 	"track F4, because traditional formant lore tends to ignore it "
@@ -370,32 +380,32 @@ DEFINITION (L"the preferred value near which the fourth track wants to be. "
 	"and because Formant objects often contain not more than three formant values "
 	"in some frames. So you will not usually specify a higher %%Number of tracks% than 3, "
 	"and in that case, this argument will be ignored.")
-TAG (L"%%Reference F5% (Hertz)")
+TAG (L"##Reference F5 (Hz)")
 DEFINITION (L"the preferred value near which the five track wants to be. "
 	"In the unlikely case that you want five tracks, "
 	"a good value may be around 4950 Hz.")
-TAG (L"%%Frequency cost% (per kiloHertz)")
+TAG (L"##Frequency cost (per kiloHertz)")
 DEFINITION (L"the local cost of having a formant value in your track that deviates "
 	"from the reference value. For instance, if a candidate (i.e. any formant in a frame "
 	"of the Formant object) has a formant frequency of 800 Hz, "
-	"and the %%Frequency cost% is 1.0/kHz, "
+	"and ##Frequency cost# is 1.0/kHz, "
 	"the cost of putting this formant in the first track is 0.250, "
 	"because the distance to the reference F1 of 550 Hz is 250 Hz. "
 	"The cost of putting the formant in the second track would be 0.850 "
 	"(= (1.650 kHz - 0.600 kHz) \\.c 1.0/kHz), so we see that the procedure "
 	"locally favours the inclusion of the 800 Hz candidate into the F1 track. "
 	"But the next two cost factors may override this local preference.")
-TAG (L"%%Bandwidth cost%")
+TAG (L"##Bandwidth cost")
 DEFINITION (L"the local cost of having a bandwidth, relative to the formant frequency. "
 	"For instance, if a candidate has a formant frequency of 400 Hz and "
-	"a bandwidth of 80 Hz, and the %%Bandwidth cost% is 1.0, "
+	"a bandwidth of 80 Hz, and ##Bandwidth cost# is 1.0, "
 	"the cost of having this formant in any track is (80/400) \\.c 1.0 = 0.200. "
 	"So we see that the procedure locally favours the inclusion of candidates "
 	"with low relative bandwidths.")
-TAG (L"%%Transition cost% (per octave)")
+TAG (L"##Transition cost (per octave)")
 DEFINITION (L"the cost of having two different consecutive formant values in a track. "
 	"For instance, if a proposed track through the candidates has two consecutive formant "
-	"values of 300 Hz and 424 Hz, and the %%Transition cost% is 1.0/octave, "
+	"values of 300 Hz and 424 Hz, and ##Transition cost# is 1.0/octave, "
 	"the cost of having this large frequency jump is (0.5 octave) \\.c (1.0/octave) = 0.500.")
 ENTRY (L"Algorithm")
 NORMAL (L"This command uses a Viterbi algorithm with multiple planes. For instance, if the selected Formant object "
@@ -446,15 +456,15 @@ MAN_BEGIN (L"FormantGrid: Add bandwidth point...", L"ppgb", 20080425)
 INTRO (L"A command to add a bandwidth point to each selected @FormantGrid.")
 NORMAL (L"For examples, see @@Source-filter synthesis@.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the number of the formant (e.g. 1, 2,...) to which a bandwidth point is to be added.")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which a bandwidth point is to be added.")
-TAG (L"%%Bandwidth (Hz)")
+TAG (L"##Bandwidth (Hz)")
 DEFINITION (L"the bandwidth value of the requested new point.")
 ENTRY (L"Example")
 NORMAL (L"To set the bandwidth of F2 at 0.3 seconds to 130 Hz, "
-	"you set %%formant number% to 2, %time to 0.3, and %bandwidth to 130.")
+	"you set ##Formant number# to 2, #Time to 0.3 s, and #Bandwidth to 130 Hz.")
 ENTRY (L"Behaviour")
 NORMAL (L"The formant tier is modified so that it contains the new point. "
 	"If a bandwidth point at the specified time was already present in the formant tier, nothing happens.")
@@ -464,15 +474,15 @@ MAN_BEGIN (L"FormantGrid: Add formant point...", L"ppgb", 20080425)
 INTRO (L"A command to add a formant point to each selected @FormantGrid.")
 NORMAL (L"For examples, see @@Source-filter synthesis@.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the number of the formant (e.g. 1, 2,...) to which a formant point is to be added.")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which a formant point is to be added.")
-TAG (L"%%Frequency (Hz)")
+TAG (L"##Frequency (Hz)")
 DEFINITION (L"the formant frequency value of the requested new point.")
 ENTRY (L"Example")
 NORMAL (L"To set the value of F2 at 0.3 seconds to 2200 Hz, "
-	"you set %%formant number% to 2, %time to 0.3, and %frequency to 2200.")
+	"you set ##Formant number# to 2, #Time to 0.3 s, and #Frequency to 2200 Hz.")
 ENTRY (L"Behaviour")
 NORMAL (L"The formant tier is modified so that it contains the new point. "
 	"If a formant point at the specified time was already present in the formant tier, nothing happens.")
@@ -481,13 +491,14 @@ MAN_END
 MAN_BEGIN (L"FormantGrid: Remove bandwidth points between...", L"ppgb", 20080427)
 INTRO (L"A command to remove some points from a bandwidth tier in every selected @FormantGrid.")
 ENTRY (L"Settings")
-TAG (L"%%Formant number")
+TAG (L"##Formant number")
 DEFINITION (L"the formant (1, 2,...) from whose bandwidth tier you want to remove some points.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s))")
+TAG (L"##To time (s)")
 DEFINITION (L"the times between which you want to remove all bandwidth points.")
 ENTRY (L"Example")
 NORMAL (L"If you want to remove all bandwidth points in F2 between 0.5 and 0.7 seconds, "
-	"you set %%formant number% to 2, %%from time% to 0.5, and %%to time% to 0.7.")
+	"you set ##Formant number# to 2, ##From time# to 0.5 s, and ##To time# to 0.7 s.")
 MAN_END
 
 MAN_BEGIN (L"FormantGrid: Remove formant points between...", L"ppgb", 20080427)
@@ -495,48 +506,12 @@ INTRO (L"A command to remove some points from a formant tier in every selected @
 ENTRY (L"Settings")
 TAG (L"%%Formant number")
 DEFINITION (L"the formant (1, 2,...) from which you want to remove some points.")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s))")
+TAG (L"##To time (s)")
 DEFINITION (L"the times between which you want to remove all formant points.")
 ENTRY (L"Example")
 NORMAL (L"If you want to remove all formant points in F2 between 0.5 and 0.7 seconds, "
-	"you set %%formant number% to 2, %%from time% to 0.5, and %%to time% to 0.7.")
-MAN_END
-
-MAN_BEGIN (L"FormantTier", L"ppgb", 20080427)
-INTRO (L"One of the @@types of objects@ in Praat. You are advised to use instead the much more flexible @FormantGrid, "
-	"which moreover comes with an editing window. The commands that create FormantTier objects are now hidden, "
-	"but they are still available in Praat scripts, for backward compatibility.")
-NORMAL (L"A FormantTier object represents spectral structure as a function of time: a %%formant contour%. "
-	"Unlike the evenly sampled @Formant object, it consists of a number of formant %points (or %targets), sorted by time. "
-	"Each point contains contains several formant/bandwidth pairs.")
-ENTRY (L"FormantTier commands")
-NORMAL (L"Creation:")
-LIST_ITEM (L"From scratch:")
-LIST_ITEM (L"\\bu ##Create FormantTier...#: the resulting object will have the specified name and time domain, "
-	"but contain no formant points. "
-	"To add some points to it, use:")
-LIST_ITEM (L"\\bu ##FormantTier: Add point...#: to get three formants at "
-	"500, 1500, and 2500 Hz with bandwidths of 50, 100, and 150 Hz, respectively, "
-	"you specify \"500 50 1500 100 2500 150\".")
-LIST_ITEM (L"Copy from another object:")
-LIST_ITEM (L"\\bu ##Formant: Down to FormantTier#: trivial copying of frames to points. "
-	"The resulting FormantTier contains a point for each original frame. The number of formants "
-	"in the result is limited to 10. The intensity information is lost.")
-NORMAL (L"Conversion:")
-LIST_ITEM (L"\\bu ##FormantTier: Down to PointProcess#: the times of all the formant points are trivially copied, and so is the time domain. "
-	"The formant information is lost.")
-NORMAL (L"Synthesis:")
-LIST_ITEM (L"\\bu ##Sound & FormantTier: Filter#: comparable to @@Sound & FormantGrid: Filter@.")
-LIST_ITEM (L"\\bu ##Sound & FormantTier: Filter (no scale)#: comparable to @@Sound & FormantGrid: Filter (no scale)@.")
-NORMAL (L"Queries:")
-LIST_ITEM (L"\\bu @@Get low index from time...")
-LIST_ITEM (L"\\bu @@Get high index from time...")
-LIST_ITEM (L"\\bu @@Get nearest index from time...")
-NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@Remove point...")
-LIST_ITEM (L"\\bu @@Remove point near...")
-LIST_ITEM (L"\\bu @@Remove points between...")
-LIST_ITEM (L"\\bu ##FormantTier: Add point...#")
+	"you set ##Formant number# to 2, ##From time# to 0.5 s, and ##To time# to 0.7.")
 MAN_END
 
 MAN_BEGIN (L"Sound: To Formant (burg)...", L"ppgb", 20101007)
@@ -544,36 +519,36 @@ INTRO (L"A command that creates a @Formant object from every selected @Sound obj
 	"It performs a short-term spectral analysis, approximating the spectrum of each "
 	"analysis frame by a number of formants.")
 ENTRY (L"Settings")
-TAG (L"%%Time step% (seconds)")
+TAG (L"##Time step (s)")
 DEFINITION (L"the time between the centres of consecutive analysis frames. If the sound is 2 seconds long, "
 	"and the time step is 0.01 seconds, there will be approximately 200 analysis frames. "
 	"The actual number is somewhat lower (usually 195), because we cannot measure very well "
 	"near the edges. If you set the time step to 0.0 (the standard), Praat will use a time step "
 	"that is equal to 25 percent of the analysis window length (see below).")
-TAG (L"%%Maximum number of formants%")
+TAG (L"##Maximum number of formants")
 DEFINITION (L"for most analyses of human speech, you will want to extract 5 formants per frame. "
-	"This, in combination with the %%Maximum formant% argument, is the only way "
+	"This, in combination with the ##Maximum formant# setting, is the only way "
 	"in which this procedure will give you results compatible with how people "
 	"tend to interpret formants for vowels, i.e. in terms of "
-	"vowel height (F1) and vowel place (F2). Otherwise, the %%Maximum number of formants% can be any multiple of 0.5, "
+	"vowel height (F1) and vowel place (F2). Otherwise, the ##Maximum number of formants# can be any multiple of 0.5, "
 	"you can choose 4, 4.5, 5, 5.5, 6, and so on (see below).")
-TAG (L"%%Maximum formant% (Hertz)")
-DEFINITION (L"the ceiling of the formant search range. It is crucial that you set this argument to a value suitable for your speaker. "
+TAG (L"##Maximum formant (Hz)")
+DEFINITION (L"the ceiling of the formant search range, in hertz. It is crucial that you set this to a value suitable for your speaker. "
 	"The standard value of 5500 Hz is suitable for an average adult female. For a male, use 5000 Hz; "
 	"if you use 5500 Hz for an adult male, you may end up with too few formants in the low frequency region, "
 	"e.g. analysing an [u] as having a single formant near 500 Hz whereas you want two formants at 300 and 600 Hz. "
 	"For a young child, use a value much higher than 5500 Hz, for instance 8000 Hz (experiment with it on steady vowels).")
-TAG (L"%%Window length% (seconds)")
-DEFINITION (L"the effective duration of the analysis window. The actual length is twice this value, "
+TAG (L"##Window length (s)")
+DEFINITION (L"the effective duration of the analysis window, in seconds. The actual length is twice this value, "
 	"because Praat uses a Gaussian-like analysis window with sidelobes below -120 dB. "
-	"For instance, if the %%Window length% is 0.025 seconds, the actual Gaussian window duration "
+	"For instance, if the ##Window length# is 0.025 seconds, the actual Gaussian window duration "
 	"is 0.050 seconds. This window has values below 4\\%  outside the central 0.025 seconds, "
 	"and its frequency resolution (-3 dB point) is 1.298 / (0.025 s) = 51.9 Hz, as computed "
 	"with the formula given at @@Sound: To Spectrogram...@. This is comparable to the bandwidth "
 	"of a Hamming window of 0.025 seconds, which is 1.303 / (0.025 s) = 52.1 Hz, "
 	"but that window (which is the window most often used in other analysis programs) "
 	"has three spectral lobes of about -42 dB on each side.")
-TAG (L"%%Pre-emphasis from% (Hertz)")
+TAG (L"##Pre-emphasis from (Hz)")
 DEFINITION (L"the +3 dB point for an inverted low-pass filter with a slope of +6 dB/octave. "
 	"If this value is 50 Hz, then frequencies below 50 Hz are not enhanced, "
 	"frequencies around 100 Hz are amplified by 6 dB, frequencies around 200 Hz are amplified by 12 dB, "
@@ -590,13 +565,13 @@ NORMAL (L"The sound will be resampled to a sampling frequency of twice the value
 	"and computes the LPC coefficients with the algorithm by Burg, as given by @@Childers (1978)@ "
 	"and @@Press et al. (1992)@. The number of \"poles\" that this algorithm computes is twice the %%Maximum number of formants%; "
 	"that's why you can set the %%Maximum number of formants% to any multiple of 0.5).")
-NORMAL (L"The algorithm will initially find %%Maximum number of formants% formants in the whole range between 0 Hz "
-	"and %%Maximum formant%. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) "
-	"or very high frequencies (near %%Maximum formant%). Such low or high \"formants\" tend to be artefacts of the LPC algorithm, "
+NORMAL (L"The algorithm will initially find ##Maximum number of formants# formants in the whole range between 0 Hz "
+	"and ##Maximum formant#. The initially found formants can therefore sometimes have very low frequencies (near 0 Hz) "
+	"or very high frequencies (near ##Maximum formant#). Such low or high \"formants\" tend to be artefacts of the LPC algorithm, "
 	"i.e., the algorithm tends to use them to match the spectral slope if that slope differs from the 6 dB/octave assumption. "
 	"Therefore, such low or high \"formants\" cannot usually be associated with the vocal tract resonances that you are looking for. "
 	"In order for you to be able to identify the traditional F1 and F2, "
-	"all formants below 50 Hz and all formants above %%Maximum formant% minus 50 Hz, "
+	"all formants below 50 Hz and all formants above ##Maximum formant# minus 50 Hz, "
 	"are therefore removed. If you don't want this removal, you may experiment with @@Sound: To Formant (keep all)...@ instead. "
 	"If you prefer an algorithm that always yields the requested number of formants, nicely distributed "
 	"across the frequency domain, you may try the otherwise rather unreliable Split-Levinson procedure @@Sound: To Formant (sl)...@.")

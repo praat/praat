@@ -1,6 +1,6 @@
 /* manual_Fon.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,73 +44,74 @@ void manual_Fon_init (ManPages me) {
 { extern void manual_formant_init (ManPages me); manual_formant_init (me); }
 { extern void manual_annotation_init (ManPages me); manual_annotation_init (me); }
 
-MAN_BEGIN (L"Get high index from time...", L"ppgb", 20080427)
+MAN_BEGIN (L"Get high index from time...", L"ppgb", 20101230)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to, but no earlier than, the specified time.")
-ENTRY (L"Argument")
-TAG (L"%Time (s)")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time from which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the lowest time greater than or equal to %time. "
+NORMAL (L"This query returns the index of the point with the lowest time greater than or equal to #Time. "
 	"It is @undefined if there are no points. "
 	"It is the number of points plus 1 (offright) if the specified time is greater than the time of the last point.")
 MAN_END
 
-MAN_BEGIN (L"Get low index from time...", L"ppgb", 20080427)
+MAN_BEGIN (L"Get low index from time...", L"ppgb", 20101230)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to, but no later than, the specified time.")
-ENTRY (L"Argument")
-TAG (L"%Time (s)")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time from which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time. "
+NORMAL (L"This query returns the index of the point with the highest time less than or equal to #Time. "
 	"It is @undefined if there are no points. "
 	"It is 0 (offleft) if the specified time is less than the time of the first point.")
 MAN_END
 
-MAN_BEGIN (L"Get nearest index from time...", L"ppgb", 20080427)
+MAN_BEGIN (L"Get nearest index from time...", L"ppgb", 20101230)
 INTRO (L"A @query to ask the selected tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier) "
+	"(@DurationTier, @IntensityTier, @PitchTier) "
 	"which point is nearest to the specified time.")
-ENTRY (L"Argument")
-TAG (L"%Time (s)")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time near which you want to get the point index.")
 ENTRY (L"Return value")
-NORMAL (L"This query returns the index of the point with the highest time less than or equal to %time. "
+NORMAL (L"This query returns the index of the point with the highest time less than or equal to #Time. "
 	"It is @undefined if there are no points.")
 MAN_END
 
-MAN_BEGIN (L"Remove point...", L"ppgb", 20080427)
+MAN_BEGIN (L"Remove point...", L"ppgb", 20101230)
 INTRO (L"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
-ENTRY (L"Argument")
-TAG (L"%%Point number")
+	"(@DurationTier, @IntensityTier, @PitchTier).")
+ENTRY (L"Setting")
+TAG (L"##Point number")
 DEFINITION (L"the index of the point you want to remove.")
 ENTRY (L"Behaviour")
-NORMAL (L"If %%point number% is 3, the third point counted from the start of the tier (if it exists) "
+NORMAL (L"If ##Point number# is 3, the third point counted from the start of the tier (if it exists) "
 	"is removed from the tier.")
 MAN_END
 
-MAN_BEGIN (L"Remove point near...", L"ppgb", 20080427)
+MAN_BEGIN (L"Remove point near...", L"ppgb", 20101230)
 INTRO (L"A command to remove one point from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
-ENTRY (L"Argument")
-TAG (L"%Time (s)")
+	"(@DurationTier, @IntensityTier, @PitchTier).")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time near which you want to remove a point.")
 ENTRY (L"Behaviour")
-NORMAL (L"The point nearest to %time (if there is any point) is removed from the tier.")
+NORMAL (L"The point nearest to #Time (if there is any point) is removed from the tier.")
 MAN_END
 
-MAN_BEGIN (L"Remove points between...", L"ppgb", 20080427)
+MAN_BEGIN (L"Remove points between...", L"ppgb", 20101230)
 INTRO (L"A command to remove some points from every selected time-based tier object "
-	"(@DurationTier, @IntensityTier, @PitchTier, @TextTier).")
+	"(@DurationTier, @IntensityTier, @PitchTier).")
 ENTRY (L"Settings")
-TAG (L"%%From time% (s), %%To time% (s)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the times between which you want to remove all points.")
 ENTRY (L"Behaviour")
-NORMAL (L"Any points between %tmin and %tmax (inclusive) are removed from the tier.")
+NORMAL (L"Any points between ##Frome time# and ##To Time# (inclusive) are removed from the tier.")
 MAN_END
 
 MAN_BEGIN (L"AmplitudeTier", L"ppgb", 20070825)
@@ -168,11 +169,11 @@ INTRO (L"A command to create a @PointProcess object that represents a Poisson pr
 NORMAL (L"A Poisson process is a stationary point process with a fixed density %\\la, "
 	"which means that there are, on the average, %\\la events per second.")
 ENTRY (L"Settings")
-TAG (L"%%Start time% (seconds)")
-DEFINITION (L"%t__%min_, the beginning of the time domain.")
-TAG (L"%%End time% (seconds)")
-DEFINITION (L"%t__%max_, the end of the time domain.")
-TAG (L"%Density (Hertz)")
+TAG (L"##Start time (s)")
+DEFINITION (L"%t__%min_, the beginning of the time domain, in seconds.")
+TAG (L"##End time (s)")
+DEFINITION (L"%t__%max_, the end of the time domain, in seconds.")
+TAG (L"##Density (Hz)")
 DEFINITION (L"the average number of points per second.")
 ENTRY (L"Algorithm")
 NORMAL (L"First, the number of points %N in the time domain is determined. Its expectation value is")
@@ -197,9 +198,9 @@ MAN_END
 MAN_BEGIN (L"Create Strings as file list...", L"ppgb", 20060919)
 INTRO (L"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
 ENTRY (L"Settings")
-TAG (L"%%Name")
+TAG (L"##Name")
 DEFINITION (L"the name of the resulting Strings object, usually \"fileList\".")
-TAG (L"%%Path")
+TAG (L"##Path")
 DEFINITION (L"the directory name, with an optional wildcard for selecting files.")
 ENTRY (L"Behaviour")
 NORMAL (L"The resulting Strings object will contain an alphabetical list of file names, "
@@ -250,12 +251,12 @@ MAN_END
 MAN_BEGIN (L"Distributions: To Strings...", L"ppgb", 19971022)
 INTRO (L"A command to create a @Strings object from every selected @Distributions object.")
 ENTRY (L"Settings")
-TAG (L"%%Column number")
+TAG (L"##Column number")
 DEFINITION (L"the column (in the #Distributions object) that contains the distribution that you are "
 	"interested in. Often the #Distributions object will only contain a single distribution, "
 	"so this argument will often be 1. If the #Distributions object contains nine distributions, "
 	"specify any number between 1 and 9.")
-TAG (L"%%Number of strings")
+TAG (L"##Number of strings")
 DEFINITION (L"the number of times a string will be drawn from the chosen distribution. "
 	"This is the number of strings that the resulting @Strings object is going to contain.")
 ENTRY (L"Behaviour")
@@ -297,21 +298,21 @@ MAN_BEGIN (L"DurationTier: Add point...", L"ppgb", 20030216)
 INTRO (L"A command to add a point to each selected @DurationTier. "
 	"For an example, see @@Create DurationTier...@.")
 ENTRY (L"Settings")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
-TAG (L"%%Relative duration")
+TAG (L"##Relative duration")
 DEFINITION (L"the relative duration value of the requested new point.")
 ENTRY (L"Behaviour")
 NORMAL (L"The tier is modified so that it contains the new point. "
 	"If a point at the specified time was already present in the tier, nothing happens.")
 MAN_END
 
-MAN_BEGIN (L"DurationTier: Get target duration...", L"ppgb", 19991016)
+MAN_BEGIN (L"DurationTier: Get target duration...", L"ppgb", 20101228)
 INTRO (L"A @query to the selected @DurationTier for the target duration of a specified time range.")
 ENTRY (L"Settings")
-TAG (L"%%From time% (s), %%To time% (s)")
-DEFINITION (L"the start and end of the time range. If %fromTime or %toTime is outside the time domain "
-	"of the Duration object, there will be .")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
+DEFINITION (L"the start and end of the (original) time range.")
 ENTRY (L"Return value")
 NORMAL (L"the target duration in seconds.")
 MAN_END
@@ -480,10 +481,11 @@ MAN_BEGIN (L"Get area...", L"ppgb", 20030216)
 INTRO (L"A @query to the selected tier object (@PitchTier, @IntensityTier, @DurationTier).")
 ENTRY (L"Return value")
 NORMAL (L"the area under the curve.")
-ENTRY (L"Attributes")
-TAG (L"%%From time% (s), %%To time% (s)")
+ENTRY (L"Settings")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the selected time domain. Values outside this domain are ignored. "
-	"If %%To time% is not greater than %%From time%, the entire time domain of the tier is considered.")
+	"If ##To time# is not greater than ##From time#, the entire time domain of the tier is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The curve consists of a sequence of line segments. The contribution of the line segment from "
 	"(%t__1_, %f__1_) to (%t__2_, %f__2_) to the area is")
@@ -502,11 +504,11 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the maximum value within the specified time domain, expressed in dB.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -516,10 +518,10 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the mean (in dB) of the intensity values of the frames within a specified time domain.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (L"%%Averaging method")
+TAG (L"##Averaging method")
 DEFINITION (L"the units in which the averaging is performed. If the method is #energy, "
 	"the returned dB value is based on the mean power (in Pa^2/s) between %t__1_ and %t__2_. "
 	"If the method is #dB, the returned value is the mean of the intensity curve in dB. "
@@ -543,11 +545,11 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the minimum value within a specified time domain, expressed in dB.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
 MAN_END
@@ -557,7 +559,7 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the standard deviation (in dB) of the intensity values of the frames within a specified time domain.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"%%Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 ENTRY (L"Algorithm")
@@ -574,7 +576,7 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the time (in seconds) associated with the maximum intensity within a specified time domain.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"%%Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 TAG (L"%%Interpolation")
@@ -588,10 +590,10 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the time (in seconds) associated with the minimum intensity within a specified time domain.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
-TAG (L"%%Interpolation")
+TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
 	"The standard is Parabolic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -602,9 +604,9 @@ INTRO (L"A @query to the selected @Intensity object.")
 ENTRY (L"Return value")
 NORMAL (L"the intensity (in dB) at a specified time. If %time is outside the frames of the Intensity, the result is 0.")
 ENTRY (L"Settings")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which the value is to be evaluated.")
-TAG (L"%%Interpolation")
+TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method, see @@vector value interpolation@. "
 	"The standard is Cubic because of the usual nonlinearity (logarithm) in the computation of intensity; "
 	"sinc interpolation would be too stiff and may give unexpected results.")
@@ -612,8 +614,8 @@ MAN_END
 
 MAN_BEGIN (L"Intensity: Get value in frame...", L"ppgb", 19991016)
 INTRO (L"A @query to the selected @Intensity object.")
-ENTRY (L"Argument")
-TAG (L"%%Frame number")
+ENTRY (L"Setting")
+TAG (L"##Frame number")
 DEFINITION (L"the frame whose value is to be looked up.")
 ENTRY (L"Return value")
 NORMAL (L"the intensity value (in dB) in the specified frame. "
@@ -638,15 +640,15 @@ DEFINITION (L"   Equal number of points:")
 LIST_ITEM (L"   \\bu %result. %points. %item [%i]. %value == %intensity. %z [1] [%i]")
 MAN_END
 
-MAN_BEGIN (L"Intensity & TextTier: To IntensityTier...", L"ppgb", 19970321)
-INTRO (L"A command to copy information from an @Intensity, at times specified by a @TextTier, "
+MAN_BEGIN (L"Intensity & PointProcess: To IntensityTier...", L"ppgb", 20101230)
+INTRO (L"A command to copy information from an @Intensity, at times specified by a @PointProcess, "
 	"to points on an @IntensityTier.")
 ENTRY (L"Behaviour")
-NORMAL (L"For all the times of the points in the TextTier, an intensity is computed from the "
+NORMAL (L"For all the times of the points in the PointProcess, an intensity is computed from the "
 	"information in the Intensity object, by linear interpolation.")
 MAN_END
 
-MAN_BEGIN (L"IntensityTier", L"ppgb", 20030316)
+MAN_BEGIN (L"IntensityTier", L"ppgb", 20101230)
 INTRO (L"One of the @@types of objects@ in Praat. "
 	"An IntensityTier object represents a time-stamped intensity contour, i.e., it contains a series of (%time, %intensity) points. "
 	"The intensity values are in dB.")
@@ -658,7 +660,7 @@ LIST_ITEM (L"\\bu @@Create IntensityTier...")
 LIST_ITEM (L"\\bu @@IntensityTier: Add point...")
 LIST_ITEM (L"Copy from another object:")
 LIST_ITEM (L"\\bu @@Intensity: To IntensityTier@: trivial copying of linearly spaced points.")
-LIST_ITEM (L"\\bu @@Intensity & TextTier: To IntensityTier...@: copying interpolated values at specified points.")
+LIST_ITEM (L"\\bu @@Intensity & PointProcess: To IntensityTier...@: copying interpolated values at specified points.")
 LIST_ITEM (L"\\bu @@PointProcess: Up to IntensityTier...@: equal values at specified points.")
 NORMAL (L"Viewing and editing:")
 LIST_ITEM (L"\\bu @IntensityTierEditor")
@@ -680,9 +682,9 @@ MAN_END
 MAN_BEGIN (L"IntensityTier: Add point...", L"ppgb", 20010410)
 INTRO (L"A command to add a point to each selected @IntensityTier.")
 ENTRY (L"Settings")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
-TAG (L"%Intensity (dB)")
+TAG (L"##Intensity (dB)")
 DEFINITION (L"the intensity value of the requested new point.")
 ENTRY (L"Behaviour")
 NORMAL (L"The tier is modified so that it contains the new point. "
@@ -786,16 +788,16 @@ NORMAL (L"A log file is a text file on disk. It consists of a number of similar 
 NORMAL (L"Every time you press F12 (or choose ##Log 1# from the Query menu, "
 	"Praat writes a line to log file 1. If you press Shift-F12, Praat writes a line to log file 2.")
 NORMAL (L"With the ##log settings# dialog, you determine the following:")
-TAG (L"%%Log 1 to Info window")
+TAG (L"##Log 1 to Info window")
 DEFINITION (L"this determines whether your log line will be written to the Info window or not.")
-TAG (L"%%Log 1 to log file")
+TAG (L"##Log 1 to log file")
 DEFINITION (L"this determines whether your log line will be written to the log file or not.")
-TAG (L"%%Log file 1")
+TAG (L"##Log file 1")
 DEFINITION (L"the name of the log file. On Windows, this has to be a complete path name, such as "
 	"$$C:\\bsWINDOWS\\bsDESKTOP\\bsPitch Log.txt$. "
 	"On Unix and MacOS X, it can either be a complete path name, e.g. $$/home/mary/pitch_log$, "
 	"or a home-relative name such as $$~/Desktop/Pitch log$.")
-TAG (L"%%Log 1 format")
+TAG (L"##Log 1 format")
 DEFINITION (L"the format of the line that Praat will write. See below.")
 NORMAL (L"The same goes for log file 2.")
 ENTRY (L"Usage")
@@ -880,11 +882,11 @@ MAN_BEGIN (L"Manipulation", L"ppgb", 20030316)
 INTRO (L"One of the @@types of objects@ in Praat, for changing the pitch and duration contours of a sound.")
 ENTRY (L"Inside a manipulation object")
 NORMAL (L"With @Inspect, you will see the following attributes:")
-TAG (L"%%timeStep%")
+TAG (L"##timeStep")
 DEFINITION (L"the time step (or %%frame length%) used in the pitch analysis. A common value is 0.010 seconds.")
-TAG (L"%%minimumPitch%")
+TAG (L"##minimumPitch")
 DEFINITION (L"the minimum pitch frequency considered in the pitch analysis. A common value is 75 Hertz.")
-TAG (L"%%maximumPitch%")
+TAG (L"##maximumPitch")
 DEFINITION (L"the maximum pitch frequency considered in the pitch analysis. A common value is 600 Hertz.")
 NORMAL (L"A Manipulation object also contains the following smaller objects:")
 LIST_ITEM (L"1. The original @Sound.")
@@ -1080,13 +1082,15 @@ MAN_END
 MAN_BEGIN (L"Matrix: Draw as squares...", L"ppgb", 19980319)
 INTRO (L"A command to draw a @Matrix object into the @@Picture window@.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin")
+TAG (L"##Xmax")
 DEFINITION (L"the windowing domain in the %x direction. Elements outside will not be drawn. "
 	"%Autowindowing: if (%Xmin \\>_ %Xmax), the entire %x domain [%x__%min_, %x__%max_] of the Matrix is used.")
-TAG (L"%Ymin, %Ymax")
+TAG (L"##Ymin")
+TAG (L"##Ymax")
 DEFINITION (L"the windowing domain in the %y direction. Elements outside will not be drawn. "
 	"%Autowindowing: if (%Ymin \\>_ %Ymax), the entire %y domain [%y__%min_, %y__%max_] of the Matrix is used.")
-TAG (L"%Garnish")
+TAG (L"##Garnish")
 DEFINITION (L"determines whether axes are drawn around the picture. "
 	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
 ENTRY (L"Behaviour")
@@ -1154,11 +1158,11 @@ Dit staat allemaal in de on-line handleiding, dus je hoeft niet te gokken!
 MAN_BEGIN (L"Matrix: Set value...", L"ppgb", 19980319)
 INTRO (L"A command to change the value of one cell in each selected @Matrix object.")
 ENTRY (L"Settings")
-TAG (L"%%Row number")
+TAG (L"##Row number")
 DEFINITION (L"the number of the row of the cell whose value you want to change.")
-TAG (L"%%Column number")
+TAG (L"##Column number")
 DEFINITION (L"the number of the column of the cell whose value you want to change.")
-TAG (L"%%New value")
+TAG (L"##New value")
 DEFINITION (L"the value that you want the specified cell to have.")
 MAN_END
 
@@ -1333,11 +1337,11 @@ MAN_BEGIN (L"PairDistribution: To Stringses...", L"ppgb", 20030916)
 INTRO (L"A command to generate a number of string pairs from the selected @PairDistribution object. "
 	"This command will create two aligned @Strings objects of equal size.")
 ENTRY (L"Settings")
-TAG (L"%Number (standard: 1000)")
+TAG (L"##Number# (standard: 1000)")
 DEFINITION (L"the number of the strings in either resulting Strings object.")
-TAG (L"%%Name of first Strings% (standard: \"input\")")
+TAG (L"##Name of first Strings# (standard: \"input\")")
 DEFINITION (L"the name of the resulting Strings object associated with the first string of each pair.")
-TAG (L"%%Name of second Strings% (standard: \"output\")")
+TAG (L"##Name of second Strings# (standard: \"output\")")
 DEFINITION (L"the name of the resulting Strings object associated with the second string of each pair.")
 ENTRY (L"Example")
 NORMAL (L"Suppose the PairDistribution contains the following:")
@@ -1378,7 +1382,7 @@ NORMAL (L"To remove one or more points, "
 	"If there is no selection, the point nearest to the cursor is removed.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess", L"ppgb", 20030521)
+MAN_BEGIN (L"PointProcess", L"ppgb", 20101230)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"A PointProcess object represents a %%point process%, "
 	"which is a sequence of %points %t__%i_ in time, defined on a domain [%t__%min_, %t__%max_]. "
@@ -1396,7 +1400,6 @@ LIST_ITEM (L"\\bu @@Sound: To PointProcess (periodic, cc)...@: near locations of
 LIST_ITEM (L"\\bu @@Sound: To PointProcess (periodic, peaks)...@: near locations of high amplitude.")
 NORMAL (L"Creation from converting another object:")
 LIST_ITEM (L"\\bu ##Matrix: To PointProcess")
-LIST_ITEM (L"\\bu @@TextTier: Down to PointProcess@")
 LIST_ITEM (L"\\bu @@PitchTier: Down to PointProcess@")
 LIST_ITEM (L"\\bu @@IntensityTier: Down to PointProcess@")
 NORMAL (L"Hearing:")
@@ -1436,15 +1439,15 @@ LIST_ITEM (L"\\bu @@PointProcess: To Sound (pulse train)...@")
 LIST_ITEM (L"\\bu @@PointProcess: To Sound (hum)...@")
 NORMAL (L"Conversion:")
 LIST_ITEM (L"\\bu ##PointProcess: To Matrix")
-LIST_ITEM (L"\\bu @@PointProcess: Up to TextTier...")
+LIST_ITEM (L"\\bu @@PointProcess: Up to TextGrid...")
 LIST_ITEM (L"\\bu @@PointProcess: Up to PitchTier...")
 LIST_ITEM (L"\\bu @@PointProcess: Up to IntensityTier...")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Add point...", L"ppgb", 20010410)
 INTRO (L"A command to add a point to each selected @PointProcess.")
-ENTRY (L"Argument")
-TAG (L"%Time (s)")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which a point is to be added.")
 ENTRY (L"Behaviour")
 NORMAL (L"The point process is modified so that it contains the new point. "
@@ -1469,9 +1472,9 @@ ENTRY (L"Return value")
 NORMAL (L"the index of the nearest point at or after the specified time, "
 	"0 if the point process contains no points, "
 	"or a number higher than the number of points if the specified time is after the last point.")
-ENTRY (L"Argument")
-TAG (L"%Time (seconds)")
-DEFINITION (L"the time from which a point is looked for.")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
+DEFINITION (L"the time from which a point is looked for, in seconds.")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Get interval...", L"ppgb", 20021212)
@@ -1483,9 +1486,9 @@ NORMAL (L"the duration of the interval around a specified time. "
 	"the nearest points to the left and to the right of the specified time. "
 	"If the point process happens to contain a point at exactly the specified time, "
 	"the duration of the interval following this point is returned.")
-ENTRY (L"Argument")
-TAG (L"%Time (seconds)")
-DEFINITION (L"the time around which a point is looked for.")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
+DEFINITION (L"the time around which a point is looked for, in seconds.")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Get jitter (local)...", L"ppgb", 20030521)
@@ -1514,12 +1517,12 @@ NORMAL (L"where %T__%i_ is the %%i%th interval and %N is the number of intervals
 	"If no sequences of three intervals can be found whose durations "
 	"are between %%Shortest period% and %%Longest period%, the result is @undefined.")
 ENTRY (L"Settings")
-TAG (L"%%Shortest period% (seconds)")
-DEFINITION (L"the shortest possible interval that will be considered. For intervals %T__%i_ shorter than this, "
+TAG (L"##Shortest period (s)")
+DEFINITION (L"the shortest possible interval that will be considered, in seconds. For intervals %T__%i_ shorter than this, "
 	"the (%i-1)st, %%i%th, and (%i+1)st terms in the formula are taken as zero. "
 	"This argument will normally be very small, say 0.1 ms.")
-TAG (L"%%Longest period% (seconds)")
-DEFINITION (L"the shortest possible interval that will be considered. For intervals %T__%i_ longer than this, "
+TAG (L"##Longest period (s)")
+DEFINITION (L"the shortest possible interval that will be considered, in seconds. For intervals %T__%i_ longer than this, "
 	"the (%i-1)st, %%i%th, and (%i+1)st terms in the formula are taken as zero. "
 	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 20 milliseconds; "
 	"intervals longer than that will be considered voiceless.")
@@ -1532,9 +1535,9 @@ INTRO (L"A @query to the selected @PointProcess object.")
 ENTRY (L"Return value")
 NORMAL (L"the index of the nearest point before or at the specified time, "
 	"or 0 if the point process contains no points or the specified time is before the first point.")
-ENTRY (L"Argument")
-TAG (L"%Time (seconds)")
-DEFINITION (L"the time from which a point is looked for.")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
+DEFINITION (L"the time from which a point is looked for, in seconds.")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Get nearest index...", L"ppgb", 20021212)
@@ -1542,9 +1545,9 @@ INTRO (L"A @query to the selected @PointProcess object.")
 ENTRY (L"Return value")
 NORMAL (L"the index of the point nearest to the specified time, "
 	"or 0 if the point process contains no points.")
-ENTRY (L"Argument")
-TAG (L"%Time (seconds)")
-DEFINITION (L"the time around which a point is looked for.")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
+DEFINITION (L"the time around which a point is looked for, in seconds.")
 /*
 form Get nearest raising zero
    real Time_(s) 0.5
@@ -1584,8 +1587,8 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove point...", L"ppgb", 20021212)
 INTRO (L"A command to remove a point from every selected @PointProcess.")
-ENTRY (L"Settings")
-TAG (L"%Index")
+ENTRY (L"Setting")
+TAG (L"##Index")
 DEFINITION (L"the index of the point that is to be removed.")
 ENTRY (L"Behaviour")
 NORMAL (L"Does nothing if %index is less than 1 or greater than the number of points %nt in the point process. "
@@ -1594,9 +1597,9 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Remove point near...", L"ppgb", 20021212)
 INTRO (L"A command to remove a point from every selected @PointProcess.")
-ENTRY (L"Settings")
-TAG (L"%Time (seconds)")
-DEFINITION (L"the time around which a point is to be removed.")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
+DEFINITION (L"the time (in seconds) around which a point is to be removed.")
 ENTRY (L"Behaviour")
 NORMAL (L"Does nothing if there are no points in the point process. "
 	"Otherwise, the point nearest to %time is removed, and the other points stay the same.")
@@ -1605,9 +1608,9 @@ MAN_END
 MAN_BEGIN (L"PointProcess: Remove points...", L"ppgb", 20021212)
 INTRO (L"A command to remove a range of points from every selected @PointProcess.")
 ENTRY (L"Settings")
-TAG (L"%%From index% (\\>_ 1)")
+TAG (L"##From index (\\>_ 1)")
 DEFINITION (L"the first index of the range of points that are to be removed.")
-TAG (L"%%To index%")
+TAG (L"##To index")
 DEFINITION (L"the last index of the range of points that are to be removed.")
 ENTRY (L"Behaviour")
 NORMAL (L"All points that originally fell in the range [%fromIndex, %toIndex] are removed, and the other points stay the same.")
@@ -1616,9 +1619,9 @@ MAN_END
 MAN_BEGIN (L"PointProcess: Remove points between...", L"ppgb", 20021212)
 INTRO (L"A command to remove a range of points from every selected @PointProcess.")
 ENTRY (L"Settings")
-TAG (L"%%From time% (seconds)")
+TAG (L"##From time (s)")
 DEFINITION (L"the start of the domain from which all points are to be removed.")
-TAG (L"%%To time% (seconds)")
+TAG (L"##To time (s)")
 DEFINITION (L"the end of the domain from which all points are to be removed.")
 ENTRY (L"Behaviour")
 NORMAL (L"All points that originally fell in the domain [%fromTime, %toTime], including the edges, are removed, "
@@ -1764,16 +1767,16 @@ NORMAL (L"These curves have moved 2.646 percent of a period to the right. At tim
 	"the glottal flow curve turns from a convex polynomial into a concave exponential, "
 	"and the derivative still has its minimum there.")
 ENTRY (L"Settings")
-TAG (L"%%Sampling frequency")
-DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
-TAG (L"%%Adaptation factor")
+TAG (L"##Sampling frequency (Hz)")
+DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 hertz.")
+TAG (L"##Adaptation factor")
 DEFINITION (L"the factor by which a pulse height will be multiplied if the pulse time is not within "
-	"%maximumPeriod from the previous pulse, and by which a pulse height will again be multiplied "
-	"if the previous pulse time is not within %maximumPeriod from the pre-previous pulse. This factor is against "
+	"##Maximum period# from the previous pulse, and by which a pulse height will again be multiplied "
+	"if the previous pulse time is not within ##Maximum period# from the pre-previous pulse. This factor is against "
 	"abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.")
-TAG (L"%%Maximum period")
+TAG (L"##Maximum period (s)")
 DEFINITION (L"the minimal period that will be considered a silence, e.g. 0.05 seconds. "
-	"Example: if %adaptationFactor is 0.6, and %adaptationTime is 0.02 s, "
+	"Example: if ##Adaptation factor# is 0.6, and ##Adaptation time# is 0.02 s, "
 	"then the heights of the first two pulses after silences of at least 20 ms "
 	"will be multiplied by 0.36 and 0.6, respectively.")
 MAN_END
@@ -1784,18 +1787,18 @@ ENTRY (L"Algorithm")
 NORMAL (L"A pulse is generated at every point in the point process. This pulse is filtered at the Nyquist frequency "
 	"of the resulting #Sound by converting it into a sampled #sinc function.")
 ENTRY (L"Settings")
-TAG (L"%%Sampling frequency")
-DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 Hertz.")
-TAG (L"%%Adaptation factor")
+TAG (L"##Sampling frequency (Hz)")
+DEFINITION (L"the sampling frequency of the resulting Sound object, e.g. 44100 hertz.")
+TAG (L"##Adaptation factor")
 DEFINITION (L"the factor by which a pulse height will be multiplied if the pulse time is not within "
-	"%adaptationTime from the pre-previous pulse, and by which a pulse height will again be multiplied "
-	"if the pulse time is not within %adaptationTime from the previous pulse. This factor is against "
+	"##Adaptation time# from the pre-previous pulse, and by which a pulse height will again be multiplied "
+	"if the pulse time is not within ##Adaptation time# from the previous pulse. This factor is against "
 	"abrupt starts of the pulse train after silences, and is 1.0 if you do want abrupt starts after silences.")
-TAG (L"%%Adaptation time")
+TAG (L"##Adaptation time (s)")
 DEFINITION (L"the minimal period that will be considered a silence, e.g. 0.05 seconds.")
-TAG (L"%%Interpolation depth")
+TAG (L"##Interpolation depth")
 DEFINITION (L"the extent of the sinc function to the left and to the right of the peak, e.g. 2000 samples.")
-NORMAL (L"Example: if %adaptationFactor is 0.6, and %adaptationTime is 0.02 s, "
+NORMAL (L"Example: if ##Adaptation factor# is 0.6, and ##Adaptation time# is 0.02 s, "
 	"then the heights of the first two pulses after silences of at least 20 ms "
 	"will be multiplied by 0.36 and 0.6, respectively.")
 MAN_END
@@ -1810,8 +1813,8 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Up to IntensityTier...", L"ppgb", 19970329)
 INTRO (L"A command to promote every selected @PointProcess to an @IntensityTier.")
-ENTRY (L"Argument")
-TAG (L"%Intensity (dB)")
+ENTRY (L"Setting")
+TAG (L"##Intensity (dB)")
 DEFINITION (L"the intensity that will be associated with every point.")
 ENTRY (L"Behaviour")
 NORMAL (L"The times of all the points are trivially copied, and so is the time domain. "
@@ -1820,8 +1823,8 @@ MAN_END
 
 MAN_BEGIN (L"PointProcess: Up to PitchTier...", L"ppgb", 19970329)
 INTRO (L"A command to promote every selected @PointProcess to a @PitchTier.")
-ENTRY (L"Argument")
-TAG (L"%Frequency (Hz)")
+ENTRY (L"Setting")
+TAG (L"##Frequency (Hz)")
 DEFINITION (L"the pitch frequency that will be associated with every point.")
 ENTRY (L"Behaviour")
 NORMAL (L"The times of all the points are trivially copied, and so is the time domain. "
@@ -1856,15 +1859,15 @@ MAN_END
 MAN_BEGIN (L"Sound: To Intensity...", L"ppgb", 20100605)
 INTRO (L"A command to create an @Intensity object from every selected @Sound.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum pitch% (Hz)")
+TAG (L"##Minimum pitch (Hz)")
 DEFINITION (L"the minimum periodicity frequency in your signal. If you set it too high, "
 	"you will end up with a pitch-synchronous intensity modulation. If you set it too low, "
 	"your intensity contour may appear smeared, so you should set it as high as allowed by the signal "
 	"if you want a sharp contour.")
-TAG (L"%%Time step% (s)")
+TAG (L"##Time step (s)")
 DEFINITION (L"the time step of the resulting intensity contour. If you set it to zero, the time step is computed as "
 	"one quarter of the effective window length, i.e. as 0.8 / (%minimum_pitch).")
-TAG (L"%%Subtract mean")
+TAG (L"##Subtract mean")
 DEFINITION (L"See @@Intro 6.2. Configuring the intensity contour@.")
 ENTRY (L"Algorithm")
 NORMAL (L"The values in the sound are first squared, then convolved with a Gaussian analysis window (Kaiser-20; sidelobes below -190 dB). "
@@ -1979,11 +1982,11 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Set value...", L"ppgb", 19980105)
 INTRO (L"A command to change the value of one table cell in each selected @TableOfReal object.")
 ENTRY (L"Settings")
-TAG (L"%%Row number")
+TAG (L"##Row number")
 DEFINITION (L"the number of the row of the cell whose value you want to change.")
-TAG (L"%%Column number")
+TAG (L"##Column number")
 DEFINITION (L"the number of the column of the cell whose value you want to change.")
-TAG (L"%%New value")
+TAG (L"##New value")
 DEFINITION (L"the value that you want the specified cell to have.")
 MAN_END
 

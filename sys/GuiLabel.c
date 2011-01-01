@@ -55,7 +55,7 @@ typedef struct structGuiLabel {
 GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags)
 {
-	GuiLabel me = Melder_calloc (struct structGuiLabel, 1);
+	GuiLabel me = Melder_calloc_f (struct structGuiLabel, 1);
 	#if gtk
 		my widget = gtk_label_new (Melder_peekWcsToUtf8 (labelText));
 		_GuiObject_setUserData (my widget, me);
@@ -112,7 +112,7 @@ void GuiLabel_setString (GuiObject widget, const wchar_t *text) {
 		gtk_label_set_text (GTK_LABEL (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac
 		Melder_free (widget -> name);
-		widget -> name = Melder_wcsdup (text);
+		widget -> name = Melder_wcsdup_f (text);
 		_GuiNativeControl_setTitle (widget);
 	#endif
 }

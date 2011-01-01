@@ -107,11 +107,7 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 		Melder_winAudioFileExtension (audioFileType));
 	if (! file -> filePointer) goto end;
 	MelderFile_writeAudioFileHeader16_e (file, audioFileType, 
-		my sampleRate, nx, nchannels);
-	if (Melder_hasError ())
-	{
-		goto end;
-	}
+		my sampleRate, nx, nchannels);	
 
 	for (i = 1; i <= numberOfReads; i++)
 	{
@@ -315,7 +311,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 	*/
 
 	MelderFile_rewind (file);
-	MelderFile_writeAudioFileHeader16_e (file, audioFileType,
+	(void) MelderFile_writeAudioFileHeader16_e (file, audioFileType,
 		 sampleRate, numberOfSamples, numberOfChannels);
 	if (Melder_hasError ())
 	{

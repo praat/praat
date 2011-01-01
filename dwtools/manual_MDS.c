@@ -222,18 +222,18 @@ MAN_END
 MAN_BEGIN (L"Configuration: Draw...", L"djmw", 20040407)
 INTRO (L"Draws a projection of the selected @Configuration on a coordinate plane.")
 ENTRY (L"Settings")
-TAG (L"%%X-coordinate%, %%Y-coordinate%")
+TAG (L"##X-coordinate#, ##Y-coordinate#")
 DEFINITION (L"control the dimensions that will show in the plot.")
-TAG (L"%xmin, %xmax; %ymin, %ymax")
+TAG (L"##xmin#, ##xmax#; ##ymin#, ##ymax#")
 DEFINITION (L"range for horizontal and vertical axes, respectively.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
 MAN_BEGIN (L"Configuration: Invert dimension...", L"djmw", 20040407)
 INTRO (L"Inverts one dimension of a @Configuration.")
-NORMAL (L"Settings")
-TAG (L"%%Dimension")
+NORMAL (L"Setting")
+TAG (L"##Dimension")
 DEFINITION (L"the dimensions that has to be inverted.")
 ENTRY (L"Behaviour")
 NORMAL (L"For all points %i=1..%numberOfPoints: if %j == %dimension then %x__%ij_ "
@@ -243,9 +243,9 @@ MAN_END
 MAN_BEGIN (L"Configuration: Normalize...", L"djmw", 20040407)
 INTRO (L"Normalizes the selected @Configuration.")
 ENTRY (L"Settings")
-TAG (L"%%Sum of squares% (default: 0.0)")
+TAG (L"##Sum of squares# (standard value: 0.0)")
 DEFINITION (L"The desired value for the variance.")
-TAG (L"%%Each dimension separately")
+TAG (L"##Each dimension separately")
 DEFINITION (L"When on, the sum of squares in each dimension (column) will be scaled to %sumOfSquares "
 	"When off, the sum of squares of all the matrix elements will equal %sumOfSquares.")
 NORMAL (L"With the default value (0.0) for %sumOfSquares, and %eachDimensionSeparately chosen, "
@@ -266,10 +266,10 @@ MAN_END
 MAN_BEGIN (L"Configuration: Rotate...", L"djmw", 20100303)
 INTRO (L"Rotates the @Configuration in a plane around the origin.")
 NORMAL (L"Settings")
-TAG (L"%%Dimension 1%, %%Dimension 2%")
+TAG (L"##Dimension 1#, ##Dimension 2#")
 DEFINITION (L"the dimensions that span the plane. The order of dimension 1 and dimension 2 is not important: "
 	"the lowest number always determines the first dimension.")
-TAG (L"%%Angle%,")
+TAG (L"##Angle")
 DEFINITION (L"the counter-clockwise rotation angle in degrees.")
 MAN_END
 
@@ -292,21 +292,21 @@ MAN_BEGIN (L"Configuration: To Configuration (varimax)...", L"djmw", 20040407)
 INTRO (L"A command that rotates the selected @Configuration object to a new "
 	"Configuration object whose coordinates have maximum %squared variance. ")
 ENTRY (L"Settings")
-TAG (L"%%Normalize rows")
+TAG (L"##Normalize rows")
 DEFINITION (L"when selected, the distances of all points to the origin will "
 	"be made equal before iteration starts. We remember these scale factors "
 	"and restore the original distances after the iteration process has "
 	"stopped.")
-TAG (L"%Quartimax")
+TAG (L"##Quartimax")
 DEFINITION (L"when selected, the sum of fourth powers, normalized or raw, "
 	"will be maximized. ")
-TAG (L"%%Maximum number of iterations")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"sets a limit to the number of iterations. One iteration consists "
 	"of %numberOfDimensions\\.c (%numberOfDimensions\\--1)/2 planar rotations "
 	"of all pairs of dimensions.")
-TAG (L"%%Tolerance")
+TAG (L"##Tolerance")
 DEFINITION (L"also determines when the iteration stops. This happens if "
-	"|%v__%i_\\--%v__%i+1_| < %Tolerance \\.c %v__%i_, where %v__%i_ is the "
+	"|%v__%i_\\--%v__%i+1_| < %tolerance \\.c %v__%i_, where %v__%i_ is the "
 	"squared variance for the %i^^th^ iteration.")
 NORMAL (L"The iteration process stops when either the %%maximum number of "
 	"iterations% is reached or the %tolerance criterion is met, which ever "
@@ -366,11 +366,11 @@ NORMAL (L"We calculate the affine transform that transforms the second "
 	"The degree of proportionality is the congruence between corresponding "
 	"dimensions.")
 ENTRY (L"Settings")
-TAG (L"%%Maximum number of iterations")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"sets a limit to the number of iterations.")
-TAG (L"%%Tolerance")
+TAG (L"##Tolerance")
 DEFINITION (L"also determines when the iteration stops. This happens if "
-	"|%f(#T__%i_)\\--%f(#T__%i+1_)| < %Tolerance \\.c %f(#T__%i_), where "
+	"|%f(#T__%i_)\\--%f(#T__%i+1_)| < %tolerance \\.c %f(#T__%i_), where "
 	"%f(#T__%i_) is the sum of the congruences for the %i^^th^ "
 	"iteration (see below).")
 NORMAL (L"The iteration process stops when either the %%maximum number of "
@@ -395,8 +395,8 @@ MAN_END
 MAN_BEGIN (L"Configuration & Configuration: To Procrustes...", L"djmw", 20011008)
 INTRO (L"A command that creates a @Procrustes object from two selected "
 	"@Configuration objects.")
-ENTRY (L"Settings")
-TAG (L"%%Orthogonal transform%")
+ENTRY (L"Setting")
+TAG (L"##Orthogonal transform")
 DEFINITION (L"determines whether or not a translation and a scaling are allowed in the transform.")
 NORMAL (L"We calculate the @@Procrustes transform@ that transforms the second "
 	"selected Configuration object to match the first selected Configuration "
@@ -407,13 +407,13 @@ MAN_BEGIN (L"Confusion: To Dissimilarity...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Dissimilarity from every selected "
 	"@Confusion.")
 ENTRY (L"Settings")
-TAG (L"%Normalize")
+TAG (L"##Normalize")
 DEFINITION (L"when on, normalize rows by dividing each row element by the row "
 	"sum. In this way you correct for unequal stimulus numbers.")
-TAG (L"%%No symmetrization%, %Average, %Houtgast")
+TAG (L"##No symmetrization#, #Average, #Houtgast")
 DEFINITION (L"determine the symmetrization procedure. See "
 	"@@Confusion: To Similarity...")
-TAG (L"%%Maximum dissimilarity")
+TAG (L"##Maximum dissimilarity")
 DEFINITION (L"determines the maximum dissimilarity possible. When the default "
 	"value, 0.0, is chosen, %maximumDissimilarity "
 	"is calculated as the maximum element in the Similarity object.")
@@ -429,10 +429,10 @@ MAN_BEGIN (L"Confusion: To Dissimilarity (pdf)...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Dissimilarity from every selected "
 	"@Confusion.")
 ENTRY (L"Settings")
-TAG (L"%%Symmetrize first")
+TAG (L"##Symmetrize first")
 DEFINITION (L"when on, the confusion matrix is symmetrized before we calculate "
 	"dissimilarities.")
-TAG (L"%%Maximum dissimilarity% (units of sigma)")
+TAG (L"##Maximum dissimilarity (units of sigma)")
 DEFINITION (L"specifies the dissimilarity from confusion matrix elements that "
 	"are zero.")
 ENTRY (L"Algorithm")
@@ -473,10 +473,10 @@ MAN_END
 MAN_BEGIN (L"Confusion: To Similarity...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Similarity from every selected @Confusion.")
 ENTRY (L"Settings")
-TAG (L"%Normalize")
+TAG (L"##Normalize")
 DEFINITION (L"when on, normalize rows by dividing each row element by the row "
 	"sum. In this way you correct for unequal stimulus numbers.")
-TAG (L"%%No symmetrization%, %Average, %Houtgast")
+TAG (L"##No symmetrization#, #Average, #Houtgast")
 DEFINITION (L"determine the symmetrization procedure.")
 ENTRY (L"Algorithm")
 NORMAL (L"The %Average procedure averages:")
@@ -549,9 +549,9 @@ MAN_BEGIN (L"ContingencyTable: To Configuration (ca)...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Configuration object from the selected "
 	"@ContingencyTable object by means of @@Correspondence analysis@.")
 ENTRY (L"Settings")
-TAG (L"%%Number of dimensions")
+TAG (L"##Number of dimensions")
 DEFINITION (L"The dimensionality of the Configuration.")
-TAG (L"%%Scaling of the final configuration")
+TAG (L"##Scaling of the final configuration")
 DEFINITION (L"determines whether row points are in the centre of gravity of "
 	"column points, or, column points are in the centre of gravity of row "
 	"points, or, whether roes and columns are treated symmetrically.")
@@ -744,22 +744,22 @@ FORMULA (L"%d\\'p__%ij_ = \\su__%k=1..(%%numberOfInteriorKnots%+%order)_ spline_
 NORMAL (L"where spline__%k_ (\\.c) is the value of the %k^^th^ I-spline of order %order and knot sequence "
 	"%knot evaluated at %\\de__%ij_.")
 ENTRY (L"Settings")
-TAG (L"%%Number of dimensions")
+TAG (L"##Number of dimensions")
 DEFINITION (L"determines the dimensionality of the configuration.")
-TAG (L"%%Number of interior knots%")
+TAG (L"##Number of interior knots")
 DEFINITION (L"determines the number of segment boundaries. Each interior knot "
 	"is the boundary between two segments. The splines in each segment will "
 	"be joined as continuously as possible.")
-TAG (L"%%Order of I-spline")
+TAG (L"##Order of I-spline")
 DEFINITION (L"The order of the polynomial basis of the I-spline.")
 NORMAL (L"Finding the optimal Configuration involves a minimization process:")
-TAG (L"%Tolerance")
+TAG (L"##Tolerance")
 DEFINITION (L"When successive values for the stress differ by less than "
-	"%Tolerance, the minimization process stops.")
-TAG (L"%%Maximum number of iterations%")
+	"#Tolerance, the minimization process stops.")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"Minimization stops after this number of iterations has been "
 	"reached.")
-TAG (L"%%Number of repetitions")
+TAG (L"##Number of repetitions")
 DEFINITION (L"If chosen larger than 1, the minimization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress, will be saved.")
@@ -776,14 +776,14 @@ MAN_BEGIN (L"Dissimilarity: To Configuration (kruskal)...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Configuration object from a @Dissimilarity "
 	"object.")
 ENTRY (L"Settings")
-TAG (L"%%Number of dimensions% (default: 2)")
+TAG (L"##Number of dimensions# (standard value: 2)")
 DEFINITION (L"The dimensionality of the Configuration.")
-TAG (L"%%Distance metric% (default: 2, i.e. Euclidean)")
+TAG (L"##Distance metric% (standard value: 2, i.e. Euclidean)")
 DEFINITION (L"the general distance between points #x__%i_ and #x__%j_ (%i,%j "
 	"= 1..%numberOfPoints) is:")
 DEFINITION (L"(\\su__%k=1..%numberOfDimensions_ |%x__%ik_ \\--%x__%jk_|"
 	"^^%metric^)^^1/%metric^")
-TAG (L"%%Sort distances")
+TAG (L"##Sort distances")
 DEFINITION (L"determines the handling of ties in the data. When off, whenever "
 	"two or more dissimilarities are equal we do not care whether the fitted "
 	"distances are equal or not. "
@@ -791,22 +791,22 @@ DEFINITION (L"determines the handling of ties in the data. When off, whenever "
 	"When on, however, we impose the constaint that the fitted distances be "
 	"equal whenever the dissimilarities are equal.")
 NORMAL (L"For the calculation of stress:")
-TAG (L"%Formula1 (default)")
+TAG (L"##Formula1 (default)")   // ??
 FORMULA (L"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su %distance__%k_^2)")
-TAG (L"%%Formula2%")
+TAG (L"##Formula2")
 FORMULA (L"%stress = \\Vr(\\su(%distance__%k_ \\-- %fittedDistance__%k_)^2 / "
 	"\\su (%distance__%k_ \\-- %averageDistance)^2)")
 DEFINITION (L"Note that values of stress 2 are generally more than double those "
 	"of stress 1 for the same degree of fit.")
 NORMAL (L"Finding the optimal Configuration involves a minimization process:")
-TAG (L"%Tolerance")
+TAG (L"##Tolerance")
 DEFINITION (L"When successive values for the stress differ less than %Tolerance "
 	"the minimization process stops.")
-TAG (L"%%Maximum number of iterations%")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"Minimization stops after this number of iterations has been "
 	"reached.")
-TAG (L"%%Number of repetitions")
+TAG (L"##Number of repetitions")
 DEFINITION (L"When chosen larger than 1, the minimalization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress will be saved.")
@@ -859,20 +859,20 @@ NORMAL (L"Dissimilarities %\\de__%ij_ and @disparities %d\\'p__%ij_ are "
 	"related by:")
 FORMULA (L"%d\\'p__%ij_ \\<_ %d\\'p__%kl_ if %\\de__%ij_ \\<_ %\\de__%kl_")
 ENTRY (L"Settings")
-TAG (L"%%Number of dimensions")
-DEFINITION (L"determines the dimension of the configuration.")
-TAG (L"%Primary or %secondary% approach to ties")
+TAG (L"##Number of dimensions")
+DEFINITION (L"determines the number of dimensions of the configuration.")
+TAG (L"##Primary or secondary approach to ties")
 DEFINITION (L"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_, "
 	"the primary approach imposes no conditions on the corresponding "
 	"@disparities %d\\'p__%ij_ and %d\\'p__%kl_, while the %secondary "
 	"approach demands that also %d\\'p__%ij_ = %d\\'p__%kl_.")
 NORMAL (L"Finding the optimal Configuration involves a minimization process:")
-TAG (L"%Tolerance")
+TAG (L"##Tolerance")
 DEFINITION (L"When successive values for the stress differ less than %Tolerance "
 	"the minimization process stops.")
-TAG (L"%%Maximum number of iterations%")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"Minimization stops after this number of iterations has been reached.")
-TAG (L"%%Number of repetitions")
+TAG (L"##Number of repetitions")
 DEFINITION (L"When chosen larger than 1, the minimalization process will be "
 	"repeated, each time with another random start configuration. "
 	"The configuration that results in minimum stress will be saved.")
@@ -890,7 +890,7 @@ MAN_BEGIN (L"Dissimilarity: To Distance...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Distance object from a selected "
 	"@Dissimilarity object.")
 ENTRY (L"Settings")
-TAG (L"%Scale")
+TAG (L"##Scale")
 DEFINITION (L"when on, the @@Dissimilarity: Get additive constant|"
 	"additiveConstant@ is determined, when off the %additiveConstant = 0.")
 NORMAL (L"dissimilarities are transformed to distances according to:")
@@ -913,13 +913,13 @@ INTRO (L"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
 FORMULA (L"%d\\'p__%ij_ = %\\de__%ij_")
 ENTRY (L"Settings")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -932,13 +932,13 @@ INTRO (L"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 FORMULA (L"%d\\'p__%ij_ = %a + %b \\.c %\\de__%ij_,")
 NORMAL (L"where the values of %a and %b are determined by regression.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -948,17 +948,17 @@ INTRO (L"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from the regression of distances %d__%ij_ from @Configuration on the "
 	"@spline transformed dissimilarities %\\de__%ij_.")
 ENTRY (L"Settings")
-TAG (L"%%Number of interior knots")
+TAG (L"##Number of interior knots")
 DEFINITION (L"determines the number of segments.")
-TAG (L"Order of I-spline")
+TAG (L"##Order of I-spline")
 DEFINITION (L"The order of the polynomial basis of the I-spline.")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -968,18 +968,18 @@ INTRO (L"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 	"from the monotone regression of distances %d__%ij_ "
 	"from @Configuration on the dissimilarities %\\de__%ij_.")
 ENTRY (L"Settings")
-TAG (L"%Primary or %secondary% approach to ties")
+TAG (L"##Primary or secondary approach to ties")
 DEFINITION (L"When dissimilarities are equal, i.e., %\\de__%ij_ = %\\de__%kl_ "
 	"the primary approach imposes no conditions on the corresponding distances "
 	"%d__%ij_ and %d__%kl_, while the %secondary approach demands that also "
 	"%d__%ij_ = %d__%kl_.")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -991,13 +991,13 @@ INTRO (L"Draws a scatterplot of the dissimilarities %\\de__%ij_ from the "
 FORMULA (L"%d\\'p__%ij_ = %b \\.c %\\de__%ij_,")
 NORMAL (L"where the value of %b is determined by regression.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -1006,13 +1006,13 @@ INTRO (L"Draws the Shepard diagram. This is a scatterplot of the "
 	"dissimilarities from the @Dissimilarity object versus distances (as "
 	"calculated from the @Configuration).")
 ENTRY (L"Settings")
-TAG (L"%%Minimum proximity%, %%Maximum proximity%")
+TAG (L"##Minimum proximity#, ##Maximum proximity#")
 DEFINITION (L"minimum and maximum values for the proximities (horizontal axis).")
-TAG (L"%%Minimum distance%, %%Maximum distance%")
+TAG (L"##Minimum distance#, ##Maximum distance#")
 DEFINITION (L"minimum and maximum values for the distances (vertical axis).")
-TAG (L"%%Mark size (mm)%, %%Mark string%")
+TAG (L"##Mark size (mm)#, ##Mark string#")
 DEFINITION (L"size and kind of the marks in the plot.")
-TAG (L"%garnish")
+TAG (L"##Garnish")
 DEFINITION (L"when on, draws a bounding box with decoration.")
 MAN_END
 
@@ -1191,8 +1191,8 @@ MAN_END
 
 MAN_BEGIN (L"Distance: To ScalarProduct...", L"djmw", 20040407)
 INTRO (L"A command that creates a @ScalarProduct for each selected @Distance.")
-ENTRY (L"Settings")
-LIST_ITEM (L"%%Make sum of squares equal 1.0")
+ENTRY (L"Setting")
+TAG (L"##Make sum of squares equal 1.0")
 DEFINITION (L"when selected, the elements in the resulting matrix part will be scaled such that "
 	"the sum of all the squared elements in the matrix equals 1.0.")
 ENTRY (L"Algorithm")
@@ -1414,7 +1414,6 @@ INTRO (L"According to the measurement theory of @@Stevens (1951)@, there are fou
 	"two levels, Nominal and Ordinal, are often called %non-%metric. The last two are %metric.")
 MAN_END
 
-
 MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20010409)
 INTRO (L"This tutorial describes how you can use P\\s{RAAT} to "
 	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")
@@ -1546,7 +1545,6 @@ NORMAL (L"For more information about the Procrustes transform and its algorithm 
 	"see chapter 19 in @@Borg & Groenen (1997)@.")
 MAN_END
 
-
 MAN_BEGIN (L"Procrustes transform", L"djmw", 19980119)
 INTRO (L"A transformation that only uses a combination of a translation, "
 	"a scaling and a rigid transformation to transform one Configuration such that it "
@@ -1626,8 +1624,8 @@ MAN_END
 MAN_BEGIN (L"Similarity: To Dissimilarity...", L"djmw", 20040407)
 INTRO (L"A command that creates a @Dissimilarity from every selected "
 	"@Similarity.")
-ENTRY (L"Settings")
-TAG (L"%%Maximum dissimilarity")
+ENTRY (L"Setting")
+TAG (L"##Maximum dissimilarity")
 DEFINITION (L"determines the maximum dissimilarity possible. When the default "
 	"value, 0.0, is chchosen%maximumDissimilarity "
 	"is calculated as the maximum element in the Similarity object.")
@@ -1806,8 +1804,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize columns...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the columns in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Settings")
-TAG (L"%Norm")
+ENTRY (L"Setting")
+TAG (L"##Norm")
 DEFINITION (L"determines the sum of the squared elements in each column after "
 	"normalization.")
 ENTRY (L"Algorithm")
@@ -1818,8 +1816,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize rows...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the rows in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Settings")
-TAG (L"%Norm")
+ENTRY (L"Setting")
+TAG (L"##Norm")
 DEFINITION (L"determines the sum of the squared elements in each row after "
 	"normalization.")
 ENTRY (L"Algorithm")
@@ -1830,8 +1828,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Normalize table...", L"djmw", 19980422)
 INTRO (L"A command that normalizes the elements in the selected @TableOfReal "
 	"objects.")
-ENTRY (L"Settings")
-TAG (L"%Norm")
+ENTRY (L"Setting")
+TAG (L"##Norm")
 DEFINITION (L"determines the sum of the squared elements after normalization.")
 ENTRY (L"Algorithm")
 NORMAL (L"All elements %x__%ij_ will be multiplied by "
@@ -1879,153 +1877,153 @@ MAN_END
 /************ references ***********************************************/
 
 MAN_BEGIN (L"Abramowitz & Stegun (1970)", L"djmw", 19971201)
-NORMAL (L"M. Abramowitz & I. Stegun (1970), %%Handbook of Mathematical "
-	"Functions%, Dover Publications, Inc., New York.")
+NORMAL (L"M. Abramowitz & I. Stegun (1970): %%Handbook of mathematical "
+	"functions%. New York: Dover Publications.")
 MAN_END
 
 
 MAN_BEGIN (L"Borg & Groenen (1997)", L"djmw", 19971219)
-NORMAL (L"I. Borg & P. Groenen (1997), %%Modern Multidimensional Scaling: "
-	"Theory and Applications%, Springer.")
+NORMAL (L"I. Borg & P. Groenen (1997): %%Modern multidimensional scaling: "
+	"theory and applications%. Springer.")
 MAN_END
 
 
 MAN_BEGIN (L"Brokken (1983)", L"djmw", 19980406)
-NORMAL (L" F.B. Brokken (1983), \"Orthogonal Procrustes rotation maximizing "
-	"congruence\", %Psychometrika #48, 343-352.")
+NORMAL (L" F.B. Brokken (1983): \"Orthogonal Procrustes rotation maximizing "
+	"congruence.\" %Psychometrika #48: 343\\--352.")
 MAN_END
 
 
 MAN_BEGIN (L"Cailliez (1983)", L"djmw", 19971201)
-NORMAL (L" F. Cailliez (1983), \"The analytical solution of the additive "
-	"constant problem\", %Psychometrika #48, 305-308.")
+NORMAL (L" F. Cailliez (1983): \"The analytical solution of the additive "
+	"constant problem.\" %Psychometrika #48, 305-308.")
 MAN_END
 
 
 MAN_BEGIN (L"Carroll & Chang (1970)", L"djmw", 19971201)
 NORMAL (L"J.D. Carroll & J.-J. Chang, (1970): \"Analysis of Individual "
 	"Differences in Multidimensional scaling via an N-way generalization of "
-	"\"Eckart-Young\" Decomposition\", %Psychometrika #35, 283-319.")
+	"\"Eckart-Young\" Decomposition.\" %Psychometrika #35: 283\\--319.")
 MAN_END
 
 
 MAN_BEGIN (L"Carroll & Wish (1974)", L"djmw", 19971201)
 NORMAL (L"J.D. Carroll & M. Wish, (1974): \"Models and methods for three-way "
-	"multidimensional scaling\", in D.H. Krantz, R.C. Atkinson, R.D. Luce & "
-	"P. Suppes (Eds.), %%Contemporary developments in mathematical psychology:"
-	" Vol. 2 Measurement, psychophysics, and neural "
-	"information processing%, 283-319, New York, Academic Press.")
+	"multidimensional scaling.\" In D.H. Krantz, R.C. Atkinson, R.D. Luce & "
+	"P. Suppes (eds.): %%Contemporary developments in mathematical psychology: "
+	"Vol. 2 Measurement, psychophysics, and neural "
+	"information processing%, 283\\--319. New York: Academic Press.")
 MAN_END
 
 
 MAN_BEGIN (L"De Leeuw (1977)", L"djmw", 19971201)
-NORMAL (L"J. de Leeuw (1977), \"Applications of convex analysis to "
-	"multidimensional scaling\", In J.R. Barra, F. Brodeau, G. Romier & "
-	"B. van Cutsem (eds.), %% Recent developments in statistics%, Amsterdam, "
-	"The Netherlands: North-Holland, 133-145.")
+NORMAL (L"J. de Leeuw (1977): \"Applications of convex analysis to "
+	"multidimensional scaling.\" In J.R. Barra, F. Brodeau, G. Romier & "
+	"B. van Cutsem (eds.): %%Recent developments in statistics%. Amsterdam: "
+	"North-Holland. 133\\--145.")
 MAN_END
 
 
 MAN_BEGIN (L"De Leeuw & Pruzansky (1978)", L"djmw", 19971201)
-NORMAL (L"J. de Leeuw & S. Pruzansky (1978), \"A new computational method to "
-	"fit the weighted Euclidean distance model\", %Psychometrika , 479-490.")
+NORMAL (L"J. de Leeuw & S. Pruzansky (1978): \"A new computational method to "
+	"fit the weighted Euclidean distance model.\" %Psychometrika #xx: 479-490.")   // ??
 MAN_END
 
 
 MAN_BEGIN (L"Gifi (1990)", L"djmw", 19971207)
-NORMAL (L"A. Gifi (1990), %%Nonlinear Multivariate Analysis%, John Wiley & "
-	"Sons Ltd., reprint 1996")
+NORMAL (L"A. Gifi (1990): %%Nonlinear multivariate analysis%. John Wiley & "
+	"Sons Ltd., reprint 1996.")
 MAN_END
 
 
 MAN_BEGIN (L"Golub & van Loan (1996)", L"djmw", 19971207)
-NORMAL (L"G. Golub & C. van Loan (1996), %%Matrix computations%, third edition, "
-	"The Johns Hopkins University Press, London")
+NORMAL (L"G. Golub & C. van Loan (1996): %%Matrix computations%. Third edition. "
+	"London: The Johns Hopkins University Press.")   // ??
 MAN_END
 
 
 MAN_BEGIN (L"Green, Carmone & Smith (1989)", L"djmw", 19971201)
 NORMAL (L"P. Green, F. Carmone, S. Smith (1989): "
-	"%%Multidimensional scaling: concepts and applications%, section 3. "
+	"%%Multidimensional scaling: concepts and applications%. Section 3. "
 	"Allyn and Bacon.")
 MAN_END
 
 
 MAN_BEGIN (L"Kaiser (1958)", L"djmw", 19980404)
-NORMAL (L" H.F. Kaiser (1958), \"The varimax criterion for analytic rotation "
-	"in factor analysis\", %Psychometrika #23, 187-200.")
+NORMAL (L" H.F. Kaiser (1958): \"The varimax criterion for analytic rotation "
+	"in factor analysis.\" %Psychometrika #23: 187\\--200.")
 MAN_END
 
 
 MAN_BEGIN (L"Kiers & Groenen (1996)", L"djmw", 19971219)
-NORMAL (L"H.A.L. Kiers & P. Groenen (1996), \"A monotonically convergent "
-	"algorithm for orthogonal congruence rotation\", %Psychometrika #61, "
-	"375-389.")
+NORMAL (L"H.A.L. Kiers & P. Groenen (1996): \"A monotonically convergent "
+	"algorithm for orthogonal congruence rotation.\" %Psychometrika #61: "
+	"375\\--389.")
 MAN_END
 
 
 MAN_BEGIN (L"Klein, Plomp & Pols (1970)", L"djmw", 19971201)
-NORMAL (L" W. Klein, R. Plomp, & L.C.W. Pols (1970), \"Vowel Spectra, "
-	"Vowel Spaces, and Vowel Identification\", JASA 48, 999-1009.")
+NORMAL (L" W. Klein, R. Plomp, & L.C.W. Pols (1970): \"Vowel Spectra, "
+	"Vowel Spaces, and Vowel Identification.\" %%Journal of the Acoustical Society of America% #48: 999\\--1009.")
 MAN_END
 
 
 MAN_BEGIN (L"Kruskal (1964)", L"djmw", 19971201)
-NORMAL (L"J.B. Kruskal (1964), \"Nonmetric multidimensional scaling: a "
-	"numerical method\", %Psychometrika #29, 115-129.")
+NORMAL (L"J.B. Kruskal (1964): \"Nonmetric multidimensional scaling: a "
+	"numerical method.\" %Psychometrika #29: 115\\--129.")
 MAN_END
 
 
 MAN_BEGIN (L"Ramsay (1988)", L"djmw", 19980106)
-NORMAL (L"J.O. Ramsay (1988), \"Monotone Regression Splines in Action\", "
-	"%%Statistical Science% #3, 425-461.")
+NORMAL (L"J.O. Ramsay (1988): \"Monotone regression splines in action.\" "
+	"%%Statistical Science% #3: 425\\--461.")
 MAN_END
 
 
 MAN_BEGIN (L"Stevens (1951)", L"djmw", 19971201)
-NORMAL (L"S.S. Stevens (1951), \"Mathematics, measurement, and psychophysics\","
-	" in S.S. Stevens (Ed.), %%Handbook of experimental Psychology%, New York:"
-	" Wiley.")
+NORMAL (L"S.S. Stevens (1951): \"Mathematics, measurement, and psychophysics.\" "
+	"In S.S. Stevens (ed.): %%Handbook of experimental psychology%. New York: "
+	"Wiley.")
 MAN_END
 
 
 MAN_BEGIN (L"Takane, Young & de Leeuw (1976)", L"djmw", 19971201)
-NORMAL (L"Y. Takane, F. Young, J. de Leeuw (1976), \"Non-metric individual "
+NORMAL (L"Y. Takane, F. Young, J. de Leeuw (1976): \"Non-metric individual "
 	"differences multidimensional scaling: an alternating least squares method "
-	"with optimal scaling features\", %Psychometrika #42, 7-67.")
+	"with optimal scaling features.\" %Psychometrika #42: 7\\--67.")
 MAN_END
 
 
 MAN_BEGIN (L"Ten Berge (1995)", L"djmw", 19980404)
-NORMAL (L"J.M.F. ten Berge (1995), \"Suppressing permutations or rigid planar "
-	"rotations: A remedy against nonoptimal varimax rotations\", "
-	"%Psychometrika #60, 437-446.")
+NORMAL (L"J.M.F. ten Berge (1995): \"Suppressing permutations or rigid planar "
+	"rotations: a remedy against nonoptimal varimax rotations.\" "
+	"%Psychometrika #60, 437\\--446.")
 MAN_END
 
 
 MAN_BEGIN (L"Ten Berge, Kiers & Krijnen (1993)", L"djmw", 19971207)
-NORMAL (L"J.M.F. ten Berge, H.A.L. Kiers & W.P. Krijnen (1993), \"Computational "
-	"Solutions for the Problem of Negative Saliences and Nonsymmetry in "
-	"INDSCAL\", %Journal of Classification #10, 115-124.")
+NORMAL (L"J.M.F. ten Berge, H.A.L. Kiers & W.P. Krijnen (1993): \"Computational "
+	"solutions for the problem of negative saliences and nonsymmetry in "
+	"INDSCAL.\" %%Journal of Classification% #10: 115\\--124.")
 MAN_END
 
 
 MAN_BEGIN (L"Torgerson (1958)", L"djmw", 19971201)
-NORMAL (L"W.S. Torgerson (1958), %%Theory and methods of scaling%, "
+NORMAL (L"W.S. Torgerson (1958): %%Theory and methods of scaling%. "
 	"New York: Wiley.")
 MAN_END
 
 
 MAN_BEGIN (L"Young, Takane & Lewyckyj (1978)", L"djmw", 19971201)
-NORMAL (L"F.W. Young, Y. Takane & R. Lewyckyj (1978), "
-	"\"Three notes on ALSCAL\", %Psychometrika #43, 433-435.")
+NORMAL (L"F.W. Young, Y. Takane & R. Lewyckyj (1978): "
+	"\"Three notes on ALSCAL.\" %Psychometrika #43: 433\\--435.")
 MAN_END
 
 
 MAN_BEGIN (L"Weller & Romney (1990)", L"djmw", 19971216)
-NORMAL (L"S.C. Weller & A.K. Romney (1990) %%Metric Scaling: "
-	"Correspondence Analysis%, Sage University Paper Series on Quantitative "
-	"Applications in the Social Sciences 07-075, Newbury Park, CA: Sage.")
+NORMAL (L"S.C. Weller & A.K. Romney (1990): %%Metric Scaling: "
+	"correspondence analysis%. Sage University Paper Series on Quantitative "
+	"Applications in the Social Sciences 07-075. Newbury Park, CA: Sage.")
 MAN_END
 
 }

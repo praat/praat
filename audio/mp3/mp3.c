@@ -145,7 +145,7 @@ int mp3_recognize (int nread, const char *data)
 
 MP3_FILE mp3f_new (void)
 {
-	MP3_FILE mp3f = Melder_malloc (struct _MP3_FILE, 1);
+	MP3_FILE mp3f = Melder_malloc_e (struct _MP3_FILE, 1);
 	if (mp3f)
 		memset (mp3f, 0, sizeof(struct _MP3_FILE));
 	return mp3f;

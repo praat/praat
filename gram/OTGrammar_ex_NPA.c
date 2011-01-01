@@ -32,38 +32,38 @@ OTGrammar OTGrammar_create_NPA_grammar (void) {
 	OTGrammar me = new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = 3); cherror
 	constraint = & my constraints [1];
-		constraint -> name = Melder_wcsdup (L"*G\\s{ESTURE}"); cherror
+		constraint -> name = Melder_wcsdup_e (L"*G\\s{ESTURE}"); cherror
 		constraint -> ranking = 102.7;
 		constraint -> plasticity = 1.0;
 	constraint = & my constraints [2];
-		constraint -> name = Melder_wcsdup (L"*R\\s{EPLACE} (n, m)"); cherror
+		constraint -> name = Melder_wcsdup_e (L"*R\\s{EPLACE} (n, m)"); cherror
 		constraint -> ranking = 100.0;
 		constraint -> plasticity = 1.0;
 	constraint = & my constraints [3];
-		constraint -> name = Melder_wcsdup (L"*R\\s{EPLACE} (t, p)"); cherror
+		constraint -> name = Melder_wcsdup_e (L"*R\\s{EPLACE} (t, p)"); cherror
 		constraint -> ranking = 112.0;
 		constraint -> plasticity = 1.0;
 	my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus = 2); cherror
 	tableau = & my tableaus [1];
-		tableau -> input = Melder_wcsdup (L"an+pa"); cherror
+		tableau -> input = Melder_wcsdup_e (L"an+pa"); cherror
 		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates = 2); cherror
 		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup (L"anpa");
+			candidate -> output = Melder_wcsdup_e (L"anpa"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 3); cherror
 			candidate -> marks [1] = 1;
 		candidate = & tableau -> candidates [2];
-			candidate -> output = Melder_wcsdup (L"ampa");
+			candidate -> output = Melder_wcsdup_e (L"ampa"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 3); cherror
 			candidate -> marks [2] = 1;
 	tableau = & my tableaus [2];
-		tableau -> input = Melder_wcsdup (L"at+ma"); cherror
+		tableau -> input = Melder_wcsdup_e (L"at+ma"); cherror
 		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates = 2); cherror
 		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup (L"atma");
+			candidate -> output = Melder_wcsdup_e (L"atma"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 3); cherror
 			candidate -> marks [1] = 1;
 		candidate = & tableau -> candidates [2];
-			candidate -> output = Melder_wcsdup (L"apma");
+			candidate -> output = Melder_wcsdup_e (L"apma"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 3); cherror
 			candidate -> marks [3] = 1;
 	OTGrammar_checkIndex (me);

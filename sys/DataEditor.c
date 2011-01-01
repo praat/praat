@@ -272,7 +272,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			case lstringwwa: {
 				wchar_t *old = * (wchar_t **) my fieldData [i]. address;
 				Melder_free (old);
-				* (wchar_t **) my fieldData [i]. address = Melder_wcsdup (text);
+				* (wchar_t **) my fieldData [i]. address = Melder_wcsdup_f (text);
 			} break;
 			default: break;
 		}
@@ -556,7 +556,7 @@ static void showStructMember (
 		fieldData -> minimum = minimum;   /* Normally 1. */
 		fieldData -> maximum = maximum;
 		fieldData -> rank = 1;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	} else if (rank < 0) {
 		/*
@@ -571,7 +571,7 @@ static void showStructMember (
 		fieldData -> minimum = 0;   /* In-line arrays start with index 0. */
 		fieldData -> maximum = maximum;   /* Probably between -1 and capacity - 1. */
 		fieldData -> rank = rank;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	} else if (rank == 3) {
 		/*
@@ -582,7 +582,7 @@ static void showStructMember (
 		fieldData -> minimum = wcsequ (((const wchar_t * (*) (int)) memberDescription -> min1) (0), L"_") ? 1 : 0;
 		fieldData -> maximum = ((int (*) (const wchar_t *)) memberDescription -> max1) (L"\n");
 		fieldData -> rank = rank;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
@@ -604,20 +604,20 @@ static void showStructMember (
 		fieldData -> min2 = min2;
 		fieldData -> max2 = max2;
 		fieldData -> rank = 2;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	} else if (type == structwa) {   /* In-line struct. */
 		fieldData -> address = memberAddress;   /* Direct. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	} else if (type == objectwa || type == collectionwa) {
 		fieldData -> address = * (Data *) memberAddress;   /* Indirect. */
 		if (! fieldData -> address) return;   /* No button if no object. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup (history);
+		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
 		GuiObject_show (fieldData -> button);
 	}
 }
@@ -750,7 +750,7 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 			fieldData -> description = object -> methods -> description;
 			fieldData -> rank = 0;
 			if (fieldData -> history) Melder_free (fieldData -> history);
-			fieldData -> history = Melder_wcsdup (history.string);
+			fieldData -> history = Melder_wcsdup_f (history.string);
 			GuiObject_show (fieldData -> button);			
 		}
 	}

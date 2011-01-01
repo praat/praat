@@ -112,10 +112,10 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 		thyrow < 1 || thyrow > thy numberOfRows ||
 		my numberOfColumns != thy numberOfColumns) return 0;
 
+	Melder_free (thy rowLabels[thyrow]);
 	if (my rowLabels[myrow] != NULL && thy rowLabels[thyrow] != my rowLabels[myrow])
 	{
-		Melder_free (thy rowLabels[thyrow]);
-		thy rowLabels[thyrow] = Melder_wcsdup (my rowLabels[myrow]);
+		thy rowLabels[thyrow] = Melder_wcsdup_e (my rowLabels[myrow]);
 		if (thy rowLabels[thyrow] == NULL) return 0;
 	}
 	if (my data[myrow] != thy data[thyrow]) NUMdvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
@@ -218,7 +218,7 @@ Strings TableOfReal_extractRowLabels (I)
 	for (i = 1; i <= n; i++)
 	{
 		wchar_t *label = my rowLabels[i] ? my rowLabels[i] : L"?";
-		thy strings[i] = Melder_wcsdup (label);
+		thy strings[i] = Melder_wcsdup_e (label);
 		if (thy strings[i] == NULL) goto end;
 	}
 
@@ -245,7 +245,7 @@ Strings TableOfReal_extractColumnLabels (I)
 	for (i = 1; i <= n; i++)
 	{
 		wchar_t *label = my columnLabels[i] ? my columnLabels[i] : L"?";
-		thy strings[i] = Melder_wcsdup (label);
+		thy strings[i] = Melder_wcsdup_e (label);
 		if (thy strings[i] == NULL) goto end;
 	}
 
@@ -765,7 +765,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels)
 		if (my rowLabels == thy rowLabels) return 1;
 		for (i=1; i <= my numberOfRows; i++)
 		{
-			if (NUMwcscmp (my rowLabels[i], thy rowLabels[i])) return 0;
+			if (Melder_wcscmp (my rowLabels[i], thy rowLabels[i])) return 0;
 		}
 	}
 	if (columnLabels)
@@ -774,7 +774,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels)
 		if (my columnLabels == thy columnLabels) return 1;
 		for (i=1; i <= my numberOfColumns; i++)
 		{
-			if (NUMwcscmp (my columnLabels[i], thy columnLabels[i])) return 0;
+			if (Melder_wcscmp (my columnLabels[i], thy columnLabels[i])) return 0;
 		}
 	}
 	return 1;
@@ -1596,7 +1596,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse)
 
 		if (mylabel != NULL)
 		{
-			thy rowLabels[i] = Melder_wcsdup (mylabel);
+			thy rowLabels[i] = Melder_wcsdup_e (mylabel);
 			if (thy rowLabels[i] == NULL) goto end;
 		}
 
@@ -1847,7 +1847,7 @@ TableOfReal TableOfReal_appendColumns (I, thou)
 			1, thy numberOfColumns)) goto end;
 	for (i = 1; i <= my numberOfRows; i++)
 	{
-		if (NUMwcscmp (my rowLabels[i], thy rowLabels[i])) labeldiffs++;
+		if (Melder_wcscmp (my rowLabels[i], thy rowLabels[i])) labeldiffs++;
 		NUMdvector_copyElements (my data[i], his data[i], 1, my numberOfColumns);
 		NUMdvector_copyElements (thy data[i], &his data[i][my numberOfColumns], 1, thy numberOfColumns);
 	}

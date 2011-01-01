@@ -190,7 +190,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 					(left. length == 0 || wcsnequ (bufferW, left. string, left. length)) &&
 					(right. length == 0 || (length >= right. length && wcsequ (bufferW + (length - right. length), right. string))))
 				{
-					my strings [++ my numberOfStrings] = Melder_wcsdup (bufferW); cherror
+					my strings [++ my numberOfStrings] = Melder_wcsdup_e (bufferW); cherror
 				}
 			}
 		}
@@ -209,7 +209,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 				 || (type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && 
 						(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0))
 				{
-					my strings [++ my numberOfStrings] = Melder_wcsdup (findData. cFileName); cherror
+					my strings [++ my numberOfStrings] = Melder_wcsdup_e (findData. cFileName); cherror
 				}
 			} while (FindNextFileW (searchHandle, & findData));
 			FindClose (searchHandle);
@@ -256,7 +256,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 	 */
 	for (long i = 1; i <= n; i ++) {
 		wchar_t *line = MelderReadText_readLine (text); cherror
-		my strings [i] = Melder_wcsdup (line); cherror
+		my strings [i] = Melder_wcsdup_e (line); cherror
 	}
 
 end:
@@ -291,14 +291,16 @@ void Strings_randomize (Strings me) {
 }
 
 int Strings_genericize (Strings me) {
-	wchar_t *buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) * 3 + 1); cherror
+	wchar_t *buffer = NULL;
+//start:
+	buffer = Melder_calloc_e (wchar_t, Strings_maximumLength (me) * 3 + 1); cherror
 	for (long i = 1; i <= my numberOfStrings; i ++) {
 		const wchar_t *p = (const wchar_t *) my strings [i];
 		while (*p) {
 			if (*p > 126) {   /* Backslashes are not converted, i.e. genericize^2 == genericize. */
 				wchar_t *newString;
 				Longchar_genericizeW (my strings [i], buffer);
-				newString = Melder_wcsdup (buffer); cherror
+				newString = Melder_wcsdup_e (buffer); cherror
 				/*
 				 * Replace string only if copying was OK.
 				 */
@@ -316,10 +318,12 @@ end:
 }
 
 int Strings_nativize (Strings me) {
-	wchar_t *buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) + 1); cherror
+	wchar_t *buffer = NULL;
+//start:
+	buffer = Melder_calloc_e (wchar_t, Strings_maximumLength (me) + 1); cherror
 	for (long i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativizeW (my strings [i], buffer, false);
-		wchar_t *newString = Melder_wcsdup (buffer); cherror
+		wchar_t *newString = Melder_wcsdup_e (buffer); cherror
 		/*
 		 * Replace string only if copying was OK.
 		 */
@@ -351,7 +355,7 @@ int Strings_replace (Strings me, long position, const wchar_t *text) {
 	Melder_assert (position <= my numberOfStrings);
 	if (Melder_wcsequ (my strings [position], text)) return 1;
 	Melder_free (my strings [position]);
-	my strings [position] = Melder_wcsdup (text); cherror
+	my strings [position] = Melder_wcsdup_e (text); cherror
 end:
 	iferror return 0;
 	return 1;
@@ -364,7 +368,7 @@ int Strings_insert (Strings me, long position, const wchar_t *text) {
 	for (long i = my numberOfStrings + 1; i > position; i --) {
 		my strings [i] = my strings [i - 1];
 	}
-	my strings [position] = Melder_wcsdup (text); cherror
+	my strings [position] = Melder_wcsdup_e (text); cherror
 	my numberOfStrings ++;
 end:
 	iferror return 0;

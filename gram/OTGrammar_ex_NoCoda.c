@@ -32,34 +32,35 @@ OTGrammar OTGrammar_create_NoCoda_grammar (void) {
 	OTGrammar me = new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = 2); cherror
 	constraint = & my constraints [1];
-		constraint -> name = Melder_wcsdup (L"N\\s{O}C\\s{ODA}"); cherror
+		constraint -> name = Melder_wcsdup_e (L"N\\s{O}C\\s{ODA}"); cherror
 		constraint -> ranking = 100.0;
 		constraint -> plasticity = 1.0;
 	constraint = & my constraints [2];
-		constraint -> name = Melder_wcsdup (L"P\\s{ARSE}"); cherror
+		constraint -> name = Melder_wcsdup_e (L"P\\s{ARSE}"); cherror
 		constraint -> ranking = 90.0;
 		constraint -> plasticity = 1.0;
 	my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus = 2); cherror
 	tableau = & my tableaus [1];
-		tableau -> input = Melder_wcsdup (L"pat"); cherror
+		tableau -> input = Melder_wcsdup_e (L"pat"); cherror
 		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates =  2); cherror
 		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup (L"pa");
+			candidate -> output = Melder_wcsdup_e (L"pa"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
 			candidate -> marks [2] = 1;
 		candidate = & tableau -> candidates [2];
-			candidate -> output = Melder_wcsdup (L"pat");
+			candidate -> output = Melder_wcsdup_e (L"pat"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
 			candidate -> marks [1] = 1;
 	tableau = & my tableaus [2];
-		tableau -> input = Melder_wcsdup (L"pa"); cherror
+		tableau -> input = Melder_wcsdup_e (L"pa"); cherror
 		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates =  1); cherror
 		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup (L"pa");
+			candidate -> output = Melder_wcsdup_e (L"pa"); cherror
 			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
 	OTGrammar_checkIndex (me);
 	OTGrammar_newDisharmonies (me, 0.0);
-end:	iferror forget (me);
+end:
+	iferror forget (me);
 	return me;
 }
 

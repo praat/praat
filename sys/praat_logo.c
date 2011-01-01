@@ -107,7 +107,7 @@ void praat_showLogo (int autoPopDown) {
 		#define xstr(s) str(s)
 		#define str(s) #s
 		gtk_about_dialog_set_version (GTK_ABOUT_DIALOG (dialog), xstr (PRAAT_VERSION_STR));
-		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "Copyright (C) 1992-2010 by Paul Boersma and David Weenink");
+		gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG (dialog), "Copyright (C) 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 		gtk_about_dialog_set_license (GTK_ABOUT_DIALOG (dialog), "GPL");
 		gtk_about_dialog_set_website (GTK_ABOUT_DIALOG (dialog), "http://www.praat.org");
 		//gtk_about_dialog_set_authors (GTK_ABOUT_DIALOG (dialog), authors);
@@ -116,56 +116,27 @@ void praat_showLogo (int autoPopDown) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 
 	#else
-	#ifdef UNIX
-		#if motif
-			XWindowAttributes windowAttributes;
-		#endif
-	#endif
-	if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
-	if (! theLogo.dia) {
-		theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
-		#if gtk
-			theLogo.form = GTK_DIALOG (theLogo.dia) -> vbox;
-		#else
-			theLogo.form = theLogo.dia;
-		#endif
-
-		#ifdef UNIX
-			#if motif
-				XtVaSetValues (XtParent (theLogo.form), XmNmwmDecorations, 4, XmNmwmFunctions, 0, NULL);
+		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
+		if (! theLogo.dia) {
+			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
+			#if gtk
+				theLogo.form = GTK_DIALOG (theLogo.dia) -> vbox;
+			#else
+				theLogo.form = theLogo.dia;
 			#endif
+			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
+				0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+				0, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
+		}
+
+		GuiObject_show (theLogo.form);
+		GuiObject_show (theLogo.dia);
+		
+		#if motif
+			if (autoPopDown)
+				XtAppAddTimeOut (theCurrentPraatApplication -> context, 2000, logo_timeOut, (XtPointer) NULL);
 		#endif
-
-		theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
-			0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
-			0, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
-	}
-
-	GuiObject_show (theLogo.form);
-	GuiObject_show (theLogo.dia);
-	
-	/*
-	 * Do not wait for the first expose event before drawing:
-	 * at start-up time, this would take too long.
-	 */
-	#ifdef UNIX
-	#if motif
-	while (XGetWindowAttributes (XtDisplay (theLogo.form), XtWindow (theLogo.form), & windowAttributes),
-	       windowAttributes. map_state != IsViewable)
-	{
-		XEvent event;
-		XtAppNextEvent (theCurrentPraatApplication -> context, & event);
-		XtDispatchEvent (& event);
-	}
-	gui_drawingarea_cb_expose (NULL, NULL);   // BUG
-	#endif
-	#endif
-
-	#if motif
-	if (autoPopDown)
-		XtAppAddTimeOut (theCurrentPraatApplication -> context, 2000, logo_timeOut, (XtPointer) NULL);
-	#endif
 	#endif
 }
 

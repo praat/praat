@@ -115,7 +115,7 @@ typedef struct structGuiButton {
 GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*activateCallback) (void *boss, GuiButtonEvent event), void *activateBoss, unsigned long flags)
 {
-	GuiButton me = Melder_calloc (struct structGuiButton, 1);
+	GuiButton me = Melder_calloc_f (struct structGuiButton, 1);
 	my activateCallback = activateCallback;
 	my activateBoss = activateBoss;
 	#if gtk
@@ -201,7 +201,7 @@ void GuiButton_setString (GuiObject widget, const wchar_t *text) {
 		gtk_button_set_label (GTK_BUTTON (widget), Melder_peekWcsToUtf8 (text));
 	#elif win || mac
 		Melder_free (widget -> name);
-		widget -> name = Melder_wcsdup (text);
+		widget -> name = Melder_wcsdup_f (text);
 		_GuiNativeControl_setTitle (widget);
 	#endif
 }

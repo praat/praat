@@ -73,7 +73,7 @@ typedef struct structGuiDialog {
 GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
-	GuiDialog me = Melder_calloc (struct structGuiDialog, 1);
+	GuiDialog me = Melder_calloc_f (struct structGuiDialog, 1);
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk

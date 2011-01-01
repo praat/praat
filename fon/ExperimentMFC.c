@@ -363,6 +363,7 @@ ResultsMFC ResultsMFC_create (long numberOfTrials) {
 
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 	ResultsMFC thee = NULL;
+//start:
 	if (my trial == 0 || my trial <= my numberOfTrials)
 		return Melder_errorp ("(ExperimentMFC_extractResults:) Experiment not finished.");
 	thee = ResultsMFC_create (my numberOfTrials); cherror
@@ -372,14 +373,14 @@ ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 		if (pipe) {
 			long nameLength = wcslen (my stimulus [my stimuli [trial]]. name);
 			long buttonTextLength = wcslen (pipe);
-			thy result [trial]. stimulus = Melder_calloc (wchar_t, nameLength + buttonTextLength + 1); cherror
+			thy result [trial]. stimulus = Melder_calloc_e (wchar_t, nameLength + buttonTextLength + 1); cherror
 			wcscpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
 			wcscat (thy result [trial]. stimulus, pipe);
 		} else {
-			thy result [trial]. stimulus = Melder_wcsdup (my stimulus [my stimuli [trial]]. name); cherror
+			thy result [trial]. stimulus = Melder_wcsdup_e (my stimulus [my stimuli [trial]]. name); cherror
 		}
 		if (my responses [trial] < 1) error3 (L"No response for trial ", Melder_integer (trial), L".")
-		thy result [trial]. response = Melder_wcsdup (my response [my responses [trial]]. name); cherror
+		thy result [trial]. response = Melder_wcsdup_e (my response [my responses [trial]]. name); cherror
 		thy result [trial]. goodness = my goodnesses [trial];
 	}
 end:
@@ -400,8 +401,8 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 		}
 		if (present) {
 			his numberOfTrials ++;
-			his result [his numberOfTrials]. stimulus = Melder_wcsdup (thy result [i]. stimulus); cherror
-			his result [his numberOfTrials]. response = Melder_wcsdup (thy result [i]. response); cherror
+			his result [his numberOfTrials]. stimulus = Melder_wcsdup_e (thy result [i]. stimulus); cherror
+			his result [his numberOfTrials]. response = Melder_wcsdup_e (thy result [i]. response); cherror
 		}
 	}
 	if (his numberOfTrials == 0) error1 (L"No shared stimuli.")

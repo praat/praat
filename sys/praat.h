@@ -290,7 +290,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define DO  UiForm_do (dia, modified); } else if (sendingForm == NULL) { \
 	if (! UiForm_parseString (dia, sendingString, interpreter)) return 0; } else { int IOBJECT = 0; (void) IOBJECT; {
 #define DO_ALTERNATIVE(alternative)  UiForm_do (dia, modified); } else if (sendingForm == NULL) { \
-	if (! UiForm_parseString (dia, sendingString, interpreter)) { wchar_t *parkedError = Melder_wcsdup (Melder_getError ()); Melder_clearError (); \
+	if (! UiForm_parseString (dia, sendingString, interpreter)) { wchar_t *parkedError = Melder_wcsdup_f (Melder_getError ()); Melder_clearError (); \
 	int result = DO_##alternative (NULL, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 	if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 	} } else { int IOBJECT = 0; (void) IOBJECT; {
@@ -359,10 +359,10 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_wcscat3 (Melder_integer (ID), L". ", FULL_NAME)
-#define NAMEW  praat_name (IOBJECT)
+#define NAME  praat_name (IOBJECT)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
-#define EVERY_TO(proc)  EVERY_CHECK (praat_new1 (proc, NAMEW))
+#define EVERY_TO(proc)  EVERY_CHECK (praat_new1 (proc, NAME))
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)

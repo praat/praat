@@ -58,7 +58,7 @@ FORM (Rename, L"Rename object", L"Rename...")
 	LABEL (L"rename object", L"New name:")
 	TEXTFIELD (L"newName", L"")
 	OK
-{ int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAMEW) }
+{ int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAME) }
 DO
 	wchar_t *string = GET_STRING (L"newName");
 	if (theCurrentPraatObjects -> totalSelection == 0)
@@ -71,7 +71,7 @@ DO
 	MelderString_empty (& fullName);
 	MelderString_append3 (& fullName, Thing_className (OBJECT), L" ", string);
 	if (! wcsequ (fullName.string, FULL_NAME)) {
-		Melder_free (FULL_NAME), FULL_NAME = Melder_wcsdup (fullName.string);
+		Melder_free (FULL_NAME), FULL_NAME = Melder_wcsdup_f (fullName.string);
 		MelderString listName = { 0 };
 		MelderString_append3 (& listName, Melder_integer (ID), L". ", fullName.string);
 		praat_list_renameAndSelect (IOBJECT, listName.string);
@@ -86,7 +86,7 @@ FORM (Copy, L"Copy object", L"Copy...")
 	LABEL (L"copy object", L"Name of new object:")
 	TEXTFIELD (L"newName", L"")
 	OK
-{ int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAMEW) }
+{ int IOBJECT; WHERE (SELECTED) SET_STRING (L"newName", NAME) }
 DO
 	if (theCurrentPraatObjects -> totalSelection == 0)
 		return Melder_error1 (L"Selection changed!\nNo object selected. Cannot copy.");

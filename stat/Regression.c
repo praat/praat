@@ -106,8 +106,10 @@ end:
 
 int Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
 	iam (Regression);
-	RegressionParameter thee = new (RegressionParameter); cherror
-	thy label = Melder_wcsdup (label); cherror
+	RegressionParameter thee = NULL;
+//start:
+	thee = new (RegressionParameter); cherror
+	thy label = Melder_wcsdup_e (label); cherror
 	thy minimum = minimum;
 	thy maximum = maximum;
 	thy value = value;

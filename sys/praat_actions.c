@@ -178,7 +178,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	theActions [position]. n3 = n3;
 	theActions [position]. class4 = class4;
 	theActions [position]. n4 = n4;
-	theActions [position]. title = Melder_wcsdup (title);
+	theActions [position]. title = Melder_wcsdup_f (title);
 	theActions [position]. depth = depth;
 	theActions [position]. callback = callback;   /* NULL for a separator. */
 	theActions [position]. button = NULL;
@@ -279,7 +279,7 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	theActions [position]. n2 = n2;
 	theActions [position]. class3 = class3;
 	theActions [position]. n3 = n3;
-	theActions [position]. title = wcslen (title) ? Melder_wcsdup (title) : NULL;   /* Allow old-fashioned untitled separators. */
+	theActions [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   /* Allow old-fashioned untitled separators. */
 	theActions [position]. depth = depth;
 	theActions [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator. */
 	theActions [position]. button = NULL;
@@ -288,9 +288,9 @@ int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cla
 	} else {
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (script, & file);
-		theActions [position]. script = Melder_wcsdup (Melder_fileToPath (& file));
+		theActions [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
 	}
-	theActions [position]. after = wcslen (after) ? Melder_wcsdup (after) : NULL;
+	theActions [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
 	theActions [position]. phase = praatP.phase;
 	if (praatP.phase >= praat_READING_BUTTONS) {
 		static long uniqueID = 0;
@@ -777,7 +777,7 @@ void praat_actions_createWriteMenu (GuiObject bar) {
 }
 
 void praat_actions_init (void) {
-	theActions = Melder_calloc (struct structPraat_Command, praat_MAXNUM_LOOSE_COMMANDS + 1);
+	theActions = Melder_calloc_f (struct structPraat_Command, praat_MAXNUM_LOOSE_COMMANDS + 1);
 }
 
 void praat_actions_createDynamicMenu (GuiObject form, int width) {

@@ -488,7 +488,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					style == Graphics_ITALIC ? "Arial-Italic" :
 					style == Graphics_BOLD_ITALIC ? "Arial-BoldItalic" : "Arial";
 			}
-			my fontInfos [font] [style] = Melder_malloc (char, 100);
+			my fontInfos [font] [style] = Melder_malloc_f (char, 100);
 			if (font == kGraphics_font_IPATIMES || font == kGraphics_font_SYMBOL || font == kGraphics_font_DINGBATS) {
 				strcpy (my fontInfos [font] [style], fontInfo);
 			} else {
@@ -1102,13 +1102,13 @@ static int initBuffer (const wchar_t *txt) {
 		Melder_free (charCodes);
 		Melder_free (charCodes8);
 		Melder_free (charCodes16);
-		if (! (widechar = Melder_calloc (_Graphics_widechar, sizeNeeded)))
+		if (! (widechar = Melder_calloc_e (_Graphics_widechar, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes = Melder_calloc (wchar_t, sizeNeeded)))
+		if (! (charCodes = Melder_calloc_e (wchar_t, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes8 = Melder_calloc (char, sizeNeeded)))
+		if (! (charCodes8 = Melder_calloc_e (char, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes16 = Melder_calloc (MelderUtf16, sizeNeeded)))
+		if (! (charCodes16 = Melder_calloc_e (MelderUtf16, sizeNeeded)))
 			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
 		bufferSize = sizeNeeded;
 	}
@@ -1400,7 +1400,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 */
 				const wchar_t *from = in + 1;   /* Start with first character after "@@". */
 				if (! links [++ numberOfLinks]. name)   /* Make room for saving link info. */
-					links [numberOfLinks]. name = Melder_calloc (wchar_t, MAX_LINK_LENGTH + 1);
+					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
 				while (*from && *from != '@' && *from != '|' && to < max)   /* Until end-of-string or '@' or '|'... */
 					* to ++ = * from ++;   /* ... copy one character. */
@@ -1429,7 +1429,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 */
 				const wchar_t *from = in;   /* Start with first character after "@". */
 				if (! links [++ numberOfLinks]. name)   /* Make room for saving link info. */
-					links [numberOfLinks]. name = Melder_calloc (wchar_t, MAX_LINK_LENGTH + 1);
+					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
 				while (*from && (isalnum (*from) || *from == '_') && to < max)   /* Until end-of-word... */
 					*to ++ = *from++;   /* ... copy one character. */
@@ -1610,7 +1610,7 @@ void Graphics_text (I, double xWC, double yWC, const wchar_t *txt) {
 			my verticalTextAlignment == Graphics_TOP ? 0 :
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
-		wchar_t *linesToDraw = Melder_wcsdup (txt), *p = & linesToDraw [0];
+		wchar_t *linesToDraw = Melder_wcsdup_f (txt), *p = & linesToDraw [0];
 		for (;;) {
 			wchar_t *newline = wcschr (p, '\n');
 			if (newline != NULL) *newline = '\0';

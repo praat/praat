@@ -35,21 +35,20 @@
  * pb 2007/10/05 made Sound_readFromMacSoundFile compatible with sample rates between 32768 and 65535 Hertz
  * pb 2008/01/19 double
  * pb 2009/09/21 made stereo movies readable
+ * pb 2010/12/27 support for multiple channels (i.e. more than two)
  */
 
 /*
 static void Sound_ulawDecode (Sound me) {
 	double mu = 100, lnu1 = log (1 + mu);
-	long i;
-	for (i = 1; i <= my nx; i ++) {
+	for (long i = 1; i <= my nx; i ++) {
 		double zabs = (exp (fabs (my z [1] [i]) * lnu1) - 1.0) / mu;
 		my z [1] [i] = my z [1] [i] < 0 ? -zabs : zabs;
 	} 
 }
 static void Sound_alawDecode (Sound me) {
 	double a = 87.6, lna1 = 1.0 + log (a);
-	long i;
-	for (i = 1; i <= my nx; i ++) {
+	for (long i = 1; i <= my nx; i ++) {
 		double zabs = fabs (my z [1] [i]);
 		if (zabs <= 1.0 / lna1) {
 			my z [1] [i] *= lna1 / a;
@@ -156,10 +155,11 @@ static void Sound_alawDecode (Sound me) {
 
 Sound Sound_readFromSoundFile (MelderFile file) {
 	Sound me = NULL;
+	FILE *f = NULL;
+//start:
 	int numberOfChannels, encoding, fileType;
 	double sampleRate;
 	long startOfData, numberOfSamples;
-	FILE *f = NULL;
 	MelderFile_open (file); cherror
 	f = file -> filePointer;
 	fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples); cherror
@@ -443,7 +443,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 	 * Read data from header.
 	 * Use defaults if necessary.
 	 */
-	if ((lines = Melder_calloc (char, headerLength + 1)) == NULL) goto error;
+	if ((lines = Melder_calloc_e (char, headerLength + 1)) == NULL) goto error;
 	if (fread (lines, 1, headerLength, f) < headerLength)
 		{ Melder_error1 (L"Header too short."); goto error; }
 	psamples = lines - 1;
@@ -569,7 +569,7 @@ end:
 int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
 //start:
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-	MelderFile_writeAudioFileHeader16_ch (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny);
+	MelderFile_writeAudioFileHeader16_e (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny); cherror
 	MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding16 (audioFileType), my z, my nx, TRUE);
 end:
 	MelderFile_close (file);

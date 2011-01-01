@@ -27,8 +27,8 @@
 #include "Strings_extensions.h"
 #include "TableOfReal.h"
 
-//#undef praat_HIDDEN
-//#define praat_HIDDEN 0
+#undef praat_HIDDEN
+#define praat_HIDDEN 0
 
 #define GaussianMixture_OPTION_MENU_CRITERIA \
 	OPTIONMENU (L"Criterion based on", 1) \
@@ -177,7 +177,7 @@ DO
 	WHERE (SELECTED)
 	{
 		Covariance cov = GaussianMixture_extractComponent (OBJECT, component);
-		if (! praat_new3 (cov, NAMEW, L"_", Thing_getName (cov))) return 0;
+		if (! praat_new3 (cov, NAME, L"_", Thing_getName (cov))) return 0;
 	}
 END
 
@@ -202,15 +202,15 @@ DO
 END
 
 DIRECT (GaussianMixture_to_Covariance_between)
-	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_between (OBJECT), NAMEW, L"_b"))
+	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_between (OBJECT), NAME, L"_b"))
 END
 
 DIRECT (GaussianMixture_to_Covariance_within)
-	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_within (OBJECT), NAMEW, L"_w"))
+	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_within (OBJECT), NAME, L"_w"))
 END
 
 DIRECT (GaussianMixture_to_Covariance_total)
-	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_total (OBJECT), NAMEW, L"_t"))
+	EVERY_CHECK (praat_new2 (GaussianMixture_to_Covariance_total (OBJECT), NAME, L"_t"))
 END
 
 FORM (GaussianMixture_and_TableOfReal_getLikelihoodValue, L"GaussianMixture & TableOfReal: Get likelihood value",
@@ -242,7 +242,7 @@ DO
 END
 
 FORM (HMM_createSimple, L"HMM: Create simple", L"HMM: Create simple HMM...")
-	WORD (L"Name", L"wheather")
+	WORD (L"Name", L"weather")
 	BOOLEAN (L"Left to right model", 0)
 	SENTENCE (L"States", L"Rainy Sunny")
 	SENTENCE (L"Observations", L"Walk Shop Clean")

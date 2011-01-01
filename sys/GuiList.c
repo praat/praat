@@ -271,7 +271,7 @@ enum {
 #endif
 
 GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header) {
-	GuiList me = Melder_calloc (struct structGuiList, 1);
+	GuiList me = Melder_calloc_f (struct structGuiList, 1);
 	my allowMultipleSelection = allowMultipleSelection;
 	#if gtk
 		GtkCellRenderer *renderer = NULL;
@@ -518,10 +518,10 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 			int selection = ListBox_GetCurSel (widget -> window);
 			if (selection == -1) return False;
 			n = 1;
-			indices = Melder_calloc (int, n);
+			indices = Melder_calloc_f (int, n);
 			indices [0] = selection;
 		} else {
-			indices = Melder_calloc (int, n);
+			indices = Melder_calloc_f (int, n);
 			ListBox_GetSelItems (widget -> window, n, indices);
 		}
 		*numberOfSelectedPositions = n;

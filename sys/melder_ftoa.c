@@ -114,7 +114,7 @@ const wchar_t * Melder_double (double value) {
 			for (; (*to++ = *from++) != '\0';) ;
 			*to = '\0';
 		#else
-			Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);
+			Melder_8bitToWcs_inline_e (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8); // BUG cherror
 		#endif
 	#else
 		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);

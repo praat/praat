@@ -85,7 +85,7 @@ static void addCandidate (OTGrammarTableau me, long numberOfSyllables, int stres
 		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) wcscat (output, L")");
 	}
 	wcscat (output, L"/");
-	my candidates [++ my numberOfCandidates]. output = Melder_wcsdup (output); cherror
+	my candidates [++ my numberOfCandidates]. output = Melder_wcsdup_e (output); cherror
 end:
 	return;
 }
@@ -194,7 +194,7 @@ static int fillTableau (OTGrammarTableau me, long numberOfSyllables, int underly
 		wcscat (input, ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}
 	wcscat (input, L"|");
-	my input = Melder_wcsdup (input);
+	my input = Melder_wcsdup_e (input); cherror
 	my candidates = NUMstructvector (OTGrammarCandidate, 1, ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables]); cherror
 	for (mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
 		int stress [10];
@@ -442,7 +442,7 @@ static void replaceOutput (OTGrammarCandidate me) {
 	}
 	*q = '\0';
 	Melder_free (my output);
-	my output = Melder_wcsdup (newOutput);
+	my output = Melder_wcsdup_f (newOutput);
 }
 
 OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
@@ -456,7 +456,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS); cherror
 	for (long icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
-		constraint -> name = Melder_wcsdup (constraintNames [icons]); cherror
+		constraint -> name = Melder_wcsdup_e (constraintNames [icons]); cherror
 		constraint -> ranking = 100.0;
 		constraint -> plasticity = 1.0;
 	}

@@ -315,14 +315,14 @@ void TableOfReal_setRowLabel (I, long irow, const wchar_t *label) {
 	iam (TableOfReal);
 	if (irow < 1 || irow > my numberOfRows || label == my rowLabels [irow]) return;
 	Melder_free (my rowLabels [irow]);
-	my rowLabels [irow] = Melder_wcsdup (label);
+	my rowLabels [irow] = Melder_wcsdup_f (label);
 }
 
 void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label) {
 	iam (TableOfReal);
 	if (icol < 1 || icol > my numberOfColumns || label == my columnLabels [icol]) return;
 	Melder_free (my columnLabels [icol]);
-	my columnLabels [icol] = Melder_wcsdup (label);
+	my columnLabels [icol] = Melder_wcsdup_f (label);
 }
 
 int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, thou) {
@@ -348,7 +348,7 @@ static void copyRowLabels (TableOfReal me, TableOfReal thee) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		thy rowLabels [irow] = Melder_wcsdup (my rowLabels [irow]); iferror return;
+		thy rowLabels [irow] = Melder_wcsdup_e (my rowLabels [irow]); iferror return;
 	}
 }
 
@@ -356,14 +356,14 @@ static void copyColumnLabels (TableOfReal me, TableOfReal thee) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy columnLabels [icol] = Melder_wcsdup (my columnLabels [icol]); iferror return;
+		thy columnLabels [icol] = Melder_wcsdup_e (my columnLabels [icol]); iferror return;
 	}
 }
 
 static void copyRow (TableOfReal me, long myRow, TableOfReal thee, long thyRow) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
-	thy rowLabels [thyRow] = Melder_wcsdup (my rowLabels [myRow]); iferror return;
+	thy rowLabels [thyRow] = Melder_wcsdup_e (my rowLabels [myRow]); iferror return;
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		thy data [thyRow] [icol] = my data [myRow] [icol];
 	}
@@ -372,7 +372,7 @@ static void copyRow (TableOfReal me, long myRow, TableOfReal thee, long thyRow) 
 static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCol) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
-	thy columnLabels [thyCol] = Melder_wcsdup (my columnLabels [myCol]); iferror return;
+	thy columnLabels [thyCol] = Melder_wcsdup_e (my columnLabels [myCol]); iferror return;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		thy data [irow] [thyCol] = my data [irow] [myCol];
 	}
@@ -717,7 +717,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 	thy strings = NUMpvector (1, my numberOfRows); cherror
 	thy numberOfStrings = my numberOfRows;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		thy strings [irow] = Melder_wcsdup (my rowLabels [irow] ? my rowLabels [irow] : L""); cherror
+		thy strings [irow] = Melder_wcsdup_e (my rowLabels [irow] ? my rowLabels [irow] : L""); cherror
 	}
 end:
 	iferror forget (thee);
@@ -731,7 +731,7 @@ Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 	thy strings = NUMpvector (1, my numberOfColumns); cherror
 	thy numberOfStrings = my numberOfColumns;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy strings [icol] = Melder_wcsdup (my columnLabels [icol] ? my columnLabels [icol] : L""); cherror
+		thy strings [icol] = Melder_wcsdup_e (my columnLabels [icol] ? my columnLabels [icol] : L""); cherror
 	}
 end:
 	iferror forget (thee);
@@ -1174,23 +1174,25 @@ end:
 }
 
 Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
-	Table thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
+	Table thee = NULL;
+//start:
+	thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1); cherror
 	Table_setColumnLabel (thee, 1, labelOfFirstColumn); cherror
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		wchar_t *columnLabel = my columnLabels [icol];
-		thy columnHeaders [icol + 1]. label = Melder_wcsdup (columnLabel && columnLabel [0] ? columnLabel : L"?"); cherror
+		thy columnHeaders [icol + 1]. label = Melder_wcsdup_e (columnLabel && columnLabel [0] ? columnLabel : L"?"); cherror
 	}
 	for (long irow = 1; irow <= thy rows -> size; irow ++) {
 		wchar_t *stringValue = my rowLabels [irow];
 		TableRow row = thy rows -> item [irow];
-		row -> cells [1]. string = Melder_wcsdup (stringValue && stringValue [0] ? stringValue : L"?"); cherror
+		row -> cells [1]. string = Melder_wcsdup_e (stringValue && stringValue [0] ? stringValue : L"?"); cherror
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			double numericValue = my data [irow] [icol];
-			row -> cells [icol + 1]. string = Melder_wcsdup (Melder_double (numericValue)); cherror
+			row -> cells [icol + 1]. string = Melder_wcsdup_e (Melder_double (numericValue)); cherror
 		}
 	}
 end:
-	iferror return NULL;
+	iferror forget (thee);
 	return thee;
 }
 

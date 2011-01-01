@@ -18,10 +18,9 @@
  */
 
 /*
- * os 20070529 Initial release?
- * os 20090123 Bugfix: Removed MUX:ing (KNN_learn) incompatible with
- *                     the scripting engine. Thanks to Paul Boersma 
- *                     for spotting this problem.
+ * os 2007/05/29 Initial release?
+ * os 2009/01/23 Bugfix: Removed MUX:ing (KNN_learn) incompatible with the scripting engine. Thanks to Paul Boersma for spotting this problem.
+ * pb 2010/12/28 in messages: typos, English, interpunction
  */
 
 #include "KNN.h"
@@ -81,16 +80,16 @@ DO
         {
             case kOla_PATTERN_CATEGORIES_MISMATCH:
                 forget(knn);
-                return Melder_error1 (L"The number of Categories must match the number of rows in Pattern");
+                return Melder_error1 (L"The number of Categories should match the number of rows in Pattern.");
             case kOla_DIMENSIONALITY_MISMATCH:
                 forget(knn);
-                return Melder_error1 (L"The dimensionality of Pattern must match that of the instance base");
+                return Melder_error1 (L"The dimensionality of Pattern should match that of the instance base.");
             default:
                 if (!praat_new1(knn, GET_STRING(L"Name"))) return(0);
         }
     }
     else
-        return(Melder_error("Failed creating kNN classifier", 0));
+        return(Melder_error("Failed to create kNN classifier.", 0));
 END
 
 
@@ -124,10 +123,10 @@ DO
     double lrate = GET_REAL(L"Learning rate");
 
     if (k < 1 || k > my nInstances)
-        return(Melder_error("Please select a value of k max such that 0 < k max < %d\n", my nInstances + 1));
+        return(Melder_error("Please select a value of k max such that 0 < k max < %d.", my nInstances + 1));
 
     if (nseeds < 1)
-        return(Melder_error("The number of seeds must exceed 1"));
+        return(Melder_error("The number of seeds should exceed 1."));
 
     switch (mode)
     {
@@ -161,7 +160,7 @@ FORM (KNN_evaluate, L"Evaluation", L"KNN: Get accuracy estimate...")
     RADIO (L"Evaluation method", 1)
     RADIOBUTTON (L"Leave one out")
     RADIOBUTTON (L"10-fold cross-validation")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
@@ -172,14 +171,14 @@ DO
     KNN me = ONLY(classKNN);
 
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
     int mode = GET_INTEGER (L"Evaluation method");
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     switch (vt)
     {
@@ -209,16 +208,16 @@ DO
     forget(fws);
 
     if (lround(result) == kOla_FWEIGHTS_MISMATCH)
-        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
+        return(Melder_error1(L"The number of feature weights should match the dimensionality of the Pattern."));
 
-    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified.");
 END
 
 FORM (KNN_evaluateWithFeatureWeights, L"Evaluation", L"KNN & FeatureWeights: Get accuracy estimate...")
     RADIO (L"Evaluation method", 1)
     RADIOBUTTON (L"Leave one out")
     RADIOBUTTON (L"10-fold cross-validation")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
@@ -233,12 +232,12 @@ DO
 
     FeatureWeights fws = ONLY(classFeatureWeights);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
     int mode = GET_INTEGER (L"Evaluation method");
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     switch (vt)
     {
@@ -266,9 +265,9 @@ DO
     double result = KNN_evaluate(me, fws, k, vt, mode);
 
     if (lround(result) == kOla_FWEIGHTS_MISMATCH)
-        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
+        return(Melder_error1(L"The number of feature weights should match the dimensionality of the Pattern."));
 
-    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified.");
 END
 
 
@@ -277,7 +276,7 @@ DIRECT  (KNN_extractInputPatterns)
     if (my nInstances > 0) {
         if (! praat_new1 (Data_copy(my input), L"Input Patterns")) return 0;
     } else {
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 	}
 END
 
@@ -286,7 +285,7 @@ DIRECT  (KNN_extractOutputCategories)
     if (my nInstances > 0) {
         if (! praat_new1 (Data_copy(my output), L"Output Categories")) return 0;
     } else {
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 	}
 END
 
@@ -305,30 +304,30 @@ DIRECT  (KNN_shuffle)
     if (my nInstances > 0)  
         KNN_shuffleInstances(me);
     else
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 END
 
 FORM (KNN_prune, L"Pruning", L"KNN: Prune...")
     POSITIVE (L"Noise pruning degree", L"1")
     POSITIVE (L"Redundancy pruning degree", L"1")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     OK
 DO
     KNN me = ONLY(classKNN);
 
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
     double n = GET_REAL(L"Noise pruning degree");
     double r = GET_REAL(L"Redundancy pruning degree");
-    long k = GET_INTEGER(L"k neighbors");
+    long k = GET_INTEGER(L"k neighbours");
     long oldn = my nInstances;
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     if (n <= 0 || n > 1 || r <= 0 || r > 1)
-        return Melder_error ("Please select a pruning degree d such that 0 < d <= 1\n");
+        return Melder_error ("Please select a pruning degree d such that 0 < d <= 1.");
 
     long npruned = KNN_prune_prune(me, n, r, k);
 
@@ -352,8 +351,7 @@ FORM (KNN_learn, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
     RADIOBUTTON (L"Random")
     RADIOBUTTON (L"Sequential")
     OK
-
-    DO
+DO
     KNN  me = ONLY(classKNN);
     Pattern p = ONLY(classPattern);
     Categories c = ONLY(classCategories);
@@ -383,9 +381,9 @@ FORM (KNN_learn, L"Learning", L"kNN classifiers 1. What is a kNN classifier?")
     switch (result)
     {
         case kOla_PATTERN_CATEGORIES_MISMATCH:  
-            return Melder_error1 (L"The number of Categories must match the number of rows in Pattern");
+            return Melder_error1 (L"The number of Categories should match the number of rows in Pattern.");
         case kOla_DIMENSIONALITY_MISMATCH:
-            return Melder_error1 (L"The dimensionality of Pattern must match that of the instance base");
+            return Melder_error1 (L"The dimensionality of Pattern should match that of the instance base.");
     }
 END
 
@@ -398,13 +396,12 @@ END
 
 
 FORM (KNN_evaluateWithTestSet, L"Evaluation", L"KNN & Pattern & Categories: Evaluate...")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
     if (my nInstances < 1)
@@ -413,11 +410,11 @@ DO
     Pattern p = ONLY(classPattern);
     Categories c = ONLY(classCategories);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
 
     if (k < 1 || k > my nInstances)
-        return(Melder_error("Please select a value of k such that 0 < k < %d\n", my nInstances + 1));
+        return(Melder_error("Please select a value of k such that 0 < k < %d.", my nInstances + 1));
 
     switch (vt)
     {
@@ -433,10 +430,10 @@ DO
     }
 
     if(p->ny != c->size)
-        return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
+        return(Melder_error1(L"The number of Categories should match the number of rows in Pattern."));
 
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
 
     double result;
@@ -444,17 +441,16 @@ DO
     result = KNN_evaluateWithTestSet(me, p, c, fws, k, vt);
     forget(fws);
 
-    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified.");
 END
 
 FORM (KNN_evaluateWithTestSetAndFeatureWeights, L"Evaluation", L"KNN & Pattern & Categories & FeatureWeights: Evaluate...")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
 
@@ -465,12 +461,12 @@ DO
     Categories c = ONLY(classCategories);
     FeatureWeights fws = ONLY(classFeatureWeights);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
     double result;
 
     if (k < 1 || k > my nInstances)
-        return(Melder_error("Please select a value of k such that 0 < k < %d\n", my nInstances + 1));
+        return(Melder_error("Please select a value of k such that 0 < k < %d.", my nInstances + 1));
 
     switch (vt)
     {
@@ -486,16 +482,16 @@ DO
     }
 
     if(p->ny != c->size)
-        return(Melder_error1(L"The number of Categories must match the number of rows in Pattern"));
+        return(Melder_error1(L"The number of Categories should match the number of rows in Pattern."));
 
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
     if (p->nx != fws->fweights->numberOfColumns)
-        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
+        return(Melder_error1(L"The number of feature weights should match the dimensionality of the Pattern."));
 
     result = KNN_evaluateWithTestSet(me, p, c, fws, k, vt);
-    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified\n");
+    Melder_information2(Melder_double(100 * result), L" percent of the instances correctly classified.");
 END
 
 
@@ -506,25 +502,24 @@ END
 /////////////////////////////////////////////////////////////////////////////////////////
 
 FORM (KNN_toCategories, L"Classification", L"KNN & Pattern: To Categories...")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
     Pattern p = ONLY(classPattern);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     switch (vt)
     {
@@ -540,7 +535,7 @@ DO
     }
 
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
 	if (! fws) return 0;
@@ -551,27 +546,26 @@ DO
     forget(fws);
 END
 
-    FORM (KNN_toTableOfReal, L"Classification", L"KNN & Pattern: To TabelOfReal...")
-    INTEGER (L"k neighbors", L"1")
+FORM (KNN_toTableOfReal, L"Classification", L"KNN & Pattern: To TabelOfReal...")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
 
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
     Pattern p = ONLY(classPattern);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     FeatureWeights fws = FeatureWeights_create(p->nx);
 	if (! fws) return 0;
@@ -590,7 +584,7 @@ DO
     }
  
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
     if (! praat_new1 (KNN_classifyToTableOfReal(me, p, fws, k, vt), L"Output")) {
 		forget (fws);
@@ -600,23 +594,22 @@ DO
 END
 
 FORM (KNN_toCategoriesWithFeatureWeights, L"Classification", L"KNN & Pattern & FeatureWeights: To Categories...")
-    INTEGER (L"k neighbors", L"KNN & Pattern & FeatureWeights: To Categories...")
+    INTEGER (L"k neighbours", L"KNN & Pattern & FeatureWeights: To Categories...")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")  
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
 
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
     Pattern p = ONLY(classPattern);
     FeatureWeights fws = ONLY(classFeatureWeights);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
 
     switch (vt)
@@ -633,42 +626,41 @@ DO
     }
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
     if (p->nx != fws->fweights->numberOfColumns)
-        return(Melder_error1(L"The number of feature weights must match the dimensionality of the Pattern"));
+        return(Melder_error1(L"The number of feature weights should match the dimensionality of the Pattern."));
 
     if (! praat_new1 (KNN_classifyToCategories(me, p, fws, k, vt), L"Output")) return 0;
 END
 
 FORM (KNN_toTableOfRealWithFeatureWeights, L"Classification", L"KNN & Pattern & FeatureWeights: To TableOfReal...")
-    INTEGER (L"k neighbors", L"1")
+    INTEGER (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 1)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
     RADIOBUTTON (L"Flat")
     OK
-
 DO
     KNN  me = ONLY(classKNN);
 
     if (my nInstances < 1)
-        return Melder_error ("Instance base is empty", 0);
+        return Melder_error ("Instance base is empty.", 0);
 
     Pattern p = ONLY(classPattern);
     FeatureWeights fws = ONLY(classFeatureWeights);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int vt = GET_INTEGER (L"Vote weighting");
 
     if (k < 1 || k > my nInstances)
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
 
     if (p->nx != fws->fweights->numberOfColumns)
-        return Melder_error1 (L"The number of features and the number of feature weights must match\n");
+        return Melder_error1 (L"The number of features and the number of feature weights should match.");
 
     switch (vt)
     {
@@ -704,7 +696,6 @@ FORM (Pattern_to_Categories_cluster, L"k-means clustering", L"Pattern: To Catego
     POSITIVE (L"Cluster size ratio constraint", L"0.0000001");
     INTEGER (L"Maximum number of reseeds", L"1000")
     OK
-
 DO
     Pattern p = ONLY (classPattern);
     if (p->nx > 0 && p->ny > 0)
@@ -717,7 +708,7 @@ DO
             return Melder_error ("Please select a value of k such that 0 < k <= %ld.", p->ny);
  
         if (rs < 0)
-            return Melder_error1 (L"The maximum number of reseeds must not be a negative value.");
+            return Melder_error1 (L"The maximum number of reseeds should not be a negative value.");
 
         if (rc > 1 || rc <= 0)
             return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
@@ -740,7 +731,6 @@ FORM (Pattern_to_Categories_clusterWithFeatureWeights, L"k-means clustering", L"
     POSITIVE (L"Cluster size ratio constraint", L"0.0000001");
     INTEGER (L"Maximum number of reseeds", L"1000")
     OK
-
 DO
     Pattern p = ONLY(classPattern);
     if (p->nx > 0 && p->ny > 0)
@@ -752,13 +742,13 @@ DO
         double rc =  GET_REAL(L"Cluster size ratio constraint");
  
         if (p->nx != fws->fweights->numberOfColumns)
-            return Melder_error1 (L"The number of features and the number of feature weights must match\n");
+            return Melder_error1 (L"The number of features and the number of feature weights should match.");
 
         if (k < 1 || k > p->ny)
             return Melder_error ("Please select a value of k such that 0 < k <= %ld.", p->ny);
  
         if (rs < 0)
-            return Melder_error1 (L"The maximum number of reseeds must not be a negative value.");
+            return Melder_error1 (L"The maximum number of reseeds should not be a negative value.");
 
         if (rc > 1 || rc <= 0)
             return Melder_error1 (L"Please select a value of the cluster size ratio constraint c such that 0 < c <= 1.");
@@ -766,7 +756,7 @@ DO
         if (! praat_new1 (Pattern_to_Categories_cluster(p, fws, k, rc, rs), L"Output")) return 0;
     }   
     else
-        return Melder_error ("Pattern is empty", 0);
+        return Melder_error ("Pattern is empty.", 0);
 END
 
 
@@ -794,7 +784,7 @@ DIRECT (KNN_patternToDissimilarityWithFeatureWeights)
     FeatureWeights fws = ONLY(classFeatureWeights);  
 
     if (p->nx != fws->fweights->numberOfColumns)
-        return Melder_error1 (L"The number of features and the number of feature weights must match\n");
+        return Melder_error1 (L"The number of features and the number of feature weights should match.");
 
     if (! praat_new1 (KNN_patternToDissimilarity(p, fws), L"Output")) return 0;
 END
@@ -838,18 +828,18 @@ END
 
 
 FORM (FeatureWeights_computeRELIEF, L"Feature weights", L"Pattern & Categories: To FeatureWeights...")
-    INTEGER (L"Number of neighbors", L"1")
+    INTEGER (L"Number of neighbours", L"1")
     OK
 DO
     Pattern p = ONLY(classPattern);
     Categories c = ONLY(classCategories);
 
     if (p->ny < 2)
-        return Melder_error ("The Pattern object must contain atleast 2 rows", 0);
+        return Melder_error ("The Pattern object should contain at least 2 rows.", 0);
     if (p->ny != c->size)
-        return Melder_error ("The number of rows in the Pattern object must equal the number of categories in the Categories object", 0);
+        return Melder_error ("The number of rows in the Pattern object should equal the number of categories in the Categories object.", 0);
 
-    if (! praat_new1(FeatureWeights_compute(p, c, GET_INTEGER(L"Number of neighbors")), L"Output")) return 0;
+    if (! praat_new1(FeatureWeights_compute(p, c, GET_INTEGER(L"Number of neighbours")), L"Output")) return 0;
 END
 
 FORM (FeatureWeights_computeWrapperExt, L"Feature weights", L"KNN & Pattern & Categories: To FeatureWeights..")
@@ -860,7 +850,7 @@ FORM (FeatureWeights_computeWrapperExt, L"Feature weights", L"KNN & Pattern & Ca
     RADIOBUTTON (L"Co-optimization")
     RADIOBUTTON (L"Single feature")
 
-    NATURAL (L"k neighbors", L"1")
+    NATURAL (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 3)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")  
@@ -890,12 +880,12 @@ DO
             break;
     }
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     if (k < 1 || k > my nInstances)
         return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
 
     if(p->nx != (my input)->nx)
-        return(Melder_error1(L"The dimensionality of Pattern must match that of the instance base"));
+        return(Melder_error1(L"The dimensionality of Pattern should match that of the instance base."));
 
     if (! praat_new1(FeatureWeights_computeWrapperExt(me, p, c, k, mode, GET_INTEGER(L"Number of seeds"),
 		GET_REAL(L"Learning rate"), GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization")), L"Output")) return 0;
@@ -911,7 +901,7 @@ FORM (FeatureWeights_computeWrapperInt, L"Feature weights", L"KNN: To FeatureWei
     RADIO (L"Evaluation method", 1)
     RADIOBUTTON (L"Leave one out")
     RADIOBUTTON (L"10-fold cross-validation")
-    NATURAL (L"k neighbors", L"1")
+    NATURAL (L"k neighbours", L"1")
     RADIO (L"Vote weighting", 3)
     RADIOBUTTON (L"Inversed squared distance")
     RADIOBUTTON (L"Inversed distance")
@@ -924,7 +914,7 @@ DO
     if (my nInstances < 1)
         return Melder_error ("Instance base is empty", 0);
 
-    long k = GET_INTEGER (L"k neighbors");
+    long k = GET_INTEGER (L"k neighbours");
     int emode = GET_INTEGER (L"Evaluation method");
     int mode = GET_INTEGER (L"Vote weighting");
 
@@ -952,7 +942,7 @@ DO
     }
 
     if (k < 1 || k > my nInstances)
-        return Melder_error ("Please select a value of k such that 0 < k < %d\n", my nInstances + 1);
+        return Melder_error ("Please select a value of k such that 0 < k < %d.", my nInstances + 1);
 
     if (! praat_new1(FeatureWeights_computeWrapperInt(me, k, mode, GET_INTEGER(L"Number of seeds"), GET_REAL(L"Learning rate"),
 		GET_REAL(L"Stop at"), (int) GET_INTEGER (L"Optimization"), emode), L"Output")) return 0;

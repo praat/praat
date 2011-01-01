@@ -94,7 +94,7 @@ typedef struct structGuiCheckButton {
 GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags)
 {
-	GuiCheckButton me = Melder_calloc (struct structGuiCheckButton, 1);
+	GuiCheckButton me = Melder_calloc_f (struct structGuiCheckButton, 1);
 	my valueChangedCallback = valueChangedCallback;
 	my valueChangedBoss = valueChangedBoss;
 	#if gtk

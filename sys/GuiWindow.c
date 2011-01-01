@@ -74,7 +74,7 @@ typedef struct structGuiWindow {
 GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
-	GuiWindow me = Melder_calloc (struct structGuiWindow, 1);
+	GuiWindow me = Melder_calloc_f (struct structGuiWindow, 1);
 	my goAwayCallback = goAwayCallback;
 	my goAwayBoss = goAwayBoss;
 	#if gtk

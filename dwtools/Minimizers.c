@@ -119,7 +119,7 @@ int Minimizer_minimize (I, long maxNumOfIterations, double tolerance,
 		double *history;
 		my maxNumOfIterations += maxNumOfIterations;
 		if (my history) my history++; /* arrays start at 1 !! */
-		history = (double *) Melder_realloc (my history, my maxNumOfIterations *
+		history = (double *) Melder_realloc_e (my history, my maxNumOfIterations *
 	    	sizeof(double));
 		if (history == NULL) return 0;
 		my history = --history; /* arrays start at 1 !! */

@@ -999,7 +999,7 @@ static int menu_cb_Find (EDITOR_ARGS) {
 	EDITOR_OK
 	EDITOR_DO
 		Melder_free (my findString);
-		my findString = Melder_wcsdup (GET_STRING (L"string"));
+		my findString = Melder_wcsdup_f (GET_STRING (L"string"));
 		do_find (me);
 	EDITOR_END
 }
@@ -1135,15 +1135,19 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 
 static int menu_cb_PublishTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
+	TextGrid publish = NULL;
+//start:
 	TextGrid grid = my data;
-	if (! checkTierSelection (me, L"publish a tier")) return 0;
-
+	checkTierSelection (me, L"publish a tier"); cherror
 	if (my publishCallback) {
-		Data anyTier = grid -> tiers -> item [my selectedTier], copy = Data_copy (anyTier);
-		if (! copy) return 0;
-		Thing_setName (copy, anyTier -> name); 
-		my publishCallback (me, my publishClosure, copy);
+		Data tier = grid -> tiers -> item [my selectedTier];
+		publish = TextGrid_createWithoutTiers (1e30, -1e30); cherror
+		TextGrid_add (publish, tier); cherror
+		Thing_setName (publish, tier -> name); cherror
+		my publishCallback (me, my publishClosure, publish);
 	}
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -1357,8 +1361,6 @@ static void createMenus (TextGridEditor me) {
 	EditorMenu_addCommand (menu, L"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
 	menu = Editor_addMenu (me, L"Tier", 0);
-	EditorMenu_addCommand (menu, L"Copy tier to list of objects", 0, menu_cb_PublishTier);
-	EditorMenu_addCommand (menu, L"-- add tier --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Add interval tier...", 0, menu_cb_AddIntervalTier);
 	EditorMenu_addCommand (menu, L"Add point tier...", 0, menu_cb_AddPointTier);
 	EditorMenu_addCommand (menu, L"Duplicate tier...", 0, menu_cb_DuplicateTier);
@@ -1366,6 +1368,9 @@ static void createMenus (TextGridEditor me) {
 	EditorMenu_addCommand (menu, L"-- remove tier --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Remove all text from tier", 0, menu_cb_RemoveAllTextFromTier);
 	EditorMenu_addCommand (menu, L"Remove entire tier", 0, menu_cb_RemoveTier);
+	EditorMenu_addCommand (menu, L"-- extract tier --", 0, NULL);
+	EditorMenu_addCommand (menu, L"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
+	EditorMenu_addCommand (menu, L"Extract entire selected tier", 0, menu_cb_PublishTier);
 
 	if (my spellingChecker) {
 		menu = Editor_addMenu (me, L"Spell", 0);
@@ -1414,7 +1419,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 				TextPoint point = textTier -> points -> item [selectedPoint];
 				Melder_free (point -> mark);
 				if (wcsspn (text, L" \n\t") != wcslen (text))   /* Any visible characters? */
-				point -> mark = Melder_wcsdup (text);
+				point -> mark = Melder_wcsdup_f (text);
 				FunctionEditor_redraw (TextGridEditor_as_FunctionEditor (me));
 				Editor_broadcastChange (TextGridEditor_as_Editor (me));
 			}

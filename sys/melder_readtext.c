@@ -109,10 +109,10 @@ wchar_t * MelderReadText_readLine (MelderReadText me) {
 		size_t sizeNeeded = strlen (result8) + 1;
 		if (sizeNeeded > size) {
 			Melder_free (textW);
-			textW = Melder_malloc (wchar_t, sizeNeeded + 100);
+			textW = Melder_malloc_f (wchar_t, sizeNeeded + 100);
 			size = sizeNeeded + 100;
 		}
-		Melder_8bitToWcs_inline (result8, textW, my input8Encoding);
+		Melder_8bitToWcs_inline_e (result8, textW, my input8Encoding);
 		return textW;
 	}
 }
@@ -168,7 +168,7 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 	}
 	if (type == 0) {
 		rewind (f);   // length and type already set correctly.
-		char *text8bit = Melder_malloc (char, length + 1);
+		char *text8bit = Melder_malloc_e (char, length + 1);
 		if (! text8bit) { Melder_fclose (file, f); return NULL; }
 		fread (text8bit, sizeof (char), length, f);
 		if (! Melder_fclose (file, f)) {
@@ -202,12 +202,12 @@ static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 			(void) Melder_killReturns_inline (*string8);
 			return NULL;
 		} else {
-			text = Melder_8bitToWcs (text8bit, 0);
+			text = Melder_8bitToWcs_e (text8bit, 0); // BUG cherror
 			Melder_free (text8bit);
 		}
 	} else {
 		length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes.
-		text = Melder_malloc (wchar_t, length + 1);
+		text = Melder_malloc_e (wchar_t, length + 1);
 		if (! text) { Melder_fclose (file, f); return NULL; }
 		if (type == 1) {
 			for (unsigned long i = 0; i < length; i ++) {
@@ -280,7 +280,7 @@ wchar_t * MelderFile_readText (MelderFile file) {
 }
 
 MelderReadText MelderReadText_createFromFile (MelderFile file) {
-	MelderReadText me = Melder_calloc (struct structMelderReadText, 1); cherror
+	MelderReadText me = Melder_calloc_e (struct structMelderReadText, 1); cherror
 	my stringW = _MelderFile_readText (file, & my string8); cherror
 	if (my stringW != NULL) {
 		my readPointerW = & my stringW [0];

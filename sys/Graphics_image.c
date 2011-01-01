@@ -220,8 +220,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				Melder_assert (bytesPerRow > 0);
 				numberOfRows = clipy1 - clipy2;
 				Melder_assert (numberOfRows > 0);
-				imageData = Melder_malloc (unsigned char, bytesPerRow * numberOfRows);
-				Melder_assert (imageData != NULL);
+				imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
 			} else {
 				GetGWorld (& savePort, & saveDevice);
 				if (my resolution > 150) undersampling = 4;

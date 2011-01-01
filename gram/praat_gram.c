@@ -331,7 +331,7 @@ FORM (OTGrammar_generateInputs, L"Generate inputs", L"OTGrammar: Generate inputs
 	OK
 DO
 	WHERE (SELECTED) {
-		int status = praat_new2 (OTGrammar_generateInputs (OBJECT, GET_INTEGER (L"Number of trials")), NAMEW, L"_in");
+		int status = praat_new2 (OTGrammar_generateInputs (OBJECT, GET_INTEGER (L"Number of trials")), NAME, L"_in");
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -383,7 +383,7 @@ END
 
 DIRECT (OTGrammar_getInputs)
 	WHERE (SELECTED) {
-		if (! praat_new2 (OTGrammar_getInputs (OBJECT), NAMEW, L"_in")) return 0;
+		if (! praat_new2 (OTGrammar_getInputs (OBJECT), NAME, L"_in")) return 0;
 	}
 END
 
@@ -900,7 +900,7 @@ FORM (OTGrammar_to_Distributions, L"OTGrammar: Compute output distributions", L"
 DO
 	WHERE (SELECTED) {
 		int status = praat_new2 (OTGrammar_to_Distribution (OBJECT, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise")),
-			NAMEW, L"_out");
+			NAME, L"_out");
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -913,7 +913,7 @@ FORM (OTGrammar_to_PairDistribution, L"OTGrammar: Compute output distributions",
 DO
 	WHERE (SELECTED) {
 		int status = praat_new2 (OTGrammar_to_PairDistribution (OBJECT, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise")),
-			NAMEW, L"_out");
+			NAME, L"_out");
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -921,7 +921,7 @@ END
 
 DIRECT (OTGrammar_measureTypology)
 	WHERE (SELECTED) {
-		int status = praat_new2 (OTGrammar_measureTypology (OBJECT), NAMEW, L"_out");
+		int status = praat_new2 (OTGrammar_measureTypology (OBJECT), NAME, L"_out");
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}
@@ -1158,7 +1158,7 @@ FORM (OTMulti_to_Distribution, L"OTMulti: Compute output distribution", 0)
 DO
 	WHERE (SELECTED) {
 		int status = praat_new2 (OTMulti_to_Distribution (OBJECT,  GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
-			GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise")), NAMEW, L"_out");
+			GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise")), NAME, L"_out");
 		praat_dataChanged (OBJECT);
 		if (! status) return 0;
 	}

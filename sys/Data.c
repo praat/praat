@@ -157,6 +157,7 @@ int Data_writeText (I, MelderFile openFile) {
 
 int Data_createTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
+//start:
 	MelderFile_create (file, L"TEXT", 0, L"txt"); cherror
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
@@ -179,7 +180,7 @@ static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _className, L" cannot be written to a text file.")
 	Data_createTextFile (me, file, verbose); cherror
 	#ifndef _WIN32
-		flockfile (file -> filePointer);
+		flockfile (file -> filePointer);   // BUG
 	#endif
 	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _className);
 	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
@@ -282,8 +283,10 @@ int Data_readText (I, MelderReadText text) {
 Any Data_readFromTextFile (MelderFile file) {
 	Data me = NULL;
 	wchar_t *klas = NULL;
-	MelderReadText text = MelderReadText_createFromFile (file); cherror
-	wchar_t *line = MelderReadText_readLine (text);
+	MelderReadText text = NULL;
+//start:
+	text = MelderReadText_createFromFile (file); cherror
+	wchar_t *line = MelderReadText_readLine (text); cherror
 	if (line == NULL) error1 (L"No lines.")
 	wchar_t *end = wcsstr (line, L"ooTextFile");   /* oo format? */
 	if (end) {

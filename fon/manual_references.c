@@ -23,8 +23,8 @@ void manual_references_init (ManPages me);
 void manual_references_init (ManPages me) {
 
 MAN_BEGIN (L"Archangeli & Pulleyblank (1994)", L"ppgb", 19971021)
-NORMAL (L"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded Phonology%. "
-	"Cambridge, Mass.: MIT Press.")
+NORMAL (L"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%. "
+	"Cambridge, MA: MIT Press.")
 MAN_END
 
 MAN_BEGIN (L"Boersma (1993)", L"ppgb", 20030312)
@@ -97,7 +97,7 @@ NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Childers (1978)", L"ppgb", 20030515)
-NORMAL (L"%%Modern spectrum analysis%, IEEE Press.")
+NORMAL (L"%%Modern spectrum analysis%. IEEE Press.")
 NORMAL (L"The Burg algorithm for linear prediction coefficients is described on pages 252-255.")
 MAN_END
 
@@ -112,7 +112,7 @@ NORMAL (L"Paola Escudero & Paul Boersma (2004): \"Bridging the gap between L2 sp
 MAN_END
 
 MAN_BEGIN (L"Fant (1960)", L"ppgb", 19980201)
-NORMAL (L"Gunnar Fant (1960): %%Acoustic Theory of Speech Production.% Mouton, The Hague.")
+NORMAL (L"Gunnar Fant (1960): %%Acoustic theory of speech production.% Mouton, The Hague.")
 MAN_END
 
 MAN_BEGIN (L"Fischer (2005)", L"ppgb", 20100331)
@@ -122,22 +122,22 @@ NORMAL (L"Markus Fischer (2005): \"A Robbins-Monro type learning algorithm for a
 MAN_END
 
 MAN_BEGIN (L"Flanagan & Landgraf (1968)", L"ppgb", 19980201)
-NORMAL (L"James L. Flanagan & L.L. Landgraf (1968): \"Self-oscillating source for vocal-tract synthesizers\", "
+NORMAL (L"James L. Flanagan & L.L. Landgraf (1968): \"Self-oscillating source for vocal-tract synthesizers.\" "
 	"%%IEEE Transactions on Audio and Electroacoustics% ##AU-16#: 57-64. "
 	"Reprinted in: James L. Flanagan & Lawrence R. Rabiner (eds.) (1973): "
-	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
+	"%%Speech synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
 NORMAL (L"The authors show that if we model each vocal cord as a single mass-spring system, "
 	"the vocal cords will vibrate passively as a result of the interaction with a glottal airflow.")
 MAN_END
 
 MAN_BEGIN (L"Hayes & MacEachern (1998)", L"ppgb", 19981219)
-NORMAL (L"Bruce P. Hayes & Margaret MacEachern (1998): \"Quatrain form in English folk verse\", "
+NORMAL (L"Bruce P. Hayes & Margaret MacEachern (1998): \"Quatrain form in English folk verse.\" "
 	"%Language #74: 473\\--507.")
 MAN_END
 
 MAN_BEGIN (L"Ishizaka & Flanagan (1972)", L"ppgb", 19980201)
 NORMAL (L"Kenzo Ishizaka & James L. Flanagan (1972): \"Synthesis of voiced sounds from a two-mass model "
-	"of the vocal cords\", %%Bell System Technical Journal% #51: 1233-1268. "
+	"of the vocal cords.\" %%Bell System Technical Journal% #51: 1233-1268. "
 	"Reprinted in: James L. Flanagan & Lawrence R. Rabiner (eds.) (1973): "
 	"%%Speech Synthesis%, Dowden, Hutchinson & Ross, Stroudsburg.")
 NORMAL (L"The authors show that if we model each vocal cord as two coupled mass-spring systems, "
@@ -207,7 +207,7 @@ NORMAL (L"Joe Pater (2008): \"Gradual learning and convergence.\" %%Linguistic I
 MAN_END
 
 MAN_BEGIN (L"Pater, Potts & Bhatt (2007)", L"ppgb", 20080331)
-NORMAL (L"Joe Pater, Christopher Potts & Rajesh Bhatt (2007): Harmonic Grammar with linear programming. "
+NORMAL (L"Joe Pater, Christopher Potts & Rajesh Bhatt (2007): \"Harmonic Grammar with linear programming.\" "
 	"Manuscript, University of Massachusetts, Amherst. %%Rutgers Optimality Archive% #872.")
 MAN_END
 
@@ -257,7 +257,7 @@ MAN_END
 
 MAN_BEGIN (L"Soderstrom, Mathis & Smolensky (2006)", L"ppgb", 20070423)
 NORMAL (L"Melanie Soderstrom, Donald Mathis & Paul Smolensky (2006): "
-	"\"Abstract genomic encoding of Universl Grammar in Optimality Theory\". "
+	"\"Abstract genomic encoding of Universal Grammar in Optimality Theory.\" "
 	"In @@Smolensky & Legendre (2006)@, pp. 403\\--471.")
 MAN_END
 
@@ -266,8 +266,8 @@ NORMAL (L"Bruce Tesar & Paul Smolensky (1998): \"Learnability in Optimality Theo
 	"%%Linguistic Inquiry% #29: 229\\--268.")
 NORMAL (L"The first version of the constraint-demotion algorithm appeared in:")
 NORMAL (L"Bruce Tesar & Paul Smolensky (1993): \"The learnability of Optimality Theory: "
-	"an algorithm and some basic complexity results\", "
-	"ms. Department of Computer Science & Institute of Cognitive Science, University of Colorado at Boulder. "
+	"an algorithm and some basic complexity results.\" "
+	"Manuscript Department of Computer Science & Institute of Cognitive Science, University of Colorado at Boulder. "
 	"Available as Rutgers Optimality Archive #2, http://ruccs.rutgers.edu/roa.html")
 NORMAL (L"The Error-Driven Constraint Demotion algorithm (EDCD) can be found in:")
 NORMAL (L"Bruce Tesar & Paul Smolensky (1996): \"Learnability in Optimality Theory (long version)\". "

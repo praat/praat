@@ -492,20 +492,22 @@ int NUM_viterbi (
 	void *closure)
 {
 	double **delta = NULL, maximum;
-	long **psi = NULL, *numberOfCandidates = NULL, iframe, icand, icand1, icand2, place;
-	if (! (delta = NUMdmatrix (1, numberOfFrames, 1, maxnCandidates))) goto end;
-	if (! (psi = NUMlmatrix (1, numberOfFrames, 1, maxnCandidates))) goto end;
-	if (! (numberOfCandidates = NUMlvector (1, numberOfFrames))) goto end;
-	for (iframe = 1; iframe <= numberOfFrames; iframe ++) {
+	long **psi = NULL, *numberOfCandidates = NULL;
+//start:
+	long place;
+	delta = NUMdmatrix (1, numberOfFrames, 1, maxnCandidates); cherror
+	psi = NUMlmatrix (1, numberOfFrames, 1, maxnCandidates); cherror
+	numberOfCandidates = NUMlvector (1, numberOfFrames); cherror
+	for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
-		for (icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
+		for (long icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
 			delta [iframe] [icand] = - getLocalCost (iframe, icand, closure);
 	}
-	for (iframe = 2; iframe <= numberOfFrames; iframe ++) {
-		for (icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
+	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
+		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
 			maximum = -1e300;
 			place = 0;
-			for (icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
+			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
 					- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
@@ -519,13 +521,13 @@ int NUM_viterbi (
 	 * Find the end of the most probable path.
 	 */
 	maximum = delta [numberOfFrames] [place = 1];
-	for (icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
+	for (long icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
 		if (delta [numberOfFrames] [icand] > maximum)
 			maximum = delta [numberOfFrames] [place = icand];
 	/*
 	 * Backtrack.
 	 */
-	for (iframe = numberOfFrames; iframe >= 1; iframe --) {
+	for (long iframe = numberOfFrames; iframe >= 1; iframe --) {
 		putResult (iframe, place, closure);
 		place = psi [iframe] [place];
 	}
@@ -533,7 +535,7 @@ end:
 	NUMdmatrix_free (delta, 1, 1);
 	NUMlmatrix_free (psi, 1, 1);
 	NUMlvector_free (numberOfCandidates, 1);
-	if (Melder_hasError ()) return 0;
+	iferror return 0;
 	return 1;
 }
 

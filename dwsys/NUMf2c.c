@@ -73,7 +73,7 @@ void s_cat(char *lp, char *rpp[], long rnp[], long *np, long ll)
 			continue;
 			}
 		lp0 = lp;
-		lp = lp1 = Melder_malloc(char,L = ll);
+		lp = lp1 = Melder_malloc_f(char,L = ll);
 		break;
 		}
 	lp1 = lp;

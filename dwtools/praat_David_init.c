@@ -2311,7 +2311,7 @@ FORM (Matrix_solveEquation, L"Matrix: Solve equation", L"Matrix: Solve equation.
 DO
 	WHERE (SELECTED)
 	{
-		if (! praat_new2 (Matrix_solveEquation (OBJECT, GET_REAL (L"Tolerance")), NAMEW, L"_solution")) return 0;
+		if (! praat_new2 (Matrix_solveEquation (OBJECT, GET_REAL (L"Tolerance")), NAME, L"_solution")) return 0;
 	}
 END
 
@@ -4411,14 +4411,14 @@ FORM (TableOfReal_meansByRowLabels, L"TableOfReal: Means by row labels", L"Table
     BOOLEAN (L"Expand", 0)
 	OK
 DO
-	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER (L"Expand"), 0), NAMEW, L"_byrowlabels"))
+	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER (L"Expand"), 0), NAME, L"_byrowlabels"))
 END
 
 FORM (TableOfReal_mediansByRowLabels, L"TableOfReal: Medians by row labels", L"TableOfReal: To TableOfReal (medians by row labels)...")
     BOOLEAN (L"Expand", 0)
 	OK
 DO
-	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER (L"Expand"), 1), NAMEW, L"_byrowlabels"))
+	EVERY_CHECK(praat_new2 (TableOfReal_meansByRowLabels (OBJECT, GET_INTEGER (L"Expand"), 1), NAME, L"_byrowlabels"))
 END
 
 /***** TableOfReal and FilterBank  *****/
@@ -5266,6 +5266,7 @@ void praat_uvafon_David_init (void)
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_LIBRARY (praat_KlattGrid_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
+	INCLUDE_LIBRARY (praat_BSS_init)
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)
 }

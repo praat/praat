@@ -41,9 +41,9 @@ INTRO (L"Draws the concentration ellipse for each component in the @@GaussianMix
 NORMAL (L"The principal component plane will be determined from @@GaussianMixture: To PCA@.")
 NORMAL (L"You might also use another  @PCA and to combine it with a GaussianMixture for drawing  (@@GaussianMixture & PCA: Draw concentration ellipses...@).")
 ENTRY (L"Settings")
-TAG (L"%%Number of sigmas%,")
+TAG (L"##Number of sigmas")
 DEFINITION (L"determines the @@concentration ellipse|data coverage@.")
-TAG (L"%%Principal component plane%,")
+TAG (L"##Principal component plane")
 DEFINITION (L"determines whether the principal component plane is used or not for drawing.")
 MAN_END
 
@@ -54,7 +54,7 @@ MAN_END
 MAN_BEGIN (L"GaussianMixture & PCA: Draw concentration ellipses...", L"djmw", 20101101)
 INTRO (L"Draws the concentration ellipse for each component in the  @@GaussianMixture@ in the plane spanned by the selected  @PCA.")
 ENTRY (L"Settings")
-TAG (L"%%Number of sigmas%,")
+TAG (L"##Number of sigmas")
 DEFINITION (L"determines the @@concentration ellipse|data coverage@.")
 MAN_END
 
@@ -98,8 +98,8 @@ MAN_END
 
 MAN_BEGIN (L"GaussianMixture: To TableOfReal (random sampling)...", L"djmw", 20101030)
 INTRO (L"The selected @@GaussianMixture@ is used as a generator of data.")
-ENTRY (L"Settings")
-TAG (L"%%Number of data points%,")
+ENTRY (L"Setting")
+TAG (L"##Number of data points")
 DEFINITION (L"determines how many random data point have to be generated.")
 ENTRY (L"Algorithm")
 NORMAL (L"For each data point to be generated:")
@@ -112,29 +112,29 @@ MAN_BEGIN (L"TableOfReal: To GaussianMixture...", L"djmw", 20101101)
 INTRO (L"Creates a  @@GaussianMixture@ from the selected  @TableOfReal by an iterative EM (Expectation Maximization)"
 	" procedure.")
 ENTRY (L"Settings")
-TAG (L"%%Number of components%")
+TAG (L"##Number of components")
 DEFINITION (L"defines the number of Gaussians in the mixture.")
-TAG (L"%%Tolerance of minimizer%,")
+TAG (L"##Tolerance of minimizer")
 DEFINITION (L"defines when to stop optimizing. If the relative difference between the likelihoods at two successive "
 	"iteration steps differs by less then the tolerance we stop, i.e. when |(%L(%i-1)-%L(%i))/%L(%i)| < %%tolerance%. ")
-TAG (L"%%Maximum number of iterations%,")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"defines another stopping criterion. The EM iteration will stop when either the tolerance "
 	"is reached or the maximum number of iterations. If zero is chosen, no iteration will be performed and the "
 	"GaussianMixture will be initialized with the initial guess.")
-TAG (L"%%Stability coefficient lambda%,")
+TAG (L"##Stability coefficient lambda")
 DEFINITION (L"defines the fraction of the total covariance that will be added to the each of the mixture "
 	"covariance matrices during the EM iteration. This may prevent one or more of these matrices to become singular.")
-TAG (L"%%Covariance matrices are%,")
+TAG (L"##Covariance matrices are")
 DEFINITION (L"defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.")
-ENTRY (L"EM Algorithm")
-NORMAL (L"The EM algorithm is an iterative procedure to maximize the likelihood of the data given a model. For a "
+ENTRY (L"Expectation\\--Maximization Algorithm")
+NORMAL (L"The Expectation\\--Maximization (EM) algorithm is an iterative procedure to maximize the likelihood of the data given a model. For a "
 	"GaussianMixture, the parameters in the model are the centers and the covariances of all components in the mixture "
 	"and their mixing probabilities.")
 NORMAL (L"The number of parameters depends on the number of components in the mixture and the dimension of the data. "
 	"For a full covariance matrix we have to find  %dimension%(%dimension%+1)/2 matrix elements and another "
 	" %dimension vector elements for its center. This makes the total number of parameters that have to be estimated "
-	"for a mixture with   %numberOfComponents components equal to "
-	" %numberOfComponents \\.c %dimension%(%dimension%+3)/2 + %numberOfComponents.")
+	"for a mixture with ##Number of components# components equal to "
+	"%numberOfComponents \\.c %dimension%(%dimension%+3)/2 + %numberOfComponents.")
 NORMAL (L"For diagonal covariance matrices the number of parameters reduces considerably.")
 NORMAL (L"The EM iteration has to start with a sensible initial guess for all the parameters. For the initial guess, "
 	"we derive our centers from positions on the 1-\\si ellipse in the plane spanned by the first two principal "
@@ -157,17 +157,17 @@ MAN_END
 MAN_BEGIN (L"GaussianMixture & TableOfReal: Get likelihood value...", L"djmw", 20101125)
 INTRO (L"Calculates how well the @GaussianMixture model fits the data according to a criterion.")
 ENTRY (L"Settings")
-TAG (L"%%Maximum likelihood%")
+TAG (L"##Maximum likelihood")
 FORMULA (L"ML = \\Si__%i=1..%n_ log (\\Si__%m=1..%k_ \\al__%k_ %p__%%ik%_)")
-TAG (L"%%Minimum message length%")
+TAG (L"##Minimum message length")
 FORMULA (L"DL = ML - 0.5(N\\.c\\Si__%m=1..%k_ log(%n\\al__%m_/12) -%k\\.clog(%n/12) -%k(%N+1))")
-TAG (L"%%Bayes information%")
+TAG (L"##Bayes information")
 FORMULA (L"BIC = 2\\.cML - k\\.cN\\.clog(n)")
-TAG (L"%%Akaike information%")
+TAG (L"##Akaike information")
 FORMULA (L"AIC = 2(ML - k\\.cN) ")
-TAG (L"%%Akaike corrected%")
+TAG (L"##Akaike corrected")
 FORMULA (L"AICc = 2(ML - k\\.cN\\.cn/(n-k\\.cN-1))")
-TAG (L"%%Complete-data ML%")
+TAG (L"##Complete-data ML")
 FORMULA (L"\\Si__%i=1..%n_\\Si__%m=1..%k_ \\ga__%%im%_ log (\\ga__%%im%_)")
 NORMAL (L"In the formulas above %n is the number of data points, %k is the number of mixture components, %N is the "
 	"number of parameters in one component, i.e. %d + %d(%d+1)/2 for a full covariance matrix of "
@@ -204,17 +204,17 @@ MAN_END
 MAN_BEGIN (L"GaussianMixture & TableOfReal: To GaussianMixture (CEMM)...", L"djmw", 20101120)
 INTRO (L"Find the best @@GaussianMixture@ from the data according to a iterative component-wise optimization algorithm by which components may be deleted.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum number of components%,")
+TAG (L"##Minimum number of components")
 DEFINITION (L"defines the minimum number of components that have to survive the minimization process. If a value of zero is chosen all components will survive and no deletions will take place.")
-TAG (L"%%Tolerance of minimizer%,")
+TAG (L"##Tolerance of minimizer")
 DEFINITION (L"defines when to stop optimizing. If the relative difference between the likelihoods at two successive "
 	"iteration steps differs by less then the tolerance we stop, i.e. when |(%L(%i-1)-%L(%i))/%L(%i)| < %%tolerance%. ")
-TAG (L"%%Maximum number of iterations%,")
+TAG (L"##Maximum number of iterations")
 DEFINITION (L"defines another stop criterion. Iteration stops whenever the number of iterations reaches this value.")
-TAG (L"%%Stability coefficient lambda%,")
+TAG (L"##Stability coefficient lambda")
 DEFINITION (L"defines the fraction of the totat covariance that is added to the covariance of each component to "
 	"prevent these matrices from becoming singular.")
-TAG (L"%%Criterion based on%,")
+TAG (L"##Criterion based on")
 DEFINITION (L"defines whether the function to be optimized is the log likelihood or the related miminum description length.")
 ENTRY (L"Algorithm")
 NORMAL (L"The component-wise optimization algorithm is described in @@Figueiredo & Jain (2002)@ where the function to be optimized "
@@ -230,8 +230,8 @@ MAN_END
 MAN_BEGIN (L"GaussianMixture & TableOfReal: To TableOfReal (BHEP normality tests)...", L"djmw", 20101113)
 INTRO (L"Tests the data in the @TableOfReal that belong to the components of the @GaussianMixture for normality "
 	"according to an adapted version of the @@BHEP multivariate normality test@.")
-ENTRY (L"Settings")
-TAG (L"%%Beta%,")
+ENTRY (L"Setting")
+TAG (L"##Beta")
 DEFINITION (L"determines the smoothing parameter of the data. If %beta equals zero the smoothing is determined "
 	"automatically for each component of the mixture separately as: ")
 FORMULA (L"%beta = 1/(\\Vr2) (2%p+1)^^1/(%p+4)^ n^^1/(%p+4)^,")
@@ -240,8 +240,8 @@ MAN_END
 
 MAN_BEGIN (L"TableOfReal: To GaussianMixture (row labels)...", L"djmw", 20101101)
 INTRO (L"Creates a  @@GaussianMixture@ from the selected  @TableOfReal. The number of mixture components is determined by the number of different row labels.")
-ENTRY (L"Settings")
-TAG (L"%%Covariance matrices are%,")
+ENTRY (L"Setting")
+TAG (L"##Covariance matrices are")
 DEFINITION (L"defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.")
 MAN_END
 
@@ -254,8 +254,8 @@ MAN_BEGIN (L"HMM_StateSequence", L"djmw", 20101010)
 INTRO (L"An HMM_StateSequence models the sequence of states that an @HMM has traversed.")
 MAN_END
 
-MAN_BEGIN (L"HMM", L"djmw", 20101009)
-INTRO (L"A HMM implements a Hidden Markov Model. Markov models are often used to model simple observation sequences. "
+MAN_BEGIN (L"HMM", L"djmw", 20101225)
+INTRO (L"A HMM is a Hidden Markov Model. Markov models are often used to model observation sequences. "
 	"The fundamental assumption in a markov model is that the probability of an observation (event) can only "
 	"depend on the previous observation. "
 	"A HMM can be visualised as a graph with a number of %%states%. If states are connected they have line connecting them. The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". Each state can emit three symbols (these are not visible in the graph).   ")
@@ -269,11 +269,11 @@ MAN_END
 MAN_BEGIN (L"HMM: Create simple HMM...", L"djmw", 20101009)
 INTRO (L"Creates a @@HMM|Hidden Markov Model@ from given states and observation symbols.")
 ENTRY (L"Settings")
-TAG (L"%%Name%")
+TAG (L"##Name")
 DEFINITION (L"determines the name (for the list of objects).")
-TAG (L"%%States%,")
+TAG (L"##States")
 DEFINITION (L"determines the number of and the names of the states.")
-TAG (L"%%Symbols%")
+TAG (L"##Symbols")
 DEFINITION (L"determines the number and the names of the observation symbols.")
 NORMAL (L"You can define a (not hidden) Markov model by leaving either the States or the Symbols field empty.")
 NORMAL (L"The model is initialised with equal probabilities for all the transitions and emissions.")
@@ -294,9 +294,9 @@ MAN_END
 MAN_BEGIN (L"HMM & HMM: Get cross-entropy...", L"djmw", 20101017)
 INTRO (L"Calculates the cross-entropy between the two selected @@HMM@ models based on observation sequences.")
 ENTRY (L"Settings")
-TAG (L"%%Observation length%")
+TAG (L"##Observation length")
 DEFINITION (L"defines the number of observations that have to generated.")
-TAG (L"%%Symmetric%")
+TAG (L"##Symmetric")
 DEFINITION (L"defines whether the symmetric formula is used in the calculation.")
 ENTRY (L"Algorithm")
 NORMAL (L"The cross-entropy is a measure of the distance between two models  \\la__1_ and \\la__2_. It is defined as")
@@ -321,10 +321,10 @@ MAN_END
 MAN_BEGIN (L"HMM: To HMM_ObservationSequence...", L"djmw", 20101010)
 INTRO (L"Use the selected @HMM as a generator for an observation sequence.")
 ENTRY (L"Settings")
-TAG (L"%%Start state%,")
+TAG (L"##Start state")
 DEFINITION (L"defines the state in which the HMM starts. If a zero is given the start state is randomly chosen according to the start probabilities.")
-TAG (L"%%Number of observations%,")
-DEFINITION (L"defines the number of observations to generate. For models of  %%finite% duration like for example left-to-right models, the HMM generator may stop before this number is reached.")
+TAG (L"##Number of observations")
+DEFINITION (L"defines the number of observations to generate. For models of %%finite% duration such as left-to-right models, the HMM generator may stop before this number is reached.")
 MAN_END
 
 MAN_BEGIN (L"HMM: Get transition probability...", L"djmw", 20101010)
@@ -373,7 +373,7 @@ MAN_END
 MAN_BEGIN (L"HMM: Set transition probabilities...", L"djmw", 20101010)
 INTRO (L"Sets the probabilities for making a transition from one state to all other states.")
 ENTRY (L"Settings")
-TAG (L"%%Probabilities%,")
+TAG (L"##Probabilities")
 DEFINITION (L"the list of transition probabilities from the given state. "
 	"The values given will be scaled as probabilities. A zero is used to mark a transition that will never occur. ")
 ENTRY (L"Examples")
@@ -411,26 +411,26 @@ NORMAL (L"Baum-Welch: uses forward and backward procedure to (re)estimate the pa
 MAN_END
 
 MAN_BEGIN (L"Bishop (2006)", L"djmw", 20101026)
-NORMAL (L"C.M. Bishop (2006), %%Pattern recognition and machine learning%, Springer.")
+NORMAL (L"C.M. Bishop (2006): %%Pattern recognition and machine learning%. Springer.")
 MAN_END
 
-MAN_BEGIN (L"Figueiredo & Jain (2002)",L"djmw", 20101120)
-NORMAL (L"Mario A.T. Figueiredo & Anil K. Jain (2002), \"Unsupervised learning of finite mixture models\", "
-	"%%IEEE Transactions on Pattern Analysis and Machine Intelligence%, #24 (3), 381-396.")
+MAN_BEGIN (L"Figueiredo & Jain (2002)",L"djmw", 20101229)
+NORMAL (L"Mario A.T. Figueiredo & Anil K. Jain (2002): \"Unsupervised learning of finite mixture models.\" "
+	"%%IEEE Transactions on Pattern Analysis and Machine Intelligence% ##24(3)#: 381\\--396.")
 MAN_END
 
 MAN_BEGIN (L"Rabiner (1989)", L"djmw", 20101017)
-NORMAL (L"L.R. Rabiner (1989), \"A tutorial on Hidden Markov Models and selected applications in speech recognition\", %%Proceedings of the IEEE% #77, 257-286.")
+NORMAL (L"L.R. Rabiner (1989): \"A tutorial on Hidden Markov Models and selected applications in speech recognition.\" %%Proceedings of the IEEE% #77: 257\\--286.")
 MAN_END
 
 MAN_BEGIN (L"Tenreiro (2009)", L"djmw", 20101113)
-NORMAL (L"C. Tenreiro (2009), \"On the choice of the smoothing parameter for the BHEP goodness-of-fit test\", "
-	"Computational Statistics and Data Analysis #53, 1038-1053.")
+NORMAL (L"C. Tenreiro (2009): \"On the choice of the smoothing parameter for the BHEP goodness-of-fit test.\" "
+	"%%Computational Statistics and Data Analysis% #53: 1038\\--1053.")
 MAN_END
 
 MAN_BEGIN (L"Zhang et al. (2003)", L"djmw", 20101122)
-NORMAL (L"Zhihua Zhang & Chibiao Chen & Jian Sun & Kap Luk Chan (2003), \"EM algorithms for Gaussian mixtures with "
-	"split-and-merge operation\", Pattern Recognition #36, 1973-1983.")
+NORMAL (L"Zhihua Zhang & Chibiao Chen & Jian Sun & Kap Luk Chan (2003): \"EM algorithms for Gaussian mixtures with "
+	"split-and-merge operation.\" %%Pattern Recognition% #36: 1973\\--1983.")
 MAN_END
 
 }

@@ -260,22 +260,24 @@ wchar_t Melder_decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding) {
-	const unsigned char *p = (const unsigned char *) & string [0];
+void Melder_8bitToWcs_inline_e (const char *string, wchar_t *wcs, int inputEncoding) {
 	wchar_t *q = & wcs [0];
-	if (inputEncoding == 0)
+//start:
+	if (inputEncoding == 0) {
 		inputEncoding = preferences. inputEncoding;
-	/*
-	 * In case the preferences weren't initialized yet, use the platform defaults:
-	 */
-	if (inputEncoding == 0)
-		#if defined (macintosh)
-			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_MACROMAN;
-		#elif defined (_WIN32)
-			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1;
-		#else
-			inputEncoding = kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1;
-		#endif
+		/*
+		 * In case the preferences weren't initialized yet, use the platform defaults:
+		 */
+		if (inputEncoding == 0) {
+			#if defined (macintosh)
+				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_MACROMAN;
+			#elif defined (_WIN32)
+				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1;
+			#else
+				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1;
+			#endif
+		}
+	}
 	if (inputEncoding == kMelder_textInputEncoding_UTF8 ||
 	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1 ||
 	    inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1 ||
@@ -291,10 +293,10 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 			inputEncoding = kMelder_textInputEncoding_MACROMAN;
 		} else {
 			Melder_assert (inputEncoding == kMelder_textInputEncoding_UTF8);
-			* q = '\0';
-			return Melder_error1 (L"Text is not valid UTF-8; please try a different text input encoding.");
+			error1 (L"Text is not valid UTF-8; please try a different text input encoding.");
 		}
 	}
+	const unsigned char *p = (const unsigned char *) & string [0];
 	if (inputEncoding == kMelder_textInputEncoding_UTF8) {
 		while (*p != '\0') {
 			uint32_t kar = * p ++;
@@ -336,25 +338,30 @@ int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding
 	} else if (inputEncoding != kMelder_textInputEncoding_UTF8) {
 		Melder_fatal ("Unknown text input encoding %d.", inputEncoding);
 	}
+end:
 	* q = '\0';
 	(void) Melder_killReturns_inlineW (wcs);
-	return 1;
 }
 
-wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding) {
+wchar_t * Melder_8bitToWcs_e (const char *string, int inputEncoding) {
 	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
-	if (result == NULL) return NULL;
-	if (! Melder_8bitToWcs_inline (string, result, inputEncoding)) {
-		Melder_free (result);
-	}
+	wchar_t *result = NULL;
+//start:
+	result = Melder_malloc_e (wchar_t, strlen (string) + 1); cherror
+	Melder_8bitToWcs_inline_e (string, result, inputEncoding); cherror
+end:
+	iferror Melder_free (result);
 	return result;
 }
 
-wchar_t * Melder_utf8ToWcs (const char *string) {
+wchar_t * Melder_utf8ToWcs_e (const char *string) {
 	if (string == NULL) return NULL;
-	wchar_t *result = Melder_malloc (wchar_t, strlen (string) + 1);
-	Melder_8bitToWcs_inline (string, result, kMelder_textInputEncoding_UTF8);
+	wchar_t *result = NULL;
+//start:
+	result = Melder_malloc_e (wchar_t, strlen (string) + 1); cherror
+	Melder_8bitToWcs_inline_e (string, result, kMelder_textInputEncoding_UTF8); cherror
+end:
+	iferror Melder_free (result);
 	return result;
 }
 
@@ -525,10 +532,14 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 	utf8 [j] = '\0';
 }
 
-char * Melder_wcsToUtf8 (const wchar_t *string) {
+char * Melder_wcsToUtf8_e (const wchar_t *string) {
 	if (string == NULL) return NULL;
-	char *result = Melder_malloc (char, wcslen_utf8 (string, true) + 1);
+	char *result = NULL;
+//start:
+	result = Melder_malloc_e (char, wcslen_utf8 (string, true) + 1); cherror
 	Melder_wcsToUtf8_inline (string, result);
+end:
+	iferror Melder_free (result);
 	return result;
 }
 
@@ -545,7 +556,7 @@ char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	}
 	if (sizeNeeded > bufferSize [ibuffer]) {
 		sizeNeeded = sizeNeeded * 1.61803 + 100;
-		buffer [ibuffer] = Melder_realloc (buffer [ibuffer], sizeNeeded * sizeof (char));
+		buffer [ibuffer] = Melder_realloc_f (buffer [ibuffer], sizeNeeded * sizeof (char));
 		bufferSize [ibuffer] = sizeNeeded;
 	}
 	Melder_wcsToUtf8_inline (text, buffer [ibuffer]);

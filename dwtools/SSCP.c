@@ -1186,7 +1186,7 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 		t = thy item[i];
 		lscale = ellipseScalefactor (t, scale, confidence);
 		if (lscale < 0) continue;
-		if (label == NULL || NUMwcscmp (label, Thing_getName (t)) == 0)
+		if (label == NULL || Melder_wcscmp (label, Thing_getName (t)) == 0)
 		{
 			_SSCP_drawTwoDimensionalEllipse (t, g, lscale, fontSize);
 		}

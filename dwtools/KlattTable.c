@@ -485,7 +485,7 @@ end:
 
 static KlattGlobal KlattGlobal_create (double samplingFrequency)
 {
-	KlattGlobal me = (KlattGlobal) _Melder_calloc (1, sizeof(struct KlattGlobal));
+	KlattGlobal me = (KlattGlobal) _Melder_calloc_f (1, sizeof(struct KlattGlobal));
 
 	my samrate = samplingFrequency;
 	double dT = 1.0 / my samrate;
@@ -558,7 +558,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 static KlattFrame KlattFrame_create ()
 {
-	KlattFrame me = (KlattFrame) _Melder_malloc (sizeof(struct KlattFrame));
+	KlattFrame me = (KlattFrame) _Melder_malloc_e (sizeof(struct KlattFrame));
 	return me;
 }
 

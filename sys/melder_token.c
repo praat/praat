@@ -45,7 +45,7 @@ static wchar_t *theMelderToken, *theMelderTokenLast;
 
 wchar_t *Melder_firstToken (const wchar_t *string) {
 	Melder_free (theMelderToken);
-	theMelderToken = Melder_wcsdup (string);
+	theMelderToken = Melder_wcsdup_f (string);
 	return Melder_wcstok (theMelderToken, L" \t\n\r", & theMelderTokenLast);
 }
 
@@ -60,7 +60,7 @@ wchar_t ** Melder_getTokens (const wchar_t *string, long *n) {
 	if (*n == 0) return NULL;
 	result = (wchar_t **) NUMpvector (1, *n); cherror
 	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
-		result [++ itoken] = Melder_wcsdup (token); cherror
+		result [++ itoken] = Melder_wcsdup_e (token); cherror
 	}
 end:
 	iferror NUMpvector_free ((void **) result, 1);

@@ -27,7 +27,7 @@
 
 int SimpleString_init (SimpleString me, const wchar_t *string)
 {
-    if ((my string = Melder_wcsdup (string))  == NULL) return 0; 
+    if ((my string = Melder_wcsdup_e (string))  == NULL) return 0; 
     return 1;
 }
 
@@ -51,7 +51,7 @@ int SimpleString_append_c (SimpleString me, const wchar_t *str)
 	long myLength; wchar_t *ptr;
 	if (! str) return 1;
 	myLength = wcslen (my string);
-	if ((ptr = Melder_realloc (my string, (myLength + wcslen (str) + 1) * sizeof (wchar_t))) == NULL) return 0;
+	if ((ptr = Melder_realloc_e (my string, (myLength + wcslen (str) + 1) * sizeof (wchar_t))) == NULL) return 0;
 	my string = ptr;
 	wcscpy (& my string[myLength], str);
 	return 1;	
@@ -74,7 +74,7 @@ SimpleString SimpleString_concat_c (SimpleString me, const wchar_t *str)
 int SimpleString_replace_c (SimpleString me, const wchar_t *str)
 {
 	wchar_t *ptr;
-    if (! str || ((ptr = Melder_wcsdup (str)) == NULL)) return 0;
+    if (! str || ((ptr = Melder_wcsdup_e (str)) == NULL)) return 0;
     Melder_free (my string);
     my string = ptr;
     return 1;
@@ -104,7 +104,7 @@ const wchar_t * SimpleString_genericize_c (SimpleString me)
 	SimpleString thee = Data_copy (me);
 	wchar_t *ptr;
 	if (thee == NULL ||
-		(ptr = Melder_realloc (my string, 3 * wcslen (my string) * sizeof (wchar_t))) == NULL)
+		(ptr = Melder_realloc_e (my string, 3 * wcslen (my string) * sizeof (wchar_t))) == NULL)
 	{
 		forget (thee); return NULL;
 	}

@@ -58,6 +58,7 @@
  	+NUMcovarianceFromColumnCentredMatrix, +NUMmultivariateKurtosis
  djmw 20100311 +NUMsolveQuadraticEquation
  djmw 20100426 replace wcstok by Melder_wcstok
+ djmw 20101209 removed NUMwcscmp is Melder_wcscmp now
 */
 
 #include "SVD.h"
@@ -125,7 +126,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 
 	*numbers_found = n = 0;
 
-	if (((dup = Melder_wcsdup (s)) == NULL) ||
+	if (((dup = Melder_wcsdup_e (s)) == NULL) ||
 		((numbers = NUMdvector (1, capacity)) == NULL)) goto end;
 	wchar_t *last;
 	token = Melder_wcstok (dup, delimiter, & last);
@@ -135,7 +136,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 		if (n > capacity)
 		{
 			long newsize = 2 * capacity; double *new;
-			if (! (new = Melder_realloc (numbers, newsize))) goto end;
+			if (! (new = Melder_realloc_e (numbers, newsize))) goto end;
 			numbers = new; capacity = newsize;
 		}
 		numbers[++n] = value;
@@ -157,7 +158,7 @@ int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 	long i;
 	for (i=lo; i <= hi; i++)
 	{
-		if (NUMwcscmp (s1[i], s2[i])) return 0;
+		if (Melder_wcscmp (s1[i], s2[i])) return 0;
 	}
 	return 1;
 }
@@ -169,7 +170,7 @@ int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 	for (i = lo; i <= hi; i++)
 	{
 		Melder_free (to[i]);
-		if (from[i] && ((to[i] = Melder_wcsdup (from[i])) == NULL)) return 0;
+		if (from[i] && ((to[i] = Melder_wcsdup_e (from[i])) == NULL)) return 0;
 	}
 	return 1;
 }
@@ -197,7 +198,7 @@ static wchar_t *appendNumberToString (wchar_t *s, long number)
 
 	ncharb = swprintf (buf, 12, L"%ld", number);
 	if (s != NULL) nchars = wcslen (s);
-	new = Melder_calloc (wchar_t, nchars + ncharb + 1);
+	new = Melder_calloc_e (wchar_t, nchars + ncharb + 1);
 	if (new == NULL) return NULL;
 	if (nchars > 0) wcsncpy (new, s, nchars);
 	wcsncpy (new + nchars, buf, ncharb + 1);
@@ -295,7 +296,7 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 
 	len_replace = wcslen (replace);
 	len_result = len_string + *nmatches * (len_replace - len_search);
-	result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
+	result = Melder_malloc_f (wchar_t, (len_result + 1) * sizeof (wchar_t));
 	result[len_result] = '\0';
 	if (result == NULL) return NULL;
 
@@ -342,7 +343,7 @@ wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wcha
 
 static int expand_buffer (wchar_t **bufp, int new_size)
 {
-	wchar_t *tbuf = (wchar_t *) Melder_realloc (*bufp, new_size * sizeof (wchar_t));
+	wchar_t *tbuf = (wchar_t *) Melder_realloc_e (*bufp, new_size * sizeof (wchar_t));
 	if (tbuf == NULL) return 0;
 	*bufp = tbuf;
 	return 1;
@@ -951,20 +952,6 @@ int NUMstrcmp (const char *s1, const char *s2)
 	}
 }
 
-int NUMwcscmp (const wchar_t *s1, const wchar_t *s2)
-{
-	if (s1 == NULL || s1[0] == '\0')
-	{
-		if (s2 != NULL && s2[0] != '\0') return -1;
-		else return 0;
-	}
-	else
-	{
-		if (s2 == NULL) return +1;
-		else return wcscmp (s1, s2);
-	}
-}
-
 void NUMlocate_f (float *xx, long n, float x, long *index)
 {
 	long ju = n + 1, jm, jl = 0;
@@ -1368,20 +1355,18 @@ end:
 int NUMpseudoInverse (double **y, long nr, long nc, double **yinv,
 	double tolerance)
 {
-	SVD me; long i, j, k;
-
-	me = SVD_create_d (y, nr, nc);
+	SVD me = SVD_create_d (y, nr, nc);
 	if (me == NULL) return 0;
 
 	(void) SVD_zeroSmallSingularValues (me, tolerance);
-	for (i = 1; i <= nc; i++)
+	for (long i = 1; i <= nc; i++)
 	{
-		for (j = 1; j <= nr; j++)
+		for (long j = 1; j <= nr; j++)
 		{
 			double s = 0;
-			for (k = 1; k <= nc; k++)
+			for (long k = 1; k <= nc; k++)
 			{
-				if (my d[k]) s += my v[i][k] * my u[j][k] / my d[k];
+				if (my d[k] != 0) s += my v[i][k] * my u[j][k] / my d[k];
 			}
 			yinv[i][j] = s;
 		}

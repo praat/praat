@@ -43,7 +43,9 @@ void NUMlinprog_delete (NUMlinprog me) {
 }
 
 NUMlinprog NUMlinprog_new (bool maximize) {
-	NUMlinprog me = Melder_calloc (struct structNUMlinprog, 1); cherror
+	NUMlinprog me = NULL;
+//start:
+	me = Melder_calloc_e (struct structNUMlinprog, 1); cherror
 	my linearProgram = glp_create_prob ();
 	glp_set_obj_dir (my linearProgram, maximize ? GLP_MAX : GLP_MIN);
 end:

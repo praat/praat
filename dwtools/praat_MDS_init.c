@@ -165,7 +165,7 @@ DIRECT (AffineTransform_help)
 END
 
 DIRECT (AffineTransform_invert)
-	EVERY_CHECK (praat_new2 (AffineTransform_invert (OBJECT), NAMEW, L"_inverse"))
+	EVERY_CHECK (praat_new2 (AffineTransform_invert (OBJECT), NAME, L"_inverse"))
 END
 
 FORM (AffineTransform_getTransformationElement, L"AffineTransform: Get transformation element", L"Procrustes")

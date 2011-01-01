@@ -62,7 +62,7 @@ int wmain (int argc, wchar_t *argvW []) {
 	if (argc > 0) {
 		argvA = NUMpvector (0, argc - 1);
 		for (int iarg = 0; iarg < argc; iarg ++) {
-			argvA [iarg] = Melder_wcsToUtf8 (argvW [iarg]);
+			argvA [iarg] = Melder_wcsToUtf8_e (argvW [iarg]);
 		}
 	}
 	return main (argc, argvA);

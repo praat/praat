@@ -31,7 +31,7 @@
 	Algorithm follows p. 145 and 642 in:
 	Donald E. Knuth (1998): The art of computer programming. Third edition. Vol. 3: sorting and searching.
 		Boston: Addison-Wesley, printed may 2002.
-	Modification: there is no distinction between record and key and 
+	Modification: there is no distinction between record and key and
 	    Floyd's optimization (page 642) is used.
 */
 
@@ -261,9 +261,9 @@ void NUMindexx_f (const float a[], long n, long index[])
 
 void NUMindexx (const double a[], long n, long index[])
 	MACRO_NUMindex(float)
-	
+
 #undef COMPARELT
-#define COMPARELT(x,y) (NUMwcscmp (x,y) <  0)
+#define COMPARELT(x,y) (Melder_wcscmp (x,y) <  0)
 void NUMindexx_s (wchar_t **a, long n, long index[])
 	MACRO_NUMindex(wchar_t *)
 
@@ -272,7 +272,7 @@ void NUMindexx_s (wchar_t **a, long n, long index[])
 
 
 /*
-	Knuth's heapsort algorithm (vol. 3, page 145), 
+	Knuth's heapsort algorithm (vol. 3, page 145),
 	modified with Floyd's optimization (vol. 3, page 642).
 */
 #define MACRO_NUMsortkf(TYPE)  { \

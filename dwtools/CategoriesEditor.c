@@ -21,7 +21,7 @@
  djmw 1995
  djmw 19980225 repaired a memory leak, caused by wrong inheritance for
  	 CategoriesEditorInsert command.
- djmw 20020408 GPL 
+ djmw 20020408 GPL
  djmw 20020408 Modified 'createMenus'
  djmw 20060111 Replaced Resources.h with Preferences.h
  djmw 20060328 Changed last argument to NULL in XtVaSetValues, XtVaGetValues and XtVaCreateManagedWidget
@@ -58,32 +58,32 @@ static void Ordered_moveItems (I, long position[], long npos, long newpos)
 	iam (Ordered);
 	Any *tmp = NULL;
 	long i, pos, min = position[1], max = position[1];
-	
+
 	for (i=2; i <= npos; i++)
 	{
 		if (position[i] > max) max = position[i];
 		else if (position[i] < min) min = position[i];
 	}
-	
-	Melder_assert (min >= 1 && max <= my size && (newpos <= min || 
+
+	Melder_assert (min >= 1 && max <= my size && (newpos <= min ||
 		newpos >= max));
-	
+
 	if (! (tmp = NUMpvector (1, npos))) return;
-	
+
 	/*
 		'remove'
 	*/
-	
+
 	for (i=1; i <= npos; i++)
 	{
 		tmp[i] = my item[position[i]];
 		my item[position[i]] = NULL;
 	}
-	
+
 	/*
 		create a contiguous 'hole'
 	*/
-	
+
 	if (newpos <= min)
 	{
 		for (pos=max, i=max; i >= newpos; i--)
@@ -100,16 +100,16 @@ static void Ordered_moveItems (I, long position[], long npos, long newpos)
 		}
 		pos = newpos - npos + 1;
 	}
-	
+
 	/*
 		fill the 'hole'
 	*/
-	
+
 	for (i=1; i <= npos; i++)
 	{
 		my item[pos++] = tmp[i];
 	}
-	
+
 	NUMpvector_free (tmp, 1);
 }
 
@@ -161,7 +161,7 @@ static int CategoriesEditorCommand_init (I, wchar_t *name,  Any data,
 {
 	iam (CategoriesEditorCommand);
 	(void) nCategories;
-	
+
 	my nSelected = nSelected;
 	return Command_init (me, name, data, execute, undo) &&
 			(my categories = Categories_create()) &&
@@ -180,8 +180,8 @@ class_create (CategoriesEditorInsert, CategoriesEditorCommand);
 
 static int CategoriesEditorInsert_execute (I)
 {
-	iam (CategoriesEditorInsert); 
-	CategoriesEditor editor = my data; 
+	iam (CategoriesEditorInsert);
+	CategoriesEditor editor = my data;
 	SimpleString str;
 	if (! (str = Data_copy (((Categories) my categories)->item[1])) ||
 		! Ordered_addItemPos (editor->data, str, my selection[1]))
@@ -194,7 +194,7 @@ static int CategoriesEditorInsert_execute (I)
 
 static int CategoriesEditorInsert_undo (I)
 {
-	iam (CategoriesEditorInsert); 
+	iam (CategoriesEditorInsert);
 	CategoriesEditor editor = my data;
 	Collection_removeItem (editor->data, my selection[1]);
 	update (editor, my selection[1], 0, my selection, 1);
@@ -224,11 +224,11 @@ class_create (CategoriesEditorRemove, CategoriesEditorCommand);
 
 static int CategoriesEditorRemove_execute (I)
 {
-	iam (CategoriesEditorRemove); 
+	iam (CategoriesEditorRemove);
 	long i;
 	CategoriesEditor editor = my data;
 	Categories categories = editor->data;
-	
+
 	for (i = my nSelected; i >= 1; i--)
 	{
 		Ordered_addItemPos (my categories, categories->item[my selection[i]], 1);
@@ -243,9 +243,9 @@ static int CategoriesEditorRemove_undo (I)
 {
 	iam (CategoriesEditorRemove);
 	int i;
-	CategoriesEditor editor = my data; 
+	CategoriesEditor editor = my data;
 	Categories categories = editor->data;
-	
+
 	for (i = 1; i <= my nSelected; i++)
 	{
 		Data item = Data_copy (my categories->item[i]);
@@ -257,10 +257,10 @@ static int CategoriesEditorRemove_undo (I)
 
 static Any CategoriesEditorRemove_create (Any data, long *posList, long posCount)
 {
-	CategoriesEditorRemove me = new (CategoriesEditorRemove); 
-	
+	CategoriesEditorRemove me = new (CategoriesEditorRemove);
+
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Remove", data,
-		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo, 
+		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo,
 		posCount, posCount)) goto end;
 	for (long i = 1; i <= posCount; i++) my selection[i] = posList[i];
 end:
@@ -272,26 +272,26 @@ class_methods (CategoriesEditorRemove, CategoriesEditorCommand)
 class_methods_end
 //update (me);
 /*********************** Replace Command ***********************/
-		
+
 #define CategoriesEditorReplace_members CategoriesEditorCommand_members
 #define CategoriesEditorReplace_methods CategoriesEditorCommand_methods
 class_create (CategoriesEditorReplace, CategoriesEditorCommand);
 
 static int CategoriesEditorReplace_execute (I)
 {
-	iam (CategoriesEditorReplace); 
+	iam (CategoriesEditorReplace);
 	long i;
 	CategoriesEditor editor = my data;
 	Categories categories = editor -> data;
-	
+
 	for (i = my nSelected; i >= 1; i--)
 	{
 		Data str = Data_copy (my categories -> item[1]);
-		Ordered_addItemPos (my categories, 
+		Ordered_addItemPos (my categories,
 			categories -> item[my selection[i]], 2);
 		categories -> item[my selection[i]] =  str;
 	}
-	update (editor, my selection[1], my selection[my nSelected], 
+	update (editor, my selection[1], my selection[my nSelected],
 		my selection, my nSelected);
 	return 1;
 }
@@ -301,13 +301,13 @@ static int CategoriesEditorReplace_undo (I)
 	iam (CategoriesEditorReplace); long i;
 	CategoriesEditor editor = my data;
 	Categories categories = editor -> data;
-	
+
 	for (i = 1; i <= my nSelected; i++)
 	{
 		Data str = Data_copy (my categories -> item[i+1]);
 		Collection_replaceItemPos (categories, str, my selection[i]);
 	}
-	update (editor, my selection[1], my selection[my nSelected], 
+	update (editor, my selection[1], my selection[my nSelected],
 		my selection, my nSelected);
 	return 1;
 }
@@ -315,9 +315,9 @@ static int CategoriesEditorReplace_undo (I)
 static Any CategoriesEditorReplace_create (Any data, Any str, long *posList, long posCount)
 {
 	CategoriesEditorReplace me = new (CategoriesEditorReplace);
-	
+
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Replace", data,
-		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo, 
+		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo,
 			posCount + 1, posCount)) goto end;
 	for (long i = 1; i <= posCount; i++)
 	{
@@ -333,7 +333,7 @@ class_methods (CategoriesEditorReplace, CategoriesEditorCommand)
 class_methods_end
 
 /*********************** MoveUp Command ***********************/
-		
+
 #define CategoriesEditorMoveUp_members CategoriesEditorCommand_members
 #define CategoriesEditorMoveUp_methods CategoriesEditorCommand_methods
 class_create (CategoriesEditorMoveUp, CategoriesEditorCommand);
@@ -343,7 +343,7 @@ static int CategoriesEditorMoveUp_execute (I)
 	iam (CategoriesEditorMoveUp);
 	CategoriesEditor editor = my data;
 	long i, *selection;
-	
+
 	Ordered_moveItems (editor->data, my selection, my nSelected, my newPos);
 	if (! (selection = NUMlvector (1, my nSelected))) return 0;
 	for (i = 1; i <= my nSelected; i++)
@@ -360,7 +360,7 @@ static int CategoriesEditorMoveUp_undo (I)
 {
 	iam (CategoriesEditorMoveUp); long i;
 	CategoriesEditor editor = my data;
-	
+
 	for (i = 1; i <= my nSelected; i++)
 	{
 		Ordered_moveItem (editor->data, my newPos, my selection[my nSelected]);
@@ -370,11 +370,11 @@ static int CategoriesEditorMoveUp_undo (I)
 	return 1;
 }
 
-static Any CategoriesEditorMoveUp_create (Any data, long *posList, 
+static Any CategoriesEditorMoveUp_create (Any data, long *posList,
 	long posCount, long newPos)
 {
-	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp); 
-	
+	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp);
+
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move up", data,
 		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount)) goto end;
 	for (long i = 1; i <= posCount; i++)
@@ -401,7 +401,7 @@ static int CategoriesEditorMoveDown_execute (I)
 	iam (CategoriesEditorMoveDown);
 	CategoriesEditor editor = my data;
 	long i, *selection;
-	
+
 	Ordered_moveItems (editor->data, my selection, my nSelected, my newPos);
 	if (! (selection = NUMlvector (1, my nSelected))) return 0;
 	for (i = 1; i <= my nSelected; i++)
@@ -421,18 +421,18 @@ static int CategoriesEditorMoveDown_undo (I)
 	{
 		Ordered_moveItem (editor->data, my newPos, my selection[1]);
 	}
-	update (editor, (from > 1 ? from-- : from), my newPos, my selection, 
+	update (editor, (from > 1 ? from-- : from), my newPos, my selection,
 		my nSelected);
 	return 1;
 }
 
-static Any CategoriesEditorMoveDown_create (Any data, long *posList, 
+static Any CategoriesEditorMoveDown_create (Any data, long *posList,
 	long posCount, long newPos)
 {
-	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown); 
-	
+	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown);
+
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move down", data,
-		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 
+		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo,
 			0, posCount)) goto end;
 	for (long i = 1; i <= posCount; i++)
 	{
@@ -446,21 +446,21 @@ end:
 
 class_methods (CategoriesEditorMoveDown, CategoriesEditorCommand)
 class_methods_end
-				
+
 /********************* Commands (End)  *************************************/
 
 static void notifyOutOfView (I)
 {
-	iam (CategoriesEditor); 
+	iam (CategoriesEditor);
 	MelderString tmp = { 0 };
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	MelderString_append1 (&tmp, L"");
 	if (posList != NULL)
 	{
 		long outOfView = 0, top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
-		
+
 		for (long i = posCount; i > 0; i--)
-		{ 
+		{
 			if (posList[i] < top || posList[i] > bottom) outOfView++;
 		}
 		NUMlvector_free (posList, 1);
@@ -482,20 +482,20 @@ static void update_dos (I)
 	/*
 		undo
 	*/
-	
+
 	if (! (name = CommandHistory_commandName (my history, 0)))
 	{
 			name = L"nothing"; undoSense = False;
 	}
-	
+
 	MelderString_append4 (&tmp, L"Undo ", L"\"", name, L"\"");
 	GuiButton_setString (my undo, tmp.string);
 	GuiObject_setSensitive (my undo, undoSense);
-	
+
 	/*
 		redo
 	*/
-	
+
 	if (! (name = CommandHistory_commandName (my history, 1)))
 	{
 		name = L"nothing"; redoSense = False;
@@ -509,7 +509,7 @@ static void update_dos (I)
 
 static void updateWidgets (I) /*all buttons except undo & redo */
 {
-	iam (CategoriesEditor); 
+	iam (CategoriesEditor);
 	long size = ((Categories) my data)->size;
 	Boolean insert = False, insertAtEnd = True, replace = False, remove = False;
 	Boolean moveUp = False, moveDown = False;
@@ -520,14 +520,14 @@ static void updateWidgets (I) /*all buttons except undo & redo */
 		int contiguous = lastPos - firstPos + 1 == posCount;
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
-		my position = firstPos;	
+		my position = firstPos;
 		remove = True; replace = True; //insertAtEnd = False;
 		if (posCount == 1)
 		{
 			insert = True;
 			//if (posList[1] == size) insertAtEnd = True;
 			if (size == 1 && ! wcscmp (CategoriesEditor_EMPTYLABEL,
-				OrderedOfString_itemAtIndex_c (my data, 1))) remove = False; 
+				OrderedOfString_itemAtIndex_c (my data, 1))) remove = False;
 		}
 		NUMlvector_free (posList, 1);
 	}
@@ -542,7 +542,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 {
 	iam (CategoriesEditor);
 	int i, itemCount, size = ((Categories) my data)->size;
-	
+
 	if (size == 0)
 	{
 		SimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
@@ -553,28 +553,28 @@ static void update (I, long from, long to, const long *select, long nSelect)
 	if (from == 0 && from == to)
 	{
 		from = 1; to = size;
-	} 
+	}
 	if (from < 1 || from > size) from = size;
 	if (to < 1 || to > size) to = size;
 	if (from > to)
 	{
 		i = from; from = to; to = i;
 	}
-	
+
 	/*
 		Begin optimization: add the items from a table instead of separately.
 	*/
-	
+
 	{
-		const wchar_t **table = NULL; 
+		const wchar_t **table = NULL;
 		MelderString itemText  = { 0 };
 		int k;
 
-		if (! (table = Melder_malloc (const wchar_t *, to - from + 1))) return;
+		if (! (table = Melder_malloc_e (const wchar_t *, to - from + 1))) return;
 		itemCount = GuiList_getNumberOfItems (my list);
 		/*for (k = 0, i = from; i <= to; i++)
 		{
-			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10]; 
+			wchar_t itemText[CategoriesEditor_TEXTMAXLENGTH+10];
 			swprintf (itemText, CategoriesEditor_TEXTMAXLENGTH+10, L"%6d     %.*ls", i, CategoriesEditor_TEXTMAXLENGTH,
 				OrderedOfString_itemAtIndex_c (my data, i));
 			table[k++] = XmStringCreateSimple (Melder_peekWcsToUtf8 (itemText));
@@ -585,7 +585,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 			MelderString_empty (&itemText);
 			swprintf (wcindex, 19, L"%5ld ", i);
 			MelderString_append2 (&itemText, wcindex, OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = Melder_wcsdup (itemText.string);
+			table[k++] = Melder_wcsdup_f (itemText.string);
 		}
 		if (itemCount > size) /* some items have been removed from Categories? */
 		{
@@ -614,11 +614,11 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		Melder_free (table);
 		MelderString_free (&itemText);
 	}
-	
+
 	/*
 		End of optimization
 	*/
-	
+
 	/*
 		HIGHLIGHT
 	*/
@@ -641,11 +641,11 @@ static void update (I, long from, long to, const long *select, long nSelect)
 			GuiList_selectItem (my list, select[i] > size ? size : select[i]);
 		}
 	}
-	
+
 	/*
 		VIEWPORT
 	*/
-	
+
 	{
 		long top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
 		long visible = bottom - top + 1;
@@ -684,14 +684,14 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
 	{
-		CategoriesEditorRemove command = CategoriesEditorRemove_create 
+		CategoriesEditorRemove command = CategoriesEditorRemove_create
 			(me, posList, posCount);
 		if (! command || ! Command_do (command))
 		{
 			forget (command); NUMlvector_free (posList, 1); return;
 		}
 		if (my history) CommandHistory_insertItem (my history, command);
-		NUMlvector_free (posList, 1);	
+		NUMlvector_free (posList, 1);
 		updateWidgets (me);
 	}
 }
@@ -702,7 +702,7 @@ static void insert (I, int position)
 	SimpleString str = NULL;
 	CategoriesEditorInsert command = NULL;
 	wchar_t *text = GuiText_getString (my text);
-	
+
 	if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
 		! (command = CategoriesEditorInsert_create (me, str, position)) ||
 		! Command_do (command)) goto end;
@@ -739,7 +739,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 		CategoriesEditorReplace command = NULL;
 		wchar_t *text = GuiText_getString (my text);
 		SimpleString str = NULL;
-		
+
 		if (wcslen (text) == 0 || ! (str = SimpleString_create (text)) ||
 			! (command = CategoriesEditorReplace_create (me, str, posList,
 				posCount)) ||
@@ -763,7 +763,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
 	{
-		CategoriesEditorMoveUp command = CategoriesEditorMoveUp_create 
+		CategoriesEditorMoveUp command = CategoriesEditorMoveUp_create
 			(me, posList, posCount, posList[1]-1);
 		if (! command || ! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
@@ -783,7 +783,7 @@ static void gui_button_cb_moveDown (I, GuiButtonEvent event) {
 	long posCount, *posList = GuiList_getSelectedPositions (my list, & posCount);
 	if (posList != NULL)
 	{
-		CategoriesEditorMoveDown command = CategoriesEditorMoveDown_create 
+		CategoriesEditorMoveDown command = CategoriesEditorMoveDown_create
 			(me, posList, posCount, posList[posCount] + 1);
 		if (! command || ! Command_do (command)) goto end;
 		if (my history) CommandHistory_insertItem (my history, command);
@@ -827,7 +827,7 @@ static void gui_button_cb_undo (I, GuiButtonEvent event) {
 static void gui_button_cb_redo (I, GuiButtonEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
-	CommandHistory_forth (my history);	
+	CommandHistory_forth (my history);
 	if (CommandHistory_offright (my history)) return;
 	Command_do (CommandHistory_getItem (my history));
 	updateWidgets (me);
@@ -874,16 +874,16 @@ static void createChildren (CategoriesEditor me)
 	#ifndef _WIN32
 		#if motif
 		XtVaGetValues (GuiObject_parent (my list), XmNverticalScrollBar, & vertScrollBar, NULL);
-		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll, 
+		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll,
 			(XtPointer) me);
 		XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
-		XtAddCallback (vertScrollBar, XmNdecrementCallback, gui_cb_scroll, 
+		XtAddCallback (vertScrollBar, XmNdecrementCallback, gui_cb_scroll,
 			(XtPointer) me);
-		XtAddCallback (vertScrollBar, XmNincrementCallback, gui_cb_scroll, 
+		XtAddCallback (vertScrollBar, XmNincrementCallback, gui_cb_scroll,
 			(XtPointer) me);
-		XtAddCallback (vertScrollBar, XmNpageIncrementCallback, gui_cb_scroll, 
+		XtAddCallback (vertScrollBar, XmNpageIncrementCallback, gui_cb_scroll,
 			(XtPointer) me);
-		XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll, 
+		XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll,
 			(XtPointer) me);
 		#endif
 	#endif
@@ -893,7 +893,7 @@ static void createChildren (CategoriesEditor me)
 	left = right + delta_x; right = left + button_width;
 	my text = GuiText_createShown (my dialog, left, right, top, bottom, 0);
 	GuiText_setString (my text, CategoriesEditor_EMPTYLABEL);
-				 
+
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
 	my insert = GuiButton_createShown (my dialog, left, right, top, bottom,	L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
 	left = right + delta_x; right = left + button_width;
@@ -908,7 +908,7 @@ static void createChildren (CategoriesEditor me)
 	my remove = GuiButton_createShown (my dialog, left, right, top, bottom, L"Remove", gui_button_cb_remove, me, 0);
 	top = bottom + delta_y; bottom = top + button_height;
 	my moveUp = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, me, 0);
-	top = bottom + delta_y; bottom = top + button_height;	
+	top = bottom + delta_y; bottom = top + button_height;
 	my moveDown = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, me, 0);
 
 	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;

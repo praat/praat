@@ -155,7 +155,7 @@ class_methods (HMM_Observation, Data)
 int HMM_Observation_init (I, wchar_t *label, long numberOfComponents, long dimension, long storage)
 {
 	iam (HMM_Observation);
-	my label = Melder_wcsdup (label);
+	my label = Melder_wcsdup_f (label);
 	if (numberOfComponents > 0 && dimension > 0 &&
 		((my gm = GaussianMixture_create (numberOfComponents, dimension, storage)) == NULL)) return 0;
 	return 1;
@@ -223,7 +223,7 @@ long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos)
 int HMM_State_init (I, wchar_t *label)
 {
 	iam (HMM_State);
-	my label = Melder_wcsdup (label);
+	my label = Melder_wcsdup_f (label);
 	return 1;
 }
 
@@ -251,7 +251,7 @@ class_methods (HMM_State, Data)
 void HMM_State_setLabel (HMM_State me, wchar_t *label)
 {
 	Melder_free (my label);
-	my label = Melder_wcsdup (label);
+	my label = Melder_wcsdup_f (label);
 }
 
 /**************** HMM_BaumWelch ******************************/
@@ -355,7 +355,7 @@ class_methods (HMM_ObservationSequence, Table)
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength)
 {
 	HMM_ObservationSequence me = new (HMM_ObservationSequence);
-	if (! Table_initWithoutColumnNames (me, numberOfItems, dataLength + 1)) forget (me);
+	if (me == NULL || ! Table_initWithoutColumnNames (me, numberOfItems, dataLength + 1)) forget (me);
 	return me;
 }
 
@@ -376,7 +376,7 @@ Strings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me)
 	if (me == NULL || ((thy strings = NUMpvector (1, numberOfStrings)) == NULL)) goto end;
 	for (long i = 1; i <= numberOfStrings; i++)
 	{
-			thy strings[i] = Melder_wcsdup (Table_getStringValue ((Table) me, i, 1));
+			thy strings[i] = Melder_wcsdup_f (Table_getStringValue ((Table) me, i, 1));
 			(thy numberOfStrings) ++;
 	}
 end:
@@ -420,7 +420,7 @@ class_methods (HMM_ObservationSequences, Collection)
 HMM_ObservationSequences HMM_ObservationSequences_create (void)
 {
 	HMM_ObservationSequences me = new (HMM_ObservationSequences);
-	if ((me == NULL) || ! Collection_init (me, classHMM_ObservationSequence, 10000)) forget (me);
+	if (me == NULL || ! Collection_init (me, classHMM_ObservationSequence, 1000)) forget (me);
 	return me;
 }
 
@@ -912,7 +912,7 @@ HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long startState,
 		if (my componentDimension > 0)
 		{
 			wchar_t *name;
-			if (! GaussianMixture_generateOneVector (s -> gm, obs, name, buf)) goto end;
+			if (! GaussianMixture_generateOneVector (s -> gm, obs, & name, buf)) goto end;
 			for (long j = 1; j <= my componentDimension; j++) Table_setNumericValue ((Table) thee, i, 1 + j, obs[j]);
 		}
 
@@ -1093,7 +1093,7 @@ void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Grap
 			Graphics_markLeft (g, js, 0, 0, 0, hmms -> label);
 		}
 		Graphics_marksBottomEvery (g, 1, 1, 1, 1, 0);
-		Graphics_textBottom (g, 1, L"Index");
+		Graphics_textBottom (g, 1, L"Time index");
 	}
 	forget (si);
 }
@@ -1362,7 +1362,7 @@ HMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, 
 	for (long it = 1; it <= numberOfTimes; it++)
 	{
 		HMM_State hmms = my states -> item[ v -> path[it] ];
-		his strings [it] = Melder_wcsdup (hmms -> label);
+		his strings [it] = Melder_wcsdup_f (hmms -> label);
 		his numberOfStrings ++;
 	}
 end:
@@ -1539,20 +1539,21 @@ double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSeq
 HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight)
 {
 	HMM thee = NULL;
-	Strings s = HMM_ObservationSequence_to_Strings (me);
-	if (s == NULL) return NULL;
+	Strings s = NULL;
+	Distributions d = NULL;
 
-	Distributions d = Strings_to_Distributions ((Strings) s);
-	if (d == NULL) goto end;
+// start:
+
+	thee = new (HMM); cherror
+	s = HMM_ObservationSequence_to_Strings (me); cherror
+	d = Strings_to_Distributions ((Strings) s); cherror
 
 	long numberOfObservationSymbols = d -> numberOfRows;
-
-	thee = new (HMM);
-	if (thee == NULL) goto end;
 	thy notHidden = numberOfStates < 1;
 	numberOfStates = numberOfStates > 0 ? numberOfStates : numberOfObservationSymbols;
 
-	if (!HMM_init (thee, numberOfStates, numberOfObservationSymbols, leftToRight)) goto end;
+	if (! HMM_init (thee, numberOfStates, numberOfObservationSymbols, leftToRight)) goto end;
+
 	for (long i = 1; i <= numberOfObservationSymbols; i++)
 	{
 		wchar_t *label = d -> rowLabels[i];
@@ -1594,7 +1595,7 @@ StringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_Observ
 	for (long is = 1; is <= my numberOfObservationSymbols; is++)
 	{
 		HMM_Observation hmmo = my observationSymbols -> item[is];
-		classes -> strings[is] = Melder_wcsdup (hmmo -> label);
+		classes -> strings[is] = Melder_wcsdup_f (hmmo -> label);
 		(classes -> numberOfStrings) ++;
 	}
 	Strings obs = HMM_ObservationSequence_to_Strings (thee);
@@ -1613,7 +1614,7 @@ StringsIndex HMM_and_HMM_StateSequence_to_StringsIndex (HMM me, HMM_StateSequenc
 	for (long is = 1; is <= my numberOfStates; is++)
 	{
 		HMM_State hmms = my states -> item[is];
-		classes -> strings[is] = Melder_wcsdup (hmms -> label);
+		classes -> strings[is] = Melder_wcsdup_f (hmms -> label);
 		(classes -> numberOfStrings) ++;
 	}
 	Strings sts = HMM_StateSequence_to_Strings (thee);

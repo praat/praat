@@ -359,14 +359,17 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 int praat_executeCommandFromStandardInput (const char *programName) {
 	char command [1000]; /* Can be recursive. */
 	for (;;) {
+		wchar_t *commandW = NULL;
+	//start:
 		char *newLine;
 		printf ("%s > ", programName);
 		if (! fgets (command, 999, stdin)) return 0;
 		newLine = strchr (command, '\n');
 		if (newLine) *newLine = '\0';
-		wchar_t *commandW = Melder_utf8ToWcs (command);
+		commandW = Melder_utf8ToWcs_e (command); cherror
 		if (! praat_executeCommand (NULL, commandW))
 			Melder_flushError ("%s: command \"%s\" not executed.", programName, command);
+	end:
 		Melder_free (commandW);
 	}
 	return 1;
@@ -377,7 +380,7 @@ int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
 	Interpreter interpreter = NULL;
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);   /* Before the first cherror! */
-
+//start:
 	text = MelderFile_readText (file); cherror
 	MelderFile_setDefaultDir (file);   /* So that relative file names can be used inside the script. */
 	Melder_includeIncludeFiles (& text); cherror
@@ -433,11 +436,12 @@ int praat_executeScriptFromText (wchar_t *text) {
 
 int praat_executeScriptFromDialog (Any dia) {
 	Interpreter interpreter = NULL;
-	structMelderFile file = { 0 };
-	wchar_t *text = NULL, *path = UiForm_getString (dia, L"$file");
+	wchar_t *text = NULL;
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-
+//start:
+	wchar_t *path = UiForm_getString (dia, L"$file");
+	structMelderFile file = { 0 };
 	Melder_pathToFile (path, & file); cherror
 	text = MelderFile_readText (& file); cherror
 	MelderFile_setDefaultDir (& file);
@@ -470,7 +474,7 @@ static int firstPassThroughScript (MelderFile file) {
 	Interpreter interpreter = NULL;
 	structMelderDir saveDir = { { 0 } };
 	Melder_getDefaultDir (& saveDir);
-
+//start:
 	text = MelderFile_readText (file); cherror
 	MelderFile_setDefaultDir (file);
 	Melder_includeIncludeFiles (& text); cherror

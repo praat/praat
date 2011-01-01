@@ -101,7 +101,7 @@ static void saveHistory (HyperPage me, const wchar_t *title) {
 	/*
 	 * Add the page title to the top of the history list.
 	 */
-	my history [my historyPointer]. page = Melder_wcsdup (title);
+	my history [my historyPointer]. page = Melder_wcsdup_f (title);
 }
 
 /********************************************************************************
@@ -426,7 +426,7 @@ if (! my printing) {
 
 int HyperPage_script (I, double width_inches, double height_inches, const wchar_t *script) {
 	iam (HyperPage);
-	wchar_t *text = Melder_wcsdup (script);
+	wchar_t *text = Melder_wcsdup_f (script);
 	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	int font = my font, size = my fontSize;
@@ -444,9 +444,9 @@ if (! my printing) {
 		my x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
 		Graphics_setWrapWidth (my g, 0);
 		{
-			if (my praatApplication == NULL) my praatApplication = Melder_calloc (structPraatApplication, 1);
-			if (my praatObjects == NULL) my praatObjects = Melder_calloc (structPraatObjects, 1);
-			if (my praatPicture == NULL) my praatPicture = Melder_calloc (structPraatPicture, 1);
+			if (my praatApplication == NULL) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+			if (my praatObjects == NULL) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+			if (my praatPicture == NULL) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 			theCurrentPraatApplication = my praatApplication;
 			theCurrentPraatApplication -> batch = true;   // prevent creation of editor windows
 			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
@@ -519,9 +519,9 @@ if (! my printing) {
 	if (my x < 0) my x = 0;
 	Graphics_setWrapWidth (my ps, 0);
 	{
-		if (my praatApplication == NULL) my praatApplication = Melder_calloc (structPraatApplication, 1);
-		if (my praatObjects == NULL) my praatObjects = Melder_calloc (structPraatObjects, 1);
-		if (my praatPicture == NULL) my praatPicture = Melder_calloc (structPraatPicture, 1);
+		if (my praatApplication == NULL) my praatApplication = Melder_calloc_f (structPraatApplication, 1);
+		if (my praatObjects == NULL) my praatObjects = Melder_calloc_f (structPraatObjects, 1);
+		if (my praatPicture == NULL) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatApplication = my praatApplication;
 		theCurrentPraatApplication -> batch = true;
 		theCurrentPraatObjects = my praatObjects;
@@ -876,7 +876,7 @@ static int menu_cb_pageDown (EDITOR_ARGS) {
 
 static int do_back (HyperPage me) {
 	if (my historyPointer <= 0) return 1;
-	wchar_t *page = Melder_wcsdup (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
+	wchar_t *page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
 	int top = my history [my historyPointer]. top;
 	if (our goToPage (me, page)) {
 		my top = top;
@@ -906,7 +906,7 @@ static int do_forth (HyperPage me) {
 	wchar_t *page;
 	int top;
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return 1;
-	page = Melder_wcsdup (my history [++ my historyPointer]. page);
+	page = Melder_wcsdup_f (my history [++ my historyPointer]. page);
 	top = my history [my historyPointer]. top;
 	if (our goToPage (me, page)) {
 		my top = top;
@@ -1129,7 +1129,7 @@ int HyperPage_goToPage (I, const wchar_t *title) {
 	}
 	saveHistory (me, title);   /* Last chance: HyperPage_clear will destroy "title" !!! */
 	Melder_free (my currentPageTitle);
-	my currentPageTitle = Melder_wcsdup (title);
+	my currentPageTitle = Melder_wcsdup_f (title);
 	my top = 0;
 	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
@@ -1148,7 +1148,7 @@ int HyperPage_goToPage_i (I, long i) {
 void HyperPage_setEntryHint (I, const wchar_t *hint) {
 	iam (HyperPage);
 	Melder_free (my entryHint);
-	my entryHint = Melder_wcsdup (hint);
+	my entryHint = Melder_wcsdup_f (hint);
 }
 
 /* End of file HyperPage.c */

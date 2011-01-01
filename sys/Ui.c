@@ -119,7 +119,7 @@ static UiField UiField_create (int type, const wchar_t *name) {
 	UiField me = new (UiField);
 	wchar_t shortName [101], *p;
 	my type = type;
-	my formLabel = Melder_wcsdup (name);
+	my formLabel = Melder_wcsdup_f (name);
 	wcscpy (shortName, name);
 	/*
 	 * Strip parentheses and colon off parameter name.
@@ -412,7 +412,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
-			my stringValue = Melder_wcsdup (string);
+			my stringValue = Melder_wcsdup_f (string);
 		} break; case UI_BOOLEAN: {
 			if (! string [0]) return Melder_error1 (L"Empty argument for toggle button.");
 			my integerValue = string [0] == '1' || string [0] == 'y' || string [0] == 'Y' ||
@@ -450,7 +450,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 				(L"Field `", my name, L"' cannot have the value \"", string, L"\".");
 			my integerValue = i;
 		} break; case UI_COLOUR: {
-			wchar_t *string2 = Melder_wcsdup (string);
+			wchar_t *string2 = Melder_wcsdup_f (string);
 			if (colourToValue (me, string2)) {
 				;
 			} else if (Interpreter_numericExpression (interpreter, string2, & my colourValue. red)) {
@@ -698,8 +698,8 @@ Any UiForm_create (GuiObject parent, const wchar_t *title,
 	Thing_setName (me, title);
 	my okCallback = okCallback;
 	my buttonClosure = buttonClosure;
-	my invokingButtonTitle = Melder_wcsdup (invokingButtonTitle);
-	my helpTitle = Melder_wcsdup (helpTitle);
+	my invokingButtonTitle = Melder_wcsdup_f (invokingButtonTitle);
+	my helpTitle = Melder_wcsdup_f (helpTitle);
 	return me;
 }
 
@@ -753,7 +753,7 @@ Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_REAL, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -761,7 +761,7 @@ Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultVa
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_REAL_OR_UNDEFINED, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -769,7 +769,7 @@ Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_POSITIVE, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -777,7 +777,7 @@ Any UiForm_addInteger (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_INTEGER, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -785,7 +785,7 @@ Any UiForm_addNatural (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_NATURAL, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -793,7 +793,7 @@ Any UiForm_addWord (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_WORD, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -801,7 +801,7 @@ Any UiForm_addSentence (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_SENTENCE, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -809,7 +809,7 @@ Any UiForm_addLabel (I, const wchar_t *name, const wchar_t *label) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_LABEL, name);
 	if (thee == NULL) return NULL;
-	thy stringValue = Melder_wcsdup (label);
+	thy stringValue = Melder_wcsdup_f (label);
 	return thee;
 }
 
@@ -825,7 +825,7 @@ Any UiForm_addText (I, const wchar_t *name, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_TEXT, name);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -861,7 +861,7 @@ Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_COLOUR, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -869,7 +869,7 @@ Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue) {
 	iam (UiForm);
 	UiField thee = UiForm_addField (me, UI_CHANNEL, label);
 	if (thee == NULL) return NULL;
-	thy stringDefaultValue = Melder_wcsdup (defaultValue);
+	thy stringDefaultValue = Melder_wcsdup_f (defaultValue);
 	return thee;
 }
 
@@ -1585,19 +1585,19 @@ int UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				Melder_free (var -> stringValue);
 				UiOption b = field -> options -> item [field -> integerValue];
-				var -> stringValue = Melder_wcsdup (b -> name);
+				var -> stringValue = Melder_wcsdup_f (b -> name);
 			} break; case UI_LIST: {
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, '$');
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				Melder_free (var -> stringValue);
-				var -> stringValue = Melder_wcsdup ((wchar_t *) field -> strings [field -> integerValue]);
+				var -> stringValue = Melder_wcsdup_f ((wchar_t *) field -> strings [field -> integerValue]);
 			} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 				MelderString_appendCharacter (& lowerCaseFieldName, '$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); cherror
 				Melder_free (var -> stringValue);
-				var -> stringValue = Melder_wcsdup (field -> stringValue);
+				var -> stringValue = Melder_wcsdup_f (field -> stringValue);
 			} break; case UI_COLOUR: {
 				// to be implemented
 			} break; default: {

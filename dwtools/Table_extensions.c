@@ -1627,14 +1627,14 @@ Table Table_createFromPetersonBarneyData (void)
 				speaker_id == 73 || speaker_id == 76) speaker_sex = 1;
 		}
 		
-		row -> cells [1]. string = Melder_wcsdup (type [speaker_type]);
-		row -> cells [2]. string = Melder_wcsdup (sex [speaker_sex]);
-		row -> cells [3]. string = Melder_wcsdup (Melder_integer (speaker_id));
-		row -> cells [4]. string = Melder_wcsdup (vowel [vowel_id - 1]);
-		row -> cells [5]. string = Melder_wcsdup (ipa [vowel_id - 1]);
+		row -> cells [1]. string = Melder_wcsdup_f (type [speaker_type]);
+		row -> cells [2]. string = Melder_wcsdup_f (sex [speaker_sex]);
+		row -> cells [3]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
+		row -> cells [4]. string = Melder_wcsdup_f (vowel [vowel_id - 1]);
+		row -> cells [5]. string = Melder_wcsdup_f (ipa [vowel_id - 1]);
 		for (j = 0; j <= 3; j++)
 		{
-			row -> cells [j + 6].string = Melder_wcsdup (Melder_integer (pbdata[i-1].f[j]));		
+			row -> cells [j + 6].string = Melder_wcsdup_f (Melder_integer (pbdata[i-1].f[j]));		
 		}
 	}
 	for (j = 1; j <= ncols; j++)
@@ -2646,14 +2646,14 @@ Table Table_createFromPolsVanNieropData (void)
 		int speaker_id = (i - 1) / 12 + 1;  /* 1 - 75 */
 		int speaker_sex = speaker_id <= 50 ? 0 : 1;
 		
-		row -> cells [1]. string = Melder_wcsdup (sex [speaker_sex]);
-		row -> cells [2]. string = Melder_wcsdup (Melder_integer (speaker_id));
-		row -> cells [3]. string = Melder_wcsdup (vowel [vowel_id - 1]);
-		row -> cells [4]. string = Melder_wcsdup (ipa [vowel_id - 1]);
+		row -> cells [1]. string = Melder_wcsdup_f (sex [speaker_sex]);
+		row -> cells [2]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
+		row -> cells [3]. string = Melder_wcsdup_f (vowel [vowel_id - 1]);
+		row -> cells [4]. string = Melder_wcsdup_f (ipa [vowel_id - 1]);
 		for (j = 0; j <= 2; j++)
 		{
-			row -> cells [j + 5]. string = Melder_wcsdup (Melder_integer (polsdata[i-1].f[j]));	
-			row -> cells [j + 8]. string = Melder_wcsdup (Melder_integer (polsdata[i-1].l[j]));
+			row -> cells [j + 5]. string = Melder_wcsdup_f (Melder_integer (polsdata[i-1].f[j]));	
+			row -> cells [j + 8]. string = Melder_wcsdup_f (Melder_integer (polsdata[i-1].l[j]));
 		}
 	}
 	for (j = 1; j <= ncols; j++)
@@ -3098,15 +3098,15 @@ Table Table_createFromWeeninkData (void)
 				speaker_id == 73 || speaker_id == 76) speaker_sex = 1;*/
 		}
 		
-		row -> cells [1]. string = Melder_wcsdup (type [speaker_type]);
-		row -> cells [2]. string = Melder_wcsdup (sex [speaker_sex]);
-		row -> cells [3]. string = Melder_wcsdup (Melder_integer (speaker_id));
-		row -> cells [4]. string = Melder_wcsdup (vowel [vowel_id]);
-		row -> cells [5]. string = Melder_wcsdup (ipa [vowel_id]);
+		row -> cells [1]. string = Melder_wcsdup_f (type [speaker_type]);
+		row -> cells [2]. string = Melder_wcsdup_f (sex [speaker_sex]);
+		row -> cells [3]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
+		row -> cells [4]. string = Melder_wcsdup_f (vowel [vowel_id]);
+		row -> cells [5]. string = Melder_wcsdup_f (ipa [vowel_id]);
 
 		for (j = 0; j <= 3; j++)
 		{
-			row -> cells [j + 6]. string = Melder_wcsdup (Melder_integer (weeninkdata[index_in_data].f[j]));		
+			row -> cells [j + 6]. string = Melder_wcsdup_f (Melder_integer (weeninkdata[index_in_data].f[j]));		
 		}
 	}
 	for (j = 1; j <= ncols; j++)

@@ -451,7 +451,7 @@ static void FormantTier_newDuration (FormantTier me, double newDuration)
 
 static void PitchTier_newDuration (PitchTier me, struct structF0 *f0p, double newDuration)
 {
-	// Always update; Widget text might have changed
+	// Always update; GuiObject text might have changed
 	double multiplier = newDuration / my xmax;
 	for (long i = 1; i <= my points -> size; i++)
 	{

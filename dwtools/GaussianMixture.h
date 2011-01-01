@@ -122,7 +122,7 @@ int GaussianMixture_getIntervalAlongDirection (GaussianMixture me, long d, doubl
 int GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, long d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax);
 
 /* with on demand expand of pca ! */
-int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t *covname, double *buf);
+int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t **covname, double *buf);
 TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
 
 

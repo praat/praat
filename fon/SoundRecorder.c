@@ -1455,7 +1455,7 @@ static void writeFakeMonoFile_e (SoundRecorder me, MelderFile file, int audioFil
 	long nsamp = my nsamp / 2;
 	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
 	if (file -> filePointer) {
-		MelderFile_writeAudioFileHeader16_ch (file, audioFileType, theControlPanel. sampleRate, nsamp, 1);
+		MelderFile_writeAudioFileHeader16_e (file, audioFileType, theControlPanel. sampleRate, nsamp, 1); cherror
 		if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
 			for (long i = 0; i < nsamp; i ++)
 				binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);

@@ -14,6 +14,7 @@ procedure test .type$ .extension$ .duration
 		assert "'energy1:11'" = "'energy2:11'"
 		plus sound
 		Remove
+		deleteFile ("kanweg." + .extension$)
 		printline  't:4' seconds
 	endfor
 endproc

@@ -66,7 +66,7 @@ static int readBinary (I, FILE *f) {
 	my length = bingeti4 (f);
 	if (my length < 0)
 		return Melder_error ("(WordList::readBinary:) Wrong length %ld.", my length);
-	my string = Melder_malloc (char, my length + 1);
+	my string = Melder_malloc_f (char, my length + 1);
 	p = current = (unsigned char *) my string;
 	if (my length > 0) {
 		/*
@@ -174,7 +174,7 @@ WordList Strings_to_WordList (Strings me) {
 	}
 	thee = new (WordList); cherror
 	thy length = totalLength + my numberOfStrings;
-	thy string = Melder_malloc (char, thy length + 1); cherror
+	thy string = Melder_malloc_e (char, thy length + 1); cherror
 	/*
 	 * Concatenate the strings into the word list.
 	 */
@@ -193,17 +193,18 @@ end:
 }
 
 Strings WordList_to_Strings (WordList me) {
-	long i;
+	Strings thee = NULL;
+//start:
 	unsigned char *word = (unsigned char *) my string;
-	Strings thee = new (Strings); cherror
+	thee = new (Strings); cherror
 	thy numberOfStrings = WordList_count (me);
 	if (thy numberOfStrings > 0) { thy strings = NUMpvector (1, thy numberOfStrings); cherror }
-	for (i = 1; i <= thy numberOfStrings; i ++) {
+	for (long i = 1; i <= thy numberOfStrings; i ++) {
 		unsigned char *kar;
 		long length;
 		for (kar = word; *kar != '\n'; kar ++) { }
 		length = kar - word;
-		thy strings [i] = Melder_calloc (wchar_t, length + 1); cherror
+		thy strings [i] = Melder_calloc_e (wchar_t, length + 1); cherror
 		wcsncpy (thy strings [i], Melder_peekUtf8ToWcs ((const char *) word), length);
 		thy strings [i] [length] = '\0';
 		word += length + 1;

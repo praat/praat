@@ -32,7 +32,7 @@ void manual_LPC_init (ManPages me)
 MAN_BEGIN (L"CC: Paint...", L"djmw", 20040407)
 INTRO (L"A command to paint the cepstral coefficients in shades of grey.")
 ENTRY (L"Settings")
-TAG (L"%%From coefficient, To coefficient")
+TAG (L"##From coefficient#, ##To coefficient#")
 DEFINITION (L"the range of coefficients that will be represented.")
 MAN_END
 
@@ -85,7 +85,7 @@ MAN_END
 MAN_BEGIN (L"LFCC: To LPC...", L"djmw", 20040407)
 INTRO (L"You can choose this command after selecting 1 or more @LFCC's.")
 ENTRY (L"Settings")
-TAG (L"%%Number of coefficients%")
+TAG (L"##Number of coefficients")
 DEFINITION (L"the desired number of linear predictive coefficients.")
 ENTRY (L"Behaviour")
 NORMAL (L"The transformation from cepstral coefficients to %a-coefficients "
@@ -112,11 +112,11 @@ MAN_END
 MAN_BEGIN (L"LPC: Draw gain...", L"djmw", 20040407)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
-TAG (L"%%From time (seconds), To time (seconds)")
+TAG (L"##From time (s)#, ##To time (seconds)#")
 DEFINITION (L"the time domain along the %x-axis.")
-TAG (L"%%Minimum gain, Maximum gain")
+TAG (L"##Minimum gain#, ##Maximum gain#")
 DEFINITION (L"the range for the %y-axis.")
-TAG (L"%Garnish")
+TAG (L"##Garnish")
 DEFINITION (L"determines whether to draw a bounding box and axis labels.")
 ENTRY (L"Behaviour")
 NORMAL (L"Gain will be drawn as a function of time (gain also equals the prediction error "
@@ -126,7 +126,7 @@ MAN_END
 MAN_BEGIN (L"LPC: Draw poles...", L"djmw", 20040407)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
-TAG (L"%Time")
+TAG (L"##Time (s)")
 DEFINITION (L"the time of the nearest frame.")
 ENTRY (L"Behaviour")
 NORMAL (L"The @@Roots|roots@ of the @@LPC: To Polynomial (slice)...|linear prediction "
@@ -178,7 +178,7 @@ MAN_END
 MAN_BEGIN (L"LPC: To Polynomial (slice)...", L"djmw", 20040407)
 INTRO (L"A command that creates a Polynomial object from each selected @LPC object.")
 ENTRY (L"Settings")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"defines the LPC frame whose coefficents will be selected.")
 ENTRY (L"Behaviour")
 NORMAL (L"The linear prediction coefficients %a__1..%n_ of the selected LPC "
@@ -190,42 +190,42 @@ MAN_END
 MAN_BEGIN (L"LPC: To Spectrum (slice)...", L"djmw", 20071120)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
-TAG (L"%%Time (seconds)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which the Spectrum must be calculated.")
-TAG (L"%%Minimum frequency resolution (Hz)")
+TAG (L"##Minimum frequency resolution (Hz)")
 DEFINITION (L"successive frequencies in the @Spectrum "
 	"will be maximally this distance apart.")
-TAG (L"%%Bandwidth reduction (Hz)")
+TAG (L"##Bandwidth reduction (Hz)")
 DEFINITION (L"formants with small bandwidths show up very well as peaks in the spectrum because the poles "
 	"lie close to the contour along which the spectrum is computed (the unit circle in the z-plane). "
 	"Peak enhancement can be realized by computing the spectrum in the z-plane along a contour of radius "
-	"%r = exp (\\-- %\\pi \\.c %BandwidthReduction / %samplingFrequency). "
+	"%r = exp (\\-- %\\pi \\.c %bandwidthReduction / %samplingFrequency). "
 	"This technique is also called off-axis spectrum computation. "
 	"Negative values evaluate the spectrum on a contour %outside the unit circle and therefore result in a "
 	"flattened  spectrum.")
-TAG (L"%%De-emphasis frequency (Hz)")
+TAG (L"##De-emphasis frequency (Hz)")
 DEFINITION (L"Performs de-emphasis when frequency is in the interval (0, @@Nyquist frequency@)")
 ENTRY (L"Algorithm")
 NORMAL (L"The Spectrum at time %t will be calculated from the %nearest LPC_Frame according to:")
 FORMULA (L"Spectrum (%f) = \\Vr(%gain\\.c%T/%df) / (1 + \\su__%k=1..%numberOfCoefficients_ %a__%k_%z^^\\--%k^),")
 NORMAL (L"where %T is the sampling period and %z = exp (\\--2 %\\pi %i %f %T) and %df is the distance in Hz "
 	"between two successive components in the Spectrum.")
-LIST_ITEM (L"1. Allocate a large enough buffer[1..%nfft] to perform an fft analysis.")
+LIST_ITEM (L"1. Allocate a large enough buffer[1..%nfft] to perform an FFT analysis.")
 LIST_ITEM (L"2. Make the first value of the buffer 1 and copy the prediction coefficients #a into "
 	"the buffer. This results in buffer values: (1, %a__1_, ..., %a__%numberOfCoefficients_, 0, ..., 0).")
-LIST_ITEM (L"3. If %deEmphasisFrequency is in the interval (0, nyquistFrequency) then \"multiply\" "
+LIST_ITEM (L"3. If ##De-emphasis frequency# is in the interval (0, %nyquistFrequency) then \"multiply\" "
 	"the buffer with (1 - %b %z^^\\--1^), where %b = exp (\\-- %\\pi %deEmphasisFrequency %T). "
 	"This results in buffer values: (1, %a__1_\\--%b, %a__2_\\--%b\\.c%a__1_, ..., "
 	"%a__%numberOfCoefficients_\\--%b\\.c%a__%numberOfCoefficients\\--1_, "
 	"\\--%b\\.c%a__%numberOfCoefficients_, 0, ..., 0). Note that the number of values in the buffer that differ from 0 "
 	"has increased by one.")
-LIST_ITEM (L"4. If %bandwidthReduction > 0 then multiply corresponding values in the buffer by %g^^%i\\--1^ where "
+LIST_ITEM (L"4. If ##Bandwidth reduction# is greater than 0 then multiply corresponding values in the buffer by %g^^%i\\--1^ where "
 	"%g = exp (2%\\pi %bandwidthReduction %T / %nfft), and %i is the position index in the buffer. "
 	"%i runs from 1 to %numberOfCoefficients+1+%t, where %t equals 1 when de-emphasis was performed, "
 	"else 0.")
-LIST_ITEM (L"5. Calculate the fft spectrum of the buffer with the coefficients. This results in complex "
+LIST_ITEM (L"5. Calculate the FFT spectrum of the buffer with the coefficients. This results in complex "
 	"amplitudes (%a__%j_,%b__%j_), %j=1..%nfft/2+1.")
-LIST_ITEM (L"6. Calculate the LPC Spectrum by taking the inverse of the fft spectrum, i.e., each complex "
+LIST_ITEM (L"6. Calculate the LPC Spectrum by taking the inverse of the FFT spectrum, i.e., each complex "
 	"amplitude becomes (%a__%j_,%b__%j_)^^\\--1^ = (%a__%j_,\\--%b__%j_) / (%a__%j_^2 + %b__%j_^2)")
 LIST_ITEM (L"7. Multiply all values with the scale factor \\Vr(%gain\\.c%T/%df).")
 MAN_END
@@ -233,15 +233,15 @@ MAN_END
 MAN_BEGIN (L"LPC: To Spectrogram...", L"djmw", 20040407)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum frequency resolution (Hz)")
+TAG (L"##Minimum frequency resolution (Hz)")
 DEFINITION (L"successive frequencies in the Spectrum will be maximally this distance apart")
-TAG (L"%%Bandwidth reduction (Hz)")
+TAG (L"##Bandwidth reduction (Hz)")
 DEFINITION (L"formants with small bandwidths show up very well as darker regions in the spectrogram "
 	"because the poles lie close to the contour along which a spectrum is computed (the unit circle "
 	"in the z-plane). "
 	"Peak enhancement can be realized by computing a spectrum in the z-plane along a contour of radius "
-	"%r = exp (\\-- %\\pi \\.c %BandwidthReduction / %samplingFrequency).")
-TAG (L"%%De-emphasis frequency (Hz)")
+	"%r = exp (\\-- %\\pi \\.c %bandwidthReduction / %samplingFrequency).")
+TAG (L"##De-emphasis frequency (Hz)")
 DEFINITION (L"Performs de-emphasis when value is in the interval (0, @@Nyquist frequency@)")
 ENTRY (L"Algorithm")
 NORMAL (L"For each LPC_Frame the corresponding Spectrum will be calculated according to the algorithm "
@@ -253,17 +253,17 @@ MAN_END
 MAN_BEGIN (L"LPC: To VocalTract (slice)...", L"djmw", 20050615)
 INTRO (L"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (L"Settings")
-TAG (L"%Time")
-DEFINITION (L"the time of the nearest frame.")
-TAG (L"%Length")
-DEFINITION (L"the length of the vocal tract.")
-TAG (L"%%Length according to Wakita")
+TAG (L"##Time (s)")
+DEFINITION (L"the time of the nearest frame, in seconds.")
+TAG (L"##Length (m)")
+DEFINITION (L"the length of the vocal tract, in metres.")
+TAG (L"##Compute length according to Wakita")
 DEFINITION (L"the length of the vocal tract is calculated according "
 	"to the algorithm as described in @@Wakita (1977)@.")
 ENTRY (L"Behaviour")
 NORMAL (L"A new @VocalTract area function is calculated from the prediction coefficients in the frame. ")
 ENTRY (L"Warning")
-NORMAL (L"When %%Length according to Wakita% is on, the optimal length is searched for in the range from 0.1 m to "
+NORMAL (L"If ##Compute length according to Wakita# is on, the optimal length is searched for in the range from 0.1 m to "
 	"0.25 m. This length calculation is extremely sensitive to the number of and the positions of the formants "
 	"with respect to the @@Nyquist frequency@. For example, there is a large difference "
 	"between the vocal tract length estimates if the highest formant is just below or just above the "
@@ -275,7 +275,7 @@ MAN_BEGIN (L"LPC & Sound: Filter...", L"djmw", 20040407)
 INTRO (L"A command that creates a new Sound object from one @Sound and one @LPC "
 	"object which have been selected together.")
 ENTRY (L"Settings")
-TAG (L"%%Use LPC gain%")
+TAG (L"##Use LPC gain")
 DEFINITION (L"Determines whether the gain from the LPC is used in the synthesis.")
 ENTRY (L"Behaviour")
 NORMAL (L"Filters the selected Sound by the selected LPC-filter.")
@@ -290,9 +290,9 @@ MAN_BEGIN (L"LPC & Sound: Filter with filter at time...", L"djmw", 20101009)
 INTRO (L"Filters the selected @Sound with a static filter that is formed by the filter coefficients "
 	"from only one @LPC frame.")
 ENTRY (L"Settings")
-TAG (L"%%Channel%,")
+TAG (L"##Channel")
 DEFINITION (L"determines the sound channel to be filtered.")
-TAG (L"%%Use filter at time (s)%,")
+TAG (L"##Use filter at time (s)")
 DEFINITION (L"determines which LPC frame will be chosen to filter the sound. ")
 MAN_END
 
@@ -309,14 +309,13 @@ NORMAL (L"In Z-domain notation: #E(%z) = #O(%z) / #H(%z), where "
 	"the LPC.)")
 MAN_END
 
-
 MAN_BEGIN (L"LPC & Sound: Filter (inverse) with filter at time...", L"djmw", 20101009)
 INTRO (L"%%Inverse% filters the selected @Sound with a static inverse filter that is formed by the filter coefficients "
 	"from only one @LPC frame.")
 ENTRY (L"Settings")
-TAG (L"%%Channel%,")
+TAG (L"##Channel")
 DEFINITION (L"determines the sound channel to be filtered.")
-TAG (L"%%Use filter at time (s)%,")
+TAG (L"##Use filter at time (s)")
 DEFINITION (L"determines which LPC frame will be chosen to inverse filter the sound. ")
 MAN_END
 
@@ -335,7 +334,7 @@ MAN_BEGIN (L"MFCC: To MelFilter...", L"djmw", 20040407)
 INTRO (L"A command to reconstruct @MelFilter objects  from the selected @MFCC "
 	"objects .")
 ENTRY (L"Settings")
-TAG (L"%%From coefficient, To coefficient")
+TAG (L"##From coefficient#, ##To coefficient#")
 DEFINITION (L"the range of coefficients that will be used in the reconstruction.")
 ENTRY (L"Details")
 NORMAL (L"The output of the triangular filters in a mel filter bank will be "
@@ -380,11 +379,11 @@ TAG (L"%%Prediction order%") \
 DEFINITION (L"the number of linear prediction coefficients, also called the %%number of poles%. " \
 	"Choose this number at least twice as large as the number of spectral peaks that you want " \
 	"to detect.") \
-TAG (L"%%Analysis window duration% (s)") \
+TAG (L"##Analysis window duration (s)") \
 DEFINITION (L"the effective duration of each analysis frame, in seconds.") \
-TAG (L"%%Time step% (s)") \
+TAG (L"##Time step (s)") \
 DEFINITION (L"the time step between two consecutive analysis frames.") \
-TAG (L"%%Pre-emphasis frequency% (Hz)") \
+TAG (L"##Pre-emphasis frequency (Hz)") \
 DEFINITION (L"a +6dB / octave filtering will be applied above this frequency. " \
 	"A pre-emphasis frequency of 48.47 Hz for a signal with a sampling frequency of 10 kHz " \
 	"approximately corresponds to a value of %a = 0.97 for the filter %y__%n_ = %x__%n_ - %a \\.c %x__%n-1_. " \
@@ -406,10 +405,10 @@ MAN_END
 
 MAN_BEGIN (L"Sound: To LPC (marple)...", L"djmw", 19970126)
 Sound_to_LPC_COMMON_HELP ("Marple's")
-TAG (L"%%Tolerance 1")
+TAG (L"##Tolerance 1")
 DEFINITION (L"stop the iteration when %E(%m) / %E(0) < %%Tolerance 1%, where %E(%m) is the "
 	"prediction error for order %m.")
-TAG (L"%%Tolerance 2")
+TAG (L"##Tolerance 2")
 DEFINITION (L"stop the iteration when (%E(%m) - %E(%m-1)) / %E(%m-1) < %%Tolerance 2.")
 ENTRY (L"Algorithm")
 NORMAL (L"The algorithm is described in @@Marple (1980)@.")

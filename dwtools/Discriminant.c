@@ -184,7 +184,7 @@ Strings Discriminant_extractGroupLabels (Discriminant me)
 	for (i=1; i <= my numberOfGroups; i++)
 	{
 		wchar_t *name = Thing_getName (my groups -> item[i]);
-		thy strings[i] = Melder_wcsdup (name);
+		thy strings[i] = Melder_wcsdup_e (name); cherror
 	}
 end:
 	if (Melder_hasError()) forget (thee);

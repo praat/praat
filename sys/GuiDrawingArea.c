@@ -273,7 +273,7 @@ GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top,
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags)
 {
-	GuiDrawingArea me = Melder_calloc (struct structGuiDrawingArea, 1);
+	GuiDrawingArea me = Melder_calloc_f (struct structGuiDrawingArea, 1);
 	my exposeCallback = exposeCallback;
 	my exposeBoss = boss;
 	my clickCallback = clickCallback;

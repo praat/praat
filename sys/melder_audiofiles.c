@@ -200,7 +200,7 @@ int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short
 //start:
 	MelderFile_create (file, macAudioFileType [audioFileType], L"PpgB", winAudioFileExtension [audioFileType]);
 	if (file -> filePointer) {
-		MelderFile_writeAudioFileHeader16_ch (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
+		MelderFile_writeAudioFileHeader16_e (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels); cherror
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
 	}
 end:

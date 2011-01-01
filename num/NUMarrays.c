@@ -38,10 +38,10 @@ void * NUMvector (long elementSize, long lo, long hi) {
 	char *result;
 	Melder_assert (sizeof (char) == 1);
 	for (;;) { /* Not very infinite: 99.999 % of the time once, 0.001 % twice. */
-		if (! (result = _Melder_calloc (hi - lo + 1, elementSize)))
+		if (! (result = _Melder_calloc_e (hi - lo + 1, elementSize)))
 			return Melder_errorp ("(NUMvector:) Not created.");
 		if (result -= lo * elementSize) break;   /* This will normally succeed at the first try. */
-		(void) Melder_realloc (result + lo * elementSize, 1);   /* Make sure that second try will succeed. */
+		(void) Melder_realloc_f (result + lo * elementSize, 1);   /* Make sure that second try will succeed. */
 	}
 	theTotalNumberOfArrays += 1;
 	return result;
@@ -83,9 +83,9 @@ void NUMvector_append_e (long elementSize, void **v, long lo, long *hi) {
 	} else {
 		long offset = lo * elementSize;
 		for (;;) { /* Not very infinite: 99.999 % of the time once, 0.001 % twice. */
-			result = Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize); cherror
+			result = Melder_realloc_e ((char *) *v + offset, (*hi - lo + 2) * elementSize); cherror
 			if ((result -= offset) != NULL) break;   /* This will normally succeed at the first try. */
-			(void) Melder_realloc (result + offset, 1);   /* Make sure that second try will succeed. */
+			(void) Melder_realloc_f (result + offset, 1);   /* Make sure that second try will succeed. */
 		}
 		(*hi) ++;
 		memset (result + *hi * elementSize, 0, elementSize);   // initialize the new element to zeroes
@@ -121,19 +121,19 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 	char **result, **dum;
 	Melder_assert (sizeof (char) == 1);
 	for (;;) {
-		if (! (result = _Melder_malloc (nrow * sizeof (char *))))   /* Assume all pointers have same size.*/
+		if (! (result = _Melder_malloc_f (nrow * sizeof (char *))))   /* Assume all pointers have same size.*/
 			return NULL;
 		if (result -= row1) break;   /* This will normally succeed at the first try. */
-		(void) Melder_realloc (result + row1, 1);   /* Make sure that second try will succeed. */
+		(void) Melder_realloc_f (result + row1, 1);   /* Make sure that second try will succeed. */
 	}
 	for (;;) {
-		if (! (result [row1] = _Melder_calloc (nrow * ncol, elementSize))) {
+		if (! (result [row1] = _Melder_calloc_e (nrow * ncol, elementSize))) {
 			dum = result + row1;
 			Melder_free (dum);
 			return NULL;
 		}
 		if (result [row1] -= col1 * elementSize) break;   /* This will normally succeed at the first try. */
-		(void) Melder_realloc (result [row1] + col1 * elementSize, 1);   /* Make sure that second try will succeed. */
+		(void) Melder_realloc_f (result [row1] + col1 * elementSize, 1);   /* Make sure that second try will succeed. */
 	}
 	for (i = row1 + 1; i <= row2; i++) result [i] = result [i - 1] + colSize;
 	theTotalNumberOfArrays += 1;

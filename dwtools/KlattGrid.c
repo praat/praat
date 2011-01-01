@@ -370,7 +370,7 @@ static void connections_free (connections me)
 
 static connections connections_create (long numberOfConnections)
 {
-	connections me = (connections) _Melder_malloc (sizeof (struct connections));
+	connections me = (connections) _Melder_malloc_e (sizeof (struct connections));
 	if (me == NULL) return NULL;
 	my numberOfConnections = numberOfConnections;
 	my x = NUMdvector (1, numberOfConnections);

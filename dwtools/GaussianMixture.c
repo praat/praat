@@ -258,12 +258,12 @@ end:
 }
 
 /* c is double vector 1..dimension !!!!!! */
-int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t *covname, double *buf)
+int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t **covname, double *buf)
 {
 	double p = NUMrandomUniform (0, 1);
 	long im = NUMgetIndexFromProbability (my mixingProbabilities, my numberOfComponents, p);
 	Covariance thee = my covariances -> item[im];
-	covname = thy name;
+	*covname = thy name;
 	if (thy numberOfRows == 1) // 1xn reduced form
 	{
 		for (long i = 1; i <= my dimension; i++)
@@ -1446,13 +1446,13 @@ TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, l
 	for (long i = 1; i <= numberOfPoints; i++)
 	{
 		wchar_t *covname;
-		if (! GaussianMixture_generateOneVector (me, thy data[i], covname, buf)) goto end;
+		if (! GaussianMixture_generateOneVector (me, thy data[i], &covname, buf)) goto end;
 		TableOfReal_setRowLabel (thee, i, covname);
 	}
 end:
 	NUMdvector_free (buf, 1);
-	if (Melder_hasError ()) forget (thee);
 	GaussianMixture_unExpandPCA (me);
+	if (Melder_hasError ()) forget (thee);
 	return thee;
 }
 

@@ -326,7 +326,7 @@ DO
 			GET_STRING (L"factors"), GET_STRING (L"columnsToSum"),
 			GET_STRING (L"columnsToAverage"), GET_STRING (L"columnsToMedianize"),
 			GET_STRING (L"columnsToAverageLogarithmically"), GET_STRING (L"columnsToMedianizeLogarithmically")),
-			NAMEW, L"_pooled")) return 0;
+			NAME, L"_pooled")) return 0;
 		praat_dataChanged (OBJECT);   // BUG: collapseRows should not change the original table overtly.
 	}
 END
@@ -414,7 +414,7 @@ DO
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
 		if (! praat_new5 (Table_extractRowsWhereColumn_number (OBJECT,
 			icol, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAMEW, L"_", Table_messageColumn (OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
+			NAME, L"_", Table_messageColumn (OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -432,7 +432,7 @@ DO
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
 		if (! praat_new3 (Table_extractRowsWhereColumn_string (OBJECT,
 			icol, GET_ENUM (kMelder_string, L"..."), value),
-			NAMEW, L"_", value)) return 0;
+			NAME, L"_", value)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -859,7 +859,7 @@ DO
 		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel); cherror
 		if (! praat_new2 (Table_rowsToColumns (OBJECT,
 			GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand")),
-			NAMEW, L"_nested")) return 0;
+			NAME, L"_nested")) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -1027,7 +1027,7 @@ DO
 	WHERE (SELECTED) {
 		Table me = OBJECT;
 		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels"));
-		if (! praat_new1 (Table_to_TableOfReal (OBJECT, icol), NAMEW)) return 0;
+		if (! praat_new1 (Table_to_TableOfReal (OBJECT, icol), NAME)) return 0;
 	}
 END
 
@@ -1130,7 +1130,7 @@ FORM (TableOfReal_extractColumnRanges, L"Extract column ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnRanges (OBJECT, GET_STRING (L"ranges")), NAMEW, L"_cols")) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnRanges (OBJECT, GET_STRING (L"ranges")), NAME, L"_cols")) return 0;
 	}
 END
 
@@ -1140,7 +1140,7 @@ FORM (TableOfReal_extractColumnsWhere, L"Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAMEW, L"_cols")) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_cols")) return 0;
 	}
 END
 
@@ -1153,7 +1153,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel (OBJECT,
 			GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text),
-			NAMEW, L"_", text)) return 0;
+			NAME, L"_", text)) return 0;
 	}
 END
 
@@ -1168,7 +1168,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new5 (TableOfReal_extractColumnsWhereRow (OBJECT,
 			row, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAMEW, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
+			NAME, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
@@ -1183,7 +1183,7 @@ FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowRanges (OBJECT, GET_STRING (L"ranges")), NAMEW, L"_rows")) return 0;
+		if (! praat_new2 (TableOfReal_extractRowRanges (OBJECT, GET_STRING (L"ranges")), NAME, L"_rows")) return 0;
 	}
 END
 
@@ -1193,7 +1193,7 @@ FORM (TableOfReal_extractRowsWhere, L"Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAMEW, L"_rows")) return 0;
+		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_rows")) return 0;
 	}
 END
 
@@ -1208,7 +1208,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new5 (TableOfReal_extractRowsWhereColumn (OBJECT,
 			column, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAMEW, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
+			NAME, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
@@ -1221,7 +1221,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new3 (TableOfReal_extractRowsWhereLabel (OBJECT,
 			GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text),
-			NAMEW, L"_", text)) return 0;
+			NAME, L"_", text)) return 0;
 	}
 END
 

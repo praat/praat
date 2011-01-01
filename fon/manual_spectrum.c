@@ -1,6 +1,6 @@
 /* manual_spectrum.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,8 @@ MAN_BEGIN (L"Ltas: Get frequency from bin number...", L"ppgb", 20041122)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the frequency (in Hz) associated with a specified bin number.")
-TAG (L"%%Bin number")
+ENTRY (L"Setting")
+TAG (L"##Bin number")
 DEFINITION (L"the bin number whose frequency is sought.")
 ENTRY (L"Algorithm")
 NORMAL (L"the result is")
@@ -148,15 +149,16 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the frequency (in Hertz) associated with the maximum energy density.")
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (s), %%To frequency% (s)")
+TAG (L"##From frequency (s)")
+TAG (L"##To frequency (s)")
 DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
-	"If %%To frequency% is not greater than %%From frequency%, "
+	"If ##To frequency# is not greater than ##From frequency#, "
 	"the entire frequency domain of the Ltas object is considered.")
-TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is None because of the usual large binning. "
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #None because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a Parabolic or Cubic interpolation would be more appropriate.")
+	"a #Parabolic or #Cubic interpolation would be more appropriate.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get frequency of minimum...", L"ppgb", 20030916)
@@ -164,7 +166,7 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the frequency (in Hertz) associated with the minimum energy density.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire frequency domain of the Ltas is considered.")
 TAG (L"%%Interpolation")
@@ -186,17 +188,19 @@ ENTRY (L"Return value")
 NORMAL (L"the lowest frequency, expressed in Hertz. It is usually 0 Hz.")
 MAN_END
 
-MAN_BEGIN (L"Ltas: Get maximum...", L"ppgb", 20030916)
+MAN_BEGIN (L"Ltas: Get maximum...", L"ppgb", 20101228)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the maximum value (in dB) within a specified frequency range.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
-DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
-	"If %t__1_ is not less than %t__2_, the entire frequency domain of the Ltas is considered.")
+TAG (L"##From frequency (Hz))")
+TAG (L"##To frequency (Hz)")
+DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
+	"If %%To frequency% is not greater than %%From frequency%, "
+	"the entire frequency domain of the Ltas object is considered.")
 TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is None because of the usual large binning. "
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #None because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
 	"a Parabolic or Cubic interpolation would be more appropriate.")
 MAN_END
@@ -206,9 +210,10 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the mean value (in dB) within a specified frequency range.")
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (s), %%To frequency% (s)")
+TAG (L"##From frequency (Hz))")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the frequency range. Values outside this range are ignored. "
-	"If %%To frequency% is not greater than %%From frequency%, the entire frequency domain of the Ltas is considered.")
+	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The mean value between the frequencies %f__1_ and %f__2_ is defined as")
 FORMULA (L"1/(%f__2_ - %f__1_)  \\in__%%f%1_^^%%f%2^ %df %x(%f)")
@@ -223,15 +228,16 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the minimum value (in dB) within a specified frequency range.")
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (s), %%To frequency% (s)")
+TAG (L"##From frequency (Hz))")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
-	"If %%To frequency% is not greater than %%From frequency%, "
+	"If ##To frequency# is not greater than ##From frequency#, "
 	"the entire frequency domain of the Ltas object is considered.")
 TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is None because of the usual large binning. "
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #None because of the usual large binning. "
 	"If the Ltas was computed with @@Spectrum: To Ltas (1-to-1)@, "
-	"a Parabolic or Cubic interpolation would be more appropriate.")
+	"a #Parabolic or #Cubic interpolation would be more appropriate.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get number of bins", L"ppgb", 20041122)
@@ -245,9 +251,10 @@ INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the standard deviation (in dB) of the LTAS within a specified frequency domain.")
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (s), %%To frequency% (s)")
+TAG (L"##From frequency (Hz))")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the frequency window. Values outside this domain are ignored. "
-	"If %%To frequency% is not greater than %%From frequency%, the entire frequency domain of the Ltas is considered.")
+	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The standard deviation between the frequencies %f__1_ and %f__2_ is defined as")
 FORMULA (L"1/(%f__2_ - %f__1_)  \\in__%%f%1_^^%%f%2^ %df (%x(%f) - %\\mu)^2")
@@ -257,17 +264,17 @@ FORMULA (L"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
 NORMAL (L"where %n is the number of band centres between %f__1_ and %f__2_. Note the \"minus 1\".")
 MAN_END
 
-MAN_BEGIN (L"Ltas: Get value at frequency...", L"ppgb", 20030916)
+MAN_BEGIN (L"Ltas: Get value at frequency...", L"ppgb", 20101228)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
 NORMAL (L"the value (in dB) at a specified frequency. "
 	"If %frequency is outside the bands of the Ltas, the result is 0.")
 ENTRY (L"Settings")
-TAG (L"%Frequency (s)")
-DEFINITION (L"the time at which the value is to be evaluated.")
+TAG (L"##Frequency (Hz)")
+DEFINITION (L"the frequency at which the value is to be evaluated.")
 TAG (L"%%Interpolation")
 DEFINITION (L"the interpolation method, see @@vector value interpolation@. "
-	"The standard is None because binning is usually large.")
+	"The standard is #None because binning is usually large.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get value in bin...", L"ppgb", 20041122)
@@ -277,7 +284,7 @@ NORMAL (L"the LTAS value (in dB) in a specified bin. "
 	"If the bin number is less than 1 or greater than the number of bin, the result is 0; "
 	"otherwise, it is %z [1] [%%bin number%].")
 ENTRY (L"Setting")
-TAG (L"%%Bin number")
+TAG (L"##Bin number")
 DEFINITION (L"the bin whose value is to be looked up.")
 MAN_END
 
@@ -287,8 +294,8 @@ INTRO (L"A command that creates a @Spectrogram from every selected @Sound object
 	"Praat computes an approximation of the spectrum at that time. Each such spectrum is called an %%analysis frame%.")
 NORMAL (L"For tutorial information, see @@Intro 3. Spectral analysis@.")
 ENTRY (L"Settings")
-TAG (L"%%Window length")
-DEFINITION (L"the duration of the analysis window. If this is 0.005 seconds, Praat uses for each frame "
+TAG (L"##Window length (s)")
+DEFINITION (L"the duration of the analysis window, in seconds. If this is 0.005 seconds, Praat uses for each frame "
 	"the part of the sound that lies between 0.0025 seconds before and 0.0025 seconds after the centre of that frame "
 	"(for Gaussian windows, Praat actually uses a bit more than that). "
 	"The window length determines the %bandwidth of the spectral analysis, i.e. the width of the horizontal line "
@@ -298,25 +305,25 @@ DEFINITION (L"the duration of the analysis window. If this is 0.005 seconds, Pra
 	"To get a `broad-band' spectrogram (bandwidth 260 Hz), set %%Window length% to 5 milliseconds; "
 	"to get a `narrow-band' spectrogram (bandwidth 43 Hz), set it to 30 milliseconds. "
 	"The other window shapes give slightly different values.")
-TAG (L"%%Maximum frequency")
-DEFINITION (L"the maximum frequency subject to analysis, e.g. 5000 Hertz. "
+TAG (L"##Maximum frequency (Hz)")
+DEFINITION (L"the maximum frequency subject to analysis, e.g. 5000 hertz. "
 	"If it is higher than the Nyquist frequency of the Sound (which is half its sampling frequency), "
 	"some values in the result will be zero (and will be drawn in white by @@Spectrogram: Paint...@).")
-TAG (L"%%Time step")
+TAG (L"##Time step (s)")
 DEFINITION (L"the distance between the centres of subsequent frames, e.g. 0.002 seconds. "
 	"This determines the number of frames of the resulting Spectrogram. For instance, if the Sound is 1 second long, "
 	"and the time step is 2 milliseconds, the Spectrogram will consist of almost 500 frames "
 	"(not %exactly 500, because no reliable spectrum can be measured near the beginning and end of the sound). "
 	"See below for cases in which the time step of the resulting Spectrogram is different from what you supply here.")
-TAG (L"%%Frequency step")
+TAG (L"##Frequency step (Hz)")
 DEFINITION (L"the frequency resolution, e.g. 20 Hertz. "
 	"This determines the number of frequency bands (%bins) of the resulting Spectrogram. For instance, if the %%Maximum frequency% "
 	"is 5000 Hz, and the frequency step is 20 Hz, the Spectrogram will consist of 250 frequency bands. "
 	"See below for cases in which the frequency step of the resulting Spectrogram is different from what you supply here.")
-TAG (L"%%Window shape")
+TAG (L"##Window shape")
 DEFINITION (L"determines the shape of the analysis window. "
-	"You can choose from: Gaussian, Square (none, rectangular), Hamming (raised sine-squared), "
-	"Bartlett (triangular), Welch (parabolic), and Hanning (sine-squared). "
+	"You can choose from: #Gaussian, #Square (none, rectangular), #Hamming (raised sine-squared), "
+	"#Bartlett (triangular), #Welch (parabolic), and #Hanning (sine-squared). "
 	"The Gaussian window is superior, as it gives no sidelobes in your spectrogram; "
 	"it analyzes a factor of 2 slower than the other window shapes, "
 	"because the analysis is actually performed on twice as many samples per frame.")
@@ -396,7 +403,7 @@ MAN_BEGIN (L"Sound: To Spectrum...", L"ppgb", 20041123)
 INTRO (L"A command that appears in the #Spectrum menu if you select one or more @Sound objects. "
 	"It turns the selected Sound into a @Spectrum by an over-all spectral analysis, a %%Fourier transform%.")
 ENTRY (L"Setting")
-TAG (L"%Fast")
+TAG (L"##Fast")
 DEFINITION (L"determines whether zeroes are appended to the sound such that the number of samples is a power of two. "
 	"This can appreciably speed up the Fourier transform.")
 ENTRY (L"Mathematical procedure")
@@ -527,21 +534,23 @@ MAN_END
 MAN_BEGIN (L"Spectrogram: Paint...", L"ppgb", 20030916)
 INTRO (L"A command to draw the selected @Spectrogram object(s) into the @@Picture window@ in shades of grey.")
 ENTRY (L"Settings")
-TAG (L"%%From time%, %%To time% (seconds)")
+TAG (L"##From time (s)")
+TAG (L"##To time (s)")
 DEFINITION (L"the time domain along the %x axis.")
-TAG (L"%%From frequency%, %%To frequency% (Hertz)")
+TAG (L"##From frequency (Hz)")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the frequency domain along the %y axis.")
-TAG (L"%%Dynamic range% (dB)")
+TAG (L"##Dynamic range (dB)")
 DEFINITION (L"The global maximum of the spectrogram (after preemphasis) will always be drawn in black; "
 	"all values that are more than %%Dynamic range% dB below this maximum (after dynamic compression) "
 	"will be drawn in white. Values in-between have appropriate shades of grey.")
-TAG (L"%%Preemphasis% (dB/octave)")
+TAG (L"##Preemphasis (dB/octave)")
 DEFINITION (L"determines the steepness of a high-pass filter, "
 	"i.e., how much the power of higher frequencies will be raised before drawing, as compared to lower frequencies. "
 	"Since the spectral slope of human vowels is approximately -6 dB per octave, "
 	"the standard value for this parameter is +6 dB per octave, "
 	"so that the spectrum is flattened and the higher formants look as strong as the lower ones.")
-TAG (L"%%Dynamic compression")
+TAG (L"##Dynamic compression")
 DEFINITION (L"determines how much stronger weak time frames should be made before drawing. "
 	"Normally, this parameter is between 0 and 1. If it is 0, there is no dynamic compression. "
 	"If it is 1, all time frames (vertical bands) will be drawn equally strong, "
@@ -592,11 +601,11 @@ INTRO (L"A command to modify every selected @Spectrum object.")
 NORMAL (L"The complex values in the #Spectrum are multiplied by real-valued sine shapes and straight lines, according to the following figure:")
 PICTURE (5, 3, draw_SpectrumPassHann)
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (standard value: 500 Hz)")
+TAG (L"##From frequency (Hz)# (standard value: 500 Hz)")
 DEFINITION (L"the lower edge of the pass band (%f__1_ in the figure). The value zero is special: the filter then acts as a low-pass filter.")
-TAG (L"%%To frequency% (standard value: 1000 Hz)")
+TAG (L"##To frequency (Hz)# (standard value: 1000 Hz)")
 DEFINITION (L"the upper edge of the pass band (%f__2_ in the figure). The value zero is special: the filter then acts as a high-pass filter.")
-TAG (L"%Smoothing (standard value: 100 Hz)")
+TAG (L"##Smoothing (Hz)# (standard value: 100 Hz)")
 DEFINITION (L"the width of the region between pass and stop (%w in the figure).")
 ENTRY (L"Usage")
 NORMAL (L"Because of its symmetric Hann-like shape, the filter is especially useful for decomposing the Spectrum into consecutive bands. "
@@ -612,11 +621,11 @@ INTRO (L"A command to modify every selected @Spectrum object.")
 NORMAL (L"The complex values in the #Spectrum are multiplied by real-valued sine shapes and straight lines, according to the following figure:")
 PICTURE (5, 3, draw_SpectrumStopHann)
 ENTRY (L"Settings")
-TAG (L"%%From frequency% (standard value: 500 Hz)")
+TAG (L"##From frequency (Hz)# (standard value: 500 Hz)")
 DEFINITION (L"the lower edge of the stop band (%f__1_ in the figure). The value zero is special: the filter then acts as a high-pass filter.")
-TAG (L"%%To frequency% (standard value: 1000 Hz)")
+TAG (L"##To frequency (Hz)# (standard value: 1000 Hz)")
 DEFINITION (L"the upper edge of the stop band (%f__2_ in the figure). The value zero is special: the filter then acts as a low-pass filter.")
-TAG (L"%Smoothing (standard value: 100 Hz)")
+TAG (L"##Smoothing (Hz)# (standard value: 100 Hz)")
 DEFINITION (L"the width of the region between stop and pass (%w in the figure).")
 ENTRY (L"Usage")
 NORMAL (L"This filter is the complement from the pass-band filter (@@Spectrum: Filter (pass Hann band)...@). "
@@ -642,10 +651,10 @@ NORMAL (L"In this formula, %f__%c_ is the spectral centre of gravity (see @@Spec
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
 ENTRY (L"Settings")
-TAG (L"%Moment")
+TAG (L"##Moment")
 DEFINITION (L"the number %n in the formulas above. A number of 3 gives you the third central spectral moment. "
 	"It is not impossible to ask for fractional moments, e.g. %n = 1.5.")
-TAG (L"%Power")
+TAG (L"##Power")
 DEFINITION (L"the quantity %p in the formula above. Common values are 2, 1, or 2/3.")
 ENTRY (L"Usage")
 NORMAL (L"For %n = 1, the central moment should be zero, since the centre of gravity %f__%c_ is computed with "
@@ -670,8 +679,8 @@ FORMULA (L"\\in__0_^\\oo  |%S(%f)|^%p %df")
 NORMAL (L"Thus, the centre of gravity is the average of %f over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
-ENTRY (L"Argument")
-TAG (L"%Power")
+ENTRY (L"Setting")
+TAG (L"##Power")
 DEFINITION (L"the quantity %p in the formulas above. Common values are 2, 1, or 2/3.")
 ENTRY (L"Interpretation")
 NORMAL (L"The spectral centre of gravity is a measure for how high the frequencies in a spectrum are on average. "
@@ -692,8 +701,8 @@ INTRO (L"A command to query the selected @Spectrum object.")
 NORMAL (L"The (normalized) kurtosis of a spectrum is the fourth central moment of this spectrum, "
 	"divided by the square of the second central moment, minus 3. "
 	"See @@Spectrum: Get central moment...@.")
-ENTRY (L"Argument")
-TAG (L"%Power")
+ENTRY (L"Setting")
+TAG (L"##Power")
 DEFINITION (L"the quantity %p in the formula for the centre of gravity and the second and fourth central moment. "
 	"Common values are 2, 1, or 2/3.")
 ENTRY (L"Interpretation")
@@ -712,8 +721,8 @@ INTRO (L"A command to query the selected @Spectrum object.")
 NORMAL (L"The (normalized) skewness of a spectrum is the third central moment of this spectrum, "
 	"divided by the 1.5 power of the second central moment. "
 	"See @@Spectrum: Get central moment...@.")
-ENTRY (L"Argument")
-TAG (L"%Power")
+ENTRY (L"Setting")
+TAG (L"##Power")
 DEFINITION (L"the quantity %p in the formula for the centre of gravity and the second and third central moment. "
 	"Common values are 2, 1, or 2/3.")
 ENTRY (L"Interpretation")
@@ -731,8 +740,8 @@ MAN_BEGIN (L"Spectrum: Get standard deviation...", L"ppgb", 20020323)
 INTRO (L"A command to query the selected @Spectrum object.")
 NORMAL (L"The standard deviation of a spectrum is the square root of the second central moment of this spectrum. "
 	"See @@Spectrum: Get central moment...@.")
-ENTRY (L"Argument")
-TAG (L"%Power")
+ENTRY (L"Setting")
+TAG (L"##Power")
 DEFINITION (L"the quantity %p in the formula for the centre of gravity and the second central moment. "
 	"Common values are 2, 1, or 2/3.")
 ENTRY (L"Interpretation")

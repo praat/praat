@@ -56,7 +56,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 	 * Copy labels and set name.
 	 */
 	for (long i = 1; i <= thy numberOfStates; i ++) {
-		thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]); cherror
+		thy stateLabels [i] = Melder_wcsdup_e (underlying -> columnLabels [i]); cherror
 	}
 	Thing_setName (thee, underlying -> columnLabels [environment]); cherror
 
@@ -163,27 +163,28 @@ end:
 }
 
 Distributions Transition_to_Distributions_conflate (Transition me) {
-	Distributions thee = Distributions_create (my numberOfStates, 1);
-	long i, j;
-	if (! thee) goto end;
+	Distributions thee = NULL;
+//start:
+	thee = Distributions_create (my numberOfStates, 1); cherror
 
 	/*
 	 * Copy labels.
 	 */
-	for (i = 1; i <= my numberOfStates; i ++)
-		thy rowLabels [i] = Melder_wcsdup (my stateLabels [i]);
+	for (long i = 1; i <= my numberOfStates; i ++) {
+		thy rowLabels [i] = Melder_wcsdup_e (my stateLabels [i]); cherror
+	}
 
 	/*
 	 * Average rows.
 	 */
-	for (i = 1; i <= my numberOfStates; i ++) {
-		for (j = 1; j <= my numberOfStates; j ++)
+	for (long i = 1; i <= my numberOfStates; i ++) {
+		for (long j = 1; j <= my numberOfStates; j ++)
 			thy data [i] [1] += my data [j] [i];
 		thy data [i] [1] /= my numberOfStates;
 	}
 
 end:
-	if (Melder_hasError ()) {
+	iferror {
 		forget (thee);
 		return Melder_errorp ("(Transition_to_Distributions_conflate:) Not performed.");
 	}

@@ -149,7 +149,7 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		wpath [n_wcs] = '\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8bitToWcs_inline (path, wpath, kMelder_textInputEncoding_UTF8);
+		Melder_8bitToWcs_inline_e (path, wpath, kMelder_textInputEncoding_UTF8);
 	#endif
 }
 #endif
@@ -873,7 +873,7 @@ char * MelderFile_readLine (MelderFile me) {
 	if (! my filePointer) return NULL;
 	if (feof (my filePointer)) return NULL;
 	if (! buffer) {
-		buffer = Melder_malloc (char, capacity = 100);
+		buffer = Melder_malloc_e (char, capacity = 100);
 		if (buffer == NULL) {
 			Melder_error1 (L"(MelderFile_readLine:) No room even for a string buffer of 100 bytes.");
 			fclose (my filePointer);
@@ -882,14 +882,14 @@ char * MelderFile_readLine (MelderFile me) {
 	}
 	for (i = 0; 1; i ++) {
 		int c;
-		if (i >= capacity && ! (buffer = Melder_realloc (buffer, capacity *= 2))) {
+		if (i >= capacity && ! (buffer = Melder_realloc_e (buffer, capacity *= 2))) {
 			Melder_error ("(MelderFile_readLine:) No memory to extend string buffer to %ld bytes.", capacity);
 			/*
 			 * If the buffer overflows the available memory,
 			 * half the buffer will also be quite large!
 			 * So shrink it.
 			 */
-			buffer = Melder_realloc (buffer, capacity = 100);
+			buffer = Melder_realloc_f (buffer, capacity = 100);
 			fclose (my filePointer);
 			my filePointer = NULL;
 			return NULL;

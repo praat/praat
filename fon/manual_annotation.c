@@ -1,6 +1,6 @@
 /* manual_annotation.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2010 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,105 +22,31 @@
 void manual_annotation_init (ManPages me);
 void manual_annotation_init (ManPages me) {
 
-MAN_BEGIN (L"Create TextGrid...", L"ppgb", 20060714)
+MAN_BEGIN (L"Create TextGrid...", L"ppgb", 20101228)
 INTRO (L"A command to create a @TextGrid from scratch.")
 ENTRY (L"Settings")
-TAG (L"%%Start time% (seconds)")
+TAG (L"##Start time (s)")
 DEFINITION (L"the start time, usually 0 seconds.")
-TAG (L"%%End time% (seconds)")
-DEFINITION (L"the end time, usually the duration.")
-TAG (L"%%Tier names")
+TAG (L"##End time (s)")
+DEFINITION (L"the end time in seconds, usually the duration.")
+TAG (L"##Tier names")
 DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
-TAG (L"%%Point tiers")
+TAG (L"##Point tiers")
 DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
-MAN_END
-
-MAN_BEGIN (L"IntervalTier", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in Praat. "
-	"An IntervalTier represents a series of contiguous intervals in time. "
-	"Each interval contains a a string.")
-ENTRY (L"Creating a IntervalTier object in Praat")
-NORMAL (L"An IntervalTier object is normally extracted from a @TextGrid object, "
-	"which may contain several tiers.")
-TAG (L"From scratch:")
-LIST_ITEM (L"1. Select an object with a time domain, e.g., a Sound or a Pitch.")
-LIST_ITEM (L"2. Click ##To IntervalTier#.")
-NORMAL (L"The resulting IntervalTier will have the same time domain "
-	"as the original Sound (or Pitch), e.g., if the Sound object starts at 0.0 seconds "
-	"and has a duration of 2.1 seconds, "
-	"the resulting IntervalTier will also have an %xmin of 0.0 "
-	"and an %xmax of 2.1 seconds.")
-NORMAL (L"The resulting IntervalTier will have one interval in it, extending from %xmin to %xmax.")
-ENTRY (L"Editing an IntervalTier in Praat")
-NORMAL (L"You would edit an IntervalTier by converting it to a @TextGrid "
-	"and invoking a @TextGridEditor, perhaps with a Sound.")
-ENTRY (L"Drawing an IntervalTier")
-NORMAL (L"You can draw an IntervalTier alone or together with a Sound or Pitch object, "
-	"after converting it to a TextGrid.")
-ENTRY (L"Inside an IntervalTier")
-NORMAL (L"With @Inspect, you will see the following attributes:")
-TAG (L"%x__%min_")
-DEFINITION (L"the start of the time domain, in seconds.")
-TAG (L"%x__%max_")
-DEFINITION (L"the end of the time domain, in seconds.")
-TAG (L"%intervals")
-DEFINITION (L"a sorted collection of text intervals.")
-NORMAL (L"The attributes of a text interval are:")
-TAG (L"%x__%min_")
-DEFINITION (L"the start of the time domain, in seconds.")
-TAG (L"%x__%max_")
-DEFINITION (L"the end of the time domain, in seconds.")
-TAG (L"%text")
-DEFINITION (L"an ASCII text string.")
-NORMAL (L"Though %text is a system-independent ASCII text string, "
-	"it may, as everywhere in Praat, contain @@Special symbols@ "
-	"like Greek letters, mathematical symbols, style information, "
-	"and Phonetic symbols, which will be visible when the string is drawn "
-	"into the Picture window or viewed in a @TextGridEditor.")
-MAN_END
-
-MAN_BEGIN (L"IntervalTier(s): To TextGrid", L"ppgb", 19970317)
-INTRO (L"A command to merge all selected @IntervalTier objects into a new @TextGrid object.")
-TAG (L"You can also merge with @TextTier objects:")
-LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
-MAN_END
-
-MAN_BEGIN (L"Label & Sound: To TextGrid", L"ppgb", 19970317)
-INTRO (L"A command to convert an old-style #Label object, "
-	"which you have probably read from an old file, into a new-style @TextGrid object.")
-NORMAL (L"The Sound is needed to supply the TextGrid with a finite time domain, "
-	"which old-style Label objects lacked.")
-MAN_END
-
-MAN_BEGIN (L"Pitch & TextTier: To PitchTier...", L"ppgb", 20030916)
-INTRO (L"A command that creates a @PitchTier object from one selected @Pitch and one selected @TextTier object.")
-ENTRY (L"Purpose")
-NORMAL (L"to return the frequencies in the Pitch contour at the times specified by the TextTier.")
-ENTRY (L"Argument")
-TAG (L"%%Check voicing% (standard: on)")
-DEFINITION (L"determines whether, if the time of a mark is not within a voiced frame, you will get a message like "
-	"\"No periodicity at time %xxx.\", and no PitchTier is created. If this button is off, "
-	"the resulting pitch frequency will be 0.0 Hz.")
-ENTRY (L"Normal behaviour")
-NORMAL (L"For all the times of the marks in the TextTier, a pitch frequency is computed from the "
-	"information in the Pitch, by linear interpolation.")
-NORMAL (L"All the resulting time-frequency pairs are put in a new PitchTier object.")
-NORMAL (L"The time domain of the resulting PitchTier is a union of the domains of the original Pitch "
-	"and TextTier functions.")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: To TextGrid...", L"ppgb", 19980113)
 INTRO (L"A command to create an empty @TextGrid from every selected @PointProcess.")
 NORMAL (L"The only information in the PointProcess that is used, is its starting and finishing times.")
 ENTRY (L"Settings")
-TAG (L"%%Tier names")
+TAG (L"##Tier names")
 DEFINITION (L"a list of the names of the tiers that you want to create, separated by spaces.")
-TAG (L"%%Point tiers")
+TAG (L"##Point tiers")
 DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 ENTRY (L"Example")
-NORMAL (L"If %%Tier names% is \"a b c\", and %%Point tiers% is \"b\", "
+NORMAL (L"If ##Tier names# is \"a b c\", and ##Point tiers# is \"b\", "
 	"the resulting TextGrid object will contain an interval tier named \"a\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
@@ -129,24 +55,24 @@ MAN_BEGIN (L"PointProcess: To TextGrid (vuv)...", L"ppgb", 19980210)
 INTRO (L"A command to create a @TextGrid with voiced/unvoiced information "
 	"from every selected @PointProcess.")
 ENTRY (L"Settings")
-TAG (L"%%Maximum period% (s)")
+TAG (L"##Maximum period (s)")
 DEFINITION (L"the maximum interval that will be consider part of a larger voiced interval.")
-TAG (L"%%Mean period% (s)")
+TAG (L"##Mean period (s)")
 DEFINITION (L"half of this value will be taken to be the amount to which a voiced interval "
-	"will extend beyond its initial and final points. %%Mean period% must be less than "
-	"%%Maximum period%, or you may get intervals with negative durations.")
+	"will extend beyond its initial and final points. ##Mean period# should be less than "
+	"##Maximum period#, or you may get intervals with negative durations.")
 ENTRY (L"Example")
-NORMAL (L"If %%Maximum period% is 0.02 s, and %%Mean period% is 0.01 s, "
+NORMAL (L"If ##Maximum period# is 0.02 s, and ##Mean period# is 0.01 s, "
 	"and the point process is 0.1 seconds long, with points at 20, 28, 39, 61, and 72 milliseconds, "
 	"the resulting TextGrid object will contain an interval tier "
 	"with \"U\" intervals at [0 ms, 15 ms], [44 ms, 56 ms], and [77 ms, 100 ms], "
 	"and \"V\" intervals at [15 ms, 44 ms] and [56 ms, 77 ms].")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Up to TextTier...", L"ppgb", 19970329)
-INTRO (L"A command to promote every selected @PointProcess to a @TextTier.")
-ENTRY (L"Argument")
-TAG (L"%Text")
+MAN_BEGIN (L"PointProcess: Up to TextGrid...", L"ppgb", 20101230)
+INTRO (L"A command to promote every selected @PointProcess to a @TextGrid with a single text tier in it.")
+ENTRY (L"Setting")
+TAG (L"##Text")
 DEFINITION (L"the text that will be placed in every point.")
 ENTRY (L"Behaviour")
 NORMAL (L"The times of all the points are trivially copied, and so is the time domain. "
@@ -162,7 +88,7 @@ TAG (L"%%Point tiers")
 DEFINITION (L"a list of the names of the tiers that you want to be %%point tiers%; "
 	"the rest of the tiers will be %%interval tiers%.")
 ENTRY (L"Example")
-NORMAL (L"If %%Tier names% is \"a b c\", and \"Point tiers\" is \"b\", "
+NORMAL (L"If ##Tier names# is \"a b c\", and ##Point tiers# is \"b\", "
 	"the resulting TextGrid object will contain an interval tier named \"a\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
@@ -185,37 +111,37 @@ NORMAL (L"If you are the maintainer of a word list for spelling checking, you wi
 NORMAL (L"The first step is to create a @WordList object from your text file, as described on the @WordList man page. "
 	"Then you simply click ##To SpellingChecker#. A button labelled ##Edit...# appears. "
 	"This command allows you to set the following attributes of the SpellingChecker object:")
-/*TAG (L"%%Check matching parentheses")
+/*TAG (L"##Check matching parentheses")
 DEFINITION (L"determines whether it is considered a spelling error if parentheses do not match, as in the string \"Hi) there\".")*/
-TAG (L"%%Allow all parenthesized")
+TAG (L"##Allow all parenthesized")
 DEFINITION (L"this flag determines whether text between parentheses is ignored in spelling checking. "
 	"This would allow the transcriber to mark utterances in foreign languages, which cannot be found in the lexicon.")
-TAG (L"%%Separating characters")
+TAG (L"##Separating characters")
 DEFINITION (L"determines the set of characters (apart from the space character) that separate words. "
 	"The standard is \".,;:()\". If a string like \"error-prone\" should be considered two separate words, "
 	"you will like to change this to \".,;:()-\". "
 	"For the Corpus of Spoken Dutch (CGN), the hyphen is not a separator, since words like \"mee-eter\" should be checked as a whole. "
 	"If a string like \"Mary's\" should be considered two separate words, include the apostrophe.")
-/*TAG (L"%%Forbidden strings")
+/*TAG (L"##Forbidden strings")
 DEFINITION (L"this will mainly contain characters that are not allowed in your corpus. For the CGN, this is \": ; \\\" \".")*/
-TAG (L"%%Allow all names")
+TAG (L"##Allow all names")
 DEFINITION (L"determines whether all words that start with a capital are allowed. For the CGN, this is on, "
 	"since the lexicon does not contain many names.")
-TAG (L"%%Name prefixes")
+TAG (L"##Name prefixes")
 DEFINITION (L"a space-separated list that determines what small groups of characters can precede names. For the CGN, "
 	"this is \"'s- d' l'\", since names like %%'s-Gravenhage%, %%d'Ancona%, and %%l'H\\o^pital% should be ignored by the spelling checker.")
-TAG (L"%%Allow all words containing")
+TAG (L"##Allow all words containing")
 DEFINITION (L"a space-separated list of strings that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"* xxx\", since words like %%keuje*d% and %%verxxxing% should be ignored by the spelling checker.")
-TAG (L"%%Allow all words starting with")
+TAG (L"##Allow all words starting with")
 DEFINITION (L"a space-separated list of prefixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is empty.")
-TAG (L"%%Allow all words ending in")
+TAG (L"##Allow all words ending in")
 DEFINITION (L"a space-separated list of suffixes that make a word correct even if not in the lexicon. "
 	"For the CGN, this is \"-\", since the first word in %%verzekerings- en bankwezen% should be ignored by the spelling checker.")
 MAN_END
 
-MAN_BEGIN (L"TextGrid", L"ppgb", 20040413)
+MAN_BEGIN (L"TextGrid", L"ppgb", 20101230)
 INTRO (L"One of the @@types of objects@ in Praat, used for %annotation (segmentation and labelling). "
 	"For tutorial information, see @@Intro 7. Annotation@.")
 ENTRY (L"Description")
@@ -229,16 +155,8 @@ LIST_ITEM (L"@@LongSound: To TextGrid...@ (takes the time domain from the LongSo
 LIST_ITEM (L"@@PointProcess: To TextGrid...@ (takes the time domain from the PointProcess)")
 LIST_ITEM (L"@@PointProcess: To TextGrid (vuv)...@ (labels voiced and unvoiced intervals)")
 LIST_ITEM (L"@@Create TextGrid...@")
-TAG (L"From merging any number of existing tiers:")
-LIST_ITEM (L"@@TextTier(s): To TextGrid@")
-LIST_ITEM (L"@@IntervalTier(s): To TextGrid@")
-LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
-TAG (L"From merging an existing TextGrid with existing tiers or TextGrids:")
-LIST_ITEM (L"@@TextGrid & TextTier: Append@")
-LIST_ITEM (L"@@TextGrid & IntervalTier: Append@")
-LIST_ITEM (L"@@TextGrid & TextGrid: Merge@")
-TAG (L"Conversion from an old-style Label object:")
-LIST_ITEM (L"@@Label & Sound: To TextGrid@")
+TAG (L"From merging existing TextGrids with each other:")
+LIST_ITEM (L"@@TextGrids: Merge@")
 ENTRY (L"How to edit a TextGrid")
 NORMAL (L"You select a TextGrid alone or together with a @Sound or @LongSound, and click #Edit. "
 	"A @TextGridEditor will appear on your screen, containing the TextGrid "
@@ -255,9 +173,9 @@ MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 19980630)
 INTRO (L"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
 ENTRY (L"Settings")
-TAG (L"%%Tier number")
+TAG (L"##Tier number")
 DEFINITION (L"the number (1, 2, 3...) of the tier whose labels you want to investigate.")
-TAG (L"%%Label text")
+TAG (L"##Label text")
 DEFINITION (L"the text on the labels that you want to count.")
 ENTRY (L"Behaviour")
 NORMAL (L"The number of intervals or points with label %%Label text% in tier %%Tier number% "
@@ -269,16 +187,8 @@ CODE (L"number_of_a = Count labels... 1 a")
 NORMAL (L"In this case, the value will not be written into the Info window.")
 MAN_END
  
-MAN_BEGIN (L"TextGrid & IntervalTier: Append", L"ppgb", 19970317)
-INTRO (L"A command to append the selected @IntervalTier to the selected @TextGrid.")
-MAN_END
-
-MAN_BEGIN (L"TextGrid & TextGrid: Merge", L"ppgb", 19970317)
-INTRO (L"A command to merge two selected @TextGrid objects into a new @TextGrid.")
-MAN_END
-
-MAN_BEGIN (L"TextGrid & TextTier: Append", L"ppgb", 19970317)
-INTRO (L"A command to append the selected @TextTier to the selected @TextGrid.")
+MAN_BEGIN (L"TextGrids: Merge", L"ppgb", 20101230)
+INTRO (L"A command to merge all selected @TextGrid objects into a new @TextGrid.")
 MAN_END
 
 MAN_BEGIN (L"TextGridEditor", L"ppgb", 20080628)
@@ -370,78 +280,6 @@ NORMAL (L"You can check the spelling of the intervals in your tiers by including
 	"object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, "
 	"then click Edit. The #Spell menu will contain the commands ##Check spelling in tier# (Command-N), and ##Check spelling in interval# "
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
-MAN_END
-
-MAN_BEGIN (L"TextTier", L"ppgb", 20030316)
-INTRO (L"One of the @@types of objects@ in Praat.")
-NORMAL (L"A TextTier object represents a marked point process, i.e., it contains a series of (%time, %text) points, "
-	"sorted by time.")
-NORMAL (L"Each point is marked with a text string. Though this is a system-independent ASCII text string, "
-	"it may, as everywhere in Praat, contain @@Special symbols@ "
-	"like Greek letters, mathematical symbols, style information, "
-	"and Phonetic symbols, which will be visible when the string is drawn "
-	"into the Picture window or viewed in a @TextGridEditor.")
-ENTRY (L"Creating a TextTier object in Praat")
-NORMAL (L"A TextTier object is usually extracted from a @TextGrid object, "
-	"which may contain several tiers.")
-TAG (L"From scratch:")
-LIST_ITEM (L"1. Select an object with a time domain, e.g., a Sound or a Pitch.")
-LIST_ITEM (L"2. Click \"To TextTier\".")
-NORMAL (L"The resulting TextTier will have the same time domain "
-	"as the original Sound (or Pitch), e.g., if the Sound object starts at 0.0 seconds "
-	"and has a duration of 2.1 seconds, "
-	"the resulting TextTier will also have an %xmin of 0.0 "
-	"and an %xmax of 2.1 seconds.")
-NORMAL (L"The resulting TextTier will have 0 points in it.")
-ENTRY (L"Editing a TextTier in Praat")
-NORMAL (L"To edit a TextTier, first convert it into a @TextGrid. "
-	"You invoke a @TextGridEditor in either of two ways:")
-LIST_ITEM (L"\\bu Select a TextGrid and click ##Edit#.")
-LIST_ITEM (L"\\bu Select a TextGrid and a @Sound and click ##Edit#.")
-NORMAL (L"In the latter case, a copy of the Sound object will be visible in the editor.")
-NORMAL (L"The @TextGridEditor will allow you to add marks to a TextTier object, "
-	"move marks around, edit the texts in the marks, and remove marks.")
-ENTRY (L"Drawing a TextTier")
-NORMAL (L"You can draw a TextTier together with a Pitch object, "
-	"by selecting one TextTier and one Pitch object, "
-	"and choosing \"Draw...\". The mark texts will appear just above the pitch contour.")
-ENTRY (L"Class description")
-NORMAL (L"If you select a TextTier and click ##Inspect# or ##Write to console#, "
-	" you will see that a TextTier object contains the following attributes:")
-TAG (L"%x__%min_")
-DEFINITION (L"the start of the time domain.")
-TAG (L"%x__%max_")
-DEFINITION (L"the end of the time domain.")
-TAG (L"%points")
-DEFINITION (L"a collection of text points, sorted by their times.")
-MAN_END
-
-MAN_BEGIN (L"TextTier: Add point...", L"ppgb", 19980324)
-INTRO (L"A command to add a point to each selected @TextTier.")
-ENTRY (L"Settings")
-TAG (L"%Time (s)")
-DEFINITION (L"the time at which a point is to be added.")
-TAG (L"%Text")
-DEFINITION (L"the text of the requested new point.")
-ENTRY (L"Behaviour")
-NORMAL (L"The tier is modified so that it contains the new point. "
-	"If a point at the specified time was already present in the tier, nothing happens.")
-MAN_END
-
-MAN_BEGIN (L"TextTier: Down to PointProcess", L"ppgb", 20010410)
-INTRO (L"A command to degrade every selected @TextTier to a @PointProcess.")
-ENTRY (L"Behaviour")
-NORMAL (L"The times of all the text points are trivially copied, and so is the time domain. The text information is lost.")
-MAN_END
-
-MAN_BEGIN (L"TextTier(s): To TextGrid", L"ppgb", 19970317)
-INTRO (L"A command to merge all selected @TextTier objects into a new @TextGrid object.")
-TAG (L"You can also merge with @IntervalTier objects:")
-LIST_ITEM (L"@@TextTier(s) & IntervalTier(s): To TextGrid@")
-MAN_END
-
-MAN_BEGIN (L"TextTier(s) & IntervalTier(s): To TextGrid", L"ppgb", 19970317)
-INTRO (L"A command to merge all selected @TextTier and @IntervalTier objects into a new @TextGrid object.")
 MAN_END
 
 MAN_BEGIN (L"WordList", L"ppgb", 19991129)

@@ -454,7 +454,7 @@ static int Formula_lexan (void) {
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (var == NULL) {
 							nieuwtok (VARIABLE_NAME_)
-							lexan [itok]. content.string = Melder_wcsdup (token.string);
+							lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 							numberOfStringConstants ++;
 						} else {
 							if (isArray) {
@@ -511,7 +511,7 @@ static int Formula_lexan (void) {
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (var == NULL) {
 							nieuwtok (VARIABLE_NAME_)
-							lexan [itok]. content.string = Melder_wcsdup (token.string);
+							lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 							numberOfStringConstants ++;
 						} else {
 							if (isArray) {
@@ -548,13 +548,13 @@ static int Formula_lexan (void) {
 					} else {
 						nieuwtok (INDEXED_NUMERIC_VARIABLE_)
 					}
-					lexan [itok]. content.string = Melder_wcsdup (token.string);
+					lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 					numberOfStringConstants ++;
 				} else {
 					InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 					if (var == NULL) {
 						nieuwtok (VARIABLE_NAME_)
-						lexan [itok]. content.string = Melder_wcsdup (token.string);
+						lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 						numberOfStringConstants ++;
 					} else {
 						if (isArray) {
@@ -704,7 +704,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (CALL_)
-			lexan [itok]. content.string = Melder_wcsdup (token.string);
+			lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 			numberOfStringConstants ++;
 		} else if (kar == '\"') {
 			/*
@@ -728,7 +728,7 @@ static int Formula_lexan (void) {
 			stokuit;
 			oudkar;
 			nieuwtok (STRING_)
-			lexan [itok]. content.string = Melder_wcsdup (token.string);
+			lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 			numberOfStringConstants ++;
 		} else if (kar == '|') {
 			nieuwtok (OR_)   /* "|" = "or" */
@@ -1881,12 +1881,10 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 	theExpressionType = expressionType;
 	theOptimize = optimize;
 	if (! lexan) {
-		lexan = Melder_calloc (struct FormulaInstruction, 3000);
+		lexan = Melder_calloc_f (struct FormulaInstruction, 3000);
 		lexan [3000 - 1]. symbol = END_;   /* Make sure that string cleaning always terminates. */
 	}
-	if (! parse) parse = Melder_calloc (struct FormulaInstruction, 3000);
-	if (lexan == NULL || parse == NULL)
-		return Melder_error1 (L"Out of memory during formula computation.");
+	if (! parse) parse = Melder_calloc_f (struct FormulaInstruction, 3000);
 
 	/*
 		Clean up strings from the previous call.
@@ -2089,7 +2087,7 @@ static void do_add (void) {
 			x->content.number + y->content.number);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
 		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string);
-		wchar_t *result = Melder_malloc (wchar_t, length1 + length2 + 1); cherror
+		wchar_t *result = Melder_malloc_e (wchar_t, length1 + length2 + 1); cherror
 		wcscpy (result, x->content.string);
 		wcscpy (result + length1, y->content.string);
 		pushString (result);
@@ -2107,11 +2105,11 @@ static void do_sub (void) {
 		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string), newlength = length1 - length2;
 		wchar_t *result;
 		if (newlength >= 0 && wcsnequ (x->content.string + newlength, y->content.string, length2)) {
-			result = Melder_malloc (wchar_t, newlength + 1); cherror
+			result = Melder_malloc_e (wchar_t, newlength + 1); cherror
 			wcsncpy (result, x->content.string, newlength);
 			result [newlength] = '\0';
 		} else {
-			result = Melder_wcsdup (x->content.string); cherror
+			result = Melder_wcsdup_e (x->content.string); cherror
 		}
 		pushString (result);
 	} else {
@@ -2757,7 +2755,7 @@ static void do_indexedStringVariable (void) {
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
 		error3 (L"Undefined indexed variable " L_LEFT_GUILLEMET, totalVariableName.string, L_RIGHT_GUILLEMET L".")
-	wchar_t *result = Melder_wcsdup (var -> stringValue);
+	wchar_t *result = Melder_wcsdup_e (var -> stringValue); cherror
 	pushString (result);
 end: return;
 }
@@ -2785,7 +2783,7 @@ end: return;
 static void do_dateStr (void) {
 	time_t today = time (NULL);
 	wchar_t *date, *newline;
-	date = Melder_utf8ToWcs (ctime (& today)); cherror
+	date = Melder_utf8ToWcs_e (ctime (& today)); cherror
 	newline = wcschr (date, '\n');
 	if (newline) *newline = '\0';
 	pushString (date);
@@ -2801,7 +2799,7 @@ static void do_leftStr (void) {
 			long length = wcslen (s->content.string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			result = Melder_malloc (wchar_t, newlength + 1); cherror
+			result = Melder_malloc_e (wchar_t, newlength + 1); cherror
 			wcsncpy (result, s->content.string, newlength);
 			result [newlength] = '\0';
 			pushString (result);
@@ -2823,7 +2821,7 @@ static void do_rightStr (void) {
 			long length = wcslen (s->content.string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			result = Melder_wcsdup (s->content.string + length - newlength); cherror
+			result = Melder_wcsdup_e (s->content.string + length - newlength); cherror
 			pushString (result);
 		} else {
 			error1 (L"The function \"right$\" requires a string, or a string and a number.")
@@ -2846,11 +2844,11 @@ static void do_midStr (void) {
 			if (finish > length) finish = length;
 			newlength = finish - start + 1;
 			if (newlength > 0) {
-				result = Melder_malloc (wchar_t, newlength + 1); cherror
+				result = Melder_malloc_e (wchar_t, newlength + 1); cherror
 				wcsncpy (result, s->content.string + start - 1, newlength);
 				result [newlength] = '\0';
 			} else {
-				result = Melder_wcsdup (L""); cherror
+				result = Melder_wcsdup_e (L""); cherror
 			}
 			pushString (result);
 		} else {
@@ -2865,7 +2863,7 @@ static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		wchar_t *value = Melder_getenv (s->content.string);
-		wchar_t *result = Melder_wcsdup (value != NULL ? value : L""); cherror
+		wchar_t *result = Melder_wcsdup_e (value != NULL ? value : L""); cherror
 		pushString (result);
 	} else {
 		error3 (L"The function \"environment$\" requires a string, not ", Stackel_whichText (s), L".")
@@ -2955,7 +2953,7 @@ static void do_replace_regexStr (void) {
 		wchar_t *errorMessage;
 		regexp *compiled_regexp = CompileRE (t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
-			wchar_t *result = Melder_wcsdup (L""); cherror
+			wchar_t *result = Melder_wcsdup_e (L""); cherror
 			pushString (result);
 		} else {
 			long numberOfMatches;
@@ -3016,7 +3014,7 @@ static void do_extractTextStr (int singleWord) {
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		wchar_t *substring = wcsstr (s->content.string, t->content.string), *result, *p;
 		if (substring == NULL) {
-			result = Melder_wcsdup (L""); cherror
+			result = Melder_wcsdup_e (L""); cherror
 		} else {
 			long length;
 			/* Skip the prompt. */
@@ -3034,7 +3032,7 @@ static void do_extractTextStr (int singleWord) {
 				while (*p != '\0' && *p != '\n' && *p != '\r') p ++;
 			}
 			length = p - substring;
-			result = Melder_malloc (wchar_t, length + 1); cherror
+			result = Melder_malloc_e (wchar_t, length + 1); cherror
 			wcsncpy (result, substring, length);
 			result [length] = '\0';
 		}
@@ -3079,16 +3077,16 @@ static void do_selectedStr (void) {
 	wchar_t *name, *result = NULL;
 	if (n->content.number == 0) {
 		name = praat_getNameOfSelected (NULL, 0); cherror
-		result = Melder_wcsdup (name); cherror
+		result = Melder_wcsdup_e (name); cherror
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
 			void *klas = Thing_classFromClassName (a->content.string); cherror
 			name = praat_getNameOfSelected (klas, 0); cherror
-			result = Melder_wcsdup (name); cherror
+			result = Melder_wcsdup_e (name); cherror
 		} else if (a->which == Stackel_NUMBER) {
 			name = praat_getNameOfSelected (NULL, a->content.number); cherror
-			result = Melder_wcsdup (name); cherror
+			result = Melder_wcsdup_e (name); cherror
 		} else {
 			error1 (L"The function \"selected$\" requires a string (an object type name) and/or a number.")
 		}
@@ -3097,7 +3095,7 @@ static void do_selectedStr (void) {
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			void *klas = Thing_classFromClassName (s->content.string); cherror
 			name = praat_getNameOfSelected (klas, x->content.number); cherror
-			result = Melder_wcsdup (name); cherror
+			result = Melder_wcsdup_e (name); cherror
 		} else {
 			error3 (L"The function \"selected$\" requires 0, 1, or 2 arguments, not ", Melder_integer (n->content.number), L".")
 		}
@@ -3127,7 +3125,7 @@ end: return;
 static void do_fixedStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		wchar_t *result = Melder_wcsdup (Melder_fixed (value->content.number, precision->content.number));
+		wchar_t *result = Melder_wcsdup_e (Melder_fixed (value->content.number, precision->content.number)); cherror
 		pushString (result);
 	} else {
 		error5 (L"The function \"fixed$\" requires two numbers (value and precision), not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
@@ -3137,7 +3135,7 @@ end: return;
 static void do_percentStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		wchar_t *result = Melder_wcsdup (Melder_percent (value->content.number, precision->content.number));
+		wchar_t *result = Melder_wcsdup_e (Melder_percent (value->content.number, precision->content.number)); cherror
 		pushString (result);
 	} else {
 		error5 (L"The function \"percent$\" requires two numbers (value and precision), not ", Stackel_whichText (value), L" and ", Stackel_whichText (precision), L".")
@@ -3502,11 +3500,11 @@ static void do_chooseReadFileStr (void) {
 		if (title->which == Stackel_STRING) {
 			SortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->content.string, false); cherror
 			if (fileNames -> size == 0) {
-				wchar_t *result = Melder_wcsdup (L""); cherror
+				wchar_t *result = Melder_wcsdup_e (L""); cherror
 				pushString (result);
 			} else {
 				SimpleString fileName = fileNames -> item [1];
-				wchar_t *result = Melder_wcsdup (fileName -> string); cherror
+				wchar_t *result = Melder_wcsdup_e (fileName -> string); cherror
 				pushString (result);
 			}
 			forget (fileNames);
@@ -3524,7 +3522,7 @@ static void do_chooseWriteFileStr (void) {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
 			wchar_t *result = GuiFileSelect_getOutfileName (NULL, title->content.string, defaultName->content.string); cherror
-			if (result == NULL) { result = Melder_wcsdup (L""); cherror }
+			if (result == NULL) { result = Melder_wcsdup_e (L""); cherror }
 			pushString (result);
 		} else {
 			error1 (L"The arguments of \"chooseWriteFile$\" must be two strings (the title and the default name).")
@@ -3540,7 +3538,7 @@ static void do_chooseDirectoryStr (void) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
 			wchar_t *result = GuiFileSelect_getDirectoryName (NULL, title->content.string); cherror
-			if (result == NULL) { result = Melder_wcsdup (L""); cherror }
+			if (result == NULL) { result = Melder_wcsdup_e (L""); cherror }
 			pushString (result);
 		} else {
 			error1 (L"The argument of \"chooseDirectory$\" must be a string (the title).")
@@ -3647,7 +3645,7 @@ static void do_demoKey (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		error3 (L"The function \"demoKey\" requires 0 arguments, not ", Melder_integer (n->content.number), L".")
-	wchar_t *key = Melder_malloc (wchar_t, 2);
+	wchar_t *key = Melder_malloc_e (wchar_t, 2); cherror
 	key [0] = Demo_key (); cherror
 	key [1] = '\0';
 	pushString (key);
@@ -3756,14 +3754,14 @@ static void do_selfStr0 (long irow, long icol) {
 	Data me = theSource;
 	if (me == NULL) error1 (L"The name \"self$\" is restricted to formulas for objects.")
 	if (our getCellStr) {
-		wchar_t *result = Melder_wcsdup (our getCellStr (me)); cherror
+		wchar_t *result = Melder_wcsdup_e (our getCellStr (me)); cherror
 		pushString (result);
 	} else if (our getVectorStr) {
 		if (icol == 0) {
 			error3 (L"We are not in a loop, hence no implicit column index for the current ",
 				Thing_className (me), L" object (self).\nTry using the [column] index explicitly.")
 		} else {
-			wchar_t *result = Melder_wcsdup (our getVectorStr (me, icol)); cherror
+			wchar_t *result = Melder_wcsdup_e (our getVectorStr (me, icol)); cherror
 			pushString (result);
 		}
 	} else if (our getMatrixStr) {
@@ -3780,7 +3778,7 @@ static void do_selfStr0 (long irow, long icol) {
 					"Try using the [row] index explicitly.")
 			}
 		} else {
-			wchar_t *result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
+			wchar_t *result = Melder_wcsdup_e (our getMatrixStr (me, irow, icol)); cherror
 			pushString (result);
 		}
 	} else {
@@ -3902,7 +3900,7 @@ static void do_selfMatriksStr1 (long irow) {
 	if (me == NULL) error1 (L"The name \"self$\" is restricted to formulas for objects.")
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getVectorStr) {
-		wchar_t *result = Melder_wcsdup (our getVectorStr (me, icol)); cherror
+		wchar_t *result = Melder_wcsdup_e (our getVectorStr (me, icol)); cherror
 		pushString (result);
 	} else if (our getMatrixStr) {
 		if (irow == 0) {
@@ -3910,7 +3908,7 @@ static void do_selfMatriksStr1 (long irow) {
 				"hence no implicit row index for the current ", Thing_className (me), L" object (self).\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
-			wchar_t *result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
+			wchar_t *result = Melder_wcsdup_e (our getMatrixStr (me, irow, icol)); cherror
 			pushString (result);
 		}
 	} else {
@@ -3961,14 +3959,16 @@ static void do_objectCellStr1 (long irow) {
 	Data thee = getObjectFromUniqueID (pop); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getVectorStr) {
-		pushString (Melder_wcsdup (your getVectorStr (thee, icol)));
+		wchar_t *result = Melder_wcsdup_e (your getVectorStr (thee, icol)); cherror
+		pushString (result);
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using: object [id, row, column].")
 		} else {
-			pushString (Melder_wcsdup (your getMatrixStr (thee, irow, icol)));
+			wchar_t *result = Melder_wcsdup_e (your getMatrixStr (thee, irow, icol)); cherror
+			pushString (result);
 		}
 	} else {
 		error2 (Thing_className (thee), L" objects accept no [column] indexes for string cells.")
@@ -3980,14 +3980,16 @@ static void do_matrixStr1 (long irow) {
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getVectorStr) {
-		pushString (Melder_wcsdup (your getVectorStr (thee, icol)));
+		wchar_t *result = Melder_wcsdup_e (your getVectorStr (thee, icol)); cherror
+		pushString (result);
 	} else if (your getMatrixStr) {
 		if (irow == 0) {
 			error3 (L"We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), L" object.\n"
 				"Try using both [row, column] indexes instead.")
 		} else {
-			pushString (Melder_wcsdup (your getMatrixStr (thee, irow, icol)));
+			wchar_t *result = Melder_wcsdup_e (your getMatrixStr (thee, irow, icol)); cherror
+			pushString (result);
 		}
 	} else {
 		error2 (Thing_className (thee), L" objects accept no [column] indexes for string cells.")
@@ -4014,7 +4016,7 @@ static void do_selfMatriksStr2 (void) {
 	irow = Stackel_getRowNumber (row, me); cherror
 	icol = Stackel_getColumnNumber (column, me); cherror
 	if (our getMatrixStr == NULL) error2 (Thing_className (me), L" objects like \"self$\" accept no [row, column] indexing for string cells.")
-	result = Melder_wcsdup (our getMatrixStr (me, irow, icol)); cherror
+	result = Melder_wcsdup_e (our getMatrixStr (me, irow, icol)); cherror
 	pushString (result);
 end: return;
 }
@@ -4042,7 +4044,7 @@ static void do_objectCellStr2 (void) {
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrixStr == NULL) error2 (Thing_className (thee), L" objects accept no [id, row, column] indexing for string cells.")
-	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
+	wchar_t *result = Melder_wcsdup_e (your getMatrixStr (thee, irow, icol)); cherror
 	pushString (result);
 end: return;
 }
@@ -4052,7 +4054,7 @@ static void do_matriksStr2 (void) {
 	long irow = Stackel_getRowNumber (row, thee); cherror
 	long icol = Stackel_getColumnNumber (column, thee); cherror
 	if (your getMatrixStr == NULL) error2 (Thing_className (thee), L" objects accept no [row, column] indexing for string cells.")
-	wchar_t *result = Melder_wcsdup (your getMatrixStr (thee, irow, icol)); cherror
+	wchar_t *result = Melder_wcsdup_e (your getMatrixStr (thee, irow, icol)); cherror
 	pushString (result);
 end: return;
 }
@@ -4246,7 +4248,7 @@ static void do_rowStr (void) {
 	wchar_t *string;
 	Stackel row = pop;
 	long irow = Stackel_getRowNumber (row, thee); cherror
-	string = Melder_wcsdup (your getRowStr (thee, irow));
+	string = Melder_wcsdup_e (your getRowStr (thee, irow)); cherror
 	if (string == NULL) Melder_error1 (L"Row index out of bounds.");
 	pushString (string);
 end: return;
@@ -4256,7 +4258,7 @@ static void do_colStr (void) {
 	wchar_t *string;
 	Stackel col = pop;
 	long icol = Stackel_getColumnNumber (col, thee); cherror
-	string = Melder_wcsdup (your getColStr (thee, icol));
+	string = Melder_wcsdup_e (your getColStr (thee, icol)); cherror
 	if (string == NULL) Melder_error1 (L"Column index out of bounds.");
 	pushString (string);
 end: return;
@@ -4278,7 +4280,7 @@ static double NUMerf (double x) {
 int Formula_run (long row, long col, struct Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   /* First symbol of the program. */
-	if (theStack == NULL) theStack = Melder_calloc (struct Stackel, 10000);
+	if (theStack == NULL) theStack = Melder_calloc_f (struct Stackel, 10000);
 	if (theStack == NULL)
 		return Melder_error1 (L"Out of memory during formula computation.");
 	w = 0, wmax = 0;   /* start new stack. */
@@ -4551,14 +4553,14 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COLSTR_: { do_colStr ();
 } break; case SQR_: { do_sqr ();
 } break; case STRING_: {
-	wchar_t *result = Melder_wcsdup (f [programPointer]. content.string); cherror
+	wchar_t *result = Melder_wcsdup_e (f [programPointer]. content.string); cherror
 	pushString (result);
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	wchar_t *result = Melder_wcsdup (var -> stringValue); cherror
+	wchar_t *result = Melder_wcsdup_e (var -> stringValue); cherror
 	pushString (result);
 } break; case NUMERIC_ARRAY_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;

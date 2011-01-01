@@ -572,7 +572,7 @@ DO
 		if (! praat_new3 (Sound_deepenBandModulation (OBJECT, GET_REAL (L"Enhancement"),
 			GET_REAL (L"From frequency"), GET_REAL (L"To frequency"),
 			GET_REAL (L"Slow modulation"), GET_REAL (L"Fast modulation"), GET_REAL (L"Band smoothing")),
-			NAMEW, L"_", Melder_integer ((long) GET_REAL (L"Enhancement")))) return 0;
+			NAME, L"_", Melder_integer ((long) GET_REAL (L"Enhancement")))) return 0;
 END
 
 FORM (old_Sound_draw, L"Sound: Draw", 0)
@@ -691,7 +691,7 @@ FORM (Sound_filter_deemphasis, L"Sound: Filter (de-emphasis)", L"Sound: Filter (
 DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Sound_filter_deemphasis (OBJECT, GET_REAL (L"From frequency")),
-			NAMEW, L"_deemp")) return 0;
+			NAME, L"_deemp")) return 0;
 	}
 END
 
@@ -702,7 +702,7 @@ FORM (Sound_filter_formula, L"Sound: Filter (formula)...", L"Formula...")
 DO
 	WHERE (SELECTED)
 		if (! praat_new2 (Sound_filter_formula (OBJECT, GET_STRING (L"formula"), interpreter),
-			NAMEW, L"_filt")) return 0;
+			NAME, L"_filt")) return 0;
 END
 
 FORM (Sound_filter_oneFormant, L"Sound: Filter (one formant)", L"Sound: Filter (one formant)...")
@@ -712,7 +712,7 @@ FORM (Sound_filter_oneFormant, L"Sound: Filter (one formant)", L"Sound: Filter (
 DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Sound_filter_oneFormant (OBJECT, GET_REAL (L"Frequency"), GET_REAL (L"Bandwidth")),
-			NAMEW, L"_filt")) return 0;
+			NAME, L"_filt")) return 0;
 	}
 END
 
@@ -736,7 +736,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Sound_filter_passHannBand (OBJECT,
 			GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing")),
-			NAMEW, L"_band")) return 0;
+			NAME, L"_band")) return 0;
 	}
 END
 
@@ -746,7 +746,7 @@ FORM (Sound_filter_preemphasis, L"Sound: Filter (pre-emphasis)", L"Sound: Filter
 DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Sound_filter_preemphasis (OBJECT, GET_REAL (L"From frequency")),
-			NAMEW, L"_preemp")) return 0;
+			NAME, L"_preemp")) return 0;
 	}
 END
 
@@ -759,7 +759,7 @@ DO
 	WHERE (SELECTED) {
 		if (! praat_new2 (Sound_filter_stopHannBand (OBJECT,
 			GET_REAL (L"From frequency"), GET_REAL (L"To frequency"), GET_REAL (L"Smoothing")),
-			NAMEW, L"_band")) return 0;
+			NAME, L"_band")) return 0;
 	}
 END
 
@@ -1052,7 +1052,7 @@ DO
 	REQUIRE (minimumPitch < maximumPitch, L"Maximum pitch should be greater than minimum pitch.")
 	WHERE (SELECTED)
 		if (! praat_new3 (Sound_lengthen_overlapAdd (OBJECT, minimumPitch, maximumPitch, factor),
-			NAMEW, L"_", Melder_fixed (factor, 2))) return 0;
+			NAME, L"_", Melder_fixed (factor, 2))) return 0;
 END
 
 FORM (Sound_multiply, L"Sound: Multiply", 0)
@@ -1237,7 +1237,7 @@ DO
 	double samplingFrequency = GET_REAL (L"New sampling frequency");
 	WHERE (SELECTED)
 		if (! praat_new3 (Sound_resample (OBJECT, samplingFrequency, GET_INTEGER (L"Precision")),
-			NAMEW, L"_", Melder_integer ((long) floor (samplingFrequency + 0.5)))) return 0;
+			NAME, L"_", Melder_integer ((long) floor (samplingFrequency + 0.5)))) return 0;
 END
 
 DIRECT (Sound_reverse)
@@ -2128,9 +2128,8 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Annotation tutorial", 0, 1, DO_AnnotationTutorial);
 		praat_addAction1 (classSound, 0, L"-- to text grid --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"To TextGrid...", 0, 1, DO_Sound_to_TextGrid);
-		praat_addAction1 (classSound, 0, L"-- to single tier --", 0, 1, 0);
-		praat_addAction1 (classSound, 0, L"To TextTier", 0, 1, DO_Sound_to_TextTier);
-		praat_addAction1 (classSound, 0, L"To IntervalTier", 0, 1, DO_Sound_to_IntervalTier);
+		praat_addAction1 (classSound, 0, L"To TextTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_TextTier);
+		praat_addAction1 (classSound, 0, L"To IntervalTier", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_IntervalTier);
 	praat_addAction1 (classSound, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classSound, 0, L"Periodicity -", 0, 0, 0);
 		praat_addAction1 (classSound, 0, L"To Pitch...", 0, 1, DO_Sound_to_Pitch);
@@ -2173,7 +2172,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Extract all channels", 0, 1, DO_Sound_extractAllChannels);
 		praat_addAction1 (classSound, 0, L"Extract left channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractLeftChannel);   // hidden December 2010
 		praat_addAction1 (classSound, 0, L"Extract right channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);   // hidden December 2010
-		praat_addAction1 (classSound, 0, L"Extract channel...", 0, 1, DO_Sound_extractChannel);
+		praat_addAction1 (classSound, 0, L"Extract one channel...", 0, 1, DO_Sound_extractChannel);
 		praat_addAction1 (classSound, 0, L"Extract part...", 0, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, L"Resample...", 0, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, L"-- enhance --", 0, 1, 0);

@@ -153,12 +153,12 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 	if (place == 0) place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (klas == NULL || CLASS == klas)) {
-			if (place == 1) return klas == NULL ? FULL_NAME : NAMEW;
+			if (place == 1) return klas == NULL ? FULL_NAME : NAME;
 			place --;
 		}
 	} else {
 		WHERE_DOWN (SELECTED && (klas == NULL || CLASS == klas)) {
-			if (place == -1) return klas == NULL ? FULL_NAME : NAMEW;
+			if (place == -1) return klas == NULL ? FULL_NAME : NAME;
 			place ++;
 		}
 	}
@@ -357,8 +357,7 @@ bool praat_new1 (I, const wchar_t *myName) {
 		
 	IOBJECT = ++ theCurrentPraatObjects -> n;
 	Melder_assert (FULL_NAME == NULL);
-	FULL_NAME = Melder_wcsdup (name.string);
-	Melder_assert (FULL_NAME != NULL);
+	FULL_NAME = Melder_wcsdup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
 
 	if (! theCurrentPraatApplication -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
@@ -756,7 +755,7 @@ void praat_dataChanged (Any object) {
 	wchar_t *saveError = NULL;
 	bool duringError = Melder_hasError ();
 	if (duringError) {
-		saveError = Melder_wcsdup (Melder_getError ());
+		saveError = Melder_wcsdup_f (Melder_getError ());
 		Melder_clearError ();
 	}
 	int IOBJECT, ieditor;
@@ -905,7 +904,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
 		praat_background ();
-		wchar_t *message = Melder_8bitToWcs (messageA, 0);
+		wchar_t *message = Melder_8bitToWcs_e (messageA, 0); cherror
 		if (! praat_executeScriptFromText (message)) error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.")
 	end:
 		Melder_free (message);
@@ -967,6 +966,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	*/
 	NUMmachar ();
 	NUMinit ();
+	Melder_alloc_init ();
 	/*
 		Remember the current directory. Only useful for scripts run from batch.
 	*/

@@ -64,7 +64,7 @@ class_methods (SpellingChecker, Data) {
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	SpellingChecker thee = new (SpellingChecker); cherror
 	thy wordList = Data_copy (me); cherror
-	thy separatingCharacters = Melder_wcsdup (L".,;:()\"");
+	thy separatingCharacters = Melder_wcsdup_e (L".,;:()\""); cherror
 end:
 	iferror forget (thee);
 	return thee;
@@ -198,16 +198,15 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word) {
 
 int SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word) {
 	wchar_t *generic = NULL;
+//start:
 	if (! my userDictionary) {
 		my userDictionary = SortedSetOfString_create ();
 		if (! my userDictionary) return 0;
 	}
-	generic = Melder_calloc (wchar_t, 3 * wcslen (word) + 1);
-	if (! generic) goto end;
+	generic = Melder_calloc_e (wchar_t, 3 * wcslen (word) + 1); cherror
 	Longchar_genericizeW (word, generic);
-	if (! SortedSetOfString_add (my userDictionary, generic)) goto end;
+	SortedSetOfString_add (my userDictionary, generic); cherror
 end:
-	Melder_free (generic);
 	iferror return 0;
 	return 1;
 }

@@ -88,8 +88,8 @@ class_methods (LogisticRegression, Regression) {
 LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const wchar_t *dependent2) {
 	LogisticRegression me = new (LogisticRegression); cherror
 	Regression_init (me); cherror
-	my dependent1 = Melder_wcsdup (dependent1); cherror
-	my dependent2 = Melder_wcsdup (dependent2); cherror	
+	my dependent1 = Melder_wcsdup_e (dependent1); cherror
+	my dependent2 = Melder_wcsdup_e (dependent2); cherror	
 end:
 	iferror forget (me);
 	return me;

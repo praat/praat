@@ -66,7 +66,7 @@ static SortedSetOfString thePreferences;
 
 static void Preferences_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text)) {
 	Preference me = new (Preference);
-	my string = Melder_wcsdup (string);
+	my string = Melder_wcsdup_f (string);
 	my type = type;
 	my value = value;
 	my min = min;

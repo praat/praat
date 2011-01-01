@@ -53,12 +53,13 @@ static void classCollection_info (I) {
 
 static int classCollection_copy (I, thou) {
 	iam (Collection); thouart (Collection);
+//start:
 	thy item = NULL;   // kill shallow copy of item
 	if (! inherited (Collection) copy (me, thee)) return 0;   // optimize around cherror
 	thy itemClass = my itemClass;
 	thy _capacity = my _capacity;
 	thy size = my size;
-	thy item = Melder_calloc (void *, my _capacity); cherror   // filled with NULL
+	thy item = Melder_calloc_e (void *, my _capacity); cherror   // filled with NULL
 	thy item --;   // immediately turn from base-0 into base-1
 	for (long i = 1; i <= my size; i ++) {
 		Thing item = my item [i];
@@ -161,6 +162,7 @@ static int classCollection_readText (I, MelderReadText text) {
 	}
 	char *className = NULL;
 	wchar_t *objectName = NULL;
+//start:
 	long size = texgeti4 (text);
 	Collection_init (me, NULL, size); cherror
 	for (long i = 1; i <= size; i ++) {
@@ -269,7 +271,7 @@ int Collection_init (I, void *itemClass, long initialCapacity) {
 	my itemClass = itemClass;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
 	my size = 0;
-	my item = Melder_calloc (void *, my _capacity);
+	my item = Melder_calloc_e (void *, my _capacity);
 	if (my item == NULL) return 0;   // optimize around cherror
 	my item --;   // base 1
 	return 1;
@@ -284,8 +286,8 @@ Any Collection_create (void *itemClass, long initialCapacity) {
 int _Collection_insertItem (I, Any data, long pos) {
 	iam (Collection);
 	if (my size >= my _capacity) {
-		Any *dum = (Any *) Melder_realloc (my item + 1, 2 * my _capacity * sizeof (Any));
-		if (! dum) return Melder_error1 (L"Collection_insert: out of memory.");
+		Any *dum = (Any *) Melder_realloc_e (my item + 1, 2 * my _capacity * sizeof (Any));
+		if (! dum) return Melder_error1 (L"(Collection_insert:) Item not inserted.");
 		my item = dum - 1;
 		my _capacity *= 2;
 	}
@@ -341,7 +343,7 @@ void Collection_removeAllItems (I) {
 void Collection_shrinkToFit (I) {
 	iam (Collection);
 	my _capacity = my size ? my size : 1;
-	my item = (Any *) Melder_realloc (my item + 1, my _capacity * sizeof (Any)) - 1;
+	my item = (Any *) Melder_realloc_f (my item + 1, my _capacity * sizeof (Any)) - 1;
 }
 
 Any Collections_merge (I, thou) {

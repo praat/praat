@@ -750,11 +750,12 @@ FORM (DrawFunction, L"Praat picture: Draw function", 0)
 	TEXTFIELD (L"formula", L"x^2 - x^4")
 	OK
 DO
+	double *y = NULL;
+	PraatPictureFunction function = NULL;
+//start:
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
 	long n = GET_INTEGER (L"Number of horizontal steps");
-	double *y = NULL;
-	PraatPictureFunction function = NULL;
 	wchar_t *formula = GET_STRING (L"formula");
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);

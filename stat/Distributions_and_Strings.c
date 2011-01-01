@@ -33,7 +33,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 	for (istring = 1; istring <= numberOfStrings; istring ++) {
 		wchar_t *string;
 		Distributions_peek (me, column, & string); cherror
-		thy strings [istring] = Melder_wcsdup (string); cherror
+		thy strings [istring] = Melder_wcsdup_e (string); cherror
 	}
 end:
 	iferror { forget (thee); return Melder_errorp ("(Distributions_to_Strings:) Not performed."); }
@@ -66,8 +66,9 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 		wchar_t *string = my rowLabels [irow];
 		if (! string)
 			error3 (L"No string in row ", Melder_integer (irow), L".")
-		for (i = 1; i <= number; i ++)
-			thy strings [++ istring] = Melder_wcsdup (string); cherror
+		for (i = 1; i <= number; i ++) {
+			thy strings [++ istring] = Melder_wcsdup_e (string); cherror
+		}
 	}
 	Strings_randomize (thee);
 end:
@@ -77,9 +78,10 @@ end:
 
 Distributions Strings_to_Distributions (Strings me) {
 	Distributions thee = NULL;
-	long i, idist = 0, j;
+//start:
+	long idist = 0, j;
 	thee = Distributions_create (my numberOfStrings, 1); cherror
-	for (i = 1; i <= my numberOfStrings; i ++) {
+	for (long i = 1; i <= my numberOfStrings; i ++) {
 		wchar_t *string = my strings [i];
 		long where = 0;
 		for (j = 1; j <= idist; j ++)
@@ -88,7 +90,7 @@ Distributions Strings_to_Distributions (Strings me) {
 		if (where) {
 			thy data [j] [1] += 1.0;
 		} else {
-			thy rowLabels [++ idist] = Melder_wcsdup (string); cherror
+			thy rowLabels [++ idist] = Melder_wcsdup_e (string); cherror
 			thy data [idist] [1] = 1.0;
 		}
 	}

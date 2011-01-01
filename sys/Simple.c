@@ -154,7 +154,7 @@ class_methods (SimpleString, Data) {
 
 SimpleString SimpleString_create (const wchar_t *string) {
 	SimpleString me = new (SimpleString);
-	if (! me || ! (my string = Melder_wcsdup (string)))
+	if (! me || ! (my string = Melder_wcsdup_e (string)))
 		{ forget (me); return NULL; }
 	return me;
 }

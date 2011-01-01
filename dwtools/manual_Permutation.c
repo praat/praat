@@ -28,14 +28,14 @@ void manual_Permutation_init (ManPages me)
 {
 
 MAN_BEGIN (L"Permutation", L"djmw", 20050721)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. A Permutation object with %n elements consists of some ordering of "
+INTRO (L"One of the @@types of objects@ in Praat. A Permutation object with %n elements consists of some ordering of "
 	"the numbers 1,2...%n.")
 ENTRY (L"Interpretation")
 NORMAL (L"A permutation like for example (2,3,5,4,1) is an %arrangement of the five objects 1, 2, 3, 4, and 5. "
 	"It tells us that the second object is in the first position, the third object is in the second position, "
 	"the fifth object in the third position and so on.")
-NORMAL (L"If we combine a Permutation together with an other object, like a Strings for example, we may force a @@Strings & Permutation: "
-	"Permute strings|new arrangement of the strings@, according to the specification in the Permutation. " )
+NORMAL (L"If we combine a Permutation together with an other object, like a Strings for example, we may force a  "
+	"new arrangement of the strings, according to the specification in the Permutation (see @@Strings & Permutation: Permute strings@)." )
 ENTRY (L"Commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"\\bu @@Create Permutation...@")
@@ -66,11 +66,11 @@ MAN_END
 MAN_BEGIN (L"Create Permutation...", L"djmw", 20050709)
 INTRO (L"A command to create a @Permutation of the numbers 1,2, ..., %numberOfElements.")
 ENTRY (L"Settings")
-TAG (L"%Name")
-DEFINITION (L"determines the name of the new permutation.")
-TAG (L"%%Number of elements%")
-DEFINITION (L"determines the number of elements in the permutation.")
-TAG (L"%%Identity Permutation")
+TAG (L"##Name")
+DEFINITION (L"the name of the new permutation.")
+TAG (L"##Number of elements%")
+DEFINITION (L"the number of elements in the permutation.")
+TAG (L"##Identity permutation")
 NORMAL (L"determines whether the permution will be a randomly chosen one, or the @@identity permutation@.")
 MAN_END
 
@@ -93,8 +93,8 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Reverse...", L"djmw", 20050709)
 INTRO (L"Reverse the elements in the given range.")
-ENTRY (L"Settings")
-TAG (L"%%Range")
+ENTRY (L"Setting")
+TAG (L"##Range")
 DEFINITION (L"defines the range of elements that will be reversed.")
 ENTRY (L"Examples")
 NORMAL (L"1. With the %range [0,0], the permutation (1,2,3,4,5) will generate (5,4,3,2,1). ")
@@ -104,12 +104,12 @@ MAN_END
 MAN_BEGIN (L"Permutation: Swap one from range...", L"djmw", 20050709)
 INTRO (L"An element, randomly chosen from a range, will be permuted with an element at a given index position.")
 ENTRY (L"Settings")
-TAG (L"%%Range")
+TAG (L"##Range")
 DEFINITION (L"defines the range of indices from which one will be randomly chosen.")
-TAG (L"%%Index%")
+TAG (L"##Index")
 DEFINITION (L"defines the special index position whose element will be interchanged with the one chosen from the range.")
-TAG (L"%%Forbid same")
-DEFINITION (L"when on, forbids the randomly chosen position and the index position to be the same. "
+TAG (L"##Forbid same")
+DEFINITION (L"when %on, forbids the randomly chosen position and the index position to be the same. "
 	"This switch is only of relevance when the chosen range happens to overlap the index position.")
 ENTRY (L"Examples")
 NORMAL (L"With range [0,0], an index of 3, \"Forbid same\" %off and (1,2,3,4,5) as the starting permutation, the outcome might be one of "
@@ -119,8 +119,8 @@ MAN_END
 
 MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20050709)
 INTRO (L"Generates a random permutation for the elements in the given range.")
-ENTRY (L"Settings")
-TAG (L"%%Range")
+ENTRY (L"Setting")
+TAG (L"##Range")
 DEFINITION (L"defines the range of elements that will be permuted.")
 ENTRY (L"Example")
 NORMAL (L"With a range of [3,6], the permutation (1,2,3,4,5,6,7) generates one of the 24 possible permutations, for example (1,2,(4,5,3,6),7).")
@@ -129,17 +129,17 @@ MAN_END
 MAN_BEGIN (L"Permutation: Permute randomly (blocks)...", L"djmw", 20050709)
 INTRO (L"Generates a new @Permutation by randomly permuting blocks of size %blocksize.")
 ENTRY (L"Settings")
-TAG (L"%%Range")
-DEFINITION (L"defines the range of elements whose blocks will be permuted.")
-TAG (L"%%Block size")
-DEFINITION (L"defines the size of the blocks that will be permuted. There must fit an integer number of blocks "
+TAG (L"##Range")
+DEFINITION (L"the range of elements whose blocks will be permuted.")
+TAG (L"##Block size")
+DEFINITION (L"the size of the blocks that will be permuted. There must fit an integer number of blocks "
 	"in the chosen range.")
-TAG (L"%%Permute within blocks%")
+TAG (L"##Permute within blocks")
 DEFINITION (L"when %on, the elements in each block are also randomly permuted.")
-TAG (L"%%No doublets%")
+TAG (L"##No doublets")
 DEFINITION (L"guarantees that the first element in each block does not equal the last element of the previous block modulo "
 	"the block size. E.g. the numbers 3, 6, 9 are all equal modulo 3. "
-	"This parameter only has effect when \"Permute within blocks\" is %on.")
+	"This parameter only has effect when ##Permute within blocks# is %on.")
 ENTRY (L"Examples")
 NORMAL (L"1. With range [0,0], a block size of 3 and \"Permute within blocks\" %off, the permutation ((1,2,3),(4,5,6),(7,8,9)) "
 	"generates one of the six possible permutations, for example ((4,5,6),(7,8,9),(1,2,3)). (The option \"No doublets\" will be ignored and the parentheses are only there to indicate the blocks.)")
@@ -153,10 +153,10 @@ MAN_END
 MAN_BEGIN (L"Permutation: Swap blocks...", L"djmw", 20050722)
 INTRO (L"A command to swap blocks in the selected @Permutation.")
 ENTRY (L"Settings")
-TAG (L"%From, %To")
-DEFINITION (L"define the two starting positions from where elements are to be swapped. The blocks may overlap.")
-TAG (L"%%Block size")
-DEFINITION (L"determines the number of pairs to swap. ")
+TAG (L"#From, #To")
+DEFINITION (L"the two starting positions from where elements are to be swapped. The blocks may overlap.")
+TAG (L"##Block size")
+DEFINITION (L"the number of pairs to swap. ")
 ENTRY (L"Behaviour")
 NORMAL (L"The elements at the %from and %to position are swapped. If blocksize is greater than one, the two elements at %from+1 and %to+1 will be swapped. This goes on until the last two elements in each block have been swapped.")
 ENTRY (L"Examples")
@@ -169,8 +169,8 @@ MAN_END
 MAN_BEGIN (L"Permutation: Swap positions...", L"djmw", 20100823)
 INTRO (L"Swaps the contents of two positions in the selected @@Permutation@.")
 ENTRY (L"Settings")
-TAG (L"%%First position%, %%Second position%")
-DEFINITION (L"define the two positions from where elements have to be swapped. The order of these positions is not important.")
+TAG (L"##First position#, ##Second position#")
+DEFINITION (L"the two positions from where elements have to be swapped. The order of these positions is not important.")
 ENTRY (L"Example")
 NORMAL (L"With positions 1 and 3, the permutation (1,3,4,2,5) changes to (4,3,1,2,5).")
 MAN_END
@@ -178,8 +178,8 @@ MAN_END
 MAN_BEGIN (L"Permutation: Swap numbers...", L"djmw", 20100823)
 INTRO (L"Swaps two numbers in the selected @@Permutation@.")
 ENTRY (L"Settings")
-TAG (L"%%First number%, %%Second number%")
-DEFINITION (L"define the two numbers that have to be swapped. The order of these numbers is not important.")
+TAG (L"##First number#, ##Second number#")
+DEFINITION (L"the two numbers that have to be swapped. The order of these numbers is not important.")
 ENTRY (L"Example")
 NORMAL (L"With numbers 1 and 3, the permutation (1,3,4,2,5) changes to (3,1,4,2,5).")
 MAN_END
@@ -196,13 +196,13 @@ NORMAL (L"If the offset differs from zero and equals 1 for example, we start wit
 	"we start the same cycle again with the next lower element in the first block (which by the way need not be the second element, "
 	"see also example 4).")
 ENTRY (L"Settings")
-TAG (L"%%Range%")
-DEFINITION (L"defines the range of elements that will be permuted.")
-TAG (L"%%Block size%")
-DEFINITION (L"defines the size of a block. There must fit an integer number of blocks "
-	"in the chosen range.")
-TAG (L"%%Offset%")
-DEFINITION (L"defines the relative positions of selected elements in successive blocks.")
+TAG (L"##Range")
+DEFINITION (L"the range of elements that will be permuted.")
+TAG (L"##Block size")
+DEFINITION (L"the size of a block. An integer number of blocks must fit "
+	"in the chosen #Range.")
+TAG (L"##Offset")
+DEFINITION (L"determines the relative positions of selected elements in successive blocks.")
 ENTRY (L"Examples")
 NORMAL (L"1. With range [0,0], a block size of 3, and an offset of 0, the permutation ((1,2,3),(4,5,6),(7,8,9)) will generate (1,4,7,2,5,8,3,6,9).")
 NORMAL (L"2. With range [0,0], a block size of 3, and an offset of 1, the permutation ((1,2,3),(4,5,6),(7,8,9)) will generate (1,5,9,2,6,7,3,4,8).")
@@ -227,14 +227,18 @@ MAN_END
 MAN_BEGIN (L"Permutation: Rotate...", L"djmw", 20050714)
 INTRO (L"A circular shift of all elements within the given range.")
 ENTRY (L"Settings")
-TAG (L"%%Range")
-DEFINITION (L"defines the range of elements that will be circularly permuted.")
-TAG (L"%%Step size")
+TAG (L"##Range")
+DEFINITION (L"the range of elements that will be circularly permuted.")   // ambiguous; are these the positions or the numbers?
+TAG (L"##Step size")
 DEFINITION (L"define how many positions each element will be shifted.")
 ENTRY (L"Examples")
-NORMAL (L"1. With a step of size 2 and range [1,5], the permutation (1,2,3,4,5) will generate (4,5,1,2,3). ")
-NORMAL (L"2. With a step of size 2 and range [2,5], the permutation ((1),(2,3,4,5)) will generate ((1),(4,5,2,3))")
-NORMAL (L"3. With a step of size -1 and range [0,0], the permutation (1,2,3,4,5) will generate (2,3,4,5,1).")
+NORMAL (L"1. With a step of size 2 and range [1,5], the permutation (1,2,3,4,5) will generate (4,5,1,2,3).")   // ambiguous, because position equals number in this example
+NORMAL (L"2. With a step of size 2 and range [2,5], the permutation ((1),(2,3,4,5)) will generate ((1),(4,5,2,3))")   // how does a permutation "generate"??
+NORMAL (L"3. With a step of size -1 and range [0,0], the permutation (1,2,3,4,5) will generate (2,3,4,5,1).")   // what do these "permutations" mean??
+// shouldn't it be this:
+//NORMAL (L"1. With a step of size 2 and range [1,5], the permutation (1,2,3,4,5) is turned into (4,5,1,2,3).")
+//NORMAL (L"2. With a step of size 2 and range [2,5], the permutation (5,4,3,2,1) is turned into (5,2,1,4,3)")
+//NORMAL (L"3. With a step of size -1 and range [0,0], the permutation (1,2,4,3,5) is turned into (2,4,3,5,1).")   // but why? does [0,0] have a special meaning?
 MAN_END
 
 MAN_BEGIN (L"Permutation: Invert", L"djmw", 20050709)
@@ -271,19 +275,19 @@ NORMAL (L"2. In the example that is discussed in the @@ExperimentMFC|listening e
 	"This type of randomization can easily be accomplished with a Permutation object and a Strings." )
 LIST_ITEM (L"1. Fill the Strings object with 12 strings, i.e. three repetitions of the four stimuli. ")
 LIST_ITEM (L"2. Create a Permutation object with 12 elements and perform  ##@@Permutation: Permute randomly (blocks)...|Permute randomly (blocks)...@ 0 0 4 yes yes#. We randomly permute blocks of size 4 and permute randomly within these blocks and make sure that on the transition from on block to the other no two stimuli are equal. (Of course, the random permutation of the blocks makes no difference here since all the blocks have the same content.)")
-LIST_ITEM (L"3. Select the Strings and the Permutation together and chose ##Permute strings#. "
+LIST_ITEM (L"3. Select the Strings and the Permutation together and choose ##Permute strings#. "
 	"Now the new Strings will contain the new ordering of the stimuli.")
 MAN_END
 
 MAN_BEGIN (L"Strings: To Permutation...", L"djmw", 20050721)
 INTRO (L"Generates a @Permutation with the same number of elements as the @Strings.")
-ENTRY (L"Settings")
-TAG (L"%Sort")
+ENTRY (L"Setting")
+TAG (L"##Sort")
 DEFINITION (L"determines whether the Permutation will have an element ordering that can be used to sort the Strings alphabetically.")
 ENTRY (L"Example")
 NORMAL (L"If \"Sort\" is %on, and the selected Strings contains 4 strings ordered as \"hud\", \"hid\", \"hood\", "
 	"\"heed\", the generated Permutation will be (4,2,3,1). If you now select the String and the Permutation "
-	"together and chose @@Strings & Permutation: Permute strings|Permute strings@, the new Strings will have "
+	"together and choose @@Strings & Permutation: Permute strings|Permute strings@, the new Strings will have "
 	"the strings ordered alphabetically as \"heed\", \"hid\", \"hood\", \"hud\". "
 	"You can also sort the Strings alphabetically descending, by first @@Permutation: Reverse...|reversing@ "
 	"the elements in the Permutation before you select the Permutation and the Strings together. ")
@@ -321,8 +325,8 @@ MAN_END
 MAN_BEGIN (L"Index: To Permutation...", L"djmw", 20050725)
 INTRO (L"Generates a @Permutation from the selected @Index by randomly permuting blocks of equivalent elements.")
 NORMAL (L"Suppose your data consists of groups of equivalent elements and the number of elements in the groups are not equal. You want to make random ordering of your data such that the elements in a group stay together. The following example shows you how.")
-ENTRY (L"Settings")
-TAG (L"%%Permute within classes")
+ENTRY (L"Setting")
+TAG (L"##Permute within classes")
 DEFINITION (L"determines whether the elements within a class will be randomly permuted.")
 ENTRY (L"Example")
 NORMAL (L"Suppose your data, for example a @Strings, consists of groups of equivalent elements and the number of elements in the groups are not equal. You want to make a random ordering of your data such that the elements in a group stay together. The following example shows you how.")
@@ -334,7 +338,7 @@ CODE (L"\"hallo\"")
 CODE (L"\"tot morgen\"")
 CODE (L"\"hallo\"")
 CODE (L"\"tot morgen\"")
-NORMAL (L"We chose @@Strings: To Index|To Index@ which will give us the following #Index:")
+NORMAL (L"We choose @@Strings: To Index|To Index@ which will give us the following #Index:")
 CODE (L"1 (number of columns) \"\" (no column name)")
 CODE (L"\"dag allemaal\"")
 CODE (L"\"hallo\"")
@@ -346,8 +350,8 @@ CODE (L"2")
 CODE (L"3")
 CODE (L"2")
 CODE (L"3")
-NORMAL (L"We chose ##To Permutation# and with \"Permute within classes\" %off, this might generate the permutation (2,4,6,1,3,5).")
-NORMAL (L"Selecting the Permutation and the Strings together and chosing @@Strings & Permutation: "
+NORMAL (L"We choose ##To Permutation# and with ##Permute within classes# %off, this might generate the permutation (2,4,6,1,3,5).")
+NORMAL (L"Selecting the Permutation and the Strings together and choosing @@Strings & Permutation: "
 	"Permute strings|Permute strings@ will generate the following Strings:")
 CODE (L"\"dag allemaal\"")
 CODE (L"\"tot morgen\"")
@@ -355,7 +359,7 @@ CODE (L"\"tot morgen\"")
 CODE (L"\"hallo\"")
 CODE (L"\"hallo\"")
 CODE (L"\"hallo\"")
-NORMAL (L"We see that the permutation always keeps equal strings together.")
+NORMAL (L"We see that the permutation always keeps identical strings together.")
 MAN_END
 
 MAN_BEGIN (L"Index: Extract part...", L"djmw", 20050725)
@@ -386,4 +390,3 @@ MAN_END
 }
 
 /* End of file manual_Permutation.c */
-

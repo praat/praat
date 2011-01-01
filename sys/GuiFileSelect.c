@@ -145,7 +145,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			outfileName = Melder_utf8ToWcs (outfileName_utf8);
+			outfileName = Melder_utf8ToWcs_e (outfileName_utf8);
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}
@@ -184,14 +184,14 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 					if (! (directoryPath_utf8 [0] == '/' && directoryPath_utf8 [1] == '\0'))
 						strcat (directoryPath_utf8, "/");
 					structMelderFile file;
-					Melder_8bitToWcs_inline (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8);
+					Melder_8bitToWcs_inline_e (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8); // BUG cherror
 					int dirLength = wcslen (file. path);
 					int n = CFStringGetLength (outfileName_cf);
 					wchar_t *p = file. path + dirLength;
 					for (int i = 0; i < n; i ++, p ++)
 						*p = CFStringGetCharacterAtIndex (outfileName_cf, i);
 					*p = '\0';
-					outfileName = Melder_wcsdup (file. path);
+					outfileName = Melder_wcsdup_f (file. path);
 				}
 				NavDisposeReply (& reply);
 			}
@@ -218,7 +218,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = NULL;
 		if (GetSaveFileNameW (& openFileName)) {
-			outfileName = Melder_wcsdup (fullFileName);
+			outfileName = Melder_wcsdup_f (fullFileName);
 		}
 	#endif
 	return outfileName;
@@ -236,7 +236,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			directoryName = Melder_utf8ToWcs (directoryName_utf8);
+			directoryName = Melder_utf8ToWcs_e (directoryName_utf8);
 			g_free (directoryName_utf8);
 			Melder_pathToFile (directoryName, & file);
 		}
@@ -266,7 +266,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title
 				structMelderFile file;
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
 					Melder_machToFile (& machFile, & file);
-					directoryName = Melder_wcsdup (Melder_fileToPath (& file));
+					directoryName = Melder_wcsdup_f (Melder_fileToPath (& file));
 				}
 				NavDisposeReply (& reply);
 			}
@@ -288,7 +288,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title
 		LPITEMIDLIST idList = SHBrowseForFolder (& info);
 		SHGetPathFromIDList (idList, fullFileName);
 		CoTaskMemFree (idList);
-		directoryName = Melder_wcsdup (fullFileName);
+		directoryName = Melder_wcsdup_f (fullFileName);
 	#endif
 	return directoryName;
 }

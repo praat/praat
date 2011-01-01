@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/21
+ * pb 2010/12/28
  */
 
 #include <stdio.h>
@@ -240,16 +240,24 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 /********** MEMORY ALLOCATION ROUTINES **********/
 
 /* These routines call malloc, free, realloc, and calloc. */
-/* If out of memory, they queue an error message (like "Out of memory") and return NULL. */
+/* If out of memory, they return NULL; the _e versions also queue an error message (like "Out of memory"). */
 /* These routines also maintain a count of the total number of blocks allocated. */
 
-void * _Melder_malloc (unsigned long size);
-#define Melder_malloc(type,size)  (type *) _Melder_malloc ((size) * sizeof (type))
-void * Melder_realloc (void *pointer, long size);
-void * _Melder_calloc (long numberOfElements, long elementSize);
-#define Melder_calloc(type,size)  (type *) _Melder_calloc (size, sizeof (type))
-char * Melder_strdup (const char *string);
-wchar_t * Melder_wcsdup (const wchar_t *string);
+void Melder_alloc_init (void);   // to be called around program start-up
+void * _Melder_malloc_e (unsigned long size);
+#define Melder_malloc_e(type,size)  (type *) _Melder_malloc_e ((size) * sizeof (type))
+void * _Melder_malloc_f (unsigned long size);
+#define Melder_malloc_f(type,size)  (type *) _Melder_malloc_f ((size) * sizeof (type))
+void * Melder_realloc_e (void *pointer, long size);
+void * Melder_realloc_f (void *pointer, long size);
+void * _Melder_calloc_e (long numberOfElements, long elementSize);
+#define Melder_calloc_e(type,size)  (type *) _Melder_calloc_e (size, sizeof (type))
+void * _Melder_calloc_f (long numberOfElements, long elementSize);
+#define Melder_calloc_f(type,size)  (type *) _Melder_calloc_f (size, sizeof (type))
+char * Melder_strdup_e (const char *string);
+char * Melder_strdup_f (const char *string);
+wchar_t * Melder_wcsdup_e (const wchar_t *string);
+wchar_t * Melder_wcsdup_f (const wchar_t *string);
 int Melder_strcmp (const char *string1, const char *string2);   // regards null string as empty string
 int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2);   // regards null string as empty string
 int Melder_strncmp (const char *string1, const char *string2, unsigned long n);
@@ -295,14 +303,16 @@ unsigned long wcslen_utf8 (const wchar_t *wcs, bool expandNewlines);
 unsigned long wcslen_utf16 (const wchar_t *wcs, bool expandNewlines);
 unsigned long wcslen_utf32 (const wchar_t *wcs, bool expandNewlines);
 
-int Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding);
-wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding);
-wchar_t * Melder_utf8ToWcs (const char *string);
-int Melder_wcsTo8bit_inline (const wchar_t *wcs, char *string, int outputEncoding);
-char * Melder_wcsTo8bit (const wchar_t *string, int outputEncoding);
+void Melder_8bitToWcs_inline_e (const char *string, wchar_t *wcs, int inputEncoding);
+	// errors: Text is not valid UTF-8.
+wchar_t * Melder_8bitToWcs_e (const char *string, int inputEncoding);
+	// errors: Out of memory; Text is not valid UTF-8.
+wchar_t * Melder_utf8ToWcs_e (const char *string);
+	// errors: Out of memory; Text is not valid UTF-8.
 
-char * Melder_wcsToUtf8 (const wchar_t *string);
 void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8);
+char * Melder_wcsToUtf8_e (const wchar_t *string);
+	// errors: Out of memory.
 void Melder_wcsTo8bitFileRepresentation_inline (const wchar_t *wcs, char *utf8);
 void Melder_8bitFileRepresentationToWcs_inline (const char *utf8, wchar_t *wcs);
 wchar_t * Melder_peekUtf8ToWcs (const char *string);
@@ -904,7 +914,6 @@ wchar_t * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc
 #define Melder_MPEG_COMPRESSION 16
 int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
 void MelderFile_writeAudioFileHeader16_e (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
-#define MelderFile_writeAudioFileHeader16_ch(a,b,c,d,e) do{MelderFile_writeAudioFileHeader16_e(a,b,c,d,e);cherror}while(0)
 int MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,

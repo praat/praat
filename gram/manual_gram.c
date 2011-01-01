@@ -167,7 +167,7 @@ INTRO (L"A framework for transferring one linguistic representation into another
 	"phonologists tended to this with a sequentially ordered set of rules, each of which transferred a representation "
 	"into another. With @OT (that's the abbreviation), there are no intermediate steps in the derivation, but a set of ranked "
 	"@constraints chooses the optimal output form from a set of candidates.")
-NORMAL (L"In P\\s{RAAT}, you can draw Optimality-Theoretic tableaus and simulate Optimality-Theoretic learning. "
+NORMAL (L"In Praat, you can draw Optimality-Theoretic tableaus and simulate Optimality-Theoretic learning. "
 	"See the @@OT learning@ tutorial.")
 MAN_END
 
@@ -272,7 +272,7 @@ MAN_END
 MAN_BEGIN (L"OT learning 2.1. Viewing a grammar", L"ppgb", 20070725)
 NORMAL (L"Consider a language where the underlying form /pat/ leads to the surface form [pa], "
 	"presumably because the structural constraint N\\s{O}C\\s{ODA} outranks the faithfulness constraint P\\s{ARSE}.")
-NORMAL (L"To create such a grammar in P\\s{RAAT}, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
+NORMAL (L"To create such a grammar in Praat, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
 	"An @OTGrammar object will then appear in the list of objects. "
 	"If you click Edit, an @OTGrammarEditor will show up, containing:")
 LIST_ITEM (L"1. the constraint list, sorted by %#disharmony (= ranking value + noise):")
@@ -1126,7 +1126,7 @@ MAN_END
 */
 
 MAN_BEGIN (L"OTGrammar", L"ppgb", 20041110)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. See the @@OT learning@ tutorial.")
+INTRO (L"One of the @@types of objects@ in Praat. See the @@OT learning@ tutorial.")
 ENTRY (L"Inside an OTGrammar")
 NORMAL (L"With @Inspect, you will see the following attributes:")
 TAG (L"%constraints")
@@ -1182,8 +1182,8 @@ INTRO (L"A command to create a @Strings object from a selected @OTGrammar.")
 NORMAL (L"A practical grammar-specific implementation of the %%richness of the base%: "
 	"the inputs are drawn at random with equal probabilities from the inputs associated with the tableaus. "
 	"For an example, see @@OT learning 3.2. Data from another grammar@.")
-ENTRY (L"Argument")
-TAG (L"%%Number of trials")
+ENTRY (L"Setting")
+TAG (L"##Number of trials")
 DEFINITION (L"the number of times a string will be drawn from the possible inputs to the grammar.")
 MAN_END
 
@@ -1191,10 +1191,10 @@ MAN_BEGIN (L"OTGrammar: Input to output...", L"ppgb", 20030916)
 INTRO (L"A command to ask the selected @OTGrammar object to evaluate the candidates associated with a specified input form.")
 NORMAL (L"See @@OT learning 2.8. Asking for one output@ for tutorial information.")
 ENTRY (L"Settings")
-TAG (L"%%Input form")
+TAG (L"##Input form")
 DEFINITION (L"the input form whose surface form you want to know. If this string is not in the list "
 	"of the possible inputs of the selected OTGrammar, you will get an error message.")
-TAG (L"%Noise (standard value: 2.0)")
+TAG (L"##Noise# (standard value: 2.0)")
 DEFINITION (L"the standard deviation of the noise added to the ranking value of every constraint during evaluation. "
 	"See @@OT learning 2.4. Evaluation@.")
 MAN_END
@@ -1204,12 +1204,12 @@ INTRO (L"A command to ask the selected @OTGrammar object to evaluate a number of
 	"with a specified input form. The result is a @Distributions object.")
 NORMAL (L"See @@OT learning 2.9. Output distributions@ for tutorial information and examples.")
 ENTRY (L"Settings")
-TAG (L"%Trials (standard value: 1000)")
+TAG (L"##Trials# (standard value: 1000)")
 DEFINITION (L"the number of evaluations that you want to perform.")
-TAG (L"%Noise (standard value: 2.0)")
+TAG (L"##Noise# (standard value: 2.0)")
 DEFINITION (L"the standard deviation of the noise added to the ranking value of every constraint during the evaluations. "
 	"See @@OT learning 2.4. Evaluation@.")
-TAG (L"%%Input form")
+TAG (L"##Input form")
 DEFINITION (L"the input form whose surface forms you want to measure. If this string is not in the list "
 	"of the possible inputs of the selected OTGrammar, you will get an error message.")
 MAN_END
@@ -1236,9 +1236,9 @@ NORMAL (L"The procedure follows the linear programming method by @@Pater, Potts 
 	"This method tries to find a special correct weighting of the constraints, "
 	"namely one that minimizes the sum of the constraint weights.")
 ENTRY (L"Settings")
-TAG (L"%%Weight floor% (standard value: 1.0)")
+TAG (L"##Weight floor# (standard value: 1.0)")
 DEFINITION (L"After the command finishes, every weight will have at least this value.")
-TAG (L"%%Margin of separation% (standard value: 1.0)")
+TAG (L"##Margin of separation# (standard value: 1.0)")
 DEFINITION (L"After the command finishes, the harmony of every optimal (and correct) output candidate "
 	"will be at least this much greater than the harmony of any competitor in the same tableau.")
 MAN_END
@@ -1247,7 +1247,7 @@ MAN_BEGIN (L"OTGrammar & Strings: Inputs to outputs...", L"ppgb", 19981230)
 INTRO (L"An action that creates a @Strings object from a selected @OTGrammar and a selected @Strings.")
 NORMAL (L"The selected Strings object is considered as a list of inputs to the OTGrammar grammar.")
 ENTRY (L"Settings")
-TAG (L"%%Noise")
+TAG (L"##Noise")
 DEFINITION (L"the standard deviation of the noise that will be temporarily added to the ranking value at each evaluation.")
 NORMAL (L"The resulting Strings object will contain the output string of the grammar for each of the input strings.")
 NORMAL (L"See @@OT learning 3.2. Data from another grammar@.")
@@ -1261,7 +1261,7 @@ INTRO (L"Causes the selected @OTGrammar object to process a number of input/outp
 MAN_END
 
 MAN_BEGIN (L"OTGrammarEditor", L"ppgb", 20030316)
-INTRO (L"One of the @editors in P\\s{RAAT}, for viewing and editing the grammar in an @OTGrammar object.")
+INTRO (L"One of the @editors in Praat, for viewing and editing the grammar in an @OTGrammar object.")
 NORMAL (L"See the @@OT learning@ tutorial for examples.")
 ENTRY (L"Usage")
 NORMAL (L"The menu command that you will probably use most often if you investigate variation, "
@@ -1273,7 +1273,7 @@ MAN_END
 
 MAN_BEGIN (L"Robust Interpretive Parsing", L"ppgb", 20021105)
 INTRO (L"The mapping from overt forms to surface forms in the acquisition model by @@Tesar & Smolensky (1998)@.")
-NORMAL (L"In P\\s{RAAT}, you can do robust interpretive parsing on any @OTGrammar object. "
+NORMAL (L"In Praat, you can do robust interpretive parsing on any @OTGrammar object. "
 	"See @@OT learning 7. Learning from overt forms@.")
 MAN_END
 

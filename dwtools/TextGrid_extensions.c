@@ -51,15 +51,15 @@ struct TIMIT_key {const char *timitLabel, *ipaLabel;} TIMIT_toIpaTable[] =
 	{"ao", "\\ct"},  		/* bought: bcl b AO tcl t */
 	{"oy", "\\ct\\ic"},  	/* boy: bcl b OY */
 	{"ow", "o"}, 			/* boat: bcl b OW tcl t */
-	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */ 
+	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
 	/* fronted allophone of uw (alveolair contexts) */
 	{"ux", "\\u\""}, 		/* toot: tcl t UX tcl t */
 	{"er", "\\er\\hr"},  	/* bird: bcl b ER dcl d */
-	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */ 
+	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
 	{"axr", "\\sr"}, 		/* butter: bcl ah dx AXR */
-	/* devoiced schwa, very short */ 
+	/* devoiced schwa, very short */
 	{"ax-h", "\\sw\\ov"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
 	/* Semivowels and glides */
 	{"l", "l"},				/* lay:	L ey */
@@ -87,7 +87,7 @@ struct TIMIT_key {const char *timitLabel, *ipaLabel;} TIMIT_toIpaTable[] =
 	{"f", "f"},				/* fin: F ih n */
 	{"th", "\\te"},			/* thin: TH ih n */
 	{"v", "v"},				/* van: v ae n */
-	{"dh", "\\dh"},			/* then: DH en */ 
+	{"dh", "\\dh"},			/* then: DH en */
 	/* Affricates */
 	{"jh", "d\\zh"},		/* joke: DCL JH ow kcl k */
 	{"ch", "t\\sh"},		/* choke TCL CH ow kcl k */
@@ -108,7 +108,7 @@ struct TIMIT_key {const char *timitLabel, *ipaLabel;} TIMIT_toIpaTable[] =
 	{"h#", ""}, 	/* marks start and end piece of sentence */
 	/* the following markers only occur in the dictionary */
 	{"1", "1"},		/* primary stress marker */
-	{"2", "2"}		/* secondary stress marker */	
+	{"2", "2"}		/* secondary stress marker */
 };
 
 #define TIMIT_NLABELS (sizeof TIMIT_toIpaTable / sizeof TIMIT_toIpaTable[1] - 1)
@@ -188,16 +188,16 @@ static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const wc
 
 TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 {
-	TextGrid me = NULL; 
-	IntervalTier timit, ipa; 
+	TextGrid me = NULL;
+	IntervalTier timit, ipa;
 	TextInterval interval;
-	long i, linesRead = 0, it1, it2, ni; 
+	long i, linesRead = 0, it1, it2, ni;
 	char line[200], label[200];
 	double tmax = 3600; /* initial value one hour should be long enough */
 	double dt = 1.0 / 16000; /* TIMIT samplingFrequency is 16000 Hz */
 	double xmax = dt, xmin;
 	FILE *f = Melder_fopen (file, "r");
-	
+
 	if (! f) return Melder_errorp1 (L"Cannot open file.");
 	/*
 		Ending time will only be known after all labels have been read.
@@ -208,7 +208,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	while (fgets (line, 199, f))
 	{
 		char *labelstring;
-		linesRead++; 
+		linesRead++;
 		if (sscanf (line,"%ld%ld%s", &it1, &it2, label) != 3)
 		{
 			(void) Melder_error1 (L"Incorrect number of items.");
@@ -228,7 +228,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 			/* Some files do not start with a first line "0 <number2> h#".
 			   Instead they start with "<number1> <number2> h#", where number1 > 0.
 			   We override number1 with 0. */
-			
+
 			if (xmin > 0 && phnFile) xmin = 0;
 		}
 		interval = timit -> intervals -> item[ni];
@@ -254,7 +254,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 	Collection_removeItem (timit -> intervals, timit -> intervals -> size);
 	interval = timit -> intervals -> item[timit -> intervals -> size];
 	tmax = interval -> xmax;
-	timit -> xmax = tmax; 
+	timit -> xmax = tmax;
 	my xmax = xmax;
 	if (phnFile) /* Create tier 2 with IPA symbols */
 	{
@@ -263,7 +263,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		for (i = 1; i <= ipa -> intervals -> size; i++)
 		{
 			interval = timit -> intervals -> item[i];
-			
+
 			if (! TextInterval_setText (ipa -> intervals -> item[i],
 				Melder_peekUtf8ToWcs (timitLabelToIpaLabel (Melder_peekWcsToUtf8 (interval -> text))))) goto cleanup;
 		}
@@ -274,7 +274,7 @@ cleanup:
 	fclose (f);
 	if (! Melder_hasError()) return me;
 	forget (me);
-	return Melder_errorp3 (L"Reading from file \"", MelderFile_name (file), L"\" not performed.");	
+	return Melder_errorp3 (L"Reading from file \"", MelderFile_name (file), L"\" not performed.");
 }
 
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
@@ -282,35 +282,35 @@ TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
 	TextGrid me, thee = NULL;
 	double extra_time_end, extra_time_start;
 	int i, at_end = 0, at_start = 1;
-	
+
 	me = Data_copy (grid1);
 	if (me == NULL) return NULL;
 	thee = Data_copy (grid2);
 	if (thee == NULL) goto end;
-	
+
 	/*
-		The new TextGrid will have the domain 
+		The new TextGrid will have the domain
 		[min(grid1->xmin, grid2->xmin), max(grid1->xmax, grid2->xmax)]
 	*/
-	
+
 	extra_time_end = fabs (thy xmax - my xmax);
 	extra_time_start = fabs (thy xmin - my xmin);
-	
+
 	if ((my xmin > thy xmin &&
 		! TextGrid_extendTime (me, extra_time_start, at_start)) ||
 		(my xmax < thy xmax &&
 		! TextGrid_extendTime (me, extra_time_end, at_end))) goto end;
-		 
+
 	if ((thy xmin > my xmin &&
 		! TextGrid_extendTime (thee, extra_time_start, at_start)) ||
 		(thy xmax < my xmax &&
 		! TextGrid_extendTime (thee, extra_time_end, at_end))) goto end;
-		
+
 	for (i = 1; i <= thy tiers -> size; i++)
 	{
 		Function tier = Data_copy (thy tiers -> item [i]);
 		if (tier == NULL || ! Collection_addItem (my tiers, tier)) goto end;
-	}	
+	}
 end:
 	forget (thee);
 	if (Melder_hasError ()) forget (me);
@@ -319,7 +319,7 @@ end:
 
 int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 {
-	TextGrid thee; 
+	TextGrid thee;
 	long i, ntier = my tiers -> size;
 	double xmax = my xmax, xmin = my xmin;
 	int at_end = position == 0;
@@ -328,19 +328,19 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 	extra_time = fabs (extra_time); /* Just in case... */
 	thee = Data_copy (me);
 	if (thee == NULL) return 0;
-		
+
 	if (at_end) xmax += extra_time;
 	else xmin -= extra_time;
-	
+
 	for (i = 1; i <= ntier; i++)
 	{
 		Function anyTier = my tiers -> item [i];
 		double tmin = anyTier -> xmin, tmax = anyTier -> xmax;
-		
+
 		if (at_end)
 		{
 			anyTier -> xmax = xmax;
-			tmin = tmax; 
+			tmin = tmax;
 			tmax = xmax;
 		}
 		else
@@ -352,7 +352,7 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 		if (anyTier -> methods == (Function_Table) classIntervalTier)
 		{
 			IntervalTier tier = (IntervalTier) anyTier;
-			
+
 			TextInterval interval = TextInterval_create (tmin, tmax, L"");
 			if (interval == NULL ||
 				! Collection_addItem (tier -> intervals, interval))
@@ -367,7 +367,7 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 			}
 		}
 	}
-	
+
 	my xmin = xmin;
 	my xmax = xmax;
 	forget (thee);
@@ -377,21 +377,21 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 int TextGrid_setTierName (TextGrid me, long itier, wchar_t *newName)
 {
 	long ntiers = my tiers -> size;
-	
-	if (itier < 1 || itier > ntiers) return 
+
+	if (itier < 1 || itier > ntiers) return
 		Melder_error5 (L"TextGrid_renameTier: Tier number (", Melder_integer (itier), L") should not be "
 		"larger than the number of tiers (", Melder_integer (ntiers), L").");
-	Thing_setName (my tiers -> item [itier], newName);	
+	Thing_setName (my tiers -> item [itier], newName);
 	return 1;
 }
 
 static void IntervalTier_removeInterval (IntervalTier me, long index, int extend_option)
 {
 	long size_pre = my intervals -> size;
-		
+
 	/* There always must be at least one interval */
 	if (size_pre == 1 || index > size_pre || index < 1) return;
-	
+
 	TextInterval ti = my intervals -> item[index];
 	double xmin = ti -> xmin;
 	double xmax = ti -> xmax;
@@ -424,11 +424,11 @@ static void IntervalTier_removeInterval (IntervalTier me, long index, int extend
 void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, wchar_t *label, double minimumDuration)
 {
 	long i = 1;
-	
+
 	while (i <= my intervals -> size)
 	{
 		TextInterval ti = my intervals -> item[i];
-		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) && 
+		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) &&
 			ti -> xmax - ti -> xmin < minimumDuration)
 		{
 			IntervalTier_removeInterval (me, i, 0);
@@ -443,14 +443,14 @@ void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, wchar_t *labe
 void IntervalTier_removeBoundary_equalLabels (IntervalTier me, wchar_t *label)
 {
 	long i = 1;
-	
+
 	while (i < my intervals -> size)
 	{
 		TextInterval ti = my intervals -> item[i], tip1 = my intervals -> item[i+1];
-		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) && 
-			(NUMwcscmp (ti -> text, tip1 -> text) == 0))
+		if ((label == NULL || (ti -> text != NULL && wcsequ (ti -> text, label))) &&
+			(Melder_wcscmp (ti -> text, tip1 -> text) == 0))
 		{
-			
+
 			IntervalTier_removeInterval (me, i, 1);
 		}
 		else
@@ -471,7 +471,7 @@ int IntervalTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *
 	if (from > to || from < 1 || to > my intervals -> size) return 0;
 	if (use_regexp && wcslen (search) == 0) return Melder_error1 (L"TextTier_changeLabels: The regex search string may not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
-	
+
 	nlabels = to - from + 1;
 	labels = (wchar_t **) NUMpvector (1, nlabels);
 	if (labels == NULL) return 0;
@@ -485,14 +485,14 @@ int IntervalTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *
 	newlabels = strs_replace (labels, 1, nlabels, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 
 	if (newlabels == NULL) goto end;
-	
+
 	for (i = from; i <= to; i++)
 	{
 		TextInterval interval = my intervals -> item[i];
 		Melder_free (interval -> text);
 		interval -> text = newlabels[i - from + 1];   // Shallow copy.
 	}
-	
+
 end:
 	NUMpvector_free (newlabels, 1);
 	NUMpvector_free (labels, 1);
@@ -510,7 +510,7 @@ int TextTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *repl
 	if (from > to || from < 1 || to > my points -> size) return 0;
 	if (use_regexp && wcslen (search) == 0) return Melder_error1 (L"TextTier_changeLabels: The regex search string may not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
-	
+
 	nmarks = to - from + 1;
 	marks = (wchar_t **) NUMpvector (1, nmarks);
 	if (marks == NULL) return 0;
@@ -524,14 +524,14 @@ int TextTier_changeLabels (I, long from, long to, wchar_t *search, wchar_t *repl
 	newmarks = strs_replace (marks, 1, nmarks, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 
 	if (newmarks == NULL) goto end;
-	
+
 	for (i = from; i <= to; i++)
 	{
 		TextPoint point = my points -> item[i];
 		Melder_free (point -> mark);
 		point -> mark = newmarks[i - from + 1];   // Shallow copy.
 	}
-	
+
 end:
 	NUMpvector_free (newmarks, 1);
 	NUMpvector_free (marks, 1);
@@ -543,7 +543,7 @@ int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, wchar_t *s
 	Data anyTier;
 	int status;
 	long ntiers = my tiers -> size;
-	
+
 	if (tier < 1 || tier > ntiers) return Melder_error
 		("TextGrid_changeLabels: The tier number (%d) should not be "
 		"larger than the number of tiers (%d).", tier, ntiers);

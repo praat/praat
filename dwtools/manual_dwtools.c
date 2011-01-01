@@ -412,8 +412,8 @@ MAN_END
 MAN_BEGIN (L"CCA: Get zero correlation probability...", L"djmw", 20040407)
 INTRO (L"Get the probability that for the selected @CCA object the chosen "
 	"canonical correlation coefficient is different from zero.")
-ENTRY (L"Settings")
-TAG (L"%Index")
+ENTRY (L"Setting")
+TAG (L"##Index")
 DEFINITION (L"is the index of the canonical correlation coefficient that "
 	"you want to test.")
 ENTRY (L"Algorithm")
@@ -443,9 +443,9 @@ MAN_BEGIN (L"CCA & Correlation: Get variance fraction...", L"djmw", 20060323)
 INTRO (L"Determine from the selected @CCA and @Correlation objects the fraction of the variance "
 	"explained by the selected @@canonical variate@ range.")
 ENTRY (L"Settings")
-TAG (L"%%X or Y")
+TAG (L"##%X or Y")
 DEFINITION (L"determines whether you select the dependent (y) or the independent (x) set.")
-TAG (L"%%Canonical variate range")
+TAG (L"##Canonical variate range")
 DEFINITION (L"determines the canonical variates (or canonical variables).")
 ENTRY (L"Remarks")
 NORMAL (L"1. In general the variance fractions for a particular canonical variate in the "
@@ -466,9 +466,9 @@ NORMAL (L"The Stewart-Love redundancy for a single @@canonical variate@ is the f
 	"canonical variate in a set times the fraction of shared variance between the corresponding canonical variates in the two sets.")
 NORMAL (L"The Stewart-Love redundancy for a canonical variate range is the sum of the individual redundancies.")
 ENTRY (L"Settings")
-TAG (L"%%X or Y")
+TAG (L"##X or Y")
 DEFINITION (L"determines whether you select the dependent (y) or the independent (x) set.")
-TAG (L"%%Canonical variate range")
+TAG (L"##Canonical variate range")
 DEFINITION (L"determines the canonical variates (or canonical variables).")
 ENTRY (L"Algorithm")
 NORMAL (L"The formula's can be found on page 170 of @@Cooley & Lohnes (1971)@.")
@@ -496,7 +496,7 @@ MAN_BEGIN (L"CCA & TableOfReal: To TableOfReal (scores)...", L"djmw", 20040407)
 INTRO (L"Determines the scores on the dependent and the independent canonical "
 	"variates from the selected @CCA and @TableOfReal objects.")
 ENTRY (L"Settings")
-TAG (L"%%Number of canonical correlations%")
+TAG (L"##Number of canonical correlations")
 DEFINITION (L"determines the dimension, i.e., the number of elements of the resulting "
 	"canonical score vectors. The newly created table will have twice this number of "
 	"columns because we have calculated score vectors for the dependent and the "
@@ -653,14 +653,14 @@ NORMAL (L"We use the recurrence relation for @@Chebyshev polynomials@ to calcula
 MAN_END
 
 MAN_BEGIN (L"ClassificationTable", L"djmw", 19990525)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An object of type ClassificationTable represents the result of a classification experiment. "
 	"The numbers in a row show how well a particular input matches the classes represented by the "
 	"column labels. The higher the number the better the match.")
 MAN_END
 
 MAN_BEGIN (L"concentration ellipse", L"djmw", 20071113)
-NORMAL (L"The percentage of bivariate normally distributed data covered by an ellipse "
+INTRO (L"The percentage of bivariate normally distributed data covered by an ellipse "
 	"whose axes have a length of %numberOfSigmas\\.c\\si can be obtained by integration of the p.d.f. "
 	"over an elliptical area. This results in the following equation as can be "
 	"verified from equation 26.3.21 in @@Abramowitz & Stegun (1970)@:")
@@ -676,7 +676,7 @@ NORMAL (L"For covering 95\\% of the data we calculate %numberOfSigmas = 2.45.")
 MAN_END
 
 MAN_BEGIN (L"confidence interval", L"djmw", 20011105)
-NORMAL (L"The confidence interval gives an estimated range of values which "
+INTRO (L"The confidence interval gives an estimated range of values which "
 	"is likely to include an unknown population parameter. "
 	"The estimated range is calculated from a given set of observations.")
 ENTRY (L"Examples")
@@ -705,7 +705,7 @@ NORMAL (L"The confidence level is the probability value 1-\\al associated "
 MAN_END
 
 MAN_BEGIN (L"Confusion", L"djmw", 20010501)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An object of type Confusions represents a confusion matrix, with "
 	"stimuli as row labels and responses as column labels. The entry at "
 	"position [%i][%j] represents the number of times response %j "
@@ -762,16 +762,16 @@ MAN_BEGIN (L"Confusion: Condense...", L"djmw", 20040407)
 INTRO (L"Groups row and column labels of the selected @Confusion object in "
 	"order to reduce its dimension.")
 ENTRY (L"Settings")
-TAG (L"%Search")
-DEFINITION (L"the pattern to match")
-TAG (L"%Replace")
-DEFINITION (L"the pattern that replaces the match(es)")
-TAG (L"%%Replace limit%")
+TAG (L"##Search")
+DEFINITION (L"the pattern to match.")
+TAG (L"##Replace")
+DEFINITION (L"the pattern that replaces the match(es).")
+TAG (L"##Replace limit")
 DEFINITION (L"limits the maximum number of times that a match/replace cycle "
 	"may occur within each label.")
-TAG (L"%Search and replace are")
+TAG (L"##Search and replace are")
 DEFINITION (L"defines whether the search and replace strings are taken "
-	"litterally or as a @@Regular expressions|regular expression@.")
+	"literally or as a @@Regular expressions|regular expression@.")
 ENTRY (L"Behaviour")
 NORMAL (L"First all row and column labels are changed according to the search "
 	"and replace specification. Next all rows or columns that have the same "
@@ -806,14 +806,14 @@ INTRO (L"Calculates @@confidence interval@s for the correlation coefficients "
 	"from the selected @Correlation object(s) and saves these intervals in a "
 	"new @TableOfReal object.")
 ENTRY (L"Settings")
-TAG (L"%%Confidence level%")
+TAG (L"##Confidence level")
 DEFINITION (L"the @@confidence level@ you want for the confidence intervals.")
-TAG (L"%%Number of tests%")
+TAG (L"##Number of tests")
 DEFINITION (L"determines the @@Bonferroni correction@ for the significance "
 	"level. If the default value (zero) is chosen, it will be set equal "
 	"to the number of correlations involved (a matrix of dimension %n "
 	"has %n\\.c(%n-1)/2 correlations).")
-TAG (L"%%Approximation%")
+TAG (L"##Approximation")
 DEFINITION (L"defines the approximation that will be used to calculate the "
 	"confidence intervals. It is either Fisher's z transformation or Ruben's "
 	"transformation. According to @@Boomsma (1977)@, Ruben's approximation is "
@@ -861,14 +861,14 @@ MAN_END
 MAN_BEGIN (L"Create simple Covariance...", L"djmw", 20101125)
 INTRO (L"Create a @@Covariance@ matrix with its centroid.")
 ENTRY (L"Settings")
-TAG (L"%%Covariances%,")
+TAG (L"##Covariances")
 DEFINITION (L"define the covariances. Because a covariance matrix is a symmetric matrix, only the upper triangular "
 	"part of the matrix has to be input (row-wise). If your covariance matrix is "
 	"of dimension %d, your input needs %d(%d+1)/2 elements. The first %d input elements are the elements of the first "
 	"row of the covariance matrix, the next %d-1 input elements are for the second row, then %d-2 for the third row, etc.")
-TAG (L"%%Centroid%,")
+TAG (L"##Centroid")
 DEFINITION (L"defines the centroid. ")
-TAG (L"%%Number of observations%,")
+TAG (L"##Number of observations")
 DEFINITION (L"defines the number of observations. ")
 MAN_END
 
@@ -901,10 +901,10 @@ MAN_BEGIN (L"Covariance: Get significance of one mean...", L"djmw", 20040407)
 INTRO (L"Gets the level of significance for one mean from the selected "
 	"@Covariance object being different from a hypothesized mean.")
 ENTRY (L"Settings")
-TAG (L"%Index")
+TAG (L"##Index")
 DEFINITION (L"the position of the element in the means vector (centroid) that "
 	"you want to test. ")
-TAG (L"%%Value")
+TAG (L"##Value")
 DEFINITION (L"the hypothesized mean %\\mu (see below).")
 ENTRY (L"Behaviour")
 NORMAL (L"This is the standard test on means when the variance is unknown. "
@@ -924,7 +924,7 @@ MAN_BEGIN (L"Covariance: Get fraction variance...", L"djmw", 20040407)
 INTRO (L"A command to ask the selected @Covariance object for the fraction "
 	"of the total variance that is accounted for by the selected dimension(s).")
 ENTRY (L"Settings")
-TAG (L"%%From dimension%, %%To dimension%")
+TAG (L"##From dimension#, ##To dimension#")
 DEFINITION (L"define the range of components. By choosing both numbers equal, "
 	"you get the fraction of the variance \"explained\" by that dimension.")
 ENTRY (L"Details")
@@ -939,14 +939,14 @@ INTRO (L"Gets the level of significance for the %difference of two means "
 	"from the selected @Covariance object being different from a hypothesized "
 	"value.")
 ENTRY (L"Settings")
-TAG (L"%%Index1, Index2")
+TAG (L"##Index1#, ##Index2#")
 DEFINITION (L"the positions of the two elements of the means vector whose "
 	"difference is compared to the hypothesized difference.")
-TAG (L"%%Value")
+TAG (L"##Value")
 DEFINITION (L"the hypothesized difference (%\\mu).")
-TAG (L"%%Paired samples")
+TAG (L"##Paired samples")
 DEFINITION (L"determines whether we treat the two means as being dependent. ")
-TAG (L"%%Equal variances")
+TAG (L"##Equal variances")
 DEFINITION (L"determines whether the distribution of the difference of the means "
 	"is a Student t-distribution (see below).")
 ENTRY (L"Behaviour")
@@ -981,13 +981,13 @@ MAN_BEGIN (L"Covariance: Get significance of one variance...", L"djmw", 20040407
 INTRO (L"Gets the probability for one variance from the selected "
 	"@Covariance object being different from a hypothesized variance.")
 ENTRY (L"Settings")
-TAG (L"%Index")
+TAG (L"##Index")
 DEFINITION (L"the position of the variance element.")
-TAG (L"%%Hypothesized variance")
-DEFINITION (L"the hypothesized variance \\si^2")
+TAG (L"##Hypothesized variance")
+DEFINITION (L"the hypothesized variance %\\si^2")
 ENTRY (L"Behaviour")
 NORMAL (L"The test statistic")
-FORMULA (L"%\\ci^2 = (%N-1)%s^2 / \\si^2,")
+FORMULA (L"%\\ci^2 = (%N-1)%s^2 / %\\si^2,")
 NORMAL (L"is distributed as a chi-squared variate with %ndf = %N-1 degrees of freedom.")
 NORMAL (L"The returned probability %p will be ")
 FORMULA (L"%p = chiSquareQ (%\\ci^2, %ndf)")
@@ -998,10 +998,10 @@ INTRO (L"Gets the probability for the ratio of two variances "
 	"from the selected @Covariance object being different from a hypothesized "
 	"ratio.")
 ENTRY (L"Settings")
-TAG (L"%%Index1, index2")
-DEFINITION (L"determine the variances")
-TAG (L"%%Hypothesized ratio")
-DEFINITION (L"the hypothesized ratio %F")
+TAG (L"##Index1#, ##Index2#")
+DEFINITION (L"determine the variances.")
+TAG (L"##Hypothesized ratio")
+DEFINITION (L"the hypothesized ratio %F.")
 ENTRY (L"Behaviour")
 NORMAL (L"The test statistic")
 FORMULA (L"%f = %s__1_^2 / %s__2_^2 / %ratio")
@@ -1016,7 +1016,7 @@ MAN_END
 MAN_BEGIN (L"Covariances: Report multivariate mean difference...", L"djmw", 20090627)
 INTRO (L"Reports the probability that the two multivariate means of the selected @@Covariance@s are equal.")
 ENTRY (L"Settings")
-TAG (L"%%Covariances are equal,")
+TAG (L"##Covariances are equal")
 DEFINITION (L"determines whether the test is performed as if the two covariance matrices are equal or not.")
 ENTRY (L"Algorithm")
 NORMAL (L"For equal covariance matrices the test is via Hotelling's T^^2^ as described in @@Morrison (1990)|Morrison (1990,@ page 141). "
@@ -1036,8 +1036,8 @@ MAN_END
 MAN_BEGIN (L"Covariance: To TableOfReal (random sampling)...", L"djmw", 20101101)
 INTRO (L"Generate a @TableOfReal object by random sampling from a multi-variate "
 	"normal distribution whose @Covariance matrix is the selected object.")
-ENTRY (L"Settings")
-TAG (L"%%Number of data points")
+ENTRY (L"Setting")
+TAG (L"##Number of data points")
 DEFINITION (L"determines the number of data points that will be generated. Each "
 	"data point occupies one row in the generated table.")
 ENTRY (L"Algorithm")
@@ -1072,8 +1072,8 @@ MAN_END
 MAN_BEGIN (L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20100106)
 INTRO (L"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
-ENTRY (L"Settings")
-TAG (L"%%Use table centroid%")
+ENTRY (L"Setting")
+TAG (L"##Use table centroid")
 DEFINITION (L"Use the mean vector calculated from the columns in the selected TableOfReal instead of the means in the selected Covariance.")
 ENTRY (L"Explanation")
 NORMAL (L"The Mahalanobis distance is defined as")
@@ -1106,7 +1106,7 @@ MAN_END
 MAN_BEGIN (L"Create ChebyshevSeries...", L"djmw", 20040407)
 INTRO (L"A command to create a @ChebyshevSeries from a list of coefficients.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin# and ##Xmax#")
 DEFINITION (L"define the domain of the polynomials.")
 TAG (L"%Coefficients")
 DEFINITION (L"define the coefficients of each @@Chebyshev polynomials|Chebyshev polynomial@. "
@@ -1116,7 +1116,7 @@ MAN_END
 MAN_BEGIN (L"Create ISpline...", L"djmw", 20040407)
 INTRO (L"A command to create an @ISpline from a list of coefficients.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin# and ##Xmax#")
 DEFINITION (L"define the domain of the polynomial @spline.")
 TAG (L"%Degree")
 DEFINITION (L"defines the degree of the polynomial @spline.")
@@ -1134,13 +1134,13 @@ MAN_END
 MAN_BEGIN (L"Create MSpline...", L"djmw", 20040407)
 INTRO (L"A command to create an @MSpline from a list of coefficients.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin# and ##Xmax#")
 DEFINITION (L"define the domain of the polynomial @spline.")
-TAG (L"%Degree")
+TAG (L"##Degree")
 DEFINITION (L"defines the degree of the polynomial @spline.")
-TAG (L"%Coefficients")
+TAG (L"##Coefficients")
 DEFINITION (L"define the coefficients of the basis polynomials.")
-TAG (L"%%Interior knots")
+TAG (L"##Interior knots")
 DEFINITION (L"define the positions in the domain where continuity conditions are defined.")
 ENTRY (L"Behaviour")
 NORMAL (L"The number of coefficients and the number of interior knots must satisfy "
@@ -1152,11 +1152,11 @@ MAN_END
 MAN_BEGIN (L"Create Polynomial...", L"djmw", 20040407)
 INTRO (L"A command to create an @Polynomial from a list of coefficients.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin# and ##Xmax#")
 DEFINITION (L"define the domain of the polynomial.")
-TAG (L"%Degree")
+TAG (L"##Degree")
 DEFINITION (L"defines the degree of the basis polynomials.")
-TAG (L"%Coefficients")
+TAG (L"##Coefficients")
 DEFINITION (L"define the coefficients of the polynomial. The coefficient of the "
 	"highest power of %x comes last.")
 MAN_END
@@ -1164,9 +1164,9 @@ MAN_END
 MAN_BEGIN (L"Create LegendreSeries...", L"djmw", 20040407)
 INTRO (L"A command to create a @LegendreSeries from a list of coefficients.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin# and ##Xmax#")
 DEFINITION (L"define the domain of the polynomials.")
-TAG (L"%Coefficients")
+TAG (L"##Coefficients")
 DEFINITION (L"define the coefficients of each @@Legendre polynomials|Legendre polynomial@. "
 	"The coefficient of the polynomial with the highest degree comes last.")
 MAN_END
@@ -1174,25 +1174,25 @@ MAN_END
 MAN_BEGIN (L"Create Sound from gammatone...", L"djmw", 20100517)
 INTRO (L"A command to create a @Sound as a @@gammatone@.")
 ENTRY (L"Settings")
-TAG (L"%Name")
+TAG (L"##Name")
 DEFINITION (L"the name of the resulting Sound object.")
-TAG (L"%%Minimum time%, %%Maximum time% (s)")
+TAG (L"##Minimum time (s)# and ##Maximum time (s)#")
 DEFINITION (L"the start and end time of the resulting Sound.")
-TAG (L"%%Sampling frequency% (Hz)")
+TAG (L"##Sampling frequency (Hz)")
 DEFINITION (L"the @@sampling frequency@ of the resulting Sound.")
-TAG (L"%Gamma")
+TAG (L"##Gamma")
 DEFINITION (L"determines the exponent of the polynomial.")
-TAG (L"%Frequency (Hz), %Bandwidth (Hz)")
+TAG (L"##Frequency (Hz)# and ##Bandwidth (Hz)#")
 DEFINITION (L"determine the frequency and damping of the cosine wave in the gammatone.")
-TAG (L"%%Initial phase% (radians)")
+TAG (L"##Initial phase (radians)")
 DEFINITION (L"the initial phase of the cosine wave.")
-TAG (L"%%Addition factor% (default: 0)")
+TAG (L"##Addition factor# (standard value: 0)")
 DEFINITION (L"determines the degree of asymmetry in the spectrum of the gammatone. "
 	"The zero default value gives a gammatone. A value unequal to zero results in a "
 	"so called %gammachirp. A negative value is used in auditory filter modeling to "
 	"guarantee the usual direction of filter asymmetry, which corresponds to an upward "
 	"glide in instantaneous frequency.")
-TAG (L"%%Scale amplitudes")
+TAG (L"##Scale amplitudes")
 DEFINITION (L"determines whether the amplitudes will be scaled to fit in the range (-1, 1).")
 ENTRY (L"Purpose")
 NORMAL (L"to create a Sound according to the following formula:")
@@ -1216,23 +1216,23 @@ MAN_END
 MAN_BEGIN (L"Create Sound from Shepard tone...", L"djmw", 20050629)
 INTRO (L"One of the commands that create a @Sound.")
 ENTRY (L"Settings")
-TAG (L"%Name")
+TAG (L"##Name")
 DEFINITION (L"the name of the resulting Sound object.")
-TAG (L"%%Minimum time%, %%Maximum time% (s)")
+TAG (L"##Minimum time (s)# and ##Maximum time (s)")
 DEFINITION (L"the start and end time of the resulting Sound.")
-TAG (L"%%Sampling frequency% (Hz)")
+TAG (L"##Sampling frequency (Hz)")
 DEFINITION (L"the @@sampling frequency@ of the resulting Sound.")
-TAG (L"%%Lowest frequency% (Hz)")
+TAG (L"##Lowest frequency (Hz)")
 DEFINITION (L"the frequency of the lowest component in the tone complex.")
-TAG (L"%%Number of components%")
+TAG (L"##Number of components")
 DEFINITION (L"the number of frequency components in the tone complex.")
-TAG (L"%%Frequency change% (semitones/s)")
+TAG (L"##Frequency change (semitones/s)")
 DEFINITION (L"determines how many semitones the frequency of each component will change in one second. "
-	"The number of seconds needed to change one octave will then be 12 divided by this number. "
+	"The number of seconds needed to change one octave will then be 12 divided by ##Frequency change#. "
 	"You can make rising, falling and monotonous tone complexes by chosing a positive, negative or zero value.")
-TAG (L"%%Amplitude range% (dB)")
+TAG (L"##Amplitude range% (dB)")
 DEFINITION (L"determines the relative size in decibels of the maximum and the minimum amplitude of the components in a tone complex. These relative amplitudes will then be 10^^\\--%amplitudeRange/20^. ")
-TAG (L"%%Octave shift fraction% [0,1)]")
+TAG (L"##Octave shift fraction (0-1)")
 DEFINITION (L"shifts all frequency components by this fraction at the start. You will probably only need this "
 	"if you want to generate static tone complexes as the example script below shows.")
 ENTRY (L"Purpose")
@@ -1413,7 +1413,7 @@ NORMAL (L"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
 	"Dutch monophthongal vowels as spoken in /h_t/ context by 50 male speakers. "
 	"This data set has been incorporated into "
-	"P\\s{RAAT} and can be called into play with the @@Create TableOfReal "
+	"Praat and can be called into play with the @@Create TableOfReal "
 	"(Pols 1973)...@ command that can be found in the \"New / "
 	"TableOfReal\" menu.")
 NORMAL (L"In the list of objects a new TableOfReal object will appear with 6 "
@@ -1508,16 +1508,16 @@ MAN_BEGIN (L"Discriminant: Draw sigma ellipses...", L"djmw", 20040407)
 INTRO (L"A command to draw for each group from the selected @Discriminant an ellipse "
 	"that covers part of the multivariate data.")
 ENTRY (L"Settings")
-TAG (L"%%Number of sigmas")
+TAG (L"##Number of sigmas")
 DEFINITION (L"determines the @@concentration ellipse|data coverage@.")
-TAG (L"%%Discriminant plane")
+TAG (L"##Discriminant plane")
 DEFINITION (L"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be drawn. When off, the selected "
 	"%X and Y-dimension will refer to the original dimensions.")
-TAG (L"%Xmin, %Xmax, %Ymin, %Ymax")
+TAG (L"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
 DEFINITION (L"determine the limits of the drawing area.")
-TAG (L"%%Label size")
+TAG (L"##Label size")
 DEFINITION (L"determines the size of the labels at the centre of the ellipse. No "
 	"labels will be drawn when a value less than or equal to zero is chosen.")
 MAN_END
@@ -1555,7 +1555,7 @@ MAN_BEGIN (L"Discriminant: Get Wilks' lambda...", L"djmw", 20040407)
 INTRO (L"A command to ask the selected @Discriminant for the value of Wilks' lamda (a "
 	"multivariate measure of group differences over several variables).")
 ENTRY (L"Settings")
-TAG (L"%From")
+TAG (L"##From")
 DEFINITION (L"the first eigenvalue number from which the value for lambda has to be calculated.")
 ENTRY (L"Details")
 NORMAL (L"Wilks' lambda is defined as:")
@@ -1568,9 +1568,9 @@ MAN_BEGIN (L"Discriminant: Get concentration ellipse area...", L"djmw", 20040407
 INTRO (L"A command to query the @Discriminant object for the area of the concentration "
 	"ellipse of one of its groups.")
 ENTRY (L"Settings")
-TAG (L"%%Number of sigmas")
+TAG (L"##Number of sigmas")
 DEFINITION (L"determines the @@concentration ellipse|data coverage@.")
-TAG (L"%%Discriminant plane")
+TAG (L"##Discriminant plane")
 DEFINITION (L"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
@@ -1583,7 +1583,7 @@ MAN_BEGIN (L"Discriminant: Get confidence ellipse area...", L"djmw", 20040407)
 INTRO (L"A command to query the @Discriminant object for the area of the confidence "
 	"ellipse of one of its groups.")
 ENTRY (L"Settings")
-TAG (L"%%Discriminant plane")
+TAG (L"##Discriminant plane")
 DEFINITION (L"When on, the selected %X and %Y-dimension will refer to the eigenvectors "
 	"of the discriminant space, and, consequently, the area of the projection of the hyper ellipsoid "
 	"onto the space spanned by these eigenvectors will be calculated. When off, the selected "
@@ -1609,7 +1609,7 @@ INTRO (L"A command to use the selected @Discriminant to classify each row from t
 	"selected @TableOfReal. The newly created @ClassificationTable will then contain the posterior "
 	"probabilities of group membership.")
 ENTRY (L"Settings")
-TAG (L"%%Pool covariance matrices")
+TAG (L"##Pool covariance matrices")
 DEFINITION (L"when on, all group covariance matrices are pooled and distances will be determined "
 	"on the basis of only this pooled covariance matrix (see below).")
 ENTRY (L"Details")
@@ -1634,7 +1634,7 @@ MAN_BEGIN (L"Discriminant & TableOfReal: To Configuration...", L"djmw", 20040407
 INTRO (L"A command to project each row in the selected @TableOfReal onto "
 	"a space spanned by the eigenvectors of the selected @Discriminant. ")
 ENTRY (L"Settings")
-TAG (L"%%Number of dimensions")
+TAG (L"##Number of dimensions")
 DEFINITION (L"specifies the number of eigenvectors taken into account, i.e., determines "
 	"the dimension of the resulting @Configuration. When the default value (0) is "
 	"given the resulting Configuration will have the maximum dimension as allowed by "
@@ -1649,9 +1649,9 @@ MAN_BEGIN (L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", L"djm
 INTRO (L"Calculate Mahalanobis distances for the selected @TableOfReal with respect to one group in the "
 	"selected @Discriminant object.")
 ENTRY (L"Settings")
-TAG (L"%%Group label%,")
+TAG (L"##Group label")
 DEFINITION (L"defines which group mean to use for the distance calculation.")
-TAG (L"%%Pool covariance matrices%,")
+TAG (L"##Pool covariance matrices")
 DEFINITION (L"when on use a pooled covariance matrix instead of the group covariance matrix.")
 ENTRY (L"Algorithm")
 NORMAL (L"See @@Covariance & TableOfReal: To TableOfReal (mahalanobis)...@.")
@@ -1696,14 +1696,14 @@ MAN_END
 MAN_BEGIN (L"DTW: Find path (band)...", L"djmw", 20050306)
 INTRO (L"Finds the optimal path for the selected @DTW satisfying constraints within a Sakoe-Chiba band.")
 ENTRY (L"Settings")
-TAG (L"%%Adjustment window duration")
+TAG (L"##Adjustment window duration (s)")
 DEFINITION (L"The maximum distance from the start of the sound that a path may start. This is the parameter "
 	"that determines the @@Sakoe & Chiba (1978)@ band.")
-TAG (L"%%Adjustment window includes end")
+TAG (L"##Adjustment window includes end")
 DEFINITION (L"determines whether the adjustment window includes the endpoint. When off and when the durations of "
 	"the two objects in the DTW differ by more than the adjustment window duration, the last part of the longest object "
 	"cannot be matched at all.")
-TAG (L"%%X weight, Y weight, Diagonal weight")
+TAG (L"##X weight#, ##Y weight#, ##Diagonal weight#")
 DEFINITION (L"determine the weights in the cumulative distance calculation.")
 NORMAL (L"To visualize the Sakoe-Chiba band, select a DTW and chose @@DTW: To Polygon (band)...|To Polygon (band)...@. "
 	"Next select ##Draw...# (don't forget to make the drawing domains equal to the domains of the two objects in the DTW).")
@@ -1712,11 +1712,11 @@ MAN_END
 
 MAN_BEGIN (L"DTW: Find path (slopes)...", L"djmw", 20050306)
 INTRO (L"Finds the optimal path for the selected @DTW satisfying slope constraints.")
-TAG (L"%%Non-diagonal steps, Diagonal steps")
-DEFINITION (L"implement a slope constraint. Every %%nonDiagonalSteps% steps in a X or Y direction must be followed by "
-	"at least %%diagonalSteps% steps in the diagonal direction. By chosing %nonDiagonalSteps = 0 you explicitly forbid "
-	"non-diagonal steps, while %diagonalSteps = 0 does not impose any slope constraints at all.")
-TAG (L"%%X weight, Y weight, Diagonal weight")
+TAG (L"##Number of non-diagonal steps#, ##Number of diagonal steps#")
+DEFINITION (L"implement a slope constraint. Every ##Number of non-diagonal steps# steps in a X or Y direction must be followed by "
+	"at least ##Number of diagonal steps# steps in the diagonal direction. By setting ##Number of non-diagonal steps# to 0 you explicitly forbid "
+	"non-diagonal steps, while setting ##Number of diagonal steps# to 0 does not impose any slope constraints at all.")
+TAG (L"##X weight#, ##Y weight#, ##Diagonal weight#")
 DEFINITION (L"determine the weights in the cumulative distance calculation.")
 ENTRY (L"Examples")
 NORMAL (L"For the constraint 1/2 <= slope <= 2, set %nonDiagonalSteps = 2 and %diagonalSteps = 1.")
@@ -1741,8 +1741,8 @@ MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20090523)
 INTRO (L"Queries the selected @DTW object for the time along the minimal path "
 	"given the time along the \"%x-direction\". This command is deprecated, the new commands for querying are "
 	"@@DTW: Get y time...@ and @@DTW: Get x time...@.")
-ENTRY (L"Settings")
-TAG (L"%Time")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time along the %x-direction.")
 ENTRY (L"Behaviour")
 NORMAL (L"When the %input time is in the interval [%xmin, %xmax], the %returned "
@@ -1763,8 +1763,8 @@ MAN_END
 MAN_BEGIN (L"DTW: Get y time...", L"djmw", 20070305)
 INTRO (L"Queries the selected @DTW object for the time along the %y-direction "
 	"given the time along the \"%x-direction\". ")
-ENTRY (L"Settings")
-TAG (L"%Time")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time along the %x-direction.")
 ENTRY (L"Behaviour")
 NORMAL (L"When the %input time is in the interval [%xmin, %xmax], the %returned "
@@ -1790,8 +1790,8 @@ MAN_END
 MAN_BEGIN (L"DTW: Get x time...", L"djmw", 20070305)
 INTRO (L"Queries the selected @DTW object for the time along the %x-direction "
 	"given the time along the \"%y-direction\". ")
-ENTRY (L"Settings")
-TAG (L"%Time")
+ENTRY (L"Setting")
+TAG (L"##Time (s)")
 DEFINITION (L"the time along the %y-direction.")
 ENTRY (L"Behaviour")
 NORMAL (L"The behaviour is like @@DTW: Get y time...@")
@@ -1848,11 +1848,11 @@ MAN_END
 MAN_BEGIN (L"Eigen: Draw eigenvalues...", L"djmw", 20040407)
 INTRO (L"A command to draw the eigenvalues of the selected @Eigen object(s).")
 ENTRY (L"Settings")
-TAG (L"%%Fraction of eigenvalues summed%")
+TAG (L"##Fraction of eigenvalues summed")
 DEFINITION (L"defines whether or not fractions are plotted. Fractions %f__%i_ "
 	"will be calculated for each number %e__%i_ by dividing this number by the sum of all "
 	"numbers %e__%j_: %f__%i_ = %e__%i_ / \\su__%j=1..%numberOfEigenvalues_ %e__%j_.")
-TAG (L"%%Cumulative%")
+TAG (L"##Cumulative")
 DEFINITION (L"defines whether or not cumulative values are plotted. Cumulative "
 	"values %c__%i_ will be calculated for each number %e__%i_ by summing the first %i "
 	"numbers %e__%j_: %c__%i_ = \\su__%j=1..%i_ %e__%j_).")
@@ -1863,7 +1863,7 @@ MAN_END
 MAN_BEGIN (L"Eigen: Draw eigenvector...", L"djmw", 20040407)
 INTRO (L"A command to draw an eigenvector from the selected @Eigen.")
 ENTRY (L"Settings")
-TAG (L"%Eigenvector %number")
+TAG (L"##Eigenvector number")
 DEFINITION (L"determines the eigenvector to be drawn.")
 TAG (L"%Component %loadings")
 DEFINITION (L"when on, the eigenvector is multiplied with the square root of the corresponding "
@@ -1872,14 +1872,14 @@ DEFINITION (L"when on, the eigenvector is multiplied with the square root of the
 	"quantitatively the elements in different component loading vectors because "
 	"the %i-th element in the %j-th component loading vector gives the covariance between the %i-th "
 	"original variable and the %j-th principal component.)")
-TAG (L"%%Element range%")
+TAG (L"##Element rang%")
 DEFINITION (L"determine the first and last element of the vector that must be drawn.")
-TAG (L"%Minimum, %Maximum")
-DEFINITION (L"determine the lower and upper bounds of the plot (choosing  Maximum < Minimum "
+TAG (L"##Minimum# and ##Maximum#")
+DEFINITION (L"determine the lower and upper bounds of the plot (choosing #Maximum smaller than #Minimum "
 	"will draw the %%inverted% eigenvector). ")
-TAG (L"%Mark %size, %Mark %string")
+TAG (L"##Mark size#, ##Mark string#")
 DEFINITION (L"determine size and type of the marks that will be drawn.")
-TAG (L"%Garnish")
+TAG (L"##Garnish")
 DEFINITION (L"determines whether a bounding box and margins will be drawn.")
 MAN_END
 
@@ -1912,8 +1912,8 @@ MAN_END
 MAN_BEGIN (L"Eigen & Matrix: Project...", L"djmw", 20040407)
 INTRO (L"A command to project the columns of the @Matrix object onto the "
 	"eigenspace of the @Eigen object.")
-ENTRY (L"Settings")
-TAG (L"%%Number of dimensions%,")
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
 DEFINITION (L"defines the dimension, i.e., the number of rows, of the "
 	"resulting object.")
 ENTRY (L"Algorithm")
@@ -1944,9 +1944,9 @@ MAN_END
 MAN_BEGIN (L"Eigen & TableOfReal: Project...", L"djmw", 20040407)
 INTRO (L"A command to project the rows of the @TableOfReal object onto the "
 	"eigenspace of the @Eigen object.")
-ENTRY (L"Settings")
-TAG (L"%%Number of dimensions%,")
-DEFINITION (L"defines the dimension, i.e., the number of columns, of the "
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
+DEFINITION (L"defines the number of dimensions, i.e., the number of columns, of the "
 	"resulting object.")
 ENTRY (L"Algorithm")
 NORMAL (L"Project each row of the TableOfReal on the coordinate "
@@ -1981,15 +1981,14 @@ MAN_END
 
 MAN_BEGIN (L"Excitations: To Pattern...", L"djmw", 19960918)
 INTRO (L"A command to convert every selected @Excitations to a @Pattern object.")
-ENTRY (L"Settings")
-TAG (L"%Join")
+ENTRY (L"Setting")
+TAG (L"##Join")
 DEFINITION (L"the number of subsequent @Excitation objects to combine into one row of @Pattern. "
 	"E.g. if an #Excitation has length 26 and %join = 2 then each row of #Pattern "
 	"contains 52 elements. The number of rows in #Pattern will be %%my size% / 2. "
 	"In the conversion process the elements of an #Excitation will be divided by 100.0 in order "
 	"to guarantee that all patterns have values between 0 and 1.")
 MAN_END
-
 
 MAN_BEGIN (L"FilterBank: Draw filter functions...", L"djmw", 20030901)
 INTRO (L"")
@@ -2134,15 +2133,15 @@ MAN_END
 MAN_BEGIN (L"Matrix: Draw distribution...", L"djmw", 20041110)
 INTRO (L"A command to draw the distribution histogram of the values in the selected part of a @Matrix.")
 ENTRY (L"Settings")
-TAG (L"%%Horizontal range%, %%Vertical range%")
+TAG (L"##Horizontal range#, ##Vertical range#")
 DEFINITION (L"determine the part of the matrix whose distribution will be drawn.")
-TAG (L"%%Minimum value%, %%Maximum value%")
+TAG (L"##Minimum value#, ##Maximum value#")
 DEFINITION (L"determine the range of values that will be considered in the distribution. "
 	"To treat all bin widths equally, the range will include the %%Minimum value% and exclude the "
 	"%%Maximum value% (see below).")
-TAG (L"%%Number of bins%")
+TAG (L"##Number of bins")
 DEFINITION (L"determines the number of bars in the distribution histogram.")
-TAG (L"%%Minimum frequency%, %%Maximum frequency%")
+TAG (L"##Minimum frequency#, ##Maximum frequency#")
 DEFINITION (L"determine the limits of the vertical axis.")
 ENTRY (L"Algorithm")
 NORMAL (L"For a particular matrix element %z, the histogram bin number %%i% that will be incremented obeys the following relation:")
@@ -2246,8 +2245,8 @@ MAN_END
 MAN_BEGIN (L"PCA: Get fraction variance accounted for...", L"djmw", 19990106)
 INTRO (L"A command to query the selected @PCA for the fraction %%variance "
 	"accounted for% by the selected components.")
-ENTRY (L"Settings")
-TAG (L"%%Principal component range%")
+ENTRY (L"Setting")
+TAG (L"##Principal component range")
 DEFINITION (L"defines the range of the principal components. If you choose both numbers equal, "
 	"you get the fraction of the \"variance\" explained by that one component.")
 ENTRY (L"Details")
@@ -2275,9 +2274,9 @@ NORMAL (L"We test the hypothesis %H__0_: %\\la__%from_ = ... = %\\la__%to_ "
 	"values and multiplicities. The alternative hypothesis to %H__0_ is that "
 	"some of the eigenvalues in the set are distinct.")
 ENTRY (L"Settings")
-TAG (L"%%Eigenvalue range%")
+TAG (L"##Eigenvalue range")
 DEFINITION (L"define the range of eigenvalues to be tested for equality.")
-TAG (L"%%Conservative test")
+TAG (L"##Conservative test")
 DEFINITION (L"when on, a more conservative estimate for %n is chosen (see below).")
 ENTRY (L"Details")
 NORMAL (L"The test statistic is:")
@@ -2293,8 +2292,8 @@ MAN_BEGIN (L"PCA: Get number of components (VAF)...", L"djmw", 19990111)
 INTRO (L"A command to ask the selected @PCA for the minimum number of "
 	"components that are necessary "
 	"to explain the given fraction %%variance accounted for%.")
-ENTRY (L"Settings")
-TAG (L"%%Variance accounted for% (fraction)")
+ENTRY (L"Setting")
+TAG (L"##Variance accounted for (fraction)")
 DEFINITION (L"the fraction variance accounted for that must be explained.")
 MAN_END
 
@@ -2302,7 +2301,7 @@ MAN_BEGIN (L"PCA: To TableOfReal (reconstruct 1)...", L"djmw", 20030108)
 INTRO (L"A command to reconstruct a single data item. The result is stored as "
 	"a @TableOfReal with only one row.")
 ENTRY (L"Settings")
-TAG (L"%Coefficients")
+TAG (L"##Coefficients")
 DEFINITION (L"the weight for the eigenvectors.")
 NORMAL (L"The algorithm is explained in @@PCA & Configuration: To TableOfReal "
 	"(reconstruct)@.")
@@ -2345,9 +2344,9 @@ MAN_END
 MAN_BEGIN (L"PCA & TableOfReal: To Configuration...", L"djmw", 19990111)
 INTRO (L"A command to construct a @Configuration from the selected @TableOfReal"
 	" and @PCA.")
-ENTRY (L"Settings")
-TAG (L"%%Number of dimensions")
-DEFINITION (L"determines the dimension of the resulting Configuration.")
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
+DEFINITION (L"determines the number of dimensions of the resulting Configuration.")
 ENTRY (L"Algorithm")
 NORMAL (L"The TableOfReal is projected on the eigenspace of the PCA, i.e., "
 	"each row of the TableOfReal is treated as a vector, and the inner product "
@@ -2420,7 +2419,7 @@ MAN_END
 MAN_BEGIN (L"Polynomial: Get area...", L"djmw", 19990610)
 INTRO (L"A command to compute the area below the selected @Polynomial object.")
 ENTRY (L"Settings")
-TAG (L"%Xmin, %Xmax")
+TAG (L"##Xmin#, ##Xmax#")
 DEFINITION (L"define the interval.")
 NORMAL (L"The area is defined as __%xmin_\\in^^xmax^ %p(%x) %dx.")
 MAN_END
@@ -2465,8 +2464,8 @@ MAN_END
 
 MAN_BEGIN (L"Polynomial: Scale x...", L"djmw", 19990610)
 INTRO (L"A command to transform the selected @Polynomial object to a new domain.")
-TAG (L"%Xmin, %Xmax")
-DEFINITION (L"define the new domain")
+TAG (L"##Xmin# and ##Xmax#")
+DEFINITION (L"define the new domain.")
 ENTRY (L"Behaviour")
 NORMAL (L"The polynomial is transformed from domain [%x__min_, %x__max_] to "
 	"domain [%Xmin, %Xmax] in such a way that its form stays the same. "
@@ -2488,10 +2487,10 @@ MAN_END
 MAN_BEGIN (L"Polynomial: To Spectrum...", L"djmw", 19990616)
 INTRO (L"A command to compute the @@Spectrum|spectrum@ of the selected @Polynomial objects.")
 ENTRY (L"Settings")
-TAG (L"%%Nyquist frequency% (Hz)")
+TAG (L"##Nyquist frequency (Hz)")
 DEFINITION (L"defines the highest frequency in the spectrum. The lowest frequency of the spectrum "
 	"will be 0 Hz.")
-TAG (L"%%Number of frequencies")
+TAG (L"##Number of frequencies")
 DEFINITION (L"defines the number of frequencies in the spectrum.")
 ENTRY (L"Algorithm")
 NORMAL (L"We calculate the spectrum by evaluating the polynomial at regularly spaced points %z__%k_ "
@@ -2824,9 +2823,8 @@ TAG (L"#\\bsW  %not a \"word\" character: [\\^ a-zA-Z0-9\\_ ].")
 TAG (L"#\\bsB  any character that is %not a word-delimiter.")
 MAN_END
 
-MAN_BEGIN (L"Regular expressions 7. Octal and hexadecimal escapes", L"djmw",
-	20010709)
-NORMAL (L"An octal number can be represented by the octal escape \"\\bs0\" "
+MAN_BEGIN (L"Regular expressions 7. Octal and hexadecimal escapes", L"djmw", 20010709)
+INTRO (L"An octal number can be represented by the octal escape \"\\bs0\" "
 	"and maximally three digits from the digit class [0-7]. "
 	"The octal number should not exceed \\bs0377. ")
 NORMAL (L"A hexadecimal number can be represented by the octal escape "
@@ -2835,8 +2833,7 @@ NORMAL (L"A hexadecimal number can be represented by the octal escape "
 LIST_ITEM1 (L"Example: \\bs053 and \\bsX2B both specify the \"+\" character.")
 MAN_END
 
-MAN_BEGIN (L"Regular expressions 8. Substitution special characters", L"djmw",
-	20010708)
+MAN_BEGIN (L"Regular expressions 8. Substitution special characters", L"djmw", 20010708)
 INTRO (L"The substitution string is mostly interpreted as ordinary text except "
 	"for the @@Regular expressions 5. Special control characters|"
 	"special control characters@, the @@Regular expressions 7. Octal and "
@@ -2934,30 +2931,30 @@ NORMAL (L"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (L"Settings")
 NORMAL (L"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL (L"The arguments that control the pitch measurement are:")
-TAG (L"%%Minimum pitch% (default 75 Hz)")
+TAG (L"##Minimum pitch (Hz)# (standard value: 75 Hz)")
 DEFINITION (L"pitch candidates below this frequency will not be considered.")
-TAG (L"%%Maximum pitch% (default 600 Hz)")
+TAG (L"##%Maximum pitch (Hz)# (standard value: 600 Hz)")
 DEFINITION (L"pitch candidates above this frequency will be ignored.")
 NORMAL (L"The arguments that control the manipulation are:")
-TAG (L"%%Formant shift ratio%")
+TAG (L"##Formant shift ratio")
 DEFINITION (L"determines the frequencies of the formants in the newly created "
 	"Sound. If this ratio equals 1 no frequency shift will occur and "
 	"the formant frequencies will not change. A ratio of 1.1 will change "
 	"a male voice to a voice with approximate female formant characteristics. "
 	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
 	"characteristics.")
-TAG (L"%%New pitch median% (default 0.0 Hz: same as original)")
+TAG (L"##New pitch median (Hz)# (standard value: 0.0 Hz, i.e. same as original)")
 DEFINITION (L"determines what the median pitch of the new Sound will be. "
 	"The pitch values in the newly created Sound will be calculated from the pitch "
 	"values in the selected Sound by multiplying them by a factor "
 	"%%newPitchMedian / oldPitchMedian%. This factor equals 1.0 if the default "
 	"value for the new pitch median (0.0) is chosen. ")
-TAG (L"%%Pitch range factor% (default 1.0)")
+TAG (L"##Pitch range factor# (standard value: 1.0)")
 DEFINITION (L"determines an %extra% scaling of the new pitch values around the %new% "
 	"pitch median. A factor of 1.0 means that no additional pitch modification will occur "
 	"(except the obvious one described above). A factor of 0.0 monotonizes the new "
 	"sound to the new pitch median.")
-TAG (L"%%Duration factor% (default 1.0)")
+TAG (L"##Duration factor# (standard value: 1.0)")
 DEFINITION (L"The factor with which the sound will be lengthened. The default is 1.0. "
 	"If you take a value less than 1.0, the resulting sound will be shorter than "
 	"the original. A value larger than 3.0 will not work.")
@@ -2978,33 +2975,32 @@ NORMAL (L"Hence, it follows that no further scaling occurs if %pitchRangeScaleFa
 	"equals 1.0.")
 MAN_END
 
-
 MAN_BEGIN (L"Sound: Change speaker...", L"djmw", 20080515)
 INTRO (L"A command to create a new @Sound with manipulated characteristics.")
 ENTRY (L"Settings")
 NORMAL (L"The quality of the @@overlap-add|manipulation@ depends on the pitch measurement.")
 NORMAL (L"The arguments that control the pitch measurement are:")
-TAG (L"%%Pitch floor% (default 75 Hz)")
+TAG (L"##Pitch floor (Hz)# (standard value: 75 Hz)")
 DEFINITION (L"pitch candidates below this frequency will not be considered.")
-TAG (L"%%Pitch ceiling% (default 600 Hz)")
+TAG (L"##Pitch ceiling (Hz)# (standard value: 600 Hz)")
 DEFINITION (L"pitch candidates above this frequency will be ignored.")
 NORMAL (L"The arguments that control the manipulation are:")
-TAG (L"%%Multiply formants by%")
+TAG (L"##Multiply formants by")
 DEFINITION (L"determines the formant frequencies of the newly created sound. "
 	"The formant frequency of the new sound will equal the formant frequencies of the selected sound multiplied by this number. "
 	"If this number equals 1, formant frequencies will not change. A number of 1.1 will change "
 	"a male voice to a voice with approximate female formant characteristics. "
 	"A ratio of 1/1.1 will change a female voice to a voice with approximate male formant "
 	"characteristics.")
-TAG (L"%%Multiply pitch by%")
+TAG (L"##Multiply pitch by")
 DEFINITION (L"determines what the pitch of the new Sound will be. "
 	"The pitch values of the new sound will equal the pitch values of the selected sound multiplied by this number. A value of 1.8 will  approximately change a male's pitch to a female's pitch.")
-TAG (L"%%Multiply pitch range by% (default 1.0)")
+TAG (L"##Multiply pitch range by# (standard value: 1.0)")
 DEFINITION (L"determines the pitch range of the newly created sound. "
 	"A factor of 1.0 means that no additional pitch modification will occur "
 	"(except the obvious one described above). A factor of 0.0 monotonizes the new "
 	"sound to the new pitch median. A negative number inverses the pitch range with respect to the median.")
-TAG (L"%%Multiply duration by% (default 1.0)")
+TAG (L"##Multiply duration by# (standard value: 1.0)")
 DEFINITION (L"determines how to modify the duration of the newly created sound. "
 	"A value of 1.0 means that the new sound will have the same duration as the selected sound. "
 	"A value less than 1.0 will result in a shortened new sound. A value larger than 2.5 will not work.")
@@ -3024,11 +3020,11 @@ MAN_END
 MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20100428)
 INTRO (L"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (L"Settings")
-TAG (L"%%Time range%,")
+TAG (L"##Time range (s)")
 DEFINITION (L"selects the time domain for the drawing.")
-TAG (L"%%Vertical range%,")
-DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
-TAG (L"%%Formula%,")
+TAG (L"##Vertical range")
+DEFINITION (L"defines the vertical limits; larger amplitudes will be clipped.")
+TAG (L"##Formula")
 DEFINITION (L"determines the part of the sound that will be drawn. All parts where the formula evaluates to true will be drawn. "
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (L"Example 1")
@@ -3067,13 +3063,13 @@ MAN_END
 MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20080314)
 INTRO (L"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (L"Settings")
-TAG (L"%%Channel%")
+TAG (L"##Channel")
 DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
-TAG (L"%%Time (s)%")
+TAG (L"##Time (s)")
 DEFINITION (L"determines where the fade-in will take place. If %time is earlier than the start time of the sound, the start time of the sound wil be used.")
-TAG (L"%%Fade time (s)%")
+TAG (L"##Fade time (s)")
 DEFINITION (L"determines the start point and the endpoint of the fade-in with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-in. If %%fadeTime% is positive, fade-in will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-in wil take place between %%time+fadeTime% and %time.")
-TAG (L"%%Silent from start%")
+TAG (L"##Silent from start")
 DEFINITION (L"when on, makes the sound silent before the fade-in starts. "
 	"When off, the sound before the fade-in starts will not be changed. ")
 ENTRY (L"Algorithm")
@@ -3092,13 +3088,13 @@ MAN_END
 MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20080314)
 INTRO (L"A command to gradually decrease the amplitude of a selected @Sound.")
 ENTRY (L"Settings")
-TAG (L"%%Channel%")
+TAG (L"##Channel")
 DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
-TAG (L"%%Time (s)%")
+TAG (L"##Time (s)")
 DEFINITION (L"determines where the fade-out will take place. If %time is later than the end time of the sound, the end time of the sound wil be used.")
-TAG (L"%%Fade time (s)%")
+TAG (L"##Fade time (s)")
 DEFINITION (L"determines the start point and the endpoint of the fade-out with respect to the %time argument. Depending on the sign of %%fadeTime%, %time is either the start or the end position of the fade-out. If %%fadeTime% is positive, fade-out will take place between %%time% and %%time+fadeTime%. If %%fadeTime% is negative, fade-out wil take place between %%time+fadeTime% and %time.")
-TAG (L"%%Silent to end")
+TAG (L"##Silent to end")
 DEFINITION (L"Make the sound silent after the fade-out finishes. ")
 ENTRY (L"Algorithm")
 NORMAL (L"Multiplication with the first half period of a (1+cos(%%x%))/2 function.")
@@ -3107,7 +3103,7 @@ MAN_END
 MAN_BEGIN (L"Sound: Filter (gammatone)...", L"djmw", 19980712)
 INTRO (L"A command to filter a Sound by a fourth order gammatone bandpass filter.")
 ENTRY (L"Settings")
-TAG (L"%%Centre frequency%, %Bandwidth")
+TAG (L"##Centre frequency (Hz)#, ##Bandwidth (Hz)#")
 DEFINITION (L"determine the passband of the filter.")
 ENTRY (L"Algorithm")
 NORMAL (L"The impulse response of the filter is a 4-th order @@gammatone@. This "
@@ -3147,15 +3143,15 @@ MAN_END
 MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20100428)
 INTRO (L"A command to paint only those parts of a @Sound where a condition holds. The painted area is the area "
 	"between the Sound and a horizontal line at a certain level.")
-TAG (L"%%Colour%,")
+TAG (L"##Colour")
 DEFINITION (L"defines the @@Colour|colour@ of the paint.")
-TAG (L"%%Time range%,")
+TAG (L"##Time range (s)")
 DEFINITION (L"selects the time domain for the drawing.")
-TAG (L"%%Vertical range%,")
-DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
-TAG (L"%%Fill from level%,")
+TAG (L"##Vertical range")
+DEFINITION (L"defines the vertical limits; larger amplitudes will be clipped.")
+TAG (L"##Fill from level")
 DEFINITION (L"defines the level of the horizontal line. ")
-TAG (L"%%Formula%,")
+TAG (L"##Formula")
 DEFINITION (L"determines the part of the sound that will be painted. All parts where the formula evaluates to true will be painted. "
 "This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (L"Example 1")
@@ -3204,11 +3200,11 @@ MAN_END
 
 MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20100506)
 INTRO (L"Paints the area between the two selected @@Sound@s. ")
-TAG (L"%%Colour%,")
+TAG (L"##Colour")
 DEFINITION (L"defines the @@Colour|colour@ of the paint.")
-TAG (L"%%Time range%,")
+TAG (L"##Time range (s)")
 DEFINITION (L"selects the time domain for the drawing.")
-TAG (L"%%Vertical range%,")
+TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
 ENTRY (L"Example")
 NORMAL (L"The following script paints the area enclosed between a sine tone of 5 Hz and the straight line %y = %x/2.")
@@ -3228,13 +3224,13 @@ MAN_BEGIN (L"Sound: To Polygon...", L"djmw", 20100408)
 INTRO (L"A command that creates a @@Polygon@ from each selected @@Sound@, where the Polygon's "
 	"(%x,%y) points are defined by the (%time, %amplitude) pairs of the sound. ")
 ENTRY (L"Settings")
-TAG (L"%%Channel%,")
+TAG (L"##Channel")
 DEFINITION (L"defines which channel of the sound is used.")
-TAG (L"%%Time range%,")
-DEFINITION (L"defines the part of the sound whose (%time,%amplitude) pairs have to be included.")
-TAG (L"%%Vertical range%,")
+TAG (L"##Time range (s)")
+DEFINITION (L"defines the part of the sound whose (%time, %amplitude) pairs have to be included.")
+TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
-TAG (L"%%Connect at%,")
+TAG (L"##Connect at")
 DEFINITION (L"defines the amplitude where the start and the end point have to be connected. ")
 ENTRY (L"Details")
 NORMAL (L"The (%x,%y) points in the Polygon are calculated as follows: ")
@@ -3266,20 +3262,20 @@ SCRIPT (4.5, 2,
 MAN_END
 
 #define xxx_to_TextGrid_detectSilences_COMMON_PARAMETERS_HELP \
-TAG (L"%%Silence threshold (dB)%") \
+TAG (L"##Silence threshold (dB)") \
 DEFINITION (L"determines the maximum silence intensity value in dB with respect to the maximum " \
 	"intensity. For example, if %imax is the maximum intensity in dB then the maximum silence " \
 	"intensity is calculated as %%imax - silenceThreshold%; intervals with an intensity smaller " \
 	"than this value are considered as silent intervals.") \
-TAG (L"%%Minimum silent interval duration (s)%") \
+TAG (L"##Minimum silent interval duration (s)") \
 DEFINITION (L"determines the minimum duration for an interval to be considered as silent. " \
 	"If you don't want the closure for a plosive to count as silent then use a large enough value.") \
-TAG (L"%%Minimum sounding interval duration (s)%") \
+TAG (L"##Minimum sounding interval duration (s)") \
 DEFINITION (L"determines the minimum duration for an interval to be ##not# considered as silent. " \
 	"This offers the possibility to filter out small intense bursts of relatively short duration.") \
-TAG (L"%%Silent interval label%") \
+TAG (L"##Silent interval label") \
 DEFINITION (L"determines the label for a silent interval in the TextGrid.") \
-TAG (L"%%Sounding interval label%") \
+TAG (L"##Sounding interval label") \
 DEFINITION (L"determines the label for a sounding interval in the TextGrid.")
 
 MAN_BEGIN (L"Sound: To TextGrid (silences)...", L"djmw", 20061205)
@@ -3363,22 +3359,22 @@ NORMAL (L"The spectral compression consists of the summation of a sequence of "
 	"estimate of the pitch. Details of the algorithm can be "
 	"found in @@Hermes (1988)@")
 ENTRY (L"Settings")
-TAG (L"%%Time step% (default 0.01 s)")
+TAG (L"##Time step (s)# (standard value: 0.01 s)")
 DEFINITION (L"the measurement interval (frame duration), in seconds.")
-TAG (L"%%Minimum pitch% (default 50 Hz)")
+TAG (L"##Minimum pitch (Hz)# (standard value: 50 Hz)")
 DEFINITION (L"candidates below this frequency will not be recruited. This parameter "
 	"determines the length of the analysis window.")
-TAG (L"%%Max. number of candidates% (default 15)")
+TAG (L"##Max. number of candidates# (standard value: 15)")
 DEFINITION (L"The maximum number of candidates that will be recruited.")
-TAG (L"%%Maximum frequency% (default 1250 Hz)")
+TAG (L"##Maximum frequency (Hz)# (standard value: 1250 Hz)")
 DEFINITION (L"higher frequencies will not be considered.")
-TAG (L"%%Max. number of subharmonics% (default 15)")
+TAG (L"##Max. number of subharmonics# (standard value: 15)")
 DEFINITION (L"the maximum number of harmonics that add up to the pitch.")
-TAG (L"%%Compression factor% (default 0.84)")
+TAG (L"##Compression factor# (standard value: 0.84)")
 DEFINITION (L"the factor by which successive compressed spectra are multiplied before the summation.")
-TAG (L"%%Number of points per octave% (default 48)")
+TAG (L"##Number of points per octave# (standard value: 48)")
 DEFINITION (L"determines the sampling of the logarithmic frequency scale.")
-TAG (L"%Ceiling (default 500 Hz)")
+TAG (L"##Ceiling (Hz)# (standard value: 500 Hz)")
 DEFINITION (L"candidates above this frequency will be ignored.")
 MAN_END
 
@@ -3408,8 +3404,8 @@ MAN_END
 MAN_BEGIN (L"SSCP: Draw sigma ellipse...", L"djmw", 19990222)
 INTRO (L"A command to draw for the selected @SSCP an ellipse that "
 	"covers a part of the multivariate data.")
-ENTRY (L"Settings")
-TAG (L"%%Number of sigmas")
+ENTRY (L"Setting")
+TAG (L"##Number of sigmas")
 DEFINITION (L"determines the @@concentration ellipse|data coverage@.")
 MAN_END
 
@@ -3449,8 +3445,8 @@ MAN_END
 MAN_BEGIN (L"SSCP: Get diagonality (bartlett)...", L"djmw", 20011111)
 INTRO (L"Tests the hypothesis that the selected @SSCP matrix object is "
 	"diagonal.")
-ENTRY (L"Settings")
-TAG (L"%%Number of constraints")
+ENTRY (L"Setting")
+TAG (L"##Number of constraints")
 DEFINITION (L"modifies the number of independent observations. "
 	"The default value is 1.")
 ENTRY (L"Algorithm")
@@ -3479,8 +3475,8 @@ MAN_END
 MAN_BEGIN (L"SSCP: To CCA...", L"djmw", 20031103)
 INTRO (L"A command that creates a @@CCA|canonical correlation@ object from the "
 	"selected @SSCP object.")
-ENTRY (L"Settings")
-TAG (L"%%Dimension of dependent variate (ny)%")
+ENTRY (L"Setting")
+TAG (L"##Dimension of dependent variate (ny)")
 DEFINITION (L"defines a partition of the square %n x %n SSCP matrix S into the parts S__yy_ of "
 	"dimension %ny x %ny, S__xx_ of dimension %nx x %nx, and the parts "
 	"S__xy_ and S__yx_ of dimensions %nx x %ny and %ny x %nx, respectively.")
@@ -3526,8 +3522,8 @@ MAN_END
 
 MAN_BEGIN (L"SSCP: To Covariance...", L"djmw", 20090624)
 INTRO (L"A command that creates a @Covariance object from each selected @SSCP object.")
-ENTRY (L"Settings")
-TAG (L"%%Number of constraints")
+ENTRY (L"Setting")
+TAG (L"##Number of constraints")
 DEFINITION (L"determines the factor by which each entry in the "
 	"SSCP-matrix is scaled to obtain the Covariance matrix.")
 ENTRY (L"Details")
@@ -3578,15 +3574,15 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: Report multivariate normality (BHEP)...", L"djmw", 20090701)
 INTRO (L"Report about multivariate normality according to the @@BHEP multivariate normality test@.")
 ENTRY (L"Settings")
-TAG (L"%%Smooting parameter%,")
-DEFINITION (L"determines the smoothing parameter %h. ")
+TAG (L"##Smoothing parameter")
+DEFINITION (L"determines the smoothing parameter %h.")
 MAN_END
 
 MAN_BEGIN (L"TableOfReal: Change row labels...", L"djmw", 20010822)
 INTRO (L"Changes the row labels of the selected @TableOfReal object according "
 	"to the specification in the search and replace fields.")
 NORMAL (L"Both search and replace fields may contain @@regular expressions|"
-	"Regular expressions@. The %%Replace limit% parameter limits the number of "
+	"Regular expressions@. The ##Replace limit# parameter limits the number of "
 	"replaces that may occur within each label.")
 MAN_END
 
@@ -3602,9 +3598,9 @@ MAN_BEGIN (L"TableOfReal: Draw biplot...", L"djmw", 20020603)
 INTRO (L"A command to draw a biplot for each column in the selected "
 	"@TableOfReal object.")
 ENTRY (L"Settings")
-TAG (L"%%Xmin%, %%Xmax%, %%Ymin%, %%Ymax%")
+TAG (L"##Xmin#, ##Xmax#, ##Ymin#, ##Ymax#")
 DEFINITION (L"determine the drawing boundaries.")
-TAG (L"%Split factor")
+TAG (L"##Split factor")
 DEFINITION (L"determines the weighing of the row and column structure "
 	"(see below).")
 ENTRY (L"Behaviour")
@@ -3630,7 +3626,7 @@ MAN_BEGIN (L"TableOfReal: Draw box plots...", L"djmw", 20000523)
 INTRO (L"A command to draw a @@box plot@ for each column in the selected "
 	"@TableOfReal object.")
 ENTRY (L"Settings")
-TAG (L"%%From row%, %%To row%, %%From column%, %%To column%")
+TAG (L"##From row#, ##To row#, ##From column#, ##To column#")
 DEFINITION (L"determine the part of the table that you want to analyse.")
 TAG (L"%Ymin and %Ymax")
 DEFINITION (L"determine the drawing boundaries.")
@@ -3644,23 +3640,23 @@ NORMAL (L"The histogram will consist of %groups of bars. The number of groups wi
 	"number of bars within each group will be determined from the number of "
 	"selected rows.")
 ENTRY (L"Settings")
-TAG (L"%%Row numbers% and %%Column range%,")
+TAG (L"##Row numbers# and ##Column range#")
 DEFINITION (L"determine the part of the table that you want to draw. "
 	"The column range determines the number of bars that you want to draw for "
 	"each row selected by the %%Row numbers% argument.")
-TAG (L"%Ymin and %Ymax")
+TAG (L"##Ymin# and ##Ymax#")
 DEFINITION (L"the drawing boundaries.")
 NORMAL (L"The following arguments are all relative to the width of a bar "
 	"in the histogram. ")
-TAG (L"%%Horizontal offset%")
+TAG (L"##Horizontal offset")
 DEFINITION (L"the offset from the left and right margin.")
-TAG (L"%%Distance between bar groups%")
+TAG (L"##Distance between bar groups")
 DEFINITION (L"the distance between each group, i.e., the distance "
 	"between the right side of the last bar in a group to the left side of "
 	"the first bar in the next group.")
-TAG (L"%%Distance between bars%")
+TAG (L"##Distance between bars")
 DEFINITION (L"the distance between the bars in a group.")
-TAG (L"%%Grey values%")
+TAG (L"##Grey values")
 DEFINITION (L"the grey values of the bars in a group.")
 ENTRY (L"Bar positioning")
 NORMAL (L"If you want to put the labels yourself you will need the following information.")
@@ -3681,11 +3677,11 @@ MAN_BEGIN (L"TableOfReal: Select columns where row...", L"djmw", 20020502)
 INTRO (L"Copy columns from the selected @TableOfReal object to a new "
 	"TableOfReal object.")
 ENTRY (L"Settings")
-TAG (L"%Columns")
+TAG (L"##Columns")
 DEFINITION (L"defines the indices of the columns to be selected. Ranges can be "
 	"defined with a colon \":\". Columns will be selected in the specified "
 	"order.")
-TAG (L"%%Row condition")
+TAG (L"##Row condition")
 DEFINITION (L"specifies a condition for the selection of rows. If the "
 	"condition evaluates as %true for a particular row, the selected elements "
 	"in this row will be copied. See @@Matrix: Formula...@ for the kind of "
@@ -3716,8 +3712,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: To Configuration (lda)...", L"djmw", 19981103)
 INTRO (L"Calculates a @Configuration based on the @Discriminant scores obtained "
 	"from the selected @TableOfReal. Row labels in the table indicate group membership.")
-ENTRY (L"Parameters")
-TAG (L"%%Number of dimensions")
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
 DEFINITION (L"determines the number of dimensions of the resulting Configuration.")
 ENTRY (L"Algorithm")
 NORMAL (L"First we calculate the Discriminant from the data in the TableOfReal. "
@@ -3729,8 +3725,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: To Configuration (pca)...", L"djmw", 19980909)
 INTRO (L"Calculates a @Configuration based on the principal components from the "
 	"selected @TableOfReal.")
-ENTRY (L"Parameters")
-TAG (L"%%Number of dimensions")
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
 DEFINITION (L"determines the number of dimensions of the resulting Configuration.")
 ENTRY (L"Algorithm")
 NORMAL (L"We form principal components without explicitly calculating the covariance matrix "
@@ -3898,8 +3894,8 @@ MAN_END
 MAN_BEGIN (L"TableOfReal: To TableOfReal (means by row labels)...", L"djmw", 20050221)
 INTRO (L"A command that appears in the ##Multivariate statistics# menu if you select a @@TableOfReal@. "
 	"It calculates the multivariate means for the different row labels from the selected TableOfReal.")
-ENTRY (L"Settings")
-TAG (L"%%Expand")
+ENTRY (L"Setting")
+TAG (L"##Expand")
 DEFINITION (L"when %off, then for a table with %n rows and %m different labels (%m\\<_%n), the resulting table will have %m rows. "
 	"When %on, the dimensions of the resulting table will be the same as the originating, and corresponding means substituded "
 	"in each row.")
@@ -3917,9 +3913,9 @@ MAN_END
 MAN_BEGIN (L"TextGrid: Extend time...", L"djmw", 20020702)
 INTRO (L"Extends the domain of the selected @TextGrid object.")
 ENTRY (L"Settings")
-TAG (L"%%Extend domain by")
+TAG (L"##Extend domain by")
 DEFINITION (L"defines the amount of time by which the domain will be extended.")
-TAG (L"%At")
+TAG (L"##At")
 DEFINITION (L"defines whether starting times or finishing times will be "
 	"modified.")
 ENTRY (L"Behaviour")
@@ -3951,48 +3947,48 @@ NORMAL (L"With the mouse button down, you can move the mouse cursor around in th
 	"first two formants follow this trajectory. The small bars on the trajectory are time markers. Default they are at 50 milliseconds apart and they may give you an indication of the speed you traversed the trajectory.")
 ENTRY (L"The interface")
 NORMAL (L"In the lower part of the editor a number of buttons and fields are displayed.")
-TAG (L"##Play#,")
+TAG (L"##Play")
 DEFINITION (L"will play the trajectory.")
-TAG (L"##Reverse#,")
+TAG (L"##Reverse")
 DEFINITION (L"will reverse the trajectory and play it.")
-TAG (L"##Publish#,")
+TAG (L"##Publish")
 DEFINITION (L"will publish the sound in the list of objects.")
-TAG (L"##Duration (s)#")
+TAG (L"##Duration (s)")
 DEFINITION (L"allows to modify the duration of the current trajectory. ")
-TAG (L"##Extend (s)#,")
+TAG (L"##Extend (s)")
 DEFINITION (L"determines the duration of the straight line trajectory that connects the endpoint of the current trajectory with the startpoint of a new trajectory. You may extend the current trajectory by starting a new trajectory with the shift button pressed. After you finished the new trajectory, three trajectories will be appended: the current one, the straight line one and the new one.")
-TAG (L"##Start F0 (Hz)#,")
+TAG (L"##Start F0 (Hz)")
 DEFINITION (L"determines the fundamental frequency at the start of the trajectory.")
-TAG (L"##F0 slope (oct/s)#,")
+TAG (L"##F0 slope (oct/s)")
 DEFINITION (L"determines how many octaves the pitch will changes during the course of the trajectory.")
 NORMAL (L"The bottom line in the Editor displays the first and second formant frequency and the fundamental frequency at the start point and the endpoint of the trajectory.")
 ENTRY (L"Editing")
-TAG (L"##Show one vowel mark...#")
+TAG (L"##Show one vowel mark...")
 DEFINITION (L"Show extra marker in the editor.")
-TAG (L"##Show vowel marks...#")
+TAG (L"##Show vowel marks...")
 DEFINITION (L"Show or don't show reference vowel marker sets for American English or Dutch. ")
-TAG (L"##Set F0...#")
+TAG (L"##Set F0...")
 DEFINITION (L"Set pitch and slope.")
-TAG (L"##Set F3 & F4...#")
+TAG (L"##Set F3 & F4...")
 DEFINITION (L"Set the frequencies and bandwidths for the third and fourth formant.")
-TAG (L"##Reverse trajectory#")
-DEFINITION (L"Reverses the trajectory (like editor button).")
-TAG (L"##Modify trajectory  duration...#")
-DEFINITION (L"Modifies trajectory duration (like editor field).")
-TAG (L"##New trajectory...#")
+TAG (L"##Reverse trajectory")
+DEFINITION (L"Reverses the trajectory (like editor button).")   // ??
+TAG (L"##Modify trajectory duration...")
+DEFINITION (L"Modifies trajectory duration (like editor field).")   // ??
+TAG (L"##New trajectory...")
 DEFINITION (L"Set startpoint, endpoint and duration of a new trajectory.")
-TAG (L"##Extend trajectory...#")
+TAG (L"##Extend trajectory...")
 DEFINITION (L"Extend current trajectory to...")
-TAG (L"##Shift trajectory...#")
+TAG (L"##Shift trajectory...")
 DEFINITION (L"Shift current trajectory.")
-TAG (L"##Show trajectory time markers every...#")
+TAG (L"##Show trajectory time markers every...")
 DEFINITION (L"")
 ENTRY (L"Publishing")
-TAG (L"##Publish Sound#")
-TAG (L"##Extract FormantTier#")
-TAG (L"##Extract PitchTier#")
+TAG (L"##Publish Sound")
+TAG (L"##Extract FormantTier")
+TAG (L"##Extract PitchTier")
 DEFINITION (L"Publish the Sound, the PitchTier and the FormantTier from the trajectory.")
-TAG (L"##Draw trajectory...#")
+TAG (L"##Draw trajectory...")
 DEFINITION (L"Draws the trajectory in the picture window")
 MAN_END
 
@@ -4022,173 +4018,173 @@ MAN_END
 /********************* References **************************************/
 
 MAN_BEGIN (L"Bai & Demmel (1993)", L"djmw", 19981007)
-NORMAL (L"Z. Bai & J. Demmel (1993), \"Computing the generalized singular value "
-	"decomposition\", %%SIAM J. Sci. Comput.% #14, 1464-1486.")
+NORMAL (L"Z. Bai & J. Demmel (1993): \"Computing the generalized singular value "
+	"decomposition.\" %%SIAM J. Sci. Comput.% #14: 1464\\--1486.")
 MAN_END
 
 MAN_BEGIN (L"Bartlett (1954)", L"djmw", 20011111)
-NORMAL (L"M.S. Bartlett(1954), \"A note on multiplying factors for various "
-	"chi-squared approximations\", %%Joural of the Royal Statistical Society, "
-	"Series B%, vol. 16, 296-298")
+NORMAL (L"M.S. Bartlett (1954): \"A note on multiplying factors for various "
+	"chi-squared approximations.\", %%Joural of the Royal Statistical Society, "
+	"Series B% #16: 296\\--298")
 MAN_END
 
 MAN_BEGIN (L"Boomsma (1977)", L"djmw", 20020524)
-NORMAL (L"A. Boomsma (1977), \"Comparing approximations of confidence intervals "
-	"for the product-moment correlation coefficient\", %%Statistica Neerlandica% "
-	"#31, 179-186.")
+NORMAL (L"A. Boomsma (1977): \"Comparing approximations of confidence intervals "
+	"for the product-moment correlation coefficient.\" %%Statistica Neerlandica% "
+	"#31: 179-186.")
 MAN_END
 
 MAN_BEGIN (L"Cooley & Lohnes (1971)", L"djmw", 20060322)
-NORMAL (L"W.W. Colley & P.R. Lohnes (1971), %%Multivariate data analysis%, "
+NORMAL (L"W.W. Colley & P.R. Lohnes (1971): %%Multivariate data analysis%. "
 	"John Wiley & Sons.")
 MAN_END
 
 MAN_BEGIN (L"Davis & Mermelstein (1980)", L"djmw", 20010419)
 NORMAL (L"S.B. Davis & P. Mermelstein (1980), \"Comparison of parametric "
 	"representations for monosyllabic word recognition in continuously "
-	"spoken sentences\", "
-	"%%IEEE Trans. on ASSP% #28, 357-366.")
+	"spoken sentences.\" "
+	"%%IEEE Transactions on ASSP% #28: 357\\--366.")
 MAN_END
 
 MAN_BEGIN (L"Efron & Tibshirani (1993)", L"djmw", 20031103)
-NORMAL (L"B. Efron & R.J. Tibshirani (1993), %%An introduction "
-	"to the bootstrap%, Chapman & Hall.")
+NORMAL (L"B. Efron & R.J. Tibshirani (1993): %%An introduction "
+	"to the bootstrap%. Chapman & Hall.")
 MAN_END
 
 MAN_BEGIN (L"Flanagan (1960)", L"djmw", 19980713)
-NORMAL (L"J.L. Flanagan (1960), \"Models for approximating basilar membrane "
-	"displacement\", %%Bell Sys. Tech. J.% #39, 1163-1191.")
+NORMAL (L"J.L. Flanagan (1960): \"Models for approximating basilar membrane "
+	"displacement.\" %%Bell System Technical Journal% #39: 1163\\--1191.")
 MAN_END
 
 MAN_BEGIN (L"Friedl (1997)", L"djmw", 20010710)
-NORMAL (L"J.E.F. Friedl (1997), %%Mastering Regular Expressions%, "
+NORMAL (L"J.E.F. Friedl (1997): %%Mastering Regular Expressions%. "
 	"O'Reilly & Associates.")
 MAN_END
 
 MAN_BEGIN (L"Heath et al. (1986)", L"djmw", 19981007)
-NORMAL (L"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986), \"Computing the "
-	"singular value decomposition of a product of two matrices\", "
-	"%%SIAM J. Sci. Statist. Comput.% #7, 1147-1159.")
+NORMAL (L"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the "
+	"singular value decomposition of a product of two matrices.\" "
+	"%%SIAM J. Sci. Statist. Comput.% #7: 1147\\--1159.")
 MAN_END
 
 MAN_BEGIN (L"Hermes (1988)", L"djmw", 19980123)
-NORMAL (L"D.J. Hermes (1988), \"Measurement of pitch by subharmonic "
-	"summation\", %%J.Acoust.Soc.Am.% #83, 257-264.")
+NORMAL (L"D.J. Hermes (1988): \"Measurement of pitch by subharmonic "
+	"summation.\" %%Journal of the Acoustical Society of America% #83: 257\\--264.")
 MAN_END
 
 MAN_BEGIN (L"Henze & Wagner (1997)", L"djmw", 20090630)
-NORMAL (L"N. Henze & T. Wagner (1997), \"A New Approach to the BHEP Tests for Multivariate Normality\", "
-	" %%Journal of Multivariate Analysis% #62, 1-23.")
+NORMAL (L"N. Henze & T. Wagner (1997): \"A New Approach to the BHEP Tests for Multivariate Normality.\" "
+	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
 MAN_END
 
 MAN_BEGIN (L"Irino & Patterson (1997)", L"djmw", 20100517)
-NORMAL (L"T. Irino & R.D. Patterson (1997), \"A time-domain, level-dependent "
-	"auditory filter: The gammachirp\", %%J.Acoust.Soc.Am.% #101, 412-419.")
+NORMAL (L"T. Irino & R.D. Patterson (1997): \"A time-domain, level-dependent "
+	"auditory filter: The gammachirp.\" %%Journal of the Acoustical Society of America% #101: 412\\--419.")
 MAN_END
 
 MAN_BEGIN (L"Johannesma (1972)", L"djmw", 19980123)
 NORMAL (L"P.I.M. Johannesma (1972): \"The pre-response stimulus ensemble of "
-	"neurons in the cochlear nucleus\", in %%Symposium on Hearing Theory% "
-	"(IPO, Eindhoven, Holland), 58-69.")
+	"neurons in the cochlear nucleus.\" In %%Symposium on Hearing Theory% "
+	"(IPO, Eindhoven, Holland), 58\\--69.")
 MAN_END
 
 MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
-NORMAL (L"D.E. Johnson (1998), %%Applied Multivariate methods%")
+NORMAL (L"D.E. Johnson (1998): %%Applied Multivariate methods%.")
 MAN_END
 
 MAN_BEGIN (L"Krishnamoorthy & Yu (2004)", L"djmw", 20090813)
-NORMAL (L"K. Krishnamoortht & J. Yu (2004), \"Modified Nel and Van der Merwe test for multivariate "
-	"Behrens-Fisher problem\", %%Statistics & Probability Letters% #66, 161-169.")
+NORMAL (L"K. Krishnamoortht & J. Yu (2004): \"Modified Nel and Van der Merwe test for multivariate "
+	"Behrens-Fisher problem.\" %%Statistics & Probability Letters% #66: 161\\--169.")
 MAN_END
 
 MAN_BEGIN (L"Lamel et al. (1986)", L"djmw", 19980123)
 NORMAL (L"L.F. Lamel, R.H. Kassel & S. Sennef (1986): \"Speech Database "
-	"Development: Design and Analysis of the Acoustic-Phonetic Corpus\", "
-	"%%Proc. DARPA Speech Recognition Workshop%\", Report No. SAIC-86/1546, "
-	"100-19.")
+	"Development: Design and Analysis of the Acoustic-Phonetic Corpus.\" "
+	"%%Proc. DARPA Speech Recognition Workshop%, Report No. SAIC-86/1546, "
+	"100\\--119.")
 MAN_END
 
 MAN_BEGIN (L"Morrison (1990)", L"djmw", 19980123)
-NORMAL (L"D.F. Morrison (1990), %%Multivariate Statistical Methods%, "
-	"McGraw-Hill, New York.")
+NORMAL (L"D.F. Morrison (1990): %%Multivariate Statistical Methods%. "
+	"New York: McGraw-Hill.")
 MAN_END
 
 MAN_BEGIN (L"Peterson & Barney (1952)", L"djmw", 20020620)
-NORMAL (L"G.E. Peterson & H.L. Barney (1952), \"Control methods used in a study "
-	"of the vowels\", %%J.Acoust.Soc.Am.% #24, 175-184")
+NORMAL (L"G.E. Peterson & H.L. Barney (1952): \"Control methods used in a study "
+	"of the vowels.\" %%Journal of the Acoustical Society of America% #24: 175\\--184")
 MAN_END
 
 MAN_BEGIN (L"Pols et al. (1973)", L"djmw", 19990426)
-NORMAL (L"L.C.W. Pols, H.R.C. Tromp & R. Plomp (1973), "
-	"\"Frequency analysis of Dutch vowels from 50 male speakers\", "
-	"%%J.Acoust.Soc.Am.% #53, 1093-1101.")
+NORMAL (L"L.C.W. Pols, H.R.C. Tromp & R. Plomp (1973): "
+	"\"Frequency analysis of Dutch vowels from 50 male speakers.\" "
+	"%%Journal of the Acoustical Society of America% #53: 1093\\--1101.")
 MAN_END
 
 MAN_BEGIN (L"Press et al. (1992)", L"djmw", 19980114)
-NORMAL (L"W.H. Press, S.A. Teukolsky, W.T. Vetterling & B.P. Flannery (1992), "
-	"%%Numerical Recipes in C: the art of scientific computing%, "
-	"Second Edition, Cambridge University Press.")
+NORMAL (L"W.H. Press, S.A. Teukolsky, W.T. Vetterling & B.P. Flannery (1992): "
+	"%%Numerical recipes in C: The art of scientific computing%. "
+	"Second Edition. Cambridge University Press.")
 MAN_END
 
 MAN_BEGIN (L"Sakoe & Chiba (1978)", L"djmw", 20050302)
-NORMAL (L"H. Sakoe & S. Chiba (1978), \"Dynamic programming algorithm optimization for spoken word recognition\", "
-	"%%Trans. on ASSP% #26, 43-49.")
+NORMAL (L"H. Sakoe & S. Chiba (1978): \"Dynamic programming algorithm optimization for spoken word recognition.\" "
+	"%%Transactions on ASSP% #26: 43\\--49.")
 MAN_END
 
 MAN_BEGIN (L"Schott (2001)", L"djmw", 20090629)
-NORMAL (L"J. R. Schott (2001), \"Some tests for the equality of covariance matrices\", "
-	"%%Journal of Statistical Planning and Inference #94, 25–36.")
+NORMAL (L"J. R. Schott (2001): \"Some tests for the equality of covariance matrices.\" "
+	"%%Journal of Statistical Planning and Inference% #94: 25\\-–36.")
 MAN_END
 
 MAN_BEGIN (L"Shepard (1964)", L"djmw", 19980114)
-NORMAL (L"R.N. Shepard (1964), \"Circularity in Judgments of Relative Pitch\", "
-	"%%J.Acoust.Soc.Am.% #36, 2346-2353.")
+NORMAL (L"R.N. Shepard (1964): \"Circularity in judgments of relative pitch.\" "
+	"%%Journal of the Acoustical Society of America% #36: 2346\\--2353.")
 MAN_END
 
 MAN_BEGIN (L"Slaney (1993)", L"djmw", 19980712)
-NORMAL (L"M. Slaney (1993), \"An efficient implementation of the "
-	"Patterson-Holdsworth auditory filterbank\", "
+NORMAL (L"M. Slaney (1993): \"An efficient implementation of the "
+	"Patterson-Holdsworth auditory filterbank.\" "
 	"%%Apple Computer Technical Report% #35, 41 pages.")
 MAN_END
 
 MAN_BEGIN (L"Tribolet et al. (1979)", L"djmw", 20010114)
-NORMAL (L"J.M. Tribolet & T.F. Quatieri (1979), \"Computation of the Complex "
-	"Cepstrum\", in: %%Programs for Digital Signal Processing%, "
+NORMAL (L"J.M. Tribolet & T.F. Quatieri (1979): \"Computation of the Complex "
+	"Cepstrum.\" In %%Programs for Digital Signal Processing%, "
 	"Digital Signal Processing Committee (eds.), IEEE Press.")
 MAN_END
 
 MAN_BEGIN (L"Tukey (1977)", L"djmw", 20000524)
-NORMAL (L"J.W. Tukey (1977), %%Exploratory data analysis%, "
-	"Addison-Wesley, Reading, Mass.")
+NORMAL (L"J.W. Tukey (1977): %%Exploratory data analysis%. "
+	"Reading, MA: Addison-Wesley.")
 MAN_END
 
 MAN_BEGIN (L"Van Nierop et al. (1973)", L"djmw", 20020620)
-NORMAL (L"D.J.P.J. Van Nierop, L.C.W. Pols & R. Plomp (1973), \"Frequency "
-	"analysis of Dutch vowels from 25 female speakers\", %%Acustica% #29, 110-118")
+NORMAL (L"D.J.P.J. Van Nierop, L.C.W. Pols & R. Plomp (1973): \"Frequency "
+	"analysis of Dutch vowels from 25 female speakers.\" %%Acustica% #29: 110\\--118")
 MAN_END
 
 MAN_BEGIN (L"Weenink (1985)", L"djmw", 20040225)
 NORMAL (L"D.J.M. Weenink (1999), \"Formant analysis of Dutch vowels from 10 children\", "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
-		"University of Amsterdam% #25, 81-99.")
+		"University of Amsterdam% #25, 81\\--99.")
 MAN_END
 
 MAN_BEGIN (L"Watrous (1991)", L"djmw", 20080125)
-NORMAL (L"R.L. Watrous (1991), \"Current status of Peterson-Barney vowel formant data\", "
-	"%%J.Acoust.Soc.Am.% #89, 2459-2460.")
+NORMAL (L"R.L. Watrous (1991): \"Current status of Peterson-Barney vowel formant data.\" "
+	"%%Journal of the Acoustical Society of America% #89: 2459\\--2460.")
 MAN_END
 
 MAN_BEGIN (L"Weenink (1985)", L"djmw", 20041217)
-NORMAL (L"D.J.M. Weenink (1985), \"Accurate algorithms for performing "
- 		"principal component analysis and discriminant analysis\", "
+NORMAL (L"D.J.M. Weenink (1985): \"Accurate algorithms for performing "
+ 		"principal component analysis and discriminant analysis.\" "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
-		"University of Amsterdam% #19, 45-52.")
+		"University of Amsterdam% #19: 45\\--52.")
 MAN_END
 
 MAN_BEGIN (L"Weenink (2003)", L"djmw", 20040225)
-NORMAL (L"D.J.M. Weenink (1999), \"Canonical correlation analysis\", "
+NORMAL (L"D.J.M. Weenink (1999): \"Canonical correlation analysis.\" "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
-		"University of Amsterdam% #25, 81-99.")
+		"University of Amsterdam% #25: 81\\--99.")
 MAN_END
 
 }

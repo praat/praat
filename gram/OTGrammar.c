@@ -899,9 +899,10 @@ Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 	thy strings = NUMpvector (1, thy numberOfStrings = numberOfTrials); cherror
 	for (i = 1; i <= numberOfTrials; i ++) {
 		long itab = NUMrandomInteger (1, my numberOfTableaus);
-		thy strings [i] = Melder_wcsdup (my tableaus [itab]. input); cherror
+		thy strings [i] = Melder_wcsdup_e (my tableaus [itab]. input); cherror
 	}
-end:	iferror forget (thee);
+end:
+	iferror forget (thee);
 	return thee;
 }
 
@@ -910,9 +911,10 @@ Strings OTGrammar_getInputs (OTGrammar me) {
 	Strings thee = new (Strings); cherror
 	thy strings = NUMpvector (1, thy numberOfStrings = my numberOfTableaus); cherror
 	for (i = 1; i <= my numberOfTableaus; i ++) {
-		thy strings [i] = Melder_wcsdup (my tableaus [i]. input); cherror
+		thy strings [i] = Melder_wcsdup_e (my tableaus [i]. input); cherror
 	}
-end:	iferror forget (thee);
+end:
+	iferror forget (thee);
 	return thee;
 }
 
@@ -937,7 +939,7 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double rankingS
 	for (i = 1; i <= n; i ++) {
 		wchar_t output [100];
 		OTGrammar_inputToOutput (me, inputs -> strings [i], output, rankingSpreading); cherror
-		outputs -> strings [i] = Melder_wcsdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
 	}
 end:
 	iferror { forget (outputs); return Melder_errorp ("(OTGrammar_inputsToOutputs:) Not performed."); }
@@ -953,7 +955,7 @@ Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, do
 	for (i = 1; i <= n; i ++) {
 		wchar_t output [100];
 		OTGrammar_inputToOutput (me, input, output, rankingSpreading); cherror
-		outputs -> strings [i] = Melder_wcsdup (output); cherror
+		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
 	}
 end:
 	iferror return Melder_errorp ("(OTGrammar_inputToOutputs:) Not performed.");
@@ -961,37 +963,37 @@ end:
 }
 
 Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double noise) {
-	Distributions thee;
-	long totalNumberOfOutputs = 0, nout = 0, itab, icand, itrial;
+	Distributions thee = NULL;
+//start:
+	long totalNumberOfOutputs = 0, nout = 0;
 	/*
 	 * Count the total number of outputs.
 	 */
-	for (itab = 1; itab <= my numberOfTableaus; itab ++)
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++)
 		totalNumberOfOutputs += my tableaus [itab]. numberOfCandidates;
 	/*
 	 * Create the distribution. One row for every output form.
 	 */
-	if ((thee = Distributions_create (totalNumberOfOutputs, 1)) == NULL) return NULL;
+	thee = Distributions_create (totalNumberOfOutputs, 1); cherror
 	/*
 	 * Measure every input form.
 	 */
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
+	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
-		if (! Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""))
-			{ forget (thee); return NULL; }
+		Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""); cherror
 		/*
 		 * Set the row labels to the output strings.
 		 */
-		for (icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
+			thy rowLabels [nout + icand] = Melder_wcsdup_e (buffer.string); cherror
 		}
 		/*
 		 * Compute a number of outputs and store the results.
 		 */
-		for (itrial = 1; itrial <= trialsPerInput; itrial ++) {
+		for (long itrial = 1; itrial <= trialsPerInput; itrial ++) {
 			long iwinner;
 			OTGrammar_newDisharmonies (me, noise);
 			iwinner = OTGrammar_getWinner (me, itab);
@@ -1002,7 +1004,9 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 		 */
 		nout += tableau -> numberOfCandidates;
 	}
+end:
 	Melder_progress1 (1.0, NULL);
+	iferror forget (thee);
 	return thee;
 }
 
@@ -1096,7 +1100,7 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
-			thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
+			thy rowLabels [nout + icand] = Melder_wcsdup_f (buffer.string);
 		}
 		/*
 		 * Compute a number of outputs and store the results.

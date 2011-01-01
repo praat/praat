@@ -218,7 +218,7 @@ static void print (I, Graphics graphics) {
 			par = my paragraphs;
 			while ((par ++) -> type) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
-			my currentPageTitle = Melder_wcsdup (page -> title);
+			my currentPageTitle = Melder_wcsdup_f (page -> title);
 			our goToPage_i (me, ipage);
 			our draw (me);
 			our goToPage_i (me, savePage);
@@ -531,7 +531,7 @@ static int goToPage_i (Manual me, long i) {
 	par = my paragraphs;
 	while ((par ++) -> type) my numberOfParagraphs ++;
 	Melder_free (my currentPageTitle);
-	my currentPageTitle = Melder_wcsdup (page -> title);
+	my currentPageTitle = Melder_wcsdup_f (page -> title);
 	return 1;
 }
 
@@ -609,7 +609,7 @@ int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data) {
 	}
 	HyperPage_init (Manual_as_parent (me), parent, windowTitle, data); cherror
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
-	my history [0]. page = Melder_wcsdup (title);   /* BAD */
+	my history [0]. page = Melder_wcsdup_f (title);   /* BAD */
 end:
 	iferror return 0;
 	return 1;

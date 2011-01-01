@@ -78,16 +78,19 @@ class_methods (TextPoint, AnyPoint) {
 }
 
 TextPoint TextPoint_create (double time, const wchar_t *mark) {
-	TextPoint me = new (TextPoint);
-	if (! me) return NULL;
+	TextPoint me = NULL;
+//start:
+	me = new (TextPoint); cherror
 	my time = time;
-	my mark = Melder_wcsdup (mark);
-	if (Melder_hasError ()) forget (me);
+	my mark = Melder_wcsdup_e (mark); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 
 int TextPoint_setText (TextPoint me, const wchar_t *text) {
-	wchar_t *newText;
+	wchar_t *newText = NULL;
+//start:
 	/*
 	 * Be fast if the string pointers are equal.
 	 */
@@ -96,10 +99,11 @@ int TextPoint_setText (TextPoint me, const wchar_t *text) {
 	 * Create a temporary variable (i.e. a temporary pointer to the final string),
 	 * in order that 'my text' does not change in case of error.
 	 */
-	newText = Melder_wcsdup (text);
-	if (! newText) return 0;
+	newText = Melder_wcsdup_e (text); cherror
 	Melder_free (my mark);
 	my mark = newText;
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -117,17 +121,20 @@ class_methods (TextInterval, Function)
 class_methods_end
 
 TextInterval TextInterval_create (double tmin, double tmax, const wchar_t *text) {
-	TextInterval me = new (TextInterval);
-	if (! me) return NULL;
+	TextInterval me = NULL;
+//start:
+	me = new (TextInterval); cherror
 	my xmin = tmin;
 	my xmax = tmax;
-	my text = Melder_wcsdup (text);
-	if (Melder_hasError ()) forget (me);
+	my text = Melder_wcsdup_e (text); cherror
+end:
+	iferror forget (me);
 	return me;
 }
 
 int TextInterval_setText (TextInterval me, const wchar_t *text) {
-	wchar_t *newText;
+	wchar_t *newText = NULL;
+//start:
 	/*
 	 * Be fast if the string pointers are equal.
 	 */
@@ -136,10 +143,11 @@ int TextInterval_setText (TextInterval me, const wchar_t *text) {
 	 * Create a temporary variable (i.e. a temporary pointer to the final string),
 	 * in order that 'my text' does not change in case of error.
 	 */
-	newText = Melder_wcsdup (text);
-	if (! newText) return 0;
+	newText = Melder_wcsdup_e (text); cherror
 	Melder_free (my text);
 	my text = newText;
+end:
+	iferror return 0;
 	return 1;
 }
 
@@ -657,8 +665,20 @@ end:
 	return (IntervalTier) tier;
 }
 
+static TextTier checkPointTier (TextGrid me, long itier) {
+	AnyTier tier = NULL;
+	checkTierNumber (me, itier); cherror
+	tier = my tiers -> item [itier];
+	if (tier -> methods != (AnyTier_Table) classTextTier)
+		error3 (L"Tier ", Melder_integer (itier), L" should be a point tier.")
+end:
+	iferror return NULL;
+	return (TextTier) tier;
+}
+
 PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion) {
 	PointProcess thee = NULL;
+//start:
 	IntervalTier tier = checkIntervalTier (me, itier); cherror
 	thee = PointProcess_create (my xmin, my xmax, 10); cherror
 	for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
@@ -677,6 +697,7 @@ end:
 
 PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion) {
 	PointProcess thee = NULL;
+//start:
 	IntervalTier tier = checkIntervalTier (me, itier); cherror
 	thee = PointProcess_create (my xmin, my xmax, 10); cherror
 	for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
@@ -695,6 +716,7 @@ end:
 
 PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion) {
 	PointProcess thee = NULL;
+//start:
 	IntervalTier tier = checkIntervalTier (me, itier); cherror
 	thee = PointProcess_create (my xmin, my xmax, 10);
 	for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
@@ -707,6 +729,25 @@ end:
 	iferror {
 		forget (thee);
 		Melder_error1 (L"TextGrid: Get centre points...: PointProcess not created.");
+	}
+	return thee;
+}
+
+PointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion) {
+	PointProcess thee = NULL;
+//start:
+	TextTier tier = checkPointTier (me, itier); cherror
+	thee = PointProcess_create (my xmin, my xmax, 10); cherror
+	for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
+		TextPoint point = tier -> points -> item [ipoint];
+		if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
+			PointProcess_addPoint (thee, point -> time); cherror
+		}
+	}
+end:
+	iferror {
+		forget (thee);
+		Melder_error1 (L"TextGrid: Get end points...: PointProcess not created.");
 	}
 	return thee;
 }
@@ -968,7 +1009,7 @@ static int genericize (wchar_t **pstring, wchar_t *buffer) {
 			if (*p > 126) {   /* Only if necessary. */
 				wchar_t *newString;
 				Longchar_genericizeW (*pstring, buffer);
-				newString = Melder_wcsdup (buffer); cherror
+				newString = Melder_wcsdup_e (buffer); cherror
 				/*
 				 * Replace string only if copying was OK.
 				 */
@@ -985,9 +1026,11 @@ end:
 }
 
 int TextGrid_genericize (TextGrid me) {
-	long itier, ntier = my tiers -> size;
-	wchar_t *buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) * 3 + 1); cherror
-	for (itier = 1; itier <= ntier; itier ++) {
+	wchar_t *buffer = NULL;
+//start:
+	long ntier = my tiers -> size;
+	buffer = Melder_calloc_e (wchar_t, TextGrid_maximumLabelLength (me) * 3 + 1); cherror
+	for (long itier = 1; itier <= ntier; itier ++) {
 		Function anyTier = my tiers -> item [itier];
 		if (anyTier -> methods == (Function_Table) classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
@@ -1012,9 +1055,11 @@ end:
 }
 
 int TextGrid_nativize (TextGrid me) {
-	long itier, ntier = my tiers -> size;
-	wchar_t *buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) + 1); cherror
-	for (itier = 1; itier <= ntier; itier ++) {
+	wchar_t *buffer = NULL;
+//start:
+	long ntier = my tiers -> size;
+	buffer = Melder_calloc_e (wchar_t, TextGrid_maximumLabelLength (me) + 1); cherror
+	for (long itier = 1; itier <= ntier; itier ++) {
 		Function anyTier = my tiers -> item [itier];
 		if (anyTier -> methods == (Function_Table) classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;

@@ -111,30 +111,31 @@ MAN_BEGIN (L"Create Sound from tone complex...", L"ppgb", 20060202)
 INTRO (L"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (L"Settings")
-TAG (L"%Name")
+TAG (L"##Name")
 DEFINITION (L"the name of the resulting Sound object.")
-TAG (L"%%Start time%, %%End time% (s)")
+TAG (L"##Start time (s)")
+TAG (L"##End time (s)")
 DEFINITION (L"the time domain of the resulting Sound.")
-TAG (L"%%Sampling frequency% (Hz)")
+TAG (L"##Sampling frequency (Hz)")
 DEFINITION (L"the sampling frequency of the resulting Sound.")
-TAG (L"%Phase")
+TAG (L"##Phase")
 DEFINITION (L"determines whether the result is a sum of %sines or a sum of %cosines, "
 	"i.e., whether the zero crossings or the maxima of the components are synchronized. "
 	"This choice has little perceptual consequences.")
-TAG (L"%%Frequency step% (Hz)")
+TAG (L"##Frequency step (Hz)")
 DEFINITION (L"the distance between the components. In first approximation, "
 	"this is the perceived fundamental frequency.")
-TAG (L"%%First frequency% (Hz)")
+TAG (L"##First frequency (Hz)")
 DEFINITION (L"the lowest frequency component. If you supply a value of 0, "
-	"%firstFrequency is taken equal to %frequencyStep.")
-TAG (L"%%Ceiling% (Hz)")
+	"##First frequency# is taken equal to ##Frequency step#.")
+TAG (L"##Ceiling (Hz)")
 DEFINITION (L"the frequency above which no components are used. If you supply a value of 0 "
 	"or a value above the Sound's @@Nyquist frequency@, %ceiling is taken equal to "
 	"the Nyquist frequency.")
-TAG (L"%%Number of components")
+TAG (L"##Number of components")
 DEFINITION (L"determines how many sinusoids are used. If you supply a value of 0 "
 	"or a very high value, the maximum number of components is used, "
-	"limited by %ceiling.")
+	"limited by #Ceiling.")
 ENTRY (L"Example 1: a pulse train")
 NORMAL (L"A series of pulses at regular intervals, "
 	"sampled after low-pass filtering at the Nyquist frequency, "
@@ -368,8 +369,8 @@ INTRO (L"A command to change the spectral slope of every selected @Sound object.
 NORMAL (L"The reverse of @@Sound: Pre-emphasize (in-line)...@. For an example, see @@Source-filter synthesis@.")
 NORMAL (L"This is the in-line version of @@Sound: Filter (de-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
-ENTRY (L"Argument")
-TAG (L"%%From frequency% (Hz)")
+ENTRY (L"Setting")
+TAG (L"##From frequency (Hz)")
 DEFINITION (L"the frequency %F above which the spectral slope will decrease by 6 dB/octave.")
 ENTRY (L"Algorithm")
 NORMAL (L"The de-emphasis factor %\\al is computed as")
@@ -382,18 +383,18 @@ MAN_END
 MAN_BEGIN (L"Sound: Deepen band modulation...", L"ppgb", 20101026)
 INTRO (L"A command to enhance the fast spectral changes, like %F__2_ movements, in each selected @Sound object.")
 ENTRY (L"Settings")
-TAG (L"%Enhancement (dB)")
+TAG (L"##Enhancement (dB)")
 DEFINITION (L"the maximum increase in the level within each critical band. The standard value is 20 dB.")
-TAG (L"%%From frequency% (Hz)")
+TAG (L"##From frequency (Hz)")
 DEFINITION (L"the lowest frequency that shall be manipulated. The bottom frequency of the first critical band that is to be enhanced. "
 	"The standard value is 300 Hertz.")
-TAG (L"%%To frequency% (Hz)")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the highest frequency that shall be manipulated (the last critical band may be narrower than the others). The standard value is 8000 Hz.")
-TAG (L"%%Slow modulation% (Hz)")
+TAG (L"##Slow modulation (Hz)")
 DEFINITION (L"the frequency %f__%slow_ below which the intensity modulations in the bands should not be expanded. The standard value is 3 Hz.")
-TAG (L"%%Fast modulation% (Hz)")
+TAG (L"##Fast modulation (Hz)")
 DEFINITION (L"the frequency %f__%fast_ above which the intensity modulations in the bands should not be expanded. The standard value is 30 Hz.")
-TAG (L"%%Band smoothing% (Hz)")
+TAG (L"##Band smoothing (Hz)")
 DEFINITION (L"the degree of overlap of each band into its adjacent bands. Prevents %ringing. The standard value is 100 Hz.")
 ENTRY (L"Algorithm")
 NORMAL (L"This algorithm was inspired by @@Nagarajan, Wang, Merzenich, Schreiner, Johnston, Jenkins, Miller & Tallal (1998)@, "
@@ -603,8 +604,8 @@ Ja
 MAN_BEGIN (L"Sound: Filter (de-emphasis)...", L"ppgb", 20030309)
 INTRO (L"A command to filter every selected @Sound object. The resulting Sound object has a lower spectral slope.")
 NORMAL (L"The reverse of @@Sound: Filter (pre-emphasis)...@. For an example, see @@Source-filter synthesis@.")
-ENTRY (L"Argument")
-TAG (L"%%From frequency% (Hz)")
+ENTRY (L"Setting")
+TAG (L"##From frequency (Hz)")
 DEFINITION (L"the frequency %F above which the spectral slope will decrease by 6 dB/octave.")
 ENTRY (L"Algorithm")
 NORMAL (L"The de-emphasis factor %\\al is computed as")
@@ -693,7 +694,7 @@ INTRO (L"A @query to the selected @Sound object.")
 ENTRY (L"Return value")
 NORMAL (L"the energy. If the unit of sound amplitude is Pa (Pascal), the unit of energy will be Pa^2\\.cs.")
 ENTRY (L"Setting")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (L"Algorithm")
@@ -742,12 +743,12 @@ MAN_BEGIN (L"Sound: Get maximum...", L"ppgb", 20041123)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the maximum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
-TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, "
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -755,7 +756,7 @@ MAN_BEGIN (L"Sound: Get mean...", L"ppgb", 20041123)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the mean amplitude (sound pressure in Pascal) within a specified time range.")
 ENTRY (L"Setting")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (L"Mathematical definition")
@@ -768,7 +769,7 @@ MAN_BEGIN (L"Sound: Get minimum...", L"ppgb", 20041123)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the minimum amplitude (sound pressure in Pascal) within a specified time window.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 TAG (L"%%Interpolation")
@@ -783,7 +784,7 @@ INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"It is @undefined if there are no zero crossings or if the specified time is outside the time domain of the sound. "
 	"Linear interpolation is used between sample points.")
 ENTRY (L"Setting")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time for which you want to get the time of the nearest zero crossing.")
 MAN_END
 
@@ -792,7 +793,7 @@ INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the power within a specified time window. "
 	"If the unit of sound amplitude is Pa (Pascal), the unit of power will be Pa^2.")
 ENTRY (L"Setting")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (L"Mathematical definition")
@@ -823,7 +824,7 @@ MAN_BEGIN (L"Sound: Get root-mean-square...", L"ppgb", 20070129)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the root-mean-square (rms) value of the sound pressure, expressed in Pascal.")
 ENTRY (L"Setting")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (L"Mathematical definition")
@@ -838,7 +839,7 @@ INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the standard deviation (in Pascal) of the sound pressure within a specified window. "
 	"If the sound contains less than 2 samples, the value is @undefined.")
 ENTRY (L"Setting")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
 ENTRY (L"Mathematical definition")
@@ -854,12 +855,12 @@ MAN_BEGIN (L"Sound: Get time of maximum...", L"ppgb", 20041123)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the maximum pressure in a specified time range.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
-TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, "
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -867,12 +868,12 @@ MAN_BEGIN (L"Sound: Get time of minimum...", L"ppgb", 20041107)
 INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the time (in seconds) associated with the minimum pressure in a specified time range.")
 ENTRY (L"Settings")
-TAG (L"%%Time range% (s)")
+TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored, except for purposes of interpolation. "
 	"If %t__1_ is not less than %t__2_, the entire time domain of the sound is considered.")
-TAG (L"%%Interpolation")
-DEFINITION (L"the interpolation method (None, Parabolic, Cubic, Sinc) of the @@vector peak interpolation@. "
-	"The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, "
+TAG (L"##Interpolation")
+DEFINITION (L"the interpolation method (#None, #Parabolic, #Cubic, #Sinc) of the @@vector peak interpolation@. "
+	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
@@ -881,7 +882,7 @@ INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"The Info window will show the amplitude (sound pressure in Pascal) at a specified sample number. "
 	"If the sample number is less than 1 or greater than the number of samples, the result is @undefined.")
 ENTRY (L"Setting")
-TAG (L"%%Sample number")
+TAG (L"##Sample number")
 DEFINITION (L"the sample number at which the value is to be evaluated.")
 MAN_END
 
@@ -891,23 +892,23 @@ INTRO (L"A command available in the #Query menu if you select a @Sound object. "
 	"If that time is outside the samples of the Sound, the result is equal to the value of the nearest sample; "
 	"otherwise, the result is an interpolated value.")
 ENTRY (L"Settings")
-TAG (L"%Time (s)")
+TAG (L"##Time (s)")
 DEFINITION (L"the time at which the value is to be evaluated.")
-TAG (L"%%Interpolation")
+TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method, see @@vector value interpolation@. "
-	"The standard is Sinc70 because a Sound object is normally a sampled band-limited signal, "
+	"The standard is #Sinc70 because a Sound object is normally a sampled band-limited signal, "
 	"which can be seen as a sum of sinc functions.")
 MAN_END
 
 MAN_BEGIN (L"Sound: Lengthen (overlap-add)...", L"ppgb", 20030916)
 INTRO (L"A command to convert each selected @Sound object into a longer new @Sound object.")
 ENTRY (L"Settings")
-TAG (L"%%Minimum frequency% (Hz)")
+TAG (L"##Minimum frequency (Hz)")
 DEFINITION (L"the minimum pitch used in the periodicity analysis. The standard value is 75 Hz. For the voice of a young child, set this to 150 Hz."
 	"The shortest voiceless interval in the decomposition is taken as 1.5 divided by %%minimum frequency%.")
-TAG (L"%%Maximum frequency% (Hz)")
+TAG (L"##Maximum frequency (Hz)")
 DEFINITION (L"the maximum pitch used in the periodicity analysis. The standard value is 600 Hz. For an adult male voice, set this to 300 Hz.")
-TAG (L"%Factor")
+TAG (L"##Factor")
 DEFINITION (L"the factor with which the sound will be lengthened. The standard value is 1.5. If you take a value less than 1, "
 	"the resulting sound will be shorter than the original. A value larger than 3 will not work.")
 ENTRY (L"Algorithm")
@@ -941,8 +942,8 @@ MAN_END
 MAN_BEGIN (L"Sound: Filter (pre-emphasis)...", L"ppgb", 20030309)
 INTRO (L"A command to filter each selected @Sound object. The resulting Sound object has a higher spectral slope.")
 NORMAL (L"The reverse of @@Sound: Filter (de-emphasis)...@.")
-ENTRY (L"Argument")
-TAG (L"%%From frequency% (Hz)")
+ENTRY (L"Setting")
+TAG (L"##From frequency (Hz)")
 DEFINITION (L"the frequency %F above which the spectral slope will increase by 6 dB/octave.")
 ENTRY (L"Algorithm")
 NORMAL (L"The pre-emphasis factor %\\al is computed as")
@@ -969,18 +970,18 @@ INTRO (L"A command that creates new @Sound objects from the selected Sounds.")
 ENTRY (L"Purpose")
 NORMAL (L"High-precision resampling from any sampling frequency to any other sampling frequency.")
 ENTRY (L"Settings")
-TAG (L"%%Sampling frequency")
-DEFINITION (L"the new sampling frequency, in Hertz.")
-TAG (L"%Precision")
+TAG (L"##Sampling frequency (Hz)")
+DEFINITION (L"the new sampling frequency, in hertz.")
+TAG (L"##Precision")
 DEFINITION (L"the depth of the interpolation, in samples (standard is 50). "
 	"This determines the quality of the interpolation used in resampling.")
 ENTRY (L"Algorithm")
-NORMAL (L"If %Precision is 1, the method is linear interpolation, which is inaccurate but fast.")
+NORMAL (L"If #Precision is 1, the method is linear interpolation, which is inaccurate but fast.")
 /* BUG */
-NORMAL (L"If %Precision is greater than 1, the method is sin(%x)/%x (\"%sinc\") interpolation, "
-	"with a depth equal to %Precision. "
-	"For higher %Precision, the algorithm is slower but more accurate.")
-NORMAL (L"If %%Sampling frequency% is less than the sampling frequency of the selected sound, "
+NORMAL (L"If #Precision is greater than 1, the method is sin(%x)/%x (\"%sinc\") interpolation, "
+	"with a depth equal to #Precision. "
+	"For higher #Precision, the algorithm is slower but more accurate.")
+NORMAL (L"If ##Sampling frequency# is less than the sampling frequency of the selected sound, "
 	"an anti-aliasing low-pass filtering is performed prior to resampling.")
 ENTRY (L"Behaviour")
 NORMAL (L"A new Sound will appear in the list of objects, "
@@ -991,10 +992,10 @@ MAN_END
 MAN_BEGIN (L"Sound: Set value at sample number...", L"ppgb", 20040420)
 INTRO (L"A command to change a specified sample of the selected @Sound object.")
 ENTRY (L"Settings")
-TAG (L"%%Sample number")
+TAG (L"##Sample number")
 DEFINITION (L"the sample whose value is to be changed. Specify any value between 1 and the number of samples in the Sound. "
 	"If you specify a value outside that range, you will get an error message.")
-TAG (L"%%New value")
+TAG (L"##New value")
 DEFINITION (L"the value that is to be put into the specified sample.")
 ENTRY (L"Scripting")
 NORMAL (L"Example:")
@@ -1109,12 +1110,12 @@ INTRO (L"A command available in the #Combine menu when you select two @Sound obj
 	"As a result, a new Sound will appear in the list of objects; "
 	"this new Sound is the %convolution of the two original Sounds.")
 ENTRY (L"Settings")
-TAG (L"%%Amplitude scaling")
+TAG (L"##Amplitude scaling")
 DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
 	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
-TAG (L"%%Signal outside time domain is...")
+TAG (L"##Signal outside time domain is...")
 DEFINITION (L"Here you can choose whether outside their time domains the sounds are considered to be #zero "
 	"(the standard value), or #similar to the sounds within the time domains. "
 	"This is explained in 4 below.")
@@ -1252,12 +1253,12 @@ INTRO (L"A command available in the #Combine menu when you select two @Sound obj
 	"As a result, a new Sound will appear in the list of objects; "
 	"this new Sound is the %cross-correlation of the two original Sounds.")
 ENTRY (L"Settings")
-TAG (L"%%Amplitude scaling")
+TAG (L"##Amplitude scaling")
 DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
 	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
-TAG (L"%%Signal outside time domain is...")
+TAG (L"##Signal outside time domain is...")
 DEFINITION (L"Here you can choose whether outside their time domains the sounds are considered to be #zero "
 	"(the standard value), or #similar to the sounds within the time domains. "
 	"This is explained in 4 below.")
@@ -1372,12 +1373,12 @@ INTRO (L"A command available in the #Periodicity menu when you select one or mor
 	"As a result, a new Sound will appear in the list of objects; "
 	"this new Sound is the %autocorrelation of the original Sound.")
 ENTRY (L"Settings")
-TAG (L"%%Amplitude scaling")
+TAG (L"##Amplitude scaling")
 DEFINITION (L"Here you can choose between the `principled' options #integral, #sum, and #normalize, which are explained in 1, 2 and 3 below. "
 	"There is also a `pragmatic' option, namely ##peak 0.99#, which scales the resulting sound in such a way "
 	"that its absolute peak becomes 0.99, so that the sound tends to be clearly audible without distortion when you play it "
 	"(see @@Sound: Scale peak...@).")
-TAG (L"%%Signal outside time domain is...")
+TAG (L"##Signal outside time domain is...")
 DEFINITION (L"Here you can choose whether outside its time domain the sound is considered to be #zero "
 	"(the standard value), or #similar to the sound within the time domain. "
 	"This is explained in 4 below.")

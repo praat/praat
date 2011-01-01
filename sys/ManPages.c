@@ -240,7 +240,7 @@ static int readOnePage (ManPages me, MelderReadText text) {
 	}
 	++ par;   // Room for the last paragraph (because counting starts at 0).
 	++ par;   // Room for the final zero-type paragraph.
-	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
+	Melder_realloc_f (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 	return 1;
 }
 static int readText (I, MelderReadText text) {
@@ -456,7 +456,7 @@ const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles) {
 		my titles = (const wchar_t **) NUMpvector (1, my pages -> size);
 		for (long i = 1; i <= my pages -> size; i ++) {
 			ManPage page = my pages -> item [i];
-			my titles [i] = Melder_wcsdup (page -> title);
+			my titles [i] = Melder_wcsdup_f (page -> title);
 		}
 	}
 	*numberOfTitles = my pages -> size;

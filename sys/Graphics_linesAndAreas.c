@@ -894,8 +894,8 @@ static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y
 void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* Base 0. */
 	iam (Graphics);
 	if (numberOfPoints == 0) return;
-	short *xyDC = Melder_malloc (short, 2 * numberOfPoints);
-	if (! xyDC) return;
+	short *xyDC = Melder_malloc_e (short, 2 * numberOfPoints);
+	if (xyDC == NULL) { Melder_clearError (); return; }
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
@@ -923,8 +923,8 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 
 void Graphics_fillArea (I, long numberOfPoints, double *xWC, double *yWC) {
 	iam (Graphics);
-	short *xyDC = Melder_malloc (short, 2 * numberOfPoints);
-	if (! xyDC) return;
+	short *xyDC = Melder_malloc_e (short, 2 * numberOfPoints);
+	if (xyDC == NULL) { Melder_clearError (); return; }
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
@@ -1146,7 +1146,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		short *xyDC; \
 		TYPE lastMini; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = Melder_malloc (short, 2 * numberOfPointsActuallyDrawn); \
+		xyDC = Melder_malloc_f (short, 2 * numberOfPointsActuallyDrawn); \
 		for (i = 0; i < numberOfPixels; i ++) { \
 			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE mini, maxi; \
@@ -1206,7 +1206,7 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		if (k > 1) polyline (me, k / 2, xyDC); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
-		short *xyDC = Melder_malloc (short, 2 * n); \
+		short *xyDC = Melder_malloc_f (short, 2 * n); \
 		for (i = 0; i < n; i ++) { \
 			long ix = ix1 + i; \
 			short value = wdy (yWC [STAGGER (ix)]); \

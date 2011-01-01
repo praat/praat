@@ -341,9 +341,11 @@ class_methods (ScriptEditor, TextEditor) {
 
 ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any voidEditor, const wchar_t *initialText) {
 	Editor editor = (Editor) voidEditor;
-	ScriptEditor me = new (ScriptEditor); cherror
+	ScriptEditor me = NULL;
+//start:
+	me = new (ScriptEditor); cherror
 	if (editor != NULL) {
-		my environmentName = Melder_wcsdup (editor -> name);
+		my environmentName = Melder_wcsdup_e (editor -> name); cherror
 		my editorClass = editor -> methods;
 	}
 	TextEditor_init (ScriptEditor_as_parent (me), parent, initialText); cherror

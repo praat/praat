@@ -512,7 +512,7 @@ static int menu_cb_find (EDITOR_ARGS) {
 		if (theFindString != NULL) SET_STRING (L"findString", theFindString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_wcsdup (GET_STRING (L"findString"));
+		theFindString = Melder_wcsdup_f (GET_STRING (L"findString"));
 		do_find (me);
 	EDITOR_END
 }
@@ -540,9 +540,9 @@ static int menu_cb_replace (EDITOR_ARGS) {
 		if (theReplaceString != NULL) SET_STRING (L"replaceString", theReplaceString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_wcsdup (GET_STRING (L"findString"));
+		theFindString = Melder_wcsdup_f (GET_STRING (L"findString"));
 		Melder_free (theReplaceString);
-		theReplaceString = Melder_wcsdup (GET_STRING (L"replaceString"));
+		theReplaceString = Melder_wcsdup_f (GET_STRING (L"replaceString"));
 		do_replace (me);
 	EDITOR_END
 }

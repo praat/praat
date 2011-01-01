@@ -255,7 +255,7 @@ int Table_insertColumn (Table me, long icol, const wchar_t *label) {
 		columnHeaders [jcol] = my columnHeaders [jcol];   /* Shallow copy of strings. */
 	for (long jcol = my numberOfColumns + 1; jcol > icol; jcol --)
 		columnHeaders [jcol] = my columnHeaders [jcol - 1];   /* Shallow copy of strings. */
-	columnHeaders [icol]. label = Melder_wcsdup (label); cherror
+	columnHeaders [icol]. label = Melder_wcsdup_e (label); cherror
 	NUMstructvector_free (TableColumnHeader, my columnHeaders, 1);
 	my columnHeaders = columnHeaders;
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
@@ -278,7 +278,7 @@ end:
 void Table_setColumnLabel (Table me, long icol, const wchar_t *label) {
 	if (icol < 1 || icol > my numberOfColumns || label == my columnHeaders [icol]. label) return;
 	Melder_free (my columnHeaders [icol]. label);
-	my columnHeaders [icol]. label = Melder_wcsdup (label);
+	my columnHeaders [icol]. label = Melder_wcsdup_f (label);
 }
 
 long Table_findColumnIndexFromColumnLabel (Table me, const wchar_t *label) {
@@ -330,7 +330,7 @@ int Table_setStringValue (Table me, long irow, long icol, const wchar_t *value) 
 	if (icol < 1 || icol > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (icol), L" out of range.");
 	row = my rows -> item [irow];
 	Melder_free (row -> cells [icol]. string);
-	row -> cells [icol]. string = Melder_wcsdup (value);
+	row -> cells [icol]. string = Melder_wcsdup_f (value);
 	my columnHeaders [icol]. numericized = FALSE;
 	return 1;
 }
@@ -341,7 +341,7 @@ int Table_setNumericValue (Table me, long irow, long icol, double value) {
 	if (icol < 1 || icol > my numberOfColumns) return Melder_error3 (L"Column number ", Melder_integer (icol), L" out of range.");
 	row = my rows -> item [irow];
 	Melder_free (row -> cells [icol]. string);
-	row -> cells [icol]. string = Melder_wcsdup (Melder_double (value));
+	row -> cells [icol]. string = Melder_wcsdup_f (Melder_double (value));
 	my columnHeaders [icol]. numericized = FALSE;
 	return 1;
 }
@@ -611,7 +611,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long column, int which_Meld
 	Table_numericize (me, column);
 	thee = Table_create (0, my numberOfColumns); cherror
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy columnHeaders [icol]. label = Melder_wcsdup (my columnHeaders [icol]. label); cherror
+		thy columnHeaders [icol]. label = Melder_wcsdup_e (my columnHeaders [icol]. label); cherror
 	}
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
@@ -638,7 +638,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long column, int which_Meld
 	Table_numericize (me, column);
 	thee = Table_create (0, my numberOfColumns); cherror
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy columnHeaders [icol]. label = Melder_wcsdup (my columnHeaders [icol]. label); cherror
+		thy columnHeaders [icol]. label = Melder_wcsdup_e (my columnHeaders [icol]. label); cherror
 	}
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];
@@ -906,7 +906,7 @@ static wchar_t ** _Table_getLevels (Table me, long column, long *numberOfLevels)
 	irow = 1;
 	while (irow <= my rows -> size) {
 		double value = ((TableRow) my rows -> item [irow]) -> cells [column]. number;
-		result [++ *numberOfLevels] = Melder_wcsdup (Table_getStringValue (me, irow, column)); cherror
+		result [++ *numberOfLevels] = Melder_wcsdup_e (Table_getStringValue (me, irow, column)); cherror
 		while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
 	}
 	sortRowsByIndex (me);   /* Unsort the original table. */
@@ -1828,7 +1828,7 @@ Table Table_readFromTableFile (MelderFile file) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') { MelderString_appendCharacter (& buffer, *p); p ++; }
-			row -> cells [icol]. string = Melder_wcsdup (buffer.string);
+			row -> cells [icol]. string = Melder_wcsdup_f (buffer.string);
 			MelderString_empty (& buffer);
 		}
 	}
@@ -1917,7 +1917,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar_t separat
 				Melder_assert (*p == separator);
 				p ++;
 			}
-			row -> cells [icol]. string = Melder_wcsdup (buffer.string);
+			row -> cells [icol]. string = Melder_wcsdup_f (buffer.string);
 			MelderString_empty (& buffer);
 		}
 	}
