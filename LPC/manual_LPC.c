@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2010 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,7 +375,7 @@ NORMAL (L"You are advised not to use this command for formant analysis. " \
 	"of 44100 Hz, you have to downsample the sound to 11000 Hz with the @@Sound: Resample...@ command. " \
 	"After that, you can use the ##To LPC# commands, with a prediction order of 10 or 11.") \
 ENTRY (L"Settings") \
-TAG (L"%%Prediction order%") \
+TAG (L"##Prediction order#") \
 DEFINITION (L"the number of linear prediction coefficients, also called the %%number of poles%. " \
 	"Choose this number at least twice as large as the number of spectral peaks that you want " \
 	"to detect.") \
@@ -430,26 +430,26 @@ LIST_ITEM (L"2.  We convert the filter values to mel frequency cepstral "
 	"coefficients (see @@MelFilter: To MFCC...@ for details).")
 MAN_END
 
-MAN_BEGIN (L"Anderson (1978)",L"djmw", 20030701)
-NORMAL (L"N. Anderson (1978), \"On the calculation of filter coefficients for "
-	"maximum entropy spectral analysis\", in Childers, %%Modern Spectrum Analysis%, "
-	"IEEE Press, 252-255.")
+MAN_BEGIN (L"Anderson (1978)", L"djmw", 20030701)
+NORMAL (L"N. Anderson (1978): \"On the calculation of filter coefficients for "
+	"maximum entropy spectral analysis.\" In Childers: %%Modern Spectrum Analysis%, "
+	"IEEE Press: 252\\--255.")
 MAN_END
 
 MAN_BEGIN (L"Markel & Gray (1976)", L"djmw", 19980114)
-NORMAL (L"J.D. Markel & A.H. Gray, Jr. (1976), %%Linear Prediction of Speech%, "
+NORMAL (L"J.D. Markel & A.H. Gray, Jr. (1976): %%Linear Prediction of Speech.% "
 	"Springer Verlag, Berlin.")
 MAN_END
 
 MAN_BEGIN (L"Marple (1980)", L"djmw", 19980114)
-NORMAL (L"L. Marple (1980), \" A new autoregressive spectrum analysis algorithm\", "
-	"%%IEEE Trans. on ASSP% #28, 441-454.")
+NORMAL (L"L. Marple (1980): \" A new autoregressive spectrum analysis algorithm.\" "
+	"%%IEEE Trans. on ASSP% #28, 441\\--454.")
 MAN_END
 
 MAN_BEGIN (L"Wakita (1977)", L"djmw", 19980114)
-NORMAL (L"H. Wakita (1977), \"Normalization of vowels by vocal-tract "
-	"length and its application to vowel identification\", %%IEEE Trans. on ASSP% "
-	"#25, 183-192.")
+NORMAL (L"H. Wakita (1977): \"Normalization of vowels by vocal-tract "
+	"length and its application to vowel identification.\" %%IEEE Trans. on ASSP% "
+	"#25: 183\\--192.")
 MAN_END
 
 }

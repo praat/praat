@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1969,6 +1969,57 @@ double TableOfReal_normalityTest_BHEP (I, double *h, double *tnb, double *lnmu, 
 end:
 	forget (thee);
 	return prob;
+}
+
+TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int nosign)
+{
+	iam (TableOfReal); thouart (TableOfReal);
+	TableOfReal him = NULL;
+	if (my numberOfColumns != thy numberOfColumns) return Melder_errorp1 (L"Both tables must have the same number of columns.");
+
+//start:
+
+	him = TableOfReal_create (my numberOfRows, thy numberOfRows); cherror
+	if (! NUMstrings_copyElements (my rowLabels, his rowLabels, 1, his numberOfRows) ||
+		! NUMstrings_copyElements (thy rowLabels, his columnLabels, 1, his numberOfColumns)) goto end;
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		for (long k = 1; k <= thy numberOfRows; k++)
+		{
+			double ctmp = 0;
+			for (long j = 1; j <= my numberOfColumns; j++) { ctmp += my data[i][j] * thy data[k][j]; }
+			his data[i][k] = nosign ? fabs(ctmp) : ctmp;
+		}
+	}
+end:
+	if (Melder_hasError ()) forget (him);
+	return him;
+}
+
+TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int nosign)
+{
+	iam (TableOfReal); thouart (TableOfReal);
+	TableOfReal him = NULL;
+	if (my numberOfRows != thy numberOfRows) return Melder_errorp1 (L"Both tables must have the same number of rows.");
+
+//start:
+
+	him = TableOfReal_create (my numberOfColumns, thy numberOfColumns); cherror
+	if (! NUMstrings_copyElements (my columnLabels, his rowLabels, 1, his numberOfRows) ||
+		! NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, his numberOfColumns)) goto end;
+
+	for (long j = 1; j <= my numberOfColumns; j++)
+	{
+		for (long k = 1; k <= thy numberOfColumns; k++)
+		{
+			double ctmp = 0;
+			for (long i = 1; i <= my numberOfRows; i++) { ctmp += my data[i][j] * thy data[i][k]; }
+			his data[j][k] = nosign ? fabs(ctmp) : ctmp;
+		}
+	}
+end:
+	if (Melder_hasError ()) forget (him);
+	return him;
 }
 
 #undef EMPTY_STRING

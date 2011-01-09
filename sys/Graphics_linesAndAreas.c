@@ -42,15 +42,15 @@
 
 #define POSTSCRIPT_MAXPATH  1000
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
-#define ORDER_DC  { short temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
+#define ORDER_DC  { long temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
 	if (my yIsZeroAtTheTop == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
 
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 	if (my lineType == Graphics_DOTTED)
-		my printf (my file, "[%d %d] 0 setdash\n", my resolution / 100, (int) (my resolution / 75 + lineWidth_pixels), my resolution / 45);
+		my printf (my file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 100), (long) (my resolution / 75 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED)
-		my printf (my file, "[%d %d] 0 setdash\n", my resolution / 25, (int) (my resolution / 50 + lineWidth_pixels), my resolution / 20);
+		my printf (my file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 25), (long) (my resolution / 50 + lineWidth_pixels));
 	if (my lineWidth != 1.0)
 		my printf (my file, "%g setlinewidth\n", lineWidth_pixels);
 }
@@ -165,7 +165,7 @@ static void psRevertLine (GraphicsPostscript me) {
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static void quickdrawPrepareLine (GraphicsScreen me) {
 		MacintoshPattern pattern;
-		short lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
+		long lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
 		SetPort (my macPort);
 		if (my lineType == Graphics_DOTTED) PenPat (GetQDGlobalsLightGray (& pattern));
 		if (my lineType == Graphics_DASHED) PenPat (GetQDGlobalsDarkGray (& pattern));
@@ -187,7 +187,7 @@ static void psRevertLine (GraphicsPostscript me) {
 
 /* First level. */
 
-static void polyline (I, long numberOfPoints, short *xyDC) {
+static void polyline (I, long numberOfPoints, long *xyDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -269,16 +269,16 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 		iam (GraphicsPostscript);
 		long nn = numberOfPoints + numberOfPoints, i, ipath;
 		psPrepareLine (me);
-		my printf (my file, "N %d %d moveto\n", xyDC [0], xyDC [1]);
+		my printf (my file, "N %ld %ld moveto\n", xyDC [0], xyDC [1]);
 		for (i = 2, ipath = 1; i < nn; i += 2) {
-			short dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
+			long dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
 			if (dx == 1 && i < nn - 20 && xyDC [i + 2] - xyDC [i] == 1 &&
 				 xyDC [i + 4] - xyDC [i + 2] == 1 && xyDC [i + 6] - xyDC [i + 4] == 1 &&
 				 xyDC [i + 8] - xyDC [i + 6] == 1 && xyDC [i + 10] - xyDC [i + 8] == 1 &&
 				 xyDC [i + 12] - xyDC [i + 10] == 1 && xyDC [i + 14] - xyDC [i + 12] == 1 &&
 				 xyDC [i + 16] - xyDC [i + 14] == 1 && xyDC [i + 18] - xyDC [i + 16] == 1)
 			{
-				my printf (my file, "%d %d %d %d %d %d %d %d %d %d F\n",
+				my printf (my file, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld F\n",
 					xyDC [i + 19] - xyDC [i + 17], xyDC [i + 17] - xyDC [i + 15],
 					xyDC [i + 15] - xyDC [i + 13], xyDC [i + 13] - xyDC [i + 11],
 					xyDC [i + 11] - xyDC [i + 9], xyDC [i + 9] - xyDC [i + 7],
@@ -287,7 +287,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 				ipath += 9;
 				i += 18;
 			} else if (dx != 0 || dy != 0 || i < 4) {
-				my printf (my file, "%d %d L\n", dx, dy);
+				my printf (my file, "%ld %ld L\n", dx, dy);
 			}
 			if (++ ipath >= POSTSCRIPT_MAXPATH && i != nn - 2) {
 				my printf (my file, "currentpoint stroke moveto\n");
@@ -299,7 +299,7 @@ static void polyline (I, long numberOfPoints, short *xyDC) {
 	}
 }
 
-static void fillArea (I, long numberOfPoints, short *xyDC) {
+static void fillArea (I, long numberOfPoints, long *xyDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -350,7 +350,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		long nn = numberOfPoints + numberOfPoints, i;
-		my printf (my file, "N %d %d M\n", (int) xyDC [0], (int) xyDC [1]);
+		my printf (my file, "N %ld %ld M\n", xyDC [0], xyDC [1]);
 		/*
 		 * Very old (?) printers have path size restrictions.
 		 * That's no reason to truncate the path on newer printers.
@@ -362,8 +362,8 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 			}
 		#endif
 		for (i = 2; i < nn; i += 2) {
-			my printf (my file, "%d %d L\n",
-				(int) (xyDC [i] - xyDC [i - 2]), (int) (xyDC [i + 1] - xyDC [i - 1]));
+			my printf (my file, "%ld %ld L\n",
+				xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
 		}
 		my printf (my file, "closepath fill\n");
 	}
@@ -371,7 +371,7 @@ static void fillArea (I, long numberOfPoints, short *xyDC) {
 
 /* Second level. */
 
-static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+static void rectangle (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -407,7 +407,7 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 				if (my drawingArea) GuiMac_clipOff ();
 			}
 		#else
-			short xyDC [10];
+			long xyDC [10];
 			xyDC [0] = x1DC;	xyDC [1] = y1DC;
 			xyDC [2] = x2DC;	xyDC [3] = y1DC;
 			xyDC [4] = x2DC;	xyDC [5] = y2DC;
@@ -419,13 +419,13 @@ static void rectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		psPrepareLine (me);
-		my printf (my file, "N %d %d M %d %d lineto %d %d lineto %d %d lineto closepath stroke\n",
+		my printf (my file, "N %ld %ld M %ld %ld lineto %ld %ld lineto %ld %ld lineto closepath stroke\n",
 			x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 		psRevertLine (me);
 	}
 }
 
-void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+void _Graphics_fillRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -460,7 +460,7 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 				if (my drawingArea) GuiMac_clipOff ();
 			}
 		#else
-			short xyDC [10];
+			long xyDC [10];
 			xyDC [0] = x1DC;	xyDC [1] = y1DC;
 			xyDC [2] = x2DC;	xyDC [3] = y1DC;
 			xyDC [4] = x2DC;	xyDC [5] = y2DC;
@@ -472,7 +472,7 @@ void _Graphics_fillRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC)
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		my printf (my file,
-			"N %d %d M %d %d lineto %d %d lineto %d %d lineto closepath fill\n",
+			"N %ld %ld M %ld %ld lineto %ld %ld lineto %ld %ld lineto closepath fill\n",
 			x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 	}
 }
@@ -521,12 +521,12 @@ static void circle (I, double xDC, double yDC, double rDC) {
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		psPrepareLine (me);
-		my printf (my file, "N %d %d %d C\n", (int) xDC, (int) yDC, (int) rDC);
+		my printf (my file, "N %ld %ld %ld C\n", (long) xDC, (long) yDC, (long) rDC);
 		psRevertLine (me);
 	}
 }
 
-static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+static void ellipse (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -590,7 +590,7 @@ static void ellipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	}
 }
 
-static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double toAngle) {
+static void arc (I, long xDC, long yDC, long rDC, double fromAngle, double toAngle) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -635,14 +635,14 @@ static void arc (I, short xDC, short yDC, short rDC, double fromAngle, double to
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
 		psPrepareLine (me);
-		my printf (my file, "N %d %d %d %f %f arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
+		my printf (my file, "N %ld %ld %ld %f %f arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
 		psRevertLine (me);
 	}
 }
 
 /* Third level. */
 
-static void fillCircle (I, short xDC, short yDC, short rDC) {
+static void fillCircle (I, long xDC, long yDC, long rDC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -681,11 +681,11 @@ static void fillCircle (I, short xDC, short yDC, short rDC) {
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
-		my printf (my file, "N %d %d %d FC\n", xDC, yDC, rDC);
+		my printf (my file, "N %ld %ld %ld FC\n", xDC, yDC, rDC);
 	}
 }
 
-static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+static void fillEllipse (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -733,18 +733,18 @@ static void fillEllipse (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 		}
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
-		my printf (my file, "gsave %d %d translate %d %d scale N 0 0 1 FC grestore\n",
-			(int) (x2DC + x1DC) / 2, (int) (y2DC + y1DC) / 2, (int) (x2DC - x1DC) / 2, (int) (y2DC - y1DC) / 2);
+		my printf (my file, "gsave %ld %ld translate %ld %ld scale N 0 0 1 FC grestore\n",
+			(x2DC + x1DC) / 2, (y2DC + y1DC) / 2, (x2DC - x1DC) / 2, (y2DC - y1DC) / 2);
 	}
 }
 
-static void fillArc (I, short xDC, short yDC, short rDC, double fromAngle, double toAngle) {
+static void fillArc (I, long xDC, long yDC, long rDC, double fromAngle, double toAngle) {
 	iam (Graphics);
 	arc (me, xDC, yDC, rDC, fromAngle, toAngle);
 	// TODO: shouldn't there be a cairo entry here with cairo_arc fill?
 }
 
-static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+static void button (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -833,9 +833,9 @@ static void button (I, short x1DC, short x2DC, short y1DC, short y2DC) {
 	}
 }
 
-static void roundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC, short r) {
+static void roundedRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC, long r) {
 	iam (Graphics);
-	short dy = my yIsZeroAtTheTop ? - r : r, xyDC [4];
+	long dy = my yIsZeroAtTheTop ? - r : r, xyDC [4];
 	ORDER_DC
 	#if win
 		if (my screen) {
@@ -874,9 +874,9 @@ static void roundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC,
 
 /* Fourth level. */
 
-static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y2DC, short r) {
+static void fillRoundedRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC, long r) {
 	iam (Graphics);
-	short dy = my yIsZeroAtTheTop ? - r : r;
+	long dy = my yIsZeroAtTheTop ? - r : r;
 	ORDER_DC
 	fillCircle (me, x2DC - r, y1DC + dy, r);
 	fillCircle (me, x2DC - r, y2DC - dy, r);
@@ -894,7 +894,7 @@ static void fillRoundedRectangle (I, short x1DC, short x2DC, short y1DC, short y
 void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* Base 0. */
 	iam (Graphics);
 	if (numberOfPoints == 0) return;
-	short *xyDC = Melder_malloc_e (short, 2 * numberOfPoints);
+	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
 	if (xyDC == NULL) { Melder_clearError (); return; }
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
@@ -912,7 +912,7 @@ void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* B
 
 void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
-	short xyDC [4];
+	long xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC);
@@ -923,7 +923,7 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 
 void Graphics_fillArea (I, long numberOfPoints, double *xWC, double *yWC) {
 	iam (Graphics);
-	short *xyDC = Melder_malloc_e (short, 2 * numberOfPoints);
+	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
 	if (xyDC == NULL) { Melder_clearError (); return; }
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
@@ -985,7 +985,7 @@ static void exitLine (I) {
 	}
 }
 
-static void polysegment (I, long numberOfPoints, short *xyDC) {
+static void polysegment (I, long numberOfPoints, long *xyDC) {
 	iam (Graphics);
 	initLine (me);
 	if (my screen) {
@@ -1003,8 +1003,8 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 			long i;
 			int halfLine = 0 /*ceil (0.5 * my lineWidth)*/;
 			for (i = 0; i < numberOfPoints; i += 2) {
-				short xfrom = xyDC [i + i] - halfLine, yfrom = xyDC [i + i + 1] - halfLine;
-				short xto = xyDC [i + i + 2] - halfLine, yto = xyDC [i + i + 3] - halfLine;
+				long xfrom = xyDC [i + i] - halfLine, yfrom = xyDC [i + i + 1] - halfLine;
+				long xto = xyDC [i + i + 2] - halfLine, yto = xyDC [i + i + 3] - halfLine;
 				MoveToEx (my dc, xfrom, yfrom, NULL);
 				LineTo (my dc, xto, yto);
 				if (my fatNonSolid) {
@@ -1033,8 +1033,8 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		long nn = numberOfPoints + numberOfPoints, i, ipath;
 		my printf (my file, "N\n");
 		for (i = 0, ipath = 1; i < nn; i += 4) {
-			short dx = xyDC [i + 2] - xyDC [i], dy = xyDC [i + 3] - xyDC [i + 1];
-			my printf (my file, "%d %d M %d %d L\n", xyDC [i], xyDC [i + 1], dx, dy);
+			long dx = xyDC [i + 2] - xyDC [i], dy = xyDC [i + 3] - xyDC [i + 1];
+			my printf (my file, "%ld %ld M %ld %ld L\n", xyDC [i], xyDC [i + 1], dx, dy);
 			if (++ ipath >= POSTSCRIPT_MAXPATH / 2 && i != nn - 4) {
 				my printf (my file, "currentpoint stroke moveto\n");
 				ipath = 1;
@@ -1047,8 +1047,8 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 
 #if 0
 #define MACRO_Graphics_function(TYPE) \
-	short x1DC, x2DC; \
-	short clipy1 = wdy (my y1WC), clipy2 = wdy (my y2WC); \
+	long x1DC, x2DC; \
+	long clipy1 = wdy (my y1WC), clipy2 = wdy (my y2WC); \
 	double dx, offsetX, translation, scale; \
 	long i, n = ix2 - ix1 + 1; \
  \
@@ -1064,13 +1064,13 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 	if (n > (x2DC - x1DC + 1) * 2) {  /* Optimize: draw one vertical line for each device x coordinate. */ \
 		long numberOfPixels = x2DC - x1DC + 1, k = 0; \
 		long numberOfPointsActuallyDrawn = numberOfPixels * 2; \
-		short *xyDC, previousMinDC = -32768, previousMaxDC = 32767; \
+		long *xyDC, previousMinDC = -32768, previousMaxDC = 32767; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = (short *) Melder_malloc (2 * numberOfPointsActuallyDrawn * sizeof (short)); \
+		xyDC = (long *) Melder_malloc (2 * numberOfPointsActuallyDrawn * sizeof (long)); \
 		for (i = 0; i < numberOfPixels; i ++) { \
 			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE minWC, maxWC; \
-			short minDC, maxDC; \
+			long minDC, maxDC; \
 			if (jmin > ix2) jmin = ix2; \
 			if (jmax > ix2) jmax = ix2; \
 			minWC = yWC [STAGGER (jmin)], maxWC = minWC; \
@@ -1106,10 +1106,10 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		if (k > 1) polysegment (me, k / 2, xyDC); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
-		short *xyDC = (short *) Melder_malloc (2 * n * sizeof (short)); \
+		long *xyDC = (long *) Melder_malloc (2 * n * sizeof (long)); \
 		for (i = 0; i < n; i ++) { \
 			long ix = ix1 + i; \
-			short value = wdy (yWC [STAGGER (ix)]); \
+			long value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
 			if (my yIsZeroAtTheTop) { \
 				if (value > clipy1) value = clipy1; \
@@ -1126,8 +1126,8 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 #endif
 
 #define MACRO_Graphics_function(TYPE) \
-	short x1DC, x2DC; \
-	short clipy1 = wdy (my y1WC), clipy2 = wdy (my y2WC); \
+	long x1DC, x2DC; \
+	long clipy1 = wdy (my y1WC), clipy2 = wdy (my y2WC); \
 	double dx, offsetX, translation, scale; \
 	long i, n = ix2 - ix1 + 1; \
  \
@@ -1143,14 +1143,14 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 	if (n > (x2DC - x1DC + 1) * 2) {  /* Optimize: draw one vertical line for each device x coordinate. */ \
 		long numberOfPixels = x2DC - x1DC + 1, k = 0; \
 		long numberOfPointsActuallyDrawn = numberOfPixels * 2; \
-		short *xyDC; \
+		long *xyDC; \
 		TYPE lastMini; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = Melder_malloc_f (short, 2 * numberOfPointsActuallyDrawn); \
+		xyDC = Melder_malloc_f (long, 2 * numberOfPointsActuallyDrawn); \
 		for (i = 0; i < numberOfPixels; i ++) { \
 			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE mini, maxi; \
-			short minDC, maxDC; \
+			long minDC, maxDC; \
 			if (jmin > ix2) jmin = ix2; \
 			if (jmax > ix2) jmax = ix2; \
 			mini = yWC [STAGGER (jmin)], maxi = mini; \
@@ -1206,10 +1206,10 @@ static void polysegment (I, long numberOfPoints, short *xyDC) {
 		if (k > 1) polyline (me, k / 2, xyDC); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
-		short *xyDC = Melder_malloc_f (short, 2 * n); \
+		long *xyDC = Melder_malloc_f (long, 2 * n); \
 		for (i = 0; i < n; i ++) { \
 			long ix = ix1 + i; \
-			short value = wdy (yWC [STAGGER (ix)]); \
+			long value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
 			if (my yIsZeroAtTheTop) { \
 				if (FUNCTIONS_ARE_CLIPPED && value > clipy1) value = clipy1; \
@@ -1232,19 +1232,19 @@ void Graphics_function (I, double yWC [], long ix1, long ix2, double x1WC, doubl
 	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
 
-void Graphics_function16 (I, short yWC [], int stagger, long ix1, long ix2, double x1WC, double x2WC) {
+void Graphics_function16 (I, int16_t yWC [], int stagger, long ix1, long ix2, double x1WC, double x2WC) {
 	iam (Graphics);
 	if (stagger == 1) {
 		#define STAGGER(i)  ((i) + (i))
-		MACRO_Graphics_function (short)
+		MACRO_Graphics_function (int16_t)
 		#undef STAGGER
 	} else if (stagger > 1) {
 		#define STAGGER(i)  ((stagger + 1) * (i))
-		MACRO_Graphics_function (short)
+		MACRO_Graphics_function (int16_t)
 		#undef STAGGER
 	} else {
 		#define STAGGER(i)  (i)
-		MACRO_Graphics_function (short)
+		MACRO_Graphics_function (int16_t)
 		#undef STAGGER
 	}
 }
@@ -1312,9 +1312,9 @@ void Graphics_fillCircle_mm (I, double xWC, double yWC, double diameter) {
 
 void Graphics_rectangle_mm (I, double xWC, double yWC, double horSide, double vertSide) {
 	iam (Graphics);
-	short xDC = wdx (xWC), yDC = wdy (yWC);
-	short halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	short halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	long xDC = wdx (xWC), yDC = wdy (yWC);
+	long halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
+	long halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		rectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
@@ -1325,9 +1325,9 @@ void Graphics_rectangle_mm (I, double xWC, double yWC, double horSide, double ve
 
 void Graphics_fillRectangle_mm (I, double xWC, double yWC, double horSide, double vertSide) {
 	iam (Graphics);
-	short xDC = wdx (xWC), yDC = wdy (yWC);
-	short halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	short halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	long xDC = wdx (xWC), yDC = wdy (yWC);
+	long halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
+	long halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		_Graphics_fillRectangle (me, xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
@@ -1362,7 +1362,7 @@ void Graphics_fillArc (I, double xWC, double yWC, double rWC, double fromAngle, 
 
 /* Arrows. */
 
-static void arrowHead (I, short xDC, short yDC, double angle) {
+static void arrowHead (I, long xDC, long yDC, double angle) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -1424,9 +1424,9 @@ static void arrowHead (I, short xDC, short yDC, double angle) {
 		#endif
 	} else if (my postScript) {
 		iam (GraphicsPostscript);
-		int length = my resolution * my arrowSize / 10, radius = my resolution * my arrowSize / 30;
-		my printf (my file, "gsave %d %d translate %f rotate\n"
-			"N 0 0 M -%d 0 %d -60 60 arc closepath fill grestore\n", xDC, yDC, angle, length, radius);
+		long length = my resolution * my arrowSize / 10, radius = my resolution * my arrowSize / 30;
+		my printf (my file, "gsave %ld %ld translate %f rotate\n"
+			"N 0 0 M -%ld 0 %ld -60 60 arc closepath fill grestore\n", xDC, yDC, angle, length, radius);
 	}
 }
 
@@ -1434,7 +1434,7 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	iam (Graphics);
 	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
-	short xyDC [4];
+	long xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
@@ -1448,7 +1448,7 @@ void Graphics_doubleArrow (I, double x1WC, double y1WC, double x2WC, double y2WC
 	iam (Graphics);
 	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
-	short xyDC [4];
+	long xyDC [4];
 	xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180) * size;
 	xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;

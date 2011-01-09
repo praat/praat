@@ -1542,8 +1542,8 @@ void Graphics_textRect (I, double x1, double x2, double y1, double y2, const wch
 	iam (Graphics);
 	_Graphics_widechar *plc, *startOfLine;
 	double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
-	short x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
-	short y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
+	long x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
+	long y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
 	int availableHeight = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC, availableWidth = x2DC - x1DC;
 	int linesAvailable = availableHeight / lineHeight, linesNeeded = 1, lines, iline;
 	if (linesAvailable <= 0) linesAvailable = 1;

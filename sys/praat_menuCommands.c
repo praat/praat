@@ -1,6 +1,6 @@
 /* praat_menuCommands.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/01/26 buttons along top
  * pb 2007/06/09 wchar_t
  * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2011/01/02 GTK: allow submenus even from scripts
  */
 
 #include "praatP.h"
@@ -229,8 +230,6 @@ GuiObject praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, cons
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
 						#if gtk
-							// TODO: Is dit de bedoeling? Tja, wie zal het zeggen? De GTK-menuhierarchie?
-//						parent = gtk_widget_get_parent (theCommands [i]. button);
 							parent = gtk_menu_item_get_submenu (GTK_MENU_ITEM (theCommands [i]. button));
 						#elif motif
 							XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
@@ -328,7 +327,9 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 			for (long i = position - 1; i > 0; i --) {
 				if (theCommands [i]. depth == depth - 1) {
 					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
-						#if motif
+						#if gtk
+							parent = gtk_menu_item_get_submenu (GTK_MENU_ITEM (theCommands [i]. button));
+						#elif motif
 							XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
 						#endif
 					break;

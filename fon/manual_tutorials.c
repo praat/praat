@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110101)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110109)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.09# (9 January 2011)")
+LIST_ITEM (L"\\bu Much improved scripting tutorial.")
+LIST_ITEM (L"\\bu Listening experiments can now show pictures instead of just texts (on the Mac).")
+LIST_ITEM (L"\\bu EPS files can now be many miles wide instead of just 55 inches.")
 NORMAL (L"##5.2.08# (1 January 2011)")
 LIST_ITEM (L"\\bu Improved manual.")
 LIST_ITEM (L"\\bu Improved memory allocation on 32-bit platforms: "
@@ -572,15 +576,15 @@ NORMAL (L"##4.5.03# (29 November 2006)")
 LIST_ITEM (L"\\bu Table: added independent-samples t-test.")
 LIST_ITEM (L"\\bu Linux: corrected a bug introduced in 4.5.02 that prevented sounds from playing and other weird things.")
 NORMAL (L"##4.5.02# (16 November 2006)")
-LIST_ITEM (L"\\bu Corrected yet another bug in the new @@Sound: To IntervalTier (silence)...@.")
+LIST_ITEM (L"\\bu Corrected yet another bug in the new @@Sound: To TextGrid (silences)...@.")
 NORMAL (L"##4.5.01# (28 October 2006)")
 LIST_ITEM (L"\\bu Sound window: the pitch drawing method is #Curves, #Speckles, or #Automatic.")
-LIST_ITEM (L"\\bu Corrected another bug in the new @@Sound: To IntervalTier (silence)...@.")
+LIST_ITEM (L"\\bu Corrected another bug in the new @@Sound: To TextGrid (silences)...@.")
 NORMAL (L"##4.5# (26 October 2006)")
 NORMAL (L"##4.4.35# (20 October 2006)")
 LIST_ITEM (L"\\bu In @ManPages you can now draw pictures.")
 NORMAL (L"##4.4.34# (19 October 2006)")
-LIST_ITEM (L"\\bu Corrected a bug in the new @@Sound: To IntervalTier (silence)...@.")
+LIST_ITEM (L"\\bu Corrected a bug in the new @@Sound: To TextGrid (silences)...@.")
 NORMAL (L"##4.4.33# (4 October 2006)")
 LIST_ITEM (L"\\bu Windows: corrected a bug introduced in 4.4.31 that caused Praat to skip the first line of the Buttons file.")
 NORMAL (L"##4.4.32# (30 September 2006)")

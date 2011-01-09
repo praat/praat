@@ -240,7 +240,7 @@ NORMAL (L"Before the experiment begins, the listener will see the %startText in 
 	"As you can see in the example, all these texts can consist of multiple lines.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.7. Response categories", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 2.7. Response categories", L"ppgb", 20110109)
 NORMAL (L"Every trial comes with the same set of response categories. "
 	"The @@ExperimentMFC 2.1. The experiment file|example experiment@ has five of them. "
 	"For each response category, you supply the area of the screen where a rectangle will be drawn. "
@@ -259,6 +259,12 @@ NORMAL (L"The third text that you supply for each rectangle is the response cate
 NORMAL (L"The border of the rectangles will be maroon, the background of the screen will be light grey. "
 	"The colour of clickable rectangles will be yellow, that of non-clickable rectangles (those with "
 	"empty category specifications) light grey.")
+NORMAL (L"You can have a picture instead of a text on a response button, by using \\bsFI:")
+CODE1 (L"0.2 0.3 0.7 0.8 \"\\bsFIpictures/hello.jpg\" 40 \"m\" \"i\"")
+NORMAL (L"In this example, the picture ##hello.jpg# from the subdirectory #pictures "
+	"(i.e. a subdirectory of the directory where your experiment file is) "
+	"will be drawn into the rectangle [0.2, 0.3] \\xx [0.7, 0.8]. "
+	"This currently (January 2011) works only on the Mac.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 2.8. Goodness judgments", L"ppgb", 20051205)

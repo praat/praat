@@ -160,7 +160,7 @@ void Graphics_setGrey (I, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-static void highlight (I, short x1DC, short x2DC, short y1DC, short y2DC) {
+static void highlight (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -219,8 +219,8 @@ void Graphics_unhighlight (I, double x1WC, double x2WC, double y1WC, double y2WC
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
-static void highlight2 (I, short x1DC, short x2DC, short y1DC, short y2DC,
-	short x1DC_inner, short x2DC_inner, short y1DC_inner, short y2DC_inner)
+static void highlight2 (I, long x1DC, long x2DC, long y1DC, long y2DC,
+	long x1DC_inner, long x2DC_inner, long y1DC_inner, long y2DC_inner)
 {
 	iam (Graphics);
 	if (my screen) {

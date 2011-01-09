@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20101112 Latest modification.
+ djmw 20110105 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
@@ -197,6 +197,9 @@ Any TableOfReal_appendColumnsMany (Collection me);
 int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
 
 double TableOfReal_normalityTest_BHEP (I, double *beta, double *tnb, double *lnmu, double *lnvar);
+
+TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int nosign);
+TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int nosign);
 
 /********************* class TablesOfReal ******************************/
 

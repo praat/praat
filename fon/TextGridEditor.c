@@ -1461,7 +1461,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	#else
 		bool platformUsesAntiAliasing = false;
 	#endif
-	short x1DC, x2DC, yDC;
+	long x1DC, x2DC, yDC;
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals -> size;
 	Graphics_WCtoDC (my graphics, my startWindow, 0.0, & x1DC, & yDC);
 	Graphics_WCtoDC (my graphics, my endWindow, 0.0, & x2DC, & yDC);

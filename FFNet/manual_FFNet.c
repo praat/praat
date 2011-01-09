@@ -1,6 +1,6 @@
 /* manual_FFNet.c
  *
- * Copyright (C) 1994-2010 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 /*
  djmw 20020408 GPL
- djmw 20100401 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -452,17 +451,17 @@ NORMAL (L"All patterns are propagated and the total costs are calculated as is s
 MAN_END
 
 MAN_BEGIN (L"Anderson (1935)", L"djmw", 20040423)
-NORMAL (L"E. Anderson (1935), \"The irises of the Gasp\\e' peninsula\", "
-	"%%Bulletin of the American Iris Society% #59, 2-5.")
+NORMAL (L"E. Anderson (1935): \"The irises of the Gasp\\e' peninsula.\" "
+	"%%Bulletin of the American Iris Society% #59: 2\\--5.")
 MAN_END
 
 MAN_BEGIN (L"Fisher (1936)", L"djmw", 19980114)
-NORMAL (L"R.A. Fisher (1936), \"The use of multiple measurements in taxonomic "
-	"problems\", %%Annals of Eugenics% #7, 179-188.")
+NORMAL (L"R.A. Fisher (1936): \"The use of multiple measurements in taxonomic "
+	"problems.\" %%Annals of Eugenics% #7: 179\\--188.")
 MAN_END
 
 MAN_BEGIN (L"Nocedal & Wright (1999)", L"djmw", 20040511)
-NORMAL (L"J. Nocedal & S.J. Wright, %%Numerical optimization%, Springer, 1999.")
+NORMAL (L"J. Nocedal & S.J. Wright (1999): %%Numerical optimization.% Springer.")
 MAN_END
 }
 

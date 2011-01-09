@@ -1,6 +1,6 @@
 /* manual_Permutation.c
  *
- * Copyright (C) 2005-2010 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 /*
   20050709 djmw
-  20100818 Latest modification
 */
+
 #include "ManPagesM.h"
 
 void manual_Permutation_init (ManPages me);
@@ -71,7 +71,7 @@ DEFINITION (L"the name of the new permutation.")
 TAG (L"##Number of elements%")
 DEFINITION (L"the number of elements in the permutation.")
 TAG (L"##Identity permutation")
-NORMAL (L"determines whether the permution will be a randomly chosen one, or the @@identity permutation@.")
+DEFINITION (L"determines whether the permution will be a randomly chosen one, or the @@identity permutation@.")
 MAN_END
 
 MAN_BEGIN (L"identity permutation", L"djmw", 20050713)
@@ -91,100 +91,100 @@ ENTRY (L"Example")
 NORMAL (L"The query for the index of value 3 for the permutation (3,2,4,5,1) gives 1.")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Reverse...", L"djmw", 20050709)
+MAN_BEGIN (L"Permutation: Reverse...", L"djmw", 20110105)
 INTRO (L"Reverse the elements in the given range.")
 ENTRY (L"Setting")
-TAG (L"##Range")
-DEFINITION (L"defines the range of elements that will be reversed.")
+TAG (L"##Index range#")
+DEFINITION (L"defines the range of indices that will be reversed.")
 ENTRY (L"Examples")
-NORMAL (L"1. With the %range [0,0], the permutation (1,2,3,4,5) will generate (5,4,3,2,1). ")
-NORMAL (L"2. With the %range [3,0], the permutation (1,2,3,4,5) will generate (1,2,5,4,3). ")
+NORMAL (L"1. With ##Index range# = [0,0], the permutation (1,2,3,4,5) is turned into (5,4,3,2,1). ")
+NORMAL (L"2. With ##Index range# = [3,0], the permutation (1,2,3,4,5) is turned into (1,2,5,4,3). ")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Swap one from range...", L"djmw", 20050709)
-INTRO (L"An element, randomly chosen from a range, will be permuted with an element at a given index position.")
+MAN_BEGIN (L"Permutation: Swap one from range...", L"djmw", 20110105)
+INTRO (L"An element at an index, randomly chosen from a range, will be permuted with an element at a prescribed index position.")
 ENTRY (L"Settings")
-TAG (L"##Range")
+TAG (L"##Index range#")
 DEFINITION (L"defines the range of indices from which one will be randomly chosen.")
-TAG (L"##Index")
+TAG (L"##Index#")
 DEFINITION (L"defines the special index position whose element will be interchanged with the one chosen from the range.")
 TAG (L"##Forbid same")
 DEFINITION (L"when %on, forbids the randomly chosen position and the index position to be the same. "
 	"This switch is only of relevance when the chosen range happens to overlap the index position.")
 ENTRY (L"Examples")
-NORMAL (L"With range [0,0], an index of 3, \"Forbid same\" %off and (1,2,3,4,5) as the starting permutation, the outcome might be one of "
-	"the five permutations (3,2,1,4,5), (1,3,2,4,5), (1,2,3,4,5), (1,2,4,3,5), (1,2,5,4,3). If \"Forbid same\" were chosen as %on, the "
-	"(1,2,3,4,5) permutation is forbidden and the only outcome could be one of other four permutations.")
+NORMAL (L"With ##Index range# = [0,0], ##Index# = 3, ##Forbid same# is %off and (1,2,3,4,5) as the starting permutation, the outcome might be one of "
+	"the five permutations (3,2,1,4,5), (1,3,2,4,5), (1,2,3,4,5), (1,2,4,3,5), (1,2,5,4,3). If ##Forbid same# were chosen as %on, the "
+	"(1,2,3,4,5) permutation is forbidden and the outcome could only be one of the four remaining permutations.")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20050709)
+MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20110105)
 INTRO (L"Generates a random permutation for the elements in the given range.")
 ENTRY (L"Setting")
-TAG (L"##Range")
+TAG (L"##Index range#")
 DEFINITION (L"defines the range of elements that will be permuted.")
 ENTRY (L"Example")
-NORMAL (L"With a range of [3,6], the permutation (1,2,3,4,5,6,7) generates one of the 24 possible permutations, for example (1,2,(4,5,3,6),7).")
+NORMAL (L"With ##Index range# = [3,6], the permutation (1,2,3,4,5,6,7) is turned into one of 24 (= 4!) possible permutations, for example (1,2,(4,5,3,6),7).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Permute randomly (blocks)...", L"djmw", 20050709)
+MAN_BEGIN (L"Permutation: Permute randomly (blocks)...", L"djmw", 20110105)
 INTRO (L"Generates a new @Permutation by randomly permuting blocks of size %blocksize.")
 ENTRY (L"Settings")
-TAG (L"##Range")
+TAG (L"##Index range#")
 DEFINITION (L"the range of elements whose blocks will be permuted.")
-TAG (L"##Block size")
+TAG (L"##Block size#")
 DEFINITION (L"the size of the blocks that will be permuted. There must fit an integer number of blocks "
 	"in the chosen range.")
-TAG (L"##Permute within blocks")
+TAG (L"##Permute within blocks#")
 DEFINITION (L"when %on, the elements in each block are also randomly permuted.")
-TAG (L"##No doublets")
+TAG (L"##No doublets#")
 DEFINITION (L"guarantees that the first element in each block does not equal the last element of the previous block modulo "
 	"the block size. E.g. the numbers 3, 6, 9 are all equal modulo 3. "
 	"This parameter only has effect when ##Permute within blocks# is %on.")
 ENTRY (L"Examples")
-NORMAL (L"1. With range [0,0], a block size of 3 and \"Permute within blocks\" %off, the permutation ((1,2,3),(4,5,6),(7,8,9)) "
-	"generates one of the six possible permutations, for example ((4,5,6),(7,8,9),(1,2,3)). (The option \"No doublets\" will be ignored and the parentheses are only there to indicate the blocks.)")
-NORMAL (L"2. With range [0,0], a block size of 3, \"Permute within blocks\" %on and \"No doublets\" %off, "
-	"the permutation ((1,2,3),(4,5,6),(7,8,9)) might generate ((5,4,6),(9,8,7),(3,1,2)).")
-NORMAL (L"3. With the same options as 2 but \"No doublets\" %on, the previously given outcome is forbidden because "
+NORMAL (L"1. With ##Index range# = [0,0], ##Block size# = 3 and ##Permute within blocks# is %off, the permutation ((1,2,3),(4,5,6),(7,8,9)) "
+	"is turned into one of six possible permutations, for example into ((4,5,6),(7,8,9),(1,2,3)). (The option ##No doublets# will be ignored and the parentheses are only there to indicate the blocks.)")
+NORMAL (L"2. With ##Index range# = [0,0], ##Block size# = 3, ##Permute within blocks# is %on and ##No doublets# is %off, "
+	"the permutation ((1,2,3),(4,5,6),(7,8,9)) might turn into ((5,4,6),(9,8,7),(3,1,2)).")
+NORMAL (L"3. With the same options as 2 but ##No doublets# is %on, the previously given outcome is forbidden because "
 	"the last element of the first block (6) and the first element of the next block (9) are equal modulo 3 (the "
 	"blocksize). A valid outcome might then be ((5,4,6),(8,9,7),(3,1,2)).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Swap blocks...", L"djmw", 20050722)
-INTRO (L"A command to swap blocks in the selected @Permutation.")
+MAN_BEGIN (L"Permutation: Swap blocks...", L"djmw", 20110105)
+INTRO (L"A command to swap the contents of two index ranges in the selected @Permutation.")
 ENTRY (L"Settings")
-TAG (L"#From, #To")
+TAG (L"##From index#, ##To index#")
 DEFINITION (L"the two starting positions from where elements are to be swapped. The blocks may overlap.")
-TAG (L"##Block size")
-DEFINITION (L"the number of pairs to swap. ")
+TAG (L"##Block size#")
+DEFINITION (L"determines the number of pairs to swap. ")
 ENTRY (L"Behaviour")
-NORMAL (L"The elements at the %from and %to position are swapped. If blocksize is greater than one, the two elements at %from+1 and %to+1 will be swapped. This goes on until the last two elements in each block have been swapped.")
+NORMAL (L"If the ##Block size# equals one, only the elements at the ##From index# and ##To index# position are swapped. If blocksize is greater than one, the two elements at ##From index#+1 and ##To index#+1 will be swapped too. This goes on until the last two elements in each block have been swapped.")
 ENTRY (L"Examples")
-NORMAL (L"1. Swap two blocks: with %from = 1, %to = 4, and %blocksize = 2, the permutation (1,2,3,4,5) will be modified to (4,5,3,1,2).")
-NORMAL (L"2. Swap two elements: with %from = 1, %to = 4, and %blocksize = 1, the permutation (1,2,3,4,5) will be modified to (4,2,3,1,5).")
-NORMAL (L"3. Swap two overlapping blocks: with %from = 1, %to = 3, and %blocksize = 3, the permutation (1,2,3,4,5) will be modified to "
+NORMAL (L"1. Swap two blocks: with ##From index# = 1, ##To index# = 4, and ##Block size# = 2, the permutation (1,2,3,4,5) is turned into (4,5,3,1,2).")
+NORMAL (L"2. Swap two elements: with ##From index# = 1, ##To index# = 4, and ##Block size# = 1, the permutation (1,2,3,4,5) is turned into (4,2,3,1,5).")
+NORMAL (L"3. Swap two overlapping blocks: with ##From index# = 1, ##To index# = 3, and ##Block size# = 3, the permutation (1,2,3,4,5) is turned into "
 	"(3,4,5,2,1).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Swap positions...", L"djmw", 20100823)
-INTRO (L"Swaps the contents of two positions in the selected @@Permutation@.")
+MAN_BEGIN (L"Permutation: Swap positions...", L"djmw", 20110105)
+INTRO (L"Swaps the contents at two indices in the selected @@Permutation@.")
 ENTRY (L"Settings")
-TAG (L"##First position#, ##Second position#")
-DEFINITION (L"the two positions from where elements have to be swapped. The order of these positions is not important.")
+TAG (L"##First index#, ##Second index#")
+DEFINITION (L"the two indices from where elements have to be swapped. The order of these indices is not important.")
 ENTRY (L"Example")
-NORMAL (L"With positions 1 and 3, the permutation (1,3,4,2,5) changes to (4,3,1,2,5).")
+NORMAL (L"With ##First index# = 1 and ##Second index# = 3, the permutation (1,3,4,2,5) is turned into (4,3,1,2,5).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Swap numbers...", L"djmw", 20100823)
+MAN_BEGIN (L"Permutation: Swap numbers...", L"djmw", 20110105)
 INTRO (L"Swaps two numbers in the selected @@Permutation@.")
 ENTRY (L"Settings")
 TAG (L"##First number#, ##Second number#")
 DEFINITION (L"the two numbers that have to be swapped. The order of these numbers is not important.")
 ENTRY (L"Example")
-NORMAL (L"With numbers 1 and 3, the permutation (1,3,4,2,5) changes to (3,1,4,2,5).")
+NORMAL (L"With ##First number# = 1 and ##Second number# = 3, the permutation (1,3,4,2,5) is turned into (3,1,4,2,5).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Interleave...", L"djmw", 20050714)
+MAN_BEGIN (L"Permutation: Interleave...", L"djmw", 20110105)
 INTRO (L"Generates a new @Permutation by interleaving elements from successive blocks. ")
 NORMAL (L"We always start with the first element in the first block. When the offset is zero, the next element will be the first "
 	"element of the second block, then the first element of the third block. After the first element of the last block, we start again "
@@ -196,18 +196,18 @@ NORMAL (L"If the offset differs from zero and equals 1 for example, we start wit
 	"we start the same cycle again with the next lower element in the first block (which by the way need not be the second element, "
 	"see also example 4).")
 ENTRY (L"Settings")
-TAG (L"##Range")
+TAG (L"##Index range#")
 DEFINITION (L"the range of elements that will be permuted.")
-TAG (L"##Block size")
+TAG (L"##Block size#")
 DEFINITION (L"the size of a block. An integer number of blocks must fit "
-	"in the chosen #Range.")
-TAG (L"##Offset")
+	"in the chosen ##Index range#.")
+TAG (L"##Offset#")
 DEFINITION (L"determines the relative positions of selected elements in successive blocks.")
 ENTRY (L"Examples")
-NORMAL (L"1. With range [0,0], a block size of 3, and an offset of 0, the permutation ((1,2,3),(4,5,6),(7,8,9)) will generate (1,4,7,2,5,8,3,6,9).")
-NORMAL (L"2. With range [0,0], a block size of 3, and an offset of 1, the permutation ((1,2,3),(4,5,6),(7,8,9)) will generate (1,5,9,2,6,7,3,4,8).")
-NORMAL (L"3. With range [0,0], a block size of 3, and an offset of 2, the permutation ((1,2,3),(4,5,6),(7,8,9)) will generate (1,6,8,2,4,9,3,5,7).")
-NORMAL (L"4. With range [0,0], a block size of 4, and an offset of 1, the permutation ((1,2,3,4),(5,6,7,8)) will generate (1,6,3,8,2,7,4,5).")
+NORMAL (L"1. With ##Index range# = [0,0], ##Block size# = 3, and ##Offset# = 0, the permutation ((1,2,3),(4,5,6),(7,8,9)) is turned into (1,4,7,2,5,8,3,6,9).")
+NORMAL (L"2. With ##Index range# = [0,0], ##Block size# = 3, and ##Offset# = 1, the permutation ((1,2,3),(4,5,6),(7,8,9)) is turned into (1,5,9,2,6,7,3,4,8).")
+NORMAL (L"3. With ##Index range# = [0,0], ##Block size# = 3, and ##Offset# = 2, the permutation ((1,2,3),(4,5,6),(7,8,9)) is turned into (1,6,8,2,4,9,3,5,7).")
+NORMAL (L"4. With ##Index range# = [0,0], ##Block size# = 4, and ##Offset# = 1, the permutation ((1,2,3,4),(5,6,7,8)) is turned into (1,6,3,8,2,7,4,5).")
 MAN_END
 
 MAN_BEGIN (L"Permutation: Next", L"djmw", 20100521)
@@ -224,27 +224,23 @@ NORMAL (L"Get the previous @@Permutation|permutation@ in lexicographic order. If
 NORMAL (L"This Previous operation follows the opposite order of @@Permutation: Next@.")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Rotate...", L"djmw", 20050714)
+MAN_BEGIN (L"Permutation: Rotate...", L"djmw", 20110105)
 INTRO (L"A circular shift of all elements within the given range.")
 ENTRY (L"Settings")
-TAG (L"##Range")
+TAG (L"##Index range#")
 DEFINITION (L"the range of elements that will be circularly permuted.")   // ambiguous; are these the positions or the numbers?
-TAG (L"##Step size")
+TAG (L"##Step size#")
 DEFINITION (L"define how many positions each element will be shifted.")
 ENTRY (L"Examples")
-NORMAL (L"1. With a step of size 2 and range [1,5], the permutation (1,2,3,4,5) will generate (4,5,1,2,3).")   // ambiguous, because position equals number in this example
-NORMAL (L"2. With a step of size 2 and range [2,5], the permutation ((1),(2,3,4,5)) will generate ((1),(4,5,2,3))")   // how does a permutation "generate"??
-NORMAL (L"3. With a step of size -1 and range [0,0], the permutation (1,2,3,4,5) will generate (2,3,4,5,1).")   // what do these "permutations" mean??
-// shouldn't it be this:
-//NORMAL (L"1. With a step of size 2 and range [1,5], the permutation (1,2,3,4,5) is turned into (4,5,1,2,3).")
-//NORMAL (L"2. With a step of size 2 and range [2,5], the permutation (5,4,3,2,1) is turned into (5,2,1,4,3)")
-//NORMAL (L"3. With a step of size -1 and range [0,0], the permutation (1,2,4,3,5) is turned into (2,4,3,5,1).")   // but why? does [0,0] have a special meaning?
+NORMAL (L"1. With ##Step size# = 2 and ##Index range# = [1,5], the permutation (1,2,3,4,5) is turned into (4,5,1,2,3). ")
+NORMAL (L"2. With ##Step size# = 2 and ##Index range# = [2,5], the permutation ((1),(2,3,4,5)) is turned into ((1),(4,5,2,3))")
+NORMAL (L"3. With ##Step size# = -1 and ##Index range# = [0,0], the permutation (1,2,3,4,5) is turned into (2,3,4,5,1).")
 MAN_END
 
 MAN_BEGIN (L"Permutation: Invert", L"djmw", 20050709)
 INTRO (L"Generates the inverse of the selected @Permutation.")
 ENTRY (L"Example")
-NORMAL (L"If the permutation is (1,5,3,2,4) the generated inverse will be (1,4,3,5,2). If we @@Permutations: Multiply|multiply@ these two permutations the result will be the identity permutation (1,2,3,4,5).")
+NORMAL (L"If the permutation is (1,5,3,2,4) the inverse will be (1,4,3,5,2). If we @@Permutations: Multiply|multiply@ these two permutations the result will be the identity permutation (1,2,3,4,5).")
 MAN_END
 
 MAN_BEGIN (L"Permutations: Multiply", L"djmw", 20050717)
@@ -390,3 +386,4 @@ MAN_END
 }
 
 /* End of file manual_Permutation.c */
+

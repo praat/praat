@@ -912,7 +912,7 @@ HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long startState,
 		if (my componentDimension > 0)
 		{
 			wchar_t *name;
-			if (! GaussianMixture_generateOneVector (s -> gm, obs, & name, buf)) goto end;
+			if (! GaussianMixture_generateOneVector (s -> gm, obs, &name, buf)) goto end;
 			for (long j = 1; j <= my componentDimension; j++) Table_setNumericValue ((Table) thee, i, 1 + j, obs[j]);
 		}
 

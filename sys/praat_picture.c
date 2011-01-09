@@ -166,7 +166,7 @@ static void updateViewportMenu (void) {
 }
 
 DIRECT (MouseSelectsInnerViewport)
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
 	praat_picture_close ();
@@ -174,7 +174,7 @@ DIRECT (MouseSelectsInnerViewport)
 END
 
 DIRECT (MouseSelectsOuterViewport)
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Viewport commands are not available inside pictures.");
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
 	praat_picture_close ();
@@ -199,12 +199,12 @@ SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
 SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
 SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin);
 DO
-	if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
+	//if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		short x1DC, x2DC, y1DC, y2DC;
+		long x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
@@ -231,6 +231,13 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
 		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
+		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
+		double height_NDC = y2wNDC - y1wNDC;
+		theCurrentPraatPicture -> y1NDC = height_NDC-bottom - ymargin;
+		theCurrentPraatPicture -> y2NDC = height_NDC-top + ymargin;
 	} else {
 		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
@@ -253,7 +260,7 @@ SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC);
 SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
 SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
 DO
-	if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
+	//if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	if (left == right) {
@@ -272,6 +279,13 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
+		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
+		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
+		double height_NDC = y2wNDC - y1wNDC;
+		theCurrentPraatPicture -> y1NDC = height_NDC-bottom;
+		theCurrentPraatPicture -> y2NDC = height_NDC-top;
 	} else {
 		if (top < bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = bottom;

@@ -1,6 +1,6 @@
 /* manual_dwtools.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3307,10 +3307,6 @@ NORMAL (L"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To IntervalTier (silence)...", L"djmw", 20061201)
-INTRO (L"The new command as of praat version 4.5.05 is @@Sound: To TextGrid (silences)...@.")
-MAN_END
-
 MAN_BEGIN (L"Sound & Pitch: To FormantFilter...", L"djmw", 20010404)
 INTRO (L"A command that creates a @FormantFilter object from the selected "
 	"@Sound and @Pitch objects by @@band filtering in the frequency domain@ with a "
@@ -4154,8 +4150,7 @@ NORMAL (L"J.M. Tribolet & T.F. Quatieri (1979): \"Computation of the Complex "
 MAN_END
 
 MAN_BEGIN (L"Tukey (1977)", L"djmw", 20000524)
-NORMAL (L"J.W. Tukey (1977): %%Exploratory data analysis%. "
-	"Reading, MA: Addison-Wesley.")
+NORMAL (L"J.W. Tukey (1977): %%Exploratory data analysis%. Reading, MA: Addison-Wesley.")
 MAN_END
 
 MAN_BEGIN (L"Van Nierop et al. (1973)", L"djmw", 20020620)

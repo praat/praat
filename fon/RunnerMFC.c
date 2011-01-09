@@ -124,25 +124,30 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
-			Graphics_setColour (my graphics,
-				response -> name [0] == '\0' ? Graphics_SILVER :
-				experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
-				experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
-				Graphics_YELLOW : Graphics_SILVER);
-			Graphics_setLineWidth (my graphics, 3.0);
-			Graphics_fillRectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
-			Graphics_setColour (my graphics, Graphics_MAROON);
-			Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
-			Graphics_setFontSize (my graphics, response -> fontSize ? response -> fontSize : 24);
+			wchar_t *textToDraw = response -> label;   // can be overridden
 			if (visibleText_p [0] != '\0') {
 				wchar_t *visibleText_q = wcschr (visibleText_p, '|');
 				if (visibleText_q) *visibleText_q = '\0';
-				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
-					0.5 * (response -> bottom + response -> top), visibleText_p);
+				textToDraw = visibleText_p;   // override
 				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += wcslen (visibleText_p);
+			}
+			if (wcsnequ (textToDraw, L"\\FI", 3)) {
+				structMelderFile file;
+				MelderDir_relativePathToFile (& experiment -> rootDirectory, textToDraw + 3, & file);
+				Graphics_imageFromFile (my graphics, Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
+				Graphics_setColour (my graphics,
+					response -> name [0] == '\0' ? Graphics_SILVER :
+					experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
+					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
+					Graphics_YELLOW : Graphics_SILVER);
+				Graphics_setLineWidth (my graphics, 3.0);
+				Graphics_fillRectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_setColour (my graphics, Graphics_MAROON);
+				Graphics_rectangle (my graphics, response -> left, response -> right, response -> bottom, response -> top);
+				Graphics_setFontSize (my graphics, response -> fontSize ? response -> fontSize : 24);
 				Graphics_text (my graphics, 0.5 * (response -> left + response -> right),
-					0.5 * (response -> bottom + response -> top), response -> label);
+					0.5 * (response -> bottom + response -> top), textToDraw);
 			}
 			Graphics_setFontSize (my graphics, 24);
 		}

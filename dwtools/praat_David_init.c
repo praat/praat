@@ -1,6 +1,6 @@
 /* praat_David_init.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2746,21 +2746,21 @@ DIRECT (Permutation_sort)
 END
 
 FORM (Permutation_swapBlocks, L"Permutation: Swap blocks", L"Permutation: Swap blocks...")
-	NATURAL (L"From", L"1")
-	NATURAL (L"To", L"2")
+	NATURAL (L"From index", L"1")
+	NATURAL (L"To index", L"2")
 	NATURAL (L"Block size", L"1")
 	OK
 DO
-	if (! Permutation_swapBlocks (ONLY_OBJECT, GET_INTEGER (L"From"), GET_INTEGER (L"To"), GET_INTEGER (L"Block size"))) return 0;
+	if (! Permutation_swapBlocks (ONLY_OBJECT, GET_INTEGER (L"From index"), GET_INTEGER (L"To index"), GET_INTEGER (L"Block size"))) return 0;
 	praat_dataChanged (ONLY_OBJECT);
 END
 
 FORM (Permutation_swapPositions, L"Permutation: Swap positions", L"Permutation: Swap positions...")
-	NATURAL (L"First position", L"1")
-	NATURAL (L"Second position", L"2")
+	NATURAL (L"First index", L"1")
+	NATURAL (L"Second index", L"2")
 	OK
 DO
-	if (! Permutation_swapPositions (ONLY_OBJECT, GET_INTEGER (L"First position"), GET_INTEGER (L"Second position"))) return 0;
+	if (! Permutation_swapPositions (ONLY_OBJECT, GET_INTEGER (L"First index"), GET_INTEGER (L"Second index"))) return 0;
 	praat_dataChanged (ONLY_OBJECT);
 END
 
@@ -2775,52 +2775,52 @@ END
 
 FORM (Permutation_swapOneFromRange, L"Permutation: Swap one from range", L"Permutation: Swap one from range...")
 	LABEL (L"", L"A randomly chosen element from ")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	LABEL (L"", L"is swapped with the element at")
 	NATURAL (L"Index", L"1")
 	BOOLEAN (L"Forbid same", 1)
 	OK
 DO
-	if (! Permutation_swapOneFromRange (ONLY_OBJECT, GET_INTEGER (L"left Range"), GET_INTEGER (L"right Range"),
+	if (! Permutation_swapOneFromRange (ONLY_OBJECT, GET_INTEGER (L"left Index range"), GET_INTEGER (L"right Index range"),
 		GET_INTEGER (L"Index"), GET_INTEGER (L"Forbid same"))) return 0;
 	praat_dataChanged (ONLY_OBJECT);
 END
 
 FORM (Permutation_permuteRandomly, L"Permutation: Permute randomly", L"Permutation: Permute randomly...")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new2 (Permutation_permuteRandomly (p, GET_INTEGER (L"left Range"),
-		GET_INTEGER (L"right Range")), Thing_getName (p), L"_randomly")) return 0;
+	if (! praat_new2 (Permutation_permuteRandomly (p, GET_INTEGER (L"left Index range"),
+		GET_INTEGER (L"right Index range")), Thing_getName (p), L"_randomly")) return 0;
 END
 
 FORM (Permutation_rotate, L"Permutation: Rotate", L"Permutation: Rotate...")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	INTEGER (L"Step size", L"1")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
 	long step = GET_INTEGER (L"Step size");
-	if (! praat_new3 (Permutation_rotate (p, GET_INTEGER (L"left Range"), GET_INTEGER (L"right Range"), step), Thing_getName (p), L"_rotate", Melder_integer (step))) return 0;
+	if (! praat_new3 (Permutation_rotate (p, GET_INTEGER (L"left Index range"), GET_INTEGER (L"right Index range"), step), Thing_getName (p), L"_rotate", Melder_integer (step))) return 0;
 END
 
 FORM (Permutation_reverse, L"Permutation: Reverse", L"Permutation: Reverse...")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new2 (Permutation_reverse (p, GET_INTEGER (L"left Range"), GET_INTEGER (L"right Range")),
+	if (! praat_new2 (Permutation_reverse (p, GET_INTEGER (L"left Index range"), GET_INTEGER (L"right Index range")),
 		Thing_getName (p), L"_reverse")) return 0;
 END
 
 FORM (Permutation_permuteBlocksRandomly, L"Permutation: Permute blocks randomly", L"Permutation: Permute randomly (blocks)...")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	NATURAL (L"Block size", L"12")
 	BOOLEAN (L"Permute within blocks", 1)
 	BOOLEAN (L"No doublets", 0)
@@ -2828,20 +2828,20 @@ FORM (Permutation_permuteBlocksRandomly, L"Permutation: Permute blocks randomly"
 DO
 	Permutation p = ONLY_OBJECT;
 	long blocksize = GET_INTEGER (L"Block size");
-	if (! praat_new3 (Permutation_permuteBlocksRandomly (p, GET_INTEGER (L"left Range"),
-		GET_INTEGER (L"right Range"), blocksize, GET_INTEGER (L"Permute within blocks"), GET_INTEGER (L"No doublets")),
+	if (! praat_new3 (Permutation_permuteBlocksRandomly (p, GET_INTEGER (L"left Index range"),
+		GET_INTEGER (L"right Index range"), blocksize, GET_INTEGER (L"Permute within blocks"), GET_INTEGER (L"No doublets")),
 		Thing_getName (p), L"_blocks", Melder_integer(blocksize))) return 0;
 END
 
 FORM (Permutation_interleave, L"Permutation: Interleave", L"Permutation: Interleave...")
-	INTEGER (L"left Range", L"0")
-	INTEGER (L"right Range", L"0")
+	INTEGER (L"left Index range", L"0")
+	INTEGER (L"right Index range", L"0")
 	NATURAL (L"Block size", L"12")
 	INTEGER (L"Offset", L"0")
 	OK
 DO
 	Permutation p = ONLY_OBJECT;
-	if (! praat_new2 (Permutation_interleave (ONLY_OBJECT, GET_INTEGER (L"left Range"), GET_INTEGER (L"right Range"),
+	if (! praat_new2 (Permutation_interleave (ONLY_OBJECT, GET_INTEGER (L"left Index range"), GET_INTEGER (L"right Index range"),
 		GET_INTEGER (L"Block size"), GET_INTEGER (L"Offset")), Thing_getName (p), L"_interleave")) return 0;
 END
 
@@ -4353,6 +4353,24 @@ DIRECT (TablesOfReal_to_Eigen_gsvd)
 	NEW (TablesOfReal_to_Eigen_gsvd (me, thee))
 END
 
+FORM (TableOfReal_and_TableOfReal_rowCorrelations, L"TableOfReal & TableOfReal: Row correlations", 0)
+	BOOLEAN (L"No sign", 1)
+	OK
+DO
+	TableOfReal t1 = NULL, t2 = NULL;
+	WHERE (SELECTED && CLASS == classTableOfReal) { if (t1) t2 = OBJECT; else t1 = OBJECT; }
+	if (! praat_new1 (TableOfReal_and_TableOfReal_rowCorrelations (t1, t2, GET_INTEGER (L"No sign")), L"rows")) return 0;
+END
+
+FORM (TableOfReal_and_TableOfReal_columnCorrelations, L"TableOfReal & TableOfReal: Column correlations", 0)
+	BOOLEAN (L"No sign", 1)
+	OK
+DO
+	TableOfReal t1 = NULL, t2 = NULL;
+	WHERE (SELECTED && CLASS == classTableOfReal) { if (t1) t2 = OBJECT; else t1 = OBJECT; }
+	if (! praat_new1 (TableOfReal_and_TableOfReal_columnCorrelations (t1, t2, GET_INTEGER (L"No sign")), L"columns")) return 0;
+END
+
 DIRECT (TablesOfReal_to_GSVD)
 	TableOfReal me = NULL, thee = NULL;
 	WHERE (SELECTED)
@@ -5235,6 +5253,11 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, L"-- configurations --", 0, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, L"To Configuration (pca)...",	0, 1, DO_TableOfReal_to_Configuration_pca);
 	praat_addAction1 (classTableOfReal, 0, L"To Configuration (lda)...", 0, 1, DO_TableOfReal_to_Configuration_lda);
+	praat_addAction1 (classTableOfReal, 2, L"-- between tables --", L"To Configuration (lda)...", 1, 0);
+	praat_addAction1 (classTableOfReal, 2, L"To TableOfReal (row correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_rowCorrelations);
+	praat_addAction1 (classTableOfReal, 2, L"To TableOfReal (column correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_columnCorrelations);
+
+
 	praat_addAction1 (classTableOfReal, 1, L"To Pattern and Categories...", L"To Matrix", 1, DO_TableOfReal_to_Pattern_and_Categories);
 	praat_addAction1 (classTableOfReal, 1, L"Split into Pattern and Categories...", L"To Pattern and Categories...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_to_Pattern_and_Categories);
 	praat_addAction1 (classTableOfReal, 0, L"To Permutation (sort row labels)", L"To Matrix", 1, DO_TableOfReal_to_Permutation_sortRowlabels);
@@ -5242,6 +5265,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 1, L"To SVD", 0, praat_HIDDEN, DO_TableOfReal_to_SVD);
 	praat_addAction1 (classTableOfReal, 2, L"To GSVD", 0, praat_HIDDEN, DO_TablesOfReal_to_GSVD);
 	praat_addAction1 (classTableOfReal, 2, L"To Eigen (gsvd)", 0, praat_HIDDEN, DO_TablesOfReal_to_Eigen_gsvd);
+
  	praat_addAction1 (classTableOfReal, 0, L"To TableOfReal (cholesky)...", 0, praat_HIDDEN, DO_TableOfReal_choleskyDecomposition);
 
 	praat_addAction1 (classTableOfReal, 0, L"-- scatter plots --", L"Draw top and bottom lines...", 1, 0);

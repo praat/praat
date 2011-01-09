@@ -136,7 +136,7 @@ int Graphics_getResolution (I) {
 }
 
 void Graphics_setWsViewport (I,
-	short x1DC, short x2DC, short y1DC, short y2DC)
+	long x1DC, long x2DC, long y1DC, long y2DC)
 {
 	iam (Graphics);
 	if (x1DC < my x1DCmin || x2DC > my x2DCmax || y1DC < my y1DCmin || y2DC > my y2DCmax) {
@@ -172,7 +172,18 @@ void Graphics_setWsViewport (I,
 	computeTrafo (me);
 }
 
-void Graphics_inqWsViewport (I, short *x1DC, short *x2DC, short *y1DC, short *y2DC) {
+void Graphics_resetWsViewport (I,
+	long x1DC, long x2DC, long y1DC, long y2DC)
+{
+	iam (Graphics);
+	my x1DC = x1DC;
+	my x2DC = x2DC;
+	my y1DC = y1DC;
+	my y2DC = y2DC;
+	computeTrafo (me);
+}
+
+void Graphics_inqWsViewport (I, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
 	iam (Graphics);
 	*x1DC = my x1DC;
 	*x2DC = my x2DC;
@@ -201,7 +212,7 @@ void Graphics_inqWsWindow (I, double *x1NDC, double *x2NDC, double *y1NDC, doubl
 
 /***** CO-ORDINATE TRANFORMATIONS *****/
 
-void Graphics_DCtoWC (I, short xDC, short yDC, double *xWC, double *yWC) {
+void Graphics_DCtoWC (I, long xDC, long yDC, double *xWC, double *yWC) {
 	iam (Graphics);
 	if (my yIsZeroAtTheTop) {
 		*xWC = (xDC + 0.5 - my deltaX) / my scaleX;
@@ -215,7 +226,7 @@ void Graphics_DCtoWC (I, short xDC, short yDC, double *xWC, double *yWC) {
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_WCtoDC (I, double xWC, double yWC, short *xDC, short *yDC) {
+void Graphics_WCtoDC (I, double xWC, double yWC, long *xDC, long *yDC) {
 	iam (Graphics);
 	*xDC = wdx (xWC);
 	*yDC = wdy (yWC);

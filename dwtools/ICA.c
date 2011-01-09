@@ -1,6 +1,6 @@
 /* ICA.c
  *
- * Copyright (C) 2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +143,38 @@ static double NUMdmatrix_diagonalityMeasure (double **v, long dimension)
 	return dmsq;
 }
 
+static double NUMdmatrix_diagonalityIndex (double **v, long dimension)
+{
+	double dindex = 0;
+	for (long irow = 1; irow <= dimension; irow++)
+	{
+		double rowmax = fabs(v[irow][1]), rowsum = 0;
+		for (long icol = 2; icol <= dimension; icol++)
+		{
+			if (fabs (v[irow][icol]) > rowmax) rowmax = fabs (v[irow][icol]);
+		}
+		for (long icol = 1; icol <= dimension; icol++)
+		{
+			rowsum += fabs (v[irow][icol]) / rowmax;
+		}
+		dindex += rowsum - 1;
+	}
+	for (long icol = 1; icol <= dimension; icol++)
+	{
+		double colmax = fabs(v[icol][1]), colsum = 0;
+		for (long irow = 2; irow <= dimension; irow++)
+		{
+			if (fabs (v[irow][icol]) > colmax) colmax = fabs (v[irow][icol]);
+		}
+		for (long irow = 1; irow <= dimension; irow++)
+		{
+			colsum += fabs (v[irow][icol]) / colmax;
+		}
+		dindex += colsum - 1;
+	}
+	return dindex;
+}
+
 /*
 	This routine is modeled after qdiag.m from Andreas Ziehe, Pavel Laskov, Guido Nolte, Klaus-Robert Müller,
 	A Fast Algorithm for Joint Diagonalization with Non-orthogonal Transformations and its Application to
@@ -165,7 +197,7 @@ static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cros
 
 	MelderInfo_open ();
 	dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts, NULL, 0, 0);
-	MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= average off diagonal)");
+	MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= diagonality measurement)");
 
 	do
 	{
@@ -229,7 +261,7 @@ static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cros
 		}
 		dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts, NULL, 0, 0);
 		iter++;
-		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= Off)");
+		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= diagonality measurement)");
 	} while (fabs((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 
 end:
@@ -240,9 +272,11 @@ end:
 }
 
 /*
-	This routine is modeled after qdiag.m from R. Vollgraf and K. Obermayer, Quadratic Optimization for Simultaneous
+	The folowing two routine are modeled after qdiag.m from
+	R. Vollgraf and K. Obermayer, Quadratic Optimization for Simultaneous
 	Matrix Diagonalization, IEEE Transaction on Signal Processing, 2006,
 */
+
 static void update_one_column (CrossCorrelationTables me, double **d, double *wp, double *wvec, double scalef, double *work)
 {
 	long dimension = ((CrossCorrelationTable)(my item[1])) -> numberOfColumns;
@@ -341,6 +375,10 @@ static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossC
 	MelderInfo_open ();
 	do
 	{
+		/*
+		 * the standard diagonality measure is rather expensive to calculate so we compare the norms of
+		 * differences of eigenvectors.
+		 */
 		delta_w = 0;
 		for (long kol = 1; kol <= dimension; kol++)
 		{
@@ -357,7 +395,11 @@ static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossC
 			update_one_column (ccts, d, cweights, wnew, 1, mvec);
 			for (long i = 1; i <= dimension; i++) { w[i][kol] = wnew[i]; }
 
-			// compare norms
+			/*
+			 * compare norms of eigenvectors. We have to compare ||wvec +/- w_new|| because eigenvectors
+			 * may change sign.
+			 */
+
 
 			double normp = 0, normm = 0;
 			for (long j = 1; j <= dimension; j++)
@@ -371,14 +413,20 @@ static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossC
 			delta_w = normp > delta_w ? normp : delta_w;
 		}
 		iter++;
-		MelderInfo_writeLine4 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (delta_w));
+		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (delta_w), L" (= vector norm difference)");
 	} while (delta_w > delta && iter < maxNumberOfIterations);
 
-	// Revert the sphering W = P'*W;
-	// Take transpose to make W*C[i]W' diagonal instead of W'*C[i]*W => (P'*W)'=W'*P
+	/* Revert the sphering W = P'*W;
+	 * Take transpose to make W*C[i]W' diagonal instead of W'*C[i]*W => (P'*W)'=W'*P
+	 * Calculate the "real" diagonality measure
+	 */
 
 	NUMdmatrix_copyElements (w, wc, 1, dimension, 1, dimension);
 	NUMdmatrices_multiply_VpC (w, wc, dimension, dimension, p, dimension); // W = W'*P: final result
+
+	double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
+	MelderInfo_writeLine5 (L"\nDiagonality measure: ", Melder_double (dm), L" after ", Melder_integer (iter),
+		L" iterations.");
 
 end:
 	MelderInfo_close ();
@@ -404,7 +452,7 @@ end:
 /*
 	This is for multi-channel "sounds" like EEG signals.
 	The cross-correlation between channel i and channel j is defined as
-		sum(k=1..nsamples, (z[i][k] - mean[i])(z[j][k + tau] - mean[j])) / nsamples
+		sum(k=1..nsamples, (z[i][k] - mean[i])(z[j][k + tau] - mean[j]))*samplingTime
 */
 CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagTime)
 {
@@ -435,9 +483,9 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 	{
 		for (long j = i; j <= my ny; j++)
 		{
-			double t = 0;
-			for (long k = i1; k <= i2; k++) { t += (data[i][k] - mean[i]) * (data[j][k + ndelta] - mean[j]); }
-			thy data[j][i] = thy data[i][j] = t / (nsamples - 1);
+			double cc = 0;
+			for (long k = i1; k <= i2; k++) { cc += (data[i][k] - mean[i]) * (data[j][k + ndelta] - mean[j]); }
+			thy data[j][i] = thy data[i][j] = cc * my dx;
 		}
 	}
 
@@ -760,15 +808,16 @@ double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, 
 	if (start >= end) { start = 1; end = my size; }
 	if (start < 1) start = 1;
 	if (end > my size) end = my size;
+	long ntables = end - start + 1;
 	long dimension = ((Covariance)(my item[1]))-> numberOfColumns;
 	double dmsq = 0;
 	for (long k = start; k <= end; k++)
 	{
 		CrossCorrelationTable thee = my item[k];
 		double dmksq = NUMdmatrix_diagonalityMeasure (thy data, dimension);
-		dmsq += w == NULL ? dmksq : dmksq * w[k];
+		dmsq += w == NULL ? dmksq / ntables : dmksq * w[k];
 	}
-	return sqrt (dmsq / ((end - start + 1) * (dimension * (dimension - 1))));
+	return sqrt (dmsq) / (dimension * (dimension - 1));
 }
 
 /************************** CrossCorrelationTables & Diagonalizer *******************************/
@@ -864,10 +913,6 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 // start:
 
 	d = NUMdmatrix (1, dimension, 1, dimension); cherror
-	v = NUMdmatrix (1, dimension, 1, dimension); cherror
-	svd = SVD_create_d (d, dimension, dimension); cherror
-	me = CrossCorrelationTables_create (); cherror
-
 	/*
 	 * Start with a square matrix with random gaussian elements and make its singular value decomposition UDV'
 	 * The V matrix will be the common diagonalizer matrix that we use.
@@ -876,6 +921,10 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 	{
 		for (long j = 1; j <= dimension; j++) { d[i][j] = NUMrandomGauss (0, 1); }
 	}
+
+	v = NUMdmatrix (1, dimension, 1, dimension); cherror
+	svd = SVD_create_d (d, dimension, dimension); cherror
+	me = CrossCorrelationTables_create (); cherror
 
 	for (long i = 1; i <= dimension; i++)
 	{
@@ -910,5 +959,6 @@ end:
 	if (Melder_hasError ()) forget (me);
 	return me;
 }
+
 
 /* End of file ICA.c */

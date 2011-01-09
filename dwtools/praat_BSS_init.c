@@ -1,6 +1,6 @@
 /* praat_BSS_init.c
  *
- * Copyright (C) 2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
 	djmw 20101003
+	djmw 20110101 Latest modification
 */
 
 #include "praat.h"
@@ -104,7 +105,7 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 END
 
 
-FORM (Sound_to_CrossCorrelationTable, L"", 0)
+FORM (Sound_to_CrossCorrelationTable, L"Sound: To CrossCorrelationTable", L"Sound: To CrossCorrelationTable...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	REAL (L"Lag time (s)", L"0.0")
@@ -118,7 +119,7 @@ DIRECT (CrossCorrelationTables_help)
 	Melder_help (L"CrossCorrelationTables");
 END
 
-FORM (CrossCorrelationTables_getDiagonalityMeasure, L"CrossCorrelationTables: Get diagonality measure", 0)
+FORM (CrossCorrelationTables_getDiagonalityMeasure, L"CrossCorrelationTables: Get diagonality measure", L"CrossCorrelationTables: Get diagonality measure...")
 	NATURAL (L"First table", L"1")
 	NATURAL (L"Last table", L"100")
 	OK
@@ -199,6 +200,10 @@ DO
 		ONLY (classCrossCorrelationTables), GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"), GET_INTEGER (L"Diagonalization method"))) return 0;
 END
 
+DIRECT (Diagonalizer_to_MixingMatrix)
+	EVERY_TO (Diagonalizer_to_MixingMatrix (OBJECT))
+END
+
 FORM (Sound_to_MixingMatrix, L"", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
@@ -240,13 +245,13 @@ END
 DIRECT (Sound_and_MixingMatrix_mix)
 	Sound s = ONLY (classSound);
 	MixingMatrix mm = ONLY (classMixingMatrix);
-	if (! praat_new3 (Sound_and_MixingMatrix_mix (s, mm), Thing_getName (s), L"_", Thing_getName (mm))) return 0;
+	if (! praat_new2 (Sound_and_MixingMatrix_mix (s, mm), Thing_getName (s), L"_mixed")) return 0;
 END
 
 DIRECT (Sound_and_MixingMatrix_unmix)
 	Sound s = ONLY (classSound);
 	MixingMatrix mm = ONLY (classMixingMatrix);
-	if (! praat_new3 (Sound_and_MixingMatrix_unmix (s, mm), Thing_getName (s), L"_", Thing_getName (mm))) return 0;
+	if (! praat_new2 (Sound_and_MixingMatrix_unmix (s, mm), Thing_getName (s), L"_unmixed")) return 0;
 END
 
 DIRECT (TableOfReal_to_MixingMatrix)
@@ -273,6 +278,7 @@ void praat_BSS_init (void)
 	praat_addAction1 (classCrossCorrelationTables, 0, L"To Diagonalizer...", 0, 0, DO_CrossCorrelationTables_to_Diagonalizer);
 
 	praat_TableOfReal_init (classDiagonalizer);
+	praat_addAction1 (classDiagonalizer, 0, L"To MixingMatrix", 0, 0, DO_Diagonalizer_to_MixingMatrix);
 
 	praat_TableOfReal_init (classMixingMatrix);
 

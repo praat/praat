@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/17
+ * pb 2011/01/05
  */
 
 #ifndef _Thing_h_
@@ -49,15 +49,16 @@ Graphics Graphics_create_xmdrawingarea (/* GuiObject */ void *drawingArea);
 
 int Graphics_getResolution (I);
 
-void Graphics_setWsViewport (I, short x1DC, short x2DC, short y1DC, short y2DC);
+void Graphics_setWsViewport (I, long x1DC, long x2DC, long y1DC, long y2DC);
+void Graphics_resetWsViewport (I, long x1DC, long x2DC, long y1DC, long y2DC);
 void Graphics_setWsWindow (I, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
-void Graphics_inqWsViewport (I, short *x1DC, short *x2DC, short *y1DC, short *y2DC);
+void Graphics_inqWsViewport (I, long *x1DC, long *x2DC, long *y1DC, long *y2DC);
 void Graphics_inqWsWindow (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_clearWs (I);
 void Graphics_flushWs (I);
 void Graphics_updateWs (I);
-void Graphics_DCtoWC (I, short xDC, short yDC, double *xWC, double *yWC);
-void Graphics_WCtoDC (I, double xWC, double yWC, short *xDC, short *yDC);
+void Graphics_DCtoWC (I, long xDC, long yDC, double *xWC, double *yWC);
+void Graphics_WCtoDC (I, double xWC, double yWC, long *xDC, long *yDC);
 
 typedef struct { double x1NDC, x2NDC, y1NDC, y2NDC; } Graphics_Viewport;
 void Graphics_setViewport (I, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
@@ -96,7 +97,7 @@ void Graphics_fillRectangle (I, double x1, double x2, double y1, double y2);
 void Graphics_roundedRectangle (I, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_fillRoundedRectangle (I, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_function (I, double y [], long ix1, long ix2, double x1, double x2);   /* y [ix1..ix2] */
-void Graphics_function16 (I, short y [], int stagger, long ix1, long ix2, double x1, double x2);
+void Graphics_function16 (I, int16_t y [], int stagger, long ix1, long ix2, double x1, double x2);
 	/* y [ix1..ix2] or y [ix1*2..ix2*2] */
 void Graphics_circle (I, double x, double y, double r);
 void Graphics_fillCircle (I, double x, double y, double r);

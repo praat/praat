@@ -178,7 +178,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
 	static RgnHandle visRgn;
 	Rect rect;
-	short x1DC, x2DC, y1DC, y2DC;
+	long x1DC, x2DC, y1DC, y2DC;
 	Graphics_inqWsViewport (my selectionGraphics, & x1DC, & x2DC, & y1DC, & y2DC);
 	SetRect (& rect, x1DC, y1DC, x2DC, y2DC);
 	/* No clearing needed; macintosh clips to update region. */
@@ -765,7 +765,7 @@ void Picture_setSelection
 {
 	if (my drawingArea) {
 		#if gtk
-			short x1, x2, y1, y2;
+			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
 			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
@@ -779,7 +779,7 @@ void Picture_setSelection
 	my sely2 = y2NDC;
 	if (my drawingArea) {
 		#if gtk
-			short x1, x2, y1, y2;
+			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
 			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
@@ -801,7 +801,7 @@ void Picture_foreground (Picture me) { my backgrounding = FALSE; }
 #if gtk
 void Picture_selfExpose (Picture me) {
 	if (my drawingArea) {
-		short x1, x2, y1, y2;
+		long x1, x2, y1, y2;
 		Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 		Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
 		gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));

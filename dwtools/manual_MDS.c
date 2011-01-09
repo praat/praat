@@ -1,6 +1,6 @@
 /* manual_MDS.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1881,31 +1881,26 @@ NORMAL (L"M. Abramowitz & I. Stegun (1970): %%Handbook of mathematical "
 	"functions%. New York: Dover Publications.")
 MAN_END
 
-
 MAN_BEGIN (L"Borg & Groenen (1997)", L"djmw", 19971219)
 NORMAL (L"I. Borg & P. Groenen (1997): %%Modern multidimensional scaling: "
 	"theory and applications%. Springer.")
 MAN_END
-
 
 MAN_BEGIN (L"Brokken (1983)", L"djmw", 19980406)
 NORMAL (L" F.B. Brokken (1983): \"Orthogonal Procrustes rotation maximizing "
 	"congruence.\" %Psychometrika #48: 343\\--352.")
 MAN_END
 
-
 MAN_BEGIN (L"Cailliez (1983)", L"djmw", 19971201)
 NORMAL (L" F. Cailliez (1983): \"The analytical solution of the additive "
 	"constant problem.\" %Psychometrika #48, 305-308.")
 MAN_END
-
 
 MAN_BEGIN (L"Carroll & Chang (1970)", L"djmw", 19971201)
 NORMAL (L"J.D. Carroll & J.-J. Chang, (1970): \"Analysis of Individual "
 	"Differences in Multidimensional scaling via an N-way generalization of "
 	"\"Eckart-Young\" Decomposition.\" %Psychometrika #35: 283\\--319.")
 MAN_END
-
 
 MAN_BEGIN (L"Carroll & Wish (1974)", L"djmw", 19971201)
 NORMAL (L"J.D. Carroll & M. Wish, (1974): \"Models and methods for three-way "
@@ -1915,7 +1910,6 @@ NORMAL (L"J.D. Carroll & M. Wish, (1974): \"Models and methods for three-way "
 	"information processing%, 283\\--319. New York: Academic Press.")
 MAN_END
 
-
 MAN_BEGIN (L"De Leeuw (1977)", L"djmw", 19971201)
 NORMAL (L"J. de Leeuw (1977): \"Applications of convex analysis to "
 	"multidimensional scaling.\" In J.R. Barra, F. Brodeau, G. Romier & "
@@ -1923,37 +1917,30 @@ NORMAL (L"J. de Leeuw (1977): \"Applications of convex analysis to "
 	"North-Holland. 133\\--145.")
 MAN_END
 
-
 MAN_BEGIN (L"De Leeuw & Pruzansky (1978)", L"djmw", 19971201)
 NORMAL (L"J. de Leeuw & S. Pruzansky (1978): \"A new computational method to "
-	"fit the weighted Euclidean distance model.\" %Psychometrika #xx: 479-490.")   // ??
+	"fit the weighted Euclidean distance model.\" %Psychometrika #43: 479\\--490.")
 MAN_END
-
 
 MAN_BEGIN (L"Gifi (1990)", L"djmw", 19971207)
 NORMAL (L"A. Gifi (1990): %%Nonlinear multivariate analysis%. John Wiley & "
 	"Sons Ltd., reprint 1996.")
 MAN_END
 
-
 MAN_BEGIN (L"Golub & van Loan (1996)", L"djmw", 19971207)
 NORMAL (L"G. Golub & C. van Loan (1996): %%Matrix computations%. Third edition. "
 	"London: The Johns Hopkins University Press.")   // ??
 MAN_END
 
-
 MAN_BEGIN (L"Green, Carmone & Smith (1989)", L"djmw", 19971201)
 NORMAL (L"P. Green, F. Carmone, S. Smith (1989): "
-	"%%Multidimensional scaling: concepts and applications%. Section 3. "
-	"Allyn and Bacon.")
+	"%%Multidimensional scaling: concepts and applications%. Section 3. Allyn and Bacon.")
 MAN_END
-
 
 MAN_BEGIN (L"Kaiser (1958)", L"djmw", 19980404)
 NORMAL (L" H.F. Kaiser (1958): \"The varimax criterion for analytic rotation "
 	"in factor analysis.\" %Psychometrika #23: 187\\--200.")
 MAN_END
-
 
 MAN_BEGIN (L"Kiers & Groenen (1996)", L"djmw", 19971219)
 NORMAL (L"H.A.L. Kiers & P. Groenen (1996): \"A monotonically convergent "
@@ -1961,24 +1948,20 @@ NORMAL (L"H.A.L. Kiers & P. Groenen (1996): \"A monotonically convergent "
 	"375\\--389.")
 MAN_END
 
-
 MAN_BEGIN (L"Klein, Plomp & Pols (1970)", L"djmw", 19971201)
 NORMAL (L" W. Klein, R. Plomp, & L.C.W. Pols (1970): \"Vowel Spectra, "
 	"Vowel Spaces, and Vowel Identification.\" %%Journal of the Acoustical Society of America% #48: 999\\--1009.")
 MAN_END
-
 
 MAN_BEGIN (L"Kruskal (1964)", L"djmw", 19971201)
 NORMAL (L"J.B. Kruskal (1964): \"Nonmetric multidimensional scaling: a "
 	"numerical method.\" %Psychometrika #29: 115\\--129.")
 MAN_END
 
-
 MAN_BEGIN (L"Ramsay (1988)", L"djmw", 19980106)
 NORMAL (L"J.O. Ramsay (1988): \"Monotone regression splines in action.\" "
 	"%%Statistical Science% #3: 425\\--461.")
 MAN_END
-
 
 MAN_BEGIN (L"Stevens (1951)", L"djmw", 19971201)
 NORMAL (L"S.S. Stevens (1951): \"Mathematics, measurement, and psychophysics.\" "
@@ -1986,13 +1969,11 @@ NORMAL (L"S.S. Stevens (1951): \"Mathematics, measurement, and psychophysics.\" 
 	"Wiley.")
 MAN_END
 
-
 MAN_BEGIN (L"Takane, Young & de Leeuw (1976)", L"djmw", 19971201)
 NORMAL (L"Y. Takane, F. Young, J. de Leeuw (1976): \"Non-metric individual "
 	"differences multidimensional scaling: an alternating least squares method "
 	"with optimal scaling features.\" %Psychometrika #42: 7\\--67.")
 MAN_END
-
 
 MAN_BEGIN (L"Ten Berge (1995)", L"djmw", 19980404)
 NORMAL (L"J.M.F. ten Berge (1995): \"Suppressing permutations or rigid planar "
@@ -2000,25 +1981,20 @@ NORMAL (L"J.M.F. ten Berge (1995): \"Suppressing permutations or rigid planar "
 	"%Psychometrika #60, 437\\--446.")
 MAN_END
 
-
 MAN_BEGIN (L"Ten Berge, Kiers & Krijnen (1993)", L"djmw", 19971207)
 NORMAL (L"J.M.F. ten Berge, H.A.L. Kiers & W.P. Krijnen (1993): \"Computational "
 	"solutions for the problem of negative saliences and nonsymmetry in "
 	"INDSCAL.\" %%Journal of Classification% #10: 115\\--124.")
 MAN_END
 
-
 MAN_BEGIN (L"Torgerson (1958)", L"djmw", 19971201)
-NORMAL (L"W.S. Torgerson (1958): %%Theory and methods of scaling%. "
-	"New York: Wiley.")
+NORMAL (L"W.S. Torgerson (1958): %%Theory and methods of scaling%. New York: Wiley.")
 MAN_END
-
 
 MAN_BEGIN (L"Young, Takane & Lewyckyj (1978)", L"djmw", 19971201)
 NORMAL (L"F.W. Young, Y. Takane & R. Lewyckyj (1978): "
 	"\"Three notes on ALSCAL.\" %Psychometrika #43: 433\\--435.")
 MAN_END
-
 
 MAN_BEGIN (L"Weller & Romney (1990)", L"djmw", 19971216)
 NORMAL (L"S.C. Weller & A.K. Romney (1990): %%Metric Scaling: "
