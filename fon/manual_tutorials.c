@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110109)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110111)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.10# (11 January 2011)")
+LIST_ITEM (L"\\bu Renamed #Read and #Write menus to #Open and #Save.")
+LIST_ITEM (L"\\bu Sound: use of ##Formula (part)...# can speed up formulas appreciably.")
 NORMAL (L"##5.2.09# (9 January 2011)")
 LIST_ITEM (L"\\bu Much improved scripting tutorial.")
 LIST_ITEM (L"\\bu Listening experiments can now show pictures instead of just texts (on the Mac).")
@@ -1318,7 +1321,7 @@ MAN_END
 
 MAN_BEGIN (L"Dynamic menu", L"ppgb", 19981024)
 INTRO (L"A column of buttons in the right-hand part of the @@Object window@, "
-	"plus the #Write menu in the Object window.")
+	"plus the #Save menu in the Object window.")
 NORMAL (L"If you select one or more @objects in the list, "
 	"the possible actions that you can perform with the selected objects "
 	"will appear in the dynamic menu. "
@@ -1723,7 +1726,7 @@ MAN_END
 
 MAN_BEGIN (L"Intro 1.2. Reading a sound from disk", L"ppgb", 20041126)
 INTRO (L"Apart from recording a new sound from a microphone, you could read an existing sound file from your disk.")
-NORMAL (L"With @@Read from file...@ from the Read menu, "
+NORMAL (L"With @@Read from file...@ from the @@Open menu@, "
 	"Praat will be able to read most standard types of sound files, e.g. WAV files. "
 	"They will appear as @Sound objects in the Object window. For instance, if you open the file ##hello.wav#, "
 	"an object called \"Sound hello\" will appear in the list.")
@@ -1752,7 +1755,7 @@ NORMAL (L"First, the @@File menu@ of the @SoundRecorder window contains commands
 	"Praat will handle them equally well on every computer. The first three of these types will "
 	"also be recognized by nearly all other sound-playing programs.")
 NORMAL (L"Then, once you have a @Sound object in the @@List of Objects@, "
-	"you can save it in several formats with the commands in the @@Write menu@. "
+	"you can save it in several formats with the commands in the @@Save menu@. "
 	"Again, the WAV, AIFF, AIFC, NeXT/Sun, and NIST formats are equally fine.")
 NORMAL (L"For more information, see the @@Sound files@ tutorial.")
 MAN_END
@@ -2193,8 +2196,8 @@ NORMAL (L"Another way to get a separate Pitch object is to select a @Sound objec
 	"choose @@Sound: To Pitch...@ (preferred) or any of the other methods from the @@Periodicity menu@.")
 NORMAL (L"To view and modify the contents of a Pitch object, select it and choose @Edit. "
 	"This creates a @PitchEditor window on your screen.")
-NORMAL (L"To save a pitch contour to disk, select the @Pitch object in the list and choose one of the commands in the @@Write menu@.")
-NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Read menu@.")
+NORMAL (L"To save a pitch contour to disk, select the @Pitch object in the list and choose one of the commands in the @@Save menu@.")
+NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Open menu@.")
 NORMAL (L"To draw a @Pitch object to the @@Picture window@, select it and choose any of the commands in the @@Draw menu@. "
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard for inclusion in your word processor.")
 MAN_END
@@ -2237,8 +2240,8 @@ NORMAL (L"Another way to get a separate Formant object is to select a @Sound obj
 	"choose @@Sound: To Formant (burg)...@ (preferred) or any of the other methods "
 	"from the @@Formants & LPC menu@.")
 ENTRY (L"Saving formant contours to disk")
-NORMAL (L"To save formant contours to disk, select the @Formant object in the list and choose one of the commands in the @@Write menu@.")
-NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Read menu@.")
+NORMAL (L"To save formant contours to disk, select the @Formant object in the list and choose one of the commands in the @@Save menu@.")
+NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Open menu@.")
 ENTRY (L"Drawing formant contours")
 NORMAL (L"To draw a @Formant object to the @@Picture window@, select it and choose any of the commands in the @@Draw menu@. "
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard for inclusion in your word processor.")
@@ -2490,7 +2493,7 @@ LIST_ITEM (L"\\bu @@Create Strings as file list...@")
 LIST_ITEM (L"\\bu @@Create TextGrid...@")
 LIST_ITEM (L"\\bu @@OT learning@ tutorial")
 LIST_ITEM (L"\\bu @@Create tongue-root grammar...@")
-NORMAL (L"To create new objects from files on disk, use the @@Read menu@ instead. "
+NORMAL (L"To create new objects from files on disk, use the @@Open menu@ instead. "
 	"Objects can also often be create from other objects, with commands that start with ##To#.")
 MAN_END
 
@@ -2508,8 +2511,8 @@ LIST_ITEM (L"\\bu @@Remove")
 LIST_ITEM (L"\\bu @@Inspect")
 ENTRY (L"Menus")
 LIST_ITEM (L"The Object window contains several fixed menus: "
-	"the #Praat, #New, #Read, and #Help menus. "
-	"It also contains the #Write menu, whose contents vary with the kinds of selected objects, "
+	"the #Praat, #New, #Open, and #Help menus. "
+	"It also contains the #Save menu, whose contents vary with the kinds of selected objects, "
 	"and must, therefore, be considered part of the dynamic menu.")
 ENTRY (L"The Praat menu")
 LIST_ITEM (L"\\bu (@@Run script...@)")
@@ -2525,8 +2528,8 @@ LIST_ITEM (L"\\bu (@@Add action command...@)")
 LIST_ITEM (L"\\bu @@Quit")
 ENTRY (L"Other menus")
 LIST_ITEM (L"\\bu The @@New menu@: for creating objects from scratch.")
-LIST_ITEM (L"\\bu The @@Read menu@: for reading objects from file into memory.")
-LIST_ITEM (L"\\bu The @@Write menu@: for writing objects from memory to file.")
+LIST_ITEM (L"\\bu The @@Open menu@: for reading objects from file into memory.")
+LIST_ITEM (L"\\bu The @@Save menu@: for writing objects from memory to file.")
 LIST_ITEM (L"\\bu The ##Help menu#: for viewing the manual.")
 MAN_END
 
@@ -2581,11 +2584,11 @@ ENTRY (L"Behaviour")
 NORMAL (L"All @objects not written to a file will be lost. "
 	"However, file-based objects (like large lexica) will be saved correctly.")
 ENTRY (L"Usage")
-NORMAL (L"To save your data to a disk file before quitting, choose a command from the @@Write menu@.")
+NORMAL (L"To save your data to a disk file before quitting, choose a command from the @@Save menu@.")
 MAN_END
 
 MAN_BEGIN (L"Read from file...", L"ppgb", 19970911)
-INTRO (L"One of the commands in the @@Read menu@.")
+INTRO (L"One of the commands in the @@Open menu@.")
 ENTRY (L"Purpose")
 NORMAL (L"To read one or more @objects from a file on disk.")
 ENTRY (L"Behaviour")
@@ -2609,11 +2612,11 @@ LIST_ITEM (L"\\bu If the file contains one object of class Pitch, named \"hallo\
 	"called \"Pitch hallo\" and \"Polygon kromme\".")
 MAN_END
 
-MAN_BEGIN (L"Read menu", L"ppgb", 20080526)
+MAN_BEGIN (L"Open menu", L"ppgb", 20110111)
 INTRO (L"One of the menus in the @@Object window@.")
-NORMAL (L"With the Read menu, you read one or more @objects from a file on disk into memory. "
+NORMAL (L"With the Open menu, you read one or more @objects from a file on disk into memory. "
 	"The resulting object(s) will appear in the @@List of Objects@.")
-NORMAL (L"The Read menu contains the command @@Read from file...@, which recognizes most file types, "
+NORMAL (L"The Open menu contains the command @@Read from file...@, which recognizes most file types, "
 	"and perhaps several other commands for reading unrecognizable file types (e.g., raw sound data), "
 	"or for interpreting known file types in a different way "
 	"(e.g., reading two mono sounds from one stereo sound file):")
@@ -2624,7 +2627,7 @@ INTRO (L"One of the fixed buttons in the @@Object window@.")
 NORMAL (L"You can choose this command after selecting one or more @objects in the list.")
 NORMAL (L"The selected objects will permanently disappear from the list, "
 	"and the computer memory that they occupied will be freed.")
-NORMAL (L"To save your data before removing, choose a command from the @@Write menu@.")
+NORMAL (L"To save your data before removing, choose a command from the @@Save menu@.")
 MAN_END
 
 MAN_BEGIN (L"Rename...", L"ppgb", 19960904)
@@ -3129,17 +3132,17 @@ MAN_BEGIN (L"View", L"ppgb", 20010512)
 INTRO (L"One of the menus in several @editors and in the @manual.")
 MAN_END
 
-MAN_BEGIN (L"Write menu", L"ppgb", 19970911)
+MAN_BEGIN (L"Save menu", L"ppgb", 19970911)
 INTRO (L"One of the menus in the @@Object window@.")
 ENTRY (L"Purpose")
-NORMAL (L"With the Write menu, you write one or more selected @objects from memory to a file on disk. "
-	"The data can be read in again with one of the commands in the @@Read menu@ "
+NORMAL (L"With the Save menu, you write one or more selected @objects from memory to a file on disk. "
+	"The data can be read in again with one of the commands in the @@Open menu@ "
 	"(most often simply with @@Read from file...@).")
 ENTRY (L"Usage: save your work")
 NORMAL (L"You will often choose a command from this menu just before clicking the @Remove button "
 	"or choosing the @Quit command.")
 ENTRY (L"Fixed commands")
-NORMAL (L"If no object is selected, the Write menu is empty. "
+NORMAL (L"If no object is selected, the Save menu is empty. "
 	"If any object is selected, it will at least contain the following commands:")
 LIST_ITEM (L"\\bu @@Write to console")
 LIST_ITEM (L"\\bu @@Write to text file...")
@@ -3147,11 +3150,11 @@ LIST_ITEM (L"\\bu @@Write to short text file...")
 LIST_ITEM (L"\\bu @@Write to binary file...")
 ENTRY (L"Dynamic commands")
 NORMAL (L"Depending on the class of the selected object, the following commands may be available "
-	"in the Write menu:")
+	"in the Save menu:")
 MAN_END
 
 MAN_BEGIN (L"Write to binary file...", L"ppgb", 19970911)
-INTRO (L"One of the commands in the @@Write menu@.")
+INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")
 ENTRY (L"Behaviour")
@@ -3165,7 +3168,7 @@ NORMAL (L"These files are in a device-independent binary format, "
 MAN_END
 
 MAN_BEGIN (L"Write to console", L"ppgb", 20070106)
-INTRO (L"One of the commands in the @@Write menu@.")
+INTRO (L"One of the commands in the @@Save menu@.")
 NORMAL (L"You can choose this command after selecting one object. "
 	"The data that it contains, is written to the Console window "
 	"(the terminal window, if you started up Praat from a terminal window), "
@@ -3175,7 +3178,7 @@ CODE (L"Write to console: class Sound,  name \"hallo\"")
 MAN_END
 
 MAN_BEGIN (L"Write to short text file...", L"ppgb", 19981124)
-INTRO (L"One of the commands in the @@Write menu@.")
+INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")
 ENTRY (L"Behaviour")
@@ -3188,7 +3191,7 @@ NORMAL (L"The file can be read again with the all-purpose @@Read from file...@."
 MAN_END
 
 MAN_BEGIN (L"Write to text file...", L"ppgb", 20070106)
-INTRO (L"One of the commands in the @@Write menu@.")
+INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")
 ENTRY (L"Behaviour")

@@ -193,15 +193,15 @@ MAN_BEGIN (L"objects", L"ppgb", 20030528)
 INTRO (L"The things that contain the data in the Praat program.")
 NORMAL (L"The objects are visible in the @@List of Objects@ in the @@Object window@.")
 NORMAL (L"Most objects are contained in memory: they are %not files! "
-	"Therefore, you may want to save them with one of the commands from the @@Write menu@ "
+	"Therefore, you may want to save them with one of the commands from the @@Save menu@ "
 	"before you @Quit. "
 	"Exceptions are the LongSound objects in the Praat program and the file-based dictionaries "
 	"in the ALS program.")
 NORMAL (L"You can create an object by choosing a command from the @@New menu@ "
-	"or from the @@Read menu@.")
+	"or from the @@Open menu@.")
 NORMAL (L"When you select one or more objects, you can perform on them the actions that are shown "
 	"in the @@dynamic menu@, on the ##fixed buttons# below the list of objects, "
-	"or in the @@Write menu@. You can choose hidden actions with the help of the @ButtonEditor.")
+	"or in the @@Save menu@. You can choose hidden actions with the help of the @ButtonEditor.")
 MAN_END
 
 MAN_BEGIN (L"overlap-add", L"ppgb", 20070816)

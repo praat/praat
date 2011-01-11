@@ -296,7 +296,7 @@ NORMAL (L"The second tableau shows that /pa/ always surfaces as [pa], which is n
 MAN_END
 
 MAN_BEGIN (L"OT learning 2.2. Inside the grammar", L"ppgb", 20070725)
-NORMAL (L"You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the Write menu "
+NORMAL (L"You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the #Save menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE (L"File type = \"ooTextFile\"")
 CODE (L"Object class = \"OTGrammar 2\"")
@@ -317,7 +317,7 @@ CODE1 (L"candidate [1]: \"pa\" 0 0")
 NORMAL (L"To understand more about this data structure, consult the @OTGrammar class description "
 	"or click #Inspect after selecting the OTGrammar object. The $$\"\\bss{...}\"$ braces ensure that "
 	"the constraint names show up with their traditional small capitals (see @@Text styles@).")
-NORMAL (L"You can read this text file into Praat again with @@Read from file...@ from the Read menu in the Objects window.")
+NORMAL (L"You can read this text file into Praat again with @@Read from file...@ from the #Open menu in the Objects window.")
 MAN_END
 
 MAN_BEGIN (L"OT learning 2.3. Defining your own grammar", L"ppgb", 20070725)

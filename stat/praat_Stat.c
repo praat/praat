@@ -1580,10 +1580,10 @@ void praat_uvafon_Stat_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create Table...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_createWithoutColumnNames);
 		praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal...", 0, 1, DO_TableOfReal_create);
 
-	praat_addMenuCommand (L"Objects", L"Read", L"Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
 
 	praat_addAction1 (classDistributions, 0, L"Distributions help", 0, 0, DO_Distributions_help);
 	praat_TableOfReal_init (classDistributions);

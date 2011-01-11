@@ -96,7 +96,7 @@ MAN_END
 MAN_BEGIN (L"SpellingChecker", L"ppgb", 20080622)
 INTRO (L"One of the @@types of objects@ in Praat. For checking the spelling in texts and @TextGrid objects.")
 ENTRY (L"1. How to create a SpellingChecker object")
-NORMAL (L"You normally read in a SpellignChecker with @@Read from file...@ from the Read menu.")
+NORMAL (L"You normally read in a SpellingChecker with @@Read from file...@ from the #Open menu.")
 ENTRY (L"2. How to check the spelling of a @TextGrid")
 NORMAL (L"A SpellingChecker object can be used fur purposes of spelling checking. In order "
 	"to check the spellings in a @TextGrid object, you first view the TextGrid in an editor window by selecting "
@@ -288,7 +288,7 @@ INTRO (L"One of the @@types of objects@ in Praat. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
 ENTRY (L"1. How to create a WordList object")
 NORMAL (L"You will normally create a WordList object by reading a binary WordList file. "
-	"You'll use the generic @@Read from file...@ command from the Read menu.")
+	"You'll use the generic @@Read from file...@ command from the #Open menu.")
 NORMAL (L"See below under 3 for how to create such a file.")
 ENTRY (L"2. What you can do with a Wordlist object")
 NORMAL (L"The main functionality of a WordList is its ability to tell you whether it contains a certain string. "
@@ -321,7 +321,7 @@ CODE (L"\\aongstr\\o\"m")
 NORMAL (L"These are just 11 words, but the procedure will work fine if you have a million of them, "
 	"and enough memory in your computer.")
 NORMAL (L"You can read the file into a @Strings object with @@Read Strings from raw text file...@ "
-	"from the Read menu in the Objects window. The resulting @Strings object contains 11 strings in the above order, "
+	"from the #Open menu in the Objects window. The resulting @Strings object contains 11 strings in the above order, "
 	"as you can verify by viewing them with @Inspect.")
 NORMAL (L"In general, the Strings object will occupy a lot of memory, and be slow to read in. "
 	"For instance, a certain list of more than 300,000 Dutch word forms occupies 3.6 MB on disk, "
@@ -366,7 +366,7 @@ CODE (L"cooks")
 NORMAL (L"The strings are now in the ASCII order, in which capitals come before lower-case letters, "
 	"and backslashes come in between these two series.")
 NORMAL (L"Clicking ##To WordList# now succeeds, and a WordList object appears in the list. "
-	"If you write it to a text file (with the Write menu), you will get the following file:")
+	"If you write it to a text file (with the Save menu), you will get the following file:")
 CODE (L"File type = \"ooTextFile\"")
 CODE (L"Object class = \"WordList\"")
 CODE (L"")
@@ -384,7 +384,7 @@ CODE (L"cooks\\\"r")
 NORMAL (L"Note that the double quotes (\\\" ) that appear inside the strings, have been doubled, "
 	"as is done everywhere inside strings in Praat text files.")
 NORMAL (L"After you have created a WordList text file, you can create a WordList object just by reading this file "
-	"with @@Read from file...@ from the Read menu.")
+	"with @@Read from file...@ from the #Open menu.")
 NORMAL (L"The WordList object has two advantages over the Strings object. First, it won't take up more "
 	"memory than the original word list. This is because the WordList is stored as a single string: "
 	"a contiguous list of strings, separated by new-line symbols. Thus, our 300,000-word list "

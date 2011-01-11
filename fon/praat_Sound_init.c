@@ -776,6 +776,25 @@ DO
 	if (! praat_Fon_formula (dia, interpreter)) return 0;
 END
 
+FORM (Sound_formula_part, L"Sound: Formula (part)", L"Sound: Formula...")
+	REAL (L"From time", L"0.0")
+	REAL (L"To time", L"0.0 (= all)")
+	NATURAL (L"From channel", L"1")
+	NATURAL (L"To channel", L"2")
+	TEXTFIELD (L"formula", L"2 * self")
+	OK
+DO
+	WHERE_DOWN (SELECTED) {
+		Matrix_formula_part (OBJECT,
+			GET_REAL (L"From time"), GET_REAL (L"To time"),
+			GET_INTEGER (L"From channel") - 0.5, GET_INTEGER (L"To channel") + 0.5,
+			GET_STRING (L"formula"), interpreter, NULL);
+		praat_dataChanged (OBJECT);
+		iferror return 0;
+	}
+end:
+END
+
 FORM (Sound_getAbsoluteExtremum, L"Sound: Get absolute extremum", L"Sound: Get absolute extremum...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0 (= all)")
@@ -1978,12 +1997,12 @@ void praat_uvafon_Sound_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create Sound from formula...", 0, 1, DO_Sound_createFromFormula);
 		praat_addMenuCommand (L"Objects", L"New", L"Create Sound from tone complex...", 0, 1, DO_Sound_createFromToneComplex);
 
-	praat_addMenuCommand (L"Objects", L"Read", L"-- read sound --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Read", L"Open long sound file...", 0, 'L', DO_LongSound_open);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read two Sounds from stereo file...", 0, praat_HIDDEN, DO_Sound_readSeparateChannelsFromSoundFile);   // grandfathered 2010
-	praat_addMenuCommand (L"Objects", L"Read", L"Read separate channels from sound file...", 0, 0, DO_Sound_readSeparateChannelsFromSoundFile);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read from special sound file", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw Alaw file...", 0, 1, DO_Sound_readFromRawAlawFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"-- read sound --", 0, 0, 0);
+	praat_addMenuCommand (L"Objects", L"Open", L"Open long sound file...", 0, 'L', DO_LongSound_open);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read two Sounds from stereo file...", 0, praat_HIDDEN, DO_Sound_readSeparateChannelsFromSoundFile);   // grandfathered 2010
+	praat_addMenuCommand (L"Objects", L"Open", L"Read separate channels from sound file...", 0, 0, DO_Sound_readSeparateChannelsFromSoundFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read from special sound file", 0, 0, 0);
+		praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw Alaw file...", 0, 1, DO_Sound_readFromRawAlawFile);
 
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Stop playing sound", 0, GuiMenu_ESCAPE, DO_stopPlayingSound);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- sound prefs --", 0, 0, 0);
@@ -2104,6 +2123,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"-- modify generic --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Reverse", 0, 1, DO_Sound_reverse);
 		praat_addAction1 (classSound, 0, L"Formula...", 0, 1, DO_Sound_formula);
+		praat_addAction1 (classSound, 0, L"Formula (part)...", 0, 1, DO_Sound_formula_part);
 		praat_addAction1 (classSound, 0, L"-- add & mul --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Add...", 0, 1, DO_Sound_add);
 		praat_addAction1 (classSound, 0, L"Subtract mean", 0, 1, DO_Sound_subtractMean);

@@ -323,7 +323,7 @@ static void createMenuItems_file_extract (TimeSoundEditor me, EditorMenu menu) {
 }
 
 static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
-	EditorMenu_addCommand (menu, L"Write to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
+	EditorMenu_addCommand (menu, L"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
 	if (my sound.data || my longSound.data) {
 		my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);

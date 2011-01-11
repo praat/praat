@@ -4529,10 +4529,10 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand (L"Objects", L"New", L"Matrix", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"New", L"Create Matrix...", 0, 1, DO_Matrix_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
-	praat_addMenuCommand (L"Objects", L"Read", L"-- read raw --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"-- read raw --", 0, 0, 0);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
 
 	INCLUDE_LIBRARY (praat_uvafon_Stat_init)
 
@@ -4551,10 +4551,10 @@ void praat_uvafon_init (void) {
 	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
 
-	praat_addMenuCommand (L"Objects", L"Read", L"-- read tier --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read from special tier file...", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"Read", L"Read TextTier from Xwaves...", 0, 1, DO_TextTier_readFromXwaves);
-		praat_addMenuCommand (L"Objects", L"Read", L"Read IntervalTier from Xwaves...", 0, 1, DO_IntervalTier_readFromXwaves);
+	praat_addMenuCommand (L"Objects", L"Open", L"-- read tier --", 0, 0, 0);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read from special tier file...", 0, 0, 0);
+		praat_addMenuCommand (L"Objects", L"Open", L"Read TextTier from Xwaves...", 0, 1, DO_TextTier_readFromXwaves);
+		praat_addMenuCommand (L"Objects", L"Open", L"Read IntervalTier from Xwaves...", 0, 1, DO_IntervalTier_readFromXwaves);
 
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Praat Intro", 0, '?', DO_Intro);
 	#ifndef macintosh

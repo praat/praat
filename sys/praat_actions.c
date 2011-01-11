@@ -206,7 +206,7 @@ static void deleteDynamicMenu (void) {
 				praat_writeMenu = gtk_menu_new ();
 				gtk_menu_item_set_submenu (GTK_MENU_ITEM (praat_writeMenuTitle), praat_writeMenu);
 			#elif motif
-				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Write", NULL, 0);
+				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Save", NULL, 0);
 				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 			#endif
 		}
@@ -762,15 +762,11 @@ void praat_actions_show (void) {
 
 void praat_actions_createWriteMenu (GuiObject bar) {
 	if (theCurrentPraatApplication -> batch) return;
-	// RFC: korter dus beter?
-	// Vraag: ik zie dat er twee keer een Menu Write wordt gedaan. Waar is dat goed voor?
-	// De eerste is de menu-knop, de tweede het menu zelf (de naam daarvan is irrelevant).
-	// TODO: writeMenu -> writeMenuTitle gedaan
 	#if gtk
-		praat_writeMenu = GuiMenuBar_addMenu2 (bar, L"Write", GuiMenu_INSENSITIVE, &praat_writeMenuTitle);
+		praat_writeMenu = GuiMenuBar_addMenu2 (bar, L"Save", GuiMenu_INSENSITIVE, & praat_writeMenuTitle);
 	#elif motif
-		praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
-		praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
+		praat_writeMenuTitle = XtVaCreateManagedWidget ("Save", xmCascadeButtonWidgetClass, bar, NULL);
+		praat_writeMenu = XmCreatePulldownMenu (bar, "Save", NULL, 0);   // the name is irrelevant
 		XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
 	#endif
 	GuiObject_setSensitive (praat_writeMenuTitle, False);

@@ -4760,10 +4760,10 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
 
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read Sound from raw 16-bit Big Endian file...", L"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
-	praat_addMenuCommand (L"Objects", L"Read", L"Read KlattTable from raw text file...", L"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw 16-bit Big Endian file...", L"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read KlattTable from raw text file...", L"Read Matrix from raw text file...", praat_HIDDEN, DO_KlattTable_readFromRawTextFile);
 
     praat_addAction1 (classActivation, 0, L"Modify", 0, 0, 0);
     praat_addAction1 (classActivation, 0, L"Formula...", 0, 0,

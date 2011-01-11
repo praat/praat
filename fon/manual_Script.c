@@ -26,7 +26,7 @@ void manual_Script_init (ManPages me) {
 MAN_BEGIN (L"Action commands", L"ppgb", 20021130)
 INTRO (L"The commands in the @@Dynamic menu@ of the @@Object window@.")
 NORMAL (L"These commands are only available if the right kinds of objects are selected. They are shown in a scrollable list, "
-	"or in the #Write menu if they start with \"Write to \" or \"Append to \".")
+	"or in the #Save menu if they start with \"Write to \" or \"Append to \".")
 MAN_END
 
 MAN_BEGIN (L"Add action command...", L"ppgb", 20060920)
@@ -78,7 +78,7 @@ TAG (L"%%Command")
 DEFINITION (L"the title of the new command button (or label, or submenu title). "
 	"To get a separator line instead of a command text (only in a submenu), "
 	"you specify a unique string that starts with a hyphen ('-'); the @ButtonEditor may contain some examples of this. "
-	"If the command starts with \"Write to \", it will be placed in the @@Write menu@.")
+	"If the command starts with \"Write to \", it will be placed in the @@Save menu@.")
 TAG (L"%%After command")
 DEFINITION (L"a button title in the dynamic menu or submenu where you want your new button. "
 	"If you specify the empty string (\"\"), your button will be put at the bottom. "
@@ -117,7 +117,7 @@ TAG (L"%Window")
 DEFINITION (L"the name of the window (\"Objects\" or \"Picture\") that contains the menu that you want to change.")
 TAG (L"%Menu")
 DEFINITION (L"the title of the menu that you want to change. If %window is \"Objects\", you can specify "
-	"the #Praat, #New, #Read, #Help, #Goodies, or #Preferences menu (for the #Write menu, which depends on the objects selected, "
+	"the #Praat, #New, #Open, #Help, #Goodies, or #Preferences menu (for the #Save menu, which depends on the objects selected, "
 	"you would use @@Add to dynamic menu...@ instead). If %window is \"Picture\", you can specify "
 	"the #File, #Edit, #Margins, #World, #Select, #Pen, #Font, or #Help menu.")
 TAG (L"%Command")
@@ -276,7 +276,7 @@ FORMULA (L"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
 MAN_END
 
 MAN_BEGIN (L"Fixed menu commands", L"ppgb", 20050822)
-INTRO (L"The commands in the fixed menus of the @@Object window@ (#Praat, #New, #Read, #Help, #Goodies, "
+INTRO (L"The commands in the fixed menus of the @@Object window@ (#Praat, #New, #Open, #Help, #Goodies, "
 	"and #Preferences) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
 NORMAL (L"These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
@@ -1304,7 +1304,7 @@ CODE (L"@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 
 NORMAL (L"The forward slash (\"/\") in this example makes your plug-in platform-independent: it will work unchanged "
 	"on Windows, Macintosh, and Unix.")
 NORMAL (L"Nothing prevents you from adding data files to your plug-in. For instance, your ##plugin_Queak# directory "
-	"could contain a subdirectory #sounds full of guinea pig recordings, and you could make them available in the New or Read menu.")
+	"could contain a subdirectory #sounds full of guinea pig recordings, and you could make them available in the New or Open menu.")
 ENTRY (L"Using a plug-in for site-wide customization")
 NORMAL (L"If your local guinea pig research group shares a number of Praat scripts, these can be made available to everybody "
 	"in the following way:")
@@ -1574,8 +1574,8 @@ CODE (L"Create Sound from formula... sine 1 0.0 1.0 44100 1/2 * sin(2*pi*377*x)"
 NORMAL (L"Both the first argument (#Name) and the sixth argument (#Formula) are %%text arguments%. "
 	"They are written in a script just as you would type them into the settings window. Well, %mostly (see 6 and 7 below)...")
 ENTRY (L"5. File arguments")
-NORMAL (L"The commands from the Read and Write menus, and several other commands whose names "
-	"start with #Read, #Open, or #Write, present a %%file selector window% instead of a typical Praat "
+NORMAL (L"The commands from the Open and Save menus, and several other commands whose names "
+	"start with #Read, #Open, or #Save, present a %%file selector window% instead of a typical Praat "
 	"settings window. File selector windows ask the user to supply a single argument: the file name.")
 #if defined (UNIX)
 	NORMAL (L"In a script, you can supply the complete %path, including the directory (folder) hierarchy "

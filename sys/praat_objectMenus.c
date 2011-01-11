@@ -125,7 +125,7 @@ GuiObject praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
-		wcsequ (menu, L"Read") ? readMenu :
+		wcsequ (menu, L"Open") || wcsequ (menu, L"Read") ? readMenu :
 		wcsequ (menu, L"Help") ? helpMenu :
 		wcsequ (menu, L"Goodies") ? goodiesMenu :
 		wcsequ (menu, L"Preferences") ? preferencesMenu :
@@ -355,7 +355,7 @@ DO
 	MelderInfo_close ();
 END
 
-/********** Callbacks of the Read menu. **********/
+/********** Callbacks of the Open menu. **********/
 
 static int readFromFile (MelderFile file) {
 	Data object = Data_readFromFile (file);
@@ -384,7 +384,7 @@ FORM_READ (Data_readFromFile, L"Read Object(s) from file", 0, true)
 	if (! readFromFile (file)) return 0;
 END
 
-/********** Callbacks of the Write menu. **********/
+/********** Callbacks of the Save menu. **********/
 
 FORM_WRITE (Data_writeToTextFile, L"Write Object(s) to text file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1) {
@@ -560,7 +560,7 @@ void praat_addMenus (GuiObject bar) {
 			praatMenu = GuiMenuBar_addMenu (bar, L"Praat", 0);
 		#endif
 		newMenu = GuiMenuBar_addMenu (bar, L"New", 0);
-		readMenu = GuiMenuBar_addMenu (bar, L"Read", 0);
+		readMenu = GuiMenuBar_addMenu (bar, L"Open", 0);
 		praat_actions_createWriteMenu (bar);
 		#ifdef macintosh
 			applicationHelpMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"Help", 0);
@@ -610,7 +610,7 @@ void praat_addMenus (GuiObject bar) {
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
 
-	praat_addMenuCommand (L"Objects", L"Read", L"Read from file...", 0, 'O', DO_Data_readFromFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read from file...", 0, 'O', DO_Data_readFromFile);
 
 	praat_addAction1 (classData, 0, L"Write to text file...", 0, 0, DO_Data_writeToTextFile);
 	praat_addAction1 (classData, 0, L"Write to short text file...", 0, 0, DO_Data_writeToShortTextFile);

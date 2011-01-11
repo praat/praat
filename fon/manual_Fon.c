@@ -1896,7 +1896,7 @@ CODE (L"\"Arrivederci\"")
 NORMAL (L"In this example, we see that a double quote within a string should be written twice; "
 	"the fourth string will therefore be read as ##Tsch\\bsu\\\" ss#, "
 	"and will be shown in info messages or in graphical text as ##Tsch\\u\"ss# (see @@special symbols@). "
-	"This file can be read simply with the generic @@Read from file...@ command from the Read menu.")
+	"This file can be read simply with the generic @@Read from file...@ command from the #Open menu.")
 NORMAL (L"An easier way is to use the special command @@Read Strings from raw text file...@. "
 	"The file can then simply look like this:")
 CODE (L"Hello")

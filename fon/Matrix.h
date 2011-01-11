@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/03/25
+ * pb 2011/01/10
  */
 
 /* Matrix inherits from Sampled */
@@ -211,6 +211,8 @@ int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interprete
 	Return value:
 		0 in case of failure, otherwise 1.
 */
+int Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
+	const wchar_t *expression, Interpreter interpreter, Matrix target);
 
 /***** Graphics routines. *****/
 /*

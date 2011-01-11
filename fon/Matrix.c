@@ -1,6 +1,6 @@
 /* Matrix.c
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2008/04/30 new Formula API
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2009/11/23 support for drawing with reversed axes
+ * pb 2011/01/10 Matrix_formula_part
  */
 
 #include "Matrix.h"
@@ -701,6 +702,28 @@ int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interprete
 	if (target == NULL) target = me;
 	for (long irow = 1; irow <= my ny; irow ++) {
 		for (long icol = 1; icol <= my nx; icol ++) {
+			Formula_run (irow, icol, & result); cherror
+			target -> z [irow] [icol] = result. result.numericResult;
+		}
+	}
+end:
+	iferror return 0;
+	return 1;
+}
+
+int Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
+	const wchar_t *expression, Interpreter interpreter, Matrix target)
+{
+	long ixmin, ixmax, iymin, iymax;
+	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
+	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
+	struct Formula_Result result;
+	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	if (target == NULL) target = me;
+	for (long irow = iymin; irow <= iymax; irow ++) {
+		for (long icol = ixmin; icol <= ixmax; icol ++) {
 			Formula_run (irow, icol, & result); cherror
 			target -> z [irow] [icol] = result. result.numericResult;
 		}

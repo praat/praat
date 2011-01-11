@@ -43,7 +43,7 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 /* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
-	'window' is "Objects", 'menu' is "Praat", "New", "Read", "Help", "Preferences", or "Goodies".
+	'window' is "Objects", 'menu' is "Praat", "New", "Open", "Help", "Preferences", or "Goodies".
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */
@@ -54,7 +54,7 @@ void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands (void);
 
-#define praat_MAXNUM_MENUS 20   /* Maximum number of added Read, Write, New, or Help menus. */
+#define praat_MAXNUM_MENUS 20   /* Maximum number of added New, Open, Save, or Help menus. */
 #define praat_MAXNUM_FILE_TYPE_RECOGNIZERS 50   /* File types recognizable by 'Read from file...'. */
 
 typedef struct structPraat_Command {

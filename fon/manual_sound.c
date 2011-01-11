@@ -207,7 +207,7 @@ NORMAL (L"This command also works if you select more than one stereo Sound. "
 MAN_END
 
 MAN_BEGIN (L"Read two sounds from stereo file...", L"ppgb", 20051218)
-INTRO (L"A command in the @@Read menu@ of the #Objects window. "
+INTRO (L"A command in the @@Open menu@ of the #Objects window. "
 	"You use this if you want to get the two channels of a @stereo sound file "
 	"as two separate @Sound objects in the list. "
 	"Praat will name the two channels %left and %right.")
@@ -1059,7 +1059,7 @@ NORMAL (L"The size of the recording buffer determines how many seconds of sound 
 	"with ##Sound input prefs...# from the Preferences menu.")
 NORMAL (L"If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
 	"In such a case, you can still write the sound to disk with one of the Write commands in the File menu. "
-	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Read menu.")
+	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Open menu.")
 #ifdef sgi
 ENTRY (L"Recording sounds on SGI")
 NORMAL (L"On SGI (Indigo, Indy, O2), you can record from microphone, line input, or digital input. "
@@ -1101,7 +1101,7 @@ NORMAL (L"All sounds must have equal sampling frequencies. "
 	"They are concatenated in the order that they appear in the list of objects.")
 ENTRY (L"How to concatenate directly to a file")
 NORMAL (L"If the resulting sound does not fit into memory, use one of the "
-	"commands in the @@Write menu@. See @@How to concatenate sound files@.")
+	"commands in the @@Save menu@. See @@How to concatenate sound files@.")
 MAN_END
 
 MAN_BEGIN (L"Sounds: Convolve...", L"ppgb & djmw", 20100404)

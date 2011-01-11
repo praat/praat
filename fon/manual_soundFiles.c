@@ -178,7 +178,7 @@ MAN_BEGIN (L"Sound files 3. Files that Praat can read", L"ppgb", 20070602)
 INTRO (L"Praat can read five types of standard sound files in several formats, "
 	"and a number of proprietary types of sound files as well.")
 ENTRY (L"Standard sound files")
-NORMAL (L"The @@Read menu@ contains two commands for opening sound files:")
+NORMAL (L"The @@Open menu@ contains two commands for opening sound files:")
 LIST_ITEM (L"\\bu With @@Read from file...@, you read the entire file into memory. "
 	"A @Sound object will appear in the list. "
 	"This is appropriate if your sound is not too long to fit into memory. "
@@ -316,14 +316,14 @@ NORMAL (L"For instance, if you want to concatenate a 30-minute AIFF file, "
 	"a 4-minute Kay sound file, and a 60-minute Next/Sun file, "
 	"by writing them into a 94-minute WAV file, "
 	"you do the following:")
-LIST_ITEM (L"1. Open the AIFF file with @@Open long sound file...@ from the @@Read menu@. "
+LIST_ITEM (L"1. Open the AIFF file with @@Open long sound file...@ from the @@Open menu@. "
 	"A @LongSound object will appear in the list.")
 LIST_ITEM (L"2. Read the Kay sound file into memory with @@Read from file...@. "
 	"A @Sound object will appear in the list.")
-LIST_ITEM (L"3. Open the AIFF file with @@Open long sound file...@ from the @@Read menu@. "
+LIST_ITEM (L"3. Open the AIFF file with @@Open long sound file...@ from the @@Open menu@. "
 	"A second @LongSound object will appear in the list.")
 LIST_ITEM (L"4. Select the three objects and choose @@Write to WAV file...@ "
-	"from the @@Write menu@.")
+	"from the @@Save menu@.")
 NORMAL (L"This only works if all the sounds have the same sampling frequency "
 	"and the same number of channels.")
 ENTRY (L"Available formats")
@@ -331,7 +331,7 @@ NORMAL (L"The format of the original sound files may be 16-bit linear "
 	"(with big-endian or little-endian byte order), 8-bit linear (signed or unsigned), "
 	"8-bit \\mu-law, or 8-bit A-law. The format of the resulting sound file is always "
 	"16-bit linear, with an appropriate default byte order. The following commands "
-	"are available in the @@Write menu@ of you select any combination of @LongSound "
+	"are available in the @@Save menu@ of you select any combination of @LongSound "
 	"and/or @Sound objects:")
 LIST_ITEM (L"\\bu @@Write to WAV file...@ (little-endian)")
 LIST_ITEM (L"\\bu @@Write to AIFF file...@ (big-endian)")
@@ -347,11 +347,11 @@ NORMAL (L"A LongSound object gives you the ability to view and label "
 	"a sound file that resides on disk. You will want to use it for sounds "
 	"that are too long to read into memory as a @Sound object (typically, a few minutes).")
 ENTRY (L"How to create a LongSound object")
-NORMAL (L"You create a LongSound object with @@Open long sound file...@ from the @@Read menu@.")
+NORMAL (L"You create a LongSound object with @@Open long sound file...@ from the @@Open menu@.")
 ENTRY (L"What you can do with a LongSound object")
 NORMAL (L"You can write a LongSound object to a new sound file, "
 	"perhaps in a different format (AIFF, AIFC, WAV, NeXT/Sun, NIST, FLAC) "
-	"with the commands in the Write menu. You can also concatenate several "
+	"with the commands in the Save menu. You can also concatenate several "
 	"LongSound objects in this way. See @@How to concatenate sound files@.")
 ENTRY (L"How to view and edit a LongSound object")
 NORMAL (L"You can view a LongSound object in a @LongSoundEditor by choosing @@LongSound: View@. "
@@ -415,7 +415,7 @@ NORMAL (L"To avoid clipping, keep the absolute amplitude below 1.000. "
 MAN_END
 
 MAN_BEGIN (L"Open long sound file...", L"ppgb", 19980730)
-INTRO (L"A command in the @@Read menu@ that creates a @LongSound object.")
+INTRO (L"A command in the @@Open menu@ that creates a @LongSound object.")
 NORMAL (L"The file will be opened for reading only. The file stays open until you remove the LongSound object.")
 MAN_END
 
