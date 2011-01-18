@@ -1031,18 +1031,21 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, int shiftK
 	  * Since some systems do double buffering,
 	  * the undrawing at the old position and redrawing at the new have to be bracketed by Graphics_mouseStillDown ().
 	  */
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	dragHorizontal = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
 		(! shiftKeyPressed || my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
 	dragVertical = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
 	while (Graphics_mouseStillDown (my graphics)) {
 		double xWC_new, yWC_new;
-		drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
-		if (dragHorizontal) dt += xWC_new - xWC, xWC = xWC_new;
-		if (dragVertical) df += yWC_new - yWC, yWC = yWC_new;
-		drawWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
+		if (xWC_new != xWC || yWC_new != yWC) {
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+			if (dragHorizontal) dt += xWC_new - xWC;
+			if (dragVertical) df += yWC_new - yWC;
+			xWC = xWC_new, yWC = yWC_new;
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+		}
 	}
 	Graphics_xorOff (my graphics);
 
@@ -1180,15 +1183,17 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	while (Graphics_mouseStillDown (my graphics)) {
 		double xWC_new, yWC_new;
-		drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
-		dt += xWC_new - xWC, xWC = xWC_new;
-		df += yWC_new - yWC, yWC = yWC_new;
-		drawDurationWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
+		if (xWC_new != xWC || yWC_new != yWC) {
+			drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+			dt += xWC_new - xWC, xWC = xWC_new;
+			df += yWC_new - yWC, yWC = yWC_new;
+			drawDurationWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
+		}
 	}
 	Graphics_xorOff (my graphics);
 

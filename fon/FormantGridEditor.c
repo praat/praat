@@ -412,15 +412,17 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	while (Graphics_mouseStillDown (my graphics)) {
 		double xWC_new, yWC_new;
-		drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
-		dt += xWC_new - xWC, df += yWC_new - yWC;
-		xWC = xWC_new, yWC = yWC_new;
-		drawWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
+		if (xWC_new != xWC || yWC_new != yWC) {
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+			dt += xWC_new - xWC, df += yWC_new - yWC;
+			xWC = xWC_new, yWC = yWC_new;
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+		}
 	}
 	Graphics_xorOff (my graphics);
 

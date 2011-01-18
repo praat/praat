@@ -51,6 +51,15 @@ typedef struct structGuiButton {
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiButton);
 		struct structGuiButtonEvent event = { widget, 0 };
+		//Melder_casual ("activate");
+		if (my activateCallback != NULL) {
+			my activateCallback (my activateBoss, & event);
+		}
+	}
+	static void _GuiGtkButton_responseCallback (GuiObject widget, gpointer void_me) {
+		iam (GuiButton);
+		struct structGuiButtonEvent event = { NULL, 0 };
+		//Melder_casual ("response");
 		if (my activateCallback != NULL) {
 			my activateCallback (my activateBoss, & event);
 		}
@@ -119,31 +128,38 @@ GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int 
 	my activateCallback = activateCallback;
 	my activateBoss = activateBoss;
 	#if gtk
-		my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
-		_GuiObject_setUserData (my widget, me);
-//		_GuiObject_position (my widget, left, right, top, bottom);
-
-		/* TODO: dit moet eigenlijk netter, problemen zijn er al met focus van
-		 * dialogbox */
-		// TODO: use gtk_box_pack_start(GTK_BOX(parent), my widget, FALSE, FALSE, ?)
-		if (parent)
-			gtk_container_add (GTK_CONTAINER (parent), my widget);
-		
-		g_signal_connect (G_OBJECT (my widget), "destroy",
-				  G_CALLBACK (_GuiGtkButton_destroyCallback), me);
-		g_signal_connect (GTK_BUTTON (my widget), "clicked",
-				  G_CALLBACK (_GuiGtkButton_activateCallback), me);
-		if (flags & GuiButton_DEFAULT) {
-			// TODO: Werkt nog niet
+		if (0 && flags & GuiButton_DEFAULT) {
+			GtkDialog *dialog = GTK_DIALOG (gtk_widget_get_parent (gtk_widget_get_parent (parent)));
+			my widget = gtk_dialog_add_button (dialog, Melder_peekWcsToUtf8 (buttonText), GTK_RESPONSE_OK);
+			g_signal_connect (G_OBJECT (my widget), "destroy",
+					G_CALLBACK (_GuiGtkButton_destroyCallback), me);
+			g_signal_connect (dialog, "response",
+					G_CALLBACK (_GuiGtkButton_responseCallback), me);
+			//gtk_widget_get_toplevel
 			GTK_WIDGET_SET_FLAGS (my widget, GTK_CAN_DEFAULT);
-			GTK_WIDGET_SET_FLAGS (my widget, GTK_HAS_DEFAULT);
-			gtk_widget_activate (my widget);
-			gtk_widget_grab_default (my widget);
-			gtk_widget_grab_focus (my widget);
+			
+			gtk_dialog_set_default_response (dialog, GTK_RESPONSE_OK);
+			//GTK_WIDGET_SET_FLAGS (my widget, GTK_HAS_DEFAULT);
+			//gtk_widget_activate (my widget);
+			//gtk_widget_grab_default (my widget);
+			//gtk_widget_grab_focus (my widget);
+		} else {
+			my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
+			_GuiObject_setUserData (my widget, me);
+//			_GuiObject_position (my widget, left, right, top, bottom);
+
+			// TODO: use gtk_box_pack_start(GTK_BOX(parent), my widget, FALSE, FALSE, ?)
+			if (parent)
+				gtk_container_add (GTK_CONTAINER (parent), my widget);
+		
+			g_signal_connect (G_OBJECT (my widget), "destroy",
+					G_CALLBACK (_GuiGtkButton_destroyCallback), me);
+			g_signal_connect (GTK_BUTTON (my widget), "clicked",
+					G_CALLBACK (_GuiGtkButton_activateCallback), me);
+//			if (flags & GuiButton_CANCEL) {
+//				parent -> shell -> cancelButton = parent -> cancelButton = my widget;
+//			}
 		}
-//		if (flags & GuiButton_CANCEL) {
-//			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
-//		}
 	#elif win
 		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
 		_GuiObject_setUserData (my widget, me);

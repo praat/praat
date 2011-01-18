@@ -1834,15 +1834,19 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		}
 	}
 
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at old position
 	while (Graphics_mouseStillDown (my graphics)) {
-		do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
-		Graphics_getMouseLocation (my graphics, & xWC, & yWC);
-		do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+		double xWC_new;
+		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC);
+		if (xWC_new != xWC) {
+			do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at old position
+			xWC = xWC_new;
+			do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // draw at new position
+		}
 	}
-	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);
+	do_drawWhileDragging (me, numberOfTiers, selectedTier, xWC, soundY);   // undraw at new position
 	Graphics_xorOff (my graphics);
 
 	/*

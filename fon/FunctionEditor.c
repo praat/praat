@@ -1578,7 +1578,7 @@ static int playCallback (Any void_me, int phase, double tmin, double tmax, doubl
 	(void) tmin;
 	Graphics_inqViewport (my graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (me);
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
 	/*
 	 * Undraw the play cursor at its old location.
 	 * BUG: during scrolling, zooming, and exposure, an ugly line may remain.

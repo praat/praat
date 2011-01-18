@@ -230,14 +230,13 @@ static void draw (RealTierEditor me) {
 
 static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
 	RealTier data = my data;
-	long i;
 	(void) xWC;
 	(void) yWC;
 
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
-	for (i = first; i <= last; i ++) {
+	for (long i = first; i <= last; i ++) {
 		RealPoint point = data -> points -> item [i];
 		double t = point -> time + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
@@ -313,15 +312,17 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my graphics, Graphics_MAGENTA);
-	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
+	Graphics_xorOn (my graphics, Graphics_MAROON);
+	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // draw at old position
 	while (Graphics_mouseStillDown (my graphics)) {
 		double xWC_new, yWC_new;
-		drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
-		dt += xWC_new - xWC, df += yWC_new - yWC;
-		xWC = xWC_new, yWC = yWC_new;
-		drawWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
+		if (xWC_new != xWC || yWC_new != yWC) {
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // undraw at old position
+			dt += xWC_new - xWC, df += yWC_new - yWC;
+			xWC = xWC_new, yWC = yWC_new;
+			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // draw at new position
+		}
 	}
 	Graphics_xorOff (my graphics);
 

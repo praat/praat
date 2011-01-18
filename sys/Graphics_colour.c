@@ -1,6 +1,6 @@
 /* Graphics_colour.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2010/05/12 highlighting in GDK instead of Cairo because of the availability of a XOR mode
  * pb 2010/05/12 xorOn in GDK instead of Cairo because of the availability of a XOR mode
  * pb 2010/06/05 set my colour in setColour
+ * pb 2011/11/15 Windows: inverted the colour in XOR mode
  */
 
 #include "GraphicsP.h"
@@ -306,6 +307,9 @@ void Graphics_xorOn (I, Graphics_Colour colour) {
 			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
 		#elif win
 			SetROP2 (my dc, R2_XORPEN);
+			colour. red = ((uint16_t) (colour. red * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. green = ((uint16_t) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
+			colour. blue = ((uint16_t) (colour. blue * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif mac
 			if (my useQuartz) {

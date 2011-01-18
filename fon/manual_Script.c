@@ -1651,7 +1651,7 @@ CODE (L"Report difference (Student t)... \"F0 before\" \"F0 after\" 0.025")
 NORMAL (L"The quotes around the first argument tell Praat that the space between $$F0$ and $$before$ is part of the argument, "
 	"i.e. part of the first column name.")
 NORMAL (L"The last, and most confusing, strange thing that can happen is if a (non-last) text argument contains quotes itself. "
-	"In such a case, you enclose the argument betwene quotes, and you double each quote that appears inside the argument. "
+	"In such a case, you enclose the argument between quotes, and you double each quote that appears inside the argument. "
 	"For example, the following window")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), L""
 	Manual_DRAW_SETTINGS_WINDOW ("Report difference (Student t)", 2.6)   // 0.6 extra for the text
@@ -1797,7 +1797,7 @@ NORMAL (L"Line 5 finally writes the text.")
 NORMAL (L"For more information on these commands, see @@Picture window@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 3.2. Numeric variables", L"ppgb", 20110108)
+MAN_BEGIN (L"Scripting 3.2. Numeric variables", L"ppgb", 20110114)
 INTRO (L"In any general procedural programming language you can work with %variables, "
 	"which are places in your computer's memory where you can store a number or anything else.")
 NORMAL (L"For instance, you could put the number 3.1 into the variable $b in the following way:")
@@ -1811,19 +1811,19 @@ NORMAL (L"You can regard a variable as a box: you put the value 3.1 into the box
 NORMAL (L"To see what value a variable contains (what's in the box, or who lives in the house), "
 	"you can use the #echo command:")
 CODE (L"b = 3.1")
-CODE (L"The value is 'b'.")
+CODE (L"echo The value is 'b'.")
 NORMAL (L"This will put the text $$The value is 3.1.$ into the Info window, as you are invited to verify.")
 NORMAL (L"A variable is called a variable because it is %variable, i.e. its value can change. Try the script")
 CODE (L"b = 3.1")
 CODE (L"b = 5.8")
-CODE (L"The value is 'b'.")
+CODE (L"echo The value is 'b'.")
 NORMAL (L"You will see that $b ends up having the value 5.8. The first line puts the value 3.1 there, but the second line "
 	"replaces it with 5.8. It's like taking the 3.1 out of the box and putting the 5.8 in its stead. "
 	"Or the family 3.1 moves from the house, and the family called 5.8 moves in.")
 NORMAL (L"In an assignment, the part to the right of the \"becomes\" sign (the \"=\" sign) doesn't have to be a number; "
 	"it can be any %formula that %evaluates to a number. For instance, the script")
 CODE (L"b = 3.1 * 2")
-CODE (L"The value is 'b'.")
+CODE (L"echo The value is 'b'.")
 NORMAL (L"puts the text $$The value is 6.2.$ into the Info window. This works because Praat handles the first line "
 	"in the following way:")
 LIST_ITEM (L"1. the formula $$3.1 * 2$ is %evaluated (i.e. its value is computed), and the result is 6.2.")
@@ -1833,7 +1833,7 @@ NORMAL (L"After line 1 has been executed, the variable $b just contains the valu
 NORMAL (L"Formulas can contain more things than numbers: they can also contain other variables:")
 CODE (L"b = 3.1")
 CODE (L"c = b * 2")
-CODE (L"The value of b is 'b', and the value of c is 'c'.")
+CODE (L"echo The value of b is 'b', and the value of c is 'c'.")
 NORMAL (L"In the first line, $b gets the value 3.1. In the second line, the formula $$b * 2$ first has to be evaluated. "
 	"Praat looks up the value of $b (which is 3.1), so that it knows that the formula actually means $$3.1 * 2$. "
 	"Praat evaluates this formula and stores the result (namely the value 6.2) "
@@ -1843,7 +1843,7 @@ NORMAL (L"After these explanations, consider the following script:")
 CODE (L"b = 3.1")
 CODE (L"c = b * 2")
 CODE (L"b = 5.8")
-CODE (L"The value of c is 'c'.")
+CODE (L"echo The value of c is 'c'.")
 NORMAL (L"Can you figure out what the Info will report? If you think it will report "
 	"$$The value of c is 6.2.$, then you are correct: after the first line, $b contains the value 3.1; "
 	"after the second line, the value of $c is therefore 6.2, and nothing more; "
@@ -1972,9 +1972,9 @@ CODE (L"intervalNumber = 5")
 CODE (L"text\\$  = Get label of interval... 1 intervalNumber")
 CODE (L"printline Interval 'intervalNumber': 'text\\$ '")
 NORMAL (L"A new trick that you see here is that as a numeric argument (##Interval number#, "
-	"the second argument to ##Get label of interval...#, you can use not only a number "
+	"the second argument to ##Get label of interval...#), you can use not only a number "
 	"(as in all previous examples), but also a variable ($intervalNumber). "
-	"The rest of the script should be known stuuf by now.")
+	"The rest of the script should be known stuff by now.")
 NORMAL (L"The script above is long, but it can be made much shorter with the use of a %%for-loop%:")
 CODE (L"echo The texts in the first five intervals:")
 CODE (L"for intervalNumber from 1 to 5")

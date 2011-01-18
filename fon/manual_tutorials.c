@@ -1,6 +1,6 @@
 /* manual_tutorials.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110111)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110118)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.11# (18 January 2011)")
+LIST_ITEM (L"\\bu Better visibility of dragged things (sound selection, tier points, TextGrid boundaries) on Windows and Linux.")
 NORMAL (L"##5.2.10# (11 January 2011)")
 LIST_ITEM (L"\\bu Renamed #Read and #Write menus to #Open and #Save.")
 LIST_ITEM (L"\\bu Sound: use of ##Formula (part)...# can speed up formulas appreciably.")

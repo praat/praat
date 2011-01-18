@@ -893,6 +893,7 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			g_signal_connect (G_OBJECT (my widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me);
 			g_signal_connect (G_OBJECT (my widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me);
 			g_signal_connect (GTK_EDITABLE (my widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
+			GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);
 			if (GTK_IS_BOX (parent)) {
 				gtk_container_add (GTK_CONTAINER (parent), my widget);
 			}
