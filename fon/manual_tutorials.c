@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110118)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110128)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.12# (28 January 2011)")
+LIST_ITEM (L"\\bu Renamed #Edit buttons to ##View & Edit#.")
+LIST_ITEM (L"\\bu Better visibility of dragged things on Linux.")
 NORMAL (L"##5.2.11# (18 January 2011)")
 LIST_ITEM (L"\\bu Better visibility of dragged things (sound selection, tier points, TextGrid boundaries) on Windows and Linux.")
 NORMAL (L"##5.2.10# (11 January 2011)")
@@ -627,7 +630,7 @@ LIST_ITEM (L"\\bu Removed limit on number of menus (Praat could crash if the num
 NORMAL (L"##4.4.19# (28 April 2006)")
 LIST_ITEM (L"\\bu Table: ##Get mean#, ##Get standard deviation#, ##Get quantile#.")
 NORMAL (L"##4.4.18# (24 April 2006)")
-LIST_ITEM (L"\\bu Table: #Edit: view the contents of a table.")
+LIST_ITEM (L"\\bu Table: ##View & Edit#: view the contents of a table.")
 LIST_ITEM (L"\\bu Table: ##Scatter plot#.")
 LIST_ITEM (L"\\bu Scripting: more warnings against missing or extra spaces.")
 NORMAL (L"##4.4.17# (19 April 2006)")
@@ -1337,7 +1340,7 @@ ENTRY (L"Example of synthesis:")
 NORMAL (L"Create a #Speaker, create and edit an #Artword, and click on ##To Sound...#.")
 MAN_END
 
-MAN_BEGIN (L"Edit", L"ppgb", 20010414)
+MAN_BEGIN (L"View & Edit", L"ppgb", 20110128)
 INTRO (L"A command in the @@Dynamic menu@ of several types of @objects.")
 NORMAL (L"This command puts an @@Editors|editor@ window on the screen, which shows the contents of the selected object. "
 	"This window will allow your to view and modify the contents of this object.")
@@ -1454,21 +1457,21 @@ NORMAL (L"If you choose ##Move cursor to maximum pitch#, then choose ##Get pitch
 	"lower values.")
 MAN_END
 
-MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20040222)
+MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20110128)
 NORMAL (L"#Question: how do I do something to all the files in a directory?")
 NORMAL (L"Answer: look at @@Create Strings as file list...@.")
 NORMAL (L"")
 NORMAL (L"#Question: why doesn't the editor window react to my commands?")
 NORMAL (L"Your commands are probably something like:")
 CODE (L"Read from file... hello.wav")
-CODE (L"Edit")
+CODE (L"View & Edit")
 CODE (L"Zoom... 0.3 0.5")
 NORMAL (L"Answer: Praat doesn't know it has to send the #Zoom command to the editor "
 	"window called ##Sound hello#. There could be several Sound editor windows on your "
 	"screen. According to @@Scripting 7.1. Scripting an editor from a shell script@, "
 	"you will have to say this explicitly:")
 CODE (L"Read from file... hello.wav")
-CODE (L"Edit")
+CODE (L"View & Edit")
 CODE (L"editor Sound hello")
 CODE (L"Zoom... 0.3 0.5")
 NORMAL (L"")
@@ -1686,7 +1689,7 @@ LIST_ITEM (L"@@Intro 1.2. Reading a sound from disk")
 LIST_ITEM (L"@@Intro 1.3. Creating a sound from a formula")
 MAN_END
 
-MAN_BEGIN (L"Intro 1.1. Recording a sound", L"ppgb", 20041126)
+MAN_BEGIN (L"Intro 1.1. Recording a sound", L"ppgb", 20110128)
 #ifdef macintosh
 	INTRO (L"To record a speech sound into Praat, you need a computer with a microphone.")
 	NORMAL (L"To record from the microphone, perform the following steps:")
@@ -1722,7 +1725,7 @@ LIST_ITEM (L"6. Click the ##Save to list# button. Your recording will now appear
 	"where it will be called \"Sound sound\".")
 LIST_ITEM (L"7. You can now close the SoundRecorder window.")
 LIST_ITEM (L"8. When you saved your sound to the Object window, some buttons appeared in that window. "
-	"These buttons show you what you can do with the sound. Try the #Play and @Edit buttons.")
+	"These buttons show you what you can do with the sound. Try the #Play and @@View & Edit@ buttons.")
 NORMAL (L"For more information on recording, see the @SoundRecorder manual page.")
 MAN_END
 
@@ -1762,9 +1765,9 @@ NORMAL (L"Then, once you have a @Sound object in the @@List of Objects@, "
 NORMAL (L"For more information, see the @@Sound files@ tutorial.")
 MAN_END
 
-MAN_BEGIN (L"Intro 2.2. Viewing and editing a sound", L"ppgb", 20051218)
+MAN_BEGIN (L"Intro 2.2. Viewing and editing a sound", L"ppgb", 20110128)
 NORMAL (L"To see the wave form of a @Sound that is in the list of objects, "
-	"select that Sound and click @Edit. A @SoundEditor window will appear on your screen. "
+	"select that Sound and click @@View & Edit@. A @SoundEditor window will appear on your screen. "
 	"You can zoom in and scroll to see the various parts of the sound in detail. "
 	"You can select a part of the sound by dragging with the mouse. "
 	"To play a part of the sound, click on any of the rectangles below it. "
@@ -1792,9 +1795,9 @@ LIST_ITEM (L"@@Intro 3.7. Configuring the spectral slice")
 LIST_ITEM (L"@@Intro 3.8. The Spectrum object")
 MAN_END
 
-MAN_BEGIN (L"Intro 3.1. Viewing a spectrogram", L"ppgb", 20030513)
+MAN_BEGIN (L"Intro 3.1. Viewing a spectrogram", L"ppgb", 20110128)
 INTRO (L"To see the spectral content of a sound as a function of time, "
-	"select a @Sound or @LongSound object and choose @Edit. "
+	"select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor or @LongSoundEditor window will appear on your screen. "
 	"In the entire bottom half of this window you will see a greyish image, which is called a %spectrogram. "
 	"If you do not see it, choose @@Show spectrogram@ from the #Spectrogram menu.")
@@ -1847,7 +1850,7 @@ NORMAL (L"The darkness of the spectrogram will also change when you scroll, beca
 	"will turn darker. The next section will describe a way to switch this off.")
 MAN_END
 
-MAN_BEGIN (L"Intro 3.2. Configuring the spectrogram", L"ppgb", 20070225)
+MAN_BEGIN (L"Intro 3.2. Configuring the spectrogram", L"ppgb", 20110128)
 NORMAL (L"With @@Spectrogram settings...@ from the #Spectrogram menu, "
 	"you can determine how the spectrogram is computed and how it is displayed. "
 	"These settings will be remembered across Praat sessions. "
@@ -1881,7 +1884,7 @@ DEFINITION (L"All values that are more than %%Dynamic range% dB below the maximu
 ENTRY (L"The bandwidth")
 NORMAL (L"To see how the window length influences the bandwidth, "
 	"first create a 1000-Hz sine wave with @@Create Sound from formula...@ "
-	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click #Edit. "
+	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click ##View & Edit#. "
 	"The spectrogram will show a horizontal black line. "
 	"You can now vary the window length in the spectrogram settings and see how the thickness "
 	"of the lines varies. The line gets thinner if you raise the window length. "
@@ -1902,7 +1905,7 @@ ENTRY (L"Advanced settings")
 NORMAL (L"The Spectrum menu also contains @@Advanced spectrogram settings...@.")
 MAN_END
 
-MAN_BEGIN (L"Advanced spectrogram settings...", L"ppgb", 20070225)
+MAN_BEGIN (L"Advanced spectrogram settings...", L"ppgb", 20110128)
 ENTRY (L"Optimization")
 TAG (L"%%Number of time steps%")
 DEFINITION (L"the maximum number of points along the time window for which Praat has to compute "
@@ -1937,7 +1940,7 @@ DEFINITION (L"the shape of the analysis window. To compute the spectrum at, say,
 ENTRY (L"Sidelobes; anybody wants to win a cake?")
 NORMAL (L"The Gaussian window is the only shape that we can consider seriously as a candidate for "
 	"the analysis window. To see this, create a 1000-Hz sine wave with @@Create Sound from formula...@ "
-	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click #Edit. "
+	"by typing $$1/2 * sin (2*pi*1000*x)$ as the formula, then click ##View & Edit#. "
 	"If the window shape is Gaussian, the spectrogram will show a horizontal black line. "
 	"If the window shape is anything else, the spectrogram will show many horizontal grey lines (%sidelobes), "
 	"which do not represent anything that is available in the signal. They are artifacts of the "
@@ -2026,7 +2029,7 @@ NORMAL (L"If you drag the mouse through the wave form of the SoundEditor or Text
 MAN_END
 
 
-MAN_BEGIN (L"Intro 3.7. Configuring the spectral slice", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 3.7. Configuring the spectral slice", L"ppgb", 20110128)
 ENTRY (L"Spectral slice at the cursor")
 NORMAL (L"What Praat does precisely, depends on your Spectrogram settings. "
 	"Suppose that the %%window length% setting is 0.005 seconds (5 milliseconds). "
@@ -2053,7 +2056,7 @@ MAN_BEGIN (L"Intro 3.8. The Spectrum object", L"ppgb", 20030403)
 NORMAL (L"To compute a Fourier frequency spectrum of an entire sound, "
 	"select a @Sound object and choose @@Sound: To Spectrum...|To Spectrum...@ from the #Spectrum menu. "
 	"A new @Spectrum object will appear in the @@List of Objects@. "
-	"To view or modify it (or listen to its parts), click @Edit. "
+	"To view or modify it (or listen to its parts), click @@View & Edit@. "
 	"To print it, choose one of the #Draw commands to draw the Spectrum object to the @@Picture window@ first.")
 MAN_END
 
@@ -2066,9 +2069,9 @@ LIST_ITEM (L"@@Intro 4.4. Printing the pitch contour")
 LIST_ITEM (L"@@Intro 4.5. The Pitch object")
 MAN_END
 
-MAN_BEGIN (L"Intro 4.1. Viewing a pitch contour", L"ppgb", 20030521)
+MAN_BEGIN (L"Intro 4.1. Viewing a pitch contour", L"ppgb", 20110128)
 NORMAL (L"To see the pitch contour of an existing sound as a function of time, "
-	"select a @Sound or @LongSound object and choose @Edit. "
+	"select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor window will appear on your screen. "
 	"The bottom half of this window will contain a pitch contour, drawn as a blue line or as a sequence of blue dots. "
 	"If you do not see the pitch contour, choose @@Show pitch@ from the #Pitch menu.")
@@ -2190,13 +2193,13 @@ NORMAL (L"To print a pitch contour, or to put it in an EPS file or on the clipbo
 	"or copy it to the clipboard (to do Paste in your word processor, for instance).")
 MAN_END
 
-MAN_BEGIN (L"Intro 4.5. The Pitch object", L"ppgb", 20030316)
+MAN_BEGIN (L"Intro 4.5. The Pitch object", L"ppgb", 20110128)
 NORMAL (L"The pitch contour that is visible in the @SoundEditor or @TextGridEditor window, "
 	"can be copied as a separate @Pitch object to the @@List of Objects@. To do this, "
 	"choose @@Extract visible pitch contour@ from the #Pitch menu.")
 NORMAL (L"Another way to get a separate Pitch object is to select a @Sound object in the list "
 	"choose @@Sound: To Pitch...@ (preferred) or any of the other methods from the @@Periodicity menu@.")
-NORMAL (L"To view and modify the contents of a Pitch object, select it and choose @Edit. "
+NORMAL (L"To view and modify the contents of a Pitch object, select it and choose @@View & Edit@. "
 	"This creates a @PitchEditor window on your screen.")
 NORMAL (L"To save a pitch contour to disk, select the @Pitch object in the list and choose one of the commands in the @@Save menu@.")
 NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Open menu@.")
@@ -2212,8 +2215,8 @@ LIST_ITEM (L"@@Intro 5.3. Querying the formant contours")
 LIST_ITEM (L"@@Intro 5.4. The Formant object")
 MAN_END
 
-MAN_BEGIN (L"Intro 5.1. Viewing formant contours", L"ppgb", 20030316)
-NORMAL (L"To see the formant contours of a sound as functions of time, select a @Sound or @LongSound object and choose @Edit. "
+MAN_BEGIN (L"Intro 5.1. Viewing formant contours", L"ppgb", 20110128)
+NORMAL (L"To see the formant contours of a sound as functions of time, select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor window will appear on your screen. "
 	"The analysis part of this window will contain formant contours, drawn as red speckles. "
 	"If you do not see the formant contours, choose @@Show formant@ from the #Formant menu.")
@@ -2257,8 +2260,8 @@ LIST_ITEM1 (L"@@Intro 6.3. Querying the intensity contour")
 LIST_ITEM1 (L"@@Intro 6.4. The Intensity object")
 MAN_END
 
-MAN_BEGIN (L"Intro 6.1. Viewing an intensity contour", L"ppgb", 20041123)
-INTRO (L"To see the intensity contour of a sound as a function of time, select a @Sound or @LongSound object and choose @Edit. "
+MAN_BEGIN (L"Intro 6.1. Viewing an intensity contour", L"ppgb", 20110128)
+INTRO (L"To see the intensity contour of a sound as a function of time, select a @Sound or @LongSound object and choose @@View & Edit@. "
 	"A @SoundEditor window will appear on your screen. "
 	"The analysis part of this window will contain an intensity contour, drawn as a yellow or green line "
 	"(choose ##Show intensity# from the #Intensity menu if it is not visible). "
@@ -2315,7 +2318,7 @@ NORMAL (L"To print an intensity contour, or to put it in an EPS file or on the c
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard.")
 MAN_END
 
-MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20090630)
+MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20110128)
 INTRO (L"You can annotate existing @Sound objects and sound files (@LongSound objects).")
 NORMAL (L"The labelling data will reside in a @TextGrid object. This object is separate "
 	"from the sound, which means that you will often see two objects in the list: a Sound or LongSound, "
@@ -2334,7 +2337,7 @@ NORMAL (L"When you create a TextGrid, you specify the names of the %tiers. For i
 ENTRY (L"View and edit")
 NORMAL (L"You can edit a TextGrid object all by itself, but you will normally want to see "
 	"the sound in the editor window as well. To achieve this, you select both the Sound (or LongSound) and "
-	"the TextGrid, and click @Edit. A @TextGridEditor will appear on your screen. "
+	"the TextGrid, and click @@View & Edit@. A @TextGridEditor will appear on your screen. "
 	"Like the Sound editor, the TextGrid editor will show you a spectrogram, a pitch contour, a formant contour, "
 	"and an intensity contour. This editor will allow "
 	"you to add, remove, and edit labels, boundaries, and tiers. Under Help in the TextGridEditor, you will "
@@ -2353,11 +2356,11 @@ LIST_ITEM (L"@@Intro 8.2. Manipulation of duration")
 LIST_ITEM (L"@@Intro 8.3. Manipulation of intensity")
 MAN_END
 
-MAN_BEGIN (L"Intro 8.1. Manipulation of pitch", L"ppgb", 20030309)
+MAN_BEGIN (L"Intro 8.1. Manipulation of pitch", L"ppgb", 20110128)
 INTRO (L"To modify the pitch contour of an existing @Sound object, "
 	"you select this @Sound and click ##To Manipulation#. "
 	"A @Manipulation object will then appear in the list. "
-	"You can then click @Edit to raise a @ManipulationEditor, "
+	"You can then click @@View & Edit@ to raise a @ManipulationEditor, "
 	"which will show the pitch contour (@PitchTier) as a series of thick dots. "
 	"To reduce the number of dots, choose ##Stylize pitch (2 st)# "
 	"from the #Pitch menu; it will then be easy to drag the dots "
@@ -2386,11 +2389,11 @@ NORMAL (L"For instance, suppose you want to have a pitch that falls from 350 to 
 	"You can put this PitchTier into a Manipulation object in the way described above.")
 MAN_END
 
-MAN_BEGIN (L"Intro 8.2. Manipulation of duration", L"ppgb", 20070107)
+MAN_BEGIN (L"Intro 8.2. Manipulation of duration", L"ppgb", 20110128)
 INTRO (L"You can use Praat to modify the relative durations in an existing sound.")
 NORMAL (L"First, you select a @Sound object and click \"To Manipulation\". "
 	"A @Manipulation object will then appear in the list. "
-	"You can then click @Edit to raise a @ManipulationEditor, "
+	"You can then click @@View & Edit@ to raise a @ManipulationEditor, "
 	"which will show an empty @DurationTier. "
 	"You can add targets to this tier by choosing \"Add duration point at cursor\" "
 	"from the \"Dur\" menu. The targets will show up as green dots, which you can easily drag "
@@ -2421,13 +2424,13 @@ NORMAL (L"To put this DurationTier back into a Manipulation object, you select t
 	"and choose ##Replace duration tier#.")
 MAN_END
 
-MAN_BEGIN (L"Intro 8.3. Manipulation of intensity", L"ppgb", 20070825)
+MAN_BEGIN (L"Intro 8.3. Manipulation of intensity", L"ppgb", 20110128)
 INTRO (L"You can modify the intensity contour of an existing sound.")
 NORMAL (L"While the pitch and duration of a sound can be modified with the @ManipulationEditor "
 	"(see @@Intro 8.1. Manipulation of pitch@ and @@Intro 8.2. Manipulation of duration@), "
 	"the modification of the intensity curve is done in a different way.")
 NORMAL (L"You can create an @IntensityTier with the command @@Create IntensityTier...@ "
-	"from the @@New menu@. With @Edit, you can add points to this tier. "
+	"from the @@New menu@. With @@View & Edit@, you can add points to this tier. "
 	"You can then \"multiply\" this tier with a sound, by selecting the @Sound and the "
 	"IntensityTier together and clicking @@Sound & IntensityTier: Multiply|Multiply@. "
 	"The points in the IntensityTier represent relative intensities in dB; "
@@ -2696,7 +2699,7 @@ LIST_ITEM (L"@@Source-filter synthesis 3. The ba-da continuum")
 LIST_ITEM (L"@@Source-filter synthesis 4. Using existing sounds")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20101231)
+MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20110128)
 INTRO (L"Creating a glottal source signal for speech synthesis involves creating a @PointProcess, "
 	"which is a series of time points that should represent the exact moments of glottal closure.")
 NORMAL (L"You may want to start with creating a well-defined pitch contour. "
@@ -2704,7 +2707,7 @@ NORMAL (L"You may want to start with creating a well-defined pitch contour. "
 	"during that time. You first create an empty @PitchTier by choosing @@Create PitchTier...@ from the #New menu "
 	"(I call this PitchTier \"empty\" because it does not contain any pitch information yet); "
 	"you may want to name the PitchTier \"source\" and have it start at 0 seconds and end at 0.5 seconds. "
-	"Once the PitchTier exists and is selected, you can #Edit it to add pitch points (pitch targets) to it at certain times "
+	"Once the PitchTier exists and is selected, you can ##View & Edit# it to add pitch points (pitch targets) to it at certain times "
 	"(or you choose @@PitchTier: Add point...@ from the #Modify menu repeatedly). "
 	"You could add a pitch point of 150 Hz at time 0.0 and a pitch point of 100 Hz at time 0.5. "
 	"In the PitchTier window, you can see that the pitch curve falls linearly "
@@ -2746,7 +2749,7 @@ NORMAL (L"Now that we have a glottal point process (a glottal pulse train), the 
 	"is to turn it into a sound by choosing @@PointProcess: To Sound (phonation)...@. "
 	"If you use the standard settings of this command (but with ##Adaptation factor# set to 0.6), the result will be a @Sound with "
 	"reasonable glottal flow derivatives centred around each of the original pulses in the point process. "
-	"You can check this by selecting the Sound and choosing #Edit:")
+	"You can check this by selecting the Sound and choosing ##View & Edit#:")
 SCRIPT (4.5, 2.5,
 	L"pitchTier = Create PitchTier... source 0 0.5\n"
 	"Add point... 0.0 150\n"

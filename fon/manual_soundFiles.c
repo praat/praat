@@ -341,7 +341,7 @@ LIST_ITEM (L"\\bu @@Write to NIST file...@ (little-endian)")
 LIST_ITEM (L"\\bu @@Write to FLAC file...@")
 MAN_END
 
-MAN_BEGIN (L"LongSound", L"ppgb", 20040113)
+MAN_BEGIN (L"LongSound", L"ppgb", 20110128)
 INTRO (L"One of the @@types of objects@ in Praat. See the @@Sound files@ tutorial.")
 NORMAL (L"A LongSound object gives you the ability to view and label "
 	"a sound file that resides on disk. You will want to use it for sounds "
@@ -362,7 +362,7 @@ ENTRY (L"How to annotate a LongSound object")
 NORMAL (L"You can label and segment a LongSound object after the following steps:")
 LIST_ITEM (L"1. Select the LongSound object.")
 LIST_ITEM (L"2. Choose @@LongSound: To TextGrid...@ and specify your tiers.")
-LIST_ITEM (L"3. Select the resulting @TextGrid object together with the LongSound object, and click #Edit.")
+LIST_ITEM (L"3. Select the resulting @TextGrid object together with the LongSound object, and click ##View & Edit#.")
 NORMAL (L"A @TextGridEditor will appear on the screen, with a copy of the LongSound object in it.")
 ENTRY (L"Limitations")
 NORMAL (L"The length of the sound file is limited to 2 gigabytes, which is 3 hours of CD-quality stereo, "

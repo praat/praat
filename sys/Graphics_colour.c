@@ -305,6 +305,7 @@ void Graphics_xorOn (I, Graphics_Colour colour) {
 			gdk_gc_set_function (my gc, GDK_XOR);
 			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
 			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
+			gdk_flush ();
 		#elif win
 			SetROP2 (my dc, R2_XORPEN);
 			colour. red = ((uint16_t) (colour. red * 65535.0) ^ 0xFFFF) / 65535.0;
@@ -335,6 +336,7 @@ void Graphics_xorOff (I) {
 			gdk_gc_set_function (my gc, GDK_COPY);
 			//cairo_set_source_rgba (my cr, 0.0, 0.0, 0.0, 1.0);
 			//cairo_set_operator (my cr, CAIRO_OPERATOR_OVER);
+			gdk_flush ();
 		#elif win
 			SetROP2 (my dc, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);

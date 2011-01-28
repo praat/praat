@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/12/07
+ * pb 2011/01/18
  */
 
 #include "Editor.h"
@@ -112,6 +112,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_RADIO_NEXT  GuiMenu_RADIO_NEXT
 #define praat_HIDDEN  0x00002000
 #define praat_UNHIDABLE  0x00004000
+#define praat_ATTRACTIVE  0x00008000
 #define praat_DEPTH_1  0x00010000
 #define praat_DEPTH_2  0x00020000
 #define praat_DEPTH_3  0x00030000

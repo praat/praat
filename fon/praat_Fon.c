@@ -310,7 +310,7 @@ END
 
 DIRECT (info_AmplitudeTier_Sound_edit)
 	Melder_information1 (L"To include a copy of a Sound in your AmplitudeTier editor:\n"
-		"   select an AmplitudeTier and a Sound, and click \"Edit\".");
+		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
 END
 
 /***** AMPLITUDETIER & SOUND *****/
@@ -503,7 +503,7 @@ DIRECT (DurationTier_help) Melder_help (L"DurationTier"); END
 
 DIRECT (info_DurationTier_Sound_edit)
 	Melder_information1 (L"To include a copy of a Sound in your DurationTier editor:\n"
-		"   select a DurationTier and a Sound, and click \"Edit\".");
+		"   select a DurationTier and a Sound, and click \"View & Edit\".");
 END
 
 /***** EXCITATION *****/
@@ -1444,7 +1444,7 @@ END
 
 DIRECT (info_IntensityTier_Sound_edit)
 	Melder_information1 (L"To include a copy of a Sound in your IntensityTier editor:\n"
-		"   select an IntensityTier and a Sound, and click \"Edit\".");
+		"   select an IntensityTier and a Sound, and click \"View & Edit\".");
 END
 
 /***** INTENSITYTIER & POINTPROCESS *****/
@@ -3022,7 +3022,7 @@ END
 
 DIRECT (info_PitchTier_Sound_edit)
 	Melder_information1 (L"To include a copy of a Sound in your PitchTier editor:\n"
-		"   select a PitchTier and a Sound, and click \"Edit\".");
+		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END
 
 FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, L"Write PitchTier to spreadsheet", 0, L"PitchTier")
@@ -3407,7 +3407,7 @@ END
 
 DIRECT (info_PointProcess_Sound_edit)
 	Melder_information1 (L"To include a copy of a Sound in your PointProcess editor:\n"
-		"   select a PointProcess and a Sound, and click \"Edit\".");
+		"   select a PointProcess and a Sound, and click \"View & Edit\".");
 END
 
 /***** POINTPROCESS & SOUND *****/
@@ -4578,8 +4578,9 @@ void praat_uvafon_init (void) {
 	#endif
 
 	praat_addAction1 (classAmplitudeTier, 0, L"AmplitudeTier help", 0, 0, DO_AmplitudeTier_help);
-	praat_addAction1 (classAmplitudeTier, 1, L"Edit", 0, 0, DO_AmplitudeTier_edit);
-	praat_addAction1 (classAmplitudeTier, 0, L"Edit with Sound?", 0, 0, DO_info_AmplitudeTier_Sound_edit);
+	praat_addAction1 (classAmplitudeTier, 1, L"View & Edit", 0, 0, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 1, L"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);
+	praat_addAction1 (classAmplitudeTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_AmplitudeTier_Sound_edit);
 	praat_addAction1 (classAmplitudeTier, 0, L"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classAmplitudeTier);
 		praat_addAction1 (classAmplitudeTier, 1, L"Get shimmer (local)...", 0, 1, DO_AmplitudeTier_getShimmer_local);
@@ -4617,8 +4618,9 @@ praat_addAction1 (classDistributions, 0, L"Learn", 0, 0, 0);
 	praat_addAction1 (classDistributions, 2, L"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise);
 
 	praat_addAction1 (classDurationTier, 0, L"DurationTier help", 0, 0, DO_DurationTier_help);
-	praat_addAction1 (classDurationTier, 1, L"Edit", 0, 0, DO_DurationTier_edit);
-	praat_addAction1 (classDurationTier, 0, L"Edit with Sound?", 0, 0, DO_info_DurationTier_Sound_edit);
+	praat_addAction1 (classDurationTier, 1, L"View & Edit", 0, 0, DO_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 1, L"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
+	praat_addAction1 (classDurationTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_DurationTier_Sound_edit);
 	praat_addAction1 (classDurationTier, 0, L"& Manipulation: Replace?", 0, 0, DO_info_DurationTier_Manipulation_replace);
 	praat_addAction1 (classDurationTier, 0, L"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classDurationTier);
@@ -4681,7 +4683,8 @@ praat_addAction1 (classFormant, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, L"To Matrix...", 0, 0, DO_Formant_to_Matrix);
 
 	praat_addAction1 (classFormantGrid, 0, L"FormantGrid help", 0, 0, DO_FormantGrid_help);
-	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, 0, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1, L"View & Edit", 0, 0, DO_FormantGrid_edit);
+	praat_addAction1 (classFormantGrid, 1, L"Edit", 0, praat_HIDDEN, DO_FormantGrid_edit);
 	praat_addAction1 (classFormantGrid, 0, L"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classFormantGrid);
 		praat_addAction1 (classFormantGrid, 0, L"Formula (frequencies)...", 0, 1, DO_FormantGrid_formula_frequencies);
@@ -4756,8 +4759,9 @@ praat_addAction1 (classFormantTier, 0, L"Down", 0, 0, 0);
 		praat_addAction1 (classIntensity, 0, L"Down to Matrix", 0, 0, DO_Intensity_downto_Matrix);
 
 	praat_addAction1 (classIntensityTier, 0, L"IntensityTier help", 0, 0, DO_IntensityTier_help);
-	praat_addAction1 (classIntensityTier, 1, L"Edit", 0, 0, DO_IntensityTier_edit);
-	praat_addAction1 (classIntensityTier, 0, L"Edit with Sound?", 0, 0, DO_info_IntensityTier_Sound_edit);
+	praat_addAction1 (classIntensityTier, 1, L"View & Edit", 0, 0, DO_IntensityTier_edit);
+	praat_addAction1 (classIntensityTier, 1, L"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
+	praat_addAction1 (classIntensityTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_IntensityTier_Sound_edit);
 	praat_addAction1 (classIntensityTier, 0, L"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classIntensityTier);
 		praat_addAction1 (classIntensityTier, 1, L"-- get content --", 0, 1, 0);
@@ -4815,7 +4819,8 @@ praat_addAction1 (classIntensityTier, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classLtas, 0, L"To Matrix", 0, 0, DO_Ltas_to_Matrix);
 
 	praat_addAction1 (classManipulation, 0, L"Manipulation help", 0, 0, DO_Manipulation_help);
-	praat_addAction1 (classManipulation, 1, L"Edit", 0, 0, DO_Manipulation_edit);
+	praat_addAction1 (classManipulation, 1, L"View & Edit", 0, 0, DO_Manipulation_edit);
+	praat_addAction1 (classManipulation, 1, L"Edit", 0, praat_HIDDEN, DO_Manipulation_edit);
 	praat_addAction1 (classManipulation, 0, L"Play (overlap-add)", 0, 0, DO_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, L"Play (PSOLA)", 0, praat_HIDDEN, DO_Manipulation_play_overlapAdd);
 	praat_addAction1 (classManipulation, 0, L"Play (LPC)", 0, 0, DO_Manipulation_play_lpc);
@@ -4894,7 +4899,8 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classParamCurve, 0, L"Draw...", 0, 0, DO_ParamCurve_draw);
 
 	praat_addAction1 (classPitch, 0, L"Pitch help", 0, 0, DO_Pitch_help);
-	praat_addAction1 (classPitch, 1, L"Edit", 0, 0, DO_Pitch_edit);
+	praat_addAction1 (classPitch, 1, L"View & Edit", 0, 0, DO_Pitch_edit);
+	praat_addAction1 (classPitch, 1, L"Edit", 0, praat_HIDDEN, DO_Pitch_edit);
 	praat_addAction1 (classPitch, 0, L"Play -", 0, 0, 0);
 		praat_addAction1 (classPitch, 0, L"Play pulses", 0, 1, DO_Pitch_play);
 		praat_addAction1 (classPitch, 0, L"Hum", 0, 1, DO_Pitch_hum);
@@ -4955,8 +4961,9 @@ praat_addAction1 (classPitch, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classPitchTier, 1, L"Write to PitchTier spreadsheet file...", 0, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, L"PitchTier help", 0, 0, DO_PitchTier_help);
-	praat_addAction1 (classPitchTier, 1, L"Edit", 0, 0, DO_PitchTier_edit);
-	praat_addAction1 (classPitchTier, 0, L"Edit with Sound?", 0, 0, DO_info_PitchTier_Sound_edit);
+	praat_addAction1 (classPitchTier, 1, L"View & Edit", 0, 0, DO_PitchTier_edit);
+	praat_addAction1 (classPitchTier, 1, L"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction1 (classPitchTier, 0, L"View & Edit with Sound?", 0, 0, DO_info_PitchTier_Sound_edit);
 	praat_addAction1 (classPitchTier, 0, L"Play pulses", 0, 0, DO_PitchTier_play);
 	praat_addAction1 (classPitchTier, 0, L"Hum", 0, 0, DO_PitchTier_hum);
 	praat_addAction1 (classPitchTier, 0, L"Play sine", 0, 0, DO_PitchTier_playSine);
@@ -4992,9 +4999,10 @@ praat_addAction1 (classPitch, 0, L"Convert", 0, 0, 0);
 		praat_addAction1 (classPitchTier, 0, L"Down to TableOfReal...", 0, 1, DO_PitchTier_downto_TableOfReal);
 
 	praat_addAction1 (classPointProcess, 0, L"PointProcess help", 0, 0, DO_PointProcess_help);
-	praat_addAction1 (classPointProcess, 0, L"Edit -", 0, 0, 0);
-		praat_addAction1 (classPointProcess, 1, L"Edit alone", 0, 1, DO_PointProcess_edit);
-		praat_addAction1 (classPointProcess, 0, L"Edit with Sound?", 0, 1, DO_info_PointProcess_Sound_edit);
+	praat_addAction1 (classPointProcess, 0, L"View & Edit -", 0, 0, 0);
+		praat_addAction1 (classPointProcess, 1, L"View & Edit alone", 0, 1, DO_PointProcess_edit);
+		praat_addAction1 (classPointProcess, 1, L"Edit alone", 0, praat_HIDDEN + praat_DEPTH_1, DO_PointProcess_edit);
+		praat_addAction1 (classPointProcess, 0, L"View & Edit with Sound?", 0, 1, DO_info_PointProcess_Sound_edit);
 	praat_addAction1 (classPointProcess, 0, L"Play -", 0, 0, 0);
 		praat_addAction1 (classPointProcess, 0, L"Play as pulse train", 0, 1, DO_PointProcess_play);
 		praat_addAction1 (classPointProcess, 0, L"Hum", 0, 1, DO_PointProcess_hum);
@@ -5081,7 +5089,8 @@ praat_addAction1 (classPolygon, 0, L"Hack", 0, 0, 0);
 		praat_addAction1 (classSpectrogram, 0, L"To Matrix", 0, 1, DO_Spectrogram_to_Matrix);
 
 	praat_addAction1 (classSpectrum, 0, L"Spectrum help", 0, 0, DO_Spectrum_help);
-	praat_addAction1 (classSpectrum, 1, L"Edit", 0, 0, DO_Spectrum_edit);
+	praat_addAction1 (classSpectrum, 1, L"View & Edit", 0, 0, DO_Spectrum_edit);
+	praat_addAction1 (classSpectrum, 1, L"Edit", 0, praat_HIDDEN, DO_Spectrum_edit);
 	praat_addAction1 (classSpectrum, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classSpectrum, 0, L"Draw...", 0, 1, DO_Spectrum_draw);
 		praat_addAction1 (classSpectrum, 0, L"Draw (log freq)...", 0, 1, DO_Spectrum_drawLogFreq);
@@ -5138,7 +5147,8 @@ praat_addAction1 (classPolygon, 0, L"Hack", 0, 0, 0);
 
 	praat_addAction1 (classStrings, 0, L"Strings help", 0, 0, DO_Strings_help);
 	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
-	praat_addAction1 (classStrings, 1, L"Edit", 0, 0, DO_Strings_edit);
+	praat_addAction1 (classStrings, 1, L"View & Edit", 0, 0, DO_Strings_edit);
+	praat_addAction1 (classStrings, 1, L"Edit", 0, praat_HIDDEN, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, L"Query", 0, 0, 0);
 		praat_addAction1 (classStrings, 2, L"Equal?", 0, 0, DO_Strings_equal);
 		praat_addAction1 (classStrings, 1, L"Get number of strings", 0, 0, DO_Strings_getNumberOfStrings);
@@ -5166,12 +5176,14 @@ praat_addAction1 (classTransition, 0, L"Synthesize", 0, 0, 0);
 praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
 	praat_addAction1 (classTransition, 0, L"To Matrix", 0, 0, DO_Transition_to_Matrix);
 
-	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"Edit", 0, 0, DO_AmplitudeTier_edit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"View & Edit", 0, 0, DO_AmplitudeTier_edit);
+	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_AmplitudeTier_edit);   // hidden 2011
 	praat_addAction2 (classAmplitudeTier, 1, classSound, 1, L"Multiply", 0, 0, DO_Sound_AmplitudeTier_multiply);
 	praat_addAction2 (classDistributions, 1, classTransition, 1, L"Map", 0, 0, DO_Distributions_Transition_map);
 	praat_addAction2 (classDistributions, 1, classTransition, 1, L"To Transition...", 0, 0, DO_Distributions_to_Transition_adj);
 	praat_addAction2 (classDistributions, 2, classTransition, 1, L"To Transition (noise)...", 0, 0, DO_Distributions_to_Transition_noise_adj);
-	praat_addAction2 (classDurationTier, 1, classSound, 1, L"Edit", 0, 0, DO_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, L"View & Edit", 0, 0, DO_DurationTier_edit);
+	praat_addAction2 (classDurationTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_DurationTier_edit);
 	praat_addAction2 (classFormant, 1, classPointProcess, 1, L"To FormantTier", 0, 0, DO_Formant_PointProcess_to_FormantTier);
 	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter", 0, 0, DO_Sound_Formant_filter);
 	praat_addAction2 (classFormant, 1, classSound, 1, L"Filter (no scale)", 0, 0, DO_Sound_Formant_filter_noscale);
@@ -5184,7 +5196,8 @@ praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
 	praat_addAction2 (classIntensity, 1, classPitch, 1, L"Speckle (phonetogram)...", 0, praat_HIDDEN, DO_Pitch_Intensity_speckle);   /* grandfathered 2005 */
 	praat_addAction2 (classIntensity, 1, classPointProcess, 1, L"To IntensityTier", 0, 0, DO_Intensity_PointProcess_to_IntensityTier);
 	praat_addAction2 (classIntensityTier, 1, classPointProcess, 1, L"To IntensityTier", 0, 0, DO_IntensityTier_PointProcess_to_IntensityTier);
-	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Edit", 0, 0, DO_IntensityTier_edit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"View & Edit", 0, 0, DO_IntensityTier_edit);
+	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_IntensityTier_edit);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Multiply", 0, praat_HIDDEN, DO_Sound_IntensityTier_multiply_old);
 	praat_addAction2 (classIntensityTier, 1, classSound, 1, L"Multiply...", 0, 0, DO_Sound_IntensityTier_multiply);
 	praat_addAction2 (classManipulation, 1, classSound, 1, L"Replace original sound", 0, 0, DO_Manipulation_replaceOriginalSound);
@@ -5201,8 +5214,10 @@ praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
 	praat_addAction2 (classPitch, 1, classSound, 1, L"To PointProcess (peaks)...", 0, 0, DO_Sound_Pitch_to_PointProcess_peaks);
 	praat_addAction2 (classPitch, 1, classSound, 1, L"To Manipulation", 0, 0, DO_Sound_Pitch_to_Manipulation);
 	praat_addAction2 (classPitchTier, 1, classPointProcess, 1, L"To PitchTier", 0, 0, DO_PitchTier_PointProcess_to_PitchTier);
-	praat_addAction2 (classPitchTier, 1, classSound, 1, L"Edit", 0, 0, DO_PitchTier_edit);
-	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Edit", 0, 0, DO_PointProcess_edit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1, L"View & Edit", 0, 0, DO_PitchTier_edit);
+	praat_addAction2 (classPitchTier, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, L"View & Edit", 0, 0, DO_PointProcess_edit);
+	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Edit", 0, praat_HIDDEN, DO_PointProcess_edit);
 praat_addAction2 (classPointProcess, 1, classSound, 1, L"Query", 0, 0, 0);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (local)...", 0, 0, DO_Point_Sound_getShimmer_local);
 	praat_addAction2 (classPointProcess, 1, classSound, 1, L"Get shimmer (local_dB)...", 0, 0, DO_Point_Sound_getShimmer_local_dB);

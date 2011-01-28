@@ -425,11 +425,11 @@ NORMAL (L"If you choose @@Write to WAV file...@, and the sound is a stereo sound
 	"you can use @@Combine to stereo@.")
 MAN_END
 
-MAN_BEGIN (L"time", L"ppgb", 20030314)
+MAN_BEGIN (L"time", L"ppgb", 20110128)
 INTRO (L"In normal life, time is how late the watch says it is.")
 NORMAL (L"In Praat, this definition is largely irrelevant. "
 	"Sound files rarely tell us the absolute time of recording. "
-	"So when you read a sound file into Praat and click #Edit, you will see "
+	"So when you read a sound file into Praat and click ##View & Edit#, you will see "
 	"that the Sound starts at a time of 0 seconds, and if its duration is 3.5 seconds, "
 	"you will see that the Sound finishes at a time of 3.5 seconds.")
 NORMAL (L"Besides sounds, many other types of objects in Praat have a time scale as well: "
@@ -437,7 +437,7 @@ NORMAL (L"Besides sounds, many other types of objects in Praat have a time scale
 	"are required to have a time domain that starts at 0 seconds. In the Sound editor window, for example, "
 	"you can select the part that runs from 1.4. to 1.7 seconds, and \"extract\" it to the Objects window "
 	"while \"preserving the times\". The resulting Sound object will have a start time of 1.4 seconds "
-	"and an end time of 1.7 seconds, as you can see when you click #Edit. "
+	"and an end time of 1.7 seconds, as you can see when you click ##View & Edit#. "
 	"Spectrograms and pitch contours that you create from this sound will also have a time domain "
 	"from 1.4 to 1.7 seconds. This time domain is preserved if you save these objects to a text file "
 	"or to a binary file and read them into Praat again later. Only if you save the Sound object "
@@ -452,7 +452,7 @@ NORMAL (L"On a clock, time runs around in circles. In Praat's editor windows, ti
 	"To see another part, you %scroll backward or forward.")
 MAN_END
 
-MAN_BEGIN (L"time domain", L"ppgb", 20060726)
+MAN_BEGIN (L"time domain", L"ppgb", 20110128)
 INTRO (L"This manual page assumes that you have read the @Intro.")
 NORMAL (L"Many objects in Praat are %%functions of time%. Examples are: "
 	"@Sound, @Pitch, @Spectrogram, @Formant, @Intensity, @TextGrid, "
@@ -463,7 +463,7 @@ NORMAL (L"In Praat, these functions have a contiguous ##time domain#, i.e. "
 	"and the end time. There are up to five ways to see the time domain "
 	"of an object.")
 ENTRY (L"The time domain in editor windows")
-NORMAL (L"If you select an object that is a function of time and click #Edit, an editor window "
+NORMAL (L"If you select an object that is a function of time and click ##View & Edit#, an editor window "
 	"will appear on the screen. The rectangle at the bottom will show the start time, "
 	"the end time, and the total duration.")
 ENTRY (L"The time domain in the picture window")

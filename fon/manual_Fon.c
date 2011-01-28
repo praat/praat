@@ -317,12 +317,12 @@ ENTRY (L"Return value")
 NORMAL (L"the target duration in seconds.")
 MAN_END
 
-MAN_BEGIN (L"DurationTierEditor", L"ppgb", 20010330)
+MAN_BEGIN (L"DurationTierEditor", L"ppgb", 20110128)
 INTRO (L"One of the @editors in the Praat program, for viewing and editing a @DurationTier object. "
-	"To create a DurationTierEditor window, select a DurationTier and click Edit.")
+	"To create a DurationTierEditor window, select a DurationTier and click ##View & Edit#.")
 MAN_END
 
-MAN_BEGIN (L"Editors", L"ppgb", 20041110)
+MAN_BEGIN (L"Editors", L"ppgb", 20110128)
 INTRO (L"Many @@types of objects@ in Praat can be viewed and edited in their own windows.")
 ENTRY (L"Editor windows")
 LIST_ITEM (L"\\bu @SoundEditor")
@@ -340,10 +340,10 @@ LIST_ITEM (L"\\bu #ArtwordEditor")
 LIST_ITEM (L"\\bu @OTGrammarEditor")
 LIST_ITEM (L"\\bu (any type: @Inspect)")
 ENTRY (L"How to open an editor for an object")
-NORMAL (L"To open an editor window for an object in the list, select the object and choose #Edit "
-	"(if the #Edit button exists, it is usually at the top of the @@Dynamic menu@). "
+NORMAL (L"To open an editor window for an object in the list, select the object and choose ##View & Edit# "
+	"(if the ##View & Edit# button exists, it is usually at the top of the @@Dynamic menu@). "
 	"The name of the object will appear as the title of the editor window.")
-NORMAL (L"Objects that cannot be modified (e.g. LongSound) have the command #View instead of #Edit.")
+NORMAL (L"Objects that cannot be modified (e.g. LongSound) just have the command #View instead of ##View & Edit#.")
 ENTRY (L"General behaviour")
 NORMAL (L"Changes that you make to an object in its editor window will take effect immediately. "
 	"For instance, you do not have close the editor window before saving the changed object to disk.")
@@ -351,7 +351,7 @@ NORMAL (L"If you @Remove an object that you are viewing or editing from the @@Li
 	"the editor window will automatically disappear from the screen.")
 NORMAL (L"All editors are independent windows: you can minimize and maximize them; "
 	"if an editor window goes hiding behind another window, "
-	"you can raise it by choosing the #Edit command again.")
+	"you can raise it by choosing the ##View & Edit# command again.")
 NORMAL (L"If you rename an object that you are viewing or editing (with @@Rename...@), "
 	"the title of the editor window immediately changes to the new name.")
 ENTRY (L"Ways to control an editor window")
@@ -697,9 +697,9 @@ ENTRY (L"Behaviour")
 NORMAL (L"The times of all the points are trivially copied, and so is the time domain. The intensity information is lost.")
 MAN_END
 
-MAN_BEGIN (L"IntensityTierEditor", L"ppgb", 20010330)
+MAN_BEGIN (L"IntensityTierEditor", L"ppgb", 20110128)
 INTRO (L"One of the @editors in the Praat program, for viewing and editing an @IntensityTier object. "
-	"To create a IntensityTierEditor window, select an IntensityTier and click Edit.")
+	"To create a IntensityTierEditor window, select an IntensityTier and click ##View & Edit#.")
 MAN_END
 
 MAN_BEGIN (L"Keyboard shortcuts", L"ppgb", 20071016)
@@ -1362,13 +1362,13 @@ NORMAL (L"An object of class #ParamCurve represents a sequence of time-stamped p
 	"in a two-dimensional space.")
 MAN_END
 
-MAN_BEGIN (L"PointEditor", L"ppgb", 20030316)
+MAN_BEGIN (L"PointEditor", L"ppgb", 20110128)
 INTRO (L"One of the @Editors in Praat, for viewing and manipulating a @PointProcess object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (L"Objects")
 NORMAL (L"The editor shows:")
 LIST_ITEM (L"\\bu The @Sound, if you selected a Sound object together with the PointProcess object "
-	"before you clicked \"Edit\".")
+	"before you clicked ##View & Edit#.")
 LIST_ITEM (L"\\bu The @PointProcess; vertical blue lines represent the points.")
 ENTRY (L"Playing")
 NORMAL (L"To play (a part of) the %resynthesized sound (pulse train): "
@@ -1382,7 +1382,7 @@ NORMAL (L"To remove one or more points, "
 	"If there is no selection, the point nearest to the cursor is removed.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess", L"ppgb", 20101230)
+MAN_BEGIN (L"PointProcess", L"ppgb", 20110128)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"A PointProcess object represents a %%point process%, "
 	"which is a sequence of %points %t__%i_ in time, defined on a domain [%t__%min_, %t__%max_]. "
@@ -1408,8 +1408,8 @@ LIST_ITEM (L"\\bu @@PointProcess: Hum@: pulse train with formants.")
 NORMAL (L"Drawing:")
 LIST_ITEM (L"\\bu @@PointProcess: Draw...@")
 NORMAL (L"Editing:")
-LIST_ITEM (L"\\bu ##PointProcess: Edit#: invokes a @PointEditor.")
-LIST_ITEM (L"\\bu ##PointProcess & Sound: Edit#: invokes a @PointEditor.")
+LIST_ITEM (L"\\bu ##PointProcess: View & Edit#: invokes a @PointEditor.")
+LIST_ITEM (L"\\bu ##PointProcess & Sound: View & Edit#: invokes a @PointEditor.")
 LIST_ITEM (L"\\bu Inside a @ManipulationEditor.")
 NORMAL (L"Queries:")
 LIST_ITEM (L"\\bu @@PointProcess: Get jitter (local)...@: periodic jitter.")

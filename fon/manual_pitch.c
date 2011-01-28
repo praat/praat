@@ -389,14 +389,14 @@ ENTRY (L"Changing the path")
 NORMAL (L"To change the path through the candidates manually, click on the candidates of your choice. "
 	"The changes will immediately affect the Pitch object that you are editing. To make a voiced frame "
 	"voiceless, click on the voicelessness bar.")
-NORMAL (L"To change the path automatically, choose `Path finder...' from the `Edit' menu; "
+NORMAL (L"To change the path automatically, choose ##Path finder...# from the #Edit menu; "
 	"this will have the same effect as filling in different values in the @@Sound: To Pitch (ac)...@ dialog, "
 	"but is much faster because the candidates do not have to be determined again.")
 ENTRY (L"Resynthesis")
 NORMAL (L"To hum any part of the pitch contour, click on one of the buttons "
-	"below or above the data area (there can be 1 to 8 of these buttons), or use a Play command from the View menu.")
+	"below or above the data area (there can be 1 to 8 of these buttons), or use a #Play command from the #View menu.")
 ENTRY (L"Changing the ceiling")
-NORMAL (L"To change the ceiling, but not the path, choose `Change ceiling...' from the `Edit' menu; "
+NORMAL (L"To change the ceiling, but not the path, choose ##Change ceiling...# from the #Edit menu; "
 	"if the new ceiling is lower than the old ceiling, some formerly voiced frames may become unvoiced; "
 	"if the new ceiling is higher than the old ceiling, some formerly unvoiced frames may become voiced.")
 MAN_END
@@ -570,13 +570,13 @@ NORMAL (L"Points are generated along the entire time domain of the #PitchTier, "
 	"under the linearly interpolated pitch contour, is always 1.")
 MAN_END
 
-MAN_BEGIN (L"PitchTierEditor", L"ppgb", 20030316)
+MAN_BEGIN (L"PitchTierEditor", L"ppgb", 20110128)
 INTRO (L"One of the @Editors in Praat, for viewing and manipulating a @PitchTier object, "
 	"which is optionally shown together with a @Sound object.")
 ENTRY (L"Objects")
 NORMAL (L"The editor shows:")
 LIST_ITEM (L"\\bu The @Sound, if you selected a Sound object together with the PitchTier object "
-	"before you clicked #Edit.")
+	"before you clicked ##View & Edit#.")
 LIST_ITEM (L"\\bu The @PitchTier: blue points connected with blue lines.")
 ENTRY (L"Playing")
 NORMAL (L"To play (a part of) the %resynthesized sound: "

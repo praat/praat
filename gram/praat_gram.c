@@ -1218,7 +1218,8 @@ void praat_uvafon_gram_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create metrics grammar...", 0, 1, DO_Create_metrics_grammar);
 
 	praat_addAction1 (classOTGrammar, 0, L"OTGrammar help", 0, 0, DO_OTGrammar_help);
-	praat_addAction1 (classOTGrammar, 0, L"Edit", 0, 0, DO_OTGrammar_edit);
+	praat_addAction1 (classOTGrammar, 0, L"View & Edit", 0, 0, DO_OTGrammar_edit);
+	praat_addAction1 (classOTGrammar, 0, L"Edit", 0, praat_HIDDEN, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, L"Draw tableau...", 0, 0, DO_OTGrammar_drawTableau);
 	praat_addAction1 (classOTGrammar, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classOTGrammar, 0, L"Query -", 0, 0, 0);
@@ -1266,7 +1267,8 @@ void praat_uvafon_gram_init (void) {
 
 	{ void praat_TableOfReal_init (void *klas); praat_TableOfReal_init (classOTHistory); }
 
-	praat_addAction1 (classOTMulti, 0, L"Edit", 0, 0, DO_OTMulti_edit);
+	praat_addAction1 (classOTMulti, 0, L"View & Edit", 0, 0, DO_OTMulti_edit);
+	praat_addAction1 (classOTMulti, 0, L"Edit", 0, praat_HIDDEN, DO_OTMulti_edit);
 	praat_addAction1 (classOTMulti, 0, L"Draw tableau...", 0, 0, DO_OTMulti_drawTableau);
 	praat_addAction1 (classOTMulti, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 1, L"Get number of constraints", 0, 1, DO_OTMulti_getNumberOfConstraints);

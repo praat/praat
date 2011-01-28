@@ -453,13 +453,13 @@ NORMAL (L"Into text fields in settings windows, you can only type text directly;
 	"to use string expressions (except if you use scripts; see @@Formulas 1.9. Formulas in scripts@).")
 MAN_END
 
-MAN_BEGIN (L"Formulas 1.7. Formulas for creation", L"ppgb", 20070225)
+MAN_BEGIN (L"Formulas 1.7. Formulas for creation", L"ppgb", 20110128)
 INTRO (L"With some commands in the @@New menu@, you can supply a formula that Praat will apply to all elements of the new object.")
 ENTRY (L"Creating a Sound from a formula")
 NORMAL (L"Choose @@Create Sound from formula...@ and type the following into the #%Formula field:")
 CODE (L"1/2 * sin (2 * pi * 377 * x)")
 NORMAL (L"When you click OK, a new @Sound object will appear in the list. "
-	"After you click #Edit and zoom in a couple of times, you will see that the sound is a sine wave "
+	"After you click ##View & Edit# and zoom in a couple of times, you will see that the sound is a sine wave "
 	"with a frequency of 377 Hertz (cycles per second). This worked because the %x in the formula represents the time, "
 	"i.e. the formula was applied to every sample separately, with a different value of %x for each sample.")
 ENTRY (L"Creating a Matrix from a formula")
@@ -3131,12 +3131,12 @@ CODE (L"nocheck Remove")
 NORMAL (L"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20100613)
+MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20110128)
 INTRO (L"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
 	"and error messages go to %stderr. "
-	"You cannot use commands like \"Edit\".")
+	"You cannot use commands like ##View & Edit#.")
 ENTRY (L"Command lines on Unix and Macintosh")
 NORMAL (L"On Unix or MacOS X, you call Praat scripts from the command line like this:")
 CODE (L"> /people/mietta/praat doit.praat 50 hallo")
@@ -3180,13 +3180,13 @@ LIST_ITEM1 (L"@@Scripting 7.1. Scripting an editor from a shell script@ (editor/
 LIST_ITEM1 (L"@@Scripting 7.2. Scripting an editor from within@")
 MAN_END
 
-MAN_BEGIN (L"Scripting 7.1. Scripting an editor from a shell script", L"ppgb", 20010606)
+MAN_BEGIN (L"Scripting 7.1. Scripting an editor from a shell script", L"ppgb", 20110128)
 NORMAL (L"From a Praat shell script, you can switch to an editor and back again:")
 CODE (L"sound\\$  = \"hallo\"")
 CODE (L"start = 0.3")
 CODE (L"finish = 0.7")
 CODE (L"Read from file... 'sound\\$ '.aifc")
-CODE (L"Edit")
+CODE (L"View & Edit")
 CODE (L"#editor Sound 'sound\\$ '")
 	CODE1 (L"Zoom... start finish")
 CODE (L"#endeditor")
@@ -3196,13 +3196,13 @@ NORMAL (L"This script reads a sound file from disk, pops up an editor for the re
 	"and returns to the Praat shell to play the entire sound.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20101119)
+MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20110128)
 NORMAL (L"This section will show how you can permanently extend the functionality of an editor.")
 NORMAL (L"As an example, consider the following problem: you want to see a graphic representation "
 	"of the spectrum of the sound around the cursor position in the SoundEditor. To achieve this, "
 	"follow these steps:")
 LIST_ITEM (L"1. Create a Sound.")
-LIST_ITEM (L"2. View it in a SoundEditor by clicking @Edit.")
+LIST_ITEM (L"2. View it in a SoundEditor by clicking @@View & Edit@.")
 LIST_ITEM (L"3. Choose ##New editor script# from the @@File menu@ in the SoundEditor. The resulting @ScriptEditor "
 	"will have a name like \"untitled script [Sound hallo]\".")
 LIST_ITEM (L"4. Type the following lines into the ScriptEditor:")
@@ -3211,7 +3211,7 @@ CODE2 (L"Select... cursor-0.02 cursor+0.02")
 CODE2 (L"Extract windowed selection... slice Kaiser2 2 no")
 CODE1 (L"#endeditor")
 CODE1 (L"To Spectrum... yes")
-CODE1 (L"Edit")
+CODE1 (L"View & Edit")
 NORMAL (L"If you choose #Run from the #Run menu in the ScriptEditor, a region of 40 milliseconds around the "
 	"current cursor position in the SoundEditor will become selected. This piece will be copied to the list of objects, "
 	"after applying a double Kaiser window (total length 80 ms). Thus, a Sound named \"slice\" will appear in the list. "
@@ -3223,7 +3223,7 @@ LIST_ITEM (L"6. Since you will want this script to be available in all future So
 	"instead of the preset value (\"File\"). For the name of the %Command, you type something like \"Show spectrum at cursor\" "
 	"(instead of \"Do it...\"). Then you click #OK.")
 NORMAL (L"The command will be visible in every SoundEditor that you create from now on. "
-	"To see this, close the one visible SoundEditor, select the original Sound, choose #Edit again, and inspect the #Spectrum menu. "
+	"To see this, close the one visible SoundEditor, select the original Sound, choose ##View & Edit# again, and inspect the #Spectrum menu. "
 	"You can now view the spectrum around the cursor just by choosing this menu command.")
 NORMAL (L"After you leave Praat and start it again, the command will continue to appear in the SoundEditor. "
 	"If you don't like the command any longer, you can remove it with the @ButtonEditor, which you can start "
@@ -3266,7 +3266,7 @@ NORMAL (L"The complete script is:")
 	CODE1 (L"Extract windowed selection... 'milliseconds'ms Kaiser2 2 no")
 CODE (L"#endeditor")
 CODE (L"To Spectrum... yes")
-CODE (L"Edit")
+CODE (L"View & Edit")
 CODE (L"#editor Spectrum 'milliseconds'ms")
 	CODE1 (L"Zoom... 0 5000")
 CODE (L"#endeditor")

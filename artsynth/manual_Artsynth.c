@@ -22,7 +22,7 @@
 void manual_Artsynth_init (ManPages me);
 void manual_Artsynth_init (ManPages me) {
 
-MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 20110101)
+MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 201101028)
 INTRO (L"This is a description of the articulatory synthesis package in Praat. "
 	"For a detailed description of the physics and mathematics behind the model, "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
@@ -31,7 +31,7 @@ ENTRY (L"How to start (after reading the @Intro)")
 NORMAL (L"We are going to have the synthesizer say [\\swp\\sw]. We need a @Speaker and an @Artword object.")
 NORMAL (L"1. Create a speaker with @@Create Speaker...@ from the @@New menu@.")
 NORMAL (L"2. Create an articulation word of 0.5 seconds with @@Create Artword...@.")
-NORMAL (L"3. Edit the Artword by selecting it and clicking #Edit.")
+NORMAL (L"3. Edit the Artword by selecting it and clicking ##View & Edit#.")
 NORMAL (L"4. To set the glottis to a position suitable for phonation, use the ArtwordEditor to "
 	"set the %Interarytenoid activity to 0.5 throughout the utterance. You set two targets: "
 	"0.5 at a time of 0 seconds, and 0.5 at a time of 0.5 seconds.")

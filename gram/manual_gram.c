@@ -274,7 +274,7 @@ NORMAL (L"Consider a language where the underlying form /pat/ leads to the surfa
 	"presumably because the structural constraint N\\s{O}C\\s{ODA} outranks the faithfulness constraint P\\s{ARSE}.")
 NORMAL (L"To create such a grammar in Praat, choose ##Create NoCoda grammar# from the Optimality Theory submenu of the @@New menu@. "
 	"An @OTGrammar object will then appear in the list of objects. "
-	"If you click Edit, an @OTGrammarEditor will show up, containing:")
+	"If you click ##View & Edit#, an @OTGrammarEditor will show up, containing:")
 LIST_ITEM (L"1. the constraint list, sorted by %#disharmony (= ranking value + noise):")
 LIST_ITEM1 (L" ")
 LIST_ITEM1 (L"\t\t      %%ranking value%\t      %disharmony\t      %plasticity")
@@ -429,7 +429,7 @@ NORMAL (L"In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /
 NORMAL (L"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
 	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol \\sp will mark the selected constraint), "
-	"and choose ##Edit ranking...# from the Edit menu, or use the keyboard shortcut Command-E.")
+	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
 NORMAL (L"In the resulting dialog, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will see in the editor:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
@@ -446,7 +446,7 @@ PICTURE (3.0, 1.0, draw_NoCoda_reverse)
 MAN_END
 
 MAN_BEGIN (L"OT learning 2.6. Variable output", L"ppgb", 20070725)
-NORMAL (L"Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the Edit menu, "
+NORMAL (L"Each time you press Command-2, which invokes the command ##Evaluate (noise 2.0)# from the #Edit menu, "
 	"you will see the disharmonies changing. If the distance between the constraint rankings is 10, however, "
 	"the winning candidates will very probably stay the same.")
 NORMAL (L"So starting from the N\\s{O}C\\s{ODA} example, we edit the rankings of the constraints again, "
@@ -632,14 +632,14 @@ NORMAL (L"These two Strings objects are sufficient to help an @OTGrammar grammar
 	"in the language data. See @@OT learning 5. Learning a stochastic grammar|\\SS5@.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 3.2. Data from another grammar", L"ppgb", 20070725)
+MAN_BEGIN (L"OT learning 3.2. Data from another grammar", L"ppgb", 20110128)
 NORMAL (L"Instead of generating input-output pairs directly from a @PairDistribution object, "
 	"you can also generate input forms and their winning outputs from an @OTGrammar grammar. Of course, "
 	"that's what the language data presented to real children comes from. Our example will be "
 	"a tongue-root harmony grammar.")
 NORMAL (L"Choose @@Create tongue-root grammar...@ from the Optimality Theory submenu of the @@New menu@. "
 	"Set %%Constraint set% to \"Five\", and %Ranking to \"Wolof\". Click OK. An object called "
-	"\"OTGrammar Wolof\" will appear in the list. Click #Edit. You will see the following grammar "
+	"\"OTGrammar Wolof\" will appear in the list. Click ##View & Edit#. You will see the following grammar "
 	"appear in the @OTGrammarEditor:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (L"\t##*[rtr / hi]#\t      100.000\t      100.000\t       1.000")
@@ -1265,7 +1265,7 @@ INTRO (L"One of the @editors in Praat, for viewing and editing the grammar in an
 NORMAL (L"See the @@OT learning@ tutorial for examples.")
 ENTRY (L"Usage")
 NORMAL (L"The menu command that you will probably use most often if you investigate variation, "
-	"is the ##Evaluate (noise 2.0)# command, which you can invoke from the Edit menu or by pressing Command-2.")
+	"is the ##Evaluate (noise 2.0)# command, which you can invoke from the #Edit menu or by pressing Command-2.")
 NORMAL (L"This command performs a new evaluation with the current ranking values. Some noise is added to the "
 	"ranking values, so that the %#disharmonies of the constraint will change. This may cause a change in the "
 	"ranking order of the constraints, which in its turn may cause a different candidate to win in some tableaus.")

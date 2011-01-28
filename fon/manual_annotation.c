@@ -93,16 +93,16 @@ NORMAL (L"If ##Tier names# is \"a b c\", and ##Point tiers# is \"b\", "
 	"a point tier named \"b\", and another interval tier named \"c\".")
 MAN_END
 
-MAN_BEGIN (L"SpellingChecker", L"ppgb", 20080622)
+MAN_BEGIN (L"SpellingChecker", L"ppgb", 20110128)
 INTRO (L"One of the @@types of objects@ in Praat. For checking the spelling in texts and @TextGrid objects.")
 ENTRY (L"1. How to create a SpellingChecker object")
 NORMAL (L"You normally read in a SpellingChecker with @@Read from file...@ from the #Open menu.")
 ENTRY (L"2. How to check the spelling of a @TextGrid")
 NORMAL (L"A SpellingChecker object can be used fur purposes of spelling checking. In order "
 	"to check the spellings in a @TextGrid object, you first view the TextGrid in an editor window by selecting "
-	"the TextGrid together with the SpellingChecker object, and clicking Edit. In most cases, you will also want "
-	"to select a @Sound or @LongSound object before clicking Edit, so that a representation of the sound "
-	"is also visible (and audible) in the editor. Thus, you typically select three objects and click Edit. "
+	"the TextGrid together with the SpellingChecker object, and clicking ##View & Edit#. In most cases, you will also want "
+	"to select a @Sound or @LongSound object before clicking ##View & Edit#, so that a representation of the sound "
+	"is also visible (and audible) in the editor. Thus, you typically select three objects and click ##View & Edit#. "
 	"The editor then allows you to check the spellings "
 	"(commands ##Check spelling in tier# and ##Check spelling in interval# from the #Spell menu).")
 ENTRY (L"3. How to create a SpellingChecker object for the first time")
@@ -141,7 +141,7 @@ DEFINITION (L"a space-separated list of suffixes that make a word correct even i
 	"For the CGN, this is \"-\", since the first word in %%verzekerings- en bankwezen% should be ignored by the spelling checker.")
 MAN_END
 
-MAN_BEGIN (L"TextGrid", L"ppgb", 20101230)
+MAN_BEGIN (L"TextGrid", L"ppgb", 20110128)
 INTRO (L"One of the @@types of objects@ in Praat, used for %annotation (segmentation and labelling). "
 	"For tutorial information, see @@Intro 7. Annotation@.")
 ENTRY (L"Description")
@@ -158,7 +158,7 @@ LIST_ITEM (L"@@Create TextGrid...@")
 TAG (L"From merging existing TextGrids with each other:")
 LIST_ITEM (L"@@TextGrids: Merge@")
 ENTRY (L"How to edit a TextGrid")
-NORMAL (L"You select a TextGrid alone or together with a @Sound or @LongSound, and click #Edit. "
+NORMAL (L"You select a TextGrid alone or together with a @Sound or @LongSound, and click ##View & Edit#. "
 	"A @TextGridEditor will appear on your screen, containing the TextGrid "
 	"and an optional copy of the Sound or LongSound.")
 ENTRY (L"How to draw a TextGrid")
@@ -191,10 +191,10 @@ MAN_BEGIN (L"TextGrids: Merge", L"ppgb", 20101230)
 INTRO (L"A command to merge all selected @TextGrid objects into a new @TextGrid.")
 MAN_END
 
-MAN_BEGIN (L"TextGridEditor", L"ppgb", 20080628)
+MAN_BEGIN (L"TextGridEditor", L"ppgb", 20110128)
 INTRO (L"One of the @Editors in Praat, for editing a @TextGrid object.")
 NORMAL (L"You can optionally include a copy of a @Sound or @LongSound in this editor, "
-	"by selecting both the TextGrid and the Sound or LongSound before clicking #Edit. "
+	"by selecting both the TextGrid and the Sound or LongSound before clicking ##View & Edit#. "
 	"The Sound or LongSound is shown in the upper part of the window, the tiers in the lower part. "
 	"A text window at the top shows the text of the %#selected interval or point, "
 	"i.e. the interval or point at the location of the cursor. "
@@ -278,7 +278,7 @@ NORMAL (L"The Search menu contains the command #Find (Command-F), which will all
 ENTRY (L"Checking the spelling")
 NORMAL (L"You can check the spelling of the intervals in your tiers by including a @SpellingChecker "
 	"object as you launch the editor: select TextGrid + (Long)Sound + SpellingChecker, "
-	"then click Edit. The #Spell menu will contain the commands ##Check spelling in tier# (Command-N), and ##Check spelling in interval# "
+	"then click ##View & Edit#. The #Spell menu will contain the commands ##Check spelling in tier# (Command-N), and ##Check spelling in interval# "
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 

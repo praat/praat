@@ -1499,7 +1499,8 @@ static int click (FunctionEditor me, double xbegin, double ybegin, int shiftKeyP
 			 * Clip to the visible window. Ideally, we should perform autoscrolling instead, though...
 			 */
 			if (x < my startWindow) x = my startWindow; else if (x > my endWindow) x = my endWindow;
-			if (x == xold) continue;
+			if (x == xold)
+				continue;
 			/*
 			 * Undraw and redraw the text at the top.
 			 */
