@@ -23,10 +23,10 @@
 void manual_Script_init (ManPages me);
 void manual_Script_init (ManPages me) {
 
-MAN_BEGIN (L"Action commands", L"ppgb", 20021130)
+MAN_BEGIN (L"Action commands", L"ppgb", 20110129)
 INTRO (L"The commands in the @@Dynamic menu@ of the @@Object window@.")
 NORMAL (L"These commands are only available if the right kinds of objects are selected. They are shown in a scrollable list, "
-	"or in the #Save menu if they start with \"Write to \" or \"Append to \".")
+	"or in the #Save menu if they start with \"Save as \" or \"Append to \".")
 MAN_END
 
 MAN_BEGIN (L"Add action command...", L"ppgb", 20060920)
@@ -51,7 +51,7 @@ NORMAL (L"Normally, however, if you want to add a command to a fixed menu, "
 	"you would use the command @@Add to fixed menu...@ of the @ScriptEditor instead.")
 MAN_END
 
-MAN_BEGIN (L"Add to dynamic menu...", L"ppgb", 20060920)
+MAN_BEGIN (L"Add to dynamic menu...", L"ppgb", 20110129)
 INTRO (L"A command in the #File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to the dynamic menu in the @@Object window@. "
 	"This button will only be visible if the specified combination of objects is selected. "
@@ -78,7 +78,7 @@ TAG (L"%%Command")
 DEFINITION (L"the title of the new command button (or label, or submenu title). "
 	"To get a separator line instead of a command text (only in a submenu), "
 	"you specify a unique string that starts with a hyphen ('-'); the @ButtonEditor may contain some examples of this. "
-	"If the command starts with \"Write to \", it will be placed in the @@Save menu@.")
+	"If the command starts with \"Save as \", it will be placed in the @@Save menu@.")
 TAG (L"%%After command")
 DEFINITION (L"a button title in the dynamic menu or submenu where you want your new button. "
 	"If you specify the empty string (\"\"), your button will be put at the bottom. "
@@ -1129,7 +1129,7 @@ CODE (L"echo The sum of cells along the diagonal is 'sumDiagonal'.")
 NORMAL (L"The first version, which accesses the contents directly, is not only three lines shorter, but also three times faster.")
 MAN_END
 
-MAN_BEGIN (L"Hidden commands", L"ppgb", 20060920)
+MAN_BEGIN (L"Hidden commands", L"ppgb", 20110129)
 NORMAL (L"Some commands in Praat's fixed and dynamic menus are hidden by default. "
 	"You can still call hidden commands from scripts, run them by clicking on them in a @ButtonEditor, "
 	"or make them visible with the help of the @ButtonEditor.")
@@ -1143,7 +1143,7 @@ LIST_ITEM (L"1. The commands @@Add menu command...@, ##Hide menu command...#, ##
 	"@ScriptEditor and the @ButtonEditor.")
 LIST_ITEM (L"2. The command ##Read from old Praat picture file...# in the #File menu of the @@Picture window@. "
 	"For reading a file format that was in use before May, 1995.")
-LIST_ITEM (L"3. In the Praat program, the action ##Sound: Write to Sesam file...#. Writes a file format in common use "
+LIST_ITEM (L"3. In the Praat program, the action ##Sound: Save as Sesam file...#. Writes a file format in common use "
 	"in the Netherlands on Vax machines. In the Dutch phonetics departments, the plugs were pulled from the Vaxes in 1994.")
 LIST_ITEM (L"4. In the Praat program, the action ##Sound: To Cochleagram (edb)...#. Needed by one person in 1994. "
 	"An interesting, but undocumented procedure (De Boer's gammatone filter bank plus Meddis & Hewitt's "
@@ -2261,7 +2261,7 @@ form Convert from WAV to AIFF
 endform
 fileName$ = fileName$ - ".wav"
 Read from file... 'shellDirectory$'/'fileName$'.wav
-Write to AIFF file... 'shellDirectory$'/'fileName$'.aiff
+Save as AIFF file... 'shellDirectory$'/'fileName$'.aiff
 
 if left$ (fileName$) <> "/"
    fileName$ = 'shellDirectory$'/'fileName$'
@@ -2959,7 +2959,7 @@ CODE (L"time = stopwatch")
 CODE (L"echo 'a' 'time:3'")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20101127)
+MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20110201)
 INTRO (L"You can temporarily halt a Praat script:")
 TAG (L"#pause %text")
 DEFINITION (L"suspends execution of the script, and allows the user to interrupt it. "
@@ -3060,7 +3060,7 @@ NORMAL (L"If you want the user to choose a file name for writing (saving), do")
 CODE (L"select mySound")
 CODE (L"fileName\\$  = ##chooseWriteFile\\$ # (\"Save as a WAV file\", \"mySound.wav\")")
 CODE (L"if fileName\\$  <> \"\"")
-	CODE1 (L"Write to WAV file... \'fileName\\$ \'")
+	CODE1 (L"Save as WAV file... \'fileName\\$ \'")
 CODE (L"endif")
 NORMAL (L"A file selector window will appear, with (in this example) \"Save as a WAV file\" as the title "
 	"and \"mySound.wav\" as the suggested file name (which the user can change). "
@@ -3073,15 +3073,35 @@ CODE (L"directoryName\\$  = ##chooseDirectory\\$ # (\"Choose a directory to save
 CODE (L"if directoryName\\$  <> \"\"")
 	CODE1 (L"for i to numberOfSelectedSounds")
 		CODE2 (L"select sound [i]")
-		CODE2 (L"Write to WAV file... 'directoryName\\$ '/sound'i'.wav")
+		CODE2 (L"Save as WAV file... 'directoryName\\$ '/sound'i'.wav")
 	CODE1 (L"endfor")
 CODE (L"endif")
 NORMAL (L"A directory selector window will appear, with (in this example) \"Choose a directory to save all the new files in\" as the title. "
 	"If the user clicks #OK, the variable $$directoryName\\$ $ will contain the name of the directory that the user selected; "
 	"if the user clicks #Cancel, the variable $$directoryName\\$ $ will contain the empty string (\"\").")
+ENTRY (L"A non-pausing pause window without a Stop button")
+NORMAL (L"Especially if you use the pause window within the @@Demo window@, you may not want to give the user the capability of "
+	"ending the script by hitting #Stop or closing the pause window. In that case, you can add an extra argument to #endPause "
+	"that denotes the cancel button:")
+CODE (L"#beginPause (\"Learning settings\")")
+	CODE1 (L"#positive (\"Learning rate\", \"0.01\")")
+	CODE1 (L"#choice (\"Directions\", 3)")
+		CODE2 (L"#option (\"Forward\")")
+		CODE2 (L"#option (\"Backward\")")
+		CODE2 (L"#option (\"Bidirectional\")")
+CODE (L"clicked = #endPause (\"Cancel\", \"OK\", 2, 1)")
+CODE (L"if clicked = 2")
+CODE1 (L"learningRate = learning_rate")
+CODE1 (L"includeForward = directions = 1 or directions = 3")
+CODE1 (L"includeBackward = directions = 2 or directions = 3")
+CODE (L"endif")
+NORMAL (L"In this example, the default button is 2 (i.e. #OK), and the cancel button is 1 (i.e. #Cancel). "
+	"The form will now contain no #Stop button, and if the user closes the window, "
+	"this will be the same as clicking #Cancel, namely that $clicked will be 1 (because the Cancel button is the first button) "
+	"and the variables $$learning_rate$, $directions and $$directions\\$ $ will not be changed (i.e. they might remain undefined).")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.7. Sending a message to another program", L"ppgb", 20021218)
+MAN_BEGIN (L"Scripting 6.7. Sending a message to another program", L"ppgb", 20110129)
 NORMAL (L"To send messages to running programs that use the Praat shell, "
 	"use $sendpraat (see @@Scripting 8. Controlling Praat from another program@).")
 NORMAL (L"To send a message to another running program that listens to a socket, "
@@ -3090,7 +3110,7 @@ ENTRY (L"Example")
 NORMAL (L"Suppose we are in the Praat-shell program #Praat, which is a system for doing phonetics by computer. "
 	"From this program, we can send a message to the %%non%-Praat-shell program #MovieEdit, "
 	"which does know how to display a sound file:")
-CODE (L"Write to file... hallo.wav")
+CODE (L"Save as file... hallo.wav")
 CODE (L"sendsocket fonsg19.hum.uva.nl:6667 display hallo.wav")
 NORMAL (L"In this example, $$fonsg19.hum.uva.nl$ is the computer on which MovieEdit is running; "
 	"you can specify any valid Internet address instead, as long as that computer allows you to send messages to it. "
@@ -3098,7 +3118,7 @@ NORMAL (L"In this example, $$fonsg19.hum.uva.nl$ is the computer on which MovieE
 NORMAL (L"The number 6667 is the port number on which MovieEdit is listening. Other programs will use different port numbers.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.8. Messages to the user", L"ppgb", 20041027)
+MAN_BEGIN (L"Scripting 6.8. Messages to the user", L"ppgb", 20110129)
 NORMAL (L"If the user makes a mistake (e.g. types conflicting settings into your form window), "
 	"you can use the #exit directive (@@Scripting 5.8. Quitting|\\SS5.8@) "
 	"to stop the execution of the script with an error message:")
@@ -3120,7 +3140,7 @@ CODE (L"elsif not (power > 0)")
 	CODE1 (L"exit Assertion failed in line xx (false): power > 0")
 CODE (L"endif")
 NORMAL (L"You can prevent Praat from issuing warning messages:")
-CODE (L"nowarn Write to WAV file... hello.wav")
+CODE (L"nowarn Save as WAV file... hello.wav")
 NORMAL (L"This prevents warning messages about clipped samples, for instance.")
 NORMAL (L"You can also prevent Praat from showing a progress window:")
 CODE (L"noprogress To Pitch... 0 75 500")

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/01/18
+ * pb 2011/02/01
  */
 
 #include "Editor.h"
@@ -108,11 +108,11 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_INSENSITIVE  GuiMenu_INSENSITIVE
 #define praat_CHECKBUTTON  GuiMenu_CHECKBUTTON
 #define praat_TOGGLE_ON  GuiMenu_TOGGLE_ON
+#define praat_ATTRACTIVE  GuiMenu_ATTRACTIVE
 #define praat_RADIO_FIRST  GuiMenu_RADIO_FIRST
 #define praat_RADIO_NEXT  GuiMenu_RADIO_NEXT
-#define praat_HIDDEN  0x00002000
-#define praat_UNHIDABLE  0x00004000
-#define praat_ATTRACTIVE  0x00008000
+#define praat_HIDDEN  0x00004000
+#define praat_UNHIDABLE  0x00008000
 #define praat_DEPTH_1  0x00010000
 #define praat_DEPTH_2  0x00020000
 #define praat_DEPTH_3  0x00030000
@@ -192,6 +192,11 @@ bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, con
 bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
 bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
 bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
+bool praat_newWithFile1 (I, const wchar_t *s1, MelderFile file);
+bool praat_newWithFile2 (I, const wchar_t *s1, const wchar_t *s2, MelderFile file);
+bool praat_newWithFile3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file);
+bool praat_newWithFile4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file);
+bool praat_newWithFile5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file);
 void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 
 /* Macros for description of forms (dialog boxes).

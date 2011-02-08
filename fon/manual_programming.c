@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (L"Programming with Praat", L"ppgb", 20100517)
+MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110204)
 INTRO (L"You can extend the functionality of the Praat program "
 	"by adding modules written in C to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -30,41 +30,30 @@ ENTRY (L"1. Warning")
 NORMAL (L"Before trying the task of learning how to write Praat extensions in C, "
 	"you should be well aware of the possibilities of @scripting. "
 	"Many built-in commands in Praat have started their "
-	"lives as Praat scripts, and scripts are easier to write than extensions in C.")
+	"lives as Praat scripts, and scripts are easier to write than extensions in C. "
+	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (L"2. Getting the existing source code")
 NORMAL (L"You obtain the Praat source code via ##www.praat.org#, in a file with a name like "
-	"##praat5133_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking "
+	"##praat5213_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking "
 	"(on old computers, use #gunzip and ##tar xvf# if Unix, or ##StuffIt^\\re Expander^\\tm# if Macintosh, "
 	"or ##Aladdin^\\re Expander^\\tm# if Windows). The result will be a set of directories "
 	"called #kar, #GSL, #num, #audio (with #FLAC and #mp3 in it), #sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #contrib, #main, #makefiles, and #test, "
 	"plus a makefile, a Codewarrior project for Windows, and an Xcode project for Macintosh.")
 ENTRY (L"3. Building Praat on Macintosh")
-NORMAL (L"Open ##praat.xcodeproj# in Xcode and choose Build and Run.")
+NORMAL (L"Open ##praat.xcodeproj# in Xcode and choose #Build and #Run.")
 ENTRY (L"4. Building Praat on Windows")
 NORMAL (L"Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
-	"##praat_win#, and choose Make or Run.")
+	"##praat_win#, and choose #Make or #Run.")
 NORMAL (L"Praat may compile under MinGW as well.")
 ENTRY (L"5. Building Praat on Linux")
 NORMAL (L"To compile and link Praat on Linux, you go to the directory that "
 	"contains the source directories and the makefile, and copy a ##makefile.defs# "
 	"file from the #makefiles directory:")
-CODE (L"> cp makefiles/makefile.defs.linux.gtk ./makefile.defs")
-NORMAL (L"The file ##makefile.defs# may require some editing after this, "
-	"since the libraries in your Linux distribution may be different from mine, or in a different location.")
+CODE (L"> cp makefiles/makefile.defs.linux ./makefile.defs")
 NORMAL (L"You have to have installed ##libgtk2.0-dev# (and its dependencies) and ##libasound2-dev#.")
-ENTRY (L"6. Building Praat on other Unixes")
-NORMAL (L"Go to the directory that "
-	"contains the source directories and the makefile, and copy a ##makefile.defs# "
-	"file from the #makefiles directory. On Silicon Graphics Irix, for instance, you type")
-CODE (L"> cp makefiles/makefile.defs.linux.sgi ./makefile.defs")
-NORMAL (L"The file ##makefile.defs# might require some editing after this. "
-	"On Sparc Solaris, you will probably use ##makefile.defs.solaris.cde#; "
-	"on HPUX, you will use ##makefile.defs.hpux#; "
-	"on Intel Solaris, ##makefile.defs.solaris.cde.up.ac#.")
-NORMAL (L"Praat has to be compiled with an #Xm include directory and linked with the Motif library ##Xm.so# or ##Xm.a#. "
-	"On SGI, Solaris, and HPUX, Motif libraries are included with the system, "
-	"and the include directory comes with the development package. You may also try the GTK edition.")
-ENTRY (L"7. Extending Praat")
+NORMAL (L"On other Unixes, you do the same, but the file ##makefile.defs# may require some editing after this, "
+	"because Silicon Graphics Irix, Sparc Solaris and HPUX may use different libraries or have them in different locations than Linux.")
+ENTRY (L"6. Extending Praat")
 NORMAL (L"You can edit ##main/main_Praat.c#. "
 	"This example shows you how to create a very simple program with all the functionality "
 	"of the Praat program, and a single bit more:")
@@ -81,13 +70,13 @@ CODE1 (L"praat_addMenuCommand (\"Objects\", \"New\", \"Hello from Jane...\", NUL
 CODE1 (L"praat_run ();")
 CODE1 (L"return 0;")
 CODE (L"}")
-ENTRY (L"8. Learning how to program")
+ENTRY (L"7. Learning how to program")
 NORMAL (L"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Data.h#, "
 	"##sys/oo.h#, the ##XXX_def.h# files in the #fon directory, and the corresponding "
 	"##XXX.c# files in the #fon directory. To see how commands show up on the buttons "
 	"in the fixed and dynamic menus, take a look at the large interface description file "
 	"##fon/praat_Fon.c#.")
-ENTRY (L"9. Using the Praat shell only")
+ENTRY (L"8. Using the Praat shell only")
 NORMAL (L"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the six directories "
 	"#kar, #GSL, #num, #audio, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
 	"You will be able to build a Praat shell, i.e. an Objects and a Picture window, "

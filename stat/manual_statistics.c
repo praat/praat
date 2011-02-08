@@ -116,9 +116,9 @@ NORMAL (L"The result was %p = 0.0056, which reliably showed that these 40 listen
 	"(this is easier to accomplish for 40 participants than for 5).")
 MAN_END
 
-MAN_BEGIN (L"Logistic regression", L"ppgb", 20071119)
+MAN_BEGIN (L"Logistic regression", L"ppgb", 20110131)
 INTRO (L"This page explains how you do logistic regression with Praat. "
-	"You start by writing a table in a text file. "
+	"You start by saving a table in a text file. "
 	"The following example contains natural stimuli (female speaker) with measured F1 and duration values, "
 	"and the responses of a certain listener who is presented each stimulus 10 times.")
 CODE1 (L" F1    Dur   /ae/  /E/")

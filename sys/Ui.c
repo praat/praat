@@ -1,6 +1,6 @@
 /* Ui.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,7 @@
  * fb 2010/02/23 GTK
  * fb 2010/03/01 GTK
  * pb 2010/12/07 channel
+ * pb 2011/02/01 cancelContinueButton
  */
 
 #include <wctype.h>
@@ -492,7 +493,7 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 	int (*cancelCallback) (Any dia, void *closure); \
 	void *buttonClosure; \
 	const wchar_t *invokingButtonTitle, *helpTitle; \
-	int numberOfContinueButtons, defaultContinueButton, clickedContinueButton; \
+	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton; \
 	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS]; \
 	int numberOfFields; \
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS]; \
@@ -704,7 +705,7 @@ Any UiForm_create (GuiObject parent, const wchar_t *title,
 }
 
 void UiForm_setPauseForm (I,
-	int numberOfContinueButtons, int defaultContinueButton,
+	int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const wchar_t *continue1, const wchar_t *continue2, const wchar_t *continue3,
 	const wchar_t *continue4, const wchar_t *continue5, const wchar_t *continue6,
 	const wchar_t *continue7, const wchar_t *continue8, const wchar_t *continue9,
@@ -715,6 +716,7 @@ void UiForm_setPauseForm (I,
 	my isPauseForm = true;
 	my numberOfContinueButtons = numberOfContinueButtons;
 	my defaultContinueButton = defaultContinueButton;
+	my cancelContinueButton = cancelContinueButton;
 	my continueTexts [1] = continue1;
 	my continueTexts [2] = continue2;
 	my continueTexts [3] = continue3;
@@ -1086,6 +1088,8 @@ void UiForm_finish (I) {
 				// TODO: dit wil natuurlijk heel graag in GuiComboBox.c ;)
 				#if gtk
 					field -> cascadeButton = gtk_combo_box_new_text ();
+					gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (field -> cascadeButton), false);
+					GTK_WIDGET_UNSET_FLAGS (field -> cascadeButton, GTK_CAN_DEFAULT);
 					gtk_table_attach_defaults (GTK_TABLE (form), field -> cascadeButton, 1, 3, row, row + 1);
 					row += 1;
 				#elif motif
@@ -1097,7 +1101,7 @@ void UiForm_finish (I) {
 					UiOption button = field -> options -> item [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					#if gtk
-						gtk_combo_box_append_text(GTK_COMBO_BOX(field -> cascadeButton), Melder_peekWcsToUtf8 (theFinishBuffer.string));
+						gtk_combo_box_append_text (GTK_COMBO_BOX (field -> cascadeButton), Melder_peekWcsToUtf8 (theFinishBuffer.string));
 					#elif motif
 						button -> toggle = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (theFinishBuffer.string), xmToggleButtonWidgetClass, box, NULL);
 						XtAddCallback (button -> toggle, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) field);
@@ -1172,9 +1176,13 @@ void UiForm_finish (I) {
 	}
 	if (my isPauseForm) {
 		x = HELP_BUTTON_X + REVERT_BUTTON_WIDTH + Gui_HORIZONTAL_DIALOG_SPACING;
-		my cancelButton = GuiButton_createShown (buttons, x, x + STOP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
-			L"Stop", gui_button_cb_cancel, me, GuiButton_CANCEL);
-		x += STOP_BUTTON_WIDTH + 7;
+		if (my cancelContinueButton == 0) {
+			my cancelButton = GuiButton_createShown (buttons, x, x + STOP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
+				L"Stop", gui_button_cb_cancel, me, GuiButton_CANCEL);
+			x += STOP_BUTTON_WIDTH + 7;
+		} else {
+			x += 30;
+		}
 		int room = dialogWidth - Gui_RIGHT_DIALOG_SPACING - x;
 		int roomPerContinueButton = room / my numberOfContinueButtons;
 		int horizontalSpacing = my numberOfContinueButtons > 7 ? Gui_HORIZONTAL_DIALOG_SPACING - 2 * (my numberOfContinueButtons - 7) : Gui_HORIZONTAL_DIALOG_SPACING;

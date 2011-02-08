@@ -386,7 +386,7 @@ END
 
 /********** Callbacks of the Save menu. **********/
 
-FORM_WRITE (Data_writeToTextFile, L"Write Object(s) to text file", 0, 0)
+FORM_WRITE (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		return Data_writeToTextFile (ONLY_OBJECT, file);
 	} else {
@@ -400,7 +400,7 @@ FORM_WRITE (Data_writeToTextFile, L"Write Object(s) to text file", 0, 0)
 	}
 END
 
-FORM_WRITE (Data_writeToShortTextFile, L"Write Object(s) to short text file", 0, 0)
+FORM_WRITE (Data_writeToShortTextFile, L"Save Object(s) as one short text file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1)
 		return Data_writeToShortTextFile (ONLY_OBJECT, file);
 	else {
@@ -414,7 +414,7 @@ FORM_WRITE (Data_writeToShortTextFile, L"Write Object(s) to short text file", 0,
 	}
 END
 
-FORM_WRITE (Data_writeToBinaryFile, L"Write Object(s) to binary file", 0, 0)
+FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1)
 		return Data_writeToBinaryFile (ONLY_OBJECT, file);
 	else {
@@ -428,7 +428,7 @@ FORM_WRITE (Data_writeToBinaryFile, L"Write Object(s) to binary file", 0, 0)
 	}
 END
 
-FORM_WRITE (Data_writeToLispFile, L"Write Object to LISP file", 0, L"lsp")
+FORM_WRITE (Data_writeToLispFile, L"Save Object as LISP file", 0, L"lsp")
 	return Data_writeToLispFile (ONLY_OBJECT, file);
 END
 
@@ -459,7 +459,7 @@ DO
 	if (! HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page"))) return 0;
 END
 
-FORM (WriteManualToHtmlDirectory, L"Write all pages as HTML files", 0)
+FORM (WriteManualToHtmlDirectory, L"Save all pages as HTML files", 0)
 	LABEL (L"", L"Type a directory name:")
 	TEXTFIELD (L"directory", L"")
 	OK
@@ -610,11 +610,14 @@ void praat_addMenus (GuiObject bar) {
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
 
-	praat_addMenuCommand (L"Objects", L"Open", L"Read from file...", 0, 'O', DO_Data_readFromFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read from file...", 0, praat_ATTRACTIVE + 'O', DO_Data_readFromFile);
 
-	praat_addAction1 (classData, 0, L"Write to text file...", 0, 0, DO_Data_writeToTextFile);
-	praat_addAction1 (classData, 0, L"Write to short text file...", 0, 0, DO_Data_writeToShortTextFile);
-	praat_addAction1 (classData, 0, L"Write to binary file...", 0, 0, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classData, 0, L"Save as text file...", 0, 0, DO_Data_writeToTextFile);
+	praat_addAction1 (classData, 0, L"Write to text file...", 0, praat_HIDDEN, DO_Data_writeToTextFile);
+	praat_addAction1 (classData, 0, L"Save as short text file...", 0, 0, DO_Data_writeToShortTextFile);
+	praat_addAction1 (classData, 0, L"Write to short text file...", 0, praat_HIDDEN, DO_Data_writeToShortTextFile);
+	praat_addAction1 (classData, 0, L"Save as binary file...", 0, 0, DO_Data_writeToBinaryFile);
+	praat_addAction1 (classData, 0, L"Write to binary file...", 0, praat_HIDDEN, DO_Data_writeToBinaryFile);
 }
 
 void praat_addMenus2 (void) {

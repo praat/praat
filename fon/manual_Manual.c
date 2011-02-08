@@ -53,7 +53,7 @@ ENTRY (L"Your own manual pages")
 NORMAL (L"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (L"ManPages", L"ppgb", 20110104)
+MAN_BEGIN (L"ManPages", L"ppgb", 20110129)
 INTRO (L"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -194,7 +194,7 @@ NORMAL (L"Note that unlike the previous script, this script does not set the fon
 	"This means that the drawing will use the font and font size of the manual page, "
 	"which is usually what you want.")
 NORMAL (L"For obvious safety reasons, embedded scripts cannot contain commands that change the contents of any disk "
-	"or send messages. Thus, commands like ##Write to WAV file...#, ##filedelete out.txt#, ##string\\$  >> out.txt#, "
+	"or send messages. Thus, commands like ##Save as WAV file...#, ##filedelete out.txt#, ##string\\$  >> out.txt#, "
 	"#system, or #sendpraat are forbidden. Several other commands, such as #pause and #editor, "
 	"are irrelevant inside pictures and are therefore forbidden as well. "
 	"Note that commands like #echo, ##Read from file...#, and #execute are still available "

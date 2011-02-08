@@ -2235,11 +2235,11 @@ DIRECT (Matrix_to_VocalTract)
 	EVERY_TO (Matrix_to_VocalTract (OBJECT))
 END
 
-FORM_WRITE (Matrix_writeToMatrixTextFile, L"Write Matrix to matrix text file", 0, L"mat")
+FORM_WRITE (Matrix_writeToMatrixTextFile, L"Save Matrix as matrix text file", 0, L"mat")
 	if (! Matrix_writeToMatrixTextFile (ONLY_OBJECT, file)) return 0;
 END
 
-FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, L"Write Matrix to spreadsheet", 0, L"txt")
+FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, L"Save Matrix as spreadsheet", 0, L"txt")
 	if (! Matrix_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
 END
 
@@ -3025,11 +3025,11 @@ DIRECT (info_PitchTier_Sound_edit)
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END
 
-FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, L"Write PitchTier to spreadsheet", 0, L"PitchTier")
+FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"PitchTier")
 	if (! PitchTier_writeToPitchTierSpreadsheetFile (ONLY_OBJECT, file)) return 0;
 END
 
-FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, L"Write PitchTier to spreadsheet", 0, L"txt")
+FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"txt")
 	if (! PitchTier_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
 END
 
@@ -4134,7 +4134,7 @@ DIRECT (Strings_to_WordList)
 	EVERY_TO (Strings_to_WordList (OBJECT))
 END
 
-FORM_WRITE (Strings_writeToRawTextFile, L"Write Strings to text file", 0, L"txt")
+FORM_WRITE (Strings_writeToRawTextFile, L"Save Strings as text file", 0, L"txt")
 	if (! Strings_writeToRawTextFile (ONLY_OBJECT, file)) return 0;
 END
 
@@ -4835,12 +4835,16 @@ praat_addAction1 (classIntensityTier, 0, L"Convert", 0, 0, 0);
 		praat_TimeFunction_modify_init (classManipulation);
 		praat_addAction1 (classManipulation, 0, L"Replace pitch tier?", 0, 1, DO_Manipulation_replacePitchTier_help);
 		praat_addAction1 (classManipulation, 0, L"Replace duration tier?", 0, 1, DO_Manipulation_replaceDurationTier_help);
-	praat_addAction1 (classManipulation, 1, L"Write to text file without Sound...", 0, 0, DO_Manipulation_writeToTextFileWithoutSound);
-	praat_addAction1 (classManipulation, 1, L"Write to binary file without Sound...", 0, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, L"Save as text file without Sound...", 0, 0, DO_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, L"Write to text file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToTextFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, L"Save as binary file without Sound...", 0, 0, DO_Manipulation_writeToBinaryFileWithoutSound);
+	praat_addAction1 (classManipulation, 1, L"Write to binary file without Sound...", 0, praat_HIDDEN, DO_Manipulation_writeToBinaryFileWithoutSound);
 
 	praat_addAction1 (classMatrix, 0, L"Matrix help", 0, 0, DO_Matrix_help);
-	praat_addAction1 (classMatrix, 1, L"Write to matrix text file...", 0, 0, DO_Matrix_writeToMatrixTextFile);
-	praat_addAction1 (classMatrix, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, L"Save as matrix text file...", 0, 0, DO_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, L"Write to matrix text file...", 0, praat_HIDDEN, DO_Matrix_writeToMatrixTextFile);
+	praat_addAction1 (classMatrix, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_Matrix_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classMatrix, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_Matrix_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classMatrix, 1, L"Play movie", 0, 0, DO_Matrix_movie);
 	praat_addAction1 (classMatrix, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, L"Draw rows...", 0, 1, DO_Matrix_drawRows);
@@ -4958,8 +4962,10 @@ praat_addAction1 (classPitch, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classPitch, 0, L"Down to PitchTier", 0, 0, DO_Pitch_to_PitchTier);
 	praat_addAction1 (classPitch, 0, L"To Matrix", 0, 0, DO_Pitch_to_Matrix);
 
-	praat_addAction1 (classPitchTier, 1, L"Write to PitchTier spreadsheet file...", 0, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
-	praat_addAction1 (classPitchTier, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, L"Save as PitchTier spreadsheet file...", 0, 0, DO_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, L"Write to PitchTier spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToPitchTierSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classPitchTier, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_PitchTier_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classPitchTier, 0, L"PitchTier help", 0, 0, DO_PitchTier_help);
 	praat_addAction1 (classPitchTier, 1, L"View & Edit", 0, 0, DO_PitchTier_edit);
 	praat_addAction1 (classPitchTier, 1, L"Edit", 0, praat_HIDDEN, DO_PitchTier_edit);
@@ -5146,7 +5152,8 @@ praat_addAction1 (classPolygon, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classSpectrumTier, 0, L"Remove points below...", 0, 0, DO_SpectrumTier_removePointsBelow);
 
 	praat_addAction1 (classStrings, 0, L"Strings help", 0, 0, DO_Strings_help);
-	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, L"Save as raw text file...", 0, 0, DO_Strings_writeToRawTextFile);
+	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, praat_HIDDEN, DO_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1, L"View & Edit", 0, 0, DO_Strings_edit);
 	praat_addAction1 (classStrings, 1, L"Edit", 0, praat_HIDDEN, DO_Strings_edit);
 	praat_addAction1 (classStrings, 0, L"Query", 0, 0, 0);

@@ -1,6 +1,6 @@
 /* UiPause.c
  *
- * Copyright (C) 2009-2010 Paul Boersma
+ * Copyright (C) 2009-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2009/01/20 created
  * pb 2010/07/13 GTK
  * pb 2010/07/26 removed UiFile_hide
+ * pb 2011/02/01 cancelContinueButton
  */
 
 #include "UiPause.h"
@@ -29,6 +30,7 @@
 static UiForm thePauseForm = NULL;
 static Any thePauseFormRadio = NULL;
 static int thePauseForm_clicked = 0;
+static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
 
 static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
@@ -41,14 +43,19 @@ static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingStr
 	/*
 	 * Get the data from the pause form.
 	 */
-	UiForm_Interpreter_addVariables (thePauseForm, closure);   // 'closure', not 'interpreter' or 'theInterpreter'!
 	thePauseForm_clicked = UiForm_getClickedContinueButton (thePauseForm);
+	if (thePauseForm_clicked != theCancelContinueButton)
+		UiForm_Interpreter_addVariables (thePauseForm, closure);   // 'closure', not 'interpreter' or 'theInterpreter'!
 	return 1;
 }
 static int thePauseFormCancelCallback (Any dia, void *closure) {
 	(void) dia;
 	(void) closure;
-	thePauseForm_clicked = -1;
+	if (theCancelContinueButton != 0) {
+		thePauseForm_clicked = theCancelContinueButton;
+	} else {
+		thePauseForm_clicked = -1;   // STOP button
+	}
 	return 1;
 }
 int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter) {
@@ -162,7 +169,7 @@ end:
 	iferror return 0;
 	return 1;
 }
-int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
+int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const wchar_t *continueText1, const wchar_t *continueText2, const wchar_t *continueText3,
 	const wchar_t *continueText4, const wchar_t *continueText5, const wchar_t *continueText6,
 	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,
@@ -170,10 +177,11 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
 {
 	if (thePauseForm == NULL)
 		error1 (L"Found the function \"endPause\" without a preceding \"beginPause\".")
-	UiForm_setPauseForm (thePauseForm, numberOfContinueButtons, defaultContinueButton,
+	UiForm_setPauseForm (thePauseForm, numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
 		continueText1, continueText2, continueText3, continueText4, continueText5,
 		continueText6, continueText7, continueText8, continueText9, continueText10,
 		thePauseFormCancelCallback);
+	theCancelContinueButton = cancelContinueButton;
 	UiForm_finish (thePauseForm); cherror
 	int wasBackgrounding = Melder_backgrounding;
 	structMelderDir dir = { { 0 } };

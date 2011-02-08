@@ -244,7 +244,7 @@ static int do_write (TimeSoundEditor me, MelderFile file, int format) {
 
 static int menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to WAV file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as WAV file", 0)
 		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_WAV)) return 0;
@@ -253,7 +253,7 @@ static int menu_cb_WriteWav (EDITOR_ARGS) {
 
 static int menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to AIFF file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as AIFF file", 0)
 		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_AIFF)) return 0;
@@ -262,7 +262,7 @@ static int menu_cb_WriteAiff (EDITOR_ARGS) {
 
 static int menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to AIFC file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as AIFC file", 0)
 		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_AIFC)) return 0;
@@ -271,7 +271,7 @@ static int menu_cb_WriteAifc (EDITOR_ARGS) {
 
 static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to NeXT/Sun file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as NeXT/Sun file", 0)
 		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_NEXT_SUN)) return 0;
@@ -280,7 +280,7 @@ static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 
 static int menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to NIST file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as NIST file", 0)
 		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_NIST)) return 0;
@@ -289,7 +289,7 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 
 static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	EDITOR_FORM_WRITE (L"Write selected sound to FLAC file", 0)
+	EDITOR_FORM_WRITE (L"Save selected sound as FLAC file", 0)
 		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
 		if (! do_write (me, file, Melder_FLAC)) return 0;
@@ -325,22 +325,28 @@ static void createMenuItems_file_extract (TimeSoundEditor me, EditorMenu menu) {
 static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
 	if (my sound.data || my longSound.data) {
-		my writeWavButton = EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", 0, menu_cb_WriteWav);
+		my writeWavButton = EditorMenu_addCommand (menu, L"Save selected sound as WAV file...", 0, menu_cb_WriteWav);
+			EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		my writeAiffButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", 0, menu_cb_WriteAiff);
+		my writeAiffButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFF file...", 0, menu_cb_WriteAiff);
+			EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-		my writeAifcButton = EditorMenu_addCommand (menu, L"Write selected sound to AIFC file...", 0, menu_cb_WriteAifc);
+		my writeAifcButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFC file...", 0, menu_cb_WriteAifc);
+			EditorMenu_addCommand (menu, L"Write selected sound to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, L"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		my writeNextSunButton = EditorMenu_addCommand (menu, L"Write selected sound to Next/Sun file...", 0, menu_cb_WriteNextSun);
+		my writeNextSunButton = EditorMenu_addCommand (menu, L"Save selected sound as Next/Sun file...", 0, menu_cb_WriteNextSun);
+			EditorMenu_addCommand (menu, L"Write selected sound to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 			EditorMenu_addCommand (menu, L"Write sound selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 			EditorMenu_addCommand (menu, L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-		my writeNistButton = EditorMenu_addCommand (menu, L"Write selected sound to NIST file...", 0, menu_cb_WriteNist);
+		my writeNistButton = EditorMenu_addCommand (menu, L"Save selected sound as NIST file...", 0, menu_cb_WriteNist);
+			EditorMenu_addCommand (menu, L"Write selected sound to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, L"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-		my writeFlacButton = EditorMenu_addCommand (menu, L"Write selected sound to FLAC file...", 0, menu_cb_WriteFlac);
+		my writeFlacButton = EditorMenu_addCommand (menu, L"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac);
+			EditorMenu_addCommand (menu, L"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 			EditorMenu_addCommand (menu, L"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 	}
 }

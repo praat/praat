@@ -893,10 +893,11 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			g_signal_connect (G_OBJECT (my widget), "delete-text", G_CALLBACK (_GuiGtkEntry_history_delete_cb), me);
 			g_signal_connect (G_OBJECT (my widget), "insert-text", G_CALLBACK (_GuiGtkEntry_history_insert_cb), me);
 			g_signal_connect (GTK_EDITABLE (my widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
-			GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);
+			//GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);
 			if (GTK_IS_BOX (parent)) {
 				gtk_container_add (GTK_CONTAINER (parent), my widget);
 			}
+			gtk_entry_set_activates_default (GTK_ENTRY (my widget), true);
 		}
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
@@ -1479,10 +1480,10 @@ void GuiText_setUndoItem (GuiObject widget, GuiObject item) {
 	#if gtk
 		iam_text;
 		if (my undo_item)
-			g_object_unref(my undo_item);
+			g_object_unref (my undo_item);
 		my undo_item = item;
 		if (my undo_item) {
-			g_object_ref(my undo_item);
+			g_object_ref (my undo_item);
 			GuiObject_setSensitive(my undo_item, history_has_undo(me));
 		}
 	#elif win
@@ -1493,7 +1494,7 @@ void GuiText_setUndoItem (GuiObject widget, GuiObject item) {
 void GuiText_undo (GuiObject widget) {
 	#if gtk
 		iam_text;
-		history_do(me, 1);
+		history_do (me, 1);
 	#elif win
 	#elif mac
 		iam_text;

@@ -1962,7 +1962,7 @@ CODE (L"\"a\" 800 1100         ! Row label (vowel), F1 value, F2 value")
 CODE (L"\"i\" 280 2800         ! Row label (vowel), F1 value, F2 value")
 CODE (L"\"u\" 260  560         ! Row label (vowel), F1 value, F2 value")
 NORMAL (L"Praat is rather forgiving about the use of spaces, tabs, and newlines. "
-	"See @@Write to text file...@ for general information.")
+	"See @@Save as text file...@ for general information.")
 NORMAL (L"You will often have your data in a file with a self-describing format, "
 	"i.e. in which the number of values on a line equals the number of columns "
 	"of the table:")

@@ -270,7 +270,7 @@ static void createMenuItems_file_extract (TextGridEditor me, EditorMenu menu) {
 
 static int menu_cb_WriteSelectionToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write selection to TextGrid text file", 0)
+	EDITOR_FORM_WRITE (L"Save selection as TextGrid text file", 0)
 		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> name);
 	EDITOR_DO_WRITE
 		TextGrid publish = TextGrid_extractPart (my data, my startSelection, my endSelection, false);
@@ -282,7 +282,7 @@ static int menu_cb_WriteSelectionToTextFile (EDITOR_ARGS) {
 
 static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Write to TextGrid text file", 0)
+	EDITOR_FORM_WRITE (L"Save as TextGrid text file", 0)
 		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> name);
 	EDITOR_DO_WRITE
 		if (! Data_writeToTextFile (my data, file)) return 0;
@@ -291,8 +291,8 @@ static int menu_cb_WriteToTextFile (EDITOR_ARGS) {
 
 static void createMenuItems_file_write (TextGridEditor me, EditorMenu menu) {
 	inherited (TextGridEditor) createMenuItems_file_write (TextGridEditor_as_parent (me), menu);
-	EditorMenu_addCommand (menu, L"Write TextGrid to text file...", 'S', menu_cb_WriteToTextFile);
-	my writeSelectedTextGridButton = EditorMenu_addCommand (menu, L"Write selected TextGrid to text file...", 0, menu_cb_WriteSelectionToTextFile);
+	EditorMenu_addCommand (menu, L"Save TextGrid as text file...", 'S', menu_cb_WriteToTextFile);
+	my writeSelectedTextGridButton = EditorMenu_addCommand (menu, L"Save selected TextGrid to text file...", 0, menu_cb_WriteSelectionToTextFile);
 }
 
 static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {

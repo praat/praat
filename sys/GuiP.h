@@ -180,7 +180,7 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 		void _Gui_manageScrolledWindow (GuiObject me);
 		void _GuiNativeControl_check (GuiObject me, Boolean value);
 		void _GuiNativeControl_destroy (GuiObject me);
-		void _GuiNativeControl_setFont (GuiObject me, int size);
+		void _GuiNativeControl_setFont (GuiObject me, int style, int size);
 		void _GuiNativeControl_setTitle (GuiObject me);
 		void _GuiNativeControl_show (GuiObject me);
 		void _GuiNativeControl_hide (GuiObject me);

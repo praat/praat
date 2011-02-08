@@ -115,14 +115,15 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
 	int i, position;
-	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
+	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
 	unsigned long motifFlags = 0;
 	if (flags > 7) {
 		depth = ((flags & praat_DEPTH_7) >> 16);
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		motifFlags = key ? flags & 0x00201FFF : flags & 0x00001F00;
+		motifFlags = key ? flags & (0x002000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
+		attractive = (motifFlags & praat_ATTRACTIVE) != 0;
 	}
 	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -185,6 +186,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	theActions [position]. script = NULL;
 	theActions [position]. hidden = hidden;
 	theActions [position]. unhidable = unhidable;
+	theActions [position]. attractive = attractive;
 }
 
 static void deleteDynamicMenu (void) {
@@ -549,7 +551,7 @@ void praat_actions_show (void) {
 						#elif motif
 							buttons [nbuttons ++] = my button;
 						#endif
-					else if (my title && (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
+					else if (my title && (wcsnequ (my title, L"Save ", 5) || wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
 						#if gtk
 							GuiObject_hide (my button);
 						#elif motif
@@ -630,12 +632,12 @@ void praat_actions_show (void) {
 				 */
 				if (! my button) {
 					GuiObject parent = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : praat_dynamicMenu;
-					if (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
+					if (wcsnequ (my title, L"Save ", 5) || wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
 						parent = praat_writeMenu;
 						if (! praat_writeMenuSeparator) {
 							if (writeMenuGoingToSeparate)
 								praat_writeMenuSeparator = GuiMenu_addSeparator (parent);
-							else if (wcsequ (my title, L"Write to binary file..."))
+							else if (wcsequ (my title, L"Save as binary file..."))
 								writeMenuGoingToSeparate = TRUE;
 						}
 					}
@@ -654,7 +656,7 @@ void praat_actions_show (void) {
 							#endif
 							my title, gui_button_cb_menu,
 							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback,
-								( my executable ? 0 : GuiButton_INSENSITIVE ));
+								( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
 						#if gtk
 							/* Dit soort onzin zou eigenlijk in GuiButton moeten */
 							gtk_button_set_alignment (GTK_BUTTON (my button), 0.0f, 0.5f);
@@ -665,12 +667,12 @@ void praat_actions_show (void) {
 							cb_menu,
 							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback);
 					}
-				} else if (wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
+				} else if (wcsnequ (my title, L"Save ", 5) || wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)) {
 					if (writeMenuGoingToSeparate) {
 						if (! praat_writeMenuSeparator)
 							praat_writeMenuSeparator = GuiMenu_addSeparator (praat_writeMenu);
 						GuiObject_show (praat_writeMenuSeparator);
-					} else if (wcsequ (my title, L"Write to binary file...")) {
+					} else if (wcsequ (my title, L"Save as binary file...")) {
 						writeMenuGoingToSeparate = TRUE;
 					}
 					#if motif
@@ -745,7 +747,7 @@ void praat_actions_show (void) {
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)
 						#if gtk
-							GuiObject_show(my button);
+							GuiObject_show (my button);
 						#elif motif
 							buttons [nbuttons++] = my button;
 						#endif

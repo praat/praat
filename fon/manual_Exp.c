@@ -277,13 +277,13 @@ NORMAL (L"If %numberOfGoodnessCategories is not 0, some more rectangles will be 
 	"goodness judgment of 5.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20051205)
+MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20110129)
 NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @@Read from file...@ "
 	"(it is not a script but a data file, so do not try to read it with ##Open Praat script...#). "
 	"You can then choose #Run. After the experiment finishes, you can close the experiment window "
 	"and choose ##Extract results#. The resulting ResultsMFC object contains for each trial the stimulus "
 	"name (e.g. \"hood\"), the response category (e.g. \"u\"), and the goodness judgment (e.g. 4). "
-	"You will want to save this ResultsMFC object to a text file with @@Write to text file...@. "
+	"You will want to save this ResultsMFC object to a text file with @@Save as text file...@. "
 	"You may want to call these text files by the names of the subjects, e.g. ##ts.ResultsMFC# "
 	"and ##mj.ResultsMFC#. Once you have collected the results of all your subjects, you can read "
 	"all the results files into Praat with @@Read from file...@, then select all the resulting "
@@ -291,7 +291,7 @@ NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @
 	"##Collect to table#. This will result in a table whose first column contains the names of the subjects, "
 	"while the second column contains the stimulus names and the third column the responses "
 	"(if there are goodness judgments, these will go into a fourth column). The table can be saved "
-	"as a table file (with ##Write to table file...#), which can be read by programs like Excel and SPSS.")
+	"as a table file (with ##Save as table file...#), which can be read by programs like Excel and SPSS.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 3. More examples", L"ppgb", 20051205)

@@ -141,7 +141,7 @@ NORMAL (L"AIFC is short for AIFF(C) or AIFF-C, i.e. the Audio Interchange File F
 NORMAL (L"Praat reads and write uncompressed AIFC files, but does not support compressed AIFC files.")
 MAN_END
 
-MAN_BEGIN (L"Sound files 2.4. NeXT/Sun (.au) files", L"ppgb", 20040223)
+MAN_BEGIN (L"Sound files 2.4. NeXT/Sun (.au) files", L"ppgb", 20110131)
 NORMAL (L"This is the format of the sound files on the Sun.")
 ENTRY (L"Reading")
 NORMAL (L"To read a #Sound from a Sun audio file on disk, use @@Read from file...@."
@@ -152,8 +152,8 @@ NORMAL (L"To read a #Sound from a Sun audio file on disk, use @@Read from file..
 	"If the encoding is 8-bit %\\mu-law, the 16-bit sample value is determined by table look-up first.")
 NORMAL (L"The resulting Sound will appear in the list of objects; "
 	"its name will be equal to the file name, without extension.")
-ENTRY (L"Writing")
-NORMAL (L"Use @@Write to NeXT/Sun file...@. The samples of the Sound are multiplied by 32768 "
+ENTRY (L"Saving")
+NORMAL (L"Use @@Save as NeXT/Sun file...@. The samples of the Sound are multiplied by 32768 "
 	"and quantized between -32768 and 32767; "
 	"the result is written to the file in 16-bit mono Sun audio format.")
 NORMAL (L"To avoid clipping, keep the absolute amplitude below 1.000. "
@@ -216,18 +216,18 @@ LIST_ITEM (L"\\bu MP3:")
 LIST_ITEM1 (L"\\bu all constant or variable bitrates")
 MAN_END
 
-MAN_BEGIN (L"Sound files 4. Files that Praat can write", L"ppgb", 20040223)
+MAN_BEGIN (L"Sound files 4. Files that Praat can write", L"ppgb", 20110129)
 INTRO (L"Praat can write five types of standard sound files in an appropriate linear 16-bit formats, "
 	"and a number of proprietary types of sound files as well:")
-LIST_ITEM (L"\\bu @@Write to WAV file...@ (16-bit little-endian)")
-LIST_ITEM (L"\\bu @@Write to AIFF file...@ (16-bit big-endian)")
-LIST_ITEM (L"\\bu @@Write to AIFC file...@ (16-bit big-endian)")
-LIST_ITEM (L"\\bu @@Write to NeXT/Sun file...@ (16-bit big-endian)")
-LIST_ITEM (L"\\bu @@Write to NIST file...@ (16-bit little-endian)")
-LIST_ITEM (L"\\bu @@Write to FLAC file...@ (16-bit)")
+LIST_ITEM (L"\\bu @@Save as WAV file...@ (16-bit little-endian)")
+LIST_ITEM (L"\\bu @@Save as AIFF file...@ (16-bit big-endian)")
+LIST_ITEM (L"\\bu @@Save as AIFC file...@ (16-bit big-endian)")
+LIST_ITEM (L"\\bu @@Save as NeXT/Sun file...@ (16-bit big-endian)")
+LIST_ITEM (L"\\bu @@Save as NIST file...@ (16-bit little-endian)")
+LIST_ITEM (L"\\bu @@Save as FLAC file...@ (16-bit)")
 MAN_END
 
-MAN_BEGIN (L"AIFF and AIFC files", L"ppgb", 19970526)
+MAN_BEGIN (L"AIFF and AIFC files", L"ppgb", 20110131)
 INTRO (L"Ways for storing a @Sound object on disk.")
 ENTRY (L"File format")
 ENTRY (L"Reading")
@@ -241,8 +241,8 @@ NORMAL (L"The sample values are divided by 2^^(%numberOfBitsPerSample \\-- 1)^, 
 	"20 \\.c ^^10^log (\\Vr2 / 2\\.c10^^\\--5^) = 91 dB.")
 NORMAL (L"The resulting Sound will appear in the List of Objects; "
 	"its name will be equal to the file name, without extension.")
-ENTRY (L"Writing")
-NORMAL (L"With @@Write to AIFF file...@.")
+ENTRY (L"Saving")
+NORMAL (L"With @@Save as AIFF file...@.")
 NORMAL (L"The samples of the Sound are multiplied by 32768 "
 	"and quantized between \\--32768 and 32767.")
 NORMAL (L"To avoid clipping, keep the absolute amplitude below 1.000. "
@@ -250,36 +250,36 @@ NORMAL (L"To avoid clipping, keep the absolute amplitude below 1.000. "
 	"the quantization threshold is (top = 1/2) \\--5 dB.")
 MAN_END
 
-MAN_BEGIN (L"Write to WAV file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit little-endian WAV file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as WAV file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit little-endian WAV file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN (L"Write to AIFF file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit big-endian AIFF file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as AIFF file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit big-endian AIFF file on disk. See the @@Sound files@ tutorial for more information.")
 /*ENTRY (L"AIFF file format for writing")
 NORMAL (L"Although")*/
 MAN_END
 
-MAN_BEGIN (L"Write to AIFC file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit big-endian AIFC file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as AIFC file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit big-endian AIFC file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN (L"Write to NeXT/Sun file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit big-endian NeXT/Sun (.au) file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as NeXT/Sun file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit big-endian NeXT/Sun (.au) file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN (L"Write to NIST file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit little-endian NIST audio file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as NIST file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit little-endian NIST audio file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
-MAN_BEGIN (L"Write to FLAC file...", L"ppgb", 20000126)
-INTRO (L"With this command, you write one or more selected @Sound and/or @LongSound objects "
-	"to a single 16-bit FLAC audio file on disk. See the @@Sound files@ tutorial for more information.")
+MAN_BEGIN (L"Save as FLAC file...", L"ppgb", 20110129)
+INTRO (L"With this command, you save one or more selected @Sound and/or @LongSound objects "
+	"as a single 16-bit FLAC audio file on disk. See the @@Sound files@ tutorial for more information.")
 MAN_END
 
 MAN_BEGIN (L"Sound files 2.7. MP3 files", L"Erez Volk", 20070601)
@@ -289,32 +289,32 @@ NORMAL (L"A ubiquitous lossy audio compression format. "
 	"(see also @@Sound files 1.6. Compression|\\SS1.6@)")
 MAN_END
 
-MAN_BEGIN (L"NIST files", L"Erez Volk", 20070514)
+MAN_BEGIN (L"NIST files", L"Erez Volk", 20110131)
 INTRO (L"A way for storing a @Sound object on disk.")
 ENTRY (L"File format")
 NORMAL (L"The compressed sound files of the Timit database, and the Groningen speech corpus.")
 ENTRY (L"Reading")
 NORMAL (L"With @@Read from file...@.")
-ENTRY (L"Writing")
-NORMAL (L"With ##Write to NIST audio file...#.")
+ENTRY (L"Saving")
+NORMAL (L"With ##Save as NIST audio file...#.")
 MAN_END
 
-MAN_BEGIN (L"FLAC files", L"Erez Volk", 20070514)
+MAN_BEGIN (L"FLAC files", L"Erez Volk", 20110131)
 INTRO (L"A way for storing a @Sound object on disk.")
 ENTRY (L"File format")
 NORMAL (L"A lossless compressed audio file format.")
 ENTRY (L"Reading")
 NORMAL (L"With @@Read from file...@.")
-ENTRY (L"Writing")
-NORMAL (L"With ##Write to FLAC audio file...#.")
+ENTRY (L"Saving")
+NORMAL (L"With ##Save as FLAC audio file...#.")
 MAN_END
 
-MAN_BEGIN (L"How to concatenate sound files", L"ppgb", 20080526)
+MAN_BEGIN (L"How to concatenate sound files", L"ppgb", 20110131)
 INTRO (L"You can concatenate any combination of AIFF, AIFC, WAV, NeXT/Sun, NIST "
 	"and FLAC audio files, and other files that you have read into memory.")
 NORMAL (L"For instance, if you want to concatenate a 30-minute AIFF file, "
 	"a 4-minute Kay sound file, and a 60-minute Next/Sun file, "
-	"by writing them into a 94-minute WAV file, "
+	"by saving them into a 94-minute WAV file, "
 	"you do the following:")
 LIST_ITEM (L"1. Open the AIFF file with @@Open long sound file...@ from the @@Open menu@. "
 	"A @LongSound object will appear in the list.")
@@ -322,7 +322,7 @@ LIST_ITEM (L"2. Read the Kay sound file into memory with @@Read from file...@. "
 	"A @Sound object will appear in the list.")
 LIST_ITEM (L"3. Open the AIFF file with @@Open long sound file...@ from the @@Open menu@. "
 	"A second @LongSound object will appear in the list.")
-LIST_ITEM (L"4. Select the three objects and choose @@Write to WAV file...@ "
+LIST_ITEM (L"4. Select the three objects and choose @@Save as WAV file...@ "
 	"from the @@Save menu@.")
 NORMAL (L"This only works if all the sounds have the same sampling frequency "
 	"and the same number of channels.")
@@ -333,15 +333,15 @@ NORMAL (L"The format of the original sound files may be 16-bit linear "
 	"16-bit linear, with an appropriate default byte order. The following commands "
 	"are available in the @@Save menu@ of you select any combination of @LongSound "
 	"and/or @Sound objects:")
-LIST_ITEM (L"\\bu @@Write to WAV file...@ (little-endian)")
-LIST_ITEM (L"\\bu @@Write to AIFF file...@ (big-endian)")
-LIST_ITEM (L"\\bu @@Write to AIFC file...@ (big-endian)")
-LIST_ITEM (L"\\bu @@Write to NeXT/Sun file...@ (big-endian)")
-LIST_ITEM (L"\\bu @@Write to NIST file...@ (little-endian)")
-LIST_ITEM (L"\\bu @@Write to FLAC file...@")
+LIST_ITEM (L"\\bu @@Save as WAV file...@ (little-endian)")
+LIST_ITEM (L"\\bu @@Save as AIFF file...@ (big-endian)")
+LIST_ITEM (L"\\bu @@Save as AIFC file...@ (big-endian)")
+LIST_ITEM (L"\\bu @@Save as NeXT/Sun file...@ (big-endian)")
+LIST_ITEM (L"\\bu @@Save as NIST file...@ (little-endian)")
+LIST_ITEM (L"\\bu @@Save as FLAC file...@")
 MAN_END
 
-MAN_BEGIN (L"LongSound", L"ppgb", 20110128)
+MAN_BEGIN (L"LongSound", L"ppgb", 20110131)
 INTRO (L"One of the @@types of objects@ in Praat. See the @@Sound files@ tutorial.")
 NORMAL (L"A LongSound object gives you the ability to view and label "
 	"a sound file that resides on disk. You will want to use it for sounds "
@@ -349,14 +349,14 @@ NORMAL (L"A LongSound object gives you the ability to view and label "
 ENTRY (L"How to create a LongSound object")
 NORMAL (L"You create a LongSound object with @@Open long sound file...@ from the @@Open menu@.")
 ENTRY (L"What you can do with a LongSound object")
-NORMAL (L"You can write a LongSound object to a new sound file, "
+NORMAL (L"You can save a LongSound object to a new sound file, "
 	"perhaps in a different format (AIFF, AIFC, WAV, NeXT/Sun, NIST, FLAC) "
 	"with the commands in the Save menu. You can also concatenate several "
 	"LongSound objects in this way. See @@How to concatenate sound files@.")
 ENTRY (L"How to view and edit a LongSound object")
 NORMAL (L"You can view a LongSound object in a @LongSoundEditor by choosing @@LongSound: View@. "
 	"This also allows you to extract parts of the LongSound as @Sound objects, "
-	"or write these parts to a sound file. "
+	"or save these parts as a sound file. "
 	"There are currently no ways to actually change the data in the file.")
 ENTRY (L"How to annotate a LongSound object")
 NORMAL (L"You can label and segment a LongSound object after the following steps:")
@@ -392,7 +392,7 @@ NORMAL (L"The display and playback of the samples is restricted to 60 seconds at
 	"the sound file itself can contain several hours of sound.")
 MAN_END
 
-MAN_BEGIN (L"Macintosh sound files", L"ppgb", 19970527)
+MAN_BEGIN (L"Macintosh sound files", L"ppgb", 20110131)
 INTRO (L"A way for storing a @Sound object on disk.")
 ENTRY (L"File format")
 NORMAL (L"The double-clickable sound file of the Macintosh (8 bits per sample). "
@@ -404,8 +404,8 @@ NORMAL (L"The 8-bit sample values are divided by 128 so that the amplitude "
 	"of the resulting Sound is between \\--1.0 and +1.0.")
 NORMAL (L"The resulting Sound will appear in the list of objects; "
 	"its name will be equal to the file name, without extension.")
-ENTRY (L"Writing")
-NORMAL (L"With ##Write to Mac sound file...#. Praat asks you for a file name. "
+ENTRY (L"Saving")
+NORMAL (L"With ##Save as Mac sound file...#. Praat asks you for a file name. "
 	"After you click OK, 0.5 is added to the samples of the Sound, "
 	"they are multiplied by 128 and quantized between 0 and 255; "
 	"the result is written to the file in 8-bit linear Macintosh sound-file format.")
@@ -419,7 +419,7 @@ INTRO (L"A command in the @@Open menu@ that creates a @LongSound object.")
 NORMAL (L"The file will be opened for reading only. The file stays open until you remove the LongSound object.")
 MAN_END
 
-MAN_BEGIN (L"Sesam/LVS files", L"ppgb", 19960911)
+MAN_BEGIN (L"Sesam/LVS files", L"ppgb", 20110131)
 INTRO (L"A way for storing a @Sound object on disk.")
 ENTRY (L"File format")
 NORMAL (L"The sound files used by the SESAM and LVS programs. Each sample is normally quantized into 12 bits.")
@@ -432,15 +432,15 @@ NORMAL (L"The resulting #Sound will appear in the List of Objects; "
 	"its name will be equal to the file name, without extension.")
 NORMAL (L"If the sound was encoded in 16 bits per sample, you should divide by 16 after reading "
 	"(with $$Formula... self/16$)")
-ENTRY (L"Writing")
-NORMAL (L"With ##Write to Sesam file...#. Praat then asks you for a file name. "
+ENTRY (L"Saving")
+NORMAL (L"With ##Save as Sesam file...#. Praat then asks you for a file name. "
 	"After you click OK, the samples of the Sound are multiplied by 2048 "
 	"and quantized between -2048 and 2047; "
 	"the result is written to the file in 12-bit LVS and Sesam format.")
 NORMAL (L"To avoid clipping, keep the absolute amplitude below 1.000. "
 	"If the maximum sound pressure level is 91 dB (top = 2047), "
 	"the quantization threshold is (top = 1/2) 19 dB.")
-NORMAL (L"If you prefer 16-bit encoding, you should multiply by 16 before writing "
+NORMAL (L"If you prefer 16-bit encoding, you should multiply by 16 before saving "
 	"(with $$Formula... self*16$)")
 MAN_END
 

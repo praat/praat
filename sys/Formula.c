@@ -3469,25 +3469,35 @@ static void do_endPauseForm (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		error1 (L"The function \"endPause\" is not available inside manuals.")
 	Stackel n = pop;
-	if (n->content.number < 2 || n->content.number > 11)
-		error3 (L"The function \"endPause\" requires 2 to 11 arguments, not ", Melder_integer (n->content.number), L".")
+	if (n->content.number < 2 || n->content.number > 12)
+		error3 (L"The function \"endPause\" requires 2 to 12 arguments, not ", Melder_integer (n->content.number), L".")
 	Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
-		error3 (L"The last argument of \"endPause\" has to be a number (the default continue button), not ", Stackel_whichText (d), L".")
+		error3 (L"The last argument of \"endPause\" has to be a number (the default or cancel continue button), not ", Stackel_whichText (d), L".")
 	int numberOfContinueButtons = n->content.number - 1;
-	Stackel c [1+10] = { 0 };
-	for (int i = numberOfContinueButtons; i >= 1; i --) {
-		c [i] = pop;
-		if (c[i]->which != Stackel_STRING)
-			error5 (L"Each of the first ", Melder_integer (numberOfContinueButtons),
-				L" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (c[i]), L".")
+	int cancelContinueButton = 0, defaultContinueButton = d->content.number;
+	Stackel ca = pop;
+	if (ca->which == Stackel_NUMBER) {
+		cancelContinueButton = defaultContinueButton;
+		defaultContinueButton = ca->content.number;
+		numberOfContinueButtons --;
+		if (cancelContinueButton < 1 || cancelContinueButton > numberOfContinueButtons)
+			error5 (L"Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", Melder_integer (cancelContinueButton),
+				L" but has to lie between 1 and ", Melder_integer (numberOfContinueButtons), L".")
 	}
-	int buttonClicked = UiPause_end (numberOfContinueButtons, d->content.number,
-		c [1] == NULL ? NULL : c[1]->content.string, c [2] == NULL ? NULL : c[2]->content.string,
-		c [3] == NULL ? NULL : c[3]->content.string, c [4] == NULL ? NULL : c[4]->content.string,
-		c [5] == NULL ? NULL : c[5]->content.string, c [6] == NULL ? NULL : c[6]->content.string,
-		c [7] == NULL ? NULL : c[7]->content.string, c [8] == NULL ? NULL : c[8]->content.string,
-		c [9] == NULL ? NULL : c[9]->content.string, c [10] == NULL ? NULL : c[10]->content.string,
+	Stackel co [1+10] = { 0 };
+	for (int i = numberOfContinueButtons; i >= 1; i --) {
+		co [i] = cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca;
+		if (co[i]->which != Stackel_STRING)
+			error5 (L"Each of the first ", Melder_integer (numberOfContinueButtons),
+				L" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (co[i]), L".")
+	}
+	int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
+		co [1] == NULL ? NULL : co[1]->content.string, co [2] == NULL ? NULL : co[2]->content.string,
+		co [3] == NULL ? NULL : co[3]->content.string, co [4] == NULL ? NULL : co[4]->content.string,
+		co [5] == NULL ? NULL : co[5]->content.string, co [6] == NULL ? NULL : co[6]->content.string,
+		co [7] == NULL ? NULL : co[7]->content.string, co [8] == NULL ? NULL : co[8]->content.string,
+		co [9] == NULL ? NULL : co[9]->content.string, co [10] == NULL ? NULL : co[10]->content.string,
 		theInterpreter); cherror
 	//Melder_casual ("Button %d", buttonClicked);
 	pushNumber (buttonClicked);

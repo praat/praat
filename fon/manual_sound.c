@@ -184,24 +184,14 @@ CODE (L"To Sound (slice)... number_of_components")
 CODE (L"Scale amplitudes... 0.99")
 MAN_END
 
-MAN_BEGIN (L"Extract left channel", L"ppgb", 20070129)
+MAN_BEGIN (L"Extract one channel...", L"ppgb", 20110129)
 INTRO (L"To extract the left channel of an existing stereo @Sound as a new mono Sound, "
-	"select that stereo Sound in the list and choose ##Extract left channel# from the #Convert menu. "
-	"A new mono Sound will appear in the list.")
+	"select that stereo Sound in the list and choose ##Extract one channel...# from the #Convert menu, "
+	"Then set the #Channel to 1 and click OK. "
+	"A new mono Sound will appear in the list. For the right channel, set #Channel to 2.")
 ENTRY (L"Details")
 NORMAL (L"The name of the new mono Sound will be based on the name of the original stereo Sound. "
-	"For instance, if the original Sound is called #hello, the new Sound will be called #hello_left.")
-NORMAL (L"This command also works if you select more than one stereo Sound. "
-	"For each of them, Praat creates a new mono Sound.")
-MAN_END
-
-MAN_BEGIN (L"Extract right channel", L"ppgb", 20070129)
-INTRO (L"To extract the right channel of an existing stereo @Sound as a new mono Sound, "
-	"select that stereo Sound in the list and choose ##Extract right channel# from the #Convert menu. "
-	"A new mono Sound will appear in the list.")
-ENTRY (L"Details")
-NORMAL (L"The name of the new mono Sound will be based on the name of the original stereo Sound. "
-	"For instance, if the original Sound is called #hello, the new Sound will be called #hello_right.")
+	"For instance, if the original Sound is called #hello and you extract channel 2, the new Sound will be called #hello_ch2.")
 NORMAL (L"This command also works if you select more than one stereo Sound. "
 	"For each of them, Praat creates a new mono Sound.")
 MAN_END
@@ -222,7 +212,7 @@ MAN_BEGIN (L"Record stereo Sound...", L"ppgb", 20021212)
 INTRO (L"A command in the @@New menu@ to record a @Sound. Creates a @SoundRecorder window.")
 MAN_END
 
-MAN_BEGIN (L"Sound", L"ppgb", 20080427)
+MAN_BEGIN (L"Sound", L"ppgb", 20110131)
 INTRO (L"One of the @@types of objects@ in Praat. For tutorial information, see all of the @Intro.")
 ENTRY (L"Commands")
 NORMAL (L"Creation:")
@@ -232,11 +222,11 @@ LIST_ITEM (L"\\bu @@Create Sound from formula...@")
 LIST_ITEM (L"\\bu @@Create Sound from tone complex...")
 LIST_ITEM (L"\\bu @@Create Sound from gammatone...")
 LIST_ITEM (L"\\bu @@Create Sound from Shepard tone...")
-NORMAL (L"Reading and writing:")
+NORMAL (L"Opening and saving:")
 LIST_ITEM (L"\\bu @@Sound files")
 NORMAL (L"You can also use the text and binary (real-valued) formats for Sounds, like for any other class:")
-LIST_ITEM (L"\\bu @@Write to text file...")
-LIST_ITEM (L"\\bu @@Write to binary file...")
+LIST_ITEM (L"\\bu @@Save as text file...")
+LIST_ITEM (L"\\bu @@Save as binary file...")
 NORMAL (L"Playing:")
 LIST_ITEM (L"\\bu @@Sound: Play")
 LIST_ITEM (L"\\bu @@PointProcess: Hum")
@@ -1035,7 +1025,7 @@ NORMAL (L"To synchronize a SoundEditor window with other windows that show a tim
 	"You cannot Cut from or Paste into a synchronized SoundEditor window.")
 MAN_END
 
-MAN_BEGIN (L"SoundRecorder", L"ppgb", 20070209)
+MAN_BEGIN (L"SoundRecorder", L"ppgb", 20110129)
 INTRO (L"With the Praat SoundRecorder window you can record a mono or stereo sound "
 	"for subsequent viewing and analysis in Praat. "
 	"The SoundRecorder appears on your screen if you choose @@Record mono Sound...@ or @@Record stereo Sound...@ "
@@ -1058,7 +1048,7 @@ NORMAL (L"The size of the recording buffer determines how many seconds of sound 
 	"You can change the size of the recording buffer "
 	"with ##Sound input prefs...# from the Preferences menu.")
 NORMAL (L"If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
-	"In such a case, you can still write the sound to disk with one of the Write commands in the File menu. "
+	"In such a case, you can still write the sound to disk with one of the #Save commands in the #File menu. "
 	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Open menu.")
 #ifdef sgi
 ENTRY (L"Recording sounds on SGI")

@@ -136,7 +136,7 @@ GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top,
 		Melder_assert (my widget -> nat.control.handle != NULL);
 		SetControlReference (my widget -> nat.control.handle, (long) my widget);
 		my widget -> isControl = true;
-		_GuiNativeControl_setFont (my widget, 13);
+		_GuiNativeControl_setFont (my widget, 0, 13);
 		_GuiNativeControl_setTitle (my widget);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		if (flags & GuiCheckButton_INSENSITIVE) {

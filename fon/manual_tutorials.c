@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110128)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110208)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.14# (8 February 2011)")
+LIST_ITEM (L"\\bu Repaired crashing bug in Manipulation window introduced in 5.2.13.")
+NORMAL (L"##5.2.13# (7 February 2011)")
+LIST_ITEM (L"\\bu Renamed #Write commands to #Save commands.")
+LIST_ITEM (L"\\bu Scripting: allow pause forms without #Stop button (see @@Scripting 6.6. Controlling the user@).")
+LIST_ITEM (L"\\bu GTK: correct behaviour of default buttons.")
 NORMAL (L"##5.2.12# (28 January 2011)")
 LIST_ITEM (L"\\bu Renamed #Edit buttons to ##View & Edit#.")
 LIST_ITEM (L"\\bu Better visibility of dragged things on Linux.")
@@ -345,7 +351,7 @@ LIST_ITEM (L"\\bu Formulas: sinc function.")
 NORMAL (L"##5.0.12# (12 March 2008)")
 LIST_ITEM (L"\\bu Bigger ligature symbol (k\\lip).")
 NORMAL (L"##5.0.11# (7 March 2008)")
-LIST_ITEM (L"\\bu Corrected writing of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).")
+LIST_ITEM (L"\\bu Corrected saving of new binary Manipulation files (you can send any unreadable Manipulation files to Paul Boersma for correction).")
 NORMAL (L"##5.0.10# (27 February 2008)")
 LIST_ITEM (L"\\bu Added the characters \\d- and \\D-.")
 LIST_ITEM (L"\\bu Windows: made ##praatcon.exe# compatible with Unicode command lines.")
@@ -419,7 +425,7 @@ LIST_ITEM (L"\\bu Macintosh: worked around a feature of a system library that co
 	"that contained objects with non-ASCII names.")
 NORMAL (L"##4.6.29# (1 October 2007)")
 LIST_ITEM (L"\\bu OT learning: leak and constraint in OTMulti.")
-LIST_ITEM (L"\\bu Support for writing Table, TableOfReal, Strings, OTGrammar and OTMulti in Unicode.")
+LIST_ITEM (L"\\bu Support for saving Table, TableOfReal, Strings, OTGrammar and OTMulti in Unicode.")
 NORMAL (L"##4.6.28# (1 October 2007)")
 LIST_ITEM (L"\\bu OT learning: positive constraint satisfactions in OTMulti tableaus.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when reading a non-UTF-8 text file "
@@ -497,7 +503,7 @@ LIST_ITEM (L"\\bu OT learning: added decision strategy PositiveHG.")
 NORMAL (L"##4.6.03# (24 May 2007)")
 LIST_ITEM (L"\\bu Spectral slices have better names.")
 NORMAL (L"##4.6.02# (17 May 2007)")
-LIST_ITEM (L"\\bu Sound files: writing FLAC audio files (implemented by Erez Volk).")
+LIST_ITEM (L"\\bu Sound files: saving FLAC audio files (implemented by Erez Volk).")
 NORMAL (L"##4.6.01# (16 May 2007)")
 LIST_ITEM (L"\\bu Removed a bug that caused downsampling (and therefore formant measurements) "
 	"to be incorrect for stereo sounds.")
@@ -813,7 +819,7 @@ ENTRY (L"Praat 4.3, 26 January 2005")
 	NORMAL (L"OT learning:")
 	LIST_ITEM (L"\\bu Monitor rankings when learning.")
 	LIST_ITEM (L"\\bu OTGrammar: Remove harmonically bounded candidates...")
-	LIST_ITEM (L"\\bu OTGrammar: Write to headerless spreadsheet file...")
+	LIST_ITEM (L"\\bu OTGrammar: Save as headerless spreadsheet file...")
 	LIST_ITEM (L"\\bu Metrics grammar: added *Clash, *Lapse, WeightByPosition and *MoraicConsonant.")
 	NORMAL (L"Scripting:")
 	LIST_ITEM (L"\\bu nowarn, noprogress, nocheck.")
@@ -1324,13 +1330,13 @@ NORMAL (L"This menu contains commands for drawing the object to the @@Picture wi
 	"which will allow you to print the drawing or to copy it to your word processor.")
 MAN_END
 
-MAN_BEGIN (L"Dynamic menu", L"ppgb", 19981024)
+MAN_BEGIN (L"Dynamic menu", L"ppgb", 20110131)
 INTRO (L"A column of buttons in the right-hand part of the @@Object window@, "
 	"plus the #Save menu in the Object window.")
 NORMAL (L"If you select one or more @objects in the list, "
 	"the possible actions that you can perform with the selected objects "
 	"will appear in the dynamic menu. "
-	"These actions can include editing, writing, drawing, "
+	"These actions can include viewing & editing, saving, drawing, "
 	"conversions to other types (including analysis and synthesis), and more.")
 ENTRY (L"Example of analysis:")
 NORMAL (L"Record a Sound, select it, and click on ##To Pitch...#. "
@@ -1609,7 +1615,7 @@ NORMAL (L"Changes that you make to the data with a Data Editor, "
 	"are immediately reflected in any open type-specific Editors (e.g., a SoundEditor).")
 MAN_END
 
-MAN_BEGIN (L"Intro", L"ppgb", 20090511)
+MAN_BEGIN (L"Intro", L"ppgb", 20110131)
 INTRO (L"This is an introductory tutorial to Praat, a computer program "
 	"with which you can analyse, synthesize, and manipulate speech, "
 	"and create high-quality pictures for your articles and thesis. "
@@ -1621,7 +1627,7 @@ LIST_ITEM (L"@@Intro 1. How to get a sound@: "
 	"@@Intro 1.2. Reading a sound from disk|read@, "
 	"@@Intro 1.3. Creating a sound from a formula|formula@.")
 LIST_ITEM (L"@@Intro 2. What to do with a sound@: "
-	"@@Intro 2.1. Writing a sound to disk|write@, "
+	"@@Intro 2.1. Saving a sound to disk|write@, "
 	"@@Intro 2.2. Viewing and editing a sound|view@.")
 LIST_ITEM (L"@@Intro 3. Spectral analysis")
 LIST_ITEM1 (L"spectrograms: @@Intro 3.1. Viewing a spectrogram|view@, "
@@ -1744,15 +1750,15 @@ INTRO (L"If you have no microphone, no sound files on disk, and no access to the
 	"you could still create a sound with @@Create Sound from formula...@ from the @@New menu@.")
 MAN_END
 
-MAN_BEGIN (L"Intro 2. What to do with a sound", L"ppgb", 20041126)
+MAN_BEGIN (L"Intro 2. What to do with a sound", L"ppgb", 20110131)
 INTRO (L"As soon as you have a @Sound in the @@List of Objects@, "
 	"the buttons in the @@Dynamic menu@ (the right-hand part of the @@Object window@) "
 	"will show you what you can do with it.")
-LIST_ITEM (L"@@Intro 2.1. Writing a sound to disk")
+LIST_ITEM (L"@@Intro 2.1. Saving a sound to disk")
 LIST_ITEM (L"@@Intro 2.2. Viewing and editing a sound")
 MAN_END
 
-MAN_BEGIN (L"Intro 2.1. Writing a sound to disk", L"ppgb", 20041126)
+MAN_BEGIN (L"Intro 2.1. Saving a sound to disk", L"ppgb", 20110131)
 INTRO (L"There are several ways to write a sound to disk.")
 NORMAL (L"First, the @@File menu@ of the @SoundRecorder window contains commands to save the left "
 	"channel, the right channel, or both channels of the recorded sound to any of four standard types "
@@ -2318,7 +2324,7 @@ NORMAL (L"To print an intensity contour, or to put it in an EPS file or on the c
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard.")
 MAN_END
 
-MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20110128)
+MAN_BEGIN (L"Intro 7. Annotation", L"ppgb", 20110129)
 INTRO (L"You can annotate existing @Sound objects and sound files (@LongSound objects).")
 NORMAL (L"The labelling data will reside in a @TextGrid object. This object is separate "
 	"from the sound, which means that you will often see two objects in the list: a Sound or LongSound, "
@@ -2344,8 +2350,8 @@ NORMAL (L"You can edit a TextGrid object all by itself, but you will normally wa
 	"find the @TextGridEditor manual page. You are strongly advised to read it, because it will show you "
 	"how you can quickly zoom (drag the mouse), play (click a rectangle), or edit a label (just type).")
 ENTRY (L"Save")
-NORMAL (L"You will normally write the TextGrid to disk with @@Write to text file...@ "
-	"or @@Write to short text file...@. It is true that @@Write to binary file...@ will also work, but the others "
+NORMAL (L"You will normally write the TextGrid to disk with @@Save as text file...@ "
+	"or @@Save as short text file...@. It is true that @@Save as binary file...@ will also work, but the others "
 	"give you a file you can read with any text editor.")
 NORMAL (L"However you saved it, you can read the TextGrid into Praat later with @@Read from file...@.")
 MAN_END
@@ -2592,21 +2598,21 @@ ENTRY (L"Usage")
 NORMAL (L"To save your data to a disk file before quitting, choose a command from the @@Save menu@.")
 MAN_END
 
-MAN_BEGIN (L"Read from file...", L"ppgb", 19970911)
+MAN_BEGIN (L"Read from file...", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Open menu@.")
 ENTRY (L"Purpose")
 NORMAL (L"To read one or more @objects from a file on disk.")
 ENTRY (L"Behaviour")
 NORMAL (L"Many kinds of files are recognized:")
-LIST_ITEM (L"1. Text files that are structured as described under @@Write to text file...@; "
+LIST_ITEM (L"1. Text files that are structured as described under @@Save as text file...@; "
 	"these can contain an object of any class, or a collection of objects.")
-LIST_ITEM (L"2. Files that were produced by @@Write to binary file...@ (any class).")
+LIST_ITEM (L"2. Files that were produced by @@Save as binary file...@ (any class).")
 LIST_ITEM (L"3. Files in a LISP text format (only for classes that can be written to a LISP file).")
 LIST_ITEM (L"4. Files that were made recognizable by the libraries built on Praat. "
 	"For instance, the phonetics library adds recognizers for many kinds of sound files.")
 NORMAL (L"If the file contains more than one object, these objects will appear in the list, "
 	"and their names will be the same as the names that they had "
-	"when they were saved with ##Write to text file...# or ##Write to binary file...#.")
+	"when they were saved with ##Save as text file...# or ##Save as binary file...#.")
 ENTRY (L"Examples")
 LIST_ITEM (L"\\bu If the file contains only one Pitch object and is called \"hallo.pit\", "
 	"an object with the name \"Pitch hallo\" will appear in the list of objects. "
@@ -3089,7 +3095,7 @@ NORMAL (L"Bureaucracy")
 LIST_ITEM (L"\\bu @WordList, @SpellingChecker")
 MAN_END
 
-MAN_BEGIN (L"Unicode", L"ppgb", 20071210)
+MAN_BEGIN (L"Unicode", L"ppgb", 20110129)
 INTRO (L"Praat is becoming a fully international program: "
 	"the texts in Praat's TextGrids, Tables, scripts, or Info window (and elsewhere) can contain many types of characters "
 	"(see @@special symbols@). "
@@ -3098,14 +3104,14 @@ ENTRY (L"ASCII text files")
 NORMAL (L"If your TextGrid (or Table, or script, or Info window...) contains only characters that can be encoded as ASCII, "
 	"namely the characters !\\\" \\# \\$ \\% &\\' ()*+,-./0123456789:;<=>?\\@  "
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\bs]\\^ \\_ ` abcdefghijklmnopqrstuvwxyz{|}~, "
-	"then when you say @@Write to text file...@ or #Save, Praat will write an ASCII text file, "
+	"then when you say @@Save as text file...@ or #Save, Praat will write an ASCII text file, "
 	"which is a text file in which every character is encoded in a single byte (8 bits). "
 	"All programs that can read plain text files can read such files produced by Praat.")
 ENTRY (L"UTF-16 text files")
 NORMAL (L"If your TextGrid (or Table, or script, or Info window...) contains one or more characters that cannot be encoded as ASCII, "
 	"for instance West-European characters such as \\ao\\c,\\e'\\o\"\\ss\\?d, East-European characters such as \\c<\\l/\\o:\\s<\\uo\\z', "
 	"or Hebrew characters such as \\?+\\B+\\G+\\M%\\vO\\sU, "
-	"then when you say @@Write to text file...@ or #Save, Praat will write an UTF-16 text file, "
+	"then when you say @@Save as text file...@ or #Save, Praat will write an UTF-16 text file, "
 	"which is a text file in which every character is encoded in two bytes (and some very rare characters in four bytes). "
 	"Many programs can read such text files, for instance NotePad, WordPad, Microsoft Word, and TextWrangler.")
 ENTRY (L"What if my other programs cannot read UTF-16 text files?")
@@ -3137,28 +3143,28 @@ MAN_BEGIN (L"View", L"ppgb", 20010512)
 INTRO (L"One of the menus in several @editors and in the @manual.")
 MAN_END
 
-MAN_BEGIN (L"Save menu", L"ppgb", 19970911)
+MAN_BEGIN (L"Save menu", L"ppgb", 20110129)
 INTRO (L"One of the menus in the @@Object window@.")
 ENTRY (L"Purpose")
-NORMAL (L"With the Save menu, you write one or more selected @objects from memory to a file on disk. "
+NORMAL (L"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
 	"The data can be read in again with one of the commands in the @@Open menu@ "
 	"(most often simply with @@Read from file...@).")
 ENTRY (L"Usage: save your work")
 NORMAL (L"You will often choose a command from this menu just before clicking the @Remove button "
 	"or choosing the @Quit command.")
 ENTRY (L"Fixed commands")
-NORMAL (L"If no object is selected, the Save menu is empty. "
+NORMAL (L"If no object is selected, the #Save menu is empty. "
 	"If any object is selected, it will at least contain the following commands:")
 LIST_ITEM (L"\\bu @@Write to console")
-LIST_ITEM (L"\\bu @@Write to text file...")
-LIST_ITEM (L"\\bu @@Write to short text file...")
-LIST_ITEM (L"\\bu @@Write to binary file...")
+LIST_ITEM (L"\\bu @@Save as text file...")
+LIST_ITEM (L"\\bu @@Save as short text file...")
+LIST_ITEM (L"\\bu @@Save as binary file...")
 ENTRY (L"Dynamic commands")
 NORMAL (L"Depending on the class of the selected object, the following commands may be available "
-	"in the Save menu:")
+	"in the #Save menu:")
 MAN_END
 
-MAN_BEGIN (L"Write to binary file...", L"ppgb", 19970911)
+MAN_BEGIN (L"Save as binary file...", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")
@@ -3172,17 +3178,17 @@ NORMAL (L"These files are in a device-independent binary format, "
 	"and can be written and read on any machine.")
 MAN_END
 
-MAN_BEGIN (L"Write to console", L"ppgb", 20070106)
+MAN_BEGIN (L"Write to console", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Save menu@.")
 NORMAL (L"You can choose this command after selecting one object. "
 	"The data that it contains, is written to the Console window "
 	"(the terminal window, if you started up Praat from a terminal window), "
-	"in the same format as with the @@Write to text file...@ command, "
+	"in the same format as with the @@Save as text file...@ command, "
 	"except for the first line, which reads something like:")
 CODE (L"Write to console: class Sound,  name \"hallo\"")
 MAN_END
 
-MAN_BEGIN (L"Write to short text file...", L"ppgb", 19981124)
+MAN_BEGIN (L"Save as short text file...", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")
@@ -3190,12 +3196,12 @@ ENTRY (L"Behaviour")
 NORMAL (L"The Object window will ask you for a file name. "
 	"After you click OK, the objects will be written to a text file on disk.")
 ENTRY (L"File format")
-NORMAL (L"The format is much shorter than the one described at @@Write to text file...@. "
+NORMAL (L"The format is much shorter than the one described at @@Save as text file...@. "
 	"Most of the comments are gone, and there is normally one piece of data per line.")
 NORMAL (L"The file can be read again with the all-purpose @@Read from file...@.")
 MAN_END
 
-MAN_BEGIN (L"Write to text file...", L"ppgb", 20070106)
+MAN_BEGIN (L"Save as text file...", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Save menu@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one or more @objects.")

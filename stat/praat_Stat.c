@@ -610,15 +610,15 @@ DO
 END
 
 FORM_READ (Table_readFromTableFile, L"Read Table from table file", 0, true)
-	if (! praat_new1 (Table_readFromTableFile (file), MelderFile_name (file))) return 0;
+	if (! praat_newWithFile1 (Table_readFromTableFile (file), MelderFile_name (file), file)) return 0;
 END
 
 FORM_READ (Table_readFromCommaSeparatedFile, L"Read Table from comma-separated file", 0, true)
-	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file))) return 0;
+	if (! praat_newWithFile1 (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file), file)) return 0;
 END
 
 FORM_READ (Table_readFromTabSeparatedFile, L"Read Table from tab-separated file", 0, true)
-	if (! praat_new1 (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file))) return 0;
+	if (! praat_newWithFile1 (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file), file)) return 0;
 END
 
 FORM (Table_removeColumn, L"Table: Remove column", 0)
@@ -1031,7 +1031,7 @@ DO
 	}
 END
 
-FORM_WRITE (Table_writeToTableFile, L"Write Table to table file", 0, L"Table")
+FORM_WRITE (Table_writeToTableFile, L"Save Table as table file", 0, L"Table")
 	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
 END
 
@@ -1340,7 +1340,7 @@ DO
 END
 
 FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, L"Read TableOfReal from headerless spreadsheet file", 0, true)
-	if (! praat_new1 (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file))) return 0;
+	if (! praat_newWithFile1 (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file), file)) return 0;
 END
 
 FORM (TableOfReal_removeColumn, L"Remove column", 0)
@@ -1459,7 +1459,7 @@ DO
 	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING (L"Label of first column")))
 END
 
-FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, L"Write TableOfReal to spreadsheet", 0, L"txt")
+FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, L"Save TableOfReal as spreadsheet", 0, L"txt")
 	if (! TableOfReal_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
 END
 
@@ -1506,7 +1506,8 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 
 void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
 void praat_TableOfReal_init (void *klas) {
-	praat_addAction1 (klas, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (klas, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Draw as numbers...", 0, 1, DO_TableOfReal_drawAsNumbers);
 		praat_addAction1 (klas, 0, L"Draw as numbers if...", 0, 1, DO_TableOfReal_drawAsNumbers_if);
@@ -1613,7 +1614,8 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classPairDistribution, 1, L"Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classTable, 0, L"Table help", 0, 0, DO_Table_help);
-	praat_addAction1 (classTable, 1, L"Write to table file...", 0, 0, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, L"Save as table file...", 0, 0, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, L"Write to table file...", 0, praat_HIDDEN, DO_Table_writeToTableFile);
 	praat_addAction1 (classTable, 1, L"Edit", 0, 0, DO_Table_edit);
 	praat_addAction1 (classTable, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classTable, 0, L"Scatter plot...", 0, 1, DO_Table_scatterPlot);

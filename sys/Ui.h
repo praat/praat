@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/07
+ * pb 2011/02/01
  */
 
 #ifndef _Graphics_h_
@@ -103,7 +103,7 @@ Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue);
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
 void UiForm_setPauseForm (I,
-	int numberOfContinueButtons, int defaultContinueButton,
+	int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const wchar_t *continue1, const wchar_t *continue2, const wchar_t *continue3,
 	const wchar_t *continue4, const wchar_t *continue5, const wchar_t *continue6,
 	const wchar_t *continue7, const wchar_t *continue8, const wchar_t *continue9,

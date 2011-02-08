@@ -1353,7 +1353,8 @@ void praat_uvafon_TextGrid_init (void) {
 	TextGridEditor_prefs ();
 
 	praat_addAction1 (classIntervalTier, 0, L"IntervalTier help", 0, 0, DO_IntervalTier_help);
-	praat_addAction1 (classIntervalTier, 1, L"Write to Xwaves label file...", 0, 0, DO_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1, L"Save as Xwaves label file...", 0, 0, DO_IntervalTier_writeToXwaves);
+	praat_addAction1 (classIntervalTier, 1, L"Write to Xwaves label file...", 0, praat_HIDDEN, DO_IntervalTier_writeToXwaves);
 	praat_addAction1 (classIntervalTier, 0, L"Collect", 0, 0, 0);
 	praat_addAction1 (classIntervalTier, 0, L"Into TextGrid", 0, 0, DO_AnyTier_into_TextGrid);
 	praat_addAction1 (classIntervalTier, 0, L"Analyse", 0, 0, 0);
@@ -1378,7 +1379,8 @@ void praat_uvafon_TextGrid_init (void) {
 	praat_addAction1 (classSpellingChecker, 0, L"Extract user dictionary", 0, 0, DO_SpellingChecker_extractUserDictionary);
 
 	praat_addAction1 (classTextGrid, 0, L"TextGrid help", 0, 0, DO_TextGrid_help);
-	praat_addAction1 (classTextGrid, 1, L"Write to chronological text file...", 0, 0, DO_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1, L"Save as chronological text file...", 0, 0, DO_TextGrid_writeToChronologicalTextFile);
+	praat_addAction1 (classTextGrid, 1, L"Write to chronological text file...", 0, praat_HIDDEN, DO_TextGrid_writeToChronologicalTextFile);
 	praat_addAction1 (classTextGrid, 0, L"View & Edit", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 1, L"View & Edit", 0, 0, DO_TextGrid_edit);
 	praat_addAction1 (classTextGrid, 1, L"Edit", 0, praat_HIDDEN, DO_TextGrid_edit);

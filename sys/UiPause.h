@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/20
+ * pb 2011/02/01
  */
 
 #include "Gui.h"
@@ -43,7 +43,7 @@ int UiPause_optionMenu (const wchar_t *label, int defaultValue);
 int UiPause_option (const wchar_t *label);
 int UiPause_comment (const wchar_t *label);
 
-int UiPause_end (int numberOfContinueButtons, int defaultContinueButton,
+int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
 	const wchar_t *continueText1, const wchar_t *continueText2, const wchar_t *continueText3,
 	const wchar_t *continueText4, const wchar_t *continueText5, const wchar_t *continueText6,
 	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,

@@ -457,7 +457,7 @@ static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sending
 	(void) interpreter;
 	(void) modified;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as EPS file",
 		DO_Picture_writeToEpsFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -468,7 +468,7 @@ static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sending
 	}
 	return 1;
 }
-/*FORM_WRITE (Picture_writeToEpsFile, L"Write picture to Encapsulated PostScript file", 0, L"praat.eps")
+/*FORM_WRITE (Picture_writeToEpsFile, L"Save picture as Encapsulated PostScript file", 0, L"praat.eps")
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
@@ -477,7 +477,7 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wch
 	(void) interpreter;
 	(void) modified;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -494,7 +494,7 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const w
 	(void) interpreter;
 	(void) modified;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.eps");
@@ -511,7 +511,7 @@ static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sending
 	(void) interpreter;
 	(void) modified;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to PDF file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as PDF file",
 		DO_Picture_writeToPdfFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.pdf");
@@ -528,7 +528,7 @@ static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t
 	(void) interpreter;
 	(void) modified;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Praat picture file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as Praat picture file",
 		DO_Picture_writeToPraatPictureFile, NULL, invokingButtonTitle, NULL);
 	if (sendingForm == NULL && sendingString == NULL) {
 		UiOutfile_do (dia, L"praat.prapic");
@@ -560,7 +560,7 @@ END
 		(void) interpreter;
 		(void) modified;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Mac PICT file",
+		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as Mac PICT file",
 			DO_Picture_writeToMacPictFile, NULL, invokingButtonTitle, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.pict");
@@ -578,7 +578,7 @@ END
 		(void) interpreter;
 		(void) modified;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Write to Windows metafile",
+		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as Windows metafile",
 			DO_Picture_writeToWindowsMetafile, NULL, invokingButtonTitle, NULL);
 		if (sendingForm == NULL && sendingString == NULL) {
 			UiOutfile_do (dia, L"praat.emf");
@@ -1625,23 +1625,33 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Read from old Windows praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldWindowsPraatPictureFile);
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"-- write --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"File", L"Save as praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
 	#ifdef _WIN32
+	praat_addMenuCommand (L"Picture", L"File", L"Save as Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
 	#endif
 	#if defined (macintosh)
-		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Write EPS file", 0, 0, NULL);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, praat_HIDDEN, DO_Picture_writeToPdfFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);
+			praat_addMenuCommand (L"Picture", L"File", L"Save as Mac PICT file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToMacPictFile);
 			praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToMacPictFile);
 			praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 1, DO_Picture_writeToEpsFile);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_silipa);
+			praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 1, DO_Picture_writeToEpsFile);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToEpsFile);
+			praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_xipa);
+			praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (SILIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_silipa);
+			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_silipa);
 	#else
 		praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN, DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, praat_HIDDEN, DO_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, praat_HIDDEN, DO_Picture_writeToFontlessEpsFile_silipa);
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
 	#if defined (macintosh)

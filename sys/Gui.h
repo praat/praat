@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2010 Paul Boersma
+ * Copyright (C) 1993-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * 2010/07/30
+ * 2011/02/02
  */
 
 #if defined (UNIX)
@@ -272,8 +272,10 @@
 #define GuiMenu_INSENSITIVE  (1 << 8)
 #define GuiMenu_CHECKBUTTON  (1 << 9)
 #define GuiMenu_TOGGLE_ON  (1 << 10)
-#define GuiMenu_RADIO_FIRST  (1 << 11)
-#define GuiMenu_RADIO_NEXT  (1 << 12)
+#define GuiMenu_ATTRACTIVE  (1 << 11)
+#define GuiMenu_RADIO_FIRST  (1 << 12)
+#define GuiMenu_RADIO_NEXT  (1 << 13)
+#define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
 
 /* Accelerators: */
 #define GuiMenu_OPTION  (1 << 21)
@@ -315,6 +317,7 @@ int Gui_getResolution (GuiObject widget);
 #define GuiButton_DEFAULT  1
 #define GuiButton_CANCEL  2
 #define GuiButton_INSENSITIVE  4
+#define GuiButton_ATTRACTIVE  8
 typedef struct structGuiButtonEvent {
 	GuiObject button;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;

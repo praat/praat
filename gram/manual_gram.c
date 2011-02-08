@@ -295,8 +295,8 @@ NORMAL (L"The second tableau shows that /pa/ always surfaces as [pa], which is n
 	"the only candidate. All cells are grey because none of them contributes to the determination of the winner.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.2. Inside the grammar", L"ppgb", 20070725)
-NORMAL (L"You can write an @OTGrammar grammar into a text file by choosing @@Write to text file...@ from the #Save menu "
+MAN_BEGIN (L"OT learning 2.2. Inside the grammar", L"ppgb", 20110129)
+NORMAL (L"You can save an @OTGrammar grammar as a text file by choosing @@Save as text file...@ from the #Save menu "
 	"of the Objects window. For the N\\s{O}C\\s{ODA} example, the contents of the file will look like:")
 CODE (L"File type = \"ooTextFile\"")
 CODE (L"Object class = \"OTGrammar 2\"")
@@ -320,9 +320,9 @@ NORMAL (L"To understand more about this data structure, consult the @OTGrammar c
 NORMAL (L"You can read this text file into Praat again with @@Read from file...@ from the #Open menu in the Objects window.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.3. Defining your own grammar", L"ppgb", 20070725)
+MAN_BEGIN (L"OT learning 2.3. Defining your own grammar", L"ppgb", 20110129)
 NORMAL (L"By editing a text file created from an example in the @@New menu@, you can define your own OT grammars.")
-NORMAL (L"As explained at @@Write to text file...@, Praat is quite resilient about its text file formats. "
+NORMAL (L"As explained at @@Save as text file...@, Praat is quite resilient about its text file formats. "
 	"As long as the strings and numbers appear in the correct order, you can redistribute the data "
 	"across the lines, add all kinds of comments, or leave the comments out. "
 	"For the N\\s{O}C\\s{ODA} example, the text file could also have looked like:")
@@ -510,7 +510,7 @@ NORMAL (L"If you try this with a Harmonic Grammar or in Linear OT, you will see 
 	"namely by the noise that is temporarily added to the ranking of each constraint at evaluation time.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.7. Tableau pictures", L"ppgb", 20001010)
+MAN_BEGIN (L"OT learning 2.7. Tableau pictures", L"ppgb", 20110129)
 NORMAL (L"To show a tableau in the @@Picture window@ instead of in the editor, "
 	"you select an @OTGrammar object and click ##Draw tableau...#. "
 	"After you specify the input form, a tableau is drawn with the current font and size "
@@ -518,7 +518,7 @@ NORMAL (L"To show a tableau in the @@Picture window@ instead of in the editor, "
 	"is aligned with the top left corner of the selection. You can draw more than one object into the Picture "
 	"window, whose menus also allow you to add a lot of graphics of your own design.")
 NORMAL (L"Besides printing the entire picture (with @@Print...@), you can save a part of it to an EPS file "
-	"for inclusion into your favourite word processor (with @@Write to EPS file...@). "
+	"for inclusion into your favourite word processor (with @@Save as EPS file...@). "
 	"For the latter to succeed, make sure that the selection includes at least your tableau; "
 	"otherwise, some part of your tableau may end up truncated.")
 MAN_END
@@ -601,12 +601,12 @@ LIST_ITEM (L"3.1. @@OT learning 3.1. Data from a pair distribution|Data from a p
 LIST_ITEM (L"3.2. @@OT learning 3.2. Data from another grammar|Data from another grammar@ (tongue-root-harmony example)")
 MAN_END
 
-MAN_BEGIN (L"OT learning 3.1. Data from a pair distribution", L"ppgb", 20021105)
+MAN_BEGIN (L"OT learning 3.1. Data from a pair distribution", L"ppgb", 20110131)
 NORMAL (L"If the grammar contains faithfulness constraints, the learner needs pairs of "
 	"underlying and adult surface forms. For our place assimilation example, she needs a lot of "
 	"/at+ma/ - [atma] pairs, and four times as many /an+pa/ - [ampa] pairs as /an+pa/ - [anpa] pairs. "
 	"We can specify this language-data distribution in a @PairDistribution object, "
-	"which we could simply write into a text file:")
+	"which we could simply save as a text file:")
 CODE (L"\"ooTextFile\"")
 CODE (L"\"PairDistribution\"")
 CODE (L"4 pairs")

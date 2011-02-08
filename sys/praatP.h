@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2011/02/02
  */
 
 #include "praat.h"
@@ -77,7 +77,8 @@ typedef struct structPraat_Command {
 		hidden,
 		toggled,
 		phase,
-		unhidable;
+		unhidable,
+		attractive;
 	GuiObject button;
 	const wchar_t *window, *menu;
 	const wchar_t *script;   /* If 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand. */

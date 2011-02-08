@@ -1482,7 +1482,7 @@ end:
 
 static int menu_cb_writeWav (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (L"Write to WAV file", 0)
+	EDITOR_FORM_WRITE (L"Save as WAV file", 0)
 		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.wav", name);
 		Melder_free (name);
@@ -1493,7 +1493,7 @@ static int menu_cb_writeWav (EDITOR_ARGS) {
 
 static int menu_cb_writeAifc (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (L"Write to AIFC file", 0)
+	EDITOR_FORM_WRITE (L"Save as AIFC file", 0)
 		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.aifc", name);
 		Melder_free (name);
@@ -1504,7 +1504,7 @@ static int menu_cb_writeAifc (EDITOR_ARGS) {
 
 static int menu_cb_writeNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (L"Write to NeXT/Sun file", 0)
+	EDITOR_FORM_WRITE (L"Save as NeXT/Sun file", 0)
 		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.au", name);
 		Melder_free (name);
@@ -1515,7 +1515,7 @@ static int menu_cb_writeNextSun (EDITOR_ARGS) {
 
 static int menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
-	EDITOR_FORM_WRITE (L"Write to NIST file", 0)
+	EDITOR_FORM_WRITE (L"Save as NIST file", 0)
 		wchar_t *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.nist", name);
 		Melder_free (name);
@@ -1528,10 +1528,10 @@ static int menu_cb_SoundRecorder_help (EDITOR_ARGS) { EDITOR_IAM (SoundRecorder)
 
 static void createMenus (SoundRecorder me) {
 	inherited (SoundRecorder) createMenus (SoundRecorder_as_parent (me));
-	Editor_addCommand (me, L"File", L"Write to WAV file...", 0, menu_cb_writeWav);
-	Editor_addCommand (me, L"File", L"Write to AIFC file...", 0, menu_cb_writeAifc);
-	Editor_addCommand (me, L"File", L"Write to NeXT/Sun file...", 0, menu_cb_writeNextSun);
-	Editor_addCommand (me, L"File", L"Write to NIST file...", 0, menu_cb_writeNist);
+	Editor_addCommand (me, L"File", L"Save as WAV file...", 0, menu_cb_writeWav);
+	Editor_addCommand (me, L"File", L"Save as AIFC file...", 0, menu_cb_writeAifc);
+	Editor_addCommand (me, L"File", L"Save as NeXT/Sun file...", 0, menu_cb_writeNextSun);
+	Editor_addCommand (me, L"File", L"Save as NIST file...", 0, menu_cb_writeNist);
 	Editor_addCommand (me, L"File", L"-- write --", 0, 0);
 }
 

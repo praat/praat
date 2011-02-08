@@ -720,7 +720,7 @@ int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int u
 			return Melder_error3 (L"Unexpected error ", Melder_integer (err), L" trying to create a screen preview .");
 		int path = FSOpenResFile (& macFileReference, fsWrPerm);
 
-		/* Write the data to the file as a 'PICT' resource. */
+		/* Save the data to the file as a 'PICT' resource. */
 		/* The Id of this resource is 256 (PS. Lang. Ref. Man., 2nd ed., p. 728. */
 
 		if (path != -1) {

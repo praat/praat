@@ -1221,7 +1221,8 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classOTGrammar, 0, L"View & Edit", 0, 0, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, L"Edit", 0, praat_HIDDEN, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, L"Draw tableau...", 0, 0, DO_OTGrammar_drawTableau);
-	praat_addAction1 (classOTGrammar, 1, L"Write to headerless spreadsheet file...", 0, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
+	praat_addAction1 (classOTGrammar, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classOTGrammar, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classOTGrammar, 1, L"Get number of constraints", 0, 1, DO_OTGrammar_getNumberOfConstraints);
 	praat_addAction1 (classOTGrammar, 1, L"Get constraint...", 0, 1, DO_OTGrammar_getConstraint);

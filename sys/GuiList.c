@@ -366,7 +366,7 @@ GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bo
 				sizeof (my macListHandle), & my macListHandle, NULL);
 			SetControlReference (my widget -> nat.control.handle, (long) my widget);
 			my widget -> isControl = TRUE;
-			_GuiNativeControl_setFont (my widget, 12);
+			_GuiNativeControl_setFont (my widget, 0, 12);
 		} else {
 			Rect dataBounds = { 0, 0, 0, 1 };
 			Point cSize;

@@ -87,14 +87,23 @@ void ManipulationEditor_prefs (void) {
 }
 
 static void updateMenus (ManipulationEditor me) {
+	Melder_assert (my synthPulsesButton != NULL);
 	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
+	Melder_assert (my synthPulsesHumButton != NULL);
 	GuiMenuItem_check (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM);
+	Melder_assert (my synthPulsesLpcButton != NULL);
 	GuiMenuItem_check (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC);
+	Melder_assert (my synthPitchButton != NULL);
 	GuiMenuItem_check (my synthPitchButton, my synthesisMethod == Manipulation_PITCH);
+	Melder_assert (my synthPitchHumButton != NULL);
 	GuiMenuItem_check (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM);
+	Melder_assert (my synthPulsesPitchButton != NULL);
 	GuiMenuItem_check (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH);
+	Melder_assert (my synthPulsesPitchHumButton != NULL);
 	GuiMenuItem_check (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
+	Melder_assert (my synthOverlapAddButton != NULL);
 	GuiMenuItem_check (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD);
+	Melder_assert (my synthPitchLpcButton != NULL);
 	GuiMenuItem_check (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC);
 }
 

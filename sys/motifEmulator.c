@@ -676,12 +676,13 @@ void _GuiNativeControl_hide (GuiObject me) {
 	#endif
 }
 
-void _GuiNativeControl_setFont (GuiObject me, int size) {
+void _GuiNativeControl_setFont (GuiObject me, int style, int size) {
 	#if win
 	#elif mac
 		ControlFontStyleRec fontStyle;
-		fontStyle. flags = kControlUseFontMask | kControlUseSizeMask;
+		fontStyle. flags = kControlUseFontMask | kControlUseFaceMask | kControlUseSizeMask;
 		fontStyle. font = systemFont;
+		fontStyle. style = style;
 		fontStyle. size = size;
 		SetControlFontStyle (my nat.control.handle, & fontStyle);
 	#endif
@@ -1141,7 +1142,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
 						my isControl = TRUE;
-						_GuiNativeControl_setFont (me, 13);
+						_GuiNativeControl_setFont (me, 0, 13);
 						_GuiNativeControl_setTitle (me);
 					} else {
 						my nat.control.isPopup = true;
@@ -1151,7 +1152,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 						Melder_assert (my nat.control.handle != NULL);
 						SetControlReference (my nat.control.handle, (long) me);
 						my isControl = TRUE;
-						_GuiNativeControl_setFont (me, 13);
+						_GuiNativeControl_setFont (me, 0, 13);
 						_GuiNativeControl_setTitle (me);
 						SetControlMaximum (my nat.control.handle, 32767);   /* The default seems to be 9 on MacOS X. */
 					}
@@ -1583,63 +1584,6 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 		Str255 ptext;
 	#endif
 	while (resource = va_arg (arg, int), resource != 0) switch (resource) {
-		case XmNaccelerator: {
-			char *string = va_arg (arg, char *), *key = strstr (string, "<Key>");
-			Melder_assert (MEMBER2 (me, PushButton, ToggleButton));
-			if (! key) break;
-			key = & key [5];
-			if (my inMenu && key [0]) {
-				int kar = 0, modifiers = 0;
-				if (strstr (string, "Ctrl")) modifiers |= _motif_COMMAND_MASK;
-				if (strstr (string, "Shift")) modifiers |= _motif_SHIFT_MASK;
-				if (strstr (string, "Mod1")) modifiers |= _motif_OPTION_MASK;
-				if (key [1] == '\0') kar = key [0];   /* Single character. */
-				else if (strequ (key, "Return")) kar = 13;
-				else if (strequ (key, "BackSpace")) kar = 8;
-				else if (strequ (key, "question")) kar = '?';
-				else if (strequ (key, "bracketleft")) kar = '[';
-				else if (strequ (key, "bracketright")) kar = ']';
-				else if (strequ (key, "Left")) kar = GuiMenu_LEFT_ARROW;
-				else if (strequ (key, "Right")) kar = GuiMenu_RIGHT_ARROW;
-				else if (strequ (key, "Up")) kar = GuiMenu_UP_ARROW;
-				else if (strequ (key, "Down")) kar = GuiMenu_DOWN_ARROW;
-				else if (strequ (key, "Pause")) kar = GuiMenu_PAUSE;
-				else if (strequ (key, "Delete")) kar = GuiMenu_DELETE;
-				else if (strequ (key, "Insert")) kar = GuiMenu_INSERT;
-				else if (strequ (key, "Tab")) kar = GuiMenu_TAB;
-				else if (strequ (key, "Home")) kar = GuiMenu_HOME;
-				else if (strequ (key, "End")) kar = GuiMenu_END;
-				else if (strequ (key, "Page_Up")) kar = GuiMenu_PAGE_UP;
-				else if (strequ (key, "Page_Down")) kar = GuiMenu_PAGE_DOWN;
-				else if (strequ (key, "Escape")) kar = GuiMenu_ESCAPE;
-				else if (strequ (key, "F1")) kar = GuiMenu_F1;
-				else if (strequ (key, "F2")) kar = GuiMenu_F2;
-				else if (strequ (key, "F3")) kar = GuiMenu_F3;
-				else if (strequ (key, "F4")) kar = GuiMenu_F4;
-				else if (strequ (key, "F5")) kar = GuiMenu_F5;
-				else if (strequ (key, "F6")) kar = GuiMenu_F6;
-				else if (strequ (key, "F7")) kar = GuiMenu_F7;
-				else if (strequ (key, "F8")) kar = GuiMenu_F8;
-				else if (strequ (key, "F9")) kar = GuiMenu_F9;
-				else if (strequ (key, "F10")) kar = GuiMenu_F10;
-				else if (strequ (key, "F11")) kar = GuiMenu_F11;
-				else if (strequ (key, "F12")) kar = GuiMenu_F12;
-				if (kar > 0 && kar < 32)
-					my shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << kar;
-				else if (kar == '?' || kar == '{' || kar == '}' || kar == '\"' || kar == '<' || kar == '>' || kar == '|' ||
-								kar == '_' || kar == '+' || kar == '~')
-					modifiers |= _motif_SHIFT_MASK;
-				my motiff.pushButton.acceleratorChar = kar;
-				my motiff.pushButton.acceleratorModifiers = modifiers;
-				NativeMenuItem_setText (me);
-			}
-			break;
-		}
-		case XmNacceleratorText: {
-			char *string = va_arg (arg, char *);
-			Melder_assert (MEMBER2 (me, PushButton, ToggleButton));
-			break;
-		}
 		case XmNautoUnmanage:
 			my autoUnmanage = va_arg (arg, int);
 			break;
@@ -4359,7 +4303,7 @@ void XtDispatchEvent (XEvent *xevent) {
 	if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 	if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
 	if (GetKeyState (VK_SHIFT) < 0) modifiers |= _motif_SHIFT_MASK;
-if(kar>=48)Melder_casual ("modifiers:%s%s%s\nmessage: %s\nkar: %d",
+if(kar>=48)Melder_flushError ("modifiers:%s%s%s\nmessage: %s\nkar: %d",
 modifiers & _motif_COMMAND_MASK ? " control" : "",
 modifiers & _motif_OPTION_MASK ? " alt" : "",
 modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN ? "keydown" : "syskeydown", kar);
@@ -4395,6 +4339,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 					} else if (kar == VK_TAB) {   /* Shortcut or text. */
 						if (acc & 1 << GuiMenu_TAB) { win_processKeyboardEquivalent (my shell, GuiMenu_TAB, modifiers); return; }
 					} else if (kar == VK_RETURN) {   /* Shortcut, default button, or text. */
+						//Melder_information4 (L"RETURN ", Melder_integer (acc), L" def ", Melder_integer ((long) my shell -> defaultButton));
 						if (acc & 1 << GuiMenu_ENTER) { win_processKeyboardEquivalent (my shell, GuiMenu_ENTER, modifiers); return; }
 						else {
 							if (my shell -> defaultButton && _GuiWinButton_tryToHandleShortcutKey (my shell -> defaultButton)) return;

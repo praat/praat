@@ -163,9 +163,7 @@ GuiObject praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, cons
 		unhidable = (flags & praat_UNHIDABLE) != 0;
 		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
 		key = flags & 0x000000FF;
-		motifFlags = key ?
-			flags & (0x006000FF | GuiMenu_INSENSITIVE | GuiMenu_CHECKBUTTON | GuiMenu_TOGGLE_ON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT) :
-			flags & (GuiMenu_INSENSITIVE | GuiMenu_CHECKBUTTON | GuiMenu_TOGGLE_ON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT);
+		motifFlags = key ? flags & (0x006000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
 	}
 	if (callback && ! title) {
 		Melder_error5 (L"praat_addMenuCommand: command with callback has no title. Window \"", window, L"\", menu \"", menu, L"\".");

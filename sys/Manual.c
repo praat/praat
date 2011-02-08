@@ -52,7 +52,7 @@ static const wchar_t *month [] =
 
 static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM_WRITE (L"Write to HTML file", 0)
+	EDITOR_FORM_WRITE (L"Save as HTML file", 0)
 		ManPages manPages = my data;
 		wchar_t *p = defaultName;
 		wcscpy (p, ((ManPage) manPages -> pages -> item [my path]) -> title);
@@ -65,7 +65,7 @@ static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 
 static int menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
-	EDITOR_FORM (L"Write all pages as HTML files", 0)
+	EDITOR_FORM (L"Save all pages as HTML files", 0)
 		LABEL (L"", L"Type a directory name:")
 		TEXTFIELD (L"directory", L"")
 	EDITOR_OK
@@ -454,13 +454,7 @@ static void createChildren (Manual me) {
 			L"Copy last played to list", gui_button_cb_publish, me, 0);
 	}
 	GuiButton_createShown (my holder, 274, 274 + 69, y, y + height,
-		L"Search:", gui_button_cb_search, me,
-		#ifdef _WIN32
-			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
-		#else
-			0
-		#endif
-		);
+		L"Search:", gui_button_cb_search, me, GuiButton_DEFAULT);
 	my searchText = GuiText_createShown (my holder, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
 	#if motif
 		/* TODO */
@@ -474,8 +468,8 @@ static void createMenus (Manual me) {
 	inherited (Manual) createMenus (Manual_as_parent (me));
 
 	Editor_addCommand (me, L"File", L"Print manual...", 0, menu_cb_printRange);
-	Editor_addCommand (me, L"File", L"Write page to HTML file...", 0, menu_cb_writeOneToHtmlFile);
-	Editor_addCommand (me, L"File", L"Write manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
+	Editor_addCommand (me, L"File", L"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
+	Editor_addCommand (me, L"File", L"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
 
 	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);

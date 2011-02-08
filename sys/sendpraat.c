@@ -154,7 +154,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 	#endif
 
 	/*
-	 * Write the message file (Unix and Windows only).
+	 * Save the message file (Unix and Windows only).
 	 */
 	#if gtk || win
 	{
@@ -371,7 +371,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 	#endif
 
 	/*
-	 * Write the message file (Unix and Windows only).
+	 * Save the message file (Unix and Windows only).
 	 */
 	#if gtk
 		FILE *messageFile;

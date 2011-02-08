@@ -314,7 +314,7 @@ void praat_cleanUpName (wchar_t *name) {
 
 /***** objects + commands *****/
 
-bool praat_new1 (I, const wchar_t *myName) {
+bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
 	iam (Data);
 	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
 	if (me == NULL) return Melder_error1 (L"No object was put into the list.");
@@ -376,7 +376,11 @@ bool praat_new1 (I, const wchar_t *myName) {
 	CLASS = my methods;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = NULL;
-	MelderFile_setToNull (& theCurrentPraatObjects -> list [IOBJECT]. file);
+	if (file != NULL) {
+		MelderFile_copy (file, & theCurrentPraatObjects -> list [IOBJECT]. file);
+	} else {
+		MelderFile_setToNull (& theCurrentPraatObjects -> list [IOBJECT]. file);
+	}
 	ID = theCurrentPraatObjects -> uniqueId;
 	theCurrentPraatObjects -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setName (OBJECT, givenName.string);
@@ -387,6 +391,34 @@ bool praat_new1 (I, const wchar_t *myName) {
 }
 
 static MelderString thePraatNewName = { 0 };
+bool praat_newWithFile2 (I, const wchar_t *s1, const wchar_t *s2, MelderFile file) {
+	iam (Data);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append2 (& thePraatNewName, s1, s2);
+	return praat_newWithFile1 (me, thePraatNewName.string, file);
+}
+bool praat_newWithFile3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file) {
+	iam (Data);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append3 (& thePraatNewName, s1, s2, s3);
+	return praat_newWithFile1 (me, thePraatNewName.string, file);
+}
+bool praat_newWithFile4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file) {
+	iam (Data);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
+	return praat_newWithFile1 (me, thePraatNewName.string, file);
+}
+bool praat_newWithFile5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file) {
+	iam (Data);
+	MelderString_empty (& thePraatNewName);
+	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
+	return praat_newWithFile1 (me, thePraatNewName.string, file);
+}
+bool praat_new1 (I, const wchar_t *s1) {
+	iam (Data);
+	return praat_newWithFile1 (me, s1, NULL);
+}
 bool praat_new2 (I, const wchar_t *s1, const wchar_t *s2) {
 	iam (Data);
 	MelderString_empty (& thePraatNewName);

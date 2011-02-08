@@ -30,7 +30,7 @@
  * pb 2010/05/12 highlighting in GDK instead of Cairo because of the availability of a XOR mode
  * pb 2010/05/12 xorOn in GDK instead of Cairo because of the availability of a XOR mode
  * pb 2010/06/05 set my colour in setColour
- * pb 2011/11/15 Windows: inverted the colour in XOR mode
+ * pb 2011/01/15 Windows: inverted the colour in XOR mode
  */
 
 #include "GraphicsP.h"
@@ -175,6 +175,7 @@ static void highlight (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 			gdk_draw_rectangle (my window, my gc, TRUE, x1DC, y2DC, width, height);
 			gdk_gc_set_rgb_fg_color (my gc, & black);
 			gdk_gc_set_function (my gc, GDK_COPY);
+			gdk_flush ();   //tryout 20110207
 			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
 			//cairo_set_operator (my cr, CAIRO_OPERATOR_BITXOR);   // this blend mode doesn't exist
 			//cairo_rectangle (my cr, x1DC, y2DC, width, height);

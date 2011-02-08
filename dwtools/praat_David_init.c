@@ -2202,23 +2202,23 @@ FORM_READ (LongSounds_appendToExistingSoundFile, L"LongSound: Append to existing
 	if (! pr_LongSounds_appendToExistingSoundFile (file)) return 0;
 END
 
-FORM_WRITE (LongSounds_writeToStereoAiffFile, L"LongSound: Write to AIFF file", 0, L"aiff")
+FORM_WRITE (LongSounds_writeToStereoAiffFile, L"LongSound: Save as AIFF file", 0, L"aiff")
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_AIFF)) return 0;
 END
 
-FORM_WRITE (LongSounds_writeToStereoAifcFile, L"LongSound: Write to AIFC file", 0, L"aifc")
+FORM_WRITE (LongSounds_writeToStereoAifcFile, L"LongSound: Save as AIFC file", 0, L"aifc")
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_AIFC)) return 0;
 END
 
-FORM_WRITE (LongSounds_writeToStereoWavFile, L"LongSound: Write to WAV file", 0, L"wav")
+FORM_WRITE (LongSounds_writeToStereoWavFile, L"LongSound: Save as WAV file", 0, L"wav")
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_WAV)) return 0;
 END
 
-FORM_WRITE (LongSounds_writeToStereoNextSunFile, L"LongSound: Write to NeXT/Sun file", 0, L"au")
+FORM_WRITE (LongSounds_writeToStereoNextSunFile, L"LongSound: Save as NeXT/Sun file", 0, L"au")
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_NEXT_SUN)) return 0;
 END
 
-FORM_WRITE (LongSounds_writeToStereoNistFile, L"LongSound: Write to NIST file", 0, L"nist")
+FORM_WRITE (LongSounds_writeToStereoNistFile, L"LongSound: Save as NIST file", 0, L"nist")
 	if (! pr_LongSounds_writeToStereoAudioFile (file, Melder_NIST)) return 0;
 END
 
@@ -3682,11 +3682,11 @@ FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0,
 	if (! praat_new1 (KlattTable_readFromRawTextFile (file), MelderFile_name (file))) return 0;
 END
 
-FORM_WRITE (Sound_writeToRawFileBE, L"Sound: Write to raw 16-bit Big Endian file", 0, L"raw")
+FORM_WRITE (Sound_writeToRawFileBE, L"Sound: Save as raw 16-bit Big Endian file", 0, L"raw")
 	if (! Sound_writeToRawFile (ONLY_OBJECT, file, 0, 0, 16, 0)) return 0;
 END
 
-FORM_WRITE (Sound_writeToRawFileLE, L"Sound: Write to raw 16-bit Little Endian file", 0, L"raw")
+FORM_WRITE (Sound_writeToRawFileLE, L"Sound: Save as raw 16-bit Little Endian file", 0, L"raw")
 	if (! Sound_writeToRawFile (ONLY_OBJECT, file, 0, 1, 16, 0)) return 0;
 END
 
@@ -5028,11 +5028,16 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classSound, 0, L"Append to existing sound file...", 0, 0, DO_LongSounds_appendToExistingSoundFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, L"Append to existing sound file...", 0, 0, DO_LongSounds_appendToExistingSoundFile);
 
-	praat_addAction1 (classLongSound, 2, L"Write to stereo AIFF file...", L"Write to NIST file...", 1, DO_LongSounds_writeToStereoAiffFile);
-	praat_addAction1 (classLongSound, 2, L"Write to stereo AIFC file...", L"Write to stereo AIFF file...", 1, DO_LongSounds_writeToStereoAifcFile);
-	praat_addAction1 (classLongSound, 2, L"Write to stereo WAV file...", L"Write to stereo AIFC file...", 1, DO_LongSounds_writeToStereoWavFile);
-	praat_addAction1 (classLongSound, 2, L"Write to stereo NeXt/Sun file...", L"Write to stereo WAV file...", 1, DO_LongSounds_writeToStereoNextSunFile);
-	praat_addAction1 (classLongSound, 2, L"Write to stereo NIST file...", L"Write to stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, L"Save as stereo AIFF file...", L"Save as NIST file...", 1, DO_LongSounds_writeToStereoAiffFile);
+	praat_addAction1 (classLongSound, 2, L"Write to stereo AIFF file...", L"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoAiffFile);
+	praat_addAction1 (classLongSound, 2, L"Save as stereo AIFC file...", L"Save as stereo AIFF file...", 1, DO_LongSounds_writeToStereoAifcFile);
+	praat_addAction1 (classLongSound, 2, L"Write to stereo AIFC file...", L"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoAifcFile);
+	praat_addAction1 (classLongSound, 2, L"Save as stereo WAV file...", L"Save as stereo AIFC file...", 1, DO_LongSounds_writeToStereoWavFile);
+	praat_addAction1 (classLongSound, 2, L"Write to stereo WAV file...", L"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoWavFile);
+	praat_addAction1 (classLongSound, 2, L"Save as stereo NeXt/Sun file...", L"Save as stereo WAV file...", 1, DO_LongSounds_writeToStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, L"Write to stereo NeXt/Sun file...", L"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNextSunFile);
+	praat_addAction1 (classLongSound, 2, L"Save as stereo NIST file...", L"Save as stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, L"Write to stereo NIST file...", L"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNistFile);
 
 	praat_addAction1 (classMatrix, 0, L"Scatter plot...", L"Paint cells...", 1, DO_Matrix_scatterPlot);
 	praat_addAction1 (classMatrix, 0, L"Draw as squares...", L"Scatter plot...", 1, DO_Matrix_drawAsSquares);
@@ -5161,8 +5166,10 @@ void praat_uvafon_David_init (void)
 
 	praat_addAction2 (classRoots, 1, classPolynomial, 1,L"Polish roots", 0, 0, DO_Roots_and_Polynomial_polish);
 
-	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Big Endian file...", 0, 0, DO_Sound_writeToRawFileBE);
-	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Little Endian file...", 0, 0, DO_Sound_writeToRawFileLE);
+	praat_addAction1 (classSound, 1, L"Save as raw 16-bit Big Endian file...", 0, 0, DO_Sound_writeToRawFileBE);
+	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Big Endian file...", 0, praat_HIDDEN, DO_Sound_writeToRawFileBE);
+	praat_addAction1 (classSound, 1, L"Save as raw 16-bit Little Endian file...", 0, 0, DO_Sound_writeToRawFileLE);
+	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Little Endian file...", 0, praat_HIDDEN, DO_Sound_writeToRawFileLE);
 
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
 

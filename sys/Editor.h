@@ -96,7 +96,7 @@ GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 	void (*do_pictureMargins) (Klas me, EditorCommand cmd);
 Thing_declare2 (Editor, Thing);
 
-#define Editor_HIDDEN  (1 << 13)
+#define Editor_HIDDEN  (1 << 14)
 GuiObject Editor_addCommand (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter));
 GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,

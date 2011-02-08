@@ -1,6 +1,6 @@
 /* manual_annotation.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ MAN_BEGIN (L"TextGrids: Merge", L"ppgb", 20101230)
 INTRO (L"A command to merge all selected @TextGrid objects into a new @TextGrid.")
 MAN_END
 
-MAN_BEGIN (L"TextGridEditor", L"ppgb", 20110128)
+MAN_BEGIN (L"TextGridEditor", L"ppgb", 20110131)
 INTRO (L"One of the @Editors in Praat, for editing a @TextGrid object.")
 NORMAL (L"You can optionally include a copy of a @Sound or @LongSound in this editor, "
 	"by selecting both the TextGrid and the Sound or LongSound before clicking ##View & Edit#. "
@@ -268,8 +268,8 @@ NORMAL (L"To copy the selected part of the Sound or LongSound as a Sound to the 
 NORMAL (L"If you are viewing a LongSound, you can save the selected part of it to a 16-bit sound file "
 	"(AIFF, AIFC, WAV, NeXT/Sun, NIST) with a command from the File menu.")
 ENTRY (L"Accelerations")
-NORMAL (L"To write the @TextGrid object to a text file without going to the @@Object window@: "
-	"choose ##Write TextGrid to text file...# from the #File menu.")
+NORMAL (L"To save the @TextGrid object as a text file without going to the @@Object window@: "
+	"choose ##Save TextGrid as text file...# from the #File menu.")
 ENTRY (L"Searching")
 NORMAL (L"The Search menu contains the command #Find (Command-F), which will allow you to specify "
 	"a text whose first occurrence will then be looked for in the currently selected tier "
@@ -282,7 +282,7 @@ NORMAL (L"You can check the spelling of the intervals in your tiers by including
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 
-MAN_BEGIN (L"WordList", L"ppgb", 19991129)
+MAN_BEGIN (L"WordList", L"ppgb", 20110131)
 INTRO (L"One of the @@types of objects@ in Praat. "
 	"An object of class WordList contains a sorted list of strings in a system-independent format. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
@@ -304,7 +304,7 @@ CODE (L"Read Strings from raw text file... lexicon.iso")
 CODE (L"Genericize")
 CODE (L"Sort")
 CODE (L"To WordList")
-CODE (L"Write to binary file... lexicon.WordList")
+CODE (L"Save as binary file... lexicon.WordList")
 NORMAL (L"I'll explain these steps in detail. "
 	"For instance, a simple text file may contain the following list of words:")
 CODE (L"cook")
@@ -366,7 +366,7 @@ CODE (L"cooks")
 NORMAL (L"The strings are now in the ASCII order, in which capitals come before lower-case letters, "
 	"and backslashes come in between these two series.")
 NORMAL (L"Clicking ##To WordList# now succeeds, and a WordList object appears in the list. "
-	"If you write it to a text file (with the Save menu), you will get the following file:")
+	"If you save it to a text file (with the Save menu), you will get the following file:")
 CODE (L"File type = \"ooTextFile\"")
 CODE (L"Object class = \"WordList\"")
 CODE (L"")
@@ -403,8 +403,8 @@ CODE (L"4 ie")
 CODE (L"6 s")
 CODE (L"5 ng")
 CODE (L"4 s")
-NORMAL (L"You can write the WordList compressed in this way to a binary file with "
-	"@@Write to binary file...@. For our 300,000-word list, this file takes up only 1.1 MB "
+NORMAL (L"You can save the WordList compressed in this way as a binary file with "
+	"@@Save as binary file...@. For our 300,000-word list, this file takes up only 1.1 MB "
 	"and can be read into memory (with @@Read from file...@) in a single second. "
 	"When read into memory, the WordList object is again expanded to 3.6 MB to allow rapid searching.")
 MAN_END
@@ -421,7 +421,7 @@ for interval to aantalIntervallen
    eindtijd = Get end point... 1 interval
    select 'longSound'
    Extract part... begintijd eindtijd no
-   Write to WAV file... C:\Geluiden\'longSoundNaam$'_'interval'.wav
+   Save as WAV file... C:\Geluiden\'longSoundNaam$'_'interval'.wav
    Remove
 endfor
 

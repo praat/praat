@@ -1293,7 +1293,7 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 					if (p [1] == '>')
 						withFile = 2, p ++;   /* Append to file. */
 					else
-						withFile = 3;   /* Write to file. */
+						withFile = 3;   /* Save to file. */
 				} else error3 (L"Missing '=', '<', or '>' after variable ", variableName, L".")
 				*endOfVariable = '\0';
 				p ++;

@@ -1,6 +1,6 @@
 /* motifEmulator_resources.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
  */
 
 /*
- * pb 2010/12/30
+ * pb 2011/02/02
  */
 
-motif_RESOURCE (XmNaccelerator)   /* XmLabel */
-motif_RESOURCE (XmNacceleratorText)   /* XmLabel */
 motif_RESOURCE (XmNactivateCallback)   /* XmPushButton, XmDrawnButton, XmCascadeButton */
 motif_RESOURCE (XmNautoUnmanage)   /* XmBulletinBoard */
 motif_RESOURCE (XmNbottomAttachment)   /* XmForm Constraint */

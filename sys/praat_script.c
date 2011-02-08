@@ -188,7 +188,7 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 			if (theCurrentPraatApplication -> batch) return 1;
 			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter); iferror return 0;
 			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6); iferror return 0;
-			UiPause_end (1, 1, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter); iferror return 0; 
+			UiPause_end (1, 1, 0, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter); iferror return 0;
 		} else if (wcsnequ (command, L"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (wcsnequ (command, L"editor", 6)) {
@@ -320,7 +320,8 @@ int praat_executeCommand (Interpreter interpreter, const wchar_t *command) {
 				return 0;
 			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
-		    (wcsnequ (command, L"Write ", 6) ||
+		    (wcsnequ (command, L"Save ", 5) ||
+			 wcsnequ (command, L"Write ", 6) ||
 			 wcsnequ (command, L"Append ", 7) ||
 			 wcsequ (command, L"Quit")))
 		{
