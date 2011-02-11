@@ -255,13 +255,6 @@ static void classEditor_destroy (I) {
 		#if gtk
 			Melder_assert (GTK_IS_WIDGET (my shell));
 			gtk_widget_destroy (my shell);
-		#elif motif
-			#if defined (UNIX)
-				XtUnrealizeWidget (my shell);   // LEAK BUG: should also destroy; but then, Praat will often crash on a destroy (OpenMotif 2.2 and 2.3)
-				//XtDestroyWidget (my shell);
-			#else
-				XtDestroyWidget (my shell);
-			#endif
 		#else
 			XtDestroyWidget (my shell);
 		#endif

@@ -1085,13 +1085,96 @@ NORMAL (L"The Praat program considers these numbers to be air pressures in units
 	"For how to obtain the true air pressures, perform a @@sound pressure calibration@.")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Concatenate", L"ppgb", 20000123)
+MAN_BEGIN (L"Sounds: Concatenate", L"ppgb", 20110211)
 INTRO (L"A command to concatenate all selected @Sound objects into a single large Sound.")
-NORMAL (L"All sounds must have equal sampling frequencies. "
-	"They are concatenated in the order that they appear in the list of objects.")
+NORMAL (L"All sounds must have equal sampling frequencies and equal numbers of channels. "
+	"They are concatenated in the order in which they appear in the list of objects (not in the order in which you select them; remember: What You See Is What You Get).")
 ENTRY (L"How to concatenate directly to a file")
 NORMAL (L"If the resulting sound does not fit into memory, use one of the "
 	"commands in the @@Save menu@. See @@How to concatenate sound files@.")
+ENTRY (L"See also")
+NORMAL (L"If you want the sounds to fade into each other smoothly, choose @@Sounds: Concatenate with overlap...@ instead.")
+MAN_END
+
+MAN_BEGIN (L"Sounds: Concatenate with overlap...", L"ppgb", 20110211)
+INTRO (L"A command to concatenate all selected @Sound objects into a single large Sound, with smooth cross-fading between the sounds.")
+NORMAL (L"All sounds must have equal sampling frequencies and equal numbers of channels. "
+	"They are concatenated in the order in which they appear in the list of objects (not in the order in which you select them; remember: What You See Is What You Get).")
+ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (1), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Sounds: Concatenate with overlap", 1)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Overlap time (s)", "0.01")
+)
+TAG (L"##Overlap time (s)")
+DEFINITION (L"the time by which any two adjacent sounds will come to overlap, "
+	"i.e. the time during which the earlier sound fades out and the later sound fades in.")
+ENTRY (L"Procedure")
+NORMAL (L"Suppose we start with the following two sounds. They are both 0.1 seconds long. "
+	"The first sound is a sine wave with a frequency of 100 Hz, the second a sine wave with a frequency of 230 Hz:")
+SCRIPT (5.0, 3, L""
+	"Create Sound from formula... sine100 1 0 0.1 10000 0.9*sin(2*pi*100*x)\n"
+	"Draw... 0 0 -1 1 yes Curve\n"
+	"Remove")
+SCRIPT (5.0, 3, L""
+	"Create Sound from formula... sine230 1 0 0.1 10000 0.9*sin(2*pi*230*x)\n"
+	"Draw... 0 0 -1 1 yes Curve\n"
+	"Remove")
+NORMAL (L"If the overlap time is 0.01 seconds, the concatenation of these two sounds will produce a Sound with a duration of 0.19 seconds, "
+	"which is the sum of the durations of the two sounds, minus the overlap time.")
+NORMAL (L"The concatenation works in the following way. "
+	"The last 0.01 seconds of the first sound is multiplied by a falling raised cosine (the second half of a Hann window, see the first red curve), "
+	"and the first 0.01 seconds of the second sound is multiplied by a rising raised cosine (the first half of a Hann window, see the second red curve):")
+SCRIPT (6.7, 5, L""
+	"Create Sound from formula... sine 1 0 0.1 10000 0.9\n"
+	"Formula (part)... 0.09 0.1 1 1 self*(0.5-0.5*cos(pi*(xmax-x)/0.01))\n"
+	"Select inner viewport... 0.5 3.5 0.5 2.5\n"
+	"Red\n"
+	"Draw... 0 0 -1 1 no Curve\n"
+	"Formula... self*sin(2*pi*100*x)\n"
+	"Black\n"
+	"Draw... 0 0 -1 1 no Curve\n"
+	"Draw inner box\n"
+	"One mark top... 0 yes yes no\n"
+	"One mark top... 0.09 yes yes yes\n"
+	"One mark top... 0.1 yes yes no\n"
+	"Text top... no Time (s)\n"
+	"One mark left... -1 yes yes no\n"
+	"One mark left... 0 yes yes yes\n"
+	"One mark left... 1 yes yes no\n"
+	"Formula... 0.9\n"
+	"Formula (part)... 0 0.01 1 1 self*(0.5-0.5*cos(pi*x/0.01))\n"
+	"Select inner viewport... 3.2 6.2 2.5 4.5\n"
+	"Red\n"
+	"Draw... 0 0 -1 1 no Curve\n"
+	"Formula... self*sin(2*pi*230*x)\n"
+	"Black\n"
+	"Draw... 0 0 -1 1 no Curve\n"
+	"Draw inner box\n"
+	"One mark bottom... 0 yes yes no\n"
+	"One mark bottom... 0.01 yes yes yes\n"
+	"One mark bottom... 0.1 yes yes no\n"
+	"Text bottom... no Time (s)\n"
+	"One mark right... -1 yes yes no\n"
+	"One mark right... 0 yes yes yes\n"
+	"One mark right... 1 yes yes no\n"
+	"Remove\n"
+)
+NORMAL (L"This figure shows how the two sounds are windowed (faded out and in), as well as how they will overlap.")
+NORMAL (L"Finally, the two windowed (\"cross-faded\") sounds are added to each other:")
+SCRIPT (6.7, 3, L""
+	"sine100 = Create Sound from formula... sine100 1 0 0.1 10000 0.9*sin(2*pi*100*x)\n"
+	"sine230 = Create Sound from formula... sine100 1 0 0.1 10000 0.9*sin(2*pi*230*x)\n"
+	"plus sine100\n"
+	"Concatenate with overlap... 0.01\n"
+	"Draw... 0 0 -1 1 yes Curve\n"
+	"One mark bottom... 0.09 yes yes yes\n"
+	"One mark bottom... 0.1 yes yes yes\n"
+	"plus sine100\n"
+	"plus sine230\n"
+	"Remove\n"
+)
+NORMAL (L"This example showed how it works if you concatenate two sounds; "
+	"if you concatenate three sounds, there will be two overlaps, and so on.")
 MAN_END
 
 MAN_BEGIN (L"Sounds: Convolve...", L"ppgb & djmw", 20100404)

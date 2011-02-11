@@ -392,7 +392,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	Sound him;
 	long nx_silence = floor (silenceDuration / my dx + 0.5), nx = my nx + nx_silence + thy nx;
 	if (my ny != thy ny)
-		return Melder_errorp ("Sounds_append: numbers of channels do not match (one is mono, the other stereo).");
+		return Melder_errorp ("Sounds_append: numbers of channels do not match (e.g. one is mono, the other stereo).");
 	if (my dx != thy dx)
 		return Melder_errorp ("Sounds_append: sampling frequencies do not match.");
 	him = Sound_create (my ny, 0, nx * my dx, nx, my dx, 0.5 * my dx);
@@ -402,6 +402,78 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 		NUMdvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
 	}
 	return him;
+}
+
+Sound Sounds_concatenate_e (Ordered me, double overlapTime) {
+	Sound thee = NULL;
+	double *smoother = NULL;
+//start:
+	long numberOfChannels = 0, nx = 0, numberOfSmoothingSamples;
+	double dx = 0.0;
+	for (long i = 1; i <= my size; i ++) {
+		Sound sound = my item [i];
+		if (numberOfChannels == 0) {
+			numberOfChannels = sound -> ny;
+		} else if (sound -> ny != numberOfChannels) {
+			error1 (L"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+		}
+		if (dx == 0.0) {
+			dx = sound -> dx;
+		} else if (sound -> dx != dx) {
+			error1 (L"To concatenate sounds, their sampling frequencies must be equal.\n"
+					"You could resample one or more of the sounds before concatenating.");
+		}
+		nx += sound -> nx;
+	}
+	numberOfSmoothingSamples = round (overlapTime / dx);
+	thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx); cherror
+	if (numberOfSmoothingSamples > 0) {
+		smoother = NUMdvector (1, numberOfSmoothingSamples); cherror
+		double factor = NUMpi / numberOfSmoothingSamples;
+		for (long i = 1; i <= numberOfSmoothingSamples; i ++) {
+			smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
+		}
+	}
+	nx = 0;
+	double time = 0.0;
+	for (long i = 1; i <= my size; i ++) {
+		Sound sound = my item [i];
+		if (numberOfSmoothingSamples > 2 * sound -> nx)
+			error1 (L"At least one of the sounds is shorter than twice the overlap time.\nChoose a shorter overlap time.")
+		bool thisIsTheFirstSound = ( i == 1 );
+		bool thisIsTheLastSound = ( i == my size );
+		bool weNeedSmoothingAtTheStartOfThisSound = ! thisIsTheFirstSound;
+		bool weNeedSmoothingAtTheEndOfThisSound = ! thisIsTheLastSound;
+		long numberOfSmoothingSamplesAtTheStartOfThisSound = weNeedSmoothingAtTheStartOfThisSound ? numberOfSmoothingSamples : 0;
+		long numberOfSmoothingSamplesAtTheEndOfThisSound = weNeedSmoothingAtTheEndOfThisSound ? numberOfSmoothingSamples : 0;
+		for (long channel = 1; channel <= numberOfChannels; channel ++) {
+			for (long j = 1, mySample = 1, thySample = mySample + nx;
+				 j <= numberOfSmoothingSamplesAtTheStartOfThisSound;
+				 j ++, mySample ++, thySample ++)
+			{
+				thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
+			}
+			NUMdvector_copyElements (sound -> z [channel], thy z [channel] + nx,
+				1 + numberOfSmoothingSamplesAtTheStartOfThisSound, sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
+			for (long j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + nx;
+				 j <= numberOfSmoothingSamplesAtTheEndOfThisSound;
+				 j ++, mySample ++, thySample ++)
+			{
+				thy z [channel] [thySample] = sound -> z [channel] [mySample] * smoother [numberOfSmoothingSamplesAtTheEndOfThisSound + 1 - j];   // replace (or add, which is the same since it's all zeroes to start with)
+			}
+		}
+		nx += sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound;
+	}
+	thy nx -= numberOfSmoothingSamples * (my size - 1);
+	Melder_assert (thy nx == nx);
+	thy xmax = thy nx * dx;
+end:
+	NUMdvector_free (smoother, 1);
+	iferror {
+		forget (thee);   // defensive
+		Melder_error1 (L"Sounds not concatenated.");
+	}
+	return thee;
 }
 
 Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {

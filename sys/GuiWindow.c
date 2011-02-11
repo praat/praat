@@ -89,7 +89,7 @@ GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int heigh
 
 		gtk_window_set_default_size (GTK_WINDOW (shell), width, height);
 		GuiWindow_setTitle (shell, title);
-		
+
 		my widget = gtk_vbox_new (FALSE, 0);
 		gtk_container_add (GTK_CONTAINER (shell), my widget);
 		_GuiObject_setUserData (my widget, me);

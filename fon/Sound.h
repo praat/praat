@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,16 @@
  */
 
 /*
- * pb 2010/12/22
+ * pb 2011/02/11
  */
 
 /* Sound inherits from Vector */
 /* A Sound is a sampled signal, not quantized. */
 #ifndef _Vector_h_
 	#include "Vector.h"
+#endif
+#ifndef _Collection_h_
+	#include "Collection.h"
 #endif
 #include "Sound_enums.h"
 
@@ -165,6 +168,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
+Sound Sounds_concatenate_e (Ordered me, double overlapTime);
 void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);

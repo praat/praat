@@ -307,35 +307,40 @@ DIRECT (Sounds_combineToStereo)
 END
 
 DIRECT (Sounds_concatenate)
-	long numberOfChannels = 0, nx = 0;
-	double dx = 0.0;
-	Sound thee;
+	Ordered ordered = NULL;
+	Sound result = NULL;
+//start:
+	ordered = Ordered_create (); cherror
 	WHERE (SELECTED) {
-		Sound me = OBJECT;
-		if (numberOfChannels == 0) {
-			numberOfChannels = my ny;
-		} else if (my ny != numberOfChannels) {
-			return Melder_error1 (L"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
-		}
-		if (dx == 0.0) {
-			dx = my dx;
-		} else if (my dx != dx) {
-			(void) Melder_error1 (L"To concatenate sounds, their sampling frequencies must be equal.\n");
-			return Melder_error1 (L"You could resample one or more of the sounds before concatenating.");
-		}
-		nx += my nx;
+		Collection_addItem (ordered, OBJECT); cherror   // copy reference
 	}
-	thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
-	if (! thee) return 0;
-	nx = 0;
+	result = Sounds_concatenate_e (ordered, 0.0); cherror
+	praat_new1 (result, L"chain"); cherror
+end:
+	if (ordered != NULL) {
+		ordered -> size = 0;   // uncopy reference
+		forget (ordered);
+	}
+END
+
+FORM (Sounds_concatenateWithOverlap, L"Sounds: Concatenate with overlap", L"Sounds: Concatenate with overlap...")
+	POSITIVE (L"Overlap (s)", L"0.01")
+	OK
+DO
+	Ordered ordered = NULL;
+	Sound result = NULL;
+//start:
+	ordered = Ordered_create (); cherror
 	WHERE (SELECTED) {
-		Sound me = OBJECT;
-		for (long channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMdvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
-		}
-		nx += my nx;
+		Collection_addItem (ordered, OBJECT); cherror   // copy reference
 	}
-	if (! praat_new1 (thee, L"chain")) return 0;
+	result = Sounds_concatenate_e (ordered, GET_REAL (L"Overlap")); cherror
+	praat_new1 (result, L"chain"); cherror
+end:
+	if (ordered != NULL) {
+		ordered -> size = 0;   // uncopy reference
+		forget (ordered);
+	}
 END
 
 DIRECT (Sounds_concatenateRecoverably)
@@ -2011,7 +2016,7 @@ void praat_uvafon_Sound_init (void) {
 	praat_addMenuCommand (L"Objects", L"Preferences", L"LongSound preferences...", 0, 0, DO_LongSoundPrefs);
 
 	praat_addAction1 (classLongSound, 0, L"LongSound help", 0, 0, DO_LongSound_help);
-	praat_addAction1 (classLongSound, 1, L"View", 0, 0, DO_LongSound_view);
+	praat_addAction1 (classLongSound, 1, L"View", 0, praat_ATTRACTIVE, DO_LongSound_view);
 	praat_addAction1 (classLongSound, 1, L"Open", 0, praat_HIDDEN, DO_LongSound_view);   // deprecated 2011
 	praat_addAction1 (classLongSound, 0, L"Play part...", 0, 0, DO_LongSound_playPart);
 	praat_addAction1 (classLongSound, 1, L"Query -", 0, 0, 0);
@@ -2248,6 +2253,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 2, L"Combine to stereo", 0, 1, DO_Sounds_combineToStereo);
 		praat_addAction1 (classSound, 0, L"Concatenate", 0, 1, DO_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, L"Concatenate recoverably", 0, 1, DO_Sounds_concatenateRecoverably);
+		praat_addAction1 (classSound, 0, L"Concatenate with overlap...", 0, 1, DO_Sounds_concatenateWithOverlap);
 		praat_addAction1 (classSound, 2, L"Convolve", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sounds_convolve_old);
 		praat_addAction1 (classSound, 2, L"Convolve...", 0, 1, DO_Sounds_convolve);
 		praat_addAction1 (classSound, 2, L"Cross-correlate...", 0, 1, DO_Sounds_crossCorrelate);

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110208)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110211)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.15# (11 February 2011)")
+LIST_ITEM (L"\\bu @@Sounds: Concatenate with overlap...@.")
 NORMAL (L"##5.2.14# (8 February 2011)")
 LIST_ITEM (L"\\bu Repaired crashing bug in Manipulation window introduced in 5.2.13.")
 NORMAL (L"##5.2.13# (7 February 2011)")
@@ -1771,9 +1773,10 @@ NORMAL (L"Then, once you have a @Sound object in the @@List of Objects@, "
 NORMAL (L"For more information, see the @@Sound files@ tutorial.")
 MAN_END
 
-MAN_BEGIN (L"Intro 2.2. Viewing and editing a sound", L"ppgb", 20110128)
+MAN_BEGIN (L"Intro 2.2. Viewing and editing a sound", L"ppgb", 20110212)
 NORMAL (L"To see the wave form of a @Sound that is in the list of objects, "
 	"select that Sound and click @@View & Edit@. A @SoundEditor window will appear on your screen. "
+	"You see a waveform (or two waveforms, if you have a stereo sound) and probably some \"analyses\" below it. "
 	"You can zoom in and scroll to see the various parts of the sound in detail. "
 	"You can select a part of the sound by dragging with the mouse. "
 	"To play a part of the sound, click on any of the rectangles below it. "

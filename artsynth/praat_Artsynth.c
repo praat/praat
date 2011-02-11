@@ -320,11 +320,11 @@ void praat_uvafon_Artsynth_init (void) {
 	praat_addMenuCommand (L"Objects", L"New", L"-- new vocal tract --", 0, 1, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Vocal Tract from phone...", 0, 1, DO_VocalTract_createFromPhone);
 
-	praat_addAction1 (classArt, 1, L"View & Edit", 0, 0, DO_Art_edit);
+	praat_addAction1 (classArt, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Art_edit);
 	praat_addAction1 (classArt, 1, L"Edit", 0, praat_HIDDEN, DO_Art_edit);
 
 	praat_addAction1 (classArtword, 0, L"Artword help", 0, 0, DO_Artword_help);
-	praat_addAction1 (classArtword, 1, L"View & Edit", 0, 0, DO_Artword_edit);
+	praat_addAction1 (classArtword, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Artword_edit);
 	praat_addAction1 (classArtword, 1, L"Edit", 0, praat_HIDDEN, DO_Artword_edit);
 	praat_addAction1 (classArtword, 0, L"Info", 0, 0, 0);
 	praat_addAction1 (classArtword, 1, L"Get target...", 0, 0, DO_Artword_getTarget);
