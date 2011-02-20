@@ -44,10 +44,10 @@ oo_CLASS_CREATE (SimpleDouble, Data);
 #define SimpleString_methods Data_methods
 oo_CLASS_CREATE (SimpleString, Data);
 
-SimpleInt SimpleInt_create (int number);
-SimpleShort SimpleShort_create (short number);
-SimpleLong SimpleLong_create (long number);
-SimpleDouble SimpleDouble_create (double number);
-SimpleString SimpleString_create (const wchar_t *string);
+GLOBAL_C SimpleInt SimpleInt_create (int number);
+GLOBAL_C SimpleShort SimpleShort_create (short number);
+GLOBAL_C SimpleLong SimpleLong_create (long number);
+GLOBAL_C SimpleDouble SimpleDouble_create (double number);
+GLOBAL_C SimpleString SimpleString_create (const wchar_t *string);
 
 #endif

@@ -257,7 +257,7 @@ KlattGRID_EDIT_FORMANTGRID(Frication,KlattGrid_FRICATION_FORMANTS)
 #undef KlattGRID_EDIT_FORMANTGRID
 
 #define KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER(Name,name,formantType) \
-FORM (KlattGrid_edit##Name##FormantAmplitudeTier, L"KlattGrid: Edit " #name "formant amplitude tier", 0) \
+FORM (KlattGrid_edit##Name##FormantAmplitudeTier, L"KlattGrid: View & Edit " #name "formant amplitude tier", 0) \
 	NATURAL (L"Formant number", L"1") \
 	OK \
 DO \

@@ -73,8 +73,8 @@ class_create (Collection, Data);
 		item [1..size]		// the items.
 */
 
-int Collection_init (I, void *itemClass, long initialCapacity);
-Any Collection_create (void *itemClass, long initialCapacity);
+GLOBAL_C int Collection_init (I, void *itemClass, long initialCapacity);
+GLOBAL_C Any Collection_create (void *itemClass, long initialCapacity);
 /*
 	Function:
 		return a new empty Collection, or NULL if out of memory.
@@ -91,7 +91,7 @@ Any Collection_create (void *itemClass, long initialCapacity);
 	these routines fail with a message and return 0.
 */
 
-int Collection_addItem (I, Any item);
+GLOBAL_C int Collection_addItem (I, Any item);
 /*
 	Function:
 		add the 'item' to the collection. Return 0 if out of memory, else 1.
@@ -105,7 +105,7 @@ int Collection_addItem (I, Any item);
 	if that item already occurred in the Collection.
 */
 
-void Collection_removeItem (I, long position);
+GLOBAL_C void Collection_removeItem (I, long position);
 /*
 	Function:
 		remove the item at 'position' from the collection and from memory.
@@ -116,7 +116,7 @@ void Collection_removeItem (I, long position);
 		my _capacity not changed;
 */
 
-void Collection_undangleItem (I, Any item);
+GLOBAL_C void Collection_undangleItem (I, Any item);
 /*
 	Function:
 		remove the item from the collection, without destroying it.
@@ -127,7 +127,7 @@ void Collection_undangleItem (I, Any item);
 		often used just before the item is destroyed, hence the name of this procedure.
 */
 
-Any Collection_subtractItem (I, long position);
+GLOBAL_C Any Collection_subtractItem (I, long position);
 /*
 	Function:
 		remove the item at 'position' from the collection and transfer ownership to the caller.
@@ -140,7 +140,7 @@ Any Collection_subtractItem (I, long position);
 		my _capacity not changed;
 */
 
-void Collection_removeAllItems (I);
+GLOBAL_C void Collection_removeAllItems (I);
 /*
 	Function:
 		remove all items from the collection and from memory.
@@ -149,7 +149,7 @@ void Collection_removeAllItems (I);
 		my _capacity not changed;
 */
 
-void Collection_shrinkToFit (I);
+GLOBAL_C void Collection_shrinkToFit (I);
 /*
 	Function:
 		release as much memory as possible without affecting the items.
@@ -157,7 +157,7 @@ void Collection_shrinkToFit (I);
 		my _capacity == max (my size, 1);
 */
 
-Any Collections_merge (I, thou);
+GLOBAL_C Any Collections_merge (I, thou);
 /*
 	Function:
 		merge two Collections into a new one.
@@ -168,7 +168,7 @@ Any Collections_merge (I, thou);
 
 /* For the inheritors. */
 
-int _Collection_insertItem (I, Any item, long position);
+GLOBAL_C int _Collection_insertItem (I, Any item, long position);
 
 /* Methods:
 
@@ -184,14 +184,14 @@ int _Collection_insertItem (I, Any item, long position);
 #define Ordered_methods Collection_methods
 class_create (Ordered, Collection);
 
-Any Ordered_create (void);
-int Ordered_init (I, void *itemClass, long initialCapacity);
+GLOBAL_C Any Ordered_create (void);
+GLOBAL_C int Ordered_init (I, void *itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Ordered) inserts an item at the end.
 */
 
-int Ordered_addItemPos (I, Any data, long position);
+GLOBAL_C int Ordered_addItemPos (I, Any data, long position);
 /*
 	Function:
 		insert an item at 'position'.
@@ -207,7 +207,7 @@ int Ordered_addItemPos (I, Any data, long position);
 	int (*compare) (I, thou);
 class_create (Sorted, Collection);
 
-int Sorted_init (I, void *itemClass, long initialCapacity);
+GLOBAL_C int Sorted_init (I, void *itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Sorted) inserts an item at such a position that the collection stays sorted.
@@ -223,14 +223,14 @@ int Sorted_init (I, void *itemClass, long initialCapacity);
 	with every insertion.
 */
 
-int Sorted_addItem_unsorted (I, Any data);
+GLOBAL_C int Sorted_addItem_unsorted (I, Any data);
 /*
 	Function:
 		add an item to the collection, quickly at the end.
 	Warning:
 		this leaves the collection unsorted; follow by Sorted_sort ().
 */
-void Sorted_sort (I);
+GLOBAL_C void Sorted_sort (I);
 /* Call this after a number of calls to Sorted_addItem_unsorted (). */
 /* The procedure used is 'heapsort'. */
 
@@ -240,7 +240,7 @@ void Sorted_sort (I);
 #define SortedSet_methods Sorted_methods
 class_create (SortedSet, Sorted);
 
-int SortedSet_init (I, void *itemClass, long initialCapacity);
+GLOBAL_C int SortedSet_init (I, void *itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (SortedSet) refuses to insert an item if this item already occurs.
@@ -248,7 +248,7 @@ int SortedSet_init (I, void *itemClass, long initialCapacity);
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
 
-int SortedSet_hasItem (I, Any item);
+GLOBAL_C int SortedSet_hasItem (I, Any item);
 
 /********** class SortedSetOfInt **********/
 
@@ -256,8 +256,8 @@ int SortedSet_hasItem (I, Any item);
 #define SortedSetOfInt_methods SortedSet_methods
 class_create (SortedSetOfInt, SortedSet);
 
-int SortedSetOfInt_init (I);
-SortedSetOfInt SortedSetOfInt_create (void);
+GLOBAL_C int SortedSetOfInt_init (I);
+GLOBAL_C SortedSetOfInt SortedSetOfInt_create (void);
 
 /********** class SortedSetOfShort **********/
 
@@ -265,8 +265,8 @@ SortedSetOfInt SortedSetOfInt_create (void);
 #define SortedSetOfShort_methods SortedSet_methods
 class_create (SortedSetOfShort, SortedSet);
 
-int SortedSetOfShort_init (I);
-SortedSetOfShort SortedSetOfShort_create (void);
+GLOBAL_C int SortedSetOfShort_init (I);
+GLOBAL_C SortedSetOfShort SortedSetOfShort_create (void);
 
 /********** class SortedSetOfLong **********/
 
@@ -274,8 +274,8 @@ SortedSetOfShort SortedSetOfShort_create (void);
 #define SortedSetOfLong_methods SortedSet_methods
 class_create (SortedSetOfLong, SortedSet);
 
-int SortedSetOfLong_init (I);
-SortedSetOfLong SortedSetOfLong_create (void);
+GLOBAL_C int SortedSetOfLong_init (I);
+GLOBAL_C SortedSetOfLong SortedSetOfLong_create (void);
 
 /********** class SortedSetOfDouble **********/
 
@@ -283,8 +283,8 @@ SortedSetOfLong SortedSetOfLong_create (void);
 #define SortedSetOfDouble_methods SortedSet_methods
 class_create (SortedSetOfDouble, SortedSet);
 
-int SortedSetOfDouble_init (I);
-SortedSetOfDouble SortedSetOfDouble_create (void);
+GLOBAL_C int SortedSetOfDouble_init (I);
+GLOBAL_C SortedSetOfDouble SortedSetOfDouble_create (void);
 
 /********** class SortedSetOfString **********/
 
@@ -292,10 +292,10 @@ SortedSetOfDouble SortedSetOfDouble_create (void);
 #define SortedSetOfString_methods SortedSet_methods
 class_create (SortedSetOfString, SortedSet);
 
-int SortedSetOfString_init (I);
-SortedSetOfString SortedSetOfString_create (void);
-long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
-int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
+GLOBAL_C int SortedSetOfString_init (I);
+GLOBAL_C SortedSetOfString SortedSetOfString_create (void);
+GLOBAL_C long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
+GLOBAL_C int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
 
 /********** class Cyclic **********/
 
@@ -304,9 +304,9 @@ int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
 	int (*compare) (I, thou);   /* virtual */
 class_create (Cyclic, Collection);
 
-int Cyclic_init (I, void *itemClass, long initialCapacity);
+GLOBAL_C int Cyclic_init (I, void *itemClass, long initialCapacity);
 
-void Cyclic_unicize (I);
+GLOBAL_C void Cyclic_unicize (I);
 
 /* End of file Collection.h */
 #endif

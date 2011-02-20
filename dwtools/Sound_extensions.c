@@ -378,7 +378,7 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 	else if (nBytesPerSample == 4 && ! unSigned) i4write (me, f, littleEndian, & nClip);
 	else if (nBytesPerSample == 4 && strequ (format, "float")) r4write (me, f);
 	if (nClip > 0) Melder_warning4 (Melder_integer (nClip), L" from ", Melder_integer (my nx), L" samples have been clipped.\n"
-		"Advice: you could scale the amplitudes or write to a binary file.");
+		"Advice: you could scale the amplitudes or save as a binary file.");
 	if (feof (f) || ferror (f))
 	{
 		Melder_error1 (L"Sound_writeToRawFile: not completed"); goto error;
@@ -387,7 +387,7 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 	return 1;
 error:
 	Melder_fclose (file, f);
-	return Melder_error3 (L"Sound_writeToRawFile: writing to file \"", MelderFile_name (file), L"\" not performed.");
+	return Melder_error3 (L"Sound_writeToRawFile: saving as file \"", MelderFile_name (file), L"\" not performed.");
 }
 
 struct dialogic_adpcm

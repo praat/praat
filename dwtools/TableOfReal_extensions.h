@@ -198,8 +198,7 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
 
 double TableOfReal_normalityTest_BHEP (I, double *beta, double *tnb, double *lnmu, double *lnvar);
 
-TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int nosign);
-TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int nosign);
+TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (I, thou, int by_columns, int center, int normalize);
 
 /********************* class TablesOfReal ******************************/
 

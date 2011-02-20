@@ -1,6 +1,6 @@
 /* manual_Fon.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1491,43 +1491,310 @@ TAG (L"##Time (s)")
 DEFINITION (L"the time around which a point is looked for, in seconds.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (local)...", L"ppgb", 20030521)
-INTRO (L"A @query to the selected @PointProcess object. See @@Voice 2. Jitter@.")
+MAN_BEGIN (L"PointProcess: Get jitter (local)...", L"ppgb", 20110220)
+INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
+NORMAL (L"This command will write into the Info window "
+	"the %%local jitter%, which is the average absolute difference between consecutive intervals, "
+	"divided by the average interval (an interval is the time between two consecutive points).")
+NORMAL (L"As %jitter is often used as a measure of voice quality (see @@Voice 2. Jitter@), "
+	"the intervals are often considered to be %%glottal periods%. "
+	"For this reason, the command has settings that can limit the possible duration of the interval (or period) "
+	"or the possible difference in the durations of consecutive intervals (periods).")
+ENTRY (L"1. The command window")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("PointProcess: Get jitter (local)", 4)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period floor (s)", "0.0001")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the start time and end time of the part of the PointProcess that will be measured. "
+	"Points outside this range will be ignored.")
+TAG (L"##Period floor (s)")
+DEFINITION (L"the shortest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is shorter than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"This setting will normally be very small, say 0.1 ms.")
+TAG (L"##Period ceiling (s)")
+DEFINITION (L"the longest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is longer than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"For example, if the minimum frequency of periodicity is 50 Hz, set this setting to 0.02 seconds; "
+	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
+TAG (L"##Maximum period factor")
+DEFINITION (L"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
+	"If the ratio of the durations of two consecutive intervals is greater than this, "
+	"this pair of intervals will be ignored in the computation of jitter "
+	"(each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).")
+ENTRY (L"2. Usage")
+NORMAL (L"The local jitter can be used as a measure of voice quality; "
+	"it is the most common jitter measurement and is usually expressed as a percentage. See @@Voice 2. Jitter@.")
+ENTRY (L"3. Algorithm")
+NORMAL (L"(In the following the term %absolute means two different things: (1) the absolute (i.e. non-negative) value of a real number, "
+	"and (2) the opposite of %relative.)")
+NORMAL (L"The local jitter is defined as the relative mean absolute "
+	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
+NORMAL (L"First, we define the absolute (non-relative) local jitter (in seconds) as the mean absolute (non-negative) "
+	"difference of consecutive intervals:")
+FORMULA (L"%jitter(seconds) = \\su__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i-1_ or %T__%i_ is not between ##Shortest period# and ##Longest period#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
+	"the term |%T__%i_ - %T__%i-1_| is not counted in the sum, and %N is lowered by 1 "
+	"(if %N ends up being less than 2, the result of the command is @undefined).")
+NORMAL (L"Second, we define the mean period as")
+FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
+	"%and %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term %T__%i_ is not counted in the sum, and %N is lowered by 1; "
+	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
+	"that had taken part in the computation of the absolute local jitter.")
+NORMAL (L"Finally, we compute the (relative) local jitter as")
+FORMULA (L"%jitter = %jitter(seconds) / %meanPeriod(seconds)")
+NORMAL (L"The result is a value between 0 and 2, or between 0 and 200 percent.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (local, absolute)...", L"ppgb", 20030521)
-INTRO (L"A @query to the selected @PointProcess object. See @@Voice 2. Jitter@.")
+MAN_BEGIN (L"PointProcess: Get jitter (local, absolute)...", L"ppgb", 20110220)
+INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
+NORMAL (L"This command will write into the Info window "
+	"the %%absolute local jitter%, which is the average absolute difference between consecutive intervals, "
+	"in seconds (an interval is the time between two consecutive points).")
+NORMAL (L"As %jitter is often used as a measure of voice quality (see @@Voice 2. Jitter@), "
+	"the intervals are often considered to be %%glottal periods%. "
+	"For this reason, the command has settings that can limit the possible duration of the interval (or period) "
+	"or the possible difference in the durations of consecutive intervals (periods).")
+ENTRY (L"1. The command window")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("PointProcess: Get jitter (local, absolute)", 4)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period floor (s)", "0.0001")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the start time and end time of the part of the PointProcess that will be measured. "
+	"Points outside this range will be ignored.")
+TAG (L"##Period floor (s)")
+DEFINITION (L"the shortest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is shorter than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"This setting will normally be very small, say 0.1 ms.")
+TAG (L"##Period ceiling (s)")
+DEFINITION (L"the longest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is longer than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
+	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
+TAG (L"##Maximum period factor")
+DEFINITION (L"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
+	"If the ratio of the durations of two consecutive intervals is greater than this, "
+	"this pair of intervals will be ignored in the computation of jitter "
+	"(each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).")
+ENTRY (L"2. Usage")
+NORMAL (L"The local jitter can be used as a measure of voice quality. See @@Voice 2. Jitter@.")
+ENTRY (L"3. Algorithm")
+NORMAL (L"The absolute local jitter is defined as the absolute (i.e. non-relative) mean absolute (i.e. non-negative) "
+	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
+NORMAL (L"The absolute local jitter (in seconds) is the mean absolute (non-negative) "
+	"difference of consecutive intervals:")
+FORMULA (L"%jitter(seconds) = \\su__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
+	"the term |%T__%i_ - %T__%i-1_| is not counted in the sum, and %N is lowered by 1 "
+	"(if %N ends up being less than 2, the result of the command is @undefined).")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (rap)...", L"ppgb", 20030521)
-INTRO (L"A @query to the selected @PointProcess object. See @@Voice 2. Jitter@.")
+MAN_BEGIN (L"PointProcess: Get jitter (rap)...", L"ppgb", 20110220)
+INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
+NORMAL (L"This command will write into the Info window the %%Relative Average Perturbation% (RAP), "
+	"a jitter measure defined as the average absolute difference between an interval and the average of it and its two neighbours, "
+	"divided by the average interval (an interval is the time between two consecutive points).")
+NORMAL (L"As jitter is often used as a measure of voice quality (see @@Voice 2. Jitter@), "
+	"the intervals are often considered to be %%glottal periods%. "
+	"For this reason, the command has settings that can limit the possible duration of the interval (or period) "
+	"or the possible difference in the durations of consecutive intervals (periods).")
+ENTRY (L"1. The command window")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("PointProcess: Get jitter (rap)", 4)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period floor (s)", "0.0001")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the start time and end time of the part of the PointProcess that will be measured. "
+	"Points outside this range will be ignored.")
+TAG (L"##Period floor (s)")
+DEFINITION (L"the shortest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is shorter than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"This setting will normally be very small, say 0.1 ms.")
+TAG (L"##Period ceiling (s)")
+DEFINITION (L"the longest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is longer than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
+	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
+TAG (L"##Maximum period factor")
+DEFINITION (L"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
+	"If the ratio of the durations of two consecutive intervals is greater than this, "
+	"this pair of intervals will be ignored in the computation of jitter "
+	"(each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).")
+ENTRY (L"2. Usage")
+NORMAL (L"The RAP can be used as a measure of voice quality; "
+	"it is the second most common jitter measurement (after @@PointProcess: Get jitter (local)...|local jitter@). See @@Voice 2. Jitter@.")
+ENTRY (L"3. Algorithm")
+NORMAL (L"Relative Average Perturbation is defined in terms of three consecutive intervals, as follows.")
+NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds):")
+FORMULA (L"%absAP(seconds) = \\su__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Shortest period# and ##Longest period#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| is not counted in the sum, and %N is lowered by 1 "
+	"(if %N ends up being less than 3, the result of the command is @undefined).")
+NORMAL (L"Second, we define the mean period as")
+FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
+	"%and %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term %T__%i_ is not counted in the sum, and %N is lowered by 1; "
+	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
+	"that had taken part in the computation of the absolute average perturbation.")
+NORMAL (L"Finally, we compute the Relative Average Perturbation as")
+FORMULA (L"%RAP = %absAP(seconds) / %meanPeriod(seconds)")
+NORMAL (L"The result is a value between 0 and 2, or between 0 and 200 percent.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (ppq5)...", L"ppgb", 20030521)
-INTRO (L"A @query to the selected @PointProcess object. See @@Voice 2. Jitter@.")
+MAN_BEGIN (L"PointProcess: Get jitter (ppq5)...", L"ppgb", 20110220)
+INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
+NORMAL (L"This command will write into the Info window the %%five-point Period Perturbation Quotient%, "
+	"a jitter measure defined as the average absolute difference between an interval and the average of it and its four closest neighbours, "
+	"divided by the average interval (an interval is the time between two consecutive points).")
+NORMAL (L"As jitter is often used as a measure of voice quality (see @@Voice 2. Jitter@), "
+	"the intervals are often considered to be %%glottal periods%. "
+	"For this reason, the command has settings that can limit the possible duration of the interval (or period) "
+	"or the possible difference in the durations of consecutive intervals (periods).")
+ENTRY (L"1. The command window")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("PointProcess: Get jitter (rap)", 4)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period floor (s)", "0.0001")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the start time and end time of the part of the PointProcess that will be measured. "
+	"Points outside this range will be ignored.")
+TAG (L"##Period floor (s)")
+DEFINITION (L"the shortest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is shorter than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"This setting will normally be very small, say 0.1 ms.")
+TAG (L"##Period ceiling (s)")
+DEFINITION (L"the longest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is longer than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
+	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
+TAG (L"##Maximum period factor")
+DEFINITION (L"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
+	"If the ratio of the durations of two consecutive intervals is greater than this, "
+	"this pair of intervals will be ignored in the computation of jitter "
+	"(each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).")
+ENTRY (L"2. Usage")
+NORMAL (L"The jitter can be used as a measure of voice quality. See @@Voice 2. Jitter@.")
+ENTRY (L"3. Algorithm")
+NORMAL (L"The five-point Period Perturbation Quotient (PPQ5) is defined in terms of five consecutive intervals, as follows.")
+NORMAL (L"First, we define the absolute (i.e. non-relative) PPQ5 (in seconds):")
+FORMULA (L"%absPPQ5(seconds) = \\su__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i-2_ or %T__%i-1_ or %T__%i_ or %T__%i+1_ or %T__%i+2_ is not between ##Shortest period# and ##Longest period#, "
+	"or if %T__%i-2_/%T__%i-1_ or %T__%i-1_/%T__%i-2_ or %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ or %T__%i+2_/%T__%i+1_ or %T__%i+1_/%T__%i+2_ is greater than ##Maximum period factor#, "
+	"the term |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| is not counted in the sum, and %N is lowered by 1 "
+	"(if %N ends up being less than 5, the result of the command is @undefined).")
+NORMAL (L"Second, we define the mean period as")
+FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
+	"%and %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term %T__%i_ is not counted in the sum, and %N is lowered by 1; "
+	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
+	"that had taken part in the computation of the absolute PPQ5.")
+NORMAL (L"Finally, we compute the five-point Period Perturbation Quotient as")
+FORMULA (L"%PPQ5 = %PPQ5(seconds) / %meanPeriod(seconds)")
+NORMAL (L"The result is a value between 0 and 4, or between 0 and 400 percent.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (ddp)...", L"ppgb", 20030521)
-INTRO (L"A @query to the selected @PointProcess object.")
-ENTRY (L"Return value")
-NORMAL (L"the periodic jitter, which is defined as the relative mean absolute "
-	"third-order difference of the point process (= the second-order difference of the interval process):")
-FORMULA (L"%jitter = \\su__%i=2_^^%N-1^ |2%T__%i_ - %T__%i-1_ - %T__%i+1_|  /  \\su__%i=2_^^%N-1^ %T__%i_")
-NORMAL (L"where %T__%i_ is the %%i%th interval and %N is the number of intervals. "
-	"If no sequences of three intervals can be found whose durations "
-	"are between %%Shortest period% and %%Longest period%, the result is @undefined.")
-ENTRY (L"Settings")
-TAG (L"##Shortest period (s)")
-DEFINITION (L"the shortest possible interval that will be considered, in seconds. For intervals %T__%i_ shorter than this, "
-	"the (%i-1)st, %%i%th, and (%i+1)st terms in the formula are taken as zero. "
-	"This argument will normally be very small, say 0.1 ms.")
-TAG (L"##Longest period (s)")
-DEFINITION (L"the shortest possible interval that will be considered, in seconds. For intervals %T__%i_ longer than this, "
-	"the (%i-1)st, %%i%th, and (%i+1)st terms in the formula are taken as zero. "
-	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 20 milliseconds; "
-	"intervals longer than that will be considered voiceless.")
-ENTRY (L"Usage")
-NORMAL (L"The periodic jitter can be used as a measure of voice quality. See @@Voice 2. Jitter@.")
+MAN_BEGIN (L"PointProcess: Get jitter (ddp)...", L"ppgb", 20110220)
+INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
+NORMAL (L"This command will write into the Info window the %%Difference of Differences of Periods%, "
+	"a jitter measure defined as the average absolute difference between the consecutives differences between consecutive intervals, "
+	"divided by the average interval (an interval is the time between two consecutive points).")
+NORMAL (L"As jitter is often used as a measure of voice quality (see @@Voice 2. Jitter@), "
+	"the intervals are often considered to be %%glottal periods%. "
+	"For this reason, the command has settings that can limit the possible duration of the interval (or period) "
+	"or the possible difference in the durations of consecutive intervals (periods).")
+ENTRY (L"1. The command window")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("PointProcess: Get jitter (rap)", 4)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Time range (s)", "0.0", "0.0 (= all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period floor (s)", "0.0001")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Period ceiling (s)", "0.02")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Maximum period factor", "1.3")
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the start time and end time of the part of the PointProcess that will be measured. "
+	"Points outside this range will be ignored.")
+TAG (L"##Period floor (s)")
+DEFINITION (L"the shortest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is shorter than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"This setting will normally be very small, say 0.1 ms.")
+TAG (L"##Period ceiling (s)")
+DEFINITION (L"the longest possible interval that will be used in the computation of jitter, in seconds. "
+	"If an interval is longer than this, it will be ignored in the computation of jitter "
+	"(and the previous and next intervals will not be regarded as consecutive). "
+	"For example, if the minimum frequency of periodicity is 50 Hz, set this argument to 0.02 seconds; "
+	"intervals longer than that could be regarded as voiceless stretches and will be ignored in the computation.")
+TAG (L"##Maximum period factor")
+DEFINITION (L"the largest possible difference between consecutive intervals that will be used in the computation of jitter. "
+	"If the ratio of the durations of two consecutive intervals is greater than this, "
+	"this pair of intervals will be ignored in the computation of jitter "
+	"(each of the intervals could still take part in the computation of jitter in a comparison with its neighbour on the other side).")
+ENTRY (L"2. Usage")
+NORMAL (L"The jitter can be used as a measure of voice quality. See @@Voice 2. Jitter@.")
+ENTRY (L"3. Algorithm")
+NORMAL (L"(In the following the term %absolute means two different things: (1) the absolute (i.e. non-negative) value of a real number, "
+	"and (2) the opposite of %relative.)")
+NORMAL (L"DDP is defined as the relative mean absolute (i.e. non-negative) "
+	"third-order difference of the point process (= the second-order difference of the interval process), as follows.")
+NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds) as one third of the mean absolute (non-negative) "
+	"difference of difference of consecutive intervals:")
+FORMULA (L"%absDDP(seconds) = \\su__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Shortest period# and ##Longest period#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term |2%T__%i_ - %T__%i-1_ - %T__%i+1_| is not counted in the sum, and %N is lowered by 1 "
+	"(if %N ends up being less than 3, the result of the command is @undefined).")
+NORMAL (L"Second, we define the mean period as")
+FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
+	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
+	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
+	"%and %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
+	"the term %T__%i_ is not counted in the sum, and %N is lowered by 1; "
+	"this procedure ensures that in the computation of the mean period we use at least all the intervals "
+	"that had taken part in the computation of DDP.")
+NORMAL (L"Finally, we compute DDP as")
+FORMULA (L"%DDP = %absDDP(seconds) / %meanPeriod(seconds)")
+NORMAL (L"The result is exactly 3 times the @@PointProcess: Get jitter (rap)...|RAP@ jitter measurement: "
+	"a value between 0 and 6, or between 0 and 600 percent.")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Get low index...", L"ppgb", 20021212)

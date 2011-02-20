@@ -20,12 +20,15 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-void manual_tutorials_init (ManPages me);
-void manual_tutorials_init (ManPages me) {
+GLOBAL_C void manual_tutorials_init (ManPages me);
+GLOBAL_C void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110211)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110220)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.16# (20 February 2011)")
+LIST_ITEM (L"\\bu Better support for WAV files with special \"chunks\" in them.")
+LIST_ITEM (L"\\bu Manual: documentation of explicit formulas for @@Voice 2. Jitter|jitter measurements@.")
 NORMAL (L"##5.2.15# (11 February 2011)")
 LIST_ITEM (L"\\bu @@Sounds: Concatenate with overlap...@.")
 NORMAL (L"##5.2.14# (8 February 2011)")
@@ -2214,6 +2217,16 @@ NORMAL (L"To save a pitch contour to disk, select the @Pitch object in the list 
 NORMAL (L"Later on, you can read the saved file again with @@Read from file...@ from the @@Open menu@.")
 NORMAL (L"To draw a @Pitch object to the @@Picture window@, select it and choose any of the commands in the @@Draw menu@. "
 	"From the Picture window, you can print it, save it to an EPS file, or copy it to the clipboard for inclusion in your word processor.")
+MAN_END
+
+MAN_BEGIN (L"Advanced pulses settings...", L"ppgb", 20110220)
+INTRO (L"A command in the #Pulses menu of the @SoundEditor or @TextGridEditor windows. "
+	"Before changing the advanced pulses settings, make sure you understand "
+	"the @@Voice@ tutorial.")
+NORMAL (L"For information about the ##Maximum period factor# setting, see @@PointProcess: Get jitter (local)...@. "
+	"The standard setting is best in most cases. "
+	"The ##Period floor# and ##Period ceiling# settings derive from the pitch floor and pitch ceiling (@@Pitch settings...@), "
+	"according to a formula given in @@Voice 2. Jitter@.")
 MAN_END
 
 MAN_BEGIN (L"Intro 5. Formant analysis", L"ppgb", 20030316)

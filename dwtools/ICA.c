@@ -133,6 +133,7 @@ static void NUMdmatrix_normalizeColumnVectors (double **w, long nrw, long ncw, d
 static double NUMdmatrix_diagonalityMeasure (double **v, long dimension)
 {
 	double dmsq = 0;
+	if (dimension < 2) return 0;
 	for (long i = 1; i <= dimension; i++)
 	{
 		for (long j = 1; j <= dimension; j++)
@@ -140,7 +141,7 @@ static double NUMdmatrix_diagonalityMeasure (double **v, long dimension)
 			if (i != j) { dmsq += v[i][j] * v[i][j]; }
 		}
 	}
-	return dmsq;
+	return dmsq / (dimension * (dimension -1 ));
 }
 
 static double NUMdmatrix_diagonalityIndex (double **v, long dimension)
@@ -182,13 +183,13 @@ static double NUMdmatrix_diagonalityIndex (double **v, long dimension)
 */
 static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double delta)
 {
-	long iter = 0, dimension = my numberOfRows, noff = thy size * dimension * (dimension - 1);
+	long iter = 0, dimension = my numberOfRows;
 	double theta = 1, **w = NULL, **v = my data, **vnew = NULL, **cc = NULL;
 	double dm_old, dm_new;
 	CrossCorrelationTables ccts = NULL;
 
 // start:
-	ccts = Data_copy (thee); cherror
+	ccts = CrossCorrelationTables_and_Diagonalizer_diagonalize (thee, me); cherror
 	w = NUMdmatrix (1, dimension, 1, dimension); cherror
 	vnew = NUMdmatrix (1, dimension, 1, dimension); cherror
 	cc = NUMdmatrix (1, dimension, 1, dimension); cherror
@@ -197,7 +198,7 @@ static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cros
 
 	MelderInfo_open ();
 	dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts, NULL, 0, 0);
-	MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= diagonality measurement)");
+	MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
 
 	do
 	{
@@ -261,7 +262,7 @@ static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cros
 		}
 		dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts, NULL, 0, 0);
 		iter++;
-		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new / noff), L" (= diagonality measurement)");
+		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
 	} while (fabs((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 
 end:
@@ -504,8 +505,8 @@ CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTi
 	for (long i = 1; i <= ncovars; i++)
 	{
 		double lag = (i - 1) * lagTime;
-		CrossCorrelationTable cov = Sound_to_CrossCorrelationTable (me, startTime, endTime, lag);
-		if (cov == NULL || ! Collection_addItem (thee, cov)) goto end;
+		CrossCorrelationTable ct = Sound_to_CrossCorrelationTable (me, startTime, endTime, lag);
+		if (ct == NULL || ! Collection_addItem (thee, ct)) goto end;
 	}
 end:
 	if (Melder_hasError ()) forget (thee);
@@ -654,13 +655,14 @@ Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee)
 
 Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee)
 {
+	Sound him = NULL;
+	double **minv = NULL;
 	if (my ny != thy numberOfRows) return Melder_errorp1 (L"The MixingMatrix and the Sound must have the same number of channels.");
-	double **minv = NUMdmatrix (1, thy numberOfColumns, 1, thy numberOfRows);
-	if (minv == NULL) return NULL;
+//start:
+	minv = NUMdmatrix (1, thy numberOfColumns, 1, thy numberOfRows); cherror
 
 	if (! NUMpseudoInverse (thy data, thy numberOfRows, thy numberOfColumns, minv, 0)) goto end;
-	Sound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-	if (him == NULL) goto end;
+	him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1); cherror
 	for (long i = 1; i <= thy numberOfColumns; i++)
 	{
 		for (long j = 1; j <= my nx; j++)
@@ -678,10 +680,10 @@ end:
 
 MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double tol, int method)
 {
-	CrossCorrelationTables ccs = Sound_to_CrossCorrelationTables (me, startTime, endTime, lagTime, ncovars);
-	if (ccs == NULL) goto end;
-	MixingMatrix thee = MixingMatrix_create (my ny, my ny);
-	if (thee == NULL) goto end;
+	MixingMatrix thee = NULL; CrossCorrelationTables ccs = NULL;
+//start:
+	ccs = Sound_to_CrossCorrelationTables (me, startTime, endTime, lagTime, ncovars); cherror
+	thee = MixingMatrix_create (my ny, my ny); cherror
 	if (! MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee, ccs, maxNumberOfIterations, tol, method)) goto end;
 
 end:
@@ -694,7 +696,7 @@ MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me)
 {
 	if (my numberOfColumns != my numberOfRows) return Melder_errorp1 (L"Number of rows and columns must be equal.");
 	MixingMatrix thee = Data_copy (me);
-	Thing_overrideClass (thee, classMixingMatrix);
+	if (thee != NULL) Thing_overrideClass (thee, classMixingMatrix);
 	return thee;
 }
 
@@ -770,9 +772,7 @@ end:
 
 double CrossCorrelationTable_getDiagonalitymeasure (CrossCorrelationTable me)
 {
-	if (my numberOfColumns == 1) return 0;
-	double dm = NUMdmatrix_diagonalityMeasure (my data, my numberOfColumns);
-	return sqrt (dm) / (my numberOfColumns * (my numberOfColumns - 1));
+	return NUMdmatrix_diagonalityMeasure (my data, my numberOfColumns);
 }
 
 /************* CrossCorrelationTables *****************************/
@@ -817,7 +817,7 @@ double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, 
 		double dmksq = NUMdmatrix_diagonalityMeasure (thy data, dimension);
 		dmsq += w == NULL ? dmksq / ntables : dmksq * w[k];
 	}
-	return sqrt (dmsq) / (dimension * (dimension - 1));
+	return dmsq;
 }
 
 /************************** CrossCorrelationTables & Diagonalizer *******************************/
@@ -960,5 +960,23 @@ end:
 	return me;
 }
 
+static int Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, long maxNumberOfIterations, double tol, int method)
+{
+	long iter = 0;
+	if (my ny != thy numberOfColumns) return Melder_error1 (L"Dimensions do not agree.");
+	double **x = NULL; // the data for ica
+
+//start:
+	x = NUMdmatrix_copy (my z, 1, my ny, 1, my nx); cherror
+	do
+	{
+
+		iter++;
+	} while (/*fabs((dm_old - dm_new) / dm_new) > tol &&*/ iter < maxNumberOfIterations);
+
+end:
+	NUMdmatrix_free (x, 1, 1);
+	return 1;
+}
 
 /* End of file ICA.c */

@@ -3146,7 +3146,7 @@ FORM (PointProcess_getJitter_local_absolute, L"PointProcess: Get jitter (local, 
 DO
 	Melder_informationReal (PointProcess_getJitter_local_absolute (ONLY (classPointProcess),
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), L" seconds");
+		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor")), L"seconds");
 END
 
 FORM (PointProcess_getJitter_rap, L"PointProcess: Get jitter (rap)", L"PointProcess: Get jitter (rap)...")

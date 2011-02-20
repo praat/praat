@@ -1,6 +1,6 @@
 /* PointEditor.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/09/22 autoscaling
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
+ * pb 2011/02/20 better messages and info
  */
 
 #include "PointEditor.h"
@@ -49,77 +50,77 @@ static void destroy (I) {
 
 static int menu_cb_getJitter_local (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_local (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 	return 1;
 }
 
 static int menu_cb_getJitter_local_absolute (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
-	Melder_informationReal (PointProcess_getJitter_local_absolute (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure jitter, make a selection first.");
+	Melder_informationReal (PointProcess_getJitter_local_absolute (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), L"seconds");
 	return 1;
 }
 
 static int menu_cb_getJitter_rap (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_rap (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 	return 1;
 }
 
 static int menu_cb_getJitter_ppq5 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ppq5 (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 	return 1;
 }
 
 static int menu_cb_getJitter_ddp (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ddp (my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_local (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_local_dB (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local_dB (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_apq3 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq3 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_apq5 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq5 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_apq11 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq11 (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }
 
 static int menu_cb_getShimmer_dda (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"Make a selection first.");
+	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_dda (my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }

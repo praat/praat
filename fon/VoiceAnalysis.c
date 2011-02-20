@@ -31,12 +31,12 @@
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
 	double sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return NUMundefined;
-	for (i = imin + 1; i < imax; i ++) {
+	for (long i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -52,12 +52,12 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	double sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return NUMundefined;
-	for (i = imin + 1; i < imax; i ++) {
+	double sum = 0.0;
+	for (long i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
@@ -73,12 +73,12 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	double sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 3) return NUMundefined;
-	for (i = imin + 2; i < imax; i ++) {
+	double sum = 0.0;
+	for (long i = imin + 2; i < imax; i ++) {
 		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
 		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && p3 >= pmin && p3 <= pmax
@@ -96,12 +96,12 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	double sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 5) return NUMundefined;
-	for (i = imin + 5; i <= imax; i ++) {
+	double sum = 0.0;
+	for (long i = imin + 5; i <= imax; i ++) {
 		double
 			p1 = my t [i - 4] - my t [i - 5],
 			p2 = my t [i - 3] - my t [i - 4],

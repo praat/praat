@@ -29,7 +29,7 @@
 	#include "Thing.h"
 #endif
 
-Any Data_copy (I);
+GLOBAL_C Any Data_copy (I);
 /*
 	Message:
 		"return a deep copy of yourself, or NULL if out of memory."
@@ -37,7 +37,7 @@ Any Data_copy (I);
 		result -> name == NULL;	// The only attribute NOT copied.
 */
 
-bool Data_equal (Any data1, Any data2);
+GLOBAL_C bool Data_equal (Any data1, Any data2);
 /*
 	Message:
 		"return 1 if the shallow or deep attributes of 'data1' and 'data2' are equal;
@@ -46,23 +46,23 @@ bool Data_equal (Any data1, Any data2);
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */
 
-bool Data_canWriteAsEncoding (I, int outputEncoding);
+GLOBAL_C bool Data_canWriteAsEncoding (I, int outputEncoding);
 /*
 	Message:
 		"Can you write yourself in that encoding?"
 	The answer depends on whether all members can be written in that encoding.
 */
 
-bool Data_canWriteText (I);
+GLOBAL_C bool Data_canWriteText (I);
 /*
 	Message:
 		"Can you write yourself as text?"
 	The answer depends on whether the subclass defines the 'writeText' method.
 */
 
-int Data_createTextFile (I, MelderFile file, bool verbose);
+GLOBAL_C int Data_createTextFile (I, MelderFile file, bool verbose);
 
-int Data_writeText (I, MelderFile openFile);
+GLOBAL_C int Data_writeText (I, MelderFile openFile);
 /*
 	Message:
 		"try to write yourself as text to an open file."
@@ -75,7 +75,7 @@ int Data_writeText (I, MelderFile openFile);
 		The format depends on the 'writeText' method defined by the subclass.
 */
 
-int Data_writeToTextFile (I, MelderFile file);
+GLOBAL_C int Data_writeToTextFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -86,7 +86,7 @@ int Data_writeToTextFile (I, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-int Data_writeToShortTextFile (I, MelderFile file);
+GLOBAL_C int Data_writeToShortTextFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -97,14 +97,14 @@ int Data_writeToShortTextFile (I, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-bool Data_canWriteBinary (I);
+GLOBAL_C bool Data_canWriteBinary (I);
 /*
 	Message:
 		"Can you write yourself as binary data?"
 	The answer depends on whether the subclass defines the 'writeBinary' method.
 */
 
-int Data_writeBinary (I, FILE *f);
+GLOBAL_C int Data_writeBinary (I, FILE *f);
 /*
 	Message:
 		"try to write yourself as binary data to an open file."
@@ -119,7 +119,7 @@ int Data_writeBinary (I, FILE *f);
 		and IEEE floating-point format.
 */
 
-int Data_writeToBinaryFile (I, MelderFile file);
+GLOBAL_C int Data_writeToBinaryFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as binary data to a file".
@@ -129,14 +129,14 @@ int Data_writeToBinaryFile (I, MelderFile file);
 		The format of the file after this is the same as in Data_writeBinary.
 */
 
-bool Data_canWriteLisp (I);
+GLOBAL_C bool Data_canWriteLisp (I);
 /*
 	Message:
 		"Can you write yourself as a sequece of LISP objects?"
 	The answer depends on whether the subclass defines a 'writeLisp' method.
 */
 
-int Data_writeLisp (I, FILE *f);
+GLOBAL_C int Data_writeLisp (I, FILE *f);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to the stream <f>."
@@ -149,7 +149,7 @@ int Data_writeLisp (I, FILE *f);
 		The format depends on the 'writeLisp' method defined by the subclass.
 */
 
-int Data_writeLispToConsole (I);
+GLOBAL_C int Data_writeLispToConsole (I);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to the standard output."
@@ -160,7 +160,7 @@ int Data_writeLispToConsole (I);
 		The standard output will most often be a window named "Console".
 */
 
-int Data_writeToLispFile (I, MelderFile file);
+GLOBAL_C int Data_writeToLispFile (I, MelderFile file);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to a file".
@@ -176,7 +176,7 @@ int Data_writeToLispFile (I, MelderFile file);
 	that you want to read by name. This call is best placed in the beginning of main ().
 */
 
-bool Data_canReadText (I);
+GLOBAL_C bool Data_canReadText (I);
 /*
 	Message:
 		"Can you read yourself as text?"
@@ -184,7 +184,7 @@ bool Data_canReadText (I);
 	but is preferably the same as the answer from Data_canWriteText.
 */
 
-int Data_readText (I, MelderReadText text);
+GLOBAL_C int Data_readText (I, MelderReadText text);
 /*
 	Message:
 		"try to read yourself as text from a string."
@@ -199,7 +199,7 @@ int Data_readText (I, MelderReadText text);
 		but is preferably the same as the format produced by the 'writeText' method.
 */
 
-Any Data_readFromTextFile (MelderFile file);
+GLOBAL_C Any Data_readFromTextFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as text from a file".
@@ -215,7 +215,7 @@ Any Data_readFromTextFile (MelderFile file);
 		(plus those from Data_readText)
 */
 
-bool Data_canReadBinary (I);
+GLOBAL_C bool Data_canReadBinary (I);
 /*
 	Message:
 		"Can you read yourself as binary data?"
@@ -223,7 +223,7 @@ bool Data_canReadBinary (I);
 	but is preferably the same as the answer from Data_canWriteBinary.
 */
 
-int Data_readBinary (I, FILE *f);
+GLOBAL_C int Data_readBinary (I, FILE *f);
 /*
 	Message:
 		"try to read yourself as binary data from the stream <f>."
@@ -238,7 +238,7 @@ int Data_readBinary (I, FILE *f);
 		but is preferably the same as the format produced by the 'writeBinary' method.
 */
 
-Any Data_readFromBinaryFile (MelderFile file);
+GLOBAL_C Any Data_readFromBinaryFile (MelderFile file);
 /*
 	Message:
 		"try to read a Data as binary data from a file".
@@ -254,7 +254,7 @@ Any Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
-bool Data_canReadLisp (I);
+GLOBAL_C bool Data_canReadLisp (I);
 /*
 	Message:
 		"Can you read yourself from a sequence of LISP objects?"
@@ -262,7 +262,7 @@ bool Data_canReadLisp (I);
 	but is preferably the same as the answer from Data_canWriteLisp.
 */
 
-int Data_readLisp (I, FILE *f);
+GLOBAL_C int Data_readLisp (I, FILE *f);
 /*
 	Message:
 		"try to read yourself from a sequence of LISP objects in the stream <f>."
@@ -277,7 +277,7 @@ int Data_readLisp (I, FILE *f);
 		but is preferably the same as the format produced by the 'writeLisp' method.
 */
 
-Any Data_readFromLispFile (MelderFile fs);
+GLOBAL_C Any Data_readFromLispFile (MelderFile fs);
 /*
 	Message:
 		"try to read a Data from a sequence of LISP objets in a file".
@@ -381,22 +381,22 @@ class_create (Data, Thing);
 
 /* Recursive routines for working with struct members. */
 
-int Data_Description_countMembers (Data_Description structDescription);
+GLOBAL_C int Data_Description_countMembers (Data_Description structDescription);
 /* Including inherited members. */
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
+GLOBAL_C Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
 /* Find the location of member 'member' in a struct. */
 /* If 'structDescription' describes a class, the ancestor classes are also searched. */
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
+GLOBAL_C Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
 /* Find the first member that uses member 'string' in its size description (max1 or max2 fields). */
 
 /* Retrieving data from object + description. */
 
-long Data_Description_integer (void *structAddress, Data_Description description);
+GLOBAL_C long Data_Description_integer (void *structAddress, Data_Description description);
 /* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
 
-int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
+GLOBAL_C int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
 	const wchar_t *formula, long *result);
 /*
  * Translates a string like '100' or 'my numberOfHorses' or 'my numberOfCows - 1' to an integer.
@@ -405,7 +405,7 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
  * Returns 0 if 'formula' cannot be parsed to a number.
  */
 
-void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile fs));
+GLOBAL_C void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile fs));
 /*
 Purpose:
 	to make sure that a file can be read by Data_readFromFile.
@@ -451,7 +451,7 @@ Registering a file-type recognizer:
 	After this, Data_readFromFile is able to read Sun audio files.
 */
 
-Any Data_readFromFile (MelderFile file);
+GLOBAL_C Any Data_readFromFile (MelderFile file);
 /*
 Purpose:
 	to read a file with data of any kind.

@@ -50,6 +50,7 @@
  * fb 2010/03/01 GTK
  * pb 2010/12/07 channel
  * pb 2011/02/01 cancelContinueButton
+ * pb 2011/02/20 better messages
  */
 
 #include <wctype.h>
@@ -545,7 +546,7 @@ int UiForm_widgetsToValues (I) {
 	iam (UiForm);
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		if (! UiField_widgetToValue (my field [ifield])) {
-			return Melder_error3 (L"Please correct dialog " L_LEFT_SINGLE_QUOTE, my name, L_RIGHT_SINGLE_QUOTE L" or cancel.");
+			return Melder_error3 (L"Please correct command window " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L" or cancel.");
 		}
 	}
 	return 1;
@@ -554,7 +555,7 @@ int UiForm_widgetsToValues (I) {
 static void UiForm_okOrApply (I, GuiObject button, int hide) {
 	iam (UiForm);
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-		Melder_error3 (L"Cannot execute dialog `", my name, L"'.");
+		Melder_error3 (L"Cannot execute command window " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L".");
 		Melder_flushError (NULL);
 		return;
 	}
@@ -654,11 +655,11 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 			 * Otherwise, show a generic message.
 			 */
 			if (wcsstr (Melder_getError (), L"Selection changed!")) {
-				Melder_error3 (L"Please change the selection in the object list, or click Cancel in the window `",
-					my name, L"'.");
+				Melder_error3 (L"Please change the selection in the object list, or click Cancel in the command window " L_LEFT_DOUBLE_QUOTE,
+					my name, L_RIGHT_DOUBLE_QUOTE L".");
 			} else {
-				Melder_error3 (L"Please change something in the window `",
-					my name, L"', or click Cancel in that window.");
+				Melder_error3 (L"Please change something in the command window " L_LEFT_DOUBLE_QUOTE,
+					my name, L_RIGHT_DOUBLE_QUOTE L", or click Cancel in that window.");
 			}
 		}
 		/*XtAddCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */

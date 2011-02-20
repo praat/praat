@@ -29,6 +29,7 @@
 
 extern void praat_SSCP_as_TableOfReal_init (void *klas);
 extern void praat_TableOfReal_init (void *klas);
+void praat_TableOfReal_init3  (void *klas);
 
 /********************** CrossCorrelationTable(s) ******************/
 
@@ -126,7 +127,7 @@ FORM (CrossCorrelationTables_getDiagonalityMeasure, L"CrossCorrelationTables: Ge
 DO
 	double dm = CrossCorrelationTables_getDiagonalityMeasure (ONLY_OBJECT,
 		NULL, GET_INTEGER (L"First table"), GET_INTEGER (L"Last table"));
-	Melder_information2 (Melder_double (dm), L" (=sqrt (average sum of squared off diagonal elements))");
+	Melder_information2 (Melder_double (dm), L" (= average sum of squared off-diagonal elements)");
 END
 
 FORM (CrossCorrelationTables_extractCrossCorrelationTable, L"CrossCorrelationTables: Extract one CrossCorrelationTable", 0)
@@ -172,7 +173,7 @@ FORM (CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure, L"CrossCorr
 DO
 	double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (ONLY (classCrossCorrelationTables),
 		ONLY (classDiagonalizer), NULL, GET_INTEGER (L"First table"), GET_INTEGER (L"Last table"));
-	Melder_information2 (Melder_double (dm), L" (=sqrt (average sum of squared off diagonal elements))");
+	Melder_information2 (Melder_double (dm), L" (= average sum of squared off-diagonal elements)");
 END
 
 DIRECT (CrossCorrelationTable_and_Diagonalizer_diagonalize)
@@ -223,6 +224,16 @@ DO
 		GET_INTEGER (L"Diagonalization method")))
 END
 
+FORM (Sound_to_CrossCorrelationTables, L"Sound: To CrossCorrelationTables", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"10.0")
+	NATURAL (L"Number of cross-correlations", L"20")
+	POSITIVE (L"Lag times (s)", L"0.002")
+	OK
+DO
+	EVERY_TO (Sound_to_CrossCorrelationTables (OBJECT, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Lag times"), GET_INTEGER (L"Number of cross-correlations")))
+END
+
 FORM (Sound_to_Sound_bss, L"Sound: To Sound (blind source separation)", L"Sound: To Sound (blind source separation)...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
@@ -258,6 +269,28 @@ DIRECT (TableOfReal_to_MixingMatrix)
 	EVERY_TO (TableOfReal_to_MixingMatrix (OBJECT))
 END
 
+FORM (TableOfReal_and_TableOfReal_crossCorrelations, L"TableOfReal & TableOfReal: Cross-correlations", 0)
+	OPTIONMENU (L"Correlations between", 1)
+	OPTION (L"Rows")
+	OPTION (L"Columns")
+	BOOLEAN (L"Center", 0)
+	BOOLEAN (L"Normalize", 0)
+	OK
+DO
+	TableOfReal t1 = NULL, t2 = NULL;
+	int by_columns = GET_INTEGER (L"Correlations between") - 1;
+	WHERE (SELECTED && Thing_member (OBJECT, classTableOfReal)) { if (t1) t2 = OBJECT; else t1 = OBJECT; }
+	if (! praat_new1 (TableOfReal_and_TableOfReal_crossCorrelations (t1, t2, by_columns,
+		GET_INTEGER (L"Center"), GET_INTEGER (L"Normalize")),
+		(by_columns ? L"by_columns" : L"by_rows"))) return 0;
+END
+
+void praat_TableOfReal_init3  (void *klas)
+{
+	praat_TableOfReal_init (klas);
+	praat_addAction1 (klas, 2, L"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
+}
+
 void praat_BSS_init (void);
 void praat_BSS_init (void)
 {
@@ -277,13 +310,15 @@ void praat_BSS_init (void)
 	praat_addAction1 (classCrossCorrelationTables, 1, L"Get diagonality measure...", 0, 0, DO_CrossCorrelationTables_getDiagonalityMeasure);
 	praat_addAction1 (classCrossCorrelationTables, 0, L"To Diagonalizer...", 0, 0, DO_CrossCorrelationTables_to_Diagonalizer);
 
-	praat_TableOfReal_init (classDiagonalizer);
+	praat_TableOfReal_init3 (classDiagonalizer);
 	praat_addAction1 (classDiagonalizer, 0, L"To MixingMatrix", 0, 0, DO_Diagonalizer_to_MixingMatrix);
 
-	praat_TableOfReal_init (classMixingMatrix);
+	praat_TableOfReal_init3 (classMixingMatrix);
 
 	praat_addAction1 (classSound, 0, L"To MixingMatrix...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MixingMatrix);
 	praat_addAction1 (classSound, 0, L"To CrossCorrelationTable...",  L"Resample...", 1, DO_Sound_to_CrossCorrelationTable);
+	praat_addAction1 (classSound, 0, L"To CrossCorrelationTables...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTables);
+
 	praat_addAction1 (classSound, 0, L"To Sound (blind source separation)...", L"Resample...", 1, DO_Sound_to_Sound_bss);
 
 	praat_addAction1 (classTableOfReal, 0, L"To MixingMatrix", L"To Configuration", praat_HIDDEN, DO_TableOfReal_to_MixingMatrix);

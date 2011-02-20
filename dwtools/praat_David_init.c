@@ -4353,22 +4353,20 @@ DIRECT (TablesOfReal_to_Eigen_gsvd)
 	NEW (TablesOfReal_to_Eigen_gsvd (me, thee))
 END
 
-FORM (TableOfReal_and_TableOfReal_rowCorrelations, L"TableOfReal & TableOfReal: Row correlations", 0)
-	BOOLEAN (L"No sign", 1)
+FORM (TableOfReal_and_TableOfReal_crossCorrelations, L"TableOfReal & TableOfReal: Cross-correlations", 0)
+	OPTIONMENU (L"Correlations between", 1)
+	OPTION (L"Rows")
+	OPTION (L"Columns")
+	BOOLEAN (L"Center", 0)
+	BOOLEAN (L"Normalize", 0)
 	OK
 DO
 	TableOfReal t1 = NULL, t2 = NULL;
+	int by_columns = GET_INTEGER (L"Correlations between") - 1;
 	WHERE (SELECTED && CLASS == classTableOfReal) { if (t1) t2 = OBJECT; else t1 = OBJECT; }
-	if (! praat_new1 (TableOfReal_and_TableOfReal_rowCorrelations (t1, t2, GET_INTEGER (L"No sign")), L"rows")) return 0;
-END
-
-FORM (TableOfReal_and_TableOfReal_columnCorrelations, L"TableOfReal & TableOfReal: Column correlations", 0)
-	BOOLEAN (L"No sign", 1)
-	OK
-DO
-	TableOfReal t1 = NULL, t2 = NULL;
-	WHERE (SELECTED && CLASS == classTableOfReal) { if (t1) t2 = OBJECT; else t1 = OBJECT; }
-	if (! praat_new1 (TableOfReal_and_TableOfReal_columnCorrelations (t1, t2, GET_INTEGER (L"No sign")), L"columns")) return 0;
+	if (! praat_new1 (TableOfReal_and_TableOfReal_crossCorrelations (t1, t2, by_columns,
+		GET_INTEGER (L"Center"), GET_INTEGER (L"Normalize")),
+		(by_columns ? L"by_columns" : L"by_rows"))) return 0;
 END
 
 DIRECT (TablesOfReal_to_GSVD)
@@ -5261,8 +5259,7 @@ void praat_uvafon_David_init (void)
 	praat_addAction1 (classTableOfReal, 0, L"To Configuration (pca)...",	0, 1, DO_TableOfReal_to_Configuration_pca);
 	praat_addAction1 (classTableOfReal, 0, L"To Configuration (lda)...", 0, 1, DO_TableOfReal_to_Configuration_lda);
 	praat_addAction1 (classTableOfReal, 2, L"-- between tables --", L"To Configuration (lda)...", 1, 0);
-	praat_addAction1 (classTableOfReal, 2, L"To TableOfReal (row correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_rowCorrelations);
-	praat_addAction1 (classTableOfReal, 2, L"To TableOfReal (column correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_columnCorrelations);
+	praat_addAction1 (classTableOfReal, 2, L"To TableOfReal (cross-correlations)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_TableOfReal_and_TableOfReal_crossCorrelations);
 
 
 	praat_addAction1 (classTableOfReal, 1, L"To Pattern and Categories...", L"To Matrix", 1, DO_TableOfReal_to_Pattern_and_Categories);

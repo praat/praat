@@ -3017,14 +3017,23 @@ NORMAL (L"The shifting of formant frequencies is done via manipulation of the sa
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 MAN_END
 
-MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20100428)
+MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20110213)
 INTRO (L"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Sound: Draw where...", 5)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU("Drawing method", "Curve")
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Draw only those parts where the following condition holds",
+		"x < xmin + (xmax - xmin) / 2; first half")
+)
 TAG (L"##Time range (s)")
 DEFINITION (L"selects the time domain for the drawing.")
 TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits; larger amplitudes will be clipped.")
-TAG (L"##Formula")
+TAG (L"##Draw only those parts where the following condition holds#")
 DEFINITION (L"determines the part of the sound that will be drawn. All parts where the formula evaluates to true will be drawn. "
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (L"Example 1")
@@ -3140,9 +3149,20 @@ LIST_ITEM (L"2. We perform a filter bank analysis on a linear frequency scale. "
 	"Pitch: To FormantFilter...@ for details).")
 MAN_END
 
-MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20100428)
+MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20110213)
 INTRO (L"A command to paint only those parts of a @Sound where a condition holds. The painted area is the area "
 	"between the Sound and a horizontal line at a certain level.")
+ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Sound: Paint where...", 6)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, {r,g,b})", "0.5")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Fill from level", "0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Paint only those parts where the following condition holds",
+		"1; always")
+)
 TAG (L"##Colour")
 DEFINITION (L"defines the @@Colour|colour@ of the paint.")
 TAG (L"##Time range (s)")
@@ -3179,7 +3199,7 @@ SCRIPT (8, 5,
 	"Remove\n")
 ENTRY (L"Example 3")
 NORMAL (L"To give an indication that the area under a 1/x curve between the points %a and %b and the area "
-	"between %c and %d are equal when %b/%a = %d/%c. For example for %a=1, %b=2, %c=4 and %d=8: ")
+	"between %c and %d are equal if %b/%a = %d/%c. For example, for %a=1, %b=2, %c=4 and %d=8: ")
 CODE (L"Create Sound from formula... 1dx Mono 0 20 100 1/x")
 CODE (L"Draw... 0 20 0 1.5 yes Curve")
 CODE (L"Paint where... Grey 0 20 0 1.5 0 yes (x >= 1 and x <2) or (x>=4 and x<8)")
@@ -3198,8 +3218,16 @@ SCRIPT (8, 5,
 	"Remove\n")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20100506)
+MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20110213)
 INTRO (L"Paints the area between the two selected @@Sound@s. ")
+ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Sounds: Paint enclosed", 4)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colour (0-1, name, {r,g,b})", "0.5")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=all)")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+)
 TAG (L"##Colour")
 DEFINITION (L"defines the @@Colour|colour@ of the paint.")
 TAG (L"##Time range (s)")

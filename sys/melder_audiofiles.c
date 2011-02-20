@@ -435,6 +435,7 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				default:
 					return Melder_error ("Unsupported Windows audio encoding %d.", winEncoding);
 			}
+			if (chunkSize & 1) chunkSize ++;
 			for (i = 17; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes in fmt chunk, but found %ld.", chunkSize, i);
 		} else if (strnequ (chunkID, "data", 4)) {
@@ -444,6 +445,7 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			dataChunkPresent = TRUE;
 			dataChunkSize = chunkSize;
 			*startOfData = ftell (f);
+			if (chunkSize & 1) chunkSize ++;
 			if (Melder_debug == 23) {
 				for (i = 1; i <= chunkSize; i ++)
 					if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes of data, but found %ld.", chunkSize, i);
@@ -454,6 +456,7 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 		    if (Melder_debug == 23)
 				Melder_warning9 (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
 					Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
+			if (chunkSize & 1) chunkSize ++;
 			for (i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);
 		}

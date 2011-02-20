@@ -1,6 +1,6 @@
 /* PointProcess.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2008/09/20 shiftX
  * pb 2008/09/23 scaleX
  * pb 2010/03/24 make sure that addPoint cannot add a point where there is already a point
+ * pb 2011/02/20 lay-out
  */
 
 #include "PointProcess.h"
@@ -437,12 +438,12 @@ long PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	double sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return NUMundefined;
-	for (i = imin; i < imax; i ++) {
+	double sum = 0.0;
+	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			sum += my t [i + 1] - my t [i];   /* This interval counts as a period. */
 		} else {
@@ -455,15 +456,15 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	long imin, imax, numberOfPeriods, i;
-	double sum = 0.0, sum2 = 0.0, mean;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
-	numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
+	long imin, imax;
+	long numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return NUMundefined;
 	/*
 	 * Compute mean.
 	 */
-	for (i = imin; i < imax; i ++) {
+	double sum = 0.0;
+	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			sum += my t [i + 1] - my t [i];   /* This interval counts as a period. */
 		} else {
@@ -471,11 +472,12 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 2) return NUMundefined;
-	mean = sum / numberOfPeriods;
+	double mean = sum / numberOfPeriods;
 	/*
 	 * Compute variance.
 	 */
-	for (i = imin; i < imax; i ++) {
+	double sum2 = 0.0;
+	for (long i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			double dperiod = my t [i + 1] - my t [i] - mean;
 			sum2 += dperiod * dperiod;

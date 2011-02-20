@@ -78,25 +78,25 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 
 /* All functions with 'I' as the first argument assume that it is not NULL. */
 
-wchar_t * Thing_className (I);
+GLOBAL_C wchar_t * Thing_className (I);
 /* Return your class name. */
 
-int Thing_member (I, void *klas);
+GLOBAL_C int Thing_member (I, void *klas);
 /*
 	return TRUE if you are a 'klas',
 	i.e., if you are an object of the class 'klas' or of one of the classes derived from 'klas'.
 	E.g., Thing_member (object, classThing) will always return TRUE.
 */
 
-int Thing_subclass (void *klas, void *ancestor);
+GLOBAL_C int Thing_subclass (void *klas, void *ancestor);
 /*
 	return TRUE if <klas> is a subclass of <ancestor>,
 	i.e., if <klas> equals <ancestor>, or if the parent class of <klas> is a subclass of <ancestor>.
 	E.g., Thing_subclass (classX, classThing) will always return TRUE.
 */
 
-void Thing_info (I);
-void Thing_infoWithId (I, unsigned long id);
+GLOBAL_C void Thing_info (I);
+GLOBAL_C void Thing_infoWithId (I, unsigned long id);
 
 #define new(klas)  (klas) Thing_new ((void *) class##klas)
 /*
@@ -108,7 +108,7 @@ void Thing_infoWithId (I, unsigned long id);
 		result -> methods -> destroy != NULL;   // Class table initialized.
 */
 
-Any Thing_new (void *klas);
+GLOBAL_C Any Thing_new (void *klas);
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -118,7 +118,7 @@ Any Thing_new (void *klas);
 		result -> methods -> destroy != NULL;   // Class table initialized.
 */
 
-void Thing_recognizeClassesByName (void *readableClass, ...);
+GLOBAL_C void Thing_recognizeClassesByName (void *readableClass, ...);
 /*
 	Function:
 		make Thing_classFromClassName () and Thing_newFromClassName ()
@@ -136,11 +136,11 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
-long Thing_listReadableClasses (void);
+GLOBAL_C void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
+GLOBAL_C long Thing_listReadableClasses (void);
 
-Any Thing_newFromClassNameA (const char *className);
-Any Thing_newFromClassName (const wchar_t *className);
+GLOBAL_C Any Thing_newFromClassNameA (const char *className);
+GLOBAL_C Any Thing_newFromClassName (const wchar_t *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -152,7 +152,7 @@ Any Thing_newFromClassName (const wchar_t *className);
 		see Thing_classFromClassName.
 */
 
-void *Thing_classFromClassName (const wchar_t *className);
+GLOBAL_C void *Thing_classFromClassName (const wchar_t *className);
 /*
 	Function:
 		Return the class table of class 'className', or NULL if it is not recognized.
@@ -166,11 +166,11 @@ void *Thing_classFromClassName (const wchar_t *className);
 		and Thing_version will be set to 300.
 */
 
-wchar_t * Thing_getName (I);
+GLOBAL_C wchar_t * Thing_getName (I);
 /* Return a pointer to your internal name (which can be NULL). */
-wchar_t * Thing_messageName (I);
+GLOBAL_C wchar_t * Thing_messageName (I);
 
-void Thing_setName (I, const wchar_t *name);
+GLOBAL_C void Thing_setName (I, const wchar_t *name);
 /*
 	Function:
 		remember that you are called 'name'.
@@ -178,7 +178,7 @@ void Thing_setName (I, const wchar_t *name);
 		my name *and* my name are copies of 'name'.
 */
 
-void Thing_overrideClass (I, void *klas);
+GLOBAL_C void Thing_overrideClass (I, void *klas);
 /*
 	Function:
 		change my class to 'klas'.
@@ -198,7 +198,7 @@ void Thing_overrideClass (I, void *klas);
 			perhaps with different names.
 */
 
-void Thing_swap (I, thou);
+GLOBAL_C void Thing_swap (I, thou);
 /*
 	Function:
 		Swap my and thy contents.
@@ -333,14 +333,14 @@ class_create (Thing, Thing);   /* Root class: no parent. */
 
 /* For the macros. */
 
-void _Thing_forget (Thing *me);
+GLOBAL_C void _Thing_forget (Thing *me);
 	/* Macro 'forget'. */
-void * _Thing_check (I, void *table, const char *fileName, int line);
+GLOBAL_C void * _Thing_check (I, void *table, const char *fileName, int line);
 	/* Macros 'iam', 'thouart', 'heis'. */
 
 /* For debugging. */
 
-long Thing_getTotalNumberOfThings (void);
+GLOBAL_C long Thing_getTotalNumberOfThings (void);
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 extern long Thing_version;

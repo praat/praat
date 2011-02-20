@@ -1,6 +1,6 @@
 /* manual_voice.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,28 +83,44 @@ NORMAL (L"The numbers between parentheses are the total duration of the voice br
 	"respectively.")
 MAN_END
 
-MAN_BEGIN (L"Voice 2. Jitter", L"ppgb", 20030531)
+MAN_BEGIN (L"Voice 2. Jitter", L"ppgb", 20110220)
 NORMAL (L"You can measure jitter in the Sound editor window, after choosing @@Show pulses@ from the #Pulses menu. "
 	"You will see blue lines that can be thought of as representing the glottal closures. "
-	"Use the Pulse menu to get the jitter in the selected part. You typically perform jitter measurements only on "
-	"long sustained vowels. The voice report gives five kinds of jitter measurements.")
+	"Use @@Voice report@ from the #Pulses menu to get the jitter in the selected part. "
+	"You typically perform jitter measurements only on long sustained vowels.")
+NORMAL (L"The voice report gives five kinds of jitter measurements. "
+	"All of these measurements are based on the computation of all %periods by the waveform-matching procedure "
+	"(see @@Voice 6. Automating voice analysis with a script@), "
+	"where the ##Period floor# setting is 0.8 divided by the pitch ceiling, "
+	"the ##Period ceiling# setting is 1.25 divided by the pitch floor, "
+	"and the ##Maximum period factor# is determined in @@Advanced pulses settings...@.")
 ENTRY (L"Jitter (local)")
 NORMAL (L"This is the average absolute difference between consecutive periods, divided by the average period. "
-	"MDVP calls this parameter %Jitt, and gives 1.040\\%  as a threshold for pathology.")
+	"For the precise procedure, see @@PointProcess: Get jitter (local)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+NORMAL (L"MDVP calls this parameter %Jitt, and gives 1.040\\%  as a threshold for pathology. "
+	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (local, absolute)")
-NORMAL (L"This is the average absolute difference between consecutive periods. "
-	"MDVP calls this parameter %Jita, and gives 83.200 \\mus as a threshold for pathology.")
+NORMAL (L"This is the average absolute difference between consecutive periods, in seconds. "
+	"For the precise procedure, see @@PointProcess: Get jitter (local, absolute)...@ "
+	"(the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+NORMAL (L"MDVP calls this parameter %Jita, and gives 83.200 \\mus as a threshold for pathology. "
+	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (rap)")
 NORMAL (L"This is the Relative Average Perturbation, "
 	"the average absolute difference between a period and the average of it and its two neighbours, divided by the average period. "
-	"MDVP gives 0.680\\%  as a threshold for pathology.")
+	"For the precise procedure, see @@PointProcess: Get jitter (rap)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+NORMAL (L"MDVP gives 0.680\\%  as a threshold for pathology. "
+	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (ppq5)")
 NORMAL (L"This is the five-point Period Perturbation Quotient, "
 	"the average absolute difference between a period and the average of it and its four closest neighbours, divided by the average period. "
-	"MDVP calls this parameter %PPQ, and gives 0.840\\%  as a threshold for pathology.")
+	"For the precise procedure, see @@PointProcess: Get jitter (ppq5)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+NORMAL (L"MDVP calls this parameter %PPQ, and gives 0.840\\%  as a threshold for pathology; "
+	"as this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (ddp)")
 NORMAL (L"This is the average absolute difference between consecutive differences between consecutive periods, divided by the average period. "
-	"This is Praat's original ##Get jitter#. The value is three times RAP.")
+	"For the precise procedure, see @@PointProcess: Get jitter (ddp)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+NORMAL (L"This is Praat's original ##Get jitter#. The value is three times RAP.")
 MAN_END
 
 MAN_BEGIN (L"Voice 3. Shimmer", L"ppgb", 20030521)

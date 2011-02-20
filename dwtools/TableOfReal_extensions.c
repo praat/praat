@@ -66,6 +66,9 @@
 #define Graphics_TWOWAYARROW 2
 #define Graphics_LINE 3
 
+TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int center, int normalize);
+TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int center, int normalize);
+
 int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce)
 {
 	iam (TableOfReal);
@@ -1971,15 +1974,35 @@ end:
 	return prob;
 }
 
-TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int nosign)
+TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (I, thou, int by_columns, int center, int normalize)
+{
+	iam (TableOfReal); thouart (TableOfReal);
+	return by_columns ? TableOfReal_and_TableOfReal_columnCorrelations (me, thee, center, normalize) :
+		TableOfReal_and_TableOfReal_rowCorrelations (me, thee, center, normalize);
+}
+
+TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int center, int normalize)
 {
 	iam (TableOfReal); thouart (TableOfReal);
 	TableOfReal him = NULL;
+	double **my_data = NULL, **thy_data = NULL;
 	if (my numberOfColumns != thy numberOfColumns) return Melder_errorp1 (L"Both tables must have the same number of columns.");
 
 //start:
 
 	him = TableOfReal_create (my numberOfRows, thy numberOfRows); cherror
+	my_data = NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns); cherror
+	thy_data = NUMdmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns); cherror
+	if (center)
+	{
+		NUMcentreRows (my_data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMcentreRows (thy_data, 1, thy numberOfRows, 1, thy numberOfColumns);
+	}
+	if (normalize)
+	{
+		NUMnormalizeRows (my_data, my numberOfRows, my numberOfColumns, 1);
+		NUMnormalizeRows (thy_data, thy numberOfRows, thy numberOfColumns, 1);
+	}
 	if (! NUMstrings_copyElements (my rowLabels, his rowLabels, 1, his numberOfRows) ||
 		! NUMstrings_copyElements (thy rowLabels, his columnLabels, 1, his numberOfColumns)) goto end;
 	for (long i = 1; i <= my numberOfRows; i++)
@@ -1987,24 +2010,39 @@ TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int nosign)
 		for (long k = 1; k <= thy numberOfRows; k++)
 		{
 			double ctmp = 0;
-			for (long j = 1; j <= my numberOfColumns; j++) { ctmp += my data[i][j] * thy data[k][j]; }
-			his data[i][k] = nosign ? fabs(ctmp) : ctmp;
+			for (long j = 1; j <= my numberOfColumns; j++)
+			{ ctmp += my_data[i][j] * thy_data[k][j]; }
+			his data[i][k] = ctmp;
 		}
 	}
 end:
+	NUMdmatrix_free (my_data, 1, 1); NUMdmatrix_free (thy_data, 1, 1);
 	if (Melder_hasError ()) forget (him);
 	return him;
 }
 
-TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int nosign)
+TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int center, int normalize)
 {
 	iam (TableOfReal); thouart (TableOfReal);
 	TableOfReal him = NULL;
+	double **my_data = NULL, **thy_data = NULL;
 	if (my numberOfRows != thy numberOfRows) return Melder_errorp1 (L"Both tables must have the same number of rows.");
 
 //start:
 
 	him = TableOfReal_create (my numberOfColumns, thy numberOfColumns); cherror
+	my_data = NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns); cherror
+	thy_data = NUMdmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns); cherror
+	if (center)
+	{
+		NUMcentreColumns (my_data, 1, my numberOfRows, 1, my numberOfColumns, NULL);
+		NUMcentreColumns (thy_data, 1, thy numberOfRows, 1, thy numberOfColumns, NULL);
+	}
+	if (normalize)
+	{
+		NUMnormalizeColumns (my_data, my numberOfRows, my numberOfColumns, 1);
+		NUMnormalizeColumns (thy_data, thy numberOfRows, thy numberOfColumns, 1);
+	}
 	if (! NUMstrings_copyElements (my columnLabels, his rowLabels, 1, his numberOfRows) ||
 		! NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, his numberOfColumns)) goto end;
 
@@ -2013,11 +2051,13 @@ TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int nosign)
 		for (long k = 1; k <= thy numberOfColumns; k++)
 		{
 			double ctmp = 0;
-			for (long i = 1; i <= my numberOfRows; i++) { ctmp += my data[i][j] * thy data[i][k]; }
-			his data[j][k] = nosign ? fabs(ctmp) : ctmp;
+			for (long i = 1; i <= my numberOfRows; i++)
+			{ ctmp += my_data[i][j] * thy_data[i][k]; }
+			his data[j][k] = ctmp;
 		}
 	}
 end:
+	NUMdmatrix_free (my_data, 1, 1); NUMdmatrix_free (thy_data, 1, 1);
 	if (Melder_hasError ()) forget (him);
 	return him;
 }

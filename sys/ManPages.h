@@ -38,22 +38,22 @@
 #define ManPages_methods Data_methods
 class_create (ManPages, Data);
 
-ManPages ManPages_create (void);
+GLOBAL_C ManPages ManPages_create (void);
 
-int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
+GLOBAL_C int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-long ManPages_lookUp (ManPages me, const wchar_t *title);
+GLOBAL_C long ManPages_lookUp (ManPages me, const wchar_t *title);
 
-int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
-int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
+GLOBAL_C int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
+GLOBAL_C int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
 
-long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
+GLOBAL_C long ManPages_uniqueLinksHither (ManPages me, long ipage);
+GLOBAL_C const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif
