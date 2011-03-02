@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  * pb 2007/09/01 oo_BOOL
  * pb 2008/01/19 double
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRING
  */
 
 /*** Single types. ***/
@@ -228,29 +229,19 @@
 /*    s4: store as sequence of bytes, preceded with 4 bytes (u4) to denote length. */
 /*    w4: store as sequence of characters (u2), preceded with 4 bytes (u4) to denote length. */
 
-#define oo_STRING(x)  oo_STRINGx (s2, x)
 #define oo_STRINGW(x)  oo_STRINGWx (w2, x)
-#define oo_LSTRING(x)  oo_STRINGx (s4, x)
 #define oo_LSTRINGW(x)  oo_STRINGWx (w4, x)
 
-#define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s2, x, cap, n)
 #define oo_STRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w2, x, cap, n)
-#define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (s4, x, cap, n)
 #define oo_LSTRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w4, x, cap, n)
 
-#define oo_STRING_SET(x,setType)  oo_STRINGx_SET (s2, x, setType)
 #define oo_STRINGW_SET(x,setType)  oo_STRINGWx_SET (w2, x, setType)
-#define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (s4, x, setType)
 #define oo_LSTRINGW_SET(x,setType)  oo_STRINGWx_SET (w4, x, setType)
 
-#define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s2, x, min, max)
 #define oo_STRINGW_VECTOR_FROM(x,min,max)  oo_STRINGWx_VECTOR (w2, x, min, max)
-#define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (s4, x, min, max)
 #define oo_LSTRINGW_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w4, x, min, max)
 
-#define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s2, x, 1, n)
 #define oo_STRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w2, x, 1, n)
-#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (s4, x, 1, n)
 #define oo_LSTRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w4, x, 1, n)
 
 /*** Structs. ***/
@@ -293,11 +284,6 @@
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  type x [cap];
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + setType##_MAX];
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  type *x;
-
-#define oo_STRINGx(storage,x)  char *x;
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  char *x [cap];
-#define oo_STRINGx_SET(storage,x,setType)  char *x [1 + setType##_MAX];
-#define oo_STRINGx_VECTOR(storage,x,min,max)  char **x;
 
 #define oo_STRINGWx(storage,x)  wchar_t *x;
 #define oo_STRINGWx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];

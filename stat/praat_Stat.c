@@ -1582,9 +1582,10 @@ void praat_uvafon_Stat_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal...", 0, 1, DO_TableOfReal_create);
 
 	praat_addMenuCommand (L"Objects", L"Open", L"Read TableOfReal from headerless spreadsheet file...", 0, 0, DO_TableOfReal_readFromHeaderlessSpreadsheetFile);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from table file...", 0, 0, DO_Table_readFromTableFile);
-	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from tab-separated file...", 0, 0, DO_Table_readFromTabSeparatedFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from comma-separated file...", 0, 0, DO_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from whitespace-separated file...", 0, 0, DO_Table_readFromTableFile);
+	praat_addMenuCommand (L"Objects", L"Open", L"Read Table from table file...", 0, praat_HIDDEN, DO_Table_readFromTableFile);
 
 	praat_addAction1 (classDistributions, 0, L"Distributions help", 0, 0, DO_Distributions_help);
 	praat_TableOfReal_init (classDistributions);
@@ -1614,7 +1615,8 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction1 (classPairDistribution, 1, L"Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classTable, 0, L"Table help", 0, 0, DO_Table_help);
-	praat_addAction1 (classTable, 1, L"Save as table file...", 0, 0, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, L"Save as tab-separated file...", 0, 0, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, L"Save as table file...", 0, praat_HIDDEN, DO_Table_writeToTableFile);
 	praat_addAction1 (classTable, 1, L"Write to table file...", 0, praat_HIDDEN, DO_Table_writeToTableFile);
 	praat_addAction1 (classTable, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Table_edit);
 	praat_addAction1 (classTable, 1, L"Edit", 0, praat_HIDDEN, DO_Table_edit);

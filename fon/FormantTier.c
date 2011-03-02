@@ -1,6 +1,6 @@
 /* FormantTier.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,11 @@
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
  * pb 2007/10/01 can write as encoding
+ * pb 2011/03/01 moved Formant filtering to FormantGrid (reimplemented)
  */
 
 #include "FormantTier.h"
+#include "AnyTier.h"
 
 #include "oo_DESTROY.h"
 #include "FormantTier_def.h"
@@ -273,21 +275,19 @@ end:
 }
 
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
-	long isamp, iformant;
 	double dt = my dx;
-	if (formantTier -> points -> size) for (iformant = 1; iformant <= 10; iformant ++) {
-		for (isamp = 1; isamp <= my nx; isamp ++) {
+	if (formantTier -> points -> size) for (long iformant = 1; iformant <= 10; iformant ++) {
+		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			double t = my x1 + (isamp - 1) * my dx;
 			/*
 			 * Compute LP coefficients.
 			 */
-			double formant, bandwidth, cosomdt, r;
+			double formant, bandwidth;
 			formant = FormantTier_getValueAtTime (formantTier, iformant, t);
-			if (NUMdefined (formant)) {
-				bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
-				Melder_assert (bandwidth != NUMundefined);
-				cosomdt = cos (2 * NUMpi * formant * dt);
-				r = exp (- NUMpi * bandwidth * dt);
+			bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
+			if (NUMdefined (formant) && NUMdefined (bandwidth)) {
+				double cosomdt = cos (2 * NUMpi * formant * dt);
+				double r = exp (- NUMpi * bandwidth * dt);
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
 					/* single pole: D(z) = 1 - r z^-1 */
@@ -320,28 +320,6 @@ Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 	Sound thee = Data_copy (me);
 	if (! thee) return NULL;
 	Sound_FormantTier_filter_inline (thee, formantTier);
-	return thee;
-}
-
-Sound Sound_Formant_filter (Sound me, Formant formant) {
-	Sound thee = NULL;
-	FormantTier tier = NULL;
-//start:
-	tier = Formant_downto_FormantTier (formant); cherror
-	thee = Sound_FormantTier_filter (me, tier); cherror
-end:
-	forget (tier);
-	return thee;
-}
-
-Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
-	Sound thee = NULL;
-	FormantTier tier = NULL;
-//start:
-	tier = Formant_downto_FormantTier (formant); cherror
-	thee = Sound_FormantTier_filter_noscale (me, tier); cherror
-end:
-	forget (tier);
 	return thee;
 }
 

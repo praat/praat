@@ -2,7 +2,7 @@
 #define _abcio_h_
 /* abcio.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,10 @@
 #endif
 
 #include "abcio_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /* Numeric text input and output. */
 
@@ -277,6 +281,10 @@ unsigned long cacgetu4LE (CACHE *f);   void cacputu4LE (unsigned long i, CACHE *
 char * cacgets1 (CACHE *f);   void cacputs1 (const char *s, CACHE *f);
 char * cacgets2 (CACHE *f);   void cacputs2 (const char *s, CACHE *f);
 char * cacgets4 (CACHE *f);   void cacputs4 (const char *s, CACHE *f);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file abcio.h */
 #endif

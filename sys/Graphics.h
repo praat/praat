@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/01/05
+ * pb 2011/03/02
  */
 
 #ifndef _Thing_h_
@@ -28,6 +28,10 @@
 #endif
 
 #include "Graphics_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct structGraphics *Graphics;
 Graphics Graphics_create (int resolution);
@@ -254,6 +258,10 @@ void Graphics_waitMouseUp (I);
 void Graphics_getMouseLocation (I, double *xWC, double *yWC);
 
 void Graphics_nextSheetOfPaper (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Graphics.h */
 #endif

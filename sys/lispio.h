@@ -2,7 +2,7 @@
 #define _lispio_h_
 /* lispio.h
  *
- * Copyright (C) 1994-2002 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,15 @@
  */
 
 /*
- * pb 1995/07/28
- * pb 2002/03/07 GPL
+ * pb 2011/03/02
  */
 
 #ifndef _melder_h_
 	#include "melder.h"   /* FILE * */
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* A LISP object is a list or an atom. */
@@ -119,6 +122,10 @@ long Lispio_count (const LispioSeq *me);
 int Lispio_isInteger (const Lispio *me);
 
 int Lispio_integer (const Lispio *me, long *value);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file lispio.h */
 #endif

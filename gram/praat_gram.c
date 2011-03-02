@@ -1,6 +1,6 @@
 /* praat_gram.c
  *
- * Copyright (C) 1997-2010 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/07/15
+ * pb 2011/03/01
  */
 
 #include "praat.h"
@@ -554,16 +554,7 @@ END
 
 FORM (OTGrammar_learn, L"OTGrammar: Learn", L"OTGrammar & 2 Strings: Learn...")
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -574,7 +565,9 @@ DO
 	Strings inputs = NULL, outputs = NULL;
 	WHERE (SELECTED && CLASS == classStrings) { if (! inputs) inputs = OBJECT; else outputs = OBJECT; }
 	OTGrammar_learn (grammar, inputs, outputs,
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Evaluation noise"),
+		GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+		GET_INTEGER (L"Honour local rankings"),
 		GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"));
 	praat_dataChanged (grammar);
 	iferror return 0;
@@ -582,16 +575,7 @@ END
 
 FORM (OTGrammar_learnFromPartialOutputs, L"OTGrammar: Learn from partial adult outputs", 0)
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -602,7 +586,9 @@ DO
 	OTGrammar grammar = ONLY (classOTGrammar);
 	OTHistory history = NULL;
 	OTGrammar_learnFromPartialOutputs (grammar, ONLY (classStrings),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Evaluation noise"),
+		GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+		GET_INTEGER (L"Honour local rankings"),
 		GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
 		GET_INTEGER (L"Store history every"), & history);
 	praat_dataChanged (grammar);
@@ -617,16 +603,7 @@ FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
 	SENTENCE (L"Input string", L"")
 	SENTENCE (L"Output string", L"")
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -634,7 +611,9 @@ FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
 DO
 	WHERE (SELECTED) {
 		OTGrammar_learnOne (OBJECT, GET_STRING (L"Input string"), GET_STRING (L"Output string"),
-			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+			GET_REAL (L"Evaluation noise"),
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -645,16 +624,7 @@ FORM (OTGrammar_learnOneFromPartialOutput, L"OTGrammar: Learn one from partial a
 	LABEL (L"", L"Partial adult surface form (e.g. overt form):")
 	SENTENCE (L"Partial output", L"")
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (L"Plasticity", L"0.1")
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	BOOLEAN (L"Honour local rankings", 1)
@@ -663,7 +633,9 @@ FORM (OTGrammar_learnOneFromPartialOutput, L"OTGrammar: Learn one from partial a
 DO
 	WHERE (SELECTED) {
 		OTGrammar_learnOneFromPartialOutput (OBJECT, GET_STRING (L"Partial output"),
-			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+			GET_REAL (L"Evaluation noise"),
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 		praat_dataChanged (OBJECT);
 		iferror return 0;
@@ -774,16 +746,7 @@ END
 FORM (OTGrammar_Distributions_learnFromPartialOutputs, L"OTGrammar & Distributions: Learn from partial outputs", L"OT learning 6. Shortcut to OT learning")
 	NATURAL (L"Column number", L"1")
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	REAL (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -797,7 +760,9 @@ DO
 	OTGrammar grammar = ONLY (classOTGrammar);
 	OTHistory history = NULL;
 	OTGrammar_Distributions_learnFromPartialOutputs (grammar, ONLY (classDistributions), GET_INTEGER (L"Column number"),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Evaluation noise"),
+		GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+		GET_INTEGER (L"Honour local rankings"),
 		GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 		GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 		GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
@@ -860,16 +825,7 @@ END
 
 FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", L"OT learning 6. Shortcut to OT learning")
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Reranking strategy", 3)
-		OPTION (L"Demotion only")
-		OPTION (L"Symmetric one")
-		OPTION (L"Symmetric all")
-		OPTION (L"Weighted uncancelled")
-		OPTION (L"Weighted all")
-		OPTION (L"EDCD")
-		OPTION (L"EDCD with vacation")
-		OPTION (L"Demote one with vacation")
-		OPTION (L"Weighted all up, highest down")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	POSITIVE (L"Initial plasticity", L"1.0")
 	NATURAL (L"Replications per plasticity", L"100000")
 	REAL (L"Plasticity decrement", L"0.1")
@@ -881,7 +837,7 @@ FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", 
 DO
 	OTGrammar grammar = ONLY (classOTGrammar);
 	OTGrammar_PairDistribution_learn (grammar, ONLY (classPairDistribution),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Reranking strategy") - 1, GET_INTEGER (L"Honour local rankings"),
+		GET_REAL (L"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Honour local rankings"),
 		GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 		GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 		GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"));
@@ -1068,7 +1024,8 @@ END
 FORM (OTMulti_learnOne, L"OTMulti: Learn one", 0)
 	SENTENCE (L"Partial form 1", L"")
 	SENTENCE (L"Partial form 2", L"")
-	OPTIONMENU (L"Learn", 3)
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU (L"Direction", 3)
 		OPTION (L"forward")
 		OPTION (L"backward")
 		OPTION (L"bidirectionally")
@@ -1078,7 +1035,8 @@ FORM (OTMulti_learnOne, L"OTMulti: Learn one", 0)
 DO
 	WHERE (SELECTED) {
 		OTMulti_learnOne (OBJECT, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
-			GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+			GET_INTEGER (L"Direction"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -1166,7 +1124,8 @@ END
 
 FORM (OTMulti_PairDistribution_learn, L"OTMulti & PairDistribution: Learn", 0)
 	REAL (L"Evaluation noise", L"2.0")
-	OPTIONMENU (L"Learn", 3)
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU (L"Direction", 3)
 		OPTION (L"forward")
 		OPTION (L"backward")
 		OPTION (L"bidirectionally")
@@ -1181,7 +1140,9 @@ DO
 	OTMulti grammar = ONLY (classOTMulti);
 	Table history = NULL;
 	OTMulti_PairDistribution_learn (grammar, ONLY (classPairDistribution),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Learn"),
+		GET_REAL (L"Evaluation noise"),
+		GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+		GET_INTEGER (L"Direction"),
 		GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 		GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 		GET_REAL (L"Rel. plasticity spreading"),

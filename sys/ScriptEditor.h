@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2002 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2011/03/02
  */
 
 #ifndef _Script_h_
@@ -31,6 +31,10 @@
 #endif
 #ifndef _Interpreter_h_
 	#include "Interpreter.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define ScriptEditor__parents(Klas) TextEditor__parents(Klas) Thing_inherit (Klas, TextEditor)
@@ -49,6 +53,10 @@ ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any editor, const wc
 ScriptEditor ScriptEditor_createFromScript (GuiObject parent, Any voidEditor, Script script);
 
 int ScriptEditors_dirty (void);   /* Are there any modified and unsaved scripts? Ask before quitting the program. */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ScriptEditor.h */
 #endif

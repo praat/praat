@@ -1329,7 +1329,7 @@ FORM (WordList_hasWord, L"Does word occur in list?", L"WordList")
 	SENTENCE (L"Word", L"")
 	OK
 DO
-	Melder_information1 (WordList_hasWord (ONLY_OBJECT, Melder_peekWcsToUtf8 (GET_STRING (L"Word"))) ? L"1" : L"0");
+	Melder_information1 (WordList_hasWord (ONLY_OBJECT, GET_STRING (L"Word")) ? L"1" : L"0");
 END
 
 DIRECT (WordList_to_Strings)

@@ -2,7 +2,7 @@
 #define _FormantGrid_h_
 /* FormantGrid.h
  *
- * Copyright (C) 2008-2009 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2011/03/01
  */
 
 #ifndef _RealTier_h_
@@ -74,6 +74,9 @@ int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter in
 
 FormantGrid Formant_downto_FormantGrid (Formant me);
 Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
+
+Sound Sound_Formant_filter (Sound me, Formant formant);
+Sound Sound_Formant_filter_noscale (Sound me, Formant formant);
 
 /* End of file FormantGrid.h */
 #endif

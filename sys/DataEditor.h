@@ -2,7 +2,7 @@
 #define _DataEditor_h
 /* DataEditor.h
  *
- * Copyright (C) 1995-2007 Paul Boersma
+ * Copyright (C) 1995-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2011/03/02
  */
 
 #ifndef _Editor_h_
 	#include "Editor.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define DataSubEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
@@ -46,6 +50,10 @@ Thing_declare1 (ClassEditor);
 Thing_declare1 (DataEditor);
 
 DataEditor DataEditor_create (GuiObject parent, const wchar_t *title, Any data);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file DataEditor.h */
 #endif

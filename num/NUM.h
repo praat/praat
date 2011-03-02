@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@
  * pb 2009/03/21 NUMvector_insert
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 void NUMinit (void);
 
@@ -527,6 +531,10 @@ int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBoun
 void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
 int NUMlinprog_run (NUMlinprog me);
 double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file NUM.h */
 #endif

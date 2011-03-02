@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
  * pb 2007/06/09 wchar_t
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -51,26 +52,6 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	NUM##t##vector_free (my x, min);
-
-
-
-#define oo_STRINGx(storage,x)  \
-	Melder_free (my x);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		Melder_free (my x [i]);
-
-#define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		Melder_free (my x [i]);
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (my x) { \
-		for (long i = min; i <= max; i ++) \
-			Melder_free (my x [i]); \
-		NUMvector_free (sizeof (char *), my x, min); \
-	}
 
 
 

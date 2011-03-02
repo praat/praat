@@ -18,10 +18,14 @@
  */
 
 /*
- * pb 2011/02/02
+ * pb 2011/03/02
  */
 
 #include "praat.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
 	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script);
@@ -167,5 +171,9 @@ extern struct PraatP {
 	int phase;
 	Any editor;   /* Scripting environment. */
 } praatP;
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file praatP.h */

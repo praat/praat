@@ -2,7 +2,7 @@
 #define _ButtonEditor_h_
 /* ButtonEditor.h
  *
- * Copyright (C) 1996-2004 Paul Boersma
+ * Copyright (C) 1996-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,25 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2011/03/02
  */
 
 #ifndef _HyperPage_h_
 	#include "HyperPage.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #define ButtonEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
 Thing_declare1 (ButtonEditor);
 
 ButtonEditor ButtonEditor_create (GuiObject parent);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ButtonEditor.h */
 #endif

@@ -20,12 +20,16 @@
  */
 
 /*
- * pb 2011/02/01
+ * pb 2011/03/02
  */
 
 #include "Gui.h"
 #ifndef _Interpreter_decl_h_
 	#include "Interpreter_decl.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter);
@@ -49,5 +53,9 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,
 	const wchar_t *continueText10, Interpreter interpreter);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file UiPause.h */
+#endif

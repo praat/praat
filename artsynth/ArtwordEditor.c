@@ -120,6 +120,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (ArtwordEditor);
 	if (my graphics == NULL) return;
+if (gtk && event -> type != BUTTON_PRESS) return;
 	Artword artword = my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);

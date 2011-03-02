@@ -230,6 +230,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (TableEditor);
 	if (my graphics == NULL) return;
+if (gtk && event -> type != BUTTON_PRESS) return;
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 	// TODO: implement selection

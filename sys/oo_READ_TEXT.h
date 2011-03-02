@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2008/03/20 layout
  * pb 2008/11/04 MelderReadText
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -76,27 +77,6 @@
 		if (! (my x = NUM##t##vector (min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
 			if ((my x [i] = texget##storage (text, & Type##_getValue)) < 0) return 0; \
-	}
-
-#define oo_STRINGx(storage,x)  \
-	if (! (my x = texget##storage (text))) return Melder_error ("Trying to read \"%s\".", #x);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (long i = 0; i < n; i ++) \
-		if (! (my x [i] = texget##storage (text))) return 0;
-
-#define oo_STRINGx_SET(storage,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) \
-		if (! (my x [i] = texget##storage (text))) return 0;
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
-		if (! (my x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (long i = min; i <= max; i ++) { \
-			if (! (my x [i] = texget##storage (text))) \
-				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
-		} \
 	}
 
 #define oo_STRINGWx(storage,x)  \

@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/08/14 enums wchar_t
  * pb 2008/01/19 NUM##storage
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -71,29 +72,6 @@
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, my x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
-	texexdent (file);
-
-
-
-#define oo_STRINGx(storage,x)  \
-	texput##storage (file, my x, L"" #x, 0,0,0,0,0);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
-	for (int i = 0; i < n; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
-	texexdent (file);
-
-#define oo_STRINGx_SET(storage,x,setType)  \
-	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
-	texexdent (file);
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
-	for (long i = min; i <= max; i ++) \
-		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 

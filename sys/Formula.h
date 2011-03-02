@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2008 Paul Boersma
+ * Copyright (C) 1990-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  */
 
 /*
- * pb 2008/05/01
+ * pb 2011/03/02
  */
 
 #ifndef _Thing_h_
 	#include "Thing.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
@@ -50,6 +54,10 @@ struct Formula_Result {
 int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize);
 
 int Formula_run (long row, long col, struct Formula_Result *result);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Formula.h */
 #endif

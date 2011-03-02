@@ -18,12 +18,16 @@
  */
 
 /*
- * pb 2011/02/01
+ * pb 2011/03/02
  */
 
 #include "Editor.h"
 #include "Manual.h"
 #include "Preferences.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /* The explanations in this header file assume
 	that you put your extra commands in praat_Sybil.c
@@ -442,5 +446,9 @@ void praat_updateSelection (void);
 	/* If you require the correct selection immediately after calling praat_new. */
 
 void praat_addCommandsToEditor (Editor me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file praat.h */

@@ -1,6 +1,6 @@
 /* OTMultiEditor.c
  *
- * Copyright (C) 2005-2008 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2007/10/01 constraint plasticity
  * pb 2007/12/14 Gui
  * pb 2008/03/20 split off Help menu
+ * pb 2011/03/01 multiple update rules
  */
 
 #include "OTMultiEditor.h"
@@ -98,7 +99,8 @@ static int menu_cb_editRanking (EDITOR_ARGS) {
 static int menu_cb_learnOne (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	EDITOR_FORM (L"Learn one", L"OTGrammar: Learn one...")
-		OPTIONMENU (L"Learn", 3)
+		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+		OPTIONMENU (L"Direction", 3)
 			OPTION (L"forward")
 			OPTION (L"backward")
 			OPTION (L"bidirectionally")
@@ -112,7 +114,8 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 		my form1 = GuiText_getString (my form1Text);
 		my form2 = GuiText_getString (my form2Text);
 		OTMulti_learnOne (my data, my form1, my form2,
-			GET_INTEGER (L"Learn"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
+			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 		iferror return 0;
 		Graphics_updateWs (my g);
 		Editor_broadcastChange (OTMultiEditor_as_Editor (me));

@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2010 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2007/06/09 wchar_t
  * pb 2009/03/21 modern enums
  * pb 2010/12/28 memory allocation with _e
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -58,26 +59,6 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
-
-
-
-#define oo_STRINGx(storage,x)  \
-	if (my x && ! (thy x = Melder_strdup_e (my x))) return 0;
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (my x [i] && ! (thy x [i] = Melder_strdup_e (my x [i]))) return 0;
-
-#define oo_STRINGx_SET(storage,x,setType)  \
-		for (int i = 0; i <= setType##_MAX; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_strdup_e (my x [i]))) return 0;
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (my x) { \
-		if (! (thy x = NUMvector (sizeof (char *), min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_strdup_e (my x [i]))) return 0; \
-	}
 
 
 

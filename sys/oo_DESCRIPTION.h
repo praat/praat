@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/08/13 wchar_t
  * pb 2007/09/02 bool
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRING
  */
 
 #include "oo_undef.h"
@@ -288,8 +289,6 @@
 #undef oo_QUESTION_VECTOR
 #define oo_QUESTION_VECTOR(x,n)  { L"" #x, questionwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 1, 0, L"" #n },
 
-#undef oo_STRING
-#define oo_STRING(x)  { L"" #x, stringwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char *) },
 #undef oo_STRINGW
 #define oo_STRINGW(x)  { L"" #x, stringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *) },
 #undef oo_LSTRING
@@ -297,8 +296,6 @@
 #undef oo_LSTRINGW
 #define oo_LSTRINGW(x)  { L"" #x, lstringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *) },
 
-#undef oo_STRING_ARRAY
-#define oo_STRING_ARRAY(x,cap,n)  { L"" #x, stringwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char *), 0, 0, - cap, 0, L"" #n },
 #undef oo_STRINGW_ARRAY
 #define oo_STRINGW_ARRAY(x,cap,n)  { L"" #x, stringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
 #undef oo_LSTRING_ARRAY
@@ -306,8 +303,6 @@
 #undef oo_LSTRINGW_ARRAY
 #define oo_LSTRINGW_ARRAY(x,cap,n)  { L"" #x, lstringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, - cap, 0, L"" #n },
 
-#undef oo_STRING_SET
-#define oo_STRING_SET(x,setType)  { L"" #x, stringwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char *), 0, 0, 3, (void *) setType##_getText, (void *) setType##_getValue },
 #undef oo_STRINGW_SET
 #define oo_STRINGW_SET(x,setType)  { L"" #x, stringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, 3, (void *) setType##_getText, (void *) setType##_getValue },
 #undef oo_LSTRING_SET
@@ -315,8 +310,6 @@
 #undef oo_LSTRINGW_SET
 #define oo_LSTRINGW_SET(x,setType)  { L"" #x, lstringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, 3, (void *) setType##_getText, (void *) setType##_getValue },
 
-#undef oo_STRING_VECTOR_FROM
-#define oo_STRING_VECTOR_FROM(x,min,max)  { L"" #x, stringwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_STRINGW_VECTOR_FROM
 #define oo_STRINGW_VECTOR_FROM(x,min,max)  { L"" #x, stringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_LSTRING_VECTOR_FROM
@@ -324,8 +317,6 @@
 #undef oo_LSTRINGW_VECTOR_FROM
 #define oo_LSTRINGW_VECTOR_FROM(x,min,max)  { L"" #x, lstringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, 1, L"" #min, L"" #max },
 
-#undef oo_STRING_VECTOR
-#define oo_STRING_VECTOR(x,n)  { L"" #x, stringwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char *), 0, 0, 1, 0, L"" #n },
 #undef oo_STRINGW_VECTOR
 #define oo_STRINGW_VECTOR(x,n)  { L"" #x, stringwwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t *), 0, 0, 1, 0, L"" #n },
 #undef oo_LSTRING_VECTOR

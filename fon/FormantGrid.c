@@ -1,6 +1,6 @@
 /* FormantGrid.c
  *
- * Copyright (C) 2008-2009 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2008/10/28 FormantGrid_to_Formant, FormantGrid_formula
  * pb 2008/11/16 FormantGrid_init
  * pb 2009/01/18 Interpreter argument to formula
+ * pb 2011/03/01 moved Formant filtering here, from FormantTier (reimplemented)
  */
 
 #include "FormantGrid.h"
@@ -204,12 +205,12 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 			/*
 			 * Compute LP coefficients.
 			 */
-			double formant, bandwidth, cosomdt, r;
+			double formant, bandwidth;
 			formant = RealTier_getValueAtTime (formantTier, t);
 			bandwidth = RealTier_getValueAtTime (bandwidthTier, t);
 			if (NUMdefined (formant) && NUMdefined (bandwidth)) {
-				cosomdt = cos (2 * NUMpi * formant * dt);
-				r = exp (- NUMpi * bandwidth * dt);
+				double cosomdt = cos (2 * NUMpi * formant * dt);
+				double r = exp (- NUMpi * bandwidth * dt);
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 				if (fabs (cosomdt) > 0.999999) {   /* Allow for round-off errors. */
 					/* single pole: D(z) = 1 - r z^-1 */
@@ -359,5 +360,42 @@ end:
 	iferror forget (thee);
 	return thee;
 }
+
+Sound Sound_Formant_filter (Sound me, Formant formant) {
+	Sound thee = NULL;
+	FormantGrid grid = NULL;
+//start:
+	grid = Formant_downto_FormantGrid (formant); cherror
+	thee = Sound_FormantGrid_filter (me, grid); cherror
+end:
+	forget (grid);
+	return thee;
+}
+
+Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
+	Sound thee = NULL;
+	FormantGrid grid = NULL;
+//start:
+	grid = Formant_downto_FormantGrid (formant); cherror
+	thee = Sound_FormantGrid_filter_noscale (me, grid); cherror
+end:
+	forget (grid);
+	iferror forget (thee);
+	return thee;
+}
+
+#if 0
+Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
+	Sound thee = NULL;
+	try {
+		automatic (FormantGrid) grid = Formant_downto_FormantGrid (formant);
+		thee = Sound_FormantGrid_filter_noscale (me, grid);
+	} catch (...) {
+		forget (thee);
+		throw;
+	}
+	return thee;
+}
+#endif
 
 /* End of file FormantGrid.c */

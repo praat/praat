@@ -1,6 +1,6 @@
-/* OTGrammar_def.h
+/* OTMulti_def.h
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2007/10/01
+ * pb 2011/03/02
  */
 
 #define ooSTRUCT OTConstraint
@@ -35,6 +35,10 @@ oo_DEFINE_STRUCT (OTConstraint)
 			my plasticity = 1.0;
 		}
 	#endif
+	#if !oo_READING && !oo_WRITING
+		oo_INT (tiedToTheLeft)
+		oo_INT (tiedToTheRight)
+	#endif
 
 oo_END_STRUCT (OTConstraint)
 #undef ooSTRUCT
@@ -46,6 +50,10 @@ oo_DEFINE_STRUCT (OTCandidate)
 	oo_STRINGW (string)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, my numberOfConstraints)
+	#if !oo_READING && !oo_WRITING
+		oo_DOUBLE (harmony)
+		oo_DOUBLE (probability)
+	#endif
 
 oo_END_STRUCT (OTCandidate)
 #undef ooSTRUCT

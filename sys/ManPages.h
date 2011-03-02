@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/02
  */
 
 #ifndef _ManPage_h_
@@ -28,6 +28,10 @@
 #endif
 #ifndef _Collection_h_
 	#include "Collection.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define ManPages_members Data_members \
@@ -38,22 +42,26 @@
 #define ManPages_methods Data_methods
 class_create (ManPages, Data);
 
-GLOBAL_C ManPages ManPages_create (void);
+ManPages ManPages_create (void);
 
-GLOBAL_C int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
+int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-GLOBAL_C long ManPages_lookUp (ManPages me, const wchar_t *title);
+long ManPages_lookUp (ManPages me, const wchar_t *title);
 
-GLOBAL_C int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
-GLOBAL_C int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
+int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
+int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
 
-GLOBAL_C long ManPages_uniqueLinksHither (ManPages me, long ipage);
-GLOBAL_C const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
+long ManPages_uniqueLinksHither (ManPages me, long ipage);
+const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ManPages.h */
 #endif

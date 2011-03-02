@@ -1,6 +1,8 @@
+#ifndef _machine_h_
+#define _machine_h_
 /* machine.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +20,12 @@
  */
 
 /*
- * pb 2004/06/17
+ * pb 2011/03/02
  */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 void Machine_initLookAndFeel (unsigned int argc, char **argv);
 char **Machine_getXresources (void);
@@ -32,4 +38,9 @@ int Machine_getTitleBarHeight (void);
 int Machine_getScrollBarWidth (void);
 int Machine_getTextHeight (void);
 
+#ifdef __cplusplus
+	}
+#endif
+
 /* End of file machine.h */
+#endif

@@ -1,6 +1,6 @@
 /* oo_CAN_WRITE_AS_ENCODING.h
  *
- * Copyright (C) 2007-2009 Paul Boersma
+ * Copyright (C) 2007-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/10/01 struct_canWriteAsEncoding static
  * pb 2007/10/14 api
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -44,14 +45,6 @@
 #define oo_ENUMx_SET(type,storage,Type,x,setType)
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)
-
-#define oo_STRINGx(storage,x)
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)
-
-#define oo_STRINGx_SET(storage,x,setType)
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)
 
 #define oo_STRINGWx(storage,x)  \
 	if (my x && ! Melder_isEncodable (my x, encoding)) return false;

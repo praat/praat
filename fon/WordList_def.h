@@ -1,6 +1,6 @@
 /* File WordList_def.h
  *
- * Copyright (C) 1999-2002 Paul Boersma
+ * Copyright (C) 1999-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,13 @@
  */
 
 /*
- * pb 1999/05/04
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #define ooSTRUCT WordList
 oo_DEFINE_CLASS (WordList, Data)
 	#if !oo_DESCRIBING
-		oo_LSTRING (string)
+		oo_LSTRINGW (string)
 	#endif
 	#if oo_DECLARING
 		oo_LONG (length)

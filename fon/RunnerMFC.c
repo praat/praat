@@ -256,8 +256,10 @@ static void do_replay (RunnerMFC me) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (RunnerMFC);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+if (gtk && event -> type != BUTTON_PRESS) return;
 	ExperimentMFC experiment = my data;
 	if (my data == NULL) return;
+	double reactionTime = Melder_clock () - experiment -> startingTime - experiment -> stimulusInitialSilenceDuration;
 	double x, y;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   /* The first click of the experiment. */
@@ -302,6 +304,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 					experiment -> responses [experiment -> trial] = iresponse;
+					experiment -> reactionTimes [experiment -> trial] = reactionTime;
 					if (experiment -> responsesAreSounds) {
 						ExperimentMFC_playResponse (experiment, iresponse);
 					}

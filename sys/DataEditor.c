@@ -1,6 +1,6 @@
 /* DataEditor.c
  *
- * Copyright (C) 1995-2008 Paul Boersma
+ * Copyright (C) 1995-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2008/07/20 wchar_t
+ * pb 2011/03/03 removed stringwa
  */
 
 #define NAME_X  30
@@ -54,12 +55,12 @@
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
 	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
-	"enum", "lenum", "boolean", "question", "string", "stringw", "lstring", "lstringw",
+	"enum", "lenum", "boolean", "question", "stringw", "lstringw",
 	"struct", "widget", "object", "collection" };*/
 static int stringLengths [] = { 0,
 	4, 6, 6, 11, 3, 5, 5, 10, 1,
 	15, 27, 35, 59, 4, 6,
-	33, 33, 8, 6, 60, 60, 60, 60 };
+	33, 33, 8, 6, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
 	GuiObject label, button, text;
@@ -266,9 +267,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (value < 0) goto error;
 				* (signed char *) my fieldData [i]. address = value;
 			} break;
-			case stringwa:
 			case stringwwa:
-			case lstringwa:
 			case lstringwwa: {
 				wchar_t *old = * (wchar_t **) my fieldData [i]. address;
 				Melder_free (old);
@@ -495,9 +494,7 @@ static wchar_t * singleTypeToText (void *address, int type, void *tagType, Melde
 		case lenumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
 		case booleanwa: MelderString_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
 		case questionwa: MelderString_append1 (buffer, * (signed char *) address ? L"<yes>" : L"<no>"); break;
-		case stringwa:
 		case stringwwa:
-		case lstringwa:
 		case lstringwwa: {
 			wchar_t *string = * (wchar_t **) address;
 			if (string == NULL) { MelderString_empty (buffer); return buffer -> string; }   // Convert NULL string to empty string.

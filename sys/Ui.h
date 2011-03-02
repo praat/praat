@@ -32,6 +32,10 @@
 	#include "Interpreter.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 /* Forms for getting arguments from the user. */
 
 /* Example of usage:
@@ -201,6 +205,10 @@ void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *
 int UiForm_widgetsToValues (I);
 int UiForm_Interpreter_addVariables (I, Interpreter interpreter);
 int UiForm_getClickedContinueButton (UiForm me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif
 /* End of file Ui.h */

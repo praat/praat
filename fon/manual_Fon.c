@@ -1491,7 +1491,7 @@ TAG (L"##Time (s)")
 DEFINITION (L"the time around which a point is looked for, in seconds.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (local)...", L"ppgb", 20110220)
+MAN_BEGIN (L"PointProcess: Get jitter (local)...", L"ppgb", 20110302)
 INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
 NORMAL (L"This command will write into the Info window "
 	"the %%local jitter%, which is the average absolute difference between consecutive intervals, "
@@ -1539,7 +1539,7 @@ NORMAL (L"First, we define the absolute (non-relative) local jitter (in seconds)
 	"difference of consecutive intervals:")
 FORMULA (L"%jitter(seconds) = \\su__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
-	"If an interval %T__%i-1_ or %T__%i_ is not between ##Shortest period# and ##Longest period#, "
+	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - %T__%i-1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 2, the result of the command is @undefined).")
@@ -1608,7 +1608,7 @@ NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the num
 	"(if %N ends up being less than 2, the result of the command is @undefined).")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (rap)...", L"ppgb", 20110220)
+MAN_BEGIN (L"PointProcess: Get jitter (rap)...", L"ppgb", 20110302)
 INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
 NORMAL (L"This command will write into the Info window the %%Relative Average Perturbation% (RAP), "
 	"a jitter measure defined as the average absolute difference between an interval and the average of it and its two neighbours, "
@@ -1652,7 +1652,7 @@ NORMAL (L"Relative Average Perturbation is defined in terms of three consecutive
 NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds):")
 FORMULA (L"%absAP(seconds) = \\su__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
-	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Shortest period# and ##Longest period#, "
+	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")
@@ -1670,7 +1670,7 @@ FORMULA (L"%RAP = %absAP(seconds) / %meanPeriod(seconds)")
 NORMAL (L"The result is a value between 0 and 2, or between 0 and 200 percent.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (ppq5)...", L"ppgb", 20110220)
+MAN_BEGIN (L"PointProcess: Get jitter (ppq5)...", L"ppgb", 20110302)
 INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
 NORMAL (L"This command will write into the Info window the %%five-point Period Perturbation Quotient%, "
 	"a jitter measure defined as the average absolute difference between an interval and the average of it and its four closest neighbours, "
@@ -1713,7 +1713,7 @@ NORMAL (L"The five-point Period Perturbation Quotient (PPQ5) is defined in terms
 NORMAL (L"First, we define the absolute (i.e. non-relative) PPQ5 (in seconds):")
 FORMULA (L"%absPPQ5(seconds) = \\su__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
-	"If an interval %T__%i-2_ or %T__%i-1_ or %T__%i_ or %T__%i+1_ or %T__%i+2_ is not between ##Shortest period# and ##Longest period#, "
+	"If an interval %T__%i-2_ or %T__%i-1_ or %T__%i_ or %T__%i+1_ or %T__%i+2_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-2_/%T__%i-1_ or %T__%i-1_/%T__%i-2_ or %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ or %T__%i+2_/%T__%i+1_ or %T__%i+1_/%T__%i+2_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 5, the result of the command is @undefined).")
@@ -1731,7 +1731,7 @@ FORMULA (L"%PPQ5 = %PPQ5(seconds) / %meanPeriod(seconds)")
 NORMAL (L"The result is a value between 0 and 4, or between 0 and 400 percent.")
 MAN_END
 
-MAN_BEGIN (L"PointProcess: Get jitter (ddp)...", L"ppgb", 20110220)
+MAN_BEGIN (L"PointProcess: Get jitter (ddp)...", L"ppgb", 20110302)
 INTRO (L"A command that becomes available in the #Query submenu when you select a @PointProcess object.")
 NORMAL (L"This command will write into the Info window the %%Difference of Differences of Periods%, "
 	"a jitter measure defined as the average absolute difference between the consecutives differences between consecutive intervals, "
@@ -1778,7 +1778,7 @@ NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation
 	"difference of difference of consecutive intervals:")
 FORMULA (L"%absDDP(seconds) = \\su__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
-	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Shortest period# and ##Longest period#, "
+	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ###Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |2%T__%i_ - %T__%i-1_ - %T__%i+1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")

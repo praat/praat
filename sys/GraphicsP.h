@@ -20,11 +20,26 @@
  */
 
 /*
- * pb 2011/01/05
+ * pb 2011/03/02
  */
 
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#include "Gui.h"
+
+#if defined (_WIN32)
+	#include <windowsx.h>
+#elif defined (macintosh)
+	#include "macport_on.h"
+	#include <Quickdraw.h>
+	#include <MacWindows.h>
+	#include "macport_off.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 typedef struct {
@@ -36,8 +51,6 @@ typedef struct {
 	union { long integer; const char *string; } font;
 	int cell, line, run;
 } _Graphics_widechar;
-
-#include "Gui.h"
 
 #define Graphics_members Thing_members \
 	/* Device constants. */ \
@@ -136,7 +149,6 @@ int Graphics_init (I);
 	#define cairo 1
 	#define pango 1
 #elif defined (_WIN32)
-	#include <windowsx.h>
 	#define GraphicsScreen_members Graphics_members \
 		HWND window; \
 		HDC dc; \
@@ -149,10 +161,6 @@ int Graphics_init (I);
 	#define cairo 0
 	#define pango 0
 #elif defined (macintosh)
-	#include "macport_on.h"
-	#include <Quickdraw.h>
-	#include <MacWindows.h>
-	#include "macport_off.h"
 	#define GraphicsScreen_members Graphics_members \
 		GrafPtr macPort; \
 		int macFont, macStyle; \
@@ -219,6 +227,10 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
 #ifdef macintosh
 	void GraphicsQuartz_initDraw (GraphicsScreen me);
 	void GraphicsQuartz_exitDraw (GraphicsScreen me);
+#endif
+
+#ifdef __cplusplus
+	}
 #endif
 
 /* End of file GraphicsP.h */

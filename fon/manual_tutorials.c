@@ -20,12 +20,16 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-GLOBAL_C void manual_tutorials_init (ManPages me);
-GLOBAL_C void manual_tutorials_init (ManPages me) {
+void manual_tutorials_init (ManPages me);
+void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110220)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110303)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.17# (2 March 2011)")
+LIST_ITEM (L"\\bu Better names for Table opening and saving commands.")
+LIST_ITEM (L"\\bu @ExperimentMFC: reaction times.")
+LIST_ITEM (L"\\bu Linux/GTK: corrected triple clicks in ExperimentMFC.")
 NORMAL (L"##5.2.16# (20 February 2011)")
 LIST_ITEM (L"\\bu Better support for WAV files with special \"chunks\" in them.")
 LIST_ITEM (L"\\bu Manual: documentation of explicit formulas for @@Voice 2. Jitter|jitter measurements@.")

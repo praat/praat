@@ -1,6 +1,6 @@
 /* UiP.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1999/11/09
- * pb 2002/03/07 GPL
+ * pb 2011/03/02
  */
 
 /*
@@ -30,9 +29,17 @@
 	#include "Ui.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 extern int (*theAllowExecutionHookHint) (void *closure);
 extern void *theAllowExecutionClosureHint;
 typedef struct structUiFileSelector *UiFileSelector;
 UiFileSelector UiFileSelector_create (GuiObject parent, const char *label, int direction, const char *defaultValue);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file UiP.h */

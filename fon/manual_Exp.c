@@ -1,6 +1,6 @@
 /* manual_Exp.c
  *
- * Copyright (C) 2001-2009 Paul Boersma
+ * Copyright (C) 2001-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ LIST_ITEM (L"@@ExperimentMFC 6. Responses are sounds")
 LIST_ITEM (L"@@ExperimentMFC 7. Running multiple experiments")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20090821)
+MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20110303)
 NORMAL (L"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
 	"`Simple' means that for identification, the subject hears a sound and has to click on one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
@@ -64,7 +64,7 @@ NORMAL (L"The advantage of using Praat's ExperimentMFC for this is that it is fr
 NORMAL (L"If you require more from your experiment design, you can use Praat's @@Demo window@; "
 	"with that less simple method you could for instance let the stimulus depend on the subject's previous responses. "
 	"Alternatively, you could use a dedicated program like Presentation or E-prime instead of Praat; "
-	"with these programs, you can measure reaction times as well.")
+	"with these programs, you can also measure reaction times more accurately.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 2. The first example", L"ppgb", 20051205)
@@ -277,7 +277,7 @@ NORMAL (L"If %numberOfGoodnessCategories is not 0, some more rectangles will be 
 	"goodness judgment of 5.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20110129)
+MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20110303)
 NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @@Read from file...@ "
 	"(it is not a script but a data file, so do not try to read it with ##Open Praat script...#). "
 	"You can then choose #Run. After the experiment finishes, you can close the experiment window "
@@ -289,8 +289,9 @@ NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @
 	"all the results files into Praat with @@Read from file...@, then select all the resulting "
 	"ResultsMFC objects (which will have automatically been named #ts, #mj, and so on), then choose "
 	"##Collect to table#. This will result in a table whose first column contains the names of the subjects, "
-	"while the second column contains the stimulus names and the third column the responses "
-	"(if there are goodness judgments, these will go into a fourth column). The table can be saved "
+	"the second column contains the stimulus names, the third column contains the responses, "
+	"and the last column contains the approximate reaction times (measured from the start of the stimulus sound, i.e. after the initial silence duration). "
+	"If there are goodness judgments, these will go into the fourth column. The table can be saved "
 	"as a table file (with ##Save as table file...#), which can be read by programs like Excel and SPSS.")
 MAN_END
 

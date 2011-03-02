@@ -44,6 +44,8 @@
  djmw 20081119 +TableOfReal_areAllCellsDefined
  djmw 20090506 +setInner for _drawScatterPlotMatrix
  djmw 20091009 +TableOfReal_drawColumnAsDistribution
+ djmw 20100222 Corrected a bug in TableOfReal_copyOneRowWithLabel which caused label corruption if 
+               from and to table were equal and rows were equal too.
 */
 
 #include <ctype.h>
@@ -114,7 +116,9 @@ int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow)
 	if ( myrow < 1 ||  myrow > my  numberOfRows ||
 		thyrow < 1 || thyrow > thy numberOfRows ||
 		my numberOfColumns != thy numberOfColumns) return 0;
-
+	
+	if (me == thee && myrow == thyrow) return 1; 
+	
 	Melder_free (thy rowLabels[thyrow]);
 	if (my rowLabels[myrow] != NULL && thy rowLabels[thyrow] != my rowLabels[myrow])
 	{

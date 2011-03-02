@@ -1,6 +1,6 @@
 /* OTGrammar_enums.h
  *
- * Copyright (C) 2006-2009 Paul Boersma
+ * Copyright (C) 2006-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/03/18
+ * pb 2011/03/01
  */
 
 enums_begin (kOTGrammar_decisionStrategy, 0)
@@ -41,6 +41,6 @@ enums_begin (kOTGrammar_rerankingStrategy, 0)
 	enums_add (kOTGrammar_rerankingStrategy, 6, EDCD_WITH_VACATION, L"EDCD with vacation")
 	enums_add (kOTGrammar_rerankingStrategy, 7, DEMOTE_ONE_WITH_VACATION, L"Demote one with vacation")
 	enums_add (kOTGrammar_rerankingStrategy, 8, WEIGHTED_ALL_UP_HIGHEST_DOWN, L"Weighted all up, highest down")
-enums_end (kOTGrammar_rerankingStrategy, 8, WEIGHTED_UNCANCELLED)
+enums_end (kOTGrammar_rerankingStrategy, 8, SYMMETRIC_ALL)
 
 /* End of file OTGrammar_enums.h */

@@ -1,6 +1,8 @@
+#ifndef _Picture_h_
+#define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,7 @@
  */
 
 /*
- * pb 2009/08/06
+ * pb 2011/03/02
  */
 
 /* A self-recording picture inside a Motif DrawingArea widget.
@@ -50,6 +52,10 @@
 
 #ifdef macintosh
 #define Picture PictureNotMac
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 typedef struct structPicture *Picture;
@@ -144,4 +150,9 @@ void Picture_foreground (Picture me);
 
 void Picture_selfExpose (Picture me);
 
+#ifdef __cplusplus
+	}
+#endif
+
 /* End of file Picture.h */
+#endif

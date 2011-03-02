@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/02
  */
 
 #ifndef _Editor_h_
@@ -31,6 +31,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define HyperLink_members Data_members \
@@ -115,6 +119,10 @@ int HyperPage_init (HyperPage me, GuiObject parent, const wchar_t *title, Any da
 void HyperPage_prefs (void);
 void HyperPage_setEntryHint (I, const wchar_t *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file HyperPage.h */
 #endif

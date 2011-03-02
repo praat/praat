@@ -1020,8 +1020,8 @@ static void createMenuItems_view_audio (FunctionEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"-- play --", 0, 0);
 	EditorMenu_addCommand (menu, L"Audio:", GuiMenu_INSENSITIVE, menu_cb_play /* dummy */);
 	EditorMenu_addCommand (menu, L"Play...", 0, menu_cb_play);
-	EditorMenu_addCommand (menu, L"Play or stop", GuiMenu_TAB, menu_cb_playOrStop);
-	EditorMenu_addCommand (menu, L"Play window", GuiMenu_SHIFT + GuiMenu_TAB, menu_cb_playWindow);
+	EditorMenu_addCommand (menu, L"Play or stop", gtk ? 0 : GuiMenu_TAB, menu_cb_playOrStop);
+	EditorMenu_addCommand (menu, L"Play window", gtk ? 0 : GuiMenu_SHIFT + GuiMenu_TAB, menu_cb_playWindow);
 	EditorMenu_addCommand (menu, L"Interrupt playing", GuiMenu_ESCAPE, menu_cb_interruptPlaying);
 }
 

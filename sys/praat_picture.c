@@ -1626,10 +1626,10 @@ void praat_picture_init (void) {
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"-- write --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"File", L"Save as praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
-	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, praat_HIDDEN, DO_Picture_writeToPraatPictureFile);
 	#ifdef _WIN32
 	praat_addMenuCommand (L"Picture", L"File", L"Save as Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
-	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
+	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, praat_HIDDEN, DO_Picture_writeToWindowsMetafile);
 	#endif
 	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"File", L"Save as PDF file...", 0, 'S', DO_Picture_writeToPdfFile);

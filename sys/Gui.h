@@ -20,7 +20,7 @@
  */
 
 /*
- * 2011/02/02
+ * 2011/03/02
  */
 
 #if defined (UNIX)
@@ -33,6 +33,25 @@
 
 #ifndef _Collection_h_
 	#include "Collection.h"
+#endif
+
+#if gtk
+	#include <gtk/gtk.h>
+	#include <gdk/gdk.h>
+	#include <cairo/cairo.h>
+#elif defined (macintosh)
+	#include "macport_on.h"
+	#include <Carbon/Carbon.h>
+	#include "macport_off.h"
+#elif defined (_WIN32)
+	#define Polygon PolygonNotWin
+	#include <windows.h>
+	#include <windowsx.h>
+	#undef Polygon
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define GUI_ARGS  GuiObject w, XtPointer void_me, XtPointer call
@@ -62,9 +81,6 @@
 #define Gui_HOMOGENEOUS  1
 
 #if gtk
-	#include <gtk/gtk.h>
-	#include <gdk/gdk.h>
-	#include <cairo/cairo.h>
 	typedef GMainContext *AppContext;
 	typedef void *XtPointer;
 	typedef gint Dimension;
@@ -74,18 +90,6 @@
 	typedef GtkWidget *GuiObject;
 #elif motif
 	typedef struct structGuiObject *GuiObject;   // Opaque
-
-	#if defined (macintosh)
-		#include "macport_on.h"
-		#include <Carbon/Carbon.h>
-		#include "macport_off.h"
-	#endif
-	#ifdef _WIN32
-		#define Polygon PolygonNotWin
-		#include <windows.h>
-		#include <windowsx.h>
-		#undef Polygon
-	#endif
 
 	/*
 	 * Definitions of X11 types.
@@ -523,6 +527,10 @@ void GuiObject_size (GuiObject me, long width, long height);
 
 void Gui_setOpenDocumentCallback (int (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Gui.h */
 #endif

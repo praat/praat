@@ -1,6 +1,6 @@
 /* SpellingChecker.c
  *
- * Copyright (C) 1999-2007 Paul Boersma
+ * Copyright (C) 1999-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2007/06/21 tex
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
+ * pb 2011/03/03 wide-character WordList
  */
 
 #include "SpellingChecker.h"
@@ -185,7 +186,7 @@ int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word) {
 			}
 		}
 	}
-	if (WordList_hasWord (my wordList, Melder_peekWcsToUtf8 (word)))
+	if (WordList_hasWord (my wordList, word))
 		return TRUE;
 	if (my userDictionary != NULL) {
 		if (wcslen (word) > 3333) return FALSE;   /* Superfluous, because WordList_hasWord already checked. But safe. */

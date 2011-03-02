@@ -2,7 +2,7 @@
 #define _WordList_h_
 /* WordList.h
  *
- * Copyright (C) 1999-2002 Paul Boersma
+ * Copyright (C) 1999-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1999/05/04
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #ifndef _Strings_h_
@@ -36,6 +35,6 @@ oo_CLASS_CREATE (WordList, Data);
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);
 
-int WordList_hasWord (WordList me, const char *word);
+int WordList_hasWord (WordList me, const wchar_t *word);
 
 #endif

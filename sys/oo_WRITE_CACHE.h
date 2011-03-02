@@ -1,6 +1,6 @@
 /* oo_WRITE_CACHE.h
  *
- * Copyright (C) 1994-2009 Paul Boersma
+ * Copyright (C) 1994-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/06/09 wchar_t
  * pb 2008/01/19 NUM##storage
  * pb 2009/03/21 modern enums
+ * pb 2011/03/03 removed oo_STRINGx
  */
 
 #include "oo_undef.h"
@@ -59,24 +60,6 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (my x && ! NUM##t##vector_writeCache_##storage (my x, min, max, f)) return 0;
-
-
-#define oo_STRINGx(storage,x)  \
-	cacput##storage (my x, f);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		cacput##storage (my x [i], f);
-
-#define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		cacput##storage (my x [i], f);
-
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
-		for (long i = min; i <= max; i ++) \
-			cacput##storage (my x [i], f); \
-	}
 
 
 #define oo_STRINGWx(storage,x)  \

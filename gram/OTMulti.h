@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2008 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/04/14
+ * pb 2011/03/01
  */
 
 #ifndef _Data_h_
@@ -65,9 +65,9 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2);
 #define OTMulti_LEARN_BACKWARD  2
 #define OTMulti_LEARN_BIDIRECTIONALLY  3
 int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
-	int direction, double plasticity, double relativePlasticityNoise);
+	int updateRule, int direction, double plasticity, double relativePlasticityNoise);
 int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
-	double evaluationNoise, int direction,
+	double evaluationNoise, int updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 

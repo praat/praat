@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2007 Paul Boersma
+ * Copyright (C) 1993-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,14 @@
  */
 
 /*
- * pb 2007/12/25
+ * pb 2011/03/02
  */
 
 #include "Gui.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /*
  * In GUI implementations, we order everything by ease of programming: Unix, Windows, Macintosh.
@@ -272,6 +276,10 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 		void _GuiText_exit (void);
 
 	#endif
+#endif
+
+#ifdef __cplusplus
+	}
 #endif
 
 /* End of file GuiP.h */

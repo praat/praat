@@ -2,7 +2,7 @@
 #define _Preferences_h_
 /* Preferences.h
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2011/03/02
  */
 
 #ifndef _melder_h_
 	#include "melder.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /*
@@ -55,6 +59,10 @@ void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value
 
 void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Preferences.h */
 #endif

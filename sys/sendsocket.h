@@ -24,10 +24,18 @@
  * pb 2002/03/07 GPL
  */
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 char * sendsocket (const char *hostNameAndPort, const char *command);
 /*
  * E.g. 'hostNameAndPort' could be "localhost:6667" or "fonsg19.hum.uva.nl:4711".
  */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file sendsocket.h */
 #endif

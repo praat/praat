@@ -2,7 +2,7 @@
 #define _FormantTier_h_
 /* FormantTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,11 @@
  */
 
 /*
- * pb 1999/11/19
- * pb 2002/07/16 GPL
+ * pb 2011/03/01
  */
 
-#ifndef _AnyTier_h_
-	#include "AnyTier.h"
+#ifndef _PointProcess_h_
+	#include "PointProcess.h"
 #endif
 #ifndef _Formant_h_
 	#include "Formant.h"
@@ -57,8 +56,6 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
-Sound Sound_Formant_filter (Sound me, Formant formant);
-Sound Sound_Formant_filter_noscale (Sound me, Formant formant);
 
 /* End of file FormantTier.h */
 #endif

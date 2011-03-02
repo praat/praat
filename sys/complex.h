@@ -2,7 +2,7 @@
 #define _complex_h_
 /* complex.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,21 +20,12 @@
  */
 
 /*
- * pb 2001/03/25
- * pb 2002/03/07 GPL
+ * pb 2011/03/02
  */
 
-/*
- * In-line complex numbers.
- * The GPL manual advises to use
- *    float dat [2];
- * rather than
- *    float re, im;
- * probably because the first declaration has guaranteed 4-byte alignment,
- * so that complex arrays can overlay arrays of floats.
- * So, the declaration below is a possible BUG on compilers with a default 8-byte alignment
- * of floats in structs. Does anybody know of such compilers?
- */
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct fcomplex { float re, im; } fcomplex;
 typedef struct dcomplex { double re, im; } dcomplex;
@@ -75,6 +66,10 @@ dcomplex dcomplex_rmul (double x, dcomplex a);
 fcomplex fcomplex_exp (fcomplex z);
 dcomplex dcomplex_exp (dcomplex z);
 	/* Exponentiation: e^z */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file complex.h */
 #endif

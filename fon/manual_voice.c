@@ -83,7 +83,7 @@ NORMAL (L"The numbers between parentheses are the total duration of the voice br
 	"respectively.")
 MAN_END
 
-MAN_BEGIN (L"Voice 2. Jitter", L"ppgb", 20110220)
+MAN_BEGIN (L"Voice 2. Jitter", L"ppgb", 20110302)
 NORMAL (L"You can measure jitter in the Sound editor window, after choosing @@Show pulses@ from the #Pulses menu. "
 	"You will see blue lines that can be thought of as representing the glottal closures. "
 	"Use @@Voice report@ from the #Pulses menu to get the jitter in the selected part. "
@@ -96,30 +96,29 @@ NORMAL (L"The voice report gives five kinds of jitter measurements. "
 	"and the ##Maximum period factor# is determined in @@Advanced pulses settings...@.")
 ENTRY (L"Jitter (local)")
 NORMAL (L"This is the average absolute difference between consecutive periods, divided by the average period. "
-	"For the precise procedure, see @@PointProcess: Get jitter (local)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+	"For the precise procedure, see @@PointProcess: Get jitter (local)...@.")
 NORMAL (L"MDVP calls this parameter %Jitt, and gives 1.040\\%  as a threshold for pathology. "
 	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (local, absolute)")
 NORMAL (L"This is the average absolute difference between consecutive periods, in seconds. "
-	"For the precise procedure, see @@PointProcess: Get jitter (local, absolute)...@ "
-	"(the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+	"For the precise procedure, see @@PointProcess: Get jitter (local, absolute)...@.")
 NORMAL (L"MDVP calls this parameter %Jita, and gives 83.200 \\mus as a threshold for pathology. "
 	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (rap)")
 NORMAL (L"This is the Relative Average Perturbation, "
 	"the average absolute difference between a period and the average of it and its two neighbours, divided by the average period. "
-	"For the precise procedure, see @@PointProcess: Get jitter (rap)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+	"For the precise procedure, see @@PointProcess: Get jitter (rap)...@.")
 NORMAL (L"MDVP gives 0.680\\%  as a threshold for pathology. "
 	"As this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (ppq5)")
 NORMAL (L"This is the five-point Period Perturbation Quotient, "
 	"the average absolute difference between a period and the average of it and its four closest neighbours, divided by the average period. "
-	"For the precise procedure, see @@PointProcess: Get jitter (ppq5)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+	"For the precise procedure, see @@PointProcess: Get jitter (ppq5)...@.")
 NORMAL (L"MDVP calls this parameter %PPQ, and gives 0.840\\%  as a threshold for pathology; "
 	"as this number was based on jitter measurements influenced by noise (see @@Voice 5. Comparison with other programs@), the correct threshold is probably lower.")
 ENTRY (L"Jitter (ddp)")
 NORMAL (L"This is the average absolute difference between consecutive differences between consecutive periods, divided by the average period. "
-	"For the precise procedure, see @@PointProcess: Get jitter (ddp)...@ (the minimum and maximum periods are 0.0001 and 0.02 seconds).")
+	"For the precise procedure, see @@PointProcess: Get jitter (ddp)...@.")
 NORMAL (L"This is Praat's original ##Get jitter#. The value is three times RAP.")
 MAN_END
 

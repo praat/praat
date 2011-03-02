@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2007 Paul Boersma
+ * Copyright (C) 1996-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/02
  */
 
 #ifndef _HyperPage_h_
@@ -28,6 +28,10 @@
 #endif
 #ifndef _ManPages_h_
 	#include "ManPages.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Manual__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
@@ -49,6 +53,10 @@ int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data);
 Manual Manual_create (GuiObject parent, const wchar_t *title, Any data);
 
 void Manual_search (Manual me, const wchar_t *query);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Manual.h */
 #endif

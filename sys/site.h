@@ -1,6 +1,8 @@
+#ifndef _site_h_
+#define _site_h_
 /* site.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +20,21 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/02
  */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 wchar_t *Site_getPrintCommand (void);
 void Site_setPrintCommand (const wchar_t *text);
 
 void Site_prefs (void);
 
-/* End of file site.c */
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file site.h */
+#endif

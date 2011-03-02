@@ -2,7 +2,7 @@
 #define _longchar_h_
 /* longchar.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,10 @@
  * pb 2008/04/23 updated info
  */
 #include <wchar.h>
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /********** NON-ASCII CHARACTERS **********/
 
@@ -119,6 +123,10 @@ Longchar_Info Longchar_getInfoFromNative (wchar_t kar);
 	Thus, the string typed as "`hallo'" will give you left and right quotes,
 	even on Macintosh. (Reading this note in Xwindows may feel somewhat funny.)
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file longchar.h */
 #endif

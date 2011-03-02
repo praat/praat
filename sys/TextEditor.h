@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  */
 
 /*
- * pb 2007/06/09
+ * pb 2011/03/02
  */
 
 #ifndef _Editor_h_
 	#include "Editor.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define TextEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
@@ -48,6 +52,10 @@ TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText);
 void TextEditor_showOpen (TextEditor me);
 
 void TextEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TextEditor.h */
 #endif

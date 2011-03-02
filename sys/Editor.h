@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2011/03/02
  */
 
 #ifndef _Collection_h_
@@ -34,6 +34,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Editor_enums.h"
@@ -200,6 +204,10 @@ void Editor_openPraatPicture (Editor me);
 void Editor_closePraatPicture (Editor me);
 
 void Editor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif
 /* End of file Editor.h */

@@ -2,7 +2,7 @@
 #define _Script_h_
 /* Script.h
  *
- * Copyright (C) 1997-2004 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,15 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2011/03/02
  */
 
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Script_members Data_members \
@@ -33,6 +37,10 @@
 class_create (Script, Data);
 
 Script Script_createFromFile (MelderFile fs);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Script.h */
 #endif

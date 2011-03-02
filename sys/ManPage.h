@@ -2,7 +2,7 @@
 #define _ManPage_h_
 /* ManPage.h
  *
- * Copyright (C) 1996-2008 Paul Boersma
+ * Copyright (C) 1996-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/01/19
+ * pb 2011/03/02
  */
 
 #ifndef _Graphics_h_
@@ -28,6 +28,10 @@
 #endif
 
 #include "ManPage_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct structManPage_Paragraph {
 	short type;
@@ -45,6 +49,10 @@ typedef struct structManPage_Paragraph {
 	double recordingTime;
 #define ManPage_methods Thing_methods
 class_create (ManPage, Thing);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ManPage.h */
 #endif

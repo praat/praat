@@ -2,7 +2,7 @@
 #define _Printer_h_
 /* Printer.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,10 @@
 
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* When changing the following structure, update its initialization in Printer.c */
@@ -56,6 +60,10 @@ int Printer_print (void (*draw) (I, Graphics g), I);
 void Printer_nextPage (void);
 
 void Printer_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Printer.h */
 #endif

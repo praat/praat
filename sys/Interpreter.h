@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2010 Paul Boersma
+ * Copyright (C) 1993-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/06/03
+ * pb 2011/03/02
  */
 
 #ifndef _Collection_h_
@@ -33,6 +33,10 @@
 #include "Interpreter_decl.h"
 #ifndef _Formula_h_
 	#include "Formula.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define InterpreterVariable_members Thing_members \
@@ -81,6 +85,10 @@ int Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Interpreter.h */
 #endif

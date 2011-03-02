@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2007 Paul Boersma
+ * Copyright (C) 2001-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,17 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/02/07 added rootDirectory
- * pb 2003/03/08 added interStimulusInterval
- * pb 2003/03/08 added initialSilenceDuration
- * pb 2004/06/22 added response key
- * pb 2005/11/21 added replayButton
- * pb 2005/12/04 added okButton and oopsButton
+ * pb 2003/03/08 added interStimulusInterval and initialSilenceDuration (version 2)
+ * pb 2004/06/22 added response key (version 3)
+ * pb 2005/11/21 added replayButton (version 4)
+ * pb 2005/12/04 added okButton and oopsButton (version 4)
  * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
  * pb 2007/08/12 wchar_t
- * pb 2007/09/26 added font size
+ * pb 2007/09/26 added font size (version 5)
+ * pb 2011/03/03 added reaction time (version 2 of ResultsMFC)
  */
 
+/********* class ExperimentMFC **********/
 
 #define ooSTRUCT SoundMFC
 oo_DEFINE_STRUCT (SoundMFC)
@@ -91,29 +92,6 @@ oo_DEFINE_STRUCT (GoodnessMFC)
 	oo_STRINGW (label)
 
 oo_END_STRUCT (GoodnessMFC)
-#undef ooSTRUCT
-
-
-#define ooSTRUCT TrialMFC
-oo_DEFINE_STRUCT (TrialMFC)
-
-	oo_STRINGW (stimulus)
-	oo_STRINGW (response)
-	oo_FROM (1)
-		oo_DOUBLE (goodness)
-	oo_ENDFROM
-
-oo_END_STRUCT (TrialMFC)
-#undef ooSTRUCT
-
-
-#define ooSTRUCT ResultsMFC
-oo_DEFINE_CLASS (ResultsMFC, Data)
-
-	oo_LONG (numberOfTrials)
-	oo_STRUCT_VECTOR (TrialMFC, result, my numberOfTrials)
-
-oo_END_CLASS (ResultsMFC)
 #undef ooSTRUCT
 
 
@@ -185,6 +163,8 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_LONG_VECTOR (stimuli, my numberOfTrials)
 		oo_LONG_VECTOR (responses, my numberOfTrials)
 		oo_DOUBLE_VECTOR (goodnesses, my numberOfTrials)
+		oo_DOUBLE (startingTime)
+		oo_DOUBLE_VECTOR (reactionTimes, my numberOfTrials)
 		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
 	oo_DIR (rootDirectory)
@@ -194,6 +174,34 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	#endif
 
 oo_END_CLASS (ExperimentMFC)
+#undef ooSTRUCT
+
+
+/********** class ResultsMFC **********/
+
+#define ooSTRUCT TrialMFC
+oo_DEFINE_STRUCT (TrialMFC)
+
+	oo_STRINGW (stimulus)
+	oo_STRINGW (response)
+	oo_FROM (1)
+		oo_DOUBLE (goodness)
+	oo_ENDFROM
+	oo_FROM (2)
+		oo_DOUBLE (reactionTime)
+	oo_ENDFROM
+
+oo_END_STRUCT (TrialMFC)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT ResultsMFC
+oo_DEFINE_CLASS (ResultsMFC, Data)
+
+	oo_LONG (numberOfTrials)
+	oo_STRUCT_VECTOR (TrialMFC, result, my numberOfTrials)
+
+oo_END_CLASS (ResultsMFC)
 #undef ooSTRUCT
 
 
