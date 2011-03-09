@@ -87,7 +87,7 @@ class_methods (Spectrum, Matrix)
 class_methods_end
 
 Spectrum Spectrum_create (double fmax, long nf) {
-	Spectrum me = new (Spectrum);
+	Spectrum me = Thing_new (Spectrum);
 	if (! me || ! Matrix_init (me, 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1, 2, 2, 1, 1))
 		forget (me);
 	return me;

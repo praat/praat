@@ -96,7 +96,7 @@ Network Network_create_e (double minimumActivity, double maximumActivity, double
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
-	Network me = new (Network); cherror
+	Network me = Thing_new (Network); cherror
 	Network_init_e (me, minimumActivity, maximumActivity, spreadingRate,
 		selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
 		xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections); cherror

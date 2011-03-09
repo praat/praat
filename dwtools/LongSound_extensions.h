@@ -2,7 +2,7 @@
 #define _LongSound_extensions_h_
 /* LongSound_extensions.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,24 @@
 /*
  djmw 20020627
  djmw 20020813 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _LongSound_h_
 	#include "LongSound.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file);
 
 int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _LongSound_extensions_h_ */

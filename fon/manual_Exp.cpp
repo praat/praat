@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_Exp_init (ManPages me);
-void manual_Exp_init (ManPages me) {
+extern "C" void manual_Exp_init (ManPages me);
+extern "C" void manual_Exp_init (ManPages me) {
 
 MAN_BEGIN (L"ExperimentMFC", L"ppgb", 20051205)
 INTRO (L"One of the @@types of objects@ in Praat, "
@@ -545,7 +545,7 @@ MAN_END
 MAN_BEGIN (L"ExperimentMFC 5. Stimulus-dependent texts", L"ppgb", 20051205)
 INTRO (L"In the @@ExperimentMFC 2.1. The experiment file|example experiment@, the text at the top of the screen "
 	"stayed the same throughout the experiment, and so did the texts on the response buttons. "
-	"There are ways to have these texts depend onthe stimulus at hand.")
+	"There are ways to have these texts depend on the stimulus at hand.")
 LIST_ITEM (L"@@ExperimentMFC 5.1. The stimulus-dependent run text")
 LIST_ITEM (L"@@ExperimentMFC 5.2. Stimulus-dependent response buttons")
 MAN_END

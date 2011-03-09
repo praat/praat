@@ -2,7 +2,7 @@
 #define _HMM_h_
 /* HMM.h
  *
- * Copyright (C) 2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,10 @@
 #endif
 #ifndef _Index_h_
  #include "Index.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "HMM_def.h"
@@ -162,5 +166,9 @@ double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSeq
 // somewhere else
 void MelderInfo_lnp (double logp);
 TableOfReal Strings_to_TableOfReal_transitions (I, int probabilities);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _HMM_h_ */

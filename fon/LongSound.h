@@ -2,7 +2,7 @@
 #define _LongSound_h_
 /* LongSound.h
  *
- * Copyright (C) 1992-2010 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
+ * Copyright (C) 1992-2011 Paul Boersma, 2007 Erez Volk (for FLAC, MP3)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/21
+ * pb 2011/03/03
  */
 
 #ifndef _Sound_h_
@@ -28,6 +28,10 @@
 #endif
 #ifndef _Collection_h_
 	#include "Collection.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define COMPRESSED_MODE_READ_FLOAT 0
@@ -81,6 +85,10 @@ int LongSound_concatenate (Ordered collection, MelderFile file, int audioFileTyp
 void LongSound_prefs (void);
 long LongSound_getBufferSizePref_seconds (void);
 void LongSound_setBufferSizePref_seconds (long size);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file LongSound.h */
 #endif

@@ -3,7 +3,7 @@
 
 /* Permutation_and_Index.h
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 
 /*
- * djmw 20050725
+ * djmw 20110307 Latest modification
  */
  
 #ifndef _Permutation_h_
@@ -32,6 +32,14 @@
 	#include "Index.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClass);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Permutation_and_Index_h_ */

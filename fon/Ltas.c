@@ -84,7 +84,7 @@ class_methods (Ltas, Vector)
 class_methods_end
 
 Ltas Ltas_create (long nx, double dx) {
-	Ltas me = new (Ltas);
+	Ltas me = Thing_new (Ltas);
 	if (! me || ! Matrix_init (me, 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1)) return NULL;
 	return me;
 }
@@ -265,7 +265,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	Ltas thee = NULL;
 	long numberOfBands = ceil ((my xmax - my xmin) / bandWidth), iband;
 	if (bandWidth <= my dx) error3 (L"Bandwidth must be greater than ", Melder_double (my dx), L".")
-	thee = new (Ltas); cherror
+	thee = Thing_new (Ltas); cherror
 	Matrix_init (thee, my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1); cherror
 	for (iband = 1; iband <= numberOfBands; iband ++) {
 		double fmin = thy xmin + (iband - 1) * bandWidth;
@@ -280,7 +280,7 @@ end:
 
 Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	long iband;
-	Ltas thee = new (Ltas); cherror
+	Ltas thee = Thing_new (Ltas); cherror
 	Matrix_init (thee, my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1); cherror
 	for (iband = 1; iband <= my nx; iband ++) {
 		thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);

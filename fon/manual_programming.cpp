@@ -1,4 +1,4 @@
-/* manual_programming.c
+/* manual_programming.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -19,22 +19,22 @@
 
 #include "ManPagesM.h"
 
-void manual_programming_init (ManPages me);
-void manual_programming_init (ManPages me) {
+extern "C" void manual_programming_init (ManPages me);
+extern "C" void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110204)
+MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110309)
 INTRO (L"You can extend the functionality of the Praat program "
-	"by adding modules written in C to it. All of Praat's source code "
+	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
 ENTRY (L"1. Warning")
-NORMAL (L"Before trying the task of learning how to write Praat extensions in C, "
+NORMAL (L"Before trying the task of learning how to write Praat extensions in C or C++, "
 	"you should be well aware of the possibilities of @scripting. "
 	"Many built-in commands in Praat have started their "
-	"lives as Praat scripts, and scripts are easier to write than extensions in C. "
+	"lives as Praat scripts, and scripts are easier to write than extensions in C or C++. "
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (L"2. Getting the existing source code")
 NORMAL (L"You obtain the Praat source code via ##www.praat.org#, in a file with a name like "
-	"##praat5213_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking "
+	"##praat5218_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking "
 	"(on old computers, use #gunzip and ##tar xvf# if Unix, or ##StuffIt^\\re Expander^\\tm# if Macintosh, "
 	"or ##Aladdin^\\re Expander^\\tm# if Windows). The result will be a set of directories "
 	"called #kar, #GSL, #num, #audio (with #FLAC and #mp3 in it), #sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #contrib, #main, #makefiles, and #test, "
@@ -54,7 +54,7 @@ NORMAL (L"You have to have installed ##libgtk2.0-dev# (and its dependencies) and
 NORMAL (L"On other Unixes, you do the same, but the file ##makefile.defs# may require some editing after this, "
 	"because Silicon Graphics Irix, Sparc Solaris and HPUX may use different libraries or have them in different locations than Linux.")
 ENTRY (L"6. Extending Praat")
-NORMAL (L"You can edit ##main/main_Praat.c#. "
+NORMAL (L"You can edit ##main/main_Praat.cpp#. "
 	"This example shows you how to create a very simple program with all the functionality "
 	"of the Praat program, and a single bit more:")
 CODE (L"\\# include \"praat.h\"")
@@ -73,9 +73,9 @@ CODE (L"}")
 ENTRY (L"7. Learning how to program")
 NORMAL (L"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Data.h#, "
 	"##sys/oo.h#, the ##XXX_def.h# files in the #fon directory, and the corresponding "
-	"##XXX.c# files in the #fon directory. To see how commands show up on the buttons "
+	"##XXX.c# and ##XXX.cpp# files in the #fon directory. To see how commands show up on the buttons "
 	"in the fixed and dynamic menus, take a look at the large interface description file "
-	"##fon/praat_Fon.c#.")
+	"##fon/praat_Fon.cpp#.")
 ENTRY (L"8. Using the Praat shell only")
 NORMAL (L"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the six directories "
 	"#kar, #GSL, #num, #audio, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
@@ -87,4 +87,4 @@ MAN_END
 
 }
 
-/* End of file manual_Prog.c */
+/* End of file manual_programming.cpp */

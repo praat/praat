@@ -117,10 +117,10 @@ cleanUp:
 
 PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 	PitchTier thee = NULL;
-	long i;
+//start:
 	thee = PitchTier_create (my xmin, my xmax);
 	if (! thee) goto end;
-	for (i = 1; i < my nt; i ++) {
+	for (long i = 1; i < my nt; i ++) {
 		double interval = my t [i + 1] - my t [i];
 		if (interval <= maximumInterval) {
 			if (! RealTier_addPoint (thee, my t [i] + 0.5 * interval, 1.0 / interval))
@@ -143,11 +143,10 @@ PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 }
 
 PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
-	long i;
 	PitchTier thee = NULL;
 	if (my points -> size == 0) return Melder_errorp ("No pitch points.");
 	thee = PitchTier_create (pp -> xmin, pp -> xmax); cherror;
-	for (i = 1; i <= pp -> nt; i ++) {
+	for (long i = 1; i <= pp -> nt; i ++) {
 		double time = pp -> t [i];
 		double value = RealTier_getValueAtTime (me, time);
 		RealTier_addPoint (thee, time, value); cherror
@@ -159,9 +158,8 @@ end:
 
 TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
 	TableOfReal thee = RealTier_downto_TableOfReal (me, L"Time", L"F0");
-	long i;
 	if (! thee) return NULL;
-	if (useSemitones) for (i = 1; i <= thy numberOfRows; i ++)
+	if (useSemitones) for (long i = 1; i <= thy numberOfRows; i ++)
 		thy data [i] [2] = NUMhertzToSemitones (thy data [i] [2]);
 	return thee;
 }

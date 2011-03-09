@@ -1,6 +1,6 @@
 /* SVD.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070102 Removed the #include "TableOfReal.h"
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20110304 Thing_new
 */
 
 #include "SVD.h"
@@ -119,7 +120,7 @@ int SVD_init (I, long numberOfRows, long numberOfColumns)
 
 SVD SVD_create (long numberOfRows, long numberOfColumns)
 {
-	SVD me = new (SVD);
+	SVD me = Thing_new (SVD);
 	
 	if (me == NULL || ! SVD_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
@@ -416,7 +417,7 @@ class_methods_end
 
 GSVD GSVD_create (long numberOfColumns)
 {
-	GSVD me = new (GSVD);
+	GSVD me = Thing_new (GSVD);
 
 	if (me == NULL) return NULL;
 

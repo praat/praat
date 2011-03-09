@@ -2,7 +2,7 @@
 #define _Pattern_h_
 /* Pattern.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Pattern_members Matrix_members
@@ -62,5 +66,9 @@ Matrix Pattern_to_Matrix (Pattern me);
 
 int _Pattern_checkElements (Pattern me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Pattern_h_ */

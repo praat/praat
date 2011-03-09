@@ -1,6 +1,6 @@
 /* NUMfft_d.c
  *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /* djmw 20020813 GPL header
-	djmw 20040511 Added n>1 test for compatibility with old behaviour. 
+	djmw 20040511 Added n>1 test for compatibility with old behaviour.
+	djmw 20110308 struct renaming
  */
 
 #include "NUM2.h"
@@ -32,7 +33,7 @@
 
 int NUMforwardRealFastFourierTransform (double *data, long n)
 {
-	struct NUMfft_Table table_struct;
+	struct structNUMfft_Table table_struct;
 	NUMfft_Table table = &table_struct;
 
 	if (!NUMfft_Table_init (table, n))
@@ -57,7 +58,7 @@ int NUMforwardRealFastFourierTransform (double *data, long n)
 
 int NUMreverseRealFastFourierTransform (double *data, long n)
 {
-	struct NUMfft_Table table_struct;
+	struct structNUMfft_Table table_struct;
 	NUMfft_Table table = &table_struct;
 
 	if (n > 1)

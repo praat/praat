@@ -1,6 +1,6 @@
 /* Permutation.c
  *
- * Copyright (C) 2005-2010 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20100521 Next and Previous
  djmw 20100818 Permutation_permuteTwoItems/Numbers
+ djmw 20110304 Thing_new
 */
 
 #include <time.h>
@@ -113,7 +114,7 @@ int Permutation_init (Permutation me, long numberOfElements)
 
 Permutation Permutation_create (long numberOfElements)
 {
-    Permutation me = new (Permutation);
+    Permutation me = Thing_new (Permutation);
     if (me == NULL || ! Permutation_init (me, numberOfElements)) forget (me);
     return me;
 }

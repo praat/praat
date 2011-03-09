@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005-2010 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20050706
- djmw 20100818 Latest modification
+ djmw 20110306 Latest modification
 */
 
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Permutation_members Data_members \
@@ -92,4 +96,9 @@ Permutation Permutation_reverse (Permutation me, long from, long to);
 
 int Permutation_next_inline (Permutation me);
 int Permutation_previous_inline (Permutation me);
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _Permutation_h_ */

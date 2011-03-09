@@ -2,7 +2,7 @@
 #define _Image_h_
 /* Image.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1995/06/01
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 
@@ -31,6 +30,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Image_members Sampled_members \
@@ -87,6 +90,10 @@ void Image_paint (I, Graphics g, double xmin, double xmax, double ymin, double y
 	Every sample is drawn as a grey rectangle.
 	The larger the value of the sample, the darker the rectangle.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Image.h */
 #endif

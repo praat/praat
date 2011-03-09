@@ -1,11 +1,13 @@
 # Makefile of the library "audio/FLAC"
 # Erez Volk, March 2007
 # pb 20100108: include sys/melder.h
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../../makefile.defs
 
-CFLAGS = -DFLAC__NOASM -I ../../sys
+CFLAGS = $(DEFS) -DFLAC__NOASM -I ../../sys
+
+CPPFLAGS = $(CFLAGS)
 
 # EREZ ?
 # On non-Intel, also define -DFLAC__CPU_UNKNOWN

@@ -45,7 +45,7 @@ class_methods (DurationTier, RealTier)
 class_methods_end
 
 DurationTier DurationTier_create (double tmin, double tmax) {
-	DurationTier me = new (DurationTier); cherror
+	DurationTier me = Thing_new (DurationTier); cherror
 	RealTier_init_e (me, tmin, tmax); cherror
 end:
 	iferror forget (me);

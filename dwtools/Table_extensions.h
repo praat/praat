@@ -1,6 +1,6 @@
 /* Table_extensions.h
  *
- * Copyright (C) 1997-2003 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  djmw 20020619 GPL header
- djmw 20071014 Latest modification
+ djmw 20110307 Latest modification
 */
 
 #ifndef _Table_extensions_h_
@@ -29,6 +29,10 @@
 	#include "Table.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Table Table_createFromPetersonBarneyData (void);
 Table Table_createFromPolsVanNieropData (void);
 Table Table_createFromWeeninkData (void);
@@ -36,5 +40,9 @@ Table Table_createFromWeeninkData (void);
 void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
 	long yci_min, long yci_max, double bar_mm, int garnish);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Table_extensions_h_ */

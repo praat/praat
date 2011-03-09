@@ -58,7 +58,7 @@ class_methods (AmplitudeTierEditor, RealTierEditor) {
 }
 
 AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, AmplitudeTier amplitude, Sound sound, int ownSound) {
-	AmplitudeTierEditor me = new (AmplitudeTierEditor);
+	AmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 	if (! me || ! RealTierEditor_init (AmplitudeTierEditor_as_parent (me), parent, title, (RealTier) amplitude, sound, ownSound))
 		{ forget (me); return NULL; }
 	return me;

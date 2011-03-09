@@ -30,6 +30,8 @@
  * pb 2008/04/04 Thing_infoWithId
  * pb 2009/03/21 modern enums
  * pb 2009/08/17 readable-class IDs
+ * pb 2011/03/05 C++
+ * pb 2011/03/09 C++
  */
 
 /* The root class of all objects. */
@@ -82,7 +84,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 
 /* All functions with 'I' as the first argument assume that it is not NULL. */
 
-wchar_t * Thing_className (I);
+const wchar_t * Thing_className (I);
 /* Return your class name. */
 
 int Thing_member (I, void *klas);
@@ -102,7 +104,7 @@ int Thing_subclass (void *klas, void *ancestor);
 void Thing_info (I);
 void Thing_infoWithId (I, unsigned long id);
 
-#define new(klas)  (klas) Thing_new ((void *) class##klas)
+#define Thing_new(klas)  (klas) _Thing_new ((void *) class##klas)
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -112,7 +114,7 @@ void Thing_infoWithId (I, unsigned long id);
 		result -> methods -> destroy != NULL;   // Class table initialized.
 */
 
-Any Thing_new (void *klas);
+Any _Thing_new (void *klas);
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -228,8 +230,15 @@ void Thing_swap (I, thou);
 /*    and use class_create_opaque in the klasP.h header file */
 /*    (or in klas.c if there will not be any inheritors). */
 
+#ifdef __cplusplus
+	#define _THING_DECLARE_AUTO(Type)  typedef _Thing_auto <struct##Type> auto##Type;
+#else
+	#define _THING_DECLARE_AUTO(Type)
+#endif
+
 #define Thing_declare1(klas) \
 	typedef struct struct##klas *klas; \
+	_THING_DECLARE_AUTO (klas) \
 	klas##__parents (klas) \
 	typedef struct struct##klas##_Table *klas##_Table; \
 	extern klas##_Table class##klas
@@ -256,7 +265,7 @@ void Thing_swap (I, thou);
 	typedef struct struct##klas##_Table *klas##_Table; \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		wchar_t *_className; \
+		const wchar_t *_className; \
 		parentKlas##_Table	_parent; \
 		long _size; \
 		klas##_methods \
@@ -270,6 +279,7 @@ void Thing_swap (I, thou);
 
 #define class_create(klas,parentKlas) \
 	typedef struct struct##klas *klas; \
+	_THING_DECLARE_AUTO (klas) \
 	class_create_opaque (klas, parentKlas)
 
 /* For klas.c, after the definitions of the methods. */
@@ -299,7 +309,8 @@ void Thing_swap (I, thou);
 	void (*destroy) (I); \
 	void (*info) (I); \
 	void (*nameChanged) (I);
-class_create (Thing, Thing);   /* Root class: no parent. */
+typedef struct structThing *Thing;
+class_create_opaque (Thing, Thing);   /* Root class: no parent. */
 
 /*
 	Methods:
@@ -352,6 +363,83 @@ extern long Thing_version;
 
 #ifdef __cplusplus
 	}
+template <class T>
+class _Thing_auto {
+	T *ptr;
+public:
+	/*
+	 * Things like
+	 *    autoPitch pitch (Pitch_create (...));
+	 *    autoPitch pitch = Pitch_create (...);
+	 * should work.
+	 */
+	_Thing_auto (T *ptr) throw (int) : ptr (ptr) {
+		//if (Melder_debug == 37) Melder_casual ("begin initializing autopointer %ld with pointer %ld", this, ptr);
+		iferror throw 1;   // if this happens, the destructor won't be called, but that is not necessary anyway
+		//if (Melder_debug == 37) Melder_casual ("end initializing autopointer %ld with pointer %ld", this, ptr);
+	}
+	/*
+	 * pitch should be destroyed when going out of scope,
+	 * both at the end of the try block and when a throw occurs.
+	 */
+	~_Thing_auto () throw () {
+		//if (Melder_debug == 37) Melder_casual ("begin forgetting autopointer %ld with pointer %ld", this, ptr);
+		forget (ptr);
+		//if (Melder_debug == 37) Melder_casual ("end forgetting autopointer %ld with pointer %ld", this, ptr);
+	}
+	/*
+	 * Access the pointer.
+	 */
+	T* peek () const throw () { return ptr; }
+	T* operator() () const throw () { return ptr; }
+	/*
+	 * The expression
+	 *    pitch.ptr -> xmin
+	 * should be abbreviatable by
+	 *    pitch -> xmin
+	 */
+	T* operator-> () const throw () { return ptr; }   // as r-value
+	T& operator* () const throw () { return *ptr; }   // as l-value
+	/*
+	 * The expression
+	 *    Pitch pitch2 = pitch.ptr;
+	 * should be abbreviatable by
+	 *    Pitch pitch2 = pitch;
+	 * But how?
+	 */
+	//T*& operator= (const _Thing_auto<T> &object) { return object.ptr; }
+	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
+	/*
+	 * Assignments like
+	 *    return thee.out();
+	 * and
+	 *    out_pitch = pitch.out();
+	 *    out_pulses = pulses.out();
+	 * make the pointer non-automatic again.
+	 */
+	T* persist (void) { T* temp = ptr; ptr = NULL; return temp; }
+	/*
+	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
+	 * and therefore has to be done explicitly (rather than via an assignment),
+	 * so that you can easily spot ugly places in your source code.
+	 * In order not to leak memory, the old object is destroyed.
+	 */
+	void reset (const T* const newPtr) { forget (ptr); ptr = newPtr; iferror return 1; }
+private:
+	/*
+	 * The compiler should prevent initializations like
+	 *    autoPitch pitch2 = pitch;
+	 */
+	template <class Y> _Thing_auto (_Thing_auto<Y> &);
+	//_Thing_auto (const _Thing_auto &);
+	/*
+	 * The compiler should prevent assignments like
+	 *    pitch2 = pitch;
+	 */
+	_Thing_auto& operator= (const _Thing_auto&);
+	//template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
+};
+
 #endif
 
 /* End of file Thing.h */

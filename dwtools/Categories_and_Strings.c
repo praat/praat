@@ -1,6 +1,6 @@
 /* Categories_and_Strings.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020315 GPL header
+ djmw 20110304 Thing_new
  */
 
 #include "Categories_and_Strings.h"
@@ -29,7 +30,7 @@ Strings Categories_to_Strings (Categories me)
 	long i;
 
 	if (my size < 1) return NULL;
-	thee = new (Strings);
+	thee = Thing_new (Strings);
 	if (thee == NULL) return NULL;
 	thy strings = NUMpvector (1, my size);
 	if (thy strings == NULL) goto end;
@@ -52,7 +53,7 @@ Categories Strings_to_Categories (Strings me)
 	long i;
 
 	if (my numberOfStrings < 1) return NULL;
-	thee = new (Categories);
+	thee = Thing_new (Categories);
 	if (thee == NULL) return NULL;
 	if (! Categories_init (thee, my numberOfStrings)) goto end;
 

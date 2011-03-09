@@ -1,9 +1,11 @@
 # Makefile of the library "stat"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
+CFLAGS = $(DEFS) -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o praat_Stat.o \
    TableOfReal.o Distributions.o Distributions_and_Strings.o PairDistribution.o \

@@ -1,6 +1,6 @@
 /* Categories.c
  * 
- * Copyright (C) 1993-2004 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020315 GPL header
+ djmw 20110304 Thing_new
  */
 
 #include "Categories.h"
@@ -35,7 +36,7 @@ static int readText (I, MelderReadText text)
     	! OrderedOfString_init (me, size)) return 0;
 	for (i=1; i <= size; i++)
 	{
-		SimpleString item = Thing_new (classSimpleString);
+		SimpleString item = Thing_new (SimpleString);
 		if (! item || ! item -> methods -> readText (item, text) ||
 			! Ordered_addItemPos (me, item, i)) return 0;
 	}
@@ -68,14 +69,14 @@ int Categories_init (Categories me, long size)
 
 Categories Categories_create (void)
 {
-	Categories me = new (Categories);
+	Categories me = Thing_new (Categories);
 	if (! me || ! Categories_init (me, 10)) forget (me);
 	return me;
 }
 
 Categories Categories_sequentialNumbers (long n)
 {
-	Categories me = new (Categories);
+	Categories me = Thing_new (Categories);
 	if (! me || ! OrderedOfString_init (me, 5) ||
 		! OrderedOfString_sequentialNumbers (me, n)) forget (me);
 	return me;

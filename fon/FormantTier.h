@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/01
+ * pb 2011/03/03
  */
 
 #ifndef _PointProcess_h_
@@ -34,6 +34,10 @@
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "FormantTier_def.h"
@@ -56,6 +60,10 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file FormantTier.h */
 #endif

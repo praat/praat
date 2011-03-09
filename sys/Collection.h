@@ -78,7 +78,7 @@ class_create (Collection, Data);
 */
 
 int Collection_init (I, void *itemClass, long initialCapacity);
-Any Collection_create (void *itemClass, long initialCapacity);
+Collection Collection_create (void *itemClass, long initialCapacity);
 /*
 	Function:
 		return a new empty Collection, or NULL if out of memory.
@@ -188,7 +188,7 @@ int _Collection_insertItem (I, Any item, long position);
 #define Ordered_methods Collection_methods
 class_create (Ordered, Collection);
 
-Any Ordered_create (void);
+Ordered Ordered_create (void);
 int Ordered_init (I, void *itemClass, long initialCapacity);
 
 /* Behaviour:

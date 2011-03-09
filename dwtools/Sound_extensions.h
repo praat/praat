@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20100415 Latest modification
+ djmw 20110307 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -41,6 +41,10 @@
 #endif
 #ifndef _Interpreter_decl_h_
 	#include "Interpreter_decl.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
@@ -203,5 +207,9 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
 	wchar_t *silentLabel, wchar_t *soundingLabel);
 
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sound_extensions_h_ */

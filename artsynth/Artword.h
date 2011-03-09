@@ -2,7 +2,7 @@
 #define _Artword_h_
 /* Artword.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,17 @@
  */
 
 /*
- * pb 1996/06/22
- * pb 2002/07/16 GPL
+ * pb 2011/03/08
  */
 
-#ifndef _Articulation_h_
-	#include "Articulation.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Articulation.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Artword_def.h"
-
 #define Artword_methods  Data_methods
 oo_CLASS_CREATE (Artword, Data);
 
@@ -94,6 +92,10 @@ void Artword_intoArt (Artword me, Art art, double tim);
 */
 	
 void Artword_draw (Artword me, Graphics graphics, int feature, int garnish);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Artword.h */
 #endif

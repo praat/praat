@@ -19,6 +19,7 @@
 
 /*
   djmw 20101202 Initial version
+  djmw 20110304 Thing_new
 */
 
 #include "ICA.h"
@@ -314,7 +315,7 @@ static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossC
 	double **pinv = NULL,**d = NULL, **p = NULL, **m1 = NULL, *wvec = NULL, *wnew = NULL, *mvec = NULL, **wc = NULL;
 
 // start:
-	eigen = new (Eigen); cherror
+	eigen = Thing_new (Eigen); cherror
 	ccts = Data_copy (thee); cherror
 	pinv = NUMdmatrix (1, dimension, 1, dimension); cherror
 	d    = NUMdmatrix (1, dimension, 1, dimension); cherror
@@ -541,7 +542,7 @@ class_methods (Diagonalizer, TableOfReal)
 
 Diagonalizer Diagonalizer_create (long dimension)
 {
-	Diagonalizer me = new (Diagonalizer);
+	Diagonalizer me = Thing_new (Diagonalizer);
 	if (me == NULL || ! TableOfReal_init (me, dimension, dimension)) goto end;
 	for (long i = 1; i <= dimension; i++) { my data[i][i] = 1; }
 end:
@@ -559,7 +560,7 @@ class_methods (MixingMatrix, TableOfReal)
 
 MixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents)
 {
-	MixingMatrix me = new (MixingMatrix);
+	MixingMatrix me = Thing_new (MixingMatrix);
 	if (me == NULL || ! TableOfReal_init (me, numberOfChannels, numberOfComponents)) goto end;
 	MixingMatrix_initializeRandom (me);
 end:
@@ -718,7 +719,7 @@ class_methods (CrossCorrelationTable, SSCP)
 
 CrossCorrelationTable CrossCorrelationTable_create (long dimension)
 {
-	CrossCorrelationTable me = new (CrossCorrelationTable);
+	CrossCorrelationTable me = Thing_new (CrossCorrelationTable);
 	if (me == NULL || ! SSCP_init (me, dimension, dimension)) forget (me);
 	return me;
 }
@@ -798,7 +799,7 @@ class_methods (CrossCorrelationTables, Ordered)
 
 CrossCorrelationTables CrossCorrelationTables_create (void)
 {
-	CrossCorrelationTables me = new (CrossCorrelationTables);
+	CrossCorrelationTables me = Thing_new (CrossCorrelationTables);
 	if (me == NULL || ! Ordered_init (me, classCrossCorrelationTable, 30)) forget (me);
 	return me;
 }

@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
  */
 
 /*
- * pb 1998/01/05
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Cochleagram_h_
-	#include "Cochleagram.h"
+#include "Sound.h"
+#include "Cochleagram.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Cochleagram Sound_to_Cochleagram (I, double dt, double df, double windowLength, double forwardMaskingTime);
@@ -34,5 +33,9 @@ Cochleagram Sound_to_Cochleagram (I, double dt, double df, double windowLength, 
 Cochleagram Sound_to_Cochleagram_edb
 	(I, double dtime, double dfreq, int hasSynapse, double replenishmentRate,
 	 double lossRate, double returnRate, double reprocessingRate);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Sound_to_Cochleagram.h */

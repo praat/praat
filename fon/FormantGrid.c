@@ -133,7 +133,7 @@ end:
 }
 
 FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants) {
-	FormantGrid me = new (FormantGrid); cherror
+	FormantGrid me = Thing_new (FormantGrid); cherror
 	FormantGrid_init (me, tmin, tmax, numberOfFormants); cherror
 end:
 	iferror forget (me);

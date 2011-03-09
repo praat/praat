@@ -2,7 +2,7 @@
 #define _Polynomial_h_
 /* Polynomial.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #define FITTER_PARAMETER_FREE 0
@@ -50,6 +50,10 @@
 #endif
 #ifndef _SSCP_h_
 	#include "SSCP.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Spline_MAXIMUM_DEGREE 20
@@ -258,5 +262,9 @@ Polynomial RealTier_to_Polynomial (I, long degree, double tol, int ic, Covarianc
 LegendreSeries RealTier_to_LegendreSeries (I, long degree, double tol, int ic, Covariance *cvm);
 
 ChebyshevSeries RealTier_to_ChebyshevSeries (I, long degree, double tol, int ic, Covariance *cvm);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Polynomial_h_ */

@@ -2,7 +2,7 @@
 #define _Pitch_extensions_h_
 /* Pitch_extensions.h
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20061207 Latest modification
+ djmw 20110307 Latest modification
 */
 
 #ifndef _Pitch_h_
@@ -31,6 +31,10 @@
 
 #ifndef _PitchTier_h_
 	#include "PitchTier.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates);
@@ -45,5 +49,9 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor);
 */
 
 Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Pitch_extensions_h_ */

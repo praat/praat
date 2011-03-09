@@ -2,7 +2,7 @@
 #define _VowelEditor_h_
 /* VowelEditor.h
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20070130 First
- djmw 20090114 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _FormantTier_h_
@@ -39,6 +39,10 @@
 #endif
 #ifndef _Editor_h_
 	#include "Editor.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Vowel_members Function_members \
@@ -91,5 +95,9 @@ Thing_declare2 (VowelEditor, Editor);
 VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data);
 
 void VowelEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _VowelEditor_h_ */

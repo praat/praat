@@ -61,9 +61,9 @@ static void _Thing_initialize (void *table) {
 	us -> nameChanged = nameChanged;
 }
 
-wchar_t * Thing_className (I) { iam (Thing); return our _className; }
+const wchar_t * Thing_className (I) { iam (Thing); return our _className; }
 
-Any Thing_new (void *table) {
+Any _Thing_new (void *table) {
 	Thing_Table us = table;
 	Thing me = (Thing) _Melder_calloc_e (1, us -> _size);
 	if (! me) return Melder_errorp ("(Thing_new:) Out of memory.");
@@ -72,6 +72,7 @@ Any Thing_new (void *table) {
 	my name = NULL;
 	if (! us -> destroy)   /* Table not initialized? */
 		us -> _initialize (us);
+	if (Melder_debug == 39) Melder_casual ("created %ls", my methods -> _className);
 	return me;
 }
 
@@ -157,17 +158,18 @@ void *Thing_classFromClassName (const wchar_t *klas) {
 Any Thing_newFromClassNameA (const char *className) {
 	void *table = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
-	return Thing_new (table);
+	return _Thing_new (table);
 }
 Any Thing_newFromClassName (const wchar_t *className) {
 	void *table = Thing_classFromClassName (className);
 	if (! table) return Melder_errorp ("(Thing_newFromClassName:) Thing not created.");
-	return Thing_new (table);
+	return _Thing_new (table);
 }
 
 void _Thing_forget (Thing *pme) {
 	Thing me = *pme;
 	if (! me) return;
+	if (Melder_debug == 39) Melder_casual ("destroying %ls", my methods -> _className);
 	our destroy (me);
 	Melder_free (me);
 	theTotalNumberOfThings -= 1;

@@ -1,4 +1,4 @@
-/* manual_tutorials.c
+/* manual_tutorials.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -20,12 +20,14 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-void manual_tutorials_init (ManPages me);
-void manual_tutorials_init (ManPages me) {
+extern "C" void manual_tutorials_init (ManPages me);
+extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110303)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110309)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.18# (9 March 2011)")
+LIST_ITEM (L"\\bu @ExperimentMFC: incomplete experiments can still output their incomplete results.")
 NORMAL (L"##5.2.17# (2 March 2011)")
 LIST_ITEM (L"\\bu Better names for Table opening and saving commands.")
 LIST_ITEM (L"\\bu @ExperimentMFC: reaction times.")
@@ -3309,4 +3311,4 @@ endproc
 /* drawing overwrites until Erase all */
 /* pitch in readable format */
 
-/* End of file manual_tutorials.c */
+/* End of file manual_tutorials.cpp */

@@ -1,6 +1,6 @@
 /* Pattern.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020813 GPL header
  djmw 20041203 Added _Pattern_checkElements.
  djmw 20071017 Melder_error<p>
+  djmw 20110304 Thing_new
 */
 
 #include "Pattern.h"
@@ -52,7 +53,7 @@ int Pattern_init (I, long ny, long nx)
 
 Any Pattern_create (long ny, long nx)
 {
-    Pattern me = new (Pattern);
+    Pattern me = Thing_new (Pattern);
     if (! me || ! Pattern_init (me, ny, nx)) forget (me);
     return me;
 }

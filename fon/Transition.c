@@ -97,7 +97,7 @@ int Transition_init (I, long numberOfStates) {
 }
 
 Transition Transition_create (long numberOfStates) {
-	Transition me = new (Transition);
+	Transition me = Thing_new (Transition);
 	if (! me || ! Transition_init (me, numberOfStates)) forget (me);
 	return me;
 }
@@ -182,7 +182,7 @@ static void Transition_transpose (Transition me) {
 
 int Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues) {
 	long i, j;
-	Eigen eigen = new (Eigen);
+	Eigen eigen = Thing_new (Eigen);
 	*eigenvectors = NULL, *eigenvalues = NULL;
 	Transition_transpose (me);
 	if (! Eigen_initFromSymmetricMatrix (eigen, my data, my numberOfStates)) {

@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_PCA if TableOfReal_areAllCellsDefined
+  djmw 20110304 Thing_new
 */
 
 #include "PCA.h"
@@ -84,7 +85,7 @@ class_methods_end
 
 PCA PCA_create (long numberOfComponents, long dimension)
 {
-	PCA me = new (PCA);
+	PCA me = Thing_new (PCA);
 	if (! me || ! Eigen_init (me, numberOfComponents, dimension) ||
 		! (my labels = NUMvector (sizeof (char *), 1, dimension)) ||
 		! (my centroid = NUMdvector (1, dimension))) forget (me);
@@ -152,7 +153,7 @@ PCA TableOfReal_to_PCA (I)
 	if (NUMfrobeniusnorm (m, n, my data) == 0) return Melder_errorp1
 		(L"All values in your table are zero. ");
 
-	if (! (thee = new (PCA)) ||
+	if (! (thee = Thing_new (PCA)) ||
 		! (a = NUMdmatrix_copy (my data, 1, m, 1, n)) ||
 		! (thy centroid = NUMdvector (1, n))) goto end;
 

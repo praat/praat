@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
  */
 
 /*
- * pb 2004/10/27
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
+#include "Sound.h"
+#include "Intensity.h"
+#include "IntensityTier.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
@@ -57,5 +55,9 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 */
 
 IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Sound_to_Intensity.h */

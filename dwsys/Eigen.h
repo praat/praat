@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification 
+ djmw 20110306 Latest modification 
 */
 
 #ifndef _Data_h_
@@ -35,6 +35,10 @@
 #endif
 #ifndef _Strings_h_
 	#include "Strings.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Eigen_members Data_members \
@@ -109,6 +113,10 @@ double Eigens_getAngleBetweenEigenplanes_degrees (I, thou);
 /*
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _Eigen_h_ */
 
-/* End of file Eigen.h */

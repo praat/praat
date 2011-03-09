@@ -628,6 +628,7 @@ int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel
 Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time)
 {
 	Sound him = Data_copy (thee);
+	if (him == NULL) return NULL;
 	if (! LPC_and_Sound_filterWithFilterAtTime_inline (me, him, channel, time)) forget (him);
 	return him;
 }
@@ -655,6 +656,7 @@ int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int 
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time)
 {
 	Sound him = Data_copy (thee);
+	if (him == NULL) return NULL;
 	if (! LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him, channel, time)) forget (him);
 	return him;
 }

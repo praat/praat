@@ -610,7 +610,7 @@ end:
 }
 
 Manual Manual_create (GuiObject parent, const wchar_t *title, Any data) {
-	Manual me = new (Manual); cherror
+	Manual me = Thing_new (Manual); cherror
 	Manual_init (me, parent, title, data); cherror
 end:
 	iferror forget (me);

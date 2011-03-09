@@ -2,7 +2,7 @@
 #define _SpellingChecker_h_
 /* SpellingChecker.h
  *
- * Copyright (C) 1999-2007 Paul Boersma
+ * Copyright (C) 1999-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,17 @@
  */
 
 /*
- * pb 2007/12/23
+ * pb 2011/03/03
  */
 
-#ifndef _WordList_h_
-	#include "WordList.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
+#include "WordList.h"
+#include "Collection.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "SpellingChecker_def.h"
-
 #define SpellingChecker_methods Data_methods
 oo_CLASS_CREATE (SpellingChecker, Data);
 
@@ -46,4 +45,9 @@ wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t 
 
 int SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word);
 
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file SpellingChecker.h */
 #endif

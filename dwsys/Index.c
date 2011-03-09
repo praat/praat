@@ -1,6 +1,6 @@
 /* Index.c
  *
- * Copyright (C) 2005-2010 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070102
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20110304 Thing_new
 */
 
 #include <time.h>
@@ -114,7 +115,7 @@ class_methods_end
 
 StringsIndex StringsIndex_create (long numberOfElements)
 {
-	StringsIndex me = new (StringsIndex);
+	StringsIndex me = Thing_new (StringsIndex);
 	if (me == NULL || ! Index_init (me, numberOfElements)) forget (me);
 	return me;
 }

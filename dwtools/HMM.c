@@ -1,6 +1,6 @@
 /* HMM.c
  *
- * Copyright (C) 2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ djmw 20110304 Thing_new
  */
 
 #include "Distributions_and_Strings.h"
@@ -163,7 +166,7 @@ int HMM_Observation_init (I, wchar_t *label, long numberOfComponents, long dimen
 
 HMM_Observation HMM_Observation_create (wchar_t *label, long numberOfComponents, long dimension, long storage)
 {
-	HMM_Observation me = new (HMM_Observation);
+	HMM_Observation me = Thing_new (HMM_Observation);
 	if (me == NULL || ! HMM_Observation_init (me, label, numberOfComponents, dimension, storage)) forget (me);
 	return me;
 }
@@ -229,7 +232,7 @@ int HMM_State_init (I, wchar_t *label)
 
 HMM_State HMM_State_create (wchar_t *label)
 {
-	HMM_State me = new (HMM_State);
+	HMM_State me = Thing_new (HMM_State);
 	if (me == NULL || ! HMM_State_init (me, label)) forget (me);
 	return me;
 }
@@ -275,7 +278,7 @@ class_methods (HMM_BaumWelch, Data)
 
 HMM_BaumWelch HMM_BaumWelch_create (long nstates, long nsymbols, long capacity)
 {
-	HMM_BaumWelch me = new (HMM_BaumWelch);
+	HMM_BaumWelch me = Thing_new (HMM_BaumWelch);
 	if (me == NULL) return NULL;
 	my numberOfTimes = my capacity = capacity;
 	my numberOfStates = nstates;
@@ -335,7 +338,7 @@ class_methods (HMM_Viterbi, Data)
 
 HMM_Viterbi HMM_Viterbi_create (long nstates, long ntimes)
 {
-	HMM_Viterbi me = new (HMM_Viterbi);
+	HMM_Viterbi me = Thing_new (HMM_Viterbi);
 	if (me == NULL) return NULL;
 	my numberOfTimes = ntimes;
 	my numberOfStates = nstates;
@@ -354,7 +357,7 @@ class_methods (HMM_ObservationSequence, Table)
 
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength)
 {
-	HMM_ObservationSequence me = new (HMM_ObservationSequence);
+	HMM_ObservationSequence me = Thing_new (HMM_ObservationSequence);
 	if (me == NULL || ! Table_initWithoutColumnNames (me, numberOfItems, dataLength + 1)) forget (me);
 	return me;
 }
@@ -372,7 +375,7 @@ void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long
 Strings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me)
 {
 	long numberOfStrings = my rows -> size;
-	Strings thee = new (Strings);
+	Strings thee = Thing_new (Strings);
 	if (me == NULL || ((thy strings = NUMpvector (1, numberOfStrings)) == NULL)) goto end;
 	for (long i = 1; i <= numberOfStrings; i++)
 	{
@@ -419,7 +422,7 @@ class_methods (HMM_ObservationSequences, Collection)
 
 HMM_ObservationSequences HMM_ObservationSequences_create (void)
 {
-	HMM_ObservationSequences me = new (HMM_ObservationSequences);
+	HMM_ObservationSequences me = Thing_new (HMM_ObservationSequences);
 	if (me == NULL || ! Collection_init (me, classHMM_ObservationSequence, 1000)) forget (me);
 	return me;
 }
@@ -442,7 +445,7 @@ class_methods (HMM_StateSequence, Strings)
 
 HMM_StateSequence HMM_StateSequence_create (long numberOfItems)
 {
-	HMM_StateSequence me = new (HMM_StateSequence);
+	HMM_StateSequence me = Thing_new (HMM_StateSequence);
 	if (me == NULL || ((my strings = NUMpvector (1, numberOfItems)) == NULL)) forget (me);
 	return me;
 }
@@ -506,7 +509,7 @@ static int HMM_init (HMM me, long numberOfStates, long numberOfObservationSymbol
 
 HMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSymbols)
 {
-	HMM me = new (HMM);
+	HMM me = Thing_new (HMM);
 	if ((me == NULL) || ! HMM_init (me, numberOfStates, numberOfObservationSymbols, leftToRight)) goto end;
 	HMM_setDefaultStates (me);
 	HMM_setDefaultObservations (me);
@@ -545,7 +548,7 @@ HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long number
 	long numberOfMixtureComponentsPerSymbol, long componentDimension, long componentStorage)
 {
 	MelderString label = { 0 };
-	HMM me = new (HMM);
+	HMM me = Thing_new (HMM);
 	if ((me == NULL) || ! HMM_init (me, numberOfStates, numberOfObservationSymbols, leftToRight)) goto end;
 	my numberOfMixtureComponents = numberOfMixtureComponentsPerSymbol;
 	my componentDimension = componentDimension;
@@ -577,7 +580,7 @@ end:
 // for a simple non-hidden model leave either states empty or symbols empty !!!
 HMM HMM_createSimple (int leftToRight, wchar_t *states_string, wchar_t *symbols_string)
 {
-	HMM me = new (HMM);
+	HMM me = Thing_new (HMM);
 	wchar_t *states = states_string;
 	wchar_t *symbols = symbols_string;
 	long numberOfStates = Melder_countTokens (states_string);
@@ -1544,7 +1547,7 @@ HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numb
 
 // start:
 
-	thee = new (HMM); cherror
+	thee = Thing_new (HMM); cherror
 	s = HMM_ObservationSequence_to_Strings (me); cherror
 	d = Strings_to_Distributions ((Strings) s); cherror
 
@@ -1590,7 +1593,7 @@ TableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationS
 
 StringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_ObservationSequence thee)
 {
-	Strings classes = new (Strings);
+	Strings classes = Thing_new (Strings);
 	if (classes == NULL || ((classes -> strings = NUMpvector (1, my numberOfObservationSymbols)) == NULL)) goto end;
 	for (long is = 1; is <= my numberOfObservationSymbols; is++)
 	{
@@ -1609,7 +1612,7 @@ end:
 
 StringsIndex HMM_and_HMM_StateSequence_to_StringsIndex (HMM me, HMM_StateSequence thee)
 {
-	Strings classes = new (Strings);
+	Strings classes = Thing_new (Strings);
 	if (classes == NULL || ((classes -> strings = NUMpvector (1, my numberOfObservationSymbols)) == NULL)) goto end;
 	for (long is = 1; is <= my numberOfStates; is++)
 	{

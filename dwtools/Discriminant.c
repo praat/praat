@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
  djmw 20100107 +Discriminant_and_TableOfReal_mahalanobis
+ djmw 20110304 Thing_new
 */
 
 #include "Discriminant.h"
@@ -95,7 +96,7 @@ class_methods_end
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension)
 {
-	Discriminant me = new (Discriminant);
+	Discriminant me = Thing_new (Discriminant);
 
 	if (! me) return NULL;
 	my numberOfGroups = numberOfGroups;
@@ -174,7 +175,7 @@ int Discriminant_setGroupLabels (Discriminant me, Strings thee)
 
 Strings Discriminant_extractGroupLabels (Discriminant me)
 {
-	Strings thee = new (Strings);
+	Strings thee = Thing_new (Strings);
 	long i;
 
 	if (thee == NULL) return NULL;
@@ -480,7 +481,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 Discriminant TableOfReal_to_Discriminant (I)
 {
 	iam (TableOfReal);
-	Discriminant thee = new (Discriminant);
+	Discriminant thee = Thing_new (Discriminant);
 	TableOfReal mew = NULL;
 	double **between = NULL, *centroid = NULL, scale, sum;
 	long j, k, dimension = my numberOfColumns;

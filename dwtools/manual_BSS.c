@@ -23,8 +23,8 @@
 
 #include "ManPagesM.h"
 
-void manual_BSS (ManPages me);
-void manual_BSS (ManPages me)
+LINK_C void manual_BSS (ManPages me);
+LINK_C void manual_BSS (ManPages me)
 {
 MAN_BEGIN (L"CrossCorrelationTable", L"djmw", 20110105)
 INTRO (L"One of the types of objects in Praat. A CrossCorrelationTable represents the cross-correlations between "

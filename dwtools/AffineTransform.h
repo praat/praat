@@ -2,7 +2,7 @@
 #define _AffineTransform_h_
 /* AffineTransform.h
  * 
- * Copyright (C) 2001-2007 David Weenink
+ * Copyright (C) 2001-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 2001
  djmw 20020315 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110305 Latest modification.
  */
 
 #ifndef _Data_h_
@@ -30,6 +30,10 @@
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define AffineTransform_members Data_members \
@@ -55,5 +59,9 @@ Any AffineTransform_invert (I);
 TableOfReal AffineTransform_extractMatrix (I);
 
 TableOfReal AffineTransform_extractTranslationVector (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _AffineTransform_h_ */

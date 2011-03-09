@@ -1,6 +1,8 @@
+#ifndef _Sampled_h_
+#define _Sampled_h_
 /* Sampled.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +20,8 @@
  */
 
 /*
- * pb 2005/06/16
+ * pb 2011/03/03
  */
-
-#ifndef _Sampled_h_
-#define _Sampled_h_
 
 /* Sampled inherits from Function */
 #ifndef _Function_h_
@@ -30,6 +29,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Sampled_members Function_members \
@@ -124,5 +127,9 @@ double Sampled_getXOfMaximum (I, double xmin, double xmax, long ilevel, int unit
 void Sampled_drawInside
 	(I, Graphics g, double xmin, double xmax, double ymin, double ymax, double speckle_mm, long ilevel, int unit);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file Sampled.h */
+#endif

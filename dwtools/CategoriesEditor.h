@@ -2,7 +2,7 @@
 #define _CategoriesEditor_h_
 /* CategoriesEditor.h
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,16 @@
 /*
  djmw 19950713
  djmw 20020813 GPL header
- djmw 20090127 Latest modification.
+ djmw 20110305 Latest modification.
 */
 
 #include "Command.h"
 #include "Editor.h"
 #include "Categories.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #define CategoriesEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
 Thing_declare1 (CategoriesEditor);
@@ -40,5 +44,9 @@ Thing_declare1 (CategoriesEditor);
 Thing_declare2 (CategoriesEditor, Editor);
 
 CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar_t *title, Any data);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _CategoriesEditor_h_ */

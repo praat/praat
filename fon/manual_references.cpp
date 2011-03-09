@@ -1,4 +1,4 @@
-/* manual_references.c
+/* manual_references.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_references_init (ManPages me);
-void manual_references_init (ManPages me) {
+extern "C" void manual_references_init (ManPages me);
+extern "C" void manual_references_init (ManPages me) {
 
 MAN_BEGIN (L"Archangeli & Pulleyblank (1994)", L"ppgb", 19971021)
 NORMAL (L"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%. "
@@ -283,4 +283,4 @@ MAN_END
 
 }
 
-/* End of file manual_references.c */
+/* End of file manual_references.cpp */

@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,23 +20,17 @@
  */
 
 /*
- * pb 2010/12/08
+ * pb 2011/03/03
  */
 
-#ifndef _AnyTier_h_
-	#include "AnyTier.h"
-#endif
-#ifndef _Label_h_
-	#include "Label.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
+#include "AnyTier.h"
+#include "Label.h"
+#include "Graphics.h"
+#include "TableOfReal.h"
+#include "Table.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "TextGrid_def.h"
@@ -133,5 +127,9 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file TextGrid.h */
+#endif

@@ -1,4 +1,4 @@
-/* manual_Picture.c
+/* manual_Picture.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -76,7 +76,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 	Graphics_text (graphics, 3.3, 7, L"click");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { double x, y; wchar_t *string; } symbols [] = {
+		static struct { double x, y; const wchar_t *string; } symbols [] = {
 { 4, 17, L"p" }, { 4, 16, L"b" }, { 4, 15, L"m" }, { 4, 14, L"\\ff" }, { 4, 13, L"\\bf" }, { 4, 11, L"\\bc" }, { 4, 8, L"\\b^" }, { 4, 7, L"\\O." },
 { 5, 15, L"\\mj" }, { 5, 14, L"f" }, { 5, 13, L"v" }, { 5, 12, L"\\vs" },
 { 6, 14, L"\\tf" }, { 6, 13, L"\\dh" }, { 6, 7, L"\\|1" },
@@ -116,7 +116,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 	Graphics_text (graphics, 3.3, 0, L"open");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { double x, y; wchar_t *string; } symbols [] = {
+		static struct { double x, y; const wchar_t *string; } symbols [] = {
 { 4, 6, L"i" }, { 5, 6, L"y" }, { 6.5, 6, L"\\i-" }, { 7.5, 6, L"\\u-" }, { 9, 6, L"\\mt" }, { 10, 6, L"u" },
 { 4.2, 5, L"\\ic" }, { 5.2, 5, L"\\yc" }, { 9.8, 5, L"\\hs" },
 { 4, 4, L"e" }, { 5, 4, L"\\o/" }, { 6.5, 4, L"\\e-" }, { 7.5, 4, L"\\o-" }, { 9, 4, L"\\rh" }, { 10, 4, L"o" },
@@ -130,8 +130,8 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 	}
 }
 
-void manual_Picture_init (ManPages me);
-void manual_Picture_init (ManPages me) {
+extern "C" void manual_Picture_init (ManPages me);
+extern "C" void manual_Picture_init (ManPages me) {
 
 MAN_BEGIN (L"Special symbols", L"ppgb", 20080227)
 INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
@@ -1052,4 +1052,4 @@ MAN_END
 
 }
 
-/* End of file manual_Picture.c */
+/* End of file manual_Picture.cpp */

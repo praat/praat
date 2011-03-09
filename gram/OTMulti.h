@@ -20,27 +20,19 @@
  */
 
 /*
- * pb 2011/03/01
+ * pb 2011/03/08
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _PairDistribution_h_
-	#include "PairDistribution.h"
-#endif
-#ifndef _Distributions_h_
-	#include "Distributions.h"
-#endif
-#ifndef _OTGrammar_h_
-	#include "OTGrammar.h"
+#include "Graphics.h"
+#include "PairDistribution.h"
+#include "Distributions.h"
+#include "OTGrammar.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "OTMulti_def.h"
-
 #define OTMulti_methods Data_methods
 oo_CLASS_CREATE (OTMulti, Data);
 
@@ -82,6 +74,10 @@ int OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t
 Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
 Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);
 Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file OTMulti.h */
 #endif

@@ -66,7 +66,7 @@ static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, i
 
 OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof) {
 	int icons, ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
-	OTGrammar me = new (OTGrammar); cherror
+	OTGrammar me = Thing_new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = ncons); cherror
 	my constraints [1]. name = Melder_wcsdup_e (L"*[rtr / hi]"); cherror
 	my constraints [2]. name = Melder_wcsdup_e (L"*[atr / lo]"); cherror

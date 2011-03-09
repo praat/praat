@@ -22,6 +22,7 @@
 
 /*
  * os 20080529 Initial release
+ * pb 2011/03/08 C++
  */
 
 /////////////////////////////////////////////////////
@@ -31,6 +32,10 @@
 #include "KNN.h"
 #include "FeatureWeights.h"
 #include "OlaP.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /////////////////////////////////////////////////////
 // Prototypes                                      //
@@ -93,4 +98,9 @@ int KNN_prune_noisy
     long k              // k(!)
 );
 
-#endif /* _KNN_prune_h_ */
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file KNN_prune.h */
+#endif

@@ -2,7 +2,7 @@
 #define _LPC_and_Tube_h_
 /* LPC_and_Tube.h
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20030612 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _LPC_h_
@@ -33,6 +34,9 @@
 	#include "VocalTract.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 int LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee);
 int LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee);
@@ -50,5 +54,9 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakitaLeng
  *      H. Wakita (1976), Normalization of vowels by vocal-tract length and its
  *      application to vowel identification, IEEE on ASSP 25, 183-192.
  * Here `length' will be used as the reference length for the calculations. */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _LPC_and_Tube_h_ */

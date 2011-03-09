@@ -19,6 +19,7 @@
 
 /*
  * os 20070529 Initial release
+ * pb 2011/03/08 C++
  */
 
 /////////////////////////////////////////////////////
@@ -31,19 +32,17 @@
 // Praat datatypes                                 //
 /////////////////////////////////////////////////////
 
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _Categories_h_
-	#include "Categories.h"
-#endif
+#include "Pattern.h"
+#include "Categories.h"
 
 /////////////////////////////////////////////////////
 // Miscs                                           //
 /////////////////////////////////////////////////////
 
-#ifndef _FeatureWeights_h_
-	#include "FeatureWeights.h"
+#include "FeatureWeights.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /////////////////////////////////////////////////////
@@ -59,3 +58,7 @@ Categories Pattern_to_Categories_cluster
     double s,               // clustersize constraint 0 < s <= 1
     long m                  // reseed maximum
 );
+
+#ifdef __cplusplus
+	}
+#endif

@@ -2,7 +2,7 @@
 #define _KlattTable_h_
 /* KlattTable.h
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20081018 Initial version
- djmw 20090708 latest modification
+ djmw 20110306 Latest modification
 */
 
 #ifndef _TableOfReal_h
@@ -29,6 +29,10 @@
 #endif
 #ifndef _Sound_h
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define KlattTable_members Table_members
@@ -109,5 +113,9 @@ KlattTable Table_to_KlattTable (Table me);
 Table KlattTable_to_Table (KlattTable me);
 
 KlattTable KlattTable_readFromRawTextFile (MelderFile fs);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _KlattTable_h_ */

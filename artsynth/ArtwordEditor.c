@@ -180,7 +180,7 @@ class_methods (ArtwordEditor, Editor) {
 }
 
 ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data) {
-	ArtwordEditor me = new (ArtwordEditor);
+	ArtwordEditor me = Thing_new (ArtwordEditor);
 	if (! me || ! Editor_init (ArtwordEditor_as_parent (me), parent, 20, 40, 650, 600, title, data))
 		return NULL;
 	//XtUnmanageChild (my menuBar);

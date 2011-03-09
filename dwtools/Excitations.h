@@ -2,7 +2,7 @@
 #define _Excitations_h_
 /* Excitations.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Collection_h_
@@ -36,6 +36,11 @@
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
 #endif
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #define Excitations_members Ordered_members
 #define Excitations_methods Ordered_methods
 
@@ -52,5 +57,9 @@ TableOfReal Excitations_to_TableOfReal (Excitations me);
 /* Precondition: my size >= 1, all items have same dimension */
 
 Any Excitations_getItem (Excitations m, long item);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Excitations_h_ */

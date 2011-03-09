@@ -1,6 +1,6 @@
 /* Pitch_AnyTier_to_PitchTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,22 @@
  */
 
 /*
- * pb 1997/04/07
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _AnyTier_h_
-	#include "AnyTier.h"
-#endif
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
+#include "Pitch.h"
+#include "AnyTier.h"
+#include "PitchTier.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod);
 PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Pitch_AnyTier_to_PitchTier.h */

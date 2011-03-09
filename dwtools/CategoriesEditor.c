@@ -1,6 +1,6 @@
 /* CategoriesEditor.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  pb 20080321 new Editor API
  djmw 20090107 Removed a bug in update that caused editor to crash on replace
  djmw 20090203 Removed potential crashes in CategoriesEditor<command>_create.
+ djmw 20110304 Thing_new
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -203,7 +204,7 @@ static int CategoriesEditorInsert_undo (I)
 
 static Any CategoriesEditorInsert_create (Any data, Any str, int position)
 {
-	CategoriesEditorInsert me = new (CategoriesEditorInsert);
+	CategoriesEditorInsert me = Thing_new (CategoriesEditorInsert);
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Insert", data,
 		CategoriesEditorInsert_execute, CategoriesEditorInsert_undo, 1, 1)) goto end;
 	my selection[1] = position;
@@ -257,7 +258,7 @@ static int CategoriesEditorRemove_undo (I)
 
 static Any CategoriesEditorRemove_create (Any data, long *posList, long posCount)
 {
-	CategoriesEditorRemove me = new (CategoriesEditorRemove);
+	CategoriesEditorRemove me = Thing_new (CategoriesEditorRemove);
 
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Remove", data,
 		CategoriesEditorRemove_execute, CategoriesEditorRemove_undo,
@@ -314,7 +315,7 @@ static int CategoriesEditorReplace_undo (I)
 
 static Any CategoriesEditorReplace_create (Any data, Any str, long *posList, long posCount)
 {
-	CategoriesEditorReplace me = new (CategoriesEditorReplace);
+	CategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
 
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Replace", data,
 		CategoriesEditorReplace_execute, CategoriesEditorReplace_undo,
@@ -373,7 +374,7 @@ static int CategoriesEditorMoveUp_undo (I)
 static Any CategoriesEditorMoveUp_create (Any data, long *posList,
 	long posCount, long newPos)
 {
-	CategoriesEditorMoveUp me = new (CategoriesEditorMoveUp);
+	CategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
 
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move up", data,
 		CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount)) goto end;
@@ -429,7 +430,7 @@ static int CategoriesEditorMoveDown_undo (I)
 static Any CategoriesEditorMoveDown_create (Any data, long *posList,
 	long posCount, long newPos)
 {
-	CategoriesEditorMoveDown me = new (CategoriesEditorMoveDown);
+	CategoriesEditorMoveDown me = Thing_new (CategoriesEditorMoveDown);
 
 	if (me == NULL || ! CategoriesEditorCommand_init (me, L"Move down", data,
 		CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo,
@@ -931,7 +932,7 @@ class_methods (CategoriesEditor, Editor) {
 
 CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar_t *title, Any data)
 {
-	CategoriesEditor me = new (CategoriesEditor);
+	CategoriesEditor me = Thing_new (CategoriesEditor);
 
 	if (me == NULL || ! Editor_init (CategoriesEditor_as_parent (me), parent, 20, 40, 600, 600, title, data) ||
 		((my history = CommandHistory_create (100)) == NULL)) goto end;

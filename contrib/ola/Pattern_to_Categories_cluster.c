@@ -1,6 +1,6 @@
 /* Pattern_to_Categories_cluster.c
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@
  * pb 20100606 removed some array-creations-on-the-stack
  * pb 20100606 corrected some arrary-index-out-of-bounds errors
  * pb 20100606 corrected some memory leaks
+ * pb 2011/03/08 tried to repair some of the header file chaos (several procedures here should be in KNN.c instead)
  */
 
 #include "Pattern_to_Categories_cluster.h"
+#include "KNN.h"   // BUG
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Pattern_to_Categories_cluster                                                                              //

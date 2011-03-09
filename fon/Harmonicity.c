@@ -129,7 +129,7 @@ class_methods (Harmonicity, Vector)
 class_methods_end
 
 Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1) {
-	Harmonicity me = new (Harmonicity);
+	Harmonicity me = Thing_new (Harmonicity);
 	if (! me || ! Matrix_init (me, tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1)) return NULL;
 	return me;
 }

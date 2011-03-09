@@ -1486,6 +1486,16 @@ DO_ALTERNATIVE (old_Sound_to_Intensity)
 		GET_REAL (L"Minimum pitch"), GET_REAL (L"Time step"), GET_INTEGER (L"Subtract mean")))
 END
 
+FORM (Sound_to_IntensityTier, L"Sound: To IntensityTier", NULL)
+	POSITIVE (L"Minimum pitch (Hz)", L"100")
+	REAL (L"Time step (s)", L"0.0 (= auto)")
+	BOOLEAN (L"Subtract mean", 1)
+	OK
+DO
+	EVERY_TO (Sound_to_IntensityTier ((Sound) OBJECT,
+		GET_REAL (L"Minimum pitch"), GET_REAL (L"Time step"), GET_INTEGER (L"Subtract mean")))
+END
+
 DIRECT (Sound_to_IntervalTier)
 	EVERY_TO (IntervalTier_create (((Sound) OBJECT) -> xmin, ((Sound) OBJECT) -> xmax))
 END
@@ -2221,6 +2231,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"To PointProcess (extrema)...", 0, 1, DO_Sound_to_PointProcess_extrema);
 		praat_addAction1 (classSound, 0, L"To PointProcess (zeroes)...", 0, 1, DO_Sound_to_PointProcess_zeroes);
 	praat_addAction1 (classSound, 0, L"To Intensity...", 0, 0, DO_Sound_to_Intensity);
+	praat_addAction1 (classSound, 0, L"To IntensityTier...", 0, praat_HIDDEN, DO_Sound_to_IntensityTier);
 	praat_addAction1 (classSound, 0, L"Manipulate", 0, 0, 0);
 	praat_addAction1 (classSound, 0, L"To Manipulation...", 0, 0, DO_Sound_to_Manipulation);
 	praat_addAction1 (classSound, 0, L"Synthesize", 0, 0, 0);

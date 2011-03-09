@@ -264,6 +264,7 @@
 		klas##_methods \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas; \
+	_THING_DECLARE_AUTO (klas) \
 	extern klas##_Table class##klas
 
 

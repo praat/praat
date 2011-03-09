@@ -2,7 +2,7 @@
 #define _Regression_h_
 /* Regression.h
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
  */
 
 /*
- * pb 2007/11/18
+ * pb 2011/03/03
  */
 
-#ifndef _Table_h_
-	#include "Table.h"
+#include "Table.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* For the inheritors. */
@@ -51,5 +53,9 @@ LinearRegression LinearRegression_create (void);
 
 LinearRegression Table_to_LinearRegression (Table me);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file Regression.h */
+#endif

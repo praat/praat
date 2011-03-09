@@ -1,6 +1,6 @@
 /* LPC.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
  djmw 20081223 Corrected a bug in Matrix LPC_to_Matrix (last coefficient was not copied)
+ djmw 20110304 Thing_new
 */
 
 #include "LPC_and_Polynomial.h"
@@ -77,7 +78,7 @@ class_methods_end
 
 int LPC_Frame_init (LPC_Frame me, int nCoefficients)
 {
-	if (nCoefficients !=0 &&
+	if (nCoefficients != 0 &&
 		((my a = NUMdvector (1, nCoefficients)) == NULL)) return 0;
 	my nCoefficients = nCoefficients;
 	return 1;
@@ -95,7 +96,7 @@ int LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 Any LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod)
 {
-	LPC me = new (LPC);
+	LPC me = Thing_new (LPC);
 	if (! me || ! LPC_init (me, tmin, tmax, nt, dt, t1,
 		predictionOrder, samplingPeriod)) forget (me);
 	return me;

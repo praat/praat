@@ -2,7 +2,7 @@
 #define _MelFilter_and_MFCC_h_
 /* MelFilter_and_MFCC.h
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 2001
  djmw 20020813 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _MelFilter_h_
@@ -29,6 +30,10 @@
 #endif
 #ifndef _MFCC_h_
 	#include "MFCC.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /*
@@ -67,5 +72,9 @@ MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient,
 Calculates the Inverse CT of cepstral coefficients:
     f[j] = c0+1/N * SUM (k=1..N, F[k] * cos (pi * k * (j - 1/2) / N)),
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* MelFilter_and_MFCC.h */

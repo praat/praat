@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20061218 Changed info to Melder_writeLine<x> format.
  djmw 20071017 oo_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 Version 1: float -> double
+ djmw 20110304 Thing_new
 */
 
 #include "Cepstrumc.h"
@@ -91,7 +92,7 @@ int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, 
 Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency)
 {
-	Cepstrumc me = new (Cepstrumc);
+	Cepstrumc me = Thing_new (Cepstrumc);
 	if (! me || ! Cepstrumc_init (me, tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency)) forget (me);
 	return me;
 }
@@ -133,14 +134,14 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	if (((him = DTW_create (my xmin, my xmax, my nx, my dx, my x1,
 			thy xmin, thy xmax, thy nx, thy dx, thy x1)) == NULL) ||
 		((ri = NUMdvector (0, my maxnCoefficients)) == NULL) ||
-		((rj = NUMdvector (0, my maxnCoefficients)) == NULL)) { forget (him); goto end; }
+		((rj = NUMdvector (0, my maxnCoefficients)) == NULL)) goto end;
 
 	/*
 		Calculate distance matrix
 	*/
 	
 	Melder_progress1 (0.0, L"");
-	for (i=1; i <= my nx; i++)
+	for (i = 1; i <= my nx; i++)
 	{
 		Cepstrumc_Frame fi = & my frame[i];
 		regression (me, i, ri, nr);
@@ -183,7 +184,8 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	DTW_findPath (him, matchStart, matchEnd, constraint);
 end:
 	NUMdvector_free (ri, 0);
-	NUMdvector_free (rj, 0); 	
+	NUMdvector_free (rj, 0);
+	if (Melder_hasError ()) forget (him);
 	return him;
 }
 
@@ -192,9 +194,9 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me)
 	Matrix thee = NULL; long i, j;
 	
 	if ((thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		0, my maxnCoefficients, my maxnCoefficients+1, 1, 0)) == NULL) return thee;
+		0, my maxnCoefficients, my maxnCoefficients+1, 1, 0)) == NULL) return NULL;
 
-	for (i=1; i <= my nx; i++)
+	for (i = 1; i <= my nx; i++)
 	{
 		Cepstrumc_Frame him = & my frame[i];
 		for (j=1; j <= his nCoefficients+1; j++) thy z[j][i] = his c[j-1];

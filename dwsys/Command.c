@@ -1,6 +1,6 @@
 /* Command.c
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 19950710
  djmw 20020812 GPL header
  djmw 20071007 wchar_t
+ djmw 20110304 Thing_new
 */
 
 #include "Command.h"
@@ -56,7 +57,7 @@ class_methods_end
 
 Any CommandHistory_create (long maximumCapacity)
 {
-	CommandHistory me = new (CommandHistory);
+	CommandHistory me = Thing_new (CommandHistory);
 	if (! me || ! Collection_init (me, classCommand, maximumCapacity)) forget (me);
 	return me;
 }

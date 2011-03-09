@@ -2,7 +2,7 @@
 #define _Discriminant_h_
 /* Discriminant.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 2000
  djmw 20020813 GPL header
- djmw 20100106 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Graphics_h_
@@ -39,6 +39,10 @@
 #endif
 #ifndef _SSCP_h_
 	#include "SSCP.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Discriminant_members Eigen_members \
@@ -113,5 +117,9 @@ Discriminant TableOfReal_to_Discriminant (I);
 
 Configuration TableOfReal_to_Configuration_lda (TableOfReal me,
 	long numberOfDimensions);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Discriminant_h_ */

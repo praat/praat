@@ -2,7 +2,7 @@
 #define _CC_h_
 /* CC.h
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  djmw 20010219 Cepstral Coefficients (abstract) class.
  djmw 20020402 GPL header
  djmw 20030612 Include CC_def.h
- djmw 20080513 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Graphics_h_
@@ -31,6 +31,10 @@
 #endif
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "CC_def.h"
@@ -65,5 +69,9 @@ double CC_getValue (I, double t, long index);
 /******************* Frames ************************************************/
 
 int CC_Frame_init (CC_Frame me, long numberOfCoefficients);
- 	
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #endif /* _CC_h_ */

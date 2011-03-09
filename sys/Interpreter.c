@@ -95,7 +95,7 @@ static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
 	if (key [0] == 'u' && key [1] == 'n' && key [2] == 'd' && key [3] == 'e' && key [4] == 'f' && key [5] == 'i' &&
 		key [6] == 'n' && key [7] == 'e' && key [8] == 'd' && key [9] == '\0')
 		return Melder_errorp ("You cannot use 'undefined' as the name of a variable.");
-	InterpreterVariable me = new (InterpreterVariable);
+	InterpreterVariable me = Thing_new (InterpreterVariable);
 	if (! me || ! (my key = Melder_wcsdup_e (key))) { forget (me); return NULL; }
 	return me;
 }
@@ -114,7 +114,7 @@ class_methods (Interpreter, Thing)
 class_methods_end
 
 Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
-	Interpreter me = new (Interpreter);
+	Interpreter me = Thing_new (Interpreter);
 	if (! me || ! (my variables = SortedSetOfString_create ())) { forget (me); return NULL; }
 	my environmentName = Melder_wcsdup_f (environmentName);
 	my editorClass = editorClass;

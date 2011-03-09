@@ -1,4 +1,4 @@
-/* manual_sound.c
+/* manual_sound.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -74,8 +74,8 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 	forget (s);
 }
 
-void manual_sound_init (ManPages me);
-void manual_sound_init (ManPages me) {
+extern "C" void manual_sound_init (ManPages me);
+extern "C" void manual_sound_init (ManPages me) {
 
 MAN_BEGIN (L"Combine to stereo", L"ppgb", 20070129)
 INTRO (L"To combine two mono @Sound objects into one single stereo Sound, "
@@ -1582,4 +1582,4 @@ MAN_END
 
 }
 
-/* End of file manual_sound.c */
+/* End of file manual_sound.cpp */

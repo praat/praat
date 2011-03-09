@@ -2,7 +2,7 @@
 #define _ArtwordEditor_h_
 /* ArtwordEditor.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2009/03/21
+ * pb 2011/03/08
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Artword_h_
-	#include "Artword.h"
+#include "Editor.h"
+#include "Graphics.h"
+#include "Artword.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define ArtwordEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
@@ -45,6 +43,10 @@ Thing_declare1 (ArtwordEditor);
 Thing_declare2 (ArtwordEditor, Editor);
 
 ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ArtwordEditor.h */
 #endif

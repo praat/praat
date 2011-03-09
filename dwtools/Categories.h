@@ -2,7 +2,7 @@
 #define _Categories_h_
 /* Categories.h
  * 
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,10 @@
 	#include "Graphics.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #define Categories_members OrderedOfString_members
 #define Categories_methods OrderedOfString_methods
 class_create (Categories, OrderedOfString);
@@ -57,5 +61,9 @@ long Categories_getSize (Categories me);
 
 Categories TableOfReal_to_CategoriesRow (I);
 Categories TableOfReal_to_CategoriesColumn (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Categories_h_ */

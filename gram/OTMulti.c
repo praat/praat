@@ -1295,7 +1295,7 @@ end:
 Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise) {
 	Strings outputs = NULL;
 //start:
-	outputs = new (Strings); cherror
+	outputs = Thing_new (Strings); cherror
 	long n = forms -> numberOfStrings;
 	outputs -> numberOfStrings = n;
 	outputs -> strings = NUMpvector (1, n); cherror
@@ -1313,7 +1313,7 @@ end:
 Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise) {
 	Strings outputs = NULL;
 //start:
-	outputs = new (Strings); cherror
+	outputs = Thing_new (Strings); cherror
 	outputs -> numberOfStrings = numberOfTrials;
 	outputs -> strings = NUMpvector (1, numberOfTrials); cherror
 	for (long i = 1; i <= numberOfTrials; i ++)

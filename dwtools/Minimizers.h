@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,16 @@
 /*
  djmw 20020813 GPL header
  djmw 20030701 Removed non-GPL minimizations
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 
 #ifndef _Thing_h_
 	#include "Thing.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /*********** deferred class Minimizer **********************************/
@@ -165,5 +169,9 @@ class_create (VDSmagtMinimizer, Minimizer);
 Any VDSmagtMinimizer_create (long dimension, void *object, double (*func) 
 	(Any object, const double p[]), void (*dfunc) (Any object, const double p[],
 	double dp[]));
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Minimizer_h_ */

@@ -2,7 +2,7 @@
 #define _Distributions_h_
 /* Distributions.h
  *
- * Copyright (C) 1997-2008 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,14 @@
  */
 
 /*
- * pb 2008/04/08
+ * pb 2011/03/03
  */
 
 /* Distributions inherits from TableOfReal */
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
+#include "TableOfReal.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Distributions_members TableOfReal_members
@@ -42,6 +44,10 @@ double Distributionses_getMeanAbsoluteDifference (Distributions me, Distribution
 
 Distributions Distributions_addTwo (Distributions me, Distributions thee);
 Distributions Distributions_addMany (Collection me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Distributions.h */
 #endif

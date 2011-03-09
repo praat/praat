@@ -2,7 +2,7 @@
 #define _Tube_h_
 /* Tube.h
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20030617 Creation
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Sampled_h_
 	#include "Sampled.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Tube_def.h"
@@ -83,5 +87,9 @@ int RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 		
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
-		
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _Tube_h_ */

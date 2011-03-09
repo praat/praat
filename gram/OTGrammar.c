@@ -893,7 +893,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 	long i;
-	Strings thee = new (Strings); cherror
+	Strings thee = Thing_new (Strings); cherror
 	thy strings = NUMpvector (1, thy numberOfStrings = numberOfTrials); cherror
 	for (i = 1; i <= numberOfTrials; i ++) {
 		long itab = NUMrandomInteger (1, my numberOfTableaus);
@@ -906,7 +906,7 @@ end:
 
 Strings OTGrammar_getInputs (OTGrammar me) {
 	long i;
-	Strings thee = new (Strings); cherror
+	Strings thee = Thing_new (Strings); cherror
 	thy strings = NUMpvector (1, thy numberOfStrings = my numberOfTableaus); cherror
 	for (i = 1; i <= my numberOfTableaus; i ++) {
 		thy strings [i] = Melder_wcsdup_e (my tableaus [i]. input); cherror
@@ -929,7 +929,7 @@ end:
 }
 
 Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise) {
-	Strings outputs = new (Strings);
+	Strings outputs = Thing_new (Strings);
 	long i, n = inputs -> numberOfStrings;
 	cherror
 	outputs -> numberOfStrings = n;
@@ -945,7 +945,7 @@ end:
 }
 
 Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, double evaluationNoise) {
-	Strings outputs = new (Strings);
+	Strings outputs = Thing_new (Strings);
 	long i;
 	cherror
 	outputs -> numberOfStrings = n;
@@ -1773,7 +1773,7 @@ end:
 
 static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, long numberOfData) {
 	long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   /* E.g. 0, 20, 40, ... */
-	OTHistory thee = new (OTHistory); cherror
+	OTHistory thee = Thing_new (OTHistory); cherror
 	TableOfReal_init (thee, 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints); cherror
 	TableOfReal_setColumnLabel (thee, 1, L"Datum");
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2344,7 +2344,7 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 						if (! grammarHasChangedDuringCycle) break;
 					}
 					if (itrial > 40) {
-						OTGrammar_List4 listElement = new (OTGrammar_List4);
+						OTGrammar_List4 listElement = Thing_new (OTGrammar_List4);
 						listElement -> hi1 = jcons;
 						listElement -> lo1 = icons;
 						listElement -> hi2 = lcons;

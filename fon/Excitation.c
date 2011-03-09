@@ -88,7 +88,7 @@ class_methods (Excitation, Vector)
 class_methods_end
 
 Excitation Excitation_create (double df, long nf) {
-	Excitation me = new (Excitation);
+	Excitation me = Thing_new (Excitation);
 	if (! me || ! Matrix_init (me, 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1))
 		forget (me);
 	return me;

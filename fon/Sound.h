@@ -25,13 +25,14 @@
 
 /* Sound inherits from Vector */
 /* A Sound is a sampled signal, not quantized. */
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Vector.h"
+#include "Collection.h"
+
 #include "Sound_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #define Sound_members  Vector_members
 #define Sound_methods  Vector_methods
@@ -341,6 +342,10 @@ int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
 Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Sound.h */
 #endif

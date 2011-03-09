@@ -2,7 +2,7 @@
 #define _Sound_to_SPINET_h_
 /* Sound_to_SPINET.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _SPINET_h_
@@ -32,8 +33,16 @@
 	#include "Sound_extensions.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 	double minimumFrequencyHz, double maximumFrequencyHz, long nFilters,
 	double excitationErbProportion, double inhibitionErbProportion);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sound_to_SPINET_h_ */

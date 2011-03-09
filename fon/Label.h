@@ -2,7 +2,7 @@
 #define _Label_h_
 /* Label.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/08/13
+ * pb 2011/03/03
  */
 
 #ifndef _Collection_h_
@@ -28,6 +28,10 @@
 #endif
 #ifndef _Function_h_
 	#include "Function.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Autosegment_members Function_members
@@ -91,6 +95,10 @@ int Label_init (I, long initialNumberOfTiers);
 int Label_addTier (Label me);
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif
 /* End of file Label.h */

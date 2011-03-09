@@ -98,7 +98,7 @@ class_methods (Manipulation, Function) {
 }
 
 Manipulation Manipulation_create (double tmin, double tmax) {
-	Manipulation me = new (Manipulation);
+	Manipulation me = Thing_new (Manipulation);
 	if (! me) return NULL;
 	my xmin = tmin, my xmax = tmax;
 	if (! (my duration = DurationTier_create (tmin, tmax))) { forget (me); return NULL; }

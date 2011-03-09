@@ -34,7 +34,7 @@ class_methods_end
 Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double df, long nf)
 {
-	Cochleagram me = new (Cochleagram);
+	Cochleagram me = Thing_new (Cochleagram);
 	if (! me || ! Matrix_init (me, tmin, tmax, nt, dt, t1,
 		0.0, nf * df, nf, df, 0.5 * df)) forget (me);
 	return me;

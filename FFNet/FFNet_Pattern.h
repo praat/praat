@@ -2,7 +2,7 @@
 #define _FFNet_Pattern_h_
 /* FFNet_Pattern.h
  *
- * Copyright (C) 1997-2002 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,20 @@
 /*
  djmw 19950113
  djmw 20020712 GPL header
+ djmw 20110307 Latest modification
 */
 
 #include "Pattern.h"
 #include "FFNet.h"
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 void FFNet_Pattern_drawActivation( FFNet me, Pattern pattern, Graphics g, long ipattern );
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _FFNet_Pattern_h_ */

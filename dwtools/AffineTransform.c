@@ -1,6 +1,6 @@
 /* AffineTransform.c
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20050726 Added AffineTransform_extractTranslationVector
  djmw 20061021 printf expects %ld for 'long int'
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20110304 Thing_new
  */
 
 #include "AffineTransform.h"
@@ -127,7 +128,7 @@ int AffineTransform_init (I, long n)
 
 AffineTransform AffineTransform_create (long n)
 {
-	AffineTransform me = new (AffineTransform);
+	AffineTransform me = Thing_new (AffineTransform);
 
 	if (me == NULL || ! AffineTransform_init (me, n)) forget (me);
 	return me;

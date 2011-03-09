@@ -2,7 +2,7 @@
 #define _KlattGrid_h_
 /* KlattGrid.h
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  * djmw 20080917 Initial version
- * djmw 20090112 Latest modification
+ * djmw 20110306 Latest modification
  */
 
 #ifndef _Collection_h_
@@ -50,6 +50,10 @@
 #endif
 #ifndef _Interpreter_decl_h_
 	#include "Interpreter_decl.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "KlattGrid_def.h"
@@ -283,5 +287,9 @@ Sound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, int filterMo
 Sound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee);
 
 KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double minimumPitchIntensity, int subtractMean);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _KlattGrid_h_ */

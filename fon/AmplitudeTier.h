@@ -2,7 +2,7 @@
 #define _AmplitudeTier_h_
 /* AmplitudeTier.h
  *
- * Copyright (C) 2003-2010 Paul Boersma
+ * Copyright (C) 2003-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/10/19
+ * pb 2011/03/03
  */
 
 #ifndef _IntensityTier_h_
@@ -31,6 +31,10 @@
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /********** class AmplitudeTier **********/
@@ -62,6 +66,10 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double shortestPeriod, 
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 
 Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file AmplitudeTier.h */
 #endif

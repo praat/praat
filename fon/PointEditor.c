@@ -249,7 +249,7 @@ class_methods (PointEditor, TimeSoundEditor) {
 }
 
 PointEditor PointEditor_create (GuiObject parent, const wchar_t *title, PointProcess point, Sound sound) {
-	PointEditor me = new (PointEditor); cherror
+	PointEditor me = Thing_new (PointEditor); cherror
 	if (sound) {
 		my monoSound = Sound_convertToMono (sound); cherror
 	}

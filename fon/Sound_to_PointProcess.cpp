@@ -1,6 +1,6 @@
-/* Sound_to_PointProcess.c
+/* Sound_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,49 +23,47 @@
  * pb 2004/07/11 default time steps in Sound_to_Pitch
  * pb 2007/01/28 made compatible with stereo sounds
  * pb 2008/01/19 double
+ * pb 2011/03/09 C++
  */
 
 #include "Sound_to_PointProcess.h"
 #include "Sound_to_Pitch.h"
 #include "Pitch_to_PointProcess.h"
 
-PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, int includeMaxima, int includeMinima) {
-	PointProcess thee = NULL;
-	double *y = my z [channel];
-	long numberOfMaxima, numberOfMinima, i;
-
+PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, bool includeMaxima, bool includeMinima) try {
 	/*
 	 * Pass 1: count the extrema. There may be a maximum and minimum in the same interval!
 	 */
-	numberOfMaxima = numberOfMinima = 0;
-	for (i = 2; i <= my nx - 1; i ++) {
+	long numberOfMaxima = 0;
+	long numberOfMinima = 0;
+	double *y = my z [channel];
+	for (long i = 2; i <= my nx - 1; i ++) {
 		if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) numberOfMaxima ++;
 		if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) numberOfMinima ++;
 	}
-
 	/*
 	 * Create the empty result.
 	 */	
-	thee = PointProcess_create (my xmin, my xmax, numberOfMaxima + numberOfMinima);
-	if (! thee) return NULL;
-
+	autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfMaxima + numberOfMinima);
 	/*
 	 * Pass 2: compute and register the extrema.
 	 */
-	for (i = 2; i <= my nx - 1; i ++) {
+	for (long i = 2; i <= my nx - 1; i ++) {
 		double time, value, i_real;
 		if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 			value = NUMimproveMaximum (y, my nx, i, interpolation, & i_real);
 			time = my x1 + (i_real - 1.0) * my dx;
-			PointProcess_addPoint (thee, time);
+			PointProcess_addPoint (thee(), time);
 		}
 		if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) {
 			value = NUMimproveMinimum (y, my nx, i, interpolation, & i_real);
 			time = my x1 + (i_real - 1.0) * my dx;
-			PointProcess_addPoint (thee, time);
+			PointProcess_addPoint (thee(), time);
 		}
 	}
-	return thee;
+	return thee.persist();
+} catch (...) {
+	rethrowzero;
 }
 
 PointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation)
@@ -75,63 +73,51 @@ PointProcess Sound_to_PointProcess_minima (Sound me, long channel, int interpola
 PointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int interpolation)
 	{ return Sound_to_PointProcess_extrema (me, channel, interpolation, TRUE, TRUE); }
 
-PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, int includeRaisers, int includeFallers) {
-	PointProcess thee = NULL;
-	double *y = my z [channel];
-	long numberOfRaisers, numberOfFallers, i;
-
+PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeRaisers, bool includeFallers) try {
 	/*
 	 * Pass 1: count the zeroes.
 	 */
-	numberOfRaisers = numberOfFallers = 0;
-	for (i = 2; i <= my nx; i ++) {
+	long numberOfRaisers = 0;
+	long numberOfFallers = 0;
+	double *y = my z [channel];
+	for (long i = 2; i <= my nx; i ++) {
 		if (includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) numberOfRaisers ++;
 		if (includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0) numberOfFallers ++;
 	}
-
 	/*
 	 * Create the empty result.
 	 */	
-	thee = PointProcess_create (my xmin, my xmax, numberOfRaisers + numberOfFallers);
-	if (! thee) return NULL;
-
+	autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfRaisers + numberOfFallers);
 	/*
 	 * Pass 2: compute and register the zeroes.
 	 */
-	for (i = 2; i <= my nx; i ++) {
+	for (long i = 2; i <= my nx; i ++) {
 		if ((includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) ||
-		    (includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0)) {
-			double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   /* Linear. */
-			PointProcess_addPoint (thee, time);
+		    (includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0))
+		{
+			double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
+			PointProcess_addPoint (thee(), time);
 		}
 	}
-	return thee;
+	return thee.persist();
+} catch (...) {
+	rethrowzero;
 }
 
-PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) {
-	PointProcess thee = NULL;
-	Pitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
-	if (! pitch) goto error;
-	if (! (thee = Sound_Pitch_to_PointProcess_cc (me, pitch))) goto error;
-	forget (pitch);
-	return thee;
-error:
-	forget (pitch);
-	forget (thee);
-	return Melder_errorp ("(Sound_to_PointProcess:) Not performed.");
+PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax) try {
+	autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
+	autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch());
+	return thee.persist();
+} catch (...) {
+	rethrowzero1 (L"(Sound_to_PointProcess:) Not performed.");
 }
 
-PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, int includeMaxima, int includeMinima) {
-	PointProcess thee = NULL;
-	Pitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
-	if (! pitch) goto error;
-	if (! (thee = Sound_Pitch_to_PointProcess_peaks (me, pitch, includeMaxima, includeMinima))) goto error;
-	forget (pitch);
-	return thee;
-error:
-	forget (pitch);
-	forget (thee);
-	return Melder_errorp ("(Sound_to_PointProcess:) Not performed.");
+PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima) try {
+	autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
+	autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch(), includeMaxima, includeMinima);
+	return thee.persist();
+} catch (...) {
+	rethrowzero1 (L"(Sound_to_PointProcess:) Not performed.");
 }
 
-/* End of file Sound_to_PointProcess.c */
+/* End of file Sound_to_PointProcess.cpp */

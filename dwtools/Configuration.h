@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  * 
- * Copyright (C) 1992-2007 David Weenink
+ * Copyright (C) 1992-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020315 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
  */
 
 #ifndef _Data_h_
@@ -35,6 +35,10 @@
 #endif
 #ifndef _Collection_h_
 	#include "Collection.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Configuration_def.h"
@@ -135,5 +139,9 @@ Configuration Configuration_createCarrollWishExample (void);
 class_create (Configurations, Ordered);
 
 Configurations Configurations_create (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Configuration_h_ */

@@ -62,7 +62,7 @@ class_methods (FormantPoint, Data) {
 }
 
 FormantPoint FormantPoint_create (double time) {
-	FormantPoint me = new (FormantPoint);
+	FormantPoint me = Thing_new (FormantPoint);
 	if (! me) return NULL;
 	my time = time;
 	return me;
@@ -82,7 +82,7 @@ class_methods (FormantTier, Function) {
 }
 
 FormantTier FormantTier_create (double tmin, double tmax) {
-	FormantTier me = new (FormantTier);
+	FormantTier me = Thing_new (FormantTier);
 	if (! me || ! (my points = SortedSetOfDouble_create ()))
 		{ forget (me); return NULL; }
 	my xmin = tmin;

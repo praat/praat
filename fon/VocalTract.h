@@ -2,7 +2,7 @@
 #define _VocalTract_h_
 /* VocalTract.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,14 @@
  */
 
 /*
- * pb 2002/06/04
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Vector.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define VocalTract_members  Vector_members
@@ -88,6 +87,10 @@ VocalTract Matrix_to_VocalTract (Matrix me);
 		thy ymin ymax ny dy y1 == 1;
 		thy z [1] [...] == my z [1] [...];
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file VocalTract.h */
 #endif

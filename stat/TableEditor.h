@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006-2007 Paul Boersma
+ * Copyright (C) 2006-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,24 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/03
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
+#include "Editor.h"
+#include "Table.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define TableEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (TableEditor, Editor)
 Thing_declare1 (TableEditor);
 
 TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TableEditor.h */
 #endif

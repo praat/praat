@@ -57,7 +57,7 @@ class_methods_end
 Any Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double fmin, double fmax, long nf, double df, double f1)
 {
-	Spectrogram me = new (Spectrogram);
+	Spectrogram me = Thing_new (Spectrogram);
 	if (! me || ! Matrix_init (me, tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1))
 		forget (me);
 	return me;    

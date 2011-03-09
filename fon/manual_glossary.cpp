@@ -1,4 +1,4 @@
-/* manual_glossary.c
+/* manual_glossary.cpp
  *
  * Copyright (C) 1992-2008 Paul Boersma
  *
@@ -28,8 +28,8 @@ static void draw_TimeDomain_Pitch (Graphics g) {
 	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, TRUE, Pitch_speckle_NO, kPitch_unit_HERTZ);
 }
 
-void manual_glossary_init (ManPages me);
-void manual_glossary_init (ManPages me) {
+extern "C" void manual_glossary_init (ManPages me);
+extern "C" void manual_glossary_init (ManPages me) {
 
 MAN_BEGIN (L"aliasing", L"ppgb", 20040331)
 INTRO (L"Aliasing (Du. %vouwvervorming) is the phenomenon of the ambiguity "
@@ -658,4 +658,4 @@ INTRO (L"The waveform is the sound pressure as a function of time, or: the micro
 MAN_END
 }
 
-/* End of file manual_TimeDomain.c */
+/* End of file manual_glossary.cpp */

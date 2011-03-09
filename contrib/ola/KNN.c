@@ -73,7 +73,7 @@ class_methods_end
 
 KNN KNN_create ()   
 {
-    KNN me = new (KNN);
+    KNN me = Thing_new (KNN);
     if (!me)
     {
         return(NULL);

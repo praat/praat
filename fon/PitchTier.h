@@ -2,7 +2,7 @@
 #define _PitchTier_h_
 /* PitchTier.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2010/10/19
+ * pb 2011/03/03
  */
 
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "RealTier.h"
+#include "Graphics.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /********** class PitchTier **********/
@@ -58,6 +56,10 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 
 int PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);
 int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file PitchTier.h */
 #endif

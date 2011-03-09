@@ -1,4 +1,4 @@
-/* manual_Fon.c
+/* manual_Fon.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -34,15 +34,22 @@ static void draw_CreateDurationTier (Graphics g) {
 	Graphics_textLeft (g, TRUE, L"Relative duration");
 }
 
-void manual_Fon_init (ManPages me);
-void manual_Fon_init (ManPages me) {
+extern "C" void manual_Sampling_init (ManPages me);
+extern "C" void manual_sound_init (ManPages me);
+extern "C" void manual_pitch_init (ManPages me);
+extern "C" void manual_spectrum_init (ManPages me);
+extern "C" void manual_formant_init (ManPages me);
+extern "C" void manual_annotation_init (ManPages me);
 
-{ extern void manual_Sampling_init (ManPages me); manual_Sampling_init (me); }
-{ extern void manual_sound_init (ManPages me); manual_sound_init (me); }
-{ extern void manual_pitch_init (ManPages me); manual_pitch_init (me); }
-{ extern void manual_spectrum_init (ManPages me); manual_spectrum_init (me); }
-{ extern void manual_formant_init (ManPages me); manual_formant_init (me); }
-{ extern void manual_annotation_init (ManPages me); manual_annotation_init (me); }
+extern "C" void manual_Fon_init (ManPages me);
+extern "C" void manual_Fon_init (ManPages me) {
+
+manual_Sampling_init (me);
+manual_sound_init (me);
+manual_pitch_init (me);
+manual_spectrum_init (me);
+manual_formant_init (me);
+manual_annotation_init (me);
 
 MAN_BEGIN (L"Get high index from time...", L"ppgb", 20101230)
 INTRO (L"A @query to ask the selected tier object "
@@ -2259,4 +2266,4 @@ MAN_END
 
 }
 
-/* End of file manual_Fon.c */
+/* End of file manual_Fon.cpp */

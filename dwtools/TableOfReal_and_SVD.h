@@ -1,6 +1,6 @@
 /* TableOfReal_and_SVD.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,20 @@
 
 /*
  djmw 20021009 GPL header
- djmw 20051202 Latest modification
+ djmw 20110397 Latest modification
 */
 
 #ifndef TableOfReal_and_SVD_h_
-#define TableOfReal_and_SVD_h_
+	#define TableOfReal_and_SVD_h_
 #ifndef _SVD_h_
 	#include "SVD.h"
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 SVD TableOfReal_to_SVD (I);
@@ -38,4 +42,9 @@ TableOfReal SVD_to_TableOfReal (SVD me, long from, long to);
 TableOfReal SVD_extractLeftSingularVectors (I);
 TableOfReal SVD_extractRightSingularVectors (I);
 TableOfReal SVD_extractSingularValues (I);
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* TableOfReal_and_SVD.h */

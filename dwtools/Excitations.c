@@ -1,6 +1,6 @@
 /* Excitations.c
  *
- * Copyright (C) 1993-2009 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20071009 wchar_t
  djmw 20071017 Melder_error<n>
  djmw 20090914 getItem modified
+ djmw 20110304 Thing_new
 */
 
 #include "Excitations.h"
@@ -47,7 +48,7 @@ class_methods_end
 
 Excitations Excitations_create (long initialCapacity)
 {
-	Excitations me = new (Excitations);
+	Excitations me = Thing_new (Excitations);
 	if (! me || ! Ordered_init (me, classExcitation, initialCapacity)) forget (me);
 	return me;
 }

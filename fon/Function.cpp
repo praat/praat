@@ -1,6 +1,6 @@
-/* Function.c
+/* Function.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
  * pb 2008/09/20 shiftXBy
+ * pb 2011/03/09 C++
  */
 
 #include "Function.h"
@@ -294,4 +295,4 @@ int Function_intersectRangeWithDomain (I, double *x1, double *x2) {
 	return 1;
 }
 
-/* End of file Function.c */
+/* End of file Function.cpp */

@@ -2,7 +2,7 @@
 #define _OTMultiEditor_h_
 /* OTMultiEditor.h
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,24 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/08
  */
 
-#ifndef _HyperPage_h_
-	#include "HyperPage.h"
-#endif
-#ifndef _OTMulti_h_
-	#include "OTMulti.h"
+#include "HyperPage.h"
+#include "OTMulti.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define OTMultiEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
 Thing_declare1 (OTMultiEditor);
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file OTMultiEditor.h */
 #endif

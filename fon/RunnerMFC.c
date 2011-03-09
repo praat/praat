@@ -409,7 +409,7 @@ class_methods (RunnerMFC, Editor)
 class_methods_end
 
 RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments) {
-	RunnerMFC me = new (RunnerMFC); cherror
+	RunnerMFC me = Thing_new (RunnerMFC); cherror
 	Editor_init (RunnerMFC_as_parent (me), parent, 0, 0, 2000, 2000, title, NULL); cherror
 	my experiments = experiments;
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);

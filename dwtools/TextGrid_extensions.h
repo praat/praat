@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20020516 GPL header
- djmw 20060921 Latest modification
+ djmw 20110307 Latest modification
 */
 
 #ifndef _TextGrid_h_
 	#include "TextGrid.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
@@ -89,6 +93,10 @@ void IntervalTier_removeBoundary_equalLabels (IntervalTier me, wchar_t *label);
 void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, wchar_t *label, double minimumDuration);
 
 int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, wchar_t *search, wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+
+#ifdef __cplusplus
+	}
+#endif
 
 
 #endif /* _TextGrid_extensions_h_ */

@@ -89,7 +89,7 @@ static int writeText (I, MelderFile file) {
 
 static int readText (I, MelderReadText text) {
 	iam (ParamCurve);
-	return (my x = new (Sound)) != NULL && (my y = new (Sound)) != NULL &&
+	return (my x = Thing_new (Sound)) != NULL && (my y = Thing_new (Sound)) != NULL &&
 		Data_readText (my x, text) && Data_readText (my y, text);
 }
 
@@ -100,7 +100,7 @@ static int writeBinary (I, FILE *f) {
 
 static int readBinary (I, FILE *f) {
 	iam (ParamCurve);
-	return (my x = new (Sound)) != NULL && (my y = new (Sound)) != NULL &&
+	return (my x = Thing_new (Sound)) != NULL && (my y = Thing_new (Sound)) != NULL &&
 		Data_readBinary (my x, f) && Data_readBinary (my y, f);
 }
 
@@ -128,7 +128,7 @@ int ParamCurve_init (I, Any void_x, Any void_y) {
 }
 
 Any ParamCurve_create (Any x, Any y) {
-	ParamCurve me = new (ParamCurve);
+	ParamCurve me = Thing_new (ParamCurve);
 	if (! me || ! ParamCurve_init (me, x, y)) { forget (me); return Melder_errorp ("ParamCurve not created."); }
 	return me;
 }

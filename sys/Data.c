@@ -119,7 +119,7 @@ Any Data_copy (I) {
 	Data thee;
 	if (me == NULL) return NULL;
 	if (our copy == classData -> copy) return Melder_errorp3 (L"(Data_copy:) Class ", our _className, L" cannot be copied.");
-	thee = Thing_new (my methods);
+	thee = _Thing_new (my methods);
 	if (! thee) return NULL;
 	if (! our copy (me, thee)) {
 		forget (thee);

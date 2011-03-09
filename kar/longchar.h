@@ -78,7 +78,7 @@ wchar_t *Longchar_genericizeW (const wchar_t *native, wchar_t *generic);
 		translating user input into a generic string.
 */
 
-typedef struct Longchar_Info {
+typedef struct structLongchar_Info {
 	unsigned char first, second;   /* First and second character of two-byte encoding. */
 		/* For ASCII characters, 'second' is a space. */
 	unsigned char alphabet;   /* Roman, Symbol, Phonetic, or Dingbats. */

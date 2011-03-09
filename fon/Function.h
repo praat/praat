@@ -1,6 +1,6 @@
 /* Function.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/09/22
+ * pb 2011/03/03
  */
 
 #ifndef _Function_h_
@@ -27,6 +27,10 @@
 /* Function inherits from Data */
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Function_members  Data_members \
@@ -152,6 +156,10 @@ void Function_shiftXBy (I, double shift);
 void Function_shiftXTo (I, double xfrom, double xto);
 void Function_scaleXBy (I, double factor);
 void Function_scaleXTo (I, double xminto, double xmaxto);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Function.h */
 #endif

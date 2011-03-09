@@ -187,7 +187,7 @@ class_methods (Vowel, Function)
 
 static Vowel Vowel_create (double duration)
 {
-	Vowel me = new (Vowel);
+	Vowel me = Thing_new (Vowel);
 
 	if (me == NULL || ! Function_init (me, 0, duration)) return NULL;
 	my ft = FormantTier_create (0, duration);
@@ -1619,7 +1619,7 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 
 VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data)
 {
-	VowelEditor me = new (VowelEditor);
+	VowelEditor me = Thing_new (VowelEditor);
 	if (me == NULL || ! Editor_init (VowelEditor_as_parent (me), parent, 20, 40, 650, 650, title, data)) goto end;
 	#if motif
 	Melder_assert (XtWindow (my drawingArea));

@@ -277,7 +277,7 @@ class_methods (OTGrammarEditor, HyperPage) {
 }
 
 OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar_t *title, OTGrammar ot) {
-	OTGrammarEditor me = new (OTGrammarEditor); cherror
+	OTGrammarEditor me = Thing_new (OTGrammarEditor); cherror
 	my data = ot;
 	HyperPage_init (OTGrammarEditor_as_parent (me), parent, title, ot); cherror
 end:

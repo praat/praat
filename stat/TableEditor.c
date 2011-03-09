@@ -434,7 +434,7 @@ static gboolean gui_cb_drawing_area_scroll(GuiObject w, GdkEventScroll *event, g
 #endif
 
 TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table) {
-	TableEditor me = new (TableEditor); cherror
+	TableEditor me = Thing_new (TableEditor); cherror
 	Editor_init (TableEditor_as_parent (me), parent, 0, 0, 700, 500, title, table); cherror
 	#if motif
 	Melder_assert (XtWindow (my drawingArea));

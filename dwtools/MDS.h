@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20071213 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #define KRUSKAL_MAXDIMENSION 10
@@ -91,6 +91,10 @@
 #endif
 #ifndef _SSCP_h_
 	#include "SSCP.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /************************** class Weight **************************************/
@@ -721,5 +725,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	int type, long order, wchar_t *interiorKnots, int garnish);
 
 void drawMDSClassRelations (Graphics g);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _MDS_h_ */

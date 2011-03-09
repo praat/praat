@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_KlattGrid (ManPages me);
-void manual_KlattGrid (ManPages me)
+LINK_C void manual_KlattGrid (ManPages me);
+LINK_C void manual_KlattGrid (ManPages me)
 {
 
 MAN_BEGIN (L"KlattGrid", L"djmw", 20091119)

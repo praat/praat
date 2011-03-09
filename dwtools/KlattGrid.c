@@ -1,6 +1,6 @@
 /* KlattGrid.c
  *
- * Copyright (C) 2008-2010 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
   djmw 20090312 Add klattGrid_addFormantAndBandwidthTier
   djmw 20090326 Changed DBSPL_to_A into DB_to_A for bypass and formant amplitudes.
   djmw 20100223 Removed gsl dependency
+  djmw 20110304 Thing_new
+  djmw 20110308 struc connections -> struct structconnections
 */
 
 #include "FormantGrid_extensions.h"
@@ -358,7 +360,7 @@ static Sound _Sound_diff (Sound me, int scale)
 	}
 }*/
 
-typedef struct connections { long numberOfConnections; double *x, *y;} *connections;
+typedef struct structconnections { long numberOfConnections; double *x, *y;} *connections;
 
 static void connections_free (connections me)
 {
@@ -370,7 +372,7 @@ static void connections_free (connections me)
 
 static connections connections_create (long numberOfConnections)
 {
-	connections me = (connections) _Melder_malloc_e (sizeof (struct connections));
+	connections me = (connections) _Melder_malloc_e (sizeof (struct structconnections));
 	if (me == NULL) return NULL;
 	my numberOfConnections = numberOfConnections;
 	my x = NUMdvector (1, numberOfConnections);
@@ -493,7 +495,7 @@ class_methods (PhonationPoint, Data)
 PhonationPoint PhonationPoint_create (double time, double period, double openPhase, double collisionPhase, double te,
 	double power1, double power2, double pulseScale)
 {
-	PhonationPoint me = new (PhonationPoint);
+	PhonationPoint me = Thing_new (PhonationPoint);
 	if (me == NULL) return NULL;
 	my time = time; my period = period;
 	my openPhase = openPhase;
@@ -519,7 +521,7 @@ class_methods (PhonationTier, Function)
 
 PhonationTier PhonationTier_create (double tmin, double tmax)
 {
-	PhonationTier me = new (PhonationTier);
+	PhonationTier me = Thing_new (PhonationTier);
 	if (me == NULL || ! Function_init (me, tmin, tmax) ||
 		((my points = SortedSetOfDouble_create ()) == NULL)) forget (me);
 	return me;
@@ -568,7 +570,7 @@ static void PhonationGridPlayOptions_setDefaults (PhonationGridPlayOptions me)
 
 PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
 {
-	PhonationGridPlayOptions me = new (PhonationGridPlayOptions);
+	PhonationGridPlayOptions me = Thing_new (PhonationGridPlayOptions);
 	if (me == NULL) return NULL;
 	return me;
 }
@@ -631,7 +633,7 @@ void PhonationGrid_setNames (PhonationGrid me)
 
 PhonationGrid PhonationGrid_create (double tmin, double tmax)
 {
-	PhonationGrid me = new (PhonationGrid);
+	PhonationGrid me = Thing_new (PhonationGrid);
 
 	if (me == NULL || ! Function_init (me, tmin, tmax)) goto end;
 
@@ -1189,7 +1191,7 @@ static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me,
 
 VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
 {
-	VocalTractGridPlayOptions me = new (VocalTractGridPlayOptions);
+	VocalTractGridPlayOptions me = Thing_new (VocalTractGridPlayOptions);
 	if (me == NULL) return NULL;
 	return me;
 }
@@ -1285,7 +1287,7 @@ void VocalTractGrid_setNames (VocalTractGrid me)
 VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfNasalFormants,	long numberOfNasalAntiFormants)
 {
-	VocalTractGrid me = new (VocalTractGrid);
+	VocalTractGrid me = Thing_new (VocalTractGrid);
 
 	if (me == NULL || ! Function_init (me, tmin, tmax)) goto end;
 
@@ -1724,7 +1726,7 @@ static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, Cou
 
 CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
 {
-	CouplingGridPlayOptions me = new (CouplingGridPlayOptions);
+	CouplingGridPlayOptions me = Thing_new (CouplingGridPlayOptions);
 	if (me == NULL) return NULL;
 	return me;
 }
@@ -1774,7 +1776,7 @@ void CouplingGrid_setNames (CouplingGrid me)
 
 CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachealFormants, long numberOfTrachealAntiFormants, long numberOfDeltaFormants)
 {
-	CouplingGrid me = new (CouplingGrid);
+	CouplingGrid me = Thing_new (CouplingGrid);
 	if (me == NULL || ! Function_init (me, tmin, tmax)) goto end;
 	if (((my tracheal_formants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealFormants)) == NULL) ||
 		((my tracheal_antiformants = FormantGrid_createEmpty (tmin, tmax, numberOfTrachealAntiFormants)) == NULL) ||
@@ -1964,7 +1966,7 @@ static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, F
 
 FricationGridPlayOptions FricationGridPlayOptions_create (void)
 {
-	FricationGridPlayOptions me = new (FricationGridPlayOptions);
+	FricationGridPlayOptions me = Thing_new (FricationGridPlayOptions);
 	if (me == NULL) return NULL;
 	return me;
 }
@@ -2012,7 +2014,7 @@ void FricationGrid_setNames (FricationGrid me)
 
 FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfFormants)
 {
-	FricationGrid me = new (FricationGrid);
+	FricationGrid me = Thing_new (FricationGrid);
 
 	if (me == NULL || ! Function_init (me, tmin, tmax)) goto end;
 	if (((my fricationAmplitude = IntensityTier_create (tmin, tmax)) == NULL) ||
@@ -2185,7 +2187,7 @@ static void KlattGridPlayOptions_setDefaults (KlattGridPlayOptions me, KlattGrid
 
 KlattGridPlayOptions KlattGridPlayOptions_create (void)
 {
-	KlattGridPlayOptions me = new (KlattGridPlayOptions);
+	KlattGridPlayOptions me = Thing_new (KlattGridPlayOptions);
 	if (me == NULL) return NULL;
 	return me;
 }
@@ -2248,7 +2250,7 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfTrachealFormants, long numberOfTrachealAntiFormants,
 	long numberOfFricationFormants, long numberOfDeltaFormants)
 {
-	KlattGrid me = new (KlattGrid);
+	KlattGrid me = Thing_new (KlattGrid);
 
 	if (me == NULL || ! Function_init (me, tmin, tmax) ||
 		((my phonation = PhonationGrid_create (tmin, tmax)) == NULL) ||
@@ -2816,7 +2818,7 @@ Sound KlattGrid_to_Sound (KlattGrid me)
 
 	if (pp -> aspiration || pp -> voicing) // No need for vocal tract filtering if no glottal source signal present
 	{
-		Sound source = PhonationGrid_to_Sound (my phonation, my coupling, samplingFrequency);
+		source = PhonationGrid_to_Sound (my phonation, my coupling, samplingFrequency);
 		if (source == NULL) goto end;
 
 		thee = Sound_VocalTractGrid_CouplingGrid_filter (source, my vocalTract, my coupling);

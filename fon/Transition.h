@@ -2,7 +2,7 @@
 #define _Transition_h_
 /* Transition.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,17 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/03
  */
 
 /* Transition inherits from Data */
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Matrix.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
-/* For the inheritors. */
 #define Transition_members Data_members \
 	long numberOfStates; \
 	wchar_t **stateLabels; \
@@ -51,6 +50,9 @@ Transition Transition_power (Transition me, long power);
 Matrix Transition_to_Matrix (Transition me);
 Transition Matrix_to_Transition (Matrix me);
 
+#ifdef __cplusplus
+	}
 #endif
 
 /* End of file TableOfReal.h */
+#endif

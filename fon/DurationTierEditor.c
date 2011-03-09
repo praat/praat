@@ -55,7 +55,7 @@ class_methods (DurationTierEditor, RealTierEditor) {
 }
 
 DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
-	DurationTierEditor me = new (DurationTierEditor);
+	DurationTierEditor me = Thing_new (DurationTierEditor);
 	if (! me || ! RealTierEditor_init (DurationTierEditor_as_parent (me), parent, title, (RealTier) duration, sound, ownSound))
 		{ forget (me); return NULL; }
 	return me;

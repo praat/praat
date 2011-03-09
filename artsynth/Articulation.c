@@ -69,7 +69,7 @@ class_methods (Art, Data) {
 }
 
 Art Art_create (void) {
-	return new (Art);
+	return Thing_new (Art);
 }
 
 /* End of file Articulation.c */

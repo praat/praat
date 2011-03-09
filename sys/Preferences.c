@@ -65,7 +65,7 @@ class_methods_end
 static SortedSetOfString thePreferences;
 
 static void Preferences_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text)) {
-	Preference me = new (Preference);
+	Preference me = Thing_new (Preference);
 	my string = Melder_wcsdup_f (string);
 	my type = type;
 	my value = value;

@@ -124,7 +124,7 @@ int Graphics_init (I) {
 }
 
 Graphics Graphics_create (int resolution) {
-	Graphics me = (Graphics) new (Graphics);
+	Graphics me = (Graphics) Thing_new (Graphics);
 	if (! me || ! Graphics_init (me)) forget (me);
 	my resolution = resolution;
 	return me;

@@ -2,7 +2,7 @@
 #define _Resonator_h_
 /* Resonator.h
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  * djmw 20081029
- * djmw 20081124 +ConstantGainResonator
+ * djmw 20110306 Latest modification
  */
 	
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Filter_members Data_members \
@@ -76,6 +80,10 @@ void Filter_setFB (I, double f, double b);
 double Filter_getOutput (I, double input);
 
 void Filter_resetMemory (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Resonator_h_ */
 

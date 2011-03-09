@@ -212,7 +212,7 @@ TableOfReal TableOfReal_createIrisDataset (void)
 Strings TableOfReal_extractRowLabels (I)
 {
 	iam (TableOfReal);
-	Strings thee = new (Strings);
+	Strings thee = Thing_new (Strings);
 	long i, n = my numberOfRows;
 
 	if (thee == NULL) return NULL;
@@ -239,7 +239,7 @@ end:
 Strings TableOfReal_extractColumnLabels (I)
 {
 	iam (TableOfReal);
-	Strings thee = new (Strings);
+	Strings thee = Thing_new (Strings);
 	long i, n = my numberOfColumns;
 
 	if (thee == NULL) return NULL;
@@ -1205,7 +1205,7 @@ int TablesOfReal_init (I, void *klas)
 
 TablesOfReal TablesOfReal_create (void)
 {
-	TablesOfReal me = new (TablesOfReal);
+	TablesOfReal me = Thing_new (TablesOfReal);
 	if (! me || ! TablesOfReal_init (me, classTableOfReal)) forget (me);
 	return me;
 }
@@ -1889,7 +1889,7 @@ Any TableOfReal_appendColumnsMany (Collection me)
 			goto end;
 		}
 	}
-	if ((him = Thing_new (thy methods)) == NULL ||
+	if ((him = Thing_new (TableOfReal)) == NULL ||
 		! TableOfReal_init (him, nrow, ncol)) goto end;
 	/* Unsafe: new attributes not initialized. */
 	for (irow = 1; irow <= nrow; irow++)

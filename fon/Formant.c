@@ -105,7 +105,7 @@ class_methods (Formant, Sampled) {
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 	int maxnFormants)
 {
-	Formant me = new (Formant);
+	Formant me = Thing_new (Formant);
 	if (! me || ! Sampled_init (me, tmin, tmax, nt, dt, t1) ||
 		! (my frame = NUMstructvector (Formant_Frame, 1, nt))) goto error;
 	my maxnFormants = maxnFormants;

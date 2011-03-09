@@ -516,7 +516,7 @@ end:
 }
 
 FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data) {
-	FormantGridEditor me = new (FormantGridEditor); cherror
+	FormantGridEditor me = Thing_new (FormantGridEditor); cherror
 	FormantGridEditor_init (me, parent, title, data); cherror
 end:
 	iferror forget (me);

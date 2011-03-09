@@ -20,9 +20,11 @@
 /*
  * os 20070529 Initial release
  * pb 20100606 removed some array-creations-on-the-stack
+ * pb 2011/03/08 tried to repair some of the header file chaos (several procedures here should be in KNN.c instead)
  */
 
 #include "FeatureWeights.h"
+#include "KNN.h"   // BUG
 
 #include "oo_DESTROY.h"
 #include "FeatureWeights_def.h"
@@ -75,7 +77,7 @@ FeatureWeights FeatureWeights_create
 )
 
 {
-    FeatureWeights me = new (FeatureWeights);
+    FeatureWeights me = Thing_new (FeatureWeights);
     if (me)
     {
         my fweights = TableOfReal_create(1, nweights);

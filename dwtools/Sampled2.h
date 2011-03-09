@@ -2,7 +2,7 @@
 #define _Sampled2_h_
 /* Sampled2.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,15 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Sampled2_members Data_members	\
@@ -94,5 +98,9 @@ long Sampled2_getWindowExtrema_f (I, float **z, long ixmin, long ixmax,
 	Postconditions:
 		if result == 0, *minimum and *maximum are not changed;
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sampled2_h_ */

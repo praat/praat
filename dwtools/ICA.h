@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,17 @@
 
 /*
   djmw 20101202 Initial version
+  djmw 20110306 Latest modification.
 */
 #ifndef _SSCP_h_
 	#include "SSCP.h"
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define MixingMatrix_members TableOfReal_members
@@ -114,5 +119,9 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagTime, long n);
 
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /*_ICA_h_ */

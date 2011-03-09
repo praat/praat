@@ -148,7 +148,7 @@ class_methods (Table, Data) {
 }
 
 static TableRow TableRow_create (long numberOfColumns) {
-	TableRow me = new (TableRow); cherror
+	TableRow me = Thing_new (TableRow); cherror
 	my numberOfColumns = numberOfColumns;
 	my cells = NUMstructvector (TableCell, 1, numberOfColumns); cherror
 end:
@@ -171,7 +171,7 @@ int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
 }
 
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
-	Table me = new (Table);
+	Table me = Thing_new (Table);
 	if (! me || ! Table_initWithoutColumnNames (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }
@@ -191,7 +191,7 @@ end:
 }
 
 Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames) {
-	Table me = new (Table);
+	Table me = Thing_new (Table);
 	if (! me || ! Table_initWithColumnNames (me, numberOfRows, columnNames)) forget (me);
 	return me;
 }

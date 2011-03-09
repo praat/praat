@@ -1,6 +1,6 @@
 /* DTW.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
  djmw 20081123 DTW_and_Sounds_checkDomains did not swap sounds correctly.
  djmw 20091009 Removed a bug in DTW_Path_recode that could cause two identical x and y times in succesion at the end.
  djmw 20100504 extra check in DTW_Path_makeIndex
+ djmw 20110304 Thing_new
 */
 
 #include "DTW.h"
@@ -533,7 +534,7 @@ class_methods_end
 Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c)
 {
-	DTW me = new (DTW);
+	DTW me = Thing_new (DTW);
 	if ((me == NULL) ||
 		(! Matrix_init (me, tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p)) ||
 		((my path = NUMstructvector (DTW_Path, 1, ntc + ntp - 1)) == NULL) ||

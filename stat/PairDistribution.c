@@ -80,7 +80,7 @@ class_methods (PairDistribution, Data) {
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
 	PairProbability me = NULL;
 //start:
-	me = new (PairProbability); cherror
+	me = Thing_new (PairProbability); cherror
 	my string1 = Melder_wcsdup_e (string1); cherror
 	my string2 = Melder_wcsdup_e (string2); cherror
 	my weight = weight;
@@ -90,7 +90,7 @@ end:
 }
 
 PairDistribution PairDistribution_create (void) {
-	PairDistribution me = new (PairDistribution);
+	PairDistribution me = Thing_new (PairDistribution);
 	if (! me || ! (my pairs = Ordered_create ())) { forget (me); return NULL; }
 	return me;
 }
@@ -125,10 +125,10 @@ int PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *stri
 	}
 	if (total <= 0.0)
 		error1 (L"Sum of weights not positive.")
-	*strings1 = new (Strings); cherror
+	*strings1 = Thing_new (Strings); cherror
 	(*strings1) -> numberOfStrings = nout;
 	(*strings1) -> strings = NUMpvector (1, nout); cherror
-	*strings2 = new (Strings); cherror
+	*strings2 = Thing_new (Strings); cherror
 	(*strings2) -> numberOfStrings = nout;
 	(*strings2) -> strings = NUMpvector (1, nout); cherror
 	for (iout = 1; iout <= nout; iout ++) {

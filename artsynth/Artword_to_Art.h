@@ -1,6 +1,6 @@
 /* Artword_to_Art.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  */
 
 /*
- * pb 1993/12/02
- * pb 2002/07/16 GPL
+ * pb 2011/03/08
  */
 
-#ifndef _Artword_h_
-	#include "Artword.h"
+#include "Artword.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Art Artword_to_Art (I, double time);
@@ -31,5 +32,9 @@ Art Artword_to_Art (I, double time);
 	Function:
 		linear interpolation between targets.	
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Artword_to_Art.h */

@@ -22,7 +22,12 @@
 
 /*
  * os 20090123 First version
+ * pb 2011/03/08 C++
  */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 /////////////////////////////////////////////////////
 //                                                 //
@@ -57,5 +62,9 @@ void * KNN_threadTestAux
     void * dummy
 );
 
+#ifdef __cplusplus
+	}
+#endif
 
-#endif /* _KNN_threads_h_ */
+/* End of file KNN_threads.h */
+#endif

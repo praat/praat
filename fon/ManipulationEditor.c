@@ -1296,7 +1296,7 @@ class_methods (ManipulationEditor, FunctionEditor) {
 }
 
 ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar_t *title, Manipulation ana) {
-	ManipulationEditor me = new (ManipulationEditor);
+	ManipulationEditor me = Thing_new (ManipulationEditor);
 	if (! me || ! FunctionEditor_init (ManipulationEditor_as_parent (me), parent, title, ana)) return NULL;
 
 	my pitchTier.draggingStrategy = preferences.pitchTier.draggingStrategy;

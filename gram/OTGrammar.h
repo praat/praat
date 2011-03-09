@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2009 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,26 +20,20 @@
  */
 
 /*
- * pb 2009/07/07
+ * pb 2011/03/08
  */
 
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _PairDistribution_h_
-	#include "PairDistribution.h"
-#endif
-#ifndef _Distributions_h_
-	#include "Distributions.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
+#include "Strings.h"
+#include "Graphics.h"
+#include "PairDistribution.h"
+#include "Distributions.h"
+#include "TableOfReal.h"
 
 #include "OTGrammar_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #include "OTGrammar_def.h"
 #define OTGrammar_methods Data_methods
@@ -167,6 +161,10 @@ int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistrib
 int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber);
 
 int OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file OTGrammar.h */
 #endif

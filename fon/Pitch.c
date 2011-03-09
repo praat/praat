@@ -438,7 +438,7 @@ int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 	double ceiling, int maxnCandidates)
 {
-	Pitch me = new (Pitch);
+	Pitch me = Thing_new (Pitch);
 	long it;
 	if (! me || ! Sampled_init (me, tmin, tmax, nt, dt, t1)) goto error;
 	my ceiling = ceiling;

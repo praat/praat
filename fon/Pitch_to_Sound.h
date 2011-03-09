@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2005/02/09
+ * pb 2011/03/03
  */
 
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "Pitch.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* These routines convert a Pitch into a PointProcess, */
@@ -42,5 +42,9 @@ int Pitch_hum (I, double tmin, double tmax);
 
 Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency,
 	int roundToNearestZeroCrossings);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Pitch_to_Sound.h */

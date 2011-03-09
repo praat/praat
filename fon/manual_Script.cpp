@@ -1,4 +1,4 @@
-/* manual_Script.c
+/* manual_Script.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -20,8 +20,8 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-void manual_Script_init (ManPages me);
-void manual_Script_init (ManPages me) {
+extern "C" void manual_Script_init (ManPages me);
+extern "C" void manual_Script_init (ManPages me) {
 
 MAN_BEGIN (L"Action commands", L"ppgb", 20110129)
 INTRO (L"The commands in the @@Dynamic menu@ of the @@Object window@.")
@@ -3882,4 +3882,4 @@ MAN_END
 
 }
 
-/* End of file manual_Script.c */
+/* End of file manual_Script.cpp */

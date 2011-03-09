@@ -169,7 +169,7 @@ static void draw (ButtonEditor me) {
 		case 4:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") < 0)
 					drawAction (me, praat_getAction (i), i);
 			}
@@ -177,7 +177,7 @@ static void draw (ButtonEditor me) {
 		case 5:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") >= 0)
 					drawAction (me, praat_getAction (i), i);
 			}
@@ -311,7 +311,7 @@ class_methods (ButtonEditor, HyperPage) {
 }
 
 ButtonEditor ButtonEditor_create (GuiObject parent) {
-	ButtonEditor me = new (ButtonEditor); cherror
+	ButtonEditor me = Thing_new (ButtonEditor); cherror
 	HyperPage_init (ButtonEditor_as_parent (me), parent, L"Buttons", NULL); cherror
 	which (me, 1);
 end:

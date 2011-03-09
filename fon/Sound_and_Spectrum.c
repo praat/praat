@@ -38,7 +38,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	long numberOfSamples = my nx, i, numberOfFrequencies;
 	double *data = NULL, scaling;
 	double *re, *im;
-	struct NUMfft_Table fourierTable = { 0 };
+	struct structNUMfft_Table fourierTable = { 0 };
 
 	if (fast) {
 		numberOfSamples = 2;

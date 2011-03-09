@@ -1,6 +1,6 @@
 /* Activation.c
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020315 GPL header
  djmw 20041203 Added _Activation_checkElements.
  djmw 20080122 float -> double
+ djmw 20110304 Thing_new
  */
 
 #include "Activation.h"
@@ -54,7 +55,7 @@ int Activation_init (I, long ny, long nx)
 
 Any Activation_create (long ny, long nx)
 {
-    Activation me = new (Activation);
+    Activation me = Thing_new (Activation);
     if (! me || ! Activation_init (me, ny, nx)) forget (me);
     return me;
 }

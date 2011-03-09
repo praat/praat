@@ -78,20 +78,20 @@ int Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, 
 }
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1) {
-	Intensity me = new (Intensity);
+	Intensity me = Thing_new (Intensity);
 	if (! me || ! Intensity_init (me, tmin, tmax, nt, dt, t1)) forget (me);
 	return me;
 }
 
 Matrix Intensity_to_Matrix (Intensity me) {
-	Matrix thee = Data_copy (me);
+	Matrix thee = (Matrix) Data_copy (me);
 	if (! thee) return NULL;
 	Thing_overrideClass (thee, classMatrix);
 	return thee;
 }
 
 Intensity Matrix_to_Intensity (Matrix me) {
-	Intensity thee = Data_copy (me);
+	Intensity thee = (Intensity) Data_copy (me);
 	if (! thee) return NULL;
 	Thing_overrideClass (thee, classIntensity);
 	return thee;

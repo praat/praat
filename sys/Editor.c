@@ -116,7 +116,7 @@ static void commonCallback (GUI_ARGS) {
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
 	int (*commandCallback) (Any editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter))
 {
-	EditorCommand me = new (EditorCommand);
+	EditorCommand me = Thing_new (EditorCommand);
 	my editor = menu -> editor;
 	my menu = menu;
 	if ((my itemTitle = Melder_wcsdup_e (itemTitle)) == NULL) { forget (me); return NULL; }
@@ -132,7 +132,7 @@ GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
 EditorMenu Editor_addMenu (Any editor, const wchar_t *menuTitle, long flags) {
-	EditorMenu me = new (EditorMenu);
+	EditorMenu me = Thing_new (EditorMenu);
 	my editor = editor;
 	if (! (my menuTitle = Melder_wcsdup_e (menuTitle))) { forget (me); return NULL; }
 	my menuWidget = GuiMenuBar_addMenu (((Editor) editor) -> menuBar, menuTitle, flags);
@@ -173,7 +173,7 @@ GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const w
 	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
-			EditorCommand cmd = new (EditorCommand);
+			EditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> editor = me;
 			cmd -> menu = menu;
 			cmd -> itemTitle = Melder_wcsdup_f (itemTitle);

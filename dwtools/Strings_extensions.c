@@ -36,7 +36,7 @@
 
 Strings Strings_createFixedLength (long numberOfStrings)
 {
-	Strings me = new (Strings);
+	Strings me = Thing_new (Strings);
 	if (me == NULL || numberOfStrings <= 0) return NULL;
 	my numberOfStrings = numberOfStrings;
 	my strings = NUMpvector (1, numberOfStrings);
@@ -105,7 +105,7 @@ Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace,
 	int use_regexp)
 {
 	wchar_t **strings;
-	Strings thee = new (Strings);
+	Strings thee = Thing_new (Strings);
 	if (thee == NULL) return NULL;
 
 	strings = strs_replace (my strings, 1, my numberOfStrings,

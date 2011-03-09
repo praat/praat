@@ -31,8 +31,11 @@
 	#include "Collection.h"
 #endif
 
-#include "FujisakiPitch_def.h"
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
+#include "FujisakiPitch_def.h"
 #define FujisakiCommand_methods Function_methods
 oo_CLASS_CREATE (FujisakiCommand, Function);
 
@@ -47,5 +50,9 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
 	FujisakiPitch *intermediate1, FujisakiPitch *intermediate2, FujisakiPitch *intermediate3);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file FujisakiPitch.h */
+#endif

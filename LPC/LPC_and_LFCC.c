@@ -1,6 +1,6 @@
 /* LPC_and_LFCC.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients)
 	
 	if ((thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1, 
 		numberOfCoefficients, 0, 0.5 / my samplingPeriod)) == NULL)
-			return thee;
+			return NULL;
 			
 	for (i = 1; i <= my nx; i++)
 	{
@@ -111,7 +111,7 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients)
 	
 	if ((thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 
 		numberOfCoefficients, 0.5 / my fmax)) == NULL)
-			return thee;
+			return NULL;
 			
 	for (i = 1; i <= my nx; i++)
 	{

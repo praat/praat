@@ -1,6 +1,6 @@
 /* Resonator.c
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * djmw 20081029
  * djmw 20081124 +ConstantGainResonator
+ * djmw 20110304 Thing_new
  */
 
 #include "Resonator.h"
@@ -70,7 +71,7 @@ class_methods_end
 
 Resonator Resonator_create (double dT, int normalisation)
 {
-	Resonator me = new (Resonator);
+	Resonator me = Thing_new (Resonator);
 	my a = 1; // all-pass
 	my dT = dT;
 	my normalisation = normalisation;
@@ -144,7 +145,7 @@ class_methods_end
 
 ConstantGainResonator ConstantGainResonator_create (double dT)
 {
-	ConstantGainResonator me = new (ConstantGainResonator);
+	ConstantGainResonator me = Thing_new (ConstantGainResonator);
 	my a = 1; // all-pass
 	my dT = dT;
 	return me;
@@ -152,7 +153,7 @@ ConstantGainResonator ConstantGainResonator_create (double dT)
 
 AntiResonator AntiResonator_create (double dT)
 {
-	AntiResonator me = new (AntiResonator);
+	AntiResonator me = Thing_new (AntiResonator);
 	my a = 1; // all-pass
 	my dT = dT;
 	return me;

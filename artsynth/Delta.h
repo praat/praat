@@ -2,7 +2,7 @@
 #define _Delta_h_
 /* Delta.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,14 @@
  */
 
 /*
- * pb 2004/10/16
+ * pb 2011/03/08
  */
+
+#include "Thing.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct structDelta_Tube *Delta_Tube;
 struct structDelta_Tube
@@ -55,7 +61,6 @@ struct structDelta_Tube
 	double B, r, R, DeltaP, v;
 };
 
-#include "Thing.h"
 #define Delta_members Thing_members \
 	int numberOfTubes; \
 	struct structDelta_Tube *tube;
@@ -79,6 +84,10 @@ Delta Delta_create (int numberOfTubes);
 		all members of result -> tube [1..numberOfTubes] are zero or NULL,
 		except 'parallel', which is 1.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Delta.h */
 #endif

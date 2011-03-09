@@ -264,7 +264,7 @@ class_methods (LongSound, Sampled)
 class_methods_end
 
 LongSound LongSound_open (MelderFile fs) {
-	LongSound me = new (LongSound);
+	LongSound me = Thing_new (LongSound);
 	if (! me || ! LongSound_init (me, fs)) { forget (me); return Melder_errorp ("LongSound not created."); }
 	return me;
 }

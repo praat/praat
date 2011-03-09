@@ -20,24 +20,18 @@
  */
 
 /*
- * pb 2011/01/10
+ * pb 2011/03/03
  */
 
 /* Matrix inherits from Sampled */
-#ifndef _Sampled_h_
-	#include "Sampled.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Interpreter_decl_h
-	#include "Interpreter_decl.h"
+#include "Sampled.h"
+#include "Graphics.h"
+#include "Table.h"
+#include "TableOfReal.h"
+#include "Interpreter_decl.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Matrix_members Sampled_members \
@@ -284,5 +278,9 @@ int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 Matrix TableOfReal_to_Matrix (I);
 TableOfReal Matrix_to_TableOfReal (I);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file Matrix.h */
+#endif

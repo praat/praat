@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.h
  *
- * Copyright (C) 1992-2002 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011 David Weenink & Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
  */
 
 /*
- * pb 1995/03/17
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
+#include "Spectrum.h"
+#include "Spectrogram.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Spectrum Spectrogram_to_Spectrum (I, double time);
@@ -60,5 +59,9 @@ Spectrogram Spectrum_to_Spectrogram (I);
 		for (i = 1; i <= my nx; i ++) 
 			thy z [i] [1] == (my z [1] [i]) ^ 2 + (my z [2] [i]) ^ 2;
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Spectrum_and_Spectrogram.h */

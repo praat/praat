@@ -2,7 +2,7 @@
 #define _FilterBank_h_
 /* FilterBank.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  djmw 20010609
  djmw 20020813 GPL header
  djmw 20040702 Corrected MELTOBARK formula.
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Matrix_h_
@@ -46,6 +46,10 @@
 #endif
 #ifndef _PCA_h_
 	#include "PCA.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define HZTOBARK(x) NUMhertzToBark2(x)
@@ -161,5 +165,9 @@ Intensity FilterBank_to_Intensity (I);
 
 void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _FilterBank_h_ */

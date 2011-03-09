@@ -2,7 +2,7 @@
 #define _Spectrogram_h_
 /* Spectrogram.h
  *
- * Copyright (C) 1992-2003 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011 David Weenink & Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2003/05/27
+ * pb 2011/03/03
  */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Matrix.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Spectrogram_members  Matrix_members
@@ -101,6 +101,10 @@ Matrix Spectrogram_to_Matrix (I);
 	with deep copy of all its attributes, except class information and methods.
 	Return NULL if out of memory.  
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Spectrogram.h */
 #endif

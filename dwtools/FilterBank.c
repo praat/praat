@@ -1,6 +1,6 @@
 /* FilterBank.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  djmw 20071017 Melder_error<n>
  djmw 20071201 Melder_warning<n>
  djmw 20080122 float -> double
+ djmw 20110304 Thing_new
 */
 
 #include "Eigen_and_Matrix.h"
@@ -199,7 +200,7 @@ class_methods_end
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, long f1)
 {
-	BarkFilter me = new (BarkFilter);
+	BarkFilter me = Thing_new (BarkFilter);
 	if (me == NULL || ! Matrix_init (me, tmin, tmax, nt, dt, t1,
 		fmin, fmax, nf, df, f1)) forget (me);
 	return me;
@@ -376,7 +377,7 @@ class_methods_end
 MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1)
 {
-	MelFilter me = new (MelFilter);
+	MelFilter me = Thing_new (MelFilter);
 	
 	if (me == NULL || ! Matrix_init (me, tmin, tmax, nt, dt, t1,
 		fmin, fmax, nf, df, f1)) forget (me);
@@ -558,7 +559,7 @@ FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
 	double dt, double t1, double fmin, double fmax, long nf, double df,
 	double f1)
 {
-	FormantFilter me = new (FormantFilter);
+	FormantFilter me = Thing_new (FormantFilter);
 	
 	if (me == NULL || ! Matrix_init (me, tmin, tmax, nt, dt, t1,
 		fmin, fmax, nf, df, f1)) forget (me);

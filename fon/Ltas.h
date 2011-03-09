@@ -2,7 +2,7 @@
 #define _Ltas_h_
 /* Ltas.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2007/01/26
+ * pb 2011/03/03
  */
 
 #ifndef _Spectrum_h_
@@ -37,6 +37,10 @@
 #endif
 #ifndef _Collection_h_
 	#include "Collection.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Ltas_members  Vector_members
@@ -102,6 +106,10 @@ Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maxi
 
 double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits);
 double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Ltas.h */
 #endif

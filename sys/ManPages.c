@@ -128,7 +128,7 @@ static int readOnePage (ManPages me, MelderReadText text) {
 		return 1;
 	}
 
-	page = new (ManPage);
+	page = Thing_new (ManPage);
 	page -> title = title;
 
 	/*
@@ -258,7 +258,7 @@ class_methods (ManPages, Data) {
 }
 
 ManPages ManPages_create (void) {
-	ManPages me = new (ManPages);
+	ManPages me = Thing_new (ManPages);
 	my pages = Ordered_create ();
 	return me;
 }
@@ -266,7 +266,7 @@ ManPages ManPages_create (void) {
 int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs [])
 {
-	ManPage page = new (ManPage);
+	ManPage page = Thing_new (ManPage);
 	page -> title = title;
 	page -> paragraphs = & paragraphs [0];
 	page -> author = author;
@@ -317,7 +317,7 @@ static long lookUp_unsorted (ManPages me, const wchar_t *title) {
 static long lookUp_sorted (ManPages me, const wchar_t *title) {
 	static ManPage dummy;
 	ManPage *page;
-	if (! dummy) dummy = new (ManPage);
+	if (! dummy) dummy = Thing_new (ManPage);
 	dummy -> title = title;
 	page = bsearch (& dummy, & my pages -> item [1], my pages -> size, sizeof (ManPage), pageCompare);
 	if (page) return (page - (ManPage *) & my pages -> item [1]) + 1;

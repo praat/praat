@@ -142,7 +142,7 @@ class_methods (Sound, Vector)
 class_methods_end
 
 Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
-	Sound me = new (Sound);
+	Sound me = Thing_new (Sound);
 	if (! me || ! Matrix_init (me, xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1))
 		forget (me);
 	return me;

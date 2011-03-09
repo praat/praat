@@ -57,7 +57,7 @@ class_methods (FujisakiCommand, Function) {
 }
 
 FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
-	FujisakiCommand me = new (FujisakiCommand);
+	FujisakiCommand me = Thing_new (FujisakiCommand);
 	if (! me) return NULL;
 	Function_init (me, tmin, tmax);
 	my amplitude = amplitude;
@@ -80,7 +80,7 @@ class_methods (FujisakiPitch, Function) {
 FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma)
 {
-	FujisakiPitch me = new (FujisakiPitch);
+	FujisakiPitch me = Thing_new (FujisakiPitch);
 	if (! me) return NULL;
 	Function_init (me, tmin, tmax);
 	my baseFrequency = baseFrequency;

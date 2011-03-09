@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2010 Paul Boersma
+ * Copyright (C) 2002-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2010/06/23
+ * pb 2011/03/03
  */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
+#include "Collection.h"
+#include "Graphics.h"
+#include "Interpreter_decl.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* For the inheritors. */
@@ -134,5 +132,9 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 	const wchar_t *columnsToAverageLogarithmically_string, const wchar_t *columnsToMedianizeLogarithmically_string);
 Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnToTranspose, const wchar_t *columnsToExpand_string);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file Table.h */
+#endif

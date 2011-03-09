@@ -43,6 +43,10 @@
 	#include "SSCP.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 int TableOfReal_to_Pattern_and_Categories(I, long fromrow, long torow, long fromcol, long tocol,
 	Pattern *p, Categories *c);
 
@@ -214,5 +218,9 @@ TablesOfReal TablesOfReal_create (void);
 TableOfReal TablesOfReal_sum (I);
 
 int TablesOfReal_checkDimensions (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _TableOfReal_extensions_h_ */

@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,22 @@
  */
 
 /*
- * pb 1995/08/24
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "Matrix.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Matrix Pitch_to_Matrix (Pitch me);
 
 Pitch Matrix_to_Pitch (Matrix me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Matrix_and_Pitch.h */

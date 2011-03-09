@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 2010-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20101021 initial version
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _ClassificationTable_h_
@@ -34,6 +35,10 @@
 #endif
 #ifndef _TableOfReal_extensions_h_
 	#include "TableOfReal_extensions.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define GaussianMixture_members Data_members \
@@ -125,5 +130,9 @@ int GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, lo
 int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t **covname, double *buf);
 TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
 
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _GaussianMixture_h_ */

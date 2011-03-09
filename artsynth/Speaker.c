@@ -59,7 +59,7 @@ class_methods (Speaker, Data) {
 
 Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses)
 {
-	Speaker me = new (Speaker);
+	Speaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/
 	/*    "Articulatory model for the study of speech production",		*/

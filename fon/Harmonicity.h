@@ -2,7 +2,7 @@
 #define _Harmonicity_h_
 /* Harmonicity.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,15 @@
  */
 
 /*
- * pb 2002/06/04
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #ifndef _Vector_h_
 	#include "Vector.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Harmonicity_members  Vector_members
@@ -61,6 +64,10 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile);
 
 Matrix Harmonicity_to_Matrix (Harmonicity me);
 Harmonicity Matrix_to_Harmonicity (I);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Harmonicity.h */
 #endif

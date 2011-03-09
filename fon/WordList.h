@@ -23,12 +23,13 @@
  * pb 2011/03/03
  */
 
-#ifndef _Strings_h_
-	#include "Strings.h"
+#include "Strings.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "WordList_def.h"
-
 #define WordList_methods Data_methods
 oo_CLASS_CREATE (WordList, Data);
 
@@ -37,4 +38,9 @@ Strings WordList_to_Strings (WordList me);
 
 int WordList_hasWord (WordList me, const wchar_t *word);
 
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file WordList.h */
 #endif

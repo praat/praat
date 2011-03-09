@@ -7,6 +7,7 @@
  djmw 20030701 Removed non-GPL minimizations
  djmw 20040421 Bug removed: delayed message when learning was interrupted by user.
  djmw 20080122 float -> double
+  djmw 20110304 Thing_new
 */
 
 #include "NUM2.h"
@@ -329,7 +330,7 @@ Any SteepestDescentMinimizer_create (long nParameters, Any object,
 	double (*func) (Any object, const double p[]),
 	 void (*dfunc) (Any object, const double p[], double dp[]))
 {
-	SteepestDescentMinimizer me = new (SteepestDescentMinimizer);
+	SteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
 	if (me == NULL) return NULL;
 	if (Minimizer_init (me, nParameters, object))
 	{
@@ -603,7 +604,7 @@ Any VDSmagtMinimizer_create (long nParameters, void *object,
 	double (*func) (void *object, const double x[]),
     void (*dfunc) (void *object, const double x[], double dx[]))
 {
-    VDSmagtMinimizer me = new (VDSmagtMinimizer);
+    VDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 	
 	if (me == NULL) return NULL;
 	if (Minimizer_init (me, nParameters, object) &&

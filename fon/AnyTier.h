@@ -2,7 +2,7 @@
 #define _AnyTier_h_
 /* AnyTier.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 2000/08/23
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #ifndef _Collection_h_
@@ -32,6 +31,10 @@
 #endif
 
 #include "AnyTier_def.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #define AnyPoint_methods Data_methods
 oo_CLASS_CREATE (AnyPoint, Data);
@@ -51,6 +54,10 @@ void AnyTier_removePointsBetween (I, double tmin, double tmax);
 PointProcess AnyTier_downto_PointProcess (I);
 
 #define AnyPoint_members Data_members double time;
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif
 /* End of file AnyTier.h */

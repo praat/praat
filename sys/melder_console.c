@@ -29,7 +29,7 @@
 
 bool Melder_consoleIsAnsi = false;
 
-void Melder_writeToConsole (wchar_t *message, bool useStderr) {
+void Melder_writeToConsole (const wchar_t *message, bool useStderr) {
 	if (message == NULL) return;
 	#if defined (_WIN32)
 		(void) useStderr;

@@ -1,4 +1,4 @@
-/* manual_voice.c
+/* manual_voice.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_voice_init (ManPages me);
-void manual_voice_init (ManPages me) {
+LINK_C void manual_voice_init (ManPages me);
+LINK_C void manual_voice_init (ManPages me) {
 
 MAN_BEGIN (L"Voice", L"ppgb", 20061028)
 INTRO (L"This tutorial describes how you can do voice analysis with Praat. "
@@ -270,4 +270,4 @@ INTRO (L"A command in the #Pulses menu that will write to the Info window an ext
 MAN_END
 }
 
-/* End of file manual_voice.c */
+/* End of file manual_voice.cpp */

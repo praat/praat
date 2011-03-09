@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.h
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2005/07/08
+ * pb 2011/03/03
  */
 
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "PitchTier.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
@@ -41,5 +41,9 @@ int PitchTier_hum (PitchTier me);
 
 Sound PitchTier_to_Sound_sine (I, double tmin, double tmax, double samplingFrequency);
 int PitchTier_playPart_sine (I, double tmin, double tmax);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file PitchTier_to_Sound.h */

@@ -1,4 +1,4 @@
-/* praat_Stat.c
+/* praat_Stat.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/06/23
+ * pb 2011/03/09
  */
 
 #include "praat.h"
@@ -60,7 +60,7 @@ FORM (Distributionses_getMeanAbsoluteDifference, L"Get mean difference", 0)
 	OK
 DO
 	Distributions me = NULL, thee = NULL;
-	WHERE (SELECTED) { if (me) thee = OBJECT; else me = OBJECT; }
+	WHERE (SELECTED) { if (me) thee = (Distributions) OBJECT; else me = (Distributions) OBJECT; }
 	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER (L"Column number")), NULL);
 END
 
@@ -69,7 +69,7 @@ FORM (Distributions_getProbability, L"Get probability", 0)
 	SENTENCE (L"String", L"")
 	OK
 DO
-	Melder_informationReal (Distributions_getProbability (ONLY_OBJECT,
+	Melder_informationReal (Distributions_getProbability ((Distributions) ONLY_OBJECT,
 		GET_STRING (L"String"), GET_INTEGER (L"Column number")), NULL);
 END
 
@@ -80,14 +80,14 @@ FORM (Distributions_to_Strings, L"To Strings", 0)
 	NATURAL (L"Number of strings", L"1000")
 	OK
 DO
-	EVERY_TO (Distributions_to_Strings (OBJECT, GET_INTEGER (L"Column number"), GET_INTEGER (L"Number of strings")))
+	EVERY_TO (Distributions_to_Strings ((Distributions) OBJECT, GET_INTEGER (L"Column number"), GET_INTEGER (L"Number of strings")))
 END
 
 FORM (Distributions_to_Strings_exact, L"To Strings (exact)", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	EVERY_TO (Distributions_to_Strings_exact (OBJECT, GET_INTEGER (L"Column number")))
+	EVERY_TO (Distributions_to_Strings_exact ((Distributions) OBJECT, GET_INTEGER (L"Column number")))
 END
 
 /***** LOGISTICREGRESSION *****/
@@ -104,7 +104,7 @@ FORM (LogisticRegression_drawBoundary, L"LogisticRegression: Draw boundary", 0)
 DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
-		LogisticRegression me = OBJECT;
+		LogisticRegression me = (LogisticRegression) OBJECT;
 		long xfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Horizontal factor")); cherror
 		long yfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Vertical factor")); cherror
 		LogisticRegression_drawBoundary (me, GRAPHICS,
@@ -120,17 +120,17 @@ END
 /***** PAIRDISTRIBUTION *****/
 
 DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
-	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood (ONLY_OBJECT), NULL);
+	Melder_informationReal (PairDistribution_getFractionCorrect_maximumLikelihood ((PairDistribution) ONLY_OBJECT), NULL);
 	iferror return 0;
 END
 
 DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
-	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching (ONLY_OBJECT), NULL);
+	Melder_informationReal (PairDistribution_getFractionCorrect_probabilityMatching ((PairDistribution) ONLY_OBJECT), NULL);
 	iferror return 0;
 END
 
 DIRECT (PairDistribution_getNumberOfPairs)
-	PairDistribution me = ONLY_OBJECT;
+	PairDistribution me = (PairDistribution) ONLY_OBJECT;
 	Melder_information1 (Melder_integer (my pairs -> size));
 END
 
@@ -138,12 +138,12 @@ FORM (PairDistribution_getString1, L"Get string1", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	PairDistribution me = ONLY_OBJECT;
+	PairDistribution me = (PairDistribution) ONLY_OBJECT;
 	long ipair = GET_INTEGER (L"Pair number");
 	if (ipair > my pairs -> size) {
 		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
-	PairProbability prob = my pairs -> item [ipair];
+	PairProbability prob = (PairProbability) my pairs -> item [ipair];
 	Melder_information1 (prob -> string1);
 END
 
@@ -151,12 +151,12 @@ FORM (PairDistribution_getString2, L"Get string2", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	PairDistribution me = ONLY_OBJECT;
+	PairDistribution me = (PairDistribution) ONLY_OBJECT;
 	long ipair = GET_INTEGER (L"Pair number");
 	if (ipair > my pairs -> size) {
 		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
-	PairProbability prob = my pairs -> item [ipair];
+	PairProbability prob = (PairProbability) my pairs -> item [ipair];
 	Melder_information1 (prob -> string2);
 END
 
@@ -164,19 +164,19 @@ FORM (PairDistribution_getWeight, L"Get weight", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	PairDistribution me = ONLY_OBJECT;
+	PairDistribution me = (PairDistribution) ONLY_OBJECT;
 	long ipair = GET_INTEGER (L"Pair number");
 	if (ipair > my pairs -> size) {
 		return Melder_error5 (L"Pair number (", Melder_integer (ipair), L") cannot be greater than number of pairs (", Melder_integer (my pairs -> size), L").");
 	}
-	PairProbability prob = my pairs -> item [ipair];
+	PairProbability prob = (PairProbability) my pairs -> item [ipair];
 	Melder_information1 (Melder_double (prob -> weight));
 END
 
 DIRECT (PairDistribution_help) Melder_help (L"PairDistribution"); END
 
 DIRECT (PairDistribution_removeZeroWeights)
-	EVERY (PairDistribution_removeZeroWeights (OBJECT))
+	EVERY (PairDistribution_removeZeroWeights ((PairDistribution) OBJECT))
 END
 
 FORM (PairDistribution_to_Stringses, L"Generate two Strings objects", 0)
@@ -186,13 +186,13 @@ FORM (PairDistribution_to_Stringses, L"Generate two Strings objects", 0)
 	OK
 DO
 	Strings strings1, strings2;
-	if (! PairDistribution_to_Stringses (ONLY (classPairDistribution), GET_INTEGER (L"Number"), & strings1, & strings2)) return 0;
+	if (! PairDistribution_to_Stringses ((PairDistribution) ONLY (classPairDistribution), GET_INTEGER (L"Number"), & strings1, & strings2)) return 0;
 	if (! praat_new1 (strings1, GET_STRING (L"Name of first Strings"))) { forget (strings2); return 0; }
 	if (! praat_new1 (strings2, GET_STRING (L"Name of second Strings"))) return 0;
 END
 
 DIRECT (PairDistribution_to_Table)
-	EVERY_TO (PairDistribution_to_Table (OBJECT))
+	EVERY_TO (PairDistribution_to_Table ((PairDistribution) OBJECT))
 END
 
 /***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
@@ -202,7 +202,7 @@ FORM (PairDistribution_Distributions_getFractionCorrect, L"PairDistribution & Di
 	OK
 DO
 	Melder_informationReal (PairDistribution_Distributions_getFractionCorrect
-		(ONLY (classPairDistribution), ONLY (classDistributions), GET_INTEGER (L"Column")), NULL);
+		((PairDistribution) ONLY (classPairDistribution), (Distributions) ONLY (classDistributions), GET_INTEGER (L"Column")), NULL);
 END
 
 /***** TABLE *****/
@@ -223,7 +223,7 @@ FORM (Table_appendColumn, L"Table: Append column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_appendColumn (OBJECT, GET_STRING (L"Label"));
+		Table_appendColumn ((Table) OBJECT, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -236,10 +236,10 @@ FORM (Table_appendDifferenceColumn, L"Table: Append difference column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-		Table_appendDifferenceColumn (OBJECT, icol, jcol, GET_STRING (L"Label"));
+		Table_appendDifferenceColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -253,10 +253,10 @@ FORM (Table_appendProductColumn, L"Table: Append product column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-		Table_appendProductColumn (OBJECT, icol, jcol, GET_STRING (L"Label"));
+		Table_appendProductColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -270,10 +270,10 @@ FORM (Table_appendQuotientColumn, L"Table: Append quotient column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-		Table_appendQuotientColumn (OBJECT, icol, jcol, GET_STRING (L"Label"));
+		Table_appendQuotientColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -287,10 +287,10 @@ FORM (Table_appendSumColumn, L"Table: Append sum column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
-		Table_appendSumColumn (OBJECT, icol, jcol, GET_STRING (L"Label"));
+		Table_appendSumColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -299,7 +299,7 @@ END
 
 DIRECT (Table_appendRow)
 	WHERE (SELECTED) {
-		Table_appendRow (OBJECT);
+		Table_appendRow ((Table) OBJECT);
 		praat_dataChanged (OBJECT);   // BUG
 		iferror return 0;   // BUG (occurs often in this file): if append fails, it should restore the previous overt state.
 	}
@@ -322,7 +322,7 @@ FORM (Table_collapseRows, L"Table: Collapse rows", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (Table_collapseRows (OBJECT,
+		if (! praat_new2 (Table_collapseRows ((Table) OBJECT,
 			GET_STRING (L"factors"), GET_STRING (L"columnsToSum"),
 			GET_STRING (L"columnsToAverage"), GET_STRING (L"columnsToMedianize"),
 			GET_STRING (L"columnsToAverageLogarithmically"), GET_STRING (L"columnsToMedianizeLogarithmically")),
@@ -367,7 +367,7 @@ FORM (Table_drawEllipse, L"Draw ellipse (standard deviation)", 0)
 DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); cherror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); cherror
 		Table_drawEllipse (me, GRAPHICS, xcolumn, ycolumn,
@@ -383,12 +383,12 @@ END
 FORM (Table_drawRowFromDistribution, L"Table: Draw row from distribution", 0)
 	WORD (L"Column with distribution", L"")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); cherror
-	long row = Table_drawRowFromDistribution (me, icol); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); therror
+	long row = Table_drawRowFromDistribution (me, icol); therror
 	Melder_information1 (Melder_integer (row));
-end:
+} catch (...) { }
 END
 
 DIRECT (Table_edit)
@@ -396,7 +396,7 @@ DIRECT (Table_edit)
 		return Melder_error1 (L"Cannot edit a Table from batch.");
 	} else {
 		WHERE (SELECTED) {
-			TableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, ONLY_OBJECT);
+			TableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, (Table) ONLY_OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 		}
 	}
@@ -410,11 +410,11 @@ FORM (Table_extractRowsWhereColumn_number, L"Table: Extract rows where column (n
 DO
 	double value = GET_REAL (L"...the number");
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
-		if (! praat_new5 (Table_extractRowsWhereColumn_number (OBJECT,
+		if (! praat_new5 (Table_extractRowsWhereColumn_number (me,
 			icol, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAME, L"_", Table_messageColumn (OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
+			NAME, L"_", Table_messageColumn ((Table) OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -428,9 +428,9 @@ FORM (Table_extractRowsWhereColumn_text, L"Table: Extract rows where column (tex
 DO
 	const wchar_t *value = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); cherror
-		if (! praat_new3 (Table_extractRowsWhereColumn_string (OBJECT,
+		if (! praat_new3 (Table_extractRowsWhereColumn_string (me,
 			icol, GET_ENUM (kMelder_string, L"..."), value),
 			NAME, L"_", value)) return 0;
 		praat_dataChanged (OBJECT);
@@ -444,9 +444,9 @@ FORM (Table_formula, L"Table: Formula", L"Table: Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-		if (! Table_formula (OBJECT, icol, GET_STRING (L"formula"), interpreter)) return 0;
+		if (! Table_formula (me, icol, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -459,10 +459,10 @@ FORM (Table_formula_columnRange, L"Table: Formula (column range)", L"Table: Form
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); cherror
 		long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); cherror
-		if (! Table_formula_columnRange (OBJECT, icol1, icol2, GET_STRING (L"formula"), interpreter)) return 0;
+		if (! Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 end:
@@ -472,14 +472,14 @@ FORM (Table_getColumnIndex, L"Table: Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (ONLY_OBJECT, GET_STRING (L"Column label"))));
+	Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel ((Table) ONLY_OBJECT, GET_STRING (L"Column label"))));
 END
 	
 FORM (Table_getColumnLabel, L"Table: Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	Table me = ONLY_OBJECT;
+	Table me = (Table) ONLY_OBJECT;
 	long icol = GET_INTEGER (L"Column number");
 	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (my columnHeaders [icol]. label);
@@ -490,68 +490,68 @@ FORM (Table_getGroupMean, L"Table: Get group mean", 0)
 	WORD (L"Group column", L"gender")
 	SENTENCE (L"Group", L"F")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
-	Melder_information1 (Melder_double (Table_getGroupMean (ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
-end:
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+	Melder_information1 (Melder_double (Table_getGroupMean ((Table) ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
+} catch (...) { }
 END
 
 FORM (Table_getMaximum, L"Table: Get maximum", 0)
 	SENTENCE (L"Column label", L"")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-	double maximum = Table_getMaximum_e (me, icol); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+	double maximum = Table_getMaximum_e (me, icol); therror
 	Melder_information1 (Melder_double (maximum));
-end:
+} catch (...) { }
 END
 	
 FORM (Table_getMean, L"Table: Get mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-	double mean = Table_getMean_e (me, icol); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+	double mean = Table_getMean_e (me, icol); therror
 	Melder_information1 (Melder_double (mean));
-end:
+} catch (...) { }
 END
 	
 FORM (Table_getMinimum, L"Table: Get minimum", 0)
 	SENTENCE (L"Column label", L"")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-	double minimum = Table_getMinimum_e (me, icol); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+	double minimum = Table_getMinimum_e (me, icol); therror
 	Melder_information1 (Melder_double (minimum));
-end:
+} catch (...) { }
 END
 	
 FORM (Table_getQuantile, L"Table: Get quantile", 0)
 	SENTENCE (L"Column label", L"")
 	POSITIVE (L"Quantile", L"0.50 (= median)")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 	double quantile = Table_getQuantile_e (me, icol, GET_REAL (L"Quantile"));
 	Melder_information1 (Melder_double (quantile));
-end:
+} catch (...) { }
 END
 	
 FORM (Table_getStandardDeviation, L"Table: Get standard deviation", 0)
 	SENTENCE (L"Column label", L"")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 	double stdev = Table_getStdev_e (me, icol);
 	Melder_information1 (Melder_double (stdev));
-end:
+} catch (...) { }
 END
 	
 DIRECT (Table_getNumberOfColumns)
@@ -567,7 +567,7 @@ FORM (Table_getValue, L"Table: Get value", 0)
 	WORD (L"Column label", L"")
 	OK
 DO
-	Table me = ONLY_OBJECT;
+	Table me = (Table) ONLY_OBJECT;
 	long irow = GET_INTEGER (L"Row number");
 	REQUIRE (irow >= 1 && irow <= my rows -> size, L"Row number out of range.")
 	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
@@ -583,7 +583,7 @@ FORM (Table_insertColumn, L"Table: Insert column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_insertColumn (OBJECT, GET_INTEGER (L"Position"), GET_STRING (L"Label"));
+		Table_insertColumn ((Table) OBJECT, GET_INTEGER (L"Position"), GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -594,7 +594,7 @@ FORM (Table_insertRow, L"Table: Insert row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_insertRow (OBJECT, GET_INTEGER (L"Position"));
+		Table_insertRow ((Table) OBJECT, GET_INTEGER (L"Position"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -605,7 +605,7 @@ FORM (Table_list, L"Table: List", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_list (OBJECT, GET_INTEGER (L"Include row numbers"));
+		Table_list ((Table) OBJECT, GET_INTEGER (L"Include row numbers"));
 	}
 END
 
@@ -626,7 +626,7 @@ FORM (Table_removeColumn, L"Table: Remove column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
 		Table_removeColumn (me, icol);
 		praat_dataChanged (me);
@@ -640,7 +640,7 @@ FORM (Table_removeRow, L"Table: Remove row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_removeRow (OBJECT, GET_INTEGER (L"Row number"));
+		Table_removeRow ((Table) OBJECT, GET_INTEGER (L"Row number"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -651,10 +651,10 @@ FORM (Table_reportCorrelation_kendallTau, L"Report correlation (Kendall tau)", 0
 	WORD (L"right Columns", L"")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double correlation, significance, lowerLimit, upperLimit;
 	correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
@@ -670,7 +670,7 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 
 FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
@@ -678,10 +678,10 @@ FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
 	WORD (L"right Columns", L"")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double correlation, significance, lowerLimit, upperLimit;
 	correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
@@ -698,7 +698,7 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 	
 FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
@@ -706,10 +706,10 @@ FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
 	WORD (L"right Columns", L"")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); cherror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 	difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
@@ -727,7 +727,7 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 	
 FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t)", 0)
@@ -737,10 +737,10 @@ FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t
 	SENTENCE (L"Group 2", L"M")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
 	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
@@ -759,7 +759,7 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 
 FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wilcoxon rank sum)", 0)
@@ -768,10 +768,10 @@ FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wi
 	SENTENCE (L"Group 1", L"F")
 	SENTENCE (L"Group 2", L"M")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
 	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
 	double areaUnderCurve, rankSum, significanceFromZero;
 	areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
@@ -784,7 +784,7 @@ DO
 	MelderInfo_writeLine2 (L"Rank sum: ", Melder_double (rankSum));
 	MelderInfo_writeLine3 (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 
 FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
@@ -793,10 +793,10 @@ FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
 	SENTENCE (L"Group", L"F")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	wchar_t *group = GET_STRING (L"Group");
 	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
@@ -815,16 +815,16 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 
 FORM (Table_reportMean_studentT, L"Report mean (Student t)", 0)
 	WORD (L"Column", L"")
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
-DO
-	Table me = ONLY_OBJECT;
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); cherror
+DO try {
+	Table me = (Table) ONLY_OBJECT;
+	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
 	double unconfidence = GET_REAL (L"One-tailed unconfidence");
 	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 	mean = Table_getMean_studentT (me, column, unconfidence,
@@ -841,7 +841,7 @@ DO
 	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
 		L" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 	MelderInfo_close ();
-end:
+} catch (...) { }
 END
 
 FORM (Table_rowsToColumns, L"Table: Rows to columns", 0)
@@ -855,9 +855,9 @@ FORM (Table_rowsToColumns, L"Table: Rows to columns", 0)
 DO
 	const wchar_t *columnLabel = GET_STRING (L"Column to transpose");
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel); cherror
-		if (! praat_new2 (Table_rowsToColumns (OBJECT,
+		if (! praat_new2 (Table_rowsToColumns (me,
 			GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand")),
 			NAME, L"_nested")) return 0;
 		praat_dataChanged (OBJECT);
@@ -879,7 +879,7 @@ FORM (Table_scatterPlot, L"Scatter plot", 0)
 DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); cherror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); cherror
 		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks")); cherror
@@ -907,7 +907,7 @@ FORM (Table_scatterPlot_mark, L"Scatter plot (marks)", 0)
 DO
 	praat_picture_open ();
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); cherror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); cherror
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
@@ -925,7 +925,7 @@ FORM (Table_searchColumn, L"Table: Search column", 0)
 	WORD (L"Value", L"")
 	OK
 DO
-	Table me = ONLY_OBJECT;
+	Table me = (Table) ONLY_OBJECT;
 	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
 	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
 end:
@@ -937,7 +937,7 @@ FORM (Table_setColumnLabel_index, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_setColumnLabel (OBJECT, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
+		Table_setColumnLabel ((Table) OBJECT, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -949,7 +949,8 @@ FORM (Table_setColumnLabel_label, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table_setColumnLabel (OBJECT, Table_findColumnIndexFromColumnLabel (OBJECT, GET_STRING (L"Old label")), GET_STRING (L"New label"));
+		Table me = (Table) OBJECT;
+		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label"));
 		praat_dataChanged (OBJECT);
 		iferror return 0;
 	}
@@ -962,7 +963,7 @@ FORM (Table_setNumericValue, L"Table: Set numeric value", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
 		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value"));
 		praat_dataChanged (me);
@@ -978,7 +979,7 @@ FORM (Table_setStringValue, L"Table: Set string value", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
 		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value"));
 		praat_dataChanged (me);
@@ -989,7 +990,7 @@ END
 
 DIRECT (Table_randomizeRows)
 	WHERE (SELECTED) {
-		Table_randomizeRows (OBJECT);
+		Table_randomizeRows ((Table) OBJECT);
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1000,14 +1001,14 @@ FORM (Table_sortRows, L"Table: Sort rows", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		if (! Table_sortRows_string (me, GET_STRING (L"columnLabels"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
 
 DIRECT (Table_to_LinearRegression)
-	EVERY_TO (Table_to_LinearRegression (OBJECT))
+	EVERY_TO (Table_to_LinearRegression ((Table) OBJECT))
 END
 
 FORM (Table_to_LogisticRegression, L"Table: To LogisticRegression", 0)
@@ -1017,7 +1018,7 @@ FORM (Table_to_LogisticRegression, L"Table: To LogisticRegression", 0)
 	WORD (L"Dependent 2 (column name)", L"i")
 	OK
 DO
-	EVERY_TO (Table_to_LogisticRegression (OBJECT, GET_STRING (L"factors"), GET_STRING (L"Dependent 1"), GET_STRING (L"Dependent 2")))
+	EVERY_TO (Table_to_LogisticRegression ((Table) OBJECT, GET_STRING (L"factors"), GET_STRING (L"Dependent 1"), GET_STRING (L"Dependent 2")))
 END
 
 FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
@@ -1025,14 +1026,14 @@ FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		Table me = OBJECT;
+		Table me = (Table) OBJECT;
 		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels"));
-		if (! praat_new1 (Table_to_TableOfReal (OBJECT, icol), NAME)) return 0;
+		if (! praat_new1 (Table_to_TableOfReal (me, icol), NAME)) return 0;
 	}
 END
 
 FORM_WRITE (Table_writeToTableFile, L"Save Table as table file", 0, L"Table")
-	if (! Table_writeToTableFile (ONLY_OBJECT, file)) return 0;
+	if (! Table_writeToTableFile ((Table) ONLY_OBJECT, file)) return 0;
 END
 
 /***** TABLEOFREAL *****/
@@ -1069,7 +1070,7 @@ FORM (TableOfReal_drawAsNumbers, L"Draw as numbers", 0)
 	NATURAL (L"Precision", L"5")
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers (OBJECT, GRAPHICS,
+	EVERY_DRAW (TableOfReal_drawAsNumbers ((TableOfReal) OBJECT, GRAPHICS,
 		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision")))
 END
@@ -1087,7 +1088,7 @@ FORM (TableOfReal_drawAsNumbers_if, L"Draw as numbers if...", 0)
 	TEXTFIELD (L"condition", L"self <> 0")
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers_if (OBJECT, GRAPHICS,
+	EVERY_DRAW (TableOfReal_drawAsNumbers_if ((TableOfReal) OBJECT, GRAPHICS,
 		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition"), interpreter))
 END
@@ -1100,7 +1101,7 @@ FORM (TableOfReal_drawAsSquares, L"Draw table as squares", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsSquares (OBJECT, GRAPHICS, 
+	EVERY_DRAW (TableOfReal_drawAsSquares ((TableOfReal) OBJECT, GRAPHICS, 
 		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 		GET_INTEGER (L"From column"), GET_INTEGER (L"To column"),
 		GET_INTEGER (L"Garnish")))
@@ -1108,16 +1109,16 @@ END
 
 FORM (TableOfReal_drawHorizontalLines, L"Draw horizontal lines", 0)
 	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawHorizontalLines (OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	EVERY_DRAW (TableOfReal_drawHorizontalLines ((TableOfReal) OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
 FORM (TableOfReal_drawLeftAndRightLines, L"Draw left and right lines", 0)
 	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawLeftAndRightLines (OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	EVERY_DRAW (TableOfReal_drawLeftAndRightLines ((TableOfReal) OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
 FORM (TableOfReal_drawTopAndBottomLines, L"Draw top and bottom lines", 0)
 	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawTopAndBottomLines (OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	EVERY_DRAW (TableOfReal_drawTopAndBottomLines ((TableOfReal) OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
 FORM (TableOfReal_drawVerticalLines, L"Draw vertical lines", 0)
 	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawVerticalLines (OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	EVERY_DRAW (TableOfReal_drawVerticalLines ((TableOfReal) OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
 
 DIRECT (TableOfReal_extractColumnLabelsAsStrings)
 	EVERY_TO (TableOfReal_extractColumnLabelsAsStrings (OBJECT))
@@ -1130,7 +1131,7 @@ FORM (TableOfReal_extractColumnRanges, L"Extract column ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnRanges (OBJECT, GET_STRING (L"ranges")), NAME, L"_cols")) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnRanges ((TableOfReal) OBJECT, GET_STRING (L"ranges")), NAME, L"_cols")) return 0;
 	}
 END
 
@@ -1140,7 +1141,7 @@ FORM (TableOfReal_extractColumnsWhere, L"Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_cols")) return 0;
+		if (! praat_new2 (TableOfReal_extractColumnsWhere ((TableOfReal) OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_cols")) return 0;
 	}
 END
 
@@ -1151,7 +1152,7 @@ FORM (TableOfReal_extractColumnsWhereLabel, L"Extract column where label", 0)
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel (OBJECT,
+		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel ((TableOfReal) OBJECT,
 			GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text),
 			NAME, L"_", text)) return 0;
 	}
@@ -1166,14 +1167,14 @@ DO
 	long row = GET_INTEGER (L"Extract all columns where row...");
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
-		if (! praat_new5 (TableOfReal_extractColumnsWhereRow (OBJECT,
+		if (! praat_new5 (TableOfReal_extractColumnsWhereRow ((TableOfReal) OBJECT,
 			row, GET_ENUM (kMelder_number, L"...is..."), value),
 			NAME, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
 END
 
 DIRECT (TableOfReal_extractRowLabelsAsStrings)
-	EVERY_TO (TableOfReal_extractRowLabelsAsStrings (OBJECT))
+	EVERY_TO (TableOfReal_extractRowLabelsAsStrings ((TableOfReal) OBJECT))
 END
 
 FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
@@ -1183,7 +1184,7 @@ FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowRanges (OBJECT, GET_STRING (L"ranges")), NAME, L"_rows")) return 0;
+		if (! praat_new2 (TableOfReal_extractRowRanges ((TableOfReal) OBJECT, GET_STRING (L"ranges")), NAME, L"_rows")) return 0;
 	}
 END
 
@@ -1193,7 +1194,7 @@ FORM (TableOfReal_extractRowsWhere, L"Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowsWhere (OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_rows")) return 0;
+		if (! praat_new2 (TableOfReal_extractRowsWhere ((TableOfReal) OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_rows")) return 0;
 	}
 END
 
@@ -1206,7 +1207,7 @@ DO
 	long column = GET_INTEGER (L"Extract all rows where column...");
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
-		if (! praat_new5 (TableOfReal_extractRowsWhereColumn (OBJECT,
+		if (! praat_new5 (TableOfReal_extractRowsWhereColumn ((TableOfReal) OBJECT,
 			column, GET_ENUM (kMelder_number, L"...is..."), value),
 			NAME, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
 	}
@@ -1219,7 +1220,7 @@ FORM (TableOfReal_extractRowsWhereLabel, L"Extract rows where label", 0)
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new3 (TableOfReal_extractRowsWhereLabel (OBJECT,
+		if (! praat_new3 (TableOfReal_extractRowsWhereLabel ((TableOfReal) OBJECT,
 			GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text),
 			NAME, L"_", text)) return 0;
 	}
@@ -1231,7 +1232,7 @@ FORM (TableOfReal_formula, L"TableOfReal: Formula", L"Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_formula (OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
+		if (! TableOfReal_formula ((TableOfReal) OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1240,14 +1241,14 @@ FORM (TableOfReal_getColumnIndex, L"Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (ONLY_OBJECT, GET_STRING (L"Column label"))));
+	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex ((TableOfReal) ONLY_OBJECT, GET_STRING (L"Column label"))));
 END
 	
 FORM (TableOfReal_getColumnLabel, L"Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	TableOfReal table = ONLY_OBJECT;
+	TableOfReal table = (TableOfReal) ONLY_OBJECT;
 	long columnNumber = GET_INTEGER (L"Column number");
 	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_information1 (table -> columnLabels == NULL ? L"" : table -> columnLabels [columnNumber]);
@@ -1257,7 +1258,7 @@ FORM (TableOfReal_getColumnMean_index, L"Get column mean", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	TableOfReal table = ONLY_OBJECT;
+	TableOfReal table = (TableOfReal) ONLY_OBJECT;
 	long columnNumber = GET_INTEGER (L"Column number");
 	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
 	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
@@ -1267,7 +1268,7 @@ FORM (TableOfReal_getColumnMean_label, L"Get column mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	TableOfReal table = ONLY_OBJECT;
+	TableOfReal table = (TableOfReal) ONLY_OBJECT;
 	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING (L"Column label"));
 	REQUIRE (columnNumber > 0, L"Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
@@ -1284,14 +1285,14 @@ FORM (TableOfReal_getColumnStdev_label, L"Get column standard deviation", 0)
 	SENTENCE (L"Column label", L"1")
 	OK
 DO
-	TableOfReal table = ONLY_OBJECT;
+	TableOfReal table = (TableOfReal) ONLY_OBJECT;
 	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING (L"Column label"));
 	REQUIRE (columnNumber > 0, L"Column label does not exist.")
 	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
 END
 
-DIRECT (TableOfReal_getNumberOfColumns) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfColumns)); END
-DIRECT (TableOfReal_getNumberOfRows) TableOfReal me = ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfRows)); END
+DIRECT (TableOfReal_getNumberOfColumns) TableOfReal me = (TableOfReal) ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfColumns)); END
+DIRECT (TableOfReal_getNumberOfRows) TableOfReal me = (TableOfReal) ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfRows)); END
 
 FORM (TableOfReal_getRowIndex, L"Get row index", 0)
 	SENTENCE (L"Row label", L"")
@@ -1304,18 +1305,23 @@ FORM (TableOfReal_getRowLabel, L"Get row label", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	TableOfReal table = ONLY_OBJECT;
+	TableOfReal table = (TableOfReal) ONLY_OBJECT;
 	long rowNumber = GET_INTEGER (L"Row number");
 	REQUIRE (rowNumber <= table -> numberOfRows, L"Row number must not be greater than number of rows.")
 	Melder_information1 (table -> rowLabels == NULL ? L"" : table -> rowLabels [rowNumber]);
 END
 
 FORM (TableOfReal_getValue, L"Get value", 0)
-	NATURAL (L"Row number", L"1") NATURAL (L"Column number", L"1") OK DO TableOfReal me = ONLY_OBJECT;
+	NATURAL (L"Row number", L"1")
+	NATURAL (L"Column number", L"1")
+	OK
+DO
+	TableOfReal me = (TableOfReal) ONLY_OBJECT;
 	long row = GET_INTEGER (L"Row number"), column = GET_INTEGER (L"Column number");
 	REQUIRE (row <= my numberOfRows, L"Row number must not exceed number of rows.")
 	REQUIRE (column <= my numberOfColumns, L"Column number must not exceed number of columns.")
-	Melder_informationReal (my data [row] [column], NULL); END
+	Melder_informationReal (my data [row] [column], NULL);
+END
 
 DIRECT (TableOfReal_help) Melder_help (L"TableOfReal"); END
 
@@ -1324,7 +1330,7 @@ FORM (TableOfReal_insertColumn, L"Insert column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_insertColumn (OBJECT, GET_INTEGER (L"Column number"))) return 0;
+		if (! TableOfReal_insertColumn ((TableOfReal) OBJECT, GET_INTEGER (L"Column number"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1334,7 +1340,7 @@ FORM (TableOfReal_insertRow, L"Insert row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_insertRow (OBJECT, GET_INTEGER (L"Row number"))) return 0;
+		if (! TableOfReal_insertRow ((TableOfReal) OBJECT, GET_INTEGER (L"Row number"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1348,7 +1354,7 @@ FORM (TableOfReal_removeColumn, L"Remove column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_removeColumn (OBJECT, GET_INTEGER (L"Column number"))) return 0;
+		if (! TableOfReal_removeColumn ((TableOfReal) OBJECT, GET_INTEGER (L"Column number"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1358,7 +1364,7 @@ FORM (TableOfReal_removeRow, L"Remove row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_removeRow (OBJECT, GET_INTEGER (L"Row number"))) return 0;
+		if (! TableOfReal_removeRow ((TableOfReal) OBJECT, GET_INTEGER (L"Row number"))) return 0;
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1369,7 +1375,7 @@ FORM (TableOfReal_setColumnLabel_index, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
+		TableOfReal_setColumnLabel ((TableOfReal) OBJECT, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1380,7 +1386,7 @@ FORM (TableOfReal_setColumnLabel_label, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING (L"Old label")),
+		TableOfReal_setColumnLabel ((TableOfReal) OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING (L"Old label")),
 			GET_STRING (L"New label"));
 		praat_dataChanged (OBJECT);
 	}
@@ -1392,7 +1398,7 @@ FORM (TableOfReal_setRowLabel_index, L"Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, GET_INTEGER (L"Row number"), GET_STRING (L"Label"));
+		TableOfReal_setRowLabel ((TableOfReal) OBJECT, GET_INTEGER (L"Row number"), GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1404,7 +1410,7 @@ FORM (TableOfReal_setValue, L"Set value", L"TableOfReal: Set value...")
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal me = OBJECT;
+		TableOfReal me = (TableOfReal) OBJECT;
 		long irow = GET_INTEGER (L"Row number"), icol = GET_INTEGER (L"Column number");
 		REQUIRE (irow <= my numberOfRows, L"Row number too large.")
 		REQUIRE (icol <= my numberOfColumns, L"Column number too large.")
@@ -1419,7 +1425,7 @@ FORM (TableOfReal_setRowLabel_label, L"Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING (L"Old label")),
+		TableOfReal_setRowLabel ((TableOfReal) OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING (L"Old label")),
 			GET_STRING (L"New label"));
 		praat_dataChanged (OBJECT);
 	}
@@ -1431,7 +1437,7 @@ FORM (TableOfReal_sortByColumn, L"Sort rows by column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_sortByColumn (OBJECT, GET_INTEGER (L"Column"), GET_INTEGER (L"Secondary column"));
+		TableOfReal_sortByColumn ((TableOfReal) OBJECT, GET_INTEGER (L"Column"), GET_INTEGER (L"Secondary column"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1443,7 +1449,7 @@ FORM (TableOfReal_sortByLabel, L"Sort rows by label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_sortByLabel (OBJECT, GET_INTEGER (L"Column1"), GET_INTEGER (L"Column2"));
+		TableOfReal_sortByLabel ((TableOfReal) OBJECT, GET_INTEGER (L"Column1"), GET_INTEGER (L"Column2"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1456,11 +1462,11 @@ FORM (TableOfReal_to_Table, L"TableOfReal: To Table", 0)
 	SENTENCE (L"Label of first column", L"rowLabel")
 	OK
 DO
-	EVERY_TO (TableOfReal_to_Table (OBJECT, GET_STRING (L"Label of first column")))
+	EVERY_TO (TableOfReal_to_Table ((TableOfReal) OBJECT, GET_STRING (L"Label of first column")))
 END
 
 FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, L"Save TableOfReal as spreadsheet", 0, L"txt")
-	if (! TableOfReal_writeToHeaderlessSpreadsheetFile (ONLY_OBJECT, file)) return 0;
+	if (! TableOfReal_writeToHeaderlessSpreadsheetFile ((TableOfReal) ONLY_OBJECT, file)) return 0;
 END
 
 
@@ -1504,8 +1510,8 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 
-void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
-void praat_TableOfReal_init (void *klas) {
+extern "C" void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
+extern "C" void praat_TableOfReal_init (void *klas) {
 	praat_addAction1 (klas, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, L"Draw -", 0, 0, 0);
@@ -1567,8 +1573,8 @@ void praat_TableOfReal_init (void *klas) {
 		praat_addAction1 (klas, 0, L"To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
 }
 
-void praat_uvafon_Stat_init (void);
-void praat_uvafon_Stat_init (void) {
+extern "C" void praat_uvafon_Stat_init (void);
+extern "C" void praat_uvafon_Stat_init (void) {
 
 	Thing_recognizeClassesByName (classTableOfReal, classDistributions, classPairDistribution,
 		classTable, classLinearRegression, classLogisticRegression, NULL);
@@ -1695,4 +1701,4 @@ void praat_uvafon_Stat_init (void) {
 	praat_addAction2 (classPairDistribution, 1, classDistributions, 1, L"Get fraction correct...", 0, 0, DO_PairDistribution_Distributions_getFractionCorrect);
 }
 
-/* End of file praat_Stat.c */
+/* End of file praat_Stat.cpp */

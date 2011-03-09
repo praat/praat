@@ -1,6 +1,6 @@
 /* DTW_and_TextGrid.c
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20060906
  djmw 20070306: Reverse x and y. Reference should always be vertical!
+ djmw 20110304 Thing_new
 */
 
 #include "DTW_and_TextGrid.h"
@@ -85,7 +86,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 {
-	TextGrid him = new (TextGrid);
+	TextGrid him = Thing_new (TextGrid);
 	long i;
 
 	if (him == NULL) return NULL;
@@ -183,7 +184,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 
 TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 {
-	TextGrid him = new (TextGrid);
+	TextGrid him = Thing_new (TextGrid);
 	long i;
 
 	if (him == NULL) return NULL;

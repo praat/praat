@@ -1,6 +1,5 @@
 #ifndef _KNN_h_
 #define _KNN_h_
-
 /* KNN.h
  *
  * Copyright (C) 2007-2008 Ola Söder
@@ -22,6 +21,7 @@
 
 /*
  * os 20080529 Initial release
+ * pb 2011/03/08 C++
  */
 
 /////////////////////////////////////////////////////
@@ -36,22 +36,24 @@
 #include "MDS.h"
 
 /////////////////////////////////////////////////////
-// Praat specifics                                 //
-/////////////////////////////////////////////////////
-
-#include "KNN_def.h"
-
-#define KNN_methods Data_methods
-oo_CLASS_CREATE (KNN, Data);
-
-
-/////////////////////////////////////////////////////
 // KNN miscs                                       //
 /////////////////////////////////////////////////////
 
 #include "OlaP.h"
 #include "FeatureWeights.h"
 #include "gsl_siman.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+/////////////////////////////////////////////////////
+// Praat specifics                                 //
+/////////////////////////////////////////////////////
+
+#include "KNN_def.h"
+#define KNN_methods Data_methods
+oo_CLASS_CREATE (KNN, Data);
 
 /////////////////////////////////////////////////////
 // Private definitions and macros                  //
@@ -429,4 +431,47 @@ void KNN_SA_partition
     long * result           
 );
 
-#endif /* _KNN_h_ */
+// Compute feature weights (wrapper), evaluate using folding
+FeatureWeights FeatureWeights_computeWrapperInt
+(
+    KNN me,                 // Classifier
+    long k,                 // k(!)
+    int d,                  // distance weighting
+    long nseeds,            // the number of seeds
+    double alfa,            // shrinkage factor
+    double stop,            // stop at
+    int mode,               // mode (co/serial)
+    int emode               // evaluation mode (10-fold/L1O)
+);
+
+// Compute feature weights (wrapper), evaluate using separate test set
+FeatureWeights FeatureWeights_computeWrapperExt
+(
+    KNN nn,                 // Classifier
+    Pattern pp,             // test pattern
+    Categories c,           // test categories
+    long k,                 // k(!)
+    int d,                  // distance weighting
+    long nseeds,            // the number of seeds
+    double alfa,            // shrinkage factor
+    double stop,            // stop at
+    int mode                // mode (co/serial)
+);
+
+// Evaluate feature weights, wrapper aux.
+double FeatureWeights_evaluate
+(
+    FeatureWeights fws,     // Weights to evaluate
+    KNN nn,                 // Classifier
+    Pattern pp,             // test pattern
+    Categories c,           // test categories
+    long k,                 // k(!)
+    int d                   // distance weighting
+);
+
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file KNN.h */
+#endif

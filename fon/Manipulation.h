@@ -2,7 +2,7 @@
 #define _Manipulation_h_
 /* Manipulation.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,42 +20,25 @@
  */
 
 /*
- * pb 2007/07/22
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-#ifndef _DurationTier_h_
-	#include "DurationTier.h"
-#endif
-#ifndef _LPC_h_
-	#include "LPC.h"
-#endif
+#include "Sound.h"
+#include "PointProcess.h"
+#include "PitchTier.h"
+#include "DurationTier.h"
+#include "LPC.h"
+
 /* The following have to be included for compatibility. */
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _FormantTier_h_
-	#include "FormantTier.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _Image_h_
-	#include "Image.h"
+#include "IntensityTier.h"
+#include "Intensity.h"
+#include "FormantTier.h"
+#include "Formant.h"
+#include "Pitch.h"
+#include "Image.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Manipulation_def.h"
@@ -106,6 +89,10 @@ int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile fs);
 
 Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 	PitchTier pitch, DurationTier duration, double maxT);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Manipulation.h */
 #endif

@@ -2,7 +2,7 @@
 #define _SpectrumTier_h_
 /* SpectrumTier.h
  *
- * Copyright (C) 2007-2010 Paul Boersma
+ * Copyright (C) 2007-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2010/10/19
+ * pb 2011/03/03
  */
 
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
+#include "RealTier.h"
+#include "Graphics.h"
+#include "Spectrum.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /********** class SpectrumTier **********/
@@ -55,6 +53,10 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
 SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file SpectrumTier.h */
 #endif

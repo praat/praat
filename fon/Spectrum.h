@@ -2,7 +2,7 @@
 #define _Spectrum_h_
 /* Spectrum.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
  */
 
 /*
- * pb 2007/03/30
+ * pb 2011/03/03
  */
 
 /* Complex spectrum. */
 /* If it comes from a sound (expressed in Pa), the values are expressed in Pa/Hz. */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Matrix.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Spectrum_def.h"
@@ -106,6 +106,10 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth);
 
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax, double smooth);
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax, double smooth);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Spectrum.h */
 #endif

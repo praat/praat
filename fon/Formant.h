@@ -2,7 +2,7 @@
 #define _Formant_h_
 /* Formant.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2008/06/01
+ * pb 2011/03/03
  */
 
 #ifndef _Matrix_h_
@@ -31,6 +31,10 @@
 #endif
 #ifndef _Interpreter_decl_h_
 	#include "Interpreter_decl.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Formant_def.h"
@@ -109,6 +113,10 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 	bool includeIntensity, int intensityDecimals,
 	bool includeNumberOfFormants, int frequencyDecimals,
 	bool includeBandwidths);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Formant.h */
 #endif

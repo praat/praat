@@ -2,7 +2,7 @@
 #define _Intensity_extensions_h_
 /* Intensity_extensions.h
  *
- * Copyright (C) 2006 David Weenink
+ * Copyright (C) 2006-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20061204 Initial version
+ djmw 20110307 Latewst modification
 */
 
 #ifndef _Sound_h_
@@ -31,6 +32,10 @@
 #endif
 #ifndef _TextGrid_h_
 	#include "TextGrid.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, 
@@ -45,5 +50,9 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	If minSilenceDuration > 0 then only intervals with a duration > minSilenceDuration will be labelled
 	as silences in the IntervalTier.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Intensity_extensions_h_ */

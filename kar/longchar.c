@@ -38,7 +38,7 @@
 #include <stdio.h>   /* For error message. */
 #include "UnicodeData.h"
 
-static struct Longchar_Info Longchar_database [] = {
+static struct structLongchar_Info Longchar_database [] = {
 
 /* Space. */
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */

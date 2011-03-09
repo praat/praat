@@ -1,6 +1,6 @@
 /* MDS.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  djmw 20071201 Melder_warning<n>
  djmw 20071213 Removed Preference.
  djmw 20080724 Thing_classNameW ->Thing_className
+  djmw 20110304 Thing_new
 */
 
 #include "SVD.h"
@@ -269,7 +270,7 @@ int Transformator_init (I, long numberOfPoints)
 
 Transformator Transformator_create (long numberOfPoints)
 {
-	Transformator me = new (Transformator);
+	Transformator me = Thing_new (Transformator);
 	
 	if (me == NULL || ! Transformator_init (me, numberOfPoints))
 	{
@@ -350,7 +351,7 @@ class_methods_end
 
 RatioTransformator RatioTransformator_create (long numberOfPoints)
 {
-	RatioTransformator me = new (RatioTransformator);
+	RatioTransformator me = Thing_new (RatioTransformator);
 	
 	if (me == NULL ||
 		! Transformator_init (me, numberOfPoints)) forget (me);
@@ -374,7 +375,7 @@ class_methods_end
 
 MonotoneTransformator MonotoneTransformator_create (long numberOfPoints)
 {
-	MonotoneTransformator me = new (MonotoneTransformator);
+	MonotoneTransformator me = Thing_new (MonotoneTransformator);
 
 	if (me == NULL) return NULL;
 	
@@ -495,7 +496,7 @@ class_methods_end
 ISplineTransformator ISplineTransformator_create (long numberOfPoints, 
 	long numberOfInteriorKnots, long order)
 {
-	ISplineTransformator me = new (ISplineTransformator);
+	ISplineTransformator me = Thing_new (ISplineTransformator);
 	long i, numberOfKnots;
 	long nData = (numberOfPoints - 1) * numberOfPoints / 2;
 
@@ -567,7 +568,7 @@ class_methods_end
 
 ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns)
 {
-	ContingencyTable me = new (ContingencyTable);
+	ContingencyTable me = Thing_new (ContingencyTable);
 	if (! me || ! TableOfReal_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }
@@ -1087,7 +1088,7 @@ class_methods_end
 
 Weight Weight_create (long numberOfPoints)
 {
-	Weight me = new (Weight); 
+	Weight me = Thing_new (Weight); 
 	long i, j;
 	
 	if (! me || ! TableOfReal_init (me, numberOfPoints, numberOfPoints))
@@ -1112,7 +1113,7 @@ class_methods_end
 
 Salience Salience_create (long numberOfSources, long numberOfDimensions)
 {
-	Salience me = new (Salience);
+	Salience me = Thing_new (Salience);
 	 
 	if (! me || ! TableOfReal_init (me, numberOfSources, numberOfDimensions))
 	{
@@ -1228,7 +1229,7 @@ class_methods_end
 
 MDSVec MDSVec_create (long nPoints)
 {
-	MDSVec me = new (MDSVec);
+	MDSVec me = Thing_new (MDSVec);
 	
 	if (me == NULL) return NULL;
 	
@@ -1278,7 +1279,7 @@ class_methods_end
 
 MDSVecs MDSVecs_create (void)
 {
-	MDSVecs me = new (MDSVecs);
+	MDSVecs me = Thing_new (MDSVecs);
 	if (! me || ! Ordered_init (me, classMDSVec, 10)) forget (me);
 	return me;
 }
@@ -1309,7 +1310,7 @@ class_methods_end
 
 Confusions Confusions_create (void)
 {
-	Confusions me = new (Confusions);
+	Confusions me = Thing_new (Confusions);
 	if (! me || ! Proximities_init (me, classConfusion)) forget (me);
 	return me;
 }
@@ -1332,7 +1333,7 @@ class_methods_end
 
 Distances Distances_create (void)
 {
-	Distances me = new (Distances);
+	Distances me = Thing_new (Distances);
 	
 	if (me == NULL) return NULL;
 	if (! Proximities_init (me, classDistance)) forget (me);
@@ -1347,7 +1348,7 @@ class_methods_end
 
 ScalarProduct ScalarProduct_create (long numberOfPoints)
 {
-	ScalarProduct me = new (ScalarProduct);
+	ScalarProduct me = Thing_new (ScalarProduct);
 	
 	if (me == NULL) return NULL;
 	if (! TableOfReal_init (me, numberOfPoints, numberOfPoints)) forget (me);
@@ -1362,7 +1363,7 @@ class_methods_end
 
 ScalarProducts ScalarProducts_create (void)
 {
-	ScalarProducts me = new (ScalarProducts);
+	ScalarProducts me = Thing_new (ScalarProducts);
 	if (! me || ! TablesOfReal_init (me, classScalarProduct)) forget (me);
 	return me;
 }
@@ -1374,7 +1375,7 @@ class_methods_end
 
 Dissimilarity Dissimilarity_create (long numberOfPoints)
 {
-	Dissimilarity me = new (Dissimilarity);
+	Dissimilarity me = Thing_new (Dissimilarity);
 	if (me == NULL || ! Proximity_init (me, numberOfPoints)) forget (me);
 	return me;
 }
@@ -1473,7 +1474,7 @@ class_methods_end
 
 Dissimilarities Dissimilarities_create (void)
 {
-	Dissimilarities me = new (Dissimilarities);
+	Dissimilarities me = Thing_new (Dissimilarities);
 	
 	if (me == NULL || ! Proximities_init (me, classDissimilarity)) forget (me);
 	
@@ -1488,7 +1489,7 @@ class_methods_end
 
 Similarity Similarity_create (long numberOfPoints)
 {
-	Similarity me = new (Similarity);
+	Similarity me = Thing_new (Similarity);
 	
 	if (me == NULL || ! Proximity_init (me, numberOfPoints)) forget (me);
 	
@@ -2064,7 +2065,7 @@ int Proximities_init (I, void *klas)
 
 Proximities Proximities_create (void)
 {
-	Proximities me = new (Proximities);
+	Proximities me = Thing_new (Proximities);
 	if (! me || ! Proximities_init (me, classProximity)) forget (me);
 	return me;
 }
@@ -3198,7 +3199,7 @@ class_methods_end
 
 Kruskal Kruskal_create (long numberOfPoints, long numberOfDimensions)
 {
-	Kruskal me = new (Kruskal);
+	Kruskal me = Thing_new (Kruskal);
 	
 	if (! me ||
 		! (my proximities = Proximities_create ()) ||

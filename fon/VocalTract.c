@@ -41,7 +41,7 @@ class_methods (VocalTract, Vector)
 class_methods_end
 
 VocalTract VocalTract_create (long nx, double dx) {
-	VocalTract me = new (VocalTract);
+	VocalTract me = Thing_new (VocalTract);
 	if (! me || ! Matrix_init (me, 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1)) return NULL;
 	return me;
 }

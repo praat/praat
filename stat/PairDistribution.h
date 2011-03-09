@@ -2,7 +2,7 @@
 #define _PairDistribution_h_
 /* PairDistribution.h
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2007/08/12
+ * pb 2011/03/03
  */
 
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
-#endif
-#ifndef _Distributions_h_
-	#include "Distributions.h"
+#include "Strings.h"
+#include "Table.h"
+#include "Distributions.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "PairDistribution_def.h"
@@ -59,6 +57,9 @@ PairDistribution PairDistribution_append (PairDistribution me, PairDistribution 
 
 Table PairDistribution_to_Table (PairDistribution me);
 
+#ifdef __cplusplus
+	}
 #endif
 
 /* End of file PairDistribution.h */
+#endif

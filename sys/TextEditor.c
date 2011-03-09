@@ -767,7 +767,7 @@ end:
 }
 
 TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText) {
-	TextEditor me = new (TextEditor);
+	TextEditor me = Thing_new (TextEditor);
 	if (! me || ! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
 	return me;
 }

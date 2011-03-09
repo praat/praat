@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,14 @@
  */
 
 /*
- * pb 2003/05/20
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "Sound.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Pitch Sound_to_Pitch (Sound me, double timeStep,
@@ -92,5 +92,9 @@ Pitch Sound_to_Pitch_any (Sound me,
 		It is directly copied into the Pitch object as a hint for considering
 		pitches above a certain value "voiceless".
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Sound_to_Pitch.h */

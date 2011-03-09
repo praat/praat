@@ -80,12 +80,12 @@ class_methods_end
 
 CCA CCA_create (long numberOfCoefficients, long ny, long nx)
 {
-	CCA me = new (CCA);
+	CCA me = Thing_new (CCA);
 	
 	if (me == NULL) return NULL;
 	my numberOfCoefficients = numberOfCoefficients;
-	my yLabels = new (Strings);
-	my xLabels = new (Strings);
+	my yLabels = Thing_new (Strings);
+	my xLabels = Thing_new (Strings);
 	if ((my xLabels == NULL) || (my yLabels == NULL) ||
 		((my y = Eigen_create (numberOfCoefficients, ny)) == NULL) ||
 		((my x = Eigen_create (numberOfCoefficients, nx)) == NULL)) 

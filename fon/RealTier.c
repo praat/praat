@@ -72,7 +72,7 @@ class_methods (RealPoint, Data) {
 }
 
 RealPoint RealPoint_create (double time, double value) {
-	RealPoint me = new (RealPoint); cherror
+	RealPoint me = Thing_new (RealPoint); cherror
 	my time = time;
 	my value = value;
 end:
@@ -153,7 +153,7 @@ end:
 }
 
 RealTier RealTier_create (double tmin, double tmax) {
-	RealTier me = new (RealTier); cherror
+	RealTier me = Thing_new (RealTier); cherror
 	RealTier_init_e (me, tmin, tmax); cherror
 end:
 	iferror forget (me);

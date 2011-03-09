@@ -1,9 +1,11 @@
 # Makefile of the library "sys"
-# Paul Boersma, 26 July 2010
+# Paul Boersma, 10 March 2011
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../audio/FLAC -I ../audio/mp3
+CFLAGS = $(DEFS) -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../audio/FLAC -I ../audio/mp3
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = abcio.o lispio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \

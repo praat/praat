@@ -58,7 +58,7 @@ class_methods (IntensityTierEditor, RealTierEditor) {
 }
 
 IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar_t *title, IntensityTier intensity, Sound sound, int ownSound) {
-	IntensityTierEditor me = new (IntensityTierEditor);
+	IntensityTierEditor me = Thing_new (IntensityTierEditor);
 	if (! me || ! RealTierEditor_init (IntensityTierEditor_as_parent (me), parent, title, (RealTier) intensity, sound, ownSound))
 		{ forget (me); return NULL; }
 	return me;

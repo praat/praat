@@ -1,4 +1,4 @@
-/* manual_pitch.c
+/* manual_pitch.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_pitch_init (ManPages me);
-void manual_pitch_init (ManPages me) {
+extern "C" void manual_pitch_init (ManPages me);
+extern "C" void manual_pitch_init (ManPages me) {
 
 MAN_BEGIN (L"Create PitchTier...", L"ppgb", 20110101)
 INTRO (L"A command in the @@New menu@ to create an empty @PitchTier object.")
@@ -808,4 +808,4 @@ MAN_END
 
 }
 
-/* End of file manual_pitch.c */
+/* End of file manual_pitch.cpp */

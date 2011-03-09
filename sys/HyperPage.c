@@ -63,7 +63,7 @@ class_methods (HyperLink, Data)
 class_methods_end
 
 HyperLink HyperLink_create (const wchar_t *name, double x1DC, double x2DC, double y1DC, double y2DC) {
-	HyperLink me = new (HyperLink);
+	HyperLink me = Thing_new (HyperLink);
 	if (! me) return NULL;
 	Thing_setName (me, name);
 	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;

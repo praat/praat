@@ -2,7 +2,7 @@
 #define _FFNet_Pattern_Activation_h_
 /* FFNet_Pattern_Activation.h
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  djmw 1994.
  djmw 20020712 GPL header.
  djmw 20030701 Removed non-GPL minimizations.
- djmw 20041118 Latest modification.
+ djmw 20110307 Latest modification.
 */
 
 #ifndef _FFNet_h_
@@ -39,6 +39,9 @@
 	#include "Minimizers.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 int FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
@@ -53,5 +56,9 @@ double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activatio
 Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _FFNet_Pattern_Activation_h_ */

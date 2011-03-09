@@ -2,7 +2,7 @@
 #define _Articulation_h_
 /* Articulation.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,20 @@
  */
 
 /*
- * pb 2009/03/21
+ * pb 2011/03/08
  */
 
 /* Art = Articulation */
 /* Members represent muscle activities for speech production. */
 /* All members have values from 0 (no activity) to 1 (maximum activity). */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+#include "Data.h"
 
 #include "Articulation_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #include "Articulation_def.h"
 #define Art_methods  Data_methods
@@ -46,6 +48,10 @@ Art Art_create (void);
 		...
 		result -> art [kArt_muscle_BUCCINATOR] = 0.0;
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Articulation.h */
 #endif

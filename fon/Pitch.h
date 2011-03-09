@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,18 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2011/03/03
  */
 
-#ifndef _Sampled_h_
-	#include "Sampled.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
-#endif
+#include "Sampled.h"
+#include "Graphics.h"
+#include "Interpreter_decl.h"
 
 #include "Pitch_enums.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #include "Pitch_def.h"
 #define Pitch_methods Sampled_methods
@@ -209,6 +207,10 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 */
 
 int Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Pitch.h */
 #endif

@@ -239,7 +239,7 @@ static void GaussianMixture_setDefaultMixtureNames (GaussianMixture me)
 
 GaussianMixture GaussianMixture_create (long numberOfComponents, long dimension, long storage)
 {
-	GaussianMixture me = new (GaussianMixture);
+	GaussianMixture me = Thing_new (GaussianMixture);
 	if (me == NULL) return NULL;
 	my numberOfComponents = numberOfComponents;
 	my dimension = dimension;

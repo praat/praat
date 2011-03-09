@@ -2,7 +2,7 @@
 #define _LPC_h_
 /* LPC.h
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20030526 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Matrix_h_
@@ -29,6 +29,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "LPC_def.h"
@@ -59,5 +63,9 @@ Matrix LPC_to_Matrix (LPC me);
 /******************* Frames ************************************************/
 
 int LPC_Frame_init (LPC_Frame me, int nCoefficients);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _LPC_h_ */

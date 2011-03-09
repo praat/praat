@@ -534,6 +534,55 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 #ifdef __cplusplus
 	}
+#define FUNCTION(t,type)  \
+struct autoNUM##t##vector {  \
+	type *ptr;  \
+	long from;  \
+	autoNUM##t##vector (long from, long to) throw (int) : from (from) {  \
+		ptr = NUM##t##vector (from, to);  \
+		if (ptr == NULL) throw 1;  \
+	}  \
+	autoNUM##t##vector (void) throw () : from (0), ptr (NULL) { }  \
+	~autoNUM##t##vector () {  \
+		NUM##t##vector_free (ptr, from);  \
+	}  \
+	type& operator[] (long i) { return ptr [i]; }  \
+	void reset (long newFrom, long to) throw (int) {  \
+		NUM##t##vector_free (ptr, from);  \
+		ptr = NUM##t##vector (from = newFrom, to);  \
+		if (ptr == NULL) throw 1;  \
+	}  \
+};  \
+struct autoNUM##t##matrix {  \
+	type **ptr;  \
+	long row1, col1;  \
+	autoNUM##t##matrix (long row1, long row2, long col1, long col2) throw (int) : row1 (row1), col1 (col1) {  \
+		ptr = NUM##t##matrix (row1, row2, col1, col2);  \
+		if (ptr == NULL) throw 1;  \
+	}  \
+	autoNUM##t##matrix (void) throw () : row1 (0), col1 (0), ptr (NULL) { }  \
+	~autoNUM##t##matrix () {  \
+		NUM##t##matrix_free (ptr, row1, col1);  \
+	}  \
+	type* operator[] (long row) { return ptr [row]; }  \
+	void reset (long newRow1, long row2, long newCol1, long col2) throw (int) {  \
+		NUM##t##matrix_free (ptr, row1, col1);  \
+		ptr = NUM##t##matrix (row1 = newRow1, row2, col1 = newCol1, col2);  \
+		if (ptr == NULL) throw 1;  \
+	}  \
+};
+FUNCTION (b, signed char)
+FUNCTION (s, short)
+FUNCTION (i, int)
+FUNCTION (l, long)
+FUNCTION (ub, unsigned char)
+FUNCTION (us, unsigned short)
+FUNCTION (ui, unsigned int)
+FUNCTION (ul, unsigned long)
+FUNCTION (d, double)
+FUNCTION (fc, fcomplex)
+FUNCTION (dc, dcomplex)
+FUNCTION (c, char)
 #endif
 
 /* End of file NUM.h */

@@ -2,7 +2,7 @@
 #define _Configuration_and_Procrustes_h_
 /* Configuration_and_Procrustes.h
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20041025 Latest modification.
+ djmw 20110307 Latest modification.
 */
 
 #ifndef _Configuration_h_
@@ -31,6 +31,14 @@
 	#include "Procrustes.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Configuration_and_Procrustes_h_ */

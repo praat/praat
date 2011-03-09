@@ -106,14 +106,14 @@
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (cacgetex (f)) { if (! (my x = new (Class)) || ! Data_readCache (my x, f)) return 0; }
+	if (cacgetex (f)) { if (! (my x = Thing_new (Class)) || ! Data_readCache (my x, f)) return 0; }
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
 		long n = cacgeti4 (f); \
 		if (! (my x = Class##_create ())) return 0; \
 		for (long i = 1; i <= n; i ++) { \
-			ItemClass item = new (ItemClass); \
+			ItemClass item = Thing_new (ItemClass); \
 			if (! item || ! item -> methods -> readCache (item, f)) return 0; \
 			if (! Collection_addItem (my x, item)) return 0; \
 		} \

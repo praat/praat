@@ -1,10 +1,12 @@
 # Makefile of the library "audio/mp3"
 # Erez Volk, 24 May 2007
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../../makefile.defs
 
-CFLAGS = -I ../../sys
+CFLAGS = $(DEFS) -I ../../sys
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = mp3.o \
 	mad_bit.o \

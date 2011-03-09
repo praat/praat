@@ -2,7 +2,7 @@
 #define _Proximity_h_
 /* Proximity.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Proximity_members TableOfReal_members
@@ -33,5 +37,9 @@
 class_create (Proximity, TableOfReal);
 
 int Proximity_init (I, long numberOfPoints);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Proximity_h_ */

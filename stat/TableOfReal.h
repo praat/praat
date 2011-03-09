@@ -2,7 +2,7 @@
 #define _TableOfReal_h_
 /* TableOfReal.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,21 +20,17 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2011/03/03
  */
 
 /* TableOfReal inherits from Data */
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
+#include "Collection.h"
+#include "Strings.h"
+#include "Table.h"
+#include "Interpreter_decl.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /* For the inheritors. */
@@ -94,5 +90,9 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 Strings TableOfReal_extractRowLabelsAsStrings (I);
 Strings TableOfReal_extractColumnLabelsAsStrings (I);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file TableOfReal.h */
+#endif

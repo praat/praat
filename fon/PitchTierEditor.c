@@ -59,7 +59,7 @@ class_methods (PitchTierEditor, RealTierEditor) {
 }
 
 PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar_t *title, PitchTier pitch, Sound sound, int ownSound) {
-	PitchTierEditor me = new (PitchTierEditor); cherror
+	PitchTierEditor me = Thing_new (PitchTierEditor); cherror
 	RealTierEditor_init (PitchTierEditor_as_parent (me), parent, title, (RealTier) pitch, sound, ownSound); cherror
 end:
 	iferror forget (me);

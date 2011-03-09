@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005-2010 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20050724
- djmw 20101007 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Data_h_
@@ -30,6 +30,10 @@
 
 #ifndef _Distributions_h_
 	#include "Collection.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Index_members Data_members \
@@ -56,5 +60,9 @@ int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel);
 
 long StringsIndex_countItems (StringsIndex me, int iclas);
 
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Index_h_ */

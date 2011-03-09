@@ -1,6 +1,6 @@
 /* FFNet.c
  *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  djmw 20070902 FFNet_createNameFromTopology to wchar_t
  djmw 20071014 Melder_error<n>
  djmw 20080121 float -> double
+ djmw 20110304 Thing_new
 */
 
 #include "FFNet_Matrix.h"
@@ -276,7 +277,7 @@ int FFNet_setOutputCategories (FFNet me, Categories thee)
 FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, 
 	long numberOfOutputs, int outputsAreLinear)
 {
-    FFNet me = new (FFNet);
+    FFNet me = Thing_new (FFNet);
 	if (me == NULL || ! FFNet_init (me, numberOfInputs, numberInLayer1, numberInLayer2, 
 		numberOfOutputs, outputsAreLinear)) forget (me);
 	return me;

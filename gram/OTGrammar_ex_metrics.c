@@ -452,7 +452,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 	int numberOfSyllables;
 	int underlyingWeightPattern [1+7], maximumUnderlyingWeight = includeCodas ? 3 : 2;
 	long numberOfTableaus = includeCodas ? 9 + 27 + 81 + 243 + 2 : 62;
-	OTGrammar me = new (OTGrammar); cherror
+	OTGrammar me = Thing_new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS); cherror
 	for (long icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];

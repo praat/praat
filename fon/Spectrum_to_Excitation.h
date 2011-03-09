@@ -1,6 +1,6 @@
 /* Spectrum_to_Excitation.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
  */
 
 /*
- * pb 1995/03/07
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _Excitation_h_
-	#include "Excitation.h"
+#include "Spectrum.h"
+#include "Excitation.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Excitation Spectrum_to_Excitation (I, double df);
@@ -34,5 +33,9 @@ Excitation Spectrum_to_Excitation (I, double df);
 	Postcondition:
 		filtered with 10 ^ (1.581 + 0.75 * bark - 1.75 * sqrt (1 + bark * bark)))
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Spectrum_to_Excitation.h */

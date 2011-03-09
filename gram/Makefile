@@ -1,9 +1,11 @@
 # Makefile of the library "gram"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
+CFLAGS = $(DEFS) -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = Network.o \
    OTGrammar.o OTGrammarEditor.o manual_gram.o praat_gram.o OTMulti.o OTMultiEditor.o \

@@ -187,9 +187,9 @@ int Editor_init (Editor me, GuiObject parent, int x, int y , int width, int heig
 
 void Editor_save (Editor me, const wchar_t *text);   /* For Undo. */
 
-Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
+UiForm UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 int UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter);
-Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
+UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle);
 int Editor_doMenuCommand (Editor me, const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);

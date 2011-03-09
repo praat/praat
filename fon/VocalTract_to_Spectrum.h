@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,22 @@
  */
 
 /*
- * pb 1995/03/06
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _VocalTract_h_
-	#include "VocalTract.h"
-#endif
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
+#include "VocalTract.h"
+#include "Spectrum.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Spectrum VocalTract_to_Spectrum
     (VocalTract tube, long numberOfFrequencies, double maximumFrequency,
      double glottalDamping, int hasRadiationDamping, int hasInternalDamping);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file VocalTract_to_Spectrum.h */

@@ -2,7 +2,7 @@
 #define _Discriminant_Pattern_Categories_h_
 /* Discriminant_Pattern_Categories.h
  *
- * Copyright (C) 2004 David Weenink
+ * Copyright (C) 2004-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20040422 Initial version
+ djmw 20110307 Latest modification
 */
 
 #ifndef _Discriminant_h_
@@ -33,9 +34,17 @@
 	#include "Categories.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee);
 
 Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, 
 	int poolCovarianceMatrices,int useAprioriProbabilities);
- 
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _Discriminant_Pattern_Categories_h_ */

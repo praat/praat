@@ -80,7 +80,7 @@ class_methods (TextPoint, AnyPoint) {
 TextPoint TextPoint_create (double time, const wchar_t *mark) {
 	TextPoint me = NULL;
 //start:
-	me = new (TextPoint); cherror
+	me = Thing_new (TextPoint); cherror
 	my time = time;
 	my mark = Melder_wcsdup_e (mark); cherror
 end:
@@ -123,7 +123,7 @@ class_methods_end
 TextInterval TextInterval_create (double tmin, double tmax, const wchar_t *text) {
 	TextInterval me = NULL;
 //start:
-	me = new (TextInterval); cherror
+	me = Thing_new (TextInterval); cherror
 	my xmin = tmin;
 	my xmax = tmax;
 	my text = Melder_wcsdup_e (text); cherror
@@ -185,7 +185,7 @@ class_methods (TextTier, Function)
 class_methods_end
 
 TextTier TextTier_create (double tmin, double tmax) {
-	TextTier me = new (TextTier);
+	TextTier me = Thing_new (TextTier);
 	if (! me || ! (my points = SortedSetOfDouble_create ()))
 		{ forget (me); return NULL; }
 	my xmin = tmin;
@@ -233,7 +233,7 @@ class_methods (IntervalTier, Function)
 class_methods_end
 
 IntervalTier IntervalTier_create (double tmin, double tmax) {
-	IntervalTier me = new (IntervalTier);
+	IntervalTier me = Thing_new (IntervalTier);
 	TextInterval interval;
 	if (! me || ! (my intervals = SortedSetOfDouble_create ()))
 		{ forget (me); return NULL; }
@@ -351,7 +351,7 @@ class_methods (TextGrid, Function) {
 }
 
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
-	TextGrid me = new (TextGrid);
+	TextGrid me = Thing_new (TextGrid);
 	if (me == NULL || (my tiers = Ordered_create ()) == NULL)
 		{ forget (me); return NULL; }
 	my xmin = tmin;
@@ -1282,20 +1282,20 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	tag = texgetw2 (text); cherror
 	if (! wcsequ (tag, L"Praat chronological TextGrid text file"))
 		error1 (L"Not a chronological TextGrid text file.")
-	me = new (TextGrid); cherror
+	me = Thing_new (TextGrid); cherror
 	classFunction -> readText (me, text); cherror
 	my tiers = Ordered_create (); cherror
 	long numberOfTiers = texgeti4 (text); cherror
 	for (long itier = 1; itier <= numberOfTiers; itier ++) {
 		wchar_t *klas = texgetw2 (text); cherror
 		if (wcsequ (klas, L"IntervalTier")) {
-			IntervalTier tier = new (IntervalTier); cherror
+			IntervalTier tier = Thing_new (IntervalTier); cherror
 			Collection_addItem (my tiers, tier); cherror
 			tier -> name = texgetw2 (text); cherror
 			classFunction -> readText (tier, text); cherror
 			tier -> intervals = SortedSetOfDouble_create (); cherror
 		} else if (wcsequ (klas, L"TextTier")) {
-			TextTier tier = new (TextTier); cherror
+			TextTier tier = Thing_new (TextTier); cherror
 			Collection_addItem (my tiers, tier); cherror
 			tier -> name = texgetw2 (text); cherror
 			classFunction -> readText (tier, text); cherror
@@ -1319,12 +1319,12 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			error3 (L"Wrong tier number ", Melder_integer (itier), L".")
 		if (((Data) my tiers -> item [itier]) -> methods == (Data_Table) classIntervalTier) {
 			IntervalTier tier = my tiers -> item [itier];
-			TextInterval interval = new (TextInterval); cherror
+			TextInterval interval = Thing_new (TextInterval); cherror
 			classTextInterval -> readText (interval, text); cherror
 			Collection_addItem (tier -> intervals, interval); cherror   /* Not earlier: sorting depends on contents of interval. */
 		} else {
 			TextTier tier = my tiers -> item [itier];
-			TextPoint point = new (TextPoint); cherror
+			TextPoint point = Thing_new (TextPoint); cherror
 			classTextPoint -> readText (point, text); cherror
 			Collection_addItem (tier -> points, point); cherror   /* Not earlier: sorting depends on contents of point. */
 		}
@@ -1431,7 +1431,7 @@ end:
 }
 
 TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
-	TextGrid me = new (TextGrid);
+	TextGrid me = Thing_new (TextGrid);
 	char *line, arg1 [41], arg2 [41], arg3 [41], arg4 [41], arg5 [41], arg6 [41], arg7 [201];
 	long startOfData, sentenceNumber = 0;
 	int itier;
@@ -1494,13 +1494,13 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile fs) {
 				/*
 				 * Create two new tiers.
 				 */
-				sentenceTier = new (IntervalTier); cherror
+				sentenceTier = Thing_new (IntervalTier); cherror
 				sentenceTier -> intervals = SortedSetOfDouble_create (); cherror
 				sentenceTier -> xmin = 0.0;
 				sentenceTier -> xmax = my xmax;
 				Thing_setName (sentenceTier, Melder_peekUtf8ToWcs (speakerName));
 				Collection_addItem (my tiers, sentenceTier); cherror
-				phraseTier = new (IntervalTier); cherror
+				phraseTier = Thing_new (IntervalTier); cherror
 				phraseTier -> intervals = SortedSetOfDouble_create (); cherror
 				phraseTier -> xmin = 0.0;
 				phraseTier -> xmax = my xmax;

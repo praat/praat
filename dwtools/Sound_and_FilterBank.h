@@ -2,7 +2,7 @@
 #define _Sound_and_FilterBank_h_
 /* Sound_and_FilterBank.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 20010404
  djmw 20020813 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _FilterBank_h_
@@ -32,6 +33,10 @@
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
@@ -55,5 +60,9 @@ FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
 FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, 
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);	
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sound_and_FilterBank_h_ */

@@ -25,8 +25,8 @@
 #include "ManPagesM.h"
 #include "MFCC.h"
 
-void manual_LPC_init (ManPages me);
-void manual_LPC_init (ManPages me)
+LINK_C void manual_LPC_init (ManPages me);
+LINK_C void manual_LPC_init (ManPages me)
 {
 
 MAN_BEGIN (L"CC: Paint...", L"djmw", 20040407)

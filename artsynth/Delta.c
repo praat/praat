@@ -41,7 +41,7 @@ class_methods_end
 
 Delta Delta_create (int numberOfTubes)
 {
-	Delta me = new (Delta);
+	Delta me = Thing_new (Delta);
 	int itube;
 	if (! me) return NULL;
 	Melder_assert (numberOfTubes >= 1);

@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,14 @@
  */
 
 /*
- * pb 1999/07/02
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Harmonicity_h_
-	#include "Harmonicity.h"
+#include "Sound.h"
+#include "Harmonicity.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
@@ -40,5 +39,9 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 	double fmax,   /* 4500 Hz */
 	double bandwidth,  /* 1000 Hz */
 	double step);   /* 80 Hz */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Sound_to_Harmonicity.h */

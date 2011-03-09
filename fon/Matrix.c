@@ -180,13 +180,13 @@ Matrix Matrix_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1)
 {
-	Matrix me = new (Matrix);
+	Matrix me = Thing_new (Matrix);
 	if (! me || ! Matrix_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) forget (me);
 	return me;
 }
 
 Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
-	Matrix me = new (Matrix);
+	Matrix me = Thing_new (Matrix);
 	if (! me || ! Matrix_init (me, 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
 		0.5, numberOfRows + 0.5, numberOfRows, 1, 1)) forget (me);
 	return me;
@@ -618,7 +618,7 @@ int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues) {
 	*eigenvectors = NULL, *eigenvalues = NULL;
 	if (my nx != my ny) return Melder_error1 (L"(Matrix_eigen:) Matrix not square.");
 
-	Eigen eigen = new (Eigen); cherror
+	Eigen eigen = Thing_new (Eigen); cherror
 	Eigen_initFromSymmetricMatrix (eigen, my z, my nx); cherror
 	*eigenvectors = Data_copy (me); cherror
 	*eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1); cherror

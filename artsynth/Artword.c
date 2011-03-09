@@ -59,7 +59,7 @@ class_methods (Artword, Data) {
 }
 
 Artword Artword_create (double totalTime) {
-	Artword me = new (Artword);
+	Artword me = Thing_new (Artword);
 	if (! me) return NULL;
 	my totalTime = totalTime;
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)

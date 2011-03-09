@@ -2,7 +2,7 @@
 #define _CCA_and_Correlation_h_
 /* CCA_and_Correlation.h
  * 
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 2001
  djmw 20020516 GPL header
- djmw 20060323 Latest modification.
+ djmw 20110307 Latest modification.
  */
 
 #ifndef _CCA_h_
@@ -31,6 +31,11 @@
 #ifndef _SSCP_h_
 	#include "SSCP.h"
 #endif
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 
 TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
 /*
@@ -50,5 +55,9 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	of the other set.
 	redundancy = VarianceFraction * (canonical correlation)^2
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _CCA_and_Correlation_h_ */

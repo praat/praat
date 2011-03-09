@@ -1,6 +1,6 @@
 /* Configuration.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
  djmw 20071009 wchar_t
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20100302 Extra test in Configuration_rotate
+ djmw 20110304 Thing_new
  */
 
 #include <ctype.h>
@@ -85,7 +86,7 @@ class_methods_end
 Configuration Configuration_create (long numberOfPoints,
 	long numberOfDimensions)
 {
-	Configuration me = new (Configuration);
+	Configuration me = Thing_new (Configuration);
 
 	if (me == NULL) return NULL;
 
@@ -597,7 +598,7 @@ class_methods_end
 
 Configurations Configurations_create (void)
 {
-	Configurations me = new (Configurations);
+	Configurations me = Thing_new (Configurations);
 	if (! me || ! Ordered_init (me, classConfiguration, 10)) forget (me);
 	return me;
 }

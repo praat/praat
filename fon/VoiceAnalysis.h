@@ -1,6 +1,6 @@
 /* VoiceAnalysis.h
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
  */
 
 /*
- * pb 2004/07/14
+ * pb 2011/03/03
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "Sound.h"
+#include "PointProcess.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
@@ -62,5 +60,9 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	double tmin, double tmax,
 	double floor, double ceiling, double maximumPeriodFactor, double maximumAmplitudeFactor,
 	double silenceThreshold, double voicingThreshold);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file VoiceAnalysis.h */

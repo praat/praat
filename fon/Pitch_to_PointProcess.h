@@ -1,6 +1,6 @@
 /* Pitch_to_PointProcess.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,15 @@
  */
 
 /*
- * pb 1996/04/26
- * pb 2002/07/16 GPL
- * pb 2003/02/26
+ * pb 2011/03/03
  */
 
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "Pitch.h"
+#include "PointProcess.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 PointProcess Pitch_to_PointProcess (Pitch pitch);
@@ -38,5 +34,9 @@ PointProcess Pitch_to_PointProcess (Pitch pitch);
 PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch);
 
 PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Pitch_to_PointProcess.h */

@@ -34,7 +34,7 @@ class_methods (IntensityTier, RealTier)
 class_methods_end
 
 IntensityTier IntensityTier_create (double tmin, double tmax) {
-	IntensityTier me = new (IntensityTier); cherror
+	IntensityTier me = Thing_new (IntensityTier); cherror
 	RealTier_init_e (me, tmin, tmax); cherror
 end:
 	iferror forget (me);

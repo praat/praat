@@ -1,6 +1,6 @@
 /* Distance.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20110304 Thing_new
 */
 
 #include "Distance.h"
@@ -28,7 +29,7 @@ class_methods_end
 
 Distance Distance_create (long numberOfPoints)
 {
-	Distance me = new (Distance);
+	Distance me = Thing_new (Distance);
 	if (! me || ! Proximity_init (me, numberOfPoints)) forget (me);
 	return me;
 }

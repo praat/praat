@@ -2,7 +2,7 @@
 #define _Network_h_
 /* Network.h
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +20,17 @@
  */
 
 /*
- * pb 2009/09/29
+ * pb 2011/03/08
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Data.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Network_def.h"
-
 #define Network_methods Data_methods
 oo_CLASS_CREATE (Network, Data);
 
@@ -67,6 +66,10 @@ void Network_zeroActivities (Network me, long nodeMin, long nodeMax);
 void Network_normalizeActivities (Network me, long nodeMin, long nodeMax);
 void Network_spreadActivities (Network me, long numberOfSteps);
 void Network_updateWeights (Network me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Network.h */
 #endif

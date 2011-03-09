@@ -65,7 +65,7 @@ int DoubleVector_init (I, long min, long max)
 
 DoubleVector DoubleVector_create (long min, long max)
 {
-	DoubleVector me = new (DoubleVector);
+	DoubleVector me = Thing_new (DoubleVector);
 	if (! me || ! DoubleVector_init (me, min, max)) forget (me);
 	return me;
 }
@@ -92,7 +92,7 @@ int ComplexVector_init (I, long min, long max)
 
 ComplexVector ComplexVector_create (long min, long max)
 {
-	ComplexVector me = new (ComplexVector);
+	ComplexVector me = Thing_new (ComplexVector);
 	if (! me || ! ComplexVector_init (me, min, max)) forget (me);
 	return me;
 }

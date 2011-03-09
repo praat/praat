@@ -2,7 +2,7 @@
 #define _Command_h_
 /* Command.h
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,15 @@
 /*
  djmw 19950711
  djmw 20020812 GPL header
- djmw 20071007 wchar_t
+ djmw 20110306 Latest modification
 */
 
 #include "Thing.h"
 #include "Collection.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #define Command_members Thing_members	\
 	Any data;							\
@@ -82,5 +86,9 @@ int CommandHistory_offright (I);
 wchar_t *CommandHistory_commandName (I, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return NULL. */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Command_h_ */

@@ -1,6 +1,6 @@
 /* ClassificationTable.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  djmw 20040623 Added ClassificationTable_to_Strings_maximumProbability
  djmw 20040824 Added Strings_extensions.h header
  djmw 20101122 ClassificationTable_to_Correlation_columns
+ djmw 20110304 Thing_new
 */
 
 #include "ClassificationTable.h"
@@ -35,7 +36,7 @@ class_methods_end
 
 ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfGroups)
 {
-	ClassificationTable me = new (ClassificationTable);
+	ClassificationTable me = Thing_new (ClassificationTable);
 
 	if (! me || ! TableOfReal_init (me, numberOfRows, numberOfGroups)) forget (me);
 	return me;

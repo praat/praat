@@ -63,7 +63,7 @@ end:
 
 int LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
 {
-	struct structTube_Frame rc_struct;
+	struct structTube_Frame rc_struct = { 0 };
 	Tube_Frame rc = & rc_struct;
 	int status;
 	memset (&  rc_struct, 0, sizeof(rc_struct));

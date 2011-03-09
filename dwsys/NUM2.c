@@ -1,6 +1,6 @@
 /* NUM2.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@
  djmw 20100311 +NUMsolveQuadraticEquation
  djmw 20100426 replace wcstok by Melder_wcstok
  djmw 20101209 removed NUMwcscmp is Melder_wcscmp now
+ djmw 20110304 Thing_new
 */
 
 #include "SVD.h"
@@ -1258,7 +1259,7 @@ double NUMtrace2 (double **a1, double **a2, long n)
 
 int NUMeigensystem (double **a, long n, double **evec, double eval[])
 {
-	Eigen me = new (Eigen);
+	Eigen me = Thing_new (Eigen);
 
 	if (me == NULL || ! Eigen_initFromSymmetricMatrix (me, a, n)) goto end;
 	if (evec) NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);

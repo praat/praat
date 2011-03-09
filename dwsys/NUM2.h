@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2010 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20101209 Latest modification.
+ djmw 20110308 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -34,6 +34,10 @@
 #endif
 /* machine precision */
 #define NUMeps 2.2e-16
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 int NUMstrcmp (const char *s1, const char *s2);
 /*
@@ -976,22 +980,22 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 
 /********************** fft ******************************************/
 
-struct NUMfft_Table_f
+struct structNUMfft_Table_f
 {
   long n; /* Data length */
   float *trigcache;
   long *splitcache;
 };
 
-struct NUMfft_Table
+struct structNUMfft_Table
 {
   long n;
   double *trigcache;
   long *splitcache;
 };
 
-typedef struct NUMfft_Table_f *NUMfft_Table_f;
-typedef struct NUMfft_Table *NUMfft_Table;
+typedef struct structNUMfft_Table_f *NUMfft_Table_f;
+typedef struct structNUMfft_Table *NUMfft_Table;
 
 int NUMfft_Table_init_f (NUMfft_Table_f table, long n);
 int NUMfft_Table_init (NUMfft_Table table, long n);
@@ -1124,5 +1128,9 @@ int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. 
 int NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _NUM2_h_ */

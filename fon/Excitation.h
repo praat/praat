@@ -2,7 +2,7 @@
 #define _Excitation_h_
 /* Excitation.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,12 @@
  */
 
 /*
- * pb 2002/06/04
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 double Excitation_hertzToBark (double hertz);
 double Excitation_barkToHertz (double bark);
@@ -47,6 +50,10 @@ double Excitation_getLoudness (Excitation me);
 void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 Matrix Excitation_to_Matrix (Excitation me);
 Excitation Matrix_to_Excitation (Matrix me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Excitation.h */
 #endif

@@ -2,7 +2,7 @@
 #define _DurationTier_h_
 /* DurationTier.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2010/10/19
+ * pb 2011/03/03
  */
 
 #ifndef _RealTier_h_
@@ -28,6 +28,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /********** class DurationTier **********/
@@ -42,6 +46,10 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const wchar_t *method, int garnish);
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file DurationTier.h */
 #endif

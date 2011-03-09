@@ -1,6 +1,6 @@
 /* TextGrid_Sound.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,15 @@
  */
 
 /*
- * pb 2010/12/08
+ * pb 2011/03/03
  */
 
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "TextGrid.h"
+#include "Sound.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
@@ -45,5 +43,9 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
 
 int TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *textGrid, Sound *sound);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TextGrid_Sound.h */

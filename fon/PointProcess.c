@@ -138,7 +138,7 @@ int PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {
 }
 
 PointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
-	PointProcess me = new (PointProcess);
+	PointProcess me = Thing_new (PointProcess);
 	if (! me || ! PointProcess_init (me, tmin, tmax, initialMaxnt)) forget (me);
 	return me;
 }

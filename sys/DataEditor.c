@@ -651,7 +651,7 @@ end:
 }
 
 static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	StructEditor me = new (StructEditor); cherror
+	StructEditor me = Thing_new (StructEditor); cherror
 	StructEditor_init (me, root, title, address, description); cherror
 end:
 	iferror forget (me);
@@ -762,7 +762,7 @@ class_methods (VectorEditor, DataSubEditor) {
 static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum)
 {
-	VectorEditor me = new (VectorEditor); cherror
+	VectorEditor me = Thing_new (VectorEditor); cherror
 	my minimum = minimum;
 	my maximum = maximum;
 	DataSubEditor_init (VectorEditor_as_parent (me), root, title, address, description); cherror
@@ -828,7 +828,7 @@ class_methods (MatrixEditor, DataSubEditor) {
 static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2)
 {
-	MatrixEditor me = new (MatrixEditor); cherror
+	MatrixEditor me = Thing_new (MatrixEditor); cherror
 	my minimum = min1;
 	my maximum = max1;
 	my min2 = min2;
@@ -873,7 +873,7 @@ end:
 }
 
 static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	ClassEditor me = new (ClassEditor); cherror
+	ClassEditor me = Thing_new (ClassEditor); cherror
 	ClassEditor_init (me, root, title, address, description); cherror
 end:
 	iferror forget (me);
@@ -925,7 +925,7 @@ DataEditor DataEditor_create (GuiObject parent, const wchar_t *title, Any data) 
 	Data_Table klas = ((Data) data) -> methods;
 	if (klas -> description == NULL) error3
 		(L"(DataEditor_create:) Class ", klas -> _className, L" cannot be inspected.");
-	me = new (DataEditor); cherror
+	me = Thing_new (DataEditor); cherror
 	my children = Collection_create (classDataSubEditor, 10); cherror
 	my parent = parent;
 	ClassEditor_init (DataEditor_as_parent (me), me, title, data, klas -> description); cherror

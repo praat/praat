@@ -146,7 +146,7 @@ class_methods_end
 Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification)
 {
-	GraphicsPostscript me = new (GraphicsPostscript);
+	GraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
 	my postScript = true, my yIsZeroAtTheTop = true, my languageLevel = 2;
 	my job = TRUE, my eps = FALSE, my printer = FALSE;
@@ -210,7 +210,7 @@ static int Eps_postScript_printf (void *stream, const char *format, ... ) {
 Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsPostscript_spots spots,
 	double x1inches, double x2inches, double y1inches, double y2inches, bool includeFonts, bool useSilipaPS)
 {
-	GraphicsPostscript me = new (GraphicsPostscript);
+	GraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
 	int left, right, top, bottom;
 	my postScript = true, my languageLevel = 2;
@@ -264,7 +264,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsP
 
 #ifndef UNIX
 Graphics Graphics_create_postscriptprinter (void) {
-	GraphicsPostscript me = new (GraphicsPostscript);
+	GraphicsPostscript me = Thing_new (GraphicsPostscript);
 	my postScript = TRUE, my languageLevel = 2;
 	my job = FALSE, my eps = FALSE, my printer = TRUE;
 	my printf = Printer_postScript_printf;

@@ -2,7 +2,7 @@
 #define _LPC_and_LFCC_h_
 /* LPC_and_LFCC.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,15 @@
 /*
  djmw 20001228
  djmw 20020812 GPL header
+ djmw 20110307 Latest modification
 */
 
 #include "LPC.h"
 #include "LFCC.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients);
 
@@ -54,5 +59,9 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee);
 	Programs for Digital Signal Processing, IEEE Press,
 	1979 (page 4.3-6).
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _LPC_and_LFCC_h_ */

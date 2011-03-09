@@ -2,7 +2,7 @@
 #define _SPINET_h_
 /* SPINET.h
  *
- * Copyright (C) 1993-2007 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 19970408
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Sampled2_h_
@@ -30,6 +30,10 @@
 #endif
 #ifndef _Graphics_h_
 	#include "Graphics.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SPINET_members Sampled2_members			\
@@ -51,5 +55,9 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
 	double minimum, double maximum, int enhanced, int garnish);
-	
+
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _SPINET_h_ */

@@ -1,6 +1,6 @@
 /* Polynomial.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20080122 float -> double
+  djmw 20110304 Thing_new
 */
 
 #include "Polynomial.h"
@@ -353,7 +354,7 @@ int FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients)
 FunctionTerms FunctionTerms_create (double xmin, double xmax, 
 	long numberOfCoefficients)
 {
-	FunctionTerms me = new (FunctionTerms);
+	FunctionTerms me = Thing_new (FunctionTerms);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_init (me, xmin, xmax, numberOfCoefficients))
@@ -720,7 +721,7 @@ class_methods_end
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree)
 {
-	Polynomial me = new (Polynomial);
+	Polynomial me = Thing_new (Polynomial);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_init (me, xmin, xmax, degree + 1)) forget (me);
@@ -729,7 +730,7 @@ Polynomial Polynomial_create (double xmin, double xmax, long degree)
 
 Polynomial Polynomial_createFromString (double xmin, double xmax, wchar_t *s)
 {
-	Polynomial me = new (Polynomial);
+	Polynomial me = Thing_new (Polynomial);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_initFromString (me, xmin, xmax, s, 0)) forget (me);
@@ -1030,7 +1031,7 @@ class_methods_end
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials)
 {
-	LegendreSeries me = new (LegendreSeries);
+	LegendreSeries me = Thing_new (LegendreSeries);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_init (me, xmin, xmax, numberOfPolynomials)) forget (me);
@@ -1040,7 +1041,7 @@ LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPol
 LegendreSeries LegendreSeries_createFromString (double xmin, double xmax,
 	wchar_t *s)
 {
-	LegendreSeries me = new (LegendreSeries);
+	LegendreSeries me = Thing_new (LegendreSeries);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_initFromString (me, xmin, xmax, s, 0)) forget (me);
@@ -1128,7 +1129,7 @@ class_methods_end
 
 Roots Roots_create (long numberOfRoots)
 {
-	Roots me = new (Roots);
+	Roots me = Thing_new (Roots);
 	
 	if (me == NULL) return me;
 	if (! ComplexVector_init (me, 1, numberOfRoots)) forget (me);
@@ -1537,7 +1538,7 @@ class_methods_end
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, 
 	long numberOfPolynomials)
 {
-	ChebyshevSeries me = new (ChebyshevSeries);
+	ChebyshevSeries me = Thing_new (ChebyshevSeries);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_init (me, xmin, xmax, numberOfPolynomials)) forget (me);
@@ -1547,7 +1548,7 @@ ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax,
 ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax,
 	wchar_t *s)
 {
-	ChebyshevSeries me = new (ChebyshevSeries);
+	ChebyshevSeries me = Thing_new (ChebyshevSeries);
 	
 	if (me == NULL) return NULL;
 	if (! FunctionTerms_initFromString (me, xmin, xmax, s, 0)) forget (me);
@@ -2121,7 +2122,7 @@ class_methods_end
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots)
 {
-	MSpline me = new (MSpline);
+	MSpline me = Thing_new (MSpline);
 	long numberOfCoefficients = numberOfInteriorKnots + degree + 1;
 	long numberOfKnots = numberOfCoefficients + degree + 1;
 	
@@ -2134,7 +2135,7 @@ MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInte
 MSpline MSpline_createFromStrings (double xmin, double xmax, long degree,
 	wchar_t *coef, wchar_t *interiorKnots)
 {
-	MSpline me = new (MSpline);
+	MSpline me = Thing_new (MSpline);
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{
@@ -2186,7 +2187,7 @@ class_methods_end
 ISpline ISpline_create (double xmin, double xmax, long degree,
 	long numberOfInteriorKnots)
 {
-	ISpline me = new (ISpline);
+	ISpline me = Thing_new (ISpline);
 	long numberOfCoefficients = numberOfInteriorKnots + degree;
 	long numberOfKnots = numberOfCoefficients + degree;
 	
@@ -2199,7 +2200,7 @@ ISpline ISpline_create (double xmin, double xmax, long degree,
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree,
 	wchar_t *coef, wchar_t *interiorKnots)
 {
-	ISpline me = new (ISpline);
+	ISpline me = Thing_new (ISpline);
 	
 	if (degree > Spline_MAXIMUM_DEGREE)
 	{

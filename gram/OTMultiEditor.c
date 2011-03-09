@@ -272,7 +272,7 @@ class_methods (OTMultiEditor, HyperPage) {
 }
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar) {
-	OTMultiEditor me = new (OTMultiEditor); cherror
+	OTMultiEditor me = Thing_new (OTMultiEditor); cherror
 	my data = grammar;
 	my form1 = Melder_wcsdup_e (L""); cherror
 	my form2 = Melder_wcsdup_e (L""); cherror

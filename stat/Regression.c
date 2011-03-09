@@ -108,7 +108,7 @@ int Regression_addParameter (I, const wchar_t *label, double minimum, double max
 	iam (Regression);
 	RegressionParameter thee = NULL;
 //start:
-	thee = new (RegressionParameter); cherror
+	thee = Thing_new (RegressionParameter); cherror
 	thy label = Melder_wcsdup_e (label); cherror
 	thy minimum = minimum;
 	thy maximum = maximum;
@@ -133,7 +133,7 @@ class_methods (LinearRegression, Regression)
 class_methods_end
 
 LinearRegression LinearRegression_create (void) {
-	LinearRegression me = new (LinearRegression); cherror
+	LinearRegression me = Thing_new (LinearRegression); cherror
 	Regression_init (me); cherror
 end:
 	iferror forget (me);

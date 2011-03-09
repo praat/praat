@@ -23,8 +23,8 @@
 
 #include "ManPagesM.h"
 
-void manual_Permutation_init (ManPages me);
-void manual_Permutation_init (ManPages me)
+LINK_C void manual_Permutation_init (ManPages me);
+LINK_C void manual_Permutation_init (ManPages me)
 {
 
 MAN_BEGIN (L"Permutation", L"djmw", 20050721)

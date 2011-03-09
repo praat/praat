@@ -1,6 +1,6 @@
 /* Confusion.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20061214 Changed info to Melder_writeLine<x> format.
  djmw 20070620 Latest modification.
  djmw 20080521 +Confusion_drawAsNumbers
+ djmw 20110304 Thing_new
 */
 
 #include "Confusion.h"
@@ -64,7 +65,7 @@ class_methods_end
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses)
 {
-    Confusion me = new (Confusion);
+    Confusion me = Thing_new (Confusion);
     if ((me == NULL) || ! TableOfReal_init (me, numberOfStimuli,
 		 numberOfResponses)) forget (me);
     return me;
@@ -402,12 +403,12 @@ Confusion Confusion_condense (Confusion me, wchar_t *search, wchar_t *replace,
 		&nstringmatches, use_regexp);
 	if (columnLabels == NULL) goto end;
 	
-	srow = new (Strings);
+	srow = Thing_new (Strings);
 	if (srow == NULL) goto end;
 	srow -> numberOfStrings = my numberOfRows;
 	srow -> strings = rowLabels;
 	
-	scol = new (Strings);
+	scol = Thing_new (Strings);
 	if (scol == NULL) goto end;
 	scol -> numberOfStrings = my numberOfColumns;
 	scol -> strings = columnLabels;

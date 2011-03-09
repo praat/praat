@@ -85,7 +85,7 @@ class_methods (SpectrogramEditor, FunctionEditor) {
 }
 
 SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	SpectrogramEditor me = new (SpectrogramEditor); cherror
+	SpectrogramEditor me = Thing_new (SpectrogramEditor); cherror
 	FunctionEditor_init (SpectrogramEditor_as_parent (me), parent, title, data); cherror
 	my maximum = 10000;
 end:

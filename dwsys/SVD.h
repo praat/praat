@@ -1,6 +1,6 @@
 /* SVD.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  djmw 20020423 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 #ifndef _SVD_h_
 #define _SVD_h_
@@ -27,6 +27,10 @@
 #include "NUM2.h"
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SVD_members Data_members		\
@@ -106,5 +110,9 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
 void GSVD_setTolerance (GSVD me, double tolerance);
 
 double GSVD_getTolerance (GSVD me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _SVD_h_ */

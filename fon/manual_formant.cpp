@@ -1,4 +1,4 @@
-/* manual_formant.c
+/* manual_formant.cpp
  *
  * Copyright (C) 1992-2010 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_formant_init (ManPages me);
-void manual_formant_init (ManPages me) {
+extern "C" void manual_formant_init (ManPages me);
+extern "C" void manual_formant_init (ManPages me) {
 
 MAN_BEGIN (L"Create FormantGrid...", L"ppgb", 20080425)
 INTRO (L"A command in the @@New menu@ to create an empty @FormantGrid object.")
@@ -637,4 +637,4 @@ MAN_END
 
 }
 
-/* End of file manual_formant.c */
+/* End of file manual_formant.cpp */

@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020327 GPL
- djmw 20101102 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _TableOfReal_extensions_h_
@@ -32,6 +32,10 @@
 #endif
 #ifndef _CCA_h_
 	#include "CCA.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SSCP_members TableOfReal_members \
@@ -263,6 +267,9 @@ void SSCP_unExpandLowerCholesky (I);
 int SSCP_expandPCA (I);
 void SSCP_unExpandPCA (I);
 
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _SSCP_h_ */
 
-/* End of file SSCP.h */

@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,16 @@
  */
 
 /*
- * pb 2007/01/27
+ * pb 2011/03/03
  */
 
 /* Vector inherits from Matrix */
 /* A Vector is horizontal Matrix. */
 /* The rows are 'channels'. There will often be only one channel, but e.g. a stereo sound has two. */
-#ifndef _Matrix_h_
-	#include "Matrix.h"
+#include "Matrix.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Vector_members  Matrix_members
@@ -78,6 +80,10 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	method can be "curve", "bars", "poles", or "speckles"; it must not be NULL;
 	if anything else is specified, a curve is drawn.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Vector.h */
 #endif

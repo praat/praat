@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,10 @@
 #endif
 #ifndef _TableOfReal_h_
 	#include "TableOfReal.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "FFNet_def.h"
@@ -222,5 +226,9 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2);
 TableOfReal FFNet_extractWeights (FFNet me, long layer);
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish);
 FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _FFNet_h_ */

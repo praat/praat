@@ -3,7 +3,7 @@
 
 /* DTW_and_TextGrid.h
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 /*
  djmw 20060906
+ djmw 20110307 Latest modification
 */
 
 #ifndef _DTW_h_
@@ -32,6 +33,10 @@
 	#include "TextGrid.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee);
 IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee);
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee);
@@ -39,5 +44,9 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee);
 	Purpose: Create the new TextGrid with all times determined by the DTW.
 		The y-dimension of the DTW determines the new times.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _DTW_and_TextGrid_h_ */

@@ -444,7 +444,7 @@ class_methods (SoundEditor, TimeSoundAnalysisEditor) {
 }
 
 SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	SoundEditor me = new (SoundEditor);
+	SoundEditor me = Thing_new (SoundEditor);
 	Melder_assert (data != NULL);
 	/*
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,

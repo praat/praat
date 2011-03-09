@@ -1,6 +1,6 @@
 /* Tube.c
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20030613 Creation
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20110304 Thing_new
 */
 
 #include "Tube.h"
@@ -136,7 +137,7 @@ int Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
 {
-	Area me = new (Area);
+	Area me = Thing_new (Area);
 	
 	if (! me || 
 		! Area_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength)) forget (me);
@@ -155,7 +156,7 @@ int RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength)
 {
-	RC me = new (RC);
+	RC me = Thing_new (RC);
 	
 	if (! me || 
 		! RC_init (me, tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength)) forget (me);

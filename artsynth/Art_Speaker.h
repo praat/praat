@@ -1,6 +1,6 @@
 /* Art_Speaker.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,15 @@
  */
 
 /*
- * pb 1996/04/09
- * pb 2002/07/16 GPL
+ * pb 2011/03/08
  */
 
-#ifndef _Articulation_h_
-	#include "Articulation.h"
-#endif
-#ifndef _Speaker_h_
-	#include "Speaker.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Articulation.h"
+#include "Speaker.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 void Art_Speaker_toVocalTract (Art art, Speaker speaker,
@@ -60,5 +57,9 @@ void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	double xmm [], double ymm [], int closed []);
 
 void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics g);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Art_Speaker.h */

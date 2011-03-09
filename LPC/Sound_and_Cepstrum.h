@@ -2,7 +2,7 @@
 #define _Sound_and_Cepstrum_h_
 /* Sound_and_Cepstrum.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20020812 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _Sound_h_
@@ -30,10 +31,18 @@
 	#include "Cepstrum.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Cepstrum Sound_to_Cepstrum (Sound me);
 
 Cepstrum Sound_to_Cepstrum_bw (Sound me);
 
 Sound Cepstrum_to_Sound (Cepstrum me);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sound_and_Cepstrum_h_ */

@@ -1,6 +1,6 @@
 /* Collection_extensions.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20050511 Skip printing unique labels in OrderedOfString
  djmw 20061214 
  djmw 20061214 Changed info to Melder_writeLine<x> format.
+ djmw 20110304 Thing_new
 */
 
 #include "Collection_extensions.h"
@@ -105,7 +106,7 @@ int OrderedOfString_init (I, long initialCapacity)
 
 Any OrderedOfString_create (void)
 {
-    OrderedOfString me = new (OrderedOfString);
+    OrderedOfString me = Thing_new (OrderedOfString);
     if (! me || ! OrderedOfString_init (me, 10)) forget (me);
     return me;
 }
@@ -163,7 +164,7 @@ Any OrderedOfString_selectUniqueItems (I, int sort)
 		Collection_shrinkToFit (him);
 		return him;
 	}
-	thee = new (SortedSet);
+	thee = Thing_new (SortedSet);
 	SortedSet_init (thee, classSimpleString, 10);
 	classSortedSet->compare = (int (*)(Any, Any)) SimpleString_compare;
 

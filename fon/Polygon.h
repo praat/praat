@@ -2,7 +2,7 @@
 #define _Polygon_h_
 /* Polygon.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2009/12/14
+ * pb 2011/03/03
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Data.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Polygon_members  Data_members \
@@ -83,5 +83,9 @@ void Polygon_paintCircles (I, Graphics g,
 void Polygons_drawConnection (I, thou, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, int hasArrow, double relativeLength);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file Polygon.h */
+#endif

@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,15 @@
  */
 
 /*
- * pb 1995/04/06
- * pb 2002/07/16 GPL
+ * pb 2011/03/08
  */
 
-#ifndef _Artword_h_
-	#include "Artword.h"
-#endif
-#ifndef _Speaker_h_
-	#include "Speaker.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "Artword.h"
+#include "Speaker.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
@@ -37,5 +34,9 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
    Sound *w1, int iw1, Sound *w2, int iw2, Sound *w3, int iw3,
    Sound *p1, int ip1, Sound *p2, int ip2, Sound *p3, int ip3,
    Sound *v1, int iv1, Sound *v2, int iv2, Sound *v3, int iv3);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Artword_Speaker_to_Sound.h */

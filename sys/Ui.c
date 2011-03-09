@@ -118,7 +118,7 @@ class_methods (UiField, Thing) {
 class_methods_end }
 
 static UiField UiField_create (int type, const wchar_t *name) {
-	UiField me = new (UiField);
+	UiField me = Thing_new (UiField);
 	wchar_t shortName [101], *p;
 	my type = type;
 	my formLabel = Melder_wcsdup_f (name);
@@ -149,7 +149,7 @@ class_methods (UiOption, Thing) {
 class_methods_end }
 
 static Any UiOption_create (const wchar_t *label) {
-	UiOption me = new (UiOption);
+	UiOption me = Thing_new (UiOption);
 	Thing_setName (me, label);
 	return me;
 }
@@ -691,11 +691,11 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 	Melder_help (my helpTitle);
 }
 
-Any UiForm_create (GuiObject parent, const wchar_t *title,
+UiForm UiForm_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
-	UiForm me = new (UiForm);
+	UiForm me = Thing_new (UiForm);
 	my parent = parent;
 	Thing_setName (me, title);
 	my okCallback = okCallback;
@@ -740,7 +740,7 @@ static int commonOkCallback (UiForm dia, const wchar_t *dummy, Interpreter inter
 	return cmd -> commandCallback (cmd -> editor, cmd, cmd -> dialog, NULL, interpreter);
 }
 
-Any UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
+UiForm UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
 	Editor editor = (Editor) cmd -> editor;
 	UiForm dia = UiForm_create (editor -> dialog, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;

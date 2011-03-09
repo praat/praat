@@ -1551,7 +1551,7 @@ class_methods (SoundRecorder, Editor) {
 }
 
 SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void *applicationContext) {
-	SoundRecorder me = new (SoundRecorder);
+	SoundRecorder me = Thing_new (SoundRecorder);
 	my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
 
 	if (my inputUsesPortAudio) {

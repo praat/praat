@@ -1,6 +1,6 @@
 /* Sound_and_LPC_robust.c
  *
- * Copyright (C) 1994-2010 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  djmw 20070103 Sound interface changes
  djmw 20080122 float -> double
  djmw 20101008 New LPC_Frame_filterInverse interface.
+ djmw 20110302 Corrected a number of pointer initialisations
 */
 
 #include "Sound_and_LPC.h"
@@ -47,10 +48,13 @@ struct huber_struct
 };
 
 static int huber_struct_init (struct huber_struct *hs, double windowDuration,
-	long p,	double samplingFrequency, double location, int wantlocation)
+	long p, double samplingFrequency, double location, int wantlocation)
 {
 	long n;
-
+	
+	hs -> e = NULL; hs -> w = NULL; hs -> work = NULL; hs -> a = NULL; 
+	hs -> covar = NULL; hs -> c = NULL; hs -> svd = NULL;
+	
 	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	if (hs -> e == NULL) return 0;
 	n = hs -> e -> nx;
@@ -209,7 +213,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol,
 	int wantlocation)
 {
-	struct huber_struct struct_huber;
+	struct huber_struct struct_huber = { 0 };
 	Sound sound = NULL, sframe = NULL, window = NULL;
 	LPC him = NULL;
 	double t1, samplingFrequency = 1.0 / my dx, dt = thy dx;

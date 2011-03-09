@@ -177,7 +177,7 @@ WordList Strings_to_WordList (Strings me) {
 		}
 		totalLength += wcslen (string);
 	}
-	thee = new (WordList); cherror
+	thee = Thing_new (WordList); cherror
 	thy length = totalLength + my numberOfStrings;
 	thy string = Melder_malloc_e (wchar_t, thy length + 1); cherror
 	/*
@@ -201,7 +201,7 @@ Strings WordList_to_Strings (WordList me) {
 	Strings thee = NULL;
 //start:
 	unsigned char *word = (unsigned char *) my string;
-	thee = new (Strings); cherror
+	thee = Thing_new (Strings); cherror
 	thy numberOfStrings = WordList_count (me);
 	if (thy numberOfStrings > 0) { thy strings = NUMpvector (1, thy numberOfStrings); cherror }
 	for (long i = 1; i <= thy numberOfStrings; i ++) {

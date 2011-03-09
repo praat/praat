@@ -2,7 +2,7 @@
 #define _Cochleagram_h_
 /* Cochleagram.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,15 @@
  */
 
 /*
- * pb 1995/07/24
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Cochleagram_members  Matrix_members
@@ -82,6 +85,10 @@ Matrix Cochleagram_to_Matrix (Cochleagram me);
 		with deep copy of all its attributes, except class information and methods.
 	Return NULL if out of memory.  
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Cochleagram.h */
 #endif

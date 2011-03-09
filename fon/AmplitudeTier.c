@@ -35,7 +35,7 @@ class_methods (AmplitudeTier, RealTier)
 class_methods_end
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
-	AmplitudeTier me = new (AmplitudeTier); cherror
+	AmplitudeTier me = Thing_new (AmplitudeTier); cherror
 	RealTier_init_e (me, tmin, tmax); cherror
 end:
 	iferror forget (me);

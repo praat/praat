@@ -84,7 +84,7 @@
 */
 
 /* The following routines work on the screen and from batch. */
-Any UiForm_create (GuiObject parent, const wchar_t *title,
+UiForm UiForm_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
@@ -171,11 +171,11 @@ Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 
 int UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
 
-Any UiInfile_create (GuiObject parent, const wchar_t *title,
+UiForm UiInfile_create (GuiObject parent, const wchar_t *title,
   int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
   const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles);
 
-Any UiOutfile_create (GuiObject parent, const wchar_t *title,
+UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
   int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
   const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 

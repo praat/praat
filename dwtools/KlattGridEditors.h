@@ -2,7 +2,7 @@
 #define _KlattGridEditors_h_
 /* KlattGridEditors.h
  *
- * Copyright (C) 2009 David Weenink
+ * Copyright (C) 2009-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
   djmw 20090123, 20090420, 20090630
+  djmw 20110306 Latest modification.
 */
 
 #ifndef _KlattGrid_h_
@@ -37,6 +38,10 @@
 #endif
 #ifndef _FormantGridEditor_h_
 	#include "FormantGridEditor.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define KlattGrid_realTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
@@ -176,6 +181,10 @@ Thing_declare1 (KlattGrid_formantGridEditor);
 Thing_declare2 (KlattGrid_formantGridEditor, FormantGridEditor);
 
 KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (GuiObject parent, const wchar_t *title, KlattGrid data, int formantType);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _KlattGridEditors_h_ */
 

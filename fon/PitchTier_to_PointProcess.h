@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,15 @@
  */
 
 /*
- * pb 1997/06/06
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "PitchTier.h"
+#include "PointProcess.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 PointProcess PitchTier_to_PointProcess (PitchTier me);
@@ -47,5 +44,9 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
 PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
 PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
 TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file PitchTier_to_PointProcess.h */

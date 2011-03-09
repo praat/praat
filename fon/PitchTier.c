@@ -49,7 +49,7 @@ class_methods (PitchTier, RealTier)
 class_methods_end
 
 PitchTier PitchTier_create (double tmin, double tmax) {
-	PitchTier me = new (PitchTier); cherror
+	PitchTier me = Thing_new (PitchTier); cherror
 	RealTier_init_e (me, tmin, tmax); cherror
 end:
 	iferror forget (me);

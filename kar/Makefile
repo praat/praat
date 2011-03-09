@@ -1,7 +1,11 @@
 # Makefile of the library "kar"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../makefile.defs
+
+CFLAGS = $(DEFS)
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = ipaSerifRegularPS.o ipaSerifRegular24.o longchar.o
 

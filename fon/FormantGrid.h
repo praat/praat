@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/01
+ * pb 2011/03/03
  */
 
 #ifndef _RealTier_h_
@@ -34,6 +34,10 @@
 #endif
 #ifndef _Interpreter_decl_h_
 	#include "Interpreter_decl.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "FormantGrid_def.h"
@@ -77,6 +81,10 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
 
 Sound Sound_Formant_filter (Sound me, Formant formant);
 Sound Sound_Formant_filter_noscale (Sound me, Formant formant);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file FormantGrid.h */
 #endif

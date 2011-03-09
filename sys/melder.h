@@ -41,7 +41,10 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
+	#define LINK_C  extern "C"
 	extern "C" {
+#else
+	#define LINK_C
 #endif
 
 bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2);
@@ -93,7 +96,7 @@ double Melder_atof (const wchar_t *string);
 
 /********** CONSOLE **********/
 
-void Melder_writeToConsole (wchar_t *message, bool useStderr);
+void Melder_writeToConsole (const wchar_t *message, bool useStderr);
 
 /********** ERROR **********/
 
@@ -962,6 +965,46 @@ double Melder_clock (void);   // seconds since 1969
 
 #ifdef __cplusplus
 	}
+struct MelderArg {
+	int type;
+	union {
+		const wchar_t *argW;
+		const char *arg8;
+	};
+	MelderArg (const wchar_t *arg) : type (1), argW (arg) { }
+	MelderArg (const char *arg) : type (2), arg8 (arg) { }
+	MelderArg (const double arg) : type (1), argW (Melder_double (arg)) { }
+	MelderArg (const long arg) : type (1), argW (Melder_integer (arg)) { }
+};
+extern "C++" void Melder_throw (const MelderArg& arg1);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
+	const MelderArg& arg13 = L"", const MelderArg& arg14 = L"", const MelderArg& arg15 = L"", const MelderArg& arg16 = L"",
+	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
+#define therror  iferror throw 1;   // will be removed once all errors throw exceptions
+#define rethrow  return   // will be: throw
+#define rethrowzero  do { return 0; } while (false)   // will be: throw
+#define rethrow1(s)  do { Melder_error1 (s); return; } while (false)   // will be: do { Melder_error1 (s); throw; } while (false)
+#define rethrowzero1(s)  do { Melder_error1 (s); return 0; } while (false)   // will be: do { Melder_error1 (s); throw; } while (false)
 #endif
 
 /* End of file melder.h */

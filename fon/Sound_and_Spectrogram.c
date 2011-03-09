@@ -61,7 +61,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	long binWidth_samples;
 	double duration = my dx * (double) my nx, t1, windowssq = 0.0, binWidth_hertz;
 
-	struct NUMfft_Table fftTable = { 0 };
+	struct structNUMfft_Table fftTable = { 0 };
 
 	/*
 	 * Compute the time sampling.

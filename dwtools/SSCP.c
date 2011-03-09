@@ -1,6 +1,6 @@
 /* SSCP.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@
  djmw 20090629 +Covariances_getMultivariateCentroidDifference, Covariances_equality.
  djmw 20100106 +Covariance_and_TableOfReal_mahalanobis.
  djmw 20101019 Reduced storage Covariance.
+  djmw 20110304 Thing_new
 */
 
 #include "SSCP.h"
@@ -319,7 +320,7 @@ int SSCP_init (I, long dimension, long storage)
 
 SSCP SSCP_create (long dimension)
 {
-	SSCP me = new (SSCP);
+	SSCP me = Thing_new (SSCP);
 
 	if (! me || ! SSCP_init (me, dimension, dimension)) forget (me);
 	return me;
@@ -853,7 +854,7 @@ CCA SSCP_to_CCA (I, long ny)
 		nx = ny; ny = m - nx;
 	}
 
-	thee = new (CCA);
+	thee = Thing_new (CCA);
 	if (thee == NULL ||
 		((sxx = NUMdmatrix (1, nx, 1, nx)) == NULL) ||
 		((syy = NUMdmatrix (1, ny, 1, ny)) == NULL) ||
@@ -1045,7 +1046,7 @@ class_methods_end
 
 SSCPs SSCPs_create (void)
 {
-	SSCPs me = new (SSCPs);
+	SSCPs me = Thing_new (SSCPs);
 	if (! me || ! Ordered_init (me, classSSCP, 10)) forget (me);
 	return me;
 }
@@ -1238,14 +1239,14 @@ class_methods_end
 
 Covariance Covariance_create (long dimension)
 {
-	Covariance me = new (Covariance);
+	Covariance me = Thing_new (Covariance);
 	if (me == NULL || ! SSCP_init (me, dimension, dimension)) forget (me);
 	return me;
 }
 
 Covariance Covariance_create_reduceStorage (long dimension, long storage)
 {
-	Covariance me = new (Covariance);
+	Covariance me = Thing_new (Covariance);
 	if (storage <= 0 || storage >= dimension) storage = dimension;
 	if (me == NULL || ! SSCP_init (me, dimension, storage)) forget (me);
 	return me;
@@ -1324,7 +1325,7 @@ end:
 
 Correlation Correlation_create (long dimension)
 {
-	Correlation me = new (Correlation);
+	Correlation me = Thing_new (Correlation);
 	if (me == NULL || ! SSCP_init (me, dimension, dimension)) forget (me);
 	return me;
 }

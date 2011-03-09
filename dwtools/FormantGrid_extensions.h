@@ -2,7 +2,7 @@
 #define _FormantGrid_extensions_h_
 /* FormantGrid_extensions.h
  *
- * Copyright (C) 2009 David Weenink
+ * Copyright (C) 2009-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /*
  djmw 20090310
+ djmw 20110307 Latest modification
 */
 
 #ifndef _FormantGrid_h_
@@ -30,10 +31,17 @@
 	#include "Graphics.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const wchar_t *method);
 
 void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position);
 int FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position);
 
+#ifdef __cplusplus
+	}
+#endif
  
 #endif /* _FormantGrid_extensions_h_ */

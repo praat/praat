@@ -2,7 +2,7 @@
 #define _Confusion_h_
 /* Confusion.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
@@ -35,6 +35,10 @@
 #endif
 #ifndef _Matrix_h_
 	#include "Matrix.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define Confusion_members TableOfReal_members
@@ -107,5 +111,9 @@ TableOfReal Confusion_to_TableOfReal_marginals (I);
 
 void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision);
 // option marginals draw one extra row and column with sums.
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Confusion_h_ */

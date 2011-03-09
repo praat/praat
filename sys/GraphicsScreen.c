@@ -264,7 +264,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 }
 
 Graphics Graphics_create_screen (void *display, unsigned long window, int resolution) {
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	if (! Graphics_init (me)) return 0;
@@ -279,7 +279,7 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 
 #ifdef macintosh
 Graphics Graphics_create_port (void *display, unsigned long port, int resolution) {
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	if (! Graphics_init (me)) return 0;
@@ -290,7 +290,7 @@ Graphics Graphics_create_port (void *display, unsigned long port, int resolution
 #endif
 
 Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	my printer = true;
@@ -342,7 +342,7 @@ static void cb_move (GUI_ARGS) {
 #endif
 
 Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget */
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	#if gtk
 		GtkRequisition realsize;
 	#elif motif
@@ -385,7 +385,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
@@ -419,7 +419,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 Graphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
-	GraphicsScreen me = new (GraphicsScreen);
+	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh

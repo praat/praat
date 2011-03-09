@@ -1,6 +1,6 @@
 /* Eigen_and_TableOfReal.c
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20020429 _project: copy rowLabels too.
  djmw 20020502 Added from index to projections.
  djmw 20020813 GPL header
+ djmw 20110304 Thing_new
 */
 
 #include "Eigen_and_TableOfReal.h"
@@ -86,7 +87,7 @@ int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 
 Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee)
 {
-	Eigen him = new (Eigen);
+	Eigen him = Thing_new (Eigen);
 
 	if (him == NULL) return NULL;
 

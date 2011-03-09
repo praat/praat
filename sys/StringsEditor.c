@@ -160,7 +160,7 @@ class_methods (StringsEditor, Editor) {
 }
 
 StringsEditor StringsEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	StringsEditor me = new (StringsEditor); cherror
+	StringsEditor me = Thing_new (StringsEditor); cherror
 	Editor_init (StringsEditor_as_parent (me), parent, 20, 40, 600, 600, title, data); cherror
 	updateList (me);
 end:

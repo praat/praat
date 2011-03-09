@@ -76,18 +76,18 @@ class_create (UiInfile, UiFile);
 class_methods (UiInfile, UiFile)
 class_methods_end
 
-Any UiInfile_create (GuiObject parent, const wchar_t *title,
+UiForm UiInfile_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles)
 {
-	UiInfile me = new (UiInfile);
+	UiInfile me = Thing_new (UiInfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
 	my invokingButtonTitle = invokingButtonTitle;
 	my helpTitle = helpTitle;
 	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me, parent, title);
-	return me;
+	return (UiForm) me;
 }
 
 void UiInfile_do (I) {
@@ -125,10 +125,10 @@ class_create (UiOutfile, UiFile);
 class_methods (UiOutfile, UiFile)
 class_methods_end
 
-Any UiOutfile_create (GuiObject parent, const wchar_t *title,
+UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
 	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
-	UiOutfile me = new (UiOutfile);
+	UiOutfile me = Thing_new (UiOutfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
 	my invokingButtonTitle = invokingButtonTitle;
@@ -136,7 +136,7 @@ Any UiOutfile_create (GuiObject parent, const wchar_t *title,
 	UiFile_init (me, parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
-	return me;
+	return (UiForm) me;
 }
 
 static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
@@ -146,11 +146,11 @@ static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingStri
 	return command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter);
 }
 
-Any UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
+UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
 	Editor editor = (Editor) cmd -> editor;
-	UiOutfile dia = UiOutfile_create (editor -> dialog, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
+	UiOutfile dia = (UiOutfile) UiOutfile_create (editor -> dialog, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
-	return dia;
+	return (UiForm) dia;   // BUG
 }
 
 void UiOutfile_do (I, const wchar_t *defaultName) {

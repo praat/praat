@@ -1,6 +1,6 @@
 /* KlattTable.c
  *
- * Copyright (C) 2008 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -349,6 +349,7 @@ e-mail sensimetrics@sens.com
   djmw 20081019 first implementation.
   djmw 20081128 Parallel section: rnp filters dif(source)+frication instead of source only.
   djmw 20090708 +Table_to_KlattTable, KlattTable_to_Table
+  djmw 20110308 Thing_new + struct KlattFrame -> struct structKlattFrame
 */
 
 #include "KlattTable.h"
@@ -368,7 +369,7 @@ e-mail sensimetrics@sens.com
 #define SAMPLE_FACTOR 0.00001
 
 /* Structure for Klatt Parameters */
-typedef struct KlattFrame
+typedef struct structKlattFrame
 {
 	long F0hz10;	/* Voicing fund freq in units of 0.1 Hz */
 	long AVdb;	/* Amp of voicing in dB, 0 to 70 */
@@ -463,7 +464,7 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs)
 
 	if (thy nx != KlattTable_NPAR) return Melder_errorp3 (L"A KlattTable needs ", Melder_integer (KlattTable_NPAR), L" columns.");
 
-	KlattTable me = new (KlattTable);
+	KlattTable me = Thing_new (KlattTable);
 	if (me == NULL || ! Table_initWithColumnNames (me, thy ny, columnNames)) goto end;
 	for (long irow = 1; irow <= thy ny; irow++)
 	{
@@ -558,7 +559,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 static KlattFrame KlattFrame_create ()
 {
-	KlattFrame me = (KlattFrame) _Melder_malloc_e (sizeof(struct KlattFrame));
+	KlattFrame me = (KlattFrame) _Melder_malloc_e (sizeof(struct structKlattFrame));
 	return me;
 }
 
@@ -572,7 +573,7 @@ class_methods_end
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration)
 {
-	KlattTable me = new (KlattTable);
+	KlattTable me = Thing_new (KlattTable);
 	long nrows = floor (totalDuration / frameDuration) + 1;
 	if (me == NULL) return NULL;
 	if (!Table_initWithColumnNames (me, nrows, columnNames)) forget (me);
@@ -2657,7 +2658,7 @@ KlattTable KlattTable_createExample (void)
 		830,0,920,0,1445,0,2804,0,3915,0,5969,0,6256,0,0,0,200,30,0,60,0,0,0,0,0,87,0,62,0,103,0,105,0,80,0,80,0,0,0,60,
 		830,0,920,0,1445,0,2804,0,3915,0,5969,0,6256,0,0,0,200,30,0,60,0,0,0,0,0,87,0,62,0,103,0,105,0,80,0,80,0,0,0,60
 	};
-	KlattTable me = new (KlattTable);
+	KlattTable me = Thing_new (KlattTable);
 	if (! Table_initWithColumnNames (me, nrows, columnNames)) goto end;
 	for (long irow = 1; irow <= nrows; irow++)
 	{

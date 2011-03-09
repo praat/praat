@@ -51,7 +51,7 @@ class_methods (Autosegment, Function)
 class_methods_end
 
 Any Autosegment_create (double tmin, double tmax, const wchar_t *label) {
-	Autosegment me = new (Autosegment);
+	Autosegment me = Thing_new (Autosegment);
 	if (! me || ! Function_init (me, tmin, tmax) || (label != NULL && (Thing_setName (me, label), my name == NULL)))
 		forget (me);
 	return me;
@@ -83,7 +83,7 @@ int Tier_init (I, long initialCapacity) {
 }
 
 Tier Tier_create (long initialCapacity) {
-	Tier me = new (Tier);
+	Tier me = Thing_new (Tier);
 	if (! Tier_init (me, initialCapacity)) forget (me);
 	return me;
 }
@@ -114,7 +114,7 @@ int Label_init (I, long initialNumberOfTiers) {
 }
 
 Label Label_create (long initialNumberOfTiers) {
-	Label me = new (Label);
+	Label me = Thing_new (Label);
 	if (! Label_init (me, initialNumberOfTiers)) forget (me);
 	return me;
 }

@@ -775,7 +775,7 @@ DO
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
 	y = NUMdvector (1, n); cherror
-	function = new (PraatPictureFunction); cherror
+	function = Thing_new (PraatPictureFunction); cherror
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;
 	function -> nx = n;

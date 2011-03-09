@@ -30,7 +30,7 @@ class_methods (Script, Data) {
 }
 
 Script Script_createFromFile (MelderFile file) {
-	Script me = new (Script); cherror
+	Script me = Thing_new (Script); cherror
 	MelderFile_copy (file, & my file);
 end:
 	iferror forget (me);

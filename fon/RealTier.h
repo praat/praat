@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,23 +20,17 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2011/03/03
  */
 
-#ifndef _AnyTier_h_
-	#include "AnyTier.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
+#include "AnyTier.h"
+#include "Graphics.h"
+#include "TableOfReal.h"
+#include "Vector.h"
+#include "Interpreter_decl.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 /********** class RealPoint **********/
@@ -102,6 +96,10 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value);
 int RealTier_formula (I, const wchar_t *expression, Interpreter interpreter, thou);
 void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file RealTier.h */
 #endif

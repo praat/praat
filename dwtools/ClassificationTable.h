@@ -2,7 +2,7 @@
 #define _ClassificationTable_h_
 /* ClassificationTable.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  djmw 20020315 GPL header
  djmw 20040422 Added ClassificationTable_to_Categories_maximumProbability
  djmw 20040623 Added ClassificationTable_to_Strings_maximumProbability
- djmw 20101122 Latest modification.
+ djmw 20110306 Latest modification.
  */
 
 #ifndef _TableOfReal_h_
@@ -38,6 +38,10 @@
 #endif
 #ifndef _Strings_h_
 	#include "Strings.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define ClassificationTable_members TableOfReal_members
@@ -54,6 +58,9 @@ Confusion ClassificationTable_to_Confusion (ClassificationTable me);
 /* Correlations between the classes (columns) */
 Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me);
 
+#ifdef __cplusplus
+	}
+#endif
+
 #endif /* _ClassificationTable_h_ */
 
-/* End of file ClassificationTable.h */

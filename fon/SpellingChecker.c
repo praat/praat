@@ -63,7 +63,7 @@ class_methods (SpellingChecker, Data) {
 }
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
-	SpellingChecker thee = new (SpellingChecker); cherror
+	SpellingChecker thee = Thing_new (SpellingChecker); cherror
 	thy wordList = Data_copy (me); cherror
 	thy separatingCharacters = Melder_wcsdup_e (L".,;:()\""); cherror
 end:

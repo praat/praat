@@ -176,7 +176,7 @@ int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 }
 
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
-	TableOfReal me = new (TableOfReal);
+	TableOfReal me = Thing_new (TableOfReal);
 	if (! me || ! TableOfReal_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }
@@ -713,7 +713,7 @@ end:
 Strings TableOfReal_extractRowLabelsAsStrings (I) {
 	iam (TableOfReal);
 	long irow;
-	Strings thee = new (Strings); cherror
+	Strings thee = Thing_new (Strings); cherror
 	thy strings = NUMpvector (1, my numberOfRows); cherror
 	thy numberOfStrings = my numberOfRows;
 	for (irow = 1; irow <= my numberOfRows; irow ++) {
@@ -727,7 +727,7 @@ end:
 Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 	iam (TableOfReal);
 	long icol;
-	Strings thee = new (Strings); cherror
+	Strings thee = Thing_new (Strings); cherror
 	thy strings = NUMpvector (1, my numberOfColumns); cherror
 	thy numberOfStrings = my numberOfColumns;
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1021,7 +1021,7 @@ Any TablesOfReal_append (I, thou) {
 	 */
 	if (thy numberOfColumns != my numberOfColumns) error1 (L"Numbers of columns do not match.")
 
-	him = Thing_new (my methods); cherror
+	him = _Thing_new (my methods); cherror
 	TableOfReal_init (him, my numberOfRows + thy numberOfRows, my numberOfColumns); cherror
 	/* Unsafe: new attributes not initialized. */
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1055,7 +1055,7 @@ Any TablesOfReal_appendMany (Collection me) {
 		nrow += thy numberOfRows;
 		if (thy numberOfColumns != ncol) error1 (L"Numbers of columns do not match.")
 	}
-	him = Thing_new (thy methods); cherror
+	him = _Thing_new (thy methods); cherror
 	TableOfReal_init (him, nrow, ncol); cherror
 	/* Unsafe: new attributes not initialized. */
 	for (icol = 1; icol <= ncol; icol ++) {

@@ -1,4 +1,4 @@
-/* manual_soundFiles.c
+/* manual_soundFiles.cpp
  *
  * Copyright (C) 1992-2008 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_soundFiles_init (ManPages me);
-void manual_soundFiles_init (ManPages me) {
+extern "C" void manual_soundFiles_init (ManPages me);
+extern "C" void manual_soundFiles_init (ManPages me) {
 
 MAN_BEGIN (L"Sound files", L"ppgb", 20070602)
 INTRO (L"This tutorial describes the sound files that you can read "
@@ -446,4 +446,4 @@ MAN_END
 
 }
 
-/* End of file manual_soundFiles.c */
+/* End of file manual_soundFiles.cpp */

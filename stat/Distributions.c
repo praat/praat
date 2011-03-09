@@ -39,7 +39,7 @@ class_methods (Distributions, TableOfReal)
 class_methods_end
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
-	Distributions me = new (Distributions);
+	Distributions me = Thing_new (Distributions);
 	if (! me || ! TableOfReal_init (me, numberOfRows, numberOfColumns)) forget (me);
 	return me;
 }

@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,9 @@ Cepstrumc LPC_to_Cepstrumc (LPC me)
 {
 	Cepstrumc thee; long i;
 	if ((thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1, 
-		my maxnCoefficients, 1.0 / my samplingPeriod)) == NULL) return thee;
-	for (i=1; i <= my nx; i++)
+		my maxnCoefficients, 1.0 / my samplingPeriod)) == NULL) return NULL;
+	
+	for (i = 1; i <= my nx; i++)
 	{
 		if (! Cepstrumc_Frame_init (& thy frame[i], my frame[i].nCoefficients)) { forget (thee); break; } 
 		LPC_Frame_into_Cepstrumc_Frame (& my frame[i], & thy frame[i]);
@@ -77,7 +78,7 @@ LPC Cepstrumc_to_LPC (Cepstrumc me)
 {
 	LPC thee; long i;
 	if ((thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 
-		my maxnCoefficients, 1.0 / my samplingFrequency)) == NULL) return thee;
+		my maxnCoefficients, 1.0 / my samplingFrequency)) == NULL) return NULL;
 	for (i=1; i <= my nx; i++)
 	{
 		if (! LPC_Frame_init (& thy frame[i], my frame[i].nCoefficients)) { forget (thee); break; } 

@@ -1,4 +1,4 @@
-/* manual_Manual.c
+/* manual_Manual.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-void manual_Manual_init (ManPages me);
-void manual_Manual_init (ManPages me) {
+extern "C" void manual_Manual_init (ManPages me);
+extern "C" void manual_Manual_init (ManPages me) {
 
 MAN_BEGIN (L"Manual", L"ppgb", 20110101)
 INTRO (L"The documentation system for the Praat program.")
@@ -260,4 +260,4 @@ MAN_END
 
 }
 
-/* End of file manual_Manual.c */
+/* End of file manual_Manual.cpp */

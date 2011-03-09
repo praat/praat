@@ -277,8 +277,8 @@ int Collection_init (I, void *itemClass, long initialCapacity) {
 	return 1;
 }
 
-Any Collection_create (void *itemClass, long initialCapacity) {
-	Collection me = new (Collection);
+Collection Collection_create (void *itemClass, long initialCapacity) {
+	Collection me = Thing_new (Collection);
 	if (! me || ! Collection_init (me, itemClass, initialCapacity)) forget (me);
 	return me;
 }
@@ -374,8 +374,8 @@ int Ordered_init (I, void *itemClass, long initialMaximumLength) {
 	return 1;
 }
 
-Any Ordered_create (void) {
-	Ordered me = new (Ordered);
+Ordered Ordered_create (void) {
+	Ordered me = Thing_new (Ordered);
 	if (! me || ! Ordered_init (me, NULL, 10)) forget (me);
 	return me;
 }
@@ -485,7 +485,7 @@ class_methods (SortedSetOfInt, SortedSet) {
 int SortedSetOfInt_init (I) { iam (SortedSetOfInt); return SortedSet_init (me, classSimpleInt, 10); }
 
 SortedSetOfInt SortedSetOfInt_create (void) {
-	SortedSetOfInt me = new (SortedSetOfInt);
+	SortedSetOfInt me = Thing_new (SortedSetOfInt);
 	if (! me || ! SortedSetOfInt_init (me)) forget (me);
 	return me;
 }
@@ -507,7 +507,7 @@ class_methods (SortedSetOfShort, SortedSet) {
 int SortedSetOfShort_init (I) { iam (SortedSetOfShort); return SortedSet_init (me, classSimpleShort, 10); }
 
 SortedSetOfShort SortedSetOfShort_create (void) {
-	SortedSetOfShort me = new (SortedSetOfShort);
+	SortedSetOfShort me = Thing_new (SortedSetOfShort);
 	if (! me || ! SortedSetOfShort_init (me)) forget (me);
 	return me;
 }
@@ -529,7 +529,7 @@ class_methods (SortedSetOfLong, SortedSet) {
 int SortedSetOfLong_init (I) { iam (SortedSetOfLong); return SortedSet_init (me, classSimpleLong, 10); }
 
 SortedSetOfLong SortedSetOfLong_create (void) {
-	SortedSetOfLong me = new (SortedSetOfLong);
+	SortedSetOfLong me = Thing_new (SortedSetOfLong);
 	if (! me || ! SortedSetOfLong_init (me)) forget (me);
 	return me;
 }
@@ -551,7 +551,7 @@ class_methods (SortedSetOfDouble, SortedSet) {
 int SortedSetOfDouble_init (I) { iam (SortedSetOfDouble); return SortedSet_init (me, classSimpleDouble, 10); }
 
 SortedSetOfDouble SortedSetOfDouble_create (void) {
-	SortedSetOfDouble me = new (SortedSetOfDouble);
+	SortedSetOfDouble me = Thing_new (SortedSetOfDouble);
 	if (! me || ! SortedSetOfDouble_init (me)) forget (me);
 	return me;
 }
@@ -571,7 +571,7 @@ class_methods (SortedSetOfString, SortedSet) {
 int SortedSetOfString_init (I) { iam (SortedSetOfString); return SortedSet_init (me, classSimpleString, 10); }
 
 SortedSetOfString SortedSetOfString_create (void) {
-	SortedSetOfString me = new (SortedSetOfString);
+	SortedSetOfString me = Thing_new (SortedSetOfString);
 	if (! me || ! SortedSetOfString_init (me)) forget (me);
 	return me;
 }

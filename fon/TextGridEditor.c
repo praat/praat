@@ -2315,7 +2315,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 /********** EXPORTED **********/
 
 TextGridEditor TextGridEditor_create (GuiObject parent, const wchar_t *title, TextGrid grid, Any sound, Any spellingChecker) {
-	TextGridEditor me = new (TextGridEditor); cherror
+	TextGridEditor me = Thing_new (TextGridEditor); cherror
 	my spellingChecker = spellingChecker;   // Set in time.
 
 	/*

@@ -2,7 +2,7 @@
 #define _Speaker_h_
 /* Speaker.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
  */
 
 /*
- * pb 2007/10/09
+ * pb 2011/03/08
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
+#include "Data.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "Speaker_def.h"
@@ -36,6 +38,10 @@ Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses);
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/
 	/*    Kind of speaker is not one of "Female", "Male", or "Child".		*/
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file Speaker.h */
 #endif

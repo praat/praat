@@ -65,7 +65,7 @@ class_methods (SimpleInt, Data) {
 }
 
 SimpleInt SimpleInt_create (int number) {
-	SimpleInt me = new (SimpleInt);
+	SimpleInt me = Thing_new (SimpleInt);
 	if (! me) return NULL;
 	my number = number;
 	return me;
@@ -87,7 +87,7 @@ class_methods (SimpleShort, Data) {
 }
 
 SimpleShort SimpleShort_create (short number) {
-	SimpleShort me = new (SimpleShort);
+	SimpleShort me = Thing_new (SimpleShort);
 	if (! me) return NULL;
 	my number = number;
 	return me;
@@ -109,7 +109,7 @@ class_methods (SimpleLong, Data) {
 }
 
 SimpleLong SimpleLong_create (long number) {
-	SimpleLong me = new (SimpleLong);
+	SimpleLong me = Thing_new (SimpleLong);
 	if (! me) return NULL;
 	my number = number;
 	return me;
@@ -131,7 +131,7 @@ class_methods (SimpleDouble, Data) {
 }
 
 SimpleDouble SimpleDouble_create (double number) {
-	SimpleDouble me = new (SimpleDouble);
+	SimpleDouble me = Thing_new (SimpleDouble);
 	if (! me) return NULL;
 	my number = number;
 	return me;
@@ -153,7 +153,7 @@ class_methods (SimpleString, Data) {
 }
 
 SimpleString SimpleString_create (const wchar_t *string) {
-	SimpleString me = new (SimpleString);
+	SimpleString me = Thing_new (SimpleString);
 	if (! me || ! (my string = Melder_wcsdup_e (string)))
 		{ forget (me); return NULL; }
 	return me;

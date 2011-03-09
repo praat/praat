@@ -1,6 +1,6 @@
 /* Cepstrum.c
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20010514
  djmw 20020812 GPL header
  djmw 20080122 Version 1: float -> double
+ djmw 20110304 Thing_new
 */
 
 #include "Cepstrum.h"
@@ -32,7 +33,7 @@ class_methods_end
 
 Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
 {
-	Cepstrum me = new (Cepstrum);
+	Cepstrum me = Thing_new (Cepstrum);
 	double dx = (qmax - qmin) / nq;
 
 	if (me == NULL || ! Matrix_init (me, qmin, qmax, nq, dx, qmin + dx/2, 

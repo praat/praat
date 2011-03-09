@@ -2,7 +2,7 @@
 #define _LogisticRegression_h_
 /* LogisticRegression.h
  *
- * Copyright (C) 2005-2007 Paul Boersma
+ * Copyright (C) 2005-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,16 @@
  */
 
 /*
- * pb 2007/11/19
+ * pb 2011/03/03
  */
 
-#ifndef _Regression_h_
-	#include "Regression.h"
+#include "Regression.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "LogisticRegression_def.h"
-
 #define LogisticRegression_methods  Regression_methods
 oo_CLASS_CREATE (LogisticRegression, Regression);
 
@@ -40,5 +41,9 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *columns
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xmin, double xmax,
 	long coly, double ymin, double ymax, bool garnish);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file LogisticRegression.h */
+#endif

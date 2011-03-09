@@ -1,6 +1,6 @@
 /* Excitation_to_Formant.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 1995/08/23
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 #ifndef _Excitation_h_
@@ -29,6 +28,14 @@
 	#include "Formant.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 Formant Excitation_to_Formant (Excitation, int maxnFormants);
 
-/* End of file Excitation_to_Formant.c */
+#ifdef __cplusplus
+	}
+#endif
+
+/* End of file Excitation_to_Formant.h */

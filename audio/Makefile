@@ -1,7 +1,11 @@
 # Makefile of the library "audio"
-# Paul Boersma, 22 February 2010
+# Paul Boersma, 10 March 2011
 
 include ../makefile.defs
+
+CFLAGS = $(DEFS)
+
+CPPFLAGS = $(CFLAGS)
 
 OBJECTS = pa_unix_hostapis.o pa_linux_alsa.o \
 	pa_front.o pa_unix_util.o pa_debugprint.o pa_cpuload.o \

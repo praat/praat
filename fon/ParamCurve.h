@@ -2,7 +2,7 @@
 #define _ParamCurve_h_
 /* ParamCurve.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  */
 
 /*
- * pb 1995/03/07
- * pb 2002/07/16 GPL
+ * pb 2011/03/03
  */
 
 /*
@@ -32,11 +31,11 @@
 		y [i] = y (ty [i]) = y (ty1 + (i - 1) * dty);
 */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
+#include "Sound.h"
+#include "Graphics.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define ParamCurve_members Function_members \
@@ -84,6 +83,10 @@ void ParamCurve_swapXY (I);
 		x == old y;
 		y == old x;
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ParamCurve.h */
 #endif

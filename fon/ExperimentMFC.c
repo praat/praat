@@ -354,7 +354,7 @@ class_methods (ResultsMFC, Data) {
 }
 
 ResultsMFC ResultsMFC_create (long numberOfTrials) {
-	ResultsMFC me = new (ResultsMFC);
+	ResultsMFC me = Thing_new (ResultsMFC);
 	if (! me) return NULL;
 	my numberOfTrials = numberOfTrials;
 	if ((my result = NUMstructvector (TrialMFC, 1, my numberOfTrials)) == NULL)
@@ -366,7 +366,7 @@ ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 	ResultsMFC thee = NULL;
 //start:
 	if (my trial == 0 || my trial <= my numberOfTrials)
-		return Melder_errorp ("(ExperimentMFC_extractResults:) Experiment not finished.");
+		Melder_warning3 (L"The experiment was not finished. Only the first ", Melder_integer (my trial), L" responses are valid.");
 	thee = ResultsMFC_create (my numberOfTrials); cherror
 	for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 		wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?
@@ -380,7 +380,7 @@ ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 		} else {
 			thy result [trial]. stimulus = Melder_wcsdup_e (my stimulus [my stimuli [trial]]. name); cherror
 		}
-		if (my responses [trial] < 1) error3 (L"No response for trial ", Melder_integer (trial), L".")
+		//if (my responses [trial] < 1) error3 (L"No response for trial ", Melder_integer (trial), L".")
 		thy result [trial]. response = Melder_wcsdup_e (my response [my responses [trial]]. name); cherror
 		thy result [trial]. goodness = my goodnesses [trial];
 		thy result [trial]. reactionTime = my reactionTimes [trial];

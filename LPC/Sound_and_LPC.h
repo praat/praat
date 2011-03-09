@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_h_
 /* Sound_and_LPC.h
  *
- * Copyright (C) 1994-2010 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 /*
  djmw 19971103
  djmw 20020812 GPL header
+ djmw 20110307 Latest modification
 */
 
 #ifndef _LPC_h_
@@ -29,6 +30,10 @@
 #endif
 #ifndef _Sound_h_
 	#include "Sound.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 LPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -99,5 +104,9 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Sound_and_LPC_h_ */

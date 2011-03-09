@@ -173,7 +173,7 @@ end:
 }
 
 DemoEditor DemoEditor_create (GuiObject parent) {
-	DemoEditor me = new (DemoEditor);
+	DemoEditor me = Thing_new (DemoEditor);
 	if (! me || ! DemoEditor_init (me, parent)) { forget (me); return NULL; }
 	return me;
 }

@@ -2,7 +2,7 @@
 #define _Polygon_extensions_h_
 /* Polygon_extensions.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,17 @@
 /*
  djmw 1996
  djmw 20020813 GPL header
+ djmw 20110307 Latest modification
 */
 
 #include "Polygon.h"
 #include "Categories.h"
 #include "Graphics.h"
 #include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 void Polygon_translate (I, double xt, double yt);
 void Polygon_rotate (I, double alpha, double xc, double yc);
@@ -71,5 +76,9 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 
 Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax);
 /* Area enclosed by the sounds */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Polygon_extensions_h_ */

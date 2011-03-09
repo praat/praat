@@ -29,7 +29,7 @@ OTGrammar OTGrammar_create_NoCoda_grammar (void) {
 	OTGrammarCandidate candidate;
 	OTGrammarTableau tableau;
 	OTGrammarConstraint constraint;
-	OTGrammar me = new (OTGrammar); cherror
+	OTGrammar me = Thing_new (OTGrammar); cherror
 	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = 2); cherror
 	constraint = & my constraints [1];
 		constraint -> name = Melder_wcsdup_e (L"N\\s{O}C\\s{ODA}"); cherror

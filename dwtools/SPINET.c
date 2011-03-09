@@ -1,6 +1,6 @@
 /* SPINET.c
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20080122 float -> double
+  djmw 20110304 Thing_new
 */
 
 #include "SPINET.h"
@@ -78,7 +79,7 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,
 	 double excitationErbProportion, double inhibitionErbProportion)
 {
-	SPINET me = new (SPINET);
+	SPINET me = Thing_new (SPINET);
 	double minErb = NUMhertzToErb (minimumFrequency);
 	double maxErb = NUMhertzToErb (maximumFrequency);
 	double dErb = (maxErb - minErb) / nFilters;

@@ -2,7 +2,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  */
 
 /*
- djmw 20020813 GPL header
+ * djmw 20020813 GPL header
+ * djmw 20110304 Thing_new
 */
 
 #include "MFCC.h"
@@ -32,7 +33,7 @@ class_methods_end
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel)
 {
-	MFCC me = new (MFCC);
+	MFCC me = Thing_new (MFCC);
 	if (me == NULL || ! CC_init (me, tmin, tmax, nt, dt, t1,
 		maximumNumberOfCoefficients, fmin_mel, fmax_mel)) forget (me);
 	return me;

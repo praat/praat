@@ -1,6 +1,6 @@
 /* melder_debug.c
  *
- * Copyright (C) 2000-2010 Paul Boersma
+ * Copyright (C) 2000-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2010/11/17
+ * pb 2011/03/05
  */
 
 #include "melder.h"
@@ -63,6 +63,8 @@ the behaviour of that program changes in the following way:
 34: trace memory allocation and deallocation
 35: debugging on for QuickTime movie file opening
 36: debugging on for images
+37: debug autoThing
+38: debug autoNUMvector
 1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)

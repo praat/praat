@@ -2,7 +2,7 @@
 #define _SimpleVector_h_
 /* SimpleVector.h
  *
- * Copyright (C) 1994-2007 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 
 /*
  djmw 20020812 GPL header
- djmw 20070620 Latest modification.
+ djmw 20110306 Latest modification.
 */
 
 #ifndef _Data_h_
 	#include "Data.h"
+#endif
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define DoubleVector_members Data_members	\
@@ -45,5 +49,9 @@ class_create (ComplexVector, Data);
 
 int ComplexVector_init (I, long min, long max);
 ComplexVector ComplexVector_create (long min, long max);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _SimpleVector_h_ */

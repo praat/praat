@@ -378,7 +378,7 @@ class_methods (PitchEditor, FunctionEditor) {
 }
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch) {
-	PitchEditor me = new (PitchEditor); cherror
+	PitchEditor me = Thing_new (PitchEditor); cherror
 	FunctionEditor_init (PitchEditor_as_parent (me), parent, title, pitch); cherror
 end:
 	iferror forget (me);

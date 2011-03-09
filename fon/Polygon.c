@@ -91,7 +91,7 @@ class_methods (Polygon, Data) {
 }
 
 Polygon Polygon_create (long numberOfPoints) {
-	Polygon me = new (Polygon);
+	Polygon me = Thing_new (Polygon);
 	if (! me) return NULL;
 	my numberOfPoints = numberOfPoints;
 	if (! (my x = NUMdvector (1, numberOfPoints)) || ! (my y = NUMdvector (1, numberOfPoints)))

@@ -130,7 +130,7 @@ class_methods (Strings, Data) {
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
 static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int type) {
-	Strings me = new (Strings);
+	Strings me = Thing_new (Strings);
 	#if USE_STAT
 		/*
 		 * Initialize.
@@ -247,7 +247,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 	/*
 	 * Create.
 	 */
-	me = new (Strings);
+	me = Thing_new (Strings);
 	if (n > 0) my strings = NUMpvector (1, n); cherror
 	my numberOfStrings = n;
 

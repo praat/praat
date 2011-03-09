@@ -43,7 +43,7 @@ class_methods (SpectrumTier, RealTier)
 class_methods_end
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax) {
-	SpectrumTier me = new (SpectrumTier); cherror
+	SpectrumTier me = Thing_new (SpectrumTier); cherror
 	RealTier_init_e (me, fmin, fmax); cherror
 end:
 	iferror forget (me);
