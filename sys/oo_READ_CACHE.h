@@ -113,7 +113,7 @@
 		long n = cacgeti4 (f); \
 		if (! (my x = Class##_create ())) return 0; \
 		for (long i = 1; i <= n; i ++) { \
-			ItemClass item = Thing_new (ItemClass); \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			if (! item || ! item -> methods -> readCache (item, f)) return 0; \
 			if (! Collection_addItem (my x, item)) return 0; \
 		} \

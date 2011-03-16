@@ -286,8 +286,14 @@ Collection Collection_create (void *itemClass, long initialCapacity) {
 int _Collection_insertItem (I, Any data, long pos) {
 	iam (Collection);
 	if (my size >= my _capacity) {
+	/*
+	 * Check without change.
+	 */
 		Any *dum = (Any *) Melder_realloc_e (my item + 1, 2 * my _capacity * sizeof (Any));
 		if (! dum) return Melder_error1 (L"(Collection_insert:) Item not inserted.");
+	/*
+	 * From here: change without error.
+	 */
 		my item = dum - 1;
 		my _capacity *= 2;
 	}

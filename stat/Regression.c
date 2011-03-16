@@ -155,8 +155,8 @@ LinearRegression Table_to_LinearRegression (Table me) {
 	x = NUMdvector (1, numberOfParameters); cherror
 	thee = LinearRegression_create (); cherror
 	for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
-		double minimum = Table_getMinimum_e (me, ivar); cherror
-		double maximum = Table_getMaximum_e (me, ivar); cherror
+		double minimum = Table_getMinimum (me, ivar); cherror
+		double maximum = Table_getMaximum (me, ivar); cherror
 		Regression_addParameter (thee, my columnHeaders [ivar]. label, minimum, maximum, 0.0); cherror
 	}
 	for (icell = 1; icell <= numberOfCells; icell ++) {

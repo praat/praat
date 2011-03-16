@@ -336,14 +336,14 @@ typedef struct structData_Description {
 	double (*getDy) (I); \
 	double (*getX) (I, long ix); \
 	double (*getY) (I, long iy); \
-	wchar_t * (*getRowStr) (I, long irow); \
-	wchar_t * (*getColStr) (I, long icol); \
+	const wchar * (*getRowStr) (I, long irow); \
+	const wchar * (*getColStr) (I, long icol); \
 	double (*getCell) (I); \
-	wchar_t * (*getCellStr) (I); \
+	const wchar * (*getCellStr) (I); \
 	double (*getVector) (I, long irow, long icol); \
-	wchar_t * (*getVectorStr) (I, long icol); \
+	const wchar * (*getVectorStr) (I, long icol); \
 	double (*getMatrix) (I, long irow, long icol); \
-	wchar_t * (*getMatrixStr) (I, long irow, long icol); \
+	const wchar * (*getMatrixStr) (I, long irow, long icol); \
 	double (*getFunction0) (I); \
 	double (*getFunction1) (I, long irow, double x); \
 	double (*getFunction2) (I, double x, double y); \

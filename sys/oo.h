@@ -31,6 +31,7 @@
  * pb 2008/01/19 double
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRING
+ * pb 2011/03/15 removed oo_CHAR
  */
 
 /*** Single types. ***/
@@ -68,7 +69,6 @@
 #define oo_DOUBLE(x)  oo_SIMPLE (double, r8, x)
 #define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c8, x)
 #define oo_DCOMPLEX(x)  oo_SIMPLE (dcomplex, c16, x)
-#define oo_CHAR(x)  oo_SIMPLE (char, c1, x)
 #define oo_WCHAR(x)  oo_SIMPLE (wchar_t, c2, x)
 #define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
 
@@ -91,7 +91,6 @@
 #define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r8, x, cap, n)
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c8, x, cap, n)
 #define oo_DCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c16, x, cap, n)
-#define oo_CHAR_ARRAY(x,cap,n)  oo_ARRAY (char, c1, x, cap, n)
 #define oo_WCHAR_ARRAY(x,cap,n)  oo_ARRAY (wchar_t, c2, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
@@ -111,7 +110,6 @@
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r8, x, setType)
 #define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c8, x, setType)
 #define oo_DCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c16, x, setType)
-#define oo_CHAR_SET(x,setType)  oo_SET (char, c1, x, setType)
 #define oo_WCHAR_SET(x,setType)  oo_SET (wchar_t, c2, x, setType)
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
 
@@ -132,7 +130,6 @@
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, d, r8, x, min, max)
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, fc, c8, x, min, max)
 #define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, dc, c16, x, min, max)
-#define oo_CHAR_VECTOR_FROM(x,min,max)  oo_VECTOR (char, c, c1, x, min, max)
 #define oo_WCHAR_VECTOR_FROM(x,min,max)  oo_VECTOR (wchar_t, c, c2, x, min, max)
 #define oo_POINTER_VECTOR_FROM(x,min,max)  oo_VECTOR (void *, p, dummy, x, min, max)
 
@@ -149,8 +146,7 @@
 #define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, d, r8, x, row1, row2, col1, col2)
 #define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, fc, c8, x, row1, row2, col1, col2)
 #define oo_DCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, dc, c16, x, row1, row2, col1, col2)
-#define oo_CHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (char, c, c1, x, row1, row2, col1, col2)
-#define oo_WCHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (wchar_t, c, c2, x, row1, row2, col1, col2)
+#define oo_WCHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (wchar, c, c2, x, row1, row2, col1, col2)
 #define oo_POINTER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (void *, p, dummy, x, row1, row2, col1, col2)
 
 /* The same arrays, with the first index fixed at 1. */
@@ -168,8 +164,7 @@
 #define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, d, r8, x, 1, n)
 #define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, fc, c8, x, 1, n)
 #define oo_DCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, dc, c16, x, 1, n)
-#define oo_CHAR_VECTOR(x,n)  oo_VECTOR (char, c, c1, x, 1, n)
-#define oo_WCHAR_VECTOR(x,n)  oo_VECTOR (wchar_t, c, c2, x, 1, n)
+#define oo_WCHAR_VECTOR(x,n)  oo_VECTOR (wchar, c, c2, x, 1, n)
 #define oo_POINTER_VECTOR(x,n)  oo_VECTOR (void *, p, dummy, x, 1, n)
 
 #define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, b, i1, x, 1, nrow, 1, ncol)
@@ -185,8 +180,7 @@
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, d, r8, x, 1, nrow, 1, ncol)
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, fc, c8, x, 1, nrow, 1, ncol)
 #define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, dc, c16, x, 1, nrow, 1, ncol)
-#define oo_CHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (char, c, c1, x, 1, nrow, 1, ncol)
-#define oo_WCHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (char, c, c2, x, 1, nrow, 1, ncol)
+#define oo_WCHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (wchar, c, c2, x, 1, nrow, 1, ncol)
 #define oo_POINTER_MATRIX(x,nrow,ncol)  oo_MATRIX (void *, p, dummy, x, 1, nrow, 1, ncol)
 
 
@@ -258,7 +252,7 @@
 #define oo_CLASS_CREATE(klas,parent) \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		wchar_t *_className; \
+		const wchar_t *_className; \
 		parent##_Table _parent; \
 		long _size; \
 		klas##_methods \

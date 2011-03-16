@@ -33,103 +33,130 @@
 
 #include "Sound_to_Intensity.h"
 
-static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) try {
-	/*
-	 * Preconditions.
-	 */
-	if (! NUMdefined (minimumPitch)) Melder_throw ("(Sound-to-Intensity:) Minimum pitch undefined.");
-	if (! NUMdefined (timeStep)) Melder_throw ("(Sound-to-Intensity:) Time step undefined.");
-	if (timeStep < 0.0) Melder_throw ("(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, ".");
-	if (my dx <= 0.0) Melder_throw ("(Sound-to-Intensity:) The Sound's time step should be positive.");
-	if (minimumPitch <= 0.0) Melder_throw ("(Sound-to-Intensity:) Minimum pitch should be positive.");
-	/*
-	 * Defaults.
-	 */
-	if (timeStep == 0.0) timeStep = 0.8 / minimumPitch;   // default: four times oversampling Hanning-wise
-
-	double windowDuration = 6.4 / minimumPitch;
-	Melder_assert (windowDuration > 0.0);
-	double halfWindowDuration = 0.5 * windowDuration;
-	long halfWindowSamples = halfWindowDuration / my dx;
-	autoNUMdvector amplitude (- halfWindowSamples, halfWindowSamples);
-	autoNUMdvector window (- halfWindowSamples, halfWindowSamples);
-
-	for (long i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
-		double x = i * my dx / halfWindowDuration, root = 1 - x * x;
-		window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root));
-	}
-
-	long numberOfFrames;
-	double thyFirstTime;
+static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
 	try {
-		Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime); therror
-	} catch (...) {
-		Melder_throw ("The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, " Hz), "
-			"i.e. at least ", 6.4 / minimumPitch, " s, instead of ", my xmax - my xmin, " s.");
-	}
-	autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
-	for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
-		double midTime = Sampled_indexToX (thee.peek(), iframe);
-		long midSample = Sampled_xToNearestIndex (me, midTime);
-		long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
-		double sumxw = 0.0, sumw = 0.0, intensity;
-		if (leftSample < 1) leftSample = 1;
-		if (rightSample > my nx) rightSample = my nx;
+		/*
+		 * Preconditions.
+		 */
+		if (! NUMdefined (minimumPitch)) Melder_throw ("(Sound-to-Intensity:) Minimum pitch undefined.");
+		if (! NUMdefined (timeStep)) Melder_throw ("(Sound-to-Intensity:) Time step undefined.");
+		if (timeStep < 0.0) Melder_throw ("(Sound-to-Intensity:) Time step should be zero or positive instead of ", timeStep, ".");
+		if (my dx <= 0.0) Melder_throw ("(Sound-to-Intensity:) The Sound's time step should be positive.");
+		if (minimumPitch <= 0.0) Melder_throw ("(Sound-to-Intensity:) Minimum pitch should be positive.");
+		/*
+		 * Defaults.
+		 */
+		if (timeStep == 0.0) timeStep = 0.8 / minimumPitch;   // default: four times oversampling Hanning-wise
 
-		for (long channel = 1; channel <= my ny; channel ++) {
-			for (long i = leftSample; i <= rightSample; i ++) {
-				amplitude [i - midSample] = my z [channel] [i];
-			}
-			if (subtractMeanPressure) {
-				double sum = 0.0;
-				for (long i = leftSample; i <= rightSample; i ++) {
-					sum += amplitude [i - midSample];
-				}
-				double mean = sum / (rightSample - leftSample + 1);
-				for (long i = leftSample; i <= rightSample; i ++) {
-					amplitude [i - midSample] -= mean;
-				}
-			}
-			for (long i = leftSample; i <= rightSample; i ++) {
-				sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
-				sumw += window [i - midSample];
-			}
+		double windowDuration = 6.4 / minimumPitch;
+		Melder_assert (windowDuration > 0.0);
+		double halfWindowDuration = 0.5 * windowDuration;
+		long halfWindowSamples = halfWindowDuration / my dx;
+		autoNUMdvector amplitude (- halfWindowSamples, halfWindowSamples);
+		autoNUMdvector window (- halfWindowSamples, halfWindowSamples);
+
+		for (long i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
+			double x = i * my dx / halfWindowDuration, root = 1 - x * x;
+			window [i] = root <= 0.0 ? 0.0 : NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root));
 		}
-		intensity = sumxw / sumw;
-		if (intensity != 0.0) intensity /= 4e-10;
-		thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
+
+		long numberOfFrames;
+		double thyFirstTime;
+		try {
+			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime); therror
+		} catch (...) {
+			Melder_throw ("The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, " Hz), "
+				"i.e. at least ", 6.4 / minimumPitch, " s, instead of ", my xmax - my xmin, " s.");
+		}
+		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
+		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			double midTime = Sampled_indexToX (thee.peek(), iframe);
+			long midSample = Sampled_xToNearestIndex (me, midTime);
+			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
+			double sumxw = 0.0, sumw = 0.0, intensity;
+			if (leftSample < 1) leftSample = 1;
+			if (rightSample > my nx) rightSample = my nx;
+
+			for (long channel = 1; channel <= my ny; channel ++) {
+				for (long i = leftSample; i <= rightSample; i ++) {
+					amplitude [i - midSample] = my z [channel] [i];
+				}
+				if (subtractMeanPressure) {
+					double sum = 0.0;
+					for (long i = leftSample; i <= rightSample; i ++) {
+						sum += amplitude [i - midSample];
+					}
+					double mean = sum / (rightSample - leftSample + 1);
+					for (long i = leftSample; i <= rightSample; i ++) {
+						amplitude [i - midSample] -= mean;
+					}
+				}
+				for (long i = leftSample; i <= rightSample; i ++) {
+					sumxw += amplitude [i - midSample] * amplitude [i - midSample] * window [i - midSample];
+					sumw += window [i - midSample];
+				}
+			}
+			intensity = sumxw / sumw;
+			if (intensity != 0.0) intensity /= 4e-10;
+			thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
+		}
+		return thee.transfer();
+	} catch (...) {
+		rethrowmzero ("Sound: intensity analysis not performed.");
 	}
-	return thee.persist();
-} catch (...) {
-	rethrowzero1 (L"Intensity analysis not performed.");
 }
 
-extern "C"
-Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) try {
-	bool veryAccurate = false;
-	if (veryAccurate) {
-		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
-		autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
-		return thee.persist();
-	} else {
-		autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
-		return thee.persist();
+Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
+	try {
+		bool veryAccurate = false;
+		if (veryAccurate) {
+			autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
+			autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
+			return thee.transfer();
+		} else {
+			autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
+			return thee.transfer();
+		}
+	} catch (...) {
+		rethrowzero;
 	}
-} catch (...) {
-	rethrowzero;
 }
 
-extern "C"
-IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) try {
-	autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
-	//autoIntensity i2;   // compiler prevents this
-	//autoIntensity i3 = intensity;   // compiler prevents this
-	//i2 = intensity;   // compiler prevents this
-	//Intensity i4 = intensity;   // compiler SHOULD allow this
-	autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
-	return thee.persist();
-} catch (...) {
-	rethrowzero1 (L"(Sound-to-IntensityTier:) Not performed.");
+#define PLAYGROUND  0
+
+#if PLAYGROUND
+	struct structIntensity2 : structIntensity {
+		structIntensity2 () { }
+	};
+	typedef structIntensity2 *Intensity2;
+	_THING_DECLARE_AUTO (Intensity2)
+#endif
+
+IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) {
+	try {
+		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
+		#if PLAYGROUND
+			autoIntensity i2;   // compiler prevents this
+			autoIntensity i3 = intensity;   // compiler prevents this
+			i2 = intensity;   // compiler prevents this
+			Intensity i4 = intensity;   // compiler allows this
+			Intensity i8 = i2;   // compiler allows this
+			i4 = intensity;   // and this
+			Intensity2 i5 = NULL;
+			i4 = i5;   // base-class object becomes derived-class object
+			autoIntensity i6 = i5;
+			autoIntensity2 i7;
+			Intensity_downto_IntensityTier (i7);   // a double conversion that seems to work
+			structTable table = { 0 };
+			Table_initWithoutColumnNames (& table, 10, 10);
+			Table theenew = new structTable (table);
+			Melder_casual("rows %ld, columns %ld", theenew -> rows -> size, theenew -> numberOfColumns);
+		#endif
+		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
+		return thee.transfer();
+	} catch (...) {
+		rethrowmzero (L"Sound: no IntensityTier created.");
+	}
 }
 
 /* End of file Sound_to_Intensity.cpp */

@@ -60,7 +60,7 @@ FORM (Create_empty_Network, L"Create empty Network", 0)
 	REAL (L"right y range", L"10.0")
 	OK
 DO
-	if (! praat_new1 (Network_create_e (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
+	if (! praat_new1 (Network_create (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
 		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
 		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
 		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),

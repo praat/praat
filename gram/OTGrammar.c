@@ -1496,7 +1496,7 @@ int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	for (iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 		for (ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 			wchar_t *input, *output;
-			if (! PairDistribution_peekPair (thee, & input, & output)) goto end;
+			PairDistribution_peekPair (thee, & input, & output); cherror
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0) {
 				long icons;

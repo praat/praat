@@ -23,9 +23,11 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110309)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110316)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.19# (16 March 2011)")
+LIST_ITEM (L"\\bu @ExperimentMFC: corrected a bug introduced in 5.2.18 that could cause Praat to crash when extracting results from an incomplete experiment.")
 NORMAL (L"##5.2.18# (9 March 2011)")
 LIST_ITEM (L"\\bu @ExperimentMFC: incomplete experiments can still output their incomplete results.")
 NORMAL (L"##5.2.17# (2 March 2011)")

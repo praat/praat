@@ -92,7 +92,7 @@ end:
 	return;
 }
 
-Network Network_create_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
@@ -214,7 +214,7 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
 {
-	Network me = Network_create_e (minimumActivity, maximumActivity, spreadingRate,
+	Network me = Network_create (minimumActivity, maximumActivity, spreadingRate,
 		selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
 		0.0, numberOfColumns, 0.0, numberOfRows, numberOfRows * numberOfColumns,
 		numberOfRows * (numberOfColumns - 1) + numberOfColumns * (numberOfRows - 1)); cherror
@@ -261,7 +261,7 @@ Network Network_create_rectangle_vertical_e (double minimumActivity, double maxi
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
 {
-	Network me = Network_create_e (minimumActivity, maximumActivity, spreadingRate,
+	Network me = Network_create (minimumActivity, maximumActivity, spreadingRate,
 		selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
 		0.0, numberOfColumns, 0.0, numberOfRows, numberOfRows * numberOfColumns,
 		numberOfColumns * numberOfColumns * (numberOfRows - 1)); cherror

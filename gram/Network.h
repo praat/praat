@@ -38,7 +38,7 @@ void Network_init_e (Network me, double minimumActivity, double maximumActivity,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
-Network Network_create_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 

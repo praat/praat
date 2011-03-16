@@ -107,7 +107,7 @@
 	cacputi4 (my x ? my x -> size : 0, f); \
 	if (my x) { \
 		for (long i = 1; i <= my x -> size; i ++) { \
-			ItemClass data = my x -> item [i]; \
+			ItemClass data = (ItemClass) my x -> item [i]; \
 			if (! class##ItemClass -> writeCache (data, f)) return 0; \
 		} \
 	}

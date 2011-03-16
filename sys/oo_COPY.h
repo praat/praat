@@ -102,7 +102,7 @@
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
-		if (! (thy x = NUMstructmatrix (Type, row1, row2, col1, col2))) return 0; \
+		if (! (thy x = (Type **) NUMstructmatrix (Type, row1, row2, col1, col2))) return 0; \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
 				if (! Type##_copy (& my x [i] [j], & thy x [i] [j])) return 0; \
@@ -125,10 +125,10 @@
 
 
 #define oo_OBJECT(Class,version,x)  \
-	if (my x && ! (thy x = Data_copy (my x))) return 0;
+	if (my x && ! (thy x = (Class) Data_copy (my x))) return 0;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (my x && ! (thy x = Data_copy (my x))) return 0;
+	if (my x && ! (thy x = (Class) Data_copy (my x))) return 0;
 
 #define oo_FILE(x)  \
 	MelderFile_copy (& my x, & thy x);

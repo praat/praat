@@ -104,7 +104,7 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (me)), L" characters");
 }
 
-static wchar_t * getVectorStr (I, long icol) {
+static const wchar * getVectorStr (I, long icol) {
 	iam (Strings);
 	wchar_t *stringValue;
 	if (icol < 1 || icol > my numberOfStrings) return L"";

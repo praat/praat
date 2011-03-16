@@ -826,7 +826,7 @@ int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double ev
 	for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 		for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 			wchar_t *form1, *form2;
-			if (! PairDistribution_peekPair (thee, & form1, & form2)) goto end;
+			PairDistribution_peekPair (thee, & form1, & form2); cherror
 			++ idatum;
 			if (graphics && idatum % (numberOfData / 400 + 1) == 0)
 			{

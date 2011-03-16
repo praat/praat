@@ -115,8 +115,8 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 	smallMatrix = NUMdmatrix (0, numberOfFactors, 0, numberOfParameters); cherror
 	thee = LogisticRegression_create (my columnHeaders [dependent1]. label, my columnHeaders [dependent2]. label); cherror
 	for (ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		double minimum = Table_getMinimum_e (me, factors [ivar]); cherror
-		double maximum = Table_getMaximum_e (me, factors [ivar]); cherror
+		double minimum = Table_getMinimum (me, factors [ivar]); cherror
+		double maximum = Table_getMaximum (me, factors [ivar]); cherror
 		Regression_addParameter (thee, my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0); cherror
 	}
 	for (icell = 1; icell <= numberOfCells; icell ++) {

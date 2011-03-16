@@ -86,7 +86,7 @@ const wchar_t * Melder_naturalLogarithm (double lnNumber);   // turns -10000 int
 
 /********** STRING TO NUMBER CONVERSION **********/
 
-int Melder_isStringNumeric (const wchar_t *string);
+int Melder_isStringNumeric_nothrow (const wchar_t *string);
 double Melder_atof (const wchar_t *string);
 	/*
 	 * "3.14e-3" -> 3.14e-3
@@ -1003,8 +1003,14 @@ extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, co
 #define therror  iferror throw 1;   // will be removed once all errors throw exceptions
 #define rethrow  return   // will be: throw
 #define rethrowzero  do { return 0; } while (false)   // will be: throw
-#define rethrow1(s)  do { Melder_error1 (s); return; } while (false)   // will be: do { Melder_error1 (s); throw; } while (false)
-#define rethrowzero1(s)  do { Melder_error1 (s); return 0; } while (false)   // will be: do { Melder_error1 (s); throw; } while (false)
+#define rethrowm(...)  do { try { Melder_throw (__VA_ARGS__); } catch (...) { } return; } while (false)   // will be: do { Melder_throw (__VA_ARGS__) (s); } while (false)
+#define rethrowmzero(...)  do { try { Melder_throw (__VA_ARGS__); } catch (...) { } return 0; } while (false)   // will be: do { Melder_throw (__VA_ARGS__); } while (false)
+
+struct autoMelderProgress {
+	autoMelderProgress (const wchar_t *message) { Melder_progress1 (0.0, message); }
+	~autoMelderProgress () { Melder_progress1 (1.0, NULL); }
+};
+
 #endif
 
 /* End of file melder.h */

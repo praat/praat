@@ -40,25 +40,11 @@
 #define FCC_NORMAL  2
 #define FCC_ACCURATE  3
 
-struct autoNUMfft_Table {
-	structNUMfft_Table table;
-	autoNUMfft_Table () throw () {
-		table.n = 0;
-		table.trigcache = NULL;
-		table.splitcache = NULL;
-		//Melder_casual ("creating fft table");
-	}
-	~autoNUMfft_Table () {
-		NUMfft_Table_free (& table);
-		//Melder_casual ("deleting fft table");
-	}
-};
-
 Pitch Sound_to_Pitch_any (Sound me,
 	double dt, double minimumPitch, double periodsPerWindow, int maxnCandidates,
 	int method,
 	double silenceThreshold, double voicingThreshold,
-	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling) try
+	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling) { try
 {
 	autoNUMfft_Table fftTable;
 	double duration, t1;
@@ -140,8 +126,11 @@ Pitch Sound_to_Pitch_any (Sound me,
 	 * We do this even for the forward cross-correlation method,
 	 * because that allows us to compare the two methods.
 	 */
-	if (! Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1))
+	try {
+		Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1); therror
+	} catch (...) {
 		Melder_throw ("The pitch analysis would give zero pitch frames.");
+	}
 
 	/*
 	 * Create the resulting pitch contour.
@@ -164,7 +153,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		}
 	}
 	if (globalPeak == 0.0) {
-		return thee.persist();
+		return thee.transfer();
 	}
 
 	autoNUMdmatrix frame;
@@ -236,7 +225,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	autoNUMlvector imax (1, maxnCandidates);
 	autoNUMdvector localMean (1, my ny);
 
-	Melder_progress1 (0.0, L"Sound to Pitch...");   // autoMelderProgress progress (L"Sound to Pitch...");
+	autoMelderProgress progress (L"Sound to Pitch...");
 
 	for (iframe = 1; iframe <= nFrames; iframe ++) {
 		Pitch_Frame pitchFrame = & thy frame [iframe];
@@ -446,12 +435,10 @@ Pitch Sound_to_Pitch_any (Sound me,
 	Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
 		octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
-	Melder_progress1 (1.0, NULL);   /* Done. */   // delete
-	return thee.persist();
+	return thee.transfer();
 } catch (...) {
-	Melder_progress1 (1.0, NULL);   /* Done. */   // delete
-	rethrowzero1 (L"Pitch analysis not performed.");
-}
+	rethrowmzero (L"Sound: pitch analysis not performed.");
+}}
 
 Pitch Sound_to_Pitch (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
 	return Sound_to_Pitch_ac (me, timeStep, minimumPitch,

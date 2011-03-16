@@ -778,7 +778,7 @@ Matrix Table_to_Matrix (Table me) {
 	long irow, icol;
 	Matrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns); cherror
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize (me, icol);
+		Table_numericize_nothrow (me, icol);
 	}
 	for (irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = my rows -> item [irow];

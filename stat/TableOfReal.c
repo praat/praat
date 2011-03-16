@@ -117,12 +117,12 @@ static void info (I) {
 
 static double getNrow (I) { iam (TableOfReal); return my numberOfRows; }
 static double getNcol (I) { iam (TableOfReal); return my numberOfColumns; }
-static wchar_t * getRowStr (I, long irow) {
+static const wchar * getRowStr (I, long irow) {
 	iam (TableOfReal);
 	if (irow < 1 || irow > my numberOfRows) return NULL;
 	return my rowLabels [irow] ? my rowLabels [irow] : L"";
 }
-static wchar_t * getColStr (I, long icol) {
+static const wchar * getColStr (I, long icol) {
 	iam (TableOfReal);
 	if (icol < 1 || icol > my numberOfColumns) return NULL;
 	return my columnLabels [icol] ? my columnLabels [icol] : L"";
@@ -1134,7 +1134,7 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 	if (labelColumn < 1 || labelColumn > my numberOfColumns) labelColumn = 0;
 	thee = TableOfReal_create (my rows -> size, labelColumn ? my numberOfColumns - 1 : my numberOfColumns); cherror
 	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize (me, icol);
+		Table_numericize_nothrow (me, icol);
 	}
 	if (labelColumn) {
 		for (icol = 1; icol < labelColumn; icol ++) {

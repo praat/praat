@@ -50,10 +50,10 @@ Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 Table Tables_append (Collection me);
 int Table_appendRow (Table me);
 int Table_appendColumn (Table me, const wchar_t *label);
-int Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label);
-int Table_appendDifferenceColumn (Table me, long column1, long column2, const wchar_t *label);
-int Table_appendProductColumn (Table me, long column1, long column2, const wchar_t *label);
-int Table_appendQuotientColumn (Table me, long column1, long column2, const wchar_t *label);
+void Table_appendSumColumn (Table me, long column1, long column2, const wchar_t *label);
+void Table_appendDifferenceColumn (Table me, long column1, long column2, const wchar_t *label);
+void Table_appendProductColumn (Table me, long column1, long column2, const wchar_t *label);
+void Table_appendQuotientColumn (Table me, long column1, long column2, const wchar_t *label);
 int Table_removeRow (Table me, long row);
 int Table_removeColumn (Table me, long column);
 int Table_insertRow (Table me, long row);
@@ -79,14 +79,14 @@ int Table_setStringValue (Table me, long row, long column, const wchar_t *value)
 int Table_setNumericValue (Table me, long row, long column, double value);
 
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
-void Table_numericize (Table me, long column);
+void Table_numericize_nothrow (Table me, long column);
 
-double Table_getQuantile_e (Table me, long column, double quantile);
-double Table_getMean_e (Table me, long column);
-double Table_getMaximum_e (Table me, long icol);
-double Table_getMinimum_e (Table me, long icol);
+double Table_getQuantile (Table me, long column, double quantile);
+double Table_getMean (Table me, long column);
+double Table_getMaximum (Table me, long icol);
+double Table_getMinimum (Table me, long icol);
 double Table_getGroupMean (Table me, long column, long groupColumn, const wchar_t *group);
-double Table_getStdev_e (Table me, long column);
+double Table_getStdev (Table me, long column);
 long Table_drawRowFromDistribution (Table me, long column);
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,
 	double *out_significance, double *out_lowerLimit, double *out_upperLimit);
@@ -117,7 +117,7 @@ void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long markColumn, int fontSize, int garnish);
 void Table_scatterPlot_mark (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double markSize_mm, const wchar_t *mark, int garnish);
-void Table_drawEllipse (Table me, Graphics g, long xcolumn, long ycolumn,
+void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int garnish);
 
 void Table_list (Table me, bool includeRowNumbers);

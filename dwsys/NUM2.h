@@ -1131,6 +1131,22 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 
 #ifdef __cplusplus
 	}
+#ifdef __cplusplus
+struct autoNUMfft_Table {
+	structNUMfft_Table table;
+	autoNUMfft_Table () throw () {
+		table.n = 0;
+		table.trigcache = NULL;
+		table.splitcache = NULL;
+		//Melder_casual ("creating fft table");
+	}
+	~autoNUMfft_Table () {
+		NUMfft_Table_free (& table);
+		//Melder_casual ("deleting fft table");
+	}
+};
+#endif
+
 #endif
 
 #endif /* _NUM2_h_ */

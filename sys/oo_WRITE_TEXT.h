@@ -140,7 +140,7 @@
 	texputi4 (file, my x ? my x -> size : 0, L"" #x ": size", 0,0,0,0,0); \
 	if (my x) { \
 		for (long i = 1; i <= my x -> size; i ++) { \
-			ItemClass data = my x -> item [i]; \
+			ItemClass data = (ItemClass) my x -> item [i]; \
 			texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 			if (! class##ItemClass -> writeText (data, file)) return 0; \
 			texexdent (file); \

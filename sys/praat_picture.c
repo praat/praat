@@ -1344,12 +1344,11 @@ FORM (textWidth_wc, L"Text width in world coordinates", 0)
 	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
-	double wc;
 	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth (GRAPHICS, GET_STRING (L"text"));
+	double wc = Graphics_textWidth (GRAPHICS, GET_STRING (L"text"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
@@ -1358,12 +1357,11 @@ FORM (textWidth_mm, L"Text width in millimetres", 0)
 	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
-	double mm;
 	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING (L"text")));
+	double mm = Graphics_dxWCtoMM (GRAPHICS, Graphics_textWidth (GRAPHICS, GET_STRING (L"text")));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
@@ -1375,12 +1373,11 @@ FORM (textWidth_ps_wc, L"PostScript text width in world coordinates", 0)
 	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
-	double wc;
 	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
+	double wc = Graphics_textWidth_ps (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
@@ -1392,12 +1389,11 @@ FORM (textWidth_ps_mm, L"PostScript text width in millimetres", 0)
 	TEXTFIELD (L"text", L"Hello world")
 	OK
 DO
-	double mm;
 	Graphics_setFont (GRAPHICS, theCurrentPraatPicture -> font);
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
+	double mm = Graphics_textWidth_ps_mm (GRAPHICS, GET_STRING (L"text"), GET_INTEGER (L"Phonetic font") - 1);
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END

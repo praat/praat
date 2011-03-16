@@ -54,6 +54,7 @@
 /* Public. */
 
 typedef void *Any;   /* Prevent compile-time type checking. */
+typedef wchar_t wchar;
 
 /*
 	Use the macros 'I' and 'thou' for objects in the formal parameter lists.
@@ -250,7 +251,7 @@ void Thing_swap (I, thou);
 	static inline parentKlas klas##_as_parent (klas me) { return (parentKlas) me; } \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		wchar_t *_className; \
+		const wchar_t *_className; \
 		parentKlas##_Table _parent; \
 		long _size; \
 		klas##__methods(klas) \
@@ -363,6 +364,15 @@ extern long Thing_version;
 
 #ifdef __cplusplus
 	}
+class autostring {
+	wchar *ptr;
+public:
+	explicit autostring (const wchar *string) throw (int) { ptr = Melder_wcsdup_e (string); iferror throw 1; }
+	~autostring () throw () { Melder_free (ptr); }
+	operator wchar* () { return ptr; }
+	wchar * transfer () { wchar *tmp = ptr; ptr = NULL; return tmp; }
+};
+
 template <class T>
 class _Thing_auto {
 	T *ptr;
@@ -384,14 +394,14 @@ public:
 	 */
 	~_Thing_auto () throw () {
 		//if (Melder_debug == 37) Melder_casual ("begin forgetting autopointer %ld with pointer %ld", this, ptr);
-		forget (ptr);
+		if (ptr) forget (ptr);
 		//if (Melder_debug == 37) Melder_casual ("end forgetting autopointer %ld with pointer %ld", this, ptr);
 	}
 	/*
 	 * Access the pointer.
 	 */
 	T* peek () const throw () { return ptr; }
-	T* operator() () const throw () { return ptr; }
+	//T* operator() () const throw () { return ptr; }
 	/*
 	 * The expression
 	 *    pitch.ptr -> xmin
@@ -407,24 +417,27 @@ public:
 	 *    Pitch pitch2 = pitch;
 	 * But how?
 	 */
-	//T*& operator= (const _Thing_auto<T> &object) { return object.ptr; }
+	//operator T* () { return ptr; }   // this way; but perhaps it's better not to allow that, and have an explicit peek() versus transfer()
 	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
 	/*
 	 * Assignments like
-	 *    return thee.out();
+	 *    return thee.transfer();
 	 * and
-	 *    out_pitch = pitch.out();
-	 *    out_pulses = pulses.out();
+	 *    out_pitch = pitch.transfer();
+	 *    out_pulses = pulses.transfer();
+	 * and
+	 *    Collection_addItem (me, pitch.transfer());
+	 *    praat_new (pitch.transfer(), NAME);
 	 * make the pointer non-automatic again.
 	 */
-	T* persist (void) { T* temp = ptr; ptr = NULL; return temp; }
+	T* transfer (void) throw () { T* temp = ptr; ptr = NULL; return temp; }
 	/*
 	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
 	 * and therefore has to be done explicitly (rather than via an assignment),
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (const T* const newPtr) { forget (ptr); ptr = newPtr; iferror return 1; }
+	void reset (const T* const newPtr) { if (ptr) forget (ptr); ptr = newPtr; iferror return 1; }
 private:
 	/*
 	 * The compiler should prevent initializations like

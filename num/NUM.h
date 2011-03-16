@@ -270,11 +270,11 @@ FUNCTION (c, char)
 #undef FUNCTION
 
 #define NUMstructvector(Type,lo,hi)  \
-	NUMvector (sizeof (struct struct##Type), lo, hi)
+	(struct struct##Type *) NUMvector (sizeof (struct struct##Type), lo, hi)
 #define NUMstructvector_free(Type,v,lo)  \
 	NUMvector_free (sizeof (struct struct##Type), v, lo)
 #define NUMstructvector_copy(Type,v,lo,hi)  \
-	NUMvector_copy (sizeof (struct struct##Type), v, lo, hi)
+	(struct struct##Type *) NUMvector_copy (sizeof (struct struct##Type), v, lo, hi)
 #define NUMstructvector_copyElements(Type,v,to,lo,hi)  \
 	NUMvector_copyElements (sizeof (struct struct##Type), v, to, lo, hi)
 #define NUMstructvector_equal(Type,v1,v2,lo,hi)  \

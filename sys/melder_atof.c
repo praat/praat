@@ -27,7 +27,7 @@
 #include "melder.h"
 #include "NUM.h"
 
-static const wchar_t *findEndOfNumericString (const wchar_t *string) {
+static const wchar_t *findEndOfNumericString_nothrow (const wchar_t *string) {
 	const wchar_t *p = & string [0];
 	/*
 	 * Leading white space is OK.
@@ -88,9 +88,9 @@ static const wchar_t *findEndOfNumericString (const wchar_t *string) {
 	return p;
 }
 
-int Melder_isStringNumeric (const wchar_t *string) {
+int Melder_isStringNumeric_nothrow (const wchar_t *string) {
 	if (string == NULL) return false;
-	const wchar_t *p = findEndOfNumericString (string);
+	const wchar_t *p = findEndOfNumericString_nothrow (string);
 	if (p == NULL) return FALSE;
 	/*
 	 * We accept only white space after the numeric string.
@@ -102,7 +102,7 @@ int Melder_isStringNumeric (const wchar_t *string) {
 
 double Melder_atof (const wchar_t *string) {
 	if (string == NULL) return NUMundefined;
-	const wchar_t *p = findEndOfNumericString (string);
+	const wchar_t *p = findEndOfNumericString_nothrow (string);
 	if (p == NULL) return NUMundefined;
 	Melder_assert (p - string > 0);
 	#if defined (macintosh)

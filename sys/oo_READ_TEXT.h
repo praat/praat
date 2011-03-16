@@ -134,7 +134,7 @@
 		if ((my x = Class##_create ()) == NULL) return 0; \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
-			ItemClass item = Thing_new (ItemClass); \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			if (item == NULL) return 0; \
 			Thing_version = version; \
 			if (! item -> methods -> readText (item, text)) return 0; \
