@@ -47,7 +47,7 @@ oo_END_CLASS (SimpleDouble)
 
 #define ooSTRUCT SimpleString
 oo_DEFINE_CLASS (SimpleString, Data)
-	oo_STRINGW (string)
+	oo_STRING (string)
 oo_END_CLASS (SimpleString)
 #undef ooSTRUCT
 

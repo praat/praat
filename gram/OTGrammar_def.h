@@ -25,7 +25,7 @@
 #define ooSTRUCT OTGrammarConstraint
 oo_DEFINE_STRUCT (OTGrammarConstraint)
 
-	oo_STRINGW (name)
+	oo_STRING (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
 	oo_FROM (2)
@@ -58,7 +58,7 @@ oo_END_STRUCT (OTGrammarFixedRanking)
 #define ooSTRUCT OTGrammarCandidate
 oo_DEFINE_STRUCT (OTGrammarCandidate)
 
-	oo_STRINGW (output)
+	oo_STRING (output)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, my numberOfConstraints)
 	#if !oo_READING && !oo_WRITING
@@ -75,7 +75,7 @@ oo_END_STRUCT (OTGrammarCandidate)
 #define ooSTRUCT OTGrammarTableau
 oo_DEFINE_STRUCT (OTGrammarTableau)
 
-	oo_STRINGW (input)
+	oo_STRING (input)
 	oo_LONG (numberOfCandidates)
 	oo_STRUCT_VECTOR (OTGrammarCandidate, candidates, my numberOfCandidates)
 

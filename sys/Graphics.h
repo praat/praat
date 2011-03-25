@@ -20,18 +20,18 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/03/22
  */
 
 #ifndef _Thing_h_
 	#include "Thing.h"
 #endif
 
-#include "Graphics_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "Graphics_enums.h"
 
 typedef struct structGraphics *Graphics;
 Graphics Graphics_create (int resolution);
@@ -185,7 +185,7 @@ void Graphics_setArrowSize (I, double arrorSize);
 
 void Graphics_inqViewport (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
-int Graphics_inqFont (I);
+enum kGraphics_font Graphics_inqFont (I);
 int Graphics_inqFontSize (I);
 int Graphics_inqFontStyle (I);
 int Graphics_inqLineType (I);

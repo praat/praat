@@ -2,7 +2,7 @@
 #define _TextGridEditor_h_
 /* TextGridEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2007/12/07
+ * pb 2011/03/23
  */
 
-#ifndef _TimeSoundAnalysisEditor_h_
-	#include "TimeSoundAnalysisEditor.h"
-#endif
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
+#include "TimeSoundAnalysisEditor.h"
+#include "TextGrid.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "TextGridEditor_enums.h"
@@ -40,6 +40,10 @@ TextGridEditor TextGridEditor_create (GuiObject parent, const wchar_t *title, Te
 	Any spellingChecker);
 
 void TextGridEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TextGridEditor.h */
 #endif

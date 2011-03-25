@@ -2,7 +2,7 @@
 #define _PitchEditor_h_
 /* PitchEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/23
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
+#include "FunctionEditor.h"
+#include "Pitch.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define PitchEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
@@ -38,6 +38,10 @@ Thing_declare1 (PitchEditor);
 Thing_declare2 (PitchEditor, FunctionEditor);
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file PitchEditor.h */
 #endif

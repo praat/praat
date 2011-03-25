@@ -28,7 +28,7 @@
 	#include "NUMcblas.h"
 #endif
 
-static struct machar_Table machar_table;
+static struct structmachar_Table machar_table;
 machar_Table NUMfpp = NULL;
 
 /*

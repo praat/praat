@@ -26,7 +26,7 @@
 oo_DEFINE_CLASS (Strings, Data)
 
 	oo_LONG (numberOfStrings)
-	oo_STRINGW_VECTOR (strings, my numberOfStrings)
+	oo_STRING_VECTOR (strings, my numberOfStrings)
 
 oo_END_CLASS (Strings)
 #undef ooSTRUCT

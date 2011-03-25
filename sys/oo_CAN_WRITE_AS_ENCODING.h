@@ -46,18 +46,18 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	if (my x && ! Melder_isEncodable (my x, encoding)) return false;
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
 			if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false; \

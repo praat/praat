@@ -102,9 +102,7 @@ GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int heigh
 		if (width != Gui_AUTOMATIC) XtVaSetValues (shell, XmNwidth, (Dimension) width, NULL);
 		if (height != Gui_AUTOMATIC) XtVaSetValues (shell, XmNheight, (Dimension) height, NULL);
 		if (goAwayCallback) {
-			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
-			XmAddWMProtocols (shell, & atom, 1);
-			XmAddWMProtocolCallback (shell, atom, _GuiMotifWindow_goAwayCallback, (void *) me);
+			XmAddWMProtocolCallback (shell, 'delw', _GuiMotifWindow_goAwayCallback, (void *) me);
 		}
 		GuiWindow_setTitle (shell, title);
 		my widget = XmCreateForm (shell, "dialog", NULL, 0);

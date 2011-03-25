@@ -2,7 +2,7 @@
 #define _TimeSoundAnalysisEditor_h_
 /* TimeSoundAnalysisEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,25 +42,18 @@
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
  * pb 2007/12/02 split off TimeSoundAnalysisEditor_enums.h
+ * pb 2011/03/23 C++
  */
 
-#ifndef _TimeSoundEditor_h_
-	#include "TimeSoundEditor.h"
-#endif
-#ifndef _Sound_and_Spectrogram_h_
-	#include "Sound_and_Spectrogram.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
+#include "TimeSoundEditor.h"
+#include "Sound_and_Spectrogram.h"
+#include "Pitch.h"
+#include "Intensity.h"
+#include "Formant.h"
+#include "PointProcess.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "TimeSoundAnalysisEditor_enums.h"
@@ -164,6 +157,10 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me);
 
 void TimeSoundAnalysisEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif

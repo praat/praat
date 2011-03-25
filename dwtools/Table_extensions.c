@@ -3146,12 +3146,12 @@ void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xc
 
 	for (long row = 1; row <= nrows; row++)
 	{
-		double x  = Table_getNumericValue (me, row, xcolumn);
-		double y  = Table_getNumericValue (me, row, ycolumn);
-		double x1 = Table_getNumericValue (me, row, xci_min);	
-		double x2 = Table_getNumericValue (me, row, xci_max);
-		double y1 = Table_getNumericValue (me, row, yci_min);	
-		double y2 = Table_getNumericValue (me, row, yci_max);
+		double x  = Table_getNumericValue_Assert (me, row, xcolumn);
+		double y  = Table_getNumericValue_Assert (me, row, ycolumn);
+		double x1 = Table_getNumericValue_Assert (me, row, xci_min);	
+		double x2 = Table_getNumericValue_Assert (me, row, xci_max);
+		double y1 = Table_getNumericValue_Assert (me, row, yci_min);	
+		double y2 = Table_getNumericValue_Assert (me, row, yci_max);
 		double xo1, yo1, xo2, yo2;
 		
 		if (xci_min > 0)

@@ -54,7 +54,6 @@
 /* Public. */
 
 typedef void *Any;   /* Prevent compile-time type checking. */
-typedef wchar_t wchar;
 
 /*
 	Use the macros 'I' and 'thou' for objects in the formal parameter lists.
@@ -364,15 +363,6 @@ extern long Thing_version;
 
 #ifdef __cplusplus
 	}
-class autostring {
-	wchar *ptr;
-public:
-	explicit autostring (const wchar *string) throw (int) { ptr = Melder_wcsdup_e (string); iferror throw 1; }
-	~autostring () throw () { Melder_free (ptr); }
-	operator wchar* () { return ptr; }
-	wchar * transfer () { wchar *tmp = ptr; ptr = NULL; return tmp; }
-};
-
 template <class T>
 class _Thing_auto {
 	T *ptr;

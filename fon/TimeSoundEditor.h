@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2007/12/07
+ * pb 2011/03/23
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _LongSound_h_
-	#include "LongSound.h"
+#include "FunctionEditor.h"
+#include "Sound.h"
+#include "LongSound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 struct TimeSoundEditor_sound {
@@ -59,6 +57,10 @@ void TimeSoundEditor_prefs (void);
 int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file TimeSoundEditor.h */
 #endif

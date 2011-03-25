@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/03/23
  */
 
 #include "Strings.h"
@@ -29,11 +29,11 @@
 #include "Distributions.h"
 #include "TableOfReal.h"
 
-#include "OTGrammar_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "OTGrammar_enums.h"
 
 #include "OTGrammar_def.h"
 #define OTGrammar_methods Data_methods
@@ -99,36 +99,26 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInput, double evaluationNoise);
 Distributions OTGrammar_measureTypology (OTGrammar me);
 
-#define OTGrammar_DEMOTION_ONLY  0
-#define OTGrammar_SYMMETRIC_ONE  1
-#define OTGrammar_SYMMETRIC_ALL  2
-#define OTGrammar_WEIGHTED_UNCANCELLED  3
-#define OTGrammar_WEIGHTED_ALL  4
-#define OTGrammar_EDCD  5
-#define OTGrammar_EDCD_WITH_VACATION  6
-#define OTGrammar_DEMOTE_ONE_WITH_VACATION  7
-#define OTGrammar_ALL_UP_ONE_DOWN  8
-
 int OTGrammar_learnOne (OTGrammar me, const wchar_t *input, const wchar_t *adultOutput,
-	double rankingSpreading, int strategy, int honourLocalRankings,
+	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, int newDisharmonies,
 	int warnIfStalled, int *grammarHasChanged);
 int OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
-	double rankingSpreading, int strategy, int honourLocalRankings,
+	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews);
 int OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
-	double evaluationNoise, int strategy, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews);
 bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation);
 int OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAdultOutput,
-	double rankingSpreading, int strategy, int honourLocalRankings,
+	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, int warnIfStalled);
 int OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
-	double rankingSpreading, int strategy, int honourLocalRankings,
+	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, long numberOfChews, long storeHistoryEvery, OTHistory *history);
 int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
-	double evaluationNoise, int strategy, int honourLocalRankings,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out);

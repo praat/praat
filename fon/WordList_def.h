@@ -24,7 +24,7 @@
 #define ooSTRUCT WordList
 oo_DEFINE_CLASS (WordList, Data)
 	#if !oo_DESCRIBING
-		oo_LSTRINGW (string)
+		oo_LSTRING (string)
 	#endif
 	#if oo_DECLARING
 		oo_LONG (length)

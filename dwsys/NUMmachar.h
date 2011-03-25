@@ -23,7 +23,11 @@
  djmw 20020812 GPL header
 */
 
-struct machar_Table
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+struct structmachar_Table
 {
 	int base;		/* Radix in which numbers are presented. */
 	int t;			/* Number of base digits in mantissa*/
@@ -37,8 +41,12 @@ struct machar_Table
 	double rmax;	/* Overflow threshold  - (base**emax)*(1-eps)*/	
 };
 
-typedef struct machar_Table *machar_Table;
+typedef struct structmachar_Table *machar_Table;
 
 void NUMmachar (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _NUMmachar_h_ */

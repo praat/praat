@@ -2,7 +2,7 @@
 #define _PointEditor_h_
 /* PointEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2007/09/08
+ * pb 2011/03/23
  */
 
-#ifndef _TimeSoundEditor_h_
-	#include "TimeSoundEditor.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
+#include "TimeSoundEditor.h"
+#include "PointProcess.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define PointEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
@@ -44,6 +44,10 @@ PointEditor PointEditor_create (GuiObject parent, const wchar_t *title,
 /*
 	'sound' may be NULL.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file PointEditor.h */
 #endif

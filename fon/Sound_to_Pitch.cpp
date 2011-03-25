@@ -207,14 +207,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 		* Compute the normalized autocorrelation of the window.
 		*/
 		for (long i = 1; i <= nsamp_window; i ++) windowR [i] = window [i];
-		NUMfft_forward (& fftTable.table, windowR.ptr);
+		NUMfft_forward (& fftTable.table, windowR.peek());
 		windowR [1] *= windowR [1];   /* DC component. */
 		for (long i = 2; i < nsampFFT; i += 2) {
 			windowR [i] = windowR [i] * windowR [i] + windowR [i+1] * windowR [i+1];
 			windowR [i + 1] = 0.0;   /* Power spectrum: square and zero. */
 		}
 		windowR [nsampFFT] *= windowR [nsampFFT];   /* Nyquist frequency. */
-		NUMfft_backward (& fftTable.table, windowR.ptr);   /* Autocorrelation. */
+		NUMfft_backward (& fftTable.table, windowR.peek());   /* Autocorrelation. */
 		for (long i = 2; i <= nsamp_window; i ++) windowR [i] /= windowR [1];   /* Normalize. */
 		windowR [1] = 1.0;   /* Normalize. */
 
@@ -335,7 +335,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 				}
 				ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   /* Nyquist frequency. */
 			}
-			NUMfft_backward (& fftTable.table, ac.ptr);   /* Autocorrelation. */
+			NUMfft_backward (& fftTable.table, ac.peek());   /* Autocorrelation. */
 
 			/*
 			 * Normalize the autocorrelation to the value with zero lag,

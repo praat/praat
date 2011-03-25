@@ -1684,7 +1684,7 @@ Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecim
 		}
 	}
 	long columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
-	Table_sortRows (thee, columns, 2);
+	Table_sortRows_Assert (thee, columns, 2);
 end:
 	iferror forget (thee);
 	return thee;

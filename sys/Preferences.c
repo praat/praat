@@ -111,7 +111,7 @@ void Preferences_addDouble (const wchar_t *string, double *value, double default
 	{ *value = defaultValue; Preferences_add (string, doublewa, value, 0, 0, NULL, NULL); }
 
 void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue)
-	{ wcscpy (value, defaultValue); Preferences_add (string, stringwwa, value, 0, 0, NULL, NULL); }
+	{ wcscpy (value, defaultValue); Preferences_add (string, stringwa, value, 0, 0, NULL, NULL); }
 
 void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value, int min, int max,
 	const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text), int defaultValue)
@@ -150,7 +150,7 @@ void Preferences_read (MelderFile file) {
 				wcstol (value, NULL, 10) != 0; break;
 			case charwa: * (wchar_t *) pref -> value = value [0]; break;
 			case doublewa: * (double *) pref -> value = Melder_atof (value); break;
-			case stringwwa: {
+			case stringwa: {
 				wcsncpy ((wchar_t *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
 				((wchar_t *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;
 			}
@@ -185,7 +185,7 @@ void Preferences_write (MelderFile file) {
 			case boolwa: MelderString_append1 (& buffer, Melder_boolean (* (bool *) pref -> value)); break;
 			case charwa: MelderString_appendCharacter (& buffer, * (char *) pref -> value); break;
 			case doublewa: MelderString_append1 (& buffer, Melder_double (* (double *) pref -> value)); break;
-			case stringwwa: MelderString_append1 (& buffer, pref -> value); break;
+			case stringwa: MelderString_append1 (& buffer, pref -> value); break;
 			case enumwa: MelderString_append1 (& buffer, pref -> getText (* (enum kPreferences_dummy *) pref -> value)); break;
 		}
 		MelderString_appendCharacter (& buffer, '\n');

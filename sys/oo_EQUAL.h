@@ -62,18 +62,18 @@
 	if (! my x != ! thy x || \
 		(my x && ! NUM##t##vector_equal (my x, thy x, min, max))) return 0;
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	if (! Melder_wcsequ (my x, thy x)) return 0;
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Melder_wcsequ (my x [i], thy x [i])) return 0;
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! my x != ! thy x) return 0; \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \

@@ -25,7 +25,7 @@
 #define ooSTRUCT TextPoint
 oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
-	oo_STRINGW (mark)
+	oo_STRING (mark)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
 	#if oo_READING_TEXT
@@ -41,7 +41,7 @@ oo_END_CLASS (TextPoint)
 #define ooSTRUCT TextInterval
 oo_DEFINE_CLASS (TextInterval, Function)
 
-	oo_STRINGW (text)
+	oo_STRING (text)
 
 oo_END_CLASS (TextInterval)
 #undef ooSTRUCT

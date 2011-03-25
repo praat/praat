@@ -100,40 +100,40 @@ PairDistribution PairDistribution_create () {
 	}
 }
 
-static void PairDistribution_checkSpecifiedPairNumber (const structPairDistribution& me, long pairNumber) {
+static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, long pairNumber) {
 	if (pairNumber < 1)
-		Melder_throw ("Table: the specified pair number is ", pairNumber, ", but should be at least 1.");
-	if (pairNumber > me. pairs -> size)
-		Melder_throw ("Table: the specified pair number is ", pairNumber, ", but should be at most my number of pairs (", me. pairs -> size, ").");	
+		Melder_throw (me, ": the specified pair number is ", pairNumber, ", but should be at least 1.");
+	if (pairNumber > my pairs -> size)
+		Melder_throw (me, ": the specified pair number is ", pairNumber, ", but should be at most my number of pairs (", my pairs -> size, ").");	
 }
 
 const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber) {
 	try {
-		PairDistribution_checkSpecifiedPairNumber (*me, pairNumber);
+		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string1;
 	} catch (...) {
-		rethrowmzero ("PairDistribution: string1 not retrieved.");
+		rethrowmzero (me, ": string1 not retrieved.");
 	}
 }
 
 const wchar * PairDistribution_getString2 (PairDistribution me, long pairNumber) {
 	try {
-		PairDistribution_checkSpecifiedPairNumber (*me, pairNumber);
+		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string2;
 	} catch (...) {
-		rethrowmzero ("PairDistribution: string2 not retrieved.");
+		rethrowmzero (me, ": string2 not retrieved.");
 	}
 }
 
 double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 	try {
-		PairDistribution_checkSpecifiedPairNumber (*me, pairNumber);
+		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> weight;
 	} catch (...) {
-		rethrowmzero ("PairDistribution: weight not retrieved.");
+		rethrowmzero (me, ": weight not retrieved.");
 	}
 }
 
@@ -162,7 +162,7 @@ static double PairDistributions_getTotalWeight_checkPositive (PairDistribution m
 		totalWeight += prob -> weight;
 	}
 	if (totalWeight <= 0.0) {
-		Melder_throw ("PairDistribution: the total probability weight is ", Melder_half (totalWeight), " but should be greater than zero for this operation.");
+		Melder_throw (me, ": the total probability weight is ", Melder_half (totalWeight), " but should be greater than zero for this operation.");
 	}
 	return totalWeight;
 }
@@ -200,7 +200,7 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 		*strings1_out = strings1.transfer();
 		*strings2_out = strings2.transfer();
 	} catch (...) {
-		rethrowm ("PairDistribution: generation of Stringses not performed.");
+		rethrowm (me, ": generation of Stringses not performed.");
 	}
 }
 
@@ -228,7 +228,7 @@ void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t 
 		*string1 = prob -> string1;
 		*string2 = prob -> string2;
 	} catch (...) {
-		rethrowm (L"PairDistribution: pair not peeked.");
+		rethrowm (me, ": pair not peeked.");
 	}
 }
 
@@ -276,7 +276,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		} while (pairmin <= thy pairs -> size);
 		return correct;
 	} catch (...) {
-		rethrowmzero ("PairDistribution: could not compute my fraction correct.");
+		rethrowmzero (me, ": could not compute my fraction correct.");
 	}
 }
 
@@ -286,13 +286,6 @@ double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution m
 
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me) {
 	return PairDistribution_getFractionCorrect (me, 1);
-}
-
-static void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber) {
-	if (columnNumber < 1)
-		Melder_throw ("Distributions: the specified column number is ", columnNumber, ", but should be at least 1.");
-	if (columnNumber > my numberOfColumns)
-		Melder_throw ("Distributions: the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");
 }
 
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions dist, long column) {
@@ -340,7 +333,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		} while (pairmin <= thy pairs -> size);
 		return correct;
 	} catch (...) {
-		rethrowmzero (L"PairDistribution & Distributions: could not compute our fraction correct.");
+		rethrowmzero (me, " & ", dist, ": could not compute our fraction correct.");
 	}
 }
 

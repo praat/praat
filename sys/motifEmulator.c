@@ -3067,12 +3067,6 @@ void XmAddWMProtocolCallback (GuiObject me, Atom protocol, XtCallbackProc callba
 	}
 }
 
-void XmAddWMProtocols (GuiObject shell, Atom *protocols, Cardinal num_protocols) {
-	(void) shell;
-	(void) protocols;
-	(void) num_protocols;
-}
-
 GuiObject XmCreateBulletinBoard (GuiObject parent, const char *name, ArgList dum1, int dum2) {
 	(void) dum1;
 	(void) dum2;
@@ -3183,13 +3177,6 @@ GuiObject XmCreateToggleButtonGadget (GuiObject parent, const char *name, ArgLis
 	(void) dum1;
 	(void) dum2;
 	return createWidget (xmToggleButtonWidgetClass, parent, name);
-}
-
-Atom XmInternAtom (Display *display, String name, Boolean only_if_exists) {
-	(void) display;
-	(void) only_if_exists;
-	if (strequ (name, "WM_DELETE_WINDOW")) return 'delw';
-	return 0;
 }
 
 void XmScaleGetValue (GuiObject me, int *value_return) {

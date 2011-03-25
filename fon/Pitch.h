@@ -20,18 +20,18 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/03/23
  */
 
 #include "Sampled.h"
 #include "Graphics.h"
 #include "Interpreter_decl.h"
 
-#include "Pitch_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "Pitch_enums.h"
 
 #include "Pitch_def.h"
 #define Pitch_methods Sampled_methods

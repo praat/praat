@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008-2009 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2009/01/23
+ * pb 2011/03/23
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _FormantGrid_h_
-	#include "FormantGrid.h"
+#include "FunctionEditor.h"
+#include "FormantGrid.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 struct FormantGridEditor_Play {
@@ -56,6 +56,10 @@ int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_
 FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data);
 
 void FormantGridEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file FormantGridEditor.h */
 #endif

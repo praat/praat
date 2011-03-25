@@ -224,7 +224,6 @@
 	 * Declarations of Xm functions.
 	 */
 	void XmAddWMProtocolCallback (GuiObject shell, Atom protocol, XtCallbackProc callback, char *closure);
-	void XmAddWMProtocols (GuiObject shell, Atom *protocols, Cardinal num_protocols);   /* does nothing */
 	GuiObject XmCreateBulletinBoard (GuiObject, const char *, ArgList, int);  
 	GuiObject XmCreateBulletinBoardDialog (GuiObject, const char *, ArgList, int);  
 	GuiObject XmCreateCascadeButton (GuiObject, const char *, ArgList, int);
@@ -244,7 +243,6 @@
 	GuiObject XmCreateShell (GuiObject, const char *, ArgList, int);
 	GuiObject XmCreateToggleButton (GuiObject, const char *, ArgList, int);
 	GuiObject XmCreateToggleButtonGadget (GuiObject, const char *, ArgList, int);   
-	Atom XmInternAtom (Display *display, String name, Boolean only_if_exists);
 	void XmScaleGetValue (GuiObject widget, int *value_return);
 	void XmScaleSetValue (GuiObject widget, int value);
 	void XmScrollBarGetValues (GuiObject me, int *value, int *sliderSize, int *increment, int *pageIncrement);

@@ -25,8 +25,8 @@
 #define ooSTRUCT PairProbability
 oo_DEFINE_CLASS (PairProbability, Data)
 
-	oo_STRINGW (string1)
-	oo_STRINGW (string2)
+	oo_STRING (string1)
+	oo_STRING (string2)
 	oo_DOUBLE (weight)
 
 oo_END_CLASS (PairProbability)

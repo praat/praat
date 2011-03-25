@@ -98,9 +98,7 @@ GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int heigh
 		GuiObject shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, NULL);
 		if (goAwayCallback) {
-			Atom atom = XmInternAtom (XtDisplay (shell), "WM_DELETE_WINDOW", True);
-			XmAddWMProtocols (shell, & atom, 1);
-			XmAddWMProtocolCallback (shell, atom, _GuiMotifDialog_goAwayCallback, (void *) me);
+			XmAddWMProtocolCallback (shell, 'delw', _GuiMotifDialog_goAwayCallback, (void *) me);
 		}
 		GuiWindow_setTitle (shell, title);
 		my widget = XmCreateForm (shell, "dialog", NULL, 0);

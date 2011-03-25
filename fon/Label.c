@@ -41,7 +41,7 @@ static bool equal (I, thou) {
 
 static struct structData_Description description [] = {
 	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theStructFunction. description },
-	{ L"name", stringwwa, (int) & ((Autosegment) 0) -> name, sizeof (wchar_t *) },
+	{ L"name", stringwa, (int) & ((Autosegment) 0) -> name, sizeof (wchar_t *) },
 	{ 0 } };
 
 class_methods (Autosegment, Function)

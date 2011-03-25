@@ -1159,7 +1159,7 @@ static int KlattTable_checkLimits (KlattTable me)
 	{
 		for (j = 1; j <= KlattTable_NPAR; j++)
 		{
-			long val = Table_getNumericValue ((Table) me, irow, j);
+			long val = Table_getNumericValue_Assert ((Table) me, irow, j);
 			if (val < lower[j])
 			{
 				nviolations_lower[j]++; nv++;
@@ -1230,7 +1230,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 	{
 		for (jcol = 1; jcol <= KlattTable_NPAR; jcol++)
 		{
-			par[jcol] = Table_getNumericValue ((Table) me, irow, jcol);
+			par[jcol] = Table_getNumericValue_Assert ((Table) me, irow, jcol);
 		}
 		jcol = 1;
 		frame ->  F0hz10 = par[jcol++]; frame ->  AVdb = par[jcol++];

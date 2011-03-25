@@ -76,22 +76,22 @@
 
 
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	texput##storage (file, my x, L""#x, 0,0,0,0,0);
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
 		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		texput##storage (file, my x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \

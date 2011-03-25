@@ -18,14 +18,18 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/03/22
  */
+
+#include "Articulation.h"
+#include "Speaker.h"
+#include "VocalTract.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-Any Art_Speaker_to_VocalTract (Any art, Any speaker);
+VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker);
 
 #ifdef __cplusplus
 	}

@@ -25,7 +25,7 @@
 #define ooSTRUCT RegressionParameter
 oo_DEFINE_CLASS (RegressionParameter, Data)
 
-	oo_STRINGW (label)
+	oo_STRING (label)
 	oo_DOUBLE (minimum)
 	oo_DOUBLE (maximum)
 	oo_DOUBLE (value)

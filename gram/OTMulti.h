@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/03/23
  */
 
 #include "Graphics.h"
@@ -57,9 +57,9 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2);
 #define OTMulti_LEARN_BACKWARD  2
 #define OTMulti_LEARN_BIDIRECTIONALLY  3
 int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
-	int updateRule, int direction, double plasticity, double relativePlasticityNoise);
+	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise);
 int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
-	double evaluationNoise, int updateRule, int direction,
+	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 

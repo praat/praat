@@ -527,6 +527,19 @@ static Sound synthesize_pitch (Manipulation me) {
 	return thee;
 }
 
+#if 0
+static Sound synthesize_pitch (Manipulation me) {
+	try {
+		if (! my pitch) Melder_throw ("Cannot synthesize pitch manipulation without pitch tier.");
+		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch);
+		autoSound thee = PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
+		return thee.transfer();
+	} catch (...) {
+		rethrowzero;
+	}
+}
+#endif
+
 static Sound synthesize_pitch_hum (Manipulation me) {
 	Sound thee = NULL;
 	PointProcess temp = NULL;

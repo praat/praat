@@ -25,7 +25,7 @@
 #define ooSTRUCT TableCell
 oo_DEFINE_STRUCT (TableCell)
 
-	oo_STRINGW (string)
+	oo_STRING (string)
 	#if oo_DECLARING || oo_COPYING
 		oo_DOUBLE (number)
 	#endif
@@ -50,7 +50,7 @@ oo_END_CLASS (TableRow)
 #define ooSTRUCT TableColumnHeader
 oo_DEFINE_STRUCT (TableColumnHeader)
 
-	oo_STRINGW (label)
+	oo_STRING (label)
 	#if oo_DECLARING || oo_COPYING
 		oo_INT (numericized)
 	#endif

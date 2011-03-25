@@ -62,18 +62,18 @@
 	if (my x && ! NUM##t##vector_writeCache_##storage (my x, min, max, f)) return 0;
 
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	cacput##storage (my x, f);
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 			cacput##storage (my x [i], f);
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f);
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		for (long i = min; i <= max; i ++) \
 			cacput##storage (my x [i], f); \

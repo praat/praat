@@ -47,6 +47,7 @@ Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames
 int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
+
 Table Tables_append (Collection me);
 int Table_appendRow (Table me);
 int Table_appendColumn (Table me, const wchar_t *label);
@@ -54,10 +55,10 @@ void Table_appendSumColumn (Table me, long column1, long column2, const wchar_t 
 void Table_appendDifferenceColumn (Table me, long column1, long column2, const wchar_t *label);
 void Table_appendProductColumn (Table me, long column1, long column2, const wchar_t *label);
 void Table_appendQuotientColumn (Table me, long column1, long column2, const wchar_t *label);
-int Table_removeRow (Table me, long row);
-int Table_removeColumn (Table me, long column);
-int Table_insertRow (Table me, long row);
-int Table_insertColumn (Table me, long column, const wchar_t *label);
+void Table_removeRow (Table me, long row);
+void Table_removeColumn (Table me, long column);
+void Table_insertRow (Table me, long row);
+void Table_insertColumn (Table me, long column, const wchar_t *label);
 void Table_setColumnLabel (Table me, long column, const wchar_t *label);
 long Table_findColumnIndexFromColumnLabel (Table me, const wchar_t *label);
 long Table_getColumnIndexFromColumnLabel (Table me, const wchar_t *columnLabel);
@@ -68,8 +69,8 @@ long Table_searchColumn (Table me, long column, const wchar_t *value);
  * Procedure for reading strings or numbers from table cells:
  * use the following two calls exclusively.
  */
-const wchar_t * Table_getStringValue (Table me, long row, long column);
-double Table_getNumericValue (Table me, long row, long column);
+const wchar_t * Table_getStringValue_Assert (Table me, long row, long column);
+double Table_getNumericValue_Assert (Table me, long row, long column);
 
 /*
  * Procedure for writing strings or numbers into table cells:
@@ -79,7 +80,7 @@ int Table_setStringValue (Table me, long row, long column, const wchar_t *value)
 int Table_setNumericValue (Table me, long row, long column, double value);
 
 /* For optimizations only (e.g. conversion to Matrix or TableOfReal). */
-void Table_numericize_nothrow (Table me, long column);
+void Table_numericize_Assert (Table me, long columnNumber);
 
 double Table_getQuantile (Table me, long column, double quantile);
 double Table_getMean (Table me, long column);
@@ -109,8 +110,8 @@ bool Table_getExtrema (Table me, long icol, double *minimum, double *maximum);
 int Table_formula (Table me, long column, const wchar_t *formula, Interpreter interpreter);
 int Table_formula_columnRange (Table me, long column1, long column2, const wchar_t *expression, Interpreter interpreter);
 
-void Table_sortRows (Table me, long *columns, long numberOfColumns);
-int Table_sortRows_string (Table me, const wchar_t *columns_string);
+void Table_sortRows_Assert (Table me, long *columns, long numberOfColumns);
+void Table_sortRows_string (Table me, const wchar_t *columns_string);
 void Table_randomizeRows (Table me);
 
 void Table_scatterPlot (Table me, Graphics g, long xcolumn, long ycolumn,
@@ -134,6 +135,8 @@ Table Table_rowsToColumns (Table me, const wchar_t *factors_string, long columnT
 
 #ifdef __cplusplus
 	}
+void Table_checkSpecifiedRowNumberWithinRange (Table me, long rowNumber);
+void Table_checkSpecifiedColumnNumberWithinRange (Table me, long columnNumber);
 #endif
 
 /* End of file Table.h */

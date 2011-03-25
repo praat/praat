@@ -112,7 +112,11 @@
 #define GET_REAL(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, name)
 #define GET_STRING(name)  UiForm_getString (cmd -> dialog, name)
-#define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
+#ifdef __cplusplus
+	#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
+#else
+	#define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
+#endif
 #define GET_FILE  UiForm_getFile (cmd -> dialog)
 
 /* End of file EditorM.h */

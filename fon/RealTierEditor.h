@@ -2,7 +2,7 @@
 #define _RealTierEditor_h_
 /* RealTierEditor.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2009/01/23
+ * pb 2011/03/23
  */
 
-#ifndef _TimeSoundEditor_h_
-	#include "TimeSoundEditor.h"
-#endif
-#ifndef _RealTier_h_
-	#include "RealTier.h"
+#include "TimeSoundEditor.h"
+#include "RealTier.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define RealTierEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
@@ -55,6 +55,10 @@ int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *tit
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,
 	which the editor will destroy when the editor is destroyed.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file RealTierEditor.h */
 #endif

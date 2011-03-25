@@ -2,7 +2,7 @@
 #define _SoundEditor_h_
 /* SoundEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
  */
 
 /*
- * pb 2007/09/08
+ * pb 2011/03/23
  */
 
-#ifndef _TimeSoundAnalysisEditor_h_
-	#include "TimeSoundAnalysisEditor.h"
+#include "TimeSoundAnalysisEditor.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SoundEditor__parents(Klas) TimeSoundAnalysisEditor__parents(Klas) Thing_inherit (Klas, TimeSoundAnalysisEditor)
@@ -37,6 +39,10 @@ Thing_declare1 (SoundEditor);
 Thing_declare2 (SoundEditor, TimeSoundAnalysisEditor);
 
 SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file SoundEditor.h */
 #endif

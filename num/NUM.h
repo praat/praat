@@ -299,6 +299,21 @@ FUNCTION (c, char)
 #define NUMpvector_insert_e(v,lo,hi,position)  \
 	NUMvector_insert_e (sizeof (void *), (void **) v, lo, hi, position)
 
+#define NUMwvector(lo,hi)  \
+	(wchar **) NUMvector (sizeof (wchar **), lo, hi)
+#define NUMwvector_free(v,lo)  \
+	NUMvector_free (sizeof (wchar **), v, lo)
+#define NUMwvector_copy(v,lo,hi)  \
+	(wchar **) NUMvector_copy (sizeof (wchar **), v, lo, hi)
+#define NUMwvector_copyElements(v,to,lo,hi)  \
+	NUMvector_copyElements (sizeof (wchar **), v, to, lo, hi)
+#define NUMwvector_equal(v1,v2,lo,hi)  \
+	NUMvector_equal (sizeof (wchar **), v1, v2, lo, hi)
+#define NUMwvector_append_e(v,lo,hi)  \
+	NUMvector_append_e (sizeof (wchar **), (void **) v, lo, hi)
+#define NUMwvector_insert_e(v,lo,hi,position)  \
+	NUMvector_insert_e (sizeof (wchar **), (void **) v, lo, hi, position)
+
 #define NUMstructmatrix(Type,row1,row2,col1,col2)  \
 	NUMmatrix (sizeof (struct struct##Type), row1, row2, col1, col2)
 #define NUMstructmatrix_free(Type,m,row1,col1)  \
@@ -536,40 +551,43 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 	}
 #define FUNCTION(t,type)  \
 struct autoNUM##t##vector {  \
-	type *ptr;  \
-	long from;  \
 	autoNUM##t##vector (long from, long to) throw (int) : from (from) {  \
-		ptr = NUM##t##vector (from, to);  \
-		if (ptr == NULL) throw 1;  \
+		ptr = NUM##t##vector (from, to); therror  \
 	}  \
+	autoNUM##t##vector (type *ptr, long from) throw (int) : ptr (ptr), from (from) { therror }  \
 	autoNUM##t##vector (void) throw () : from (0), ptr (NULL) { }  \
 	~autoNUM##t##vector () {  \
 		NUM##t##vector_free (ptr, from);  \
 	}  \
 	type& operator[] (long i) { return ptr [i]; }  \
+	type * peek () const throw () { return ptr; }  \
+	type * transfer (void) throw () { type *temp = ptr; ptr = NULL; return temp; }  \
 	void reset (long newFrom, long to) throw (int) {  \
 		NUM##t##vector_free (ptr, from);  \
-		ptr = NUM##t##vector (from = newFrom, to);  \
-		if (ptr == NULL) throw 1;  \
+		ptr = NUM##t##vector (from = newFrom, to); therror  \
 	}  \
+private:  \
+	type *ptr;  \
+	long from;  \
 };  \
 struct autoNUM##t##matrix {  \
-	type **ptr;  \
-	long row1, col1;  \
 	autoNUM##t##matrix (long row1, long row2, long col1, long col2) throw (int) : row1 (row1), col1 (col1) {  \
-		ptr = NUM##t##matrix (row1, row2, col1, col2);  \
-		if (ptr == NULL) throw 1;  \
+		ptr = NUM##t##matrix (row1, row2, col1, col2); therror  \
 	}  \
 	autoNUM##t##matrix (void) throw () : row1 (0), col1 (0), ptr (NULL) { }  \
 	~autoNUM##t##matrix () {  \
 		NUM##t##matrix_free (ptr, row1, col1);  \
 	}  \
-	type* operator[] (long row) { return ptr [row]; }  \
+	type*& operator[] (long row) { return ptr [row]; }  \
+	type ** peek () const throw () { return ptr; }  \
+	type ** transfer (void) throw () { type **temp = ptr; ptr = NULL; return temp; }  \
 	void reset (long newRow1, long row2, long newCol1, long col2) throw (int) {  \
 		NUM##t##matrix_free (ptr, row1, col1);  \
-		ptr = NUM##t##matrix (row1 = newRow1, row2, col1 = newCol1, col2);  \
-		if (ptr == NULL) throw 1;  \
+		ptr = NUM##t##matrix (row1 = newRow1, row2, col1 = newCol1, col2); therror  \
 	}  \
+private:  \
+	type **ptr;  \
+	long row1, col1;  \
 };
 FUNCTION (b, signed char)
 FUNCTION (s, short)
@@ -583,6 +601,48 @@ FUNCTION (d, double)
 FUNCTION (fc, fcomplex)
 FUNCTION (dc, dcomplex)
 FUNCTION (c, char)
+//FUNCTION (p, void *)
+struct autoNUMpvector {
+	autoNUMpvector (long from, long to) throw (int) : from (from) {
+		ptr = (void **) NUMpvector (from, to); therror
+	}
+	autoNUMpvector (void **ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
+	autoNUMpvector (void) throw () : from (0), ptr (NULL) { }
+	~autoNUMpvector () {
+		NUMpvector_free (ptr, from);
+	}
+	void*& operator[] (long i) { return ptr [i]; }
+	void ** peek () const throw () { return ptr; }
+	void ** transfer (void) throw () { void **temp = ptr; ptr = NULL; return temp; }
+	void reset (long newFrom, long to) throw (int) {
+		NUMpvector_free (ptr, from);
+		ptr = (void **) NUMpvector (from = newFrom, to); therror
+	}
+private:
+	void **ptr;
+	long from;
+};
+struct autoNUMwvector {
+	autoNUMwvector (long from, long to) throw (int) : from (from) {
+		ptr = NUMwvector (from, to); therror
+	}
+	autoNUMwvector (wchar **ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
+	autoNUMwvector (void) throw () : from (0), ptr (NULL) { }
+	~autoNUMwvector () {
+		NUMwvector_free (ptr, from);
+	}
+	wchar*& operator[] (long i) { return ptr [i]; }
+	wchar ** peek () const throw () { return ptr; }
+	wchar ** transfer (void) throw () { wchar **temp = ptr; ptr = NULL; return temp; }
+	void reset (long newFrom, long to) throw (int) {
+		NUMwvector_free (ptr, from);
+		ptr = NUMwvector (from = newFrom, to); therror
+	}
+private:
+	wchar **ptr;
+	long from;
+};
+
 #endif
 
 /* End of file NUM.h */

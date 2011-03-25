@@ -27,8 +27,8 @@ oo_DEFINE_CLASS (TableOfReal, Data)
 
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_STRINGW_VECTOR (rowLabels, my numberOfRows)
-	oo_STRINGW_VECTOR (columnLabels, my numberOfColumns)
+	oo_STRING_VECTOR (rowLabels, my numberOfRows)
+	oo_STRING_VECTOR (columnLabels, my numberOfColumns)
 	oo_DOUBLE_MATRIX (data, my numberOfRows, my numberOfColumns)
 
 oo_END_CLASS (TableOfReal)

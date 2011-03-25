@@ -55,22 +55,22 @@
 
 
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	Melder_free (my x);
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		Melder_free (my x [i]);
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (my x [i]);
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
 			Melder_free (my x [i]); \
-		NUMvector_free (sizeof (wchar_t *), my x, min); \
+		NUMwvector_free (my x, min); \
 	}
 
 

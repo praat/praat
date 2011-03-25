@@ -2912,66 +2912,66 @@ KlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration)
 		double val, f0, fk;
 		long icol = 1;
 
-		f0 = val = Table_getNumericValue (kt, irow, icol) / 10; // F0hz10
+		f0 = val = Table_getNumericValue_Assert (kt, irow, icol) / 10; // F0hz10
 		RealTier_addPoint (thy phonation -> pitch, t, f0);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // AVdb
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // AVdb
 		// dB values below 13 were put to zero in the DBtoLIN function
 		val -= 7;
 		if (val < 13) val = dBNul;
 //		RealTier_addPoint (thy source -> voicingAmplitude, t, val);
 		for (long kf = 1; kf <= 6; kf++)
 		{
-			icol++; fk = val = Table_getNumericValue (kt, irow, icol); // Fhz
+			icol++; fk = val = Table_getNumericValue_Assert (kt, irow, icol); // Fhz
 			RealTier_addPoint (thy vocalTract -> oral_formants -> formants -> item[kf], t, val);
 			RealTier_addPoint (thy frication -> frication_formants -> formants -> item[kf], t, val); // only amplitudes and bandwidths in frication section
-			icol++; val = Table_getNumericValue (kt, irow, icol); // Bhz
+			icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Bhz
 			if (val <= 0) val = fk / 10;
 			RealTier_addPoint (thy vocalTract -> oral_formants -> bandwidths -> item[kf], t, val);
 		}
-		icol++; val = Table_getNumericValue (kt, irow, icol); // FNZhz
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // FNZhz
 		RealTier_addPoint (thy vocalTract -> nasal_antiformants -> formants -> item[1], t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // BNZhz
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // BNZhz
 		RealTier_addPoint (thy vocalTract -> nasal_antiformants -> bandwidths -> item[1], t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // FNPhz
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // FNPhz
 		RealTier_addPoint (thy vocalTract -> nasal_formants -> formants -> item[1], t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // BNPhz
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // BNPhz
 		RealTier_addPoint (thy vocalTract -> nasal_formants -> bandwidths -> item[1], t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // ah
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // ah
 		if (val < 13) val = dBNul; else val += 20 * log10 (0.05) + dB_offset_noise;
 		RealTier_addPoint (thy phonation -> aspirationAmplitude, t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // Kopen
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Kopen
 		double openPhase = f0 > 0 ? (val / 16000) * f0 : 0.7;
 		RealTier_addPoint (thy phonation -> openPhase, t, openPhase);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // Aturb breathinessAmplitude during voicing (max is 8192)
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Aturb breathinessAmplitude during voicing (max is 8192)
 		if (val < 13) val = dBNul; else val += 20 * log10 (0.1) + dB_offset_noise;
 		RealTier_addPoint (thy phonation -> breathinessAmplitude, t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // TLTdb
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // TLTdb
 		RealTier_addPoint (thy phonation -> spectralTilt, t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // AF
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // AF
 		if (val < 13) val = dBNul; else val += 20 * log10 (0.25) + dB_offset_noise;
 		RealTier_addPoint (thy frication -> fricationAmplitude, t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // Kskew ???
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Kskew ???
 		//RealTier_addPoint (, t, val);
 		for (long kf = 1; kf <= 6; kf++)
 		{
-			icol++; val = Table_getNumericValue (kt, irow, icol); // Ap
+			icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Ap
 			if (val < 13) val = dBNul; else val += 20 * log10 (ap[kf]) + dB_offset;
 			RealTier_addPoint (thy vocalTract -> oral_formants_amplitudes -> item[kf], t, val);
 			RealTier_addPoint (thy frication -> frication_formants_amplitudes -> item[kf], t, val);
-			icol++; val = Table_getNumericValue (kt, irow, icol); // Bhz
+			icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Bhz
 			RealTier_addPoint (thy frication -> frication_formants -> bandwidths -> item[kf], t, val);
 		}
 
-		icol++; val = Table_getNumericValue (kt, irow, icol); // ANP
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // ANP
 		if (val < 13) val = dBNul; else val += 20 * log10 (0.6) + dB_offset;
 		RealTier_addPoint (thy vocalTract -> nasal_formants_amplitudes -> item[1], t, val);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // AB
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // AB
 		if (val < 13) val = dBNul; else val += 20 * log10 (0.05) + dB_offset_noise;
 		RealTier_addPoint (thy frication -> bypass, t, val);
 
-		icol++; val = Table_getNumericValue (kt, irow, icol); // AVpdb
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // AVpdb
 		RealTier_addPoint (thy phonation -> voicingAmplitude, t, val + dB_offset_voicing);
-		icol++; val = Table_getNumericValue (kt, irow, icol); // Gain0
+		icol++; val = Table_getNumericValue_Assert (kt, irow, icol); // Gain0
 		val -= 3; if (val <= 0) val = 57;
 		RealTier_addPoint (thy gain, t, val + dB_offset);
 	}

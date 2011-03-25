@@ -40,6 +40,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef wchar_t wchar;
+
 #ifdef __cplusplus
 	#define LINK_C  extern "C"
 	extern "C" {
@@ -383,16 +385,18 @@ double Melder_movingReallocationsCount (void);
 struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 
+#define kMelder_MAXPATH 1023   /* excluding the null byte */
+
 typedef struct {
 	FILE *filePointer;
-	wchar_t path [260];
+	wchar_t path [kMelder_MAXPATH+1];
 	bool openForReading, openForWriting, verbose, requiresCRLF;
 	unsigned long outputEncoding;
 	int indent;
 	struct FLAC__StreamEncoder *flacEncoder;
 } structMelderFile, *MelderFile;
 typedef struct {
-	wchar_t path [260];
+	wchar_t path [kMelder_MAXPATH+1];
 } structMelderDir, *MelderDir;
 
 /********** STRINGS **********/
@@ -965,6 +969,7 @@ double Melder_clock (void);   // seconds since 1969
 
 #ifdef __cplusplus
 	}
+extern "C" wchar_t *Thing_messageName (void *);
 struct MelderArg {
 	int type;
 	union {
@@ -975,6 +980,7 @@ struct MelderArg {
 	MelderArg (const char *arg) : type (2), arg8 (arg) { }
 	MelderArg (const double arg) : type (1), argW (Melder_double (arg)) { }
 	MelderArg (const long arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (void* arg) : type (1), argW (Thing_messageName (arg)) { }
 };
 extern "C++" void Melder_throw (const MelderArg& arg1);
 extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2);
@@ -997,8 +1003,14 @@ extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, co
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
 extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
+	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15);
+extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
-	const MelderArg& arg13 = L"", const MelderArg& arg14 = L"", const MelderArg& arg15 = L"", const MelderArg& arg16 = L"",
+	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
 #define therror  iferror throw 1;   // will be removed once all errors throw exceptions
 #define rethrow  return   // will be: throw
@@ -1009,6 +1021,35 @@ extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, co
 struct autoMelderProgress {
 	autoMelderProgress (const wchar_t *message) { Melder_progress1 (0.0, message); }
 	~autoMelderProgress () { Melder_progress1 (1.0, NULL); }
+};
+
+struct autoMelderString : MelderString {
+	autoMelderString () { length = 0; bufferSize = 0; string = NULL; }
+	~autoMelderString () { Melder_free (string); }
+};
+
+struct autoMelderTokens {
+	autoMelderTokens () throw () { tokens = NULL; }
+	autoMelderTokens (const wchar_t *string, long *n) throw (int) { tokens = Melder_getTokens (string, n); therror }
+	~autoMelderTokens () throw () { Melder_freeTokens (& tokens); }
+	wchar*& operator[] (long i) { return tokens [i]; }
+	wchar ** peek () const throw () { return tokens; }
+	void reset (const wchar_t *string, long *n) throw (int) {
+		if (tokens) Melder_freeTokens (& tokens);
+		tokens = Melder_getTokens (string, n); therror
+	}
+private:
+	wchar **tokens;
+};
+
+class autostring {
+	wchar *ptr;
+public:
+	autostring (wchar *string) throw (int) { ptr = string; iferror throw 1; }
+	~autostring () throw () { Melder_free (ptr); }
+	wchar& operator[] (long i) throw () { return ptr [i]; }
+	wchar * peek () const throw () { return ptr; }
+	wchar * transfer () throw () { wchar *tmp = ptr; ptr = NULL; return tmp; }
 };
 
 #endif

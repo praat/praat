@@ -26,7 +26,7 @@
 oo_DEFINE_CLASS (Transition, Data)
 
 	oo_LONG (numberOfStates)
-	oo_STRINGW_VECTOR (stateLabels, my numberOfStates)
+	oo_STRING_VECTOR (stateLabels, my numberOfStates)
 	oo_DOUBLE_MATRIX (data, my numberOfStates, my numberOfStates)
 
 oo_END_CLASS (Transition)

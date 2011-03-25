@@ -32,10 +32,10 @@
 #undef oo_ENUMx_SET
 #undef oo_ENUMx_VECTOR
 
-#undef oo_STRINGWx
-#undef oo_STRINGWx_ARRAY
-#undef oo_STRINGWx_SET
-#undef oo_STRINGWx_VECTOR
+#undef oo_STRINGx
+#undef oo_STRINGx_ARRAY
+#undef oo_STRINGx_SET
+#undef oo_STRINGx_VECTOR
 
 #undef oo_STRUCT
 #undef oo_STRUCT_ARRAY

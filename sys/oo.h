@@ -223,20 +223,20 @@
 /*    s4: store as sequence of bytes, preceded with 4 bytes (u4) to denote length. */
 /*    w4: store as sequence of characters (u2), preceded with 4 bytes (u4) to denote length. */
 
-#define oo_STRINGW(x)  oo_STRINGWx (w2, x)
-#define oo_LSTRINGW(x)  oo_STRINGWx (w4, x)
+#define oo_STRING(x)  oo_STRINGx (w2, x)
+#define oo_LSTRING(x)  oo_STRINGx (w4, x)
 
-#define oo_STRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w2, x, cap, n)
-#define oo_LSTRINGW_ARRAY(x,cap,n)  oo_STRINGWx_ARRAY (w4, x, cap, n)
+#define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w2, x, cap, n)
+#define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w4, x, cap, n)
 
-#define oo_STRINGW_SET(x,setType)  oo_STRINGWx_SET (w2, x, setType)
-#define oo_LSTRINGW_SET(x,setType)  oo_STRINGWx_SET (w4, x, setType)
+#define oo_STRING_SET(x,setType)  oo_STRINGx_SET (w2, x, setType)
+#define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (w4, x, setType)
 
-#define oo_STRINGW_VECTOR_FROM(x,min,max)  oo_STRINGWx_VECTOR (w2, x, min, max)
-#define oo_LSTRINGW_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w4, x, min, max)
+#define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w2, x, min, max)
+#define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w4, x, min, max)
 
-#define oo_STRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w2, x, 1, n)
-#define oo_LSTRINGW_VECTOR(x,n)  oo_STRINGWx_VECTOR (w4, x, 1, n)
+#define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w2, x, 1, n)
+#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w4, x, 1, n)
 
 /*** Structs. ***/
 
@@ -280,10 +280,10 @@
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  type x [1 + setType##_MAX];
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  type *x;
 
-#define oo_STRINGWx(storage,x)  wchar_t *x;
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];
-#define oo_STRINGWx_SET(storage,x,setType)  wchar_t *x [1 + setType##_MAX];
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  wchar_t **x;
+#define oo_STRINGx(storage,x)  wchar_t *x;
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  wchar_t *x [cap];
+#define oo_STRINGx_SET(storage,x,setType)  wchar_t *x [1 + setType##_MAX];
+#define oo_STRINGx_VECTOR(storage,x,min,max)  wchar_t **x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];

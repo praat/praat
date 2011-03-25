@@ -277,7 +277,7 @@ NORMAL (L"If %numberOfGoodnessCategories is not 0, some more rectangles will be 
 	"goodness judgment of 5.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20110303)
+MAN_BEGIN (L"ExperimentMFC 2.9. How an experiment proceeds", L"ppgb", 20110317)
 NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @@Read from file...@ "
 	"(it is not a script but a data file, so do not try to read it with ##Open Praat script...#). "
 	"You can then choose #Run. After the experiment finishes, you can close the experiment window "
@@ -292,7 +292,7 @@ NORMAL (L"A text file with an ExperimentMFC object can be read into Praat with @
 	"the second column contains the stimulus names, the third column contains the responses, "
 	"and the last column contains the approximate reaction times (measured from the start of the stimulus sound, i.e. after the initial silence duration). "
 	"If there are goodness judgments, these will go into the fourth column. The table can be saved "
-	"as a table file (with ##Save as table file...#), which can be read by programs like Excel and SPSS.")
+	"as a table file (with ##Save as tab-separated file...#), which can be read by programs like Excel and SPSS.")
 MAN_END
 
 MAN_BEGIN (L"ExperimentMFC 3. More examples", L"ppgb", 20051205)

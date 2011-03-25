@@ -2,7 +2,7 @@
 #define _IntensityTierEditor_h_
 /* IntensityTierEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/23
  */
 
-#ifndef _RealTierEditor_h_
-	#include "RealTierEditor.h"
-#endif
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "RealTierEditor.h"
+#include "IntensityTier.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define IntensityTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
@@ -45,6 +43,10 @@ IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar_t 
 /*
 	'sound' may be NULL.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file IntensityTierEditor.h */
 #endif

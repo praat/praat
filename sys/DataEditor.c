@@ -267,8 +267,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (value < 0) goto error;
 				* (signed char *) my fieldData [i]. address = value;
 			} break;
-			case stringwwa:
-			case lstringwwa: {
+			case stringwa:
+			case lstringwa: {
 				wchar_t *old = * (wchar_t **) my fieldData [i]. address;
 				Melder_free (old);
 				* (wchar_t **) my fieldData [i]. address = Melder_wcsdup_f (text);
@@ -494,8 +494,8 @@ static wchar_t * singleTypeToText (void *address, int type, void *tagType, Melde
 		case lenumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
 		case booleanwa: MelderString_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
 		case questionwa: MelderString_append1 (buffer, * (signed char *) address ? L"<yes>" : L"<no>"); break;
-		case stringwwa:
-		case lstringwwa: {
+		case stringwa:
+		case lstringwa: {
 			wchar_t *string = * (wchar_t **) address;
 			if (string == NULL) { MelderString_empty (buffer); return buffer -> string; }   // Convert NULL string to empty string.
 			return string;   // May be much longer than the usual size of 'buffer'.

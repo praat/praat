@@ -369,7 +369,11 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define GET_REAL(name)  UiForm_getReal (dia, name)
 #define GET_INTEGER(name)  UiForm_getInteger (dia, name)
 #define GET_STRING(name)  UiForm_getString (dia, name)
-#define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
+#ifdef __cplusplus
+	#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
+#else
+	#define GET_ENUM(enum,name)  enum##_getValue (GET_STRING (name))
+#endif
 #define GET_COLOUR(name)  UiForm_getColour (dia, name)
 #define GET_FILE(name)  UiForm_getFile (dia, name)
 #define REQUIRE(c,t)  if (! (c)) return Melder_error1 (t);
@@ -472,6 +476,30 @@ struct autoPraatPicture {
 	autoPraatPicture () { praat_picture_open (); }
 	~autoPraatPicture () { praat_picture_close (); }
 };
+static inline void praat_new (void *newData, const wchar *s1) { praat_new1 (newData, s1); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2) { praat_new2 (newData, s1, s2); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3) { praat_new3 (newData, s1, s2, s3); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4)
+	{ praat_new4 (newData, s1, s2, s3, s4); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5)
+	{ praat_new5 (newData, s1, s2, s3, s4, s5); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
+	const wchar *s6) { praat_new6 (newData, s1, s2, s3, s4, s5, s6); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
+	const wchar *s6, const wchar *s7) { praat_new7 (newData, s1, s2, s3, s4, s5, s6, s7); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
+	const wchar *s6, const wchar *s7, const wchar *s8) { praat_new8 (newData, s1, s2, s3, s4, s5, s6, s7, s8); therror }
+static inline void praat_new (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
+	const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) { praat_new9 (newData, s1, s2, s3, s4, s5, s6, s7, s8, s9); therror }
+static inline void praat_newWithFile (void *newData, const wchar *s1, MelderFile file) { praat_newWithFile1 (newData, s1, file); therror }
+static inline void praat_newWithFile (void *newData, const wchar *s1, const wchar *s2, MelderFile file)
+	{ praat_newWithFile2 (newData, s1, s2, file); therror }
+static inline void praat_newWithFile (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, MelderFile file)
+	{ praat_newWithFile3 (newData, s1, s2, s3, file); therror }
+static inline void praat_newWithFile (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, MelderFile file)
+	{ praat_newWithFile4 (newData, s1, s2, s3, s4, file); therror }
+static inline void praat_newWithFile (void *newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
+	MelderFile file) { praat_newWithFile5 (newData, s1, s2, s3, s4, s5, file); therror }
 #endif
 
 /* End of file praat.h */

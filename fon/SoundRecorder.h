@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@
  */
 
 /*
- * pb 2008/06/17
+ * pb 2011/03/23
  */
 
 /* An editor-like object that allows the user to record sounds. */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "Editor.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SoundRecorder__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
@@ -46,5 +46,9 @@ void SoundRecorder_prefs (void);
 int SoundRecorder_getBufferSizePref_MB (void);
 void SoundRecorder_setBufferSizePref_MB (int size);
 
+#ifdef __cplusplus
+	}
 #endif
+
 /* End of file SoundRecorder.h */
+#endif

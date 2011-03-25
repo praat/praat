@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2009/09/21
+ * pb 2011/03/23
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Function_h_
-	#include "Function.h"
+#include "Editor.h"
+#include "Graphics.h"
+#include "Function.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 struct FunctionEditor_picture {
@@ -254,6 +252,10 @@ void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
 void FunctionEditor_insetViewport (FunctionEditor me);
 
 void FunctionEditor_garnish (FunctionEditor me);   // Optionally selection times and selection hairs.
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file FunctionEditor.h */
 #endif

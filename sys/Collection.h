@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/03/23
  */
 
 /* Collections contain a number of items whose class is a subclass of Data.
@@ -60,6 +60,7 @@
 #define Collection_members Data_members \
 	void *itemClass; \
 	long _capacity, size; \
+	bool _dontOwnItems; \
 	Any *item;
 #define Collection_methods Data_methods \
 	long (*position) (I, Any data);
@@ -87,6 +88,8 @@ Collection Collection_create (void *itemClass, long initialCapacity);
 	Postconditions:
 		my _capacity == initialCapacity;
 */
+
+void Collection_dontOwnItems (I);
 
 /*
 	Data_copy, Data_equal, Data_writeXXX, Data_readXXX

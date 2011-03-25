@@ -1,6 +1,6 @@
 /* Collection.c
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  * pb 2008/03/19 removed SortedSetOfFloat
  * pb 2008/07/20 wchar_t
  * pb 2010/07/28 tiny corrections (like a memory leak if out of memory...)
+ * pb 2011/03/23 Collection_dontOwnItems
  */
 
 #include "Collection.h"
@@ -37,8 +38,10 @@
 static void classCollection_destroy (I) {
 	iam (Collection);
 	if (my item != NULL) {
-		for (long i = 1; i <= my size; i ++) {
-			forget (my item [i]);
+		if (! my _dontOwnItems) {
+			for (long i = 1; i <= my size; i ++) {
+				forget (my item [i]);
+			}
 		}
 		my item ++;   // base 1
 		Melder_free (my item);
@@ -63,9 +66,13 @@ static int classCollection_copy (I, thou) {
 	thy item --;   // immediately turn from base-0 into base-1
 	for (long i = 1; i <= my size; i ++) {
 		Thing item = my item [i];
-		if (! Thing_member (item, classData))
-			error3 (L"Collection::copy: cannot copy item of class ", Thing_className (item), L".")
-		thy item [i] = Data_copy (item); cherror
+		if (my _dontOwnItems) {
+			thy item [i] = item;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
+		} else {
+			if (! Thing_member (item, classData))
+				error3 (L"Collection::copy: cannot copy item of class ", Thing_className (item), L".")
+			thy item [i] = Data_copy (item); cherror
+		}
 	}
 end:
 	// thy item is NULL or base-1
@@ -283,6 +290,12 @@ Collection Collection_create (void *itemClass, long initialCapacity) {
 	return me;
 }
 
+void Collection_dontOwnItems (I) {
+	iam (Collection);
+	Melder_assert (my size == 0);
+	my _dontOwnItems = true;
+}
+
 int _Collection_insertItem (I, Any data, long pos) {
 	iam (Collection);
 	if (my size >= my _capacity) {
@@ -318,7 +331,7 @@ int Collection_addItem (I, Any data) {
 void Collection_removeItem (I, long pos) {
 	iam (Collection);
 	Melder_assert (pos >= 1 && pos <= my size);
-	forget (my item [pos]);
+	if (! my _dontOwnItems) forget (my item [pos]);
 	for (long i = pos; i < my size; i ++) my item [i] = my item [i + 1];
 	my size --;
 }
@@ -342,7 +355,7 @@ Any Collection_subtractItem (I, long pos) {
 
 void Collection_removeAllItems (I) {
 	iam (Collection);
-	for (long i = 1; i <= my size; i ++) forget (my item [i]);
+	if (! my _dontOwnItems) for (long i = 1; i <= my size; i ++) forget (my item [i]);
 	my size = 0;
 }
 
@@ -357,15 +370,25 @@ Any Collections_merge (I, thou) {
 	Collection him;
 	if (my methods != thy methods) return Melder_errorp5 (L"(Collections_merge:) "
 		"Objects are of different class (", Thing_className (me), L" and ", Thing_className (thee), L").");
-	if (! (him = Data_copy (me))) goto error;
+	if (my _dontOwnItems != thy _dontOwnItems) return Melder_errorp1 (L"(Collections_merge:) "
+		"Cannot mix data and references.");
+	him = Data_copy (me); cherror
 	for (long i = 1; i <= thy size; i ++) {
-		Data tmp = Data_copy (thy item [i]);
-		if (! tmp || ! Collection_addItem (him, tmp)) { forget (tmp); goto error; }
+		Thing tmp;
+		Thing item = (Thing) thy item [i];
+		if (my _dontOwnItems) {
+			tmp = item;
+		} else {
+			if (! Thing_member (item, classData))
+				error3 (L"(Collections_merge:) Cannot copy item of class ", Thing_className (item), L".")
+			tmp = Data_copy (item); cherror
+		}
+		if (! tmp || ! Collection_addItem (him, tmp)) { forget (tmp); goto end; }
 	}
 	return him;
-error:
+end:
 	forget (him);
-	return Melder_errorp ("(Collection_join:) Not performed." );
+	return Melder_errorp ("Collections not merged." );
 }
 
 /********** class Ordered **********/

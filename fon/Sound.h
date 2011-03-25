@@ -28,11 +28,11 @@
 #include "Vector.h"
 #include "Collection.h"
 
-#include "Sound_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "Sound_enums.h"
 
 #define Sound_members  Vector_members
 #define Sound_methods  Vector_methods

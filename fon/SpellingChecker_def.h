@@ -23,18 +23,18 @@
 
 #define ooSTRUCT SpellingChecker
 oo_DEFINE_CLASS (SpellingChecker, Data)           /* CGN: */
-	oo_STRINGW (forbiddenStrings)              /* : ; " */
+	oo_STRING (forbiddenStrings)              /* : ; " */
 	oo_BOOLEAN (checkMatchingParentheses)     /* true */
-	oo_STRINGW (separatingCharacters)          /* .,:;()!? */
+	oo_STRING (separatingCharacters)          /* .,:;()!? */
 	oo_BOOLEAN (allowAllParenthesized)        /* true */
 	oo_BOOLEAN (allowAllNames)                /* true */
-	oo_STRINGW (namePrefixes)                  /* 's- d' l' */
+	oo_STRING (namePrefixes)                  /* 's- d' l' */
 	oo_BOOLEAN (allowAllAbbreviations)        /* true */
 	oo_BOOLEAN (allowCapsSentenceInitially)   /* false */
 	oo_BOOLEAN (allowCapsAfterColon)          /* false */
-	oo_STRINGW (allowAllWordsContaining)       /* * xxx */
-	oo_STRINGW (allowAllWordsStartingWith)     /* */
-	oo_STRINGW (allowAllWordsEndingIn)         /* - */
+	oo_STRING (allowAllWordsContaining)       /* * xxx */
+	oo_STRING (allowAllWordsStartingWith)     /* */
+	oo_STRING (allowAllWordsEndingIn)         /* - */
 	oo_OBJECT (WordList, 0, wordList)
 	oo_COLLECTION (SortedSetOfString, userDictionary, SimpleString, 0)
 oo_END_CLASS (SpellingChecker)

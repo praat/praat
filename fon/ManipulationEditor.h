@@ -2,7 +2,7 @@
 #define _ManipulationEditor_h_
 /* ManipulationEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2007/12/09
+ * pb 2011/03/22
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _Manipulation_h_
-	#include "Manipulation.h"
+#include "FunctionEditor.h"
+#include "Manipulation.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #include "ManipulationEditor_enums.h"
@@ -47,7 +47,7 @@ Thing_declare1 (ManipulationEditor);
 	GuiObject synthPulsesPitchButton, synthPulsesPitchHumButton; \
 	GuiObject synthOverlapAddNodurButton, synthOverlapAddButton; \
 	GuiObject synthPitchLpcButton; \
-	struct { int units, draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
+	struct { enum kManipulationEditor_pitchUnits units; enum kManipulationEditor_draggingStrategy draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
 	struct { double minimum, maximum, cursor;  } duration; \
 	Graphics_Viewport inset;
 #define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
@@ -56,6 +56,10 @@ Thing_declare2 (ManipulationEditor, FunctionEditor);
 ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar_t *title, Manipulation ana);
 
 void ManipulationEditor_prefs (void);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file ManipulationEditor.h */
 #endif

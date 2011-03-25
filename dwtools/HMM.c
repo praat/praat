@@ -379,7 +379,7 @@ Strings HMM_ObservationSequence_to_Strings (HMM_ObservationSequence me)
 	if (me == NULL || ((thy strings = NUMpvector (1, numberOfStrings)) == NULL)) goto end;
 	for (long i = 1; i <= numberOfStrings; i++)
 	{
-			thy strings[i] = Melder_wcsdup_f (Table_getStringValue ((Table) me, i, 1));
+			thy strings[i] = Melder_wcsdup_f (Table_getStringValue_Assert ((Table) me, i, 1));
 			(thy numberOfStrings) ++;
 	}
 end:

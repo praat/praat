@@ -1894,7 +1894,7 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 		ilexan = 1;
 		for (;;) {
 			int symbol = lexan [ilexan]. symbol;
-			if (symbol == STRING_ || symbol == VARIABLE_NAME_) Melder_free (lexan [ilexan]. content.string);
+			if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_ || symbol == CALL_) Melder_free (lexan [ilexan]. content.string);
 			else if (symbol == END_) break;   /* Either the end of a formula, or the end of lexan. */
 			ilexan ++;
 		}

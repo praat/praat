@@ -25,8 +25,8 @@
 #define ooSTRUCT LogisticRegression
 oo_DEFINE_CLASS (LogisticRegression, Regression)
 
-	oo_STRINGW (dependent1)
-	oo_STRINGW (dependent2)
+	oo_STRING (dependent1)
+	oo_STRING (dependent2)
 
 oo_END_CLASS (LogisticRegression)
 #undef ooSTRUCT

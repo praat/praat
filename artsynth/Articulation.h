@@ -29,11 +29,11 @@
 
 #include "Data.h"
 
-#include "Articulation_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "Articulation_enums.h"
 
 #include "Articulation_def.h"
 #define Art_methods  Data_methods

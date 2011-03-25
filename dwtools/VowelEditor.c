@@ -726,13 +726,13 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g)
 	{
 		for (int i = 1; i <= thy rows -> size; i++)
 		{
-			const wchar_t *label = Table_getStringValue (thee, i, 1);
-			f1 = Table_getNumericValue (thee, i, 2);
-			f2 = Table_getNumericValue (thee, i, 3);
+			const wchar_t *label = Table_getStringValue_Assert (thee, i, 1);
+			f1 = Table_getNumericValue_Assert (thee, i, 2);
+			f2 = Table_getNumericValue_Assert (thee, i, 3);
 			if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max)
 			{
 				VowelEditor_getXYFromF1F2 (me, f1, f2, &x1, &y1);
-				int size = Table_getNumericValue (thee, i, thy numberOfColumns);
+				int size = Table_getNumericValue_Assert (thee, i, thy numberOfColumns);
 				Graphics_setFontSize (g, size);
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 				Graphics_text (g, x1, y1, label);

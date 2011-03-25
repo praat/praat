@@ -2,7 +2,7 @@
 #define _SpectrogramEditor_h_
 /* SpectrogramEditor.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/23
  */
 
-#ifndef _FunctionEditor_h_
-	#include "FunctionEditor.h"
-#endif
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
+#include "FunctionEditor.h"
+#include "Spectrogram.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define SpectrogramEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
@@ -39,6 +39,10 @@ Thing_declare1 (SpectrogramEditor);
 Thing_declare2 (SpectrogramEditor, FunctionEditor);
 
 SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *title, Any data);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file SpectrogramEditor.h */
 #endif

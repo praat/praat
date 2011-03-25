@@ -27,11 +27,11 @@
 	#include "Graphics.h"
 #endif
 
-#include "ManPage_enums.h"
-
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+#include "ManPage_enums.h"
 
 typedef struct structManPage_Paragraph {
 	short type;

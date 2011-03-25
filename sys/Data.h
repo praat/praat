@@ -372,9 +372,9 @@ class_create (Data, Thing);
 #define lenumwa  17
 #define booleanwa  18
 #define questionwa  19
-#define stringwwa  20
-#define lstringwwa  21
-#define maxsingletypewa lstringwwa
+#define stringwa  20
+#define lstringwa  21
+#define maxsingletypewa lstringwa
 #define structwa  22
 #define widgetwa  23
 #define objectwa  24

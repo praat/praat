@@ -67,21 +67,21 @@
 			if ((my x [i] = cacget##storage (f, & enum_##Type)) < 0) return 0; \
 	}
 
-#define oo_STRINGWx(storage,x)  \
+#define oo_STRINGx(storage,x)  \
 	if (! (my x = cacget##storage (f))) return 0;
 
-#define oo_STRINGWx_ARRAY(storage,x,cap,n)  \
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
 	for (int i = 0; i < n; i ++) \
 		if (! (my x [i] = cacget##storage (f))) return 0;
 
-#define oo_STRINGWx_SET(storage,x,setType)  \
+#define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! (my x [i] = cacget##storage (f))) return 0;
 
-#define oo_STRINGWx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMvector (sizeof (wchar_t *), min, max))) return 0; \
+		if (! (my x = NUMwvector (min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
 			if (! (my x [i] = cacget##storage (f))) return 0; \
 	}

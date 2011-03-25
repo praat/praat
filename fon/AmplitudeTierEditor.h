@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2007 Paul Boersma
+ * Copyright (C) 2003-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,15 @@
  */
 
 /*
- * pb 2007/06/10
+ * pb 2011/03/23
  */
 
-#ifndef _RealTierEditor_h_
-	#include "RealTierEditor.h"
-#endif
-#ifndef _AmplitudeTier_h_
-	#include "AmplitudeTier.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
+#include "RealTierEditor.h"
+#include "AmplitudeTier.h"
+#include "Sound.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 #define AmplitudeTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
@@ -45,6 +43,10 @@ AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar_t 
 /*
 	'sound' may be NULL.
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file AmplitudeTierEditor.h */
 #endif

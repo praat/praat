@@ -86,7 +86,7 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Distributions);
 		autoStrings thee = Distributions_to_Strings (me, GET_INTEGER (L"Column number"), GET_INTEGER (L"Number of strings"));
-		praat_new1 (thee.transfer(), NAME); therror
+		praat_new (thee.transfer(), NAME);
 	}
 END
 
@@ -97,7 +97,7 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Distributions);
 		autoStrings thee = Distributions_to_Strings_exact (me, GET_INTEGER (L"Column number"));
-		praat_new1 (thee.transfer(), NAME); therror
+		praat_new (thee.transfer(), NAME);
 	}
 END
 
@@ -187,8 +187,8 @@ DO
 	Strings strings1_, strings2_;
 	PairDistribution_to_Stringses (me, GET_INTEGER (L"Number"), & strings1_, & strings2_);
 	autoStrings strings1 = strings1_, strings2 = strings2_;   // UGLY
-	praat_new1 (strings1.transfer(), GET_STRING (L"Name of first Strings")); therror
-	praat_new1 (strings2.transfer(), GET_STRING (L"Name of second Strings")); therror
+	praat_new (strings1.transfer(), GET_STRING (L"Name of first Strings"));
+	praat_new (strings2.transfer(), GET_STRING (L"Name of second Strings"));
 END
 
 DIRECT (PairDistribution_to_Table)
@@ -214,7 +214,7 @@ DIRECT (Tables_append)
 	try {
 		WHERE (SELECTED) Collection_addItem (me.peek(), OBJECT);   // dangle (share pointers)
 		autoTable thee = Tables_append (me.peek());
-		praat_new1 (thee.transfer(), L"appended"); therror
+		praat_new (thee.transfer(), L"appended");
 		my size = 0;   //undangle (UGLY)
 	} catch (...) {
 		my size = 0;   //undangle (UGLY)
@@ -323,8 +323,7 @@ DO
 			GET_STRING (L"factors"), GET_STRING (L"columnsToSum"),
 			GET_STRING (L"columnsToAverage"), GET_STRING (L"columnsToMedianize"),
 			GET_STRING (L"columnsToAverageLogarithmically"), GET_STRING (L"columnsToMedianizeLogarithmically"));
-		praat_new2 (thee.transfer(), NAME, L"_pooled"); therror
-		praat_dataChanged (OBJECT);   // BUG: collapseRows should not change the original table overtly.
+		praat_new (thee.transfer(), NAME, L"_pooled");
 	}
 END
 
@@ -335,9 +334,8 @@ FORM (Table_createWithColumnNames, L"Create Table with column names", 0)
 	TEXTFIELD (L"columnNames", L"speaker dialect age vowel F0 F1 F2")
 	OK
 DO
-	if (! praat_new1 (Table_createWithColumnNames
-		(GET_INTEGER (L"Number of rows"), GET_STRING (L"columnNames")),
-		GET_STRING (L"Name"))) return 0;
+	autoTable me = Table_createWithColumnNames (GET_INTEGER (L"Number of rows"), GET_STRING (L"columnNames"));
+	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
 FORM (Table_createWithoutColumnNames, L"Create Table without column names", 0)
@@ -346,9 +344,8 @@ FORM (Table_createWithoutColumnNames, L"Create Table without column names", 0)
 	NATURAL (L"Number of columns", L"3")
 	OK
 DO
-	if (! praat_new1 (Table_createWithoutColumnNames
-		(GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns")),
-		GET_STRING (L"Name"))) return 0;
+	autoTable me = Table_createWithoutColumnNames (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
+	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
 FORM (Table_drawEllipse, L"Draw ellipse (standard deviation)", 0)
@@ -385,13 +382,11 @@ DO
 END
 
 DIRECT (Table_edit)
-	if (theCurrentPraatApplication -> batch) {
-		return Melder_error1 (L"Cannot edit a Table from batch.");
-	} else {
-		WHERE (SELECTED) {
-			TableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, static_cast <Table> ONLY_OBJECT);
-			if (! praat_installEditor (editor, IOBJECT)) return 0;
-		}
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Table from batch.");
+	WHERE (SELECTED) {
+		iam_LOOP (Table);
+		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
 
@@ -405,9 +400,8 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
-		if (! praat_new5 (Table_extractRowsWhereColumn_number (me,
-			icol, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAME, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) floor (value+0.5)) : L"undefined")) return 0;
+		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, L"...is..."), value);
+		praat_new (thee.transfer(), NAME, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) round (value)) : L"undefined");
 		praat_dataChanged (OBJECT);   // WHY?
 	}
 END
@@ -422,9 +416,8 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
-		if (! praat_new3 (Table_extractRowsWhereColumn_string (me,
-			icol, GET_ENUM (kMelder_string, L"..."), value),
-			NAME, L"_", value)) return 0;
+		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, L"..."), value);
+		praat_new3 (thee.transfer(), NAME, L"_", value);
 		praat_dataChanged (OBJECT);   // WHY?
 	}
 END
@@ -467,16 +460,17 @@ FORM (Table_getColumnIndex, L"Table: Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (static_cast <Table> ONLY_OBJECT, GET_STRING (L"Column label"))));
+	iam_ONLY (Table);
+	Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"))));
 END
-	
+
 FORM (Table_getColumnLabel, L"Table: Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
 	iam_ONLY (Table);
 	long icol = GET_INTEGER (L"Column number");
-	REQUIRE (icol <= my numberOfColumns, L"Column number must not be greater than number of columns.")
+	if (icol > my numberOfColumns) Melder_throw ("Column number must not be greater than number of columns.");
 	Melder_information1 (my columnHeaders [icol]. label);
 END
 
@@ -501,7 +495,7 @@ DO
 	double maximum = Table_getMaximum (me, icol); therror
 	Melder_information1 (Melder_double (maximum));
 END
-	
+
 FORM (Table_getMean, L"Table: Get mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
@@ -511,7 +505,7 @@ DO
 	double mean = Table_getMean (me, icol); therror
 	Melder_information1 (Melder_double (mean));
 END
-	
+
 FORM (Table_getMinimum, L"Table: Get minimum", 0)
 	SENTENCE (L"Column label", L"")
 	OK
@@ -521,7 +515,7 @@ DO
 	double minimum = Table_getMinimum (me, icol); therror
 	Melder_information1 (Melder_double (minimum));
 END
-	
+
 FORM (Table_getQuantile, L"Table: Get quantile", 0)
 	SENTENCE (L"Column label", L"")
 	POSITIVE (L"Quantile", L"0.50 (= median)")
@@ -529,20 +523,20 @@ FORM (Table_getQuantile, L"Table: Get quantile", 0)
 DO
 	iam_ONLY (Table);
 	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile"));
+	double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile")); therror
 	Melder_information1 (Melder_double (quantile));
 END
-	
+
 FORM (Table_getStandardDeviation, L"Table: Get standard deviation", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
 	iam_ONLY (Table);
 	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double stdev = Table_getStdev (me, icol);
+	double stdev = Table_getStdev (me, icol); therror
 	Melder_information1 (Melder_double (stdev));
 END
-	
+
 DIRECT (Table_getNumberOfColumns)
 	iam_ONLY (Table);
 	Melder_information1 (Melder_integer (my numberOfColumns));
@@ -559,10 +553,10 @@ FORM (Table_getValue, L"Table: Get value", 0)
 	OK
 DO
 	iam_ONLY (Table);
-	long irow = GET_INTEGER (L"Row number");
-	if (irow < 1 || irow > my rows -> size) Melder_throw ("Row number out of range.");
+	long rowNumber = GET_INTEGER (L"Row number");
+	Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	Melder_information1 (((TableRow) my rows -> item [irow]) -> cells [icol]. string);
+	Melder_information1 (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
 END
 
 DIRECT (Table_help) Melder_help (L"Table"); END
@@ -572,13 +566,10 @@ FORM (Table_insertColumn, L"Table: Insert column", 0)
 	WORD (L"Label", L"newcolumn")
 	OK
 DO
-	WHERE (SELECTED) try {
+	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		Table_insertColumn (me, GET_INTEGER (L"Position"), GET_STRING (L"Label")); therror
 		praat_dataChanged (me);
-	} catch (...) {
-		praat_dataChanged (OBJECT);   // cannot fully recover?
-		throw 1;
 	}
 END
 
@@ -586,13 +577,10 @@ FORM (Table_insertRow, L"Table: Insert row", 0)
 	NATURAL (L"Position", L"1")
 	OK
 DO
-	WHERE (SELECTED) try {
+	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		Table_insertRow (me, GET_INTEGER (L"Position")); therror
 		praat_dataChanged (me);
-	} catch (...) {
-		praat_dataChanged (OBJECT);   // cannot fully recover?
-		throw 1;
 	}
 END
 
@@ -607,15 +595,15 @@ DO
 END
 
 FORM_READ (Table_readFromTableFile, L"Read Table from table file", 0, true)
-	if (! praat_newWithFile1 (Table_readFromTableFile (file), MelderFile_name (file), file)) return 0;
+	praat_newWithFile (Table_readFromTableFile (file), MelderFile_name (file), file);
 END
 
 FORM_READ (Table_readFromCommaSeparatedFile, L"Read Table from comma-separated file", 0, true)
-	if (! praat_newWithFile1 (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file), file)) return 0;
+	praat_newWithFile (Table_readFromCharacterSeparatedTextFile (file, ','), MelderFile_name (file), file);
 END
 
 FORM_READ (Table_readFromTabSeparatedFile, L"Read Table from tab-separated file", 0, true)
-	if (! praat_newWithFile1 (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file), file)) return 0;
+	praat_newWithFile (Table_readFromCharacterSeparatedTextFile (file, '\t'), MelderFile_name (file), file);
 END
 
 FORM (Table_removeColumn, L"Table: Remove column", 0)
@@ -625,9 +613,8 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Table_removeColumn (me, icol);
+		Table_removeColumn (me, icol); therror
 		praat_dataChanged (me);
-		iferror return 0;
 	}
 END
 
@@ -637,9 +624,8 @@ FORM (Table_removeRow, L"Table: Remove row", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		Table_removeRow (me, GET_INTEGER (L"Row number"));
-		praat_dataChanged (OBJECT);
-		iferror return 0;
+		Table_removeRow (me, GET_INTEGER (L"Row number")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -847,10 +833,8 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel); therror
-		if (! praat_new2 (Table_rowsToColumns (me,
-			GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand")),
-			NAME, L"_nested")) return 0;
-		praat_dataChanged (OBJECT);
+		autoTable thee = Table_rowsToColumns (me, GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand"));
+		praat_new (thee.transfer(), NAME, L"_nested");
 	}
 END
 
@@ -866,20 +850,17 @@ FORM (Table_scatterPlot, L"Scatter plot", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); cherror
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); cherror
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks")); cherror
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
+		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks")); therror
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 			markColumn, GET_INTEGER (L"Font size"), GET_INTEGER (L"Garnish"));
 	}
-	praat_picture_close ();
-	return 1;
-end:
 END
 
 FORM (Table_scatterPlot_mark, L"Scatter plot (marks)", 0)
@@ -923,9 +904,8 @@ FORM (Table_setColumnLabel_index, L"Set column label", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		Table_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
-		praat_dataChanged (OBJECT);
-		iferror return 0;
+		Table_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -936,9 +916,8 @@ FORM (Table_setColumnLabel_label, L"Set column label", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label"));
-		praat_dataChanged (OBJECT);
-		iferror return 0;
+		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -950,12 +929,10 @@ FORM (Table_setNumericValue, L"Table: Set numeric value", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value"));
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value")); therror
 		praat_dataChanged (me);
-		iferror return 0;
 	}
-end:
 END
 
 FORM (Table_setStringValue, L"Table: Set string value", 0)
@@ -966,19 +943,17 @@ FORM (Table_setStringValue, L"Table: Set string value", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); cherror
-		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value"));
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value")); therror
 		praat_dataChanged (me);
-		iferror return 0;
 	}
-end:
 END
 
 DIRECT (Table_randomizeRows)
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
 		Table_randomizeRows (me);
-		praat_dataChanged (OBJECT);
+		praat_dataChanged (me);
 	}
 END
 
@@ -989,13 +964,17 @@ FORM (Table_sortRows, L"Table: Sort rows", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		if (! Table_sortRows_string (me, GET_STRING (L"columnLabels"))) return 0;
-		praat_dataChanged (OBJECT);
+		Table_sortRows_string (me, GET_STRING (L"columnLabels")); therror
+		praat_dataChanged (me);
 	}
 END
 
 DIRECT (Table_to_LinearRegression)
-	EVERY_TO (Table_to_LinearRegression (static_cast <Table> OBJECT))
+	WHERE (SELECTED) {
+		iam_LOOP (Table);
+		autoLinearRegression thee = Table_to_LinearRegression (me);
+		praat_new (thee.transfer(), NAME);
+	}
 END
 
 FORM (Table_to_LogisticRegression, L"Table: To LogisticRegression", 0)
@@ -1005,7 +984,11 @@ FORM (Table_to_LogisticRegression, L"Table: To LogisticRegression", 0)
 	WORD (L"Dependent 2 (column name)", L"i")
 	OK
 DO
-	EVERY_TO (Table_to_LogisticRegression (static_cast <Table> OBJECT, GET_STRING (L"factors"), GET_STRING (L"Dependent 1"), GET_STRING (L"Dependent 2")))
+	WHERE (SELECTED) {
+		iam_LOOP (Table);
+		autoLogisticRegression thee = Table_to_LogisticRegression (me, GET_STRING (L"factors"), GET_STRING (L"Dependent 1"), GET_STRING (L"Dependent 2"));
+		praat_new (thee.transfer(), NAME);
+	}
 END
 
 FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
@@ -1014,8 +997,9 @@ FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels"));
-		if (! praat_new1 (Table_to_TableOfReal (me, icol), NAME)) return 0;
+		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels")); therror
+		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
+		praat_new (thee.transfer(), NAME);
 	}
 END
 

@@ -1,6 +1,8 @@
+#ifndef _praat_script_h_
+#define _praat_script_h_
 /* praat_script.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +20,16 @@
  */
 
 /*
- * pb 2009/12/22
+ * pb 2011/03/24
  */
 
-#ifndef _Interpreter_h_
-	#include "Interpreter.h"
+#include "Interpreter.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
-int praat_executeCommand (Interpreter me, const wchar_t *command);
+int praat_executeCommand (Interpreter me, wchar_t *command);
 int praat_executeCommandFromStandardInput (const char *programName);
 int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments);
 int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments);
@@ -35,4 +39,9 @@ int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interp
 int DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
 int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar_t *script);
 
+#ifdef __cplusplus
+	}
+#endif
+
 /* End of file praat_script.h */
+#endif

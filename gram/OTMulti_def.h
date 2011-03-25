@@ -24,7 +24,7 @@
 #define ooSTRUCT OTConstraint
 oo_DEFINE_STRUCT (OTConstraint)
 
-	oo_STRINGW (name)
+	oo_STRING (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
 	oo_FROM (2)
@@ -47,7 +47,7 @@ oo_END_STRUCT (OTConstraint)
 #define ooSTRUCT OTCandidate
 oo_DEFINE_STRUCT (OTCandidate)
 
-	oo_STRINGW (string)
+	oo_STRING (string)
 	oo_LONG (numberOfConstraints)
 	oo_INT_VECTOR (marks, my numberOfConstraints)
 	#if !oo_READING && !oo_WRITING

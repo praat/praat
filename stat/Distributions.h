@@ -47,6 +47,8 @@ Distributions Distributions_addMany (Collection me);
 
 #ifdef __cplusplus
 	}
+void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber);
+
 #endif
 
 /* End of file Distributions.h */
