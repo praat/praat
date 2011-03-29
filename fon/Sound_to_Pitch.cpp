@@ -156,10 +156,10 @@ Pitch Sound_to_Pitch_any (Sound me,
 		return thee.transfer();
 	}
 
-	autoNUMdmatrix frame;
-	autoNUMdvector ac;
-	autoNUMdvector window;
-	autoNUMdvector windowR;
+	autoNUMmatrix <double> frame;
+	autoNUMvector <double> ac;
+	autoNUMvector <double> window;
+	autoNUMvector <double> windowR;
 	if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
 		/*
@@ -221,9 +221,9 @@ Pitch Sound_to_Pitch_any (Sound me,
 		brent_ixmax = nsamp_window * interpolation_depth;
 	}
 
-	autoNUMdvector r (- nsamp_window, nsamp_window);
-	autoNUMlvector imax (1, maxnCandidates);
-	autoNUMdvector localMean (1, my ny);
+	autoNUMvector <double> r (- nsamp_window, nsamp_window);
+	autoNUMvector <long> imax (1, maxnCandidates);
+	autoNUMvector <double> localMean (1, my ny);
 
 	autoMelderProgress progress (L"Sound to Pitch...");
 

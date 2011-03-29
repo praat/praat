@@ -46,20 +46,15 @@ END
 
 DIRECT (ExperimentMFC_run)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot run experiments from the command line.");
-	/*
-	 * This procedure has to use no less than FOUR kinds of reference copying.
-	 * Its correctness is difficult to prove.
-	 * Does it make a good case for reference counting?
-	 */
 	autoOrdered experiments = Ordered_create ();
 	Collection_dontOwnItems (experiments.peek());
 	WHERE (SELECTED) {
 		iam_LOOP (ExperimentMFC);
-		Collection_addItem (experiments.peek(), me);   // safe reference copy of me
+		Collection_addItem (experiments.peek(), me);   // reference copy of me
 	}
-	Ordered experiments_peek = experiments.peek();   // remember a reference to the Ordered   // UGLY
-	autoRunnerMFC runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experiments.transfer());   // transfer ownership of the Ordered, which contains reference copies of experiments
-	praat_installEditorN (runner.transfer(), experiments_peek); therror   // UGLY: a dangling pointer to a set of dangling pointers; it works only because the runner hasn't destroyed the experiments if it was successfully created
+	autoOrdered experimentsCopy = experiments.clone();   // we need a copy, because we do a transfer, then a peek
+	autoRunnerMFC runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experimentsCopy.transfer());
+	praat_installEditorN (runner.transfer(), experiments.peek()); therror
 END
 
 DIRECT (ExperimentMFC_extractResults)

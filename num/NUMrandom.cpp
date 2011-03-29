@@ -1,6 +1,6 @@
 /* NUMrandom.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2002/03/04 GPL
  * pb 2006/12/18 improved comment
+ * pb 2011/03/29 C++
  */
 
 /*
@@ -319,4 +320,4 @@ double NUMrandomPoisson (double mean) {
 	}
 }
 
-/* End of file NUMrandom.c */
+/* End of file NUMrandom.cpp */

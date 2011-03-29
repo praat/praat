@@ -256,15 +256,15 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 
 void Melder_alloc_init (void);   // to be called around program start-up
 void * _Melder_malloc_e (unsigned long size);
-#define Melder_malloc_e(type,size)  (type *) _Melder_malloc_e ((size) * sizeof (type))
+#define Melder_malloc_e(type,numberOfElements)  (type *) _Melder_malloc_e ((numberOfElements) * sizeof (type))
 void * _Melder_malloc_f (unsigned long size);
-#define Melder_malloc_f(type,size)  (type *) _Melder_malloc_f ((size) * sizeof (type))
+#define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * sizeof (type))
 void * Melder_realloc_e (void *pointer, long size);
 void * Melder_realloc_f (void *pointer, long size);
 void * _Melder_calloc_e (long numberOfElements, long elementSize);
-#define Melder_calloc_e(type,size)  (type *) _Melder_calloc_e (size, sizeof (type))
+#define Melder_calloc_e(type,numberOfElements)  (type *) _Melder_calloc_e (numberOfElements, sizeof (type))
 void * _Melder_calloc_f (long numberOfElements, long elementSize);
-#define Melder_calloc_f(type,size)  (type *) _Melder_calloc_f (size, sizeof (type))
+#define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
 char * Melder_strdup_e (const char *string);
 char * Melder_strdup_f (const char *string);
 wchar_t * Melder_wcsdup_e (const wchar_t *string);

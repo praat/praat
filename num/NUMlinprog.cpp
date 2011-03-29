@@ -1,6 +1,6 @@
-/* NUMlinprog.c
+/* NUMlinprog.cpp
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 2008-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /*
- * pb 2008/04/12
+ * pb 2008/04/12 created
+ * pb 2011/03/29 C++
  */
 
 #include "NUM.h"
@@ -129,4 +130,4 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar) {
 	return glp_get_col_prim (my linearProgram, ivar);
 }
 
-/* End of file NUMlinprog.c */
+/* End of file NUMlinprog.cpp */

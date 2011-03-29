@@ -108,12 +108,12 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 		/*
 		 * Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
 		 */
-		autoNUMdmatrix x (1, numberOfCells, 0, numberOfFactors);   // column 0 is the intercept
-		autoNUMdvector y0 (1, numberOfCells);
-		autoNUMdvector y1 (1, numberOfCells);
-		autoNUMdvector meanX (1, numberOfFactors);
-		autoNUMdvector stdevX (1, numberOfFactors);
-		autoNUMdmatrix smallMatrix (0, numberOfFactors, 0, numberOfParameters);
+		autoNUMmatrix <double> x (1, numberOfCells, 0, numberOfFactors);   // column 0 is the intercept
+		autoNUMvector <double> y0 (1, numberOfCells);
+		autoNUMvector <double> y1 (1, numberOfCells);
+		autoNUMvector <double> meanX (1, numberOfFactors);
+		autoNUMvector <double> stdevX (1, numberOfFactors);
+		autoNUMmatrix <double> smallMatrix (0, numberOfFactors, 0, numberOfParameters);
 		autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label, my columnHeaders [dependent2]. label);
 		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
 			double minimum = Table_getMinimum (me, factors [ivar]); therror
@@ -294,7 +294,7 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors
 {
 	try {
 		long numberOfFactors;
-		autoNUMlvector factors_columnIndices (Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString, & numberOfFactors), 1);
+		autoNUMvector <long> factors_columnIndices (Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString, & numberOfFactors), 1);
 		long dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel); therror
 		long dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel); therror
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);

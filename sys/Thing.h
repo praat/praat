@@ -370,6 +370,7 @@ public:
 	/*
 	 * Things like
 	 *    autoPitch pitch (Pitch_create (...));
+	 * and
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
@@ -387,11 +388,7 @@ public:
 		if (ptr) forget (ptr);
 		//if (Melder_debug == 37) Melder_casual ("end forgetting autopointer %ld with pointer %ld", this, ptr);
 	}
-	/*
-	 * Access the pointer.
-	 */
 	T* peek () const throw () { return ptr; }
-	//T* operator() () const throw () { return ptr; }
 	/*
 	 * The expression
 	 *    pitch.ptr -> xmin
@@ -401,26 +398,29 @@ public:
 	T* operator-> () const throw () { return ptr; }   // as r-value
 	T& operator* () const throw () { return *ptr; }   // as l-value
 	/*
-	 * The expression
-	 *    Pitch pitch2 = pitch.ptr;
-	 * should be abbreviatable by
-	 *    Pitch pitch2 = pitch;
-	 * But how?
-	 */
-	//operator T* () { return ptr; }   // this way; but perhaps it's better not to allow that, and have an explicit peek() versus transfer()
-	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
-	/*
-	 * Assignments like
+	 * There are two ways to access the pointer; with and without transfer of ownership.
+	 *
+	 * Without transfer:
+	 *    autoPitch pitch = Sound_to_Pitch (...);
+	 *    Pitch_draw (pitch.peek());
+	 *
+	 * With transfer:
 	 *    return thee.transfer();
 	 * and
-	 *    out_pitch = pitch.transfer();
-	 *    out_pulses = pulses.transfer();
+	 *    *out_pitch = pitch.transfer();
+	 *    *out_pulses = pulses.transfer();
 	 * and
 	 *    Collection_addItem (me, pitch.transfer());
-	 *    praat_new (pitch.transfer(), NAME);
-	 * make the pointer non-automatic again.
+	 * and
+	 *    praat_new (pitch.transfer(), my name);
 	 */
-	T* transfer (void) throw () { T* temp = ptr; ptr = NULL; return temp; }
+	T* transfer () throw () { T* temp = ptr; ptr = NULL; return temp; }   // make the pointer non-automatic again
+	//operator T* () { return ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
+	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
+	/*
+	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
+	 */
+	T* clone () const throw (int) { return static_cast<T *> (Data_copy (ptr)); }
 	/*
 	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
 	 * and therefore has to be done explicitly (rather than via an assignment),
@@ -440,7 +440,7 @@ private:
 	 *    pitch2 = pitch;
 	 */
 	_Thing_auto& operator= (const _Thing_auto&);
-	//template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
+	template <class Y> _Thing_auto& operator= (const _Thing_auto<Y>&);
 };
 
 #endif

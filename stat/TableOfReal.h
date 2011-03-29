@@ -43,10 +43,10 @@ class_create (TableOfReal, Data);
 
 int TableOfReal_init (I, long numberOfRows, long numberOfColumns);
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);
-int TableOfReal_removeRow (I, long irow);
-int TableOfReal_removeColumn (I, long icol);
-int TableOfReal_insertRow (I, long irow);
-int TableOfReal_insertColumn (I, long icol);
+void TableOfReal_removeRow (I, long irow);
+void TableOfReal_removeColumn (I, long icol);
+void TableOfReal_insertRow (I, long irow);
+void TableOfReal_insertColumn (I, long icol);
 void TableOfReal_setRowLabel (I, long irow, const wchar_t *label);
 void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label);
 long TableOfReal_rowLabelToIndex (I, const wchar_t *label);

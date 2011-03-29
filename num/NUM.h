@@ -300,19 +300,19 @@ FUNCTION (c, char)
 	NUMvector_insert_e (sizeof (void *), (void **) v, lo, hi, position)
 
 #define NUMwvector(lo,hi)  \
-	(wchar **) NUMvector (sizeof (wchar **), lo, hi)
+	(wchar **) NUMvector (sizeof (wchar *), lo, hi)
 #define NUMwvector_free(v,lo)  \
-	NUMvector_free (sizeof (wchar **), v, lo)
+	NUMvector_free (sizeof (wchar *), v, lo)
 #define NUMwvector_copy(v,lo,hi)  \
-	(wchar **) NUMvector_copy (sizeof (wchar **), v, lo, hi)
+	(wchar **) NUMvector_copy (sizeof (wchar *), v, lo, hi)
 #define NUMwvector_copyElements(v,to,lo,hi)  \
-	NUMvector_copyElements (sizeof (wchar **), v, to, lo, hi)
+	NUMvector_copyElements (sizeof (wchar *), v, to, lo, hi)
 #define NUMwvector_equal(v1,v2,lo,hi)  \
-	NUMvector_equal (sizeof (wchar **), v1, v2, lo, hi)
+	NUMvector_equal (sizeof (wchar *), v1, v2, lo, hi)
 #define NUMwvector_append_e(v,lo,hi)  \
-	NUMvector_append_e (sizeof (wchar **), (void **) v, lo, hi)
+	NUMvector_append_e (sizeof (wchar *), (void **) v, lo, hi)
 #define NUMwvector_insert_e(v,lo,hi,position)  \
-	NUMvector_insert_e (sizeof (wchar **), (void **) v, lo, hi, position)
+	NUMvector_insert_e (sizeof (wchar *), (void **) v, lo, hi, position)
 
 #define NUMstructmatrix(Type,row1,row2,col1,col2)  \
 	NUMmatrix (sizeof (struct struct##Type), row1, row2, col1, col2)
@@ -504,36 +504,36 @@ FUNCTION (c, char, c1)
 #undef FUNCTION
 
 /*
-int NUMr8vector_writeBinary (const double *v, long lo, long hi, FILE *f);   // etc
+int NUMdvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
 	Return 0 if anything went wrong, else return 1.
 	The vectors need not have been created by NUM...vector.
-double * NUMr8vector_readText (long lo, long hi, MelderReadString *text, const char *name);   // etc
+double * NUMdvector_readText_r8 (long lo, long hi, MelderReadString *text, const char *name);   // etc
 	create and read a vector as text.
 	Queue an error message and return NULL if anything went wrong.
 	Every element is supposed to be on the beginning of a line.
-double * NUMr8vector_readBinary (long lo, long hi, FILE *f);   // etc
+double * NUMdvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Queue an error message and return NULL if anything went wrong.
-int NUMr8vector_writeText (const double *v, long lo, long hi, MelderFile file, const char *name);   // etc
+int NUMdvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const char *name);   // etc
 	write the vector elements v [lo..hi] as text to the stream f,
 	each element on its own line, preceded by "name [index]: ".
 	Return 0 if anything went wrong, else return 1.
 	The vectors need not have been created by NUMvector.
-int NUMr8matrix_writeText (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
+int NUMdmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
 	Return 0 if anything went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-int NUMr8matrix_writeBinary (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+int NUMdmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
 	Return 0 if anything went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-double ** NUMr8matrix_readText (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
+double ** NUMdmatrix_readText_r8 (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
 	create and read a matrix as text.
 	Give an error message and return NULL if anything went wrong.
-double ** NUMr8matrix_readBinary (long r1, long r2, long c1, long c2, FILE *f);   // etc
+double ** NUMdmatrix_readBinary_r8 (long r1, long r2, long c1, long c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
 	Give an error message and return NULL if anything went wrong.
 */
@@ -549,98 +549,70 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 #ifdef __cplusplus
 	}
-#define FUNCTION(t,type)  \
-struct autoNUM##t##vector {  \
-	autoNUM##t##vector (long from, long to) throw (int) : from (from) {  \
-		ptr = NUM##t##vector (from, to); therror  \
-	}  \
-	autoNUM##t##vector (type *ptr, long from) throw (int) : ptr (ptr), from (from) { therror }  \
-	autoNUM##t##vector (void) throw () : from (0), ptr (NULL) { }  \
-	~autoNUM##t##vector () {  \
-		NUM##t##vector_free (ptr, from);  \
-	}  \
-	type& operator[] (long i) { return ptr [i]; }  \
-	type * peek () const throw () { return ptr; }  \
-	type * transfer (void) throw () { type *temp = ptr; ptr = NULL; return temp; }  \
-	void reset (long newFrom, long to) throw (int) {  \
-		NUM##t##vector_free (ptr, from);  \
-		ptr = NUM##t##vector (from = newFrom, to); therror  \
-	}  \
-private:  \
-	type *ptr;  \
-	long from;  \
-};  \
-struct autoNUM##t##matrix {  \
-	autoNUM##t##matrix (long row1, long row2, long col1, long col2) throw (int) : row1 (row1), col1 (col1) {  \
-		ptr = NUM##t##matrix (row1, row2, col1, col2); therror  \
-	}  \
-	autoNUM##t##matrix (void) throw () : row1 (0), col1 (0), ptr (NULL) { }  \
-	~autoNUM##t##matrix () {  \
-		NUM##t##matrix_free (ptr, row1, col1);  \
-	}  \
-	type*& operator[] (long row) { return ptr [row]; }  \
-	type ** peek () const throw () { return ptr; }  \
-	type ** transfer (void) throw () { type **temp = ptr; ptr = NULL; return temp; }  \
-	void reset (long newRow1, long row2, long newCol1, long col2) throw (int) {  \
-		NUM##t##matrix_free (ptr, row1, col1);  \
-		ptr = NUM##t##matrix (row1 = newRow1, row2, col1 = newCol1, col2); therror  \
-	}  \
-private:  \
-	type **ptr;  \
-	long row1, col1;  \
-};
-FUNCTION (b, signed char)
-FUNCTION (s, short)
-FUNCTION (i, int)
-FUNCTION (l, long)
-FUNCTION (ub, unsigned char)
-FUNCTION (us, unsigned short)
-FUNCTION (ui, unsigned int)
-FUNCTION (ul, unsigned long)
-FUNCTION (d, double)
-FUNCTION (fc, fcomplex)
-FUNCTION (dc, dcomplex)
-FUNCTION (c, char)
-//FUNCTION (p, void *)
-struct autoNUMpvector {
-	autoNUMpvector (long from, long to) throw (int) : from (from) {
-		ptr = (void **) NUMpvector (from, to); therror
+	
+template <class T>
+T* NUMvector (long from, long to) {
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror;
+	return result;
+}
+
+template <class T>
+void NUMvector_free (T* ptr, long from) {
+	NUMvector_free (sizeof (T), ptr, from);
+}
+
+template <class T>
+struct autoNUMvector {
+	autoNUMvector (long from, long to) throw (int) : from (from) {
+		ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
 	}
-	autoNUMpvector (void **ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
-	autoNUMpvector (void) throw () : from (0), ptr (NULL) { }
-	~autoNUMpvector () {
-		NUMpvector_free (ptr, from);
+	autoNUMvector (T *ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
+	autoNUMvector (void) throw () : from (0), ptr (NULL) { }
+	~autoNUMvector () {
+		NUMvector_free (sizeof (T), ptr, from);
 	}
-	void*& operator[] (long i) { return ptr [i]; }
-	void ** peek () const throw () { return ptr; }
-	void ** transfer (void) throw () { void **temp = ptr; ptr = NULL; return temp; }
+	T& operator[] (long i) { return ptr [i]; }
+	T* peek () const throw () { return ptr; }
+	T* transfer (void) throw () { T *temp = ptr; ptr = NULL; return temp; }
 	void reset (long newFrom, long to) throw (int) {
-		NUMpvector_free (ptr, from);
-		ptr = (void **) NUMpvector (from = newFrom, to); therror
+		NUMvector_free (sizeof (T), ptr, from);
+		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
 	}
 private:
-	void **ptr;
+	T *ptr;
 	long from;
 };
-struct autoNUMwvector {
-	autoNUMwvector (long from, long to) throw (int) : from (from) {
-		ptr = NUMwvector (from, to); therror
+
+template <class T>
+T** NUMmatrix (long row1, long row2, long col1, long col2) {
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror;
+	return result;
+}
+
+template <class T>
+void NUMmatrix_free (T** ptr, long row1, long col1) {
+	NUMmatrix_free (sizeof (T), ptr, row1, col1);
+}
+
+template <class T>
+struct autoNUMmatrix {
+	autoNUMmatrix (long row1, long row2, long col1, long col2) throw (int) : row1 (row1), col1 (col1) {
+		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
 	}
-	autoNUMwvector (wchar **ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
-	autoNUMwvector (void) throw () : from (0), ptr (NULL) { }
-	~autoNUMwvector () {
-		NUMwvector_free (ptr, from);
+	autoNUMmatrix (void) throw () : row1 (0), col1 (0), ptr (NULL) { }
+	~autoNUMmatrix () {
+		NUMmatrix_free (sizeof (T), ptr, row1, col1);
 	}
-	wchar*& operator[] (long i) { return ptr [i]; }
-	wchar ** peek () const throw () { return ptr; }
-	wchar ** transfer (void) throw () { wchar **temp = ptr; ptr = NULL; return temp; }
-	void reset (long newFrom, long to) throw (int) {
-		NUMwvector_free (ptr, from);
-		ptr = NUMwvector (from = newFrom, to); therror
+	T*& operator[] (long row) { return ptr [row]; }
+	T** peek () const throw () { return ptr; }
+	T** transfer (void) throw () { T **temp = ptr; ptr = NULL; return temp; }
+	void reset (long newRow1, long row2, long newCol1, long col2) throw (int) {
+		NUMmatrix_free (sizeof (T), ptr, row1, col1);
+		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1 = newRow1, row2, col1 = newCol1, col2)); therror
 	}
 private:
-	wchar **ptr;
-	long from;
+	T** ptr;
+	long row1, col1;
 };
 
 #endif

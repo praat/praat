@@ -23,11 +23,14 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110325)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110329)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.21# (29 March 2011)")
+LIST_ITEM (L"\\bu Scripting: removed a crashing bug introduced for colour names in 5.2.20.")
 NORMAL (L"##5.2.20# (25 March 2011)")
-LIST_ITEM (L"\\bu Scripting: removed a memory leak for indexed variables.")
+LIST_ITEM (L"\\bu Scripting: removed a large memory leak for indexed variables.")
+LIST_ITEM (L"\\bu Scripting: removed a small memory leak for colour names.")
 LIST_ITEM (L"\\bu Support for very long file paths on the Mac.")
 NORMAL (L"##5.2.19# (16 March 2011)")
 LIST_ITEM (L"\\bu @ExperimentMFC: corrected a bug introduced in 5.2.18 that could cause Praat to crash when extracting results from an incomplete experiment.")

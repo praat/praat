@@ -456,7 +456,7 @@ static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter
 		} break; case UI_COLOUR: {
 			wchar_t *string2 = Melder_wcsdup_f (string);
 			if (colourToValue (me, string2)) {
-				Melder_free (string);
+				Melder_free (string2);
 			} else if (Interpreter_numericExpression (interpreter, string2, & my colourValue. red)) {
 				my colourValue. green = my colourValue. blue = my colourValue. red;
 				Melder_free (string2);

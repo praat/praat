@@ -228,11 +228,16 @@ wchar_t * Thing_messageName (I) {
 
 void Thing_setName (I, const wchar_t *name) {
 	iam (Thing);
-	if (name != my name) {   /* Pointer comparison! So that Thing_setName (me, my name) does not fail. */
-		Melder_free (my name);
-		my name = Melder_wcsdup_f (name);
-	}
-	our nameChanged (me);
+	/*
+	 * First check without change.
+	 */
+	wchar *newName = Melder_wcsdup_f (name);   // BUG: that's no checking
+	/*
+	 * Then change without error.
+	 */
+	Melder_free (my name);
+	my name = newName;
+	our nameChanged (me);   // BUG: what if this fails?
 }
 
 long Thing_getTotalNumberOfThings (void) { return theTotalNumberOfThings; }

@@ -86,30 +86,31 @@ int Distributions_peek (Distributions me, long column, wchar_t **string) {
 }
 
 int Distributions_peek_opt (Distributions me, long column, long *number) {
-	double total = 0.0;
-	long irow;
-	if (column > my numberOfColumns)
-		error3 (L"No column ", Melder_integer (column), L".")
-	if (my numberOfRows < 1)
-		error1 (L"No candidates.")
-	for (irow = 1; irow <= my numberOfRows; irow ++) {
-		total += my data [irow] [column];
-	}
-	if (total <= 0.0)
-		error1 (L"Column total not positive.")
-	do {
-		double rand = NUMrandomUniform (0, total), sum = 0.0;
-		for (irow = 1; irow <= my numberOfRows; irow ++) {
-			sum += my data [irow] [column];
-			if (rand <= sum) break;
+	try {
+		Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
+		if (my numberOfRows < 1)
+			Melder_throw (me, ": I have no candidates.");
+		double total = 0.0;
+		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+			total += my data [irow] [column];
 		}
-	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
-	if (my rowLabels [irow] == NULL)
-		error3 (L"No string in row ", Melder_integer (irow), L".")
-	*number = irow;
-end:
-	iferror return Melder_error1 (L"(Distributions_peek:) Not performed.");
-	return 1;
+		if (total <= 0.0)
+			Melder_throw (me, ": the total weight of column ", column, " is not positive.");
+		long irow;
+		do {
+			double rand = NUMrandomUniform (0, total), sum = 0.0;
+			for (irow = 1; irow <= my numberOfRows; irow ++) {
+				sum += my data [irow] [column];
+				if (rand <= sum) break;
+			}
+		} while (irow > my numberOfRows);   /* Guard against rounding errors. */
+		if (my rowLabels [irow] == NULL)
+			Melder_throw (me, ": no string in row ", irow, ".");
+		*number = irow;
+		return 1;
+	} catch (...) {
+		rethrowzero;
+	}
 }
 
 double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
@@ -127,9 +128,9 @@ double Distributions_getProbability (Distributions me, const wchar_t *string, lo
 }
 
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column) {
-	double total = 0.0;
 	if (column < 1 || column > my numberOfColumns || column > thy numberOfColumns ||
 	    my numberOfRows != thy numberOfRows) return NUMundefined;
+	double total = 0.0;
 	for (long irow = 1; irow <= my numberOfRows; irow ++) {
 		total += fabs (my data [irow] [column] - thy data [irow] [column]);
 	}

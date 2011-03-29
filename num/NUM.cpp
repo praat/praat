@@ -1,4 +1,4 @@
-/* NUM.c
+/* NUM.cpp
  *
  * Copyright (C) 1992-2008 Paul Boersma
  *
@@ -29,6 +29,7 @@
  * pb 2008/01/19 double
  * pb 2008/09/21 NUMshift
  * pb 2008/09/22 NUMscale
+ * pb 2011/03/29 C++
  */
 
 #include "NUM.h"
@@ -447,7 +448,7 @@ struct improve_params {
 };
 
 static double improve_evaluate (double x, void *closure) {
-	struct improve_params *me = closure;
+	struct improve_params *me = (struct improve_params *) closure;
 	double y = NUM_interpolate_sinc (my y, my ixmax, x, my depth);
 	return my isMaximum ? - y : y;
 }
@@ -552,31 +553,28 @@ struct parm2 {
 };
 
 static long getNumberOfCandidates_n (long iframe, void *closure) {
-	struct parm2 *me = closure;
+	struct parm2 *me = (struct parm2 *) closure;
 	(void) iframe;
 	return my ncomb;
 }
 static double getLocalCost_n (long iframe, long jcand, void *closure) {
-	struct parm2 *me = closure;
-	int itrack;
+	struct parm2 *me = (struct parm2 *) closure;
 	double localCost = 0.0;
-	for (itrack = 1; itrack <= my ntrack; itrack ++)
+	for (int itrack = 1; itrack <= my ntrack; itrack ++)
 		localCost += my getLocalCost (iframe, my indices [jcand] [itrack], itrack, my closure);
 	return localCost;
 }
 static double getTransitionCost_n (long iframe, long jcand1, long jcand2, void *closure) {
-	struct parm2 *me = closure;
-	int itrack;
+	struct parm2 *me = (struct parm2 *) closure;
 	double transitionCost = 0.0;
-	for (itrack = 1; itrack <= my ntrack; itrack ++)
+	for (int itrack = 1; itrack <= my ntrack; itrack ++)
 		transitionCost += my getTransitionCost (iframe,
 			my indices [jcand1] [itrack], my indices [jcand2] [itrack], itrack, my closure);
 	return transitionCost;
 }
 static void putResult_n (long iframe, long jplace, void *closure) {
-	struct parm2 *me = closure;
-	int itrack;
-	for (itrack = 1; itrack <= my ntrack; itrack ++)
+	struct parm2 *me = (struct parm2 *) closure;
+	for (int itrack = 1; itrack <= my ntrack; itrack ++)
 		my putResult (iframe, my indices [jplace] [itrack], itrack, my closure);
 }
 
@@ -659,4 +657,4 @@ int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], doubl
 	return nup;
 }
 
-/* End of file NUM.c */
+/* End of file NUM.cpp */

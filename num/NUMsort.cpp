@@ -1,6 +1,6 @@
 /* NUMsort.c
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/06/24 removed NUMselect
  * pb 2007/08/10 NUMsort_strW
  * pb 2008/01/21 double
+ * pb 2011/03/29 C++
  */
 
 #include "NUM.h"
@@ -166,4 +167,4 @@ double NUMquantile (long n, double a [], double factor) {
 	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }
 
-/* End of file NUMsort.c */
+/* End of file NUMsort.cpp */

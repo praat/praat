@@ -29,6 +29,7 @@
  * pb 2007/02/14 honoured precondition of Sampled_shortTermAnalysis (by checking whether minimumPitch is defined)
  * pb 2008/01/19 double
  * pb 2011/03/04 C++
+ * pb 2011/03/28 C++
  */
 
 #include "Sound_to_Intensity.h"
@@ -52,8 +53,8 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		Melder_assert (windowDuration > 0.0);
 		double halfWindowDuration = 0.5 * windowDuration;
 		long halfWindowSamples = halfWindowDuration / my dx;
-		autoNUMdvector amplitude (- halfWindowSamples, halfWindowSamples);
-		autoNUMdvector window (- halfWindowSamples, halfWindowSamples);
+		autoNUMvector <double> amplitude (- halfWindowSamples, halfWindowSamples);
+		autoNUMvector <double> window (- halfWindowSamples, halfWindowSamples);
 
 		for (long i = - halfWindowSamples; i <= halfWindowSamples; i ++) {
 			double x = i * my dx / halfWindowDuration, root = 1 - x * x;
@@ -102,7 +103,7 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		}
 		return thee.transfer();
 	} catch (...) {
-		rethrowmzero ("Sound: intensity analysis not performed.");
+		rethrowmzero (me, ": intensity analysis not performed.");
 	}
 }
 
@@ -139,14 +140,19 @@ IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double time
 			autoIntensity i2;   // compiler prevents this
 			autoIntensity i3 = intensity;   // compiler prevents this
 			i2 = intensity;   // compiler prevents this
-			Intensity i4 = intensity;   // compiler allows this
-			Intensity i8 = i2;   // compiler allows this
-			i4 = intensity;   // and this
+			Intensity i4 = intensity.peek();   // compiler allows this
+			Intensity i10 = intensity;   // but not  this
+			Intensity i8 = i2.peek();   // compiler allows this
+			Intensity i9 = i2;   // but not this
+			i4 = intensity;   // or this
 			Intensity2 i5 = NULL;
 			i4 = i5;   // base-class object becomes derived-class object
 			autoIntensity i6 = i5;
 			autoIntensity2 i7;
-			Intensity_downto_IntensityTier (i7);   // a double conversion that seems to work
+			Intensity_downto_IntensityTier (i7.peek());   // a conversion that works
+			Intensity_downto_IntensityTier (i7);   // and one that doesn't
+			autoIntensity i11 = i2.peek();   // this is wrong but not detected...
+			autoIntensity i22 = i2.transfer();   // ... and this is correct
 			structTable table = { 0 };
 			Table_initWithoutColumnNames (& table, 10, 10);
 			Table theenew = new structTable (table);
@@ -155,7 +161,7 @@ IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double time
 		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
 		return thee.transfer();
 	} catch (...) {
-		rethrowmzero (L"Sound: no IntensityTier created.");
+		rethrowmzero (me, ": no IntensityTier created.");
 	}
 }
 

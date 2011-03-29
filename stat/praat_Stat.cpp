@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/09
+ * pb 2011/03/28
  */
 
 #include "praat.h"
@@ -86,7 +86,7 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Distributions);
 		autoStrings thee = Distributions_to_Strings (me, GET_INTEGER (L"Column number"), GET_INTEGER (L"Number of strings"));
-		praat_new (thee.transfer(), NAME);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -97,7 +97,7 @@ DO
 	WHERE (SELECTED) {
 		iam_LOOP (Distributions);
 		autoStrings thee = Distributions_to_Strings_exact (me, GET_INTEGER (L"Column number"));
-		praat_new (thee.transfer(), NAME);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -323,7 +323,7 @@ DO
 			GET_STRING (L"factors"), GET_STRING (L"columnsToSum"),
 			GET_STRING (L"columnsToAverage"), GET_STRING (L"columnsToMedianize"),
 			GET_STRING (L"columnsToAverageLogarithmically"), GET_STRING (L"columnsToMedianizeLogarithmically"));
-		praat_new (thee.transfer(), NAME, L"_pooled");
+		praat_new (thee.transfer(), my name, L"_pooled");
 	}
 END
 
@@ -401,8 +401,8 @@ DO
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
 		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, L"...is..."), value);
-		praat_new (thee.transfer(), NAME, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) round (value)) : L"undefined");
-		praat_dataChanged (OBJECT);   // WHY?
+		praat_new (thee.transfer(), my name, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) round (value)) : L"undefined");
+		praat_dataChanged (me);   // WHY?
 	}
 END
 
@@ -417,8 +417,8 @@ DO
 		iam_LOOP (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
 		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, L"..."), value);
-		praat_new3 (thee.transfer(), NAME, L"_", value);
-		praat_dataChanged (OBJECT);   // WHY?
+		praat_new3 (thee.transfer(), my name, L"_", value);
+		praat_dataChanged (me);   // WHY?
 	}
 END
 
@@ -427,14 +427,16 @@ FORM (Table_formula, L"Table: Formula", L"Table: Formula...")
 	TEXTFIELD (L"formula", L"abs (self)")
 	OK
 DO
-	WHERE (SELECTED) try {
+	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Table_formula (me, icol, GET_STRING (L"formula"), interpreter); therror
-		praat_dataChanged (me);
-	} catch (...) {
-		praat_dataChanged (OBJECT);   // in case of error, the Table may have partially changed
-		throw 1;
+		try {
+			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+			Table_formula (me, icol, GET_STRING (L"formula"), interpreter); therror
+			praat_dataChanged (me);
+		} catch (...) {
+			praat_dataChanged (me);   // in case of error, the Table may have partially changed
+			throw 1;
+		}
 	}
 END
 
@@ -444,15 +446,17 @@ FORM (Table_formula_columnRange, L"Table: Formula (column range)", L"Table: Form
 	TEXTFIELD (L"formula", L"log10 (self)")
 	OK
 DO
-	WHERE (SELECTED) try {
+	WHERE (SELECTED) {
 		iam_LOOP (Table);
-		long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); therror
-		long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); therror
-		Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter); therror
-		praat_dataChanged (me);
-	} catch (...) {
-		praat_dataChanged (OBJECT);   // in case of error, the Table may have partially changed
-		throw 1;
+		try {
+			long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); therror
+			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); therror
+			Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter); therror
+			praat_dataChanged (me);
+		} catch (...) {
+			praat_dataChanged (me);   // in case of error, the Table may have partially changed
+			throw 1;
+		}
 	}
 END
 
@@ -1011,14 +1015,14 @@ END
 /***** TABLEOFREAL *****/
 
 DIRECT (TablesOfReal_append)
-	Collection me = Collection_create (classTableOfReal, 10);
-	if (! me) return 0;
-	WHERE (SELECTED)
-		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new1 (TablesOfReal_appendMany (me), L"appended")) {
-		my size = 0; forget (me); return 0;
+	autoCollection tables = Collection_create (classTableOfReal, 10);
+	Collection_dontOwnItems (tables.peek());
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		Collection_addItem (tables.peek(), me);
 	}
-	my size = 0; forget (me);
+	autoTableOfReal thee = static_cast <TableOfReal> (TablesOfReal_appendMany (tables.peek()));
+	praat_new (thee.transfer(), L"appended");
 END
 
 FORM (TableOfReal_create, L"Create TableOfReal", 0)
@@ -1028,7 +1032,7 @@ FORM (TableOfReal_create, L"Create TableOfReal", 0)
 	OK
 DO
 	autoTableOfReal me = TableOfReal_create (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
-	praat_new1 (me.transfer(), GET_STRING (L"Name")); therror
+	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
 FORM (TableOfReal_drawAsNumbers, L"Draw as numbers", 0)
@@ -1042,9 +1046,13 @@ FORM (TableOfReal_drawAsNumbers, L"Draw as numbers", 0)
 	NATURAL (L"Precision", L"5")
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers (static_cast <TableOfReal> OBJECT, GRAPHICS,
-		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
-		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision")))
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawAsNumbers (me, GRAPHICS,
+			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
+			GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"));
+	}
 END
 
 FORM (TableOfReal_drawAsNumbers_if, L"Draw as numbers if...", 0)
@@ -1060,9 +1068,13 @@ FORM (TableOfReal_drawAsNumbers_if, L"Draw as numbers if...", 0)
 	TEXTFIELD (L"condition", L"self <> 0")
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsNumbers_if (static_cast <TableOfReal> OBJECT, GRAPHICS,
-		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
-		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition"), interpreter))
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawAsNumbers_if (me, GRAPHICS,
+			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
+			GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition"), interpreter);
+	}
 END
 
 FORM (TableOfReal_drawAsSquares, L"Draw table as squares", 0)
@@ -1073,27 +1085,70 @@ FORM (TableOfReal_drawAsSquares, L"Draw table as squares", 0)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (TableOfReal_drawAsSquares (static_cast <TableOfReal> OBJECT, GRAPHICS, 
-		GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
-		GET_INTEGER (L"From column"), GET_INTEGER (L"To column"),
-		GET_INTEGER (L"Garnish")))
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawAsSquares (me, GRAPHICS, 
+			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
+			GET_INTEGER (L"From column"), GET_INTEGER (L"To column"),
+			GET_INTEGER (L"Garnish"));
+		}
 END
 
 FORM (TableOfReal_drawHorizontalLines, L"Draw horizontal lines", 0)
-	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawHorizontalLines (static_cast <TableOfReal> OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	NATURAL (L"From row", L"1")
+	INTEGER (L"To row", L"0 (= all)")
+	OK
+DO
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawHorizontalLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
+	}
+END
+
 FORM (TableOfReal_drawLeftAndRightLines, L"Draw left and right lines", 0)
-	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawLeftAndRightLines (static_cast <TableOfReal> OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	NATURAL (L"From row", L"1")
+	INTEGER (L"To row", L"0 (= all)")
+	OK
+DO
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawLeftAndRightLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
+	}
+END
+
 FORM (TableOfReal_drawTopAndBottomLines, L"Draw top and bottom lines", 0)
-	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawTopAndBottomLines (static_cast <TableOfReal> OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	NATURAL (L"From row", L"1")
+	INTEGER (L"To row", L"0 (= all)")
+	OK
+DO
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawTopAndBottomLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
+	}
+END
+
 FORM (TableOfReal_drawVerticalLines, L"Draw vertical lines", 0)
-	NATURAL (L"From row", L"1") INTEGER (L"To row", L"0 (= all)") OK DO
-	EVERY_DRAW (TableOfReal_drawVerticalLines (static_cast <TableOfReal> OBJECT, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"))) END
+	NATURAL (L"From row", L"1")
+	INTEGER (L"To row", L"0 (= all)")
+	OK
+DO
+	autoPraatPicture picture;
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		TableOfReal_drawVerticalLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
+	}
+END
 
 DIRECT (TableOfReal_extractColumnLabelsAsStrings)
-	EVERY_TO (TableOfReal_extractColumnLabelsAsStrings (OBJECT))
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		autoStrings thee = TableOfReal_extractColumnLabelsAsStrings (me);
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 FORM (TableOfReal_extractColumnRanges, L"Extract column ranges", 0)
@@ -1103,7 +1158,9 @@ FORM (TableOfReal_extractColumnRanges, L"Extract column ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnRanges (static_cast <TableOfReal> OBJECT, GET_STRING (L"ranges")), NAME, L"_cols")) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractColumnRanges (me, GET_STRING (L"ranges"));
+		praat_new (thee.transfer(), my name, L"_cols");
 	}
 END
 
@@ -1113,7 +1170,9 @@ FORM (TableOfReal_extractColumnsWhere, L"Extract columns where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractColumnsWhere (static_cast <TableOfReal> OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_cols")) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractColumnsWhere (me, GET_STRING (L"condition"), interpreter);
+		praat_new (thee.transfer(), my name, L"_cols");
 	}
 END
 
@@ -1124,9 +1183,9 @@ FORM (TableOfReal_extractColumnsWhereLabel, L"Extract column where label", 0)
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new3 (TableOfReal_extractColumnsWhereLabel (static_cast <TableOfReal> OBJECT,
-			GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text),
-			NAME, L"_", text)) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractColumnsWhereLabel (me, GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text);
+		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
@@ -1139,14 +1198,18 @@ DO
 	long row = GET_INTEGER (L"Extract all columns where row...");
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
-		if (! praat_new5 (TableOfReal_extractColumnsWhereRow (static_cast <TableOfReal> OBJECT,
-			row, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAME, L"_", Melder_integer (row), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractColumnsWhereRow (me, row, GET_ENUM (kMelder_number, L"...is..."), value);
+		praat_new (thee.transfer(), my name, L"_", Melder_integer (row), L"_", Melder_integer (round (value)));
 	}
 END
 
 DIRECT (TableOfReal_extractRowLabelsAsStrings)
-	EVERY_TO (TableOfReal_extractRowLabelsAsStrings (static_cast <TableOfReal> OBJECT))
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		autoStrings thee = TableOfReal_extractRowLabelsAsStrings (me);
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
@@ -1156,7 +1219,9 @@ FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowRanges (static_cast <TableOfReal> OBJECT, GET_STRING (L"ranges")), NAME, L"_rows")) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractRowRanges (me, GET_STRING (L"ranges"));
+		praat_new (thee.transfer(), my name, L"_rows");
 	}
 END
 
@@ -1166,7 +1231,9 @@ FORM (TableOfReal_extractRowsWhere, L"Extract rows where", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! praat_new2 (TableOfReal_extractRowsWhere (static_cast <TableOfReal> OBJECT, GET_STRING (L"condition"), interpreter), NAME, L"_rows")) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractRowsWhere (me, GET_STRING (L"condition"), interpreter);
+		praat_new (thee.transfer(), my name, L"_rows");
 	}
 END
 
@@ -1179,9 +1246,10 @@ DO
 	long column = GET_INTEGER (L"Extract all rows where column...");
 	double value = GET_REAL (L"...the value");
 	WHERE (SELECTED) {
-		if (! praat_new5 (TableOfReal_extractRowsWhereColumn (static_cast <TableOfReal> OBJECT,
-			column, GET_ENUM (kMelder_number, L"...is..."), value),
-			NAME, L"_", Melder_integer (column), L"_", Melder_integer ((long) floor (value+0.5)))) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractRowsWhereColumn (me,
+			column, GET_ENUM (kMelder_number, L"...is..."), value);
+		praat_new (thee.transfer(), my name, L"_", Melder_integer (column), L"_", Melder_integer (round (value)));
 	}
 END
 
@@ -1192,9 +1260,9 @@ FORM (TableOfReal_extractRowsWhereLabel, L"Extract rows where label", 0)
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
 	WHERE (SELECTED) {
-		if (! praat_new3 (TableOfReal_extractRowsWhereLabel (static_cast <TableOfReal> OBJECT,
-			GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text),
-			NAME, L"_", text)) return 0;
+		iam_LOOP (TableOfReal);
+		autoTableOfReal thee = TableOfReal_extractRowsWhereLabel (me, GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text);
+		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
@@ -1204,8 +1272,14 @@ FORM (TableOfReal_formula, L"TableOfReal: Formula", L"Formula...")
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_formula (static_cast <TableOfReal> OBJECT, GET_STRING (L"formula"), interpreter, NULL)) return 0;
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		try {
+			TableOfReal_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			praat_dataChanged (me);
+		} catch (...) {
+			praat_dataChanged (me);
+			throw 1;
+		}
 	}
 END
 
@@ -1213,74 +1287,92 @@ FORM (TableOfReal_getColumnIndex, L"Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	Melder_information1 (Melder_integer (TableOfReal_columnLabelToIndex (static_cast <TableOfReal> ONLY_OBJECT, GET_STRING (L"Column label"))));
+	iam_ONLY (TableOfReal);
+	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label")); therror
+	Melder_information1 (Melder_integer (columnNumber));
 END
 	
 FORM (TableOfReal_getColumnLabel, L"Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	TableOfReal table = static_cast <TableOfReal> ONLY_OBJECT;
+	iam_ONLY (TableOfReal);
 	long columnNumber = GET_INTEGER (L"Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
-	Melder_information1 (table -> columnLabels == NULL ? L"" : table -> columnLabels [columnNumber]);
+	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+	Melder_information1 (my columnLabels == NULL ? L"" : my columnLabels [columnNumber]);
 END
 	
 FORM (TableOfReal_getColumnMean_index, L"Get column mean", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	TableOfReal table = static_cast <TableOfReal> ONLY_OBJECT;
+	iam_ONLY (TableOfReal);
 	long columnNumber = GET_INTEGER (L"Column number");
-	REQUIRE (columnNumber <= table -> numberOfColumns, L"Column number must not be greater than number of columns.")
-	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
+	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+	double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+	Melder_informationReal (columnMean, NULL);
 END
 	
 FORM (TableOfReal_getColumnMean_label, L"Get column mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	TableOfReal table = static_cast <TableOfReal> ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING (L"Column label"));
-	REQUIRE (columnNumber > 0, L"Column label does not exist.")
-	Melder_informationReal (TableOfReal_getColumnMean (table, columnNumber), NULL);
+	iam_ONLY (TableOfReal);
+	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
+	if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
+	double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+	Melder_informationReal (columnMean, NULL);
 END
 	
 FORM (TableOfReal_getColumnStdev_index, L"Get column standard deviation", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	Melder_informationReal (TableOfReal_getColumnStdev (ONLY_OBJECT, GET_INTEGER (L"Column number")), NULL);
+	iam_ONLY (TableOfReal);
+	long columnNumber = GET_INTEGER (L"Column number");
+	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+	double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+	Melder_informationReal (stdev, NULL);
 END
 	
 FORM (TableOfReal_getColumnStdev_label, L"Get column standard deviation", 0)
 	SENTENCE (L"Column label", L"1")
 	OK
 DO
-	TableOfReal table = static_cast <TableOfReal> ONLY_OBJECT;
-	long columnNumber = TableOfReal_columnLabelToIndex (table, GET_STRING (L"Column label"));
-	REQUIRE (columnNumber > 0, L"Column label does not exist.")
-	Melder_informationReal (TableOfReal_getColumnStdev (table, columnNumber), NULL);
+	iam_ONLY (TableOfReal);
+	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
+	if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
+	double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+	Melder_informationReal (stdev, NULL);
 END
 
-DIRECT (TableOfReal_getNumberOfColumns) TableOfReal me = static_cast <TableOfReal> ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfColumns)); END
-DIRECT (TableOfReal_getNumberOfRows) TableOfReal me = static_cast <TableOfReal> ONLY_OBJECT; Melder_information1 (Melder_integer (my numberOfRows)); END
+DIRECT (TableOfReal_getNumberOfColumns)
+	iam_ONLY (TableOfReal);
+	Melder_information1 (Melder_integer (my numberOfColumns));
+END
+
+DIRECT (TableOfReal_getNumberOfRows)
+	iam_ONLY (TableOfReal);
+	Melder_information1 (Melder_integer (my numberOfRows));
+END
 
 FORM (TableOfReal_getRowIndex, L"Get row index", 0)
 	SENTENCE (L"Row label", L"")
 	OK
 DO
-	Melder_information1 (Melder_integer (TableOfReal_rowLabelToIndex (ONLY_OBJECT, GET_STRING (L"Row label"))));
+	iam_ONLY (TableOfReal);
+	long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label")); therror
+	Melder_information1 (Melder_integer (rowNumber));
 END
 	
 FORM (TableOfReal_getRowLabel, L"Get row label", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	TableOfReal table = static_cast <TableOfReal> ONLY_OBJECT;
+	iam_ONLY (TableOfReal);
 	long rowNumber = GET_INTEGER (L"Row number");
-	REQUIRE (rowNumber <= table -> numberOfRows, L"Row number must not be greater than number of rows.")
-	Melder_information1 (table -> rowLabels == NULL ? L"" : table -> rowLabels [rowNumber]);
+	if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not be greater than number of rows.");
+	Melder_information1 (my rowLabels == NULL ? L"" : my rowLabels [rowNumber]);
 END
 
 FORM (TableOfReal_getValue, L"Get value", 0)
@@ -1288,11 +1380,11 @@ FORM (TableOfReal_getValue, L"Get value", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	TableOfReal me = static_cast <TableOfReal> ONLY_OBJECT;
-	long row = GET_INTEGER (L"Row number"), column = GET_INTEGER (L"Column number");
-	REQUIRE (row <= my numberOfRows, L"Row number must not exceed number of rows.")
-	REQUIRE (column <= my numberOfColumns, L"Column number must not exceed number of columns.")
-	Melder_informationReal (my data [row] [column], NULL);
+	iam_ONLY (TableOfReal);
+	long rowNumber = GET_INTEGER (L"Row number"), columnNumber = GET_INTEGER (L"Column number");
+	if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not exceed number of rows.");
+	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not exceed number of columns.");
+	Melder_informationReal (my data [rowNumber] [columnNumber], NULL);
 END
 
 DIRECT (TableOfReal_help) Melder_help (L"TableOfReal"); END
@@ -1302,8 +1394,9 @@ FORM (TableOfReal_insertColumn, L"Insert column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_insertColumn (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Column number"))) return 0;
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_insertColumn (me, GET_INTEGER (L"Column number")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -1312,13 +1405,14 @@ FORM (TableOfReal_insertRow, L"Insert row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_insertRow (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Row number"))) return 0;
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_insertRow (me, GET_INTEGER (L"Row number")); therror
+		praat_dataChanged (me);
 	}
 END
 
 FORM_READ (TableOfReal_readFromHeaderlessSpreadsheetFile, L"Read TableOfReal from headerless spreadsheet file", 0, true)
-	if (! praat_newWithFile1 (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file), file)) return 0;
+	praat_newWithFile (TableOfReal_readFromHeaderlessSpreadsheetFile (file), MelderFile_name (file), file);
 END
 
 FORM (TableOfReal_removeColumn, L"Remove column", 0)
@@ -1326,8 +1420,9 @@ FORM (TableOfReal_removeColumn, L"Remove column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_removeColumn (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Column number"))) return 0;
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_removeColumn (me, GET_INTEGER (L"Column number"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -1336,8 +1431,9 @@ FORM (TableOfReal_removeRow, L"Remove row", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		if (! TableOfReal_removeRow (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Row number"))) return 0;
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_removeRow (me, GET_INTEGER (L"Row number"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -1347,8 +1443,9 @@ FORM (TableOfReal_setColumnLabel_index, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -1358,9 +1455,10 @@ FORM (TableOfReal_setColumnLabel_label, L"Set column label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setColumnLabel (static_cast <TableOfReal> OBJECT, TableOfReal_columnLabelToIndex (OBJECT, GET_STRING (L"Old label")),
-			GET_STRING (L"New label"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Old label")); therror
+		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (L"New label")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -1370,8 +1468,9 @@ FORM (TableOfReal_setRowLabel_index, L"Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Row number"), GET_STRING (L"Label"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_setRowLabel (me, GET_INTEGER (L"Row number"), GET_STRING (L"Label")); therror
+		praat_dataChanged (me);
 	}
 END
 
@@ -1382,11 +1481,11 @@ FORM (TableOfReal_setValue, L"Set value", L"TableOfReal: Set value...")
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal me = static_cast <TableOfReal> OBJECT;
-		long irow = GET_INTEGER (L"Row number"), icol = GET_INTEGER (L"Column number");
-		REQUIRE (irow <= my numberOfRows, L"Row number too large.")
-		REQUIRE (icol <= my numberOfColumns, L"Column number too large.")
-		my data [irow] [icol] = GET_REAL (L"New value");
+		iam_LOOP (TableOfReal);
+		long rowNumber = GET_INTEGER (L"Row number"), columnNumber = GET_INTEGER (L"Column number");
+		if (rowNumber > my numberOfRows) Melder_throw (me, ": row number too large.");
+		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number too large.");
+		my data [rowNumber] [columnNumber] = GET_REAL (L"New value");
 		praat_dataChanged (me);
 	}
 END
@@ -1397,9 +1496,10 @@ FORM (TableOfReal_setRowLabel_label, L"Set row label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_setRowLabel (static_cast <TableOfReal> OBJECT, TableOfReal_rowLabelToIndex (OBJECT, GET_STRING (L"Old label")),
-			GET_STRING (L"New label"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Old label")); therror
+		TableOfReal_setRowLabel (me, rowNumber, GET_STRING (L"New label"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -1409,8 +1509,9 @@ FORM (TableOfReal_sortByColumn, L"Sort rows by column", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_sortByColumn (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Column"), GET_INTEGER (L"Secondary column"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_sortByColumn (me, GET_INTEGER (L"Column"), GET_INTEGER (L"Secondary column"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -1421,24 +1522,34 @@ FORM (TableOfReal_sortByLabel, L"Sort rows by label", 0)
 	OK
 DO
 	WHERE (SELECTED) {
-		TableOfReal_sortByLabel (static_cast <TableOfReal> OBJECT, GET_INTEGER (L"Column1"), GET_INTEGER (L"Column2"));
-		praat_dataChanged (OBJECT);
+		iam_LOOP (TableOfReal);
+		TableOfReal_sortByLabel (me, GET_INTEGER (L"Column1"), GET_INTEGER (L"Column2"));
+		praat_dataChanged (me);
 	}
 END
 
 DIRECT (TableOfReal_to_Matrix)
-	EVERY_TO (TableOfReal_to_Matrix (OBJECT))
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		autoMatrix thee = TableOfReal_to_Matrix (me);
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 FORM (TableOfReal_to_Table, L"TableOfReal: To Table", 0)
 	SENTENCE (L"Label of first column", L"rowLabel")
 	OK
 DO
-	EVERY_TO (TableOfReal_to_Table (static_cast <TableOfReal> OBJECT, GET_STRING (L"Label of first column")))
+	WHERE (SELECTED) {
+		iam_LOOP (TableOfReal);
+		autoTable thee = TableOfReal_to_Table (me, GET_STRING (L"Label of first column"));
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, L"Save TableOfReal as spreadsheet", 0, L"txt")
-	if (! TableOfReal_writeToHeaderlessSpreadsheetFile (static_cast <TableOfReal> ONLY_OBJECT, file)) return 0;
+	iam_ONLY (TableOfReal);
+	TableOfReal_writeToHeaderlessSpreadsheetFile (me, file);
 END
 
 

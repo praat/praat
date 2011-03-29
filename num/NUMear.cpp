@@ -1,6 +1,6 @@
-/* NUMear.c
+/* NUMear.cpp
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1999/06/26
  * pb 2002/03/07 GPL
+ * pb 2011/03/29 C++
  */
 
 #include "NUM.h"
@@ -86,4 +87,4 @@ double NUMerbToHertz (double erb) {
 	return erb < 0 ? NUMundefined : (14680.0 * dum - 312.0) / (1.0 - dum);
 }
 
-/* End of file NUMear.c */
+/* End of file NUMear.cpp */

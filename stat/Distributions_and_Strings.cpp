@@ -80,28 +80,29 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 }
 
 Distributions Strings_to_Distributions (Strings me) {
-	Distributions thee = NULL;
-//start:
-	long idist = 0, j;
-	thee = Distributions_create (my numberOfStrings, 1); cherror
-	for (long i = 1; i <= my numberOfStrings; i ++) {
-		wchar_t *string = my strings [i];
-		long where = 0;
-		for (j = 1; j <= idist; j ++)
-			if (wcsequ (thy rowLabels [j], string))
-				{ where = j; break; }
-		if (where) {
-			thy data [j] [1] += 1.0;
-		} else {
-			thy rowLabels [++ idist] = Melder_wcsdup_e (string); cherror
-			thy data [idist] [1] = 1.0;
+	try {
+		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
+		long idist = 0;
+		for (long i = 1; i <= my numberOfStrings; i ++) {
+			wchar_t *string = my strings [i];
+			long where = 0;
+			long j = 1;
+			for (; j <= idist; j ++)
+				if (wcsequ (thy rowLabels [j], string))
+					{ where = j; break; }
+			if (where) {
+				thy data [j] [1] += 1.0;
+			} else {
+				thy rowLabels [++ idist] = Melder_wcsdup_e (string); therror
+				thy data [idist] [1] = 1.0;
+			}
 		}
+		thy numberOfRows = idist;
+		TableOfReal_sortByLabel (thee.peek(), 1, 0);
+		return thee.transfer();
+	} catch (...) {
+		rethrowmzero (me, ": n distribution computed.");
 	}
-	thy numberOfRows = idist;
-	TableOfReal_sortByLabel (thee, 1, 0);
-end:
-	iferror forget (thee);
-	return thee;
 }
 
 /* End of file Distributions_and_Strings.cpp */

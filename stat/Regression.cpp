@@ -159,9 +159,9 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		if (numberOfCells < numberOfParameters) {
 			Melder_warning1 (L"Solution is not unique (more parameters than cases).");
 		}
-		autoNUMdmatrix u (1, numberOfCells, 1, numberOfParameters);
-		autoNUMdvector b (1, numberOfCells);
-		autoNUMdvector x (1, numberOfParameters);
+		autoNUMmatrix <double> u (1, numberOfCells, 1, numberOfParameters);
+		autoNUMvector <double> b (1, numberOfCells);
+		autoNUMvector <double> x (1, numberOfParameters);
 		autoLinearRegression thee = LinearRegression_create ();
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			double minimum = Table_getMinimum (me, ivar); therror
