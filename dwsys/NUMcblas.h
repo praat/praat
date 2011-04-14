@@ -2,7 +2,7 @@
  #define _NUMcblas_h_
  /* NUMcblas.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,12 @@
 
 /*
  djmw 20020923 GPL header
+ djmw 20110308 Latest modification
 */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 #define xerbla_(src,info) (void) Melder_error4 (Melder_peekUtf8ToWcs (src), L": parameter ", Melder_integer (*info), L"not correct!")
 
@@ -771,6 +776,10 @@ int NUMblas_dtrsm (char *side, char *uplo, char *transa, char *diag, long *m, lo
 
 long NUMblas_idamax (long *n, double *dx, long *incx);
 /* finds the index of element having max. absolute value.*/
+
+#ifdef __cplusplus
+	}
+#endif
 
 
 #endif /* _NUMcblas_h_ */

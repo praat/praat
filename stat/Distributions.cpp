@@ -45,7 +45,7 @@ Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 		autoDistributions me = Thing_new (Distributions);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns); therror
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Distributions not created.");
 	}
 }
@@ -80,7 +80,7 @@ int Distributions_peek (Distributions me, long column, wchar_t **string) {
 		if (! *string)
 			Melder_throw (me, ": no string in row ", irow, ".");
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -108,7 +108,7 @@ int Distributions_peek_opt (Distributions me, long column, long *number) {
 			Melder_throw (me, ": no string in row ", irow, ".");
 		*number = irow;
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -179,7 +179,7 @@ Distributions Distributions_addTwo (Distributions me, Distributions thee) {
 		TableOfReal_sortByLabel (him.peek(), 0, 0);
 		unicize (him.peek());
 		return him.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Two Distributions not added.");
 	}
 }
@@ -190,7 +190,7 @@ Distributions Distributions_addMany (Collection me) {
 		TableOfReal_sortByLabel (thee.peek(), 0, 0);
 		unicize (thee.peek());
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Distributions objects not added.");
 	}
 }

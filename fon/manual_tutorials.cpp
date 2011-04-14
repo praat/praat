@@ -23,9 +23,12 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110329)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110415)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.22# (14 April 2011)")
+LIST_ITEM (L"\\bu @ExperimentMFC: reaction times for key presses.")
+LIST_ITEM (L"\\bu Linux: more reliable start-up on German systems.")
 NORMAL (L"##5.2.21# (29 March 2011)")
 LIST_ITEM (L"\\bu Scripting: removed a crashing bug introduced for colour names in 5.2.20.")
 NORMAL (L"##5.2.20# (25 March 2011)")
@@ -38,7 +41,7 @@ NORMAL (L"##5.2.18# (9 March 2011)")
 LIST_ITEM (L"\\bu @ExperimentMFC: incomplete experiments can still output their incomplete results.")
 NORMAL (L"##5.2.17# (2 March 2011)")
 LIST_ITEM (L"\\bu Better names for Table opening and saving commands.")
-LIST_ITEM (L"\\bu @ExperimentMFC: reaction times.")
+LIST_ITEM (L"\\bu @ExperimentMFC: reaction times for mouse clicks.")
 LIST_ITEM (L"\\bu Linux/GTK: corrected triple clicks in ExperimentMFC.")
 NORMAL (L"##5.2.16# (20 February 2011)")
 LIST_ITEM (L"\\bu Better support for WAV files with special \"chunks\" in them.")

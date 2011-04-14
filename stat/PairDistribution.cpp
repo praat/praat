@@ -85,7 +85,7 @@ PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *s
 		my string2 = Melder_wcsdup_e (string2); therror
 		my weight = weight;
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -95,7 +95,7 @@ PairDistribution PairDistribution_create () {
 		autoPairDistribution me = Thing_new (PairDistribution); therror
 		my pairs = Ordered_create (); therror
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -112,7 +112,7 @@ const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber)
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": string1 not retrieved.");
 	}
 }
@@ -122,7 +122,7 @@ const wchar * PairDistribution_getString2 (PairDistribution me, long pairNumber)
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string2;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": string2 not retrieved.");
 	}
 }
@@ -132,7 +132,7 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> weight;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": weight not retrieved.");
 	}
 }
@@ -141,7 +141,7 @@ void PairDistribution_add (PairDistribution me, const wchar_t *string1, const wc
 	try {
 		PairProbability pair = PairProbability_create (string1, string2, weight); therror
 		Collection_addItem (my pairs, pair); therror
-	} catch (...) {
+	} catch (MelderError) {
 		rethrow;
 	}
 }
@@ -155,7 +155,7 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 	}
 }
 
-static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) throw (int) {
+static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) throw (MelderError) {
 	double totalWeight = 0.0;
 	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [ipair]);
@@ -178,10 +178,10 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 		double total = PairDistributions_getTotalWeight_checkPositive (me);
 		autoStrings strings1 = Thing_new (Strings);
 		strings1 -> numberOfStrings = nout;
-		strings1 -> strings = (wchar_t **) NUMpvector (1, nout); therror
+		strings1 -> strings = NUMvector <wchar*> (1, nout);
 		autoStrings strings2 = Thing_new (Strings);
 		strings2 -> numberOfStrings = nout;
-		strings2 -> strings = (wchar_t **) NUMpvector (1, nout); therror
+		strings2 -> strings = NUMvector <wchar*> (1, nout);
 		for (long iout = 1; iout <= nout; iout ++) {
 			do {
 				double rand = NUMrandomUniform (0, total), sum = 0.0;
@@ -199,7 +199,7 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 		}
 		*strings1_out = strings1.transfer();
 		*strings2_out = strings2.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": generation of Stringses not performed.");
 	}
 }
@@ -227,7 +227,7 @@ void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t 
 		if (! prob -> string1 || ! prob -> string2) Melder_throw ("No string in probability pair ", iin, L".");
 		*string1 = prob -> string1;
 		*string2 = prob -> string2;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": pair not peeked.");
 	}
 }
@@ -275,7 +275,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 			pairmin = pairmax + 1;
 		} while (pairmin <= thy pairs -> size);
 		return correct;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": could not compute my fraction correct.");
 	}
 }
@@ -332,7 +332,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 			pairmin = pairmax + 1;
 		} while (pairmin <= thy pairs -> size);
 		return correct;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, " & ", dist, ": could not compute our fraction correct.");
 	}
 }
@@ -347,7 +347,7 @@ Table PairDistribution_to_Table (PairDistribution me) {
 			Table_setNumericValue (thee.peek(), ipair, 3, prob -> weight); therror
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }

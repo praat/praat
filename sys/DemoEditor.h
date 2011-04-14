@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/04/06
  */
 
 #ifndef _Editor_h_
@@ -34,7 +34,7 @@
 #define DemoEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
 Thing_declare1 (DemoEditor);
 
-int DemoEditor_init (DemoEditor me, GuiObject parent);
+void DemoEditor_init (DemoEditor me, GuiObject parent);
 DemoEditor DemoEditor_create (GuiObject parent);
 
 int Demo_open (void);

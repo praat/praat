@@ -66,7 +66,7 @@ static int readBinary (I, FILE *f) {
 	iam (WordList);
 	wchar_t *current, *p;
 	int kar = 0;
-	my length = bingeti4 (f);
+	my length = bingeti4 (f); //cherror
 	if (my length < 0)
 		return Melder_error ("(WordList::readBinary:) Wrong length %ld.", my length);
 	my string = Melder_malloc_f (wchar_t, my length + 1);

@@ -90,7 +90,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 				Sound_clipboard -> z [channel] [++ j] = oldData [channel] [i];
 			}
 		}
-		newData = NUMdmatrix (1, sound -> ny, 1, newNumberOfSamples);
+		newData = NUMmatrix <double> (1, sound -> ny, 1, newNumberOfSamples);   // BUG memory
 		for (long channel = 1; channel <= sound -> ny; channel ++) {
 			long j = 0;
 			for (long i = 1; i < first; i ++) {
@@ -101,7 +101,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 			}
 		}
 		Editor_save (SoundEditor_as_Editor (me), L"Cut");
-		NUMdmatrix_free (oldData, 1, 1);
+		NUMmatrix_free <double> (oldData, 1, 1);
 		sound -> xmin = 0.0;
 		sound -> xmax = newNumberOfSamples * sound -> dx;
 		sound -> nx = newNumberOfSamples;
@@ -162,61 +162,71 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 
 static int menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
-	Sound sound = (Sound) my data;
-	long leftSample = Sampled_xToLowIndex (sound, my endSelection);
-	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
-	double **newData, **oldData = sound -> z;
-	if (! Sound_clipboard) {
-		Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
+	try {
+		Sound sound = (Sound) my data;
+		long leftSample = Sampled_xToLowIndex (sound, my endSelection);
+		long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
+		double **oldData = sound -> z;
+		if (! Sound_clipboard) {
+			Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
+			return 1;
+		}
+		if (Sound_clipboard -> ny != sound -> ny)
+			return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
+				"the number of channels of the clipboard is not equal to\n"
+				"the number of channels of the edited sound.");
+		if (Sound_clipboard -> dx != sound -> dx)
+			return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
+				"the sampling frequency of the clipboard is not equal to\n"
+				"the sampling frequency of the edited sound.");
+		if (leftSample < 0) leftSample = 0;
+		if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
+		newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
+		/*
+		 * Check without change.
+		 */
+		autoNUMmatrix <double> newData (1, sound -> ny, 1, newNumberOfSamples);
+		for (long channel = 1; channel <= sound -> ny; channel ++) {
+			long j = 0;
+			for (long i = 1; i <= leftSample; i ++) {
+				newData [channel] [++ j] = oldData [channel] [i];
+			}
+			for (long i = 1; i <= Sound_clipboard -> nx; i ++) {
+				newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
+			}
+			for (long i = leftSample + 1; i <= oldNumberOfSamples; i ++) {
+				newData [channel] [++ j] = oldData [channel] [i];
+			}
+		}
+		Editor_save (SoundEditor_as_Editor (me), L"Paste");
+		/*
+		 * Change without error.
+		 */
+		NUMmatrix_free <double> (oldData, 1, 1);
+		sound -> xmin = 0.0;
+		sound -> xmax = newNumberOfSamples * sound -> dx;
+		sound -> nx = newNumberOfSamples;
+		sound -> x1 = 0.5 * sound -> dx;
+		sound -> z = newData.transfer();
+
+		/* Start updating the markers of the FunctionEditor, respecting the invariants. */
+
+		my tmin = sound -> xmin;
+		my tmax = sound -> xmax;
+		my startSelection = leftSample * sound -> dx;
+		my endSelection = (leftSample + Sound_clipboard -> nx) * sound -> dx;
+
+		/* Force FunctionEditor to show changes. */
+
+		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
+		our destroy_analysis (me);
+		FunctionEditor_ungroup (SoundEditor_as_FunctionEditor (me));
+		FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
+		Editor_broadcastChange (SoundEditor_as_Editor (me));
 		return 1;
+	} catch (MelderError) {
+		rethrowzero;
 	}
-	if (Sound_clipboard -> ny != sound -> ny)
-		return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
- 			"the number of channels of the clipboard is not equal to\n"
-			"the number of channels of the edited sound.");
-	if (Sound_clipboard -> dx != sound -> dx)
-		return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
- 			"the sampling frequency of the clipboard is not equal to\n"
-			"the sampling frequency of the edited sound.");
-	if (leftSample < 0) leftSample = 0;
-	if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
-	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
-	if (! (newData = NUMdmatrix (1, sound -> ny, 1, newNumberOfSamples))) return 0;
-	for (long channel = 1; channel <= sound -> ny; channel ++) {
-		long j = 0;
-		for (long i = 1; i <= leftSample; i ++) {
-			newData [channel] [++ j] = oldData [channel] [i];
-		}
-		for (long i = 1; i <= Sound_clipboard -> nx; i ++) {
-			newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
-		}
-		for (long i = leftSample + 1; i <= oldNumberOfSamples; i ++) {
-			newData [channel] [++ j] = oldData [channel] [i];
-		}
-	}
-	Editor_save (SoundEditor_as_Editor (me), L"Paste");
-	NUMdmatrix_free (oldData, 1, 1);
-	sound -> xmin = 0.0;
-	sound -> xmax = newNumberOfSamples * sound -> dx;
-	sound -> nx = newNumberOfSamples;
-	sound -> x1 = 0.5 * sound -> dx;
-	sound -> z = newData;
-
-	/* Start updating the markers of the FunctionEditor, respecting the invariants. */
-
-	my tmin = sound -> xmin;
- 	my tmax = sound -> xmax;
-	my startSelection = leftSample * sound -> dx;
-	my endSelection = (leftSample + Sound_clipboard -> nx) * sound -> dx;
-
-	/* Force FunctionEditor to show changes. */
-
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-	our destroy_analysis (me);
-	FunctionEditor_ungroup (SoundEditor_as_FunctionEditor (me));
-	FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (SoundEditor_as_Editor (me));
-	return 1;
 }
 
 static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
@@ -460,7 +470,7 @@ SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data
 			FunctionEditor_marksChanged (SoundEditor_as_FunctionEditor (me.peek()));
 		}
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Sound window not created.");
 	}
 }

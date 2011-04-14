@@ -3,6 +3,7 @@
 # Checks Copy, Equal, Read, Write.
 
 echo Data test
+stopwatch
 
 printline Sound
 sound = Create Sound from formula... kanweg Mono 0 1.2345 44100 1/2 * sin(2*pi*377*x) + randomGauss(0,0.1)
@@ -201,7 +202,8 @@ Remove
 deleteFile ("kanweg.Object")
 deleteFile ("kanweg.Collection")
 
-printline OK
+t = stopwatch
+printline OK ('t:3' seconds)
 
 procedure test .object1
 	select .object1
@@ -227,6 +229,22 @@ procedure test .object1
 	# Test binary writing.
 	select .object1
 	Write to binary file... kanweg.Object
+	.object2 = Read from file... kanweg.Object
+	assert objectsAreIdentical (.object1, .object2)   ; binary write and read
+	Remove
+	# Test binary writing.
+	select .object1
+	Write to binary file... kanweg.Object
+	Debug... 18
+	.object2 = Read from file... kanweg.Object
+	Debug... 0
+	assert objectsAreIdentical (.object1, .object2)   ; binary write and read
+	Remove
+	# Test binary writing.
+	select .object1
+	Debug... 18
+	Write to binary file... kanweg.Object
+	Debug... 0
 	.object2 = Read from file... kanweg.Object
 	assert objectsAreIdentical (.object1, .object2)   ; binary write and read
 	Remove

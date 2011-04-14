@@ -88,25 +88,29 @@ static int writeText (I, MelderFile file) {
 
 static int readText (I, MelderReadText text) {
 	iam (TableOfReal);
-	my numberOfColumns = texgeti4 (text);
-	if (my numberOfColumns >= 1) {
-		if (! (my columnLabels = (wchar **) NUMvector (sizeof (wchar_t *), 1, my numberOfColumns))) return 0;
-		for (long i = 1; i <= my numberOfColumns; i ++)
-			if (! (my columnLabels [i] = texgetw2 (text))) return 0;
-	}
-	my numberOfRows = texgeti4 (text);
-	if (my numberOfRows >= 1) {
-		if (! (my rowLabels = (wchar **) NUMvector (sizeof (wchar_t *), 1, my numberOfRows))) return 0;
-	}
-	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
-		if (! (my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns))) return 0;
-		for (long i = 1; i <= my numberOfRows; i ++) {
-			if (! (my rowLabels [i] = texgetw2 (text))) return 0;
-			for (long j = 1; j <= my numberOfColumns; j ++)
-				my data [i] [j] = texgetr8 (text);
+	try {
+		my numberOfColumns = texgeti4 (text);
+		if (my numberOfColumns >= 1) {
+			my columnLabels = NUMvector <wchar*> (1, my numberOfColumns);
+			for (long i = 1; i <= my numberOfColumns; i ++)
+				if (! (my columnLabels [i] = texgetw2 (text))) return 0;
 		}
+		my numberOfRows = texgeti4 (text);
+		if (my numberOfRows >= 1) {
+			my rowLabels = NUMvector <wchar*> (1, my numberOfRows);
+		}
+		if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
+			my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
+			for (long i = 1; i <= my numberOfRows; i ++) {
+				if (! (my rowLabels [i] = texgetw2 (text))) return 0;
+				for (long j = 1; j <= my numberOfColumns; j ++)
+					my data [i] [j] = texgetr8 (text);
+			}
+		}
+		return 1;
+	} catch (MelderError) {
+		rethrowzero;
 	}
-	return 1;
 }
 
 static void info (I) {
@@ -171,11 +175,11 @@ int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 			Melder_throw (L"Cannot create cell-less table.");
 		my numberOfRows = numberOfRows;
 		my numberOfColumns = numberOfColumns;
-		my rowLabels = NUMwvector (1, numberOfRows); therror
-		my columnLabels = NUMwvector (1, numberOfColumns); therror
-		my data = NUMdmatrix (1, my numberOfRows, 1, my numberOfColumns); therror
+		my rowLabels = NUMvector <wchar*> (1, numberOfRows);
+		my columnLabels = NUMvector <wchar*> (1, numberOfColumns);
+		my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -185,7 +189,7 @@ TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 		autoTableOfReal me = Thing_new (TableOfReal);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("TableOfReal not created.");
 	}
 }
@@ -253,7 +257,7 @@ void TableOfReal_removeRow (I, long rowNumber) {
 		NUMmatrix_free <double> (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows --;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": row ", rowNumber, " not removed.");
 	}
 }
@@ -283,7 +287,7 @@ void TableOfReal_insertRow (I, long rowNumber) {
 		NUMmatrix_free <double> (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows ++;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": row at position ", rowNumber, " not inserted.");
 	}
 }
@@ -311,7 +315,7 @@ void TableOfReal_removeColumn (I, long columnNumber) {
 		NUMmatrix_free <double> (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns --;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": column at position ", columnNumber, " not inserted.");
 	}
 }
@@ -339,7 +343,7 @@ void TableOfReal_insertColumn (I, long columnNumber) {
 		NUMmatrix_free <double> (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns ++;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": column at position ", columnNumber, " not inserted.");
 	}
 }
@@ -354,7 +358,7 @@ void TableOfReal_setRowLabel (I, long rowNumber, const wchar_t *label) {
 		 */
 		Melder_free (my rowLabels [rowNumber]);
 		my rowLabels [rowNumber] = newLabel.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": label of row ", rowNumber, " not set.");
 	}
 }
@@ -369,7 +373,7 @@ void TableOfReal_setColumnLabel (I, long columnNumber, const wchar_t *label) {
 		 */
 		Melder_free (my columnLabels [columnNumber]);
 		my columnLabels [columnNumber] = newLabel.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": label of column ", columnNumber, " not set.");
 	}
 }
@@ -388,7 +392,7 @@ int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, 
 			}
 		}
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": formula not completed.");
 	}
 }
@@ -402,7 +406,7 @@ static void copyRowLabels (TableOfReal me, TableOfReal thee) {
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			thy rowLabels [irow] = Melder_wcsdup_e (my rowLabels [irow]); therror
 		}
-	} catch (...) {
+	} catch (MelderError) {
 		rethrow;
 	}
 }
@@ -414,7 +418,7 @@ static void copyColumnLabels (TableOfReal me, TableOfReal thee) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy columnLabels [icol] = Melder_wcsdup_e (my columnLabels [icol]); therror;
 		}
-	} catch (...) {
+	} catch (MelderError) {
 		rethrow;
 	}
 }
@@ -427,7 +431,7 @@ static void copyRow (TableOfReal me, long myRow, TableOfReal thee, long thyRow) 
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy data [thyRow] [icol] = my data [myRow] [icol];
 		}
-	} catch (...) {
+	} catch (MelderError) {
 		rethrow;
 	}
 }
@@ -440,7 +444,7 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			thy data [irow] [thyCol] = my data [irow] [myCol];
 		}
-	} catch (...) {
+	} catch (MelderError) {
 		rethrow;
 	}
 }
@@ -466,7 +470,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": rows not extracted.");
 	}
 }
@@ -490,7 +494,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": rows not extracted.");
 	}
 }
@@ -517,7 +521,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NU
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": columns not extracted.");
 	}
 }
@@ -542,7 +546,7 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, co
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": columns not extracted.");
 	}
 }
@@ -631,7 +635,7 @@ static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, lo
 			}
 		}
 		return elements.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -647,7 +651,7 @@ TableOfReal TableOfReal_extractRowRanges (I, const wchar_t *ranges) {
 			copyRow (me, elements [ielement], thee.peek(), ielement); therror
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": row ranges not extracted.");
 	}
 }
@@ -663,7 +667,7 @@ TableOfReal TableOfReal_extractColumnRanges (I, const wchar_t *ranges) {
 			copyColumn (me, elements [ielement], thee.peek(), ielement); therror
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": column ranges not extracted.");
 	}
 }
@@ -708,7 +712,7 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpret
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": rows not extracted.");
 	}
 }
@@ -753,7 +757,7 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": columns not extracted.");
 	}
 }
@@ -764,13 +768,13 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 	iam (TableOfReal);
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMwvector (1, my numberOfRows); therror
+		thy strings = NUMvector <wchar *> (1, my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			thy strings [irow] = Melder_wcsdup_e (my rowLabels [irow] ? my rowLabels [irow] : L""); therror
 		}
 		return thee.transfer();	
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": row labels not extracted.");
 	}
 }
@@ -779,13 +783,13 @@ Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 	iam (TableOfReal);
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMwvector (1, my numberOfColumns); therror
+		thy strings = NUMvector <wchar *> (1, my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy strings [icol] = Melder_wcsdup_e (my columnLabels [icol] ? my columnLabels [icol] : L""); therror
 		}
 		return thee.transfer();	
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": column labels not extracted.");
 	}
 }
@@ -933,7 +937,7 @@ void TableOfReal_drawAsNumbers_if (I, Graphics graphics, long rowmin, long rowma
 			Graphics_line (graphics, left, 1, my numberOfColumns + 0.5, 1);
 		}
 		Graphics_unsetInner (graphics);
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm (me, ": numbers not drawn.");
 	}
 }
@@ -1079,7 +1083,7 @@ Any TablesOfReal_append (I, thou) {
 				his data [hisRow] [icol] = thy data [irow] [icol];
 		}
 		return him.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("TableOfReal objects not appended.");
 	}
 }
@@ -1113,7 +1117,7 @@ Any TablesOfReal_appendMany (Collection me) {
 		}
 		Melder_assert (totalNumberOfRows == his numberOfRows);
 		return him.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("TableOfReal objects not appended.");
 	}
 }
@@ -1207,7 +1211,7 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": not converted to TableOfReal.");
 	}
 }
@@ -1230,7 +1234,7 @@ Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": not converted to Table.");
 	}
 }
@@ -1257,7 +1261,7 @@ int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fil
 		}
 		MelderFile_writeText (file, buffer.string); therror
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": not saved to headerless spreadsheet file.");
 	}
 }
@@ -1348,7 +1352,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 			}
 		}
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("TableOfReal: headerless spreadsheet file ", MelderFile_messageName (file), " not read.");
 	}
 }

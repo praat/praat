@@ -42,7 +42,7 @@ Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 		}
 	}
 	return thee.transfer();
-} catch (...) {
+} catch (MelderError) {
 	rethrowmzero (L"Sound: harmonicity analysis not performed.");
 }
 
@@ -62,7 +62,7 @@ Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
 		}
 	}
 	return thee.transfer();
-} catch (...) {
+} catch (MelderError) {
 	rethrowmzero (L"Sound: harmonicity analysis not performed.");
 }
 

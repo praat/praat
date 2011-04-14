@@ -70,10 +70,10 @@ Artword Artword_create (double totalTime) {
 
 void Artword_setDefault (Artword me, int feature) {
 	ArtwordData f = & my data [feature];
-	NUMdvector_free (f -> times, 1);
-	NUMdvector_free (f -> targets, 1);
-	f -> times = NUMdvector (1, 2);
-	f -> targets = NUMdvector (1, 2);
+	NUMvector_free <double> (f -> times, 1);
+	NUMvector_free <double> (f -> targets, 1);
+	f -> times = NUMvector <double> (1, 2);
+	f -> targets = NUMvector <double> (1, 2);
 	f -> numberOfTargets = 2;
 	f -> times [1] = 0.0;
 	f -> targets [1] = 0.0;
@@ -83,25 +83,29 @@ void Artword_setDefault (Artword me, int feature) {
 }
 
 void Artword_setTarget (Artword me, int feature, double time, double target) {
-	Melder_assert (feature >= 1);
-	Melder_assert (feature <= kArt_muscle_MAX);
-	ArtwordData f = & my data [feature];
-	Melder_assert (f -> numberOfTargets >= 2);
-	int insert = 1;
-	if (time < 0.0) time = 0.0;
-	if (time > my totalTime) time = my totalTime;
-	while (insert <= f -> numberOfTargets && f -> times [insert] < time)
-		insert ++;
-	Melder_assert (insert <= f -> numberOfTargets);   // can never insert past totalTime
-	if (f -> times [insert] != time) {
-		long numberOfTargets = f -> numberOfTargets;
-		NUMdvector_insert_e (& f -> times, 1, & numberOfTargets, insert);
-		numberOfTargets = f -> numberOfTargets;
-		NUMdvector_insert_e (& f -> targets, 1, & numberOfTargets, insert);
-		f -> numberOfTargets ++;
+	try {
+		Melder_assert (feature >= 1);
+		Melder_assert (feature <= kArt_muscle_MAX);
+		ArtwordData f = & my data [feature];
+		Melder_assert (f -> numberOfTargets >= 2);
+		int insert = 1;
+		if (time < 0.0) time = 0.0;
+		if (time > my totalTime) time = my totalTime;
+		while (insert <= f -> numberOfTargets && f -> times [insert] < time)
+			insert ++;
+		Melder_assert (insert <= f -> numberOfTargets);   // can never insert past totalTime
+		if (f -> times [insert] != time) {
+			long numberOfTargets = f -> numberOfTargets;
+			NUMvector_insert <double> (& f -> times, 1, & numberOfTargets, insert);
+			numberOfTargets = f -> numberOfTargets;
+			NUMvector_insert <double> (& f -> targets, 1, & numberOfTargets, insert);
+			f -> numberOfTargets ++;
+		}
+		f -> targets [insert] = target;
+		f -> times [insert] = time;
+	} catch (MelderError) {
+		rethrowm (me, ": target not set.");
 	}
-	f -> targets [insert] = target;
-	f -> times [insert] = time;
 }
 
 double Artword_getTarget (Artword me, int feature, double time) {
@@ -146,30 +150,30 @@ void Artword_intoArt (Artword me, Art art, double time) {
 }
 
 void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
-	long numberOfTargets = my data [feature]. numberOfTargets;
-	if (numberOfTargets > 0) {
-		double *x = NULL, *y = NULL;
-		x = NUMdvector (1, numberOfTargets); cherror
-		y = NUMdvector (1, numberOfTargets); cherror
-		Graphics_setInner (g);
-		Graphics_setWindow (g, 0, my totalTime, -1, 1);
-		for (int i = 1; i <= numberOfTargets; i ++) {
-			x [i] = my data [feature]. times [i];
-			y [i] = my data [feature]. targets [i];
+	try {
+		long numberOfTargets = my data [feature]. numberOfTargets;
+		if (numberOfTargets > 0) {
+			autoNUMvector <double> x (1, numberOfTargets);
+			autoNUMvector <double> y (1, numberOfTargets);
+			Graphics_setInner (g);
+			Graphics_setWindow (g, 0, my totalTime, -1, 1);
+			for (int i = 1; i <= numberOfTargets; i ++) {
+				x [i] = my data [feature]. times [i];
+				y [i] = my data [feature]. targets [i];
+			}
+			Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
+			Graphics_unsetInner (g);
 		}
-		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
-		Graphics_unsetInner (g);
-	end:
-		NUMdvector_free (x, 1);
-		NUMdvector_free (y, 1);
-	}
 
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
-		Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
-		Graphics_textBottom (g, TRUE, L"Time (s)");
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
+			Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
+			Graphics_textBottom (g, TRUE, L"Time (s)");
+		}
+	} catch (MelderError) {
+		rethrow;
 	}
 }
 

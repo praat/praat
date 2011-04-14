@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/03/29
  */
 
 #include "Data.h"
@@ -34,7 +34,7 @@
 #define Network_methods Data_methods
 oo_CLASS_CREATE (Network, Data);
 
-void Network_init_e (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
+void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
@@ -42,25 +42,25 @@ Network Network_create (double minimumActivity, double maximumActivity, double s
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
-Network Network_create_rectangle_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create_rectangle (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
-Network Network_create_rectangle_vertical_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create_rectangle_vertical (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
 
-void Network_addNode_e (Network me, double x, double y, double activity, bool clamped);
-void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight, double plasticity);
+void Network_addNode (Network me, double x, double y, double activity, bool clamped);
+void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weight, double plasticity);
 
 void Network_draw (Network me, Graphics graphics, bool colour);
 
-double Network_getActivity_e (Network me, long inode);
-void Network_setActivity_e (Network me, long inode, double activity);
-double Network_getWeight_e (Network me, long iconn);
-void Network_setWeight_e (Network me, long iconn, double weight);
-void Network_setClamping_e (Network me, long inode, bool clamped);
+double Network_getActivity (Network me, long inode);
+void Network_setActivity (Network me, long inode, double activity);
+double Network_getWeight (Network me, long iconn);
+void Network_setWeight (Network me, long iconn, double weight);
+void Network_setClamping (Network me, long inode, bool clamped);
 
 void Network_zeroActivities (Network me, long nodeMin, long nodeMax);
 void Network_normalizeActivities (Network me, long nodeMin, long nodeMax);

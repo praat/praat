@@ -41,12 +41,6 @@
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-void NUMinit (void);
-
 /********** Inherit all the ANSI routines from math.h **********/
 
 /* On the sgi, math.h declares some bessel functions. */
@@ -76,6 +70,13 @@ void NUMinit (void);
 	#include "abcio.h"
 #endif
 #define NUMlog2(x)  (log (x) * NUMlog2e)
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
+void NUMinit (void);
+
 double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
 void NUMshift (double *x, double xfrom, double xto);
 void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
@@ -188,8 +189,8 @@ int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
 	The vectors need not have been created by NUMvector.
 */
 
-void NUMvector_append_e (long elementSize, void **v, long lo, long *hi);
-void NUMvector_insert_e (long elementSize, void **v, long lo, long *hi, long position);
+void NUMvector_append (long elementSize, void **v, long lo, long *hi);
+void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long position);
 /*
 	add one element to the vector *v.
 	The new element is initialized to zero.
@@ -247,8 +248,8 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 	type * NUM##t##vector_copy (const type *v, long lo, long hi); \
 	void NUM##t##vector_copyElements (const type *v, type *to, long lo, long hi); \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi); \
-	void NUM##t##vector_append_e (type **v, long lo, long *hi); \
-	void NUM##t##vector_insert_e (type **v, long lo, long *hi, long position); \
+	void NUM##t##vector_append (type **v, long lo, long *hi); \
+	void NUM##t##vector_insert (type **v, long lo, long *hi, long position); \
 	type ** NUM##t##matrix (long row1, long row2, long col1, long col2); \
 	void NUM##t##matrix_free (type **m, long row1, long col1); \
 	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2); \
@@ -269,6 +270,8 @@ FUNCTION (dc, dcomplex)
 FUNCTION (c, char)
 #undef FUNCTION
 
+#ifndef __cplusplus
+
 #define NUMstructvector(Type,lo,hi)  \
 	(struct struct##Type *) NUMvector (sizeof (struct struct##Type), lo, hi)
 #define NUMstructvector_free(Type,v,lo)  \
@@ -279,10 +282,10 @@ FUNCTION (c, char)
 	NUMvector_copyElements (sizeof (struct struct##Type), v, to, lo, hi)
 #define NUMstructvector_equal(Type,v1,v2,lo,hi)  \
 	NUMvector_equal (sizeof (struct struct##Type), v1, v2, lo, hi)
-#define NUMstructvector_append_e(Type,v,lo,hi)  \
-	NUMvector_append_e (sizeof (struct struct##Type), (void **) v, lo, hi)
-#define NUMstructvector_insert_e(Type,v,lo,hi,position)  \
-	NUMvector_insert_e (sizeof (struct struct##Type), (void **) v, lo, hi, position)
+#define NUMstructvector_append(Type,v,lo,hi)  \
+	NUMvector_append (sizeof (struct struct##Type), (void **) v, lo, hi)
+#define NUMstructvector_insert(Type,v,lo,hi,position)  \
+	NUMvector_insert (sizeof (struct struct##Type), (void **) v, lo, hi, position)
 
 #define NUMpvector(lo,hi)  \
 	NUMvector (sizeof (void *), lo, hi)
@@ -294,10 +297,10 @@ FUNCTION (c, char)
 	NUMvector_copyElements (sizeof (void *), v, to, lo, hi)
 #define NUMpvector_equal(v1,v2,lo,hi)  \
 	NUMvector_equal (sizeof (void *), v1, v2, lo, hi)
-#define NUMpvector_append_e(v,lo,hi)  \
-	NUMvector_append_e (sizeof (void *), (void **) v, lo, hi)
-#define NUMpvector_insert_e(v,lo,hi,position)  \
-	NUMvector_insert_e (sizeof (void *), (void **) v, lo, hi, position)
+#define NUMpvector_append(v,lo,hi)  \
+	NUMvector_append (sizeof (void *), (void **) v, lo, hi)
+#define NUMpvector_insert(v,lo,hi,position)  \
+	NUMvector_insert (sizeof (void *), (void **) v, lo, hi, position)
 
 #define NUMwvector(lo,hi)  \
 	(wchar **) NUMvector (sizeof (wchar *), lo, hi)
@@ -309,10 +312,10 @@ FUNCTION (c, char)
 	NUMvector_copyElements (sizeof (wchar *), v, to, lo, hi)
 #define NUMwvector_equal(v1,v2,lo,hi)  \
 	NUMvector_equal (sizeof (wchar *), v1, v2, lo, hi)
-#define NUMwvector_append_e(v,lo,hi)  \
-	NUMvector_append_e (sizeof (wchar *), (void **) v, lo, hi)
-#define NUMwvector_insert_e(v,lo,hi,position)  \
-	NUMvector_insert_e (sizeof (wchar *), (void **) v, lo, hi, position)
+#define NUMwvector_append(v,lo,hi)  \
+	NUMvector_append (sizeof (wchar *), (void **) v, lo, hi)
+#define NUMwvector_insert(v,lo,hi,position)  \
+	NUMvector_insert (sizeof (wchar *), (void **) v, lo, hi, position)
 
 #define NUMstructmatrix(Type,row1,row2,col1,col2)  \
 	NUMmatrix (sizeof (struct struct##Type), row1, row2, col1, col2)
@@ -335,6 +338,8 @@ FUNCTION (c, char)
 	NUMmatrix_copyElements (sizeof (void *), m, to, row1, row2, col1, col2)
 #define NUMpmatrix_equal(m1,m2,row1,row2,col1,col2)  \
 	NUMmatrix_equal (sizeof (void *), m1, m2, row1, row2, col1, col2)
+
+#endif
 
 long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
@@ -549,10 +554,10 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 #ifdef __cplusplus
 	}
-	
+
 template <class T>
 T* NUMvector (long from, long to) {
-	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror;
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
 	return result;
 }
 
@@ -562,30 +567,67 @@ void NUMvector_free (T* ptr, long from) {
 }
 
 template <class T>
-struct autoNUMvector {
-	autoNUMvector (long from, long to) throw (int) : from (from) {
+T* NUMvector_copy (T* ptr, long lo, long hi) {
+	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi)); therror
+	return result;
+}
+
+template <class T>
+bool NUMvector_equal (T* v1, T* v2, long lo, long hi) {
+	return NUMvector_equal (sizeof (T), v1, v2, lo, hi);
+}
+
+template <class T>
+void NUMvector_copyElements (T* vfrom, T* vto, long lo, long hi) {
+	NUMvector_copyElements (sizeof (T), vfrom, vto, lo, hi);
+}
+
+template <class T>
+void NUMvector_append (T** v, long lo, long *hi) {
+	NUMvector_append (sizeof (T), (void**) v, lo, hi); therror
+}
+
+template <class T>
+void NUMvector_insert (T** v, long lo, long *hi, long position) {
+	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position); therror
+}
+
+template <class T>
+class autoNUMvector {
+	T* ptr;
+	long from;
+public:
+	autoNUMvector<T> (long from, long to) : from (from) {
 		ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
 	}
-	autoNUMvector (T *ptr, long from) throw (int) : ptr (ptr), from (from) { therror }
-	autoNUMvector (void) throw () : from (0), ptr (NULL) { }
-	~autoNUMvector () {
+	autoNUMvector (T *ptr, long from) : ptr (ptr), from (from) {
+		therror
+	}
+	autoNUMvector () : ptr (NULL), from (1) {
+	}
+	~autoNUMvector<T> () {
 		NUMvector_free (sizeof (T), ptr, from);
 	}
-	T& operator[] (long i) { return ptr [i]; }
-	T* peek () const throw () { return ptr; }
-	T* transfer (void) throw () { T *temp = ptr; ptr = NULL; return temp; }
-	void reset (long newFrom, long to) throw (int) {
+	T& operator[] (long i) {
+		return ptr [i];
+	}
+	T* peek () const {
+		return ptr;
+	}
+	T* transfer () {
+		T* temp = ptr;
+		ptr = NULL;   // make the pointer non-automatic again
+		return temp;
+	}
+	void reset (long newFrom, long to) {
 		NUMvector_free (sizeof (T), ptr, from);
 		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
 	}
-private:
-	T *ptr;
-	long from;
 };
 
 template <class T>
 T** NUMmatrix (long row1, long row2, long col1, long col2) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror;
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
 	return result;
 }
 
@@ -595,24 +637,49 @@ void NUMmatrix_free (T** ptr, long row1, long col1) {
 }
 
 template <class T>
-struct autoNUMmatrix {
-	autoNUMmatrix (long row1, long row2, long col1, long col2) throw (int) : row1 (row1), col1 (col1) {
+T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
+	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2)); therror
+	return result;
+}
+
+template <class T>
+bool NUMmatrix_equal (T* m1, T* m2, long row1, long row2, long col1, long col2) {
+	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
+}
+
+template <class T>
+void NUMmatrix_copyElements (T** mfrom, T** mto, long row1, long row2, long col1, long col2) {
+	NUMmatrix_copyElements (sizeof (T), mfrom, mto, row1, row2, col1, col2);
+}
+
+template <class T>
+class autoNUMmatrix {
+	T** ptr;
+	long row1, col1;
+public:
+	autoNUMmatrix (long row1, long row2, long col1, long col2) : row1 (row1), col1 (col1) {
 		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
 	}
-	autoNUMmatrix (void) throw () : row1 (0), col1 (0), ptr (NULL) { }
+	autoNUMmatrix () : ptr (NULL), row1 (0), col1 (0) {
+	}
 	~autoNUMmatrix () {
 		NUMmatrix_free (sizeof (T), ptr, row1, col1);
 	}
-	T*& operator[] (long row) { return ptr [row]; }
-	T** peek () const throw () { return ptr; }
-	T** transfer (void) throw () { T **temp = ptr; ptr = NULL; return temp; }
-	void reset (long newRow1, long row2, long newCol1, long col2) throw (int) {
+	T*& operator[] (long row) {
+		return ptr [row];
+	}
+	T** peek () const {
+		return ptr;
+	}
+	T** transfer () {
+		T** temp = ptr;
+		ptr = NULL;
+		return temp;
+	}
+	void reset (long newRow1, long row2, long newCol1, long col2) {
 		NUMmatrix_free (sizeof (T), ptr, row1, col1);
 		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1 = newRow1, row2, col1 = newCol1, col2)); therror
 	}
-private:
-	T** ptr;
-	long row1, col1;
 };
 
 #endif

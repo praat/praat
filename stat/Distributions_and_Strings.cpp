@@ -30,14 +30,14 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = numberOfStrings;
-		thy strings = (wchar **) NUMpvector (1, numberOfStrings); therror
+		thy strings = NUMvector <wchar*> (1, numberOfStrings);
 		for (long istring = 1; istring <= numberOfStrings; istring ++) {
 			wchar_t *string;
 			Distributions_peek (me, column, & string); therror
 			thy strings [istring] = Melder_wcsdup_e (string); therror
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Distributions: Strings not drawn.");
 	}
 }
@@ -62,7 +62,7 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 			Melder_throw ("Column total not positive.");
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = total;
-		thy strings = (wchar **) NUMpvector (1, total); therror
+		thy strings = NUMvector <wchar*> (1, total);
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			long number = my data [irow] [column];
 			wchar_t *string = my rowLabels [irow];
@@ -74,7 +74,7 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 		}
 		Strings_randomize (thee.peek());
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Distributions: Strings not drawn.");
 	}
 }
@@ -100,7 +100,7 @@ Distributions Strings_to_Distributions (Strings me) {
 		thy numberOfRows = idist;
 		TableOfReal_sortByLabel (thee.peek(), 1, 0);
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": n distribution computed.");
 	}
 }

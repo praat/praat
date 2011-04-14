@@ -91,7 +91,7 @@ SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *tit
 		FunctionEditor_init (SpectrogramEditor_as_parent (me.peek()), parent, title, data); therror
 		my maximum = 10000;
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Spectrogram window not created.");
 	}
 }

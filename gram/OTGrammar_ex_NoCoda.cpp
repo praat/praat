@@ -1,6 +1,6 @@
-/* OTGrammar_ex_NoCoda.c
+/* OTGrammar_ex_NoCoda.cpp
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,47 +21,50 @@
  * pb 2002/07/16 GPL
  * pb 2007/07/23 constraint plasticity
  * pb 2007/08/12 wchar_t
+ * pb 2011/03/29 C++
  */
 
 #include "OTGrammar.h"
 
 OTGrammar OTGrammar_create_NoCoda_grammar (void) {
-	OTGrammarCandidate candidate;
-	OTGrammarTableau tableau;
-	OTGrammarConstraint constraint;
-	OTGrammar me = Thing_new (OTGrammar); cherror
-	my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints = 2); cherror
-	constraint = & my constraints [1];
-		constraint -> name = Melder_wcsdup_e (L"N\\s{O}C\\s{ODA}"); cherror
-		constraint -> ranking = 100.0;
-		constraint -> plasticity = 1.0;
-	constraint = & my constraints [2];
-		constraint -> name = Melder_wcsdup_e (L"P\\s{ARSE}"); cherror
-		constraint -> ranking = 90.0;
-		constraint -> plasticity = 1.0;
-	my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus = 2); cherror
-	tableau = & my tableaus [1];
-		tableau -> input = Melder_wcsdup_e (L"pat"); cherror
-		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates =  2); cherror
-		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup_e (L"pa"); cherror
-			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
-			candidate -> marks [2] = 1;
-		candidate = & tableau -> candidates [2];
-			candidate -> output = Melder_wcsdup_e (L"pat"); cherror
-			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
-			candidate -> marks [1] = 1;
-	tableau = & my tableaus [2];
-		tableau -> input = Melder_wcsdup_e (L"pa"); cherror
-		tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates =  1); cherror
-		candidate = & tableau -> candidates [1];
-			candidate -> output = Melder_wcsdup_e (L"pa"); cherror
-			candidate -> marks = NUMivector (1, candidate -> numberOfConstraints = 2); cherror
-	OTGrammar_checkIndex (me);
-	OTGrammar_newDisharmonies (me, 0.0);
-end:
-	iferror forget (me);
-	return me;
+	try {
+		OTGrammarCandidate candidate;
+		OTGrammarTableau tableau;
+		OTGrammarConstraint constraint;
+		autoOTGrammar me = Thing_new (OTGrammar);
+		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = 2);
+		constraint = & my constraints [1];
+			constraint -> name = Melder_wcsdup_e (L"N\\s{O}C\\s{ODA}"); therror
+			constraint -> ranking = 100.0;
+			constraint -> plasticity = 1.0;
+		constraint = & my constraints [2];
+			constraint -> name = Melder_wcsdup_e (L"P\\s{ARSE}"); therror
+			constraint -> ranking = 90.0;
+			constraint -> plasticity = 1.0;
+		my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus = 2);
+		tableau = & my tableaus [1];
+			tableau -> input = Melder_wcsdup_e (L"pat"); therror
+			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  2);
+			candidate = & tableau -> candidates [1];
+				candidate -> output = Melder_wcsdup_e (L"pa"); therror
+				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
+				candidate -> marks [2] = 1;
+			candidate = & tableau -> candidates [2];
+				candidate -> output = Melder_wcsdup_e (L"pat"); therror
+				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
+				candidate -> marks [1] = 1;
+		tableau = & my tableaus [2];
+			tableau -> input = Melder_wcsdup_e (L"pa"); therror
+			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  1);
+			candidate = & tableau -> candidates [1];
+				candidate -> output = Melder_wcsdup_e (L"pa"); therror
+				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2); therror
+		OTGrammar_checkIndex (me.peek()); therror
+		OTGrammar_newDisharmonies (me.peek(), 0.0);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("NoCoda grammar not created.");
+	}
 }
 
-/* End of file OTGrammar_ex_NoCoda.c */
+/* End of file OTGrammar_ex_NoCoda.cpp */

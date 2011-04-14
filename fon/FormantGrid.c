@@ -390,7 +390,7 @@ Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 	try {
 		automatic (FormantGrid) grid = Formant_downto_FormantGrid (formant);
 		thee = Sound_FormantGrid_filter_noscale (me, grid);
-	} catch (...) {
+	} catch (MelderError) {
 		forget (thee);
 		throw;
 	}

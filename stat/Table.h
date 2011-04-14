@@ -42,9 +42,9 @@ oo_CLASS_CREATE (TableRow, Data);
 #define Table_methods Data_methods
 oo_CLASS_CREATE (Table, Data);
 
-int Table_initWithColumnNames (I, long numberOfRows, const wchar_t *columnNames);
+void Table_initWithColumnNames (I, long numberOfRows, const wchar_t *columnNames);
 Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames);
-int Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
+void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 

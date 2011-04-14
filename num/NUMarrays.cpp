@@ -40,13 +40,13 @@ void * NUMvector (long elementSize, long lo, long hi) {
 		char *result;
 		Melder_assert (sizeof (char) == 1);   // some say that this is true by definition
 		for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-			result = reinterpret_cast<char*> (_Melder_calloc_e (hi - lo + 1, elementSize)); therror
+			result = reinterpret_cast<char*> (_Melder_calloc (hi - lo + 1, elementSize));
 			if (result -= lo * elementSize) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result + lo * elementSize, 1);   // make "sure" that the second try will succeed (not *very* sure, because realloc might move memory even if it shrinks)
 		}
 		theTotalNumberOfArrays += 1;
 		return result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Vector not created.");
 	}
 }
@@ -65,7 +65,7 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 		long offset = lo * elementSize;
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Vector not copied.");
 	}
 }
@@ -82,7 +82,7 @@ int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi) {
 	return ! memcmp ((char *) v1 + offset, (char *) v2 + offset, (hi - lo + 1) * elementSize);
 }
 
-void NUMvector_append_e (long elementSize, void **v, long lo, long *hi) {
+void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
 	try {
 		char *result;
 		if (*v == NULL) {
@@ -91,7 +91,7 @@ void NUMvector_append_e (long elementSize, void **v, long lo, long *hi) {
 		} else {
 			long offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-				result = reinterpret_cast <char *> (Melder_realloc_e ((char *) *v + offset, (*hi - lo + 2) * elementSize)); therror
+				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
 				if ((result -= offset) != NULL) break;   // this will normally succeed at the first try
 				(void) Melder_realloc_f (result + offset, 1);   // make "sure" that the second try will succeed
 			}
@@ -99,12 +99,12 @@ void NUMvector_append_e (long elementSize, void **v, long lo, long *hi) {
 			memset (result + *hi * elementSize, 0, elementSize);   // initialize the new element to zeroes
 		}
 		*v = result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm ("Vector: element not appended.");
 	}
 }
 
-void NUMvector_insert_e (long elementSize, void **v, long lo, long *hi, long position) {
+void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long position) {
 	try {
 		char *result;
 		if (*v == NULL) {
@@ -120,7 +120,7 @@ void NUMvector_insert_e (long elementSize, void **v, long lo, long *hi, long pos
 			(*hi) ++;
 		}
 		*v = result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowm ("Vector: element not inserted.");
 	}
 }
@@ -148,11 +148,11 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		long numberOfColumns = col2 - col1 + 1;
 		for (;;) {
 			try {
-				result [row1] = reinterpret_cast <char *> (_Melder_calloc_e (numberOfRows * numberOfColumns, elementSize)); therror
-			} catch (...) {
+				result [row1] = reinterpret_cast <char *> (_Melder_calloc (numberOfRows * numberOfColumns, elementSize));
+			} catch (MelderError) {
 				result += row1;
 				Melder_free (result);   // free the row pointers
-				throw 1;
+				throw MelderError ();
 			}
 			if ((result [row1] -= col1 * elementSize) != NULL) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result [row1] + col1 * elementSize, 1);   // make "sure" that the second try will succeed
@@ -161,7 +161,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		for (long irow = row1 + 1; irow <= row2; irow ++) result [irow] = result [irow - 1] + columnSize;
 		theTotalNumberOfArrays += 1;
 		return result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Matrix not created.");
 	}
 }
@@ -184,7 +184,7 @@ void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long co
 		long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
 		memcpy (result [row1] + columnOffset, ((char **) m) [row1] + columnOffset, dataSize);
 		return result;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Matrix not copied.");
 	}
 }
@@ -216,10 +216,10 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
 	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
-	void NUM##t##vector_append_e (type **v, long lo, long *hi) \
-		{ NUMvector_append_e (sizeof (type), (void **) v, lo, hi); } \
-	void NUM##t##vector_insert_e (type **v, long lo, long *hi, long position) \
-		{ NUMvector_insert_e (sizeof (type), (void **) v, lo, hi, position); } \
+	void NUM##t##vector_append (type **v, long lo, long *hi) \
+		{ NUMvector_append (sizeof (type), (void **) v, lo, hi); } \
+	void NUM##t##vector_insert (type **v, long lo, long *hi, long position) \
+		{ NUMvector_insert (sizeof (type), (void **) v, lo, hi, position); } \
 	type ** NUM##t##matrix (long row1, long row2, long col1, long col2) \
 		{ return (type **) NUMmatrix (sizeof (type), row1, row2, col1, col2); } \
 	void NUM##t##matrix_free (type **m, long row1, long col1) \

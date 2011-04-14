@@ -1,6 +1,6 @@
 /* NUMlapack.h
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
  */
 
 /*
- djmw 20020418 Notify that product svd does not work.  
+ djmw 20020418 Notify that product svd does not work.
+ djmw 20110308 Latest modification
 */
 #ifndef _NUMlapack_h_
 #define _NUMlapack_h_
@@ -116,6 +117,10 @@ We have changed the following things:
 	dtgsja	NUMgsvdFromUpperTriangulars
 	dggsvp	NUMmatricesToUpperTriangularForms
 */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 void NUMidentity (double **a, long rb, long re, long cb);
 /*
@@ -1110,5 +1115,9 @@ void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a);
 	Computes inverse of triangular matrix.
 
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _NUMlapack_h_ */

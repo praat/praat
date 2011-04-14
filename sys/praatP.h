@@ -27,22 +27,22 @@
 	extern "C" {
 #endif
 
-int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
+void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
 	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script);
 /* No strings may be NULL; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
-int praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
+void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
 	const wchar_t *className3, const wchar_t *title);
 /* No arguments may be NULL; unspecify them by giving an empty string. */
 /* 'title' is deep-copied. */
-int praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title);
-int praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
+void praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title);
+void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
 	const wchar_t *className3, const wchar_t *title);
-int praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title);
-int praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
+void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title);
+void praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
 	const wchar_t *className3, const wchar_t *title);
 void praat_sortActions (void);
 
-int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
 	const wchar_t *after, int depth, const wchar_t *script);
 /* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
 /*
@@ -51,8 +51,8 @@ int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, cons
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */
-int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
-int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
+void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
+void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_saveMenuCommands (FILE *f);
 void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);

@@ -27,6 +27,7 @@
   djmw 20100223 Removed gsl dependency
   djmw 20110304 Thing_new
   djmw 20110308 struc connections -> struct structconnections
+  djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
 */
 
 #include "FormantGrid_extensions.h"

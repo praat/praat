@@ -20,18 +20,12 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/04/06
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Editor.h"
+#include "Collection.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -56,7 +50,8 @@ Thing_declare1 (HyperPage);
 	int printing, top, mirror; \
 	wchar_t *insideHeader, *middleHeader, *outsideHeader; \
 	wchar_t *insideFooter, *middleFooter, *outsideFooter; \
-	int font, fontSize; \
+	enum kGraphics_font font; \
+	int fontSize; \
 	wchar_t *entryHint; double entryPosition; \
 	struct { wchar_t *page; int top; } history [20]; \
 	int historyPointer; \
@@ -82,7 +77,7 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-int HyperPage_any (I, const wchar_t *text, int font, int size, int style, double minFooterDistance,
+int HyperPage_any (I, const wchar_t *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
 int HyperPage_pageTitle (I, const wchar_t *title);
 int HyperPage_intro (I, const wchar_t *text);

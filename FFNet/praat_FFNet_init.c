@@ -478,7 +478,7 @@ FORM (FFNet_Pattern_Activation_learnSD, L"FFNet & Pattern & Activation: Learn sl
 	RADIOBUTTON (L"Minimum-cross-entropy")
     OK
 DO
-	struct structSteepestDescentMinimizer_parameters p;
+	struct structSteepestDescentMinimizer_Parameters p;
     p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
     return FFNet_Pattern_Activation_learnSD (ONLY (classFFNet), ONLY (classPattern),
@@ -593,7 +593,7 @@ FORM (FFNet_Pattern_Categories_learnSD, L"FFNet & Pattern & Categories: Learn sl
 	RADIOBUTTON (L"Minimum-cross-entropy")
     OK
 DO
-	struct structSteepestDescentMinimizer_parameters p;
+	struct structSteepestDescentMinimizer_Parameters p;
 	p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
     return FFNet_Pattern_Categories_learnSD (ONLY (classFFNet),

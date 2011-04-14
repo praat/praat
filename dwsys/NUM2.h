@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20110308 Latest modification.
+ djmw 20110314 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -1006,6 +1006,22 @@ int NUMfft_Table_init (NUMfft_Table table, long n);
 void NUMfft_Table_free_f (NUMfft_Table_f table);
 void NUMfft_Table_free (NUMfft_Table table);
 
+#ifdef __cplusplus
+struct autoNUMfft_Table {
+        structNUMfft_Table table;
+        autoNUMfft_Table () throw () {
+                table.n = 0;
+                table.trigcache = NULL;
+                table.splitcache = NULL;
+                //Melder_casual ("creating fft table");
+        }
+        ~autoNUMfft_Table () {
+                NUMfft_Table_free (& table);
+                //Melder_casual ("deleting fft table");
+        }
+};
+#endif
+
 void NUMfft_forward_f (NUMfft_Table_f table, float *data);
 void NUMfft_forward (NUMfft_Table table, double *data);
 /*
@@ -1131,22 +1147,6 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 
 #ifdef __cplusplus
 	}
-#ifdef __cplusplus
-struct autoNUMfft_Table {
-	structNUMfft_Table table;
-	autoNUMfft_Table () throw () {
-		table.n = 0;
-		table.trigcache = NULL;
-		table.splitcache = NULL;
-		//Melder_casual ("creating fft table");
-	}
-	~autoNUMfft_Table () {
-		NUMfft_Table_free (& table);
-		//Melder_casual ("deleting fft table");
-	}
-};
-#endif
-
 #endif
 
 #endif /* _NUM2_h_ */

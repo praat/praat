@@ -407,7 +407,7 @@ static void destroy (I) {
 	#elif motif
 		if (my workProcId) XtRemoveWorkProc (my workProcId);
 	#endif
-	NUMsvector_free (my buffer, 0);
+	NUMvector_free <short> (my buffer, 0);
 
 	if (my inputUsesPortAudio) {
 		if (my portaudioStream) Pa_StopStream (my portaudioStream);
@@ -1612,9 +1612,9 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void
 				#endif
 			my nmax = nmax_bytes / (sizeof (short) * numberOfChannels);
 			for (;;) {
-				my buffer = NUMsvector (0, my nmax * numberOfChannels - 1);
+				my buffer = NUMvector <short> (0, my nmax * numberOfChannels - 1);
 				if (my buffer) break;   // success
-				if (my nmax < 100000) throw 1;   // failure, with error message
+				if (my nmax < 100000) throw MelderError ();   // failure, with error message
 				Melder_clearError ();
 				my nmax /= 2;   // retry with less application memory
 			}
@@ -1756,7 +1756,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 			my workProcId = XtAppAddWorkProc (applicationContext, workProc, (XtPointer) me.peek());
 		#endif
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("SoundRecorder not created.");
 	}
 }

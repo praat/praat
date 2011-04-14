@@ -38,7 +38,7 @@
 #if defined(linux)
    #define HAVE_DECL_FINITE 1
 #else
-   #undef HAVE_DECL_FINITE
+   #define HAVE_DECL_FINITE 0
 #endif
 
 /* Define to 1 if you have the declaration of `frexp', and to 0 if you don't.

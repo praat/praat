@@ -80,7 +80,7 @@ FORM (Create_rectangular_Network, L"Create rectangular Network", 0)
 	REAL (L"right Initial weight range", L"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle_e (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
+	autoNetwork me = Network_create_rectangle (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
 		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
 		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
 		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
@@ -103,7 +103,7 @@ FORM (Create_rectangular_Network_vertical, L"Create rectangular Network (vertica
 	REAL (L"right Initial weight range", L"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle_vertical_e (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
+	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
 		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
 		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
 		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
@@ -124,7 +124,7 @@ FORM (Network_addConnection, L"Network: Add connection", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Network);
-		Network_addConnection_e (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
+		Network_addConnection (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -138,7 +138,7 @@ FORM (Network_addNode, L"Network: Add node", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Network);
-		Network_addNode_e (me, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
+		Network_addNode (me, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -159,7 +159,7 @@ FORM (Network_getActivity, L"Network: Get activity", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double activity = Network_getActivity_e (me, GET_INTEGER (L"Node")); therror
+	double activity = Network_getActivity (me, GET_INTEGER (L"Node")); therror
 	Melder_information1 (Melder_double (activity));
 END
 
@@ -168,7 +168,7 @@ FORM (Network_getWeight, L"Network: Get weight", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double weight = Network_getWeight_e (me, GET_INTEGER (L"Connection")); therror
+	double weight = Network_getWeight (me, GET_INTEGER (L"Connection")); therror
 	Melder_information1 (Melder_double (weight));
 END
 
@@ -191,7 +191,7 @@ FORM (Network_setActivity, L"Network: Set activity", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Network);
-		Network_setActivity_e (me, GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
+		Network_setActivity (me, GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -203,7 +203,7 @@ FORM (Network_setWeight, L"Network: Set weight", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Network);
-		Network_setWeight_e (me, GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
+		Network_setWeight (me, GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -215,7 +215,7 @@ FORM (Network_setClamping, L"Network: Set clamping", 0)
 DO
 	WHERE (SELECTED) {
 		iam_LOOP (Network);
-		Network_setClamping_e (me, GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
+		Network_setClamping (me, GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -611,7 +611,7 @@ DO
 			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews")); therror
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);   // partial change
 	}
 END
@@ -637,7 +637,7 @@ DO
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
 			GET_INTEGER (L"Store history every"), & history); therror
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning
 		// trickle down to save history
 	}
@@ -666,9 +666,9 @@ DO
 			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
-		throw 1;
+		throw;
 	}
 END
 
@@ -691,9 +691,9 @@ DO
 			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
-		throw 1;
+		throw;
 	}
 END
 
@@ -831,7 +831,7 @@ DO
 			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
 			GET_INTEGER (L"Store history every"), & history);
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);
 	}
 	if (history) praat_new1 (history, my name);
@@ -874,9 +874,9 @@ DO
 		OTGrammar_PairDistribution_getFractionCorrect (me, thee,
 			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications"), & result); therror
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);
-		throw 1;
+		throw;
 	}
 	Melder_informationReal (result, NULL);
 END
@@ -893,9 +893,9 @@ DO
 		OTGrammar_PairDistribution_getMinimumNumberCorrect (me, thee,
 			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications per input"), & result);
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);
-		throw 1;
+		throw;
 	}
 	Melder_information1 (Melder_integer (result));
 END
@@ -921,9 +921,9 @@ DO
 			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews")); therror
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);
-		throw 1;
+		throw;
 	}
 END
 
@@ -943,9 +943,9 @@ DO
 		autoDistributions thee = OTGrammar_to_Distribution (me, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise"));
 		praat_new (thee.transfer(), my name, L"_out");
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
-		throw 1;
+		throw;
 	}
 END
 
@@ -959,9 +959,9 @@ DO
 		autoPairDistribution thee = OTGrammar_to_PairDistribution (me, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise"));
 		praat_new (thee.transfer(), my name, L"_out");
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
-		throw 1;
+		throw;
 	}
 END
 
@@ -971,9 +971,9 @@ DIRECT (OTGrammar_measureTypology)
 		autoDistributions thee = OTGrammar_measureTypology (me);
 		praat_new (thee.transfer(), my name, L"_out");
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
-		throw 1;
+		throw;
 	}
 END
 
@@ -1147,7 +1147,7 @@ DO
 				GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
 				GET_INTEGER (L"Direction"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading")); therror
 			praat_dataChanged (me);
-		} catch (...) {
+		} catch (MelderError) {
 			praat_dataChanged (me);
 		}
 	}
@@ -1236,9 +1236,9 @@ DO
 			GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise"));
 			praat_new (thee.transfer(), my name, L"_out");
 			praat_dataChanged (me);
-		} catch (...) {
+		} catch (MelderError) {
 			praat_dataChanged (me);
-			throw 1;
+			throw;
 		}
 	}
 END
@@ -1271,7 +1271,7 @@ DO
 			GET_REAL (L"Rel. plasticity spreading"),
 			GET_INTEGER (L"Store history every"), & history); therror
 		praat_dataChanged (me);
-	} catch (...) {
+	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning
 		// trickle down to save history
 	}

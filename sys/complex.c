@@ -1,6 +1,6 @@
-/* complex.c
+/* complex.cpp
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 1999/06/19
  * pb 2002/03/07 GPL
+ * pb 2011/04/06 C++
  */
 
 #include <math.h>
@@ -243,4 +244,4 @@ dcomplex dcomplex_exp (dcomplex z) {
 	return result;
 }
 
-/* End of file complex.c */
+/* End of file complex.cpp */

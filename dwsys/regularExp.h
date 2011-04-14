@@ -33,6 +33,11 @@
 /* Number of text capturing parentheses allowed. */
 
 #include <wchar.h>
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 #if defined (macintosh) || defined (linux)
 	#define regularExp_CHAR wchar_t
 #else
@@ -119,5 +124,9 @@ void SetREDefaultWordDelimiters (
 /* Enable (or disable) brace counting quantifiers, e.g. `(foo){0,3}'. */
 
 void EnableCountingQuantifier (int is_enabled);
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _regularExp_h_ */

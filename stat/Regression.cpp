@@ -102,7 +102,7 @@ int Regression_init (I) {
 	try {
 		my parameters = Ordered_create (); therror
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -117,7 +117,7 @@ int Regression_addParameter (I, const wchar_t *label, double minimum, double max
 		thy value = value;
 		Collection_addItem (my parameters, thee.transfer()); therror
 		return 1;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (Thing_messageName (me), ": parameter not added.");
 	}
 }
@@ -131,7 +131,7 @@ long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName) {
 		}
 		Melder_throw (Thing_messageName (me), L" has no parameter named \"", factorName, L"\".");
 		return 0;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -145,7 +145,7 @@ LinearRegression LinearRegression_create (void) {
 		autoLinearRegression me = Thing_new (LinearRegression);
 		Regression_init (me.peek()); therror
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("LinearRegression not created.");
 	}
 }
@@ -182,7 +182,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 			parm -> value = x [ivar];
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (Thing_messageName (me), ": linear regression not performed.");
 	}
 }

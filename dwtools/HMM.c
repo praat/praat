@@ -358,7 +358,7 @@ class_methods (HMM_ObservationSequence, Table)
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength)
 {
 	HMM_ObservationSequence me = Thing_new (HMM_ObservationSequence);
-	if (me == NULL || ! Table_initWithoutColumnNames (me, numberOfItems, dataLength + 1)) forget (me);
+	Table_initWithoutColumnNames (me, numberOfItems, dataLength + 1);
 	return me;
 }
 

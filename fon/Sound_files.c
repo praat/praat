@@ -190,7 +190,9 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 	double samplingFrequency;
 	long numberOfSamples;
 	if (! f) return 0;
-	for (long i = 1; i <= 128; i ++) header [i] = bingeti4LE (f);
+	for (long i = 1; i <= 128; i ++) {
+		header [i] = bingeti4LE (f); //cherror
+	}
 	/* Try SESAM header. */
 	samplingFrequency = header [126];
 	numberOfSamples = header [127];
@@ -207,7 +209,9 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 	}
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (! me) return NULL;
-	for (long i = 1; i <= numberOfSamples; i ++) my z [1] [i] = bingeti2LE (f) * (1.0 / 2048);   /* 12 bits. */
+	for (long i = 1; i <= numberOfSamples; i ++) {
+		my z [1] [i] = bingeti2LE (f) * (1.0 / 2048); //cherror   // 12 bits
+	}
 	if (fclose (f) == EOF) return Melder_errorp3 (L"Error reading file ", MelderFile_messageName (file), L".");
 	return me;
 }
@@ -447,7 +451,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 	if (fread (lines, 1, headerLength, f) < headerLength)
 		{ Melder_error1 (L"Header too short."); goto error; }
 	psamples = lines - 1;
-	while ((psamples = strstr (psamples + 1, "samples ")) != NULL)   /* Take last occurrence. */
+	while ((psamples = strstr (psamples + 1, "samples ")) != NULL)   // take last occurrence
 		numberOfSamples = atol (psamples + 8);
 	if (numberOfSamples < 1) {
 		/* Use file length. */
@@ -457,7 +461,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 	if (numberOfSamples < 1)
 		{ Melder_error1 (L"No samples found."); goto error; }
 	pfrequency = lines - 1;
-	while ((pfrequency = strstr (pfrequency + 1, "frequency ")) != NULL)   /* Take last occurrence. */
+	while ((pfrequency = strstr (pfrequency + 1, "frequency ")) != NULL)   // take last occurrence
 		samplingFrequency = atof (pfrequency + 10);
 	if (samplingFrequency <= 0.0)
 		samplingFrequency = 16000.0;
@@ -471,8 +475,9 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 	 * Read samples.
 	 */
 	fseek (f, tagLength + headerLength, SEEK_SET);
-	for (i = 1; i <= numberOfSamples; i ++)
-		my z [1] [i] = bingeti2 (f) * (1.0 / 32768); /* 16-bits Big-Endian. */
+	for (i = 1; i <= numberOfSamples; i ++) {
+		my z [1] [i] = bingeti2 (f) * (1.0 / 32768); //cherror   // 16-bits big-endian
+	}
 
 	if (fclose (f) != 0)
 		{ Melder_error1 (L"Error reading file."); goto error; }
@@ -512,11 +517,11 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		fclose (f);
 		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain HEDR chunk.");
 	}
-	chunkSize = bingetu4LE (f);
+	chunkSize = bingetu4LE (f); //cherror
 	if (chunkSize & 1) ++ chunkSize;
 	if (fread (data, 1, chunkSize - 12, f) < chunkSize - 12) return readError (file);
-	samplingFrequency = bingetu4LE (f);
-	numberOfSamples = bingetu4LE (f);
+	samplingFrequency = bingetu4LE (f); //cherror
+	numberOfSamples = bingetu4LE (f); //cherror
 	if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000) {
 		fclose (f);
 		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" is not a correct Kay file.");
@@ -531,12 +536,12 @@ Sound Sound_readFromKayFile (MelderFile file) {
 			fclose (f);
 			return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain readable SD chunk.");
 		}
-		chunkSize = bingetu4LE (f);
+		chunkSize = bingetu4LE (f); //cherror
 		if (chunkSize & 1) ++ chunkSize;
 		if (fread (data, 1, chunkSize, f) < chunkSize) return readError (file);
 		if (fread (data, 1, 4, f) < 4) return readError (file);
 	}
-	chunkSize = bingetu4LE (f);
+	chunkSize = bingetu4LE (f); //cherror
 	if (chunkSize != numberOfSamples * 2) {
 		fclose (f);
 		return Melder_errorp3 (L"(Sound_readFromKayFile:) File ", MelderFile_messageName (file), L" does not contain readable SD chunk.");
@@ -544,8 +549,9 @@ Sound Sound_readFromKayFile (MelderFile file) {
 
 	me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 	if (! me) return NULL;
-	for (unsigned long i = 1; i <= numberOfSamples; i ++)
-		my z [1] [i] = bingeti2LE (f) / 32768.0;
+	for (unsigned long i = 1; i <= numberOfSamples; i ++) {
+		my z [1] [i] = bingeti2LE (f) / 32768.0; //cherror
+	}
 	fclose (f);
 	return me;
 }

@@ -93,7 +93,7 @@ LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const w
 		my dependent1 = Melder_wcsdup_e (dependent1); therror
 		my dependent2 = Melder_wcsdup_e (dependent2); therror	
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("LogisticRegression not created.");
 	}
 }
@@ -284,7 +284,7 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 			thy intercept -= parm -> value * meanX [ivar];
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -299,7 +299,7 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors
 		long dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel); therror
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Table: logistic regression not performed.");
 	}
 }

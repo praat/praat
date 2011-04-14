@@ -1,6 +1,6 @@
 /* VowelEditor.c
  *
- * Copyright (C) 2008-2010 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
  */
 
 /*
- djmw 20080202, 20080330
- djmw 20090114 FormantTier_to_FormantGrid.
- djmw 20090613 Extract KlattGrid
+  djmw 20080202, 20080330
+  djmw 20090114 FormantTier_to_FormantGrid.
+  djmw 20090613 Extract KlattGrid
+  djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
 */
 
 /*

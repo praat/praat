@@ -55,8 +55,8 @@ oo_CLASS_CREATE (FeatureWeights, Data);
 // Private definitions and macros                  //
 /////////////////////////////////////////////////////
 
-#define FRIENDS(x,y) !SimpleString_compare(x,y)
-#define ENEMIES(x,y) SimpleString_compare(x,y)
+#define FeatureWeights_areFriends(x,y)  ! SimpleString_compare (x,y)
+#define FeatureWeights_areEnemies(x,y)  SimpleString_compare (x,y)
 
 /////////////////////////////////////////////////////
 // Prototypes                                      //

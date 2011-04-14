@@ -1,6 +1,6 @@
-/* praat_actions.c
+/* praat_actions.cpp
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2009/08/03 repaired a memory leak in praat_removeAction
  * pb 2009/12/22 invokingButtonTitle
+ * pb 2011/04/05 C++
  */
 
 #include "praatP.h"
@@ -55,8 +56,6 @@ static void fixSelectionSpecification (void **class1, int *n1, void **class2, in
  * Usage:
  *	Called by praat_addAction () and praat_removeAction ().
  */
-	void *helpClass;
-	int helpN;
 
 	/* Fix unusual input bubblewise. */
 
@@ -68,27 +67,26 @@ static void fixSelectionSpecification (void **class1, int *n1, void **class2, in
 	 * Bubble-sort the input by class name.
 	 */
 	if (*class2 && wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
-		helpClass = *class1; *class1 = *class2; *class2 = helpClass;
-		helpN = *n1; *n1 = *n2; *n2 = helpN;
+		void *helpClass = *class1; *class1 = *class2; *class2 = helpClass;
+		int helpN = *n1; *n1 = *n2; *n2 = helpN;
 	}
 	if (*class3 && wcscmp (((Data_Table) *class2) -> _className, ((Data_Table) *class3) -> _className) > 0) {
-		helpClass = *class2; *class2 = *class3; *class3 = helpClass;
-		helpN = *n2; *n2 = *n3; *n3 = helpN;
+		void *helpClass = *class2; *class2 = *class3; *class3 = helpClass;
+		int helpN = *n2; *n2 = *n3; *n3 = helpN;
 		if (wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
-			helpClass = *class1; *class1 = *class2; *class2 = helpClass;
-			helpN = *n1; *n1 = *n2; *n2 = helpN;
+			void *helpClass = *class1; *class1 = *class2; *class2 = helpClass;
+			int helpN = *n1; *n1 = *n2; *n2 = helpN;
 		}
 	}
 }
 
-static int lookUpMatchingAction (void *class1, void *class2, void *class3, void *class4, const wchar_t *title) {
+static long lookUpMatchingAction (void *class1, void *class2, void *class3, void *class4, const wchar_t *title) {
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
  *	class1, class2, and class3 must be in sorted order.
  */
-	int i;
-	for (i = 1; i <= theNumberOfActions; i ++)
+	for (long i = 1; i <= theNumberOfActions; i ++)
 		if (class1 == theActions [i]. class1 && class2 == theActions [i]. class2 &&
 		    class3 == theActions [i]. class3 && class4 == theActions [i]. class4 &&
 		    title && theActions [i]. title && wcsequ (theActions [i]. title, title)) return i;
@@ -114,79 +112,78 @@ void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3,
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
 	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
-	int i, position;
-	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
-	unsigned long motifFlags = 0;
-	if (flags > 7) {
-		depth = ((flags & praat_DEPTH_7) >> 16);
-		unhidable = (flags & praat_UNHIDABLE) != 0;
-		hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
-		key = flags & 0x000000FF;
-		motifFlags = key ? flags & (0x002000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
-		attractive = (motifFlags & praat_ATTRACTIVE) != 0;
-	}
-	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-
-	if (callback && ! title) {
-		Melder_error9 (L"praat_addAction: command with callback has no title. Classes: ",
-			class1 ? ((Data_Table) class1) -> _className : L"", L" ",
-			class2 ? ((Data_Table) class2) -> _className : L"", L" ",
-			class3 ? ((Data_Table) class3) -> _className : L"", L" ",
-			class4 ? ((Data_Table) class4) -> _className : L"", L".");
-		Melder_flushError (NULL);
-		return;
-	}
-
-	if (! class1) {
-		Melder_flushError ("praat_addAction: command \"%ls\" has no first class.", title);
-		return;
-	}
-
-	/* Determine the position of the new command.
-	 */
-	if (after) {   /* Search for existing command with same selection. */
-		int found = lookUpMatchingAction (class1, class2, class3, class4, after);
-		if (found) {
-			position = found + 1;   /* After 'after'. */
-		} else {
-			Melder_error5 (L"praat_addAction: the command \"", title, L"\" cannot be put after \"", after, L"\",\n"
-				"because the latter command does not exist.");
-			Melder_flushError (NULL);
-			return;
+	try {
+		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
+		unsigned long motifFlags = 0;
+		if (flags > 7) {
+			depth = ((flags & praat_DEPTH_7) >> 16);
+			unhidable = (flags & praat_UNHIDABLE) != 0;
+			hidden = (flags & praat_HIDDEN) != 0 && ! unhidable;
+			key = flags & 0x000000FF;
+			motifFlags = key ? flags & (0x002000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
+			attractive = (motifFlags & praat_ATTRACTIVE) != 0;
 		}
-	} else {
-		position = theNumberOfActions + 1;   /* At end. */
+		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
+
+		if (callback && ! title)
+			Melder_throw ("An action command with callback has no title. Classes: ",
+				class1 ? ((Data_Table) class1) -> _className : L"", L" ",
+				class2 ? ((Data_Table) class2) -> _className : L"", L" ",
+				class3 ? ((Data_Table) class3) -> _className : L"", L" ",
+				class4 ? ((Data_Table) class4) -> _className : L"", L".");
+
+		if (! class1)
+			Melder_throw ("The action command \"", title, "\" has no first class.");
+
+		/*
+		 * Determine the position of the new command.
+		 */
+		long position;
+		if (after) {   // search for existing command with same selection
+			long found = lookUpMatchingAction (class1, class2, class3, class4, after);
+			if (found == 0)
+				Melder_throw ("The action command \"", title, "\" cannot be put after \"", after, "\",\n"
+					"because the latter command does not exist.");
+			position = found + 1;   // after 'after'
+		} else {
+			position = theNumberOfActions + 1;   // at end
+		}
+
+		/*
+		 * Increment the command area.
+		 */
+		if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
+			Melder_throw ("Too many action commands (maximum ", praat_MAXNUM_LOOSE_COMMANDS, ").");
+		theNumberOfActions += 1;
+
+		/*
+		 * Make room for insertion.
+		 */
+		for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
+		memset (& theActions [position], 0, sizeof (struct structPraat_Command));
+
+		/*
+		 * Insert new command.
+		 */
+		theActions [position]. class1 = class1;
+		theActions [position]. n1 = n1;
+		theActions [position]. class2 = class2;
+		theActions [position]. n2 = n2;
+		theActions [position]. class3 = class3;
+		theActions [position]. n3 = n3;
+		theActions [position]. class4 = class4;
+		theActions [position]. n4 = n4;
+		theActions [position]. title = Melder_wcsdup_f (title);
+		theActions [position]. depth = depth;
+		theActions [position]. callback = callback;   /* NULL for a separator. */
+		theActions [position]. button = NULL;
+		theActions [position]. script = NULL;
+		theActions [position]. hidden = hidden;
+		theActions [position]. unhidable = unhidable;
+		theActions [position]. attractive = attractive;
+	} catch (MelderError) {
+		Melder_flushError (NULL);
 	}
-
-	/* Increment the command area.
-	 */
-	if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
-		Melder_flushError ("praat_addAction: too many loose commands.");
-	theNumberOfActions += 1;
-
-	/* Make room for insertion.
-	 */
-	for (i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
-	memset (& theActions [position], 0, sizeof (struct structPraat_Command));
-
-	/* Insert new command.
-	 */
-	theActions [position]. class1 = class1;
-	theActions [position]. n1 = n1;
-	theActions [position]. class2 = class2;
-	theActions [position]. n2 = n2;
-	theActions [position]. class3 = class3;
-	theActions [position]. n3 = n3;
-	theActions [position]. class4 = class4;
-	theActions [position]. n4 = n4;
-	theActions [position]. title = Melder_wcsdup_f (title);
-	theActions [position]. depth = depth;
-	theActions [position]. callback = callback;   /* NULL for a separator. */
-	theActions [position]. button = NULL;
-	theActions [position]. script = NULL;
-	theActions [position]. hidden = hidden;
-	theActions [position]. unhidable = unhidable;
-	theActions [position]. attractive = attractive;
 }
 
 static void deleteDynamicMenu (void) {
@@ -222,173 +219,221 @@ static void updateDynamicMenu (void) {
 	praat_show ();
 }
 
-int praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
+void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
 	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script)
 {
-	long position;
-	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
-	Melder_assert (className1 && className2 && className3 && title && after && script);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
-	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
+	try {
+		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		Melder_assert (className1 && className2 && className3 && title && after && script);
+		if (wcslen (className1)) {
+			class1 = Thing_classFromClassName (className1); therror
+		}
+		if (wcslen (className2)) {
+			class2 = Thing_classFromClassName (className2); therror
+		}
+		if (wcslen (className3)) {
+			class3 = Thing_classFromClassName (className3); therror
+		}
+		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
-	if (wcslen (script) && ! wcslen (title))
-		return Melder_error7 (L"praat_addActionScript: command with callback has no title. Classes: ",
-			className1, L" ", className2, L" ", className3, L".");
+		if (wcslen (script) && ! wcslen (title))
+			Melder_throw ("Command with callback has no title. Classes: ", className1, " ", className2, " ", className3, ".");
 
-	if (! wcslen (className1))
-		return Melder_error3 (L"praat_addActionScript: command \"", title, L"\" has no first class.");
+		if (! wcslen (className1))
+			Melder_throw ("Command \"", title, "\" has no first class.");
 
-	/*
-	 * If the button already exists, remove it.
-	 */
-	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
-	if (found) {
+		/*
+		 * If the button already exists, remove it.
+		 */
+		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		if (found) {
+			theNumberOfActions --;
+			for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+		}
+
+		/*
+		 * Determine the position of the new command.
+		 */
+		long position;
+		if (wcslen (after)) {   /* Search for existing command with same selection. */
+			long found = lookUpMatchingAction (class1, class2, class3, NULL, after);
+			if (found) {
+				position = found + 1;   // after 'after'
+			} else {
+				position = theNumberOfActions + 1;   // at end
+			}
+		} else {
+			position = theNumberOfActions + 1;   // at end
+		}
+
+		/*
+		 * Increment the command area.
+		 */
+		if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
+			Melder_throw ("Too many actions (maximum is ", praat_MAXNUM_LOOSE_COMMANDS, ").");
+		theNumberOfActions += 1;
+
+		/*
+		 * Make room for insertion.
+		 */
+		for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
+		memset (& theActions [position], 0, sizeof (struct structPraat_Command));
+
+		/*
+		 * Insert new command.
+		 */
+		theActions [position]. class1 = class1;
+		theActions [position]. n1 = n1;
+		theActions [position]. class2 = class2;
+		theActions [position]. n2 = n2;
+		theActions [position]. class3 = class3;
+		theActions [position]. n3 = n3;
+		theActions [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   // allow old-fashioned untitled separators
+		theActions [position]. depth = depth;
+		theActions [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   // NULL for a separator
+		theActions [position]. button = NULL;
+		if (wcslen (script) == 0) {
+			theActions [position]. script = NULL;
+		} else {
+			structMelderFile file = { 0 };
+			Melder_relativePathToFile (script, & file);
+			theActions [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
+		}
+		theActions [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
+		theActions [position]. phase = praatP.phase;
+		if (praatP.phase >= praat_READING_BUTTONS) {
+			static long uniqueID = 0;
+			theActions [position]. uniqueID = ++ uniqueID;
+		}
+		updateDynamicMenu ();
+	} catch (MelderError) {
+		rethrowm ("Praat: script action not added.");
+	}
+}
+
+void praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+	try {
+		int n1, n2, n3;
+		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
+		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		if (! found) {
+			Melder_throw ("Action command \"", ((Data_Table) class1) -> _className,
+				class2 ? L" & ": L"", ((Data_Table) class2) -> _className,
+				class3 ? L" & ": L"", ((Data_Table) class3) -> _className,
+				": ", title, "\" not found.");
+		}
+		Melder_free (theActions [found]. title);
 		theNumberOfActions --;
 		for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
+	} catch (MelderError) {
+		rethrowm ("Praat: action not removed.");
 	}
+}
 
-	/* Determine the position of the new command.
-	 */
-	if (wcslen (after)) {   /* Search for existing command with same selection. */
-		long found = lookUpMatchingAction (class1, class2, class3, NULL, after);
-		if (found) {
-			position = found + 1;   /* After 'after'. */
-		} else {
-			position = theNumberOfActions + 1;   /* At end. */
+void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
+	const wchar_t *className3, const wchar_t *title)
+{
+	try {
+		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		Melder_assert (className1 && className2 && className3 && title);
+		if (wcslen (className1)) {
+			class1 = Thing_classFromClassName (className1); therror
 		}
-	} else {
-		position = theNumberOfActions + 1;   /* At end. */
-	}
-
-	/* Increment the command area.
-	 */
-	if (theNumberOfActions >= praat_MAXNUM_LOOSE_COMMANDS)
-		return Melder_error1 (L"praat_addActionScript: too many loose commands.");
-	theNumberOfActions += 1;
-
-	/* Make room for insertion.
-	 */
-	for (long i = theNumberOfActions; i > position; i --) theActions [i] = theActions [i - 1];
-	memset (& theActions [position], 0, sizeof (struct structPraat_Command));
-
-	/* Insert new command.
-	 */
-	theActions [position]. class1 = class1;
-	theActions [position]. n1 = n1;
-	theActions [position]. class2 = class2;
-	theActions [position]. n2 = n2;
-	theActions [position]. class3 = class3;
-	theActions [position]. n3 = n3;
-	theActions [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   /* Allow old-fashioned untitled separators. */
-	theActions [position]. depth = depth;
-	theActions [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator. */
-	theActions [position]. button = NULL;
-	if (wcslen (script) == 0) {
-		theActions [position]. script = NULL;
-	} else {
-		structMelderFile file = { 0 };
-		Melder_relativePathToFile (script, & file);
-		theActions [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
-	}
-	theActions [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
-	theActions [position]. phase = praatP.phase;
-	if (praatP.phase >= praat_READING_BUTTONS) {
-		static long uniqueID = 0;
-		theActions [position]. uniqueID = ++ uniqueID;
-	}
-	updateDynamicMenu ();
-	return 1;
-}
-
-int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3;
-	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
-	if (! found) {
-		return Melder_error9 (L"(praat_removeAction:) Action command \"", ((Data_Table) class1) -> _className,
-			class2 ? L" & ": L"", ((Data_Table) class2) -> _className,
-			class3 ? L" & ": L"", ((Data_Table) class3) -> _className,
-			L": ", title, L"\" not found.");
-	}
-	Melder_free (theActions [found]. title);
-	theNumberOfActions --;
-	for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
-	return 1;
-}
-
-int praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title)
-{
-	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
-	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
-	if (! praat_removeAction (class1, class2, class3, title)) return 0;
-	updateDynamicMenu ();
-	return 1;
-}
-
-int praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3;
-	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
-	if (! found) {
-		return Melder_error9 (L"(praat_hideAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
-			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
-			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
-			L": ", title, L"\" not found.");
-	}
-	if (! theActions [found]. hidden) {
-		theActions [found]. hidden = TRUE;
-		if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
+		if (wcslen (className2)) {
+			class2 = Thing_classFromClassName (className2); therror
+		}
+		if (wcslen (className3)) {
+			class3 = Thing_classFromClassName (className3); therror
+		}
+		praat_removeAction (class1, class2, class3, title); therror
 		updateDynamicMenu ();
+	} catch (MelderError) {
+		rethrowm ("Praat: action not removed.");
 	}
-	return 1;
 }
 
-int praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
+void praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+	try {
+		int n1, n2, n3;
+		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
+		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		if (! found) {
+			Melder_throw ("Praat: action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
+				class2 ? " & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
+				class3 ? " & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
+				": ", title, "\" not found.");
+		}
+		if (! theActions [found]. hidden) {
+			theActions [found]. hidden = TRUE;
+			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
+			updateDynamicMenu ();
+		}
+	} catch (MelderError) {
+		rethrowm ("Praat: action not hidden.");
+	}
+}
+
+void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
 	const wchar_t *className3, const wchar_t *title)
 {
-	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
-	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
-	if (! praat_hideAction (class1, class2, class3, title)) return 0;
-	return 1;
+	try {
+		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		Melder_assert (className1 && className2 && className3 && title);
+		if (wcslen (className1)) {
+			class1 = Thing_classFromClassName (className1); therror
+		}
+		if (wcslen (className2)) {
+			class2 = Thing_classFromClassName (className2); therror
+		}
+		if (wcslen (className3)) {
+			class3 = Thing_classFromClassName (className3); therror
+		}
+		praat_hideAction (class1, class2, class3, title); therror
+	} catch (MelderError) {
+		rethrowm ("Praat: action not hidden.");
+	}
 }
 
-int praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title) {
-	int n1, n2, n3;
-	fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-	long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
-	if (! found) {
-		return Melder_error9 (L"(praat_showAction:) Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
-			class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
-			class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
-			L": ", title, L"\" not found.");
+void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+	try {
+		int n1, n2, n3;
+		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
+		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
+		if (! found) {
+			Melder_throw ("Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
+				class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
+				class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
+				L": ", title, "\" not found.");
+		}
+		if (theActions [found]. hidden) {
+			theActions [found]. hidden = FALSE;
+			if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
+			updateDynamicMenu ();
+		}
+	} catch (MelderError) {
+		rethrowm ("Praat: action not shown.");
 	}
-	if (theActions [found]. hidden) {
-		theActions [found]. hidden = FALSE;
-		if (praatP.phase >= praat_READING_BUTTONS) theActions [found]. toggled = ! theActions [found]. toggled;
-		updateDynamicMenu ();
-	}
-	return 1;
 }
 
-int praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
+void praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
 	const wchar_t *className3, const wchar_t *title)
 {
-	void *class1 = NULL, *class2 = NULL, *class3 = NULL;
-	Melder_assert (className1 && className2 && className3 && title);
-	if (wcslen (className1) && ! (class1 = Thing_classFromClassName (className1))) return 0;
-	if (wcslen (className2) && ! (class2 = Thing_classFromClassName (className2))) return 0;
-	if (wcslen (className3) && ! (class3 = Thing_classFromClassName (className3))) return 0;
-	if (! praat_showAction (class1, class2, class3, title)) return 0;
-	return 1;
+	try {
+		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		Melder_assert (className1 && className2 && className3 && title);
+		if (wcslen (className1)) {
+			class1 = Thing_classFromClassName (className1); therror
+		}
+		if (wcslen (className2)) {
+			class2 = Thing_classFromClassName (className2); therror
+		}
+		if (wcslen (className3)) {
+			class3 = Thing_classFromClassName (className3); therror
+		}
+		praat_showAction (class1, class2, class3, title); therror
+	} catch (MelderError) {
+		rethrowm ("Praat: action not shown.");
+	}
 }
 
 static int compareActions (const void *void_me, const void *void_thee) {
@@ -474,8 +519,11 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (my title);
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
-			if (! callback (NULL, NULL, NULL, my title, modified, NULL))
+			try {
+				callback (NULL, NULL, NULL, my title, modified, NULL); therror
+			} catch (MelderError) {
 				Melder_flushError ("Command not executed.");
+			}
 			Ui_setAllowExecutionHook (NULL, NULL);
 			praat_updateSelection (); return;
 		}
@@ -488,8 +536,11 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (my script);
 				UiHistory_write (L"\"");
 			}
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL))
+			try {
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
+			} catch (MelderError) {
 				Melder_flushError ("Script not executed.");
+			}
 			praat_updateSelection (); return;
 		}
 	}
@@ -775,7 +826,7 @@ void praat_actions_createWriteMenu (GuiObject bar) {
 }
 
 void praat_actions_init (void) {
-	theActions = Melder_calloc_f (struct structPraat_Command, praat_MAXNUM_LOOSE_COMMANDS + 1);
+	theActions = Melder_calloc_f (struct structPraat_Command, 1 + praat_MAXNUM_LOOSE_COMMANDS);
 }
 
 void praat_actions_createDynamicMenu (GuiObject form, int width) {

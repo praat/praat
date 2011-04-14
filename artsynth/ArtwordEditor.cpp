@@ -52,12 +52,12 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
-	long numberOfSelectedPositions, *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);
+	long numberOfSelectedPositions, *selectedPositions = GuiList_getSelectedPositions (my list, & numberOfSelectedPositions);   // BUG memory
 	if (selectedPositions != NULL) {
 		for (long ipos = numberOfSelectedPositions; ipos > 0; ipos --)
 			Artword_removeTarget (artword, my feature, selectedPositions [ipos]);
 	}
-	NUMlvector_free (selectedPositions, 1);
+	NUMvector_free <long> (selectedPositions, 1);
 	updateList (me);
 	Editor_broadcastChange (ArtwordEditor_as_Editor (me));
 }

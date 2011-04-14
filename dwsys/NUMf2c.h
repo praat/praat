@@ -3,7 +3,7 @@
  /* NUMf2c.h  --  Standard Fortran to C header file
  *                Auxiliary f2c routines.
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,12 @@
 
 /*
  djmw 20020923 GPL header
+ djmw 20110308 Latest modification
 */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 double d_sign(double *a, double *b);
 /*
@@ -46,5 +51,9 @@ long s_cmp(char *a0, char *b0, long la, long lb);
 
 void s_copy(register char *a, register char *b, long la, long lb);
 /* assign strings:  a = b (when no null byte at end of string)*/
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _NUMf2c_h_ */

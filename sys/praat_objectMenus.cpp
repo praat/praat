@@ -197,9 +197,9 @@ FORM (praat_addMenuCommand, L"Add menu command", L"Add menu command...")
 	TEXTFIELD (L"Script", L"/u/miep/hallo.praat")
 	OK
 DO
-	if (! praat_addMenuCommandScript (GET_STRING (L"Window"), GET_STRING (L"Menu"),
+	praat_addMenuCommandScript (GET_STRING (L"Window"), GET_STRING (L"Menu"),
 		GET_STRING (L"Command"), GET_STRING (L"After command"),
-		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
+		GET_INTEGER (L"Depth"), GET_STRING (L"Script"));
 END
 
 FORM (praat_hideMenuCommand, L"Hide menu command", L"Hide menu command...")
@@ -208,8 +208,8 @@ FORM (praat_hideMenuCommand, L"Hide menu command", L"Hide menu command...")
 	SENTENCE (L"Command", L"Hallo...")
 	OK
 DO
-	if (! praat_hideMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
-		GET_STRING (L"Command"))) return 0;
+	praat_hideMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
+		GET_STRING (L"Command"));
 END
 
 FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...")
@@ -218,8 +218,8 @@ FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...")
 	SENTENCE (L"Command", L"Hallo...")
 	OK
 DO
-	if (! praat_showMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
-		GET_STRING (L"Command"))) return 0;
+	praat_showMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
+		GET_STRING (L"Command"));
 END
 
 FORM (praat_addAction, L"Add action command", L"Add action command...")
@@ -236,10 +236,10 @@ FORM (praat_addAction, L"Add action command", L"Add action command...")
 	TEXTFIELD (L"Script", L"/u/miep/playReverse.praat")
 	OK
 DO
-	if (! praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
+	praat_addActionScript (GET_STRING (L"Class 1"), GET_INTEGER (L"Number 1"),
 		GET_STRING (L"Class 2"), GET_INTEGER (L"Number 2"), GET_STRING (L"Class 3"),
 		GET_INTEGER (L"Number 3"), GET_STRING (L"Command"), GET_STRING (L"After command"),
-		GET_INTEGER (L"Depth"), GET_STRING (L"Script"))) return 0;
+		GET_INTEGER (L"Depth"), GET_STRING (L"Script"));
 END
 
 FORM (praat_hideAction, L"Hide action command", L"Hide action command...")
@@ -249,8 +249,8 @@ FORM (praat_hideAction, L"Hide action command", L"Hide action command...")
 	SENTENCE (L"Command", L"Play")
 	OK
 DO
-	if (! praat_hideAction_classNames (GET_STRING (L"Class 1"),
-		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"))) return 0;
+	praat_hideAction_classNames (GET_STRING (L"Class 1"),
+		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
 END
 
 FORM (praat_showAction, L"Show action command", L"Show action command...")
@@ -260,8 +260,8 @@ FORM (praat_showAction, L"Show action command", L"Show action command...")
 	SENTENCE (L"Command", L"Play")
 	OK
 DO
-	if (! praat_showAction_classNames (GET_STRING (L"Class 1"),
-		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"))) return 0;
+	praat_showAction_classNames (GET_STRING (L"Class 1"),
+		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
 END
 
 /********** Callbacks of the Preferences menu. **********/

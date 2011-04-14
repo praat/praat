@@ -2,7 +2,7 @@
 #define _NUMclapack_h_
  /* NUMclapack.h
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,10 @@
 	of the transposed problem (e.g. See code in SVD_compute).
 
 */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 int NUMlapack_dbdsqr(char *uplo, long *n, long *ncvt, long *nru, long *ncc,
 	double *d, double *e, double *vt, long *ldvt, double *u, long *ldu, 
@@ -6608,5 +6612,9 @@ long NUMlapack_ilaenv (long *ispec, char *name, char *opts, long *n1,
 
     =====================================================================
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _NUMclapack_h_ */

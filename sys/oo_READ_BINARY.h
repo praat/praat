@@ -26,133 +26,332 @@
  * pb 2008/01/19 NUM##storage
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/03/29 C++
+ * pb 2011/03/31 cherror, therror
  */
 
 #include "oo_undef.h"
 
+#ifdef __cplusplus
 #define oo_SIMPLE(type,storage,x)  \
-	my x = binget##storage (f);
+	my x = binget##storage (f); therror
+#else
+#define oo_SIMPLE(type,storage,x)  \
+	my x = binget##storage (f); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		my x [i] = binget##storage (f);
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f); therror \
+	}
+#else
+#define oo_ARRAY(type,storage,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		my x [i] = binget##storage (f);
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f); therror \
+	}
+#else
+#define oo_SET(type,storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readBinary_##storage (min, max, f))) return 0;
+	if (max >= min) { \
+		my x = NUM##t##vector_readBinary_##storage (min, max, f); therror \
+	}
+#else
+#define oo_VECTOR(type,t,storage,x,min,max)  \
+	if (max >= min) { \
+		my x = NUM##t##vector_readBinary_##storage (min, max, f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readBinary_##storage (row1, row2, col1, col2, f))) return 0;
+	if (row2 >= row1 && col2 >= col1) { \
+	    my x = NUM##t##matrix_readBinary_##storage (row1, row2, col1, col2, f); therror \
+	}
+#else
+#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+	if (row2 >= row1 && col2 >= col1) { \
+	    my x = NUM##t##matrix_readBinary_##storage (row1, row2, col1, col2, f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx(type,storage,Type,x)  \
-	if ((my x = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
+	my x = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); therror
+#else
+#define oo_ENUMx(type,storage,Type,x)  \
+	my x = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); therror \
+	}
+#else
+#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); therror \
+	}
+#else
+#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUM##t##vector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if ((my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type)) < 0) return 0; \
+		my x = NUM##t##vector (min, max); therror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); therror \
 	}
+#else
+#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
+	if (max >= min) { \
+		my x = NUM##t##vector (min, max); cherror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx(storage,x)  \
-	if (! (my x = binget##storage (f))) return 0;
+	my x = binget##storage (f); therror
+#else
+#define oo_STRINGx(storage,x)  \
+	my x = binget##storage (f); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if (! (my x [i] = binget##storage (f))) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f); therror \
+	}
+#else
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = binget##storage (f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! (my x [i] = binget##storage (f))) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f); therror \
+	}
+#else
+#define oo_STRINGx_SET(storage,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = binget##storage (f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMwvector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! (my x [i] = binget##storage (f))) return 0; \
+		my x = NUMvector <wchar*> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = binget##storage (f); therror \
+		} \
 	}
+#else
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	if (max >= min) { \
+		my x = NUMwvector (min, max); cherror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = binget##storage (f); cherror \
+		} \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_readBinary (& my x, f)) return 0;
+	Type##_readBinary (& my x, f); therror
+#else
+#define oo_STRUCT(Type,x)  \
+	Type##_readBinary (& my x, f); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if (! Type##_readBinary (& my x [i], f)) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		Type##_readBinary (& my x [i], f); cherror \
+	}
+#else
+#define oo_STRUCT_ARRAY(Type,x,cap,n) \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (int i = 0; i < n; i ++) { \
+		Type##_readBinary (& my x [i], f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! Type##_readBinary (& my x [i], f)) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		Type##_readBinary (& my x [i], f); therror \
+	}
+#else
+#define oo_STRUCT_SET(Type,x,setType) \
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		Type##_readBinary (& my x [i], f); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_readBinary (& my x [i], f)) return 0; \
+		my x = NUMvector <struct##Type> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			Type##_readBinary (& my x [i], f); therror \
+		} \
 	}
+#else
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+	if (max >= min) { \
+		my x = NUMstructvector (Type, min, max); cherror \
+		for (long i = min; i <= max; i ++) { \
+			Type##_readBinary (& my x [i], f); cherror \
+		} \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_OBJECT(Class,version,x)  \
 	if (bingetex (f)) { \
 		long saveVersion = Thing_version; \
-		if ((my x = Thing_new (Class)) == NULL) return 0; \
+		my x = Thing_new (Class); therror \
 		Thing_version = version; \
-		if (! Data_readBinary (my x, f)) return 0; \
+		Data_readBinary (my x, f); therror \
 		Thing_version = saveVersion; \
 	}
+#else
+#define oo_OBJECT(Class,version,x)  \
+	if (bingetex (f)) { \
+		long saveVersion = Thing_version; \
+		my x = Thing_new (Class); cherror \
+		Thing_version = version; \
+		Data_readBinary (my x, f); cherror \
+		Thing_version = saveVersion; \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = bingeti4 (f); \
-		if ((my x = Class##_create ()) == NULL) return 0; \
+		long n = bingeti4 (f); therror \
+		my x = Class##_create (); therror \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
-			ItemClass item = (ItemClass) Thing_new (ItemClass); \
-			if (item == NULL) return 0; \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); therror \
 			Thing_version = version; \
-			if (! item -> methods -> readBinary (item, f)) return 0; \
+			item -> methods -> readBinary (item, f); therror \
 			Thing_version = saveVersion; \
-			if (! Collection_addItem (my x, item)) return 0; \
+			Collection_addItem (my x, item); therror \
 		} \
 	}
+#else
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
+	{ \
+		long n = bingeti4 (f); cherror \
+		my x = Class##_create (); cherror \
+		for (long i = 1; i <= n; i ++) { \
+			long saveVersion = Thing_version; \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); cherror \
+			Thing_version = version; \
+			item -> methods -> readBinary (item, f); cherror \
+			Thing_version = saveVersion; \
+			Collection_addItem (my x, item); cherror \
+		} \
+	}
+#endif
 
 #define oo_FILE(x)
 
 #define oo_DIR(x)
 
+#ifdef __cplusplus
+#define oo_DEFINE_STRUCT(Type)  \
+	static int Type##_readBinary (Type me, FILE *f) try { \
+		int localVersion = Thing_version; (void) localVersion;
+#else
 #define oo_DEFINE_STRUCT(Type)  \
 	static int Type##_readBinary (Type me, FILE *f) { \
 		int localVersion = Thing_version; (void) localVersion;
+#endif
 
+#ifdef __cplusplus
 #define oo_END_STRUCT(Type)  \
 		return 1; \
+	} catch (MelderError) { \
+		rethrowzero; \
 	}
+#else
+#define oo_END_STRUCT(Type)  \
+	end: \
+		return 1; \
+	}
+#endif
 
+#ifdef __cplusplus
+#define oo_DEFINE_CLASS(Class,Parent)  \
+	static int class##Class##_readBinary (I, FILE *f) try { \
+		iam (Class); \
+		int localVersion = Thing_version; (void) localVersion; \
+		if (localVersion > our version) \
+			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
+		inherited (Class) readBinary (me, f); therror
+#else
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	static int class##Class##_readBinary (I, FILE *f) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
-		if (localVersion > our version) \
-			return Melder_error ("The format of this file is too new. Download a newer version of Praat."); \
-		if (! inherited (Class) readBinary (me, f)) return 0;
+		if (localVersion > our version) { \
+			Melder_error ("The format of this file is too new. Download a newer version of Praat."); goto end; \
+		} \
+		inherited (Class) readBinary (me, f); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_END_CLASS(Class)  \
 		return 1; \
+	} catch (MelderError) { \
+		rethrowzero; \
 	}
+#else
+#define oo_END_CLASS(Class)  \
+	end: \
+		return 1; \
+	}
+#endif
 
 #define oo_IF(condition)  \
 	if (condition) {

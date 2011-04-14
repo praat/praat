@@ -1,6 +1,6 @@
 /* Table_extensions.c
 	 *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  */
 
 /*
- djmw 20020619 GPL header
- djmw 20040113 Added comment header for Peterson&Barney data.
- djmw 20040512 Corrected Peterson&Barney ARPABET-labeling.
- djmw 20041213 Added Table_createFromWeeninkData.
- djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset according to Watrous
- djmw 20080508 Labeling back to original PB article.
+  djmw 20020619 GPL header
+  djmw 20040113 Added comment header for Peterson&Barney data.
+  djmw 20040512 Corrected Peterson&Barney ARPABET-labeling.
+  djmw 20041213 Added Table_createFromWeeninkData.
+  djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset according to Watrous
+  djmw 20080508 Labeling back to original PB article.
+  djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
 */
 /*	speaker type (m|w|c), sex(m|f), id, vowel_number, vowel_label
 	F0, F1, F2, F3

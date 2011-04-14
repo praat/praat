@@ -32,6 +32,7 @@
  * pb 2008/11/04 MelderReadText
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/03/29 C++
  */
 
 #include "oo_undef.h"
@@ -91,6 +92,16 @@
 	for (long i = 0; i <= setType##_MAX; i ++) \
 		if (! (my x [i] = texget##storage (text))) return 0;
 
+#ifdef __cplusplus
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	if (max >= min) { \
+		if (! (my x = NUMvector <wchar*> (min, max))) return 0; \
+		for (long i = min; i <= max; i ++) { \
+			if (! (my x [i] = texget##storage (text))) \
+				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+		} \
+	}
+#else
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		if (! (my x = NUMwvector (min, max))) return 0; \
@@ -99,6 +110,7 @@
 				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
 		} \
 	}
+#endif
 
 #define oo_STRUCT(Type,x)  \
 	if (! Type##_readText (& my x, text)) return 0;
@@ -112,12 +124,21 @@
 	for (long i = 0; i <= setType##_MAX; i ++) \
 		if (! Type##_readText (& my x [i], text)) return 0;
 
+#ifdef __cplusplus
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+	if (max >= min) { \
+		if (! (my x = NUMvector <struct##Type> (min, max))) return 0; \
+		for (long i = min; i <= max; i ++) \
+			if (! Type##_readText (& my x [i], text)) return 0; \
+	}
+#else
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
 			if (! Type##_readText (& my x [i], text)) return 0; \
 	}
+#endif
 
 #define oo_OBJECT(Class,version,x)  \
 	if (texgetex (text) == 1) { \

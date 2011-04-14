@@ -19,6 +19,7 @@
 
 /*
  djmw 20100929 Initial definition.
+ djmw 20110329 oo_STRINGW -> oo_STRING
  */
 
 #define ooSTRUCT HMM_State

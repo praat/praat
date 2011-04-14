@@ -180,9 +180,8 @@ Any UiRadio_addButton (I, const wchar_t *label) {
 // TODO: Ik denk dat dit Native GTK gedrag is (als dit alleen het label update)
 static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 	iam (UiField);
-	int i;
 	(void) call;
-	for (i = 1; i <= my options -> size; i ++) {
+	for (int i = 1; i <= my options -> size; i ++) {
 		UiOption b = static_cast <UiOption> (my options -> item [i]);
 		#if motif
 		if (b -> toggle == w) {
@@ -363,14 +362,14 @@ static int UiField_widgetToValue (UiField me) {
 			if (my integerValue == 0)
 				return Melder_error3 (L"No option chosen for `", my name, L"'.");
 		} break; case UI_LIST: {
-			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
+			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (selected == NULL) {
 				Melder_warning1 (L"No items selected.");
 				my integerValue = 1;
 			} else {
 				if (numberOfSelected > 1) Melder_warning1 (L"More than one item selected.");
 				my integerValue = selected [1];
-				NUMlvector_free (selected, 1);
+				NUMvector_free <long> (selected, 1);
 			}
 		} break; case UI_COLOUR: {
 			wchar_t *string = GuiText_getString (my text);
@@ -585,15 +584,10 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 		}
 	}
 	/*
-	 * Keep the gate for both C and C++ error handling.
+	 * Keep the gate for error handling.
 	 */
-	int status = 1;
 	try {
-		status = my okCallback (me, NULL, NULL, NULL, false, my buttonClosure);   // C: errors are put into a zero return value
-	} catch (...) {
-		status = 0;   // C++: errors are thrown as exceptions
-	}
-	if (status) {
+		my okCallback (me, NULL, NULL, NULL, false, my buttonClosure); therror
 		/*
 		 * Write everything to history. Before destruction!
 		 */
@@ -602,7 +596,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 			UiHistory_write (my invokingButtonTitle);
 			int size = my numberOfFields;
 			while (size >= 1 && my field [size] -> type == UI_LABEL)
-				size --;   /* Ignore trailing fields without a value. */
+				size --;   // ignore trailing fields without a value
 			for (int ifield = 1; ifield <= size; ifield ++) {
 				UiField field = my field [ifield];
 				switch (field -> type) {
@@ -656,7 +650,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 				return;
 			}
 		}
-	} else {
+	} catch (MelderError) {
 		/*
 		 * If a solution has already been suggested, or the "error" was actually a conscious user action, do not add anything more.
 		 */

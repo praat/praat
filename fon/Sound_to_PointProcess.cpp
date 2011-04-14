@@ -63,7 +63,7 @@ PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpol
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (L"Sound: PointProcess not created.");
 	}
 }
@@ -103,7 +103,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 			}
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (L"Sound: PointProcess not created.");
 	}
 }
@@ -113,7 +113,7 @@ PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fm
 		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch.peek());
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (L"Sound: PointProcess not created.");
 	}
 }
@@ -123,7 +123,7 @@ PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double
 		autoPitch pitch = Sound_to_Pitch (me, 0.0, fmin, fmax);
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.peek(), includeMaxima, includeMinima);
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (L"Sound: PointProcess not created.");
 	}
 }

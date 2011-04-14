@@ -534,7 +534,7 @@ static Sound synthesize_pitch (Manipulation me) {
 		autoPointProcess pulses = PitchTier_to_PointProcess (my pitch);
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pulses.peek(), 44100, 0.7, 0.05, 30);
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }

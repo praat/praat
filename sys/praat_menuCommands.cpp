@@ -74,7 +74,7 @@ static long lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *men
 		    (menu == tryMenu || (menu && tryMenu && wcsequ (menu, tryMenu))) &&
 		    (title == tryTitle || (title && tryTitle && wcsequ (title, tryTitle)))) return i;
 	}
-	return 0;   /* Not found. */
+	return 0;   // not found
 }
 
 static void do_menu (I, unsigned long modified) {
@@ -254,128 +254,132 @@ if (! parent) return NULL;
 	return theCommands [position]. button;
 }
 
-int praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
+void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
 	const wchar_t *after, int depth, const wchar_t *script)
 {
-	long position;
+	try {
+		Melder_assert (window && menu && title && after && script);
+		if (wcslen (script) && ! wcslen (title))
+			Melder_throw ("Command with script has no title. Window \"", window, "\", menu \"", menu, "\".");
 
-	Melder_assert (window && menu && title && after && script);
-	if (wcslen (script) && ! wcslen (title))
-		return Melder_error5 (L"praat_addMenuCommand: command with script has no title. Window \"", window, L"\", menu \"", menu, L"\".");
-
-	/* Determine the position of the new command.
-	 */
-	if (wcslen (after)) {   /* Search for existing command with same selection. */
-		long found = lookUpMatchingMenuCommand (window, menu, after);
-		if (found) {
-			position = found + 1;   /* After 'after'. */
-		} else {
-			/*return Melder_error ("praat_addMenuCommand: the command \"%ls\" cannot be put after \"%ls\",\n"
-				"in the menu \"%ls\" in the window \"%ls\"\n"
-				"because the latter command does not exist.", title, after, menu, window);*/
-			position = theNumberOfCommands + 1;   /* Default: at end. */
-		}
-	} else {
-		position = theNumberOfCommands + 1;   /* At end. */
-	}
-
-	/* Increment the command area.
-	 */
-	if (theNumberOfCommands >= praat_MAXNUM_FIXED_COMMANDS)
-		return Melder_error1 (L"praat_addMenuCommand: too many menu commands.");
-	theNumberOfCommands += 1;
-
-	/* Make room for insertion.
-	 */
-	for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
-	memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
-
-	/* Insert new command.
-	 */
-	theCommands [position]. window = Melder_wcsdup_f (window);
-	theCommands [position]. menu = Melder_wcsdup_f (menu);
-	theCommands [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   /* Allow old-fashioned untitled separators. */
-	theCommands [position]. depth = depth;
-	theCommands [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
-	theCommands [position]. executable = wcslen (script) != 0;
-	if (wcslen (script) == 0) {
-		theCommands [position]. script = Melder_wcsdup_f (L"");   /* Empty string, which will be needed to signal origin. */
-	} else {
-		structMelderFile file = { 0 };
-		Melder_relativePathToFile (script, & file);
-		theCommands [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
-	}
-	theCommands [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
-	if (praatP.phase >= praat_READING_BUTTONS) {
-		static long uniqueID = 0;
-		theCommands [position]. uniqueID = ++ uniqueID;
-	}
-
-	if (! theCurrentPraatApplication -> batch) {
-		GuiObject parent = NULL;
-
-		/* WHERE TO PUT IT?
-		 * Determine parent menu widget.
-		 * This is not going to fail:
-		 * if 'depth' is inappropriate, the alleged subitem will be put in the top menu.
+		/*
+		 * Determine the position of the new command.
 		 */
-		if (depth == 0) {
-			parent = windowMenuToWidget (window, menu);   /* Not a subitem: in the top menu. */
+		long position;
+		if (wcslen (after)) {   /* Search for existing command with same selection. */
+			long found = lookUpMatchingMenuCommand (window, menu, after);
+			if (found) {
+				position = found + 1;   /* After 'after'. */
+			} else {
+				/*Melder_throw ("The menu command \"", title, "\" cannot be put after \"", after, "\",\n"
+					"in the menu \"", menu, "\" in the window \"", window, "\"\n"
+					"because the latter command does not exist.", title, after, menu, window);*/
+				position = theNumberOfCommands + 1;   // default: at end
+			}
 		} else {
-			for (long i = position - 1; i > 0; i --) {
-				if (theCommands [i]. depth == depth - 1) {
-					if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
-						#if gtk
-							parent = gtk_menu_item_get_submenu (GTK_MENU_ITEM (theCommands [i]. button));
-						#elif motif
-							XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
-						#endif
-					break;
+			position = theNumberOfCommands + 1;   /* At end. */
+		}
+
+		/*
+		 * Increment the command area.
+		 */
+		if (theNumberOfCommands >= praat_MAXNUM_FIXED_COMMANDS)
+			Melder_throw ("Too many menu commands (maximum ", praat_MAXNUM_FIXED_COMMANDS, ").");
+		theNumberOfCommands += 1;
+
+		/*
+		 * Make room for insertion.
+		 */
+		for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
+		memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
+
+		/*
+		 * Insert new command.
+		 */
+		theCommands [position]. window = Melder_wcsdup_f (window);
+		theCommands [position]. menu = Melder_wcsdup_f (menu);
+		theCommands [position]. title = wcslen (title) ? Melder_wcsdup_f (title) : NULL;   /* Allow old-fashioned untitled separators. */
+		theCommands [position]. depth = depth;
+		theCommands [position]. callback = wcslen (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : NULL;   /* NULL for a separator or cascade button. */
+		theCommands [position]. executable = wcslen (script) != 0;
+		if (wcslen (script) == 0) {
+			theCommands [position]. script = Melder_wcsdup_f (L"");   /* Empty string, which will be needed to signal origin. */
+		} else {
+			structMelderFile file = { 0 };
+			Melder_relativePathToFile (script, & file);
+			theCommands [position]. script = Melder_wcsdup_f (Melder_fileToPath (& file));
+		}
+		theCommands [position]. after = wcslen (after) ? Melder_wcsdup_f (after) : NULL;
+		if (praatP.phase >= praat_READING_BUTTONS) {
+			static long uniqueID = 0;
+			theCommands [position]. uniqueID = ++ uniqueID;
+		}
+
+		if (! theCurrentPraatApplication -> batch) {
+			GuiObject parent = NULL;
+
+			/* WHERE TO PUT IT?
+			 * Determine parent menu widget.
+			 * This is not going to fail:
+			 * if 'depth' is inappropriate, the alleged subitem will be put in the top menu.
+			 */
+			if (depth == 0) {
+				parent = windowMenuToWidget (window, menu);   /* Not a subitem: in the top menu. */
+			} else {
+				for (long i = position - 1; i > 0; i --) {
+					if (theCommands [i]. depth == depth - 1) {
+						if (theCommands [i]. callback == NULL && theCommands [i]. title != NULL && theCommands [i]. title [0] != '-')   /* Cascade button? */
+							#if gtk
+								parent = gtk_menu_item_get_submenu (GTK_MENU_ITEM (theCommands [i]. button));
+							#elif motif
+								XtVaGetValues (theCommands [i]. button, XmNsubMenuId, & parent, NULL);   /* The relevant menu title. */
+							#endif
+						break;
+					}
+				}
+				if (! parent) parent = windowMenuToWidget (window, menu);   /* Fallback: a subitem without a menu title. */
+			}
+			if (parent) {
+				/* WHAT TO PUT THERE?
+				 */
+				if (title [0] == '\0' || title [0] == '-') {
+					theCommands [position]. button = GuiMenu_addSeparator (parent);
+				} else if (script [0] == '\0') {
+					(void) GuiMenuBar_addMenu2 (parent, title, 0, & theCommands [position]. button);
+				} else {
+					theCommands [position]. button = GuiMenu_addItem (parent, title, 0, gui_cb_menu, (void *) theCommands [position]. script);   /* Not just "script"!! */
 				}
 			}
-			if (! parent) parent = windowMenuToWidget (window, menu);   /* Fallback: a subitem without a menu title. */
 		}
-		if (parent) {
-			/* WHAT TO PUT THERE?
-			 */
-			if (title [0] == '\0' || title [0] == '-') {
-				theCommands [position]. button = GuiMenu_addSeparator (parent);
-			} else if (script [0] == '\0') {
-				(void) GuiMenuBar_addMenu2 (parent, title, 0, & theCommands [position]. button);
-			} else {
-				theCommands [position]. button = GuiMenu_addItem (parent, title, 0, gui_cb_menu, (void *) theCommands [position]. script);   /* Not just "script"!! */
-			}
-		}
-	}
 
-	if (praatP.phase >= praat_HANDLING_EVENTS) praat_sortMenuCommands ();
-	return 1;
+		if (praatP.phase >= praat_HANDLING_EVENTS) praat_sortMenuCommands ();
+	} catch (MelderError) {
+		rethrowm ("Script menu command not added.");
+	}
 }
 
-int praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
-	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
+void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	long found = lookUpMatchingMenuCommand (window, menu, title);
-	if (! found) return 0;
+	if (! found) return;
 	praat_Command command = & theCommands [found];
 	if (! command -> hidden && ! command -> unhidable) {
 		command -> hidden = TRUE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
 		if (command -> button) GuiObject_hide (command -> button);
 	}
-	return 1;
 }
 
-int praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
-	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return 1;
+void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title) {
+	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	long found = lookUpMatchingMenuCommand (window, menu, title);
-	if (! found) return 0;
+	if (! found) return;
 	praat_Command command = & theCommands [found];
 	if (command -> hidden) {
 		command -> hidden = FALSE;
 		if (praatP.phase >= praat_READING_BUTTONS) command -> toggled = ! command -> toggled;
 		if (command -> button) GuiObject_show (command -> button);
 	}
-	return 1;
 }
 
 void praat_saveMenuCommands (FILE *f) {
@@ -444,7 +448,7 @@ void praat_addCommandsToEditor (Editor me) {
 	const wchar_t *windowName = our _className;
 	for (long i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
 		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
-			Melder_flushError ("To fix this, go to Praat:Preferences:Buttons:Editors, "
+			Melder_flushError ("To fix this, go to Praat->Preferences->Buttons->Editors, "
 				"and remove the script from this menu.\n"
 				"You may want to install the script in a different menu.");
 	}

@@ -20,12 +20,10 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/04/07
  */
 
-#ifndef _Thing_h_
-	#include "Thing.h"
-#endif
+#include "Thing.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -46,12 +44,12 @@ struct Formula_Result {
 	int expressionType;
 	union {
 		double numericResult;
-		wchar_t *stringResult;
+		wchar *stringResult;
 		struct Formula_NumericArray numericArrayResult;
 	} result;
 };
 
-int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize);
+int Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize);
 
 int Formula_run (long row, long col, struct Formula_Result *result);
 

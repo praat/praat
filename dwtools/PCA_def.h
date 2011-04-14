@@ -18,8 +18,7 @@
  */
 
 /*
- djmw 19981225
- djmw 20020813 GPL header
+ djmw 19981225, 20020813 GPL header, 20110329 latest modification
 */
 
 #define ooSTRUCT PCA

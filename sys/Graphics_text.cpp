@@ -53,8 +53,8 @@
 #include "longchar.h"
 #include "Printer.h"
 
-extern "C" char * ipaSerifRegularPS [];
-extern "C" char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
+extern const char * ipaSerifRegularPS [];
+extern const char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 
 /*
  * When computing the width of a text by adding the widths of the separate characters,
@@ -466,7 +466,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					style == Graphics_BOLD_ITALIC ? "BookAntiqua-BoldItalic" : "BookAntiqua";
 			} else if (font == kGraphics_font_IPATIMES) {
 				if (my includeFonts && ! my loadedXipa) {
-					char **p;
+					const char **p;
 					for (p = & ipaSerifRegularPS [0]; *p; p ++)
 						my printf (my file, "%s", *p);
 					my loadedXipa = TRUE;
@@ -812,7 +812,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					if (overstrike) 
 						xDC -= 10;
 					for (irow = 0; irow < 24; irow ++) {
-						char *row = ipaSerifRegular24 [code - 32] [irow];
+						const char *row = ipaSerifRegular24 [code - 32] [irow];
 						int jrow = yDC - 18 + irow;
 						for (icol = 0; icol < ncol; icol ++) {
 							if (row [icol] == '#')
@@ -868,7 +868,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					int irow, icol, code = ((unsigned char *) codes8) [ichar];
 					int ncol = strlen (ipaSerifRegular24 [code - 32] [0]);
 					for (irow = 0; irow < 24; irow ++) {
-						char *row = ipaSerifRegular24 [code - 32] [irow];
+						const char *row = ipaSerifRegular24 [code - 32] [irow];
 						double dy1 = irow - 18;
 						for (icol = 0; icol < ncol; icol ++) {
 							if (row [icol] == '#') {

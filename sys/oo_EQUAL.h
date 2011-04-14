@@ -26,6 +26,7 @@
  * pb 2009/01/22 consider empty strings and null strings identical
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/03/29 C++
  */
 
 #include "oo_undef.h"
@@ -41,9 +42,15 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i] != thy x [i]) return 0; \
 
+#ifdef __cplusplus
+#define oo_VECTOR(type,t,storage,x,min,max)  \
+	if (! my x != ! thy x || \
+		(my x && ! NUMvector_equal <type> (my x, thy x, min, max))) return 0;
+#else
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (! my x != ! thy x || \
 		(my x && ! NUM##t##vector_equal (my x, thy x, min, max))) return 0;
+#endif
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (! my x != ! thy x || \

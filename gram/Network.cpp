@@ -1,6 +1,6 @@
-/* Network.c
+/* Network.cpp
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2009/03/05 setClamping
  * pb 2009/05/14 zeroActivities, normalizeActivities
  * pb 2009/06/11 connection plasticities
+ * pb 2011/03/29 C++
  */
 
 #include "Network.h"
@@ -68,85 +69,99 @@ class_methods (Network, Data) {
 	class_methods_end
 }
 
-void Network_init_e (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
+void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
-	my minimumActivity = minimumActivity;
-	my maximumActivity = maximumActivity;
-	my spreadingRate = spreadingRate;
-	my selfExcitation = selfExcitation;
-	my minimumWeight = minimumWeight;
-	my maximumWeight = maximumWeight;
-	my learningRate = learningRate;
-	my leak = leak;
-	my xmin = xmin;
-	my xmax = xmax;
-	my ymin = ymin;
-	my ymax = ymax;
-	my numberOfNodes = numberOfNodes;
-	my nodes = NUMstructvector (NetworkNode, 1, numberOfNodes); cherror
-	my numberOfConnections = numberOfConnections;
-	my connections = NUMstructvector (NetworkConnection, 1, numberOfConnections); cherror
-end:
-	return;
+	try {
+		my minimumActivity = minimumActivity;
+		my maximumActivity = maximumActivity;
+		my spreadingRate = spreadingRate;
+		my selfExcitation = selfExcitation;
+		my minimumWeight = minimumWeight;
+		my maximumWeight = maximumWeight;
+		my learningRate = learningRate;
+		my leak = leak;
+		my xmin = xmin;
+		my xmax = xmax;
+		my ymin = ymin;
+		my ymax = ymax;
+		my numberOfNodes = numberOfNodes;
+		my nodes = NUMvector <structNetworkNode> (1, numberOfNodes);
+		my numberOfConnections = numberOfConnections;
+		my connections = NUMvector <structNetworkConnection> (1, numberOfConnections);
+	} catch (MelderError) {
+		rethrow;
+	}
 }
 
 Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
-	Network me = Thing_new (Network); cherror
-	Network_init_e (me, minimumActivity, maximumActivity, spreadingRate,
-		selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
-		xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoNetwork me = Thing_new (Network);
+		Network_init (me.peek(), minimumActivity, maximumActivity, spreadingRate,
+			selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
+			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Network not created.");
+	}
 }
 
-double Network_getActivity_e (Network me, long inode) {
-	double activity = NUMundefined;
-	if (inode <= 0 || inode > my numberOfNodes)
-		error4 (L"Node number (", Melder_integer (inode), L" out of the range 1..", Melder_integer (my numberOfNodes))
-	activity = my nodes [inode]. activity;
-end:
-	iferror Melder_error1 (L"Network: activity not gotten.");
-	return activity;
+double Network_getActivity (Network me, long nodeNumber) {
+	try {
+		double activity = NUMundefined;
+		if (nodeNumber <= 0 || nodeNumber > my numberOfNodes)
+			Melder_throw (me, ": node number (", nodeNumber, " out of the range 1..", my numberOfNodes);
+		activity = my nodes [nodeNumber]. activity;
+		return activity;
+	} catch (MelderError) {
+		rethrowmzero (me, ": activity not gotten.");
+	}
 }
 
-void Network_setActivity_e (Network me, long inode, double activity) {
-	if (inode <= 0 || inode > my numberOfNodes)
-		error5 (L"(Network: Set activity:) Node number (", Melder_integer (inode), L") out of the range 1..", Melder_integer (my numberOfNodes), L".")
-	my nodes [inode]. activity = activity;
-end:
-	iferror Melder_error1 (L"Network: activity not set.");
+void Network_setActivity (Network me, long nodeNumber, double activity) {
+	try {
+		if (nodeNumber <= 0 || nodeNumber > my numberOfNodes)
+			Melder_throw (me, ": node number (", nodeNumber, " out of the range 1..", my numberOfNodes);
+		my nodes [nodeNumber]. activity = activity;
+	} catch (MelderError) {
+		rethrowm (me, ": activity not set.");
+	}
 }
 
-double Network_getWeight_e (Network me, long iconn) {
-	double weight = NUMundefined;
-	if (iconn <= 0 || iconn > my numberOfConnections)
-		error4 (L"Connection number (", Melder_integer (iconn), L" out of the range 1..", Melder_integer (my numberOfConnections))
-	weight = my connections [iconn]. weight;
-end:
-	iferror Melder_error1 (L"Network: weight not gotten.");
-	return weight;
+double Network_getWeight (Network me, long connectionNumber) {
+	try {
+		double weight = NUMundefined;
+		if (connectionNumber <= 0 || connectionNumber > my numberOfConnections)
+			Melder_throw (me, ": connection number (", connectionNumber, " out of the range 1..", my numberOfConnections);
+		weight = my connections [connectionNumber]. weight;
+		return weight;
+	} catch (MelderError) {
+		rethrowmzero (me, ": weight not gotten.");
+	}
 }
 
-void Network_setWeight_e (Network me, long iconn, double weight) {
-	if (iconn <= 0 || iconn > my numberOfConnections)
-		error4 (L"(Network: Set weight:) Connection number (", Melder_integer (iconn), L" out of the range 1..", Melder_integer (my numberOfConnections))
-	my connections [iconn]. weight = weight;
-end:
-	iferror Melder_error1 (L"Network: weight not set.");
+void Network_setWeight (Network me, long connectionNumber, double weight) {
+	try {
+		if (connectionNumber <= 0 || connectionNumber > my numberOfConnections)
+			Melder_throw (me, ": connection number (", connectionNumber, " out of the range 1..", my numberOfConnections);
+		my connections [connectionNumber]. weight = weight;
+	} catch (MelderError) {
+		rethrowm (me, ": weight not set.");
+	}
 }
 
-void Network_setClamping_e (Network me, long inode, bool clamped) {
-	if (inode <= 0 || inode > my numberOfNodes)
-		error5 (L"(Network: Set clamping:) Node number (", Melder_integer (inode), L") out of the range 1..", Melder_integer (my numberOfNodes), L".")
-	my nodes [inode]. clamped = clamped;
-end:
-	iferror Melder_error1 (L"Network: clamping not set.");
+void Network_setClamping (Network me, long connectionNumber, bool clamped) {
+	try {
+		if (connectionNumber <= 0 || connectionNumber > my numberOfConnections)
+			Melder_throw (me, ": connection number (", connectionNumber, " out of the range 1..", my numberOfConnections);
+		my nodes [connectionNumber]. clamped = clamped;
+	} catch (MelderError) {
+		rethrowm (me, ": clamping not set.");
+	}
 }
 
 void Network_spreadActivities (Network me, long numberOfSteps) {
@@ -209,7 +224,7 @@ void Network_updateWeights (Network me) {
 	}
 }
 
-Network Network_create_rectangle_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create_rectangle (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
@@ -253,12 +268,12 @@ Network Network_create_rectangle_e (double minimumActivity, double maximumActivi
 		}
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Rectangular network not created.");
 	}
 }
 
-Network Network_create_rectangle_vertical_e (double minimumActivity, double maximumActivity, double spreadingRate,
+Network Network_create_rectangle_vertical (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
@@ -295,7 +310,7 @@ Network Network_create_rectangle_vertical_e (double minimumActivity, double maxi
 		}
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Vertical rectangular network not created.");
 	}
 }
@@ -343,24 +358,28 @@ void Network_draw (Network me, Graphics graphics, bool colour) {
 	Graphics_unsetInner (graphics);
 }
 
-void Network_addNode_e (Network me, double x, double y, double activity, bool clamped) {
-	NUMstructvector_append_e (NetworkNode, & my nodes, 1, & my numberOfNodes); cherror
-	my nodes [my numberOfNodes]. x = x;
-	my nodes [my numberOfNodes]. y = y;
-	my nodes [my numberOfNodes]. activity = activity;
-	my nodes [my numberOfNodes]. clamped = clamped;
-end:
-	return;
+void Network_addNode (Network me, double x, double y, double activity, bool clamped) {
+	try {
+		NUMvector_append <structNetworkNode> (& my nodes, 1, & my numberOfNodes);
+		my nodes [my numberOfNodes]. x = x;
+		my nodes [my numberOfNodes]. y = y;
+		my nodes [my numberOfNodes]. activity = activity;
+		my nodes [my numberOfNodes]. clamped = clamped;
+	} catch (MelderError) {
+		rethrowm (me, ": node not added.");
+	}
 }
 
-void Network_addConnection_e (Network me, long nodeFrom, long nodeTo, double weight, double plasticity) {
-	NUMstructvector_append_e (NetworkConnection, & my connections, 1, & my numberOfConnections); cherror
-	my connections [my numberOfConnections]. nodeFrom = nodeFrom;
-	my connections [my numberOfConnections]. nodeTo = nodeTo;
-	my connections [my numberOfConnections]. weight = weight;
-	my connections [my numberOfConnections]. plasticity = plasticity;
-end:
-	return;
+void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weight, double plasticity) {
+	try {
+		NUMvector_append <structNetworkConnection> (& my connections, 1, & my numberOfConnections);
+		my connections [my numberOfConnections]. nodeFrom = nodeFrom;
+		my connections [my numberOfConnections]. nodeTo = nodeTo;
+		my connections [my numberOfConnections]. weight = weight;
+		my connections [my numberOfConnections]. plasticity = plasticity;
+	} catch (MelderError) {
+		rethrowm (me, ": connection not added.");
+	}
 }
 
-/* End of file Network.c */
+/* End of file Network.cpp */

@@ -1,5 +1,5 @@
 echo texio
-# Paul Boersma, December 10, 2007
+# Paul Boersma, 30 March 2011
 
 tex1 = Read from file... texio/texio1.TextGrid
 Write to chronological text file... kanweg.txt
@@ -10,11 +10,13 @@ Remove
 asserterror Found a number while looking for a string in text (line 10).
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio2.TextGrid
 
 asserterror Found a number while looking for an enumerated value in text (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio4.TextGrid
 
@@ -23,6 +25,7 @@ asserterror Found a string while looking for a real number in text (line 13).
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio3.TextGrid
 
@@ -30,11 +33,13 @@ asserterror Found a string while looking for an integer in text (line 14).
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio13.TextGrid
 
 asserterror Found a string while looking for an enumerated value in text (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio12.TextGrid
 
@@ -43,6 +48,7 @@ asserterror Found an enumerated value while looking for a string in text (line 1
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio5.TextGrid
 
@@ -51,6 +57,7 @@ asserterror Found an enumerated value while looking for a real number in text (l
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio6.TextGrid
 
@@ -58,6 +65,7 @@ asserterror Found an enumerated value while looking for an integer in text (line
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio14.TextGrid
 
@@ -66,6 +74,7 @@ asserterror Character x following quote (line 18). End of string or undoubled qu
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio15.TextGrid
 
@@ -74,11 +83,13 @@ asserterror Early end of text detected while looking for a real number (line 21)
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio7.TextGrid
 
 asserterror Early end of text detected while looking for an enumerated value (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio8.TextGrid
 
@@ -86,6 +97,7 @@ asserterror Early end of text detected while looking for an integer (line 14).
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio9.TextGrid
 
@@ -94,6 +106,7 @@ asserterror Early end of text detected while looking for a string (line 18).
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio10.TextGrid
 
@@ -102,6 +115,7 @@ asserterror Early end of text detected while looking for a real number (line 18)
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio11.TextGrid
 
@@ -110,26 +124,31 @@ asserterror Early end of text detected while reading a string (line 18).
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio16.TextGrid
 
 asserterror Early end of text detected while reading an enumerated value (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio17.TextGrid
 
 asserterror No matching '>' while reading an enumerated value (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio18.TextGrid
 
 asserterror Found strange text while reading an enumerated value in text (line 6).
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio19.TextGrid
 
 asserterror "exi" is not a value of the enumerated type.
 ...'newline$'TextGrid not read.
+...'newline$'Data not read from text file.
 ...'newline$'No object was put into the list.
 Read from file... texio/texio20.TextGrid
 

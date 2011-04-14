@@ -125,7 +125,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
-int praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title);
+void praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title);
 	/* 'class2' and 'class3' may be NULL. */
 	/* 'title' may be NULL; reference-copied. */
 
@@ -305,7 +305,7 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 		int result = DO_##alternative (NULL, sendingString, interpreter, invokingButtonTitle, modified, buttonClosure); \
 		if (result == 0 && parkedError) { Melder_clearError (); Melder_error1 (parkedError); } Melder_free (parkedError); return result; \
 		} } else try { int IOBJECT = 0; (void) IOBJECT; {
-	#define END  (void) 0; } } catch (...) { } iferror return 0; praat_updateSelection (); return 1; }
+	#define END  (void) 0; } } catch (MelderError) { } iferror return 0; praat_updateSelection (); return 1; }
 	#define DIRECT(proc)  static int DO_##proc (UiForm dummy1, const wchar_t *dummy2, Interpreter dummy3, const wchar_t *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) dummy2; (void) dummy3; (void) dummy4; (void) dummy5; (void) dummy6; try { int IOBJECT = 0; (void) IOBJECT; {
 #else

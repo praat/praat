@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/01
+ * pb 2011/04/13
  */
 
 enums_begin (kOTGrammar_decisionStrategy, 0)
@@ -39,8 +39,7 @@ enums_begin (kOTGrammar_rerankingStrategy, 0)
 	enums_add (kOTGrammar_rerankingStrategy, 4, WEIGHTED_ALL, L"Weighted all")
 	enums_add (kOTGrammar_rerankingStrategy, 5, EDCD, L"EDCD")
 	enums_add (kOTGrammar_rerankingStrategy, 6, EDCD_WITH_VACATION, L"EDCD with vacation")
-	enums_add (kOTGrammar_rerankingStrategy, 7, DEMOTE_ONE_WITH_VACATION, L"Demote one with vacation")
-	enums_add (kOTGrammar_rerankingStrategy, 8, WEIGHTED_ALL_UP_HIGHEST_DOWN, L"Weighted all up, highest down")
-enums_end (kOTGrammar_rerankingStrategy, 8, SYMMETRIC_ALL)
+	enums_add (kOTGrammar_rerankingStrategy, 7, WEIGHTED_ALL_UP_HIGHEST_DOWN, L"Weighted all up, highest down")
+enums_end (kOTGrammar_rerankingStrategy, 7, SYMMETRIC_ALL)
 
 /* End of file OTGrammar_enums.h */

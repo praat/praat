@@ -256,18 +256,25 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 
 void Melder_alloc_init (void);   // to be called around program start-up
 void * _Melder_malloc_e (unsigned long size);
+void * _Melder_malloc (unsigned long size);
 #define Melder_malloc_e(type,numberOfElements)  (type *) _Melder_malloc_e ((numberOfElements) * sizeof (type))
+#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * sizeof (type))
 void * _Melder_malloc_f (unsigned long size);
 #define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * sizeof (type))
 void * Melder_realloc_e (void *pointer, long size);
+void * Melder_realloc (void *pointer, long size);
 void * Melder_realloc_f (void *pointer, long size);
 void * _Melder_calloc_e (long numberOfElements, long elementSize);
+void * _Melder_calloc (long numberOfElements, long elementSize);
 #define Melder_calloc_e(type,numberOfElements)  (type *) _Melder_calloc_e (numberOfElements, sizeof (type))
+#define Melder_calloc(type,numberOfElements)  (type *) _Melder_calloc (numberOfElements, sizeof (type))
 void * _Melder_calloc_f (long numberOfElements, long elementSize);
 #define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
 char * Melder_strdup_e (const char *string);
+char * Melder_strdup (const char *string);
 char * Melder_strdup_f (const char *string);
 wchar_t * Melder_wcsdup_e (const wchar_t *string);
+wchar_t * Melder_wcsdup (const wchar_t *string);
 wchar_t * Melder_wcsdup_f (const wchar_t *string);
 int Melder_strcmp (const char *string1, const char *string2);   // regards null string as empty string
 int Melder_wcscmp (const wchar_t *string1, const wchar_t *string2);   // regards null string as empty string
@@ -555,7 +562,7 @@ void Melder_print (const wchar_t *s);
 	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
 
 void Melder_clearInfo (void);   /* Clear the Info window. */
-wchar_t * Melder_getInfo (void);
+const wchar_t * Melder_getInfo (void);
 void Melder_help (const wchar_t *query);
 
 void Melder_search (void);
@@ -718,15 +725,15 @@ extern bool Melder_consoleIsAnsi;
 /* They may chage the string arguments. */
 /* Many of these routines are called by MelderMotif_create and MelderXvt_create. */
 
-void Melder_setCasualProc (void (*casualProc) (wchar_t *message));
-void Melder_setProgressProc (int (*progressProc) (double progress, wchar_t *message));
-void Melder_setMonitorProc (void * (*monitorProc) (double progress, wchar_t *message));
-void Melder_setInformationProc (void (*informationProc) (wchar_t *message));
+void Melder_setCasualProc (void (*casualProc) (const wchar_t *message));
+void Melder_setProgressProc (int (*progressProc) (double progress, const wchar_t *message));
+void Melder_setMonitorProc (void * (*monitorProc) (double progress, const wchar_t *message));
+void Melder_setInformationProc (void (*informationProc) (const wchar_t *message));
 void Melder_setHelpProc (void (*help) (const wchar_t *query));
 void Melder_setSearchProc (void (*search) (void));
-void Melder_setWarningProc (void (*warningProc) (wchar_t *message));
-void Melder_setErrorProc (void (*errorProc) (wchar_t *message));
-void Melder_setFatalProc (void (*fatalProc) (wchar_t *message));
+void Melder_setWarningProc (void (*warningProc) (const wchar_t *message));
+void Melder_setErrorProc (void (*errorProc) (const wchar_t *message));
+void Melder_setFatalProc (void (*fatalProc) (const wchar_t *message));
 void Melder_setPublishProc (int (*publish) (void *));
 void Melder_setRecordProc (int (*record) (double));
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
@@ -905,9 +912,9 @@ void Melder_audio_prefs (void);   // in init file
 #define Melder_FLAC 7
 #define Melder_MP3 8
 #define Melder_NUMBER_OF_AUDIO_FILE_TYPES  8
-wchar_t * Melder_audioFileTypeString (int audioFileType);   /* "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II", "FLAC", "MP3" */
-wchar_t * Melder_macAudioFileType (int audioFileType);   /* "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f", "FLAC", "MP3" */
-wchar_t * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2", ".flac", ".mp3" */
+const wchar_t * Melder_audioFileTypeString (int audioFileType);   /* "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "Sound Designer II", "FLAC", "MP3" */
+const wchar_t * Melder_macAudioFileType (int audioFileType);   /* "AIFF", "AIFC", "WAVE", "ULAW", "NIST", "Sd2f", "FLAC", "MP3" */
+const wchar_t * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".aifc", ".wav", ".au", ".nist", ".sd2", ".flac", ".mp3" */
 /* Audio encodings. */
 #define Melder_LINEAR_8_SIGNED  1
 #define Melder_LINEAR_8_UNSIGNED  2
@@ -969,6 +976,8 @@ double Melder_clock (void);   // seconds since 1969
 
 #ifdef __cplusplus
 	}
+class MelderError { };
+
 extern "C" wchar_t *Thing_messageName (void *);
 struct MelderArg {
 	int type;
@@ -976,10 +985,15 @@ struct MelderArg {
 		const wchar_t *argW;
 		const char *arg8;
 	};
-	MelderArg (const wchar_t *arg) : type (1), argW (arg) { }
+	MelderArg (const wchar *arg) : type (1), argW (arg) { }
 	MelderArg (const char *arg) : type (2), arg8 (arg) { }
 	MelderArg (const double arg) : type (1), argW (Melder_double (arg)) { }
 	MelderArg (const long arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (const unsigned long arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (const int arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (const unsigned int arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (const short arg) : type (1), argW (Melder_integer (arg)) { }
+	MelderArg (const unsigned short arg) : type (1), argW (Melder_integer (arg)) { }
 	MelderArg (void* arg) : type (1), argW (Thing_messageName (arg)) { }
 };
 extern "C++" void Melder_throw (const MelderArg& arg1);
@@ -1012,11 +1026,44 @@ extern "C++" void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, co
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-#define therror  iferror throw 1;   // will be removed once all errors throw exceptions
+#define therror  iferror throw MelderError ();   // will be removed once all errors throw exceptions
 #define rethrow  return   // will be: throw
 #define rethrowzero  do { return 0; } while (false)   // will be: throw
-#define rethrowm(...)  do { try { Melder_throw (__VA_ARGS__); } catch (...) { } return; } while (false)   // will be: do { Melder_throw (__VA_ARGS__) (s); } while (false)
-#define rethrowmzero(...)  do { try { Melder_throw (__VA_ARGS__); } catch (...) { } return 0; } while (false)   // will be: do { Melder_throw (__VA_ARGS__); } while (false)
+#define rethrowval(val)  do { return val; } while (false)   // will be: throw
+#define rethrowm(...)  do { try { Melder_throw (__VA_ARGS__); } catch (MelderError) { } return; } while (false)   // will be: do { Melder_throw (__VA_ARGS__) (s); } while (false)
+#define rethrowmzero(...)  do { try { Melder_throw (__VA_ARGS__); } catch (MelderError) { } return 0; } while (false)   // will be: do { Melder_throw (__VA_ARGS__); } while (false)
+#define rethrowmval(val,...)  do { try { Melder_throw (__VA_ARGS__); } catch (MelderError) { } return val; } while (false)   // will be: do { Melder_throw (__VA_ARGS__); } while (false)
+
+extern "C++" void Melder_warning (const MelderArg& arg1);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
+	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15);
+extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
+	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
+	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
 
 struct autoMelderProgress {
 	autoMelderProgress (const wchar_t *message) { Melder_progress1 (0.0, message); }
@@ -1028,29 +1075,106 @@ struct autoMelderString : MelderString {
 	~autoMelderString () { Melder_free (string); }
 };
 
-struct autoMelderTokens {
-	autoMelderTokens () throw () { tokens = NULL; }
-	autoMelderTokens (const wchar_t *string, long *n) throw (int) { tokens = Melder_getTokens (string, n); therror }
-	~autoMelderTokens () throw () { Melder_freeTokens (& tokens); }
-	wchar*& operator[] (long i) { return tokens [i]; }
-	wchar ** peek () const throw () { return tokens; }
-	void reset (const wchar_t *string, long *n) throw (int) {
+class autoMelderTokens {
+	wchar **tokens;
+public:
+	autoMelderTokens () {
+		tokens = NULL;
+	}
+	autoMelderTokens (const wchar_t *string, long *n) {
+		tokens = Melder_getTokens (string, n); therror
+	}
+	~autoMelderTokens () {
+		if (tokens) Melder_freeTokens (& tokens);
+	}
+	wchar*& operator[] (long i) {
+		return tokens [i];
+	}
+	wchar ** peek () const {
+		return tokens;
+	}
+	void reset (const wchar_t *string, long *n) {
 		if (tokens) Melder_freeTokens (& tokens);
 		tokens = Melder_getTokens (string, n); therror
 	}
-private:
-	wchar **tokens;
 };
 
-class autostring {
-	wchar *ptr;
+template <class T>
+class _autostring {
+	T *ptr;
 public:
-	autostring (wchar *string) throw (int) { ptr = string; iferror throw 1; }
-	~autostring () throw () { Melder_free (ptr); }
-	wchar& operator[] (long i) throw () { return ptr [i]; }
-	wchar * peek () const throw () { return ptr; }
-	wchar * transfer () throw () { wchar *tmp = ptr; ptr = NULL; return tmp; }
+	_autostring (T *string) : ptr (string) {
+		//if (Melder_debug == 39) Melder_casual ("autostring: entering constructor from C-string %ld", ptr);
+		therror;
+		//if (Melder_debug == 39) Melder_casual ("autostring: leaving constructor from C-string");
+	}
+	_autostring () : ptr (0) {
+		//if (Melder_debug == 39) Melder_casual ("autostring: zero constructor");
+	}
+	#if 0
+	_autostring (_autostring& source) {
+		//if (Melder_debug == 39) Melder_casual ("autostring: entering copy constructor from %ld", source.ptr);
+		ptr = source.ptr;
+		if (source.ptr) {
+			Melder_free (source.ptr);
+			source.ptr = NULL;
+		}
+		//if (Melder_debug == 39) Melder_casual ("autostring: leaving copy constructor %ld", ptr);		
+	}
+	#endif
+	~_autostring () {
+		//if (Melder_debug == 39) Melder_casual ("autostring: entering destrutor ptr = %ld", ptr);
+		if (ptr) Melder_free (ptr);
+		//if (Melder_debug == 39) Melder_casual ("autostring: leaving destructor");
+	}
+	#if 0
+	_autostring& operator= (_autostring& source) {
+		//if (Melder_debug == 39) Melder_casual ("autostring: entering copy assignment %ld", ptr);
+		if (& source != this) {
+			if (ptr) Melder_free (ptr);
+			ptr = source.ptr;
+			if (source.ptr) {
+				Melder_free (source.ptr);
+				source.ptr = NULL;
+			}
+		}
+		//if (Melder_debug == 39) Melder_casual ("autostring: leaving copy assignment %ld", ptr);
+		return *this;
+	}
+	#endif
+	#if 1
+	void operator= (T *string) {
+		//if (Melder_debug == 39) Melder_casual ("autostring: entering assignment from C-string; old = %ld", ptr);
+		if (ptr) Melder_free (ptr);
+		ptr = string;
+		therror;
+		//if (Melder_debug == 39) Melder_casual ("autostring: leaving assignment from C-string; new = %ld", ptr);
+	}
+	#endif
+	T& operator[] (long i) {
+		return ptr [i];
+	}
+	T * peek () const {
+		return ptr;
+	}
+	T * transfer () {
+		T *tmp = ptr;
+		ptr = NULL;
+		return tmp;
+	}
+	void reset (T *string) {
+		if (ptr) Melder_free (ptr);
+		ptr = string;
+		therror;
+	}
+private:
+	_autostring& operator= (const _autostring&);   // disable copy assignment
+	//autostring (autostring &);   // disable copy constructor (trying it this way also disables good things like autostring s1 = wcsdup("hello");)
+	template <class Y> _autostring (_autostring<Y> &);   // disable copy constructor
 };
+
+typedef _autostring <wchar> autostring;
+typedef _autostring <char> autostring8;
 
 #endif
 

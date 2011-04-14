@@ -72,7 +72,7 @@ Any _Thing_new (void *table) {
 	my name = NULL;
 	if (! us -> destroy)   /* Table not initialized? */
 		us -> _initialize (us);
-	if (Melder_debug == 39) Melder_casual ("created %ls", my methods -> _className);
+	if (Melder_debug == 40) Melder_casual ("created %ls", my methods -> _className);
 	return me;
 }
 
@@ -169,7 +169,7 @@ Any Thing_newFromClassName (const wchar_t *className) {
 void _Thing_forget (Thing *pme) {
 	Thing me = *pme;
 	if (! me) return;
-	if (Melder_debug == 39) Melder_casual ("destroying %ls", my methods -> _className);
+	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
 	our destroy (me);
 	Melder_free (me);
 	theTotalNumberOfThings -= 1;

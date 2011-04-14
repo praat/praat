@@ -466,7 +466,7 @@ TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table ta
 		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me.peek());
 		#endif
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("TableEditor not created.");
 	}
 }

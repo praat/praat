@@ -1,6 +1,6 @@
-/* praat_picture.c
+/* praat_picture.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@
  * pb 2010/07/13 GTK: attempts to front the window
  * pb 2010/07/29 removed GuiWindow_show (and window comes to the front!)
  * pb 2010/12/17 dashed-dotted lines
+ * pb 2011/03/29 C++
  */
 
 #include "praatP.h"
@@ -84,9 +85,10 @@ static void updateFontMenu (void) {
 	}
 }
 static void setFont (kGraphics_font font) {
-	praat_picture_open ();
-	Graphics_setFont (GRAPHICS, font);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setFont (GRAPHICS, font);
+	}
 	theCurrentPraatPicture -> font = font;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateFontMenu ();
@@ -111,9 +113,10 @@ static void updateSizeMenu (void) {
 }
 static void setFontSize (int fontSize) {
 	//Melder_casual("Praat picture: set font size %d", fontSize);
-	praat_picture_open ();
-	Graphics_setFontSize (GRAPHICS, fontSize);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setFontSize (GRAPHICS, fontSize);
+	}
 	theCurrentPraatPicture -> fontSize = fontSize;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateSizeMenu ();
@@ -148,9 +151,10 @@ END
 	x2NDC += xmargin;
 	y1NDC -= ymargin;
 	y2NDC += ymargin;
-	praat_picture_open ();
-	Graphics_setFontSize (GRAPHICS, praat_size = fontSize);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setFontSize (GRAPHICS, praat_size = fontSize);
+	}
 	Picture_setSelection (praat_picture, x1NDC, x2NDC, y1NDC, y2NDC, False);
 	updateSizeMenu ();
 }*/
@@ -167,17 +171,19 @@ static void updateViewportMenu (void) {
 
 DIRECT (MouseSelectsInnerViewport)
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
-	praat_picture_open ();
-	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
+	}
 	updateViewportMenu ();
 END
 
 DIRECT (MouseSelectsOuterViewport)
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
-	praat_picture_open ();
-	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
+	}
 	updateViewportMenu ();
 END
 
@@ -309,7 +315,7 @@ DO
 	double x1WC, x2WC, y1WC, y2WC;
 	int hor = GET_INTEGER (L"Horizontal alignment") - 1;
 	int vert = GET_INTEGER (L"Vertical alignment") - 1;
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
 	Graphics_setTextAlignment (GRAPHICS, hor, vert);
@@ -318,7 +324,6 @@ DO
 		vert == 0 ? 0 : vert == 1 ? 0.5 : 1, GET_STRING (L"text"));
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_setWindow (GRAPHICS, x1WC, x2WC, y1WC, y2WC);
-	praat_picture_close ();
 END
 
 /***** "Pen" MENU *****/
@@ -354,9 +359,10 @@ static void updatePenMenu (void) {
 	}
 }
 static void setLineType (int lineType) {
-	praat_picture_open ();
-	Graphics_setLineType (GRAPHICS, lineType);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setLineType (GRAPHICS, lineType);
+	}
 	theCurrentPraatPicture -> lineType = lineType;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
@@ -373,9 +379,10 @@ FORM (Line_width, L"Praat picture: Line width", 0)
 SET_REAL (L"Line width", theCurrentPraatPicture -> lineWidth);
 DO
 	double lineWidth = GET_REAL (L"Line width");
-	praat_picture_open ();
-	Graphics_setLineWidth (GRAPHICS, lineWidth);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setLineWidth (GRAPHICS, lineWidth);
+	}
 	theCurrentPraatPicture -> lineWidth = lineWidth;
 END
 
@@ -385,16 +392,18 @@ FORM (Arrow_size, L"Praat picture: Arrow size", 0)
 SET_REAL (L"Arrow size", theCurrentPraatPicture -> arrowSize);
 DO
 	double arrowSize = GET_REAL (L"Arrow size");
-	praat_picture_open ();
-	Graphics_setArrowSize (GRAPHICS, arrowSize);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setArrowSize (GRAPHICS, arrowSize);
+	}
 	theCurrentPraatPicture -> arrowSize = arrowSize;
 END
 
 static void setColour (Graphics_Colour colour) {
-	praat_picture_open ();
-	Graphics_setColour (GRAPHICS, colour);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setColour (GRAPHICS, colour);
+	}
 	theCurrentPraatPicture -> colour = colour;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
@@ -423,9 +432,10 @@ FORM (Colour, L"Praat picture: Colour", 0)
 	OK
 DO
 	Graphics_Colour colour = GET_COLOUR (L"Colour");
-	praat_picture_open ();
-	Graphics_setColour (GRAPHICS, colour);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_setColour (GRAPHICS, colour);
+	}
 	theCurrentPraatPicture -> colour = colour;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updatePenMenu ();
@@ -644,14 +654,13 @@ FORM (Text, L"Praat picture: Text", L"Text...")
 	TEXTFIELD (L"text", L"")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setTextAlignment (GRAPHICS,
 		GET_INTEGER (L"Horizontal alignment") - 1, GET_INTEGER (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_text (GRAPHICS, GET_REAL (L"Horizontal position"),
 		GET_REAL (L"Vertical position"), GET_STRING (L"text"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (Text_special, L"Praat picture: Text special", 0)
@@ -674,7 +683,7 @@ FORM (Text_special, L"Praat picture: Text special", 0)
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setTextAlignment (GRAPHICS, GET_INTEGER (L"Horizontal alignment") - 1, GET_INTEGER (L"Vertical alignment") - 1);
 	Graphics_setInner (GRAPHICS);
 	Graphics_setFont (GRAPHICS, GET_ENUM (kGraphics_font, L"Font"));
@@ -689,7 +698,6 @@ DO
 	Graphics_setFontSize (GRAPHICS, currentSize);
 	Graphics_setTextRotation (GRAPHICS, 0.0);
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 static void dia_line (Any dia) {
@@ -702,36 +710,33 @@ FORM (DrawLine, L"Praat picture: Draw line", 0)
 	dia_line (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_line (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
 		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawArrow, L"Praat picture: Draw arrow", 0)
 	dia_line (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_arrow (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
 		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawDoubleArrow, L"Praat picture: Draw double arrow", 0)
 	dia_line (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_doubleArrow (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"From y"), GET_REAL (L"To x"),
 		GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 #define PraatPictureFunction_members Data_members \
@@ -764,9 +769,6 @@ FORM (DrawFunction, L"Praat picture: Draw function", 0)
 	TEXTFIELD (L"formula", L"x^2 - x^4")
 	OK
 DO
-	double *y = NULL;
-	PraatPictureFunction function = NULL;
-//start:
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
 	long n = GET_INTEGER (L"Number of horizontal steps");
@@ -774,28 +776,23 @@ DO
 	if (n < 2) return 1;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
-	y = NUMdvector (1, n); cherror
-	function = Thing_new (PraatPictureFunction); cherror
+	autoNUMvector <double> y (1, n);
+	autoPraatPictureFunction function = Thing_new (PraatPictureFunction);
 	function -> xmin = x1WC;
 	function -> xmax = x2WC;
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	Formula_compile (interpreter, function, formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
+	Formula_compile (interpreter, function.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 	for (long i = 1; i <= n; i ++) {
 		struct Formula_Result result;
-		Formula_run (1, i, & result); cherror
+		Formula_run (1, i, & result); therror
 		y [i] = result. result.numericResult;
 	}
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
-	Graphics_function (GRAPHICS, y, 1, n, fromX, toX);
+	Graphics_function (GRAPHICS, y.peek(), 1, n, fromX, toX);
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
-end:
-	NUMdvector_free (y, 1);
-	forget (function);
-	iferror return 0;
 END
 
 static void dia_rectangle (Any dia) {
@@ -808,12 +805,11 @@ FORM (DrawRectangle, L"Praat picture: Draw rectangle", 0)
 	dia_rectangle (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_rectangle (GRAPHICS,
 		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
@@ -821,12 +817,11 @@ FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
 	dia_rectangle (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawRoundedRectangle, L"Praat picture: Draw rounded rectangle", 0)
@@ -834,12 +829,11 @@ FORM (DrawRoundedRectangle, L"Praat picture: Draw rounded rectangle", 0)
 	POSITIVE (L"Radius (mm)", L"3.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_roundedRectangle (GRAPHICS,
 		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
@@ -848,12 +842,11 @@ FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
 	POSITIVE (L"Radius (mm)", L"3.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillRoundedRectangle (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawArc, L"Praat picture: Draw arc", 0)
@@ -864,24 +857,22 @@ FORM (DrawArc, L"Praat picture: Draw arc", 0)
 	REAL (L"To angle (degrees)", L"90.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_arc (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"),
 		GET_REAL (L"From angle"), GET_REAL (L"To angle"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawEllipse, L"Praat picture: Draw ellipse", 0)
 	dia_rectangle (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_ellipse (GRAPHICS,
 		GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
@@ -889,12 +880,11 @@ FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
 	dia_rectangle (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillEllipse (GRAPHICS, GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawCircle, L"Praat picture: Draw circle", 0)
@@ -903,11 +893,10 @@ FORM (DrawCircle, L"Praat picture: Draw circle", 0)
 	POSITIVE (L"Radius (along x)", L"1.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_circle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (PaintCircle, L"Praat picture: Paint circle", 0)
@@ -917,12 +906,11 @@ FORM (PaintCircle, L"Praat picture: Paint circle", 0)
 	POSITIVE (L"Radius (along x)", L"1.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Radius"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (DrawCircle_mm, L"Praat picture: Draw circle (mm)", 0)
@@ -931,11 +919,10 @@ FORM (DrawCircle_mm, L"Praat picture: Draw circle (mm)", 0)
 	POSITIVE (L"Diameter (mm)", L"5.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_circle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
@@ -945,12 +932,11 @@ FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
 	POSITIVE (L"Diameter (mm)", L"5.0")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_setColour (GRAPHICS, GET_COLOUR (L"Colour"));
 	Graphics_fillCircle_mm (GRAPHICS, GET_REAL (L"Centre x"), GET_REAL (L"Centre y"), GET_REAL (L"Diameter"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (InsertPictureFromFile, L"Praat picture: Insert picture from file", L"Insert picture from file...")
@@ -959,11 +945,10 @@ FORM (InsertPictureFromFile, L"Praat picture: Insert picture from file", L"Inser
 	dia_rectangle (dia);
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
 	Graphics_imageFromFile (GRAPHICS, GET_STRING (L"fileName"), GET_REAL (L"From x"), GET_REAL (L"To x"), GET_REAL (L"From y"), GET_REAL (L"To y"));
 	Graphics_unsetInner (GRAPHICS);
-	praat_picture_close ();
 END
 
 
@@ -984,17 +969,15 @@ DO
 	double top = GET_REAL (L"right Bottom and top"), bottom = GET_REAL (L"left Bottom and top");
 	REQUIRE (right != left, L"Left and right must not be equal.")
 	REQUIRE (top != bottom, L"Top and bottom must not be equal.")
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_setWindow (GRAPHICS, left, right, bottom, top);
-	praat_picture_close ();
 END
 
 /***** "Margins" MENU *****/
 
 DIRECT (DrawInnerBox)
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_drawInnerBox (GRAPHICS);
-	praat_picture_close ();
 END
 
 FORM (Text_left, L"Praat picture: Text left", L"Text left/right/top/bottom...")
@@ -1002,9 +985,8 @@ FORM (Text_left, L"Praat picture: Text left", L"Text left/right/top/bottom...")
 	TEXTFIELD (L"text", L"")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_textLeft (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Text_right, L"Praat picture: Text right", L"Text left/right/top/bottom...")
@@ -1012,9 +994,8 @@ FORM (Text_right, L"Praat picture: Text right", L"Text left/right/top/bottom..."
 	TEXTFIELD (L"text", L"")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_textRight (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Text_top, L"Praat picture: Text top", L"Text left/right/top/bottom...")
@@ -1022,9 +1003,8 @@ FORM (Text_top, L"Praat picture: Text top", L"Text left/right/top/bottom...")
 	TEXTFIELD (L"text", L"")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_textTop (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Text_bottom, L"Praat picture: Text bottom", L"Text left/right/top/bottom...")
@@ -1032,9 +1012,8 @@ FORM (Text_bottom, L"Praat picture: Text bottom", L"Text left/right/top/bottom..
 	TEXTFIELD (L"text", L"")
 	OK
 DO
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_textBottom (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 static void dia_marksEvery (Any dia) {
@@ -1045,11 +1024,10 @@ static void dia_marksEvery (Any dia) {
 	BOOLEAN (L"Draw dotted lines", 1)
 }
 static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (void *, double, double, bool, bool, bool)) {
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_marksEvery (GRAPHICS, GET_REAL (L"Units"), GET_REAL (L"Distance"),
 		GET_INTEGER (L"Write numbers"),
 		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
-	praat_picture_close ();
 }
 FORM (Marks_left_every, L"Praat picture: Marks left every...", L"Marks left/right/top/bottom every...")
 	dia_marksEvery (dia); OK DO do_marksEvery (dia, Graphics_marksLeftEvery); END
@@ -1069,10 +1047,9 @@ static void dia_marks (Any dia) {
 static int do_marks (Any dia, void (*Graphics_marks) (void *, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (L"Number of marks");
 	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (L"Write numbers"),
 		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
-	praat_picture_close ();
 	return 1;
 }
 FORM (Marks_left, L"Praat picture: Marks left", L"Marks left/right/top/bottom...")
@@ -1092,10 +1069,9 @@ static void dia_marksLogarithmic (Any dia) {
 }
 static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (void *, int, bool, bool, bool)) {
 	long numberOfMarksPerDecade = GET_INTEGER (L"Marks per decade");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (L"Write numbers"),
 		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
-	praat_picture_close ();
 }
 FORM (marksLeftLogarithmic, L"Praat picture: Logarithmic marks left", L"Logarithmic marks left/right/top/bottom...")
 	dia_marksLogarithmic (dia); OK DO do_marksLogarithmic (dia, Graphics_marksLeftLogarithmic); END
@@ -1126,18 +1102,18 @@ FORM (Mark_left, L"Praat picture: One mark left", L"One mark left/right/top/bott
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markLeft (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Mark_right, L"Praat picture: One mark right", L"One mark left/right/top/bottom...")
@@ -1146,18 +1122,18 @@ FORM (Mark_right, L"Praat picture: One mark right", L"One mark left/right/top/bo
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markRight (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Mark_top, L"Praat picture: One mark top", L"One mark left/right/top/bottom...")
@@ -1166,18 +1142,18 @@ FORM (Mark_top, L"Praat picture: One mark top", L"One mark left/right/top/bottom
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;   // WHY?
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markTop (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (Mark_bottom, L"Praat picture: One mark bottom", L"One mark left/right/top/bottom...")
@@ -1186,18 +1162,18 @@ FORM (Mark_bottom, L"Praat picture: One mark bottom", L"One mark left/right/top/
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markBottom (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 static void dia_oneLogarithmicMark (Any dia) {
@@ -1214,18 +1190,18 @@ FORM (LogarithmicMark_left, L"Praat picture: One logarithmic mark left", L"One l
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (LogarithmicMark_right, L"Praat picture: One logarithmic mark right", L"One logarithmic mark left/right/top/bottom...")
@@ -1234,18 +1210,18 @@ FORM (LogarithmicMark_right, L"Praat picture: One logarithmic mark right", L"One
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
 		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (LogarithmicMark_top, L"Praat picture: One logarithmic mark top", L"One logarithmic mark left/right/top/bottom...")
@@ -1254,18 +1230,18 @@ FORM (LogarithmicMark_top, L"Praat picture: One logarithmic mark top", L"One log
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (LogarithmicMark_bottom, L"Praat picture: One logarithmic mark bottom", L"One logarithmic mark left/right/top/bottom...")
@@ -1274,29 +1250,28 @@ FORM (LogarithmicMark_bottom, L"Praat picture: One logarithmic mark bottom", L"O
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
-	praat_picture_open ();
-	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	praat_picture_close ();
+	{
+		autoPraatPicture picture;
+		Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
 		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
-	praat_picture_open ();
+	autoPraatPicture picture;
 	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
 		GET_STRING (L"text"));
-	praat_picture_close ();
 END
 
 FORM (dxMMtoWC, L"Compute horizontal distance in world coordinates", 0)
 	REAL (L"Distance (mm)", L"10.0")
 	OK
 DO
-	double wc;
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
+	double wc = Graphics_dxMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
@@ -1305,11 +1280,10 @@ FORM (dxWCtoMM, L"Compute horizontal distance in millimetres", 0)
 	REAL (L"Distance (wc)", L"0.1")
 	OK
 DO
-	double mm;
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
+	double mm = Graphics_dxWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END
@@ -1318,11 +1292,10 @@ FORM (dyMMtoWC, L"Compute vertical distance in world coordinates", 0)
 	REAL (L"Distance (mm)", L"10.0")
 	OK
 DO
-	double wc;
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
+	double wc = Graphics_dyMMtoWC (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (wc, L"(world coordinates)");
 END
@@ -1331,11 +1304,10 @@ FORM (dyWCtoMM, L"Compute vertical distance in millimetres", 0)
 	REAL (L"Distance (wc)", L"1.0")
 	OK
 DO
-	double mm;
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 	Graphics_setInner (GRAPHICS);
-	mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
+	double mm = Graphics_dyWCtoMM (GRAPHICS, GET_REAL (L"Distance"));
 	Graphics_unsetInner (GRAPHICS);
 	Melder_informationReal (mm, L"mm");
 END

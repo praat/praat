@@ -30,7 +30,9 @@
  * pb 2007/08/12 wchar_t
  * pb 2008/03/31 correct error message when the second of multiple experiments cannot start
  * pb 2008/04/08 disable the OK key if no response has been given yet
+ * pb 2011/03/03 reaction times for mouse clicks
  * pb 2011/03/23 C++
+ * pb 2011/04/14 reaction times for key presses
  */
 
 #include "RunnerMFC.h"
@@ -360,6 +362,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
+	double reactionTime = Melder_clock () - experiment -> startingTime - experiment -> stimulusInitialSilenceDuration;
 	if (experiment -> trial == 0) {
 	} else if (experiment -> pausing) {
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
@@ -380,6 +383,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (response -> key != NULL && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
+					experiment -> reactionTimes [experiment -> trial] = reactionTime;
 					if (experiment -> responsesAreSounds) {
 						ExperimentMFC_playResponse (experiment, iresponse);
 					}
@@ -427,7 +431,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		my iexperiment = 1;
 		RunnerMFC_startExperiment (me.peek()); therror
 		return me.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero ("Experiment window not created.");
 	}
 }

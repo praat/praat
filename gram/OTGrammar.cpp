@@ -162,82 +162,86 @@ static int writeText (I, MelderFile file) {
 void OTGrammar_checkIndex (OTGrammar me) {
 	int icons;
 	if (my index) return;
-	my index = NUMlvector (1, my numberOfConstraints);
+	my index = NUMvector <long> (1, my numberOfConstraints);
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
 	OTGrammar_sort (me);
 }
 
 static int readText (I, MelderReadText text) {
-	int localVersion = Thing_version;
 	iam (OTGrammar);
-	if (! inherited (OTGrammar) readText (me, text)) return 0;
-	if (localVersion >= 1) {
-		if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) return Melder_error1 (L"Trying to read decision strategy.");
-	}
-	if (localVersion >= 2) {
-		my leak = texgetr8 (text); iferror return Melder_error1 (L"Trying to read leak.");
-	}
-	my numberOfConstraints = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of constraints.");
-	if (my numberOfConstraints < 1) return Melder_error1 (L"No constraints.");
-	if (! (my constraints = NUMstructvector (OTGrammarConstraint, 1, my numberOfConstraints))) return 0;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [icons];
-		constraint -> name = texgetw2 (text); iferror return Melder_error3 (L"Trying to read name of constraint ", Melder_integer (icons), L".");
-		constraint -> ranking = texgetr8 (text); iferror return Melder_error3 (L"Trying to read ranking of constraint ", Melder_integer (icons), L".");
-		constraint -> disharmony = texgetr8 (text); iferror return Melder_error3 (L"Trying to read disharmony of constraint ", Melder_integer (icons), L".");
-		if (localVersion < 2) {
-			constraint -> plasticity = 1.0;
-		} else {
-			constraint -> plasticity = texgetr8 (text); iferror return Melder_error3 (L"Trying to read plasticity of constraint ", Melder_integer (icons), L".");;
+	try {
+		int localVersion = Thing_version;
+		if (! inherited (OTGrammar) readText (me, text)) return 0;
+		if (localVersion >= 1) {
+			if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) Melder_throw ("Trying to read decision strategy.");
 		}
-	}
-	my numberOfFixedRankings = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of fixed rankings.");
-	if (my numberOfFixedRankings >= 1) {
-		if (! (my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings))) return 0;
-		for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
-			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
-			fixedRanking -> higher = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the higher of constraint pair ", Melder_integer (irank), L".");;
-			fixedRanking -> lower = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the lower of constraint pair ", Melder_integer (irank), L".");
+		if (localVersion >= 2) {
+			my leak = texgetr8 (text); iferror return Melder_error1 (L"Trying to read leak.");
 		}
-	}
-	my numberOfTableaus = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of tableaus.");
-	if (my numberOfTableaus < 1) return Melder_error1 (L"No tableaus.");
-	if (! (my tableaus = NUMstructvector (OTGrammarTableau, 1, my numberOfTableaus))) return 0;
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & my tableaus [itab];
-		tableau -> input = texgetw2 (text); iferror return Melder_error3 (L"Trying to read input of tableau ", Melder_integer (itab), L".");
-		tableau -> numberOfCandidates = texgeti4 (text); iferror return Melder_error3 (L"Trying to read number of candidates of tableau ", Melder_integer (itab), L".");
-		if (tableau -> numberOfCandidates < 1) return Melder_error9
-			(L"No candidates in tableau ", Melder_integer (itab),
-			 L" (input: ", tableau -> input, L")"
-			 L" in line ", MelderReadText_getLineNumber (text),
-			 itab == 1 ? L"." : L", or perhaps wrong number of candidates for input " L_LEFT_GUILLEMET,
-			 itab == 1 ? NULL : my tableaus [itab - 1]. input,
-			 itab == 1 ? NULL : L_RIGHT_GUILLEMET L".");
-		if (! (tableau -> candidates = NUMstructvector (OTGrammarCandidate, 1, tableau -> numberOfCandidates))) return 0;
-		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			candidate -> output = texgetw2 (text); iferror return Melder_error9
-				(L"Trying to read candidate ", Melder_integer (icand),
-				 L" of tableau ", Melder_integer (itab),
+		my numberOfConstraints = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of constraints.");
+		if (my numberOfConstraints < 1) return Melder_error1 (L"No constraints.");
+		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints);
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTGrammarConstraint constraint = & my constraints [icons];
+			constraint -> name = texgetw2 (text); iferror Melder_throw ("Trying to read name of constraint ", icons, ".");
+			constraint -> ranking = texgetr8 (text); iferror Melder_throw ("Trying to read ranking of constraint ", icons, ".");
+			constraint -> disharmony = texgetr8 (text); iferror Melder_throw ("Trying to read disharmony of constraint ", icons, ".");
+			if (localVersion < 2) {
+				constraint -> plasticity = 1.0;
+			} else {
+				constraint -> plasticity = texgetr8 (text); iferror Melder_throw ("Trying to read plasticity of constraint ", icons, ".");;
+			}
+		}
+		my numberOfFixedRankings = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of fixed rankings.");
+		if (my numberOfFixedRankings >= 1) {
+			my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings);
+			for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
+				OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
+				fixedRanking -> higher = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the higher of constraint pair ", Melder_integer (irank), L".");;
+				fixedRanking -> lower = texgeti4 (text); iferror return Melder_error3 (L"Trying to read the lower of constraint pair ", Melder_integer (irank), L".");
+			}
+		}
+		my numberOfTableaus = texgeti4 (text); iferror return Melder_error1 (L"Trying to read number of tableaus.");
+		if (my numberOfTableaus < 1) return Melder_error1 (L"No tableaus.");
+		my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus);
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tableau = & my tableaus [itab];
+			tableau -> input = texgetw2 (text); iferror return Melder_error3 (L"Trying to read input of tableau ", Melder_integer (itab), L".");
+			tableau -> numberOfCandidates = texgeti4 (text); iferror return Melder_error3 (L"Trying to read number of candidates of tableau ", Melder_integer (itab), L".");
+			if (tableau -> numberOfCandidates < 1) return Melder_error9
+				(L"No candidates in tableau ", Melder_integer (itab),
 				 L" (input: ", tableau -> input, L")"
-				 L" in line ", MelderReadText_getLineNumber (text), L".");
-			candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
-			if (! (candidate -> marks = NUMivector (1, candidate -> numberOfConstraints))) return 0;
-			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				candidate -> marks [icons] = texgeti2 (text); iferror return Melder_error15
-					(L"Trying to read number of violations of constraint ", Melder_integer (icons),
-					 L" (", my constraints [icons]. name, L")"
-					 L" of candidate ", Melder_integer (icand),
-					 L" (", candidate -> output, L")"
+				 L" in line ", MelderReadText_getLineNumber (text),
+				 itab == 1 ? L"." : L", or perhaps wrong number of candidates for input " L_LEFT_GUILLEMET,
+				 itab == 1 ? NULL : my tableaus [itab - 1]. input,
+				 itab == 1 ? NULL : L_RIGHT_GUILLEMET L".");
+			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates);
+			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				OTGrammarCandidate candidate = & tableau -> candidates [icand];
+				candidate -> output = texgetw2 (text); iferror return Melder_error9
+					(L"Trying to read candidate ", Melder_integer (icand),
 					 L" of tableau ", Melder_integer (itab),
 					 L" (input: ", tableau -> input, L")"
 					 L" in line ", MelderReadText_getLineNumber (text), L".");
+				candidate -> numberOfConstraints = my numberOfConstraints;   /* Redundancy, needed for writing binary. */
+				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
+				for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
+					candidate -> marks [icons] = texgeti2 (text); iferror return Melder_error15
+						(L"Trying to read number of violations of constraint ", Melder_integer (icons),
+						 L" (", my constraints [icons]. name, L")"
+						 L" of candidate ", Melder_integer (icand),
+						 L" (", candidate -> output, L")"
+						 L" of tableau ", Melder_integer (itab),
+						 L" (input: ", tableau -> input, L")"
+						 L" in line ", MelderReadText_getLineNumber (text), L".");
+				}
 			}
 		}
+		OTGrammar_checkIndex (me);
+		return 1;
+	} catch (MelderError) {
+		rethrowzero;
 	}
-	OTGrammar_checkIndex (me);
-	return 1;
 }
 
 class_methods (OTGrammar, Data) {
@@ -893,26 +897,30 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar_t *input) {
 }
 
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
-	Strings thee = Thing_new (Strings); cherror
-	thy strings = NUMwvector (1, thy numberOfStrings = numberOfTrials); cherror
-	for (long i = 1; i <= numberOfTrials; i ++) {
-		long itab = NUMrandomInteger (1, my numberOfTableaus);
-		thy strings [i] = Melder_wcsdup_e (my tableaus [itab]. input); cherror
+	try {
+		autoStrings thee = Thing_new (Strings);
+		thy strings = NUMvector <wchar*> (1, thy numberOfStrings = numberOfTrials);
+		for (long i = 1; i <= numberOfTrials; i ++) {
+			long itab = NUMrandomInteger (1, my numberOfTableaus);
+			thy strings [i] = Melder_wcsdup_e (my tableaus [itab]. input); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": inputs not generated.");
 	}
-end:
-	iferror forget (thee);
-	return thee;
 }
 
 Strings OTGrammar_getInputs (OTGrammar me) {
-	Strings thee = Thing_new (Strings); cherror
-	thy strings = NUMwvector (1, thy numberOfStrings = my numberOfTableaus); cherror
-	for (long i = 1; i <= my numberOfTableaus; i ++) {
-		thy strings [i] = Melder_wcsdup_e (my tableaus [i]. input); cherror
+	try {
+		autoStrings thee = Thing_new (Strings);
+		thy strings = NUMvector <wchar*> (1, thy numberOfStrings = my numberOfTableaus);
+		for (long i = 1; i <= my numberOfTableaus; i ++) {
+			thy strings [i] = Melder_wcsdup_e (my tableaus [i]. input); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": inputs not gotten.");
 	}
-end:
-	iferror forget (thee);
-	return thee;
 }
 
 int OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output, double evaluationNoise) {
@@ -928,35 +936,36 @@ end:
 }
 
 Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluationNoise) {
-	Strings outputs = Thing_new (Strings);
-	long n = inputs -> numberOfStrings;
-	cherror
-	outputs -> numberOfStrings = n;
-	outputs -> strings = NUMwvector (1, n); cherror
-	for (long i = 1; i <= n; i ++) {
-		wchar_t output [100];
-		OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise); cherror
-		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
+	try {
+		autoStrings him = Thing_new (Strings);
+		long n = inputs -> numberOfStrings;
+		his numberOfStrings = n;
+		his strings = NUMvector <wchar*> (1, n);
+		for (long i = 1; i <= n; i ++) {
+			wchar_t output [100];
+			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise); therror
+			his strings [i] = Melder_wcsdup_e (output); therror
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": outputs not computed.");
 	}
-end:
-	iferror { forget (outputs); return (Strings) Melder_errorp ("(OTGrammar_inputsToOutputs:) Not performed."); }
-	return outputs;
 }
 
 Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, double evaluationNoise) {
-	Strings outputs = Thing_new (Strings);
-	long i;
-	cherror
-	outputs -> numberOfStrings = n;
-	outputs -> strings = NUMwvector (1, n); cherror
-	for (i = 1; i <= n; i ++) {
-		wchar_t output [100];
-		OTGrammar_inputToOutput (me, input, output, evaluationNoise); cherror
-		outputs -> strings [i] = Melder_wcsdup_e (output); cherror
+	try {
+		autoStrings thee = Thing_new (Strings);
+		thy numberOfStrings = n;
+		thy strings = NUMvector <wchar*> (1, n);
+		for (long i = 1; i <= n; i ++) {
+			wchar_t output [100];
+			OTGrammar_inputToOutput (me, input, output, evaluationNoise); therror
+			thy strings [i] = Melder_wcsdup_e (output); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": output not computed.");
 	}
-end:
-	iferror return (Strings) Melder_errorp ("(OTGrammar_inputToOutputs:) Not performed.");
-	return outputs;
 }
 
 Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, double noise) {
@@ -1541,73 +1550,72 @@ static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, co
 
 bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
 	NUMlinprog linprog = NULL;
-	long *optimalCandidates = NULL;
-
-	bool result = false;
-	if (my decisionStrategy != kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR &&
-		my decisionStrategy != kOTGrammar_decisionStrategy_LINEAR_OT &&
-		my decisionStrategy != kOTGrammar_decisionStrategy_POSITIVE_HG &&
-		my decisionStrategy != kOTGrammar_decisionStrategy_EXPONENTIAL_HG)
-	{
-		error1 (L"To find positive weights, the decision strategy has to be "
-			"HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
-	}
-	optimalCandidates = NUMlvector (1, my numberOfTableaus); cherror
-	/*
-	 * Check that there is exactly one optimal output for each input.
-	 */
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tab = & my tableaus [itab];
-		wchar_t *attestedOutput = NULL;
-		long numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input, & attestedOutput);
-		if (numberOfAttestedOutputs == 0) {
-			error3 (L"Input \"", my tableaus [itab]. input, L"\" has no attested output.");
-		} else if (numberOfAttestedOutputs > 1) {
-			error3 (L"Input \"", my tableaus [itab]. input, L"\" has more than one attested output.");
-		} else {
-			Melder_assert (attestedOutput != NULL);
-			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+	try {
+		bool result = false;
+		if (my decisionStrategy != kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR &&
+			my decisionStrategy != kOTGrammar_decisionStrategy_LINEAR_OT &&
+			my decisionStrategy != kOTGrammar_decisionStrategy_POSITIVE_HG &&
+			my decisionStrategy != kOTGrammar_decisionStrategy_EXPONENTIAL_HG)
+		{
+			Melder_throw ("To find positive weights, the decision strategy has to be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
+		}
+		autoNUMvector <long> optimalCandidates (1, my numberOfTableaus);
+		/*
+		 * Check that there is exactly one optimal output for each input.
+		 */
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tab = & my tableaus [itab];
+			wchar_t *attestedOutput = NULL;
+			long numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input, & attestedOutput);
+			if (numberOfAttestedOutputs == 0) {
+				Melder_throw ("Input \"", my tableaus [itab]. input, "\" has no attested output.");
+			} else if (numberOfAttestedOutputs > 1) {
+				Melder_throw ("Input \"", my tableaus [itab]. input, "\" has more than one attested output.");
+			} else {
+				Melder_assert (attestedOutput != NULL);
+				for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+					OTGrammarCandidate cand = & tab -> candidates [icand];
+					if (wcsequ (attestedOutput, cand -> output)) {
+						optimalCandidates [itab] = icand;
+					}
+				}
+			}
+			Melder_assert (optimalCandidates [itab] != 0);
+		}
+		/*
+		 * Create linear programming problem.
+		 */
+		linprog = NUMlinprog_new (false);
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			NUMlinprog_addVariable (linprog, weightFloor, NUMundefined, 1.0);
+		}
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tab = & my tableaus [itab];
+			long ioptimalCandidate = optimalCandidates [itab];
+			Melder_assert (ioptimalCandidate >= 1);
+			Melder_assert (ioptimalCandidate <= tab -> numberOfCandidates);
+			OTGrammarCandidate optimalCandidate = & tab -> candidates [ioptimalCandidate];
+			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
-				if (wcsequ (attestedOutput, cand -> output)) {
-					optimalCandidates [itab] = icand;
+				NUMlinprog_addConstraint (linprog, marginOfSeparation, NUMundefined); therror
+				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+					NUMlinprog_addConstraintCoefficient (linprog, cand -> marks [icons] - optimalCandidate -> marks [icons]);
 				}
 			}
 		}
-		Melder_assert (optimalCandidates [itab] != 0);
-	}
-	/*
-	 * Create linear programming problem.
-	 */
-	linprog = NUMlinprog_new (false);
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		NUMlinprog_addVariable (linprog, weightFloor, NUMundefined, 1.0);
-	}
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tab = & my tableaus [itab];
-		long ioptimalCandidate = optimalCandidates [itab];
-		Melder_assert (ioptimalCandidate >= 1);
-		Melder_assert (ioptimalCandidate <= tab -> numberOfCandidates);
-		OTGrammarCandidate optimalCandidate = & tab -> candidates [ioptimalCandidate];
-		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
-			OTGrammarCandidate cand = & tab -> candidates [icand];
-			NUMlinprog_addConstraint (linprog, marginOfSeparation, NUMundefined); cherror
-			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-				NUMlinprog_addConstraintCoefficient (linprog, cand -> marks [icons] - optimalCandidate -> marks [icons]);
-			}
+		NUMlinprog_run (linprog); therror
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			double weighting = NUMlinprog_getPrimalValue (linprog, icons);
+			Melder_assert (weighting >= weightFloor);
+			my constraints [icons]. ranking = my constraints [icons]. disharmony =
+				my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ? log (weighting) : weighting;
 		}
+		NUMlinprog_delete (linprog);
+		return result;
+	} catch (MelderError) {
+		NUMlinprog_delete (linprog);
+		rethrowmzero (me, ": positive weights not found.");
 	}
-	NUMlinprog_run (linprog); cherror
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		double weighting = NUMlinprog_getPrimalValue (linprog, icons);
-		Melder_assert (weighting >= weightFloor);
-		my constraints [icons]. ranking = my constraints [icons]. disharmony =
-			my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ? log (weighting) : weighting;
-	}
-end:
-	NUMlvector_free (optimalCandidates, 1);
-	NUMlinprog_delete (linprog);
-	iferror Melder_error1 (L"Positive weights not found.");
-	return result;
 }
 
 void OTGrammar_reset (OTGrammar me, double ranking) {
@@ -1653,18 +1661,18 @@ int *theSaveTiedToTheLeft, *theSaveTiedToTheRight;
 static int OTGrammar_save (OTGrammar me) {
 	long icons;
 	if (my numberOfConstraints != theSaveNumberOfConstraints) {
-		NUMlvector_free (theSaveIndex, 1); theSaveIndex = NULL;
-		NUMdvector_free (theSaveRankings, 1); theSaveRankings = NULL;
-		NUMdvector_free (theSaveDisharmonies, 1); theSaveDisharmonies = NULL;
-		NUMivector_free (theSaveTiedToTheLeft, 1); theSaveTiedToTheLeft = NULL;
-		NUMivector_free (theSaveTiedToTheRight, 1); theSaveTiedToTheRight = NULL;
+		NUMvector_free (theSaveIndex, 1); theSaveIndex = NULL;
+		NUMvector_free (theSaveRankings, 1); theSaveRankings = NULL;
+		NUMvector_free (theSaveDisharmonies, 1); theSaveDisharmonies = NULL;
+		NUMvector_free (theSaveTiedToTheLeft, 1); theSaveTiedToTheLeft = NULL;
+		NUMvector_free (theSaveTiedToTheRight, 1); theSaveTiedToTheRight = NULL;
 		theSaveNumberOfConstraints = my numberOfConstraints;
 	}
-	if (theSaveIndex == NULL) theSaveIndex = NUMlvector (1, my numberOfConstraints);
-	if (theSaveRankings == NULL) theSaveRankings = NUMdvector (1, my numberOfConstraints);
-	if (theSaveDisharmonies == NULL) theSaveDisharmonies = NUMdvector (1, my numberOfConstraints);
-	if (theSaveTiedToTheLeft == NULL) theSaveTiedToTheLeft = NUMivector (1, my numberOfConstraints);
-	if (theSaveTiedToTheRight == NULL) theSaveTiedToTheRight = NUMivector (1, my numberOfConstraints);
+	if (theSaveIndex == NULL) theSaveIndex = NUMvector <long> (1, my numberOfConstraints);
+	if (theSaveRankings == NULL) theSaveRankings = NUMvector <double> (1, my numberOfConstraints);
+	if (theSaveDisharmonies == NULL) theSaveDisharmonies = NUMvector <double> (1, my numberOfConstraints);
+	if (theSaveTiedToTheLeft == NULL) theSaveTiedToTheLeft = NUMvector <int> (1, my numberOfConstraints);
+	if (theSaveTiedToTheRight == NULL) theSaveTiedToTheRight = NUMvector <int> (1, my numberOfConstraints);
 	cherror
 	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 		theSaveIndex [icons] = my index [icons];
@@ -1850,49 +1858,49 @@ static void OTGrammar_opt_deleteOutputMatching (OTGrammar me) {
 		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate cand = & tab -> candidates [icand];
 			cand -> numberOfPotentialPartialOutputsMatching = 0;
-			NUMbvector_free (cand -> partialOutputMatches, 1);
+			NUMvector_free (cand -> partialOutputMatches, 1);
 			cand -> partialOutputMatches = NULL;
 		}
 	}
 }
 
 static int OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Distributions thee, long columnNumber) {
-	if (columnNumber > thy numberOfColumns)
-		error3 (L"No column ", Melder_integer (columnNumber), L" in Distributions.")
-	if (thy numberOfRows < 1)
-		error1 (L"No candidates in Distributions.")
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tab = & my tableaus [itab];
-		for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
-			OTGrammarCandidate cand = & tab -> candidates [icand];
-			cand -> numberOfPotentialPartialOutputsMatching = thy numberOfRows;
-			cand -> partialOutputMatches = NUMbvector (1, thy numberOfRows); cherror
+	try {
+		if (columnNumber > thy numberOfColumns)
+			Melder_throw ("No column ", columnNumber, " in Distributions.");
+		if (thy numberOfRows < 1)
+			Melder_throw ("No candidates in Distributions.");
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tab = & my tableaus [itab];
+			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+				OTGrammarCandidate cand = & tab -> candidates [icand];
+				cand -> numberOfPotentialPartialOutputsMatching = thy numberOfRows;
+				cand -> partialOutputMatches = NUMvector <signed char> (1, thy numberOfRows);
+			}
 		}
-	}
-	for (long ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
-		if (thy data [ipartialOutput] [columnNumber] > 0.0) {
-			wchar_t *partialOutput = thy rowLabels [ipartialOutput];
-			bool foundPartialOutput = false;
-			for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-				OTGrammarTableau tab = & my tableaus [itab];
-				for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
-					OTGrammarCandidate cand = & tab -> candidates [icand];
-					if (wcsstr (cand -> output, partialOutput)) {
-						foundPartialOutput = true;
-						cand -> partialOutputMatches [ipartialOutput] = true;
+		for (long ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
+			if (thy data [ipartialOutput] [columnNumber] > 0.0) {
+				wchar_t *partialOutput = thy rowLabels [ipartialOutput];
+				bool foundPartialOutput = false;
+				for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+					OTGrammarTableau tab = & my tableaus [itab];
+					for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
+						OTGrammarCandidate cand = & tab -> candidates [icand];
+						if (wcsstr (cand -> output, partialOutput)) {
+							foundPartialOutput = true;
+							cand -> partialOutputMatches [ipartialOutput] = true;
+						}
 					}
 				}
+				if (! foundPartialOutput)
+					Melder_throw ("The partial output \"", partialOutput, "\" does not match any candidate for any input form.");
 			}
-			if (! foundPartialOutput)
-				error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.")
 		}
-	}
-end:
-	iferror {
+		return 1;
+	} catch (MelderError) {
 		OTGrammar_opt_deleteOutputMatching (me);
-		return 0;
+		rethrowzero;
 	}
-	return 1;
 }
 
 int OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distributions thee, long columnNumber,
@@ -2068,7 +2076,7 @@ int OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName) {
 			 */
 			my numberOfFixedRankings -= 1;
 			if (my numberOfFixedRankings == 0) {
-				NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);
+				NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);
 				my fixedRankings = NULL;
 			}
 			for (jfixed = ifixed; jfixed <= my numberOfFixedRankings; jfixed ++) {
@@ -2111,7 +2119,7 @@ static int OTGrammarTableau_removeCandidate_unstripped (OTGrammarTableau me, lon
 	 * Free up memory associated with this candidate.
 	 */
 	Melder_free (my candidates [icand]. output);
-	NUMivector_free (my candidates [icand]. marks, 1);   // dangle
+	NUMvector_free (my candidates [icand]. marks, 1);   // dangle
 	/*
 	 * Remove.
 	 */
@@ -2217,272 +2225,293 @@ class_methods (OTGrammar_List4, Data) {
 }
 
 int OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
-	OTGrammarFixedRanking savedFixedRankings;
-	long savedNumberOfFixedRankings = my numberOfFixedRankings;
-	long ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
-	long ilist, jlist, itrial, iform;
-	int **obligatory = NULL, improved;
-	double evaluationNoise = 1e-9;
-	Ordered list = NULL;
 	/*
 	 * Save.
 	 */
-	savedFixedRankings = my fixedRankings;
+	OTGrammarFixedRanking savedFixedRankings = my fixedRankings;   // dangle...
+	my fixedRankings = NULL;   // ...undangle
+	long savedNumberOfFixedRankings = my numberOfFixedRankings;
 	OTGrammar_save (me);
-	/*
-	 * Add room for two more fixed rankings.
-	 */
-	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings + 2);
-	for (ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
-		my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
-		my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
-	}
-	/*
-	 * Test whether there are rankings at all for these output data.
-	 */
-	OTGrammar_reset (me, 100.0);
-	for (itrial = 1; itrial <= 40; itrial ++) {
-		int grammarHasChangedDuringCycle = FALSE;
-		OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
-		OTGrammar_newDisharmonies (me, evaluationNoise);
-		for (iform = 1; iform <= thy pairs -> size; iform ++) {
-			PairProbability prob = (PairProbability) thy pairs -> item [iform];
-			if (prob -> weight > 0.0) {
-				int grammarHasChanged;
-				OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-					evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-					1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
-				if (grammarHasChanged) {
-					OTGrammar_newDisharmonies (me, evaluationNoise);
-				}
-				grammarHasChangedDuringCycle |= grammarHasChanged;
-			}
+	try {
+		long ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+		long ilist, jlist, itrial, iform;
+		int improved;
+		double evaluationNoise = 1e-9;
+		/*
+		 * Add room for two more fixed rankings.
+		 */
+		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings + 2);
+		for (ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
+			my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
+			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 		}
-		if (! grammarHasChangedDuringCycle) break;
-	}
-	if (itrial > 40) {
-		MelderInfo_writeLine1 (L"There are no total rankings that generate these input-output pairs.");
-		goto end;
-	}
-	/*
-	 * Test learnability of every possible ranked pair.
-	 */
-	my numberOfFixedRankings ++;
-	obligatory = NUMimatrix (1, my numberOfConstraints, 1, my numberOfConstraints); cherror
-	MelderInfo_open ();
-	Melder_progress1 (0.0, L"");
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
-			my fixedRankings [my numberOfFixedRankings]. higher = icons;
-			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
-			OTGrammar_reset (me, 100.0);
-			Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
-				my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
-			ipair ++;
-			for (itrial = 1; itrial <= 40; itrial ++) {
-				int grammarHasChangedDuringCycle = FALSE;
-				OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
-				OTGrammar_newDisharmonies (me, evaluationNoise);
-				for (iform = 1; iform <= thy pairs -> size; iform ++) {
-					PairProbability prob = (PairProbability) thy pairs -> item [iform];
-					if (prob -> weight > 0.0) {
-						int grammarHasChanged;
-						OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-							evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-							1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
-						if (grammarHasChanged) {
-							OTGrammar_newDisharmonies (me, evaluationNoise);
-						}
-						grammarHasChangedDuringCycle |= grammarHasChanged;
-					}
-				}
-				if (! grammarHasChangedDuringCycle) break;
-			}
-			if (itrial > 40) {
-				obligatory [jcons] [icons] = TRUE;
-				MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
-				MelderInfo_close ();
-			}
-		}
-	}
-	my numberOfFixedRankings ++;
-	Melder_progress1 (0.0, L"");
-	npair = npair * npair;
-	list = Ordered_create ();
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
-			my fixedRankings [my numberOfFixedRankings - 1]. higher = icons;
-			my fixedRankings [my numberOfFixedRankings - 1]. lower = jcons;
-			for (kcons = icons; kcons <= my numberOfConstraints; kcons ++) {
-				for (lcons = 1; lcons <= my numberOfConstraints; lcons ++) if (kcons != lcons && ! obligatory [lcons] [kcons]) {
-					if (icons == kcons && jcons >= lcons) continue;
-					if (icons == lcons && jcons == kcons) continue;
-					if (jcons == kcons && obligatory [lcons] [icons]) continue;
-					if (icons == lcons && obligatory [jcons] [kcons]) continue;
-					if (obligatory [lcons] [icons] && obligatory [jcons] [kcons]) continue;
-					my fixedRankings [my numberOfFixedRankings]. higher = kcons;
-					my fixedRankings [my numberOfFixedRankings]. lower = lcons;
-					OTGrammar_reset (me, 100.0);
-					Melder_progress3 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair));
-					ipair ++;
-					for (itrial = 1; itrial <= 40; itrial ++) {
-						int grammarHasChangedDuringCycle = FALSE;
-						OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+		/*
+		 * Test whether there are rankings at all for these output data.
+		 */
+		OTGrammar_reset (me, 100.0);
+		for (itrial = 1; itrial <= 40; itrial ++) {
+			int grammarHasChangedDuringCycle = FALSE;
+			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+			OTGrammar_newDisharmonies (me, evaluationNoise);
+			for (iform = 1; iform <= thy pairs -> size; iform ++) {
+				PairProbability prob = (PairProbability) thy pairs -> item [iform];
+				if (prob -> weight > 0.0) {
+					int grammarHasChanged;
+					OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+						evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+						1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+					if (grammarHasChanged) {
 						OTGrammar_newDisharmonies (me, evaluationNoise);
-						for (iform = 1; iform <= thy pairs -> size; iform ++) {
-							PairProbability prob = (PairProbability) thy pairs -> item [iform];
-							if (prob -> weight > 0.0) {
-								int grammarHasChanged;
-								OTGrammar_learnOne (me, prob -> string1, prob -> string2,
-									evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-									1.0, 0.0, FALSE, TRUE, & grammarHasChanged); cherror
-								if (grammarHasChanged) {
-									OTGrammar_newDisharmonies (me, evaluationNoise);
-								}
-								grammarHasChangedDuringCycle |= grammarHasChanged;
+					}
+					grammarHasChangedDuringCycle |= grammarHasChanged;
+				}
+			}
+			if (! grammarHasChangedDuringCycle) break;
+		}
+		if (itrial > 40) {
+			MelderInfo_writeLine1 (L"There are no total rankings that generate these input-output pairs.");
+			throw MelderError ();
+		}
+		/*
+		 * Test learnability of every possible ranked pair.
+		 */
+		my numberOfFixedRankings ++;
+		autoNUMmatrix <int> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
+		MelderInfo_open ();
+		autoMelderProgress progress (L"Finding obligatory rankings.");
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+				my fixedRankings [my numberOfFixedRankings]. higher = icons;
+				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
+				OTGrammar_reset (me, 100.0);
+				Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+					my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
+				ipair ++;
+				for (itrial = 1; itrial <= 40; itrial ++) {
+					int grammarHasChangedDuringCycle = FALSE;
+					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+					OTGrammar_newDisharmonies (me, evaluationNoise);
+					for (iform = 1; iform <= thy pairs -> size; iform ++) {
+						PairProbability prob = (PairProbability) thy pairs -> item [iform];
+						if (prob -> weight > 0.0) {
+							int grammarHasChanged;
+							OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+								evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+								1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+							if (grammarHasChanged) {
+								OTGrammar_newDisharmonies (me, evaluationNoise);
 							}
+							grammarHasChangedDuringCycle |= grammarHasChanged;
 						}
-						if (! grammarHasChangedDuringCycle) break;
 					}
-					if (itrial > 40) {
-						OTGrammar_List4 listElement = Thing_new (OTGrammar_List4);
-						listElement -> hi1 = jcons;
-						listElement -> lo1 = icons;
-						listElement -> hi2 = lcons;
-						listElement -> lo2 = kcons;
-						Collection_addItem (list, listElement);
+					if (! grammarHasChangedDuringCycle) break;
+				}
+				if (itrial > 40) {
+					obligatory [jcons] [icons] = TRUE;
+					MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
+					MelderInfo_close ();
+				}
+			}
+		}
+		my numberOfFixedRankings ++;
+		Melder_progress1 (0.0, L"");
+		npair = npair * npair;
+		autoOrdered list = Ordered_create ();
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
+				my fixedRankings [my numberOfFixedRankings - 1]. higher = icons;
+				my fixedRankings [my numberOfFixedRankings - 1]. lower = jcons;
+				for (kcons = icons; kcons <= my numberOfConstraints; kcons ++) {
+					for (lcons = 1; lcons <= my numberOfConstraints; lcons ++) if (kcons != lcons && ! obligatory [lcons] [kcons]) {
+						if (icons == kcons && jcons >= lcons) continue;
+						if (icons == lcons && jcons == kcons) continue;
+						if (jcons == kcons && obligatory [lcons] [icons]) continue;
+						if (icons == lcons && obligatory [jcons] [kcons]) continue;
+						if (obligatory [lcons] [icons] && obligatory [jcons] [kcons]) continue;
+						my fixedRankings [my numberOfFixedRankings]. higher = kcons;
+						my fixedRankings [my numberOfFixedRankings]. lower = lcons;
+						OTGrammar_reset (me, 100.0);
+						Melder_progress3 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair));
+						ipair ++;
+						for (itrial = 1; itrial <= 40; itrial ++) {
+							int grammarHasChangedDuringCycle = FALSE;
+							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
+							OTGrammar_newDisharmonies (me, evaluationNoise);
+							for (iform = 1; iform <= thy pairs -> size; iform ++) {
+								PairProbability prob = (PairProbability) thy pairs -> item [iform];
+								if (prob -> weight > 0.0) {
+									int grammarHasChanged;
+									OTGrammar_learnOne (me, prob -> string1, prob -> string2,
+										evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+										1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+									if (grammarHasChanged) {
+										OTGrammar_newDisharmonies (me, evaluationNoise);
+									}
+									grammarHasChangedDuringCycle |= grammarHasChanged;
+								}
+							}
+							if (! grammarHasChangedDuringCycle) break;
+						}
+						if (itrial > 40) {
+							autoOTGrammar_List4 listElement = Thing_new (OTGrammar_List4);
+							listElement -> hi1 = jcons;
+							listElement -> lo1 = icons;
+							listElement -> hi2 = lcons;
+							listElement -> lo2 = kcons;
+							Collection_addItem (list.peek(), listElement.transfer());
+						}
 					}
 				}
 			}
 		}
-	}
-	Melder_progress1 (1.0, L"");
-	/*
-	 * Improve list.
-	 */
-	improved = TRUE;
-	while (improved) {
-		improved = FALSE;
-		for (ilist = 1; ilist <= list -> size; ilist ++) {
-			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-				OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
-				long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
-				long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
-				improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
-					(alo1 == blo1 || obligatory [alo1] [blo1]) && (alo2 == blo2 || obligatory [alo2] [blo2]);
-				improved |= (ahi1 == bhi2 || obligatory [bhi2] [ahi1]) && (ahi2 == bhi1 || obligatory [bhi1] [ahi2]) &&
-					(alo1 == blo2 || obligatory [alo1] [blo2]) && (alo2 == blo1 || obligatory [alo2] [blo1]);
-				if (improved) {
-					Collection_removeItem (list, jlist);
-					break;
+		Melder_progress1 (1.0, L"");
+		/*
+		 * Improve list.
+		 */
+		improved = TRUE;
+		while (improved) {
+			improved = FALSE;
+			for (ilist = 1; ilist <= list -> size; ilist ++) {
+				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
+					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
+					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
+					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
+					improved |= (ahi1 == bhi1 || obligatory [bhi1] [ahi1]) && (ahi2 == bhi2 || obligatory [bhi2] [ahi2]) &&
+						(alo1 == blo1 || obligatory [alo1] [blo1]) && (alo2 == blo2 || obligatory [alo2] [blo2]);
+					improved |= (ahi1 == bhi2 || obligatory [bhi2] [ahi1]) && (ahi2 == bhi1 || obligatory [bhi1] [ahi2]) &&
+						(alo1 == blo2 || obligatory [alo1] [blo2]) && (alo2 == blo1 || obligatory [alo2] [blo1]);
+					if (improved) {
+						Collection_removeItem (list.peek(), jlist);
+						break;
+					}
 				}
+				if (improved) break;
 			}
-			if (improved) break;
 		}
-	}
-	improved = TRUE;
-	while (improved) {
-		improved = FALSE;
-		for (ilist = 1; ilist <= list -> size; ilist ++) {
-			for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
-				OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
-				long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
-				long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
-				improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
-				improved |= ahi1 == bhi2 && alo1 == blo2 && ahi2 == bhi1 && blo1 == bhi2 && alo2 == alo1;
-				improved |= ahi2 == bhi1 && alo2 == blo1 && ahi1 == bhi2 && blo2 == bhi1 && alo1 == alo2;
-				improved |= ahi2 == bhi2 && alo2 == blo2 && ahi1 == bhi1 && blo1 == bhi2 && alo1 == alo2;
-				if (improved) {
-					Collection_removeItem (list, jlist);
-					break;
+		improved = TRUE;
+		while (improved) {
+			improved = FALSE;
+			for (ilist = 1; ilist <= list -> size; ilist ++) {
+				for (jlist = 1; jlist <= list -> size; jlist ++) if (ilist != jlist) {
+					OTGrammar_List4 elA = (OTGrammar_List4) list -> item [ilist], elB = (OTGrammar_List4) list -> item [jlist];
+					long ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
+					long bhi1 = elB -> hi1, blo1 = elB -> lo1, bhi2 = elB -> hi2, blo2 = elB -> lo2;
+					improved |= ahi1 == bhi1 && alo1 == blo1 && ahi2 == bhi2 && blo2 == bhi1 && alo2 == alo1;
+					improved |= ahi1 == bhi2 && alo1 == blo2 && ahi2 == bhi1 && blo1 == bhi2 && alo2 == alo1;
+					improved |= ahi2 == bhi1 && alo2 == blo1 && ahi1 == bhi2 && blo2 == bhi1 && alo1 == alo2;
+					improved |= ahi2 == bhi2 && alo2 == blo2 && ahi1 == bhi1 && blo1 == bhi2 && alo1 == alo2;
+					if (improved) {
+						Collection_removeItem (list.peek(), jlist);
+						break;
+					}
 				}
+				if (improved) break;
 			}
-			if (improved) break;
 		}
-	}
-	for (ilist = 1; ilist <= list -> size; ilist ++) {
-		OTGrammar_List4 el = (OTGrammar_List4) list -> item [ilist];
-		MelderInfo_write4 (my constraints [el -> hi1]. name, L" >> ", my constraints [el -> lo1]. name, L" OR ");
-		MelderInfo_writeLine3 (my constraints [el -> hi2]. name, L" >> ", my constraints [el -> lo2]. name);
+		for (ilist = 1; ilist <= list -> size; ilist ++) {
+			OTGrammar_List4 el = (OTGrammar_List4) list -> item [ilist];
+			MelderInfo_write4 (my constraints [el -> hi1]. name, L" >> ", my constraints [el -> lo1]. name, L" OR ");
+			MelderInfo_writeLine3 (my constraints [el -> hi2]. name, L" >> ", my constraints [el -> lo2]. name);
+			MelderInfo_close ();
+		}
 		MelderInfo_close ();
+		/*
+		 * Remove room.
+		 */
+		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
+		/*
+		 * Restore.
+		 */
+		my numberOfFixedRankings = savedNumberOfFixedRankings;
+		my fixedRankings = savedFixedRankings;   // undangle
+		OTGrammar_restore (me);
+		return 1;
+	} catch (MelderError) {
+		MelderInfo_close ();
+		/*
+		 * Remove room.
+		 */
+		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
+		/*
+		 * Restore.
+		 */
+		my numberOfFixedRankings = savedNumberOfFixedRankings;
+		my fixedRankings = savedFixedRankings;   // undangle
+		OTGrammar_restore (me);
+		rethrowmzero (me, ": obligatory rankings not listed.");
 	}
-end:
-	Melder_progress1 (1.0, L"");
-	MelderInfo_close ();
-	forget (list);
-	NUMimatrix_free (obligatory, 1, 1);
-	/*
-	 * Remove room.
-	 */
-	my numberOfFixedRankings = savedNumberOfFixedRankings;
-	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);   // dangle
-	/*
-	 * Restore.
-	 */
-	my fixedRankings = savedFixedRankings;   // undangle
-	OTGrammar_restore (me);
-	iferror return 0;
-	return 1;
 }
 
 int OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber) {
-	OTGrammarFixedRanking savedFixedRankings;
-	long ifixedRanking, icons, jcons, kcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
 	/*
 	 * Save.
 	 */
-	savedFixedRankings = my fixedRankings;
+	OTGrammarFixedRanking savedFixedRankings = my fixedRankings;
+	my fixedRankings = NULL;
 	OTGrammar_save (me);
-	/*
-	 * Add room for one more fixed ranking.
-	 */
-	my numberOfFixedRankings ++;
-	my fixedRankings = NUMstructvector (OTGrammarFixedRanking, 1, my numberOfFixedRankings);
-	for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
-		my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
-		my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
-	}
-	/*
-	 * Test learnability of every possible ranked pair.
-	 */
-	MelderInfo_open ();
-	Melder_progress1 (0.0, L"");
-	for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-		for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
-			my fixedRankings [my numberOfFixedRankings]. higher = icons;
-			my fixedRankings [my numberOfFixedRankings]. lower = jcons;
-			OTGrammar_reset (me, 100.0);
-			Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
-				my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
-			ipair ++;
-			Melder_progressOff ();
-			OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
-				1e-9, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-				1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL); cherror
-			Melder_progressOn ();
-			for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
-				if (my constraints [kcons]. ranking < 0.0) {
-					MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
-					break;
+	try {
+		long ifixedRanking, icons, jcons, kcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+		/*
+		 * Add room for one more fixed ranking.
+		 */
+		my numberOfFixedRankings ++;
+		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings);
+		for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
+			my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
+			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
+		}
+		/*
+		 * Test learnability of every possible ranked pair.
+		 */
+		MelderInfo_open ();
+		autoMelderProgress progress (L"Finding obligatory rankings.");
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+				my fixedRankings [my numberOfFixedRankings]. higher = icons;
+				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
+				OTGrammar_reset (me, 100.0);
+				Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+					my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
+				ipair ++;
+				Melder_progressOff ();
+				OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
+					1e-9, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
+					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL); therror
+				Melder_progressOn ();
+				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
+					if (my constraints [kcons]. ranking < 0.0) {
+						MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
+						break;
+					}
 				}
 			}
 		}
+		MelderInfo_close ();
+		/*
+		 * Remove room.
+		 */
+		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
+		/*
+		 * Restore.
+		 */
+		my numberOfFixedRankings --;
+		my fixedRankings = savedFixedRankings;   // undangle
+		OTGrammar_restore (me);
+		return 1;
+	} catch (MelderError) {
+		MelderInfo_close ();
+		/*
+		 * Remove room.
+		 */
+		NUMvector_free <structOTGrammarFixedRanking> (my fixedRankings, 1);   // dangle
+		/*
+		 * Restore.
+		 */
+		my numberOfFixedRankings --;
+		my fixedRankings = savedFixedRankings;   // undangle
+		OTGrammar_restore (me);
+		rethrowmzero (me, ": obligatory rankings not listed.");
 	}
-end:
-	Melder_progress1 (1.0, L"");
-	MelderInfo_close ();
-	/*
-	 * Remove room.
-	 */
-	my numberOfFixedRankings --;
-	NUMstructvector_free (OTGrammarFixedRanking, my fixedRankings, 1);   // dangle
-	/*
-	 * Restore.
-	 */
-	my fixedRankings = savedFixedRankings;   // undangle
-	OTGrammar_restore (me);
-	iferror return 0;
-	return 1;
 }
 
 static void printConstraintNames (OTGrammar me, MelderString *buffer) {

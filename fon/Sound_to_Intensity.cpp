@@ -65,7 +65,7 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		double thyFirstTime;
 		try {
 			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime); therror
-		} catch (...) {
+		} catch (MelderError) {
 			Melder_throw ("The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, " Hz), "
 				"i.e. at least ", 6.4 / minimumPitch, " s, instead of ", my xmax - my xmin, " s.");
 		}
@@ -102,7 +102,7 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 			thy z [1] [iframe] = intensity < 1e-30 ? -300 : 10 * log10 (intensity);
 		}
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": intensity analysis not performed.");
 	}
 }
@@ -118,7 +118,7 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 			autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
 			return thee.transfer();
 		}
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }
@@ -138,8 +138,8 @@ IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double time
 		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
 		#if PLAYGROUND
 			autoIntensity i2;   // compiler prevents this
-			autoIntensity i3 = intensity;   // compiler prevents this
-			i2 = intensity;   // compiler prevents this
+			autoIntensity i3 = intensity;   // compiler prevents copy constructor
+			i2 = intensity;   // compiler prevents copy assignment
 			Intensity i4 = intensity.peek();   // compiler allows this
 			Intensity i10 = intensity;   // but not  this
 			Intensity i8 = i2.peek();   // compiler allows this
@@ -160,7 +160,7 @@ IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double time
 		#endif
 		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
 		return thee.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, ": no IntensityTier created.");
 	}
 }

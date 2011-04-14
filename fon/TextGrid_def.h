@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 	#if oo_READING_TEXT
 		if (Thing_version == 1) (void) texgetw2 (text);
 	#elif oo_READING_BINARY
-		if (Thing_version == 1) (void) bingetw2 (f);
+		if (Thing_version == 1) { (void) bingetw2 (f); cherror }
 	#endif
 
 oo_END_CLASS (TextPoint)

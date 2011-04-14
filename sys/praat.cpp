@@ -504,7 +504,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 			first = FALSE;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
-		NUMlvector_free (selected, 1);
+		NUMvector_free <long> (selected, 1);
 	}
 	praat_show ();
 }
@@ -1190,7 +1190,6 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Machine_initLookAndFeel (argc, argv);
 		sprintf (objectWindowTitle, "%s Objects", praatP.title);
 		#if gtk
-			gtk_init_check (NULL, NULL);
 			g_set_application_name (title);
 			raam = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
 			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (raam);
@@ -1384,6 +1383,10 @@ void praat_run (void) {
 	Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 
 	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
+	{ int dummy = 200; Melder_assert ((int) (signed char) dummy == -56); }   // bingeti1 relies on this
+	{ int dummy = 200; Melder_assert ((int) (unsigned char) dummy == 200); }
+	{ uint16_t dummy = 40000; Melder_assert ((int) (int16_t) dummy == -25536); }   // bingeti2 relies on this
+	{ uint16_t dummy = 40000; Melder_assert ((short) (int16_t) dummy == -25536); }   // bingete2 relies on this
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText != NULL) {

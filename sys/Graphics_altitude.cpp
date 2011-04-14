@@ -141,10 +141,10 @@ void Graphics_contour (I, double **z,
 	xoff = x1WC - ix1 * dx;
 	yoff = y1WC - iy1 * dy;
 	if (! right) {   /* Static! */
-		right = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		below = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		x = NUMdvector (1, MAXALTPATH);
-		y = NUMdvector (1, MAXALTPATH);
+		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);   // BUG memory
+		below = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
+		x = NUMvector <double> (1, MAXALTPATH);
+		y = NUMvector <double> (1, MAXALTPATH);
 		if (! y) {
 			right = NULL;
 			Melder_flushError ("Graphics_altitude: not enough memory.");
@@ -172,10 +172,10 @@ void Graphics_altitude (I, double **z,
 	xoff = x1WC - ix1 * dx;
 	yoff = y1WC - iy1 * dy;
 	if (! right) {   /* Static! */
-		right = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		below = NUMimatrix (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
-		x = NUMdvector (1, MAXALTPATH);
-		y = NUMdvector (1, MAXALTPATH);
+		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);   // BUG memory
+		below = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
+		x = NUMvector <double> (1, MAXALTPATH);
+		y = NUMvector <double> (1, MAXALTPATH);
 		if (! y) {
 			right = NULL;
 			Melder_flushError ("Graphics_altitude: not enough memory.");

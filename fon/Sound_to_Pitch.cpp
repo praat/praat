@@ -128,7 +128,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	 */
 	try {
 		Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1); therror
-	} catch (...) {
+	} catch (MelderError) {
 		Melder_throw ("The pitch analysis would give zero pitch frames.");
 	}
 
@@ -436,7 +436,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 
 	return thee.transfer();
-} catch (...) {
+} catch (MelderError) {
 	rethrowmzero (L"Sound: pitch analysis not performed.");
 }}
 

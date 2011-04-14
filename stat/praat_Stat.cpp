@@ -216,7 +216,7 @@ DIRECT (Tables_append)
 		autoTable thee = Tables_append (me.peek());
 		praat_new (thee.transfer(), L"appended");
 		my size = 0;   //undangle (UGLY)
-	} catch (...) {
+	} catch (MelderError) {
 		my size = 0;   //undangle (UGLY)
 		rethrowzero;
 	}
@@ -433,9 +433,9 @@ DO
 			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 			Table_formula (me, icol, GET_STRING (L"formula"), interpreter); therror
 			praat_dataChanged (me);
-		} catch (...) {
+		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Table may have partially changed
-			throw 1;
+			throw;
 		}
 	}
 END
@@ -453,9 +453,9 @@ DO
 			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); therror
 			Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter); therror
 			praat_dataChanged (me);
-		} catch (...) {
+		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Table may have partially changed
-			throw 1;
+			throw;
 		}
 	}
 END
@@ -1276,9 +1276,9 @@ DO
 		try {
 			TableOfReal_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
 			praat_dataChanged (me);
-		} catch (...) {
+		} catch (MelderError) {
 			praat_dataChanged (me);
-			throw 1;
+			throw;
 		}
 	}
 END

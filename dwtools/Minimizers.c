@@ -311,7 +311,7 @@ static void classSteepestDescentMinimizer_setParameters (I, Any p)
 	iam (SteepestDescentMinimizer);
 	if (p)
 	{
-		structSteepestDescentMinimizer_parameters thee = p;
+		SteepestDescentMinimizer_Parameters thee = p;
 		my eta = thy eta;
 		my momentum = thy momentum;
 	}
@@ -587,7 +587,7 @@ static void classVDSmagtMinimizer_setParameters (I, Any parameters)
 	iam (VDSmagtMinimizer);
 	if (parameters)
 	{
-		structVDSmagtMinimizer_parameters p = parameters;
+		VDSmagtMinimizer_Parameters p = parameters;
     	my lineSearchGradient = p->lineSearchGradient;
     	my lineSearchMaxNumOfIterations = p->lineSearchMaxNumOfIterations;
     }

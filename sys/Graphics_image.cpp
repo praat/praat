@@ -76,78 +76,75 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	 * provided that some cells are larger than a pixel.
 	 */
 	if (! interpolate && nx * ny < 3000 && (dx > 1.0 || dy < -1.0)) {
-		/*unsigned int cellWidth = (unsigned int) dx + 1;*/
-		unsigned int cellHeight = (unsigned int) (- (int) dy) + 1;
-		long ix, iy;
-		long *lefts = NUMlvector (ix1, ix2 + 1);
-		#if cairo
-			cairo_pattern_t *grey[256];
-			int igrey;
-			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++) {
-				double v = igrey / ((double)(sizeof(grey)/sizeof(*grey)) - 1.0);
-				grey[igrey] = cairo_pattern_create_rgb(v, v, v);
-			}
-		#elif win
-			int igrey;
-			static HBRUSH greyBrush [256];
-			RECT rect;
-			if (! greyBrush [0])
-				for (igrey = 0; igrey <= 255; igrey ++)
-					greyBrush [igrey] = CreateSolidBrush (RGB (igrey, igrey, igrey));   /* Once. */
-		#elif mac
-			int igrey;
-			long pixel [256];
-			Rect rect;
-			for (igrey = 0; igrey <= 255; igrey ++) {
-				RGBColor rgb;
-				rgb. red = rgb. green = rgb. blue = igrey * 256;
-				/*RGBForeColor (& rgb);*/
-				pixel [igrey] = Color2Index (& rgb); /*my macWindow -> fgColor;   /* Each time anew. */
-			}
-		#endif
-		if (! lefts) return;
-		for (ix = ix1; ix <= ix2 + 1; ix ++)
-			lefts [ix] = x1DC + (long) ((ix - ix1) * dx);
-		for (iy = iy1; iy <= iy2; iy ++) {
-			long bottom = y1DC + (long) ((iy - iy1) * dy), top = bottom - cellHeight;
-			if (top > clipy1 || bottom < clipy2) continue;
-			if (top < clipy2) top = clipy2;
-			if (bottom > clipy1) bottom = clipy1;
-			#if win || mac
-				rect. bottom = bottom; rect. top = top;
-			#endif
-			for (ix = ix1; ix <= ix2; ix ++) {
-				long left = lefts [ix], right = lefts [ix + 1];
-				long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
-				if (right < clipx1 || left > clipx2) continue;
-				if (left < clipx1) left = clipx1;
-				if (right > clipx2) right = clipx2;
-				#if cairo
-					cairo_set_source(my cr, grey[value <= 0 ? 0 : value >= sizeof(grey)/sizeof(*grey) ? sizeof(grey)/sizeof(*grey) : value]);
-					cairo_rectangle(my cr, left, top, right - left, bottom - top);
-					cairo_fill(my cr);
-				#elif win
-					rect. left = left; rect. right = right;
-					FillRect (my dc, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
-				#elif mac
-				{
-					RGBColor rgb;
-					rgb. red = rgb. green = rgb. blue = (value <= 0 ? 0 : value >= 255 ? 255 : value) * 256;
-					RGBForeColor (& rgb);
-					/*my macWindow -> fgColor = pixel [value <= 0 ? 0 : value >= 255 ? 255 : value];*/
-					rect. left = left; rect. right = right;
-					PaintRect (& rect);
+		try {
+			/*unsigned int cellWidth = (unsigned int) dx + 1;*/
+			unsigned int cellHeight = (unsigned int) (- (int) dy) + 1;
+			long ix, iy;
+			#if cairo
+				cairo_pattern_t *grey [256];
+				for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey ++) {
+					double v = igrey / ((double) (sizeof (grey) / sizeof (*grey)) - 1.0);
+					grey [igrey] = cairo_pattern_create_rgb (v, v, v);
 				}
+			#elif win
+				static HBRUSH greyBrush [256];
+				RECT rect;
+				if (! greyBrush [0])
+					for (int igrey = 0; igrey <= 255; igrey ++)
+						greyBrush [igrey] = CreateSolidBrush (RGB (igrey, igrey, igrey));   // once
+			#elif mac
+				long pixel [256];
+				Rect rect;
+				for (int igrey = 0; igrey <= 255; igrey ++) {
+					RGBColor rgb;
+					rgb. red = rgb. green = rgb. blue = igrey * 256;
+					/*RGBForeColor (& rgb);*/
+					pixel [igrey] = Color2Index (& rgb);   // my macWindow -> fgColor;   // each time anew
+				}
+			#endif
+			autoNUMvector <long> lefts (ix1, ix2 + 1);
+			for (ix = ix1; ix <= ix2 + 1; ix ++)
+				lefts [ix] = x1DC + (long) ((ix - ix1) * dx);
+			for (iy = iy1; iy <= iy2; iy ++) {
+				long bottom = y1DC + (long) ((iy - iy1) * dy), top = bottom - cellHeight;
+				if (top > clipy1 || bottom < clipy2) continue;
+				if (top < clipy2) top = clipy2;
+				if (bottom > clipy1) bottom = clipy1;
+				#if win || mac
+					rect. bottom = bottom; rect. top = top;
 				#endif
+				for (ix = ix1; ix <= ix2; ix ++) {
+					long left = lefts [ix], right = lefts [ix + 1];
+					long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+					if (right < clipx1 || left > clipx2) continue;
+					if (left < clipx1) left = clipx1;
+					if (right > clipx2) right = clipx2;
+					#if cairo
+						cairo_set_source (my cr, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
+						cairo_rectangle (my cr, left, top, right - left, bottom - top);
+						cairo_fill (my cr);
+					#elif win
+						rect. left = left; rect. right = right;
+						FillRect (my dc, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
+					#elif mac
+					{
+						RGBColor rgb;
+						rgb. red = rgb. green = rgb. blue = (value <= 0 ? 0 : value >= 255 ? 255 : value) * 256;
+						RGBForeColor (& rgb);
+						/*my macWindow -> fgColor = pixel [value <= 0 ? 0 : value >= 255 ? 255 : value];*/
+						rect. left = left; rect. right = right;
+						PaintRect (& rect);
+					}
+					#endif
+				}
 			}
-		}
-		NUMlvector_free (lefts, ix1);
-		
-		#if cairo
-			for (igrey=0; igrey<sizeof(grey)/sizeof(*grey); igrey++)
-				cairo_pattern_destroy(grey[igrey]);
-			cairo_paint(my cr);
-		#endif
+			
+			#if cairo
+				for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey ++)
+					cairo_pattern_destroy (grey [igrey]);
+				cairo_paint(my cr);
+			#endif
+		} catch (MelderError) { }
 	} else {
 		long xDC, yDC;
 		long undersampling = 1;
@@ -296,77 +293,74 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				}
 		#endif
 		if (interpolate) {
-			long *ileft = NUMlvector (clipx1, clipx2), *iright = NUMlvector (clipx1, clipx2);
-			double *rightWeight = NUMdvector (clipx1, clipx2), *leftWeight = NUMdvector (clipx1, clipx2);
-			if (! ileft || ! iright || ! rightWeight || ! leftWeight) goto ready1;
-			for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
-				double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
-				ileft [xDC] = floor (ix_real), iright [xDC] = ileft [xDC] + 1;
-				rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
-				if (ileft [xDC] < ix1) ileft [xDC] = ix1;
-				if (iright [xDC] > ix2) iright [xDC] = ix2;
-			}
-			for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
-				double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
-				long itop = ceil (iy_real), ibottom = itop - 1;
-				double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
-				unsigned char *pixelAddress = ROW_START_ADDRESS;
-				if (itop > iy2) itop = iy2;
-				if (ibottom < iy1) ibottom = iy1;
-				if (z_float) {
-					double *ztop = z_float [itop], *zbottom = z_float [ibottom];
-					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
-						double interpol =
-							rightWeight [xDC] *
-								(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
-							leftWeight [xDC] *
-								(topWeight * ztop [ileft [xDC]] + bottomWeight * zbottom [ileft [xDC]]);
-						double value = offset - scale * interpol;
-						PUT_PIXEL
-					}
-				} else {
-					unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
-					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
-						double interpol =
-							rightWeight [xDC] *
-								(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
-							leftWeight [xDC] *
-								(topWeight * ztop [ileft [xDC]] + bottomWeight * zbottom [ileft [xDC]]);
-						double value = offset - scale * interpol;
-						PUT_PIXEL
+			try {
+				autoNUMvector <long> ileft (clipx1, clipx2);
+				autoNUMvector <long> iright (clipx1, clipx2);
+				autoNUMvector <double> rightWeight (clipx1, clipx2);
+				autoNUMvector <double> leftWeight (clipx1, clipx2);
+				for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+					double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
+					ileft [xDC] = floor (ix_real), iright [xDC] = ileft [xDC] + 1;
+					rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
+					if (ileft [xDC] < ix1) ileft [xDC] = ix1;
+					if (iright [xDC] > ix2) iright [xDC] = ix2;
+				}
+				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
+					double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
+					long itop = ceil (iy_real), ibottom = itop - 1;
+					double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
+					unsigned char *pixelAddress = ROW_START_ADDRESS;
+					if (itop > iy2) itop = iy2;
+					if (ibottom < iy1) ibottom = iy1;
+					if (z_float) {
+						double *ztop = z_float [itop], *zbottom = z_float [ibottom];
+						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+							double interpol =
+								rightWeight [xDC] *
+									(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
+								leftWeight [xDC] *
+									(topWeight * ztop [ileft [xDC]] + bottomWeight * zbottom [ileft [xDC]]);
+							double value = offset - scale * interpol;
+							PUT_PIXEL
+						}
+					} else {
+						unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
+						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+							double interpol =
+								rightWeight [xDC] *
+									(topWeight * ztop [iright [xDC]] + bottomWeight * zbottom [iright [xDC]]) +
+								leftWeight [xDC] *
+									(topWeight * ztop [ileft [xDC]] + bottomWeight * zbottom [ileft [xDC]]);
+							double value = offset - scale * interpol;
+							PUT_PIXEL
+						}
 					}
 				}
-			}
-			ready1:
-			NUMlvector_free (ileft, clipx1);
-			NUMlvector_free (iright, clipx1);
-			NUMdvector_free (rightWeight, clipx1);
-			NUMdvector_free (leftWeight, clipx1);
+			} catch (MelderError) { }
 		} else {
-			long *ix = NUMlvector (clipx1, clipx2);
-			if (! ix) goto ready2;
-			for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
-				ix [xDC] = floor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
-			for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
-				long iy = ceil (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
-				unsigned char *pixelAddress = ROW_START_ADDRESS;
-				Melder_assert (iy >= iy1 && iy <= iy2);
-				if (z_float) {
-					double *ziy = z_float [iy];
-					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
-						double value = offset - scale * ziy [ix [xDC]];
-						PUT_PIXEL
-					}
-				} else {
-					unsigned char *ziy = z_byte [iy];
-					for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
-						double value = offset - scale * ziy [ix [xDC]];
-						PUT_PIXEL
+			try {
+				autoNUMvector <long> ix (clipx1, clipx2);
+				for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
+					ix [xDC] = floor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
+				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
+					long iy = ceil (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
+					unsigned char *pixelAddress = ROW_START_ADDRESS;
+					Melder_assert (iy >= iy1 && iy <= iy2);
+					if (z_float) {
+						double *ziy = z_float [iy];
+						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+							double value = offset - scale * ziy [ix [xDC]];
+							PUT_PIXEL
+						}
+					} else {
+						unsigned char *ziy = z_byte [iy];
+						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+							double value = offset - scale * ziy [ix [xDC]];
+							PUT_PIXEL
+						}
 					}
 				}
-			}
-			ready2:
-			NUMlvector_free (ix, clipx1);
+			} catch (MelderError) { }
 		}
 		/*
 		 * Copy the bitmap to the screen.

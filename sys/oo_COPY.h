@@ -25,6 +25,7 @@
  * pb 2009/03/21 modern enums
  * pb 2010/12/28 memory allocation with _e
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/03/29 C++
  */
 
 #include "oo_undef.h"
@@ -40,12 +41,21 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		thy x [i] = my x [i];
 
+#ifdef __cplusplus
+#define oo_VECTOR(type,t,storage,x,min,max)  \
+	if (my x) thy x = NUMvector_copy <type> (my x, min, max);
+#else
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
+#endif
 
+#ifdef __cplusplus
+#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+	if (my x) thy x = NUMmatrix_copy <type> (my x, row1, row2, col1, col2);
+#else
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (my x && ! (thy x = NUM##t##matrix_copy (my x, row1, row2, col1, col2))) return 0;
-
+#endif
 
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -73,12 +83,21 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0;
 
+#ifdef __cplusplus
+#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+	if (my x) { \
+		if (! (thy x = NUMvector <wchar*> (min, max))) return 0; \
+		for (long i = min; i <= max; i ++) \
+			if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0; \
+	}
+#else
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		if (! (thy x = NUMwvector (min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
 			if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0; \
 	}
+#endif
 
 
 
@@ -93,12 +112,21 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (! Type##_copy (& my x [i], & thy x [i])) { Melder_casual ("struct set copy fail %d", i); return 0; }
 
+#ifdef __cplusplus
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+	if (my x) { \
+		if (! (thy x = NUMvector <struct##Type> (min, max))) return 0; \
+		for (long i = min; i <= max; i ++) \
+			if (! Type##_copy (& my x [i], & thy x [i])) return 0; \
+	}
+#else
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
 		if (! (thy x = NUMstructvector (Type, min, max))) return 0; \
 		for (long i = min; i <= max; i ++) \
 			if (! Type##_copy (& my x [i], & thy x [i])) return 0; \
 	}
+#endif
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \

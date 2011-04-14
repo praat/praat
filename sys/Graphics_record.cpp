@@ -241,12 +241,12 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case IMAGE8:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				long nrow = get, ncol = get;
-				unsigned char **z = NUMubmatrix (1, nrow, 1, ncol);
+				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
 				for (long irow = 1; irow <= nrow; irow ++)
 					for (long icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMubmatrix_free (z, 1, 1);
+				NUMmatrix_free (z, 1, 1);
 			}  break;
 			case UNHIGHLIGHT:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
@@ -302,12 +302,12 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY8:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				long nrow = get, ncol = get;
-				unsigned char **z = NUMubmatrix (1, nrow, 1, ncol);
+				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
 				for (long irow = 1; irow <= nrow; irow ++)
 					for (long icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = get;
 				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMubmatrix_free (z, 1, 1);
+				NUMmatrix_free (z, 1, 1);
 			}  break;
 			case IMAGE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;

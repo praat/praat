@@ -191,144 +191,149 @@ static void permuteRandomly (ExperimentMFC me, long first, long last) {
 }
 
 int ExperimentMFC_start (ExperimentMFC me) {
-	long maximumStimulusPlaySamples, maximumResponsePlaySamples, maximumPlaySamples;
-	long stimulusCarrierBeforeSamples = 0, stimulusCarrierAfterSamples = 0, maximumStimulusSamples = 0;
-	long responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
-	Melder_warningOff ();
-	my trial = 0;
-	NUMlvector_free (my stimuli, 1);
-	NUMlvector_free (my responses, 1);
-	NUMdvector_free (my goodnesses, 1);
-	forget (my playBuffer);
-	my pausing = FALSE;
-	my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
-	my stimuli = NUMlvector (1, my numberOfTrials); cherror
-	my responses = NUMlvector (1, my numberOfTrials); cherror
-	my goodnesses = NUMdvector (1, my numberOfTrials); cherror
-	my reactionTimes = NUMdvector (1, my numberOfTrials); cherror
-	/*
-	 * Read all the sounds. They must all have the same sampling frequency and number of channels.
-	 */
-	my samplePeriod = 0.0;
-	my numberOfChannels = 0;
-	if (my stimuliAreSounds) {
-		if (my stimulusCarrierBefore. name && my stimulusCarrierBefore. name [0]) {
-			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulusCarrierBefore. name, & my stimulusCarrierBefore. sound); cherror
-			stimulusCarrierBeforeSamples = my stimulusCarrierBefore. sound -> nx;
+	try {
+		long maximumStimulusPlaySamples, maximumResponsePlaySamples, maximumPlaySamples;
+		long stimulusCarrierBeforeSamples = 0, stimulusCarrierAfterSamples = 0, maximumStimulusSamples = 0;
+		long responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
+		Melder_warningOff ();
+		my trial = 0;
+		NUMvector_free <long> (my stimuli, 1);
+		NUMvector_free <long> (my responses, 1);
+		NUMvector_free <double> (my goodnesses, 1);
+		forget (my playBuffer);
+		my pausing = FALSE;
+		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
+		my stimuli = NUMvector <long> (1, my numberOfTrials);
+		my responses = NUMvector <long> (1, my numberOfTrials);
+		my goodnesses = NUMvector <double> (1, my numberOfTrials);
+		my reactionTimes = NUMvector <double> (1, my numberOfTrials);
+		/*
+		 * Read all the sounds. They must all have the same sampling frequency and number of channels.
+		 */
+		my samplePeriod = 0.0;
+		my numberOfChannels = 0;
+		if (my stimuliAreSounds) {
+			if (my stimulusCarrierBefore. name && my stimulusCarrierBefore. name [0]) {
+				readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
+					& my stimulusCarrierBefore. name, & my stimulusCarrierBefore. sound); therror
+				stimulusCarrierBeforeSamples = my stimulusCarrierBefore. sound -> nx;
+			}
+			if (my stimulusCarrierAfter. name && my stimulusCarrierAfter. name [0]) {
+				readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
+					& my stimulusCarrierAfter. name, & my stimulusCarrierAfter. sound); therror
+				stimulusCarrierAfterSamples = my stimulusCarrierAfter. sound -> nx;
+			}
+			for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++) {
+				readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
+					& my stimulus [istim]. name, & my stimulus [istim]. sound); therror
+				if (my stimulus [istim]. sound -> nx > maximumStimulusSamples)
+					maximumStimulusSamples = my stimulus [istim]. sound -> nx;
+			}
 		}
-		if (my stimulusCarrierAfter. name && my stimulusCarrierAfter. name [0]) {
-			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulusCarrierAfter. name, & my stimulusCarrierAfter. sound); cherror
-			stimulusCarrierAfterSamples = my stimulusCarrierAfter. sound -> nx;
+		if (my responsesAreSounds) {
+			if (my responseCarrierBefore. name && my responseCarrierBefore. name [0]) {
+				readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
+					& my responseCarrierBefore. name, & my responseCarrierBefore. sound); therror
+				responseCarrierBeforeSamples = my responseCarrierBefore. sound -> nx;
+			}
+			if (my responseCarrierAfter. name && my responseCarrierAfter. name [0]) {
+				readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
+					& my responseCarrierAfter. name, & my responseCarrierAfter. sound); therror
+				responseCarrierAfterSamples = my responseCarrierAfter. sound -> nx;
+			}
+			for (long iresp = 1; iresp <= my numberOfDifferentResponses; iresp ++) {
+				readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
+					& my response [iresp]. name, & my response [iresp]. sound); therror
+				if (my response [iresp]. sound -> nx > maximumResponseSamples)
+					maximumResponseSamples = my response [iresp]. sound -> nx;
+			}
 		}
-		for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++) {
-			readSound (me, my stimulusFileNameHead, my stimulusFileNameTail, my stimulusMedialSilenceDuration,
-				& my stimulus [istim]. name, & my stimulus [istim]. sound); cherror
-			if (my stimulus [istim]. sound -> nx > maximumStimulusSamples)
-				maximumStimulusSamples = my stimulus [istim]. sound -> nx;
-		}
-	}
-	if (my responsesAreSounds) {
-		if (my responseCarrierBefore. name && my responseCarrierBefore. name [0]) {
-			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my responseCarrierBefore. name, & my responseCarrierBefore. sound); cherror
-			responseCarrierBeforeSamples = my responseCarrierBefore. sound -> nx;
-		}
-		if (my responseCarrierAfter. name && my responseCarrierAfter. name [0]) {
-			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my responseCarrierAfter. name, & my responseCarrierAfter. sound); cherror
-			responseCarrierAfterSamples = my responseCarrierAfter. sound -> nx;
-		}
-		for (long iresp = 1; iresp <= my numberOfDifferentResponses; iresp ++) {
-			readSound (me, my responseFileNameHead, my responseFileNameTail, my responseMedialSilenceDuration,
-				& my response [iresp]. name, & my response [iresp]. sound); cherror
-			if (my response [iresp]. sound -> nx > maximumResponseSamples)
-				maximumResponseSamples = my response [iresp]. sound -> nx;
-		}
-	}
-	/*
-	 * Create the play buffer.
-	 */
-	maximumStimulusPlaySamples = floor (my stimulusInitialSilenceDuration / my samplePeriod + 0.5)
-		+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 1;
-	maximumResponsePlaySamples = floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
-		+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 1;
-	maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
-	my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
-		maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod); cherror
-	/*
-	 * Determine the order in which the stimuli will be presented to the subject.
-	 */
-	if (my randomize == kExperiment_randomize_CYCLIC_NON_RANDOM) {
-		for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
-			my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
-	} else if (my randomize == kExperiment_randomize_PERMUTE_ALL) {
-		for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
-			my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
-		permuteRandomly (me, 1, my numberOfTrials);
-	} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED) {
-		for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
-			long offset = (ireplica - 1) * my numberOfDifferentStimuli;
-			for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
-				my stimuli [offset + istim] = istim;
-			permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
-		}
-	} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED_NO_DOUBLETS) {
-		for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
-			long offset = (ireplica - 1) * my numberOfDifferentStimuli;
-			for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
-				my stimuli [offset + istim] = istim;
-			do {
+		/*
+		 * Create the play buffer.
+		 */
+		maximumStimulusPlaySamples = floor (my stimulusInitialSilenceDuration / my samplePeriod + 0.5)
+			+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 1;
+		maximumResponsePlaySamples = floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
+			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 1;
+		maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
+		my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
+			maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod); therror
+		/*
+		 * Determine the order in which the stimuli will be presented to the subject.
+		 */
+		if (my randomize == kExperiment_randomize_CYCLIC_NON_RANDOM) {
+			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
+				my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
+		} else if (my randomize == kExperiment_randomize_PERMUTE_ALL) {
+			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
+				my stimuli [itrial] = (itrial - 1) % my numberOfDifferentStimuli + 1;
+			permuteRandomly (me, 1, my numberOfTrials);
+		} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED) {
+			for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
+				long offset = (ireplica - 1) * my numberOfDifferentStimuli;
+				for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
+					my stimuli [offset + istim] = istim;
 				permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
-			} while (ireplica != 1 && my stimuli [offset + 1] == my stimuli [offset] && my numberOfDifferentStimuli > 1);
+			}
+		} else if (my randomize == kExperiment_randomize_PERMUTE_BALANCED_NO_DOUBLETS) {
+			for (long ireplica = 1; ireplica <= my numberOfReplicationsPerStimulus; ireplica ++) {
+				long offset = (ireplica - 1) * my numberOfDifferentStimuli;
+				for (long istim = 1; istim <= my numberOfDifferentStimuli; istim ++)
+					my stimuli [offset + istim] = istim;
+				do {
+					permuteRandomly (me, offset + 1, offset + my numberOfDifferentStimuli);
+				} while (ireplica != 1 && my stimuli [offset + 1] == my stimuli [offset] && my numberOfDifferentStimuli > 1);
+			}
+		} else if (my randomize == kExperiment_randomize_WITH_REPLACEMENT) {
+			for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
+				my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
 		}
-	} else if (my randomize == kExperiment_randomize_WITH_REPLACEMENT) {
-		for (long itrial = 1; itrial <= my numberOfTrials; itrial ++)
-			my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
-	}
-end:
-	Melder_warningOn ();
-	iferror {
+		Melder_warningOn ();
+		return 1;
+	} catch (MelderError) {
+		Melder_warningOn ();
 		my numberOfTrials = 0;
 		my stimuli = NULL;
 		return 0;
 	}
-	return 1;
 }
 
 static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound carrierAfter, double initialSilenceDuration) {
-	long initialSilenceSamples = floor (initialSilenceDuration / my samplePeriod + 0.5);
-	long carrierBeforeSamples = carrierBefore ? carrierBefore -> nx : 0;
-	long soundSamples = sound ? sound -> nx : 0;
-	long carrierAfterSamples = carrierAfter ? carrierAfter -> nx : 0;
-	for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-		for (long i = 1; i <= initialSilenceSamples; i ++) {
-			my playBuffer -> z [channel] [i] = 0.0;
-		}
-	}
-	if (carrierBefore) {
+	try {
+		long initialSilenceSamples = floor (initialSilenceDuration / my samplePeriod + 0.5);
+		long carrierBeforeSamples = carrierBefore ? carrierBefore -> nx : 0;
+		long soundSamples = sound ? sound -> nx : 0;
+		long carrierAfterSamples = carrierAfter ? carrierAfter -> nx : 0;
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMdvector_copyElements (carrierBefore -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples, 1, carrierBeforeSamples);
+			for (long i = 1; i <= initialSilenceSamples; i ++) {
+				my playBuffer -> z [channel] [i] = 0.0;
+			}
 		}
-	}
-	if (sound) {
-		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMdvector_copyElements (sound -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
+		if (carrierBefore) {
+			for (long channel = 1; channel <= my numberOfChannels; channel ++) {
+				NUMvector_copyElements <double> (carrierBefore -> z [channel],
+					my playBuffer -> z [channel] + initialSilenceSamples, 1, carrierBeforeSamples);
+			}
 		}
-	}
-	if (carrierAfter) {
-		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
-			NUMdvector_copyElements (carrierAfter -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
+		if (sound) {
+			for (long channel = 1; channel <= my numberOfChannels; channel ++) {
+				NUMvector_copyElements <double> (sound -> z [channel],
+					my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
+			}
 		}
+		if (carrierAfter) {
+			for (long channel = 1; channel <= my numberOfChannels; channel ++) {
+				NUMvector_copyElements <double> (carrierAfter -> z [channel],
+					my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
+			}
+		}
+		my startingTime = Melder_clock ();
+		Sound_playPart (my playBuffer, 0.0,
+			(initialSilenceSamples + carrierBeforeSamples + soundSamples + carrierAfterSamples) * my samplePeriod,
+			0, NULL);
+	} catch (MelderError) {
+		rethrow;
 	}
-	my startingTime = Melder_clock ();
-	Sound_playPart (my playBuffer, 0.0,
-		(initialSilenceSamples + carrierBeforeSamples + soundSamples + carrierAfterSamples) * my samplePeriod,
-		0, NULL);
 }
 
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim) {
@@ -356,40 +361,42 @@ class_methods (ResultsMFC, Data) {
 }
 
 ResultsMFC ResultsMFC_create (long numberOfTrials) {
-	ResultsMFC me = Thing_new (ResultsMFC);
-	if (! me) return NULL;
-	my numberOfTrials = numberOfTrials;
-	if ((my result = NUMstructvector (TrialMFC, 1, my numberOfTrials)) == NULL)
-		{ forget (me); return NULL; }
-	return me;
+	try {
+		autoResultsMFC me = Thing_new (ResultsMFC);
+		my numberOfTrials = numberOfTrials;
+		my result = NUMvector <structTrialMFC> (1, my numberOfTrials);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("ResultsMFC not created.");
+	}
 }
 
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
-	ResultsMFC thee = NULL;
-//start:
-	if (my trial == 0 || my trial <= my numberOfTrials)
-		Melder_warning3 (L"The experiment was not finished. Only the first ", Melder_integer (my trial - 1), L" responses are valid.");
-	thee = ResultsMFC_create (my numberOfTrials); cherror
-	for (long trial = 1; trial <= my numberOfTrials; trial ++) {
-		wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?
-			wcschr (my stimulus [my stimuli [trial]]. visibleText, '|') : NULL;
-		if (pipe) {
-			long nameLength = wcslen (my stimulus [my stimuli [trial]]. name);
-			long buttonTextLength = wcslen (pipe);
-			thy result [trial]. stimulus = Melder_calloc_e (wchar_t, nameLength + buttonTextLength + 1); cherror
-			wcscpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
-			wcscat (thy result [trial]. stimulus, pipe);
-		} else {
-			thy result [trial]. stimulus = Melder_wcsdup_e (my stimulus [my stimuli [trial]]. name); cherror
+	try {
+		if (my trial == 0 || my trial <= my numberOfTrials)
+			Melder_warning ("The experiment was not finished. Only the first ", my trial - 1, " responses are valid.");
+		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
+		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
+			wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?
+				wcschr (my stimulus [my stimuli [trial]]. visibleText, '|') : NULL;
+			if (pipe) {
+				long nameLength = wcslen (my stimulus [my stimuli [trial]]. name);
+				long buttonTextLength = wcslen (pipe);
+				thy result [trial]. stimulus = Melder_calloc (wchar_t, nameLength + buttonTextLength + 1);
+				wcscpy (thy result [trial]. stimulus, my stimulus [my stimuli [trial]]. name);
+				wcscat (thy result [trial]. stimulus, pipe);
+			} else {
+				thy result [trial]. stimulus = Melder_wcsdup (my stimulus [my stimuli [trial]]. name);
+			}
+			//if (my responses [trial] < 1) Melder_throw ("No response for trial ", trial, ".")
+			thy result [trial]. response = Melder_wcsdup (my responses [trial] ? my response [my responses [trial]]. name : L"");
+			thy result [trial]. goodness = my goodnesses [trial];
+			thy result [trial]. reactionTime = my reactionTimes [trial];
 		}
-		//if (my responses [trial] < 1) error3 (L"No response for trial ", Melder_integer (trial), L".")
-		thy result [trial]. response = Melder_wcsdup_e (my responses [trial] ? my response [my responses [trial]]. name : L""); cherror
-		thy result [trial]. goodness = my goodnesses [trial];
-		thy result [trial]. reactionTime = my reactionTimes [trial];
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": results not extracted.");
 	}
-end:
-	iferror { forget (thee); return NULL; }
-	return thee;
 }
 
 ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
@@ -413,7 +420,7 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 		if (his numberOfTrials == 0)
 			Melder_throw ("No shared stimuli.");
 		return him.transfer();
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowmzero (me, " & ", thee, ": unshared stimuli not removed.");
 	}
 }
@@ -434,23 +441,25 @@ Table ResultsMFCs_to_Table (Collection me) {
 		}
 	}
 	thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes); cherror
-	Table_setColumnLabel (thee, 1, L"subject");
-	Table_setColumnLabel (thee, 2, L"stimulus");
-	Table_setColumnLabel (thee, 3, L"response");
-	if (hasGoodnesses) Table_setColumnLabel (thee, 4, L"goodness");
-	if (hasReactionTimes) Table_setColumnLabel (thee, 4 + hasGoodnesses, L"reactionTime");
+	Table_setColumnLabel (thee, 1, L"subject"); cherror
+	Table_setColumnLabel (thee, 2, L"stimulus"); cherror
+	Table_setColumnLabel (thee, 3, L"response"); cherror
+	if (hasGoodnesses) { Table_setColumnLabel (thee, 4, L"goodness"); cherror }
+	if (hasReactionTimes) { Table_setColumnLabel (thee, 4 + hasGoodnesses, L"reactionTime"); cherror }
 	irow = 0;
 	for (long iresults = 1; iresults <= my size; iresults ++) {
 		ResultsMFC results = (ResultsMFC) my item [iresults];
 		for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 			irow ++;
-			Table_setStringValue (thee, irow, 1, results -> name);
-			Table_setStringValue (thee, irow, 2, results -> result [itrial]. stimulus);
-			Table_setStringValue (thee, irow, 3, results -> result [itrial]. response);
-			if (hasGoodnesses)
-				Table_setNumericValue (thee, irow, 4, results -> result [itrial]. goodness);
-			if (hasReactionTimes)
-				Table_setNumericValue (thee, irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime);
+			Table_setStringValue (thee, irow, 1, results -> name); cherror
+			Table_setStringValue (thee, irow, 2, results -> result [itrial]. stimulus); cherror
+			Table_setStringValue (thee, irow, 3, results -> result [itrial]. response); cherror
+			if (hasGoodnesses) {
+				Table_setNumericValue (thee, irow, 4, results -> result [itrial]. goodness); cherror
+			}
+			if (hasReactionTimes) {
+				Table_setNumericValue (thee, irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime); cherror
+			}
 		}
 	}
 end:
@@ -515,7 +524,7 @@ double Categories_getEntropy (Categories me) {
 			entropy -= p * NUMlog2 (p);
 		}
 		return entropy;
-	} catch (...) {
+	} catch (MelderError) {
 		rethrowzero;
 	}
 }

@@ -476,7 +476,7 @@ int TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *out_textGrid, Sou
 			for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 				long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 				Melder_assert (sample <= my nx);
-				my z [channel] [sample] = bingeti3LE (f) * factor;
+				my z [channel] [sample] = bingeti3LE (f) * factor; cherror
 			}
 		}
 	}

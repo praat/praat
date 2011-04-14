@@ -38,8 +38,8 @@ struct structNUMlinprog {
 void NUMlinprog_delete (NUMlinprog me) {
 	if (me == NULL) return;
 	if (my linearProgram != NULL) glp_delete_prob (my linearProgram);
-	NUMivector_free (my ind, 1);
-	NUMdvector_free (my val, 1);
+	NUMvector_free <int> (my ind, 1);
+	NUMvector_free <double> (my val, 1);
 	Melder_free (me);
 }
 
@@ -67,19 +67,29 @@ void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound
 }
 
 int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound) {
-	if (my ind == NULL) {
-		my ind = NUMivector (1, my numberOfVariables); cherror
-		my val = NUMdvector (1, my numberOfVariables); cherror
+	try {
+		if (my ind == NULL) {
+			/*
+			 * Check without change.
+			 */
+			autoNUMvector <int> ind (1, my numberOfVariables);
+			autoNUMvector <double> val (1, my numberOfVariables);
+			/*
+			 * Change without error.
+			 */
+			my ind = ind.transfer();
+			my val = val.transfer();
+		}
+		glp_add_rows (my linearProgram, 1);
+		glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
+			lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
+			upperBound == NUMundefined ? GLP_LO :
+			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
+		my ivar = 0;
+		return 1;
+	} catch (MelderError) {
+		rethrowmzero ("Linear programming: constraint not added.");
 	}
-	glp_add_rows (my linearProgram, 1);
-	glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
-		lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
-		upperBound == NUMundefined ? GLP_LO :
-		lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
-	my ivar = 0;
-end:
-	iferror return 0;
-	return 1;
 }
 
 void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient) {
