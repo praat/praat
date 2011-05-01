@@ -1,4 +1,4 @@
-/* Procrustes.c
+/* Procrustes.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -28,18 +28,15 @@
 
 #include "Procrustes.h"
 
-static void classProcrustes_transform (I, double **in, long nrows, 
-	double **out)
+static void classProcrustes_transform (I, double **in, long nrows, double **out)
 {
 	iam (Procrustes);
-	long i, j, k;
-
-	for (i = 1; i <= nrows; i++)
+	for (long i = 1; i <= nrows; i++)
 	{
-		for (j = 1; j <= my n; j++)
+		for (long j = 1; j <= my n; j++)
 		{
 			double tmp = 0;
-			for (k = 1; k <= my n; k++)
+			for (long k = 1; k <= my n; k++)
 			{
 				tmp += in[i][k] * my r[k][j];
 			}
@@ -50,41 +47,39 @@ static void classProcrustes_transform (I, double **in, long nrows,
 
 static Any classProcrustes_invert (I)
 {
-	iam (Procrustes);
-	Procrustes thee = Data_copy (me);
-	long i, j;
-	
-	if (thee == NULL) return NULL;
-	
-	/*
-		R is symmetric rotation matrix --> 
-		inverse is transpose!
-	*/
-	
-	thy s = my s == 0 ? 1 : 1 / my s;
-	
-	for (i = 1; i <= my n; i++)
-	{
-		for (j = i + 1; j <= my n; j++)
-		{
-			thy r[i][j] = my r[j][i];
-			thy r[j][i] = my r[i][j];
-		}
-		thy t[i] = 0;
+	try {
+		iam (Procrustes);
+		autoProcrustes thee = (Procrustes) Data_copy (me);
 		/*
-		for (j = 1; j <= thy n; j++)
-		{
-			thy t[i] -= thy r[i][j] * my t[j];
-		}
+			R is symmetric rotation matrix --> 
+			inverse is transpose!
 		*/
-		for (j = 1; j <= thy n; j++)
+	
+		thy s = my s == 0 ? 1 : 1 / my s;
+	
+		for (long i = 1; i <= my n; i++)
 		{
-			thy t[i] -= thy r[j][i] * my t[j];
-		}
+			for (long j = i + 1; j <= my n; j++)
+			{
+				thy r[i][j] = my r[j][i];
+				thy r[j][i] = my r[i][j];
+			}
+			thy t[i] = 0;
+			/*
+			for (j = 1; j <= thy n; j++)
+			{
+				thy t[i] -= thy r[i][j] * my t[j];
+			}
+			*/
+			for (long j = 1; j <= thy n; j++)
+			{
+				thy t[i] -= thy r[j][i] * my t[j];
+			}
 		
-		thy t[i] *= thy s;
-	}	
-	return thee;	
+			thy t[i] *= thy s;
+		}
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero ("Procrustes not inverted."); }
 }
 
 #include "oo_DESTROY.h"
@@ -122,14 +117,12 @@ class_methods_end
 
 static void Procrustes_setDefaults (Procrustes me)
 {
-	long i, j;
-
 	my s = 1;
-	for (i = 1; i <= my n; i++)
+	for (long i = 1; i <= my n; i++)
 	{
 		my t[i] = 0;
 		my r[i][i] = 1;
-		for (j = i + 1; j <= my n; j++)
+		for (long j = i + 1; j <= my n; j++)
 		{
 			my r[i][j] = my r[j][i] = 0;
 		}
@@ -138,15 +131,12 @@ static void Procrustes_setDefaults (Procrustes me)
 
 Procrustes Procrustes_create (long n)
 {
-	Procrustes me = Thing_new (Procrustes);
-
-	if (me == NULL || ! AffineTransform_init (me, n))
-	{
-		forget (me);
-		return NULL;
-	}
-	Procrustes_setDefaults (me);
-	return me;
+	try {
+		autoProcrustes me = (Procrustes) Thing_new (Procrustes);
+		AffineTransform_init (me.peek(), n); therror
+		Procrustes_setDefaults (me.peek());
+		return me.transfer();
+	} catch (MelderError) { rethrowmzero ("Procrustes not created."); }
 }
 
 

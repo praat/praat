@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/04/07
+ * pb 2011/04/27
  */
 
 #include "melder.h"
@@ -67,6 +67,8 @@ the behaviour of that program changes in the following way:
 38: debug autoNUMvector
 39: debug autostring
 40: debug Thing_new
+41: OTGrammar_getWinner: always first choice rather than random choice 
+42: OTGrammar_getWinner: always last choice rather than random choice 
 1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)

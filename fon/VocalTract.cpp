@@ -1,6 +1,6 @@
-/* VocalTract.c
+/* VocalTract.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2006/12/10 MelderInfo
  * pb 2007/03/17 domain quantity
  * pb 2008/01/19 double
+ * pb 2011/04/29 C++
  */
 
 #include "VocalTract.h"
@@ -35,19 +36,24 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"Section length: ", Melder_single (my dx), L" metres");
 }
 
-class_methods (VocalTract, Vector)
+class_methods (VocalTract, Vector) {
 	class_method (info)
 	us -> domainQuantity = MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES;
-class_methods_end
+	class_methods_end
+}
 
 VocalTract VocalTract_create (long nx, double dx) {
-	VocalTract me = Thing_new (VocalTract);
-	if (! me || ! Matrix_init (me, 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1)) return NULL;
-	return me;
+	try {
+		autoVocalTract me = Thing_new (VocalTract);
+		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("VocalTract not created.");
+	}
 }
 
 #define MinimumWidth 0.0001
-static struct { wchar_t *phone; int numberOfSections; double area [40]; }
+static struct { const wchar_t *phone; int numberOfSections; double area [40]; }
 	data [] = {
 { L"a", 34, { 1.7, 1.2, 1.6, 3.39, 2.1, 1.4, 1, 0.8, 0.8, 0.8, 1, 1.4,
 	2.1, 2.9, 3.09, 2.1, 2.5, 4, 5.3, 6.16, 7, 7.6, 8.15, 8.5, 8.6,
@@ -125,16 +131,22 @@ static struct { wchar_t *phone; int numberOfSections; double area [40]; }
 	10.9, 12.9, 13.15, 13, 12.5, 9.9, 3.9, 1.8, 0.32, 0.4, 0.6 } },
 { NULL, 0, { 0 } } };
 
-VocalTract VocalTract_createFromPhone (wchar_t *phone) {
-	VocalTract me;
-	int i = 0, isection;
-	while (! Melder_wcsequ (data [i]. phone, phone)) i ++;
-	if (! data [i]. phone)
-		return Melder_errorp2 (L"VocalTract_createFromFant60: unknown phone ", phone);
-	me = VocalTract_create (data [i]. numberOfSections, 0.005);
-	for (isection = 1; isection <= my nx; isection ++)
-		my z [1] [isection] = data [i]. area [isection - 1] * 0.0001;
-	return me;
+VocalTract VocalTract_createFromPhone (const wchar_t *phone) {
+	try {
+		int i = 0;
+		for (;; i ++) {
+			if (data [i]. phone == NULL)
+				Melder_throw ("Unknown phone ", phone);
+			if (Melder_wcsequ (data [i]. phone, phone))
+				break;
+		}
+		autoVocalTract me = VocalTract_create (data [i]. numberOfSections, 0.005);
+		for (int isection = 1; isection <= my nx; isection ++)
+			my z [1] [isection] = data [i]. area [isection - 1] * 0.0001;
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("VocalTract not created from phone.");
+	}
 }
 
 void VocalTract_draw (VocalTract me, Graphics g) {
@@ -142,17 +154,23 @@ void VocalTract_draw (VocalTract me, Graphics g) {
 }
 
 Matrix VocalTract_to_Matrix (VocalTract me) {
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-							my ymin, my ymax, my ny, my dy, my y1);
-	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
-	return thee;
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Matrix.");
+	}
 }
 
 VocalTract Matrix_to_VocalTract (Matrix me) {
-	VocalTract thee = VocalTract_create (my nx, my dx);
-	if (! thee) return NULL;
-	NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
-	return thee;
+	try {
+		autoVocalTract thee = VocalTract_create (my nx, my dx);
+		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to VocalTract.");
+	}
 }
 
-/* End of file VocalTract.c */
+/* End of file VocalTract.cpp */

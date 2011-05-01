@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/04/29
  */
 
 #include "Vector.h"
@@ -61,7 +61,7 @@ VocalTract VocalTract_create (long nx, double dx);
 		my z [1] [1..nx] == 1e-4; // straight tube, area 1 cm2.
  */
 
-VocalTract VocalTract_createFromPhone (wchar_t *phone);
+VocalTract VocalTract_createFromPhone (const wchar_t *phone);
 /* 'phone' is one of the following: a e i o u y1 y2 y3 jery p t k x pa ta ka pi ti ki pu tu ku */
 
 void VocalTract_draw (VocalTract me, Graphics g);   /* Draw a VocalTract into a Graphics. */

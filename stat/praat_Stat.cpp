@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/28
+ * pb 2011/05/01
  */
 
 #include "praat.h"
@@ -30,6 +30,9 @@
 #include "Table.h"
 #include "TableEditor.h"
 #include "UnicodeData.h"
+
+#undef iam
+#define iam iam_LOOP
 
 static wchar_t formatBuffer [32] [40];
 static int formatIndex = 0;
@@ -45,14 +48,9 @@ static wchar_t * Table_messageColumn (Table me, long column) {
 /***** DISTRIBUTIONS *****/
 
 DIRECT (Distributionses_add)
-	Collection me = Collection_create (classDistributions, 10);
-	if (! me) return 0;
-	WHERE (SELECTED)
-		if (! Collection_addItem (me, OBJECT)) { my size = 0; forget (me); return 0; }
-	if (! praat_new1 (Distributions_addMany (me), L"added")) {
-		my size = 0; forget (me); return 0;   // UGLY
-	}
-	my size = 0; forget (me);
+	autoOrdered me = praat_getSelectedObjects ();
+	autoDistributions thee = Distributions_addMany ((Collection) me.peek());
+	praat_new (thee.transfer(), L"added");
 END
 
 FORM (Distributionses_getMeanAbsoluteDifference, L"Get mean difference", 0)
@@ -60,7 +58,9 @@ FORM (Distributionses_getMeanAbsoluteDifference, L"Get mean difference", 0)
 	OK
 DO
 	Distributions me = NULL, thee = NULL;
-	WHERE (SELECTED) { if (me) thee = static_cast <Distributions> OBJECT; else me = static_cast <Distributions> OBJECT; }   // UGLY
+	LOOP {
+		(me ? thee : me) = (Distributions) OBJECT;
+	}
 	Melder_informationReal (Distributionses_getMeanAbsoluteDifference (me, thee, GET_INTEGER (L"Column number")), NULL);
 END
 
@@ -69,9 +69,11 @@ FORM (Distributions_getProbability, L"Get probability", 0)
 	SENTENCE (L"String", L"")
 	OK
 DO
-	iam_ONLY (Distributions);
-	double probability = Distributions_getProbability (me, GET_STRING (L"String"), GET_INTEGER (L"Column number")); therror
-	Melder_informationReal (probability, NULL);
+	LOOP {
+		iam (Distributions);
+		double probability = Distributions_getProbability (me, GET_STRING (L"String"), GET_INTEGER (L"Column number")); therror
+		Melder_informationReal (probability, NULL);
+	}
 END
 
 DIRECT (Distributions_help)
@@ -83,8 +85,8 @@ FORM (Distributions_to_Strings, L"To Strings", 0)
 	NATURAL (L"Number of strings", L"1000")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Distributions);
+	LOOP {
+		iam (Distributions);
 		autoStrings thee = Distributions_to_Strings (me, GET_INTEGER (L"Column number"), GET_INTEGER (L"Number of strings"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -94,8 +96,8 @@ FORM (Distributions_to_Strings_exact, L"To Strings (exact)", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Distributions);
+	LOOP {
+		iam (Distributions);
 		autoStrings thee = Distributions_to_Strings_exact (me, GET_INTEGER (L"Column number"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -114,8 +116,8 @@ FORM (LogisticRegression_drawBoundary, L"LogisticRegression: Draw boundary", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (LogisticRegression);
+	LOOP {
+		iam (LogisticRegression);
 		long xfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Horizontal factor")); therror
 		long yfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Vertical factor")); therror
 		LogisticRegression_drawBoundary (me, GRAPHICS,
@@ -128,53 +130,69 @@ END
 /***** PAIRDISTRIBUTION *****/
 
 DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
-	iam_ONLY (PairDistribution);
-	double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me); therror
-	Melder_informationReal (fractionCorrect, NULL);
+	LOOP {
+		iam (PairDistribution);
+		double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me); therror
+		Melder_informationReal (fractionCorrect, NULL);
+	}
 END
 
 DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
-	iam_ONLY (PairDistribution);
-	double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me); therror
-	Melder_informationReal (fractionCorrect, NULL);
+	LOOP {
+		iam (PairDistribution);
+		double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me); therror
+		Melder_informationReal (fractionCorrect, NULL);
+	}
 END
 
 DIRECT (PairDistribution_getNumberOfPairs)
-	iam_ONLY (PairDistribution);
-	Melder_information1 (Melder_integer (my pairs -> size));
+	LOOP {
+		iam (PairDistribution);
+		Melder_information1 (Melder_integer (my pairs -> size));
+	}
 END
 
 FORM (PairDistribution_getString1, L"Get string1", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number")); therror
-	Melder_information1 (string1);
+	LOOP {
+		iam (PairDistribution);
+		const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number")); therror
+		Melder_information1 (string1);
+	}
 END
 
 FORM (PairDistribution_getString2, L"Get string2", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number")); therror
-	Melder_information1 (string2);
+	LOOP {
+		iam (PairDistribution);
+		const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number")); therror
+		Melder_information1 (string2);
+	}
 END
 
 FORM (PairDistribution_getWeight, L"Get weight", 0)
 	NATURAL (L"Pair number", L"1")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	double weight = PairDistribution_getWeight (me, GET_INTEGER (L"Pair number")); therror
-	Melder_information1 (Melder_double (weight));
+	LOOP {
+		iam (PairDistribution);
+		double weight = PairDistribution_getWeight (me, GET_INTEGER (L"Pair number")); therror
+		Melder_information1 (Melder_double (weight));
+	}
 END
 
 DIRECT (PairDistribution_help) Melder_help (L"PairDistribution"); END
 
 DIRECT (PairDistribution_removeZeroWeights)
-	EVERY (PairDistribution_removeZeroWeights (static_cast <PairDistribution> OBJECT))
+	LOOP {
+		iam (PairDistribution);
+		PairDistribution_removeZeroWeights (me); therror
+		praat_dataChanged (me);
+	}
 END
 
 FORM (PairDistribution_to_Stringses, L"Generate two Strings objects", 0)
@@ -183,16 +201,22 @@ FORM (PairDistribution_to_Stringses, L"Generate two Strings objects", 0)
 	SENTENCE (L"Name of second Strings", L"output")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	Strings strings1_, strings2_;
-	PairDistribution_to_Stringses (me, GET_INTEGER (L"Number"), & strings1_, & strings2_);
-	autoStrings strings1 = strings1_, strings2 = strings2_;   // UGLY
-	praat_new (strings1.transfer(), GET_STRING (L"Name of first Strings"));
-	praat_new (strings2.transfer(), GET_STRING (L"Name of second Strings"));
+	LOOP {
+		iam (PairDistribution);
+		Strings strings1_, strings2_;
+		PairDistribution_to_Stringses (me, GET_INTEGER (L"Number"), & strings1_, & strings2_);
+		autoStrings strings1 = strings1_, strings2 = strings2_;   // UGLY
+		praat_new (strings1.transfer(), GET_STRING (L"Name of first Strings"));
+		praat_new (strings2.transfer(), GET_STRING (L"Name of second Strings"));
+	}
 END
 
 DIRECT (PairDistribution_to_Table)
-	EVERY_TO (PairDistribution_to_Table (static_cast <PairDistribution> OBJECT))
+	LOOP {
+		iam (PairDistribution);
+		autoTable thee = PairDistribution_to_Table (me);
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 /***** PAIRDISTRIBUTION & DISTRIBUTIONS *****/
@@ -201,8 +225,12 @@ FORM (PairDistribution_Distributions_getFractionCorrect, L"PairDistribution & Di
 	NATURAL (L"Column", L"1")
 	OK
 DO
-	iam_ONLY (PairDistribution);
-	thouart_ONLY (Distributions);
+	PairDistribution me = NULL;
+	Distributions thee = NULL;
+	LOOP {
+		if (CLASS == classPairDistribution) me = (PairDistribution) OBJECT;
+		if (CLASS == classDistributions) thee = (Distributions) OBJECT;
+	}
 	double fractionCorrect = PairDistribution_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column")); therror
 	Melder_informationReal (fractionCorrect, NULL);
 END
@@ -212,7 +240,7 @@ END
 DIRECT (Tables_append)
 	autoCollection me = Collection_create (classTable, 10);
 	try {
-		WHERE (SELECTED) Collection_addItem (me.peek(), OBJECT);   // dangle (share pointers)
+		LOOP Collection_addItem (me.peek(), OBJECT);   // dangle (share pointers)
 		autoTable thee = Tables_append (me.peek());
 		praat_new (thee.transfer(), L"appended");
 		my size = 0;   //undangle (UGLY)
@@ -226,8 +254,8 @@ FORM (Table_appendColumn, L"Table: Append column", 0)
 	WORD (L"Label", L"newcolumn")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_appendColumn (me, GET_STRING (L"Label")); therror
 		praat_dataChanged (OBJECT);
 	}
@@ -239,8 +267,8 @@ FORM (Table_appendDifferenceColumn, L"Table: Append difference column", 0)
 	WORD (L"Label", L"diff")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 		Table_appendDifferenceColumn (me, icol, jcol, GET_STRING (L"Label")); therror
@@ -254,8 +282,8 @@ FORM (Table_appendProductColumn, L"Table: Append product column", 0)
 	WORD (L"Label", L"diff")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 		Table_appendProductColumn (me, icol, jcol, GET_STRING (L"Label")); therror
@@ -269,8 +297,8 @@ FORM (Table_appendQuotientColumn, L"Table: Append quotient column", 0)
 	WORD (L"Label", L"diff")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 		Table_appendQuotientColumn (me, icol, jcol, GET_STRING (L"Label")); therror
@@ -284,8 +312,8 @@ FORM (Table_appendSumColumn, L"Table: Append sum column", 0)
 	WORD (L"Label", L"diff")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
 		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
 		Table_appendSumColumn (me, icol, jcol, GET_STRING (L"Label")); therror
@@ -294,8 +322,8 @@ DO
 END
 
 DIRECT (Table_appendRow)
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_appendRow (me);
 		praat_dataChanged (me);
 	}
@@ -317,8 +345,8 @@ FORM (Table_collapseRows, L"Table: Collapse rows", 0)
 	LABEL (L"", L"Columns not mentioned above will be ignored.")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		autoTable thee = Table_collapseRows (me,
 			GET_STRING (L"factors"), GET_STRING (L"columnsToSum"),
 			GET_STRING (L"columnsToAverage"), GET_STRING (L"columnsToMedianize"),
@@ -360,8 +388,8 @@ FORM (Table_drawEllipse, L"Draw ellipse (standard deviation)", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
@@ -375,16 +403,18 @@ FORM (Table_drawRowFromDistribution, L"Table: Draw row from distribution", 0)
 	WORD (L"Column with distribution", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); therror
-	long row = Table_drawRowFromDistribution (me, icol); therror
-	Melder_information1 (Melder_integer (row));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); therror
+		long row = Table_drawRowFromDistribution (me, icol); therror
+		Melder_information1 (Melder_integer (row));
+	}
 END
 
 DIRECT (Table_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Table from batch.");
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
@@ -397,8 +427,8 @@ FORM (Table_extractRowsWhereColumn_number, L"Table: Extract rows where column (n
 	OK
 DO
 	double value = GET_REAL (L"...the number");
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
 		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, L"...is..."), value);
 		praat_new (thee.transfer(), my name, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) round (value)) : L"undefined");
@@ -413,8 +443,8 @@ FORM (Table_extractRowsWhereColumn_text, L"Table: Extract rows where column (tex
 	OK
 DO
 	const wchar_t *value = GET_STRING (L"...the text");
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
 		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, L"..."), value);
 		praat_new3 (thee.transfer(), my name, L"_", value);
@@ -427,8 +457,8 @@ FORM (Table_formula, L"Table: Formula", L"Table: Formula...")
 	TEXTFIELD (L"formula", L"abs (self)")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		try {
 			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 			Table_formula (me, icol, GET_STRING (L"formula"), interpreter); therror
@@ -446,8 +476,8 @@ FORM (Table_formula_columnRange, L"Table: Formula (column range)", L"Table: Form
 	TEXTFIELD (L"formula", L"log10 (self)")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		try {
 			long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); therror
 			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); therror
@@ -464,18 +494,22 @@ FORM (Table_getColumnIndex, L"Table: Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"))));
+	LOOP {
+		iam (Table);
+		Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"))));
+	}
 END
 
 FORM (Table_getColumnLabel, L"Table: Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = GET_INTEGER (L"Column number");
-	if (icol > my numberOfColumns) Melder_throw ("Column number must not be greater than number of columns.");
-	Melder_information1 (my columnHeaders [icol]. label);
+	LOOP {
+		iam (Table);
+		long icol = GET_INTEGER (L"Column number");
+		if (icol > my numberOfColumns) Melder_throw ("Column number must not be greater than number of columns.");
+		Melder_information1 (my columnHeaders [icol]. label);
+	}
 END
 
 FORM (Table_getGroupMean, L"Table: Get group mean", 0)
@@ -484,40 +518,48 @@ FORM (Table_getGroupMean, L"Table: Get group mean", 0)
 	SENTENCE (L"Group", L"F")
 	OK
 DO
-	iam_ONLY (Table);
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
-	Melder_information1 (Melder_double (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		Melder_information1 (Melder_double (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
+	}
 END
 
 FORM (Table_getMaximum, L"Table: Get maximum", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double maximum = Table_getMaximum (me, icol); therror
-	Melder_information1 (Melder_double (maximum));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		double maximum = Table_getMaximum (me, icol); therror
+		Melder_information1 (Melder_double (maximum));
+	}
 END
 
 FORM (Table_getMean, L"Table: Get mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double mean = Table_getMean (me, icol); therror
-	Melder_information1 (Melder_double (mean));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		double mean = Table_getMean (me, icol); therror
+		Melder_information1 (Melder_double (mean));
+	}
 END
 
 FORM (Table_getMinimum, L"Table: Get minimum", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double minimum = Table_getMinimum (me, icol); therror
-	Melder_information1 (Melder_double (minimum));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		double minimum = Table_getMinimum (me, icol); therror
+		Melder_information1 (Melder_double (minimum));
+	}
 END
 
 FORM (Table_getQuantile, L"Table: Get quantile", 0)
@@ -525,30 +567,38 @@ FORM (Table_getQuantile, L"Table: Get quantile", 0)
 	POSITIVE (L"Quantile", L"0.50 (= median)")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile")); therror
-	Melder_information1 (Melder_double (quantile));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile")); therror
+		Melder_information1 (Melder_double (quantile));
+	}
 END
 
 FORM (Table_getStandardDeviation, L"Table: Get standard deviation", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	double stdev = Table_getStdev (me, icol); therror
-	Melder_information1 (Melder_double (stdev));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		double stdev = Table_getStdev (me, icol); therror
+		Melder_information1 (Melder_double (stdev));
+	}
 END
 
 DIRECT (Table_getNumberOfColumns)
-	iam_ONLY (Table);
-	Melder_information1 (Melder_integer (my numberOfColumns));
+	LOOP {
+		iam (Table);
+		Melder_information1 (Melder_integer (my numberOfColumns));
+	}
 END
 
 DIRECT (Table_getNumberOfRows)
-	iam_ONLY (Table);
-	Melder_information1 (Melder_integer (my rows -> size));
+	LOOP {
+		iam (Table);
+		Melder_information1 (Melder_integer (my rows -> size));
+	}
 END
 
 FORM (Table_getValue, L"Table: Get value", 0)
@@ -556,11 +606,13 @@ FORM (Table_getValue, L"Table: Get value", 0)
 	WORD (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long rowNumber = GET_INTEGER (L"Row number");
-	Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	Melder_information1 (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
+	LOOP {
+		iam (Table);
+		long rowNumber = GET_INTEGER (L"Row number");
+		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		Melder_information1 (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
+	}
 END
 
 DIRECT (Table_help) Melder_help (L"Table"); END
@@ -570,8 +622,8 @@ FORM (Table_insertColumn, L"Table: Insert column", 0)
 	WORD (L"Label", L"newcolumn")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_insertColumn (me, GET_INTEGER (L"Position"), GET_STRING (L"Label")); therror
 		praat_dataChanged (me);
 	}
@@ -581,8 +633,8 @@ FORM (Table_insertRow, L"Table: Insert row", 0)
 	NATURAL (L"Position", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_insertRow (me, GET_INTEGER (L"Position")); therror
 		praat_dataChanged (me);
 	}
@@ -592,8 +644,8 @@ FORM (Table_list, L"Table: List", 0)
 	BOOLEAN (L"Include row numbers", true)
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_list (me, GET_INTEGER (L"Include row numbers"));
 	}
 END
@@ -614,8 +666,8 @@ FORM (Table_removeColumn, L"Table: Remove column", 0)
 	WORD (L"Column label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		Table_removeColumn (me, icol); therror
 		praat_dataChanged (me);
@@ -626,8 +678,8 @@ FORM (Table_removeRow, L"Table: Remove row", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_removeRow (me, GET_INTEGER (L"Row number")); therror
 		praat_dataChanged (me);
 	}
@@ -639,24 +691,26 @@ FORM (Table_reportCorrelation_kendallTau, L"Report correlation (Kendall tau)", 0
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double correlation, significance, lowerLimit, upperLimit;
-	correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
-		& significance, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
-		L" and column ", Table_messageColumn (me, column2), L":");
-	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		double correlation, significance, lowerLimit, upperLimit;
+		correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
+			& significance, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+			L" and column ", Table_messageColumn (me, column2), L":");
+		MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 
 FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
@@ -665,25 +719,27 @@ FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double correlation, significance, lowerLimit, upperLimit;
-	correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
-		& significance, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
-		L" and column ", Table_messageColumn (me, column2), L":");
-	MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
-	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_integer (my rows -> size - 2));
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		double correlation, significance, lowerLimit, upperLimit;
+		correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
+			& significance, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+			L" and column ", Table_messageColumn (me, column2), L":");
+		MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
+		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_integer (my rows -> size - 2));
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 	
 FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
@@ -692,26 +748,28 @@ FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-	long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
-	difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
-		& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
-		L" and column ", Table_messageColumn (me, column2), L":");
-	MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
-	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
-	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
+		difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
+			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
+			L" and column ", Table_messageColumn (me, column2), L":");
+		MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
+		MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
+		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 	
 FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t)", 0)
@@ -722,27 +780,29 @@ FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
-	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
-		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
-	MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
-	MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
-	MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
-	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
+		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
+			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+		MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
+		MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
+		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 
 FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wilcoxon rank sum)", 0)
@@ -752,21 +812,23 @@ FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wi
 	SENTENCE (L"Group 2", L"M")
 	OK
 DO
-	iam_ONLY (Table);
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
-	wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
-	double areaUnderCurve, rankSum, significanceFromZero;
-	areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
-		& rankSum, & significanceFromZero);
-	MelderInfo_open ();
-	MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
-	MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
-	MelderInfo_writeLine2 (L"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : L"(both equal)");
-	MelderInfo_writeLine2 (L"Area under curve: ", Melder_double (areaUnderCurve));
-	MelderInfo_writeLine2 (L"Rank sum: ", Melder_double (rankSum));
-	MelderInfo_writeLine3 (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
+		double areaUnderCurve, rankSum, significanceFromZero;
+		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
+			& rankSum, & significanceFromZero);
+		MelderInfo_open ();
+		MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+		MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine2 (L"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : L"(both equal)");
+		MelderInfo_writeLine2 (L"Area under curve: ", Melder_double (areaUnderCurve));
+		MelderInfo_writeLine2 (L"Rank sum: ", Melder_double (rankSum));
+		MelderInfo_writeLine3 (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_close ();
+	}
 END
 
 FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
@@ -776,27 +838,29 @@ FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-	long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	wchar_t *group = GET_STRING (L"Group");
-	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
-		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
-	MelderInfo_writeLine3 (L" of column ", Table_messageColumn (me, groupColumn), L":");
-	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
-	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
-	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		wchar_t *group = GET_STRING (L"Group");
+		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
+			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
+		MelderInfo_writeLine3 (L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
+		MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 
 FORM (Table_reportMean_studentT, L"Report mean (Student t)", 0)
@@ -804,24 +868,26 @@ FORM (Table_reportMean_studentT, L"Report mean (Student t)", 0)
 	POSITIVE (L"One-tailed unconfidence", L"0.025")
 	OK
 DO
-	iam_ONLY (Table);
-	long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-	double unconfidence = GET_REAL (L"One-tailed unconfidence");
-	double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
-	mean = Table_getMean_studentT (me, column, unconfidence,
-		& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
-	MelderInfo_open ();
-	MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
-	MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
-	MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
-	MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-	MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-	MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-	MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
-		L" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
-		L" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-	MelderInfo_close ();
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+		double unconfidence = GET_REAL (L"One-tailed unconfidence");
+		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
+		mean = Table_getMean_studentT (me, column, unconfidence,
+			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
+		MelderInfo_open ();
+		MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
+		MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
+		MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
+		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+			L" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+			L" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
+		MelderInfo_close ();
+	}
 END
 
 FORM (Table_rowsToColumns, L"Table: Rows to columns", 0)
@@ -834,8 +900,8 @@ FORM (Table_rowsToColumns, L"Table: Rows to columns", 0)
 	OK
 DO
 	const wchar_t *columnLabel = GET_STRING (L"Column to transpose");
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel); therror
 		autoTable thee = Table_rowsToColumns (me, GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand"));
 		praat_new (thee.transfer(), NAME, L"_nested");
@@ -855,8 +921,8 @@ FORM (Table_scatterPlot, L"Scatter plot", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
 		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks")); therror
@@ -880,8 +946,8 @@ FORM (Table_scatterPlot_mark, L"Scatter plot (marks)", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
 		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
@@ -896,9 +962,11 @@ FORM (Table_searchColumn, L"Table: Search column", 0)
 	WORD (L"Value", L"")
 	OK
 DO
-	iam_ONLY (Table);
-	long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-	Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
+	}
 END
 	
 FORM (Table_setColumnLabel_index, L"Set column label", 0)
@@ -906,8 +974,8 @@ FORM (Table_setColumnLabel_index, L"Set column label", 0)
 	SENTENCE (L"Label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
 		praat_dataChanged (me);
 	}
@@ -918,8 +986,8 @@ FORM (Table_setColumnLabel_label, L"Set column label", 0)
 	SENTENCE (L"New label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label")); therror
 		praat_dataChanged (me);
 	}
@@ -931,8 +999,8 @@ FORM (Table_setNumericValue, L"Table: Set numeric value", 0)
 	REAL_OR_UNDEFINED (L"Numeric value", L"1.5")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value")); therror
 		praat_dataChanged (me);
@@ -945,8 +1013,8 @@ FORM (Table_setStringValue, L"Table: Set string value", 0)
 	SENTENCE (L"String value", L"xx")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value")); therror
 		praat_dataChanged (me);
@@ -954,8 +1022,8 @@ DO
 END
 
 DIRECT (Table_randomizeRows)
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_randomizeRows (me);
 		praat_dataChanged (me);
 	}
@@ -966,16 +1034,16 @@ FORM (Table_sortRows, L"Table: Sort rows", 0)
 	TEXTFIELD (L"columnLabels", L"dialect gender name")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		Table_sortRows_string (me, GET_STRING (L"columnLabels")); therror
 		praat_dataChanged (me);
 	}
 END
 
 DIRECT (Table_to_LinearRegression)
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		autoLinearRegression thee = Table_to_LinearRegression (me);
 		praat_new (thee.transfer(), NAME);
 	}
@@ -988,8 +1056,8 @@ FORM (Table_to_LogisticRegression, L"Table: To LogisticRegression", 0)
 	WORD (L"Dependent 2 (column name)", L"i")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		autoLogisticRegression thee = Table_to_LogisticRegression (me, GET_STRING (L"factors"), GET_STRING (L"Dependent 1"), GET_STRING (L"Dependent 2"));
 		praat_new (thee.transfer(), NAME);
 	}
@@ -999,8 +1067,8 @@ FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
 	WORD (L"Column for row labels", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Table);
+	LOOP {
+		iam (Table);
 		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels")); therror
 		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
 		praat_new (thee.transfer(), NAME);
@@ -1008,8 +1076,10 @@ DO
 END
 
 FORM_WRITE (Table_writeToTableFile, L"Save Table as table file", 0, L"Table")
-	iam_ONLY (Table);
-	Table_writeToTableFile (me, file); therror
+	LOOP {
+		iam (Table);
+		Table_writeToTableFile (me, file); therror
+	}
 END
 
 /***** TABLEOFREAL *****/
@@ -1017,8 +1087,8 @@ END
 DIRECT (TablesOfReal_append)
 	autoCollection tables = Collection_create (classTableOfReal, 10);
 	Collection_dontOwnItems (tables.peek());
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		Collection_addItem (tables.peek(), me);
 	}
 	autoTableOfReal thee = static_cast <TableOfReal> (TablesOfReal_appendMany (tables.peek()));
@@ -1047,8 +1117,8 @@ FORM (TableOfReal_drawAsNumbers, L"Draw as numbers", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawAsNumbers (me, GRAPHICS,
 			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 			GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"));
@@ -1069,8 +1139,8 @@ FORM (TableOfReal_drawAsNumbers_if, L"Draw as numbers if...", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawAsNumbers_if (me, GRAPHICS,
 			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 			GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_STRING (L"condition"), interpreter);
@@ -1086,8 +1156,8 @@ FORM (TableOfReal_drawAsSquares, L"Draw table as squares", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawAsSquares (me, GRAPHICS, 
 			GET_INTEGER (L"From row"), GET_INTEGER (L"To row"),
 			GET_INTEGER (L"From column"), GET_INTEGER (L"To column"),
@@ -1101,8 +1171,8 @@ FORM (TableOfReal_drawHorizontalLines, L"Draw horizontal lines", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawHorizontalLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
 	}
 END
@@ -1113,8 +1183,8 @@ FORM (TableOfReal_drawLeftAndRightLines, L"Draw left and right lines", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawLeftAndRightLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
 	}
 END
@@ -1125,8 +1195,8 @@ FORM (TableOfReal_drawTopAndBottomLines, L"Draw top and bottom lines", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawTopAndBottomLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
 	}
 END
@@ -1137,15 +1207,15 @@ FORM (TableOfReal_drawVerticalLines, L"Draw vertical lines", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_drawVerticalLines (me, GRAPHICS, GET_INTEGER (L"From row"), GET_INTEGER (L"To row"));
 	}
 END
 
 DIRECT (TableOfReal_extractColumnLabelsAsStrings)
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoStrings thee = TableOfReal_extractColumnLabelsAsStrings (me);
 		praat_new (thee.transfer(), my name);
 	}
@@ -1157,8 +1227,8 @@ FORM (TableOfReal_extractColumnRanges, L"Extract column ranges", 0)
 	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnRanges (me, GET_STRING (L"ranges"));
 		praat_new (thee.transfer(), my name, L"_cols");
 	}
@@ -1169,8 +1239,8 @@ FORM (TableOfReal_extractColumnsWhere, L"Extract columns where", 0)
 	TEXTFIELD (L"condition", L"col mod 3 = 0 ; this example extracts every third column")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhere (me, GET_STRING (L"condition"), interpreter);
 		praat_new (thee.transfer(), my name, L"_cols");
 	}
@@ -1182,8 +1252,8 @@ FORM (TableOfReal_extractColumnsWhereLabel, L"Extract column where label", 0)
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhereLabel (me, GET_ENUM (kMelder_string, L"Extract all columns whose label..."), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
@@ -1197,16 +1267,16 @@ FORM (TableOfReal_extractColumnsWhereRow, L"Extract columns where row", 0)
 DO
 	long row = GET_INTEGER (L"Extract all columns where row...");
 	double value = GET_REAL (L"...the value");
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractColumnsWhereRow (me, row, GET_ENUM (kMelder_number, L"...is..."), value);
 		praat_new (thee.transfer(), my name, L"_", Melder_integer (row), L"_", Melder_integer (round (value)));
 	}
 END
 
 DIRECT (TableOfReal_extractRowLabelsAsStrings)
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoStrings thee = TableOfReal_extractRowLabelsAsStrings (me);
 		praat_new (thee.transfer(), my name);
 	}
@@ -1218,8 +1288,8 @@ FORM (TableOfReal_extractRowRanges, L"Extract row ranges", 0)
 	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowRanges (me, GET_STRING (L"ranges"));
 		praat_new (thee.transfer(), my name, L"_rows");
 	}
@@ -1230,8 +1300,8 @@ FORM (TableOfReal_extractRowsWhere, L"Extract rows where", 0)
 	TEXTFIELD (L"condition", L"row mod 3 = 0 ; this example extracts every third row")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhere (me, GET_STRING (L"condition"), interpreter);
 		praat_new (thee.transfer(), my name, L"_rows");
 	}
@@ -1245,8 +1315,8 @@ FORM (TableOfReal_extractRowsWhereColumn, L"Extract rows where column", 0)
 DO
 	long column = GET_INTEGER (L"Extract all rows where column...");
 	double value = GET_REAL (L"...the value");
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhereColumn (me,
 			column, GET_ENUM (kMelder_number, L"...is..."), value);
 		praat_new (thee.transfer(), my name, L"_", Melder_integer (column), L"_", Melder_integer (round (value)));
@@ -1259,8 +1329,8 @@ FORM (TableOfReal_extractRowsWhereLabel, L"Extract rows where label", 0)
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"...the text");
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTableOfReal thee = TableOfReal_extractRowsWhereLabel (me, GET_ENUM (kMelder_string, L"Extract all rows whose label..."), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
@@ -1271,8 +1341,8 @@ FORM (TableOfReal_formula, L"TableOfReal: Formula", L"Formula...")
 	TEXTFIELD (L"formula", L"if col = 5 then self + self [6] else self fi")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		try {
 			TableOfReal_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
 			praat_dataChanged (me);
@@ -1287,92 +1357,112 @@ FORM (TableOfReal_getColumnIndex, L"Get column index", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label")); therror
-	Melder_information1 (Melder_integer (columnNumber));
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label")); therror
+		Melder_information1 (Melder_integer (columnNumber));
+	}
 END
 	
 FORM (TableOfReal_getColumnLabel, L"Get column label", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = GET_INTEGER (L"Column number");
-	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-	Melder_information1 (my columnLabels == NULL ? L"" : my columnLabels [columnNumber]);
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = GET_INTEGER (L"Column number");
+		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+		Melder_information1 (my columnLabels == NULL ? L"" : my columnLabels [columnNumber]);
+	}
 END
 	
 FORM (TableOfReal_getColumnMean_index, L"Get column mean", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = GET_INTEGER (L"Column number");
-	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-	double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
-	Melder_informationReal (columnMean, NULL);
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = GET_INTEGER (L"Column number");
+		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+		double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+		Melder_informationReal (columnMean, NULL);
+	}
 END
 	
 FORM (TableOfReal_getColumnMean_label, L"Get column mean", 0)
 	SENTENCE (L"Column label", L"")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
-	if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
-	double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
-	Melder_informationReal (columnMean, NULL);
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
+		if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
+		double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+		Melder_informationReal (columnMean, NULL);
+	}
 END
 	
 FORM (TableOfReal_getColumnStdev_index, L"Get column standard deviation", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = GET_INTEGER (L"Column number");
-	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-	double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
-	Melder_informationReal (stdev, NULL);
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = GET_INTEGER (L"Column number");
+		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
+		double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+		Melder_informationReal (stdev, NULL);
+	}
 END
 	
 FORM (TableOfReal_getColumnStdev_label, L"Get column standard deviation", 0)
 	SENTENCE (L"Column label", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
-	if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
-	double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
-	Melder_informationReal (stdev, NULL);
+	LOOP {
+		iam (TableOfReal);
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
+		if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
+		double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+		Melder_informationReal (stdev, NULL);
+	}
 END
 
 DIRECT (TableOfReal_getNumberOfColumns)
-	iam_ONLY (TableOfReal);
-	Melder_information1 (Melder_integer (my numberOfColumns));
+	LOOP {
+		iam (TableOfReal);
+		Melder_information1 (Melder_integer (my numberOfColumns));
+	}
 END
 
 DIRECT (TableOfReal_getNumberOfRows)
-	iam_ONLY (TableOfReal);
-	Melder_information1 (Melder_integer (my numberOfRows));
+	LOOP {
+		iam (TableOfReal);
+		Melder_information1 (Melder_integer (my numberOfRows));
+	}
 END
 
 FORM (TableOfReal_getRowIndex, L"Get row index", 0)
 	SENTENCE (L"Row label", L"")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label")); therror
-	Melder_information1 (Melder_integer (rowNumber));
+	LOOP {
+		iam (TableOfReal);
+		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label")); therror
+		Melder_information1 (Melder_integer (rowNumber));
+	}
 END
 	
 FORM (TableOfReal_getRowLabel, L"Get row label", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long rowNumber = GET_INTEGER (L"Row number");
-	if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not be greater than number of rows.");
-	Melder_information1 (my rowLabels == NULL ? L"" : my rowLabels [rowNumber]);
+	LOOP {
+		iam (TableOfReal);
+		long rowNumber = GET_INTEGER (L"Row number");
+		if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not be greater than number of rows.");
+		Melder_information1 (my rowLabels == NULL ? L"" : my rowLabels [rowNumber]);
+	}
 END
 
 FORM (TableOfReal_getValue, L"Get value", 0)
@@ -1380,11 +1470,13 @@ FORM (TableOfReal_getValue, L"Get value", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	iam_ONLY (TableOfReal);
-	long rowNumber = GET_INTEGER (L"Row number"), columnNumber = GET_INTEGER (L"Column number");
-	if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not exceed number of rows.");
-	if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not exceed number of columns.");
-	Melder_informationReal (my data [rowNumber] [columnNumber], NULL);
+	LOOP {
+		iam (TableOfReal);
+		long rowNumber = GET_INTEGER (L"Row number"), columnNumber = GET_INTEGER (L"Column number");
+		if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not exceed number of rows.");
+		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not exceed number of columns.");
+		Melder_informationReal (my data [rowNumber] [columnNumber], NULL);
+	}
 END
 
 DIRECT (TableOfReal_help) Melder_help (L"TableOfReal"); END
@@ -1393,8 +1485,8 @@ FORM (TableOfReal_insertColumn, L"Insert column", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_insertColumn (me, GET_INTEGER (L"Column number")); therror
 		praat_dataChanged (me);
 	}
@@ -1404,8 +1496,8 @@ FORM (TableOfReal_insertRow, L"Insert row", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_insertRow (me, GET_INTEGER (L"Row number")); therror
 		praat_dataChanged (me);
 	}
@@ -1419,8 +1511,8 @@ FORM (TableOfReal_removeColumn, L"Remove column", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_removeColumn (me, GET_INTEGER (L"Column number"));
 		praat_dataChanged (me);
 	}
@@ -1430,8 +1522,8 @@ FORM (TableOfReal_removeRow, L"Remove row", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_removeRow (me, GET_INTEGER (L"Row number"));
 		praat_dataChanged (me);
 	}
@@ -1442,8 +1534,8 @@ FORM (TableOfReal_setColumnLabel_index, L"Set column label", 0)
 	SENTENCE (L"Label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
 		praat_dataChanged (me);
 	}
@@ -1454,8 +1546,8 @@ FORM (TableOfReal_setColumnLabel_label, L"Set column label", 0)
 	SENTENCE (L"New label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Old label")); therror
 		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (L"New label")); therror
 		praat_dataChanged (me);
@@ -1467,8 +1559,8 @@ FORM (TableOfReal_setRowLabel_index, L"Set row label", 0)
 	SENTENCE (L"Label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_setRowLabel (me, GET_INTEGER (L"Row number"), GET_STRING (L"Label")); therror
 		praat_dataChanged (me);
 	}
@@ -1480,8 +1572,8 @@ FORM (TableOfReal_setValue, L"Set value", L"TableOfReal: Set value...")
 	REAL_OR_UNDEFINED (L"New value", L"0.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		long rowNumber = GET_INTEGER (L"Row number"), columnNumber = GET_INTEGER (L"Column number");
 		if (rowNumber > my numberOfRows) Melder_throw (me, ": row number too large.");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number too large.");
@@ -1495,8 +1587,8 @@ FORM (TableOfReal_setRowLabel_label, L"Set row label", 0)
 	SENTENCE (L"New label", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Old label")); therror
 		TableOfReal_setRowLabel (me, rowNumber, GET_STRING (L"New label"));
 		praat_dataChanged (me);
@@ -1508,8 +1600,8 @@ FORM (TableOfReal_sortByColumn, L"Sort rows by column", 0)
 	INTEGER (L"Secondary column", L"0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_sortByColumn (me, GET_INTEGER (L"Column"), GET_INTEGER (L"Secondary column"));
 		praat_dataChanged (me);
 	}
@@ -1521,16 +1613,16 @@ FORM (TableOfReal_sortByLabel, L"Sort rows by label", 0)
 	INTEGER (L"Column2", L"0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		TableOfReal_sortByLabel (me, GET_INTEGER (L"Column1"), GET_INTEGER (L"Column2"));
 		praat_dataChanged (me);
 	}
 END
 
 DIRECT (TableOfReal_to_Matrix)
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoMatrix thee = TableOfReal_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
@@ -1540,16 +1632,18 @@ FORM (TableOfReal_to_Table, L"TableOfReal: To Table", 0)
 	SENTENCE (L"Label of first column", L"rowLabel")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (TableOfReal);
+	LOOP {
+		iam (TableOfReal);
 		autoTable thee = TableOfReal_to_Table (me, GET_STRING (L"Label of first column"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
 FORM_WRITE (TableOfReal_writeToHeaderlessSpreadsheetFile, L"Save TableOfReal as spreadsheet", 0, L"txt")
-	iam_ONLY (TableOfReal);
-	TableOfReal_writeToHeaderlessSpreadsheetFile (me, file);
+	LOOP {
+		iam (TableOfReal);
+		TableOfReal_writeToHeaderlessSpreadsheetFile (me, file);
+	}
 END
 
 

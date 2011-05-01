@@ -30,27 +30,24 @@ static void Eigen_and_SSCP_project_ (I, thou, Any sscp)
 	iam (Eigen); 
 	thouart (SSCP); 
 	SSCP him = (SSCP) sscp;
-	long i, j, k, m;
 	 
-	for (i = 1; i <= my numberOfEigenvalues; i++)
+	for (long i = 1; i <= my numberOfEigenvalues; i++)
 	{
-		double tmp;
-		for (j = i; j <= my numberOfEigenvalues; j++)
+		for (long j = i; j <= my numberOfEigenvalues; j++)
 		{
-			tmp = 0;
-			for (k = 1; k <= my dimension; k++)
+			double tmp = 0;
+			for (long k = 1; k <= my dimension; k++)
 			{
-				for (m = 1; m <= my dimension; m++)
+				for (long m = 1; m <= my dimension; m++)
 				{
-					tmp += my eigenvectors[i][k] * thy data[k][m] * 
-						my eigenvectors[j][m];
+					tmp += my eigenvectors[i][k] * thy data[k][m] * my eigenvectors[j][m];
 				}
 			}
 			his data[i][j] = his data[j][i] = tmp;
 		}
 		
-		tmp = 0;
-		for (m = 1; m <= my dimension; m++)
+		double tmp = 0;
+		for (long m = 1; m <= my dimension; m++)
 		{
 			tmp += thy centroid[m] * my eigenvectors[i][m];
 		}
@@ -62,34 +59,24 @@ static void Eigen_and_SSCP_project_ (I, thou, Any sscp)
 
 SSCP Eigen_and_SSCP_project (I, SSCP thee)
 {
-	iam (Eigen); 
-	SSCP him;
-	
-	if (thy numberOfRows != my dimension) return Melder_errorp
-		("SSCP_and_Eigen_project: dimensions don't agree.");
-	
-	him = SSCP_create (my numberOfEigenvalues);	
-	if (him == NULL) return NULL;
-	
-	Eigen_and_SSCP_project_ (me, thee, him);
-	
-	return him;
+	try {
+		iam (Eigen); 
+		if (thy numberOfRows != my dimension) Melder_throw ("SSCP_and_Eigen_project: dimensions don't agree.");
+		autoSSCP him = SSCP_create (my numberOfEigenvalues);	
+		Eigen_and_SSCP_project_ (me, thee, him.peek());
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero ("SSCP not projected."); }
 }
 
 Covariance Eigen_and_Covariance_project (I, Covariance thee)
 {
-	iam (Eigen); 
-	Covariance him;
-	
-	if (thy numberOfRows != my dimension) return Melder_errorp
-		("Covariance_and_Eigen_project: dimensions don't agree.");
-	
-	him = Covariance_create (my numberOfEigenvalues);	
-	if (him == NULL) return NULL;
-	
-	Eigen_and_SSCP_project_ (me, thee, him);
-	
-	return him;
+	try {
+		iam (Eigen); 
+		if (thy numberOfRows != my dimension) Melder_throw ("Covariance_and_Eigen_project: dimensions don't agree.");
+		autoCovariance him = Covariance_create (my numberOfEigenvalues);
+		Eigen_and_SSCP_project_ (me, thee, him.peek());
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero ("Covariance not projected."); }
 }
 
 /* End of file Eigen_and_SSCP.c */

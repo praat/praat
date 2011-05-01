@@ -127,7 +127,7 @@ int ParamCurve_init (I, Any void_x, Any void_y) {
 	return 1;
 }
 
-Any ParamCurve_create (Any x, Any y) {
+ParamCurve ParamCurve_create (Any x, Any y) {
 	ParamCurve me = Thing_new (ParamCurve);
 	if (! me || ! ParamCurve_init (me, x, y)) { forget (me); return Melder_errorp ("ParamCurve not created."); }
 	return me;

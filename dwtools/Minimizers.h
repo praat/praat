@@ -22,7 +22,7 @@
 /*
  djmw 20020813 GPL header
  djmw 20030701 Removed non-GPL minimizations
- djmw 20110306 Latest modification.
+ djmw 20110414 Latest modification.
 */
 
 
@@ -122,9 +122,9 @@ int LineMinimizer_init (I, long nParameters, Any object, double (*func)
 
 /******************  class SteepestDescentMinimizer**************************/
 
-typedef struct structSteepestDescentMinimizer_Parameters {
+typedef struct structSteepestDescentMinimizer_parameters {
 	double eta, momentum;
-} *SteepestDescentMinimizer_Parameters;
+} *SteepestDescentMinimizer_parameters;
 
 #define SteepestDescentMinimizer_members Minimizer_members	\
 	double eta, momentum;									\
@@ -141,10 +141,10 @@ Any SteepestDescentMinimizer_create (long nParameters, Any object, double (*func
 
 /**********  class VDSmagtMinimizer ********************************/
 
-typedef struct structVDSmagtMinimizer_Parameters {
+typedef struct structVDSmagtMinimizer_parameters {
 	double lineSearchGradient;
 	long lineSearchMaxNumOfIterations;
-} *VDSmagtMinimizer_Parameters;
+} *VDSmagtMinimizer_parameters;
 
 #define VDSmagtMinimizer_members Minimizer_members                          \
     double (*func) (Any object, const double p[]);							\

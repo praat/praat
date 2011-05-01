@@ -23,9 +23,11 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110415)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110501)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.23# (1 May 2011)")
+LIST_ITEM (L"\\bu Removed a bug introduced recently that could cause Praat to crash when working with derivatives of TableOfReal (such as Distributions).")
 NORMAL (L"##5.2.22# (14 April 2011)")
 LIST_ITEM (L"\\bu @ExperimentMFC: reaction times for key presses.")
 LIST_ITEM (L"\\bu Linux: more reliable start-up on German systems.")

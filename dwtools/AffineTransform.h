@@ -46,7 +46,7 @@
 	Any (*invert) (I);
 class_create (AffineTransform, Data);
 
-int AffineTransform_init (I, long n);
+void AffineTransform_init (I, long n);
 
 AffineTransform AffineTransform_create (long n);
 

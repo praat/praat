@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/04/20
  */
 
 #include <stdio.h>
@@ -37,6 +37,9 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <wchar.h>
+#ifdef __MINGW32__
+	#define swprintf  _snwprintf
+#endif
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -1075,6 +1078,29 @@ struct autoMelderString : MelderString {
 	~autoMelderString () { Melder_free (string); }
 };
 
+class autofile {
+	FILE *ptr;
+public:
+	autofile (FILE *f) : ptr (f) {
+		therror;
+	}
+	autofile () : ptr (NULL) {
+	}
+	~autofile () {
+		if (ptr) fclose (ptr);   // no error checking, because this is a destructor, only called after a throw, because otherwise you'd use f.close(file)
+	}
+	operator FILE * () {
+		return ptr;
+	}
+	void close (MelderFile file) {
+		if (ptr) {
+			FILE *tmp = ptr;
+			ptr = NULL;
+			Melder_fclose (file, tmp); therror
+		}
+	}
+};
+	
 class autoMelderTokens {
 	wchar **tokens;
 public:

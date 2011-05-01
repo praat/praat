@@ -50,7 +50,7 @@ class_create (Index, Data);
 class_create (StringsIndex, Index);
 
 
-int Index_init (I, long numberOfElements);
+void Index_init (I, long numberOfElements);
 
 Index Index_extractPart (I, long from, long to);
 

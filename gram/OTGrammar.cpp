@@ -67,6 +67,7 @@
  * pb 2010/06/05 corrected colours
  * pb 2011/03/01 renamed "strategy" to "updateRule", "meanLearningStep" to "plasticity", "rankingSpreading" to "evaluationNoise"
  * pb 2011/03/22 C++
+ * pb 2011/04/27 Melder_debug 41 and 42
  */
 
 #include "OTGrammar.h"
@@ -467,7 +468,11 @@ long OTGrammar_getWinner (OTGrammar me, long itab) {
 				/*
 				 * Give all candidates that are equally good an equal chance to become the winner.
 				 */
-				if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+				if (Melder_debug == 41) {
+					icand_best = icand_best;   // keep first
+				} else if (Melder_debug == 42) {
+					icand_best = icand;   // take last
+				} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
 					icand_best = icand;
 				}
 			}
@@ -530,7 +535,13 @@ int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, 
 						/*
 						 * Give all candidates that are equally good an equal chance to become the winner.
 						 */
-						if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+						if (Melder_debug == 41) {
+							itab_best = itab_best;
+							icand_best = icand_best;   // keep first
+						} else if (Melder_debug == 42) {
+							itab_best = itab;
+							icand_best = icand;   // take last
+						} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
 							itab_best = itab;
 							icand_best = icand;
 						}
@@ -570,7 +581,13 @@ static int OTGrammar_getInterpretiveParse_opt (OTGrammar me, long ipartialOutput
 						/*
 						 * Give all candidates that are equally good an equal chance to become the winner.
 						 */
-						if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+						if (Melder_debug == 41) {
+							itab_best = itab_best;
+							icand_best = icand_best;   // keep first
+						} else if (Melder_debug == 42) {
+							itab_best = itab;
+							icand_best = icand;   // take last
+						} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
 							itab_best = itab;
 							icand_best = icand;
 						}

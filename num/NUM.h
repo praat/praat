@@ -38,6 +38,8 @@
  * pb 2008/11/04 MelderReadText
  * pb 2009/03/14 NUMvector_append
  * pb 2009/03/21 NUMvector_insert
+ */
+
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
 
@@ -606,7 +608,7 @@ public:
 	autoNUMvector () : ptr (NULL), from (1) {
 	}
 	~autoNUMvector<T> () {
-		NUMvector_free (sizeof (T), ptr, from);
+		if (ptr) NUMvector_free (sizeof (T), ptr, from);
 	}
 	T& operator[] (long i) {
 		return ptr [i];
@@ -620,7 +622,7 @@ public:
 		return temp;
 	}
 	void reset (long newFrom, long to) {
-		NUMvector_free (sizeof (T), ptr, from);
+		if (ptr) NUMvector_free (sizeof (T), ptr, from);
 		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
 	}
 };
@@ -660,10 +662,13 @@ public:
 	autoNUMmatrix (long row1, long row2, long col1, long col2) : row1 (row1), col1 (col1) {
 		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
 	}
+	autoNUMmatrix (T **ptr, long row1, long col1) : ptr (ptr), row1 (row1), col1 (col1) {
+		therror
+	}
 	autoNUMmatrix () : ptr (NULL), row1 (0), col1 (0) {
 	}
 	~autoNUMmatrix () {
-		NUMmatrix_free (sizeof (T), ptr, row1, col1);
+		if (ptr) NUMmatrix_free (sizeof (T), ptr, row1, col1);
 	}
 	T*& operator[] (long row) {
 		return ptr [row];
@@ -677,7 +682,7 @@ public:
 		return temp;
 	}
 	void reset (long newRow1, long row2, long newCol1, long col2) {
-		NUMmatrix_free (sizeof (T), ptr, row1, col1);
+		if (ptr) NUMmatrix_free (sizeof (T), ptr, row1, col1);
 		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1 = newRow1, row2, col1 = newCol1, col2)); therror
 	}
 };

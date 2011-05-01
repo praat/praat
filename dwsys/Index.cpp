@@ -67,39 +67,35 @@ class_methods (Index, Data)
 	class_method_local (Index, description)
 class_methods_end
 
-int Index_init (I, long numberOfElements)
+void Index_init (I, long numberOfElements)
 {
-	iam (Index);
-
-    my classes = Ordered_create ();
-    if (my classes == NULL) return 0;
-    my numberOfElements = numberOfElements;
-    my classIndex = NUMlvector (1, numberOfElements);
-    if (my classIndex == NULL) return 0;
-    return 1;
+	try {
+		iam (Index);
+		if (numberOfElements < 1) Melder_throw ("Cannot create index without elements.");
+		my classes = Ordered_create (); therror
+		my numberOfElements = numberOfElements;
+		my classIndex = NUMvector<long> (1, numberOfElements);
+	} catch (MelderError) { rethrow; }
 }
 
 Index Index_extractPart (I, long from, long to)
 {
-	iam (Index);
-	Index thee;
-	long i;
+	try {
+		iam (Index);
 
-	if (from == 0) from = 1;
-	if (to == 0) to = my numberOfElements;
-	if (to < from || from < 1 || to > my numberOfElements) return Melder_errorp
-		("Index_extractPart: range should be in interval [1,%d].", my numberOfElements);
-	if ((thee = Data_copy (me)) == NULL) return NULL;
-	thy numberOfElements = to - from + 1;
-	/* */
-	for (i = 1; i <= thy numberOfElements; i++)
-	{
-		thy classIndex[i] = my classIndex[from + i - 1];
-	}
-	/* Claim excess memory */
-
-	if (Melder_hasError ()) forget (thee);
-	return thee;
+		if (from == 0) from = 1;
+		if (to == 0) to = my numberOfElements;
+		if (to < from || from < 1 || to > my numberOfElements) Melder_throw 
+			("Range should be in interval [1,%d].", my numberOfElements);
+		autoIndex thee = (Index) Data_copy (me); therror
+		thy numberOfElements = to - from + 1;
+		/* */
+		for (long i = 1; i <= thy numberOfElements; i++)
+		{
+			thy classIndex[i] = my classIndex[from + i - 1];
+		}
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero ("Index not extracted."); }
 }
 
 class_methods (StringsIndex, Index)
@@ -115,18 +111,18 @@ class_methods_end
 
 StringsIndex StringsIndex_create (long numberOfElements)
 {
-	StringsIndex me = Thing_new (StringsIndex);
-	if (me == NULL || ! Index_init (me, numberOfElements)) forget (me);
-	return me;
+	try {
+		autoStringsIndex me = (StringsIndex) Thing_new (StringsIndex);
+		Index_init (me.peek(), numberOfElements); therror
+		return me.transfer();
+	} catch (MelderError) { rethrowmzero ("StringsIndex not created."); }
 }
 
 int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)
 {
-	long i;
-
-	for (i = 1; i <= my classes -> size; i++)
+	for (long i = 1; i <= my classes -> size; i++)
 	{
-		SimpleString ss = my classes -> item[i];
+		SimpleString ss = (SimpleString) my classes -> item[i];
 		if (Melder_wcscmp (ss -> string, classLabel) == 0) return i;
 	}
 	return 0;

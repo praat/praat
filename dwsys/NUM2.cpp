@@ -62,6 +62,7 @@
  djmw 20110304 Thing_new
 */
 
+#include <vector>
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
@@ -86,19 +87,18 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
-
-extern machar_Table NUMfpp;
+using namespace std;
 
 struct pdf1_struct { double p; double df; };
 struct pdf2_struct { double p; double df1; double df2; };
 
 int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce)
 {
-	long i, j; double min, max;
-	min = max = m[rb][cb];
-	for (i=rb; i <= re; i++)
+	double min = m[rb][cb];
+	double max = min;
+	for (long i = rb; i <= re; i++)
 	{
-		for (j=cb; j <= ce; j++)
+		for (long j = cb; j <= ce; j++)
 		{
 			if (m[i][j] > max) max = m[i][j];
 			else if (m[i][j] < min) min = m[i][j];
@@ -110,9 +110,9 @@ int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce)
 
 int NUMstring_containsPrintableCharacter (wchar_t *s)
 {
-	long i, len;
+	long len;
 	if (s == NULL || ((len = wcslen (s)) == 0)) return 0;
-	for (i = 0; i < len; i++)
+	for (long i = 0; i < len; i++)
 	{
 		int c = s[i];
 		if (isgraph (c)) return 1;
@@ -120,9 +120,9 @@ int NUMstring_containsPrintableCharacter (wchar_t *s)
 	return 0;
 }
 
-double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
+/*double *NUMstring_to_numbers2 (const wchar_t *s, long *numbers_found)
 {
-	wchar_t *dup = NULL, *token, *delimiter = L" ,\t";
+	wchar_t *dup = NULL, *token, *delimiter = " ,\t";
 	long capacity = 100, n; double *numbers = NULL;
 
 	*numbers_found = n = 0;
@@ -152,12 +152,37 @@ end:
 		*numbers_found = 0;
 	}
 	return numbers;
+}*/
+
+double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
+{
+	*numbers_found = 0;
+	try {
+		wchar_t const *delimiter = L" ,\t";
+		long capacity = 100,  n = 0;
+		vector<double> dnumvec(capacity);
+		wchar_t *dup = Melder_wcsdup (s);
+		wchar_t *last, *token = Melder_wcstok (dup, delimiter, & last);
+		while (token)
+		{
+			double value = wcstod (token, NULL);
+			if (n > capacity) 
+			{
+				dnumvec.resize (2*capacity); capacity = dnumvec.capacity();
+			}
+			dnumvec[n++] = value; // dnums starts at index 0
+			token = Melder_wcstok (NULL, delimiter, & last);
+		}
+		*numbers_found = n;
+		autoNUMvector<double> numbers (1, n);
+		for (long i = 1; i < dnumvec.size(); i++) { numbers[i] = dnumvec[i - 1]; }
+		return numbers.transfer();
+	} catch (MelderError) { rethrowmzero ("No numbers found."); }
 }
 
 int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 {
-	long i;
-	for (i=lo; i <= hi; i++)
+	for (long i = lo; i <= hi; i++)
 	{
 		if (Melder_wcscmp (s1[i], s2[i])) return 0;
 	}
@@ -166,57 +191,55 @@ int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 
 int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 {
-	long i;
-
-	for (i = lo; i <= hi; i++)
-	{
-		Melder_free (to[i]);
-		if (from[i] && ((to[i] = Melder_wcsdup_e (from[i])) == NULL)) return 0;
-	}
-	return 1;
+	try {
+		for (long i = lo; i <= hi; i++)
+		{
+			Melder_free (to[i]);
+			if (from[i]) to[i] = Melder_wcsdup (from[i]); therror
+		}
+		return 1;
+	} catch (MelderError) { rethrowmzero ("Elements not copied."); }
 }
 
 void NUMstrings_free (wchar_t **s, long lo, long hi)
 {
-	long i;
 	if (s == NULL) return;
-	for (i=lo; i <= hi; i++) Melder_free (s[i]);
-	NUMpvector_free (s, lo);
+	for (long i = lo; i <= hi; i++) Melder_free (s[i]);
+	NUMvector_free<wchar_t *> (s, lo);
 }
 
 wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi)
 {
-	wchar_t **to = (wchar_t**) NUMpvector (lo, hi);
-	if (to == NULL || ! NUMstrings_copyElements (from, to, lo, hi))
-		NUMstrings_free (to, lo, hi);
-	return to;
+	try {
+		autoNUMvector<wchar_t *> to (lo, hi);
+		NUMstrings_copyElements (from, to.peek(), lo, hi);
+		return to.transfer();
+	} catch (MelderError) { rethrowmzero ("Not copied."); }
 }
 
 static wchar_t *appendNumberToString (wchar_t *s, long number)
 {
-	wchar_t buf[12], *new;
+	wchar_t buf[12];
 	long ncharb, nchars = 0;
 
 	ncharb = swprintf (buf, 12, L"%ld", number);
 	if (s != NULL) nchars = wcslen (s);
-	new = Melder_calloc_e (wchar_t, nchars + ncharb + 1);
-	if (new == NULL) return NULL;
-	if (nchars > 0) wcsncpy (new, s, nchars);
-	wcsncpy (new + nchars, buf, ncharb + 1);
-	return new;
+	wchar_t *newc = Melder_calloc_e (wchar_t, nchars + ncharb + 1);
+	if (newc == NULL) return NULL;
+	if (nchars > 0) wcsncpy (newc, s, nchars);
+	wcsncpy (newc + nchars, buf, ncharb + 1);
+	return newc;
 }
 
 int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
 	wchar_t *pre, long number, long increment)
 {
-	long i;
-
-	for (i = lo; i <= hi; i++, number += increment)
+	for (long i = lo; i <= hi; i++, number += increment)
 	{
-		wchar_t *new = appendNumberToString (pre, number);
-		if (new == NULL) return 0;
+		wchar_t *newc = appendNumberToString (pre, number);
+		if (newc == NULL) return 0;
 		Melder_free (s[i]);
-		s[i] = new;
+		s[i] = newc;
 	}
 	return 1;
 }
@@ -241,105 +264,105 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = NULL;
-	wchar_t *compileMsg;
-	regexp *compiled_regexp = CompileRE (search_regexp, &compileMsg, 0);
+	regularExp_CHAR *compileMsg;
+	regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) search_regexp, &compileMsg, 0);
 
-	if (compiled_regexp == NULL) return Melder_errorp1 (compileMsg);
+	if (compiled_regexp == NULL) Melder_throw ("No regexp");
 
-	if (ExecRE(compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
-		charp = compiled_regexp -> startp[0];
+	if (ExecRE(compiled_regexp, NULL, (regularExp_CHAR *) string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
+		charp = (wchar *) compiled_regexp -> startp[0];
 	}
 
 	free (compiled_regexp);
 	return charp;
 }
 
-wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search, const wchar_t *replace,
+wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, const wchar_t *replace,
 	long maximumNumberOfReplaces, long *nmatches)
 {
-	int len_replace, len_search, len_string, len_result;
-	int i, nchar, result_nchar = 0;
-	wchar_t *pos; 	/* current position / start of current match */
-	wchar_t *posp; /* end of previous match */
-	wchar_t *result;
+	try {
+		int len_replace, len_search, len_string, len_result;
+		int i, nchar, result_nchar = 0;
+		const wchar_t *pos; 	/* current position / start of current match */
+		const wchar_t *posp; /* end of previous match */
 
-	if (string == NULL || search == NULL || replace == NULL) return NULL;
+		if (string == NULL || search == NULL || replace == NULL) return NULL;
 
 
-	len_string = wcslen (string);
-	if (len_string == 0) maximumNumberOfReplaces = 1;
-	len_search = wcslen (search);
-	if (len_search == 0) maximumNumberOfReplaces = 1;
+		len_string = wcslen (string);
+		if (len_string == 0) maximumNumberOfReplaces = 1;
+		len_search = wcslen (search);
+		if (len_search == 0) maximumNumberOfReplaces = 1;
 
-	/*
-		To allocate memory for 'result' only once, we have to know how many
-		matches will occur.
-	*/
+		/*
+			To allocate memory for 'result' only once, we have to know how many
+			matches will occur.
+		*/
 
-	pos = string; *nmatches = 0;
-	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
+		pos = string; *nmatches = 0;
+		if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
 
-	if (len_search == 0) /* Search is empty string... */
-	{
-		if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
-	}
-	else
-	{
-		if (len_string != 0) /* Because empty string always matches */
+		if (len_search == 0) /* Search is empty string... */
 		{
-			while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+			if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
+		}
+		else
+		{
+			if (len_string != 0) /* Because empty string always matches */
 			{
-				pos += len_search;
-				(*nmatches)++;
+				while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+				{
+					pos += len_search;
+					(*nmatches)++;
+				}
 			}
 		}
-	}
 
-	len_replace = wcslen (replace);
-	len_result = len_string + *nmatches * (len_replace - len_search);
-	result = Melder_malloc_f (wchar_t, (len_result + 1) * sizeof (wchar_t));
-	result[len_result] = '\0';
-	if (result == NULL) return NULL;
+		len_replace = wcslen (replace);
+		len_result = len_string + *nmatches * (len_replace - len_search);
+		wchar_t *result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
+		result[len_result] = '\0';
 
-	pos = posp = string;
-	for (i=1; i <= *nmatches; i++)
-	{
-		pos = wcsstr (pos, search);
-
-		/*
-			Copy gap between end of previous match and start of current.
-		*/
-
-		nchar = (pos - posp);
-		if (nchar > 0)
+		pos = posp = string;
+		for (long i = 1; i <= *nmatches; i++)
 		{
-			wcsncpy (result + result_nchar, posp, nchar);
-			result_nchar += nchar;
+			pos = wcsstr (pos, search);
+
+			/*
+				Copy gap between end of previous match and start of current.
+			*/
+
+			nchar = (pos - posp);
+			if (nchar > 0)
+			{
+				wcsncpy (result + result_nchar, posp, nchar);
+				result_nchar += nchar;
+			}
+
+			/*
+				Insert the replace string in result.
+			*/
+
+			wcsncpy (result + result_nchar, replace, len_replace);
+			result_nchar += len_replace;
+
+			/*
+				Next search starts after the match.
+			*/
+
+			pos += len_search;
+			posp = pos;
 		}
 
 		/*
-			Insert the replace string in result.
+			Copy gap between end of match and end of string.
 		*/
 
-		wcsncpy (result + result_nchar, replace, len_replace);
-		result_nchar += len_replace;
-
-		/*
-			Next search starts after the match.
-		*/
-
-		pos += len_search;
-		posp = pos;
-	}
-
-	/*
-		Copy gap between end of match and end of string.
-	*/
-
-	pos = string + len_string;
-	nchar = pos - posp;
-	if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
-	return result;
+		pos = string + len_string;
+		nchar = pos - posp;
+		if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
+		return result;
+	} catch (MelderError) { rethrowzero; }
 }
 
 static int expand_buffer (wchar_t **bufp, int new_size)
@@ -350,7 +373,7 @@ static int expand_buffer (wchar_t **bufp, int new_size)
 	return 1;
 }
 
-wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
+wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches)
 {
 	long i;
@@ -362,8 +385,8 @@ wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
 	int nchar, reverse = 0;
 	int errorType;
 	wchar_t prev_char = '\0';
-	wchar_t *pos; 	/* current position in 'string' / start of current match */
-	wchar_t *posp; /* end of previous match */
+	const wchar_t *pos; 	/* current position in 'string' / start of current match */
+	const wchar_t *posp; /* end of previous match */
 	wchar_t *buf = NULL;
 
 	*nmatches = 0;
@@ -389,7 +412,7 @@ wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
 	if (! expand_buffer (& buf, buf_size)) return 0;
 
 	pos = posp = string;
-	while (ExecRE(compiledSearchRE, NULL, pos, NULL, reverse, prev_char, '\0', NULL, NULL, NULL) && i++ < maximumNumberOfReplaces)
+	while (ExecRE(compiledSearchRE, NULL, (regularExp_CHAR *) pos, NULL, reverse, prev_char, '\0', NULL, NULL, NULL) && i++ < maximumNumberOfReplaces)
 	{
 		/*
 			Copy gap between the end of the previous match and the start
@@ -397,7 +420,7 @@ wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
 			Check buffer overflow. pos == posp ? '\0' : pos[-1],
 		*/
 
-		pos = compiledSearchRE -> startp[0];
+		pos = (wchar *) compiledSearchRE -> startp[0];
 		nchar = pos - posp;
 		if (nchar > 0 && ! gap_copied)
 		{
@@ -417,7 +440,7 @@ wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
 
-		if ((SubstituteRE (compiledSearchRE, replaceRE, buf + buf_nchar, buf_size - buf_nchar, &errorType)) == FALSE)
+		if ((SubstituteRE (compiledSearchRE, (regularExp_CHAR *) replaceRE, (regularExp_CHAR *) buf + buf_nchar, buf_size - buf_nchar, &errorType)) == FALSE)
 		{
 			if (errorType == 1) // not enough memory
 			{
@@ -445,7 +468,7 @@ wchar_t *str_replace_regexp (wchar_t *string, regexp *compiledSearchRE,
 		*/
 
 		posp = pos;
-		pos = compiledSearchRE -> endp[0];
+		pos = (wchar *) compiledSearchRE -> endp[0];
 		if (pos != posp) prev_char = pos[-1];
 		gap_copied = 0;
 		posp = pos; //pb 20080121
@@ -476,34 +499,28 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 	const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
-	wchar_t **result;
-	long i, nmatches_sub = 0;
+	wchar_t ** result = NULL;
+	try {
+		long nmatches_sub = 0;
 
-	if (search == NULL || replace == NULL) return NULL;
-
-	result = (wchar_t **) NUMpvector (lo, hi);
-	if (result == NULL) goto end;
-
-	*nmatches = 0; *nstringmatches = 0;
-	for (i = lo; i <= hi; i++)
-	{
-		/* Treat a NULL as an empty string */
-		wchar_t *string = from[i] == NULL ? L"" : from[i];
-
-		result[i] = str_replace_literal (string, search, replace,
-			maximumNumberOfReplaces, &nmatches_sub);
-		if (result[i] == NULL) goto end;
-		if (nmatches_sub > 0)
+		if (search == NULL || replace == NULL) return NULL;
+		autoNUMvector<wchar_t *> result (lo, hi);
+		*nmatches = 0; *nstringmatches = 0;
+		for (long i = lo; i <= hi; i++)
 		{
-			*nmatches += nmatches_sub;
-			(*nstringmatches)++;
+			/* Treat a NULL as an empty string */
+			const wchar_t *string = from[i] == NULL ? L"" : from[i];
+
+			result[i] = str_replace_literal (string, search, replace,
+			maximumNumberOfReplaces, &nmatches_sub);
+			if (nmatches_sub > 0)
+			{
+				*nmatches += nmatches_sub;
+				(*nstringmatches)++;
+			}
 		}
-	}
-
-end:
-
-	if (Melder_hasError ()) NUMstrings_free (result, lo, hi);
-	return result;
+		return result.transfer();
+	} catch (MelderError) { NUMstrings_free (result, lo, hi); rethrowzero; }
 }
 
 
@@ -511,39 +528,34 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	const wchar_t *searchRE, const wchar_t *replaceRE, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches)
 {
-	regexp *compiledRE;
-	wchar_t *compileMsg;
 	wchar_t **result = NULL;
-	long i, nmatches_sub = 0;
+	try {
+		regexp *compiledRE;
+		wchar_t *compileMsg;
+		long nmatches_sub = 0;
 
-	if (searchRE == NULL || replaceRE == NULL) return NULL;
+		if (searchRE == NULL || replaceRE == NULL) return NULL;
 
-	compiledRE = CompileRE (searchRE, &compileMsg, 0);
-	if (compiledRE == NULL) return Melder_errorp1 (compileMsg);
+		compiledRE = CompileRE ((regularExp_CHAR *) searchRE, (regularExp_CHAR **) &compileMsg, 0);
+		if (compiledRE == NULL) Melder_throw ("No regexp ");
 
-	result = (wchar_t **) NUMpvector (lo, hi);
-	if (result == NULL) goto end;
+		autoNUMvector<wchar_t *> result (lo, hi);
 
-	*nmatches = 0; *nstringmatches = 0;
-	for (i = lo; i <= hi; i++)
-	{
-		/* Treat a NULL as an empty string */
-		wchar_t *string = from[i] == NULL ? L"" : from[i];
-		result [i] = str_replace_regexp (string, compiledRE, replaceRE,
-			maximumNumberOfReplaces, &nmatches_sub);
-		if (result [i] == NULL) goto end;
-		if (nmatches_sub > 0)
+		*nmatches = 0; *nstringmatches = 0;
+		for (long i = lo; i <= hi; i++)
 		{
-			*nmatches += nmatches_sub;
-			(*nstringmatches)++;
+			/* Treat a NULL as an empty string */
+			const wchar_t *string = from[i] == NULL ? L"" : from[i];
+			result [i] = str_replace_regexp (string, compiledRE, replaceRE,
+				maximumNumberOfReplaces, &nmatches_sub);
+			if (nmatches_sub > 0)
+			{
+				*nmatches += nmatches_sub;
+				(*nstringmatches)++;
+			}
 		}
-	}
-
-end:
-
-	free (compiledRE);
-	if (Melder_hasError ()) NUMstrings_free (result, lo, hi);
-	return result;
+		return result.transfer();
+	} catch (MelderError) { NUMstrings_free (result, lo, hi); rethrowzero; }
 }
 
 wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
@@ -558,7 +570,7 @@ wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
 void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, wchar_t *name)
 {
 	long i, j, k, npc = 5;
-	div_t n = div (nc, npc);
+	ldiv_t n = ldiv (nc, npc);
 
 	MelderInfo_open ();
 	MelderInfo_write2 (name, L"=[");
@@ -1353,27 +1365,26 @@ end:
 	return ! Melder_hasError ();
 }
 
-int NUMpseudoInverse (double **y, long nr, long nc, double **yinv,
-	double tolerance)
+int NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance)
 {
-	SVD me = SVD_create_d (y, nr, nc);
-	if (me == NULL) return 0;
+	try {
+		SVD me = SVD_create_d (y, nr, nc);
 
-	(void) SVD_zeroSmallSingularValues (me, tolerance);
-	for (long i = 1; i <= nc; i++)
-	{
-		for (long j = 1; j <= nr; j++)
+		(void) SVD_zeroSmallSingularValues (me, tolerance);
+		for (long i = 1; i <= nc; i++)
 		{
-			double s = 0;
-			for (long k = 1; k <= nc; k++)
+			for (long j = 1; j <= nr; j++)
 			{
-				if (my d[k] != 0) s += my v[i][k] * my u[j][k] / my d[k];
+				double s = 0;
+				for (long k = 1; k <= nc; k++)
+				{
+					if (my d[k] != 0) s += my v[i][k] * my u[j][k] / my d[k];
+				}
+				yinv[i][j] = s;
 			}
-			yinv[i][j] = s;
 		}
-	}
-	forget (me);
-	return 1;
+		return 1;
+	} catch (MelderError) { rethrowzero; }
 }
 
 long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2)
@@ -1890,144 +1901,125 @@ end:
 	return status;
 }
 
-int NUMProcrustes (double **x, double **y, long nPoints,
-	long nDimensions, double **t, double *v, double *s)
+int NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double *v, double *s)
 {
-	SVD svd = NULL;
-	long i, j, k;
-	double **c, **yc = NULL, trace, traceXtJYT, traceYtJY;
-	int orthogonal = v == NULL || s == NULL; /* else similarity transform */
+	try {
+		int orthogonal = v == NULL || s == NULL; /* else similarity transform */
 
-	c = NUMdmatrix (1, nDimensions, 1, nDimensions);
-	if (c == NULL) return 0;
-	yc = NUMdmatrix_copy (y, 1, nPoints, 1, nDimensions);
-	if (yc == NULL) goto end;
-
-	/*
-		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
-		Springer
-		1. Calculate C = X'JY (page 346) for similarity transform
-			else X'Y for othogonal (page 341)
-			JY amounts to centering the columns of Y.
-	*/
-
-	if (! orthogonal) NUMcentreColumns (yc, 1, nPoints, 1, nDimensions, NULL);
-	for (i = 1; i <= nDimensions; i++)
-	{
-		for (j = 1; j <= nDimensions; j++)
-		{
-			for (k = 1; k <= nPoints; k++)
-			{
-				c[i][j] += x[k][i] * yc[k][j];
-			}
-		}
-	}
-
-	/*
-		2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
-	*/
-
-	if (! (svd = SVD_create_d (c, nDimensions, nDimensions))) goto end;
-
-	for (trace = 0, i = 1; i <= nDimensions; i++)
-	{
-		trace += svd -> d[i];
-	}
-
-	if (trace == 0)
-	{
-		(void) Melder_error1 (L"NUMProcrustes: degenerate configuration(s).");
-		goto end;
-	}
-
-	/*
-		3. T = QP'
-	*/
-
-	for (i = 1; i <= nDimensions; i++)
-	{
-		for (j = 1; j <= nDimensions; j++)
-		{
-			for (t[i][j] = 0, k = 1; k <= nDimensions; k++)
-			{
-				t[i][j] += svd -> v[i][k] * svd -> u[j][k];
-			}
-		}
-	}
-
-	if (! orthogonal)
-	{
-		double **xc, **yt = NULL;
-		if (! (xc = NUMdmatrix_copy (x, 1, nPoints, 1, nDimensions)) ||
-			! (yt = NUMdmatrix (1, nPoints, 1, nDimensions))) goto oend;
+		autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
+		autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
+		NUMdmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
+		
 
 		/*
-			4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
-			   First we need YT.
+			Reference: Borg & Groenen (1997), Modern multidimensional scaling,
+			Springer
+			1. Calculate C = X'JY (page 346) for similarity transform
+				else X'Y for othogonal (page 341)
+				JY amounts to centering the columns of Y.
 		*/
 
-		for (i = 1; i <= nPoints; i++)
+		if (! orthogonal) NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, NULL);
+		for (long i = 1; i <= nDimensions; i++)
 		{
-			for (j = 1; j <= nDimensions; j++)
+			for (long j = 1; j <= nDimensions; j++)
 			{
-				for (k = 1; k <= nDimensions; k++)
+				for (long k = 1; k <= nPoints; k++)
 				{
-					yt[i][j] += y[i][k] * t[k][j];
+					c[i][j] += x[k][i] * yc[k][j];
 				}
 			}
 		}
 
 		/*
-			X'J amount to centering the columns of X
+			2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
 		*/
+		autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
+		double trace = 0;
+		for (long i = 1; i <= nDimensions; i++) { trace += svd -> d[i]; }
 
-		NUMcentreColumns (xc, 1, nPoints, 1, nDimensions, NULL);
+		if (trace == 0) Melder_throw ("NUMProcrustes: degenerate configuration(s).");
 
 		/*
-			tr X'J YT == tr xc' yt
+			3. T = QP'
 		*/
 
-		for (traceXtJYT = 0, i = 1; i <= nDimensions; i++)
+		for (long i = 1; i <= nDimensions; i++)
 		{
-			for (j = 1; j <= nPoints; j++)
+			for (long j = 1; j <= nDimensions; j++)
 			{
-				traceXtJYT += xc[j][i] * yt[j][i];
+				t[i][j] = 0;
+				for (long k = 1; k <= nDimensions; k++)
+				{
+					t[i][j] += svd -> v[i][k] * svd -> u[j][k];
+				}
 			}
 		}
 
-		for (traceYtJY = 0, i = 1; i <= nDimensions; i++)
+		if (! orthogonal)
 		{
-			for (j = 1; j <= nPoints; j++)
+			autoNUMmatrix<double> xc (1, nPoints, 1, nDimensions);
+			NUMdmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
+			autoNUMmatrix<double> yt (1, nPoints, 1, nDimensions);
+			/*
+				4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
+				First we need YT.
+			*/
+
+			for (long i = 1; i <= nPoints; i++)
 			{
-				traceYtJY += y[j][i] * yc[j][i];
+				for (long j = 1; j <= nDimensions; j++)
+				{
+					for (long k = 1; k <= nDimensions; k++)
+					{
+						yt[i][j] += y[i][k] * t[k][j];
+					}
+				}
+			}
+
+			/*
+				X'J amount to centering the columns of X
+			*/
+
+			NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, NULL);
+
+			/*
+				tr X'J YT == tr xc' yt
+			*/
+			double traceXtJYT = 0;
+			for (long i = 1; i <= nDimensions; i++)
+			{
+				for (long j = 1; j <= nPoints; j++)
+				{
+					traceXtJYT += xc[j][i] * yt[j][i];
+				}
+			}
+			double traceYtJY = 0;
+			for (long i = 1; i <= nDimensions; i++)
+			{
+				for (long j = 1; j <= nPoints; j++)
+				{
+					traceYtJY += y[j][i] * yc[j][i];
+				}
+			}
+
+			*s = traceXtJYT / traceYtJY;
+
+			/*
+				5. Translation vector tr = (X - sYT)'1 / nPoints
+			*/
+
+			for (long i = 1; i <= nDimensions; i++)
+			{
+				for (long j = 1; j <= nPoints; j++)
+				{
+					v[i] += x[j][i] - *s * yt[j][i];
+				}
+				v[i] /= nPoints;
 			}
 		}
-
-		*s = traceXtJYT / traceYtJY;
-
-		/*
-			5. Translation vector tr = (X - sYT)'1 / nPoints
-		*/
-
-		for (i = 1; i <= nDimensions; i++)
-		{
-			for (j = 1; j <= nPoints; j++)
-			{
-				v[i] += x[j][i] - *s * yt[j][i];
-			}
-			v[i] /= nPoints;
-		}
-oend:
-		NUMdmatrix_free (xc, 1, 1);
-		NUMdmatrix_free (yt, 1, 1);
-	}
-
-end:
-
-	forget (svd);
-	NUMdmatrix_free (yc, 1, 1);
-	NUMdmatrix_free (c, 1, 1);
-	return ! Melder_hasError ();
+		return 1;
+	} catch (MelderError) { rethrowzero; }
 }
 
 

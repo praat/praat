@@ -18,9 +18,10 @@
  */
 
 /*
- * os 20070529 Initial release
- * pb 20100606 removed some array-creations-on-the-stack
+ * os 2007/05/29 Initial release
+ * pb 2010/06/06 removed some array-creations-on-the-stack
  * pb 2011/03/08 tried to repair some of the header file chaos (several procedures here should be in KNN.c instead)
+ * pb 2011/04/12 C++
  */
 
 #include "FeatureWeights.h"

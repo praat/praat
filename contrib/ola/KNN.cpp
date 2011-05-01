@@ -1,6 +1,6 @@
 /* KNN.c
  *
- * Copyright (C) 2008 Ola So"der, 2010 Paul Boersma
+ * Copyright (C) 2008 Ola So"der, 2010-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * os 2008/05/29 initial release
  * pb 2010/06/06 removed some array-creations-on-the-stack
+ * pb 2011/04/12 C++
  * pb 2011/04/13 removed several memory leaks
  */
 
@@ -1907,4 +1908,4 @@ void KNN_SA_partition
 }
 
 
-/* End of file KNN.c */
+/* End of file KNN.cpp */

@@ -662,22 +662,24 @@ end:
 	return thee;
 }
 
-int Matrix_writeToMatrixTextFile (Matrix me, MelderFile fs) {
-	FILE *f = Melder_fopen (fs, "w");
-	long i, j;
-	if (! f) return 0;
-	fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%.17g %.17g %ld %.17g %.17g\n%.17g %.17g %ld %.17g %.17g\n",
-		my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-	for (i = 1; i <= my ny; i ++) {
-		for (j = 1; j <= my nx; j ++) {
-			if (j > 1) fprintf (f, " ");
-			fprintf (f, "%.17g", my z [i] [j]);
+int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "w");
+		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%.17g %.17g %ld %.17g %.17g\n%.17g %.17g %ld %.17g %.17g\n",
+			my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+		for (long i = 1; i <= my ny; i ++) {
+			for (long j = 1; j <= my nx; j ++) {
+				if (j > 1) fprintf (f, " ");
+				fprintf (f, "%.17g", my z [i] [j]);
+			}
+			fprintf (f, "\n");
 		}
-		fprintf (f, "\n");
+		f.close (file);
+		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+		return 1;
+	} catch (MelderError) {
+		rethrowmzero (me, ": not written to Matrix text file.");
 	}
-	if (! Melder_fclose (fs, f)) return 0;
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
-	return 1;
 }
 
 int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {

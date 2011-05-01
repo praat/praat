@@ -92,14 +92,14 @@ wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search,
 	'nstringmatches'.
 */
 
-wchar_t *str_replace_literal (wchar_t *string, const wchar_t *search,
+wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search,
 	const wchar_t *replace, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-wchar_t *str_replace_regexp (wchar_t *string, regexp *search_compiled,
+wchar_t *str_replace_regexp (const wchar_t *string, regexp *search_compiled,
 	const wchar_t *replace_regexp, long maximumNumberOfReplaces, long *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on

@@ -22,6 +22,7 @@
   djmw 20090114 FormantTier_to_FormantGrid.
   djmw 20090613 Extract KlattGrid
   djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
+  djmw 20110331 Corrected a typo
 */
 
 /*
@@ -582,6 +583,7 @@ end:
 }
 
 static struct {
+	int shellWidth, shellHeight;
 	int soundFollowsMouse;
 	double f1min, f1max, f2min, f2max;
 	double f3, b3, f4, b4;
@@ -592,7 +594,8 @@ static struct {
 
 void VowelEditor_prefs (void)
 {
-	Preferences_addInt (L"VowelEditor.soundFollowsMouse", &prefs.soundFollowsMouse, 1);
+	Preferences_addInt (L"VowelEditor.shellWidth", &prefs.shellWidth, 500);
+	Preferences_addInt (L"VowelEditor.shellHeight", &prefs.shellWidth, 500);
 	Preferences_addDouble (L"VowelEditor.f1min", &prefs.f1min, 200);
 	Preferences_addDouble (L"VowelEditor.f1max", &prefs.f1max, 1200);
 	Preferences_addDouble (L"VowelEditor.f2min", &prefs.f2min, 500);
@@ -604,6 +607,7 @@ void VowelEditor_prefs (void)
 	Preferences_addInt (L"VowelEditor.frequencyScale", &prefs.frequencyScale, 0);
 	Preferences_addInt (L"VowelEditor.axisOrientation", &prefs.axisOrientation, 0);
 	Preferences_addInt (L"VowelEditor.speakerType", &prefs.speakerType, 1);
+	Preferences_addInt (L"VowelEditor.soundFollowsMouse", &prefs.soundFollowsMouse, 1);
 }
 
 static int VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType, int fontSize)
@@ -1248,7 +1252,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event)
 	FormantTier_drawF1F2Trajectory (my vowel -> ft, my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 }
 
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event)
+static void gui_drawingarea_cb_resize__ (I, GuiDrawingAreaResizeEvent event)
 {
 	iam (VowelEditor);
 	(void) me;
@@ -1260,6 +1264,25 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event)
 	Graphics_setWsWindow (my g, 0, my width, 0, my height);
 	Graphics_setViewport (my g, 0, my width, 0, my height);
 	Graphics_updateWs (my g);
+}
+
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (VowelEditor);
+	if (my g == NULL) return;   // Could be the case in the very beginning.
+	Graphics_setWsViewport (my g, 0, event -> width, 0, event -> height);
+	my width = event -> width;
+	my height = event -> height;
+	Graphics_setWsWindow (my g, 0, my width, 0, my height);
+	Graphics_setViewport (my g, 0, my width, 0, my height);
+	#if gtk
+		// updateWs() also resizes the cairo clipping context to the new window size
+	#endif
+	Graphics_updateWs (my g);
+
+	/* Save the current shell size as the user's preference for a new FunctionEditor. */
+
+	prefs.shellWidth = GuiObject_getWidth (my shell);
+	prefs.shellHeight = GuiObject_getHeight (my shell);
 }
 
 static int VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y)
@@ -1417,7 +1440,7 @@ static void createMenus (VowelEditor me)
 	Editor_addCommand (me, L"File", L"Publish Sound", 0, menu_cb_publishSound);
 	Editor_addCommand (me, L"File", L"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
 	Editor_addCommand (me, L"File", L"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
-	Editor_addCommand (me, L"File", L"Extract PitchTsier", 0, menu_cb_extract_PitchTier);
+	Editor_addCommand (me, L"File", L"Extract PitchTier", 0, menu_cb_extract_PitchTier);
 	Editor_addCommand (me, L"File", L"-- script stuff --", 0, NULL);
 	Editor_addCommand (me, L"File", L"Draw trajectory...", 0, menu_cb_drawTrajectory);
 	Editor_addCommand (me, L"Edit", L"Show one vowel mark...", 0, menu_cb_showOneVowelMark);
@@ -1621,12 +1644,12 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data)
 {
 	VowelEditor me = Thing_new (VowelEditor);
-	if (me == NULL || ! Editor_init (VowelEditor_as_parent (me), parent, 20, 40, 650, 650, title, data)) goto end;
+	if (me == NULL || ! Editor_init (VowelEditor_as_parent (me), parent, 0, 0, prefs.shellWidth, prefs.shellHeight, title, data)) goto end;
 	#if motif
 	Melder_assert (XtWindow (my drawingArea));
 	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
-	Graphics_setFontSize (my g, 10);
+	Graphics_setFontSize (my g, 12);
 	VowelEditor_prefs ();
 	Editor_setPublishCallback (VowelEditor_as_Editor (me), cb_publish, NULL);
 
@@ -1660,9 +1683,16 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data
 	GuiText_setString (my durationTextField, L"0.2"); // Source has been created
 	GuiText_setString (my extendTextField, Melder_double (my extendDuration));
 	my grid = griddefault;
-	struct structGuiDrawingAreaResizeEvent event = { 0 };
-	event.widget = my drawingArea;
-	gui_drawingarea_cb_resize (me, & event);
+{
+// This exdents because it's a hack:
+struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+event. width = GuiObject_getWidth (my drawingArea);
+event. height = GuiObject_getHeight (my drawingArea);
+gui_drawingarea_cb_resize (me, & event);
+}
+	//struct structGuiDrawingAreaResizeEvent event = { 0 };
+	//event.widget = my drawingArea;
+	//gui_drawingarea_cb_resize (me, & event);
 	updateWidgets (me);
 
 end:

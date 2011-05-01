@@ -239,6 +239,16 @@ praat_Object praat_onlyScreenObject (void) {
 	return & theCurrentPraatObjects -> list [result];
 }
 
+Ordered praat_getSelectedObjects (void) {
+	autoOrdered thee = Ordered_create ();
+	Collection_dontOwnItems (thee.peek());
+	LOOP {
+		iam_LOOP (Data);
+		Collection_addItem (thee.peek(), me);
+	}
+	return thee.transfer();
+}
+
 wchar_t *praat_name (int IOBJECT) { return wcschr (FULL_NAME, ' ') + 1; }
 
 void praat_write_do (Any dia, const wchar_t *extension) {

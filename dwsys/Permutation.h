@@ -44,7 +44,7 @@ class_create (Permutation, Data);
 */
 
 
-int Permutation_init (Permutation me, long numberOfElements);
+void Permutation_init (Permutation me, long numberOfElements);
 
 Permutation Permutation_create (long numberOfElements);
 /*

@@ -33,11 +33,6 @@
 /* Number of text capturing parentheses allowed. */
 
 #include <wchar.h>
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #if defined (macintosh) || defined (linux)
 	#define regularExp_CHAR wchar_t
 #else
@@ -48,6 +43,10 @@
 
 /* Structure to contain the compiled form of a regular expression plus
    pointers to matched text.  `program' is the actual compiled regex code. */
+
+#ifdef __cplusplus
+	extern "C" {
+#endif
 
 typedef struct regexp {
    regularExp_CHAR *startp [NSUBEXP];  /* Captured text starting locations. */

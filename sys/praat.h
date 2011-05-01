@@ -472,6 +472,10 @@ void praat_addCommandsToEditor (Editor me);
 #define iam_ONLY(klas)  klas me = static_cast<klas> (ONLY (class##klas))
 #define thouart_ONLY(klas)  klas thee = static_cast<klas> (ONLY (class##klas))
 #define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
+#define LOOP  for (int IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
+
+Ordered praat_getSelectedObjects (void);
+
 struct autoPraatPicture {
 	autoPraatPicture () { praat_picture_open (); }
 	~autoPraatPicture () { praat_picture_close (); }

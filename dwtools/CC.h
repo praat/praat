@@ -71,7 +71,7 @@ double CC_getValue (I, double t, long index);
 int CC_Frame_init (CC_Frame me, long numberOfCoefficients);
 
 #ifdef __cplusplus
-	}
+	extern "C" {
 #endif
 
 #endif /* _CC_h_ */

@@ -21,15 +21,14 @@
 
 /*
  djmw 20020812 GPL header
- djmw 20050719 Latest modification.
+ djmw 20110414 Latest modification.
 */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Collection.h"
+#include "Permutation.h"
 
-#ifndef _Permutation_h_
-	#include "Permutation.h"
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
 Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
@@ -42,14 +41,14 @@ Collection Collection_permuteItems(Collection me);
 #define OrderedOfString_methods Ordered_methods
 class_create (OrderedOfString, Ordered);
 
-Any OrderedOfString_create (void);
+OrderedOfString OrderedOfString_create (void);
 int OrderedOfString_init (I, long initialCapacity);
 
 int OrderedOfString_append (I, wchar_t *append);
-Any OrderedOfString_joinItems (I, thou);
+OrderedOfString OrderedOfString_joinItems (I, thou);
 /* Join each item */
 
-Any OrderedOfString_selectUniqueItems (I, int sort);
+OrderedOfString OrderedOfString_selectUniqueItems (I, int sort);
 /* Postcondition: thy size <= my size */ 
 
 void OrderedOfString_frequency (I, thou, long *count);
@@ -89,5 +88,9 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation);
  
 long OrderedOfString_getSize (I);
 /* return my size */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _Collection_extensions_h_ */

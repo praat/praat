@@ -466,7 +466,8 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs)
 	if (thy nx != KlattTable_NPAR) return Melder_errorp3 (L"A KlattTable needs ", Melder_integer (KlattTable_NPAR), L" columns.");
 
 	KlattTable me = Thing_new (KlattTable);
-	Table_initWithColumnNames (me, thy ny, columnNames);
+	if (me == NULL)  goto end;
+	Table_initWithColumnNames (me, thy ny, columnNames); cherror
 	for (long irow = 1; irow <= thy ny; irow++)
 	{
 		for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++)
@@ -574,10 +575,11 @@ class_methods_end
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration)
 {
-	KlattTable me = Thing_new (KlattTable);
+	KlattTable me = (KlattTable) Thing_new (KlattTable); cherror
 	long nrows = floor (totalDuration / frameDuration) + 1;
-	if (me == NULL) return NULL;
 	Table_initWithColumnNames (me, nrows, columnNames);
+end:
+	if (Melder_hasError ()) forget (me);
 	return me;
 }
 
@@ -2659,8 +2661,8 @@ KlattTable KlattTable_createExample (void)
 		830,0,920,0,1445,0,2804,0,3915,0,5969,0,6256,0,0,0,200,30,0,60,0,0,0,0,0,87,0,62,0,103,0,105,0,80,0,80,0,0,0,60,
 		830,0,920,0,1445,0,2804,0,3915,0,5969,0,6256,0,0,0,200,30,0,60,0,0,0,0,0,87,0,62,0,103,0,105,0,80,0,80,0,0,0,60
 	};
-	KlattTable me = Thing_new (KlattTable);
-	Table_initWithColumnNames (me, nrows, columnNames);
+	KlattTable me = (KlattTable) Thing_new (KlattTable); cherror
+	Table_initWithColumnNames (me, nrows, columnNames); cherror
 	for (long irow = 1; irow <= nrows; irow++)
 	{
 		for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++)

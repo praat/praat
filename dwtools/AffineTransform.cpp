@@ -31,18 +31,16 @@
 #include "NUM2.h"
 
 
-static void classAffineTransform_transform (I, double **in, long nrows, 
-	double **out)
+static void classAffineTransform_transform (I, double **in, long nrows, double **out)
 {
 	iam (AffineTransform);
-	long i, j, k;
 
-	for (i = 1; i <= nrows; i++)
+	for (long i = 1; i <= nrows; i++)
 	{
-		for (j = 1; j <= my n; j++)
+		for (long j = 1; j <= my n; j++)
 		{
 			double tmp = 0;
-			for (k = 1; k <= my n; k++)
+			for (long k = 1; k <= my n; k++)
 			{
 				tmp += in[i][k] * my r[k][j];
 			}
@@ -54,29 +52,21 @@ static void classAffineTransform_transform (I, double **in, long nrows,
 static Any classAffineTransform_invert (I)
 {
 	iam (AffineTransform);
-	AffineTransform thee = Data_copy (me);
-	double tolerance = 0.000001;
+	try {
+		autoAffineTransform thee = (AffineTransform) Data_copy (me);
+		double tolerance = 0.000001;
 	
-	if (thee == NULL) return NULL;
-	
-	if (NUMpseudoInverse (my r, my n, my n, thy r, tolerance))
-	{
-		long i, j;
-		for (i = 1; i <= my n; i++)
+		NUMpseudoInverse (my r, my n, my n, thy r, tolerance); therror
+		for (long i = 1; i <= my n; i++)
 		{
 			thy t[i] = 0;
-			for (j = 1; j <= thy n; j++)
+			for (long j = 1; j <= thy n; j++)
 			{
 				thy t[i] -= thy r[i][j] * my t[j];
 			}
 		}
-	}
-	else
-	{
-		forget (thee);
-	}
-	
-	return thee;
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero (me, " not inverted"); } 
 }
 
 #include "oo_DESTROY.h"
@@ -112,26 +102,24 @@ class_methods (AffineTransform, Data)
 	class_method_local (AffineTransform, invert)
 class_methods_end
 
-int AffineTransform_init (I, long n)
+void AffineTransform_init (I, long n)
 {
-	iam (AffineTransform);
-
-	Melder_assert (n > 0);
-
-	my n = n;
-	my r = NUMdmatrix (1, n, 1, n);
-	if (my r == NULL) return 0;
-	my t = NUMdvector (1, n);
-	if (my t == NULL) return 0;
-    return 1;
+	try {
+		iam (AffineTransform);
+		if (n < 1) Melder_throw ("Dimensionality must be at least 1.");
+		my n = n;
+		my r = NUMmatrix<double> (1, n, 1, n);
+		my t = NUMvector<double> (1, n);
+	} catch (MelderError) { rethrow; } 
 }
 
 AffineTransform AffineTransform_create (long n)
 {
-	AffineTransform me = Thing_new (AffineTransform);
-
-	if (me == NULL || ! AffineTransform_init (me, n)) forget (me);
-	return me;
+	try {
+		autoAffineTransform me = Thing_new (AffineTransform);
+		AffineTransform_init (me.peek(), n);
+		return me.transfer();
+	} catch (MelderError) { rethrowmzero ("AffineTransform not created."); }
 }
 
 Any AffineTransform_invert (I)
@@ -144,33 +132,30 @@ Any AffineTransform_invert (I)
 
 TableOfReal AffineTransform_extractMatrix (I)
 {
-	iam (AffineTransform);
-	TableOfReal thee = NULL;
-	long i;
+	try {
+		iam (AffineTransform);
 	
-	thee = TableOfReal_create (my n, my n);
-	if (thee == NULL) return NULL;
-	NUMdmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
-	for (i = 1; i <= my n; i++)
-	{
-		wchar_t label[20];
-		(void) swprintf (label, 20, L"%ld", i);
-		TableOfReal_setRowLabel (thee, i, label);
-		TableOfReal_setColumnLabel (thee, i, label);
-	}
-	return thee;
+		autoTableOfReal thee = TableOfReal_create (my n, my n);
+		NUMdmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
+		for (long i = 1; i <= my n; i++)
+		{
+			wchar_t label[20];
+			(void) swprintf (label, 20, L"%ld", i);
+			TableOfReal_setRowLabel (thee.peek(), i, label);
+			TableOfReal_setColumnLabel (thee.peek(), i, label);
+		}
+		return thee.transfer();
+	} catch (MelderError) {rethrowmzero ("Matrix not created."); }
 }
 
 TableOfReal AffineTransform_extractTranslationVector (I)
 {
-	iam (AffineTransform);
-	TableOfReal thee = NULL;
-	long i;
-
-	thee = TableOfReal_create (1, my n);
-	if (thee == NULL) return NULL;
-	for (i = 1; i <= my n; i++) thy data[1][i] = my t[i];
-	return thee;
+	try {
+		iam (AffineTransform);
+		autoTableOfReal thee = TableOfReal_create (1, my n);
+		for (long i = 1; i <= my n; i++) thy data[1][i] = my t[i];
+		return thee.transfer();
+	} catch (MelderError) {rethrowmzero ("Vector not created."); }
 }
 
 /* End of file AffineTransform.c */

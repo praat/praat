@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/04/25
  */
 
 /*
@@ -45,7 +45,7 @@ class_create (ParamCurve, Function);
 
 int ParamCurve_init (I, Any x, Any y);
 
-Any ParamCurve_create (Any x, Any y);
+ParamCurve ParamCurve_create (Any x, Any y);
 /*
 	Return value:
 		a newly created ParamCurve object,

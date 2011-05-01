@@ -12,6 +12,10 @@ The FLaC__INLINE statement is turned into an inline statement
 in flac_share_alloc.h, and removed elsewhere (i.e. wherever there is a
 compiler message).
 
+For MinGW we need to change in flac_share_alloc.h:
+
+#if !defined _MSC_VER && !defined __EMX__#include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */#endif
+
 For win32 on Metrowerks CodeWarrior we do a
 #if defined (_WIN32) && ! defined (off_t)
 #define off_t long

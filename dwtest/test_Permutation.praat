@@ -1,5 +1,5 @@
 # test_Permutation.praat
-# djmw 20050710, 20070820, 20100525, 20100819
+# djmw 20050710, 20070820, 20100525, 20100819, 20110418
 
 call test_600_12
 call rotate
@@ -10,20 +10,17 @@ call swap
 procedure rotate
   printline Rotate
   for i to 20
-    Create Permutation... test i y
-    p = selected ("Permutation")
+    p = Create Permutation... test i y
   
     print 'i'
     for k to i
       select p
-      Rotate... 0 0 k
-      pk = selected ("Permutation")
+      pk = Rotate... 0 0 k
       pkk = Get value... k+1
       if pkk > 0
         assert pkk = 1 ; i='i', k='k'
       endif
-      Rotate... 0 0 -k
-      pki = selected ("Permutation")
+     pki =  Rotate... 0 0 -k
       for l to k
         pkil = Get value... l
         assert pkil = l
@@ -42,13 +39,10 @@ endproc
 procedure invert
   printline Invert
   for i to 20
-    Create Permutation... test i n
-    p = selected ("Permutation")
-    Invert
-    pin = selected ("Permutation")
+    p = Create Permutation... test i n
+    pin = Invert
     plus p
-    Multiply
-    pm = selected ("Permutation")
+    pm = Multiply
     for k to i
       pmk = Get value... k
       assert pmk = k ; i='i', k='k'

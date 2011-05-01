@@ -439,7 +439,7 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (const T* const newPtr) {
+	void reset (T* const newPtr) {
 		if (ptr) forget (ptr);
 		ptr = newPtr;
 		therror;
@@ -473,10 +473,11 @@ public:
 	autoThingVector () : ptr (NULL), from (1), to (0) {
 	}
 	~autoThingVector<T> () {
-		if (ptr)
+		if (ptr) {
 			for (long i = from; i <= to; i ++)
 				forget (ptr [i]);
-		NUMvector_free (sizeof (T), ptr, from);
+			NUMvector_free (sizeof (T), ptr, from);
+		}
 	}
 	T& operator[] (long i) {
 		return ptr [i];
@@ -490,7 +491,7 @@ public:
 		return temp;
 	}
 	void reset (long newFrom, long to) {
-		NUMvector_free (sizeof (T), ptr, from);
+		if (ptr) NUMvector_free (sizeof (T), ptr, from);
 		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
 	}
 };

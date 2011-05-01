@@ -31,6 +31,7 @@
  * pb 2010/06/05 corrected colours
  * pb 2011/03/01 multiple update rules; more decision strategies
  * pb 2011/03/29 C++
+ * pb 2011/04/27 Melder_debug 41 and 42
  */
 
 #include "OTMulti.h"
@@ -366,7 +367,11 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2) 
 					/*
 					 * Give all candidates that are equally good an equal chance to become the winner.
 					 */
-					if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {
+					if (Melder_debug == 41) {
+						icand_best = icand_best;   // keep first
+					} else if (Melder_debug == 42) {
+						icand_best = icand;   // take last
+					} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
 						icand_best = icand;
 					}
 				}
@@ -1207,7 +1212,7 @@ int OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName) {
 void OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise) {
 	try {
 		OTMulti_newDisharmonies (me, evaluationNoise);
-		long winner = OTMulti_getWinner (me, form1, form2);
+		long winner = OTMulti_getWinner (me, form1, form2); therror
 		wcscpy (optimalForm, my candidates [winner]. string);
 	} catch (MelderError) {
 		rethrowm (me, ": optimal form not generated.");
