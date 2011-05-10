@@ -207,7 +207,7 @@ void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call)
 	#define MAXIMUM_NUMBER_OF_MENUS  32767
 #endif
 static GuiObject theMenus [1+MAXIMUM_NUMBER_OF_MENUS];   /* We can freely use and reuse these menu ids */
-static int (*theOpenDocumentCallback) (MelderFile file);
+static void (*theOpenDocumentCallback) (MelderFile file);
 static int (*theQuitApplicationCallback) (void);
 #if win
 	static int theCommandShow = False;   /* Last argument of WinMain. */
@@ -4766,7 +4766,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		theUserMessageCallbackW = userMessageCallback;
 	}
 #endif
-void Gui_setOpenDocumentCallback (int (*openDocumentCallback) (MelderFile file)) {
+void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)) {
 	theOpenDocumentCallback = openDocumentCallback;
 }
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {

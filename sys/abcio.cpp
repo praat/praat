@@ -46,7 +46,7 @@
 #define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xFFFF : 0xFFFFFFFF)
 
 static long getInteger (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;
+	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
 	int i;
 	wchar_t buffer [41], c;
 	/*
@@ -94,7 +94,7 @@ static long getInteger (MelderReadText me) {
 }
 
 static unsigned long getUnsigned (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;
+	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
 	int i;
 	wchar_t buffer [41], c;
 	for (c = MelderReadText_getChar (me); ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
@@ -143,7 +143,7 @@ static unsigned long getUnsigned (MelderReadText me) {
 }
 
 static double getReal (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;
+	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
 	int i;
 	wchar_t buffer [41], c, *slash;
 	do {
@@ -322,12 +322,68 @@ static wchar_t * getString (MelderReadText me) {
 #include "enums_getValue.h"
 #include "abcio_enums.h"
 
-int texgeti1 (MelderReadText text) { return getInteger (text); }   /* There should be out-of-bound checks here... */
-int texgeti2 (MelderReadText text) { return getInteger (text); }
-long texgeti4 (MelderReadText text) { return getInteger (text); }
-unsigned int texgetu1 (MelderReadText text) { return getInteger (text); }
-unsigned int texgetu2 (MelderReadText text) { return getUnsigned (text); }
-unsigned long texgetu4 (MelderReadText text) { return getUnsigned (text); }
+int texgeti1 (MelderReadText text) {
+	try {
+		long externalValue = getInteger (text); therror
+		if (externalValue < -128 || externalValue > +127)
+			Melder_throw ("Value (", externalValue, ") out of range (-128 .. +127).");
+		return (int) externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Signed small integer not read from text file.");
+	}
+}
+
+int texgeti2 (MelderReadText text) {
+	try {
+		long externalValue = getInteger (text); therror
+		if (externalValue < -32768 || externalValue > +32767)
+			Melder_throw ("Value (", externalValue, ") out of range (-32768 .. +32767).");
+		return (int) externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Signed short integer not read from text file.");
+	}
+}
+
+long texgeti4 (MelderReadText text) {
+	try {
+		long externalValue = getInteger (text); therror
+		return externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Signed integer not read from text file.");
+	}
+}
+
+unsigned int texgetu1 (MelderReadText text) {
+	try {
+		long externalValue = getUnsigned (text); therror
+		if (externalValue > 255)
+			Melder_throw ("Value (", externalValue, ") out of range (0 .. 255).");
+		return (unsigned int) externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Unsigned small integer not read from text file.");
+	}
+}
+
+unsigned int texgetu2 (MelderReadText text) {
+	try {
+		long externalValue = getUnsigned (text); therror
+		if (externalValue > 65535)
+			Melder_throw ("Value (", externalValue, ") out of range (0 .. 65535).");
+		return (unsigned int) externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Unsigned short integer not read from text file.");
+	}
+}
+
+unsigned long texgetu4 (MelderReadText text) {
+	try {
+		long externalValue = getUnsigned (text); therror
+		return externalValue;
+	} catch (MelderError) {
+		rethrowmzero ("Unsigned integer not read from text file.");
+	}
+}
+
 double texgetr4 (MelderReadText text) { return getReal (text); }
 double texgetr8 (MelderReadText text) { return getReal (text); }
 double texgetr10 (MelderReadText text) { return getReal (text); }
@@ -1297,8 +1353,8 @@ void binputr8 (double x, FILE *f) {
 				if ((exponent > 1024) || ! (fMantissa < 1))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x07FF; highMantissa = 0; lowMantissa = 0; }   // Infinity
 				else { /* Finite. */
-					exponent += 1022;   /* Add bias. */
-					if (exponent <= 0) {   /* Denormalized. */
+					exponent += 1022;   // add bias
+					if (exponent <= 0) {   // denormalized
 						fMantissa = ldexp (fMantissa, exponent - 1);
 						exponent = 0;
 					}

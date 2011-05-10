@@ -1276,6 +1276,7 @@ static int sgmlToPraat (char *text) {
 }
 
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
+	Thing_version = 0;
 	TextGrid me = NULL;
 	wchar_t *tag = NULL;
 	MelderReadText text = MelderReadText_createFromFile (file); cherror

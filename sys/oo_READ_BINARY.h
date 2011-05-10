@@ -271,11 +271,11 @@
 		my x = Class##_create (); therror \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
-			ItemClass item = (ItemClass) Thing_new (ItemClass); therror \
+			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			Thing_version = version; \
-			item -> methods -> readBinary (item, f); therror \
+			item -> methods -> readBinary (item.peek(), f); therror \
 			Thing_version = saveVersion; \
-			Collection_addItem (my x, item); therror \
+			Collection_addItem (my x, item.transfer()); therror \
 		} \
 	}
 #else
@@ -285,7 +285,7 @@
 		my x = Class##_create (); cherror \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
-			ItemClass item = (ItemClass) Thing_new (ItemClass); cherror \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); cherror /* LEAK */ \
 			Thing_version = version; \
 			item -> methods -> readBinary (item, f); cherror \
 			Thing_version = saveVersion; \

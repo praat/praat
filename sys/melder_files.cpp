@@ -189,7 +189,7 @@ int Melder_dirToMach (MelderDir dir, void *void_fsref) {
 }
 #endif
 
-wchar_t * MelderFile_name (MelderFile file) {
+const wchar_t * MelderFile_name (MelderFile file) {
 	#if defined (UNIX)
 		wchar_t *slash = wcsrchr (file -> path, '/');
 		return slash ? slash + 1 : file -> path;

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/22
+ * pb 2011/05/03
  */
 
 #include "praat.h"
@@ -28,6 +28,9 @@
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
+
+#undef iam
+#define iam iam_LOOP
 
 /***** HELP *****/
 
@@ -122,7 +125,7 @@ FORM (Network_addConnection, L"Network: Add connection", 0)
 	REAL (L"Plasticity", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_addConnection (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
 		praat_dataChanged (me);
@@ -136,7 +139,7 @@ FORM (Network_addNode, L"Network: Add node", 0)
 	BOOLEAN (L"Clamping", 0)
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_addNode (me, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
@@ -148,7 +151,7 @@ FORM (Network_draw, L"Draw Network", 0)
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_draw (me, GRAPHICS, GET_INTEGER (L"Colour"));
 	}
@@ -177,7 +180,7 @@ FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
 	INTEGER (L"To node", L"0 (= all)")
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_normalizeActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
 		praat_dataChanged (me);
@@ -189,7 +192,7 @@ FORM (Network_setActivity, L"Network: Set activity", 0)
 	REAL (L"Activity", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_setActivity (me, GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
 		praat_dataChanged (me);
@@ -201,7 +204,7 @@ FORM (Network_setWeight, L"Network: Set weight", 0)
 	REAL (L"Weight", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_setWeight (me, GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
 		praat_dataChanged (me);
@@ -213,7 +216,7 @@ FORM (Network_setClamping, L"Network: Set clamping", 0)
 	BOOLEAN (L"Clamping", 1)
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_setClamping (me, GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
@@ -224,7 +227,7 @@ FORM (Network_spreadActivities, L"Network: Spread activities", 0)
 	NATURAL (L"Number of steps", L"20")
 	OK
 DO
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_spreadActivities (me, GET_INTEGER (L"Number of steps"));
 		praat_dataChanged (me);
@@ -232,7 +235,7 @@ DO
 END
 
 DIRECT (Network_updateWeights)
-	WHERE (SELECTED) {
+	LOOP {
 		iam_LOOP (Network);
 		Network_updateWeights (me);
 		praat_dataChanged (me);
@@ -244,8 +247,8 @@ FORM (Network_zeroActivities, L"Network: Zero activities", 0)
 	INTEGER (L"To node", L"0 (= all)")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Network);
+	LOOP {
+		iam (Network);
 		Network_zeroActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
 		praat_dataChanged (me);
 	}
@@ -316,16 +319,16 @@ FORM (OTGrammar_drawTableau, L"Draw tableau", L"OT learning")
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_drawTableau (me, GRAPHICS, GET_STRING (L"Input string"));
 	}
 END
 
 DIRECT (OTGrammar_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit from batch.");
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		autoOTGrammarEditor editor = OTGrammarEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
@@ -335,17 +338,19 @@ FORM (OTGrammar_evaluate, L"OTGrammar: Evaluate", 0)
 	REAL (L"Evaluation noise", L"2.0")
 	OK
 DO
-	iam_ONLY (OTGrammar);
-	OTGrammar_newDisharmonies (me, GET_REAL (L"Evaluation noise"));
-	praat_dataChanged (me);
+	LOOP {
+		iam (OTGrammar);
+		OTGrammar_newDisharmonies (me, GET_REAL (L"Evaluation noise"));
+		praat_dataChanged (me);
+	}
 END
 
 FORM (OTGrammar_generateInputs, L"Generate inputs", L"OTGrammar: Generate inputs...")
 	NATURAL (L"Number of trials", L"1000")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		autoStrings thee = OTGrammar_generateInputs (me, GET_INTEGER (L"Number of trials"));
 		praat_new (thee.transfer(), my name, L"_in");
 	}
@@ -401,8 +406,8 @@ DO
 END
 
 DIRECT (OTGrammar_getInputs)
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		autoStrings thee = OTGrammar_getInputs (me);
 		praat_new (thee.transfer(), my name, L"_in");
 	}
@@ -542,7 +547,7 @@ DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Strings);
 	autoStrings him = OTGrammar_inputsToOutputs (me, thee, GET_REAL (L"Evaluation noise"));
-	praat_new2 (him.transfer(), my name, L"_out");
+	praat_new (him.transfer(), my name, L"_out");
 	praat_dataChanged (me);
 END
 
@@ -658,8 +663,8 @@ FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
 	BOOLEAN (L"Honour local rankings", 1)
 	OK
 DO
-	WHERE (SELECTED) try {
-		iam_LOOP (OTGrammar);
+	LOOP try {
+		iam (OTGrammar);
 		OTGrammar_learnOne (me, GET_STRING (L"Input string"), GET_STRING (L"Output string"),
 			GET_REAL (L"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
@@ -683,8 +688,8 @@ FORM (OTGrammar_learnOneFromPartialOutput, L"OTGrammar: Learn one from partial a
 	NATURAL (L"Number of chews", L"1")
 	OK
 DO
-	WHERE (SELECTED) try {
-		iam_LOOP (OTGrammar);
+	LOOP try {
+		iam (OTGrammar);
 		OTGrammar_learnOneFromPartialOutput (me, GET_STRING (L"Partial output"),
 			GET_REAL (L"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
@@ -701,8 +706,8 @@ FORM (OTGrammar_removeConstraint, L"OTGrammar: Remove constraint", 0)
 	SENTENCE (L"Constraint name", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_removeConstraint (me, GET_STRING (L"Constraint name")); therror
 		praat_dataChanged (me);
 	}
@@ -712,8 +717,8 @@ FORM (OTGrammar_removeHarmonicallyBoundedCandidates, L"OTGrammar: Remove harmoni
 	BOOLEAN (L"Singly", 0)
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_removeHarmonicallyBoundedCandidates (me, GET_INTEGER (L"Singly")); therror
 		praat_dataChanged (me);
 	}
@@ -723,8 +728,8 @@ FORM (OTGrammar_resetAllRankings, L"OTGrammar: Reset all rankings", 0)
 	REAL (L"Ranking", L"100.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_reset (me, GET_REAL (L"Ranking"));
 		praat_dataChanged (me);
 	}
@@ -735,8 +740,8 @@ FORM (OTGrammar_resetToRandomTotalRanking, L"OTGrammar: Reset to random total ra
 	POSITIVE (L"Ranking distance", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_resetToRandomTotalRanking (me, GET_REAL (L"Maximum ranking"), GET_REAL (L"Ranking distance"));
 		praat_dataChanged (me);
 	}
@@ -747,8 +752,8 @@ FORM (OTGrammar_setConstraintPlasticity, L"OTGrammar: Set constraint plasticity"
 	REAL (L"Plasticity", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_setConstraintPlasticity (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Plasticity"));
 		praat_dataChanged (OBJECT);
 	}
@@ -782,8 +787,8 @@ FORM (OTGrammar_setRanking, L"OTGrammar: Set ranking", 0)
 	REAL (L"Disharmony", L"100.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTGrammar);
+	LOOP {
+		iam (OTGrammar);
 		OTGrammar_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony")); therror
 		praat_dataChanged (me);
 	}
@@ -938,14 +943,16 @@ FORM (OTGrammar_to_Distributions, L"OTGrammar: Compute output distributions", L"
 	REAL (L"Evaluation noise", L"2.0")
 	OK
 DO
-	WHERE (SELECTED) try {
-		iam_LOOP (OTGrammar);
-		autoDistributions thee = OTGrammar_to_Distribution (me, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise"));
-		praat_new (thee.transfer(), my name, L"_out");
-		praat_dataChanged (me);
-	} catch (MelderError) {
-		praat_dataChanged (OBJECT);
-		throw;
+	LOOP {
+		iam (OTGrammar);
+		try {
+			autoDistributions thee = OTGrammar_to_Distribution (me, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise"));
+			praat_new (thee.transfer(), my name, L"_out");
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);
+			throw;
+		}
 	}
 END
 
@@ -954,8 +961,8 @@ FORM (OTGrammar_to_PairDistribution, L"OTGrammar: Compute output distributions",
 	REAL (L"Evaluation noise", L"2.0")
 	OK
 DO
-	WHERE (SELECTED) try {
-		iam_LOOP (OTGrammar);
+	LOOP try {
+		iam (OTGrammar);
 		autoPairDistribution thee = OTGrammar_to_PairDistribution (me, GET_INTEGER (L"Trials per input"), GET_REAL (L"Evaluation noise"));
 		praat_new (thee.transfer(), my name, L"_out");
 		praat_dataChanged (me);
@@ -966,8 +973,8 @@ DO
 END
 
 DIRECT (OTGrammar_measureTypology)
-	WHERE (SELECTED) try {
-		iam_LOOP (OTGrammar);
+	LOOP try {
+		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology (me);
 		praat_new (thee.transfer(), my name, L"_out");
 		praat_dataChanged (me);
@@ -989,8 +996,8 @@ FORM (OTMulti_drawTableau, L"Draw tableau", L"OT learning")
 	OK
 DO
 	autoPraatPicture picture;
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		OTMulti_drawTableau (me, GRAPHICS, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 			GET_INTEGER (L"Show disharmonies"));
 	}
@@ -998,8 +1005,8 @@ END
 
 DIRECT (OTMulti_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit an OTMulti from batch.");
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		autoOTMultiEditor editor = OTMultiEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
@@ -1140,8 +1147,8 @@ FORM (OTMulti_learnOne, L"OTMulti: Learn one", 0)
 	REAL (L"Rel. plasticity spreading", L"0.1")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		try {
 			OTMulti_learnOne (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 				GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
@@ -1157,8 +1164,8 @@ FORM (OTMulti_removeConstraint, L"OTMulti: Remove constraint", 0)
 	SENTENCE (L"Constraint name", L"")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		OTMulti_removeConstraint (me, GET_STRING (L"Constraint name")); therror
 		praat_dataChanged (me);
 	}
@@ -1168,8 +1175,8 @@ FORM (OTMulti_resetAllRankings, L"OTMulti: Reset all rankings", 0)
 	REAL (L"Ranking", L"100.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		OTMulti_reset (me, GET_REAL (L"Ranking")); therror
 		praat_dataChanged (me);
 	}
@@ -1180,8 +1187,8 @@ FORM (OTMulti_setConstraintPlasticity, L"OTMulti: Set constraint plasticity", 0)
 	REAL (L"Plasticity", L"1.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		OTMulti_setConstraintPlasticity (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Plasticity")); therror
 		praat_dataChanged (me);
 	}
@@ -1215,8 +1222,8 @@ FORM (OTMulti_setRanking, L"OTMulti: Set ranking", 0)
 	REAL (L"Disharmony", L"100.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		OTMulti_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony")); therror
 		praat_dataChanged (me);
 	}
@@ -1229,8 +1236,8 @@ FORM (OTMulti_to_Distribution, L"OTMulti: Compute output distribution", 0)
 	POSITIVE (L"Evaluation noise", L"2.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (OTMulti);
+	LOOP {
+		iam (OTMulti);
 		try {
 			autoDistributions thee = OTMulti_to_Distribution (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 			GET_INTEGER (L"Number of trials"), GET_REAL (L"Evaluation noise"));

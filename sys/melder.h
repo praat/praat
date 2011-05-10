@@ -752,7 +752,7 @@ void Melder_setPublishPlayedProc (int (*publishPlayed) (void));
 	int Melder_fileToMach (MelderFile file, void *void_fsref);
 	int Melder_dirToMach (MelderDir dir, void *void_fsref);
 #endif
-wchar_t * MelderFile_name (MelderFile file);
+const wchar_t * MelderFile_name (MelderFile file);
 wchar_t * MelderDir_name (MelderDir dir);
 int Melder_pathToDir (const wchar_t *path, MelderDir dir);
 int Melder_pathToFile (const wchar_t *path, MelderFile file);

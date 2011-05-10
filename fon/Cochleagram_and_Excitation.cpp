@@ -1,6 +1,6 @@
-/* Cochleagram_and_Excitation.c
+/* Cochleagram_and_Excitation.cpp
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
 /*
  * pb 1993/12/20
  * pb 2002/07/16 GPL
+ * pb 2011/05/05 type
+ * pb 2011/05/09 C++
  */
 
 #include "Cochleagram_and_Excitation.h"
 
-Any Cochleagram_to_Excitation (I, double t)
+Excitation Cochleagram_to_Excitation (I, double t)
 {
 	iam (Cochleagram);
 	long column = Matrix_xToNearestColumn (me, t), ifreq;
@@ -38,4 +40,4 @@ Any Cochleagram_to_Excitation (I, double t)
 	return thee;
 }
 
-/* End of file Cochleagram_and_Excitation.c */
+/* End of file Cochleagram_and_Excitation.cpp */

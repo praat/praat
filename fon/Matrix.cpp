@@ -59,23 +59,23 @@
 static int readText (I, MelderReadText text) {
 	iam (Matrix);
 	if (Thing_version < 0) {
-		my xmin = texgetr8 (text);
-		my xmax = texgetr8 (text);
-		my ymin = texgetr8 (text);
-		my ymax = texgetr8 (text);
-		my nx = texgeti4 (text);
-		my ny = texgeti4 (text);
-		my dx = texgetr8 (text);
-		my dy = texgetr8 (text);
-		my x1 = texgetr8 (text);
-		my y1 = texgetr8 (text);
+		my xmin = texgetr8 (text); therror
+		my xmax = texgetr8 (text); therror
+		my ymin = texgetr8 (text); therror
+		my ymax = texgetr8 (text); therror
+		my nx = texgeti4 (text); therror
+		my ny = texgeti4 (text); therror
+		my dx = texgetr8 (text); therror
+		my dy = texgetr8 (text); therror
+		my x1 = texgetr8 (text); therror
+		my y1 = texgetr8 (text); therror
 	} else {
 		inherited (Matrix) readText (me, text);
-		my ymin = texgetr8 (text);
-		my ymax = texgetr8 (text);
-		my ny = texgeti4 (text);
-		my dy = texgetr8 (text);
-		my y1 = texgetr8 (text);
+		my ymin = texgetr8 (text); therror
+		my ymax = texgetr8 (text); therror
+		my ny = texgeti4 (text); therror
+		my dy = texgetr8 (text); therror
+		my y1 = texgetr8 (text); therror
 	}
 	if (my xmin > my xmax || my ymin > my ymax)
 		return Melder_error1 (L"(Matrix::readText:) xmin should <= xmax and ymin <= ymax.");

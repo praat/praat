@@ -33,160 +33,358 @@
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
  * pb 2011/03/29 C++
+ * pb 2011/05/03 cherror, therror
  */
 
 #include "oo_undef.h"
 
+#ifdef __cplusplus
+#define oo_SIMPLE(type,storage,x)  \
+	try { \
+		my x = texget##storage (text); therror \
+	} catch (MelderError) { \
+		rethrowmzero ("\"", #x, L"\" not read."); \
+	}
+#else
 #define oo_SIMPLE(type,storage,x)  \
 	my x = texget##storage (text); \
-	iferror return Melder_error3 (L"Trying to read \"", L"" #x, L"\".");
+	iferror { Melder_error3 (L"Trying to read \"", L"" #x, L"\"."); goto end; }
+#endif
 
+#ifdef __cplusplus
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (long i = 0; i < n; i ++) { \
+		try { \
+			my x [i] = texget##storage (text); therror \
+		} catch (MelderError) { \
+			rethrowmzero ("Element ", i+1, " of \"", #x, "\" not read."); \
+		} \
+	}
+#else
+#define oo_ARRAY(type,storage,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
 	for (long i = 0; i < n; i ++) { \
 		my x [i] = texget##storage (text); \
 		iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
 	}
+#endif
 
+#ifdef __cplusplus
+#define oo_SET(type,storage,x,setType)  \
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		try { \
+			my x [i] = texget##storage (text); therror \
+		} catch (MelderError) { \
+			rethrowmzero ("Element ", i+1, " of \"", #x, "\" not read."); \
+		} \
+	}
+#else
 #define oo_SET(type,storage,x,setType)  \
 	for (long i = 0; i <= setType##_MAX; i ++) { \
 		my x [i] = texget##storage (text); \
 		iferror return Melder_error ("Trying to read element %ld of \"%s\".", i+1, #x); \
 	}
+#endif
 
+#ifdef __cplusplus
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readText_##storage (min, max, text, #x))) return 0;
+	if (max >= min) { \
+		my x = NUM##t##vector_readText_##storage (min, max, text, #x); therror \
+	}
+#else
+#define oo_VECTOR(type,t,storage,x,min,max)  \
+	if (max >= min) { \
+		my x = NUM##t##vector_readText_##storage (min, max, text, #x); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readText_##storage (row1, row2, col1, col2, text, #x))) return 0;
+	if (row2 >= row1 && col2 >= col1) { \
+	    my x = NUM##t##matrix_readText_##storage (row1, row2, col1, col2, text, #x); therror \
+	}
+#else
+#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+	if (row2 >= row1 && col2 >= col1) { \
+	    my x = NUM##t##matrix_readText_##storage (row1, row2, col1, col2, text, #x); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx(type,storage,Type,x)  \
-	if ((my x = texget##storage (text, Type##_getValue)) < 0) return 0;
+	my x = texget##storage (text, Type##_getValue); therror
+#else
+#define oo_ENUMx(type,storage,Type,x)  \
+	my x = texget##storage (text, Type##_getValue); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (long i = 0; i < n; i ++) \
-		if ((my x [i] = texget##storage (text, Type##_getValue)) < 0) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (long i = 0; i < n; i ++) { \
+		my x [i] = texget##storage (text, Type##_getValue); therror \
+	}
+#else
+#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (long i = 0; i < n; i ++) { \
+		my x [i] = texget##storage (text, Type##_getValue); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) \
-		if ((my x [i] = texget##storage (text, & Type##_getValue)) < 0) return 0;
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = texget##storage (text, & Type##_getValue); therror \
+	}
+#else
+#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = texget##storage (text, & Type##_getValue); cherror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUM##t##vector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if ((my x [i] = texget##storage (text, & Type##_getValue)) < 0) return 0; \
+		my x = NUM##t##vector (min, max); therror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = texget##storage (text, & Type##_getValue); therror \
+		} \
 	}
+#else
+#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
+	if (max >= min) { \
+		my x = NUM##t##vector (min, max); therror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = texget##storage (text, & Type##_getValue); cherror \
+		} \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx(storage,x)  \
-	if (! (my x = texget##storage (text))) return Melder_error ("Trying to read \"%s\".", #x);
+	try { \
+		my x = texget##storage (text); therror \
+	} catch (MelderError) { \
+		rethrowmzero ("String \"", #x, "\" not read."); \
+	}
+#else
+#define oo_STRINGx(storage,x)  \
+	my x = texget##storage (text); \
+	iferror { Melder_error ("Trying to read \"%s\".", #x); goto end; }
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (long i = 0; i < n; i ++) \
-		if (! (my x [i] = texget##storage (text))) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (long i = 0; i < n; i ++) { \
+		my x [i] = texget##storage (text); therror \
+	}
+#else
+#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (long i = 0; i < n; i ++) { \
+		my x [i] = texget##storage (text); therror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (long i = 0; i <= setType##_MAX; i ++) \
-		if (! (my x [i] = texget##storage (text))) return 0;
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = texget##storage (text); therror \
+	}
+#else
+#define oo_STRINGx_SET(storage,x,setType)  \
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = texget##storage (text); cherror \
+	}
+#endif
 
 #ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMvector <wchar*> (min, max))) return 0; \
+		my x = NUMvector <wchar*> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			if (! (my x [i] = texget##storage (text))) \
-				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+			try { \
+				my x [i] = texget##storage (text); therror \
+			} catch (MelderError) { \
+				rethrowmzero ("Element ", i, " of \"" #x, "\" not read."); \
+			} \
 		} \
 	}
 #else
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMwvector (min, max))) return 0; \
+		my x = NUMwvector (min, max); cherror \
 		for (long i = min; i <= max; i ++) { \
-			if (! (my x [i] = texget##storage (text))) \
-				return Melder_error ("Trying to read element %ld of \"%s\".", i, #x); \
+			my x [i] = texget##storage (text); \
+			iferror { Melder_error ("Trying to read element %ld of \"%s\".", i, #x); goto end; } \
 		} \
 	}
 #endif
 
+#ifdef __cplusplus
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_readText (& my x, text)) return 0;
+	Type##_readText (& my x, text); therror
+#else
+#define oo_STRUCT(Type,x)  \
+	Type##_readText (& my x, text); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (long i = 0; i < n; i ++) \
-		if (! Type##_readText (& my x [i], text)) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (long i = 0; i < n; i ++) { \
+		Type##_readText (& my x [i], text); therror \
+	}
+#else
+#define oo_STRUCT_ARRAY(Type,x,cap,n) \
+	if (n > cap) { Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); goto end; } \
+	for (long i = 0; i < n; i ++) { \
+		Type##_readText (& my x [i], text); therror \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (long i = 0; i <= setType##_MAX; i ++) \
-		if (! Type##_readText (& my x [i], text)) return 0;
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		Type##_readText (& my x [i], text); therror \
+	}
+#else
+#define oo_STRUCT_SET(Type,x,setType) \
+	for (long i = 0; i <= setType##_MAX; i ++) { \
+		Type##_readText (& my x [i], text); cherror \
+	}
+#endif
 
 #ifdef __cplusplus
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMvector <struct##Type> (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_readText (& my x [i], text)) return 0; \
+		my x = NUMvector <struct##Type> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			Type##_readText (& my x [i], text); therror \
+		} \
 	}
 #else
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_readText (& my x [i], text)) return 0; \
+		my x = NUMstructvector (Type, min, max); cherror \
+		for (long i = min; i <= max; i ++) { \
+			Type##_readText (& my x [i], text); cherror \
+		} \
 	}
 #endif
 
+#ifdef __cplusplus
 #define oo_OBJECT(Class,version,x)  \
 	if (texgetex (text) == 1) { \
 		long saveVersion = Thing_version; \
-		if ((my x = Thing_new (Class)) == NULL) return 0; \
+		my x = Thing_new (Class); therror \
 		Thing_version = version; \
-		if (! Data_readText (my x, text)) return 0; \
+		Data_readText (my x, text); therror \
 		Thing_version = saveVersion; \
 	}
+#else
+#define oo_OBJECT(Class,version,x)  \
+	if (texgetex (text) == 1) { \
+		long saveVersion = Thing_version; \
+		my x = Thing_new (Class); cherror \
+		Thing_version = version; \
+		Data_readText (my x, text); cherror \
+		Thing_version = saveVersion; \
+	}
+#endif
 
+#ifdef __cplusplus
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = texgeti4 (text); \
-		if ((my x = Class##_create ()) == NULL) return 0; \
+		long n = texgeti4 (text); therror \
+		my x = Class##_create (); therror \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
-			ItemClass item = (ItemClass) Thing_new (ItemClass); \
-			if (item == NULL) return 0; \
+			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			Thing_version = version; \
-			if (! item -> methods -> readText (item, text)) return 0; \
+			item -> methods -> readText (item.peek(), text); therror \
 			Thing_version = saveVersion; \
-			if (! Collection_addItem (my x, item)) return 0; \
+			Collection_addItem (my x, item.transfer()); therror \
 		} \
 	}
+#else
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
+	{ \
+		long n = texgeti4 (text); cherror \
+		my x = Class##_create (); cherror \
+		for (long i = 1; i <= n; i ++) { \
+			long saveVersion = Thing_version; \
+			ItemClass item = (ItemClass) Thing_new (ItemClass); cherror /* LEAK */ \
+			Thing_version = version; \
+			item -> methods -> readText (item, text); cherror \
+			Thing_version = saveVersion; \
+			Collection_addItem (my x, item); cherror \
+		} \
+	}
+#endif
 
 #define oo_FILE(x)
 
 #define oo_DIR(x)
 
+#ifdef __cplusplus
+#define oo_DEFINE_STRUCT(Type)  \
+	static int Type##_readText (Type me, MelderReadText text) try { \
+		int localVersion = Thing_version; (void) localVersion;
+#else
 #define oo_DEFINE_STRUCT(Type)  \
 	static int Type##_readText (Type me, MelderReadText text) { \
 		int localVersion = Thing_version; (void) localVersion;
+#endif
 
+#ifdef __cplusplus
 #define oo_END_STRUCT(Type)  \
 		return 1; \
+	} catch (MelderError) { \
+		rethrowzero; \
 	}
+#else
+#define oo_END_STRUCT(Type)  \
+	end: \
+		return 1; \
+	}
+#endif
 
+#ifdef __cplusplus
+#define oo_DEFINE_CLASS(Class,Parent)  \
+	static int class##Class##_readText (I, MelderReadText text) try { \
+		iam (Class); \
+		int localVersion = Thing_version; (void) localVersion; \
+		if (localVersion > our version) \
+			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
+		inherited (Class) readText (me, text); therror
+#else
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	static int class##Class##_readText (I, MelderReadText text) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
-		if (localVersion > our version) \
-			return Melder_error ("The format of this file is too new. Download a newer version of Praat."); \
-		if (! inherited (Class) readText (me, text)) return 0;
+		if (localVersion > our version) { \
+			Melder_error ("The format of this file is too new. Download a newer version of Praat."); goto end; \
+		} \
+		inherited (Class) readText (me, text); cherror
+#endif
 
+#ifdef __cplusplus
 #define oo_END_CLASS(Class)  \
 		return 1; \
+	} catch (MelderError) { \
+		rethrowzero; \
 	}
+#else
+#define oo_END_CLASS(Class)  \
+	end: \
+		return 1; \
+	}
+#endif
 
 #define oo_IF(condition)  \
 	if (condition) {

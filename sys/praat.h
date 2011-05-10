@@ -395,6 +395,15 @@ void praat_name2 (wchar_t *name, void *klas1, void *klas2);
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
+#ifdef __cplusplus
+	Any praat_firstObject (void *klas);
+	Any praat_firstObject_generic (void *klas);
+	Any praat_firstObject_any ();
+	#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
+	#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
+	#define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
+#endif
+
 #define EVERY_DRAW(proc) \
 	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
 
@@ -474,7 +483,7 @@ void praat_addCommandsToEditor (Editor me);
 #define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
 #define LOOP  for (int IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
-Ordered praat_getSelectedObjects (void);
+Collection praat_getSelectedObjects (void);
 
 struct autoPraatPicture {
 	autoPraatPicture () { praat_picture_open (); }

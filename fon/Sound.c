@@ -404,7 +404,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	return him;
 }
 
-Sound Sounds_concatenate_e (Ordered me, double overlapTime) {
+Sound Sounds_concatenate_e (Collection me, double overlapTime) {
 	Sound thee = NULL;
 	double *smoother = NULL;
 //start:

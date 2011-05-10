@@ -621,7 +621,7 @@ err:
 	Melder_free (thy resampledBuffer);
 }
 
-int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
+int LongSound_concatenate (Collection me, MelderFile file, int audioFileType) {
 //start:
 	long i, sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 	int numberOfChannels;

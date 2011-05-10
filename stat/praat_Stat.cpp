@@ -48,8 +48,8 @@ static wchar_t * Table_messageColumn (Table me, long column) {
 /***** DISTRIBUTIONS *****/
 
 DIRECT (Distributionses_add)
-	autoOrdered me = praat_getSelectedObjects ();
-	autoDistributions thee = Distributions_addMany ((Collection) me.peek());
+	autoCollection me = praat_getSelectedObjects ();
+	autoDistributions thee = Distributions_addMany (me.peek());
 	praat_new (thee.transfer(), L"added");
 END
 

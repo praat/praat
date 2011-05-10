@@ -20,7 +20,7 @@
  */
 
 /*
- * 2011/03/02
+ * 2011/05/03
  */
 
 #if defined (UNIX)
@@ -523,7 +523,7 @@ void GuiObject_size (GuiObject me, long width, long height);
 
 /********** EVENTS **********/
 
-void Gui_setOpenDocumentCallback (int (*openDocumentCallback) (MelderFile file));
+void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
 #ifdef __cplusplus

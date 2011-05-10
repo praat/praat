@@ -169,7 +169,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime,
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
 
-Sound Sounds_concatenate_e (Ordered me, double overlapTime);
+Sound Sounds_concatenate_e (Collection me, double overlapTime);
 void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);

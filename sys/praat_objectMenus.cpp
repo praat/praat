@@ -1,6 +1,6 @@
-/* praat_objectMenus.c
+/* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2008/04/30 new Formula API
  * pb 2009/01/17 arguments to UiForm callbacks
+ * pb 2011/05/03 C++
  */
 
 #include <ctype.h>
@@ -43,6 +44,9 @@
 #include "ButtonEditor.h"
 #include "DataEditor.h"
 #include "site.h"
+
+#undef iam
+#define iam iam_LOOP
 
 #define EDITOR  theCurrentPraatObjects -> list [IOBJECT]. editors
 
@@ -148,14 +152,14 @@ DIRECT (Memory_info)
 END
 
 DIRECT (praat_newScript)
-	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
-	if (! editor) return 0;
+	autoScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
+	editor.transfer();   // the user becomes the owner
 END
 
 DIRECT (praat_openScript)
-	ScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
-	if (! editor) return 0;
-	TextEditor_showOpen (ScriptEditor_as_TextEditor (editor));
+	autoScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
+	TextEditor_showOpen (ScriptEditor_as_TextEditor (editor.peek()));
+	editor.transfer();   // the user becomes the owner
 END
 
 static ButtonEditor theButtonEditor;
@@ -208,8 +212,7 @@ FORM (praat_hideMenuCommand, L"Hide menu command", L"Hide menu command...")
 	SENTENCE (L"Command", L"Hallo...")
 	OK
 DO
-	praat_hideMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
-		GET_STRING (L"Command"));
+	praat_hideMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"), GET_STRING (L"Command"));
 END
 
 FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...")
@@ -218,8 +221,7 @@ FORM (praat_showMenuCommand, L"Show menu command", L"Show menu command...")
 	SENTENCE (L"Command", L"Hallo...")
 	OK
 DO
-	praat_showMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"),
-		GET_STRING (L"Command"));
+	praat_showMenuCommand (GET_STRING (L"Window"), GET_STRING (L"Menu"), GET_STRING (L"Command"));
 END
 
 FORM (praat_addAction, L"Add action command", L"Add action command...")
@@ -249,8 +251,7 @@ FORM (praat_hideAction, L"Hide action command", L"Hide action command...")
 	SENTENCE (L"Command", L"Play")
 	OK
 DO
-	praat_hideAction_classNames (GET_STRING (L"Class 1"),
-		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
+	praat_hideAction_classNames (GET_STRING (L"Class 1"), GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
 END
 
 FORM (praat_showAction, L"Show action command", L"Show action command...")
@@ -260,8 +261,7 @@ FORM (praat_showAction, L"Show action command", L"Show action command...")
 	SENTENCE (L"Command", L"Play")
 	OK
 DO
-	praat_showAction_classNames (GET_STRING (L"Class 1"),
-		GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
+	praat_showAction_classNames (GET_STRING (L"Class 1"), GET_STRING (L"Class 2"), GET_STRING (L"Class 3"), GET_STRING (L"Command"));
 END
 
 /********** Callbacks of the Preferences menu. **********/
@@ -381,55 +381,52 @@ static int readFromFile (MelderFile file) {
 }
 
 FORM_READ (Data_readFromFile, L"Read Object(s) from file", 0, true)
-	if (! readFromFile (file)) return 0;
+	readFromFile (file); therror
 END
 
 /********** Callbacks of the Save menu. **********/
 
 FORM_WRITE (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1) {
-		return Data_writeToTextFile (ONLY_OBJECT, file);
+		LOOP {
+			iam (Data);
+			Data_writeToTextFile (me, file); therror
+		}
 	} else {
-		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
-		WHERE (SELECTED) Collection_addItem (list, OBJECT);
-		result = Data_writeToTextFile (list, file);
-		list -> size = 0;   /* Disown. */
-		forget (list);
-		return result;
+		autoCollection set = praat_getSelectedObjects ();
+		Data_writeToTextFile (set.peek(), file); therror
 	}
 END
 
 FORM_WRITE (Data_writeToShortTextFile, L"Save Object(s) as one short text file", 0, 0)
-	if (theCurrentPraatObjects -> totalSelection == 1)
-		return Data_writeToShortTextFile (ONLY_OBJECT, file);
-	else {
-		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
-		WHERE (SELECTED) Collection_addItem (list, OBJECT);
-		result = Data_writeToShortTextFile (list, file);
-		list -> size = 0;   /* Disown. */
-		forget (list);
-		return result;
+	if (theCurrentPraatObjects -> totalSelection == 1) {
+		LOOP {
+			iam (Data);
+			Data_writeToShortTextFile (me, file); therror
+		}
+	} else {
+		autoCollection set = praat_getSelectedObjects ();
+		Data_writeToShortTextFile (set.peek(), file); therror
 	}
 END
 
 FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
-	if (theCurrentPraatObjects -> totalSelection == 1)
-		return Data_writeToBinaryFile (ONLY_OBJECT, file);
-	else {
-		int result, IOBJECT;
-		Collection list = Collection_create (classData, theCurrentPraatObjects -> n);
-		WHERE (SELECTED) Collection_addItem (list, OBJECT);
-		result = Data_writeToBinaryFile (list, file);
-		list -> size = 0;   /* Disown. */
-		forget (list);
-		return result;
+	if (theCurrentPraatObjects -> totalSelection == 1) {
+		LOOP {
+			iam (Data);
+			Data_writeToBinaryFile (me, file); therror
+		}
+	} else {
+		autoCollection set = praat_getSelectedObjects ();
+		Data_writeToBinaryFile (set.peek(), file); therror
 	}
 END
 
 FORM_WRITE (Data_writeToLispFile, L"Save Object as LISP file", 0, L"lsp")
-	return Data_writeToLispFile (ONLY_OBJECT, file);
+	LOOP {
+		iam (Data);
+		Data_writeToLispFile (me, file); therror
+	}
 END
 
 /********** Callbacks of the Help menu. **********/
@@ -527,7 +524,7 @@ static void searchProc (void) {
 static MelderString itemTitle_about = { 0 };
 
 static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
-	wchar_t *name = MelderFile_name (file);
+	const wchar_t *name = MelderFile_name (file);
 	if (nread < 2) return NULL;
 	if ((header [0] == '#' && header [1] == '!') || wcsstr (name, L".praat") == name + wcslen (name) - 6
 	    || wcsstr (name, L".html") == name + wcslen (name) - 5)
@@ -537,10 +534,12 @@ static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
 	return NULL;
 }
 
-static int cb_openDocument (MelderFile file) {
-	if (! readFromFile (file))
+static void cb_openDocument (MelderFile file) {
+	try {
+		readFromFile (file); therror
+	} catch (MelderError) {
 		Melder_flushError (NULL);
-	return 0;
+	}
 }
 
 void praat_addMenus (GuiObject bar) {
@@ -638,4 +637,4 @@ void praat_addMenus2 (void) {
 	#endif
 }
 
-/* End of file praat_objectMenus.c */
+/* End of file praat_objectMenus.cpp */

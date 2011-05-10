@@ -1,6 +1,6 @@
-/* Cochleagram.c
+/* Cochleagram.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * pb 2002/07/16 GPL
  * pb 2007/03/17 domain quantity
  * pb 2008/01/19 double
+ * pb 2011/05/09 C++
  */
 
 #include "Graphics.h"
@@ -44,7 +45,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 {
 	static double border [1 + 12] =
 		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
-	Cochleagram copy = Data_copy (me);
+	Cochleagram copy = (Cochleagram) Data_copy (me);
 	long iy, ix, itmin, itmax;
 	if (! copy) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -112,4 +113,4 @@ Matrix Cochleagram_to_Matrix (Cochleagram me)
 	return thee;
 }
 
-/* End of file Cochleagram.c */
+/* End of file Cochleagram.cpp */

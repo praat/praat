@@ -225,11 +225,25 @@ Any praat_onlyObject (void *klas) {
 	return theCurrentPraatObjects -> list [result]. object;
 }
 
+Any praat_firstObject (void *klas) {
+	LOOP {
+		if (CLASS == klas) return theCurrentPraatObjects -> list [IOBJECT]. object;
+	}
+	return NULL;   // this is often OK
+}
+
 Any praat_onlyObject_generic (void *klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && Thing_subclass (CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
+}
+
+Any praat_firstObject_generic (void *klas) {
+	LOOP {
+		if (Thing_subclass (CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
+	}
+	return NULL;   // this is often OK
 }
 
 praat_Object praat_onlyScreenObject (void) {
@@ -239,8 +253,15 @@ praat_Object praat_onlyScreenObject (void) {
 	return & theCurrentPraatObjects -> list [result];
 }
 
-Ordered praat_getSelectedObjects (void) {
-	autoOrdered thee = Ordered_create ();
+Any praat_firstObject_any () {
+	LOOP {
+		return theCurrentPraatObjects -> list [IOBJECT]. object;
+	}
+	return NULL;   // this is often OK
+}
+
+Collection praat_getSelectedObjects (void) {
+	autoCollection thee = Collection_create (NULL, 10);
 	Collection_dontOwnItems (thee.peek());
 	LOOP {
 		iam_LOOP (Data);
@@ -935,14 +956,13 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
 	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
-	static int cb_openDocument (MelderFile file) {
+	static void cb_openDocument (MelderFile file) {
 		wchar_t text [500];
 		wchar_t *s = file -> path;
 		swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
 		long l = wcslen (text);
 		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
-		return 0;
 	}
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {

@@ -33,6 +33,7 @@
  * pb 2008/01/19 double
  * pb 2010/12/23 support for multi-channel sound files
  * pb 2011/04/05 C++
+ * pb 2011/05/03 fix WAV files with negative data chunk sizes
  */
 
 #include "melder.h"
@@ -395,6 +396,10 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 
 	while (fread (chunkID, 1, 4, f) == 4) {
 		chunkSize = bingeti4LE (f); //cherror
+		if (Melder_debug == 23) {
+			Melder_warning9 (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
+				Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
+		}
 		if (strnequ (chunkID, "fmt ", 4)) {
 			/*
 			 * Found a Format Chunk.
@@ -447,6 +452,12 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			dataChunkSize = chunkSize;
 			*startOfData = ftell (f);
 			if (chunkSize & 1) chunkSize ++;
+			if (chunkSize < 0) {   // incorrect data chunk (sometimes -44); assume that the data run till the end of the file
+				fseek (f, 0, SEEK_END);
+				long endOfData = ftell (f);
+				dataChunkSize = chunkSize = endOfData - *startOfData;
+				fseek (f, *startOfData, SEEK_SET);
+			}
 			if (Melder_debug == 23) {
 				for (i = 1; i <= chunkSize; i ++)
 					if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes of data, but found %ld.", chunkSize, i);
@@ -454,9 +465,6 @@ static int Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 				if (formatChunkPresent) break;   // OPTIMIZATION: do not read the whole data chunk if we have already read the format chunk
 			}
 		} else {   /* Ignore other chunks. */
-		    if (Melder_debug == 23)
-				Melder_warning9 (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
-					Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
 			if (chunkSize & 1) chunkSize ++;
 			for (i = 1; i <= chunkSize; i ++)
 				if (fread (data, 1, 1, f) < 1) return Melder_error ("File too small: expected %ld bytes, but found %ld.", chunkSize, i);

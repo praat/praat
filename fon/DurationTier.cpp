@@ -1,6 +1,6 @@
-/* DurationTier.c
+/* DurationTier.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2007/03/17 domain quantity
  * pb 2007/08/12 wchar_t
  * pb 2010/10/19 allow drawing without speckles
+ * pb 2011/05/09 C++
  */
 
 #include "DurationTier.h"
@@ -39,17 +40,20 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (me)));
 }
 
-class_methods (DurationTier, RealTier)
+class_methods (DurationTier, RealTier) {
 	class_method (info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
+	class_methods_end
+}
 
 DurationTier DurationTier_create (double tmin, double tmax) {
-	DurationTier me = Thing_new (DurationTier); cherror
-	RealTier_init_e (me, tmin, tmax); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoDurationTier me = Thing_new (DurationTier);
+		RealTier_init_e (me.peek(), tmin, tmax); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("DurationTier not created.");
+	}
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
@@ -59,12 +63,15 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 }
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me) {
-	long i;
-	DurationTier thee = DurationTier_create (my xmin, my xmax);
-	if (! thee) return NULL;
-	for (i = 1; i <= my nt; i ++)
-		if (! RealTier_addPoint (thee, my t [i], 1.0)) { forget (thee); return NULL; }
-	return thee;
+	try {
+		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
+		for (long i = 1; i <= my nt; i ++) {
+			RealTier_addPoint (thee.peek(), my t [i], 1.0); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to DurationTier.");
+	}
 }
 
-/* End of file DurationTier.c */
+/* End of file DurationTier.cpp */

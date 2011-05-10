@@ -1,6 +1,6 @@
 /* Strings.c
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
  * pb 2007/10/01 corrected nativization
  * pb 2007/11/17 getVectorStr
  * pb 2007/12/10 Strings_createAsFileList precomposes characters
+ * pb 2011/05/03 Windows: ignore file or directory names starting with '.'
  */
 
 //#define USE_STAT  1
@@ -209,12 +210,15 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 				 || (type == Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY && 
 						(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0))
 				{
-					my strings [++ my numberOfStrings] = Melder_wcsdup_e (findData. cFileName); cherror
+					if (findData. cFileName [0] != '.') {
+						my strings [++ my numberOfStrings] = Melder_wcsdup_e (findData. cFileName); cherror
+					}
 				}
 			} while (FindNextFileW (searchHandle, & findData));
 			FindClose (searchHandle);
 		}
 	#endif
+	Strings_sort (me);
 end:
 	#if USE_STAT
 		if (d) closedir (d);

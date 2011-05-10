@@ -1,6 +1,6 @@
-/* AnyTier.c
+/* AnyTier.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2008/03/31 corrected binary search (case n=1)
  * pb 2008/09/20 shiftX
  * pb 2008/09/23 scaleX
+ * pb 2011/05/09 C++
  */
 
 #include "AnyTier.h"
@@ -64,7 +65,7 @@ static void shiftX (I, double xfrom, double xto) {
 	iam (AnyTier);
 	inherited (AnyTier) shiftX (me, xfrom, xto);
 	for (long i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = my points -> item [i];
+		AnyPoint point = (AnyPoint) my points -> item [i];
 		NUMshift (& point -> time, xfrom, xto);
 	}
 }
@@ -73,7 +74,7 @@ static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double x
 	iam (AnyTier);
 	inherited (AnyTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
 	for (long i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = my points -> item [i];
+		AnyPoint point = (AnyPoint) my points -> item [i];
 		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
@@ -265,4 +266,4 @@ PointProcess AnyTier_downto_PointProcess (I) {
 	return thee;
 }
 
-/* End of file AnyTier.c */
+/* End of file AnyTier.cpp */

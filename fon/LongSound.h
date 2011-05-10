@@ -79,7 +79,7 @@ int LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int ch
 int LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
 int LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
 
-int LongSound_concatenate (Ordered collection, MelderFile file, int audioFileType);
+int LongSound_concatenate (Collection collection, MelderFile file, int audioFileType);
 /* Concatenate a collection of Sound and LongSound objects. */
 
 void LongSound_prefs (void);

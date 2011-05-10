@@ -18,21 +18,17 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/05/05
  */
 
-#ifndef _Cochleagram_h_
-	#include "Cochleagram.h"
-#endif
-#ifndef _Excitation_h_
-	#include "Excitation.h"
-#endif
+#include "Cochleagram.h"
+#include "Excitation.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-Any Cochleagram_to_Excitation (I, double t);
+Excitation Cochleagram_to_Excitation (I, double t);
 
 #ifdef __cplusplus
 	}
