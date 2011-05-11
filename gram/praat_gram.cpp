@@ -363,7 +363,7 @@ FORM (OTGrammar_getCandidate, L"Get candidate", 0)
 DO
 	iam_ONLY (OTGrammar);
 	OTGrammarTableau tableau;
-	long itab = GET_INTEGER (L"Tableau"), icand = GET_INTEGER (L"Candidate");
+	long itab = GET_INTEGER (L"Tableau number"), icand = GET_INTEGER (L"Candidate number");
 	if (itab > my numberOfTableaus)
 		Melder_throw ("The specified tableau number should not exceed the number of tableaus.");
 	tableau = & my tableaus [itab];

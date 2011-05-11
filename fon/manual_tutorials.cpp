@@ -23,9 +23,11 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110510)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110511)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.25# (11 May 2011)")
+LIST_ITEM (L"\\bu OT learning: corrected a crashing bug from ##Get candidate...#.")
 NORMAL (L"##5.2.24# (10 May 2011)")
 LIST_ITEM (L"\\bu Ability to open WAV files that contain incorrect information about the number of samples.")
 LIST_ITEM (L"\\bu Removed an old bug that could cause Praat to fail to read a chronological TextGrid text file.")
