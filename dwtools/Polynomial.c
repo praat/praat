@@ -362,7 +362,7 @@ FunctionTerms FunctionTerms_create (double xmin, double xmax,
 	return me;
 }
 
-int FunctionTerms_initFromString (I, double xmin, double xmax, wchar_t *s,
+int FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s,
 	int allowTrailingZeros)
 {
 	iam (FunctionTerms); long numberOfCoefficients; double *numbers = NULL;
@@ -728,7 +728,7 @@ Polynomial Polynomial_create (double xmin, double xmax, long degree)
 	return me;
 }
 
-Polynomial Polynomial_createFromString (double xmin, double xmax, wchar_t *s)
+Polynomial Polynomial_createFromString (double xmin, double xmax, const wchar_t *s)
 {
 	Polynomial me = Thing_new (Polynomial);
 	
@@ -1039,7 +1039,7 @@ LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPol
 }
 
 LegendreSeries LegendreSeries_createFromString (double xmin, double xmax,
-	wchar_t *s)
+	const wchar_t *s)
 {
 	LegendreSeries me = Thing_new (LegendreSeries);
 	
@@ -1132,7 +1132,7 @@ Roots Roots_create (long numberOfRoots)
 	Roots me = Thing_new (Roots);
 	
 	if (me == NULL) return me;
-	if (! ComplexVector_init (me, 1, numberOfRoots)) forget (me);
+	ComplexVector_init (me, 1, numberOfRoots); 
 	return me;
 }
 
@@ -1175,7 +1175,7 @@ static void NUMdcvector_extrema_im (dcomplex v[], long lo, long hi,
 }
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin,
-	double imax, wchar_t *symbol, int fontSize, int garnish)
+	double imax, const wchar_t *symbol, int fontSize, int garnish)
 {
 	long i; int oldFontSize = Graphics_inqFontSize (g);
 	double eps = 1e-6, denum;
@@ -1546,7 +1546,7 @@ ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax,
 }
 
 ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax,
-	wchar_t *s)
+	const wchar_t *s)
 {
 	ChebyshevSeries me = Thing_new (ChebyshevSeries);
 	
@@ -1916,7 +1916,7 @@ class_methods (Spline, FunctionTerms)
 class_methods_end
 
 /* Precondition: FunctionTerms part inited + degree */
-static int Spline_initKnotsFromString (I, long degree, wchar_t *interiorKnots)
+static int Spline_initKnotsFromString (I, long degree, const wchar_t *interiorKnots)
 {
 	iam (Spline); double *numbers = NULL;
 	long i, n, numberOfInteriorKnots, order;
@@ -2133,7 +2133,7 @@ MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInte
 }
 
 MSpline MSpline_createFromStrings (double xmin, double xmax, long degree,
-	wchar_t *coef, wchar_t *interiorKnots)
+	const wchar_t *coef, const wchar_t *interiorKnots)
 {
 	MSpline me = Thing_new (MSpline);
 	
@@ -2198,7 +2198,7 @@ ISpline ISpline_create (double xmin, double xmax, long degree,
 }
 
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree,
-	wchar_t *coef, wchar_t *interiorKnots)
+	const wchar_t *coef, const wchar_t *interiorKnots)
 {
 	ISpline me = Thing_new (ISpline);
 	

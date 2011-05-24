@@ -38,6 +38,7 @@
  * pb 2008/11/04 MelderReadText
  * pb 2009/03/14 NUMvector_append
  * pb 2009/03/21 NUMvector_insert
+ * pb 2011/05/14
  */
 
 /* "NUM" = "NUMerics" */
@@ -269,7 +270,6 @@ FUNCTION (f, float)
 FUNCTION (d, double)
 FUNCTION (fc, fcomplex)
 FUNCTION (dc, dcomplex)
-FUNCTION (c, char)
 #undef FUNCTION
 
 #ifndef __cplusplus
@@ -507,7 +507,6 @@ FUNCTION (d, double, r4)
 FUNCTION (d, double, r8)
 FUNCTION (fc, fcomplex, c8)
 FUNCTION (dc, dcomplex, c16)
-FUNCTION (c, char, c1)
 #undef FUNCTION
 
 /*

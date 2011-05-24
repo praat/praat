@@ -106,7 +106,7 @@ int OrderedOfString_append (I, wchar_t *append)
 {
 	iam (OrderedOfString);
 	try {
-		if (append == NULL) return 1; // BUG: lege string appenden??
+		if (append == 0) return 1; // BUG: lege string appenden??
 		autoSimpleString item = SimpleString_create (append);
 		Collection_addItem (me, item.transfer());
 		return 1;
@@ -125,7 +125,7 @@ OrderedOfString OrderedOfString_joinItems (I, thou)
 	
 		for (long i = 1; i <= my size; i++)
 		{
-			SimpleString_append ((SimpleString)his item[i], (SimpleString)thy item[i]);
+			SimpleString_append ((SimpleString) his item[i], (SimpleString)thy item[i]);
 		}
 		return him.transfer();
 	} catch (MelderError) { rethrowzero; }
@@ -141,10 +141,11 @@ OrderedOfString OrderedOfString_selectUniqueItems (I, int sort)
 			autoOrderedOfString him = OrderedOfString_create ();
 			for (long i = 1; i <= my size; i++)
 			{
-				if (! OrderedOfString_indexOfItem_c (him.peek(), ((SimpleString) my item[i])->string))
+				SimpleString ss = (SimpleString) my item[i];
+				if (! OrderedOfString_indexOfItem_c (him.peek(), ss -> string))
 				{
-					autoSimpleString item = (SimpleString) Data_copy (my item[i]);
-					Collection_addItem (him.peek(), item.transfer());
+					autoSimpleString item = (SimpleString) Data_copy (ss);
+					Collection_addItem (him.peek(), item.transfer()); therror
 				}
 			}
 			Collection_shrinkToFit (him.peek());
@@ -164,7 +165,7 @@ OrderedOfString OrderedOfString_selectUniqueItems (I, int sort)
 			}
 		}
 		autoOrderedOfString him = OrderedOfString_create ();
-		for (long i=1; i <= thy size; i++)
+		for (long i = 1; i <= thy size; i++)
 		{
 			autoData item = (Data) Data_copy (thy item[i]);
 			Collection_addItem (him.peek(), item.transfer()); therror
@@ -317,7 +318,7 @@ end:
 }
  
 
-long OrderedOfString_isSubsetOf (I, thou, long *translation)
+long OrderedOfString_isSubsetOf (I, thou, long *translation) // ?? test and give number
 {
     iam (OrderedOfString); 
 	thouart (OrderedOfString); 

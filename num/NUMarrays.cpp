@@ -23,6 +23,7 @@
  * pb 2008/01/19 include storage in I/O names
  * pb 2009/03/14 NUMvector_add
  * pb 2011/03/29 C++
+ * pb 2011/05/14 removed char (because only signed char and unsigned char can be read and written correctly)
  */
 
 #include "NUM.h"
@@ -47,6 +48,7 @@ void * NUMvector (long elementSize, long lo, long hi) {
 		theTotalNumberOfArrays += 1;
 		return result;
 	} catch (MelderError) {
+		Melder_casual ("exception in NUMvector");
 		rethrowmzero ("Vector not created.");
 	}
 }
@@ -242,7 +244,6 @@ FUNCTION (ul, unsigned long)
 FUNCTION (d, double)
 FUNCTION (fc, fcomplex)
 FUNCTION (dc, dcomplex)
-FUNCTION (c, char)
 #undef FUNCTION
 
 #define FUNCTION(t,type,storage)  \
@@ -377,7 +378,6 @@ FUNCTION (d, double, r4)
 FUNCTION (d, double, r8)
 FUNCTION (fc, fcomplex, c8)
 FUNCTION (dc, dcomplex, c16)
-FUNCTION (c, char, c1)
 #undef FUNCTION
 
 /* End of file NUMarrays.cpp */

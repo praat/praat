@@ -103,10 +103,10 @@ int Configuration_rotateToPrincipalDirections (Configuration me);
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, 
 	int yCoordinate, double xmin, double xmax, double ymin, double ymax, 
-	int labelSize, int useRowLabels, wchar_t *label, int garnish);
+	int labelSize, int useRowLabels, const wchar_t *label, int garnish);
 	
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, 
-	double scale, int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
+	double scale, int confidence, const wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
 Configuration TableOfReal_to_Configuration (I);

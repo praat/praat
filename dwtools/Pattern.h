@@ -51,7 +51,7 @@ class_create (Pattern, Matrix);
 
 int Pattern_init (I, long ny, long nx);
 
-Any Pattern_create (long ny, long nx);
+Pattern Pattern_create (long ny, long nx);
 
 void Pattern_normalize (I, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);

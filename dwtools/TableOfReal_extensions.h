@@ -78,13 +78,13 @@ TableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
 
 void TableOfReal_getColumnExtrema (I, long col, double *min, double *max);
 
-void TableOfReal_drawRowsAsHistogram (I, Graphics g, wchar_t *rows, long colb, long cole,
+void TableOfReal_drawRowsAsHistogram (I, Graphics g, const wchar_t *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
-	double interbarsFraction, wchar_t *greys, int garnish);
+	double interbarsFraction, const wchar_t *greys, int garnish);
 
 void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 	long rowe, double xmin, double xmax, double ymin, double ymax,
-	int labelSize, int useRowLabels, wchar_t *label, int garnish);
+	int labelSize, int useRowLabels, const wchar_t *label, int garnish);
 
 void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, double fractionWhite);
 
@@ -102,7 +102,7 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax,
 void TableOfReal_drawColumnAsDistribution (I, Graphics g, int column, double minimum, double maximum, long nBins,
 	double freqMin, double freqMax, int cumulative, int garnish);
 
-long TableOfReal_getNumberOfLabelMatches (I, wchar_t *search, int columnLabels,
+long TableOfReal_getNumberOfLabelMatches (I, const wchar_t *search, int columnLabels,
 	int use_regexp);
 /*
 	Find number of labels that match search description.
@@ -125,17 +125,17 @@ int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin);
 void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column);
 
 int TableOfReal_setSequentialColumnLabels (I, long from, long to,
-	wchar_t *precursor, long number, long increment);
+	const wchar_t *precursor, long number, long increment);
 int TableOfReal_setSequentialRowLabels (I, long from, long to,
-	wchar_t *precursor, long number, long increment);
+	const wchar_t *precursor, long number, long increment);
 
 int TableOfReal_hasRowLabels (I);
 int TableOfReal_hasColumnLabels (I);
 
-int TableOfReal_changeRowLabels (I, wchar_t *search, wchar_t *replace,
+int TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
-int TableOfReal_changeColumnLabels (I, wchar_t *search, wchar_t *replace,
+int TableOfReal_changeColumnLabels (I, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 /*
@@ -155,7 +155,9 @@ void TableOfReal_centreColumns_byRowLabel (I);
 
 double TableOfReal_getColumnQuantile (I, long col, double quantile);
 
+double TableOfReal_getRowSumByLabel (I, const wchar_t *label);
 double TableOfReal_getRowSum (I, long index);
+double TableOfReal_getColumnSumByLabel (I, const wchar_t *label);
 double TableOfReal_getColumnSum (I, long index);
 double TableOfReal_getGrandSum (I);
 
@@ -211,7 +213,7 @@ TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (I, thou, int by_colum
 #define TablesOfReal_methods Ordered_methods
 class_create (TablesOfReal, Ordered);
 
-int TablesOfReal_init (I, void *klas);
+void TablesOfReal_init (I, void *klas);
 
 TablesOfReal TablesOfReal_create (void);
 

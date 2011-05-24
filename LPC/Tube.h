@@ -46,13 +46,13 @@ oo_CLASS_CREATE (Tube, Sampled);
 	            c[nSegments] -> glottis. 	
 */
 
-int Tube_Frame_init (Tube_Frame me, long nSegments, double length);
+void Tube_Frame_init (Tube_Frame me, long nSegments, double length);
 
 void Tube_Frame_free (Tube_Frame me);
 
-int Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
+void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-int Tube_init (I, double tmin, double tmax, long nt, double dt, double t1, 
+void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1, 
 	long maxnSegments, double defaultLength);
 
 
@@ -65,7 +65,7 @@ class_create (Area, Tube);
 	units in m^2. 
 */
 
-int Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, 
+void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, 
 	long maxnSegments, double defaultLength);
 		
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -82,7 +82,7 @@ class_create (RC, Tube);
 */
 
 
-int RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
+void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
 		
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -92,4 +92,12 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	}
 #endif
 
+#if 0
+#ifdef __cplusplus
+struct autoTubeFrame : struct structTubeFrame {
+	autoTubeFrame () { nSegments = 0; length = 0; c = 0; }
+	~autoTubeFrame () { NUMvector_free(c, 1); }
+};
+#endif
+#endif
 #endif /* _Tube_h_ */

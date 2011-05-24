@@ -199,6 +199,9 @@ Post/Preprocesing
 The layout of config.h/gsl__config.h varies from one version of gsl to the other
 Do it by hand in """ + todir + """gsl__config.h:
 Replace the #define "haves" with
+
+#define HAVE_IEEEFP_H 0
+
 #if defined(linux)
    #define HAVE_DECL_EXPM1 1
 #else
@@ -286,6 +289,8 @@ Replace the #define "haves" with
  #undef HAVE_DARWIN86_IEEE_INTERFACE
 
  #define GSL_DISABLE_DEPRECATED 1
+ 
+#define USE_BLAS 0
 
 By hand: Corrected in the fromdir/specfun/coupling.c:
 #if ! defined (GSL_DISABLE_DEPRECATED)

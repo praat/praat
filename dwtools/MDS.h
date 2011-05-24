@@ -175,7 +175,7 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me);
 #define Proximities_methods TablesOfReal_methods
 class_create (Proximities, TablesOfReal);
 
-int Proximities_init (I, void *klas);
+void Proximities_init (I, void *klas);
 
 Proximities Proximities_create (void);
 
@@ -242,7 +242,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c);
 	Distance (*transform) (I, MDSVec vec, Distance dist, Weight w);
 class_create (Transformator, Thing);
 
-int Transformator_init (I, long numberOfPoints);
+void Transformator_init (I, long numberOfPoints);
 
 Transformator Transformator_create (long numberOfPoints);
 
@@ -722,7 +722,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseStd);
 Salience Salience_createCarrollWishExample (void);
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
-	int type, long order, wchar_t *interiorKnots, int garnish);
+	int type, long order, wchar_t const *interiorKnots, int garnish);
 
 void drawMDSClassRelations (Graphics g);
 

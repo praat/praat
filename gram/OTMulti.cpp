@@ -32,6 +32,7 @@
  * pb 2011/03/01 multiple update rules; more decision strategies
  * pb 2011/03/29 C++
  * pb 2011/04/27 Melder_debug 41 and 42
+ * pb 2011/05/15 prevented zero sums of probabilities in MaxEnt
  */
 
 #include "OTMulti.h"
@@ -109,7 +110,7 @@ static int readText (I, MelderReadText text) {
 		iam (OTMulti);
 		if (! inherited (OTMulti) readText (me, text)) return 0;
 		if (localVersion >= 1) {
-			if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) return Melder_error1 (L"Trying to read decision strategy.");
+			if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) return Melder_error1 (L"Decision strategy not read.");
 		}
 		if (localVersion >= 2) {
 			my leak = texgetr8 (text); iferror Melder_throw ("Trying to read leak.");
@@ -124,7 +125,7 @@ static int readText (I, MelderReadText text) {
 			if (localVersion < 2) {
 				constraint -> plasticity = 1.0;
 			} else {
-				constraint -> plasticity = texgetr8 (text); iferror Melder_throw ("Trying to read plasticity of constraint ", icons, ".");
+				constraint -> plasticity = texgetr8 (text); iferror Melder_throw ("Plasticity of constraint ", icons, " not read.");
 			}
 		}
 		if ((my numberOfCandidates = texgeti4 (text)) < 1) Melder_throw ("No candidates.");
@@ -311,8 +312,8 @@ static void _OTMulti_fillInHarmonies (OTMulti me, const wchar_t *form1, const wc
 }
 
 static void _OTMulti_fillInProbabilities (OTMulti me, const wchar_t *form1, const wchar_t *form2) {
-	double maximumHarmony = my candidates [1]. harmony;
-	for (long icand = 2; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
+	double maximumHarmony = -1e300;
+	for (long icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
 		if (candidate -> harmony > maximumHarmony) {
 			maximumHarmony = candidate -> harmony;

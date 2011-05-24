@@ -21,7 +21,7 @@
 
 /*
  djmw 20020315 GPL header.
- djmw 20110305 Latest modification.
+ djmw 20110505 Latest modification.
  */
 
 #include "Matrix.h"
@@ -48,13 +48,13 @@ class_create (Activation, Matrix);
    z[iy][ix]		:the activities
 */
 
-int Activation_init (I, long ny, long nx);
+void Activation_init (I, long ny, long nx);
 
-Any Activation_create (long ny, long nx);
+Activation Activation_create (long ny, long nx);
 
-Any Matrix_to_Activation (I);
+Activation Matrix_to_Activation (I);
 
-Any Activation_to_Matrix (I);
+Matrix Activation_to_Matrix (I);
 
 
 int _Activation_checkElements (Activation me);

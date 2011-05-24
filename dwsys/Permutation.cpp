@@ -1,4 +1,4 @@
-/* Permutation.c
+/* Permutation.cpp
  *
  * Copyright (C) 2005-2011 David Weenink
  *
@@ -198,7 +198,7 @@ Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
 		autoPermutation thee = (Permutation) Data_copy (me); therror
 		Permutation_permuteRandomly_inline (thee.peek(), from, to); therror
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Permutation not permuted."); };
+	} catch (MelderError) { rethrowmzero ("Permutation not permuted."); }
 }
 
 Permutation Permutation_rotate (Permutation me, long from, long to, long step)
@@ -272,7 +272,9 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 				long last = first + blocksize - 1;
 				Permutation_permuteRandomly_inline (thee.peek(), first, last); therror
 				if (noDoublets && iblock > 0 && (thy p[first - 1] % blocksize) == (thy p[first] % blocksize))
-				 Permutation_swapOneFromRange (thee.peek(), first+1, last, first, 0); therror
+				{
+					Permutation_swapOneFromRange (thee.peek(), first+1, last, first, 0); therror
+				}
 			}
 		}
 		return thee.transfer();

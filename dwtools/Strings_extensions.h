@@ -51,11 +51,11 @@ Strings Strings_createFixedLength (long numberOfStrings);
 
 Strings Strings_append (Ordered me);
 
-Strings Strings_change (Strings me, wchar_t *search, wchar_t *replace,
+Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
-int Strings_setString (Strings me, wchar_t *new, long index);
+int Strings_setString (Strings me, const wchar_t *newstr, long index);
 
 Strings strings_to_Strings (wchar_t **strings, long from, long to);
 

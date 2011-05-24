@@ -32,7 +32,7 @@
 	extern "C" {
 #endif
 
-int SimpleString_init (SimpleString me, const wchar_t *value);
+void SimpleString_init (SimpleString me, const wchar_t *value);
 /* return 0 when value == NULL */
 
 const wchar_t *SimpleString_c (SimpleString me);
@@ -40,15 +40,15 @@ const wchar_t *SimpleString_c (SimpleString me);
 
 int SimpleString_compare (SimpleString me, SimpleString thee);
 
-int SimpleString_append (SimpleString me, SimpleString thee);
-int SimpleString_append_c (SimpleString me, const wchar_t *str);
+void SimpleString_append (SimpleString me, SimpleString thee);
+void SimpleString_append_c (SimpleString me, const wchar_t *str);
 /* append string to me */
 
 SimpleString SimpleString_concat (SimpleString me, SimpleString thee);
 SimpleString SimpleString_concat_c (SimpleString me, const wchar_t *str);
 /* concatenate two strings */
 
-int SimpleString_replace_c (SimpleString me, const wchar_t *replacement);
+void SimpleString_replace_c (SimpleString me, const wchar_t *replacement);
 /* replace my value with new string */
 
 long SimpleString_length (SimpleString me);

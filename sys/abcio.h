@@ -27,6 +27,7 @@
  * pb 2007/06/21 *w2
  * pb 2007/07/21 MelderReadString
  * pb 2008/11/04 MelderReadText
+ * pb 2011/05/14
  */
 
 #ifndef _complex_h_
@@ -55,7 +56,6 @@ double texgetr8 (MelderReadText text);
 double texgetr10 (MelderReadText text);
 fcomplex texgetc8 (MelderReadText text);
 dcomplex texgetc16 (MelderReadText text);
-char texgetc1 (MelderReadText text);
 short texgete1 (MelderReadText text, int (*getValue) (const wchar_t *));
 short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *));
 short texgeteb (MelderReadText text);
@@ -81,7 +81,6 @@ void texputr4 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, 
 void texputr8 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc8 (MelderFile file, fcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void texputc1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texpute2 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
@@ -198,18 +197,16 @@ fcomplex bingetc8 (FILE *f);
 dcomplex bingetc16 (FILE *f);
 void binputc8 (fcomplex z, FILE *f);
 void binputc16 (dcomplex z, FILE *f);
-#define bingetc1 bingeti1
-#define binputc1 binputi1
 
 char * bingets1 (FILE *f);   void binputs1 (const char *s, FILE *f);   /* 0..255 characters. */
 char * bingets2 (FILE *f);   void binputs2 (const char *s, FILE *f);   /* 0..65535 characters. */
 char * bingets4 (FILE *f);   void binputs4 (const char *s, FILE *f);   /* 0..4294967295 characters. */
 /*
-	Read or write a string from or to strlen (s) + 1, 2, or 4 bytes in the stream 'f',
+	Read or write a string from or to wcslen (s) UTF-16LE or ASCII characters + 1, 2, or 4 bytes in the stream 'f',
 	in a Pascal-style format: first the length, then the characters, without a trailing null byte.
 	bingetsxxx returns a new 'malloc'ed null-terminated C string (for the caller to 'free' it),
 	or NULL if out of memory.
-	binputsxxx expects a null-terminated C string whose 'strlen' fits in 1, 2, or 4 bytes.
+	binputsxxx expects a null-terminated C string whose 'wcslen' fits in 1, 2, or 4 bytes.
 */
 wchar_t * bingetw1 (FILE *f);   void binputw1 (const wchar_t *s, FILE *f);
 wchar_t * bingetw2 (FILE *f);   void binputw2 (const wchar_t *s, FILE *f);
@@ -273,8 +270,6 @@ fcomplex cacgetc8 (CACHE *f);
 dcomplex cacgetc16 (CACHE *f);
 void cacputc8 (fcomplex z, CACHE *f);
 void cacputc16 (dcomplex z, CACHE *f);
-#define cacgetc1 cacgeti1
-#define cacputc1 cacputi1
 long cacgeti4LE (CACHE *f);   void cacputi4LE (long i, CACHE *f);
 unsigned int cacgetu2LE (CACHE *f);   void cacputu2LE (unsigned int i, CACHE *f);
 unsigned long cacgetu4LE (CACHE *f);   void cacputu4LE (unsigned long i, CACHE *f);

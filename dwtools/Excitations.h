@@ -56,7 +56,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join);
 TableOfReal Excitations_to_TableOfReal (Excitations me);
 /* Precondition: my size >= 1, all items have same dimension */
 
-Any Excitations_getItem (Excitations m, long item);
+Excitation Excitations_getItem (Excitations m, long item);
 
 #ifdef __cplusplus
 	}

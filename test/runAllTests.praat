@@ -6,8 +6,10 @@
 directories = Create Strings as directory list... directories .
 numberOfDirectories = Get number of strings
 for directory to numberOfDirectories
+printline 'directory'
 	select Strings directories
 	directory$ = Get string... directory
+printline 'directory$'
 	if directory$ <> "manually"
 		files = Create Strings as file list... files 'directory$'/*.praat
 		numberOfFiles = Get number of strings

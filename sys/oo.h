@@ -32,6 +32,7 @@
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRING
  * pb 2011/03/15 removed oo_CHAR
+ * pb 2011/04/14 removed oo_WCHAR
  */
 
 /*** Single types. ***/
@@ -49,9 +50,7 @@
 /*    r10: store as 10-byte IEEE/Apple MSB-first floating point format. */
 /*    c8: store real and imaginary part as r4. */
 /*    c16: store real and imaginary part as r4. */
-/*    c1: store as 1-byte character. */
-/*    c2: store as 2-byte character. */
-/* For text format, there are no restrictions for the integer types, */
+/* For text format, reading imposes the same restrictions for the integer types, */
 /* and the real numbers are written with a precision of 8, 17, or 20 characters. */
 
 /* Single types. Declarations like: int x; */
@@ -69,7 +68,6 @@
 #define oo_DOUBLE(x)  oo_SIMPLE (double, r8, x)
 #define oo_FCOMPLEX(x)  oo_SIMPLE (fcomplex, c8, x)
 #define oo_DCOMPLEX(x)  oo_SIMPLE (dcomplex, c16, x)
-#define oo_WCHAR(x)  oo_SIMPLE (wchar_t, c2, x)
 #define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
 
 /* Arrays with compile-time allocation of capacity. Declarations like: int x [cap]; */
@@ -91,7 +89,6 @@
 #define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r8, x, cap, n)
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (fcomplex, c8, x, cap, n)
 #define oo_DCOMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c16, x, cap, n)
-#define oo_WCHAR_ARRAY(x,cap,n)  oo_ARRAY (wchar_t, c2, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
 /* Sets with compile-time allocation of capacity. Declarations like: int x [1 + setType_MAX]; */
@@ -110,7 +107,6 @@
 #define oo_DOUBLE_SET(x,setType)  oo_SET (double, r8, x, setType)
 #define oo_FCOMPLEX_SET(x,setType)  oo_SET (fcomplex, c8, x, setType)
 #define oo_DCOMPLEX_SET(x,setType)  oo_SET (dcomplex, c16, x, setType)
-#define oo_WCHAR_SET(x,setType)  oo_SET (wchar_t, c2, x, setType)
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
 
 /* Arrays with run-time allocation of size. Declarations like: int *x; */
@@ -130,7 +126,6 @@
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  oo_VECTOR (double, d, r8, x, min, max)
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (fcomplex, fc, c8, x, min, max)
 #define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  oo_VECTOR (dcomplex, dc, c16, x, min, max)
-#define oo_WCHAR_VECTOR_FROM(x,min,max)  oo_VECTOR (wchar_t, c, c2, x, min, max)
 #define oo_POINTER_VECTOR_FROM(x,min,max)  oo_VECTOR (void *, p, dummy, x, min, max)
 
 #define oo_BYTE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (signed char, b, i1, x, row1, row2, col1, col2)
@@ -146,7 +141,6 @@
 #define oo_DOUBLE_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (double, d, r8, x, row1, row2, col1, col2)
 #define oo_FCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (fcomplex, fc, c8, x, row1, row2, col1, col2)
 #define oo_DCOMPLEX_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (dcomplex, dc, c16, x, row1, row2, col1, col2)
-#define oo_WCHAR_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (wchar, c, c2, x, row1, row2, col1, col2)
 #define oo_POINTER_MATRIX_FROM(x,row1,row2,col1,col2)  oo_MATRIX (void *, p, dummy, x, row1, row2, col1, col2)
 
 /* The same arrays, with the first index fixed at 1. */
@@ -164,7 +158,6 @@
 #define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, d, r8, x, 1, n)
 #define oo_FCOMPLEX_VECTOR(x,n)  oo_VECTOR (fcomplex, fc, c8, x, 1, n)
 #define oo_DCOMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, dc, c16, x, 1, n)
-#define oo_WCHAR_VECTOR(x,n)  oo_VECTOR (wchar, c, c2, x, 1, n)
 #define oo_POINTER_VECTOR(x,n)  oo_VECTOR (void *, p, dummy, x, 1, n)
 
 #define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, b, i1, x, 1, nrow, 1, ncol)
@@ -180,7 +173,6 @@
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, d, r8, x, 1, nrow, 1, ncol)
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (fcomplex, fc, c8, x, 1, nrow, 1, ncol)
 #define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, dc, c16, x, 1, nrow, 1, ncol)
-#define oo_WCHAR_MATRIX(x,nrow,ncol)  oo_MATRIX (wchar, c, c2, x, 1, nrow, 1, ncol)
 #define oo_POINTER_MATRIX(x,nrow,ncol)  oo_MATRIX (void *, p, dummy, x, 1, nrow, 1, ncol)
 
 

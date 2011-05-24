@@ -23,9 +23,13 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110511)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110524)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.26# (24 May 2011)")
+LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash on some platforms when reading a Praat binary file.")
+LIST_ITEM (L"\\bu @ExperimentMFC: corrected a bug that caused Praat to crash if an experiment contained zero trials.")
+LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash when merging multiple IntervalTiers.")
 NORMAL (L"##5.2.25# (11 May 2011)")
 LIST_ITEM (L"\\bu OT learning: corrected a crashing bug from ##Get candidate...#.")
 NORMAL (L"##5.2.24# (10 May 2011)")
@@ -45,7 +49,7 @@ LIST_ITEM (L"\\bu Support for very long file paths on the Mac.")
 NORMAL (L"##5.2.19# (16 March 2011)")
 LIST_ITEM (L"\\bu @ExperimentMFC: corrected a bug introduced in 5.2.18 that could cause Praat to crash when extracting results from an incomplete experiment.")
 NORMAL (L"##5.2.18# (9 March 2011)")
-LIST_ITEM (L"\\bu @ExperimentMFC: incomplete experiments can still output their incomplete results.")
+LIST_ITEM (L"\\bu @ExperimentMFC: incomplete experiments can nevertheless output their incomplete results.")
 NORMAL (L"##5.2.17# (2 March 2011)")
 LIST_ITEM (L"\\bu Better names for Table opening and saving commands.")
 LIST_ITEM (L"\\bu @ExperimentMFC: reaction times for mouse clicks.")

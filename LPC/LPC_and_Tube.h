@@ -38,8 +38,8 @@
 	extern "C" {
 #endif
 
-int LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee);
-int LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee);
+void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee);
+void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee);
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength);
 

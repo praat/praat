@@ -219,8 +219,7 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 		thouart (Configuration);
 		long npc = thy numberOfColumns;
 
-		if (thy numberOfColumns > my dimension) Melder_throw ("The dimension of the Configuration must "
-			"be less than or equal to the dimension of the PCA.");
+		if (thy numberOfColumns > my dimension) Melder_throw ("The dimension of the Configuration must be less than or equal to the dimension of the PCA.");
 
 		if (npc > my numberOfEigenvalues) npc = my numberOfEigenvalues;
 

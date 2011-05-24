@@ -220,7 +220,7 @@ OK
 DO
 	TableOfReal thee = ONLY (classTableOfReal);
 	int criterion = GET_INTEGER (L"Criterion based on") - 1;
-	wchar_t *criterionText = GaussianMixture_criterionText (criterion);
+	const wchar_t *criterionText = GaussianMixture_criterionText (criterion);
 	double lnpdn = GaussianMixture_and_TableOfReal_getLikelihoodValue (ONLY (classGaussianMixture), thee, criterion);
 	Melder_information6 (Melder_double (lnpdn / thy numberOfRows), L" (= ", criterionText, L", n = ",
 		Melder_integer (thy numberOfRows), L")");

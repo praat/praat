@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20110306 Latest modification.
+ djmw 20110511 Latest modification.
 */
 
 #ifndef _TableOfReal_h_
@@ -51,11 +51,15 @@ class_create (Confusion, TableOfReal);
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses);
 
+Confusion Confusion_createSimple (const wchar *labels);
+
 Confusion Categories_to_Confusion (Categories me, Categories thee);
 
-int Confusion_addEntry (Confusion me, const wchar_t *stimulus,
-	const wchar_t *response);
+void Confusion_increase (Confusion me, const wchar_t *stimulus, const wchar_t *response);
 /* data['stim']['resp'] += 1; */
+
+double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *resp);
+/* data['stim']['resp'] ; */
 
 void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
     double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy);
@@ -70,8 +74,7 @@ void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
  *  *uxy    symmetrical dependency
  */
 
-void Confusion_getFractionCorrect (Confusion me, double *fraction,
-	long *numberOfCorrect);
+void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberOfCorrect);
 
 void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g,
 	long index, double lowerPercentage, double xmin, double xmax,
@@ -95,7 +98,11 @@ Any Confusion_difference (Confusion me, Confusion thee);
 
 long Confusion_getNumberOfEntries (Confusion me);
 
-Confusion Confusion_condense (Confusion me, wchar_t *search, wchar_t *replace,
+Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
+Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
+Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos);
+
+Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t *replace,
 	long maximumNumberOfReplaces, int use_regexp);
 /*
 	Group row and column labels according to search and replace.

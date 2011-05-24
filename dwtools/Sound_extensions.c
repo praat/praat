@@ -504,7 +504,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 
 	for (n = 1, i = 1; i <= filelength; i++)
 	{
-		(void) fread (&sc, 1, 1, f);
+		fread (&sc, 1, 1, f);
 		adpcm.code = (char) ((sc >> 4) & 0x0f);
 		my z[1][n++] = dialogic_adpcm_decode(& adpcm);
 		adpcm.code = (char) (sc & 0x0f);

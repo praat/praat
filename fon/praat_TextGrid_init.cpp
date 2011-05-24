@@ -53,8 +53,8 @@ DIRECT (AnyTier_into_TextGrid)
 	LOOP {
 		iam (AnyTier);
 		TextGrid_add (grid.peek(), me);
-		praat_new (grid.transfer(), L"grid");
 	}
+	praat_new (grid.transfer(), L"grid");
 END
 
 /***** INTERVALTIER *****/

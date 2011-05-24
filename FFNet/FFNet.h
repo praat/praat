@@ -130,13 +130,13 @@ oo_CLASS_CREATE (FFNet, Data);
  *  copy everything except minimizer, patterns and inputs.
  */
 
-int FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, 
-	long numberOfOutputs, int outputsAreLinear	);
+void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, 
+	long numberOfOutputs, int outputsAreLinear);
 
 FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, 
 	long numberOfOutputs, int outputsAreLinear	);
 	
-void FFNet_createNameFromTopology (FFNet me, MelderString *name);	
+wchar_t * FFNet_createNameFromTopology (FFNet me);
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>, 
 	<inputs>-<hidden1>-<hidden2>-<outputs> for 1, 2 or 3 layer networks.
 */
@@ -149,7 +149,12 @@ void FFNet_setCostFunction (FFNet me, int type);
 
 void FFNet_setNonLinearity (FFNet me, int type);
 
-int FFNet_setOutputCategories (FFNet me, Categories thee);
+void FFNet_setOutputCategories (FFNet me, Categories thee);
+
+double FFNet_getBias (FFNet me, long layer, long unit);
+void FFNet_setBias (FFNet me, long layer, long node, double value);
+void FFNet_setWeight (FFNet me, long later, long node, long node_from, double value);
+double FFNet_getWeight (FFNet me, long later, long node, long node_from);
 
 void FFNet_reset (FFNet me, double wrange);
 /* reset the neural net:

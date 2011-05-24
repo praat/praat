@@ -64,7 +64,7 @@ oo_CLASS_CREATE (DTW, Matrix);
 int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
 
 /* Prototype on y-axis and test on x-axis */
-Any DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
+DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c);
 	
 DTW DTW_swapAxes (DTW me);

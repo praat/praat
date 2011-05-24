@@ -575,6 +575,49 @@ DIRECT (Confusion_help)
 	Melder_help (L"Confusion");
 END
 
+FORM (Confusion_createSimple, L"Create simple Confusion", L"Create simple Confusion...")
+	WORD (L"Name", L"simple")
+	SENTENCE (L"Labels", L"u i a")
+	OK
+DO
+	if (! praat_new1 (Confusion_createSimple (GET_STRING (L"Labels")), GET_STRING (L"Name"))) return 0;
+END
+
+FORM (Confusion_increase, L"Confusion: Increase", L"Confusion: Increase...")
+	WORD (L"Stimulus", L"u")
+	WORD (L"Response", L"i")
+	OK
+DO
+	WHERE(SELECTED) {
+	Confusion_increase (OBJECT, GET_STRING (L"Stimulus"), GET_STRING (L"Response"));
+	praat_dataChanged (OBJECT); }
+END
+
+FORM (Confusion_getValue, L"Confusion: Get value", 0)
+	WORD (L"Stimulus", L"u")
+	WORD (L"Response", L"i")
+	OK
+DO
+	wchar_t * stim = GET_STRING (L"Stimulus");
+	wchar_t * resp = GET_STRING (L"Response");
+	Melder_information6 (Melder_double (Confusion_getValue (ONLY (classConfusion), stim, resp)), 
+		L" ( [\"", stim, L"\", \"",  resp, L"\"] )");
+END
+
+FORM (Confusion_getResponseSum, L"Confusion: Get response sum", L"Confusion: Get response sum...")
+	WORD (L"Response", L"u")
+	OK
+DO
+	Melder_information1 (Melder_double (TableOfReal_getColumnSumByLabel (ONLY_GENERIC(classTableOfReal), GET_STRING (L"Response"))));
+END
+
+FORM (Confusion_getStimulusSum, L"Confusion: Get stimulus sum", L"Confusion: Get stimulus sum...")
+	WORD (L"Stimulus", L"u")
+	OK
+DO
+	Melder_information1 (Melder_double (TableOfReal_getRowSumByLabel (ONLY_GENERIC(classTableOfReal), GET_STRING (L"Stimulus"))));
+END
+
 DIRECT (Confusion_to_TableOfReal_marginals)
 	EVERY_TO (Confusion_to_TableOfReal_marginals (OBJECT))
 END
@@ -586,10 +629,10 @@ DIRECT (Confusion_difference)
 END
 
 FORM (Confusion_condense, L"Confusion: Condense", L"Confusion: Condense...")
-	SENTENCE (L"Search", L"a")
-	SENTENCE (L"Replace", L"a")
+	SENTENCE (L"Search", L"^(u|i)$")
+	SENTENCE (L"Replace", L"high")
 	INTEGER (L"Replace limit", L"0 (=unlimited)")
-	RADIO (L"Search and replace are", 1)
+	RADIO (L"Search and replace are", 2)
 	RADIOBUTTON (L"Literals")
 	RADIOBUTTON (L"Regular Expressions")
 	OK
@@ -597,6 +640,51 @@ DO
 	EVERY_TO (Confusion_condense (OBJECT, GET_STRING (L"Search"),
 		GET_STRING (L"Replace"), GET_INTEGER (L"Replace limit"),
 		GET_INTEGER (L"Search and replace are") - 1))
+END
+
+FORM (Confusion_group, L"Confusion: Group stimuli & responses", L"Confusion: Group...")
+	SENTENCE (L"Stimuli & Responses", L"u i")
+	SENTENCE (L"New label", L"high")
+	INTEGER (L"New label position", L"0")
+	OK
+DO
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	WHERE(SELECTED)
+	{
+		Confusion cf = OBJECT;
+		if (! praat_new3 (Confusion_group (cf, GET_STRING (L"Stimuli & Responses"), newlabel, GET_INTEGER (L"New label position")),
+			Thing_getName (cf), L"_sr", newlabel)) return 0;
+	}
+END
+
+FORM (Confusion_groupStimuli, L"Confusion: Group stimuli", L"Confusion: Group stimuli...")
+	SENTENCE (L"Stimuli", L"u i")
+	SENTENCE (L"New label", L"high")
+	INTEGER (L"New label position", L"0")
+	OK
+DO
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	WHERE(SELECTED)
+	{
+		Confusion cf = OBJECT;
+		if (! praat_new3 (Confusion_groupStimuli (cf, GET_STRING (L"Stimuli"), newlabel, GET_INTEGER (L"New label position")),
+			Thing_getName (cf), L"_s", newlabel)) return 0;
+	}
+END
+
+FORM (Confusion_groupResponses, L"Confusion: Group responses", L"Confusion: Group responses...")
+	SENTENCE (L"Responses", L"a i")
+	SENTENCE (L"New label", L"front")
+	INTEGER (L"New label position", L"0")
+	OK
+DO
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	WHERE(SELECTED)
+	{
+		Confusion cf = OBJECT;
+		if (! praat_new3 (Confusion_groupResponses (cf, GET_STRING (L"Responses"), newlabel, GET_INTEGER (L"New label position")),
+			Thing_getName (cf), L"_s", newlabel)) return 0;
+	}
 END
 
 FORM (Confusion_drawAsNumbers, L"", L"")
@@ -4756,6 +4844,7 @@ void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Pols 1973)...", L"Create TableOfReal...", 1, DO_TableOfReal_createFromPolsData_50males);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Van Nierop 1973)...", L"Create TableOfReal (Pols 1973)...", 1, DO_TableOfReal_createFromVanNieropData_25females);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
+	praat_addMenuCommand (L"Objects", L"New", L"Create simple Confusion...", L"Create TableOfReal (Weenink 1985)...", 1, DO_Confusion_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
 
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
@@ -4830,16 +4919,24 @@ void praat_uvafon_David_init (void)
 		DO_Confusion_help);
     praat_TableOfReal_init2 (classConfusion);
 	praat_removeAction (classConfusion, NULL, NULL, L"Draw as numbers...");
+	praat_removeAction (classConfusion, NULL, NULL, L"Sort by label...");
+	praat_removeAction (classConfusion, NULL, NULL, L"Sort by column...");
 	praat_addAction1 (classConfusion, 0, L"Draw as numbers...", L"Draw -", 1, DO_Confusion_drawAsNumbers);
-	praat_addAction1 (classConfusion, 0, L"-- confusion statistics --", L"Get value...", 1, 0);
+	praat_addAction1 (classConfusion, 1, L"Get value (labels)...", L"Get value...", 1, DO_Confusion_getValue);
+	praat_addAction1 (classConfusion, 0, L"-- confusion statistics --", L"Get value (labels)...", 1, 0);
 	praat_addAction1 (classConfusion, 1, L"Get fraction correct", L"-- confusion statistics --", 1, DO_Confusion_getFractionCorrect);
-	praat_addAction1 (classConfusion, 1, L"Get row sum...", L"Get fraction correct", 1, DO_TableOfReal_getRowSum);
- 	praat_addAction1 (classConfusion, 1, L"Get column sum...", L"Get row sum...", 1, DO_TableOfReal_getColumnSum);
-	praat_addAction1 (classConfusion, 1, L"Get grand sum", L"Get column sum...", 1, DO_TableOfReal_getGrandSum);
+	praat_addAction1 (classConfusion, 1, L"Get stimulus sum...", L"Get fraction correct", 1, DO_Confusion_getStimulusSum);
+	praat_addAction1 (classConfusion, 1, L"Get row sum...", L"Get fraction correct", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_getRowSum);
+ 	praat_addAction1 (classConfusion, 1, L"Get response sum...", L"Get stimulus sum...", 1, DO_Confusion_getResponseSum);
+ 	praat_addAction1 (classConfusion, 1, L"Get column sum...", L"Get row sum...", praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_getColumnSum);
+	praat_addAction1 (classConfusion, 1, L"Get grand sum", L"Get response sum...", 1, DO_TableOfReal_getGrandSum);
+	praat_addAction1 (classConfusion, 0, L"Increase...", L"Formula...", 1, DO_Confusion_increase);
 	praat_addAction1 (classConfusion, 0, L"To TableOfReal (marginals)", L"To TableOfReal", 0, DO_Confusion_to_TableOfReal_marginals);
 	praat_addAction1 (classConfusion, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classConfusion, 0, L"Condense...", 0, 0,
-		DO_Confusion_condense);
+	praat_addAction1 (classConfusion, 0, L"Condense...", 0, praat_HIDDEN, DO_Confusion_condense);
+	praat_addAction1 (classConfusion, 0, L"Group...", 0, 0, DO_Confusion_group);
+	praat_addAction1 (classConfusion, 0, L"Group stimuli...", 0, 0, DO_Confusion_groupStimuli);
+	praat_addAction1 (classConfusion, 0, L"Group responses...", 0, 0, DO_Confusion_groupResponses);
     praat_addAction1 (classConfusion, 2, L"To difference matrix", 0, 0,
 		DO_Confusion_difference);
 

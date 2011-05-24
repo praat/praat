@@ -1230,7 +1230,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				argv [0] = & praatP. title [0];   /* argc == 4 */
 				Gui_setOpenDocumentCallback (cb_openDocument);
 			#endif
-			theCurrentPraatApplication -> topShell = XtVaAppInitialize (& theCurrentPraatApplication -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
+			theCurrentPraatApplication -> topShell = XtVaAppInitialize (& theCurrentPraatApplication -> context, "Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
 			#if defined (macintosh) || defined (_WIN32)
 				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);

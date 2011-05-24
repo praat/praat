@@ -87,7 +87,7 @@ int GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double n
 #define GaussianMixture_AICC 4
 #define GaussianMixture_CD_LIKELIHOOD 5
 
-wchar_t *GaussianMixture_criterionText (int criterion);
+const wchar_t *GaussianMixture_criterionText (int criterion);
 
 GaussianMixture TableOfReal_to_GaussianMixture (I, long numberOfComponents, double delta_lnp, long maxNumberOfIterations, double lambda, int storage, int criterion);
 

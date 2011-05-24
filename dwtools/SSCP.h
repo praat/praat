@@ -240,7 +240,7 @@ SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2);
 /* For inheritors */
 
 void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
-	int confidence, wchar_t *label, long d1, long d2, double xmin, double xmax,
+	int confidence, const wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
 void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confidence,

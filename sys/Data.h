@@ -366,20 +366,18 @@ class_create (Data, Thing);
 #define doublewa  11
 #define fcomplexwa  12
 #define dcomplexwa  13
-#define charwa  14
-#define wcharwa  15
-#define enumwa  16
-#define lenumwa  17
-#define booleanwa  18
-#define questionwa  19
-#define stringwa  20
-#define lstringwa  21
+#define enumwa  14
+#define lenumwa  15
+#define booleanwa  16
+#define questionwa  17
+#define stringwa  18
+#define lstringwa  19
 #define maxsingletypewa lstringwa
-#define structwa  22
-#define widgetwa  23
-#define objectwa  24
-#define collectionwa  25
-#define inheritwa  26
+#define structwa  20
+#define widgetwa  21
+#define objectwa  22
+#define collectionwa  23
+#define inheritwa  24
 
 /* Recursive routines for working with struct members. */
 

@@ -64,7 +64,7 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-extern machar_Table NUMfpp;
+extern "C" machar_Table NUMfpp;
 static void NUMtranspose_d (double **m, long n);
 
 /* if A=UDV' then A' = (UDV')'=VDU' */

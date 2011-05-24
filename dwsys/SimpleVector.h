@@ -21,7 +21,7 @@
 
 /*
  djmw 20020812 GPL header
- djmw 20110306 Latest modification.
+ djmw 20110505 Latest modification.
 */
 
 #ifndef _Data_h_
@@ -38,7 +38,7 @@
 #define DoubleVector_methods Data_methods
 class_create (DoubleVector, Data);
 
-int DoubleVector_init (I, long min, long max);
+void DoubleVector_init (I, long min, long max);
 DoubleVector DoubleVector_create (long min, long max);
 
 #define ComplexVector_members Data_members	\
@@ -47,7 +47,7 @@ DoubleVector DoubleVector_create (long min, long max);
 #define ComplexVector_methods Data_methods
 class_create (ComplexVector, Data);
 
-int ComplexVector_init (I, long min, long max);
+void ComplexVector_init (I, long min, long max);
 ComplexVector ComplexVector_create (long min, long max);
 
 #ifdef __cplusplus

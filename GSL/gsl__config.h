@@ -105,6 +105,8 @@
 /* Define to 1 if you have the <ieeefp.h> header file. */
 /* #undef HAVE_IEEEFP_H */
 
+#define HAVE_IEEEFP_H 0
+
 /* Define this if IEEE comparisons work correctly (e.g. NaN != NaN) */
 #define HAVE_IEEE_COMPARISONS 1
 
@@ -331,3 +333,6 @@
 
 /* Disable deprecated functions and enums while building */
 #define GSL_DISABLE_DEPRECATED 1
+
+// 20110502
+#define USE_BLAS 0

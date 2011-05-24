@@ -537,8 +537,8 @@ FORM (Dissimilarity_Configuration_kruskal, L"Dissimilarity & Configuration: To C
 	RADIOBUTTON (L"Primary approach")
 	RADIOBUTTON (L"Secondary approach")
 	RADIO (L"Stress calculation", 1)
-	RADIOBUTTON (L"Formula1 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k])^2))")
-	RADIOBUTTON (L"Formula2 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k]-dbar)^2))")
+	RADIOBUTTON (L"Formula1")
+	RADIOBUTTON (L"Formula2")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO
@@ -708,8 +708,8 @@ FORM (Dissimilarity_Configuration_getStress, L"Dissimilarity & Configuration: Ge
 	RADIOBUTTON (L"Primary approach")
 	RADIOBUTTON (L"Secondary approach")
 	RADIO (L"Stress calculation", 1)
-	RADIOBUTTON (L"Formula1 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k])^2))")
-	RADIOBUTTON (L"Formula2 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k]-dbar)^2))")
+	RADIOBUTTON (L"Formula1")
+	RADIOBUTTON (L"Formula2")
 	OK
 DO
 	Melder_information1 (Melder_double (Dissimilarity_Configuration_getStress
@@ -952,8 +952,8 @@ FORM (Dissimilarity_kruskal, L"Dissimilarity: To Configuration (kruskal)",
 	RADIOBUTTON (L"Primary approach")
 	RADIOBUTTON (L"Secondary approach")
 	RADIO (L"Stress calculation", 1)
-	RADIOBUTTON (L"Formula1 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k])^2))")
-	RADIOBUTTON (L"Formula2 (sqrt (SUM((dist[k]-fit[k])^2) / SUM((dist[k]-dbar)^2))")
+	RADIOBUTTON (L"Formula1")
+	RADIOBUTTON (L"Formula2")
 	Dissimilarity_to_Configuration_addCommonFields (dia);
 	OK
 DO

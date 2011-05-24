@@ -270,7 +270,12 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 		Editor_broadcastChange (RunnerMFC_as_Editor (me));
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
-			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);
+			if (experiment -> numberOfTrials < 1) {
+				Melder_flushError ("There are zero trials in this experiment.");
+				forget (me);
+				return;
+			}
+			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
 	} else if (experiment -> pausing) {   /* A click to leave the break. */
 		if (x > experiment -> oops_left && x < experiment -> oops_right &&

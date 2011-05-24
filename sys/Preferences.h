@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/05/14
  */
 
 #ifndef _melder_h_
@@ -36,7 +36,7 @@
  * which conveniently equals the size of the path buffer in MelderFile so that
  * file paths can be used as preferences.
  */
-#define Preferences_STRING_BUFFER_SIZE 260
+#define Preferences_STRING_BUFFER_SIZE 1+kMelder_MAXPATH
 
 enum kPreferences_dummy { dummy1 = 1, dummy2 = 2 };
 
@@ -49,13 +49,13 @@ void Preferences_addUshort (const wchar_t *string, unsigned short *value, unsign
 void Preferences_addUint (const wchar_t *string, unsigned int *value, unsigned int defaultValue);
 void Preferences_addUlong (const wchar_t *string, unsigned long *value, unsigned long defaultValue);
 void Preferences_addBool (const wchar_t *string, bool *value, bool defaultValue);
-void Preferences_addChar (const wchar_t *string, wchar_t *value, wchar_t defaultValue);
 void Preferences_addDouble (const wchar_t *string, double *value, double defaultValue);
 void Preferences_addString (const wchar_t *string, wchar_t *value, const wchar_t *defaultValue);
 void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value, int min, int max,
-	const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text), int defaultValue);
+	const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text), enum kPreferences_dummy defaultValue);
 #define Preferences_addEnum(string,value,enumerated,defaultValue) \
-	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, enumerated##_MIN, enumerated##_MAX, enumerated##_getText, enumerated##_getValue, enumerated##_##defaultValue)
+	_Preferences_addEnum (string, (enum kPreferences_dummy *) value, enumerated##_MIN, enumerated##_MAX, \
+	enumerated##_getText, enumerated##_getValue, (enum kPreferences_dummy) enumerated##_##defaultValue)
 
 void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);

@@ -293,7 +293,7 @@ int ExperimentMFC_start (ExperimentMFC me) {
 	} catch (MelderError) {
 		Melder_warningOn ();
 		my numberOfTrials = 0;
-		my stimuli = NULL;
+		my stimuli = NULL;   // TODO
 		return 0;
 	}
 }

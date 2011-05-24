@@ -7,7 +7,7 @@ echo arrays...
 a=5
 
 # should give an error:
-; a+5
+a+5
 
 a [1] = 3
 assert a [1] = 3

@@ -34,6 +34,7 @@
  * pb 2008/07/20 wchar_t
  * pb 2011/03/03 removed stringwa
  * pb 2011/04/06 C++
+ * pb 2011/05/14 removed charwa and wcharwa
  */
 
 #define NAME_X  30
@@ -55,12 +56,12 @@
 
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
-	"float", "double", "fcomplex", "dcomplex", "char", "wchar",
+	"float", "double", "fcomplex", "dcomplex",
 	"enum", "lenum", "boolean", "question", "stringw", "lstringw",
 	"struct", "widget", "object", "collection" };*/
 static int stringLengths [] = { 0,
 	4, 6, 6, 11, 3, 5, 5, 10, 1,
-	15, 27, 35, 59, 4, 6,
+	15, 27, 35, 59,
 	33, 33, 8, 6, 60, 60 };
 
 typedef struct structDataSubEditor_FieldData {
@@ -243,7 +244,6 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				swscanf (text, L"%f + %f i", & x -> re, & x -> im); } break;
 			case dcomplexwa: { dcomplex *x = (dcomplex *) my fieldData [i]. address;
 				swscanf (text, L"%lf + %lf i", & x -> re, & x -> im); } break;
-			case charwa: { * (char *) my fieldData [i]. address = wcstol (text, NULL, 10); } break;
 			case enumwa: {
 				if (wcslen (text) < 3) goto error;
 				text [wcslen (text) - 1] = '\0';   /* Remove trailing ">". */
@@ -490,7 +490,6 @@ static const wchar_t * singleTypeToText (void *address, int type, void *tagType,
 			MelderString_append4 (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;
 		case dcomplexwa: { dcomplex value = * (dcomplex *) address;
 			MelderString_append4 (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
-		case charwa: MelderString_append1 (buffer, Melder_integer (* (wchar_t *) address)); break;
 		case enumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed char *) address), L">"); break;
 		case lenumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
 		case booleanwa: MelderString_append1 (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;

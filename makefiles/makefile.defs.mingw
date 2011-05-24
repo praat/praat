@@ -1,11 +1,12 @@
 # File: makefile.defs.mingw
 
 # System: MinGW
-# Eric Carlson & Paul Boersma, March 20, 2007
+# Eric Carlson & Paul Boersma, 20 March 2007
+# Chris Northwood, 1 May 2010
 
-CC = mingw32-gcc -D_WIN32 -DMINGW -std=gnu99 -DDONT_INCLUDE_QUICKTIME -Dmain=wingwmain -mwindows -O2
+CC = mingw32-gcc -D_WIN32 -DMINGW -D_WIN32_WINNT=0x0610 -DUNICODE -std=gnu99 -DDONT_INCLUDE_QUICKTIME -Dmain=wingwmain -mwindows -O2
 
-LIBS = -lwinmm -lwsock32 -lcomctl32
+LIBS = -lwinmm -lwsock32 -lcomctl32 -lole32 -lsetupapi
 
 RANLIB = ls
 ICON = praat_win.o

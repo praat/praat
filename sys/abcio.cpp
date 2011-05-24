@@ -389,7 +389,7 @@ double texgetr8 (MelderReadText text) { return getReal (text); }
 double texgetr10 (MelderReadText text) { return getReal (text); }
 fcomplex texgetc8 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 dcomplex texgetc16 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
-char texgetc1 (MelderReadText text) { return getInteger (text); }
+
 short texgete1 (MelderReadText text, int (*getValue) (const wchar_t *)) { return getEnum (text, getValue); }
 short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *)) { return getEnum (text, getValue); }
 short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
@@ -465,10 +465,6 @@ void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s
 	PUTLEADER
 	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_double (z.re),
 		file -> verbose ? L" + " : L" ", Melder_double (z.im), file -> verbose ? L" i " : NULL);
-}
-void texputc1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
-	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER

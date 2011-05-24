@@ -282,33 +282,29 @@ int Data_readText (I, MelderReadText text) {
 }
 
 Any Data_readFromTextFile (MelderFile file) {
-	Data me = NULL;
-	wchar *klas = NULL;
 	MelderReadText text = NULL;
 	try {
 		text = MelderReadText_createFromFile (file); therror
 		wchar *line = MelderReadText_readLine (text); therror
 		if (line == NULL) Melder_throw (L"No lines.");
 		wchar *end = wcsstr (line, L"ooTextFile");   // oo format?
+		autoData me = NULL;
 		if (end) {
-			klas = texgetw2 (text); therror
-			me = (Data) Thing_newFromClassName (klas); therror
+			autostring klas = texgetw2 (text);
+			me.reset ((Data) Thing_newFromClassName (klas.peek()));
 		} else {
 			end = wcsstr (line, L"TextFile");
 			if (end == NULL) Melder_throw (L"Not an old-type text file; should not occur.");
 			*end = '\0';
-			me = (Data) Thing_newFromClassName (line); therror
+			me.reset ((Data) Thing_newFromClassName (line));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me, text); therror
-		Melder_free (klas);
+		Data_readText (me.peek(), text); therror
 		MelderReadText_delete (text);
-		return me;
+		return me.transfer();
 	} catch (MelderError) {
-		Melder_free (klas);   // UGLY
 		MelderReadText_delete (text);
-		forget (me);
 		rethrowmzero ("Data not read from text file.");
 	}
 }
@@ -328,36 +324,32 @@ int Data_readBinary (I, FILE *f) {
 }
 
 Any Data_readFromBinaryFile (MelderFile file) {
-	Data me = NULL;
-	FILE *f = NULL;
 	try {
-		f = Melder_fopen (file, "rb"); therror
+		autofile f = Melder_fopen (file, "rb");
 		char line [200];
 		int n = fread (line, 1, 199, f); line [n] = '\0';
 		char *end = strstr (line, "ooBinaryFile");
+		autoData me = NULL;
 		if (end) {
-			char *klas;
 			fseek (f, strlen ("ooBinaryFile"), 0);
-			klas = bingets1 (f); therror
-			me = (Data) Thing_newFromClassNameA (klas); therror
-			Melder_free (klas);
+			autostring8 klas = bingets1 (f); therror
+			me.reset ((Data) Thing_newFromClassNameA (klas.peek()));
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
 				Melder_throw ("File ", MelderFile_messageName (file), " is not a Data binary file.");
 			}
 			*end = '\0';
-			me = (Data) Thing_newFromClassNameA (line); therror
+			me.reset ((Data) Thing_newFromClassNameA (line));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readBinary (me, f); therror
-		fclose (f);
-		return me;
+		Data_readBinary (me.peek(), f); therror
+		f.close (file);
+		return me.transfer();
 	} catch (MelderError) {
-		if (f) fclose (f);
 		rethrowmzero ("Data not read from binary file.");
 	}
 }
@@ -518,9 +510,8 @@ long Data_Description_integer (void *address, Data_Description description) {
 		case uintwa: return * (unsigned int *) ((char *) address + description -> offset);
 		case ulongwa: return * (unsigned long *) ((char *) address + description -> offset);
 		case boolwa: return * (bool *) ((char *) address + description -> offset);
-		case charwa: return * (char *) ((char *) address + description -> offset);
-		case collectionwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
 		case objectwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
+		case collectionwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
 		default: return 0;
 	}
 }

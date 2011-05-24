@@ -27,6 +27,7 @@
  * pb 2007/09/02 bool
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRING
+ * pb 2011/05/14 removed oo_CHAR and oo_WCHAR
  */
 
 #include "oo_undef.h"
@@ -57,10 +58,6 @@
 #define oo_FCOMPLEX(x)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex) },
 #undef oo_DCOMPLEX
 #define oo_DCOMPLEX(x)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex) },
-#undef oo_CHAR
-#define oo_CHAR(x)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char) },
-#undef oo_WCHAR
-#define oo_WCHAR(x)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t) },
 
 #undef oo_BYTE_ARRAY
 #define oo_BYTE_ARRAY(x,cap,n)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, - cap, (const wchar *) 0, L"" #n },
@@ -88,10 +85,6 @@
 #define oo_FCOMPLEX_ARRAY(x,cap,n)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, - cap, (const wchar *) 0, L"" #n },
 #undef oo_DCOMPLEX_ARRAY
 #define oo_DCOMPLEX_ARRAY(x,cap,n)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, - cap, (const wchar *) 0, L"" #n },
-#undef oo_CHAR_ARRAY
-#define oo_CHAR_ARRAY(x,cap,n)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, - cap, (const wchar *) 0, L"" #n },
-#undef oo_WCHAR_ARRAY
-#define oo_WCHAR_ARRAY(x,cap,n)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, - cap, (const wchar *) 0, L"" #n },
 
 #undef oo_BYTE_SET
 #define oo_BYTE_SET(x,setType)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue }, /* BUG function pointer to pointer */
@@ -119,10 +112,6 @@
 #define oo_FCOMPLEX_SET(x,setType)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
 #undef oo_DCOMPLEX_SET
 #define oo_DCOMPLEX_SET(x,setType)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
-#undef oo_CHAR_SET
-#define oo_CHAR_SET(x,setType)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
-#undef oo_WCHAR_SET
-#define oo_WCHAR_SET(x,setType)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
 
 #undef oo_BYTE_VECTOR_FROM
 #define oo_BYTE_VECTOR_FROM(x,min,max)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 1, L"" #min, L"" #max },
@@ -150,10 +139,6 @@
 #define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, 1, L"" #min, L"" #max },
 #undef oo_DCOMPLEX_VECTOR_FROM
 #define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 1, L"" #min, L"" #max },
-#undef oo_CHAR_VECTOR_FROM
-#define oo_CHAR_VECTOR_FROM(x,min,max)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, 1, L"" #min, L"" #max },
-#undef oo_WCHAR_VECTOR_FROM
-#define oo_WCHAR_VECTOR_FROM(x,min,max)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, 1, L"" #min, L"" #max },
 
 #undef oo_BYTE_MATRIX_FROM
 #define oo_BYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
@@ -181,10 +166,6 @@
 #define oo_FCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 #undef oo_DCOMPLEX_MATRIX_FROM
 #define oo_DCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
-#undef oo_CHAR_MATRIX_FROM
-#define oo_CHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
-#undef oo_WCHAR_MATRIX_FROM
-#define oo_WCHAR_MATRIX_FROM(x,r1,r2,c1,c2)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
 
 #undef oo_BYTE_VECTOR
 #define oo_BYTE_VECTOR(x,n)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 1, (const wchar *) 0, L"" #n },
@@ -210,12 +191,8 @@
 #define oo_DOUBLE_VECTOR(x,n)  { L"" #x, doublewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (double), 0, 0, 1, (const wchar *) 0, L"" #n },
 #undef oo_FCOMPLEX_VECTOR
 #define oo_FCOMPLEX_VECTOR(x,n)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, 1, (const wchar *) 0, L"" #n },
-#undef oo_CCOMPLEX_VECTOR
-#define oo_CCOMPLEX_VECTOR(x,n)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 1, (const wchar *) 0, L"" #n },
-#undef oo_CHAR_VECTOR
-#define oo_CHAR_VECTOR(x,n)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, 1, (const wchar *) 0, L"" #n },
-#undef oo_WCHAR_VECTOR
-#define oo_WCHAR_VECTOR(x,n)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, 1, (const wchar *) 0, L"" #n },
+#undef oo_DCOMPLEX_VECTOR
+#define oo_DCOMPLEX_VECTOR(x,n)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 1, (const wchar *) 0, L"" #n },
 
 #undef oo_BYTE_MATRIX
 #define oo_BYTE_MATRIX(x,nrow,ncol)  { L"" #x, bytewa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), 0, 0, 2, (const wchar *) 0, L"" #nrow, (const wchar *) 0, L"" #ncol },
@@ -243,10 +220,6 @@
 #define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, fcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (fcomplex), 0, 0, 2, (const wchar *) 0, L"" #nrow, (const wchar *) 0, L"" #ncol },
 #undef oo_DCOMPLEX_MATRIX
 #define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  { L"" #x, dcomplexwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (dcomplex), 0, 0, 2, (const wchar *) 0, L"" #nrow, (const wchar *) 0, L"" #ncol },
-#undef oo_CHAR_MATRIX
-#define oo_CHAR_MATRIX(x,nrow,ncol)  { L"" #x, charwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (char), 0, 0, 2, (const wchar *) 0, L"" #nrow, (const wchar *) 0, L"" #ncol },
-#undef oo_WCHAR_MATRIX
-#define oo_WCHAR_MATRIX(x,nrow,ncol)  { L"" #x, wcharwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (wchar_t), 0, 0, 2, (const wchar *) 0, L"" #nrow, (const wchar *) 0, L"" #ncol },
 
 #undef oo_ENUM
 #define oo_ENUM(Type,x)  { L"" #x, enumwa, (char *) & ((ooSTRUCT) 0) -> x - (char *) 0, sizeof (signed char), L"" #Type, (void *) Type##_getText },

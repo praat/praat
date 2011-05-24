@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/05/15
  */
 
 #ifdef __cplusplus
@@ -28,10 +28,6 @@
 #endif
 
 void Machine_initLookAndFeel (unsigned int argc, char **argv);
-char **Machine_getXresources (void);
-#ifndef UNIX
-	#define Machine_getXresources()  0
-#endif
 int Machine_getMenuBarHeight (void);
 int Machine_getMainWindowMenuBarHeight (void);
 int Machine_getTitleBarHeight (void);

@@ -45,7 +45,7 @@
 #define Categories_methods OrderedOfString_methods
 class_create (Categories, OrderedOfString);
 
-int Categories_init (Categories me, long size);
+void Categories_init (Categories me, long size);
 
 Categories Categories_create (void);
 Categories Categories_sequentialNumbers (long n);

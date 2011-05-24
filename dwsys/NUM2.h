@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20110314 Latest modification.
+ djmw 20110428 Latest modification.
 */
 
 #ifndef _NUM_h_
@@ -46,16 +46,16 @@ int NUMstrcmp (const char *s1, const char *s2);
 		(s2 == NULL ? 1 : strcmp (s1, s2));
 */
 
-int NUMstring_containsPrintableCharacter (wchar_t *s);
+int NUMstring_containsPrintableCharacter (const wchar_t *s);
 
 double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
 /* return array with the number of numbers found */
 
-int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi);
+int NUMstrings_equal (const wchar_t **s1, const wchar_t **s2, long lo, long hi);
 int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
 void NUMstrings_free (wchar_t **s, long lo, long hi);
 int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
-	wchar_t *precursor, long number, long increment);
+	const wchar_t *precursor, long number, long increment);
 /*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -124,7 +124,7 @@ void NUMsvector_extrema (short v[], long lo, long hi, double *min, double *max);
 		lo and hi must be valid indices in the array.
 */
 
-void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, wchar_t *name);
+void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 	                      1 2 3
@@ -449,7 +449,7 @@ double NUMtrace2 (double **a1, double **a2, long n);
 
 void eigenSort (double d[], double **v, long n, int sort);
 
-int NUMeigensystem (double **a, long n, double **evec, double eval[]);
+void NUMeigensystem (double **a, long n, double **evec, double eval[]);
 /*
 	Determines the eigensystem of a real, symmetric matrix[1..][1..n].
 	Returned are: evec[1..n][1..n] with eigenvectors (columnwise) and
@@ -603,7 +603,7 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 		root not bracketed.
 */
 
-int NUMmspline (double knot[], long nKnots, long order, long i, double x,
+void NUMmspline (double knot[], long nKnots, long order, long i, double x,
 	double *y);
 /*
 	Calculates an M-spline for a knot sequence.
@@ -616,7 +616,7 @@ int NUMmspline (double knot[], long nKnots, long order, long i, double x,
 	Error condition: no memory.
 */
 
-int NUMispline (double aknot[], long nKnots, long order, long i, double x,
+void NUMispline (double aknot[], long nKnots, long order, long i, double x,
 	double *y);
 /*
 	Calculates an I-spline for simple knot sequences: only one knot at each

@@ -47,10 +47,10 @@ oo_CLASS_CREATE (LPC, Sampled);
 	nx : number of frames
 */	
 
-int LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
+void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod);
 
-Any LPC_create (double tmin, double tmax, long nt, double dt, double t1,
+LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod);
 
 void LPC_drawGain (LPC me, Graphics g, double t1, double t2,

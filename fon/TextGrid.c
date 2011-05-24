@@ -488,13 +488,12 @@ int TextGrid_add (TextGrid me, Any anyTier) {
 
 TextGrid TextGrid_merge (Collection textGrids) {
 	TextGrid thee = NULL;
-	long igrid, itier;
 	if (textGrids -> size < 1)
 		error1 (L"Cannot merge zero TextGrid objects.")
 	thee = Data_copy (textGrids -> item [1]); cherror
-	for (igrid = 2; igrid <= textGrids -> size; igrid ++) {
+	for (long igrid = 2; igrid <= textGrids -> size; igrid ++) {
 		TextGrid textGrid = textGrids -> item [igrid];
-		for (itier = 1; itier <= textGrid -> tiers -> size; itier ++) {
+		for (long itier = 1; itier <= textGrid -> tiers -> size; itier ++) {
 			TextGrid_add (thee, textGrid -> tiers -> item [itier]); cherror
 		}
 	}

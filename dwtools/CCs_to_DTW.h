@@ -33,6 +33,10 @@
 	#include "DTW.h"
 #endif
 
+#ifdef __cplusplus
+	extern "C" {
+#endif
+
 DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 	double dtr, int matchStart, int matchEnd, int constraint);
 /*
@@ -53,5 +57,9 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer,
 	
 	at least one of wc, wle, wr, wer != 0
 */
+
+#ifdef __cplusplus
+	}
+#endif
 
 #endif /* _CCs_to_DTW_h_ */
