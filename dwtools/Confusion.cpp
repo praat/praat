@@ -90,7 +90,7 @@ Confusion Confusion_createSimple (const wchar_t *labels)
 			ilabel++;
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not created."); }
+	} catch (MelderError) { rethrowmzero ("Simple Confusion not created."); }
 }
 
 Confusion Categories_to_Confusion (Categories me, Categories thee)
@@ -118,7 +118,7 @@ Confusion Categories_to_Confusion (Categories me, Categories thee)
 			Confusion_increase (him.peek(), SimpleString_c (myi), SimpleString_c (thyi));
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Confusion not created."); }
 }
 
 #define TINY 1.0e-30
@@ -189,7 +189,7 @@ double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *res
 		long respIndex = TableOfReal_columnLabelToIndex (me, resp);
 		if (respIndex < 1) Melder_throw ("Response not valid.");
 		return my data[stimIndex][respIndex];
-	} catch (MelderError) { rethrowval (NUMundefined); }
+	} catch (MelderError) { rethrowzero; }
 	
 }
 
@@ -353,7 +353,7 @@ Any Confusion_difference (Confusion me, Confusion thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero ("Matrix not created from two Confusions."); }
 }
 
 long Confusion_getNumberOfEntries (Confusion me)
@@ -431,18 +431,18 @@ Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Condensed Confusion not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not condensed."); }
 }
 
 Confusion TableOfReal_to_Confusion (I)
 {
+	iam (TableOfReal); 
 	try {
-		iam (TableOfReal); 
 		if (! TableOfReal_checkPositive (me)) Melder_throw ("Elements may not be less than zero.");
 		autoConfusion thee = (Confusion) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classConfusion);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Confusion."); }
 }
 
 Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -451,7 +451,7 @@ Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *n
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
 		autoConfusion me = Confusion_groupResponses (stim.peek(), labels, newLabel, newpos);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not grouped."); }
+	} catch (MelderError) { rethrowmzero (me, ": not grouped."); }
 }
 
 Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -496,7 +496,7 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 			{ thy data[rowpos][j] += my data[i][j]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not created."); }	
+	} catch (MelderError) { rethrowmzero (me, ": stimuli not grouped."); }	
 }
 
 Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -540,13 +540,13 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 			{ thy data[j][colpos] += my data[j][i]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Confusion not created."); }	
+	} catch (MelderError) { rethrowmzero (me, ": responses not grouped."); }	
 }
 
 TableOfReal Confusion_to_TableOfReal_marginals (I)
 {
+	iam (Confusion);
 	try {
-		iam (Confusion);
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
 	
 		double total = 0;
@@ -577,13 +577,13 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows); 
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal with marginals not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": table with marginals not created."); }
 }
 
 void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision)
 {
+	iam (Confusion);
 	try {
-		iam (Confusion);
 		autoTableOfReal thee = marginals ? Confusion_to_TableOfReal_marginals (me) : (TableOfReal) me; 
 		TableOfReal_drawAsNumbers (thee.peek(), g, 1, thy numberOfRows, iformat, precision);
 		if (! marginals) thee.transfer();

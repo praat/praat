@@ -37,7 +37,7 @@
 oo_CLASS_CREATE (TableRow, Data);
 #define Table_members Data_members \
 	long numberOfColumns; \
-	struct TableColumnHeader *columnHeaders; \
+	struct structTableColumnHeader *columnHeaders; \
 	Ordered rows;
 #define Table_methods Data_methods
 oo_CLASS_CREATE (Table, Data);

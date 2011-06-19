@@ -90,10 +90,13 @@ class_methods (Excitation, Vector) {
 }
 
 Excitation Excitation_create (double df, long nf) {
-	Excitation me = Thing_new (Excitation);
-	if (! me || ! Matrix_init (me, 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1))
-		forget (me);
-	return me;
+	try {
+		autoExcitation me = Thing_new (Excitation);
+		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Excitation not created.");
+	}
 }
 
 double Excitation_getDistance (Excitation me, Excitation thee) {
@@ -111,9 +114,8 @@ double Excitation_getDistance (Excitation me, Excitation thee) {
 }
 
 double Excitation_getLoudness (Excitation me) {
-	int i;
 	double loudness = 0.0;
-	for (i = 1; i <= my nx; i ++)
+	for (int i = 1; i <= my nx; i ++)
 		/*  Sones = 2 ** ((Phones - 40) / 10)  */
 		loudness += pow (2, (my z [1] [i] - 40) / 10);
 	return my dx * loudness;
@@ -122,8 +124,8 @@ double Excitation_getLoudness (Excitation me) {
 void Excitation_draw (Excitation me, Graphics g,
 	double fmin, double fmax, double minimum, double maximum, int garnish)
 {
-	long ifmin, ifmax;
 	if (fmax <= fmin) { fmin = my xmin; fmax = my xmax; }
+	long ifmin, ifmax;
 	Matrix_getWindowSamplesX (me, fmin, fmax, & ifmin, & ifmax);
 	if (maximum <= minimum)
 		Matrix_getWindowExtrema (me, ifmin, ifmax, 1, 1, & minimum, & maximum);
@@ -143,17 +145,23 @@ void Excitation_draw (Excitation me, Graphics g,
 }
 
 Matrix Excitation_to_Matrix (Excitation me) {
-	Matrix thee = (Matrix) Data_copy (me);
-	if (! thee) return NULL;
-	Thing_overrideClass (thee, classMatrix);
-	return thee;
+	try {
+		autoMatrix thee = (Matrix) Data_copy (me);
+		Thing_overrideClass (thee.peek(), classMatrix);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Matrix.");
+	}
 }
 
 Excitation Matrix_to_Excitation (Matrix me) {
-	Excitation thee = (Excitation) Data_copy (me);
-	if (! thee) return NULL;
-	Thing_overrideClass (thee, classExcitation);
-	return thee;
+	try {
+		autoExcitation thee = (Excitation) Data_copy (me);
+		Thing_overrideClass (thee.peek(), classExcitation);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Excitation.");
+	}
 }
 
 /* End of file Excitation.cpp */

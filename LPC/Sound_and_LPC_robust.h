@@ -35,9 +35,8 @@
 	extern "C" {
 #endif
 
-int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee,
-	LPC_Frame him, void *huber);
-/*
+void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs);
+/*int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, void *huber);
 	The gnu c compiler (version 3.3.1) complaints about having two LPC_Frame types
 	in the argument list:
 	error: two or more data types in declaration of `LPC_Frame_and_Sound_into_LPC_Frame_huber

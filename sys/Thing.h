@@ -228,7 +228,7 @@ void Thing_swap (I, thou);
 /*    but visible to the inheritor. */
 /*    In this case, put the statement "typedef struct klas *klas;" in klas.h, */
 /*    and use class_create_opaque in the klasP.h header file */
-/*    (or in klas.c if there will not be any inheritors). */
+/*    (or in klas.cpp if there will not be any inheritors). */
 
 #ifdef __cplusplus
 	#define _THING_DECLARE_AUTO(Type)  typedef _Thing_auto <struct##Type> auto##Type;
@@ -240,6 +240,12 @@ void Thing_swap (I, thou);
 	typedef struct struct##klas *klas; \
 	_THING_DECLARE_AUTO (klas) \
 	klas##__parents (klas) \
+	typedef struct struct##klas##_Table *klas##_Table; \
+	extern klas##_Table class##klas
+
+#define Thing_declare1cpp(klas) \
+	typedef struct struct##klas *klas; \
+	_THING_DECLARE_AUTO (klas) \
 	typedef struct struct##klas##_Table *klas##_Table; \
 	extern klas##_Table class##klas
 
@@ -258,6 +264,16 @@ void Thing_swap (I, thou);
 	struct struct##klas { \
 		klas##_Table methods; \
 		klas##__members(klas) \
+	}; \
+	extern struct struct##klas##_Table theStruct##klas
+
+#define Thing_declare2cpp(klas,parentKlas) \
+	struct struct##klas##_Table { \
+		void (* _initialize) (void *table); \
+		const wchar_t *_className; \
+		parentKlas##_Table _parent; \
+		long _size; \
+		klas##__methods(klas) \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas
 
@@ -282,7 +298,7 @@ void Thing_swap (I, thou);
 	_THING_DECLARE_AUTO (klas) \
 	class_create_opaque (klas, parentKlas)
 
-/* For klas.c, after the definitions of the methods. */
+/* For klas.cpp, after the definitions of the methods. */
 
 #define class_methods(klas,parentKlas) \
 	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
@@ -294,6 +310,7 @@ void Thing_swap (I, thou);
 		klas##_Table us = (klas##_Table) table; \
 		if (! class##parentKlas -> destroy)   /* Parent class not initialized? */ \
 			class##parentKlas -> _initialize (class##parentKlas); \
+		if (Melder_debug == 43) Melder_casual ("Initializing class %ls (%ld), part %ls.", us -> _className, table, class##parentKlas -> _className); \
 		class##parentKlas -> _initialize (us);   /* Inherit methods from parent class. */
 #define class_method(method)  us -> method = method;   /* Override one method. */
 #define class_method_local(klas,method)  us -> method = class##klas##_##method;
@@ -379,6 +396,7 @@ public:
 		therror;   // if this happens, the destructor won't be called, but that is not necessary anyway
 		//if (Melder_debug == 37) Melder_casual ("end initializing autopointer %ld with pointer %ld", this, ptr);
 	}
+	_Thing_auto () : ptr (NULL) { }
 	/*
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.

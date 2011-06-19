@@ -33,7 +33,7 @@ static int readText (I, MelderReadText text)
 		{
 			OrderedOfString_init (me, 1); therror
 		}
-		if (size < 0) rethrowzero;
+		if (size < 0) Melder_throw ("Size cannot be negative.");
     	OrderedOfString_init (me, size); therror
 		for (long i = 1; i <= size; i++)
 		{
@@ -77,7 +77,7 @@ Categories Categories_create (void)
 		autoCategories me = Thing_new (Categories);
 		Categories_init (me.peek(), 10);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("categories not created."); }
+	} catch (MelderError) { rethrowmzero ("Categories not created."); }
 }
 
 Categories Categories_sequentialNumbers (long n)
@@ -87,7 +87,7 @@ Categories Categories_sequentialNumbers (long n)
 		OrderedOfString_init (me.peek(), 5); therror
 		OrderedOfString_sequentialNumbers (me.peek(), n); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories with sequential numbers not created."); }
+	} catch (MelderError) { rethrowmzero ("Sequential number Categories not created."); }
 }
 
 Categories Categories_selectUniqueItems (Categories me, int sorted)
@@ -96,7 +96,7 @@ Categories Categories_selectUniqueItems (Categories me, int sorted)
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no unique categories created."); }
 }
 
 void Categories_drawItem (Categories me, Graphics g, long position, 
@@ -108,8 +108,8 @@ void Categories_drawItem (Categories me, Graphics g, long position,
 
 Categories OrderedOfString_to_Categories (I)
 {
+	iam (OrderedOfString);
 	try {
-		iam (OrderedOfString);
 		autoCategories thee = Categories_create();
 		
 		for (long i = 1; i <= my size; i++)
@@ -118,7 +118,7 @@ Categories OrderedOfString_to_Categories (I)
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Categories."); }
 }
 
 long Categories_getSize (Categories me) { return my size; }
@@ -126,8 +126,8 @@ long Categories_getSize (Categories me) { return my size; }
 /* TableOfReal_Rowlabels_to_Categories  ??? */
 Categories TableOfReal_to_CategoriesRow (I)
 {
+	iam (TableOfReal);
 	try {
-		iam (TableOfReal);
 		autoCategories thee = Categories_create ();
 	
 		for (long i = 1; i <= my numberOfRows; i++)
@@ -139,13 +139,13 @@ Categories TableOfReal_to_CategoriesRow (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": row labels not converted to Categories."); }
 }
 
 Categories TableOfReal_to_CategoriesColumn (I)
 {
-	try {
 		iam (TableOfReal); 
+	try {
 		autoCategories thee = Categories_create ();
 	 
 		for (long i = 1; i <= my numberOfColumns; i++)
@@ -157,7 +157,7 @@ Categories TableOfReal_to_CategoriesColumn (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": columnlabels not converted to Categories."); }
 }
 
 /* End of file Categories.cpp */

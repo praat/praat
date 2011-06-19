@@ -20,33 +20,41 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/06/16
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
+#include "Editor.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define TextEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (TextEditor);
+Thing_declare1cpp (TextEditor);
 
-#define TextEditor__members(Klas) Editor__members(Klas) \
-	structMelderFile file; \
-	GuiObject textWidget; \
-	Any openDialog, saveDialog, printDialog, findDialog; \
-	int dirty, fontSize; \
-	GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
-	GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+#ifdef __cplusplus
+	struct structTextEditor : public structEditor {
+		structMelderFile file;
+		GuiObject textWidget;
+		Any openDialog, saveDialog, printDialog, findDialog;
+		int dirty, fontSize;
+		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
+		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+	};
+#else
+	#define TextEditor__members(Klas) Editor__members(Klas) \
+		structMelderFile file; \
+		GuiObject textWidget; \
+		Any openDialog, saveDialog, printDialog, findDialog; \
+		int dirty, fontSize; \
+		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
+		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+#endif
 #define TextEditor__methods(Klas) Editor__methods(Klas) \
 	bool fileBased; \
 	void (*clear) (Klas me);
-Thing_declare2 (TextEditor, Editor);
+Thing_declare2cpp (TextEditor, Editor);
 
-int TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText);
+void TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText);
 TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */
 void TextEditor_showOpen (TextEditor me);

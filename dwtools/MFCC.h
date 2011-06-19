@@ -48,7 +48,7 @@ class_create (MFCC, CC);
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel);
 
-int MFCC_lifter (MFCC me, long lifter);
+void MFCC_lifter (MFCC me, long lifter);
 /*
 	Lifter the cepstral coefficients:
 	

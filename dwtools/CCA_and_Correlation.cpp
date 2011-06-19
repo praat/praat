@@ -65,7 +65,7 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero ("TableOfReal not created from CCA & Correlation."); }
 }
 
 static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)

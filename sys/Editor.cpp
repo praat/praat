@@ -111,7 +111,12 @@ static void commonCallback (GUI_ARGS) {
 		UiHistory_write (L"\n");
 		UiHistory_write (my itemTitle);
 	}
-	if (! my commandCallback (my editor, me, NULL, NULL, NULL)) Melder_flushError (NULL);
+	try {
+		my commandCallback (my editor, me, NULL, NULL, NULL); therror
+	} catch (MelderError) {
+		Melder_error3 (L"Menu command \"", my itemTitle, L"\" not completed.");
+		Melder_flushError (NULL);
+	}
 }
 
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar_t *itemTitle, long flags,
@@ -170,8 +175,8 @@ GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const w
 	const wchar_t *script)
 {
 	Editor me = (Editor) editor;
-	int numberOfMenus = my menus -> size, imenu;
-	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	int numberOfMenus = my menus -> size;
+	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			EditorCommand cmd = Thing_new (EditorCommand);
@@ -198,8 +203,8 @@ GuiObject Editor_addCommandScript (Any editor, const wchar_t *menuTitle, const w
 
 void Editor_setMenuSensitive (Any editor, const wchar_t *menuTitle, int sensitive) {
 	Editor me = (Editor) editor;
-	int numberOfMenus = my menus -> size, imenu;
-	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	int numberOfMenus = my menus -> size;
+	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			GuiObject_setSensitive (menu -> menuWidget, sensitive);
@@ -209,8 +214,8 @@ void Editor_setMenuSensitive (Any editor, const wchar_t *menuTitle, int sensitiv
 }
 
 EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle) {
-	int numberOfMenus = my menus -> size, imenu;
-	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	int numberOfMenus = my menus -> size;
+	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		if (wcsequ (menuTitle, menu -> menuTitle)) {
 			int numberOfCommands = menu -> commands -> size, icommand;
@@ -226,8 +231,8 @@ EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const 
 }
 
 int Editor_doMenuCommand (Editor me, const wchar_t *commandTitle, const wchar_t *arguments, Interpreter interpreter) {
-	int numberOfMenus = my menus -> size, imenu;
-	for (imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	int numberOfMenus = my menus -> size;
+	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 		int numberOfCommands = menu -> commands -> size, icommand;
 		for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
@@ -333,18 +338,14 @@ static int menu_cb_searchManual (EDITOR_ARGS) {
 
 static int menu_cb_newScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	(void) ScriptEditor_createFromText (my parent, me, NULL); cherror
-end:
-	iferror return 0;
+	(void) ScriptEditor_createFromText (my parent, me, NULL); therror
 	return 1;
 }
 
 static int menu_cb_openScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL); cherror
-	TextEditor_showOpen (ScriptEditor_as_TextEditor (scriptEditor));
-end:
-	iferror return 0;
+	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL); therror
+	TextEditor_showOpen (scriptEditor);
 	return 1;
 }
 

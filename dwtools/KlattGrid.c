@@ -536,7 +536,7 @@ PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me)
 	for (long ip = 1; ip <= nt; ip++)
 	{
 		PhonationPoint fp = my points -> item[ip];
-		if (! PointProcess_addPoint (thee, fp -> time)) goto end;
+		PointProcess_addPoint (thee, fp -> time);
 	}
 end:
 	if (Melder_hasError ()) forget (thee);
@@ -973,7 +973,7 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me)
 
 		t += pulseDelay;
 		PhonationPoint phonationPoint = PhonationPoint_create (t, period, openPhase, collisionPhase, te, power1, power2, pulseScale);
-		if (phonationPoint == NULL || ! AnyTier_addPoint (thee, phonationPoint)) goto end;
+		AnyTier_addPoint (thee, phonationPoint);
 	}
 
 end:

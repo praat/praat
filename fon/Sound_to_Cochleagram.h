@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/08
  */
 
 #include "Sound.h"
@@ -28,10 +28,10 @@
 	extern "C" {
 #endif
 
-Cochleagram Sound_to_Cochleagram (I, double dt, double df, double windowLength, double forwardMaskingTime);
+Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double windowLength, double forwardMaskingTime);
 
 Cochleagram Sound_to_Cochleagram_edb
-	(I, double dtime, double dfreq, int hasSynapse, double replenishmentRate,
+	(Sound me, double dtime, double dfreq, int hasSynapse, double replenishmentRate,
 	 double lossRate, double returnRate, double reprocessingRate);
 
 #ifdef __cplusplus

@@ -27,7 +27,7 @@
 Strings Categories_to_Strings (Categories me)
 {
 	try {
-		if (my size < 1) rethrowzero;
+		if (my size < 1) Melder_throw ("No elements.");
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<wchar_t *> (1, my size);
 		thy numberOfStrings = my size;
@@ -38,13 +38,13 @@ Strings Categories_to_Strings (Categories me)
 			thy strings[i] = Melder_wcsdup (s -> string); therror
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Strings."); }
 }
 
 Categories Strings_to_Categories (Strings me)
 {
 	try {
-		if (my numberOfStrings < 1) rethrowzero;
+		if (my numberOfStrings < 1) Melder_throw ("Empty strings.");
 		autoCategories thee = Thing_new (Categories);
 		Categories_init (thee.peek(), my numberOfStrings);
 
@@ -54,7 +54,7 @@ Categories Strings_to_Categories (Strings me)
 			Collection_addItem (thee.peek(), s.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted."); }
 }
 
 /* End of file Categories_and_Strings.cpp */

@@ -157,17 +157,17 @@ static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const wc
 {
 	try {
 		long i = IntervalTier_timeToIndex (me, xmin); // xmin is in interval i
-		if (i < 1) rethrowzero;
+		if (i < 1) Melder_throw ("Index too low.");
 		
 		autoTextInterval newti = TextInterval_create (xmin, xmax, label);
 		TextInterval interval = (TextInterval) my intervals -> item[i];
 		double xmaxi = interval -> xmax;
-		if (xmax > xmaxi) rethrowzero; // Don't know what to do
+		if (xmax > xmaxi) Melder_throw ("Don't know what to do"); // Don't know what to do
 		if (xmin == interval -> xmin)
 		{
 			if (xmax == interval -> xmax) // interval already present
 			{
-				return TextInterval_setText (interval, label);
+				TextInterval_setText (interval, label); therror
 			}
 			// split interval
 			interval -> xmin = xmax;
@@ -255,13 +255,13 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		}
 		f.close(file);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Reading from file \"", MelderFile_name (file), "\" not performed."); }
+	} catch (MelderError) { rethrowmzero ("TextGrid not read from file ", MelderFile_messageName (file), "."); }
 }
 
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
 {
 	try {
-	int i, at_end = 0, at_start = 1;
+	int at_end = 0, at_start = 1;
 
 		autoTextGrid me = (TextGrid) Data_copy (grid1);
 		autoTextGrid thee = (TextGrid) Data_copy (grid2);
@@ -430,7 +430,7 @@ int IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, con
 
 		if (from == 0) from = 1;
 		if (to == 0) to = my intervals -> size;
-		if (from > to || from < 1 || to > my intervals -> size) rethrowzero;
+		if (from > to || from < 1 || to > my intervals -> size) Melder_throw ("Incorrect specification of where to act.");
 		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 
@@ -461,7 +461,7 @@ int TextTier_changeLabels (I, long from, long to, const wchar_t *search, const w
 
 		if (from == 0) from = 1;
 		if (to == 0) to = my points -> size;
-		if (from > to || from < 1 || to > my points -> size) rethrowzero;
+		if (from > to || from < 1 || to > my points -> size) Melder_throw ("Incorrect specification of where to act.");
 		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 
@@ -504,7 +504,7 @@ int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wcha
 			TextTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		}
 		return 1;
-	} catch (MelderError) { rethrowmzero ("Labels not changed"); }
+	} catch (MelderError) { rethrowmzero (me, ": labels not changed"); }
 }
 
 /* End of file TextGrid_extensions.cpp */

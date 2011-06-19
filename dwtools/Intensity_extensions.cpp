@@ -30,7 +30,7 @@
 static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const wchar_t *leftLabel)
 {
 	try {
-		if (time <= my xmin || time >= my xmax) rethrowzero;
+		if (time <= my xmin || time >= my xmax) Melder_throw ("Time is outside interval.");
 
 		// Find interval to split
 		if (iinterval <= 0) iinterval = IntervalTier_timeToLowIndex (me, time);
@@ -121,7 +121,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		IntervalTier_removeBoundary_equalLabels (it, soundingLabel);
 
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TextGrid not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": TextGrid not created."); }
 }
 
 /* End of file Intensity_extensions.cpp */

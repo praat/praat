@@ -320,7 +320,7 @@ static void draw (PitchEditor me) {
 }
 
 static void play (PitchEditor me, double tmin, double tmax) {
-	if (! Pitch_hum (my data, tmin, tmax)) Melder_flushError (NULL);
+	Pitch_hum ((Pitch) my data, tmin, tmax);
 }
 
 static int click (PitchEditor me, double xWC, double yWC, int dummy) {
@@ -379,11 +379,13 @@ class_methods (PitchEditor, FunctionEditor) {
 }
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch) {
-	PitchEditor me = Thing_new (PitchEditor); cherror
-	FunctionEditor_init (PitchEditor_as_parent (me), parent, title, pitch); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoPitchEditor me = Thing_new (PitchEditor);
+		FunctionEditor_init (PitchEditor_as_parent (me.peek()), parent, title, pitch); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Pitch window not created.");
+	}
 }
 
 /* End of file PitchEditor.cpp */

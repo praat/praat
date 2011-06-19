@@ -2999,7 +2999,7 @@ static void do_extractTextStr (int singleWord) {
 }
 static void do_selected (void) {
 	Stackel n = pop;
-	long result;
+	long result = 0;
 	if (n->content.number == 0) {
 		result = praat_getIdOfSelected (NULL, 0); therror
 	} else if (n->content.number == 1) {
@@ -3029,22 +3029,18 @@ static void do_selectedStr (void) {
 	Stackel n = pop;
 	wchar_t *name;
 	autostring result;
-	//autostring r2 = result;
-	//autostring r3 = result.transfer();
-	//r2 = result;
-	//r2 = result.transfer();
 	if (n->content.number == 0) {
 		name = praat_getNameOfSelected (NULL, 0); therror
-		result = Melder_wcsdup (name);
+		result.reset (Melder_wcsdup (name));
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
 			void *klas = Thing_classFromClassName (a->content.string); therror
 			name = praat_getNameOfSelected (klas, 0); therror
-			result = Melder_wcsdup (name);
+			result.reset (Melder_wcsdup (name));
 		} else if (a->which == Stackel_NUMBER) {
 			name = praat_getNameOfSelected (NULL, a->content.number); therror
-			result = Melder_wcsdup (name);
+			result.reset (Melder_wcsdup (name));
 		} else {
 			Melder_throw ("The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
@@ -3053,7 +3049,7 @@ static void do_selectedStr (void) {
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			void *klas = Thing_classFromClassName (s->content.string); therror
 			name = praat_getNameOfSelected (klas, x->content.number); therror
-			result = Melder_wcsdup (name);
+			result.reset (Melder_wcsdup (name));
 		} else {
 			Melder_throw ("The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->content.number, ".");
 		}
@@ -3062,7 +3058,7 @@ static void do_selectedStr (void) {
 }
 static void do_numberOfSelected (void) {
 	Stackel n = pop;
-	long result;
+	long result = 0;
 	if (n->content.number == 0) {
 		result = praat_selection (NULL);
 	} else if (n->content.number == 1) {
@@ -3468,7 +3464,7 @@ static void do_chooseWriteFileStr (void) {
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
 			autostring result = GuiFileSelect_getOutfileName (NULL, title->content.string, defaultName->content.string);
 			if (result.peek() == NULL) {
-				result = Melder_wcsdup (L"");
+				result.reset (Melder_wcsdup (L""));
 			}
 			pushString (result.transfer());
 		} else {
@@ -3617,7 +3613,7 @@ static void do_demoExtraControlKeyPressed (void) {
 	pushNumber (result);
 }
 static long Stackel_getRowNumber (Stackel row, Data thee) {
-	long result;
+	long result = 0;
 	if (row->which == Stackel_NUMBER) {
 		result = floor (row->content.number + 0.5);   // round
 	} else if (row->which == Stackel_STRING) {
@@ -3632,7 +3628,7 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 	return result;
 }
 static long Stackel_getColumnNumber (Stackel column, Data thee) {
-	long result;
+	long result = 0;
 	if (column->which == Stackel_NUMBER) {
 		result = floor (column->content.number + 0.5);   // round
 	} else if (column->which == Stackel_STRING) {

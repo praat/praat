@@ -34,7 +34,7 @@ Polynomial LPC_Frame_to_Polynomial (LPC_Frame me)
 		}
 		thy coefficients[degree + 1] = 1;
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Polynomial not created."); }
+	} catch (MelderError) { rethrowmzero ("Polynomial not created from LPC_Frame."); }
 }
 
 Polynomial LPC_to_Polynomial (LPC me, double time)
@@ -42,10 +42,10 @@ Polynomial LPC_to_Polynomial (LPC me, double time)
 	try {
 		long iFrame = Sampled_xToIndex (me, time);
 	
-		if (iFrame < 1 || iFrame > my nx) rethrowzero;
+		if (iFrame < 1 || iFrame > my nx) Melder_throw ("invalid frame number.");
 		autoPolynomial thee = LPC_Frame_to_Polynomial (&my frame[iFrame]);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Polynomial not created."); }
+	} catch (MelderError) { rethrowmzero (me, ":no Polynomial created."); }
 }
 
 /* End of file LPC_and_Polynomial.cpp */

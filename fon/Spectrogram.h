@@ -47,7 +47,7 @@ class_create (Spectrogram, Matrix);
 	z [iy] [ix]		// Power spectrum density.
 */
 
-Any Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
+Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 					double fmin, double fmax, long nf, double df, double f1);
 /*
 	Function:

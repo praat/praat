@@ -120,10 +120,8 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 			"the dimension of the independent part (", nx, L").");
 		if (n < ny) Melder_throw (L"The number of observations must be larger then ", ny, ".");
 
-		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) rethrowzero;
-	/*
-		Use svd as (temporary) storage, and copy data
-	*/
+		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
+		// Use svd as (temporary) storage, and copy data
 
 		autoSVD svdy = SVD_create (n, ny);
 		autoSVD svdx = SVD_create (n, nx);
@@ -235,7 +233,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 		Melder_assert (thy x -> dimension == thy xLabels -> numberOfStrings && 
 			thy y -> dimension == thy yLabels -> numberOfStrings);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("CCA not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": CCA not created."); }
 }
 
 TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfFactors)
@@ -302,7 +300,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero ("Predictions not created."); }
 }
 
 TableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee)
@@ -311,7 +309,7 @@ TableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee)
 		autoCorrelation c = TableOfReal_to_Correlation (thee);
 		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero ("Factor loadings not created."); }
 }
 
 double CCA_getCorrelationCoefficient (CCA me, long index)

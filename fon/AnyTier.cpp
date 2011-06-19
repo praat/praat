@@ -227,10 +227,13 @@ long AnyTier_hasPoint (I, double t) {
 	return 0;   /* Point not found. */
 }
 
-int AnyTier_addPoint (I, Any point) {
+void AnyTier_addPoint (I, Any point) {
 	iam (AnyTier);
-	if (! point || ! Collection_addItem (my points, point)) return 0;
-	return 1;
+	try {
+		Collection_addItem (my points, point); therror
+	} catch (MelderError) {
+		rethrowm (me, ": point not added.");
+	}
 }
 
 void AnyTier_removePoint (I, long i) {
@@ -255,15 +258,18 @@ void AnyTier_removePointsBetween (I, double tmin, double tmax) {
 
 PointProcess AnyTier_downto_PointProcess (I) {
 	iam (AnyTier);
-	long numberOfPoints = my points -> size;
-	AnyPoint *points = (AnyPoint *) my points -> item;
-	PointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
-	if (! thee) return NULL;
-	/* OPTIMIZATION, bypassing PointProcess_addTime: */
-	for (long i = 1; i <= numberOfPoints; i ++)
-		thy t [i] = points [i] -> time;
-	thy nt = numberOfPoints;
-	return thee;
+	try {
+		long numberOfPoints = my points -> size;
+		AnyPoint *points = (AnyPoint *) my points -> item;
+		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
+		/* OPTIMIZATION, bypassing PointProcess_addTime: */
+		for (long i = 1; i <= numberOfPoints; i ++)
+			thy t [i] = points [i] -> time;
+		thy nt = numberOfPoints;
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to PointProcess.");
+	}
 }
 
 /* End of file AnyTier.cpp */

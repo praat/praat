@@ -74,7 +74,7 @@ void Tube_Frame_init (Tube_Frame me, long nSegments, double length)
 	try {
 		my nSegments = nSegments;
 		my length = length;
-		if (nSegments <= 0) rethrow;
+		if (nSegments <= 0) Melder_throw ("Number of segments must be a natural number.");
 		my c = NUMvector<double> (1, nSegments);
 	} catch (MelderError) { rethrow; }
 }
@@ -89,7 +89,7 @@ void Tube_Frame_free (Tube_Frame me)
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee)
 {
 	try {
-		if (my nSegments > thy nSegments) rethrow;
+		if (my nSegments > thy nSegments) Melder_throw ("Number of segments to big.");
 	
 		double s = 0.0001; /* 1.0 cm^2 at glottis */
 		double *rc = my c, *area = thy c;

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/12
  */
 
 #include "Strings.h"
@@ -36,7 +36,7 @@ oo_CLASS_CREATE (WordList, Data);
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);
 
-int WordList_hasWord (WordList me, const wchar_t *word);
+bool WordList_hasWord (WordList me, const wchar_t *word);
 
 #ifdef __cplusplus
 	}

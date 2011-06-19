@@ -86,7 +86,7 @@ LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients)
 			
 		for (long i = 1; i <= my nx; i++)
 		{
-			CC_Frame_init (& thy frame[i], numberOfCoefficients); therror
+			CC_Frame_init (& thy frame[i], numberOfCoefficients);
 			LPC_Frame_into_CC_Frame (& my frame[i], & thy frame[i]);
 		}
 		return thee.transfer();

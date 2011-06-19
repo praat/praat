@@ -1,4 +1,4 @@
-/* Graphics_record.c
+/* Graphics_record.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -27,6 +27,7 @@
  * pb 2009/08/10 image from file
  * pb 2010/07/11 Graphics_clearRecording ()
  * pb 2011/03/17 C++
+ * pb 2011/06/18 Graphics_polyline_closed ()
  */
 
 #include "GraphicsP.h"
@@ -346,6 +347,10 @@ void Graphics_play (Graphics me, Graphics thee) {
 			{  double x1 = get, x2 = get, y1 = get, y2 = get; long length = get; char *text_utf8 = sget (length);
 				Graphics_imageFromFile (thee, Melder_peekUtf8ToWcs (text_utf8), x1, x2, y1, y2);
 			}  break;
+			case POLYLINE_CLOSED:
+			{  long n = get; double *x = mget (n), *y = mget (n);
+				Graphics_polyline_closed (thee, n, & x [1], & y [1]);
+			} break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);

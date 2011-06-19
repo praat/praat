@@ -70,15 +70,15 @@
 	long (*getDegree) (I);
 class_create (FunctionTerms, Function);
 
-int FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
+void FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
 
-int FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s, int allowTrailingZeros);
+void FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s, int allowTrailingZeros);
 
 FunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients);
 
 void FunctionTerms_setDomain (I, double xmin, double xmax);
 
-int FunctionTerms_setCoefficient (I, long index, double value);
+void FunctionTerms_setCoefficient (I, long index, double value);
 
 double FunctionTerms_evaluate (I, double x);
 
@@ -151,7 +151,7 @@ void Polynomial_evaluateTerms (I, double x, double terms[]);
 
 Polynomial Polynomials_multiply (Polynomial me, Polynomial thee);
 
-int Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomial *r);
+void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomial *r);
 
 #define LegendreSeries_members FunctionTerms_members
 #define LegendreSeries_methods FunctionTerms_methods
@@ -182,7 +182,7 @@ void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, do
 	const wchar_t *symbol, int fontSize, int garnish);
 	
 dcomplex Roots_getRoot (Roots me, long index);
-int Roots_setRoot (Roots me, long index, double re, double im);
+void Roots_setRoot (Roots me, long index, double re, double im);
 
 Spectrum Roots_to_Spectrum (Roots me, double nyquistFrequency,
 	long numberOfFrequencies, double radius);
@@ -229,7 +229,7 @@ Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 	long (*getOrder) (I);
 class_create (Spline, FunctionTerms);
 
-int Spline_init (I, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
+void Spline_init (I, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
 
 long Spline_getOrder (I);
 
@@ -255,7 +255,7 @@ ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const 
 
 /****************** fit **********************************************/
 
-int FunctionTerms_and_RealTier_fit (I, thou, int *freezeCoefficients, double tol, int ic, Covariance *c);
+void FunctionTerms_and_RealTier_fit (I, thou, int *freezeCoefficients, double tol, int ic, Covariance *c);
 
 Polynomial RealTier_to_Polynomial (I, long degree, double tol, int ic, Covariance *cvm);
 

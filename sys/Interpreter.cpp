@@ -84,9 +84,10 @@ static void classInterpreterVariable_destroy (I) {
 	inherited (InterpreterVariable) destroy (me);
 }
 
-class_methods (InterpreterVariable, Thing)
+class_methods (InterpreterVariable, Thing) {
 	class_method_local (InterpreterVariable, destroy)
-class_methods_end
+	class_methods_end
+}
 
 static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
 	try {
@@ -1521,20 +1522,26 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 						}
 					}
 				} // endif fail
+				if (assertErrorLineNumber != 0 && assertErrorLineNumber != lineNumber) {
+					long save_assertErrorLineNumber = assertErrorLineNumber;
+					assertErrorLineNumber = 0;
+					Melder_throw ("Script assertion fails in line ", save_assertErrorLineNumber,
+							": error " L_LEFT_GUILLEMET " ", assertErrorString.string, " " L_RIGHT_GUILLEMET " not raised. Instead: no error.");
+					
+				}
 			} catch (MelderError) {
+				//Melder_casual ("Error: << %ls >>\nassertErrorLineNumber: %ld\nlineNumber: %ld\nAssert error string: << %ls >>\n",
+				//	Melder_getError(), assertErrorLineNumber, lineNumber, assertErrorString.string);
 				if (assertErrorLineNumber == 0) {
 					iferror throw;
 				} else if (assertErrorLineNumber != lineNumber) {
-					if (/*assertErrorLineNumber != lineNumber - 1 ||*/ ! Melder_hasError ()) {
-						Melder_throw ("Script assertion fails in line ", assertErrorLineNumber,
-							": error " L_LEFT_GUILLEMET " ", assertErrorString.string, " " L_RIGHT_GUILLEMET " not raised. Instead: no error.");
-					}
 					if (wcsstr (Melder_getError (), assertErrorString.string)) {
 						Melder_clearError ();
 						assertErrorLineNumber = 0;
 					} else {
-						autostring errorCopy = Melder_wcsdup_f (Melder_getError ());
+						wchar *errorCopy_nothrow = Melder_wcsdup_f (Melder_getError ());   // UGLY but necessary (1)
 						Melder_clearError ();
+						autostring errorCopy = errorCopy_nothrow;   // UGLY but necessary (2)
 						Melder_throw ("Script assertion fails in line ", assertErrorLineNumber,
 							": error " L_LEFT_GUILLEMET " ", assertErrorString.string, " " L_RIGHT_GUILLEMET " not raised. Instead:\n",
 							errorCopy.peek());
@@ -1548,10 +1555,10 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		return 1;
 	} catch (MelderError) {
 		iferror {
-			if (! wcsnequ (lines [lineNumber], L"exit ", 5) && ! assertionFailed) {   /* Don't show the message twice! */
-				while (lines [lineNumber] [0] == '\0') {   /* Did this use to be a continuation line? */
+			if (! wcsnequ (lines [lineNumber], L"exit ", 5) && ! assertionFailed) {   // don't show the message twice!
+				while (lines [lineNumber] [0] == '\0') {   // did this use to be a continuation line?
 					lineNumber --;
-					Melder_assert (lineNumber > 0);   /* Originally empty lines that stayed empty should not generate errors. */
+					Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
 				}
 				Melder_error5 (L"Script line ", Melder_integer (lineNumber), L" not performed or completed:\n" L_LEFT_GUILLEMET L" ",
 					lines [lineNumber], L" " L_RIGHT_GUILLEMET);

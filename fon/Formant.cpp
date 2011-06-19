@@ -314,13 +314,14 @@ double Formant_getMean (Formant me, int iformant, double tmin, double tmax, int 
 }
 
 double Formant_getStandardDeviation (Formant me, int iformant, double tmin, double tmax, int bark) {
-	long itmin, itmax, iframe, n = 0;
-	double mean, sum = 0.0;
 	if (iformant < 1 || tmin == NUMundefined || tmax == NUMundefined) return NUMundefined;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return NUMundefined;
-	mean = Formant_getMean (me, iformant, tmin, tmax, bark);
-	for (iframe = itmin; iframe <= itmax; iframe ++) {
+	double mean = Formant_getMean (me, iformant, tmin, tmax, bark);
+	double sum = 0.0;
+	long n = 0;
+	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
 		double f;
 		if (iformant > frame -> nFormants) continue;
@@ -350,9 +351,9 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
 	double size_mm, const wchar_t *mark, int garnish)
 {
-	long itmin, itmax, iframe;
 	if (iformant1 < 1 || iformant2 < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
 	if (fmax1 == fmin1)
 		Formant_getExtrema (me, iformant1, tmin, tmax, & fmin1, & fmax1);
@@ -362,12 +363,11 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	if (fmax2 == fmin2) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fmin1, fmax1, fmin2, fmax2);
-	for (iframe = itmin; iframe <= itmax; iframe ++) {
+	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my frame [iframe];
-		double x, y;
 		if (iformant1 > frame -> nFormants || iformant2 > frame -> nFormants) continue;
-		x = frame -> formant [iformant1]. frequency;
-		y = frame -> formant [iformant2]. frequency;
+		double x = frame -> formant [iformant1]. frequency;
+		double y = frame -> formant [iformant2]. frequency;
 		if (x == 0.0 || y == 0.0) continue;
 		Graphics_mark (g, x, y, size_mm, mark);
 	}
@@ -385,29 +385,31 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 }
 
 Matrix Formant_to_Matrix (Formant me, int iformant) {
-	long iframe;
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		1, 1, 1, 1, 1);
-	if (! thee) return NULL;
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		thy z [1] [iframe] = iformant <= frame -> nFormants ?
-			frame -> formant [iformant]. frequency : 0.0;
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			thy z [1] [iframe] = iformant <= frame -> nFormants ?
+				frame -> formant [iformant]. frequency : 0.0;
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": frequencies of formant ", iformant, " not converted to Matrix.");
 	}
-	return thee;
 }
 
 Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
-	long iframe;
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		1, 1, 1, 1, 1);
-	if (! thee) return NULL;
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		thy z [1] [iframe] = iformant <= frame -> nFormants ?
-			frame -> formant [iformant]. bandwidth : 0.0;
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			thy z [1] [iframe] = iformant <= frame -> nFormants ?
+				frame -> formant [iformant]. bandwidth : 0.0;
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": bandwidths of formant ", iformant, " not converted to Matrix.");
 	}
-	return thee;
 }
 
 /*** Viterbi methods. ***/

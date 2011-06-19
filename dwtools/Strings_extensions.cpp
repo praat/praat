@@ -37,7 +37,7 @@
 Strings Strings_createFixedLength (long numberOfStrings)
 {
 	try {
-		if (numberOfStrings <= 0) rethrowzero;
+		if (numberOfStrings <= 0) Melder_throw ("The number of strings must be positive.");
 		autoStrings me = Thing_new (Strings);
 		my strings = NUMvector<wchar_t *> (1, numberOfStrings);
 		my numberOfStrings = numberOfStrings;
@@ -45,7 +45,7 @@ Strings Strings_createFixedLength (long numberOfStrings)
 	} catch (MelderError) { rethrowmzero ("Strings not created."); }
 }
 
-Strings Strings_append (Ordered me)
+Strings Strings_append (Collection me)
 {
 	try {
 		long index = 1, numberOfStrings = 0;
@@ -68,7 +68,7 @@ Strings Strings_append (Ordered me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not appended."); }
 }
 
 Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces, 
@@ -81,7 +81,7 @@ Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replac
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = strings;
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not changed."); }
 }
 
 int Strings_setString (Strings me, const wchar_t *newstr, long index)
@@ -113,7 +113,7 @@ Strings Strings_extractPart (Strings me, long from, long to)
 		if (from < 1 || to > my numberOfStrings || from > to) Melder_throw
 			("Strings_extractPart: begin and end must be in interval [1, ", my numberOfStrings, L"].");
 		return strings_to_Strings (my strings, from, to);
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no part extracted."); }
 }
 
 Strings strings_to_Strings_link (wchar_t** strings, long n)
@@ -125,7 +125,7 @@ Strings strings_to_Strings_link (wchar_t** strings, long n)
 			my strings[i] = strings[i];
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero ("Strings not linked."); }
 }
 
 void _Strings_unlink (Strings me)
@@ -139,7 +139,7 @@ Permutation Strings_to_Permutation (Strings me, int sort)
 		autoPermutation thee = Permutation_create (my numberOfStrings);
 		if (sort != 0) NUMindexx_s (my strings, my numberOfStrings, thy p);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Permutation not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Permutation created."); }
 }
 
 Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
@@ -154,7 +154,7 @@ Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee)
 			his strings[i] = Melder_wcsdup (my strings[index]); therror
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no permuted Strings created."); }
 }
 
 StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
@@ -182,7 +182,7 @@ StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
 			his classIndex[j] = index;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("StringsIndex not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no StringsIndex created."); }
 }
 
 StringsIndex Strings_to_StringsIndex (Strings me)
@@ -206,7 +206,7 @@ StringsIndex Strings_to_StringsIndex (Strings me)
 			thy classIndex[index] = numberOfClasses;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("StringsIndex not created from Strings."); }
+	} catch (MelderError) { rethrowmzero (me, ": no StringsIndex created."); }
 }
 
 Strings StringsIndex_to_Strings (StringsIndex me)
@@ -219,7 +219,7 @@ Strings StringsIndex_to_Strings (StringsIndex me)
 			thy strings[i] = Melder_wcsdup (s -> string);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created from StringsIndex."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Strings created."); }
 }
 
 /* End of file Strings_extensions.cpp */

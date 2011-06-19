@@ -115,7 +115,7 @@ static void regression (Cepstrumc me, long frame, double r[], long nr)
 		if (f->nCoefficients < nc) nc = f->nCoefficients;
 		sumsq += j * j;
 	}
-	for (long i=0; i <= nc; i++)
+	for (long i = 0; i <= nc; i++)
 	{
 		for (long j = -nr/2; j <= nr/2; j++)
 		{
@@ -182,7 +182,7 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 				his z[i][j] = sqrt (dist); // prototype along y-direction
 			}
 			if (! Melder_progress5 ((double)i / my nx, L"Calculate distances: frame ",
-				Melder_integer (i), L" from ", Melder_integer (my nx), L".")) { rethrowzero; }
+				Melder_integer (i), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Distance calculation interrupted");
 		}
 		Melder_progress1 (1.0, NULL);
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
@@ -202,7 +202,7 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me)
 			for (long j = 1; j <= his nCoefficients+1; j++) thy z[j][i] = his c[j-1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
 }
 
 /* End of file Cepstrumc.cpp */

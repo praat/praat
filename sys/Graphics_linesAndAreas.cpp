@@ -188,7 +188,7 @@ static void psRevertLine (GraphicsPostscript me) {
 
 /* First level. */
 
-static void polyline (I, long numberOfPoints, long *xyDC) {
+static void polyline (I, long numberOfPoints, long *xyDC, bool close) {
 	iam (Graphics);
 	if (my screen) {
 		iam (GraphicsScreen);
@@ -207,39 +207,34 @@ static void polyline (I, long numberOfPoints, long *xyDC) {
 				for (long i = 1; i < numberOfPoints; i ++) {
 					cairo_line_to (my cr, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
 				}
-				// cairo_close_path (my cr);
+				if (close) cairo_close_path (my cr);
 				cairo_stroke (my cr);
 				cairoRevertLine (me);
 			}
 		#elif win
-			static POINT *points;
 			winPrepareLine (me);
-			if (points == NULL) {
-				points = (POINT *) malloc (sizeof (POINT) * 15001L);
-			}
+			POINT *points = Melder_malloc (POINT, numberOfPoints + close);
 			if (points) {
-				long nleft = numberOfPoints, i;
-				while (nleft > 15000) {
-					for (i = 0; i < 15001; i ++)
-						points [i]. x = *xyDC, xyDC ++, points [i]. y = *xyDC, xyDC ++;
-					Polyline (my dc, points, 15001);
-					if (my fatNonSolid) {
-						for (i = 0; i < 15001; i ++) points [i]. x -= 1;
-						Polyline (my dc, points, 15001);
-						for (i = 0; i < 15001; i ++) points [i]. x += 1, points [i]. y -= 1;
-						Polyline (my dc, points, 15001);
-					}
-					nleft -= 15000;
-					xyDC -= 2;
+				for (long i = 0; i < numberOfPoints; i ++) {
+					points [i]. x = *xyDC, xyDC ++;
+					points [i]. y = *xyDC, xyDC ++;
 				}
-				for (i = 0; i < nleft; i ++)
-					points [i]. x = *xyDC, xyDC ++, points [i]. y = *xyDC, xyDC ++;
-				Polyline (my dc, points, nleft);
+				if (close)
+					points [numberOfPoints] = points [0];
+				Polyline (my dc, points, numberOfPoints + close);
 				if (my fatNonSolid) {
-					for (i = 0; i < nleft; i ++) points [i]. x -= 1;
-					Polyline (my dc, points, nleft);
-					for (i = 0; i < nleft; i ++) points [i]. x += 1, points [i]. y -= 1;
-					Polyline (my dc, points, nleft);
+					for (long i = 0; i < numberOfPoints; i ++)
+						points [i]. x -= 1;
+					if (close)
+						points [numberOfPoints] = points [0];
+					Polyline (my dc, points, numberOfPoints + close);
+					for (long i = 0; i < numberOfPoints; i ++) {
+						points [i]. x += 1;
+						points [i]. y -= 1;
+					}
+					if (close)
+						points [numberOfPoints] = points [0];
+					Polyline (my dc, points, numberOfPoints + close);
 				}
 			}
 			DEFAULT
@@ -252,6 +247,8 @@ static void polyline (I, long numberOfPoints, long *xyDC) {
 				for (long i = 1; i < numberOfPoints; i ++) {
 					CGContextAddLineToPoint (my macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 				}
+				if (close)
+					CGContextClosePath (my macGraphicsContext);
 				CGContextStrokePath (my macGraphicsContext);
 				quartzRevertLine (me);
 				GraphicsQuartz_exitDraw (me);
@@ -262,6 +259,8 @@ static void polyline (I, long numberOfPoints, long *xyDC) {
 				MoveTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
 				for (long i = 1; i < numberOfPoints; i ++)
 					LineTo (xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
+				if (close)
+					LineTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
 				quickdrawRevertLine (me);
 				if (my drawingArea) GuiMac_clipOff ();
 			}
@@ -291,6 +290,8 @@ static void polyline (I, long numberOfPoints, long *xyDC) {
 				my printf (my file, "%ld %ld L\n", dx, dy);
 			}
 			if (++ ipath >= POSTSCRIPT_MAXPATH && i != nn - 2) {
+				if (close)
+					my printf (my file, "closepath ");
 				my printf (my file, "currentpoint stroke moveto\n");
 				ipath = 1;
 			}
@@ -408,13 +409,12 @@ static void rectangle (I, long x1DC, long x2DC, long y1DC, long y2DC) {
 				if (my drawingArea) GuiMac_clipOff ();
 			}
 		#else
-			long xyDC [10];
+			long xyDC [8];
 			xyDC [0] = x1DC;	xyDC [1] = y1DC;
 			xyDC [2] = x2DC;	xyDC [3] = y1DC;
 			xyDC [4] = x2DC;	xyDC [5] = y2DC;
 			xyDC [6] = x1DC;	xyDC [7] = y2DC;
-			xyDC [8] = x1DC;	xyDC [9] = y1DC;
-			polyline (me, 5, & xyDC [0]);
+			polyline (me, 5, & xyDC [0], true);
 		#endif
 		}
 	} else if (my postScript) {
@@ -851,25 +851,25 @@ static void roundedRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC, lon
 	xyDC [1] = y1DC;
 	xyDC [2] = x2DC - r;
 	xyDC [3] = y1DC;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arc (me, x2DC - r, y1DC + dy, r, -90, 0);
 	xyDC [0] = x2DC;
 	xyDC [1] = y1DC + dy;
 	xyDC [2] = x2DC;
 	xyDC [3] = y2DC - dy;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arc (me, x2DC - r, y2DC - dy, r, 0, 90);
 	xyDC [0] = x2DC - r;
 	xyDC [1] = y2DC;
 	xyDC [2] = x1DC + r;
 	xyDC [3] = y2DC;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arc (me, x1DC + r, y2DC - dy, r, 90, 180);
 	xyDC [0] = x1DC;
 	xyDC [1] = y2DC - dy;
 	xyDC [2] = x1DC;
 	xyDC [3] = y1DC + dy;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arc (me, x1DC + r, y1DC + dy, r, 180, 270);
 }
 
@@ -892,7 +892,7 @@ static void fillRoundedRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC,
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* Base 0. */
+void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {   // base 0
 	iam (Graphics);
 	if (numberOfPoints == 0) return;
 	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
@@ -901,10 +901,29 @@ void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {	/* B
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}
-	polyline (me, numberOfPoints, xyDC);
+	polyline (me, numberOfPoints, xyDC, false);
 	Melder_free (xyDC);
 	if (my recording) {
 		op (POLYLINE, 1 + 2 * numberOfPoints);
+		put (numberOfPoints);
+		mput (numberOfPoints, & xWC [0])
+		mput (numberOfPoints, & yWC [0])
+	}
+}
+
+void Graphics_polyline_closed (I, long numberOfPoints, double *xWC, double *yWC) {   // base 0
+	iam (Graphics);
+	if (numberOfPoints == 0) return;
+	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
+	if (xyDC == NULL) { Melder_clearError (); return; }
+	for (long i = 0; i < numberOfPoints; i ++) {
+		xyDC [i + i] = wdx (xWC [i]);
+		xyDC [i + i + 1] = wdy (yWC [i]);
+	}
+	polyline (me, numberOfPoints, xyDC, true);
+	Melder_free (xyDC);
+	if (my recording) {
+		op (POLYLINE_CLOSED, 1 + 2 * numberOfPoints);
 		put (numberOfPoints);
 		mput (numberOfPoints, & xWC [0])
 		mput (numberOfPoints, & yWC [0])
@@ -918,7 +937,7 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC);
 	xyDC [3] = wdy (y2WC);
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
@@ -1204,7 +1223,7 @@ static void polysegment (I, long numberOfPoints, long *xyDC) {
 			} \
 			lastMini = mini; \
 		} \
-		if (k > 1) polyline (me, k / 2, xyDC); \
+		if (k > 1) polyline (me, k / 2, xyDC, false); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
 		long *xyDC = Melder_malloc_f (long, 2 * n); \
@@ -1221,7 +1240,7 @@ static void polysegment (I, long numberOfPoints, long *xyDC) {
 			} \
 			xyDC [i + i + 1] = value; \
 		} \
-		polyline (me, n, xyDC); \
+		polyline (me, n, xyDC, false); \
 		Melder_free (xyDC); \
 	}
 
@@ -1440,7 +1459,7 @@ void Graphics_arrow (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
 	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);
 	if (my recording) { op (ARROW, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
@@ -1454,7 +1473,7 @@ void Graphics_doubleArrow (I, double x1WC, double y1WC, double x2WC, double y2WC
 	xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
 	xyDC [3] = wdy (y2WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin ((angle - 180) * NUMpi / 180) * size;
-	polyline (me, 2, xyDC);
+	polyline (me, 2, xyDC, false);
 	arrowHead (me, wdx (x1WC), wdy (y1WC), angle + 180);
 	//polyline (me, 2, xyDC);
 	arrowHead (me, wdx (x2WC), wdy (y2WC), angle);

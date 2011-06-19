@@ -228,10 +228,10 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	NOT given.
  */
 
-int NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
+void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
-	The matrix covar must already be allocated.
+	The matrix covar must already have been allocated and centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
@@ -544,7 +544,7 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **a, long nr, long nc,
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-int NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
+void NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 	long n, double *alpha, double *gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
@@ -558,7 +558,7 @@ int NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 	Psychometrika 48, 631-638.
 */
 
-int NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[],
+void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[],
 	double alpha, double delta, double t[]);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],

@@ -222,7 +222,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 	} catch (MelderError) { 
 		thy xmax = thy x1 = thy dx = NUMundefined;
 		Tube_Frame_destroy (area); 
-		rethrowmzero ("VocalTract not created."); }
+		rethrowmzero (me, ": no VocalTract created."); }
 }
 
 /* End of file LPC_and_Tube.cpp */

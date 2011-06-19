@@ -27,6 +27,9 @@
 #ifndef _Data_h_
 	#include "Data.h"
 #endif
+#ifndef _Collection_h_
+	#include "Collection.h"
+#endif
 
 #ifdef __cplusplus
 	extern "C" {
@@ -59,22 +62,22 @@ int Permutation_checkInvariant (Permutation me);
 void Permutation_sort (Permutation me);
 /* Set p[1..n]=1,..n */
 
-int Permutation_permuteRandomly_inline (Permutation me, long from, long to);
+void Permutation_permuteRandomly_inline (Permutation me, long from, long to);
 
 Permutation Permutation_permuteRandomly (Permutation me, long from, long to);
 /* Generate a new sequence by permuting the elements from..to */
 
 Permutation Permutation_rotate (Permutation me, long from, long to, long step);
 
-int Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame);
+void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame);
 /* Swap item at pos with one randomly chosen in interval [from,to]. If pos in [from,to]
 	and forbidsame==true then new position may not be equal to pos. */
 
-int Permutation_swapBlocks (Permutation me, long from, long to, long blocksize);
+void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize);
 /* Swap two blocks */
 
-int Permutation_swapPositions (Permutation me, long i1, long i2);
-int Permutation_swapNumbers (Permutation me, long i1, long i2);
+void Permutation_swapPositions (Permutation me, long i1, long i2);
+void Permutation_swapNumbers (Permutation me, long i1, long i2);
 Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
 
 Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize,
@@ -94,8 +97,11 @@ Permutation Permutation_invert (Permutation me);
 Permutation Permutation_reverse (Permutation me, long from, long to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
-int Permutation_next_inline (Permutation me);
-int Permutation_previous_inline (Permutation me);
+void Permutation_next_inline (Permutation me);
+void Permutation_previous_inline (Permutation me);
+
+Permutation Permutations_multiply2 (Permutation me, Permutation thee);
+Permutation Permutations_multiply (Collection me);
 
 #ifdef __cplusplus
 	}

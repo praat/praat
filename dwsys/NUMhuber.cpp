@@ -63,7 +63,7 @@ int NUMmad (double *x, long n, double *location, int wantlocation, double *mad, 
 
 static double NUMgauss (double x)
 {
-	return exp (- 0.5 * x * x) / sqrt(2 * NUMpi);
+	return NUM1_sqrt2pi * exp (- 0.5 * x * x);
 }
 
 int NUMstatistics_huber (double *x, long n, double *location, int wantlocation,

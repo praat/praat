@@ -43,7 +43,7 @@
 #define ParamCurve_methods Function_methods
 class_create (ParamCurve, Function);
 
-int ParamCurve_init (I, Any x, Any y);
+void ParamCurve_init (I, Any x, Any y);
 
 ParamCurve ParamCurve_create (Any x, Any y);
 /*
@@ -60,7 +60,7 @@ ParamCurve ParamCurve_create (Any x, Any y);
 		result -> xmax = min (x -> xmax, y -> xmax);
 */
 
-int ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
+void ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 	double x1, double x2, double y1, double y2, int garnish);
 /*
 	Function:

@@ -191,7 +191,7 @@ Configuration Covariance_to_Configuration (Covariance me, long numberOfDimension
 
 Configuration Correlation_to_Configuration (Correlation me, long numberOfDimensions);
 
-int Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
+void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, long *ndf);
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	double *probability, double *t, double *ndf);
@@ -216,7 +216,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	f has Fisher distribution with p and n1+n2-p-1 degrees of freedom.
 */
 
-void Covariances_equality (Ordered me, int method, double *prob, double *chisq, double *df);
+void Covariances_equality (Collection me, int method, double *prob, double *chisq, double *df);
 /*
 	Equality of covariance.
 	method = 1 : Bartlett (Morrison, 1990)

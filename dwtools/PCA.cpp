@@ -1,4 +1,4 @@
-/* PCA.c
+/* PCA.cpp
  *
  * Principal Component Analysis
  *
@@ -103,8 +103,7 @@ long PCA_getNumberOfObservations (PCA me)
 	return my numberOfObservations;
 }
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
-	double *probability, double *chisq, long *ndf)
+void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf)
 {
 	double sum = 0, sumln = 0;
 
@@ -138,8 +137,8 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 
 PCA TableOfReal_to_PCA (I)
 {
+	iam (TableOfReal);
 	try {
-		iam (TableOfReal);
 		long m = my numberOfRows, n = my numberOfColumns;
 
 		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) Melder_throw ("Undefined cells.");
@@ -152,7 +151,7 @@ PCA TableOfReal_to_PCA (I)
 
 		if (NUMfrobeniusnorm (m, n, my data) == 0) Melder_throw  ("All values in your table are zero.");
 		autoPCA thee = Thing_new (PCA);
-		double **a = NUMmatrix_copy<double> (my data, 1, m, 1, n);
+		autoNUMmatrix<double> a (NUMdmatrix_copy (my data, 1, m, 1, n), 1, 1);
 		thy centroid = NUMvector<double> (1, n);
 
 		for (long j = 1; j <= n; j++)
@@ -169,7 +168,7 @@ PCA TableOfReal_to_PCA (I)
 			}
 			thy centroid[j] = colmean;
 		}
-		Eigen_initFromSquareRoot (thee.peek(), a, m, n);
+		Eigen_initFromSquareRoot (thee.peek(), a.peek(), m, n);
 		thy labels = NUMvector<wchar_t *> (1, n);
 
 		NUMstrings_copyElements (my columnLabels, thy labels, 1, n);
@@ -187,30 +186,25 @@ PCA TableOfReal_to_PCA (I)
 			thy eigenvalues[i] /= (m - 1);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("PCA not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": PCA not created."); }
 }
 
-Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou,
-	long numberOfDimensions)
+Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions)
 {
-	Configuration him = NULL;
 	try {
 		thouart (TableOfReal);
-
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues)
 		{
 			numberOfDimensions = my numberOfEigenvalues;
 		}
 
-		Configuration him = Configuration_create (thy numberOfRows, numberOfDimensions); therror
-
-		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & him, 1, numberOfDimensions); therror
+		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
+		Configuration thim = him.peek();
+		Eigen_and_TableOfReal_project_into (me, thee, 1, thy numberOfColumns, & thim, 1, numberOfDimensions);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		TableOfReal_setSequentialColumnLabels (him, 0, 0, L"pc", 1, 1);
-		return him;
-	} catch (MelderError) { forget (him); rethrowmzero ("Configuration not created."); }
-
-	return him;
+		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, L"pc", 1, 1);
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero ("Configuration not created from PCA & TableOfReal."); }
 }
 
 TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
@@ -223,9 +217,10 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 
 		if (npc > my numberOfEigenvalues) npc = my numberOfEigenvalues;
 
-		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension); therror
-		NUMstrings_copyElements (my labels, his columnLabels, 1, my dimension); therror
-
+		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
+		NUMstrings_copyElements (my labels, his columnLabels, 1, my dimension);
+		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		
 		for (long i = 1; i <= thy numberOfRows; i++)
 		{
 			double *hisdata = his data[i];
@@ -239,7 +234,7 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero ("TableOfReal not reconstructed."); }
 }
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to)
@@ -259,21 +254,19 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to
 
 TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring)
 {
-	double *pc = NULL;
 	try {
 		long npc;
-		pc = NUMstring_to_numbers (numstring, & npc);
+		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
 
 		autoConfiguration c = Configuration_create (1, npc);
 		for (long j = 1; j <= npc; j++)
 		{
 			c -> data [1][j] = pc[j];
 		}
-		NUMdvector_free (pc, 1);
 		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.peek());
 		return him.transfer();
-	} catch (MelderError) { NUMdvector_free (pc, 1); rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero (me, " not reconstructed."); }
 }
 
 
-/* End of file PCA.c */
+/* End of file PCA.cpp */

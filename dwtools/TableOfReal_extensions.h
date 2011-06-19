@@ -132,10 +132,10 @@ int TableOfReal_setSequentialRowLabels (I, long from, long to,
 int TableOfReal_hasRowLabels (I);
 int TableOfReal_hasColumnLabels (I);
 
-int TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *replace,
+void TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
-int TableOfReal_changeColumnLabels (I, const wchar_t *search, const wchar_t *replace,
+void TableOfReal_changeColumnLabels (I, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 /*

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/18
  */
 
 #include "Data.h"
@@ -71,6 +71,7 @@ void Polygon_salesperson (I, long numberOfIterations);
 /*** Drawing routines. ***/
 
 void Polygon_draw (I, Graphics g, double xmin, double xmax, double ymin, double ymax);
+void Polygon_drawClosed (I, Graphics g, double xmin, double xmax, double ymin, double ymax);
 
 void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax);
 

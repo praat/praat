@@ -26,18 +26,18 @@
 
 #include "Cochleagram_and_Excitation.h"
 
-Excitation Cochleagram_to_Excitation (I, double t)
-{
-	iam (Cochleagram);
-	long column = Matrix_xToNearestColumn (me, t), ifreq;
-	Excitation thee;
-	if (column < 1) column = 1;
-	if (column > my nx) column = my nx;
-	thee = Excitation_create (my dy, my ny);
-	if (! thee) return NULL;
-	for (ifreq = 1; ifreq <= my ny; ifreq ++)
-		thy z [1] [ifreq] = my z [ifreq] [column];
-	return thee;
+Excitation Cochleagram_to_Excitation (Cochleagram me, double t) {
+	try {
+		long column = Matrix_xToNearestColumn (me, t);
+		if (column < 1) column = 1;
+		if (column > my nx) column = my nx;
+		autoExcitation thee = Excitation_create (my dy, my ny);
+		for (long ifreq = 1; ifreq <= my ny; ifreq ++)
+			thy z [1] [ifreq] = my z [ifreq] [column];
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": slice at time ", t, " seconds not extracted to Excitation.");
+	}
 }
 
 /* End of file Cochleagram_and_Excitation.cpp */

@@ -797,9 +797,9 @@ int Melder_fclose (MelderFile file, FILE *stream);
 void Melder_files_cleanUp (void);
 
 /* So these will be the future replacements for the above, as soon as we rid of text files: */
-void MelderFile_open (MelderFile file);
-void MelderFile_append (MelderFile file);
-void MelderFile_create (MelderFile file, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension);
+MelderFile MelderFile_open (MelderFile file);
+MelderFile MelderFile_append (MelderFile file);
+MelderFile MelderFile_create (MelderFile file, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension);
 void * MelderFile_read (MelderFile file, long nbytes);
 char * MelderFile_readLine (MelderFile file);
 void MelderFile_writeCharacter (MelderFile file, wchar_t kar);
@@ -816,6 +816,7 @@ void MelderFile_rewind (MelderFile file);
 void MelderFile_seek (MelderFile file, long position, int direction);
 long MelderFile_tell (MelderFile file);
 void MelderFile_close (MelderFile file);
+void MelderFile_close_nothrow (MelderFile file);
 /* If one of these routines fails, it closes the file and generates an error. */
 /* It is often sufficient to call cherror only before other tests that could */
 /* result in Melder_error (), and to call iferror at the end. */
@@ -1073,9 +1074,32 @@ struct autoMelderProgress {
 	~autoMelderProgress () { Melder_progress1 (1.0, NULL); }
 };
 
+typedef struct structGraphics *Graphics;
+
+struct autoMelderMonitor {
+	autoMelderMonitor (const wchar_t *message) { g = (Graphics) Melder_monitor1 (0.0, message); }
+	~autoMelderMonitor () { Melder_monitor1 (1.0, NULL); }
+	Graphics graphics () { return g; }
+private:
+	Graphics g;
+};
+
 struct autoMelderString : MelderString {
 	autoMelderString () { length = 0; bufferSize = 0; string = NULL; }
 	~autoMelderString () { Melder_free (string); }
+};
+
+struct autoMelderReadText {
+	MelderReadText text;
+	autoMelderReadText (MelderReadText text) : text (text) {
+		therror;
+	}
+	~autoMelderReadText () {
+		if (text) MelderReadText_delete (text);
+	}
+	operator MelderReadText () {
+		return text;
+	}
 };
 
 class autofile {
@@ -1100,7 +1124,25 @@ public:
 		}
 	}
 };
-	
+
+class autoMelderFile {
+	MelderFile file;
+public:
+	autoMelderFile (MelderFile file) : file (file) {
+		therror;
+	}
+	~autoMelderFile () {
+		if (file) MelderFile_close_nothrow (file);
+	}
+	void close () {
+		if (file && file -> filePointer) {
+			MelderFile tmp = file;
+			file = NULL;
+			MelderFile_close (tmp); therror
+		}
+	}
+};
+
 class autoMelderTokens {
 	wchar **tokens;
 public:
@@ -1137,38 +1179,12 @@ public:
 	_autostring () : ptr (0) {
 		//if (Melder_debug == 39) Melder_casual ("autostring: zero constructor");
 	}
-	#if 0
-	_autostring (_autostring& source) {
-		//if (Melder_debug == 39) Melder_casual ("autostring: entering copy constructor from %ld", source.ptr);
-		ptr = source.ptr;
-		if (source.ptr) {
-			Melder_free (source.ptr);
-			source.ptr = NULL;
-		}
-		//if (Melder_debug == 39) Melder_casual ("autostring: leaving copy constructor %ld", ptr);		
-	}
-	#endif
 	~_autostring () {
 		//if (Melder_debug == 39) Melder_casual ("autostring: entering destrutor ptr = %ld", ptr);
 		if (ptr) Melder_free (ptr);
 		//if (Melder_debug == 39) Melder_casual ("autostring: leaving destructor");
 	}
 	#if 0
-	_autostring& operator= (_autostring& source) {
-		//if (Melder_debug == 39) Melder_casual ("autostring: entering copy assignment %ld", ptr);
-		if (& source != this) {
-			if (ptr) Melder_free (ptr);
-			ptr = source.ptr;
-			if (source.ptr) {
-				Melder_free (source.ptr);
-				source.ptr = NULL;
-			}
-		}
-		//if (Melder_debug == 39) Melder_casual ("autostring: leaving copy assignment %ld", ptr);
-		return *this;
-	}
-	#endif
-	#if 1
 	void operator= (T *string) {
 		//if (Melder_debug == 39) Melder_casual ("autostring: entering assignment from C-string; old = %ld", ptr);
 		if (ptr) Melder_free (ptr);
@@ -1182,6 +1198,9 @@ public:
 	}
 	T * peek () const {
 		return ptr;
+	}
+	T ** operator& () {
+		return & ptr;
 	}
 	T * transfer () {
 		T *tmp = ptr;

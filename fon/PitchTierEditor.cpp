@@ -25,6 +25,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/23 minimum and maximum legal values
  * pb 2011/03/22 C++
+ * pb 2011/06/06 C++
  */
 
 #include "PitchTierEditor.h"
@@ -42,7 +43,7 @@ static void createHelpMenuItems (PitchTierEditor me, EditorMenu menu) {
 
 static void play (PitchTierEditor me, double tmin, double tmax) {
 	if (my sound.data) Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
-	else if (! PitchTier_playPart ((PitchTier) my data, tmin, tmax, FALSE)) Melder_flushError (NULL);
+	else PitchTier_playPart ((PitchTier) my data, tmin, tmax, FALSE);
 }
 
 class_methods (PitchTierEditor, RealTierEditor) {
@@ -60,11 +61,13 @@ class_methods (PitchTierEditor, RealTierEditor) {
 }
 
 PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar_t *title, PitchTier pitch, Sound sound, int ownSound) {
-	PitchTierEditor me = Thing_new (PitchTierEditor); cherror
-	RealTierEditor_init (PitchTierEditor_as_parent (me), parent, title, (RealTier) pitch, sound, ownSound); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoPitchTierEditor me = Thing_new (PitchTierEditor);
+		RealTierEditor_init (PitchTierEditor_as_parent (me.peek()), parent, title, (RealTier) pitch, sound, ownSound); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("PitchTier window not created.");
+	}
 }
 
 /* End of file PitchTierEditor.cpp */

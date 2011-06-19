@@ -46,7 +46,7 @@
 #define FormantGrid_methods Function_methods
 oo_CLASS_CREATE (FormantGrid, Function);
 
-int FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);
+void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);
 FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
 
 FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,

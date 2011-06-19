@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/05/31
  */
 
 #include "AnyTier.h"
@@ -55,7 +55,7 @@ RealPoint RealPoint_create (double time, double value);
 #define RealTier_methods Function_methods
 class_create (RealTier, Function);
 
-void RealTier_init_e (I, double tmin, double tmax);
+void RealTier_init (I, double tmin, double tmax);
 RealTier RealTier_create (double tmin, double tmax);
 /*
 	Postconditions:

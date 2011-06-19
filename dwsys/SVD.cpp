@@ -104,7 +104,7 @@ class_methods_end
 	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
 	m < n, mxn matrix A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
 */
-int SVD_init (I, long numberOfRows, long numberOfColumns)
+void SVD_init (I, long numberOfRows, long numberOfColumns)
 {
 	try {
 		iam (SVD);
@@ -116,8 +116,7 @@ int SVD_init (I, long numberOfRows, long numberOfColumns)
 		my u = NUMmatrix<double> (1, numberOfRows, 1, mn_min);
 		my v = NUMmatrix<double> (1, numberOfColumns, 1, mn_min);
 		my d = NUMvector<double> (1, mn_min);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 SVD SVD_create (long numberOfRows, long numberOfColumns)
@@ -135,7 +134,7 @@ SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns)
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_d (me.peek(), m);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SVD not created."); }
+	} catch (MelderError) { rethrowmzero ("SVD not created from vector."); }
 }
 
 SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns)
@@ -144,10 +143,10 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns)
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_f (me.peek(), m);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SVD not created."); }
+	} catch (MelderError) { rethrowmzero ("SVD not created from vector."); }
 }
 
-int SVD_svd_d (I, double **m)
+void SVD_svd_d (I, double **m)
 {
 	try {
 		iam (SVD);
@@ -168,11 +167,10 @@ int SVD_svd_d (I, double **m)
 			}
 		}
 		SVD_compute (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
-int SVD_svd_f (I, float **m)
+void SVD_svd_f (I, float **m)
 {
 	try {
 		iam (SVD);
@@ -193,8 +191,7 @@ int SVD_svd_f (I, float **m)
 			}
 		}
 		SVD_compute (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 void SVD_setTolerance (I, double tolerance)
@@ -238,7 +235,7 @@ static void NUMtranspose_d (double **m, long n)
 		double *s, double *u, long *ldu, double *vt, long *ldvt, double *work,
 		long *lwork, long *info);
 */
-int SVD_compute (I)
+void SVD_compute (I)
 {
 	try {
 		iam (SVD);
@@ -266,12 +263,11 @@ int SVD_compute (I)
 		
 		NUMtranspose_d (my v, MIN(m, n));
 		if (transpose) SVD_transpose (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 
-int SVD_solve (I, double b[], double x[])
+void SVD_solve (I, double b[], double x[])
 {
 	try {
 		iam (SVD);
@@ -305,11 +301,10 @@ int SVD_solve (I, double b[], double x[])
 			}
 			x[j] = tmp;
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
-int SVD_sort (I)
+void SVD_sort (I)
 {
 	try {
 		iam (SVD); 
@@ -326,8 +321,7 @@ int SVD_sort (I)
 			for (long i = 1; i <= my numberOfRows; i++) my u[i][j] = thy u[i][from];
 			for (long i = 1; i <= my numberOfColumns; i++) my v[i][j] = thy v[i][from];
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 long SVD_zeroSmallSingularValues (I, double tolerance)
@@ -369,32 +363,32 @@ long SVD_getRank (I)
 	we can write the svd expansion  A = sum_{i=1}^n {d[i] u[i] v[i]'}.
 	Golub & van Loan, 3rd ed, p 71.
 */
-int SVD_synthesize (I, long sv_from, long sv_to, double **m)
+void SVD_synthesize (I, long sv_from, long sv_to, double **m)
 {
 	iam (SVD);
-	long i, j, k, mn_min = MIN (my numberOfRows, my numberOfColumns);
+	try {
+		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 
-	if (sv_to == 0) sv_to = mn_min;
+		if (sv_to == 0) sv_to = mn_min;
 
-	if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) return
-		Melder_error3 (L"SVD_synthesize: indices must be in range [1, ", Melder_integer (mn_min), L"].");
+		if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) Melder_throw ("Indices must be in range [1, ", mn_min, "].");
 
-	for (i = 1; i <= my numberOfRows; i++)
-	{
-		for (j = 1; j <= my numberOfColumns; j++) m[i][j] = 0;
-	}
-
-	for (k = sv_from; k <= sv_to; k++)
-	{
-		for (i = 1; i <= my numberOfRows; i++)
+		for (long i = 1; i <= my numberOfRows; i++)
 		{
-			for (j = 1; j <= my numberOfColumns; j++)
+			for (long j = 1; j <= my numberOfColumns; j++) m[i][j] = 0;
+		}
+
+		for (long k = sv_from; k <= sv_to; k++)
+		{
+			for (long i = 1; i <= my numberOfRows; i++)
 			{
-				m[i][j] += my d[k] * my u[i][k] * my v[j][k];
+				for (long j = 1; j <= my numberOfColumns; j++)
+				{
+					m[i][j] += my d[k] * my u[i][k] * my v[j][k];
+				}
 			}
 		}
-	}
-	return 1;
+	} catch (MelderError) { rethrow; }
 }
 
 static void classGSVD_info (I)
@@ -418,91 +412,75 @@ class_methods_end
 
 GSVD GSVD_create (long numberOfColumns)
 {
-	GSVD me = Thing_new (GSVD);
+	try {
+		autoGSVD me = Thing_new (GSVD);
+		my numberOfColumns = numberOfColumns;
 
-	if (me == NULL) return NULL;
-
-	my numberOfColumns = numberOfColumns;
-
-	if (((my q = NUMdmatrix(1, numberOfColumns, 1, numberOfColumns)) == NULL) ||
-		((my r = NUMdmatrix(1, numberOfColumns, 1, numberOfColumns)) == NULL) ||
-		((my d1 = NUMdvector (1, numberOfColumns)) == NULL) ||
-		((my d2 = NUMdvector (1, numberOfColumns)) == NULL)) forget (me);
-	return me;
+		my q = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
+		my r = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
+		my d1 = NUMvector<double> (1, numberOfColumns);
+		my d2 = NUMvector<double> (1, numberOfColumns);
+		return me.transfer();
+	} catch (MelderError) { rethrowmzero ("GSVD not created."); }
 }
 
-GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
-	double **m2, long numberOfRows2)
+GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2)
 {
-	long m = numberOfRows1, n = numberOfColumns, p = numberOfRows2, kl;
-	long i, j, k, l, lwork = MAX (MAX (3*n, m), p) + n, *iwork = NULL, info;
-	double **a = NULL, **b = NULL, *work = NULL, *pr;
-	double *alpha = NULL, *beta = NULL, **q = NULL;
-	GSVD me = NULL;
+	try {
+		long m = numberOfRows1, n = numberOfColumns, p = numberOfRows2;
+		long lwork = MAX (MAX (3*n, m), p) + n;
 
-	/*
-		Store the matrices a and b as column major!
-	*/
-	if (((a = NUMdmatrix_transpose (m1, m, n)) == NULL) ||
-		((b = NUMdmatrix_transpose (m2, p, n)) == NULL) ||
-		((alpha = NUMdvector (1, n)) == NULL) ||
-		((beta = NUMdvector (1, n)) == NULL) ||
-		((q = NUMdmatrix (1, n, 1, n)) == NULL) ||
-		((work = NUMdvector (1, lwork)) == NULL) ||
-		((iwork = NUMlvector (1, n)) == NULL)) goto end;
+		// Store the matrices a and b as column major!
+		autoNUMmatrix<double> a (NUMdmatrix_transpose (m1, m, n), 1, 1);
+		autoNUMmatrix<double> b (NUMdmatrix_transpose (m2, p, n), 1, 1);
+		autoNUMmatrix<double> q (1, n, 1, n);
+		autoNUMvector<double> alpha (1, n);
+		autoNUMvector<double> beta (1, n);
+		autoNUMvector<double> work (1, lwork);
+		autoNUMvector<long> iwork (1, n);
+		
 
-	{
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
-		(void) NUMlapack_dggsvd (&jobu1, &jobu2, &jobq, &m, &n, &p, &k, &l,
+		long k, l, info;
+		NUMlapack_dggsvd (&jobu1, &jobu2, &jobq, &m, &n, &p, &k, &l,
 			&a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], NULL, &m,
 			NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
-		if (info != 0)
-		{
-			(void) Melder_error2 (L"Error info = ", Melder_integer (info));
-			goto end;
-		}
-	}
+		if (info != 0) Melder_throw ("dggsvd failed, error = ", info);
 
-	kl = k + l;
-	me = GSVD_create (kl);
-	if (me == NULL) return NULL;
+
+		long kl = k + l;
+		autoGSVD me = GSVD_create (kl);
 	
-	for (i = 1; i <= kl; i++)
-	{
-		my d1[i] = alpha[i];
-		my d2[i] = beta[i];
-	}
+		for (long i = 1; i <= kl; i++)
+		{
+			my d1[i] = alpha[i];
+			my d2[i] = beta[i];
+		}
 
-	/*
-		Transpose q
-	*/
-	for (i = 1; i <= n; i++)
-	{
-		for (j = i + 1; j <= n; j++)
+		// Transpose q
+
+		for (long i = 1; i <= n; i++)
 		{
-			my q[i][j] = q[j][i];
-			my q[j][i] = q[i][j];
+			for (long j = i + 1; j <= n; j++)
+			{
+				my q[i][j] = q[j][i];
+				my q[j][i] = q[i][j];
+			}
+			my q[i][i] = q[i][i];
 		}
-		my q[i][i] = q[i][i];
-	}
-	/*
-		Get R from a(1:k+l,n-k-l+1:n)
-	*/
-	pr = &a[1][1];
-	for (i = 1; i <= kl; i++)
-	{
-		for (j = i; j <= kl; j++)
+
+		// Get R from a(1:k+l,n-k-l+1:n)
+
+		double *pr = &a[1][1];
+		for (long i = 1; i <= kl; i++)
 		{
-			my r[i][j] = pr[i - 1 + (n - kl + j - 1) * m]; /* from col-major */
+			for (long j = i; j <= kl; j++)
+			{
+				my r[i][j] = pr[i - 1 + (n - kl + j - 1) * m]; /* from col-major */
+			}
 		}
-	}
-end:
-	NUMdmatrix_free (q, 1, 1); NUMdvector_free (alpha,1);
-	NUMdvector_free (beta,1); NUMlvector_free (iwork, 1);
-	NUMdvector_free (work, 1); NUMdmatrix_free (b, 1, 1);
-	NUMdmatrix_free (a, 1, 1);
-	if (Melder_hasError ()) forget (me);
-	return me;
+		return me.transfer();
+	} catch (MelderError) { rethrowzero;}
 }
 
 void GSVD_setTolerance (GSVD me, double tolerance)

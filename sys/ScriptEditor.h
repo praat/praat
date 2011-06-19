@@ -20,33 +20,35 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/06/16
  */
 
-#ifndef _Script_h_
-	#include "Script.h"
-#endif
-#ifndef _TextEditor_h_
-	#include "TextEditor.h"
-#endif
-#ifndef _Interpreter_h_
-	#include "Interpreter.h"
-#endif
+#include "Script.h"
+#include "TextEditor.h"
+#include "Interpreter.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define ScriptEditor__parents(Klas) TextEditor__parents(Klas) Thing_inherit (Klas, TextEditor)
-Thing_declare1 (ScriptEditor);
+Thing_declare1cpp (ScriptEditor);
 
-#define ScriptEditor__members(Klas) TextEditor__members(Klas) \
-	wchar_t *environmentName; \
-	Editor_Table editorClass; \
-	Interpreter interpreter; \
-	Any argsDialog;
+#ifdef __cplusplus
+	struct structScriptEditor: public structTextEditor {
+		wchar_t *environmentName;
+		Editor_Table editorClass;
+		Interpreter interpreter;
+		Any argsDialog;
+	};
+#else
+	#define ScriptEditor__members(Klas) TextEditor__members(Klas) \
+		wchar_t *environmentName; \
+		Editor_Table editorClass; \
+		Interpreter interpreter; \
+		Any argsDialog;
+#endif
 #define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
-Thing_declare2 (ScriptEditor, TextEditor);
+Thing_declare2cpp (ScriptEditor, TextEditor);
 
 ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any editor, const wchar_t *initialText);
 	/* 'initalText' may be NULL. */

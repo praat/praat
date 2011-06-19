@@ -39,7 +39,7 @@ Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
 
 		Matrix_init (me.peek(), qmin, qmax, nq, dx, qmin + dx/2, 1, 1, 1, 1, 1); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("cepstrum not created."); }
+	} catch (MelderError) { rethrowmzero ("Cepstrum not created."); }
 }
 
 void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
@@ -94,7 +94,7 @@ Matrix Cepstrum_to_Matrix (Cepstrum me)
 		autoMatrix thee = (Matrix) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
 }
 
 Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
@@ -106,7 +106,7 @@ Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
 		if (row > my ny) row = my ny;
 		NUMdvector_copyElements (my z[row], thy z[1], 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Cepstrum not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Cepstrum created."); }
 }
 
 

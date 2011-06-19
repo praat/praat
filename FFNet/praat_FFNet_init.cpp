@@ -47,7 +47,6 @@
 20040422, 2.4.04: FFNet_weightsToMatrix use FFNet_extractWeights
 */
 
-
 #undef iam
 #define iam iam_LOOP
 

@@ -71,9 +71,11 @@ Any _Thing_new (void *table) {
 	theTotalNumberOfThings += 1;
 	my methods = us;
 	my name = NULL;
-	if (! us -> destroy)   /* Table not initialized? */
+	if (! us -> destroy) {   /* Table not initialized? */
 		us -> _initialize (us);
-	if (Melder_debug == 40) Melder_casual ("created %ls", my methods -> _className);
+		//Melder_casual ("Initializing class %ls (%ld).", us -> _className, table);
+	}
+	if (Melder_debug == 40) Melder_casual ("created %ls (%ld, %ld, %ld)", my methods -> _className, us, table, my methods);
 	return me;
 }
 

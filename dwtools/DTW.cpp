@@ -562,7 +562,7 @@ DTW DTW_swapAxes (DTW me)
 			thy path[i].y = my path[i].x;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": axes not swapped."); }
 }
 
 static int DTW_checkAdjustmentWindow (DTW me, double adjustment_window_duration, int adjustment_window_includes_end)
@@ -788,7 +788,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 				psi[y][x] = direction;
 			}
 			if ((x % 10) == 2 && ! Melder_progress5 (0.999 * x / my nx, L"Calculate time warp: frame ",
-				Melder_integer (x), L" from ", Melder_integer (my nx), L".")) rethrowzero;
+				Melder_integer (x), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Warping interrupted.");
 		}
 
 		/*
@@ -1052,7 +1052,7 @@ s3:				{
 				delta[i][j] = minimum;
 			}
 			if ((j % 10) == 2 && ! Melder_progress5 (0.999 * j / my nx, L"Calculate time warp: frame ",
-			Melder_integer (j), L" from ", Melder_integer (my nx), L".")) rethrow;
+			Melder_integer (j), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Warping interrupted.");
 		}
 
 		// Find minimum at end of path and trace back.
@@ -1285,7 +1285,7 @@ Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adju
 		DTW_checkAdjustmentWindow (me, adjustment_window_duration, adjustment_window_includes_end);
 		autoPolygon thee = _DTW_to_Polygon (me, DTW_SAKOECHIBA, adjustment_window_duration, adjustment_window_includes_end, 1, 0);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Polygon not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Polygon not created."); }
 }
 
 Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
@@ -1294,7 +1294,7 @@ Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
 		DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy);
 		autoPolygon thee = _DTW_to_Polygon (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Polygon not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Polygon not created."); }
 }
 
 static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
@@ -1561,7 +1561,7 @@ Matrix DTW_distancesToMatrix (DTW me)
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": distances not converted to Matrix."); }
 }
 
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
@@ -1661,11 +1661,11 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 				his z[i][j] = d / my ny; /* == d * dy / ymax */
 			}
 			if ((i % 10) == 1 && ! Melder_progress5 (0.999 * i / my nx, L"Calculate distances: column ",
-			Melder_integer (i), L" from ", Melder_integer (my nx), L".")) rethrowzero;
+			Melder_integer (i), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Distance calculation interrupted.");
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { rethrowmzero ("DTW not created from matrices."); }
 }
 
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
@@ -1696,7 +1696,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 
 		autoDTW him = Matrices_to_DTW (m1.peek(), m2.peek(), matchStart, matchEnd, slope, metric);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { rethrowmzero ("DTW not created from Spectrograms."); }
 }
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
@@ -1764,7 +1764,7 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { rethrowmzero ("DTW not created from Pitches."); }
 }
 
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart,
@@ -1812,7 +1812,7 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { rethrowmzero ("DTW not created from Pitches."); }
 }
 
 DurationTier DTW_to_DurationTier (DTW me)

@@ -45,13 +45,12 @@ void NUMlinprog_delete (NUMlinprog me) {
 
 NUMlinprog NUMlinprog_new (bool maximize) {
 	NUMlinprog me = NULL;
-//start:
-	me = Melder_calloc_e (struct structNUMlinprog, 1); cherror
-	my linearProgram = glp_create_prob ();
-	glp_set_obj_dir (my linearProgram, maximize ? GLP_MAX : GLP_MIN);
-end:
-	iferror {
-		NUMlinprog_delete (me);
+	try {
+		Melder_calloc (structNUMlinprog, 1);
+		my linearProgram = glp_create_prob ();   // TODO: check
+		glp_set_obj_dir (my linearProgram, maximize ? GLP_MAX : GLP_MIN);
+	} catch (MelderError) {
+		if (me) NUMlinprog_delete (me);
 		return NULL;
 	}
 	return me;
@@ -66,7 +65,7 @@ void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound
 	glp_set_obj_coef (my linearProgram, my ivar, coeff);
 }
 
-int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound) {
+void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound) {
 	try {
 		if (my ind == NULL) {
 			/*
@@ -80,15 +79,14 @@ int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBoun
 			my ind = ind.transfer();
 			my val = val.transfer();
 		}
-		glp_add_rows (my linearProgram, 1);
+		glp_add_rows (my linearProgram, 1);   // TODO: check
 		glp_set_row_bnds (my linearProgram, ++ my numberOfConstraints,
 			lowerBound == NUMundefined ? ( upperBound == NUMundefined ? GLP_FR : GLP_UP ) :
 			upperBound == NUMundefined ? GLP_LO :
 			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 		my ivar = 0;
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero ("Linear programming: constraint not added.");
+		rethrowm ("Linear programming: constraint not added.");
 	}
 }
 
@@ -101,39 +99,40 @@ void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient) {
 	}
 }
 
-int NUMlinprog_run (NUMlinprog me) {
-	glp_smcp parm;
-	glp_init_smcp (& parm);
-	parm. msg_lev = GLP_MSG_OFF;
-	my status = glp_simplex (my linearProgram, & parm);
-	switch (my status) {
-		case GLP_EBADB: error1 (L"Unable to start the search, because the initial basis is invalid.");
-		case GLP_ESING: error1 (L"Unable to start the search, because the basis matrix is singular.");
-		case GLP_ECOND: error1 (L"Unable to start the search, because the basis matrix is ill-conditioned.");
-		case GLP_EBOUND: error1 (L"Unable to start the search, because some variables have incorrect bounds.");
-		case GLP_EFAIL: error1 (L"Search prematurely terminated due to solver failure.");
-		case GLP_EOBJLL: error1 (L"Search prematurely terminated: lower limit reached.");
-		case GLP_EOBJUL: error1 (L"Search prematurely terminated: upper limit reached.");
-		case GLP_EITLIM: error1 (L"Search prematurely terminated: iteration limit exceeded.");
-		case GLP_ETMLIM: error1 (L"Search prematurely terminated: time limit exceeded.");
-		case GLP_ENOPFS: error1 (L"The problem has no primal feasible solution.");
-		case GLP_ENODFS: error1 (L"The problem has no dual feasible solution.");
-		default: break;
+void NUMlinprog_run (NUMlinprog me) {
+	try {
+		glp_smcp parm;
+		glp_init_smcp (& parm);
+		parm. msg_lev = GLP_MSG_OFF;
+		my status = glp_simplex (my linearProgram, & parm);
+		switch (my status) {
+			case GLP_EBADB: Melder_throw ("Unable to start the search, because the initial basis is invalid.");
+			case GLP_ESING: Melder_throw (L"Unable to start the search, because the basis matrix is singular.");
+			case GLP_ECOND: Melder_throw (L"Unable to start the search, because the basis matrix is ill-conditioned.");
+			case GLP_EBOUND: Melder_throw (L"Unable to start the search, because some variables have incorrect bounds.");
+			case GLP_EFAIL: Melder_throw (L"Search prematurely terminated due to solver failure.");
+			case GLP_EOBJLL: Melder_throw (L"Search prematurely terminated: lower limit reached.");
+			case GLP_EOBJUL: Melder_throw (L"Search prematurely terminated: upper limit reached.");
+			case GLP_EITLIM: Melder_throw (L"Search prematurely terminated: iteration limit exceeded.");
+			case GLP_ETMLIM: Melder_throw (L"Search prematurely terminated: time limit exceeded.");
+			case GLP_ENOPFS: Melder_throw (L"The problem has no primal feasible solution.");
+			case GLP_ENODFS: Melder_throw (L"The problem has no dual feasible solution.");
+			default: break;
+		}
+		my status = glp_get_status (my linearProgram);
+		switch (my status) {
+			case GLP_INFEAS: Melder_throw (L"Solution is infeasible.");
+			case GLP_NOFEAS: Melder_throw (L"Problem has no feasible solution.");
+			case GLP_UNBND: Melder_throw (L"Problem has unbounded solution.");
+			case GLP_UNDEF: Melder_throw (L"Solution is undefined.");
+			default: break;
+		}
+		if (my status == GLP_FEAS) {
+			Melder_warning1 (L"Linear programming solution is feasible but not optimal.");
+		}
+	} catch (MelderError) {
+		rethrowm ("Linear programming: not run.");
 	}
-	my status = glp_get_status (my linearProgram);
-	switch (my status) {
-		case GLP_INFEAS: error1 (L"Solution is infeasible.");
-		case GLP_NOFEAS: error1 (L"Problem has no feasible solution.");
-		case GLP_UNBND: error1 (L"Problem has unbounded solution.");
-		case GLP_UNDEF: error1 (L"Solution is undefined.");
-		default: break;
-	}
-	if (my status == GLP_FEAS) {
-		Melder_warning1 (L"Linear programming solution is feasible but not optimal.");
-	}
-end:
-	iferror return 0;
-	return 1;
 }
 
 double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar) {

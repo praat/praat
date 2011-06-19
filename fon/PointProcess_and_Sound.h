@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/06
  */
 
 #include "PointProcess.h"
@@ -52,9 +52,9 @@ Sound PointProcess_to_Sound_phonation
 #define PointProcess_to_Sound_phonation_DEFAULT_POWER_1  3.0
 #define PointProcess_to_Sound_phonation_DEFAULT_POWER_2  4.0
 
-int PointProcess_playPart (PointProcess me, double tmin, double tmax);
-int PointProcess_play (PointProcess me);
-int PointProcess_hum (PointProcess me, double tmin, double tmax);
+void PointProcess_playPart (PointProcess me, double tmin, double tmax);
+void PointProcess_play (PointProcess me);
+void PointProcess_hum (PointProcess me, double tmin, double tmax);
 Sound PointProcess_to_Sound_hum (PointProcess me);
 
 #ifdef __cplusplus

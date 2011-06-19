@@ -31,18 +31,18 @@
 TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 	long numberOfComponents)
 {
-	TableOfReal him = NULL;
 	try {
 		iam (Eigen);
 		thouart (TableOfReal);
 
 		if (numberOfComponents == 0) numberOfComponents = my numberOfEigenvalues;
 
-		him = TableOfReal_create (thy numberOfRows, numberOfComponents); therror
-		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, &him, 1, numberOfComponents); therror
+		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents); therror
+		TableOfReal thim = him.peek();
+		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, &thim, 1, numberOfComponents); therror
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows); therror
-		return him;
-	} catch (MelderError) { forget (him); rethrowmzero ("TableOfReal not created."); } 
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero ("TableOfReal not created from projection."); } 
 }
 
 int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
@@ -86,7 +86,7 @@ Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee)
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Eigen not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Eigen not created."); }
 }
 
 /* End of file Eigen_and_TableOfReal.c */

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/05/05
+ * pb 2011/06/18
  */
 
 #include "praat.h"
@@ -4557,6 +4557,20 @@ DO
 	}
 END
 
+FORM (Polygon_drawClosed, L"Polygon: Draw", 0)
+	REAL (L"Xmin", L"0.0")
+	REAL (L"Xmax", L"0.0")
+	REAL (L"Ymin", L"0.0")
+	REAL (L"Ymax", L"0.0")
+	OK
+DO
+	LOOP {
+		iam (Polygon);
+		autoPraatPicture picture;
+		Polygon_drawClosed (me, GRAPHICS, GET_REAL (L"Xmin"), GET_REAL (L"Xmax"), GET_REAL (L"Ymin"), GET_REAL (L"Ymax"));
+	}
+END
+
 FORM (Polygons_drawConnection, L"Polygons: Draw connection", 0)
 	REAL (L"Xmin", L"0.0")
 	REAL (L"Xmax", L"0.0 (= all)")
@@ -6396,6 +6410,7 @@ praat_addAction1 (classPointProcess, 0, L"Convert", 0, 0, 0);
 	praat_addAction1 (classPolygon, 0, L"Polygon help", 0, 0, DO_Polygon_help);
 praat_addAction1 (classPolygon, 0, L"Draw", 0, 0, 0);
 	praat_addAction1 (classPolygon, 0, L"Draw...", 0, 0, DO_Polygon_draw);
+	praat_addAction1 (classPolygon, 0, L"Draw closed...", 0, 0, DO_Polygon_drawClosed);
 	praat_addAction1 (classPolygon, 0, L"Paint...", 0, 0, DO_Polygon_paint);
 	praat_addAction1 (classPolygon, 0, L"Draw circles...", 0, 0, DO_Polygon_drawCircles);
 	praat_addAction1 (classPolygon, 0, L"Paint circles...", 0, 0, DO_Polygon_paintCircles);

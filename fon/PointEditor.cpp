@@ -1,4 +1,4 @@
-/* PointEditor.c
+/* PointEditor.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -31,6 +31,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2011/02/20 better messages and info
+ * pb 2011/06/06 C++
  */
 
 #include "PointEditor.h"
@@ -235,7 +236,7 @@ static void play (PointEditor me, double tmin, double tmax) {
 	if (my sound.data) {
 		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 	} else {
-		if (! PointProcess_playPart ((PointProcess) my data, tmin, tmax)) Melder_flushError (NULL);
+		PointProcess_playPart ((PointProcess) my data, tmin, tmax); therror
 	}
 }
 
@@ -249,14 +250,16 @@ class_methods (PointEditor, TimeSoundEditor) {
 }
 
 PointEditor PointEditor_create (GuiObject parent, const wchar_t *title, PointProcess point, Sound sound) {
-	PointEditor me = Thing_new (PointEditor); cherror
-	if (sound) {
-		my monoSound = Sound_convertToMono (sound); cherror
+	try {
+		autoPointEditor me = Thing_new (PointEditor);
+		if (sound) {
+			my monoSound = Sound_convertToMono (sound); therror
+		}
+		TimeSoundEditor_init (PointEditor_as_parent (me.peek()), parent, title, point, my monoSound, false); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("PointProcess window not created.");
 	}
-	TimeSoundEditor_init (PointEditor_as_parent (me), parent, title, point, my monoSound, false); cherror
-end:
-	iferror forget (me);
-	return me;
 }
 
-/* End of file PointEditor.c */
+/* End of file PointEditor.cpp */

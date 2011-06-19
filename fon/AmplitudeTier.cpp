@@ -31,16 +31,19 @@
 
 #include "AmplitudeTier.h"
 
-class_methods (AmplitudeTier, RealTier)
+class_methods (AmplitudeTier, RealTier) {
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
+	class_methods_end
+}
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
-	AmplitudeTier me = Thing_new (AmplitudeTier); cherror
-	RealTier_init_e (me, tmin, tmax); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoAmplitudeTier me = Thing_new (AmplitudeTier);
+		RealTier_init (me.peek(), tmin, tmax);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("AmplitudeTier not created.");
+	}
 }
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
@@ -50,36 +53,43 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 }
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
-	AmplitudeTier thee = (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure);
-	if (! thee) return NULL;
-	Thing_overrideClass (thee, classAmplitudeTier);
-	return thee;
+	try {
+		autoAmplitudeTier thee = (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure);
+		Thing_overrideClass (thee.peek(), classAmplitudeTier);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to AmplitudeTier.");
+	}
 }
 
 AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
-	long i;
-	AmplitudeTier thee = (AmplitudeTier) Data_copy (me);
-	if (! thee) return NULL;
-	Thing_overrideClass (thee, classAmplitudeTier);
-	for (i = 1; i <= thy points -> size; i ++) {
-		RealPoint point = (RealPoint) thy points -> item [i];
-		point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
+	try {
+		autoAmplitudeTier thee = (AmplitudeTier) Data_copy (me);
+		Thing_overrideClass (thee.peek(), classAmplitudeTier);
+		for (long i = 1; i <= thy points -> size; i ++) {
+			RealPoint point = (RealPoint) thy points -> item [i];
+			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to AmplitudeTier.");
 	}
-	return thee;
 }
 
 IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB) {
-	double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   /* Often zero! */
-	long i;
-	IntensityTier thee = (IntensityTier) Data_copy (me);
-	if (! thee) return NULL;
-	Thing_overrideClass (thee, classIntensityTier);
-	for (i = 1; i <= thy points -> size; i ++) {
-		RealPoint point = (RealPoint) thy points -> item [i];
-		double absoluteValue = fabs (point -> value);
-		point -> value = absoluteValue <= threshold_Pa ? threshold_dB : 20.0 * log10 (absoluteValue / 2.0e-5);
+	try {
+		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   /* Often zero! */
+		autoIntensityTier thee = (IntensityTier) Data_copy (me);
+		Thing_overrideClass (thee.peek(), classIntensityTier);
+		for (long i = 1; i <= thy points -> size; i ++) {
+			RealPoint point = (RealPoint) thy points -> item [i];
+			double absoluteValue = fabs (point -> value);
+			point -> value = absoluteValue <= threshold_Pa ? threshold_dB : 20.0 * log10 (absoluteValue / 2.0e-5);
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to IntensityTier.");
 	}
-	return thee;
 }
 
 TableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
@@ -98,23 +108,29 @@ void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
 }
 
 Sound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
-	Sound thee = (Sound) Data_copy (me);
-	if (! thee) return NULL;
-	Sound_AmplitudeTier_multiply_inline (thee, amplitude);
-	Vector_scale (thee, 0.9);
-	return thee;
+	try {
+		autoSound thee = (Sound) Data_copy (me);
+		Sound_AmplitudeTier_multiply_inline (thee.peek(), amplitude);
+		Vector_scale (thee.peek(), 0.9);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not multiplied by ", amplitude, ".");
+	}
 }
 
 AmplitudeTier PointProcess_Sound_to_AmplitudeTier_point (PointProcess me, Sound thee) {
-	AmplitudeTier him = NULL;
-	long i, imin, imax, numberOfPeaks = PointProcess_getWindowPoints (me, my xmin, my xmax, & imin, & imax);
-	if (numberOfPeaks < 3) return NULL;
-	him = AmplitudeTier_create (my xmin, my xmax);
-	for (i = imin; i <= imax; i ++) {
-		double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
-		if (NUMdefined (value)) RealTier_addPoint (him, my t [i], value);
+	try {
+		long imin, imax, numberOfPeaks = PointProcess_getWindowPoints (me, my xmin, my xmax, & imin, & imax);
+		if (numberOfPeaks < 3) return NULL;
+		autoAmplitudeTier him = AmplitudeTier_create (my xmin, my xmax);
+		for (long i = imin; i <= imax; i ++) {
+			double value = Vector_getValueAtX (thee, my t [i], Vector_CHANNEL_AVERAGE, Vector_VALUE_INTERPOLATION_SINC700);
+			if (NUMdefined (value)) RealTier_addPoint (him.peek(), my t [i], value);
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, " & ", thee, ": not converted to AmplitudeTier.");
 	}
-	return him;
 }
 /*
 static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
@@ -137,9 +153,9 @@ static double Sound_getPeak (Sound me, double tmin, double tmax, long channel) {
 */
 static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft, double widthRight) {
 	double sumOfSquares = 0.0, windowSumOfSquares = 0.0;
-	long i, imin, imax;
+	long imin, imax;
 	if (Sampled_getWindowSamples (me, tmid - widthLeft, tmid + widthRight, & imin, & imax) < 3) return NUMundefined;
-	for (i = imin; i <= imax; i ++) {
+	for (long i = imin; i <= imax; i ++) {
 		double t = my x1 + (i - 1) * my dx;
 		double width = t < tmid ? widthLeft : widthRight;
 		double windowPhase = (t - tmid) / width;   /* in [-1 .. 1] */
@@ -153,27 +169,31 @@ static double Sound_getHannWindowedRms (Sound me, double tmid, double widthLeft,
 AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound thee, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	AmplitudeTier him = NULL;
-	long i, imin, imax, numberOfPeaks;
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
-	numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
-	if (numberOfPeaks < 3) return NULL;
-	him = AmplitudeTier_create (tmin, tmax);
-	for (i = imin + 1; i < imax; i ++) {
-		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
-		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
-		if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
-			double peak = Sound_getHannWindowedRms (thee, my t [i], 0.2 * p1, 0.2 * p2);
-			if (NUMdefined (peak) && peak > 0.0) RealTier_addPoint (him, my t [i], peak);
+	try {
+		long imin, imax, numberOfPeaks;
+		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
+		numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
+		if (numberOfPeaks < 3) return NULL;
+		autoAmplitudeTier him = AmplitudeTier_create (tmin, tmax);
+		for (long i = imin + 1; i < imax; i ++) {
+			double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
+			double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
+			if (pmin == pmax || (p1 >= pmin && p1 <= pmax && p2 >= pmin && p2 <= pmax && intervalFactor <= maximumPeriodFactor)) {
+				double peak = Sound_getHannWindowedRms (thee, my t [i], 0.2 * p1, 0.2 * p2);
+				if (NUMdefined (peak) && peak > 0.0)
+					RealTier_addPoint (him.peek(), my t [i], peak);
+			}
 		}
+		return him.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, " & ", thee, ": not converted to AmplitudeTier.");
 	}
-	return him;
 }
 double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
-	long i, numberOfPeaks = 0;
+	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
-	for (i = 2; i <= my points -> size; i ++) {
+	for (long i = 2; i <= my points -> size; i ++) {
 		double p = points [i] -> time - points [i - 1] -> time;
 		if (pmin == pmax || (p >= pmin && p <= pmax)) {
 			double a1 = points [i - 1] -> value, a2 = points [i] -> value;
@@ -187,7 +207,7 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 	if (numberOfPeaks < 1) return NUMundefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
-	for (i = 1; i < my points -> size; i ++) {
+	for (long i = 1; i < my points -> size; i ++) {
 		denominator += points [i] -> value;
 		numberOfPeaks ++;
 	}
@@ -196,10 +216,10 @@ double AmplitudeTier_getShimmer_local (AmplitudeTier me, double pmin, double pma
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
-	long i, numberOfPeaks = 0;
+	long numberOfPeaks = 0;
 	double result = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
-	for (i = 2; i <= my points -> size; i ++) {
+	for (long i = 2; i <= my points -> size; i ++) {
 		double p = points [i] -> time - points [i - 1] -> time;
 		if (pmin == pmax || (p >= pmin && p <= pmax)) {
 			double a1 = points [i - 1] -> value, a2 = points [i] -> value;
@@ -215,10 +235,10 @@ double AmplitudeTier_getShimmer_local_dB (AmplitudeTier me, double pmin, double 
 	return 20.0 * result;
 }
 double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
-	long i, numberOfPeaks = 0;
+	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
-	for (i = 2; i <= my points -> size - 1; i ++) {
+	for (long i = 2; i <= my points -> size - 1; i ++) {
 		double
 			p1 = points [i] -> time - points [i - 1] -> time,
 			p2 = points [i + 1] -> time - points [i] -> time;
@@ -235,7 +255,7 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 	if (numberOfPeaks < 1) return NUMundefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
-	for (i = 1; i < my points -> size; i ++) {
+	for (long i = 1; i < my points -> size; i ++) {
 		denominator += points [i] -> value;
 		numberOfPeaks ++;
 	}
@@ -244,10 +264,10 @@ double AmplitudeTier_getShimmer_apq3 (AmplitudeTier me, double pmin, double pmax
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
-	long i, numberOfPeaks = 0;
+	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
-	for (i = 3; i <= my points -> size - 2; i ++) {
+	for (long i = 3; i <= my points -> size - 2; i ++) {
 		double
 			p1 = points [i - 1] -> time - points [i - 2] -> time,
 			p2 = points [i] -> time - points [i - 1] -> time,
@@ -272,7 +292,7 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 	if (numberOfPeaks < 1) return NUMundefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
-	for (i = 1; i < my points -> size; i ++) {
+	for (long i = 1; i < my points -> size; i ++) {
 		denominator += points [i] -> value;
 		numberOfPeaks ++;
 	}
@@ -281,10 +301,10 @@ double AmplitudeTier_getShimmer_apq5 (AmplitudeTier me, double pmin, double pmax
 	return numerator / denominator;
 }
 double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pmax, double maximumAmplitudeFactor) {
-	long i, numberOfPeaks = 0;
+	long numberOfPeaks = 0;
 	double numerator = 0.0, denominator = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
-	for (i = 6; i <= my points -> size - 5; i ++) {
+	for (long i = 6; i <= my points -> size - 5; i ++) {
 		double
 			p1 = points [i - 4] -> time - points [i - 5] -> time,
 			p2 = points [i - 3] -> time - points [i - 4] -> time,
@@ -325,7 +345,7 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double pmin, double pma
 	if (numberOfPeaks < 1) return NUMundefined;
 	numerator /= numberOfPeaks;
 	numberOfPeaks = 0;
-	for (i = 1; i < my points -> size; i ++) {
+	for (long i = 1; i < my points -> size; i ++) {
 		denominator += points [i] -> value;
 		numberOfPeaks ++;
 	}
@@ -339,39 +359,40 @@ double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax,
 }
 
 Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth) {
-	Sound thee;
-	long it;
-	long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   /* >= 1 */
-	double dt = 1.0 / samplingFrequency;
-	double tmid = (my xmin + my xmax) / 2;
-	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
-	double *sound;
-	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
-	if (! thee) return NULL;
-	sound = thy z [1];
-	for (it = 1; it <= my points -> size; it ++) {
-		RealPoint point = (RealPoint) my points -> item [it];
-		double t = point -> time, amplitude = point -> value, angle, halfampsinangle;
-		long mid = Sampled_xToNearestIndex (thee, t), j;
-		long begin = mid - interpolationDepth, end = mid + interpolationDepth;
-		if (begin < 1) begin = 1;
-		if (end > thy nx) end = thy nx;
-		angle = NUMpi * (Sampled_indexToX (thee, begin) - t) / thy dx;
-		halfampsinangle = 0.5 * amplitude * sin (angle);
-		for (j = begin; j <= end; j ++) {
-			if (fabs (angle) < 1e-6)
-				sound [j] += amplitude;
-			else if (angle < 0.0)
-				sound [j] += halfampsinangle *
-					(1 + cos (angle / (mid - begin + 1))) / angle;
-			else
-				sound [j] += halfampsinangle *
-					(1 + cos (angle / (end - mid + 1))) / angle;
-			angle += NUMpi;
-			halfampsinangle = - halfampsinangle;
+	try {
+		long sound_nt = 1 + floor ((my xmax - my xmin) * samplingFrequency);   /* >= 1 */
+		double dt = 1.0 / samplingFrequency;
+		double tmid = (my xmin + my xmax) / 2;
+		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
+		double *sound;
+		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
+		sound = thy z [1];
+		for (long it = 1; it <= my points -> size; it ++) {
+			RealPoint point = (RealPoint) my points -> item [it];
+			double t = point -> time, amplitude = point -> value, angle, halfampsinangle;
+			long mid = Sampled_xToNearestIndex (thee.peek(), t), j;
+			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
+			if (begin < 1) begin = 1;
+			if (end > thy nx) end = thy nx;
+			angle = NUMpi * (Sampled_indexToX (thee.peek(), begin) - t) / thy dx;
+			halfampsinangle = 0.5 * amplitude * sin (angle);
+			for (j = begin; j <= end; j ++) {
+				if (fabs (angle) < 1e-6)
+					sound [j] += amplitude;
+				else if (angle < 0.0)
+					sound [j] += halfampsinangle *
+						(1 + cos (angle / (mid - begin + 1))) / angle;
+				else
+					sound [j] += halfampsinangle *
+						(1 + cos (angle / (end - mid + 1))) / angle;
+				angle += NUMpi;
+				halfampsinangle = - halfampsinangle;
+			}
 		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Sound.");
 	}
-	return thee;
 }
 
 /* End of file AmplitudeTier.cpp */

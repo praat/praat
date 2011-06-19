@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/19
  */
 
 /* Matrix inherits from Sampled */
@@ -42,7 +42,7 @@
 #define Matrix_methods Sampled_methods
 class_create (Matrix, Sampled);
 
-int Matrix_init
+void Matrix_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,
 		double ymin, double ymax, long ny, double dy, double y1);
 
@@ -190,7 +190,7 @@ long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
 		if result == 0, *minimum and *maximum are not changed;
 */
 
-int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target);
+void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target);
 /*
 	Arguments:
 		"me" is the Matrix referred to as "self" or with "nx" etc. in the expression
@@ -205,7 +205,7 @@ int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interprete
 	Return value:
 		0 in case of failure, otherwise 1.
 */
-int Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
+void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
 	const wchar_t *expression, Interpreter interpreter, Matrix target);
 
 /***** Graphics routines. *****/
@@ -266,14 +266,14 @@ Matrix Matrix_readFromRawTextFile (MelderFile file);
 Matrix Matrix_readAP (MelderFile file);
 Matrix Matrix_appendRows (I, thou);
 
-int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
+void Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
 Matrix Matrix_power (I, long power);
 
 void Matrix_scaleAbsoluteExtremum (I, double scale);
 
 Matrix Table_to_Matrix (Table me);
-int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
-int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
+void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
+void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 
 Matrix TableOfReal_to_Matrix (I);
 TableOfReal Matrix_to_TableOfReal (I);

@@ -47,8 +47,8 @@ static void classProcrustes_transform (I, double **in, long nrows, double **out)
 
 static Any classProcrustes_invert (I)
 {
+	iam (Procrustes);
 	try {
-		iam (Procrustes);
 		autoProcrustes thee = (Procrustes) Data_copy (me);
 		/*
 			R is symmetric rotation matrix --> 
@@ -79,7 +79,7 @@ static Any classProcrustes_invert (I)
 			thy t[i] *= thy s;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Procrustes not inverted."); }
+	} catch (MelderError) { rethrowmzero (me, ": not inverted."); }
 }
 
 #include "oo_DESTROY.h"

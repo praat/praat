@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/02/11
+ * pb 2011/06/07
  */
 
 /* Sound inherits from Vector */
@@ -174,10 +174,10 @@ void Sound_multiplyByWindow (Sound me, enum kSound_windowShape windowShape);
 void Sound_scaleIntensity (Sound me, double newAverageIntensity);
 void Sound_overrideSamplingFrequency (Sound me, double newSamplingFrequency);
 Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape windowShape, double relativeWidth, bool preserveTimes);
-int Sound_filterWithFormants (Sound me, double tmin, double tmax,
+void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth []);
 Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
-int Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth);
+void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth);
 Sound Sound_filter_preemphasis (Sound me, double frequency);
 Sound Sound_filter_deemphasis (Sound me, double frequency);
 
@@ -253,7 +253,7 @@ Sound Sound_recordFixedTime (int inputSource,
 			and wait for the publishCallback.
 	*/
 
-int Sound_playPart (Sound me, double tmin, double tmax,
+void Sound_playPart (Sound me, double tmin, double tmax,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
@@ -288,7 +288,7 @@ int Sound_playPart (Sound me, double tmin, double tmax,
  *
  * Sound_playPart () usually runs asynchronously, and kills an already playing sound.
  */
-int Sound_play (Sound me,
+void Sound_play (Sound me,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playClosure); */
 
@@ -296,14 +296,14 @@ int Sound_play (Sound me,
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
-int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType);
+void Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType);
 #ifdef macintosh
-	int Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
+	void Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
 #endif
-int Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file);   /* 8 bit */
-int Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file);   /* 8 bit */
-int Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
-int Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
+void Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file);   /* 8 bit */
+void Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file);   /* 8 bit */
+void Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
+void Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
 
 Sound Sound_readFromSoundFile (MelderFile file);   /* AIFF, WAV, NeXT/Sun, or NIST */
 #ifdef macintosh
@@ -327,7 +327,7 @@ Sound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfCha
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
 	'sampleRate' is in Hertz
 */
-int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
+void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED

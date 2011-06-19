@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/05
  */
 
 #include "Pitch.h"
@@ -32,9 +32,9 @@
 /* then this PointProcess into a Sound (pulse train), */
 /* and then optionally filter this with 6 formants. */
 
-Sound Pitch_to_Sound (I, double tmin, double tmax, int hum);
-int Pitch_play (I, double tmin, double tmax);
-int Pitch_hum (I, double tmin, double tmax);
+Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum);
+void Pitch_play (Pitch me, double tmin, double tmax);
+void Pitch_hum (Pitch me, double tmin, double tmax);
 
 /* This one converts a Pitch into a PitchTier, */
 /* then this PitchTier into a Sound (sine wave), */

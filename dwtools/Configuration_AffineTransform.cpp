@@ -64,7 +64,7 @@ static void do_steps45 (double **w, double **t, double **c, long n, double *f)
 	}
 }
 
-static int NUMmaximizeCongruence (double **b, double **a, long nr, long nc, 
+static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, 
 	double **t, long maximumNumberOfIterations, double tolerance)
 {
 	try {
@@ -74,7 +74,7 @@ static int NUMmaximizeCongruence (double **b, double **a, long nr, long nc,
 	
 		if (nc == 1)
 		{
-			t[1][1] = 1; return 1;
+			t[1][1] = 1; return;
 		}
 		autoNUMmatrix<double> c (1, nc, 1, nc);
 		autoNUMmatrix<double> w (1, nc, 1, nc);
@@ -203,8 +203,7 @@ static int NUMmaximizeCongruence (double **b, double **a, long nr, long nc,
 			do_steps45 (w.peek(), t, c.peek(), nc, &f);
 	
 		} while (fabs(f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
@@ -220,7 +219,7 @@ AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
 		autoAffineTransform at = AffineTransform_create (p -> n);	
 		NUMdmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
 		return at.transfer();
-	} catch (MelderError) { rethrowmzero ("AffineTransform not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no congruence transformation created."); }
 }
 
 Configuration Configuration_and_AffineTransform_to_Configuration (Configuration me, thou)

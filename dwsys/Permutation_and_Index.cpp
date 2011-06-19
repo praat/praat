@@ -27,8 +27,8 @@
 
 Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses)
 {
+	iam (Index);
 	try {
-		iam (Index);
 		long numberOfClasses = my classes -> size;
 	
 		autoPermutation thee = Permutation_create (my numberOfElements);
@@ -67,7 +67,7 @@ Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Permutation not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Permutation not created."); }
 }
 
 /*  End of file Permutation_and_Index.cpp */

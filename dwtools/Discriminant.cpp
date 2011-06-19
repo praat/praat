@@ -185,7 +185,7 @@ Strings Discriminant_extractGroupLabels (Discriminant me)
 			thy strings[i] = Melder_wcsdup_e (name); therror
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Strings not created from group labels."); }
+	} catch (MelderError) { rethrowmzero (me, ": group labels not extracted."); }
 }
 
 TableOfReal Discriminant_extractGroupCentroids (Discriminant me)
@@ -201,8 +201,8 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me)
 			NUMdvector_copyElements (sscp -> centroid, thy data[i], 1, n);
 		}
 		NUMstrings_copyElements (((SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
-		return thee.transfer(); therror
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from group centroids."); }
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": group centroids not extracted."); }
 }
 
 TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me)
@@ -223,7 +223,7 @@ TableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me)
 		}
 		NUMstrings_copyElements (((SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n); therror
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from group standard deviations."); }
+	} catch (MelderError) { rethrowmzero (me, ": group standard deviations not extracted."); }
 }
 
 double Discriminant_getWilksLambda (Discriminant me, long from)
@@ -269,7 +269,7 @@ TableOfReal Discriminant_extractCoefficients (Discriminant me, int choice)
 			thy data[i][nx + 1] = raw ? 0 : -u0;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": coefficients not extracted."); }
 }
 
 static long Discriminant_getDegreesOfFreedom (Discriminant me)
@@ -357,7 +357,7 @@ SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index)
 			("Index must be in interval [1,", my numberOfGroups, "].");
 		autoSSCP thee = (SSCP) Data_copy (my groups -> item[index]);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Within group SSCP not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": within group SSCP not created."); }
 }
 
 SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me)
@@ -374,7 +374,7 @@ SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me)
 			}
 		}
 		return b.transfer();
-	} catch (MelderError) { rethrowmzero ("Between group SSCP not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": between group SSCP not created."); }
 }
 
 void Discriminant_drawTerritorialMap (Discriminant me, Graphics g,
@@ -441,12 +441,12 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
 
 Discriminant TableOfReal_to_Discriminant (I)
 {
+	iam (TableOfReal);
 	try {
-		iam (TableOfReal);
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
 
-		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) rethrowzero;
+		TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0);
 
 		if (NUMdmatrix_hasInfinities (my data, 1, my numberOfRows, 1, dimension)) Melder_throw ("Table contains infinities.");
 
@@ -511,7 +511,7 @@ Discriminant TableOfReal_to_Discriminant (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Discriminant not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Discriminant not created."); }
 }
 
 Configuration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, long numberOfDimensions)
@@ -647,7 +647,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 					// Clear the error.
 
 					Melder_clearError ();
-					if (npool == 0 && ! NUMlowerCholeskyInverse (pool -> data, p, &lnd)) rethrowzero;
+					if (npool == 0) NUMlowerCholeskyInverse (pool -> data, p, &lnd);
 					npool++;
 					sscpvec[j] = pool.peek();
 					ln_determinant[j] = lnd;
@@ -699,7 +699,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("ClassificationTable not created."); }
+	} catch (MelderError) { rethrowmzero ("ClassificationTable from Discriminant & TableOfReal not created."); }
 }
 
 ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee, 
@@ -743,7 +743,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			if (! NUMlowerCholeskyInverse (pool -> data, p, &lnd)) rethrowzero;
+			NUMlowerCholeskyInverse (pool -> data, p, &lnd);
 			for (long j = 1; j <= g; j++)
 			{
 				ln_determinant[j] = lnd;
@@ -776,7 +776,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 					// Clear the error.
 
 					Melder_clearError ();
-					if (npool == 0 && ! NUMlowerCholeskyInverse (pool -> data, p, &lnd)) rethrowzero;
+					if (npool == 0) NUMlowerCholeskyInverse (pool -> data, p, &lnd);
 					npool++;
 					sscpvec[j] = pool.peek();
 					ln_determinant[j] = lnd;
@@ -852,7 +852,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		}
 		*displacements = adisplacements.transfer();
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("ClassificationTable not created."); }
+	} catch (MelderError) { rethrowmzero ("ClassificationTable for Weenink procedure not created."); }
 }
 
 Configuration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDimensions)
@@ -861,7 +861,7 @@ Configuration TableOfReal_to_Configuration_lda (TableOfReal me, long numberOfDim
 		autoDiscriminant thee = TableOfReal_to_Discriminant (me);
 		autoConfiguration him = Discriminant_and_TableOfReal_to_Configuration (thee.peek(), me, numberOfDimensions);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Configuration with lda data not created."); }
 }
 
 #undef MAX

@@ -78,7 +78,7 @@ static void info (I)
 		MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my size));
 		autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems(me, 1);
 		MelderInfo_writeLine2 (L"Number of unique categories: ", Melder_integer (uStrings -> size));
-	} catch(MelderError) { rethrow; }
+	} catch (MelderError) { rethrow; }
 }
 
 class_methods (OrderedOfString, Ordered) {
@@ -99,7 +99,7 @@ OrderedOfString OrderedOfString_create (void)
 		autoOrderedOfString me = Thing_new (OrderedOfString);
 		OrderedOfString_init (me.peek(), 10); therror
 		return me.transfer();
-	} catch(MelderError) { rethrowmzero ("OrderedOfString not created."); }
+	} catch (MelderError) { rethrowmzero ("OrderedOfString not created."); }
 }
 
 int OrderedOfString_append (I, wchar_t *append)
@@ -287,7 +287,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 	if (use_regexp)
 	{			
 		compiled_search = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
-		if (compiled_search == NULL) return Melder_error1 ((wchar *) compileMsg);
+		if (compiled_search == NULL) return Melder_error1 ((wchar_t*) compileMsg);
 	}
 	for (long i = 1; i <= my size; i++)
 	{

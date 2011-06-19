@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/05/31
  */
 
 /*
@@ -47,7 +47,7 @@ class_create (Intensity, Vector);
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 
-int Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1);
+void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1);
 
 Matrix Intensity_to_Matrix (Intensity me);
 

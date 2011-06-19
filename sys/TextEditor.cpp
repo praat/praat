@@ -44,6 +44,7 @@
  * pb 2010/07/29 removed GuiDialog_show
  * pb 2010/12/03 command "Convert to C string"
  * pb 2011/04/06 C++
+ * pb 2011/04/16 C++
  */
 
 #include "TextEditor.h"
@@ -52,6 +53,12 @@
 #include "EditorM.h"
 #include "Preferences.h"
 #include "UnicodeData.h"
+
+/*
+ * UGLY
+ */
+#undef our
+#define our ((TextEditor_Table) my methods) ->
 
 static int theTextEditorFontSize;
 
@@ -105,17 +112,15 @@ static int openDocument (TextEditor me, MelderFile file) {
 		for (long ieditor = 1; ieditor <= theOpenTextEditors -> size; ieditor ++) {
 			TextEditor editor = (TextEditor) theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
-				Editor_raise (TextEditor_as_Editor (editor));
+				Editor_raise (editor);
 				Melder_error3 (L"Text file ", MelderFile_messageName (file), L" is already open.");
 				forget (me);   // don't forget me before Melder_error, because "file" is owned by one of my dialogs
 				return 0;
 			}
 		}
 	}
-	wchar_t *text = MelderFile_readText (file);
-	if (! text) return 0;
-	GuiText_setString (my textWidget, text);
-	Melder_free (text);
+	autostring text = MelderFile_readText (file);
+	GuiText_setString (my textWidget, text.peek());
 	/*
 	 * GuiText_setString has invoked the changeCallback,
 	 * which has set 'my dirty' to TRUE. Fix this.
@@ -133,9 +138,8 @@ static void newDocument (TextEditor me) {
 }
 
 static int saveDocument (TextEditor me, MelderFile file) {
-	wchar_t *text = GuiText_getString (my textWidget);
-	if (! MelderFile_writeText (file, text)) { Melder_free (text); return 0; }
-	Melder_free (text);
+	autostring text = GuiText_getString (my textWidget);
+	MelderFile_writeText (file, text.peek()); therror
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));
@@ -344,7 +348,7 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
 		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
 		closeDocument (me);
 	} else {
-		menu_cb_saveAs (me, Editor_getMenuCommand (TextEditor_as_Editor (me), L"File", L"Save as..."), NULL, NULL, NULL);
+		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL, NULL, NULL);
 	}
 }
 
@@ -460,10 +464,10 @@ static wchar_t *theFindString = NULL, *theReplaceString = NULL;
 static void do_find (TextEditor me) {
 	if (theFindString == NULL) return;   // e.g. when the user does "Find again" before having done any "Find"
 	long left, right;
-	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	wchar_t *location = wcsstr (text + right, theFindString);
+	autostring text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
+	wchar_t *location = wcsstr (& text [right], theFindString);
 	if (location != NULL) {
-		long index = location - text;
+		long index = location - text.peek();
 		GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
@@ -471,9 +475,9 @@ static void do_find (TextEditor me) {
 		#endif
 	} else {
 		/* Try from the start of the document. */
-		location = wcsstr (text, theFindString);
+		location = wcsstr (text.peek(), theFindString);
 		if (location != NULL) {
-			long index = location - text;
+			long index = location - text.peek();
 			GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
@@ -483,19 +487,17 @@ static void do_find (TextEditor me) {
 			Melder_beep ();
 		}
 	}
-	Melder_free (text);
 }
 
 static void do_replace (TextEditor me) {
 	if (theReplaceString == NULL) return;   // e.g. when the user does "Replace again" before having done any "Replace"
-	wchar_t *selection = GuiText_getSelection (my textWidget);
-	if (! Melder_wcsequ (selection, theFindString)) {
+	autostring selection = GuiText_getSelection (my textWidget);
+	if (! Melder_wcsequ (selection.peek(), theFindString)) {
 		do_find (me);
 		return;
 	}
 	long left, right;
-	wchar_t *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	Melder_free (text);
+	autostring text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	GuiText_replace (my textWidget, left, right, theReplaceString);
 	GuiText_setSelection (my textWidget, left, left + wcslen (theReplaceString));
 	GuiText_scrollToSelection (my textWidget);
@@ -577,7 +579,7 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 		getSelectedLines (me, & firstLine, & lastLine);
 		SET_INTEGER (L"Line", firstLine);
 	EDITOR_DO
-		wchar_t *text = GuiText_getString (my textWidget);
+		autostring text = GuiText_getString (my textWidget);
 		long lineToGo = GET_INTEGER (L"Line"), currentLine = 1;
 		unsigned long left = 0, right = 0;
 		if (lineToGo == 1) {
@@ -594,12 +596,11 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 				}
 			}
 		}
-		if (left == wcslen (text)) {
+		if (left == wcslen (text.peek())) {
 			right = left;
 		} else if (text [right] == '\n') {
 			right ++;
 		}
-		Melder_free (text);
 		GuiText_setSelection (my textWidget, left, right);
 		GuiText_scrollToSelection (my textWidget);
 	EDITOR_END
@@ -607,7 +608,7 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 
 static int menu_cb_convertToCString (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	wchar_t *text = GuiText_getString (my textWidget);
+	autostring text = GuiText_getString (my textWidget);
 	wchar_t buffer [2] = L" ";
 	const wchar_t *hex [16] = { L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L"A", L"B", L"C", L"D", L"E", L"F" };
 	MelderInfo_open ();
@@ -636,7 +637,6 @@ static int menu_cb_convertToCString (EDITOR_ARGS) {
 	}
 	MelderInfo_write1 (L"\"");
 	MelderInfo_close ();
-	Melder_free (text);
 	return 1;
 }
 
@@ -672,7 +672,7 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 }
 
 static void classTextEditor_createMenus (TextEditor me) {
-	inherited (TextEditor) createMenus (TextEditor_as_Editor (me));
+	inherited (TextEditor) createMenus (me);
 	if (our fileBased) {
 		Editor_addCommand (me, L"File", L"New", 'N', menu_cb_new);
 		Editor_addCommand (me, L"File", L"Open...", 'O', menu_cb_open);
@@ -728,8 +728,8 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 static void classTextEditor_createChildren (TextEditor me) {
 	my textWidget = GuiText_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (my textWidget, gui_text_cb_change, me);
-	GuiText_setUndoItem (my textWidget, Editor_getMenuCommand (TextEditor_as_Editor (me), L"Edit", L"Undo") -> itemWidget);
-	GuiText_setRedoItem (my textWidget, Editor_getMenuCommand (TextEditor_as_Editor (me), L"Edit", L"Redo") -> itemWidget);
+	GuiText_setUndoItem (my textWidget, Editor_getMenuCommand (me, L"Edit", L"Undo") -> itemWidget);
+	GuiText_setRedoItem (my textWidget, Editor_getMenuCommand (me, L"Edit", L"Redo") -> itemWidget);
 }
 
 static void classTextEditor_clear (TextEditor me) {
@@ -748,33 +748,34 @@ class_methods (TextEditor, Editor) {
 	class_methods_end
 }
 
-int TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText) {
-	Editor_init (TextEditor_as_parent (me), parent, 0, 0, 600, 400, NULL, NULL); cherror
+void TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText) {
+	Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL); therror
 	setFontSize (me, theTextEditorFontSize);
 	if (initialText) {
 		GuiText_setString (my textWidget, initialText);
-		my dirty = FALSE;   /* Was set to TRUE in valueChanged callback. */
+		my dirty = FALSE;   // was set to TRUE in valueChanged callback
 		Thing_setName (me, NULL);
 	}
 	if (theOpenTextEditors == NULL) {
-		theOpenTextEditors = Collection_create (classTextEditor, 100);
+		theOpenTextEditors = Collection_create (classTextEditor, 100); therror
 	}
 	if (theOpenTextEditors != NULL) {
-		Collection_addItem (theOpenTextEditors, me);
+		Collection_addItem (theOpenTextEditors, me); therror
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
 TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText) {
-	TextEditor me = Thing_new (TextEditor);
-	if (! me || ! TextEditor_init (me, parent, initialText)) { forget (me); return NULL; }
-	return me;
+	try {
+		autoTextEditor me = Thing_new (TextEditor);
+		TextEditor_init (me.peek(), parent, initialText);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Text window not created.");
+	}
 }
 
 void TextEditor_showOpen (TextEditor me) {
-	cb_showOpen (Editor_getMenuCommand (TextEditor_as_Editor (me), L"File", L"Open..."), NULL, NULL, NULL);
+	cb_showOpen (Editor_getMenuCommand (me, L"File", L"Open..."), NULL, NULL, NULL);
 }
 
 /* End of file TextEditor.cpp */

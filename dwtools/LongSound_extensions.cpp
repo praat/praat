@@ -185,7 +185,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 	my imax = 0;
 }
 
-int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
+int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 {
 	long pre_append_endpos = 0;
 	try {
@@ -202,7 +202,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 		*/
 	
 		autofile f = Melder_fopen (file, "r+b");
-		file -> filePointer = f;
+		file -> filePointer = f; // essential !!
 		double sampleRate_d;
 		long startOfData, numberOfSamples;
 		int numberOfChannels, encoding;
@@ -257,7 +257,7 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 				LongSound longSound = (LongSound) data;
 				writePartToOpenFile16 (longSound, audioFileType, 1, longSound -> nx, file);
 			}
-			if (errno != 0) rethrowzero;
+			if (errno != 0) Melder_throw ("Error during writing.");
 		}
 	
 		// Update header
@@ -272,11 +272,8 @@ int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file)
 			// Restore file at original size
 			int error = errno;
 			MelderFile_truncate (file, pre_append_endpos);
-			Melder_error5 (L"File ", MelderFile_messageName (file), L" restored to original size (",
-				Melder_peekUtf8ToWcs (strerror (error)), L").");
-		}
-		rethrowzero;
-	}
+			rethrowmzero ("File ", MelderFile_messageName (file), L" restored to original size (", strerror (error), ").");
+		} rethrowzero; }
 }
 
 /* End of file LongSound_extensions.cpp */	 

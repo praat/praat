@@ -181,7 +181,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 		iam (Eigen);
 		double *u = NULL, *v = NULL, maxsv2 = -10;
 		char jobu = 'N', jobv = 'N', jobq = 'Q';
-		long ii, j = 0, k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
+		long k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
 		long lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
 		long lwork = MAX (MAX (3*n, m), p) + n, info;
 
@@ -201,7 +201,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 			&ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
 			v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
 
-		if (info != 0) rethrowzero;
+		if (info != 0) Melder_throw ("dggsvd fails.");
 
 		/*
 			Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
@@ -227,11 +227,12 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 			}
 		}
 
-		if (ll - n < 1) rethrowmzero ("No eigenvectors can be found. Matrix too singular.");
+		if (ll - n < 1) Melder_throw ("No eigenvectors can be found. Matrix too singular.");
 
 		Eigen_init (me, ll - n, numberOfColumns);
 
-		for (long i = k+1, ii = 0; i <= k+ll; i++)
+		long ii = 0;
+		for (long i = k+1; i <= k+ll; i++)
 		{
 			if (alpha[i] == -1) continue;
 
@@ -246,7 +247,7 @@ int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 
 		NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 		return 1;
-	} catch(MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrowzero; }
 }
 
 int Eigen_initFromSymmetricMatrix_f (I, float **a, long n)
@@ -284,14 +285,14 @@ int Eigen_initFromSymmetricMatrix (I, double **a, long n)
 
 		(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 			&my eigenvalues[1], wt, &lwork, &info);
-		if (info != 0) rethrowzero;
+		if (info != 0) Melder_throw ("dsyev fails");
 
 		lwork = wt[0];
 		autoNUMvector<double> work (0L, lwork);
 
 		(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 			&my eigenvalues[1], work.peek(), &lwork, &info);
-		if (info != 0) rethrowzero;
+		if (info != 0) Melder_throw ("dsyev fails");
 
 		/*
 			We want descending order instead of ascending.
@@ -308,7 +309,7 @@ int Eigen_initFromSymmetricMatrix (I, double **a, long n)
 			}
 		}
 		return 1; 
-	} catch(MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrowzero; }
 }
 
 Eigen Eigen_create (long numberOfEigenvalues, long dimension)
@@ -522,7 +523,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	}
 }
 
-int Eigens_alignEigenvectors (Ordered me)
+int Eigens_alignEigenvectors (Collection me)
 {
 	if (my size < 2) return 1;
 

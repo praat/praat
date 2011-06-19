@@ -75,16 +75,15 @@ class_methods (CC, Sampled)
 	class_method_local (CC, description)
 class_methods_end
 
-int CC_Frame_init (CC_Frame me, long numberOfCoefficients)
+void CC_Frame_init (CC_Frame me, long numberOfCoefficients)
 {
 	try {
 		my c = NUMvector<double> (1, numberOfCoefficients);
 		my numberOfCoefficients = numberOfCoefficients;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
-int CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
+void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax)
 {
 	try {
@@ -92,16 +91,15 @@ int CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 		my fmin = fmin;
 		my fmax = fmax;
 		my maximumNumberOfCoefficients = maximumNumberOfCoefficients;
-		Sampled_init (me, tmin, tmax, nt, dt, t1);
+		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
 		my frame = NUMvector<structCC_Frame> (1, nt);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 Matrix CC_to_Matrix (I)
 {
+	iam (CC);
 	try {
-		iam (CC);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 			1, my maximumNumberOfCoefficients, my maximumNumberOfCoefficients, 1, 1);
 
@@ -114,7 +112,7 @@ Matrix CC_to_Matrix (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Matrix."); }
 }
 
 void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,

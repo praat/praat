@@ -23,94 +23,107 @@
  * pb 2007/03/17 domain quantity
  * pb 2008/01/19 double
  * pb 2011/05/09 C++
+ * pb 2011/06/13 C++
  */
 
 #include "Graphics.h"
 #include "Cochleagram.h"
 
-class_methods (Cochleagram, Matrix)
+class_methods (Cochleagram, Matrix) {
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-class_methods_end
-
-Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
-	double df, long nf)
-{
-	Cochleagram me = Thing_new (Cochleagram);
-	if (! me || ! Matrix_init (me, tmin, tmax, nt, dt, t1,
-		0.0, nf * df, nf, df, 0.5 * df)) forget (me);
-	return me;
+	class_methods_end
 }
 
-void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish)
-{
-	static double border [1 + 12] =
-		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
-	Cochleagram copy = (Cochleagram) Data_copy (me);
-	long iy, ix, itmin, itmax;
-	if (! copy) return;
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
-	for (iy = 2; iy < my ny; iy ++)
-		for (ix = itmin; ix <= itmax; ix ++)
-			if (my z [iy] [ix] > my z [iy - 1] [ix] &&
-				my z [iy] [ix] > my z [iy + 1] [ix])
-			{
-				copy -> z [iy - 1] [ix] += 10;
-				copy -> z [iy] [ix] += 10;
-				copy -> z [iy + 1] [ix] += 10;
-			}
-	Graphics_setInner (g);
-	Graphics_setWindow (g, tmin, tmax, 0, my ny * my dy);
-	Graphics_grey (g, copy -> z,
-		itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
-		1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
-		12, border);
-	Graphics_unsetInner (g);
-	forget (copy);
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_marksBottom (g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Place (Bark)");
-		Graphics_marksLeftEvery (g, 1.0, 5.0, 1, 1, 0);
+Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
+	try {
+		autoCochleagram me = Thing_new (Cochleagram);
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Cochleagram with ", nt, " times and ", nf, " frequencies not created.");
 	}
 }
 
-double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, double tmax)
-{
-	long itime, ifreq, itmin, itmax, nt;
-	double diff = 0.0;
-	if (my nx != thy nx || my dx != thy dx || my x1 != thy x1 || my ny != thy ny)
-		return Melder_error1 (L"Cochleagram_difference: unequal time sampling or number of frequencies.");
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-	if (! (nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax)))
-		return Melder_error1 (L"Cochleagram_difference: window too short.");
-	for (itime = itmin; itime <= itmax; itime ++)
-		for (ifreq = 1; ifreq <= my ny; ifreq ++)
-		{
-			double d = my z [ifreq] [itime] - thy z [ifreq] [itime];
-			diff += d * d;
+void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish) {
+	static double border [1 + 12] =
+		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
+	try {
+		autoCochleagram copy = (Cochleagram) Data_copy (me);
+		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+		long itmin, itmax;
+		Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
+		for (long iy = 2; iy < my ny; iy ++)
+			for (long ix = itmin; ix <= itmax; ix ++)
+				if (my z [iy] [ix] > my z [iy - 1] [ix] &&
+					my z [iy] [ix] > my z [iy + 1] [ix])
+				{
+					copy -> z [iy - 1] [ix] += 10;
+					copy -> z [iy] [ix] += 10;
+					copy -> z [iy + 1] [ix] += 10;
+				}
+		Graphics_setInner (g);
+		Graphics_setWindow (g, tmin, tmax, 0, my ny * my dy);
+		Graphics_grey (g, copy -> z,
+			itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
+			1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
+			12, border);
+		Graphics_unsetInner (g);
+		forget (copy);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_textBottom (g, 1, L"Time (s)");
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+			Graphics_textLeft (g, 1, L"Place (Bark)");
+			Graphics_marksLeftEvery (g, 1.0, 5.0, 1, 1, 0);
 		}
-	diff /= nt * my ny;
-	return sqrt (diff);
+	} catch (MelderError) {
+		Melder_clearError ();   // BUG
+	}
 }
 
-Cochleagram Matrix_to_Cochleagram (Matrix me)
-{
-	Cochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1,
-		my dy, my ny);
-	if (! thee) return NULL;
-	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-	return thee;
+double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, double tmax) {
+	try {
+		if (my nx != thy nx || my dx != thy dx || my x1 != thy x1)
+			Melder_throw (L"Unequal time samplings.");
+		if (my ny != thy ny)
+			Melder_throw (L"Unequal numbers of frequencies.");
+		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+		long itmin, itmax;
+		long nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
+		if (nt == 0)
+			Melder_throw ("Window too short.");
+		double diff = 0.0;
+		for (long itime = itmin; itime <= itmax; itime ++) {
+			for (long ifreq = 1; ifreq <= my ny; ifreq ++) {
+				double d = my z [ifreq] [itime] - thy z [ifreq] [itime];
+				diff += d * d;
+			}
+		}
+		diff /= nt * my ny;
+		return sqrt (diff);
+	} catch (MelderError) {
+		rethrowmzero (me, " & ", thee, ": difference not computed.");
+	}
 }
 
-Matrix Cochleagram_to_Matrix (Cochleagram me)
-{
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-					my ymin, my ymax, my ny, my dy, my y1);
-	if (! thee) return NULL;
-	NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
-	return thee;
+Cochleagram Matrix_to_Cochleagram (Matrix me) {
+	try {
+		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1, my dy, my ny);
+		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Cochleagram.");
+	}
+}
+
+Matrix Cochleagram_to_Matrix (Cochleagram me) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
+		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Matrix.");
+	}
 }
 
 /* End of file Cochleagram.cpp */

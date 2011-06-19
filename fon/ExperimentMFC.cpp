@@ -426,71 +426,71 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 }
 
 Table ResultsMFCs_to_Table (Collection me) {
-	Table thee = NULL;
-//start:
-	long irow = 0;
-	bool hasGoodnesses = false, hasReactionTimes = false;
-	for (long iresults = 1; iresults <= my size; iresults ++) {
-		ResultsMFC results = (ResultsMFC) my item [iresults];
-		for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
-			irow ++;
-			if (results -> result [itrial]. goodness != 0)
-				hasGoodnesses = true;
-			if (results -> result [itrial]. reactionTime != 0.0)
-				hasReactionTimes = true;
-		}
-	}
-	thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes); cherror
-	Table_setColumnLabel (thee, 1, L"subject"); cherror
-	Table_setColumnLabel (thee, 2, L"stimulus"); cherror
-	Table_setColumnLabel (thee, 3, L"response"); cherror
-	if (hasGoodnesses) { Table_setColumnLabel (thee, 4, L"goodness"); cherror }
-	if (hasReactionTimes) { Table_setColumnLabel (thee, 4 + hasGoodnesses, L"reactionTime"); cherror }
-	irow = 0;
-	for (long iresults = 1; iresults <= my size; iresults ++) {
-		ResultsMFC results = (ResultsMFC) my item [iresults];
-		for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
-			irow ++;
-			Table_setStringValue (thee, irow, 1, results -> name); cherror
-			Table_setStringValue (thee, irow, 2, results -> result [itrial]. stimulus); cherror
-			Table_setStringValue (thee, irow, 3, results -> result [itrial]. response); cherror
-			if (hasGoodnesses) {
-				Table_setNumericValue (thee, irow, 4, results -> result [itrial]. goodness); cherror
-			}
-			if (hasReactionTimes) {
-				Table_setNumericValue (thee, irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime); cherror
+	try {
+		long irow = 0;
+		bool hasGoodnesses = false, hasReactionTimes = false;
+		for (long iresults = 1; iresults <= my size; iresults ++) {
+			ResultsMFC results = (ResultsMFC) my item [iresults];
+			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
+				irow ++;
+				if (results -> result [itrial]. goodness != 0)
+					hasGoodnesses = true;
+				if (results -> result [itrial]. reactionTime != 0.0)
+					hasReactionTimes = true;
 			}
 		}
+		autoTable thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes);
+		Table_setColumnLabel (thee.peek(), 1, L"subject"); therror
+		Table_setColumnLabel (thee.peek(), 2, L"stimulus"); therror
+		Table_setColumnLabel (thee.peek(), 3, L"response"); therror
+		if (hasGoodnesses) { Table_setColumnLabel (thee.peek(), 4, L"goodness"); therror }
+		if (hasReactionTimes) { Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, L"reactionTime"); therror }
+		irow = 0;
+		for (long iresults = 1; iresults <= my size; iresults ++) {
+			ResultsMFC results = (ResultsMFC) my item [iresults];
+			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
+				irow ++;
+				Table_setStringValue (thee.peek(), irow, 1, results -> name); therror
+				Table_setStringValue (thee.peek(), irow, 2, results -> result [itrial]. stimulus); therror
+				Table_setStringValue (thee.peek(), irow, 3, results -> result [itrial]. response); therror
+				if (hasGoodnesses) {
+					Table_setNumericValue (thee.peek(), irow, 4, results -> result [itrial]. goodness); therror
+				}
+				if (hasReactionTimes) {
+					Table_setNumericValue (thee.peek(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime); therror
+				}
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("ResultsMFC objects not collected to Table.");
 	}
-end:
-	iferror { forget (thee); return NULL; }
-	return thee;
 }
 
 Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
-	Categories thee = NULL;
-//start:
-	thee = Categories_create (); cherror
-	for (long trial = 1; trial <= my numberOfTrials; trial ++) {
-		SimpleString category = SimpleString_create (my result [trial]. stimulus); cherror
-		Collection_addItem (thee, category); cherror
+	try {
+		autoCategories thee = Categories_create ();
+		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
+			autoSimpleString category = SimpleString_create (my result [trial]. stimulus);
+			Collection_addItem (thee.peek(), category.transfer()); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": stimuli not converted to Categories.");
 	}
-end:
-	iferror { forget (thee); return NULL; }
-	return thee;
 }
 
 Categories ResultsMFC_to_Categories_responses (ResultsMFC me) {
-	Categories thee = NULL;
-//start:
-	thee = Categories_create ();
-	for (long trial = 1; trial <= my numberOfTrials; trial ++) {
-		SimpleString category = SimpleString_create (my result [trial]. response); cherror
-		Collection_addItem (thee, category); cherror
+	try {
+		autoCategories thee = Categories_create ();
+		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
+			autoSimpleString category = SimpleString_create (my result [trial]. response);
+			Collection_addItem (thee.peek(), category.transfer()); therror
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": responses not converted to Categories.");
 	}
-end:
-	iferror { forget (thee); return NULL; }
-	return thee;
 }
 
 static int compare (SimpleString me, SimpleString thee) {

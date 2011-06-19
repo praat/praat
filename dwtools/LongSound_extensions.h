@@ -36,7 +36,7 @@
 int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file);
 
-int LongSounds_appendToExistingSoundFile (Ordered me, MelderFile file);
+int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file);
 
 #ifdef __cplusplus
 	}

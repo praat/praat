@@ -266,12 +266,14 @@ class_methods (OTGrammarEditor, HyperPage) {
 }
 
 OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar_t *title, OTGrammar ot) {
-	OTGrammarEditor me = Thing_new (OTGrammarEditor); cherror
-	my data = ot;
-	HyperPage_init (OTGrammarEditor_as_parent (me), parent, title, ot); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
+		my data = ot;
+		HyperPage_init (OTGrammarEditor_as_parent (me.peek()), parent, title, ot); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("OTGrammar window not created.");
+	}
 }
 
 /* End of file OTGrammarEditor.cpp */

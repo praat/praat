@@ -20,13 +20,10 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/06/18
  */
 
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-
+#include "Graphics.h"
 #include "Gui.h"
 
 #if defined (_WIN32)
@@ -214,7 +211,8 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 	/* 146 */ SET_DOLLAR_SIGN_IS_CODE, SET_AT_SIGN_IS_LINK,
 	/* 148 */ BUTTON, ROUNDED_RECTANGLE, FILL_ROUNDED_RECTANGLE, FILL_ARC,
 	/* 152 */ INNER_RECTANGLE, CELL_ARRAY8, IMAGE, HIGHLIGHT2, UNHIGHLIGHT2,
-	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW, SET_RGB_COLOUR, IMAGE_FROM_FILE
+	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW, SET_RGB_COLOUR, IMAGE_FROM_FILE,
+	/* 161 */ POLYLINE_CLOSED
 };
 
 void _Graphics_text_init (I);

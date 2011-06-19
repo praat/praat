@@ -23,9 +23,13 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110524)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110619)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.27# (19 June 2011)")
+LIST_ITEM (L"\\bu @Polygon: ##Draw (closed)...#.")
+LIST_ITEM (L"\\bu @@PointProcess: To Sound (phonation)...@: "
+	"corrected a bug that could cause Praat to crash if pulses lay outside the time domain.")
 NORMAL (L"##5.2.26# (24 May 2011)")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash on some platforms when reading a Praat binary file.")
 LIST_ITEM (L"\\bu @ExperimentMFC: corrected a bug that caused Praat to crash if an experiment contained zero trials.")

@@ -49,7 +49,7 @@ class_methods (DurationTier, RealTier) {
 DurationTier DurationTier_create (double tmin, double tmax) {
 	try {
 		autoDurationTier me = Thing_new (DurationTier);
-		RealTier_init_e (me.peek(), tmin, tmax); therror
+		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
 		rethrowmzero ("DurationTier not created.");

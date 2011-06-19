@@ -20,15 +20,11 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/02
  */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Function_h_
-	#include "Function.h"
-#endif
+#include "Collection.h"
+#include "Function.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -38,7 +34,7 @@
 #define Autosegment_methods Function_methods
 class_create (Autosegment, Function);
 
-Any Autosegment_create (double tmin, double tmax, const wchar_t *label);
+Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 /*
 	Function:
 		create a new instance of Autosegment.
@@ -82,7 +78,7 @@ long Tier_timeToIndex (Tier me, double t);
 		result == 0 || my item [i] -> xmin <= result < my item [i] -> xmax;
 */
 
-int Tier_init (I, long initialCapacity);
+void Tier_init (I, long initialCapacity);
 
 #define Label_members Ordered_members
 #define Label_methods Ordered_methods
@@ -90,9 +86,9 @@ class_create (Label, Ordered);
 
 Label Label_create (long initialNumberOfTiers);
 
-int Label_init (I, long initialNumberOfTiers);
+void Label_init (I, long initialNumberOfTiers);
 
-int Label_addTier (Label me);
+void Label_addTier (Label me);
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax);
 

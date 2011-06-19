@@ -548,9 +548,9 @@ typedef struct structNUMlinprog *NUMlinprog;
 void NUMlinprog_delete (NUMlinprog me);
 NUMlinprog NUMlinprog_new (bool maximize);
 void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff);
-int NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
+void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
 void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
-int NUMlinprog_run (NUMlinprog me);
+void NUMlinprog_run (NUMlinprog me);
 double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 #ifdef __cplusplus

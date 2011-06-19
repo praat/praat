@@ -50,7 +50,7 @@ class_create (SVD, Data);
 #define GSVD_methods Data_methods
 class_create (GSVD, Data);
 
-int SVD_init (I, long numberOfRows, long numberOfColumns);
+void SVD_init (I, long numberOfRows, long numberOfColumns);
 
 SVD SVD_create (long numberOfRows, long numberOfColumns);
 /*
@@ -64,19 +64,19 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns);
 	Copy matrix into svd->u and calculate U D V'
 */
 
-int SVD_svd_d (I, double **m);
-int SVD_svd_f (I, float **m);
+void SVD_svd_d (I, double **m);
+void SVD_svd_f (I, float **m);
 /*
 	Perform SVD analysis on matrix M, i.e., decompose M as M = UDV'.
 	Watch out: dataType contains V, not V' !!
 */
 
-int SVD_compute (I);
+void SVD_compute (I);
 
-int SVD_solve (I, double b[], double x[]);
+void SVD_solve (I, double b[], double x[]);
 /* Solve Ax = b */
 
-int SVD_sort (I);
+void SVD_sort (I);
 /*
 	Sort singular values (and corresponding column vectors of U and V) in decreasing order.
 */
@@ -91,7 +91,7 @@ long SVD_zeroSmallSingularValues (I, double tolerance);
 	Return the number of s.v.'s zeroed.
 */
 
-int SVD_synthesize (I, long sv_from, long sv_to, double **m);
+void SVD_synthesize (I, long sv_from, long sv_to, double **m);
 /*
 	Synthesize matrix as U D(sv_from:sv_to) V'.
 	(The synthesized matrix is an approximation of the svd'ed matrix with 

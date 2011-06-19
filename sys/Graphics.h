@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/22
+ * pb 2011/06/18
  */
 
 #ifndef _Thing_h_
@@ -71,6 +71,7 @@ void Graphics_resetViewport (I, Graphics_Viewport viewport);
 void Graphics_setWindow (I, double x1, double x2, double y1, double y2);
 
 void Graphics_polyline (I, long numberOfPoints, double *x, double *y);
+void Graphics_polyline_closed (I, long numberOfPoints, double *x, double *y);
 void Graphics_text (I, double x, double y, const wchar_t *text);
 void Graphics_text1 (I, double x, double y, const wchar_t *s1);
 void Graphics_text2 (I, double x, double y, const wchar_t *s1, const wchar_t *s2);

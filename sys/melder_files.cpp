@@ -864,10 +864,11 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 
 #define my  me ->
 
-void MelderFile_open (MelderFile me) {
+MelderFile MelderFile_open (MelderFile me) {
 	my filePointer = Melder_fopen (me, "rb");
-	if (my filePointer == NULL) return;
+	if (my filePointer == NULL) return me;
 	my openForReading = true;
+	return me;
 }
 
 char * MelderFile_readLine (MelderFile me) {
@@ -925,11 +926,11 @@ char * MelderFile_readLine (MelderFile me) {
 	return buffer;
 }
 
-void MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension) {
+MelderFile MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension) {
 	my filePointer = Melder_fopen (me, "wb");
-	if (! my filePointer) return;
+	if (! my filePointer) return me;
 	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).
-	if (my filePointer == stdout) return;
+	if (my filePointer == stdout) return me;
 	#if defined (macintosh)
 		(void) winExtension;
 	{
@@ -950,6 +951,7 @@ void MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *ma
 		(void) macCreator;
 		(void) winExtension;
 	#endif
+	return me;
 }
 
 void MelderFile_seek (MelderFile me, long position, int direction) {
@@ -977,20 +979,30 @@ void MelderFile_rewind (MelderFile me) {
 	rewind (my filePointer);
 }
 
-void MelderFile_close (MelderFile me) {
+static void _MelderFile_close (MelderFile me, bool mayThrow) {
 	if (my outputEncoding == kMelder_textOutputEncoding_FLAC) {
 		if (my flacEncoder) {
 			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
 			FLAC__stream_encoder_delete (my flacEncoder);
 		}
 	} else if (my filePointer != NULL) {
-		Melder_fclose (me, my filePointer);
+		if (mayThrow) {
+			Melder_fclose (me, my filePointer);
+		} else {
+			fclose (my filePointer);
+		}
 	}
 	/* Set everything to zero, except paths (they stay around for error messages and the like). */
 	my filePointer = NULL;
 	my openForWriting = my openForReading = false;
 	my indent = 0;
 	my flacEncoder = NULL;
+}
+void MelderFile_close (MelderFile me) {
+	_MelderFile_close (me, true);
+}
+void MelderFile_close_nothrow (MelderFile me) {
+	_MelderFile_close (me, false);
 }
 
 /* End of file melder_files.cpp */

@@ -3309,7 +3309,7 @@ SCRIPT (8, 5,
 	"Remove\n")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20110213)
+MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20110524)
 INTRO (L"Paints the area between the two selected @@Sound@s. ")
 ENTRY (L"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
@@ -3327,13 +3327,13 @@ TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
 ENTRY (L"Example")
 NORMAL (L"The following script paints the area enclosed between a sine tone of 5 Hz and the straight line %y = %x/2.")
-CODE (L"s1 = Create Sound from formula... s1 Mono 0 1 10000 1/2 * sin(2*pi*5*x)")
-CODE (L"s2 = Create Sound from formula... sine Mono 0 1 10000 x / 2")
+CODE (L"s1 = Create Sound from formula... sine Mono 0 1 10000 1/2 * sin(2*pi*5*x)")
+CODE (L"s2 = Create Sound from formula... line Mono 0 1 10000 x / 2")
 CODE (L"plus s1")
 CODE (L"Paint enclosed... Grey 0 0 -1 1 yes")
 SCRIPT ( 4, 2,
-	L"s1 = Create Sound from formula... sineWithNoise Mono 0 1 10000 1/2 * sin(2*pi*5*x)\n"
-	"s2 = Create Sound from formula... sine Mono 0 1 10000 x / 2\n"
+	L"s1 = Create Sound from formula... sine Mono 0 1 10000 1/2 * sin(2*pi*5*x)\n"
+	"s2 = Create Sound from formula... line Mono 0 1 10000 x / 2\n"
 	"plus s1\n"
 	"Paint enclosed... Grey 0 0 -1 1 yes\n"
 	"Remove\n")

@@ -103,7 +103,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	Draw eigenvector. When rowLabels != NULL, draw row text labels on bottom axis.
 */
 	
-int Eigens_alignEigenvectors (Ordered me);
+int Eigens_alignEigenvectors (Collection me);
 /*
 	Correlate all eigenvectors with the eigenvectors of the first Eigen.
 	If r < 0 then mirror the eigenvectors of 

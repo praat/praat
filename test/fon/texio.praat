@@ -45,7 +45,7 @@ asserterror Found a string while looking for an enumerated value in text (line 6
 Read from file... texio/texio12.TextGrid
 
 asserterror Found an enumerated value while looking for a string in text (line 18).
-...'newline$'Trying to read "text".
+...'newline$'String "text" not read.
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
@@ -72,7 +72,7 @@ asserterror Found an enumerated value while looking for an integer in text (line
 Read from file... texio/texio14.TextGrid
 
 asserterror Character x following quote (line 18). End of string or undoubled quote?
-...'newline$'Trying to read "text".
+...'newline$'String "text" not read.
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
@@ -105,7 +105,7 @@ asserterror Early end of text detected while looking for an integer (line 14).
 Read from file... texio/texio9.TextGrid
 
 asserterror Early end of text detected while looking for a string (line 18).
-...'newline$'Trying to read "text".
+...'newline$'String "text" not read.
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.
@@ -123,7 +123,7 @@ asserterror Early end of text detected while looking for a real number (line 18)
 Read from file... texio/texio11.TextGrid
 
 asserterror Early end of text detected while reading a string (line 18).
-...'newline$'Trying to read "text".
+...'newline$'String "text" not read.
 ...'newline$'IntervalTier not read.
 ...'newline$'Ordered not read.
 ...'newline$'TextGrid not read.

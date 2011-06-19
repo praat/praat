@@ -204,7 +204,7 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers)
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static int NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, 
+static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, 
 	long maximumNumberOfIterations, double tolerance)
 {
 	try {
@@ -212,7 +212,7 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc, int normalize
 
 		NUMdmatrix_copyElements (xm, ym, 1, nr, 1, nc);
 
-		if (nc == 1) return 1;
+		if (nc == 1) return;
 		if (nc == 2) maximumNumberOfIterations = 1;
 
 		autoNUMvector<double> u (1, nr);
@@ -243,7 +243,7 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc, int normalize
 		// Initial squared "variance".
 
 		double varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
-		if (varianceSq == 0) return 1;
+		if (varianceSq == 0) return;
 		
 		// Treat columns pairwise.
 
@@ -323,8 +323,7 @@ static int NUMvarimax (double **xm, double **ym, long nr, long nc, int normalize
 				for (long j = 1; j <= nc; j++) ym[i][j] *= norm[i];
 			}
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 Configuration Configuration_varimax (Configuration me, int normalizeRows,
@@ -335,7 +334,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax,
 			maximumNumberOfIterations, tolerance);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": varimax rotation not performed."); }
 }
 
 Configuration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance)
@@ -344,7 +343,7 @@ Configuration Configuration_congruenceRotation (Configuration me, Configuration 
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
 		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created from congruence rotation."); }
+	} catch (MelderError) { rethrowmzero (me, ": congruence rotation not performed."); }
 }
 
 /* Replace by TableOfReal_to_Configuration_pca ??? */
@@ -434,14 +433,14 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 
 Configuration TableOfReal_to_Configuration (I)
 {
+	iam (TableOfReal);
 	try {
-		iam (TableOfReal);
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
 
 		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted."); }
 }
 
 Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions)
@@ -453,7 +452,7 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 		autoPCA pca = TableOfReal_to_PCA (me);
 		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.peek(), me, numberOfDimensions);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": pca not performed."); }
 }
 
 /********************** Examples *********************************************/

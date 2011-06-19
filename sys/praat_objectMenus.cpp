@@ -158,7 +158,7 @@ END
 
 DIRECT (praat_openScript)
 	autoScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
-	TextEditor_showOpen (ScriptEditor_as_TextEditor (editor.peek()));
+	TextEditor_showOpen (editor.peek());
 	editor.transfer();   // the user becomes the owner
 END
 

@@ -49,7 +49,7 @@
 
 Strings Strings_createFixedLength (long numberOfStrings);
 
-Strings Strings_append (Ordered me);
+Strings Strings_append (Collection me);
 
 Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,

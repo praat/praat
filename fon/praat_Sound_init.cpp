@@ -151,7 +151,7 @@ DO
 		structMelderFile file = { 0 };
 		Melder_relativePathToFile (GET_STRING (L"Audio file"), & file); therror
 		LongSound_writePartToAudioFile16 (me, GET_INTEGER (L"Type"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), & file);
+			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), & file); therror
 	}
 END
 	
@@ -1572,7 +1572,7 @@ FORM (Sound_to_Cochleagram, L"Sound: To Cochleagram", 0)
 DO
 	LOOP {
 		iam (Sound);
-		autoCochleagram thee = Sound_to_Cochleagram (OBJECT, GET_REAL (L"Time step"),
+		autoCochleagram thee = Sound_to_Cochleagram (me, GET_REAL (L"Time step"),
 			GET_REAL (L"Frequency resolution"), GET_REAL (L"Window length"), GET_REAL (L"Forward-masking time"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -2284,7 +2284,7 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
 	TextGrid textGrid;
 	Sound sound;
-	if (! TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound)) return NULL;
+	TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound); iferror return NULL;
 	Collection collection = Collection_create (classData, 2);
 	Collection_addItem (collection, sound);
 	Collection_addItem (collection, textGrid);

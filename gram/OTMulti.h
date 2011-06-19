@@ -58,7 +58,7 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2);
 #define OTMulti_LEARN_BIDIRECTIONALLY  3
 int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
 	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise);
-int OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
+void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int direction,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
@@ -68,7 +68,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 void OTMulti_reset (OTMulti me, double ranking);
 int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
 int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity);
-int OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName);
+void OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName);
 
 void OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise);
 Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise);

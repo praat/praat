@@ -158,7 +158,7 @@ int bookkeeping (FFNet me)
 			my nNodes += my nUnitsInLayer[i] + 1;
 			nWeights += my nUnitsInLayer[i] * (my nUnitsInLayer[i - 1] + 1);
 		}
-		if (my nWeights > 0 && my nWeights != nWeights) rethrowzero;
+		if (my nWeights > 0 && my nWeights != nWeights) Melder_throw ("Number of weights is incorret.");
 		my nWeights = nWeights;
 		
 		// The following test is essential because when an FFNet is read from file the w array already exists 
@@ -195,6 +195,7 @@ int bookkeeping (FFNet me)
 			firstNodeInPrevious += my nUnitsInLayer[j-1] + 1;
 		}
 		FFNet_selectAllWeights (me);
+		return 1;
 	} catch (MelderError) { rethrowzero; }
 }
 
@@ -239,7 +240,8 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 	try {
 		long numberOfLayers = 3;
 	
-		if (numberOfInputs < 1 || numberOfOutputs < 1) rethrow;
+		if (numberOfInputs < 1) Melder_throw ("Number of inputs must be a natrural number.");
+		if (numberOfOutputs < 1) Melder_throw ("Number of outputs must be a natrural number.");
 		if (nodesInLayer1 < 1) numberOfLayers--;
 		if (nodesInLayer2 < 1) numberOfLayers--;
 		my nLayers = numberOfLayers;
@@ -665,7 +667,7 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int garnish)
 {
 	try {
-		if (layer < 1 || layer > my nLayers) rethrow;
+		if (layer < 1 || layer > my nLayers) Melder_throw ("Layer must be in [1,", my nLayers, "].");
     	autoMatrix weights = FFNet_weightsToMatrix (me, layer, 0);
 		Matrix_scale (weights.peek(), scaling);
 		Matrix_drawAsSquares (weights.peek(), g, 0, 0, 0, 0, 0);

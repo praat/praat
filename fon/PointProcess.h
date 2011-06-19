@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/06
  */
 
 #include "Function.h"
@@ -38,12 +38,12 @@ class_create (PointProcess, Function);
 
 PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
 PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);
-int PointProcess_init (I, double startingTime, double finishingTime, long initialMaxnt);
+void PointProcess_init (I, double startingTime, double finishingTime, long initialMaxnt);
 long PointProcess_getLowIndex (PointProcess me, double t);
 long PointProcess_getHighIndex (PointProcess me, double t);
 long PointProcess_getNearestIndex (PointProcess me, double t);
 long PointProcess_getWindowPoints (PointProcess me, double tmin, double tmax, long *imin, long *imax);
-int PointProcess_addPoint (PointProcess me, double t);
+void PointProcess_addPoint (PointProcess me, double t);
 long PointProcess_findPoint (PointProcess me, double t);
 void PointProcess_removePoint (PointProcess me, long index);
 void PointProcess_removePointNear (PointProcess me, double t);
@@ -54,8 +54,8 @@ double PointProcess_getInterval (PointProcess me, double t);
 PointProcess PointProcesses_union (PointProcess me, PointProcess thee);
 PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee);
 PointProcess PointProcesses_difference (PointProcess me, PointProcess thee);
-int PointProcess_fill (PointProcess me, double tmin, double tmax, double period);
-int PointProcess_voice (PointProcess me, double period, double maxT);
+void PointProcess_fill (PointProcess me, double tmin, double tmax, double period);
+void PointProcess_voice (PointProcess me, double period, double maxT);
 
 long PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);

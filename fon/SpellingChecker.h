@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/10
  */
 
 #include "WordList.h"
@@ -36,14 +36,14 @@ oo_CLASS_CREATE (SpellingChecker, Data);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me);
 WordList SpellingChecker_extractWordList (SpellingChecker me);
-int SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
+void SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
 SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me);
-int SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
+void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfString userDictionary);
 
-int SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word);
+bool SpellingChecker_isWordAllowed (SpellingChecker me, const wchar_t *word);
 wchar_t * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar_t *sentence, long *start);
 
-int SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word);
+void SpellingChecker_addNewWord (SpellingChecker me, const wchar_t *word);
 
 #ifdef __cplusplus
 	}

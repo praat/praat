@@ -279,12 +279,11 @@ static int colourToValue (UiField me, wchar_t *string) {
 	return 1;
 }
 
-static int UiField_widgetToValue (UiField me) {
+static void UiField_widgetToValue (UiField me) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-			wchar_t *dirty = GuiText_getString (my text);   /* The text as typed by the user. */
-			if (! Interpreter_numericExpression (NULL, dirty, & my realValue)) { Melder_free (dirty); return 0; }
-			Melder_free (dirty);
+			autostring dirty = GuiText_getString (my text);   // the text as typed by the user
+			Interpreter_numericExpression (NULL, dirty.peek(), & my realValue); therror
 			/*
 			 * Put a clean version of the new value in the form.
 			 * If the value is equal to the default, make sure that any default comments are included.
@@ -305,28 +304,27 @@ static int UiField_widgetToValue (UiField me) {
 				GuiText_setString (my text, clean);
 			}
 			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
-				return Melder_error3 (L"`", my name, L"' has the value \"undefined\".");
+				Melder_throw (L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				return Melder_error3 (L"`", my name, L"' must be greater than 0.0.");
+				Melder_throw (L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L" must be greater than 0.0.");
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
-			wchar_t *dirty = GuiText_getString (my text);
-			if (my type == UI_CHANNEL && (wcsequ (dirty, L"Left") || wcsequ (dirty, L"Mono"))) {
+			autostring dirty = GuiText_getString (my text);
+			if (my type == UI_CHANNEL && (wcsequ (dirty.peek(), L"Left") || wcsequ (dirty.peek(), L"Mono"))) {
 				my integerValue = 1;
-			} else if (my type == UI_CHANNEL && (wcsequ (dirty, L"Right") || wcsequ (dirty, L"Stereo"))) {
+			} else if (my type == UI_CHANNEL && (wcsequ (dirty.peek(), L"Right") || wcsequ (dirty.peek(), L"Stereo"))) {
 				my integerValue = 2;
 			} else {
 				double realValue;
-				if (! Interpreter_numericExpression (NULL, dirty, & realValue)) { Melder_free (dirty); return 0; }
+				Interpreter_numericExpression (NULL, dirty.peek(), & realValue); therror
 				my integerValue = floor (realValue + 0.5);
 			}
-			Melder_free (dirty);
 			if (my integerValue == wcstol (my stringDefaultValue, NULL, 10)) {
 				GuiText_setString (my text, my stringDefaultValue);
 			} else {
 				GuiText_setString (my text, Melder_integer (my integerValue));
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
-				return Melder_error3 (L"`", my name, L"' must be a positive whole number.");
+				Melder_throw (L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L" must be a positive whole number.");
 		} break; case UI_WORD: {
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
@@ -346,7 +344,7 @@ static int UiField_widgetToValue (UiField me) {
 					my integerValue = i;
 			}
 			if (my integerValue == 0)
-				return Melder_error3 (L"No option chosen for `", my name, L"'.");
+				Melder_throw ("No option chosen for " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE ".");
 		} break; case UI_OPTIONMENU: {
 			my integerValue = 0;
 			#if gtk
@@ -360,7 +358,7 @@ static int UiField_widgetToValue (UiField me) {
 			}
 			#endif
 			if (my integerValue == 0)
-				return Melder_error3 (L"No option chosen for `", my name, L"'.");
+				Melder_throw ("No option chosen for " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE ".");
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (selected == NULL) {
@@ -372,19 +370,15 @@ static int UiField_widgetToValue (UiField me) {
 				NUMvector_free <long> (selected, 1);
 			}
 		} break; case UI_COLOUR: {
-			wchar_t *string = GuiText_getString (my text);
-			if (colourToValue (me, string)) {
-				Melder_free (string);
-			} else if (Interpreter_numericExpression (NULL, string, & my colourValue. red)) {
-				my colourValue. green = my colourValue. blue = my colourValue. red;
-				Melder_free (string);
+			autostring string = GuiText_getString (my text);
+			if (colourToValue (me, string.peek())) {
+				// do nothing
 			} else {
-				Melder_free (string);
-				return 0;
+				Interpreter_numericExpression (NULL, string.peek(), & my colourValue. red); therror
+				my colourValue. green = my colourValue. blue = my colourValue. red;
 			}
 		}
 	}
-	return 1;
 }
 
 static int UiField_stringToValue (UiField me, const wchar_t *string, Interpreter interpreter) {
@@ -546,12 +540,13 @@ static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 
 int UiForm_widgetsToValues (I) {
 	iam (UiForm);
-	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
-		if (! UiField_widgetToValue (my field [ifield])) {
-			return Melder_error3 (L"Please correct command window " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE L" or cancel.");
-		}
+	try {
+		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
+			UiField_widgetToValue (my field [ifield]);
+		return 1;
+	} catch (MelderError) {
+		rethrowmzero ("Please correct command window " L_LEFT_DOUBLE_QUOTE, my name, L_RIGHT_DOUBLE_QUOTE " or cancel.");
 	}
-	return 1;
 }
 
 static void UiForm_okOrApply (I, GuiObject button, int hide) {

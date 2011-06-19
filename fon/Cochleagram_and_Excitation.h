@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/05/05
+ * pb 2011/06/13
  */
 
 #include "Cochleagram.h"
@@ -28,7 +28,7 @@
 	extern "C" {
 #endif
 
-Excitation Cochleagram_to_Excitation (I, double t);
+Excitation Cochleagram_to_Excitation (Cochleagram me, double t);
 
 #ifdef __cplusplus
 	}

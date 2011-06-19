@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/11
  */
 
 #include "TextGrid.h"
@@ -42,7 +42,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
 
-int TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *textGrid, Sound *sound);
+void TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *textGrid, Sound *sound);
 
 #ifdef __cplusplus
 	}

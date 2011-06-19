@@ -46,10 +46,10 @@ static long stochastic (I, const double activation[])
 	iam (FFNet);
 	long i;
 	double range = 0;
-	for (long i = 1; i <= my nOutputs; i++) range += activation[i];
+	for (i = 1; i <= my nOutputs; i++) { range += activation[i]; }
 	double number = NUMrandomUniform (0, range);
 	double lower = 0;
-	for (long i = 1; i <= my nOutputs; i++)
+	for (i = 1; i <= my nOutputs; i++)
 	{
 		lower += activation[i];
 		if (number < lower) break;

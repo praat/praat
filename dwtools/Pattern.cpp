@@ -100,9 +100,8 @@ void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax, double
 
 Pattern Matrix_to_Pattern (I, int join)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
-	
 		if (join < 1) join = 1;
 		if ((my ny % join) != 0) Melder_throw (L"Number of rows is not a multiple of join factor.");
 		
@@ -115,7 +114,7 @@ Pattern Matrix_to_Pattern (I, int join)
 			for (long j = 1; j <= my nx; j++) { thy z[r][c++] = my z[i][j]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Pattern not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Pattern created."); }
 }
 
 Matrix Pattern_to_Matrix (Pattern me)
@@ -124,7 +123,7 @@ Matrix Pattern_to_Matrix (Pattern me)
 		autoMatrix thee = (Matrix) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Matrix."); }
 }
 
 /* End of file Pattern.cpp */

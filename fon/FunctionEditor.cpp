@@ -1126,8 +1126,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	}
 	else   /* Clicked outside signal region? Let us hear it. */
 	{
-		int i;
-		for (i = 0; i < 8; i ++)
+		for (int i = 0; i < 8; i ++) {
 			if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
 				 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
 				switch (i) {
@@ -1140,6 +1139,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 					case 6: our play (me, my marker [2], my marker [3]); break;
 					case 7: our play (me, my startSelection, my endSelection); break;
 				}
+		}
 	}
 }
 

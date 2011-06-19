@@ -1137,19 +1137,15 @@ static int menu_cb_RenameTier (EDITOR_ARGS) {
 
 static int menu_cb_PublishTier (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	TextGrid publish = NULL;
-//start:
 	TextGrid grid = (TextGrid) my data;
-	checkTierSelection (me, L"publish a tier"); cherror
+	checkTierSelection (me, L"publish a tier"); therror
 	if (my publishCallback) {
 		Data tier = (Data) grid -> tiers -> item [my selectedTier];
-		publish = TextGrid_createWithoutTiers (1e30, -1e30); cherror
-		TextGrid_add (publish, tier); cherror
-		Thing_setName (publish, tier -> name); cherror
-		my publishCallback (me, my publishClosure, publish);
+		autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
+		TextGrid_addTier (publish.peek(), tier); therror
+		Thing_setName (publish.peek(), tier -> name); therror
+		my publishCallback (me, my publishClosure, publish.transfer());
 	}
-end:
-	iferror return 0;
 	return 1;
 }
 

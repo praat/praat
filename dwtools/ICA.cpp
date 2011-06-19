@@ -182,7 +182,7 @@ static double NUMdmatrix_diagonalityIndex (double **v, long dimension)
 	A Fast Algorithm for Joint Diagonalization with Non-orthogonal Transformations and its Application to
 	Blind Source Separation, Journal of Machine Learning Research 5 (2004), 777–800.
 */
-static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double delta)
+static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double delta)
 {
 	try {
 		long iter = 0, dimension = my numberOfRows;
@@ -266,8 +266,7 @@ static int Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cros
 			MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
 		} while (fabs((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 		MelderInfo_close ();
-		return 1;
-	} catch (MelderError) { 	MelderInfo_close (); rethrowzero; }
+	} catch (MelderError) { MelderInfo_close (); rethrow; }
 }
 
 /*
@@ -302,7 +301,7 @@ static void update_one_column (CrossCorrelationTables me, double **d, double *wp
 	}
 }
 
-static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorrelationTables thee, double *cweights, long maxNumberOfIterations, double delta)
+static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorrelationTables thee, double *cweights, long maxNumberOfIterations, double delta)
 {
 	try {
 		CrossCorrelationTable c0 = (CrossCorrelationTable) thy item[1];
@@ -422,18 +421,16 @@ static int Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossC
 		MelderInfo_writeLine5 (L"\nDiagonality measure: ", Melder_double (dm), L" after ", Melder_integer (iter),
 		L" iterations.");
 		MelderInfo_close ();
-		return 1;
-	} catch (MelderError) {MelderInfo_close (); rethrowzero; }
+	} catch (MelderError) {MelderInfo_close (); rethrowm (me, ": not improved."); }
 }
 
-int MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method)
+void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method)
 {
 	try {
 		autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
 		Diagonalizer_and_CrossCorrelationTables_improveDiagonality (him.peek(), thee, maxNumberOfIterations, tol, method);
 		NUMpseudoInverse (his data, his numberOfRows, his numberOfColumns, my data, 0);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 /*
@@ -479,7 +476,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 		thy numberOfObservations = nsamples;
 
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("CrossCorrelationTable not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": CrossCorrelationTable not created."); }
 }
 
 CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagTime, long ncovars)
@@ -496,7 +493,7 @@ CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTi
 			Collection_addItem (thee.peek(), ct.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("CrossCorrelationTables not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no CrossCorrelationTables created."); }
 }
 
 Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double tol, int method)
@@ -505,7 +502,7 @@ Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncova
 		autoMixingMatrix him = Sound_to_MixingMatrix (me, startTime, endTime, ncovars, lagTime, maxNumberOfIterations, tol, method);
 		autoSound thee = Sound_and_MixingMatrix_unmix (me, him.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not separated."); }
 }
 
 PCA Sound_to_PCA (Sound me, double startTime, double endTime)
@@ -514,7 +511,7 @@ PCA Sound_to_PCA (Sound me, double startTime, double endTime)
 		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0);
 		autoPCA him = SSCP_to_PCA (thee.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("PCA not created from Sound."); }
+	} catch (MelderError) { rethrowmzero (me, ": no PCA created."); }
 }
 
 /************************ Diagonalizer **********************************/
@@ -606,7 +603,7 @@ Diagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me)
 		autoDiagonalizer thee = Diagonalizer_create (my numberOfRows);
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Diagonalizer not created from MixingMatrix."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Diagonalizer created."); }
 }
 
 MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me)
@@ -615,7 +612,7 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me)
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("MixingMatrix not created from Diagonalizer."); }
+	} catch (MelderError) { rethrowmzero (me, ": no MixingMatrix created."); }
 }
 
 /********************* Sound & MixingMatrix ************************************/
@@ -635,7 +632,7 @@ Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not mixed."); }
+	} catch (MelderError) { rethrowmzero (me, ": not mixed."); }
 }
 
 Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee)
@@ -656,7 +653,7 @@ Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not unmixed."); }
+	} catch (MelderError) { rethrowmzero (me, ": not unmixed."); }
 }
 
 MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double tol, int method)
@@ -666,7 +663,7 @@ MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, 
 		autoMixingMatrix thee = MixingMatrix_create (my ny, my ny);
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), ccs.peek(), maxNumberOfIterations, tol, method);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("MixingMatrix not created from Sound."); }
+	} catch (MelderError) { rethrowmzero (me, ": no MixingMatrix created."); }
 }
 
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me)
@@ -676,7 +673,7 @@ MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me)
 		autoMixingMatrix thee = (MixingMatrix) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classMixingMatrix);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("MixingMatrix not created from TableOfReal."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to MixingMatrix."); }
 }
 
 /************* CrossCorrelationTable *****************************/
@@ -841,7 +838,7 @@ Diagonalizer CrossCorrelationTables_to_Diagonalizer (CrossCorrelationTables me, 
 	} catch (MelderError) { rethrowmzero ("Diagonalizer not created from CrossCorrelationTables."); };
 }
 
-int Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method)
+void Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me, CrossCorrelationTables thee, long maxNumberOfIterations, double tol, int method)
 {
 	try {
 		if (method == 1)
@@ -854,8 +851,7 @@ int Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me,
 		{
 			Diagonalizer_and_CrossCorrelationTables_ffdiag (me, thee, maxNumberOfIterations, tol);
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	} catch (MelderError) { rethrow; }
 }
 
 Sound Sound_and_PCA_to_Sound_pc (Sound me, PCA thee, long numberOfComponents, int whiten)
@@ -924,7 +920,7 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 			NUMdmatrices_multiply_VCVp (ct -> data, v.peek(), dimension, dimension, d.peek(), 1);
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("CrossCorrelationTables tes set not created."); }
+	} catch (MelderError) { rethrowmzero ("CrossCorrelationTables test set not created."); }
 }
 
 static int Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, long maxNumberOfIterations, double tol, int method)

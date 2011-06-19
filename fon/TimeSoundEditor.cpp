@@ -105,15 +105,13 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
-			return Melder_error1 (L"There is no sound to draw.");
-		Sound publish = my longSound.data ?
+			Melder_throw ("There is no sound to draw.");
+		autoSound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
-		if (! publish) return 0;
 		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
-		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
+		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
-		forget (publish);
 		FunctionEditor_garnish (TimeSoundEditor_as_FunctionEditor (me));
 		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
 	EDITOR_END
@@ -144,44 +142,40 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 		our do_pictureMargins (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
-			return Melder_error1 (L"There is no sound to draw.");
-		Sound publish = my longSound.data ?
+			Melder_throw ("There is no sound to draw.");
+		autoSound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
-		if (! publish) return 0;
 		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
-		Sound_draw (publish, my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
+		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
-		forget (publish);
 		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
 	EDITOR_END
 }
 
-static int do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
-	Sound extract = NULL;
-	if (my endSelection <= my startSelection) return Melder_error1 (L"No selection.");
+static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
+	autoSound extract = NULL;
+	if (my endSelection <= my startSelection)
+		Melder_throw ("No selection.");
 	if (my longSound.data) {
-		extract = LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preserveTimes);
-		iferror return 0;
+		extract.reset (LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preserveTimes));
 	} else if (my sound.data) {
-		extract = Sound_extractPart (my sound.data, my startSelection, my endSelection,
-			kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-		iferror return 0;
+		extract.reset (Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes));
 	}
-	Melder_assert (extract != NULL);
 	if (my publishCallback)
-		my publishCallback (me, my publishClosure, extract);
-	return 1;
+		my publishCallback (me, my publishClosure, extract.transfer());
 }
 
 static int menu_cb_ExtractSelectedSound_timeFromZero (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	return do_ExtractSelectedSound (me, FALSE);
+	do_ExtractSelectedSound (me, FALSE);
+	return 1;
 }
 
 static int menu_cb_ExtractSelectedSound_preserveTimes (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
-	return do_ExtractSelectedSound (me, TRUE);
+	do_ExtractSelectedSound (me, TRUE);
+	return 1;
 }
 
 static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
@@ -201,20 +195,19 @@ static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 		preferences.extract.windowShape = GET_ENUM (kSound_windowShape, L"Window shape");
 		preferences.extract.relativeWidth = GET_REAL (L"Relative width");
 		preferences.extract.preserveTimes = GET_INTEGER (L"Preserve times");
-		Sound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowShape,
+		autoSound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowShape,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
-		if (! extract) return 0;
-		Thing_setName (extract, GET_STRING (L"Name"));
+		Thing_setName (extract.peek(), GET_STRING (L"Name")); therror
 		if (my publishCallback)
-			my publishCallback (me, my publishClosure, extract);
+			my publishCallback (me, my publishClosure, extract.transfer());
 	EDITOR_END
 }
 
-static int do_write (TimeSoundEditor me, MelderFile file, int format) {
+static void do_write (TimeSoundEditor me, MelderFile file, int format) {
 	if (my startSelection >= my endSelection)
-		return Melder_error1 (L"No samples selected.");
+		Melder_throw ("No samples selected.");
 	if (my longSound.data) {
-		return LongSound_writePartToAudioFile16 (my longSound.data, format, my startSelection, my endSelection, file);
+		LongSound_writePartToAudioFile16 (my longSound.data, format, my startSelection, my endSelection, file); therror
 	} else if (my sound.data) {
 		Sound sound = my sound.data;
 		double margin = 0.0;
@@ -224,9 +217,7 @@ static int do_write (TimeSoundEditor me, MelderFile file, int format) {
 		first -= nmargin;
 		last += nmargin;
 		if (numberOfSamples) {
-			Sound save = Sound_create (sound -> ny, 0.0, numberOfSamples * sound -> dx,
-							numberOfSamples, sound -> dx, 0.5 * sound -> dx);
-			if (! save) return 0;
+			autoSound save = Sound_create (sound -> ny, 0.0, numberOfSamples * sound -> dx, numberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			long offset = first - 1;
 			if (first < 1) first = 1;
 			if (last > sound -> nx) last = sound -> nx;
@@ -235,12 +226,9 @@ static int do_write (TimeSoundEditor me, MelderFile file, int format) {
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			int result = Sound_writeToAudioFile16 (save, file, format);
-			forget (save);
-			return result;
+			Sound_writeToAudioFile16 (save.peek(), file, format); therror
 		}
 	}
-	return 0;
 }
 
 static int menu_cb_WriteWav (EDITOR_ARGS) {
@@ -248,7 +236,7 @@ static int menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as WAV file", 0)
 		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_WAV)) return 0;
+		do_write (me, file, Melder_WAV);
 	EDITOR_END
 }
 
@@ -257,7 +245,7 @@ static int menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFF file", 0)
 		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_AIFF)) return 0;
+		do_write (me, file, Melder_AIFF);
 	EDITOR_END
 }
 
@@ -266,7 +254,7 @@ static int menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFC file", 0)
 		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_AIFC)) return 0;
+		do_write (me, file, Melder_AIFC);
 	EDITOR_END
 }
 
@@ -275,7 +263,7 @@ static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as NeXT/Sun file", 0)
 		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_NEXT_SUN)) return 0;
+		do_write (me, file, Melder_NEXT_SUN);
 	EDITOR_END
 }
 
@@ -284,7 +272,7 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as NIST file", 0)
 		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_NIST)) return 0;
+		do_write (me, file, Melder_NIST);
 	EDITOR_END
 }
 
@@ -293,7 +281,7 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as FLAC file", 0)
 		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		if (! do_write (me, file, Melder_FLAC)) return 0;
+		do_write (me, file, Melder_FLAC);
 	EDITOR_END
 }
 
@@ -571,4 +559,4 @@ end:
 	return 1;
 }
 
-/* End of file FunctionEditor.cpp */
+/* End of file TimeSoundEditor.cpp */

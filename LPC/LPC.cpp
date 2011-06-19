@@ -162,7 +162,7 @@ Matrix LPC_to_Matrix (LPC me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
 }
 
 /* End of file LPC.cpp */

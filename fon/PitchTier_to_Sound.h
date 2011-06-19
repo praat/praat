@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/05
  */
 
 #include "PitchTier.h"
@@ -35,12 +35,12 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double maximumPeriod,
 	 double openPhase, double collisionPhase, double power1, double power2,
 	 int hum);
-int PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum);
-int PitchTier_play (PitchTier me);
-int PitchTier_hum (PitchTier me);
+void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum);
+void PitchTier_play (PitchTier me);
+void PitchTier_hum (PitchTier me);
 
-Sound PitchTier_to_Sound_sine (I, double tmin, double tmax, double samplingFrequency);
-int PitchTier_playPart_sine (I, double tmin, double tmax);
+Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency);
+void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax);
 
 #ifdef __cplusplus
 	}

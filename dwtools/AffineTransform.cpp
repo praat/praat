@@ -132,9 +132,8 @@ Any AffineTransform_invert (I)
 
 TableOfReal AffineTransform_extractMatrix (I)
 {
+	iam (AffineTransform);
 	try {
-		iam (AffineTransform);
-	
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
 		NUMdmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
 		for (long i = 1; i <= my n; i++)
@@ -145,17 +144,17 @@ TableOfReal AffineTransform_extractMatrix (I)
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
 		return thee.transfer();
-	} catch (MelderError) {rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": transformation matrix not extracted."); }
 }
 
 TableOfReal AffineTransform_extractTranslationVector (I)
 {
+	iam (AffineTransform);
 	try {
-		iam (AffineTransform);
 		autoTableOfReal thee = TableOfReal_create (1, my n);
 		for (long i = 1; i <= my n; i++) thy data[1][i] = my t[i];
 		return thee.transfer();
-	} catch (MelderError) {rethrowmzero ("Vector not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": translation vector not extracted."); }
 }
 
 /* End of file AffineTransform.c */

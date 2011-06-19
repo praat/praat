@@ -25,6 +25,7 @@
  * pb 2010/07/13 GTK key event
  * pb 2010/11/28 removed Motif
  * pb 2011/04/06 C++
+ * pb 2011/06/05 all callbacks protected against exceptions
  */
 
 #include "GuiP.h"
@@ -81,7 +82,11 @@ typedef struct structGuiDrawingArea {
 			event. y = expose -> area. y;
 			event. width = expose -> area. width;
 			event. height = expose -> area. height;
-			my exposeCallback (my exposeBoss, & event);
+			try {
+				my exposeCallback (my exposeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Redrawing not completed");
+			}
 			return TRUE;		// let the expose callback handle redrawing
 		}
 		return FALSE;			// let GTK+ handle redrawing
@@ -117,7 +122,11 @@ typedef struct structGuiDrawingArea {
 			event. y = ((GdkEventButton *) e) -> y;
 			event. shiftKeyPressed = (((GdkEventButton *) e) -> state & GDK_SHIFT_MASK) != 0;
 			if (e -> type == GDK_BUTTON_PRESS || 1) {
-				my clickCallback (my clickBoss, & event);
+				try {
+					my clickCallback (my clickBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Mouse click not completely handled.");
+				}
 				return TRUE;
 			}
 		}
@@ -142,7 +151,11 @@ typedef struct structGuiDrawingArea {
 			event. commandKeyPressed = (gkeyEvent -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (gkeyEvent -> state & GDK_MOD1_MASK) != 0;
 			event. extraControlKeyPressed = false;
-			my keyCallback (my keyBoss, & event);
+			try {
+				my keyCallback (my keyBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Key press not completely handled.");
+			}
 			/*
 			 * FIXME: here we should empty the type-ahead buffer
 			 */
@@ -157,7 +170,11 @@ typedef struct structGuiDrawingArea {
 			event. width = allocation -> width;
 			event. height = allocation -> height;
 			//g_debug("%d %d", allocation->width, allocation->height);
-			my resizeCallback (my clickBoss, & event);
+			try {
+				my resizeCallback (my clickBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Window resizing not completely handled.");
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -178,7 +195,11 @@ typedef struct structGuiDrawingArea {
 			BeginPaint (widget -> window, & paintStruct);
 			if (my exposeCallback) {
 				struct structGuiDrawingAreaExposeEvent event = { widget };
-				my exposeCallback (my exposeBoss, & event);
+				try {
+					my exposeCallback (my exposeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Redrawing not completed");
+				}
 			}
 			EndPaint (widget -> window, & paintStruct);
 		}
@@ -189,7 +210,11 @@ typedef struct structGuiDrawingArea {
 				event. x = x;
 				event. y = y;
 				event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-				my clickCallback (my clickBoss, & event);
+				try {
+					my clickCallback (my clickBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Mouse click not completely handled.");
+				}
 			}
 		}
 		void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
@@ -202,7 +227,11 @@ typedef struct structGuiDrawingArea {
 				if (event. key == VK_UP) event. key = 0x2191;
 				if (event. key == VK_DOWN) event. key = 0x2193;
 				event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
-				my keyCallback (my keyBoss, & event);
+				try {
+					my keyCallback (my keyBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Key press not completely handled.");
+				}
 			}
 		}
 		void _GuiWinDrawingArea_shellResize (GuiObject widget) {
@@ -211,7 +240,11 @@ typedef struct structGuiDrawingArea {
 				struct structGuiDrawingAreaResizeEvent event = { widget };
 				event. width = widget -> width;
 				event. height = widget -> height;
-				my resizeCallback (my resizeBoss, & event);
+				try {
+					my resizeCallback (my resizeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Window resizing not completely handled.");
+				}
 			}
 		}
 	#elif mac
@@ -220,7 +253,11 @@ typedef struct structGuiDrawingArea {
 			if (my exposeCallback) {
 				struct structGuiDrawingAreaExposeEvent event = { widget };
 				_GuiMac_clipOnParent (widget);
-				my exposeCallback (my exposeBoss, & event);
+				try {
+					my exposeCallback (my exposeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Redrawing not completed");
+				}
 				GuiMac_clipOff ();
 			}
 		}
@@ -234,7 +271,11 @@ typedef struct structGuiDrawingArea {
 				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
 				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
 				event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-				my clickCallback (my clickBoss, & event);
+				try {
+					my clickCallback (my clickBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Mouse click not completely handled.");
+				}
 			}
 		}
 		bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent) {
@@ -250,7 +291,11 @@ typedef struct structGuiDrawingArea {
 				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
 				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
 				event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-				my keyCallback (my keyBoss, & event);
+				try {
+					my keyCallback (my keyBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Key press not completely handled.");
+				}
 				return true;
 			}
 			return false;
@@ -261,7 +306,11 @@ typedef struct structGuiDrawingArea {
 				struct structGuiDrawingAreaResizeEvent event = { widget, 0 };
 				event. width = widget -> width;
 				event. height = widget -> height;
-				my resizeCallback (my resizeBoss, & event);
+				try {
+					my resizeCallback (my resizeBoss, & event);
+				} catch (MelderError) {
+					Melder_flushError ("Window resizing not completely handled.");
+				}
 			}
 		}
 	#endif

@@ -1,4 +1,4 @@
-/* Matrix.c
+/* Matrix.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -32,6 +32,7 @@
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2009/11/23 support for drawing with reversed axes
  * pb 2011/01/10 Matrix_formula_part
+ * pb 2011/06/19 C++
  */
 
 #include "Matrix.h"
@@ -165,31 +166,46 @@ class_methods (Matrix, Sampled) {
 	class_methods_end
 }
 
-int Matrix_init
+void Matrix_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,
 		 double ymin, double ymax, long ny, double dy, double y1)
 {
 	iam (Matrix);
-	if (! Sampled_init (me, xmin, xmax, nx, dx, x1)) return 0;
-	my ymin = ymin; my ymax = ymax; my ny = ny; my dy = dy; my y1 = y1;
-	if (! (my z = NUMdmatrix (1, my ny, 1, my nx))) return 0;
-	return 1;
+	try {
+		Sampled_init (me, xmin, xmax, nx, dx, x1); therror
+		my ymin = ymin;
+		my ymax = ymax;
+		my ny = ny;
+		my dy = dy;
+		my y1 = y1;
+		my z = NUMmatrix <double> (1, my ny, 1, my nx);
+	} catch (MelderError) {
+		rethrow;
+	}
 }
 
 Matrix Matrix_create
 	(double xmin, double xmax, long nx, double dx, double x1,
 	 double ymin, double ymax, long ny, double dy, double y1)
 {
-	Matrix me = Thing_new (Matrix);
-	if (! me || ! Matrix_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) forget (me);
-	return me;
+	try {
+		autoMatrix me = Thing_new (Matrix);
+		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Matrix not created.");
+	}
 }
 
 Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
-	Matrix me = Thing_new (Matrix);
-	if (! me || ! Matrix_init (me, 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
-		0.5, numberOfRows + 0.5, numberOfRows, 1, 1)) forget (me);
-	return me;
+	try {
+		autoMatrix me = Thing_new (Matrix);
+		Matrix_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
+			0.5, numberOfRows + 0.5, numberOfRows, 1, 1); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Matrix not created.");
+	}
 }
 
 double Matrix_columnToX (I, double column) { iam (Matrix); return my x1 + (column - 1) * my dx; }
@@ -236,19 +252,18 @@ long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
 	double *minimum, double *maximum)
 {
 	iam (Matrix);
-	long iy, ix;
 	if (ixmin == 0) ixmin = 1;
 	if (ixmax == 0) ixmax = my nx;
 	if (iymin == 0) iymin = 1;
 	if (iymax == 0) iymax = my ny;
 	if (ixmin > ixmax || iymin > iymax) return 0;
 	*minimum = *maximum = my z [iymin] [ixmin];
-	for (iy = iymin; iy <= iymax; iy ++)
-		for (ix = ixmin; ix <= ixmax; ix ++)
-		{
+	for (long iy = iymin; iy <= iymax; iy ++) {
+		for (long ix = ixmin; ix <= ixmax; ix ++) {
 			if (my z [iy] [ix] < *minimum) *minimum = my z [iy] [ix];
 			if (my z [iy] [ix] > *maximum) *maximum = my z [iy] [ix];
 		}
+	}
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
@@ -286,9 +301,9 @@ double Matrix_getValueAtXY (I, double x, double y) {
 	if (leftCol < 1) leftCol = 1;             /* 1 <= leftCol <= my nx */
 	if (rightCol > my nx) rightCol = my nx;   /* 1 <= rightCol <= my nx */
 	return (1.0 - drow) * (1.0 - dcol) * my z [bottomRow] [leftCol] +
-	       drow * (1.0 - dcol) * my z [topRow] [leftCol] +
-	       (1.0 - drow) * dcol * my z [bottomRow] [rightCol] +
-	       drow * dcol * my z [topRow] [rightCol];
+		drow * (1.0 - dcol) * my z [topRow] [leftCol] +
+		(1.0 - drow) * dcol * my z [bottomRow] [rightCol] +
+		drow * dcol * my z [topRow] [rightCol];
 }
 
 double Matrix_getSum (I) {
@@ -313,9 +328,9 @@ void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, doub
 	double minimum, double maximum)
 {
 	iam (Matrix);
-	long ixmin, ixmax, iymin, iymax, iy;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	long ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
@@ -323,13 +338,12 @@ void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, doub
 	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
 	if (xmin >= xmax) return;
 	Graphics_setInner (g);
-	for (iy = iymin; iy <= iymax; iy ++)
-	{
+	for (long iy = iymin; iy <= iymax; iy ++) {
 		Graphics_setWindow (g, xmin, xmax,
 			minimum - (iy - iymin) * (maximum - minimum),
 			maximum + (iymax - iy) * (maximum - minimum));
 		Graphics_function (g, my z [iy], ixmin, ixmax,
-					Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
+			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
 	Graphics_unsetInner (g);
 	if (iymin < iymax)
@@ -364,9 +378,9 @@ void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, 
 {
 	iam (Matrix);
 	double border [1 + 8];
-	long ixmin, ixmax, iymin, iymax, iborder;
 	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
+	long ixmin, ixmax, iymin, iymax, iborder;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
@@ -390,9 +404,9 @@ void Matrix_paintContours (I, Graphics g, double xmin, double xmax, double ymin,
 {
 	iam (Matrix);
 	double border [1 + 30];
-	long ixmin, ixmax, iymin, iymax, iborder;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	long ixmin, ixmax, iymin, iymax, iborder;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
@@ -415,9 +429,9 @@ static void cellArrayOrImage (I, Graphics g, double xmin, double xmax, double ym
 	double minimum, double maximum, int interpolate)
 {
 	iam (Matrix);
-	long ixmin, ixmax, iymin, iymax;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	long ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx,
 		& ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy,
@@ -458,9 +472,9 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 	double minimum, double maximum, double elevation, double azimuth)
 {
 	iam (Matrix);
-	long ixmin, ixmax, iymin, iymax;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+	long ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 	if (maximum <= minimum)
@@ -478,191 +492,185 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 extern int sginap (long);
 void Matrix_movie (I, Graphics g) {
 	iam (Matrix);
-	double minimum = 0, maximum = 1;
-	double *column = NUMdvector (1, my ny);
+	autoNUMvector <double> column (1, my ny);
+	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	Graphics_setViewport (g, 0, 1, 0, 1);
 	Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
 	for (long icol = 1; icol <= my nx; icol ++) {
-		long irow;
-		for (irow = 1; irow <= my ny; irow ++)
+		for (long irow = 1; irow <= my ny; irow ++)
 			column [irow] = my z [irow] [icol];
 		Graphics_clearWs (g);
-		Graphics_function (g, column, 1, my ny, my ymin, my ymax);
+		Graphics_function (g, column.peek(), 1, my ny, my ymin, my ymax);
 		Graphics_flushWs (g);
 		#ifdef sgi
 			sginap (2);
 		#endif
 	}
-	NUMdvector_free (column, 1);
 }
 
-Matrix Matrix_readAP (MelderFile fs) {
-	Matrix me;
-	short header [256];
-	long i, j;
-	double samplingFrequency;
-	FILE *f = Melder_fopen (fs, "rb");
-	if (! f) return 0;
-	for (i = 0; i < 256; i ++)
-		header [i] = bingeti2LE (f);
-	samplingFrequency = header [100];
-	Melder_casual ("Sampling frequency %.10g.", samplingFrequency);
-	me = Matrix_create (0, header [34], header [34] /* Number of frames. */, 1, 0.5,
+Matrix Matrix_readAP (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		short header [256];
+		for (long i = 0; i < 256; i ++)
+			header [i] = bingeti2LE (f);
+		double samplingFrequency = header [100];
+		Melder_casual ("Sampling frequency %.10g.", samplingFrequency);
+		autoMatrix me = Matrix_create (0, header [34], header [34] /* Number of frames. */, 1, 0.5,
 			0, header [35], header [35] /* Number of words per frame. */, 1, 0.5);
-	if (! me) { fclose (f); return NULL; }
-        /*Mat := MATRIX_create (Buffer.I2 [36], (* Number of words per frame. *)
-                           Buffer.I2 [35], (* Number of frames. *)
-                           1.0,
-                           Buffer.I2 [111] / (* Samples per frame. *)
-                           Buffer.I2 [101]); (* Sampling frequency. *)*/
-	Melder_casual ("... Loading %d frames of %d words ...", header [34], header [35]);
-        for (i = 1; i <= my nx; i ++) for (j = 1; j <= my ny; j ++)
-		my z [j] [i] = bingeti2LE (f);
+			/*Mat := MATRIX_create (Buffer.I2 [36], (* Number of words per frame. *)
+							   Buffer.I2 [35], (* Number of frames. *)
+							   1.0,
+							   Buffer.I2 [111] / (* Samples per frame. *)
+							   Buffer.I2 [101]); (* Sampling frequency. *)*/
+		Melder_casual ("... Loading %d frames of %d words ...", header [34], header [35]);
+		for (long i = 1; i <= my nx; i ++)
+			for (long j = 1; j <= my ny; j ++)
+				my z [j] [i] = bingeti2LE (f);
 
-	/* Get pitch frequencies.
-	 */
-	for (i = 1; i <= my nx; i ++) if (my z [1] [i] != 0.0)
-		my z [1] [i] = - samplingFrequency / my z [1] [i];
+		/*
+		 * Get pitch frequencies.
+		 */
+		for (long i = 1; i <= my nx; i ++)
+			if (my z [1] [i] != 0.0)
+				my z [1] [i] = - samplingFrequency / my z [1] [i];
 
-	fclose (f);
-	return me;
+		f.close (file);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Matrix not read from AP file ", MelderFile_messageName (file));
+	}
 }
 
 Matrix Matrix_appendRows (I, thou) {
 	iam (Matrix); thouart (Matrix);
-	long irow, icol;
-	Matrix him;
-	him = Matrix_create (my xmin < thy xmin ? my xmin : thy xmin,
-		my xmax > thy xmax ? my xmax : thy xmax,
-		my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,
-		my ymin, my ymax + (thy ymax - thy ymin), my ny + thy ny, my dy, my y1);
-	if (! him) return NULL;
-	if (our _size == classMatrix -> _size) Thing_overrideClass (him, my methods);
-	for (irow = 1; irow <= my ny; irow ++)
-		for (icol = 1; icol <= my nx; icol ++)
-			his z [irow] [icol] = my z [irow] [icol];
-	for (irow = 1; irow <= thy ny; irow ++)
-		for (icol = 1; icol <= thy nx; icol ++)
-			his z [irow + my ny] [icol] = thy z [irow] [icol];
-	return him;
+	try {
+		autoMatrix him = Matrix_create (my xmin < thy xmin ? my xmin : thy xmin,
+			my xmax > thy xmax ? my xmax : thy xmax,
+			my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,
+			my ymin, my ymax + (thy ymax - thy ymin), my ny + thy ny, my dy, my y1);
+		if (our _size == classMatrix -> _size) Thing_overrideClass (him.peek(), my methods);
+		for (long irow = 1; irow <= my ny; irow ++)
+			for (long icol = 1; icol <= my nx; icol ++)
+				his z [irow] [icol] = my z [irow] [icol];
+		for (long irow = 1; irow <= thy ny; irow ++)
+			for (long icol = 1; icol <= thy nx; icol ++)
+				his z [irow + my ny] [icol] = thy z [irow] [icol];
+		return him.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, " & ", thee, ": rows not appended.");
+	}
 }
 
-Matrix Matrix_readFromRawTextFile (MelderFile fs) {   // BUG: not Unicode-compatible
-	FILE *f = NULL;
-	Matrix me = NULL;
-	long nrow, ncol, nelements, irow, icol;
+Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-compatible
+	try {
+		autofile f = Melder_fopen (file, "rb");
 
-	f = Melder_fopen (fs, "rb");
-	if (! f) goto end;
+		/*
+		 * Count number of columns.
+		 */
+		long ncol = 0;
+		for (;;) {
+			int kar = fgetc (f);
+			if (kar == '\n' || kar == '\r' || kar == EOF) break;
+			if (kar == ' ' || kar == '\t') continue;
+			ncol ++;
+			do {
+				kar = fgetc (f);
+			} while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\r' && kar != EOF);
+			if (kar == '\n' || kar == '\r' || kar == EOF) break;
+		}
+		if (ncol == 0)
+			Melder_throw ("File empty");
 
-	/*
-	 * Count number of columns.
-	 */
-	ncol = 0;
-	for (;;) {
-		int kar = fgetc (f);
-		if (kar == '\n' || kar == '\r' || kar == EOF) break;
-		if (kar == ' ' || kar == '\t') continue;
-		ncol ++;
-		do {
-			kar = fgetc (f);
-		} while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\r' && kar != EOF);
-		if (kar == '\n' || kar == '\r' || kar == EOF) break;
+		/*
+		 * Count number of elements.
+		 */
+		rewind (f);
+		long nelements = 0;
+		for (;;) {
+			double element;
+			if (fscanf (f, "%lf", & element) < 1) break;   /* Zero or end-of-file. */
+			nelements ++;
+		}
+
+		/*
+		 * Check if all columns are complete.
+		 */
+		if (nelements == 0 || nelements % ncol != 0)
+			Melder_throw ("The number of elements (", nelements, ") is not a multiple of the number of columns (", ncol, ").");
+
+		/*
+		 * Create simple matrix.
+		 */
+		long nrow = nelements / ncol;
+		autoMatrix me = Matrix_createSimple (nrow, ncol);
+
+		/*
+		 * Read elements.
+		 */
+		rewind (f);
+		for (long irow = 1; irow <= nrow; irow ++)
+			for (long icol = 1; icol <= ncol; icol ++)
+				fscanf (f, "%lf", & my z [irow] [icol]);
+
+		f.close (file);
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Matrix not read from raw text file ", MelderFile_messageName (file));
 	}
-	if (! ncol) error1 (L"File empty")
-
-	/*
-	 * Count number of elements.
-	 */
-	rewind (f);
-	nelements = 0;
-	for (;;) {
-		double element;
-		if (fscanf (f, "%lf", & element) < 1) break;   /* Zero or end-of-file. */
-		nelements ++;
-	}
-
-	/*
-	 * Check if all columns are complete.
-	 */
-	if (! nelements || nelements % ncol)
-		error5 (L"The number of elements (", Melder_integer (nelements), L") is not a multiple of the number of columns (", Melder_integer (ncol), L").")
-
-	/*
-	 * Create simple matrix.
-	 */
-
-	nrow = nelements / ncol;
-	me = Matrix_createSimple (nrow, ncol);
-	if (! me) goto end;
-
-	/*
-	 * Read elements.
-	 */
-
-	rewind (f);
-	for (irow = 1; irow <= nrow; irow ++)
-		for (icol = 1; icol <= ncol; icol ++)
-			fscanf (f, "%lf", & my z [irow] [icol]);
-
-end:
-	Melder_fclose (fs, f);
-	iferror { forget (me); return (Matrix) Melder_errorp3 (
-		L"(Matrix_readFromRawTextFile:) File ", MelderFile_messageName (fs), L" not read."); }
-	return me;
 }
 
-int Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues) {
+void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 	iam (Matrix);
-	*eigenvectors = NULL, *eigenvalues = NULL;
-	if (my nx != my ny) return Melder_error1 (L"(Matrix_eigen:) Matrix not square.");
+	*out_eigenvectors = NULL;
+	*out_eigenvalues = NULL;
+	try {
+		if (my nx != my ny)
+			Melder_throw ("(Matrix not square.");
 
-	Eigen eigen = Thing_new (Eigen); cherror
-	Eigen_initFromSymmetricMatrix (eigen, my z, my nx); cherror
-	*eigenvectors = (Matrix) Data_copy (me); cherror
-	*eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1); cherror
-	for (long i = 1; i <= my nx; i ++) {
-		(*eigenvalues) -> z [i] [1] = eigen -> eigenvalues [i];
-		for (long j = 1; j <= my nx; j ++)
-			(*eigenvectors) -> z [i] [j] = eigen -> eigenvectors [j] [i];
+		autoEigen eigen = Thing_new (Eigen);
+		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx); therror
+		autoMatrix eigenvectors = (Matrix) Data_copy (me); therror
+		autoMatrix eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);
+		for (long i = 1; i <= my nx; i ++) {
+			eigenvalues -> z [i] [1] = eigen -> eigenvalues [i];
+			for (long j = 1; j <= my nx; j ++)
+				eigenvectors -> z [i] [j] = eigen -> eigenvectors [j] [i];
+		}
+		*out_eigenvectors = eigenvectors.transfer();
+		*out_eigenvalues = eigenvalues.transfer();
+	} catch (MelderError) {
+		rethrowm (me, ": eigenstructure not computed.");
 	}
-end:
-	forget (eigen);
-	iferror {
-		_Thing_forget ((Thing *) eigenvectors); *eigenvectors = NULL;
-		_Thing_forget ((Thing *) eigenvalues); *eigenvalues = NULL;
-		return 0;
-	}
-	return 1;
 }
 
 Matrix Matrix_power (I, long power) {
 	iam (Matrix);
-	long ipow;
-	Matrix thee = NULL, him = NULL;
-	if (my nx != my ny) return (Matrix) Melder_errorp ("(Matrix_power:) Matrix not square.");
-	thee = (Matrix) Data_copy (me);
-	him = (Matrix) Data_copy (me);
-	if (! thee || ! him) goto end;
-	for (ipow = 2; ipow <= power; ipow ++) {
-		long irow, icol;
-		Matrix tmp;
-		tmp = him; him = thee; thee = tmp;
-		for (irow = 1; irow <= my ny; irow ++) for (icol = 1; icol <= my nx; icol ++) {
-			long i;
-			thy z [irow] [icol] = 0.0;
-			for (i = 1; i <= my nx; i ++)
-				thy z [irow] [icol] += his z [irow] [i] * my z [i] [icol];
+	try {
+		if (my nx != my ny)
+			Melder_throw ("Matrix not square.");
+		autoMatrix thee = (Matrix) Data_copy (me);
+		autoMatrix him = (Matrix) Data_copy (me);
+		for (long ipow = 2; ipow <= power; ipow ++) {
+			double **tmp = his z; his z = thy z; thy z = tmp;
+			for (long irow = 1; irow <= my ny; irow ++) {
+				for (long icol = 1; icol <= my nx; icol ++) {
+					thy z [irow] [icol] = 0.0;
+					for (long i = 1; i <= my nx; i ++) {
+						thy z [irow] [icol] += his z [irow] [i] * my z [i] [icol];
+					}
+				}
+			}
 		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": power not computed.");
 	}
-end:
-	forget (him);
-	if (Melder_hasError ()) forget (thee);
-	return thee;
 }
 
-int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
+void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "w");
 		fprintf (f, "\"ooTextFile\"\n\"Matrix\"\n%.17g %.17g %ld %.17g %.17g\n%.17g %.17g %ld %.17g %.17g\n",
@@ -676,66 +684,69 @@ int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 		}
 		f.close (file);
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": not written to Matrix text file.");
+		rethrowm (me, ": not written to Matrix text file.");
 	}
 }
 
-int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile fs) {
-	FILE *f = Melder_fopen (fs, "w");
-	long i, j;
-	if (! f) return 0;
-	for (i = 1; i <= my ny; i ++) {
-		for (j = 1; j <= my nx; j ++) {
-			if (j > 1) fprintf (f, "\t");
-			fprintf (f, "%ls", Melder_single (my z [i] [j]));
+void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "w");
+		for (long i = 1; i <= my ny; i ++) {
+			for (long j = 1; j <= my nx; j ++) {
+				if (j > 1) fprintf (f, "\t");
+				fprintf (f, "%ls", Melder_single (my z [i] [j]));
+			}
+			fprintf (f, "\n");
 		}
-		fprintf (f, "\n");
+		f.close (file);
+		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	} catch (MelderError) {
+		rethrowm (me, ": not saved as tab-separated file ", MelderFile_messageName (file));
 	}
-	if (! Melder_fclose (fs, f)) return 0;
-	MelderFile_setMacTypeAndCreator (fs, 'TEXT', 0);
-	return 1;
 }
 
-int Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
-	struct Formula_Result result;
-	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
-	if (target == NULL) target = me;
-	for (long irow = 1; irow <= my ny; irow ++) {
-		for (long icol = 1; icol <= my nx; icol ++) {
-			Formula_run (irow, icol, & result); cherror
-			target -> z [irow] [icol] = result. result.numericResult;
+void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
+	try {
+		struct Formula_Result result;
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		if (target == NULL) target = me;
+		for (long irow = 1; irow <= my ny; irow ++) {
+			for (long icol = 1; icol <= my nx; icol ++) {
+				Formula_run (irow, icol, & result); therror
+				target -> z [irow] [icol] = result. result.numericResult;
+			}
 		}
+	} catch (MelderError) {
+		rethrowm (me, ": formula not completed.");
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
+void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
 	const wchar_t *expression, Interpreter interpreter, Matrix target)
 {
-	long ixmin, ixmax, iymin, iymax;
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
-	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
-	(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
-	(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-	struct Formula_Result result;
-	Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); cherror
-	if (target == NULL) target = me;
-	for (long irow = iymin; irow <= iymax; irow ++) {
-		for (long icol = ixmin; icol <= ixmax; icol ++) {
-			Formula_run (irow, icol, & result); cherror
-			target -> z [irow] [icol] = result. result.numericResult;
+	try {
+		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+		if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+		long ixmin, ixmax, iymin, iymax;
+		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
+		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
+		struct Formula_Result result;
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		if (target == NULL) target = me;
+		for (long irow = iymin; irow <= iymax; irow ++) {
+			for (long icol = ixmin; icol <= ixmax; icol ++) {
+				Formula_run (irow, icol, & result); therror
+				target -> z [irow] [icol] = result. result.numericResult;
+			}
 		}
+	} catch (MelderError) {
+		rethrowm (me, ": formula not completed.");
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
-void Matrix_scaleAbsoluteExtremum (I, double scale) { iam (Matrix);
+void Matrix_scaleAbsoluteExtremum (I, double scale) {
+	iam (Matrix);
 	double extremum = 0.0;
 	for (long i = 1; i <= my ny; i ++) {
 		for (long j = 1; j <= my nx; j ++) {
@@ -756,41 +767,46 @@ void Matrix_scaleAbsoluteExtremum (I, double scale) { iam (Matrix);
 
 Matrix TableOfReal_to_Matrix (I) {
 	iam (TableOfReal);
-	long i, j;
-	Matrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns); cherror
-	for (i = 1; i <= my numberOfRows; i ++) for (j = 1; j <= my numberOfColumns; j ++)
-		thy z [i] [j] = my data [i] [j];
-end:
-	iferror return NULL;
-	return thee;
+	try {
+		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
+		for (long i = 1; i <= my numberOfRows; i ++)
+			for (long j = 1; j <= my numberOfColumns; j ++)
+				thy z [i] [j] = my data [i] [j];
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Matrix.");
+	}
 }
 
 TableOfReal Matrix_to_TableOfReal (I) {
 	iam (Matrix);
-	long i, j;
-	TableOfReal thee = TableOfReal_create (my ny, my nx); cherror
-	for (i = 1; i <= my ny; i ++) for (j = 1; j <= my nx; j ++)
-		thy data [i] [j] = my z [i] [j];
-end:
-	iferror return NULL;
-	return thee;
+	try {
+		autoTableOfReal thee = TableOfReal_create (my ny, my nx);
+		for (long i = 1; i <= my ny; i ++)
+			for (long j = 1; j <= my nx; j ++)
+				thy data [i] [j] = my z [i] [j];
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to TableOfReal.");
+	}
 }
 
 Matrix Table_to_Matrix (Table me) {
-	long irow, icol;
-	Matrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns); cherror
-	for (icol = 1; icol <= my numberOfColumns; icol ++) {
-		Table_numericize_Assert (me, icol);
-	}
-	for (irow = 1; irow <= my rows -> size; irow ++) {
-		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-		for (icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy z [irow] [icol] = row -> cells [icol]. number;
+	try {
+		autoMatrix thee = Matrix_createSimple (my rows -> size, my numberOfColumns);
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			Table_numericize_Assert (me, icol);
 		}
+		for (long irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+				thy z [irow] [icol] = row -> cells [icol]. number;
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		rethrowmzero (me, ": not converted to Matrix.");
 	}
-end:
-	iferror return NULL;
-	return thee;
 }
 
-/* End of file Matrix.c */
+/* End of file Matrix.cpp */

@@ -71,7 +71,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join)
 			for (long j = 1; j <= m -> nx; j++) thy z[r][c++] = z[j];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Pattern not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Pattern created."); }
 }
 
 TableOfReal Excitations_to_TableOfReal (Excitations me)
@@ -86,7 +86,7 @@ TableOfReal Excitations_to_TableOfReal (Excitations me)
 			for (long j = 1; j <= m -> nx; j++) thy data[i][j] = z[j];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from Excitations."); }
+	} catch (MelderError) { rethrowmzero (me, ": no TableOfReal created."); }
 }
 
 Excitation Excitations_getItem (Excitations me, long item)
@@ -96,7 +96,7 @@ Excitation Excitations_getItem (Excitations me, long item)
 		autoExcitation thee = (Excitation) Data_copy (my item[item]);
 		Thing_setName (thee.peek(), Thing_getName (my item[item]));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Excitation not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": no Excitation created."); }
 }
 
 /* End of file Excitations.cpp */

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/11
  */
 
 /* Transition inherits from Data */
@@ -38,13 +38,13 @@
 #define Transition_methods Data_methods
 class_create (Transition, Data);
 
-int Transition_init (I, long numberOfStates);
+void Transition_init (I, long numberOfStates);
 Transition Transition_create (long numberOfStates);
 
-int Transition_formula (I, const wchar_t *formula);
+void Transition_formula (I, const wchar_t *formula);
 void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision);
 
-int Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);
+void Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);
 Transition Transition_power (Transition me, long power);
 
 Matrix Transition_to_Matrix (Transition me);
@@ -54,5 +54,5 @@ Transition Matrix_to_Transition (Matrix me);
 	}
 #endif
 
-/* End of file TableOfReal.h */
+/* End of file Transition.h */
 #endif

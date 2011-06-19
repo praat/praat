@@ -86,31 +86,23 @@ static int click (SpectrumEditor me, double xWC, double yWC, int shiftKeyPressed
 }
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
-	long i, imin, imax;
-	double *re, *im;
-	Spectrum band = (Spectrum) Data_copy (me);
-	if (! band) return NULL;
-	re = band -> z [1], im = band -> z [2];
-	imin = Sampled_xToLowIndex (band, fmin), imax = Sampled_xToHighIndex (band, fmax);
-	for (i = 1; i <= imin; i ++) re [i] = 0.0, im [i] = 0.0;
-	for (i = imax; i <= band -> nx; i ++) re [i] = 0.0, im [i] = 0.0;
-	return band;
+	autoSpectrum band = (Spectrum) Data_copy (me); therror
+	double *re = band -> z [1], *im = band -> z [2];
+	long imin = Sampled_xToLowIndex (band.peek(), fmin), imax = Sampled_xToHighIndex (band.peek(), fmax);
+	for (long i = 1; i <= imin; i ++) re [i] = 0.0, im [i] = 0.0;
+	for (long i = imax; i <= band -> nx; i ++) re [i] = 0.0, im [i] = 0.0;
+	return band.transfer();
 }
 
 static Sound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
-	Spectrum band = Spectrum_band (me, fmin, fmax);
-	Sound sound;
-	if (! band) return NULL;
-	sound = Spectrum_to_Sound (band);
-	forget (band);
-	return sound;
+	autoSpectrum band = Spectrum_band (me, fmin, fmax);
+	autoSound sound = Spectrum_to_Sound (band.peek());
+	return sound.transfer();
 }
 
 static void play (SpectrumEditor me, double fmin, double fmax) {
-	Sound sound = Spectrum_to_Sound_part ((Spectrum) my data, fmin, fmax);
-	if (! sound) { Melder_flushError (NULL); return; }
-	Sound_play (sound, NULL, NULL);
-	forget (sound);
+	autoSound sound = Spectrum_to_Sound_part ((Spectrum) my data, fmin, fmax);
+	Sound_play (sound.peek(), NULL, NULL);
 }
 
 static int menu_cb_publishBand (EDITOR_ARGS) {
@@ -222,15 +214,17 @@ class_methods (SpectrumEditor, FunctionEditor) {
 }
 
 SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	SpectrumEditor me = Thing_new (SpectrumEditor);
-	FunctionEditor_init (SpectrumEditor_as_parent (me), parent, title, data); cherror
-	my cursorHeight = -1000;
-	my bandSmoothing = preferences.bandSmoothing;
-	my dynamicRange = preferences.dynamicRange;
-	updateRange (me);
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoSpectrumEditor me = Thing_new (SpectrumEditor);
+		FunctionEditor_init (SpectrumEditor_as_parent (me.peek()), parent, title, data); therror
+		my cursorHeight = -1000;
+		my bandSmoothing = preferences.bandSmoothing;
+		my dynamicRange = preferences.dynamicRange;
+		updateRange (me.peek());
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("Spectrum window not created.");
+	}
 }
 
 /* End of file SpectrumEditor.cpp */

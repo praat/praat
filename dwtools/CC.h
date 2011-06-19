@@ -46,7 +46,7 @@
 #define CC_methods Sampled_methods
 oo_CLASS_CREATE (CC, Sampled);
 
-int CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
+void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax);
 	
 void CC_getNumberOfCoefficients_extrema (I, long startframe, 
@@ -68,7 +68,7 @@ double CC_getValue (I, double t, long index);
 
 /******************* Frames ************************************************/
 
-int CC_Frame_init (CC_Frame me, long numberOfCoefficients);
+void CC_Frame_init (CC_Frame me, long numberOfCoefficients);
 
 #ifdef __cplusplus
 	}

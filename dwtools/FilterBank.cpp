@@ -390,7 +390,7 @@ void FilterBank_drawFilters (I, Graphics g, long fromf, long tof,
 }*/
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, 
-	double fmax, double min, double max, wchar_t *xlabel, int garnish)
+	double fmax, double min, double max, const wchar_t *xlabel, int garnish)
 {
 	iam (Matrix);
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
@@ -504,36 +504,35 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
 */
 Matrix FilterBank_to_Matrix (I)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
-	
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to Matrix."); }
 }
 
 BarkFilter Matrix_to_BarkFilter (I)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("BarkFilter not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to BarkFilter."); }
 }
 
 MelFilter Matrix_to_MelFilter (I)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("MelFilter not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to MelFilter."); }
 }
 
 class_methods (FormantFilter, FilterBank)
@@ -617,13 +616,13 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 
 FormantFilter Matrix_to_FormantFilter (I)
 {
-	try {
 		iam (Matrix);
+	try {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("FormantFilter not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": not converted to FormantFilter."); }
 }
 
 Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t)
@@ -651,13 +650,13 @@ Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t)
 			thy z[2][i] = 0.0;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Spectrum not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Spectral slice not created."); }
 }
 
 Intensity FilterBank_to_Intensity (I)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 
 		double db_ref = 10 * log10 (FilterBank_DBREF);
@@ -671,7 +670,7 @@ Intensity FilterBank_to_Intensity (I)
 			thy z[1][j] = 10 * log10 (p) - db_ref;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Intensity not created."); }
+	} catch (MelderError) { rethrowmzero (me, ": Intensity not created."); }
 }
 
 void FilterBank_equalizeIntensities (I, double intensity_db)

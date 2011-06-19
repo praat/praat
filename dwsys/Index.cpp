@@ -80,13 +80,12 @@ void Index_init (I, long numberOfElements)
 
 Index Index_extractPart (I, long from, long to)
 {
+	iam (Index);
 	try {
-		iam (Index);
-
 		if (from == 0) from = 1;
 		if (to == 0) to = my numberOfElements;
 		if (to < from || from < 1 || to > my numberOfElements) Melder_throw 
-			("Range should be in interval [1,%d].", my numberOfElements);
+			("Range should be in interval [1,", my numberOfElements, "].");
 		autoIndex thee = (Index) Data_copy (me); therror
 		thy numberOfElements = to - from + 1;
 		/* */
@@ -95,7 +94,7 @@ Index Index_extractPart (I, long from, long to)
 			thy classIndex[i] = my classIndex[from + i - 1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Index not extracted."); }
+	} catch (MelderError) { rethrowmzero (me, ": part not extracted."); }
 }
 
 class_methods (StringsIndex, Index)

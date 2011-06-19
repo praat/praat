@@ -101,7 +101,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	int dbScale, double ymin, double ymax, int garnish);
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax,
-	double min, double max, wchar_t *xlabel, int garnish);
+	double min, double max, const wchar_t *xlabel, int garnish);
  
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, long f1);

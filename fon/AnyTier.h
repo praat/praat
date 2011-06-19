@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/06/13
  */
 
 #ifndef _Collection_h_
@@ -47,7 +47,7 @@ long AnyTier_timeToHighIndex (I, double time);
 long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax);
 long AnyTier_timeToNearestIndex (I, double time);
 long AnyTier_hasPoint (I, double t);
-int AnyTier_addPoint (I, Any point);
+void AnyTier_addPoint (I, Any point);
 void AnyTier_removePoint (I, long i);
 void AnyTier_removePointNear (I, double time);
 void AnyTier_removePointsBetween (I, double tmin, double tmax);

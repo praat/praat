@@ -87,8 +87,11 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (L"\n");
 				UiHistory_write (my title);
 			}
-			if (! callback (NULL, NULL, NULL, my title, modified, NULL))
-				Melder_flushError ("Command not executed.");
+			try {
+				callback (NULL, NULL, NULL, my title, modified, NULL); therror
+			} catch (MelderError) {
+				Melder_flushError ("Fixed command not executed.");
+			}
 			praat_updateSelection (); return;
 		}
 		if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand && my script == (void *) void_me) {
@@ -100,8 +103,11 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (my script);
 				UiHistory_write (L"\"");
 			}
-			if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL))
-				Melder_flushError ("Script not executed.");
+			try {
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
+			} catch (MelderError) {
+				Melder_flushError ("Script from added menu command not executed.");
+			}
 			praat_updateSelection (); return;
 		}
 	}

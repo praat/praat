@@ -1,9 +1,9 @@
 # Makefile of the library "LPC"
-# David Weenink, 22 February 2010
+# David Weenink, 20110530
 
 include ../makefile.defs
 
-CFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
+CFLAGS = $(DEFS) -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 CPPFLAGS = $(CFLAGS)
 
