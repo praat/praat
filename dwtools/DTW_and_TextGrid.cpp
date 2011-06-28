@@ -45,7 +45,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee)
 		for (long i = 1; i <= his points -> size; i++)
 		{
 			TextPoint textpoint = (TextPoint) his points -> item[i];
-			double time = DTW_getXTime (me, textpoint -> time);
+			double time = DTW_getXTimeFromYTime (me, textpoint -> time);
 		
 			textpoint -> time = time;
 		}
@@ -66,9 +66,9 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 		for (long i = 1; i <= his intervals -> size; i++)
 		{
 			TextInterval textinterval = (TextInterval) his intervals -> item[i];
-			double xmin = DTW_getXTime (me, textinterval -> xmin);
+			double xmin = DTW_getXTimeFromYTime (me, textinterval -> xmin);
 			textinterval -> xmin = xmin;
-			double xmax = DTW_getXTime (me, textinterval -> xmax);
+			double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
 			textinterval -> xmax = xmax;
 		}
 		return him.transfer();

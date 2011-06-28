@@ -112,15 +112,15 @@ void HMM_State_setLabel (HMM_State me, wchar_t *label);
 
 
 HMM HMM_create (int leftToRight, long numberOfStates, long numberOfObservationSymbols);
-HMM HMM_createSimple (int leftToRight, wchar_t *states_string, wchar_t *symbols_string);
+HMM HMM_createSimple (int leftToRight, const wchar_t *states_string, const wchar_t *symbols_string);
 HMM HMM_createContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfMixtureComponentsPerSymbol, long componentDimension, long componentStorage);
 HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long numberOfObservationSymbols,
 	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream);
 HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
 void HMM_draw (HMM me, Graphics g, int garnish);
-int HMM_addObservation (HMM me, thou);
-int HMM_addState (HMM me, thou);
+void HMM_addObservation (HMM me, thou);
+void HMM_addState (HMM me, thou);
 void HMM_setDefaultStates (HMM me);
 void HMM_setDefaultObservations (HMM me);
 void HMM_setDefaultTransitionProbs (HMM me);
@@ -136,9 +136,9 @@ void HMM_unExpandPCA (HMM me);
 /*
 	Set the probabilities. A probability zero value indicates that this p cannot be changed during training/learning.
 */
-int HMM_setTransitionProbabilities (HMM me, long state_number, wchar_t *state_probs);
-int HMM_setEmissionProbabilities (HMM me, long state_number, wchar_t *emission_probs);
-int HMM_setStartProbabilities (HMM me, wchar_t *probs);
+void HMM_setTransitionProbabilities (HMM me, long state_number, wchar_t *state_probs);
+void HMM_setEmissionProbabilities (HMM me, long state_number, wchar_t *emission_probs);
+void HMM_setStartProbabilities (HMM me, wchar_t *probs);
 
 double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate);
 double HMM_getProbabilityAtTimeBeingInStateEmittingSymbol (HMM me, long itime, long istate, long isymbol);
@@ -157,7 +157,7 @@ TableOfReal HMM_extractEmissionProbabilities (HMM me);
 HMM_ObservationSequence HMM_to_HMM_ObservationSequence (HMM me, long initialState, long numberOfItems);
 HMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, HMM_ObservationSequence thee);
 double HMM_and_HMM_StateSequence_getProbability (HMM me, HMM_StateSequence thee);
-int HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences thee, double delta_lnp, double minProb);
+void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences thee, double delta_lnp, double minProb);
 void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Graphics g, int connect, int garnish);
 double HMM_and_HMM_ObservationSequence_getProbability (HMM me, HMM_ObservationSequence thee);
 double HMM_and_HMM_ObservationSequence_getCrossEntropy (HMM me, HMM_ObservationSequence thee);
@@ -165,7 +165,7 @@ double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSeq
 
 // somewhere else
 void MelderInfo_lnp (double logp);
-TableOfReal Strings_to_TableOfReal_transitions (I, int probabilities);
+TableOfReal Strings_to_TableOfReal_transitions (Strings me, int probabilities);
 
 #ifdef __cplusplus
 	}

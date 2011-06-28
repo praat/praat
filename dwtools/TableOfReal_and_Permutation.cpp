@@ -1,6 +1,6 @@
-/* TableOfReal_and_Permutation.c
+/* TableOfReal_and_Permutation.cpp
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,26 @@
 TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee)
 {
 	iam (TableOfReal);
-	long i;
-	TableOfReal him;
-
-	if (my numberOfRows != thy numberOfElements) return Melder_errorp1 (L"TableOfReal_and_Permutation_permuteRows: "
-		"The number of rows in the table and the number of elements in the Permutation must be equal.");
-	him = TableOfReal_create (my numberOfRows, my numberOfColumns);
-	if (him == NULL) return NULL;
+	try {
+		if (my numberOfRows != thy numberOfElements) Melder_throw (L"The number of rows in the table and the number of elements in the Permutation must be equal.");
+		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 	
-	for (i = 1; i <= thy numberOfElements; i++)
-	{
-		if (! TableOfReal_copyOneRowWithLabel (me, him, thy p[i], i)) break;
-	}
-	if (Melder_hasError ()) forget (him);
-	return him;
+		for (long i = 1; i <= thy numberOfElements; i++)
+		{
+			TableOfReal_copyOneRowWithLabel (me, him.peek(), thy p[i], i);
+		}
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": not permuted."); }
 }
 
 Permutation TableOfReal_to_Permutation_sortRowLabels (I)
 {
 	iam (TableOfReal);
-	Permutation thee;
-		
-	thee = Permutation_create (my numberOfRows);
-	if (thee != NULL)
-	{
+	try {
+		autoPermutation thee = Permutation_create (my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);
-	}
-	return thee;
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": no Permutation created."); }
 }
 
-/* End of file TableOfReal_and_Permutation.c */
+/* End of file TableOfReal_and_Permutation.cpp */

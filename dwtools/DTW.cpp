@@ -117,7 +117,7 @@ static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
 */
 
 /* DTW_getXTime (DTW me, (DTW_getYTime (DTW me, double tx)) == tx */
-double DTW_getYTime (DTW me, double tx)
+double DTW_getYTimeFromXTime (DTW me, double tx)
 {
 	DTW_Path_Query thee = & my pathQuery;
 
@@ -157,7 +157,7 @@ double DTW_getYTime (DTW me, double tx)
 	return a * tx + b;
 }
 
-double DTW_getXTime (DTW me, double ty)
+double DTW_getXTimeFromYTime (DTW me, double ty)
 {
 	DTW_Path_Query thee = & my pathQuery;
 
@@ -457,7 +457,7 @@ static int get_ylimitsFromConstraints (long nsteps_xory, long nsteps_xandy, long
 	return 1;
 }
 
-static void get_adjustmentwindow_parameters (DTW me, double adjustment_window_duration, 
+static void get_adjustmentwindow_parameters (DTW me, double sakoeChibaBand, 
 	int adjustment_window_includes_end, long *r, double *adjustment_window_slope)
 {
 	double durationx = (my xmax - my xmin);
@@ -469,16 +469,16 @@ static void get_adjustmentwindow_parameters (DTW me, double adjustment_window_du
 	/* If the adjustment_window includes the endpoint we set a slope on the adjustment range r */
 	*adjustment_window_slope = adjustment_window_includes_end ? slope : 1;
 
-	*r = ceil (fabs (adjustment_window_duration) / my dx); /* r may be 0 */
+	*r = ceil (fabs (sakoeChibaBand) / my dx); /* r may be 0 */
 }
 
-static void get_ylimitsFromAdjustmentwindow (DTW me, double adjustment_window_duration, 
+static void get_ylimitsFromAdjustmentwindow (DTW me, double sakoeChibaBand, 
 	int adjustment_window_includes_end, long x, long *ylow, long *yhigh)
 {
 	double adjustment_window_slope;
 	long r;
 
-	get_adjustmentwindow_parameters (me, adjustment_window_duration, adjustment_window_includes_end, &r, &adjustment_window_slope);
+	get_adjustmentwindow_parameters (me, sakoeChibaBand, adjustment_window_includes_end, &r, &adjustment_window_slope);
 
 	double dtx = my x1 + (x - 1) * my dx - my xmin;
 	double ty = my ymin + adjustment_window_slope * dtx;
@@ -521,12 +521,12 @@ class_methods (DTW, Matrix)
 	class_method_local (DTW, equal)
 	class_method_local (DTW, canWriteAsEncoding)
 	class_method_local (DTW, copy)
-	class_method (info)
 	class_method_local (DTW, readText)
 	class_method_local (DTW, readBinary)
 	class_method_local (DTW, writeText)
 	class_method_local (DTW, writeBinary)
 	class_method_local (DTW, description)
+	class_method (info)
 class_methods_end
 
 /* Prototype must be on y-axis and test on x-axis */
@@ -539,8 +539,14 @@ DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 		Matrix_init (me.peek(), tminc, tmaxc, ntc, dtc, t1c, tminp, tmaxp, ntp, dtp, t1p); therror
 		my path = NUMvector<structDTW_Path> (1, ntc + ntp - 1);
 		DTW_Path_Query_init (& my pathQuery, ntp, ntc);
+		my wx = 1; my wy = 1; my wd = 2;
 		return me.transfer();
 	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+}
+
+void DTW_setWeights (DTW me, double wx, double wy, double wd)
+{
+	my wx = wx; my wy = wy; my wd = wd;
 }
 
 DTW DTW_swapAxes (DTW me)
@@ -565,7 +571,7 @@ DTW DTW_swapAxes (DTW me)
 	} catch (MelderError) { rethrowmzero (me, ": axes not swapped."); }
 }
 
-static int DTW_checkAdjustmentWindow (DTW me, double adjustment_window_duration, int adjustment_window_includes_end)
+static int DTW_checkAdjustmentWindow (DTW me, double sakoeChibaBand, int adjustment_window_includes_end)
 {
 	try {
 		double durationx = (my xmax - my xmin), durationMin = durationx;
@@ -576,7 +582,7 @@ static int DTW_checkAdjustmentWindow (DTW me, double adjustment_window_duration,
 			durationMin = durationy; durationMax = durationx;
 		}
 
-		if (! adjustment_window_includes_end && durationMin + adjustment_window_duration < durationMax)
+		if (! adjustment_window_includes_end && durationMin + sakoeChibaBand < durationMax)
 		{
 			Melder_throw ("There is a conflict between the chosen parameters.\n "
 			"We cannot \'Match end positions\' because the sum of the durations of the shortest \n"
@@ -619,12 +625,12 @@ static int DTW_checkSlopeConstraintParameters (DTW me, long nsteps_xory, long ns
 	} catch (MelderError) { rethrowzero; }
 }
 
-static int get_ylimits_x (DTW me, int choice, double adjustment_window_duration, 
+static int get_ylimits_x (DTW me, int choice, double sakoeChibaBand, 
 	int adjustment_window_includes_end, long nsteps_xory, long nsteps_xandy, long x, long *ylow, long *yhigh)
 {
 	if (choice == DTW_SAKOECHIBA)
 	{
-		get_ylimitsFromAdjustmentwindow (me, adjustment_window_duration, adjustment_window_includes_end, x, ylow, yhigh);
+		get_ylimitsFromAdjustmentwindow (me, sakoeChibaBand, adjustment_window_includes_end, x, ylow, yhigh);
 	}
 	else if (choice == DTW_SLOPES)
 	{
@@ -674,8 +680,8 @@ static int slope_constraints (long x, long y, long nsteps_x, long nsteps_y, long
 #define DTW_REACHABLE(x,y) (psi[y][x] != DTW_UNREACHABLE && psi[y][x] != DTW_FORBIDDEN)
 /* Improvement: Working with unsigned longs -> psi[y[[x] & 1 */
 
-/* Does not chack validity of parameters! */
-static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duration, int adjustment_window_includes_end,
+/* Does not check validity of parameters! */
+static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjustment_window_includes_end,
 	long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy)
 {
 	try {
@@ -694,15 +700,13 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 
 		autoMelderProgress progress (L"Find path");
 
-		/*
-			initialize the psi and delta matrices.
-			Treat first column and row as special.
-		*/
+		// initialize the psi and delta matrices.
+		// Treat first column and row as special.
 
 		int no_slope_constraints = choice != DTW_SLOPES || nsteps_xandy == 0;
 		for (x = 1; x <= my nx; x++)
 		{
-			if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end,
+			if (! get_ylimits_x (me, choice, sakoeChibaBand, adjustment_window_includes_end,
 			nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) return 1;
 			/*Melder_casual ("x, ylow yhigh: %5d %5d %5d", x, ylow, yhigh);*/
 			for (y = my ny; y > yhigh; y--) psi[y][x] = DTW_FORBIDDEN;
@@ -744,7 +748,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 
 		for (x = 2; x <= my nx; x++)
 		{
-			if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end,
+			if (! get_ylimits_x (me, choice, sakoeChibaBand, adjustment_window_includes_end,
 				nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) Melder_throw ("Er");
 
 			if (ylow < 2) ylow = 2;
@@ -791,11 +795,9 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 				Melder_integer (x), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Warping interrupted.");
 		}
 
-		/*
-			2. Backward pass.
+		// 2. Backward pass.
+		// Find minimum at end of path and trace back.
 
-			Find minimum at end of path and trace back.
-		*/
 		if (Melder_debug != 0 && nodirection_assigned > 0)
 		{
 			MelderInfo_writeLine4 (Melder_integer (nodirection_assigned), L" cells from ", Melder_integer (numberOfCells), L" had no valid direction assigned.");
@@ -814,7 +816,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 			if (psi[y][my nx] == DTW_FORBIDDEN) break;
 			if (delta[y][my nx] < minimum) minimum = delta[ypos = y][my nx];
 		}
-		/* Search back along x */
+		// Search back along x
 		for (x = my nx; x > my nx - xmargin; x--)
 		{
 			if (psi[my ny][x] == DTW_FORBIDDEN) break;
@@ -826,9 +828,7 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 		my path[pathIndex].y = y = ypos;
 		my path[pathIndex].x = x = xpos;
 
-		/*
-			Fill path backwards.
-		*/
+		// Fill path backwards.
 
 		while (x > 1)
 		{
@@ -859,10 +859,9 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 			my path[pathIndex].y = y;
 		}
 
-		/*
-			If the real path length is shorter than the maximum path length
-			then shift the path to start at 1.
-		*/
+		// If the real path length is shorter than the maximum path length
+		// then shift the path to start at 1.
+
 		my pathLength = my nx + my ny - pathIndex;
 		if (pathIndex > 1)
 		{
@@ -875,11 +874,11 @@ static int _DTW_pathFinder (DTW me, int choice, double adjustment_window_duratio
 	} catch (MelderError) { rethrowzero; }
 }
 
-int DTW_pathFinder_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end,
+int DTW_pathFinder_band (DTW me, double sakoeChibaBand, int adjustment_window_includes_end,
 	 double costs_x, double costs_y, double costs_xandy)
 {
-	return DTW_checkAdjustmentWindow (me, adjustment_window_duration, adjustment_window_includes_end) &&
-		_DTW_pathFinder (me, DTW_SAKOECHIBA, adjustment_window_duration, adjustment_window_includes_end,
+	return DTW_checkAdjustmentWindow (me, sakoeChibaBand, adjustment_window_includes_end) &&
+		_DTW_pathFinder (me, DTW_SAKOECHIBA, sakoeChibaBand, adjustment_window_includes_end,
 			1, 0, costs_x, costs_y, costs_xandy);
 }
 
@@ -889,25 +888,64 @@ int DTW_pathFinder_slopes (DTW me, long nsteps_xory, long nsteps_xandy, double c
 		_DTW_pathFinder (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy, costs_x, costs_y, costs_xandy);
 }
 
+void DTW_initAccumulatedWeights (DTW me)
+{
+	
+}
+
+Matrix DTW_to_Matrix_accumulatedCosts (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope,  int localSlopeConstraint)
+{
+	if (localSlopeConstraint < 1 || localSlopeConstraint > 4) Melder_throw ("Invalid local slope constraint.");
+	autoNUMmatrix<double> delta (-3, my ny + 1, -3, my nx);
+	
+	// initialise the accumulated distances
+	for (long i = -3; i <= 0; i++)
+	{
+		for (long j = -3; j <= my nx; j++) delta[i][j] = DTW_BIG; // bottom rows
+		for (long j = 1; j <= my ny; j++) delta[j][i] = DTW_BIG; // left columns
+	}
+	for (long j = -3; j <= my nx; j++) delta[my ny + 1][j] = DTW_BIG; // top row
+	delta[1][1] = my z[1][1];
+	for (long j = 2; j <= my ny; j++) delta[j][1] += my wy * delta[j-1][1]; // first column
+	for (long j = 2; j <= my nx; j++) delta[1][j] += my wx * delta[1][j-1]; // first row
+	if (localSlopeConstraint == 1) // no constraints
+	{
+		for (long i = 1; i <= my nx; i++) {}
+	}
+	else if (localSlopeConstraint == 2) // 1/3 -- 3
+	{
+		
+	}
+	else if (localSlopeConstraint == 3) // 1/2 -- 2
+	{
+		
+	}
+	else if (localSlopeConstraint == 4) // 2/3 -- 3/2
+	{
+		
+	}
+
+}
+
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 {
 	try {
 		long pathIndex = my nx + my ny - 1; /* At maximum path length */
 		double minimum;
 		double slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
-		double relDuration = (my ymax - my ymin) / (my xmax - my xmin);
+		double dtw_slope = (my ymax - my ymin) / (my xmax - my xmin);
 
 		if (slope < 1 || slope > 4) Melder_throw ("DTW_findPath: Invalid slope constraint.");
 
-		if (relDuration < 1)
+		if (dtw_slope < 1)
 		{
-			relDuration = 1 / relDuration;
+			dtw_slope = 1 / dtw_slope;
 		}
 
-		if (relDuration > slopeConstraint[slope])
+		if (dtw_slope > slopeConstraint[slope])
 		{
 			Melder_warning3 (L"DTW_findPath: There is a conflict between the chosen slope constraint and the relative  duration.\n "
-			"The duration ratio of the longest and the shortest object is ", Melder_double (relDuration),
+			"The duration ratio of the longest and the shortest object is ", Melder_double (dtw_slope),
 			L". This implies that the largest slope in the \n"
 			"constraint must have a value greater or equal to this ratio.");
 		}
@@ -1240,18 +1278,95 @@ long DTW_getMaximumConsecutiveSteps (DTW me, int direction)
 	return nglobal;
 }
 
-static Polygon _DTW_to_Polygon (DTW me, int choice, double adjustment_window_duration, 
+Polygon DTW_to_Polygon_globalConstraints (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope)
+{
+	try {
+		double xdur = my xmax - my xmin, ydur = my ymax - my ymin, slope = ydur / xdur;
+		double dtw_slope = slope > 1 ? slope : 1 / slope;
+		if (useItakuraSlope)
+		{
+			if (itakuraSlope <= 0) Melder_throw ("The Itakura slope has to be positive.");
+			if (itakuraSlope < 1) itakuraSlope = 1 / itakuraSlope;
+			if (dtw_slope > itakuraSlope) Melder_throw ("The itakuraSlope is not effective (it should be larger than ", dtw_slope, ").");
+		}
+		if (sakoeChibaBand < 0) sakoeChibaBand = 0;
+		if (sakoeChibaBand == 0 and not useItakuraSlope) Melder_throw ("You have to use al least one of the options.");
+		if (sakoeChibaBand > xdur or sakoeChibaBand > ydur)
+		{ // no limits, polugon is the whole domain
+			autoPolygon thee = Polygon_create (4);
+			thy x[1] = my xmin; thy y[1] = my ymin;
+			thy x[2] = my xmin; thy y[2] = my ymax;
+			thy x[3] = my xmax; thy y[3] = my ymax;
+			thy x[4] = my xmax; thy y[4] = my ymin;
+			return thee.transfer();
+		}
+		if (not useItakuraSlope)
+		{
+			autoPolygon thee = Polygon_create (6);
+			thy x[1] = my xmin; thy y[1] = my ymin;
+			thy x[2] = my xmin; thy y[2] = my ymin + sakoeChibaBand;
+			thy x[3] = my xmax - sakoeChibaBand; thy y[3] = my ymax;
+			thy x[4] = my xmax; thy y[4] = my ymax;
+			thy x[5] = my xmax; thy y[5] = my ymax - sakoeChibaBand;
+			thy x[6] = my xmin + sakoeChibaBand; thy y[6] = my ymin;
+			return thee.transfer();
+		}
+		// We have to calculate the intersection of two lines;
+		// (1)  y = a * x + b1; passes through the point (x1, y1)  
+		// (2)  y = x / a + b2; passes through the point (x2, y2)
+		// It follows that
+		// (3)  b1 = y1 - a * x1
+		// (4)  b2 = y2 - x2 / a
+		// The intersection is at the point where a * x + b1 = x / a + b2 from which it follows that
+		// (5) xa = (b2 -b1) / (a - 1/a)
+		// (6) ya = a * xa + b1
+
+		// Above diagonal: (x1,y1) = (xmin, ymin + sakoeChibaBand) and (x2,y2) = (xmax-sakoeChibaBand, ymax)
+		double b1 = my ymin + sakoeChibaBand - itakuraSlope * my xmin;
+		double b2 = my ymax - (my xmax - sakoeChibaBand) / itakuraSlope;
+		double xa = (b2 - b1) / (itakuraSlope - 1 / itakuraSlope);
+		double ya = itakuraSlope * xa + b1;
+		// Below diagonal: (x1,y1) = (xmax, ymax - sakoeChibaBand), (x2,y2) = (xmin + sakoeChibaBand, ymin)
+		b1 = my ymax - sakoeChibaBand - itakuraSlope * my xmax;
+		b2 = my ymin - (my xmin + sakoeChibaBand) / itakuraSlope;
+		double xb = (b2 - b1) / (itakuraSlope - 1 / itakuraSlope);
+		double yb = itakuraSlope * xb + b1;
+		long npoints = sakoeChibaBand > 0 ? 8 : 4;
+		autoPolygon thee = Polygon_create (npoints);
+		thy x[1] = my xmin; thy y[1] = my ymin; 
+		if (sakoeChibaBand > 0)
+		{
+			thy x[2] = my xmin; thy y[2] = my ymin + sakoeChibaBand;
+			thy x[3] = xa; thy y[3] = ya;
+			thy x[4] = my xmax - sakoeChibaBand; thy y[4] = my ymax;
+			thy x[5] = my xmax; thy y[5] = my ymax;
+			thy x[6] = my xmax; thy y[6] = my ymax - sakoeChibaBand;
+			thy x[7] = xb; thy y[7] = yb;
+			thy x[8] = my xmin + sakoeChibaBand; thy y[8] = my ymin;
+		}
+		else
+		{
+			thy x[2] = xa; thy y[2] = ya;
+			thy x[3] = my xmax; thy y[3] = my ymax;
+			thy x[4] = xb; thy y[4] = yb;
+		}
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": no Polygon created."); }
+	
+}
+
+static Polygon _DTW_to_Polygon (DTW me, int choice, double sakoeChibaBand, 
 	int adjustment_window_includes_end, long nsteps_xory, long nsteps_xandy)
 {
 	try {
-		long numberOfPoints = 4 * my nx + 1;
+		long numberOfPoints = 4 * my nx;
 		autoPolygon thee = Polygon_create (numberOfPoints);
 
 		long iyhigh = 0, iylow = numberOfPoints;
 		long ylow, yhigh;
 		for (long x = 1; x <= my nx; x++)
 		{
-			if (! get_ylimits_x (me, choice, adjustment_window_duration, adjustment_window_includes_end,
+			if (! get_ylimits_x (me, choice, sakoeChibaBand, adjustment_window_includes_end,
 				nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) Melder_throw (L"Limits!");
 
 			if (ylow > my ny) break;
@@ -1271,24 +1386,20 @@ static Polygon _DTW_to_Polygon (DTW me, int choice, double adjustment_window_dur
 			thy y[iylow] = y2;
 		}
 
-		// Connect end to begin
-
-		thy x[numberOfPoints] = thy x[1];
-		thy y[numberOfPoints] = thy y[1];
 		return thee.transfer();
 	} catch (MelderError) { rethrowzero; }
 }
 
-Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end)
+Polygon DTW_to_Polygon_band (DTW me, double sakoeChibaBand, int adjustment_window_includes_end)
 {
 	try {
-		DTW_checkAdjustmentWindow (me, adjustment_window_duration, adjustment_window_includes_end);
-		autoPolygon thee = _DTW_to_Polygon (me, DTW_SAKOECHIBA, adjustment_window_duration, adjustment_window_includes_end, 1, 0);
+		DTW_checkAdjustmentWindow (me, sakoeChibaBand, adjustment_window_includes_end);
+		autoPolygon thee = _DTW_to_Polygon (me, DTW_SAKOECHIBA, sakoeChibaBand, adjustment_window_includes_end, 1, 0);
 		return thee.transfer();
 	} catch (MelderError) { rethrowmzero (me, ": Polygon not created."); }
 }
 
-Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy)
+Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_xandy)
 {
 	try {
 		DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy);
@@ -1377,7 +1488,7 @@ void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
 
 static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset)
 {
-	double ty = DTW_getYTime (me, tx);
+	double ty = DTW_getYTimeFromXTime (me, tx);
 	int lineType = Graphics_inqLineType (g);
 
 	if (xmin >= xmax)
@@ -1392,11 +1503,14 @@ static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, dou
 	if (inset) Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	ty = DTW_getYTime (me, tx);
+	ty = DTW_getYTimeFromXTime (me, tx);
 	Graphics_setLineType (g, Graphics_DOTTED);
-
-	Graphics_line (g, tx, ymin, tx, ty);
-	Graphics_line (g, tx, ty, xmin, ty);
+	if (ty <= ymax)
+	{
+		Graphics_line (g, tx, ymin, tx, ty);
+		Graphics_line (g, tx, ty, xmin, ty);
+	}
+	else Graphics_line (g, tx, ymin, tx, ymax);
 
 	Graphics_setLineType (g, lineType);
 
@@ -1405,7 +1519,7 @@ static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, dou
 	if (garnish)
 	{
 		Graphics_markBottom (g, tx, 1, 1, 0, NULL);
-		Graphics_markLeft (g, ty, 1, 1, 0, NULL);
+		if (ty <= ymax) Graphics_markLeft (g, ty, 1, 1, 0, 0);
 	}
 }
 
@@ -1538,7 +1652,7 @@ void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xm
 	ymin = ymax - (ymax - ymin) / dtw_part_y;
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	double ty = DTW_getYTime (me, tx);
+	double ty = DTW_getYTimeFromXTime (me, tx);
 	Graphics_setLineType (g, Graphics_DOTTED);
 
 	Graphics_line (g, tx, ymin, tx, ty);
@@ -1820,6 +1934,20 @@ DurationTier DTW_to_DurationTier (DTW me)
 	(void) me;
 	DurationTier thee = NULL;
 	return thee;
+}
+
+void DTW_and_Matrix_replace (DTW me, Matrix thee)
+{
+	try {
+		if (my xmin != thy xmin || my xmax != thy xmax || my ymin != thy ymin || my ymax != thy ymax) 
+			Melder_throw ("The X and Y domains of the matrix and the DTW must be equal.");
+		if (my nx != thy nx || my dx != thy dx || my ny != thy ny || my dy != thy dy) 
+			Melder_throw ("The sampling of the matrix and the DTW must be equal.");
+		double minimum, maximum;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		if (minimum < 0) Melder_throw ("Distances cannot be negative.");
+		NUMmatrix_copyElements<double> (thy z, my z, 1, my ny, 1, my nx);
+	} catch (MelderError) { rethrowm (me, ": distances not replaced."); }
 }
 
 /* End of file DTW.cpp */

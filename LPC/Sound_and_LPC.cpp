@@ -126,7 +126,7 @@ end:
 		if (i == m) return 1;
 		thy nCoefficients = i;
 		for (long j = i + 1; j <= m; j++) thy a[j] = 0;
-		return 1; // Melder_warning ("Less coefficienst than asked for.");
+		return 0; // Melder_warning ("Less coefficienst than asked for.");
 	} catch (MelderError) { rethrowzero; }
 }
 
@@ -139,7 +139,7 @@ end:
 	cc = & work[m+1)/2+m+m+1+m+1]
 	for (i=1; i<=m(m+1)/2+m+m+1+m+m+1;i++) work[i] = 0;
 */
-static void Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
+static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 {
 	try {
 		long i = 1, n = my nx, m = thy nCoefficients;
@@ -228,27 +228,29 @@ end:
 		{
 			thy a[j] = a[j+1];
 		}
-		if (i == m) return;
+		if (i == m) return 1;
 
 		thy nCoefficients = i;
 		for (long j = i + 1; j <= m; j++) thy a[j] = 0;
-		// Melder_warning ("Less coefficienst than asked for.");
-	} catch (MelderError) { rethrow; }
+		return 0; // Melder_warning ("Less coefficienst than asked for.");
+	} catch (MelderError) { rethrowzero; }
 }
 
-static void Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee)
+static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee)
 {
 	try {
-		NUMburg (my z[1], my nx, thy a, thy nCoefficients, &thy gain);
+		int status = NUMburg (my z[1], my nx, thy a, thy nCoefficients, &thy gain);
 		thy gain *= my nx;
 		for (long i = 1; i <= thy nCoefficients; i++) thy a[i] = -thy a[i];
-	} catch (MelderError) { rethrow; }
+		return status;
+	} catch (MelderError) { rethrowzero; }
 }
 
-static void Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2)
+static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2)
 {
 	try {
-		long k, m = 1, n = my nx, mmax = thy nCoefficients; int status = 1;
+		long k, m = 1, n = my nx, mmax = thy nCoefficients;
+		int status = 1;
 		double *a = thy a, *x = my z[1];
 
 		autoNUMvector<double> c (1, mmax + 1);
@@ -263,7 +265,7 @@ static void Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, 
 		if (e0 == 0)
 		{
 			m = 0; thy gain *= 0.5; /* because e0 is twice the energy */
-			thy nCoefficients = m; return;
+			thy nCoefficients = m; return 0; // warning no signal
 		}
 		double q1 = 1.0 / e0;
 		double q2 = q1 * x[1], q = q1 * x[1] * x[1], w = q1 * x[n] * x[n];
@@ -387,9 +389,8 @@ static void Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, 
 end:
 		thy gain *= 0.5; /* because e0 is twice the energy */
 		thy nCoefficients = m;
-		if (status == 2 || status == 3) Melder_warning ("Frame is ill conditioned.");
-		// return status == 1 || status == 4 || status == 5;
-	} catch (MelderError) { rethrow; }
+		return status == 1 || status == 4 || status == 5;
+	} catch (MelderError) { rethrowzero; }
 }
 
 static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -423,12 +424,22 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 			Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.peek());
 			Sounds_multiply (sframe.peek(), window.peek());
-			try {
-			if (method == LPC_METHOD_AUTO) Sound_into_LPC_Frame_auto (sframe.peek(), lpcframe);
-			else if (method == LPC_METHOD_COVAR) Sound_into_LPC_Frame_covar (sframe.peek(), lpcframe);
-			else if (method == LPC_METHOD_BURG) Sound_into_LPC_Frame_burg (sframe.peek(), lpcframe);
-			else if (method == LPC_METHOD_MARPLE) Sound_into_LPC_Frame_marple (sframe.peek(), lpcframe, tol1, tol2);
-			} catch (MelderError) {frameErrorCount++; }
+			if (method == LPC_METHOD_AUTO)
+			{
+				if (! Sound_into_LPC_Frame_auto (sframe.peek(), lpcframe)) frameErrorCount++;
+			}
+			else if (method == LPC_METHOD_COVAR)
+			{
+				if (! Sound_into_LPC_Frame_covar (sframe.peek(), lpcframe)) frameErrorCount++;
+			}
+			else if (method == LPC_METHOD_BURG)
+			{
+				if (! Sound_into_LPC_Frame_burg (sframe.peek(), lpcframe)) frameErrorCount++;
+			}
+			else if (method == LPC_METHOD_MARPLE)
+			{
+				if (! Sound_into_LPC_Frame_marple (sframe.peek(), lpcframe, tol1, tol2)) frameErrorCount++;
+			}
 			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
 			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) Melder_throw ("Interrupted.");
 		}

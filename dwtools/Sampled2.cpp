@@ -130,15 +130,15 @@ long Sampled2_getWindowExtrema_d (I, double **z, long ixmin, long ixmax, long iy
 	double *minimum, double *maximum)
 {
 	iam (Sampled2);
-	long iy, ix;
+
 	if (ixmin == 0) ixmin = 1;
 	if (ixmax == 0) ixmax = my nx;
 	if (iymin == 0) iymin = 1;
 	if (iymax == 0) iymax = my ny;
 	if (ixmin > ixmax || iymin > iymax) return 0;
 	*minimum = *maximum = z[iymin][ixmin];
-	for (iy = iymin; iy <= iymax; iy ++)
-		for (ix = ixmin; ix <= ixmax; ix ++)
+	for (long iy = iymin; iy <= iymax; iy ++)
+		for (long ix = ixmin; ix <= ixmax; ix ++)
 		{
 			if (z[iy][ix] < *minimum) *minimum = z[iy][ix];
 			if (z[iy][ix] > *maximum) *maximum = z[iy][ix];
@@ -150,15 +150,14 @@ long Sampled2_getWindowExtrema_f (I, float **z, long ixmin, long ixmax, long iym
 	double *minimum, double *maximum)
 {
 	iam (Sampled2);
-	long iy, ix;
 	if (ixmin == 0) ixmin = 1;
 	if (ixmax == 0) ixmax = my nx;
 	if (iymin == 0) iymin = 1;
 	if (iymax == 0) iymax = my ny;
 	if (ixmin > ixmax || iymin > iymax) return 0;
 	*minimum = *maximum = z[iymin] [ixmin];
-	for (iy = iymin; iy <= iymax; iy ++)
-		for (ix = ixmin; ix <= ixmax; ix ++)
+	for (long iy = iymin; iy <= iymax; iy ++)
+		for (long ix = ixmin; ix <= ixmax; ix ++)
 		{
 			if (z[iy][ix] < *minimum) *minimum = z[iy][ix];
 			if (z[iy][ix] > *maximum) *maximum = z[iy][ix];

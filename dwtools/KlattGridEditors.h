@@ -51,7 +51,7 @@ Thing_declare1 (KlattGrid_realTierEditor);
 #define KlattGrid_realTierEditor__methods(Klas) RealTierEditor__methods(Klas)
 Thing_declare2 (KlattGrid_realTierEditor, RealTierEditor);
 
-int KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
+void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
 
 #define KlattGrid_openPhaseTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
 Thing_declare1 (KlattGrid_openPhaseTierEditor);
@@ -115,7 +115,7 @@ Thing_declare1 (KlattGrid_intensityTierEditor);
 #define KlattGrid_intensityTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
 Thing_declare2 (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor);
 
-int KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier);
+void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier);
 
 #define KlattGrid_decibelTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
 Thing_declare1 (KlattGrid_decibelTierEditor);

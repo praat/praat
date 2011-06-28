@@ -1293,7 +1293,7 @@ Correlation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, 
 	} catch (MelderError) { rethrowmzero ("Correlation not created from GaussianMixture & TableOfReal."); }
 }
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, wchar_t *vector)
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const wchar_t *vector)
 {
 	try {
 		autoNUMvector<double> v (1, my dimension);

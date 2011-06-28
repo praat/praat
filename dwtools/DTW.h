@@ -98,8 +98,8 @@ double DTW_getPathY (DTW me, double tx);
 /*
 	Get the time Y-time that corresponds to time t (along X).
 */
-double DTW_getYTime (DTW me, double tx);
-double DTW_getXTime (DTW me, double ty);
+double DTW_getYTimeFromXTime (DTW me, double tx);
+double DTW_getXTimeFromYTime (DTW me, double ty);
 
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
@@ -120,8 +120,9 @@ void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, d
 void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
 	double ymin, double ymax, double tx, int garnish);
 	
-Polygon DTW_to_Polygon_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end);
-Polygon DTW_to_Polygon_slopes (DTW me, long nsteps_xory, long nsteps_xandy);
+Polygon DTW_to_Polygon_globalConstraints (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope);
+Polygon DTW_to_Polygon_band (DTW me, double sakoeChibaBand, int sakoeChibaBand_includes_end);
+Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_xandy);
 	
 Matrix DTW_distancesToMatrix (DTW me);
 
@@ -133,6 +134,8 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
 
 DurationTier DTW_to_DurationTier (DTW me);
+
+void DTW_and_Matrix_replace (DTW me, Matrix thee);
 
 #ifdef __cplusplus
 	}

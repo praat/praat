@@ -650,7 +650,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 		 * If a solution has already been suggested, or the "error" was actually a conscious user action, do not add anything more.
 		 */
 		if (! wcsstr (Melder_getError (), L"Please ") && ! wcsstr (Melder_getError (), L"You could ") &&
-			! wcsstr (Melder_getError (), L"You interrupted "))
+			! wcsstr (Melder_getError (), L"You interrupted ") && ! wcsstr (Melder_getError (), L"Interrupted!"))
 		{
 			/*
 			 * Otherwise, show a generic message.

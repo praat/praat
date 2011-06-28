@@ -23,9 +23,11 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110619)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110628)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.28# (28 July 2011)")
+LIST_ITEM (L"\\bu Corrected some Polygon bugs.")
 NORMAL (L"##5.2.27# (19 June 2011)")
 LIST_ITEM (L"\\bu @Polygon: ##Draw (closed)...#.")
 LIST_ITEM (L"\\bu @@PointProcess: To Sound (phonation)...@: "

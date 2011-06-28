@@ -167,7 +167,8 @@ static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const wc
 		{
 			if (xmax == interval -> xmax) // interval already present
 			{
-				TextInterval_setText (interval, label); therror
+				TextInterval_setText (interval, label);
+				return 1;
 			}
 			// split interval
 			interval -> xmin = xmax;
@@ -261,7 +262,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
 {
 	try {
-	int at_end = 0, at_start = 1;
+	int i, at_end = 0, at_start = 1;
 
 		autoTextGrid me = (TextGrid) Data_copy (grid1);
 		autoTextGrid thee = (TextGrid) Data_copy (grid2);

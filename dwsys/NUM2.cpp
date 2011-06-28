@@ -2499,7 +2499,7 @@ for (i=1; i<=n+n+n; i++) work[i]=0;
 int NUMburg (double x[], long n, double a[], int m, double *xms)
 {
 	try {
-		for (long j = 1; j <= m; j++) a[j] = 0; 
+		for (long j = 1; j <= m; j++) a[j] = 0;
 		
 		autoNUMvector<double> b1 (1, n);
 		autoNUMvector<double> b2 (1, n);
@@ -2514,7 +2514,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms)
 		}
 
 		*xms = p / n;
-		if (*xms <= 0) Melder_throw ("Empty signal.");
+		if (*xms <= 0) return 0; // warning empty
 
 		// (9)
 
@@ -2536,7 +2536,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms)
 				denum += b1[j] * b1[j] + b2[j] * b2[j];
 			}
 
-			if (denum <= 0) return 0; // we're done
+			if (denum <= 0) return 0; // warning ill-conditioned
 
 			a[i] = 2.0 * num / denum;
 

@@ -103,7 +103,7 @@ TableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, thou, int criterion);
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, wchar_t *vector);
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const wchar_t *vector);
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
 
 Correlation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, thou);

@@ -27,6 +27,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2011/03/01 multiple update rules
  * pb 2011/03/23 C++
+ * pb 2011/06/28 C++
  */
 
 #include "OTMultiEditor.h"
@@ -273,14 +274,16 @@ class_methods (OTMultiEditor, HyperPage) {
 }
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar) {
-	OTMultiEditor me = Thing_new (OTMultiEditor); cherror
-	my data = grammar;
-	my form1 = Melder_wcsdup_e (L""); cherror
-	my form2 = Melder_wcsdup_e (L""); cherror
-	HyperPage_init (OTMultiEditor_as_parent (me), parent, title, grammar); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoOTMultiEditor me = Thing_new (OTMultiEditor);
+		my data = grammar;
+		my form1 = Melder_wcsdup (L"");
+		my form2 = Melder_wcsdup (L"");
+		HyperPage_init (OTMultiEditor_as_parent (me.peek()), parent, title, grammar); therror
+		return me.transfer();
+	} catch (MelderError) {
+		rethrowmzero ("OTMulti window not created.");
+	}
 }
 
-/* End of file OTGrammarEditor.cpp */
+/* End of file OTMultiEditor.cpp */

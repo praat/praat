@@ -1,6 +1,6 @@
-/* Spectrum_extensions.c
+/* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 	double cosf = cos (freq_rad), sinf = sin (freq_rad);
 	double a = 2 * cosf, b, u1 = 0, u2 = u1, w1 = u1, w2 = u1;
 	double *x = tbs -> x;
-	long j, nx = tbs -> nx;
+	long nx = tbs -> nx;
 	
-	for (j = 1; j <= nx; j++)
+	for (long j = 1; j <= nx; j++)
 	{
 		double xj = x[j];
 		double u0 =           xj + a * u1 - u2;
@@ -189,166 +189,137 @@ p40:
 
 Matrix Spectrum_unwrap (Spectrum me)
 {
-	Sound x = NULL, nx = NULL;
-	Spectrum snx = NULL;
-	Matrix thee = NULL;
-	struct tribolet_struct tbs;
-	double pdvt, phase = 0, ppdvt, pphase, ppv;
-	long i, nfft = 2, iphase;
-	int remove_linear_part = 1;
+	try {
+		struct tribolet_struct tbs;
+		int remove_linear_part = 1;
 
-	while (nfft < my nx - 1) nfft *= 2;
-	nfft *= 2;
+		long nfft = 2;
+		while (nfft < my nx - 1) nfft *= 2;
+		nfft *= 2;
 
-	if (nfft / 2 != my nx - 1) return Melder_errorp1 (L"Spectrum_unwrapPhases: "
-		" dimension of Spectrum is not (power of 2 - 1).");
-
-	if ((x = Spectrum_to_Sound (me)) == NULL) return NULL;
-			
-	if ((nx = Data_copy (x)) == NULL) goto end;
-	
-	for (i = 1; i <= x -> nx; i++)
-	{
-		nx -> z[1][i] *= (i - 1);
-	}
-	
-	if ((snx = Sound_to_Spectrum (nx, TRUE)) == NULL) goto end;
-	
-	if ((thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 
-			1, 2, 2, 1, 1)) == NULL) goto end;
-	
-	/*
-		Common variables.
-	*/
-	
-	tbs.thlinc = THLINC;
-	tbs.thlcon = THLCON;
-	tbs.x = x -> z[1];
-	tbs.nx = x -> nx;
-	tbs.l =  (pow (2, EXP2) + 0.1);
-	tbs.ddf = NUM2pi / ((tbs.l) * nfft);
-	tbs.reverse_sign = my z[1][1] < 0;
-	tbs.count = 0;
-	
-	/*
-		Reuse snx : put phase derivative (d/df) in imaginary part.
-	*/
-	
-	tbs.dvtmn2 = 0;
-	for (i = 1; i <= my nx; i ++)
-	{
-		double xr = my z[1][i], xi = my z[2][i];
-		double nxr = snx -> z[1][i], nxi = snx -> z[2][i];
-		double xmsq = xr * xr + xi * xi;
-		pdvt = PHADVT (xr, xi, nxr, nxi, xmsq);
-		thy z[1][i] = xmsq;
-		snx -> z[2][i] = pdvt;
-		tbs.dvtmn2 += pdvt;
-	}
-	
-	tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx])
-		/ (my nx - 1);
+		if (nfft / 2 != my nx - 1) Melder_throw ("Dimension of Spectrum is not (power of 2 - 1).");
 		
-	Melder_progress1 (0.0, L"Phase unwrapping");
+		autoSound x = Spectrum_to_Sound (me);
+		autoSound nx = (Sound) Data_copy (x.peek());
 	
-	pphase = 0;
-	ppdvt = snx -> z[2][1];
-	thy z[2][1] = ppv = PPVPHA (my z[1][1], my z[2][1], tbs.reverse_sign);
-	for (i = 2; i <= my nx; i ++)
-	{
-		double pfreq = NUM2pi * (i - 1) / nfft;
-		pdvt = snx -> z[2][i];
-		ppv = PPVPHA (my z[1][i], my z[2][i], tbs.reverse_sign);
-		phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
-		ppdvt = pdvt;
-		thy z[2][i] = pphase = phase;
-		if ((i % 10) == 1 && ! Melder_progress4 ((double)i / my nx, Melder_integer (i),
-			L" unwrapped phases from ", Melder_integer (my nx), L".")) goto end;
-	}
-
-	iphase = (phase / NUMpi + 0.1);
-		
-	if (remove_linear_part)
-	{
-		phase /= my nx - 1;
-		for (i = 2; i <= my nx; i ++)
+		for (long i = 1; i <= x -> nx; i++)
 		{
-			thy z[2][i] -= phase * (i - 1);
+			nx -> z[1][i] *= (i - 1);
 		}
-	}
-	Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
-	Melder_information2 (L" iphase = ", Melder_integer (iphase));
-end:
+		autoSpectrum snx = Sound_to_Spectrum (nx.peek(), 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
+	
+		// Common variables.
+	
+		tbs.thlinc = THLINC;
+		tbs.thlcon = THLCON;
+		tbs.x = x -> z[1];
+		tbs.nx = x -> nx;
+		tbs.l =  (pow (2, EXP2) + 0.1);
+		tbs.ddf = NUM2pi / ((tbs.l) * nfft);
+		tbs.reverse_sign = my z[1][1] < 0;
+		tbs.count = 0;
+	
+		// Reuse snx : put phase derivative (d/df) in imaginary part.
+	
+		tbs.dvtmn2 = 0;
+		for (long i = 1; i <= my nx; i ++)
+		{
+			double xr = my z[1][i], xi = my z[2][i];
+			double nxr = snx -> z[1][i], nxi = snx -> z[2][i];
+			double xmsq = xr * xr + xi * xi;
+			double pdvt = PHADVT (xr, xi, nxr, nxi, xmsq);
+			thy z[1][i] = xmsq;
+			snx -> z[2][i] = pdvt;
+			tbs.dvtmn2 += pdvt;
+		}
+	
+		tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx]) / (my nx - 1);
+		
+		autoMelderProgress progress (L"Phase unwrapping");
+	
+		double pphase = 0, phase = 0;
+		double ppdvt = snx -> z[2][1];
+		thy z[2][1] = PPVPHA (my z[1][1], my z[2][1], tbs.reverse_sign);
+		for (long i = 2; i <= my nx; i ++)
+		{
+			double pfreq = NUM2pi * (i - 1) / nfft;
+			double pdvt = snx -> z[2][i];
+			double ppv = PPVPHA (my z[1][i], my z[2][i], tbs.reverse_sign);
+			phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
+			ppdvt = pdvt;
+			thy z[2][i] = pphase = phase;
+			Melder_progress4 ((double)i / my nx, Melder_integer (i),
+			L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
+		}
 
-	Melder_progress1 (1.0, NULL);
-	forget (x); forget (nx); forget (snx);
-	if (Melder_hasError ()) forget (thee);
-	return thee;
+		long iphase = (phase / NUMpi + 0.1);
+		
+		if (remove_linear_part)
+		{
+			phase /= my nx - 1;
+			for (long i = 2; i <= my nx; i ++)
+			{
+				thy z[2][i] -= phase * (i - 1);
+			}
+		}
+		Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
+		Melder_information2 (L" iphase = ", Melder_integer (iphase));
+		return thee.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": not unwrapped."); }
 }
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 	double phase_min, double phase_max, int unwrap, int garnish)
 {
-	Matrix thee; long i;
-	int reverse_sign = my z[1][1] < 0;
+	try {
+		autoMatrix thee = 0;
+		int reverse_sign = my z[1][1] < 0;
 
-	if (unwrap)
-	{
-		thee = Spectrum_unwrap (me);
-		if (thee == NULL)
+		if (unwrap)
 		{
-		    Melder_warning1 (L"Spectrum_drawPhases: Spectrum has not been unwrapped.");
-		    return;
+			thee.reset(Spectrum_unwrap (me));
 		}
-	}
-	else
-	{
-		if ((thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-			1, 2, 2, 1, 1)) == NULL) return;
-		for (i = 1; i <= my nx; i ++)
+		else
 		{
-			thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
+			thee.reset(Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
+			for (long i = 1; i <= my nx; i ++)
+			{
+				thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
+			}
 		}
-	}
 	
-	Matrix_drawRows (thee, g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
-	if (garnish)
-	{
+		Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
+		if (garnish)
+		{
 	
-	}	
-
-	forget (thee);
+		}	
+	} catch (MelderError) { rethrow; }
 }
 
 Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
 {
-	Spectrum him;
-	long i;
-
-	if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
-		my dx != thy dx) return Melder_errorp1 (L"Dimensions of both spectra do not conform.");
-		
-	him = Data_copy (me);
-	if (him == NULL) return NULL;
+	try {
+		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
+			my dx != thy dx) Melder_throw ("Dimensions of both spectra do not conform.");
+		autoSpectrum him = (Spectrum) Data_copy (me);
 	
-	for (i = 1; i <= his nx; i++)
-	{
-		his z[1][i] = my z[1][i] * thy z[1][i] - my z[2][i] * thy z[2][i];
-		his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i]; 
-	}
-	
-	return him;
+		for (long i = 1; i <= his nx; i++)
+		{
+			his z[1][i] = my z[1][i] * thy z[1][i] - my z[2][i] * thy z[2][i];
+			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i]; 
+		}
+		return him.transfer();
+	} catch (MelderError) { rethrowmzero (me, ": not multiplied."); }
 }
 
 void Spectrum_conjugate (Spectrum me)
 {
-	long i;
-	
-	for (i = 1; i <= my nx; i++)
+	for (long i = 1; i <= my nx; i++)
 	{
 		my z[2][i] = - my z[2][i];
 	}
 }
 
 
-/* End of file Spectrum_extensions.c */
+/* End of file Spectrum_extensions.cpp */

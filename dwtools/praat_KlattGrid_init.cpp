@@ -1,6 +1,6 @@
 /* praat_KlattGrid_init.c
  *
- * Copyright (C) 2009 David Weenink
+ * Copyright (C) 2009-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,13 @@
 #include "KlattGridEditors.h"
 #include "KlattTable.h"
 
+#undef iam
+#define iam iam_LOOP
+
 
 /******************* KlattGrid  *********************************/
 
-static wchar_t *formant_names[] = { L"", L"oral ", L"nasal ", L"frication ", L"tracheal ", L"nasal anti", L"tracheal anti", L"delta "};
+static const wchar_t *formant_names[] = { L"", L"oral ", L"nasal ", L"frication ", L"tracheal ", L"nasal anti", L"tracheal anti", L"delta "};
 
 static void KlattGrid_4formants_addCommonField (void *dia)
 {
@@ -167,7 +170,7 @@ static void KlattGrid_PlayOptions_getCommonFields (void *dia, int sound, KlattGr
 }
 
 DIRECT (KlattGrid_createExample)
-	if (! praat_new1 (KlattGrid_createExample(), L"example")) return 0;
+	praat_new (KlattGrid_createExample(), L"example");
 END
 
 FORM (KlattGrid_create, L"Create KlattGrid", L"Create KlattGrid...")
@@ -198,23 +201,21 @@ DO
 		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
 		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
 		L"The number of (..) formants cannot be negative!")
-	if (! praat_new1 (KlattGrid_create (tmin, tmax, numberOfOralFormants,
+	praat_new (KlattGrid_create (tmin, tmax, numberOfOralFormants,
 		numberOfNasalFormants, numberOfNasalAntiFormants,
 		numberOfTrachealFormants, numberOfTrachealAntiFormants,
 		numberOfFricationFormants, numberOfDeltaFormants),
-		GET_STRING (L"Name"))) return 0;
+		GET_STRING (L"Name"));
 END
 
 
 #define KlattGrid_INSTALL_TIER_EDITOR(Name,name) \
 DIRECT (KlattGrid_edit##Name##Tier) \
-	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); } \
-	WHERE (SELECTED && CLASS == classKlattGrid) \
-	{\
-		const wchar_t *id_and_name = Melder_wcscat2 (Melder_integer (ID), L". " #name  " tier"); \
-		if (! praat_installEditor (KlattGrid_##name##TierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, \
-			OBJECT), IOBJECT)) return 0; \
-		Melder_free (id_and_name); \
+	if (theCurrentPraatApplication -> batch) { Melder_throw ("Cannot edit a KlattGrid from batch."); } \
+	LOOP {\
+		iam (KlattGrid); \
+		auto##KlattGrid_##name##TierEditor editor = KlattGrid_##name##TierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me); \
+		praat_installEditor (editor.transfer(), IOBJECT); therror \
 	}\
 END
 
@@ -237,11 +238,12 @@ KlattGrid_INSTALL_TIER_EDITOR (FricationAmplitude, fricationAmplitude)
 
 #define KlattGRID_EDIT_FORMANTGRID(Name,formantType) \
 DIRECT (KlattGrid_edit##Name##FormantGrid) \
-	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); } \
-	WHERE (SELECTED && CLASS == classKlattGrid) \
-	{ \
+	if (theCurrentPraatApplication -> batch) { Melder_throw ("Cannot edit a KlattGrid from batch."); } \
+	LOOP {\
+		iam (KlattGrid); \
 		const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L"formant grid"); \
-		if (! praat_installEditor (KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, OBJECT, formantType), IOBJECT)) return 0; \
+		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, formantType); \
+		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
 END
@@ -262,15 +264,15 @@ FORM (KlattGrid_edit##Name##FormantAmplitudeTier, L"KlattGrid: View & Edit " #na
 	OK \
 DO \
 	long formantNumber = GET_INTEGER (L"Formant number"); \
-	if (theCurrentPraatApplication -> batch) { return Melder_error1 (L"Cannot edit a KlattGrid from batch."); } \
-	WHERE (SELECTED && CLASS == classKlattGrid) \
-	{ \
-		KlattGrid kg = OBJECT; \
-		Ordered *amp = KlattGrid_getAddressOfAmplitudes (kg, formantType); \
-		if (amp == NULL) return Melder_error1 (L"Unknown formant type"); \
-		if (formantNumber > (*amp) -> size) return Melder_error1 (L"Formant number does not exist."); \
+	if (theCurrentPraatApplication -> batch) { Melder_throw ("Cannot edit a KlattGrid from batch."); } \
+	LOOP { \
+		iam (KlattGrid); \
+		Ordered *amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
+		if (amp == NULL) Melder_throw ("Unknown formant type"); \
+		if (formantNumber > (*amp) -> size) Melder_throw ("Formant number does not exist."); \
 		const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L"formant amplitude tier"); \
-		if (! praat_installEditor (KlattGrid_decibelTierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, kg, (*amp)->item[formantNumber]), IOBJECT)) return 0; \
+		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
+		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
 END
@@ -287,7 +289,9 @@ FORM(KlattGrid_get##Name##AtTime, L"KlattGrid: Get " #name " at time", 0) \
 	REAL (L"Time", L"0.5") \
 	OK \
 DO \
-	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, GET_REAL (L"Time")), unit); \
+	LOOP { iam (KlattGrid); \
+	Melder_informationReal (KlattGrid_get##Name##AtTime (me, GET_REAL (L"Time")), unit); \
+	}\
 END \
 FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
 	REAL (L"Time (s)", L"0.5") \
@@ -296,9 +300,9 @@ FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
 DO \
 	double value = GET_REAL (L"Value"); \
 	REQUIRE (require, requiremessage) \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_add##Name##Point (OBJECT, GET_REAL (L"Time"), value)) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_add##Name##Point (me, GET_REAL (L"Time"), value); \
+		praat_dataChanged (me); \
 	} \
 END \
 FORM (KlattGrid_remove##Name##Points, L"Remove " #name " points", 0) \
@@ -306,19 +310,21 @@ FORM (KlattGrid_remove##Name##Points, L"Remove " #name " points", 0) \
 	REAL (L"To time (s)", L"0.7") \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		KlattGrid_remove##Name##Points (OBJECT, GET_REAL (L"From time"), GET_REAL (L"To time")); \
-		praat_dataChanged (OBJECT);\
+	LOOP { iam (KlattGrid); \
+		KlattGrid_remove##Name##Points (me, GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (me);\
 	} \
 END \
 DIRECT (KlattGrid_extract##Name##Tier) \
-	WHERE (SELECTED) { \
-		if (! praat_new1 (KlattGrid_extract##Name##Tier (OBJECT), newname)) return 0; \
+	LOOP { iam (KlattGrid); \
+		praat_new (KlattGrid_extract##Name##Tier (me), newname); \
 	} \
 END \
 DIRECT (KlattGrid_replace##Name##Tier) \
-	if (! KlattGrid_replace##Name##Tier (ONLY(classKlattGrid), ONLY(class##tiertype))) return 0; \
-	praat_dataChanged (OBJECT);\
+	KlattGrid me = FIRST(KlattGrid); \
+	tiertype thee = FIRST(tiertype); \
+	KlattGrid_replace##Name##Tier (me, thee); \
+	praat_dataChanged (me);\
 END
 
 // 55 DO_KlattGrid... functions
@@ -359,9 +365,9 @@ FORM (KlattGrid_formula##Name##Formant##ForBs, L"KlattGrid: Formula (" #namef "o
 	TEXTFIELD (L"formula", textfield) \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_formula_##forbs (OBJECT, formantType, GET_STRING (L"formula"), interpreter)) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_formula_##forbs (me, formantType, GET_STRING (L"formula"), interpreter); \
+		praat_dataChanged (me); \
 	} \
 END
 
@@ -374,9 +380,9 @@ FORM (KlattGrid_add##Name##Formant##FBA##Point, L"KlattGrid: Add " #namef "orman
 DO \
 	double value = GET_REAL (L"Value"); \
 	REQUIRE (require, requiremessage) \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_add##Form##Point (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_add##Form##Point (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value); \
+		praat_dataChanged (me); \
 	} \
 END
 
@@ -387,9 +393,9 @@ FORM (KlattGrid_remove##Name##Formant##FBA##Points, L"KlattGrid: Remove " #namef
 	REAL (L"To time (s)", L"0.7") \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		KlattGrid_remove##Form##Points (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
-		praat_dataChanged (OBJECT);\
+	LOOP { iam (KlattGrid); \
+		KlattGrid_remove##Form##Points (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (me);\
 	} \
 END
 
@@ -398,9 +404,9 @@ FORM (KlattGrid_add##Name##Formant, L"KlattGrid: Add " #namef "ormant", 0) \
 	INTEGER (L"Position", L"0 (=at end)") \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_addFormant (OBJECT, formantType, GET_INTEGER (L"Position"))) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_addFormant (me, formantType, GET_INTEGER (L"Position")); \
+		praat_dataChanged (me); \
 	} \
 END
 
@@ -409,9 +415,9 @@ FORM (KlattGrid_remove##Name##Formant, L"KlattGrid: Remove " #namef "ormant", 0)
 	INTEGER (L"Position", L"0 (=do nothing)") \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		KlattGrid_removeFormant (OBJECT, formantType, GET_INTEGER (L"Position")); \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_removeFormant (me, formantType, GET_INTEGER (L"Position")); \
+		praat_dataChanged (me); \
 	} \
 END
 
@@ -463,9 +469,9 @@ KlattGrid_FORMULA_ADD_REMOVE_FBA(Frication,frication f,KlattGrid_FRICATION_FORMA
 #undef KlattGrid_FORMULA_FORMANT_FB_VALUE
 
 DIRECT (KlattGrid_extractPointProcess_glottalClosures)
-	WHERE (SELECTED)
-	{
-		if (! praat_new1 (KlattGrid_extractPointProcess_glottalClosures (OBJECT), NAME)) return 0;
+	LOOP {
+		iam (KlattGrid);
+		praat_new (KlattGrid_extractPointProcess_glottalClosures (me), my name);
 	}
 END
 
@@ -476,9 +482,10 @@ FORM (KlattGrid_formula_frequencies, L"KlattGrid: Formula (frequencies)", L"Form
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! KlattGrid_formula_frequencies (OBJECT, formantType, GET_STRING (L"formula"), interpreter)) return 0;
-		praat_dataChanged (OBJECT);
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_formula_frequencies (me, formantType, GET_STRING (L"formula"), interpreter);
+		praat_dataChanged (me);
 	}
 END
 
@@ -489,9 +496,10 @@ FORM (KlattGrid_formula_bandwidths, L"KlattGrid: Formula (bandwidths)", L"Forman
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! KlattGrid_formula_bandwidths (OBJECT, formantType, GET_STRING (L"formula"), interpreter)) return 0;
-		praat_dataChanged (OBJECT);
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_formula_bandwidths (me, formantType, GET_STRING (L"formula"), interpreter);
+		praat_dataChanged (me);
 	}
 END
 
@@ -501,7 +509,9 @@ FORM (KlattGrid_get##Name##Formant##ForB##AtTime, L"KlattGrid: Get " #name " " #
 	REAL (L"Time (s)", L"0.5") \
 	OK \
 DO \
-	Melder_informationReal (KlattGrid_get##FormB##AtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	LOOP { iam (KlattGrid); \
+		Melder_informationReal (KlattGrid_get##FormB##AtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	} \
 END
 
 #define KlattGrid_FORMANT_GET_A_VALUE(Name,name,formantType) \
@@ -510,7 +520,9 @@ FORM (KlattGrid_get##Name##FormantAmplitudeAtTime, L"KlattGrid: Get " #name " fo
 	REAL (L"Time (s)", L"0.5") \
 	OK \
 DO \
-	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)"); \
+	LOOP { iam (KlattGrid); \
+	Melder_informationReal (KlattGrid_getAmplitudeAtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)"); \
+	} \
 END
 
 #define KlattGrid_FORMANT_GET_FB_VALUES(Name,name,formantType) \
@@ -534,9 +546,8 @@ KlattGrid_FORMANT_GET_A_VALUE(Frication,frication,KlattGrid_FRICATION_FORMANTS)
 
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType) \
 DIRECT (KlattGrid_extract##Name##FormantGrid) \
-	WHERE (SELECTED) \
-	{ \
-		if (! praat_new1 (KlattGrid_extractFormantGrid (OBJECT, gridType), formant_names[gridType])) return 0; \
+	LOOP { iam (KlattGrid); \
+		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]); \
 	} \
 END
 
@@ -545,9 +556,8 @@ FORM (KlattGrid_extract##Name##FormantAmplitudeTier, L"KlattGrid: Extract " #nam
 	NATURAL (L"Formant number", L"1") \
 	OK \
 DO \
-	WHERE (SELECTED) \
-	 { \
-		if (! praat_new1 (KlattGrid_extractAmplitudeTier (OBJECT, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType])) return 0; \
+	LOOP { iam (KlattGrid); \
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType]); \
 	} \
 END
 
@@ -568,11 +578,10 @@ KlattGrid_EXTRACT_FORMANT_GRID (Delta, KlattGrid_DELTA_FORMANTS)
 
 #define KlattGrid_REPLACE_FORMANT_GRID(Name,formantType) \
 DIRECT (KlattGrid_replace##Name##FormantGrid) \
-WHERE (SELECTED) \
-{ \
-		if (! KlattGrid_replaceFormantGrid (ONLY(classKlattGrid), formantType, ONLY(classFormantGrid))) return 0; \
-		praat_dataChanged (OBJECT); \
-	} \
+	KlattGrid me = FIRST (KlattGrid); \
+	FormantGrid thee = FIRST (FormantGrid); \
+	KlattGrid_replaceFormantGrid (me, formantType, thee); \
+	praat_dataChanged (me); \
 END
 
 #define KlattGrid_REPLACE_FORMANT_AMPLITUDE(Name,name,formantType) \
@@ -580,11 +589,10 @@ FORM (KlattGrid_replace##Name##FormantAmplitudeTier, L"KlattGrid: Replace " #nam
 	NATURAL (L"Formant number", L"1") \
 	OK \
 DO \
-	WHERE (SELECTED) \
-	{ \
-		if (! KlattGrid_replaceAmplitudeTier (ONLY(classKlattGrid), formantType, GET_INTEGER (L"Formant number"), ONLY(classIntensityTier))) return 0; \
-		praat_dataChanged (OBJECT); \
-	} \
+	KlattGrid me = FIRST (KlattGrid); \
+	IntensityTier thee = FIRST (IntensityTier); \
+	KlattGrid_replaceAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number"), thee); \
+	praat_dataChanged (me); \
 END
 
 KlattGrid_REPLACE_FORMANT_GRID (Oral, KlattGrid_ORAL_FORMANTS)
@@ -610,14 +618,18 @@ FORM (KlattGrid_get##Name##AtTime, L"KlattGrid: Get " #name " at time", 0) \
 	OK \
 DO \
 	int formantType = GET_INTEGER (L"Formant type"); \
-	Melder_informationReal (KlattGrid_get##Name##AtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	LOOP { iam (KlattGrid); \
+		Melder_informationReal (KlattGrid_get##Name##AtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	} \
 END \
 FORM (KlattGrid_getDelta##Name##AtTime, L"KlattGrid: Get delta " #name " at time", 0) \
 	NATURAL (L"Formant number", L"1") \
 	REAL (L"Time (s)", L"0.5") \
 	OK \
 DO \
-	Melder_informationReal (KlattGrid_getDelta##Name##AtTime (ONLY_OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	LOOP { iam (KlattGrid); \
+		Melder_informationReal (KlattGrid_getDelta##Name##AtTime (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (Hz)"); \
+	} \
 END \
 FORM (KlattGrid_add##Name##Point, L"KlattGrid: Add " #name " point", 0) \
 	KlattGrid_6formants_addCommonField (dia); \
@@ -629,9 +641,9 @@ DO \
 	int formantType = GET_INTEGER (L"Formant type"); \
 	double value = GET_REAL (L"Value"); \
 	REQUIRE (require, requiremessage) \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_add##Name##Point (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_add##Name##Point (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value); \
+		praat_dataChanged (me); \
 	} \
 END \
 FORM (KlattGrid_addDelta##Name##Point, L"KlattGrid: Add delta " #name " point", 0) \
@@ -642,9 +654,9 @@ FORM (KlattGrid_addDelta##Name##Point, L"KlattGrid: Add delta " #name " point", 
 DO \
 	double value = GET_REAL (L"Value"); \
 	REQUIRE (require, requiremessage) \
-	WHERE (SELECTED) { \
-		if (! KlattGrid_addDelta##Name##Point (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0; \
-		praat_dataChanged (OBJECT); \
+	LOOP { iam (KlattGrid); \
+		KlattGrid_addDelta##Name##Point (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value); \
+		praat_dataChanged (me); \
 	} \
 END \
 FORM (KlattGrid_remove##Name##Points, L"Remove " #name " points", 0) \
@@ -655,9 +667,9 @@ FORM (KlattGrid_remove##Name##Points, L"Remove " #name " points", 0) \
 	OK \
 DO \
 	int formantType = GET_INTEGER (L"Formant type"); \
-	WHERE (SELECTED) { \
-		KlattGrid_remove##Name##Points (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
-		praat_dataChanged (OBJECT);\
+	LOOP { iam (KlattGrid); \
+		KlattGrid_remove##Name##Points (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (me);\
 	} \
 END \
 FORM (KlattGrid_removeDelta##Name##Points, L"Remove delta " #name " points", 0) \
@@ -666,9 +678,9 @@ FORM (KlattGrid_removeDelta##Name##Points, L"Remove delta " #name " points", 0) 
 	REAL (L"To time (s)", L"0.7") \
 	OK \
 DO \
-	WHERE (SELECTED) { \
-		KlattGrid_removeDelta##Name##Points (OBJECT, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
-		praat_dataChanged (OBJECT);\
+	LOOP { iam (KlattGrid); \
+		KlattGrid_removeDelta##Name##Points (me, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time")); \
+		praat_dataChanged (me);\
 	} \
 END
 
@@ -683,9 +695,10 @@ FORM (KlattGrid_addFormantAndBandwidthTier, L"", 0)
 	OK
 DO
 	long gridType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! KlattGrid_addFormantAndBandwidthTier (OBJECT, gridType, GET_INTEGER (L"Position"))) return 0;
-		praat_dataChanged (OBJECT);
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_addFormantAndBandwidthTier (me, gridType, GET_INTEGER (L"Position"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -694,8 +707,9 @@ FORM (KlattGrid_extractFormantGrid, L"KlattGrid: Extract formant grid", 0)
 	OK
 DO
 	long gridType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! praat_new1 (KlattGrid_extractFormantGrid (OBJECT, gridType), formant_names[gridType])) return 0;
+	LOOP {
+		iam (KlattGrid);
+		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]);
 	}
 END
 
@@ -703,10 +717,10 @@ FORM (KlattGrid_replaceFormantGrid, L"KlattGrid: Replace formant grid", 0)
 	KlattGrid_6formants_addCommonField (dia);
 	OK
 DO
-	WHERE (SELECTED) {
-		if (! KlattGrid_replaceFormantGrid (ONLY(classKlattGrid), GET_INTEGER (L"Formant type"), ONLY(classFormantGrid))) return 0;
-		praat_dataChanged (OBJECT);
-	}
+	KlattGrid me = FIRST (KlattGrid);
+	FormantGrid thee = FIRST (FormantGrid);
+	KlattGrid_replaceFormantGrid (me, GET_INTEGER (L"Formant type"), thee);
+	praat_dataChanged (OBJECT);
 END
 
 FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0) \
@@ -716,7 +730,10 @@ FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0) \
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	Melder_informationReal (KlattGrid_getAmplitudeAtTime (ONLY_OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)");
+	LOOP {
+		iam (KlattGrid);
+		Melder_informationReal (KlattGrid_getAmplitudeAtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)");
+	}
 END
 
 FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", 0)
@@ -728,9 +745,10 @@ FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", 0)
 DO
 	int formantType = GET_INTEGER (L"Formant type");
 	double value = GET_REAL (L"Value");
-	WHERE (SELECTED) {
-		if (! KlattGrid_addAmplitudePoint (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value)) return 0;
-		praat_dataChanged (OBJECT);
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_addAmplitudePoint (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value);
+		praat_dataChanged (me);
 	}
 END
 
@@ -742,9 +760,10 @@ FORM (KlattGrid_removeAmplitudePoints, L"Remove amplitude points", 0) \
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		KlattGrid_removeAmplitudePoints (OBJECT, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (OBJECT);
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_removeAmplitudePoints (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
+		praat_dataChanged (me);
 	}
 END
 
@@ -754,8 +773,9 @@ FORM (KlattGrid_extractAmplitudeTier, L"", 0)
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! praat_new1 (KlattGrid_extractAmplitudeTier (OBJECT, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType])) return 0;
+	LOOP {
+		iam (KlattGrid);
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType]);
 	}
 END
 
@@ -765,31 +785,29 @@ FORM (KlattGrid_replaceAmplitudeTier, L"KlattGrid: Replace amplitude tier", 0)
 	OK
 DO
 	int formantType = GET_INTEGER (L"Formant type");
-	WHERE (SELECTED) {
-		if (! KlattGrid_replaceAmplitudeTier (ONLY(classKlattGrid), formantType, GET_INTEGER (L"Formant number"), ONLY(classIntensityTier))) return 0;
-		praat_dataChanged (OBJECT);
-	}
+	KlattGrid me = FIRST (KlattGrid);
+	IntensityTier thee = FIRST (IntensityTier);
+	KlattGrid_replaceAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number"), thee);
+	praat_dataChanged (me);
 END
 
 FORM (KlattGrid_to_Sound_special, L"KlattGrid: To Sound (special)", L"KlattGrid: To Sound (special)...")
 	KlattGrid_PlayOptions_addCommonFields (dia, 1);
 	OK
 DO
-	WHERE(SELECTED)
-	{
-		KlattGrid thee = OBJECT;
-		KlattGrid_setDefaultPlayOptions (thee);
-		KlattGrid_PlayOptions_getCommonFields (dia, 1, thee);
-		if (! praat_new1 (KlattGrid_to_Sound (thee), NAME)) return 0;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_setDefaultPlayOptions (me);
+		KlattGrid_PlayOptions_getCommonFields (dia, 1, me);
+		praat_new (KlattGrid_to_Sound (me), my name);
 	}
 END
 
 DIRECT (KlattGrid_to_Sound)
-	WHERE(SELECTED)
-	{
-		KlattGrid thee = OBJECT;
-		KlattGrid_setDefaultPlayOptions (thee);
-		if (! praat_new1 (KlattGrid_to_Sound (thee), NAME)) return 0;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_setDefaultPlayOptions (me);
+		praat_new (KlattGrid_to_Sound (me), my name);
 	}
 END
 
@@ -797,12 +815,11 @@ FORM (KlattGrid_playSpecial, L"KlattGrid: Play special", L"KlattGrid: Play speci
 	KlattGrid_PlayOptions_addCommonFields (dia, 0);
 	OK
 DO
-	WHERE(SELECTED)
-	{
-		KlattGrid thee = OBJECT;
-		KlattGrid_setDefaultPlayOptions (thee);
-		KlattGrid_PlayOptions_getCommonFields (dia, 0, thee);
-		if (! KlattGrid_playSpecial (thee)) return 0;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_setDefaultPlayOptions (me);
+		KlattGrid_PlayOptions_getCommonFields (dia, 0, me);
+		KlattGrid_playSpecial (me);
 	}
 END
 
@@ -811,19 +828,21 @@ FORM (KlattGrid_to_Sound_phonation, L"KlattGrid: To Sound (phonation)", L"KlattG
 	KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
 	OK
 DO
-	WHERE(SELECTED)
-	{
-		KlattGrid thee = OBJECT;
-		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
-		thy options -> samplingFrequency = GET_REAL (L"Sampling frequency");
-		if (! praat_new2 (KlattGrid_to_Sound_phonation (thee), NAME, L"_phonation")) return 0;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, me);
+		my options -> samplingFrequency = GET_REAL (L"Sampling frequency");
+		praat_new (KlattGrid_to_Sound_phonation (me), my name, L"_phonation");
 	}
 END
 
 DIRECT (KlattGrid_help) Melder_help (L"KlattGrid"); END
 
 DIRECT (KlattGrid_play)
-	EVERY_CHECK (KlattGrid_play (OBJECT))
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_play (me);
+	}
 END
 
 FORM (KlattGrid_draw, L"KlattGrid: Draw", 0)
@@ -832,7 +851,11 @@ FORM (KlattGrid_draw, L"KlattGrid: Draw", 0)
 	RADIOBUTTON (L"Parallel")
 	OK
 DO
-	EVERY_DRAW (KlattGrid_draw (OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1))
+	autoPraatPicture picture;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_draw (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1);
+	}
 END
 
 FORM (KlattGrid_drawVocalTract, L"KlattGrid: Draw vocal tract", 0)
@@ -842,23 +865,27 @@ FORM (KlattGrid_drawVocalTract, L"KlattGrid: Draw vocal tract", 0)
 	BOOLEAN (L"Include tracheal formants", 1);
 	OK
 DO
-	praat_picture_open ();
-		KlattGrid_drawVocalTract (ONLY_OBJECT, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include tracheal formants"));
-	praat_picture_close (); return 1;
+	autoPraatPicture picture;
+	LOOP {
+		iam (KlattGrid);
+		KlattGrid_drawVocalTract (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include tracheal formants"));
+	}
 END
 
 DIRECT(KlattGrid_drawPhonation)
-	praat_picture_open ();
-	KlattGrid thee = ONLY_OBJECT;
-		PhonationGrid_draw (thy phonation, GRAPHICS);
-	praat_picture_close (); return 1;
+	autoPraatPicture picture;
+	LOOP {
+		iam (KlattGrid);
+		PhonationGrid_draw (my phonation, GRAPHICS);
+	}
 END
 
 DIRECT(KlattGrid_drawFrication)
-	praat_picture_open ();
-	KlattGrid thee = ONLY_OBJECT;
-		FricationGrid_draw (thy frication, GRAPHICS);
-	praat_picture_close (); return 1;
+	autoPraatPicture picture;
+	LOOP {
+		iam (KlattGrid);
+		FricationGrid_draw (my frication, GRAPHICS);
+	}
 END
 
 FORM (KlattGrid_to_oralFormantGrid_openPhases, L"KlattGrid: Extract oral formant grid (open phases)", L"KlattGrid: Extract oral formant grid (open phases)...")
@@ -867,9 +894,9 @@ FORM (KlattGrid_to_oralFormantGrid_openPhases, L"KlattGrid: Extract oral formant
 DO
 	double fadeFraction = GET_REAL (L"Fade fraction");
 	REQUIRE (fadeFraction < 0.5, L"Fade fraction has to be smaller than 0.5.")
-	WHERE (SELECTED)
-	{
-		if (! praat_new1 (KlattGrid_to_oralFormantGrid_openPhases (OBJECT, fadeFraction), L"corrected")) return 0;
+	LOOP {
+		iam (KlattGrid);
+		praat_new (KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction), L"corrected");
 	}
 END
 
@@ -879,14 +906,14 @@ FORM (Sound_KlattGrid_filterByVocalTract, L"Sound & KlattGrid: Filter by vocal t
 	RADIOBUTTON (L"Parallel")
 	OK
 DO
-	Sound s = ONLY (classSound);
-	KlattGrid kg = ONLY (classKlattGrid);
+	Sound me = FIRST (Sound);
+	KlattGrid thee = FIRST (KlattGrid);
 	int filterModel = GET_INTEGER (L"Vocal tract filter model") - 1;
-	if (! praat_new3 (Sound_KlattGrid_filterByVocalTract (s, kg, filterModel), Thing_getName (s), L"_", Thing_getName (kg))) return 0;
+	praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel), my name, L"_", thy name);
 END
 
-void praat_KlattGrid_init (void);
-void praat_KlattGrid_init (void)
+extern "C" void praat_KlattGrid_init (void);
+extern "C" void praat_KlattGrid_init (void)
 {
 
 	Thing_recognizeClassesByName (classKlattGrid, NULL);

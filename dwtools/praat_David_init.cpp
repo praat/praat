@@ -253,8 +253,13 @@ DIRECT (Categories_edit)
 	if (theCurrentPraatApplication -> batch)
 		return Melder_error1 (L"Cannot edit a Categories from batch.");
 	else
-		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
-			FULL_NAME, OBJECT), IOBJECT)) return 0;
+	{
+		LOOP {
+			iam (Categories);
+			if (! praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
+			my name, me), IOBJECT)) therror;
+		}
+	}
 END
 
 DIRECT (Categories_getNumberOfCategories)
@@ -1550,6 +1555,125 @@ DO
 	}
 END
 
+DIRECT (DTW_getStartTimeX)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my xmin), L" s (= start time along x)");
+	}
+END
+
+DIRECT (DTW_getEndTimeX)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my xmax), L" s (= end time along x)");
+	}
+END
+
+DIRECT (DTW_getTotalDurationX)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my xmax - my xmin), L" s (= total duration along x)");
+	}
+END
+
+DIRECT (DTW_getStartTimeY)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my ymin), L" s (= start time along y)");
+	}
+END
+
+DIRECT (DTW_getEndTimeY)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my ymax), L" s (= end time along y)");
+	}
+END
+
+DIRECT (DTW_getTotalDurationY)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my ymax - my ymin), L" s (= total duration along y)");
+	}
+END
+
+DIRECT (DTW_getNumberOfFramesX)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_integer (my nx), L" (= number of frames along x)");
+	}
+END
+
+DIRECT (DTW_getTimeStepX)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my dx), L" s (= time step along x)");
+	}
+END
+
+FORM (DTW_getTimeFromFrameNumberX, L"DTW: Get time from frame number (x)", 0)
+	NATURAL (L"Frame number (x)", L"1")
+	OK
+DO
+	double column = GET_INTEGER (L"Frame number");
+	LOOP {
+		iam (DTW);
+		Melder_information4 (Melder_double (Matrix_columnToX (me, column)), L" s (= y time at x frame ", Melder_integer(column), L")");
+	}
+END
+
+FORM (DTW_getFrameNumberFromTimeX, L"DTW: Get frame number from time (x)", 0)
+	REAL (L"Time along x (s)", L"0.1")
+	OK
+DO
+	double time = GET_REAL (L"Time along x");
+	LOOP {
+		iam (DTW);
+		if (time < my xmin || time > my xmax) Melder_throw (me, "Time outside x domain.");
+		long iframe = floor (Matrix_xToColumn (me, time) + 0.5);
+		Melder_information4 (Melder_integer (iframe), L" (= x frame at y time ", Melder_double (time), L")");
+	}
+END
+
+DIRECT (DTW_getNumberOfFramesY)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_integer (my ny), L" (= number of frames along y)");
+	}
+END
+
+DIRECT (DTW_getTimeStepY)
+	LOOP {
+		iam (DTW);
+		Melder_information2 (Melder_double (my dy), L" s (= time step along y)");
+	}
+END
+
+FORM (DTW_getTimeFromFrameNumberY, L"DTW: Get time from frame number (y)", 0)
+	NATURAL (L"Frame number (y)", L"1")
+	OK
+DO
+	double row = GET_INTEGER (L"Frame number");
+	LOOP {
+		iam (DTW);
+		Melder_information4 (Melder_double (Matrix_rowToY (me, row)), L" s (= x time at y frame ", Melder_integer(row), L")");
+	}
+END
+
+FORM (DTW_getFrameNumberFromTimeY, L"DTW: Get frame number from time (y)", 0)
+	REAL (L"Time along y (s)", L"0.1")
+	OK
+DO
+	double time = GET_REAL (L"Time along y");
+	LOOP {
+		iam (DTW);
+		if (time < my ymin || time > my ymax) Melder_throw (me, "Time outside y domain.");
+		long iframe = floor (Matrix_yToRow (me, time) + 0.5);
+		Melder_information4 (Melder_integer (iframe), L" (= y frame at x time ", Melder_double (time), L")");
+	}
+END
+
+
 FORM (DTW_getPathY, L"DTW: Get time along path", L"DTW: Get time along path...")
 	REAL (L"Time (s)", L"0.0")
 	OK
@@ -1560,23 +1684,25 @@ DO
 	}
 END
 
-FORM (DTW_getYTime, L"DTW: Get y time", L"DTW: Get y time...")
+FORM (DTW_getYTimeFromXTime, L"DTW: Get y time from x time", L"DTW: Get y time from x time...")
 	REAL (L"Time at x (s)", L"0.0")
 	OK
 DO
+	double time = GET_REAL (L"Time at x");
 	LOOP {
 		iam (DTW);
-		Melder_information1 (Melder_double (DTW_getYTime (me, GET_REAL (L"Time at x"))));
+		Melder_information4 (Melder_double (DTW_getYTimeFromXTime (me, time)), L" s (= y time at z time ", Melder_double (time), L")");
 	}
 END
 
-FORM (DTW_getXTime, L"DTW: Get x time", L"DTW: Get x time...")
+FORM (DTW_getXTimeFromYTime, L"DTW: Get x time from y time", L"DTW: Get x time from y time...")
 	REAL (L"Time at y (s)", L"0.0")
 	OK
 DO
+	double time = GET_REAL (L"Time at y");
 	LOOP {
 		iam (DTW);
-		Melder_information1 (Melder_double (DTW_getXTime (me, GET_REAL (L"Time at y"))));
+		Melder_information4 (Melder_double (DTW_getXTimeFromYTime (me, time)), L" s (= x time at y time ", Melder_double (time), L")");
 	}
 END
 
@@ -1593,7 +1719,7 @@ DO
 	LOOP {
 		iam (DTW);
 		Melder_information4 (Melder_integer (DTW_getMaximumConsecutiveSteps (me, direction[d])),
-		L" (=maximum number of consecutive steps in ", string[d], L" direction");
+		L" (= maximum number of consecutive steps in ", string[d], L" direction)");
 	}
 END
 
@@ -1601,6 +1727,89 @@ DIRECT (DTW_getWeightedDistance)
 	LOOP {
 		iam (DTW);
 		Melder_information1 (Melder_double (my weightedDistance));
+	}
+END
+
+FORM (DTW_getDistanceValue, L"DTW: Get distance value", 0)
+	REAL (L"Time at x (s)", L"0.1")
+	REAL (L"Time at y (s)", L"0.1")
+	OK
+DO
+	double xtime = GET_REAL (L"Time at x");
+	double ytime = GET_REAL (L"Time at y");
+	double dist;
+	LOOP {
+		iam (DTW);
+		if (xtime < my xmin || xtime > my xmax || ytime < my ymin || ytime > my ymax) { dist = NUMundefined; }
+		else
+		{
+			long irow = Matrix_yToNearestRow (me, ytime);
+			long icol = Matrix_xToNearestColumn (me, xtime);
+			dist = my z[irow][icol];
+		}
+		Melder_information6 (Melder_double (dist), L" (= distance at (", Melder_double (xtime), L", ", Melder_double (ytime), L"))");
+	}
+END
+
+DIRECT (DTW_getMinimumDistance)
+	LOOP {
+		iam (DTW);
+		double minimum = NUMundefined, maximum = NUMundefined;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		Melder_informationReal (minimum, 0);
+	}
+END
+
+DIRECT (DTW_getMaximumDistance)
+	LOOP {
+		iam (DTW);
+		double minimum = NUMundefined, maximum = NUMundefined;
+		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+		Melder_informationReal (maximum, 0);
+	}
+END
+
+FORM (DTW_formulaDistances, L"DTW: Formula (distances)", 0)
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	LOOP {
+		iam (DTW);
+		autoMatrix cp = DTW_distancesToMatrix (me);
+		try {
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, 0); therror
+			double minimum, maximum;
+			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
+			if (minimum < 0)
+			{
+				DTW_and_Matrix_replace (me, cp.peek()); // restore original
+				Melder_throw ("Execution of the formula has made some distance(s) negative which is not allowed.");
+			}
+			praat_dataChanged (me);
+		} catch (MelderError) { throw; }
+	}
+END
+
+FORM (DTW_setDistanceValue, L"DTW: Set distance value", 0)
+	REAL (L"Time at x (s)", L"0.1")
+	REAL (L"Time at y (s)", L"0.1")
+	REAL (L"New value", L"0.0")
+	OK
+DO
+	double xtime = GET_REAL (L"Time at x");
+	double ytime = GET_REAL (L"Time at y");
+	double val = GET_REAL (L"New value");
+	if (val < 0) Melder_throw ("Distances cannot be negative.");
+	LOOP {
+		iam (DTW);
+		if (xtime < my xmin || xtime > my xmax) Melder_throw ("Time at x outside domain.");
+		if (ytime < my ymin || ytime > my ymax) Melder_throw ("Time at y outside domain.");
+		long irow = Matrix_yToNearestRow (me, ytime);
+		long icol = Matrix_xToNearestColumn (me, xtime);
+		my z[irow][icol] = GET_REAL (L"New value");
+		praat_dataChanged (me);
 	}
 END
 
@@ -1653,7 +1862,7 @@ DO
 	}
 END
 
-FORM (DTW_to_Polygon_slopes, L"DTW: To Polygon (slopes)", L"DTW: To Polygon (slopes)...")
+FORM (DTW_to_Polygon_localConstraints, L"DTW: To Polygon (local constraints)", L"DTW: To Polygon (slopes)...")
 	LABEL (L"", L"Slope constraints:")
 	LABEL (L"", L"This number of")
 	INTEGER (L"Non-diagonal steps", L"1")
@@ -1663,18 +1872,33 @@ FORM (DTW_to_Polygon_slopes, L"DTW: To Polygon (slopes)", L"DTW: To Polygon (slo
 DO
 	LOOP {
 		iam (DTW);
-		praat_new (DTW_to_Polygon_slopes (me, GET_INTEGER (L"Non-diagonal steps"), GET_INTEGER (L"Diagonal steps")), 0);
+		praat_new (DTW_to_Polygon_localConstraints (me, GET_INTEGER (L"Non-diagonal steps"), GET_INTEGER (L"Diagonal steps")), 0);
+	}
+END
+
+FORM (DTW_to_Polygon_globalConstraints, L"DTW: To Polygon (global constraints)", 0)
+	REAL (L"Sakoe-Chiba band (s)", L"0.1")
+	BOOLEAN (L"Use Itakura slope", 1)
+	POSITIVE (L"Itakura slope", L"2.0 (= like 1 / 2.0)")
+	OK
+DO
+	double scband = GET_REAL (L"Sakoe-Chiba band");
+	if (scband < 0) Melder_throw ("The Sakoe-Chiba band duration cannot be negative.");
+	double slope = GET_REAL (L"Itakura slope");
+	LOOP {
+		iam (DTW);
+		praat_new (DTW_to_Polygon_globalConstraints (me, scband, slope, GET_INTEGER (L"Use Itakura slope")), my name);
 	}
 END
 
 FORM (DTW_to_Polygon_band, L"DTW: To Polygon (band)", L"DTW: To Polygon (band)...")
-	REAL (L"Adjustment window duration (s)", L"0.1")
-	BOOLEAN (L"Adjustment window includes end", 0)
+	REAL (L"Sakoe-Chiba band (s)", L"0.1")
+	BOOLEAN (L"Sakoe-Chiba band includes end", 0)
 	OK
 DO
 	LOOP {
 		iam (DTW);
-		praat_new (DTW_to_Polygon_band (me, GET_REAL (L"Adjustment window duration"), GET_INTEGER (L"Adjustment window includes end")), 0);
+		praat_new (DTW_to_Polygon_band (me, GET_REAL (L"Sakoe-Chiba band"), GET_INTEGER (L"Sakoe-Chiba band includes end")), 0);
 	}
 END
 
@@ -1690,6 +1914,13 @@ DIRECT (DTW_swapAxes)
 		iam (DTW);
 		praat_new (DTW_swapAxes (me), 0);
 	}
+END
+
+DIRECT (DTW_and_Matrix_replace)
+	DTW me = FIRST (DTW);
+	Matrix m = FIRST (Matrix);
+	DTW_and_Matrix_replace (me, m);
+	praat_dataChanged (me);
 END
 
 DIRECT (DTW_and_TextGrid_to_TextGrid)
@@ -3297,7 +3528,7 @@ DO
 	LOOP {
 		iam (Permutation);
 		Permutation_swapNumbers (me, GET_INTEGER (L"First number"), GET_INTEGER (L"Second number"));
-		praat_dataChanged (ONLY_OBJECT);
+		praat_dataChanged (me);
 	}
 END
 
@@ -3314,7 +3545,7 @@ DO
 		iam (Permutation);
 		Permutation_swapOneFromRange (me, GET_INTEGER (L"left Index range"), GET_INTEGER (L"right Index range"),
 		GET_INTEGER (L"Index"), GET_INTEGER (L"Forbid same"));
-		praat_dataChanged (ONLY_OBJECT);
+		praat_dataChanged (me);
 	}
 END
 
@@ -3444,6 +3675,94 @@ DO
 END
 
 /******************* Polygon & Categories *************************************/
+
+FORM (Polygon_createSimple, L"Create simple Polygon", L"Create simple Polygon...")
+	WORD (L"Name", L"p")
+	SENTENCE (L"Vertices as X-Y pairs", L"0.0 0.0  0.0 1.0  1.0 0.0")
+	OK
+DO
+	praat_new (Polygon_createSimple (GET_STRING (L"Vertices as X-Y pairs")), GET_STRING (L"Name"));
+END
+
+FORM (Polygon_createFromRandomVertices, L"", 0)
+	WORD (L"Name", L"p")
+	NATURAL (L"Number of vertices", L"10")
+	REAL (L"left X range", L"0.0")
+	REAL (L"right X range", L"1.0")
+	REAL (L"left Y range", L"0.0")
+	REAL (L"right Y range", L"1.0")
+	OK
+DO
+	praat_new (Polygon_createFromRandomVertices (GET_INTEGER (L"Number of vertices"),
+		GET_REAL (L"left X range"), GET_REAL (L"right X range"),
+		GET_REAL (L"left Y range"),GET_REAL (L"right Y range")), GET_STRING (L"Name"));
+END
+
+DIRECT (Polygon_getNumberOfPoints)
+	LOOP {
+		iam (Polygon);
+		Melder_information1 (Melder_integer (my numberOfPoints));
+	}
+END
+
+FORM (Polygon_getPointX, L"Polygon: Get point (x)", 0)
+	NATURAL (L"Point number", L"1")
+	OK
+DO
+	long point = GET_INTEGER (L"Point number");
+	LOOP {
+		iam (Polygon);
+		if (point > my numberOfPoints) Melder_throw ("Point cannot be larger than ", my numberOfPoints, ".");
+		Melder_information1 (Melder_double (my x[point]));
+	}
+END
+
+FORM (Polygon_getPointY, L"Polygon: Get point (y)", 0)
+	NATURAL (L"Point number", L"1")
+	OK
+DO
+	long point = GET_INTEGER (L"Point number");
+	LOOP {
+		iam (Polygon);
+		if (point > my numberOfPoints) Melder_throw ("Vertex cannot be larger than ", my numberOfPoints, ".");
+		Melder_information1 (Melder_double (my y[point]));
+	}
+END
+
+FORM (Polygon_getLocationOfPoint, L"Get location of point", L"Polygon: Get location of point...")
+	LABEL (L"", L"Point is (I)n, (O)ut, (E)dge or (V)ertex?")
+	REAL (L"X", L"0.0")
+	REAL (L"Y", L"0.0")
+	REAL (L"Precision", L"1.64e-15")
+	OK
+DO
+	double eps = GET_REAL (L"Precision");
+	REQUIRE (eps >= 0, L"The precision can not be negative.")
+	LOOP {
+		iam (Polygon);
+		int loc = Polygon_getLocationOfPoint (me, GET_REAL (L"X"), GET_REAL (L"Y"), eps);
+		Melder_information1 (loc == Polygon_INSIDE ? L"I" : loc == Polygon_OUTSIDE ? L"O" :
+		 loc == Polygon_EDGE ? L"E" : L"V");
+	}
+END
+
+FORM (Polygon_circularPermutation, L"Polygon: Circular permutation", 0)
+	INTEGER (L"Shift", L"1")
+	OK
+DO
+	long shift = GET_INTEGER (L"Shift");
+	LOOP {
+		iam (Polygon);
+		praat_new (Polygon_circularPermutation (me, shift), my name, L"_", Melder_integer (shift));
+	}
+END
+
+DIRECT (Polygon_simplify)
+	LOOP {
+		iam (Polygon);
+		praat_new (Polygon_simplify (me), my name, L"_s");
+	}
+END
 
 FORM (Polygon_translate, L"Polygon: Translate", L"Polygon: Translate...")
 	REAL (L"X", L"0.0")
@@ -4145,14 +4464,12 @@ DO
 END
 
 FORM (Sound_to_Polygon, L"Sound: To Polygon", L"Sound: To Polygon...")
-	OPTIONMENU (L"Channel", 1)
-		OPTION (L"Left")
-		OPTION (L"Right")
+	CHANNEL (L"Channel (number, Left, or Right)", L"1")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0")
 	REAL (L"left Vertical range", L"0.0")
 	REAL (L"right Vertical range", L"0.0")
-	REAL (L"Connect at", L"0.0")
+	REAL (L"Connection y-value", L"0.0")
 	OK
 DO
 	long channel = GET_INTEGER (L"Channel");
@@ -4160,7 +4477,7 @@ DO
 		iam (Sound);
 		if (channel > my ny) channel = 1;
 		praat_new (Sound_to_Polygon (me, channel, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_REAL (L"Connect at")), 0);
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_REAL (L"Connection y-value")), 0);
 	}
 END
 
@@ -4468,7 +4785,7 @@ END
 DIRECT (SSCP_extractCentroid)
 	LOOP {
 		iam (SSCP);
-		praat_new (SSCP_extractCentroid (me), Thing_getName (OBJECT), L"_centroid");
+		praat_new (SSCP_extractCentroid (me), my name, L"_centroid");
 	}
 END
 
@@ -4952,7 +5269,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (TableOfReal);
-		TableOfReal_drawRowsAsHistogram (OBJECT, GRAPHICS,
+		TableOfReal_drawRowsAsHistogram (me, GRAPHICS,
 		GET_STRING (L"Row numbers"),
 		GET_INTEGER (L"left Column range"), GET_INTEGER (L"right Column range"),
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
@@ -5285,7 +5602,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		TextGrid_setTierName (me, GET_INTEGER (L"Tier number"), GET_STRING (L"Name")); therror
-		praat_dataChanged (OBJECT);
+		praat_dataChanged (me);
 	}
 END
 
@@ -5533,7 +5850,8 @@ extern "C" void praat_uvafon_David_init (void)
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Confusion...", L"Create TableOfReal (Weenink 1985)...", 1, DO_Confusion_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Covariance...", L"Create simple Confusion...", 1, DO_Covariance_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+praat_HIDDEN, DO_KlattTable_createExample);
-
+	praat_addMenuCommand (L"Objects", L"New", L"Create simple Polygon...", 0, praat_HIDDEN, DO_Polygon_createSimple);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Polygon (random vertices)...", 0,   praat_HIDDEN, DO_Polygon_createFromRandomVertices);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw 16-bit Little Endian file...", L"Read from special sound file", 1,
 		 DO_Sound_readFromRawFileLE);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Sound from raw 16-bit Big Endian file...", L"Read Sound from raw 16-bit Little Endian file...", 1, DO_Sound_readFromRawFileBE);
@@ -5734,17 +6052,44 @@ extern "C" void praat_uvafon_David_init (void)
 
 
 	praat_addAction1 (classDTW, 0, L"DTW help", 0, 0, DO_DTW_help);
-	praat_addAction1 (classDTW, 0, L"Draw", 0, 0, 0);
-    praat_addAction1 (classDTW, 0, L"Draw path...", 0, 0, DO_DTW_drawPath);
-    praat_addAction1 (classDTW, 0, L"Paint distances...", 0, 0, DO_DTW_paintDistances);
-    praat_addAction1 (classDTW, 0, L"Draw warp (x)...", 0, 0, DO_DTW_drawWarpX);
+	praat_addAction1 (classDTW, 0, DRAW_BUTTON, 0, 0, 0);
+    praat_addAction1 (classDTW, 0, L"Draw path...", 0, 1, DO_DTW_drawPath);
+    praat_addAction1 (classDTW, 0, L"Paint distances...", 0, 1, DO_DTW_paintDistances);
+    praat_addAction1 (classDTW, 0, L"Draw warp (x)...", 0, 1, DO_DTW_drawWarpX);
     praat_addAction1 (classDTW, 0, QUERY_BUTTON, 0, 0, 0);
-    praat_addAction1 (classDTW, 1, L"Get distance (weighted)", 0, 1, DO_DTW_getWeightedDistance);
+	praat_addAction1 (classDTW, 1, L"Query time domains", 0, 1, 0);
+	praat_addAction1 (classDTW, 1, L"Get start time (x)", 0, 2, DO_DTW_getStartTimeX);
+	praat_addAction1 (classDTW, 1, L"Get end time (x)", 0, 2, DO_DTW_getEndTimeX);
+	praat_addAction1 (classDTW, 1, L"Get total duration (x)", 0, 2, DO_DTW_getTotalDurationX);
+	praat_addAction1 (classDTW, 1, L"-- time domain x from y separator --", 0, 2, 0);
+	praat_addAction1 (classDTW, 1, L"Get start time (y)", 0, 2, DO_DTW_getStartTimeY);
+	praat_addAction1 (classDTW, 1, L"Get end time (y)", 0, 2, DO_DTW_getEndTimeY);
+	praat_addAction1 (classDTW, 1, L"Get total duration (y)", 0, 2, DO_DTW_getTotalDurationY);
+	praat_addAction1 (classDTW, 1, L"Query time samplings", 0, 1, 0);
+	praat_addAction1 (classDTW, 1, L"Get number of frames (x)", 0, 2, DO_DTW_getNumberOfFramesX);
+	praat_addAction1 (classDTW, 1, L"Get time step (x)", 0, 2, DO_DTW_getTimeStepX);
+	praat_addAction1 (classDTW, 1, L"Get time from frame number (x)...", 0, 2, DO_DTW_getTimeFromFrameNumberX);
+	praat_addAction1 (classDTW, 1, L"Get frame number from time (x)...", 0, 2, DO_DTW_getFrameNumberFromTimeX);
+	praat_addAction1 (classDTW, 1, L"-- time sampling x from y separator --", 0, 2, 0);
+	praat_addAction1 (classDTW, 1, L"Get number of frames (y)", 0, 2, DO_DTW_getNumberOfFramesY);
+	praat_addAction1 (classDTW, 1, L"Get time step (y)", 0, 2, DO_DTW_getTimeStepY);
+	praat_addAction1 (classDTW, 1, L"Get time from frame number (y)...", 0, 2, DO_DTW_getTimeFromFrameNumberY);
+	praat_addAction1 (classDTW, 1, L"Get frame number from time (y)...", 0, 2, DO_DTW_getFrameNumberFromTimeY);
+
+    praat_addAction1 (classDTW, 1, L"Get y time from x time...", 0, 1, DO_DTW_getYTimeFromXTime);
+    praat_addAction1 (classDTW, 1, L"Get x time from y time...", 0, 1, DO_DTW_getXTimeFromYTime);
+    praat_addAction1 (classDTW, 1, L"Get y time...", 0, praat_HIDDEN + praat_DEPTH_1, DO_DTW_getYTimeFromXTime);
+    praat_addAction1 (classDTW, 1, L"Get x time...", 0, praat_HIDDEN + praat_DEPTH_1, DO_DTW_getXTimeFromYTime);
 	praat_addAction1 (classDTW, 1, L"Get maximum consecutive steps...", 0, 1, DO_DTW_getMaximumConsecutiveSteps);
     praat_addAction1 (classDTW, 1, L"Get time along path...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_DTW_getPathY);
-    praat_addAction1 (classDTW, 1, L"Get y time...", 0, 1, DO_DTW_getYTime);
-    praat_addAction1 (classDTW, 1, L"Get x time...", 0, 1, DO_DTW_getXTime);
-
+	praat_addAction1 (classDTW, 1, L"-- distance queries --", 0, 1, 0);
+	praat_addAction1 (classDTW, 1, L"Get distance value...", 0, 1, DO_DTW_getDistanceValue);
+	praat_addAction1 (classDTW, 1, L"Get minimum distance", 0, 1, DO_DTW_getMinimumDistance);
+	praat_addAction1 (classDTW, 1, L"Get maximum distance", 0, 1, DO_DTW_getMaximumDistance);
+	praat_addAction1 (classDTW, 1, L"Get distance (weighted)", 0, 1, DO_DTW_getWeightedDistance);
+    praat_addAction1 (classDTW, 0, MODIFY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classDTW, 0, L"Formula (distances)...", 0, 1, DO_DTW_formulaDistances);
+    praat_addAction1 (classDTW, 0, L"Set distance value...", 0, 1, DO_DTW_setDistanceValue);
 
     praat_addAction1 (classDTW, 0, L"Analyse", 0, 0, 0);
     praat_addAction1 (classDTW, 0, L"Find path...", 0, 0, DO_DTW_findPath);
@@ -5752,11 +6097,14 @@ extern "C" void praat_uvafon_David_init (void)
 #ifdef INCLUDE_DTW_SLOPES
 	praat_addAction1 (classDTW, 0, L"Find path (slopes)...", 0, 0, DO_DTW_pathFinder_slopes);
 #endif
-	praat_addAction1 (classDTW, 0, L"To Polygon (band)...", 0, 0, DO_DTW_to_Polygon_band);
-	praat_addAction1 (classDTW, 0, L"To Polygon (slopes)...", 0, 0, DO_DTW_to_Polygon_slopes);
+	praat_addAction1 (classDTW, 0, L"To Polygon (global constraints)...", 0, 1, DO_DTW_to_Polygon_globalConstraints);
+	praat_addAction1 (classDTW, 0, L"To Polygon (band)...", 0, praat_HIDDEN, DO_DTW_to_Polygon_band);
+	praat_addAction1 (classDTW, 0, L"To Polygon (local constraints)...", 0, 0, DO_DTW_to_Polygon_localConstraints);
+	praat_addAction1 (classDTW, 0, L"To Polygon (slopes)...", 0, praat_HIDDEN, DO_DTW_to_Polygon_localConstraints);
     praat_addAction1 (classDTW, 0, L"To Matrix (distances)", 0, 0, DO_DTW_distancesToMatrix);
 	praat_addAction1 (classDTW, 0, L"Swap axes", 0, 0, DO_DTW_swapAxes);
 
+	praat_addAction2 (classDTW, 1, classMatrix, 1, L"Replace matrix", 0, 0, DO_DTW_and_Matrix_replace);
 	praat_addAction2 (classDTW, 1, classTextGrid, 1, L"To TextGrid (warp times)", 0, 0, DO_DTW_and_TextGrid_to_TextGrid);
 
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw...", 0, 0, DO_DTW_and_Sounds_draw);
@@ -5911,12 +6259,20 @@ extern "C" void praat_uvafon_David_init (void)
 	praat_addAction1 (classPitch, 2, L"To DTW...", L"To PointProcess", praat_HIDDEN, DO_Pitches_to_DTW);
 
 	praat_addAction1 (classPitchTier, 0, L"To Pitch...", L"To Sound (sine)...", 1, DO_PitchTier_to_Pitch);
-	praat_addAction1 (classPolygon, 0, L"Translate...", L"Modify", 0, DO_Polygon_translate);
-	praat_addAction1 (classPolygon, 0, L"Rotate...", L"Translate...", 0, DO_Polygon_rotate);
-	praat_addAction1 (classPolygon, 0, L"Scale...", L"Rotate...", 0, DO_Polygon_scale);
-	praat_addAction1 (classPolygon, 0, L"Reverse X", L"Scale...", 0, DO_Polygon_reverseX);
-	praat_addAction1 (classPolygon, 0, L"Reverse Y", L"Reverse X", 0, DO_Polygon_reverseY);
-
+	praat_addAction1 (classPolygon, 0, QUERY_BUTTON, L"Paint circles...", 0, 0);
+	praat_addAction1 (classPolygon, 0, L"Get number of points", QUERY_BUTTON, 1, DO_Polygon_getNumberOfPoints);
+	praat_addAction1 (classPolygon, 0, L"Get point (x)...", L"Get number of points", 1, DO_Polygon_getPointX);
+	praat_addAction1 (classPolygon, 0, L"Get point (y)...",  L"Get point (x)...", 1, DO_Polygon_getPointY);
+	praat_addAction1 (classPolygon, 0, L"-- other queries --",  L"Get point (y)...", 1, 0);
+	praat_addAction1 (classPolygon, 0, L"Get location of point...", L"-- other queries --", 1, DO_Polygon_getLocationOfPoint);
+	praat_addAction1 (classPolygon, 0, L"Translate...", MODIFY_BUTTON, 1, DO_Polygon_translate);
+	praat_addAction1 (classPolygon, 0, L"Rotate...", L"Translate...", 1, DO_Polygon_rotate);
+	praat_addAction1 (classPolygon, 0, L"Scale...", L"Rotate...", 1, DO_Polygon_scale);
+	praat_addAction1 (classPolygon, 0, L"Reverse X", L"Scale...", 1, DO_Polygon_reverseX);
+	praat_addAction1 (classPolygon, 0, L"Reverse Y", L"Reverse X", 1, DO_Polygon_reverseY);
+	praat_addAction1 (classPolygon, 0, L"Simplify", 0, praat_HIDDEN, DO_Polygon_simplify);
+	praat_addAction1 (classPolygon, 0, L"Circular permutation...", 0, praat_HIDDEN, DO_Polygon_circularPermutation);
+	
 	praat_addAction2 (classPolygon, 1, classCategories, 1, L"Draw...", 0, 0, DO_Polygon_Categories_draw);
 
 	praat_addAction1 (classPolynomial, 0, L"Polynomial help", 0, 0, DO_Polynomial_help);
@@ -6085,4 +6441,4 @@ extern "C" void praat_uvafon_David_init (void)
 	INCLUDE_LIBRARY (praat_BSS_init)
 }
 
-/* End of file praat_David.c 5472*/
+/* End of file praat_David.c */

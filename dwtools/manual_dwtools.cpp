@@ -1767,7 +1767,7 @@ CODE (L"no = Get number of rows")
 
 MAN_END
 
-MAN_BEGIN (L"DTW", L"djmw", 20090523)
+MAN_BEGIN (L"DTW", L"djmw", 20110603)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type DTW represents the dynamic time warp structure of "
 	"two objects.")
@@ -1776,8 +1776,8 @@ NORMAL (L"Creation:")
 LIST_ITEM (L"\\bu @@CC: To DTW...@ (from 2 objects with cepstral coefficients)")
 LIST_ITEM (L"\\bu ##Spectrogram: To DTW...# (from 2 Spectrogram objects)")
 NORMAL (L"Query:")
-LIST_ITEM (L"\\bu @@DTW: Get y time...@")
-LIST_ITEM (L"\\bu @@DTW: Get x time...@")
+LIST_ITEM (L"\\bu @@DTW: Get y time from x time...@")
+LIST_ITEM (L"\\bu @@DTW: Get x time from y time...@")
 MAN_END
 
 MAN_BEGIN (L"DTW: Draw warp (x)...", L"djmw", 20071204)
@@ -1828,10 +1828,10 @@ NORMAL (L"If the distance matrix has %%nx% cells along the %%x%-direction, %%ny%
 	"sum of the distances along the minimum path is %%S%, the weighted distance is given by %%S%/(%nx+%ny). ")
 MAN_END
 
-MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20090523)
+MAN_BEGIN (L"DTW: Get time along path...", L"djmw", 20110603)
 INTRO (L"Queries the selected @DTW object for the time along the minimal path "
 	"given the time along the \"%x-direction\". This command is deprecated, the new commands for querying are "
-	"@@DTW: Get y time...@ and @@DTW: Get x time...@.")
+	"@@DTW: Get y time from x time...@ and @@DTW: Get x time from y time...@.")
 ENTRY (L"Setting")
 TAG (L"##Time (s)")
 DEFINITION (L"the time along the %x-direction.")
@@ -1851,7 +1851,7 @@ NORMAL (L"2. The local path is vertical. We calculate the %y-time from the line 
 	"topmost horizontal time block.")
 MAN_END
 
-MAN_BEGIN (L"DTW: Get y time...", L"djmw", 20070305)
+MAN_BEGIN (L"DTW: Get y time from x time...", L"djmw", 20110603)
 INTRO (L"Queries the selected @DTW object for the time along the %y-direction "
 	"given the time along the \"%x-direction\". ")
 ENTRY (L"Setting")
@@ -1878,14 +1878,14 @@ NORMAL (L"3. A cell is both part of a path in the %x- and the %y-direction. "
 	"from this intersection point.")
 MAN_END
 
-MAN_BEGIN (L"DTW: Get x time...", L"djmw", 20070305)
+MAN_BEGIN (L"DTW: Get x time from y time...", L"djmw", 20110603)
 INTRO (L"Queries the selected @DTW object for the time along the %x-direction "
 	"given the time along the \"%y-direction\". ")
 ENTRY (L"Setting")
 TAG (L"##Time (s)")
 DEFINITION (L"the time along the %y-direction.")
 ENTRY (L"Behaviour")
-NORMAL (L"The behaviour is like @@DTW: Get y time...@")
+NORMAL (L"The behaviour is like @@DTW: Get y time from x time...@")
 MAN_END
 
 MAN_BEGIN (L"DTW: Swap axes", L"djmw", 20050306)
@@ -1902,14 +1902,14 @@ INTRO (L"A command to convert for a selected @DTW the slope constraints "
 	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
 MAN_END
 
-MAN_BEGIN (L"DTW & TextGrid: To TextGrid (warp times)", L"djmw", 20070306)
+MAN_BEGIN (L"DTW & TextGrid: To TextGrid (warp times)", L"djmw", 20110603)
 INTRO (L"Create a new TextGrid from the selected @DTW and @TextGrid by warping the "
 	"times from the selected TextGrid to the newly created TextGrid.")
 ENTRY (L"Algorithm")
 NORMAL (L"First we check whether the y-domain of the DTW and the domain of the TextGrid are "
 	"equal. If they are, a new TextGrid is created by copying the selected one. "
 	"We then change its domain and make it equal to the x-domain of the DTW. "
-	"Then for each tier we change the domain and @@DTW: Get x time...|calculate new times@ by using the path.")
+	"Then for each tier we change the domain and @@DTW: Get x time from y time...|calculate new times@ by using the path.")
 MAN_END
 
 MAN_BEGIN (L"DTW & Sounds: Draw...", L"djmw", 20071204)
@@ -2465,6 +2465,44 @@ MAN_END
 
 MAN_BEGIN (L"Polygon: Rotate...", L"djmw", 20100418)
 INTRO (L"Rotates the selected @@Polygon@ counterclockwise with respect to the given coordinates.")
+MAN_END
+
+MAN_BEGIN (L"Create simple Polygon...", L"djmw", 20110622)
+INTRO (L"Creates a @@Polygon@ from user  supplied x/y pairs.")
+ENTRY (L"Settings")
+TAG (L"##Name")
+DEFINITION (L"defines the name of the resulting Polygon.")
+TAG (L"##Vertices as X-Y pairs#,")
+DEFINITION (L"defines the x-y values of the vertices of the Polygon. The Polygon will be automatically closed, i.e., the first and the last point will be connected.")
+ENTRY (L"Example")
+NORMAL (L"The command ##Create simple Polygon... p 0.0 0.0  0.0 1.0  1.0 0.0# defines  a Polygon with three points. In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
+SCRIPT (4,4, L"Create simple Polygon... p 0.0 0.0 0.0 1.0 1.0 0.0\n"
+	"Draw circles... 0 1 0 1 3\n"
+	"Draw closed... 0 1 0 1\n"
+	"Remove\n")
+MAN_END
+
+MAN_BEGIN (L"Polygon: Get location of point...", L"djmw", 20110617)
+INTRO (L"Determines whether a given point is on the ##I#nside, the ##O#utside, on an ##E#dge or on a ##V#ertex of the selected Polygon.")
+ENTRY (L"Algorithm")
+NORMAL (L"We determine how often a horizontal line extending from the point crosses the polygon. If this results in an even number the point is outside, else inside. Special care is taken to be able to detect idf a point is on the boundary of the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
+MAN_END
+
+MAN_BEGIN (L"Polygon: Simplify", L"djmw", 20110615)
+INTRO (L"Removes collinear vertices from a @@Polygon@.")
+ENTRY (L"Example")
+SCRIPT (4, 4,
+	L"p1 = Create simple Polygon... p 0.0 0.0 0.0 1.0 0.5 0.5 1.0 0.0 0.5 0 0 -0.5 0 -0.25\n"
+	 "Draw closed... 0 0 0 0\n"
+	 "Red\n"
+	 "Draw circles... 0 0 0 0 3\n"
+	 "p2 = Simplify\n"
+	 "Black\n"
+	 "Paint circles... 0 0 0 0 1.5\n"
+	 "plus p1\n"
+	 "Remove\n"
+)
+NORMAL (L"Given the Polygon with the seven vertices indicated by the red open circles, the Simplify action results in the Polygon with four vertices indicated by the filled black circles.")
 MAN_END
 
 MAN_BEGIN (L"Polygon: Translate...", L"djmw", 20100418)
@@ -3339,9 +3377,9 @@ SCRIPT ( 4, 2,
 	"Remove\n")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Polygon...", L"djmw", 20100408)
-INTRO (L"A command that creates a @@Polygon@ from each selected @@Sound@, where the Polygon's "
-	"(%x,%y) points are defined by the (%time, %amplitude) pairs of the sound. ")
+MAN_BEGIN (L"Sound: To Polygon...", L"djmw", 20110620)
+INTRO (L"A command that creates a @@Polygon@ from a selected @@Sound@, where the Polygon's "
+	" points are defined by the (%time, %amplitude) pairs of the sound. ")
 ENTRY (L"Settings")
 TAG (L"##Channel")
 DEFINITION (L"defines which channel of the sound is used.")
@@ -3349,31 +3387,26 @@ TAG (L"##Time range (s)")
 DEFINITION (L"defines the part of the sound whose (%time, %amplitude) pairs have to be included.")
 TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
-TAG (L"##Connect at")
-DEFINITION (L"defines the amplitude where the start and the end point have to be connected. ")
-ENTRY (L"Details")
-NORMAL (L"The (%x,%y) points in the Polygon are calculated as follows: ")
-NORMAL (L"The first point is at (%tmin,%connectAt), the second point at (%tmin,%sound(%tmin)), "
-	"then the selected sample points of the sound are added as (%time,%value) pairs. "
-	"Next the point (%tmax,%sound(%tmax)) and (%tmax,%connectAt) are added. Finally the Polygon is "
-	"closed by adding the point (%tmin, %closeAt). Here %tmin and %tmax are minimum and maximum value of " "the selected part of the sound, %sound(%tmin) and %sound(%tmax) are the interpolated amplitudes of " "the sound at %tmin and %tmax, respectively, and, %closeAt is the user defined amplitude value of the " "connection point. ")
+TAG (L"##Connection y-value")
+DEFINITION (L"defines the y-value of the first and last point of the Polygon. This gives the opportunity to "
+	" draw a closed Polygon with the horizontal connection line at any position you like. ")
 ENTRY (L"Example")
 NORMAL (L"The following script paints the area under a sound curve in red and the area above in green.")
 CODE (L"s = Create Sound from formula... s Mono 0 1 10000 0.5*sin(2*pi*5*x)")
-CODE (L"\\# Connection point is at amplitude -1: area under the curve.")
-CODE (L"p1 = To Polygon... Average 0 0 -1")
+CODE (L"\\# Connection y-value is at amplitude -1: area under the curve.")
+CODE (L"p1 = To Polygon... 1 0 0 -1 1 -1")
 CODE (L"Paint... {1,0,0} 0 0 -1 1")
 CODE (L"select s")
-CODE (L"\\# Connection point is at amplitude 1: area above the curve.")
-CODE (L"p2 = To Polygon... Average 0 0 1")
+CODE (L"\\# Connection y-value is now at amplitude 1: area above the curve.")
+CODE (L"p2 = To Polygon... 1 0 0 -1 1 1")
 CODE (L"Paint... {0,1,0} 0 0 -1 1")
 SCRIPT (4.5, 2,
 	L"s = Create Sound from formula... s Mono 0 1 10000 0.5*sin(2*pi*5*x)\n"
-	"p1 = To Polygon... Average 0 0 -1\n"
+	"p1 = To Polygon... 1 0 0 -1 1 -1\n"
 	"Paint... {1,0,0} 0 0 -1 1\n"
 	"Remove\n"
 	"select s\n"
-	"p2 = To Polygon... Average 0 0 1\n"
+	"p2 = To Polygon... 1 0 0 -1 1 1\n"
 	"Paint... {0,1,0} 0 0 -1 1\n"
 	"plus s\n"
 	"Remove\n"
@@ -4176,6 +4209,10 @@ NORMAL (L"J.E.F. Friedl (1997): %%Mastering Regular Expressions%. "
 	"O'Reilly & Associates.")
 MAN_END
 
+MAN_BEGIN (L"Greiner & Hormann (1998)", L"djmw", 20110617)
+NORMAL (L"G. Greiner & K. Hormann (1998): \"Efficient clipping of arbitrary polygons.\" %%ACM Transactions on Graphics% #17: 71\\--83.")
+MAN_END
+
 MAN_BEGIN (L"Heath et al. (1986)", L"djmw", 19981007)
 NORMAL (L"M.T. Heath, J.A. Laub, C.C. Paige & R.C. Ward (1986): \"Computing the "
 	"singular value decomposition of a product of two matrices.\" "
@@ -4188,8 +4225,13 @@ NORMAL (L"D.J. Hermes (1988): \"Measurement of pitch by subharmonic "
 MAN_END
 
 MAN_BEGIN (L"Henze & Wagner (1997)", L"djmw", 20090630)
-NORMAL (L"N. Henze & T. Wagner (1997): \"A New Approach to the BHEP Tests for Multivariate Normality.\" "
+NORMAL (L"N. Henze & T. Wagner (1997): \"A new npproach to the BHEP Tests for Multivariate Normality.\" "
 	"%%Journal of Multivariate Analysis% #62: 1\\--23.")
+MAN_END
+
+MAN_BEGIN (L"Hormann & Agathos (2001)", L"djmw", 20110617)
+NORMAL (L"K. Hormann & A. Agathos (2001): \"The point in polygon problem for arbitrary polygons.\" "
+	"%%Computational Geometry% #20: 131\\--144.")
 MAN_END
 
 MAN_BEGIN (L"Irino & Patterson (1997)", L"djmw", 20100517)
@@ -4205,6 +4247,10 @@ MAN_END
 
 MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
 NORMAL (L"D.E. Johnson (1998): %%Applied Multivariate methods%.")
+MAN_END
+
+MAN_BEGIN (L"Kim & Kim (2006)", L"djmw", 20110617)
+NORMAL (L"D.H. Kim & M.-J. Kim (2006): \"An extension of polygon clipping to resolve degenerate cases.\" %%Computer-Aided Design & Applications% #3: 447\\--456.")
 MAN_END
 
 MAN_BEGIN (L"Krishnamoorthy & Yu (2004)", L"djmw", 20090813)

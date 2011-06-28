@@ -788,7 +788,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 			}
 			plasticity *= plasticityDecrement;
 		}
-		*history_out = history;
+		*history_out = history;   // LEAK
 	} catch (MelderError) {
 		rethrowm (me, ": learning from partial pairs not completed.");
 	}

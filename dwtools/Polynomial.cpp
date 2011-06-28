@@ -443,6 +443,7 @@ double FunctionTerms_getXOfMaximum (I, double x1, double x2)
 
 static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, long numberOfPoints, double ymin, double ymax)
 {
+	double  ye;
 	long index = 0;
 	
 	if (numberOfPoints < 2) return;
@@ -481,7 +482,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, l
 			{
 				// Line enters from below: start new segment. Save start values
 
-				xb = x[i-1]; yb = y[i-1]; index = i - 1;
+				double xb = x[i-1]; yb = y[i-1]; index = i - 1;
 				y[i-1] = ymin; x[i-1] = xcros_min;
 			}
 			if (y1 < ymax && y2 > ymax)

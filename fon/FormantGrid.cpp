@@ -158,27 +158,25 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 	}
 }
 
-int FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value) {
+void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
 		if (iformant < 1 || iformant > my formants -> size)
 			Melder_throw ("No such formant number.");
 		RealTier formantTier = (RealTier) my formants -> item [iformant];
 		RealTier_addPoint (formantTier, t, value); therror
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": formant point not added.");
+		rethrowm (me, ": formant point not added.");
 	}
 }
 
-int FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value) {
+void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value) {
 	try {
 		if (iformant < 1 || iformant > my formants -> size)
 			Melder_throw ("No such formant number.");
 		RealTier bandwidthTier = (RealTier) my bandwidths -> item [iformant];
 		RealTier_addPoint (bandwidthTier, t, value); therror
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": bandwidth point not added.");
+		rethrowm (me, ": bandwidth point not added.");
 	}
 }
 
@@ -278,7 +276,7 @@ Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 	}
 }
 
-int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
+void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure)
@@ -289,15 +287,12 @@ int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double sampl
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2);
 		Vector_scale (sound.peek(), 0.99);
 		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playClosure);
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": not played.");
+		rethrowm (me, ": not played.");
 	}
 }
 
-int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter interpreter, thou) {
-	iam (FormantGrid);
-	thouart (FormantGrid);
+void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;
@@ -311,15 +306,12 @@ int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter in
 				((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": bandwidth formula not completed.");
+		rethrowm (me, ": bandwidth formula not completed.");
 	}
 }
 
-int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter interpreter, thou) {
-	iam (FormantGrid);
-	thouart (FormantGrid);
+void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;
@@ -333,9 +325,8 @@ int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter i
 				((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": frequency formula not completed.");
+		rethrowm (me, ": frequency formula not completed.");
 	}
 }
 

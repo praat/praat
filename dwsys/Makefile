@@ -10,7 +10,7 @@ CPPFLAGS = $(CFLAGS)
 all: libdwsys.a
 
 OBJECTS = Collection_extensions.o Command.o \
-	Eigen.o Index.o \
+	DLL.o Eigen.o Index.o \
 	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_d.o NUMsort2.o \
 	Permutation.o Permutation_and_Index.o \

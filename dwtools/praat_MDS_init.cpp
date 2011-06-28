@@ -391,7 +391,7 @@ DO
 	LOOP {
 		iam (Configuration);
 		praat_new (Configuration_varimax (me, GET_INTEGER (L"Normalize rows"), GET_INTEGER (L"Quartimax"),
-			GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance")), 0);
+			GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance")), my name, L"_varimax");
 	}
 END
 

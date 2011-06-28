@@ -30,15 +30,28 @@
 #include "Graphics.h"
 #include "Sound.h"
 
+#define Polygon_INSIDE -1
+#define Polygon_OUTSIDE 0
+#define Polygon_BOUNDARY 1
+#define Polygon_EDGE 3
+#define Polygon_VERTEX 5
+
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
+Polygon Polygon_createSimple (wchar_t *xystring);
+Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
+Polygon Polygon_simplify (Polygon me);
 void Polygon_translate (I, double xt, double yt);
 void Polygon_rotate (I, double alpha, double xc, double yc);
 void Polygon_scale (I, double xs, double ys);
 void Polygon_reverseX (I);
 void Polygon_reverseY (I);
+Polygon Polygon_circularPermutation (Polygon me, long nshift);
+
+// Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
+int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 
 void Polygon_Categories_draw (I, Any categories, Any graphics, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
@@ -76,6 +89,8 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 
 Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax);
 /* Area enclosed by the sounds */
+
+Polygon Polygons_union (Polygon me, Polygon thee);
 
 #ifdef __cplusplus
 	}

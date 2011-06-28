@@ -56,8 +56,8 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t);
 double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t);
 
-int FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value);
-int FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value);
+void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, double value);
+void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, double value);
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax);
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long iformant, double tmin, double tmax);
 
@@ -68,13 +68,13 @@ Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid);
 Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2);
-int FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
+void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samplingFrequency,
 	double tStart, double f0Start, double tMid, double f0Mid, double tEnd, double f0End,
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 
-int FormantGrid_formula_frequencies (I, const wchar_t *expression, Interpreter interpreter, thou);
-int FormantGrid_formula_bandwidths (I, const wchar_t *expression, Interpreter interpreter, thou);
+void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee);
 
 FormantGrid Formant_downto_FormantGrid (Formant me);
 Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);

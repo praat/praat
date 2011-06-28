@@ -79,74 +79,80 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,
 	 double excitationErbProportion, double inhibitionErbProportion)
 {
-	SPINET me = Thing_new (SPINET);
-	double minErb = NUMhertzToErb (minimumFrequency);
-	double maxErb = NUMhertzToErb (maximumFrequency);
-	double dErb = (maxErb - minErb) / nFilters;
-	if (! me || ! Sampled2_init (me, tmin, tmax, nt, dt, t1,
-			minErb - dErb / 2, maxErb + dErb / 2, nFilters, dErb, minErb) ||
-		! (my y = NUMdmatrix (1, nFilters, 1, nt)) ||
-		! (my s = NUMdmatrix (1, nFilters, 1, nt))) { forget (me); return NULL; }
-	my gamma = 4;
-	my excitationErbProportion = excitationErbProportion;
-	my inhibitionErbProportion = inhibitionErbProportion;
-	return me;
+	try {
+		autoSPINET me = Thing_new (SPINET);
+		double minErb = NUMhertzToErb (minimumFrequency);
+		double maxErb = NUMhertzToErb (maximumFrequency);
+		double dErb = (maxErb - minErb) / nFilters;
+		Sampled2_init (me.peek(), tmin, tmax, nt, dt, t1,
+			minErb - dErb / 2, maxErb + dErb / 2, nFilters, dErb, minErb);
+		my y = NUMmatrix<double> (1, nFilters, 1, nt);
+		my s = NUMmatrix<double> (1, nFilters, 1, nt);
+		my gamma = 4;
+		my excitationErbProportion = excitationErbProportion;
+		my inhibitionErbProportion = inhibitionErbProportion;
+		return me.transfer();
+	} catch (MelderError) { rethrowmzero ("SPINET not created."); }
 }
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
 	double fromErb, double toErb, double minimum, double maximum, int enhanced,
 	int garnish)
 {
-	long i, j; double **z = enhanced ? my s : my y;
-	Matrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		my ymin, my ymax, my ny, my dy, my y1);
-	if (! thee) return;
-	for (j=1; j <= my ny; j++) for (i=1; i <= my nx; i++)
-		thy z[j][i] = z[j][i]; /* > 0 ? 10 * log10 (z[i][j] / 2e-5) : 0;*/
-	Matrix_paintCells (thee, g, fromTime, toTime, fromErb, toErb, minimum, maximum);
-	if (garnish)
-	{
-		Graphics_drawInnerBox(g);
-		Graphics_textBottom (g, 1, L"Time (s)");
-		Graphics_marksBottom( g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"Frequency (ERB)");
-		Graphics_marksLeft( g, 2, 1, 1, 0);
-		Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
-			L"Gammatone filterbank output");
-	}
-	forget (thee);
+	try {
+		double **z = enhanced ? my s : my y;
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
+			my ymin, my ymax, my ny, my dy, my y1);
+		for (long j = 1; j <= my ny; j++)
+		{
+			for (long i = 1; i <= my nx; i++) thy z[j][i] = z[j][i];
+		}
+		Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
+		if (garnish)
+		{
+			Graphics_drawInnerBox(g);
+			Graphics_textBottom (g, 1, L"Time (s)");
+			Graphics_marksBottom( g, 2, 1, 1, 0);
+			Graphics_textLeft (g, 1, L"Frequency (ERB)");
+			Graphics_marksLeft( g, 2, 1, 1, 0);
+			Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
+				L"Gammatone filterbank output");
+		}
+	} catch (MelderError) { rethrow; }
 }
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
 	double minimum, double maximum, int enhanced, int garnish)
 {
-	long i, ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
-	double **z = enhanced ? my s : my y; double *spec;
-	if (icol < 1 || icol > my nx) return;
-	if (toErb <= fromErb) { fromErb = my ymin; toErb = my ymax; }
-	if (! Sampled2_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax) ||
-		! (spec = NUMdvector (1, my ny))) return;
+	try {
+		long ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
+		double **z = enhanced ? my s : my y;
+		if (icol < 1 || icol > my nx) return;
+		if (toErb <= fromErb) { fromErb = my ymin; toErb = my ymax; }
+		Sampled2_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax);
+		autoNUMvector<double> spec (1, my ny);
 		
-	for (i=1; i <= my ny; i++) spec[i] = z[i][icol];
-	if (maximum <= minimum) NUMdvector_extrema (spec, ifmin, ifmax, &minimum, &maximum);
-	if (maximum <= minimum) { minimum -= 1; maximum += 1; }
-	for (i=ifmin; i <= ifmax; i++)
-		if (spec[i] > maximum) spec[i] = maximum;
-		else if (spec[i] < minimum) spec[i] = minimum;
-	Graphics_setInner (g);
-	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
-	Graphics_function (g, spec, ifmin, ifmax,
-		Sampled2_rowToY (me, ifmin), Sampled2_rowToY (me, ifmax));
-	Graphics_unsetInner (g);
-	if (garnish)
-	{
-		Graphics_drawInnerBox(g);
-		Graphics_textBottom (g, 1, L"Frequency (ERB)");
-		Graphics_marksBottom( g, 2, 1, 1, 0);
-		Graphics_textLeft (g, 1, L"strength");
-		Graphics_marksLeft( g, 2, 1, 1, 0);
-	}
-	NUMdvector_free (spec, 1);
+		for (long i = 1; i <= my ny; i++) spec[i] = z[i][icol];
+		if (maximum <= minimum) NUMdvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
+		if (maximum <= minimum) { minimum -= 1; maximum += 1; }
+		for (long i = ifmin; i <= ifmax; i++)
+		{
+			if (spec[i] > maximum) spec[i] = maximum;
+			else if (spec[i] < minimum) spec[i] = minimum;
+		}
+		Graphics_setInner (g);
+		Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
+		Graphics_function (g, spec.peek(), ifmin, ifmax, Sampled2_rowToY (me, ifmin), Sampled2_rowToY (me, ifmax));
+		Graphics_unsetInner (g);
+		if (garnish)
+		{
+			Graphics_drawInnerBox(g);
+			Graphics_textBottom (g, 1, L"Frequency (ERB)");
+			Graphics_marksBottom( g, 2, 1, 1, 0);
+			Graphics_textLeft (g, 1, L"strength");
+			Graphics_marksLeft( g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) { rethrow; }
 }
 
-/* End of file SPINET.c */
+/* End of file SPINET.cpp */

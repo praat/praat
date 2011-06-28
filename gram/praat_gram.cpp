@@ -802,9 +802,8 @@ FORM (OTGrammar_Distributions_getFractionCorrect, L"OTGrammar & Distributions: G
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	double result;
-	OTGrammar_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column number"),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications"), & result); therror
+	double result = OTGrammar_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column number"),
+		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications")); therror
 	praat_dataChanged (me);
 	Melder_informationReal (result, NULL);
 END
@@ -876,8 +875,8 @@ DO
 	thouart_ONLY (PairDistribution);
 	double result;
 	try {
-		OTGrammar_PairDistribution_getFractionCorrect (me, thee,
-			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications"), & result); therror
+		result = OTGrammar_PairDistribution_getFractionCorrect (me, thee,
+			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications")); therror
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
@@ -895,8 +894,8 @@ DO
 	thouart_ONLY (PairDistribution);
 	long result;
 	try {
-		OTGrammar_PairDistribution_getMinimumNumberCorrect (me, thee,
-			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications per input"), & result);
+		result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, thee,
+			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications per input"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
