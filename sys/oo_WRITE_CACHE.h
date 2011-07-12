@@ -24,6 +24,8 @@
  * pb 2008/01/19 NUM##storage
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/06/29 removed C version
+ * pb 2011/07/07 void
  */
 
 #include "oo_undef.h"
@@ -41,11 +43,12 @@
 		cacput##storage (my x [i], f);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (my x && ! NUM##t##vector_writeCache_##storage (my x, min, max, f)) return 0;
+	if (my x) \
+		NUM##t##vector_writeCache_##storage (my x, min, max, f);
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (my x && ! NUM##t##matrix_writeCache_##storage (my x, row1, row2, col1, col2, f)) return 0;
-
+	if (my x) \
+		NUM##t##matrix_writeCache_##storage (my x, row1, row2, col1, col2, f);
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	cacput##storage (my x, f, & enum_##Type);
@@ -59,26 +62,24 @@
 		cacput##storage (my x [i], f, & enum_##Type);
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	if (my x && ! NUM##t##vector_writeCache_##storage (my x, min, max, f)) return 0;
-
+	if (my x) \
+		NUM##t##vector_writeCache_##storage (my x, min, max, f);
 
 #define oo_STRINGx(storage,x)  \
 	cacput##storage (my x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-			cacput##storage (my x [i], f);
+		cacput##storage (my x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		cacput##storage (my x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
+	if (max >= min) \
 		for (long i = min; i <= max; i ++) \
-			cacput##storage (my x [i], f); \
-	}
-
+			cacput##storage (my x [i], f);
 
 #define oo_STRUCT(Type,x)  \
 	Type##_writeCache (& my x, f);
@@ -92,47 +93,37 @@
 		Type##_writeCache (& my x [i], f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) { \
+	if (max >= min) \
 		for (long i = min; i <= max; i ++) \
-			Type##_writeCache (& my x [i], f); \
-	}
-
-
+			Type##_writeCache (& my x [i], f);
 
 #define oo_OBJECT(Class,version,x)  \
 	cacputex (my x != NULL, f); \
-	if (my x && ! Data_writeCache (my x, f)) return 0;
+	if (my x) \
+		Data_writeCache (my x, f);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	cacputi4 (my x ? my x -> size : 0, f); \
 	if (my x) { \
 		for (long i = 1; i <= my x -> size; i ++) { \
 			ItemClass data = (ItemClass) my x -> item [i]; \
-			if (! class##ItemClass -> writeCache (data, f)) return 0; \
+			class##ItemClass -> writeCache (data, f); \
 		} \
 	}
 
-
-
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_writeCache (Type me, CACHE *f) {
+	static void Type##_writeCache (Type me, CACHE *f) {
 
 #define oo_END_STRUCT(Type)  \
-		return 1; \
 	}
-
-
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_writeCache (I, CACHE *f) { \
+	static void class##Class##_writeCache (I, CACHE *f) { \
 		iam (Class); \
-		if (! inherited (Class) writeCache (me, f)) return 0;
+		inherited (Class) writeCache (me, f);
 
 #define oo_END_CLASS(Class)  \
-		return 1; \
 	}
-
-
 
 #define oo_IF(condition)  \
 	if (condition) {
@@ -140,17 +131,11 @@
 #define oo_ENDIF  \
 	}
 
-
-
 #define oo_FROM(from)
 
 #define oo_ENDFROM
 
-
-
 #define oo_VERSION(version)
-
-
 
 #define oo_DECLARING  0
 #define oo_DESTROYING  0

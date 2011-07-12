@@ -39,53 +39,51 @@ Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
 
 		Matrix_init (me.peek(), qmin, qmax, nq, dx, qmin + dx/2, 1, 1, 1, 1, 1); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Cepstrum not created."); }
+	} catch (MelderError) { Melder_thrown ("Cepstrum not created."); }
 }
 
 void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	double minimum, double maximum, int garnish)
 {
-	try {
-		int autoscaling = minimum >= maximum;
+	int autoscaling = minimum >= maximum;
 
-		Graphics_setInner (g);
+	Graphics_setInner (g);
 
-		if (qmax <= qmin)
-		{
-			qmin = my xmin; qmax = my xmax;
-		}
-	
-		long imin, imax;
-		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) return;
-		autoNUMvector<double> y (imin, imax);
-	
-		double *z = my z[1];
-	
-		for (long i = imin; i <= imax; i++)
-		{
-			y[i] = z[i];
-		}
-	
-		if (autoscaling) NUMdvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
+	if (qmax <= qmin)
+	{
+		qmin = my xmin; qmax = my xmax;
+	}
 
-		for (long i = imin; i <= imax; i ++)
-		{
-			if (y[i] > maximum) y[i] = maximum;
-			else if (y[i] < minimum) y[i] = minimum;
-		}
-	
-		Graphics_setWindow (g, qmin, qmax, minimum, maximum);
-		Graphics_function (g, y.peek(), imin, imax, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
+	long imin, imax;
+	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) return;
+	autoNUMvector<double> y (imin, imax);
 
-		Graphics_unsetInner (g);
-	
-		if (garnish) {
-			Graphics_drawInnerBox (g);
-			Graphics_textBottom (g, 1, L"Quefrency");
-			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-			Graphics_textLeft (g, 1, L"Amplitude");
-		}
-	} catch (MelderError) { rethrow; }
+	double *z = my z[1];
+
+	for (long i = imin; i <= imax; i++)
+	{
+		y[i] = z[i];
+	}
+
+	if (autoscaling) NUMdvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
+
+	for (long i = imin; i <= imax; i ++)
+	{
+		if (y[i] > maximum) y[i] = maximum;
+		else if (y[i] < minimum) y[i] = minimum;
+	}
+
+	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
+	Graphics_function (g, y.peek(), imin, imax, Matrix_columnToX (me, imin), Matrix_columnToX (me, imax));
+
+	Graphics_unsetInner (g);
+
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, 1, L"Quefrency");
+		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_textLeft (g, 1, L"Amplitude");
+	}
 }
 
 Matrix Cepstrum_to_Matrix (Cepstrum me)
@@ -94,7 +92,7 @@ Matrix Cepstrum_to_Matrix (Cepstrum me)
 		autoMatrix thee = (Matrix) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
 }
 
 Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
@@ -106,7 +104,7 @@ Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
 		if (row > my ny) row = my ny;
 		NUMdvector_copyElements (my z[row], thy z[1], 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Cepstrum created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Cepstrum created."); }
 }
 
 

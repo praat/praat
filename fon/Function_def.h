@@ -30,7 +30,7 @@ oo_DEFINE_CLASS (Function, Data)
 
 	#if oo_READING
 		if (my xmin > my xmax)
-			return Melder_error5 (L"Wrong xmin ", Melder_double (my xmin), L" and xmax ", Melder_double (my xmax), L".");
+			Melder_throw ("Wrong xmin ", my xmin, " and xmax ", my xmax, ".");
 	#endif
 
 oo_END_CLASS (Function)

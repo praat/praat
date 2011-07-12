@@ -30,9 +30,7 @@
 	extern "C" {
 #endif
 
-#define VocalTract_members  Vector_members
-#define VocalTract_methods  Vector_methods
-class_create (VocalTract, Vector);
+Thing_declare1cpp (VocalTract);
 
 /*
 	Attributes:
@@ -90,6 +88,12 @@ VocalTract Matrix_to_VocalTract (Matrix me);
 
 #ifdef __cplusplus
 	}
+
+	struct structVocalTract : public structVector {
+	};
+	#define VocalTract__methods(klas)  Vector__methods(klas)
+	Thing_declare2cpp (VocalTract, Vector);
+
 #endif
 
 /* End of file VocalTract.h */

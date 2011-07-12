@@ -32,6 +32,9 @@
 #include "Preferences.h"
 #include "EditorM.h"
 
+#undef our
+#define our ((TimeSoundEditor_Table) my methods) ->
+
 /********** PREFERENCES **********/
 
 static struct {
@@ -109,11 +112,11 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		autoSound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
-		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
+		Editor_openPraatPicture (me);
 		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
-		FunctionEditor_garnish (TimeSoundEditor_as_FunctionEditor (me));
-		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
+		FunctionEditor_garnish (me);
+		Editor_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -146,10 +149,10 @@ static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 		autoSound publish = my longSound.data ?
 			LongSound_extractPart (my longSound.data, my startSelection, my endSelection, preferences.picture.preserveTimes) :
 			Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preferences.picture.preserveTimes);
-		Editor_openPraatPicture (TimeSoundEditor_as_Editor (me));
+		Editor_openPraatPicture (me);
 		Sound_draw (publish.peek(), my pictureGraphics, 0.0, 0.0, preferences.picture.bottom, preferences.picture.top,
 			preferences.picture.garnish, L"Curve");
-		Editor_closePraatPicture (TimeSoundEditor_as_Editor (me));
+		Editor_closePraatPicture (me);
 	EDITOR_END
 }
 
@@ -341,7 +344,7 @@ static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
 }
 
 static void createMenuItems_file (TimeSoundEditor me, EditorMenu menu) {
-	inherited (TimeSoundEditor) createMenuItems_file (TimeSoundEditor_as_parent (me), menu);
+	inherited (TimeSoundEditor) createMenuItems_file (me, menu);
 	our createMenuItems_file_draw (me, menu);
 	EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
 	our createMenuItems_file_extract (me, menu);
@@ -365,7 +368,7 @@ static int menu_cb_LongSoundInfo (EDITOR_ARGS) {
 }
 
 static void createMenuItems_query_info (TimeSoundEditor me, EditorMenu menu) {
-	inherited (TimeSoundEditor) createMenuItems_query_info (TimeSoundEditor_as_parent (me), menu);
+	inherited (TimeSoundEditor) createMenuItems_query_info (me, menu);
 	if (my sound.data != NULL && my sound.data != my data) {
 		EditorMenu_addCommand (menu, L"Sound info", 0, menu_cb_SoundInfo);
 	} else if (my longSound.data != NULL && my longSound.data != my data) {
@@ -378,13 +381,13 @@ static void createMenuItems_query_info (TimeSoundEditor me, EditorMenu menu) {
 static int menu_cb_autoscaling (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	preferences.sound.autoscaling = my sound.autoscaling = ! my sound.autoscaling;
-	FunctionEditor_redraw (TimeSoundEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (me);
 	return 1;
 }
 
 static void createMenuItems_view (TimeSoundEditor me, EditorMenu menu) {
 	if (my sound.data || my longSound.data) our createMenuItems_view_sound (me, menu);
-	inherited (TimeSoundEditor) createMenuItems_view (TimeSoundEditor_as_parent (me), menu);
+	inherited (TimeSoundEditor) createMenuItems_view (me, menu);
 }
 
 static void createMenuItems_view_sound (TimeSoundEditor me, EditorMenu menu) {
@@ -505,7 +508,7 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (TimeSoundEditor_as_FunctionEditor (me), cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
+				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
@@ -535,15 +538,15 @@ class_methods (TimeSoundEditor, FunctionEditor) {
 	class_methods_end
 }
 
-int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound) {
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound) {
 	my ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {
 			Melder_assert (Thing_member (sound, classSound));
-			my sound.data = (Sound) Data_copy (sound); cherror   // Deep copy; ownership transferred.
+			my sound.data = (Sound) Data_copy (sound); therror   // deep copy; ownership transferred
 			Matrix_getWindowExtrema (sound, 1, my sound.data -> nx, 1, my sound.data -> ny, & my sound.minimum, & my sound.maximum);
 		} else if (Thing_member (sound, classSound)) {
-			my sound.data = (Sound) sound;   // Reference copy; ownership not transferred.
+			my sound.data = (Sound) sound;   // reference copy; ownership not transferred
 			Matrix_getWindowExtrema (sound, 1, my sound.data -> nx, 1, my sound.data -> ny, & my sound.minimum, & my sound.maximum);
 		} else if (Thing_member (sound, classLongSound)) {
 			my longSound.data = (LongSound) sound;
@@ -552,11 +555,8 @@ int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *t
 			Melder_fatal ("Invalid sound class in TimeSoundEditor_init.");
 		}
 	}
-	FunctionEditor_init (TimeSoundEditor_as_parent (me), parent, title, data); cherror
+	FunctionEditor_init (me, parent, title, data);
 	my sound.autoscaling = preferences.sound.autoscaling;
-end:
-	iferror return 0;
-	return 1;
 }
 
 /* End of file TimeSoundEditor.cpp */

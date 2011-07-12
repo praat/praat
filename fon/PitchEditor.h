@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/02
  */
 
 #include "FunctionEditor.h"
@@ -30,18 +30,19 @@
 	extern "C" {
 #endif
 
-#define PitchEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (PitchEditor);
+Thing_declare1cpp (PitchEditor);
 
-#define PitchEditor__members(Klas) FunctionEditor__members(Klas)
-#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2 (PitchEditor, FunctionEditor);
-
-PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch);
+PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structPitchEditor : public structFunctionEditor {
+	};
+	#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
+	Thing_declare2cpp (PitchEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file PitchEditor.h */
 #endif

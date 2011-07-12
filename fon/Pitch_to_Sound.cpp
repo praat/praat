@@ -42,7 +42,7 @@ Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 
@@ -52,7 +52,7 @@ void Pitch_play (Pitch me, double tmin, double tmax) {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 
@@ -62,7 +62,7 @@ void Pitch_hum (Pitch me, double tmin, double tmax) {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 
@@ -94,7 +94,7 @@ Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFr
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (sine).");
+		Melder_throw (me, ": not converted to Sound (sine).");
 	}
 }
 

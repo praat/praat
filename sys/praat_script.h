@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/24
+ * pb 2011/07/12
  */
 
 #include "Interpreter.h"
@@ -29,15 +29,15 @@
 	extern "C" {
 #endif
 
-int praat_executeCommand (Interpreter me, wchar_t *command);
-int praat_executeCommandFromStandardInput (const char *programName);
-int praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments);
-int praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments);
-int praat_executeScriptFromText (wchar_t *text);
-int praat_executeScriptFromDialog (Any dia);
-int DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
-int DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy);
-int DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar_t *script);
+void praat_executeCommand (Interpreter me, wchar *command);
+void praat_executeCommandFromStandardInput (const char *programName);
+void praat_executeScriptFromFile (MelderFile file, const wchar *arguments);
+void praat_executeScriptFromFileNameWithArguments (const wchar *nameAndArguments);
+void praat_executeScriptFromText (wchar_t *text);
+void praat_executeScriptFromDialog (Any dia);
+void DO_praat_runScript (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar *scriptPath, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar *script);
 
 #ifdef __cplusplus
 	}

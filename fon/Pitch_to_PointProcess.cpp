@@ -44,7 +44,7 @@ PointProcess Pitch_to_PointProcess (Pitch pitch) {
 		autoPointProcess point = PitchTier_Pitch_to_PointProcess (pitchTier.peek(), pitch);
 		return point.transfer();
 	} catch (MelderError) {
-		rethrowmzero (pitch, ": not converted to PointProcess.");
+		Melder_throw (pitch, ": not converted to PointProcess.");
 	}
 }
 
@@ -251,7 +251,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 		}
 		return point.transfer();
 	} catch (MelderError) {
-		rethrowmzero (sound, " & ", pitch, ": not converted to PointProcess.");
+		Melder_throw (sound, " & ", pitch, ": not converted to PointProcess (cc).");
 	}
 }
 	
@@ -316,7 +316,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 		}
 		return point.transfer();
 	} catch (MelderError) {
-		rethrowmzero (sound, " & ", pitch, ": not converted to PointProcess.");
+		Melder_throw (sound, " & ", pitch, ": not converted to PointProcess (peaks).");
 	}
 }
 	

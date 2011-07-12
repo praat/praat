@@ -24,26 +24,16 @@
   djmw 20070620 Latest modification.
 */
 
-#ifndef _Collection_extensions_h_
-	#include "Collection_extensions.h"
-#endif
-#ifndef _Simple_extensions_h_
-	#include "Simple_extensions.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Collection_extensions.h"
+#include "Simple_extensions.h"
+#include "TableOfReal.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Categories_members OrderedOfString_members
-#define Categories_methods OrderedOfString_methods
-class_create (Categories, OrderedOfString);
+Thing_declare1cpp (Categories);
 
 void Categories_init (Categories me, long size);
 
@@ -64,6 +54,12 @@ Categories TableOfReal_to_CategoriesColumn (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structCategories : public structOrderedOfString {
+	};
+	#define Categories__methods(klas) OrderedOfString__methods(klas)
+	Thing_declare2cpp (Categories, OrderedOfString);
+
 #endif
 
 #endif /* _Categories_h_ */

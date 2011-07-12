@@ -24,41 +24,38 @@
 
 #include "NUM2.h"
 
-int NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work)
+void NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work)
 {
-	try {
-		double *tmp = work;
+	double *tmp = work;
 
-		*mad = NUMundefined;
-		if (n < 1) return 0;
-		if (n == 1)
-		{
-			*location = x[1];
-			return 0;
-		}
-		autoNUMvector<double> atmp;
-		if (work == 0)  { atmp.reset (1, n); tmp = atmp.peek(); }
+	*mad = NUMundefined;
+	if (n < 1) Melder_throw ("The dimension must be at least 1");
+	if (n == 1)
+	{
+		*location = x[1];
+		return;
+	}
+	autoNUMvector<double> atmp;
+	if (work == 0)  { atmp.reset (1, n); tmp = atmp.peek(); }
 
-		for (long i = 1; i <= n; i++)
-		{
-			tmp[i] = x[i];
-		}
+	for (long i = 1; i <= n; i++)
+	{
+		tmp[i] = x[i];
+	}
 
-		if (wantlocation)
-		{
-			NUMsort_d (n, tmp);
-			*location = NUMquantile (n, tmp, 0.5);
-		}
-
-		for (long i = 1; i <= n; i++)
-		{
-			tmp[i] = fabs (tmp[i] - *location);
-		}
-
+	if (wantlocation)
+	{
 		NUMsort_d (n, tmp);
-		*mad = 1.4826 * NUMquantile (n, tmp, 0.5);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		*location = NUMquantile (n, tmp, 0.5);
+	}
+
+	for (long i = 1; i <= n; i++)
+	{
+		tmp[i] = fabs (tmp[i] - *location);
+	}
+
+	NUMsort_d (n, tmp);
+	*mad = 1.4826 * NUMquantile (n, tmp, 0.5);
 }
 
 static double NUMgauss (double x)
@@ -66,64 +63,61 @@ static double NUMgauss (double x)
 	return NUM1_sqrt2pi * exp (- 0.5 * x * x);
 }
 
-int NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
+void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 	double *scale, int wantscale, double k, double tol, double *work)
 {
-	try {
-		double *tmp = work;
-		double theta = 2 * NUMgaussP (k) - 1;
-		double beta = theta + k * k * (1 - theta) - 2 * k * NUMgauss (k);
-		long n1 = n;
+	double *tmp = work;
+	double theta = 2 * NUMgaussP (k) - 1;
+	double beta = theta + k * k * (1 - theta) - 2 * k * NUMgauss (k);
+	long n1 = n;
 
-		autoNUMvector<double> atmp;
-		if (work == 0)  { atmp.reset (1, n); tmp = atmp.peek(); }
-		double mad;
-		NUMmad (x, n, location, wantlocation, & mad, tmp);
-		if (wantscale) *scale = mad;
-		if (*scale == 0) Melder_throw ("Scale is zero.");
+	autoNUMvector<double> atmp;
+	if (work == 0)  { atmp.reset (1, n); tmp = atmp.peek(); }
+	double mad;
+	NUMmad (x, n, location, wantlocation, & mad, tmp);
+	if (wantscale) *scale = mad;
+	if (*scale == 0) Melder_throw ("Scale is zero.");
 
-		double mu0, mu1 = *location;
-		double s0, s1 = *scale;
+	double mu0, mu1 = *location;
+	double s0, s1 = *scale;
 
-		if (wantlocation) n1 = n - 1;
+	if (wantlocation) n1 = n - 1;
 
-		do
+	do
+	{
+		mu0 = mu1;
+		s0 = s1;
+
+		double low  = mu0 - k * s0; 
+		double high = mu0 + k * s0;
+
+		for (long i = 1; i <= n; i++)
 		{
-			mu0 = mu1;
-			s0 = s1;
-
-			double low  = mu0 - k * s0; 
-			double high = mu0 + k * s0;
-
+			if (x[i] < low) { tmp[i] = low; }
+			else if (x[i] > high) { tmp[i] = high; }
+			else { tmp[i] =  x[i]; }
+		}
+		if (wantlocation)
+		{
+			mu1 = 0;
 			for (long i = 1; i <= n; i++)
 			{
-				if (x[i] < low) { tmp[i] = low; }
-				else if (x[i] > high) { tmp[i] = high; }
-				else { tmp[i] =  x[i]; }
+				mu1 += tmp[i];
 			}
-			if (wantlocation)
+			mu1 /= n;
+		}
+		if (wantscale)
+		{
+			s1 = 0;
+			for (long i = 1; i <= n; i++)
 			{
-				mu1 = 0;
-				for (long i = 1; i <= n; i++)
-				{
-					mu1 += tmp[i];
-				}
-				mu1 /= n;
+				double dx = tmp[i] - mu1;
+				s1 += dx * dx;
 			}
-			if (wantscale)
-			{
-				s1 = 0;
-				for (long i = 1; i <= n; i++)
-				{
-					double dx = tmp[i] - mu1;
-					s1 += dx * dx;
-				}
-				s1 = sqrt (s1 / (n1 * beta));
-			}
-		} while (fabs (mu0 - mu1) > tol * s0 || fabs (s0 - s1) > tol * s0);
+			s1 = sqrt (s1 / (n1 * beta));
+		}
+	} while (fabs (mu0 - mu1) > tol * s0 || fabs (s0 - s1) > tol * s0);
 
-		if (wantlocation) *location = mu1;
-		if (wantscale) *scale = s1;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	if (wantlocation) *location = mu1;
+	if (wantscale) *scale = s1;
 }

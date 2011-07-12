@@ -88,7 +88,7 @@ CCA CCA_create (long numberOfCoefficients, long ny, long nx)
 		my y = Eigen_create (numberOfCoefficients, ny);
 		my x = Eigen_create (numberOfCoefficients, nx);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("CCA not created."); }
+	} catch (MelderError) { Melder_thrown ("CCA not created."); }
 }
 
 void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, long ivec, long first, long last,
@@ -233,7 +233,7 @@ CCA TableOfReal_to_CCA (TableOfReal me, long ny)
 		Melder_assert (thy x -> dimension == thy xLabels -> numberOfStrings && 
 			thy y -> dimension == thy yLabels -> numberOfStrings);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": CCA not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": CCA not created."); }
 }
 
 TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfFactors)
@@ -257,7 +257,7 @@ TableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, long numberOfF
 		TableOfReal_setSequentialColumnLabels (him.peek(), 1, numberOfFactors, L"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.peek(), numberOfFactors + 1, his numberOfColumns, L"x_", 1, 1);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no TableOfReal with scores created."); }
 }
 
 TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from)
@@ -300,7 +300,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Predictions not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no predictions created."); }
 }
 
 TableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee)
@@ -309,7 +309,7 @@ TableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee)
 		autoCorrelation c = TableOfReal_to_Correlation (thee);
 		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Factor loadings not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no factor loadings created."); }
 }
 
 double CCA_getCorrelationCoefficient (CCA me, long index)

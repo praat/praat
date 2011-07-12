@@ -84,7 +84,7 @@ Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double
 		Intensity_init (me.peek(), tmin, tmax, nt, dt, t1);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Intensity not created.");
+		Melder_throw ("Intensity not created.");
 	}
 }
 
@@ -94,7 +94,7 @@ Matrix Intensity_to_Matrix (Intensity me) {
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Intensity.");
+		Melder_throw (me, ": not converted to Intensity.");
 	}
 }
 
@@ -104,7 +104,7 @@ Intensity Matrix_to_Intensity (Matrix me) {
 		Thing_overrideClass (thee.peek(), classIntensity);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 

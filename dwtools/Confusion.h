@@ -24,26 +24,20 @@
  djmw 20110511 Latest modification.
 */
 
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Categories_h_
-	#include "Categories.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
+#include "TableOfReal.h"
+#include "Categories.h"
+#include "Graphics.h"
+#include "Matrix.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Confusion_members TableOfReal_members
-#define Confusion_methods TableOfReal_methods
-class_create (Confusion, TableOfReal);
+Thing_declare1cpp (Confusion);
+struct structConfusion : public structTableOfReal {
+};
+#define Confusion__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Confusion, TableOfReal);
 
 /*
 	A Confusion matrix has both row and column labels.

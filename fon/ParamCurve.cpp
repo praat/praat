@@ -66,14 +66,13 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"   Maximum y: ", Melder_double (ymax));
 }
 
-static int copy (I, thou) {
+static void copy (I, thou) {
 	iam (ParamCurve); thouart (ParamCurve);
 	thy x = NULL;
 	thy y = NULL;
 	inherited (ParamCurve) copy (me, thee); therror
 	thy x = (Sound) Data_copy (my x); therror
 	thy y = (Sound) Data_copy (my y); therror
-	return 1;
 }
 
 static bool equal (I, thou) {
@@ -81,12 +80,13 @@ static bool equal (I, thou) {
 	return inherited (ParamCurve) equal (me, thee) && Data_equal (my x, thy x) && Data_equal (my y, thy y);
 }
 
-static int writeText (I, MelderFile file) {
+static void writeText (I, MelderFile file) {
 	iam (ParamCurve);
-	return Data_writeText (my x, file) && Data_writeText (my y, file);
+	Data_writeText (my x, file);
+	Data_writeText (my y, file);
 }
 
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (ParamCurve);
 	my x = Thing_new (Sound); therror
 	my y = Thing_new (Sound); therror
@@ -94,32 +94,25 @@ static int readText (I, MelderReadText text) {
 	Data_readText (my y, text); therror
 	my xmin = my x -> xmin > my y -> xmin ? my x -> xmin : my y -> xmin;
 	my xmax = my x -> xmax < my y -> xmax ? my x -> xmax : my y -> xmax;
-	return 1;
 }
 
-static int writeBinary (I, FILE *f) {
+static void writeBinary (I, FILE *f) {
 	iam (ParamCurve);
 	Data_writeBinary (my x, f); therror
 	Data_writeBinary (my y, f); therror
-	return 1;
 }
 
-static int readBinary (I, FILE *f) {
+static void readBinary (I, FILE *f) {
 	iam (ParamCurve);
-	try {
-		long saveVersion = Thing_version;
-		Thing_version = 2;
-		my x = Thing_new (Sound); therror
-		my y = Thing_new (Sound); therror
-		Data_readBinary (my x, f); therror
-		Data_readBinary (my y, f); therror
-		Thing_version = saveVersion;
-		my xmin = my x -> xmin > my y -> xmin ? my x -> xmin : my y -> xmin;
-		my xmax = my x -> xmax < my y -> xmax ? my x -> xmax : my y -> xmax; 
-	} catch (MelderError) {
-		rethrowzero;
-	}
-	return 1;
+	long saveVersion = Thing_version;
+	Thing_version = 2;
+	my x = Thing_new (Sound); therror
+	my y = Thing_new (Sound); therror
+	Data_readBinary (my x, f); therror
+	Data_readBinary (my y, f); therror
+	Thing_version = saveVersion;
+	my xmin = my x -> xmin > my y -> xmin ? my x -> xmin : my y -> xmin;
+	my xmax = my x -> xmax < my y -> xmax ? my x -> xmax : my y -> xmax; 
 }
 
 class_methods (ParamCurve, Function) {
@@ -152,7 +145,7 @@ ParamCurve ParamCurve_create (Any x, Any y) {
 		ParamCurve_init (me.peek(), x, y); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("ParamCurve not created.");
+		Melder_throw ("ParamCurve not created.");
 	}
 }
 

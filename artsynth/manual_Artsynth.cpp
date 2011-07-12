@@ -97,7 +97,7 @@ NORMAL (L"To ensure the stability of the synthesis, this internal sampling frequ
 	"velocity of sound (353 m/s) divided by the length of the shortest tube. For the standard #Female, "
 	"#Male, and #Child speakers, the shortest tube is the upper glottis, which has a length "
 	"of 0.7, 1.0, and 0.3 millimetres, respectively. The minimum internal sampling frequencies, therefore, "
-	"are 504286, 353000, and 1176667 Hertz, respectively.")
+	"are 504286, 353000, and 1176667 hertz, respectively.")
 ENTRY (L"Time resolution")
 NORMAL (L"To capture the microscopic pressure changes in the glottis, you will want maximum time resolution. "
 	"For a female speaker, you could set ##Sampling frequency# to 550750 Hz, and #Oversampling to 1.")

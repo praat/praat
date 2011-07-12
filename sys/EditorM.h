@@ -1,6 +1,8 @@
+#ifndef _EditorM_h_
+#define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +20,7 @@
  */
 
 /*
- * pb 2010/12/07
+ * pb 2010/07/05
  */
 
 #undef FORM
@@ -73,8 +75,8 @@
 #define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
 #define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> dialog, label, def);
 #define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIOBUTTONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
-#define OPTIONS_ENUM(labelProc,min,max) { int itext; for (itext = min; itext <= max; itext ++) OPTION (labelProc) }
+#define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
+#define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \
 	RADIO (label, enum##_##def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
@@ -91,23 +93,23 @@
 
 #define DIALOG  cmd -> dialog
 
-#define EDITOR_ARGS  Any void_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter
+#define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> dialog == NULL) { Any radio = 0; (void) radio; \
 	cmd -> dialog = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);
 #define EDITOR_OK  UiForm_finish (cmd -> dialog); } if (sendingForm == NULL && sendingString == NULL) {
 #define EDITOR_DO  UiForm_do (cmd -> dialog, false); } else if (sendingForm == NULL) { \
-	if (! UiForm_parseStringE (cmd, sendingString, interpreter)) return 0; } else {
+	UiForm_parseStringE (cmd, sendingString, interpreter); } else {
 #define EDITOR_END  } return 1;
 
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> dialog == NULL) { \
 		cmd -> dialog = UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
-		} if (sendingForm == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
+		} if (sendingForm == NULL && sendingString == NULL) { wchar defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> dialog, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> dialog, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> dialog, name)
@@ -120,3 +122,4 @@
 #define GET_FILE  UiForm_getFile (cmd -> dialog)
 
 /* End of file EditorM.h */
+#endif

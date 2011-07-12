@@ -20,43 +20,40 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/12
  */
 
-#ifndef _HyperPage_h_
-	#include "HyperPage.h"
-#endif
-#ifndef _ManPages_h_
-	#include "ManPages.h"
-#endif
+#include "HyperPage.h"
+#include "ManPages.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Manual__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
-Thing_declare1 (Manual);
+Thing_declare1cpp (Manual);
 
-#define Manual__members(Klas) HyperPage__members(Klas) \
-	long path, numberOfParagraphs; \
-	struct structManPage_Paragraph *paragraphs; \
-	GuiObject searchText; \
-	GuiObject homeButton, recordButton, playButton, publishButton; \
-	int numberOfMatches; \
-	long matches [1 + 20], fromPage, toPage; \
-	int suppressLinksHither; \
-	wchar_t *printPagesStartingWith;
-#define Manual__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2 (Manual, HyperPage);
+void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data);
+Manual Manual_create (GuiObject parent, const wchar *title, Data data);
 
-int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data);
-Manual Manual_create (GuiObject parent, const wchar_t *title, Any data);
-
-void Manual_search (Manual me, const wchar_t *query);
+void Manual_search (Manual me, const wchar *query);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structManual : public structHyperPage {
+		long path, numberOfParagraphs;
+		struct structManPage_Paragraph *paragraphs;
+		GuiObject searchText;
+		GuiObject homeButton, recordButton, playButton, publishButton;
+		int numberOfMatches;
+		long matches [1 + 20], fromPage, toPage;
+		int suppressLinksHither;
+		wchar *printPagesStartingWith;
+	};
+	#define Manual__methods(Klas) HyperPage__methods(Klas)
+	Thing_declare2cpp (Manual, HyperPage);
+
+#endif // __cplusplus
 
 /* End of file Manual.h */
 #endif

@@ -250,7 +250,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 			ppdvt = pdvt;
 			thy z[2][i] = pphase = phase;
 			Melder_progress4 ((double)i / my nx, Melder_integer (i),
-			L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
+				L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
 		}
 
 		long iphase = (phase / NUMpi + 0.1);
@@ -266,35 +266,33 @@ Matrix Spectrum_unwrap (Spectrum me)
 		Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
 		Melder_information2 (L" iphase = ", Melder_integer (iphase));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not unwrapped."); }
+	} catch (MelderError) { Melder_thrown (me, ": not unwrapped."); }
 }
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 	double phase_min, double phase_max, int unwrap, int garnish)
 {
-	try {
-		autoMatrix thee = 0;
-		int reverse_sign = my z[1][1] < 0;
+	autoMatrix thee = 0;
+	int reverse_sign = my z[1][1] < 0;
 
-		if (unwrap)
+	if (unwrap)
+	{
+		thee.reset(Spectrum_unwrap (me));
+	}
+	else
+	{
+		thee.reset(Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
+		for (long i = 1; i <= my nx; i ++)
 		{
-			thee.reset(Spectrum_unwrap (me));
+			thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
 		}
-		else
-		{
-			thee.reset(Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
-			for (long i = 1; i <= my nx; i ++)
-			{
-				thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
-			}
-		}
-	
-		Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
-		if (garnish)
-		{
-	
-		}	
-	} catch (MelderError) { rethrow; }
+	}
+
+	Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
+	if (garnish)
+	{
+
+	}	
 }
 
 Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
@@ -310,7 +308,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
 			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i]; 
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not multiplied."); }
+	} catch (MelderError) { Melder_thrown (me, ": not multiplied."); }
 }
 
 void Spectrum_conjugate (Spectrum me)

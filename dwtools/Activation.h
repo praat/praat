@@ -30,9 +30,11 @@
 	extern "C" {
 #endif
 
-#define Activation_members Matrix_members
-#define Activation_methods Matrix_methods
-class_create (Activation, Matrix);
+Thing_declare1cpp (Activation);
+struct structActivation : public structMatrix {
+};
+#define Activation__methods(klas) Matrix__methods(klas)
+oo_CLASS_CREATE (Activation, Matrix);
 
 /* Attributes:
    xmin				:1

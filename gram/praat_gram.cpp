@@ -277,11 +277,11 @@ FORM (Create_metrics_grammar, L"Create metrics grammar", 0)
 	BOOLEAN (L"Include codas", 0)
 	OK
 DO
-	if (! praat_new1 (OTGrammar_create_metrics (GET_INTEGER (L"Initial ranking"), GET_INTEGER (L"Trochaicity constraint"),
+	praat_new (OTGrammar_create_metrics (GET_INTEGER (L"Initial ranking"), GET_INTEGER (L"Trochaicity constraint"),
 		GET_INTEGER (L"Include FootBimoraic"), GET_INTEGER (L"Include FootBisyllabic"),
 		GET_INTEGER (L"Include Peripheral"), GET_INTEGER (L"Nonfinality constraint"),
 		GET_INTEGER (L"Overt forms have secondary stress"), GET_INTEGER (L"Include *Clash and *Lapse"), GET_INTEGER (L"Include codas")),
-		GET_STRING (L"Initial ranking"))) return 0;
+		GET_STRING (L"Initial ranking"));
 END
 
 DIRECT (Create_NoCoda_grammar)
@@ -522,7 +522,7 @@ FORM (OTGrammar_inputToOutput, L"OTGrammar: Input to output", L"OTGrammar: Input
 	OK
 DO
 	iam_ONLY (OTGrammar);
-	wchar_t output [100];
+	wchar output [100];
 	OTGrammar_inputToOutput (me, GET_STRING (L"Input form"), output, GET_REAL (L"Evaluation noise"));
 	Melder_information1 (output);
 	praat_dataChanged (me);
@@ -647,10 +647,6 @@ DO
 		// trickle down to save history
 	}
 	if (history) praat_new (history, my name);
-	iferror {
-		if (history) praat_updateSelection ();
-		return 0;
-	}
 END
 
 FORM (OTGrammar_learnOne, L"OTGrammar: Learn one", L"OTGrammar: Learn one...")
@@ -838,11 +834,7 @@ DO
 	} catch (MelderError) {
 		praat_dataChanged (me);
 	}
-	if (history) praat_new1 (history, my name);
-	iferror {
-		if (history) praat_updateSelection ();
-		return 0;
-	}
+	if (history) praat_new (history, my name);
 END
 
 FORM (OTGrammar_Distributions_listObligatoryRankings, L"OTGrammar & Distributions: Get fraction correct...", 0)
@@ -1127,7 +1119,7 @@ FORM (OTMulti_generateOptimalForm, L"OTMulti: Generate optimal form", 0)
 	OK
 DO
 	iam_ONLY (OTMulti);
-	wchar_t output [100];
+	wchar output [100];
 	OTMulti_generateOptimalForm (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 		output, GET_REAL (L"Evaluation noise")); therror
 	Melder_information1 (output);

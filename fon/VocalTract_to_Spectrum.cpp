@@ -131,7 +131,7 @@ Spectrum VocalTract_to_Spectrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Spectrum.");
+		Melder_throw (me, ": not converted to Spectrum.");
 	}
 }
 

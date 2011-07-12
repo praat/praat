@@ -37,9 +37,7 @@ Collection Collection_permuteItems(Collection me);
 
 /****************** class OrderedOfString ******************/
 
-#define OrderedOfString_members Ordered_members
-#define OrderedOfString_methods Ordered_methods
-class_create (OrderedOfString, Ordered);
+Thing_declare1cpp (OrderedOfString);
 
 OrderedOfString OrderedOfString_create (void);
 int OrderedOfString_init (I, long initialCapacity);
@@ -91,6 +89,12 @@ long OrderedOfString_getSize (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structOrderedOfString : public structOrdered {
+	};
+	#define OrderedOfString__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (OrderedOfString, Ordered);
+
 #endif
 
 #endif /* _Collection_extensions_h_ */

@@ -40,7 +40,7 @@ ClassificationTable ClassificationTable_create (long numberOfRows, long numberOf
 		autoClassificationTable me = Thing_new (ClassificationTable);
 		TableOfReal_init (me.peek(), numberOfRows, numberOfGroups);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("ClassificationTable not created."); }
+	} catch (MelderError) { Melder_thrown ("ClassificationTable not created."); }
 }
 
 Confusion ClassificationTable_to_Confusion (ClassificationTable me)
@@ -50,7 +50,7 @@ Confusion ClassificationTable_to_Confusion (ClassificationTable me)
 		autoCategories c2 = ClassificationTable_to_Categories_maximumProbability (me);
 		autoConfusion thee = Categories_to_Confusion (c1.peek(), c2.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": confusions cannot be calculated."); }
+	} catch (MelderError) { Melder_thrown (me, ": confusions cannot be calculated."); }
 }
 
 Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me)
@@ -72,7 +72,7 @@ Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable m
 			if (my columnLabels[col] != 0) Strings_setString (thee.peek(), my columnLabels[col], i);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": strings cannot be created."); }
+	} catch (MelderError) { Melder_thrown (me, ": strings cannot be created."); }
 }
 
 Categories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me)
@@ -93,7 +93,7 @@ Categories ClassificationTable_to_Categories_maximumProbability (ClassificationT
 			OrderedOfString_append (thee.peek(), my columnLabels[col]); therror
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Categories created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Categories created."); }
 }
 
 Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me)
@@ -125,7 +125,7 @@ Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me)
 		}
 		thy numberOfObservations = my numberOfRows;
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no correlation created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no correlation created."); }
 }
 
 /* End of file ClassificationTable.cpp */

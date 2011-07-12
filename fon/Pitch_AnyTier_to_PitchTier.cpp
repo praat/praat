@@ -43,14 +43,14 @@ PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier) {
 		 */
 		for (long ipoint = 1; ipoint <= points -> size; ipoint ++) {
 			AnyPoint point = (AnyPoint) points -> item [ipoint];
-			double time = point -> time;
+			double time = point -> number;
 			double frequency = RealTier_getValueAtTime (pitch, time);
 			RealTier_addPoint (thee.peek(), time, frequency);
 		}
 
 		return thee.peek();
 	} catch (MelderError) {
-		rethrowmzero (pitch, " & ", tier, ": not converted to PitchTier.");
+		Melder_throw (pitch, " & ", tier, ": not converted to PitchTier.");
 	}
 }
 
@@ -75,7 +75,7 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 		 */
 		for (long ipoint = 1; ipoint <= points -> size; ipoint ++) {
 			AnyPoint point = (AnyPoint) points -> item [ipoint];
-			double time = point -> time;
+			double time = point -> number;
 			double frequency = Pitch_getValueAtTime (pitch, time, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (frequency == NUMundefined && checkMethod)
 				Melder_throw ("No periodicity at time ", time, " seconds.");
@@ -84,7 +84,7 @@ PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod
 
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (pitch, " & ", tier, ": not converted to PitchTier.");
+		Melder_throw (pitch, " & ", tier, ": not converted to PitchTier.");
 	}
 }
 

@@ -1,4 +1,4 @@
-/* SPINET_to_Pitch.c
+/* SPINET_to_Pitch.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -130,7 +130,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			Pitch_Frame_resizeStrengths (&thy frame[j], localStrength / maxStrength, unvoicedCriterium);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Pitch created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Pitch created."); }
 }
 
-/* End of file SPINET_to_Pitch.c */
+/* End of file SPINET_to_Pitch.cpp */

@@ -49,23 +49,15 @@ static int playCallback (void *playClosure, int phase, double tmin, double tmax,
 }
 
 void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound, Graphics graphics) {
-	int own = FALSE;
-	static struct playInfo info;   /* Must be static!!! */
-	info. artword = artword;
-	info. speaker = speaker;
-	info. graphics = graphics;
-	if (sound == NULL) {
-		sound = Sound_createSimple (1, artword -> totalTime, 22050);
-		if (! sound) {
-			Melder_flushError (NULL);
-			return;
-		}
-		own = TRUE;
-	}
-	Sound_play (sound, playCallback, & info);
-	iferror Melder_clearError ();
-	if (own) {
-		forget (sound);
+	try {
+		static struct playInfo info;   // must be static!!!
+		info. artword = artword;
+		info. speaker = speaker;
+		info. graphics = graphics;
+		autoSound mySound = sound ? NULL : Sound_createSimple (1, artword -> totalTime, 44100);
+		Sound_play (sound ? sound : mySound.peek(), playCallback, & info);
+	} catch (MelderError) {
+		Melder_throw (artword, " & ", speaker, ": movie not played.");
 	}
 }
 

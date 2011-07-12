@@ -70,7 +70,7 @@ Sound PointProcess_to_Sound_pulseTrain
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": pulse train not synthesized.");
+		Melder_throw (me, ": pulse train not synthesized.");
 	}
 }
 
@@ -194,7 +194,7 @@ Sound PointProcess_to_Sound_phonation
 		Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (phonation).");
+		Melder_throw (me, ": not converted to Sound (phonation).");
 	}
 }
 
@@ -203,7 +203,7 @@ void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 
@@ -214,13 +214,9 @@ void PointProcess_play (PointProcess me) {
 void PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
-	try {
-		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
-		Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth); therror
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
-	} catch (MelderError) {
-		rethrow;
-	}
+	autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
+	Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth); therror
+	Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 }
 
 Sound PointProcess_to_Sound_hum (PointProcess me) {
@@ -231,7 +227,7 @@ Sound PointProcess_to_Sound_hum (PointProcess me) {
 		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth); therror
 		return sound.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (hum).");
+		Melder_throw (me, ": not converted to Sound (hum).");
 	}
 }
 

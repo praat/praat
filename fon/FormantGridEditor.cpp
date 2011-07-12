@@ -21,12 +21,16 @@
  * pb 2008/04/24 created
  * pb 2008/04/25 audio
  * pb 2011/03/23 C++
+ * pb 2011/07/02 C++
  */
 
 #include "FormantGridEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
 #include "PointProcess_and_Sound.h"
+
+#undef our
+#define our ((FormantGridEditor_Table) my methods) ->
 
 /********** PREFERENCES **********/
 
@@ -42,18 +46,18 @@ static struct {
 #define DEFAULT_F0_END  120.0
 
 void FormantGridEditor_prefs (void) {
-	Preferences_addDouble (L"FormantGridEditor.formantFloor", & preferences.formantFloor, 0.0);   // Hertz
-	Preferences_addDouble (L"FormantGridEditor.formantCeiling", & preferences.formantCeiling, 11000.0);   // Hertz
-	Preferences_addDouble (L"FormantGridEditor.bandwidthFloor", & preferences.bandwidthFloor, 0.0);   // Hertz
-	Preferences_addDouble (L"FormantGridEditor.bandwidthCeiling", & preferences.bandwidthCeiling, 1000.0);   // Hertz
-	Preferences_addDouble (L"FormantGridEditor.play.samplingFrequency", & preferences.play.samplingFrequency, 44100.0);   // Hertz
+	Preferences_addDouble (L"FormantGridEditor.formantFloor", & preferences.formantFloor, 0.0);   // Hz
+	Preferences_addDouble (L"FormantGridEditor.formantCeiling", & preferences.formantCeiling, 11000.0);   // Hz
+	Preferences_addDouble (L"FormantGridEditor.bandwidthFloor", & preferences.bandwidthFloor, 0.0);   // Hz
+	Preferences_addDouble (L"FormantGridEditor.bandwidthCeiling", & preferences.bandwidthCeiling, 1000.0);   // Hz
+	Preferences_addDouble (L"FormantGridEditor.play.samplingFrequency", & preferences.play.samplingFrequency, 44100.0);   // Hz
 	Preferences_addDouble (L"FormantGridEditor.source.pitch.tStart", & preferences.source.pitch.tStart, 0.0);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Start", & preferences.source.pitch.f0Start, DEFAULT_F0_START);   // Hertz
+	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Start", & preferences.source.pitch.f0Start, DEFAULT_F0_START);   // Hz
 	Preferences_addDouble (L"FormantGridEditor.source.pitch.tMid", & preferences.source.pitch.tMid, DEFAULT_T_MID);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Mid", & preferences.source.pitch.f0Mid, DEFAULT_F0_MID);   // Hertz
+	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Mid", & preferences.source.pitch.f0Mid, DEFAULT_F0_MID);   // Hz
 	Preferences_addDouble (L"FormantGridEditor.source.pitch.tEnd", & preferences.source.pitch.tEnd, 1.0);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0End", & preferences.source.pitch.f0End, DEFAULT_F0_END);   // Hertz
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0End", & preferences.source.pitch.f0End, DEFAULT_F0_END);   // Hertz
+	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0End", & preferences.source.pitch.f0End, DEFAULT_F0_END);   // Hz
+	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0End", & preferences.source.pitch.f0End, DEFAULT_F0_END);   // Hz
 	Preferences_addDouble (L"FormantGridEditor.source.phonation.adaptFactor", & preferences.source.phonation.adaptFactor, PointProcess_to_Sound_phonation_DEFAULT_ADAPT_FACTOR);
 	Preferences_addDouble (L"FormantGridEditor.source.phonation.maximumPeriod", & preferences.source.phonation.maximumPeriod, PointProcess_to_Sound_phonation_DEFAULT_MAXIMUM_PERIOD);
 	Preferences_addDouble (L"FormantGridEditor.source.phonation.openPhase", & preferences.source.phonation.openPhase, PointProcess_to_Sound_phonation_DEFAULT_OPEN_PHASE);
@@ -66,7 +70,7 @@ void FormantGridEditor_prefs (void) {
 
 static int menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
-	Editor_save (FormantGridEditor_as_Editor (me), L"Remove point(s)");
+	Editor_save (me, L"Remove point(s)");
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
@@ -74,20 +78,20 @@ static int menu_cb_removePoints (EDITOR_ARGS) {
 		AnyTier_removePointNear (tier, my startSelection);
 	else
 		AnyTier_removePointsBetween (tier, my startSelection, my endSelection);
-	FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (FormantGridEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
-	Editor_save (FormantGridEditor_as_Editor (me), L"Add point");
+	Editor_save (me, L"Add point");
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 	RealTier_addPoint (tier, 0.5 * (my startSelection + my endSelection), my ycursor);
-	FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (FormantGridEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -100,13 +104,13 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
 		SET_REAL (L"Frequency", my ycursor)
 	EDITOR_DO
-		Editor_save (FormantGridEditor_as_Editor (me), L"Add point");
+		Editor_save (me, L"Add point");
 		FormantGrid grid = (FormantGrid) my data;
 		Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 		RealTier tier = (RealTier) tiers -> item [my selectedFormant];
 		RealTier_addPoint (tier, GET_REAL (L"Time"), GET_REAL (L"Frequency"));
-		FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (FormantGridEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -121,7 +125,7 @@ static int menu_cb_setFormantRange (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.formantFloor = my formantFloor = GET_REAL (L"Minimum formant");
 		preferences.formantCeiling = my formantCeiling = GET_REAL (L"Maximum formant");
-		FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
@@ -136,14 +140,14 @@ static int menu_cb_setBandwidthRange (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.bandwidthFloor = my bandwidthFloor = GET_REAL (L"Minimum bandwidth");
 		preferences.bandwidthCeiling = my bandwidthCeiling = GET_REAL (L"Maximum bandwidth");
-		FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static int menu_cb_showBandwidths (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	my editingBandwidths = ! my editingBandwidths;
-	FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (me);
 	return 1;
 }
 
@@ -155,7 +159,7 @@ static int selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 			L", because the FormantGrid has only ", Melder_integer (numberOfFormants), L" formants.");
 	}
 	my selectedFormant = iformant;
-	FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
+	FunctionEditor_redraw (me);
 	return 1;
 }
 
@@ -176,7 +180,7 @@ static int menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
 		SET_INTEGER (L"Formant number", my selectedFormant)
 	EDITOR_DO
 		if (! selectFormantOrBandwidth (me, GET_INTEGER (L"Formant number"))) return 0;
-		FunctionEditor_redraw (FormantGridEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
@@ -209,7 +213,7 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 }
 
 static void createMenus (FormantGridEditor me) {
-	inherited (FormantGridEditor) createMenus (FormantGridEditor_as_FunctionEditor (me));
+	inherited (FormantGridEditor) createMenus (me);
 	EditorMenu menu = Editor_addMenu (me, L"Formant", 0);
 	EditorMenu_addCommand (menu, L"Show bandwidths", GuiMenu_CHECKBUTTON + 'B', menu_cb_showBandwidths);
 	EditorMenu_addCommand (menu, L"Set formant range...", 0, menu_cb_setFormantRange);
@@ -238,7 +242,7 @@ static void createMenus (FormantGridEditor me) {
 }
 
 static void dataChanged (FormantGridEditor me) {
-	inherited (FormantGridEditor) dataChanged (FormantGridEditor_as_FunctionEditor (me));
+	inherited (FormantGridEditor) dataChanged (me);
 }
 
 /********** DRAWING AREA **********/
@@ -277,7 +281,7 @@ static void draw (FormantGridEditor me) {
 			Graphics_line (my graphics, my startWindow, yleft, my endWindow, yright);
 		} else for (long i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) tier -> points -> item [i];
-			double t = point -> time, y = point -> value;
+			double t = point -> number, y = point -> value;
 			Graphics_fillCircle_mm (my graphics, t, y, 2);
 			if (i == 1)
 				Graphics_line (my graphics, my startWindow, y, t, y);
@@ -289,7 +293,7 @@ static void draw (FormantGridEditor me) {
 				Graphics_line (my graphics, t, y, my endWindow, RealTier_getValueAtTime (tier, my endWindow));
 			else {
 				RealPoint pointRight = (RealPoint) tier -> points -> item [i + 1];
-				Graphics_line (my graphics, t, y, pointRight -> time, pointRight -> value);
+				Graphics_line (my graphics, t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
@@ -309,7 +313,7 @@ static void draw (FormantGridEditor me) {
 		Graphics_line (my graphics, my startWindow, yleft, my endWindow, yright);
 	} else for (long i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) selectedTier -> points -> item [i];
-		double t = point -> time, y = point -> value;
+		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
 			Graphics_setColour (my graphics, Graphics_RED);	
 		Graphics_fillCircle_mm (my graphics, t, y, 3);
@@ -324,7 +328,7 @@ static void draw (FormantGridEditor me) {
 			Graphics_line (my graphics, t, y, my endWindow, RealTier_getValueAtTime (selectedTier, my endWindow));
 		else {
 			RealPoint pointRight = (RealPoint) selectedTier -> points -> item [i + 1];
-			Graphics_line (my graphics, t, y, pointRight -> time, pointRight -> value);
+			Graphics_line (my graphics, t, y, pointRight -> number, pointRight -> value);
 		}
 	}
 	Graphics_setLineWidth (my graphics, 1);
@@ -345,7 +349,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 	 */
 	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) tier -> points -> item [i];
-		double t = point -> time + dt, y = point -> value + dy;
+		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
 			Graphics_circle_mm (my graphics, t, y, 3);
 	}
@@ -355,7 +359,7 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 		 * Draw a crosshair with time and y.
 		 */
 		RealPoint point = (RealPoint) tier -> points -> item [first];
-		double t = point -> time + dt, y = point -> value + dy;
+		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my graphics, t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics, 4.0));
 		Graphics_setTextAlignment (my graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
 		Graphics_text1 (my graphics, t, ymax, Melder_fixed (t, 6));
@@ -389,25 +393,25 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (tier, xWC);
 	if (inearestPoint == 0) {
-		return inherited (FormantGridEditor) click (FormantGridEditor_as_FunctionEditor (me), xWC, yWC, shiftKeyPressed);
+		return inherited (FormantGridEditor) click (me, xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) tier -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> time, nearestPoint -> value) > 1.5) {
-		return inherited (FormantGridEditor) click (FormantGridEditor_as_FunctionEditor (me), xWC, yWC, shiftKeyPressed);
+	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+		return inherited (FormantGridEditor) click (me, xWC, yWC, shiftKeyPressed);
 	}
 
 	/*
 	 * Clicked on a selected point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> time > my startSelection && nearestPoint -> time < my endSelection;
+		nearestPoint -> number > my startSelection && nearestPoint -> number < my endSelection;
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (tier, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (tier, my endSelection);
-		Editor_save (FormantGridEditor_as_Editor (me), L"Drag points");
+		Editor_save (me, L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (FormantGridEditor_as_Editor (me), L"Drag point");
+		Editor_save (me, L"Drag point");
 	}
 
 	/*
@@ -436,21 +440,21 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 	 * Points not dragged past neighbours?
 	 */
 	RealPoint *points = (RealPoint *) tier -> points -> item;
-	double newTime = points [ifirstSelected] -> time + dt;
-	if (newTime < my tmin) return 1;   /* Outside domain. */
-	if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> time)
-		return 1;   /* Past left neighbour. */
-	newTime = points [ilastSelected] -> time + dt;
-	if (newTime > my tmax) return 1;   /* Outside domain. */
-	if (ilastSelected < tier -> points -> size && newTime >= points [ilastSelected + 1] -> time)
-		return 1;   /* Past right neighbour. */
+	double newTime = points [ifirstSelected] -> number + dt;
+	if (newTime < my tmin) return 1;   // outside domain
+	if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
+		return 1;   // past left neighbour
+	newTime = points [ilastSelected] -> number + dt;
+	if (newTime > my tmax) return 1;   // outside domain
+	if (ilastSelected < tier -> points -> size && newTime >= points [ilastSelected + 1] -> number)
+		return 1;   // past right neighbour
 
 	/*
 	 * Drop.
 	 */
 	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = (RealPoint) tier -> points -> item [i];
-		point -> time += dt;
+		point -> number += dt;
 		point -> value += df;
 	}
 
@@ -464,7 +468,7 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 		 * Move crosshair to only selected formant point.
 		 */
 		RealPoint point = (RealPoint) tier -> points -> item [ifirstSelected];
-		my startSelection = my endSelection = point -> time;
+		my startSelection = my endSelection = point -> number;
 		my ycursor = point -> value;
 	} else {
 		/*
@@ -474,7 +478,7 @@ static int click (FormantGridEditor me, double xWC, double yWC, int shiftKeyPres
 		my ycursor += df;
 	}
 
-	Editor_broadcastChange (FormantGridEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;   /* Update needed. */
 }
 
@@ -499,10 +503,10 @@ class_methods (FormantGridEditor, FunctionEditor) {
 	class_methods_end
 }
 
-int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_t *title, FormantGrid data) {
+void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classFormantGrid));
-	FunctionEditor_init (FormantGridEditor_as_FunctionEditor (me), parent, title, data); cherror
+	FunctionEditor_init (me, parent, title, data);
 	my formantFloor = preferences.formantFloor;
 	my formantCeiling = preferences.formantCeiling;
 	my bandwidthFloor = preferences.bandwidthFloor;
@@ -511,17 +515,16 @@ int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_
 	my source = preferences.source;
 	my ycursor = 0.382 * my formantFloor + 0.618 * my formantCeiling;
 	my selectedFormant = 1;
-end:
-	iferror return 0;
-	return 1;
 }
 
-FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data) {
-	FormantGridEditor me = Thing_new (FormantGridEditor); cherror
-	FormantGridEditor_init (me, parent, title, data); cherror
-end:
-	iferror forget (me);
-	return me;
+FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar *title, FormantGrid data) {
+	try {
+		autoFormantGridEditor me = Thing_new (FormantGridEditor);
+		FormantGridEditor_init (me.peek(), parent, title, data);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("FormantGrid window not created.");
+	}
 }
 
 /* End of file FormantGridEditor.cpp */

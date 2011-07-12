@@ -64,7 +64,7 @@ static void fprintquotedstring (MelderFile file, const wchar_t *s) {
 	MelderFile_writeCharacter (file, '\"');
 }
 
-static int writeText (I, MelderFile file) {
+static void writeText (I, MelderFile file) {
 	iam (TableOfReal);
 	texputi4 (file, my numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
 	MelderFile_write1 (file, L"\ncolumnLabels []: ");
@@ -83,33 +83,27 @@ static int writeText (I, MelderFile file) {
 			MelderFile_write2 (file, L"\t", Melder_double (x));
 		}
 	}
-	return 1;
 }
 
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (TableOfReal);
-	try {
-		my numberOfColumns = texgeti4 (text);
-		if (my numberOfColumns >= 1) {
-			my columnLabels = NUMvector <wchar*> (1, my numberOfColumns);
-			for (long i = 1; i <= my numberOfColumns; i ++)
-				if (! (my columnLabels [i] = texgetw2 (text))) return 0;
+	my numberOfColumns = texgeti4 (text);
+	if (my numberOfColumns >= 1) {
+		my columnLabels = NUMvector <wchar*> (1, my numberOfColumns);
+		for (long i = 1; i <= my numberOfColumns; i ++)
+			my columnLabels [i] = texgetw2 (text);
+	}
+	my numberOfRows = texgeti4 (text);
+	if (my numberOfRows >= 1) {
+		my rowLabels = NUMvector <wchar*> (1, my numberOfRows);
+	}
+	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
+		my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
+		for (long i = 1; i <= my numberOfRows; i ++) {
+			my rowLabels [i] = texgetw2 (text);
+			for (long j = 1; j <= my numberOfColumns; j ++)
+				my data [i] [j] = texgetr8 (text);
 		}
-		my numberOfRows = texgeti4 (text);
-		if (my numberOfRows >= 1) {
-			my rowLabels = NUMvector <wchar*> (1, my numberOfRows);
-		}
-		if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
-			my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
-			for (long i = 1; i <= my numberOfRows; i ++) {
-				if (! (my rowLabels [i] = texgetw2 (text))) return 0;
-				for (long j = 1; j <= my numberOfColumns; j ++)
-					my data [i] [j] = texgetr8 (text);
-			}
-		}
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
 	}
 }
 
@@ -168,20 +162,15 @@ class_methods (TableOfReal, Data) {
 	class_methods_end
 }
 
-int TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
-	try {
-		iam (TableOfReal);
-		if (numberOfRows < 1 || numberOfColumns < 1)
-			Melder_throw (L"Cannot create cell-less table.");
-		my numberOfRows = numberOfRows;
-		my numberOfColumns = numberOfColumns;
-		my rowLabels = NUMvector <wchar*> (1, numberOfRows);
-		my columnLabels = NUMvector <wchar*> (1, numberOfColumns);
-		my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+void TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
+	iam (TableOfReal);
+	if (numberOfRows < 1 || numberOfColumns < 1)
+		Melder_throw ("Cannot create cell-less table.");
+	my numberOfRows = numberOfRows;
+	my numberOfColumns = numberOfColumns;
+	my rowLabels = NUMvector <wchar*> (1, numberOfRows);
+	my columnLabels = NUMvector <wchar*> (1, numberOfColumns);
+	my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 }
 
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
@@ -190,7 +179,7 @@ TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("TableOfReal not created.");
+		Melder_throw ("TableOfReal not created.");
 	}
 }
 
@@ -258,7 +247,7 @@ void TableOfReal_removeRow (I, long rowNumber) {
 		my data = data.transfer();
 		my numberOfRows --;
 	} catch (MelderError) {
-		rethrowm (me, ": row ", rowNumber, " not removed.");
+		Melder_throw (me, ": row ", rowNumber, " not removed.");
 	}
 }
 
@@ -288,7 +277,7 @@ void TableOfReal_insertRow (I, long rowNumber) {
 		my data = data.transfer();
 		my numberOfRows ++;
 	} catch (MelderError) {
-		rethrowm (me, ": row at position ", rowNumber, " not inserted.");
+		Melder_throw (me, ": row at position ", rowNumber, " not inserted.");
 	}
 }
 
@@ -316,7 +305,7 @@ void TableOfReal_removeColumn (I, long columnNumber) {
 		my data = data.transfer();
 		my numberOfColumns --;
 	} catch (MelderError) {
-		rethrowm (me, ": column at position ", columnNumber, " not inserted.");
+		Melder_throw (me, ": column at position ", columnNumber, " not inserted.");
 	}
 }
 
@@ -344,7 +333,7 @@ void TableOfReal_insertColumn (I, long columnNumber) {
 		my data = data.transfer();
 		my numberOfColumns ++;
 	} catch (MelderError) {
-		rethrowm (me, ": column at position ", columnNumber, " not inserted.");
+		Melder_throw (me, ": column at position ", columnNumber, " not inserted.");
 	}
 }
 
@@ -359,7 +348,7 @@ void TableOfReal_setRowLabel (I, long rowNumber, const wchar_t *label) {
 		Melder_free (my rowLabels [rowNumber]);
 		my rowLabels [rowNumber] = newLabel.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": label of row ", rowNumber, " not set.");
+		Melder_throw (me, ": label of row ", rowNumber, " not set.");
 	}
 }
 
@@ -374,11 +363,11 @@ void TableOfReal_setColumnLabel (I, long columnNumber, const wchar_t *label) {
 		Melder_free (my columnLabels [columnNumber]);
 		my columnLabels [columnNumber] = newLabel.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": label of column ", columnNumber, " not set.");
+		Melder_throw (me, ": label of column ", columnNumber, " not set.");
 	}
 }
 
-int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, thou) {
+void TableOfReal_formula (I, const wchar *expression, Interpreter interpreter, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
 	try {
@@ -391,61 +380,44 @@ int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, 
 				thy data [irow] [icol] = result. result.numericResult;
 			}
 		}
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": formula not completed.");
+		Melder_throw (me, ": formula not completed.");
 	}
 }
 
 /***** EXTRACT PART *****/
 
 static void copyRowLabels (TableOfReal me, TableOfReal thee) {
-	try {
-		Melder_assert (me != thee);
-		Melder_assert (my numberOfRows == thy numberOfRows);
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			thy rowLabels [irow] = Melder_wcsdup_e (my rowLabels [irow]); therror
-		}
-	} catch (MelderError) {
-		rethrow;
+	Melder_assert (me != thee);
+	Melder_assert (my numberOfRows == thy numberOfRows);
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		thy rowLabels [irow] = Melder_wcsdup (my rowLabels [irow]);
 	}
 }
 
 static void copyColumnLabels (TableOfReal me, TableOfReal thee) {
-	try {
-		Melder_assert (me != thee);
-		Melder_assert (my numberOfColumns == thy numberOfColumns);
-		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy columnLabels [icol] = Melder_wcsdup_e (my columnLabels [icol]); therror;
-		}
-	} catch (MelderError) {
-		rethrow;
+	Melder_assert (me != thee);
+	Melder_assert (my numberOfColumns == thy numberOfColumns);
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		thy columnLabels [icol] = Melder_wcsdup (my columnLabels [icol]);
 	}
 }
 
 static void copyRow (TableOfReal me, long myRow, TableOfReal thee, long thyRow) {
-	try {
-		Melder_assert (me != thee);
-		Melder_assert (my numberOfColumns == thy numberOfColumns);
-		thy rowLabels [thyRow] = Melder_wcsdup_e (my rowLabels [myRow]); therror
-		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy data [thyRow] [icol] = my data [myRow] [icol];
-		}
-	} catch (MelderError) {
-		rethrow;
+	Melder_assert (me != thee);
+	Melder_assert (my numberOfColumns == thy numberOfColumns);
+	thy rowLabels [thyRow] = Melder_wcsdup (my rowLabels [myRow]);
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		thy data [thyRow] [icol] = my data [myRow] [icol];
 	}
 }
 
 static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCol) {
-	try {
-		Melder_assert (me != thee);
-		Melder_assert (my numberOfRows == thy numberOfRows);
-		thy columnLabels [thyCol] = Melder_wcsdup_e (my columnLabels [myCol]); therror
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			thy data [irow] [thyCol] = my data [irow] [myCol];
-		}
-	} catch (MelderError) {
-		rethrow;
+	Melder_assert (me != thee);
+	Melder_assert (my numberOfRows == thy numberOfRows);
+	thy columnLabels [thyCol] = Melder_wcsdup (my columnLabels [myCol]);
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		thy data [irow] [thyCol] = my data [irow] [myCol];
 	}
 }
 
@@ -462,16 +434,14 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder
 		}
 		if (n == 0) Melder_throw ("No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
-		copyColumnLabels (me, thee.peek()); therror
+		copyColumnLabels (me, thee.peek());
 		n = 0;
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion)) {
-				copyRow (me, irow, thee.peek(), ++ n); therror
-			}
-		}
+		for (long irow = 1; irow <= my numberOfRows; irow ++)
+			if (Melder_numberMatchesCriterion (my data [irow] [column], which_Melder_NUMBER, criterion))
+				copyRow (me, irow, thee.peek(), ++ n);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": rows not extracted.");
+		Melder_throw (me, ": rows not extracted.");
 	}
 }
 
@@ -484,18 +454,17 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const
 				n ++;
 			}
 		}
-		if (n == 0) Melder_throw (L"No row matches this criterion.");
+		if (n == 0)
+			Melder_throw (L"No row matches this criterion.");
 		autoTableOfReal thee = TableOfReal_create (n, my numberOfColumns);
-		copyColumnLabels (me, thee.peek()); therror
+		copyColumnLabels (me, thee.peek());
 		n = 0;
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion)) {
-				copyRow (me, irow, thee.peek(), ++ n); therror
-			}
-		}
+		for (long irow = 1; irow <= my numberOfRows; irow ++)
+			if (Melder_stringMatchesCriterion (my rowLabels [irow], which_Melder_STRING, criterion))
+				copyRow (me, irow, thee.peek(), ++ n);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": rows not extracted.");
+		Melder_throw (me, ": rows not extracted.");
 	}
 }
 
@@ -513,16 +482,14 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NU
 		if (n == 0) Melder_throw ("No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
-		copyRowLabels (me, thee.peek()); therror
+		copyRowLabels (me, thee.peek());
 		n = 0;
-		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion)) {
-				copyColumn (me, icol, thee.peek(), ++ n); therror
-			}
-		}
+		for (long icol = 1; icol <= my numberOfColumns; icol ++)
+			if (Melder_numberMatchesCriterion (my data [row] [icol], which_Melder_NUMBER, criterion))
+				copyColumn (me, icol, thee.peek(), ++ n);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": columns not extracted.");
+		Melder_throw (me, ": columns not extracted.");
 	}
 }
 
@@ -538,16 +505,16 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, co
 		if (n == 0) Melder_throw ("No column matches this criterion.");
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, n);
-		copyRowLabels (me, thee.peek()); therror
+		copyRowLabels (me, thee.peek());
 		n = 0;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (Melder_stringMatchesCriterion (my columnLabels [icol], which_Melder_STRING, criterion)) {
-				copyColumn (me, icol, thee.peek(), ++ n); therror
+				copyColumn (me, icol, thee.peek(), ++ n);
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": columns not extracted.");
+		Melder_throw (me, ": columns not extracted.");
 	}
 }
 
@@ -556,119 +523,113 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, co
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, const wchar_t *elementType) {
-	try {
-		/*
-		 * Count the elements.
-		 */
-		long previousElement = 0;
-		*numberOfElements = 0;
-		const wchar *p = & ranges [0];
-		for (;;) {
-			while (*p == ' ' || *p == '\t') p ++;
-			if (*p == '\0') break;
-			if (isdigit (*p)) {
-				long currentElement = wcstol (p, NULL, 10);
-				if (currentElement == 0)
-					Melder_throw ("No such ", elementType, L": 0 (minimum is 1).");
-				if (currentElement > maximumElement)
-					Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
-				*numberOfElements += 1;
-				previousElement = currentElement;
-				do { p ++; } while (isdigit (*p));
-			} else if (*p == ':') {
-				if (previousElement == 0)
-					Melder_throw ("Cannot start range with colon.");
-				do { p ++; } while (*p == ' ' || *p == '\t');
-				if (*p == '\0')
-					Melder_throw ("Cannot end range with colon.");
-				if (! isdigit (*p))
-					Melder_throw ("End of range should be a positive whole number.");
-				long currentElement = wcstol (p, NULL, 10);
-				if (currentElement == 0)
-					Melder_throw ("No such ", elementType, ": 0 (minimum is 1).");
-				if (currentElement > maximumElement)
-					Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
-				if (currentElement > previousElement) {
-					*numberOfElements += currentElement - previousElement;
-				} else {
-					*numberOfElements += previousElement - currentElement;
-				}
-				previousElement = currentElement;
-				do { p ++; } while (isdigit (*p));
+static long *getElementsOfRanges (const wchar *ranges, long maximumElement, long *numberOfElements, const wchar *elementType) {
+	/*
+	 * Count the elements.
+	 */
+	long previousElement = 0;
+	*numberOfElements = 0;
+	const wchar *p = & ranges [0];
+	for (;;) {
+		while (*p == ' ' || *p == '\t') p ++;
+		if (*p == '\0') break;
+		if (isdigit (*p)) {
+			long currentElement = wcstol (p, NULL, 10);
+			if (currentElement == 0)
+				Melder_throw ("No such ", elementType, L": 0 (minimum is 1).");
+			if (currentElement > maximumElement)
+				Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
+			*numberOfElements += 1;
+			previousElement = currentElement;
+			do { p ++; } while (isdigit (*p));
+		} else if (*p == ':') {
+			if (previousElement == 0)
+				Melder_throw ("Cannot start range with colon.");
+			do { p ++; } while (*p == ' ' || *p == '\t');
+			if (*p == '\0')
+				Melder_throw ("Cannot end range with colon.");
+			if (! isdigit (*p))
+				Melder_throw ("End of range should be a positive whole number.");
+			long currentElement = wcstol (p, NULL, 10);
+			if (currentElement == 0)
+				Melder_throw ("No such ", elementType, ": 0 (minimum is 1).");
+			if (currentElement > maximumElement)
+				Melder_throw ("No such ", elementType, ": ", currentElement, " (maximum is ", maximumElement, ").");
+			if (currentElement > previousElement) {
+				*numberOfElements += currentElement - previousElement;
 			} else {
-				Melder_throw ("Start of range should be a positive whole number.");
+				*numberOfElements += previousElement - currentElement;
 			}
+			previousElement = currentElement;
+			do { p ++; } while (isdigit (*p));
+		} else {
+			Melder_throw ("Start of range should be a positive whole number.");
 		}
-		/*
-		 * Create room for the elements.
-		 */
-		autoNUMvector <long> elements (1, *numberOfElements);
-		/*
-		 * Store the elements.
-		 */
-		previousElement = 0;
-		*numberOfElements = 0;
-		p = & ranges [0];
-		for (;;) {
-			while (*p == ' ' || *p == '\t') p ++;
-			if (*p == '\0') break;
-			if (isdigit (*p)) {
-				long currentElement = wcstol (p, NULL, 10);
-				elements [++ *numberOfElements] = currentElement;
-				previousElement = currentElement;
-				do { p ++; } while (isdigit (*p));
-			} else if (*p == ':') {
-				do { p ++; } while (*p == ' ' || *p == '\t');
-				long currentElement = wcstol (p, NULL, 10);
-				if (currentElement > previousElement) {
-					for (long ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
-						elements [++ *numberOfElements] = ielement;
-					}
-				} else {
-					for (long ielement = previousElement - 1; ielement >= currentElement; ielement --) {
-						elements [++ *numberOfElements] = ielement;
-					}
-				}
-				previousElement = currentElement;
-				do { p ++; } while (isdigit (*p));
-			}
-		}
-		return elements.transfer();
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	/*
+	 * Create room for the elements.
+	 */
+	autoNUMvector <long> elements (1, *numberOfElements);
+	/*
+	 * Store the elements.
+	 */
+	previousElement = 0;
+	*numberOfElements = 0;
+	p = & ranges [0];
+	for (;;) {
+		while (*p == ' ' || *p == '\t') p ++;
+		if (*p == '\0') break;
+		if (isdigit (*p)) {
+			long currentElement = wcstol (p, NULL, 10);
+			elements [++ *numberOfElements] = currentElement;
+			previousElement = currentElement;
+			do { p ++; } while (isdigit (*p));
+		} else if (*p == ':') {
+			do { p ++; } while (*p == ' ' || *p == '\t');
+			long currentElement = wcstol (p, NULL, 10);
+			if (currentElement > previousElement) {
+				for (long ielement = previousElement + 1; ielement <= currentElement; ielement ++) {
+					elements [++ *numberOfElements] = ielement;
+				}
+			} else {
+				for (long ielement = previousElement - 1; ielement >= currentElement; ielement --) {
+					elements [++ *numberOfElements] = ielement;
+				}
+			}
+			previousElement = currentElement;
+			do { p ++; } while (isdigit (*p));
+		}
+	}
+	return elements.transfer();
 }
 
-TableOfReal TableOfReal_extractRowRanges (I, const wchar_t *ranges) {
+TableOfReal TableOfReal_extractRowRanges (I, const wchar *ranges) {
 	iam (TableOfReal);
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, L"row"), 1);
 		autoTableOfReal thee = TableOfReal_create (numberOfElements, my numberOfColumns);
-		copyColumnLabels (me, thee.peek()); therror
-		for (long ielement = 1; ielement <= numberOfElements; ielement ++) {
-			copyRow (me, elements [ielement], thee.peek(), ielement); therror
-		}
+		copyColumnLabels (me, thee.peek());
+		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
+			copyRow (me, elements [ielement], thee.peek(), ielement);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": row ranges not extracted.");
+		Melder_throw (me, ": row ranges not extracted.");
 	}
 }
 
-TableOfReal TableOfReal_extractColumnRanges (I, const wchar_t *ranges) {
+TableOfReal TableOfReal_extractColumnRanges (I, const wchar *ranges) {
 	iam (TableOfReal);
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, L"column"), 1);
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, numberOfElements);
-		copyRowLabels (me, thee.peek()); therror
-		for (long ielement = 1; ielement <= numberOfElements; ielement ++) {
-			copyColumn (me, elements [ielement], thee.peek(), ielement); therror
-		}
+		copyRowLabels (me, thee.peek());
+		for (long ielement = 1; ielement <= numberOfElements; ielement ++)
+			copyColumn (me, elements [ielement], thee.peek(), ielement);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": column ranges not extracted.");
+		Melder_throw (me, ": column ranges not extracted.");
 	}
 }
 
@@ -696,7 +657,7 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpret
 		 * Create room for the result.
 		 */	
 		autoTableOfReal thee = TableOfReal_create (numberOfElements, my numberOfColumns);
-		copyColumnLabels (me, thee.peek()); therror
+		copyColumnLabels (me, thee.peek());
 		/*
 		 * Store the result.
 		 */
@@ -706,14 +667,14 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpret
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
-					copyRow (me, irow, thee.peek(), ++ numberOfElements); therror
+					copyRow (me, irow, thee.peek(), ++ numberOfElements);
 					break;
 				}
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": rows not extracted.");
+		Melder_throw (me, ": rows not extracted.");
 	}
 }
 
@@ -741,7 +702,7 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 		 * Create room for the result.
 		 */	
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, numberOfElements);
-		copyRowLabels (me, thee.peek()); therror
+		copyRowLabels (me, thee.peek());
 		/*
 		 * Store the result.
 		 */
@@ -751,14 +712,14 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 				struct Formula_Result result;
 				Formula_run (irow, icol, & result); therror
 				if (result. result.numericResult != 0.0) {
-					copyColumn (me, icol, thee.peek(), ++ numberOfElements); therror
+					copyColumn (me, icol, thee.peek(), ++ numberOfElements);
 					break;
 				}
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": columns not extracted.");
+		Melder_throw (me, ": columns not extracted.");
 	}
 }
 
@@ -775,7 +736,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 		}
 		return thee.transfer();	
 	} catch (MelderError) {
-		rethrowmzero (me, ": row labels not extracted.");
+		Melder_throw (me, ": row labels not extracted.");
 	}
 }
 
@@ -790,7 +751,7 @@ Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 		}
 		return thee.transfer();	
 	} catch (MelderError) {
-		rethrowmzero (me, ": column labels not extracted.");
+		Melder_throw (me, ": column labels not extracted.");
 	}
 }
 
@@ -938,7 +899,7 @@ void TableOfReal_drawAsNumbers_if (I, Graphics graphics, long rowmin, long rowma
 		}
 		Graphics_unsetInner (graphics);
 	} catch (MelderError) {
-		rethrowm (me, ": numbers not drawn.");
+		Melder_throw (me, ": numbers not drawn.");
 	}
 }
 
@@ -1084,7 +1045,7 @@ Any TablesOfReal_append (I, thou) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("TableOfReal objects not appended.");
+		Melder_throw ("TableOfReal objects not appended.");
 	}
 }
 
@@ -1118,7 +1079,7 @@ Any TablesOfReal_appendMany (Collection me) {
 		Melder_assert (totalNumberOfRows == his numberOfRows);
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("TableOfReal objects not appended.");
+		Melder_throw ("TableOfReal objects not appended.");
 	}
 }
 
@@ -1212,7 +1173,7 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to TableOfReal.");
+		Melder_throw (me, ": not converted to TableOfReal.");
 	}
 }
 
@@ -1235,11 +1196,11 @@ Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Table.");
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
-int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {
+void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {
 	try {
 		autoMelderString buffer;
 		MelderString_copy (& buffer, L"rowLabel"); therror
@@ -1260,9 +1221,8 @@ int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fil
 			MelderString_appendCharacter (& buffer, '\n'); therror
 		}
 		MelderFile_writeText (file, buffer.string); therror
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": not saved to headerless spreadsheet file.");
+		Melder_throw (me, ": not saved to tab-separated file.");
 	}
 }
 
@@ -1353,7 +1313,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("TableOfReal: headerless spreadsheet file ", MelderFile_messageName (file), " not read.");
+		Melder_throw ("TableOfReal: tab-separated file ", MelderFile_messageName (file), " not read.");
 	}
 }
 

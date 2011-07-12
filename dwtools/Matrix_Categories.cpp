@@ -42,7 +42,7 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee)
 			for (long j = 1; j <= my nx; j++) his data[i][j] = my z[i][j];
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from Matrix & Categories."); }
+	} catch (MelderError) { Melder_thrown ("TableOfReal not created from Matrix & Categories."); }
 }
 
 /* End of file Matrix_Categories.cpp */

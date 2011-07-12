@@ -48,38 +48,36 @@ static void classProcrustes_transform (I, double **in, long nrows, double **out)
 static Any classProcrustes_invert (I)
 {
 	iam (Procrustes);
-	try {
-		autoProcrustes thee = (Procrustes) Data_copy (me);
-		/*
-			R is symmetric rotation matrix --> 
-			inverse is transpose!
-		*/
-	
-		thy s = my s == 0 ? 1 : 1 / my s;
-	
-		for (long i = 1; i <= my n; i++)
+	autoProcrustes thee = (Procrustes) Data_copy (me);
+	/*
+		R is symmetric rotation matrix --> 
+		inverse is transpose!
+	*/
+
+	thy s = my s == 0 ? 1 : 1 / my s;
+
+	for (long i = 1; i <= my n; i++)
+	{
+		for (long j = i + 1; j <= my n; j++)
 		{
-			for (long j = i + 1; j <= my n; j++)
-			{
-				thy r[i][j] = my r[j][i];
-				thy r[j][i] = my r[i][j];
-			}
-			thy t[i] = 0;
-			/*
-			for (j = 1; j <= thy n; j++)
-			{
-				thy t[i] -= thy r[i][j] * my t[j];
-			}
-			*/
-			for (long j = 1; j <= thy n; j++)
-			{
-				thy t[i] -= thy r[j][i] * my t[j];
-			}
-		
-			thy t[i] *= thy s;
+			thy r[i][j] = my r[j][i];
+			thy r[j][i] = my r[i][j];
 		}
-		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not inverted."); }
+		thy t[i] = 0;
+		/*
+		for (j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[i][j] * my t[j];
+		}
+		*/
+		for (long j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[j][i] * my t[j];
+		}
+	
+		thy t[i] *= thy s;
+	}
+	return thee.transfer();
 }
 
 #include "oo_DESTROY.h"
@@ -136,7 +134,7 @@ Procrustes Procrustes_create (long n)
 		AffineTransform_init (me.peek(), n); therror
 		Procrustes_setDefaults (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Procrustes not created."); }
+	} catch (MelderError) { Melder_thrown ("Procrustes not created."); }
 }
 
 

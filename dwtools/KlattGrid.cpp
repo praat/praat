@@ -74,6 +74,8 @@ Sound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTi
 
 Sound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency);
 
+#undef MIN
+#undef MAX
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define KlattGrid_OPENPHASE_DEFAULT 0.7
@@ -146,7 +148,7 @@ static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double ma
 	if (myindex <= numberOfValues)\
 	{\
 	mypoint = (RealPoint) my points -> item [myindex];\
-	mytime = mypoint -> time; myvalue = mypoint -> value;\
+	mytime = mypoint -> number; myvalue = mypoint -> value;\
 	}\
 	else mytime = my xmax;\
 
@@ -156,7 +158,7 @@ static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phonation
 		long myindex = 1;
 		RealPoint mypoint = (RealPoint) my points -> item [myindex];
 		long numberOfValues = my points -> size;
-		double mytime = mypoint -> time;
+		double mytime = mypoint -> number;
 		double myvalue = mypoint -> value;
 		double lasttime = my xmin - 0.001; // sometime before xmin
 		autoRealTier thee = RealTier_create (my xmin, my xmax);
@@ -239,7 +241,7 @@ static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phonation
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not updated with delta."); }
+	} catch (MelderError) { Melder_thrown (me, ": not updated with delta."); }
 }
 
 static void check_formants (long numberOfFormants, long *ifb, long *ife)
@@ -307,7 +309,7 @@ static Sound _Sound_diff (Sound me, int scale)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not differenced."); }
+	} catch (MelderError) { Melder_thrown (me, ": not differenced."); }
 }
 
 /*static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
@@ -340,7 +342,7 @@ static connections connections_create (long numberOfConnections)
 		my x = NUMvector<double> (1, numberOfConnections);
 		my y = NUMvector<double> (1, numberOfConnections);
 		return me;
-	} catch (MelderError) { connections_free (me); rethrowmzero ("Connections not created."); }
+	} catch (MelderError) { connections_free (me); Melder_thrown ("Connections not created."); }
 }
 
 // Calculates the intersection point (xi,yi) of a line with a circle.
@@ -464,7 +466,7 @@ PhonationPoint PhonationPoint_create (double time, double period, double openPha
 		my power1 = power1; my power2 = power2;
 		my pulseScale = pulseScale;
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("PhonationPoint not created."); }
+	} catch (MelderError) { Melder_thrown ("PhonationPoint not created."); }
 }
 
 class_methods (PhonationTier, Function)
@@ -488,7 +490,7 @@ PhonationTier PhonationTier_create (double tmin, double tmax)
 		Function_init (me.peek(), tmin, tmax);
 		my points = SortedSetOfDouble_create ();
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("PhonationTier not created."); }
+	} catch (MelderError) { Melder_thrown ("PhonationTier not created."); }
 }
 
 PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me)
@@ -502,7 +504,7 @@ PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me)
 			PointProcess_addPoint (thee.peek(), fp -> time);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no PointProcess with closure times created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no PointProcess with closure times created."); }
 }
 
 /********************** PhonationGridPlayOptions **********************/
@@ -536,7 +538,7 @@ PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
 	try {
 		autoPhonationGridPlayOptions me = Thing_new (PhonationGridPlayOptions);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("PhonationGridPlayOptions not created."); }
+	} catch (MelderError) { Melder_thrown ("PhonationGridPlayOptions not created."); }
 }
 
 /********************** PhonationGrid **********************/
@@ -614,19 +616,18 @@ PhonationGrid PhonationGrid_create (double tmin, double tmax)
 		my options = PhonationGridPlayOptions_create ();
 		PhonationGrid_setNames (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("PhonationGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("PhonationGrid not created."); }
 }
 
 static void PhonationGrid_checkFlowFunction (PhonationGrid me)
 {
-	try {
 		int hasPower1Points = my power1 -> points -> size > 0;
 		int hasPower2Points = my power2 -> points -> size > 0;
 
 		long ipoint = 1;
 		do
 		{
-			double time = hasPower1Points ? ((RealPoint)(my power1 -> points -> item[ipoint])) -> time : 0.5*(my xmin + my xmax);
+			double time = hasPower1Points ? ((RealPoint)(my power1 -> points -> item[ipoint])) -> number : 0.5*(my xmin + my xmax);
 			double power1 = RealTier_getValueAtIndex (my power1, ipoint);
 			if (power1 == NUMundefined) power1 = KlattGrid_POWER1_DEFAULT;
 			if (power1 <= 0) Melder_throw ("All power1 values must greater than zero.");
@@ -641,19 +642,17 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me)
 		ipoint = 1;
 		do
 		{
-			double time = hasPower2Points ? ((RealPoint)(my power2 -> points -> item[ipoint])) -> time : 0.5*(my xmin + my xmax);
+			double time = hasPower2Points ? ((RealPoint)(my power2 -> points -> item[ipoint])) -> number : 0.5*(my xmin + my xmax);
 			double power2 = RealTier_getValueAtIndex (my power2, ipoint);
 			if (power2 == NUMundefined) power2 = KlattGrid_POWER2_DEFAULT;
 			double power1 = RealTier_getValueAtTime (my power1, time);
 			if (power1 == NUMundefined) power1 = KlattGrid_POWER1_DEFAULT;
 			if (power2 <= power1) Melder_throw ("At all times the power2 value must be greater than the corresponding power1 value.");
 		} while (++ipoint < my power2 -> points -> size);
-	} catch (MelderError) { rethrow; }
 }
 
 static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout)
 {
-	try {
 		// dum voicing conn tilt conn summer
 		(void) me;
 		double xw[6] = { 0, 1, 0.5, 1, 0.5, 0.5 }, xws[6];
@@ -691,7 +690,6 @@ static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin
 		connections_free (thee);
 
 		if (yout != 0) *yout = ys;
-	} catch (MelderError) { rethrow; }
 
 }
 
@@ -737,7 +735,7 @@ PointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutte
 			thy t[it] += tsum;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (pitch, ": no flutter PointProcess created."); }
+	} catch (MelderError) { Melder_thrown (pitch, ": no flutter PointProcess created."); }
 }
 
 Sound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFrequency)
@@ -764,7 +762,7 @@ Sound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFreque
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no aspiration Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no aspiration Sound created."); }
 }
 
 static void Sound_PhonationGrid_spectralTilt_inline (Sound thee, PhonationGrid me)
@@ -813,7 +811,6 @@ static void nrfunction (double x, double *fx, double *dfx, void *closure)
 
 static double get_collisionPoint_x (double n, double m, double collisionPhase)
 {
-	try {
 		double y = NUMundefined;
 		/*
 		Domain [0,1]:
@@ -845,7 +842,6 @@ static double get_collisionPoint_x (double n, double m, double collisionPhase)
 			NUMnrbis (&nrfunction, xmaxFlow, 1, &nrfs, &root); y = root;
 		}
 		return y;
-	} catch (MelderError) { rethrowzero; }
 }
 
 PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me)
@@ -938,7 +934,7 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me)
 			AnyTier_addPoint (thee.peek(), phonationPoint.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no PhonationTier created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no PhonationTier created."); }
 }
 
 Sound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency)
@@ -1058,7 +1054,7 @@ Sound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTi
 			if (breathy.peek() != 0) his z[1][i] += breathy -> z[1][i];
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Sound created."); }
 }
 
 static Sound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFrequency)
@@ -1067,7 +1063,7 @@ static Sound PhonationGrid_to_Sound_voiced (PhonationGrid me, double samplingFre
 		autoPhonationTier thee = PhonationGrid_to_PhonationTier (me);
 		autoSound him = PhonationGrid_PhonationTier_to_Sound_voiced (me, thee.peek(), samplingFrequency);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no voiced Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no voiced Sound created."); }
 }
 
 static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double samplingFrequency)
@@ -1094,7 +1090,7 @@ static Sound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, double 
 		}
 		if (thee.peek() == 0) thee.reset (Sound_createEmptyMono (my xmin, my xmax, samplingFrequency));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Sound created."); }
 }
 
 static Ordered formantsAmplitudes_create (double tmin, double tmax, long numberOfFormants)
@@ -1107,7 +1103,7 @@ static Ordered formantsAmplitudes_create (double tmin, double tmax, long numberO
 			Collection_addItem (me.peek(), a.transfer());
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("No formants amplitudes created."); };
+	} catch (MelderError) { Melder_thrown ("No formants amplitudes created."); };
 }
 
 /********************** VocalTractGridPlayOptions **********************/
@@ -1142,7 +1138,7 @@ VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
 	try {
 		VocalTractGridPlayOptions me = Thing_new (VocalTractGridPlayOptions);
 		return me;
-	} catch (MelderError) { rethrowmzero ("VocalTractGridPlayOptions not created."); }
+	} catch (MelderError) { Melder_thrown ("VocalTractGridPlayOptions not created."); }
 }
 
 /********************** VocalTractGrid ***************************************/
@@ -1247,7 +1243,7 @@ VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFor
 		my options = VocalTractGridPlayOptions_create ();
 		VocalTractGrid_setNames (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("VocalTractGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("VocalTractGrid not created."); }
 }
 
 static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout)
@@ -1308,7 +1304,6 @@ end:
 
 static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout)
 {
-	try {
 		// (0: filler) (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
 		// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
 		double xw[9] = { 0, 0.3, 0.2, 1.5, 0.5, 0.5, 1, 0.5, 0.5 }, xws[9];
@@ -1405,7 +1400,6 @@ end:
 
 		if (yin != NULL) *yin = y1;
 		if (yout != NULL) *yout = y2;
-	} catch (MelderError) { rethrow; }
 }
 
 static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout)
@@ -1513,7 +1507,7 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not filtered by vocaltract and coupling grid."); }
+	} catch (MelderError) { Melder_thrown (me, ": not filtered by vocaltract and coupling grid."); }
 
 }
 
@@ -1605,7 +1599,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 
 		if (him.peek() == 0) him.reset ((Sound) Data_copy (me));
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not filtered in parallel."); }
+	} catch (MelderError) { Melder_thrown (me, ": not filtered in parallel."); }
 }
 
 Sound Sound_VocalTractGrid_CouplingGrid_filter (Sound me, VocalTractGrid thee, CouplingGrid coupling)
@@ -1650,7 +1644,7 @@ CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
 	try {
 		CouplingGridPlayOptions me = Thing_new (CouplingGridPlayOptions);
 		return me;
-	} catch (MelderError) { rethrowmzero ("CouplingGridPlayOptions not created."); }
+	} catch (MelderError) { Melder_thrown ("CouplingGridPlayOptions not created."); }
 }
 
 /********************** CouplingGrid *************************************/
@@ -1709,7 +1703,7 @@ CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachea
 		my options = CouplingGridPlayOptions_create ();
 		CouplingGrid_setNames (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("CouplingGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("CouplingGrid not created."); }
 }
 
 /********************** FormantGrid & CouplingGrid *************************************/
@@ -1749,14 +1743,13 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 				}
 			}
 		}
-	} catch (MelderError) { rethrowm (me, ": not updated with open hase information."); }
+	} catch (MelderError) { Melder_throw (me, ": not updated with open hase information."); }
 }
 
 /************************ Sound & FormantGrid *********************************************/
 
 void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, thou, long iformant, int antiformant)
 {
-	try {
 		thouart (FormantGrid);
 		if (iformant < 1 || iformant > thy formants -> size)
 		{
@@ -1781,7 +1774,6 @@ void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, thou, long iforma
 			if (f <= nyquist && NUMdefined (b)) Filter_setFB (r.peek(), f, b);
 			my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant)
@@ -1825,7 +1817,7 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 			}
 			my z[1][is] = Filter_getOutput (r.peek(), my z[1][is]);
 		}
-	} catch (MelderError) { rethrowm (me, ": not filtered with one formant filter."); }
+	} catch (MelderError) { Melder_throw (me, ": not filtered with one formant filter."); }
 }
 
 Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered amplitudes, long iformantb, long iformante, int alternatingSign)
@@ -1850,7 +1842,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 			} catch (MelderError) { ; } // Just skip the formant
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not filtered."); }
+	} catch (MelderError) { Melder_thrown (me, ": not filtered."); }
 }
 
 /********************** FricationGridPlayOptions **********************/
@@ -1881,7 +1873,7 @@ FricationGridPlayOptions FricationGridPlayOptions_create (void)
 	try {
 		FricationGridPlayOptions me = Thing_new (FricationGridPlayOptions);
 		return me;
-	} catch (MelderError) { rethrowmzero ("FricationGridPlayOptions not created."); }
+	} catch (MelderError) { Melder_thrown ("FricationGridPlayOptions not created."); }
 }
 
 /************************ FricationGrid (& Sound) *********************************************/
@@ -1937,7 +1929,7 @@ FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfForma
 		my options = FricationGridPlayOptions_create ();
 		FricationGrid_setNames (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("FricationGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("FricationGrid not created."); }
 }
 
 static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout)
@@ -2032,7 +2024,7 @@ Sound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency)
 
 		autoSound him = Sound_FricationGrid_filter (thee.peek(), me);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no frication Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no frication Sound created."); }
 }
 
 /************************ Sound & FricationGrid *********************************************/
@@ -2070,7 +2062,7 @@ Sound Sound_FricationGrid_filter (Sound me, FricationGrid thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not filtered by frication filter."); }
+	} catch (MelderError) { Melder_thrown (me, ": not filtered by frication filter."); }
 }
 
 /********************** KlattGridPlayOptions **********************/
@@ -2102,7 +2094,7 @@ KlattGridPlayOptions KlattGridPlayOptions_create (void)
 	try {
 		KlattGridPlayOptions me = Thing_new (KlattGridPlayOptions);
 		return me;
-	} catch (MelderError) { rethrowmzero ("KlattGridPlayOptions not created."); }
+	} catch (MelderError) { Melder_thrown ("KlattGridPlayOptions not created."); }
 }
 
 void KlattGrid_setDefaultPlayOptions (KlattGrid me)
@@ -2176,7 +2168,7 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 		KlattGrid_setDefaultPlayOptions (me.peek());
 		KlattGrid_setNames (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("KlattGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("KlattGrid not created."); }
 }
 
 KlattGrid KlattGrid_createExample (void)
@@ -2185,7 +2177,7 @@ KlattGrid KlattGrid_createExample (void)
 		autoKlattTable thee = KlattTable_createExample ();
 		autoKlattGrid me = KlattTable_to_KlattGrid (thee.peek(), 0.005);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("KlattGrid example not created."); };
+	} catch (MelderError) { Melder_thrown ("KlattGrid example not created."); };
 }
 
 // y is the heigth in units of the height of one section,
@@ -2388,7 +2380,7 @@ void KlattGrid_replace##Name##Tier (KlattGrid me, tierType thee) \
 	auto##tierType any = (tierType) Data_copy (thee); \
 	forget (my phonation -> name); \
 	my phonation -> name = any.transfer(); \
-	} catch (MelderError) { rethrowm (me, ": tier not replaced."); } \
+	} catch (MelderError) { Melder_throw (me, ": tier not replaced."); } \
 }
 
 // Generate 55 functions
@@ -2473,7 +2465,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const wchar_t 
 				((RealPoint) amplitudes -> points -> item [icol]) -> value = result. result.numericResult;
 			}
 		}
-	} catch (MelderError) { rethrowm (me, ": formula not finished on amplitudes."); }
+	} catch (MelderError) { Melder_throw (me, ": formula not finished on amplitudes."); }
 }
 
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t)
@@ -2504,7 +2496,7 @@ IntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, lon
 		if (iformant < 0 || iformant > (*ordered) ->size) Melder_throw ("Formant does not exist.");
 		autoIntensityTier thee = (IntensityTier) Data_copy ((*ordered) -> item[iformant]);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no IntensityTier extracted."); }
+	} catch (MelderError) { Melder_thrown (me, ": no IntensityTier extracted."); }
 }
 
 void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iformant, IntensityTier thee)
@@ -2516,7 +2508,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 		autoIntensityTier any = (IntensityTier) Data_copy (thee);
 		forget ((*ordered) -> item[iformant]);
 		(*ordered) -> item[iformant] = any.transfer();
-	} catch (MelderError) { rethrowm (me, ": no ampitude tier replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": no ampitude tier replaced."); }
 }
 
 FormantGrid KlattGrid_extractFormantGrid (KlattGrid me, int formantType)
@@ -2525,7 +2517,7 @@ FormantGrid KlattGrid_extractFormantGrid (KlattGrid me, int formantType)
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
 		autoFormantGrid thee = (FormantGrid) Data_copy (*fg);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no FormantGrid extracted."); }
+	} catch (MelderError) { Melder_thrown (me, ": no FormantGrid extracted."); }
 }
 
 void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid thee)
@@ -2536,7 +2528,7 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid th
 		autoFormantGrid any = (FormantGrid) Data_copy (thee);
 		forget (*fg);
 		*fg = any.transfer();
-	} catch (MelderError) { rethrowm (me, ": no FormantGrid replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": no FormantGrid replaced."); }
 }
 
 void KlattGrid_addFormant (KlattGrid me,int formantType, long position)
@@ -2564,7 +2556,7 @@ void KlattGrid_addFormant (KlattGrid me,int formantType, long position)
 			Ordered_addItemPos ((*ordered), it.transfer(), position);
 		} catch (MelderError) { // restore original
 			FormantGrid_removeFormantAndBandwidthTiers (*fg, position); }
-	} catch (MelderError) { rethrowm (me, ": no formant added."); }
+	} catch (MelderError) { Melder_throw (me, ": no formant added."); }
 }
 
 void KlattGrid_removeFormant (KlattGrid me,int formantType, long position)
@@ -2608,8 +2600,9 @@ FormantGrid KlattGrid_extractDeltaFormantGrid (KlattGrid me)
 {
 	try {
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, KlattGrid_DELTA_FORMANTS);
-		return (FormantGrid) Data_copy (*fg);
-	} catch (MelderError) { rethrowmzero (me, ": no delta FormantGrid extracted."); }
+		autoFormantGrid thee = (FormantGrid) Data_copy (*fg);
+		return thee.transfer();
+	} catch (MelderError) { Melder_thrown (me, ": no delta FormantGrid extracted."); }
 }
 
 void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee)
@@ -2620,7 +2613,7 @@ void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee)
 		autoFormantGrid him = (FormantGrid) Data_copy (thee);
 		forget (*fg);
 		*fg = him.transfer();
-	} catch (MelderError) { rethrowm (me, ": no delta FormantGrid replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": no delta FormantGrid replaced."); }
 }
 
 FormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fadeFraction)
@@ -2634,7 +2627,7 @@ FormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fadeFr
 		KlattGrid_setGlottisCoupling (me);
 		FormantGrid_CouplingGrid_updateOpenPhases (thee.peek(), my coupling);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no \"open phase\" oral FormantGrid created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no \"open phase\" oral FormantGrid created."); }
 }
 
 PointProcess KlattGrid_extractPointProcess_glottalClosures (KlattGrid me)
@@ -2644,7 +2637,7 @@ PointProcess KlattGrid_extractPointProcess_glottalClosures (KlattGrid me)
 		autoPhonationTier pt = PhonationGrid_to_PhonationTier (my phonation);
 		autoPointProcess thee = PhonationTier_to_PointProcess_closures (pt.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no glottal closure points extracted."); }
+	} catch (MelderError) { Melder_thrown (me, ": no glottal closure points extracted."); }
 }
 
 double KlattGrid_getFricationAmplitudeAtTime (KlattGrid me, double t)
@@ -2674,7 +2667,7 @@ void KlattGrid_replaceFricationAmplitudeTier (KlattGrid me, IntensityTier thee)
 		autoIntensityTier him = (IntensityTier) Data_copy (thee);
 		forget (my frication -> fricationAmplitude);
 		my frication -> fricationAmplitude = him.transfer();
-	} catch (MelderError) { rethrowm (me, ": no frication amplitude tier replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": no frication amplitude tier replaced."); }
 }
 
 double KlattGrid_getFricationBypassAtTime (KlattGrid me, double t)
@@ -2704,7 +2697,7 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee)
 		autoIntensityTier him = (IntensityTier) Data_copy (thee);
 		forget (my frication -> bypass);
 		my frication -> bypass = him.transfer();
-	} catch (MelderError) { rethrowm (me, ": no frication bypass tier replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": no frication bypass tier replaced."); }
 }
 
 void KlattGrid_setGlottisCoupling (KlattGrid me)
@@ -2713,7 +2706,7 @@ void KlattGrid_setGlottisCoupling (KlattGrid me)
 		forget (my coupling -> glottis);
 		my coupling -> glottis = PhonationGrid_to_PhonationTier (my phonation);
 		if (my coupling -> glottis == 0) Melder_throw ("Empty phonation tier.");
-	} catch (MelderError) { rethrowm (me, ": no coupling could be set."); }
+	} catch (MelderError) { Melder_throw (me, ": no coupling could be set."); }
 }
 
 Sound KlattGrid_to_Sound_aspiration (KlattGrid me, double samplingFrequency)
@@ -2753,7 +2746,7 @@ Sound KlattGrid_to_Sound (KlattGrid me)
 		if (thee.peek() == 0) thee.reset (Sound_createEmptyMono (my xmin, my xmax, samplingFrequency));
 		else if (my options -> scalePeak) Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Sound created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Sound created."); }
 }
 
 void KlattGrid_playSpecial (KlattGrid me)
@@ -2764,7 +2757,7 @@ void KlattGrid_playSpecial (KlattGrid me)
 		if (his scalePeak) Vector_scale (thee.peek(), 0.99);
 		if (his xmin == 0 && his xmax == 0) { his xmin = my xmin; his xmax = my xmax; }
 		Sound_playPart (thee.peek(), his xmin, his xmax, 0, 0);
-	} catch (MelderError) { rethrowm (me, ": not played."); }
+	} catch (MelderError) { Melder_throw (me, ": not played."); }
 }
 
 void KlattGrid_play (KlattGrid me)
@@ -2789,7 +2782,7 @@ Sound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, int filterMo
 		thy vocalTract -> options -> filterModel = filterModel;
 		autoSound him = Sound_VocalTractGrid_CouplingGrid_filter (me, thy vocalTract, thy coupling);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not filtered by KlattGrid."); }
+	} catch (MelderError) { Melder_thrown (me, ": not filtered by KlattGrid."); }
 }
 
 /******************* KlattTable to KlattGrid *********************/
@@ -2891,7 +2884,7 @@ KlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration)
 		//RealTier_addPoint (thy tracheal_formants -> formants -> item[1], 0.5*(tmin+tmax), 0.095*samplingFrequency);
 		//RealTier_addPoint (thy tracheal_formants -> bandwidths -> item[1], 0.5*(tmin+tmax), 0.063*samplingFrequency);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no KlattGrid created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no KlattGrid created."); }
 }
 
 KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double pitchFloorIntensity, int subtractMean)
@@ -2920,7 +2913,7 @@ KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumb
 		KlattGrid_replaceFormantGrid (thee.peek(), KlattGrid_ORAL_FORMANTS, fgrid.peek());
 		KlattGrid_replaceVoicingAmplitudeTier (thee.peek(), itier.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no simple KlattGrid created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no simple KlattGrid created."); }
 }
 
 /* End of file KlattGrid.cpp */

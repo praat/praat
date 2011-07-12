@@ -484,7 +484,7 @@ double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, dou
 
 /********** Viterbi **********/
 
-int NUM_viterbi (
+void NUM_viterbi (
 	long numberOfFrames, long maxnCandidates,
 	long (*getNumberOfCandidates) (long iframe, void *closure),
 	double (*getLocalCost) (long iframe, long icand, void *closure),
@@ -492,47 +492,43 @@ int NUM_viterbi (
 	void (*putResult) (long iframe, long place, void *closure),
 	void *closure)
 {
-	try {
-		autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
-		autoNUMmatrix <long> psi (1, numberOfFrames, 1, maxnCandidates);
-		autoNUMvector <long> numberOfCandidates (1, numberOfFrames);
-		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
-			for (long icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
-				delta [iframe] [icand] = - getLocalCost (iframe, icand, closure);
-		}
-		for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
-			for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
-				double maximum = -1e300;
-				double place = 0;
-				for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
-					double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
-						- getTransitionCost (iframe, icand1, icand2, closure);
-					if (value > maximum) { maximum = value; place = icand1; }
-				}
-				if (place == 0) Melder_throw ("Viterbi algorithm cannot compute a track because of weird values.");
-				delta [iframe] [icand2] = maximum;
-				psi [iframe] [icand2] = place;
+	autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
+	autoNUMmatrix <long> psi (1, numberOfFrames, 1, maxnCandidates);
+	autoNUMvector <long> numberOfCandidates (1, numberOfFrames);
+	for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
+		for (long icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
+			delta [iframe] [icand] = - getLocalCost (iframe, icand, closure);
+	}
+	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
+		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
+			double maximum = -1e300;
+			double place = 0;
+			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
+				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
+					- getTransitionCost (iframe, icand1, icand2, closure);
+				if (value > maximum) { maximum = value; place = icand1; }
 			}
+			if (place == 0)
+				Melder_throw ("Viterbi algorithm cannot compute a track because of weird values.");
+			delta [iframe] [icand2] = maximum;
+			psi [iframe] [icand2] = place;
 		}
-		/*
-		 * Find the end of the most probable path.
-		 */
-		long place;
-		double maximum = delta [numberOfFrames] [place = 1];
-		for (long icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
-			if (delta [numberOfFrames] [icand] > maximum)
-				maximum = delta [numberOfFrames] [place = icand];
-		/*
-		 * Backtrack.
-		 */
-		for (long iframe = numberOfFrames; iframe >= 1; iframe --) {
-			putResult (iframe, place, closure);
-			place = psi [iframe] [place];
-		}
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
+	}
+	/*
+	 * Find the end of the most probable path.
+	 */
+	long place;
+	double maximum = delta [numberOfFrames] [place = 1];
+	for (long icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
+		if (delta [numberOfFrames] [icand] > maximum)
+			maximum = delta [numberOfFrames] [place = icand];
+	/*
+	 * Backtrack.
+	 */
+	for (long iframe = numberOfFrames; iframe >= 1; iframe --) {
+		putResult (iframe, place, closure);
+		place = psi [iframe] [place];
 	}
 }
 
@@ -574,68 +570,63 @@ static void putResult_n (long iframe, long jplace, void *closure) {
 		my putResult (iframe, my indices [jplace] [itrack], itrack, my closure);
 }
 
-int NUM_viterbi_multi (
+void NUM_viterbi_multi (
 	long nframe, long ncand, int ntrack,
 	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
 	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
 	void (*putResult) (long iframe, long place, int itrack, void *closure),
 	void *closure)
 {
-	try {
-		struct parm2 parm;
-		parm.indices = NULL;
+	struct parm2 parm;
+	parm.indices = NULL;
 
-		if (ntrack > ncand) Melder_throw ("(NUM_viterbi_multi:) "
-			"Number of tracks (", ntrack, ") should not exceed number of candidates (", ncand, ").");
-		double ncomb = NUMcombinations (ncand, ntrack);
-		if (ncomb > 10000000) Melder_throw ("(NUM_viterbi_multi:) "
-			"Unrealistically high number of combinations (", ncomb, ").");
-		parm. ntrack = ntrack;
-		parm. ncomb = ncomb;
+	if (ntrack > ncand) Melder_throw ("(NUM_viterbi_multi:) "
+		"Number of tracks (", ntrack, ") should not exceed number of candidates (", ncand, ").");
+	double ncomb = NUMcombinations (ncand, ntrack);
+	if (ncomb > 10000000) Melder_throw ("(NUM_viterbi_multi:) "
+		"Unrealistically high number of combinations (", ncomb, ").");
+	parm. ntrack = ntrack;
+	parm. ncomb = ncomb;
 
-		/*
-		 * For ncand == 5 and ntrack == 3, parm.indices is going to contain:
-		 *   1 2 3
-		 *   1 2 4
-		 *   1 2 5
-		 *   1 3 4
-		 *   1 3 5
-		 *   1 4 5
-		 *   2 3 4
-		 *   2 3 5
-		 *   2 4 5
-		 *   3 4 5
-		 */
-		autoNUMmatrix <long> indices (1, parm. ncomb, 1, ntrack);
-		parm.indices = indices.peek();
-		autoNUMvector <long> icand (1, ntrack);
+	/*
+	 * For ncand == 5 and ntrack == 3, parm.indices is going to contain:
+	 *   1 2 3
+	 *   1 2 4
+	 *   1 2 5
+	 *   1 3 4
+	 *   1 3 5
+	 *   1 4 5
+	 *   2 3 4
+	 *   2 3 5
+	 *   2 4 5
+	 *   3 4 5
+	 */
+	autoNUMmatrix <long> indices (1, parm. ncomb, 1, ntrack);
+	parm.indices = indices.peek();
+	autoNUMvector <long> icand (1, ntrack);
+	for (int itrack = 1; itrack <= ntrack; itrack ++)
+		icand [itrack] = itrack;   // start out with "1 2 3"
+	long jcomb = 0;
+	for (;;) {
+		jcomb ++;
 		for (int itrack = 1; itrack <= ntrack; itrack ++)
-			icand [itrack] = itrack;   // start out with "1 2 3"
-		long jcomb = 0;
-		for (;;) {
-			jcomb ++;
-			for (int itrack = 1; itrack <= ntrack; itrack ++)
-				parm. indices [jcomb] [itrack] = icand [itrack];
-			int itrack = ntrack;
-			for (; itrack >= 1; itrack --) {
-				if (++ icand [itrack] <= ncand - (ntrack - itrack)) {
-					for (int jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
-						icand [jtrack] = icand [itrack] + jtrack - itrack;
-					break;
-				}
+			parm. indices [jcomb] [itrack] = icand [itrack];
+		int itrack = ntrack;
+		for (; itrack >= 1; itrack --) {
+			if (++ icand [itrack] <= ncand - (ntrack - itrack)) {
+				for (int jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
+					icand [jtrack] = icand [itrack] + jtrack - itrack;
+				break;
 			}
-			if (itrack == 0) break;
 		}
-		Melder_assert (jcomb == ncomb);
-		parm. getLocalCost = getLocalCost;
-		parm. getTransitionCost = getTransitionCost;
-		parm. putResult = putResult;
-		parm. closure = closure;
-		NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm); therror
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
+		if (itrack == 0) break;
 	}
+	Melder_assert (jcomb == ncomb);
+	parm. getLocalCost = getLocalCost;
+	parm. getTransitionCost = getTransitionCost;
+	parm. putResult = putResult;
+	parm. closure = closure;
+	NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm); therror
 }
 
 int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], double y []) {

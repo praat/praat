@@ -46,7 +46,7 @@ Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double fact
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), 1.5 / fmin);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not lengthened.");
+		Melder_throw (me, ": not lengthened.");
 	}
 }
 
@@ -126,7 +126,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 		thy x1 = my x1;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": band modulation not deepened.");
+		Melder_throw (me, ": band modulation not deepened.");
 	}
 }
 

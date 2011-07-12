@@ -32,7 +32,7 @@ MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth,
 		autoMelFilter mf = Sound_to_MelFilter (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		autoMFCC mfcc = MelFilter_to_MFCC (mf.peek(), numberOfCoefficients);
 		return mfcc.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no MFCC created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no MFCC created."); }
 }
 
 /* End of file Sound_to_MFCC.cpp */

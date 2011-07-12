@@ -173,7 +173,7 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static int waitWhileProgress (double progress, const wchar_t *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
+static bool waitWhileProgress (double progress, const wchar_t *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
@@ -198,7 +198,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 						if (control == cancelButton) {
 							FlushEvents (everyEvent, 0);
 							XtUnmanageChild (dia);
-							return 0;
+							return false;   // don't continue
 						} else {
 							break;
 						}
@@ -224,7 +224,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 				 */
 				if (LOWORD (event. wParam) == VK_ESCAPE) {
 					XtUnmanageChild (dia);
-					return 0;
+					return false;   // don't continue
 				}
 			} else if (event. message == WM_LBUTTONDOWN) {
 				/*
@@ -233,7 +233,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 				GuiObject me = (GuiObject) GetWindowLong (event. hwnd, GWL_USERDATA);
 				if (me == cancelButton) {
 					XtUnmanageChild (dia);
-					return 0;
+					return false;   // don't continue
 				}
 			} else if (event. message != WM_SYSKEYDOWN) {
 				/*
@@ -248,7 +248,7 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 		XEvent event;
 		if (XCheckTypedWindowEvent (XtDisplay (cancelButton), XtWindow (cancelButton), ButtonPress, & event)) {
 			XtUnmanageChild (dia);
-			return 0;
+			return false;   // don't continue
 		}
 	}
 	#endif
@@ -276,13 +276,13 @@ static int waitWhileProgress (double progress, const wchar_t *message, GuiObject
 				gtk_main_iteration ();
 			// check whether cancelButton has the "pressed" key set
 			if (g_object_steal_data (G_OBJECT (cancelButton), "pressed"))
-				return 0;
+				return false;   // don't continue
 		#else
 			XmScaleSetValue (scale, floor (progress * 1000.0));
 			XmUpdateDisplay (dia);
 		#endif
 	}
-	return 1;
+	return true;   // continue
 }
 
 #if gtk
@@ -338,7 +338,7 @@ static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label
 }
 #endif
 
-static int _Melder_progress (double progress, const wchar_t *message) {
+static void _Melder_progress (double progress, const wchar *message) {
 	(void) progress;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
@@ -346,70 +346,67 @@ static int _Melder_progress (double progress, const wchar_t *message) {
 		static GuiObject dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
-			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
+			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
-			if (dia == NULL) {
+			if (dia == NULL)
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
-			}
-			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
-			if (! interruption) Melder_error1 (L"Interrupted!");
+			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
+				Melder_throw ("Interrupted!");
 			lastTime = now;
-			return interruption;
 		}
 	}
 	#endif
-	return 1;   /* Proceed. */
 }
 
 static MelderString theProgressBuffer = { 0 };
 
-int Melder_progress1 (double progress, const wchar_t *s1) {
+void Melder_progress1 (double progress, const wchar_t *s1) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append1 (& theProgressBuffer, s1);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress2 (double progress, const wchar_t *s1, const wchar_t *s2) {
+void Melder_progress2 (double progress, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append2 (& theProgressBuffer, s1, s2);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void Melder_progress3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void Melder_progress4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+void Melder_progress5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void Melder_progress6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+void Melder_progress7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+void Melder_progress8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
-int Melder_progress9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+void Melder_progress9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
-	return _Melder_progress (progress, theProgressBuffer.string);
+	_Melder_progress (progress, theProgressBuffer.string);
 }
 
-static void * _Melder_monitor (double progress, const wchar_t *message) {
+static void * _Melder_monitor (double progress, const wchar *message) {
 	(void) progress;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
@@ -418,7 +415,7 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 		clock_t now = clock ();
 		static Any graphics = NULL;
 		if (progress <= 0.0 || progress >= 1.0 ||
-			now - lastTime > CLOCKS_PER_SEC / 4)   /* This time step must be much longer than the null-event waiting time. */
+			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
 			if (dia == NULL) {
 				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
@@ -426,16 +423,15 @@ static void * _Melder_monitor (double progress, const wchar_t *message) {
 				GuiObject_show (dia);
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
-			bool interruption = waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton);
-			if (! interruption) Melder_error1 (L"Interrupted!");
+			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
+				Melder_throw ("Interrupted!");
 			lastTime = now;
 			if (progress == 0.0)
 				return graphics;
-			if (! interruption) return NULL;
 		}
 	}
 	#endif
-	return progress <= 0.0 ? NULL /* No Graphics. */ : & progress /* Any non-NULL pointer. */;
+	return progress <= 0.0 ? NULL /* no Graphics */ : & progress /* any non-NULL pointer */;
 }
 
 void * Melder_monitor1 (double progress, const wchar_t *s1) {

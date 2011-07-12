@@ -246,7 +246,7 @@ DIRECT (Tables_append)
 		my size = 0;   //undangle (UGLY)
 	} catch (MelderError) {
 		my size = 0;   //undangle (UGLY)
-		rethrowzero;
+		throw;
 	}
 END
 

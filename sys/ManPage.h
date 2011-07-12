@@ -20,12 +20,10 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/11
  */
 
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -40,18 +38,22 @@ typedef struct structManPage_Paragraph {
 	void (*draw) (Graphics g);
 } *ManPage_Paragraph;
 
-#define ManPage_members Thing_members \
-	const wchar_t *title, *author; \
-	long date; \
-	struct structManPage_Paragraph *paragraphs; \
-	long nlinksHither, nlinksThither; \
-	long *linksHither, *linksThither; \
-	double recordingTime;
-#define ManPage_methods Thing_methods
-class_create (ManPage, Thing);
+Thing_declare1cpp (ManPage);
 
 #ifdef __cplusplus
 	}
+
+	struct structManPage : public structThing {
+		const wchar *title, *author;
+		long date;
+		struct structManPage_Paragraph *paragraphs;
+		long nlinksHither, nlinksThither;
+		long *linksHither, *linksThither;
+		double recordingTime;
+	};
+	#define ManPage__methods(klas) Thing__methods(klas)
+	Thing_declare2cpp (ManPage, Thing);
+
 #endif
 
 /* End of file ManPage.h */

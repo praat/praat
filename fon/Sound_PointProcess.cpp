@@ -50,7 +50,7 @@ Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ":Sound ensemble not created.");
+		Melder_throw (me, " & ", thee, ": Sound ensemble not created.");
 	}
 }
 

@@ -101,9 +101,9 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		autoNUMvector <double> spec (1, nsampFFT);
 		autoNUMvector <double> window (1, nsamp_window);
 		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (& fftTable.table, nsampFFT); therror
+		NUMfft_Table_init (& fftTable, nsampFFT); therror
 
-		autoMelderProgress (L"Sound to Spectrogram...");
+		autoMelderProgress progress (L"Sound to Spectrogram...");
 		for (long i = 1; i <= nsamp_window; i ++) {
 			double nSamplesPerWindow_f = physicalAnalysisWidth / my dx;
 			double phase = (double) i / nSamplesPerWindow_f;   /* 0 .. 1 */
@@ -155,7 +155,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 
 				/* Compute Fast Fourier Transform of the frame. */
 
-				NUMfft_forward (& fftTable.table, frame.peek());   // complex spectrum
+				NUMfft_forward (& fftTable, frame.peek());   // complex spectrum
 
 				/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
 
@@ -178,7 +178,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": spectrogram analysis not performed.");
+		Melder_throw (me, ": spectrogram analysis not performed.");
 	}
 }
 
@@ -203,7 +203,7 @@ Sound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 

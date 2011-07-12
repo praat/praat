@@ -86,7 +86,7 @@ void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBou
 			lowerBound == upperBound ? GLP_FX : GLP_DB, lowerBound, upperBound);
 		my ivar = 0;
 	} catch (MelderError) {
-		rethrowm ("Linear programming: constraint not added.");
+		Melder_throw ("Linear programming: constraint not added.");
 	}
 }
 
@@ -131,7 +131,7 @@ void NUMlinprog_run (NUMlinprog me) {
 			Melder_warning1 (L"Linear programming solution is feasible but not optimal.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Linear programming: not run.");
+		Melder_throw ("Linear programming: not run.");
 	}
 }
 

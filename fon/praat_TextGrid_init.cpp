@@ -247,7 +247,7 @@ END
 FORM (TextGrid_Pitch_drawSemitones, L"TextGrid & Pitch: Draw semitones", 0)
 	INTEGER (STRING_TIER_NUMBER, L"1")
 	praat_dia_timeRange (dia);
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 hertz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	INTEGER (L"Font size (points)", L"18")
@@ -325,7 +325,7 @@ END
 
 FORM (TextGrid_Pitch_drawSeparatelySemitones, L"TextGrid & Pitch: Draw separately semitones", 0)
 	praat_dia_timeRange (dia);
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 hertz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	BOOLEAN (L"Show boundaries", 1)
@@ -395,7 +395,7 @@ END
 FORM (TextGrid_Pitch_speckleSemitones, L"TextGrid & Pitch: Speckle semitones", 0)
 	INTEGER (STRING_TIER_NUMBER, L"1")
 	praat_dia_timeRange (dia);
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 hertz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	INTEGER (L"Font size (points)", L"18")
@@ -457,7 +457,7 @@ END
 
 FORM (TextGrid_Pitch_speckleSeparatelySemitones, L"TextGrid & Pitch: Speckle separately semitones", 0)
 	praat_dia_timeRange (dia);
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 hertz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	BOOLEAN (L"Show boundaries", 1)
@@ -805,7 +805,7 @@ DO
 	}
 END
 
-static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
+static void cb_TextGridEditor_publish (Any editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -814,7 +814,7 @@ static void cb_TextGridEditor_publish (Any editor, void *closure, Any publish) {
 	try {
 		praat_new (publish, NULL);
 		praat_updateSelection ();
-		if (Thing_member (publish, classSpectrum) && wcsequ (Thing_getName (publish), L"slice")) {
+		if (Thing_member ((Thing) publish, classSpectrum) && wcsequ (Thing_getName ((Thing) publish), L"slice")) {
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
@@ -834,7 +834,7 @@ DIRECT (TextGrid_edit)
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, NULL);
-		Editor_setPublishCallback (TextGridEditor_as_Editor (editor.peek()), cb_TextGridEditor_publish, NULL);
+		Editor_setPublishCallback (editor.peek(), cb_TextGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -850,7 +850,7 @@ DIRECT (TextGrid_LongSound_edit)
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, NULL);
-		Editor_setPublishCallback (TextGridEditor_as_Editor (editor.peek()), cb_TextGridEditor_publish, NULL);
+		Editor_setPublishCallback (editor.peek(), cb_TextGridEditor_publish, NULL);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound); therror
 	}
 END
@@ -915,14 +915,14 @@ static Data pr_TextGrid_peekTier (Any dia) {
 
 static IntervalTier pr_TextGrid_peekIntervalTier (Any dia) {
 	Data tier = pr_TextGrid_peekTier (dia);
-	if (tier -> methods != (Data_Table) classIntervalTier) Melder_throw ("Tier should be interval tier.");
+	if (tier -> methods != (Thing_Table) classIntervalTier) Melder_throw ("Tier should be interval tier.");
 	return (IntervalTier) tier;
 }
 
 static TextTier pr_TextGrid_peekTextTier (Any dia) {
 	Data tier = pr_TextGrid_peekTier (dia);
 	if (! tier) return NULL;
-	if (tier -> methods != (Data_Table) classTextTier) Melder_throw ("Tier should be point tier (TextTier).");
+	if (tier -> methods != (Thing_Table) classTextTier) Melder_throw ("Tier should be point tier (TextTier).");
 	return (TextTier) tier;
 }
 
@@ -1032,7 +1032,7 @@ DIRECT (TextGrid_getNumberOfTiers)
 	}
 END
 
-FORM (TextGrid_getStartingPoint, L"TextGrid: Get starting point", 0)
+FORM (TextGrid_getStartingPoint, L"TextGrid: Get start point", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	NATURAL (STRING_INTERVAL_NUMBER, L"1")
 	OK
@@ -1086,7 +1086,7 @@ FORM (TextGrid_getTimeOfPoint, L"TextGrid: Get time of point", 0)
 	OK
 DO
 	TextPoint point = pr_TextGrid_peekPoint (dia);
-	Melder_informationReal (point -> time, L"seconds");
+	Melder_informationReal (point -> number, L"seconds");
 END
 	
 FORM (TextGrid_getLabelOfPoint, L"TextGrid: Get label of point", 0)
@@ -1165,7 +1165,7 @@ FORM (TextGrid_isIntervalTier, L"TextGrid: Is interval tier?", 0)
 	OK
 DO
 	Data tier = pr_TextGrid_peekTier (dia);
-	if (tier -> methods == (Data_Table) classIntervalTier) {
+	if (tier -> methods == (Thing_Table) classIntervalTier) {
 		Melder_information3 (L"1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is an interval tier)");
 	} else {
 		Melder_information3 (L"0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is a point tier)");
@@ -1282,7 +1282,7 @@ DO
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		intervalTier = (IntervalTier) my tiers -> item [itier];
-		if (intervalTier -> methods != classIntervalTier)
+		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)
@@ -1310,7 +1310,7 @@ DO
 			Melder_throw ("You cannot remove a point from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		pointTier = (TextTier) my tiers -> item [itier];
-		if (pointTier -> methods != classTextTier)
+		if (pointTier -> methods != (Thing_Table) classTextTier)
 			Melder_throw ("You cannot remove a point from tier ", itier, " of ", me,
 				", because that tier is an interval tier instead of a point tier.");
 		if (ipoint > pointTier -> points -> size)
@@ -1335,7 +1335,7 @@ DO
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		intervalTier = (IntervalTier) my tiers -> item [itier];
-		if (intervalTier -> methods != classIntervalTier)
+		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				L", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)

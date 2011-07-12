@@ -26,7 +26,7 @@
  * sdk 2008/03/24 Gui
  * pb 2010/07/29 removed GuiDialog_show
  * pb 2011/04/06 C++
- * pb 2011/04/16 C++
+ * pb 2011/07/03 C++
  */
 
 #include "TextEditor.h"
@@ -40,6 +40,9 @@
 Thing_declare1cpp (InfoEditor);
 
 struct structInfoEditor : public structTextEditor {
+// override:
+	bool fileBased () { return false; };
+	void clear ();
 };
 #define InfoEditor__methods(Klas) TextEditor__methods(Klas)
 Thing_declare2cpp (InfoEditor, TextEditor);
@@ -52,24 +55,21 @@ static void destroy (I) {
 	inherited (InfoEditor) destroy (me);
 }
 
-static void classInfoEditor_clear (InfoEditor me) {
-	(void) me;
+void structInfoEditor::clear () {
 	Melder_clearInfo ();
 }
 
 class_methods (InfoEditor, TextEditor) {
 	class_method (destroy)
 	us -> scriptable = false;
-	us -> fileBased = false;
-	class_method_local (InfoEditor, clear)
 	class_methods_end
 }
 
-extern "C" void gui_information (wchar_t *message);   // BUG
-void gui_information (wchar_t *message) {
+extern "C" void gui_information (wchar *message);   // BUG
+void gui_information (wchar *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = Thing_new (InfoEditor);
-		TextEditor_init (theInfoEditor, (GuiObject) Melder_topShell, L"");
+		theInfoEditor -> structTextEditor::init ((GuiObject) Melder_topShell, L"");
 		Thing_setName (theInfoEditor, L"Praat Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);

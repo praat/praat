@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/07/11
  */
 
 #include "Thing.h"
@@ -61,11 +61,13 @@ struct structDelta_Tube
 	double B, r, R, DeltaP, v;
 };
 
-#define Delta_members Thing_members \
-	int numberOfTubes; \
+Thing_declare1cpp (Delta);
+struct structDelta : public structThing {
+	int numberOfTubes;
 	struct structDelta_Tube *tube;
-#define Delta_methods Thing_methods
-class_create (Delta, Thing);
+};
+#define Delta__methods(klas) Thing__methods(klas)
+Thing_declare2cpp (Delta, Thing);
 
 /*
 	Members:

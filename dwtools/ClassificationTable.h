@@ -27,26 +27,20 @@
  djmw 20110306 Latest modification.
  */
 
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
-#ifndef _Confusion_h_
-	#include "Confusion.h"
-#endif
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
+#include "TableOfReal.h"
+#include "SSCP.h"
+#include "Confusion.h"
+#include "Strings.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define ClassificationTable_members TableOfReal_members
-#define ClassificationTable_methods TableOfReal_methods
-class_create (ClassificationTable, TableOfReal);
+Thing_declare1cpp (ClassificationTable);
+struct structClassificationTable : public structTableOfReal {
+};
+#define ClassificationTable__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (ClassificationTable, TableOfReal);
 
 ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
 

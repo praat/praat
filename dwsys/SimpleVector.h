@@ -24,28 +24,21 @@
  djmw 20110505 Latest modification.
 */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+#include "Data.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define DoubleVector_members Data_members	\
-	long min, max;	\
-	double *v;
-#define DoubleVector_methods Data_methods
-class_create (DoubleVector, Data);
+#include "SimpleVector_def.h"
+#define DoubleVector__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (DoubleVector, Data);
 
 void DoubleVector_init (I, long min, long max);
 DoubleVector DoubleVector_create (long min, long max);
 
-#define ComplexVector_members Data_members	\
-	long min, max;	\
-	dcomplex *v;
-#define ComplexVector_methods Data_methods
-class_create (ComplexVector, Data);
+#define ComplexVector__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (ComplexVector, Data);
 
 void ComplexVector_init (I, long min, long max);
 ComplexVector ComplexVector_create (long min, long max);

@@ -20,13 +20,13 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/07/23 constraint plasticity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/03/29 C++
  */
 
 #include "OTGrammar.h"
 
-static const wchar_t *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ep", L"a" };
+static const wchar *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ep", L"a" };
 #define i  0
 #define e  1
 #define schwa  2
@@ -50,28 +50,24 @@ static void countVowelViolations (int *marks, int ncons, int v) {
 }
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
-	try {
-		wchar_t buffer [100];
-		swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-		my output = Melder_wcsdup_e (buffer); therror
-		my marks = NUMvector <int> (1, my numberOfConstraints = ncons);
-		/*
-		 * Count vowel-gesture violations.
-		 */
-		countVowelViolations (my marks, ncons, v1);
-		countVowelViolations (my marks, ncons, v2);
-		/*
-		 * Count contour-gesture violations.
-		 */
-		if (isatr (v1) != isatr (v2)) my marks [5] ++;
-	} catch (MelderError) {
-		rethrow;
-	}
+	wchar buffer [100];
+	swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
+	my output = Melder_wcsdup (buffer);
+	my marks = NUMvector <int> (1, my numberOfConstraints = ncons);
+	/*
+	 * Count vowel-gesture violations.
+	 */
+	countVowelViolations (my marks, ncons, v1);
+	countVowelViolations (my marks, ncons, v2);
+	/*
+	 * Count contour-gesture violations.
+	 */
+	if (isatr (v1) != isatr (v2)) my marks [5] ++;
 }
 
 OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random_infant_Wolof) {
 	try {
-		int icons, ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
+		int ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = ncons);
 		my constraints [1]. name = Melder_wcsdup_e (L"*[rtr / hi]"); therror
@@ -86,13 +82,13 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 			my constraints [9]. name = Melder_wcsdup_e (L"*[atr / hi]"); therror
 		}
 		if (equal_random_infant_Wolof == 1) {   /* equal? */
-			for (icons = 1; icons <= ncons; icons ++)
+			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;
 		} else if (equal_random_infant_Wolof == 2) {   /* random? */
-			for (icons = 1; icons <= ncons; icons ++)
+			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = NUMrandomGauss (100.0, 10.0);
 		} else if (equal_random_infant_Wolof == 3) {   /* infant (= cannot speak) ? */
-			for (icons = 1; icons <= ncons; icons ++)
+			for (long icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;   /* Structural constraints. */
 			my constraints [3]. ranking = 50.0;   /* Faithfulness constraints. */
 			my constraints [4]. ranking = 50.0;
@@ -120,10 +116,10 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		itab = 1;
 		for (v1 = 0; v1 < 6; v1 ++) for (v2 = 0; v2 < 6; v2 ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			wchar_t buffer [100];
+			wchar buffer [100];
 			swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
-			tableau -> input = Melder_wcsdup_e (buffer); therror
-			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 4); therror
+			tableau -> input = Melder_wcsdup (buffer);
+			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 4);
 			/*
 			 * Generate the four tongue-root variants as output candidates.
 			 */
@@ -156,11 +152,11 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		}
 		OTGrammar_checkIndex (me.peek()); therror
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
-		for (icons = 1; icons <= my numberOfConstraints; icons ++)
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
 			my constraints [icons]. plasticity = 1.0;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Tongue root grammar not created.");
+		Melder_throw ("Tongue root grammar not created.");
 	}
 }
 

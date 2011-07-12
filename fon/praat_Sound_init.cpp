@@ -88,7 +88,7 @@ END
 DIRECT (LongSound_getSampleRate)
 	LOOP {
 		iam (LongSound);
-		Melder_informationReal (1.0 / my dx, L"Hertz");
+		Melder_informationReal (1.0 / my dx, L"Hz");
 	}
 END
 
@@ -522,7 +522,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 			else
 				Melder_throw ("You could raise the start time or lower the end time or the sampling frequency, and try again.");
 		} else {
-			rethrow;   /* Unexpected error. Wait for generic message. */
+			throw;   // unexpected error; wait for generic message
 		}
 	}
 	Matrix_formula ((Matrix) sound.peek(), GET_STRING (L"formula"), interpreter, NULL); therror
@@ -675,7 +675,7 @@ DO_ALTERNATIVE (old_Sound_draw)
 	}
 END
 
-static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
+static void cb_SoundEditor_publish (Any editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -684,7 +684,7 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	try {
 		praat_new (publish, NULL);
 		praat_updateSelection ();
-		if (Thing_member (publish, classSpectrum)) {
+		if (Thing_member ((Thing) publish, classSpectrum)) {
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
@@ -700,7 +700,7 @@ DIRECT (Sound_edit)
 	LOOP {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (SoundEditor_as_Editor (editor.peek()), cb_SoundEditor_publish, NULL);
+		Editor_setPublishCallback (editor.peek(), cb_SoundEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -773,7 +773,7 @@ DO
 END
 
 FORM (Sound_filter_formula, L"Sound: Filter (formula)...", L"Formula...")
-	LABEL (L"", L"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in Hertz")
+	LABEL (L"", L"Frequency-domain filtering with a formula (uses Sound-to-Spectrum and Spectrum-to-Sound): x is frequency in hertz")
 	TEXTFIELD (L"formula", L"if x<500 or x>1000 then 0 else self fi; rectangular band filter")
 	OK
 DO
@@ -810,7 +810,7 @@ END
 
 FORM (Sound_filter_passHannBand, L"Sound: Filter (pass Hann band)", L"Sound: Filter (pass Hann band)...")
 	REAL (L"From frequency (Hz)", L"500")
-	REAL (L"To frequency (s)", L"1000")
+	REAL (L"To frequency (Hz)", L"1000")
 	POSITIVE (L"Smoothing (Hz)", L"100")
 	OK
 DO
@@ -835,7 +835,7 @@ END
 
 FORM (Sound_filter_stopHannBand, L"Sound: Filter (stop Hann band)", L"Sound: Filter (stop Hann band)...")
 	REAL (L"From frequency (Hz)", L"500")
-	REAL (L"To frequency (s)", L"1000")
+	REAL (L"To frequency (Hz)", L"1000")
 	POSITIVE (L"Smoothing (Hz)", L"100")
 	OK
 DO
@@ -1349,50 +1349,59 @@ static void cb_SoundRecorder_destroy (Any editor, void *closure) {
 	soundRecorder = NULL;
 }
 static int previousNumberOfChannels;
-static void cb_SoundRecorder_publish (Any editor, void *closure, Any publish) {
+static void cb_SoundRecorder_publish (Any editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new1 (publish, NULL)) Melder_flushError (NULL);
+	try {
+		praat_new1 (publish, NULL);
+	} catch (MelderError) {
+		Melder_flushError (NULL);
+	}
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_mono)
-	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw ("Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 1) {
-			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
+			Editor_raise (soundRecorder);
 		} else {
 			forget (soundRecorder);
 		}
 	}
 	if (! soundRecorder) {
 		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 1, theCurrentPraatApplication -> context);
-		if (soundRecorder == NULL) return 0;
-		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);
+		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
+		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
 	}
 	previousNumberOfChannels = 1;
 END
-static void cb_SoundRecorder_publish2 (Any editor, Any closure, Any publish1, Any publish2) {
+static void cb_SoundRecorder_publish2 (Any editor, Any closure, Data publish1, Data publish2) {
 	(void) editor;
 	(void) closure;
-	if (! praat_new1 (publish1, L"left") || ! praat_new1 (publish2, L"right")) Melder_flushError (NULL);
+	try {
+		praat_new (publish1, L"left");
+		praat_new (publish2, L"right");
+	} catch (MelderError) {
+		Melder_flushError (NULL);
+		return;
+	}
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_stereo)
-	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot record a Sound from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 2) {
-			Editor_raise (SoundRecorder_as_Editor (soundRecorder));
+			Editor_raise (soundRecorder);
 		} else {
 			forget (soundRecorder);
 		}
 	}
 	if (! soundRecorder) {
 		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 2, theCurrentPraatApplication -> context);
-		if (soundRecorder == NULL) return 0;
-		Editor_setDestroyCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish, NULL);
-		Editor_setPublish2Callback (SoundRecorder_as_Editor (soundRecorder), cb_SoundRecorder_publish2, NULL);
+		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
+		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
+		Editor_setPublish2Callback (soundRecorder, cb_SoundRecorder_publish2, NULL);
 	}
 	previousNumberOfChannels = 2;
 END

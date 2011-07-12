@@ -185,7 +185,7 @@ void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long 
 	These vectors need not have been created by NUMvector.
 */
 
-int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
+bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi);
 /*
 	return 1 if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return 0.
@@ -237,7 +237,7 @@ void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, lon
 	These matrices need not have been created by NUMmatrix.
 */
 
-int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2);
+bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2);
 /*
 	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
 	to the corresponding elements of the matrix m2; otherwise, return 0.
@@ -250,14 +250,14 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 	void NUM##t##vector_free (type *v, long lo); \
 	type * NUM##t##vector_copy (const type *v, long lo, long hi); \
 	void NUM##t##vector_copyElements (const type *v, type *to, long lo, long hi); \
-	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi); \
+	bool NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi); \
 	void NUM##t##vector_append (type **v, long lo, long *hi); \
 	void NUM##t##vector_insert (type **v, long lo, long *hi, long position); \
 	type ** NUM##t##matrix (long row1, long row2, long col1, long col2); \
 	void NUM##t##matrix_free (type **m, long row1, long col1); \
 	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2); \
 	void NUM##t##matrix_copyElements (type **m, type **to, long row1, long row2, long col1, long col2); \
-	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2);
+	bool NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2);
 FUNCTION (b, signed char)
 FUNCTION (s, short)
 FUNCTION (i, int)
@@ -425,7 +425,7 @@ double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, do
 double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
 double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
 
-int NUM_viterbi (
+void NUM_viterbi (
 	long numberOfFrames, long maxnCandidates,
 	long (*getNumberOfCandidates) (long iframe, void *closure),
 	double (*getLocalCost) (long iframe, long icand, void *closure),
@@ -433,7 +433,7 @@ int NUM_viterbi (
 	void (*putResult) (long iframe, long place, void *closure),
 	void *closure);
 
-int NUM_viterbi_multi (
+void NUM_viterbi_multi (
 	long nframe, long ncand, int ntrack,
 	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
 	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
@@ -483,15 +483,15 @@ void NUMautoscale (double x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(t,type,storage)  \
-	int NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
-	int NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
-	int NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
+	void NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name); \
+	void NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
+	void NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
 	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
 	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f); \
 	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f); \
-	int NUM##t##matrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
-	int NUM##t##matrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
-	int NUM##t##matrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
+	void NUM##t##matrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name); \
+	void NUM##t##matrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
+	void NUM##t##matrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
 	type ** NUM##t##matrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
 	type ** NUM##t##matrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f); \
 	type ** NUM##t##matrix_readCache_##storage (long r1, long r2, long c1, long c2, CACHE *f);
@@ -510,7 +510,7 @@ FUNCTION (dc, dcomplex, c16)
 #undef FUNCTION
 
 /*
-int NUMdvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
+void NUMdvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
 	Return 0 if anything went wrong, else return 1.
@@ -522,16 +522,16 @@ double * NUMdvector_readText_r8 (long lo, long hi, MelderReadString *text, const
 double * NUMdvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Queue an error message and return NULL if anything went wrong.
-int NUMdvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const char *name);   // etc
+void NUMdvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const wchar *name);   // etc
 	write the vector elements v [lo..hi] as text to the stream f,
 	each element on its own line, preceded by "name [index]: ".
 	Return 0 if anything went wrong, else return 1.
 	The vectors need not have been created by NUMvector.
-int NUMdmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const char *name);   // etc
+void NUMdmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
 	Return 0 if anything went wrong, else return 1.
 	The matrices need not have been created by NUMmatrix.
-int NUMdmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+void NUMdmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
 	Return 0 if anything went wrong, else return 1.

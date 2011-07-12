@@ -20,30 +20,22 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "PointProcess.h"
+#include "Formant.h"
+#include "TableOfReal.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
 #include "FormantTier_def.h"
-#define FormantPoint_methods Data_methods
+#define FormantPoint__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FormantPoint, Data);
-#define FormantTier_methods Function_methods
+#define FormantTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FormantTier, Function);
 
 FormantPoint FormantPoint_create (double time);

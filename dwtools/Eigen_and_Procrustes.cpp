@@ -1,4 +1,4 @@
-/* Eigen_and_Procrustes.c
+/* Eigen_and_Procrustes.cpp
  * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,8 +49,8 @@ Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to)
 
 		NUMProcrustes (x.peek(), y.peek(), my dimension, nvectors, his r, NULL, NULL);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Procrustes not created from Eigens."); }
+	} catch (MelderError) { Melder_thrown ("Procrustes not created from Eigens."); }
 }
 
 
-/* End of file Eigen_and_Procrustes.c */
+/* End of file Eigen_and_Procrustes.cpp */

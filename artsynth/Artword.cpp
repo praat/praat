@@ -104,7 +104,7 @@ void Artword_setTarget (Artword me, int feature, double time, double target) {
 		f -> targets [insert] = target;
 		f -> times [insert] = time;
 	} catch (MelderError) {
-		rethrowm (me, ": target not set.");
+		Melder_throw (me, ": target not set.");
 	}
 }
 
@@ -150,30 +150,26 @@ void Artword_intoArt (Artword me, Art art, double time) {
 }
 
 void Artword_draw (Artword me, Graphics g, int feature, int garnish) {
-	try {
-		long numberOfTargets = my data [feature]. numberOfTargets;
-		if (numberOfTargets > 0) {
-			autoNUMvector <double> x (1, numberOfTargets);
-			autoNUMvector <double> y (1, numberOfTargets);
-			Graphics_setInner (g);
-			Graphics_setWindow (g, 0, my totalTime, -1, 1);
-			for (int i = 1; i <= numberOfTargets; i ++) {
-				x [i] = my data [feature]. times [i];
-				y [i] = my data [feature]. targets [i];
-			}
-			Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
-			Graphics_unsetInner (g);
+	long numberOfTargets = my data [feature]. numberOfTargets;
+	if (numberOfTargets > 0) {
+		autoNUMvector <double> x (1, numberOfTargets);
+		autoNUMvector <double> y (1, numberOfTargets);
+		Graphics_setInner (g);
+		Graphics_setWindow (g, 0, my totalTime, -1, 1);
+		for (int i = 1; i <= numberOfTargets; i ++) {
+			x [i] = my data [feature]. times [i];
+			y [i] = my data [feature]. targets [i];
 		}
+		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
+		Graphics_unsetInner (g);
+	}
 
-		if (garnish) {
-			Graphics_drawInnerBox (g);
-			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-			Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
-			Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
-			Graphics_textBottom (g, TRUE, L"Time (s)");
-		}
-	} catch (MelderError) {
-		rethrow;
+	if (garnish) {
+		Graphics_drawInnerBox (g);
+		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_marksLeft (g, 3, TRUE, TRUE, TRUE);
+		Graphics_textTop (g, FALSE, kArt_muscle_getText (feature));
+		Graphics_textBottom (g, TRUE, L"Time (s)");
 	}
 }
 

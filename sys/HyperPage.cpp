@@ -31,6 +31,7 @@
  * pb 2009/03/17 split up structPraat
  * pb 2010/05/14 GTK
  * pb 2011/04/06 C++
+ * pb 2011/07/01 C++
  */
 
 #include <ctype.h>
@@ -613,6 +614,9 @@ static void draw (HyperPage hyperPage) {
 	(void) hyperPage;
 }
 
+#undef our
+#define our ((HyperPage_Table) my methods) ->
+
 static void print (I, Graphics graphics) {
 	iam (HyperPage);
 	my ps = graphics;
@@ -976,7 +980,7 @@ static void gui_button_cb_forth (I, GuiButtonEvent event) {
 }
 
 static void createMenus (HyperPage me) {
-	inherited (HyperPage) createMenus (HyperPage_as_parent (me));
+	inherited (HyperPage) createMenus (me);
 
 	Editor_addCommand (me, L"File", L"PostScript settings...", 0, menu_cb_postScriptSettings);
 	#ifdef macintosh
@@ -1079,38 +1083,33 @@ static void createChildren (HyperPage me) {
 	#endif
 }
 
-int HyperPage_init (HyperPage me, GuiObject parent, const wchar_t *title, Any data) {
-	try {
-		resolution = Gui_getResolution (parent);
-		Editor_init (HyperPage_as_parent (me), parent, 0, 0, 6 * resolution + 30, 800, title, data); therror
-		#if motif
-			Melder_assert (XtWindow (my drawingArea));
-		#endif
-		my g = Graphics_create_xmdrawingarea (my drawingArea);
-		Graphics_setAtSignIsLink (my g, TRUE);
-		Graphics_setDollarSignIsCode (my g, TRUE);
-		Graphics_setFont (my g, kGraphics_font_TIMES);
-		if (prefs_font != kGraphics_font_TIMES && prefs_font != kGraphics_font_HELVETICA)
-			prefs_font = kGraphics_font_TIMES;   // Ensure Unicode compatibility.
-		my font = prefs_font;
-		setFontSize (me, prefs_fontSize);	
+void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data data) {
+	resolution = Gui_getResolution (parent);
+	Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data); therror
+	#if motif
+		Melder_assert (XtWindow (my drawingArea));
+	#endif
+	my g = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setAtSignIsLink (my g, TRUE);
+	Graphics_setDollarSignIsCode (my g, TRUE);
+	Graphics_setFont (my g, kGraphics_font_TIMES);
+	if (prefs_font != kGraphics_font_TIMES && prefs_font != kGraphics_font_HELVETICA)
+		prefs_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
+	my font = prefs_font;
+	setFontSize (me, prefs_fontSize);	
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
 
-		#if gtk
-			g_signal_connect (G_OBJECT (my verticalScrollBar), "value-changed", G_CALLBACK (gui_cb_verticalScroll), me);
-		#elif motif
-			XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
-			XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
-		#endif
-		updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	#if gtk
+		g_signal_connect (G_OBJECT (my verticalScrollBar), "value-changed", G_CALLBACK (gui_cb_verticalScroll), me);
+	#elif motif
+		XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
+		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
+	#endif
+	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
 }
 
 void HyperPage_clear (HyperPage me) {

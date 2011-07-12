@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/05/31
+ * pb 2011/07/11
  */
 
 /*
@@ -33,17 +33,13 @@
 	z = intensity (dB relative to 2e-5 N/m2 or 1e-12 W/m2)
 */
 
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
+#include "Vector.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Intensity_members Vector_members
-#define Intensity_methods Vector_methods
-class_create (Intensity, Vector);
+Thing_declare1cpp (Intensity);
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 
@@ -73,6 +69,12 @@ double Intensity_getAverage (Intensity me, double tmin, double tmax, int averagi
 
 #ifdef __cplusplus
 	}
+
+	struct structIntensity : public structVector {
+	};
+	#define Intensity__methods(klas) Vector__methods(klas)
+	Thing_declare2cpp (Intensity, Vector);
+
 #endif
 
 /* End of file Intensity.h */

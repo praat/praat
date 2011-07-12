@@ -30,23 +30,24 @@
 	extern "C" {
 #endif
 
-#define SpectrumEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (SpectrumEditor);
+Thing_declare1cpp (SpectrumEditor);
 
-#define SpectrumEditor__members(Klas) FunctionEditor__members(Klas) \
-	double minimum, maximum, cursorHeight; \
-	double bandSmoothing, dynamicRange; \
-	GuiObject publishBandButton, publishSoundButton;
-#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2 (SpectrumEditor, FunctionEditor);
-
-SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar_t *title, Any data);
+SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data);
 
 void SpectrumEditor_prefs (void);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structSpectrumEditor : public structFunctionEditor {
+		double minimum, maximum, cursorHeight;
+		double bandSmoothing, dynamicRange;
+		GuiObject publishBandButton, publishSoundButton;
+	};
+	#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
+	Thing_declare2cpp (SpectrumEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file SpectrumEditor.h */
 #endif

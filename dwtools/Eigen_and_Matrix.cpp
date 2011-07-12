@@ -36,37 +36,34 @@ Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents)
 		Matrix thim = him.peek();
 		Eigen_and_Matrix_project_into (me, thee, &thim);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Projection Matrix not created."); }
+	} catch (MelderError) { Melder_thrown ("Projection Matrix not created."); }
 }
 
-int Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him)
+void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him)
 {
-	try {
-		iam (Eigen); thouart (Matrix);
-		Matrix him = *((Matrix *) void_pointer_to_him);
-	
-		if (my dimension != thy ny) Melder_throw
-			("The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
-		if (his nx != thy nx) Melder_throw ("The number of columns in the Matrixes must be equal.");
-		if (his ny > my numberOfEigenvalues) Melder_throw
-			("The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
+	iam (Eigen); thouart (Matrix);
+	Matrix him = *((Matrix *) void_pointer_to_him);
 
-		for (long i = 1; i <= thy nx; i++)
+	if (my dimension != thy ny) Melder_throw
+		("The number of rows in the 'from' Matrix must equal the dimension of the eigenvector.");
+	if (his nx != thy nx) Melder_throw ("The number of columns in the Matrixes must be equal.");
+	if (his ny > my numberOfEigenvalues) Melder_throw
+		("The number of rows in the 'to' Matrix cannot exceed the number of eigenvectors.");
+
+	for (long i = 1; i <= thy nx; i++)
+	{
+		for (long j = 1; j <= his ny; j++)
 		{
-			for (long j = 1; j <= his ny; j++)
+			double r = 0;
+			for (long k = 1; k <= my dimension; k++)
 			{
-				double r = 0;
-				for (long k = 1; k <= my dimension; k++)
-				{
-					// eigenvector in row, data in column
+				// eigenvector in row, data in column
 
-					r += my eigenvectors[j][k] * thy z[k][i];
-				}
-				his z[j][i] = r;
+				r += my eigenvectors[j][k] * thy z[k][i];
 			}
+			his z[j][i] = r;
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
 }
 
 /* End of file Eigen_and_Matrix.cpp */

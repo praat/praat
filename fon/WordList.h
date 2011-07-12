@@ -30,7 +30,7 @@
 #endif
 
 #include "WordList_def.h"
-#define WordList_methods Data_methods
+#define WordList__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (WordList, Data);
 
 WordList Strings_to_WordList (Strings me);

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/18
+ * pb 2011/07/11
  */
 
 #include "Data.h"
@@ -30,11 +30,9 @@
 	extern "C" {
 #endif
 
-#define Polygon_members  Data_members \
-	long numberOfPoints; \
-	double *x, *y;
-#define Polygon_methods  Data_methods
-class_create (Polygon, Data);
+#include "Polygon_def.h"
+#define Polygon__methods(klas)  Data__methods(klas)
+oo_CLASS_CREATE (Polygon, Data);
 
 Polygon Polygon_create (long numberOfPoints);
 /*

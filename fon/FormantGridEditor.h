@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/02
  */
 
 #include "FunctionEditor.h"
@@ -38,28 +38,29 @@ struct FormantGridEditor_Source {
 	struct { double adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2; } phonation;
 };
 
-#define FormantGridEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (FormantGridEditor);
+Thing_declare1cpp (FormantGridEditor);
 
-#define FormantGridEditor__members(Klas) FunctionEditor__members(Klas) \
-	bool editingBandwidths; \
-	long selectedFormant; \
-	double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor; \
-	struct FormantGridEditor_Play play; \
-	struct FormantGridEditor_Source source;
-#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
-	bool hasSourceMenu;
-Thing_declare2 (FormantGridEditor, FunctionEditor);
+void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data);
 
-int FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar_t *title, FormantGrid data);
-
-FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar_t *title, FormantGrid data);
+FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar *title, FormantGrid data);
 
 void FormantGridEditor_prefs (void);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structFormantGridEditor : public structFunctionEditor {
+		bool editingBandwidths;
+		long selectedFormant;
+		double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor;
+		struct FormantGridEditor_Play play;
+		struct FormantGridEditor_Source source;
+	};
+	#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
+		bool hasSourceMenu;
+	Thing_declare2cpp (FormantGridEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file FormantGridEditor.h */
 #endif

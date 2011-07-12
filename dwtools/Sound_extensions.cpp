@@ -77,7 +77,7 @@ static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tm
 	{
 		RealPoint point = (RealPoint) my points -> item [i];
 		double f = point -> value;
-		if (point -> time < tmin || point -> time > tmax) continue;
+		if (point -> number < tmin || point -> number > tmax) continue;
 		if (f > 0)
 		{
 			double f_st = fref_st + 12.0 * log2 (f / fref_Hz) * multiplier;
@@ -273,7 +273,7 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromCmuAudioFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Reading from file not performed."); }
+	} catch (MelderError) { Melder_thrown ("Reading from file not performed."); }
 }
 
 Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
@@ -302,7 +302,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromRawFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not read from file ", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_thrown ("Sound not read from file ", MelderFile_messageName (file), "."); }
 }
 
 int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned)
@@ -327,7 +327,7 @@ int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int lit
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_writeToRawFile: not completed");
 		f.close (file);
 		return 1;
-	} catch (MelderError) { rethrowmzero (me, ": saving as raw file not performed."); }
+	} catch (MelderError) { Melder_thrown (me, ": saving as raw file not performed."); }
 }
 
 struct dialogic_adpcm
@@ -424,7 +424,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 		}
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_thrown ("Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), "."); }
 }
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency)
@@ -461,7 +461,7 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 			s[i] = (exp (-48.0*(i-imid)*(i-imid)/(my nx+1)/(my nx+1)) - edge) / (1 - edge);
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Gaussian function."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Gaussian function."); }
 }
 
 Sound Sound_createHamming (double windowDuration, double samplingFrequency)
@@ -475,7 +475,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 			s[i] = 0.54 - 0.46 * cos ((i-1) * p);
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Hamming function."); };
+	} catch (MelderError) { Melder_thrown ("Sound not created from Hamming function."); };
 }
 
 static Sound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency)
@@ -522,7 +522,7 @@ static Sound Sound_createToneComplex (double minimumTime, double maximumTime, do
 		}
 		if (scaleAmplitudes) Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from tone complex."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from tone complex."); }
 }
 
 
@@ -576,7 +576,7 @@ Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samp
 		}
 		if (scaleAmplitudes) Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from gammatone function."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from gammatone function."); }
 }
 
 static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_frequency,
@@ -715,7 +715,7 @@ Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double 
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not filtered by gammatone filter4."); }
+	} catch (MelderError) { Melder_thrown ("Sound not filtered by gammatone filter4."); }
 }
 
 /*
@@ -822,7 +822,7 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Shepard tone complex."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Shepard tone complex."); }
 }
 
 /* can be implemented more efficiently with sin recurrence? */
@@ -867,7 +867,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Shepard tone."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Shepard tone."); }
 }
 
 Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
@@ -886,7 +886,7 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Patterson Wightman tone."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Patterson Wightman tone."); }
 }
 
 Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
@@ -907,7 +907,7 @@ Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samp
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Plomp tone."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Plomp tone."); }
 }
 
 void Sounds_multiply (Sound me, Sound thee)
@@ -1041,7 +1041,6 @@ end:
 
 int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 {
-	try {
 		if (my dx != thy dx) Melder_throw ("Sample rates must be equal.");
 
 		if (t1 == 0) t1 =  my xmin;
@@ -1063,12 +1062,10 @@ int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 			my z[1][i] = thy z[1][i - i1 + i3];
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter)
 {
-	try {
 		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
 		autoSpectrum spec = Sound_to_Spectrum (part.peek(), TRUE);
 		Matrix_formula ((Matrix) spec.peek(), formula, interpreter, 0); therror
@@ -1078,7 +1075,6 @@ int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *fo
 
 		Sound_overwritePart (me, t1, t2, filtered.peek(), 0);
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 /*
@@ -1109,7 +1105,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 			i += step;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no PointProcess created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no PointProcess created."); }
 }
 
 /* Internal pitch representation in semitones */
@@ -1161,7 +1157,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 
 		if (formantMultiplier != 1) thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Pitch & Sound."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Pitch & Sound."); }
 }
 
 Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
@@ -1174,7 +1170,7 @@ Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
 		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.peek(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": speaker not changed."); }
+	} catch (MelderError) { Melder_thrown (me, ": speaker not changed."); }
 }
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
@@ -1186,7 +1182,7 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.peek(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no TextGrid with silences created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no TextGrid with silences created."); }
 }
 
 /*  Compatibility with old Sound(&pitch)_changeGender  ***********************************/
@@ -1197,7 +1193,7 @@ static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, d
 	{
 		RealPoint point = (RealPoint) my points -> item [i];
 		double f = point -> value;
-		if (point -> time < tmin || point -> time > tmax) continue;
+		if (point -> number < tmin || point -> number > tmax) continue;
 		f = fmid + (f - fmid) * factor;
 		point -> value = f < 0 ? 0 : f;
 	}
@@ -1223,7 +1219,7 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
 			if (f < my ceiling) thy frame[i].candidate[1].frequency = f;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Pitch not scaled."); }
+	} catch (MelderError) { Melder_thrown ("Pitch not scaled."); }
 }
 
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
@@ -1273,7 +1269,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 
 		if (formantRatio != 1) thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from Pitch & Sound."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from Pitch & Sound."); }
 }
 
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
@@ -1284,7 +1280,7 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 		autoSound thee = Sound_and_Pitch_changeGender_old (me, pitch.peek(), formantRatio,
 			new_pitch, pitchRangeFactor, durationFactor);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created for gender change."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created for gender change."); }
 }
 
 /*  End of compatibility with Sound_changeGender and Sound_and_Pitch_changeGender ***********************************/
@@ -1499,7 +1495,7 @@ Sound Sound_createFromWindowFunction (double windowDuration, double samplingFreq
 			my z[1][i] = value;
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound not created from window function."); }
+	} catch (MelderError) { Melder_thrown ("Sound not created from window function."); }
 }
 
 /* y[n] = sum(i=-n, i=n, x[n+mi])/(2*n+1) */
@@ -1532,7 +1528,7 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Sound (local average) not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Sound (local average) created."); }
 }
 
 static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum)
@@ -1589,7 +1585,6 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
 	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y)
 {
-	try {
 		if (left)
 		{
 			*x = Matrix_columnToX (me, isample);
@@ -1667,7 +1662,6 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 
 		*x = xmid;
 		*y = thy z[ichannel][2];
-	} catch (MelderError) { rethrow; }
 }
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
@@ -1884,4 +1878,4 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 	Melder_clearError ();
 }
 
-/* End of file Sound_extensions.c 2099*/
+/* End of file Sound_extensions.cpp 2099*/

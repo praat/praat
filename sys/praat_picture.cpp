@@ -170,8 +170,9 @@ static void updateViewportMenu (void) {
 }
 
 DIRECT (MouseSelectsInnerViewport)
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
-	{
+	if (theCurrentPraatPicture != & theForegroundPraatPicture)
+		Melder_throw ("Mouse commands are not available inside pictures.");
+	{ // scope
 		autoPraatPicture picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
 	}
@@ -179,8 +180,9 @@ DIRECT (MouseSelectsInnerViewport)
 END
 
 DIRECT (MouseSelectsOuterViewport)
-	if (theCurrentPraatPicture != & theForegroundPraatPicture) return Melder_error1 (L"Mouse commands are not available inside pictures.");
-	{
+	if (theCurrentPraatPicture != & theForegroundPraatPicture)
+		Melder_throw ("Mouse commands are not available inside pictures.");
+	{ // scope
 		autoPraatPicture picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
 	}
@@ -222,13 +224,11 @@ DO
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
 	if (left == right) {
-		Melder_error1 (L"The left and right edges of the viewport cannot be equal.");
-		return Melder_error1 (L"Please change the horizontal range.");
+		Melder_throw ("The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
 	}
 	if (left > right) { double temp; temp = left; left = right; right = temp; }
 	if (top == bottom) {
-		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
-		return Melder_error1 (L"Please change the vertical range.");
+		Melder_throw ("The top and bottom edges of the viewport cannot be equal.\nPlease change the vertical range.");
 	}
 	theCurrentPraatPicture -> x1NDC = left - xmargin;
 	theCurrentPraatPicture -> x2NDC = right + xmargin;
@@ -270,13 +270,11 @@ DO
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	if (left == right) {
-		Melder_error1 (L"The left and right edges of the viewport cannot be equal.");
-		return Melder_error1 (L"Please change the horizontal range.");
+		Melder_throw ("The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
 	}
 	if (left > right) { double temp; temp = left; left = right; right = temp; }
 	if (top == bottom) {
-		Melder_error1 (L"The top and bottom edges of the viewport cannot be equal.");
-		return Melder_error1 (L"Please change the vertical range.");
+		Melder_throw ("The top and bottom edges of the viewport cannot be equal.\nPlease change the vertical range.");
 	}
 	theCurrentPraatPicture -> x1NDC = left;
 	theCurrentPraatPicture -> x2NDC = right;
@@ -445,24 +443,27 @@ END
 /***** "File" MENU *****/
 
 FORM_READ (Picture_readFromPraatPictureFile, L"Read picture from praat picture file", 0, false)
-	return Picture_readFromPraatPictureFile (praat_picture, file);
+	Picture_readFromPraatPictureFile (praat_picture, file);
 END
 
 FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat picture file", 0, false)
-	int result;
 	Graphics_setWsWindow (GRAPHICS, 0, 2, -1, 1);
-	result = Picture_readFromPraatPictureFile (praat_picture, file);
+	try {
+		Picture_readFromPraatPictureFile (praat_picture, file);
+	} catch (MelderError) {
+		Graphics_setWsWindow (GRAPHICS, 0, 12, 0, 12);
+		throw;
+	}
 	Graphics_setWsWindow (GRAPHICS, 0, 12, 0, 12);
-	return result;
 END
 
 #ifdef _WIN32
 FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat picture file", 0, false)
-	return Picture_readFromOldWindowsPraatPictureFile (praat_picture, file);
+	Picture_readFromOldWindowsPraatPictureFile (praat_picture, file);
 END
 #endif
 
-static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
 	(void) modified;
@@ -473,16 +474,15 @@ static int DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sending
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sendingString == NULL) file = UiFile_getFile (dia);
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-		return Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		Picture_writeToEpsFile (praat_picture, file, TRUE, FALSE);
 	}
-	return 1;
 }
 /*FORM_WRITE (Picture_writeToEpsFile, L"Save picture as Encapsulated PostScript file", 0, L"praat.eps")
 	if (! Picture_writeToEpsFile (praat_picture, fileName, TRUE)) return 0;
 END*/
 
-static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
 	(void) modified;
@@ -493,13 +493,12 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, const wch
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sendingString == NULL) file = UiFile_getFile (dia);
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-		return Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		Picture_writeToEpsFile (praat_picture, file, FALSE, FALSE);
 	}
-	return 1;
 }
 
-static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
 	(void) modified;
@@ -510,13 +509,12 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, const w
 		UiOutfile_do (dia, L"praat.eps");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sendingString == NULL) file = UiFile_getFile (dia);
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-		return Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		Picture_writeToEpsFile (praat_picture, file, FALSE, TRUE);
 	}
-	return 1;
 }
 
-static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
 	(void) modified;
@@ -527,13 +525,12 @@ static int DO_Picture_writeToPdfFile (UiForm sendingForm, const wchar_t *sending
 		UiOutfile_do (dia, L"praat.pdf");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sendingString == NULL) file = UiFile_getFile (dia);
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-		return Picture_writeToPdfFile (praat_picture, file);
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		Picture_writeToPdfFile (praat_picture, file);
 	}
-	return 1;
 }
 
-static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
 	(void) modified;
@@ -544,10 +541,9 @@ static int DO_Picture_writeToPraatPictureFile (UiForm sendingForm, const wchar_t
 		UiOutfile_do (dia, L"praat.prapic");
 	} else { MelderFile file; structMelderFile file2 = { 0 };
 		if (sendingString == NULL) file = UiFile_getFile (dia);
-		else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-		return Picture_writeToPraatPictureFile (praat_picture, file);
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		Picture_writeToPraatPictureFile (praat_picture, file);
 	}
-	return 1;
 }
 
 #ifdef macintosh
@@ -565,7 +561,7 @@ DIRECT (Print)
 END
 
 #ifdef macintosh
-	static int DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+	static void DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 		static Any dia;
 		(void) interpreter;
 		(void) modified;
@@ -576,14 +572,13 @@ END
 			UiOutfile_do (dia, L"praat.pict");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (sendingString == NULL) file = UiFile_getFile (dia);
-			else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-			return Picture_writeToMacPictFile (praat_picture, file);
+			else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+			Picture_writeToMacPictFile (praat_picture, file);
 		}
-		return 1;
 	}
 #endif
 #ifdef _WIN32
-	static int DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+	static void DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 		static Any dia;
 		(void) interpreter;
 		(void) modified;
@@ -594,10 +589,9 @@ END
 			UiOutfile_do (dia, L"praat.emf");
 		} else { MelderFile file; structMelderFile file2 = { 0 };
 			if (sendingString == NULL) file = UiFile_getFile (dia);
-			else { if (! Melder_relativePathToFile (sendingString, & file2)) return 0; file = & file2; }
-			return Picture_writeToWindowsMetafile (praat_picture, file);
+			else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+			Picture_writeToWindowsMetafile (praat_picture, file);
 		}
-		return 1;
 	}
 #endif
 
@@ -739,11 +733,13 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END
 
-#define PraatPictureFunction_members Data_members \
-	double xmin, xmax, dx, x1; \
+Thing_declare1cpp (PraatPictureFunction);
+struct structPraatPictureFunction : public structData {
+	double xmin, xmax, dx, x1;
 	long nx;
-#define PraatPictureFunction_methods Data_methods
-class_create (PraatPictureFunction, Data);
+};
+#define PraatPictureFunction__methods(klas) Data__methods(klas)
+Thing_declare2cpp (PraatPictureFunction, Data);
 
 static double getXmin (I) { iam (PraatPictureFunction); return my xmin; }
 static double getXmax (I) { iam (PraatPictureFunction); return my xmax; }
@@ -772,8 +768,8 @@ DO
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
 	long n = GET_INTEGER (L"Number of horizontal steps");
-	wchar_t *formula = GET_STRING (L"formula");
-	if (n < 2) return 1;
+	wchar *formula = GET_STRING (L"formula");
+	if (n < 2) return;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
 	autoNUMvector <double> y (1, n);
@@ -1044,22 +1040,21 @@ static void dia_marks (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static int do_marks (Any dia, void (*Graphics_marks) (void *, int, bool, bool, bool)) {
+static void do_marks (Any dia, void (*Graphics_marks) (void *, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (L"Number of marks");
 	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
 	autoPraatPicture picture;
 	Graphics_marks (GRAPHICS, numberOfMarks, GET_INTEGER (L"Write numbers"),
 		GET_INTEGER (L"Draw ticks"), GET_INTEGER (L"Draw dotted lines"));
-	return 1;
 }
 FORM (Marks_left, L"Praat picture: Marks left", L"Marks left/right/top/bottom...")
-	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksLeft)) return 0; END
+	dia_marks (dia); OK DO do_marks (dia, Graphics_marksLeft); END
 FORM (Marks_right, L"Praat picture: Marks right", L"Marks left/right/top/bottom...")
-	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksRight)) return 0; END
+	dia_marks (dia); OK DO do_marks (dia, Graphics_marksRight); END
 FORM (Marks_bottom, L"Praat picture: Marks bottom", L"Marks left/right/top/bottom...")
-	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksBottom)) return 0; END
+	dia_marks (dia); OK DO do_marks (dia, Graphics_marksBottom); END
 FORM (Marks_top, L"Praat picture: Marks top", L"Marks left/right/top/bottom...")
-	dia_marks (dia); OK DO if (! do_marks (dia, Graphics_marksTop)) return 0; END
+	dia_marks (dia); OK DO do_marks (dia, Graphics_marksTop); END
 
 static void dia_marksLogarithmic (Any dia) {
 	NATURAL (L"Marks per decade", L"3")
@@ -1108,8 +1103,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
-	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
+	if (position < y1WC - dy || position > y2WC + dy)
+		Melder_throw ("\"Position\" must be between ", y1WC, " and ", y2WC, ".");
 	autoPraatPicture picture;
 	Graphics_markLeft (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1128,8 +1123,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
-	if (position < y1WC - dy || position > y2WC + dy) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (y1WC), L" and ", Melder_double (y2WC), L".");
+	if (position < y1WC - dy || position > y2WC + dy)
+		Melder_throw ("\"Position\" must be between ", y1WC, " and ", y2WC, ".");
 	autoPraatPicture picture;
 	Graphics_markRight (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1148,8 +1143,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
-	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
+	if (position < x1WC - dx || position > x2WC + dx)
+		Melder_throw ("\"Position\" must be between ", x1WC, " and ", x2WC, ".");
 	autoPraatPicture picture;
 	Graphics_markTop (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1168,8 +1163,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
-	if (position < x1WC - dx || position > x2WC + dx) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (x1WC), L" and ", Melder_double (x2WC), L".");
+	if (position < x1WC - dx || position > x2WC + dx)
+		Melder_throw ("\"Position\" must be between ", x1WC, " and ", x2WC, ".");
 	autoPraatPicture picture;
 	Graphics_markBottom (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1196,8 +1191,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
-	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
+	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
+		Melder_throw ("\"Position\" must be between ", pow (10, y1WC), " and ", pow (10, y2WC), ".");
 	autoPraatPicture picture;
 	Graphics_markLeftLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1216,8 +1211,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
-	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy)) return Melder_error5 (
-		L"`Position' must be between ", Melder_double (pow (10, y1WC)), L" and ", Melder_double (pow (10, y2WC)), L".");
+	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
+		Melder_throw ("\"Position\" must be between ", pow (10, y1WC), " and ", pow (10, y2WC), ".");
 	autoPraatPicture picture;
 	Graphics_markRightLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1236,8 +1231,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
-	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
+	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
+		Melder_throw ("\"Position\" must be between ", pow (10, x1WC), " and ", pow (10, x2WC), ".");
 	autoPraatPicture picture;
 	Graphics_markTopLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),
@@ -1256,8 +1251,8 @@ DO
 	}
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
-	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx)) return Melder_error (
-		"`Position' must be between %.15g and %.15g.", pow (10, x1WC), pow (10, x2WC));
+	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
+		Melder_throw ("\"Position\" must be between ", pow (10, x1WC), " and ", pow (10, x2WC), ".");
 	autoPraatPicture picture;
 	Graphics_markBottomLogarithmic (GRAPHICS, position, GET_INTEGER (L"Write number"),
 		GET_INTEGER (L"Draw tick"), GET_INTEGER (L"Draw dotted line"),

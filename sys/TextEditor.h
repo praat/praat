@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/16
+ * pb 2011/07/03
  */
 
 #include "Editor.h"
@@ -31,7 +31,18 @@
 
 Thing_declare1cpp (TextEditor);
 
+TextEditor TextEditor_create (
+	GuiObject parent,
+	const wchar *initialText   // may be NULL
+);
+
+void TextEditor_showOpen (TextEditor me);
+
+void TextEditor_prefs (void);
+
 #ifdef __cplusplus
+	}
+
 	struct structTextEditor : public structEditor {
 		structMelderFile file;
 		GuiObject textWidget;
@@ -39,31 +50,18 @@ Thing_declare1cpp (TextEditor);
 		int dirty, fontSize;
 		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+	// functions:
+		void init (GuiObject parent, const wchar *initialText);
+	// overridden methods:
+		void goAway ();
+	// methods:
+		virtual bool fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
+		virtual void clear () { }
 	};
-#else
-	#define TextEditor__members(Klas) Editor__members(Klas) \
-		structMelderFile file; \
-		GuiObject textWidget; \
-		Any openDialog, saveDialog, printDialog, findDialog; \
-		int dirty, fontSize; \
-		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog; \
-		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
-#endif
-#define TextEditor__methods(Klas) Editor__methods(Klas) \
-	bool fileBased; \
-	void (*clear) (Klas me);
-Thing_declare2cpp (TextEditor, Editor);
+	#define TextEditor__methods(Klas) Editor__methods(Klas)
+	Thing_declare2cpp (TextEditor, Editor);
 
-void TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText);
-TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText);
-	/* 'initalText' may be NULL. */
-void TextEditor_showOpen (TextEditor me);
-
-void TextEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-#endif
+#endif // __cplusplus
 
 /* End of file TextEditor.h */
 #endif

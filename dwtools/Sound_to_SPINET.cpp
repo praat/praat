@@ -68,7 +68,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 
 		autoMelderProgress progress (L"SPINET analysis");
 
-		for (long i=1; i <= nFilters; i++)
+		for (long i = 1; i <= nFilters; i++)
 		{
 			double bb = (f[i] / 1000) * exp (- f[i] / 1000); // outer & middle ear and phase locking
 			double tgammaMax = (thy gamma - 1) / bw[i]; // Time where gammafunction envelope has maximum 
@@ -105,7 +105,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 
 		// On-center off-surround interactions
 
-		for (long j=1; j <= numberOfFrames; j++)
+		for (long j = 1; j <= numberOfFrames; j++)
 			for (long i=1; i <= nFilters; i++)
 			{
 				double a = 0;
@@ -119,7 +119,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				thy s[i][j] = a > 0 ? a : 0;
 			}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ":  no SPINET created."); }
+	} catch (MelderError) { Melder_thrown (me, ":  no SPINET created."); }
 }
 
 /* End of file Sound_to_SPINET.cpp */

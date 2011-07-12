@@ -125,7 +125,7 @@ MAN_BEGIN (L"frequency", L"ppgb", 20030314)
 INTRO (L"Frequency is how often something happens in a certain time, for instance "
 	"the number of times the Praat home page www.praat.org is visited every day.")
 NORMAL (L"In Praat, frequency is the number of vibration cycles per second. "
-	"Although one can sometimes see the abbreviation %cps, Praat always uses Hz (short for %Hertz), "
+	"Although one can sometimes see the abbreviation %cps, Praat always uses Hz (short for %hertz), "
 	"which means the same.")
 NORMAL (L"Unfortunately, there are two very distinct kinds of vibrations in speech analysis. "
 	"For pitch, frequency is the number of glottal cycles per second, and for spectral analysis, "
@@ -227,7 +227,7 @@ MAN_END
 
 MAN_BEGIN (L"pitch floor", L"ppgb", 20060914)
 INTRO (L"The pitch floor is the bottom of the pitch range in the Sound window (see the @Intro). "
-	"The standard setting is 75 Hertz; pitch values below this pitch floor will not be computed or shown by Praat.")
+	"The standard setting is 75 hertz; pitch values below this pitch floor will not be computed or shown by Praat.")
 NORMAL (L"To change the pitch floor, choose @@Pitch settings...@.")
 MAN_END
 
@@ -309,7 +309,7 @@ MAN_END
 
 MAN_BEGIN (L"sampling frequency", L"ppgb", 20040415)
 INTRO (L"The sampling frequency (or %%sample rate%) is the number of samples per second in a @Sound. "
-	"For example: if the sampling frequency is 44100 Hertz, a recording with a duration of 60 seconds "
+	"For example: if the sampling frequency is 44100 hertz, a recording with a duration of 60 seconds "
 	"will contain 2,646,000 samples.")
 NORMAL (L"Usual values for the sampling frequency are 44100 Hz (CD quality) and 22050 Hz "
 	"(just enough for speech, since speech does not contain relevant frequencies above 11025 Hz; see @aliasing).")

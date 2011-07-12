@@ -30,12 +30,10 @@ class_methods_end
 
 void Proximity_init (I, long numberOfPoints)
 {
-	try {
-		iam (Proximity);
-		TableOfReal_init (me, numberOfPoints, numberOfPoints); therror
-		TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1); therror
-		TableOfReal_setSequentialColumnLabels (me, 0, 0, NULL, 1, 1); therror
-	} catch (MelderError) { rethrow; }
+	iam (Proximity);
+	TableOfReal_init (me, numberOfPoints, numberOfPoints); therror
+	TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1); therror
+	TableOfReal_setSequentialColumnLabels (me, 0, 0, NULL, 1, 1); therror
 }
 
 /* End of file Proximity.c */

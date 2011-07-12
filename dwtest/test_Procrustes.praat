@@ -106,7 +106,7 @@ procedure test_procrustes_random_configurations numconf
     Rename... X_Yi
     # no need to test the translations, they need not be equal (see BG page 347)
     sp = Get scale
-    assert scale - sp < nr*nc*eps; scale
+    assert abs(scale - sp) < nr*nc*eps; scale
   
 #   printline o.k.: nr='nr', nc='nc', alpha='alpha' degrees, scale='scale', t=('t1', 't2')
     nr *= 2

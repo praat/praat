@@ -32,9 +32,7 @@
 	extern "C" {
 #endif
 
-#define Vector_members  Matrix_members
-#define Vector_methods  Matrix_methods
-class_create (Vector, Matrix);
+Thing_declare1cpp (Vector);
 
 #define Vector_CHANNEL_AVERAGE  0
 #define Vector_CHANNEL_1  1
@@ -83,6 +81,12 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 
 #ifdef __cplusplus
 	}
+
+	struct structVector : public structMatrix {
+	};
+	#define Vector__methods(klas)  Matrix__methods(klas)
+	Thing_declare2cpp (Vector, Matrix);
+
 #endif
 
 /* End of file Vector.h */

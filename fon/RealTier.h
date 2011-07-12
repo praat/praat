@@ -35,11 +35,9 @@
 
 /********** class RealPoint **********/
 
-#define RealPoint_members Data_members \
-	double time; \
-	double value;
-#define RealPoint_methods Data_methods
-class_create (RealPoint, Data);
+#include "RealTier_def.h"
+#define RealPoint__methods(klas) AnyPoint__methods(klas)
+oo_CLASS_CREATE (RealPoint, AnyPoint);
 
 RealPoint RealPoint_create (double time, double value);
 /*
@@ -50,10 +48,8 @@ RealPoint RealPoint_create (double time, double value);
 
 /********** class RealTier **********/
 
-#define RealTier_members Function_members \
-	SortedSetOfDouble points;
-#define RealTier_methods Function_methods
-class_create (RealTier, Function);
+#define RealTier__methods(klas) Function__methods(klas)
+oo_CLASS_CREATE (RealTier, Function);
 
 void RealTier_init (I, double tmin, double tmax);
 RealTier RealTier_create (double tmin, double tmax);

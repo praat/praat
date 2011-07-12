@@ -41,9 +41,7 @@
 #endif
 
 #include "FormantGrid_def.h"
-#define FormantGrid_members Function_members \
-	Ordered formants, bandwidths;
-#define FormantGrid_methods Function_methods
+#define FormantGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FormantGrid, Function);
 
 void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);

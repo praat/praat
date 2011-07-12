@@ -90,7 +90,7 @@ PCA PCA_create (long numberOfComponents, long dimension)
 		my labels = NUMvector<wchar_t *> (1, dimension);
 		my centroid = NUMvector<double> (1, dimension);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("PCA not created"); }
+	} catch (MelderError) { Melder_thrown ("PCA not created"); }
 }
 
 void PCA_setNumberOfObservations (PCA me, long numberOfObservations)
@@ -186,7 +186,7 @@ PCA TableOfReal_to_PCA (I)
 			thy eigenvalues[i] /= (m - 1);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": PCA not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": PCA not created."); }
 }
 
 Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions)
@@ -204,7 +204,7 @@ Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfD
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, L"pc", 1, 1);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created from PCA & TableOfReal."); }
+	} catch (MelderError) { Melder_thrown ("Configuration not created from PCA & TableOfReal."); }
 }
 
 TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
@@ -234,7 +234,7 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not reconstructed."); }
+	} catch (MelderError) { Melder_thrown ("TableOfReal not reconstructed."); }
 }
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to)
@@ -265,7 +265,7 @@ TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring)
 		}
 		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, " not reconstructed."); }
+	} catch (MelderError) { Melder_thrown (me, " not reconstructed."); }
 }
 
 

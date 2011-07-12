@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/07/02
  */
 
 #include "HyperPage.h"
@@ -30,10 +30,9 @@
 	extern "C" {
 #endif
 
-#define OTGrammarEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
-Thing_declare1 (OTGrammarEditor);
+Thing_declare1cpp (OTGrammarEditor);
 
-OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar_t *title, OTGrammar ot);
+OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot);
 
 #ifdef __cplusplus
 	}

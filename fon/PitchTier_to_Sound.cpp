@@ -43,7 +43,7 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (pulse train).");
+		Melder_throw (me, ": not converted to Sound (pulse train).");
 	}
 }
 
@@ -61,7 +61,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 		}
 		return sound.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (pulse train).");
+		Melder_throw (me, ": not converted to Sound (phonation).");
 	}
 }
 
@@ -70,7 +70,7 @@ void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL); therror
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 
@@ -99,7 +99,7 @@ Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double sa
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound (sine).");
+		Melder_throw (me, ": not converted to Sound (sine).");
 	}
 }
 
@@ -109,7 +109,7 @@ void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
 		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL); therror
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 

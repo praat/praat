@@ -23,22 +23,27 @@
  * pb 2011/03/02
  */
 
-#ifndef _HyperPage_h_
-	#include "HyperPage.h"
-#endif
+#include "HyperPage.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define ButtonEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
-Thing_declare1 (ButtonEditor);
+Thing_declare1cpp (ButtonEditor);
 
 ButtonEditor ButtonEditor_create (GuiObject parent);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structButtonEditor : public structHyperPage {
+		int show;
+		GuiObject button1, button2, button3, button4, button5;
+	};
+	#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
+	Thing_declare2cpp (ButtonEditor, HyperPage);
+
+#endif // __cplusplus
 
 /* End of file ButtonEditor.h */
 #endif

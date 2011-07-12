@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/16
+ * pb 2011/07/03
  */
 
 #include "Script.h"
@@ -33,32 +33,37 @@
 
 Thing_declare1cpp (ScriptEditor);
 
-#ifdef __cplusplus
-	struct structScriptEditor: public structTextEditor {
-		wchar_t *environmentName;
-		Editor_Table editorClass;
-		Interpreter interpreter;
-		Any argsDialog;
-	};
-#else
-	#define ScriptEditor__members(Klas) TextEditor__members(Klas) \
-		wchar_t *environmentName; \
-		Editor_Table editorClass; \
-		Interpreter interpreter; \
-		Any argsDialog;
-#endif
-#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
-Thing_declare2cpp (ScriptEditor, TextEditor);
+ScriptEditor ScriptEditor_createFromText (
+	GuiObject parent,
+	Editor editor,   // the scripting environment; if NULL, the scripting environment consists of the global windows
+	const wchar *initialText   // may be NULL
+);
 
-ScriptEditor ScriptEditor_createFromText (GuiObject parent, Any editor, const wchar_t *initialText);
-	/* 'initalText' may be NULL. */
-ScriptEditor ScriptEditor_createFromScript (GuiObject parent, Any voidEditor, Script script);
+ScriptEditor ScriptEditor_createFromScript (
+	GuiObject parent,
+	Editor editor,
+	Script script
+);
 
-int ScriptEditors_dirty (void);   /* Are there any modified and unsaved scripts? Ask before quitting the program. */
+int ScriptEditors_dirty (void);   // are there any modified and unsaved scripts? Ask before quitting the program.
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structScriptEditor : public structTextEditor {
+		wchar *environmentName;
+		Editor_Table editorClass;
+		Interpreter interpreter;
+		Any argsDialog;
+	// functions:
+		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
+	// override:
+		void goAway ();
+	};
+	#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
+	Thing_declare2cpp (ScriptEditor, TextEditor);
+
+#endif // __cplusplus
 
 /* End of file ScriptEditor.h */
 #endif

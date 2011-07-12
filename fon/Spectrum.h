@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/01
  */
 
 /* Complex spectrum. */
@@ -34,19 +34,19 @@
 #endif
 
 #include "Spectrum_def.h"
-#define Spectrum_methods  Matrix_methods
+#define Spectrum__methods(klas)  Matrix__methods(klas)
 oo_CLASS_CREATE (Spectrum, Matrix);
 
 /*
-	xmin			// Lowest frequency (Hertz).
-	xmax		// Highest frequency (Hertz).
-	nx			// Number of frequencies.
-	dx			// Frequency step (Hertz).
-	x1			// First frequency (Hertz).
-	ymin = 1		// First row: real part.
-	ymax = 2		// Second row: imaginary part.
-	ny = 2		// Two rows.
-	dy = 1; y1 = 1	// y is row number
+	xmin            // lowest frequency (Hz)
+	xmax            // highest frequency (Hz)
+	nx              // number of frequencies
+	dx              // frequency step (Hz)
+	x1              // first frequency (Hz)
+	ymin = 1        // first row: real part
+	ymax = 2        // second row: imaginary part
+	ny = 2          // two rows
+	dy = 1; y1 = 1  // y is row number
 */
 
 Spectrum Spectrum_create (double fmax, long nf);
@@ -54,12 +54,17 @@ Spectrum Spectrum_create (double fmax, long nf);
 		fmax > 0.0;
 		nf >= 2;
 	Postconditions:
-		my xmin = 0.0;				my ymin = 1;
-		my xmax = fmax;				my ymax = 2;
-		my nx = nf;				my ny = 2;
-		my dx = fmax / (nx - 1);			my dy = 1;
-		my x1 = 0.0;				my y1 = 1;
-		my z [1..ny] [1..nx] = 0.0;
+		my xmin == 0.0;
+		my xmax == fmax;
+		my nx == nf;
+		my dx == fmax / (nx - 1);
+		my x1 == 0.0;
+		my ymin == 1;
+		my ymax == 2;
+		my ny == 2;
+		my dy == 1;
+		my y1 == 1;
+		my z [1..ny] [1..nx] == 0.0;
 */
 		
 int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum);   /* Return 0 if all zeroes. */
@@ -87,9 +92,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	Preconditions:
 		maximum > minimum;
 	Arguments:
-		[fmin, fmax]: frequencies in Hertz; x domain of drawing;
+		[fmin, fmax]: frequencies in Hz; x domain of drawing;
 		Autowindowing: if fmax <= fmin, x domain of drawing is [my xmin, my xmax].
-		[minimum, maximum]: power in dB/Hertz; y range of drawing.
+		[minimum, maximum]: power in dB/Hz; y range of drawing.
 */
 void Spectrum_drawLogFreq (Spectrum me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 

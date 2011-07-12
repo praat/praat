@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/10
+ * pb 2011/07/11
  */
 
 #include "AnyTier.h"
@@ -35,56 +35,56 @@
 
 #include "TextGrid_def.h"
 
-#define TextPoint_methods AnyPoint_methods
+#define TextPoint__methods(klas) AnyPoint__methods(klas)
 oo_CLASS_CREATE (TextPoint, AnyPoint);
-TextPoint TextPoint_create (double time, const wchar_t *mark);
+TextPoint TextPoint_create (double time, const wchar *mark);
 
-void TextPoint_setText (TextPoint me, const wchar_t *text);
+void TextPoint_setText (TextPoint me, const wchar *text);
 
-#define TextInterval_methods Function_methods
+#define TextInterval__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (TextInterval, Function);
 TextInterval TextInterval_create (double tmin, double tmax, const wchar_t *text);
 
-long TextGrid_countLabels (TextGrid me, long itier, const wchar_t *text);
-void TextInterval_setText (TextInterval me, const wchar_t *text);
+void TextInterval_setText (TextInterval me, const wchar *text);
 
-#define TextTier_methods Function_methods
+#define TextTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (TextTier, Function);
 TextTier TextTier_create (double tmin, double tmax);
 
-void TextTier_addPoint (TextTier me, double time, const wchar_t *mark);
+void TextTier_addPoint (TextTier me, double time, const wchar *mark);
 TextTier TextTier_readFromXwaves (MelderFile file);
-PointProcess TextTier_getPoints (TextTier me, const wchar_t *text);
+PointProcess TextTier_getPoints (TextTier me, const wchar *text);
 
-#define IntervalTier_methods Function_methods
+#define IntervalTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (IntervalTier, Function);
 IntervalTier IntervalTier_create (double tmin, double tmax);
 IntervalTier IntervalTier_readFromXwaves (MelderFile file);
 void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file);
 
 long IntervalTier_timeToLowIndex (IntervalTier me, double t);
-long IntervalTier_timeToIndex (IntervalTier me, double t);   /* Obsolete. */
+long IntervalTier_timeToIndex (IntervalTier me, double t);   // obsolete
 long IntervalTier_timeToHighIndex (IntervalTier me, double t);
 long IntervalTier_hasTime (IntervalTier me, double t);
 long IntervalTier_hasBoundary (IntervalTier me, double t);
 PointProcess IntervalTier_getStartingPoints (IntervalTier me, const wchar_t *text);
 PointProcess IntervalTier_getEndPoints (IntervalTier me, const wchar_t *text);
 PointProcess IntervalTier_getCentrePoints (IntervalTier me, const wchar_t *text);
-PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
-PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
-PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
-PointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
-
 PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase);
 PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProcess point, double phase);
 void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval);
 
 void TextTier_removePoint (TextTier me, long ipoint);
 
-#define TextGrid_methods Function_methods
+#define TextGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (TextGrid, Function);
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax);
 TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, const wchar_t *pointTiers);
+
+long TextGrid_countLabels (TextGrid me, long itier, const wchar *text);
+PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
 
 void TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber);
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber);

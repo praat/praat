@@ -26,6 +26,7 @@
  * pb 2010/12/28 memory allocation with _e
  * pb 2011/03/03 removed oo_STRINGx
  * pb 2011/03/29 C++
+ * pb 2011/07/07 void
  */
 
 #include "oo_undef.h"
@@ -41,21 +42,11 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		thy x [i] = my x [i];
 
-#ifdef __cplusplus
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	if (my x) thy x = NUMvector_copy <type> (my x, min, max);
-#else
-#define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
-#endif
 
-#ifdef __cplusplus
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	if (my x) thy x = NUMmatrix_copy <type> (my x, row1, row2, col1, col2);
-#else
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (my x && ! (thy x = NUM##t##matrix_copy (my x, row1, row2, col1, col2))) return 0;
-#endif
 
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -68,72 +59,54 @@
 	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = my x [i];
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	if (my x && ! (thy x = NUM##t##vector_copy (my x, min, max))) return 0;
+	if (my x) thy x = NUM##t##vector_copy (my x, min, max);
 
 
 
 #define oo_STRINGx(storage,x)  \
-	if (my x && ! (thy x = Melder_wcsdup_e (my x))) return 0;
+	if (my x) thy x = Melder_wcsdup (my x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0;
+		if (my x [i]) thy x [i] = Melder_wcsdup (my x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0;
+		if (my x [i]) thy x [i] = Melder_wcsdup (my x [i]);
 
-#ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
-		if (! (thy x = NUMvector <wchar*> (min, max))) return 0; \
+		thy x = NUMvector <wchar*> (min, max); \
 		for (long i = min; i <= max; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0; \
+			if (my x [i]) thy x [i] = Melder_wcsdup (my x [i]); \
 	}
-#else
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (my x) { \
-		if (! (thy x = NUMwvector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (my x [i] && ! (thy x [i] = Melder_wcsdup_e (my x [i]))) return 0; \
-	}
-#endif
 
 
 
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_copy (& my x, & thy x)) return 0;
+	Type##_copy (& my x, & thy x);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! Type##_copy (& my x [i], & thy x [i])) return 0;
+		Type##_copy (& my x [i], & thy x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! Type##_copy (& my x [i], & thy x [i])) { Melder_casual ("struct set copy fail %d", i); return 0; }
+		Type##_copy (& my x [i], & thy x [i]);
 
-#ifdef __cplusplus
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
-		if (! (thy x = NUMvector <struct##Type> (min, max))) return 0; \
+		thy x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) \
-			if (! Type##_copy (& my x [i], & thy x [i])) return 0; \
+			Type##_copy (& my x [i], & thy x [i]); \
 	}
-#else
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (my x) { \
-		if (! (thy x = NUMstructvector (Type, min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_copy (& my x [i], & thy x [i])) return 0; \
-	}
-#endif
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
-		if (! (thy x = (Type **) NUMstructmatrix (Type, row1, row2, col1, col2))) return 0; \
+		thy x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				if (! Type##_copy (& my x [i] [j], & thy x [i] [j])) return 0; \
+				Type##_copy (& my x [i] [j], & thy x [i] [j]); \
 	}
 
 
@@ -153,10 +126,10 @@
 
 
 #define oo_OBJECT(Class,version,x)  \
-	if (my x && ! (thy x = (Class) Data_copy (my x))) return 0;
+	if (my x) thy x = (Class) Data_copy (my x);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (my x && ! (thy x = (Class) Data_copy (my x))) return 0;
+	if (my x) thy x = (Class) Data_copy (my x);
 
 #define oo_FILE(x)  \
 	MelderFile_copy (& my x, & thy x);
@@ -167,22 +140,20 @@
 
 
 #define oo_DEFINE_STRUCT(Type)  \
-	int Type##_copy (Type me, Type thee) {
+	void Type##_copy (Type me, Type thee) {
 
 #define oo_END_STRUCT(Type)  \
-		return 1; \
 	}
 
 
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_copy (I, thou) { \
+	static void class##Class##_copy (I, thou) { \
 		iam (Class); \
 		thouart (Class); \
-		if (! inherited (Class) copy (me, thee)) return 0;
+		inherited (Class) copy (me, thee);
 
 #define oo_END_CLASS(Class)  \
-		return 1; \
 	}
 
 

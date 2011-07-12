@@ -27,6 +27,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2011/03/22 C++
+ * pb 2011/07/01 C++
  */
 
 #include "SpectrumEditor.h"
@@ -54,7 +55,7 @@ static void updateRange (SpectrumEditor me) {
 
 static void dataChanged (SpectrumEditor me) {
 	updateRange (me);
-	inherited (SpectrumEditor) dataChanged (SpectrumEditor_as_parent (me));
+	inherited (SpectrumEditor) dataChanged (me);
 }
 
 static void draw (SpectrumEditor me) {
@@ -67,10 +68,10 @@ static void draw (SpectrumEditor me) {
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 	Spectrum_drawInside (spectrum, my graphics, my startWindow, my endWindow, my minimum, my maximum);
-	FunctionEditor_drawRangeMark (SpectrumEditor_as_FunctionEditor (me), my maximum, Melder_fixed (my maximum, 1), L" dB", Graphics_TOP);
-	FunctionEditor_drawRangeMark (SpectrumEditor_as_FunctionEditor (me), my minimum, Melder_fixed (my minimum, 1), L" dB", Graphics_BOTTOM);
+	FunctionEditor_drawRangeMark (me, my maximum, Melder_fixed (my maximum, 1), L" dB", Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my minimum, Melder_fixed (my minimum, 1), L" dB", Graphics_BOTTOM);
 	if (my cursorHeight > my minimum && my cursorHeight < my maximum)
-		FunctionEditor_drawHorizontalHair (SpectrumEditor_as_FunctionEditor (me), my cursorHeight, Melder_fixed (my cursorHeight, 1), L" dB");
+		FunctionEditor_drawHorizontalHair (me, my cursorHeight, Melder_fixed (my cursorHeight, 1), L" dB");
 	Graphics_setColour (my graphics, Graphics_BLACK);
 
 	/* Update buttons. */
@@ -82,7 +83,7 @@ static void draw (SpectrumEditor me) {
 
 static int click (SpectrumEditor me, double xWC, double yWC, int shiftKeyPressed) {
 	my cursorHeight = my minimum + yWC * (my maximum - my minimum);
-	return inherited (SpectrumEditor) click (SpectrumEditor_as_parent (me), xWC, yWC, shiftKeyPressed);   /* Move cursor or drag selection. */
+	return inherited (SpectrumEditor) click (me, xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
 }
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
@@ -132,10 +133,10 @@ static int menu_cb_passBand (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
 		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
-		Editor_save (SpectrumEditor_as_Editor (me), L"Pass band");
+		Editor_save (me, L"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
-		FunctionEditor_redraw (SpectrumEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (SpectrumEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -148,10 +149,10 @@ static int menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
 		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
-		Editor_save (SpectrumEditor_as_Editor (me), L"Stop band");
+		Editor_save (me, L"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
-		FunctionEditor_redraw (SpectrumEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (SpectrumEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -164,7 +165,7 @@ static int menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_DO
 		preferences.dynamicRange = my dynamicRange = GET_REAL (L"Dynamic range");
 		updateRange (me);
-		FunctionEditor_redraw (SpectrumEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
@@ -172,7 +173,7 @@ static int menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEdito
 static int menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); return 1; }
 
 static void createMenus (SpectrumEditor me) {
-	inherited (SpectrumEditor) createMenus (SpectrumEditor_as_parent (me));
+	inherited (SpectrumEditor) createMenus (me);
 	my publishBandButton = Editor_addCommand (me, L"File", L"Publish band", 0, menu_cb_publishBand);
 	my publishSoundButton = Editor_addCommand (me, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
 	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
@@ -185,11 +186,11 @@ static void createMenuItems_view (SpectrumEditor me, EditorMenu menu) {
 	(void) me;
 	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, menu_cb_setDynamicRange);
 	EditorMenu_addCommand (menu, L"-- view settings --", 0, 0);
-	inherited (SpectrumEditor) createMenuItems_view (SpectrumEditor_as_parent (me), menu);
+	inherited (SpectrumEditor) createMenuItems_view (me, menu);
 }
 
 static void createHelpMenuItems (SpectrumEditor me, EditorMenu menu) {
-	inherited (SpectrumEditor) createHelpMenuItems (SpectrumEditor_as_parent (me), menu);
+	inherited (SpectrumEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
 	EditorMenu_addCommand (menu, L"Spectrum help", 0, menu_cb_help_Spectrum);
 }
@@ -204,26 +205,26 @@ class_methods (SpectrumEditor, FunctionEditor) {
 	us -> format_short = L"%.0f";
 	us -> format_long = L"%.2f";
 	us -> fixedPrecision_long = 2;
-	us -> format_units = L"Hertz";
-	us -> format_totalDuration = L"Total bandwidth %.2f Hertz";
-	us -> format_window = L"Window %.2f Hertz";
+	us -> format_units = L"hertz";
+	us -> format_totalDuration = L"Total bandwidth %.2f hertz";
+	us -> format_window = L"Window %.2f hertz";
 	us -> format_selection = L"%.2f Hz";
 	class_method (click)
 	class_method (play)
 	class_methods_end
 }
 
-SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar_t *title, Any data) {
+SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
-		FunctionEditor_init (SpectrumEditor_as_parent (me.peek()), parent, title, data); therror
+		FunctionEditor_init (me.peek(), parent, title, data);
 		my cursorHeight = -1000;
 		my bandSmoothing = preferences.bandSmoothing;
 		my dynamicRange = preferences.dynamicRange;
 		updateRange (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Spectrum window not created.");
+		Melder_throw ("Spectrum window not created.");
 	}
 }
 

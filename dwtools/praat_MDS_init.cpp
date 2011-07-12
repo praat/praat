@@ -79,7 +79,7 @@ static void TabelOfReal_testSorting (I, long rowtoindex)
 
 		NUMindexx (my data[rowtoindex], nc, index.peek());
 		for (long i = 1; i <= nc; i++) my data[6][i] = index[i];
-	} catch (MelderError) { rethrowm (me, ": sorting test not ok."); }
+	} catch (MelderError) { Melder_throw (me, ": sorting test not ok."); }
 }
 
 #undef iam
@@ -164,7 +164,7 @@ END
 DIRECT (AffineTransform_invert)
 	LOOP {
 		iam (AffineTransform);
-		praat_new (AffineTransform_invert (me), NAME, L"_inv");
+		praat_new ((Data) AffineTransform_invert (me), NAME, L"_inv");
 	}
 END
 

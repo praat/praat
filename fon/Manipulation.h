@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 #include "Sound.h"
@@ -42,7 +42,7 @@
 #endif
 
 #include "Manipulation_def.h"
-#define Manipulation_methods Function_methods
+#define Manipulation__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (Manipulation, Function);
 
 /* How to create an Manipulation. */

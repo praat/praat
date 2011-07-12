@@ -23,10 +23,12 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110628)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110712)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (L"##5.2.28# (28 July 2011)")
+NORMAL (L"##5.2.29# (12 July 2011)")
+LIST_ITEM (L"\\bu More accurate error checking, due to Praat's conversion to C++ (last C-only version was 5.2.17).")
+NORMAL (L"##5.2.28# (28 June 2011)")
 LIST_ITEM (L"\\bu Corrected some Polygon bugs.")
 NORMAL (L"##5.2.27# (19 June 2011)")
 LIST_ITEM (L"\\bu @Polygon: ##Draw (closed)...#.")
@@ -1852,7 +1854,7 @@ NORMAL (L"The spectrogram is a @@spectro-temporal representation@ of the sound. 
 	"The time scale of the spectrogram is the same as that of the waveform, so the spectrogram reacts "
 	"to your zooming and scrolling. "
 	"To the left of the spectrogram, you see the frequency scale. The frequency at the bottom of the spectrogram "
-	"is usually 0 Hz (Hertz, cps, cycles per second), and a common value for the frequency at the top is 5000 Hz.")
+	"is usually 0 Hz (hertz, cps, cycles per second), and a common value for the frequency at the top is 5000 Hz.")
 NORMAL (L"Darker parts of the spectrogram mean higher energy densities, lighter parts mean lower energy densities. "
 	"If the spectrogram has a dark area around a time of 1.2 seconds and a frequency of 4000 Hz, "
 	"this means that the sound has lots of energy for those high frequencies at that time. "
@@ -2134,7 +2136,7 @@ NORMAL (L"With @@Pitch settings...@ from the #Pitch menu, "
 	"All these settings have standard values (\"factory settings\"), which appear "
 	"when you click #Standards.")
 ENTRY (L"The %%pitch range% setting")
-NORMAL (L"This is the most important setting for pitch analysis. The standard range is from 75 to 500 Hertz, "
+NORMAL (L"This is the most important setting for pitch analysis. The standard range is from 75 to 500 hertz, "
 	"which means that the pitch analysis method will only find values between 75 and 500 Hz. "
 	"The range that you set here will be shown to the right of the analysis window.")
 NORMAL (L"For a male voice, you may want to set the floor to 75 Hz, and the ceiling to 300 Hz; "
@@ -2154,7 +2156,7 @@ NORMAL (L"So setting the floor of the pitch range is a technical requirement for
 	"although 75 Hz will still give you the same time resolution as you get for the males.")
 ENTRY (L"The %units setting")
 NORMAL (L"This setting determines the units of the vertical pitch scale. Most people like to see the pitch range "
-	"in Hertz, but there are several other possibilities.")
+	"in hertz, but there are several other possibilities.")
 ENTRY (L"Advanced settings")
 NORMAL (L"The Pitch menu also contains @@Advanced pitch settings...@.")
 MAN_END
@@ -2851,18 +2853,18 @@ MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20080427)
 INTRO (L"Once you have a glottal source signal, you are ready to create a filter that represents "
 	"the resonances of the vocal tract, as a function of time. In other words, you create a @FormantGrid object.")
 NORMAL (L"For a vowel spoken by an average (i.e. adult female) human voice, tradition assumes five formants in the range "
-	"between 0 and 5500 Hertz. This number comes from a computation of the formants of a "
+	"between 0 and 5500 hertz. This number comes from a computation of the formants of a "
 	"straight tube, which has resonances at wavelengths of four tube lengths, four thirds of a tube length, "
 	"four fifths, and so on. For a straight tube 16 centimetres long, the shortest wavelength is 64 cm, "
-	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 Hertz. "
-	"The other resonances will be at 1650, 2750, 3850, and 4950 Hertz.")
+	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 hertz. "
+	"The other resonances will be at 1650, 2750, 3850, and 4950 hertz.")
 NORMAL (L"You can create a @FormantGrid object with @@Create FormantGrid...@ from the #New menu (submenu #Tiers):")
 CODE (L"Create FormantGrid... filter 0 0.5 10 550 1100 60 50")
 NORMAL (L"This creates a FormantGrid with 10 formants and a single frequency value for each formant: %F__1_ is 550 Hz "
 	"and the higher formants are spaced 1100 Hz apart, i.e., they are "
-	"1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 Hertz; "
+	"1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 hertz; "
 	"the ten bandwidths start at 60 Hz and have a spacing of 50 Hz, "
-	"i.e., they are 60, 110, 160, 210, 260, 310, 360, 410, 460, and 510 Hertz.")
+	"i.e., they are 60, 110, 160, 210, 260, 310, 360, 410, 460, and 510 hertz.")
 NORMAL (L"You can then create formant contours with @@FormantGrid: Add formant point...@:")
 CODE (L"Remove formant points between... 1 0 0.5")
 CODE (L"Add formant point... 1 0.00 100")
@@ -2870,8 +2872,8 @@ CODE (L"Add formant point... 1 0.05 700")
 CODE (L"Remove formant points between... 2 0 0.5")
 CODE (L"Add formant point... 2 0.00 500")
 CODE (L"Add formant point... 2 0.05 1100")
-NORMAL (L"This example creates a spectral specification whose %F__1_ rises from 100 to 700 Hertz during the "
-	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 Hertz. "
+NORMAL (L"This example creates a spectral specification whose %F__1_ rises from 100 to 700 hertz during the "
+	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 hertz. "
 	"The other eight formants keep their original values, as do the ten bandwidths. "
 	"The resulting sound may be a [ba]-like formant transition.")
 NORMAL (L"To get the final acoustic result (the sound), you select the glottal source signal "
@@ -2945,7 +2947,7 @@ NORMAL (L"For a speech signal, the peaks are identified with the resonances (%fo
 	"6 dB per octave, %%pre-emphasis% is applied to the signal before the linear-prediction analysis, "
 	"so that the algorithm will not try to match only the lower parts of the spectrum.")
 NORMAL (L"For an adult female human voice, tradition assumes five formants in the range "
-	"between 0 and 5500 Hertz, say at 550, 1650, 2750, 3850, and 4950 Hertz. For the linear prediction in "
+	"between 0 and 5500 hertz, say at 550, 1650, 2750, 3850, and 4950 hertz. For the linear prediction in "
 	"Praat, you will have to implement this 5500-Hz band-limiting by resampling the original "
 	"speech signal to 11 kHz. For a male voice, you would use 10 kHz; for a young child, 20 kHz.")
 NORMAL (L"To perform the resampling, you use @@Sound: Resample...@: "
@@ -3049,7 +3051,7 @@ NORMAL (L"A @Formant object can be changed in a friendlier way, with @@Formant: 
 	"you do")
 CODE (L"#select Formant filter")
 CODE (L"Formula (frequencies)... self * 0.9")
-NORMAL (L"To add 200 Hertz to all values of %F__2_, you do")
+NORMAL (L"To add 200 hertz to all values of %F__2_, you do")
 CODE (L"Formula (frequencies)... if row = 2 then self + 200 else self fi")
 NORMAL (L"A @FormantGrid object can be changed by adding or removing points:")
 LIST_ITEM (L"@@FormantGrid: Add formant point...@")

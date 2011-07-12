@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/18
+ * pb 2011/07/11
  */
 
 #include "Graphics.h"
@@ -49,79 +49,80 @@ typedef struct {
 	int cell, line, run;
 } _Graphics_widechar;
 
-#define Graphics_members Thing_members \
-	/* Device constants. */ \
-	bool screen; \
-		/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */ \
-	bool postScript; \
-		/* A boolean for whether we are a PostScript device. */ \
-	bool printer; \
-		/* A boolean for whether we are a printer. */ \
-	bool metafile; \
-		/* A boolean for whether we are a high-resolution metafile or clipboard. */ \
-	bool yIsZeroAtTheTop; \
-		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */ \
-	GuiObject drawingArea; \
-		/* Also used as a boolean. */ \
-	int resolution; \
-		/* Dots per inch. */ \
-	long x1DCmin, x2DCmax, y1DCmin, y2DCmax; \
-		/* Maximum dimensions of the output device. */ \
-		/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */ \
-		/* The point (x1DCmin, y1DCmin) can be either in the top left */ \
-		/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */ \
-		/* Device variables. */ \
-	long x1DC, x2DC, y1DC, y2DC; \
-		/* Current dimensions of the output device, or: */ \
-		/* device coordinates of the viewport rectangle. */ \
-		/* x1DCmin <= x1DC < x2DC <= x2DCmax; */ \
-		/* y1DCmin <= y1DC < y2DC <= y2DCmax; */ \
-		/* Graphics_create_xxxxxx sets these coordinates to */ \
-		/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */ \
-		/* They can be changed by Graphics_setWsViewport. */ \
-	double x1wNDC, x2wNDC, y1wNDC, y2wNDC; \
-		/* Normalized device coordinates of */ \
-		/* the device viewport rectangle. */ \
-		/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/ \
-		/* Graphics_create_xxxxxx sets these coordinates to */ \
-		/* 0.0, 1.0, 0.0, and 1.0. */ \
-		/* They can be changed by Graphics_setWsWindow. */ \
-	double x1NDC, x2NDC, y1NDC, y2NDC; \
-		/* Normalized device coordinates of the user output viewport, */ \
-		/* which is a part of the device viewport rectangle. */ \
-		/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */ \
-		/* y1wNDC <= y1NDC < y2NDC <= y2wNDC; */ \
-		/* Graphics_create_xxxxxx sets these coordinates to */ \
-		/* 0.0, 1.0, 0.0, and 1.0. */ \
-		/* They can be changed by Graphics_setViewport. */ \
-	double x1WC, x2WC, y1WC, y2WC; \
-		/* World coordinates of the user output viewport rectangle.	*/ \
-		/* They bear a relation to the "real" world,			*/ \
-		/* and are used in the drawing routines.			*/ \
-		/* Graphics_create_xxxxxx sets these coordinates to		*/ \
-		/* 0.0, 1.0, 0.0, and 1.0.					*/ \
-		/* They can be changed by Graphics_setWindow.			*/ \
-	double deltaX, deltaY, scaleX, scaleY; \
-		/* Current coordinate transformation. */ \
-	/* Graphics state. */ \
-	int lineType; \
-	Graphics_Colour colour; \
-	double lineWidth, arrowSize; \
-	int horizontalTextAlignment, verticalTextAlignment; \
-	double textRotation, wrapWidth, secondIndent, textX, textY; \
-	enum kGraphics_font font; \
-	int fontSize, fontStyle; \
-	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript; \
-	int dollarSignIsCode, atSignIsLink; \
-	bool recording, duringXor; \
-	long irecord, nrecord; \
-	double *record; \
-	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */ \
-	double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */ \
+Thing_declare1cpp (Graphics);
+struct structGraphics : public structThing {
+	/* Device constants. */
+	bool screen;
+		/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */
+	bool postScript;
+		/* A boolean for whether we are a PostScript device. */
+	bool printer;
+		/* A boolean for whether we are a printer. */
+	bool metafile;
+		/* A boolean for whether we are a high-resolution metafile or clipboard. */
+	bool yIsZeroAtTheTop;
+		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */
+	GuiObject drawingArea;
+		/* Also used as a boolean. */
+	int resolution;
+		/* Dots per inch. */
+	long x1DCmin, x2DCmax, y1DCmin, y2DCmax;
+		/* Maximum dimensions of the output device. */
+		/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
+		/* The point (x1DCmin, y1DCmin) can be either in the top left */
+		/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
+		/* Device variables. */
+	long x1DC, x2DC, y1DC, y2DC;
+		/* Current dimensions of the output device, or: */
+		/* device coordinates of the viewport rectangle. */
+		/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
+		/* y1DCmin <= y1DC < y2DC <= y2DCmax; */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */
+		/* They can be changed by Graphics_setWsViewport. */
+	double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		/* Normalized device coordinates of */
+		/* the device viewport rectangle. */
+		/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setWsWindow. */
+	double x1NDC, x2NDC, y1NDC, y2NDC;
+		/* Normalized device coordinates of the user output viewport, */
+		/* which is a part of the device viewport rectangle. */
+		/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */
+		/* y1wNDC <= y1NDC < y2NDC <= y2wNDC; */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setViewport. */
+	double x1WC, x2WC, y1WC, y2WC;
+		/* World coordinates of the user output viewport rectangle.	*/
+		/* They bear a relation to the "real" world, */
+		/* and are used in the drawing routines. */
+		/* Graphics_create_xxxxxx sets these coordinates to */
+		/* 0.0, 1.0, 0.0, and 1.0. */
+		/* They can be changed by Graphics_setWindow. */
+	double deltaX, deltaY, scaleX, scaleY;
+		/* Current coordinate transformation. */
+	/* Graphics state. */
+	int lineType;
+	Graphics_Colour colour;
+	double lineWidth, arrowSize;
+	int horizontalTextAlignment, verticalTextAlignment;
+	double textRotation, wrapWidth, secondIndent, textX, textY;
+	enum kGraphics_font font;
+	int fontSize, fontStyle;
+	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
+	int dollarSignIsCode, atSignIsLink;
+	bool recording, duringXor;
+	long irecord, nrecord;
+	double *record;
+	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */
+	double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */
 	double paperWidth, paperHeight;
-
-#define Graphics_methods Thing_methods
-class_create_opaque (Graphics, Thing);
+};
+#define Graphics__methods(klas) Thing__methods(klas)
+Thing_declare2cpp (Graphics, Thing);
 
 int Graphics_init (I);
 /*
@@ -135,56 +136,63 @@ int Graphics_init (I);
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
 #define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
 
-#if defined (UNIX)
-	#define GraphicsScreen_members Graphics_members \
-		GdkDisplay *display; \
-		GdkDrawable *window; \
-		GdkGC *gc; \
+Thing_declare1cpp (GraphicsScreen);
+struct structGraphicsScreen : public structGraphics {
+	#if defined (UNIX)
+		GdkDisplay *display;
+		GdkDrawable *window;
+		GdkGC *gc;
 		cairo_t *cr;
+	#elif defined (_WIN32)
+		HWND window;
+		HDC dc;
+		COLORREF foregroundColour;
+		HPEN pen;
+		HBRUSH brush;
+		bool fatNonSolid;
+	#elif defined (macintosh)
+		GrafPtr macPort;
+		int macFont, macStyle;
+		int depth;
+		RGBColor macColour;
+		bool useQuartz;
+		CGContextRef macGraphicsContext;
+	#endif
+};
+
+#define GraphicsScreen__methods(klas) Graphics__methods(klas)
+Thing_declare2cpp (GraphicsScreen, Graphics);
+
+#if defined (UNIX)
 	#define mac 0
 	#define win 0
 	#define cairo 1
 	#define pango 1
 #elif defined (_WIN32)
-	#define GraphicsScreen_members Graphics_members \
-		HWND window; \
-		HDC dc; \
-		COLORREF foregroundColour; \
-		HPEN pen; \
-		HBRUSH brush; \
-		bool fatNonSolid;
 	#define mac 0
 	#define win 1
 	#define cairo 0
 	#define pango 0
 #elif defined (macintosh)
-	#define GraphicsScreen_members Graphics_members \
-		GrafPtr macPort; \
-		int macFont, macStyle; \
-		int depth; \
-		RGBColor macColour; \
-		bool useQuartz; \
-		CGContextRef macGraphicsContext;
 	#define mac 1
 	#define win 0
 	#define cairo 0
 	#define pango 0
 #endif
 
-#define GraphicsScreen_methods Graphics_methods
-class_create (GraphicsScreen, Graphics);
-
-#define GraphicsPostscript_members Graphics_members \
-	FILE *file;	 \
-	int (*printf) (void *stream, const char *format, ...); \
-	int languageLevel; \
-	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS; \
-	double magnification; \
-	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC]; \
-	const char *lastFid; \
+Thing_declare1cpp (GraphicsPostscript);
+struct structGraphicsPostscript : public structGraphics {
+	FILE *file;
+	int (*printf) (void *stream, const char *format, ...);
+	int languageLevel;
+	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
+	double magnification;
+	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
+	const char *lastFid;
 	int job, eps, pageNumber, lastSize;
-#define GraphicsPostscript_methods Graphics_methods
-class_create (GraphicsPostscript, Graphics);
+};
+#define GraphicsPostscript__methods(klas) Graphics__methods(klas)
+Thing_declare2cpp (GraphicsPostscript, Graphics);
 
 /* Opcodes for recording. */
 

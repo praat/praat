@@ -24,38 +24,26 @@
  djmw 20110306 Latest modification 
 */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
+#include "Collection.h"
+#include "Graphics.h"
+#include "Strings.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Eigen_members Data_members \
-	long numberOfEigenvalues, dimension;	\
-	double *eigenvalues;	\
-	double **eigenvectors; /* eigenvectors stored in row */
-#define Eigen_methods Data_methods
-class_create (Eigen, Data);
+#include "Eigen_def.h"
+#define Eigen__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (Eigen, Data);
 
 Eigen Eigen_create (long numberOfEigenvalues, long dimension);
 
-int Eigen_init (I, long numberOfEigenvalues, long dimension);
+void Eigen_init (I, long numberOfEigenvalues, long dimension);
 
-int Eigen_initFromSymmetricMatrix_f (I, float **a, long n);
-int Eigen_initFromSymmetricMatrix (I, double **a, long n);
+void Eigen_initFromSymmetricMatrix_f (I, float **a, long n);
+void Eigen_initFromSymmetricMatrix (I, double **a, long n);
 
-int Eigen_initFromSquareRoot (I, double **a, long numberOfRows,
+void Eigen_initFromSquareRoot (I, double **a, long numberOfRows,
 	long numberOfColumns);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
@@ -64,7 +52,7 @@ int Eigen_initFromSquareRoot (I, double **a, long numberOfRows,
 	Method: SVD.
 */
 
-int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
+void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	long numberOfColumns, double **b, long numberOfRows_b);
 /*
 	Calculate eigenstructure for A'Ax - lambda B'Bx = 0
@@ -103,7 +91,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	Draw eigenvector. When rowLabels != NULL, draw row text labels on bottom axis.
 */
 	
-int Eigens_alignEigenvectors (Collection me);
+void Eigens_alignEigenvectors (Collection me);
 /*
 	Correlate all eigenvectors with the eigenvectors of the first Eigen.
 	If r < 0 then mirror the eigenvectors of 

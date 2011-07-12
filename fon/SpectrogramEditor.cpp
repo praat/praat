@@ -76,7 +76,7 @@ static int click (SpectrogramEditor me, double xWC, double yWC, int shiftKeyPres
 		bestFrame = 1;
 	else if (bestFrame > spectrogram -> nx)
 		bestFrame = spectrogram -> nx;
-	return inherited (SpectrogramEditor) click (SpectrogramEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
+	return inherited (SpectrogramEditor) click (me, xWC, yWC, shiftKeyPressed);
 }
 
 class_methods (SpectrogramEditor, FunctionEditor) {
@@ -85,14 +85,14 @@ class_methods (SpectrogramEditor, FunctionEditor) {
 	class_methods_end
 }
 
-SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *title, Any data) {
+SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Data data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
-		FunctionEditor_init (SpectrogramEditor_as_parent (me.peek()), parent, title, data); therror
+		FunctionEditor_init (me.peek(), parent, title, data);
 		my maximum = 10000;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Spectrogram window not created.");
+		Melder_throw ("Spectrogram window not created.");
 	}
 }
 

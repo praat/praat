@@ -24,23 +24,15 @@
  djmw 20110306 Latest modification
 */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Collection.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Permutation_members Data_members \
-	long numberOfElements; \
-	long *p;
-
-#define Permutation_methods Data_methods
-class_create (Permutation, Data);
+#include "Permutation_def.h"
+#define Permutation__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (Permutation, Data);
 
 /*
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.
@@ -55,7 +47,7 @@ Permutation Permutation_create (long numberOfElements);
 		with the identical permutation (1,2,..n)
 */
 
-int Permutation_checkInvariant (Permutation me);
+void Permutation_checkInvariant (Permutation me);
 /* Check that the elements, if sorted ascendingly, are exactly equal to the identity (1,2,...). */
 
 

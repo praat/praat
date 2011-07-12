@@ -1,6 +1,6 @@
 /* NUMfft_f.c
  *
- * Copyright (C) 1997-2008 David Weenink
+ * Copyright (C) 1997-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,53 +28,44 @@
 #define FFT_DATA_TYPE float
 #include "NUMfft_core.h"
 
-int NUMforwardRealFastFourierTransform_f (float *data, long n)
+void NUMforwardRealFastFourierTransform_f (float *data, long n)
 {
 	struct NUMfft_Table_f table_struct;
 	NUMfft_Table_f table = &table_struct;
 
-	if (!NUMfft_Table_init_f (table, n)) return 0;
+	NUMfft_Table_init_f (table, n);
 	
 	NUMfft_forward_f (table, data);
 
 	if (n > 1)
 	{
-		/* To be compatible with old behaviour */
-		long i;
-		float tmp;
-
-		tmp = data[n];
-		for (i = n; i > 2; i--)
+		// To be compatible with old behaviour
+		float tmp = data[n];
+		for (long i = n; i > 2; i--)
 			data[i] = data[i - 1];
 		data[2] = tmp;
 	}
 
 	NUMfft_Table_free_f (table);
-	return 1;
 }
 
-int NUMreverseRealFastFourierTransform_f (float *data, long n)
+void NUMreverseRealFastFourierTransform_f (float *data, long n)
 {
 	struct NUMfft_Table_f table_struct;
 	NUMfft_Table_f table = &table_struct;
 
 	if (n > 1)
 	{
-		/* To be compatible with old behaviour */
-		long i;
-		float tmp;
-
-		tmp = data[2];
-		for (i = 2; i < n; i++)
+		// To be compatible with old behaviour
+		float tmp = data[2];
+		for (long i = 2; i < n; i++)
 			data[i] = data[i + 1];
 		data[n] = tmp;
 	}
 
-	if (!NUMfft_Table_init_f (table, n))
-		return 0;
+	NUMfft_Table_init_f (table, n);
 	NUMfft_backward_f (table, data);
 	NUMfft_Table_free_f (table);
-	return 1;
 }
 
 void NUMfft_forward_f (NUMfft_Table_f me, float *data)
@@ -91,41 +82,27 @@ void NUMfft_backward_f (NUMfft_Table_f me, float *data)
 	drftb1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-int NUMfft_Table_init_f (NUMfft_Table_f me, long n)
+void NUMfft_Table_init_f (NUMfft_Table_f me, long n)
 {
-	int status = 0;
-	
-	my  n = n;
-	
-	my  trigcache = NUMfvector (0, 3 * n - 1);
-	if (my trigcache == NULL) return 0;
-	
-	my  splitcache = NUMlvector (0, 31);
-	if (my splitcache == NULL) goto end;
-	
+	my n = n;
+	my trigcache = NUMvector<float> (0, 3 * n - 1);
+	my splitcache = NUMvector<long> (0, 31);
 	NUMrffti (n, my trigcache, my splitcache);
-	status = 1;
-
-  end:
-
-	if (Melder_hasError ()) NUMfft_Table_free_f (me);
-	
-	return status;
 }
 
 void NUMfft_Table_free_f (NUMfft_Table_f me)
 {
 	if (me)
 	{
-		NUMfvector_free (my trigcache, 0);
-		NUMlvector_free (my splitcache, 0); 
+		NUMvector_free (my trigcache, 0);
+		NUMvector_free (my splitcache, 0); 
 	}
 }
 
-int NUMrealft_f (float *data, long n, int isign)
+void NUMrealft_f (float *data, long n, int isign)
 {
-	return isign == 1 ? NUMforwardRealFastFourierTransform_f (data, n) :
+	isign == 1 ? NUMforwardRealFastFourierTransform_f (data, n) :
 		NUMreverseRealFastFourierTransform_f (data, n);
 }
 
-/* End of file NUMfft.c */
+/* End of file NUMfft.cpp */

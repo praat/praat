@@ -1,6 +1,6 @@
-/* Permutation_and_Index.c
+/* Permutation_and_Index.cpp
  *
- * Copyright (C) 2005 David Weenink
+ * Copyright (C) 2005-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": Permutation not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": Permutation not created."); }
 }
 
 /*  End of file Permutation_and_Index.cpp */

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/07/02
  */
 
 #include "HyperPage.h"
@@ -30,10 +30,9 @@
 	extern "C" {
 #endif
 
-#define OTMultiEditor__parents(Klas) HyperPage__parents(Klas) Thing_inherit (Klas, HyperPage)
-Thing_declare1 (OTMultiEditor);
+Thing_declare1cpp (OTMultiEditor);
 
-OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar);
+OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar);
 
 #ifdef __cplusplus
 	}

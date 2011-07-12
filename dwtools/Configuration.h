@@ -42,7 +42,7 @@
 #endif
 
 #include "Configuration_def.h"
-#define Configuration_methods TableOfReal_methods
+#define Configuration__methods(klas) TableOfReal__methods(klas)
 oo_CLASS_CREATE (Configuration, TableOfReal);
 
 Configuration Configuration_create (long numberOfPoints, long numberOfDimensions);
@@ -99,7 +99,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 		a remedy against nonoptimal varimax rotations", Psychometrika 60, 437-446.
 */
 
-int Configuration_rotateToPrincipalDirections (Configuration me);
+void Configuration_rotateToPrincipalDirections (Configuration me);
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, 
 	int yCoordinate, double xmin, double xmax, double ymin, double ymax, 
@@ -134,14 +134,18 @@ Configuration Configuration_createCarrollWishExample (void);
 
 /************************** class Configurations **************************************/
 
-#define Configurations_members Ordered_members
-#define Configurations_methods Ordered_methods
-class_create (Configurations, Ordered);
+Thing_declare1cpp (Configurations);
 
 Configurations Configurations_create (void);
 
 #ifdef __cplusplus
 	}
+
+	struct structConfigurations : public structOrdered {
+	};
+	#define Configurations__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (Configurations, Ordered);
+
 #endif
 
 #endif /* _Configuration_h_ */

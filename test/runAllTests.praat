@@ -9,13 +9,14 @@ for directory to numberOfDirectories
 printline 'directory'
 	select Strings directories
 	directory$ = Get string... directory
-printline 'directory$'
+	printline 'directory$'
 	if directory$ <> "manually"
 		files = Create Strings as file list... files 'directory$'/*.praat
 		numberOfFiles = Get number of strings
 		for file to numberOfFiles
 			select files
 			file$ = Get string... file
+			printline ### executing 'directory$'/'file$':
 			execute 'directory$'/'file$'
 		endfor
 	endif
@@ -37,6 +38,7 @@ for directory1 to numberOfDirectories1
 			for file to numberOfFiles
 				select files
 				file$ = Get string... file
+				printline ### executing 'directory1$'/'directory2$'/'file$':
 				execute 'directory1$'/'directory2$'/'file$'
 			endfor
 		endfor

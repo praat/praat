@@ -20,30 +20,38 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/11
  */
 
 #include "TimeSoundAnalysisEditor.h"
 #include "TextGrid.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "SpellingChecker.h"
+#include "Preferences.h"
 
 #include "TextGridEditor_enums.h"
 
-#define TextGridEditor__parents(Klas) TimeSoundAnalysisEditor__parents(Klas) Thing_inherit (Klas, TimeSoundAnalysisEditor)
-Thing_declare1 (TextGridEditor);
+Thing_declare1cpp (TextGridEditor);
+#define TextGridEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
+Thing_declare2cpp (TextGridEditor, TimeSoundAnalysisEditor);
+struct structTextGridEditor : public structTimeSoundAnalysisEditor {
 
-TextGridEditor TextGridEditor_create (GuiObject parent, const wchar_t *title, TextGrid grid,
-	Any sound,   /* 'sound' could be a Sound or a LongSound */
-	Any spellingChecker);
+//Thing_declare (TextGridEditor, TimeSoundAnalysisEditor) {
+	SpellingChecker spellingChecker;
+	long selectedTier;
+	bool useTextStyles, shiftDragMultiple, suppressRedraw;
+	int fontSize;
+	enum kGraphics_horizontalAlignment alignment;
+	wchar *findString, greenString [Preferences_STRING_BUFFER_SIZE];
+	enum kTextGridEditor_showNumberOf showNumberOf;
+	enum kMelder_string greenMethod;
+	GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+};
+
+TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,
+	Data sound,   // either a Sound or a LongSound, or null
+	SpellingChecker spellingChecker);
 
 void TextGridEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file TextGridEditor.h */
 #endif

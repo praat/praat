@@ -63,7 +63,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 		Data anyTier = (Data) my tiers -> item [itier];
 		double ymin = -1.0 - 0.5 * itier, ymax = ymin + 0.5;
 		Graphics_rectangle (g, tmin, tmax, ymin, ymax);
-		if (anyTier -> methods == (Data_Table) classIntervalTier) {
+		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			long ninterval = tier -> intervals -> size;
 			for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
@@ -91,7 +91,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 			long numberOfPoints = tier -> points -> size;
 			for (long ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
 				TextPoint point = (TextPoint) tier -> points -> item [ipoint];
-				double t = point -> time;
+				double t = point -> number;
 				if (t > tmin && t < tmax) {
 					if (showBoundaries) {
 						Graphics_setLineType (g, Graphics_DOTTED);
@@ -130,7 +130,7 @@ Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long ti
 		}
 		return collection.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", sound, ": intervals not extracted.");
+		Melder_throw (me, " & ", sound, ": intervals not extracted.");
 	}
 }
 
@@ -149,7 +149,7 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 		if (collection -> size == 0) Melder_warning1 (L"No non-empty intervals were found.");
 		return collection.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", sound, ": non-empty intervals not extracted.");
+		Melder_throw (me, " & ", sound, ": non-empty intervals not extracted.");
 	}
 }
 
@@ -174,7 +174,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 			Melder_warning5 (L"No label that ", kMelder_string_getText (comparison_Melder_STRING), L" the text \"", text, L"\" was found.");
 		return collection.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", sound, ": intervals not extracted.");
+		Melder_throw (me, " & ", sound, ": intervals not extracted.");
 	}
 }
 
@@ -325,7 +325,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 		Graphics_setUnderscoreIsSubscript (g, useTextStyles);
 		Data anyTier = (Data) grid -> tiers -> item [tierNumber];
-		if (anyTier -> methods == (Data_Table) classIntervalTier) {
+		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			for (long i = 1; i <= tier -> intervals -> size; i ++) {
 				TextInterval interval = (TextInterval) tier -> intervals -> item [i];
@@ -345,7 +345,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 			TextTier tier = (TextTier) anyTier;
 			for (long i = 1; i <= tier -> points -> size; i ++) {
 				TextPoint point = (TextPoint) tier -> points -> item [i];
-				double t = point -> time, f0;
+				double t = point -> number, f0;
 				if (! point -> mark || ! point -> mark [0]) continue;
 				if (t < tmin || t > tmax) continue;
 				f0 = ClassFunction_convertStandardToSpecialUnit (classPitch, RealTier_getValueAtTime (pitchTier.peek(), t), Pitch_LEVEL_FREQUENCY, unit);
@@ -360,7 +360,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setFontSize (g, oldFontSize);
 		Graphics_unsetInner (g);
 	} catch (MelderError) {
-		rethrowm (grid, " & ", pitch, ": not drawn.");
+		Melder_throw (grid, " & ", pitch, ": not drawn.");
 	}
 }
 
@@ -473,10 +473,11 @@ void TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *out_textGrid, So
 				}
 			}
 		}
+		f.close (file);
 		*out_sound = me.transfer();
 		*out_textGrid = thee.transfer();
 	} catch (MelderError) {
-		rethrowm ("BDF file not read.");
+		Melder_throw ("BDF file not read.");
 	}
 }
 

@@ -2,7 +2,7 @@
 #define _RunnerMFC_h_
 /* RunnerMFC.h
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,23 @@
  */
 
 /*
- * pb 2005/12/08
+ * pb 2011/07/02
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _ExperimentMFC_h_
-	#include "ExperimentMFC.h"
+#include "Editor.h"
+#include "ExperimentMFC.h"
+
+#ifdef __cplusplus
+	extern "C" {
 #endif
 
-#define RunnerMFC__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (RunnerMFC);
+Thing_declare1cpp (RunnerMFC);
 
-RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments);
+RunnerMFC RunnerMFC_create (GuiObject parent, const wchar *title, Ordered experiments);
+
+#ifdef __cplusplus
+	}
+#endif
 
 /* End of file RunnerMFC.h */
 #endif

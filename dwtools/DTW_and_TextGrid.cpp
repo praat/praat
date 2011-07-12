@@ -45,12 +45,12 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee)
 		for (long i = 1; i <= his points -> size; i++)
 		{
 			TextPoint textpoint = (TextPoint) his points -> item[i];
-			double time = DTW_getXTimeFromYTime (me, textpoint -> time);
+			double time = DTW_getXTimeFromYTime (me, textpoint -> number);
 		
-			textpoint -> time = time;
+			textpoint -> number = time;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TextTier not created from DTW & TextTier."); }
+	} catch (MelderError) { Melder_thrown ("TextTier not created from DTW & TextTier."); }
 }
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
@@ -72,7 +72,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 			textinterval -> xmax = xmax;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("IntervalTier not created from DTW & IntervalTier."); }
+	} catch (MelderError) { Melder_thrown ("IntervalTier not created from DTW & IntervalTier."); }
 }
 
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
@@ -89,12 +89,12 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 		{
 			Data anyTier = (Data) thy tiers -> item[i];
 		 
-			if (anyTier -> methods == (Data_Table) classIntervalTier)
+			if (anyTier -> methods == (Thing_Table) classIntervalTier)
 			{
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek()); therror
 			}
-			else if (anyTier -> methods == (Data_Table) classTextTier)
+			else if (anyTier -> methods == (Thing_Table) classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek()); therror
@@ -105,7 +105,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TextGrid not created from DTW & TextGrid."); }	
+	} catch (MelderError) { Melder_thrown ("TextGrid not created from DTW & TextGrid."); }	
 }
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
@@ -121,11 +121,11 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee)
 		for (long i = 1; i <= his points -> size; i++)
 		{
 			TextPoint textpoint = (TextPoint) his points -> item[i];
-			double time = DTW_getPathY (me, textpoint -> time);
-			textpoint -> time = time;
+			double time = DTW_getPathY (me, textpoint -> number);
+			textpoint -> number = time;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TextTier not created."); }
+	} catch (MelderError) { Melder_thrown ("TextTier not created."); }
 }
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee)
@@ -148,7 +148,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 			textinterval -> xmax = xmax;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("IntervalTier not created."); }
+	} catch (MelderError) { Melder_thrown ("IntervalTier not created."); }
 }
 
 TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
@@ -165,13 +165,13 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 		{
 			Data anyTier = (Data) thy tiers -> item[i];
 		 
-			if (anyTier -> methods == (Data_Table) classIntervalTier)
+			if (anyTier -> methods == (Thing_Table) classIntervalTier)
 			{
 			
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek()); therror
 			}
-			else if (anyTier -> methods == (Data_Table) classTextTier)
+			else if (anyTier -> methods == (Thing_Table) classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek()); therror
@@ -182,7 +182,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TextGrid not created."); }
+	} catch (MelderError) { Melder_thrown ("TextGrid not created."); }
 }
 
 /* End of file DTW_and_TextGrid.cpp */

@@ -43,7 +43,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled2_def.h"
 
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (Sampled2);
 	my xmin = texgetr8 (text);
 	my xmax = texgetr8 (text);
@@ -56,12 +56,11 @@ static int readText (I, MelderReadText text) {
 	my dy = texgetr8 (text);
 	my y1 = texgetr8 (text);
 	if (my xmin > my xmax || my ymin > my ymax)
-		return Melder_error1 (L"(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
+		Melder_throw (L"(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		return Melder_error1 (L"(Sampled2::readText:) nx should >= 1 and ny >= 1.");
+		Melder_throw (L"(Sampled2::readText:) nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		return Melder_error1 (L"(Sampled2::readText:) dx should > 0 and dy > 0.");
-	return 1;
+		Melder_throw (L"(Sampled2::readText:) dx should > 0 and dy > 0.");
 }
 
 class_methods (Sampled2, Data)
@@ -76,14 +75,13 @@ class_methods (Sampled2, Data)
 	class_method_local (Sampled2, readBinary)
 class_methods_end
 
-int Sampled2_init
+void Sampled2_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,
 		 double ymin, double ymax, long ny, double dy, double y1)
 {
 	iam (Sampled2);
 	my xmin = xmin; my xmax = xmax; my nx = nx; my dx = dx; my x1 = x1;
 	my ymin = ymin; my ymax = ymax; my ny = ny; my dy = dy; my y1 = y1;
-	return 1;
 }
 
 double Sampled2_columnToX (I, double column) { iam (Sampled2); return my x1 + (column - 1) * my dx; }

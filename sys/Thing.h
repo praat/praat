@@ -74,7 +74,73 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 #define our  my methods ->
 #define your  thy methods ->
 
+#define inherited(klas)  class##klas -> _parent ->
+
+#define Thing_declare1cpp(klas) \
+	typedef struct struct##klas *klas; \
+	typedef _Thing_auto <struct##klas> auto##klas; \
+	typedef struct struct##klas##_Table *klas##_Table; \
+	extern klas##_Table class##klas
+
+#define Thing_declare2cpp(klas,parentKlas) \
+	typedef struct##parentKlas klas##_Parent; \
+	struct struct##klas##_Table { \
+		void (* _initialize) (void *table); \
+		const wchar *_className; \
+		parentKlas##_Table _parent; \
+		long _size; \
+		void * (* _new) (); \
+		klas##__methods(klas) \
+	}; \
+	extern struct struct##klas##_Table theStruct##klas
+
+#define class_methods(klas,parentKlas) \
+	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
+	static void *_##klas##_new () { return (Thing) new struct##klas; } \
+	struct struct##klas##_Table theStruct##klas = { \
+		_##klas##_initialize, L"" #klas,   /* Partial initialization because init and */ \
+		& theStruct##parentKlas, sizeof (struct struct##klas),   /* parent must be known. */ \
+		_##klas##_new }; \
+	klas##_Table class##klas = & theStruct##klas; \
+	static void _##klas##_initialize (void *table) { \
+		klas##_Table us = (klas##_Table) table; \
+		if (! class##parentKlas -> destroy)   /* Parent class not initialized? */ \
+			class##parentKlas -> _initialize (class##parentKlas); \
+		if (Melder_debug == 43) Melder_casual ("Initializing class %ls (%ld), part %ls.", us -> _className, table, class##parentKlas -> _className); \
+		class##parentKlas -> _initialize (us);   /* Inherit methods from parent class. */
+#define class_method(method)  us -> method = method;   /* Override one method. */
+#define class_method_local(klas,method)  us -> method = class##klas##_##method;
+#define class_methods_end  }
+
+#define Thing__methods(klas) \
+	long version; \
+	long sequentialUniqueIdOfReadableClass; \
+	void (*destroy) (I); \
+	void (*info) (I); \
+	void (*nameChanged) (I);
+typedef struct structThing *Thing;
+typedef struct structThing_Table *Thing_Table;
+struct structThing_Table {
+	void (* _initialize) (void *table);
+	const wchar *_className;
+	Thing_Table	_parent;
+	long _size;
+	void * (* _new) ();
+	Thing__methods(Thing)
+};
+struct structThing {
+	Thing_Table methods;
+	wchar *name;
+	void * operator new (size_t size) { return Melder_calloc (char, size); }
+	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
+	virtual void info_cpp () { }
+};
+extern struct structThing_Table theStructThing;
+extern Thing_Table classThing;
+
 #define forget(thing)  _Thing_forget ((Thing *) & (thing))
+#define forget_cpp(thing)  do { _Thing_forget_cpp (thing); delete thing; } while (false)
+#define forget_cpp0(thing)  do { _Thing_forget_cpp (thing); delete thing; thing = NULL; } while (false)
 /*
 	Function:
 		free all memory associated with 'thing'.
@@ -82,29 +148,29 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 		thing == NULL;
 */
 
-/* All functions with 'I' as the first argument assume that it is not NULL. */
+/* All functions with 'Thing me' as the first argument assume that it is not NULL. */
 
-const wchar_t * Thing_className (I);
+const wchar * Thing_className (Thing me);
 /* Return your class name. */
 
-int Thing_member (I, void *klas);
+bool Thing_member (Thing me, void *klas);
 /*
-	return TRUE if you are a 'klas',
+	return true if you are a 'klas',
 	i.e., if you are an object of the class 'klas' or of one of the classes derived from 'klas'.
-	E.g., Thing_member (object, classThing) will always return TRUE.
+	E.g., Thing_member (object, classThing) will always return true.
 */
 
-int Thing_subclass (void *klas, void *ancestor);
+bool Thing_subclass (void *klas, void *ancestor);
 /*
-	return TRUE if <klas> is a subclass of <ancestor>,
+	return true if <klas> is a subclass of <ancestor>,
 	i.e., if <klas> equals <ancestor>, or if the parent class of <klas> is a subclass of <ancestor>.
-	E.g., Thing_subclass (classX, classThing) will always return TRUE.
+	E.g., Thing_subclass (classX, classThing) will always return true.
 */
 
-void Thing_info (I);
-void Thing_infoWithId (I, unsigned long id);
+void Thing_info (Thing me);
+void Thing_infoWithId (Thing me, unsigned long id);
 
-#define Thing_new(klas)  (klas) _Thing_new ((void *) class##klas)
+#define Thing_new(Klas)  (Klas) _Thing_new (class##Klas)
 /*
 	Function:
 		return a new object of class 'klas'.
@@ -142,11 +208,11 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName);
+void Thing_recognizeClassByOtherName (void *readableClass, const wchar *otherName);
 long Thing_listReadableClasses (void);
 
 Any Thing_newFromClassNameA (const char *className);
-Any Thing_newFromClassName (const wchar_t *className);
+Any Thing_newFromClassName (const wchar *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -172,11 +238,11 @@ void *Thing_classFromClassName (const wchar_t *className);
 		and Thing_version will be set to 300.
 */
 
-wchar_t * Thing_getName (I);
+wchar * Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be NULL). */
-wchar_t * Thing_messageName (I);
+wchar * Thing_messageName (Thing me);
 
-void Thing_setName (I, const wchar_t *name);
+void Thing_setName (Thing me, const wchar_t *name);
 /*
 	Function:
 		remember that you are called 'name'.
@@ -184,7 +250,7 @@ void Thing_setName (I, const wchar_t *name);
 		my name *and* my name are copies of 'name'.
 */
 
-void Thing_overrideClass (I, void *klas);
+void Thing_overrideClass (Thing me, void *klas);
 /*
 	Function:
 		change my class to 'klas'.
@@ -204,7 +270,7 @@ void Thing_overrideClass (I, void *klas);
 			perhaps with different names.
 */
 
-void Thing_swap (I, thou);
+void Thing_swap (Thing me, Thing thee);
 /*
 	Function:
 		Swap my and thy contents.
@@ -217,157 +283,12 @@ void Thing_swap (I, thou);
 		Swap two objects without changing any references to them.
 */
 
-#define inherited(klas)  class##klas -> _parent ->
-
-/* The inheritor should put one of the macros class_create or class_create_opaque */
-/* after the definitions of the members and methods. */
-/* There are two cases: */
-/* 1. The declaration of the class members should be visible to the user. */
-/*    In this case, use class_create in the klas.h header file. */
-/* 2. The declaration of the class members should be opaque to the user, */
-/*    but visible to the inheritor. */
-/*    In this case, put the statement "typedef struct klas *klas;" in klas.h, */
-/*    and use class_create_opaque in the klasP.h header file */
-/*    (or in klas.cpp if there will not be any inheritors). */
-
-#ifdef __cplusplus
-	#define _THING_DECLARE_AUTO(Type)  typedef _Thing_auto <struct##Type> auto##Type;
-#else
-	#define _THING_DECLARE_AUTO(Type)
-#endif
-
-#define Thing_declare1(klas) \
-	typedef struct struct##klas *klas; \
-	_THING_DECLARE_AUTO (klas) \
-	klas##__parents (klas) \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	extern klas##_Table class##klas
-
-#define Thing_declare1cpp(klas) \
-	typedef struct struct##klas *klas; \
-	_THING_DECLARE_AUTO (klas) \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	extern klas##_Table class##klas
-
-#define Thing_inherit(klas,parentKlas) \
-	static inline parentKlas klas##_as_##parentKlas (klas me) { return (parentKlas) me; }
-
-#define Thing_declare2(klas,parentKlas) \
-	static inline parentKlas klas##_as_parent (klas me) { return (parentKlas) me; } \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar_t *_className; \
-		parentKlas##_Table _parent; \
-		long _size; \
-		klas##__methods(klas) \
-	}; \
-	struct struct##klas { \
-		klas##_Table methods; \
-		klas##__members(klas) \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas
-
-#define Thing_declare2cpp(klas,parentKlas) \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar_t *_className; \
-		parentKlas##_Table _parent; \
-		long _size; \
-		klas##__methods(klas) \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas
-
-#define class_create_opaque(klas,parentKlas) \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar_t *_className; \
-		parentKlas##_Table	_parent; \
-		long _size; \
-		klas##_methods \
-	}; \
-	struct struct##klas { \
-		klas##_Table methods; \
-		klas##_members \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas; \
-	extern klas##_Table class##klas
-
-#define class_create(klas,parentKlas) \
-	typedef struct struct##klas *klas; \
-	_THING_DECLARE_AUTO (klas) \
-	class_create_opaque (klas, parentKlas)
-
-/* For klas.cpp, after the definitions of the methods. */
-
-#define class_methods(klas,parentKlas) \
-	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
-	struct struct##klas##_Table theStruct##klas = { \
-		_##klas##_initialize, L"" #klas,   /* Partial initialization because init and */ \
-		& theStruct##parentKlas, sizeof (struct struct##klas) };   /* parent must be known. */ \
-	klas##_Table class##klas = & theStruct##klas; \
-	static void _##klas##_initialize (void *table) { \
-		klas##_Table us = (klas##_Table) table; \
-		if (! class##parentKlas -> destroy)   /* Parent class not initialized? */ \
-			class##parentKlas -> _initialize (class##parentKlas); \
-		if (Melder_debug == 43) Melder_casual ("Initializing class %ls (%ld), part %ls.", us -> _className, table, class##parentKlas -> _className); \
-		class##parentKlas -> _initialize (us);   /* Inherit methods from parent class. */
-#define class_method(method)  us -> method = method;   /* Override one method. */
-#define class_method_local(klas,method)  us -> method = class##klas##_##method;
-#define class_methods_end  }
-
-/* For the inheritors. */
-
-#define Thing_members \
-	wchar_t *name;
-#define Thing_methods \
-	long version; \
-	long sequentialUniqueIdOfReadableClass; \
-	void (*destroy) (I); \
-	void (*info) (I); \
-	void (*nameChanged) (I);
-typedef struct structThing *Thing;
-class_create_opaque (Thing, Thing);   /* Root class: no parent. */
-
-/*
-	Methods:
-
-	void destroy (I)
-		Message sent by _Thing_forget:
-			destroy all of my members who are arrays or objects,
-			except those who are NULL already (always check).
-		Inheritor:
-			Use NUMxvector_free and NUMxmatrix_free for destroying arrays;
-			you do not have to set the array members to NULL.
-			Use 'forget' for destroying objects.
-			You can call the inherited 'destroy' last, for destroying the inherited arrays and objects.
-		Example:
-			iam (Miep);
-			NUMdvector_free (my array);
-			forget (my object);
-			inherited (Miep) destroy (me);
-		Thing::destroy does nothing.
-		After exit:
-			the memory associated with me will be freed,
-			and one pointer to it will be set to NULL (see 'forget').
-
-	void info (I)
-		Message sent by Thing_info:
-			use a sequence of MelderInfo_writeXXX to give some information about you;
-			these are often preceded by classData -> info (me).
-		Thing::info shows my class name.
-
-	void nameChanged (I)
-		Message sent by Thing_setName after setting the new name:
-			if you are capable of showing your name, show your new name.
-		Thing::nameChanged does nothing.
-*/
-
 /* For the macros. */
 
 void _Thing_forget (Thing *me);
 	/* Macro 'forget'. */
-void * _Thing_check (I, void *table, const char *fileName, int line);
+void _Thing_forget_cpp (Thing me);
+void * _Thing_check (Thing me, void *table, const char *fileName, int line);
 	/* Macros 'iam', 'thouart', 'heis'. */
 
 /* For debugging. */

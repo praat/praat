@@ -20,20 +20,16 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
+#include "Matrix.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Cochleagram_members  Matrix_members
-#define Cochleagram_methods  Matrix_methods
-class_create (Cochleagram, Matrix);
+Thing_declare1cpp (Cochleagram);
 
 /* Normally, the attributes will meet the following:
 	xmin;			// Start time (seconds).
@@ -46,7 +42,7 @@ class_create (Cochleagram, Matrix);
 	ny;				// Number of frequencies.
 	dy = 25.6 / ny;		// Frequency step (Bark).
 	y1 = 0.5 * dy;		// Centre of first frequency band (Bark).
-	z;				// Basilar filter output (milliVolt), or firing rate (Hertz), or intensity (phon).
+	z;				// Basilar filter output (milliVolt), or firing rate (Hz), or intensity (phon).
 */
 
 Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -88,6 +84,12 @@ Matrix Cochleagram_to_Matrix (Cochleagram me);
 
 #ifdef __cplusplus
 	}
+
+	struct structCochleagram : public structMatrix {
+	};
+	#define Cochleagram__methods(klas)  Matrix__methods(klas)
+	Thing_declare2cpp (Cochleagram, Matrix);
+
 #endif
 
 /* End of file Cochleagram.h */

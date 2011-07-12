@@ -571,7 +571,7 @@ DO
 	struct structSteepestDescentMinimizer_parameters p;
     p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
-    return FFNet_Pattern_Activation_learnSD (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
+    FFNet_Pattern_Activation_learnSD (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
 		GET_REAL (L"Tolerance of minimizer"), & p, GET_INTEGER (L"Cost function"));
 END
 
@@ -586,7 +586,7 @@ DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
 	Activation him = FIRST (Activation);
-    return FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
+    FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
 		GET_REAL (L"Tolerance of minimizer"), NULL,
 		GET_INTEGER (L"Cost function"));
 END

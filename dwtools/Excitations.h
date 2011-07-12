@@ -24,27 +24,20 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Excitation_h_
-	#include "Excitation.h"
-#endif
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
+#include "Collection.h"
+#include "Excitation.h"
+#include "Pattern.h"
+#include "TableOfReal.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Excitations_members Ordered_members
-#define Excitations_methods Ordered_methods
-
-class_create (Excitations, Ordered);
+Thing_declare1cpp (Excitations);
+struct structExcitations : public structOrdered {
+};
+#define Excitations__methods(klas) Ordered__methods(klas)
+Thing_declare2cpp (Excitations, Ordered);
 
 /* Excitations is a collection of objects of the same class Excitation */
 

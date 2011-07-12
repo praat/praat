@@ -27,43 +27,47 @@
 #include "Sound_to_Harmonicity.h"
 
 Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
-	double silenceThreshold, double periodsPerWindow) try
+	double silenceThreshold, double periodsPerWindow)
 {
-	autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 1,
-		silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
-	autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
-		pitch -> dx, pitch -> x1);
-	for (long i = 1; i <= thy nx; i ++) {
-		if (pitch -> frame [i]. candidate [1]. frequency == 0) {
-			thy z [1] [i] = -200;
-		} else {
-			double r = pitch -> frame [i]. candidate [1]. strength;
-			thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+	try {
+		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 1,
+			silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
+		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
+			pitch -> dx, pitch -> x1);
+		for (long i = 1; i <= thy nx; i ++) {
+			if (pitch -> frame [i]. candidate [1]. frequency == 0) {
+				thy z [1] [i] = -200;
+			} else {
+				double r = pitch -> frame [i]. candidate [1]. strength;
+				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+			}
 		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": harmonicity analysis (ac) not performed.");
 	}
-	return thee.transfer();
-} catch (MelderError) {
-	rethrowmzero (L"Sound: harmonicity analysis not performed.");
 }
 
 Harmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitch,
-	double silenceThreshold, double periodsPerWindow) try
+	double silenceThreshold, double periodsPerWindow)
 {
-	autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 3,
-		silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
-	autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
-		pitch -> dx, pitch -> x1);
-	for (long i = 1; i <= thy nx; i ++) {
-		if (pitch -> frame [i]. candidate [1]. frequency == 0) {
-			thy z [1] [i] = -200;
-		} else {
-			double r = pitch -> frame [i]. candidate [1]. strength;
-			thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+	try {
+		autoPitch pitch = Sound_to_Pitch_any (me, dt, minimumPitch, periodsPerWindow, 15, 3,
+			silenceThreshold, 0, 0, 0, 0, 0.5 / my dx);
+		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
+			pitch -> dx, pitch -> x1);
+		for (long i = 1; i <= thy nx; i ++) {
+			if (pitch -> frame [i]. candidate [1]. frequency == 0) {
+				thy z [1] [i] = -200;
+			} else {
+				double r = pitch -> frame [i]. candidate [1]. strength;
+				thy z [1] [i] = r <= 1e-15 ? -150 : r > 1 - 1e-15 ? 150 : 10 * log10 (r / (1 - r));
+			}
 		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": harmonicity analysis (cc) not performed.");
 	}
-	return thee.transfer();
-} catch (MelderError) {
-	rethrowmzero (L"Sound: harmonicity analysis not performed.");
 }
 
-/* End of file Sound_to_Harmonicity.c */
+/* End of file Sound_to_Harmonicity.cpp */

@@ -261,104 +261,111 @@ void Formant_sort (Formant me) {
 static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOfPoles,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
-	try {
-		double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
-		double duration = my nx * my dx, t1;
-		double dt_window = 2.0 * halfdt_window;
-		long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
-		long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
+	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
+	double duration = my nx * my dx, t1;
+	double dt_window = 2.0 * halfdt_window;
+	long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
+	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
-		if (nsamp_window < numberOfPoles + 1)
-			Melder_throw ("Window too short.");
-		t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt); /* Centre of first frame. */
-		if (nFrames < 1) {
-			nFrames = 1;
-			t1 = my x1 + 0.5 * duration;
-			dt_window = duration;
-			nsamp_window = my nx;
-		}
-		autoFormant thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2);   // e.g. 11 poles -> maximally 6 formants
-		autoNUMvector <double> window (1, nsamp_window);
-		autoNUMvector <double> frame (1, nsamp_window);
-		autoNUMvector <double> cof (1, numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
-
-		autoMelderProgress progress (L"Formant analysis...");
-
-		/* Pre-emphasis. */
-		Sound_preEmphasis (me, preemphasisFrequency);
-
-		/* Gaussian window. */
-		for (long i = 1; i <= nsamp_window; i ++) {
-			double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
-			window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1 - edge);
-		}
-
-		for (long iframe = 1; iframe <= nFrames; iframe ++) {
-			double t = Sampled_indexToX (thee.peek(), iframe);
-			long leftSample = Sampled_xToLowIndex (me, t);
-			long rightSample = leftSample + 1;
-			long startSample = rightSample - halfnsamp_window;
-			long endSample = leftSample + halfnsamp_window;
-			double maximumIntensity = 0.0;
-			if (startSample < 1) startSample = 1;
-			if (endSample > my nx) endSample = my nx;
-			for (long i = startSample; i <= endSample; i ++) {
-				double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
-				if (value * value > maximumIntensity) {
-					maximumIntensity = value * value;
-				}
-			}
-			if (maximumIntensity == HUGE_VAL)
-				Melder_throw ("Sound contains infinities.");
-			thy frame [iframe]. intensity = maximumIntensity;
-			if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
-
-			/* Copy a pre-emphasized window to a frame. */
-			for (long j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
-
-			if (which == 1) {
-				burg (frame.peek(), endSample - startSample + 1, cof.peek(), numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin);
-			} else if (which == 2) {
-				if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)) {
-					Melder_clearError ();
-					Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
-				}
-			}
-			Melder_progress2 ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe)); therror
-		}
-		Formant_sort (thee.peek());
-		return thee.transfer();
-	} catch (MelderError) {
-		rethrowmzero (me, ": formant analysis not performed.");
+	if (nsamp_window < numberOfPoles + 1)
+		Melder_throw ("Window too short.");
+	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt); /* Centre of first frame. */
+	if (nFrames < 1) {
+		nFrames = 1;
+		t1 = my x1 + 0.5 * duration;
+		dt_window = duration;
+		nsamp_window = my nx;
 	}
+	autoFormant thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2);   // e.g. 11 poles -> maximally 6 formants
+	autoNUMvector <double> window (1, nsamp_window);
+	autoNUMvector <double> frame (1, nsamp_window);
+	autoNUMvector <double> cof (1, numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
+
+	autoMelderProgress progress (L"Formant analysis...");
+
+	/* Pre-emphasis. */
+	Sound_preEmphasis (me, preemphasisFrequency);
+
+	/* Gaussian window. */
+	for (long i = 1; i <= nsamp_window; i ++) {
+		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
+		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1 - edge);
+	}
+
+	for (long iframe = 1; iframe <= nFrames; iframe ++) {
+		double t = Sampled_indexToX (thee.peek(), iframe);
+		long leftSample = Sampled_xToLowIndex (me, t);
+		long rightSample = leftSample + 1;
+		long startSample = rightSample - halfnsamp_window;
+		long endSample = leftSample + halfnsamp_window;
+		double maximumIntensity = 0.0;
+		if (startSample < 1) startSample = 1;
+		if (endSample > my nx) endSample = my nx;
+		for (long i = startSample; i <= endSample; i ++) {
+			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
+			if (value * value > maximumIntensity) {
+				maximumIntensity = value * value;
+			}
+		}
+		if (maximumIntensity == HUGE_VAL)
+			Melder_throw ("Sound contains infinities.");
+		thy frame [iframe]. intensity = maximumIntensity;
+		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
+
+		/* Copy a pre-emphasized window to a frame. */
+		for (long j = 1, i = startSample; j <= nsamp_window; j ++)
+			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
+
+		if (which == 1) {
+			burg (frame.peek(), endSample - startSample + 1, cof.peek(), numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin);
+		} else if (which == 2) {
+			if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)) {
+				Melder_clearError ();
+				Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
+			}
+		}
+		Melder_progress2 ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe)); therror
+	}
+	Formant_sort (thee.peek());
+	return thee.transfer();
 }
 
 Formant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
+	double nyquist = 0.5 / my dx;
+	autoSound sound = NULL;
+	if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
+		sound.reset ((Sound) Data_copy (me));   // will be modified
+	} else {
+		sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
+	}
+	autoFormant thee = Sound_to_Formant_any_inline (sound.peek(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
+	return thee.transfer();
+}
+
+Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
 	try {
-		double nyquist = 0.5 / my dx;
-		autoSound sound = NULL;
-		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
-			sound.reset ((Sound) Data_copy (me));   // will be modified
-		} else {
-			sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
-		}
-		autoFormant thee = Sound_to_Formant_any_inline (sound.peek(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
-		return thee.transfer();
+		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0);
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw (me, ": formant analysis (Burg) not performed.");
 	}
 }
 
-Formant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 50.0); }
+Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
+	try {
+		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0);
+	} catch (MelderError) {
+		Melder_throw (me, ": formant analysis (keep all) not performed.");
+	}
+}
 
-Formant Sound_to_Formant_keepAll (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 1, preemphasisFrequency, 0.0); }
-
-Formant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency)
-	{ return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0); }
+Formant Sound_to_Formant_willems (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {
+	try {
+		return Sound_to_Formant_any (me, dt, (int) (2 * nFormants), maximumFrequency, halfdt_window, 2, preemphasisFrequency, 50.0);
+	} catch (MelderError) {
+		Melder_throw (me, ": formant analysis (Burg) not performed.");
+	}
+}
 
 /* End of file Sound_to_Formant.cpp */

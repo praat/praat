@@ -47,7 +47,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Transition_def.h"
 
-static int writeText (I, MelderFile file) {
+static void writeText (I, MelderFile file) {
 	iam (Transition);
 	texputi4 (file, my numberOfStates, L"numberOfStates", 0,0,0,0,0);
 	MelderFile_write1 (file, L"\nstateLabels []: ");
@@ -64,7 +64,6 @@ static int writeText (I, MelderFile file) {
 			MelderFile_write2 (file, L"\t", Melder_double (my data [i] [j]));
 		}
 	}
-	return 1;
 }
 
 static void info (I) {
@@ -102,7 +101,7 @@ Transition Transition_create (long numberOfStates) {
 		Transition_init (me.peek(), numberOfStates);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Transition not created.");
+		Melder_throw ("Transition not created.");
 	}
 }
 
@@ -204,7 +203,7 @@ void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eige
 	} catch (MelderError) {
 		if (transposed)
 			Transition_transpose (me);
-		rethrowm (me, ": eigenvectors not computed.");
+		Melder_throw (me, ": eigenvectors not computed.");
 	}
 }
 
@@ -225,7 +224,7 @@ Transition Transition_power (Transition me, long power) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": power not computed.");
+		Melder_throw (me, ": power not computed.");
 	}
 }
 
@@ -237,7 +236,7 @@ Matrix Transition_to_Matrix (Transition me) {
 				thy z [i] [j] = my data [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -251,7 +250,7 @@ Transition Matrix_to_Transition (Matrix me) {
 				thy data [i] [j] = my z [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Transition.");
+		Melder_throw (me, ": not converted to Transition.");
 	}
 }
 

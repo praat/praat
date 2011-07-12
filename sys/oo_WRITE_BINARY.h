@@ -26,296 +26,111 @@
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
  * pb 2011/04/03 C++
+ * pb 2011/06/29 removed C version
+ * pb 2011/07/04 C++
+ * pb 2011/07/07 void
  */
 
 #include "oo_undef.h"
 
-
-#ifdef __cplusplus
 #define oo_SIMPLE(type,storage,x)  \
-	binput##storage (my x, f); therror
-#else
-#define oo_SIMPLE(type,storage,x)  \
-	binput##storage (my x, f); cherror
-#endif
+	binput##storage (my x, f);
 
-#ifdef __cplusplus
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (my x) { \
-		NUM##t##vector_writeBinary_##storage (my x, min, max, f); therror \
-	}
-#else
-#define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (my x) { \
-		NUM##t##vector_writeBinary_##storage (my x, min, max, f); cherror \
-	}
-#endif
+	if (my x) \
+		NUM##t##vector_writeBinary_##storage (my x, min, max, f);
 
-#ifdef __cplusplus
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (my x) { \
-		NUM##t##matrix_writeBinary_##storage (my x, row1, row2, col1, col2, f); therror \
-	}
-#else
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (my x) { \
-		NUM##t##matrix_writeBinary_##storage (my x, row1, row2, col1, col2, f); cherror \
-	}
-#endif
+	if (my x) \
+		NUM##t##matrix_writeBinary_##storage (my x, row1, row2, col1, col2, f);
 
-#ifdef __cplusplus
 #define oo_ENUMx(type,storage,Type,x)  \
-	binput##storage (my x, f); therror
-#else
-#define oo_ENUMx(type,storage,Type,x)  \
-	binput##storage (my x, f); cherror
-#endif
+	binput##storage (my x, f);
 
-#ifdef __cplusplus
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	if (my x) { \
-		NUM##t##vector_writeBinary_##storage (my x, min, max, f); therror \
-	}
-#else
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	if (my x) { \
-		NUM##t##vector_writeBinary_##storage (my x, min, max, f); cherror \
-	}
-#endif
+	if (my x) \
+		NUM##t##vector_writeBinary_##storage (my x, min, max, f);
 
-#ifdef __cplusplus
 #define oo_STRINGx(storage,x)  \
-	binput##storage (my x, f); therror
-#else
-#define oo_STRINGx(storage,x)  \
-	binput##storage (my x, f); cherror
-#endif
+	binput##storage (my x, f);
 
-#ifdef __cplusplus
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i < n; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		binput##storage (my x [i], f); cherror \
-	}
-#endif
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		binput##storage (my x [i], f);
 
-#ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
+	if (max >= min) \
 		for (long i = min; i <= max; i ++) \
-			binput##storage (my x [i], f); therror \
-	}
-#else
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
+			binput##storage (my x [i], f);
+
+#define oo_STRUCT(Type,x)  \
+	Type##_writeBinary (& my x, f);
+
+#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
+	for (int i = 0; i < n; i ++) \
+		Type##_writeBinary (& my x [i], f);
+
+#define oo_STRUCT_SET(Type,x,setType)  \
+	for (int i = 0; i <= setType##_MAX; i ++) \
+		Type##_writeBinary (& my x [i], f);
+
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
+	if (max >= min) \
 		for (long i = min; i <= max; i ++) \
-			binput##storage (my x [i], f); cherror \
-	}
-#endif
+			Type##_writeBinary (& my x [i], f);
 
 
-#ifdef __cplusplus
-#define oo_STRUCT(Type,x)  \
-	Type##_writeBinary (& my x, f); therror
-#else
-#define oo_STRUCT(Type,x)  \
-	Type##_writeBinary (& my x, f); cherror
-#endif
-
-#ifdef __cplusplus
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		Type##_writeBinary (& my x [i], f); therror \
-	}
-#else
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) { \
-		Type##_writeBinary (& my x [i], f); cherror \
-	}
-#endif
-
-#ifdef __cplusplus
-#define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		Type##_writeBinary (& my x [i], f); therror \
-	}
-#else
-#define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) { \
-		Type##_writeBinary (& my x [i], f); cherror \
-	}
-#endif
-
-#ifdef __cplusplus
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) { \
-		for (long i = min; i <= max; i ++) { \
-			Type##_writeBinary (& my x [i], f); therror \
-		} \
-	}
-#else
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) { \
-		for (long i = min; i <= max; i ++) { \
-			Type##_writeBinary (& my x [i], f); cherror \
-		} \
-	}
-#endif
-
-
-#ifdef __cplusplus
 #define oo_OBJECT(Class,version,x)  \
-	binputex (my x != NULL, f); therror \
-	if (my x) { \
-		Data_writeBinary (my x, f); therror \
-	}
-#else
-#define oo_OBJECT(Class,version,x)  \
-	binputex (my x != NULL, f); cherror \
-	if (my x) { \
-		Data_writeBinary (my x, f); cherror \
-	}
-#endif
+	binputex (my x != NULL, f); \
+	if (my x) \
+		Data_writeBinary (my x, f);
 
-#ifdef __cplusplus
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	binputi4 (my x ? my x -> size : 0, f); therror \
+	binputi4 (my x ? my x -> size : 0, f); \
 	if (my x) { \
 		for (long i = 1; i <= my x -> size; i ++) { \
 			ItemClass data = (ItemClass) my x -> item [i]; \
-			class##ItemClass -> writeBinary (data, f); therror \
+			class##ItemClass -> writeBinary (data, f); \
 		} \
 	}
-#else
-#define oo_COLLECTION(Class,x,ItemClass,version)  \
-	binputi4 (my x ? my x -> size : 0, f); cherror \
-	if (my x) { \
-		for (long i = 1; i <= my x -> size; i ++) { \
-			ItemClass data = (ItemClass) my x -> item [i]; \
-			class##ItemClass -> writeBinary (data, f); cherror \
-		} \
-	}
-#endif
-
-
 
 #define oo_FILE(x)
 
 #define oo_DIR(x)
 
-
-
-#ifdef __cplusplus
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_writeBinary (Type me, FILE *f) try {
-#else
-#define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_writeBinary (Type me, FILE *f) {
-#endif
+	static void Type##_writeBinary (Type me, FILE *f) {
 
-#ifdef __cplusplus
 #define oo_END_STRUCT(Type)  \
-		return 1; \
-	} catch (MelderError) { \
-		rethrowzero; \
 	}
-#else
-#define oo_END_STRUCT(Type)  \
-	end: \
-		return 1; \
-	}
-#endif
 
-
-#ifdef __cplusplus
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_writeBinary (I, FILE *f) try { \
+	static void class##Class##_writeBinary (I, FILE *f) { \
 		iam (Class); \
-		inherited (Class) writeBinary (me, f); therror
-#else
-#define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_writeBinary (I, FILE *f) { \
-		iam (Class); \
-		inherited (Class) writeBinary (me, f); cherror
-#endif
+		inherited (Class) writeBinary (me, f);
 
-#ifdef __cplusplus
 #define oo_END_CLASS(Class)  \
-		return 1; \
-	} catch (MelderError) { \
-		rethrowzero; \
 	}
-#else
-#define oo_END_CLASS(Class)  \
-	end: \
-		return 1; \
-	}
-#endif
-
 
 #define oo_IF(condition)  \
 	if (condition) {
@@ -323,17 +138,11 @@
 #define oo_ENDIF  \
 	}
 
-
-
 #define oo_FROM(from)
 
 #define oo_ENDFROM
 
-
-
 #define oo_VERSION(version)
-
-
 
 #define oo_DECLARING  0
 #define oo_DESTROYING  0

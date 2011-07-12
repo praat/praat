@@ -36,16 +36,16 @@ Formant LPC_to_Formant (LPC me, double margin);
 
 LPC Formant_to_LPC (Formant me, double samplingPeriod);
 
-int LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, 
+void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, 
 	double samplingPeriod, double margin);
 
-int Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
+void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod);
 
 void Formant_Frame_scale (Formant_Frame me, double scale);
 
-int Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
+void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
 
-int Formant_Frame_init (Formant_Frame me, long nFormants);
+void Formant_Frame_init (Formant_Frame me, long nFormants);
 
 #ifdef __cplusplus
 	}

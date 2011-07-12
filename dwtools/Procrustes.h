@@ -25,19 +25,15 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _AffineTransform_h_
-	#include "AffineTransform.h"
-#endif
+#include "AffineTransform.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Procrustes_members AffineTransform_members \
-	double s;
-
-#define Procrustes_methods AffineTransform_methods
-class_create (Procrustes, AffineTransform);
+#include "Procrustes_def.h"
+#define Procrustes__methods(klas) AffineTransform__methods(klas)
+oo_CLASS_CREATE (Procrustes, AffineTransform);
 
 Procrustes Procrustes_create (long n);
 

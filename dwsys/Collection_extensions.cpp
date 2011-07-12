@@ -32,7 +32,6 @@
 
 Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him)
 {
-	try {
 		if (my size != his numberOfElements) Melder_throw (me, "The number of elements are not equal.");
 		autoNUMvector<long> pos (1, my size);
 		autoCollection thee = static_cast<Collection>(Data_copy (me));
@@ -55,7 +54,6 @@ Collection Collection_and_Permutation_permuteItems (Collection me, Permutation h
 			pos[which] = which <= i ? i : ti;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowzero; }
 }
 
 Collection Collection_permuteItems(Collection me)
@@ -65,7 +63,7 @@ Collection Collection_permuteItems(Collection me)
 		Permutation_permuteRandomly_inline (p.peek(), 0, 0); therror 
 		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": items not permuted."); }
+	} catch (MelderError) { Melder_thrown (me, ": items not permuted."); }
 }
 
 /****************** class OrderedOfString ******************/
@@ -73,12 +71,10 @@ Collection Collection_permuteItems(Collection me)
 static void info (I)
 {
 	iam (OrderedOfString); 
-	try {
 		classData -> info (me);
 		MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my size));
 		autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems(me, 1);
 		MelderInfo_writeLine2 (L"Number of unique categories: ", Melder_integer (uStrings -> size));
-	} catch (MelderError) { rethrow; }
 }
 
 class_methods (OrderedOfString, Ordered) {
@@ -99,7 +95,7 @@ OrderedOfString OrderedOfString_create (void)
 		autoOrderedOfString me = Thing_new (OrderedOfString);
 		OrderedOfString_init (me.peek(), 10); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("OrderedOfString not created."); }
+	} catch (MelderError) { Melder_thrown ("OrderedOfString not created."); }
 }
 
 int OrderedOfString_append (I, wchar_t *append)
@@ -110,14 +106,13 @@ int OrderedOfString_append (I, wchar_t *append)
 		autoSimpleString item = SimpleString_create (append);
 		Collection_addItem (me, item.transfer());
 		return 1;
-	} catch (MelderError) { rethrowmzero (me, ": text not appended."); }
+	} catch (MelderError) { Melder_thrown (me, ": text not appended."); }
 }
 
 OrderedOfString OrderedOfString_joinItems (I, thou)
 {
 	iam (OrderedOfString);
 	thouart (OrderedOfString);
-	try {
 	
 		if (my size != thy size) Melder_throw ("sizes must be equal.");
 	
@@ -128,7 +123,6 @@ OrderedOfString OrderedOfString_joinItems (I, thou)
 			SimpleString_append ((SimpleString) his item[i], (SimpleString)thy item[i]);
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowzero; }
 }
 
 
@@ -171,7 +165,7 @@ OrderedOfString OrderedOfString_selectUniqueItems (I, int sort)
 			Collection_addItem (him.peek(), item.transfer()); therror
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": unique items not selected."); }
+	} catch (MelderError) { Melder_thrown (me, ": unique items not selected."); }
 }
 
 void OrderedOfString_frequency (I, thou, long *count)
@@ -239,7 +233,6 @@ int OrderedOfString_difference (I, thou, long *ndif, double *fraction)
 long OrderedOfString_indexOfItem_c (I, const wchar_t *str)
 {
 	iam (OrderedOfString);
-	try {
 		long index = 0;
 		autoSimpleString s = SimpleString_create (str);
 	
@@ -248,7 +241,6 @@ long OrderedOfString_indexOfItem_c (I, const wchar_t *str)
 			if (Data_equal (my item[i], s.peek())) { index = i; break; }
 		}
 		return index;
-	} catch (MelderError) {rethrowzero; }
 }
 
 const wchar_t *OrderedOfString_itemAtIndex_c (I, long index)
@@ -260,7 +252,6 @@ const wchar_t *OrderedOfString_itemAtIndex_c (I, long index)
 int OrderedOfString_sequentialNumbers (I, long n)
 {
 	iam (OrderedOfString);
-	try {
 		Collection_removeAllItems (me);
 		for (long i = 1; i <= n; i++)
 		{
@@ -270,7 +261,6 @@ int OrderedOfString_sequentialNumbers (I, long n)
 			Collection_addItem (me, str.transfer());
 		}
 		return 1;
-	} catch (MelderError) {rethrowzero; }
 }
 
 int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace, 

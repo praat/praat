@@ -45,7 +45,7 @@ Polygon Matrix_to_Polygon (I) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Polygon.");
+		Melder_throw (me, ": not converted to Polygon.");
 	}
 }
 
@@ -57,7 +57,7 @@ Matrix Polygon_to_Matrix (I) {
 		NUMdvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 

@@ -166,8 +166,8 @@ void Matrix_scale (I, int choice)
 
 Any Matrix_transpose (I)
 {
+	iam (Matrix);
 	try {
-		iam (Matrix);
 		autoMatrix thee = Matrix_create (my ymin, my ymax, my ny, my dy, my y1,
 			my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= my ny; i++)
@@ -178,7 +178,7 @@ Any Matrix_transpose (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not transposed."); }
+	} catch (MelderError) { Melder_thrown (me, ": not transposed."); }
 }
 
 void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
@@ -329,7 +329,7 @@ Matrix Matrix_solveEquation (I, double tolerance)
 		NUMsolveEquation (u.peek(), nr, nc, b.peek(), 0, x.peek());
 		for (long j = 1; j <= nc; j++) thy z[1][j] = x[j];
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix equation not solved."); }
+	} catch (MelderError) { Melder_thrown ("Matrix equation not solved."); }
 }
 
 /* End of file Matrix_extensions.cpp */

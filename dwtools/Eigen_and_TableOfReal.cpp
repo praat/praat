@@ -1,4 +1,4 @@
-/* Eigen_and_TableOfReal.c
+/* Eigen_and_TableOfReal.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -42,10 +42,10 @@ TableOfReal Eigen_and_TableOfReal_project (I, thou, long from,
 		Eigen_and_TableOfReal_project_into (me, thee, from, thy numberOfColumns, &thim, 1, numberOfComponents); therror
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows); therror
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from projection."); } 
+	} catch (MelderError) { Melder_thrown ("TableOfReal not created from projection."); } 
 }
 
-int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
+void Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	Any void_pointer_to_him, long his_from, long his_to)
 {
 	TableOfReal him = *((TableOfReal *)void_pointer_to_him);
@@ -76,7 +76,6 @@ int Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 			his data[i][his_from + j - 1] = r;
 		}
 	}
-	return 1;
 }
 
 Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee)
@@ -86,7 +85,7 @@ Eigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee)
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.peek(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": Eigen not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": Eigen not created."); }
 }
 
-/* End of file Eigen_and_TableOfReal.c */
+/* End of file Eigen_and_TableOfReal.cpp */

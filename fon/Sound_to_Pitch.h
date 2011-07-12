@@ -47,7 +47,7 @@ Pitch Sound_to_Pitch_cc (Sound me, double timeStep, double minimumPitch,
 Pitch Sound_to_Pitch_any (Sound me,
 
 	double dt,                 /* time step (seconds); 0.0 = automatic = periodsPerWindow / minimumPitch / 4 */
-	double minimumPitch,       /* (Hertz) */
+	double minimumPitch,       /* (Hz) */
 	double periodsPerWindow,   /* ac3 for pitch analysis, 6 or 4.5 for HNR, 1 for FCC */
 	int maxnCandidates,        /* maximum number of candidates per frame */
 	int method,                /* 0 or 1 = AC, 2 or 3 = FCC, 0 or 2 = fast, 1 or 3 = accurate */
@@ -57,7 +57,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	double octaveCost,         /* favours higher pitches; default 0.01 */
 	double octaveJumpCost,     /* default 0.35 */
 	double voicedUnvoicedCost, /* default 0.14 */
-	double maximumPitch);      /* (Hertz) */
+	double maximumPitch);      /* (Hz) */
 /*
 	Function:
 		acoustic periodicity analysis.

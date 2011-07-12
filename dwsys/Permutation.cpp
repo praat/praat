@@ -49,27 +49,21 @@
 
 static long Permutation_checkRange (Permutation me, long *from, long *to)
 {
-	try {
 		if ((*from < 0 || *from > my numberOfElements) || (*to < 0 || *to > my numberOfElements))
 			Melder_throw (L"Range must be in [1, ", my numberOfElements, "].");
 		if (*from == 0) *from = 1;
 		if (*to == 0) *to = my numberOfElements;
 		return *to - *from + 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
-int Permutation_checkInvariant (Permutation me)
+void Permutation_checkInvariant (Permutation me)
 {
-	try {
-		Permutation thee = (Permutation) Data_copy (me); therror
-		NUMsort_l (thy numberOfElements, thy p);
-		for (long i = 1; i <= my numberOfElements; i++)
-		{
-			if (thy p[i] != i) therror
-		}
-		forget (thee);
-		return 1;
-	} catch (MelderError) { rethrowmzero (me, ":not a valid permutation."); }
+	autoPermutation thee = (Permutation) Data_copy (me);
+	NUMsort_l (thy numberOfElements, thy p);
+	for (long i = 1; i <= my numberOfElements; i++)
+	{
+		if (thy p[i] != i) Melder_throw (me, ":not a valid permutation.");
+	}
 }
 
 static void info (I)
@@ -79,16 +73,13 @@ static void info (I)
 	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
 }
 
-static int readText (I, MelderReadText text)
+static void readText (I, MelderReadText text)
 {
-	try {
 		iam (Permutation);
 		my numberOfElements = texgeti4 (text);
 		if (my numberOfElements < 1) Melder_throw (L"(Permutation::readText:) Number of elements must be >= 1.");
 		my p = NUMlvector_readText_i4 (1, my numberOfElements, text, "p"); therror
 		Permutation_checkInvariant (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 class_methods (Permutation, Data)
@@ -106,11 +97,9 @@ class_methods_end
 
 void Permutation_init (Permutation me, long numberOfElements)
 {
-	try {
-		my numberOfElements = numberOfElements;
-		my p = NUMvector<long> (1, numberOfElements);
-		Permutation_sort (me);
-	} catch (MelderError) { rethrow; }
+	my numberOfElements = numberOfElements;
+	my p = NUMvector<long> (1, numberOfElements);
+	Permutation_sort (me);
 }
 
 Permutation Permutation_create (long numberOfElements)
@@ -119,7 +108,7 @@ Permutation Permutation_create (long numberOfElements)
 		autoPermutation me = Thing_new (Permutation);
 		Permutation_init (me.peek(), numberOfElements);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Permulation not created."); }
+	} catch (MelderError) { Melder_thrown ("Permulation not created."); }
 }
 
 void Permutation_sort (Permutation me)
@@ -138,7 +127,7 @@ void Permutation_swapPositions (Permutation me, long i1, long i2)
 		long tmp = my p[i1];
 		my p[i1] = my p[i2];
 		my p[i2] = tmp;
-	} catch (MelderError) { rethrowm (me, ":positions not swapped."); }
+	} catch (MelderError) { Melder_throw (me, ":positions not swapped."); }
 }
 
 void Permutation_swapNumbers (Permutation me, long i1, long i2)
@@ -154,7 +143,7 @@ void Permutation_swapNumbers (Permutation me, long i1, long i2)
 			if (ip == 2) break;
 		}
 		Melder_assert (ip == 2);
-	} catch (MelderError) { rethrowm (me, ": numbers not swapped."); }
+	} catch (MelderError) { Melder_throw (me, ": numbers not swapped."); }
 }
 
 void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
@@ -172,7 +161,7 @@ void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 			my p[from + i - 1] = my p[to + i - 1];
 			my p[to + i - 1] = tmp;
 		}
-	} catch (MelderError) { rethrowm (me, ": blocks not swapped."); }
+	} catch (MelderError) { Melder_throw (me, ": blocks not swapped."); }
 }
 
 void Permutation_permuteRandomly_inline (Permutation me, long from, long to)
@@ -188,7 +177,7 @@ void Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 			my p[i] = my p[newpos];
 			my p[newpos] = pi;
 		}
-	} catch (MelderError) { rethrowm (me, ": not permuted randomly."); }
+	} catch (MelderError) { Melder_throw (me, ": not permuted randomly."); }
 }
 
 Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
@@ -197,7 +186,7 @@ Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
 		autoPermutation thee = (Permutation) Data_copy (me); therror
 		Permutation_permuteRandomly_inline (thee.peek(), from, to);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not permuted."); }
+	} catch (MelderError) { Melder_thrown (me, ": not permuted."); }
 }
 
 Permutation Permutation_rotate (Permutation me, long from, long to, long step)
@@ -215,7 +204,7 @@ Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 			thy p[ifrom] = my p[i];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not rotated."); }
+	} catch (MelderError) { Melder_thrown (me, ": not rotated."); }
 }
 
 void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame)
@@ -230,7 +219,7 @@ void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos,
 		}
 
 		long tmp = my p[pos]; my p[pos] = my p[newpos]; my p[newpos] = tmp;
-	} catch (MelderError) { rethrowm (me, ": one from range not swapped."); }
+	} catch (MelderError) { Melder_throw (me, ": one from range not swapped."); }
 }
 
 
@@ -276,7 +265,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not permuted block randomly."); }
+	} catch (MelderError) { Melder_thrown (me, ": not permuted block randomly."); }
 }
 
 Permutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset)
@@ -317,7 +306,7 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 			thy p[from - 1 + i] = my p[index];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not interleaved."); }
+	} catch (MelderError) { Melder_thrown (me, ": not interleaved."); }
 }
 
 long Permutation_getValueAtIndex (Permutation me, long i)
@@ -343,7 +332,7 @@ Permutation Permutation_invert (Permutation me)
 			thy p[my p[i]] = i;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not inverted."); }
+	} catch (MelderError) { Melder_thrown (me, ": not inverted."); }
 }
 
 Permutation Permutation_reverse (Permutation me, long from, long to)
@@ -357,7 +346,7 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 		}
 		return thee.transfer();
 		
-	} catch (MelderError) { rethrowmzero (me, ": not reversed."); }
+	} catch (MelderError) { Melder_thrown (me, ": not reversed."); }
 }
 
 /* Replaces p with the next permutation (in the standard lexicographical ordering.
@@ -365,7 +354,6 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 */
 void Permutation_next_inline (Permutation me)
 {
-	try {
 		long size = my numberOfElements;
 		long *p = & my p[1];
 
@@ -392,7 +380,6 @@ void Permutation_next_inline (Permutation me)
 			p[j] = p[size + i - j];
 			p[size + i - j] = tmp;
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 /* Replaces p with the previous permutation (in the standard lexicographical ordering.
@@ -401,7 +388,6 @@ void Permutation_next_inline (Permutation me)
 
 void Permutation_previous_inline (Permutation me)
 {
-	try {
 		long size = my numberOfElements;
 		long *p = & my p[1];
 
@@ -428,7 +414,6 @@ void Permutation_previous_inline (Permutation me)
 			p[j] = p[size + i - j];
 			p[size + i - j] = tmp;
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 Permutation Permutations_multiply2 (Permutation me, Permutation thee)
@@ -441,7 +426,7 @@ Permutation Permutations_multiply2 (Permutation me, Permutation thee)
 			his p[i] = my p[thy p[i]];
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, "not multiplied by ", thee); }
+	} catch (MelderError) { Melder_thrown (me, "not multiplied by ", thee); }
 }
 
 Permutation Permutations_multiply (Collection me)
@@ -454,7 +439,7 @@ Permutation Permutations_multiply (Collection me)
 			thee.reset (Permutations_multiply2 (thee.peek(), (Permutation) my item[i]));
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Permutations not multiplied."); }
+	} catch (MelderError) { Melder_thrown ("Permutations not multiplied."); }
 }
 
 /* End of Permutation.c */

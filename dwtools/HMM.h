@@ -43,52 +43,56 @@
 
 #include "HMM_def.h"
 
-#define HMM_State_methods Data_methods
+#define HMM_State__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_State, Data);
 
-#define HMM_Observation_methods Data_methods
+#define HMM_Observation__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_Observation, Data);
 
-#define HMM_Viterbi_methods Data_methods
+#define HMM_Viterbi__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_Viterbi, Data);
 
-#define HMM_methods Data_methods
+#define HMM__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM, Data);
 
-#define HMM_BaumWelch_members Data_members \
-	long capacity; \
-	long numberOfTimes; \
-	long totalNumberOfSequences; \
-	long numberOfStates; \
-	long numberOfSymbols; \
-	double lnProb; \
-	double minProb; \
-	double **alpha; \
-	double **beta; \
-	double *scale; \
-	double **gamma; \
-	double ***xi; \
-	double **aij_num, **aij_denom; \
+Thing_declare1cpp (HMM_BaumWelch);
+struct structHMM_BaumWelch : public structData {
+	long capacity;
+	long numberOfTimes;
+	long totalNumberOfSequences;
+	long numberOfStates;
+	long numberOfSymbols;
+	double lnProb;
+	double minProb;
+	double **alpha;
+	double **beta;
+	double *scale;
+	double **gamma;
+	double ***xi;
+	double **aij_num, **aij_denom;
 	double **bik_num, **bik_denom;
-#define HMM_BaumWelch_methods Data_methods
-class_create (HMM_BaumWelch, Data);
+};
+#define HMM_BaumWelch__methods(klas) Data__methods(klas)
+Thing_declare2cpp (HMM_BaumWelch, Data);
 
-/* the definition of String_members is essential */
-#define Strings_members Data_members \
-	long numberOfStrings; \
-	wchar_t **strings;
-#define HMM_StateSequence_members Strings_members
-#define HMM_StateSequence_methods Strings_methods
-class_create (HMM_StateSequence, Strings);
+Thing_declare1cpp (HMM_StateSequence);
+struct structHMM_StateSequence : public structStrings {
+};
+#define HMM_StateSequence__methods(klas) Strings__methods(klas)
+Thing_declare2cpp (HMM_StateSequence, Strings);
 
-#define HMM_ObservationSequence_members Table_members
-#define HMM_ObservationSequence_methods Table_methods
-class_create (HMM_ObservationSequence, Table);
+Thing_declare1cpp (HMM_ObservationSequence);
+struct structHMM_ObservationSequence : public structTable {
+};
+#define HMM_ObservationSequence__methods(klas) Table__methods(klas)
+Thing_declare2cpp (HMM_ObservationSequence, Table);
 // First column is always a symbol, if only 1 column then symbols only
 
-#define HMM_ObservationSequences_members Collection_members
-#define HMM_ObservationSequences_methods Collection_methods
-class_create (HMM_ObservationSequences, Collection);
+Thing_declare1cpp (HMM_ObservationSequences);
+struct structHMM_ObservationSequences : public structCollection {
+};
+#define HMM_ObservationSequences__methods(klas) Collection__methods(klas)
+Thing_declare2cpp (HMM_ObservationSequences, Collection);
 
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength);
 void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long index);

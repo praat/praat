@@ -37,7 +37,7 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee)
 			TableOfReal_copyOneRowWithLabel (me, him.peek(), thy p[i], i);
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not permuted."); }
+	} catch (MelderError) { Melder_thrown (me, ": not permuted."); }
 }
 
 Permutation TableOfReal_to_Permutation_sortRowLabels (I)
@@ -47,7 +47,7 @@ Permutation TableOfReal_to_Permutation_sortRowLabels (I)
 		autoPermutation thee = Permutation_create (my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Permutation created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Permutation created."); }
 }
 
 /* End of file TableOfReal_and_Permutation.cpp */

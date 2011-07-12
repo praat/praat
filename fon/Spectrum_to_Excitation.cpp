@@ -71,7 +71,7 @@ Excitation Spectrum_to_Excitation (I, double dbark) {
 
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Excitation.");
+		Melder_throw (me, ": not converted to Excitation.");
 	}
 }
 

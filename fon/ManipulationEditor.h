@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/22
+ * pb 2011/07/02
  */
 
 #include "FunctionEditor.h"
@@ -32,34 +32,35 @@
 
 #include "ManipulationEditor_enums.h"
 
-#define ManipulationEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (ManipulationEditor);
+Thing_declare1cpp (ManipulationEditor);
 
-#define ManipulationEditor__members(Klas) FunctionEditor__members(Klas) \
-	PointProcess previousPulses; \
-	PitchTier previousPitch; \
-	DurationTier previousDuration; \
-	double soundmin, soundmax; \
-	int synthesisMethod; \
-	GuiObject synthPulsesButton, synthPulsesHumButton; \
-	GuiObject synthPulsesLpcButton; \
-	GuiObject synthPitchButton, synthPitchHumButton; \
-	GuiObject synthPulsesPitchButton, synthPulsesPitchHumButton; \
-	GuiObject synthOverlapAddNodurButton, synthOverlapAddButton; \
-	GuiObject synthPitchLpcButton; \
-	struct { enum kManipulationEditor_pitchUnits units; enum kManipulationEditor_draggingStrategy draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier; \
-	struct { double minimum, maximum, cursor;  } duration; \
-	Graphics_Viewport inset;
-#define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2 (ManipulationEditor, FunctionEditor);
-
-ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar_t *title, Manipulation ana);
+ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar *title, Manipulation ana);
 
 void ManipulationEditor_prefs (void);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structManipulationEditor : structFunctionEditor {
+		PointProcess previousPulses;
+		PitchTier previousPitch;
+		DurationTier previousDuration;
+		double soundmin, soundmax;
+		int synthesisMethod;
+		GuiObject synthPulsesButton, synthPulsesHumButton;
+		GuiObject synthPulsesLpcButton;
+		GuiObject synthPitchButton, synthPitchHumButton;
+		GuiObject synthPulsesPitchButton, synthPulsesPitchHumButton;
+		GuiObject synthOverlapAddNodurButton, synthOverlapAddButton;
+		GuiObject synthPitchLpcButton;
+		struct { enum kManipulationEditor_pitchUnits units; enum kManipulationEditor_draggingStrategy draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier;
+		struct { double minimum, maximum, cursor;  } duration;
+		Graphics_Viewport inset;
+	};
+	#define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
+	Thing_declare2cpp (ManipulationEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file ManipulationEditor.h */
 #endif

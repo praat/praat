@@ -29,13 +29,13 @@
 #include "Matrix.h"
 #include "Graphics.h"
 #include "DTW.h"
-#include "Cepstrumc_def.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Cepstrumc_methods Sampled_methods
+#include "Cepstrumc_def.h"
+#define Cepstrumc__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Cepstrumc, Sampled);
 
 int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,

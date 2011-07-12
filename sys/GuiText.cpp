@@ -1043,7 +1043,7 @@ wchar_t * GuiText_getSelection (GuiObject widget) {
 			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), & start, & end); 
 			if (end > start) {   // at least one character selected?
 				gchar *text = gtk_editable_get_chars (GTK_EDITABLE (widget), start, end);
-				wchar_t *result = Melder_utf8ToWcs_e (text);
+				wchar_t *result = Melder_utf8ToWcs (text);
 				g_free (text);
 				return result;
 			}
@@ -1053,7 +1053,7 @@ wchar_t * GuiText_getSelection (GuiObject widget) {
 				GtkTextIter start, end;
 				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
 				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE);
-				wchar_t *result = Melder_utf8ToWcs_e (text);
+				wchar_t *result = Melder_utf8ToWcs (text);
 				g_free (text);
 				return result;
 			}
@@ -1098,14 +1098,14 @@ wchar_t * GuiText_getStringAndSelectionPosition (GuiObject widget, long *first, 
 			gtk_editable_get_selection_bounds (GTK_EDITABLE (widget), & first_gint, & last_gint);
 			*first = first_gint;
 			*last = last_gint;
-			return Melder_utf8ToWcs_e (gtk_entry_get_text (GTK_ENTRY (widget)));
+			return Melder_utf8ToWcs (gtk_entry_get_text (GTK_ENTRY (widget)));
 		} else if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 			GtkTextIter start, end;
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
 			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, TRUE); // TODO: Hidden chars ook maar doen he?
-			wchar_t *result = Melder_utf8ToWcs_e (text);
+			wchar_t *result = Melder_utf8ToWcs (text);
 			g_free (text);
 			gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
 			*first = gtk_text_iter_get_offset (& start);

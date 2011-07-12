@@ -24,6 +24,7 @@
  * pb 2007/12/27 Gui
  * pb 2009/03/21 modern enums
  * pb 2011/03/22 C+
+ * pb 2011/07/02 C+
  */
 
 #include "ArtwordEditor.h"
@@ -59,16 +60,16 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	}
 	NUMvector_free <long> (selectedPositions, 1);
 	updateList (me);
-	Editor_broadcastChange (ArtwordEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 	(void) event;
 	iam (ArtwordEditor);
 	Artword artword = (Artword) my data;
-	wchar_t *timeText = GuiText_getString (my time);
+	wchar *timeText = GuiText_getString (my time);
 	double tim = Melder_atof (timeText);
-	wchar_t *valueText = GuiText_getString (my value);
+	wchar *valueText = GuiText_getString (my value);
 	double value = Melder_atof (valueText);
 	ArtwordData a = & artword -> data [my feature];
 	int i = 1, oldCount = a -> numberOfTargets;
@@ -93,7 +94,7 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
-	Editor_broadcastChange (ArtwordEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
@@ -180,14 +181,17 @@ class_methods (ArtwordEditor, Editor) {
 	class_methods_end
 }
 
-ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data) {
-	ArtwordEditor me = Thing_new (ArtwordEditor);
-	if (! me || ! Editor_init (ArtwordEditor_as_parent (me), parent, 20, 40, 650, 600, title, data))
-		return NULL;
-	//XtUnmanageChild (my menuBar);
-	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-	updateList (me);
-	return me;
+ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data) {
+	try {
+		autoArtwordEditor me = Thing_new (ArtwordEditor);
+		Editor_init (me.peek(), parent, 20, 40, 650, 600, title, data);
+		//XtUnmanageChild (my menuBar);
+		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+		updateList (me.peek());
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Artword window not created.");
+	}
 }
 
 /* End of file ArtwordEditor.cpp */

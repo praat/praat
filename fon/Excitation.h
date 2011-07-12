@@ -20,29 +20,23 @@
  */
 
 /*
- * pb 2011/05/12
+ * pb 2011/07/11
  */
 
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Vector.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
+
+Thing_declare1cpp (Excitation);
 
 double Excitation_hertzToBark (double hertz);
 double Excitation_barkToHertz (double bark);
 double Excitation_phonToDifferenceLimens (double phon);
 double Excitation_differenceLimensToPhon (double ndli);
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
-
-#define Excitation_members  Vector_members
-#define Excitation_methods  Vector_methods
-class_create (Excitation, Vector);
 
 Excitation Excitation_create (double df, long nf);
 double Excitation_getDistance (Excitation me, Excitation thee);
@@ -53,6 +47,12 @@ Excitation Matrix_to_Excitation (Matrix me);
 
 #ifdef __cplusplus
 	}
+
+	struct structExcitation : public structVector {
+	};
+	#define Excitation__methods(klas)  Vector__methods(klas)
+	Thing_declare2cpp (Excitation, Vector);
+
 #endif
 
 /* End of file Excitation.h */

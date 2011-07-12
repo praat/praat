@@ -79,7 +79,7 @@ DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (L"Trial");
 	if (trial > my numberOfTrials)
-		return Melder_error5 (L"Trial ", Melder_integer (trial), L" does not exist (maximum ", Melder_integer (my numberOfTrials), L").");
+		Melder_throw ("Trial ", trial, " does not exist (maximum ", my numberOfTrials, ").");
 	Melder_information1 (my result [trial]. response);
 END
 
@@ -90,7 +90,7 @@ DO
 	iam_ONLY (ResultsMFC);
 	long trial = GET_INTEGER (L"Trial");
 	if (trial > my numberOfTrials)
-		return Melder_error5 (L"Trial ", Melder_integer (trial), L" does not exist (maximum ", Melder_integer (my numberOfTrials), L").");
+		Melder_throw ("Trial ", trial, " does not exist (maximum ", my numberOfTrials, ").");
 	Melder_information1 (my result [trial]. stimulus);
 END
 
@@ -98,7 +98,7 @@ DIRECT (ResultsMFC_removeUnsharedStimuli)
 	ResultsMFC res1 = NULL, res2 = NULL;
 	WHERE (SELECTED) { if (res1) res2 = (ResultsMFC) OBJECT; else res1 = (ResultsMFC) OBJECT; }
 	Melder_assert (res1 && res2);
-	if (! praat_new2 (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, L"_shared")) return 0;
+	praat_new2 (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, L"_shared");
 END
 
 DIRECT (ResultsMFC_to_Categories_stimuli)

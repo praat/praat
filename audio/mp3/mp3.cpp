@@ -52,8 +52,10 @@
 #include "mp3.h"
 #include "melder.h"
 
-#include "mad_config.h"
-#include "mad_decoder.h"
+extern "C" {
+	#include "mad_config.h"
+	#include "mad_decoder.h"
+}
 
 #define MP3F_BUFFER_SIZE (8 * 1024)
 #define MP3F_MAX_LOCATIONS 1024
@@ -145,10 +147,11 @@ int mp3_recognize (int nread, const char *data)
 
 MP3_FILE mp3f_new (void)
 {
-	MP3_FILE mp3f = Melder_malloc_e (struct _MP3_FILE, 1);
-	if (mp3f)
-		memset (mp3f, 0, sizeof(struct _MP3_FILE));
-	return mp3f;
+	try {
+		return Melder_calloc (struct _MP3_FILE, 1);
+	} catch (MelderError) {
+		Melder_throw ("Cannot create MP3 file object.");
+	}
 }
 
 void mp3f_delete (MP3_FILE mp3f)

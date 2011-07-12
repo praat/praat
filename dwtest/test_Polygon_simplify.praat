@@ -2,6 +2,10 @@
 
 printline test_Polygon_simplify
 
+
+p = Create simple Polygon... p 0 0 0 1 0.25 0.75 -0.25 0.75 0.25 0.25 -0.25 0.25
+
+
 for j to 10
 	m = Create simple Matrix... ps 2 100  randomUniform (0,1)
 	p1x = Get value in cell... 1 1
@@ -16,7 +20,7 @@ for j to 10
 			p2y = Get value in cell... 2 i+10
 		elsif ( i mod 10) >0
 			# 9 points on the edge from p(i) to point(i+10)
-			af = randomUniform (0,2)
+			af = randomUniform (0,1)
 			xn = p1x +af*(p2x-p1x)
 			yn = p1y + af*(p2y-p1y)
 			Set value... 1 i xn
@@ -36,7 +40,7 @@ for j to 10
 	endfor
 	select m
 	plus p
-	#Remove
+	Remove
 endfor
 
 printline test_Polygon_simplify OK

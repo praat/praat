@@ -85,6 +85,9 @@
 
 #define my me ->
 
+#undef MAX
+#undef MIN
+
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
@@ -124,18 +127,15 @@ int NUMstring_containsPrintableCharacter (const wchar_t *s)
 
 double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found)
 {
-	try {
-		*numbers_found = Melder_countTokens (s);
-		if (*numbers_found < 1) Melder_throw ("Empty string.");
-		autoNUMvector<double> numbers (1, *numbers_found);
-		long inum = 1;
-		for (wchar_t *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++)
-		{
-			if (! Interpreter_numericExpression (0, token, &numbers[inum])) Melder_throw 
-				("Item ", inum, L" \"", token, "\"is not a number.");
-		}
-		return numbers.transfer();
-	} catch (MelderError) { rethrowzero; }
+	*numbers_found = Melder_countTokens (s);
+	if (*numbers_found < 1) Melder_throw ("Empty string.");
+	autoNUMvector<double> numbers (1, *numbers_found);
+	long inum = 1;
+	for (wchar_t *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++)
+	{
+		Interpreter_numericExpression (0, token, &numbers[inum]);
+	}
+	return numbers.transfer();
 }
 #if 0
 int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
@@ -147,16 +147,13 @@ int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi)
 	return 1;
 }
 #endif
-int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
+void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 {
-	try {
-		for (long i = lo; i <= hi; i++)
-		{
-			Melder_free (to[i]);
-			if (from[i]) to[i] = Melder_wcsdup (from[i]); therror
-		}
-		return 1;
-	} catch (MelderError) { rethrowmzero ("Elements not copied."); }
+	for (long i = lo; i <= hi; i++)
+	{
+		Melder_free (to[i]);
+		if (from[i]) to[i] = Melder_wcsdup (from[i]); therror
+	}
 }
 
 void NUMstrings_free (wchar_t **s, long lo, long hi)
@@ -168,11 +165,9 @@ void NUMstrings_free (wchar_t **s, long lo, long hi)
 
 wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi)
 {
-	try {
-		autoNUMvector<wchar_t *> to (lo, hi);
-		NUMstrings_copyElements (from, to.peek(), lo, hi);
-		return to.transfer();
-	} catch (MelderError) { rethrowmzero ("Not copied."); }
+	autoNUMvector<wchar_t *> to (lo, hi);
+	NUMstrings_copyElements (from, to.peek(), lo, hi);
+	return to.transfer();
 }
 
 static wchar_t *appendNumberToString (const wchar_t *s, long number)
@@ -182,8 +177,7 @@ static wchar_t *appendNumberToString (const wchar_t *s, long number)
 
 	ncharb = swprintf (buf, 12, L"%ld", number);
 	if (s != NULL) nchars = wcslen (s);
-	wchar_t *newc = Melder_calloc_e (wchar_t, nchars + ncharb + 1);
-	if (newc == NULL) return NULL;
+	wchar_t *newc = Melder_calloc (wchar_t, nchars + ncharb + 1); 
 	if (nchars > 0) wcsncpy (newc, s, nchars);
 	wcsncpy (newc + nchars, buf, ncharb + 1);
 	return newc;
@@ -238,94 +232,84 @@ wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, const wchar_t *replace,
 	long maximumNumberOfReplaces, long *nmatches)
 {
-	try {
-		if (string == 0 || search == 0 || replace == 0) return NULL;
+	if (string == 0 || search == 0 || replace == 0) return NULL;
 
 
-		int len_string = wcslen (string);
-		if (len_string == 0) maximumNumberOfReplaces = 1;
-		int len_search = wcslen (search);
-		if (len_search == 0) maximumNumberOfReplaces = 1;
+	int len_string = wcslen (string);
+	if (len_string == 0) maximumNumberOfReplaces = 1;
+	int len_search = wcslen (search);
+	if (len_search == 0) maximumNumberOfReplaces = 1;
+
+	/*
+		To allocate memory for 'result' only once, we have to know how many
+		matches will occur.
+	*/
+
+	const wchar_t *pos = string; //current position / start of current match
+	*nmatches = 0;
+	if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
+
+	if (len_search == 0) /* Search is empty string... */
+	{
+		if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
+	}
+	else
+	{
+		if (len_string != 0) /* Because empty string always matches */
+		{
+			while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
+			{
+				pos += len_search;
+				(*nmatches)++;
+			}
+		}
+	}
+
+	int len_replace = wcslen (replace);
+	int len_result = len_string + *nmatches * (len_replace - len_search);
+	wchar_t *result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
+	result[len_result] = '\0';
+
+	const wchar_t *posp = pos = string;
+	int nchar = 0, result_nchar = 0;
+	for (long i = 1; i <= *nmatches; i++)
+	{
+		pos = wcsstr (pos, search);
 
 		/*
-			To allocate memory for 'result' only once, we have to know how many
-			matches will occur.
+			Copy gap between end of previous match and start of current.
 		*/
 
-		const wchar_t *pos = string; //current position / start of current match
-		*nmatches = 0;
-		if (maximumNumberOfReplaces <= 0) maximumNumberOfReplaces = LONG_MAX;
-
-		if (len_search == 0) /* Search is empty string... */
+		nchar = (pos - posp);
+		if (nchar > 0)
 		{
-			if (len_string == 0) *nmatches = 1; /* ...only matches empty string */
-		}
-		else
-		{
-			if (len_string != 0) /* Because empty string always matches */
-			{
-				while ((pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces)
-				{
-					pos += len_search;
-					(*nmatches)++;
-				}
-			}
-		}
-
-		int len_replace = wcslen (replace);
-		int len_result = len_string + *nmatches * (len_replace - len_search);
-		wchar_t *result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
-		result[len_result] = '\0';
-
-		const wchar_t *posp = pos = string;
-		int nchar = 0, result_nchar = 0;
-		for (long i = 1; i <= *nmatches; i++)
-		{
-			pos = wcsstr (pos, search);
-
-			/*
-				Copy gap between end of previous match and start of current.
-			*/
-
-			nchar = (pos - posp);
-			if (nchar > 0)
-			{
-				wcsncpy (result + result_nchar, posp, nchar);
-				result_nchar += nchar;
-			}
-
-			/*
-				Insert the replace string in result.
-			*/
-
-			wcsncpy (result + result_nchar, replace, len_replace);
-			result_nchar += len_replace;
-
-			/*
-				Next search starts after the match.
-			*/
-
-			pos += len_search;
-			posp = pos;
+			wcsncpy (result + result_nchar, posp, nchar);
+			result_nchar += nchar;
 		}
 
 		/*
-			Copy gap between end of match and end of string.
+			Insert the replace string in result.
 		*/
 
-		pos = string + len_string;
-		nchar = pos - posp;
-		if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
-		return result;
-	} catch (MelderError) { rethrowzero; }
-}
+		wcsncpy (result + result_nchar, replace, len_replace);
+		result_nchar += len_replace;
 
-static int expand_buffer (wchar_t **bufp, int new_size)
-{
-	wchar_t *tbuf = (wchar_t *) Melder_realloc_e (*bufp, new_size * sizeof (wchar_t));
-	if (tbuf == NULL) return 0;
-	*bufp = tbuf;
-	return 1;
+		/*
+			Next search starts after the match.
+		*/
+
+		pos += len_search;
+		posp = pos;
+	}
+
+	/*
+		Copy gap between end of match and end of string.
+	*/
+
+	pos = string + len_string;
+	nchar = pos - posp;
+	if (nchar > 0) wcsncpy (result + result_nchar, posp, nchar);
+	return result;
 }
 
 wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
@@ -338,7 +322,7 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	wchar_t prev_char = '\0';
 	const wchar_t *pos; 	/* current position in 'string' / start of current match */
 	const wchar_t *posp; /* end of previous match */
-	wchar_t *buf = 0;
+	autostring buf;
 
 	*nmatches = 0;
 	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0) return 0;
@@ -360,7 +344,7 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	*/
 
 	int buf_size = MAX (2 * string_length, 100);
-	if (! expand_buffer (& buf, buf_size)) return 0;
+	buf.resize (buf_size);
 
 	pos = posp = string;
 	while (ExecRE(compiledSearchRE, 0, (regularExp_CHAR *) pos, 0, reverse, prev_char, '\0', 0, 0, 0) && i++ < maximumNumberOfReplaces)
@@ -378,9 +362,9 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 			if (buf_nchar + nchar + 1 > buf_size)
 			{
 				buf_size *= 2;
-				if (! expand_buffer (& buf, buf_size)) goto end;
+				buf.resize (buf_size);
 			}
-			wcsncpy (buf + buf_nchar, posp, nchar);
+			wcsncpy (buf.peek() + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
 		}
 
@@ -391,32 +375,25 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
 
-		if ((SubstituteRE (compiledSearchRE, (regularExp_CHAR *) replaceRE, (regularExp_CHAR *) buf + buf_nchar, buf_size - buf_nchar, &errorType)) == FALSE)
+		if ((SubstituteRE (compiledSearchRE, (regularExp_CHAR *) replaceRE, (regularExp_CHAR *) buf.peek() + buf_nchar, buf_size - buf_nchar, &errorType)) == false)
 		{
 			if (errorType == 1) // not enough memory
 			{
 				buf_size *= 2;
-				if (! expand_buffer (& buf, buf_size)) goto end;
+				buf.resize (buf_size);
 				Melder_clearError ();
 				i--; // retry
-			continue;
+				continue;
 			}
-			else
-			{
-				goto end;
-			}
+			Melder_throw ("Error during substitution.");
 		}
 
-		/*
-			Buffer is not full, get number of characters added;
-		*/
+		// Buffer is not full, get number of characters added;
 
-		nchar = wcslen (buf + buf_nchar);
+		nchar = wcslen (buf.peek() + buf_nchar);
 		buf_nchar += nchar;
 
-		/*
-			Update next start position in search string.
-		*/
+		// Update next start position in search string.
 
 		posp = pos;
 		pos = (wchar_t *) compiledSearchRE -> endp[0];
@@ -429,21 +406,15 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 		if (pos - string == string_length) break;
 	}
 
-	/*
-		Copy last part of string to destination string
-	*/
+	// Copy last part of string to destination string
 
 	nchar = (string + string_length) - pos;
 	buf_size = buf_nchar + nchar + 1;
-	if (! expand_buffer (& buf, buf_size)) goto end;
+	buf.resize (buf_size);
 
-	wcsncpy (buf + buf_nchar, pos, nchar);
+	wcsncpy (buf.peek() + buf_nchar, pos, nchar);
 	buf[buf_size-1] = '\0';
-
-end:
-
-	if (Melder_hasError ()) Melder_free (buf);
-	return buf;
+	return buf.transfer();
 }
 
 static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
@@ -471,7 +442,10 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 			}
 		}
 		return result.transfer();
-	} catch (MelderError) { NUMstrings_free (result, lo, hi); rethrowzero; }
+	} catch (MelderError) {
+		NUMstrings_free (result, lo, hi);
+		return 0; 
+	}
 }
 
 
@@ -506,7 +480,10 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 			}
 		}
 		return result.transfer();
-	} catch (MelderError) { NUMstrings_free (result, lo, hi); rethrowzero; }
+	} catch (MelderError) {
+		NUMstrings_free (result, lo, hi);
+		return 0; 
+	}
 }
 
 wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
@@ -576,13 +553,12 @@ void NUMcentreRows (double **a, long rb, long re, long cb, long ce)
 
 void NUMcentreColumns (double **a, long rb, long re, long cb, long ce, double *centres)
 {
-	long i, j;
-	for (j = cb; j <= ce; j++)
+	for (long j = cb; j <= ce; j++)
 	{
 		double colmean = 0;
-		for (i = rb; i <= re; i++) colmean += a[i][j];
+		for (long i = rb; i <= re; i++) colmean += a[i][j];
 		colmean /= (re - rb + 1);
-		for (i = rb; i <= re; i++) a[i][j] -= colmean;
+		for (long i = rb; i <= re; i++) a[i][j] -= colmean;
 		if (centres != NULL) centres[j - cb + 1] = colmean;
 	}
 }
@@ -793,7 +769,6 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar)
 {
-	try {
 		if (ndf < 0 || nrows - ndf < 1 || covar == 0) Melder_throw ("Invalid arguments.");
 		for (long i = 1; i <= ncols; i++)
 		{
@@ -807,38 +782,35 @@ void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, l
 				covar[i][j] = covar[j][i] = sum / (nrows - ndf);
 			}
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method)
 {
-	try {
-		double kurt = NUMundefined;
-		if (nrows < 5) return kurt;
-		autoNUMvector<double> mean (1, ncols);
-		autoNUMmatrix<double> covar (1, ncols, 1, ncols);
-	
-		NUMcentreColumns (x, 1, nrows, 1, ncols, mean.peek());
-		NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.peek());
-		if (method == 1) // Schott (2001, page 33)
+	double kurt = NUMundefined;
+	if (nrows < 5) return kurt;
+	autoNUMvector<double> mean (1, ncols);
+	autoNUMmatrix<double> covar (1, ncols, 1, ncols);
+
+	NUMcentreColumns (x, 1, nrows, 1, ncols, mean.peek());
+	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.peek());
+	if (method == 1) // Schott (2001, page 33)
+	{
+		kurt = 0;
+		for (long l = 1; l <= ncols; l++)
 		{
-			kurt = 0;
-			for (long l = 1; l <= ncols; l++)
+			double zl = 0, wl, sll2 = covar[l][l] * covar[l][l];
+			for (long j = 1; j <= nrows; j++)
 			{
-				double zl = 0, wl, sll2 = covar[l][l] * covar[l][l];
-				for (long j = 1; j <= nrows; j++)
-				{
-					double d = x[j][l] - mean[l], d2 = d * d;
-					zl += d2 * d2;
-				}
-				zl = (zl - 6 * sll2) / (nrows - 4);
-				wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
-				kurt += zl / wl;
+				double d = x[j][l] - mean[l], d2 = d * d;
+				zl += d2 * d2;
 			}
-			kurt = kurt / (3 * ncols) - 1;
+			zl = (zl - 6 * sll2) / (nrows - 4);
+			wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
+			kurt += zl / wl;
 		}
-		return kurt;
-	} catch (MelderError) { rethrowzero; }
+		kurt = kurt / (3 * ncols) - 1;
+	}
+	return kurt;
 }
 
 /* obsolete 20080121
@@ -1064,89 +1036,82 @@ void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[])
 	}
 }
 
-int NUMdeterminant_cholesky (double **a, long n, double *lnd)
+void NUMdeterminant_cholesky (double **a, long n, double *lnd)
 {
-	try {
-		// Save the diagonal
-		autoNUMvector<double> d (1, n);
-		for (long i = 1; i <= n; i++) d[i] = a[i][i];
+	// Save the diagonal
+	autoNUMvector<double> d (1, n);
+	for (long i = 1; i <= n; i++) d[i] = a[i][i];
 
-		//	 Cholesky decomposition in lower, leave upper intact
+	//	 Cholesky decomposition in lower, leave upper intact
 
-		char uplo = 'U';
-		long lda = n, info;
-		NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &lda, &info);
-		if (info != 0) Melder_throw ("Cannot determine Cholesky decomposition.");
+	char uplo = 'U';
+	long lda = n, info;
+	NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &lda, &info);
+	if (info != 0) Melder_throw ("Cannot determine Cholesky decomposition.");
 
-		// Determinant from diagonal, restore diagonal
+	// Determinant from diagonal, restore diagonal
+	*lnd = 0;
+	for (long i = 1; i <= n; i++)
+	{
+		*lnd += log (a[i][i]);
+		a[i][i] = d[i];
+	}
+	*lnd *= 2; // because A = L . L'
+
+	// Restore lower from upper */
+
+	for (long i = 1; i < n; i++)
+	{
+		for (long j = i + 1; j <= n; j++) a[j][i] = a[i][j];
+	}
+}
+
+void NUMlowerCholeskyInverse (double **a, long n, double *lnd)
+{
+
+	char uplo = 'U', diag = 'N';
+	long info;
+
+	// Cholesky decomposition in lower, leave upper intact
+	// Fortran storage -> use uplo='U' to get 'L'.
+
+	(void) NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &n, &info);
+	if (info != 0) Melder_throw ("dpotf2 fails.");
+
+	// Determinant from diagonal, diagonal is now sqrt (a[i][i]) !
+
+	if (lnd != NULL)
+	{
 		*lnd = 0;
 		for (long i = 1; i <= n; i++)
 		{
 			*lnd += log (a[i][i]);
-			a[i][i] = d[i];
 		}
-		*lnd *= 2; // because A = L . L'
+		*lnd *= 2; /* because A = L . L' */
+	}
 
-		// Restore lower from upper */
+	// Get the inverse */
 
-		for (long i = 1; i < n; i++)
-		{
-			for (long j = i + 1; j <= n; j++) a[j][i] = a[i][j];
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
-}
-
-int NUMlowerCholeskyInverse (double **a, long n, double *lnd)
-{
-	try {
-		char uplo = 'U', diag = 'N';
-		long info;
-
-		// Cholesky decomposition in lower, leave upper intact
-		// Fortran storage -> use uplo='U' to get 'L'.
-
-		(void) NUMlapack_dpotf2 (&uplo, &n, &a[1][1], &n, &info);
-		if (info != 0) Melder_throw ("dpotf2 fails.");
-
-		// Determinant from diagonal, diagonal is now sqrt (a[i][i]) !
-
-		if (lnd != NULL)
-		{
-			*lnd = 0;
-			for (long i = 1; i <= n; i++)
-			{
-				*lnd += log (a[i][i]);
-			}
-			*lnd *= 2; /* because A = L . L' */
-		}
-
-		// Get the inverse */
-
-		(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
-		if (info != 0) Melder_throw ("dtrtri fails.");
-		return 1;
-	} catch(MelderError) { rethrowzero; }
+	(void) NUMlapack_dtrtri (&uplo, &diag, &n, &a[1][1], &n, &info);
+	if (info != 0) Melder_throw ("dtrtri fails.");
 }
 
 double **NUMinverseFromLowerCholesky (double **m, long n)
 {
-	try {
-		autoNUMmatrix<double> r (1, n, 1, n);
-		for (long i = 1; i <= n; i++)
+	autoNUMmatrix<double> r (1, n, 1, n);
+	for (long i = 1; i <= n; i++)
+	{
+		for (long j = 1; j <= i; j++)
 		{
-			for (long j = 1; j <= i; j++)
+			double sum = 0;
+			for (long k = i; k <= n; k++)
 			{
-				double sum = 0;
-				for (long k = i; k <= n; k++)
-				{
-					sum += m[k][i] * m[k][j];
-				}
-				r[i][j] = r[j][i] = sum;
+				sum += m[k][i] * m[k][j];
 			}
+			r[i][j] = r[j][i] = sum;
 		}
-		return r.transfer();
-	} catch (MelderError) { rethrowzero; }
+	}
+	return r.transfer();
 }
 
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, long nr, long n)
@@ -1191,118 +1156,104 @@ double NUMtrace2 (double **a1, double **a2, long n)
 
 void NUMeigensystem (double **a, long n, double **evec, double eval[])
 {
-	try {
 		autoEigen me = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (me.peek(), a, n); therror
 		if (evec) NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 		if (eval) NUMdvector_copyElements (my eigenvalues, eval, 1, n);
-	} catch (MelderError) { rethrow; }
 }
 
-int NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance)
+void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance)
 {
-	try {
-		autoNUMvector<double> z (1, n);
+	autoNUMvector<double> z (1, n);
 
-		double val, cval = 0;
+	double val, cval = 0;
+	for (long k = 1; k <= n; k++)
+	{
+		for (long l = 1; l <= n; l++) { cval += q[k] * mns[k][l] * q[l]; }
+	}
+	if (cval == 0) Melder_throw ("Zero matrices ??");
+	
+	long iter = 0; 
+	do
+	{
+		double znorm2 = 0;
+		for (long l = 1; l <= n; l++)
+		{
+			z[l] = 0;
+			for (long k = 1; k <= n; k++) { z[l] += mns[l][k] * q[k]; }
+		}
+		
+		for (long k = 1; k <= n; k++)  { znorm2 += z[k] * z[k]; }
+		znorm2 = sqrt (znorm2);
+		
+		for (long k = 1; k <= n; k++) { q[k] = z[k] / znorm2; }
+		
+		val = cval; cval = 0;
+		
 		for (long k = 1; k <= n; k++)
 		{
 			for (long l = 1; l <= n; l++) { cval += q[k] * mns[k][l] * q[l]; }
 		}
-		if (cval == 0) Melder_throw ("Zero matrices ??");
 		
-		long iter = 0; 
-		do
+	} while (fabs(cval - val) > tolerance || ++iter < 30);
+	*lambda = cval;
+}
+
+void NUMprincipalComponents (double **a, long n, long nComponents, double **pc)
+{
+	autoNUMmatrix<double> evec (1, n, 1, n);
+	NUMeigensystem (a, n, evec.peek(), NULL);
+	for (long i = 1; i <= n; i++)
+	{
+		for (long j = 1; j <= nComponents; j++)
 		{
-			double znorm2 = 0;
-			for (long l = 1; l <= n; l++)
-			{
-				z[l] = 0;
-				for (long k = 1; k <= n; k++) { z[l] += mns[l][k] * q[k]; }
-			}
-			
-			for (long k = 1; k <= n; k++)  { znorm2 += z[k] * z[k]; }
-			znorm2 = sqrt (znorm2);
-			
-			for (long k = 1; k <= n; k++) { q[k] = z[k] / znorm2; }
-			
-			val = cval; cval = 0;
-			
+			double s = 0;
 			for (long k = 1; k <= n; k++)
 			{
-				for (long l = 1; l <= n; l++) { cval += q[k] * mns[k][l] * q[l]; }
+				s += a[k][i] * evec[k][j]; /* times sqrt(eigenvalue) ?? */
 			}
-			
-		} while (fabs(cval - val) > tolerance || ++iter < 30);
-		*lambda = cval;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+			pc[i][j] = s;
+		}
+	}
 }
 
-int NUMprincipalComponents (double **a, long n, long nComponents, double **pc)
+void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, long numberOfComponents, double **pc)
 {
-	try {
-		autoNUMmatrix<double> evec (1, n, 1, n);
-		NUMeigensystem (a, n, evec.peek(), NULL);
-		for (long i = 1; i <= n; i++)
+	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
+	autoNUMmatrix<double> mc (NUMdmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
+
+	/*NUMcentreColumns (mc, nrows, ncols);*/
+	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
+	for (long i = 1; i <= nrows; i++)
+	{
+		for (long j = 1; j <= numberOfComponents; j++)
 		{
-			for (long j = 1; j <= nComponents; j++)
+			pc[i][j] = 0;
+			for (long k = 1; k <= ncols; k++)
 			{
-				double s = 0;
-				for (long k = 1; k <= n; k++)
-				{
-					s += a[k][i] * evec[k][j]; /* times sqrt(eigenvalue) ?? */
-				}
-				pc[i][j] = s;
+				pc[i][j] += svd -> v[k][j] * m[i][k];
 			}
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
 }
 
-int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, long numberOfComponents, double **pc)
+void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance)
 {
-	try {
-		Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
-		autoNUMmatrix<double> mc (NUMdmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
-	
-		/*NUMcentreColumns (mc, nrows, ncols);*/
-		autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
-		for (long i = 1; i <= nrows; i++)
-		{
-			for (long j = 1; j <= numberOfComponents; j++)
-			{
-				pc[i][j] = 0;
-				for (long k = 1; k <= ncols; k++)
-				{
-					pc[i][j] += svd -> v[k][j] * m[i][k];
-				}
-			}
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
-}
+	autoSVD me = SVD_create_d (y, nr, nc);
 
-int NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance)
-{
-	try {
-		autoSVD me = SVD_create_d (y, nr, nc);
-
-		(void) SVD_zeroSmallSingularValues (me.peek(), tolerance);
-		for (long i = 1; i <= nc; i++)
+	(void) SVD_zeroSmallSingularValues (me.peek(), tolerance);
+	for (long i = 1; i <= nc; i++)
+	{
+		for (long j = 1; j <= nr; j++)
 		{
-			for (long j = 1; j <= nr; j++)
+			double s = 0;
+			for (long k = 1; k <= nc; k++)
 			{
-				double s = 0;
-				for (long k = 1; k <= nc; k++)
-				{
-					if (my d[k] != 0) s += my v[i][k] * my u[j][k] / my d[k];
-				}
-				yinv[i][j] = s;
+				if (my d[k] != 0) s += my v[i][k] * my u[j][k] / my d[k];
 			}
+			yinv[i][j] = s;
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
 }
 
 long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2)
@@ -1310,50 +1261,44 @@ long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-int NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance, double *result)
+void NUMsolveEquation (double **a, long nr, long nc, double *b, double tolerance, double *result)
 {
-	try {
-		double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
+	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
-		if (nr <= 0 || nc <= 0) Melder_throw ("Negative dimensions");
+	if (nr <= 0 || nc <= 0) Melder_throw ("Negative dimensions");
 
-		autoSVD me = SVD_create_d (a, nr, nc);
-		SVD_zeroSmallSingularValues (me.peek(), tol);
-		SVD_solve (me.peek(), b, result);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	autoSVD me = SVD_create_d (a, nr, nc);
+	SVD_zeroSmallSingularValues (me.peek(), tol);
+	SVD_solve (me.peek(), b, result);
 }
 
 
-int NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tolerance, double **x)
+void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tolerance, double **x)
 {
-	try {
-		double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
+	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
-		if (nr <= 0 || nc <= 0) Melder_throw ("Negative dimensions");
+	if (nr <= 0 || nc <= 0) Melder_throw ("Negative dimensions");
 
-		autoSVD me = SVD_create_d (a, nr, nc);
-		autoNUMvector<double> bt (1, nr + nc);
-		double *xt = & bt[nr];
+	autoSVD me = SVD_create_d (a, nr, nc);
+	autoNUMvector<double> bt (1, nr + nc);
+	double *xt = & bt[nr];
 
-		SVD_zeroSmallSingularValues (me.peek(), tol);
+	SVD_zeroSmallSingularValues (me.peek(), tol);
 
-		for (long k = 1; k <= ncb; k++)
+	for (long k = 1; k <= ncb; k++)
+	{
+		for (long j = 1; j <= nr; j++)
 		{
-			for (long j = 1; j <= nr; j++)
-			{
-				bt[j] = b[j][k];
-			}
-
-			SVD_solve (me.peek(), bt.peek(), xt);
-
-			for (long j = 1; j <= nc; j++)
-			{
-				x[j][k] = xt[j];
-			}
+			bt[j] = b[j][k];
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+
+		SVD_solve (me.peek(), bt.peek(), xt);
+
+		for (long j = 1; j <= nc; j++)
+		{
+			x[j][k] = xt[j];
+		}
+	}
 }
 
 
@@ -1426,7 +1371,6 @@ static void nr_func (double x, double *f, double *df, void *data)
 
 void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], long n, double *alpha, double *gamma)
 {
-	try {
 		long n3 = 3, info;
 		double eps = 1e-5, t1, t2, t3;
 
@@ -1589,7 +1533,6 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], lon
 		}
 
 		*alpha = chi[1]; *gamma = chi[3];
-	} catch (MelderError) { rethrow; }
 }
 
 /*
@@ -1615,7 +1558,6 @@ static void nr2_func (double b, double *f, double *df, void *data)
 
 void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[], double alpha, double delta, double t[])
 {
-	try {
 		autoNUMmatrix<double> u (1, m, 1, m);
 		autoNUMvector<double> c (1, m);
 		autoNUMvector<double> x (1, n);
@@ -1725,124 +1667,119 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 				t[j] += u[j][k] * x[k] / (c[k] - b0);
 			}
 		}
-	} catch (MelderError) { rethrow; }
 }
 
-int NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double *v, double *s)
+void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double *v, double *s)
 {
-	try {
-		int orthogonal = v == 0 || s == 0; /* else similarity transform */
+	int orthogonal = v == 0 || s == 0; /* else similarity transform */
 
-		autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
-		autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
-		NUMdmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
-		
-		/*
-			Reference: Borg & Groenen (1997), Modern multidimensional scaling,
-			Springer
-			1. Calculate C = X'JY (page 346) for similarity transform
-				else X'Y for othogonal (page 341)
-				JY amounts to centering the columns of Y.
-		*/
+	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
+	autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
+	NUMdmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
+	
+	/*
+		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
+		Springer
+		1. Calculate C = X'JY (page 346) for similarity transform
+			else X'Y for othogonal (page 341)
+			JY amounts to centering the columns of Y.
+	*/
 
-		if (! orthogonal) NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, NULL);
-		for (long i = 1; i <= nDimensions; i++)
+	if (! orthogonal) NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, NULL);
+	for (long i = 1; i <= nDimensions; i++)
+	{
+		for (long j = 1; j <= nDimensions; j++)
 		{
-			for (long j = 1; j <= nDimensions; j++)
+			for (long k = 1; k <= nPoints; k++)
 			{
-				for (long k = 1; k <= nPoints; k++)
-				{
-					c[i][j] += x[k][i] * yc[k][j];
-				}
+				c[i][j] += x[k][i] * yc[k][j];
 			}
 		}
+	}
 
-		// 2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
+	// 2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
 
-		autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
-		double trace = 0;
-		for (long i = 1; i <= nDimensions; i++) { trace += svd -> d[i]; }
+	autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
+	double trace = 0;
+	for (long i = 1; i <= nDimensions; i++) { trace += svd -> d[i]; }
 
-		if (trace == 0) Melder_throw ("NUMProcrustes: degenerate configuration(s).");
+	if (trace == 0) Melder_throw ("NUMProcrustes: degenerate configuration(s).");
 
-		// 3. T = QP'
+	// 3. T = QP'
 
-		for (long i = 1; i <= nDimensions; i++)
+	for (long i = 1; i <= nDimensions; i++)
+	{
+		for (long j = 1; j <= nDimensions; j++)
+		{
+			t[i][j] = 0;
+			for (long k = 1; k <= nDimensions; k++)
+			{
+				t[i][j] += svd -> v[i][k] * svd -> u[j][k];
+			}
+		}
+	}
+
+	if (! orthogonal)
+	{
+		autoNUMmatrix<double> xc (1, nPoints, 1, nDimensions);
+		NUMdmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
+		autoNUMmatrix<double> yt (1, nPoints, 1, nDimensions);
+
+		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
+		// First we need YT.
+
+		for (long i = 1; i <= nPoints; i++)
 		{
 			for (long j = 1; j <= nDimensions; j++)
 			{
-				t[i][j] = 0;
 				for (long k = 1; k <= nDimensions; k++)
 				{
-					t[i][j] += svd -> v[i][k] * svd -> u[j][k];
+					yt[i][j] += y[i][k] * t[k][j];
 				}
 			}
 		}
 
-		if (! orthogonal)
+		// X'J amount to centering the columns of X
+
+		NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, NULL);
+
+		// tr X'J YT == tr xc' yt
+
+		double traceXtJYT = 0;
+		for (long i = 1; i <= nDimensions; i++)
 		{
-			autoNUMmatrix<double> xc (1, nPoints, 1, nDimensions);
-			NUMdmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
-			autoNUMmatrix<double> yt (1, nPoints, 1, nDimensions);
-
-			// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
-			// First we need YT.
-
-			for (long i = 1; i <= nPoints; i++)
+			for (long j = 1; j <= nPoints; j++)
 			{
-				for (long j = 1; j <= nDimensions; j++)
-				{
-					for (long k = 1; k <= nDimensions; k++)
-					{
-						yt[i][j] += y[i][k] * t[k][j];
-					}
-				}
-			}
-
-			// X'J amount to centering the columns of X
-
-			NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, NULL);
-
-			// tr X'J YT == tr xc' yt
-
-			double traceXtJYT = 0;
-			for (long i = 1; i <= nDimensions; i++)
-			{
-				for (long j = 1; j <= nPoints; j++)
-				{
-					traceXtJYT += xc[j][i] * yt[j][i];
-				}
-			}
-			double traceYtJY = 0;
-			for (long i = 1; i <= nDimensions; i++)
-			{
-				for (long j = 1; j <= nPoints; j++)
-				{
-					traceYtJY += y[j][i] * yc[j][i];
-				}
-			}
-
-			*s = traceXtJYT / traceYtJY;
-
-			// 5. Translation vector tr = (X - sYT)'1 / nPoints
-
-			for (long i = 1; i <= nDimensions; i++)
-			{
-				for (long j = 1; j <= nPoints; j++)
-				{
-					v[i] += x[j][i] - *s * yt[j][i];
-				}
-				v[i] /= nPoints;
+				traceXtJYT += xc[j][i] * yt[j][i];
 			}
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		double traceYtJY = 0;
+		for (long i = 1; i <= nDimensions; i++)
+		{
+			for (long j = 1; j <= nPoints; j++)
+			{
+				traceYtJY += y[j][i] * yc[j][i];
+			}
+		}
+
+		*s = traceXtJYT / traceYtJY;
+
+		// 5. Translation vector tr = (X - sYT)'1 / nPoints
+
+		for (long i = 1; i <= nDimensions; i++)
+		{
+			for (long j = 1; j <= nPoints; j++)
+			{
+				v[i] += x[j][i] - *s * yt[j][i];
+			}
+			v[i] /= nPoints;
+		}
+	}
 }
 
 
 void NUMmspline (double knot[], long nKnots, long order, long i, double x, double *y)
 {
-	try {
 		long j, nSplines = nKnots - order;
 		if (nSplines <= 0) Melder_throw ("No splines.");
 		
@@ -1883,12 +1820,10 @@ void NUMmspline (double knot[], long nKnots, long order, long i, double x, doubl
 			}
 		}
 		*y = m[i];
-	} catch (MelderError) { rethrow; }
 }
 
 void NUMispline (double aknot[], long nKnots, long order, long i, double x, double *y)
 {
-	try {
 		long j, orderp1 = order + 1;
 
 		*y = 0;
@@ -1916,7 +1851,6 @@ void NUMispline (double aknot[], long nKnots, long order, long i, double x, doub
 			*y += (aknot[m+orderp1] - aknot[m]) * r;
 		}
 		*y /= orderp1;
-	} catch (MelderError) { rethrow; }
 }
 
 double NUMwilksLambda (double *lambda, long from, long to)
@@ -1935,68 +1869,65 @@ double NUMfactln (int n)
 		(table[n] = NUMlnGamma (n + 1.0));
 }
 
-int NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double x1, double x2, void *closure, double *root)
+void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double x1, double x2, void *closure, double *root)
 {
-	try {
-		double df, dx, dxold, fx, fh, fl, tmp, xh, xl, tol;
-		long itermax = 60;
+	double df, dx, dxold, fx, fh, fl, tmp, xh, xl, tol;
+	long itermax = 60;
 
-		(*f) (x1, &fl, &df, closure);
-		if (fl == 0.0)
+	(*f) (x1, &fl, &df, closure);
+	if (fl == 0.0)
+	{
+		*root = x1;
+		return;
+	}
+
+	(*f) (x2, &fh, &df, closure);
+	if (fh == 0.0)
+	{
+		*root = x2;
+		return;
+	}
+
+	if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0))
+	{
+		*root = NUMundefined;
+		Melder_throw (L"Root must be bracketed.");
+	}
+
+	if (fl < 0.0) { xl = x1; xh = x2; }
+	else { xh = x1; xl = x2; }
+
+	dxold = fabs (x2 - x1);
+	dx = dxold;
+	*root = 0.5 * (x1 + x2);
+	(*f) (*root, &fx, &df, closure);
+
+	for (long iter = 1; iter <= itermax; iter++)
+	{
+		if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df)))
 		{
-			*root = x1;
-			return 1;
+			dxold = dx;
+			dx = 0.5 * (xh - xl);
+			*root = xl + dx;
+			if (xl == *root) return;
 		}
-
-		(*f) (x2, &fh, &df, closure);
-		if (fh == 0.0)
+		else
 		{
-			*root = x2;
-			return 1;
+			dxold = dx;
+			dx = fx / df;
+			tmp = *root;
+			*root -= dx;
+			if (tmp == *root) return;
 		}
+		tol = NUMfpp -> eps	* (*root == 0 ? 1 : fabs (*root));
+		if (fabs(dx) < tol) return;
 
-		if ((fl > 0.0 && fh > 0.0) || (fl < 0.0 && fh < 0.0))
-		{
-			*root = NUMundefined;
-			Melder_throw (L"Root must be bracketed.");
-		}
-
-		if (fl < 0.0) { xl = x1; xh = x2; }
-		else { xh = x1; xl = x2; }
-
-		dxold = fabs (x2 - x1);
-		dx = dxold;
-		*root = 0.5 * (x1 + x2);
 		(*f) (*root, &fx, &df, closure);
 
-		for (long iter = 1; iter <= itermax; iter++)
-		{
-			if ((((*root - xh) * df - fx) * ((*root - xl) * df - fx) >= 0.0) || (fabs (2.0 * fx) > fabs (dxold * df)))
-			{
-				dxold = dx;
-				dx = 0.5 * (xh - xl);
-				*root = xl + dx;
-				if (xl == *root) return 1;
-			}
-			else
-			{
-				dxold = dx;
-				dx = fx / df;
-				tmp = *root;
-				*root -= dx;
-				if (tmp == *root) return 1;
-			}
-			tol = NUMfpp -> eps	* (*root == 0 ? 1 : fabs (*root));
-			if (fabs(dx) < tol) return 1;
-
-			(*f) (*root, &fx, &df, closure);
-
-			if (fx < 0.0) { xl = *root; }
-			else { xh = *root; }
-		}
-		Melder_warning3 (L"NUMnrbis: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		if (fx < 0.0) { xl = *root; }
+		else { xh = *root; }
+	}
+	Melder_warning3 (L"NUMnrbis: maximum number of iterations (", Melder_integer (itermax), L") exceeded.");
 }
 
 double NUMridders (double (*f) (double x, void *closure), double x1, double x2, void *closure)
@@ -2329,61 +2260,59 @@ double NUMlnBeta (double a, double b)
 
 double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar)
 {
-	try {
-		if (*beta <= 0) *beta = (1.0 / sqrt (2)) * pow ((1.0 + 2 * p ) / 4, 1.0 / (p + 4 )) * pow (n, 1.0 / (p + 4));
-		double p2 = p / 2.0;
-		double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-		double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-		double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
-		double prob = NUMundefined;
+	if (*beta <= 0) *beta = (1.0 / sqrt (2)) * pow ((1.0 + 2 * p ) / 4, 1.0 / (p + 4 )) * pow (n, 1.0 / (p + 4));
+	double p2 = p / 2.0;
+	double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+	double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+	double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
+	double prob = NUMundefined;
 
-		*tnb = *lnmu = *lnvar = NUMundefined;
+	*tnb = *lnmu = *lnvar = NUMundefined;
 
-		if (n < 2 || p < 1) return prob;
+	if (n < 2 || p < 1) return prob;
 
-		autoNUMvector<double> zero (1, p);
-		autoNUMmatrix<double> covar (1, p, 1, p);
-		autoNUMmatrix<double> x (NUMdmatrix_copy (data, 1, n, 1, p), 1, 1);
+	autoNUMvector<double> zero (1, p);
+	autoNUMmatrix<double> covar (1, p, 1, p);
+	autoNUMmatrix<double> x (NUMdmatrix_copy (data, 1, n, 1, p), 1, 1);
 
-		NUMcentreColumns (x.peek(), 1, n, 1, p, NULL); // x - xmean
+	NUMcentreColumns (x.peek(), 1, n, 1, p, NULL); // x - xmean
 
-		NUMcovarianceFromColumnCentredMatrix (x.peek(), n, p, 0, covar.peek());
+	NUMcovarianceFromColumnCentredMatrix (x.peek(), n, p, 0, covar.peek());
 
-		if (! NUMlowerCholeskyInverse (covar.peek(), p, NULL))
+	try { 
+		NUMlowerCholeskyInverse (covar.peek(), p, NULL);
+		double djk, djj, sumjk = 0, sumj = 0;
+		double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
+		/* Heinze & Wagner (1997), page 3
+			We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
+			So d[j][k]= d[k][j] and d[j][j] = 0
+		*/
+		for (long j = 1; j <= n; j++)
 		{
-			*tnb = 4 * n;
-		}
-		else
-		{
-			double djk, djj, sumjk = 0, sumj = 0;
-			double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
-			/* Heinze & Wagner (1997), page 3
-				We use d[j][k] = ||Y[j]-Y[k]||^2 = (Y[j]-Y[k])'S^(-1)(Y[j]-Y[k])
-				So d[j][k]= d[k][j] and d[j][j] = 0
-			*/
-			for (long j = 1; j <= n; j++)
+			for (long k = 1; k < j; k++)
 			{
-				for (long k = 1; k < j; k++)
-				{
-					djk = NUMmahalanobisDistance_chi (covar.peek(), x[j], x[k], p, p);
-					sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
-				}
-				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance_chi (covar.peek(), x[j], zero.peek(), p, p);
-				sumj += exp (-b2 * djj);
+				djk = NUMmahalanobisDistance_chi (covar.peek(), x[j], x[k], p, p);
+				sumjk += 2 * exp (-b1 * djk); // factor 2 because d[j][k] == d[k][j]
 			}
-			*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+			sumjk += 1; // for k == j
+			djj = NUMmahalanobisDistance_chi (covar.peek(), x[j], zero.peek(), p, p);
+			sumj += exp (-b2 * djj);
 		}
-		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
-		double var = 2.0 * pow (1 + 4 * beta2, -p2)
-			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
-			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
-		double mu2 = mu * mu;
-		*lnmu = log (sqrt (mu2 * mu2 /(mu2 + var)));
-		*lnvar = sqrt (log ((mu2 + var) / mu2));
-		prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
-		return prob;
-	} catch (MelderError) { rethrowzero; }
+		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+	} catch (MelderError) {
+		Melder_clearError ();
+		*tnb = 4 * n;
+	}
+
+	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2 * gamma2));
+	double var = 2.0 * pow (1 + 4 * beta2, -p2)
+		+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4 * gamma4))
+		- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2 * delta2));
+	double mu2 = mu * mu;
+	*lnmu = log (sqrt (mu2 * mu2 /(mu2 + var)));
+	*lnvar = sqrt (log ((mu2 + var) / mu2));
+	prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
+	return prob;
 }
 
 /*************** Hz <--> other freq reps *********************/
@@ -2498,77 +2427,75 @@ for (i=1; i<=n+n+n; i++) work[i]=0;
 */
 int NUMburg (double x[], long n, double a[], int m, double *xms)
 {
-	try {
-		for (long j = 1; j <= m; j++) a[j] = 0;
-		
-		autoNUMvector<double> b1 (1, n);
-		autoNUMvector<double> b2 (1, n);
-		autoNUMvector<double> aa (1, m);
-		
-		// (3)
+	for (long j = 1; j <= m; j++) a[j] = 0;
+	
+	autoNUMvector<double> b1 (1, n);
+	autoNUMvector<double> b2 (1, n);
+	autoNUMvector<double> aa (1, m);
+	
+	// (3)
 
-		double p = 0.0;
-		for (long j = 1; j <= n; j++)
+	double p = 0.0;
+	for (long j = 1; j <= n; j++)
+	{
+		p += x[j] * x[j];
+	}
+
+	*xms = p / n;
+	if (*xms <= 0) return 0; // warning empty
+
+	// (9)
+
+	b1[1] = x[1];
+	b2[n - 1] = x[n];
+	for (long j = 2; j <= n - 1; j++)
+	{
+		b1[j] = b2[j - 1] = x[j];
+	}
+
+	for (long i = 1; i <= m; i++)
+	{
+		// (7)
+
+		double num = 0.0, denum = 0.0;
+		for (long j = 1; j <= n - i; j++)
 		{
-			p += x[j] * x[j];
+			num += b1[j] * b2[j];
+			denum += b1[j] * b1[j] + b2[j] * b2[j];
 		}
 
-		*xms = p / n;
-		if (*xms <= 0) return 0; // warning empty
+		if (denum <= 0) return 0; // warning ill-conditioned
 
-		// (9)
+		a[i] = 2.0 * num / denum;
 
-		b1[1] = x[1];
-		b2[n - 1] = x[n];
-		for (long j = 2; j <= n - 1; j++)
+		// (10)
+
+		*xms *= 1.0 - a[i] * a[i];
+
+		// (5)
+
+		for (long j = 1; j <= i - 1; j++)
 		{
-			b1[j] = b2[j - 1] = x[j];
+			a[j] = aa[j] - a[i] * aa[i - j];
 		}
 
-		for (long i = 1; i <= m; i++)
+		if (i < m)
 		{
-			// (7)
 
-			double num = 0.0, denum = 0.0;
-			for (long j = 1; j <= n - i; j++)
+			// (8)  Watch out: i -> i+1
+
+			for (long j = 1; j <= i; j++)
 			{
-				num += b1[j] * b2[j];
-				denum += b1[j] * b1[j] + b2[j] * b2[j];
+				aa[j] = a[j];
 			}
-
-			if (denum <= 0) return 0; // warning ill-conditioned
-
-			a[i] = 2.0 * num / denum;
-
-			// (10)
-
-			*xms *= 1.0 - a[i] * a[i];
-
-			// (5)
-
-			for (long j = 1; j <= i - 1; j++)
+			for (long j = 1; j <= n - i - 1; j++)
 			{
-				a[j] = aa[j] - a[i] * aa[i - j];
-			}
-
-			if (i < m)
-			{
-
-				// (8)  Watch out: i -> i+1
-
-				for (long j = 1; j <= i; j++)
-				{
-					aa[j] = a[j];
-				}
-				for (long j = 1; j <= n - i - 1; j++)
-				{
-					b1[j] -= aa[i] * b2[j];
-					b2[j] = b2[j + 1] - aa[i] * b1[j + 1];
-				}
+				b1[j] -= aa[i] * b2[j];
+				b2[j] = b2[j + 1] - aa[i] * b1[j + 1];
 			}
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+	return 1;
 }
 
 int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
@@ -2611,84 +2538,76 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 
 double **NUMcosinesTable (long first, long last, long npoints)
 {
-	try {
-		Melder_assert (0 < first && first <= last && npoints > 0);
-		autoNUMmatrix<double> m (first, last, 1, npoints);
-		for (long i = first; i <= last; i++)
+	Melder_assert (0 < first && first <= last && npoints > 0);
+	autoNUMmatrix<double> m (first, last, 1, npoints);
+	for (long i = first; i <= last; i++)
+	{
+		double f = i * NUMpi / npoints;
+		for (long j = 1; j <= npoints; j++)
 		{
-			double f = i * NUMpi / npoints;
-			for (long j = 1; j <= npoints; j++)
-			{
-				m[i][j] = cos (f * (j - 0.5));
-			}
+			m[i][j] = cos (f * (j - 0.5));
 		}
-		return m.transfer();
-	} catch (MelderError) { rethrowzero; }
+	}
+	return m.transfer();
 }
 
-int NUMspline (double x[], double y[], long n, double yp1, double ypn,
+void NUMspline (double x[], double y[], long n, double yp1, double ypn,
 	double y2[])
 {
-	try {
-		autoNUMvector<double> u (1, n - 1);
-		
-		if (yp1 > 0.99e30)
-		{
-			y2[1] = u[1] = 0.0;
-		}
-		else
-		{
-			y2[1] = -0.5;
-			u[1] = (3.0 / (x[2] - x[1])) * ((y[2] - y[1]) / (x[2] - x[1]) - yp1);
-		}
-		
-		for (long i = 2; i <= n - 1; i++)
-		{
-			double sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
-			double p = sig * y2[i-1] + 2.0;
-			y2[i] = (sig - 1.0) / p;
-			u[i] = (y[i+1] - y[i]) / (x[i+1] - x[i]) - (y[i] - y[i-1]) / (x[i] - x[i-1]);
-			u[i] = (6.0 * u[i] / (x[i+1] - x[i-1]) - sig * u[i-1]) / p;
-		}
-		
-		double qn, un;
-		if (ypn > 0.99e30)
-		{
-			qn = un = 0.0;
-		}
-		else
-		{
-			qn = 0.5;
-			un = (3.0 / (x[n] - x[n-1])) * (ypn - (y[n] - y[n-1]) / (x[n] - x[n-1]));
-		}
+	autoNUMvector<double> u (1, n - 1);
+	
+	if (yp1 > 0.99e30)
+	{
+		y2[1] = u[1] = 0.0;
+	}
+	else
+	{
+		y2[1] = -0.5;
+		u[1] = (3.0 / (x[2] - x[1])) * ((y[2] - y[1]) / (x[2] - x[1]) - yp1);
+	}
+	
+	for (long i = 2; i <= n - 1; i++)
+	{
+		double sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
+		double p = sig * y2[i-1] + 2.0;
+		y2[i] = (sig - 1.0) / p;
+		u[i] = (y[i+1] - y[i]) / (x[i+1] - x[i]) - (y[i] - y[i-1]) / (x[i] - x[i-1]);
+		u[i] = (6.0 * u[i] / (x[i+1] - x[i-1]) - sig * u[i-1]) / p;
+	}
+	
+	double qn, un;
+	if (ypn > 0.99e30)
+	{
+		qn = un = 0.0;
+	}
+	else
+	{
+		qn = 0.5;
+		un = (3.0 / (x[n] - x[n-1])) * (ypn - (y[n] - y[n-1]) / (x[n] - x[n-1]));
+	}
 
-		y2[n] = (un - qn * u[n-1]) / (qn * y2[n-1] + 1.0);
-		for (long k = n - 1; k >= 1; k--)
-		{
-			y2[k] = y2[k] * y2[k+1] + u[k];
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	y2[n] = (un - qn * u[n-1]) / (qn * y2[n-1] + 1.0);
+	for (long k = n - 1; k >= 1; k--)
+	{
+		y2[k] = y2[k] * y2[k+1] + u[k];
+	}
 }
 
-int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y)
+void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y)
 {
-	try {
-		long klo = 1, khi = n;
-		while (khi - klo > 1)
-		{
-			long k = (khi + klo) >> 1;
-			if (xa[k] > x) khi = k;
-			else klo = k;
-		}
-		double h = xa[khi] - xa[klo];
-		if (h == 0.0) Melder_throw ("NUMsplint: bad input value.");
-		double a = (xa[khi] - x) / h;
-		double b = (x - xa[klo]) / h;
-		*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
-			(b * b * b - b) * y2a[khi]) * (h * h) / 6.0;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	long klo = 1, khi = n;
+	while (khi - klo > 1)
+	{
+		long k = (khi + klo) >> 1;
+		if (xa[k] > x) khi = k;
+		else klo = k;
+	}
+	double h = xa[khi] - xa[klo];
+	if (h == 0.0) Melder_throw ("NUMsplint: bad input value.");
+	double a = (xa[khi] - x) / h;
+	double b = (x - xa[klo]) / h;
+	*y = a * ya[klo] + b * ya[khi]+((a * a * a - a) * y2a[klo] +
+		(b * b * b - b) * y2a[khi]) * (h * h) / 6.0;
 }
 
 double NUMsinc (const double x)

@@ -86,37 +86,35 @@ static int _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern,
 	Activation activation, long maxNumOfEpochs, double tolerance, 
 	Any parameters, int costFunctionType, int reset)
 {
-	try {
-		_FFNet_Pattern_Activation_checkDimensions (me, pattern, activation);
-		Minimizer_setParameters (my minimizer, parameters);
-	
-		// Link the things to be learned
-	
-		my nPatterns = pattern -> ny;
-		my inputPattern = pattern -> z;
-		my targetActivation = activation -> z;
-		FFNet_setCostFunction (me, costFunctionType);
-	
-		if (reset) 
-		{
-			autoNUMvector<double> wbuf (1, my dimension);
-			long k = 1;
-			for (long i = 1; i <= my nWeights; i++)
-			{
-				if (my wSelected[i]) wbuf[k++] = my w[i];
-			} 
-			Minimizer_reset (my minimizer, wbuf.peek());
-		}
-		
-		int status = Minimizer_minimize (my minimizer, maxNumOfEpochs, tolerance, 1);
+	_FFNet_Pattern_Activation_checkDimensions (me, pattern, activation);
+	Minimizer_setParameters (my minimizer, parameters);
 
-		// Unlink
+	// Link the things to be learned
+
+	my nPatterns = pattern -> ny;
+	my inputPattern = pattern -> z;
+	my targetActivation = activation -> z;
+	FFNet_setCostFunction (me, costFunctionType);
+
+	if (reset) 
+	{
+		autoNUMvector<double> wbuf (1, my dimension);
+		long k = 1;
+		for (long i = 1; i <= my nWeights; i++)
+		{
+			if (my wSelected[i]) wbuf[k++] = my w[i];
+		} 
+		Minimizer_reset (my minimizer, wbuf.peek());
+	}
 	
-		my nPatterns = 0; 
-		my inputPattern = NULL; 
-		my targetActivation = NULL;
-		return status;
-	} catch (MelderError) { rethrowzero; }
+	int status = Minimizer_minimize (my minimizer, maxNumOfEpochs, tolerance, 1);
+
+	// Unlink
+
+	my nPatterns = 0; 
+	my inputPattern = NULL; 
+	my targetActivation = NULL;
+	return status;
 }
   
 
@@ -206,7 +204,7 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer)
 			FFNet_propagateToLayer (me, p -> z[i], thy z[i], layer);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Activation not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Activation created."); }
 }
 
 /* End of file FFNet_Pattern_Activation.cpp */

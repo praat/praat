@@ -62,7 +62,7 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Number of characters: ", Melder_integer (my length - n));
 }
 
-static int readBinary (I, FILE *f) {
+static void readBinary (I, FILE *f) {
 	iam (WordList);
 	wchar_t *current, *p;
 	int kar = 0;
@@ -108,10 +108,9 @@ static int readBinary (I, FILE *f) {
 	*p = '\0';
 	if (p - my string != my length)
 		Melder_throw ("Length in header (", my length, ") does not match string (", p - my string, ").");
-	return 1;
 }
 
-static int writeBinary (I, FILE *f) {
+static void writeBinary (I, FILE *f) {
 	iam (WordList);
 	long currentLength, previousLength;
 	if (! my length) my length = wcslen (my string);
@@ -141,7 +140,6 @@ static int writeBinary (I, FILE *f) {
 				fputc (current [numberOfSame + i], f);   // TODO: check
 		}
 	}
-	return 1;
 }
 
 class_methods (WordList, Data) {
@@ -195,7 +193,7 @@ WordList Strings_to_WordList (Strings me) {
 		Melder_assert (q - thy string == thy length);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to WordList.");
+		Melder_throw (me, ": not converted to WordList.");
 	}
 }
 
@@ -218,7 +216,7 @@ Strings WordList_to_Strings (WordList me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Strings.");
+		Melder_throw (me, ": not converted to Strings.");
 	}
 }
 

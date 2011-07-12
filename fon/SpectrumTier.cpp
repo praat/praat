@@ -50,7 +50,7 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax) {
 		RealTier_init (me.peek(), fmin, fmax);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("SpectrumTier not created.");
+		Melder_throw ("SpectrumTier not created.");
 	}
 }
 
@@ -65,7 +65,7 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 		autoTable table = SpectrumTier_downto_Table (me, includeIndexes, includeFrequency, includePowerDensity);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		rethrowm (me, ": not listed.");
+		Melder_throw (me, ": not listed.");
 	}
 }
 
@@ -82,7 +82,7 @@ SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me) {
 		autoSpectrumTier thee = Ltas_to_SpectrumTier_peaks (ltas.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": peaks not converted to SpectrumTier.");
+		Melder_throw (me, ": peaks not converted to SpectrumTier.");
 	}
 }
 

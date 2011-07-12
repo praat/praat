@@ -73,60 +73,69 @@ typedef struct structDataSubEditor_FieldData {
 	int rank;   /* Should the button open a StructEditor (0) or VectorEditor (1) or MatrixEditor (2) ? */
 } *DataSubEditor_FieldData;
 
-#define DataSubEditor__members(Klas) Editor__members(Klas) \
-	DataEditor root; \
-	void *address; \
-	Data_Description description; \
-	GuiObject scrollBar; \
-	int irow, topField, numberOfFields; \
+struct structDataSubEditor : public structEditor {
+	DataEditor root;
+	void *address;
+	Data_Description description;
+	GuiObject scrollBar;
+	int irow, topField, numberOfFields;
 	struct structDataSubEditor_FieldData fieldData [1 + MAXNUM_ROWS];
+};
 #define DataSubEditor__methods(Klas) Editor__methods(Klas) \
 	long (*countFields) (Klas me); \
 	void (*showMembers) (Klas me);
-Thing_declare2 (DataSubEditor, Editor);
+Thing_declare2cpp (DataSubEditor, Editor);
 
-#define VectorEditor__members(Klas) DataSubEditor__members(Klas) \
+struct structVectorEditor : public structDataSubEditor {
 	long minimum, maximum;
+};
 #define VectorEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2 (VectorEditor, DataSubEditor);
+Thing_declare2cpp (VectorEditor, DataSubEditor);
 
 static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
-#define MatrixEditor__members(Klas) DataSubEditor__members(Klas) \
+struct structMatrixEditor : public structDataSubEditor {
 	long minimum, maximum, min2, max2;
+};
 #define MatrixEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2 (MatrixEditor, DataSubEditor);
+Thing_declare2cpp (MatrixEditor, DataSubEditor);
 
 static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2);
 
-#define StructEditor__members(Klas) DataSubEditor__members(Klas)
+struct structStructEditor : public structDataSubEditor {
+};
 #define StructEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2 (StructEditor, DataSubEditor);
+Thing_declare2cpp (StructEditor, DataSubEditor);
 
 static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
-#define ClassEditor__members(Klas) StructEditor__members(Klas)
+struct structClassEditor : public structStructEditor {
+};
 #define ClassEditor__methods(Klas) StructEditor__methods(Klas)
-Thing_declare2 (ClassEditor, StructEditor);
+Thing_declare2cpp (ClassEditor, StructEditor);
 
 static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
-#define DataEditor__members(Klas) ClassEditor__members(Klas) \
+struct structDataEditor : public structClassEditor {
 	Collection children;
+};
 #define DataEditor__methods(Klas) ClassEditor__methods(Klas)
-Thing_declare2 (DataEditor, ClassEditor);
+Thing_declare2cpp (DataEditor, ClassEditor);
 
 /********** DataSubEditor **********/
+#undef our
+#define our ((DataSubEditor_Table) my methods) ->
 
 static void classDataSubEditor_destroy (I) {
 	iam (DataSubEditor);
 	for (int i = 1; i <= MAXNUM_ROWS; i ++)
 		Melder_free (my fieldData [i]. history);
-	if (my root && my root -> children) for (int i = my root -> children -> size; i > 0; i --)
-		if (my root -> children -> item [i] == me)
-			Collection_subtractItem (my root -> children, i);
+	if (my root && my root -> children)
+		for (int i = my root -> children -> size; i > 0; i --)
+			if (my root -> children -> item [i] == me)
+				Collection_subtractItem (my root -> children, i);
 	inherited (DataSubEditor) destroy (me);
 }
 
@@ -149,8 +158,8 @@ static void update (DataSubEditor me) {
 static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const wchar_t *number) {
 	Data_Description structDescription, result;
 	wchar_t string [100];
-	if (my methods == (DataSubEditor_Table) classMatrixEditor) return NULL;   /* No structs inside. */
-	if (my methods == (DataSubEditor_Table) classVectorEditor) {
+	if ((DataSubEditor_Table) my methods == (DataSubEditor_Table) classMatrixEditor) return NULL;   /* No structs inside. */
+	if ((DataSubEditor_Table) my methods == (DataSubEditor_Table) classVectorEditor) {
 		if (my description -> type != structwa) return NULL;   /* No structs inside. */
 		structDescription = (Data_Description) my description -> tagType;
 	} else { /* StructEditor or ClassEditor or DataEditor. */
@@ -435,7 +444,7 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); return 1; }
 
 static void classDataSubEditor_createHelpMenuItems (DataSubEditor me, EditorMenu menu) {
-	inherited (DataSubEditor) createHelpMenuItems (DataSubEditor_as_parent (me), menu);
+	inherited (DataSubEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"DataEditor help", '?', menu_cb_help);
 }
 
@@ -453,18 +462,17 @@ class_methods (DataSubEditor, Editor) {
 	class_methods_end
 }
 
-static int DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
+static void DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
 	my root = root;
-	if (me != DataEditor_as_DataSubEditor (root)) Collection_addItem (root -> children, me);
+	if (me != root) {
+		Collection_addItem (root -> children, me); therror
+	}
 	my address = address;
 	my description = description;
 	my topField = 1;
 	my numberOfFields = our countFields (me);
-	Editor_init (DataSubEditor_as_parent (me), root -> parent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL); cherror
+	Editor_init (me, root -> parent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL); therror
 	update (me);
-end:
-	iferror return 0;
-	return 1;
 }
 
 /********** StructEditor **********/
@@ -643,19 +651,18 @@ class_methods (StructEditor, DataSubEditor) {
 	class_methods_end
 }
 
-static int StructEditor_init (StructEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	DataSubEditor_init (StructEditor_as_parent (me), root, title, address, description); cherror
-end:
-	iferror return 0;
-	return 1;
+static void StructEditor_init (StructEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
+	DataSubEditor_init (me, root, title, address, description);
 }
 
 static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	StructEditor me = Thing_new (StructEditor); cherror
-	StructEditor_init (me, root, title, address, description); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoStructEditor me = Thing_new (StructEditor);
+		StructEditor_init (me.peek(), root, title, address, description);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Struct inspector window not created.");
+	}
 }
 
 /********** VectorEditor **********/
@@ -742,9 +749,9 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 
 			Data object = * (Data *) elementAddress;
 			if (object == NULL) return;   /* No button if no object. */
-			if (! object -> methods -> description) return;   /* No button if no description for this class. */
+			if (! ((Data_Table) object -> methods) -> description) return;   /* No button if no description for this class. */
 			fieldData -> address = object;
-			fieldData -> description = object -> methods -> description;
+			fieldData -> description = ((Data_Table) object -> methods) -> description;
 			fieldData -> rank = 0;
 			if (fieldData -> history) Melder_free (fieldData -> history);
 			fieldData -> history = Melder_wcsdup_f (history.string);
@@ -762,13 +769,15 @@ class_methods (VectorEditor, DataSubEditor) {
 static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum)
 {
-	VectorEditor me = Thing_new (VectorEditor); cherror
-	my minimum = minimum;
-	my maximum = maximum;
-	DataSubEditor_init (VectorEditor_as_parent (me), root, title, address, description); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoVectorEditor me = Thing_new (VectorEditor);
+		my minimum = minimum;
+		my maximum = maximum;
+		DataSubEditor_init (me.peek(), root, title, address, description);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Vector inspector window not created.");
+	}
 }
 
 /********** MatrixEditor **********/
@@ -828,15 +837,17 @@ class_methods (MatrixEditor, DataSubEditor) {
 static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2)
 {
-	MatrixEditor me = Thing_new (MatrixEditor); cherror
-	my minimum = min1;
-	my maximum = max1;
-	my min2 = min2;
-	my max2 = max2;
-	DataSubEditor_init (MatrixEditor_as_parent (me), root, title, address, description); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoMatrixEditor me = Thing_new (MatrixEditor);
+		my minimum = min1;
+		my maximum = max1;
+		my min2 = min2;
+		my max2 = max2;
+		DataSubEditor_init (me.peek(), root, title, address, description);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Matrix inspector window not created.");
+	}
 }
 
 /********** ClassEditor **********/
@@ -863,21 +874,20 @@ class_methods (ClassEditor, StructEditor) {
 	class_methods_end
 }
 
-static int ClassEditor_init (ClassEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	if (description == NULL) error3
-		(L"(ClassEditor_init:) Class ", Thing_className (address), L" cannot be inspected.");
-	StructEditor_init (ClassEditor_as_parent (me), root, title, address, description); cherror
-end:
-	iferror return 0;
-	return 1;
+static void ClassEditor_init (ClassEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
+	if (description == NULL)
+		Melder_throw ("Class ", Thing_className ((Thing) address), " cannot be inspected.");
+	StructEditor_init (me, root, title, address, description);
 }
 
 static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description) {
-	ClassEditor me = Thing_new (ClassEditor); cherror
-	ClassEditor_init (me, root, title, address, description); cherror
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoClassEditor me = Thing_new (ClassEditor);
+		ClassEditor_init (me.peek(), root, title, address, description);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Class inspector window not created.");
+	}
 }
 
 /********** DataEditor **********/
@@ -920,18 +930,19 @@ class_methods (DataEditor, ClassEditor) {
 	class_methods_end
 }
 
-DataEditor DataEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	DataEditor me = NULL;
-	Data_Table klas = ((Data) data) -> methods;
-	if (klas -> description == NULL) error3
-		(L"(DataEditor_create:) Class ", klas -> _className, L" cannot be inspected.");
-	me = Thing_new (DataEditor); cherror
-	my children = Collection_create (classDataSubEditor, 10); cherror
-	my parent = parent;
-	ClassEditor_init (DataEditor_as_parent (me), me, title, data, klas -> description); cherror
-end:
-	iferror forget (me);
-	return me;
+DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data) {
+	try {
+		Data_Table klas = (Data_Table) ((Thing) data) -> methods;
+		if (klas -> description == NULL)
+			Melder_throw ("Class ", klas -> _className, " cannot be inspected.");
+		autoDataEditor me = Thing_new (DataEditor);
+		my children = Collection_create (classDataSubEditor, 10); therror
+		my parent = parent;
+		ClassEditor_init (me.peek(), me.peek(), title, data, klas -> description);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Inspector window not created.");
+	}
 }
 
 /* End of file DataEditor.cpp */

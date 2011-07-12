@@ -90,203 +90,199 @@ LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const w
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
 		Regression_init (me.peek()); therror
-		my dependent1 = Melder_wcsdup_e (dependent1); therror
-		my dependent2 = Melder_wcsdup_e (dependent2); therror	
+		my dependent1 = Melder_wcsdup (dependent1);
+		my dependent2 = Melder_wcsdup (dependent2);	
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("LogisticRegression not created.");
+		Melder_throw ("LogisticRegression not created.");
 	}
 }
 
 static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors, long numberOfFactors, long dependent1, long dependent2) {
-	try {
-		long numberOfParameters = numberOfFactors + 1;
-		long numberOfCells = my rows -> size, numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
-		double logLikelihood = 1e300, previousLogLikelihood = 2e300;
-		if (numberOfParameters < 1)   // includes intercept
-			Melder_throw ("Not enough columns (has to be more than 1).");
-		/*
-		 * Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
-		 */
-		autoNUMmatrix <double> x (1, numberOfCells, 0, numberOfFactors);   // column 0 is the intercept
-		autoNUMvector <double> y0 (1, numberOfCells);
-		autoNUMvector <double> y1 (1, numberOfCells);
-		autoNUMvector <double> meanX (1, numberOfFactors);
-		autoNUMvector <double> stdevX (1, numberOfFactors);
-		autoNUMmatrix <double> smallMatrix (0, numberOfFactors, 0, numberOfParameters);
-		autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label, my columnHeaders [dependent2]. label);
+	long numberOfParameters = numberOfFactors + 1;
+	long numberOfCells = my rows -> size, numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
+	double logLikelihood = 1e300, previousLogLikelihood = 2e300;
+	if (numberOfParameters < 1)   // includes intercept
+		Melder_throw ("Not enough columns (has to be more than 1).");
+	/*
+	 * Divide up the contents of the table into a number of independent variables (x) and two dependent variables (y0 and y1).
+	 */
+	autoNUMmatrix <double> x (1, numberOfCells, 0, numberOfFactors);   // column 0 is the intercept
+	autoNUMvector <double> y0 (1, numberOfCells);
+	autoNUMvector <double> y1 (1, numberOfCells);
+	autoNUMvector <double> meanX (1, numberOfFactors);
+	autoNUMvector <double> stdevX (1, numberOfFactors);
+	autoNUMmatrix <double> smallMatrix (0, numberOfFactors, 0, numberOfParameters);
+	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label, my columnHeaders [dependent2]. label);
+	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+		double minimum = Table_getMinimum (me, factors [ivar]); therror
+		double maximum = Table_getMaximum (me, factors [ivar]); therror
+		Regression_addParameter (thee.peek(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0); therror
+	}
+	for (long icell = 1; icell <= numberOfCells; icell ++) {
+		y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);
+		y1 [icell] = Table_getNumericValue_Assert (me, icell, dependent2);
+		numberOfY0 += y0 [icell];
+		numberOfY1 += y1 [icell];
+		numberOfData += y0 [icell] + y1 [icell];
+		x [icell] [0] = 1.0;   /* Intercept. */
 		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			double minimum = Table_getMinimum (me, factors [ivar]); therror
-			double maximum = Table_getMaximum (me, factors [ivar]); therror
-			Regression_addParameter (thee.peek(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0); therror
+			x [icell] [ivar] = Table_getNumericValue_Assert (me, icell, factors [ivar]);
+			meanX [ivar] += x [icell] [ivar] * (y0 [icell] + y1 [icell]);
 		}
+	}
+	if (numberOfY0 == 0 && numberOfY1 == 0)
+		Melder_throw ("No data in either class. Cannot determine result.");
+	if (numberOfY0 == 0)
+		Melder_throw ("No data in class ", my columnHeaders [dependent1]. label, ". Cannot determine result.");
+	if (numberOfY1 == 0)
+		Melder_throw ("No data in class ", my columnHeaders [dependent2]. label, ". Cannot determine result.");
+	/*
+	 * Normalize the data.
+	 */
+	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+		meanX [ivar] /= numberOfData;
 		for (long icell = 1; icell <= numberOfCells; icell ++) {
-			y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);
-			y1 [icell] = Table_getNumericValue_Assert (me, icell, dependent2);
-			numberOfY0 += y0 [icell];
-			numberOfY1 += y1 [icell];
-			numberOfData += y0 [icell] + y1 [icell];
-			x [icell] [0] = 1.0;   /* Intercept. */
-			for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-				x [icell] [ivar] = Table_getNumericValue_Assert (me, icell, factors [ivar]);
-				meanX [ivar] += x [icell] [ivar] * (y0 [icell] + y1 [icell]);
-			}
+			x [icell] [ivar] -= meanX [ivar];
 		}
-		if (numberOfY0 == 0 && numberOfY1 == 0)
-			Melder_throw ("No data in either class. Cannot determine result.");
-		if (numberOfY0 == 0)
-			Melder_throw ("No data in class ", my columnHeaders [dependent1]. label, ". Cannot determine result.");
-		if (numberOfY1 == 0)
-			Melder_throw ("No data in class ", my columnHeaders [dependent2]. label, ". Cannot determine result.");
-		/*
-		 * Normalize the data.
-		 */
+	}
+	for (long icell = 1; icell <= numberOfCells; icell ++) {
 		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			meanX [ivar] /= numberOfData;
-			for (long icell = 1; icell <= numberOfCells; icell ++) {
-				x [icell] [ivar] -= meanX [ivar];
-			}
+			stdevX [ivar] += x [icell] [ivar] * x [icell] [ivar] * (y0 [icell] + y1 [icell]);
 		}
+	}
+	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+		stdevX [ivar] = sqrt (stdevX [ivar] / numberOfData);
 		for (long icell = 1; icell <= numberOfCells; icell ++) {
-			for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-				stdevX [ivar] += x [icell] [ivar] * x [icell] [ivar] * (y0 [icell] + y1 [icell]);
-			}
+			x [icell] [ivar] /= stdevX [ivar];
 		}
-		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			stdevX [ivar] = sqrt (stdevX [ivar] / numberOfData);
-			for (long icell = 1; icell <= numberOfCells; icell ++) {
-				x [icell] [ivar] /= stdevX [ivar];
+	}
+	/*
+	 * Initial state of iteration: the null model.
+	 */
+	thy intercept = log ((double) numberOfY1 / (double) numberOfY0);   // initial state of intercept: best guess for average log odds
+	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+		parm -> value = 0.0;   // initial state of dependence: none
+	}
+	long iteration = 1;
+	for (; iteration <= 100; iteration ++) {
+		previousLogLikelihood = logLikelihood;
+		for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
+			for (long jvar = ivar; jvar <= numberOfParameters; jvar ++) {
+				smallMatrix [ivar] [jvar] = 0.0;
 			}
 		}
 		/*
-		 * Initial state of iteration: the null model.
+		 * Compute the current log likelihood.
 		 */
-		thy intercept = log ((double) numberOfY1 / (double) numberOfY0);   // initial state of intercept: best guess for average log odds
-		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-			RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
-			parm -> value = 0.0;   // initial state of dependence: none
-		}
-		long iteration = 1;
-		for (; iteration <= 100; iteration ++) {
-			previousLogLikelihood = logLikelihood;
-			for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
-				for (long jvar = ivar; jvar <= numberOfParameters; jvar ++) {
-					smallMatrix [ivar] [jvar] = 0.0;
-				}
-			}
-			/*
-			 * Compute the current log likelihood.
-			 */
-			logLikelihood = 0.0;
-			for (long icell = 1; icell <= numberOfCells; icell ++) {
-				double fittedLogit = thy intercept, fittedP, fittedQ, fittedLogP, fittedLogQ, fittedPQ, fittedVariance;
-				for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-					RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
-					fittedLogit += parm -> value * x [icell] [ivar];
-				}
-				/*
-				 * Basically we have fittedP = 1.0 / (1.0 + exp (- fittedLogit)),
-				 * but that works neither for fittedP values near 0 nor for values near 1.
-				 */
-				if (fittedLogit > 15.0) {
-					/*
-					 * For large fittedLogit, fittedLogP = ln (1/(1+exp(-fittedLogit))) = -ln (1+exp(-fittedLogit)) =~ - exp(-fittedLogit)
-					 */
-					fittedLogP = - exp (- fittedLogit);
-					fittedLogQ = - fittedLogit;
-					fittedPQ = exp (- fittedLogit);
-					fittedP = exp (fittedLogP);
-					fittedQ = 1.0 - fittedP;
-				} else if (fittedLogit < -15.0) {
-					fittedLogP = fittedLogit;
-					fittedLogQ = - exp (fittedLogit);
-					fittedPQ = exp (fittedLogit);
-					fittedP = exp (fittedLogP);
-					fittedQ = 1 - fittedP;
-				} else {
-					fittedP = 1.0 / (1.0 + exp (- fittedLogit));
-					fittedLogP = log (fittedP);
-					fittedQ = 1.0 - fittedP;
-					fittedLogQ = log (fittedQ);
-					fittedPQ = fittedP * fittedQ;
-				}
-				logLikelihood += -2 * (y1 [icell] * fittedLogP + y0 [icell] * fittedLogQ);
-				/*
-				 * Matrix shifting stuff.
-				 * Suppose a + b Sk + c Tk = ln (pk / qk),
-				 * where {a, b, c} are the coefficients to be optimized,
-				 * Sk and Tk are properties of stimulus k,
-				 * and pk and qk are the fitted probabilities for y1 and y0, respectively, given stimulus k.
-				 * Then ln pk = - ln (1 + qk / pk) = - ln (1 + exp (- (a + b Sk + c Tk)))
-				 * d ln pk / da = 1 / (1 + exp (a + b Sk + c Tk)) = qk
-				 * d ln pk / db = qk Sk
-				 * d ln pk / dc = qk Tk
-				 * d ln qk / da = - pk
-				 * Now LL = Sum(k) (y1k ln pk + y0k ln qk)
-				 * so that dLL/da = Sum(k) (y1k d ln pk / da + y0k ln qk / da) = Sum(k) (y1k qk - y0k pk)
-				 */
-				fittedVariance = fittedPQ * (y0 [icell] + y1 [icell]);
-				for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
-					/*
-					 * The last column gets the gradient of LL: dLL/da, dLL/db, dLL/dc.
-					 */
-					smallMatrix [ivar] [numberOfParameters] += x [icell] [ivar] * (y1 [icell] * fittedQ - y0 [icell] * fittedP);
-					for (long jvar = ivar; jvar <= numberOfFactors; jvar ++) {
-						smallMatrix [ivar] [jvar] += x [icell] [ivar] * x [icell] [jvar] * fittedVariance;
-					}
-				}
-			}
-			if (fabs (logLikelihood - previousLogLikelihood) < 1e-11) {
-				break;
-			}
-			/*
-			 * Make matrix symmetric.
-			 */
-			for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-				for (long jvar = 0; jvar < ivar; jvar ++) {
-					smallMatrix [ivar] [jvar] = smallMatrix [jvar] [ivar];
-				}
-			}
-			/*
-			 * Invert matrix in the simplest way, and shift and wipe the last column with it.
-			 */
-			for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
-				double pivot = smallMatrix [ivar] [ivar];   /* Save diagonal. */
-				smallMatrix [ivar] [ivar] = 1.0;
-				for (long jvar = 0; jvar <= numberOfParameters; jvar ++) {
-					smallMatrix [ivar] [jvar] /= pivot;
-				}
-				for (long jvar = 0; jvar <= numberOfFactors; jvar ++) {
-					if (jvar != ivar) {
-						double temp = smallMatrix [jvar] [ivar];
-						smallMatrix [jvar] [ivar] = 0.0;
-						for (long kvar = 0; kvar <= numberOfParameters; kvar ++) {
-							smallMatrix [jvar] [kvar] -= temp * smallMatrix [ivar] [kvar];
-						}
-					}
-				}
-			}
-			/*
-			 * Update the parameters from the last column of smallMatrix.
-			 */
-			thy intercept += smallMatrix [0] [numberOfParameters];
+		logLikelihood = 0.0;
+		for (long icell = 1; icell <= numberOfCells; icell ++) {
+			double fittedLogit = thy intercept, fittedP, fittedQ, fittedLogP, fittedLogQ, fittedPQ, fittedVariance;
 			for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
 				RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
-				parm -> value += smallMatrix [ivar] [numberOfParameters];
+				fittedLogit += parm -> value * x [icell] [ivar];
+			}
+			/*
+			 * Basically we have fittedP = 1.0 / (1.0 + exp (- fittedLogit)),
+			 * but that works neither for fittedP values near 0 nor for values near 1.
+			 */
+			if (fittedLogit > 15.0) {
+				/*
+				 * For large fittedLogit, fittedLogP = ln (1/(1+exp(-fittedLogit))) = -ln (1+exp(-fittedLogit)) =~ - exp(-fittedLogit)
+				 */
+				fittedLogP = - exp (- fittedLogit);
+				fittedLogQ = - fittedLogit;
+				fittedPQ = exp (- fittedLogit);
+				fittedP = exp (fittedLogP);
+				fittedQ = 1.0 - fittedP;
+			} else if (fittedLogit < -15.0) {
+				fittedLogP = fittedLogit;
+				fittedLogQ = - exp (fittedLogit);
+				fittedPQ = exp (fittedLogit);
+				fittedP = exp (fittedLogP);
+				fittedQ = 1 - fittedP;
+			} else {
+				fittedP = 1.0 / (1.0 + exp (- fittedLogit));
+				fittedLogP = log (fittedP);
+				fittedQ = 1.0 - fittedP;
+				fittedLogQ = log (fittedQ);
+				fittedPQ = fittedP * fittedQ;
+			}
+			logLikelihood += -2 * (y1 [icell] * fittedLogP + y0 [icell] * fittedLogQ);
+			/*
+			 * Matrix shifting stuff.
+			 * Suppose a + b Sk + c Tk = ln (pk / qk),
+			 * where {a, b, c} are the coefficients to be optimized,
+			 * Sk and Tk are properties of stimulus k,
+			 * and pk and qk are the fitted probabilities for y1 and y0, respectively, given stimulus k.
+			 * Then ln pk = - ln (1 + qk / pk) = - ln (1 + exp (- (a + b Sk + c Tk)))
+			 * d ln pk / da = 1 / (1 + exp (a + b Sk + c Tk)) = qk
+			 * d ln pk / db = qk Sk
+			 * d ln pk / dc = qk Tk
+			 * d ln qk / da = - pk
+			 * Now LL = Sum(k) (y1k ln pk + y0k ln qk)
+			 * so that dLL/da = Sum(k) (y1k d ln pk / da + y0k ln qk / da) = Sum(k) (y1k qk - y0k pk)
+			 */
+			fittedVariance = fittedPQ * (y0 [icell] + y1 [icell]);
+			for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
+				/*
+				 * The last column gets the gradient of LL: dLL/da, dLL/db, dLL/dc.
+				 */
+				smallMatrix [ivar] [numberOfParameters] += x [icell] [ivar] * (y1 [icell] * fittedQ - y0 [icell] * fittedP);
+				for (long jvar = ivar; jvar <= numberOfFactors; jvar ++) {
+					smallMatrix [ivar] [jvar] += x [icell] [ivar] * x [icell] [jvar] * fittedVariance;
+				}
 			}
 		}
-		if (iteration > 100) {
-			Melder_warning1 (L"Logistic regression has not converged in 100 iterations. The results are unreliable.");
+		if (fabs (logLikelihood - previousLogLikelihood) < 1e-11) {
+			break;
 		}
+		/*
+		 * Make matrix symmetric.
+		 */
+		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+			for (long jvar = 0; jvar < ivar; jvar ++) {
+				smallMatrix [ivar] [jvar] = smallMatrix [jvar] [ivar];
+			}
+		}
+		/*
+		 * Invert matrix in the simplest way, and shift and wipe the last column with it.
+		 */
+		for (long ivar = 0; ivar <= numberOfFactors; ivar ++) {
+			double pivot = smallMatrix [ivar] [ivar];   /* Save diagonal. */
+			smallMatrix [ivar] [ivar] = 1.0;
+			for (long jvar = 0; jvar <= numberOfParameters; jvar ++) {
+				smallMatrix [ivar] [jvar] /= pivot;
+			}
+			for (long jvar = 0; jvar <= numberOfFactors; jvar ++) {
+				if (jvar != ivar) {
+					double temp = smallMatrix [jvar] [ivar];
+					smallMatrix [jvar] [ivar] = 0.0;
+					for (long kvar = 0; kvar <= numberOfParameters; kvar ++) {
+						smallMatrix [jvar] [kvar] -= temp * smallMatrix [ivar] [kvar];
+					}
+				}
+			}
+		}
+		/*
+		 * Update the parameters from the last column of smallMatrix.
+		 */
+		thy intercept += smallMatrix [0] [numberOfParameters];
 		for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
 			RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
-			parm -> value /= stdevX [ivar];
-			thy intercept -= parm -> value * meanX [ivar];
+			parm -> value += smallMatrix [ivar] [numberOfParameters];
 		}
-		return thee.transfer();
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	if (iteration > 100) {
+		Melder_warning1 (L"Logistic regression has not converged in 100 iterations. The results are unreliable.");
+	}
+	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (thy parameters -> item [ivar]);
+		parm -> value /= stdevX [ivar];
+		thy intercept -= parm -> value * meanX [ivar];
+	}
+	return thee.transfer();
 }
 
 LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors_columnLabelString,
@@ -300,7 +296,7 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Table: logistic regression not performed.");
+		Melder_throw (me, ": logistic regression not performed.");
 	}
 }
 

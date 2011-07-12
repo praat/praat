@@ -32,9 +32,7 @@
 	extern "C" {
 #endif
 
-#define Pattern_members Matrix_members
-#define Pattern_methods Matrix_methods
-class_create (Pattern, Matrix);
+Thing_declare1cpp (Pattern);
 
 /* Attributes:
    xmin				:index of first input node.
@@ -49,7 +47,7 @@ class_create (Pattern, Matrix);
    z[iy][ix]		:the inputs. All elements in interval [0,1].
 */
 
-int Pattern_init (I, long ny, long nx);
+void Pattern_init (I, long ny, long nx);
 
 Pattern Pattern_create (long ny, long nx);
 
@@ -69,6 +67,12 @@ int _Pattern_checkElements (Pattern me);
 
 #ifdef __cplusplus
 	}
+
+	struct structPattern : public structMatrix {
+	};
+	#define Pattern__methods(klas) Matrix__methods(klas)
+	Thing_declare2cpp (Pattern, Matrix);
+
 #endif
 
 #endif /* _Pattern_h_ */

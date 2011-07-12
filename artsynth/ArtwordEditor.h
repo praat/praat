@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/08
+ * pb 2011/07/02
  */
 
 #include "Editor.h"
@@ -31,22 +31,23 @@
 	extern "C" {
 #endif
 
-#define ArtwordEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (ArtwordEditor);
+Thing_declare1cpp (ArtwordEditor);
 
-#define ArtwordEditor__members(Klas) Editor__members(Klas) \
-	Graphics graphics; \
-	int feature; \
-	GuiObject list, drawingArea, radio, time, value; \
-	GuiObject button [1 + kArt_muscle_MAX];
-#define ArtwordEditor__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (ArtwordEditor, Editor);
-
-ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar_t *title, Artword data);
+ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structArtwordEditor : public structEditor {
+		Graphics graphics;
+		int feature;
+		GuiObject list, drawingArea, radio, time, value;
+		GuiObject button [1 + kArt_muscle_MAX];
+	};
+	#define ArtwordEditor__methods(Klas) Editor__methods(Klas)
+	Thing_declare2cpp (ArtwordEditor, Editor);
+
+#endif // __cplusplus
 
 /* End of file ArtwordEditor.h */
 #endif

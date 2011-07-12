@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/02
  */
 
 #include "TimeSoundEditor.h"
@@ -30,18 +30,7 @@
 	extern "C" {
 #endif
 
-#define RealTierEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
-Thing_declare1 (RealTierEditor);
-
-#define RealTierEditor__members(Klas) TimeSoundEditor__members(Klas) \
-	double ymin, ymax, ycursor;
-#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
-	double minimumLegalValue, maximumLegalValue; \
-	const wchar_t *quantityText, *quantityKey, *rightTickUnits; \
-	double defaultYmin, defaultYmax; \
-	const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
-	const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
-Thing_declare2 (RealTierEditor, TimeSoundEditor);
+Thing_declare1cpp (RealTierEditor);
 
 void RealTierEditor_updateScaling (RealTierEditor me);
 /*
@@ -49,7 +38,7 @@ void RealTierEditor_updateScaling (RealTierEditor me);
 	Call after every change in the data.
 */
 
-int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, int ownSound);
+void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *title, RealTier data, Sound sound, bool ownSound);
 /*
 	'Sound' may be NULL;
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,
@@ -58,7 +47,19 @@ int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *tit
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structRealTierEditor : structTimeSoundEditor {
+		double ymin, ymax, ycursor;
+	};
+	#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
+		double minimumLegalValue, maximumLegalValue; \
+		const wchar_t *quantityText, *quantityKey, *rightTickUnits; \
+		double defaultYmin, defaultYmax; \
+		const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
+		const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
+	Thing_declare2cpp (RealTierEditor, TimeSoundEditor);
+
+#endif // __cplusplus
 
 /* End of file RealTierEditor.h */
 #endif

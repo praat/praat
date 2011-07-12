@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/16
+ * pb 2011/07/11
  */
 
 #include "Strings.h"
@@ -32,11 +32,10 @@
 #endif
 
 #include "PairDistribution_def.h"
-
-#define PairProbability_methods Data_methods
+#define PairProbability__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PairProbability, Data);
 
-#define PairDistribution_methods Data_methods
+#define PairDistribution__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PairDistribution, Data);
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight);

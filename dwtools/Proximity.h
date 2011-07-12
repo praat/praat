@@ -24,17 +24,17 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
+#include "TableOfReal.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Proximity_members TableOfReal_members
-#define Proximity_methods TableOfReal_methods
-class_create (Proximity, TableOfReal);
+Thing_declare1cpp (Proximity);
+struct structProximity : public structTableOfReal {
+};
+#define Proximity__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Proximity, TableOfReal);
 
 void Proximity_init (I, long numberOfPoints);
 

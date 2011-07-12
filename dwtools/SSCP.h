@@ -24,49 +24,29 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _TableOfReal_extensions_h_
-	#include "TableOfReal_extensions.h"
-#endif
-#ifndef _PCA_h_
-	#include "PCA.h"
-#endif
-#ifndef _CCA_h_
-	#include "CCA.h"
-#endif
+#include "TableOfReal_extensions.h"
+#include "PCA.h"
+#include "CCA.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define SSCP_members TableOfReal_members \
-	double numberOfObservations;	\
-	double *centroid; \
-	long expansionNumberOfRows; \
-	int dataChanged; \
-	double **expansion; \
-	double lnd; \
-	double **lowerCholesky; \
-	PCA pca;
-#define SSCP_methods TableOfReal_methods
-class_create (SSCP, TableOfReal);
+#include "SSCP_def.h"
+#define SSCP__methods(klas) TableOfReal__methods(klas)
+oo_CLASS_CREATE (SSCP, TableOfReal);
 
-#define Covariance_members SSCP_members
-#define Covariance_methods SSCP_methods
-class_create (Covariance, SSCP);
+Thing_declare1cpp (Covariance);
 
-#define Correlation_members SSCP_members
-#define Correlation_methods SSCP_methods
-class_create (Correlation, SSCP);
+Thing_declare1cpp (Correlation);
 
 /*
 	Ordered collection of SSCP's
 	All SSCP's must have the same dimensions and labels.
 */
-#define SSCPs_members Ordered_members
-#define SSCPs_methods Ordered_methods
-class_create (SSCPs, Ordered);
+Thing_declare1cpp (SSCPs);
 
-int SSCP_init (I, long dimension, long storage);
+void SSCP_init (I, long dimension, long storage);
 
 SSCP SSCP_create (long dimension);
 
@@ -74,8 +54,8 @@ void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confi
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 void SSCP_setNumberOfObservations (I, double numberOfObservations);
-int SSCP_setCentroid (I, long component, double value); // only SSCP & Covariance
-int SSCP_setValue (I, long row, long col, double value); // only SSCP & Covariance
+void SSCP_setCentroid (I, long component, double value); // only SSCP & Covariance
+void SSCP_setValue (I, long row, long col, double value); // only SSCP & Covariance
 
 double SSCP_getNumberOfObservations (I);
 double SSCP_getDegreesOfFreedom (I);
@@ -131,7 +111,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I);
 
 PCA SSCP_to_PCA (I);
 
-int SSCP_expandPCA (I);
+void SSCP_expandPCA (I);
 void SSCP_unExpandPCA (I);
 
 CCA SSCP_to_CCA (I, long ny);
@@ -246,7 +226,7 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale,
 void SSCPs_getEllipsesBoundingBoxCoordinates (SSCPs me, double scale, int confidence,
 	double *xmin, double *xmax, double *ymin, double *ymax);
 
-int SSCP_expand (I);
+void SSCP_expand (I);
 /*
 	Expand a reduced storage SSCP. For efficiency reasons, the expanded matrix is kept in memory.
 	Successive calls to SSCP_expand don't change anything unless
@@ -255,20 +235,34 @@ int SSCP_expand (I);
 
 	Covariance me = Covariance_create_reduceStorage (dimension, 1); // diagonal only
 	...
-	if (! SSCP_expand (me)) Melder_error (..)
+	SSCP_expand (me);
 	PCA thee = SSCP_to_PCA (me);
 */
 
 void SSCP_unExpand (I);
 /* Use only if the memory is really needed! */
 
-int SSCP_expandLowerCholesky (I); // create lower square root of covariance matrix
+void SSCP_expandLowerCholesky (I); // create lower square root of covariance matrix
 void SSCP_unExpandLowerCholesky (I);
-int SSCP_expandPCA (I);
-void SSCP_unExpandPCA (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structCovariance : public structSSCP {
+	};
+	#define Covariance__methods(klas) SSCP__methods(klas)
+	Thing_declare2cpp (Covariance, SSCP);
+
+	struct structCorrelation : public structSSCP {
+	};
+	#define Correlation__methods(klas) SSCP__methods(klas)
+	Thing_declare2cpp (Correlation, SSCP);
+
+	struct structSSCPs : public structOrdered {
+	};
+	#define SSCPs__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (SSCPs, Ordered);
+
 #endif
 
 #endif /* _SSCP_h_ */

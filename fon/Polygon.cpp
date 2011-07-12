@@ -53,17 +53,16 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Perimeter: ", Melder_single (Polygon_perimeter (me)));
 }
   
-static int writeText (I, MelderFile file) {
+static void writeText (I, MelderFile file) {
 	iam (Polygon);
 	texputi4 (file, my numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
 	for (long i = 1; i <= my numberOfPoints; i ++) {
 		texputr4 (file, my x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
 		texputr4 (file, my y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
 	}
-	return 1;
 }
 
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (Polygon);
 	my numberOfPoints = texgeti4 (text);
 	if (my numberOfPoints < 1)
@@ -74,7 +73,6 @@ static int readText (I, MelderReadText text) {
 		my x [i] = texgetr4 (text);
 		my y [i] = texgetr4 (text);
 	}
-	return 1;
 }
 
 class_methods (Polygon, Data) {
@@ -100,7 +98,7 @@ Polygon Polygon_create (long numberOfPoints) {
 		my y = NUMvector <double> (1, numberOfPoints);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Polygon not created.");
+		Melder_throw ("Polygon not created.");
 	}
 }
 
@@ -290,7 +288,7 @@ void Polygon_salesperson (I, long numberOfIterations)
 			my y [i] = help -> y [shortestPath [i]];
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": shortest path not found.");
+		Melder_throw (me, ": shortest path not found.");
 	}
 }
 
@@ -335,41 +333,12 @@ void Polygon_draw (I, Graphics g, double xmin, double xmax, double ymin, double 
 	Graphics_unsetInner (g);
 }
 
-struct structPolygon2 : public structPolygon {
-	virtual void info2 ();
-};
-
-void structPolygon2::info2 () {
-	Melder_casual ("222");
-}
-
-struct structPolygon3 : public structPolygon2 {
-};
-
-struct structPolygon4 : public structPolygon3 {
-	virtual void info2 ();
-};
-
-void structPolygon4::info2 () {
-	Melder_casual ("444");
-}
-
-typedef structPolygon2 *Polygon2;
-typedef structPolygon3 *Polygon3;
-typedef structPolygon4 *Polygon4;
-
-typedef structPolygon Polygon2_Parent;
-typedef structPolygon2 Polygon3_Parent;
-typedef structPolygon3 Polygon4_Parent;
-
 void Polygon_drawClosed (I, Graphics g, double xmin, double xmax, double ymin, double ymax) {
 	iam (Polygon);
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_polyline_closed (g, my numberOfPoints, & my x [1], & my y [1]);
 	Graphics_unsetInner (g);
-	Polygon4 pol = new structPolygon4;
-	pol -> Polygon4_Parent::info2 ();
 }
 
 void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax) {

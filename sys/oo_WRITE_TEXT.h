@@ -26,6 +26,7 @@
  * pb 2008/01/19 NUM##storage
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
+ * pb 2011/07/07 void
  */
 
 #include "oo_undef.h"
@@ -46,12 +47,12 @@
 	texexdent (file);
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (! NUM##t##vector_writeText_##storage (my x, min, max, file, L"" #x)) return 0;
+	if (my x) \
+		NUM##t##vector_writeText_##storage (my x, min, max, file, L"" #x);
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (! NUM##t##matrix_writeText_##storage (my x, row1, row2, col1, col2, file, L"" #x)) return 0;
-
-
+	if (my x) \
+		NUM##t##matrix_writeText_##storage (my x, row1, row2, col1, col2, file, L"" #x);
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	texput##storage (file, my x, Type##_getText, L"" #x, 0,0,0,0,0);
@@ -74,8 +75,6 @@
 		texput##storage (file, my x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
-
-
 #define oo_STRINGx(storage,x)  \
 	texput##storage (file, my x, L""#x, 0,0,0,0,0);
 
@@ -96,8 +95,6 @@
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, my x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
-
-
 
 #define oo_STRUCT(Type,x)  \
 	texputintro (file, L"" #x ":", 0,0,0,0,0); \
@@ -131,10 +128,10 @@
 	} \
 	texexdent (file);
 
-
 #define oo_OBJECT(Class,version,x)  \
 	texputex (file, my x != NULL, L"" #x, 0,0,0,0,0); \
-	if (my x && ! Data_writeText (my x, file)) return 0;
+	if (my x) \
+		Data_writeText (my x, file);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	texputi4 (file, my x ? my x -> size : 0, L"" #x ": size", 0,0,0,0,0); \
@@ -142,7 +139,7 @@
 		for (long i = 1; i <= my x -> size; i ++) { \
 			ItemClass data = (ItemClass) my x -> item [i]; \
 			texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
-			if (! class##ItemClass -> writeText (data, file)) return 0; \
+			class##ItemClass -> writeText (data, file); \
 			texexdent (file); \
 		} \
 	}
@@ -151,37 +148,25 @@
 
 #define oo_DIR(x)
 
-
-
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_writeText (Type me, MelderFile file) {
+	static void Type##_writeText (Type me, MelderFile file) {
 
 #define oo_END_STRUCT(Type)  \
-		return 1; \
 	}
-
-
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_writeText (I, MelderFile file) { \
+	static void class##Class##_writeText (I, MelderFile file) { \
 		iam (Class); \
-		if (! inherited (Class) writeText (me, file)) return 0;
+		inherited (Class) writeText (me, file);
 
 #define oo_END_CLASS(Class)  \
-		return 1; \
 	}
-
-
 
 #define oo_FROM(from)
 
 #define oo_ENDFROM
 
-
-
 #define oo_VERSION(version)
-
-
 
 #define oo_IF(condition)  if (condition) {
 #define oo_ENDIF  }

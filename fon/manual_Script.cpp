@@ -460,7 +460,7 @@ NORMAL (L"Choose @@Create Sound from formula...@ and type the following into the
 CODE (L"1/2 * sin (2 * pi * 377 * x)")
 NORMAL (L"When you click OK, a new @Sound object will appear in the list. "
 	"After you click ##View & Edit# and zoom in a couple of times, you will see that the sound is a sine wave "
-	"with a frequency of 377 Hertz (cycles per second). This worked because the %x in the formula represents the time, "
+	"with a frequency of 377 hertz (cycles per second). This worked because the %x in the formula represents the time, "
 	"i.e. the formula was applied to every sample separately, with a different value of %x for each sample.")
 ENTRY (L"Creating a Matrix from a formula")
 NORMAL (L"Choose @@Create simple Matrix...@ and type the following into the #%Formula field:")
@@ -517,11 +517,11 @@ DEFINITION (L"the current column")
 TAG (L"#x")
 DEFINITION (L"the %x value associated with the current column:")
 DEFINITION (L"    for a Sound, Spectrogram, Cochleagram, or Harmonicity: time")
-DEFINITION (L"    for a Spectrum: frequency (Hertz)")
+DEFINITION (L"    for a Spectrum: frequency (Hz)")
 DEFINITION (L"    for an Excitation: frequency (Bark)")
 TAG (L"#y")
 DEFINITION (L"the %y value associated with the current row:")
-DEFINITION (L"    for a Spectrogram: frequency (Hertz)")
+DEFINITION (L"    for a Spectrogram: frequency (Hz)")
 DEFINITION (L"    for a Cochleagram: frequency (Bark)")
 ENTRY (L"Referring to the contents of the object itself")
 NORMAL (L"You can refer to values in the current Matrix (or Sound, etc.) by index.")
@@ -833,7 +833,7 @@ DEFINITION (L"from acoustic frequency to a logarithmic musical scale, relative t
 TAG (L"##semitonesToHertz (%x)")
 DEFINITION (L"100 exp (%x ln 2 / 12)")
 TAG (L"##erb (%f)")
-DEFINITION (L"the perceptual %%equivalent rectangular bandwidth% (ERB) in Hertz, for a specified acoustic frequency (also in Hertz): "
+DEFINITION (L"the perceptual %%equivalent rectangular bandwidth% (ERB) in hertz, for a specified acoustic frequency (also in hertz): "
 	"6.23\\.c10^^-6^ %f^2 + 0.09339 %f + 28.52")
 TAG (L"##hertzToErb (%x)")
 DEFINITION (L"from acoustic frequency to ERB-rate: 11.17 ln ((%x + 312) / (%x + 14680)) + 43")
@@ -976,13 +976,13 @@ NORMAL (L"The following attributes are available:")
 TAG (L"#xmin")
 DEFINITION (L"the start of the time domain (usually 0) for a @Sound, @Pitch, @Formant, "
 	"@Spectrogram, @Intensity, @Cochleagram, @PointProcess, or @Harmonicity object, in seconds; "
-	"the lowest frequency (always 0) for a @Spectrum object, in Hertz; "
+	"the lowest frequency (always 0) for a @Spectrum object, in hertz; "
 	"the lowest frequency (usually 0) for an @Excitation object, in Bark; "
 	"the left edge of the %x domain for a @Matrix object.")
 TAG (L"#xmax")
 DEFINITION (L"the end of the time domain (usually the duration, if %xmin is zero) for a Sound, Pitch, Formant, "
 	"Spectrogram, Intensity, Cochleagram, PointProcess, or Harmonicity object, in seconds; "
-	"the highest frequency (@@Nyquist frequency@) for a Spectrum object, e.g. 11025 Hertz; "
+	"the highest frequency (@@Nyquist frequency@) for a Spectrum object, e.g. 11025 hertz; "
 	"the highest frequency for an Excitation object, often 25.6 Bark; "
 	"the right edge of the %x domain for a Matrix object.")
 TAG (L"#ncol")
@@ -1001,15 +1001,15 @@ DEFINITION (L"the number of samples in a Sound object; "
 TAG (L"#dx")
 DEFINITION (L"the sample period (time distance between consecutive samples) in a Sound object (the inverse of the sampling frequency), in seconds; "
 	"the time step between consecutive frames in a Pitch, Formant, Spectrogram, Intensity, Cochleagram, or Harmonicity object, in seconds; "
-	"the width of a frequency bin in a Spectrum object, in Hertz; "
+	"the width of a frequency bin in a Spectrum object, in hertz; "
 	"the width of a frequency bin in an Excitation object, in Bark; "
 	"the horizontal distance between cells in a Matrix object.")
 TAG (L"#ymin")
-DEFINITION (L"the lowest frequency (usually 0) for a Spectrogram object, in Hertz; "
+DEFINITION (L"the lowest frequency (usually 0) for a Spectrogram object, in hertz; "
 	"the lowest frequency (usually 0) for a Cochleagram object, in Bark; "
 	"the bottom of the %y domain for a Matrix object.")
 TAG (L"#ymax")
-DEFINITION (L"the highest frequency for a Spectrogram object, e.g. 5000 Hertz; "
+DEFINITION (L"the highest frequency for a Spectrogram object, e.g. 5000 hertz; "
 	"the highest frequency for a Cochleagram object, often 25.6 Bark; "
 	"the top of the %y domain for a Matrix object.")
 TAG (L"#ny")
@@ -1017,8 +1017,8 @@ DEFINITION (L"the number of frequency bands in a Spectrogram or Cochleagram obje
 	"for a Spectrum object: always 2 (first row is real part, second row is imaginary part) "
 	"the number of divisions of the %y domain for a Matrix object (= %nrow).")
 TAG (L"#dy")
-DEFINITION (L"the distance between adjacent frequency bands in a Spectrogram object, in Hertz; "
-	"the distance between adjacent frequency bands in a Cochleagram object, in Hertz; "
+DEFINITION (L"the distance between adjacent frequency bands in a Spectrogram object, in hertz; "
+	"the distance between adjacent frequency bands in a Cochleagram object, in hertz; "
 	"the vertical distance between cells in a Matrix object.")
 ENTRY (L"Attributes in a creation formula")
 NORMAL (L"In formulas for creating a new object, you can refer to the attributes of any object, "

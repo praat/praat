@@ -46,145 +46,110 @@
 #define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xFFFF : 0xFFFFFFFF)
 
 static long getInteger (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
-	int i;
-	wchar_t buffer [41], c;
+	wchar buffer [41], c;
 	/*
 	 * Look for the first numeric character.
 	 */
 	for (c = MelderReadText_getChar (me); c != '-' && ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
-		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for an integer (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-		if (c == '!') {   /* End-of-line comment? */
-			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an integer (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
+		if (c == 0)
+			Melder_throw ("Early end of text detected while looking for an integer (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '!') {   // end-of-line comment?
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') {
+				if (c == 0)
+					Melder_throw ("Early end of text detected in comment while looking for an integer (line ", MelderReadText_getLineNumber (me), ").");
 			}
 		}
-		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
+		if (c == '\"')
+			Melder_throw ("Found a string while looking for an integer in text (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '<')
+			Melder_throw ("Found an enumerated value while looking for an integer in text (line ", MelderReadText_getLineNumber (me), ").");
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
-			}
+			if (c == 0)
+				Melder_throw ("Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), ").");
 			c = MelderReadText_getChar (me);
 		}
 	}
-	for (i = 0; i < 40; i ++) {
+	int i = 0;
+	for (; i < 40; i ++) {
 		buffer [i] = c;
 		c = MelderReadText_getChar (me);
-		if (c == 0) { break; }   /* This may well be OK here. */
+		if (c == 0) { break; }   // this may well be OK here
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
-	if (i >= 40) {
-		Melder_error3 (L"Found strange text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), L").");
-		return 0;
-	}
+	if (i >= 40)
+		Melder_throw ("Found strange text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), ").");
 	buffer [i + 1] = '\0';
 	return wcstol (buffer, NULL, 10);
 }
 
 static unsigned long getUnsigned (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
-	int i;
-	wchar_t buffer [41], c;
+	wchar buffer [41], c;
 	for (c = MelderReadText_getChar (me); ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
-		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-		if (c == '!') {   /* End-of-line comment? */
-			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
+		if (c == 0)
+			Melder_throw ("Early end of text detected while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '!') {   // end-of-line comment?
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') {
+				if (c == 0)
+					Melder_throw ("Early end of text detected in comment while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), ").");
 			}
 		}
-		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-		if (c == '-') {
-			Melder_error3 (L"Found a negative value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
+		if (c == '\"')
+			Melder_throw ("Found a string while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '<')
+			Melder_throw ("Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '-')
+			Melder_throw ("Found a negative value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), ").");
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
-			}
+			if (c == 0)
+				Melder_throw ("Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), ").");
 			c = MelderReadText_getChar (me);
 		}
 	}
+	int i = 0;
 	for (i = 0; i < 40; i ++) {
 		buffer [i] = c;
 		c = MelderReadText_getChar (me);
-		if (c == 0) { break; }   /* This may well be OK here. */
+		if (c == 0) { break; }   // this may well be OK here
 		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 	}
-	if (i >= 40) {
-		Melder_error3 (L"Found strange text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), L").");
-		return 0;
-	}
+	if (i >= 40)
+		Melder_throw ("Found strange text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), ").");
 	buffer [i + 1] = '\0';
 	return wcstoul (buffer, NULL, 10);
 }
 
 static double getReal (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return 0;   // TODO: remove
 	int i;
 	wchar_t buffer [41], c, *slash;
 	do {
 		for (c = MelderReadText_getChar (me); c != '-' && ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
-			if (c == 0) {
-				Melder_error3 (L"Early end of text detected while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
-			}
-			if (c == '!') {   /* End-of-line comment? */
-				while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
-					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
-					return 0;
+			if (c == 0)
+				Melder_throw ("Early end of text detected while looking for a real number (line ", MelderReadText_getLineNumber (me), ").");
+			if (c == '!') {   // end-of-line comment?
+				while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') {
+					if (c == 0)
+						Melder_throw ("Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), ").");
 				}
 			}
-			if (c == '\"') {
-				Melder_error3 (L"Found a string while looking for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
-			}
-			if (c == '<') {
-				Melder_error3 (L"Found an enumerated value while looking for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
-				return 0;
-			}
+			if (c == '\"')
+				Melder_throw ("Found a string while looking for a real number in text (line ", MelderReadText_getLineNumber (me), ").");
+			if (c == '<')
+				Melder_throw ("Found an enumerated value while looking for a real number in text (line ", MelderReadText_getLineNumber (me), ").");
 			while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-				if (c == 0) {
-					Melder_error3 (L"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), L").");
-					return 0;
-				}
+				if (c == 0)
+					Melder_throw ("Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), ").");
 				c = MelderReadText_getChar (me);
 			}
 		}
 		for (i = 0; i < 40; i ++) {
 			buffer [i] = c;
 			c = MelderReadText_getChar (me);
-			if (c == 0) { break; }   /* This may well be OK here. */
+			if (c == 0) { break; }   // this may well be OK here
 			if (c == ' ' || c == '\n' || c == '\t' || c == '\r') break;
 		}
-		if (i >= 40) {
-			Melder_error3 (L"Found strange text while searching for a real number in text (line ", MelderReadText_getLineNumber (me), L").");
-			return 0;
-		}
-	} while (i == 0 && buffer [0] == '+');   /* Guard against single '+' symbols, which occur in complex numbers. */
+		if (i >= 40)
+			Melder_throw ("Found strange text while searching for a real number in text (line ", MelderReadText_getLineNumber (me), ").");
+	} while (i == 0 && buffer [0] == '+');   // guard against single '+' symbols, which occur in complex numbers
 	buffer [i + 1] = '\0';
 	slash = wcschr (buffer, '/');
 	if (slash) {
@@ -198,116 +163,85 @@ static double getReal (MelderReadText me) {
 	return Melder_atof (buffer);
 }
 
-static short getEnum (MelderReadText me, int (*getValue) (const wchar_t *)) {
-	if (! MelderReadText_isValid (me)) return -1;
-	int i;
-	wchar_t buffer [41], c;
+static short getEnum (MelderReadText me, int (*getValue) (const wchar *)) {
+	wchar buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != '<'; c = MelderReadText_getChar (me)) {
-		if (c == 0) {
-			(void) Melder_error3 (L"Early end of text detected while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
-			return -1;
-		}
+		if (c == 0)
+			Melder_throw ("Early end of text detected while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
 		if (c == '!') {   /* End-of-line comment? */
-			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
-				return -1;
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') {
+				if (c == 0)
+					Melder_throw ("Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
 			}
 		}
-		if (c == '-' || isdigit (c) || c == '+') {
-			Melder_error3 (L"Found a number while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
-			return -1;
-		}
-		if (c == '\"') {
-			Melder_error3 (L"Found a string while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
-			return -1;
-		}
+		if (c == '-' || isdigit (c) || c == '+')
+			Melder_throw ("Found a number while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '\"')
+			Melder_throw ("Found a string while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), ").");
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
-				return -1;
-			}
+			if (c == 0)
+				Melder_throw ("Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
 			c = MelderReadText_getChar (me);
 		}
 	}
-	for (i = 0; i < 40; i ++) {
-		c = MelderReadText_getChar (me);   /* Read past first '<'. */
-		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
-			return -1;
-		}
-		if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
-			Melder_error3 (L"No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), L").");
-			return -1;
-		}
+	int i = 0;
+	for (; i < 40; i ++) {
+		c = MelderReadText_getChar (me);   // read past first '<'
+		if (c == 0)
+			Melder_throw ("Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == ' ' || c == '\n' || c == '\t' || c == '\r')
+			Melder_throw ("No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
 		if (c == '>')
-			break;   /* The expected closing bracket; not added to the buffer. */
+			break;   // the expected closing bracket; not added to the buffer
 		buffer [i] = c;
 	}
-	if (i >= 40) {
-		Melder_error3 (L"Found strange text while reading an enumerated value in text (line ", MelderReadText_getLineNumber (me), L").");
-		return -1;
-	}
+	if (i >= 40)
+		Melder_throw ("Found strange text while reading an enumerated value in text (line ", MelderReadText_getLineNumber (me), ").");
 	buffer [i] = '\0';
 	int value = getValue (buffer);
-	if (value < 0) {
-		Melder_error3 (L"\"", buffer, L"\" is not a value of the enumerated type.");
-		return -1;
-	}
+	if (value < 0)
+		Melder_throw ("\"", buffer, "\" is not a value of the enumerated type.");
 	return value;
 }
 
-static wchar_t * getString (MelderReadText me) {
-	if (! MelderReadText_isValid (me)) return NULL;
-	int i;
-	wchar_t c;
+static wchar * getString (MelderReadText me) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	for (c = MelderReadText_getChar (me); c != '\"'; c = MelderReadText_getChar (me)) {
-		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
-			return NULL;
-		}
-		if (c == '!') {   /* End-of-line comment? */
-			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') if (c == 0) {
-				Melder_error3 (L"Early end of text detected in comment while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
-				return NULL;
+	for (wchar c = MelderReadText_getChar (me); c != '\"'; c = MelderReadText_getChar (me)) {
+		if (c == 0)
+			Melder_throw ("Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '!') {   // end-of-line comment?
+			while ((c = MelderReadText_getChar (me)) != '\n' && c != '\r') {
+				if (c == 0)
+					Melder_throw ("Early end of text detected in comment while looking for a string (line ", MelderReadText_getLineNumber (me), ").");
 			}
 		}
-		if (c == '-' || isdigit (c) || c == '+') {
-			Melder_error3 (L"Found a number while looking for a string in text (line ", MelderReadText_getLineNumber (me), L").");
-			return NULL;
-		}
-		if (c == '<') {
-			Melder_error3 (L"Found an enumerated value while looking for a string in text (line ", MelderReadText_getLineNumber (me), L").");
-			return NULL;
-		}
+		if (c == '-' || isdigit (c) || c == '+')
+			Melder_throw ("Found a number while looking for a string in text (line ", MelderReadText_getLineNumber (me), ").");
+		if (c == '<')
+			Melder_throw ("Found an enumerated value while looking for a string in text (line ", MelderReadText_getLineNumber (me), ").");
 		while (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
-			if (c == 0) {
-				Melder_error3 (L"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), L").");
-				return NULL;
-			}
+			if (c == 0)
+				Melder_throw ("Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), ").");
 			c = MelderReadText_getChar (me);
 		}
 	}
-	for (i = 0; 1; i ++) {
-		c = MelderReadText_getChar (me);   /* Read past first '"'. */
-		if (c == 0) {
-			Melder_error3 (L"Early end of text detected while reading a string (line ", MelderReadText_getLineNumber (me), L").");
-			return NULL;
-		}
+	for (int i = 0; 1; i ++) {
+		wchar c = MelderReadText_getChar (me);   // read past first '"'
+		if (c == 0)
+			Melder_throw ("Early end of text detected while reading a string (line ", MelderReadText_getLineNumber (me), ").");
 		if (c == '\"') {
 			wchar_t next = MelderReadText_getChar (me);
-			if (next == 0) { break; }   // Closing quote is last character in file: OK.
+			if (next == 0) { break; }   // closing quote is last character in file: OK
 			if (next != '\"') {
 				if (next == ' ' || next == '\n' || next == '\t' || next == '\r') {
-					// Closing quote is followed by whitespace: it is OK to skip this whitespace (no need to "ungetChar").
+					// closing quote is followed by whitespace: it is OK to skip this whitespace (no need to "ungetChar")
 				} else {
 					wchar_t kar2 [2] = { next, '\0' };
-					Melder_error5 (L"Character ", kar2, L" following quote (line ", MelderReadText_getLineNumber (me), L"). End of string or undoubled quote?");
-					return NULL;
+					Melder_throw ("Character ", kar2, " following quote (line ", MelderReadText_getLineNumber (me), "). End of string or undoubled quote?");
 				}
-				break;   /* The expected closing double quote; not added to the buffer. */
-			} /* Else: add only one of the two quotes to the buffer. */
+				break;   // the expected closing double quote; not added to the buffer
+			}   // else: add only one of the two quotes to the buffer
 		}
 		MelderString_appendCharacter (& buffer, c);
 	}
@@ -324,63 +258,63 @@ static wchar_t * getString (MelderReadText me) {
 
 int texgeti1 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text); therror
+		long externalValue = getInteger (text);
 		if (externalValue < -128 || externalValue > +127)
 			Melder_throw ("Value (", externalValue, ") out of range (-128 .. +127).");
 		return (int) externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Signed small integer not read from text file.");
+		Melder_throw ("Signed small integer not read from text file.");
 	}
 }
 
 int texgeti2 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text); therror
+		long externalValue = getInteger (text);
 		if (externalValue < -32768 || externalValue > +32767)
 			Melder_throw ("Value (", externalValue, ") out of range (-32768 .. +32767).");
 		return (int) externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Signed short integer not read from text file.");
+		Melder_throw ("Signed short integer not read from text file.");
 	}
 }
 
 long texgeti4 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text); therror
+		long externalValue = getInteger (text);
 		return externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Signed integer not read from text file.");
+		Melder_throw ("Signed integer not read from text file.");
 	}
 }
 
 unsigned int texgetu1 (MelderReadText text) {
 	try {
-		long externalValue = getUnsigned (text); therror
+		long externalValue = getUnsigned (text);
 		if (externalValue > 255)
 			Melder_throw ("Value (", externalValue, ") out of range (0 .. 255).");
 		return (unsigned int) externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned small integer not read from text file.");
+		Melder_throw ("Unsigned small integer not read from text file.");
 	}
 }
 
 unsigned int texgetu2 (MelderReadText text) {
 	try {
-		long externalValue = getUnsigned (text); therror
+		long externalValue = getUnsigned (text);
 		if (externalValue > 65535)
 			Melder_throw ("Value (", externalValue, ") out of range (0 .. 65535).");
 		return (unsigned int) externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned short integer not read from text file.");
+		Melder_throw ("Unsigned short integer not read from text file.");
 	}
 }
 
 unsigned long texgetu4 (MelderReadText text) {
 	try {
-		long externalValue = getUnsigned (text); therror
+		long externalValue = getUnsigned (text);
 		return externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned integer not read from text file.");
+		Melder_throw ("Unsigned integer not read from text file.");
 	}
 }
 
@@ -395,10 +329,10 @@ short texgete2 (MelderReadText text, int (*getValue) (const wchar_t *)) { return
 short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
 short texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
 short texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
-char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8_e (getString (text)); }
-char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8_e (getString (text)); }
-wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup_e (getString (text)); }
-wchar_t *texgetw4 (MelderReadText text) { return Melder_wcsdup_e (getString (text)); }
+char *texgets2 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
+char *texgets4 (MelderReadText text) { return Melder_wcsToUtf8 (getString (text)); }
+wchar_t *texgetw2 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
+wchar_t *texgetw4 (MelderReadText text) { return Melder_wcsdup (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
@@ -493,7 +427,7 @@ void texputs1 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // Double any internal quotes.
+			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
@@ -505,7 +439,7 @@ void texputs2 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // Double any internal quotes.
+			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
@@ -517,7 +451,7 @@ void texputs4 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 		char c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // Double any internal quotes.
+			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
@@ -529,7 +463,7 @@ void texputw2 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 		wchar_t c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // Double any internal quotes.
+			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
@@ -541,7 +475,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 		wchar_t c;
 		while ((c = *s ++) != '\0') {
 			MelderFile_writeCharacter (file, c);
-			if (c == '\"') MelderFile_writeCharacter (file, c);   // Double any internal quotes.
+			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
 	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
@@ -688,7 +622,7 @@ unsigned int bingetu1 (FILE *f) {
 		if (externalValue < 0) readError (f, "a byte.");
 		return (unsigned int) externalValue;
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned integer not read from 1 byte in binary file.");
+		Melder_throw ("Unsigned integer not read from 1 byte in binary file.");
 	}
 }
 
@@ -696,7 +630,7 @@ void binputu1 (unsigned int u, FILE *f) {
 	try {
 		if (putc (u, f) < 0) writeError ("a byte.");
 	} catch (MelderError) {
-		rethrowm ("Unsigned integer not written to 1 byte in binary file.");
+		Melder_throw ("Unsigned integer not written to 1 byte in binary file.");
 	}
 }
 
@@ -706,7 +640,7 @@ int bingeti1 (FILE *f) {
 		if (externalValue < 0) readError (f, "a byte.");
 		return (signed char) externalValue;   // this converts e.g. 200 to -56
 	} catch (MelderError) {
-		rethrowmzero ("Signed integer not read from 1 byte in binary file.");
+		Melder_throw ("Signed integer not read from 1 byte in binary file.");
 	}
 }
 
@@ -714,7 +648,7 @@ void binputi1 (int u, FILE *f) {
 	try {
 		if (putc (u, f) < 0) writeError ("a byte.");
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 1 byte in binary file.");
+		Melder_throw ("Signed integer not written to 1 byte in binary file.");
 	}
 }
 
@@ -727,7 +661,7 @@ int bingete1 (FILE *f, int min, int max, const wchar *type) {
 			Melder_throw (result, " is not a value of enumerated type <", type, ">.");
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("Enumerated type not read from 1 byte in binary file.");
+		Melder_throw ("Enumerated type not read from 1 byte in binary file.");
 	}
 }
 
@@ -735,7 +669,7 @@ void binpute1 (int value, FILE *f) {
 	try {
 		if (putc (value, f) < 0) writeError ("a byte.");
 	} catch (MelderError) {
-		rethrowm ("Enumerated type not written to 1 byte in binary file.");
+		Melder_throw ("Enumerated type not written to 1 byte in binary file.");
 	}
 }
 
@@ -778,7 +712,7 @@ int bingeti2 (FILE *f) {
 			return (int) (int16_t) externalValue;   // with sign extension if an int is 4 bytes
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Signed integer not read from 2 bytes in binary file.");
+		Melder_throw ("Signed integer not read from 2 bytes in binary file.");
 	}
 }
 
@@ -795,7 +729,7 @@ unsigned int bingetu2 (FILE *f) {
 			return (unsigned int) externalValue;
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned integer not read from 2 bytes in binary file.");
+		Melder_throw ("Unsigned integer not read from 2 bytes in binary file.");
 	}
 }
 
@@ -814,7 +748,7 @@ int bingete2 (FILE *f, int min, int max, const wchar_t *type) {
 			Melder_throw (result, " is not a value of enumerated type \"", type, L"\".");
 		return (int) result;
 	} catch (MelderError) {
-		rethrowmzero ("Enumerated value not read from 2 bytes in binary file.");
+		Melder_throw ("Enumerated value not read from 2 bytes in binary file.");
 	}
 }
 
@@ -827,7 +761,7 @@ long bingeti3 (FILE *f) {
 			externalValue |= 0xFF000000;   // extend negative sign to 32 bits
 		return (long) (int32_t) externalValue;   // first convert signedness, then perhaps extend sign to 64 bits!
 	} catch (MelderError) {
-		rethrowmzero ("Signed long integer not read from 3 bytes in binary file.");
+		Melder_throw ("Signed long integer not read from 3 bytes in binary file.");
 	}
 }
 
@@ -845,7 +779,7 @@ long bingeti4 (FILE *f) {
 				((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];   // 32 or 64 bits
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Signed long integer not read from 4 bytes in binary file.");
+		Melder_throw ("Signed long integer not read from 4 bytes in binary file.");
 	}
 }
 
@@ -863,7 +797,7 @@ unsigned long bingetu4 (FILE *f) {
 				((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];   // 32 or 64 bits
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned long integer not read from 4 bytes in binary file.");
+		Melder_throw ("Unsigned long integer not read from 4 bytes in binary file.");
 	}
 }
 
@@ -880,7 +814,7 @@ int bingeti2LE (FILE *f) {
 			return (int) (int16_t) externalValue;   // with sign extension if an int is 4 bytes
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Signed integer not read from 2 bytes in binary file.");
+		Melder_throw ("Signed integer not read from 2 bytes in binary file.");
 	}
 }
 
@@ -897,7 +831,7 @@ unsigned int bingetu2LE (FILE *f) {
 			return (unsigned int) externalValue;
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned integer not read from 2 bytes in binary file.");
+		Melder_throw ("Unsigned integer not read from 2 bytes in binary file.");
 	}
 }
 
@@ -910,7 +844,7 @@ long bingeti3LE (FILE *f) {
 			externalValue |= 0xFF000000;   // extend negative sign to 32 bits
 		return (long) (int32_t) externalValue;   // first convert signedness, then perhaps extend sign to 64 bits!
 	} catch (MelderError) {
-		rethrowmzero ("Signed long integer not read from 3 bytes in binary file.");
+		Melder_throw ("Signed long integer not read from 3 bytes in binary file.");
 	}
 }
 
@@ -928,7 +862,7 @@ long bingeti4LE (FILE *f) {
 				((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];   // 32 or 64 bits
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Signed long integer not read from 4 bytes in binary file.");
+		Melder_throw ("Signed long integer not read from 4 bytes in binary file.");
 	}
 }
 
@@ -946,7 +880,7 @@ unsigned long bingetu4LE (FILE *f) {
 				((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];   // 32 or 64 bits
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Unsigned long integer not read from 4 bytes in binary file.");
+		Melder_throw ("Unsigned long integer not read from 4 bytes in binary file.");
 	}
 }
 
@@ -972,7 +906,7 @@ double bingetr4 (FILE *f) {
 			return bytes [0] & 0x80 ? - x : x;
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Floating-point number not read from 4 bytes in binary file.");
+		Melder_throw ("Floating-point number not read from 4 bytes in binary file.");
 	}
 }
 
@@ -998,7 +932,7 @@ double bingetr4LE (FILE *f) {
 			return bytes [3] & 0x80 ? - x : x;
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Floating-point number not read from 4 bytes in binary file.");
+		Melder_throw ("Floating-point number not read from 4 bytes in binary file.");
 	}
 }
 
@@ -1028,7 +962,7 @@ double bingetr8 (FILE *f) {
 			return bytes [0] & 0x80 ? - x : x;
 		}
 	} catch (MelderError) {
-		rethrowmzero ("Floating-point number not read from 8 bytes in binary file.");
+		Melder_throw ("Floating-point number not read from 8 bytes in binary file.");
 	}
 }
 
@@ -1049,7 +983,7 @@ double bingetr10 (FILE *f) {
 		}
 		return bytes [0] & 0x80 ? - x : x;
 	} catch (MelderError) {
-		rethrowmzero ("Floating-point number not read from 10 bytes in binary file.");
+		Melder_throw ("Floating-point number not read from 10 bytes in binary file.");
 	}
 }
 
@@ -1092,7 +1026,7 @@ void binputi2 (int i, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 2, f) != 2) writeError ("two bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 2 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 2 bytes in binary file.");
 	}
 }
 
@@ -1108,7 +1042,7 @@ void binputu2 (unsigned int u, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 2, f) != 2) writeError ("two bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Unsigned integer not written to 2 bytes in binary file.");
+		Melder_throw ("Unsigned integer not written to 2 bytes in binary file.");
 	}
 }
 
@@ -1124,7 +1058,7 @@ void binpute2 (int value, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 2, f) != 2) writeError ("two bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Enumerated value not written to 2 bytes in binary file.");
+		Melder_throw ("Enumerated value not written to 2 bytes in binary file.");
 	}
 }
 
@@ -1136,7 +1070,7 @@ void binputi3 (long i, FILE *f) {
 		bytes [2] = i;
 		if (fwrite (bytes, sizeof (char), 3, f) != 3) writeError ("three bytes");
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 3 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 3 bytes in binary file.");
 	}
 }
 
@@ -1153,7 +1087,7 @@ void binputi4 (long i, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 4 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1170,7 +1104,7 @@ void binputu4 (unsigned long u, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Unsigned integer not written to 4 bytes in binary file.");
+		Melder_throw ("Unsigned integer not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1186,7 +1120,7 @@ void binputi2LE (int i, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 2, f) != 2) writeError ("two bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 2 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 2 bytes in binary file.");
 	}
 }
 
@@ -1202,7 +1136,7 @@ void binputu2LE (unsigned int u, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 2, f) != 2) writeError ("two bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Unsigned integer not written to 2 bytes in binary file.");
+		Melder_throw ("Unsigned integer not written to 2 bytes in binary file.");
 	}
 }
 
@@ -1214,7 +1148,7 @@ void binputi3LE (long i, FILE *f) {
 		bytes [0] = i;
 		if (fwrite (bytes, sizeof (char), 3, f) != 3) writeError ("three bytes");
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 3 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 3 bytes in binary file.");
 	}
 }
 
@@ -1231,7 +1165,7 @@ void binputi4LE (long i, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Signed integer not written to 4 bytes in binary file.");
+		Melder_throw ("Signed integer not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1248,7 +1182,7 @@ void binputu4LE (unsigned long u, FILE *f) {
 			if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Unsigned integer not written to 4 bytes in binary file.");
+		Melder_throw ("Unsigned integer not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1288,7 +1222,7 @@ void binputr4 (double x, FILE *f) {
 			if (fwrite (bytes, sizeof (unsigned char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Floating-point number not written to 4 bytes in binary file.");
+		Melder_throw ("Floating-point number not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1328,7 +1262,7 @@ void binputr4LE (double x, FILE *f) {
 			if (fwrite (bytes, sizeof (unsigned char), 4, f) != 4) writeError ("four bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Floating-point number not written to 4 bytes in binary file.");
+		Melder_throw ("Floating-point number not written to 4 bytes in binary file.");
 	}
 }
 
@@ -1374,7 +1308,7 @@ void binputr8 (double x, FILE *f) {
 			if (fwrite (bytes, sizeof (unsigned char), 8, f) != 8) writeError ("eight bytes.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Floating-point number not written to 8 bytes in binary file.");
+		Melder_throw ("Floating-point number not written to 8 bytes in binary file.");
 	}
 }
 
@@ -1418,110 +1352,112 @@ void binputr10 (double x, FILE *f) {
 		bytes [9] = lowMantissa;
 		if (fwrite (bytes, sizeof (unsigned char), 10, f) != 10) writeError ("ten bytes.");
 	} catch (MelderError) {
-		rethrowm ("Floating-point number not written to 10 bytes in binary file.");
+		Melder_throw ("Floating-point number not written to 10 bytes in binary file.");
 	}
 }
 
 fcomplex bingetc8 (FILE *f) {
 	try {
 		fcomplex result;
-		result. re = bingetr4 (f); therror
-		result. im = bingetr4 (f); therror
+		result. re = bingetr4 (f);
+		result. im = bingetr4 (f);
 		return result;
 	} catch (MelderError) {
+		Melder_throw ("Complex number not read from 8 bytes in binary file.");
 		fcomplex result = { 0 };
-		rethrowmval (result, "Complex number not read from 8 bytes in binary file.");
+		return result;
 	}
 }
 
 dcomplex bingetc16 (FILE *f) {
 	try {
 		dcomplex result;
-		result. re = bingetr8 (f); therror
-		result. im = bingetr8 (f); therror
+		result. re = bingetr8 (f);
+		result. im = bingetr8 (f);
 		return result;
 	} catch (MelderError) {
+		Melder_throw ("Complex number not read from 16 bytes in binary file.");
 		dcomplex result = { 0 };
-		rethrowmval (result, "Complex number not read from 16 bytes in binary file.");
+		return result;
 	}
 }
 
 void binputc8 (fcomplex z, FILE *f) {
 	try {
-		binputr4 (z. re, f); therror
-		binputr4 (z. im, f); therror
+		binputr4 (z. re, f);
+		binputr4 (z. im, f);
 	} catch (MelderError) {
-		rethrowm ("Complex number not written to 8 bytes in binary file.");
+		Melder_throw ("Complex number not written to 8 bytes in binary file.");
 	}
 }
 
 void binputc16 (dcomplex z, FILE *f) {
 	try {
-		binputr8 (z. re, f); therror
-		binputr8 (z. im, f); therror
+		binputr8 (z. re, f);
+		binputr8 (z. im, f);
 	} catch (MelderError) {
-		rethrowm ("Complex number not written to 16 bytes in binary file.");
+		Melder_throw ("Complex number not written to 16 bytes in binary file.");
 	}
 }
 
 char * bingets1 (FILE *f) {
 	try {
-		unsigned int length = bingetu1 (f); therror
+		unsigned int length = bingetu1 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? "Reached end of file" : "Error in file", " while trying to read ", length, " one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 char * bingets2 (FILE *f) {
 	try {
-		unsigned int length = bingetu2 (f); therror
+		unsigned int length = bingetu2 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? "Reached end of file" : "Error in file", " while trying to read ", length, " one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 char * bingets4 (FILE *f) {
 	try {
-		unsigned long length = bingetu4 (f); therror
+		unsigned long length = bingetu4 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? "Reached end of file" : "Error in file", " while trying to read ", length, " one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 wchar * bingetw1 (FILE *f) {
 	try {
 		autostring result = NULL;
-		unsigned short length = bingetu1 (f); therror
+		unsigned short length = bingetu1 (f);
 		if (length == 0xFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu1 (f); therror
+			length = bingetu1 (f);
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f); therror
+					result [i] = bingetu2 (f);
 				} else {
-					uint16_t kar = bingetu2 (f); therror
+					uint16_t kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
 						if (kar > 0xDBFF)
 							Melder_throw ("Incorrect Unicode value (first surrogate member ", kar, ").");
-						uint16_t kar2 = bingetu2 (f); therror
+						uint16_t kar2 = bingetu2 (f);
 						if (kar2 < 0xDC00 || kar2 > 0xDFFF)
 							Melder_throw ("Incorrect Unicode value (second surrogate member ", kar2, ").");
 						result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
@@ -1536,35 +1472,35 @@ wchar * bingetw1 (FILE *f) {
 			 */
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
-				result [i] = bingetu1 (f); therror
+				result [i] = bingetu1 (f);
 			}
 		}
 		result [length] = L'\0';
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 wchar * bingetw2 (FILE *f) {
 	try {
 		autostring result = NULL;
-		unsigned short length = bingetu2 (f); therror
+		unsigned short length = bingetu2 (f);
 		if (length == 0xFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu2 (f); therror
+			length = bingetu2 (f);
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f); therror
+					result [i] = bingetu2 (f);
 				} else {
-					unsigned short kar = bingetu2 (f); therror
+					unsigned short kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
 						if (kar > 0xDBFF)
 							Melder_throw ("Incorrect Unicode value (first surrogate member ", kar, ").");
-						unsigned short kar2 = bingetu2 (f); therror
+						unsigned short kar2 = bingetu2 (f);
 						if (kar2 < 0xDC00 || kar2 > 0xDFFF)
 							Melder_throw ("Incorrect Unicode value (second surrogate member ", kar2, ").");
 						result [i] = (((kar & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
@@ -1579,31 +1515,31 @@ wchar * bingetw2 (FILE *f) {
 			 */
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
-				result [i] = bingetu1 (f); therror
+				result [i] = bingetu1 (f);
 			}
 		}
 		result [length] = L'\0';
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 wchar * bingetw4 (FILE *f) {
 	try {
 		autostring result = NULL;
-		unsigned long length = bingetu4 (f); therror
+		unsigned long length = bingetu4 (f);
 		if (length == 0xFFFFFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu4 (f); therror
+			length = bingetu4 (f);
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned long i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
-					result [i] = bingetu2 (f); therror
+					result [i] = bingetu2 (f);
 				} else {
-					unsigned short kar = bingetu2 (f); therror
+					unsigned short kar = bingetu2 (f);
 					if ((kar & 0xF800) == 0xD800) {
 						if (kar > 0xDBFF)
 							Melder_throw ("Incorrect Unicode value (first surrogate member ", kar, ").");
@@ -1622,80 +1558,80 @@ wchar * bingetw4 (FILE *f) {
 			 */
 			result.reset (Melder_malloc (wchar, length + 1));
 			for (unsigned long i = 0; i < length; i ++) {
-				result [i] = bingetu1 (f); therror
+				result [i] = bingetu1 (f);
 			}
 		}
 		result [length] = L'\0';
 		return result.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text not read from a binary file.");
+		Melder_throw ("Text not read from a binary file.");
 	}
 }
 
 void binputs1 (const char *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu1 (0, f); therror
+			binputu1 (0, f);
 		} else {
 			unsigned long length = strlen (s);
 			if (length > 255) {
 				Melder_warning ("Text of ", length, " characters truncated to 255 characters.");
 				length = 255;
 			}
-			binputu1 (length, f); therror
+			binputu1 (length, f);
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw ("Error in file while trying to write ", length, " one-byte characters.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
 void binputs2 (const char *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu2 (0, f); therror
+			binputu2 (0, f);
 		} else {
 			unsigned long length = strlen (s);
 			if (length > 65535) {
 				Melder_warning ("Text of ", length, " characters truncated to 65535 characters.");
 				length = 65535;
 			}
-			binputu2 (length, f); therror
+			binputu2 (length, f);
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw ("Error in file while trying to write ", length, " one-byte characters.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
 void binputs4 (const char *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu4 (0, f); therror
+			binputu4 (0, f);
 		} else {
 			unsigned long length = strlen (s);
-			binputu4 (length, f); therror
+			binputu4 (length, f);
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw ("Error in file while trying to write ", length, " one-byte characters.");
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
 static inline void binpututf16 (wchar_t character, FILE *f) {
 	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-		binputu2 (character, f); therror
+		binputu2 (character, f);
 	} else {   // wchar_t is UTF-32.
 		MelderUtf32 kar = character;
 		if (kar <= 0xFFFF) {
-			binputu2 (character, f); therror
+			binputu2 (character, f);
 		} else if (kar <= 0x10FFFF) {
 			kar -= 0x10000;
-			binputu2 (0xD800 | (kar >> 10), f); therror
-			binputu2 (0xDC00 | (kar & 0x3FF), f); therror
+			binputu2 (0xD800 | (kar >> 10), f);
+			binputu2 (0xDC00 | (kar & 0x3FF), f);
 		} else {
 			Melder_fatal ("Impossible Unicode value.");
 		}
@@ -1705,7 +1641,7 @@ static inline void binpututf16 (wchar_t character, FILE *f) {
 void binputw1 (const wchar_t *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu1 (0, f); therror
+			binputu1 (0, f);
 		} else {
 			unsigned long length = wcslen (s);
 			if (length > 254) {
@@ -1716,30 +1652,30 @@ void binputw1 (const wchar_t *s, FILE *f) {
 				/*
 				 * ASCII
 				 */
-				binputu1 (length, f); therror
+				binputu1 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
-					binputu1 (s [i], f); therror
+					binputu1 (s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu1 (0xFF, f); therror   // an escape for multibyte encoding
-				binputu1 (length, f); therror
+				binputu1 (0xFF, f);   // an escape for multibyte encoding
+				binputu1 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
 					binpututf16 (s [i], f);
 				}
 			}
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
 void binputw2 (const wchar_t *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu2 (0, f); therror
+			binputu2 (0, f);
 		} else {
 			unsigned long length = wcslen (s);
 			if (length > 65534) {
@@ -1750,53 +1686,53 @@ void binputw2 (const wchar_t *s, FILE *f) {
 				/*
 				 * ASCII
 				 */
-				binputu2 (length, f); therror
+				binputu2 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
-					binputu1 (s [i], f); therror
+					binputu1 (s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu2 (0xFFFF, f); therror   // an escape for multibyte encoding
-				binputu2 (length, f); therror
+				binputu2 (0xFFFF, f);   // an escape for multibyte encoding
+				binputu2 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
-					binpututf16 (s [i], f); therror
+					binpututf16 (s [i], f);
 				}
 			}
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
 void binputw4 (const wchar_t *s, FILE *f) {
 	try {
 		if (s == NULL) {
-			binputu4 (0, f); therror
+			binputu4 (0, f);
 		} else {
 			unsigned long length = wcslen (s);
 			if (Melder_isValidAscii (s)) {
 				/*
 				 * ASCII
 				 */
-				binputu4 (length, f); therror
+				binputu4 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
-					binputu1 (s [i], f); therror
+					binputu1 (s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu4 (0xFFFFFFFF, f); therror   // an escape for multibyte encoding
-				binputu4 (length, f); therror
+				binputu4 (0xFFFFFFFF, f);   // an escape for multibyte encoding
+				binputu4 (length, f);
 				for (unsigned long i = 0; i < length; i ++) {
-					binpututf16 (s [i], f); therror
+					binpututf16 (s [i], f);
 				}
 			}
 		}
 	} catch (MelderError) {
-		rethrowm ("Text not written to a binary file.");
+		Melder_throw ("Text not written to a binary file.");
 	}
 }
 
@@ -1811,8 +1747,8 @@ void binputw4 (const wchar_t *s, FILE *f) {
 CACHE * memopen (size_t nbytes) {
 	CACHE *me;
 	if (nbytes < 1) return NULL;
-	if (! (me = Melder_malloc_e (CACHE, 1))) return NULL;
-	if (! (my base = Melder_malloc_e (unsigned char, nbytes))) { Melder_free (me); return NULL; }
+	me = Melder_malloc (CACHE, 1);
+	my base = Melder_malloc (unsigned char, nbytes);
 	my max = my base + nbytes;
 	my ptr = my base;
 	return me;
@@ -2338,33 +2274,39 @@ void cacputc16 (dcomplex z, CACHE *f) {
 }
 
 char * cacgets1 (CACHE *f) {
-	unsigned int length = (unsigned char) * f -> ptr ++;
-	char *result = Melder_malloc_e (char, length + 1);
-	if (! result)
-		return (char *) Melder_errorp ("(cacgets1:) Cannot create a string of length %d.", length);
-	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
-	result [length] = 0;   /* Trailing null byte. */
-	return result;
+	try {
+		unsigned int length = (unsigned char) * f -> ptr ++;
+		autostring8 result = Melder_malloc (char, length + 1);
+		memread (result.peek(), 1, length, f);
+		result [length] = 0;   // trailing null byte
+		return result.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Cannot read string from cache.");
+	}
 }
 
 char * cacgets2 (CACHE *f) {
-	unsigned int length = cacgetu2 (f);
-	char *result = Melder_malloc_e (char, length + 1);
-	if (! result)
-		return (char *) Melder_errorp ("(cacgets2:) Cannot create a string of length %d.", length);
-	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
-	result [length] = 0;   /* Trailing null byte. */
-	return result;
+	try {
+		unsigned int length = cacgetu2 (f);
+		autostring8 result = Melder_malloc (char, length + 1);
+		memread (result.peek(), 1, length, f);
+		result [length] = 0;   // trailing null byte
+		return result.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Cannot read string from cache.");
+	}
 }
 
 char * cacgets4 (CACHE *f) {
-	unsigned long length = cacgetu4 (f);
-	char *result = Melder_malloc_e (char, length + 1);
-	if (! result)
-		return (char *) Melder_errorp ("(cacgets4:) Cannot create a string of length %ld.", length);
-	if (memread (result, 1, length, f) != length) { Melder_free (result); return NULL; }
-	result [length] = 0;   /* Trailing null byte. */
-	return result;
+	try {
+		unsigned long length = cacgetu4 (f);
+		autostring8 result = Melder_malloc (char, length + 1);
+		memread (result.peek(), 1, length, f);
+		result [length] = 0;   // trailing null byte
+		return result.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Cannot read string from cache.");
+	}
 }
 
 void cacputs1 (const char *s, CACHE *f) {

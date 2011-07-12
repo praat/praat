@@ -40,7 +40,7 @@ oo_DEFINE_CLASS (PointProcess, Function)
 			oo_DOUBLE_VECTOR (t, my nt)
 		} else {
 			my maxnt = 1;
-			if (! (my t = NUMdvector (1, 1))) return 0;
+			my t = NUMvector <double> (1, 1);
 		}
 	#else
 		oo_DOUBLE_VECTOR (t, my nt)

@@ -20,20 +20,16 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
+#include "Vector.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Harmonicity_members  Vector_members
-#define Harmonicity_methods  Vector_methods
-class_create (Harmonicity, Vector);
+Thing_declare1cpp (Harmonicity);
 
 /* Attributes:
 		xmin				// Start time (seconds).
@@ -67,6 +63,12 @@ Harmonicity Matrix_to_Harmonicity (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structHarmonicity : public structVector {
+	};
+	#define Harmonicity__methods(klas)  Vector__methods(klas)
+	Thing_declare2cpp (Harmonicity, Vector);
+
 #endif
 
 /* End of file Harmonicity.h */

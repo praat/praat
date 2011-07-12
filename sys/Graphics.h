@@ -20,12 +20,10 @@
  */
 
 /*
- * pb 2011/06/18
+ * pb 2011/07/08
  */
 
-#ifndef _Thing_h_
-	#include "Thing.h"
-#endif
+#include "Thing.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -33,7 +31,8 @@
 
 #include "Graphics_enums.h"
 
-typedef struct structGraphics *Graphics;
+Thing_declare1cpp (Graphics);
+
 Graphics Graphics_create (int resolution);
 Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification);

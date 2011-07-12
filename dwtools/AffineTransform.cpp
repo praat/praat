@@ -1,4 +1,4 @@
-/* AffineTransform.c
+/* AffineTransform.cpp
  * 
  * Copyright (C) 1993-2011 David Weenink
  * 
@@ -30,6 +30,8 @@
 #include "AffineTransform.h"
 #include "NUM2.h"
 
+#undef our
+#define our ((AffineTransform_Table) my methods) ->
 
 static void classAffineTransform_transform (I, double **in, long nrows, double **out)
 {
@@ -52,21 +54,19 @@ static void classAffineTransform_transform (I, double **in, long nrows, double *
 static Any classAffineTransform_invert (I)
 {
 	iam (AffineTransform);
-	try {
-		autoAffineTransform thee = (AffineTransform) Data_copy (me);
-		double tolerance = 0.000001;
-	
-		NUMpseudoInverse (my r, my n, my n, thy r, tolerance); therror
-		for (long i = 1; i <= my n; i++)
+	autoAffineTransform thee = (AffineTransform) Data_copy (me);
+	double tolerance = 0.000001;
+
+	NUMpseudoInverse (my r, my n, my n, thy r, tolerance); therror
+	for (long i = 1; i <= my n; i++)
+	{
+		thy t[i] = 0;
+		for (long j = 1; j <= thy n; j++)
 		{
-			thy t[i] = 0;
-			for (long j = 1; j <= thy n; j++)
-			{
-				thy t[i] -= thy r[i][j] * my t[j];
-			}
+			thy t[i] -= thy r[i][j] * my t[j];
 		}
-		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, " not inverted"); } 
+	}
+	return thee.transfer();
 }
 
 #include "oo_DESTROY.h"
@@ -104,13 +104,11 @@ class_methods_end
 
 void AffineTransform_init (I, long n)
 {
-	try {
-		iam (AffineTransform);
-		if (n < 1) Melder_throw ("Dimensionality must be at least 1.");
-		my n = n;
-		my r = NUMmatrix<double> (1, n, 1, n);
-		my t = NUMvector<double> (1, n);
-	} catch (MelderError) { rethrow; } 
+	iam (AffineTransform);
+	if (n < 1) Melder_throw ("Dimensionality must be at least 1.");
+	my n = n;
+	my r = NUMmatrix<double> (1, n, 1, n);
+	my t = NUMvector<double> (1, n);
 }
 
 AffineTransform AffineTransform_create (long n)
@@ -119,7 +117,7 @@ AffineTransform AffineTransform_create (long n)
 		autoAffineTransform me = Thing_new (AffineTransform);
 		AffineTransform_init (me.peek(), n);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("AffineTransform not created."); }
+	} catch (MelderError) { Melder_thrown ("AffineTransform not created."); }
 }
 
 Any AffineTransform_invert (I)
@@ -144,7 +142,7 @@ TableOfReal AffineTransform_extractMatrix (I)
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": transformation matrix not extracted."); }
+	} catch (MelderError) { Melder_thrown (me, ": transformation matrix not extracted."); }
 }
 
 TableOfReal AffineTransform_extractTranslationVector (I)
@@ -154,7 +152,7 @@ TableOfReal AffineTransform_extractTranslationVector (I)
 		autoTableOfReal thee = TableOfReal_create (1, my n);
 		for (long i = 1; i <= my n; i++) thy data[1][i] = my t[i];
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": translation vector not extracted."); }
+	} catch (MelderError) { Melder_thrown (me, ": translation vector not extracted."); }
 }
 
-/* End of file AffineTransform.c */
+/* End of file AffineTransform.cpp */

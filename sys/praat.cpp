@@ -1,6 +1,6 @@
-/* praat.c
+/* praat.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
  * pb 2010/05/24 sendpraat for GTK
  * pb 2010/07/29 removed GuiWindow_show
  * pb 2010/12/08 can read Collections created from multiple objects read from one file (e.g. a labelled sound file)
+ * pb 2011/07/05 C++
  */
 
 #include "melder.h"
@@ -345,25 +346,30 @@ void praat_cleanUpName (wchar_t *name) {
 
 /***** objects + commands *****/
 
-bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
-	iam (Data);
-	int IOBJECT, ieditor;   /* Must be local: praat_new can be called from within a loop!!! */
-	if (me == NULL) return Melder_error1 (L"No object was put into the list.");
+void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
+	int IOBJECT, ieditor;   // must be local: praat_new can be called from within a loop!!!
+	if (me == NULL)
+		Melder_throw ("No object was put into the list.");
 	/*
 	 * If my class is Collection, I'll have to be unpacked.
 	 */
 	if (my methods == (Any) classCollection) {
 		Collection list = (Collection) me;
-		bool result = true;
-		for (long idata = 1; idata <= list -> size; idata ++) {
-			Data object = (Data) list -> item [idata];
-			const wchar_t *name = object -> name ? object -> name : myName;
-			Melder_assert (name != NULL);
-			result &= praat_new1 (object, name) ? true : false;   // Recurse.
+		try {
+			for (long idata = 1; idata <= list -> size; idata ++) {
+				Data object = (Data) list -> item [idata];
+				const wchar *name = object -> name ? object -> name : myName;
+				Melder_assert (name != NULL);
+				praat_new1 (object, name);   // recurse
+			}
+		} catch (MelderError) {
+			list -> size = 0;   // disown
+			forget (list);
+			throw;
 		}
-		list -> size = 0;   // Disown.
+		list -> size = 0;   // disown
 		forget (list);
-		return result;
+		return;
 	}
 
 	MelderString name = { 0 }, givenName = { 0 };
@@ -372,7 +378,7 @@ bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
 		/*
 		 * Remove extension.
 		 */
-		wchar_t *p = wcsrchr (givenName.string, '.');
+		wchar *p = wcsrchr (givenName.string, '.');
 		if (p) *p = '\0';
 		praat_cleanUpName (givenName.string);
 	} else {
@@ -382,8 +388,7 @@ bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
 
 	if (theCurrentPraatObjects -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
-		return Melder_error3 (L"The Object Window cannot contain more than ", Melder_integer (praat_MAXNUM_OBJECTS), L" objects. "
-			"You could remove some objects.");
+		Melder_throw ("The Object Window cannot contain more than ", praat_MAXNUM_OBJECTS, " objects. You could remove some objects.");
 	}
 		
 	IOBJECT = ++ theCurrentPraatObjects -> n;
@@ -391,7 +396,7 @@ bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
 	FULL_NAME = Melder_wcsdup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
 
-	if (! theCurrentPraatApplication -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
+	if (! theCurrentPraatApplication -> batch) {   // put a new object on the screen, at the bottom of the list
 		#ifdef UNIX
 			#if motif
 				XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraatObjects -> n + 2, NULL);
@@ -414,89 +419,75 @@ bool praat_newWithFile1 (I, const wchar_t *myName, MelderFile file) {
 	}
 	ID = theCurrentPraatObjects -> uniqueId;
 	theCurrentPraatObjects -> list [IOBJECT]. _beingCreated = TRUE;
-	Thing_setName (OBJECT, givenName.string);
+	Thing_setName ((Thing) OBJECT, givenName.string);
 	theCurrentPraatObjects -> totalBeingCreated ++;
 	MelderString_free (& givenName);
 	MelderString_free (& name);
-	return true;
 }
 
 static MelderString thePraatNewName = { 0 };
-bool praat_newWithFile2 (I, const wchar_t *s1, const wchar_t *s2, MelderFile file) {
-	iam (Data);
+void praat_newWithFile2 (Data me, const wchar *s1, const wchar *s2, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append2 (& thePraatNewName, s1, s2);
-	return praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-bool praat_newWithFile3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file) {
-	iam (Data);
+void praat_newWithFile3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append3 (& thePraatNewName, s1, s2, s3);
-	return praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-bool praat_newWithFile4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file) {
-	iam (Data);
+void praat_newWithFile4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
-	return praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-bool praat_newWithFile5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file) {
-	iam (Data);
+void praat_newWithFile5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
-	return praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-bool praat_new1 (I, const wchar_t *s1) {
-	iam (Data);
-	return praat_newWithFile1 (me, s1, NULL);
+void praat_new1 (Data me, const wchar *s1) {
+	praat_newWithFile1 (me, s1, NULL);
 }
-bool praat_new2 (I, const wchar_t *s1, const wchar_t *s2) {
-	iam (Data);
+void praat_new2 (Data me, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append2 (& thePraatNewName, s1, s2);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new3 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
-	iam (Data);
+void praat_new3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append3 (& thePraatNewName, s1, s2, s3);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new4 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
-	iam (Data);
+void praat_new4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
 	return praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new5 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
-	iam (Data);
+void praat_new5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new6 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
-	iam (Data);
+void praat_new6 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append6 (& thePraatNewName, s1, s2, s3, s4, s5, s6);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new7 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
-	iam (Data);
+void praat_new7 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append7 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new8 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
-	iam (Data);
+void praat_new8 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append8 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
-bool praat_new9 (I, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
-	iam (Data);
+void praat_new9 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
-	return praat_new1 (me, thePraatNewName.string);
+	praat_new1 (me, thePraatNewName.string);
 }
 
 void praat_updateSelection (void) {
@@ -597,18 +588,27 @@ static void praat_exit (int exit_code) {
 	 * Stop receiving messages.
 	 */
 	#if defined (UNIX)
+		/*
+		 * We are going to delete the process id ("pid") file, if it's ours.
+		 */
 		if (pidFile. path [0]) {
-			FILE *f = Melder_fopen (& pidFile, "r");
-			if (f) {
+			try {
+				/*
+				 * To see whether we own the pid file,
+				 * we look into it to see whether its pid equals our pid.
+				 * If not, then we are probably living in an old invocation of the program,
+				 * and the pid file was written by the latest invocation of the program,
+				 * which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
+				 */
+				autofile f = Melder_fopen (& pidFile, "r");
 				long pid;
-				if (fscanf (f, "%ld", & pid) < 1 || pid == getpid ()) {
-					fclose (f);
-					MelderFile_delete (& pidFile);
-				} else {
-					fclose (f);   /* Probably second invocation of program. */
+				if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
+				f.close (& pidFile);
+				if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
+					MelderFile_delete (& pidFile);   // ...then we own the pid file and can delete it
 				}
-			} else {
-				Melder_clearError ();
+			} catch (MelderError) {
+				Melder_clearError ();   // if the pid file is somehow missing or corrupted, we just ignore that
 			}
 		}
 	#endif
@@ -623,17 +623,17 @@ static void praat_exit (int exit_code) {
 	 * Save the script buttons.
 	 */
 	if (! theCurrentPraatApplication -> batch) {
-		FILE *f = Melder_fopen (& buttons5File, "wb");
-		if (f) {
-			MelderFile_setMacTypeAndCreator (& buttons5File, 'pref', 'PpgB');
+		try {
+			autofile f = Melder_fopen (& buttons5File, "wb");
 			fwprintf (f, L"\ufeff# Buttons (1).\n");
 			fwprintf (f, L"# This file is generated automatically when you quit the %ls program.\n", Melder_peekUtf8ToWcs (praatP.title));
 			fwprintf (f, L"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 			fwprintf (f, L"# and the buttons that you hid or showed.\n\n");
 			praat_saveMenuCommands (f);
 			praat_saveAddedActions (f);
-			fclose (f);
-		} else {
+			f.close (& buttons5File);
+			MelderFile_setMacTypeAndCreator (& buttons5File, 'pref', 'PpgB');
+		} catch (MelderError) {
 			Melder_clearError ();
 		}
 	}
@@ -656,7 +656,7 @@ static void cb_Editor_destroy (I, void *closure) {
 	removeAllReferencesToEditor (me);   /* Remove reference(s) to moribund Editor. */
 }
 
-static void cb_Editor_dataChanged (I, void *closure, Any data) {
+static void cb_Editor_dataChanged (I, void *closure, Data data) {
 	iam (Editor);
 	int iobject, ieditor;
 	(void) closure;
@@ -688,14 +688,18 @@ static void cb_Editor_dataChanged (I, void *closure, Any data) {
 	}
 }
 
-static void cb_Editor_publish (Any editor, void *closure, Any publish) {
+static void cb_Editor_publish (Any editor, void *closure, Data publish) {
 /*
    The default publish callback.
    Works nicely if the publisher invents a name.
 */
 	(void) editor;
 	(void) closure;
-	if (! praat_new1 (publish, NULL)) { Melder_flushError (NULL); return; }
+	try {
+		praat_new1 (publish, NULL);
+	} catch (MelderError) {
+		Melder_flushError (NULL);
+	}
 	praat_updateSelection ();
 }
 
@@ -842,15 +846,25 @@ void praat_clipboardChanged (void *closure, Any clipboard) {
 }
 
 static void helpProc (const wchar_t *query) {
-	if (theCurrentPraatApplication -> batch) { Melder_flushError ("Cannot view manual from batch."); return; }
-	if (! Manual_create (theCurrentPraatApplication -> topShell, query, theCurrentPraatApplication -> manPages))
-		Melder_flushError ("help: no help on \"%ls\".", query);   /* Failure. */
+	if (theCurrentPraatApplication -> batch) {
+		Melder_flushError ("Cannot view manual from batch.");
+		return;
+	}
+	try {
+		Manual_create (theCurrentPraatApplication -> topShell, query, theCurrentPraatApplication -> manPages);
+	} catch (MelderError) {
+		Melder_flushError ("help: no help on \"%ls\".", query);
+	}
 }
 
 static int publishProc (void *anything) {
-	if (! praat_new1 (anything, NULL)) return Melder_error1 (L"(Melder_publish:) not published.");
-	praat_updateSelection ();
-	return 1;
+	try {
+		praat_new1 ((Data) anything, NULL);
+		praat_updateSelection ();
+		return 1;
+	} catch (MelderError) {
+		Melder_throw ("Not published.");
+	}
 }
 
 /***** QUIT *****/
@@ -893,72 +907,47 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 /********** INITIALIZATION OF THE PRAAT SHELL **********/
 
 #if defined (UNIX)
-	#if gtk
-		static gboolean cb_userMessage (GtkWidget widget, GdkEventClient *event, gpointer user_data) {
-			FILE *f;
-			(void) widget;
-			(void) user_data;
-			if ((f = Melder_fopen (& messageFile, "r")) != NULL) {
-				long pid;
-				int narg = fscanf (f, "#%ld", & pid);
-				fclose (f);
-				praat_background ();
-				if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-					Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
-					Melder_flushError (NULL);
-				}
-				praat_foreground ();
-				if (narg) kill (pid, SIGUSR2);
-			} else {
-				Melder_clearError ();
-			}
-			return TRUE;
+	static gboolean cb_userMessage (GtkWidget widget, GdkEventClient *event, gpointer user_data) {
+		(void) widget;
+		(void) user_data;
+		autofile f;
+		try {
+			f.reset (Melder_fopen (& messageFile, "r"));
+		} catch (MelderError) {
+			Melder_clearError ();
+			return true;   // OK
 		}
-	#elif motif
-		int haveMessage = FALSE;
-		static void timerProc_userMessage (XtPointer dummy, XtIntervalId *id) {
-			FILE *f;
-			(void) dummy;
-			(void) id;
-			if ((f = Melder_fopen (& messageFile, "r")) != NULL) {
-				long pid;
-				int narg = fscanf (f, "#%ld", & pid);
-				fclose (f);
-				praat_background ();
-				if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-					Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
-					Melder_flushError (NULL);
-				}
-				praat_foreground ();
-				if (narg) kill (pid, SIGUSR2);
-			} else {
-				Melder_clearError ();
+		long pid;
+		int narg = fscanf (f, "#%ld", & pid);
+		f.close (& messageFile);
+		{ // scope
+			autoPraatBackground background;
+			try {
+				praat_executeScriptFromFile (& messageFile, NULL);
+			} catch (MelderError) {
+				Melder_error_ (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
+				Melder_flushError (NULL);
 			}
 		}
-		static void handleMessage (int message) {
-			(void) message;
-			signal (SIGUSR1, handleMessage);   /* Keep this handler in the air. */
-			haveMessage = TRUE;
-			/* Trial: */
-			haveMessage = FALSE;
-			XtAppAddTimeOut (theCurrentPraatApplication -> context, 100, timerProc_userMessage, 0);
-		}
-	#endif
+		if (narg) kill (pid, SIGUSR2);
+		return true;
+	}
 #elif defined (_WIN32)
 	static int cb_userMessage (void) {
-		praat_background ();
-		if (! praat_executeScriptFromFile (& messageFile, NULL)) {
-			Melder_error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
+		autoPraatBackground background;
+		try {
+			praat_executeScriptFromFile (& messageFile, NULL);
+		} catch (MelderError) {
+			Melder_error_ (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.");
 			Melder_flushError (NULL);
 		}
-		praat_foreground ();
 		return 0;
 	}
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
-	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
+	extern "C" wchar *sendpraatW (void *display, const wchar *programName, long timeOut, const wchar *text);
 	static void cb_openDocument (MelderFile file) {
-		wchar_t text [500];
-		wchar_t *s = file -> path;
+		wchar text [500];
+		wchar *s = file -> path;
 		swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
 		long l = wcslen (text);
 		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
@@ -966,21 +955,24 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
-		praat_background ();
-		wchar_t *message = Melder_8bitToWcs_e (messageA, 0); cherror
-		if (! praat_executeScriptFromText (message)) error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.")
-	end:
-		Melder_free (message);
-		praat_foreground ();
-		iferror Melder_flushError (NULL);
+		autoPraatBackground background;
+		autostring message = Melder_8bitToWcs (messageA, 0);
+		try {
+			praat_executeScriptFromText (message.peek());
+		} catch (MelderError) {
+			Melder_error_ (praatP.title, ": message not completely handled.");
+			Melder_flushError (NULL);
+		}
 		return 0;
 	}
-	static int cb_userMessageW (wchar_t *message) {
-		praat_background ();
-		if (! praat_executeScriptFromText (message)) error2 (Melder_peekUtf8ToWcs (praatP.title), L": message not completely handled.")
-	end:
-		praat_foreground ();
-		iferror Melder_flushError (NULL);
+	static int cb_userMessageW (wchar *message) {
+		autoPraatBackground ();
+		try {
+			praat_executeScriptFromText (message);
+		} catch (MelderError) {
+			Melder_error_ (praatP.title, ": message not completely handled.");
+			Melder_flushError (NULL);
+		}
 		return 0;
 	}
 	static int cb_quitApplication (void) {
@@ -989,9 +981,9 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 #endif
 
-static wchar_t * thePraatStandAloneScriptText = NULL;
+static wchar * thePraatStandAloneScriptText = NULL;
 
-void praat_setStandAloneScriptText (wchar_t *text) {
+void praat_setStandAloneScriptText (wchar *text) {
 	thePraatStandAloneScriptText = text;
 }
 
@@ -1173,14 +1165,14 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			 * Messages from "sendpraat" are caught very early this way,
 			 * though they will be responded to much later.
 			 */
-			FILE *f;
-			if ((f = Melder_fopen (& pidFile, "w")) != NULL) {
+			try {
+				autofile f = Melder_fopen (& pidFile, "w");
 				fprintf (f, "%ld", (long) getpid ());
-				fclose (f);
+				f.close (& pidFile);
 				#if motif
 					signal (SIGUSR1, handleMessage);
 				#endif
-			} else {
+			} catch (MelderError) {
 				Melder_clearError ();
 			}
 		}
@@ -1293,25 +1285,20 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		GuiObject_show (Raam);
 		#ifdef UNIX
-		{
-			FILE *f;
-			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
+			try {
+				autofile f = Melder_fopen (& pidFile, "a");
 				#if gtk
 					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (theCurrentPraatApplication -> topShell -> window)));
 				#else
 					fprintf (f, " %ld", (long) XtWindow (theCurrentPraatApplication -> topShell));
 				#endif
-				fclose (f);
-			} else {
+				f.close (& pidFile);
+			} catch (MelderError) {
 				Melder_clearError ();
 			}
-		}
 		#endif
 		#ifdef UNIX
 			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
-		#endif
-		#if ! defined (macintosh)
-			/* praat_showLogo (TRUE);   /* Mac: later. */
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
 			MelderGui_create (theCurrentPraatApplication -> context, theCurrentPraatApplication -> topShell);   /* Mac: done this earlier. */
@@ -1322,28 +1309,21 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	theCurrentPraatApplication -> manPages = ManPages_create ();
 
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
-	#if defined (macintosh)
-		if (! Melder_batch) {
-			/* praat_showLogo (TRUE);   /* Unix & Windows: earlier. */
-		}
-	#endif
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {
-	FILE *f;
-	wchar_t name [256];
+	wchar name [256];
 	swprintf (name, 256, fileNameTemplate, Melder_peekUtf8ToWcs (programName));
 	if (! MelderDir_isNull (startUpDirectory)) {   // Should not occur on modern systems.
 		structMelderFile startUp = { 0 };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
-		if ((f = Melder_fopen (& startUp, "r")) != NULL) {
-			fclose (f);
-			if (! praat_executeScriptFromFile (& startUp, NULL)) {
-				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": start-up file ", MelderFile_messageName (& startUp), L" not completed.");
-				Melder_flushError (NULL);
-			}
-		} else {
-			Melder_clearError ();
+		if (! MelderFile_readable (& startUp))
+			return; // it's OK if the file doesn't exist
+		try {
+			praat_executeScriptFromFile (& startUp, NULL);
+		} catch (MelderError) {
+			Melder_error_ (praatP.title, ": start-up file ", MelderFile_messageName (& startUp), " not completed.");
+			Melder_flushError (NULL);
 		}
 	}
 }
@@ -1358,7 +1338,6 @@ void praat_run (void) {
 		praat_addMenuCommand (L"Objects", L"Praat", L"-- quit --", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
 	#endif
-
 	/*
 	 * Read the preferences file, and notify those who want to be notified of this,
 	 * namely, those who already have a window (namely, the Picture window),
@@ -1379,7 +1358,7 @@ void praat_run (void) {
 		executeStartUpFile (& usrLocal, L"%ls-startUp");
 	#endif
 	#if defined (UNIX) || defined (macintosh)
-		executeStartUpFile (& homeDir, L".%ls-user-startUp");   /* Not on Windows (empty file name error). */
+		executeStartUpFile (& homeDir, L".%ls-user-startUp");   // not on Windows (empty file name error)
 	#endif
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32)
 		executeStartUpFile (& homeDir, L"%ls-user-startUp");
@@ -1398,14 +1377,13 @@ void praat_run (void) {
 			structMelderFile plugin = { 0 };
 			MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 			MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
-			if ((f = Melder_fopen (& plugin, "r")) != NULL) {   /* Necessary? */
-				fclose (f);
-				if (! praat_executeScriptFromFile (& plugin, NULL)) {
-					Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": plugin ", MelderFile_messageName (& plugin), L" contains an error.");
+			if (MelderFile_readable (& plugin)) {
+				try {
+					praat_executeScriptFromFile (& plugin, NULL);
+				} catch (MelderError) {
+					Melder_error_ (praatP.title, ": plugin ", MelderFile_messageName (& plugin), " contains an error.");
 					Melder_flushError (NULL);
 				}
-			} else {
-				Melder_clearError ();
 			}
 		}
 	}
@@ -1420,25 +1398,39 @@ void praat_run (void) {
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText != NULL) {
-			praat_executeScriptFromText (thePraatStandAloneScriptText);
-			praat_exit (0);
-		} else if (doingCommandLineInterface) {
-			if (praat_executeCommandFromStandardInput (praatP.title)) {
+			try {
+				praat_executeScriptFromText (thePraatStandAloneScriptText);
 				praat_exit (0);
-			} else {
+			} catch (MelderError) {
+				Melder_flushError ("%s: stand-alone script session interrupted.", praatP.title);
+				praat_exit (-1);
+			}
+		} else if (doingCommandLineInterface) {
+			try {
+				praat_executeCommandFromStandardInput (praatP.title);
+				praat_exit (0);
+			} catch (MelderError) {
 				Melder_flushError ("%s: command line session interrupted.", praatP.title);
 				praat_exit (-1);
 			}
 		} else {
-			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraatApplication -> batchName.string)) {
+			try {
+				praat_executeScriptFromFileNameWithArguments (theCurrentPraatApplication -> batchName.string);
 				praat_exit (0);
-			} else {
+			} catch (MelderError) {
+				/*
+				 * Try to get the error message out; this is a bit complicated...
+				 */
 				structMelderFile batchFile = { 0 };
-				if (! Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & batchFile)) praat_exit (-1);
+				try {
+					Melder_relativePathToFile (theCurrentPraatApplication -> batchName.string, & batchFile);
+				} catch (MelderError) {
+					praat_exit (-1);
+				}
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderGui_create (NULL, NULL);
 				#endif
-				Melder_error4 (Melder_peekUtf8ToWcs (praatP.title), L": command file ", MelderFile_messageName (& batchFile), L" not completed.");
+				Melder_error_ (praatP.title, ": command file ", MelderFile_messageName (& batchFile), " not completed.");
 				Melder_flushError (NULL);
 				praat_exit (-1);
 			}
@@ -1448,17 +1440,30 @@ void praat_run (void) {
 		/*
 		 * Read the added script buttons. Each line separately: every error should be ignored.
 		 */
-		wchar_t *buttons = MelderFile_readText (MelderFile_readable (& buttons5File) ? & buttons5File : & buttons4File);
-		if (buttons == NULL) {
-			Melder_clearError ();   // The file does not have to exist yet.
-		} else {
-			wchar_t *line = buttons;
-			for (;;) {
-				wchar_t *newline = wcschr (line, '\n');
-				if (newline) *newline = '\0';
-				if (! praat_executeCommand (NULL, line)) Melder_clearError ();
-				if (newline == NULL) break;
-				line = newline + 1;
+		{ // scope
+			autostring buttons;
+			try {
+				buttons.reset (MelderFile_readText (& buttons5File));
+			} catch (MelderError) {
+				try {
+					buttons.reset (MelderFile_readText (& buttons4File));
+				} catch (MelderError) {
+					Melder_clearError ();
+				}
+			}
+			if (buttons.peek()) {
+				wchar *line = buttons.peek();
+				for (;;) {
+					wchar_t *newline = wcschr (line, '\n');
+					if (newline) *newline = '\0';
+					try {
+						praat_executeCommand (NULL, line);
+					} catch (MelderError) {
+						Melder_clearError ();   // ignore this line, but not necessarily the next
+					}
+					if (newline == NULL) break;
+					line = newline + 1;
+				}
 			}
 		}
 
@@ -1469,7 +1474,7 @@ void praat_run (void) {
 		praat_sortActions ();
 
 		praatP.phase = praat_HANDLING_EVENTS;
-		
+
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell), "client-event", G_CALLBACK (cb_userMessage), NULL);
@@ -1491,7 +1496,11 @@ void praat_run (void) {
 					if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
 					//Melder_error3 (L"command <<", text, L">>");
 					//Melder_flushError (NULL);
-					if (! praat_executeScriptFromText (text)) Melder_error1 (NULL);   // BUG
+					try {
+						praat_executeScriptFromText (text);
+					} catch (MelderError) {
+						Melder_flushError (NULL);
+					}
 				}
 			#endif
 			for (;;) {
@@ -1503,4 +1512,4 @@ void praat_run (void) {
 	}
 }
 
-/* End of file praat.c */
+/* End of file praat.cpp */

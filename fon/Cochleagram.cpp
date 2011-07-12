@@ -40,7 +40,7 @@ Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Cochleagram with ", nt, " times and ", nf, " frequencies not created.");
+		Melder_throw ("Cochleagram with ", nt, " times and ", nf, " frequencies not created.");
 	}
 }
 
@@ -102,7 +102,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 		diff /= nt * my ny;
 		return sqrt (diff);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": difference not computed.");
+		Melder_throw (me, " & ", thee, ": difference not computed.");
 	}
 }
 
@@ -112,7 +112,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me) {
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Cochleagram.");
+		Melder_throw (me, ": not converted to Cochleagram.");
 	}
 }
 
@@ -122,7 +122,7 @@ Matrix Cochleagram_to_Matrix (Cochleagram me) {
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 

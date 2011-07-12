@@ -20,26 +20,27 @@
 /*
  * pb 2005/07/04 created
  * pb 2006/05/17 draw disharmonies on top of tableau
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
+ * pb 2007/06/10 wchar
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 constraint plasticity
  * pb 2007/12/14 Gui
  * pb 2008/03/20 split off Help menu
  * pb 2011/03/01 multiple update rules
  * pb 2011/03/23 C++
- * pb 2011/06/28 C++
+ * pb 2011/07/02 C++
  */
 
 #include "OTMultiEditor.h"
 #include "EditorM.h"
 #include "machine.h"
 
-#define OTMultiEditor__members(Klas) HyperPage__members(Klas) \
-	const wchar_t *form1, *form2; \
-	GuiObject form1Text, form2Text; \
+struct structOTMultiEditor : public structHyperPage {
+	const wchar *form1, *form2;
+	GuiObject form1Text, form2Text;
 	long selectedConstraint;
+};
 #define OTMultiEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2 (OTMultiEditor, HyperPage);
+Thing_declare2cpp (OTMultiEditor, HyperPage);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
@@ -47,28 +48,28 @@ static int menu_cb_evaluate (EDITOR_ARGS) {
 		REAL (L"Evaluation noise", L"2.0")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTMultiEditor_as_Editor (me), L"Evaluate");
+		Editor_save (me, L"Evaluate");
 		OTMulti_newDisharmonies ((OTMulti) my data, GET_REAL (L"Evaluation noise"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
 static int menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
-	Editor_save (OTMultiEditor_as_Editor (me), L"Evaluate (noise 2.0)");
+	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 2.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
-	Editor_save (OTMultiEditor_as_Editor (me), L"Evaluate (tiny noise)");
+	Editor_save (me, L"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 1e-9);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -89,12 +90,12 @@ static int menu_cb_editRanking (EDITOR_ARGS) {
 	EDITOR_DO
 		OTMulti grammar = (OTMulti) my data;
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-		Editor_save (OTMultiEditor_as_Editor (me), L"Edit ranking");
+		Editor_save (me, L"Edit ranking");
 		constraint -> ranking = GET_REAL (L"Ranking value");
 		constraint -> disharmony = GET_REAL (L"Disharmony");
 		OTMulti_sort (grammar);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -110,7 +111,7 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 		REAL (L"Rel. plasticity spreading", L"0.1")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTMultiEditor_as_Editor (me), L"Learn one");
+		Editor_save (me, L"Learn one");
 		Melder_free (my form1);
 		Melder_free (my form2);
 		my form1 = GuiText_getString (my form1Text);
@@ -120,7 +121,7 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 		iferror return 0;
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -131,10 +132,10 @@ static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
 		return Melder_error1 (L"Select a constraint first.");
 	constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-	Editor_save (OTMultiEditor_as_Editor (me), L"Remove constraint");
+	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -144,10 +145,10 @@ static int menu_cb_resetAllRankings (EDITOR_ARGS) {
 		REAL (L"Ranking", L"100.0")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTMultiEditor_as_Editor (me), L"Reset all rankings");
+		Editor_save (me, L"Reset all rankings");
 		OTMulti_reset ((OTMulti) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTMultiEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -184,7 +185,7 @@ static void createChildren (OTMultiEditor me) {
 	#define STRING_SPACING 2
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	inherited (OTMultiEditor) createChildren (OTMultiEditor_as_parent (me));
+	inherited (OTMultiEditor) createChildren (me);
 	GuiButton_createShown (my dialog, 4, 124, y, y + height,
 		L"Partial forms:", gui_button_cb_limit, me,
 		#ifdef _WIN32
@@ -206,7 +207,7 @@ static void createChildren (OTMultiEditor me) {
 }
 
 static void createMenus (OTMultiEditor me) {
-	inherited (OTMultiEditor) createMenus (OTMultiEditor_as_parent (me));
+	inherited (OTMultiEditor) createMenus (me);
 	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
 	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
@@ -219,12 +220,12 @@ static void createMenus (OTMultiEditor me) {
 }
 
 static void createHelpMenuItems (OTMultiEditor me, EditorMenu menu) {
-	inherited (OTMultiEditor) createHelpMenuItems (OTMultiEditor_as_parent (me), menu);
+	inherited (OTMultiEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 
 static OTMulti drawTableau_grammar;
-static const wchar_t *drawTableau_form1, *drawTableau_form2;
+static const wchar *drawTableau_form1, *drawTableau_form2;
 static void drawTableau (Graphics g) {
 	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, TRUE);
 }
@@ -257,7 +258,7 @@ static void draw (OTMultiEditor me) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 }
 
-static int goToPage (OTMultiEditor me, const wchar_t *title) {
+static int goToPage (OTMultiEditor me, const wchar *title) {
 	if (title == NULL) return 1;
 	my selectedConstraint = wcstol (title, NULL, 10);
 	return 1;
@@ -273,16 +274,16 @@ class_methods (OTMultiEditor, HyperPage) {
 	class_methods_end
 }
 
-OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar_t *title, OTMulti grammar) {
+OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar) {
 	try {
 		autoOTMultiEditor me = Thing_new (OTMultiEditor);
 		my data = grammar;
 		my form1 = Melder_wcsdup (L"");
 		my form2 = Melder_wcsdup (L"");
-		HyperPage_init (OTMultiEditor_as_parent (me.peek()), parent, title, grammar); therror
+		HyperPage_init (me.peek(), parent, title, grammar);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("OTMulti window not created.");
+		Melder_throw ("OTMulti window not created.");
 	}
 }
 

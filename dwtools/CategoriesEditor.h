@@ -33,20 +33,22 @@
 	extern "C" {
 #endif
 
-#define CategoriesEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (CategoriesEditor);
-#define CategoriesEditor__members(Klas) Editor__members(Klas)				\
-	CommandHistory history;									\
-	int position;											\
-	GuiObject list, text, outOfView, undo, redo;				\
-	GuiObject remove, insert, insertAtEnd, replace, moveUp, moveDown;
-#define CategoriesEditor__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (CategoriesEditor, Editor);
+Thing_declare1cpp (CategoriesEditor);
 
-CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar_t *title, Any data);
+CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structCategoriesEditor : public structEditor {
+		CommandHistory history;
+		int position;
+		GuiObject list, text, outOfView, undo, redo;
+		GuiObject remove, insert, insertAtEnd, replace, moveUp, moveDown;
+	};
+	#define CategoriesEditor__methods(Klas) Editor__methods(Klas)
+	Thing_declare2cpp (CategoriesEditor, Editor);
+
+#endif // __cplusplus
 
 #endif /* _CategoriesEditor_h_ */

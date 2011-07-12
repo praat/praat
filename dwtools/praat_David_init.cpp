@@ -251,7 +251,7 @@ END
 
 DIRECT (Categories_edit)
 	if (theCurrentPraatApplication -> batch)
-		return Melder_error1 (L"Cannot edit a Categories from batch.");
+		Melder_throw ("Cannot edit a Categories from batch.");
 	else
 	{
 		LOOP {
@@ -704,7 +704,7 @@ DIRECT (Confusion_difference)
 		( c1 ? c2 : c1 ) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new (Confusion_difference (c1, c2), L"diffs");
+	praat_new ((Data) Confusion_difference (c1, c2), L"diffs");
 END
 
 FORM (Confusion_condense, L"Confusion: Condense", L"Confusion: Condense...")
@@ -2206,7 +2206,7 @@ DIRECT (Excitations_append)
 		( e1 ? e2 : e1 ) = me;
 	}
 	Melder_assert (e1 && e2);
-	praat_new (Collections_merge (e1, e2), 0);
+	praat_new ((Data) Collections_merge (e1, e2), 0);
 END
 
 FORM (Excitations_to_Pattern,L"Excitations: To Pattern", 0)
@@ -2965,7 +2965,7 @@ END
 DIRECT (Matrix_transpose)
 	LOOP {
 		iam (Matrix);
-		praat_new (Matrix_transpose (me), 0);
+		praat_new ((Data) Matrix_transpose (me), my name);
 	}
 END
 
@@ -4096,7 +4096,6 @@ static void Sound_create_addCommonFields (void *dia)
 static void Sound_create_checkCommonFields (void *dia, double *startingTime, double *finishingTime,
 	double *samplingFrequency)
 {
-	try {
 		double numberOfSamples_real;
 		*startingTime = GET_REAL (L"Starting time");
 		*finishingTime = GET_REAL (L"Finishing time");
@@ -4135,12 +4134,10 @@ static void Sound_create_checkCommonFields (void *dia, double *startingTime, dou
 				Melder_throw (L"Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
 #endif
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 static void Sound_create_check (Sound me, double startingTime, double finishingTime, double samplingFrequency)
 {
-	try {
 		if (me != 0) return;
 
 		if (wcsstr (Melder_getError (), L"memory"))
@@ -4155,7 +4152,6 @@ static void Sound_create_check (Sound me, double startingTime, double finishingT
 				Melder_throw ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
 #endif
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 FORM (Sound_and_Pitch_to_FormantFilter, L"Sound & Pitch: To FormantFilter", L"Sound & Pitch: To FormantFilter...")
@@ -5096,7 +5092,7 @@ END
 
 DIRECT (TableOfReal_appendColumns)
 	autoCollection set = praat_getSelectedObjects ();
-	praat_new (TableOfReal_appendColumnsMany (set.peek()), L"columns_appended");
+	praat_new ((Data) TableOfReal_appendColumnsMany (set.peek()), L"columns_appended");
 END
 
 FORM (TableOfReal_createFromPolsData_50males, L"Create TableOfReal (Pols 1973)", L"Create TableOfReal (Pols 1973)...")
@@ -5608,9 +5604,8 @@ END
 
 static VowelEditor vowelEditor = NULL;
 DIRECT (VowelEditor_create)
-	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot edit from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw (L"Cannot edit from batch.");
 	vowelEditor = VowelEditor_create (theCurrentPraatApplication -> topShell, L"VowelEditor", NULL);
-	if (vowelEditor == NULL) return 0;
 END
 
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
@@ -5769,8 +5764,11 @@ FORM (SSCP_setValue, L"Covariance: Set value", L"Covariance: Set value...")
 	REAL (L"New value", L"1.0")
 	OK
 DO
-	if (! SSCP_setValue (ONLY_GENERIC (classSSCP), GET_INTEGER (L"Row number"), GET_INTEGER (L"Column number"),
-		GET_REAL (L"New value"))) return 0;
+	LOOP {
+		iam (SSCP);
+		SSCP_setValue (me, GET_INTEGER (L"Row number"), GET_INTEGER (L"Column number"),
+		GET_REAL (L"New value"));
+	}
 END
 
 FORM (SSCP_setCentroid, L"", 0)
@@ -5778,7 +5776,10 @@ FORM (SSCP_setCentroid, L"", 0)
 	REAL (L"New value", L"1.0")
 	OK
 DO
-	if (! SSCP_setCentroid (ONLY_GENERIC (classSSCP), GET_INTEGER (L"Element number"), GET_REAL (L"New value"))) return 0;
+	LOOP {
+		iam (SSCP);
+		SSCP_setCentroid (me, GET_INTEGER (L"Element number"), GET_REAL (L"New value"));
+	}
 END
 
 extern "C" void praat_SSCP_as_TableOfReal_init (void *klas)

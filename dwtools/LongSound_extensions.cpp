@@ -50,35 +50,32 @@
 static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long nbuf,
 	int nchannels, int ichannel, long ibuf)
 {
-	try {
-		long numberOfReads = (my nx - 1) / nbuf + 1;
-		long n_to_read = 0;
+	long numberOfReads = (my nx - 1) / nbuf + 1;
+	long n_to_read = 0;
+
+		if (ibuf <= numberOfReads)
+	{
+		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
+		long imin = (ibuf - 1) * nbuf + 1;
+		LongSound_readAudioToShort (me, my buffer, imin, n_to_read); therror
 	
-			if (ibuf <= numberOfReads)
+		for (long i = 1; i <= n_to_read; i++)
 		{
-			n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
-			long imin = (ibuf - 1) * nbuf + 1;
-			LongSound_readAudioToShort (me, my buffer, imin, n_to_read); therror
-		
-			for (long i = 1; i <= n_to_read; i++)
-			{
-				buffer[nchannels * (i - 1) + ichannel] = my buffer[i];
-			}
+			buffer[nchannels * (i - 1) + ichannel] = my buffer[i];
 		}
-		if (ibuf >= numberOfReads)
+	}
+	if (ibuf >= numberOfReads)
+	{
+		for (long i = n_to_read + 1; i <= nbuf; i++)
 		{
-			for (long i = n_to_read + 1; i <= nbuf; i++)
-			{
-				buffer[nchannels * (i - 1) + ichannel] = 0;
-			}
+			buffer[nchannels * (i - 1) + ichannel] = 0;
 		}
-	} catch (MelderError) { rethrow; }
+	}
 } 
 
-int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
+void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file)
 {
-	try {
 		long nbuf = my nmax < thy nmax ? my nmax : thy nmax; 
 		long nx = my nx > thy nx ? my nx : thy nx; 
 		long numberOfReads = (nx - 1) / nbuf + 1;
@@ -97,8 +94,8 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 		long nchannels = 2; 
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
 		
-		MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", 
-		Melder_winAudioFileExtension (audioFileType)); therror
+		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", 
+			Melder_winAudioFileExtension (audioFileType));
 		MelderFile_writeAudioFileHeader16_e (file, audioFileType, my sampleRate, nx, nchannels);	
 
 		for (long i = 1; i <= numberOfReads; i++)
@@ -109,8 +106,6 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding16 (audioFileType), 
 				buffer.peek(), n_to_write);
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 
@@ -122,7 +117,6 @@ int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 */
 static int MelderFile_truncate (MelderFile me, long size)
 {	
-	try {
 #if defined(_WIN32)
 
 		HANDLE hFile;
@@ -159,7 +153,6 @@ static int MelderFile_truncate (MelderFile me, long size)
 		return 0;
 #endif
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) 
@@ -185,7 +178,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 	my imax = 0;
 }
 
-int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
+void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 {
 	long pre_append_endpos = 0;
 	try {
@@ -218,7 +211,7 @@ int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		{
 			int sampleRatesMatch, numbersOfChannelsMatch;
 			Data data = (Data) my item [i];
-			if (data -> methods == (Data_Table) classSound)
+			if (data -> methods == (Thing_Table) classSound)
 			{
 				Sound sound = (Sound) data;
 				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
@@ -246,11 +239,11 @@ int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		for (long i = 1; i <= my size; i++)
 		{
 			Data data = (Data) my item [i];
-			if (data -> methods == (Data_Table) classSound)
+			if (data -> methods == (Thing_Table) classSound)
 			{
 				Sound sound = (Sound) data;
 				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding16
-					(audioFileType), sound -> z, sound -> nx, TRUE);
+					(audioFileType), sound -> z, sound -> nx, true);
 			}
 			else
 			{
@@ -265,15 +258,15 @@ int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		MelderFile_rewind (file);
 		MelderFile_writeAudioFileHeader16_e (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
 		f.close(file);
-		return 1;
+		return;
 	} catch (MelderError) {
 		if (errno != 0 && pre_append_endpos > 0)
 		{
 			// Restore file at original size
 			int error = errno;
 			MelderFile_truncate (file, pre_append_endpos);
-			rethrowmzero ("File ", MelderFile_messageName (file), L" restored to original size (", strerror (error), ").");
-		} rethrowzero; }
+			Melder_throw ("File ", MelderFile_messageName (file), L" restored to original size (", strerror (error), ").");
+		} throw; }
 }
 
 /* End of file LongSound_extensions.cpp */	 

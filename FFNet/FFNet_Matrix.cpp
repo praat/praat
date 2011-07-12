@@ -40,7 +40,7 @@ Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights)
 				thy z[k++][i] = deltaWeights ? my dwi[j] : my w[j];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Matrix not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
 }
 
 FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer)
@@ -60,7 +60,7 @@ FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer)
 			for (long j = thy wFirst[node]; j <= thy wLast[node]; j++, k++) { thy w[j] = his z[k][i]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("FFNet not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no FFNet created."); }
 }
 
 /* End of file FFNet_Matrix.cpp */

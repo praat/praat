@@ -33,6 +33,7 @@
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/31 C++
+ * pb 2011/07/11 C++
  */
 
 #include "RealTier.h"
@@ -59,7 +60,7 @@
 
 /********** class RealPoint **********/
 
-class_methods (RealPoint, Data) {
+class_methods (RealPoint, AnyPoint) {
 	class_method_local (RealPoint, destroy)
 	class_method_local (RealPoint, copy)
 	class_method_local (RealPoint, equal)
@@ -74,7 +75,7 @@ class_methods (RealPoint, Data) {
 
 RealPoint RealPoint_create (double time, double value) {
 	autoRealPoint me = Thing_new (RealPoint);
-	my time = time;
+	my number = time;
 	my value = value;
 	return me.transfer();
 }
@@ -90,7 +91,7 @@ static void info (I) {
 }
 
 static double getNx (I) { iam (RealTier); return my points -> size; }
-static double getX (I, long ix) { iam (RealTier); return ((RealPoint) my points -> item [ix]) -> time; }
+static double getX (I, long ix) { iam (RealTier); return ((RealPoint) my points -> item [ix]) -> number; }
 static double getNcol (I) { iam (RealTier); return my points -> size; }
 static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
 static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
@@ -108,7 +109,7 @@ static void shiftX (I, double xfrom, double xto) {
 	inherited (RealTier) shiftX (me, xfrom, xto);
 	for (long i = 1; i <= my points -> size; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
-		NUMshift (& point -> time, xfrom, xto);
+		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
@@ -117,7 +118,7 @@ static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double x
 	inherited (RealTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
 	for (long i = 1; i <= my points -> size; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
-		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
+		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
@@ -156,7 +157,7 @@ RealTier RealTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("RealTier not created.");
+		Melder_throw ("RealTier not created.");
 	}
 }
 
@@ -167,7 +168,7 @@ int RealTier_addPoint (I, double t, double value) {
 		Collection_addItem (my points, point.transfer()); therror
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": point not added.");
+		Melder_throw (me, ": point not added.");
 	}
 }
 
@@ -182,16 +183,16 @@ double RealTier_getValueAtTime (I, double t) {
 	long n = my points -> size;
 	if (n == 0) return NUMundefined;
 	RealPoint pointRight = (RealPoint) my points -> item [1];
-	if (t <= pointRight -> time) return pointRight -> value;   /* Constant extrapolation. */
+	if (t <= pointRight -> number) return pointRight -> value;   /* Constant extrapolation. */
 	RealPoint pointLeft = (RealPoint) my points -> item [n];
-	if (t >= pointLeft -> time) return pointLeft -> value;   /* Constant extrapolation. */
+	if (t >= pointLeft -> number) return pointLeft -> value;   /* Constant extrapolation. */
 	Melder_assert (n >= 2);
 	long ileft = AnyTier_timeToLowIndex (me, t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = (RealPoint) my points -> item [ileft];
 	pointRight = (RealPoint) my points -> item [iright];
-	double tleft = pointLeft -> time, fleft = pointLeft -> value;
-	double tright = pointRight -> time, fright = pointRight -> value;
+	double tleft = pointLeft -> number, fleft = pointLeft -> value;
+	double tright = pointRight -> number, fright = pointRight -> value;
 	return t == tright ? fright   /* Be very accurate. */
 		: tleft == tright ? 0.5 * (fleft + fright)   /* Unusual, but possible; no preference. */
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   /* Linear interpolation. */
@@ -241,9 +242,9 @@ double RealTier_getArea (I, double tmin, double tmax) {
 	for (long i = imin; i < imax; i ++) {
 		double tleft, fleft, tright, fright;
 		if (i == imin) tleft = tmin, fleft = RealTier_getValueAtTime (me, tmin);
-		else tleft = points [i] -> time, fleft = points [i] -> value;
+		else tleft = points [i] -> number, fleft = points [i] -> value;
 		if (i + 1 == imax) tright = tmax, fright = RealTier_getValueAtTime (me, tmax);
-		else tright = points [i + 1] -> time, fright = points [i + 1] -> value;
+		else tright = points [i + 1] -> number, fright = points [i + 1] -> value;
 		area += 0.5 * (fleft + fright) * (tright - tleft);
 	}
 	return area;
@@ -279,9 +280,9 @@ double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
 	for (long i = imin; i < imax; i ++) {
 		double tleft, fleft, tright, fright, sum, diff;
 		if (i == imin) tleft = tmin, fleft = RealTier_getValueAtTime (me, tmin);
-		else tleft = points [i] -> time, fleft = points [i] -> value - mean;
+		else tleft = points [i] -> number, fleft = points [i] -> value - mean;
 		if (i + 1 == imax) tright = tmax, fright = RealTier_getValueAtTime (me, tmax);
-		else tright = points [i + 1] -> time, fright = points [i + 1] -> value - mean;
+		else tright = points [i + 1] -> number, fright = points [i + 1] -> value - mean;
 		/*
 		 * The area is integral dt f^2
 		 *   = integral dt [f1 + (f2-f1)/(t2-t1) (t-t1)]^2
@@ -333,7 +334,7 @@ void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
 	long ipoint;
 	for (ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 		RealPoint point = (RealPoint) my points -> item [ipoint];
-		double t = point -> time;
+		double t = point -> number;
 		if (t >= tmin && t <= tmax) {
 			point -> value *= factor;
 		}
@@ -359,7 +360,7 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 		if (drawLines) Graphics_line (g, tmin, fleft, tmax, fright);
 	} else for (i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
-		double t = point -> time, f = point -> value;
+		double t = point -> number, f = point -> value;
 		if (drawSpeckles) Graphics_fillCircle_mm (g, t, f, 1);
 		if (drawLines) {
 			if (i == 1)
@@ -372,7 +373,7 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 				Graphics_line (g, t, f, tmax, RealTier_getValueAtTime (me, tmax));
 			else {
 				RealPoint pointRight = (RealPoint) my points -> item [i + 1];
-				Graphics_line (g, t, f, pointRight -> time, pointRight -> value);
+				Graphics_line (g, t, f, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
@@ -394,12 +395,12 @@ TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wcha
 		TableOfReal_setColumnLabel (thee.peek(), 2, valueLabel); therror
 		for (long i = 1; i <= my points -> size; i ++) {
 			RealPoint point = (RealPoint) my points -> item [i];
-			thy data [i] [1] = point -> time;
+			thy data [i] [1] = point -> number;
 			thy data [i] [2] = point -> value;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to TableOfReal.");
+		Melder_throw (me, ": not converted to TableOfReal.");
 	}
 }
 
@@ -409,7 +410,7 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 		autoRealTier thee = (RealTier) Data_copy (me);
 		for (long ipoint = 1; ipoint < my points -> size; ipoint ++) {
 			RealPoint point1 = (RealPoint) my points -> item [ipoint], point2 = (RealPoint) my points -> item [ipoint + 1];
-			double time1 = point1 -> time, time2 = point2 -> time, tmid = 0.5 * (time1 + time2);
+			double time1 = point1 -> number, time2 = point2 -> number, tmid = 0.5 * (time1 + time2);
 			double value1 = point1 -> value, value2 = point2 -> value, valuemid;
 			double timeStep = (tmid - time1) / (numberOfPointsPerParabola + 1);
 			if (logarithmically) value1 = log (value1), value2 = log (value2);
@@ -442,7 +443,7 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 		Thing_swap (me, thee.peek());
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": not interpolated quadratically.");
+		Melder_throw (me, ": not interpolated quadratically.");
 	}
 }
 
@@ -459,12 +460,12 @@ Table RealTier_downto_Table (I, const wchar_t *indexText, const wchar_t *timeTex
 			RealPoint point = (RealPoint) my points -> item [ipoint];
 			icol = 0;
 			if (indexText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint); therror }
-			if (timeText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> time); therror }
+			if (timeText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number); therror }
 			if (valueText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value); therror }
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Table.");
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
@@ -477,7 +478,7 @@ RealTier Vector_to_RealTier (I, long channel) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to RealTier.");
+		Melder_throw (me, ": not converted to RealTier.");
 	}
 }
 
@@ -496,7 +497,7 @@ RealTier Vector_to_RealTier_peaks (I, long channel) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to RealTier.");
+		Melder_throw (me, ": not converted to RealTier (peaks).");
 	}
 }
 
@@ -515,7 +516,7 @@ RealTier Vector_to_RealTier_valleys (I, long channel) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to RealTier.");
+		Melder_throw (me, ": not converted to RealTier (valleys).");
 	}
 }
 
@@ -527,7 +528,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to RealTier.");
+		Melder_throw (me, ": not converted to RealTier.");
 	}
 }
 
@@ -546,7 +547,7 @@ int RealTier_formula (I, const wchar_t *expression, Interpreter interpreter, tho
 		}
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": formula not completed.");
+		Melder_throw (me, ": formula not completed.");
 	}
 }
 

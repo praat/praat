@@ -25,18 +25,21 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/23 minimum and maximum legal values
  * pb 2011/03/22 C++
- * pb 2011/06/06 C++
+ * pb 2011/07/02 C++
  */
 
 #include "PitchTierEditor.h"
 #include "PitchTier_to_Sound.h"
 #include "EditorM.h"
 
+#undef our
+#define our ((PitchTierEditor_Table) my methods) ->
+
 static int menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTierEditor"); return 1; }
 static int menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTier"); return 1; }
 
 static void createHelpMenuItems (PitchTierEditor me, EditorMenu menu) {
-	inherited (PitchTierEditor) createHelpMenuItems (PitchTierEditor_as_parent (me), menu);
+	inherited (PitchTierEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
 	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
@@ -60,13 +63,13 @@ class_methods (PitchTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar_t *title, PitchTier pitch, Sound sound, int ownSound) {
+PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar *title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		RealTierEditor_init (PitchTierEditor_as_parent (me.peek()), parent, title, (RealTier) pitch, sound, ownSound); therror
+		RealTierEditor_init (me.peek(), parent, title, (RealTier) pitch, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("PitchTier window not created.");
+		Melder_throw ("PitchTier window not created.");
 	}
 }
 

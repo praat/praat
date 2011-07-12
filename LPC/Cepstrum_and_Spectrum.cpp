@@ -49,7 +49,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me)
 		autoCepstrum thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx);
 		NUMdvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Cepstrum not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Cepstrum created."); }
 }
 
 Spectrum Cepstrum_to_Spectrum (Cepstrum me)
@@ -68,7 +68,7 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me)
 			thy z[2][i] = ar * sin (ai);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Spectrum not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Spectrum created."); }
 }
 
 /* End of file Cepstrum_and_Spectrum.cpp  */

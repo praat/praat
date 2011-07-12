@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/22
+ * pb 2011/07/12
  */
 
 #include "Art_Speaker.h"
@@ -31,8 +31,10 @@
 #include "VocalTract_to_Spectrum.h"
 #include "praat.h"
 
-extern "C" int praat_Fon_formula (UiForm dia, Interpreter interpreter);
-extern "C" Graphics Movie_create (const wchar_t *title, int width, int height);
+extern "C" Graphics Movie_create (const wchar *title, int width, int height);
+
+#undef iam
+#define iam iam_LOOP
 
 /***** ART *****/
 
@@ -40,7 +42,7 @@ FORM (Art_create, L"Create a default Articulation", L"Articulatory synthesis")
 	WORD (L"Name", L"articulation")
 	OK
 DO
-	if (! praat_new1 (Art_create (), GET_STRING (L"Name"))) return 0;
+	praat_new1 (Art_create (), GET_STRING (L"Name"));
 END
 
 FORM (Art_edit, L"View & Edit Articulation", 0)
@@ -54,7 +56,8 @@ FORM (Art_edit, L"View & Edit Articulation", 0)
 }
 DO
 	Art object = (Art) ONLY_OBJECT;
-	if (theCurrentPraatApplication -> batch) return Melder_error1 (L"Cannot edit an Art from batch.");
+	if (theCurrentPraatApplication -> batch)
+		Melder_throw ("Cannot edit an Art from batch.");
 	for (int i = 1; i <= kArt_muscle_MAX; i ++)
 		object -> art [i] = GET_REAL (kArt_muscle_getText (i));
 END
@@ -66,7 +69,7 @@ FORM (Artword_create, L"Create an empty Artword", L"Create Artword...")
 	POSITIVE (L"Duration (seconds)", L"1.0")
 	OK
 DO
-	if (! praat_new1 (Artword_create (GET_REAL (L"Duration")), GET_STRING (L"Name"))) return 0;
+	praat_new1 (Artword_create (GET_REAL (L"Duration")), GET_STRING (L"Name"));
 END
 
 FORM (Artword_draw, L"Draw one Artword tier", NULL)
@@ -76,7 +79,12 @@ FORM (Artword_draw, L"Draw one Artword tier", NULL)
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
-	EVERY_DRAW (Artword_draw ((Artword) OBJECT, GRAPHICS, GET_INTEGER (L"Muscle"), GET_INTEGER (L"Garnish")))
+	
+	autoPraatPicture picture;
+	LOOP {
+		iam (Artword);
+		Artword_draw (me, GRAPHICS, GET_INTEGER (L"Muscle"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 DIRECT (Artword_edit)
@@ -95,9 +103,11 @@ FORM (Artword_getTarget, L"Get one Artword target", 0)
 		OPTION (kArt_muscle_getText (ienum))
 	OK
 DO
-	iam_ONLY (Artword);
-	double target = Artword_getTarget (me, GET_INTEGER (L"Muscle"), GET_REAL (L"Time"));
-	Melder_information1 (Melder_double (target));
+	LOOP {
+		iam (Artword);
+		double target = Artword_getTarget (me, GET_INTEGER (L"Muscle"), GET_REAL (L"Time"));
+		Melder_information1 (Melder_double (target));
+	}
 END
 
 DIRECT (Artword_help)
@@ -114,8 +124,8 @@ FORM (Artword_setTarget, L"Set one Artword target", 0)
 DO
 	double time = GET_REAL (L"Time");
 	if (time < 0.0) Melder_throw ("Specified time should not be less than 0.");
-	WHERE (SELECTED) {
-		iam_LOOP (Artword);
+	LOOP {
+		iam (Artword);
 		Artword_setTarget (me, GET_INTEGER (L"Muscle"), time, GET_REAL (L"Target value")); therror
 		praat_dataChanged (me);
 	}
@@ -125,8 +135,8 @@ FORM (Artword_to_Art, L"From Artword to Art", 0)
 	REAL (L"Time (seconds)", L"0.0")
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (Artword);
+	LOOP {
+		iam (Artword);
 		autoArt thee = Artword_to_Art (me, GET_REAL (L"Time"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -241,8 +251,8 @@ FORM (Speaker_create, L"Create a Speaker", L"Create Speaker...")
 		OPTION (L"10")
 	OK
 DO
-	if (! praat_new1 (Speaker_create (GET_STRING (L"Kind of speaker"),
-		wcstol (GET_STRING (L"Number of tubes in glottis"), NULL, 10)), GET_STRING (L"Name"))) return 0;
+	autoSpeaker me = Speaker_create (GET_STRING (L"Kind of speaker"), wcstol (GET_STRING (L"Number of tubes in glottis"), NULL, 10));
+	praat_new1 (me.transfer(), GET_STRING (L"Name"));
 END
 
 DIRECT (Speaker_help) Melder_help (L"Speaker"); END
@@ -275,7 +285,8 @@ FORM (VocalTract_createFromPhone, L"Create Vocal Tract from phone", L"Create Voc
 		OPTION (L"ku")
 	OK
 DO
-	if (! praat_new1 (VocalTract_createFromPhone (GET_STRING (L"Phone")), GET_STRING (L"Phone"))) return 0;
+	autoVocalTract me = VocalTract_createFromPhone (GET_STRING (L"Phone"));
+	praat_new1 (me.transfer(), GET_STRING (L"Phone"));
 END
 
 DIRECT (VocalTract_draw)
@@ -292,7 +303,16 @@ FORM (VocalTract_formula, L"VocalTract Formula", L"Matrix: Formula...")
 	TEXTFIELD (L"formula", L"0")
 	OK
 DO
-	if (! praat_Fon_formula (dia, interpreter)) return 0;
+	LOOP {
+		iam (VocalTract);
+		try {
+			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);
+			throw;
+		}
+	}
 END
 
 DIRECT (VocalTract_help) Melder_help (L"VocalTract"); END
@@ -314,8 +334,8 @@ FORM (VocalTract_to_Spectrum, L"From Vocal Tract to Spectrum", 0)
 	BOOLEAN (L"Internal damping", 1)
 	OK
 DO
-	WHERE (SELECTED) {
-		iam_LOOP (VocalTract);
+	LOOP {
+		iam (VocalTract);
 		autoSpectrum thee = VocalTract_to_Spectrum (me, GET_INTEGER (L"Number of frequencies"),
 			GET_REAL (L"Maximum frequency"), GET_REAL (L"Glottal damping"),
 			GET_INTEGER (L"Radiation damping"), GET_INTEGER (L"Internal damping"));

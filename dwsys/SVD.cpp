@@ -106,17 +106,15 @@ class_methods_end
 */
 void SVD_init (I, long numberOfRows, long numberOfColumns)
 {
-	try {
-		iam (SVD);
-		long mn_min = MIN(numberOfRows, numberOfColumns);
-		my numberOfRows = numberOfRows;
-		my numberOfColumns = numberOfColumns;
-		if (! NUMfpp) NUMmachar ();
-		my tolerance = NUMfpp -> eps * MAX (numberOfRows, numberOfColumns);
-		my u = NUMmatrix<double> (1, numberOfRows, 1, mn_min);
-		my v = NUMmatrix<double> (1, numberOfColumns, 1, mn_min);
-		my d = NUMvector<double> (1, mn_min);
-	} catch (MelderError) { rethrow; }
+	iam (SVD);
+	long mn_min = MIN(numberOfRows, numberOfColumns);
+	my numberOfRows = numberOfRows;
+	my numberOfColumns = numberOfColumns;
+	if (! NUMfpp) NUMmachar ();
+	my tolerance = NUMfpp -> eps * MAX (numberOfRows, numberOfColumns);
+	my u = NUMmatrix<double> (1, numberOfRows, 1, mn_min);
+	my v = NUMmatrix<double> (1, numberOfColumns, 1, mn_min);
+	my d = NUMvector<double> (1, mn_min);
 }
 
 SVD SVD_create (long numberOfRows, long numberOfColumns)
@@ -125,7 +123,7 @@ SVD SVD_create (long numberOfRows, long numberOfColumns)
 		autoSVD me = Thing_new (SVD);
 		SVD_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SVD not created."); }
+	} catch (MelderError) { Melder_thrown ("SVD not created."); }
 }
 
 SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns)
@@ -134,7 +132,7 @@ SVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns)
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_d (me.peek(), m);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SVD not created from vector."); }
+	} catch (MelderError) { Melder_thrown ("SVD not created from vector."); }
 }
 
 SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns)
@@ -143,12 +141,11 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns)
 		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
 		SVD_svd_f (me.peek(), m);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SVD not created from vector."); }
+	} catch (MelderError) { Melder_thrown ("SVD not created from vector."); }
 }
 
 void SVD_svd_d (I, double **m)
 {
-	try {
 		iam (SVD);
 		if (my numberOfRows >= my numberOfColumns)
 		{
@@ -167,12 +164,10 @@ void SVD_svd_d (I, double **m)
 			}
 		}
 		SVD_compute (me);
-	} catch (MelderError) { rethrow; }
 }
 
 void SVD_svd_f (I, float **m)
 {
-	try {
 		iam (SVD);
 		if (my numberOfRows >= my numberOfColumns)
 		{
@@ -191,7 +186,6 @@ void SVD_svd_f (I, float **m)
 			}
 		}
 		SVD_compute (me);
-	} catch (MelderError) { rethrow; }
 }
 
 void SVD_setTolerance (I, double tolerance)
@@ -237,7 +231,6 @@ static void NUMtranspose_d (double **m, long n)
 */
 void SVD_compute (I)
 {
-	try {
 		iam (SVD);
 		char jobu = 'S', jobvt = 'O';
 		long m, lda, ldu, ldvt, info, lwork = -1;
@@ -263,13 +256,11 @@ void SVD_compute (I)
 		
 		NUMtranspose_d (my v, MIN(m, n));
 		if (transpose) SVD_transpose (me);
-	} catch (MelderError) { rethrow; }
 }
 
 
 void SVD_solve (I, double b[], double x[])
 {
-	try {
 		iam (SVD);
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 
@@ -301,12 +292,10 @@ void SVD_solve (I, double b[], double x[])
 			}
 			x[j] = tmp;
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 void SVD_sort (I)
 {
-	try {
 		iam (SVD); 
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoSVD thee = (SVD) Data_copy (me);
@@ -321,7 +310,6 @@ void SVD_sort (I)
 			for (long i = 1; i <= my numberOfRows; i++) my u[i][j] = thy u[i][from];
 			for (long i = 1; i <= my numberOfColumns; i++) my v[i][j] = thy v[i][from];
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 long SVD_zeroSmallSingularValues (I, double tolerance)
@@ -366,7 +354,6 @@ long SVD_getRank (I)
 void SVD_synthesize (I, long sv_from, long sv_to, double **m)
 {
 	iam (SVD);
-	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 
 		if (sv_to == 0) sv_to = mn_min;
@@ -388,7 +375,6 @@ void SVD_synthesize (I, long sv_from, long sv_to, double **m)
 				}
 			}
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 static void classGSVD_info (I)
@@ -421,7 +407,7 @@ GSVD GSVD_create (long numberOfColumns)
 		my d1 = NUMvector<double> (1, numberOfColumns);
 		my d2 = NUMvector<double> (1, numberOfColumns);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("GSVD not created."); }
+	} catch (MelderError) { Melder_thrown ("GSVD not created."); }
 }
 
 GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2)
@@ -480,7 +466,7 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 			}
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowzero;}
+	} catch (MelderError) { Melder_thrown ("GSVD not created."); }
 }
 
 void GSVD_setTolerance (GSVD me, double tolerance)

@@ -113,16 +113,13 @@ class_methods (Eigen, Data)
 	class_method_local (Eigen, readBinary)
 class_methods_end
 
-int Eigen_init (I, long numberOfEigenvalues, long dimension)
+void Eigen_init (I, long numberOfEigenvalues, long dimension)
 {
-	try {
-		iam (Eigen);
-		my numberOfEigenvalues = numberOfEigenvalues;
-		my dimension = dimension;
-		my eigenvalues = NUMvector<double> (1, numberOfEigenvalues);
-		my eigenvectors = NUMmatrix<double> (1, numberOfEigenvalues, 1, dimension);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	iam (Eigen);
+	my numberOfEigenvalues = numberOfEigenvalues;
+	my dimension = dimension;
+	my eigenvalues = NUMvector<double> (1, numberOfEigenvalues);
+	my eigenvectors = NUMmatrix<double> (1, numberOfEigenvalues, 1, dimension);
 }
 
 /*
@@ -132,184 +129,172 @@ int Eigen_init (I, long numberOfEigenvalues, long dimension)
 	Eigenvectors: the columns of the matrix V
 	Eigenvalues: D_i^2
 */
-int Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfColumns)
+void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfColumns)
 {
-	try {
-		iam (Eigen);
-		long numberOfZeroed, numberOfEigenvalues;
-		long nsv = MIN (numberOfRows, numberOfColumns);
+	iam (Eigen);
+	long numberOfZeroed, numberOfEigenvalues;
+	long nsv = MIN (numberOfRows, numberOfColumns);
 
-		my dimension = numberOfColumns;
-		autoSVD svd = SVD_create_d (a, numberOfRows, numberOfColumns);
+	my dimension = numberOfColumns;
+	autoSVD svd = SVD_create_d (a, numberOfRows, numberOfColumns);
 
-		/*
-			Make sv's that are too small zero. These values occur automatically
-			when the rank of A'A < numberOfColumns. This could occur when for
-			example numberOfRows <= numberOfColumns.
-			(n points in  an n-dimensional space define maximally an n-1
-			dimensional surface for which we maximally need an n-1 dimensional
-			basis.)
-		*/
+	/*
+		Make sv's that are too small zero. These values occur automatically
+		when the rank of A'A < numberOfColumns. This could occur when for
+		example numberOfRows <= numberOfColumns.
+		(n points in  an n-dimensional space define maximally an n-1
+		dimensional surface for which we maximally need an n-1 dimensional
+		basis.)
+	*/
 
-		numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0);
+	numberOfZeroed = SVD_zeroSmallSingularValues (svd.peek(), 0);
 
-		numberOfEigenvalues = nsv - numberOfZeroed;
+	numberOfEigenvalues = nsv - numberOfZeroed;
 
-		Eigen_init (me, numberOfEigenvalues, numberOfColumns);
-		long k = 0;
-		for (long i = 1; i <= nsv; i++)
+	Eigen_init (me, numberOfEigenvalues, numberOfColumns);
+	long k = 0;
+	for (long i = 1; i <= nsv; i++)
+	{
+		double t = svd -> d[i];
+		if (t > 0)
 		{
-			double t = svd -> d[i];
-			if (t > 0)
-			{
-				my eigenvalues[++k] = t * t;
-				for (long j = 1; j <= numberOfColumns; j++)
-				{
-					my eigenvectors[k][j] = svd -> v[j][i];
-				}
-			}
-		}
-		Eigen_sort (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
-}
-
-int Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
-	long numberOfColumns, double **b, long numberOfRows_b) 
-{
-	try {
-		iam (Eigen);
-		double *u = NULL, *v = NULL, maxsv2 = -10;
-		char jobu = 'N', jobv = 'N', jobq = 'Q';
-		long k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
-		long lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
-		long lwork = MAX (MAX (3*n, m), p) + n, info;
-
-		/*	Melder_assert (numberOfRows >= numberOfColumns || numberOfRows_b >= numberOfColumns);*/
-
-		my dimension = numberOfColumns;
-
-		autoNUMvector<double> alpha (1, n);
-		autoNUMvector<double> beta (1, n);
-		autoNUMvector<double> work (1, lwork);
-		autoNUMvector<long> iwork (1, n);
-		autoNUMmatrix<double> q (1, n, 1, n);
-		autoNUMmatrix<double> ac (NUMdmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
-		autoNUMmatrix<double> bc (NUMdmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
-
-		(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
-			&ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
-			v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
-
-		if (info != 0) Melder_throw ("dggsvd fails.");
-
-		/*
-			Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
-		*/
-
-		maxsv2 = -1;
-		for (long i = k + 1; i <= k + ll; i++)
-		{
-			double t = alpha[i] / beta[i];
-			alpha[i] = t * t;
-			if (alpha[i] > maxsv2) maxsv2 = alpha[i];
-		}
-
-		/*
-			Deselect the eigenvalues < eps * max_eigenvalue.
-		*/
-		n = 0;
-		for (long i = k + 1; i <= k + ll; i++)
-		{
-			if (alpha[i] < NUMfpp -> eps * maxsv2)
-			{
-				n++; alpha[i] = -1;
-			}
-		}
-
-		if (ll - n < 1) Melder_throw ("No eigenvectors can be found. Matrix too singular.");
-
-		Eigen_init (me, ll - n, numberOfColumns);
-
-		long ii = 0;
-		for (long i = k+1; i <= k+ll; i++)
-		{
-			if (alpha[i] == -1) continue;
-
-			my eigenvalues[++ii] = alpha[i];
+			my eigenvalues[++k] = t * t;
 			for (long j = 1; j <= numberOfColumns; j++)
 			{
-				my eigenvectors[ii][j] = q[i][j];
+				my eigenvectors[k][j] = svd -> v[j][i];
 			}
 		}
-
-		Eigen_sort (me);
-
-		NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+	Eigen_sort (me);
 }
 
-int Eigen_initFromSymmetricMatrix_f (I, float **a, long n)
+void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
+	long numberOfColumns, double **b, long numberOfRows_b) 
 {
-	try {
-		iam (Eigen);
+	iam (Eigen);
+	double *u = NULL, *v = NULL, maxsv2 = -10;
+	char jobu = 'N', jobv = 'N', jobq = 'Q';
+	long k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
+	long lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
+	long lwork = MAX (MAX (3*n, m), p) + n, info;
 
-		autoNUMmatrix<double> m (1, n, 1, n);
-		for (long i = 1; i <= n; i++)
+	/*	Melder_assert (numberOfRows >= numberOfColumns || numberOfRows_b >= numberOfColumns);*/
+
+	my dimension = numberOfColumns;
+
+	autoNUMvector<double> alpha (1, n);
+	autoNUMvector<double> beta (1, n);
+	autoNUMvector<double> work (1, lwork);
+	autoNUMvector<long> iwork (1, n);
+	autoNUMmatrix<double> q (1, n, 1, n);
+	autoNUMmatrix<double> ac (NUMdmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
+	autoNUMmatrix<double> bc (NUMdmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
+
+	(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
+		&ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
+		v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
+
+	if (info != 0) Melder_throw ("dggsvd fails.");
+
+	/*
+		Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
+	*/
+
+	maxsv2 = -1;
+	for (long i = k + 1; i <= k + ll; i++)
+	{
+		double t = alpha[i] / beta[i];
+		alpha[i] = t * t;
+		if (alpha[i] > maxsv2) maxsv2 = alpha[i];
+	}
+
+	/*
+		Deselect the eigenvalues < eps * max_eigenvalue.
+	*/
+	n = 0;
+	for (long i = k + 1; i <= k + ll; i++)
+	{
+		if (alpha[i] < NUMfpp -> eps * maxsv2)
 		{
-			for (long j = 1; j <= n; j++) m[i][j] = a[i][j];
+			n++; alpha[i] = -1;
 		}
-		Eigen_initFromSymmetricMatrix (me, m.peek(), n);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+
+	if (ll - n < 1) Melder_throw ("No eigenvectors can be found. Matrix too singular.");
+
+	Eigen_init (me, ll - n, numberOfColumns);
+
+	long ii = 0;
+	for (long i = k+1; i <= k+ll; i++)
+	{
+		if (alpha[i] == -1) continue;
+
+		my eigenvalues[++ii] = alpha[i];
+		for (long j = 1; j <= numberOfColumns; j++)
+		{
+			my eigenvectors[ii][j] = q[i][j];
+		}
+	}
+
+	Eigen_sort (me);
+
+	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
-int Eigen_initFromSymmetricMatrix (I, double **a, long n)
+void Eigen_initFromSymmetricMatrix_f (I, float **a, long n)
 {
-	try {
-		iam (Eigen);
-		double wt[1], temp;
-		char jobz = 'V', uplo = 'U';
-		long lwork = -1, info;
+	iam (Eigen);
 
-		my dimension = my numberOfEigenvalues = n;
+	autoNUMmatrix<double> m (1, n, 1, n);
+	for (long i = 1; i <= n; i++)
+	{
+		for (long j = 1; j <= n; j++) m[i][j] = a[i][j];
+	}
+	Eigen_initFromSymmetricMatrix (me, m.peek(), n);
+}
 
-		if (my eigenvectors == NULL) Eigen_init (me, n, n);
+void Eigen_initFromSymmetricMatrix (I, double **a, long n)
+{
+	iam (Eigen);
+	double wt[1], temp;
+	char jobz = 'V', uplo = 'U';
+	long lwork = -1, info;
 
-		NUMdmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
+	my dimension = my numberOfEigenvalues = n;
 
-		/*
-			Get size of work array
-		*/
+	if (my eigenvectors == NULL) Eigen_init (me, n, n);
 
-		(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
-			&my eigenvalues[1], wt, &lwork, &info);
-		if (info != 0) Melder_throw ("dsyev fails");
+	NUMdmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
 
-		lwork = wt[0];
-		autoNUMvector<double> work (0L, lwork);
+	/*
+		Get size of work array
+	*/
 
-		(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
-			&my eigenvalues[1], work.peek(), &lwork, &info);
-		if (info != 0) Melder_throw ("dsyev fails");
+	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
+		&my eigenvalues[1], wt, &lwork, &info);
+	if (info != 0) Melder_throw ("dsyev fails");
 
-		/*
-			We want descending order instead of ascending.
-		*/
+	lwork = wt[0];
+	autoNUMvector<double> work (0L, lwork);
 
-		for (long i = 1; i <= n / 2; i++)
+	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
+		&my eigenvalues[1], work.peek(), &lwork, &info);
+	if (info != 0) Melder_throw ("dsyev fails");
+
+	/*
+		We want descending order instead of ascending.
+	*/
+
+	for (long i = 1; i <= n / 2; i++)
+	{
+		long ilast = n - i + 1;
+
+		SWAP(my eigenvalues[i], my eigenvalues[ilast])
+		for (long j = 1; j <= n; j++)
 		{
-			long ilast = n - i + 1;
-
-			SWAP(my eigenvalues[i], my eigenvalues[ilast])
-			for (long j = 1; j <= n; j++)
-			{
-				SWAP(my eigenvectors[i][j], my eigenvectors[ilast][j])
-			}
+			SWAP(my eigenvectors[i][j], my eigenvectors[ilast][j])
 		}
-		return 1; 
-	} catch (MelderError) { rethrowzero; }
+	}
 }
 
 Eigen Eigen_create (long numberOfEigenvalues, long dimension)
@@ -318,7 +303,7 @@ Eigen Eigen_create (long numberOfEigenvalues, long dimension)
 		autoEigen me = Thing_new (Eigen);
 		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Eigen not created."); }
+	} catch (MelderError) { Melder_thrown ("Eigen not created."); }
 }
 
 long Eigen_getNumberOfEigenvectors (I)
@@ -482,7 +467,6 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	int connect, wchar_t **rowLabels, int garnish)
 {
 	iam (Eigen);
-	long i;
 	double xmin = first, xmax = last, *vec, w;
 
 	if (ivec < 1 || ivec > my numberOfEigenvalues) return;
@@ -506,7 +490,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	for (i = first; i <= last; i++)
+	for (long i = first; i <= last; i++)
 	{
 		Graphics_mark (g, i, w * vec[i], size_mm, mark);
 		if (connect && i > first) Graphics_line (g, i - 1, w * vec[i-1], i, w * vec[i]);
@@ -523,9 +507,9 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	}
 }
 
-int Eigens_alignEigenvectors (Collection me)
+void Eigens_alignEigenvectors (Collection me)
 {
-	if (my size < 2) return 1;
+	if (my size < 2) return;
 
 	Eigen e1 = (Eigen) my item[1];
 	double **evec1 = e1 -> eigenvectors;
@@ -537,8 +521,7 @@ int Eigens_alignEigenvectors (Collection me)
 		Eigen e2 = (Eigen) my item[i];
 		if (e2 -> dimension != dimension)
 		{
-			 return Melder_error3 (L"Eigens_alignEigenvectors: The dimension of the "
-			 	"eigenvectors must be equal (offending object is ", Melder_integer (i), L").");
+			 Melder_throw ("The dimension of the eigenvectors must be equal (offending object is ",  i, ").");
 		}
 	}
 
@@ -565,47 +548,44 @@ int Eigens_alignEigenvectors (Collection me)
 			}
 		}
 	}
-	return 1;
 }
 
-static int Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec_to, double *angles_degrees)
+static void Eigens_getAnglesBetweenSubspaces (I, thou, long ivec_from, long ivec_to, double *angles_degrees)
 {
-	try {
-		iam (Eigen); thouart (Eigen);
-		long nvectors = ivec_to - ivec_from + 1;
-		long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
+	iam (Eigen); thouart (Eigen);
+	long nvectors = ivec_to - ivec_from + 1;
+	for (long i = 1; i <= nvectors; i++) { angles_degrees[i] = NUMundefined; }
+	long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
-		if (my dimension != thy dimension)
-			return Melder_error1 (L"The eigenvectors must have the same dimension.");
-		if (ivec_from > ivec_to || ivec_from< 1 || ivec_to > nmin)
-			return Melder_error1 (L"Eigenvector range too large.");
+	if (my dimension != thy dimension)
+		Melder_throw ("The eigenvectors must have the same dimension.");
+	if (ivec_from > ivec_to || ivec_from< 1 || ivec_to > nmin)
+		Melder_throw ("Eigenvector range too large.");
 
-		autoNUMmatrix<double> c(1, nvectors, 1, nvectors);
+	autoNUMmatrix<double> c(1, nvectors, 1, nvectors);
 
-		/*
-			Algorithm 12.4.3 Golub & van Loan
-			Because we deal with eigenvectors we don't have to do the QR-decomposition,
-				the columns in the Q's are the eigenvectors.
-			Compute C.
-		*/
+	/*
+		Algorithm 12.4.3 Golub & van Loan
+		Because we deal with eigenvectors we don't have to do the QR-decomposition,
+			the columns in the Q's are the eigenvectors.
+		Compute C.
+	*/
 
-		for (long i = 1; i <= nvectors; i++)
+	for (long i = 1; i <= nvectors; i++)
+	{
+		for (long j = 1; j <= nvectors; j++)
 		{
-			for (long j = 1; j <= nvectors; j++)
+			for (long k = 1; k <= my dimension; k++)
 			{
-				for (long k = 1; k <= my dimension; k++)
-				{
-					c[i][j] += my eigenvectors[ivec_from+i-1][k] * thy eigenvectors[ivec_from+j-1][k];
-				}
+				c[i][j] += my eigenvectors[ivec_from+i-1][k] * thy eigenvectors[ivec_from+j-1][k];
 			}
 		}
-		autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
-		for (long i = 1; i <= nvectors; i++)
-		{
-			angles_degrees[i] = acos (svd -> d[i]) * 180 / NUMpi;
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
+	for (long i = 1; i <= nvectors; i++)
+	{
+		angles_degrees[i] = acos (svd -> d[i]) * 180 / NUMpi;
+	}
 }
 
 double Eigens_getAngleBetweenEigenplanes_degrees (I, thou)
@@ -613,7 +593,7 @@ double Eigens_getAngleBetweenEigenplanes_degrees (I, thou)
 	iam (Eigen); thouart (Eigen);
 	double angles_degrees[3];
 
-	if (! Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees)) return NUMundefined;
+	Eigens_getAnglesBetweenSubspaces (me, thee, 1, 2, angles_degrees);
 	return angles_degrees[2];
 }
 

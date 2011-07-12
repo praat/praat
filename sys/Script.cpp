@@ -22,6 +22,7 @@
  * pb 2002/03/07 GPL
  * pb 2009/01/26
  * pb 2011/05/15 C++
+ * pb 2011/07/04 C++
  */
 
 #include "Script.h"
@@ -31,11 +32,9 @@ class_methods (Script, Data) {
 }
 
 Script Script_createFromFile (MelderFile file) {
-	Script me = Thing_new (Script); cherror
+	autoScript me = Thing_new (Script);
 	MelderFile_copy (file, & my file);
-end:
-	iferror forget (me);
-	return me;
+	return me.transfer();
 }
 
 /* End of file Script.cpp */

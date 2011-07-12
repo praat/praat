@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 #include "Regression.h"
@@ -30,13 +30,13 @@
 #endif
 
 #include "LogisticRegression_def.h"
-#define LogisticRegression_methods  Regression_methods
+#define LogisticRegression__methods(klas)  Regression__methods(klas)
 oo_CLASS_CREATE (LogisticRegression, Regression);
 
-LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const wchar_t *dependent2);
+LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2);
 
-LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *columnsWithFactors_string,
-	const wchar_t *columnWithDependent1_string, const wchar_t *columnWithDependent2_string);
+LogisticRegression Table_to_LogisticRegression (Table me, const wchar *columnsWithFactors_string,
+	const wchar *columnWithDependent1_string, const wchar *columnWithDependent2_string);
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xmin, double xmax,
 	long coly, double ymin, double ymax, bool garnish);

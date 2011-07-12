@@ -135,11 +135,13 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 				his z[i][j] = sqrt (dist);	/* prototype along y-direction */
 			}
 		
-			if ((i % 10) == 1 && ! Melder_progress5 (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L".")) Melder_throw ("distance calculation interrupted.");
+			if ((i % 10) == 1) { 
+				Melder_progress5 (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
+			}
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created from CCs."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created from CCs."); }
 }
 
 /* End of file CCs_to_DTW.cpp */

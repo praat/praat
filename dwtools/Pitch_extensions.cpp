@@ -104,7 +104,7 @@ Pitch Pitch_scaleTime (Pitch me, double scaleFactor)
 			if (f < my ceiling) thy frame[i].candidate[1].frequency = f; 
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Pitch not scaled."); }
+	} catch (MelderError) { Melder_thrown (me, ": not scaled."); }
 }
 
 static double HertzToSpecial (double value, int pitchUnit)
@@ -161,7 +161,7 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 			point -> value = f;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("PitchTier not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no PitchTier created."); }
 }
 
 Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling)
@@ -185,7 +185,7 @@ Pitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pit
 			candidate -> frequency = f;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Pitch not created from PitchTier."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Pitch created."); }
 }
 
 /* End of file Pitch_extensions.cpp */

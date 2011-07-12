@@ -24,31 +24,18 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Spectrogram_h_
-	#include "Spectrogram.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Polygon_h
-	#include "Polygon.h"
-#endif
-#ifndef _Pitch_h
-	#include "Pitch.h"
-#endif
-#ifndef _DurationTier_h
-	#include "DurationTier.h"
-#endif
-#ifndef _Sound_h
-	#include "Sound.h"
-#endif
+#include "Spectrogram.h"
+#include "Polygon.h"
+#include "Pitch.h"
+#include "DurationTier.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
 #include "DTW_def.h"
-#define DTW_methods Matrix_methods
+#define DTW__methods(klas) Matrix__methods(klas)
 oo_CLASS_CREATE (DTW, Matrix);
 
 #define DTW_SAKOECHIBA 1
@@ -66,6 +53,8 @@ int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
 /* Prototype on y-axis and test on x-axis */
 DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c);
+
+void DTW_setWeights (DTW me, double wx, double wy, double wd);
 	
 DTW DTW_swapAxes (DTW me);
 

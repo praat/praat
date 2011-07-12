@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,13 @@
  */
 
 /*
- * pb 1997/03/18
- * pb 2002/07/16 GPL
+ * pb 2011/07/11
  */
 
 
 #define ooSTRUCT RealPoint
-oo_DEFINE_CLASS (RealPoint, Data)
+oo_DEFINE_CLASS (RealPoint, AnyPoint)
 
-	oo_DOUBLE (time)   /* AnyPoint */
 	oo_DOUBLE (value)
 
 oo_END_CLASS (RealPoint)

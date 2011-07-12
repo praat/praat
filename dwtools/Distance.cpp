@@ -33,7 +33,7 @@ Distance Distance_create (long numberOfPoints)
 		autoDistance me = Thing_new (Distance);
 		Proximity_init (me.peek(), numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Distance not created."); }
+	} catch (MelderError) { Melder_thrown ("Distance not created."); }
 }
 
 void Distance_drawDendogram (Distance me, Graphics g, int method)

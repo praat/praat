@@ -36,7 +36,7 @@ Excitation Cochleagram_to_Excitation (Cochleagram me, double t) {
 			thy z [1] [ifreq] = my z [ifreq] [column];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": slice at time ", t, " seconds not extracted to Excitation.");
+		Melder_throw (me, ": slice at time ", t, " seconds not extracted to Excitation.");
 	}
 }
 

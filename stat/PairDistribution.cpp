@@ -22,6 +22,7 @@
  * pb 2004/09/03 PairDistribution_Distributions_getFractionCorrect
  * pb 2007/03/29 PairDistribution_to_Table
  * pb 2011/03/13 C++
+ * pb 2011/07/05 C++
  */
 
 #include "PairDistribution.h"
@@ -79,15 +80,11 @@ class_methods (PairDistribution, Data) {
 }
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
-	try {
-		autoPairProbability me = Thing_new (PairProbability); therror
-		my string1 = Melder_wcsdup_e (string1); therror
-		my string2 = Melder_wcsdup_e (string2); therror
-		my weight = weight;
-		return me.transfer();
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	autoPairProbability me = Thing_new (PairProbability); therror
+	my string1 = Melder_wcsdup_e (string1); therror
+	my string2 = Melder_wcsdup_e (string2); therror
+	my weight = weight;
+	return me.transfer();
 }
 
 PairDistribution PairDistribution_create () {
@@ -96,7 +93,7 @@ PairDistribution PairDistribution_create () {
 		my pairs = Ordered_create (); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw ("PairDistribution not created.");
 	}
 }
 
@@ -113,7 +110,7 @@ const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber)
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": string1 not retrieved.");
+		Melder_throw (me, ": string1 not retrieved.");
 	}
 }
 
@@ -123,7 +120,7 @@ const wchar * PairDistribution_getString2 (PairDistribution me, long pairNumber)
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> string2;
 	} catch (MelderError) {
-		rethrowmzero (me, ": string2 not retrieved.");
+		Melder_throw (me, ": string2 not retrieved.");
 	}
 }
 
@@ -133,17 +130,13 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
 		return prob -> weight;
 	} catch (MelderError) {
-		rethrowmzero (me, ": weight not retrieved.");
+		Melder_throw (me, ": weight not retrieved.");
 	}
 }
 
-void PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight) {
-	try {
-		PairProbability pair = PairProbability_create (string1, string2, weight); therror
-		Collection_addItem (my pairs, pair); therror
-	} catch (MelderError) {
-		rethrow;
-	}
+void PairDistribution_add (PairDistribution me, const wchar *string1, const wchar *string2, double weight) {
+	PairProbability pair = PairProbability_create (string1, string2, weight); therror
+	Collection_addItem (my pairs, pair);
 }
 
 void PairDistribution_removeZeroWeights (PairDistribution me) {
@@ -200,7 +193,7 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 		*strings1_out = strings1.transfer();
 		*strings2_out = strings2.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": generation of Stringses not performed.");
+		Melder_throw (me, ": generation of Stringses not performed.");
 	}
 }
 
@@ -228,7 +221,7 @@ void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t 
 		*string1 = prob -> string1;
 		*string2 = prob -> string2;
 	} catch (MelderError) {
-		rethrowm (me, ": pair not peeked.");
+		Melder_throw (me, ": pair not peeked.");
 	}
 }
 
@@ -276,7 +269,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		} while (pairmin <= thy pairs -> size);
 		return correct;
 	} catch (MelderError) {
-		rethrowmzero (me, ": could not compute my fraction correct.");
+		Melder_throw (me, ": could not compute my fraction correct.");
 	}
 }
 
@@ -333,7 +326,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		} while (pairmin <= thy pairs -> size);
 		return correct;
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", dist, ": could not compute our fraction correct.");
+		Melder_throw (me, " & ", dist, ": could not compute our fraction correct.");
 	}
 }
 
@@ -348,8 +341,8 @@ Table PairDistribution_to_Table (PairDistribution me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
-/* End of file PairDistribution.c */
+/* End of file PairDistribution.cpp */

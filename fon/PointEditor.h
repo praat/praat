@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/02
  */
 
 #include "TimeSoundEditor.h"
@@ -30,16 +30,9 @@
 	extern "C" {
 #endif
 
-#define PointEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
-Thing_declare1 (PointEditor);
+Thing_declare1cpp (PointEditor);
 
-#define PointEditor__members(Klas) TimeSoundEditor__members(Klas) \
-	Sound monoSound; \
-	GuiObject addPointAtDialog;
-#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
-Thing_declare2 (PointEditor, TimeSoundEditor);
-
-PointEditor PointEditor_create (GuiObject parent, const wchar_t *title,
+PointEditor PointEditor_create (GuiObject parent, const wchar *title,
 	PointProcess point, Sound sound);
 /*
 	'sound' may be NULL.
@@ -47,7 +40,15 @@ PointEditor PointEditor_create (GuiObject parent, const wchar_t *title,
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structPointEditor : structTimeSoundEditor {
+		Sound monoSound;
+		GuiObject addPointAtDialog;
+	};
+	#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
+	Thing_declare2cpp (PointEditor, TimeSoundEditor);
+
+#endif // __cplusplus
 
 /* End of file PointEditor.h */
 #endif

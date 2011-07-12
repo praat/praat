@@ -65,7 +65,7 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created from CCA & Correlation."); }
+	} catch (MelderError) { Melder_thrown ("TableOfReal not created from CCA & Correlation."); }
 }
 
 static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)
@@ -144,4 +144,4 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	return redundancy;
 }
 
-/* End of file CCA_and_Correlation.h */
+/* End of file CCA_and_Correlation.cpp */

@@ -1,6 +1,6 @@
 /* AnyTier_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,11 @@
  */
 
 /*
- * pb 1996/07/23
- * pb 2002/07/16 GPL
+ * pb 2011/07/11
  */
 
 #define ooSTRUCT AnyPoint
-oo_DEFINE_CLASS (AnyPoint, Data)
-
-	oo_DOUBLE (time)
+oo_DEFINE_CLASS (AnyPoint, SimpleDouble)
 
 oo_END_CLASS (AnyPoint)
 #undef ooSTRUCT

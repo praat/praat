@@ -66,6 +66,9 @@
 #include "enums_getValue.h"
 #include "Pitch_enums.h"
 
+#undef our
+#define our ((Pitch_Table) my methods) ->
+
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
 #define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
@@ -80,7 +83,7 @@ static int getMaximumUnit (I, long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
@@ -169,7 +172,7 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 static double getValueAtSample (I, long iframe, long ilevel, int unit) {
 	iam (Pitch);
 	double f = my frame [iframe]. candidate [1]. frequency;
-	if (f <= 0.0 || f >= my ceiling) return NUMundefined;   /* Frequency out of range (or NUMundefined)? Voiceless. */
+	if (f <= 0.0 || f >= my ceiling) return NUMundefined;   // frequency out of range (or NUMundefined)? Voiceless
 	return our convertStandardToSpecialUnit (me, ilevel == Pitch_LEVEL_FREQUENCY ? f : my frame [iframe]. candidate [1]. strength, ilevel, unit);
 }
 
@@ -340,7 +343,7 @@ static void info (I) {
 	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (my nx), L" (", Melder_integer (nVoiced), L" voiced)");
 	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
 	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
-	MelderInfo_writeLine3 (L"Ceiling at: ", Melder_double (my ceiling), L" Hertz");
+	MelderInfo_writeLine3 (L"Ceiling at: ", Melder_double (my ceiling), L" Hz");
 
 	if (nVoiced >= 1) {   /* Quantiles. */
 		double quantile10, quantile16, quantile50, quantile84, quantile90;
@@ -460,7 +463,7 @@ Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Pitch not created.");
+		Melder_throw ("Pitch not created.");
 	}
 }
 
@@ -614,7 +617,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": path not found.");
+		Melder_throw (me, ": path not found.");
 	}
 }
 
@@ -709,7 +712,7 @@ Pitch Pitch_killOctaveJumps (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": octave jumps not killed.");
+		Melder_throw (me, ": octave jumps not killed.");
 	}
 }
 
@@ -739,7 +742,7 @@ Pitch Pitch_interpolate (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not interpolated.");
+		Melder_throw (me, ": not interpolated.");
 	}
 }
 
@@ -791,7 +794,7 @@ Pitch Pitch_subtractLinearFit (Pitch me, int unit) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": linear fit not subtracted.");
+		Melder_throw (me, ": linear fit not subtracted.");
 	}
 }
 
@@ -841,7 +844,7 @@ Pitch Pitch_smooth (Pitch me, double bandWidth) {
 		thy ceiling = my ceiling;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not smoothed.");
+		Melder_throw (me, ": not smoothed.");
 	}
 }
 

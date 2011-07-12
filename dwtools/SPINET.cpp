@@ -1,4 +1,4 @@
-/* SPINET.c
+/* SPINET.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -92,14 +92,13 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("SPINET not created."); }
+	} catch (MelderError) { Melder_thrown ("SPINET not created."); }
 }
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
 	double fromErb, double toErb, double minimum, double maximum, int enhanced,
 	int garnish)
 {
-	try {
 		double **z = enhanced ? my s : my y;
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
@@ -118,41 +117,38 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 			Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
 				L"Gammatone filterbank output");
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
 	double minimum, double maximum, int enhanced, int garnish)
 {
-	try {
-		long ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
-		double **z = enhanced ? my s : my y;
-		if (icol < 1 || icol > my nx) return;
-		if (toErb <= fromErb) { fromErb = my ymin; toErb = my ymax; }
-		Sampled2_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax);
-		autoNUMvector<double> spec (1, my ny);
-		
-		for (long i = 1; i <= my ny; i++) spec[i] = z[i][icol];
-		if (maximum <= minimum) NUMdvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
-		if (maximum <= minimum) { minimum -= 1; maximum += 1; }
-		for (long i = ifmin; i <= ifmax; i++)
-		{
-			if (spec[i] > maximum) spec[i] = maximum;
-			else if (spec[i] < minimum) spec[i] = minimum;
-		}
-		Graphics_setInner (g);
-		Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
-		Graphics_function (g, spec.peek(), ifmin, ifmax, Sampled2_rowToY (me, ifmin), Sampled2_rowToY (me, ifmax));
-		Graphics_unsetInner (g);
-		if (garnish)
-		{
-			Graphics_drawInnerBox(g);
-			Graphics_textBottom (g, 1, L"Frequency (ERB)");
-			Graphics_marksBottom( g, 2, 1, 1, 0);
-			Graphics_textLeft (g, 1, L"strength");
-			Graphics_marksLeft( g, 2, 1, 1, 0);
-		}
-	} catch (MelderError) { rethrow; }
+	long ifmin, ifmax, icol = Sampled2_xToColumn (me, time);
+	double **z = enhanced ? my s : my y;
+	if (icol < 1 || icol > my nx) return;
+	if (toErb <= fromErb) { fromErb = my ymin; toErb = my ymax; }
+	Sampled2_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax);
+	autoNUMvector<double> spec (1, my ny);
+	
+	for (long i = 1; i <= my ny; i++) spec[i] = z[i][icol];
+	if (maximum <= minimum) NUMdvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
+	if (maximum <= minimum) { minimum -= 1; maximum += 1; }
+	for (long i = ifmin; i <= ifmax; i++)
+	{
+		if (spec[i] > maximum) spec[i] = maximum;
+		else if (spec[i] < minimum) spec[i] = minimum;
+	}
+	Graphics_setInner (g);
+	Graphics_setWindow (g, fromErb, toErb, minimum, maximum);
+	Graphics_function (g, spec.peek(), ifmin, ifmax, Sampled2_rowToY (me, ifmin), Sampled2_rowToY (me, ifmax));
+	Graphics_unsetInner (g);
+	if (garnish)
+	{
+		Graphics_drawInnerBox(g);
+		Graphics_textBottom (g, 1, L"Frequency (ERB)");
+		Graphics_marksBottom( g, 2, 1, 1, 0);
+		Graphics_textLeft (g, 1, L"strength");
+		Graphics_marksLeft( g, 2, 1, 1, 0);
+	}
 }
 
 /* End of file SPINET.cpp */

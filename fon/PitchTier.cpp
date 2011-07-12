@@ -40,8 +40,8 @@ static void info (I) {
 	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
 	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), L" Hertz");
-	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), L" Hertz");
+	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), L" Hz");
+	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), L" Hz");
 }
 
 class_methods (PitchTier, RealTier) {	
@@ -56,7 +56,7 @@ PitchTier PitchTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("PitchTier not created.");
+		Melder_throw ("PitchTier not created.");
 	}
 }
 
@@ -72,7 +72,7 @@ PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 		Thing_overrideClass (thee.peek(), classPitchTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PitchTier.");
+		Melder_throw (me, ": not converted to PitchTier.");
 	}
 }
 
@@ -86,7 +86,7 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 			RealPoint pl = (RealPoint) my points -> item [i - 1];
 			RealPoint pr = (RealPoint) my points -> item [i + 1];
 			double expectedFrequency = pl -> value + (pr -> value - pl -> value) /
-				 (pr -> time - pl -> time) * (pm -> time - pl -> time);
+				 (pr -> number - pl -> number) * (pm -> number - pl -> number);
 			double df = useSemitones ?
 				12 * fabs (log (pm -> value / expectedFrequency)) / NUMln2:
 				fabs (pm -> value - expectedFrequency);
@@ -100,29 +100,32 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemiton
 	}
 }
 
-static int PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, int hasHeader) {
+static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, int hasHeader) {
+	autofile f = Melder_fopen (file, "w");
+	if (hasHeader)
+		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, my points -> size);
+	for (long i = 1; i <= my points -> size; i ++) {
+		RealPoint point = (RealPoint) my points -> item [i];
+		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
+	}
+	f.close (file);
+	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+}
+
+void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {
 	try {
-		autofile f = Melder_fopen (file, "w");
-		if (hasHeader)
-			fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, my points -> size);
-		for (long i = 1; i <= my points -> size; i ++) {
-			RealPoint point = (RealPoint) my points -> item [i];
-			fprintf (f, "%.17g\t%.17g\n", point -> time, point -> value);
-		}
-		f.close (file);
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
-		return 1;
+		PitchTier_writeToSpreadsheetFile (me, file, TRUE);
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw (me, " not written to tab-separated PitchTier file.");
 	}
 }
 
-int PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {
-	return PitchTier_writeToSpreadsheetFile (me, file, TRUE);
-}
-
-int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) {
-	return PitchTier_writeToSpreadsheetFile (me, file, FALSE);
+void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) {
+	try {
+		PitchTier_writeToSpreadsheetFile (me, file, FALSE);
+	} catch (MelderError) {
+		Melder_throw (me, " not written to tab-separated table file.");
+	}
 }
 
 int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
@@ -130,7 +133,7 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 		for (long i = 1; i <= my points -> size; i ++) {
 			RealPoint point = (RealPoint) my points -> item [i];
 			double frequency = point -> value;
-			if (point -> time < tmin || point -> time > tmax) continue;
+			if (point -> number < tmin || point -> number > tmax) continue;
 			switch (unit) {
 				case kPitch_unit_HERTZ: {	
 					frequency += shift;
@@ -156,7 +159,7 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 		}
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": frequencies not shifted.");
+		Melder_throw (me, ": frequencies not shifted.");
 	}
 }
 
@@ -164,7 +167,7 @@ void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, doub
 	Melder_assert (factor > 0.0);
 	for (long i = 1; i <= my points -> size; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
-		if (point -> time < tmin || point -> time > tmax) continue;
+		if (point -> number < tmin || point -> number > tmax) continue;
 		point -> value *= factor;
 	}
 }

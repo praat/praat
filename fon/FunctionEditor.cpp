@@ -1,6 +1,6 @@
-/* FunctionEditor.c
+/* FunctionEditor.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,16 @@
  * pb 2009/10/26 repaired the synchronizedZoomAndScroll preference
  * fb 2010/02/24 GTK
  * pb 2010/05/14 abolished resolution independence
+ * pb 2011/07/01 C++
  */
 
 #include "FunctionEditor.h"
 #include "machine.h"
 #include "Preferences.h"
 #include "EditorM.h"
+
+#undef our
+#define our ((FunctionEditor_Table) my methods) ->
 
 #define maximumScrollBarValue  2000000000
 #define RELATIVE_PAGE_INCREMENT  0.8
@@ -997,7 +1001,7 @@ static int menu_cb_intro (EDITOR_ARGS) {
 }
 
 static void createMenuItems_file (FunctionEditor me, EditorMenu menu) {
-	inherited (FunctionEditor) createMenuItems_file (FunctionEditor_as_parent (me), menu);
+	inherited (FunctionEditor) createMenuItems_file (me, menu);
 	EditorMenu_addCommand (menu, L"Preferences...", 0, menu_cb_preferences);
 	EditorMenu_addCommand (menu, L"-- after preferences --", 0, 0);
 }
@@ -1031,7 +1035,7 @@ static void createMenuItems_view (FunctionEditor me, EditorMenu menu) {
 }
 
 static void createMenuItems_query (FunctionEditor me, EditorMenu menu) {
-	inherited (FunctionEditor) createMenuItems_query (FunctionEditor_as_parent (me), menu);
+	inherited (FunctionEditor) createMenuItems_query (me, menu);
 	EditorMenu_addCommand (menu, L"-- query selection --", 0, 0);
 	EditorMenu_addCommand (menu, L"Get start of selection", 0, menu_cb_getB);
 	EditorMenu_addCommand (menu, L"Get begin of selection", Editor_HIDDEN, menu_cb_getB);
@@ -1041,7 +1045,7 @@ static void createMenuItems_query (FunctionEditor me, EditorMenu menu) {
 }
 
 static void createMenus (FunctionEditor me) {
-	inherited (FunctionEditor) createMenus (FunctionEditor_as_parent (me));
+	inherited (FunctionEditor) createMenus (me);
 	EditorMenu menu;
 
 	menu = Editor_addMenu (me, L"View", 0);
@@ -1069,7 +1073,7 @@ static void createMenus (FunctionEditor me) {
 }
 
 static void createHelpMenuItems (FunctionEditor me, EditorMenu menu) {
-	inherited (FunctionEditor) createHelpMenuItems (FunctionEditor_as_parent (me), menu);
+	inherited (FunctionEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"Intro", 0, menu_cb_intro);
 }
 
@@ -1693,10 +1697,10 @@ class_methods (FunctionEditor, Editor) {
 	class_methods_end
 }
 
-int FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar_t *title, Any data) {
+void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Data data) {
 	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
 	my tmax = ((Function) data) -> xmax;
-	Editor_init (FunctionEditor_as_parent (me), parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data); cherror
+	Editor_init (me, parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data);
 
 	my startWindow = my tmin;
 	my endWindow = my tmax;
@@ -1720,9 +1724,6 @@ gui_drawingarea_cb_resize (me, & event);
 		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
 	my enableUpdates = TRUE;
 	my arrowScrollStep = preferences.arrowScrollStep;
-end:
-	iferror return 0;
-	return 1;
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me) {

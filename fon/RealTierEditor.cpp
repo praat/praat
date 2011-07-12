@@ -29,11 +29,15 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/23 minimum and maximum legal values
  * pb 2011/03/23 C++
+ * pb 2011/07/01 C++
  */
 
 #include "RealTierEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
+
+#undef our
+#define our ((RealTierEditor_Table) my methods) ->
 
 #define SOUND_HEIGHT  0.382
 
@@ -41,14 +45,14 @@
 
 static int menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
-	Editor_save (RealTierEditor_as_Editor (me), L"Remove point(s)");
+	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
 		AnyTier_removePointNear (my data, my startSelection);
 	else
 		AnyTier_removePointsBetween (my data, my startSelection, my endSelection);
 	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (RealTierEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -58,11 +62,11 @@ static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
 		return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
 	if (NUMdefined (our maximumLegalValue) && my ycursor > our maximumLegalValue)
 		return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
-	Editor_save (RealTierEditor_as_Editor (me), L"Add point");
+	Editor_save (me, L"Add point");
 	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
-	FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (RealTierEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -80,11 +84,11 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 			return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
 		if (NUMdefined (our maximumLegalValue) && desiredValue > our maximumLegalValue)
 			return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
-		Editor_save (RealTierEditor_as_Editor (me), L"Add point");
+		Editor_save (me, L"Add point");
 		RealTier_addPoint (my data, GET_REAL (L"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (RealTierEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -100,18 +104,18 @@ static int menu_cb_setRange (EDITOR_ARGS) {
 		my ymin = GET_REAL (our yminKey);
 		my ymax = GET_REAL (our ymaxKey);
 		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
-		FunctionEditor_redraw (RealTierEditor_as_FunctionEditor (me));
+		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void createMenuItems_view (RealTierEditor me, EditorMenu menu) {
-	inherited (RealTierEditor) createMenuItems_view (RealTierEditor_as_parent (me), menu);
+	inherited (RealTierEditor) createMenuItems_view (me, menu);
 	EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
 	EditorMenu_addCommand (menu, our setRangeTitle, 0, menu_cb_setRange);
 }
 
 static void createMenus (RealTierEditor me) {
-	inherited (RealTierEditor) createMenus (RealTierEditor_as_parent (me));
+	inherited (RealTierEditor) createMenus (me);
 	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
@@ -160,7 +164,7 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 
 static void dataChanged (RealTierEditor me) {
 	RealTierEditor_updateScaling (me);
-	inherited (RealTierEditor) dataChanged (RealTierEditor_as_parent (me));
+	inherited (RealTierEditor) dataChanged (me);
 }
 
 /********** DRAWING AREA **********/
@@ -174,7 +178,7 @@ static void draw (RealTierEditor me) {
 		Graphics_setColour (my graphics, Graphics_WHITE);
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		TimeSoundEditor_draw_sound (RealTierEditor_as_TimeSoundEditor (me), -1.0, 1.0);
+		TimeSoundEditor_draw_sound (me, -1.0, 1.0);
 		Graphics_resetViewport (my graphics, viewport);
 		Graphics_insetViewport (my graphics, 0, 1, 0.0, 1 - SOUND_HEIGHT);
 	}
@@ -206,7 +210,7 @@ static void draw (RealTierEditor me) {
 		Graphics_line (my graphics, my startWindow, yleft, my endWindow, yright);
 	} else for (i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) data -> points -> item [i];
-		double t = point -> time, y = point -> value;
+		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
 			Graphics_setColour (my graphics, Graphics_RED);	
 		Graphics_fillCircle_mm (my graphics, t, y, 3);
@@ -221,7 +225,7 @@ static void draw (RealTierEditor me) {
 			Graphics_line (my graphics, t, y, my endWindow, RealTier_getValueAtTime (data, my endWindow));
 		else {
 			RealPoint pointRight = (RealPoint) data -> points -> item [i + 1];
-			Graphics_line (my graphics, t, y, pointRight -> time, pointRight -> value);
+			Graphics_line (my graphics, t, y, pointRight -> number, pointRight -> value);
 		}
 	}
 	Graphics_setLineWidth (my graphics, 1);
@@ -239,7 +243,7 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 	 */
 	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) data -> points -> item [i];
-		double t = point -> time + dt, y = point -> value + dy;
+		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
 			Graphics_circle_mm (my graphics, t, y, 3);
 	}
@@ -249,7 +253,7 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 		 * Draw a crosshair with time and y.
 		 */
 		RealPoint point = (RealPoint) data -> points -> item [first];
-		double t = point -> time + dt, y = point -> value + dy;
+		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics, 4.0));
 		Graphics_setTextAlignment (my graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
 		Graphics_text1 (my graphics, t, my ymax, Melder_fixed (t, 6));
@@ -277,7 +281,7 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 			my ycursor = (1.0 - yWC) * my ymin + yWC * my ymax;
 			viewport = Graphics_insetViewport (my graphics, 0, 1, 0, 1 - SOUND_HEIGHT);
 		} else {
-			return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
+			return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
 		}
 	} else {
 		my ycursor = (1.0 - yWC) * my ymin + yWC * my ymax;
@@ -289,25 +293,25 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 	 * Clicked on a point?
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
-	if (inearestPoint == 0) return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
+	if (inearestPoint == 0) return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> time, nearestPoint -> value) > 1.5) {
+	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		if (my sound.data) Graphics_resetViewport (my graphics, viewport);
-		return inherited (RealTierEditor) click (RealTierEditor_as_parent (me), xWC, yWC, shiftKeyPressed);
+		return inherited (RealTierEditor) click (me, xWC, yWC, shiftKeyPressed);
 	}
 
 	/*
 	 * Clicked on a selected point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> time > my startSelection && nearestPoint -> time < my endSelection;
+		nearestPoint -> number > my startSelection && nearestPoint -> number < my endSelection;
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
-		Editor_save (RealTierEditor_as_Editor (me), L"Drag points");
+		Editor_save (me, L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
-		Editor_save (RealTierEditor_as_Editor (me), L"Drag point");
+		Editor_save (me, L"Drag point");
 	}
 
 	/*
@@ -337,14 +341,14 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 	 */
 	{
 		RealPoint *points = (RealPoint *) pitch -> points -> item;
-		double newTime = points [ifirstSelected] -> time + dt;
-		if (newTime < my tmin) return 1;   /* Outside domain. */
-		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> time)
-			return 1;   /* Past left neighbour. */
-		newTime = points [ilastSelected] -> time + dt;
-		if (newTime > my tmax) return 1;   /* Outside domain. */
-		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> time)
-			return 1;   /* Past right neighbour. */
+		double newTime = points [ifirstSelected] -> number + dt;
+		if (newTime < my tmin) return 1;   // outside domain
+		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
+			return 1;   // past left neighbour
+		newTime = points [ilastSelected] -> number + dt;
+		if (newTime > my tmax) return 1;   // outside domain
+		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> number)
+			return 1;   // past right neighbour
 	}
 
 	/*
@@ -352,7 +356,7 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 	 */
 	for (i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = (RealPoint) pitch -> points -> item [i];
-		point -> time += dt;
+		point -> number += dt;
 		point -> value += df;
 		if (NUMdefined (our minimumLegalValue) && point -> value < our minimumLegalValue)
 			point -> value = our minimumLegalValue;
@@ -370,7 +374,7 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 		 * Move crosshair to only selected pitch point.
 		 */
 		RealPoint point = (RealPoint) pitch -> points -> item [ifirstSelected];
-		my startSelection = my endSelection = point -> time;
+		my startSelection = my endSelection = point -> number;
 		my ycursor = point -> value;
 	} else {
 		/*
@@ -384,9 +388,9 @@ static int click (RealTierEditor me, double xWC, double yWC, int shiftKeyPressed
 			my ycursor = our maximumLegalValue;
 	}
 
-	Editor_broadcastChange (RealTierEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	RealTierEditor_updateScaling (me);
-	return 1;   /* Update needed. */
+	return 1;   // update needed
 }
 
 static void play (RealTierEditor me, double tmin, double tmax) {
@@ -418,16 +422,13 @@ class_methods (RealTierEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-int RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, int ownSound) {
+void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
-	TimeSoundEditor_init (RealTierEditor_as_parent (me), parent, title, data, sound, ownSound); cherror
+	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);
 	my ymin = -1.0;
 	RealTierEditor_updateScaling (me);
 	my ycursor = 0.382 * my ymin + 0.618 * my ymax;
-end:
-	iferror return 0;
-	return 1;
 }
 
 /* End of file RealTierEditor.cpp */

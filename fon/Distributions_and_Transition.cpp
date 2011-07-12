@@ -125,7 +125,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (underlying, ": Transition not computed.");
+		Melder_throw (underlying, ": Transition not computed.");
 	}
 }
 
@@ -154,7 +154,7 @@ Distributions Distributions_Transition_map (Distributions me, Transition map) {
 
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not mapped to Transition.");
+		Melder_throw (me, ": not mapped to Transition.");
 	}
 }
 
@@ -180,7 +180,7 @@ Distributions Transition_to_Distributions_conflate (Transition me) {
 
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not conflated to Distributions.");
+		Melder_throw (me, ": not conflated to Distributions.");
 	}
 }
 

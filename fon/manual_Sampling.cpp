@@ -39,7 +39,7 @@ MAN_END
 
 MAN_BEGIN (L"Get sampling frequency", L"ppgb", 20040420)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")
-NORMAL (L"The Info window will tell you the @@sampling frequency@ in Hertz.")
+NORMAL (L"The Info window will tell you the @@sampling frequency@ in hertz.")
 ENTRY (L"Usage")
 NORMAL (L"You will not often choose this command with the mouse, "
 	"since the sampling frequency is included in the information that you get "
@@ -99,7 +99,7 @@ MAN_BEGIN (L"Get number of samples", L"ppgb", 20040420)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
 NORMAL (L"The Info window will tell you the total number of time samples in this object.")
 ENTRY (L"Example")
-NORMAL (L"If the sampling frequency is 44100 Hertz, a recording with a duration of 60 seconds "
+NORMAL (L"If the sampling frequency is 44100 hertz, a recording with a duration of 60 seconds "
 	"will contain 2,646,000 samples.")
 ENTRY (L"Details for hackers")
 NORMAL (L"If you select a Sound or LongSound and click @Inspect, "

@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/04/06
+ * pb 2011/07/11
  */
 
 #include "Editor.h"
@@ -31,45 +31,11 @@
 	extern "C" {
 #endif
 
-#define HyperLink_members Data_members \
-	double x1DC, x2DC, y1DC, y2DC;
-#define HyperLink_methods Data_methods
-class_create (HyperLink, Data);
+Thing_declare1cpp (HyperLink);
 
-HyperLink HyperLink_create (const wchar_t *name, double x1, double x2, double y1, double y2);
+HyperLink HyperLink_create (const wchar *name, double x1, double x2, double y1, double y2);
 
-#define HyperPage__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (HyperPage);
-
-#define HyperPage__members(Klas) Editor__members(Klas) \
-	GuiObject drawingArea, verticalScrollBar; \
-	Graphics g, ps; \
-	double x, y, rightMargin, previousBottomSpacing; \
-	long pageNumber; \
-	Collection links; \
-	int printing, top, mirror; \
-	wchar_t *insideHeader, *middleHeader, *outsideHeader; \
-	wchar_t *insideFooter, *middleFooter, *outsideFooter; \
-	enum kGraphics_font font; \
-	int fontSize; \
-	wchar_t *entryHint; double entryPosition; \
-	struct { wchar_t *page; int top; } history [20]; \
-	int historyPointer; \
-	wchar_t *currentPageTitle; \
-	GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24; \
-	GuiObject holder; \
-	void *praatApplication, *praatObjects, *praatPicture; \
-	bool scriptErrorHasBeenNotified; \
-	structMelderDir rootDirectory;
-#define HyperPage__methods(Klas) Editor__methods(Klas) \
-	void (*draw) (Klas me); \
-	long (*getNumberOfPages) (Klas me); \
-	long (*getCurrentPageNumber) (Klas me); \
-	int (*goToPage) (Klas me, const wchar_t *title); \
-	int (*goToPage_i) (Klas me, long ipage); \
-	void (*defaultHeaders) (EditorCommand cmd); \
-	int hasHistory, isOrdered;
-Thing_declare2 (HyperPage, Editor);
+Thing_declare1cpp (HyperPage);
 
 void HyperPage_clear (HyperPage me);
 
@@ -77,47 +43,85 @@ void HyperPage_clear (HyperPage me);
 #define HyperPage_ADD_BORDER  1
 #define HyperPage_USE_ENTRY_HINT  2
 
-int HyperPage_any (I, const wchar_t *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
+int HyperPage_any (I, const wchar *text, enum kGraphics_font font, int size, int style, double minFooterDistance,
 	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method);
-int HyperPage_pageTitle (I, const wchar_t *title);
-int HyperPage_intro (I, const wchar_t *text);
-int HyperPage_entry (I, const wchar_t *title);
-int HyperPage_paragraph (I, const wchar_t *text);
-int HyperPage_listItem (I, const wchar_t *text);
-int HyperPage_listItem1 (I, const wchar_t *text);
-int HyperPage_listItem2 (I, const wchar_t *text);
-int HyperPage_listItem3 (I, const wchar_t *text);
-int HyperPage_listTag (I, const wchar_t *text);
-int HyperPage_listTag1 (I, const wchar_t *text);
-int HyperPage_listTag2 (I, const wchar_t *text);
-int HyperPage_listTag3 (I, const wchar_t *text);
-int HyperPage_definition (I, const wchar_t *text);
-int HyperPage_definition1 (I, const wchar_t *text);
-int HyperPage_definition2 (I, const wchar_t *text);
-int HyperPage_definition3 (I, const wchar_t *text);
-int HyperPage_code (I, const wchar_t *text);
-int HyperPage_code1 (I, const wchar_t *text);
-int HyperPage_code2 (I, const wchar_t *text);
-int HyperPage_code3 (I, const wchar_t *text);
-int HyperPage_code4 (I, const wchar_t *text);
-int HyperPage_code5 (I, const wchar_t *text);
-int HyperPage_prototype (I, const wchar_t *text);
-int HyperPage_formula (I, const wchar_t *formula);
+int HyperPage_pageTitle (I, const wchar *title);
+int HyperPage_intro (I, const wchar *text);
+int HyperPage_entry (I, const wchar *title);
+int HyperPage_paragraph (I, const wchar *text);
+int HyperPage_listItem (I, const wchar *text);
+int HyperPage_listItem1 (I, const wchar *text);
+int HyperPage_listItem2 (I, const wchar *text);
+int HyperPage_listItem3 (I, const wchar *text);
+int HyperPage_listTag (I, const wchar *text);
+int HyperPage_listTag1 (I, const wchar *text);
+int HyperPage_listTag2 (I, const wchar *text);
+int HyperPage_listTag3 (I, const wchar *text);
+int HyperPage_definition (I, const wchar *text);
+int HyperPage_definition1 (I, const wchar *text);
+int HyperPage_definition2 (I, const wchar *text);
+int HyperPage_definition3 (I, const wchar *text);
+int HyperPage_code (I, const wchar *text);
+int HyperPage_code1 (I, const wchar *text);
+int HyperPage_code2 (I, const wchar *text);
+int HyperPage_code3 (I, const wchar *text);
+int HyperPage_code4 (I, const wchar *text);
+int HyperPage_code5 (I, const wchar *text);
+int HyperPage_prototype (I, const wchar *text);
+int HyperPage_formula (I, const wchar *formula);
 int HyperPage_picture (I, double width_inches, double height_inches, void (*draw) (Graphics g));
-int HyperPage_script (I, double width_inches, double height_inches, const wchar_t *script);
+int HyperPage_script (I, double width_inches, double height_inches, const wchar *script);
 
-int HyperPage_goToPage (I, const wchar_t *title);
+int HyperPage_goToPage (I, const wchar *title);
 int HyperPage_goToPage_i (I, long i);
 
-int HyperPage_init (HyperPage me, GuiObject parent, const wchar_t *title, Any data);
+void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data data);
 
 void HyperPage_prefs (void);
-void HyperPage_setEntryHint (I, const wchar_t *entry);
+void HyperPage_setEntryHint (I, const wchar *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structHyperLink : public structData {
+		double x1DC, x2DC, y1DC, y2DC;
+	};
+	#define HyperLink__methods(klas) Data__methods(klas)
+	Thing_declare2cpp (HyperLink, Data);
+
+	struct structHyperPage : public structEditor {
+		GuiObject drawingArea, verticalScrollBar;
+		Graphics g, ps;
+		double x, y, rightMargin, previousBottomSpacing;
+		long pageNumber;
+		Collection links;
+		int printing, top, mirror;
+		wchar *insideHeader, *middleHeader, *outsideHeader;
+		wchar *insideFooter, *middleFooter, *outsideFooter;
+		enum kGraphics_font font;
+		int fontSize;
+		wchar *entryHint; double entryPosition;
+		struct { wchar *page; int top; } history [20];
+		int historyPointer;
+		wchar *currentPageTitle;
+		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+		GuiObject holder;
+		void *praatApplication, *praatObjects, *praatPicture;
+		bool scriptErrorHasBeenNotified;
+		structMelderDir rootDirectory;
+	};
+	#define HyperPage__methods(Klas) Editor__methods(Klas) \
+		void (*draw) (Klas me); \
+		long (*getNumberOfPages) (Klas me); \
+		long (*getCurrentPageNumber) (Klas me); \
+		int (*goToPage) (Klas me, const wchar *title); \
+		int (*goToPage_i) (Klas me, long ipage); \
+		void (*defaultHeaders) (EditorCommand cmd); \
+		int hasHistory, isOrdered;
+	Thing_declare2cpp (HyperPage, Editor);
+
+#endif // __cplusplus
 
 /* End of file HyperPage.h */
 #endif

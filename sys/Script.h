@@ -20,26 +20,28 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/11
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+#include "Data.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Script_members Data_members \
-	structMelderFile file;
-#define Script_methods Data_methods
-class_create (Script, Data);
+Thing_declare1cpp (Script);
 
-Script Script_createFromFile (MelderFile fs);
+Script Script_createFromFile (MelderFile file);
 
 #ifdef __cplusplus
 	}
+
+	struct structScript : public structData {
+		structMelderFile file;
+	};
+	#define Script__methods(klas) Data__methods(klas)
+	Thing_declare2cpp (Script, Data);
+
 #endif
 
 /* End of file Script.h */

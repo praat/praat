@@ -46,7 +46,7 @@ Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Distributions not created.");
+		Melder_throw ("Distributions not created.");
 	}
 }
 
@@ -58,59 +58,51 @@ void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long
 }
 
 int Distributions_peek (Distributions me, long column, wchar_t **string) {
-	try {
-		Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
-		if (my numberOfRows < 1)
-			Melder_throw (me, ": I have no candidates.");
-		double total = 0.0;
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			total += my data [irow] [column];
-		}
-		if (total <= 0.0)
-			Melder_throw (me, ": the total weight of column ", column, " is not positive.");
-		long irow;
-		do {
-			double rand = NUMrandomUniform (0, total), sum = 0.0;
-			for (irow = 1; irow <= my numberOfRows; irow ++) {
-				sum += my data [irow] [column];
-				if (rand <= sum) break;
-			}
-		} while (irow > my numberOfRows);   // guard against rounding errors
-		*string = my rowLabels [irow];
-		if (! *string)
-			Melder_throw (me, ": no string in row ", irow, ".");
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
+	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
+	if (my numberOfRows < 1)
+		Melder_throw (me, ": I have no candidates.");
+	double total = 0.0;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		total += my data [irow] [column];
 	}
+	if (total <= 0.0)
+		Melder_throw (me, ": the total weight of column ", column, " is not positive.");
+	long irow;
+	do {
+		double rand = NUMrandomUniform (0, total), sum = 0.0;
+		for (irow = 1; irow <= my numberOfRows; irow ++) {
+			sum += my data [irow] [column];
+			if (rand <= sum) break;
+		}
+	} while (irow > my numberOfRows);   // guard against rounding errors
+	*string = my rowLabels [irow];
+	if (! *string)
+		Melder_throw (me, ": no string in row ", irow, ".");
+	return 1;
 }
 
 int Distributions_peek_opt (Distributions me, long column, long *number) {
-	try {
-		Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
-		if (my numberOfRows < 1)
-			Melder_throw (me, ": I have no candidates.");
-		double total = 0.0;
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			total += my data [irow] [column];
-		}
-		if (total <= 0.0)
-			Melder_throw (me, ": the total weight of column ", column, " is not positive.");
-		long irow;
-		do {
-			double rand = NUMrandomUniform (0, total), sum = 0.0;
-			for (irow = 1; irow <= my numberOfRows; irow ++) {
-				sum += my data [irow] [column];
-				if (rand <= sum) break;
-			}
-		} while (irow > my numberOfRows);   /* Guard against rounding errors. */
-		if (my rowLabels [irow] == NULL)
-			Melder_throw (me, ": no string in row ", irow, ".");
-		*number = irow;
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
+	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
+	if (my numberOfRows < 1)
+		Melder_throw (me, ": I have no candidates.");
+	double total = 0.0;
+	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		total += my data [irow] [column];
 	}
+	if (total <= 0.0)
+		Melder_throw (me, ": the total weight of column ", column, " is not positive.");
+	long irow;
+	do {
+		double rand = NUMrandomUniform (0, total), sum = 0.0;
+		for (irow = 1; irow <= my numberOfRows; irow ++) {
+			sum += my data [irow] [column];
+			if (rand <= sum) break;
+		}
+	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
+	if (my rowLabels [irow] == NULL)
+		Melder_throw (me, ": no string in row ", irow, ".");
+	*number = irow;
+	return 1;
 }
 
 double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
@@ -180,7 +172,7 @@ Distributions Distributions_addTwo (Distributions me, Distributions thee) {
 		unicize (him.peek());
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Two Distributions not added.");
+		Melder_throw (me, " & ", thee, ": not added.");
 	}
 }
 
@@ -191,7 +183,7 @@ Distributions Distributions_addMany (Collection me) {
 		unicize (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Distributions objects not added.");
+		Melder_throw ("Distributions objects not added.");
 	}
 }
 

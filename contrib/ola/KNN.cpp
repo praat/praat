@@ -1,4 +1,4 @@
-/* KNN.c
+/* KNN.cpp
  *
  * Copyright (C) 2008 Ola So"der, 2010-2011 Paul Boersma
  *
@@ -22,6 +22,7 @@
  * pb 2010/06/06 removed some array-creations-on-the-stack
  * pb 2011/04/12 C++
  * pb 2011/04/13 removed several memory leaks
+ * pb 2011/07/07 some exception safety
  */
 
 #include "KNN.h"
@@ -75,16 +76,13 @@ class_methods (KNN, Data) {
 
 KNN KNN_create ()   
 {
-    KNN me = Thing_new (KNN);
-    if (!me)
-    {
-        return(NULL);
-    }
-    else
-    {
+	try {
+		autoKNN me = Thing_new (KNN);
         my nInstances = 0;
-        return(me);
-    }
+        return me.transfer();
+    } catch (MelderError) {
+		Melder_throw ("KNN classifier not created.");
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,19 +108,19 @@ int KNN_learn
 
 {
     if (c->size == p->ny)           // the number of input vectors must
-    {                               // equal the number of categories
+    {                               // equal the number of categories.
         switch (method)
         {
         case kOla_REPLACE:          // in REPLACE mode simply
                                     // dispose of the current
             if (my nInstances > 0)  // instance base and store
-            {                       // the new one
-                forget(my input);
-                forget(my output);
+            {                       // the new one.
+                forget (my input);
+                forget (my output);
             }
 
-            my input = (Pattern) Data_copy(p);
-            my output = (Categories) Data_copy(c);
+            my input = (Pattern) Data_copy (p);   // LEAK
+            my output = (Categories) Data_copy (c);
             my nInstances = c->size;
 
             break;
@@ -130,28 +128,32 @@ int KNN_learn
         case kOla_APPEND:                   // in APPEND mode a new
                                             // instance base is formed
                                             // by merging the new and
-                                            // the old
+                                            // the old.
                                             //
             if (p->nx == (my input)->nx)    // the number of features
                                             // of the old and new
                                             // instance base must
-                                            // match otherwise merging
-                                            // wont be possible
+                                            // match; otherwise merging
+                                            // won't be possible.
             {
+				/*
+				 * Create without change.
+				 */
+                autoMatrix tinput = Matrix_appendRows (my input, p);
+                autoCategories toutput = (Categories) Collections_merge (my output, c);
 
-                Matrix tinput = Matrix_appendRows(my input, p);
-                Categories toutput = (Categories) Collections_merge (my output, c);
-
-                forget(my input);
-                forget(my output);
-
-                my input = (Pattern) tinput;
-                my output = toutput;
+				/*
+				 * Change without error.
+				 */
+                forget (my input);
+                forget (my output);
+                my input = (Pattern) tinput.transfer();
+                my output = toutput.transfer();
                 my nInstances += p->ny;
             }
             else                                    // fail
             {
-                return(kOla_DIMENSIONALITY_MISMATCH);
+                return kOla_DIMENSIONALITY_MISMATCH;
             }
             break;
         }
@@ -162,10 +164,10 @@ int KNN_learn
     }
     else                                            // fail
     {
-        return(kOla_PATTERN_CATEGORIES_MISMATCH);
+        return kOla_PATTERN_CATEGORIES_MISMATCH;
     }
 
-    return(kOla_SUCCESS);                           // success
+    return kOla_SUCCESS;                            // success
 
 }
 
@@ -831,9 +833,9 @@ double KNN_modelSearch
 		*k = best.k;
 		*dist = dists[best.dist];
 
-		return(best.performance);
+		return best.performance;
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", fws, ": model search not performed.");
+		Melder_throw (me, " & ", fws, ": model search not performed.");
 	}
 }
 
@@ -941,43 +943,40 @@ long KNN_kNeighboursSkip
     long dc = 0;
     long py = 1;
 
-    double *distances = NUMdvector (0, k - 1);
+    autoNUMvector <double> distances (0L, k - 1);
 
     Melder_assert(jy > 0 && jy <= j->ny);
     Melder_assert(k > 0 && k <= p->ny);
     Melder_assert(skipper <= p->ny);
 
-    while (dc < k && py <= p->ny)
+    while (dc < k && py <= p -> ny)
     {
-        if ((py != jy) && (py != skipper))
+        if (py != jy && py != skipper)
         {
-
-            distances[dc] = KNN_distanceEuclidean(j, p, fws, jy, py);
-            indices[dc] = py;
-            ++dc;
+            distances [dc] = KNN_distanceEuclidean (j, p, fws, jy, py);
+            indices [dc] = py;
+            ++ dc;
         }
-        ++py;
+        ++ py;
     }
 
-    maxi = KNN_max(distances, k);
+    maxi = KNN_max (distances.peek(), k);
     while (py <= p->ny)
     {
-        if ((py != jy) && (py != skipper))
+        if (py != jy && py != skipper)
         {
-
-            double d = KNN_distanceEuclidean(j, p, fws, jy, py);
-            if (d < distances[maxi])
+            double d = KNN_distanceEuclidean (j, p, fws, jy, py);
+            if (d < distances [maxi])
             {
-                distances[maxi] = d;
-                indices[maxi] = py;
-                maxi = KNN_max(distances, k);
+                distances [maxi] = d;
+                indices [maxi] = py;
+                maxi = KNN_max (distances.peek(), k);
             }
         }
-        ++py;
+        ++ py;
     }
     
-	NUMdvector_free (distances, 0);
-    return(OlaMIN(k, dc));
+    return OlaMIN (k, dc);
 
 }
 
@@ -1270,22 +1269,19 @@ long KNN_friendsAmongkNeighbours
 )
 
 {
-    double *distances = NUMdvector (0, k - 1);
-    long *indices = NUMlvector (0, k - 1);
+    autoNUMvector <double> distances (0L, k - 1);
+    autoNUMvector <long> indices (0L, k - 1);
     long friends = 0;
 
-    Melder_assert(jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
+    Melder_assert (jy > 0 && jy <= j->ny  && k <= p->ny && k > 0);
 
-    FeatureWeights fws = FeatureWeights_create(p->nx);
-    long ncollected = KNN_kNeighbours(j, p, fws, jy, k, indices, distances);
-    forget(fws);
+    autoFeatureWeights fws = FeatureWeights_create (p -> nx);
+    long ncollected = KNN_kNeighbours (j, p, fws.peek(), jy, k, indices.peek(), distances.peek());
 
     while (ncollected--)
         if (FeatureWeights_areFriends ((SimpleString) c->item[jy], (SimpleString) c->item[indices[ncollected]])) friends++;
     
-	NUMdvector_free (distances, 0);
-	NUMlvector_free (indices, 0);
-    return(friends);
+    return friends ;
 
 }
 
@@ -1386,18 +1382,11 @@ Dissimilarity KNN_patternToDissimilarity
 )
 
 {
-    Dissimilarity output = Dissimilarity_create(p->ny);
-    Melder_assert(output);
-    if (output)
-    {
-        for (long y = 1; y <= p->ny; ++y)
-            for (long x = 1; x <= p->ny; ++x)
-                output->data[y][x] = KNN_distanceEuclidean(p, p, fws, y, x);
-        
-        return(output);
-    }
-    else 
-        return(NULL);
+    autoDissimilarity output = Dissimilarity_create (p -> ny);
+	for (long y = 1; y <= p -> ny; ++ y)
+		for (long x = 1; x <= p -> ny; ++ x)
+			output -> data [y] [x] = KNN_distanceEuclidean (p, p, fws, y, x);
+	return output.transfer();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1554,36 +1543,26 @@ void KNN_shuffleInstances
     if (my nInstances < 2) 
         return;                 // It takes atleast two to tango
 
-    Pattern new_input = (Pattern) Pattern_create(my nInstances, (my input)->nx);
-    Categories new_output = Categories_create();
-    Melder_assert(new_input && new_output);
-    if (new_input && new_output)
-    {
-        long y = 1;
-        while (my nInstances)
-        {
-            long pick = (long) lround(NUMrandomUniform(1, my nInstances));
-            Collection_addItem(new_output, Data_copy((my output)->item[pick]));
+    autoPattern new_input = Pattern_create (my nInstances, my input -> nx);
+    autoCategories new_output = Categories_create ();
+	long y = 1;
+	while (my nInstances)
+	{
+		long pick = (long) lround (NUMrandomUniform (1, my nInstances));
+		Collection_addItem (new_output.peek(), Data_copy (my output -> item [pick]));
 
-            for (long x = 1;x <= (my input)->nx; ++x)
-                new_input->z[y][x] = (my input)->z[pick][x];
+		for (long x = 1;x <= (my input)->nx; ++x)
+			new_input -> z [y] [x] = my input-> z [pick] [x];
 
-            KNN_removeInstance(me, pick);
-            ++y;
-        }
+		KNN_removeInstance (me, pick);
+		++y;
+	}
 
-        forget(my input);
-        forget(my output);
-
-        my input = new_input;
-        my output = new_output;
-        my nInstances  = new_output->size;
-    }
-    else
-    {
-        forget(new_input);
-        forget(new_output);
-    }
+	forget (my input);
+	forget (my output);
+	my nInstances = new_output -> size;
+	my input = new_input.transfer();
+	my output = new_output.transfer();
 }
 
 
@@ -1705,16 +1684,11 @@ double KNN_SA_t_metric
     return(result);
 }
 
-void KNN_SA_t_print
-(
-    void * istruct
-)
-
-{
-    Melder_casual("\n");
-    for(long i = 1; i <= ((KNN_SA_t *)istruct)->p->ny; ++i)
-        Melder_casual("%ld,", ((KNN_SA_t *)istruct)->indices[i]);
-    Melder_casual("\n");
+void KNN_SA_t_print (void * istruct) {
+    Melder_casual ("\n");
+    for (long i = 1; i <= ((KNN_SA_t *) istruct) -> p -> ny; i ++)
+        Melder_casual ("%ld,", ((KNN_SA_t *) istruct) -> indices [i]);
+    Melder_casual ("\n");
 }
 
 void KNN_SA_t_step
@@ -1725,33 +1699,33 @@ void KNN_SA_t_step
 )
 
 {
-    long i1 = lround((((KNN_SA_t *) istruct)->p->ny - 1) * gsl_rng_uniform(r)) + 1;
-    long i2 = (i1 + lround(step_size * gsl_rng_uniform(r))) % ((KNN_SA_t *) istruct)->p->ny + 1;
+    long i1 = lround ((((KNN_SA_t *) istruct) -> p -> ny - 1) * gsl_rng_uniform (r)) + 1;
+    long i2 = (i1 + lround (step_size * gsl_rng_uniform (r))) % ((KNN_SA_t *) istruct) -> p -> ny + 1;
 
-    if(i1 == i2)
+    if (i1 == i2)
         return;
 
-    if(i1 > i2)
-        OlaSWAP(long, i1, i2);
+    if (i1 > i2)
+        OlaSWAP (long, i1, i2);
 
     long partitions[i2 - i1 + 1];
 
     KNN_SA_partition(((KNN_SA_t *) istruct)->p, i1, i2, partitions);
 
-    for(long r, l = 1, stop = i2 - i1 + 1; l < stop; ++l)
+    for (long r, l = 1, stop = i2 - i1 + 1; l < stop; l ++)
     {
-        while(l < stop && partitions[l] == 1)
-            ++l;
+        while (l < stop && partitions [l] == 1)
+            l ++;
 
         r = l + 1;
 
-        while(r <= stop && partitions[r] == 2)
-            ++r;
+        while (r <= stop && partitions [r] == 2)
+            r ++;
 
-        if(r == stop)
+        if (r == stop)
             break;
         
-        OlaSWAP(long, ((KNN_SA_t *) istruct)->indices[i1], ((KNN_SA_t *) istruct)->indices[i2]); 
+        OlaSWAP (long, ((KNN_SA_t *) istruct) -> indices [i1], ((KNN_SA_t *) istruct) -> indices [i2]); 
     }
 }
 
@@ -1842,10 +1816,10 @@ void KNN_SA_partition
         p2[x] = p->z[c2][x];
     }
 
-    for(short converging = 1; converging; )
+    for (bool converging = true; converging; )
     {
         double d1, d2;
-        converging = 0;
+        converging = false;
 
         for(long i = i1, j = 1; i <= i2; ++i)
         {
@@ -1865,7 +1839,7 @@ void KNN_SA_partition
             {
                 if(result[j] != 1)
                 {
-                    converging = 1;
+                    converging = true;
                     result[j] = 1;
                 }
             }
@@ -1873,30 +1847,30 @@ void KNN_SA_partition
             { 
                 if(result[j] != 2)
                 {
-                    converging = 1;
+                    converging = true;
                     result[j] = 2;
                 }
             }
             ++j;
         }
 
-        for(long x = 1; x <= p->nx; ++x)
+        for (long x = 1; x <= p -> nx; x ++)
         {
             p1[x] = 0;
             p2[x] = 0;
         }
 
-        for(long i = i1, j = 1, j1 = 1, j2 = 1; i <= i2; ++i)
+        for (long i = i1, j = 1, j1 = 1, j2 = 1; i <= i2; i ++)
         {
-            if(result[j] == 1)
+            if (result [j] == 1)
             {
-                for(long x = 1; x <= p->nx; ++x)
+                for (long x = 1; x <= p->nx; x ++)
                     p1[x] += (p->z[i][x] - p1[x]) / j1;
                 ++j1;
             }
             else
             {
-                for(long x = 1; x <= p->nx; ++x)
+                for (long x = 1; x <= p -> nx; x ++)
                     p2[x] += (p->z[i][x] - p2[x]) / j2;
                 ++j2;
             }

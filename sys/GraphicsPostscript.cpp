@@ -89,7 +89,7 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 
 static void initPage (GraphicsPostscript me) {
 	++ my pageNumber;
-	if (my printer && my pageNumber > 1) downloadPrologAndSetUp (me);   /* Has to be repeated at every page. */
+	if (my printer && my pageNumber > 1) downloadPrologAndSetUp (me);   // has to be repeated for every page
 	if (my job) {
 		my printf (my file, "%%%%Page: %d %d\n", my pageNumber, my pageNumber);
 		/*my printf (my file, "save\n");*/
@@ -147,12 +147,12 @@ class_methods_end
 Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification)
 {
-	GraphicsPostscript me = Thing_new (GraphicsPostscript);
+	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
 	my postScript = true, my yIsZeroAtTheTop = true, my languageLevel = 2;
 	my job = TRUE, my eps = FALSE, my printer = FALSE;
 	my printf = (int (*)(void *, const char*, ...)) fprintf;
-	if (! Graphics_init (me)) return NULL;
+	Graphics_init (me.peek());
 	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
 					/* there is no problem if this always equals 600 dpi. */
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
@@ -164,7 +164,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	my landscape = rotation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = magnification;
 	my includeFonts = TRUE;
-	if ((my file = Melder_fopen (file, "w")) == NULL) { forget (me); return 0; }
+	my file = Melder_fopen (file, "w");
 	/*
 	 * The Device Coordinates are the PostScript user coordinates.
 	 * They are chosen in such a way that a distance of 1 in device coordinates
@@ -178,7 +178,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	/*
 	 * Now don't just set x1wNDC etc, but force computation of the scaling as well.
 	 */
-	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
+	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	/*
 	 * We will adhere to version 3.0 of the Document Structuring Conventions for print jobs.
 	 */
@@ -190,9 +190,9 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	my printf (my file, "%%%%PageOrder: Special\n");
 	my printf (my file, "%%%%Pages: (atend)\n");
 	my printf (my file, "%%%%EndComments\n");
-	downloadPrologAndSetUp (me);
-	initPage (me);
-	return (Graphics) me;
+	downloadPrologAndSetUp (me.peek());
+	initPage (me.peek());
+	return (Graphics) me.transfer();
 }
 
 #if defined (macintosh)
@@ -208,10 +208,10 @@ static int Eps_postScript_printf (void *stream, const char *format, ... ) {
 }
 #endif
 
-Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsPostscript_spots spots,
+Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	double x1inches, double x2inches, double y1inches, double y2inches, bool includeFonts, bool useSilipaPS)
 {
-	GraphicsPostscript me = Thing_new (GraphicsPostscript);
+	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
 	int left, right, top, bottom;
 	my postScript = true, my languageLevel = 2;
@@ -222,7 +222,7 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsP
 	#else
 		my printf = (int (*)(void *, const char*, ...)) fprintf;
 	#endif
-	if (! Graphics_init (me)) return NULL;
+	Graphics_init (me.peek());
 	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
 					/* there is no problem if this always equals 600 dpi. */
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
@@ -233,12 +233,12 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsP
 	my magnification = 1.0;
 	my includeFonts = includeFonts;
 	my useSilipaPS = useSilipaPS;
-	if ((my file = Melder_fopen (fs, "w")) == NULL) { forget (me); return 0; }
+	my file = Melder_fopen (file, "w");
 	my x1DC = my x1DCmin = 0;
 	my x2DC = my x2DCmax = my paperWidth * resolution; /* 600 dpi -> 4500 virtual dots */
 	my y1DC = my y1DCmin = 0;
 	my y2DC = my y2DCmax = my paperHeight * resolution; /* 600 dpi -> 6600 virtual dots */
-	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth, 12.0 - my paperHeight, 12.0);   /* Force scaling. */
+	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth, 12.0 - my paperHeight, 12.0);   // force scaling
 	/*
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,
 	 * which includes supplying the bounding box information.
@@ -258,9 +258,9 @@ Graphics Graphics_create_epsfile (MelderFile fs, int resolution, enum kGraphicsP
 	today = time (NULL);
 	my printf (my file, "%%%%CreationDate: %s", ctime (& today));   /* Contains newline symbol. */
 	my printf (my file, "%%%%EndComments\n");
-	downloadPrologAndSetUp (me);
-	initPage (me);
-	return (Graphics) me;
+	downloadPrologAndSetUp (me.peek());
+	initPage (me.peek());
+	return (Graphics) me.transfer();
 }
 
 #ifndef UNIX

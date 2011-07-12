@@ -44,11 +44,11 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 		long numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 		autoNUMvector <double> data (1, numberOfSamples);
 		autoNUMfft_Table fourierTable;
-		NUMfft_Table_init (& fourierTable.table, numberOfSamples); therror
+		NUMfft_Table_init (& fourierTable, numberOfSamples); therror
 
 		for (long i = 1; i <= my nx; i ++)
 			data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
-		NUMfft_forward (& fourierTable.table, data.peek()); therror
+		NUMfft_forward (& fourierTable, data.peek()); therror
 		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies); therror
 		thy dx = 1.0 / (my dx * numberOfSamples);   // override
 		double *re = thy z [1];
@@ -71,7 +71,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Spectrum.");
+		Melder_throw (me, ": not converted to Spectrum.");
 	}
 }
 
@@ -100,7 +100,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 		NUMrealft (amp, numberOfSamples, -1); therror
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 
@@ -138,7 +138,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 		im [halfnfft + 1] = 0.0;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not smoothed.");
+		Melder_throw (me, ": not smoothed.");
 	}
 }
 
@@ -161,7 +161,7 @@ Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interp
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered.");
+		Melder_throw (me, ": not filtered (with formula).");
 	}
 }
 
@@ -184,7 +184,7 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered.");
+		Melder_throw (me, ": not filtered (pass Hann band).");
 	}
 }
 
@@ -207,7 +207,7 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered.");
+		Melder_throw (me, ": not filtered (stop Hann band).");
 	}
 }
 

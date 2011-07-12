@@ -367,8 +367,8 @@ NORMAL (L"In the window of the PitchEditor, you will see the following features:
 LIST_ITEM (L"\\bu Digits between 0 and 9 scattered all over the drawing area. Their locations represent "
 	"the pitch %#candidates, of which there are several for every time frame. The digits themselves "
 	"represent the goodness of a candidate, multiplied by ten. For instance, if you see a \"9\" "
-	"at the location (1.23 seconds, 189 Hertz), this means that in the time frame at 1.23 seconds, "
-	"there is a pitch candidate with a value of 189 Hertz, and its goodness is 0.9. "
+	"at the location (1.23 seconds, 189 hertz), this means that in the time frame at 1.23 seconds, "
+	"there is a pitch candidate with a value of 189 hertz, and its goodness is 0.9. "
 	"The number 0.9 may be the relative height of an autocorrelation peak, a cross-correlation peak, "
 	"or a spectral peak, depending on the method by which the Pitch object was computed.")
 LIST_ITEM (L"\\bu A %#path of red disks. These disks represent the best path through the candidates, "

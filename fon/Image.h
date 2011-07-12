@@ -36,13 +36,9 @@
 	extern "C" {
 #endif
 
-#define Image_members Sampled_members \
-	double ymin, ymax; \
-	long ny; \
-	double dy, y1; \
-	unsigned char **z;
-#define Image_methods Sampled_methods
-class_create (Image, Sampled);
+#include "Image_def.h"
+#define Image__methods(klas) Sampled__methods(klas)
+oo_CLASS_CREATE (Image, Sampled);
 
 /*
 	An object of type Image represents a quantized function z (x, y)

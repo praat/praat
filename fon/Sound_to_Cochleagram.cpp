@@ -77,7 +77,7 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 				thy z [ifreq] [iframe] *= integrationCorrection;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Cochleagram.");
+		Melder_throw (me, ": not converted to Cochleagram.");
 	}
 }
 
@@ -201,7 +201,7 @@ Cochleagram Sound_to_Cochleagram_edb
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Cochleagram.");
+		Melder_throw (me, ": not converted to Cochleagram (edb).");
 	}
 }
 

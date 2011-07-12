@@ -103,65 +103,29 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": intensity analysis not performed.");
+		Melder_throw (me, ": intensity analysis not performed.");
 	}
 }
 
 Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMeanPressure) {
-	try {
-		bool veryAccurate = false;
-		if (veryAccurate) {
-			autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
-			autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
-			return thee.transfer();
-		} else {
-			autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
-			return thee.transfer();
-		}
-	} catch (MelderError) {
-		rethrowzero;
+	bool veryAccurate = false;
+	if (veryAccurate) {
+		autoSound up = Sound_upsample (me);   // because squaring doubles the frequency content, i.e. you get super-Nyquist components
+		autoIntensity thee = Sound_to_Intensity_ (up.peek(), minimumPitch, timeStep, subtractMeanPressure);
+		return thee.transfer();
+	} else {
+		autoIntensity thee = Sound_to_Intensity_ (me, minimumPitch, timeStep, subtractMeanPressure);
+		return thee.transfer();
 	}
 }
-
-#define PLAYGROUND  0
-
-#if PLAYGROUND
-	struct structIntensity2 : structIntensity {
-		structIntensity2 () { }
-	};
-	typedef structIntensity2 *Intensity2;
-	_THING_DECLARE_AUTO (Intensity2)
-#endif
 
 IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean) {
 	try {
 		autoIntensity intensity = Sound_to_Intensity (me, minimumPitch, timeStep, subtractMean);
-		#if PLAYGROUND
-			autoIntensity i2;   // compiler prevents this
-			autoIntensity i3 = intensity;   // compiler prevents copy constructor
-			i2 = intensity;   // compiler prevents copy assignment
-			Intensity i4 = intensity.peek();   // compiler allows this
-			Intensity i10 = intensity;   // but not  this
-			Intensity i8 = i2.peek();   // compiler allows this
-			Intensity i9 = i2;   // but not this
-			i4 = intensity;   // or this
-			Intensity2 i5 = NULL;
-			i4 = i5;   // base-class object becomes derived-class object
-			autoIntensity i6 = i5;
-			autoIntensity2 i7;
-			Intensity_downto_IntensityTier (i7.peek());   // a conversion that works
-			Intensity_downto_IntensityTier (i7);   // and one that doesn't
-			autoIntensity i11 = i2.peek();   // this is wrong but not detected...
-			autoIntensity i22 = i2.transfer();   // ... and this is correct
-			structTable table = { 0 };
-			Table_initWithoutColumnNames (& table, 10, 10);
-			Table theenew = new structTable (table);
-			Melder_casual("rows %ld, columns %ld", theenew -> rows -> size, theenew -> numberOfColumns);
-		#endif
 		autoIntensityTier thee = Intensity_downto_IntensityTier (intensity.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": no IntensityTier created.");
+		Melder_throw (me, ": no IntensityTier created.");
 	}
 }
 

@@ -176,7 +176,7 @@ int ClassFunction_getDomainQuantity (I) {
 	return my domainQuantity;
 }
 
-const wchar_t * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
+const wchar * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	iam (Function_Table);
 	if (! my destroy) my _initialize (me);
 	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));
@@ -207,6 +207,9 @@ double ClassFunction_convertToNonlogarithmic (I, double value, long ilevel, int 
 	if (! my destroy) my _initialize (me);
 	return NUMdefined (value) && my isUnitLogarithmic (me, ilevel, unit) ? pow (10.0, value) : value;
 }
+
+#undef our
+#define our ((Function_Table) my methods) ->
 
 void Function_shiftXBy (I, double shift) {
 	iam (Function);

@@ -31,6 +31,7 @@
  * pb 2007/12/09 enums
  * pb 2009/01/18 arguments to UiForm callbacks
  * pb 2011/05/15 C++
+ * pb 2011/07/11 C++
  */
 
 #include <unistd.h> // close
@@ -42,7 +43,7 @@
 #endif
 
 #include "Printer.h"
-#include "praat.h"   /* topShell */
+#include "praat.h"   // topShell
 #include "Ui.h"
 #include "site.h"
 
@@ -239,7 +240,7 @@ int Printer_pageSetup (void) {
 	return 1;
 }
 
-static int DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Printer_postScriptSettings (UiForm dia, const wchar *sendingString_dummy, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
@@ -269,7 +270,6 @@ static int DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingStri
 	#if defined (macintosh)
 		thePrinter. epsFilesHavePreview = GET_INTEGER (L"EPS files include preview");
 	#endif
-	return 1;
 }
 
 int Printer_postScriptSettings (void) {
@@ -339,206 +339,210 @@ int Printer_postScriptSettings (void) {
 #endif
 
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
-	#if defined (UNIX)
-		structMelderFile tempFile = { 0 };
-		char tempPath_utf8 [] = "/tmp/picXXXXXX";
-		close (mkstemp (tempPath_utf8));
-		Melder_pathToFile (Melder_peekUtf8ToWcs (tempPath_utf8), & tempFile);
-		thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
-			thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
-		if (! thePrinter. graphics) return Melder_error1 (L"Cannot create temporary PostScript file for printing.");
-		draw (boss, thePrinter. graphics);
-		forget (thePrinter. graphics);
-		char command [500];
-		sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath_utf8);
-		system (command);
-		MelderFile_delete (& tempFile);
-	#elif defined (_WIN32)
-		int postScriptCode = POSTSCRIPT_PASSTHROUGH;
-		DOCINFO docInfo;
-		DEVMODE *devMode;
-		initPrinter ();
-		if (! theWinPrint. hDevMode) {
-			memset (& theWinPrint, 0, sizeof (PRINTDLG));
-			theWinPrint. lStructSize = sizeof (PRINTDLG);
-			theWinPrint. Flags = PD_RETURNDEFAULT;
-			if (! PrintDlg (& theWinPrint)) return Melder_error1 (L"Cannot initialize printer.");
-		}
-		if (Melder_backgrounding) {
-			theWinPrint. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
-			if (! PrintDlg (& theWinPrint) || theWinPrint. hDC == NULL) {
-				return Melder_error1 (L"Cannot print from a script on this computer.");
-			}
-		} else {
-			theWinPrint. Flags &= ~ PD_RETURNDEFAULT;
-			theWinPrint. Flags |= PD_RETURNDC;
-			if (! PrintDlg (& theWinPrint)) return 1;
-		}
-		theWinDC = theWinPrint. hDC;
-		thePrinter. postScript = thePrinter. allowDirectPostScript &&
-			Escape (theWinDC, QUERYESCSUPPORT, sizeof (int), (LPSTR) & postScriptCode, NULL);
-		/*
-		 * The HP colour inkjet printer returns in dmFields:
-		 * 0, 1, 8, 9, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26 = DM_ORIENTATION |
-		 *    DM_PAPERSIZE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY |
-		 *    DM_COLOR | DM_DUPLEX | DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE |
-		 *    DM_ICMMETHOD | DM_ICMINTENT | DM_MEDIATYPE | DM_DITHERTYPE
-		 */
-		devMode = * (DEVMODE **) theWinPrint. hDevMode;
-		thePrinter. resolution = devMode -> dmFields & DM_YRESOLUTION ? devMode -> dmYResolution :
-			devMode -> dmFields & DM_PRINTQUALITY ?
-			( devMode -> dmPrintQuality > 0 ? devMode -> dmPrintQuality : 300 ) : 300;
-		if (devMode -> dmFields & DM_PAPERWIDTH) {
-			thePrinter. paperWidth = devMode -> dmPaperWidth * thePrinter. resolution / 254;
-			thePrinter. paperHeight = devMode -> dmPaperLength * thePrinter. resolution / 254;
-		} else if (devMode -> dmFields & DM_PAPERSIZE) {
-			static struct { float width, height; } sizes [] = { { 0, 0 }, { 8.5, 11 }, { 8.5, 11 }, { 11, 17 },
-				{ 17, 11 }, { 8.5, 14 }, { 5.5, 8.5 }, { 7.25, 10.5 }, { 297/25.4, 420/25.4 },
-				{ 210/25.4, 297/25.4 }, { 210/25.4, 297/25.4 }, { 148.5/25.4, 210/25.4 },
-				{ 250/25.4, 354/25.4 }, { 182/25.4, 257/25.4 }, { 8.5, 13 },
-				{ 215/25.4, 275/25.4 }, { 10, 14 }, { 11, 17 }, { 8.5, 11 }, { 3.875, 8.875 },
-				{ 4.125, 9.5 }, { 4.5, 10.375 } };
-			int paperSize = devMode -> dmPaperSize;
-			if (paperSize <= 0 || paperSize > 21) paperSize = 1;
-			thePrinter. paperWidth = sizes [paperSize]. width * thePrinter. resolution;
-			thePrinter. paperHeight = sizes [paperSize]. height * thePrinter. resolution;
-			if (devMode -> dmOrientation == DMORIENT_LANDSCAPE) {
-				long dummy = thePrinter. paperWidth;
-				thePrinter. paperWidth = thePrinter. paperHeight;
-				thePrinter. paperHeight = dummy;
-			}
-		} else {
-			thePrinter. paperWidth = 1000;
-			thePrinter. paperHeight = 1000;
-		}
-		EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), FALSE);
-		SetAbortProc (theWinDC, AbortFunc);
-		memset (& docInfo, 0, sizeof (DOCINFO));
-		docInfo. cbSize = sizeof (DOCINFO);
-		docInfo. lpszDocName = L"Praatjes";
-		docInfo. lpszOutput = NULL;
-		if (thePrinter. postScript) {
-			StartDoc (theWinDC, & docInfo);
-			StartPage (theWinDC);
-			initPostScriptPage ();
-			thePrinter. graphics = Graphics_create_postscriptprinter ();
-			if (! thePrinter. graphics) return Melder_error1 (L"Cannot open printer.");
+	try {
+		#if defined (UNIX)
+			structMelderFile tempFile = { 0 };
+			char tempPath_utf8 [] = "/tmp/picXXXXXX";
+			close (mkstemp (tempPath_utf8));
+			Melder_pathToFile (Melder_peekUtf8ToWcs (tempPath_utf8), & tempFile);
+			thePrinter. graphics = Graphics_create_postscriptjob (& tempFile, thePrinter. resolution,
+				thePrinter. spots, thePrinter. paperSize, thePrinter. orientation, thePrinter. magnification);
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
-			exitPostScriptPage ();
-			EndPage (theWinDC);
-			EndDoc (theWinDC);
-		} else {
-			StartDoc (theWinDC, & docInfo);
-			StartPage (theWinDC);
-			thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theWinDC);
-			if (! thePrinter. graphics) return Melder_error1 (L"Cannot open printer.");
-			draw (boss, thePrinter. graphics);
-			forget (thePrinter. graphics);
-			if (EndPage (theWinDC) < 0) {
-				Melder_error1 (L"Cannot print page.");
+			char command [500];
+			sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath_utf8);
+			system (command);
+			MelderFile_delete (& tempFile);
+		#elif defined (_WIN32)
+			int postScriptCode = POSTSCRIPT_PASSTHROUGH;
+			DOCINFO docInfo;
+			DEVMODE *devMode;
+			initPrinter ();
+			if (! theWinPrint. hDevMode) {
+				memset (& theWinPrint, 0, sizeof (PRINTDLG));
+				theWinPrint. lStructSize = sizeof (PRINTDLG);
+				theWinPrint. Flags = PD_RETURNDEFAULT;
+				if (! PrintDlg (& theWinPrint)) return Melder_error1 (L"Cannot initialize printer.");
+			}
+			if (Melder_backgrounding) {
+				theWinPrint. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
+				if (! PrintDlg (& theWinPrint) || theWinPrint. hDC == NULL) {
+					return Melder_error1 (L"Cannot print from a script on this computer.");
+				}
 			} else {
-				EndDoc (theWinDC);
+				theWinPrint. Flags &= ~ PD_RETURNDEFAULT;
+				theWinPrint. Flags |= PD_RETURNDC;
+				if (! PrintDlg (& theWinPrint)) return 1;
 			}
-		}
-		EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), TRUE);
-		DeleteDC (theWinDC), theWinDC = NULL;
-	#elif defined (macintosh)
-		Boolean result;
-		initPrinter ();
-		if (Melder_backgrounding) {
+			theWinDC = theWinPrint. hDC;
+			thePrinter. postScript = thePrinter. allowDirectPostScript &&
+				Escape (theWinDC, QUERYESCSUPPORT, sizeof (int), (LPSTR) & postScriptCode, NULL);
+			/*
+			 * The HP colour inkjet printer returns in dmFields:
+			 * 0, 1, 8, 9, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26 = DM_ORIENTATION |
+			 *    DM_PAPERSIZE | DM_COPIES | DM_DEFAULTSOURCE | DM_PRINTQUALITY |
+			 *    DM_COLOR | DM_DUPLEX | DM_YRESOLUTION | DM_TTOPTION | DM_COLLATE |
+			 *    DM_ICMMETHOD | DM_ICMINTENT | DM_MEDIATYPE | DM_DITHERTYPE
+			 */
+			devMode = * (DEVMODE **) theWinPrint. hDevMode;
+			thePrinter. resolution = devMode -> dmFields & DM_YRESOLUTION ? devMode -> dmYResolution :
+				devMode -> dmFields & DM_PRINTQUALITY ?
+				( devMode -> dmPrintQuality > 0 ? devMode -> dmPrintQuality : 300 ) : 300;
+			if (devMode -> dmFields & DM_PAPERWIDTH) {
+				thePrinter. paperWidth = devMode -> dmPaperWidth * thePrinter. resolution / 254;
+				thePrinter. paperHeight = devMode -> dmPaperLength * thePrinter. resolution / 254;
+			} else if (devMode -> dmFields & DM_PAPERSIZE) {
+				static struct { float width, height; } sizes [] = { { 0, 0 }, { 8.5, 11 }, { 8.5, 11 }, { 11, 17 },
+					{ 17, 11 }, { 8.5, 14 }, { 5.5, 8.5 }, { 7.25, 10.5 }, { 297/25.4, 420/25.4 },
+					{ 210/25.4, 297/25.4 }, { 210/25.4, 297/25.4 }, { 148.5/25.4, 210/25.4 },
+					{ 250/25.4, 354/25.4 }, { 182/25.4, 257/25.4 }, { 8.5, 13 },
+					{ 215/25.4, 275/25.4 }, { 10, 14 }, { 11, 17 }, { 8.5, 11 }, { 3.875, 8.875 },
+					{ 4.125, 9.5 }, { 4.5, 10.375 } };
+				int paperSize = devMode -> dmPaperSize;
+				if (paperSize <= 0 || paperSize > 21) paperSize = 1;
+				thePrinter. paperWidth = sizes [paperSize]. width * thePrinter. resolution;
+				thePrinter. paperHeight = sizes [paperSize]. height * thePrinter. resolution;
+				if (devMode -> dmOrientation == DMORIENT_LANDSCAPE) {
+					long dummy = thePrinter. paperWidth;
+					thePrinter. paperWidth = thePrinter. paperHeight;
+					thePrinter. paperHeight = dummy;
+				}
+			} else {
+				thePrinter. paperWidth = 1000;
+				thePrinter. paperHeight = 1000;
+			}
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), FALSE);
+			SetAbortProc (theWinDC, AbortFunc);
+			memset (& docInfo, 0, sizeof (DOCINFO));
+			docInfo. cbSize = sizeof (DOCINFO);
+			docInfo. lpszDocName = L"Praatjes";
+			docInfo. lpszOutput = NULL;
+			if (thePrinter. postScript) {
+				StartDoc (theWinDC, & docInfo);
+				StartPage (theWinDC);
+				initPostScriptPage ();
+				thePrinter. graphics = Graphics_create_postscriptprinter ();
+				draw (boss, thePrinter. graphics);
+				forget (thePrinter. graphics);
+				exitPostScriptPage ();
+				EndPage (theWinDC);
+				EndDoc (theWinDC);
+			} else {
+				StartDoc (theWinDC, & docInfo);
+				StartPage (theWinDC);
+				thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theWinDC);
+				draw (boss, thePrinter. graphics);
+				forget (thePrinter. graphics);
+				if (EndPage (theWinDC) < 0) {
+					Melder_throw ("Cannot print page.");
+				} else {
+					EndDoc (theWinDC);
+				}
+			}
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), TRUE);
+			DeleteDC (theWinDC), theWinDC = NULL;
+		#elif defined (macintosh)
+			Boolean result;
+			initPrinter ();
+			if (Melder_backgrounding) {
+				PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
+				PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
+			} else {
+				Boolean accepted;
+				PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
+				if (! accepted) return 1;   // normal cancelled return
+			}
 			PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
 			PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-		} else {
-			Boolean accepted;
-			PMSessionPrintDialog (theMacPrintSession, theMacPrintSettings, theMacPageFormat, & accepted);
-			if (! accepted) return 1;   /* Normal cancelled return. */
-		}
-		PMSessionValidatePageFormat (theMacPrintSession, theMacPageFormat, & result);
-		PMSessionValidatePrintSettings (theMacPrintSession, theMacPrintSettings, & result);
-		PMResolution res;
-		PMGetResolution (theMacPageFormat, & res);
-		thePrinter. resolution = res. hRes;
-		PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
-		thePrinter. paperWidth = paperSize. right - paperSize. left;
-		thePrinter. paperHeight = paperSize. bottom - paperSize. top;
-		Boolean isPostScriptDriver = FALSE;
-		//PMSessionIsDocumentFormatSupported (theMacPrintSession,
-		//	kPMDocumentFormatPICTPS, & isPostScriptDriver);
-		CFArrayRef supportedFormats;
-		PMSessionGetDocumentFormatGeneration (theMacPrintSession, & supportedFormats);
-		CFIndex numberOfSupportedFormats = CFArrayGetCount (supportedFormats);
-		if (Melder_debug == 21) {
-			MelderInfo_open ();
-			MelderInfo_writeLine1 (L"Supported document formats:");
-		}
-		for (CFIndex i = 0; i < numberOfSupportedFormats; i ++) {
-			CFStringRef supportedFormat = (CFStringRef) CFArrayGetValueAtIndex (supportedFormats, i);
-			if (CFStringCompare (supportedFormat, kPMDocumentFormatPICTPS, 0) == 0) {
-				isPostScriptDriver = TRUE;
+			PMResolution res;
+			PMGetResolution (theMacPageFormat, & res);
+			thePrinter. resolution = res. hRes;
+			PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
+			thePrinter. paperWidth = paperSize. right - paperSize. left;
+			thePrinter. paperHeight = paperSize. bottom - paperSize. top;
+			Boolean isPostScriptDriver = FALSE;
+			//PMSessionIsDocumentFormatSupported (theMacPrintSession,
+			//	kPMDocumentFormatPICTPS, & isPostScriptDriver);
+			CFArrayRef supportedFormats;
+			PMSessionGetDocumentFormatGeneration (theMacPrintSession, & supportedFormats);
+			CFIndex numberOfSupportedFormats = CFArrayGetCount (supportedFormats);
+			if (Melder_debug == 21) {
+				MelderInfo_open ();
+				MelderInfo_writeLine1 (L"Supported document formats:");
+			}
+			for (CFIndex i = 0; i < numberOfSupportedFormats; i ++) {
+				CFStringRef supportedFormat = (CFStringRef) CFArrayGetValueAtIndex (supportedFormats, i);
+				if (CFStringCompare (supportedFormat, kPMDocumentFormatPICTPS, 0) == 0) {
+					isPostScriptDriver = TRUE;
+				}
+				if (Melder_debug == 21) {
+					MelderInfo_writeLine3 (Melder_integer (i), L": ",
+						Melder_peekUtf8ToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingUTF8)));
+				}
 			}
 			if (Melder_debug == 21) {
-				MelderInfo_writeLine3 (Melder_integer (i), L": ",
-					Melder_peekUtf8ToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingUTF8)));
+				MelderInfo_close ();
 			}
-		}
-		if (Melder_debug == 21) {
-			MelderInfo_close ();
-		}
-		CFRelease (supportedFormats);
-		isPostScriptDriver = FALSE;   // OVERRIDE, because from 10.4 on we have something better: we'll be sending PDF
-		thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
-		if (thePrinter. postScript) {
-			CFStringRef strings [1];
-			strings [0] = kPMGraphicsContextQuickdraw;
-			CFArrayRef array = CFArrayCreate (kCFAllocatorDefault, (const void **) strings, 1, & kCFTypeArrayCallBacks);
-			OSStatus err = PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, array, NULL);
-			CFRelease (array);
-			if (err != 0) {
-				return Melder_error2 (L"PMSessionSetDocumentFormatGeneration: error ", Melder_integer (err));
+			CFRelease (supportedFormats);
+			isPostScriptDriver = FALSE;   // OVERRIDE, because from 10.4 on we have something better: we'll be sending PDF
+			thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
+			if (thePrinter. postScript) {
+				CFStringRef strings [1];
+				strings [0] = kPMGraphicsContextQuickdraw;
+				CFArrayRef array = CFArrayCreate (kCFAllocatorDefault, (const void **) strings, 1, & kCFTypeArrayCallBacks);
+				OSStatus err = PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, array, NULL);
+				CFRelease (array);
+				if (err != 0)
+					Melder_throw ("PMSessionSetDocumentFormatGeneration: error ", err);
 			}
-		}
-		PMOrientation orientation;
-		PMGetOrientation (theMacPageFormat, & orientation);
-		thePrinter. orientation = orientation == kPMLandscape ||
-			orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
-		PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
-		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
-		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-		/*
-		 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
-		 * On the screen, however, the point (0, 0) is the top left corner of the writable page.
-		 * Since we want paper-related margins, not writable-page-related margins,
-		 * we require that this point gets the coordinates (250, 258) or so,
-		 * so that the top left corner of the paper gets coordinates (0, 0).
-		 * The "left" and "top" attributes of rPaper are negative values (e.g. -250 and -258),
-		 * so multiply them by -1.
-		 *
-		 * Under Carbon, the port has to be set inside the page.
-		 */
-		SetPort (theMacPort);
-		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
-		if (thePrinter. postScript) {
-			if (! openPostScript ()) error1 (L"Cannot print PostScript.")
-			thePrinter. graphics = Graphics_create_postscriptprinter ();
-			if (! thePrinter. graphics) goto end;
-			draw (boss, thePrinter. graphics);
-			forget (thePrinter. graphics);
-			closePostScript ();
-		} else {
-			thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theMacPort);
-			draw (boss, thePrinter. graphics);
-			forget (thePrinter. graphics);
-		}
-	end:
-		if (theMacPort) {
-			PMSessionEndPage (theMacPrintSession);
-			PMSessionEndDocument (theMacPrintSession);
-			theMacPort = NULL;
-		}
-	#endif
-	iferror return 0;
-	return 1;
+			PMOrientation orientation;
+			PMGetOrientation (theMacPageFormat, & orientation);
+			thePrinter. orientation = orientation == kPMLandscape ||
+				orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
+			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
+			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
+			/*
+			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
+			 * On the screen, however, the point (0, 0) is the top left corner of the writable page.
+			 * Since we want paper-related margins, not writable-page-related margins,
+			 * we require that this point gets the coordinates (250, 258) or so,
+			 * so that the top left corner of the paper gets coordinates (0, 0).
+			 * The "left" and "top" attributes of rPaper are negative values (e.g. -250 and -258),
+			 * so multiply them by -1.
+			 *
+			 * Under Carbon, the port has to be set inside the page.
+			 */
+			SetPort (theMacPort);
+			if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
+			if (thePrinter. postScript) {
+				openPostScript ();
+				thePrinter. graphics = Graphics_create_postscriptprinter ();
+				draw (boss, thePrinter. graphics);
+				forget (thePrinter. graphics);
+				closePostScript ();
+			} else {
+				thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theMacPort);
+				draw (boss, thePrinter. graphics);
+				forget (thePrinter. graphics);
+			}
+			if (theMacPort) {
+				PMSessionEndPage (theMacPrintSession);
+				PMSessionEndDocument (theMacPrintSession);
+				theMacPort = NULL;
+			}
+		#endif
+		return 1;
+	} catch (MelderError) {
+		#if defined (macintosh)
+			if (theMacPort) {
+				PMSessionEndPage (theMacPrintSession);
+				PMSessionEndDocument (theMacPrintSession);
+				theMacPort = NULL;
+			}
+		#endif
+		Melder_throw ("Not printed.");
+	}
 }
 
 /* End of file Printer.cpp */

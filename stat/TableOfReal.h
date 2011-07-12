@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 /* TableOfReal inherits from Data */
@@ -33,15 +33,13 @@
 	extern "C" {
 #endif
 
-/* For the inheritors. */
-#define TableOfReal_members Data_members \
-	long numberOfRows, numberOfColumns; \
-	wchar_t **rowLabels, **columnLabels; \
-	double **data;
-#define TableOfReal_methods Data_methods
-class_create (TableOfReal, Data);
+//Thing_declare1cpp (TableOfReal);
 
-int TableOfReal_init (I, long numberOfRows, long numberOfColumns);
+#include "TableOfReal_def.h"
+#define TableOfReal__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (TableOfReal, Data);
+
+void TableOfReal_init (I, long numberOfRows, long numberOfColumns);
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);
 void TableOfReal_removeRow (I, long irow);
 void TableOfReal_removeColumn (I, long icol);
@@ -56,7 +54,7 @@ double TableOfReal_getColumnStdev (I, long icol);
 
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
 Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn);
-int TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, Any /* TableOfReal */ target);
+void TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, Any /* TableOfReal */ target);
 void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int iformat, int precision);
 void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
 	const wchar_t *conditionFormula, Interpreter interpreter);
@@ -72,7 +70,7 @@ Any TablesOfReal_appendMany (Collection me);
 void TableOfReal_sortByLabel (I, long column1, long column2);
 void TableOfReal_sortByColumn (I, long column1, long column2);
 
-int TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file);
+void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file);
 TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 
 TableOfReal TableOfReal_extractRowRanges (I, const wchar_t *ranges);

@@ -24,31 +24,18 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-
-#ifndef _Distributions_h_
-	#include "Collection.h"
-#endif
+#include "Collection.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Index_members Data_members \
-	Ordered classes; \
-	long numberOfElements; \
-	long *classIndex;
+#include "Index_def.h"
+#define Index__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (Index, Data);
 
-#define Index_methods Data_methods
-class_create (Index, Data);
-
-#define StringsIndex_members Index_members
-
-#define StringsIndex_methods Index_methods
-class_create (StringsIndex, Index);
-
+#define StringsIndex__methods(klas) Index__methods(klas)
+oo_CLASS_CREATE (StringsIndex, Index);
 
 void Index_init (I, long numberOfElements);
 

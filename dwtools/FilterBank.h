@@ -26,27 +26,11 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _MFCC_h_
-	#include "MFCC.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _PCA_h_
-	#include "PCA.h"
-#endif
+#include "TableOfReal.h"
+#include "Spectrum.h"
+#include "MFCC.h"
+#include "Intensity.h"
+#include "PCA.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -68,15 +52,18 @@
 #define FilterBank_BARK  2
 #define FilterBank_MEL   3
 
-#define FilterBank_members Matrix_members
-#define FilterBank_methods Matrix_methods \
+Thing_declare1cpp (FilterBank);
+struct structFilterBank : public structMatrix {
+};
+#define FilterBank__methods(klas) Matrix__methods(klas) \
 	int (*getFrequencyScale) (I);
-class_create (FilterBank, Matrix);
+Thing_declare2cpp (FilterBank, Matrix);
 
-
-#define BarkFilter_members FilterBank_members
-#define BarkFilter_methods FilterBank_methods
-class_create (BarkFilter, FilterBank);
+Thing_declare1cpp (BarkFilter);
+struct structBarkFilter : public structFilterBank {
+};
+#define BarkFilter__methods(klas) FilterBank__methods(klas)
+Thing_declare2cpp (BarkFilter, FilterBank);
 
 /*
 Interpretation:
@@ -108,10 +95,11 @@ BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 
 BarkFilter Matrix_to_BarkFilter (I);
 
-
-#define MelFilter_members FilterBank_members
-#define MelFilter_methods FilterBank_methods
-class_create (MelFilter, FilterBank);
+Thing_declare1cpp (MelFilter);
+struct structMelFilter : public structFilterBank {
+};
+#define MelFilter__methods(klas) FilterBank__methods(klas)
+Thing_declare2cpp (MelFilter, FilterBank);
 
 /*
 Interpretation:
@@ -133,10 +121,12 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 
 MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 
-#define FormantFilter_members FilterBank_members
-#define FormantFilter_methods FilterBank_methods \
+Thing_declare1cpp (FormantFilter);
+struct structFormantFilter : public structFilterBank {
+};
+#define FormantFilter__methods(klas) FilterBank__methods(klas) \
 	void (*drawFilterFunction) (I, int from, int to, void *dwrawclosure);
-class_create (FormantFilter, FilterBank);
+Thing_declare2cpp (FormantFilter, FilterBank);
 
 FormantFilter FormantFilter_create (double tmin, double tmax, long nt, 
 	double dt, double t1, double fmin, double fmax, long nf, double df, 

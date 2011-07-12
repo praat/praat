@@ -30,10 +30,10 @@
 #endif
 
 #include "Speaker_def.h"
-#define Speaker_methods Data_methods
+#define Speaker__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Speaker, Data);
 
-Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses);
+Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses);
 	/* Preconditions:								*/
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/

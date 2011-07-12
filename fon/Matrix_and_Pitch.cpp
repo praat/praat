@@ -36,7 +36,7 @@ Matrix Pitch_to_Matrix (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -60,7 +60,7 @@ Pitch Matrix_to_Pitch (Matrix me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Pitch.");
+		Melder_throw (me, ": not converted to Pitch.");
 	}
 }
 
@@ -80,7 +80,7 @@ int Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
 		}
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": formula not completed.");
+		Melder_throw (me, ": formula not completed.");
 	}
 }
 

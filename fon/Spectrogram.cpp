@@ -64,7 +64,7 @@ Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Spectrogram not created.");
+		Melder_throw ("Spectrogram not created.");
 	}
 }
 
@@ -144,7 +144,7 @@ Spectrogram Matrix_to_Spectrogram (I) {
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Spectrogram.");
+		Melder_throw (me, ": not converted to Spectrogram.");
 	}
 }
 
@@ -155,7 +155,7 @@ Matrix Spectrogram_to_Matrix (I) {
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 

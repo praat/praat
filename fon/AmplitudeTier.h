@@ -20,18 +20,12 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "IntensityTier.h"
+#include "TableOfReal.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -39,9 +33,7 @@
 
 /********** class AmplitudeTier **********/
 
-#define AmplitudeTier_members RealTier_members
-#define AmplitudeTier_methods RealTier_methods
-class_create (AmplitudeTier, RealTier);
+Thing_declare1cpp (AmplitudeTier);
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 
@@ -69,6 +61,12 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 
 #ifdef __cplusplus
 	}
+
+	struct structAmplitudeTier : public structRealTier {
+	};
+	#define AmplitudeTier__methods(klas) RealTier__methods(klas)
+	Thing_declare2cpp (AmplitudeTier, RealTier);
+
 #endif
 
 /* End of file AmplitudeTier.h */

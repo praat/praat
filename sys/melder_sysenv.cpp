@@ -52,15 +52,14 @@ wchar_t * Melder_getenv (const wchar_t *variableName) {
 	#endif
 }
 
-int Melder_system (const wchar_t *command) {
+void Melder_system (const wchar *command) {
 	#if defined (macintosh) || defined (UNIX)
 		if (system (Melder_peekWcsToUtf8 (command)) != 0)
-			return Melder_error1 (L"System command failed.");
-		return 1;
+			Melder_throw ("System command failed.");
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
-		wchar_t *comspec = Melder_getenv (L"COMSPEC");   /* E.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" */
+		wchar_t *comspec = Melder_getenv (L"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
 		if (comspec == NULL) {
 			comspec = Melder_getenv (L"ComSpec");
 		}
@@ -74,7 +73,7 @@ int Melder_system (const wchar_t *command) {
 			if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo)) {
 				osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 				if (! GetVersionEx ((OSVERSIONINFO *) & osVersionInfo))
-					return Melder_error1 (L"System command cannot find system version.");
+					Melder_throw ("System command cannot find system version.");
 			}
 			switch (osVersionInfo. dwPlatformId) {
 				case VER_PLATFORM_WIN32_NT: {
@@ -90,11 +89,10 @@ int Melder_system (const wchar_t *command) {
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
 		if (! CreateProcess (NULL, buffer.string, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))
-			return 0;
+			Melder_throw ("Cannot create subprocess.");
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);
 		CloseHandle (piProcInfo. hThread);
-		return 1;
 	#endif
 }
 

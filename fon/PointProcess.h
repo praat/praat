@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/06
+ * pb 2011/07/11
  */
 
 #include "Function.h"
@@ -30,11 +30,9 @@
 	extern "C" {
 #endif
 
-#define PointProcess_members  Function_members \
-	long maxnt, nt; \
-	double *t;
-#define PointProcess_methods  Function_methods
-class_create (PointProcess, Function);
+#include "PointProcess_def.h"
+#define PointProcess__methods(klas)  Function__methods(klas)
+oo_CLASS_CREATE (PointProcess, Function);
 
 PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);
 PointProcess PointProcess_createPoissonProcess (double startingTime, double finishingTime, double density);

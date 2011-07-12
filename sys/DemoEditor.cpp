@@ -33,16 +33,19 @@
 #include "praatP.h"
 #include "UnicodeData.h"
 
-#define DemoEditor__members(Klas) Editor__members(Klas) \
-	GuiObject drawingArea; \
-	Graphics graphics; \
-	void *praatPicture; \
-	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed; \
-	long x, y; \
-	wchar_t key; \
+struct structDemoEditor : public structEditor {
+	GuiObject drawingArea;
+	Graphics graphics;
+	void *praatPicture;
+	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+	long x, y;
+	wchar key;
 	bool waitingForInput, userWantsToClose, fullScreen;
+// overridden methods:
+	void goAway ();
+};
 #define DemoEditor__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (DemoEditor, Editor);
+Thing_declare2cpp (DemoEditor, Editor);
 
 static DemoEditor theDemoEditor;
 
@@ -64,16 +67,16 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Font size: ", Melder_integer (((PraatPicture) my praatPicture) -> fontSize));
 }
 
-static void goAway (DemoEditor me) {
-	if (my waitingForInput) {
-		my userWantsToClose = true;
+void structDemoEditor::goAway () {
+	if (waitingForInput) {
+		userWantsToClose = true;
 	} else {
-		forget (me);
+		DemoEditor_Parent::goAway ();
 	}
 }
 
 static void createMenus (DemoEditor me) {
-	inherited (DemoEditor) createMenus (DemoEditor_as_Editor (me));
+	inherited (DemoEditor) createMenus (me);
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -142,7 +145,6 @@ static void createChildren (DemoEditor me) {
 class_methods (DemoEditor, Editor) {
 	class_method (destroy)
 	class_method (info)
-	class_method (goAway)
 	class_method (createChildren)
 	class_method (createMenus)
 	us -> hasMenuBar = false;
@@ -152,39 +154,34 @@ class_methods (DemoEditor, Editor) {
 }
 
 void DemoEditor_init (DemoEditor me, GuiObject parent) {
-	try {
-		Editor_init (DemoEditor_as_parent (me), parent, 0, 0, 1024, 768, L"", NULL); therror
-		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_startRecording (my graphics);
-		//Graphics_setViewport (my graphics, 0, 100, 0, 100);
-		//Graphics_setWindow (my graphics, 0, 100, 0, 100);
-		//Graphics_line (my graphics, 0, 100, 100, 0);
+	Editor_init (me, parent, 0, 0, 1024, 768, L"", NULL);
+	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_setWindow (my graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_startRecording (my graphics);
+	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
+	//Graphics_setWindow (my graphics, 0, 100, 0, 100);
+	//Graphics_line (my graphics, 0, 100, 100, 0);
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
-
-	} catch (MelderError) {
-		rethrow;
-	}
 }
 
 DemoEditor DemoEditor_create (GuiObject parent) {
 	try {
 		autoDemoEditor me = Thing_new (DemoEditor);
-		DemoEditor_init (me.peek(), parent); therror
+		DemoEditor_init (me.peek(), parent);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Demo window not created.");
+		Melder_throw ("Demo window not created.");
 	}
 }
 
-int Demo_open (void) {
+void Demo_open (void) {
 	#ifndef CONSOLE_APPLICATION
 		if (Melder_batch) {
 			/*
@@ -211,11 +208,10 @@ int Demo_open (void) {
 			theCurrentPraatPicture -> y2NDC = 100;
 		}
 		if (theDemoEditor -> waitingForInput)
-			return Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+			Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 				"Please click or type into the Demo window or close it.");
 		theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
 	#endif
-	return 1;
 }
 
 void Demo_close (void) {
@@ -223,18 +219,16 @@ void Demo_close (void) {
 }
 
 int Demo_windowTitle (const wchar_t *title) {
-	if (! Demo_open ()) return 0;
+	autoDemoOpen demo;
 	Thing_setName (theDemoEditor, title);
-	Demo_close ();
 	return 1;
 }
 
 int Demo_show (void) {
 	if (theDemoEditor == NULL) return 0;
-	if (! Demo_open ()) return 0;
+	autoDemoOpen demo;
 	GuiObject_show (theDemoEditor -> dialog);
 	GuiWindow_drain (theDemoEditor -> shell);
-	Demo_close ();
 	return 1;
 }
 

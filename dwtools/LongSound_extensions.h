@@ -22,7 +22,7 @@
 /*
  djmw 20020627
  djmw 20020813 GPL header
- djmw 20110307 Latest modification
+ djmw 20110702 Latest modification
 */
 
 #ifndef _LongSound_h_
@@ -33,10 +33,10 @@
 	extern "C" {
 #endif
 
-int LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
+void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file);
 
-int LongSounds_appendToExistingSoundFile (Collection me, MelderFile file);
+void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file);
 
 #ifdef __cplusplus
 	}

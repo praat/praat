@@ -20,15 +20,11 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Sound.h"
+#include "Collection.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -41,29 +37,13 @@ struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
-#define LongSound_members Sampled_members \
-	structMelderFile file; \
-	FILE *f; \
-	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint; \
-	double sampleRate; \
-	long startOfData; \
-	double bufferLength; \
-	short *buffer; \
-	long imin, imax, nmax; \
-	struct FLAC__StreamDecoder *flacDecoder; \
-	struct _MP3_FILE *mp3f; \
-	int compressedMode; \
-	long compressedSamplesLeft; \
-	double *compressedFloats [2]; \
-	short *compressedShorts;
-#define LongSound_methods Sampled_methods
-class_create (LongSound, Sampled);
+Thing_declare1cpp (LongSound);
 
 LongSound LongSound_open (MelderFile fs);
 
 Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes);
 
-int LongSound_haveWindow (LongSound me, double tmin, double tmax);
+bool LongSound_haveWindow (LongSound me, double tmin, double tmax);
 /*
  * Returns 0 if error or if window exceeds buffer, otherwise 1;
  */
@@ -76,8 +56,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 void LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file);
 void LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int channel, MelderFile file);
 
-int LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
-int LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
+void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
+void LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples);
 
 void LongSound_concatenate (Collection collection, MelderFile file, int audioFileType);
 /* Concatenate a collection of Sound and LongSound objects. */
@@ -88,6 +68,26 @@ void LongSound_setBufferSizePref_seconds (long size);
 
 #ifdef __cplusplus
 	}
+
+	struct structLongSound : public structSampled {
+		structMelderFile file;
+		FILE *f;
+		int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
+		double sampleRate;
+		long startOfData;
+		double bufferLength;
+		short *buffer;
+		long imin, imax, nmax;
+		struct FLAC__StreamDecoder *flacDecoder;
+		struct _MP3_FILE *mp3f;
+		int compressedMode;
+		long compressedSamplesLeft;
+		double *compressedFloats [2];
+		short *compressedShorts;
+	};
+	#define LongSound__methods(klas) Sampled__methods(klas)
+	Thing_declare2cpp (LongSound, Sampled);
+
 #endif
 
 /* End of file LongSound.h */

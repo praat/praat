@@ -820,17 +820,17 @@ NORMAL (L"If you do want to use the logging facility, you typically start by del
 ENTRY (L"Example 1: pitch logging")
 NORMAL (L"Suppose you want to log the time of the cursor and the pitch value at the cursor. "
 	"You could use the following log format:")
-CODE (L"Time \'time:6\' seconds, pitch \'f0:2\' Hertz")
-NORMAL (L"If you now click at 3.456789876 seconds, and the pitch happens to be 355.266 Hertz "
+CODE (L"Time \'time:6\' seconds, pitch \'f0:2\' hertz")
+NORMAL (L"If you now click at 3.456789876 seconds, and the pitch happens to be 355.266 hertz "
 	"at that time, the following line will be appended to the log file and/or to the Info window:")
-CODE (L"Time 3.456790 seconds, pitch 355.27 Hertz.")
+CODE (L"Time 3.456790 seconds, pitch 355.27 hertz.")
 NORMAL (L"The parts \":6\" and \":2\" denote the number of digits after the decimal point. "
 	"If you leave them out, the values will be written with a precision of 17 digits.")
 NORMAL (L"The words \'time\' and \'f0\' mean exactly the same as the result of the commands "
 	"##Get cursor# and ##Get pitch#. Therefore, if instead of setting a cursor line you selected a larger "
 	"piece of the sound, \'time\' will give the centre of the selection and \'f0\' will give the mean pitch "
 	"in the selection.")
-NORMAL (L"Beware of the following pitfall: if your pitch units are not Hertz, but semitones, "
+NORMAL (L"Beware of the following pitfall: if your pitch units are not hertz, but semitones, "
 	"then \'f0\' will give the result in semitones. A format as in this example will then be misleading.")
 ENTRY (L"Example 2: formant logging")
 NORMAL (L"Suppose you want to log the start and finish of the selection, its duration, and the mean values "
@@ -839,7 +839,7 @@ NORMAL (L"Suppose you want to log the start and finish of the selection, its dur
 CODE (L"\'t1:4\'\'tab\\$ \'\'t2:4\'\'tab\\$ \'\'f1:0\'\'tab\\$ \'\'f2:0\'\'tab\\$ \'\'f3:0\'")
 NORMAL (L"You see that \'t1\' and \'t2\' are the start and finish of the selection, respectively, "
 	"and that they are written with 4 digits after the decimal point. By using \":0\", the three formant values "
-	"are rounded to whole numbers in Hertz. The word \'tab\\$ \' is the tab stop.")
+	"are rounded to whole numbers in hertz. The word \'tab\\$ \' is the tab stop.")
 ENTRY (L"Loggable values")
 NORMAL (L"The following values can be logged:")
 LIST_ITEM (L"\'time\': the time of the cursor, or the centre of the selection.")
@@ -892,9 +892,9 @@ NORMAL (L"With @Inspect, you will see the following attributes:")
 TAG (L"##timeStep")
 DEFINITION (L"the time step (or %%frame length%) used in the pitch analysis. A common value is 0.010 seconds.")
 TAG (L"##minimumPitch")
-DEFINITION (L"the minimum pitch frequency considered in the pitch analysis. A common value is 75 Hertz.")
+DEFINITION (L"the minimum pitch frequency considered in the pitch analysis. A common value is 75 hertz.")
 TAG (L"##maximumPitch")
-DEFINITION (L"the maximum pitch frequency considered in the pitch analysis. A common value is 600 Hertz.")
+DEFINITION (L"the maximum pitch frequency considered in the pitch analysis. A common value is 600 hertz.")
 NORMAL (L"A Manipulation object also contains the following smaller objects:")
 LIST_ITEM (L"1. The original @Sound.")
 LIST_ITEM (L"2. A @PointProcess representing glottal pulses.")

@@ -88,21 +88,21 @@ FORM (Cepstrum_formula, L"Cepstrum: Formula...", L"Cepstrum: Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	if (! praat_Fon_formula (dia)) return 0;
+	praat_Fon_formula (dia);
 END
 
 
 DIRECT (Cepstrum_to_Spectrum)
 	LOOP {
 		iam (Cepstrum);
-		praat_new (Cepstrum_to_Spectrum (me), 0);
+		praat_new (Cepstrum_to_Spectrum (me), my name);
 	}
 END
 
 DIRECT (Cepstrum_to_Matrix)
 	LOOP {
 		iam (Cepstrum);
-		praat_new (Cepstrum_to_Matrix (me), 0);
+		praat_new (Cepstrum_to_Matrix (me), my name);
 	}
 END
 
@@ -330,13 +330,11 @@ static void Sound_to_LPC_addCommonFields (void *dia) {
 static void Sound_to_LPC_checkCommonFields (void * dia, long *predictionOrder, double *analysisWindowDuration,
 	double *timeStep, double *preemphasisFrequency)
 {
-	try {
 		*predictionOrder = GET_INTEGER (L"Prediction order");
 		*analysisWindowDuration = GET_REAL (L"Window length");
 		*timeStep = GET_REAL (L"Time step");
 		*preemphasisFrequency = GET_REAL (L"Pre-emphasis frequency");
 		if (*preemphasisFrequency < 0.0) Melder_throw ("Pre-emphasis frequencies cannot be negative.");
-	} catch (MelderError) { rethrow; }
 }
 
 FORM (Sound_to_LPC_auto, L"Sound: To LPC (autocorrelation)", L"Sound: To LPC (autocorrelation)...")

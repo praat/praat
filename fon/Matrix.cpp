@@ -57,35 +57,34 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (Matrix);
 	if (Thing_version < 0) {
-		my xmin = texgetr8 (text); therror
-		my xmax = texgetr8 (text); therror
-		my ymin = texgetr8 (text); therror
-		my ymax = texgetr8 (text); therror
-		my nx = texgeti4 (text); therror
-		my ny = texgeti4 (text); therror
-		my dx = texgetr8 (text); therror
-		my dy = texgetr8 (text); therror
-		my x1 = texgetr8 (text); therror
-		my y1 = texgetr8 (text); therror
+		my xmin = texgetr8 (text);
+		my xmax = texgetr8 (text);
+		my ymin = texgetr8 (text);
+		my ymax = texgetr8 (text);
+		my nx = texgeti4 (text);
+		my ny = texgeti4 (text);
+		my dx = texgetr8 (text);
+		my dy = texgetr8 (text);
+		my x1 = texgetr8 (text);
+		my y1 = texgetr8 (text);
 	} else {
 		inherited (Matrix) readText (me, text);
-		my ymin = texgetr8 (text); therror
-		my ymax = texgetr8 (text); therror
-		my ny = texgeti4 (text); therror
-		my dy = texgetr8 (text); therror
-		my y1 = texgetr8 (text); therror
+		my ymin = texgetr8 (text);
+		my ymax = texgetr8 (text);
+		my ny = texgeti4 (text);
+		my dy = texgetr8 (text);
+		my y1 = texgetr8 (text);
 	}
 	if (my xmin > my xmax || my ymin > my ymax)
-		return Melder_error1 (L"(Matrix::readText:) xmin should <= xmax and ymin <= ymax.");
+		Melder_throw ("Matrix::readText: xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		return Melder_error1 (L"(Matrix::readText:) nx should >= 1 and ny >= 1.");
+		Melder_throw ("Matrix::readText: nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		return Melder_error1 (L"(Matrix::readText:) dx should > 0 and dy > 0.");
-	if (! (my z = NUMdmatrix_readText_r8 (1, my ny, 1, my nx, text, "z"))) return 0;
-	return 1;
+		Melder_throw ("Matrix::readText: dx should > 0 and dy > 0.");
+	my z = NUMdmatrix_readText_r8 (1, my ny, 1, my nx, text, "z"); therror
 }
 
 static void info (I) {
@@ -106,6 +105,9 @@ static void info (I) {
 	MelderInfo_writeLine2 (L"Minimum value: ", Melder_single (minimum));
 	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
 }
+
+#undef our
+#define our ((Matrix_Table) my methods) ->
 
 static double getValueAtSample (I, long isamp, long ilevel, int unit) {
 	iam (Matrix);
@@ -171,17 +173,13 @@ void Matrix_init
 		 double ymin, double ymax, long ny, double dy, double y1)
 {
 	iam (Matrix);
-	try {
-		Sampled_init (me, xmin, xmax, nx, dx, x1); therror
-		my ymin = ymin;
-		my ymax = ymax;
-		my ny = ny;
-		my dy = dy;
-		my y1 = y1;
-		my z = NUMmatrix <double> (1, my ny, 1, my nx);
-	} catch (MelderError) {
-		rethrow;
-	}
+	Sampled_init (me, xmin, xmax, nx, dx, x1); therror
+	my ymin = ymin;
+	my ymax = ymax;
+	my ny = ny;
+	my dy = dy;
+	my y1 = y1;
+	my z = NUMmatrix <double> (1, my ny, 1, my nx);
 }
 
 Matrix Matrix_create
@@ -193,7 +191,7 @@ Matrix Matrix_create
 		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not created.");
+		Melder_throw ("Matrix object not created.");
 	}
 }
 
@@ -204,7 +202,7 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 			0.5, numberOfRows + 0.5, numberOfRows, 1, 1); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not created.");
+		Melder_throw ("Matrix object not created.");
 	}
 }
 
@@ -539,7 +537,7 @@ Matrix Matrix_readAP (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not read from AP file ", MelderFile_messageName (file));
+		Melder_throw ("Matrix object not read from AP file ", MelderFile_messageName (file));
 	}
 }
 
@@ -559,7 +557,7 @@ Matrix Matrix_appendRows (I, thou) {
 				his z [irow + my ny] [icol] = thy z [irow] [icol];
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": rows not appended.");
+		Melder_throw (me, " & ", thee, ": rows not appended.");
 	}
 }
 
@@ -618,7 +616,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not read from raw text file ", MelderFile_messageName (file));
+		Melder_throw ("Matrix object not read from raw text file ", MelderFile_messageName (file));
 	}
 }
 
@@ -642,7 +640,7 @@ void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 		*out_eigenvectors = eigenvectors.transfer();
 		*out_eigenvalues = eigenvalues.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": eigenstructure not computed.");
+		Melder_throw (me, ": eigenstructure not computed.");
 	}
 }
 
@@ -666,7 +664,7 @@ Matrix Matrix_power (I, long power) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": power not computed.");
+		Melder_throw (me, ": power not computed.");
 	}
 }
 
@@ -685,7 +683,7 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 		f.close (file);
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
-		rethrowm (me, ": not written to Matrix text file.");
+		Melder_throw (me, ": not written to Matrix text file.");
 	}
 }
 
@@ -702,7 +700,7 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 		f.close (file);
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
-		rethrowm (me, ": not saved as tab-separated file ", MelderFile_messageName (file));
+		Melder_throw (me, ": not saved as tab-separated file ", MelderFile_messageName (file));
 	}
 }
 
@@ -718,7 +716,7 @@ void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpret
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": formula not completed.");
+		Melder_throw (me, ": formula not completed.");
 	}
 }
 
@@ -741,7 +739,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": formula not completed.");
+		Melder_throw (me, ": formula not completed.");
 	}
 }
 
@@ -774,7 +772,7 @@ Matrix TableOfReal_to_Matrix (I) {
 				thy z [i] [j] = my data [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -787,7 +785,7 @@ TableOfReal Matrix_to_TableOfReal (I) {
 				thy data [i] [j] = my z [i] [j];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to TableOfReal.");
+		Melder_throw (me, ": not converted to TableOfReal.");
 	}
 }
 
@@ -805,7 +803,7 @@ Matrix Table_to_Matrix (Table me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 

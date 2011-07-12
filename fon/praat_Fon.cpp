@@ -122,17 +122,16 @@ static void dia_Vector_getValue (Any dia) {
 	RADIOBUTTON (L"Sinc700")
 }
 
-static int getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmin, double *fmax) {
+static void getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fmin, double *fmax) {
 	*tmin = GET_REAL (STRING_FROM_TIME);
 	*tmax = GET_REAL (STRING_TO_TIME);
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
 	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")
-	return 1;
 }
 #define GET_TMIN_TMAX_FMIN_FMAX \
 	double tmin, tmax, fmin, fmax; \
-	if (! getTminTmaxFminFmax (dia, & tmin, & tmax, & fmin, & fmax)) return 0;
+	getTminTmaxFminFmax (dia, & tmin, & tmax, & fmin, & fmax);
 
 /***** Two auxiliary routines, exported. *****/
 
@@ -547,7 +546,11 @@ DO
 END
 
 DIRECT (DurationTier_downto_PointProcess)
-	EVERY_TO (AnyTier_downto_PointProcess (OBJECT))
+	LOOP {
+		iam (DurationTier);
+		autoPointProcess thee = AnyTier_downto_PointProcess (OBJECT);
+		praat_new (thee.transfer(), my name);
+	}
 END
 
 DIRECT (DurationTier_edit)
@@ -1193,7 +1196,7 @@ DO
 	praat_new (thee.transfer(), GET_STRING (L"Name"));
 END
 
-static void cb_FormantGridEditor_publish (Any editor, void *closure, Any publish) {
+static void cb_FormantGridEditor_publish (Any editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
 	/*
@@ -1211,7 +1214,7 @@ DIRECT (FormantGrid_edit)
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (FormantGridEditor_as_Editor (editor.peek()), cb_FormantGridEditor_publish, NULL);
+		Editor_setPublishCallback (editor.peek(), cb_FormantGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -1763,8 +1766,8 @@ END
 /***** INTENSITY & PITCH *****/
 
 FORM (Pitch_Intensity_draw, L"Plot intensity by pitch", 0)
-	REAL (L"From frequency (Hertz)", L"0.0")
-	REAL (L"To frequency (Hertz)", L"0.0 (= auto)")
+	REAL (L"From frequency (Hz)", L"0.0")
+	REAL (L"To frequency (Hz)", L"0.0 (= auto)")
 	REAL (L"From intensity (dB)", L"0.0")
 	REAL (L"To intensity (dB)", L"100.0")
 	BOOLEAN (L"Garnish", 1)
@@ -1788,8 +1791,8 @@ DO
 END
 
 FORM (Pitch_Intensity_speckle, L"Plot intensity by pitch", 0)
-	REAL (L"From frequency (Hertz)", L"0.0")
-	REAL (L"To frequency (Hertz)", L"0.0 (= auto)")
+	REAL (L"From frequency (Hz)", L"0.0")
+	REAL (L"To frequency (Hz)", L"0.0 (= auto)")
 	REAL (L"From intensity (dB)", L"0.0")
 	REAL (L"To intensity (dB)", L"100.0")
 	BOOLEAN (L"Garnish", 1)
@@ -2045,7 +2048,7 @@ DO_ALTERNATIVE (old_Ltas_draw)
 END
 
 FORM (Ltas_formula, L"Ltas Formula", 0)
-	LABEL (L"label", L"`x' is the frequency in Hertz, `col' is the bin number")
+	LABEL (L"label", L"`x' is the frequency in hertz, `col' is the bin number")
 	LABEL (L"label", L"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
 	TEXTFIELD (L"formula", L"0")
 	OK
@@ -2103,8 +2106,8 @@ DO
 END
 
 FORM (Ltas_getFrequencyOfMinimum, L"Ltas: Get frequency of minimum", L"Ltas: Get frequency of minimum...")
-	REAL (L"From frequency (s)", L"0.0")
-	REAL (L"To frequency (s)", L"0.0 (= all)")
+	REAL (L"From frequency (Hz)", L"0.0")
+	REAL (L"To frequency (Hz)", L"0.0 (= all)")
 	RADIO (L"Interpolation", 1)
 		RADIOBUTTON (L"None")
 		RADIOBUTTON (L"Parabolic")
@@ -2121,7 +2124,7 @@ END
 
 DIRECT (Ltas_getHighestFrequency)
 	Ltas me = FIRST (Ltas);
-	Melder_informationReal (my xmax, L"Hertz");
+	Melder_informationReal (my xmax, L"Hz");
 END
 
 FORM (Ltas_getLocalPeakHeight, L"Ltas: Get local peak height", 0)
@@ -2301,7 +2304,7 @@ END
 
 /***** MANIPULATION *****/
 
-static void cb_ManipulationEditor_publish (Any editor, void *closure, Any publish) {
+static void cb_ManipulationEditor_publish (Any editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
 	try {
@@ -2316,7 +2319,7 @@ DIRECT (Manipulation_edit)
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (ManipulationEditor_as_Editor (editor.peek()), cb_ManipulationEditor_publish, NULL);
+		Editor_setPublishCallback (editor.peek(), cb_ManipulationEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -3062,7 +3065,7 @@ END
 FORM (Pitch_drawSemitones, L"Pitch: Draw semitones", L"Pitch: Draw...")
 	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
 	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 Hz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	BOOLEAN (L"Garnish", 1)
@@ -3305,7 +3308,7 @@ DIRECT (Pitch_play)
 END
 
 FORM (Pitch_smooth, L"Pitch: Smooth", L"Pitch: Smooth...")
-	REAL (L"Bandwidth (Hertz)", L"10.0")
+	REAL (L"Bandwidth (Hz)", L"10.0")
 	OK
 DO
 	LOOP {
@@ -3382,7 +3385,7 @@ END
 FORM (Pitch_speckleSemitones, L"Pitch: Speckle semitones", L"Pitch: Draw...")
 	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
 	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
-	LABEL (L"", L"Range in semitones re 100 Hertz:")
+	LABEL (L"", L"Range in semitones re 100 hertz:")
 	REAL (L"left Frequency range (st)", L"-12.0")
 	REAL (L"right Frequency range (st)", L"30.0")
 	BOOLEAN (L"Garnish", 1)
@@ -3690,7 +3693,7 @@ FORM (PitchTier_formula, L"PitchTier: Formula", L"PitchTier: Formula...")
 	LABEL (L"", L"# ncol = the number of points")
 	LABEL (L"", L"for col from 1 to ncol")
 	LABEL (L"", L"   # x = the time of the colth point, in seconds")
-	LABEL (L"", L"   # self = the value of the colth point, in Hertz")
+	LABEL (L"", L"   # self = the value of the colth point, in hertz")
 	LABEL (L"", L"   self = `formula'")
 	LABEL (L"", L"endfor")
 	TEXTFIELD (L"formula", L"self * 2 ; one octave up")
@@ -3958,8 +3961,9 @@ FORM (PointProcess_createPoissonProcess, L"Create Poisson process", L"Create Poi
 DO
 	double tmin = GET_REAL (L"Start time"), tmax = GET_REAL (L"End time");
 	if (tmax < tmin)
-		return Melder_error5 (L"End time (", Melder_single (tmax), L") should not be less than start time (", Melder_single (tmin), L").");
-	if (! praat_new1 (PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (L"Density")), GET_STRING (L"Name"))) return 0;
+		Melder_throw ("End time (", tmax, ") should not be less than start time (", tmin, ").");
+	autoPointProcess me = PointProcess_createPoissonProcess (tmin, tmax, GET_REAL (L"Density"));
+	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
 DIRECT (PointProcess_difference)
@@ -4708,7 +4712,7 @@ END
 FORM (Spectrogram_formula, L"Spectrogram: Formula", L"Spectrogram: Formula...")
 	LABEL (L"label", L"Do for all times and frequencies:")
 	LABEL (L"label", L"   `x' is the time in seconds")
-	LABEL (L"label", L"   `y' is the frequency in Hertz")
+	LABEL (L"label", L"   `y' is the frequency in hertz")
 	LABEL (L"label", L"   `self' is the current value in Pa\u00B2/Hz")
 	LABEL (L"label", L"   Replace all values with:")
 	TEXTFIELD (L"formula", L"self * exp (- x / 0.1)")
@@ -4845,7 +4849,7 @@ DIRECT (Spectrum_edit)
 END
 
 FORM (Spectrum_formula, L"Spectrum: Formula", L"Spectrum: Formula...")
-	LABEL (L"label", L"`x' is the frequency in Hertz, `col' is the bin number;   "
+	LABEL (L"label", L"`x' is the frequency in hertz, `col' is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
 	LABEL (L"label", L"y := 1;   row := 1;   "
 		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
@@ -5628,7 +5632,7 @@ DO
 		iam (AnyTier);
 		long i = GET_INTEGER (L"Point number");
 		if (i > my points -> size) Melder_information1 (L"--undefined--");
-		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> time, L"seconds");
+		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, L"seconds");
 	}
 END
 

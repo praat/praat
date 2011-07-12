@@ -27,17 +27,17 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _CC_h_
-	#include "CC.h"
-#endif
+#include "CC.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define LFCC_members CC_members
-#define LFCC_methods CC_methods
-class_create (LFCC, CC);
+Thing_declare1cpp (LFCC);
+struct structLFCC : public structCC {
+};
+#define LFCC__methods(klas) CC__methods(klas)
+Thing_declare2cpp (LFCC, CC);
 
 LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax);

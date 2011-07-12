@@ -20,8 +20,9 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/07/23 constraint plasticity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/03/29 C++
+ * pb 2011/07/12 C++
  */
 
 #include "OTGrammar.h"
@@ -34,45 +35,45 @@ OTGrammar OTGrammar_create_NPA_grammar (void) {
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = 3);
 		constraint = & my constraints [1];
-			constraint -> name = Melder_wcsdup_e (L"*G\\s{ESTURE}"); therror
+			constraint -> name = Melder_wcsdup (L"*G\\s{ESTURE}");
 			constraint -> ranking = 102.7;
 			constraint -> plasticity = 1.0;
 		constraint = & my constraints [2];
-			constraint -> name = Melder_wcsdup_e (L"*R\\s{EPLACE} (n, m)"); therror
+			constraint -> name = Melder_wcsdup (L"*R\\s{EPLACE} (n, m)");
 			constraint -> ranking = 100.0;
 			constraint -> plasticity = 1.0;
 		constraint = & my constraints [3];
-			constraint -> name = Melder_wcsdup_e (L"*R\\s{EPLACE} (t, p)"); therror
+			constraint -> name = Melder_wcsdup (L"*R\\s{EPLACE} (t, p)");
 			constraint -> ranking = 112.0;
 			constraint -> plasticity = 1.0;
 		my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus = 2);
 		tableau = & my tableaus [1];
-			tableau -> input = Melder_wcsdup_e (L"an+pa"); therror
+			tableau -> input = Melder_wcsdup (L"an+pa");
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 2);
 			candidate = & tableau -> candidates [1];
-				candidate -> output = Melder_wcsdup_e (L"anpa"); therror
+				candidate -> output = Melder_wcsdup (L"anpa");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [1] = 1;
 			candidate = & tableau -> candidates [2];
-				candidate -> output = Melder_wcsdup_e (L"ampa"); therror
+				candidate -> output = Melder_wcsdup (L"ampa");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [2] = 1;
 		tableau = & my tableaus [2];
 			tableau -> input = Melder_wcsdup_e (L"at+ma"); therror
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 2);
 			candidate = & tableau -> candidates [1];
-				candidate -> output = Melder_wcsdup_e (L"atma"); therror
+				candidate -> output = Melder_wcsdup (L"atma");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [1] = 1;
 			candidate = & tableau -> candidates [2];
-				candidate -> output = Melder_wcsdup_e (L"apma"); therror
+				candidate -> output = Melder_wcsdup (L"apma");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [3] = 1;
 		OTGrammar_checkIndex (me.peek()); therror
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Nasal place assimilation grammar not created.");
+		Melder_throw ("Nasal place assimilation grammar not created.");
 	}
 }
 
@@ -85,7 +86,7 @@ PairDistribution OTGrammar_create_NPA_distribution (void) {
 		PairDistribution_add (me.peek(), L"an+pa", L"ampa",  80);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Nasal place assimilation distribution not created.");
+		Melder_throw ("Nasal place assimilation distribution not created.");
 	}
 }
 

@@ -1,4 +1,4 @@
-/* Command.c
+/* Command.cpp
  *
  * Copyright (C) 1994-2011 David Weenink
  *
@@ -29,7 +29,7 @@
 class_methods (Command, Thing)
 class_methods_end
 
-int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any))
+void Command_init (I, const wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any))
 {
 	iam (Command);
 	Melder_assert (execute && undo);
@@ -37,7 +37,6 @@ int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(A
 	my data = data;
 	my execute = execute;
 	my undo = undo;
-	return 1;
 }
 
 int Command_do (I)
@@ -55,11 +54,13 @@ int Command_undo (I)
 class_methods (CommandHistory, Ordered)
 class_methods_end
 
-Any CommandHistory_create (long maximumCapacity)
+CommandHistory CommandHistory_create (long maximumCapacity)
 {
-	CommandHistory me = Thing_new (CommandHistory);
-	if (! me || ! Collection_init (me, classCommand, maximumCapacity)) forget (me);
-	return me;
+	try {
+		autoCommandHistory me = Thing_new (CommandHistory);
+		Collection_init (me.peek(), classCommand, maximumCapacity);
+		return me.transfer();
+	} catch (MelderError) { Melder_thrown ("Command not created."); }
 }
 
 void CommandHistory_forth (I)
@@ -84,12 +85,11 @@ Any CommandHistory_getItem (I)
 void CommandHistory_insertItem (I, Any data)
 {
 	iam (CommandHistory); 
-	long i;
 	
-	Melder_assert (data && (Thing_member (data, my itemClass) || my itemClass == NULL));
+	Melder_assert (data && (Thing_member ((Thing) data, my itemClass) || my itemClass == NULL));
 	if (my current < my size)
 	{
-		for (i = my current+1; i <= my size; i++) forget (my item[i]);
+		for (long i = my current+1; i <= my size; i++) forget (my item[i]);
 		my size = my current;
 	}
 	if (my size >= my _capacity) Collection_removeItem (me, 1);
@@ -120,7 +120,7 @@ wchar_t *CommandHistory_commandName (I, long offsetFromCurrent)
 	iam (CommandHistory); 
 	long pos = my current + offsetFromCurrent;
 	
-	return pos >= 1 && pos <= my size ? Thing_getName (my item[pos]) : NULL;
+	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : NULL;
 }
 
-/* End of file Command.c */
+/* End of file Command.cpp */

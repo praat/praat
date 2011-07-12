@@ -25,31 +25,17 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Eigen_h_
-	#include "Eigen.h"
-#endif
-
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
+#include "Eigen.h"
+#include "TableOfReal.h"
+#include "Strings.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define CCA_members Data_members \
-	long numberOfCoefficients; \
-	long numberOfObservations; \
-	Strings yLabels; \
-	Strings xLabels; \
-	Eigen y; \
-	Eigen x;
-#define CCA_methods Data_methods
-class_create (CCA, Data);
+#include "CCA_def.h"
+#define CCA__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (CCA, Data);
 
 /*
 	Class CCA represents the Canonical Correlation Analysis of two datasets

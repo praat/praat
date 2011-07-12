@@ -24,41 +24,44 @@
  * djmw 20110306 Latest modification
  */
 	
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Filter_members Data_members \
-	double dT; \
-	double a, b, c; \
+Thing_declare1cpp (Filter);
+struct structFilter : public structData {
+	double dT;
+	double a, b, c;
 	double p1, p2;
-
-#define Filter_methods Data_methods \
+};
+#define Filter__methods(klas) Data__methods(klas) \
 	double (*getOutput) (I, double input); \
 	void (*setFB) (I, double f, double b); \
 	void (*resetMemory)(I);
+Thing_declare2cpp (Filter, Data);
 
-class_create (Filter, Data);
-
-#define Resonator_members Filter_members \
+Thing_declare1cpp (Resonator);
+struct structResonator : public structFilter {
 	int normalisation;
-#define Resonator_methods Filter_methods
-class_create (Resonator, Filter);
+};
+#define Resonator__methods(klas) Filter__methods(klas)
+Thing_declare2cpp (Resonator, Filter);
 
-#define AntiResonator_members Resonator_members
-#define AntiResonator_methods Resonator_methods
-class_create (AntiResonator, Filter);
+Thing_declare1cpp (AntiResonator);
+struct structAntiResonator : public structResonator {
+};
+#define AntiResonator__methods(klas) Resonator__methods(klas)
+Thing_declare2cpp (AntiResonator, Filter);
 
-#define ConstantGainResonator_members Filter_members \
-	double d; \
+Thing_declare1cpp (ConstantGainResonator);
+struct structConstantGainResonator : public structFilter {
+	double d;
 	double p3, p4;
-
-#define ConstantGainResonator_methods Filter_methods
-class_create (ConstantGainResonator, Filter);
+};
+#define ConstantGainResonator__methods(klas) Filter__methods(klas)
+Thing_declare2cpp (ConstantGainResonator, Filter);
 
 #define Resonator_NORMALISATION_H0 0
 #define Resonator_NORMALISATION_HMAX 1

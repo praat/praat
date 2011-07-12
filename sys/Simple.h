@@ -20,12 +20,10 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/11
  */
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+#include "Data.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -33,19 +31,19 @@
 
 #include "Simple_def.h"
 
-#define SimpleInt_methods Data_methods
+#define SimpleInt__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleInt, Data);
 
-#define SimpleShort_methods Data_methods
+#define SimpleShort__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleShort, Data);
 
-#define SimpleLong_methods Data_methods
+#define SimpleLong__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleLong, Data);
 
-#define SimpleDouble_methods Data_methods
+#define SimpleDouble__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleDouble, Data);
 
-#define SimpleString_methods Data_methods
+#define SimpleString__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleString, Data);
 
 SimpleInt SimpleInt_create (int number);

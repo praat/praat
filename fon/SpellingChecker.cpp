@@ -70,7 +70,7 @@ SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 		thy separatingCharacters = Melder_wcsdup (L".,;:()\"");
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to SpellingChecker.");
+		Melder_throw (me, ": not converted to SpellingChecker.");
 	}
 }
 
@@ -90,7 +90,7 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 		forget (my wordList);
 		my wordList = newList.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": word list not replaced.");
+		Melder_throw (me, ": word list not replaced.");
 	}
 }
 
@@ -100,7 +100,7 @@ SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me) {
 			Melder_throw ("This spelling checker does not contain a user dictionary.");
 		return (SortedSetOfString) Data_copy (my userDictionary);
 	} catch (MelderError) {
-		rethrowmzero (me, ": user dictionary not extracted.");
+		Melder_throw (me, ": user dictionary not extracted.");
 	}
 }
 
@@ -116,7 +116,7 @@ void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfStrin
 		forget (my userDictionary);
 		my userDictionary = newDict.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": user dictionary not replaced.");
+		Melder_throw (me, ": user dictionary not replaced.");
 	}
 }
 
@@ -228,7 +228,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const wchar *word) {
 		Longchar_genericizeW (word, generic.peek());
 		SortedSetOfString_add (my userDictionary, generic.transfer()); therror
 	} catch (MelderError) {
-		rethrowm (me, ": word \"", word, "\" not added.");
+		Melder_throw (me, ": word \"", word, "\" not added.");
 	}
 }
 

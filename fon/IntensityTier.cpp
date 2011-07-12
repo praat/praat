@@ -41,7 +41,7 @@ IntensityTier IntensityTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("IntensityTier not created.");
+		Melder_throw ("IntensityTier not created.");
 	}
 }
 
@@ -57,7 +57,7 @@ IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity
 		Thing_overrideClass (thee.peek(), classIntensityTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to IntensityTier.");
+		Melder_throw (me, ": not converted to IntensityTier.");
 	}
 }
 
@@ -67,7 +67,7 @@ IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 		Thing_overrideClass (thee.peek(), classIntensityTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to IntensityTier.");
+		Melder_throw (me, ": not converted to IntensityTier.");
 	}
 }
 
@@ -77,7 +77,7 @@ IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 		Thing_overrideClass (thee.peek(), classIntensityTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": peaks not converted to IntensityTier.");
+		Melder_throw (me, ": peaks not converted to IntensityTier.");
 	}
 }
 
@@ -87,7 +87,7 @@ IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 		Thing_overrideClass (thee.peek(), classIntensityTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": valleys not converted to IntensityTier.");
+		Melder_throw (me, ": valleys not converted to IntensityTier.");
 	}
 }
 
@@ -97,7 +97,7 @@ IntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProces
 		autoIntensityTier thee = IntensityTier_PointProcess_to_IntensityTier (temp.peek(), pp);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", pp, ": not converted to IntensityTier.");
+		Melder_throw (me, " & ", pp, ": not converted to IntensityTier.");
 	}
 }
 
@@ -112,7 +112,7 @@ IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, Poi
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", pp, ": not converted to IntensityTier.");
+		Melder_throw (me, " & ", pp, ": not converted to IntensityTier.");
 	}
 }
 
@@ -138,7 +138,7 @@ Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale
 		if (scale) Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not multiplied with ", intensity, ".");
+		Melder_throw (me, ": not multiplied with ", intensity, ".");
 	}
 }
 

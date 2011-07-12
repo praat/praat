@@ -48,7 +48,7 @@
 /////////////////////////////////////////////////////
 
 #include "FeatureWeights_def.h"
-#define FeatureWeights_methods Data_methods
+#define FeatureWeights__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FeatureWeights, Data);
 
 /////////////////////////////////////////////////////

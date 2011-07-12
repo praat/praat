@@ -1,6 +1,6 @@
-/* DurationTierEditor.c
+/* DurationTierEditor.cpp
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2008/03/21
  * pb 2009/01/23 minimum and maximum legal values
+ * pb 2011/07/01 C++
  */
 
 #include "DurationTierEditor.h"
@@ -28,7 +29,7 @@
 static int menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); return 1; }
 
 static void createHelpMenuItems (DurationTierEditor me, EditorMenu menu) {
-	inherited (DurationTierEditor) createHelpMenuItems (DurationTierEditor_as_parent (me), menu);
+	inherited (DurationTierEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
@@ -54,11 +55,14 @@ class_methods (DurationTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title, DurationTier duration, Sound sound, int ownSound) {
-	DurationTierEditor me = Thing_new (DurationTierEditor);
-	if (! me || ! RealTierEditor_init (DurationTierEditor_as_parent (me), parent, title, (RealTier) duration, sound, ownSound))
-		{ forget (me); return NULL; }
-	return me;
+DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title, DurationTier duration, Sound sound, bool ownSound) {
+	try {
+		autoDurationTierEditor me = Thing_new (DurationTierEditor);
+		RealTierEditor_init (me.peek(), parent, title, (RealTier) duration, sound, ownSound);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("DurationTier window not created.");
+	}
 }
 
-/* End of file DurationTierEditor.c */
+/* End of file DurationTierEditor.cpp */

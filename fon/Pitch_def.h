@@ -33,7 +33,7 @@
 	maxnCandidates >= 1	// Maximum number of candidates per time slice.
 	frame[1..nx].nCandidates	// Number of candidates in each time slice, including the unvoiced candidate.
 	frame[1..nx].candidate[1..nCandidates].frequency
-		// The frequency of each candidate (Hertz), 0 means aperiodic or silent.
+		// The frequency of each candidate (Hz), 0 means aperiodic or silent.
 		// candidate[1].frequency is the frequency of the currently best candidate.
 	frame[1..nx].candidate[1..nCandidates].strength
 		// The strength of each candidate, a real number between 0 and 1:

@@ -45,15 +45,11 @@ typedef struct {
 } structEdgeContour, *EdgeContour;
 
 static EdgeContour EdgeContour_create (int numberOfPoints) {
-	try {
-		EdgeContour result = Melder_calloc_f (structEdgeContour, 1); therror
-		result -> numberOfPoints = numberOfPoints;
-		result -> x = NUMvector <double> (1, 2 * numberOfPoints);
-		result -> y = result -> x + numberOfPoints;
-		return result;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	EdgeContour result = Melder_calloc (structEdgeContour, 1);
+	result -> numberOfPoints = numberOfPoints;
+	result -> x = NUMvector <double> (1, 2 * numberOfPoints);
+	result -> y = result -> x + numberOfPoints;
+	return result;   // LEAK
 }
 static void EdgeContour_delete (EdgeContour e) {
 	NUMvector_free <double> (e -> x, 1);
@@ -67,15 +63,11 @@ typedef struct {
 } structClosedContour, *ClosedContour;
 
 static ClosedContour ClosedContour_create (int numberOfPoints) {
-	try {
-		ClosedContour result = Melder_calloc_f (structClosedContour, 1); therror
-		result -> numberOfPoints = numberOfPoints;
-		result -> x = NUMvector <double> (1, 2 * numberOfPoints);
-		result -> y = result -> x + numberOfPoints;
-		return result;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	ClosedContour result = Melder_calloc (structClosedContour, 1);
+	result -> numberOfPoints = numberOfPoints;
+	result -> x = NUMvector <double> (1, 2 * numberOfPoints);
+	result -> y = result -> x + numberOfPoints;
+	return result;   // LEAK
 }
 static void ClosedContour_delete (ClosedContour c) {
 	NUMvector_free <double> (c -> x, 1);

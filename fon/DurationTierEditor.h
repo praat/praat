@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/02
  */
 
 #include "RealTierEditor.h"
@@ -31,22 +31,23 @@
 	extern "C" {
 #endif
 
-#define DurationTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
-Thing_declare1 (DurationTierEditor);
+Thing_declare1cpp (DurationTierEditor);
 
-#define DurationTierEditor__members(Klas) RealTierEditor__members(Klas)
-#define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-Thing_declare2 (DurationTierEditor, RealTierEditor);
-
-DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title,
-	DurationTier duration, Sound sound, int ownSound);
+DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar *title,
+	DurationTier duration, Sound sound, bool ownSound);
 /*
 	'sound' may be NULL.
 */
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structDurationTierEditor : public structRealTierEditor {
+	};
+	#define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+	Thing_declare2cpp (DurationTierEditor, RealTierEditor);
+
+#endif // __cplusplus
 
 /* End of file DurationTierEditor.h */
 #endif

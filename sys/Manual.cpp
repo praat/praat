@@ -32,6 +32,7 @@
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2011/04/06 C++
+ * pb 2011/07/05 C++
  */
 
 #include <ctype.h>
@@ -42,6 +43,7 @@
 #include <time.h>
 #include "EditorM.h"
 #include "praat_script.h"
+#include "praatP.h"
 
 /* Remaining BUGS: HTML writer does not recognize "\s{". */
 
@@ -60,7 +62,7 @@ static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 		while (*p) { if (! isalnum (*p) && *p != '_') *p = '_'; p ++; }
 		wcscat (defaultName, L".html");
 	EDITOR_DO_WRITE
-		if (! ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file)) return 0;
+		ManPages_writeOneToHtmlFile ((ManPages) my data, my path, file);
 	EDITOR_END
 }
 
@@ -74,8 +76,8 @@ static int menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 		Melder_getDefaultDir (& currentDirectory);
 		SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
-		wchar_t *directory = GET_STRING (L"directory");
-		if (! ManPages_writeAllToHtmlDir ((ManPages) my data, directory)) return 0;
+		wchar *directory = GET_STRING (L"directory");
+		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
 	EDITOR_END
 }
 
@@ -197,6 +199,9 @@ static void draw (Manual me) {
 }
 
 /********** PRINTING **********/
+
+#undef our
+#define our ((Manual_Table) my methods) ->
 
 static void print (I, Graphics graphics) {
 	iam (Manual);
@@ -439,7 +444,7 @@ static void createChildren (Manual me) {
 	#define STRING_SPACING 2
 #endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	inherited (Manual) createChildren (Manual_as_parent (me));
+	inherited (Manual) createChildren (me);
 	my homeButton = GuiButton_createShown (my holder, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, me, 0);
 	if (pages -> dynamic) {
@@ -466,7 +471,7 @@ static void createChildren (Manual me) {
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); if (! HyperPage_goToPage (me, L"Manual")) return 0; return 1; }
 
 static void createMenus (Manual me) {
-	inherited (Manual) createMenus (Manual_as_parent (me));
+	inherited (Manual) createMenus (me);
 
 	Editor_addCommand (me, L"File", L"Print manual...", 0, menu_cb_printRange);
 	Editor_addCommand (me, L"File", L"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
@@ -477,7 +482,7 @@ static void createMenus (Manual me) {
 }
 
 static void createHelpMenuItems (Manual me, EditorMenu menu) {
-	inherited (Manual) createHelpMenuItems (Manual_as_parent (me), menu);
+	inherited (Manual) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
 }
 
@@ -530,8 +535,6 @@ static int goToPage_i (Manual me, long i) {
 	return 1;
 }
 
-extern "C" void praat_background (void);   // BUG
-extern "C" void praat_foreground (void);   // BUG
 static int goToPage (Manual me, const wchar_t *title) {
 	ManPages manPages = (ManPages) my data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
@@ -540,23 +543,18 @@ static int goToPage (Manual me, const wchar_t *title) {
 		Melder_recordFromFile (& file);
 		return -1;
 	} else if (title [0] == '\\' && title [1] == 'S' && title [2] == 'C') {
-		structMelderDir saveDir = { { 0 } };
-		Melder_getDefaultDir (& saveDir);
-		Melder_setDefaultDir (& manPages -> rootDirectory);
-		praat_background ();
-		if (! praat_executeScriptFromFileNameWithArguments (title + 3)) {
-			praat_foreground ();
+		autoMelderSetDefaultDir dir (& manPages -> rootDirectory);
+		autoPraatBackground ();
+		try {
+			praat_executeScriptFromFileNameWithArguments (title + 3);
+		} catch (MelderError) {
 			Melder_flushError (NULL);
-		} else {
-			praat_foreground ();
 		}
-		Melder_setDefaultDir (& saveDir);
 		return 0;
 	} else {
-		long i;
-		i = ManPages_lookUp (manPages, title);
+		long i = ManPages_lookUp (manPages, title);
 		if (! i)
-			return Melder_error3 (L"Page \"", title, L"\" not found.");
+			Melder_throw ("Page \"", title, "\" not found.");
 		return goToPage_i (me, i);
 	}
 }
@@ -581,14 +579,14 @@ class_methods (Manual, HyperPage) {
 	class_methods_end
 }
 
-int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data) {
+void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data) {
 	ManPages manPages = (ManPages) data;
-	wchar_t windowTitle [101];
+	wchar windowTitle [101];
 	long i;
 	ManPage page;
 	ManPage_Paragraph par;
 	if (! (i = ManPages_lookUp (manPages, title)))
-		return Melder_error3 (L"Page \"", title, L"\" not found.");
+		Melder_throw ("Page \"", title, "\" not found.");
 	my path = i;
 	page = (ManPage) manPages -> pages -> item [i];
 	my paragraphs = page -> paragraphs;
@@ -602,20 +600,19 @@ int Manual_init (Manual me, GuiObject parent, const wchar_t *title, Any data) {
 	} else {
 		wcscpy (windowTitle, L"Manual");
 	}
-	HyperPage_init (Manual_as_parent (me), parent, windowTitle, data); cherror
+	HyperPage_init (me, parent, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_wcsdup_f (title);   /* BAD */
-end:
-	iferror return 0;
-	return 1;
 }
 
-Manual Manual_create (GuiObject parent, const wchar_t *title, Any data) {
-	Manual me = Thing_new (Manual); cherror
-	Manual_init (me, parent, title, data); cherror
-end:
-	iferror forget (me);
-	return me;
+Manual Manual_create (GuiObject parent, const wchar *title, Data data) {
+	try {
+		autoManual me = Thing_new (Manual);
+		Manual_init (me.peek(), parent, title, data);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Manual window not created.");
+	}
 }
 
 /* End of file Manual.cpp */

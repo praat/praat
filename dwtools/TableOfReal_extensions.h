@@ -56,7 +56,7 @@ Strings TableOfReal_extractRowLabels (I);
 
 Strings TableOfReal_extractColumnLabels (I);
 
-int TableOfReal_and_Categories_setRowLabels (I, Categories thee);
+void TableOfReal_and_Categories_setRowLabels (I, Categories thee);
 /* !!! Set rowlabels from categories
   Because we need a Table-object with string-columns.
 */
@@ -111,7 +111,7 @@ long TableOfReal_getNumberOfLabelMatches (I, const wchar_t *search, int columnLa
 int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels);
 /* return 1 when labels are equal else 0 */
 
-int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin);
+void TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin);
 /*
 	rowOrigin ==  1 copy from row
 	rowOrigin ==  0 do nothing
@@ -124,9 +124,9 @@ int TableOfReal_copyLabels (I, thou, int rowOrigin, int columnOrigin);
 
 void TableOfReal_labelsFromCollectionItemNames (I, thou, int row, int column);
 
-int TableOfReal_setSequentialColumnLabels (I, long from, long to,
+void TableOfReal_setSequentialColumnLabels (I, long from, long to,
 	const wchar_t *precursor, long number, long increment);
-int TableOfReal_setSequentialRowLabels (I, long from, long to,
+void TableOfReal_setSequentialRowLabels (I, long from, long to,
 	const wchar_t *precursor, long number, long increment);
 
 int TableOfReal_hasRowLabels (I);
@@ -208,10 +208,7 @@ TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (I, thou, int by_colum
 
 /********************* class TablesOfReal ******************************/
 
-
-#define TablesOfReal_members Ordered_members
-#define TablesOfReal_methods Ordered_methods
-class_create (TablesOfReal, Ordered);
+Thing_declare1cpp (TablesOfReal);
 
 void TablesOfReal_init (I, void *klas);
 
@@ -223,6 +220,12 @@ int TablesOfReal_checkDimensions (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structTablesOfReal : public structOrdered {
+	};
+	#define TablesOfReal__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (TablesOfReal, Ordered);
+
 #endif
 
 #endif /* _TableOfReal_extensions_h_ */

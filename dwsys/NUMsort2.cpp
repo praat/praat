@@ -156,7 +156,6 @@ void NUMrank (long n, double a[])
 
 int NUMrankColumns (double **m, long rb, long re, long cb, long ce)
 {
-	try {
 		long nr = re - rb + 1;
 		autoNUMvector<double> v (1, nr);
 		autoNUMvector<long> index (1, nr);
@@ -170,7 +169,6 @@ int NUMrankColumns (double **m, long rb, long re, long cb, long ce)
 			for (long i = 1; i <= nr; i++) { m[rb + index[i] - 1][j] = v[i]; }
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 #define MACRO_NUMindex(TYPE) \

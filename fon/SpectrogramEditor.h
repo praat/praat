@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/12
  */
 
 #include "FunctionEditor.h"
@@ -30,19 +30,20 @@
 	extern "C" {
 #endif
 
-#define SpectrogramEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (SpectrogramEditor);
+Thing_declare1cpp (SpectrogramEditor);
 
-#define SpectrogramEditor__members(Klas) FunctionEditor__members(Klas) \
-	double maximum;
-#define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2 (SpectrogramEditor, FunctionEditor);
-
-SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar_t *title, Any data);
+SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Data data);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structSpectrogramEditor : public structFunctionEditor {
+		double maximum;
+	};
+	#define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
+	Thing_declare2cpp (SpectrogramEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file SpectrogramEditor.h */
 #endif

@@ -142,7 +142,7 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (local) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (local) not computed.");
 	}
 }
 
@@ -154,7 +154,7 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (local, dB) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (local, dB) not computed.");
 	}
 }
 
@@ -166,7 +166,7 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (apq3) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (apq3) not computed.");
 	}
 }
 
@@ -178,7 +178,7 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq5 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (apq5) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (apq5) not computed.");
 	}
 }
 
@@ -190,7 +190,7 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq11 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (apq11) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (apq11) not computed.");
 	}
 }
 
@@ -203,7 +203,7 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 		return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": shimmer (dda) not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer (dda) not computed.");
 	}
 }
 
@@ -221,7 +221,7 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 		if (apq11) *apq11 = AmplitudeTier_getShimmer_apq11 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 		if (dda) *dda = 3.0 * AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		rethrowm (me, " & ", thee, ": shimmer measures not computed.");
+		Melder_throw (me, " & ", thee, ": shimmer measures not computed.");
 	}
 }
 
@@ -323,7 +323,7 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		MelderInfo_writeLine2 (L"   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));
 		MelderInfo_writeLine3 (L"   Mean harmonics-to-noise ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB), 3), L" dB");
 	} catch (MelderError) {
-		rethrowm (sound, " & ", pitch, " & ", pulses, ": voice report not computed.");
+		Melder_throw (sound, " & ", pitch, " & ", pulses, ": voice report not computed.");
 	}
 }
 

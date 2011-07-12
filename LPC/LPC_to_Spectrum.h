@@ -22,7 +22,7 @@
 /*
  djmw 19980224
  djmw 20020812 GPL header
- djmw 20110307 Latest modification
+ djmw 20110702 Latest modification
 */
 
 #include "LPC.h"
@@ -32,7 +32,7 @@
 	extern "C" {
 #endif
 
-int LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction,
+void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction,
 	double deEmphasisFrequency);
 	
 Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction,
@@ -41,8 +41,6 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 Spectrum LPC_to_Spectrum2 (LPC me, double t, double dfMin, double bandwidthReduction);
 /* if(dfMin >= 0) df <= dfMin else df = NyquistFrequency / 512 */
 /* integration radius r = exp (- pi * bandwidthReduction / samplingFrequency) */
-
-int LPC_Frame_into_Spectrum2 (LPC_Frame me, Spectrum thee, double bandwidthReduction);
 
 #ifdef __cplusplus
 	}

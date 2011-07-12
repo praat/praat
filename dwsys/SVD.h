@@ -25,30 +25,18 @@
 #define _SVD_h_
 
 #include "NUM2.h"
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+#include "Data.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define SVD_members Data_members		\
-	double tolerance;	\
-	long numberOfRows, numberOfColumns;	\
-	double **u; /* column vectors */ \
-	double **v; /* row vectors */ \
-	double *d; /* decreasing singular values */
-#define SVD_methods Data_methods
-class_create (SVD, Data);
+#include "SVD_def.h"
+#define SVD__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (SVD, Data);
 
-#define GSVD_members Data_members		\
-	double tolerance; \
-	long numberOfColumns; \
-	double **q, **r; \
-	double *d1, *d2;
-#define GSVD_methods Data_methods
-class_create (GSVD, Data);
+#define GSVD__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (GSVD, Data);
 
 void SVD_init (I, long numberOfRows, long numberOfColumns);
 

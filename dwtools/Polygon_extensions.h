@@ -83,7 +83,6 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 	thy y[ns+4] = clip(level)
 	thy x[ns+5] = thy x[1] (close the path)
 	thy y[ns+5] = thy y[1]
-
 	where clip(y) = y < ymin ? ymin : y > ymax ? ymax ; y;
 */
 
@@ -91,6 +90,8 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 /* Area enclosed by the sounds */
 
 Polygon Polygons_union (Polygon me, Polygon thee);
+
+Collection Polygons_clip (Polygon me, Polygon thee);
 
 #ifdef __cplusplus
 	}

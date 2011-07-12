@@ -86,7 +86,7 @@ FeatureWeights FeatureWeights_create
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("FeatureWeights not created.");
+		Melder_throw ("FeatureWeights not created.");
 	}
 }
 
@@ -189,7 +189,6 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		double range = 0.5;
 		double progress = 1 / range;
 		autoNUMvector <double> results (0L, nseeds);
-		autoMelderProgress (L"FeatureWeights: compute wrapper.");
 
 		autoThingVector <FeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
@@ -204,7 +203,6 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		while (range > 0 && results [nseeds] < stop)
 		{
 			long best = nseeds;
-			if (! Melder_progress1 (range * progress, L"")) break;
 
 			if (mode == 2)
 			{
@@ -256,7 +254,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 		cs [nseeds] = NULL;   // prevent destruction
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("FeatureWeights: wrapper not computed.");
+		Melder_throw ("FeatureWeights: wrapper not computed.");
 	}
 }
 
@@ -296,9 +294,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		double progress = 1 / range;
 		autoNUMvector <double> results (0L, nseeds);
-		autoMelderProgress (L"FeatureWeights: compute wrapper.");
 
 		autoThingVector <FeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
@@ -313,7 +309,6 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		while (range > 0 && results [nseeds] < stop)
 		{
 			long best = nseeds;
-			if (! Melder_progress1 (range * progress, L"")) break;
 
 			if (mode == 2)
 			{
@@ -365,7 +360,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 		cs [nseeds] = NULL;   // prevent destruction
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("FeatureWeights: wrapper not computed.");
+		Melder_throw ("FeatureWeights: wrapper not computed.");
 	}
 }
 
@@ -404,7 +399,8 @@ double FeatureWeights_evaluate      // Obsolete - use *_EvaluateWithTestSet
 		hits /= o -> size;
 		return hits;
 	} catch (MelderError) {
-		rethrowval (NUMundefined);
+		throw;
+		return 0;
 	}
 }
 
@@ -427,100 +423,94 @@ FeatureWeights FeatureWeights_computeRELIEF
 )
 
 {
-	try {
-		autoPattern p = (Pattern) Data_copy (pp);
-		autoFeatureWeights me = FeatureWeights_create (p -> nx);
-		autoMelderProgress (L"FeatureWeights: compute RELIEF.");
+	autoPattern p = (Pattern) Data_copy (pp);
+	autoFeatureWeights me = FeatureWeights_create (p -> nx);
 
-        /////////////////////////////////
-        // Initial weights <- 0        //
-        /////////////////////////////////
+	/////////////////////////////////
+	// Initial weights <- 0        //
+	/////////////////////////////////
 
-        for (long i = 1; i <= p->nx; i++) {
-            my fweights -> data [1] [i] = 0.0;
-        }
+	for (long i = 1; i <= p->nx; i++) {
+		my fweights -> data [1] [i] = 0.0;
+	}
 
-        /////////////////////////////////
-        // Normalization               //
-        /////////////////////////////////
+	/////////////////////////////////
+	// Normalization               //
+	/////////////////////////////////
 
-		autoNUMvector <double> min (0L, p->nx - 1);
-		autoNUMvector <double> max (0L, p->nx - 1);
-        for (long x = 1; x <= p -> nx; x ++) {
-            max [x] = p -> z [1] [x];
-            min [x] = max [x];
-        }
+	autoNUMvector <double> min (0L, p->nx - 1);
+	autoNUMvector <double> max (0L, p->nx - 1);
+	for (long x = 1; x <= p -> nx; x ++) {
+		max [x] = p -> z [1] [x];
+		min [x] = max [x];
+	}
 
-        for (long y = 1; y <= p -> ny; y ++) {
-            for (long x = 1; x <= p->nx; x++) {
-                if (p->z[y][x] > max[x]) max[x] = p->z[y][x];
-                if (p->z[y][x] < min[x]) min[x] = p->z[y][x];
-            }
-        }
+	for (long y = 1; y <= p -> ny; y ++) {
+		for (long x = 1; x <= p->nx; x++) {
+			if (p->z[y][x] > max[x]) max[x] = p->z[y][x];
+			if (p->z[y][x] < min[x]) min[x] = p->z[y][x];
+		}
+	}
 
-        autoNUMvector <double> alfa (0L, p -> nx - 1);
-        for (long x = 1; x <= p -> nx; x ++) {
-            alfa [x] = max [x] - min [x];
-        }
+	autoNUMvector <double> alfa (0L, p -> nx - 1);
+	for (long x = 1; x <= p -> nx; x ++) {
+		alfa [x] = max [x] - min [x];
+	}
 
-        for (long y = 1; y <= p->ny; y++) {
-            for (long x = 1; x <= p->nx; x++) {
-                if (alfa [x]) {
-                    p->z[y][x] = (p->z[y][x] - min[x]) / alfa[x];
-                } else {
-                    p->z[y][x] = 0;
-                }
-            }
-        }
+	for (long y = 1; y <= p->ny; y++) {
+		for (long x = 1; x <= p->nx; x++) {
+			if (alfa [x]) {
+				p->z[y][x] = (p->z[y][x] - min[x]) / alfa[x];
+			} else {
+				p->z[y][x] = 0;
+			}
+		}
+	}
 
-        /////////////////////////////////
-        // Computing prior class probs //
-        /////////////////////////////////
+	/////////////////////////////////
+	// Computing prior class probs //
+	/////////////////////////////////
 
-        autoNUMvector <double> priors (0L, c->size - 1);   // worst-case allocations
-        autoNUMvector <long> classes (0L, c->size - 1);//
-        autoNUMvector <long> enemies (0L, c->size - 1);//
-        autoNUMvector <long> friends (0L, c->size - 1);//
-        long nclasses = FeatureWeights_computePriors (c, classes.peek(), priors.peek());
-		Melder_assert (nclasses >= 2);
+	autoNUMvector <double> priors (0L, c->size - 1);   // worst-case allocations
+	autoNUMvector <long> classes (0L, c->size - 1);//
+	autoNUMvector <long> enemies (0L, c->size - 1);//
+	autoNUMvector <long> friends (0L, c->size - 1);//
+	long nclasses = FeatureWeights_computePriors (c, classes.peek(), priors.peek());
+	Melder_assert (nclasses >= 2);
 
-        /////////////////////////////////
-        // Updating the w.vector       //
-        /////////////////////////////////
+	/////////////////////////////////
+	// Updating the w.vector       //
+	/////////////////////////////////
 
-        for (long y = 1; y <= p -> ny; y ++) {
-            if (! Melder_progress1(1 - (double) y / p->ny, L"")) break;
+	for (long y = 1; y <= p -> ny; y ++) {
 
-            long nfriends = KNN_kFriends (p.peek(), p.peek(), c, y, k, friends.peek());
-            long nenemies = KNN_kUniqueEnemies (p.peek(), p.peek(), c, y, nclasses - 1, enemies.peek());
+		long nfriends = KNN_kFriends (p.peek(), p.peek(), c, y, k, friends.peek());
+		long nenemies = KNN_kUniqueEnemies (p.peek(), p.peek(), c, y, nclasses - 1, enemies.peek());
 
-            if (nfriends && nenemies) {
-                autoNUMvector <double> classps (0L, nenemies - 1);
-                for (long eq = 0; eq < nenemies; eq++) {
-					for (long iq = 0; iq < nclasses; iq++) {
-                        if (FeatureWeights_areFriends ((SimpleString) c->item[enemies[eq]], (SimpleString) c->item[classes[iq]])) {
-                            classps[eq] = priors[iq];
-                            break;
-                        }
+		if (nfriends && nenemies) {
+			autoNUMvector <double> classps (0L, nenemies - 1);
+			for (long eq = 0; eq < nenemies; eq++) {
+				for (long iq = 0; iq < nclasses; iq++) {
+					if (FeatureWeights_areFriends ((SimpleString) c->item[enemies[eq]], (SimpleString) c->item[classes[iq]])) {
+						classps[eq] = priors[iq];
+						break;
 					}
 				}
-                for (long x = 1; x <= p->nx; x++) {
-                    double p1 = 0.0;
-                    double p2 = 0.0;
-                    for (long ec = 0; ec < nfriends; ec++) {
-                        p1 += fabs(p->z[y][x] - p->z[friends[ec]][x]) / (p->ny * nfriends);
-                    }
-                    for (long ec = 0; ec < nenemies; ec++) {
-                        p2 += (fabs(p->z[y][x] - p->z[enemies[ec]][x]) * classps[ec]) / p->ny;
-                    }
-                    my fweights -> data [1] [x] = my fweights -> data [1] [x] - p1 + p2;
-                }
-            }
-        }
-        return me.transfer();
-    } catch (MelderError) {
-		rethrowzero;
-    }
+			}
+			for (long x = 1; x <= p->nx; x++) {
+				double p1 = 0.0;
+				double p2 = 0.0;
+				for (long ec = 0; ec < nfriends; ec++) {
+					p1 += fabs(p->z[y][x] - p->z[friends[ec]][x]) / (p->ny * nfriends);
+				}
+				for (long ec = 0; ec < nenemies; ec++) {
+					p2 += (fabs(p->z[y][x] - p->z[enemies[ec]][x]) * classps[ec]) / p->ny;
+				}
+				my fweights -> data [1] [x] = my fweights -> data [1] [x] - p1 + p2;
+			}
+		}
+	}
+	return me.transfer();
 }
 
 /* End of file FeatureWeights.cpp */

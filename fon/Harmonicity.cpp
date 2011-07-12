@@ -138,7 +138,7 @@ Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, do
 		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Harmonicity not created.");
+		Melder_throw ("Harmonicity not created.");
 	}
 }
 
@@ -148,7 +148,7 @@ Matrix Harmonicity_to_Matrix (Harmonicity me) {
 		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, "not converted to Matrix.");
+		Melder_throw (me, "not converted to Matrix.");
 	}
 }
 
@@ -159,7 +159,7 @@ Harmonicity Matrix_to_Harmonicity (I) {
 		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, "not converted to Harmonicity.");
+		Melder_throw (me, "not converted to Harmonicity.");
 	}
 }
 

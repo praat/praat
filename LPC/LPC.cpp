@@ -76,24 +76,19 @@ class_methods (LPC, Sampled)
 	class_method (info)
 class_methods_end
 
-int LPC_Frame_init (LPC_Frame me, int nCoefficients)
+void LPC_Frame_init (LPC_Frame me, int nCoefficients)
 {
-	try {
-		if (nCoefficients != 0) my a = NUMvector<double> (1, nCoefficients);
-		my nCoefficients = nCoefficients;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	if (nCoefficients != 0) my a = NUMvector<double> (1, nCoefficients);
+	my nCoefficients = nCoefficients;
 }
 
 void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 	int predictionOrder, double samplingPeriod)
 {
-	try {
-		my samplingPeriod = samplingPeriod;
-		my maxnCoefficients = predictionOrder;
-		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
-		my frame = NUMvector<structLPC_Frame> (1, nt);
-	} catch (MelderError) { rethrow; }
+	my samplingPeriod = samplingPeriod;
+	my maxnCoefficients = predictionOrder;
+	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	my frame = NUMvector<structLPC_Frame> (1, nt);
 }
 
 LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -103,47 +98,43 @@ LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("LPC not created."); }
+	} catch (MelderError) { Melder_thrown ("LPC not created."); }
 }
 
 void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish)
 {
-	try {
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-		long itmin, itmax;
-		if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
-		autoNUMvector<double> gain (itmin, itmax);
-		
-		for (long iframe=itmin; iframe <= itmax; iframe++) { gain[iframe] = my frame[iframe].gain; }
-		if (gmax <= gmin) NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
-		if (gmax == gmin) { gmin = 0; gmax += 0.5; }
-		
-		Graphics_setInner (g);
-		Graphics_setWindow (g, tmin, tmax, gmin, gmax);
-		for (long iframe = itmin; iframe <= itmax; iframe++)
-		{
-			double x = Sampled_indexToX (me, iframe);
-			Graphics_fillCircle_mm (g, x, gain[iframe], 1.0);
-		}
-		Graphics_unsetInner (g);
-		if (garnish)
-		{
-			Graphics_drawInnerBox (g);
-			Graphics_textBottom (g, 1, L"Time (seconds)");
-			Graphics_textLeft (g, 1, L"Gain");
-			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_marksLeft (g, 2, 1, 1, 0);
-		}
-	} catch (MelderError) { rethrow; }
+	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+	long itmin, itmax;
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
+	autoNUMvector<double> gain (itmin, itmax);
+	
+	for (long iframe=itmin; iframe <= itmax; iframe++) { gain[iframe] = my frame[iframe].gain; }
+	if (gmax <= gmin) NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
+	if (gmax == gmin) { gmin = 0; gmax += 0.5; }
+	
+	Graphics_setInner (g);
+	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
+	for (long iframe = itmin; iframe <= itmax; iframe++)
+	{
+		double x = Sampled_indexToX (me, iframe);
+		Graphics_fillCircle_mm (g, x, gain[iframe], 1.0);
+	}
+	Graphics_unsetInner (g);
+	if (garnish)
+	{
+		Graphics_drawInnerBox (g);
+		Graphics_textBottom (g, 1, L"Time (seconds)");
+		Graphics_textLeft (g, 1, L"Gain");
+		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_marksLeft (g, 2, 1, 1, 0);
+	}
 }
 
 void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
 {
-	try {
-		autoPolynomial p = LPC_to_Polynomial (me, time);
-		autoRoots r = Polynomial_to_Roots (p.peek());
-		Roots_draw (r.peek(), g, -1, 1, -1, 1, L"+", 12, garnish);
-	} catch (MelderError) { rethrow; }
+	autoPolynomial p = LPC_to_Polynomial (me, time);
+	autoRoots r = Polynomial_to_Roots (p.peek());
+	Roots_draw (r.peek(), g, -1, 1, -1, 1, L"+", 12, garnish);
 }
 
 
@@ -162,7 +153,7 @@ Matrix LPC_to_Matrix (LPC me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
 }
 
 /* End of file LPC.cpp */

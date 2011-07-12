@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/10/01 can write as encoding
- * pb 2007/10/09 wchar_t
+ * pb 2007/10/09 wchar
  */
 
 #include "Speaker.h"
@@ -57,7 +57,7 @@ class_methods (Speaker, Data) {
 	class_methods_end
 }
 
-Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses)
+Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses)
 {
 	Speaker me = Thing_new (Speaker);
 

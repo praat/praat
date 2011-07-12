@@ -39,44 +39,40 @@ long KNN_prune_prune
     long k      // k(!)
 )
 {
-	try {
-		autoCategories uniqueCategories = Categories_selectUniqueItems (my output, 1);
-		if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
-			return 0;
-		long removals = 0;
-		long ncandidates = 0;
-		autoNUMvector <long> candidates (0L, my nInstances - 1);
-		if (my nInstances <= 1)
-			return 0;
-		for (long y = 1; y <= my nInstances; y ++) {
-			if (KNN_prune_noisy (my input, my output, y, k)) {
-				if (n == 1 || NUMrandomUniform (0, 1) <= n) {
-					KNN_removeInstance (me, y);
-					++ removals;
-				}
+	autoCategories uniqueCategories = Categories_selectUniqueItems (my output, 1);
+	if (Categories_getSize (uniqueCategories.peek()) == my nInstances)
+		return 0;
+	long removals = 0;
+	long ncandidates = 0;
+	autoNUMvector <long> candidates (0L, my nInstances - 1);
+	if (my nInstances <= 1)
+		return 0;
+	for (long y = 1; y <= my nInstances; y ++) {
+		if (KNN_prune_noisy (my input, my output, y, k)) {
+			if (n == 1 || NUMrandomUniform (0, 1) <= n) {
+				KNN_removeInstance (me, y);
+				++ removals;
 			}
 		}
-		for (long y = 1; y <= my nInstances; ++ y) {
-			if (KNN_prune_superfluous (my input, my output, y, k, 0) && ! KNN_prune_critical (my input, my output, y, k))
-				candidates [ncandidates ++] = y;
-		}
-		KNN_prune_sort (my input, my output, k, candidates.peek(), ncandidates);
-		for (long y = 0; y < ncandidates; ++ y) {
-			if (KNN_prune_superfluous (my input, my output, candidates [y], k, 0) && ! KNN_prune_critical (my input, my output, candidates [y], k)) {
-				if (r == 1 || NUMrandomUniform (0, 1) <= r) {
-					KNN_removeInstance (me, candidates[y]);
-					for (long i = y + 1; i < ncandidates; ++ i) {
-						if(candidates[i] > candidates[y])
-							-- candidates[i];
-					}
-					++ removals;
-				}
-			}
-		}
-		return removals;
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	for (long y = 1; y <= my nInstances; ++ y) {
+		if (KNN_prune_superfluous (my input, my output, y, k, 0) && ! KNN_prune_critical (my input, my output, y, k))
+			candidates [ncandidates ++] = y;
+	}
+	KNN_prune_sort (my input, my output, k, candidates.peek(), ncandidates);
+	for (long y = 0; y < ncandidates; ++ y) {
+		if (KNN_prune_superfluous (my input, my output, candidates [y], k, 0) && ! KNN_prune_critical (my input, my output, candidates [y], k)) {
+			if (r == 1 || NUMrandomUniform (0, 1) <= r) {
+				KNN_removeInstance (me, candidates[y]);
+				for (long i = y + 1; i < ncandidates; ++ i) {
+					if(candidates[i] > candidates[y])
+						-- candidates[i];
+				}
+				++ removals;
+			}
+		}
+	}
+	return removals;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,30 +88,26 @@ void KNN_prune_sort
     long nindices   // the number of instances to be sorted
 )
 {
-	try {
-		long n = nindices;
-		autoNUMvector <long> h (0L, nindices - 1);
-		for (long cc = 0; cc < nindices; ++ cc)
-			h [cc] = KNN_friendsAmongkNeighbours (p, p, c, indices [cc], k);
-		while (-- n) {   // insertion-sort, is heap-sort worth the effort?
-			for (long m = n; m < nindices - 1; m ++) {
-				if (h [m - 1] > h[m]) 
-					break;
-				if (h [m - 1] < h[m]) {
+	long n = nindices;
+	autoNUMvector <long> h (0L, nindices - 1);
+	for (long cc = 0; cc < nindices; ++ cc)
+		h [cc] = KNN_friendsAmongkNeighbours (p, p, c, indices [cc], k);
+	while (-- n) {   // insertion-sort, is heap-sort worth the effort?
+		for (long m = n; m < nindices - 1; m ++) {
+			if (h [m - 1] > h[m]) 
+				break;
+			if (h [m - 1] < h[m]) {
+				OlaSWAP (long, indices [m - 1], indices [m]);
+			} else {
+				if (KNN_nearestEnemy (p, p, c, indices [m - 1]) < KNN_nearestEnemy (p, p, c, indices [m])) {
 					OlaSWAP (long, indices [m - 1], indices [m]);
 				} else {
-					if (KNN_nearestEnemy (p, p, c, indices [m - 1]) < KNN_nearestEnemy (p, p, c, indices [m])) {
+					if (NUMrandomUniform (0, 1) > 0.5) {
 						OlaSWAP (long, indices [m - 1], indices [m]);
-					} else {
-						if (NUMrandomUniform (0, 1) > 0.5) {
-							OlaSWAP (long, indices [m - 1], indices [m]);
-						}
 					}
 				}
 			}
 		}
-	} catch (MelderError) {
-		rethrow;
 	}
 }
 
@@ -133,28 +125,24 @@ long KNN_prune_kCoverage
     long * indices  // Out: kCoverage set
 )
 {
-	try {
-		Melder_assert (y <= p->ny);
-		Melder_assert (k > 0 && k <= p->ny);
-		long cc = 0;
-		autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-		autoNUMvector <long> tempindices (0L, p -> ny - 1);
-		for (long yy = 1; yy <= p -> ny; yy++) {
-			if (y != yy && FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [yy])) {
-				long n = KNN_kNeighboursSkip (p, p, fws.peek(), yy, k, tempindices.peek(), y);
-				while (n) {
-					Melder_assert (n <= p -> ny);
-					if (tempindices [-- n] == y) {
-						indices [cc ++] = yy;
-						break;
-					}
+	Melder_assert (y <= p->ny);
+	Melder_assert (k > 0 && k <= p->ny);
+	long cc = 0;
+	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
+	autoNUMvector <long> tempindices (0L, p -> ny - 1);
+	for (long yy = 1; yy <= p -> ny; yy++) {
+		if (y != yy && FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [yy])) {
+			long n = KNN_kNeighboursSkip (p, p, fws.peek(), yy, k, tempindices.peek(), y);
+			while (n) {
+				Melder_assert (n <= p -> ny);
+				if (tempindices [-- n] == y) {
+					indices [cc ++] = yy;
+					break;
 				}
 			}
 		}
-		return cc;
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	return cc;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -170,23 +158,19 @@ int KNN_prune_superfluous
     long skipper    // Skipping instance skipper
 )
 {
-	try {
-		if (y > p -> ny) y = p -> ny;   // safety belt
-		if (k > p -> ny) k = p -> ny;
-		autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-		autoNUMvector <long> indices (0L, k - 1);
-		autoNUMvector <long> freqindices (0L, k - 1);
-		autoNUMvector <double> distances (0L, k - 1);
-		autoNUMvector <double> freqs (0L, k - 1);
-		if (! KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), skipper)) return 0;
-		long ncategories = KNN_kIndicesToFrequenciesAndDistances (c, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
-		int result = FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [freqindices [KNN_max (freqs.peek(), ncategories)]]);
-		if (result)
-			return 1;
-		return 0;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	if (y > p -> ny) y = p -> ny;   // safety belt
+	if (k > p -> ny) k = p -> ny;
+	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
+	autoNUMvector <long> indices (0L, k - 1);
+	autoNUMvector <long> freqindices (0L, k - 1);
+	autoNUMvector <double> distances (0L, k - 1);
+	autoNUMvector <double> freqs (0L, k - 1);
+	if (! KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), skipper)) return 0;
+	long ncategories = KNN_kIndicesToFrequenciesAndDistances (c, k, indices.peek(), distances.peek(), freqs.peek(), freqindices.peek());
+	int result = FeatureWeights_areFriends ((SimpleString) c -> item [y], (SimpleString) c -> item [freqindices [KNN_max (freqs.peek(), ncategories)]]);
+	if (result)
+		return 1;
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,21 +185,17 @@ int KNN_prune_critical
     long k          // k(!)
 )
 {
-	try {
-		if (y > p -> ny) y = p -> ny;   // safety belt
-		if (k > p -> ny) k = p -> ny;
-		autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-		autoNUMvector <long> indices (0L, k - 1);
-		long ncollected = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y);
-		for (long ic = 0; ic < ncollected; ic ++) {
-			if (! KNN_prune_superfluous (p, c, indices [ic], k, 0) || ! KNN_prune_superfluous (p, c, indices [ic], k, y)) {
-				return 1;
-			}
+	if (y > p -> ny) y = p -> ny;   // safety belt
+	if (k > p -> ny) k = p -> ny;
+	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
+	autoNUMvector <long> indices (0L, k - 1);
+	long ncollected = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y);
+	for (long ic = 0; ic < ncollected; ic ++) {
+		if (! KNN_prune_superfluous (p, c, indices [ic], k, 0) || ! KNN_prune_superfluous (p, c, indices [ic], k, y)) {
+			return 1;
 		}
-		return 0;
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	return 0;
 }
 
 
@@ -231,19 +211,15 @@ int KNN_prune_noisy
     long k          // k(!)
 )
 {
-	try {
-		if (y > p -> ny) y = p -> ny;   // safety belt
-		if (k > p -> ny) k = p -> ny;
-		autoFeatureWeights fws = FeatureWeights_create (p -> nx);
-		autoNUMvector <long> indices (0L, p->ny - 1);    // the coverage is not bounded by k but by n
-		long reachability = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y); 
-		long coverage = KNN_prune_kCoverage (p, c, y, k, indices.peek());
-		if (! KNN_prune_superfluous (p, c, y, k, 0) && reachability > coverage)
-			return 1;
-		return 0;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	if (y > p -> ny) y = p -> ny;   // safety belt
+	if (k > p -> ny) k = p -> ny;
+	autoFeatureWeights fws = FeatureWeights_create (p -> nx);
+	autoNUMvector <long> indices (0L, p->ny - 1);    // the coverage is not bounded by k but by n
+	long reachability = KNN_kNeighboursSkip (p, p, fws.peek(), y, k, indices.peek(), y); 
+	long coverage = KNN_prune_kCoverage (p, c, y, k, indices.peek());
+	if (! KNN_prune_superfluous (p, c, y, k, 0) && reachability > coverage)
+		return 1;
+	return 0;
 }
 
 /* End of file KNN_prune.cpp */

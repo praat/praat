@@ -67,7 +67,7 @@ oo_DEFINE_CLASS (DTW, Matrix)
 		oo_STRUCT (DTW_Path_Query, pathQuery)
 	#endif
 	#if oo_READING
-		if (! DTW_Path_Query_init (& my pathQuery, my ny, my nx)) return 0;
+		DTW_Path_Query_init (& my pathQuery, my ny, my nx);
 		DTW_Path_recode (me);
 	#endif
 oo_END_CLASS (DTW)

@@ -33,6 +33,7 @@
  * pb 2007/08/25 added an extra count to "par" in readOnePage (awful bug)
  * pb 2007/10/01 made sure that non-ASCII characters in ManPage code are written as ASCII Unicode numbers
  * pb 2011/05/15 C++
+ * pb 2011/07/03 C++
  */
 
 #include <ctype.h>
@@ -76,8 +77,8 @@ static void destroy (I) { iam (ManPages);
 	inherited (ManPages) destroy (me);
 }
 
-static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_t *link) {
-	wchar_t *to = link, *max = link + 300;
+static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link) {
+	wchar *to = link, *max = link + 300;
 	if (p == NULL) p = text;
 	/*
 	 * Search for next '@' that is not in a backslash sequence.
@@ -90,7 +91,7 @@ static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_
 	}
 	Melder_assert (*p == '@');
 	if (p [1] == '@') {
-		const wchar_t *from = p + 2;
+		const wchar *from = p + 2;
 		while (*from != '@' && *from != '|' && *from != '\0') {
 			if (to >= max) {
 				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
@@ -101,7 +102,7 @@ static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_
 		if (*from == '|') { from ++; while (*from != '@' && *from != '\0') from ++; }
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
-		const wchar_t *from = p + 1;
+		const wchar *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
 			if (to >= max) {
 				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
@@ -115,55 +116,70 @@ static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_
 	return p;
 }
 
-static int readOnePage (ManPages me, MelderReadText text) {
-	ManPage page;
-	ManPage_Paragraph par;
-	wchar_t *title = texgetw2 (text);
-	if (! title) return Melder_error1 (L"Cannot find page title.");
+static void readOnePage (ManPages me, MelderReadText text) {
+	wchar *title;
+	try {
+		title = texgetw2 (text);
+	} catch (MelderError) {
+		Melder_throw ("Cannot find page title.");
+	}
 
 	/*
 	 * Check whether a page with this title is already present.
 	 */
 	if (lookUp_unsorted (me, title)) {
 		Melder_free (title);   // memory leak repaired, ppgb 20061228
-		return 1;
+		return;
 	}
 
-	page = Thing_new (ManPage);
+	ManPage page = Thing_new (ManPage);
 	page -> title = title;
 
 	/*
 	 * Add the page early, so that lookUp can find it.
 	 */
-	if (! Collection_addItem (my pages, page)) return 0;
+	Collection_addItem (my pages, page);
 
-	page -> author = texgetw2 (text);
-	if (! page -> author) return Melder_error1 (L"Cannot find author.");
-	page -> date = texgetu4 (text);
-	iferror return Melder_error1 (L"Cannot find date.");
-	page -> recordingTime = texgetr8 (text);
-	iferror return Melder_error1 (L"Cannot find recording time.");
+	try {
+		page -> author = texgetw2 (text);
+	} catch (MelderError) {
+		Melder_throw ("Cannot find author.");
+	}
+	try {
+		page -> date = texgetu4 (text);
+	} catch (MelderError) {
+		Melder_throw ("Cannot find date.");
+	}
+	try {
+		page -> recordingTime = texgetr8 (text);
+	} catch (MelderError) {
+		Melder_throw ("Cannot find recording time.");
+	}
 	page -> paragraphs = NUMvector <struct structManPage_Paragraph> (0, 500);
-	if (! page -> paragraphs) return 0;
-	for (par = page -> paragraphs;; par ++) {
-		wchar_t link [501], fileName [256];
-		const wchar_t *p;
-		par -> type = texgete1 (text, kManPage_type_getValue);
-		if (Melder_hasError ()) {
+
+	ManPage_Paragraph par = & page -> paragraphs [0];
+	for (;; par ++) {
+		wchar link [501], fileName [256];
+		try {
+			par -> type = texgete1 (text, kManPage_type_getValue);
+		} catch (MelderError) {
 			if (wcsstr (Melder_getError (), L"end of text")) {
 				Melder_clearError ();
 				break;
 			} else {
-				return 0;
+				throw;
 			}
 		}
 		if (par -> type == kManPage_type_SCRIPT) {
 			par -> width = texgetr4 (text);
 			par -> height = texgetr4 (text);
 		}
-		par -> text = texgetw2 (text);
-		if (! par -> text) return Melder_error1 (L"Cannot find text.");
-		for (p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
+		try {
+			par -> text = texgetw2 (text);
+		} catch (MelderError) {
+			Melder_throw ("Cannot find text.");
+		}
+		for (const wchar *p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
@@ -212,13 +228,14 @@ static int readOnePage (ManPages me, MelderReadText text) {
 				wcscpy (fileName, link);
 				wcscat (fileName, L".man");
 				MelderDir_getFile (& my rootDirectory, fileName, & file2);
-				MelderReadText text2 = MelderReadText_createFromFile (& file2);
-				if (text2 != NULL) {
-					if (! readOnePage (me, text2)) {
-						MelderReadText_delete (text2);
-						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
+				try {
+					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+					try {
+						readOnePage (me, text2.peek());
+					} catch (MelderError) {
+						Melder_throw ("File ", MelderFile_messageName (& file2), ".");
 					}
-				} else {
+				} catch (MelderError) {
 					/*
 					 * Second try: with upper case.
 					 */
@@ -227,29 +244,26 @@ static int readOnePage (ManPages me, MelderReadText text) {
 					wcscpy (fileName, link);
 					wcscat (fileName, L".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
-					text2 = MelderReadText_createFromFile (& file2);
-					if (text2 == NULL) return 0;
-					if (! readOnePage (me, text2)) {
-						MelderReadText_delete (text2);
-						return Melder_error3 (L"File ", MelderFile_messageName (& file2), L".");
+					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
+					try {
+						readOnePage (me, text2.peek());
+					} catch (MelderError) {
+						Melder_throw ("File ", MelderFile_messageName (& file2), ".");
 					}
 				}
-				MelderReadText_delete (text2);
 			}
 		}
-		iferror return 0;
 	}
 	++ par;   // Room for the last paragraph (because counting starts at 0).
 	++ par;   // Room for the final zero-type paragraph.
-	Melder_realloc_f (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
-	return 1;
+	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
-static int readText (I, MelderReadText text) {
+static void readText (I, MelderReadText text) {
 	iam (ManPages);
 	my dynamic = TRUE;
 	my pages = Ordered_create ();
 	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
-	return readOnePage (me, text);
+	readOnePage (me, text);
 }
 
 class_methods (ManPages, Data) {
@@ -264,16 +278,15 @@ ManPages ManPages_create (void) {
 	return me;
 }
 
-int ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
+void ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs [])
 {
-	ManPage page = Thing_new (ManPage);
+	autoManPage page = Thing_new (ManPage);
 	page -> title = title;
 	page -> paragraphs = & paragraphs [0];
 	page -> author = author;
 	page -> date = date;
-	Collection_addItem (my pages, page);
-	return ! Melder_hasError ();
+	Collection_addItem (my pages, page.transfer());
 }
 
 static int pageCompare (const void *first, const void *second) {
@@ -761,38 +774,48 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 	MelderString_append1 (buffer, L"</p>\n</address>\n</body>\n</html>\n");
 }
 
-int ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
+void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
 	writePageAsHtml (me, file, ipage, & buffer);
-	if (! MelderFile_writeText (file, buffer.string)) return 0;
-	return 1;
+	MelderFile_writeText (file, buffer.string);
 }
 
-int ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
+void ManPages_writeAllToHtmlDir (ManPages me, const wchar *dirPath) {
 	structMelderDir dir;
 	Melder_pathToDir (dirPath, & dir);
 	for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = (ManPage) my pages -> item [ipage];
-		wchar_t fileName [256], *oldText;
+		wchar fileName [256];
 		wcscpy (fileName, page -> title);
-		for (wchar_t *p = fileName; *p; p ++) if (! isAllowedFileNameCharacter (*p)) *p = '_';
-		if (fileName [0] == '\0') wcscpy (fileName, L"_");   /* Otherwise Mac problems and Unix invisibility. */
-		fileName [LONGEST_FILE_NAME] = '\0';   /* Longest file name will be 30 characters on Mac. */
+		for (wchar *p = fileName; *p; p ++)
+			if (! isAllowedFileNameCharacter (*p))
+				*p = '_';
+		if (fileName [0] == '\0')
+			wcscpy (fileName, L"_");   // no empty file names please
+		fileName [LONGEST_FILE_NAME] = '\0';
 		wcscat (fileName, L".html");
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
 		structMelderFile file = { 0 };
 		MelderDir_getFile (& dir, fileName, & file);
 		writePageAsHtml (me, & file, ipage, & buffer);
-		oldText = MelderFile_readText (& file);
-		Melder_clearError ();
-		if (oldText == NULL || wcscmp (buffer.string, oldText)) {
-			if (! MelderFile_writeText (& file, buffer.string)) return 0;
+		/*
+		 * An optimization because reading is much faster than writing:
+		 * we write the file only if the old file is different or doesn't exist.
+		 */
+		autostring oldText;
+		try {
+			oldText.reset (MelderFile_readText (& file));
+		} catch (MelderError) {
+			Melder_clearError ();
 		}
-		Melder_free (oldText);
+		if (oldText.peek() == NULL   // doesn't the file exist yet?
+			|| wcscmp (buffer.string, oldText.peek()))   // isn't the old file identical to the new text?
+		{
+			MelderFile_writeText (& file, buffer.string);   // then write the new text
+		}
 	}
-	return 1;
 }
 
 /* End of file ManPages.cpp */

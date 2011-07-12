@@ -68,36 +68,27 @@ void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position)
 	FormantGrid_removeBandwidthTier (me, position);
 }
 
-static int FormantGrid_addFormantTier (FormantGrid me, int position)
+static void FormantGrid_addFormantTier (FormantGrid me, int position)
 {
-	try {
-		if (position > my formants -> size || position < 1) position = my formants -> size + 1;
-		autoRealTier rt = RealTier_create (my xmin, my xmax);
-		Ordered_addItemPos (my formants, rt.transfer(), position);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	if (position > my formants -> size || position < 1) position = my formants -> size + 1;
+	autoRealTier rt = RealTier_create (my xmin, my xmax);
+	Ordered_addItemPos (my formants, rt.transfer(), position);
 }
 
-static int FormantGrid_addBandwidthTier (FormantGrid me, int position)
+static void FormantGrid_addBandwidthTier (FormantGrid me, int position)
 {
-	try {
 		if (position > my bandwidths -> size || position < 1) position = my bandwidths -> size + 1;
 		autoRealTier rt = RealTier_create (my xmin, my xmax);
 		Ordered_addItemPos (my bandwidths, rt.transfer(), position);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
-int FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position)
+void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position)
 {
-	try {
 		if (my formants -> size != my bandwidths -> size) Melder_throw ("Number of formants and bandwidths must be equal.");
 		if (position > my formants -> size || position < 1) position = my formants -> size + 1;
 		FormantGrid_addFormantTier (me, position);
-		try { FormantGrid_addBandwidthTier (me, position); 	
-		} catch (MelderError) { FormantGrid_removeFormantTier (me, position); rethrowzero; }
-	} catch (MelderError) { rethrowzero; }
-	return 1;
+		try { FormantGrid_addBandwidthTier (me, position); 
+		} catch (MelderError) { FormantGrid_removeFormantTier (me, position); throw; }
 }
 
 /* End of file FormantGrid_extensions.cpp */

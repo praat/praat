@@ -97,7 +97,7 @@ Configuration Configuration_create (long numberOfPoints,
 		Configuration_setDefaultWeights (me.peek());
 		Configuration_randomize (me.peek());
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Configuration not created."); }
+	} catch (MelderError) { Melder_thrown ("Configuration not created."); }
 }
 
 void Configuration_setMetric (Configuration me, long metric)
@@ -207,7 +207,6 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers)
 static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, 
 	long maximumNumberOfIterations, double tolerance)
 {
-	try {
 		Melder_assert (nr > 0 && nc > 0);
 
 		NUMdmatrix_copyElements (xm, ym, 1, nr, 1, nc);
@@ -323,7 +322,6 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 				for (long j = 1; j <= nc; j++) ym[i][j] *= norm[i];
 			}
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 Configuration Configuration_varimax (Configuration me, int normalizeRows,
@@ -334,7 +332,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax,
 			maximumNumberOfIterations, tolerance);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": varimax rotation not performed."); }
+	} catch (MelderError) { Melder_thrown (me, ": varimax rotation not performed."); }
 }
 
 Configuration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance)
@@ -343,26 +341,23 @@ Configuration Configuration_congruenceRotation (Configuration me, Configuration 
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
 		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.peek());
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": congruence rotation not performed."); }
+	} catch (MelderError) { Melder_thrown (me, ": congruence rotation not performed."); }
 }
 
 /* Replace by TableOfReal_to_Configuration_pca ??? */
 
-int Configuration_rotateToPrincipalDirections (Configuration me)
+void Configuration_rotateToPrincipalDirections (Configuration me)
 {
-	try {
 		autoNUMmatrix<double> m (NUMdmatrix_copy (my data, 1, my numberOfRows,1, my numberOfColumns), 1, 1);
 
 		NUMdmatrix_into_principalComponents (my data, my numberOfRows, my numberOfColumns, my numberOfColumns, m.peek());
+		NUMvector_free (my data, 1);
 		my data = m.transfer();
-		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax,
 	double ymin, double ymax, int labelSize, int useRowLabels, const wchar_t *label, int garnish)
 {
-	try {
 		long nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 
 		if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions ||
@@ -417,18 +412,15 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 
 		if (noLabel > 0) Melder_warning5 (L"Configuration_draw: ", Melder_integer (noLabel), L" from ", Melder_integer (my numberOfRows),
 		L" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
-	} catch (MelderError) { rethrow; }
 }
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, int confidence, const wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish)
 {
-	try {
 		autoSSCPs sscps = TableOfReal_to_SSCPs_byLabel (me);
 		SSCPs_drawConcentrationEllipses (sscps.peek(), g, scale, confidence, label,
 			d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
-	} catch (MelderError) { rethrow; }
 }
 
 Configuration TableOfReal_to_Configuration (I)
@@ -440,7 +432,7 @@ Configuration TableOfReal_to_Configuration (I)
 		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not converted."); }
+	} catch (MelderError) { Melder_thrown (me, ": not converted."); }
 }
 
 Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions)
@@ -452,7 +444,7 @@ Configuration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDim
 		autoPCA pca = TableOfReal_to_PCA (me);
 		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.peek(), me, numberOfDimensions);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": pca not performed."); }
+	} catch (MelderError) { Melder_thrown (me, ": pca not performed."); }
 }
 
 /********************** Examples *********************************************/
@@ -513,7 +505,7 @@ Configuration Configuration_createLetterRExample (int choice)
 			my data [i][2] = y[i];
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Letter R Configuration not created."); }
+	} catch (MelderError) { Melder_thrown ("Letter R Configuration not created."); }
 }
 
 Configuration Configuration_createCarrollWishExample (void)
@@ -531,7 +523,7 @@ Configuration Configuration_createCarrollWishExample (void)
 			TableOfReal_setRowLabel (me.peek(), i, label[i]);
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Carroll Wish Configuration not created."); }
+	} catch (MelderError) { Melder_thrown ("Carroll Wish Configuration not created."); }
 }
 
 /************ CONFIGURATIONS **************************************/
@@ -545,7 +537,7 @@ Configurations Configurations_create (void)
 		autoConfigurations me = Thing_new (Configurations);
 		Ordered_init (me.peek(), classConfiguration, 10);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Configurations not created."); }
+	} catch (MelderError) { Melder_thrown ("Configurations not created."); }
 }
 
 /* End of file Configuration.cpp */

@@ -27,13 +27,10 @@
 #include "LPC_and_Polynomial.h"
 #include "NUM2.h"
 
-int Formant_Frame_init (Formant_Frame me, long nFormants)
+void Formant_Frame_init (Formant_Frame me, long nFormants)
 {
-	try {
 		my nFormants = nFormants;
 		if (nFormants > 0) my formant = NUMvector<structFormant_Formant> (1, my nFormants);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 void Formant_Frame_scale (Formant_Frame me, double scale)
@@ -45,54 +42,48 @@ void Formant_Frame_scale (Formant_Frame me, double scale)
 	}
 }
 
-int Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin)
+void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin)
 {
-	try {
-		long n = my max - my min + 1;
-		autoNUMvector<double> fc (1, n);
-		autoNUMvector<double> bc (1, n);	
+	long n = my max - my min + 1;
+	autoNUMvector<double> fc (1, n);
+	autoNUMvector<double> bc (1, n);	
 
-		// Determine the formants and bandwidths
-	 
-		thy nFormants = 0;
-		double fLow = margin, fHigh = samplingFrequency / 2 - margin;
-		for (long i = my min; i <= my max; i++)
-		{
-			if (my v[i].im < 0) continue;
-			double f = fabs (atan2 (my v[i].im, my v[i].re)) * samplingFrequency / 2 / NUMpi;
-			if (f >= fLow && f <= fHigh)
-			{
-				/*b = - log (my v[i].re * my v[i].re + my v[i].im * my v[i].im) * samplingFrequency / 2 / NUMpi;*/
-				double b = - log (dcomplex_abs (my v[i])) * samplingFrequency / NUMpi;
-				thy nFormants++;
-				fc[thy nFormants] = f;
-				bc[thy nFormants] = b;
-			}
-		}
+	// Determine the formants and bandwidths
 	
-		Formant_Frame_init (thee, thy nFormants); therror
-	
-		for (long i = 1; i <= thy nFormants; i++)
+	thy nFormants = 0;
+	double fLow = margin, fHigh = samplingFrequency / 2 - margin;
+	for (long i = my min; i <= my max; i++)
+	{
+		if (my v[i].im < 0) continue;
+		double f = fabs (atan2 (my v[i].im, my v[i].re)) * samplingFrequency / 2 / NUMpi;
+		if (f >= fLow && f <= fHigh)
 		{
-			thy formant[i].frequency = fc[i];
-			thy formant[i].bandwidth = bc[i];	
+			/*b = - log (my v[i].re * my v[i].re + my v[i].im * my v[i].im) * samplingFrequency / 2 / NUMpi;*/
+			double b = - log (dcomplex_abs (my v[i])) * samplingFrequency / NUMpi;
+			thy nFormants++;
+			fc[thy nFormants] = f;
+			bc[thy nFormants] = b;
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+
+	Formant_Frame_init (thee, thy nFormants);
+
+	for (long i = 1; i <= thy nFormants; i++)
+	{
+		thy formant[i].frequency = fc[i];
+		thy formant[i].bandwidth = bc[i];	
+	}
 }
 
-int LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin)
+void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samplingPeriod, double margin)
 {
-	try {
-		thy intensity = my gain;
-		if (my nCoefficients == 0) return 1;
+	thy intensity = my gain;
+	if (my nCoefficients == 0) return;
 
-		autoPolynomial p = LPC_Frame_to_Polynomial (me);
-		autoRoots r = Polynomial_to_Roots (p.peek());    
-		Roots_fixIntoUnitCircle (r.peek());
-		Roots_into_Formant_Frame (r.peek(), thee, 1 / samplingPeriod, margin);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	autoPolynomial p = LPC_Frame_to_Polynomial (me);
+	autoRoots r = Polynomial_to_Roots (p.peek());    
+	Roots_fixIntoUnitCircle (r.peek());
+	Roots_into_Formant_Frame (r.peek(), thee, 1 / samplingPeriod, margin);
 }
 
 Formant LPC_to_Formant (LPC me, double margin)
@@ -119,56 +110,55 @@ Formant LPC_to_Formant (LPC me, double margin)
 			try { LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin); therror
 			} catch (MelderError) { Melder_clearError(); err++; }
 		
-			if ((interval == 1 || (i % interval) == 1) && ! Melder_progress5 ((double)i / my nx,
-				L"LPC to Formant: frame ", Melder_integer (i), L" out of ", Melder_integer (my nx), L".")) rethrowzero;
+			if ((interval == 1 || (i % interval) == 1)) {
+				Melder_progress5 ((double)i / my nx, L"LPC to Formant: frame ", Melder_integer (i), 
+					L" out of ", Melder_integer (my nx), L"."); therror
+			}
 		}
 	
 		Formant_sort (thee.peek());
 		if (err > 0) Melder_warning4 (Melder_integer (err), L" formant frames out of ", Melder_integer (my nx), L" suspect.");
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Formant created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Formant created."); }
 }
 
-int Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod)
+void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod)
 {
-	try {
-		long m = 2, n = 2 * my nFormants;
+	long m = 2, n = 2 * my nFormants;
+
+	if (my nFormants < 1) return;
+	autoNUMvector<double> lpc (-1, n);
+
+	lpc[0] = 1;
+	double nyquist = 2.0 / samplingPeriod;
+	for (long i = 1; i <= my nFormants; i++)
+	{
+		double f = my formant[i].frequency;
+		
+		if (f > nyquist) continue;
 	
-		if (my nFormants < 1) return 1;
-		autoNUMvector<double> lpc (-1, n);
+		// D(z): 1 + p z^-1 + q z^-2
 	
-		lpc[0] = 1;
-		double nyquist = 2.0 / samplingPeriod;
-		for (long i = 1; i <= my nFormants; i++)
+		double r = exp (- NUMpi * my formant[i].bandwidth * samplingPeriod);
+		double p = - 2 * r * cos (2 * NUMpi * f * samplingPeriod);
+		double q = r * r;
+	
+		for (long j = m; j > 0; j--)
 		{
-			double f = my formant[i].frequency;
-			
-			if (f > nyquist) continue;
-		
-			// D(z): 1 + p z^-1 + q z^-2
-		
-			double r = exp (- NUMpi * my formant[i].bandwidth * samplingPeriod);
-			double p = - 2 * r * cos (2 * NUMpi * f * samplingPeriod);
-			double q = r * r;
-		
-			for (long j = m; j > 0; j--)
-			{
-				lpc[j] += p * lpc[j - 1] + q * lpc[j - 2];
-			}
-		
-			m += 2;
+			lpc[j] += p * lpc[j - 1] + q * lpc[j - 2];
 		}
 	
-		n = thy nCoefficients < n ? thy nCoefficients : n;
-	
-		for (long i = 1; i <= n ; i++)
-		{
-			thy a[i] = lpc[i];
-		}
-	
-		thy gain = my intensity;
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		m += 2;
+	}
+
+	n = thy nCoefficients < n ? thy nCoefficients : n;
+
+	for (long i = 1; i <= n ; i++)
+	{
+		thy a[i] = lpc[i];
+	}
+
+	thy gain = my intensity;
 }
 
 LPC Formant_to_LPC (Formant me, double samplingPeriod)
@@ -186,7 +176,7 @@ LPC Formant_to_LPC (Formant me, double samplingPeriod)
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod); therror
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("LPC not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC created."); }
 }
 
 /* End of file LPC_and_Formant.cpp */

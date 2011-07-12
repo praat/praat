@@ -33,20 +33,22 @@
  * pb 2011/03/03 reaction times for mouse clicks
  * pb 2011/03/23 C++
  * pb 2011/04/14 reaction times for key presses
+ * pb 2011/07/02 C++
  */
 
 #include "RunnerMFC.h"
 #include "EditorM.h"
 #include "machine.h"
 
-#define RunnerMFC__members(Klas) Editor__members(Klas) \
-	GuiObject drawingArea; \
-	Ordered experiments; \
-	long iexperiment; \
-	Graphics graphics; \
+struct structRunnerMFC : public structEditor {
+	GuiObject drawingArea;
+	Ordered experiments;
+	long iexperiment;
+	Graphics graphics;
 	long numberOfReplays;
+};
 #define RunnerMFC__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (RunnerMFC, Editor);
+Thing_declare2cpp (RunnerMFC, Editor);
 
 static void destroy (I) {
 	iam (RunnerMFC);
@@ -63,15 +65,15 @@ static void dataChanged (RunnerMFC me) {
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
-	my data = my experiments -> item [my iexperiment];
-	if (! ExperimentMFC_start ((ExperimentMFC) my data)) return Melder_error1 (L"Cannot start experiment.");
+	my data = (Data) my experiments -> item [my iexperiment];
+	ExperimentMFC_start ((ExperimentMFC) my data); therror
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
-	Editor_broadcastChange (RunnerMFC_as_Editor (me));
+	Editor_broadcastChange (me);
 	Graphics_updateWs (my graphics);
 	return 1;
 }
 
-static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar_t *visibleText) {
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar *visibleText) {
 	Graphics_setColour (my graphics, Graphics_MAROON);
 	Graphics_setLineWidth (my graphics, 3.0);
 	Graphics_fillRectangle (my graphics, left, right, bottom, top);
@@ -210,15 +212,15 @@ static void do_ok (RunnerMFC me) {
 	my numberOfReplays = 0;
 	if (experiment -> trial == experiment -> numberOfTrials) {
 		experiment -> trial ++;
-		Editor_broadcastChange (RunnerMFC_as_Editor (me));
+		Editor_broadcastChange (me);
 		Graphics_updateWs (my graphics);
 	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
 		experiment -> pausing = TRUE;
-		Editor_broadcastChange (RunnerMFC_as_Editor (me));
+		Editor_broadcastChange (me);
 		Graphics_updateWs (my graphics);
 	} else {
 		experiment -> trial ++;
-		Editor_broadcastChange (RunnerMFC_as_Editor (me));
+		Editor_broadcastChange (me);
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -238,7 +240,7 @@ static void do_oops (RunnerMFC me) {
 	experiment -> goodnesses [experiment -> trial] = 0;
 	experiment -> pausing = FALSE;
 	my numberOfReplays = 0;
-	Editor_broadcastChange (RunnerMFC_as_Editor (me));
+	Editor_broadcastChange (me);
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -249,7 +251,7 @@ static void do_replay (RunnerMFC me) {
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
 	my numberOfReplays ++;
-	Editor_broadcastChange (RunnerMFC_as_Editor (me));
+	Editor_broadcastChange (me);
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -265,9 +267,9 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime - experiment -> stimulusInitialSilenceDuration;
 	double x, y;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
-	if (experiment -> trial == 0) {   /* The first click of the experiment. */
+	if (experiment -> trial == 0) {   // the first click of the experiment
 		experiment -> trial ++;
-		Editor_broadcastChange (RunnerMFC_as_Editor (me));
+		Editor_broadcastChange (me);
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
@@ -277,7 +279,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 			}
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
-	} else if (experiment -> pausing) {   /* A click to leave the break. */
+	} else if (experiment -> pausing) {   // a click to leave the break
 		if (x > experiment -> oops_left && x < experiment -> oops_right &&
 			y > experiment -> oops_bottom && y < experiment -> oops_top && experiment -> trial > 1)
 		{
@@ -285,7 +287,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 		} else {
 			experiment -> pausing = FALSE;
 			experiment -> trial ++;
-			Editor_broadcastChange (RunnerMFC_as_Editor (me));
+			Editor_broadcastChange (me);
 			Graphics_updateWs (my graphics);
 			if (experiment -> stimuliAreSounds) {
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -319,7 +321,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						Editor_broadcastChange (RunnerMFC_as_Editor (me));
+						Editor_broadcastChange (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -329,7 +331,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
-						Editor_broadcastChange (RunnerMFC_as_Editor (me));
+						Editor_broadcastChange (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -395,7 +397,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						Editor_broadcastChange (RunnerMFC_as_Editor (me));
+						Editor_broadcastChange (me);
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -421,7 +423,7 @@ class_methods (RunnerMFC, Editor) {
 RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
-		Editor_init (RunnerMFC_as_parent (me.peek()), parent, 0, 0, 2000, 2000, title, NULL); therror
+		Editor_init (me.peek(), parent, 0, 0, 2000, 2000, title, NULL);
 		my experiments = experiments;
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		#if gtk
@@ -437,7 +439,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		RunnerMFC_startExperiment (me.peek()); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Experiment window not created.");
+		Melder_throw ("Experiment window not created.");
 	}
 }
 

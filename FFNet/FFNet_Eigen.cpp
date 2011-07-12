@@ -159,4 +159,4 @@ void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, thou, Graphics g, long
     Graphics_unsetInner (g);
 }
 
-/* End of file FFNet_Eigen.c */
+/* End of file FFNet_Eigen.cpp */

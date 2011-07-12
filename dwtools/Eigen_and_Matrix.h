@@ -44,7 +44,7 @@ Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents);
 	eigenspace (me). 
 */
 
-int Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him);
+void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him);
 /*
 	Purpose: project the columns of the Matrix (thou) on the 
 	eigenspace (me). Result in existing Matrix (him). 

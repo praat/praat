@@ -155,29 +155,21 @@ class_methods (Table, Data) {
 }
 
 static TableRow TableRow_create (long numberOfColumns) {
-	try {
-		autoTableRow me = Thing_new (TableRow);
-		my numberOfColumns = numberOfColumns;
-		my cells = NUMvector <structTableCell> (1, numberOfColumns);
-		return me.transfer();
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	autoTableRow me = Thing_new (TableRow);
+	my numberOfColumns = numberOfColumns;
+	my cells = NUMvector <structTableCell> (1, numberOfColumns);
+	return me.transfer();
 }
 
 void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
-	try {
-		iam (Table);
-		if (numberOfColumns < 1)
-			Melder_throw ("Cannot create table without columns.");
-		my numberOfColumns = numberOfColumns;
-		my columnHeaders = NUMvector <structTableColumnHeader> (1, numberOfColumns);
-		my rows = Ordered_create (); therror
-		for (long irow = 1; irow <= numberOfRows; irow ++) {
-			Table_appendRow (me); therror
-		}
-	} catch (MelderError) {
-		rethrow;
+	iam (Table);
+	if (numberOfColumns < 1)
+		Melder_throw ("Cannot create table without columns.");
+	my numberOfColumns = numberOfColumns;
+	my columnHeaders = NUMvector <structTableColumnHeader> (1, numberOfColumns);
+	my rows = Ordered_create (); therror
+	for (long irow = 1; irow <= numberOfRows; irow ++) {
+		Table_appendRow (me);
 	}
 }
 
@@ -187,50 +179,44 @@ Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Table not created.");
+		Melder_throw ("Table not created.");
 	}
 }
 
 void Table_initWithColumnNames (I, long numberOfRows, const wchar *columnNames) {
-	try {
-		iam (Table);
-		Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames)); therror
-		long icol = 0;
-		for (wchar *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
-			icol ++;
-			Table_setColumnLabel (me, icol, columnName); therror
-		}
-	} catch (MelderError) {
-		rethrow;
+	iam (Table);
+	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames)); therror
+	long icol = 0;
+	for (wchar *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
+		icol ++;
+		Table_setColumnLabel (me, icol, columnName); therror
 	}
 }
 
 Table Table_createWithColumnNames (long numberOfRows, const wchar *columnNames) {
 	try {
 		autoTable me = Thing_new (Table);
-		Table_initWithColumnNames (me.peek(), numberOfRows, columnNames); therror
+		Table_initWithColumnNames (me.peek(), numberOfRows, columnNames);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Table not created.");
+		Melder_throw ("Table not created.");
 	}
 }
 
-int Table_appendRow (Table me) {
+void Table_appendRow (Table me) {
 	try {
 		autoTableRow row = TableRow_create (my numberOfColumns);
-		Collection_addItem (my rows, row.transfer()); therror
-		return 1;
+		Collection_addItem (my rows, row.transfer());
 	} catch (MelderError) {
-		rethrowmzero (me, ": row not appended.");
+		Melder_throw (me, ": row not appended.");
 	}
 }
 
-int Table_appendColumn (Table me, const wchar *label) {
+void Table_appendColumn (Table me, const wchar *label) {
 	try {
-		Table_insertColumn (me, my numberOfColumns + 1, label); therror
-		return 1;
+		Table_insertColumn (me, my numberOfColumns + 1, label);
 	} catch (MelderError) {
-		rethrowmzero (me, ": column \"", label, "\" not appended.");
+		Melder_throw (me, ": column \"", label, "\" not appended.");
 	}
 }
 
@@ -250,7 +236,7 @@ void Table_removeRow (Table me, long rowNumber) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = FALSE;
 	} catch (MelderError) {
-		rethrowm (me, ": row ", rowNumber, " not removed.");
+		Melder_throw (me, ": row ", rowNumber, " not removed.");
 	}
 }
 
@@ -281,7 +267,7 @@ void Table_removeColumn (Table me, long columnNumber) {
 		}
 		my numberOfColumns --;
 	} catch (MelderError) {
-		rethrowm (me, ": column ", columnNumber, " not removed.");
+		Melder_throw (me, ": column ", columnNumber, " not removed.");
 	}
 }
 
@@ -305,7 +291,7 @@ void Table_insertRow (Table me, long rowNumber) {
 		for (long icol = 1; icol <= my numberOfColumns; icol ++)
 			my columnHeaders [icol]. numericized = FALSE;
 	} catch (MelderError) {
-		rethrowm (me, ": row ", rowNumber, " not inserted.");
+		Melder_throw (me, ": row ", rowNumber, " not inserted.");
 	}
 }
 
@@ -373,7 +359,7 @@ void Table_insertColumn (Table me, long columnNumber, const wchar *label) {
 		 */
 		my numberOfColumns ++;
 	} catch (MelderError) {
-		rethrowm (me, ": column not inserted.");
+		Melder_throw (me, ": column not inserted.");
 	}
 }
 
@@ -390,7 +376,7 @@ void Table_setColumnLabel (Table me, long columnNumber, const wchar *label) {
 		Melder_free (my columnHeaders [columnNumber]. label);
 		my columnHeaders [columnNumber]. label = newLabel.transfer();
 	} catch (MelderError) {
-		rethrowm (me, ": column label not set.");
+		Melder_throw (me, ": column label not set.");
 	}
 }
 
@@ -402,30 +388,22 @@ long Table_findColumnIndexFromColumnLabel (Table me, const wchar *label) {
 }
 
 long Table_getColumnIndexFromColumnLabel (Table me, const wchar *columnLabel) {
-	try {
-		long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnLabel);
-		if (columnNumber == 0)
-			Melder_throw (me, ": there is no column named \"", columnLabel, "\".");
-		return columnNumber;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+	if (columnNumber == 0)
+		Melder_throw (me, ": there is no column named \"", columnLabel, "\".");
+	return columnNumber;
 }
 
 long * Table_getColumnIndicesFromColumnLabelString (Table me, const wchar *string, long *numberOfTokens) {
-	try {
-		*numberOfTokens = 0;
-		autoMelderTokens tokens (string, numberOfTokens);
-		if (*numberOfTokens < 1)
-			Melder_throw (me, ": you specified an empty list of columns.");
-		autoNUMvector <long> columns (1, *numberOfTokens);
-		for (long icol = 1; icol <= *numberOfTokens; icol ++) {
-			columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]); therror
-		}
-		return columns.transfer();
-	} catch (MelderError) {
-		rethrowzero;
+	*numberOfTokens = 0;
+	autoMelderTokens tokens (string, numberOfTokens);
+	if (*numberOfTokens < 1)
+		Melder_throw (me, ": you specified an empty list of columns.");
+	autoNUMvector <long> columns (1, *numberOfTokens);
+	for (long icol = 1; icol <= *numberOfTokens; icol ++) {
+		columns [icol] = Table_getColumnIndexFromColumnLabel (me, tokens [icol]);
 	}
+	return columns.transfer();
 }
 
 long Table_searchColumn (Table me, long columnNumber, const wchar *value) {
@@ -437,7 +415,7 @@ long Table_searchColumn (Table me, long columnNumber, const wchar *value) {
 	return 0;
 }
 
-int Table_setStringValue (Table me, long rowNumber, long columnNumber, const wchar *value) {
+void Table_setStringValue (Table me, long rowNumber, long columnNumber, const wchar *value) {
 	try {
 		/*
 		 * Check without changes.
@@ -452,13 +430,12 @@ int Table_setStringValue (Table me, long rowNumber, long columnNumber, const wch
 		Melder_free (row -> cells [columnNumber]. string);
 		row -> cells [columnNumber]. string = newValue.transfer();
 		my columnHeaders [columnNumber]. numericized = FALSE;
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": string value not set.");
+		Melder_throw (me, ": string value not set.");
 	}
 }
 
-int Table_setNumericValue (Table me, long rowNumber, long columnNumber, double value) {
+void Table_setNumericValue (Table me, long rowNumber, long columnNumber, double value) {
 	try {
 		/*
 		 * Check without changes.
@@ -473,9 +450,8 @@ int Table_setNumericValue (Table me, long rowNumber, long columnNumber, double v
 		Melder_free (row -> cells [columnNumber]. string);
 		row -> cells [columnNumber]. string = newValue.transfer();
 		my columnHeaders [columnNumber]. numericized = FALSE;
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": numeric value not set.");
+		Melder_throw (me, ": numeric value not set.");
 	}
 }
 
@@ -608,7 +584,7 @@ double Table_getMean (Table me, long columnNumber) {
 		}
 		return sum / my rows -> size;
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute mean of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot compute mean of column ", columnNumber, ".");
 	}
 }
 
@@ -627,7 +603,7 @@ double Table_getMaximum (Table me, long columnNumber) {
 		}
 		return maximum;
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute maximum of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot compute maximum of column ", columnNumber, ".");
 	}
 }
 
@@ -646,7 +622,7 @@ double Table_getMinimum (Table me, long columnNumber) {
 		}
 		return minimum;
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute minimum of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot compute minimum of column ", columnNumber, ".");
 	}
 }
 
@@ -667,7 +643,7 @@ double Table_getGroupMean (Table me, long columnNumber, long groupColumnNumber, 
 		double mean = sum / n;
 		return mean;
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute mean of column ", columnNumber, " for group \"", group, "\" of column ", groupColumnNumber, ".");
+		Melder_throw (me, ": cannot compute mean of column ", columnNumber, " for group \"", group, "\" of column ", groupColumnNumber, ".");
 	}
 }
 
@@ -685,7 +661,7 @@ double Table_getQuantile (Table me, long columnNumber, double quantile) {
 		NUMsort_d (my rows -> size, sortingColumn.peek());
 		return NUMquantile (my rows -> size, sortingColumn.peek(), quantile);
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute the ", quantile, " quantile of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot compute the ", quantile, " quantile of column ", columnNumber, ".");
 	}
 }
 
@@ -702,7 +678,7 @@ double Table_getStdev (Table me, long columnNumber) {
 		}
 		return sqrt (sum / (my rows -> size - 1));
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot compute the standard deviation of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot compute the standard deviation of column ", columnNumber, ".");
 	}
 }
 
@@ -730,7 +706,7 @@ long Table_drawRowFromDistribution (Table me, long columnNumber) {
 		} while (irow > my rows -> size);   /* Guard against rounding errors. */
 		return irow;
 	} catch (MelderError) {
-		rethrowmzero (me, ": cannot draw a row from the distribution of column ", columnNumber, ".");
+		Melder_throw (me, ": cannot draw a row from the distribution of column ", columnNumber, ".");
 	}
 }
 
@@ -754,7 +730,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": rows not extracted.");
+		Melder_throw (me, ": rows not extracted.");
 	}
 }
 
@@ -778,7 +754,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": rows not extracted.");
+		Melder_throw (me, ": rows not extracted.");
 	}
 }
 
@@ -1003,7 +979,8 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 		return thee.transfer();
 	} catch (MelderError) {
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
-		rethrowzero;
+		throw;
+		return NULL;
 	}
 }
 
@@ -1034,7 +1011,8 @@ static wchar ** _Table_getLevels (Table me, long column, long *numberOfLevels) {
 		return result.transfer();
 	} catch (MelderError) {
 		sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
-		rethrowzero;
+		throw;
+		return NULL;
 	}
 }
 
@@ -1163,7 +1141,8 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 		return thee.transfer();
 	} catch (MelderError) {
 		if (originalChanged) sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
-		rethrowzero;
+		throw;
+		return NULL;
 	}
 }
 
@@ -1201,7 +1180,7 @@ void Table_sortRows_string (Table me, const wchar *columns_string) {
 		}
 		Table_sortRows_Assert (me, columns.peek(), numberOfColumns);
 	} catch (MelderError) {
-		rethrowm (me, ": rows not sorted.");
+		Melder_throw (me, ": rows not sorted.");
 	}
 }
 
@@ -1249,7 +1228,7 @@ Table Tables_append (Collection me) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Table objects not appended.");
+		Melder_throw ("Table objects not appended.");
 	}
 }
 
@@ -1284,7 +1263,7 @@ void Table_appendSumColumn (Table me, long column1, long column2, const wchar *l
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": sum column not appended.");
+		Melder_throw (me, ": sum column not appended.");
 	}
 }
 
@@ -1319,7 +1298,7 @@ void Table_appendDifferenceColumn (Table me, long column1, long column2, const w
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": difference column not appended.");
+		Melder_throw (me, ": difference column not appended.");
 	}
 }
 
@@ -1354,7 +1333,7 @@ void Table_appendProductColumn (Table me, long column1, long column2, const wcha
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": product column not appended.");
+		Melder_throw (me, ": product column not appended.");
 	}
 }
 
@@ -1391,11 +1370,11 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const wch
 			thyCell -> string = NULL;   // ...undangle
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": quotient column not appended.");
+		Melder_throw (me, ": quotient column not appended.");
 	}
 }
 
-int Table_formula_columnRange (Table me, long fromColumn, long toColumn, const wchar *expression, Interpreter interpreter) {
+void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const wchar *expression, Interpreter interpreter) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, fromColumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, toColumn);
@@ -1416,14 +1395,13 @@ int Table_formula_columnRange (Table me, long fromColumn, long toColumn, const w
 				}
 			}
 		}
-		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": application of formula not completed.");
+		Melder_throw (me, ": application of formula not completed.");
 	}
 }
 
-int Table_formula (Table me, long icol, const wchar *expression, Interpreter interpreter) {
-	return Table_formula_columnRange (me, icol, icol, expression, interpreter);
+void Table_formula (Table me, long icol, const wchar *expression, Interpreter interpreter) {
+	Table_formula_columnRange (me, icol, icol, expression, interpreter);
 }
 
 double Table_getCorrelation_pearsonR (Table me, long column1, long column2, double significanceLevel,
@@ -1930,7 +1908,7 @@ void Table_list (Table me, bool includeRowNumbers) {
 	MelderInfo_close ();
 }
 
-int Table_writeToTableFile (Table me, MelderFile file) {
+void Table_writeToTableFile (Table me, MelderFile file) {
 	try {
 		autoMelderString buffer;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1949,9 +1927,8 @@ int Table_writeToTableFile (Table me, MelderFile file) {
 			MelderString_appendCharacter (& buffer, '\n'); therror
 		}
 		MelderFile_writeText (file, buffer.string); therror
-		return 1;
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw (me, ": not written to tab-separated file.");
 	}
 }
 
@@ -2027,7 +2004,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		return me;
 	} catch (MelderError) {
 		forget (me);
-		rethrowmzero ("(Table_readFromTableFile:) File ", MelderFile_messageName (file), L" not read.");
+		Melder_throw ("Table object not read from space-separated text file ", MelderFile_messageName (file), ".");
 	}
 }
 
@@ -2112,7 +2089,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar separator
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("(Table_readFromCharacterSeparatedTextFile:) File ", MelderFile_messageName (file), " not read.");
+		Melder_throw ("Table object not read from character-separated text file ", MelderFile_messageName (file), ".");
 	}
 }
 

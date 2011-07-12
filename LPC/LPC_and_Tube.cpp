@@ -29,27 +29,25 @@
 
 void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee)
 {
-	try {
-		long p = my nCoefficients;	
-		Melder_assert (p <= thy nSegments); //TODO 
-	
-		autoNUMvector<double> b (1, p);
-		autoNUMvector<double> a (1, p);
-	
-		for (long i = 1; i <= p; i++) a[i] = my a[i];
-	
-		double *rc = thy c;
-		for (long m = p; m > 0; m--)
+	long p = my nCoefficients;	
+	Melder_assert (p <= thy nSegments); //TODO 
+
+	autoNUMvector<double> b (1, p);
+	autoNUMvector<double> a (1, p);
+
+	for (long i = 1; i <= p; i++) a[i] = my a[i];
+
+	double *rc = thy c;
+	for (long m = p; m > 0; m--)
+	{
+		rc[m] = a[m];
+		if (fabs (rc[m]) > 1) Melder_throw ("rc larger 1."); // TODO kan er geen Tube worden gemaakt?
+		for (long i = 1; i < m; i++) b[i] = a[i];
+		for (long i = 1; i < m; i++)
 		{
-			rc[m] = a[m];
-			if (fabs (rc[m]) > 1) Melder_throw ("rc larger 1."); // TODO kan er geen Tube worden gemaakt?
-			for (long i = 1; i < m; i++) b[i] = a[i];
-			for (long i = 1; i < m; i++)
-			{
-				a[i] = (b[i] - rc[m] * b[m-i]) / (1.0 - rc[m] * rc[m]);
-			}
+			a[i] = (b[i] - rc[m] * b[m-i]) / (1.0 - rc[m] * rc[m]);
 		}
-	} catch (MelderError) { rethrow; }
+	}
 }
 
 void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
@@ -61,7 +59,7 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
 		LPC_Frame_into_Tube_Frame_rc (me, rc); therror
 		Tube_Frames_rc_into_area (rc, thee); therror
 		Tube_Frame_destroy (rc);
-	} catch (MelderError) { Tube_Frame_destroy (rc); rethrow; }
+	} catch (MelderError) { Tube_Frame_destroy (rc); throw; }
 }
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength)
@@ -75,7 +73,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	try {
 		long m = my nCoefficients;
 		double length, dlength = 0.001, wakita_length = NUMundefined; 
-		double var, varMin = 1e38, logSum;
+		double varMin = 1e38;
 		double fscale = 1;
 	
 		memset(& lpc_struct, 0, sizeof(lpc_struct));
@@ -94,7 +92,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		
 		// LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !! 
 		
-		if (f -> nFormants < 1) rethrowzero;
+		if (f -> nFormants < 1) throw MelderError ();
 	
 		double *area = af -> c;
 		double lmin = length = 0.10;
@@ -222,7 +220,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 	} catch (MelderError) { 
 		thy xmax = thy x1 = thy dx = NUMundefined;
 		Tube_Frame_destroy (area); 
-		rethrowmzero (me, ": no VocalTract created."); }
+		Melder_thrown (me, ": no VocalTract created."); }
 }
 
 /* End of file LPC_and_Tube.cpp */

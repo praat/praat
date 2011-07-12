@@ -80,39 +80,37 @@ static Matrix Sound_to_spectralpower (Sound me)
 		z[1] *= 0.5;
 		z[s -> nx] *= 0.5;
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Matrix with spectral power created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Matrix with spectral power created."); }
 }
 
 static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame)
 {
-	try {
-		autoMatrix pv = Sound_to_spectralpower (me);	
-		long nf = pv -> nx;
-		autoNUMvector<double> z (1, nf);
-		
+	autoMatrix pv = Sound_to_spectralpower (me);	
+	long nf = pv -> nx;
+	autoNUMvector<double> z (1, nf);
+	
+	for (long j = 1; j <= nf; j++)
+	{
+		z[j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
+	}
+
+	for (long i = 1; i <= thy ny; i++)
+	{
+		double p = 0;
+		double z0 = thy y1 + (i - 1) * thy dy;
+		double *pow = pv -> z[1]; // TODO ??
 		for (long j = 1; j <= nf; j++)
 		{
-			z[j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
+			// Sekey & Hanson filter is defined in the power domain.
+			// We therefore multiply the power with a (and not a^2).
+			// integral (F(z),z=0..25) = 1.58/9
+		
+			double a = NUMsekeyhansonfilter_amplitude (z0, z[j]);
+			p += a * pow[j] ;
 		}
-	
-		for (long i = 1; i <= thy ny; i++)
-		{
-			double p = 0;
-			double z0 = thy y1 + (i - 1) * thy dy;
-			double *pow = pv -> z[1]; // TODO ??
-			for (long j = 1; j <= nf; j++)
-			{
-				// Sekey & Hanson filter is defined in the power domain.
-				// We therefore multiply the power with a (and not a^2).
-				// integral (F(z),z=0..25) = 1.58/9
-			
-				double a = NUMsekeyhansonfilter_amplitude (z0, z[j]);
-				p += a * pow[j] ;
-			}
-			thy z[i][frame] = p;
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		thy z[i][frame] = p;
+	}
+	return 1;
 }
 
 BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
@@ -153,8 +151,10 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 						
 			if (! Sound_into_BarkFilter_frame (sframe.peek(), thee.peek(), i)) frameErrorCount++;
 		
-			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt,  L"BarkFilter analysis: frame ",
-			Melder_integer (i), L" from ", Melder_integer (nt), L".")) Melder_throw ("Analysis interrupted");
+			if ((i % 10) == 1) {
+				Melder_progress5 ((double)i / nt,  L"BarkFilter analysis: frame ",
+					Melder_integer (i), L" from ", Melder_integer (nt), L"."); therror
+			}
 		}
 	
 		if (frameErrorCount > 0)
@@ -167,39 +167,37 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();	
-	} catch (MelderError) { rethrowmzero (me, ": no BarkFilter created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no BarkFilter created."); }
 } 
 
 
 static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame)
 {
-	try {
-		autoMatrix pv = Sound_to_spectralpower (me);
-	
-		double z1 = pv -> x1;
-		double dz = pv -> dx;
-		long nf = pv -> nx;
-		double df = thy dy;
-		for (long i = 1; i <= thy ny; i++)
+	autoMatrix pv = Sound_to_spectralpower (me);
+
+	double z1 = pv -> x1;
+	double dz = pv -> dx;
+	long nf = pv -> nx;
+	double df = thy dy;
+	for (long i = 1; i <= thy ny; i++)
+	{
+		double p = 0;
+		double fc_mel = thy y1 + (i - 1) * df;
+		double fc_hz = MELTOHZ (fc_mel);
+		double fl_hz = MELTOHZ (fc_mel - df);
+		double fh_hz =  MELTOHZ (fc_mel + df);
+		double *pow = pv -> z[1];	
+		for (long j = 1; j <= nf; j++)
 		{
-			double p = 0;
-			double fc_mel = thy y1 + (i - 1) * df;
-			double fc_hz = MELTOHZ (fc_mel);
-			double fl_hz = MELTOHZ (fc_mel - df);
-			double fh_hz =  MELTOHZ (fc_mel + df);
-			double *pow = pv -> z[1];	
-			for (long j = 1; j <= nf; j++)
-			{
-				// Filter with a triangular filter the power (=amplitude-squared)
-			
-				double f = z1 + (j - 1) * dz;
-				double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
-				p += a * pow[j] ;
-			}
-			thy z[i][frame] = p;
+			// Filter with a triangular filter the power (=amplitude-squared)
+		
+			double f = z1 + (j - 1) * dz;
+			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
+			p += a * pow[j] ;
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		thy z[i][frame] = p;
+	}
+	return 1;
 }
 
 MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
@@ -241,8 +239,10 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
 			Sounds_multiply (sframe.peek(), window.peek());
 			if (! Sound_into_MelFilter_frame (sframe.peek(), thee.peek(), i)) frameErrorCount++;
-			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Frame ",
-			Melder_integer (i), L" out of ", Melder_integer (nt), L".")) Melder_throw ("Analysis interrupted");
+			if ((i % 10) == 1) {
+				Melder_progress5 ((double)i / nt, L"Frame ", Melder_integer (i), L" out of ", 
+					Melder_integer (nt), L"."); therror
+			}
 		}
 	
 		if (frameErrorCount) Melder_warning5 (L"Analysis results of ", Melder_integer (frameErrorCount), 
@@ -254,7 +254,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no MelFilter created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no MelFilter created."); }
 }
 
 /*
@@ -263,33 +263,31 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 */
 static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, long frame, double bw)
 {
-	try {
-		Melder_assert (bw > 0);
-		autoMatrix pv = Sound_to_spectralpower (me);
-		double z1 = pv -> x1;
-		double dz = pv -> dx;
-		long nf = pv -> nx;
-	
-		for (long i = 1; i <= thy ny; i++)
+	Melder_assert (bw > 0);
+	autoMatrix pv = Sound_to_spectralpower (me);
+	double z1 = pv -> x1;
+	double dz = pv -> dx;
+	long nf = pv -> nx;
+
+	for (long i = 1; i <= thy ny; i++)
+	{
+		double p = 0;
+		double fc = thy y1 + (i - 1) * thy dy;
+		double *pow = pv -> z[1];
+		for (long j = 1; j <= nf; j++)
 		{
-			double p = 0;
-			double fc = thy y1 + (i - 1) * thy dy;
-			double *pow = pv -> z[1];
-			for (long j = 1; j <= nf; j++)
-			{
-				// H(f) = ifB / (fc^2 - f^2 + ifB)
-				// H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)
-				//|H(f)|^2 = f^2B^2 / ((fc^2 - f^2)^2 + f^2B^2)
-				//         = 1 / (((fc^2 - f^2) /fB)^2 + 1)
-			
-				double f = z1 + (j - 1) * dz;
-				double a = NUMformantfilter_amplitude (fc, bw, f);
-				p += a * pow[j];
-			}
-			thy z[i][frame] = p;
+			// H(f) = ifB / (fc^2 - f^2 + ifB)
+			// H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)
+			//|H(f)|^2 = f^2B^2 / ((fc^2 - f^2)^2 + f^2B^2)
+			//         = 1 / (((fc^2 - f^2) /fB)^2 + 1)
+		
+			double f = z1 + (j - 1) * dz;
+			double a = NUMformantfilter_amplitude (fc, bw, f);
+			p += a * pow[j];
 		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		thy z[i][frame] = p;
+	}
+	return 1;
 }
 
 FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
@@ -309,7 +307,7 @@ FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
 		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.peek(), analysisWidth, dt, 
 			f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no FormantFilter created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no FormantFilter created."); }
 }
 
 FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, 
@@ -363,14 +361,16 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 						
 			Sound_into_FormantFilter_frame (sframe.peek(), him.peek(), i, b); therror
 		
-			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nt, L"Frame ",
-				Melder_integer (i), L" out of ", Melder_integer (nt), L".")) Melder_throw ("Analysis interrupted");
+			if ((i % 10) == 1) {
+				Melder_progress5 ((double)i / nt, L"Frame ", Melder_integer (i), L" out of ", 
+					Melder_integer (nt), L"."); therror
+			}
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 		NUMdmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("FormantFilter not created from Pitch & FormantFilter."); }
+	} catch (MelderError) { Melder_thrown ("FormantFilter not created from Pitch & FormantFilter."); }
 }
 
 /* End of file Sound_and_FilterBank.cpp */

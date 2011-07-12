@@ -20,42 +20,32 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/12
  */
 
 #include "Gui.h"
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
-#endif
+#include "Interpreter_decl.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+void UiPause_begin (GuiObject topShell, const wchar *title, Interpreter interpreter);
 
-int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter);
-
-int UiPause_real (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_positive (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_integer (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_natural (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_word (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_sentence (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_text (const wchar_t *label, const wchar_t *defaultValue);
-int UiPause_boolean (const wchar_t *label, int defaultValue);
-int UiPause_choice (const wchar_t *label, int defaultValue);
-int UiPause_optionMenu (const wchar_t *label, int defaultValue);
-int UiPause_option (const wchar_t *label);
-int UiPause_comment (const wchar_t *label);
+void UiPause_real (const wchar *label, const wchar *defaultValue);
+void UiPause_positive (const wchar *label, const wchar *defaultValue);
+void UiPause_integer (const wchar *label, const wchar *defaultValue);
+void UiPause_natural (const wchar *label, const wchar *defaultValue);
+void UiPause_word (const wchar *label, const wchar *defaultValue);
+void UiPause_sentence (const wchar *label, const wchar *defaultValue);
+void UiPause_text (const wchar *label, const wchar *defaultValue);
+void UiPause_boolean (const wchar *label, int defaultValue);
+void UiPause_choice (const wchar *label, int defaultValue);
+void UiPause_optionMenu (const wchar *label, int defaultValue);
+void UiPause_option (const wchar *label);
+void UiPause_comment (const wchar *label);
 
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
-	const wchar_t *continueText1, const wchar_t *continueText2, const wchar_t *continueText3,
-	const wchar_t *continueText4, const wchar_t *continueText5, const wchar_t *continueText6,
-	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,
-	const wchar_t *continueText10, Interpreter interpreter);
-
-#ifdef __cplusplus
-	}
-#endif
+	const wchar *continueText1, const wchar *continueText2, const wchar *continueText3,
+	const wchar *continueText4, const wchar *continueText5, const wchar *continueText6,
+	const wchar *continueText7, const wchar *continueText8, const wchar *continueText9,
+	const wchar *continueText10, Interpreter interpreter);
 
 /* End of file UiPause.h */
 #endif

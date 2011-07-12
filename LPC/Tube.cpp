@@ -71,12 +71,10 @@ class_methods_end
 
 void Tube_Frame_init (Tube_Frame me, long nSegments, double length)
 {
-	try {
-		my nSegments = nSegments;
-		my length = length;
-		if (nSegments <= 0) Melder_throw ("Number of segments must be a natural number.");
-		my c = NUMvector<double> (1, nSegments);
-	} catch (MelderError) { rethrow; }
+	my nSegments = nSegments;
+	my length = length;
+	if (nSegments <= 0) Melder_throw ("Number of segments must be a natural number.");
+	my c = NUMvector<double> (1, nSegments);
 }
 
 
@@ -88,17 +86,15 @@ void Tube_Frame_free (Tube_Frame me)
 /* Gray & Markel (1979), LPTRN */
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee)
 {
-	try {
-		if (my nSegments > thy nSegments) Melder_throw ("Number of segments to big.");
-	
-		double s = 0.0001; /* 1.0 cm^2 at glottis */
-		double *rc = my c, *area = thy c;
-		for (long i = my nSegments; i > 0; i--)
-		{
-			s *= (1.0 + rc[i]) / (1.0 - rc[i]);
-			area[i] = s;
-		}
-	} catch (MelderError) { rethrow; }
+	if (my nSegments > thy nSegments) Melder_throw ("Number of segments to big.");
+
+	double s = 0.0001; /* 1.0 cm^2 at glottis */
+	double *rc = my c, *area = thy c;
+	for (long i = my nSegments; i > 0; i--)
+	{
+		s *= (1.0 + rc[i]) / (1.0 - rc[i]);
+		area[i] = s;
+	}
 }
 
 static void Tube_setLengths (I, double length)
@@ -114,13 +110,11 @@ static void Tube_setLengths (I, double length)
 void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
 {
-	try {
-		iam (Tube);
-		my maxnSegments = maxnSegments;
-		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
-		my frame = NUMvector<structTube_Frame> (1, nt);
-		Tube_setLengths (me, defaultLength);
-	} catch (MelderError) { rethrow; }
+	iam (Tube);
+	my maxnSegments = maxnSegments;
+	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	my frame = NUMvector<structTube_Frame> (1, nt);
+	Tube_setLengths (me, defaultLength);
 }
 
 class_methods (Area, Tube)
@@ -129,9 +123,7 @@ class_methods_end
 void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
 {
-	try {
-		Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
-	} catch (MelderError) { rethrow; }
+	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 		
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -141,7 +133,7 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoArea me = Thing_new (Area);
 		Area_init (me.peek(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Area not crteated."); }
+	} catch (MelderError) { Melder_thrown ("Area not crteated."); }
 }
 
 class_methods (RC, Tube)
@@ -150,9 +142,7 @@ class_methods_end
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
 {	
-	try {
-		Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
-	} catch (MelderError) { rethrow; }
+	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -162,7 +152,7 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoRC me = Thing_new (RC);
 		RC_init (me.peek(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("RC not crteated."); }
+	} catch (MelderError) { Melder_thrown ("RC not crteated."); }
 }
 		
 /* End of file Tube.cpp */

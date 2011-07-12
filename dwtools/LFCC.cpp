@@ -37,7 +37,7 @@ LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoLFCC me = Thing_new (LFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin, fmax);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("LFCC not created."); }
+	} catch (MelderError) { Melder_thrown ("LFCC not created."); }
 }
 
 /* End of file LFCC.cpp */

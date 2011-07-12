@@ -30,9 +30,7 @@
 	extern "C" {
 #endif
 
-#define Autosegment_members Function_members
-#define Autosegment_methods Function_methods
-class_create (Autosegment, Function);
+Thing_declare1cpp (Autosegment);
 
 Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 /*
@@ -52,9 +50,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 			result -> name [] == label [];   // 'label' copied into 'name'
 */
 
-#define Tier_members Sorted_members
-#define Tier_methods Sorted_methods
-class_create (Tier, Sorted);
+Thing_declare1cpp (Tier);
 
 Tier Tier_create (long initialCapacity);
 /*
@@ -80,9 +76,7 @@ long Tier_timeToIndex (Tier me, double t);
 
 void Tier_init (I, long initialCapacity);
 
-#define Label_members Ordered_members
-#define Label_methods Ordered_methods
-class_create (Label, Ordered);
+Thing_declare1cpp (Label);
 
 Label Label_create (long initialNumberOfTiers);
 
@@ -94,6 +88,22 @@ void Label_suggestDomain (Label me, double *tmin, double *tmax);
 
 #ifdef __cplusplus
 	}
+
+	struct structAutosegment : public structFunction {
+	};
+	#define Autosegment__methods(klas) Function__methods(klas)
+	Thing_declare2cpp (Autosegment, Function);
+
+	struct structTier : public structSorted {
+	};
+	#define Tier__methods(klas) Sorted__methods(klas)
+	Thing_declare2cpp (Tier, Sorted);
+
+	struct structLabel : public structOrdered {
+	};
+	#define Label__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (Label, Ordered);
+
 #endif
 
 #endif

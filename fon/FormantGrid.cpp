@@ -77,11 +77,11 @@ static void shiftX (I, double xfrom, double xto) {
 	inherited (FormantGrid) shiftX (me, xfrom, xto);
 	for (long i = 1; i <= my formants -> size; i ++) {
 		RealTier tier = (RealTier) my formants -> item [i];
-		tier -> methods -> shiftX (tier, xfrom, xto);
+		((Function_Table) tier -> methods) -> shiftX (tier, xfrom, xto);
 	}
 	for (long i = 1; i <= my bandwidths -> size; i ++) {
 		RealTier tier = (RealTier) my bandwidths -> item [i];
-		tier -> methods -> shiftX (tier, xfrom, xto);
+		((Function_Table) tier -> methods) -> shiftX (tier, xfrom, xto);
 	}
 }
 
@@ -90,11 +90,11 @@ static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double x
 	inherited (FormantGrid) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
 	for (long i = 1; i <= my formants -> size; i ++) {
 		RealTier tier = (RealTier) my formants -> item [i];
-		tier -> methods -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+		((Function_Table) tier -> methods) -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 	for (long i = 1; i <= my bandwidths -> size; i ++) {
 		RealTier tier = (RealTier) my bandwidths -> item [i];
-		tier -> methods -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+		((Function_Table) tier -> methods) -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
@@ -136,7 +136,7 @@ FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfForm
 		FormantGrid_init (me.peek(), tmin, tmax, numberOfFormants);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Empty FormantGrid not created.");
+		Melder_throw ("Empty FormantGrid not created.");
 	}
 }
 
@@ -154,7 +154,7 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("FormantGrid not created.");
+		Melder_throw ("FormantGrid not created.");
 	}
 }
 
@@ -165,7 +165,7 @@ void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, doubl
 		RealTier formantTier = (RealTier) my formants -> item [iformant];
 		RealTier_addPoint (formantTier, t, value); therror
 	} catch (MelderError) {
-		rethrowm (me, ": formant point not added.");
+		Melder_throw (me, ": formant point not added.");
 	}
 }
 
@@ -176,7 +176,7 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 		RealTier bandwidthTier = (RealTier) my bandwidths -> item [iformant];
 		RealTier_addPoint (bandwidthTier, t, value); therror
 	} catch (MelderError) {
-		rethrowm (me, ": bandwidth point not added.");
+		Melder_throw (me, ": bandwidth point not added.");
 	}
 }
 
@@ -244,7 +244,7 @@ Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formantGrid, ".");
+		Melder_throw (me, ": not filtered with ", formantGrid, ".");
 	}
 }
 
@@ -254,7 +254,7 @@ Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formantGrid, ".");
+		Melder_throw (me, ": not filtered with ", formantGrid, ".");
 	}
 }
 
@@ -272,7 +272,7 @@ Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 		Sound_FormantGrid_filter_inline (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 
@@ -288,7 +288,7 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 		Vector_scale (sound.peek(), 0.99);
 		Sound_playPart (sound.peek(), tmin, tmax, playCallback, playClosure);
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 
@@ -307,7 +307,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, 
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": bandwidth formula not completed.");
+		Melder_throw (me, ": bandwidth formula not completed.");
 	}
 }
 
@@ -326,7 +326,7 @@ void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression,
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": frequency formula not completed.");
+		Melder_throw (me, ": frequency formula not completed.");
 	}
 }
 
@@ -344,7 +344,7 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to FormantGrid.");
+		Melder_throw (me, ": not converted to FormantGrid.");
 	}
 }
 
@@ -369,7 +369,7 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Formant.");
+		Melder_throw (me, ": not converted to Formant.");
 	}
 }
 
@@ -379,7 +379,7 @@ Sound Sound_Formant_filter (Sound me, Formant formant) {
 		autoSound thee = Sound_FormantGrid_filter (me, grid.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formant, ".");
+		Melder_throw (me, ": not filtered with ", formant, ".");
 	}
 }
 
@@ -389,7 +389,7 @@ Sound Sound_Formant_filter_noscale (Sound me, Formant formant) {
 		autoSound thee = Sound_FormantGrid_filter_noscale (me, grid.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formant, ".");
+		Melder_throw (me, ": not filtered with ", formant, ".");
 	}
 }
 

@@ -81,7 +81,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		 * and 10 ms shift between successive frames.
 		 * Since we need a spectrally flat signal (not an approximation
 		 * of the source signal), we must turn the pre-emphasis off
-		 * (by setting its turnover point at 1,000,000,000 Hertz);
+		 * (by setting its turnover point at 1,000,000,000 Hz);
 		 * otherwise, the pre-emphasis would cause an overestimation
 		 * in the LPC object of the high frequencies, so that inverse
 		 * filtering would yield weakened high frequencies.
@@ -163,7 +163,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 
 		return cc.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Harmonicity (GNE).");
+		Melder_throw (me, ": not converted to Harmonicity (GNE).");
 	}
 }
 

@@ -20,11 +20,12 @@
  */
 
 /*
- * pb 2011/05/14
+ * pb 2011/07/11
  */
 
-typedef struct structInterpreter *Interpreter;
-_THING_DECLARE_AUTO (Interpreter)
+extern "C" {
+	Thing_declare1cpp (Interpreter);
+}
 
 /* End of file Interpreter_decl.h */
 #endif

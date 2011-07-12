@@ -22,27 +22,28 @@
  * pb 2004/10/16 C++ compatible structs
  * pb 2007/08/13 wchar_t
  * pb 2011/06/02 C++
+ * pb 2011/07/02 C++
  */
 
 #include "Label.h"
 
-static int copy (I, thou) {
+static void copy (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
-	if (! inherited (Autosegment) copy (me, thee)) return 0;
-	return my name == NULL || (Thing_setName (thee, my name), my name != NULL);
+	inherited (Autosegment) copy (me, thee);
+	if (my name) Thing_setName (thee, my name);
 }
 
 static bool equal (I, thou) {
 	iam (Autosegment); thouart (Autosegment);
-	if (! inherited (Autosegment) equal (me, thee)) return 0;
-	if (my name == NULL && thy name == NULL) return 1;   /* Shortcut: no names. */
-	if (my name == NULL || thy name == NULL) return 0;
+	if (! inherited (Autosegment) equal (me, thee)) return false;
+	if (my name == NULL && thy name == NULL) return true;   // shortcut: no names
+	if (my name == NULL || thy name == NULL) return false;
 	return wcsequ (my name, thy name);
 }
 
 static struct structData_Description description [] = {
 	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theStructFunction. description },
-	{ L"name", stringwa, (long) & ((Autosegment) 0) -> name, sizeof (wchar_t *) },
+	{ L"name", stringwa, (char *) & ((Autosegment) & Melder_debug) -> name - (char *) & Melder_debug, sizeof (wchar *) },
 	{ 0 } };
 
 class_methods (Autosegment, Function) {
@@ -61,7 +62,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label) 
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Autosegment not created.");
+		Melder_throw ("Autosegment not created.");
 	}
 }
 
@@ -91,7 +92,7 @@ Tier Tier_create (long initialCapacity) {
 		Tier_init (me.peek(), initialCapacity);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Tier not created.");
+		Melder_throw ("Tier not created.");
 	}
 }
 
@@ -122,7 +123,7 @@ Label Label_create (long initialNumberOfTiers) {
 		Label_init (me.peek(), initialNumberOfTiers);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Label not created.");
+		Melder_throw ("Label not created.");
 	}
 }
 

@@ -64,7 +64,7 @@ FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitu
 		my amplitude = amplitude;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Fujisaki command not created.");
+		Melder_throw ("Fujisaki command not created.");
 	}
 }
 
@@ -95,7 +95,7 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 		my accentCommands = SortedSetOfDouble_create (); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("FujisakiPitch not created.");
+		Melder_throw ("FujisakiPitch not created.");
 	}
 }
 
@@ -146,7 +146,7 @@ FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolut
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to FujisakiPitch.");
+		Melder_throw (me, ": not converted to FujisakiPitch.");
 	}
 }
 

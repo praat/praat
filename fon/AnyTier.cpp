@@ -48,7 +48,7 @@
 #include "oo_DESCRIPTION.h"
 #include "AnyTier_def.h"
 
-class_methods (AnyPoint, Data) {
+class_methods (AnyPoint, SimpleDouble) {
 	class_method_local (AnyPoint, destroy)
 	class_method_local (AnyPoint, copy)
 	class_method_local (AnyPoint, equal)
@@ -66,7 +66,7 @@ static void shiftX (I, double xfrom, double xto) {
 	inherited (AnyTier) shiftX (me, xfrom, xto);
 	for (long i = 1; i <= my points -> size; i ++) {
 		AnyPoint point = (AnyPoint) my points -> item [i];
-		NUMshift (& point -> time, xfrom, xto);
+		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
@@ -75,7 +75,7 @@ static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double x
 	inherited (AnyTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
 	for (long i = 1; i <= my points -> size; i ++) {
 		AnyPoint point = (AnyPoint) my points -> item [i];
-		NUMscale (& point -> time, xminfrom, xmaxfrom, xminto, xmaxto);
+		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
@@ -99,15 +99,15 @@ long AnyTier_timeToLowIndex (I, double time) {
 	if (my points -> size == 0) return 0;   // undefined
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
-	double tleft = points [ileft] -> time;
+	double tleft = points [ileft] -> number;
 	if (time < tleft) return 0;   // offleft
-	double tright = points [iright] -> time;
+	double tright = points [iright] -> number;
 	if (time >= tright) return iright;
 	Melder_assert (time >= tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = points [imid] -> time;
+		double tmid = points [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -119,8 +119,8 @@ long AnyTier_timeToLowIndex (I, double time) {
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
 	Melder_assert (iright <= my points -> size);
-	Melder_assert (time >= points [ileft] -> time);
-	Melder_assert (time <= points [iright] -> time);
+	Melder_assert (time >= points [ileft] -> number);
+	Melder_assert (time <= points [iright] -> number);
 	return ileft;
 }
 
@@ -129,15 +129,15 @@ long AnyTier_timeToHighIndex (I, double time) {
 	if (my points -> size == 0) return 0;   // undefined; is this right?
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
-	double tleft = points [ileft] -> time;
+	double tleft = points [ileft] -> number;
 	if (time <= tleft) return 1;
-	double tright = points [iright] -> time;
+	double tright = points [iright] -> number;
 	if (time > tright) return iright + 1;   // offright
 	Melder_assert (time > tleft && time <= tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = points [imid] -> time;
+		double tmid = points [imid] -> number;
 		if (time <= tmid) {
 			iright = imid;
 			tright = tmid;
@@ -149,8 +149,8 @@ long AnyTier_timeToHighIndex (I, double time) {
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
 	Melder_assert (iright <= my points -> size);
-	Melder_assert (time >= points [ileft] -> time);
-	Melder_assert (time <= points [iright] -> time);
+	Melder_assert (time >= points [ileft] -> number);
+	Melder_assert (time <= points [iright] -> number);
 	return iright;
 }
 
@@ -168,15 +168,15 @@ long AnyTier_timeToNearestIndex (I, double time) {
 	if (my points -> size == 0) return 0;   // undefined
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
-	double tleft = points [ileft] -> time;
+	double tleft = points [ileft] -> number;
 	if (time <= tleft) return 1;
-	double tright = points [iright] -> time;
+	double tright = points [iright] -> number;
 	if (time >= tright) return iright;
 	Melder_assert (time > tleft && time < tright);
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = points [imid] -> time;
+		double tmid = points [imid] -> number;
 		if (time < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -188,8 +188,8 @@ long AnyTier_timeToNearestIndex (I, double time) {
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
 	Melder_assert (iright <= my points -> size);
-	Melder_assert (time >= points [ileft] -> time);
-	Melder_assert (time <= points [iright] -> time);
+	Melder_assert (time >= points [ileft] -> number);
+	Melder_assert (time <= points [iright] -> number);
 	return time - tleft <= tright - time ? ileft : iright;
 }
 
@@ -198,9 +198,9 @@ long AnyTier_hasPoint (I, double t) {
 	if (my points -> size == 0) return 0;   // point not found
 	long ileft = 1, iright = my points -> size;
 	AnyPoint *points = (AnyPoint *) my points -> item;
-	double tleft = points [ileft] -> time;
+	double tleft = points [ileft] -> number;
 	if (t < tleft) return 0;   // offleft
-	double tright = points [iright] -> time;
+	double tright = points [iright] -> number;
 	if (t > tright) return 0;   // offright
 	if (t == tleft) return 1;
 	if (t == tright) return iright;
@@ -208,7 +208,7 @@ long AnyTier_hasPoint (I, double t) {
 	Melder_assert (iright > ileft);
 	while (iright > ileft + 1) {
 		long imid = (ileft + iright) / 2;
-		double tmid = points [imid] -> time;
+		double tmid = points [imid] -> number;
 		if (t < tmid) {
 			iright = imid;
 			tright = tmid;
@@ -222,8 +222,8 @@ long AnyTier_hasPoint (I, double t) {
 	Melder_assert (iright == ileft + 1);
 	Melder_assert (ileft >= 1);
 	Melder_assert (iright <= my points -> size);
-	Melder_assert (t > points [ileft] -> time);
-	Melder_assert (t < points [iright] -> time);
+	Melder_assert (t > points [ileft] -> number);
+	Melder_assert (t < points [iright] -> number);
 	return 0;   /* Point not found. */
 }
 
@@ -232,7 +232,7 @@ void AnyTier_addPoint (I, Any point) {
 	try {
 		Collection_addItem (my points, point); therror
 	} catch (MelderError) {
-		rethrowm (me, ": point not added.");
+		Melder_throw (me, ": point not added.");
 	}
 }
 
@@ -264,11 +264,11 @@ PointProcess AnyTier_downto_PointProcess (I) {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
 		/* OPTIMIZATION, bypassing PointProcess_addTime: */
 		for (long i = 1; i <= numberOfPoints; i ++)
-			thy t [i] = points [i] -> time;
+			thy t [i] = points [i] -> number;
 		thy nt = numberOfPoints;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PointProcess.");
+		Melder_throw (me, ": not converted to PointProcess.");
 	}
 }
 

@@ -30,6 +30,7 @@
  * pb 2009/07/22 Picture_writeToPdfFile
  * fb 2010/03/01 cairo fix for black 1px borders
  * pb 2011/05/15 C++
+ * pb 2011/07/08 C++
  */
 
 #include "melder.h"
@@ -42,19 +43,14 @@ struct structPicture {
 	GuiObject drawingArea;
 	Any graphics, selectionGraphics;
 	Boolean sensitive;
-	double selx1, selx2, sely1, sely2;   /* Selection in NDC co-ordinates. */
+	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (struct structPicture *, XtPointer, double, double, double, double);
 	XtPointer selectionChangedClosure;
 	int backgrounding, mouseSelectsInnerViewport;
-#if gtk
-	bool selectionInProgress;
-	double ixstart, iystart;
-#endif
-#if defined (UNIX)
-	#if motif
-	Region updateRegion;
+	#if gtk
+		bool selectionInProgress;
+		double ixstart, iystart;
 	#endif
-#endif
 };
 
 static void drawMarkers (Picture me)
@@ -142,80 +138,59 @@ static void drawSelection (Picture me, int high) {
 
 //static double test = 0.0;
 
-static int SMERIG_valid;
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (Picture);
-#if gtk
-//	g_debug("EXPOSE DRAWING AREA");
-	
-	// save old cairo contexts
-	cairo_t *cgr = (cairo_t *) Graphics_x_getCR (my graphics);
-	Melder_assert (cgr != NULL);
-	cairo_t *csgr = (cairo_t *) Graphics_x_getCR (my selectionGraphics);
-	
-	// set new cairo contexts
-	Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
-	Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
-	// - Graphics_x_setCR(my graphics, Graphics_x_getCR(my selectionGraphics));
-	// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
-	cairo_rectangle ((cairo_t *) Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
-	cairo_clip ((cairo_t *) Graphics_x_getCR (my graphics));
-	drawMarkers (me);
-	Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-	drawSelection (me, 1);
-//	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
-//	cairo_fill(Graphics_x_getCR (my graphics));
-	cairo_destroy ((cairo_t *) Graphics_x_getCR (my selectionGraphics));
-	cairo_destroy ((cairo_t *) Graphics_x_getCR (my graphics));
-
-	// restore old cairo contexts
-	Graphics_x_setCR (my graphics, cgr);
-	Graphics_x_setCR (my selectionGraphics, csgr);
-
-//	test+=0.1;
-//	if (test > 3) test = 0.1;
-//	g_debug("%d", test);
-#elif defined (macintosh) && 0
-	WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
-	static RgnHandle visRgn;
-	Rect rect;
-	long x1DC, x2DC, y1DC, y2DC;
-	Graphics_inqWsViewport (my selectionGraphics, & x1DC, & x2DC, & y1DC, & y2DC);
-	SetRect (& rect, x1DC, y1DC, x2DC, y2DC);
-	/* No clearing needed; macintosh clips to update region. */
-	if (visRgn == NULL) visRgn = NewRgn ();
-	GetPortVisibleRegion (GetWindowPort (window), visRgn);
-	if (RectInRgn (& rect, visRgn)) {
+	#if gtk
+	//	g_debug("EXPOSE DRAWING AREA");
+		
+		// save old cairo contexts
+		cairo_t *cgr = (cairo_t *) Graphics_x_getCR (my graphics);
+		Melder_assert (cgr != NULL);
+		cairo_t *csgr = (cairo_t *) Graphics_x_getCR (my selectionGraphics);
+		
+		// set new cairo contexts
+		Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+		Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+		// - Graphics_x_setCR(my graphics, Graphics_x_getCR(my selectionGraphics));
+		// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
+		cairo_rectangle ((cairo_t *) Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
+		cairo_clip ((cairo_t *) Graphics_x_getCR (my graphics));
 		drawMarkers (me);
 		Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
 		drawSelection (me, 1);
-	}
-#elif defined (_WIN32) || 1
-	(void) event;
-	drawMarkers (me);
-	Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-	drawSelection (me, 1);
-#else
-	XRectangle rectangle;
-	if (! my updateRegion) my updateRegion = XCreateRegion ();
-	rectangle. x = event -> x;
-	rectangle. y = event -> y;
-	rectangle. width = event -> width;
-	rectangle. height = event -> height;
-	XUnionRectWithRegion (& rectangle, my updateRegion, my updateRegion);
-	if (event -> count == 0) {
-		XSetRegion (XtDisplay (my drawingArea), Graphics_x_getGC (my graphics), my updateRegion);
-		if (my sensitive) XSetRegion (XtDisplay (my drawingArea), Graphics_x_getGC (my selectionGraphics), my updateRegion);
+	//	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
+	//	cairo_fill(Graphics_x_getCR (my graphics));
+		cairo_destroy ((cairo_t *) Graphics_x_getCR (my selectionGraphics));
+		cairo_destroy ((cairo_t *) Graphics_x_getCR (my graphics));
+
+		// restore old cairo contexts
+		Graphics_x_setCR (my graphics, cgr);
+		Graphics_x_setCR (my selectionGraphics, csgr);
+
+	//	test+=0.1;
+	//	if (test > 3) test = 0.1;
+	//	g_debug("%d", test);
+	#elif defined (macintosh) && 0
+		WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
+		static RgnHandle visRgn;
+		Rect rect;
+		long x1DC, x2DC, y1DC, y2DC;
+		Graphics_inqWsViewport (my selectionGraphics, & x1DC, & x2DC, & y1DC, & y2DC);
+		SetRect (& rect, x1DC, y1DC, x2DC, y2DC);
+		/* No clearing needed; macintosh clips to update region. */
+		if (visRgn == NULL) visRgn = NewRgn ();
+		GetPortVisibleRegion (GetWindowPort (window), visRgn);
+		if (RectInRgn (& rect, visRgn)) {
+			drawMarkers (me);
+			Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
+			drawSelection (me, 1);
+		}
+	#elif defined (_WIN32) || 1
+		(void) event;
 		drawMarkers (me);
 		Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-		if (my sensitive && ! SMERIG_valid) drawSelection (me, 1);
-		XSetClipMask (XtDisplay (my drawingArea), Graphics_x_getGC (my graphics), None);
-		if (my sensitive) XSetClipMask (XtDisplay (my drawingArea), Graphics_x_getGC (my selectionGraphics), None);
-		XDestroyRegion (my updateRegion);
-		my updateRegion = NULL;
-	}
-	SMERIG_valid = 0;
-#endif
+		drawSelection (me, 1);
+	#endif
 }
 
 // TODO: Paul, als praat nu 100dpi zou zijn waarom zie ik hier dan nog 72.0 onder?
@@ -384,11 +359,11 @@ void Picture_remove (Picture *pme) {
 Any Picture_getGraphics (Picture me) { return my graphics; }
 
 void Picture_unhighlight (Picture me) {
-	if (my drawingArea) drawSelection (me, 0);   /* Unselect. */
+	if (my drawingArea) drawSelection (me, 0);   // unselect
 }
 
 void Picture_highlight (Picture me) {
-	if (my drawingArea) drawSelection (me, 1);   /* Select. */
+	if (my drawingArea) drawSelection (me, 1);   // select
 }
 
 void Picture_erase (Picture me) {
@@ -398,54 +373,56 @@ void Picture_erase (Picture me) {
 		drawMarkers (me);
 		drawSelection (me, 1);
 	}
-SMERIG_valid = 1;
 }
 
-int Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
-	FILE *f = Melder_fopen (file, "wb");
-	if (! f) return 0;
-	if (fprintf (f, "PraatPictureFile") < 0 || ! Graphics_writeRecordings (my graphics, f)) {
-		fclose (f);
-		return Melder_error3 (L"Cannot write picture file ", MelderFile_messageName (file), L".");
+void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "wb");
+		if (fprintf (f, "PraatPictureFile") < 0) Melder_throw ("Write error.");
+		Graphics_writeRecordings (my graphics, f);
+		f.close (file);
+	} catch (MelderError) {
+		Melder_throw ("Cannot write Praat picture file ", MelderFile_messageName (file), ".");
 	}
-	fclose (f);
-	return 1;
 }
 
-static int Picture_readFromPraatPictureFile_any (Picture me, MelderFile file, int old) {
-	FILE *f;
-	int n;
-	char line [200], *end;
+static void Picture_readFromPraatPictureFile_any (Picture me, MelderFile file, bool old) {
+	autofile f = Melder_fopen (file, "rb");
+	char line [200];
+	int n = fread (line, 1, 199, f);
+	line [n] = '\0';
 	const char *tag = "PraatPictureFile";
-	if ((f = Melder_fopen (file, "rb")) == NULL) return 0;
-	n = fread (line, 1, 199, f); line [n] = '\0';
-	end = strstr (line, tag);
-	if (! end) {
-		fclose (f);
-		return Melder_error2 (MelderFile_messageName (file), L" is not a Praat picture file.");
-	}
+	char *end = strstr (line, tag);
+	if (! end) Melder_throw ("This is not a Praat picture file.");
 	*end = '\0';
 	rewind (f);
 	fread (line, 1, end - line + strlen (tag), f);
 	if (old) {
 		#ifdef _WIN32
-		if (! Graphics_readRecordings_oldWindows (my graphics, f)) { fclose (f); return 0; }
+			Graphics_readRecordings_oldWindows (my graphics, f);
 		#endif
 	} else {
-		if (! Graphics_readRecordings (my graphics, f)) { fclose (f); return 0; }
+		Graphics_readRecordings (my graphics, f);
 	}
-	fclose (f);
 	Graphics_updateWs (my graphics);
-	return 1;
+	f.close (file);
 }
 
-int Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
-	return Picture_readFromPraatPictureFile_any (me, file, FALSE);
+void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
+	try {
+		Picture_readFromPraatPictureFile_any (me, file, false);
+	} catch (MelderError) {
+		Melder_throw ("Praat picture not read from file ", MelderFile_messageName (file));
+	}
 }
 
 #ifdef _WIN32
-int Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file) {
-	return Picture_readFromPraatPictureFile_any (me, file, TRUE);
+void Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file) {
+	try {
+		Picture_readFromPraatPictureFile_any (me, file, true);
+	} catch (MelderError) {
+		Melder_throw ("Praat picture not read from file ", MelderFile_messageName (file));
+	}
 }
 #endif
 
@@ -590,24 +567,25 @@ void Picture_copyToClipboard_screenImage (Picture me) {
 	HUnlock ((Handle) pict);
 	KillPicture (pict);
 }
-int Picture_writeToMacPictFile (Picture me, MelderFile file) {
-	long i, zero = 0, count;
-	PicHandle pict = copyToPict (me);	
-	MelderFile_delete (file);   /* Overwrite existing file with same name. */
-	FILE *f = Melder_fopen (file, "wb");
-	if (f == NULL)
-		return Melder_error3 (L"Cannot create Mac picture file ", MelderFile_messageName (file), L".");
-	count = 4;
-	for (i = 1; i <= 128; i ++)
-		fwrite (& zero, 4, 1, f);
-	HLock ((Handle) pict);
-	count = GetHandleSize ((Handle) pict);
-	fwrite (*pict, count, 1, f);
-	HUnlock ((Handle) pict);
-	Melder_fclose (file, f);
-	KillPicture (pict);
-	MelderFile_setMacTypeAndCreator (file, 'PICT', 'PpgB');
-	return 1;
+void Picture_writeToMacPictFile (Picture me, MelderFile file) {
+	try {
+		PicHandle pict = copyToPict (me);	
+		MelderFile_delete (file);   // overwrite any existing file with the same name
+		autofile f = Melder_fopen (file, "wb");
+		long zero = 0, count;
+		count = 4;
+		for (int i = 1; i <= 128; i ++)
+			fwrite (& zero, 4, 1, f);
+		HLock ((Handle) pict);
+		count = GetHandleSize ((Handle) pict);
+		fwrite (*pict, count, 1, f);
+		HUnlock ((Handle) pict);
+		f.close (file);
+		KillPicture (pict);
+		MelderFile_setMacTypeAndCreator (file, 'PICT', 'PpgB');
+	} catch (MelderError) {
+		Melder_throw ("Picture not written to Mac picture file ", MelderFile_messageName (file), ".");
+	}
 }
 #endif
 
@@ -617,20 +595,18 @@ int Picture_writeToMacPictFile (Picture me, MelderFile file) {
 #define WIN_WIDTH  7.5
 #define WIN_HEIGHT  11
 static HENHMETAFILE copyToMetafile (Picture me) {
-	HENHMETAFILE metafile;
 	RECT rect;
 	HDC dc;
 	PRINTDLG defaultPrinter;
 	int resolution;
-	Graphics pictGraphics;
 	memset (& defaultPrinter, 0, sizeof (PRINTDLG));
 	defaultPrinter. lStructSize = sizeof (PRINTDLG);
 	defaultPrinter. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 	PrintDlg (& defaultPrinter);
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
 	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, L"Praat\0");
-	if (! dc) return (HENHMETAFILE) Melder_errorp1 (L"Cannot create metafile.");
-	resolution = GetDeviceCaps (dc, LOGPIXELSX);   /* Virtual PC: 360 */
+	if (! dc) Melder_throw ("Cannot create Windows metafile.");
+	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
 		MelderInfo_open ();
@@ -661,96 +637,99 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 			MelderInfo_writeLine2 (L"orientation ", Melder_integer (devMode -> dmOrientation));
 		MelderInfo_close ();
 	}
-	pictGraphics = Graphics_create_screen ((void *) dc, 0, resolution);
-	Graphics_setWsViewport (pictGraphics, 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
-	Graphics_setWsWindow (pictGraphics, 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
-	Graphics_play ((Graphics) my graphics, pictGraphics);
-	metafile = CloseEnhMetaFile (dc);
-	forget (pictGraphics);
+	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, 0, resolution);
+	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
+	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
+	Graphics_play ((Graphics) my graphics, pictGraphics.peek());
+	HENHMETAFILE metafile = CloseEnhMetaFile (dc);
 	return metafile;
 }
 void Picture_copyToClipboard (Picture me) {
-	HENHMETAFILE metafile = copyToMetafile (me);
-	if (! metafile) Melder_flushError (NULL);
-	OpenClipboard (NULL);
-	EmptyClipboard ();
-	SetClipboardData (CF_ENHMETAFILE, metafile);
-	CloseClipboard ();
-	/*
-	 * We should NOT call DeleteEnhMetaFile,
-	 * because the clipboard becomes the owner of this global memory object.
-	 */
+	try {
+		HENHMETAFILE metafile = copyToMetafile (me);
+		OpenClipboard (NULL);
+		EmptyClipboard ();
+		SetClipboardData (CF_ENHMETAFILE, metafile);
+		CloseClipboard ();
+		/*
+		 * We should NOT call DeleteEnhMetaFile,
+		 * because the clipboard becomes the owner of this global memory object.
+		 */
+	} catch (MelderError) {
+		Melder_throw ("Picture not copied to clipboard.");
+	}
 }
-int Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
-	HENHMETAFILE metafile = copyToMetafile (me);
-	if (! metafile) Melder_flushError (NULL);
-	MelderFile_delete (file);   /* Overwrite existing file with same name. */
-	DeleteEnhMetaFile (CopyEnhMetaFile (metafile, file -> path));
-	DeleteEnhMetaFile (metafile);
-	return 1;
+void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
+	try {
+		HENHMETAFILE metafile = copyToMetafile (me);
+		MelderFile_delete (file);   // overwrite any existing file with the same name
+		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, file -> path));
+		DeleteEnhMetaFile (metafile);
+	} catch (MelderError) {
+		Melder_throw ("Picture not written to Windows metafile ", MelderFile_messageName (file));
+	}
 }
 #endif
 
-int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS) {
-	Graphics ps;
-	MelderFile_delete (file);   /* To kill resources as well (fopen only kills data fork). */
-	/* BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading). */
+void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS) {
+	try {
+		MelderFile_delete (file);   // to kill resources as well (fopen only kills data fork)
+		/* BUG: no message if file cannot be deleted (e.g. because still open by Microsoft Word 2001 after reading). */
 
-	ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
-		my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
-	if (! ps)
-		return Melder_error3 (L"Cannot create EPS file ", MelderFile_messageName (file), L".");
-	Graphics_play ((Graphics) my graphics, ps);
-	forget (ps);
-	MelderFile_setMacTypeAndCreator (file, 'EPSF', 'vgrd');
-
-	#ifdef macintosh
-	/*
-		Create an 8-bit screen preview.
-	*/
-	if (thePrinter. epsFilesHavePreview) {
-		PicHandle pict = copyToPict_screenImage (me);
-		/*
-		 * Copy the PICT to the file.
-		 */
-		FSRef macFileReference;
-		Melder_fileToMach (file, & macFileReference);
-		HFSUniStr255 resourceForkName;
-		FSGetResourceForkName (& resourceForkName);
-		OSErr err = FSCreateResourceFork (& macFileReference, resourceForkName. length, resourceForkName. unicode, 0);
-		if (err != noErr)
-			return Melder_error3 (L"Unexpected error ", Melder_integer (err), L" trying to create a screen preview .");
-		int path = FSOpenResFile (& macFileReference, fsWrPerm);
-
-		/* Save the data to the file as a 'PICT' resource. */
-		/* The Id of this resource is 256 (PS. Lang. Ref. Man., 2nd ed., p. 728. */
-
-		if (path != -1) {
-			AddResource ((Handle) pict, 'PICT', 256, (unsigned char *) "pict");   /* Resource manager's. */
-			if (ResError () != noErr) {
-				/*
-				 * Disk full, or PICT resource larger than 32 kilobytes?
-				 */
-				CloseResFile (path);
-				return Melder_error1 (L"Picture_writeToEpsFile: not enough disk space.");
-			}
-			SetResAttrs ((Handle) pict, resPurgeable + resChanged);
-			CloseResFile (path);
+		{ // scope
+			autoGraphics ps = Graphics_create_epsfile (file, 600, thePrinter. spots,
+				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
+			Graphics_play ((Graphics) my graphics, ps.peek());
 		}
-	}
-	#endif
+		MelderFile_setMacTypeAndCreator (file, 'EPSF', 'vgrd');
 
-	return 1;
+		#ifdef macintosh
+		/*
+			Create an 8-bit screen preview.
+		*/
+		if (thePrinter. epsFilesHavePreview) {
+			PicHandle pict = copyToPict_screenImage (me);
+			/*
+			 * Copy the PICT to the file.
+			 */
+			FSRef macFileReference;
+			Melder_fileToMach (file, & macFileReference);
+			HFSUniStr255 resourceForkName;
+			FSGetResourceForkName (& resourceForkName);
+			OSErr err = FSCreateResourceFork (& macFileReference, resourceForkName. length, resourceForkName. unicode, 0);
+			if (err != noErr)
+				Melder_throw ("Unexpected error ", err, " trying to create a screen preview .");
+			int path = FSOpenResFile (& macFileReference, fsWrPerm);
+
+			/* Save the data to the file as a 'PICT' resource. */
+			/* The Id of this resource is 256 (PS. Lang. Ref. Man., 2nd ed., p. 728. */
+
+			if (path != -1) {
+				AddResource ((Handle) pict, 'PICT', 256, (unsigned char *) "pict");   // owned by resource manager
+				if (ResError () != noErr) {
+					/*
+					 * Disk full, or PICT resource larger than 32 kilobytes?
+					 */
+					CloseResFile (path);
+					Melder_throw ("Not enough disk space.");
+				}
+				SetResAttrs ((Handle) pict, resPurgeable + resChanged);
+				CloseResFile (path);
+			}
+		}
+		#endif
+	} catch (MelderError) {
+		Melder_throw ("Picture not written to Windows metafile ", MelderFile_messageName (file));
+	}
 }
 
-int Picture_writeToPdfFile (Picture me, MelderFile file) {
-	Graphics graphics = Graphics_create_pdffile (file, 300,
-		my selx1, my selx2, my sely1, my sely2);
-	if (graphics == NULL)
-		return Melder_error3 (L"Cannot create PDF file ", MelderFile_messageName (file), L".");
-	Graphics_play ((Graphics) my graphics, graphics);
-	forget (graphics);
-	return 1;
+void Picture_writeToPdfFile (Picture me, MelderFile file) {
+	try {
+		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
+		Graphics_play ((Graphics) my graphics, graphics.peek());
+	} catch (MelderError) {
+		Melder_throw ("Picture not written to PDF file ", MelderFile_messageName (file), ".");
+	}
 }
 
 static void print (I, Graphics printer) {
@@ -772,7 +751,7 @@ void Picture_setSelection
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
 			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
-			drawSelection (me, 0);   /* Unselect. */
+			drawSelection (me, 0);   // unselect
 		#endif
 	}
 	my selx1 = x1NDC;
@@ -786,7 +765,7 @@ void Picture_setSelection
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
 			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
-			drawSelection (me, 1);   /* Select. */
+			drawSelection (me, 1);   // select
 		#endif
 	}
 

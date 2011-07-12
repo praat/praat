@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/11
+ * pb 2011/07/11
  */
 
 /* Transition inherits from Data */
@@ -31,12 +31,9 @@
 	extern "C" {
 #endif
 
-#define Transition_members Data_members \
-	long numberOfStates; \
-	wchar_t **stateLabels; \
-	double **data;
-#define Transition_methods Data_methods
-class_create (Transition, Data);
+#include "Transition_def.h"
+#define Transition__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (Transition, Data);
 
 void Transition_init (I, long numberOfStates);
 Transition Transition_create (long numberOfStates);

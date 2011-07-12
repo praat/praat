@@ -26,134 +26,134 @@
  * pb 2009/03/21 modern enums
  * pb 2011/03/03 removed oo_STRINGx
  * pb 2011/03/29 C++
+ * pb 2011/06/29 removed C version
+ * pb 2011/07/07 C++
+ * pb 2011/07/07 void
  */
 
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	my x = cacget##storage (f);
+	my x = cacget##storage (f); therror
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		my x [i] = cacget##storage (f);
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = cacget##storage (f); therror \
+	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		my x [i] = cacget##storage (f);
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = cacget##storage (f); therror \
+	}
 
 #define oo_VECTOR(type,t,storage,x,min,max)  \
-	if (max >= min && ! (my x = NUM##t##vector_readCache_##storage (min, max, f))) return 0;
+	if (max >= min) { \
+		my x = NUM##t##vector_readCache_##storage (min, max, f); therror \
+	}
 
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	if (row2 >= row1 && col2 >= col1 && \
-	    ! (my x = NUM##t##matrix_readCache_##storage (row1, row2, col1, col2, f))) return 0;
+	if (row2 >= row1 && col2 >= col1) { \
+	    my x = NUM##t##matrix_readCache_##storage (row1, row2, col1, col2, f); therror \
+	}
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	if ((my x = cacget##storage (f, & enum_##Type)) < 0) return 0;
+	my x = cacget##storage (f, & enum_##Type); therror
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if ((my x [i] = cacget##storage (f, & enum_##Type)) < 0) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = cacget##storage (f, & enum_##Type); therror \
+	}
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if ((my x [i] = cacget##storage (f, & enum_##Type)) < 0) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = cacget##storage (f, & enum_##Type); therror \
+	}
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUM##t##vector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if ((my x [i] = cacget##storage (f, & enum_##Type)) < 0) return 0; \
+		my x = NUM##t##vector (min, max); therror \
+		for (long i = min; i <= max; i ++) { \
+			my x [i] = cacget##storage (f, & enum_##Type); therror \
+		} \
 	}
 
 #define oo_STRINGx(storage,x)  \
-	if (! (my x = cacget##storage (f))) return 0;
+	my x = cacget##storage (f); therror
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if (! (my x [i] = cacget##storage (f))) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		my x [i] = cacget##storage (f); therror \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! (my x [i] = cacget##storage (f))) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		my x [i] = cacget##storage (f); therror \
+	}
 
-#ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMvector <wchar*> (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! (my x [i] = cacget##storage (f))) return 0; \
+		my x = NUMvector <wchar *> (min, max); \
+		for (long i = min; i <= max; i ++)  { \
+			my x [i] = cacget##storage (f); therror \
+		} \
 	}
-#else
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
-		if (! (my x = NUMwvector (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! (my x [i] = cacget##storage (f))) return 0; \
-	}
-#endif
 
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_readCache (& my x, f)) return 0;
+	Type##_readCache (& my x, f); therror
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) return Melder_error ("Number of \"%s\" (%d) greater than %d.", #x, n, cap); \
-	for (int i = 0; i < n; i ++) \
-		if (! Type##_readCache (& my x [i], f)) return 0;
+	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
+	for (int i = 0; i < n; i ++) { \
+		Type##_readCache (& my x [i], f); therror \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! Type##_readCache (& my x [i], f)) return 0;
+	for (int i = 0; i <= setType##_MAX; i ++) { \
+		Type##_readCache (& my x [i], f); therror \
+	}
 
-#ifdef __cplusplus
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
-		if (! (my x = NUMvector <struct##Type> (min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_readCache (& my x [i], f)) return 0; \
+		my x = NUMvector <struct##Type> (min, max); \
+		for (long i = min; i <= max; i ++) { \
+			Type##_readCache (& my x [i], f); therror \
+		} \
 	}
-#else
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) { \
-		if (! (my x = NUMstructvector (Type, min, max))) return 0; \
-		for (long i = min; i <= max; i ++) \
-			if (! Type##_readCache (& my x [i], f)) return 0; \
-	}
-#endif
 
 #define oo_OBJECT(Class,version,x)  \
-	if (cacgetex (f)) { if (! (my x = Thing_new (Class)) || ! Data_readCache (my x, f)) return 0; }
+	if (cacgetex (f)) { \
+		my x = Thing_new (Class); therror \
+		Data_readCache (my x, f); therror \
+	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
-		long n = cacgeti4 (f); \
-		if (! (my x = Class##_create ())) return 0; \
+		long n = cacgeti4 (f); therror \
+		my x = Class##_create (); therror \
 		for (long i = 1; i <= n; i ++) { \
-			ItemClass item = (ItemClass) Thing_new (ItemClass); \
-			if (! item || ! item -> methods -> readCache (item, f)) return 0; \
-			if (! Collection_addItem (my x, item)) return 0; \
+			auto#ItemClass item = (ItemClass) Thing_new (ItemClass); \
+			((Data_Table) item -> methods) -> readCache (item.peek(), f); therror \
+			Collection_addItem (my x, item.transfer()); \
 		} \
 	}
 
 #define oo_DEFINE_STRUCT(Type)  \
-	static int Type##_readCache (Type me, CACHE *f) { \
+	static void Type##_readCache (Type me, CACHE *f) { \
 		int localVersion = Thing_version;
 
 #define oo_END_STRUCT(Type)  \
-		return 1; \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static int class##Class##_readCache (I, CACHE *f) { \
+	static void class##Class##_readCache (I, CACHE *f) { \
 		iam (Class); \
 		int localVersion = Thing_version; (void) localVersion; \
-		if (! inherited (Class) readCache (me, f)) return 0;
+		inherited (Class) readCache (me, f); therror
 
 #define oo_END_CLASS(Class)  \
-		return 1; \
 	}
 
 #define oo_IF(condition)  \

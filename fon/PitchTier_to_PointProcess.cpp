@@ -33,9 +33,9 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 		long size = my points -> size;
 		if (size == 0) return thee.transfer();
 		for (long interval = 0; interval <= size; interval ++) {
-			double t1 = interval == 0 ? my xmin : ((RealPoint) my points -> item [interval]) -> time;
+			double t1 = interval == 0 ? my xmin : ((RealPoint) my points -> item [interval]) -> number;
 			Melder_assert (NUMdefined (t1));
-			double t2 = interval == size ? my xmax : ((RealPoint) my points -> item [interval + 1]) -> time;
+			double t2 = interval == size ? my xmax : ((RealPoint) my points -> item [interval + 1]) -> number;
 			Melder_assert (NUMdefined (t2));
 			double f1 = ((RealPoint) my points -> item [interval == 0 ? 1 : interval]) -> value;
 			Melder_assert (NUMdefined (f1));
@@ -52,7 +52,7 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PointProcess.");
+		Melder_throw (me, ": not converted to PointProcess.");
 	}
 }
 
@@ -71,7 +71,7 @@ PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", vuv, ": not converted to PointProcess.");
+		Melder_throw (me, " & ", vuv, ": not converted to PointProcess.");
 	}
 }
 
@@ -102,7 +102,7 @@ PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, do
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", vuv, ": not converted to PointProcess.");
+		Melder_throw (me, " & ", vuv, ": not converted to PointProcess.");
 	}
 }
 
@@ -117,7 +117,7 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PitchTier.");
+		Melder_throw (me, ": not converted to PitchTier.");
 	}
 }
 
@@ -127,7 +127,7 @@ PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp) {
 		autoPitchTier thee = PitchTier_PointProcess_to_PitchTier (temp.peek(), pp);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", pp, ": not converted to PitchTier.");
+		Melder_throw (me, " & ", pp, ": not converted to PitchTier.");
 	}
 }
 
@@ -142,7 +142,7 @@ PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", pp, ": not converted to PitchTier.");
+		Melder_throw (me, " & ", pp, ": not converted to PitchTier.");
 	}
 }
 
@@ -154,7 +154,7 @@ TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
 				thy data [i] [2] = NUMhertzToSemitones (thy data [i] [2]);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to TableOfReal.");
+		Melder_throw (me, ": not converted to TableOfReal.");
 	}
 }
 

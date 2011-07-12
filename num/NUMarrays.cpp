@@ -24,6 +24,7 @@
  * pb 2009/03/14 NUMvector_add
  * pb 2011/03/29 C++
  * pb 2011/05/14 removed char (because only signed char and unsigned char can be read and written correctly)
+ * pb 2011/07/05 C++
  */
 
 #include "NUM.h"
@@ -48,8 +49,7 @@ void * NUMvector (long elementSize, long lo, long hi) {
 		theTotalNumberOfArrays += 1;
 		return result;
 	} catch (MelderError) {
-		Melder_casual ("exception in NUMvector");
-		rethrowmzero ("Vector not created.");
+		Melder_throw ("Vector of elements not created.");
 	}
 }
 
@@ -68,7 +68,7 @@ void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("Vector not copied.");
+		Melder_throw ("Vector of elements not copied.");
 	}
 }
 
@@ -78,7 +78,7 @@ void NUMvector_copyElements (long elementSize, void *v, void *to, long lo, long 
 	if (hi >= lo) memcpy ((char *) to + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 }
 
-int NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi) {
+bool NUMvector_equal (long elementSize, void *v1, void *v2, long lo, long hi) {
 	long offset = lo * elementSize;
 	Melder_assert (v1 != NULL && v2 != NULL);
 	return ! memcmp ((char *) v1 + offset, (char *) v2 + offset, (hi - lo + 1) * elementSize);
@@ -102,7 +102,7 @@ void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
 		}
 		*v = result;
 	} catch (MelderError) {
-		rethrowm ("Vector: element not appended.");
+		Melder_throw ("Vector: element not appended.");
 	}
 }
 
@@ -123,7 +123,7 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 		}
 		*v = result;
 	} catch (MelderError) {
-		rethrowm ("Vector: element not inserted.");
+		Melder_throw ("Vector: element not inserted.");
 	}
 }
 
@@ -164,7 +164,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		theTotalNumberOfArrays += 1;
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not created.");
+		Melder_throw ("Matrix of elements not created.");
 	}
 }
 
@@ -187,7 +187,7 @@ void * NUMmatrix_copy (long elementSize, void * m, long row1, long row2, long co
 		memcpy (result [row1] + columnOffset, ((char **) m) [row1] + columnOffset, dataSize);
 		return result;
 	} catch (MelderError) {
-		rethrowmzero ("Matrix not copied.");
+		Melder_throw ("Matrix of elements not copied.");
 	}
 }
 
@@ -198,7 +198,7 @@ void NUMmatrix_copyElements (long elementSize, void *m, void *to, long row1, lon
 	memcpy (((char **) to) [row1] + columnOffset, ((char **) m) [row1] + columnOffset, dataSize);
 }
 
-int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2) {
+bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2, long col1, long col2) {
 	Melder_assert (m1 != NULL && m2 != NULL);
 	long columnOffset = col1 * elementSize;
 	long dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
@@ -216,7 +216,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ return (type *) NUMvector_copy (sizeof (type), (void *) v, lo, hi); } \
 	void NUM##t##vector_copyElements (const type *v, type *to, long lo, long hi) \
 		{ NUMvector_copyElements (sizeof (type), (void *) v, to, lo, hi); } \
-	int NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
+	bool NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi) \
 		{ return NUMvector_equal (sizeof (type), (void *) v1, (void *) v2, lo, hi); } \
 	void NUM##t##vector_append (type **v, long lo, long *hi) \
 		{ NUMvector_append (sizeof (type), (void **) v, lo, hi); } \
@@ -230,7 +230,7 @@ int NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2,
 		{ return (type **) NUMmatrix_copy (sizeof (type), m, row1, row2, col1, col2); } \
 	void NUM##t##matrix_copyElements (type **m, type **to, long row1, long row2, long col1, long col2) \
 		{ NUMmatrix_copyElements (sizeof (type), m, to, row1, row2, col1, col2); } \
-	int NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
+	bool NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2) \
 		{ return NUMmatrix_equal (sizeof (type), m1, m2, row1, row2, col1, col2); }
 
 FUNCTION (b, signed char)
@@ -247,58 +247,66 @@ FUNCTION (dc, dcomplex)
 #undef FUNCTION
 
 #define FUNCTION(t,type,storage)  \
-	int NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
+	void NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name) { \
 		texputintro (file, name, L" []: ", hi >= lo ? NULL : L"(empty)", 0,0,0); \
 		for (long i = lo; i <= hi; i ++) \
 			texput##storage (file, v [i], name, L" [", Melder_integer (i), L"]", 0,0); \
 		texexdent (file); \
-		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
-		return 1; \
+		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw ("Write error."); \
 	} \
-	int NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f) { \
+	void NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f) { \
 		for (long i = lo; i <= hi; i ++) \
 			binput##storage (v [i], f); \
-		if (feof (f) || ferror (f)) return 0; \
-		return 1; \
+		if (feof (f) || ferror (f)) Melder_throw ("Write error."); \
 	} \
-	int NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f) { \
+	void NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f) { \
 		for (long i = lo; i <= hi; i ++) \
 			cacput##storage (v [i], f); \
-		return 1; \
 	} \
 	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadText text, const char *name) { \
-		type *result = NUM##t##vector (lo, hi); \
-		if (! result) return NULL; \
-		for (long i = lo; i <= hi; i ++) { \
-			result [i] = texget##storage (text); \
-			if (Melder_hasError ()) { \
-				NUM##t##vector_free (result, lo); \
-				return (type *) Melder_errorp ("(NUM" #t "vector_readText:) Could not read %s [%ld].", name, i); \
+		type *result = NULL; \
+		try { \
+			result = NUM##t##vector (lo, hi); \
+			for (long i = lo; i <= hi; i ++) { \
+				try { \
+					result [i] = texget##storage (text); \
+				} catch (MelderError) { \
+					Melder_throw ("Could not read ", name, " [", i, "]."); \
+				} \
 			} \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##vector_free (result, lo); \
+			throw; \
 		} \
-		return result; \
 	} \
 	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f) { \
-		type *result = NUM##t##vector (lo, hi); \
-		if (! result) return NULL; \
-		for (long i = lo; i <= hi; i ++) { \
-			result [i] = binget##storage (f); \
-			if (feof (f)) { \
-				NUM##t##vector_free (result, lo); \
-				return NULL; \
+		type *result = NULL; \
+		try { \
+			result = NUM##t##vector (lo, hi); \
+			for (long i = lo; i <= hi; i ++) { \
+				result [i] = binget##storage (f); \
 			} \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##vector_free (result, lo); \
+			throw; \
 		} \
-		return result; \
 	} \
 	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f) { \
-		type *result = NUM##t##vector (lo, hi); \
-		if (! result) return NULL; \
-		for (long i = lo; i <= hi; i ++) { \
-			result [i] = cacget##storage (f); \
+		type *result = NULL; \
+		try { \
+			result = NUM##t##vector (lo, hi); \
+			for (long i = lo; i <= hi; i ++) { \
+				result [i] = cacget##storage (f); \
+			} \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##vector_free (result, lo); \
+			throw; \
 		} \
-		return result; \
 	} \
-	int NUM##t##matrix_writeText_##storage (type **m, long row1, long row2, long col1, long col2, MelderFile file, const wchar_t *name) { \
+	void NUM##t##matrix_writeText_##storage (type **m, long row1, long row2, long col1, long col2, MelderFile file, const wchar_t *name) { \
 		texputintro (file, name, L" [] []: ", row2 >= row1 ? NULL : L"(empty)", 0,0,0); \
 		if (row2 >= row1) { \
 			for (long irow = row1; irow <= row2; irow ++) { \
@@ -310,60 +318,65 @@ FUNCTION (dc, dcomplex)
 			} \
 		} \
 		texexdent (file); \
-		if (feof (file -> filePointer) || ferror (file -> filePointer)) return 0; \
-		return 1; \
+		if (feof (file -> filePointer) || ferror (file -> filePointer)) Melder_throw ("Write error."); \
 	} \
-	int NUM##t##matrix_writeBinary_##storage (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
+	void NUM##t##matrix_writeBinary_##storage (type **m, long row1, long row2, long col1, long col2, FILE *f) { \
 		if (row2 >= row1) { \
 			for (long irow = row1; irow <= row2; irow ++) { \
 				for (long icol = col1; icol <= col2; icol ++) \
 					binput##storage (m [irow] [icol], f); \
 			} \
 		} \
-		if (feof (f) || ferror (f)) return 0; \
-		return 1; \
+		if (feof (f) || ferror (f)) Melder_throw ("Write error."); \
 	} \
-	int NUM##t##matrix_writeCache_##storage (type **m, long row1, long row2, long col1, long col2, CACHE *f) { \
+	void NUM##t##matrix_writeCache_##storage (type **m, long row1, long row2, long col1, long col2, CACHE *f) { \
 		if (row2 >= row1) { \
 			for (long irow = row1; irow <= row2; irow ++) { \
 				for (long icol = col1; icol <= col2; icol ++) \
 					cacput##storage (m [irow] [icol], f); \
 			} \
 		} \
-		return 1; \
 	} \
 	type ** NUM##t##matrix_readText_##storage (long row1, long row2, long col1, long col2, MelderReadText text, const char *name) { \
-		type **result = NUM##t##matrix (row1, row2, col1, col2); \
-		if (! result) return NULL; \
-		for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) { \
-			result [irow] [icol] = texget##storage (text); \
-			if (Melder_hasError ()) { \
-				NUM##t##matrix_free (result, row1, col1); \
-				return (type **) Melder_errorp ("(NUM" #t "matrix_readText:) " \
-					"Could not read %s [%ld] [%ld].", name, irow, icol); \
+		type **result = NULL; \
+		try { \
+			result = NUM##t##matrix (row1, row2, col1, col2); \
+			for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) { \
+				try { \
+					result [irow] [icol] = texget##storage (text); \
+				} catch (MelderError) { \
+					Melder_throw ("Could not read ", name, " [", irow, "] [", icol, "]."); \
+				} \
 			} \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##matrix_free (result, row1, col1); \
+			throw; \
 		} \
-		return result; \
 	} \
 	type ** NUM##t##matrix_readBinary_##storage (long row1, long row2, long col1, long col2, FILE *f) { \
-		type **result = NUM##t##matrix (row1, row2, col1, col2); \
-		if (! result) return NULL; \
-		for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) { \
-			result [irow] [icol] = binget##storage (f); \
-			if (feof (f)) { \
-				NUM##t##matrix_free (result, row1, col1); \
-				return NULL; \
-			} \
+		type **result = NULL; \
+		try { \
+			result = NUM##t##matrix (row1, row2, col1, col2); \
+			for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) \
+				result [irow] [icol] = binget##storage (f); \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##matrix_free (result, row1, col1); \
+			throw; \
 		} \
-		return result; \
 	} \
 	type ** NUM##t##matrix_readCache_##storage (long row1, long row2, long col1, long col2, CACHE *f) { \
-		type **result = NUM##t##matrix (row1, row2, col1, col2); \
-		if (! result) return NULL; \
-		for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) { \
-			result [irow] [icol] = cacget##storage (f); \
+		type **result = NULL; \
+		try { \
+			result = NUM##t##matrix (row1, row2, col1, col2); \
+			for (long irow = row1; irow <= row2; irow ++) for (long icol = col1; icol <= col2; icol ++) \
+				result [irow] [icol] = cacget##storage (f); \
+			return result; \
+		} catch (MelderError) { \
+			NUM##t##matrix_free (result, row1, col1); \
+			throw; \
 		} \
-		return result; \
 	}
 
 FUNCTION (b, signed char, i1)

@@ -1676,7 +1676,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 			Melder_assert (MEMBER2 (me, CascadeButton, PushButton));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_utf8ToWcs_e (text);   // BUG cherror
+			my name = Melder_utf8ToWcs (text);   // BUG throwable
 			if (my inMenu) {
 				NativeMenuItem_setText (me);
 			} else if (MEMBER (me, CascadeButton) && my motiff.cascadeButton.inBar) {
@@ -1789,7 +1789,7 @@ static void _motif_setValues (GuiObject me, va_list arg) {
 			Melder_assert (MEMBER (me, Scale));
 			text = va_arg (arg, char *);
 			Melder_free (my name);
-			my name = Melder_utf8ToWcs_e (text); // BUG cherror
+			my name = Melder_utf8ToWcs (text); // BUG throwable
 			_Gui_invalidateWidget (me);
 			break;
 		case XmNtopAttachment:
@@ -2935,7 +2935,7 @@ void XtVaGetValues (GuiObject me, ...) {
 		case XmNlabelString:
 		case XmNtitleString:
 			Melder_assert (my widgetClass == xmCascadeButtonWidgetClass || my widgetClass == xmScaleWidgetClass);
-			text = Melder_wcsToUtf8_e (my name); // BUG cherror
+			text = Melder_wcsToUtf8 (my name); // BUG throwable
 			*va_arg (arg, char **) = text;
 			break;
 		case XmNdialogTitle:
@@ -4465,7 +4465,7 @@ void XtAppMainLoop (XtAppContext appctxt) {
 		sprintf (commandShowString, "%d", commandShow);
 		argv [1] = & instanceString [0];
 		argv [2] = & commandShowString [0];
-		argv [3] = Melder_wcsToUtf8_e (GetCommandLineW ());   // it's OK to ignore the possiiblity of low memory
+		argv [3] = Melder_wcsToUtf8 (GetCommandLineW ());   // it's OK to ignore the possibility of low memory
 		if (argv [3] [0] == '\"') {
 			argv [3] ++;   // skip quote
 			while (argv [3] [0] != '\"') { argv [3] ++; }

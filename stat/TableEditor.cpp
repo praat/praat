@@ -29,6 +29,7 @@
  * pb 2008/03/20 split off Help menu
  * fb 2010/02/24 GTK
  * pb 2011/03/20 C++
+ * pb 2011/07/02 C++
  */
 
 #include "TableEditor.h"
@@ -38,15 +39,19 @@
 #define MAXNUM_VISIBLE_COLUMNS  100
 #define SIZE_INCHES  40
 
-#define TableEditor__members(Klas) Editor__members(Klas) \
-	long topRow, leftColumn, selectedRow, selectedColumn; \
-	GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar; \
-	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS]; \
+struct structTableEditor : public structEditor {
+	long topRow, leftColumn, selectedRow, selectedColumn;
+	GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
+	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS];
 	Graphics graphics;
+};
 #define TableEditor__methods(Klas) Editor__methods(Klas) \
 	void (*draw) (Klas me); \
 	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
-Thing_declare2 (TableEditor, Editor);
+Thing_declare2cpp (TableEditor, Editor);
+
+#undef our
+#define our ((TableEditor_Table) my methods) ->
 
 /********** EDITOR METHODS **********/
 
@@ -218,7 +223,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	iam (TableEditor);
 	(void) event;
 	Table table = static_cast<Table> (my data);
-	Editor_broadcastChange (TableEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -347,7 +352,7 @@ static void createChildren (TableEditor me) {
 }
 
 static void createMenus (TableEditor me) {
-	inherited (TableEditor) createMenus (TableEditor_as_parent (me));
+	inherited (TableEditor) createMenus (me);
 
 	#ifndef macintosh
 	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
@@ -363,7 +368,7 @@ static void createMenus (TableEditor me) {
 }
 
 static void createHelpMenuItems (TableEditor me, EditorMenu menu) {
-	inherited (TableEditor) createHelpMenuItems (TableEditor_as_parent (me), menu);
+	inherited (TableEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
@@ -437,7 +442,7 @@ static gboolean gui_cb_drawing_area_scroll(GuiObject w, GdkEventScroll *event, g
 TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
-		Editor_init (TableEditor_as_parent (me.peek()), parent, 0, 0, 700, 500, title, table); therror
+		Editor_init (me.peek(), parent, 0, 0, 700, 500, title, table);
 		#if motif
 		Melder_assert (XtWindow (my drawingArea));
 		#endif
@@ -467,7 +472,7 @@ TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table ta
 		#endif
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("TableEditor not created.");
+		Melder_throw ("TableEditor not created.");
 	}
 }
 

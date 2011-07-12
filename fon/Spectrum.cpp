@@ -39,6 +39,9 @@
 #include "oo_READ_BINARY.h"
 #include "Spectrum_def.h"
 
+#undef our
+#define our ((Spectrum_Table) my methods) ->
+
 static void info (I) {
 	iam (Spectrum);
 	classData -> info (me);
@@ -94,7 +97,7 @@ Spectrum Spectrum_create (double fmax, long nf) {
 		Matrix_init (me.peek(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1, 2, 2, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Spectrum not created.");
+		Melder_throw ("Spectrum not created.");
 	}
 }
 
@@ -222,7 +225,7 @@ Table Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool includeFr
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Table.");
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
@@ -234,7 +237,7 @@ void Spectrum_list (Spectrum me, bool includeBinNumbers, bool includeFrequency,
 			includeRealPart, includeImaginaryPart, includeEnergyDensity, includePowerDensity);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		rethrowm (me, ": not listed.");
+		Melder_throw (me, ": not listed.");
 	}
 }
 
@@ -246,7 +249,7 @@ Spectrum Matrix_to_Spectrum (Matrix me) {
 		Thing_overrideClass (thee.peek(), classSpectrum);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Spectrum.");
+		Melder_throw (me, ": not converted to Spectrum.");
 	}
 }
 
@@ -256,7 +259,7 @@ Matrix Spectrum_to_Matrix (Spectrum me) {
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -301,7 +304,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": cepstral smoothing not computed.");
+		Melder_throw (me, ": cepstral smoothing not computed.");
 	}
 }
 

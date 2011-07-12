@@ -43,13 +43,11 @@ int _Activation_checkElements (Activation me)
 
 void Activation_init (I, long ny, long nx)
 {
-	try {
-		iam (Activation); 
-		double xmin = 1, xmax = nx, dx = 1, x1 = 1, ymin = 1, ymax = ny;
-		double dy = 1, y1 = 1;
-		my ny = ny; my nx = nx;
-		Matrix_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
-	} catch (MelderError) { rethrow; }
+	iam (Activation); 
+	double xmin = 1, xmax = nx, dx = 1, x1 = 1, ymin = 1, ymax = ny;
+	double dy = 1, y1 = 1;
+	my ny = ny; my nx = nx;
+	Matrix_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 }
 
 Activation Activation_create (long ny, long nx)
@@ -58,7 +56,7 @@ Activation Activation_create (long ny, long nx)
 		autoActivation me = Thing_new (Activation);
 		Activation_init (me.peek(), ny, nx);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Activation not created."); }
+	} catch (MelderError) { Melder_thrown ("Activation not created."); }
 }
 
 Activation Matrix_to_Activation (I)
@@ -68,7 +66,7 @@ Activation Matrix_to_Activation (I)
 		autoActivation thee = Activation_create (my ny, my nx);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not converted to Activation."); }
+	} catch (MelderError) { Melder_thrown (me, ": not converted to Activation."); }
 }
 
 Matrix Activation_to_Matrix (I)
@@ -79,7 +77,7 @@ Matrix Activation_to_Matrix (I)
                                  my ymin, my ymax, my ny, my dy, my y1); 
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);   
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
 }
 
 /* End of file Activation.cpp */

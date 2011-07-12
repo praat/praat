@@ -56,7 +56,7 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 		thy frame [1]. nFormants = nform;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Formant.");
+		Melder_throw (me, ": not converted to Formant.");
 	}
 }
 

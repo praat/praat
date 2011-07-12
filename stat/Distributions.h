@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 /* Distributions inherits from TableOfReal */
@@ -30,9 +30,11 @@
 	extern "C" {
 #endif
 
-#define Distributions_members TableOfReal_members
-#define Distributions_methods TableOfReal_methods
-class_create (Distributions, TableOfReal);
+Thing_declare1cpp (Distributions);
+struct structDistributions : public structTableOfReal {
+};
+#define Distributions__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Distributions, TableOfReal);
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns);
 

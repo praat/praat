@@ -31,6 +31,9 @@
 
 #include "Vector.h"
 
+#undef our
+#define our ((Vector_Table) my methods) ->
+
 //
 // Vector::getVector () returns a channel or the average of all the channels.
 //

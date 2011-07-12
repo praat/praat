@@ -33,6 +33,7 @@
  * pb 2011/03/03 removed oo_STRING
  * pb 2011/03/15 removed oo_CHAR
  * pb 2011/04/14 removed oo_WCHAR
+ * pb 2011/07/07 void
  */
 
 /*** Single types. ***/
@@ -242,15 +243,17 @@
 /*** Class declaration in header file. ***/
 
 #define oo_CLASS_CREATE(klas,parent) \
+	typedef struct struct##klas *klas; \
+	typedef _Thing_auto <struct##klas> auto##klas; \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
-		const wchar_t *_className; \
+		const wchar *_className; \
 		parent##_Table _parent; \
 		long _size; \
-		klas##_methods \
+		void * (* _new) (); \
+		klas##__methods(klas) \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas; \
-	_THING_DECLARE_AUTO (klas) \
 	extern klas##_Table class##klas
 
 
@@ -298,15 +301,14 @@
 #define oo_DEFINE_STRUCT(Type)  typedef struct struct##Type {
 #define oo_END_STRUCT(Type)  } *Type; \
 	void Type##_destroy (Type me); \
-	int Type##_copy (Type me, Type thee); \
+	void Type##_copy (Type me, Type thee); \
 	bool Type##_equal (Type me, Type thee);
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	typedef struct struct##Class##_Table *Class##_Table; \
-	typedef struct struct##Class { \
-		Class##_Table methods; \
-		Parent##_members
-#define oo_END_CLASS(Class)  } *Class;
+	typedef struct struct##Class *Class; \
+	struct struct##Class : public struct##Parent {
+#define oo_END_CLASS(Class)  };
 
 /*** Miscellaneous. ***/
 

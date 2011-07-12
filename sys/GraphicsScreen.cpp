@@ -298,7 +298,7 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
 	#ifdef macintosh
 		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	if (! Graphics_init (me)) return 0;
+	Graphics_init (me);
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
 	my x1DC = my x1DCmin = thePrinter. resolution / 2;

@@ -153,7 +153,7 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 		wpath [n_wcs] = '\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8bitToWcs_inline_e (path, wpath, kMelder_textInputEncoding_UTF8);
+		Melder_8bitToWcs_inline (path, wpath, kMelder_textInputEncoding_UTF8);
 	#endif
 }
 #endif
@@ -171,21 +171,19 @@ void Melder_machToDir (void *void_fsref, MelderDir dir) {
 	FSRefMakePath (fsref, (unsigned char *) path, kMelder_MAXPATH);   // Decomposed UTF-8.
 	Melder_8bitFileRepresentationToWcs_inline (path, dir -> path);
 }
-int Melder_fileToMach (MelderFile file, void *void_fsref) {
+void Melder_fileToMach (MelderFile file, void *void_fsref) {
 	char path [kMelder_MAXPATH+1];
 	Melder_wcsTo8bitFileRepresentation_inline (file -> path, path);
 	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
 	if (err != noErr && err != fnfErr)
-		return Melder_error5 (L"Error #", Melder_integer (err), L" translating file name ", file -> path, L".");
-	return 1;
+		Melder_throw ("Error #", err, " translating file name ", file -> path, ".");
 }
-int Melder_dirToMach (MelderDir dir, void *void_fsref) {
+void Melder_dirToMach (MelderDir dir, void *void_fsref) {
 	char path [kMelder_MAXPATH+1];
 	Melder_wcsTo8bitFileRepresentation_inline (dir -> path, path);
 	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
 	if (err != noErr && err != fnfErr)
-		return Melder_error5 (L"Error #", Melder_integer (err), L" translating dir name ", dir -> path, L".");
-	return 1;
+		Melder_throw ("Error #", err, " translating dir name ", dir -> path, ".");
 }
 #endif
 
@@ -209,12 +207,11 @@ wchar_t * MelderDir_name (MelderDir dir) {
 	#endif
 }
 
-int Melder_pathToDir (const wchar_t *path, MelderDir dir) {
+void Melder_pathToDir (const wchar *path, MelderDir dir) {
 	wcscpy (dir -> path, path);
-	return 1;
 }
 
-int Melder_pathToFile (const wchar_t *path, MelderFile file) {
+void Melder_pathToFile (const wchar *path, MelderFile file) {
 	/*
 	 * This handles complete path names only.
 	 * Unlike Melder_relativePathToFile, this handles Windows file names with slashes in them.
@@ -223,10 +220,9 @@ int Melder_pathToFile (const wchar_t *path, MelderFile file) {
 	 * i.e. if the program determined the name (fileselector, printing, prefs).
 	 */
 	wcscpy (file -> path, path);
-	return 1;
 }
 
-int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
+void Melder_relativePathToFile (const wchar *path, MelderFile file) {
 	/*
 	 * This handles complete and partial path names,
 	 * and translates slashes to native directory separators (unlike Melder_pathToFile).
@@ -269,7 +265,8 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 				if (slash == NULL) break;
 				*slash = '\\';
 			}
-			return Melder_relativePathToFile (winPath, file);
+			Melder_relativePathToFile (winPath, file);
+			return;
 		}
 		if (wcschr (path, ':') || path [0] == '\\' && path [1] == '\\' || wcsequ (path, L"<stdout>")) {
 			wcscpy (file -> path, path);
@@ -285,14 +282,13 @@ int Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 			wcscpy (file -> path, buffer.string);
 		}
 	#endif
-	return 1;
 }
 
-wchar_t * Melder_dirToPath (MelderDir dir) {
+wchar * Melder_dirToPath (MelderDir dir) {
 	return & dir -> path [0];
 }
 
-wchar_t * Melder_fileToPath (MelderFile file) {
+wchar * Melder_fileToPath (MelderFile file) {
 	return & file -> path [0];
 }
 
@@ -304,11 +300,11 @@ void MelderDir_copy (MelderDir dir, MelderDir copy) {
 	wcscpy (copy -> path, dir -> path);
 }
 
-int MelderFile_equal (MelderFile file1, MelderFile file2) {
+bool MelderFile_equal (MelderFile file1, MelderFile file2) {
 	return wcsequ (file1 -> path, file2 -> path);
 }
 
-int MelderDir_equal (MelderDir dir1, MelderDir dir2) {
+bool MelderDir_equal (MelderDir dir1, MelderDir dir2) {
 	return wcsequ (dir1 -> path, dir2 -> path);
 }
 
@@ -316,7 +312,7 @@ void MelderFile_setToNull (MelderFile file) {
 	file -> path [0] = '\0';
 }
 
-int MelderFile_isNull (MelderFile file) {
+bool MelderFile_isNull (MelderFile file) {
 	return file -> path [0] == '\0';
 }
 
@@ -324,7 +320,7 @@ void MelderDir_setToNull (MelderDir dir) {
 	dir -> path [0] = '\0';
 }
 
-int MelderDir_isNull (MelderDir dir) {
+bool MelderDir_isNull (MelderDir dir) {
 	return dir -> path [0] == '\0';
 }
 
@@ -477,11 +473,11 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 	#endif
 }
 
-int MelderDir_isDesktop (MelderDir dir) {
+bool MelderDir_isDesktop (MelderDir dir) {
 	return dir -> path [0] == '\0';
 }
 
-int MelderDir_getSubdir (MelderDir parent, const wchar_t *subdirName, MelderDir subdir) {
+void MelderDir_getSubdir (MelderDir parent, const wchar *subdirName, MelderDir subdir) {
 	#if defined (UNIX)
 		if (parent -> path [0] == '/' && parent -> path [1] == '\0') {
 			swprintf (subdir -> path, kMelder_MAXPATH+1, L"/%ls", subdirName);
@@ -497,7 +493,6 @@ int MelderDir_getSubdir (MelderDir parent, const wchar_t *subdirName, MelderDir 
 			swprintf (subdir -> path, kMelder_MAXPATH+1, L"%ls\\%ls", parent -> path, subdirName);
 		}
 	#endif
-	return 1;
 }
 
 void Melder_getHomeDir (MelderDir homeDir) {
@@ -651,23 +646,24 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 		#ifdef sgi
 			Melder_error ("%s.", strerror (errno));
 		#endif
-		Melder_error5 (L"Cannot ", type [0] == 'r' ? L"open" : type [0] == 'a' ? L"append to" : L"create",
-			L" file ", MelderFile_messageName (file), L".");
+		Melder_error_ ("Cannot ", type [0] == 'r' ? "open" : type [0] == 'a' ? "append to" : "create",
+			" file ", MelderFile_messageName (file), ".");
 		if (path [0] == '\0')
-			Melder_error1 (L"Hint: empty file name.");
+			Melder_error_ ("Hint: empty file name.");
 		else if (path [0] == ' ' || path [0] == '\t')
-			Melder_error1 (L"Hint: file name starts with a space or tab.");
+			Melder_error_ ("Hint: file name starts with a space or tab.");
 		else if (path [wcslen (path) - 1] == ' ' || path [wcslen (path) - 1] == '\t')
-			Melder_error1 (L"Hint: file name ends in a space or tab.");
+			Melder_error_ ("Hint: file name ends in a space or tab.");
 		else if (wcschr (path, '\n'))
-			Melder_error1 (L"Hint: file name contains a newline symbol.");
+			Melder_error_ ("Hint: file name contains a newline symbol.");
+		throw MelderError ();
 		return NULL;
 	}
 	return f;
 }
 
-int Melder_fclose (MelderFile file, FILE *f) {
-	if (! f) return 1;
+void Melder_fclose (MelderFile file, FILE *f) {
+	if (! f) return;
 	#if defined (CURLPRESENT)
  	if (wcsstr (file -> wpath, L"://") && file -> openForWriting) {
 		unsigned char utf8path [kMelder_MAXPATH+1];
@@ -709,20 +705,16 @@ int Melder_fclose (MelderFile file, FILE *f) {
 		CURLreturn = curl_easy_perform (CURLhandle);
 		/* Handle errors. */
 		if (CURLreturn) {
-			Melder_error ("%s\n", errorbuffer);
+			curl_easy_cleanup (CURLhandle);
 			f = NULL;
+			Melder_throw (errorbuffer, "\n");
 	    };
 		/* Clean up session */
 		curl_easy_cleanup (CURLhandle);
     }
 	#endif
-	if (f != stdout && fclose (f) == EOF) {
-		#ifdef sgi
-			Melder_error ("%s", strerror (errno));
-		#endif
-		return Melder_error3 (L"Error closing file ", MelderFile_messageName (file), L".");
-	}
-	return 1;
+	if (f != stdout && fclose (f) == EOF)
+		Melder_throw ("Error closing file ", MelderFile_messageName (file), ".");
 }
 
 void Melder_files_cleanUp (void) {
@@ -734,23 +726,33 @@ void Melder_files_cleanUp (void) {
 	#endif
 }
 
-int MelderFile_exists (MelderFile file) {
+bool MelderFile_exists (MelderFile file) {
 	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
 		Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8path);
 		struct stat statistics;
 		return ! stat (utf8path, & statistics);
 	#else
-		FILE *f = Melder_fopen (file, "rb");
-		return f ? (fclose (f), TRUE) : (Melder_clearError (), FALSE);
+		try {
+			autofile f = Melder_fopen (file, "rb");
+			f.close (file);
+			return true;
+		} catch (MelderError) {
+			Melder_clearError ();
+			return false;
+		}
 	#endif
 }
 
-int MelderFile_readable (MelderFile file) {
-	FILE *f = Melder_fopen (file, "r");
-	if (! f) { Melder_clearError (); return FALSE; }
-	fclose (f);
-	return TRUE;
+bool MelderFile_readable (MelderFile file) {
+	try {
+		autofile f = Melder_fopen (file, "rb");
+		f.close (file);
+		return true;
+	} catch (MelderError) {
+		Melder_clearError ();
+		return false;
+	}
 }
 
 long MelderFile_length (MelderFile file) {
@@ -761,18 +763,21 @@ long MelderFile_length (MelderFile file) {
 		if (stat ((char *) utf8path, & statistics)) return -1;
 		return statistics. st_size;
 	#else
-		FILE *f = Melder_fopen (file, "r");
-		long length;
-		if (! f) { Melder_clearError (); return -1; }
-		fseek (f, 0, SEEK_END);
-		length = ftell (f);
-		fclose (f);
-		return length;
+		try {
+			autofile f = Melder_fopen (file, "r");
+			fseek (f, 0, SEEK_END);
+			long length = ftell (f);
+			f.close (file);
+			return length;
+		} catch (MelderError) {
+			Melder_clearError ();
+			return -1;
+		}
 	#endif
 }
 
-int MelderFile_delete (MelderFile file) {
-	if (! file) return 1;
+void MelderFile_delete (MelderFile file) {
+	if (! file) return;
 	#if defined (_WIN32)
 		DeleteFile (file -> path);
 	#else
@@ -780,13 +785,12 @@ int MelderFile_delete (MelderFile file) {
 		Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8path);
 		remove ((char *) utf8path);
 	#endif
-	return 1;
 }
 
-wchar_t * Melder_peekExpandBackslashes (const wchar_t *message) {
-	static wchar_t names [11] [kMelder_MAXPATH+1];
+wchar * Melder_peekExpandBackslashes (const wchar *message) {
+	static wchar names [11] [kMelder_MAXPATH+1];
 	static int index = 0;
-	const wchar_t *from;
+	const wchar *from;
 	wchar_t *to;
 	if (++ index == 11) index = 0;
 	for (from = & message [0], to = & names [index] [0]; *from != '\0'; from ++, to ++) {
@@ -797,7 +801,7 @@ wchar_t * Melder_peekExpandBackslashes (const wchar_t *message) {
 	return & names [index] [0];
 }
 
-wchar_t * MelderFile_messageName (MelderFile file) {
+wchar * MelderFile_messageName (MelderFile file) {
 	return file -> path;
 }
 
@@ -825,7 +829,7 @@ void MelderFile_setDefaultDir (MelderFile file) {
 	Melder_setDefaultDir (& dir);
 }
 
-int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) {
+void Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) {
 #if defined (_WIN32)
 	structMelderFile file = { 0 };
 	SECURITY_ATTRIBUTES sa;
@@ -838,9 +842,8 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 	} else {
 		swprintf (file. path, kMelder_MAXPATH+1, L"%ls/%ls", parent -> path, dirName);   // relative path
 	}
-	if (! CreateDirectoryW (file. path, & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   /* Ignore if directory already exists. */
-		return Melder_error3 (L"Cannot create directory ", MelderFile_messageName (& file), L".");
-	return 1;
+	if (! CreateDirectoryW (file. path, & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
+		Melder_throw ("Cannot create directory ", MelderFile_messageName (& file), ".");
 #else
 	structMelderFile file = { 0 };
 	if (dirName [0] == '/') {
@@ -852,9 +855,8 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 	}
 	char utf8path [kMelder_MAXPATH+1];
 	Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8path);
-	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   /* Ignore if directory already exists. */
-		return Melder_error3 (L"Cannot create directory ", MelderFile_messageName (& file), L".");
-	return 1;
+	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
+		Melder_throw ("Cannot create directory ", MelderFile_messageName (& file), ".");
 #endif
 }
 
@@ -866,7 +868,6 @@ int Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode) 
 
 MelderFile MelderFile_open (MelderFile me) {
 	my filePointer = Melder_fopen (me, "rb");
-	if (my filePointer == NULL) return me;
 	my openForReading = true;
 	return me;
 }
@@ -928,7 +929,6 @@ char * MelderFile_readLine (MelderFile me) {
 
 MelderFile MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension) {
 	my filePointer = Melder_fopen (me, "wb");
-	if (! my filePointer) return me;
 	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).
 	if (my filePointer == stdout) return me;
 	#if defined (macintosh)

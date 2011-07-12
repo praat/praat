@@ -27,6 +27,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2011/04/06 C++
+ * pb 2011/07/01 C++
  */
 
 #include "ButtonEditor.h"
@@ -42,12 +43,6 @@
 #else
 	#define BUTTON_WIDTH  96
 #endif
-
-#define ButtonEditor__members(Klas) HyperPage__members(Klas) \
-	int show; \
-	GuiObject button1, button2, button3, button4, button5;
-#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2 (ButtonEditor, HyperPage);
 
 static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 	static MelderString text = { 0 };
@@ -218,9 +213,17 @@ static int goToPage (ButtonEditor me, const wchar_t *title) {
 				UiHistory_write (action -> title);
 			}
 			if (action -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
+				try {
+					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL, false, NULL);
+				} catch (MelderError) {
+					Melder_flushError ("Command not executed.");
+				}
 			} else {
-				if (! action -> callback (NULL, NULL, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
+				try {
+					action -> callback (NULL, NULL, NULL, NULL, false, NULL);
+				} catch (MelderError) {
+					Melder_flushError ("Command not executed.");
+				}
 			}
 			praat_updateSelection ();
 		} break;
@@ -233,9 +236,17 @@ static int goToPage (ButtonEditor me, const wchar_t *title) {
 				UiHistory_write (menuCommand -> title);
 			}
 			if (menuCommand -> script) {
-				if (! DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
+				try {
+					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL, false, NULL);
+				} catch (MelderError) {
+					Melder_flushError ("Command not executed.");
+				}
 			} else {
-				if (! menuCommand -> callback (NULL, NULL, NULL, NULL, false, NULL)) Melder_flushError ("Command not executed.");
+				try {
+					menuCommand -> callback (NULL, NULL, NULL, NULL, false, NULL);
+				} catch (MelderError) {
+					Melder_flushError ("Command not executed.");
+				}
 			}
 			praat_updateSelection ();
 		} break;
@@ -267,7 +278,7 @@ static void createChildren (ButtonEditor me) {
 		void *group = NULL;
 	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
-	inherited (ButtonEditor) createChildren (ButtonEditor_as_parent (me));
+	inherited (ButtonEditor) createChildren (me);
 	my button1 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
 		L"Objects", gui_radiobutton_cb_objects, me, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
@@ -298,7 +309,7 @@ static void createChildren (ButtonEditor me) {
 static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); return 1; }
 
 static void createHelpMenuItems (ButtonEditor me, EditorMenu menu) {
-	inherited (ButtonEditor) createHelpMenuItems (ButtonEditor_as_parent (me), menu);
+	inherited (ButtonEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
@@ -312,12 +323,14 @@ class_methods (ButtonEditor, HyperPage) {
 }
 
 ButtonEditor ButtonEditor_create (GuiObject parent) {
-	ButtonEditor me = Thing_new (ButtonEditor); cherror
-	HyperPage_init (ButtonEditor_as_parent (me), parent, L"Buttons", NULL); cherror
-	which (me, 1);
-end:
-	iferror forget (me);
-	return me;
+	try {
+		autoButtonEditor me = Thing_new (ButtonEditor);
+		HyperPage_init (me.peek(), parent, L"Buttons", NULL);
+		which (me.peek(), 1);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Buttons window not created.");
+	}
 }
 
 /* End of file ButtonEditor.cpp */

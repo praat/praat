@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/11
  */
 
 #include "TimeSoundAnalysisEditor.h"
@@ -29,20 +29,21 @@
 	extern "C" {
 #endif
 
-#define SoundEditor__parents(Klas) TimeSoundAnalysisEditor__parents(Klas) Thing_inherit (Klas, TimeSoundAnalysisEditor)
-Thing_declare1 (SoundEditor);
+Thing_declare1cpp (SoundEditor);
 
-#define SoundEditor__members(Klas) TimeSoundAnalysisEditor__members(Klas) \
-	GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton; \
-	double maxBuffer;
-#define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
-Thing_declare2 (SoundEditor, TimeSoundAnalysisEditor);
-
-SoundEditor SoundEditor_create (GuiObject parent, const wchar_t *title, Any data);
+SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Data data);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structSoundEditor : public structTimeSoundAnalysisEditor {
+		GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton;
+		double maxBuffer;
+	};
+	#define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
+	Thing_declare2cpp (SoundEditor, TimeSoundAnalysisEditor);
+
+#endif // __cplusplus
 
 /* End of file SoundEditor.h */
 #endif

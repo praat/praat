@@ -19,52 +19,57 @@
 
 #include "DLL.h"
 
-static void classNode_destroy (I)
+static void classDLLNode_destroy (I)
 {
-	iam (Node);
+	iam (DLLNode);
 	forget (my data);
-	inherited (Node) destroy (me);
+	inherited (DLLNode) destroy (me);
 }
 
-static int classNode_copy (I,thou)
+static void classDLLNode_copy (I,thou)
 {
-	iam (Node); thouart (Node);
+	iam (DLLNode); thouart (DLLNode);
 	thy data = (Data) Data_copy (my data); therror
-	return 1;
 }
 
-class_methods (Node, Data)
+class_methods (DLLNode, Data)
 {
-	class_method_local (Node, copy)
-	class_method_local (Node, destroy)
+	class_method_local (DLLNode, copy)
+	class_method_local (DLLNode, destroy)
 	class_methods_end
+}
+
+static int classDLL_compare (Any node1, Any node2)
+{
+	(void) node1;
+	(void) node2;
+	return 0;
 }
 
 static void classDLL_destroy (I)
 {
 	iam (DLL);
-	Node v = my front;
+	DLLNode v = my front;
 	while (v != 0) {
-		Node cur = v;
+		DLLNode cur = v;
 		v = v -> next;
 		forget (cur);
 	}
 	inherited (DLL) destroy (me);
 }
-
+ 
 class_methods (DLL, Thing)
 {
+	class_method_local (DLL, compare)
 	class_method_local (DLL, destroy)
 	class_methods_end
 }
 
-Node Node_create (Data data)
+DLLNode DLLNode_create (Data data)
 {
-	try {
-		Node me = Thing_new (Node);
+		DLLNode me = Thing_new (DLLNode);
 		my data = data;
 		return me;
-	} catch (MelderError) { rethrowzero; }
 }
 
 void DLL_init (I) { iam (DLL); }
@@ -74,11 +79,11 @@ DLL DLL_create()
 	try {
 		DLL me = Thing_new (DLL);
 		return me;
-	} catch (MelderError) { rethrowmzero ("DLL not created."); }
+	} catch (MelderError) { Melder_thrown ("DLL not created."); }
 	
 }
 
-void DLL_addFront (DLL me, Node n)
+void DLL_addFront (DLL me, DLLNode n)
 {
 	if (my front == 0) // empty list
 	{
@@ -91,13 +96,13 @@ void DLL_addFront (DLL me, Node n)
 	else DLL_addBefore (me, my front, n);
 }
 
-void DLL_addBack (DLL me, Node n)
+void DLL_addBack (DLL me, DLLNode n)
 {
 	if (my back == 0) DLL_addFront (me, n); // empty list
 	else DLL_addAfter (me, my back, n);
 }
 
-void DLL_addBefore (DLL me, Node pos, Node n)
+void DLL_addBefore (DLL me, DLLNode pos, DLLNode n)
 {
 	n -> prev = pos -> prev;
 	n -> next = pos;
@@ -107,7 +112,7 @@ void DLL_addBefore (DLL me, Node pos, Node n)
 	my numberOfNodes++;
 }
 
-void DLL_addAfter (DLL me, Node pos, Node n)
+void DLL_addAfter (DLL me, DLLNode pos, DLLNode n)
 {
 	n -> prev = pos;
 	n -> next = pos -> next;
@@ -117,7 +122,7 @@ void DLL_addAfter (DLL me, Node pos, Node n)
 	my numberOfNodes++;
 }
 
-void DLL_remove (DLL me, Node n)
+void DLL_remove (DLL me, DLLNode n)
 {
 	if (my numberOfNodes == 0) return;
 	if (n == my front)
@@ -137,6 +142,35 @@ void DLL_remove (DLL me, Node n)
 	}
 	forget (n);
 	my numberOfNodes++;
+}
+
+#undef our
+#define our ((DLL_Table) my methods) ->   // tijdelijk
+
+void DLL_sort (DLL me, DLLNode from, DLLNode to)
+{
+	try {
+		if (from == to) return; // ok nothing to do ?
+		// first pass : count the number of nodes
+		long numberOfNodes = 2;
+		DLLNode current = from;
+		while ((current = current -> next) != to && numberOfNodes < my numberOfNodes) { numberOfNodes++; }
+		// reserve storage
+		autoNUMvector<Data> data (1, numberOfNodes);
+		current = from;
+		for (long inode = 1; inode <= numberOfNodes; inode++)
+		{
+			data[inode] = current -> data;
+			current = current -> next;
+		}
+		NUMsort_p (numberOfNodes, (void**) data.peek(), (int (*) (const void *, const void *)) our compare);
+		// 
+		current = from;
+		for (long inode = 1; inode <= numberOfNodes; inode++)
+		{
+			current -> data = data[inode]; current = current -> next;
+		}
+	} catch (MelderError) { Melder_throw (me, ": not sorted."); }
 }
 
 // end of file DLL.cpp

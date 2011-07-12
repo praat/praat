@@ -20,33 +20,30 @@
  */
 
 /*
- * 2011/03/02
+ * 2011/07/02
 */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
+#include "Editor.h"
+#include "Strings.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define StringsEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (StringsEditor);
+Thing_declare1cpp (StringsEditor);
 
-#define StringsEditor__members(Klas) Editor__members(Klas) \
-	GuiObject list, text;
-#define StringsEditor__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (StringsEditor, Editor);
-
-StringsEditor StringsEditor_create (GuiObject parent, const wchar_t *title, Any data);
+StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structStringsEditor : public structEditor {
+		GuiObject list, text;
+	};
+	#define StringsEditor__methods(Klas) Editor__methods(Klas)
+	Thing_declare2cpp (StringsEditor, Editor);
+
+#endif // __cplusplus
 
 /* End of file StringsEditor.h */
 #endif

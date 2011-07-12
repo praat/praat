@@ -20,21 +20,13 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "RealTier.h"
+#include "Intensity.h"
+#include "TableOfReal.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -42,9 +34,7 @@
 
 /********** class IntensityTier **********/
 
-#define IntensityTier_members RealTier_members
-#define IntensityTier_methods RealTier_methods
-class_create (IntensityTier, RealTier);
+Thing_declare1cpp (IntensityTier);
 
 IntensityTier IntensityTier_create (double tmin, double tmax);
 
@@ -63,6 +53,12 @@ Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale
 
 #ifdef __cplusplus
 	}
+
+	struct structIntensityTier : public structRealTier {
+	};
+	#define IntensityTier__methods(klas) RealTier__methods(klas)
+	Thing_declare2cpp (IntensityTier, RealTier);
+
 #endif
 
 /* End of file IntensityTier.h */

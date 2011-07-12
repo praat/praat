@@ -33,9 +33,7 @@
 
 /********** class PitchTier **********/
 
-#define PitchTier_members RealTier_members
-#define PitchTier_methods RealTier_methods
-class_create (PitchTier, RealTier);
+Thing_declare1cpp (PitchTier);
 
 PitchTier PitchTier_create (double tmin, double tmax);
 /*
@@ -54,11 +52,17 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
 void PitchTier_stylize (PitchTier me, double frequencyResolution, int useSemitones);
 
-int PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);
-int PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file);
+void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file);
+void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file);
 
 #ifdef __cplusplus
 	}
+
+	struct structPitchTier : public structRealTier {
+	};
+	#define PitchTier__methods(klas) RealTier__methods(klas)
+	Thing_declare2cpp (PitchTier, RealTier);
+
 #endif
 
 /* End of file PitchTier.h */

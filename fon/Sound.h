@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/06/07
+ * pb 2011/07/11
  */
 
 /* Sound inherits from Vector */
@@ -34,9 +34,7 @@
 
 #include "Sound_enums.h"
 
-#define Sound_members  Vector_members
-#define Sound_methods  Vector_methods
-class_create (Sound, Vector);
+Thing_declare1cpp (Sound);
 
 /* Attributes:
 	xmin              // Start time (seconds).
@@ -325,7 +323,7 @@ Sound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfCha
 		Melder_MULAW
 		Melder_ALAW
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
-	'sampleRate' is in Hertz
+	'sampleRate' is in hertz
 */
 void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 /*
@@ -345,6 +343,12 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 
 #ifdef __cplusplus
 	}
+
+	struct structSound : public structVector {
+	};
+	#define Sound__methods(klas)  Vector__methods(klas)
+	Thing_declare2cpp (Sound, Vector);
+
 #endif
 
 /* End of file Sound.h */

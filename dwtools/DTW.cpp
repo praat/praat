@@ -199,7 +199,6 @@ double DTW_getXTimeFromYTime (DTW me, double ty)
 
 int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx)
 {
-	try {
 		Melder_assert (ny > 0 && nx > 0);
 		my ny = ny;
 		my nx = nx;
@@ -208,7 +207,6 @@ int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx)
 		my yindex = NUMvector<structDTW_Path_Index> (1, my ny);
 		my xindex = NUMvector<structDTW_Path_Index> (1, my nx);
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static void DTW_Path_makeIndex (DTW me, int xory)
@@ -541,7 +539,7 @@ DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 		DTW_Path_Query_init (& my pathQuery, ntp, ntc);
 		my wx = 1; my wy = 1; my wd = 2;
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created."); }
 }
 
 void DTW_setWeights (DTW me, double wx, double wy, double wd)
@@ -568,12 +566,11 @@ DTW DTW_swapAxes (DTW me)
 			thy path[i].y = my path[i].x;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": axes not swapped."); }
+	} catch (MelderError) { Melder_thrown (me, ": axes not swapped."); }
 }
 
 static int DTW_checkAdjustmentWindow (DTW me, double sakoeChibaBand, int adjustment_window_includes_end)
 {
-	try {
 		double durationx = (my xmax - my xmin), durationMin = durationx;
 		double durationy = (my ymax - my ymin), durationMax = durationy;
 
@@ -593,12 +590,10 @@ static int DTW_checkAdjustmentWindow (DTW me, double sakoeChibaBand, int adjustm
 			"2. Uncheck \'Match end positions\'.");
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static int DTW_checkSlopeConstraintParameters (DTW me, long nsteps_xory, long nsteps_xandy)
 {
-	try {
 		double durationx = (my xmax - my xmin), durationMin = durationx;
 		double durationy = (my ymax - my ymin), durationMax = durationy;
 		double slope = durationy / durationx;
@@ -622,7 +617,6 @@ static int DTW_checkSlopeConstraintParameters (DTW me, long nsteps_xory, long ns
 			}
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static int get_ylimits_x (DTW me, int choice, double sakoeChibaBand, 
@@ -684,7 +678,6 @@ static int slope_constraints (long x, long y, long nsteps_x, long nsteps_y, long
 static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjustment_window_includes_end,
 	long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy)
 {
-	try {
 		double minimum;
 		long x, y, xmargin = my dx, ymargin = my dy, ylow, yhigh, xpos, ypos;
 		long numberOfCells = 0, nodirection_assigned = 0;
@@ -791,8 +784,8 @@ static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjus
 				delta[y][x] = minimum;
 				psi[y][x] = direction;
 			}
-			if ((x % 10) == 2 && ! Melder_progress5 (0.999 * x / my nx, L"Calculate time warp: frame ",
-				Melder_integer (x), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Warping interrupted.");
+			if ((x % 10) == 2) { Melder_progress5 (0.999 * x / my nx, L"Calculate time warp: frame ",
+				Melder_integer (x), L" from ", Melder_integer (my nx), L"."); therror }
 		}
 
 		// 2. Backward pass.
@@ -871,7 +864,6 @@ static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjus
 			}
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int DTW_pathFinder_band (DTW me, double sakoeChibaBand, int adjustment_window_includes_end,
@@ -893,43 +885,47 @@ void DTW_initAccumulatedWeights (DTW me)
 	
 }
 
+#if 0
+Matrix DTW_to_Matrix_accumulatedCosts (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope,  int localSlopeConstraint);
 Matrix DTW_to_Matrix_accumulatedCosts (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope,  int localSlopeConstraint)
 {
-	if (localSlopeConstraint < 1 || localSlopeConstraint > 4) Melder_throw ("Invalid local slope constraint.");
-	autoNUMmatrix<double> delta (-3, my ny + 1, -3, my nx);
+	try {
+		if (localSlopeConstraint < 1 || localSlopeConstraint > 4) Melder_throw ("Invalid local slope constraint.");
+		autoNUMmatrix<double> delta (-3, my ny + 1, -3, my nx);
 	
-	// initialise the accumulated distances
-	for (long i = -3; i <= 0; i++)
-	{
-		for (long j = -3; j <= my nx; j++) delta[i][j] = DTW_BIG; // bottom rows
-		for (long j = 1; j <= my ny; j++) delta[j][i] = DTW_BIG; // left columns
-	}
-	for (long j = -3; j <= my nx; j++) delta[my ny + 1][j] = DTW_BIG; // top row
-	delta[1][1] = my z[1][1];
-	for (long j = 2; j <= my ny; j++) delta[j][1] += my wy * delta[j-1][1]; // first column
-	for (long j = 2; j <= my nx; j++) delta[1][j] += my wx * delta[1][j-1]; // first row
-	if (localSlopeConstraint == 1) // no constraints
-	{
-		for (long i = 1; i <= my nx; i++) {}
-	}
-	else if (localSlopeConstraint == 2) // 1/3 -- 3
-	{
+		// initialise the accumulated distances
+		for (long i = -3; i <= 0; i++)
+		{
+			for (long j = -3; j <= my nx; j++) delta[i][j] = DTW_BIG; // bottom rows
+			for (long j = 1; j <= my ny; j++) delta[j][i] = DTW_BIG; // left columns
+		}
+		for (long j = -3; j <= my nx; j++) delta[my ny + 1][j] = DTW_BIG; // top row
+		delta[1][1] = my z[1][1];
+		for (long j = 2; j <= my ny; j++) delta[j][1] += my wy * delta[j-1][1]; // first column
+		for (long j = 2; j <= my nx; j++) delta[1][j] += my wx * delta[1][j-1]; // first row
+		if (localSlopeConstraint == 1) // no constraints
+		{
+			for (long i = 1; i <= my nx; i++) {}
+		}
+		else if (localSlopeConstraint == 2) // 1/3 -- 3
+		{
+			
+		}
+		else if (localSlopeConstraint == 3) // 1/2 -- 2
+		{
+			
+		}
+		else if (localSlopeConstraint == 4) // 2/3 -- 3/2
+		{
 		
-	}
-	else if (localSlopeConstraint == 3) // 1/2 -- 2
-	{
-		
-	}
-	else if (localSlopeConstraint == 4) // 2/3 -- 3/2
-	{
-		
-	}
-
+		}
+		return delta.transfer();
+	} catch (MelderError) { Melder_thrown (me, ": accumulated costs matrix not created."); }
 }
+#endif
 
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope)
 {
-	try {
 		long pathIndex = my nx + my ny - 1; /* At maximum path length */
 		double minimum;
 		double slopeConstraint[5] = { DTW_BIG, DTW_BIG, 3, 2, 1.5 } ;
@@ -1089,8 +1085,8 @@ s3:				{
 				psi[i][j] = direction;
 				delta[i][j] = minimum;
 			}
-			if ((j % 10) == 2 && ! Melder_progress5 (0.999 * j / my nx, L"Calculate time warp: frame ",
-			Melder_integer (j), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Warping interrupted.");
+			if ((j % 10) == 2) { Melder_progress5 (0.999 * j / my nx, L"Calculate time warp: frame ",
+			Melder_integer (j), L" from ", Melder_integer (my nx), L"."); therror }
 		}
 
 		// Find minimum at end of path and trace back.
@@ -1146,7 +1142,6 @@ s3:				{
 		}
 
 		DTW_Path_recode (me);
-	} catch (MelderError) { rethrow; }
 }
 
 double DTW_getPathY (DTW me, double tx)
@@ -1351,14 +1346,13 @@ Polygon DTW_to_Polygon_globalConstraints (DTW me, double sakoeChibaBand, double 
 			thy x[4] = xb; thy y[4] = yb;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Polygon created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Polygon created."); }
 	
 }
 
 static Polygon _DTW_to_Polygon (DTW me, int choice, double sakoeChibaBand, 
 	int adjustment_window_includes_end, long nsteps_xory, long nsteps_xandy)
 {
-	try {
 		long numberOfPoints = 4 * my nx;
 		autoPolygon thee = Polygon_create (numberOfPoints);
 
@@ -1387,7 +1381,6 @@ static Polygon _DTW_to_Polygon (DTW me, int choice, double sakoeChibaBand,
 		}
 
 		return thee.transfer();
-	} catch (MelderError) { rethrowzero; }
 }
 
 Polygon DTW_to_Polygon_band (DTW me, double sakoeChibaBand, int adjustment_window_includes_end)
@@ -1396,7 +1389,7 @@ Polygon DTW_to_Polygon_band (DTW me, double sakoeChibaBand, int adjustment_windo
 		DTW_checkAdjustmentWindow (me, sakoeChibaBand, adjustment_window_includes_end);
 		autoPolygon thee = _DTW_to_Polygon (me, DTW_SAKOECHIBA, sakoeChibaBand, adjustment_window_includes_end, 1, 0);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": Polygon not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": Polygon not created."); }
 }
 
 Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_xandy)
@@ -1405,7 +1398,7 @@ Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_x
 		DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy);
 		autoPolygon thee = _DTW_to_Polygon (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": Polygon not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": Polygon not created."); }
 }
 
 static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
@@ -1675,13 +1668,12 @@ Matrix DTW_distancesToMatrix (DTW me)
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": distances not converted to Matrix."); }
+	} catch (MelderError) { Melder_thrown (me, ": distances not converted to Matrix."); }
 }
 
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
 void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax, double dmin, double dmax, int garnish)
 {
-	try {
 		if (xmin >= xmax)
 		{
 			xmin = my xmin; xmax = my xmax;
@@ -1734,7 +1726,6 @@ void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax, double
 			Graphics_marksBottom (g, 2, 1, 1, 0);
 			Graphics_marksLeft (g, 2, 1, 1, 0);
 		}
-	} catch (MelderError) { rethrow; }
 }
 
 /*
@@ -1774,12 +1765,12 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 				d = dmax * pow (d, 1.0 / metric);
 				his z[i][j] = d / my ny; /* == d * dy / ymax */
 			}
-			if ((i % 10) == 1 && ! Melder_progress5 (0.999 * i / my nx, L"Calculate distances: column ",
-			Melder_integer (i), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Distance calculation interrupted.");
+			if ((i % 10) == 1) { Melder_progress5 (0.999 * i / my nx, L"Calculate distances: column ",
+			Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror }
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created from matrices."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created from matrices."); }
 }
 
 DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
@@ -1810,7 +1801,7 @@ DTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart,
 
 		autoDTW him = Matrices_to_DTW (m1.peek(), m2.peek(), matchStart, matchEnd, slope, metric);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created from Spectrograms."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created from Spectrograms."); }
 }
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
@@ -1878,7 +1869,7 @@ DTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weig
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created from Pitches."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created from Pitches."); }
 }
 
 DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart,
@@ -1926,7 +1917,7 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created from Pitches."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created from Pitches."); }
 }
 
 DurationTier DTW_to_DurationTier (DTW me)
@@ -1947,7 +1938,7 @@ void DTW_and_Matrix_replace (DTW me, Matrix thee)
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		if (minimum < 0) Melder_throw ("Distances cannot be negative.");
 		NUMmatrix_copyElements<double> (thy z, my z, 1, my ny, 1, my nx);
-	} catch (MelderError) { rethrowm (me, ": distances not replaced."); }
+	} catch (MelderError) { Melder_throw (me, ": distances not replaced."); }
 }
 
 /* End of file DTW.cpp */

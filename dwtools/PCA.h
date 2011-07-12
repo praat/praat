@@ -27,32 +27,17 @@
 */
 
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-
-#ifndef _Configuration_h_
-	#include "Configuration.h"
-#endif
-
-#ifndef _Eigen_h_
-	#include "Eigen.h"
-#endif
+#include "TableOfReal.h"
+#include "Configuration.h"
+#include "Eigen.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define PCA_members Eigen_members \
-	long numberOfObservations;			\
-	wchar_t **labels;						\
-	double *centroid;
-#define PCA_methods Eigen_methods
-class_create (PCA, Eigen);
+#include "PCA_def.h"
+#define PCA__methods(klas) Eigen__methods(klas)
+oo_CLASS_CREATE (PCA, Eigen);
 
 PCA PCA_create (long numberOfComponents, long dimension);
 

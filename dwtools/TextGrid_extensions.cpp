@@ -1,4 +1,4 @@
-/* TextGrid_extensions.c
+/* TextGrid_extensions.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -153,38 +153,35 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 	return TextGrid_readFromTIMITLabelFile (file, phnFile);
 }
 
-static int IntervalTier_add (IntervalTier me, double xmin, double xmax, const wchar_t *label)
+static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const wchar_t *label)
 {
-	try {
-		long i = IntervalTier_timeToIndex (me, xmin); // xmin is in interval i
-		if (i < 1) Melder_throw ("Index too low.");
-		
-		autoTextInterval newti = TextInterval_create (xmin, xmax, label);
-		TextInterval interval = (TextInterval) my intervals -> item[i];
-		double xmaxi = interval -> xmax;
-		if (xmax > xmaxi) Melder_throw ("Don't know what to do"); // Don't know what to do
-		if (xmin == interval -> xmin)
+	long i = IntervalTier_timeToIndex (me, xmin); // xmin is in interval i
+	if (i < 1) Melder_throw ("Index too low.");
+	
+	autoTextInterval newti = TextInterval_create (xmin, xmax, label);
+	TextInterval interval = (TextInterval) my intervals -> item[i];
+	double xmaxi = interval -> xmax;
+	if (xmax > xmaxi) Melder_throw ("Don't know what to do"); // Don't know what to do
+	if (xmin == interval -> xmin)
+	{
+		if (xmax == interval -> xmax) // interval already present
 		{
-			if (xmax == interval -> xmax) // interval already present
-			{
-				TextInterval_setText (interval, label);
-				return 1;
-			}
-			// split interval
-			interval -> xmin = xmax;
-			Collection_addItem (my intervals, newti.transfer());
-			return 1;
+			TextInterval_setText (interval, label);
+			return;
 		}
-		interval -> xmax = xmin;
+		// split interval
+		interval -> xmin = xmax;
 		Collection_addItem (my intervals, newti.transfer());
-		// extra interval when xmax's are not the same 
-		if (xmax < xmaxi)
-		{
-			autoTextInterval newti = TextInterval_create (xmax, xmaxi, interval -> text);
-			Collection_addItem (my intervals, newti.transfer());
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		return;
+	}
+	interval -> xmax = xmin;
+	Collection_addItem (my intervals, newti.transfer());
+	// extra interval when xmax's are not the same 
+	if (xmax < xmaxi)
+	{
+		autoTextInterval newti = TextInterval_create (xmax, xmaxi, interval -> text);
+		Collection_addItem (my intervals, newti.transfer());
+	}
 }
 
 TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
@@ -256,13 +253,12 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		}
 		f.close(file);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("TextGrid not read from file ", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_thrown ("TextGrid not read from file ", MelderFile_messageName (file), "."); }
 }
 
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
 {
-	try {
-	int i, at_end = 0, at_start = 1;
+		int at_end = 0, at_start = 1;
 
 		autoTextGrid me = (TextGrid) Data_copy (grid1);
 		autoTextGrid thee = (TextGrid) Data_copy (grid2);
@@ -284,13 +280,11 @@ TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2)
 			Collection_addItem (my tiers, tier.transfer());
 		}
 		return me.transfer();
-	} catch (MelderError) { rethrowzero; }
 }
 
 int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 {
 	autoTextGrid thee = 0;
-	try {
 		double xmax = my xmax, xmin = my xmin;
 		int at_end = position == 0;
 
@@ -318,7 +312,7 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 				tmax = tmin;
 				tmin = xmin;
 			}
-			if (anyTier -> methods == (Function_Table) classIntervalTier)
+			if (anyTier -> methods == (Thing_Table) classIntervalTier)
 			{
 				IntervalTier tier = (IntervalTier) anyTier;
 				try {
@@ -328,26 +322,24 @@ int TextGrid_extendTime (TextGrid me, double extra_time, int position)
 					TextGrid tmp = me;
 					me = thee.transfer();
 					forget (tmp);
-					rethrowzero;
+					throw;
+					return 0;
 				}
 			}
 		}
 		my xmin = xmin;
 		my xmax = xmax;
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int TextGrid_setTierName (TextGrid me, long itier, const wchar_t *newName)
 {
-	try {
 		long ntiers = my tiers -> size;
 
 		if (itier < 1 || itier > ntiers) Melder_throw ("Tier number (", itier, ") should not be "
 		"larger than the number of tiers (", ntiers, L").");
-		Thing_setName (my tiers -> item [itier], newName);
+		Thing_setName ((Thing) my tiers -> item [itier], newName);
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static void IntervalTier_removeInterval (IntervalTier me, long index, int extend_option)
@@ -426,7 +418,6 @@ void IntervalTier_removeBoundary_equalLabels (IntervalTier me, const wchar_t *la
 
 int IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches)
 {
-	try {
 		iam (IntervalTier);
 
 		if (from == 0) from = 1;
@@ -452,12 +443,10 @@ int IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, con
 			interval -> text = newlabels[i - from + 1];   // Shallow copy.
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int TextTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches)
 {
-	try {
 		iam (TextTier);
 
 		if (from == 0) from = 1;
@@ -483,7 +472,6 @@ int TextTier_changeLabels (I, long from, long to, const wchar_t *search, const w
 			point -> mark = newmarks[i - from + 1];   // Shallow copy.
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches)
@@ -496,7 +484,7 @@ int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wcha
 		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 		Data anyTier = (Data) my tiers -> item [tier];
-		if (anyTier -> methods == (Data_Table) classIntervalTier)
+		if (anyTier -> methods == (Thing_Table) classIntervalTier)
 		{
 			IntervalTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		}
@@ -505,7 +493,7 @@ int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wcha
 			TextTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		}
 		return 1;
-	} catch (MelderError) { rethrowmzero (me, ": labels not changed"); }
+	} catch (MelderError) { Melder_thrown (me, ": labels not changed"); }
 }
 
 /* End of file TextGrid_extensions.cpp */

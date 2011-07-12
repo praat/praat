@@ -68,7 +68,7 @@ FormantPoint FormantPoint_create (double time) {
 		my time = time;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Formant point not created.");
+		Melder_throw ("Formant point not created.");
 	}
 }
 
@@ -93,7 +93,7 @@ FormantTier FormantTier_create (double tmin, double tmax) {
 		my xmax = tmax;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("FormantTier not created.");
+		Melder_throw ("FormantTier not created.");
 	}
 }
 
@@ -195,7 +195,7 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to FormantTier.");
+		Melder_throw (me, ": not converted to FormantTier.");
 	}
 }
 
@@ -220,7 +220,7 @@ FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", pp, ": not converted to FormantTier.");
+		Melder_throw (me, " & ", pp, ": not converted to FormantTier.");
 	}
 }
 
@@ -272,7 +272,7 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to TableOfReal.");
+		Melder_throw (me, ": not converted to TableOfReal.");
 	}
 }
 
@@ -317,7 +317,7 @@ Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formantTier, ".");
+		Melder_throw (me, ": not filtered with ", formantTier, ".");
 	}
 }
 
@@ -327,7 +327,7 @@ Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered with ", formantTier, ".");
+		Melder_throw (me, ": not filtered with ", formantTier, ".");
 	}
 }
 

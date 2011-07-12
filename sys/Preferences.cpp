@@ -32,6 +32,7 @@
  * pb 2009/03/21 modern enums
  * pb 2011/05/14 removed charwa
  * pb 2011/05/14 C++
+ * pb 2011/07/11 C++
  */
 
 #include "Preferences.h"
@@ -42,15 +43,16 @@
  * we will use SimpleString routines with it.
  */
 
-#define Preference_members Data_members \
-	wchar_t *string; \
-	int type; \
-	void *value; \
-	int min, max; \
-	const wchar_t * (*getText) (int value); \
-	int (*getValue) (const wchar_t *text);
-#define Preference_methods Data_methods
-class_create (Preference, Data);
+Thing_declare1cpp (Preference);
+struct structPreference : public structSimpleString {
+	int type;
+	void *value;
+	int min, max;
+	const wchar * (*getText) (int value);
+	int (*getValue) (const wchar *text);
+};
+#define Preference__methods(klas) SimpleString__methods(klas)
+Thing_declare2cpp (Preference, SimpleString);
 
 /* Warning: copy methods etc. not implemented. */
 
@@ -60,13 +62,14 @@ static void destroy (I) {
 	inherited (Preference) destroy (me);
 }
 
-class_methods (Preference, Data)
+class_methods (Preference, SimpleString) {
 	class_method (destroy)
-class_methods_end
+	class_methods_end
+}
 
 static SortedSetOfString thePreferences;
 
-static void Preferences_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text)) {
+static void Preferences_add (const wchar *string, int type, void *value, int min, int max, const wchar *(*getText) (int value), int (*getValue) (const wchar *text)) {
 	Preference me = Thing_new (Preference);
 	my string = Melder_wcsdup_f (string);
 	my type = type;
@@ -125,44 +128,48 @@ void Preferences_read (MelderFile file) {
 	 * In that case, do nothing.
 	 */
 	if (! thePreferences) return;
-	MelderReadText text = MelderReadText_createFromFile (file); cherror
-	for (;;) {
-		wchar_t *line = MelderReadText_readLine (text), *value;
-		if (line == NULL) goto end;
-		if ((value = wcsstr (line, L": ")) == NULL) goto end;
-		*value = '\0', value += 2;
-		long ipref = SortedSetOfString_lookUp (thePreferences, line);
-		if (! ipref) continue;   /* Ignore unrecognized preferences. */
-		Preference pref = (Preference) thePreferences -> item [ipref];
-		switch (pref -> type) {
-			case bytewa: * (signed char *) pref -> value = wcstol (value, NULL, 10); break;
-			case shortwa: * (short *) pref -> value = wcstol (value, NULL, 10); break;
-			case intwa: * (int *) pref -> value = wcstol (value, NULL, 10); break;
-			case longwa: * (long *) pref -> value = wcstol (value, NULL, 10); break;
-			case ubytewa: * (unsigned char *) pref -> value = wcstoul (value, NULL, 10); break;
-			case ushortwa: * (unsigned short *) pref -> value = wcstoul (value, NULL, 10); break;
-			case uintwa: * (unsigned int *) pref -> value = wcstoul (value, NULL, 10); break;
-			case ulongwa: * (unsigned long *) pref -> value = wcstoul (value, NULL, 10); break;
-			case boolwa: * (bool *) pref -> value =
-				wcsnequ (value, L"yes", 3) ? true :
-				wcsnequ (value, L"no", 2) ? false :
-				wcstol (value, NULL, 10) != 0; break;
-			case doublewa: * (double *) pref -> value = Melder_atof (value); break;
-			case stringwa: {
-				wcsncpy ((wchar_t *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
-				((wchar_t *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;
-			}
-			case enumwa: {
-				int intValue = pref -> getValue (value);
-				if (intValue < 0)
-					intValue = pref -> getValue (L"\t");   // look for the default
-				* (enum kPreferences_dummy *) pref -> value = (enum kPreferences_dummy) intValue; break;
+	try {
+		autoMelderReadText text = MelderReadText_createFromFile (file);
+		for (;;) {
+			wchar *line = MelderReadText_readLine (text.peek());
+			if (line == NULL)
+				return;   // OK: we have read past the last line
+			wchar *value = wcsstr (line, L": ");
+			if (value == NULL)
+				return;   // OK: we have read past the last key-value pair
+			*value = '\0', value += 2;
+			long ipref = SortedSetOfString_lookUp (thePreferences, line);
+			if (! ipref) continue;   // skip unrecognized keys
+			Preference pref = (Preference) thePreferences -> item [ipref];
+			switch (pref -> type) {
+				case bytewa: * (signed char *) pref -> value = wcstol (value, NULL, 10); break;
+				case shortwa: * (short *) pref -> value = wcstol (value, NULL, 10); break;
+				case intwa: * (int *) pref -> value = wcstol (value, NULL, 10); break;
+				case longwa: * (long *) pref -> value = wcstol (value, NULL, 10); break;
+				case ubytewa: * (unsigned char *) pref -> value = wcstoul (value, NULL, 10); break;
+				case ushortwa: * (unsigned short *) pref -> value = wcstoul (value, NULL, 10); break;
+				case uintwa: * (unsigned int *) pref -> value = wcstoul (value, NULL, 10); break;
+				case ulongwa: * (unsigned long *) pref -> value = wcstoul (value, NULL, 10); break;
+				case boolwa: * (bool *) pref -> value =
+					wcsnequ (value, L"yes", 3) ? true :
+					wcsnequ (value, L"no", 2) ? false :
+					wcstol (value, NULL, 10) != 0; break;
+				case doublewa: * (double *) pref -> value = Melder_atof (value); break;
+				case stringwa: {
+					wcsncpy ((wchar *) pref -> value, value, Preferences_STRING_BUFFER_SIZE);
+					((wchar *) pref -> value) [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; break;
+				}
+				case enumwa: {
+					int intValue = pref -> getValue (value);
+					if (intValue < 0)
+						intValue = pref -> getValue (L"\t");   // look for the default
+					* (enum kPreferences_dummy *) pref -> value = (enum kPreferences_dummy) intValue; break;
+				}
 			}
 		}
+	} catch (MelderError) {
+		Melder_clearError ();   // this is done during start-up, so it should never fail
 	}
-end:
-	Melder_clearError ();
-	MelderReadText_delete (text);
 }
 
 void Preferences_write (MelderFile file) {

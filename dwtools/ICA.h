@@ -23,32 +23,36 @@
   djmw 20101202 Initial version
   djmw 20110306 Latest modification.
 */
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "SSCP.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define MixingMatrix_members TableOfReal_members
-#define MixingMatrix_methods TableOfReal_methods
-class_create (MixingMatrix, TableOfReal);
+Thing_declare1cpp (MixingMatrix);
+struct structMixingMatrix : public structTableOfReal {
+};
+#define MixingMatrix__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (MixingMatrix, TableOfReal);
 
-#define Diagonalizer_members TableOfReal_members
-#define Diagonalizer_methods TableOfReal_methods
-class_create (Diagonalizer, TableOfReal);
+Thing_declare1cpp (Diagonalizer);
+struct structDiagonalizer : public structTableOfReal {
+};
+#define Diagonalizer__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Diagonalizer, TableOfReal);
 
-#define CrossCorrelationTable_members SSCP_members
-#define CrossCorrelationTable_methods SSCP_methods
-class_create (CrossCorrelationTable, SSCP);
+Thing_declare1cpp (CrossCorrelationTable);
+struct structCrossCorrelationTable : public structSSCP {
+};
+#define CrossCorrelationTable__methods(klas) SSCP__methods(klas)
+Thing_declare2cpp (CrossCorrelationTable, SSCP);
 
-#define CrossCorrelationTables_members Ordered_members
-#define CrossCorrelationTables_methods Ordered_methods
-class_create (CrossCorrelationTables, Ordered);
+Thing_declare1cpp (CrossCorrelationTables);
+struct structCrossCorrelationTables : public structOrdered {
+};
+#define CrossCorrelationTables__methods(klas) Ordered__methods(klas)
+Thing_declare2cpp (CrossCorrelationTables, Ordered);
 
 /*
 	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j.

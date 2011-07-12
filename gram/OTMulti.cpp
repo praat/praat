@@ -22,7 +22,7 @@
  * pb 2006/05/16 guarded against cells with many violations
  * pb 2006/05/17 draw disharmonies above tableau
  * pb 2007/05/19 decision strategies
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 leak and constraint plasticity
  * pb 2007/10/01 can write as encoding
  * pb 2007/11/14 drawTableau: corrected direction of arrows for positive satisfactions
@@ -67,14 +67,14 @@ static void classOTMulti_info (I) {
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
-static int writeText (I, MelderFile file) {
+static void writeText (I, MelderFile file) {
 	iam (OTMulti);
 	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (my decisionStrategy),
 		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [icons];
 		MelderFile_write1 (file, L"\n\t\"");
-		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
+		for (const wchar *p = & constraint -> name [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
@@ -85,7 +85,7 @@ static int writeText (I, MelderFile file) {
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		OTCandidate candidate = & my candidates [icand];
 		MelderFile_write1 (file, L"\n\t\"");
-		for (const wchar_t *p = & candidate -> string [0]; *p; p ++) {
+		for (const wchar *p = & candidate -> string [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
@@ -94,7 +94,6 @@ static int writeText (I, MelderFile file) {
 			MelderFile_write2 (file, L" ", Melder_integer (candidate -> marks [icons]));
 		}
 	}
-	return 1;
 }
 
 void OTMulti_checkIndex (OTMulti me) {
@@ -104,46 +103,53 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-static int readText (I, MelderReadText text) {
-	try {
-		int localVersion = Thing_version;
-		iam (OTMulti);
-		if (! inherited (OTMulti) readText (me, text)) return 0;
-		if (localVersion >= 1) {
-			if ((my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue)) < 0) return Melder_error1 (L"Decision strategy not read.");
+static void readText (I, MelderReadText text) {
+	int localVersion = Thing_version;
+	iam (OTMulti);
+	inherited (OTMulti) readText (me, text);
+	if (localVersion >= 1) {
+		try {
+			my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
+		} catch (MelderError) {
+			Melder_throw ("Decision strategy not read.");
 		}
-		if (localVersion >= 2) {
-			my leak = texgetr8 (text); iferror Melder_throw ("Trying to read leak.");
-		}
-		if ((my numberOfConstraints = texgeti4 (text)) < 1) Melder_throw ("No constraints.");
-		my constraints = NUMvector <structOTConstraint> (1, my numberOfConstraints);
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTConstraint constraint = & my constraints [icons];
-			if ((constraint -> name = texgetw2 (text)) == NULL) return 0;
-			constraint -> ranking = texgetr8 (text);
-			constraint -> disharmony = texgetr8 (text);
-			if (localVersion < 2) {
-				constraint -> plasticity = 1.0;
-			} else {
-				constraint -> plasticity = texgetr8 (text); iferror Melder_throw ("Plasticity of constraint ", icons, " not read.");
-			}
-		}
-		if ((my numberOfCandidates = texgeti4 (text)) < 1) Melder_throw ("No candidates.");
-		my candidates = NUMvector <structOTCandidate> (1, my numberOfCandidates);
-		for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
-			OTCandidate candidate = & my candidates [icand];
-			if ((candidate -> string = texgetw2 (text)) == NULL) return 0;
-			candidate -> numberOfConstraints = my numberOfConstraints;   // redundancy, needed for writing binary
-			candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
-			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				candidate -> marks [icons] = texgeti2 (text);
-			}
-		}
-		OTMulti_checkIndex (me);
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
 	}
+	if (localVersion >= 2) {
+		try {
+			my leak = texgetr8 (text);
+		} catch (MelderError) {
+			Melder_throw ("Trying to read leak.");
+		}
+	}
+	if ((my numberOfConstraints = texgeti4 (text)) < 1) Melder_throw ("No constraints.");
+	my constraints = NUMvector <structOTConstraint> (1, my numberOfConstraints);
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		OTConstraint constraint = & my constraints [icons];
+		constraint -> name = texgetw2 (text);
+		constraint -> ranking = texgetr8 (text);
+		constraint -> disharmony = texgetr8 (text);
+		if (localVersion < 2) {
+			constraint -> plasticity = 1.0;
+		} else {
+			try {
+				constraint -> plasticity = texgetr8 (text);
+			} catch (MelderError) {
+				Melder_throw ("Plasticity of constraint ", icons, " not read.");
+			}
+		}
+	}
+	if ((my numberOfCandidates = texgeti4 (text)) < 1) Melder_throw ("No candidates.");
+	my candidates = NUMvector <structOTCandidate> (1, my numberOfCandidates);
+	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
+		OTCandidate candidate = & my candidates [icand];
+		candidate -> string = texgetw2 (text);
+		candidate -> numberOfConstraints = my numberOfConstraints;   // redundancy, needed for writing binary
+		candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
+		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
+			candidate -> marks [icons] = texgeti2 (text);
+		}
+	}
+	OTMulti_checkIndex (me);
 }
 
 class_methods (OTMulti, Data) {
@@ -161,7 +167,7 @@ class_methods (OTMulti, Data) {
 	class_methods_end
 }
 
-long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar_t *name) {
+long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar *name) {
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		if (Melder_wcsequ (my constraints [icons]. name, name)) {
 			return icons;
@@ -270,12 +276,12 @@ int OTMulti_compareCandidates (OTMulti me, long icand1, long icand2) {
 	return 0;   /* None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 }
 
-int OTMulti_candidateMatches (OTMulti me, long icand, const wchar_t *form1, const wchar_t *form2) {
-	const wchar_t *string = my candidates [icand]. string;
+int OTMulti_candidateMatches (OTMulti me, long icand, const wchar *form1, const wchar *form2) {
+	const wchar *string = my candidates [icand]. string;
 	return (form1 [0] == '\0' || wcsstr (string, form1)) && (form2 [0] == '\0' || wcsstr (string, form2));
 }
 
-static void _OTMulti_fillInHarmonies (OTMulti me, const wchar_t *form1, const wchar_t *form2) {
+static void _OTMulti_fillInHarmonies (OTMulti me, const wchar *form1, const wchar *form2) {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) return;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
@@ -311,7 +317,7 @@ static void _OTMulti_fillInHarmonies (OTMulti me, const wchar_t *form1, const wc
 	}
 }
 
-static void _OTMulti_fillInProbabilities (OTMulti me, const wchar_t *form1, const wchar_t *form2) {
+static void _OTMulti_fillInProbabilities (OTMulti me, const wchar *form1, const wchar *form2) {
 	double maximumHarmony = -1e300;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
@@ -338,7 +344,7 @@ static void _OTMulti_fillInProbabilities (OTMulti me, const wchar_t *form1, cons
 
 class MelderError_OTMulti_NoMatchingCandidate: public MelderError {};
 
-long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2) {
+long OTMulti_getWinner (OTMulti me, const wchar *form1, const wchar *form2) {
 	try {
 		long icand_best = 0;
 		if (my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
@@ -388,7 +394,7 @@ long OTMulti_getWinner (OTMulti me, const wchar_t *form1, const wchar_t *form2) 
 		}
 		return icand_best;
 	} catch (MelderError) {
-		rethrowmzero (me, ": winner not determined.");
+		Melder_throw (me, ": winner not determined.");
 	}
 }
 
@@ -396,28 +402,44 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 	enum kOTGrammar_rerankingStrategy updateRule,
 	double plasticity, double relativePlasticityNoise)
 {
-	try {
-		bool *grammarHasChanged = NULL;   // to be implemented
-		bool warnIfStalled = false;   // to be implemented
-		if (iwinner == iloser) return;
-		OTCandidate winner = & my candidates [iwinner], loser = & my candidates [iloser];
-		double step = relativePlasticityNoise == 0.0 ? plasticity : NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
-		bool multiplyStepByNumberOfViolations =
-			my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-			my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY;
-		if (Melder_debug != 0) {
-			/*
-			 * Perhaps override the standard update rule.
-			 */
-			if (Melder_debug == 26) multiplyStepByNumberOfViolations = false;   // OT-GLA
-			else if (Melder_debug == 27) multiplyStepByNumberOfViolations = true;   // HG-GLA
+	bool *grammarHasChanged = NULL;   // to be implemented
+	bool warnIfStalled = false;   // to be implemented
+	if (iwinner == iloser) return;
+	OTCandidate winner = & my candidates [iwinner], loser = & my candidates [iloser];
+	double step = relativePlasticityNoise == 0.0 ? plasticity : NUMrandomGauss (plasticity, relativePlasticityNoise * plasticity);
+	bool multiplyStepByNumberOfViolations =
+		my decisionStrategy == kOTGrammar_decisionStrategy_HARMONIC_GRAMMAR ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_LINEAR_OT ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_MAXIMUM_ENTROPY ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_POSITIVE_HG ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
+		my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY;
+	if (Melder_debug != 0) {
+		/*
+		 * Perhaps override the standard update rule.
+		 */
+		if (Melder_debug == 26) multiplyStepByNumberOfViolations = false;   // OT-GLA
+		else if (Melder_debug == 27) multiplyStepByNumberOfViolations = true;   // HG-GLA
+	}
+	if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ONE) {
+		long icons = NUMrandomInteger (1, my numberOfConstraints);
+		OTConstraint constraint = & my constraints [icons];
+		double constraintStep = step * constraint -> plasticity;
+		int winnerMarks = winner -> marks [icons];
+		int loserMarks = loser -> marks [icons];
+		if (loserMarks > winnerMarks) {
+			if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+			constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
+			if (grammarHasChanged != NULL) *grammarHasChanged = true;
 		}
-		if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ONE) {
-			long icons = NUMrandomInteger (1, my numberOfConstraints);
+		if (winnerMarks > loserMarks) {
+			if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+			constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
+			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+		}
+	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL) {
+		bool changed = false;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
 			int winnerMarks = winner -> marks [icons];
@@ -425,15 +447,34 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			if (loserMarks > winnerMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
-				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				changed = true;
 			}
 			if (winnerMarks > loserMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				changed = true;
 			}
-		} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL) {
-			bool changed = false;
+		}
+		if (changed && my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
+			double sumOfWeights = 0.0;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				sumOfWeights += my constraints [icons]. ranking;
+			}
+			double averageWeight = sumOfWeights / my numberOfConstraints;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				my constraints [icons]. ranking -= averageWeight;
+			}
+		}
+		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_UNCANCELLED) {
+		int winningConstraints = 0, losingConstraints = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (loserMarks > winnerMarks) losingConstraints ++;
+			if (winnerMarks > loserMarks) winningConstraints ++;
+		}
+		if (winningConstraints != 0) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
@@ -441,151 +482,169 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				int loserMarks = loser -> marks [icons];
 				if (loserMarks > winnerMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
-					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
-					changed = true;
+					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
+					//constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) * winningConstraints;
+					if (grammarHasChanged != NULL) *grammarHasChanged = true;
 				}
 				if (winnerMarks > loserMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
-					changed = true;
+					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
+					//constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * losingConstraints;
+					if (grammarHasChanged != NULL) *grammarHasChanged = true;
 				}
 			}
-			if (changed && my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
-				double sumOfWeights = 0.0;
-				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-					sumOfWeights += my constraints [icons]. ranking;
-				}
-				double averageWeight = sumOfWeights / my numberOfConstraints;
-				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-					my constraints [icons]. ranking -= averageWeight;
-				}
+		}
+	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL) {
+		int winningConstraints = 0, losingConstraints = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (loserMarks > 0) losingConstraints ++;
+			if (winnerMarks > 0) winningConstraints ++;
+		}
+		if (winningConstraints != 0) for (long icons = 1; icons <= my numberOfConstraints; icons ++)  {
+			OTConstraint constraint = & my constraints [icons];
+			double constraintStep = step * constraint -> plasticity;
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (loserMarks > 0) {
+				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
+				if (grammarHasChanged != NULL) *grammarHasChanged = true;
 			}
-			if (grammarHasChanged != NULL) *grammarHasChanged = changed;
-		} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_UNCANCELLED) {
-			int winningConstraints = 0, losingConstraints = 0;
-			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			if (winnerMarks > 0) {
+				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
+				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+			}
+		}
+	} else if (updateRule == kOTGrammar_rerankingStrategy_EDCD || updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
+		/*
+		 * Determine the crucial winner mark.
+		 */
+		double pivotRanking;
+		bool equivalent = true;
+		long icons = 1;
+		for (; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [my index [icons]];   // order is important, so indirect
+			int loserMarks = loser -> marks [my index [icons]];
+			if (loserMarks < winnerMarks) break;
+			if (loserMarks > winnerMarks) equivalent = false;
+		}
+		if (icons > my numberOfConstraints) {   // completed the loop?
+			if (warnIfStalled && ! equivalent)
+				Melder_warning4 (L"Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
+					"Correct output: ", loser -> string, L"\nLearner's output: ", winner -> string);
+			return;
+		}
+		/*
+		 * Determine the stratum into which some constraints will be demoted.
+		 */
+		pivotRanking = my constraints [my index [icons]]. ranking;
+		if (updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
+			long numberOfConstraintsToDemote = 0;
+			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int winnerMarks = winner -> marks [icons];
 				int loserMarks = loser -> marks [icons];
-				if (loserMarks > winnerMarks) losingConstraints ++;
-				if (winnerMarks > loserMarks) winningConstraints ++;
-			}
-			if (winningConstraints != 0) {
-				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				if (loserMarks > winnerMarks) {
 					OTConstraint constraint = & my constraints [icons];
-					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [icons];
-					int loserMarks = loser -> marks [icons];
-					if (loserMarks > winnerMarks) {
-						if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
-						constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
-						//constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) * winningConstraints;
-						if (grammarHasChanged != NULL) *grammarHasChanged = true;
+					if (constraint -> ranking >= pivotRanking) {
+						numberOfConstraintsToDemote += 1;
 					}
-					if (winnerMarks > loserMarks) {
-						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
-						//constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * losingConstraints;
+				}
+			}
+			if (numberOfConstraintsToDemote > 0) {
+				for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+					OTConstraint constraint = & my constraints [icons];
+					if (constraint -> ranking < pivotRanking) {
+						constraint -> ranking -= numberOfConstraintsToDemote * step * constraint -> plasticity;
 						if (grammarHasChanged != NULL) *grammarHasChanged = true;
 					}
 				}
 			}
-		} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL) {
-			int winningConstraints = 0, losingConstraints = 0;
-			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
-				if (loserMarks > 0) losingConstraints ++;
-				if (winnerMarks > 0) winningConstraints ++;
+		}
+		/*
+		 * Demote all the uniquely violated constraints in the loser
+		 * that have rankings not lower than the pivot.
+		 */
+		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+			long numberOfConstraintsDemoted = 0;
+			int winnerMarks = winner -> marks [my index [icons]];   // For the vacation version, the order is important, so indirect.
+			int loserMarks = loser -> marks [my index [icons]];
+			if (loserMarks > winnerMarks) {
+				OTConstraint constraint = & my constraints [my index [icons]];
+				double constraintStep = step * constraint -> plasticity;
+				if (constraint -> ranking >= pivotRanking) {
+					numberOfConstraintsDemoted += 1;
+					constraint -> ranking = pivotRanking - numberOfConstraintsDemoted * constraintStep;   // This preserves the order of the demotees.
+					if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				}
 			}
-			if (winningConstraints != 0) for (long icons = 1; icons <= my numberOfConstraints; icons ++)  {
+		}
+	} else if (updateRule == kOTGrammar_rerankingStrategy_DEMOTION_ONLY) {
+		/*
+		 * Determine the crucial loser mark.
+		 */
+		long crucialLoserMark;
+		OTConstraint offendingConstraint;
+		long icons = 1;
+		for (; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
+			int loserMarks = loser -> marks [my index [icons]];
+			if (my constraints [my index [icons]]. tiedToTheRight)
+				Melder_throw ("Demotion-only learning cannot handle tied constraints.");
+			if (loserMarks < winnerMarks) {
+				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+					Melder_throw ("Demotion-only learning step: Loser wins! Should never happen.");
+				} else {
+					// do nothing; the whole demotion-only idea does not really apply very well to non-OT decision strategies
+				}
+			}
+			if (loserMarks > winnerMarks) break;
+		}
+		if (icons > my numberOfConstraints) {   // completed the loop?
+			if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+				Melder_throw ("(OTGrammar_step:) Loser equals correct candidate: loser \"", loser -> string, "\", winner \"", winner -> string, "\".");
+			} else {
+				// do nothing
+			}
+		} else {
+			crucialLoserMark = icons;
+			/*
+			 * Demote the highest uniquely violated constraint in the loser.
+			 */
+			offendingConstraint = & my constraints [my index [crucialLoserMark]];
+			double constraintStep = step * offendingConstraint -> plasticity;
+			offendingConstraint -> ranking -= constraintStep;
+			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+		}
+	} else { Melder_assert (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN);
+		bool changed = false;
+		long numberOfUp = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (winnerMarks > loserMarks) {
+				numberOfUp ++;
+			}
+		}
+		if (numberOfUp > 0) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
 				int winnerMarks = winner -> marks [icons];
 				int loserMarks = loser -> marks [icons];
-				if (loserMarks > 0) {
-					if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
-					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
-					if (grammarHasChanged != NULL) *grammarHasChanged = true;
-				}
-				if (winnerMarks > 0) {
+				if (winnerMarks > loserMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / winningConstraints;
-					if (grammarHasChanged != NULL) *grammarHasChanged = true;
+					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
 				}
 			}
-		} else if (updateRule == kOTGrammar_rerankingStrategy_EDCD || updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
-			/*
-			 * Determine the crucial winner mark.
-			 */
-			double pivotRanking;
-			bool equivalent = true;
-			long icons = 1;
-			for (; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   // order is important, so indirect
-				int loserMarks = loser -> marks [my index [icons]];
-				if (loserMarks < winnerMarks) break;
-				if (loserMarks > winnerMarks) equivalent = false;
-			}
-			if (icons > my numberOfConstraints) {   // completed the loop?
-				if (warnIfStalled && ! equivalent)
-					Melder_warning4 (L"Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
-						"Correct output: ", loser -> string, L"\nLearner's output: ", winner -> string);
-				return;
-			}
-			/*
-			 * Determine the stratum into which some constraints will be demoted.
-			 */
-			pivotRanking = my constraints [my index [icons]]. ranking;
-			if (updateRule == kOTGrammar_rerankingStrategy_EDCD_WITH_VACATION) {
-				long numberOfConstraintsToDemote = 0;
-				for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-					int winnerMarks = winner -> marks [icons];
-					int loserMarks = loser -> marks [icons];
-					if (loserMarks > winnerMarks) {
-						OTConstraint constraint = & my constraints [icons];
-						if (constraint -> ranking >= pivotRanking) {
-							numberOfConstraintsToDemote += 1;
-						}
-					}
-				}
-				if (numberOfConstraintsToDemote > 0) {
-					for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-						OTConstraint constraint = & my constraints [icons];
-						if (constraint -> ranking < pivotRanking) {
-							constraint -> ranking -= numberOfConstraintsToDemote * step * constraint -> plasticity;
-							if (grammarHasChanged != NULL) *grammarHasChanged = true;
-						}
-					}
-				}
-			}
-			/*
-			 * Demote all the uniquely violated constraints in the loser
-			 * that have rankings not lower than the pivot.
-			 */
-			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-				long numberOfConstraintsDemoted = 0;
-				int winnerMarks = winner -> marks [my index [icons]];   // For the vacation version, the order is important, so indirect.
-				int loserMarks = loser -> marks [my index [icons]];
-				if (loserMarks > winnerMarks) {
-					OTConstraint constraint = & my constraints [my index [icons]];
-					double constraintStep = step * constraint -> plasticity;
-					if (constraint -> ranking >= pivotRanking) {
-						numberOfConstraintsDemoted += 1;
-						constraint -> ranking = pivotRanking - numberOfConstraintsDemoted * constraintStep;   // This preserves the order of the demotees.
-						if (grammarHasChanged != NULL) *grammarHasChanged = true;
-					}
-				}
-			}
-		} else if (updateRule == kOTGrammar_rerankingStrategy_DEMOTION_ONLY) {
-			/*
-			 * Determine the crucial loser mark.
-			 */
-			long crucialLoserMark;
+			long crucialLoserMark, winnerMarks = 0, loserMarks = 0;
 			OTConstraint offendingConstraint;
 			long icons = 1;
 			for (; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
-				int loserMarks = loser -> marks [my index [icons]];
+				winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
+				loserMarks = loser -> marks [my index [icons]];
 				if (my constraints [my index [icons]]. tiedToTheRight)
 					Melder_throw ("Demotion-only learning cannot handle tied constraints.");
 				if (loserMarks < winnerMarks) {
@@ -610,88 +669,27 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				 */
 				offendingConstraint = & my constraints [my index [crucialLoserMark]];
 				double constraintStep = step * offendingConstraint -> plasticity;
-				offendingConstraint -> ranking -= constraintStep;
-				if (grammarHasChanged != NULL) *grammarHasChanged = true;
+				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
 			}
-		} else { Melder_assert (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN);
-			bool changed = false;
-			long numberOfUp = 0;
-			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
-				if (winnerMarks > loserMarks) {
-					numberOfUp ++;
-				}
-			}
-			if (numberOfUp > 0) {
-				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-					OTConstraint constraint = & my constraints [icons];
-					double constraintStep = step * constraint -> plasticity;
-					int winnerMarks = winner -> marks [icons];
-					int loserMarks = loser -> marks [icons];
-					if (winnerMarks > loserMarks) {
-						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
-					}
-				}
-				long crucialLoserMark, winnerMarks = 0, loserMarks = 0;
-				OTConstraint offendingConstraint;
-				long icons = 1;
-				for (; icons <= my numberOfConstraints; icons ++) {
-					winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
-					loserMarks = loser -> marks [my index [icons]];
-					if (my constraints [my index [icons]]. tiedToTheRight)
-						Melder_throw ("Demotion-only learning cannot handle tied constraints.");
-					if (loserMarks < winnerMarks) {
-						if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
-							Melder_throw ("Demotion-only learning step: Loser wins! Should never happen.");
-						} else {
-							// do nothing; the whole demotion-only idea does not really apply very well to non-OT decision strategies
-						}
-					}
-					if (loserMarks > winnerMarks) break;
-				}
-				if (icons > my numberOfConstraints) {   // completed the loop?
-					if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
-						Melder_throw ("(OTGrammar_step:) Loser equals correct candidate: loser \"", loser -> string, "\", winner \"", winner -> string, "\".");
-					} else {
-						// do nothing
-					}
-				} else {
-					crucialLoserMark = icons;
-					/*
-					 * Demote the highest uniquely violated constraint in the loser.
-					 */
-					offendingConstraint = & my constraints [my index [crucialLoserMark]];
-					double constraintStep = step * offendingConstraint -> plasticity;
-					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
-					offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
-				}
-			}
-			if (grammarHasChanged != NULL) *grammarHasChanged = changed;
 		}
-	} catch (MelderError) {
-		rethrow;
+		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
 	}
 }
 
-int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
+int OTMulti_learnOne (OTMulti me, const wchar *form1, const wchar *form2,
 	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise)
 {
-	try {
-		long iloser = OTMulti_getWinner (me, form1, form2); therror
-		if (direction & OTMulti_LEARN_FORWARD) {
-			long iwinner = OTMulti_getWinner (me, form1, L""); therror
-			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
-		}
-		if (direction & OTMulti_LEARN_BACKWARD) {
-			long iwinner = OTMulti_getWinner (me, form2, L""); therror
-			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
-		}
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
+	long iloser = OTMulti_getWinner (me, form1, form2); therror
+	if (direction & OTMulti_LEARN_FORWARD) {
+		long iwinner = OTMulti_getWinner (me, form1, L""); therror
+		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
 	}
+	if (direction & OTMulti_LEARN_BACKWARD) {
+		long iwinner = OTMulti_getWinner (me, form2, L""); therror
+		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
+	}
+	return 1;
 }
 
 static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long numberOfData)
@@ -713,11 +711,11 @@ static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long num
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": history not created.");
+		Melder_throw (me, ": history not created.");
 	}
 }
 
-static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery, long idatum, const wchar_t *form1, const wchar_t *form2)
+static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery, long idatum, const wchar *form1, const wchar *form2)
 {
 	try {
 		if (idatum % storeHistoryEvery == 0) {
@@ -731,7 +729,7 @@ static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery
 		}
 		return 1;
 	} catch (MelderError) {
-		rethrowmzero (me, ": history not updated.");
+		Melder_throw (me, ": history not updated.");
 	}
 }
 
@@ -753,7 +751,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 		}
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-				wchar_t *form1, *form2;
+				wchar *form1, *form2;
 				PairDistribution_peekPair (thee, & form1, & form2); therror
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
@@ -790,11 +788,11 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 		}
 		*history_out = history;   // LEAK
 	} catch (MelderError) {
-		rethrowm (me, ": learning from partial pairs not completed.");
+		Melder_throw (me, ": learning from partial pairs not completed.");
 	}
 }
 
-static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numberOfOptimalCandidates, const wchar_t *form1, const wchar_t *form2)
+static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numberOfOptimalCandidates, const wchar *form1, const wchar *form2)
 {
 	if (my numberOfCandidates < 2) return 0;   // if there is only one candidate, all cells can be greyed
 	if (OTMulti_compareCandidates (me, icand, iwinner) == 0) {   // candidate equally good as winner?
@@ -829,7 +827,7 @@ static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numb
 }
 
 static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int showDisharmony) {
-	wchar_t text [100], *newLine;
+	wchar text [100], *newLine;
 	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), TRUE) : 0.0,
 		firstWidth, secondWidth;
 	wcscpy (text, constraint -> name);
@@ -847,13 +845,13 @@ static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int 
 	return maximumWidth;
 }
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wchar_t *form2, int showDisharmonies) {
+void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, int showDisharmonies) {
 	long winner, winner1 = 0, winner2 = 0, numberOfMatchingCandidates;
 	long numberOfOptimalCandidates, numberOfOptimalCandidates1, numberOfOptimalCandidates2;
 	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
 	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
 	Graphics_Colour colour = Graphics_inqColour (g);
-	wchar_t text [200];
+	wchar text [200];
 	int bidirectional = form1 [0] != '\0' && form2 [0] != '\0';
 	try {
 		winner = OTMulti_getWinner (me, form1, form2); therror
@@ -947,7 +945,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 		OTConstraint constraint = & my constraints [my index [icons]];
 		double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 		if (wcschr (constraint -> name, '\n')) {
-			wchar_t *newLine;
+			wchar *newLine;
 			wcscpy (text, constraint -> name);
 			newLine = wcschr (text, '\n');
 			*newLine = '\0';
@@ -1041,7 +1039,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wc
 			int index = my index [icons];
 			OTConstraint constraint = & my constraints [index];
 			double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
-			wchar_t markString [40];
+			wchar markString [40];
 			markString [0] = '\0';
 			if (bidirectional && my candidates [icand]. marks [index] > 0) {
 				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal) {
@@ -1144,7 +1142,7 @@ int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plastic
 	return 1;
 }
 
-void OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName) {
+void OTMulti_removeConstraint (OTMulti me, const wchar *constraintName) {
 	try {
 		long removed = 0;
 
@@ -1190,17 +1188,17 @@ void OTMulti_removeConstraint (OTMulti me, const wchar_t *constraintName) {
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) my index [icons] = icons;
 		OTMulti_sort (me);
 	} catch (MelderError) {
-		rethrowm (me, ": constraint not removed.");
+		Melder_throw (me, ": constraint not removed.");
 	}
 }
 
-void OTMulti_generateOptimalForm (OTMulti me, const wchar_t *form1, const wchar_t *form2, wchar_t *optimalForm, double evaluationNoise) {
+void OTMulti_generateOptimalForm (OTMulti me, const wchar *form1, const wchar *form2, wchar *optimalForm, double evaluationNoise) {
 	try {
 		OTMulti_newDisharmonies (me, evaluationNoise);
 		long winner = OTMulti_getWinner (me, form1, form2); therror
 		wcscpy (optimalForm, my candidates [winner]. string);
 	} catch (MelderError) {
-		rethrowm (me, ": optimal form not generated.");
+		Melder_throw (me, ": optimal form not generated.");
 	}
 }
 
@@ -1211,33 +1209,33 @@ Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double e
 		outputs -> numberOfStrings = n;
 		outputs -> strings = NUMvector <wchar*> (1, n);
 		for (long i = 1; i <= n; i ++) {
-			wchar_t output [100];
+			wchar output [100];
 			OTMulti_generateOptimalForm (me, thy strings [i], L"", output, evaluationNoise); therror
 			outputs -> strings [i] = Melder_wcsdup_e (output); therror
 		}
 		return outputs.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": optimal forms not generated.");
+		Melder_throw (me, " & ", thee, ": optimal forms not generated.");
 	}
 }
 
-Strings OTMulti_generateOptimalForms (OTMulti me, const wchar_t *form1, const wchar_t *form2, long numberOfTrials, double evaluationNoise) {
+Strings OTMulti_generateOptimalForms (OTMulti me, const wchar *form1, const wchar *form2, long numberOfTrials, double evaluationNoise) {
 	try {
 		autoStrings outputs = Thing_new (Strings);
 		outputs -> numberOfStrings = numberOfTrials;
 		outputs -> strings = NUMvector <wchar*> (1, numberOfTrials);
 		for (long i = 1; i <= numberOfTrials; i ++) {
-			wchar_t output [100];
+			wchar output [100];
 			OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise); therror
 			outputs -> strings [i] = Melder_wcsdup (output);
 		}
 		return outputs.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": optimal forms not generated.");
+		Melder_throw (me, ": optimal forms not generated.");
 	}
 }
 
-Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const wchar_t *form2,
+Distributions OTMulti_to_Distribution (OTMulti me, const wchar *form1, const wchar *form2,
 	long numberOfTrials, double evaluationNoise)
 {
 	try {
@@ -1275,7 +1273,7 @@ Distributions OTMulti_to_Distribution (OTMulti me, const wchar_t *form1, const w
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": distribution not computed.");
+		Melder_throw (me, ": distribution not computed.");
 	}
 }
 

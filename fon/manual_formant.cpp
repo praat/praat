@@ -140,9 +140,9 @@ DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify 
 TAG (L"##Time (s)")
 DEFINITION (L"the time at which to evaluate the bandwidth.")
 TAG (L"##Units")
-DEFINITION (L"the units of the result (#Hertz or #Bark).")
+DEFINITION (L"the units of the result (#hertz or #Bark).")
 ENTRY (L"Return value")
-NORMAL (L"the estimated bandwidth in Hertz or Bark. "
+NORMAL (L"the estimated bandwidth in hertz or Bark. "
 	"If %Time is not within half a frame width of any frame centre, or "
 	"If the specified %%Formant number% is greater than the number of formants in the frame, "
 	"the return value is @undefined; "
@@ -150,14 +150,14 @@ NORMAL (L"the estimated bandwidth in Hertz or Bark. "
 ENTRY (L"Algorithm")
 NORMAL (L"If possible (i.e. if the adjacent frame has enough formants), "
 	"a linear interpolation is performed between the centre of the frame and the centre of the adjacent frame. "
-	"With Bark units, the Hertz-to-Bark transformation is performed "
+	"With Bark units, the hertz-to-Bark transformation is performed "
 	"on the two frequencies %F \\+_ 1/2 %B (after interpolation), and the result is the difference between these two values")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get maximum...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the maximum value of the specified formant.")
 ENTRY (L"Return value")
-NORMAL (L"the maximum, in Hertz or Bark.")
+NORMAL (L"the maximum, in hertz or Bark.")
 ENTRY (L"Settings")
 TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -174,7 +174,7 @@ MAN_END
 MAN_BEGIN (L"Formant: Get mean...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the mean value of the specified formant.")
 ENTRY (L"Return value")
-NORMAL (L"the mean, in Hertz or Bark.")
+NORMAL (L"the mean, in hertz or Bark.")
 ENTRY (L"Settings")
 TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -194,7 +194,7 @@ MAN_END
 MAN_BEGIN (L"Formant: Get minimum...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the minimum value of the specified formant.")
 ENTRY (L"Return value")
-NORMAL (L"the minimum, in Hertz or Bark.")
+NORMAL (L"the minimum, in hertz or Bark.")
 ENTRY (L"Settings")
 TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -221,7 +221,7 @@ MAN_BEGIN (L"Formant: Get quantile...", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for an estimation of the specified quantile of the distribution "
 	"that underlies the attested values of the specified formant.")
 ENTRY (L"Return value")
-NORMAL (L"the quantile, in Hertz or Bark.")
+NORMAL (L"the quantile, in hertz or Bark.")
 ENTRY (L"Settings")
 TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -238,14 +238,14 @@ DEFINITION (L"the fraction (between 0 and 1) of the values of the underlying dis
 ENTRY (L"Algorithm")
 NORMAL (L"First, the available formant values within the selected time domain are collected in an array. "
 	"This array is then sorted and the @@quantile algorithm@ is performed. With Bark units, "
-	"the Hertz-to-Bark transformation is performed before the quantile algorithm.")
+	"the hertz-to-Bark transformation is performed before the quantile algorithm.")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get standard deviation", L"ppgb", 19991016)
 INTRO (L"A @query to ask the selected @Formant object for the standard deviation of the attested values of the specified formant "
 	"within a specified time domain.")
 ENTRY (L"Return value")
-NORMAL (L"the standard deviation, in Hertz or Bark.")
+NORMAL (L"the standard deviation, in hertz or Bark.")
 ENTRY (L"Settings")
 TAG (L"##Formant number")
 DEFINITION (L"the ordinal number of the formant, counting up from 0 Hz. Specify \"2\" for %F__2_ etc.")
@@ -306,7 +306,7 @@ TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method, see @@vector value interpolation@. "
 	"Always Linear.")
 ENTRY (L"Return value")
-NORMAL (L"the bandwidth in Hertz or Bark. "
+NORMAL (L"the bandwidth in hertz or Bark. "
 	"If #Time is not within half a frame width of any frame centre, or "
 	"if ##Formant number# is greater than the number of formants in the frame, "
 	"the value is @undefined; "
@@ -314,7 +314,7 @@ NORMAL (L"the bandwidth in Hertz or Bark. "
 ENTRY (L"Algorithm")
 NORMAL (L"If possible (i.e. if the adjacent frame has enough formants), "
 	"a linear interpolation is performed between the centre of the frame and the centre of the adjacent frame. "
-	"With Bark units, the Hertz-to-Bark transformation is performed before interpolation.")
+	"With Bark units, the hertz-to-Bark transformation is performed before interpolation.")
 MAN_END
 
 MAN_BEGIN (L"Formant: Speckle...", L"ppgb", 20030916)

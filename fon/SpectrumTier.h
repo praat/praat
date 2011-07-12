@@ -33,9 +33,7 @@
 
 /********** class SpectrumTier **********/
 
-#define SpectrumTier_members RealTier_members
-#define SpectrumTier_methods RealTier_methods
-class_create (SpectrumTier, RealTier);
+Thing_declare1cpp (SpectrumTier);
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax);
 /*
@@ -56,6 +54,12 @@ SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
 
 #ifdef __cplusplus
 	}
+
+	struct structSpectrumTier : public structRealTier {
+	};
+	#define SpectrumTier__methods(klas) RealTier__methods(klas)
+	Thing_declare2cpp (SpectrumTier, RealTier);
+
 #endif
 
 /* End of file SpectrumTier.h */

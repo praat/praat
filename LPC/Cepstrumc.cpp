@@ -75,23 +75,19 @@ class_methods_end
 
 int Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients)
 {
-	try {
 		my c = NUMvector<double> (0, nCoefficients);
 		my nCoefficients = nCoefficients;
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency)
 {
-	try {
 		my samplingFrequency = samplingFrequency;
 		my maxnCoefficients = nCoefficients;
 		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
 		my frame = NUMvector<structCepstrumc_Frame> (1, nt);
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
  
 Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -101,7 +97,7 @@ Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double
 		autoCepstrumc me = Thing_new (Cepstrumc);
 		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Cepstrum not created."); }
+	} catch (MelderError) { Melder_thrown ("Cepstrum not created."); }
 }
 
 static void regression (Cepstrumc me, long frame, double r[], long nr)
@@ -125,7 +121,7 @@ static void regression (Cepstrumc me, long frame, double r[], long nr)
 	}
 }
 
-DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
+DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint)
 {
 	try {
@@ -141,7 +137,7 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 
 		// Calculate distance matrix
 	
-		Melder_progress1 (0.0, L"");
+		autoMelderProgress progress (L"");
 		for (long i = 1; i <= my nx; i++)
 		{
 			Cepstrumc_Frame fi = & my frame[i];
@@ -181,13 +177,12 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 				dist /= wc + wle + wr + wer;
 				his z[i][j] = sqrt (dist); // prototype along y-direction
 			}
-			if (! Melder_progress5 ((double)i / my nx, L"Calculate distances: frame ",
-				Melder_integer (i), L" from ", Melder_integer (my nx), L".")) Melder_throw ("Distance calculation interrupted");
+			Melder_progress5 ((double)i / my nx, L"Calculate distances: frame ",
+				Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
 		}
-		Melder_progress1 (1.0, NULL);
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("DTW not created."); }
+	} catch (MelderError) { Melder_thrown ("DTW not created."); }
 }
 
 Matrix Cepstrumc_to_Matrix (Cepstrumc me)
@@ -202,7 +197,7 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me)
 			for (long j = 1; j <= his nCoefficients+1; j++) thy z[j][i] = his c[j-1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Matrix created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
 }
 
 /* End of file Cepstrumc.cpp */

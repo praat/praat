@@ -48,7 +48,7 @@ VocalTract VocalTract_create (long nx, double dx) {
 		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("VocalTract not created.");
+		Melder_throw ("VocalTract not created.");
 	}
 }
 
@@ -145,7 +145,7 @@ VocalTract VocalTract_createFromPhone (const wchar_t *phone) {
 			my z [1] [isection] = data [i]. area [isection - 1] * 0.0001;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("VocalTract not created from phone.");
+		Melder_throw ("VocalTract not created from phone.");
 	}
 }
 
@@ -159,7 +159,7 @@ Matrix VocalTract_to_Matrix (VocalTract me) {
 		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -169,7 +169,7 @@ VocalTract Matrix_to_VocalTract (Matrix me) {
 		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to VocalTract.");
+		Melder_throw (me, ": not converted to VocalTract.");
 	}
 }
 

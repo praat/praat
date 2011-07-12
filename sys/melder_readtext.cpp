@@ -21,6 +21,7 @@
  * pb 2008/11/04 split off from melder_strings.c and melder_encodings.c
  * pb 2010/03/09 support Unicode values above 0xFFFF
  * pb 2011/04/05 C++
+ * pb 2011/07/03 C++
  */
 
 #include "melder.h"
@@ -28,18 +29,7 @@
 #include "abcio.h"
 #define my  me ->
 
-struct structMelderReadText {
-	bool valid;
-	wchar_t *stringW, *readPointerW;
-	char *string8, *readPointer8;
-	unsigned long input8Encoding;
-};
-
-bool MelderReadText_isValid (MelderReadText me) {
-	return my valid;
-}
-
-wchar_t MelderReadText_getChar (MelderReadText me) {
+wchar MelderReadText_getChar (MelderReadText me) {
 	if (my stringW != NULL) {
 		if (* my readPointerW == '\0') return 0;
 		return * my readPointerW ++;
@@ -71,17 +61,15 @@ wchar_t MelderReadText_getChar (MelderReadText me) {
 	}
 }
 
-wchar_t * MelderReadText_readLine (MelderReadText me) {
-	if (! my valid) return NULL;
+wchar * MelderReadText_readLine (MelderReadText me) {
 	if (my stringW != NULL) {
 		Melder_assert (my readPointerW != NULL);
 		Melder_assert (my readPointer8 == NULL);
-		if (*my readPointerW == '\0') {   // Tried to read past end of file.
-			my valid = false;
+		if (*my readPointerW == '\0') {   // tried to read past end of file
 			return NULL;
 		}
-		wchar_t *result = my readPointerW;
-		wchar_t *newline = wcschr (result, '\n');
+		wchar *result = my readPointerW;
+		wchar *newline = wcschr (result, '\n');
 		if (newline != NULL) {
 			*newline = '\0';
 			my readPointerW = newline + 1;
@@ -93,8 +81,7 @@ wchar_t * MelderReadText_readLine (MelderReadText me) {
 		Melder_assert (my string8 != NULL);
 		Melder_assert (my readPointerW == NULL);
 		Melder_assert (my readPointer8 != NULL);
-		if (*my readPointer8 == '\0') {   // Tried to read past end of file.
-			my valid = false;
+		if (*my readPointer8 == '\0') {   // tried to read past end of file
 			return NULL;
 		}
 		char *result8 = my readPointer8;
@@ -105,15 +92,15 @@ wchar_t * MelderReadText_readLine (MelderReadText me) {
 		} else {
 			my readPointer8 += strlen (result8);
 		}
-		static wchar_t *textW = NULL;
+		static wchar *textW = NULL;
 		static size_t size = 0;
 		size_t sizeNeeded = strlen (result8) + 1;
 		if (sizeNeeded > size) {
 			Melder_free (textW);
-			textW = Melder_malloc_f (wchar_t, sizeNeeded + 100);
+			textW = Melder_malloc_f (wchar, sizeNeeded + 100);
 			size = sizeNeeded + 100;
 		}
-		Melder_8bitToWcs_inline_e (result8, textW, my input8Encoding);
+		Melder_8bitToWcs_inline (result8, textW, my input8Encoding);
 		return textW;
 	}
 }
@@ -135,7 +122,7 @@ long MelderReadText_getNumberOfLines (MelderReadText me) {
 const wchar_t * MelderReadText_getLineNumber (MelderReadText me) {
 	long result = 1;
 	if (my stringW != NULL) {
-		wchar_t *p = my stringW;
+		wchar *p = my stringW;
 		while (my readPointerW - p > 0) {
 			if (*p == '\0' || *p == '\n') result ++;
 			p ++;
@@ -151,129 +138,118 @@ const wchar_t * MelderReadText_getLineNumber (MelderReadText me) {
 	return Melder_integer (result);
 }
 
-static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
-	int type = 0;   // 8-bit
-	wchar_t *text = NULL;
-	FILE *f = Melder_fopen (file, "rb");
-	if (f == NULL) return NULL;
- 	fseek (f, 0, SEEK_END);
- 	unsigned long length = ftell (f);
- 	rewind (f);
-	if (length >= 2) {
-		int firstByte = fgetc (f), secondByte = fgetc (f);
-		if (firstByte == 0xFE && secondByte == 0xFF) {
-			type = 1;   // big-endian 16-bit
-		} else if (firstByte == 0xFF && secondByte == 0xFE) {
-			type = 2;   // little-endian 16-bit
-		}
-	}
-	if (type == 0) {
-		rewind (f);   // length and type already set correctly.
-		char *text8bit = Melder_malloc_e (char, length + 1);
-		if (! text8bit) { Melder_fclose (file, f); return NULL; }
-		fread (text8bit, sizeof (char), length, f);
-		if (! Melder_fclose (file, f)) {
-			Melder_free (text8bit);
-			Melder_error3 (L"Error reading file ", MelderFile_messageName (file), L".");
-			return NULL;
-		}
-		text8bit [length] = '\0';
-		/*
-		 * Count and repair null bytes.
-		 */
-		if (length > 0) {
-			long numberOfNullBytes = 0;
-			for (char *p = text8bit + (length - 1); (long) (p - text8bit) >= 0; p --) {
-				if (*p == '\0') {
-					numberOfNullBytes += 1;
-					/*
-					 * Shift.
-					 */
-					for (char *q = p; (unsigned long) (q - text8bit) < length; q ++) {
-						*q = q [1];
-					}
-				}
-			}
-			if (numberOfNullBytes > 0) {
-				Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageName (file), L".");
+static wchar * _MelderFile_readText (MelderFile file, char **string8) {
+	try {
+		int type = 0;   // 8-bit
+		autostring text;
+		autofile f = Melder_fopen (file, "rb");
+		fseek (f, 0, SEEK_END);
+		unsigned long length = ftell (f);
+		rewind (f);
+		if (length >= 2) {
+			int firstByte = fgetc (f), secondByte = fgetc (f);
+			if (firstByte == 0xFE && secondByte == 0xFF) {
+				type = 1;   // big-endian 16-bit
+			} else if (firstByte == 0xFF && secondByte == 0xFE) {
+				type = 2;   // little-endian 16-bit
 			}
 		}
-		if (string8 != NULL) {
-			*string8 = text8bit;
-			(void) Melder_killReturns_inline (*string8);
-			return NULL;
-		} else {
-			text = Melder_8bitToWcs_e (text8bit, 0); // BUG cherror
-			Melder_free (text8bit);
-		}
-	} else {
-		length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes.
-		text = Melder_malloc_e (wchar_t, length + 1);
-		if (! text) { Melder_fclose (file, f); return NULL; }
-		if (type == 1) {
-			for (unsigned long i = 0; i < length; i ++) {
-				unsigned short kar = bingetu2 (f); cherror
-				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-					text [i] = kar;
-				} else {   // wchar_t is UTF-32.
-					unsigned long kar1 = kar;
-					if (kar1 < 0xD800) {
-						text [i] = kar1;
-					} else if (kar1 < 0xDC00) {
-						length --;
-						unsigned long kar2 = bingetu2 (f); cherror
-						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
-						} else {
-							text [i] = UNICODE_REPLACEMENT_CHARACTER;
+		if (type == 0) {
+			rewind (f);   // length and type already set correctly.
+			autostring8 text8bit = Melder_malloc (char, length + 1);
+			fread (text8bit.peek(), sizeof (char), length, f);
+			text8bit [length] = '\0';
+			/*
+			 * Count and repair null bytes.
+			 */
+			if (length > 0) {
+				long numberOfNullBytes = 0;
+				for (char *p = & text8bit [length - 1]; (long) (p - text8bit.peek()) >= 0; p --) {
+					if (*p == '\0') {
+						numberOfNullBytes += 1;
+						/*
+						 * Shift.
+						 */
+						for (char *q = p; (unsigned long) (q - text8bit.peek()) < length; q ++) {
+							*q = q [1];
 						}
-					} else if (kar1 < 0xE000) {
-						text [i] = UNICODE_REPLACEMENT_CHARACTER;
-					} else if (kar1 <= 0xFFFF) {
-						text [i] = kar1;
-					} else {
-						Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 					}
 				}
+				if (numberOfNullBytes > 0) {
+					Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageName (file), L".");
+				}
+			}
+			if (string8 != NULL) {
+				*string8 = text8bit.transfer();
+				(void) Melder_killReturns_inline (*string8);
+				return NULL;   // OK
+			} else {
+				text.reset (Melder_8bitToWcs (text8bit.peek(), 0));
 			}
 		} else {
-			for (unsigned long i = 0; i < length; i ++) {
-				unsigned short kar = bingetu2LE (f); cherror
-				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
-					text [i] = kar;
-				} else {   // wchar_t is UTF-32.
-					unsigned long kar1 = kar;
-					if (kar1 < 0xD800) {
-						text [i] = kar1;
-					} else if (kar1 < 0xDC00) {
-						length --;
-						unsigned long kar2 = bingetu2LE (f); cherror
-						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
-						} else {
+			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
+			text.reset (Melder_malloc (wchar, length + 1));
+			if (type == 1) {
+				for (unsigned long i = 0; i < length; i ++) {
+					unsigned short kar = bingetu2 (f);
+					if (sizeof (wchar_t) == 2) {   // wchar is UTF-16?
+						text [i] = kar;
+					} else {   // wchar_t is UTF-32.
+						unsigned long kar1 = kar;
+						if (kar1 < 0xD800) {
+							text [i] = kar1;
+						} else if (kar1 < 0xDC00) {
+							length --;
+							unsigned long kar2 = bingetu2 (f);
+							if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+								text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
+							} else {
+								text [i] = UNICODE_REPLACEMENT_CHARACTER;
+							}
+						} else if (kar1 < 0xE000) {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
+						} else if (kar1 <= 0xFFFF) {
+							text [i] = kar1;
+						} else {
+							Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
 						}
-					} else if (kar1 < 0xE000) {
-						text [i] = UNICODE_REPLACEMENT_CHARACTER;
-					} else if (kar1 <= 0xFFFF) {
-						text [i] = kar1;
-					} else {
-						Melder_fatal ("MelderFile_readText_LE: unsigned short greater than 0xFFFF: should not occur.");
+					}
+				}
+			} else {
+				for (unsigned long i = 0; i < length; i ++) {
+					unsigned short kar = bingetu2LE (f);
+					if (sizeof (wchar) == 2) {   // wchar is UTF-16?
+						text [i] = kar;
+					} else {   // wchar is UTF-32
+						unsigned long kar1 = kar;
+						if (kar1 < 0xD800) {
+							text [i] = kar1;
+						} else if (kar1 < 0xDC00) {
+							length --;
+							unsigned long kar2 = bingetu2LE (f);
+							if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+								text [i] = 0x10000 + ((kar1 & 0x3FF) << 10) + (kar2 & 0x3FF);
+							} else {
+								text [i] = UNICODE_REPLACEMENT_CHARACTER;
+							}
+						} else if (kar1 < 0xE000) {
+							text [i] = UNICODE_REPLACEMENT_CHARACTER;
+						} else if (kar1 <= 0xFFFF) {
+							text [i] = kar1;
+						} else {
+							Melder_fatal ("MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
+						}
 					}
 				}
 			}
+			text [length] = '\0';
+			(void) Melder_killReturns_inlineW (text.peek());
 		}
-		if (! Melder_fclose (file, f)) {
-			Melder_free (text);
-			goto end;
-		}
-		text [length] = '\0';
-		(void) Melder_killReturns_inlineW (text);
+		f.close (file);
+		return text.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Error reading file ", MelderFile_messageName (file), ".");
 	}
-end:
-	if (text == NULL)
-		return (wchar *) Melder_errorp3 (L"Error reading file ", MelderFile_messageName (file), L".");
-	return text;
 }
 
 wchar_t * MelderFile_readText (MelderFile file) {
@@ -281,8 +257,8 @@ wchar_t * MelderFile_readText (MelderFile file) {
 }
 
 MelderReadText MelderReadText_createFromFile (MelderFile file) {
-	MelderReadText me = Melder_calloc_e (struct structMelderReadText, 1); cherror
-	my stringW = _MelderFile_readText (file, & my string8); cherror
+	autoMelderReadText me = Melder_calloc (struct structMelderReadText, 1);
+	my stringW = _MelderFile_readText (file, & my string8);
 	if (my stringW != NULL) {
 		my readPointerW = & my stringW [0];
 	} else {
@@ -297,7 +273,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file) {
 			if (Melder_strIsValidUtf8 (my string8)) {
 				my input8Encoding = kMelder_textInputEncoding_UTF8;
 			} else if (my input8Encoding == kMelder_textInputEncoding_UTF8) {
-				error1 (L"Text is not valid UTF-8; please try a different text input encoding.");
+				Melder_throw ("Text is not valid UTF-8; please try a different text input encoding.");
 			} else if (my input8Encoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1) {
 				my input8Encoding = kMelder_textInputEncoding_ISO_LATIN1;
 			} else if (my input8Encoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1) {
@@ -307,13 +283,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file) {
 			}
 		}
 	}
-	my valid = true;
-end:
-	iferror {
-		MelderReadText_delete (me);
-		me = NULL;
-	}
-	return me;
+	return me.transfer();
 }
 
 MelderReadText MelderReadText_createFromString (const wchar_t *string);

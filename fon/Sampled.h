@@ -20,27 +20,18 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 /* Sampled inherits from Function */
-#ifndef _Function_h_
-	#include "Function.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Function.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Sampled_members Function_members \
-	long nx; \
-	double dx, x1;
-#define Sampled_methods Function_methods \
-	double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
-class_create (Sampled, Function);
+Thing_declare1cpp (Sampled);
 
 /* A Sampled is a Function that is sampled at nx points [1..nx], */
 /* which are spaced apart by a constant distance dx. */
@@ -59,9 +50,9 @@ long Sampled_xToNearestIndex (I, double x);
 
 long Sampled_getWindowSamples (I, double xmin, double xmax, long *ixmin, long *ixmax);
 
-int Sampled_init (I, double xmin, double xmax, long nx, double dx, double x1);
+void Sampled_init (I, double xmin, double xmax, long nx, double dx, double x1);
 
-int Sampled_shortTermAnalysis (I, double windowDuration, double timeStep,
+void Sampled_shortTermAnalysis (I, double windowDuration, double timeStep,
 		long *numberOfFrames, double *firstTime);
 /*
 	Function:
@@ -129,6 +120,15 @@ void Sampled_drawInside
 
 #ifdef __cplusplus
 	}
+
+	struct structSampled : public structFunction {
+		long nx;
+		double dx, x1;
+	};
+	#define Sampled__methods(klas) Function__methods(klas) \
+		double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
+	Thing_declare2cpp (Sampled, Function);
+
 #endif
 
 /* End of file Sampled.h */

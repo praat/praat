@@ -22,20 +22,22 @@
  * pb 2003/03/31 removeConstraint
  * pb 2003/05/27 learnOne and learnOneFromPartialOutput
  * pb 2004/03/16 Evaluate (tiny noise)
- * pb 2007/06/10 wchar_t
+ * pb 2007/06/10 wchar
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2008/05/31 ExponentialMaximumEntropy
  * pb 2011/03/22 C++
+ * pb 2011/07/02 C++
  */
 
 #include "OTGrammarEditor.h"
 #include "EditorM.h"
 
-#define OTGrammarEditor__members(Klas) HyperPage__members(Klas) \
+struct structOTGrammarEditor : public structHyperPage {
 	long selected;
+};
 #define OTGrammarEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2 (OTGrammarEditor, HyperPage);
+Thing_declare2cpp (OTGrammarEditor, HyperPage);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
@@ -43,37 +45,37 @@ static int menu_cb_evaluate (EDITOR_ARGS) {
 		REAL (L"Noise", L"2.0")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTGrammarEditor_as_Editor (me), L"Evaluate");
+		Editor_save (me, L"Evaluate");
 		OTGrammar_newDisharmonies ((OTGrammar) my data, GET_REAL (L"Noise"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
 static int menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
-	Editor_save (OTGrammarEditor_as_Editor (me), L"Evaluate (noise 2.0)");
+	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 2.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
-	Editor_save (OTGrammarEditor_as_Editor (me), L"Evaluate (tiny noise)");
+	Editor_save (me, L"Evaluate (tiny noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 1e-9);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
-	Editor_save (OTGrammarEditor_as_Editor (me), L"Evaluate (zero noise)");
+	Editor_save (me, L"Evaluate (zero noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 0.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -96,13 +98,13 @@ static int menu_cb_editConstraint (EDITOR_ARGS) {
 	EDITOR_DO
 		OTGrammar ot = (OTGrammar) my data;
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [my selected]];
-		Editor_save (OTGrammarEditor_as_Editor (me), L"Edit constraint");
+		Editor_save (me, L"Edit constraint");
 		constraint -> ranking = GET_REAL (L"Ranking value");
 		constraint -> disharmony = GET_REAL (L"Disharmony");
 		constraint -> plasticity = GET_REAL (L"Plasticity");
 		OTGrammar_sort (ot);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -120,13 +122,13 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 		BOOLEAN (L"Honour local rankings", 1)
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTGrammarEditor_as_Editor (me), L"Learn one");
+		Editor_save (me, L"Learn one");
 		OTGrammar_learnOne ((OTGrammar) my data, GET_STRING (L"Input string"), GET_STRING (L"Output string"),
 			GET_REAL (L"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -143,13 +145,13 @@ static int menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 		NATURAL (L"Number of chews", L"1")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTGrammarEditor_as_Editor (me), L"Learn one from partial output");
+		Editor_save (me, L"Learn one from partial output");
 		OTGrammar_learnOneFromPartialOutput ((OTGrammar) my data, GET_STRING (L"Partial output"),
 			GET_REAL (L"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -159,10 +161,10 @@ static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	OTGrammarConstraint constraint;
 	if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error ("Select a constraint first.");
 	constraint = & ot -> constraints [ot -> index [my selected]];
-	Editor_save (OTGrammarEditor_as_Editor (me), L"Remove constraint");
+	Editor_save (me, L"Remove constraint");
 	OTGrammar_removeConstraint (ot, constraint -> name);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -172,10 +174,10 @@ static int menu_cb_resetAllRankings (EDITOR_ARGS) {
 		REAL (L"Ranking", L"100.0")
 	EDITOR_OK
 	EDITOR_DO
-		Editor_save (OTGrammarEditor_as_Editor (me), L"Reset all rankings");
+		Editor_save (me, L"Reset all rankings");
 		OTGrammar_reset ((OTGrammar) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (OTGrammarEditor_as_Editor (me));
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -184,7 +186,7 @@ static int menu_cb_OTGrammar_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); 
 static int menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OT learning"); return 1; }
 
 static void createMenus (OTGrammarEditor me) {
-	inherited (OTGrammarEditor) createMenus (OTGrammarEditor_as_parent (me));
+	inherited (OTGrammarEditor) createMenus (me);
 	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
 	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
 	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
@@ -199,21 +201,21 @@ static void createMenus (OTGrammarEditor me) {
 }
 
 static void createHelpMenuItems (OTGrammarEditor me, EditorMenu menu) {
-	inherited (OTGrammarEditor) createHelpMenuItems (OTGrammarEditor_as_parent (me), menu);
+	inherited (OTGrammarEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"OTGrammarEditor help", '?', menu_cb_OTGrammarEditor_help);
 	EditorMenu_addCommand (menu, L"OTGrammar help", 0, menu_cb_OTGrammar_help);
 	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 
 static OTGrammar drawTableau_ot;
-static const wchar_t *drawTableau_input;
+static const wchar *drawTableau_input;
 static void drawTableau (Graphics g) {
 	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_input);
 }
 
 static void draw (OTGrammarEditor me) {
 	OTGrammar ot = (OTGrammar) my data;
-	static wchar_t text [1000];
+	static wchar text [1000];
 	Graphics_clearWs (my g);
 	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
 		ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
@@ -250,7 +252,7 @@ static void draw (OTGrammarEditor me) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 }
 
-static int goToPage (OTGrammarEditor me, const wchar_t *title) {
+static int goToPage (OTGrammarEditor me, const wchar *title) {
 	if (title == NULL) return 1;
 	my selected = wcstol (title, NULL, 10);
 	return 1;
@@ -265,14 +267,14 @@ class_methods (OTGrammarEditor, HyperPage) {
 	class_methods_end
 }
 
-OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar_t *title, OTGrammar ot) {
+OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot) {
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
 		my data = ot;
-		HyperPage_init (OTGrammarEditor_as_parent (me.peek()), parent, title, ot); therror
+		HyperPage_init (me.peek(), parent, title, ot);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("OTGrammar window not created.");
+		Melder_throw ("OTGrammar window not created.");
 	}
 }
 

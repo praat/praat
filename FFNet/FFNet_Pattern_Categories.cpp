@@ -44,13 +44,11 @@ static int _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType,
 	int (*learn) (FFNet, Pattern, Activation, long, double, Any, int))
 {
-	try {
-		_FFNet_Pattern_Categories_checkDimensions (me, p, c);
-		autoActivation activation = FFNet_Categories_to_Activation (me, c);
-		double min, max;
-		Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
-		return learn (me, p, activation.peek(), maxNumOfEpochs, tolerance, parameters, costFunctionType);
-	} catch (MelderError) { rethrowzero; }
+	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
+	autoActivation activation = FFNet_Categories_to_Activation (me, c);
+	double min, max;
+	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
+	return learn (me, p, activation.peek(), maxNumOfEpochs, tolerance, parameters, costFunctionType);
 }
 
 double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories c, int costFunctionType)
@@ -102,7 +100,7 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling)
 			Collection_addItem (him.peek(), item.transfer()); therror
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Categories created."); }
 }
 
 /* End of file FFNet_Pattern_Categories.cpp */

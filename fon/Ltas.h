@@ -20,32 +20,19 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Vector_h_
-	#include "Vector.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Spectrum.h"
+#include "Sound.h"
+#include "PointProcess.h"
+#include "Collection.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Ltas_members  Vector_members
-#define Ltas_methods  Vector_methods
-class_create (Ltas, Vector);
+Thing_declare1cpp (Ltas);
 
 /*
 	Attributes:
@@ -109,6 +96,12 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 
 #ifdef __cplusplus
 	}
+
+	struct structLtas : public structVector {
+	};
+	#define Ltas__methods(klas)  Vector__methods(klas)
+	Thing_declare2cpp (Ltas, Vector);
+
 #endif
 
 /* End of file Ltas.h */

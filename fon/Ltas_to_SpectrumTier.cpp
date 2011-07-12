@@ -30,7 +30,7 @@ SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
 		Thing_overrideClass (thee.peek(), classSpectrumTier);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": peaks not analyzed as SpectrumTier.");
+		Melder_throw (me, ": peaks not analyzed as SpectrumTier.");
 	}
 }
 

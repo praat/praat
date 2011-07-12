@@ -23,6 +23,7 @@
  * pb 2010/07/26 removed UiFile_hide
  * pb 2011/02/01 cancelContinueButton
  * pb 2011/05/15 C++
+ * pb 2011/07/12 C++
  */
 
 #include "UiPause.h"
@@ -34,7 +35,7 @@ static int thePauseForm_clicked = 0;
 static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
 
-static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
+static void thePauseFormOkCallback (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure) {
 	(void) sendingForm;
 	(void) sendingString;
 	(void) interpreter;
@@ -47,9 +48,8 @@ static int thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingStr
 	thePauseForm_clicked = UiForm_getClickedContinueButton (thePauseForm);
 	if (thePauseForm_clicked != theCancelContinueButton)
 		UiForm_Interpreter_addVariables (thePauseForm, (Interpreter) closure);   // 'closure', not 'interpreter' or 'theInterpreter'!
-	return 1;
 }
-static int thePauseFormCancelCallback (Any dia, void *closure) {
+static void thePauseFormCancelCallback (Any dia, void *closure) {
 	(void) dia;
 	(void) closure;
 	if (theCancelContinueButton != 0) {
@@ -57,151 +57,111 @@ static int thePauseFormCancelCallback (Any dia, void *closure) {
 	} else {
 		thePauseForm_clicked = -1;   // STOP button
 	}
-	return 1;
 }
-int UiPause_begin (GuiObject topShell, const wchar_t *title, Interpreter interpreter) {
+void UiPause_begin (GuiObject topShell, const wchar *title, Interpreter interpreter) {
 	if (theEventLoopDepth > 0)
-		error1 (L"Praat cannot have more than one pause form at a time.")
+		Melder_throw ("Praat cannot have more than one pause form at a time.");
 	forget (thePauseForm);   // in case an earlier build-up of another pause window was interrupted
 	thePauseForm = UiForm_create (topShell, Melder_wcscat2 (L"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
-		NULL, NULL); cherror
-end:
-	iferror return 0;
-	return 1;
+		NULL, NULL);
 }
-int UiPause_real (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_real (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"real\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addReal (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"real\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addReal (thePauseForm, label, defaultValue);
 }
-int UiPause_positive (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_positive (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"positive\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addPositive (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"positive\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addPositive (thePauseForm, label, defaultValue);
 }
-int UiPause_integer (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_integer (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"integer\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addInteger (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"integer\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addInteger (thePauseForm, label, defaultValue);
 }
-int UiPause_natural (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_natural (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"natural\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addNatural (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"natural\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addNatural (thePauseForm, label, defaultValue);
 }
-int UiPause_word (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_word (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"word\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addWord (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"word\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addWord (thePauseForm, label, defaultValue);
 }
-int UiPause_sentence (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_sentence (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"sentence\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addSentence (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"sentence\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addSentence (thePauseForm, label, defaultValue);
 }
-int UiPause_text (const wchar_t *label, const wchar_t *defaultValue) {
+void UiPause_text (const wchar *label, const wchar *defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"text\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addText (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"text\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addText (thePauseForm, label, defaultValue);
 }
-int UiPause_boolean (const wchar_t *label, int defaultValue) {
+void UiPause_boolean (const wchar *label, int defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"boolean\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addBoolean (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"boolean\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addBoolean (thePauseForm, label, defaultValue);
 }
-int UiPause_choice (const wchar_t *label, int defaultValue) {
+void UiPause_choice (const wchar *label, int defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"choice\" has to be between a \"beginPause\" and an \"endPause\".")
-	thePauseFormRadio = UiForm_addRadio (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"choice\" has to be between a \"beginPause\" and an \"endPause\".");
+	thePauseFormRadio = UiForm_addRadio (thePauseForm, label, defaultValue);
 }
-int UiPause_optionMenu (const wchar_t *label, int defaultValue) {
+void UiPause_optionMenu (const wchar *label, int defaultValue) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"optionMenu\" has to be between a \"beginPause\" and an \"endPause\".")
-	thePauseFormRadio = UiForm_addOptionMenu (thePauseForm, label, defaultValue); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"optionMenu\" has to be between a \"beginPause\" and an \"endPause\".");
+	thePauseFormRadio = UiForm_addOptionMenu (thePauseForm, label, defaultValue);
 }
-int UiPause_option (const wchar_t *label) {
+void UiPause_option (const wchar *label) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"option\" has to be between a \"beginPause\" and an \"endPause\".")
+		Melder_throw ("The function \"option\" has to be between a \"beginPause\" and an \"endPause\".");
 	if (thePauseFormRadio == NULL) {
 		forget (thePauseForm);
-		error1 (L"Found the function \"option\" without a preceding \"choice\" or \"optionMenu\".")
+		Melder_throw ("Found the function \"option\" without a preceding \"choice\" or \"optionMenu\".");
 	}
-	UiOptionMenu_addButton (thePauseFormRadio, label); cherror
-end:
-	iferror return 0;
-	return 1;
+	UiOptionMenu_addButton (thePauseFormRadio, label);
 }
-int UiPause_comment (const wchar_t *label) {
+void UiPause_comment (const wchar *label) {
 	if (thePauseForm == NULL)
-		error1 (L"The function \"comment\" has to be between a \"beginPause\" and an \"endPause\".")
-	UiForm_addLabel (thePauseForm, L"", label); cherror
-end:
-	iferror return 0;
-	return 1;
+		Melder_throw ("The function \"comment\" has to be between a \"beginPause\" and an \"endPause\".");
+	UiForm_addLabel (thePauseForm, L"", label);
 }
 int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
-	const wchar_t *continueText1, const wchar_t *continueText2, const wchar_t *continueText3,
-	const wchar_t *continueText4, const wchar_t *continueText5, const wchar_t *continueText6,
-	const wchar_t *continueText7, const wchar_t *continueText8, const wchar_t *continueText9,
-	const wchar_t *continueText10, Interpreter interpreter)
+	const wchar *continueText1, const wchar *continueText2, const wchar *continueText3,
+	const wchar *continueText4, const wchar *continueText5, const wchar *continueText6,
+	const wchar *continueText7, const wchar *continueText8, const wchar *continueText9,
+	const wchar *continueText10, Interpreter interpreter)
 {
-	try {
-		if (thePauseForm == NULL)
-			Melder_throw ("Found the function \"endPause\" without a preceding \"beginPause\".");
-		UiForm_setPauseForm (thePauseForm, numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
-			continueText1, continueText2, continueText3, continueText4, continueText5,
-			continueText6, continueText7, continueText8, continueText9, continueText10,
-			thePauseFormCancelCallback);
-		theCancelContinueButton = cancelContinueButton;
-		UiForm_finish (thePauseForm); therror
-		int wasBackgrounding = Melder_backgrounding;
-		structMelderDir dir = { { 0 } };
-		Melder_getDefaultDir (& dir);
-		//if (theCurrentPraatApplication -> batch) goto end;
-		if (wasBackgrounding) praat_foreground ();
-		/*
-		 * Put the pause form on the screen.
-		 */
-		UiForm_destroyWhenUnmanaged (thePauseForm);
-		UiForm_do (thePauseForm, false);
-		/*
-		 * Wait for the user to click Stop or Continue.
-		 */
-		#ifndef CONSOLE_APPLICATION
-			thePauseForm_clicked = 0;
-			Melder_assert (theEventLoopDepth == 0);
-			theEventLoopDepth ++;
+	if (thePauseForm == NULL)
+		Melder_throw ("Found the function \"endPause\" without a preceding \"beginPause\".");
+	UiForm_setPauseForm (thePauseForm, numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
+		continueText1, continueText2, continueText3, continueText4, continueText5,
+		continueText6, continueText7, continueText8, continueText9, continueText10,
+		thePauseFormCancelCallback);
+	theCancelContinueButton = cancelContinueButton;
+	UiForm_finish (thePauseForm); therror
+	int wasBackgrounding = Melder_backgrounding;
+	structMelderDir dir = { { 0 } };
+	Melder_getDefaultDir (& dir);
+	//if (theCurrentPraatApplication -> batch) goto end;
+	if (wasBackgrounding) praat_foreground ();
+	/*
+	 * Put the pause form on the screen.
+	 */
+	UiForm_destroyWhenUnmanaged (thePauseForm);
+	UiForm_do (thePauseForm, false);
+	/*
+	 * Wait for the user to click Stop or Continue.
+	 */
+	#ifndef CONSOLE_APPLICATION
+		thePauseForm_clicked = 0;
+		Melder_assert (theEventLoopDepth == 0);
+		theEventLoopDepth ++;
+		try {
 			#if gtk
 				do {
 					gtk_main_iteration ();
@@ -213,25 +173,25 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 					XtDispatchEvent (& event);
 				} while (! thePauseForm_clicked);
 			#endif
-			theEventLoopDepth --;
-			if (wasBackgrounding) praat_background ();
-			Melder_setDefaultDir (& dir);
-			/* BUG: should also restore praatP. editor. */
-			thePauseForm = NULL;   // undangle
-			thePauseFormRadio = NULL;   // undangle
-			if (thePauseForm_clicked == -1) {
-				Interpreter_stop (interpreter);
-				Melder_throw ("You interrupted the script.");
-				//Melder_flushError (NULL);
-				//Melder_clearError ();
-			} else {
-				//Melder_casual ("Clicked %d", thePauseForm_clicked);
-			}
-		#endif
-		return thePauseForm_clicked;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+		} catch (MelderError) {
+			Melder_flushError ("An error made it to the outer level; should not occur! Please write to paul.boersma@uva.nl");
+		}
+		theEventLoopDepth --;
+		if (wasBackgrounding) praat_background ();
+		Melder_setDefaultDir (& dir);
+		/* BUG: should also restore praatP. editor. */
+		thePauseForm = NULL;   // undangle
+		thePauseFormRadio = NULL;   // undangle
+		if (thePauseForm_clicked == -1) {
+			Interpreter_stop (interpreter);
+			Melder_throw ("You interrupted the script.");
+			//Melder_flushError (NULL);
+			//Melder_clearError ();
+		} else {
+			//Melder_casual ("Clicked %d", thePauseForm_clicked);
+		}
+	#endif
+	return thePauseForm_clicked;
 }
 
 /* End of file UiPause.cpp */

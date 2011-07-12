@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/08
  */
 
 /* A self-recording picture inside a Motif DrawingArea widget.
@@ -116,25 +116,25 @@ void Picture_remove (Picture *me);
 
 void Picture_erase (Picture me);   /* Clears the screen. */
 
-int Picture_writeToPraatPictureFile (Picture me, MelderFile file);
-int Picture_readFromPraatPictureFile (Picture me, MelderFile file);
+void Picture_writeToPraatPictureFile (Picture me, MelderFile file);
+void Picture_readFromPraatPictureFile (Picture me, MelderFile file);
 #ifdef _WIN32
-	int Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file);
+	void Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file);
 #endif
-int Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
-int Picture_writeToPdfFile (Picture me, MelderFile file);
+void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
+void Picture_writeToPdfFile (Picture me, MelderFile file);
 
 void Picture_print (Picture me);
 void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int rotation, double magnification);
 #ifdef macintosh
-	int Picture_writeToMacPictFile (Picture me, MelderFile file);
+	void Picture_writeToMacPictFile (Picture me, MelderFile file);
 	void Picture_copyToClipboard (Picture me);
 	void Picture_copyToQuickDrawClipboard (Picture me);
 	void Picture_copyToClipboard_screenImage (Picture me);
 #endif
 #ifdef _WIN32
 	void Picture_copyToClipboard (Picture me);
-	int Picture_writeToWindowsMetafile (Picture me, MelderFile file);
+	void Picture_writeToWindowsMetafile (Picture me, MelderFile file);
 #endif
 
 void Picture_setSelection

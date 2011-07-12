@@ -93,6 +93,8 @@ for i to 100
 	assert loc$ = "O";  'xm' 'ym'
 endfor
 
+select p
+Remove
 # now use epsilon ...
 
 

@@ -38,10 +38,7 @@
 	extern "C" {
 #endif
 
-#define ParamCurve_members Function_members \
-	Sound x, y;
-#define ParamCurve_methods Function_methods
-class_create (ParamCurve, Function);
+Thing_declare1cpp (ParamCurve);
 
 void ParamCurve_init (I, Any x, Any y);
 
@@ -86,6 +83,13 @@ void ParamCurve_swapXY (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structParamCurve : public structFunction {
+		Sound x, y;
+	};
+	#define ParamCurve__methods(klas) Function__methods(klas)
+	Thing_declare2cpp (ParamCurve, Function);
+
 #endif
 
 /* End of file ParamCurve.h */

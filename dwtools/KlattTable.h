@@ -24,23 +24,19 @@
  djmw 20110306 Latest modification
 */
 
-#ifndef _TableOfReal_h
-	#include "TableOfReal.h"
-#endif
-#ifndef _Sound_h
-	#include "Sound.h"
-#endif
-#ifndef _Table_h
-	#include "Table.h"
-#endif
+#include "TableOfReal.h"
+#include "Sound.h"
+#include "Table.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define KlattTable_members Table_members
-#define KlattTable_methods Table_methods
-class_create (KlattTable, Table);
+Thing_declare1cpp (KlattTable);
+struct structKlattTable : public structTable {
+};
+#define KlattTable__methods(klas) Table__methods(klas)
+Thing_declare2cpp (KlattTable, Table);
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration);
 /*

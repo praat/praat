@@ -2,7 +2,7 @@
 #define _Ui_decl_h_
 /* Ui_decl.h
  *
- * Copyright (C) 1992-2009 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,10 @@
  */
 
 /*
- * pb 2009/01/18
+ * pb 2011/07/05
  */
 
-typedef struct structUiForm *UiForm;
+Thing_declare1cpp (UiForm);
 
-#endif
 /* End of file Ui_decl.h */
+#endif

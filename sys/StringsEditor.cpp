@@ -22,6 +22,7 @@
  * pb 2008/02/06 const
  * pb 2008/03/20 split off Help menu
  * pb 2011/04/06 C++
+ * pb 2011/07/02 C++
  */
 
 #include "StringsEditor.h"
@@ -41,7 +42,7 @@ static int menu_cb_help (EDITOR_ARGS) {
 }
 
 static void createHelpMenuItems (StringsEditor me, EditorMenu menu) {
-	inherited (StringsEditor) createHelpMenuItems (StringsEditor_as_parent (me), menu);
+	inherited (StringsEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"StringsEditor help", '?', menu_cb_help);
 }
 
@@ -77,7 +78,7 @@ static void gui_button_cb_insert (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (StringsEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_button_cb_append (I, GuiButtonEvent event) {
@@ -99,7 +100,7 @@ static void gui_button_cb_append (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (StringsEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_button_cb_remove (I, GuiButtonEvent event) {
@@ -111,7 +112,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	}
 	NUMlvector_free (selected, 1);
 	updateList (me);
-	Editor_broadcastChange (StringsEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_button_cb_replace (I, GuiButtonEvent event) {
@@ -125,7 +126,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 		GuiList_replaceItem (my list, text, selected [iselected]);
 	}
 	Melder_free (text);
-	Editor_broadcastChange (StringsEditor_as_Editor (me));
+	Editor_broadcastChange (me);
 }
 
 static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item) {
@@ -160,13 +161,15 @@ class_methods (StringsEditor, Editor) {
 	class_methods_end
 }
 
-StringsEditor StringsEditor_create (GuiObject parent, const wchar_t *title, Any data) {
-	StringsEditor me = Thing_new (StringsEditor); cherror
-	Editor_init (StringsEditor_as_parent (me), parent, 20, 40, 600, 600, title, data); cherror
-	updateList (me);
-end:
-	iferror forget (me);
-	return me;
+StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data) {
+	try {
+		autoStringsEditor me = Thing_new (StringsEditor);
+		Editor_init (me.peek(), parent, 20, 40, 600, 600, title, data);
+		updateList (me.peek());
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Strings window not created.");
+	}
 }
 
 /* End of file StringsEditor.cpp */

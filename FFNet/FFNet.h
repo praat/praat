@@ -48,7 +48,7 @@
 #endif
 
 #include "FFNet_def.h"
-#define FFNet_methods Data_methods
+#define FFNet__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FFNet, Data);
 
 /* Parameters:

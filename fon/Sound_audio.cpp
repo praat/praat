@@ -686,7 +686,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				if (fd != -1) close (fd);
 			#endif
 		}
-		rethrowmzero ("Sound not recorded.");
+		Melder_throw ("Sound not recorded.");
 	}
 }
 
@@ -761,7 +761,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 			Sound_playPart (resampled.peek(), tmin, tmax, callback, closure);   // recursively
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": not played.");
+		Melder_throw (me, ": not played.");
 	}
 }
 

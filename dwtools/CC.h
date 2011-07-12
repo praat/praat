@@ -38,12 +38,7 @@
 #endif
 
 #include "CC_def.h"
-#define CC_members Sampled_members \
-        double fmin; \
-        double fmax; \
-        long maximumNumberOfCoefficients; \
-        CC_Frame frame;
-#define CC_methods Sampled_methods
+#define CC__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (CC, Sampled);
 
 void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,

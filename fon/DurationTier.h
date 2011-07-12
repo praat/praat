@@ -20,15 +20,11 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "RealTier.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -36,9 +32,7 @@
 
 /********** class DurationTier **********/
 
-#define DurationTier_members RealTier_members
-#define DurationTier_methods RealTier_methods
-class_create (DurationTier, RealTier);
+Thing_declare1cpp (DurationTier);
 
 DurationTier DurationTier_create (double tmin, double tmax);
 
@@ -49,6 +43,12 @@ DurationTier PointProcess_upto_DurationTier (PointProcess me);
 
 #ifdef __cplusplus
 	}
+
+	struct structDurationTier : public structRealTier {
+	};
+	#define DurationTier__methods(klas) RealTier__methods(klas)
+	Thing_declare2cpp (DurationTier, RealTier);
+
 #endif
 
 /* End of file DurationTier.h */

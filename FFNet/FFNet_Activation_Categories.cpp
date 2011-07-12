@@ -74,7 +74,7 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Categories created."); }
 }
 
 Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
@@ -83,7 +83,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 		long hasCategories = 1;
 		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
 	
-		if (my outputCategories == 0) rethrowzero;
+		if (my outputCategories == 0) throw MelderError ();
 		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories, 0);
 		if (nl == 0)
 		{
@@ -99,7 +99,7 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 			his z[i][pos] = 1.0;
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero ("Activation not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Activation created."); }
 }
 
 /* End of file FFNet_Activation_Categories.c */

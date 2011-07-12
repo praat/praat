@@ -90,7 +90,7 @@ LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients)
 			LPC_Frame_into_CC_Frame (& my frame[i], & thy frame[i]);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("LFCC not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LFCC created."); }
 }
 
 LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients)
@@ -106,7 +106,7 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients)
 			CC_Frame_into_LPC_Frame (& my frame[i], & thy frame[i]);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("LPC not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC created."); }
 }
 
 #undef MIN

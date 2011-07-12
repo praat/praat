@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/02
  */
 
 #include "Editor.h"
@@ -30,8 +30,7 @@
 	extern "C" {
 #endif
 
-#define TableEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (TableEditor, Editor)
-Thing_declare1 (TableEditor);
+Thing_declare1cpp (TableEditor);
 
 TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table);
 

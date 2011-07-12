@@ -50,7 +50,6 @@ struct huber_struct
 static void huber_struct_init (struct huber_struct *hs, double windowDuration,
 	long p, double samplingFrequency, double location, int wantlocation)
 {
-	try {
 		hs -> w = hs -> work = hs -> a = hs -> c = 0;
 		hs -> covar = 0; hs -> svd = 0;
 		hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency); therror
@@ -66,7 +65,6 @@ static void huber_struct_init (struct huber_struct *hs, double windowDuration,
 		hs -> wantlocation = wantlocation;
 		if (! wantlocation) hs -> location = location;
 		hs -> wantscale = 1;
-	} catch (MelderError) { rethrow; }
 }
 
 static void huber_struct_destroy (struct huber_struct *hs)
@@ -120,7 +118,6 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 
 static void huber_struct_solvelpc (struct huber_struct *hs)
 {
-	try {
 		SVD me = hs -> svd;
 		double **covar = hs -> covar;
 
@@ -138,12 +135,10 @@ static void huber_struct_solvelpc (struct huber_struct *hs)
 		long nzeros = SVD_zeroSmallSingularValues (me, 0);
 
 		SVD_solve (me, hs -> c, hs -> a);
-	} catch (MelderError) { rethrow; }
 }
 
 void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs)
 {
-	try {
 		long p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
 		long n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
 		double *e = hs -> e -> z[1], *s = thy z[1];
@@ -171,13 +166,12 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 			try { huber_struct_solvelpc (hs); } catch (MelderError) {
 				// Copy the starting lpc coeffs */
 				for (long i = 1; i <= p; i++) his a[i] = my a[i];
-				rethrow;
+				throw;
 			}
 			for (long i = 1; i <= p; i++) his a[i] = hs -> a[i];
 
 			(hs -> iter)++;
 		} while ((hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
-	} catch (MelderError) { rethrow; }
 }
 
 
@@ -194,7 +188,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Time domains differ.");
 		if (my dx != thy samplingPeriod) Melder_throw ("Sampling intervals differ.");
 		if (floor (windowDuration / my dx) < p + 1) Melder_throw ("Analysis window too short.");
-		if (! Sampled_shortTermAnalysis (me, windowDuration, thy dx, & nFrames, & t1)) Melder_throw ("No samples.");
+		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & nFrames, & t1);
 		if (nFrames != thy nx || t1 != thy x1) Melder_throw ("Incorrect retrieved analysis width");
 
 		autoSound sound = (Sound) Data_copy (me);
@@ -228,8 +222,10 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 			iter += struct_huber.iter;
 
-			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
-			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) Melder_throw ("Interrupted.");
+			if ((i % 10) == 1) {
+				Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
+					Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); therror
+			}
 		}
 
 		if (frameErrorCount) Melder_warning5 (L"Results of ", Melder_integer (frameErrorCount),
@@ -238,7 +234,9 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		L"\n   Average per frame: ", Melder_double (((double) iter)/nFrames));
 		huber_struct_destroy (&struct_huber);
 		return him.transfer();
-	} catch (MelderError) { huber_struct_destroy (&struct_huber); rethrowmzero (me, ": "); }
+	} catch (MelderError) { 
+		huber_struct_destroy (&struct_huber);
+		Melder_thrown (me, ": no robust LPC created."); }
 }
 
 /* End of file Sound_and_LPC_robust.cpp */

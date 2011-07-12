@@ -72,7 +72,7 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		if ((my options = PhonationGridPlayOptions_create ())== NULL) return 0;
+		my options = PhonationGridPlayOptions_create ();
 		PhonationGrid_setNames (me);
 	#endif
 oo_END_CLASS (PhonationGrid)
@@ -102,7 +102,7 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		if ((my options = VocalTractGridPlayOptions_create ()) == NULL) return 0;
+		my options = VocalTractGridPlayOptions_create ();
 		VocalTractGrid_setNames (me);
 	#endif
 oo_END_CLASS (VocalTractGrid)
@@ -134,8 +134,8 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		if ((my options = CouplingGridPlayOptions_create()) == NULL) return 0;
-		if ((my glottis = PhonationTier_create (my xmin, my xmax)) == NULL) return 0;
+		my options = CouplingGridPlayOptions_create();
+		my glottis = PhonationTier_create (my xmin, my xmax);
 		CouplingGrid_setNames (me);
 	#endif
 oo_END_CLASS (CouplingGrid)
@@ -159,7 +159,7 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 		oo_OBJECT (FricationGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		if ((my options = FricationGridPlayOptions_create()) == NULL) return 0;
+		my options = FricationGridPlayOptions_create();
 		FricationGrid_setNames (me);
 	#endif
 oo_END_CLASS (FricationGrid)
@@ -185,7 +185,7 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 		oo_OBJECT (KlattGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		if ((my options = KlattGridPlayOptions_create()) == NULL) return 0;
+		my options = KlattGridPlayOptions_create();
 		KlattGrid_setNames (me);
 	#endif
 oo_END_CLASS (KlattGrid)

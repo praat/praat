@@ -27,17 +27,17 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _CC_h_
-	#include "CC.h"
-#endif
+#include "CC.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define MFCC_members CC_members
-#define MFCC_methods CC_methods
-class_create (MFCC, CC);
+Thing_declare1cpp (MFCC);
+struct structMFCC : public structCC {
+};
+#define MFCC__methods(klas) CC__methods(klas)
+oo_CLASS_CREATE (MFCC, CC);
 
 /*
 	Interpretatation:

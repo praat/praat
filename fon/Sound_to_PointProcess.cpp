@@ -64,7 +64,7 @@ PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpol
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (L"Sound: PointProcess not created.");
+		Melder_throw (me, ": extrema not computed.");
 	}
 }
 
@@ -104,7 +104,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (L"Sound: PointProcess not created.");
+		Melder_throw (me, ": zeroes not computed.");
 	}
 }
 
@@ -114,7 +114,7 @@ PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fm
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_cc (me, pitch.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (L"Sound: PointProcess not created.");
+		Melder_throw (me, ": periodic pulses (cc) not computed.");
 	}
 }
 
@@ -124,7 +124,7 @@ PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double
 		autoPointProcess thee = Sound_Pitch_to_PointProcess_peaks (me, pitch.peek(), includeMaxima, includeMinima);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (L"Sound: PointProcess not created.");
+		Melder_throw (me, ": periodic pulses (peaks) not computed.");
 	}
 }
 

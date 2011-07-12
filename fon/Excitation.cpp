@@ -78,7 +78,7 @@ static void info (I) {
 		strength = NUMimproveMaximum (my z [1], my nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		formant_bark = my x1 + (i_real - 1) * my dx;
 		MelderInfo_write3 (L"Peak at ", Melder_single (formant_bark), L" Bark");
-		MelderInfo_write3 (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hertz");
+		MelderInfo_write3 (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hz");
 		MelderInfo_writeLine3 (L", ", Melder_half (strength), L" phon.");
 	}
 }
@@ -95,7 +95,7 @@ Excitation Excitation_create (double df, long nf) {
 		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Excitation not created.");
+		Melder_throw ("Excitation not created.");
 	}
 }
 
@@ -150,7 +150,7 @@ Matrix Excitation_to_Matrix (Excitation me) {
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -160,7 +160,7 @@ Excitation Matrix_to_Excitation (Matrix me) {
 		Thing_overrideClass (thee.peek(), classExcitation);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Excitation.");
+		Melder_throw (me, ": not converted to Excitation.");
 	}
 }
 

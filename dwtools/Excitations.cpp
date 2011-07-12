@@ -52,7 +52,7 @@ Excitations Excitations_create (long initialCapacity)
 		autoExcitations me = Thing_new (Excitations);
 		Ordered_init (me.peek(), classExcitation, initialCapacity); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Excitations not created."); }
+	} catch (MelderError) { Melder_thrown ("Excitations not created."); }
 }
 
 Pattern Excitations_to_Pattern (Excitations me, long join)
@@ -71,7 +71,7 @@ Pattern Excitations_to_Pattern (Excitations me, long join)
 			for (long j = 1; j <= m -> nx; j++) thy z[r][c++] = z[j];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Pattern created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Pattern created."); }
 }
 
 TableOfReal Excitations_to_TableOfReal (Excitations me)
@@ -86,7 +86,7 @@ TableOfReal Excitations_to_TableOfReal (Excitations me)
 			for (long j = 1; j <= m -> nx; j++) thy data[i][j] = z[j];
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no TableOfReal created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no TableOfReal created."); }
 }
 
 Excitation Excitations_getItem (Excitations me, long item)
@@ -94,9 +94,9 @@ Excitation Excitations_getItem (Excitations me, long item)
 	try {
 		if (item < 1 || item > my size) Melder_throw ("Not a valid element number.");
 		autoExcitation thee = (Excitation) Data_copy (my item[item]);
-		Thing_setName (thee.peek(), Thing_getName (my item[item]));
+		Thing_setName (thee.peek(), Thing_getName ((Thing) my item[item]));
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Excitation created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Excitation created."); }
 }
 
 /* End of file Excitations.cpp */

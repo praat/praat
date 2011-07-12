@@ -77,14 +77,10 @@ int Lispio_openListFromFile (LispioSeq *seq, FILE *f, char *buffer, long maxLeng
 }
 
 char * Lispio_string (const Lispio *me) {
-	try {
-		autostring8 result = Melder_malloc (char, my length + 1);
-		memcpy (result.peek(), my string, my length);
-		result [my length] = '\0';
-		return result.transfer();
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	autostring8 result = Melder_malloc (char, my length + 1);
+	memcpy (result.peek(), my string, my length);
+	result [my length] = '\0';
+	return result.transfer();
 }
 
 int Lispio_equal (const Lispio *me, const Lispio *thee) {

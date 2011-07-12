@@ -21,6 +21,7 @@
  * pb 2010/07/26 split off from UiFile.c
  * pb 2010/11/27 GuiFileSelect_getDirectoryName ()
  * pb 2011/04/06 C++
+ * pb 2011/07/05 C++
  */
 
 #include "Gui.h"
@@ -28,114 +29,110 @@
 	#include <Shlobj.h>
 #endif
 
-SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar_t *title, bool allowMultipleFiles) {
-	try {
-		autoSortedSetOfString me = SortedSetOfString_create ();
-		#if gtk
-			(void) parent;
-			GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-			gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
-			if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-				GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
-				for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
-					char *infileName_utf8 = (char *) element -> data;
-					SortedSetOfString_add (me.peek(), Melder_peekUtf8ToWcs (infileName_utf8)); therror
-					g_free (infileName_utf8);
-				}
-				g_slist_free (infileNames_list);
+SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *title, bool allowMultipleFiles) {
+	autoSortedSetOfString me = SortedSetOfString_create ();
+	#if gtk
+		(void) parent;
+		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
+			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
+				char *infileName_utf8 = (char *) element -> data;
+				SortedSetOfString_add (me.peek(), Melder_peekUtf8ToWcs (infileName_utf8)); therror
+				g_free (infileName_utf8);
 			}
-			gtk_widget_destroy (dialog);
-		#elif defined (macintosh)
-			(void) parent;
-			OSStatus err;
-			NavDialogRef dialogRef;
-			NavDialogCreationOptions dialogOptions;
-			NavGetDefaultDialogCreationOptions (& dialogOptions);
-			dialogOptions. optionFlags |= kNavDontAutoTranslate;
-			dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
-			if (! allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
-			err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
-			if (err == noErr) {
-				NavReplyRecord reply;
-				NavDialogRun (dialogRef);
-				err = NavDialogGetReply (dialogRef, & reply);
-				if (err == noErr && reply. validRecord) {
-					SInt32 numberOfSelectedFiles;
-					AECountItems (& reply. selection, & numberOfSelectedFiles);
-					for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
-						AEKeyword keyWord;
-						DescType typeCode;
-						Size actualSize = 0;
-						FSRef machFile;
-						structMelderFile file;
-						if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
-							Melder_machToFile (& machFile, & file);
-						SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
-					}
-					NavDisposeReply (& reply);
+			g_slist_free (infileNames_list);
+		}
+		gtk_widget_destroy (dialog);
+	#elif defined (macintosh)
+		(void) parent;
+		OSStatus err;
+		NavDialogRef dialogRef;
+		NavDialogCreationOptions dialogOptions;
+		NavGetDefaultDialogCreationOptions (& dialogOptions);
+		dialogOptions. optionFlags |= kNavDontAutoTranslate;
+		dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
+		if (! allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
+		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
+		if (err == noErr) {
+			NavReplyRecord reply;
+			NavDialogRun (dialogRef);
+			err = NavDialogGetReply (dialogRef, & reply);
+			if (err == noErr && reply. validRecord) {
+				SInt32 numberOfSelectedFiles;
+				AECountItems (& reply. selection, & numberOfSelectedFiles);
+				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
+					AEKeyword keyWord;
+					DescType typeCode;
+					Size actualSize = 0;
+					FSRef machFile;
+					structMelderFile file;
+					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
+						Melder_machToFile (& machFile, & file);
+					SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
 				}
-				NavDialogDispose (dialogRef);
+				NavDisposeReply (& reply);
 			}
-		#elif defined (_WIN32)
-			static OPENFILENAMEW openFileName, dummy;
-			static wchar_t fullFileName [3000+2];
-			ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
-			openFileName. lStructSize = sizeof (OPENFILENAMEW);
-			openFileName. hwndOwner = parent ? (HWND) XtWindow (parent) : NULL;
-			openFileName. hInstance = NULL;
-			openFileName. lpstrFilter = L"All Files\0*.*\0";
-			ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
-			openFileName. lpstrCustomFilter = NULL;
-			openFileName. nMaxCustFilter = 0;
-			openFileName. lpstrFile = fullFileName;
-			openFileName. nMaxFile = 3000;
-			openFileName. lpstrFileTitle = NULL;
-			openFileName. nMaxFileTitle = 0;
-			openFileName. lpstrInitialDir = NULL;
-			openFileName. lpstrTitle = title;
-			openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
-				| (allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
-			openFileName. lpstrDefExt = NULL;
-			openFileName. lpfnHook = NULL;
-			openFileName. lpTemplateName = NULL;
-			openFileName. pvReserved = NULL;
-			openFileName. dwReserved = 0;
-			openFileName. FlagsEx = 0;
-			OSVERSIONINFO osVersionInfo;
-			ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
-			osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-			GetVersionEx (& osVersionInfo);
-			if (GetOpenFileNameW (& openFileName)) {
-				int firstFileNameLength = wcslen (fullFileName);
-				if (fullFileName [firstFileNameLength + 1] == '\0') {
-					/*
-					 * The user selected one file.
-					 */
-					SortedSetOfString_add (me.peek(), fullFileName); therror
-				} else {
-					/*
-					 * The user selected multiple files.
-					 * 'fullFileName' is a directory name; the file names follow.
-					 */
-					structMelderDir dir;
-					Melder_pathToDir (fullFileName, & dir);
-					for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
-						structMelderFile file;
-						MelderDir_getFile (& dir, p, & file);
-						SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
-					}
+			NavDialogDispose (dialogRef);
+		}
+	#elif defined (_WIN32)
+		static OPENFILENAMEW openFileName, dummy;
+		static wchar_t fullFileName [3000+2];
+		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
+		openFileName. lStructSize = sizeof (OPENFILENAMEW);
+		openFileName. hwndOwner = parent ? (HWND) XtWindow (parent) : NULL;
+		openFileName. hInstance = NULL;
+		openFileName. lpstrFilter = L"All Files\0*.*\0";
+		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
+		openFileName. lpstrCustomFilter = NULL;
+		openFileName. nMaxCustFilter = 0;
+		openFileName. lpstrFile = fullFileName;
+		openFileName. nMaxFile = 3000;
+		openFileName. lpstrFileTitle = NULL;
+		openFileName. nMaxFileTitle = 0;
+		openFileName. lpstrInitialDir = NULL;
+		openFileName. lpstrTitle = title;
+		openFileName. Flags = OFN_EXPLORER | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY
+			| (allowMultipleFiles ? OFN_ALLOWMULTISELECT : 0);
+		openFileName. lpstrDefExt = NULL;
+		openFileName. lpfnHook = NULL;
+		openFileName. lpTemplateName = NULL;
+		openFileName. pvReserved = NULL;
+		openFileName. dwReserved = 0;
+		openFileName. FlagsEx = 0;
+		OSVERSIONINFO osVersionInfo;
+		ZeroMemory (& osVersionInfo, sizeof (OSVERSIONINFO));
+		osVersionInfo. dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+		GetVersionEx (& osVersionInfo);
+		if (GetOpenFileNameW (& openFileName)) {
+			int firstFileNameLength = wcslen (fullFileName);
+			if (fullFileName [firstFileNameLength + 1] == '\0') {
+				/*
+				 * The user selected one file.
+				 */
+				SortedSetOfString_add (me.peek(), fullFileName); therror
+			} else {
+				/*
+				 * The user selected multiple files.
+				 * 'fullFileName' is a directory name; the file names follow.
+				 */
+				structMelderDir dir;
+				Melder_pathToDir (fullFileName, & dir);
+				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
+					structMelderFile file;
+					MelderDir_getFile (& dir, p, & file);
+					SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
 				}
 			}
-		#endif
-		return me.transfer();
-	} catch (MelderError) {
-		rethrowzero;
-	}
+		}
+	#endif
+	return me.transfer();
 }
 
-wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, const wchar_t *defaultName) {
-	wchar_t *outfileName = NULL;
+wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, const wchar *defaultName) {
+	wchar *outfileName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -148,14 +145,14 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			outfileName = Melder_utf8ToWcs_e (outfileName_utf8);
+			outfileName = Melder_utf8ToWcs (outfileName_utf8);
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}
 		gtk_widget_destroy (dialog);
 	#elif defined (macintosh)
 		(void) parent;
-		const wchar_t *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
+		const wchar *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
@@ -187,7 +184,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 					if (! (directoryPath_utf8 [0] == '/' && directoryPath_utf8 [1] == '\0'))
 						strcat (directoryPath_utf8, "/");
 					structMelderFile file;
-					Melder_8bitToWcs_inline_e (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8); // BUG cherror
+					Melder_8bitToWcs_inline (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8); // BUG throwable
 					int dirLength = wcslen (file. path);
 					int n = CFStringGetLength (outfileName_cf);
 					wchar_t *p = file. path + dirLength;
@@ -227,8 +224,8 @@ wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, 
 	return outfileName;
 }
 
-wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title) {
-	wchar_t *directoryName = NULL;
+wchar * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar *title) {
+	wchar *directoryName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -239,7 +236,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title
 		}
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			directoryName = Melder_utf8ToWcs_e (directoryName_utf8);
+			directoryName = Melder_utf8ToWcs (directoryName_utf8);
 			g_free (directoryName_utf8);
 			Melder_pathToFile (directoryName, & file);
 		}
@@ -276,7 +273,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title
 			NavDialogDispose (dialogRef);
 		}
 	#elif defined (_WIN32)
-		static wchar_t fullFileName [3000+2];
+		static wchar fullFileName [3000+2];
 		static bool comInited = false;
 		if (! comInited) {
 			CoInitializeEx (NULL, COINIT_APARTMENTTHREADED);

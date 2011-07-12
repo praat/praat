@@ -52,7 +52,7 @@
 /////////////////////////////////////////////////////
 
 #include "KNN_def.h"
-#define KNN_methods Data_methods
+#define KNN__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (KNN, Data);
 
 /////////////////////////////////////////////////////

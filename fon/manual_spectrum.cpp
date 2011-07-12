@@ -93,16 +93,16 @@ NORMAL (L"An object of class Ltas represents the logarithmic @@power spectral de
 ENTRY (L"Inside an Ltas object")
 NORMAL (L"With @Inspect, you will see the following attributes:")
 TAG (L"%x__%min_")
-DEFINITION (L"the bottom of the frequency domain, in Hertz. Usually 0.")
+DEFINITION (L"the bottom of the frequency domain, in hertz. Usually 0.")
 TAG (L"%x__%max_")
-DEFINITION (L"the top of the frequency domain, in Hertz.")
+DEFINITION (L"the top of the frequency domain, in hertz.")
 TAG (L"%n__%x_")
 DEFINITION (L"the number of frequency bins (\\>_ 1).")
 TAG (L"%dx")
-DEFINITION (L"the frequency step, or %%bin width%, in Hertz.")
+DEFINITION (L"the frequency step, or %%bin width%, in hertz.")
 TAG (L"%x__1_")
-DEFINITION (L"the frequency associated with the first bin, in Hertz. "
-	"Usually equals %dx / 2, because the first bin tends to start at 0 Hertz.")
+DEFINITION (L"the frequency associated with the first bin, in hertz. "
+	"Usually equals %dx / 2, because the first bin tends to start at 0 hertz.")
 TAG (L"%z__1%i_, %i = 1 ... %n__%x_")
 DEFINITION (L"the power spectral density, expressed in dB. ")
 MAN_END
@@ -127,13 +127,13 @@ MAN_END
 MAN_BEGIN (L"Ltas: Get bin width", L"ppgb", 20041122)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
-NORMAL (L"the with of a bin, expressed in Hertz.")
+NORMAL (L"the with of a bin, expressed in hertz.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get frequency from bin number...", L"ppgb", 20041122)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
-NORMAL (L"the frequency (in Hz) associated with a specified bin number.")
+NORMAL (L"the frequency (in hertz) associated with a specified bin number.")
 ENTRY (L"Setting")
 TAG (L"##Bin number")
 DEFINITION (L"the bin number whose frequency is sought.")
@@ -144,13 +144,13 @@ NORMAL (L"where %f__1_ is the frequency associated with the centre of the first 
 	"and \\De%f is the bin width.")
 MAN_END
 
-MAN_BEGIN (L"Ltas: Get frequency of maximum...", L"ppgb", 20030916)
+MAN_BEGIN (L"Ltas: Get frequency of maximum...", L"ppgb", 20110701)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
-NORMAL (L"the frequency (in Hertz) associated with the maximum energy density.")
+NORMAL (L"the frequency (in hertz) associated with the maximum energy density.")
 ENTRY (L"Settings")
-TAG (L"##From frequency (s)")
-TAG (L"##To frequency (s)")
+TAG (L"##From frequency (Hz)")
+TAG (L"##To frequency (Hz)")
 DEFINITION (L"the selected frequency domain. Values outside this domain are ignored. "
 	"If ##To frequency# is not greater than ##From frequency#, "
 	"the entire frequency domain of the Ltas object is considered.")
@@ -164,7 +164,7 @@ MAN_END
 MAN_BEGIN (L"Ltas: Get frequency of minimum...", L"ppgb", 20030916)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
-NORMAL (L"the frequency (in Hertz) associated with the minimum energy density.")
+NORMAL (L"the frequency (in hertz) associated with the minimum energy density.")
 ENTRY (L"Settings")
 TAG (L"##Time range (s)")
 DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ignored. "
@@ -179,7 +179,7 @@ MAN_END
 MAN_BEGIN (L"Ltas: Get highest frequency", L"ppgb", 20041122)
 INTRO (L"A @query to the selected @Ltas object.")
 ENTRY (L"Return value")
-NORMAL (L"the highest frequency, expressed in Hertz.")
+NORMAL (L"the highest frequency, expressed in hertz.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get lowest frequency", L"ppgb", 20041122)

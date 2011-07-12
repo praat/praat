@@ -94,23 +94,23 @@ static long lookUpMatchingAction (void *class1, void *class2, void *class3, void
 }
 
 void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (void *class1, int n1,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (void *class1, int n1, void *class2, int n2,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 {
 	try {
 		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
@@ -219,8 +219,8 @@ static void updateDynamicMenu (void) {
 	praat_show ();
 }
 
-void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
-	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script)
+void praat_addActionScript (const wchar *className1, int n1, const wchar *className2, int n2, const wchar *className3, int n3,
+	const wchar *title, const wchar *after, int depth, const wchar *script)
 {
 	try {
 		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
@@ -307,7 +307,7 @@ void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *cl
 		}
 		updateDynamicMenu ();
 	} catch (MelderError) {
-		rethrowm ("Praat: script action not added.");
+		Melder_throw ("Praat: script action not added.");
 	}
 }
 
@@ -326,7 +326,7 @@ void praat_removeAction (void *class1, void *class2, void *class3, const wchar_t
 		theNumberOfActions --;
 		for (long i = found; i <= theNumberOfActions; i ++) theActions [i] = theActions [i + 1];
 	} catch (MelderError) {
-		rethrowm ("Praat: action not removed.");
+		Melder_throw ("Praat: action not removed.");
 	}
 }
 
@@ -348,7 +348,7 @@ void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cl
 		praat_removeAction (class1, class2, class3, title); therror
 		updateDynamicMenu ();
 	} catch (MelderError) {
-		rethrowm ("Praat: action not removed.");
+		Melder_throw ("Praat: action not removed.");
 	}
 }
 
@@ -369,7 +369,7 @@ void praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {
-		rethrowm ("Praat: action not hidden.");
+		Melder_throw ("Praat: action not hidden.");
 	}
 }
 
@@ -390,7 +390,7 @@ void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *clas
 		}
 		praat_hideAction (class1, class2, class3, title); therror
 	} catch (MelderError) {
-		rethrowm ("Praat: action not hidden.");
+		Melder_throw ("Praat: action not hidden.");
 	}
 }
 
@@ -411,7 +411,7 @@ void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *
 			updateDynamicMenu ();
 		}
 	} catch (MelderError) {
-		rethrowm ("Praat: action not shown.");
+		Melder_throw ("Praat: action not shown.");
 	}
 }
 
@@ -432,7 +432,7 @@ void praat_showAction_classNames (const wchar_t *className1, const wchar_t *clas
 		}
 		praat_showAction (class1, class2, class3, title); therror
 	} catch (MelderError) {
-		rethrowm ("Praat: action not shown.");
+		Melder_throw ("Praat: action not shown.");
 	}
 }
 
@@ -461,17 +461,17 @@ void praat_sortActions (void) {
 	qsort (& theActions [1], theNumberOfActions, sizeof (struct structPraat_Command), compareActions);
 }
 
-static const wchar_t *numberString (int number) {
+static const wchar *numberString (int number) {
 	return number == 1 ? L"one" : number == 2 ? L"two" : number == 3 ? L"three" : L"any number of";
 }
-static const wchar_t *classString (void *klas) {
+static const wchar *classString (void *klas) {
 	return klas == classData ? L"" : ((Data_Table) klas) -> _className;
 }
-static const wchar_t *objectString (int number) {
+static const wchar *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
 }
 static int allowExecutionHook (void *closure) {
-	int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) closure;
+	void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *) = (void (*) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *)) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
@@ -510,7 +510,7 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (int (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
+	void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *) = (void (*) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *)) void_me;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
@@ -903,12 +903,11 @@ void praat_saveAddedActions (FILE *f) {
 	}
 }
 
-int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter) {
+int praat_doAction (const wchar *command, const wchar *arguments, Interpreter interpreter) {
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	if (! theActions [i]. callback (NULL, arguments, interpreter, NULL, false, NULL))
-		return 0;
+	theActions [i]. callback (NULL, arguments, interpreter, NULL, false, NULL); therror
 	return 1;
 }
 

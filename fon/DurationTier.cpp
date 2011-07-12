@@ -52,7 +52,7 @@ DurationTier DurationTier_create (double tmin, double tmax) {
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("DurationTier not created.");
+		Melder_throw ("DurationTier not created.");
 	}
 }
 
@@ -70,7 +70,7 @@ DurationTier PointProcess_upto_DurationTier (PointProcess me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to DurationTier.");
+		Melder_throw (me, ": not converted to DurationTier.");
 	}
 }
 

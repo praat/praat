@@ -81,7 +81,7 @@ oo_DEFINE_CLASS (FFNet, Data)
 	#endif
 
 	#if oo_READING
-		if (! bookkeeping (me)) return 0;
+		bookkeeping (me);
 		FFNet_setNonLinearity (me, my nonLinearityType);
 		FFNet_setCostFunction (me, my costFunctionType);
 	#endif

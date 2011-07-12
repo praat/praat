@@ -46,7 +46,7 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": spectral slice not extracted.");
+		Melder_throw (me, ": spectral slice not extracted.");
 	}
 }
 
@@ -58,7 +58,7 @@ Spectrogram Spectrum_to_Spectrogram (I) {
 			thy z [i] [1] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Spectrogram.");
+		Melder_throw (me, ": not converted to Spectrogram.");
 	}
 }
 

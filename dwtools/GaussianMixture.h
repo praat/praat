@@ -24,30 +24,18 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _ClassificationTable_h_
-	#include "ClassificationTable.h"
-#endif
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
-#ifndef _TableOfReal_extensions_h_
-	#include "TableOfReal_extensions.h"
-#endif
+#include "ClassificationTable.h"
+#include "Matrix.h"
+#include "SSCP.h"
+#include "TableOfReal_extensions.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define GaussianMixture_members Data_members \
-	long numberOfComponents; \
-	long dimension; \
-	double *mixingProbabilities; \
-	Ordered covariances;
-#define GaussianMixture_methods Data_methods
-class_create (GaussianMixture, Data);
+#include "GaussianMixture_def.h"
+#define GaussianMixture__methods(klas) Data__methods(klas)
+oo_CLASS_CREATE (GaussianMixture, Data);
 
 /*
 	Constraints for a Gaussian mixture:

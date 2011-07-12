@@ -73,26 +73,22 @@ void Network_init (Network me, double minimumActivity, double maximumActivity, d
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
-	try {
-		my minimumActivity = minimumActivity;
-		my maximumActivity = maximumActivity;
-		my spreadingRate = spreadingRate;
-		my selfExcitation = selfExcitation;
-		my minimumWeight = minimumWeight;
-		my maximumWeight = maximumWeight;
-		my learningRate = learningRate;
-		my leak = leak;
-		my xmin = xmin;
-		my xmax = xmax;
-		my ymin = ymin;
-		my ymax = ymax;
-		my numberOfNodes = numberOfNodes;
-		my nodes = NUMvector <structNetworkNode> (1, numberOfNodes);
-		my numberOfConnections = numberOfConnections;
-		my connections = NUMvector <structNetworkConnection> (1, numberOfConnections);
-	} catch (MelderError) {
-		rethrow;
-	}
+	my minimumActivity = minimumActivity;
+	my maximumActivity = maximumActivity;
+	my spreadingRate = spreadingRate;
+	my selfExcitation = selfExcitation;
+	my minimumWeight = minimumWeight;
+	my maximumWeight = maximumWeight;
+	my learningRate = learningRate;
+	my leak = leak;
+	my xmin = xmin;
+	my xmax = xmax;
+	my ymin = ymin;
+	my ymax = ymax;
+	my numberOfNodes = numberOfNodes;
+	my nodes = NUMvector <structNetworkNode> (1, numberOfNodes);
+	my numberOfConnections = numberOfConnections;
+	my connections = NUMvector <structNetworkConnection> (1, numberOfConnections);
 }
 
 Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
@@ -106,7 +102,7 @@ Network Network_create (double minimumActivity, double maximumActivity, double s
 			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Network not created.");
+		Melder_throw ("Network not created.");
 	}
 }
 
@@ -118,7 +114,7 @@ double Network_getActivity (Network me, long nodeNumber) {
 		activity = my nodes [nodeNumber]. activity;
 		return activity;
 	} catch (MelderError) {
-		rethrowmzero (me, ": activity not gotten.");
+		Melder_throw (me, ": activity not gotten.");
 	}
 }
 
@@ -128,7 +124,7 @@ void Network_setActivity (Network me, long nodeNumber, double activity) {
 			Melder_throw (me, ": node number (", nodeNumber, " out of the range 1..", my numberOfNodes);
 		my nodes [nodeNumber]. activity = activity;
 	} catch (MelderError) {
-		rethrowm (me, ": activity not set.");
+		Melder_throw (me, ": activity not set.");
 	}
 }
 
@@ -140,7 +136,7 @@ double Network_getWeight (Network me, long connectionNumber) {
 		weight = my connections [connectionNumber]. weight;
 		return weight;
 	} catch (MelderError) {
-		rethrowmzero (me, ": weight not gotten.");
+		Melder_throw (me, ": weight not gotten.");
 	}
 }
 
@@ -150,7 +146,7 @@ void Network_setWeight (Network me, long connectionNumber, double weight) {
 			Melder_throw (me, ": connection number (", connectionNumber, " out of the range 1..", my numberOfConnections);
 		my connections [connectionNumber]. weight = weight;
 	} catch (MelderError) {
-		rethrowm (me, ": weight not set.");
+		Melder_throw (me, ": weight not set.");
 	}
 }
 
@@ -160,7 +156,7 @@ void Network_setClamping (Network me, long connectionNumber, bool clamped) {
 			Melder_throw (me, ": connection number (", connectionNumber, " out of the range 1..", my numberOfConnections);
 		my nodes [connectionNumber]. clamped = clamped;
 	} catch (MelderError) {
-		rethrowm (me, ": clamping not set.");
+		Melder_throw (me, ": clamping not set.");
 	}
 }
 
@@ -269,7 +265,7 @@ Network Network_create_rectangle (double minimumActivity, double maximumActivity
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Rectangular network not created.");
+		Melder_throw ("Rectangular network not created.");
 	}
 }
 
@@ -311,7 +307,7 @@ Network Network_create_rectangle_vertical (double minimumActivity, double maximu
 		Melder_assert (iconn == my numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Vertical rectangular network not created.");
+		Melder_throw ("Vertical rectangular network not created.");
 	}
 }
 
@@ -366,7 +362,7 @@ void Network_addNode (Network me, double x, double y, double activity, bool clam
 		my nodes [my numberOfNodes]. activity = activity;
 		my nodes [my numberOfNodes]. clamped = clamped;
 	} catch (MelderError) {
-		rethrowm (me, ": node not added.");
+		Melder_throw (me, ": node not added.");
 	}
 }
 
@@ -378,7 +374,7 @@ void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weigh
 		my connections [my numberOfConnections]. weight = weight;
 		my connections [my numberOfConnections]. plasticity = plasticity;
 	} catch (MelderError) {
-		rethrowm (me, ": connection not added.");
+		Melder_throw (me, ": connection not added.");
 	}
 }
 

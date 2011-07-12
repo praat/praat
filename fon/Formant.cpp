@@ -113,7 +113,7 @@ Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 		my maxnFormants = maxnFormants;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Formant not created.");
+		Melder_throw ("Formant object not created.");
 	}
 }
 
@@ -205,48 +205,48 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	}
 }
 
-int Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter) {
-	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
-	Matrix mat = NULL;
-	if (nrow < 1) return Melder_error1 (L"(Formant_formula_bandwidths:) No formants available.");
-	mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1); cherror
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
-			mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
+void Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long nrow = Formant_getMaxNumFormants (me);
+		if (nrow < 1)
+			Melder_throw (L"No formants available.");
+		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
+		}
+		Matrix_formula (mat.peek(), formula, interpreter, NULL); therror
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+				frame -> formant [iformant]. bandwidth = mat -> z [iformant] [iframe];
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": bandwidth formula not executed.");
 	}
-	Matrix_formula (mat, formula, interpreter, NULL); cherror
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
-			frame -> formant [iformant]. bandwidth = mat -> z [iformant] [iframe];
-	}
-end:
-	forget (mat);
-	iferror return 0;
-	return 1;
 }
 
-int Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter) {
-	long iframe, iformant, nrow = Formant_getMaxNumFormants (me);
-	Matrix mat = NULL;
-	if (nrow < 1) return Melder_error1 (L"(Formant_formula_frequencies:) No formants available.");
-	mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1); cherror
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
-			mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
+void Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long nrow = Formant_getMaxNumFormants (me);
+		if (nrow < 1)
+			Melder_throw ("No formants available.");
+		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1, 1);
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
+		}
+		Matrix_formula (mat.peek(), formula, interpreter, NULL); therror
+		for (long iframe = 1; iframe <= my nx; iframe ++) {
+			Formant_Frame frame = & my frame [iframe];
+			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+				frame -> formant [iformant]. frequency = mat -> z [iformant] [iframe];
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": frequency formula not executed.");
 	}
-	Matrix_formula (mat, formula, interpreter, NULL); cherror
-	for (iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
-		for (iformant = 1; iformant <= frame -> nFormants; iformant ++)
-			frame -> formant [iformant]. frequency = mat -> z [iformant] [iframe];
-	}
-end:
-	forget (mat);
-	iferror return 0;
-	return 1;
 }
 
 void Formant_getExtrema (Formant me, int iformant, double tmin, double tmax, double *fmin, double *fmax) {
@@ -394,7 +394,7 @@ Matrix Formant_to_Matrix (Formant me, int iformant) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": frequencies of formant ", iformant, " not converted to Matrix.");
+		Melder_throw (me, ": frequencies of formant ", iformant, " not converted to Matrix.");
 	}
 }
 
@@ -408,7 +408,7 @@ Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": bandwidths of formant ", iformant, " not converted to Matrix.");
+		Melder_throw (me, ": bandwidths of formant ", iformant, " not converted to Matrix.");
 	}
 }
 
@@ -423,7 +423,7 @@ static double getLocalCost (long iframe, long icand, int itrack, void *closure) 
 	if (icand > frame -> nFormants) return 1e30;
 	candidate = & frame -> formant [icand];
 	/*if (candidate -> frequency <= 0.0) candidate -> frequency = 0.001;
-		/*Melder_fatal ("Weird formant frequency %ls Hertz.", Melder_double (candidate -> frequency))*/;
+		/*Melder_fatal ("Weird formant frequency %ls Hz.", Melder_double (candidate -> frequency))*/;
 	Melder_assert (candidate -> bandwidth > 0.0);
 	Melder_assert (itrack > 0 && itrack <= 5);
 	return my dfCost * fabs (candidate -> frequency - my refF [itrack]) +
@@ -480,7 +480,7 @@ Formant Formant_tracker (Formant me, int ntrack,
 			getLocalCost, getTransitionCost, putResult, & parm); therror
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not tracked.");
+		Melder_throw (me, ": not tracked.");
 	}
 }
 
@@ -521,7 +521,7 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Table.");
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
@@ -537,7 +537,7 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 			includeNumberOfFormants, frequencyDecimals, includeBandwidths);
 		Table_list (table.peek(), false);
 	} catch (MelderError) {
-		rethrowm (me, ": not listed.");
+		Melder_throw (me, ": not listed.");
 	}
 }
 

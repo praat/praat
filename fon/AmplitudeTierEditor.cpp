@@ -1,6 +1,6 @@
-/* AmplitudeTierEditor.c
+/* AmplitudeTierEditor.cpp
  *
- * Copyright (C) 2003-2009 Paul Boersma
+ * Copyright (C) 2003-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,19 @@
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2009/01/23 minimum and maximum legal values
+ * pb 2011/07/02 C++
  */
 
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 
+#undef our
+#define our ((AmplitudeTierEditor_Table) my methods) ->
+
 static int menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); return 1; }
 
 static void createHelpMenuItems (AmplitudeTierEditor me, EditorMenu menu) {
-	inherited (AmplitudeTierEditor) createHelpMenuItems (AmplitudeTierEditor_as_parent (me), menu);
+	inherited (AmplitudeTierEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
@@ -57,11 +61,14 @@ class_methods (AmplitudeTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, AmplitudeTier amplitude, Sound sound, int ownSound) {
-	AmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-	if (! me || ! RealTierEditor_init (AmplitudeTierEditor_as_parent (me), parent, title, (RealTier) amplitude, sound, ownSound))
-		{ forget (me); return NULL; }
-	return me;
+AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
+	try {
+		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
+		RealTierEditor_init (me.peek(), parent, title, (RealTier) amplitude, sound, ownSound);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("AmplitudeTier window not created.");
+	}
 }
 
-/* End of file AmplitudeTierEditor.c */
+/* End of file AmplitudeTierEditor.cpp */

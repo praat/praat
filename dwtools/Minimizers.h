@@ -26,9 +26,7 @@
 */
 
 
-#ifndef _Thing_h_
-	#include "Thing.h"
-#endif
+#include "Thing.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -36,29 +34,32 @@
 
 /*********** deferred class Minimizer **********************************/
 
-#define Minimizer_members Thing_members							\
-    long nParameters;	/* the number of parameters */			\
-    double *p;			/* the parameters */					\
-    double minimum;		/* current minimum */					\
-    double *history;	/* previous minima */					\
-    double tolerance;	/* stop criterium */					\
-    Any object;		/* reference to the object that uses this Minimizer */	\
-    long funcCalls;		/* the number of times 'func' has been called */	\
-    long success;		/* indicates whether I'm done */					\
-    long start;			/* start iteration series */						\
-    long maxNumOfIterations; /* the current maximum number of iterations */	\
-    long iteration;     /* the total number of iterations */				\
-    int (*after) (I, Any aclosure); /* to be called after each iteration */	\
-    Any aclosure;															\
+Thing_declare1cpp (Minimizer);
+
+struct structMinimizer : public structThing {
+    long nParameters;	/* the number of parameters */
+    double *p;			/* the parameters */
+    double minimum;		/* current minimum */
+    double *history;	/* previous minima */
+    double tolerance;	/* stop criterium */
+    Any object;		/* reference to the object that uses this Minimizer */
+    long funcCalls;		/* the number of times 'func' has been called */
+    long success;		/* indicates whether I'm done */
+    long start;			/* start iteration series */
+    long maxNumOfIterations; /* the current maximum number of iterations */
+    long iteration;     /* the total number of iterations */
+    int (*after) (I, Any aclosure); /* to be called after each iteration */
+    Any aclosure;
     Any gmonitor;		/* graphics to monitor the minimization process */
-#define Minimizer_methods Thing_methods				\
+};
+#define Minimizer__methods(klas) Thing__methods(klas)				\
     int (*minimize) (I);  /* does the work */		\
     void (*reset) (I); /* reset the minimizer */	\
     void (*setParameters) (I, Any parameters);
 
-class_create (Minimizer, Thing);
+Thing_declare2cpp (Minimizer, Thing);
  
-int Minimizer_init (I, long nParameters, Any object);
+void Minimizer_init (I, long nParameters, Any object);
 /*
 	Preconditions:
 		nParameters > 0;
@@ -106,17 +107,19 @@ double Minimizer_getMinimum (I);
 
 /********** deferred class LineMinimizer ************************************/
 
-#define LineMinimizer_members Minimizer_members						\
-	/* the function to be minimized */		\
-    double (*func) (Any object, const double p[]);	\
-	double maxLineStep;	/*maximum step in line search direction */	\
-    double *direction;	/* search direction vector */				\
+Thing_declare1cpp (LineMinimizer);
+struct structLineMinimizer : public structMinimizer {
+	/* the function to be minimized */
+    double (*func) (Any object, const double p[]);
+	double maxLineStep;	/*maximum step in line search direction */
+    double *direction;	/* search direction vector */
     double *ptry;		/* point in search direction */
-#define LineMinimizer_methods Minimizer_methods \
+};
+#define LineMinimizer__methods(klas) Minimizer__methods(klas) \
     void (*linmin) (I, double p[], double fp, double direction[], double *fret);	/* line minimization */
-class_create (LineMinimizer, Minimizer);
+Thing_declare2cpp (LineMinimizer, Minimizer);
 
-int LineMinimizer_init (I, long nParameters, Any object, double (*func) 
+void LineMinimizer_init (I, long nParameters, Any object, double (*func) 
 	(Any object, const double p[]));
 
 
@@ -126,15 +129,17 @@ typedef struct structSteepestDescentMinimizer_parameters {
 	double eta, momentum;
 } *SteepestDescentMinimizer_parameters;
 
-#define SteepestDescentMinimizer_members Minimizer_members	\
-	double eta, momentum;									\
-    double (*func) (Any object, const double p[]);			\
-    void  (*dfunc) (Any object, const double p[], double dp[]);	
+Thing_declare1cpp (SteepestDescentMinimizer);
+struct structSteepestDescentMinimizer : public structMinimizer {
+	double eta, momentum;
+    double (*func) (Any object, const double p[]);
+    void  (*dfunc) (Any object, const double p[], double dp[]);
 	/* calculates gradient at position p */
-#define SteepestDescentMinimizer_methods Minimizer_methods
-class_create (SteepestDescentMinimizer, Minimizer);
+};
+#define SteepestDescentMinimizer__methods(klas) Minimizer__methods(klas)
+Thing_declare2cpp (SteepestDescentMinimizer, Minimizer);
 
-Any SteepestDescentMinimizer_create (long nParameters, Any object, double (*func) 
+SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Any object, double (*func) 
 	(Any object, const double p[]), void (*dfunc) (Any object, const double p[],
 	double dp[]));
 	 
@@ -146,27 +151,29 @@ typedef struct structVDSmagtMinimizer_parameters {
 	long lineSearchMaxNumOfIterations;
 } *VDSmagtMinimizer_parameters;
 
-#define VDSmagtMinimizer_members Minimizer_members                          \
-    double (*func) (Any object, const double p[]);							\
-	void  (*dfunc) (Any object, const double p[], double dp[]);             \
-	double *dp;																\
-    double lineSearchGradient;      	                                    \
-    long lineSearchMaxNumOfIterations;                                      \
-    double gr0, gropt, df, alplim, alpha, dalpha, alphamin;					\
-    double *pc;	/* position of current point */								\
-    double *gc;	/* gradient of current point */								\
-    double *g0;	/* gradient at beginning of line search */					\
-    double *s;	/* search direction for line search */						\
-    double *srst;/* search direction for first iteration after restart */	\
-    double *grst; /* gradient for first iteration after restart */			\
-    double fc, grc, fch, gr2s, temp, grs, beta, gcg0;                       \
-    double gamma, gamma_in, f0, gsq, gopt_sq;                               \
-    long lineSearch_iteration, flag, again, one_up, restart;		    	\
+Thing_declare1cpp (VDSmagtMinimizer);
+struct structVDSmagtMinimizer : public structMinimizer {
+    double (*func) (Any object, const double p[]);
+	void  (*dfunc) (Any object, const double p[], double dp[]);
+	double *dp;
+    double lineSearchGradient;
+    long lineSearchMaxNumOfIterations;
+    double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
+    double *pc;	/* position of current point */
+    double *gc;	/* gradient of current point */
+    double *g0;	/* gradient at beginning of line search */
+    double *s;	/* search direction for line search */
+    double *srst;/* search direction for first iteration after restart */
+    double *grst; /* gradient for first iteration after restart */
+    double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
+    double gamma, gamma_in, f0, gsq, gopt_sq;
+    long lineSearch_iteration, flag, again, one_up, restart;
     long restart_flag;
-#define VDSmagtMinimizer_methods Minimizer_methods
-class_create (VDSmagtMinimizer, Minimizer);
+};
+#define VDSmagtMinimizer__methods(klas) Minimizer__methods(klas)
+Thing_declare2cpp (VDSmagtMinimizer, Minimizer);
 
-Any VDSmagtMinimizer_create (long dimension, void *object, double (*func) 
+VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, void *object, double (*func) 
 	(Any object, const double p[]), void (*dfunc) (Any object, const double p[],
 	double dp[]));
 

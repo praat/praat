@@ -63,7 +63,6 @@ static void LPC_Frame_and_Sound_filter (LPC_Frame me, Sound thee, int channel)
 
 int LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel)
 {
-	try {
 		double *x = thy z[channel];
 		autoNUMvector<double> y (0L, my nCoefficients);
 		for (long i = 1; i <= thy nx; i++)
@@ -76,12 +75,10 @@ int LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel)
 			for (long j = my nCoefficients; j > 0; j--) y[j] = y[j - 1];
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee)
 {
-	try {
 		long i = 1; // For error condition at end
 		long m = thy nCoefficients;
 		
@@ -127,7 +124,6 @@ end:
 		thy nCoefficients = i;
 		for (long j = i + 1; j <= m; j++) thy a[j] = 0;
 		return 0; // Melder_warning ("Less coefficienst than asked for.");
-	} catch (MelderError) { rethrowzero; }
 }
 
 /* Markel&Gray, LP of S, page 221
@@ -141,7 +137,6 @@ end:
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee)
 {
-	try {
 		long i = 1, n = my nx, m = thy nCoefficients;
 		double *x = my z[1];
 
@@ -233,22 +228,18 @@ end:
 		thy nCoefficients = i;
 		for (long j = i + 1; j <= m; j++) thy a[j] = 0;
 		return 0; // Melder_warning ("Less coefficienst than asked for.");
-	} catch (MelderError) { rethrowzero; }
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee)
 {
-	try {
 		int status = NUMburg (my z[1], my nx, thy a, thy nCoefficients, &thy gain);
 		thy gain *= my nx;
 		for (long i = 1; i <= thy nCoefficients; i++) thy a[i] = -thy a[i];
 		return status;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2)
 {
-	try {
 		long k, m = 1, n = my nx, mmax = thy nCoefficients;
 		int status = 1;
 		double *a = thy a, *x = my z[1];
@@ -390,13 +381,11 @@ end:
 		thy gain *= 0.5; /* because e0 is twice the energy */
 		thy nCoefficients = m;
 		return status == 1 || status == 4 || status == 5;
-	} catch (MelderError) { rethrowzero; }
 }
 
 static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt,
 	double preEmphasisFrequency, int method, double tol1, double tol2)
 {
-	try {
 		double t1, samplingFrequency = 1.0 / my dx;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		long nFrames, frameErrorCount = 0;
@@ -406,7 +395,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 		"Please increase the analysis window duration or lower the prediction order.");
 		// Convenience: analyse the whole sound into one LPC_frame
 		if (windowDuration > my dx * my nx) windowDuration = my dx * my nx;
-		if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1)) Melder_throw ("No samples.");
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
 		autoSound sound = (Sound) Data_copy (me);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
@@ -440,11 +429,12 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 			{
 				if (! Sound_into_LPC_Frame_marple (sframe.peek(), lpcframe, tol1, tol2)) frameErrorCount++;
 			}
-			if ((i % 10) == 1 && ! Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
-			Melder_integer (i), L" out of ", Melder_integer (nFrames), L".")) Melder_throw ("Interrupted.");
+			if ((i % 10) == 1) {
+				Melder_progress5 ((double)i / nFrames, L"LPC analysis of frame ",
+					Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); therror
+			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowzero; }
 }
 
 LPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -453,7 +443,7 @@ LPC Sound_to_LPC_auto (Sound me, int predictionOrder, double analysisWidth, doub
 	try {
 		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, LPC_METHOD_AUTO, 0, 0);
 		return thee.transfer ();
-	} catch (MelderError) { rethrowmzero (me, ": no LPC (auto) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC (auto) created."); }
 }
 
 LPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -462,7 +452,7 @@ LPC Sound_to_LPC_covar (Sound me, int predictionOrder, double analysisWidth, dou
 	try {
 		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, LPC_METHOD_COVAR, 0, 0);
 		return thee.transfer ();
-	} catch (MelderError) { rethrowmzero (me, ": no LPC (covar) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC (covar) created."); }
 }
 
 LPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -471,7 +461,7 @@ LPC Sound_to_LPC_burg (Sound me, int predictionOrder, double analysisWidth, doub
 	try {
 		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, LPC_METHOD_BURG, 0, 0);
 		return thee.transfer ();
-	} catch (MelderError) { rethrowmzero (me, ": no LPC (burg) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC (burg) created."); }
 }
 
 LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, double dt,
@@ -480,7 +470,7 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
 	try {
 		autoLPC thee = _Sound_to_LPC (me, predictionOrder, analysisWidth, dt, preEmphasisFrequency, LPC_METHOD_MARPLE, tol1, tol2);
 		return thee.transfer ();
-	} catch (MelderError) { rethrowmzero (me, ": no LPC (marple) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no LPC (marple) created."); }
 }
 
 Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
@@ -502,7 +492,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 			for (long j = 1; j <= m; j++) e[i] += a[j] * x[i-j];
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (thee, ": not inverse filtered."); }
+	} catch (MelderError) { Melder_thrown (thee, ": not inverse filtered."); }
 }
 
 /*
@@ -549,12 +539,11 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (thee, ": not filtered."); }
+	} catch (MelderError) { Melder_thrown (thee, ": not filtered."); }
 }
 
 int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time)
 {
-	try {
 		long frameIndex = Sampled_xToNearestIndex (me, time);
 		if (frameIndex < 1) frameIndex = 1;
 		if (frameIndex > my nx) frameIndex = my nx;
@@ -569,7 +558,6 @@ int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel
 			}
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time)
@@ -578,12 +566,11 @@ Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, dou
 		autoSound him = (Sound) Data_copy (thee);
 		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.peek(), channel, time);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (thee, ": not filtered."); }
+	} catch (MelderError) { Melder_thrown (thee, ": not filtered."); }
 }
 
 int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time)
 {
-	try {
 		long frameIndex = Sampled_xToNearestIndex (me, time);
 		if (frameIndex < 1) frameIndex = 1;
 		if (frameIndex > my nx) frameIndex = my nx;
@@ -597,7 +584,6 @@ int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int 
 			}
 		}
 		return 1;
-	} catch (MelderError) { rethrowzero; }
 }
 
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time)
@@ -606,7 +592,7 @@ Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int chann
 		autoSound him = (Sound) Data_copy (thee);
 		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.peek(), channel, time);
 		return him.transfer();
-	} catch (MelderError) { rethrowmzero (thee, ": not filtered."); }
+	} catch (MelderError) { Melder_thrown (thee, ": not inverse filtered."); }
 }
 
 /* End of file Sound_and_LPC.cpp */

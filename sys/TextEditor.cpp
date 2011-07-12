@@ -44,7 +44,7 @@
  * pb 2010/07/29 removed GuiDialog_show
  * pb 2010/12/03 command "Convert to C string"
  * pb 2011/04/06 C++
- * pb 2011/04/16 C++
+ * pb 2011/07/03 C++
  */
 
 #include "TextEditor.h"
@@ -84,7 +84,7 @@ static void classTextEditor_destroy (I) {
 
 static void classTextEditor_nameChanged (I) {
 	iam (TextEditor);
-	if (our fileBased) {
+	if (my fileBased ()) {
 		int dirtinessAlreadyShown = GuiWindow_setDirty (my shell, my dirty);
 		static MelderString windowTitle = { 0 };
 		MelderString_empty (& windowTitle);
@@ -107,15 +107,15 @@ static void classTextEditor_nameChanged (I) {
 	}
 }
 
-static int openDocument (TextEditor me, MelderFile file) {
+static void openDocument (TextEditor me, MelderFile file) {
 	if (theOpenTextEditors) {
 		for (long ieditor = 1; ieditor <= theOpenTextEditors -> size; ieditor ++) {
 			TextEditor editor = (TextEditor) theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
 				Editor_raise (editor);
-				Melder_error3 (L"Text file ", MelderFile_messageName (file), L" is already open.");
-				forget (me);   // don't forget me before Melder_error, because "file" is owned by one of my dialogs
-				return 0;
+				Melder_error_ ("Text file ", MelderFile_messageName (file), " is already open.");
+				forget (me);   // don't forget me before Melder_flushError, because "file" is owned by one of my dialogs
+				Melder_flushError (NULL);
 			}
 		}
 	}
@@ -128,37 +128,34 @@ static int openDocument (TextEditor me, MelderFile file) {
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	Thing_setName (me, Melder_fileToPath (file));
-	return 1;
 }
 
 static void newDocument (TextEditor me) {
 	GuiText_setString (my textWidget, L"");   /* Implicitly sets my dirty to TRUE. */
 	my dirty = FALSE;
-	if (our fileBased) Thing_setName (me, NULL);
+	if (my fileBased ()) Thing_setName (me, NULL);
 }
 
-static int saveDocument (TextEditor me, MelderFile file) {
+static void saveDocument (TextEditor me, MelderFile file) {
 	autostring text = GuiText_getString (my textWidget);
 	MelderFile_writeText (file, text.peek()); therror
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	if (our fileBased) Thing_setName (me, Melder_fileToPath (file));
-	return 1;
+	if (my fileBased ()) Thing_setName (me, Melder_fileToPath (file));
 }
 
 static void closeDocument (TextEditor me) {
 	forget (me);
 }
 
-static int cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
+static void cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
 	iam (TextEditor);
 	(void) sendingString;
 	(void) interpreter;
 	(void) invokingButtonTitle;
 	(void) modified;
 	MelderFile file = UiFile_getFile (sendingForm);
-	if (! openDocument (me, file)) return 0;
-	return 1;
+	openDocument (me, file);
 }
 
 static void cb_showOpen (EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter) {
@@ -171,15 +168,14 @@ static void cb_showOpen (EditorCommand cmd, UiForm sendingForm, const wchar_t *s
 	UiInfile_do (my openDialog);
 }
 
-static int cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
+static void cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, I) {
 	iam (TextEditor);
 	(void) sendingString;
 	(void) interpreter;
 	(void) invokingButtonTitle;
 	(void) modified;
 	MelderFile file = UiFile_getFile (sendingForm);
-	if (! saveDocument (me, file)) return 0;
-	return 1;
+	saveDocument (me, file);
 }
 
 static int menu_cb_saveAs (EDITOR_ARGS) {
@@ -187,7 +183,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	wchar_t defaultName [300];
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, NULL, NULL);
-	swprintf (defaultName, 300, ! our fileBased ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
+	swprintf (defaultName, 300, ! my fileBased () ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 	return 1;
 }
@@ -198,7 +194,12 @@ static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
 	TextEditor me = (TextEditor) cmd -> editor;
 	GuiObject_hide (my dirtyOpenDialog);
 	if (my name) {
-		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
+		try {
+			saveDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError (NULL);
+			return;
+		}
 		cb_showOpen (cmd, NULL, NULL, NULL);
 	} else {
 		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
@@ -259,7 +260,12 @@ static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
 	TextEditor me = (TextEditor) cmd -> editor;
 	GuiObject_hide (my dirtyNewDialog);
 	if (my name) {
-		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
+		try {
+			saveDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError (NULL);
+			return;
+		}
 		newDocument (me);
 	} else {
 		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
@@ -283,7 +289,7 @@ static void gui_button_cb_discardAndNew (I, GuiButtonEvent event) {
 
 static int menu_cb_new (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	if (our fileBased && my dirty) {
+	if (my fileBased () && my dirty) {
 		if (! my dirtyNewDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
 			my dirtyNewDialog = GuiDialog_create (my shell,
@@ -316,14 +322,19 @@ static int menu_cb_new (EDITOR_ARGS) {
 
 static int menu_cb_clear (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	our clear (me);
+	my clear ();
 	return 1;
 }
 
 static int menu_cb_save (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my name) {
-		if (! saveDocument (me, & my file)) return 0;
+		try {
+			saveDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError (NULL);
+			return 1;
+		}
 	} else {
 		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
 	}
@@ -333,9 +344,14 @@ static int menu_cb_save (EDITOR_ARGS) {
 static int menu_cb_reopen (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my name) {
-		if (! openDocument (me, & my file)) return 0;
+		try {
+			openDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError (NULL);
+			return 1;
+		}
 	} else {
-		return Melder_error1 (L"Cannot reopen from disk, because the text has never been saved yet.");
+		Melder_throw ("Cannot reopen from disk, because the text has never been saved yet.");
 	}
 	return 1;
 }
@@ -345,7 +361,12 @@ static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
 	iam (TextEditor);
 	GuiObject_hide (my dirtyCloseDialog);
 	if (my name) {
-		if (! saveDocument (me, & my file)) { Melder_flushError (NULL); return; }
+		try {
+			saveDocument (me, & my file);
+		} catch (MelderError) {
+			Melder_flushError (NULL);
+			return;
+		}
 		closeDocument (me);
 	} else {
 		menu_cb_saveAs (me, Editor_getMenuCommand (me, L"File", L"Save as..."), NULL, NULL, NULL);
@@ -365,34 +386,34 @@ static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
 	closeDocument (me);
 }
 
-static void classTextEditor_goAway (TextEditor me) {
-	if (our fileBased && my dirty) {
-		if (! my dirtyCloseDialog) {
+void structTextEditor::goAway () {
+	if (fileBased () && dirty) {
+		if (! dirtyCloseDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			my dirtyCloseDialog = GuiDialog_create (my shell,
+			dirtyCloseDialog = GuiDialog_create (shell,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				L"Text changed", NULL, NULL, GuiDialog_MODAL);
-			GuiLabel_createShown (my dirtyCloseDialog,
+			GuiLabel_createShown (dirtyCloseDialog,
 				Gui_LEFT_DIALOG_SPACING, Gui_AUTOMATIC, Gui_TOP_DIALOG_SPACING, Gui_AUTOMATIC,
 				L"The text has changed! Save changes?", 0);
-			GuiObject buttonArea = GuiDialog_getButtonArea (my dirtyCloseDialog);
+			GuiObject buttonArea = GuiDialog_getButtonArea (dirtyCloseDialog);
 			int x = Gui_LEFT_DIALOG_SPACING, y = - Gui_BOTTOM_DIALOG_SPACING;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
-				L"Discard & Close", gui_button_cb_discardAndClose, me, 0);
+				L"Discard & Close", gui_button_cb_discardAndClose, this, 0);
 			x += buttonWidth + buttonSpacing;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
-				L"Cancel", gui_button_cb_cancelClose, me, 0);
+				L"Cancel", gui_button_cb_cancelClose, this, 0);
 			x += buttonWidth + buttonSpacing;
 			GuiButton_createShown (buttonArea,
 				x, x + buttonWidth, y - Gui_PUSHBUTTON_HEIGHT, y,
-				L"Save & Close", gui_button_cb_saveAndClose, me, 0);
+				L"Save & Close", gui_button_cb_saveAndClose, this, 0);
 		}
-		GuiObject_show (my dirtyCloseDialog);
+		GuiObject_show (dirtyCloseDialog);
 	} else {
-		closeDocument (me);
+		closeDocument (this);
 	}
 }
 
@@ -673,7 +694,7 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 
 static void classTextEditor_createMenus (TextEditor me) {
 	inherited (TextEditor) createMenus (me);
-	if (our fileBased) {
+	if (my fileBased ()) {
 		Editor_addCommand (me, L"File", L"New", 'N', menu_cb_new);
 		Editor_addCommand (me, L"File", L"Open...", 'O', menu_cb_open);
 		Editor_addCommand (me, L"File", L"Reopen from disk", 0, menu_cb_reopen);
@@ -681,7 +702,7 @@ static void classTextEditor_createMenus (TextEditor me) {
 		Editor_addCommand (me, L"File", L"Clear", 'N', menu_cb_clear);
 	}
 	Editor_addCommand (me, L"File", L"-- save --", 0, NULL);
-	if (our fileBased) {
+	if (my fileBased ()) {
 		Editor_addCommand (me, L"File", L"Save", 'S', menu_cb_save);
 		Editor_addCommand (me, L"File", L"Save as...", 0, menu_cb_saveAs);
 	} else {
@@ -732,45 +753,39 @@ static void classTextEditor_createChildren (TextEditor me) {
 	GuiText_setRedoItem (my textWidget, Editor_getMenuCommand (me, L"Edit", L"Redo") -> itemWidget);
 }
 
-static void classTextEditor_clear (TextEditor me) {
-	(void) me;
-}
-
 class_methods (TextEditor, Editor) {
 	class_method_local (TextEditor, destroy)
 	class_method_local (TextEditor, nameChanged)
-	class_method_local (TextEditor, goAway)
 	class_method_local (TextEditor, createChildren)
 	class_method_local (TextEditor, createMenus)
 	us -> createMenuItems_query = NULL;
-	us -> fileBased = true;
-	class_method_local (TextEditor, clear)
 	class_methods_end
 }
 
-void TextEditor_init (TextEditor me, GuiObject parent, const wchar_t *initialText) {
-	Editor_init (me, parent, 0, 0, 600, 400, NULL, NULL); therror
-	setFontSize (me, theTextEditorFontSize);
-	if (initialText) {
-		GuiText_setString (my textWidget, initialText);
-		my dirty = FALSE;   // was set to TRUE in valueChanged callback
-		Thing_setName (me, NULL);
+void structTextEditor::init (GuiObject parent_, const wchar *initialText_) {
+	Editor_init (this, parent_, 0, 0, 600, 400, NULL, NULL);
+	setFontSize (this, theTextEditorFontSize);
+	if (initialText_) {
+		GuiText_setString (textWidget, initialText_);
+		dirty = FALSE;   // was set to TRUE in valueChanged callback
+		Thing_setName (this, NULL);
 	}
 	if (theOpenTextEditors == NULL) {
 		theOpenTextEditors = Collection_create (classTextEditor, 100); therror
+		Collection_dontOwnItems (theOpenTextEditors);
 	}
 	if (theOpenTextEditors != NULL) {
-		Collection_addItem (theOpenTextEditors, me); therror
+		Collection_addItem (theOpenTextEditors, this); therror
 	}
 }
 
-TextEditor TextEditor_create (GuiObject parent, const wchar_t *initialText) {
+TextEditor TextEditor_create (GuiObject parent, const wchar *initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
-		TextEditor_init (me.peek(), parent, initialText);
+		me.peek() -> init (parent, initialText);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Text window not created.");
+		Melder_throw ("Text window not created.");
 	}
 }
 

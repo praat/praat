@@ -20,7 +20,7 @@
 /*
  djmw 2001
  djmw 20020813 GPL header
- djmw 20021106 Latest modification
+ djmw 20110207 Latest modification
 */
 
 #include "MelFilter_and_MFCC.h"
@@ -63,7 +63,7 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients)
 			cf -> c0 = p / nf;
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no MFCC created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no MFCC created."); }
 }
 
 MelFilter MFCC_to_MelFilter (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel)
@@ -118,10 +118,10 @@ MelFilter MFCC_to_MelFilter (MFCC me, long first_cc, long last_cc, double f1_mel
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) {rethrowmzero (me, ": no MelFilter created."); }
+	} catch (MelderError) {Melder_thrown (me, ": no MelFilter created."); }
 }
 
 #undef MAX
 #undef MIN
 
-/* End of file MelFilter_and_MFCC.c */
+/* End of file MelFilter_and_MFCC.cpp */

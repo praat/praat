@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/04/07
+ * pb 2011/07/06
  */
 
 #include "Thing.h"
@@ -49,9 +49,9 @@ struct Formula_Result {
 	} result;
 };
 
-int Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize);
+void Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize);
 
-int Formula_run (long row, long col, struct Formula_Result *result);
+void Formula_run (long row, long col, struct Formula_Result *result);
 
 #ifdef __cplusplus
 	}

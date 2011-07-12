@@ -20,24 +20,21 @@
  */
 
 /*
- * pb 2011/04/06
+ * pb 2011/07/05
  */
 
-#ifndef _Editor_h_
-	#include "Editor.h"
-#endif
+#include "Editor.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define DemoEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (DemoEditor);
+Thing_declare1cpp (DemoEditor);
 
 void DemoEditor_init (DemoEditor me, GuiObject parent);
 DemoEditor DemoEditor_create (GuiObject parent);
 
-int Demo_open (void);
+void Demo_open (void);
 void Demo_close (void);
 
 int Demo_windowTitle (const wchar_t *title);
@@ -58,6 +55,11 @@ bool Demo_clickedIn (double left, double right, double bottom, double top);
 
 #ifdef __cplusplus
 	}
+struct autoDemoOpen {
+	autoDemoOpen () { Demo_open (); }
+	~autoDemoOpen () { Demo_close (); }
+};
+
 #endif
 
 /* End of file DemoEditor.h */

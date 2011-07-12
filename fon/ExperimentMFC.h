@@ -2,7 +2,7 @@
 #define _ExperimentMFC_h_
 /* ExperimentMFC.h
  *
- * Copyright (C) 2001-2005 Paul Boersma
+ * Copyright (C) 2001-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,26 +20,20 @@
  */
 
 /*
- * pb 2005/11/24
+ * pb 2011/07/11
  */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Categories_h_
-	#include "Categories.h"
-#endif
-#ifndef _Table_h_
-	#include "Table.h"
-#endif
+#include "Sound.h"
+#include "Categories.h"
+#include "Table.h"
 
 #include "Experiment_enums.h"
 
 #include "ExperimentMFC_def.h"
-#define ExperimentMFC_methods Data_methods
+#define ExperimentMFC__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (ExperimentMFC, Data);
 
-#define ResultsMFC_methods Data_methods
+#define ResultsMFC__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (ResultsMFC, Data);
 
 int ExperimentMFC_start (ExperimentMFC me);

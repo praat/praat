@@ -41,7 +41,7 @@ Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, i
 		}
 		NUMProcrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
 		return p.transfer();
-	} catch (MelderError) { rethrowmzero ("Procrustes from two Configurations not created."); }
+	} catch (MelderError) { Melder_thrown ("Procrustes from two Configurations not created."); }
 }
 
 /* End of file Configuration_and_Procrustes.c */

@@ -26,36 +26,44 @@
 	extern "C" {
 #endif
 
-/*typedef struct structNode {
-	struct structNode *next, *prev;
+/*typedef struct structDLLNode {
+	struct structDLLNode *next, *prev;
 	Data data;
-} *Node;*/
+} *DLLNode;*/
 
-#define Node_members Data_members\
-	Node next, prev; \
-	Data data;
-#define Node_methods Data_methods
-class_create (Node, Data);
+Thing_declare1cpp (DLLNode);
+Thing_declare1cpp (DLL);
 
-#define DLL_members Thing_members \
-	long numberOfNodes; \
-	Node front, back;
-#define DLL_methods Thing_methods
-class_create (DLL, Thing);
-
-Node Node_create (Data data); // Node owns the data
+DLLNode DLLNode_create (Data data); // DLLNode owns the data
 
 void DLL_init (I);
 DLL DLL_create();
 
-void DLL_addFront (DLL me, Node n);
-void DLL_addBack (DLL me, Node n);
-void DLL_addBefore (DLL me, Node pos, Node n);
-void DLL_addAfter (DLL me, Node pos, Node n);
-void DLL_remove (DLL me, Node n);
+void DLL_addFront (DLL me, DLLNode n);
+void DLL_addBack (DLL me, DLLNode n);
+void DLL_addBefore (DLL me, DLLNode pos, DLLNode n);
+void DLL_addAfter (DLL me, DLLNode pos, DLLNode n);
+void DLL_remove (DLL me, DLLNode n);
+void DLL_sort (DLL me, DLLNode from, DLLNode to);
 
 #ifdef __cplusplus
 	}
+
+	struct structDLLNode : public structData {
+		DLLNode next, prev;
+		Data data;
+	};
+	#define DLLNode__methods(klas) Data__methods(klas)
+	Thing_declare2cpp (DLLNode, Data);
+
+	struct structDLL : public structThing {
+		long numberOfNodes;
+		DLLNode front, back;
+	};
+	#define DLL__methods(klas) Thing__methods(klas) \
+		int (*compare) (I, thou);
+	Thing_declare2cpp (DLL, Thing);
+
 #endif
 
 #endif // _DLL_h_

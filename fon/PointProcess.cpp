@@ -143,7 +143,7 @@ PointProcess PointProcess_create (double tmin, double tmax, long initialMaxnt) {
 		PointProcess_init (me.peek(), tmin, tmax, initialMaxnt);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("PointProcess not created.");
+		Melder_throw ("PointProcess not created.");
 	}
 }
 
@@ -157,7 +157,7 @@ PointProcess PointProcess_createPoissonProcess (double startingTime, double fini
 		NUMsort_d (my nt, my t);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("PointProcess (Poisson process) not created.");
+		Melder_throw ("PointProcess (Poisson process) not created.");
 	}
 }
 
@@ -239,7 +239,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 			}
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": point not added.");
+		Melder_throw (me, ": point not added.");
 	}
 }
 
@@ -305,7 +305,7 @@ PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": union not computed.");
+		Melder_throw (me, " & ", thee, ": union not computed.");
 	}
 }
 
@@ -336,7 +336,7 @@ PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 				PointProcess_removePoint (him.peek(), i);
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": intersection not computed.");
+		Melder_throw (me, " & ", thee, ": intersection not computed.");
 	}
 }
 
@@ -348,7 +348,7 @@ PointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
 				PointProcess_removePoint (him.peek(), i);
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": difference not computed.");
+		Melder_throw (me, " & ", thee, ": difference not computed.");
 	}
 }
 
@@ -361,7 +361,7 @@ void PointProcess_fill (PointProcess me, double tmin, double tmax, double period
 			PointProcess_addPoint (me, t); therror
 		}
 	} catch (MelderError) {
-		rethrowm (me, ": not filled.");
+		Melder_throw (me, ": not filled.");
 	}
 }
 
@@ -381,7 +381,7 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 		endVoiceless = my xmax;
 		PointProcess_fill (me, beginVoiceless, endVoiceless, period); therror
 	} catch (MelderError) {
-		rethrowm (me, ": not voiced.");
+		Melder_throw (me, ": not voiced.");
 	}
 }
 

@@ -24,167 +24,175 @@
   djmw 20110306 Latest modification.
 */
 
-#ifndef _KlattGrid_h_
-	#include "KlattGrid.h"
-#endif
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
-#endif
-#ifndef _RealTierEditor_h_
-	#include "RealTierEditor.h"
-#endif
-#ifndef _FormantGridEditor_h_
-	#include "FormantGridEditor.h"
-#endif
+#include "KlattGrid.h"
+#include "PitchTier.h"
+#include "IntensityTier.h"
+#include "RealTierEditor.h"
+#include "FormantGridEditor.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define KlattGrid_realTierEditor__parents(Klas) RealTierEditor__parents(Klas) Thing_inherit (Klas, RealTierEditor)
-Thing_declare1 (KlattGrid_realTierEditor);
-#define KlattGrid_realTierEditor__members(Klas) RealTierEditor__members(Klas) \
-	KlattGrid klattgrid;
-#define KlattGrid_realTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_realTierEditor, RealTierEditor);
+Thing_declare1cpp (KlattGrid_realTierEditor);
 
 void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
 
-#define KlattGrid_openPhaseTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_openPhaseTierEditor);
-#define KlattGrid_openPhaseTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_openPhaseTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_openPhaseTierEditor);
 
 KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_collisionPhaseTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_collisionPhaseTierEditor);
-#define KlattGrid_collisionPhaseTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_collisionPhaseTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_collisionPhaseTierEditor);
 
 KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_power1TierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_power1TierEditor);
-#define KlattGrid_power1TierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_power1TierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_power1TierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_power1TierEditor);
 
 KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_power2TierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_power2TierEditor);
-#define KlattGrid_power2TierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_power2TierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_power2TierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_power2TierEditor);
 
 KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_doublePulsingTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_doublePulsingTierEditor);
-#define KlattGrid_doublePulsingTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_doublePulsingTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_doublePulsingTierEditor);
 
 KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_pitchTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_pitchTierEditor);
-#define KlattGrid_pitchTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_pitchTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_pitchTierEditor);
 
 KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_flutterTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_flutterTierEditor);
-#define KlattGrid_flutterTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_flutterTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_flutterTierEditor);
 
 KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_intensityTierEditor__parents(Klas) KlattGrid_realTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_realTierEditor)
-Thing_declare1 (KlattGrid_intensityTierEditor);
-#define KlattGrid_intensityTierEditor__members(Klas) KlattGrid_realTierEditor__members(Klas)
-#define KlattGrid_intensityTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor);
+Thing_declare1cpp (KlattGrid_intensityTierEditor);
 
 void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier);
 
-#define KlattGrid_decibelTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_decibelTierEditor);
-#define KlattGrid_decibelTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_decibelTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_decibelTierEditor);
 
 KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data);
 
-#define KlattGrid_voicingAmplitudeTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_voicingAmplitudeTierEditor);
-#define KlattGrid_voicingAmplitudeTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_voicingAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_voicingAmplitudeTierEditor);
 
 KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_aspirationAmplitudeTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_aspirationAmplitudeTierEditor);
-#define KlattGrid_aspirationAmplitudeTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_aspirationAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_aspirationAmplitudeTierEditor);
 
 KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_breathinessAmplitudeTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_breathinessAmplitudeTierEditor);
-#define KlattGrid_breathinessAmplitudeTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_breathinessAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_breathinessAmplitudeTierEditor);
 
 KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_spectralTiltTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_spectralTiltTierEditor);
-#define KlattGrid_spectralTiltTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_spectralTiltTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_spectralTiltTierEditor);
 
 KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_fricationBypassTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_fricationBypassTierEditor);
-#define KlattGrid_fricationBypassTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_fricationBypassTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_fricationBypassTierEditor);
 
 KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_fricationAmplitudeTierEditor__parents(Klas) KlattGrid_intensityTierEditor__parents(Klas) Thing_inherit (Klas, KlattGrid_intensityTierEditor)
-Thing_declare1 (KlattGrid_fricationAmplitudeTierEditor);
-#define KlattGrid_fricationAmplitudeTierEditor__members(Klas) KlattGrid_intensityTierEditor__members(Klas)
-#define KlattGrid_fricationAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
-Thing_declare2 (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+Thing_declare1cpp (KlattGrid_fricationAmplitudeTierEditor);
 
 KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid);
 
-#define KlattGrid_formantGridEditor__parents(Klas) FormantGridEditor__parents(Klas) Thing_inherit (Klas, FormantGridEditor)
-Thing_declare1 (KlattGrid_formantGridEditor);
-#define KlattGrid_formantGridEditor__members(Klas) FormantGridEditor__members(Klas) \
-	KlattGrid klattgrid;
-#define KlattGrid_formantGridEditor__methods(Klas) FormantGridEditor__methods(Klas)
-Thing_declare2 (KlattGrid_formantGridEditor, FormantGridEditor);
+Thing_declare1cpp (KlattGrid_formantGridEditor);
 
 KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (GuiObject parent, const wchar_t *title, KlattGrid data, int formantType);
 
 #ifdef __cplusplus
 	}
-#endif
 
-#endif /* _KlattGridEditors_h_ */
+	struct structKlattGrid_realTierEditor : public structRealTierEditor {
+		KlattGrid klattgrid;
+	};
+	#define KlattGrid_realTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_realTierEditor, RealTierEditor);
+
+	struct structKlattGrid_openPhaseTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_openPhaseTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_collisionPhaseTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_collisionPhaseTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_power1TierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_power1TierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_power1TierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_power2TierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_power2TierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_power2TierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_doublePulsingTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_doublePulsingTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_pitchTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_pitchTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_flutterTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_flutterTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_intensityTierEditor : public structKlattGrid_realTierEditor {
+	};
+	#define KlattGrid_intensityTierEditor__methods(Klas) KlattGrid_realTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor);
+
+	struct structKlattGrid_decibelTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_decibelTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_voicingAmplitudeTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_voicingAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_fricationAmplitudeTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_fricationAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_aspirationAmplitudeTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_aspirationAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_breathinessAmplitudeTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_breathinessAmplitudeTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_spectralTiltTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_spectralTiltTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_fricationBypassTierEditor : public structKlattGrid_intensityTierEditor {
+	};
+	#define KlattGrid_fricationBypassTierEditor__methods(Klas) KlattGrid_intensityTierEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor);
+
+	struct structKlattGrid_formantGridEditor : public structFormantGridEditor {
+		KlattGrid klattgrid;
+	};
+	#define KlattGrid_formantGridEditor__methods(Klas) FormantGridEditor__methods(Klas)
+	Thing_declare2cpp (KlattGrid_formantGridEditor, FormantGridEditor);
+
+#endif // __cplusplus
+
+#endif // _KlattGridEditors_h_
 

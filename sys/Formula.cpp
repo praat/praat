@@ -61,6 +61,7 @@
  * pb 2010/11/03 indexed variables
  * pb 2010/11/26 chooseDirectory$
  * pb 2011/04/06 C++
+ * pb 2011/07/11 C++
  */
 
 #include <ctype.h>
@@ -78,6 +79,11 @@
 #include "UnicodeData.h"
 #include "UiPause.h"
 #include "DemoEditor.h"
+
+#undef our
+#define our ((Data_Table) my methods) ->
+#undef your
+#define your ((Data_Table) thy methods) ->
 
 static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
@@ -297,10 +303,10 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 #define nieuwlees (lexan [++ ilexan]. symbol)
 #define oudlees  (-- ilexan)
 
-static int formulefout (const wchar *message, int position) {
+static void formulefout (const wchar *message, int position) {
 	static MelderString truncatedExpression = { 0 };
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
-	return Melder_error3 (message, L":\n" L_LEFT_GUILLEMET L" ", truncatedExpression.string);
+	Melder_throw (message, L":\n" L_LEFT_GUILLEMET L" ", truncatedExpression.string);
 }
 
 static const wchar *languageNameCompare_searchString;
@@ -333,7 +339,7 @@ static int Formula_hasLanguageName (const wchar *f) {
 	return 0;
 }
 
-static int Formula_lexan (void) {
+static void Formula_lexan (void) {
 /*
 	Purpose:
 		translate the formula text into a series of symbols.
@@ -380,10 +386,8 @@ static int Formula_lexan (void) {
 				kar = 'e'; stokkar
 				if (kar == '-') stokkar
 				else if (kar == '+') nieuwkar;
-				if (! (kar >= '0' && kar <= '9')) {
+				if (! (kar >= '0' && kar <= '9'))
 					formulefout (L"Missing exponent", ikar);
-					return 0;
-				}
 				do stokkar while (kar >= '0' && kar <= '9');
 			}
 			if (kar == '%') stokkar
@@ -493,10 +497,10 @@ static int Formula_lexan (void) {
 						 * Look for ambiguity.
 						 */
 						if (Interpreter_hasVariable (theInterpreter, token.string))
-							return Melder_error3 (
+							Melder_throw (
 								L_LEFT_GUILLEMET, token.string,
-								L_RIGHT_GUILLEMET L" is ambiguous: a variable or an attribute of the current object. "
-								L"Please change variable name.");
+								L_RIGHT_GUILLEMET " is ambiguous: a variable or an attribute of the current object. "
+								"Please change variable name.");
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							nieuwtok (tok)
 						} else {
@@ -541,8 +545,8 @@ static int Formula_lexan (void) {
 				int jkar = ikar + 1;
 				while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
 				if (theExpression [jkar] == '(') {
-					return Melder_error3 (
-						L"Unknown function " L_LEFT_GUILLEMET, token.string, L_RIGHT_GUILLEMET L" in formula.");
+					Melder_throw (
+						"Unknown function " L_LEFT_GUILLEMET, token.string, L_RIGHT_GUILLEMET " in formula.");
 				} else if (theExpression [jkar] == '[' && ! isArray) {
 					if (isString) {
 						nieuwtok (INDEXED_STRING_VARIABLE_)
@@ -588,33 +592,27 @@ static int Formula_lexan (void) {
 			 */
 			underscore = wcschr (token.string, '_');
 			if (wcsequ (token.string, L"Self")) {
-				if (theSource == NULL) {
+				if (theSource == NULL)
 					formulefout (L"Cannot use \"Self\" if there is no current object.", ikar);
-					return 0;
-				}
 				nieuwtok (MATRIKS_)
 				tokmatriks (theSource);
 			} else if (wcsequ (token.string, L"Self$")) {
-				if (theSource == NULL) {
+				if (theSource == NULL)
 					formulefout (L"Cannot use \"Self$\" if there is no current object.", ikar);
-					return 0;
-				}
 				nieuwtok (MATRIKSSTR_)
 				tokmatriks (theSource);
 			} else if (underscore == NULL) {
-				return Melder_error3 (
-					L"Unknown symbol " L_LEFT_GUILLEMET , token.string,
-					L_RIGHT_GUILLEMET L" in formula "
-					L"(variables start with lower case; object names contain an underscore).");
+				Melder_throw (
+					"Unknown symbol " L_LEFT_GUILLEMET , token.string,
+					L_RIGHT_GUILLEMET " in formula "
+					"(variables start with lower case; object names contain an underscore).");
 			} else if (wcsnequ (token.string, L"Object_", 7)) {
 				long uniqueID = wcstol (token.string + 7, NULL, 10);
 				int i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
-				if (i == 0) {
+				if (i == 0)
 					formulefout (L"No such object (note: variables start with lower case)", ikar);
-					return 0;
-				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
 				tokmatriks ((Data) theCurrentPraatObjects -> list [i]. object);
 			} else {
@@ -623,10 +621,8 @@ static int Formula_lexan (void) {
 				if (endsInDollarSign) token.string [-- token.length] = '\0';
 				while (i > 0 && ! wcsequ (token.string, theCurrentPraatObjects -> list [i]. name))
 					i --;
-				if (i == 0) {
+				if (i == 0)
 					formulefout (L"No such object (note: variables start with lower case)", ikar);
-					return 0;
-				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
 				tokmatriks ((Data) theCurrentPraatObjects -> list [i]. object);
 			}
@@ -714,10 +710,8 @@ static int Formula_lexan (void) {
 			nieuwkar;
 			stokaan;
 			for (;;) {
-				if (kar == '\0') {
+				if (kar == '\0')
 					formulefout (L"No closing quote in string constant", ikar);
-					return 0;
-				}
 				if (kar == '\"') {
 					nieuwkar;
 					if (kar == '\"') stokkar
@@ -751,26 +745,24 @@ static int Formula_lexan (void) {
 			nieuwtok (PERIOD_)
 		} else {
 			formulefout (L"Unknown symbol", ikar);
-			return 0;
 		}
 	} while (lexan [itok]. symbol != END_);
-	return 1;
 }
 
-static int pas (int symbol) {
+static void pas (int symbol) {
 	if (symbol == nieuwlees) {
-		return 1;
+		return;   // success
 	} else {
 		static MelderString melding = { 0 };
 		MelderString_empty (& melding);
-		const wchar_t *symbolName1 = Formula_instructionNames [symbol];
-		const wchar_t *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
+		const wchar *symbolName1 = Formula_instructionNames [symbol];
+		const wchar *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
 		bool needQuotes1 = wcschr (symbolName1, ' ') == NULL;
 		bool needQuotes2 = wcschr (symbolName2, ' ') == NULL;
 		MelderString_append8 (& melding,
 			L"Expected ", needQuotes1 ? L"\"" : NULL, symbolName1, needQuotes1 ? L"\"" : NULL,
 			L", but found ", needQuotes2 ? L"\"" : NULL, symbolName2, needQuotes2 ? L"\"" : NULL);
-		return formulefout (melding.string, lexan [ilexan]. position);
+		formulefout (melding.string, lexan [ilexan]. position);
 	}
 }
 
@@ -778,27 +770,27 @@ static int pas (int symbol) {
 #define parsenumber(g)  parse [iparse]. content.number = (g)
 #define ontleedlabel(l)  parse [iparse]. content.label = (l)
 
-static int parseExpression (void);
+static void parseExpression (void);
 
-static int parsePowerFactor (void) {
+static void parsePowerFactor (void) {
 	int symbol = nieuwlees;
 
 	if (symbol >= LOW_VALUE && symbol <= HIGH_VALUE) {
 		nieuwontleed (symbol);
 		if (symbol == NUMBER_) parsenumber (lexan [ilexan]. content.number);
-		return 1;
+		return;
 	}
 
 	if (symbol == STRING_) {
 		nieuwontleed (symbol);
-		parse [iparse]. content.string = lexan [ilexan]. content.string;   /* Reference copy! */
-		return 1;
+		parse [iparse]. content.string = lexan [ilexan]. content.string;   // reference copy!
+		return;
 	}
 
 	if (symbol == NUMERIC_VARIABLE_ || symbol == STRING_VARIABLE_) {
 		nieuwontleed (symbol);
 		parse [iparse]. content.variable = lexan [ilexan]. content.variable;
-		return 1;
+		return;
 	}
 
 	if (symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_) {
@@ -807,14 +799,14 @@ static int parsePowerFactor (void) {
 			int n = 0;
 			if (nieuwlees != RECHTEHAAKSLUITEN_) {
 				oudlees;
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				n ++;
 				while (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					n ++;
 				}
 				oudlees;
-				if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				pas (RECHTEHAAKSLUITEN_);
 			}
 			nieuwontleed (NUMBER_); parsenumber (n);
 			nieuwontleed (symbol);
@@ -822,7 +814,7 @@ static int parsePowerFactor (void) {
 			Melder_fatal ("Formula:parsePowerFactor (indexed variable): No '['; cannot happen.");
 		}
 		parse [iparse]. content.string = var;
-		return 1;
+		return;
 	}
 
 	if (symbol == NUMERIC_ARRAY_VARIABLE_) {
@@ -831,14 +823,14 @@ static int parsePowerFactor (void) {
 			int n = 0;
 			if (nieuwlees != RECHTEHAAKSLUITEN_) {
 				oudlees;
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				n ++;
 				while (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					n ++;
 				}
 				oudlees;
-				if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+				pas (RECHTEHAAKSLUITEN_);
 			}
 			nieuwontleed (NUMBER_); parsenumber (n);
 			nieuwontleed (NUMERIC_ARRAY_ELEMENT_);
@@ -847,187 +839,192 @@ static int parsePowerFactor (void) {
 			nieuwontleed (NUMERIC_ARRAY_VARIABLE_);
 		}
 		parse [iparse]. content.variable = var;
-		return 1;
+		return;
 	}
 
 	if (symbol == VARIABLE_NAME_) {
 		InterpreterVariable var = Interpreter_hasVariable (theInterpreter, lexan [ilexan]. content.string);
-		if (var == NULL) {
+		if (var == NULL)
 			formulefout (L"Unknown variable", lexan [ilexan]. position);
-			return 0;
-		}
 		nieuwontleed (NUMERIC_VARIABLE_);
 		parse [iparse]. content.variable = var;
-		return 1;
+		return;
 	}
 
 	if (symbol == SELF_) {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				nieuwontleed (SELFMATRIKS2_);
-				return pas (RECHTEHAAKSLUITEN_);
+				pas (RECHTEHAAKSLUITEN_);
+				return;
 			}
 			oudlees;
 			nieuwontleed (SELFMATRIKS1_);
-			return pas (RECHTEHAAKSLUITEN_);
+			pas (RECHTEHAAKSLUITEN_);
+			return;
 		}
 		if (symbol == HAAKJEOPENEN_) {
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				nieuwontleed (SELFFUNKTIE2_);
-				return pas (HAAKJESLUITEN_);
+				pas (HAAKJESLUITEN_);
+				return;
 			}
 			oudlees;
 			nieuwontleed (SELFFUNKTIE1_);
-			return pas (HAAKJESLUITEN_);
+			pas (HAAKJESLUITEN_);
+			return;
 		}
 		oudlees;
 		nieuwontleed (SELF0_);
-		return 1;
+		return;
 	}
 
 	if (symbol == SELFSTR_) {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				nieuwontleed (SELFMATRIKSSTR2_);
-				return pas (RECHTEHAAKSLUITEN_);
+				pas (RECHTEHAAKSLUITEN_);
+				return;
 			}
 			oudlees;
 			nieuwontleed (SELFMATRIKSSTR1_);
-			return pas (RECHTEHAAKSLUITEN_);
+			pas (RECHTEHAAKSLUITEN_);
+			return;
 		}
 		if (symbol == HAAKJEOPENEN_) {
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				nieuwontleed (SELFFUNKTIESTR2_);
-				return pas (HAAKJESLUITEN_);
+				pas (HAAKJESLUITEN_);
+				return;
 			}
 			oudlees;
 			nieuwontleed (SELFFUNKTIESTR1_);
-			return pas (HAAKJESLUITEN_);
+			pas (HAAKJESLUITEN_);
+			return;
 		}
 		oudlees;
 		nieuwontleed (SELFSTR0_);
-		return 1;
+		return;
 	}
 
 	if (symbol == OBJECT_) {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseExpression ()) return 0;   // the object's name or ID
+			parseExpression ();   // the object's name or ID
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
 				nieuwontleed (OBJECTCELL0_);
 			} else {
 				oudlees;
-				if (! pas (KOMMA_)) return 0;
-				if (! parseExpression ()) return 0;
+				pas (KOMMA_);
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (OBJECTCELL2_);
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (OBJECTCELL1_);
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
 		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == HAAKJESLUITEN_) {
 				nieuwontleed (OBJECTLOCATION0_);
 			} else {
 				oudlees;
-				if (! pas (KOMMA_)) return 0;
-				if (! parseExpression ()) return 0;
+				pas (KOMMA_);
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (OBJECTLOCATION2_);
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (OBJECTLOCATION1_);
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				}
 			}
 		} else {
 			formulefout (L"After \"object\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
-			return 0;
 		}
-		return 1;
+		return;
 	}
 
 	if (symbol == OBJECTSTR_) {
 		symbol = nieuwlees;
 		if (symbol == RECHTEHAAKOPENEN_) {
-			if (! parseExpression ()) return 0;   // the object's name or ID
+			parseExpression ();   // the object's name or ID
 			if (nieuwlees == RECHTEHAAKSLUITEN_) {
 				nieuwontleed (OBJECTCELLSTR0_);
 			} else {
 				oudlees;
-				if (! pas (KOMMA_)) return 0;
-				if (! parseExpression ()) return 0;
+				pas (KOMMA_);
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (OBJECTCELLSTR2_);
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (OBJECTCELLSTR1_);
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
 		} else if (symbol == HAAKJEOPENEN_) {   // the object's name or ID
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			if (nieuwlees == HAAKJESLUITEN_) {
 				nieuwontleed (OBJECTLOCATIONSTR0_);
 			} else {
 				oudlees;
-				if (! pas (KOMMA_)) return 0;
-				if (! parseExpression ()) return 0;
+				pas (KOMMA_);
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (OBJECTLOCATIONSTR2_);
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (OBJECTLOCATIONSTR1_);
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				}
 			}
 		} else {
 			formulefout (L"After \"object$\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
-			return 0;
 		}
-		return 1;
+		return;
 	}
 
 	if (symbol == HAAKJEOPENEN_) {
-		if (! parseExpression ()) return 0;
-		return pas (HAAKJESLUITEN_);
+		parseExpression ();
+		pas (HAAKJESLUITEN_);
+		return;
 	}
 
 	if (symbol == IF_) {
-		int elseLabel = nieuwlabel;   /* Moet lokaal, */
-		int endifLabel = nieuwlabel;   /* vanwege rekursie. */
-		if (! parseExpression ()) return 0;
+		int elseLabel = nieuwlabel;   // has to be local,
+		int endifLabel = nieuwlabel;   // because of recursion
+		parseExpression ();
 		nieuwontleed (IFFALSE_);  ontleedlabel (elseLabel);
-		if (! pas (THEN_)) return 0;
-		if (! parseExpression ()) return 0;
+		pas (THEN_);
+		parseExpression ();
 		nieuwontleed (GOTO_);     ontleedlabel (endifLabel);
-		if (! pas (ELSE_)) return 0;
+		pas (ELSE_);
 		nieuwontleed (LABEL_);    ontleedlabel (elseLabel);
-		if (! parseExpression ()) return 0;
-		if (! pas (ENDIF_)) return 0;
+		parseExpression ();
+		pas (ENDIF_);
 		nieuwontleed (LABEL_);    ontleedlabel (endifLabel);
-		return 1;
+		return;
 	}
 
 	if (symbol == MATRIKS_) {
@@ -1040,17 +1037,17 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.object = thee;
 			} else {
 				oudlees;
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (MATRIKS2_);
 					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (MATRIKS1_);
 					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
 		} else if (symbol == HAAKJEOPENEN_) {
@@ -1059,17 +1056,17 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.object = thee;
 			} else {
 				oudlees;
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (FUNKTIE2_);
 					parse [iparse]. content.object = thee;
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (FUNKTIE1_);
 					parse [iparse]. content.object = thee;
-					if (! pas (HAAKJESLUITEN_)) return 0;
+					pas (HAAKJESLUITEN_);
 				}
 			}
 		} else if (symbol == PERIOD_) {
@@ -1077,124 +1074,111 @@ static int parsePowerFactor (void) {
 				case XMIN_:
 					if (your getXmin == NULL) {
 						formulefout (L"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getXmin (thee));
-						return 1;
+						return;
 					}
 				case XMAX_:
 					if (your getXmax == NULL) {
 						formulefout (L"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getXmax (thee));
-						return 1;
+						return;
 					}
 				case YMIN_:
 					if (your getYmin == NULL) {
 						formulefout (L"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getYmin (thee));
-						return 1;
+						return;
 					}
 				case YMAX_:
 					if (your getYmax == NULL) {
 						formulefout (L"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getYmax (thee));
-						return 1;
+						return;
 					}
 				case NX_:
 					if (your getNx == NULL) {
 						formulefout (L"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getNx (thee));
-						return 1;
+						return;
 					}
 				case NY_:
 					if (your getNy == NULL) {
 						formulefout (L"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getNy (thee));
-						return 1;
+						return;
 					}
 				case DX_:
 					if (your getDx == NULL) {
 						formulefout (L"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getDx (thee));
-						return 1;
+						return;
 					}
 				case DY_:
 					if (your getDy == NULL) {
 						formulefout (L"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getDy (thee));
-						return 1;
+						return;
 					}
 				case NCOL_:
 					if (your getNcol == NULL) {
 						formulefout (L"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getNcol (thee));
-						return 1;
+						return;
 					}
 				case NROW_:
 					if (your getNrow == NULL) {
 						formulefout (L"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
 						nieuwontleed (NUMBER_);
 						parsenumber (your getNrow (thee));
-						return 1;
+						return;
 					}
 				case ROWSTR_:
 					if (your getRowStr == NULL) {
 						formulefout (L"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
-						if (! pas (RECHTEHAAKOPENEN_)) return 0;
-						if (! parseExpression ()) return 0;
+						pas (RECHTEHAAKOPENEN_);
+						parseExpression ();
 						nieuwontleed (ROWSTR_);
 						parse [iparse]. content.object = thee;
-						if (! pas (RECHTEHAAKSLUITEN_)) return 0;
-						return 1;
+						pas (RECHTEHAAKSLUITEN_);
+						return;
 					}
 				case COLSTR_:
 					if (your getColStr == NULL) {
 						formulefout (L"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
-						return 0;
 					} else {
-						if (! pas (RECHTEHAAKOPENEN_)) return 0;
-						if (! parseExpression ()) return 0;
+						pas (RECHTEHAAKOPENEN_);
+						parseExpression ();
 						nieuwontleed (COLSTR_);
 						parse [iparse]. content.object = thee;
-						if (! pas (RECHTEHAAKSLUITEN_)) return 0;
-						return 1;
+						pas (RECHTEHAAKSLUITEN_);
+						return;
 					}
-				default: formulefout (L"Unknown attribute.", lexan [ilexan]. position); return 0;
+				default: formulefout (L"Unknown attribute.", lexan [ilexan]. position);
 			}
 		} else {
 			formulefout (L"After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
-			return 0;
 		}
-		return 1;
+		return;
 	}
 
 	if (symbol == MATRIKSSTR_) {
@@ -1207,153 +1191,151 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.object = thee;
 			} else {
 				oudlees;
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				if (nieuwlees == KOMMA_) {
-					if (! parseExpression ()) return 0;
+					parseExpression ();
 					nieuwontleed (MATRIKSSTR2_);
 					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				} else {
 					oudlees;
 					nieuwontleed (MATRIKSSTR1_);
 					parse [iparse]. content.object = thee;
-					if (! pas (RECHTEHAAKSLUITEN_)) return 0;
+					pas (RECHTEHAAKSLUITEN_);
 				}
 			}
 		} else {
 			formulefout (L"After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
-			return 0;
 		}
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_1 && symbol <= HIGH_FUNCTION_1) {
-		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (HAAKJESLUITEN_)) return 0;
+		pas (HAAKJEOPENEN_);
+		parseExpression ();
+		pas (HAAKJESLUITEN_);
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_2 && symbol <= HIGH_FUNCTION_2) {
-		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (KOMMA_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (HAAKJESLUITEN_)) return 0;
+		pas (HAAKJEOPENEN_);
+		parseExpression ();
+		pas (KOMMA_);
+		parseExpression ();
+		pas (HAAKJESLUITEN_);
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_3 && symbol <= HIGH_FUNCTION_3) {
-		if (! pas (HAAKJEOPENEN_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (KOMMA_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (KOMMA_)) return 0;
-		if (! parseExpression ()) return 0;
-		if (! pas (HAAKJESLUITEN_)) return 0;
+		pas (HAAKJEOPENEN_);
+		parseExpression ();
+		pas (KOMMA_);
+		parseExpression ();
+		pas (KOMMA_);
+		parseExpression ();
+		pas (HAAKJESLUITEN_);
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_N && symbol <= HIGH_FUNCTION_N) {
 		int n = 0;
-		if (! pas (HAAKJEOPENEN_)) return 0;
+		pas (HAAKJEOPENEN_);
 		if (nieuwlees != HAAKJESLUITEN_) {
 			oudlees;
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			n ++;
 			while (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				n ++;
 			}
 			oudlees;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJESLUITEN_);
 		}
 		nieuwontleed (NUMBER_); parsenumber (n);
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
 	if (symbol == CALL_) {
-		wchar_t *procedureName = lexan [ilexan]. content.string;   // reference copy!
+		wchar *procedureName = lexan [ilexan]. content.string;   // reference copy!
 		int n = 0;
-		if (! pas (HAAKJEOPENEN_)) return 0;
+		pas (HAAKJEOPENEN_);
 		if (nieuwlees != HAAKJESLUITEN_) {
 			oudlees;
-			if (! parseExpression ()) return 0;
+			parseExpression ();
 			n ++;
 			while (nieuwlees == KOMMA_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 				n ++;
 			}
 			oudlees;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJESLUITEN_);
 		}
 		nieuwontleed (NUMBER_); parsenumber (n);
 		nieuwontleed (CALL_);
 		parse [iparse]. content.string = procedureName;
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
 		if (symbol >= LOW_FUNCTION_STRNUM && symbol <= HIGH_FUNCTION_STRNUM) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == INDEX_ || symbol == RINDEX_ ||
 			symbol == STARTS_WITH_ || symbol == ENDS_WITH_ ||
 			symbol == INDEX_REGEX_ || symbol == RINDEX_REGEX_ || symbol == EXTRACT_NUMBER_)
 		{
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == DATESTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == EXTRACT_WORDSTR_ || symbol == EXTRACT_LINESTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == ENVIRONMENTSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else if (symbol == REPLACESTR_ || symbol == REPLACE_REGEXSTR_) {
-			if (! pas (HAAKJEOPENEN_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (HAAKJEOPENEN_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (KOMMA_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 		} else {
-			formulefout (L"Function expected", lexan [ilexan]. position);
-			oudlees;
-			return 0;
+			oudlees;   // needed for retry if we are going to be in a string comparison?
+			formulefout (L"Function expected", lexan [ilexan + 1]. position);
 		}
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
 	if (symbol >= LOW_RANGE_FUNCTION && symbol <= HIGH_RANGE_FUNCTION) {
 		if (symbol == SUM_) {
 			//theOptimize = 1;
 			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
-			if (! pas (HAAKJEOPENEN_)) return 0;
+			pas (HAAKJEOPENEN_);
 			int symbol = nieuwlees;
 			if (symbol == NUMERIC_VARIABLE_) {   // an existing variable
 				nieuwontleed (VARIABLE_REFERENCE_);
@@ -1365,27 +1347,26 @@ static int parsePowerFactor (void) {
 				parse [iparse]. content.variable = loopVariable;
 			} else {
 				formulefout (L"Numeric variable expected", lexan [ilexan]. position);
-				return 0;
 			}
 			// now on stack: sum, loop variable
 			if (nieuwlees == FROM_) {
-				if (! parseExpression ()) return 0;
+				parseExpression ();
 			} else {
 				oudlees;
 				nieuwontleed (NUMBER_); parsenumber (1.0);
 			}
 			nieuwontleed (DECREMENT_AND_ASSIGN_);   // this pushes the variable back on the stack
 			// now on stack: sum, loop variable
-			if (! pas (TO_)) return 0;
-			if (! parseExpression ()) return 0;
+			pas (TO_);
+			parseExpression ();
 			// now on stack: sum, loop variable, end value
 			int startLabel = nieuwlabel;
 			int endLabel = nieuwlabel;
 			nieuwontleed (LABEL_); ontleedlabel (startLabel);
 			nieuwontleed (INCREMENT_GREATER_GOTO_); ontleedlabel (endLabel);
-			if (! pas (KOMMA_)) return 0;
-			if (! parseExpression ()) return 0;
-			if (! pas (HAAKJESLUITEN_)) return 0;
+			pas (KOMMA_);
+			parseExpression ();
+			pas (HAAKJESLUITEN_);
 			// now on stack: sum, loop variable, end value, value to add
 			nieuwontleed (ADD_3DOWN_);
 			// now on stack: sum, loop variable, end value
@@ -1393,111 +1374,105 @@ static int parsePowerFactor (void) {
 			nieuwontleed (LABEL_); ontleedlabel (endLabel);
 			nieuwontleed (POP_2_);
 			// now on stack: sum
-			return 1;
+			return;
 		}
 	}
 
 	if (symbol == STOPWATCH_) {
 		nieuwontleed (symbol);
-		return 1;
+		return;
 	}
 
-	formulefout (L"Symbol misplaced", lexan [ilexan]. position);
-	oudlees;   /* Needed for retry if we are going to be in a string comparison. */
-	return 0;
+	oudlees;   // needed for retry if we are going to be in a string comparison
+	formulefout (L"Symbol misplaced", lexan [ilexan + 1]. position);
 }
 
-static int parseFactor (void);
+static void parseFactor (void);
 
-static int parsePowerFactors (void) {
+static void parsePowerFactors (void) {
 	if (nieuwlees == POWER_) {
 		if (ilexan > 2 && lexan [ilexan - 2]. symbol == MINUS_ && lexan [ilexan - 1]. symbol == NUMBER_) {
-			formulefout (L"Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan]. position);
 			oudlees;
-			return 0;
+			formulefout (L"Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan + 1]. position);
 		}
-		if (! parseFactor ()) return 0;   /* Like a^-b */
+		parseFactor ();   // like a^-b
 		nieuwontleed (POWER_);
 	}
 	else
 		oudlees;
-	return 1;
 }
 
-static int parseMinus (void) {
-	if (! parsePowerFactor ()) return 0;
-	return parsePowerFactors ();
+static void parseMinus (void) {
+	parsePowerFactor ();
+	parsePowerFactors ();
 }
 
-static int parseFactor (void) {
+static void parseFactor (void) {
 	if (nieuwlees == MINUS_) {
-		if (! parseFactor ()) return 0;   /* There can be multiple consecutive minuses. */
+		parseFactor ();   // there can be multiple consecutive minuses
 		nieuwontleed (MINUS_);
-		return 1;
+		return;
 	}
 	oudlees;
-	return parseMinus ();   /* Like -a^b */
+	parseMinus ();   // like -a^b
 }
 
-static int parseFactors (void) {
-	int sym = nieuwlees;  /* Moet lokaal, vanwege rekursie. */
+static void parseFactors (void) {
+	int sym = nieuwlees;   // has to be local, because of recursion
 	if (sym == MUL_ || sym == RDIV_ || sym == IDIV_ || sym == MOD_) {
-		if (! parseFactor ()) return 0;
+		parseFactor ();
 		nieuwontleed (sym);
-		if (! parseFactors ()) return 0;
+		parseFactors ();
 	}
 	else oudlees;
-	return 1;
 }
 
-static int parseTerm (void) {
-	if (! parseFactor ()) return 0;
-	return parseFactors ();
+static void parseTerm (void) {
+	parseFactor ();
+	parseFactors ();
 }
 
-static int parseTerms (void) {
+static void parseTerms (void) {
 	int symbol = nieuwlees;
 	if (symbol == ADD_ || symbol == SUB_) {
-		if (! parseTerm ()) return 0;
+		parseTerm ();
 		nieuwontleed (symbol);
-		if (! parseTerms ()) return 0;
+		parseTerms ();
 	}
 	else oudlees;
-	return 1;
 }
 
-static int parseNot (void) {
+static void parseNot (void) {
 	int symbol;
-	if (! parseTerm ()) return 0;
-	if (! parseTerms ()) return 0;
+	parseTerm ();
+	parseTerms ();
 	symbol = nieuwlees;
 	if (symbol >= EQ_ && symbol <= GT_) {
-		if (! parseTerm ()) return 0;
-		if (! parseTerms ()) return 0;
+		parseTerm ();
+		parseTerms ();
 		nieuwontleed (symbol);
 	}
 	else oudlees;
-	return 1;
 }
 
-static int parseAnd (void) {
+static void parseAnd (void) {
 	if (nieuwlees == NOT_) {
-		if (! parseAnd ()) return 0;   /* Like not not not */
+		parseAnd ();   // like not not not
 		nieuwontleed (NOT_);
-		return 1;
+		return;
 	}
 	oudlees;
-	return parseNot ();
+	parseNot ();
 }
 
-static int parseOr (void) {
-	if (! parseAnd ()) return 0;
+static void parseOr (void) {
+	parseAnd ();
 	if (nieuwlees == AND_) {
 		int falseLabel = nieuwlabel;
 		int andLabel = nieuwlabel;
 		do {
 			nieuwontleed (IFFALSE_); ontleedlabel (falseLabel);
-			if (! parseAnd ()) return 0;
+			parseAnd ();
 		} while (nieuwlees == AND_);
 		nieuwontleed (IFFALSE_); ontleedlabel (falseLabel);
 		nieuwontleed (TRUE_);
@@ -1507,17 +1482,16 @@ static int parseOr (void) {
 		nieuwontleed (LABEL_); ontleedlabel (andLabel);
 	}
 	oudlees;
-	return 1;
 }
 
-static int parseExpression (void) {
-	if (! parseOr ()) return 0;
+static void parseExpression (void) {
+	parseOr ();
 	if (nieuwlees == OR_) {
 		int trueLabel = nieuwlabel;
 		int orLabel = nieuwlabel;
 		do {
 			nieuwontleed (IFTRUE_); ontleedlabel (trueLabel);
-			if (! parseOr ()) return 0;
+			parseOr ();
 		} while (nieuwlees == OR_);
 		nieuwontleed (IFTRUE_); ontleedlabel (trueLabel);
 		nieuwontleed (FALSE_);
@@ -1527,7 +1501,6 @@ static int parseExpression (void) {
 		nieuwontleed (LABEL_); ontleedlabel (orLabel);
 	}
 	oudlees;
-	return 1;
 }
 
 /*
@@ -1545,13 +1518,13 @@ static int parseExpression (void) {
 		result == 0 || my parse [my numberOfInstructions]. symbol == END_
 */
 
-static int Formula_parseExpression (void) {
+static void Formula_parseExpression (void) {
 	ilabel = ilexan = iparse = 0;
-	if (lexan [1]. symbol == END_) return Melder_error1 (L"Empty formula.");
-	if (! parseExpression () || ! pas (END_)) return 0;
+	if (lexan [1]. symbol == END_) Melder_throw ("Empty formula.");
+	parseExpression ();
+	pas (END_);
 	nieuwontleed (END_);
 	numberOfInstructions = iparse;
-	return 1;
 }
 
 static void schuif (int begin, int afstand) {
@@ -1766,8 +1739,8 @@ static void Formula_optimizeFlow (void)
 
 static void Formula_evaluateConstants (void) {
 	for (;;) {
-		int improved = 0, i;
-		for (i = 1; i <= numberOfInstructions; i ++) {
+		bool improved = 0;
+		for (int i = 1; i <= numberOfInstructions; i ++) {
 			int gain = 0;
 			if (parse [i]. symbol == NUMBER_) {
 				if (parse [i]. content.number == 2.0 && parse [i + 1]. symbol == POWER_)
@@ -1787,7 +1760,7 @@ static void Formula_evaluateConstants (void) {
 						{ gain = 2; parse [i]. content.number /= parse [i + 1]. content.number; }
 				}
 			}
-			if (gain) { improved = 1; schuif (i + 1, gain); }
+			if (gain) { improved = true; schuif (i + 1, gain); }
 		}
 		if (! improved) break;
 	}
@@ -1844,9 +1817,9 @@ static void Formula_print (FormulaInstruction f) {
 		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_ || symbol == INCREMENT_GREATER_GOTO_)
 			Melder_casual ("%d %ls %d", i, instructionName, f [i]. content.label);
 		else if (symbol == NUMERIC_VARIABLE_)
-			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, Melder_double (f [i]. content.variable -> numericValue));
+			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> string, Melder_double (f [i]. content.variable -> numericValue));
 		else if (symbol == STRING_VARIABLE_)
-			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> key, f [i]. content.variable -> stringValue);
+			Melder_casual ("%d %ls %ls %ls", i, instructionName, f [i]. content.variable -> string, f [i]. content.variable -> stringValue);
 		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
 			Melder_casual ("%d %ls \"%ls\"", i, instructionName, f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
@@ -1868,7 +1841,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize) {
+void Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize) {
 	theInterpreter = (Interpreter) interpreter;
 	if (theInterpreter == NULL) {
 		if (theLocalInterpreter == NULL) {
@@ -1902,9 +1875,9 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 		numberOfStringConstants = 0;
 	}
 
-	if (! Formula_lexan ()) return 0;
+	Formula_lexan (); therror
 	if (Melder_debug == 17) Formula_print (lexan);
-	if (! Formula_parseExpression ()) return 0;
+	Formula_parseExpression (); therror
 	if (Melder_debug == 17) Formula_print (parse);
 	if (theOptimize) {
 		Formula_optimizeFlow ();
@@ -1914,7 +1887,6 @@ int Formula_compile (Any interpreter, Any data, const wchar_t *expression, int e
 	}
 	Formula_removeLabels ();
 	if (Melder_debug == 17) Formula_print (parse);
-	return 1;
 }
 
 /*
@@ -2736,7 +2708,7 @@ static void do_fileReadable (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (s->content.string, & file); therror
+		Melder_relativePathToFile (s->content.string, & file);
 		pushNumber (MelderFile_readable (& file));
 	} else {
 		Melder_throw ("The function \"fileReadable\" requires a string, not ", Stackel_whichText (s), ".");
@@ -2745,7 +2717,7 @@ static void do_fileReadable (void) {
 static void do_dateStr (void) {
 	time_t today = time (NULL);
 	wchar_t *date, *newline;
-	date = Melder_utf8ToWcs_e (ctime (& today)); therror
+	date = Melder_utf8ToWcs (ctime (& today));
 	newline = wcschr (date, '\n');
 	if (newline) *newline = '\0';
 	pushString (date);
@@ -3138,7 +3110,7 @@ static void do_beginPauseForm (void) {
 	if (n->content.number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			UiPause_begin (theCurrentPraatApplication -> topShell, title->content.string, theInterpreter); therror
+			UiPause_begin (theCurrentPraatApplication -> topShell, title->content.string, theInterpreter);
 		} else {
 			Melder_throw ("The function \"beginPauseForm\" requires a string (the title), not ", Stackel_whichText (title), ".");
 		}
@@ -3153,7 +3125,7 @@ static void do_pauseFormAddReal (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar_t *defaultString = NULL;
+		const wchar *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3163,7 +3135,7 @@ static void do_pauseFormAddReal (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_real (label->content.string, defaultString); therror
+			UiPause_real (label->content.string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"real\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3178,7 +3150,7 @@ static void do_pauseFormAddPositive (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar_t *defaultString = NULL;
+		const wchar *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3188,7 +3160,7 @@ static void do_pauseFormAddPositive (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_positive (label->content.string, defaultString); therror
+			UiPause_positive (label->content.string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"positive\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3203,7 +3175,7 @@ static void do_pauseFormAddInteger (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar_t *defaultString = NULL;
+		const wchar *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3213,7 +3185,7 @@ static void do_pauseFormAddInteger (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_integer (label->content.string, defaultString); therror
+			UiPause_integer (label->content.string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"integer\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3228,7 +3200,7 @@ static void do_pauseFormAddNatural (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar_t *defaultString = NULL;
+		const wchar *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3238,7 +3210,7 @@ static void do_pauseFormAddNatural (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_natural (label->content.string, defaultString); therror
+			UiPause_natural (label->content.string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"natural\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3258,7 +3230,7 @@ static void do_pauseFormAddWord (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_word (label->content.string, defaultValue->content.string); therror
+			UiPause_word (label->content.string, defaultValue->content.string);
 		} else {
 			Melder_throw ("The first argument of \"word\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3278,7 +3250,7 @@ static void do_pauseFormAddSentence (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_sentence (label->content.string, defaultValue->content.string); therror
+			UiPause_sentence (label->content.string, defaultValue->content.string);
 		} else {
 			Melder_throw ("The first argument of \"sentence\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3298,7 +3270,7 @@ static void do_pauseFormAddText (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_text (label->content.string, defaultValue->content.string); therror
+			UiPause_text (label->content.string, defaultValue->content.string);
 		} else {
 			Melder_throw ("The first argument of \"text\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3318,7 +3290,7 @@ static void do_pauseFormAddBoolean (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->content.string, defaultValue->content.number); therror
+			UiPause_boolean (label->content.string, defaultValue->content.number);
 		} else {
 			Melder_throw ("The first argument of \"boolean\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3338,7 +3310,7 @@ static void do_pauseFormAddChoice (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_choice (label->content.string, defaultValue->content.number); therror
+			UiPause_choice (label->content.string, defaultValue->content.number);
 		} else {
 			Melder_throw ("The first argument of \"choice\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3358,7 +3330,7 @@ static void do_pauseFormAddOptionMenu (void) {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_optionMenu (label->content.string, defaultValue->content.number); therror
+			UiPause_optionMenu (label->content.string, defaultValue->content.number);
 		} else {
 			Melder_throw ("The first argument of \"optionMenu\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
@@ -3374,7 +3346,7 @@ static void do_pauseFormAddOption (void) {
 	if (n->content.number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_option (text->content.string); therror
+			UiPause_option (text->content.string);
 		} else {
 			Melder_throw ("The argument of \"option\" must be a string (the text), not ", Stackel_whichText (text), ".");
 		}
@@ -3390,7 +3362,7 @@ static void do_pauseFormAddComment (void) {
 	if (n->content.number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_comment (text->content.string); therror
+			UiPause_comment (text->content.string);
 		} else {
 			Melder_throw ("The argument of \"comment\" must be a string (the text), not ", Stackel_whichText (text), ".");
 		}
@@ -4179,13 +4151,13 @@ static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
 
-int Formula_run (long row, long col, struct Formula_Result *result) {
+void Formula_run (long row, long col, struct Formula_Result *result) {
 	FormulaInstruction f = parse;
-	programPointer = 1;   /* First symbol of the program. */
+	programPointer = 1;   // first symbol of the program
 	if (theStack == NULL) theStack = Melder_calloc_f (struct structStackel, 10000);
 	if (theStack == NULL)
-		return Melder_error1 (L"Out of memory during formula computation.");
-	w = 0, wmax = 0;   /* start new stack. */
+		Melder_throw ("Out of memory during formula computation.");
+	w = 0, wmax = 0;   // start new stack
 	try {
 		while (programPointer <= numberOfInstructions) {
 			int symbol;
@@ -4469,9 +4441,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 		1, var -> numericArrayValue. numberOfRows, 1, var -> numericArrayValue. numberOfColumns); therror
 	pushNumericArray (var -> numericArrayValue. numberOfRows, var -> numericArrayValue. numberOfColumns, data);
 } break; default: Melder_throw ("Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], "\" without action.");
-			} /* switch */
+			} // endswitch
 			programPointer ++;
-		} /* while */
+		} // endwhile
 		if (w != 1) Melder_fatal ("Formula: stackpointer ends at %ld instead of 1.", w);
 		if (theExpressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 			if (theStack [1]. which == Stackel_STRING) Melder_throw ("Found a string expression instead of a numeric expression.");
@@ -4531,8 +4503,6 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 		Stackel stackel = & theStack [w];
 		if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	}
-	iferror return 0;
-	return 1;
 }
 
 /* End of file Formula.cpp */

@@ -77,23 +77,19 @@ class_methods_end
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients)
 {
-	try {
-		my c = NUMvector<double> (1, numberOfCoefficients);
-		my numberOfCoefficients = numberOfCoefficients;
-	} catch (MelderError) { rethrow; }
+	my c = NUMvector<double> (1, numberOfCoefficients);
+	my numberOfCoefficients = numberOfCoefficients;
 }
 
 void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax)
 {
-	try {
-		iam (CC);
-		my fmin = fmin;
-		my fmax = fmax;
-		my maximumNumberOfCoefficients = maximumNumberOfCoefficients;
-		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
-		my frame = NUMvector<structCC_Frame> (1, nt);
-	} catch (MelderError) { rethrow; }
+	iam (CC);
+	my fmin = fmin;
+	my fmax = fmax;
+	my maximumNumberOfCoefficients = maximumNumberOfCoefficients;
+	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	my frame = NUMvector<structCC_Frame> (1, nt);
 }
 
 Matrix CC_to_Matrix (I)
@@ -112,62 +108,59 @@ Matrix CC_to_Matrix (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
 }
 
 void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 	long cmax, double minimum, double maximum, int garnish)
 {
-	try {
-		iam (CC);
-		autoMatrix thee = CC_to_Matrix (me);
+	iam (CC);
+	autoMatrix thee = CC_to_Matrix (me);
 	
-		Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
+	Matrix_paintCells (thee.peek(), g, xmin, xmax, cmin, cmax, minimum, maximum);
 	
-		if (garnish)
-		{
-			Graphics_marksBottom (g, 2, 1, 1, 0);
-			Graphics_textBottom (g, 1, L"Time (s)");
-			Graphics_marksLeft (g, 2, 1, 1, 0);
-			Graphics_textLeft (g, 1, L"Coefficients");
-		}
-	} catch (MelderError) { rethrow; }
+	if (garnish)
+	{
+		Graphics_marksBottom (g, 2, 1, 1, 0);
+		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_marksLeft (g, 2, 1, 1, 0);
+		Graphics_textLeft (g, 1, L"Coefficients");
+	}
 }
 
 void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish)
-{try {
-		iam (CC);
-		(void) garnish;
-	
-		if (xmin >= xmax)
-		{
-			xmin = my xmin; xmax = my xmax;
-		}
-	
-		long bframe, eframe;
-		long nframes = Sampled_getWindowSamples (me, xmin, xmax, &bframe, &eframe);
-	
-		autoNUMvector<double> c (bframe, eframe);
-		for (long i = bframe; i <= eframe; i++)
-		{
-			CC_Frame cf = & my frame[i];
-			c[i] = cf -> c0;
-		}
-		if (ymin >= ymax)
-		{
-			NUMdvector_extrema (c.peek(), bframe, eframe, &ymin, &ymax);
-			if (ymax <= ymin) { ymin -= 1.0; ymax += 1.0; }
-		}
-		else
-		{
-			NUMdvector_clip (c.peek(), bframe, eframe, ymin, ymax);
-		}
-		Graphics_setInner (g);
-		Graphics_setWindow (g, xmin, xmax, ymin, ymax);	
-		Graphics_function (g, c.peek(), bframe, eframe, xmin, xmax);
-		Graphics_unsetInner (g);
-} catch (MelderError) { rethrow; }
+{
+	iam (CC);
+	(void) garnish;
+
+	if (xmin >= xmax)
+	{
+		xmin = my xmin; xmax = my xmax;
+	}
+
+	long bframe, eframe;
+	long nframes = Sampled_getWindowSamples (me, xmin, xmax, &bframe, &eframe);
+
+	autoNUMvector<double> c (bframe, eframe);
+	for (long i = bframe; i <= eframe; i++)
+	{
+		CC_Frame cf = & my frame[i];
+		c[i] = cf -> c0;
+	}
+	if (ymin >= ymax)
+	{
+		NUMdvector_extrema (c.peek(), bframe, eframe, &ymin, &ymax);
+		if (ymax <= ymin) { ymin -= 1.0; ymax += 1.0; }
+	}
+	else
+	{
+		NUMdvector_clip (c.peek(), bframe, eframe, ymin, ymax);
+	}
+	Graphics_setInner (g);
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);	
+	Graphics_function (g, c.peek(), bframe, eframe, xmin, xmax);
+	Graphics_unsetInner (g);
 }
 
 void CC_getNumberOfCoefficients_extrema (I, long startframe, long endframe, long *min, long *max)

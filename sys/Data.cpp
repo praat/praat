@@ -32,12 +32,14 @@
 
 #include "Collection.h"
 
+#undef our
+#define our ((Data_Table) my methods) ->
+
 structMelderDir Data_directoryBeingRead = { { 0 } };
 
-static int copy (Any data1, Any data2) {
+static void copy (Any data1, Any data2) {
 	(void) data1;
 	(void) data2;
-	return 1;
 }
 
 static bool equal (Any data1, Any data2) {
@@ -52,52 +54,44 @@ static bool canWriteAsEncoding (Any data, int encoding) {
 	return 1;
 }
 
-static int writeText (Any data, MelderFile openFile) {
+static void writeText (Any data, MelderFile openFile) {
 	(void) data;
 	(void) openFile;
-	return 1;
 }
 
-static int readText (Any data, MelderReadText text) {
+static void readText (Any data, MelderReadText text) {
 	(void) data;
 	(void) text;
-	return 1;
 }
 
-static int writeBinary (Any data, FILE *f) {
+static void writeBinary (Any data, FILE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
-static int readBinary (Any data, FILE *f) {
+static void readBinary (Any data, FILE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
-static int writeCache (Any data, CACHE *f) {
+static void writeCache (Any data, CACHE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
-static int readCache (Any data, CACHE *f) {
+static void readCache (Any data, CACHE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
-static int writeLisp (Any data, FILE *f) {
+static void writeLisp (Any data, FILE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
-static int readLisp (Any data, FILE *f) {
+static void readLisp (Any data, FILE *f) {
 	(void) data;
 	(void) f;
-	return 1;
 }
 
 class_methods (Data, Thing) {
@@ -125,7 +119,7 @@ Any Data_copy (I) {
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not copied.");
+		Melder_throw (me, ": not copied.");
 	}
 }
 
@@ -148,17 +142,16 @@ bool Data_canWriteText (I) {
 	return our writeText != classData -> writeText;
 }
 
-int Data_writeText (I, MelderFile openFile) {
+void Data_writeText (I, MelderFile openFile) {
 	iam (Data);
-	if (! our writeText (me, openFile)) return 0;
-	if (ferror (openFile -> filePointer)) return Melder_error1 (L"(Data_writeText:) I/O error.");
-	return 1;
+	our writeText (me, openFile); therror
+	if (ferror (openFile -> filePointer))
+		Melder_throw ("I/O error.");
 }
 
-int Data_createTextFile (I, MelderFile file, bool verbose) {
+MelderFile Data_createTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-//start:
-	MelderFile_create (file, L"TEXT", 0, L"txt"); cherror
+	autoMelderFile mfile = MelderFile_create (file, L"TEXT", 0, L"txt");
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
 	#endif
@@ -169,41 +162,56 @@ int Data_createTextFile (I, MelderFile file, bool verbose) {
 	else if (file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16)
 		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ? kMelder_textOutputEncoding_ISO_LATIN1 : kMelder_textOutputEncoding_UTF16;
 	if (file -> outputEncoding == kMelder_textOutputEncoding_UTF16) {
-		binputu2 (0xfeff, file -> filePointer); cherror
+		binputu2 (0xfeff, file -> filePointer);
 	}
-end:
-	iferror return 0;
-	return 1;
+	return mfile.transfer();
 }
 
-static int _Data_writeToTextFile (I, MelderFile file, bool verbose) {
+
+static void _Data_writeToTextFile (I, MelderFile file, bool verbose) {
 	iam (Data);
-	if (! Data_canWriteText (me)) error3 (L"(Data_writeToTextFile:) Objects of class ", our _className, L" cannot be written to a text file.")
-	Data_createTextFile (me, file, verbose); cherror
-	#ifndef _WIN32
-		flockfile (file -> filePointer);   // BUG
-	#endif
-	MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _className);
-	if (our version > 0) MelderFile_write2 (file, L" ", Melder_integer (our version));
-	MelderFile_write1 (file, L"\"\n");
-	Data_writeText (me, file); cherror
-	MelderFile_writeCharacter (file, '\n');
-end:
-	#ifndef _WIN32
-		if (file -> filePointer) funlockfile (file -> filePointer);
-	#endif
-	MelderFile_close (file);
-	iferror return Melder_error5 (L"Cannot write ", our _className, L" to file ", MelderFile_messageName (file), L".");
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
-	return 1;
+	try {
+		if (! Data_canWriteText (me))
+			Melder_throw ("Objects of class ", our _className, " cannot be written to a text file.");
+		autoMelderFile mfile = Data_createTextFile (me, file, verbose);
+		#ifndef _WIN32
+			flockfile (file -> filePointer);   // BUG
+		#endif
+		MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", our _className);
+		if (our version > 0)
+			MelderFile_write2 (file, L" ", Melder_integer (our version));
+		MelderFile_write1 (file, L"\"\n");
+		Data_writeText (me, file);
+		MelderFile_writeCharacter (file, '\n');
+		#ifndef _WIN32
+			if (file -> filePointer) funlockfile (file -> filePointer);
+		#endif
+		mfile.close ();
+		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	} catch (MelderError) {
+		#ifndef _WIN32
+			if (file -> filePointer) funlockfile (file -> filePointer);   // the file pointer is NULL before Data_createTextFile() and after mfile.close()
+		#endif
+		throw;
+	}
 }
 
-int Data_writeToTextFile (I, MelderFile file) {
-	return _Data_writeToTextFile (void_me, file, true);
+void Data_writeToTextFile (I, MelderFile file) {
+	iam (Data);
+	try {
+		_Data_writeToTextFile (me, file, true);
+	} catch (MelderError) {
+		Melder_throw (me, ": not written to text file ", MelderFile_messageName (file), ".");
+	}
 }
 
-int Data_writeToShortTextFile (I, MelderFile file) {
-	return _Data_writeToTextFile (void_me, file, false);
+void Data_writeToShortTextFile (I, MelderFile file) {
+	iam (Data);
+	try {
+		_Data_writeToTextFile (me, file, false);
+	} catch (MelderError) {
+		Melder_throw (me, ": not written to short text file ", MelderFile_messageName (file), ".");
+	}
 }
 
 bool Data_canWriteBinary (I) {
@@ -211,26 +219,28 @@ bool Data_canWriteBinary (I) {
 	return our writeBinary != classData -> writeBinary;
 }
 
-int Data_writeBinary (I, FILE *f) {
+void Data_writeBinary (I, FILE *f) {
 	iam (Data);
-	if (! our writeBinary (me, f)) return 0;
-	if (ferror (f)) return Melder_error1 (L"I/O error.");
-	return 1;
+	our writeBinary (me, f); therror
+	if (ferror (f))
+		Melder_throw ("I/O error.");
 }
 
-int Data_writeToBinaryFile (I, MelderFile file) {
+void Data_writeToBinaryFile (I, MelderFile file) {
 	iam (Data);
-	if (! Data_canWriteBinary (me)) error3 (L"(Data_writeToBinaryFile:) Objects of class ", our _className, L" cannot be written to a generic binary file.")
-	MelderFile_create (file, 0, 0, 0); cherror
-	if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
-		error1 (L"Cannot write first bytes of file.")
-	binputw1 (our version > 0 ? Melder_wcscat3 (our _className, L" ", Melder_integer (our version)) : our _className, file -> filePointer); cherror
-	if (! Data_writeBinary (me, file -> filePointer)) goto end;
-end:
-	MelderFile_close (file);
-	iferror return Melder_error3 (L"(Data_writeToBinaryFile:) Cannot write file ", MelderFile_messageName (file), L".");
-	MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
-	return 1;
+	try {
+		if (! Data_canWriteBinary (me))
+			Melder_throw ("Objects of class ", our _className, L" cannot be written to a generic binary file.");
+		autoMelderFile mfile = MelderFile_create (file, 0, 0, 0);
+		if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
+			Melder_throw ("Cannot write first bytes of file.");
+		binputw1 (our version > 0 ? Melder_wcscat3 (our _className, L" ", Melder_integer (our version)) : our _className, file -> filePointer);
+		Data_writeBinary (me, file -> filePointer);
+		mfile.close ();
+		MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
+	} catch (MelderError) {
+		Melder_throw (me, ": not written to binary file ", MelderFile_messageName (file), ".");
+	}
 }
 
 bool Data_canWriteLisp (I) {
@@ -238,33 +248,39 @@ bool Data_canWriteLisp (I) {
 	return our writeLisp != classData -> writeLisp;
 }
 
-int Data_writeLisp (I, FILE *f) {
+void Data_writeLisp (I, FILE *f) {
 	iam (Data);
-	if (! our writeLisp (me, f)) return 0;
-	if (ferror (f)) return Melder_error1 (L"(Data_writeLisp:) I/O error.");
-	return 1;
+	our writeLisp (me, f); therror
+	if (ferror (f))
+		Melder_throw ("I/O error.");
 }
 
-int Data_writeLispToConsole (I) {
+void Data_writeLispToConsole (I) {
 	iam (Data);
-	if (! Data_canWriteLisp (me)) return Melder_error3 (L"(Data_writeLispToConsole:) Class ", our _className, L" cannot be written as LISP.");
-	wprintf (L"Write as LISP sequence to console: class %ls,  name \"%ls\".\n", Thing_className (me), my name ? my name : L"<none>");
-	return Data_writeLisp (me, stdout);
-}
-
-int Data_writeToLispFile (I, MelderFile file) {
-	iam (Data);
-	FILE *f;
-	if (! Data_canWriteLisp (me)) return Melder_error3 (L"(Data_writeToLispFile:) Class ", our _className, L" cannot be written as LISP.");
-	if ((f = Melder_fopen (file, "w")) == NULL) return 0;
-	if (fprintf (f, "%sLispFile\n", Melder_peekWcsToUtf8 (our _className)) == EOF || ! Data_writeLisp (me, f)) {
-		fclose (f);
-		return Melder_error3 (L"(Data_writeToLispFile:) Error while writing file ",
-			MelderFile_messageName (file), L". Disk probably full.");
+	try {
+		if (! Data_canWriteLisp (me))
+			Melder_throw ("Class ", our _className, " cannot be written as LISP.");
+		wprintf (L"Write as LISP sequence to console: class %ls,  name \"%ls\".\n", Thing_className (me), my name ? my name : L"<none>");
+		Data_writeLisp (me, stdout);
+	} catch (MelderError) {
+		Melder_throw (me, ": not written as LISP text to console.");
 	}
-	fclose (f);
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
-	return 1;
+}
+
+void Data_writeToLispFile (I, MelderFile file) {
+	iam (Data);
+	try {
+		if (! Data_canWriteLisp (me))
+			Melder_throw ("Class ", our _className, L" cannot be written as LISP.");
+		autofile f = Melder_fopen (file, "w");
+		if (fprintf (f, "%sLispFile\n", Melder_peekWcsToUtf8 (our _className)) == EOF)
+			Melder_throw ("Error while writing file. Disk probably full.");
+		Data_writeLisp (me, f); therror
+		f.close (file);
+		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
+	} catch (MelderError) {
+		Melder_throw (me, ": not written to LISP file ", Thing_messageName (me), ".");
+	}
 }
 
 bool Data_canReadText (I) {
@@ -272,40 +288,39 @@ bool Data_canReadText (I) {
 	return our readText != classData -> readText;
 }
 
-int Data_readText (I, MelderReadText text) {
+void Data_readText (I, MelderReadText text) {
 	iam (Data);
-	if (! our readText (me, text) || Melder_hasError ())
-		return Melder_error2 (Thing_className (me), L" not read.");
-	if (! MelderReadText_isValid (text))
-		return Melder_error3 (L"Early end of file. ", Thing_className (me), L" not read.");
-	return 1;
+	try {
+		our readText (me, text); therror
+	} catch (MelderError) {
+		Melder_throw (Thing_className (me), " not read.");
+	}
 }
 
 Any Data_readFromTextFile (MelderFile file) {
-	MelderReadText text = NULL;
 	try {
-		text = MelderReadText_createFromFile (file); therror
-		wchar *line = MelderReadText_readLine (text); therror
-		if (line == NULL) Melder_throw (L"No lines.");
+		autoMelderReadText text = MelderReadText_createFromFile (file);
+		wchar *line = MelderReadText_readLine (text.peek()); therror
+		if (line == NULL)
+			Melder_throw ("No lines.");
 		wchar *end = wcsstr (line, L"ooTextFile");   // oo format?
 		autoData me = NULL;
 		if (end) {
-			autostring klas = texgetw2 (text);
+			autostring klas = texgetw2 (text.peek());
 			me.reset ((Data) Thing_newFromClassName (klas.peek()));
 		} else {
 			end = wcsstr (line, L"TextFile");
-			if (end == NULL) Melder_throw (L"Not an old-type text file; should not occur.");
+			if (end == NULL)
+				Melder_throw ("Not an old-type text file; should not occur.");
 			*end = '\0';
 			me.reset ((Data) Thing_newFromClassName (line));
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.peek(), text); therror
-		MelderReadText_delete (text);
+		Data_readText (me.peek(), text.peek()); therror
 		return me.transfer();
 	} catch (MelderError) {
-		MelderReadText_delete (text);
-		rethrowmzero ("Data not read from text file.");
+		Melder_throw ("Data not read from text file ", MelderFile_messageName (file), ".");
 	}
 }
 
@@ -314,13 +329,17 @@ bool Data_canReadBinary (I) {
 	return our readBinary != classData -> readBinary;
 }
 
-int Data_readBinary (I, FILE *f) {
+void Data_readBinary (I, FILE *f) {
 	iam (Data);
-	if (! our readBinary (me, f)) return Melder_error3 (L"(Data_readBinary:) ", Thing_className (me), L" not read.");
-	if (feof (f))
-		return Melder_error3 (L"(Data_readBinary:) Early end of file. ", Thing_className (me), L" not read.");
-	if (ferror (f)) return Melder_error3 (L"(Data_readBinary:) I/O error. ", Thing_className (me), L" not read.");
-	return 1;
+	try {
+		our readBinary (me, f); therror
+		if (feof (f))
+			Melder_throw ("Early end of file.");
+		if (ferror (f))
+			Melder_throw ("I/O error.");
+	} catch (MelderError) {
+		Melder_throw (Thing_className (me), " not read.");
+	}
 }
 
 Any Data_readFromBinaryFile (MelderFile file) {
@@ -332,7 +351,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		autoData me = NULL;
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
-			autostring8 klas = bingets1 (f); therror
+			autostring8 klas = bingets1 (f);
 			me.reset ((Data) Thing_newFromClassNameA (klas.peek()));
 		} else {
 			end = strstr (line, "BinaryFile");
@@ -350,7 +369,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Data not read from binary file.");
+		Melder_throw ("Data not read from binary file ", MelderFile_messageName (file), ".");
 	}
 }
 
@@ -359,30 +378,33 @@ bool Data_canReadLisp (I) {
 	return our readLisp != classData -> readLisp;
 }
 
-int Data_readLisp (I, FILE *f) {
+void Data_readLisp (I, FILE *f) {
 	iam (Data);
-	if (! our readLisp (me, f)) return Melder_error3 (L"(Data_readLisp:) ", Thing_className (me), L" not read.");
-	/* (Do not check for end-of-file) */
-	if (ferror (f)) return Melder_error3 (L"(Data_readLisp:) I/O error. ", Thing_className (me), L" not read.");
-	return 1;
+	try {
+		our readLisp (me, f);
+	} catch (MelderError) {
+		Melder_throw (Thing_className (me), " not read.");
+	}
 }
 
 Any Data_readFromLispFile (MelderFile file) {
-	Data me = NULL;
-	FILE *f;
-	char line [200], *end;
-	if ((f = Melder_fopen (file, "r")) == NULL) return NULL;
-	fgets (line, 199, f);
-	end = strstr (line, "LispFile");
-	if (! end || ! (*end = '\0', me = (Data) Thing_newFromClassNameA (line))) {
-		fclose (f);
-		return Melder_errorp3 (L"(Data_readFromLispFile:) File ", MelderFile_messageName (file),
-			L" is not a Data LISP file.");
+	try {
+		autofile f = Melder_fopen (file, "r");
+		char line [200];
+		fgets (line, 199, f);
+		char *end = strstr (line, "LispFile");
+		if (! end) {
+			Melder_throw ("File ", MelderFile_messageName (file), " is not a Data LISP file.");
+		}
+		*end = '\0';
+		autoData me = (Data) Thing_newFromClassNameA (line);
+		MelderFile_getParentDir (file, & Data_directoryBeingRead);
+		Data_readLisp (me.peek(), f); therror
+		f.close (file);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Data not read from LISP file ", MelderFile_messageName (file), ".");
 	}
-	MelderFile_getParentDir (file, & Data_directoryBeingRead);
-	if (! Data_readLisp (me, f)) forget (me);
-	fclose (f);
-	return me;
 }
 
 /* Generic reading. */
@@ -397,10 +419,9 @@ void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, M
 Any Data_readFromFile (MelderFile file) {
 	int nread, i;
 	char header [513];
-	FILE *f = Melder_fopen (file, "rb");
-	if (! f) return NULL;
+	autofile f = Melder_fopen (file, "rb");
 	nread = fread (& header [0], 1, 512, f);
-	fclose (f);
+	f.close (file);
 	header [nread] = 0;
 
 	/***** 1. Is this file a text file as defined in Data.c? *****/
@@ -453,7 +474,7 @@ Any Data_readFromFile (MelderFile file) {
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
-	return Melder_errorp3 (L"(Data_readFromFile:) File ", MelderFile_messageName (file), L" not recognized.");
+	Melder_throw ("File ", MelderFile_messageName (file), " not recognized.");
 }
 
 /* Recursive routines for working with struct members. */

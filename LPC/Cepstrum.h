@@ -35,20 +35,17 @@
 
 */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Matrix.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Cepstrum_members  Matrix_members
-#define Cepstrum_methods  Matrix_methods
-class_create (Cepstrum, Matrix);
+Thing_declare1cpp (Cepstrum);
+struct structCepstrum : public structMatrix {
+};
+#define Cepstrum__methods(klas)  Matrix__methods(klas)
+Thing_declare2cpp (Cepstrum, Matrix);
 
 /*
 	xmin		// Lowest quefrency.

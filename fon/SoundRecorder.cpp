@@ -52,6 +52,7 @@
  * pb 2008/06/17 api
  * fb 2010/02/24 GTK
  * pb 2011/03/23 C++
+ * pb 2011/07/01 C++
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -75,129 +76,10 @@
 #include "EditorM.h"
 #include "Preferences.h"
 
-#include "portaudio.h"
 #if defined (macintosh)
 	#include "pa_mac_core.h"
-#endif
-
-struct SoundRecorder_Device {
-	wchar_t name [1+40];
-	bool canDo;
-	GuiObject button;
-};
-#define SoundRecorder_IDEVICE_MAX  8
-
-struct SoundRecorder_Fsamp {
-	double fsamp;
-	bool canDo;
-	GuiObject button;
-};
-#define SoundRecorder_IFSAMP_8000  1
-#define SoundRecorder_IFSAMP_9800  2
-#define SoundRecorder_IFSAMP_11025  3
-#define SoundRecorder_IFSAMP_12000  4
-#define SoundRecorder_IFSAMP_16000  5
-#define SoundRecorder_IFSAMP_22050  6
-#define SoundRecorder_IFSAMP_22254  7
-#define SoundRecorder_IFSAMP_24000  8
-#define SoundRecorder_IFSAMP_32000  9
-#define SoundRecorder_IFSAMP_44100  10
-#define SoundRecorder_IFSAMP_48000  11
-#define SoundRecorder_IFSAMP_64000  12
-#define SoundRecorder_IFSAMP_96000  13
-#define SoundRecorder_IFSAMP_192000  14
-#define SoundRecorder_IFSAMP_MAX  14
-
-#define CommonSoundRecorder1__members(Klas) Editor__members(Klas) \
-	int numberOfChannels; \
-	long nsamp, nmax; \
-	bool fakeMono, synchronous, recording; \
-	int lastLeftMaximum, lastRightMaximum; \
-	long numberOfInputDevices; \
-	struct SoundRecorder_Device device [1+SoundRecorder_IDEVICE_MAX]; \
-	struct SoundRecorder_Fsamp fsamp [1+SoundRecorder_IFSAMP_MAX]; \
-	short *buffer; \
-	GuiObject monoButton, stereoButton, meter; \
-	GuiObject progressScale, recordButton, stopButton, playButton; \
-	GuiObject soundName, cancelButton, applyButton, okButton; \
-	Graphics graphics; \
-	bool inputUsesPortAudio; \
-	const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX]; \
-	PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
-	PaStream *portaudioStream;
-#if gtk
-	#define CommonSoundRecorder__members(Klas) CommonSoundRecorder1__members(Klas)
-#elif motif
-	#define CommonSoundRecorder__members(Klas) CommonSoundRecorder1__members(Klas) \
-	XtWorkProcId workProcId;
-#endif
-
-/* Class definition of SoundRecorder. */
-
-#if defined (sgi)
-	#include <audio.h>
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		ALconfig audio; \
-		ALport port; \
-		long info [10];
-#elif defined (_WIN32)
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-	HWAVEIN hWaveIn; \
-	WAVEFORMATEX waveFormat; \
-	WAVEHDR waveHeader [3]; \
-	MMRESULT err; \
-	short buffertje1 [1000*2], buffertje2 [1000*2];
-#elif defined (macintosh)
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		short macSource [1+8]; \
-		Str255 hybridDeviceNames [1+8]; \
-		SPB spb; \
-		long refNum;
-#elif defined (sun)
-	#include <fcntl.h>
-	#include <stropts.h>
-	#include <unistd.h>
-	#if defined (sun4)
-		#include <sun/audioio.h>
-	#else
-		#include <sys/audioio.h>
-	#endif
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		int fd; \
-		struct audio_info info;
-#elif defined (HPUX)
-	#include <fcntl.h>
-	#include <ctype.h>
-	#include <unistd.h>
-	#include <sys/audio.h>
-	#include <sys/ioctl.h>
-	#include <sys/stat.h>
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		int fd; \
-		struct audio_describe info; \
-		int hpInputSource; \
-		struct audio_gain hpGains;
-#elif defined (linux)
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <sys/ioctl.h>
-	#include <fcntl.h>
-	#include <unistd.h>
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
-	#endif
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		int fd;
-#else
-	#define SoundRecorder__members(Klas) CommonSoundRecorder__members(Klas) \
-		int fd;
 #endif
-
-#define SoundRecorder__methods(Klas) Editor__methods(Klas)
-Thing_declare2 (SoundRecorder, Editor);
 
 static struct {
 	int bufferSize_MB;
@@ -250,60 +132,82 @@ static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. lpNext = NULL;
 	my waveHeader [which]. reserved = 0;
 }
-static int win_waveInCheck (SoundRecorder me) {
-	wchar_t messageText [MAXERRORLENGTH];
+static void win_waveInCheck (SoundRecorder me) {
+	wchar messageText [MAXERRORLENGTH];
 	MMRESULT err;
-	if (my err == MMSYSERR_NOERROR) return 1;
+	if (my err == MMSYSERR_NOERROR) return;
 	err = waveInGetErrorText (my err, messageText, MAXERRORLENGTH);
-	if (err == MMSYSERR_NOERROR) Melder_error1 (messageText);
-	else if (err == MMSYSERR_BADERRNUM) Melder_error3 (L"Error number ", Melder_integer (my err), L" out of range.");
-	else if (err == MMSYSERR_NODRIVER) Melder_error1 (L"No sound driver present.");
-	else if (err == MMSYSERR_NOMEM) Melder_error1 (L"Out of memory.");
-	else Melder_error1 (L"Unknown sound error.");
-	return 0;
+	if (err == MMSYSERR_NOERROR) Melder_throw (messageText);
+	else if (err == MMSYSERR_BADERRNUM) Melder_throw ("Error number ", my err, " out of range.");
+	else if (err == MMSYSERR_NODRIVER) Melder_throw ("No sound driver present.");
+	else if (err == MMSYSERR_NOMEM) Melder_throw ("Out of memory.");
+	else Melder_throw ("Unknown sound error.");
 }
-static int win_waveInOpen (SoundRecorder me) {
-	my err = waveInOpen (& my hWaveIn, WAVE_MAPPER, & my waveFormat, 0, 0, CALLBACK_NULL);
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not opened.");
-	if (Melder_debug != 8) waveInReset (my hWaveIn);
-	return 1;
+static void win_waveInOpen (SoundRecorder me) {
+	try {
+		my err = waveInOpen (& my hWaveIn, WAVE_MAPPER, & my waveFormat, 0, 0, CALLBACK_NULL);
+		win_waveInCheck (me);
+		if (Melder_debug != 8) waveInReset (my hWaveIn);
+	} catch (MelderError) {
+		Melder_throw ("Audio input not opened.");
+	}
 }
-static int win_waveInPrepareHeader (SoundRecorder me, int which) {
-	my err = waveInPrepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot prepare header.\n"
-		"Quit some other programs or go to \"Sound input prefs\" in the Preferences menu.");
-	return 1;
+static void win_waveInPrepareHeader (SoundRecorder me, int which) {
+	try {
+		my err = waveInPrepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input: cannot prepare header.\nQuit some other programs or go to \"Sound input prefs\" in the Preferences menu.");
+	}
 }
-static int win_waveInAddBuffer (SoundRecorder me, int which) {
-	my err = waveInAddBuffer (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot add buffer.");
-	return 1;
+static void win_waveInAddBuffer (SoundRecorder me, int which) {
+	try {
+		my err = waveInAddBuffer (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input: cannot add buffer.");
+	}
 }
-static int win_waveInStart (SoundRecorder me) {
-	my err = waveInStart (my hWaveIn);   /* Asynchronous. */
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not started.");
-	return 1;
+static void win_waveInStart (SoundRecorder me) {
+	try {
+		my err = waveInStart (my hWaveIn);   // asynchronous
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input not started.");
+	}
 }
-static int win_waveInStop (SoundRecorder me) {
-	my err = waveInStop (my hWaveIn);
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not stopped.");
-	return 1;
+static void win_waveInStop (SoundRecorder me) {
+	try {
+		my err = waveInStop (my hWaveIn);
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input not stopped.");
+	}
 }
-static int win_waveInReset (SoundRecorder me) {
-	my err = waveInReset (my hWaveIn);
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not reset.");
-	return 1;
+static void win_waveInReset (SoundRecorder me) {
+	try {
+		my err = waveInReset (my hWaveIn);
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input not reset.");
+	}
 }
-static int win_waveInUnprepareHeader (SoundRecorder me, int which) {
-	my err = waveInUnprepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input: cannot unprepare header.");
-	return 1;
+static void win_waveInUnprepareHeader (SoundRecorder me, int which) {
+	try {
+		my err = waveInUnprepareHeader (my hWaveIn, & my waveHeader [which], sizeof (WAVEHDR));
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input: cannot unprepare header.");
+	}
 }
-static int win_waveInClose (SoundRecorder me) {
-	my err = waveInClose (my hWaveIn);
-	my hWaveIn = 0;
-	if (! win_waveInCheck (me)) return Melder_error1 (L"Audio input not closed.");
-	return 1;
+static void win_waveInClose (SoundRecorder me) {
+	try {
+		my err = waveInClose (my hWaveIn);
+		my hWaveIn = 0;
+		win_waveInCheck (me);
+	} catch (MelderError) {
+		Melder_throw ("Audio input not closed.");
+	}
 }
 #endif
 
@@ -331,68 +235,71 @@ static void onceError (const char *routine, long err) {
 	static long notified = FALSE;
 	const char *string;
 	if (notified) return;
+	notified = TRUE;
 	string = errString (err);
 	if (string) Melder_flushError ("(%s:) %s", routine, string);
 	else Melder_flushError ("(%s:) Error %ld", routine, err);
-	notified = TRUE;
 }
 #endif
 
 static void stopRecording (SoundRecorder me) {	
 	if (! my recording) return;
-	my recording = false;
-	if (! my synchronous) {
-		if (my inputUsesPortAudio) {
-			Pa_StopStream (my portaudioStream);
-			Pa_CloseStream (my portaudioStream);
-			my portaudioStream = NULL;
-		} else {
-			#if defined (_WIN32)
-				/*
-				 * On newer systems, waveInStop waits until the buffer is full.
-				 * Wrong behaviour!
-				 * Therefore, we call waveInReset instead.
-				 * But on these same newer systems, waveInReset causes the dwBytesRecorded
-				 * attribute to go to zero, so we cannot do
-				 * my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
-				 */
-				MMTIME mmtime;
-				mmtime. wType = TIME_BYTES;
-				my nsamp = 0;
-				if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
-					my nsamp = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
-				win_waveInReset (me); cherror
-				if (my nsamp == 0)
-					my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
-				if (my nsamp > my nmax)
-					my nsamp = my nmax;
-				win_waveInUnprepareHeader (me, 0); cherror
-				win_waveInClose (me); cherror
-			#elif defined (macintosh)
-				OSErr err;
-				short recordingStatus, meterLevel;
-				unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
-				err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
-						& totalSamplesToRecord, & numberOfSamplesRecorded,
-						& totalMsecsToRecord, & numberOfMsecsRecorded);
-				if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return; }
-				/* Melder_assert (meterLevel >= 0); Melder_assert (meterLevel <= 255); */
-				if (totalSamplesToRecord == 0)
-					my nsamp = my nmax;
-				else
-					my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);   /* From Mac "samples" to Mac "frames" (our "samples"). */
-				err = SPBStopRecording (my refNum);
-				if (err != noErr) { onceError ("SPBStopRecording", err); return; }
-				my spb. bufferPtr = NULL;
-				err = SPBRecord (& my spb, true);
-				if (err != noErr) onceError ("SPBRecord", err);
-			#endif
+	try {
+		my recording = false;
+		if (! my synchronous) {
+			if (my inputUsesPortAudio) {
+				Pa_StopStream (my portaudioStream);
+				Pa_CloseStream (my portaudioStream);
+				my portaudioStream = NULL;
+			} else {
+				#if defined (_WIN32)
+					/*
+					 * On newer systems, waveInStop waits until the buffer is full.
+					 * Wrong behaviour!
+					 * Therefore, we call waveInReset instead.
+					 * But on these same newer systems, waveInReset causes the dwBytesRecorded
+					 * attribute to go to zero, so we cannot do
+					 * my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
+					 */
+					MMTIME mmtime;
+					mmtime. wType = TIME_BYTES;
+					my nsamp = 0;
+					if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
+						my nsamp = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
+					win_waveInReset (me); therror
+					if (my nsamp == 0)
+						my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
+					if (my nsamp > my nmax)
+						my nsamp = my nmax;
+					win_waveInUnprepareHeader (me, 0); therror
+					win_waveInClose (me); therror
+				#elif defined (macintosh)
+					OSErr err;
+					short recordingStatus, meterLevel;
+					unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
+					err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
+							& totalSamplesToRecord, & numberOfSamplesRecorded,
+							& totalMsecsToRecord, & numberOfMsecsRecorded);
+					if (err != noErr)
+						Melder_throw ("SPBGetRecordingStatus ", err);
+					/* Melder_assert (meterLevel >= 0); Melder_assert (meterLevel <= 255); */
+					if (totalSamplesToRecord == 0)
+						my nsamp = my nmax;
+					else
+						my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);   /* From Mac "samples" to Mac "frames" (our "samples"). */
+					err = SPBStopRecording (my refNum);
+					if (err != noErr)
+						Melder_throw ("SPBStopRecording ", err);
+					my spb. bufferPtr = NULL;
+					err = SPBRecord (& my spb, true);
+					if (err != noErr)
+						Melder_throw ("SPBRecord ", err);
+				#endif
+			}
 		}
+	} catch (MelderError) {
+		Melder_flushError ("Cannot stop recording.");
 	}
-#ifdef _WIN32
-end:
-	iferror Melder_flushError ("Cannot stop recording.");
-#endif
 	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
@@ -755,60 +662,68 @@ static int portaudioStreamCallback (
 static void gui_button_cb_record (I, GuiButtonEvent event) {
 	(void) event;
 	iam (SoundRecorder);
-	if (my recording) return;
-	my nsamp = 0;
-	my recording = true;
-	my lastLeftMaximum = 0;
-	my lastRightMaximum = 0;
-	if (! my synchronous) {
-		if (my inputUsesPortAudio) {
-			PaStreamParameters streamParameters = { 0 };
-			streamParameters. device = my deviceIndices [theControlPanel. inputSource];
-			streamParameters. channelCount = my numberOfChannels;
-			streamParameters. sampleFormat = paInt16;
-			streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
-			#if defined (macintosh)
-				PaMacCoreStreamInfo macCoreStreamInfo = { 0 };
-				macCoreStreamInfo. size = sizeof (PaMacCoreStreamInfo);
-				macCoreStreamInfo. hostApiType = paCoreAudio;
-				macCoreStreamInfo. version = 0x01;
-				macCoreStreamInfo. flags = paMacCoreChangeDeviceParameters | paMacCoreFailIfConversionRequired;
-				streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
-			#endif
-			if (Melder_debug == 20) Melder_casual ("Before Pa_OpenStream");
-			PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, NULL,
-				theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
-			if (Melder_debug == 20) Melder_casual ("Pa_OpenStream returns %d", err);
-			if (err) { Melder_error2 (L"open ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err))); goto end; }
-			Pa_StartStream (my portaudioStream);
-			if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", err);
-			if (err) { Melder_error2 (L"start ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err))); goto end; }
-		} else {
-			#if defined (_WIN32)
-				win_fillFormat (me);
-				win_fillHeader (me, 0);
-				win_waveInOpen (me); cherror
-				win_waveInPrepareHeader (me, 0); cherror
-				win_waveInAddBuffer (me, 0); cherror
-				win_waveInStart (me); cherror
-			#elif defined (macintosh)
-				OSErr err;
-				err = SPBStopRecording (my refNum);
-				if (err != noErr) { onceError ("SPBStopRecording", err); return; }
-				my spb. bufferPtr = (char *) my buffer;
-				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
-				err = SPBRecord (& my spb, true);   /* Asynchronous. */
-				if (err == notEnoughMemoryErr) {
-					Melder_flushError ("Out of memory. Quit other programs."); return;
-				} else if (err != noErr) { onceError ("SPBRecord", err); return; }
-			#endif
+	try {
+		if (my recording) return;
+		my nsamp = 0;
+		my recording = true;
+		my lastLeftMaximum = 0;
+		my lastRightMaximum = 0;
+		if (! my synchronous) {
+			if (my inputUsesPortAudio) {
+				PaStreamParameters streamParameters = { 0 };
+				streamParameters. device = my deviceIndices [theControlPanel. inputSource];
+				streamParameters. channelCount = my numberOfChannels;
+				streamParameters. sampleFormat = paInt16;
+				streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
+				#if defined (macintosh)
+					PaMacCoreStreamInfo macCoreStreamInfo = { 0 };
+					macCoreStreamInfo. size = sizeof (PaMacCoreStreamInfo);
+					macCoreStreamInfo. hostApiType = paCoreAudio;
+					macCoreStreamInfo. version = 0x01;
+					macCoreStreamInfo. flags = paMacCoreChangeDeviceParameters | paMacCoreFailIfConversionRequired;
+					streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
+				#endif
+				if (Melder_debug == 20) Melder_casual ("Before Pa_OpenStream");
+				PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, NULL,
+					theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
+				if (Melder_debug == 20) Melder_casual ("Pa_OpenStream returns %d", err);
+				if (err)
+					Melder_throw ("open ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err)));
+				Pa_StartStream (my portaudioStream);
+				if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", err);
+				if (err)
+					Melder_throw ("start ", Melder_peekUtf8ToWcs (Pa_GetErrorText (err)));
+			} else {
+				#if defined (_WIN32)
+					win_fillFormat (me);
+					win_fillHeader (me, 0);
+					win_waveInOpen (me);
+					win_waveInPrepareHeader (me, 0);
+					win_waveInAddBuffer (me, 0);
+					win_waveInStart (me);
+				#elif defined (macintosh)
+					OSErr err;
+					err = SPBStopRecording (my refNum);
+					if (err != noErr) { onceError ("SPBStopRecording", err); return; }
+					my spb. bufferPtr = (char *) my buffer;
+					my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
+					err = SPBRecord (& my spb, true);   /* Asynchronous. */
+					if (err == notEnoughMemoryErr) {
+						Melder_flushError ("Out of memory. Quit other programs."); return;
+					} else if (err != noErr) { onceError ("SPBRecord", err); return; }
+				#endif
+			}
 		}
+		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics, Graphics_WHITE);
+		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	} catch (MelderError) {
+		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+		Graphics_setColour (my graphics, Graphics_WHITE);
+		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+		my recording = false;
+		Melder_flushError ("Cannot record.");
 	}
-end:
-	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	iferror { my recording = false; Melder_flushError ("Cannot record."); }
 }
 
 static void gui_button_cb_stop (I, GuiButtonEvent event) {
@@ -1450,85 +1365,80 @@ static void createChildren (SoundRecorder me) {
 	#endif
 }
 
-static void writeFakeMonoFile_e (SoundRecorder me, MelderFile file, int audioFileType) {
-	//file -> filePointer = NULL;
-//start:
+static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	long nsamp = my nsamp / 2;
-	MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-	if (file -> filePointer) {
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, theControlPanel. sampleRate, nsamp, 1); cherror
-		if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
-			for (long i = 0; i < nsamp; i ++)
-				binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
-		} else {
-			for (long i = 0; i < nsamp; i ++)
-				binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
-		}
+	autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+	MelderFile_writeAudioFileHeader16_e (file, audioFileType, theControlPanel. sampleRate, nsamp, 1); therror
+	if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
+		for (long i = 0; i < nsamp; i ++)
+			binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+	} else {
+		for (long i = 0; i < nsamp; i ++)
+			binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	}
-end:
-	MelderFile_close (file);
+	mfile.close ();
 }
 
-static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
-//start:
-	if (my fakeMono) {
-		writeFakeMonoFile_e (me, file, audioFileType); cherror
-	} else {
-		MelderFile_writeAudioFile16 (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels);
+static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
+	try {
+		if (my fakeMono) {
+			writeFakeMonoFile (me, file, audioFileType);
+		} else {
+			MelderFile_writeAudioFile16 (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels); therror
+		}
+	} catch (MelderError) {
+		Melder_throw ("Audio file not written.");
 	}
-end:
-	iferror return Melder_error1 (L"Audio file not written.");
-	return 1;
 }
 
 static int menu_cb_writeWav (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as WAV file", 0)
-		wchar_t *name = GuiText_getString (my soundName);
+		wchar *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.wav", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
-		if (! writeAudioFile (me, file, Melder_WAV)) return 0;
+		writeAudioFile (me, file, Melder_WAV);
 	EDITOR_END
 }
 
 static int menu_cb_writeAifc (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as AIFC file", 0)
-		wchar_t *name = GuiText_getString (my soundName);
+		wchar *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.aifc", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
-		if (! writeAudioFile (me, file, Melder_AIFC)) return 0;
+		writeAudioFile (me, file, Melder_AIFC);
 	EDITOR_END
 }
 
 static int menu_cb_writeNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NeXT/Sun file", 0)
-		wchar_t *name = GuiText_getString (my soundName);
+		wchar *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.au", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
-		if (! writeAudioFile (me, file, Melder_NEXT_SUN)) return 0;
+		writeAudioFile (me, file, Melder_NEXT_SUN);
 	EDITOR_END
 }
 
 static int menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NIST file", 0)
-		wchar_t *name = GuiText_getString (my soundName);
+		wchar *name = GuiText_getString (my soundName);
 		swprintf (defaultName, 300, L"%ls.nist", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
-		if (! writeAudioFile (me, file, Melder_NIST)) return 0;
+		writeAudioFile (me, file, Melder_NIST);
 	EDITOR_END
 }
 
 static int menu_cb_SoundRecorder_help (EDITOR_ARGS) { EDITOR_IAM (SoundRecorder); Melder_help (L"SoundRecorder"); return 1; }
 
 static void createMenus (SoundRecorder me) {
-	inherited (SoundRecorder) createMenus (SoundRecorder_as_parent (me));
+	inherited (SoundRecorder) createMenus (me);
 	Editor_addCommand (me, L"File", L"Save as WAV file...", 0, menu_cb_writeWav);
 	Editor_addCommand (me, L"File", L"Save as AIFC file...", 0, menu_cb_writeAifc);
 	Editor_addCommand (me, L"File", L"Save as NeXT/Sun file...", 0, menu_cb_writeNextSun);
@@ -1537,7 +1447,7 @@ static void createMenus (SoundRecorder me) {
 }
 
 static void createHelpMenuItems (SoundRecorder me, EditorMenu menu) {
-	inherited (SoundRecorder) createHelpMenuItems (SoundRecorder_as_parent (me), menu);
+	inherited (SoundRecorder) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 
@@ -1735,7 +1645,7 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void
 		 */
 		initialize (me.peek()); therror
 
-		Editor_init (SoundRecorder_as_parent (me.peek()), parent, 100, 100, 600, 500, L"SoundRecorder", NULL); therror
+		Editor_init (me.peek(), parent, 100, 100, 600, 500, L"SoundRecorder", NULL);
 		#if motif
 		Melder_assert (XtWindow (my meter));
 		#endif
@@ -1757,7 +1667,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		#endif
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("SoundRecorder not created.");
+		Melder_throw ("SoundRecorder not created.");
 	}
 }
 

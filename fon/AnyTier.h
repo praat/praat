@@ -20,15 +20,11 @@
  */
 
 /*
- * pb 2011/06/13
+ * pb 2011/07/11
  */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
+#include "Collection.h"
+#include "PointProcess.h"
 
 #include "AnyTier_def.h"
 
@@ -36,10 +32,10 @@
 	extern "C" {
 #endif
 
-#define AnyPoint_methods Data_methods
-oo_CLASS_CREATE (AnyPoint, Data);
+#define AnyPoint__methods(klas) SimpleDouble__methods(klas)
+oo_CLASS_CREATE (AnyPoint, SimpleDouble);
 
-#define AnyTier_methods Function_methods
+#define AnyTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (AnyTier, Function);
 
 long AnyTier_timeToLowIndex (I, double time);
@@ -52,8 +48,6 @@ void AnyTier_removePoint (I, long i);
 void AnyTier_removePointNear (I, double time);
 void AnyTier_removePointsBetween (I, double tmin, double tmax);
 PointProcess AnyTier_downto_PointProcess (I);
-
-#define AnyPoint_members Data_members double time;
 
 #ifdef __cplusplus
 	}

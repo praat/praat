@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/29
+ * pb 2011/07/11
  */
 
 #include "Data.h"
@@ -31,7 +31,7 @@
 #endif
 
 #include "Network_def.h"
-#define Network_methods Data_methods
+#define Network__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Network, Data);
 
 void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,

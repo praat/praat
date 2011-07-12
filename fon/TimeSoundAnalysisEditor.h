@@ -61,7 +61,7 @@
 struct FunctionEditor_spectrogram {
 	Spectrogram data; bool show;
 	/* Spectrogram settings: */
-	double viewFrom, viewTo;   /* Hertz */
+	double viewFrom, viewTo;   /* Hz */
 	double windowLength;   /* seconds */
 	double dynamicRange;   /* dB */
 	/* Advanced spectrogram settings: */
@@ -113,42 +113,9 @@ struct FunctionEditor_pulses {
 	double maximumPeriodFactor, maximumAmplitudeFactor;
 };
 
-#define TimeSoundAnalysisEditor__parents(Klas) TimeSoundEditor__parents(Klas) Thing_inherit (Klas, TimeSoundEditor)
-Thing_declare1 (TimeSoundAnalysisEditor);
+Thing_declare1cpp (TimeSoundAnalysisEditor);
 
-#define TimeSoundAnalysisEditor__members(Klas) TimeSoundEditor__members(Klas) \
-	double longestAnalysis; \
-	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy; \
-	double fixedTimeStep; \
-	long numberOfTimeStepsPerView; \
-	struct FunctionEditor_spectrogram spectrogram; \
-	struct FunctionEditor_pitch pitch; \
-	struct FunctionEditor_intensity intensity; \
-	struct FunctionEditor_formant formant; \
-	struct FunctionEditor_pulses pulses; \
-	GuiObject spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-#define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
-	struct { struct { \
-		struct { bool garnish; } spectrogram; \
-		struct { bool garnish; } pitch; \
-		struct { bool garnish; } intensity; \
-		struct { bool garnish; } formant; \
-		struct { bool garnish; } pulses; \
-	} picture; } preferences; \
-	void (*createMenuItems_spectrum_picture) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_pitch_picture) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_intensity_picture) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_formant_picture) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_pulses_picture) (Klas me, EditorMenu menu); \
-	void (*destroy_analysis) (Klas me); \
-	void (*draw_analysis) (Klas me); \
-	void (*draw_analysis_pulses) (Klas me); \
-	void (*createMenuItems_query_log) (Klas me, EditorMenu menu); \
-	void (*createMenus_analysis) (Klas me); \
-	void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
-Thing_declare2 (TimeSoundAnalysisEditor, TimeSoundEditor);
-
-int TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);
@@ -160,7 +127,41 @@ void TimeSoundAnalysisEditor_prefs (void);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structTimeSoundAnalysisEditor : public structTimeSoundEditor {
+		double longestAnalysis;
+		enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
+		double fixedTimeStep;
+		long numberOfTimeStepsPerView;
+		struct FunctionEditor_spectrogram spectrogram;
+		struct FunctionEditor_pitch pitch;
+		struct FunctionEditor_intensity intensity;
+		struct FunctionEditor_formant formant;
+		struct FunctionEditor_pulses pulses;
+		GuiObject spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+	};
+	#define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
+		struct { struct { \
+			struct { bool garnish; } spectrogram; \
+			struct { bool garnish; } pitch; \
+			struct { bool garnish; } intensity; \
+			struct { bool garnish; } formant; \
+			struct { bool garnish; } pulses; \
+		} picture; } preferences; \
+		void (*createMenuItems_spectrum_picture) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_pitch_picture) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_intensity_picture) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_formant_picture) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_pulses_picture) (Klas me, EditorMenu menu); \
+		void (*destroy_analysis) (Klas me); \
+		void (*draw_analysis) (Klas me); \
+		void (*draw_analysis_pulses) (Klas me); \
+		void (*createMenuItems_query_log) (Klas me, EditorMenu menu); \
+		void (*createMenus_analysis) (Klas me); \
+		void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
+	Thing_declare2cpp (TimeSoundAnalysisEditor, TimeSoundEditor);
+
+#endif // __cplusplus
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif

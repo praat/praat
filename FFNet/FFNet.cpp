@@ -1,4 +1,4 @@
-/* FFNet.c
+/* FFNet.cpp
  *
  * Copyright (C) 1997-2011 David Weenink
  *
@@ -41,7 +41,7 @@
 #include "Collection.h"
 #include "Categories.h"
 
-static int bookkeeping (FFNet me);
+static void bookkeeping (FFNet me);
 
 #include "oo_DESTROY.h"
 #include "FFNet_def.h"
@@ -62,23 +62,20 @@ static int bookkeeping (FFNet me);
 #include "oo_DESCRIPTION.h"
 #include "FFNet_def.h"
 
-static int FFNet_checkLayerNumber (FFNet me, long layer)
+static void FFNet_checkLayerNumber (FFNet me, long layer)
 {
-	try {
-		if (layer < 1 || layer > my nLayers)
-		{
-			if (layer == 0) Melder_throw (L"A Layer number of 0 is not allowed.");
-			else if (layer < 0) Melder_throw (L"A negative layer number is not allowed.");
-			else if (layer > my nLayers) Melder_throw (L"A layer number of ", layer, " is too big.");
-			
-			Melder_error4 (L"This FFNet has ", Melder_integer (layer), L" layer", (my nLayers > 1 ? L"s\n" : L"\n"));
-			if (my nLayers == 1) Melder_throw (L"Layer number must be equal to 1.");
-			else if (my nLayers == 2) Melder_throw (L"Layer number must be equal to 1 or 2.");
-			else if (my nLayers == 3) Melder_throw (L"Layer number must be equal to 1, 2 or 3.");
-			else Melder_throw (L"Layer number must be in the range 1 to ", my nLayers);
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	if (layer < 1 || layer > my nLayers)
+	{
+		if (layer == 0) Melder_throw (L"A Layer number of 0 is not allowed.");
+		else if (layer < 0) Melder_throw (L"A negative layer number is not allowed.");
+		else if (layer > my nLayers) Melder_throw (L"A layer number of ", layer, " is too big.");
+		
+		Melder_error4 (L"This FFNet has ", Melder_integer (layer), L" layer", (my nLayers > 1 ? L"s\n" : L"\n"));
+		if (my nLayers == 1) Melder_throw (L"Layer number must be equal to 1.");
+		else if (my nLayers == 2) Melder_throw (L"Layer number must be equal to 1 or 2.");
+		else if (my nLayers == 3) Melder_throw (L"Layer number must be equal to 1, 2 or 3.");
+		else Melder_throw (L"Layer number must be in the range 1 to ", my nLayers);
+	}
 }
 
 wchar_t * FFNet_createNameFromTopology (FFNet me)
@@ -148,55 +145,52 @@ static double minimumCrossEntropy (I, const double target[])
 
 /* *********************************************************************** */
 
-int bookkeeping (FFNet me)
+void bookkeeping (FFNet me)
 {
-	try {
-		long nWeights = 0;
-		my nNodes = my nUnitsInLayer[0];
-		for (long i = 1; i <= my nLayers; i++)
+	long nWeights = 0;
+	my nNodes = my nUnitsInLayer[0];
+	for (long i = 1; i <= my nLayers; i++)
+	{
+		my nNodes += my nUnitsInLayer[i] + 1;
+		nWeights += my nUnitsInLayer[i] * (my nUnitsInLayer[i - 1] + 1);
+	}
+	if (my nWeights > 0 && my nWeights != nWeights) Melder_throw ("Number of weights is incorret.");
+	my nWeights = nWeights;
+	
+	// The following test is essential because when an FFNet is read from file the w array already exists 
+	if (my w == 0) my w = NUMvector<double> (1, my nWeights);
+	my activity = NUMvector<double> (1, my nNodes);
+	my isbias = NUMvector<long> (1, my nNodes);
+	my nodeFirst = NUMvector<long> (1, my nNodes);
+	my nodeLast = NUMvector<long> (1, my nNodes);
+	my wFirst = NUMvector<long> (1, my nNodes);
+	my wLast = NUMvector<long> (1, my nNodes);
+	my wSelected = NUMvector<long> (1, my nWeights);
+	my error = NUMvector<double> (1, my nNodes);
+	my deriv = NUMvector<double> (1, my nNodes);
+	my dwi = NUMvector<double> (1, my nWeights);
+	my dw = NUMvector<double> (1, my nWeights);
+	my nInputs = my nUnitsInLayer[0];
+	my nOutputs = my nUnitsInLayer[my nLayers];
+	my isbias[my nInputs + 1] = my activity[my nInputs + 1] = 1;
+	
+	long n = my nUnitsInLayer[0] + 2;
+	long firstNodeInPrevious = 1, lastWeightInPrevious = 0;
+	for (long j = 1; j <= my nLayers; j++,  n++)
+	{
+		for (long i = 1; i <= my nUnitsInLayer[j]; i++, n++)
 		{
-			my nNodes += my nUnitsInLayer[i] + 1;
-			nWeights += my nUnitsInLayer[i] * (my nUnitsInLayer[i - 1] + 1);
+			my isbias[n] = 0;
+			my nodeFirst[n] = firstNodeInPrevious;
+			my nodeLast[n] = my nodeFirst[n] + my nUnitsInLayer[j-1];
+			my wFirst[n] = lastWeightInPrevious + (i-1)* (my nUnitsInLayer[j-1] + 1) + 1;
+			my wLast[n] = my wFirst[n] + my nUnitsInLayer[j-1];
 		}
-		if (my nWeights > 0 && my nWeights != nWeights) Melder_throw ("Number of weights is incorret.");
-		my nWeights = nWeights;
-		
-		// The following test is essential because when an FFNet is read from file the w array already exists 
-		if (my w == 0) my w = NUMvector<double> (1, my nWeights);
-		my activity = NUMvector<double> (1, my nNodes);
-		my isbias = NUMvector<long> (1, my nNodes);
-		my nodeFirst = NUMvector<long> (1, my nNodes);
-		my nodeLast = NUMvector<long> (1, my nNodes);
-		my wFirst = NUMvector<long> (1, my nNodes);
-		my wLast = NUMvector<long> (1, my nNodes);
-		my wSelected = NUMvector<long> (1, my nWeights);
-		my error = NUMvector<double> (1, my nNodes);
-		my deriv = NUMvector<double> (1, my nNodes);
-		my dwi = NUMvector<double> (1, my nWeights);
-		my dw = NUMvector<double> (1, my nWeights);
-		my nInputs = my nUnitsInLayer[0];
-		my nOutputs = my nUnitsInLayer[my nLayers];
-		my isbias[my nInputs + 1] = my activity[my nInputs + 1] = 1;
-		
-		long n = my nUnitsInLayer[0] + 2;
-		long firstNodeInPrevious = 1, lastWeightInPrevious = 0;
-		for (long j = 1; j <= my nLayers; j++,  n++)
-		{
-			for (long i = 1; i <= my nUnitsInLayer[j]; i++, n++)
-			{
-				my isbias[n] = 0;
-				my nodeFirst[n] = firstNodeInPrevious;
-				my nodeLast[n] = my nodeFirst[n] + my nUnitsInLayer[j-1];
-				my wFirst[n] = lastWeightInPrevious + (i-1)* (my nUnitsInLayer[j-1] + 1) + 1;
-				my wLast[n] = my wFirst[n] + my nUnitsInLayer[j-1];
-			}
-			if (j != my nLayers) my isbias[n] = my activity[n] = 1;
-			lastWeightInPrevious = my wLast[n-1];
-			firstNodeInPrevious += my nUnitsInLayer[j-1] + 1;
-		}
-		FFNet_selectAllWeights (me);
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+		if (j != my nLayers) my isbias[n] = my activity[n] = 1;
+		lastWeightInPrevious = my wLast[n-1];
+		firstNodeInPrevious += my nUnitsInLayer[j-1] + 1;
+	}
+	FFNet_selectAllWeights (me);
 }
 
 static void info (I)
@@ -237,41 +231,37 @@ class_methods_end
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, 
 	long numberOfOutputs, int outputsAreLinear)
 {
-	try {
-		long numberOfLayers = 3;
-	
-		if (numberOfInputs < 1) Melder_throw ("Number of inputs must be a natrural number.");
-		if (numberOfOutputs < 1) Melder_throw ("Number of outputs must be a natrural number.");
-		if (nodesInLayer1 < 1) numberOfLayers--;
-		if (nodesInLayer2 < 1) numberOfLayers--;
-		my nLayers = numberOfLayers;
-		my nUnitsInLayer = NUMvector<long> (0, numberOfLayers);
-	
-		my nUnitsInLayer[numberOfLayers--] = numberOfOutputs;
-		if (nodesInLayer2 > 0) my nUnitsInLayer[numberOfLayers--] = nodesInLayer2;
-		if (nodesInLayer1 > 0) my nUnitsInLayer[numberOfLayers--] = nodesInLayer1;
-		my nUnitsInLayer[numberOfLayers] = numberOfInputs;
-		Melder_assert (numberOfLayers == 0);
-		my outputsAreLinear = outputsAreLinear;
-	
-		bookkeeping (me);
-	
-		FFNet_setCostFunction (me, FFNet_COST_MSE);
-		FFNet_setNonLinearity (me, FFNet_NONLIN_SIGMOID);
-		FFNet_reset (me, 0.1);
-	} catch (MelderError) { rethrow; }
+	long numberOfLayers = 3;
+
+	if (numberOfInputs < 1) Melder_throw ("Number of inputs must be a natrural number.");
+	if (numberOfOutputs < 1) Melder_throw ("Number of outputs must be a natrural number.");
+	if (nodesInLayer1 < 1) numberOfLayers--;
+	if (nodesInLayer2 < 1) numberOfLayers--;
+	my nLayers = numberOfLayers;
+	my nUnitsInLayer = NUMvector<long> (0, numberOfLayers);
+
+	my nUnitsInLayer[numberOfLayers--] = numberOfOutputs;
+	if (nodesInLayer2 > 0) my nUnitsInLayer[numberOfLayers--] = nodesInLayer2;
+	if (nodesInLayer1 > 0) my nUnitsInLayer[numberOfLayers--] = nodesInLayer1;
+	my nUnitsInLayer[numberOfLayers] = numberOfInputs;
+	Melder_assert (numberOfLayers == 0);
+	my outputsAreLinear = outputsAreLinear;
+
+	bookkeeping (me);
+
+	FFNet_setCostFunction (me, FFNet_COST_MSE);
+	FFNet_setNonLinearity (me, FFNet_NONLIN_SIGMOID);
+	FFNet_reset (me, 0.1);
 }
 
 void FFNet_setOutputCategories (FFNet me, Categories thee)
 {
-	try {
-		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
-		if (uniq -> size == thy size)
-		{
-			forget (my outputCategories);
-			my outputCategories = uniq.transfer();
-		}
-	} catch (MelderError) { rethrow; }
+	autoCategories uniq = Categories_selectUniqueItems (thee, 1);
+	if (uniq -> size == thy size)
+	{
+		forget (my outputCategories);
+		my outputCategories = uniq.transfer();
+	}
 }
 
 FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2, 
@@ -282,7 +272,7 @@ FFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer
 		FFNet_init (me.peek(), numberOfInputs, numberInLayer1, numberInLayer2, 
 		numberOfOutputs, outputsAreLinear);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("FFNet not created."); }
+	} catch (MelderError) { Melder_throw ("FFNet not created."); }
 }
 
 void FFNet_setNonLinearity (FFNet me, int nonLinearityType)
@@ -312,36 +302,30 @@ double FFNet_getBias (FFNet me, long layer, long unit)
 
 void FFNet_setBias (FFNet me, long layer, long unit, double value)
 {
-	try {
-		long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-		if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
-		long bias_unit = my wLast[node]; // ??? +1
-		my w[bias_unit] = value;
-	} catch (MelderError) { rethrow; }
+	long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
+	if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
+	long bias_unit = my wLast[node]; // ??? +1
+	my w[bias_unit] = value;
 }
 
 void FFNet_setWeight (FFNet me, long layer, long unit, long unit_from, double value)
 {
-	try {
-		long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-		if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
-		long nodef = FFNet_getNodeNumberFromUnitNumber (me, unit_from, layer - 1);
-		if (nodef < 1) Melder_throw ("Not a valid unit / layer combination.");
-		long w_unit = my wFirst[node] + unit_from - 1;
-		my w[w_unit] = value;
-	} catch (MelderError) { rethrow; }
+	long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
+	if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
+	long nodef = FFNet_getNodeNumberFromUnitNumber (me, unit_from, layer - 1);
+	if (nodef < 1) Melder_throw ("Not a valid unit / layer combination.");
+	long w_unit = my wFirst[node] + unit_from - 1;
+	my w[w_unit] = value;
 }
 
 double FFNet_getWeight (FFNet me, long layer, long unit, long unit_from)
 {
-	try {
-		long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
-		if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
-		long nodef = FFNet_getNodeNumberFromUnitNumber (me, unit_from, layer - 1);
-		if (nodef < 1) Melder_throw ("Not a valid unit / layer combination.");
-		long w_unit = my wFirst[node] + unit_from - 1;
-		return my w[w_unit];
-	} catch (MelderError) { return NUMundefined; }
+	long node = FFNet_getNodeNumberFromUnitNumber (me, unit, layer);
+	if (node < 1) Melder_throw ("Not a valid unit / layer combination.");
+	long nodef = FFNet_getNodeNumberFromUnitNumber (me, unit_from, layer - 1);
+	if (nodef < 1) Melder_throw ("Not a valid unit / layer combination.");
+	long w_unit = my wFirst[node] + unit_from - 1;
+	return my w[w_unit];
 }
 
 void FFNet_reset (FFNet me, double wrange)
@@ -666,35 +650,31 @@ void FFNet_drawActivation (FFNet me, Graphics g)
 /* This routine is deprecated since praat-4.2.4 20040422 and will be removed in the future. */
 void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int garnish)
 {
-	try {
-		if (layer < 1 || layer > my nLayers) Melder_throw ("Layer must be in [1,", my nLayers, "].");
-    	autoMatrix weights = FFNet_weightsToMatrix (me, layer, 0);
-		Matrix_scale (weights.peek(), scaling);
-		Matrix_drawAsSquares (weights.peek(), g, 0, 0, 0, 0, 0);
-		if (garnish)
-		{
-			double x1WC, x2WC, y1WC, y2WC; wchar_t text[30];
-			Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
-			swprintf (text, 30, L"Units in layer %ld ->", layer);
-			Graphics_textBottom (g, 0, text);
-			if (layer == 1) wcscpy (text, L"Input units ->");
-			else swprintf (text, 30, L"Units in layer %ld ->", layer-1);
-			Graphics_textLeft (g, 0, text);
-			/* how do I find out the current settings ??? */
-			Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
-			Graphics_setInner (g);
-			Graphics_text (g, 0.5, weights->ny, L"bias");
-			Graphics_unsetInner (g);
-		}
-	} catch (MelderError) { rethrow; }
+	if (layer < 1 || layer > my nLayers) Melder_throw ("Layer must be in [1,", my nLayers, "].");
+	autoMatrix weights = FFNet_weightsToMatrix (me, layer, 0);
+	Matrix_scale (weights.peek(), scaling);
+	Matrix_drawAsSquares (weights.peek(), g, 0, 0, 0, 0, 0);
+	if (garnish)
+	{
+		double x1WC, x2WC, y1WC, y2WC; wchar_t text[30];
+		Graphics_inqWindow (g, & x1WC, & x2WC, & y1WC, & y2WC);
+		swprintf (text, 30, L"Units in layer %ld ->", layer);
+		Graphics_textBottom (g, 0, text);
+		if (layer == 1) wcscpy (text, L"Input units ->");
+		else swprintf (text, 30, L"Units in layer %ld ->", layer-1);
+		Graphics_textLeft (g, 0, text);
+		/* how do I find out the current settings ??? */
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+		Graphics_setInner (g);
+		Graphics_text (g, 0.5, weights->ny, L"bias");
+		Graphics_unsetInner (g);
+	}
 }
 
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish)
 {
-	try {
-		autoTableOfReal thee = FFNet_extractWeights (me, layer);
-		TableOfReal_drawAsSquares (thee.peek(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
-	} catch (MelderError) { rethrow; }
+	autoTableOfReal thee = FFNet_extractWeights (me, layer);
+	TableOfReal_drawAsSquares (thee.peek(), g, 1, thy numberOfRows, 1, thy numberOfColumns, garnish);
 }
 
 void FFNet_drawCostHistory (FFNet me, Graphics g, long iFrom, long iTo, double costMin, double costMax, int garnish)
@@ -739,7 +719,7 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 		Collection_addItem (c.peek(), ap.transfer()); therror
 		Collection_addItem (c.peek(), ac.transfer()); therror
 		return c.transfer();
-	} catch (MelderError) { rethrowmzero ("Iris example not created."); }
+	} catch (MelderError) { Melder_thrown ("Iris example not created."); }
 }
 
 TableOfReal FFNet_extractWeights (FFNet me, long layer)
@@ -775,7 +755,7 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("TableOfReal not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no TableOfReal created."); }
 }
 
 FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
@@ -825,7 +805,7 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero ("FFNet not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no FFNet created."); }
 }
 
-/* End of file FFNet.c */
+/* End of file FFNet.cpp */

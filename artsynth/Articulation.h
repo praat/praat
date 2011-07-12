@@ -36,7 +36,7 @@
 #include "Articulation_enums.h"
 
 #include "Articulation_def.h"
-#define Art_methods  Data_methods
+#define Art__methods(Klas)  Data__methods(Klas)
 oo_CLASS_CREATE (Art, Data);
 
 Art Art_create (void);

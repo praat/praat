@@ -58,17 +58,15 @@
 
 #define Spline_MAXIMUM_DEGREE 20
 
-#define FunctionTerms_members Function_members	\
-	long numberOfCoefficients;	\
-	double *coefficients;
-#define FunctionTerms_methods Function_methods	\
+#include "Polynomial_def.h"
+#define FunctionTerms__methods(klas) Function__methods(klas)	\
 	double (*evaluate) (I, double x);	\
 	void (*evaluate_z) (I, dcomplex *z, dcomplex *p); \
 	void (*evaluateTerms) (I, double x, double terms[]); \
 	void (*getExtrema) (I, double x1, double x2, double *xmin, double *ymin, \
 			double *xmax, double *ymax);	\
 	long (*getDegree) (I);
-class_create (FunctionTerms, Function);
+oo_CLASS_CREATE (FunctionTerms, Function);
 
 void FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
 
@@ -115,13 +113,9 @@ void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin, d
 void FunctionTerms_drawBasisFunction (I, Graphics g, long index, double xmin, double xmax,
 	double ymin, double ymax, int extrapolate, int garnish);
 
-#define Polynomial_members FunctionTerms_members
-#define Polynomial_methods FunctionTerms_methods
-class_create (Polynomial, FunctionTerms);
+Thing_declare1cpp (Polynomial);
 
-#define Roots_members ComplexVector_members
-#define Roots_methods ComplexVector_methods
-class_create (Roots, ComplexVector);
+Thing_declare1cpp (Roots);
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree);
 
@@ -153,9 +147,7 @@ Polynomial Polynomials_multiply (Polynomial me, Polynomial thee);
 
 void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomial *r);
 
-#define LegendreSeries_members FunctionTerms_members
-#define LegendreSeries_methods FunctionTerms_methods
-class_create (LegendreSeries, FunctionTerms);
+Thing_declare1cpp (LegendreSeries);
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -211,10 +203,8 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 		x' = (2 * x - xmin - xmax) / (xmax - xmin)
 	This is equivalent to:
 		p(x) = c[1] /2 + sum (k=2..numberOfCoefficients, c[k]*T[k](x'))
-*/	
-#define ChebyshevSeries_members FunctionTerms_members
-#define ChebyshevSeries_methods FunctionTerms_methods
-class_create (ChebyshevSeries, FunctionTerms);
+*/
+Thing_declare1cpp (ChebyshevSeries);
 	
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -222,12 +212,9 @@ ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, cons
 
 Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
-#define Spline_members FunctionTerms_members	\
-	long degree, numberOfKnots;	\
-	double *knots;
-#define Spline_methods FunctionTerms_methods \
+#define Spline__methods(klas) FunctionTerms__methods(klas) \
 	long (*getOrder) (I);
-class_create (Spline, FunctionTerms);
+oo_CLASS_CREATE (Spline, FunctionTerms);
 
 void Spline_init (I, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
 
@@ -238,17 +225,13 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 Spline Spline_scaleX (I, double xmin, double xmax);
 /* scale domain and knots to new domain */
 
-#define MSpline_members Spline_members
-#define MSpline_methods Spline_methods
-class_create (MSpline, Spline);
+Thing_declare1cpp (MSpline);
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 
 MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
 
-#define ISpline_members Spline_members
-#define ISpline_methods Spline_methods
-class_create (ISpline, Spline);
+Thing_declare1cpp (ISpline);
 
 ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
@@ -265,6 +248,37 @@ ChebyshevSeries RealTier_to_ChebyshevSeries (I, long degree, double tol, int ic,
 
 #ifdef __cplusplus
 	}
+
+	struct structPolynomial : public structFunctionTerms {
+	};
+	#define Polynomial__methods(klas) FunctionTerms__methods(klas)
+	Thing_declare2cpp (Polynomial, FunctionTerms);
+
+	struct structRoots : public structComplexVector {
+	};
+	#define Roots__methods(klas) ComplexVector__methods(klas)
+	Thing_declare2cpp (Roots, ComplexVector);
+
+	struct structLegendreSeries : public structFunctionTerms {
+	};
+	#define LegendreSeries__methods(klas) FunctionTerms__methods(klas)
+	Thing_declare2cpp (LegendreSeries, FunctionTerms);
+
+	struct structChebyshevSeries : public structFunctionTerms {
+	};
+	#define ChebyshevSeries__methods(klas) FunctionTerms__methods(klas)
+	Thing_declare2cpp (ChebyshevSeries, FunctionTerms);
+
+	struct structMSpline : public structSpline {
+	};
+	#define MSpline__methods(klas) Spline__methods(klas)
+	Thing_declare2cpp (MSpline, Spline);
+
+	struct structISpline : public structSpline {
+	};
+	#define ISpline__methods(klas) Spline__methods(klas)
+	Thing_declare2cpp (ISpline, Spline);
+
 #endif
 
 #endif /* _Polynomial_h_ */

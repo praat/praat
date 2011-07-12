@@ -38,7 +38,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Distributions: Strings not drawn.");
+		Melder_throw (me, ": Strings not generated.");
 	}
 }
 
@@ -75,7 +75,7 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 		Strings_randomize (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Distributions: Strings not drawn.");
+		Melder_throw (me, ": Strings not generated.");
 	}
 }
 
@@ -101,7 +101,7 @@ Distributions Strings_to_Distributions (Strings me) {
 		TableOfReal_sortByLabel (thee.peek(), 1, 0);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": n distribution computed.");
+		Melder_throw (me, ": distribution not computed.");
 	}
 }
 

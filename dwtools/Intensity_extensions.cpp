@@ -27,23 +27,20 @@
 #include "Intensity_extensions.h"
 #include "TextGrid_extensions.h"
 
-static int IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const wchar_t *leftLabel)
+static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const wchar_t *leftLabel)
 {
-	try {
-		if (time <= my xmin || time >= my xmax) Melder_throw ("Time is outside interval.");
+	if (time <= my xmin || time >= my xmax) Melder_throw ("Time is outside interval.");
 
-		// Find interval to split
-		if (iinterval <= 0) iinterval = IntervalTier_timeToLowIndex (me, time);
+	// Find interval to split
+	if (iinterval <= 0) iinterval = IntervalTier_timeToLowIndex (me, time);
 
-		// Modify end time of left label
-		TextInterval ti = (TextInterval) my intervals -> item[iinterval];
-		ti -> xmax = time;
-		TextInterval_setText (ti, leftLabel); therror
+	// Modify end time of left label
+	TextInterval ti = (TextInterval) my intervals -> item[iinterval];
+	ti -> xmax = time;
+	TextInterval_setText (ti, leftLabel); therror
 
-		autoTextInterval ti_new = TextInterval_create (time, my xmax, L"");
-		Sorted_addItem_unsorted (my intervals, ti_new.transfer());
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	autoTextInterval ti_new = TextInterval_create (time, my xmax, L"");
+	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
 }
 
 TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
@@ -121,7 +118,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		IntervalTier_removeBoundary_equalLabels (it, soundingLabel);
 
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": TextGrid not created."); }
+	} catch (MelderError) { Melder_thrown (me, ": TextGrid not created."); }
 }
 
 /* End of file Intensity_extensions.cpp */

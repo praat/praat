@@ -31,30 +31,34 @@
  * pb 2010/07/21 erased Motif stuff
  * pb 2010/07/26 split off GuiFileSelect.c
  * pb 2011/05/15 C++
+ * pb 2011/07/11 C++
  */
 
 #include "UiP.h"
 #include "Editor.h"
 
-#define UiFile_members Thing_members \
-	EditorCommand command; \
-	GuiObject parent; \
-	structMelderFile file; \
-	const wchar_t *invokingButtonTitle, *helpTitle; \
-	int (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure); \
-	void *okClosure; \
+Thing_declare1cpp (UiFile);
+struct structUiFile : public structThing {
+	EditorCommand command;
+	GuiObject parent;
+	structMelderFile file;
+	const wchar *invokingButtonTitle, *helpTitle;
+	void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure);
+	void *okClosure;
 	int shiftKeyPressed;
-#define UiFile_methods Thing_methods
-class_create (UiFile, Thing);
+};
+#define UiFile__methods(klas) Thing__methods(klas)
+Thing_declare2cpp (UiFile, Thing);
 
 static void classUiFile_destroy (I) {
 	iam (UiFile);
 	inherited (UiFile) destroy (me);
 }
 
-class_methods (UiFile, Thing)
+class_methods (UiFile, Thing) {
 	class_method_local (UiFile, destroy)
-class_methods_end
+	class_methods_end
+}
 
 static void UiFile_init (I, GuiObject parent, const wchar_t *title) {
 	iam (UiFile);
@@ -69,17 +73,20 @@ MelderFile UiFile_getFile (I) {
 
 /********** READING A FILE **********/
 
-#define UiInfile_members UiFile_members \
+Thing_declare1cpp (UiInfile);
+struct structUiInfile : public structUiFile {
 	bool allowMultipleFiles;
-#define UiInfile_methods UiFile_methods
-class_create (UiInfile, UiFile);
+};
+#define UiInfile__methods(klas) UiFile__methods(klas)
+Thing_declare2cpp (UiInfile, UiFile);
 
-class_methods (UiInfile, UiFile)
-class_methods_end
+class_methods (UiInfile, UiFile) {
+	class_methods_end
+}
 
 UiForm UiInfile_create (GuiObject parent, const wchar_t *title,
-	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
-	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles)
+	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure,
+	const wchar *invokingButtonTitle, const wchar *helpTitle, bool allowMultipleFiles)
 {
 	UiInfile me = Thing_new (UiInfile);
 	my okCallback = okCallback;
@@ -107,8 +114,10 @@ void UiInfile_do (I) {
 		UiHistory_write (infileName -> string);
 		structMelderFile file;
 		MelderFile_copy (& my file, & file);
-		if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-			Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+		try {
+			my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
+		} catch (MelderError) {
+			Melder_error_ ("File ", MelderFile_messageName (& file), " not finished.");
 			Melder_flushError (NULL);
 		}
 	}
@@ -117,17 +126,20 @@ void UiInfile_do (I) {
 
 /********** WRITING A FILE **********/
 
-#define UiOutfile_members UiFile_members \
-	int (*allowExecutionHook) (void *closure); \
-	void *allowExecutionClosure;   /* I am owner (see destroy). */
-#define UiOutfile_methods UiFile_methods
-class_create (UiOutfile, UiFile);
+Thing_declare1cpp (UiOutfile);
+struct structUiOutfile : public structUiFile {
+	int (*allowExecutionHook) (void *closure);
+	void *allowExecutionClosure;   // I am owner (see destroy)
+};
+#define UiOutfile__methods(klas) UiFile__methods(klas)
+Thing_declare2cpp (UiOutfile, UiFile);
 
-class_methods (UiOutfile, UiFile)
-class_methods_end
+class_methods (UiOutfile, UiFile) {
+	class_methods_end
+}
 
 UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
-	int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
+	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure, const wchar *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	UiOutfile me = Thing_new (UiOutfile);
 	my okCallback = okCallback;
@@ -140,11 +152,11 @@ UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
 	return (UiForm) me;
 }
 
-static int commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
+static void commonOutfileCallback (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure) {
 	EditorCommand command = (EditorCommand) closure;
 	(void) invokingButtonTitle;
 	(void) modified;
-	return command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter);
+	command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter); therror
 }
 
 UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
@@ -167,8 +179,10 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 	UiHistory_write (L"\n");
 	UiHistory_write (my invokingButtonTitle);
-	if (! my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure)) {
-		Melder_error3 (L"File ", MelderFile_messageName (& file), L" not finished.");
+	try {
+		my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
+	} catch (MelderError) {
+		Melder_error_ ("File ", MelderFile_messageName (& file), " not finished.");
 		Melder_flushError (NULL);
 	}
 	UiHistory_write (L" ");

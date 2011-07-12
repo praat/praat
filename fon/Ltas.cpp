@@ -91,7 +91,7 @@ Ltas Ltas_create (long nx, double dx) {
 		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Ltas not created.");
+		Melder_throw ("Ltas not created.");
 	}
 }
 
@@ -128,7 +128,7 @@ Matrix Ltas_to_Matrix (Ltas me) {
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -139,7 +139,7 @@ Ltas Matrix_to_Ltas (Matrix me) {
 		Thing_overrideClass (thee.peek(), classLtas);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Ltas.");
+		Melder_throw (me, ": not converted to Ltas.");
 	}
 }
 
@@ -178,7 +178,7 @@ Ltas Ltases_merge (Collection ltases) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Ltas objects not merged.");
+		Melder_throw ("Ltas objects not merged.");
 	}
 }
 
@@ -191,7 +191,7 @@ Ltas Ltases_average (Collection ltases) {
 		}	
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Ltas objects not averaged.");
+		Melder_throw ("Ltas objects not averaged.");
 	}
 }
 
@@ -231,7 +231,7 @@ Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": trend line not computed.");
+		Melder_throw (me, ": trend line not computed.");
 	}
 }
 
@@ -277,7 +277,7 @@ Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": trend line not subtracted.");
+		Melder_throw (me, ": trend line not subtracted.");
 	}
 }
 
@@ -296,7 +296,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Ltas.");
+		Melder_throw (me, ": not converted to Ltas.");
 	}
 }
 
@@ -309,7 +309,7 @@ Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Ltas.");
+		Melder_throw (me, ": not converted to Ltas.");
 	}
 }
 
@@ -323,7 +323,7 @@ Ltas Sound_to_Ltas (Sound me, double bandwidth) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": LTAS analysis not performed.");
+		Melder_throw (me, ": LTAS analysis not performed.");
 	}
 }
 
@@ -422,7 +422,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		}
 		return ltas.transfer();
 	} catch (MelderError) {
-		rethrowmzero (sound, " & ", pulses, ": LTAS analysis not performed.");
+		Melder_throw (sound, " & ", pulses, ": LTAS analysis not performed.");
 	}
 }
 
@@ -436,7 +436,7 @@ Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maxi
 			shortestPeriod, longestPeriod, maximumPeriodFactor);
 		return ltas.transfer();
 	} catch (MelderError) {
-		rethrowmzero (sound, ": pitch-corrected LTAS analysis not performed.");
+		Melder_throw (sound, ": pitch-corrected LTAS analysis not performed.");
 	}
 }
 
@@ -492,7 +492,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		}
 		return ltas.transfer();
 	} catch (MelderError) {
-		rethrowmzero (sound, " & ", pulses, ": LTAS analysis (harmonics) not performed.");
+		Melder_throw (sound, " & ", pulses, ": LTAS analysis (harmonics) not performed.");
 	}
 }
 

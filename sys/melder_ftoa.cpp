@@ -96,7 +96,7 @@ const wchar_t * Melder_boolean (bool value) {
 	return value ? L"yes" : L"no";
 }
 
-const wchar_t * Melder_double (double value) {
+const wchar * Melder_double (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	#if defined (macintosh)
@@ -107,7 +107,9 @@ const wchar_t * Melder_double (double value) {
 		sprintf (buffer, "%.15g", value);
 		if (strtod (buffer, NULL) != value) {
 			sprintf (buffer, "%.16g", value);
-			if (strtod (buffer, NULL) != value) sprintf (buffer, "%.17g", value);
+			if (strtod (buffer, NULL) != value) {
+				sprintf (buffer, "%.17g", value);
+			}
 		}
 		#if 0
 			wchar_t *to = & buffers [ibuffer] [0];
@@ -115,13 +117,15 @@ const wchar_t * Melder_double (double value) {
 			for (; (*to++ = *from++) != '\0';) ;
 			*to = '\0';
 		#else
-			Melder_8bitToWcs_inline_e (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8); // BUG cherror
+			Melder_8bitToWcs_inline (buffer, buffers [ibuffer], kMelder_textInputEncoding_UTF8);   // guaranteed not to fail
 		#endif
 	#else
 		swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.15g", value);
 		if (wcstod (buffers [ibuffer], NULL) != value) {
 			swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.16g", value);
-			if (wcstod (buffers [ibuffer], NULL) != value) swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
+			if (wcstod (buffers [ibuffer], NULL) != value) {
+				swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.17g", value);
+			}
 		}
 	#endif
 	return buffers [ibuffer];

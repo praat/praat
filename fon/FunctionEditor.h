@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/01
  */
 
 #include "Editor.h"
@@ -36,112 +36,12 @@ struct FunctionEditor_picture {
 	bool garnish;
 };
 
-#define FunctionEditor__parents(Klas) Editor__parents(Klas) Thing_inherit (Klas, Editor)
-Thing_declare1 (FunctionEditor);
+Thing_declare1cpp (FunctionEditor);
 
-#define FunctionEditor__members(Klas) Editor__members(Klas) \
-	/* Subclass may change the following attributes, */ \
-	/* but has to respect the invariants, */ \
-	/* and has to call FunctionEditor_marksChanged () */ \
-	/* immediately after making the changes. */ \
-	double tmin, tmax, startWindow, endWindow; \
-	double startSelection, endSelection; /* Markers. */ \
-		/* These attributes are all expressed in seconds. Invariants: */ \
-		/*    tmin <= startWindow < endWindow <= tmax; */	 \
-		/*    tmin <= (startSelection, endSelection) <= tmax; */ \
-	double arrowScrollStep; \
-	\
-	Graphics graphics;   /* Used in the 'draw' method. */ \
-	short width, height;   /* Size of drawing area in pixels. */ \
-	GuiObject text;   /* Optional text at top. */ \
-	int shiftKeyPressed;   /* Information for the 'play' method. */ \
-	int playingCursor, playingSelection;   /* Information for end of play. */ \
-	struct FunctionEditor_picture picture; \
-	\
-	/* Private attributes: */ \
-	GuiObject drawingArea, scrollBar, groupButton, bottomArea; \
-	bool group, enableUpdates; \
-	int nrect; \
-	struct { double left, right, bottom, top; } rect [8]; \
-	double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory; \
-	int numberOfMarkers;
-#define FunctionEditor__methods(Klas) Editor__methods(Klas) \
-	void (*draw) (Klas me); \
-	void (*prepareDraw) (Klas me);   /* For less flashing. */ \
-	const wchar_t *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
-	int fixedPrecision_long; \
-	int hasText; \
-	void (*play) (Klas me, double tmin, double tmax); \
-	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed); \
-	int (*clickB) (Klas me, double xWC, double yWC); \
-	int (*clickE) (Klas me, double xWC, double yWC); \
-	void (*key) (Klas me, unsigned char key); \
-	int (*playCallback) (Any me, int phase, double tmin, double tmax, double t); \
-	void (*updateText) (Klas me); \
-	void (*prefs_addFields) (Klas me, EditorCommand cmd); \
-	void (*prefs_setValues) (Klas me, EditorCommand cmd); \
-	void (*prefs_getValues) (Klas me, EditorCommand cmd); \
-	void (*createMenuItems_file_draw) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_file_extract) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_file_write) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_view) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_view_timeDomain) (Klas me, EditorMenu menu); \
-	void (*createMenuItems_view_audio) (Klas me, EditorMenu menu); \
-	void (*highlightSelection) (Klas me, double left, double right, double bottom, double top); \
-	void (*unhighlightSelection) (Klas me, double left, double right, double bottom, double top); \
-	double (*getBottomOfSoundAndAnalysisArea) (Klas me); \
-	void (*form_pictureSelection) (Klas me, EditorCommand cmd); \
-	void (*ok_pictureSelection) (Klas me, EditorCommand cmd); \
-	void (*do_pictureSelection) (Klas me, EditorCommand cmd);
-Thing_declare2 (FunctionEditor, Editor);
-
-/*
-	Attributes:
-		data: must be a Function.
-
-	Methods:
-
-	void draw (I);
-		"draw your part of the data between startWindow and endWindow."
-
-	void play (I, double tmin, double tmax);
-		"user clicked in one of the rectangles above or below the data window."
-
-	int click (I, double xWC, double yWC, int shiftKeyPressed);
-		"user clicked in data window with the left (Mac: only) mouse button."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		'shiftKeyPressed' flags if the Shift key was held down during the click.
-		Return FunctionEditor_UPDATE_NEEDED if you want a window update, i.e.,
-			if your 'click' moves the cursor or otherwise changes the appearance of the data.
-		Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
-			if your 'click' method just 'plays' something or puts a dialog on the screen.
-			In the latter case, the 'ok' callback of the dialog should
-			call FunctionEditor_marksChanged if necessary.
-		FunctionEditor::click moves the cursor to 'xWC', drags to create a selection, 
-			or extends the selection.
-
-	int clickB (I, double xWC, double yWC);
-		"user clicked in data window with the middle mouse button (Mac: control- or option-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the start of the selection (B) to 'xWC',
-			with the sole statement 'my startSelection = xWC'.
-
-	int clickE (I, double xWC, double yWC);
-		"user clicked in data window with the right mouse button (Mac: command-click)."
-		'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
-		For the return value, see the 'click' method.
-		FunctionEditor::clickB simply moves the end of the selection (E) to 'xWC',
-			with the sole statement 'my endSelection = xWC'.
-
-	void key (I, unsigned char key);
-		"user typed a key to the data window."
-		FunctionEditor::key ignores this message.
-*/
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-int FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar_t *title, Any data);
+void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Data data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
@@ -255,7 +155,109 @@ void FunctionEditor_garnish (FunctionEditor me);   // Optionally selection times
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structFunctionEditor : public structEditor {
+		/* Subclass may change the following attributes, */
+		/* but has to respect the invariants, */
+		/* and has to call FunctionEditor_marksChanged () */
+		/* immediately after making the changes. */
+		double tmin, tmax, startWindow, endWindow;
+		double startSelection, endSelection;   // markers
+			/* These attributes are all expressed in seconds. Invariants: */
+			/*    tmin <= startWindow < endWindow <= tmax; */
+			/*    tmin <= (startSelection, endSelection) <= tmax; */
+		double arrowScrollStep;
+
+		Graphics graphics;   // used in the 'draw' method
+		short width, height;   // size of drawing area in pixels
+		GuiObject text;   // optional text at top
+		int shiftKeyPressed;   // information for the 'play' method.
+		int playingCursor, playingSelection;   // information for end of play
+		struct FunctionEditor_picture picture;
+
+		/* Private: */
+		GuiObject drawingArea, scrollBar, groupButton, bottomArea;
+		bool group, enableUpdates;
+		int nrect;
+		struct { double left, right, bottom, top; } rect [8];
+		double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
+		int numberOfMarkers;
+	};
+	#define FunctionEditor__methods(Klas) Editor__methods(Klas) \
+		void (*draw) (Klas me); \
+		void (*prepareDraw) (Klas me);   /* For less flashing. */ \
+		const wchar_t *format_domain, *format_short, *format_long, *format_units, *format_totalDuration, *format_window, *format_selection; \
+		int fixedPrecision_long; \
+		int hasText; \
+		void (*play) (Klas me, double tmin, double tmax); \
+		int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed); \
+		int (*clickB) (Klas me, double xWC, double yWC); \
+		int (*clickE) (Klas me, double xWC, double yWC); \
+		void (*key) (Klas me, unsigned char key); \
+		int (*playCallback) (Any me, int phase, double tmin, double tmax, double t); \
+		void (*updateText) (Klas me); \
+		void (*prefs_addFields) (Klas me, EditorCommand cmd); \
+		void (*prefs_setValues) (Klas me, EditorCommand cmd); \
+		void (*prefs_getValues) (Klas me, EditorCommand cmd); \
+		void (*createMenuItems_file_draw) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_file_extract) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_file_write) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_view) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_view_timeDomain) (Klas me, EditorMenu menu); \
+		void (*createMenuItems_view_audio) (Klas me, EditorMenu menu); \
+		void (*highlightSelection) (Klas me, double left, double right, double bottom, double top); \
+		void (*unhighlightSelection) (Klas me, double left, double right, double bottom, double top); \
+		double (*getBottomOfSoundAndAnalysisArea) (Klas me); \
+		void (*form_pictureSelection) (Klas me, EditorCommand cmd); \
+		void (*ok_pictureSelection) (Klas me, EditorCommand cmd); \
+		void (*do_pictureSelection) (Klas me, EditorCommand cmd);
+	Thing_declare2cpp (FunctionEditor, Editor);
+
+	/*
+		Attributes:
+			data: must be a Function.
+
+		Methods:
+
+		void draw (I);
+			"draw your part of the data between startWindow and endWindow."
+
+		void play (I, double tmin, double tmax);
+			"user clicked in one of the rectangles above or below the data window."
+
+		int click (I, double xWC, double yWC, int shiftKeyPressed);
+			"user clicked in data window with the left (Mac: only) mouse button."
+			'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
+			'shiftKeyPressed' flags if the Shift key was held down during the click.
+			Return FunctionEditor_UPDATE_NEEDED if you want a window update, i.e.,
+				if your 'click' moves the cursor or otherwise changes the appearance of the data.
+			Return FunctionEditor_NO_UPDATE_NEEDED if you do not want a window update, e.g.,
+				if your 'click' method just 'plays' something or puts a dialog on the screen.
+				In the latter case, the 'ok' callback of the dialog should
+				call FunctionEditor_marksChanged if necessary.
+			FunctionEditor::click moves the cursor to 'xWC', drags to create a selection, 
+				or extends the selection.
+
+		int clickB (I, double xWC, double yWC);
+			"user clicked in data window with the middle mouse button (Mac: control- or option-click)."
+			'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
+			For the return value, see the 'click' method.
+			FunctionEditor::clickB simply moves the start of the selection (B) to 'xWC',
+				with the sole statement 'my startSelection = xWC'.
+
+		int clickE (I, double xWC, double yWC);
+			"user clicked in data window with the right mouse button (Mac: command-click)."
+			'xWC' is the time; 'yWC' is a value between 0.0 (bottom) and 1.0 (top).
+			For the return value, see the 'click' method.
+			FunctionEditor::clickB simply moves the end of the selection (E) to 'xWC',
+				with the sole statement 'my endSelection = xWC'.
+
+		void key (I, unsigned char key);
+			"user typed a key to the data window."
+			FunctionEditor::key ignores this message.
+	*/
+
+#endif // __cplusplus
 
 /* End of file FunctionEditor.h */
 #endif

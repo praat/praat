@@ -33,27 +33,25 @@
 
 static int spec_enhance_SHS (double a[], long n)
 {
-	try {
-		if (n < 2) return 0;
-		autoNUMvector<long> posmax (1, (n + 1) / 2);
-		long nmax = 0;
-		if (a[1] > a[2]) posmax[++nmax] = 1;
-		for (long i = 2; i <= n-1; i++) if (a[i] > a[i-1] && a[i] >= a[i+1]) posmax[++nmax] = i;
-		if (a[n] > a[n-1]) posmax[++nmax] = n;
-		if (nmax == 1)
+	if (n < 2) return 0;
+	autoNUMvector<long> posmax (1, (n + 1) / 2);
+	long nmax = 0;
+	if (a[1] > a[2]) posmax[++nmax] = 1;
+	for (long i = 2; i <= n-1; i++) if (a[i] > a[i-1] && a[i] >= a[i+1]) posmax[++nmax] = i;
+	if (a[n] > a[n-1]) posmax[++nmax] = n;
+	if (nmax == 1)
+	{
+		for (long j = 1; j <= posmax[1]-3; j++) a[j] = 0;
+		for (long j = posmax[1] + 3; j <= n; j++) a[j] = 0;
+	}
+	else
+	{
+		for (long i = 2; i <= nmax; i++)
 		{
-			for (long j = 1; j <= posmax[1]-3; j++) a[j] = 0;
-			for (long j = posmax[1] + 3; j <= n; j++) a[j] = 0;
+			for (long j = posmax[i-1]+3; j <= posmax[i]-3; j++) a[j] = 0;
 		}
-		else
-		{
-			for (long i = 2; i <= nmax; i++)
-			{
-				for (long j = posmax[i-1]+3; j <= posmax[i]-3; j++) a[j] = 0;
-			}
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	}
+	return 1;
 }
 
 static void spec_smoooth_SHS (double a[], long n)
@@ -256,7 +254,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			Pitch_Frame_resizeStrengths (& thy frame[i], cc[i], vuvCriterium);
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Pitch (shs) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Pitch (shs) created."); }
 }
 
 Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
@@ -268,7 +266,7 @@ Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
 		maximumFrequencyHz, nFilters, 0.4, 0.6);
 		autoPitch thee = SPINET_to_Pitch (him.peek(), 0.15, ceiling, maxnCandidates);
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no Pitch (SPINET) created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no Pitch (SPINET) created."); }
 }
 
 /* End of file Sound_to_Pitch2.cpp */

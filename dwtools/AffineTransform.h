@@ -36,15 +36,11 @@
 	extern "C" {
 #endif
 
-#define AffineTransform_members Data_members \
-	long n;	\
-	double *t; \
-	double **r;
-
-#define AffineTransform_methods Data_methods \
+#include "AffineTransform_def.h"
+#define AffineTransform__methods(klas) Data__methods(klas) \
 	void (*transform) (I, double **in, long nrows, double **out); \
 	Any (*invert) (I);
-class_create (AffineTransform, Data);
+oo_CLASS_CREATE (AffineTransform, Data);
 
 void AffineTransform_init (I, long n);
 

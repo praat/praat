@@ -34,13 +34,7 @@
 	extern "C" {
 #endif
 
-#define Matrix_members Sampled_members \
-	double ymin, ymax; \
-	long ny; \
-	double dy, y1; \
-	double **z;
-#define Matrix_methods Sampled_methods
-class_create (Matrix, Sampled);
+Thing_declare1cpp (Matrix);
 
 void Matrix_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,
@@ -280,6 +274,16 @@ TableOfReal Matrix_to_TableOfReal (I);
 
 #ifdef __cplusplus
 	}
+
+	struct structMatrix : public structSampled {
+		double ymin, ymax; \
+		long ny; \
+		double dy, y1; \
+		double **z;
+	};
+	#define Matrix__methods(klas) Sampled__methods(klas)
+	Thing_declare2cpp (Matrix, Sampled);
+
 #endif
 
 /* End of file Matrix.h */

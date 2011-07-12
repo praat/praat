@@ -311,7 +311,7 @@ NORMAL (L"The @@ExperimentMFC 2.1. The experiment file|example experiment@ was a
 	"between these sub-stimuli.")
 NORMAL (L"The simplest discrimination task has only two sub-stimuli, and the subject has to say whether these are "
 	"the %same or %different. Suppose you have vowel-like sounds along an F1 continuum with seven steps, "
-	"say 300, 320, 340, 360, 380, 400, and 420 Hertz, and you are interested in knowing how well the listeners "
+	"say 300, 320, 340, 360, 380, 400, and 420 hertz, and you are interested in knowing how well the listeners "
 	"can distinguish these. As your stimuli, you create pairs of these sounds, separated by 0.8 seconds of silence. "
 	"It is important to include stimuli in which the sounds are identical, e.g. stimuli in which both sounds have an F1 "
 	"of 340 Hz (see the literature on signal detection theory). Since sounds that are very different acoustically "

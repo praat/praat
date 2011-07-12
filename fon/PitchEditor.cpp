@@ -33,11 +33,15 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/04/04 
  * pb 2011/03/22 C++
+ * pb 2011/07/01 C++
  */
 
 #include "Pitch_to_Sound.h"
 #include "PitchEditor.h"
 #include "EditorM.h"
+
+#undef our
+#define our ((PitchEditor_Table) my methods) ->
 
 #define HEIGHT_UNV  3.0
 #define HEIGHT_INTENS  6.0
@@ -48,16 +52,16 @@
 static int menu_cb_setCeiling (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	EDITOR_FORM (L"Change ceiling", 0)
-		POSITIVE (L"Ceiling (Hertz)", L"600")
+		POSITIVE (L"Ceiling (Hz)", L"600")
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
 		SET_REAL (L"Ceiling", pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
-		Editor_save (PitchEditor_as_Editor (me), L"Change ceiling");
+		Editor_save (me, L"Change ceiling");
 		Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
-		FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (PitchEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
@@ -69,29 +73,29 @@ static int menu_cb_pathFinder (EDITOR_ARGS) {
 		REAL (L"Octave cost", L"0.01")
 		REAL (L"Octave-jump cost", L"0.35")
 		REAL (L"Voiced/unvoiced cost", L"0.14")
-		POSITIVE (L"Ceiling (Hertz)", L"600")
+		POSITIVE (L"Ceiling (Hz)", L"600")
 		BOOLEAN (L"Pull formants", 0)
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
 		SET_REAL (L"Ceiling", pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
-		Editor_save (PitchEditor_as_Editor (me), L"Path finder");
+		Editor_save (me, L"Path finder");
 		Pitch_pathFinder (pitch,
 			GET_REAL (L"Silence threshold"), GET_REAL (L"Voicing threshold"),
 			GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
 			GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
-		FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-		Editor_broadcastChange (PitchEditor_as_Editor (me));
+		FunctionEditor_redraw (me);
+		Editor_broadcastChange (me);
 	EDITOR_END
 }
 
 static int menu_cb_getPitch (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), L"Hertz");
+		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), L"Hz");
 	} else {
-		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), L"Hertz");
+		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), L"Hz");
 	}
 	return 1;
 }
@@ -99,40 +103,40 @@ static int menu_cb_getPitch (EDITOR_ARGS) {
 static int menu_cb_octaveUp (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
-	Editor_save (PitchEditor_as_Editor (me), L"Octave up");
+	Editor_save (me, L"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my startSelection, my endSelection);
-	FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (PitchEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_fifthUp (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
-	Editor_save (PitchEditor_as_Editor (me), L"Fifth up");
+	Editor_save (me, L"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my startSelection, my endSelection);
-	FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (PitchEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_fifthDown (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
-	Editor_save (PitchEditor_as_Editor (me), L"Fifth down");
+	Editor_save (me, L"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
-	FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (PitchEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
 static int menu_cb_octaveDown (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
-	Editor_save (PitchEditor_as_Editor (me), L"Octave down");
+	Editor_save (me, L"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my startSelection, my endSelection);
-	FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (PitchEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -143,7 +147,7 @@ static int menu_cb_voiceless (EDITOR_ARGS) {
 	long iright = Sampled_xToLowIndex (pitch, my endSelection);
 	if (ileft < 1) ileft = 1;
 	if (iright > pitch -> nx) iright = pitch -> nx;
-	Editor_save (PitchEditor_as_Editor (me), L"Unvoice");
+	Editor_save (me, L"Unvoice");
 	for (i = ileft; i <= iright; i ++) {
 		Pitch_Frame frame = & pitch -> frame [i];
 		for (cand = 1; cand <= frame -> nCandidates; cand ++) {
@@ -154,8 +158,8 @@ static int menu_cb_voiceless (EDITOR_ARGS) {
 			}
 		}
 	}
-	FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-	Editor_broadcastChange (PitchEditor_as_Editor (me));
+	FunctionEditor_redraw (me);
+	Editor_broadcastChange (me);
 	return 1;
 }
 
@@ -163,7 +167,7 @@ static int menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Mel
 static int menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"Pitch"); return 1; }
 
 static void createMenus (PitchEditor me) {
-	inherited (PitchEditor) createMenus (PitchEditor_as_parent (me));
+	inherited (PitchEditor) createMenus (me);
 
 	Editor_addCommand (me, L"Edit", L"Change ceiling...", 0, menu_cb_setCeiling);
 	Editor_addCommand (me, L"Edit", L"Path finder...", 0, menu_cb_pathFinder);
@@ -181,7 +185,7 @@ static void createMenus (PitchEditor me) {
 }
 
 static void createHelpMenuItems (PitchEditor me, EditorMenu menu) {
-	inherited (PitchEditor) createHelpMenuItems (PitchEditor_as_parent (me), menu);
+	inherited (PitchEditor) createHelpMenuItems (me, menu);
 	EditorMenu_addCommand (menu, L"PitchEditor help", '?', menu_cb_PitchEditorHelp);
 	EditorMenu_addCommand (menu, L"Pitch help", 0, menu_cb_PitchHelp);
 }
@@ -351,22 +355,22 @@ static int click (PitchEditor me, double xWC, double yWC, int dummy) {
 		double distanceWC = (frequency - bestFrequency) / pitch -> ceiling * (1 - dyIntens - dyUnv);
 		double dx_mm = Graphics_dxWCtoMM (my graphics, xWC - tmid), dy_mm = Graphics_dyWCtoMM (my graphics, distanceWC);
 		if (bestFrequency < pitch -> ceiling &&   /* Above ceiling: ignore. */
-		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0) ||   /* Voiceless: click within frame. */
-		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   /* Voiced: click within circle. */
+		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0) ||   // voiceless: click within frame
+		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
 		{
 			struct structPitch_Candidate help = bestFrame -> candidate [1];
-			Editor_save (PitchEditor_as_Editor (me), L"Change path");
+			Editor_save (me, L"Change path");
 			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
 			bestFrame -> candidate [bestCandidate] = help;
-			FunctionEditor_redraw (PitchEditor_as_FunctionEditor (me));
-			Editor_broadcastChange (PitchEditor_as_Editor (me));
-			my startSelection = my endSelection = tmid;   /* Cursor will snap to candidate. */
+			FunctionEditor_redraw (me);
+			Editor_broadcastChange (me);
+			my startSelection = my endSelection = tmid;   // cursor will snap to candidate
 			return 1;
 		} else {
-			return inherited (PitchEditor) click (PitchEditor_as_parent (me), xWC, yWC, dummy);   /* Move cursor or drag selection. */
+			return inherited (PitchEditor) click (me, xWC, yWC, dummy);   // move cursor or drag selection
 		}
 	}
-	return inherited (PitchEditor) click (PitchEditor_as_parent (me), xWC, yWC, dummy);   /* Move cursor or drag selection. */
+	return inherited (PitchEditor) click (me, xWC, yWC, dummy);   // move cursor or drag selection
 }
 
 class_methods (PitchEditor, FunctionEditor) {
@@ -381,10 +385,10 @@ class_methods (PitchEditor, FunctionEditor) {
 PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
-		FunctionEditor_init (PitchEditor_as_parent (me.peek()), parent, title, pitch); therror
+		FunctionEditor_init (me.peek(), parent, title, pitch);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Pitch window not created.");
+		Melder_throw ("Pitch window not created.");
 	}
 }
 

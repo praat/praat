@@ -24,41 +24,35 @@
 
 #include "Categories.h"
 
-static int readText (I, MelderReadText text)
+static void readText (I, MelderReadText text)
 {
-	try {
-		iam (Categories); 
-		long size = texgeti4 (text);
-		if (size == 0)
-		{
-			OrderedOfString_init (me, 1); therror
-		}
-		if (size < 0) Melder_throw ("Size cannot be negative.");
-    	OrderedOfString_init (me, size); therror
-		for (long i = 1; i <= size; i++)
-		{
-			autoSimpleString item = Thing_new (SimpleString);
-			item -> methods -> readText (item.peek(), text); therror
-			Ordered_addItemPos (me, item.transfer(), i);
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	iam (Categories); 
+	long size = texgeti4 (text);
+	if (size == 0)
+	{
+		OrderedOfString_init (me, 1); therror
+	}
+	if (size < 0) Melder_throw ("Size cannot be negative.");
+	OrderedOfString_init (me, size); therror
+	for (long i = 1; i <= size; i++)
+	{
+		autoSimpleString item = Thing_new (SimpleString);
+		((Data_Table) item -> methods) -> readText (item.peek(), text); therror
+		Ordered_addItemPos (me, item.transfer(), i);
+	}
 } 
 
-static int writeText (I, MelderFile file)
+static void writeText (I, MelderFile file)
 {
-	try {
-		iam (Categories);
-		texputi4 (file, my size, L"size", 0,0,0,0,0);
-		for (long i = 1; i <= my size; i++)
-		{
-			SimpleString data = (SimpleString) my item [i];
-			texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0,0,0);
-			classSimpleString -> writeText (data, file);
-			texexdent (file);
-		}
-		return 1;
-	} catch (MelderError) { rethrowzero; }
+	iam (Categories);
+	texputi4 (file, my size, L"size", 0,0,0,0,0);
+	for (long i = 1; i <= my size; i++)
+	{
+		SimpleString data = (SimpleString) my item [i];
+		texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0,0,0);
+		classSimpleString -> writeText (data, file);
+		texexdent (file);
+	}
 }
 
 class_methods (Categories, OrderedOfString)
@@ -68,7 +62,7 @@ class_methods_end
 
 void Categories_init (Categories me, long size)
 {
-	try { OrderedOfString_init (me, size);} catch (MelderError) { rethrow; }
+	OrderedOfString_init (me, size);
 }
 
 Categories Categories_create (void)
@@ -77,7 +71,7 @@ Categories Categories_create (void)
 		autoCategories me = Thing_new (Categories);
 		Categories_init (me.peek(), 10);
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Categories not created."); }
+	} catch (MelderError) { Melder_thrown ("Categories not created."); }
 }
 
 Categories Categories_sequentialNumbers (long n)
@@ -87,7 +81,7 @@ Categories Categories_sequentialNumbers (long n)
 		OrderedOfString_init (me.peek(), 5); therror
 		OrderedOfString_sequentialNumbers (me.peek(), n); therror
 		return me.transfer();
-	} catch (MelderError) { rethrowmzero ("Sequential number Categories not created."); }
+	} catch (MelderError) { Melder_thrown ("Sequential number Categories not created."); }
 }
 
 Categories Categories_selectUniqueItems (Categories me, int sorted)
@@ -96,7 +90,7 @@ Categories Categories_selectUniqueItems (Categories me, int sorted)
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": no unique categories created."); }
+	} catch (MelderError) { Melder_thrown (me, ": no unique categories created."); }
 }
 
 void Categories_drawItem (Categories me, Graphics g, long position, 
@@ -118,7 +112,7 @@ Categories OrderedOfString_to_Categories (I)
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": not converted to Categories."); }
+	} catch (MelderError) { Melder_thrown (me, ": not converted to Categories."); }
 }
 
 long Categories_getSize (Categories me) { return my size; }
@@ -139,7 +133,7 @@ Categories TableOfReal_to_CategoriesRow (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": row labels not converted to Categories."); }
+	} catch (MelderError) { Melder_thrown (me, ": row labels not converted to Categories."); }
 }
 
 Categories TableOfReal_to_CategoriesColumn (I)
@@ -157,7 +151,7 @@ Categories TableOfReal_to_CategoriesColumn (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { rethrowmzero (me, ": columnlabels not converted to Categories."); }
+	} catch (MelderError) { Melder_thrown (me, ": columnlabels not converted to Categories."); }
 }
 
 /* End of file Categories.cpp */

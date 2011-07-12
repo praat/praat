@@ -78,18 +78,18 @@ extern "C" structMelderDir praatDir;
 
 static void classInterpreterVariable_destroy (I) {
 	iam (InterpreterVariable);
-	Melder_free (my key);
+	Melder_free (my string);
 	Melder_free (my stringValue);
 	NUMdmatrix_free (my numericArrayValue. data, 1, 1);
 	inherited (InterpreterVariable) destroy (me);
 }
 
-class_methods (InterpreterVariable, Thing) {
+class_methods (InterpreterVariable, SimpleString) {
 	class_method_local (InterpreterVariable, destroy)
 	class_methods_end
 }
 
-static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
+static InterpreterVariable InterpreterVariable_create (const wchar *key) {
 	try {
 		if (key [0] == 'e' && key [1] == '\0')
 			Melder_throw ("You cannot use 'e' as the name of a variable (e is the constant 2.71...).");
@@ -99,10 +99,10 @@ static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
 			key [6] == 'n' && key [7] == 'e' && key [8] == 'd' && key [9] == '\0')
 			Melder_throw ("You cannot use 'undefined' as the name of a variable.");
 		autoInterpreterVariable me = Thing_new (InterpreterVariable);
-		my key = Melder_wcsdup (key);
+		my string = Melder_wcsdup (key);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw ("Interpreter variable not created.");
 	}
 }
 
@@ -128,7 +128,7 @@ Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
 		my editorClass = editorClass;
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowzero;
+		Melder_throw ("Interpreter not created.");
 	}
 }
 
@@ -137,15 +137,14 @@ Interpreter Interpreter_createFromEnvironment (Any editor) {
 	return Interpreter_create (((Editor) editor) -> name, ((Editor) editor) -> methods);
 }
 
-int Melder_includeIncludeFiles (wchar_t **text) {
-	int depth;
-	for (depth = 0; ; depth ++) {
-		wchar_t *head = *text;
+void Melder_includeIncludeFiles (wchar **text) {
+	for (int depth = 0; ; depth ++) {
+		wchar *head = *text;
 		long numberOfIncludes = 0;
 		if (depth > 10)
-			return Melder_error1 (L"Include files nested too deep. Probably cyclic.");
+			Melder_throw ("Include files nested too deep. Probably cyclic.");
 		for (;;) {
-			wchar_t *includeLocation, *includeFileName, *includeText, *tail, *newText;
+			wchar *includeLocation, *includeFileName, *tail, *newText;
 			long headLength, includeTextLength, newLength;
 			/*
 				Look for an include statement. If not found, we have finished.
@@ -173,19 +172,22 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 				Get the contents of the include file.
 			 */
 			structMelderFile includeFile = { 0 };
-			if (! Melder_relativePathToFile (includeFileName, & includeFile)) return 0;
-			includeText = MelderFile_readText (& includeFile);
-			if (! includeText) error3 (L"Include file ", MelderFile_messageName (& includeFile), L" not read.")
+			Melder_relativePathToFile (includeFileName, & includeFile);
+			autostring includeText;
+			try {
+				includeText.reset (MelderFile_readText (& includeFile));
+			} catch (MelderError) {
+				Melder_throw ("Include file ", MelderFile_messageName (& includeFile), " not read.");
+			}
 			/*
 				Construct the new text.
 			 */
 			headLength = (head - *text) + wcslen (head);
-			includeTextLength = wcslen (includeText);
+			includeTextLength = wcslen (includeText.peek());
 			newLength = headLength + includeTextLength + 1 + wcslen (tail);
-			newText = Melder_malloc_e (wchar_t, newLength + 1);
-			if (! newText) { Melder_free (includeText); cherror }
+			newText = Melder_malloc (wchar, newLength + 1);
 			wcscpy (newText, *text);
-			wcscpy (newText + headLength, includeText);
+			wcscpy (newText + headLength, includeText.peek());
 			wcscpy (newText + headLength + includeTextLength, L"\n");
 			wcscpy (newText + headLength + includeTextLength + 1, tail);
 			/*
@@ -194,46 +196,37 @@ int Melder_includeIncludeFiles (wchar_t **text) {
 			Melder_free (*text);
 			*text = newText;
 			/*
-				Clean up.
-			 */
-			Melder_free (includeText);
-			/*
 				Cycle.
 			 */
 			head = *text + headLength + includeTextLength + 1;
 		}
 		if (numberOfIncludes == 0) break;
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Interpreter_readParameters (Interpreter me, wchar_t *text) {
-	wchar_t *formLocation = NULL;
-	int npar = 0;
+long Interpreter_readParameters (Interpreter me, wchar *text) {
+	wchar *formLocation = NULL;
+	long npar = 0;
 	my dialogTitle [0] = '\0';
 	/*
 	 * Look for a "form" line.
 	 */
-	{
-		wchar_t *p = text;
-		for (;;) {
-			while (*p == ' ' || *p == '\t') p ++;
-			if (wcsnequ (p, L"form ", 5)) {
-				formLocation = p;
-				break;
-			}
-			while (*p != '\0' && *p != '\n') p ++;
-			if (*p == '\0') break;
-			p ++;   /* Skip newline symbol. */
+	wchar *p = text;
+	for (;;) {
+		while (*p == ' ' || *p == '\t') p ++;
+		if (wcsnequ (p, L"form ", 5)) {
+			formLocation = p;
+			break;
 		}
+		while (*p != '\0' && *p != '\n') p ++;
+		if (*p == '\0') break;
+		p ++;   /* Skip newline symbol. */
 	}
 	/*
 	 * If there is no "form" line, there are no parameters.
 	 */
 	if (formLocation) {
-		wchar_t *dialogTitle = formLocation + 5, *newLine;
+		wchar *dialogTitle = formLocation + 5, *newLine;
 		while (*dialogTitle == ' ' || *dialogTitle == '\t') dialogTitle ++;
 		newLine = wcschr (dialogTitle, '\n');
 		if (newLine) *newLine = '\0';
@@ -246,7 +239,8 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 			while (*line == ' ' || *line == '\t') line ++;
 			while (*line == '#' || *line == ';' || *line == '!' || *line == '\n') {
 				newLine = wcschr (line, '\n');
-				if (newLine == NULL) return Melder_error1 (L"Unfinished form.");
+				if (newLine == NULL)
+					Melder_throw ("Unfinished form.");
 				line = newLine + 1;
 				while (*line == ' ' || *line == '\t') line ++;
 			}
@@ -267,8 +261,9 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 			else {
 				newLine = wcschr (line, '\n');
 				if (newLine) *newLine = '\0';
-				Melder_error3 (L"Unknown parameter type:\n\"", line, L"\".");
+				Melder_error_ ("Unknown parameter type:\n\"", line, "\".");
 				if (newLine) *newLine = '\n';
+				throw MelderError ();
 				return 0;
 			}
 			/*
@@ -294,7 +289,7 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 			if (type <= Interpreter_OPTIONMENU) {
 				while (*p == ' ' || *p == '\t') p ++;
 				if (*p == '\n' || *p == '\0')
-					return Melder_error3 (L"Missing parameter:\n\"", line, L"\".");
+					Melder_throw ("Missing parameter:\n\"", line, "\".");
 				wchar_t *q = my parameters [++ my numberOfParameters];
 				while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') * (q ++) = * (p ++);
 				*q = '\0';
@@ -316,7 +311,9 @@ int Interpreter_readParameters (Interpreter me, wchar_t *text) {
 	return npar;
 }
 
-Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *path, int (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure) {
+Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar *path,
+	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure)
+{
 	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
 	if (path) UiForm_addText (form, L"$file", path);
@@ -373,9 +370,9 @@ Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *pat
 	return form;
 }
 
-int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
+void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-		wchar_t parameter [100], *p;
+		wchar parameter [100], *p;
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
@@ -393,7 +390,7 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 		switch (my types [ipar]) {
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {
-				double value = UiForm_getReal_check (dialog, parameter); cherror
+				double value = UiForm_getReal_check (dialog, parameter); therror
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
 				wcscpy (my arguments [ipar], Melder_double (value));
@@ -402,7 +399,7 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_INTEGER:
 			case Interpreter_NATURAL:
 			case Interpreter_BOOLEAN: {
-				long value = UiForm_getInteger (dialog, parameter); cherror
+				long value = UiForm_getInteger (dialog, parameter); therror
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", value);
@@ -412,10 +409,10 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_OPTIONMENU: {
 				long integerValue = 0;
 				wchar_t *stringValue = NULL;
-				integerValue = UiForm_getInteger (dialog, parameter); cherror
-				stringValue = UiForm_getString (dialog, parameter); cherror
+				integerValue = UiForm_getInteger (dialog, parameter); therror
+				stringValue = UiForm_getString (dialog, parameter); therror
 				Melder_free (my arguments [ipar]);
-				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
+				my arguments [ipar] = Melder_calloc_f (wchar, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", integerValue);
 				wcscpy (my choiceArguments [ipar], stringValue);
 				break;
@@ -425,25 +422,22 @@ int Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_COMMENT:
 				break;
 			default: {
-				wchar_t *value = UiForm_getString (dialog, parameter); cherror
+				wchar *value = UiForm_getString (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_wcsdup_f (value);
 				break;
 			}
 		}
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments) {
+void Interpreter_getArgumentsFromString (Interpreter me, const wchar *arguments) {
 	int size = my numberOfParameters;
 	long length = wcslen (arguments);
 	while (size >= 1 && my parameters [size] [0] == '\0')
 		size --;   /* Ignore fields without a variable name (button, comment). */
 	for (int ipar = 1; ipar <= size; ipar ++) {
-		wchar_t *p = my parameters [ipar];
+		wchar *p = my parameters [ipar];
 		/*
 		 * Ignore buttons and comments again.
 		 */
@@ -464,8 +458,8 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 		 * Ignore buttons and comments again. The buttons will keep their labels as "arguments".
 		 */
 		if (my parameters [ipar] [0] == '\0') continue;
-		Melder_free (my arguments [ipar]);   /* Erase the current values, probably the default values. */
-		my arguments [ipar] = Melder_calloc_f (wchar_t, length + 1);   /* Replace with the actual arguments. */
+		Melder_free (my arguments [ipar]);   // erase the current values, probably the default values
+		my arguments [ipar] = Melder_calloc_f (wchar_t, length + 1);   // replace with the actual arguments
 		/*
 		 * Skip spaces until next argument.
 		 */
@@ -480,17 +474,18 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 		 *     I said "hello"
 		 */
 		if (*arguments == '\"') {
-			arguments ++;   /* Do not include leading double quote. */
+			arguments ++;   // do not include leading double quote
 			for (;;) {
-				if (*arguments == '\0') return Melder_error1 (L"Missing matching quote.");
-				if (*arguments == '\"' && * ++ arguments != '\"') break;   /* Remember second quote. */
+				if (*arguments == '\0')
+					Melder_throw ("Missing matching quote.");
+				if (*arguments == '\"' && * ++ arguments != '\"') break;   // remember second quote
 				my arguments [ipar] [ichar ++] = *arguments ++;
 			}
 		} else {
 			while (*arguments != ' ' && *arguments != '\t' && *arguments != '\0')
 				my arguments [ipar] [ichar ++] = *arguments ++;
 		}
-		my arguments [ipar] [ichar] = '\0';   /* Trailing null byte. */
+		my arguments [ipar] [ichar] = '\0';   // trailing null byte
 	}
 	/* The last item is handled separately, because it consists of the rest of the line.
 	 * Leading spaces are skipped, but trailing spaces are included.
@@ -515,28 +510,28 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 			{
 				wcscpy (arg, L"0");
 			} else {
-				return Melder_error5 (L"Unknown value \"", arg, L"\" for boolean \"", my parameters [ipar], L"\".");
+				Melder_throw ("Unknown value \"", arg, "\" for boolean \"", my parameters [ipar], "\".");
 			}
 		} else if (my types [ipar] == Interpreter_CHOICE) {
 			int jpar;
 			wchar_t *arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
-					return Melder_error5 (L"Unknown value \"", arg, L"\" for choice \"", my parameters [ipar], L"\".");
-				if (wcsequ (my arguments [jpar], arg)) {   /* The button labels are in the arguments, see Interpreter_readParameters */
+					Melder_throw ("Unknown value \"", arg, "\" for choice \"", my parameters [ipar], "\".");
+				if (wcsequ (my arguments [jpar], arg)) {   // the button labels are in the arguments; see Interpreter_readParameters
 					swprintf (arg, 40, L"%d", jpar - ipar);
 					wcscpy (my choiceArguments [ipar], my arguments [jpar]);
 					break;
 				}
 			}
 			if (jpar > my numberOfParameters)
-				return Melder_error5 (L"Unknown value \"", arg, L"\" for choice \"", my parameters [ipar], L"\".");
+				Melder_throw ("Unknown value \"", arg, "\" for choice \"", my parameters [ipar], "\".");
 		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
 			int jpar;
 			wchar_t *arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
-					return Melder_error5 (L"Unknown value \"", arg, L"\" for option menu \"", my parameters [ipar], L"\".");
+					Melder_throw ("Unknown value \"", arg, "\" for option menu \"", my parameters [ipar], "\".");
 				if (wcsequ (my arguments [jpar], arg)) {
 					swprintf (arg, 40, L"%d", jpar - ipar);
 					wcscpy (my choiceArguments [ipar], my arguments [jpar]);
@@ -544,27 +539,26 @@ int Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments
 				}
 			}
 			if (jpar > my numberOfParameters)
-				return Melder_error5 (L"Unknown value \"", arg, L"\" for option menu \"", my parameters [ipar], L"\".");
+				Melder_throw ("Unknown value \"", arg, "\" for option menu \"", my parameters [ipar], "\".");
 		}
 	}
-	return 1;
 }
 
-static int Interpreter_addNumericVariable (Interpreter me, const wchar_t *key, double value) {
+static int Interpreter_addNumericVariable (Interpreter me, const wchar *key, double value) {
 	InterpreterVariable variable = InterpreterVariable_create (key);
-	if (! variable || ! Collection_addItem (my variables, variable)) return 0;
 	variable -> numericValue = value;
+	Collection_addItem (my variables, variable);
 	return 1;
 }
 
-static InterpreterVariable Interpreter_addStringVariable (Interpreter me, const wchar_t *key, const wchar_t *value) {
+static InterpreterVariable Interpreter_addStringVariable (Interpreter me, const wchar *key, const wchar *value) {
 	InterpreterVariable variable = InterpreterVariable_create (key);
-	if (! variable || ! Collection_addItem (my variables, variable)) return NULL;
-	variable -> stringValue = Melder_wcsdup_f (value);
+	variable -> stringValue = Melder_wcsdup (value);
+	Collection_addItem (my variables, variable);
 	return variable;
 }
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key) {
+InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar *key) {
 	long ivar = 0;
 	wchar_t variableNameIncludingProcedureName [1+200];
 	Melder_assert (key != NULL);
@@ -578,9 +572,9 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key)
 	return ivar ? (InterpreterVariable) my variables -> item [ivar] : NULL;
 }
 
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key) {
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar *key) {
 	InterpreterVariable var = NULL;
-	wchar_t variableNameIncludingProcedureName [1+200];
+	wchar variableNameIncludingProcedureName [1+200];
 	Melder_assert (key != NULL);
 	if (key [0] == '.') {
 		wcscpy (variableNameIncludingProcedureName, my procedureNames [my callDepth]);
@@ -591,11 +585,11 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *k
 	var = Interpreter_hasVariable (me, variableNameIncludingProcedureName);
 	if (var) return var;
 	var = InterpreterVariable_create (variableNameIncludingProcedureName);
-	if (! var || ! Collection_addItem (my variables, var)) return NULL;
+	Collection_addItem (my variables, var);
 	return Interpreter_hasVariable (me, variableNameIncludingProcedureName);
 }
 
-static long lookupLabel (Interpreter me, const wchar_t *labelName) {
+static long lookupLabel (Interpreter me, const wchar *labelName) {
 	int ilabel;
 	for (ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 		if (wcsequ (labelName, my labelNames [ilabel]))
@@ -603,7 +597,7 @@ static long lookupLabel (Interpreter me, const wchar_t *labelName) {
 	return Melder_error3 (L"Unknown label \"", labelName, L"\".");
 }
 
-static bool isCommand (const wchar_t *p) {
+static bool isCommand (const wchar *p) {
 	/*
 	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
 	 */
@@ -641,12 +635,12 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 	}
 }
 
-int Interpreter_run (Interpreter me, wchar_t *text) {
+void Interpreter_run (Interpreter me, wchar *text) {
 	autoNUMvector <wchar *> lines;
 	long lineNumber = 0;
 	bool assertionFailed = false;
 	try {
-		static MelderString valueString = { 0 };   /* To divert the info. */
+		static MelderString valueString = { 0 };   // to divert the info
 		static MelderString assertErrorString = { 0 };
 		wchar_t *command = text;
 		autoMelderString command2;
@@ -659,8 +653,6 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		 */
 		if (my editorClass) {
 			praatP. editor = praat_findEditorFromString (my environmentName);
-			if (praatP. editor == NULL)
-				return Melder_error3 (L"Editor \"", my environmentName, L"\" does not exist.");
 		} else {
 			praatP. editor = NULL;
 		}
@@ -1552,22 +1544,18 @@ int Interpreter_run (Interpreter me, wchar_t *text) {
 		my numberOfLabels = 0;
 		my running = false;
 		my stopped = false;
-		return 1;
 	} catch (MelderError) {
-		iferror {
-			if (! wcsnequ (lines [lineNumber], L"exit ", 5) && ! assertionFailed) {   // don't show the message twice!
-				while (lines [lineNumber] [0] == '\0') {   // did this use to be a continuation line?
-					lineNumber --;
-					Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
-				}
-				Melder_error5 (L"Script line ", Melder_integer (lineNumber), L" not performed or completed:\n" L_LEFT_GUILLEMET L" ",
-					lines [lineNumber], L" " L_RIGHT_GUILLEMET);
+		if (! wcsnequ (lines [lineNumber], L"exit ", 5) && ! assertionFailed) {   // don't show the message twice!
+			while (lines [lineNumber] [0] == '\0') {   // did this use to be a continuation line?
+				lineNumber --;
+				Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
 			}
+			Melder_error_ ("Script line ", lineNumber, " not performed or completed:\n" L_LEFT_GUILLEMET " ", lines [lineNumber], " " L_RIGHT_GUILLEMET);
 		}
 		my numberOfLabels = 0;
 		my running = false;
 		my stopped = false;
-		return 0;
+		throw;
 	}
 }
 
@@ -1577,56 +1565,41 @@ void Interpreter_stop (Interpreter me) {
 //Melder_casual ("Interpreter_stop out: %ld", me);
 }
 
-int Interpreter_voidExpression (Interpreter me, const wchar_t *expression) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); cherror
+void Interpreter_voidExpression (Interpreter me, const wchar *expression) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); therror
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); cherror
-end:
-	iferror return 0;
-	return 1;
+	Formula_run (0, 0, & result); therror
 }
 
-int Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value) {
+void Interpreter_numericExpression (Interpreter me, const wchar *expression, double *value) {
 	Melder_assert (value != NULL);
 	if (wcsstr (expression, L"(=")) {
 		*value = Melder_atof (expression);
 	} else {
-		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); cherror
+		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); therror
 		struct Formula_Result result;
-		Formula_run (0, 0, & result); cherror
+		Formula_run (0, 0, & result); therror
 		*value = result. result.numericResult;
 	}
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE); cherror
+void Interpreter_stringExpression (Interpreter me, const wchar *expression, wchar **value) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE); therror
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); cherror
+	Formula_run (0, 0, & result); therror
 	*value = result. result.stringResult;
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE); cherror
+void Interpreter_numericArrayExpression (Interpreter me, const wchar *expression, struct Formula_NumericArray *value) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE); therror
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); cherror
+	Formula_run (0, 0, & result); therror
 	*value = result. result.numericArrayResult;
-end:
-	iferror return 0;
-	return 1;
 }
 
-int Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE); cherror
-	Formula_run (0, 0, result); cherror
-end:
-	iferror return 0;
-	return 1;
+void Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result) {
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE); therror
+	Formula_run (0, 0, result); therror
 }
 
 /* End of file Interpreter.cpp */

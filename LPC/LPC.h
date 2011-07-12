@@ -24,19 +24,15 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Matrix.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
 #include "LPC_def.h"
-#define LPC_methods Sampled_methods
+#define LPC__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (LPC, Sampled);
 
 /*
@@ -62,7 +58,7 @@ Matrix LPC_to_Matrix (LPC me);
 
 /******************* Frames ************************************************/
 
-int LPC_Frame_init (LPC_Frame me, int nCoefficients);
+void LPC_Frame_init (LPC_Frame me, int nCoefficients);
 
 #ifdef __cplusplus
 	}

@@ -52,7 +52,6 @@ Categories Pattern_to_Categories_cluster
 )
 
 {
-	try {
 		autoCategories categories = Categories_sequentialNumbers (k);
 		if (k == p->ny)
 			return categories.transfer();
@@ -69,12 +68,11 @@ Categories Pattern_to_Categories_cluster
 		autoPattern centroids = (Pattern) Pattern_create (k, p->nx);
 		autoNUMvector <double> beta (0L, centroids->nx);
 
-		autoMelderProgress (L"Pattern: cluster");
 		do
 		{
 			double delta;
 			long nfriends  = 0;
-			if (!Melder_progress1(1 - (progress - m) / progress, L"")) break;
+			Melder_progress1(1 - (progress - m) / progress, L"");
 
 			for (long y = 1; y <= centroids->ny; y++)
 			{
@@ -171,9 +169,6 @@ Categories Pattern_to_Categories_cluster
 		autoCategories output = KNN_classifyToCategories (knn.peek(), p, fws, 1, kOla_FLAT_VOTING);
 
 		return output.transfer();
-	} catch (MelderError) {
-		rethrowzero;
-	}
 }
 
 /* End of file Pattern_to_Categories_cluster.cpp */

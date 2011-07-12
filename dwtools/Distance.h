@@ -24,20 +24,18 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Proximity_h_
-	#include "Proximity.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Proximity.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-#define Distance_members Proximity_members
-#define Distance_methods Proximity_methods
-class_create (Distance, Proximity);
+Thing_declare1cpp (Distance);
+struct structDistance : public structProximity {
+};
+#define Distance__methods(klas) Proximity__methods(klas)
+Thing_declare2cpp (Distance, Proximity);
 
 Distance Distance_create (long numberOfPoints);
 

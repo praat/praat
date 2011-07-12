@@ -62,36 +62,14 @@
 #define MDS_MSPLINE 1
 #define MDS_ISPLINE 2
 
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Minimizers_h_
-	#include "Minimizers.h"
-#endif
-#ifndef _Confusion_h_
-	#include "Confusion.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _TableOfReal_extensions_h_
-	#include "TableOfReal_extensions.h"
-#endif
-#ifndef _Proximity_h_
-	#include "Proximity.h"
-#endif
-#ifndef _Distance_h_
-	#include "Distance.h"
-#endif
-#ifndef _Configuration_h_
-	#include "Configuration.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
+#include "Graphics.h"
+#include "Minimizers.h"
+#include "Confusion.h"
+#include "TableOfReal_extensions.h"
+#include "Proximity.h"
+#include "Distance.h"
+#include "Configuration.h"
+#include "SSCP.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -99,17 +77,21 @@
 
 /************************** class Weight **************************************/
 
-#define Weight_members TableOfReal_members
-#define Weight_methods TableOfReal_methods
-class_create (Weight, TableOfReal);
+Thing_declare1cpp (Weight);
+struct structWeight : public structTableOfReal {
+};
+#define Weight__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Weight, TableOfReal);
 
 Weight Weight_create (long numberOfPoints);
 
 /************************** class Salience **************************************/
 
-#define Salience_members TableOfReal_members
-#define Salience_methods TableOfReal_methods
-class_create (Salience, TableOfReal);
+Thing_declare1cpp (Salience);
+struct structSalience : public structTableOfReal {
+};
+#define Salience__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (Salience, TableOfReal);
 
 Salience Salience_create (long numberOfSources, long numberOfDimensions);
 
@@ -122,30 +104,35 @@ void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension,
 
 /************************** class MDSVec ******************************/
 
-#define MDSVec_members Data_members	\
-	long nProximities, nPoints;		\
-	double *proximity;				\
+Thing_declare1cpp (MDSVec);
+struct structMDSVec : public structData {
+	long nProximities, nPoints;
+	double *proximity;
 	long *iPoint, *jPoint;
-#define MDSVec_methods Data_methods
-class_create (MDSVec, Data);
+};
+#define MDSVec__methods(klas) Data__methods(klas)
+Thing_declare2cpp (MDSVec, Data);
 
 MDSVec MDSVec_create (long nObjects);
 
 /************** class MDSVecs *********************************/
 
-#define MDSVecs_members Ordered_members
-#define MDSVecs_methods Ordered_methods
-class_create (MDSVecs, Ordered);
+Thing_declare1cpp (MDSVecs);
+struct structMDSVecs : public structOrdered {
+};
+#define MDSVecs__methods(klas) Ordered__methods(klas)
+Thing_declare2cpp (MDSVecs, Ordered);
 
 MDSVecs MDSVecs_create (void);
 
 
 /*********** class ContingencyTable ***********************************/
 
-
-#define ContingencyTable_members TableOfReal_members
-#define ContingencyTable_methods TableOfReal_methods
-class_create (ContingencyTable, TableOfReal);
+Thing_declare1cpp (ContingencyTable);
+struct structContingencyTable : public structTableOfReal {
+};
+#define ContingencyTable__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (ContingencyTable, TableOfReal);
 
 /* entries must be nonnegative numbers */
 
@@ -171,9 +158,11 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me);
 	
 /********************* class Proximities *******************************/
 
-#define Proximities_members TablesOfReal_members
-#define Proximities_methods TablesOfReal_methods
-class_create (Proximities, TablesOfReal);
+Thing_declare1cpp (Proximities);
+struct structProximities : public structTablesOfReal {
+};
+#define Proximities__methods(klas) TablesOfReal__methods(klas)
+Thing_declare2cpp (Proximities, TablesOfReal);
 
 void Proximities_init (I, void *klas);
 
@@ -181,9 +170,11 @@ Proximities Proximities_create (void);
 
 /****************** class Confusions **********************************/
 
-#define Confusions_members Proximities_members
-#define Confusions_methods Proximities_methods
-class_create (Confusions, Proximities);
+Thing_declare1cpp (Confusions);
+struct structConfusions : public structProximities {
+};
+#define Confusions__methods(klas) Proximities__methods(klas)
+Thing_declare2cpp (Confusions, Proximities);
 
 Confusions Confusions_create (void);
 
@@ -191,36 +182,44 @@ Confusion Confusions_sum (Confusions me);
 
 /************* class Distances **************************************/
 
-#define Distances_members Proximities_members
-#define Distances_methods Proximities_methods
-class_create (Distances, Proximities);
+Thing_declare1cpp (Distances);
+struct structDistances : public structProximities {
+};
+#define Distances__methods(klas) Proximities__methods(klas)
+Thing_declare2cpp (Distances, Proximities);
 
 Distances Distances_create (void);
 
 
 /**************** class ScalarProduct **************************************/
 
-#define ScalarProduct_members TableOfReal_members
-#define ScalarProduct_methods TableOfReal_methods
-class_create (ScalarProduct, TableOfReal);
+Thing_declare1cpp (ScalarProduct);
+struct structScalarProduct : public structTableOfReal {
+};
+#define ScalarProduct__methods(klas) TableOfReal__methods(klas)
+Thing_declare2cpp (ScalarProduct, TableOfReal);
 
 ScalarProduct ScalarProduct_create (long numberOfPoints);
 
 
 /************** class ScalarProducts ********************************/
 
-#define ScalarProducts_members TablesOfReal_members
-#define ScalarProducts_methods TablesOfReal_methods
-class_create (ScalarProducts, TablesOfReal);
+Thing_declare1cpp (ScalarProducts);
+struct structScalarProducts : public structTablesOfReal {
+};
+#define ScalarProducts__methods(klas) TablesOfReal__methods(klas)
+Thing_declare2cpp (ScalarProducts, TablesOfReal);
 
 ScalarProducts ScalarProducts_create (void);
 
 
 /************* class Dissimilarity *********************************/
 
-#define Dissimilarity_members Proximity_members
-#define Dissimilarity_methods Proximity_methods
-class_create (Dissimilarity, Proximity);
+Thing_declare1cpp (Dissimilarity);
+struct structDissimilarity : public structProximity {
+};
+#define Dissimilarity__methods(klas) Proximity__methods(klas)
+Thing_declare2cpp (Dissimilarity, Proximity);
 
 Dissimilarity Dissimilarity_create (long numberOfPoints);
 
@@ -235,12 +234,14 @@ int Dissimilarity_getAdditiveConstant (I, double *c);
 
 /****************** class Transformator *******************************/
 
-#define Transformator_members Thing_members	\
-	long numberOfPoints;					\
+Thing_declare1cpp (Transformator);
+struct structTransformator : public structThing {
+	long numberOfPoints;
 	int normalization;
-#define Transformator_methods Thing_methods	\
+};
+#define Transformator__methods(klas) Thing__methods(klas)	\
 	Distance (*transform) (I, MDSVec vec, Distance dist, Weight w);
-class_create (Transformator, Thing);
+Thing_declare2cpp (Transformator, Thing);
 
 void Transformator_init (I, long numberOfPoints);
 
@@ -250,26 +251,32 @@ void Transformator_setNormalization (I, int normalization);
 
 Distance Transformator_transform (I, MDSVec vec, Distance dist, Weight w);
 
-#define ISplineTransformator_members Transformator_members	\
-	long numberOfInteriorKnots, order, numberOfParameters;	\
+Thing_declare1cpp (ISplineTransformator);
+struct structISplineTransformator : public structTransformator {
+	long numberOfInteriorKnots, order, numberOfParameters;
 	double **m, *b, *knot;
-#define ISplineTransformator_methods Transformator_methods
-class_create (ISplineTransformator, Transformator);
+};
+#define ISplineTransformator__methods(klas) Transformator__methods(klas)
+Thing_declare2cpp (ISplineTransformator, Transformator);
 
 ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots,
 	long order);
 
-#define RatioTransformator_members Transformator_members \
+Thing_declare1cpp (RatioTransformator);
+struct structRatioTransformator : public structTransformator {
 	double ratio;
-#define RatioTransformator_methods Transformator_methods
-class_create (RatioTransformator, Transformator);
+};
+#define RatioTransformator__methods(klas) Transformator__methods(klas)
+Thing_declare2cpp (RatioTransformator, Transformator);
 
 RatioTransformator RatioTransformator_create (long numberOfPoints);
 
-#define MonotoneTransformator_members Transformator_members \
+Thing_declare1cpp (MonotoneTransformator);
+struct structMonotoneTransformator : public structTransformator {
 	int tiesProcessing;
-#define MonotoneTransformator_methods Transformator_methods
-class_create (MonotoneTransformator, Transformator);
+};
+#define MonotoneTransformator__methods(klas) Transformator__methods(klas)
+Thing_declare2cpp (MonotoneTransformator, Transformator);
 
 MonotoneTransformator MonotoneTransformator_create (long numberPoints);
 
@@ -279,36 +286,41 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 
 /*************** class Dissimilarities ****************************/
 
-
-#define Dissimilarities_members Proximities_members
-#define Dissimilarities_methods Proximities_methods
-class_create (Dissimilarities, Proximities);
+Thing_declare1cpp (Dissimilarities);
+struct structDissimilarities : public structProximities {
+};
+#define Dissimilarities__methods(klas) Proximities__methods(klas)
+Thing_declare2cpp (Dissimilarities, Proximities);
 
 Dissimilarities Dissimilarities_create (void);
 
 /**************** class Similarity *****************************/
 
-#define Similarity_members Proximity_members
-#define Similarity_methods Proximity_methods
-class_create (Similarity, Proximity);
+Thing_declare1cpp (Similarity);
+struct structSimilarity : public structProximity {
+};
+#define Similarity__methods(klas) Proximity__methods(klas)
+Thing_declare2cpp (Similarity, Proximity);
 
 Similarity Similarity_create (long numberOfPoints);
 
 
 /************** KRUSKAL *********************************************/
 
-#define Kruskal_members Thing_members	\
-	int process;						\
-	int measurementLevel;				\
-	int conditionality;					\
-	Configuration configuration;		\
-	Proximities proximities;			\
-	int stress_formula;					\
-	MDSVec vec;							\
-	double **dx;						\
+Thing_declare1cpp (Kruskal);
+struct structKruskal : public structThing {
+	int process;
+	int measurementLevel;
+	int conditionality;
+	Configuration configuration;
+	Proximities proximities;
+	int stress_formula;
+	MDSVec vec;
+	double **dx;
 	Minimizer minimizer;
-#define Kruskal_methods Thing_methods
-class_create (Kruskal, Thing);
+};
+#define Kruskal__methods(klas) Thing__methods(klas)
+Thing_declare2cpp (Kruskal, Thing);
 
 Kruskal Kruskal_create (long numberOfpoints, long numberOfDimensions);
 
@@ -613,18 +625,18 @@ Distances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee,
 
 /************** SCALARPRODUCT(S) & ...... **********************************/
 
-int ScalarProduct_Configuration_getVariances (ScalarProduct me, 
+void ScalarProduct_Configuration_getVariances (ScalarProduct me, 
 	Configuration thee, double *varianceExplained, double *varianceTotal);
 	
-int ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, 
+void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, 
 	Configuration thee, Salience him, double *vaf);
 
 ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize);
 
-int ScalarProducts_to_Configuration_ytl (ScalarProducts me, 
+void ScalarProducts_to_Configuration_ytl (ScalarProducts me, 
 	int numberOfDimensions, Configuration *out1, Salience *out2);
 
-int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, 
+void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, 
 	Configuration conf, Salience weights, double tolerance, 
 	long numberOfIterations, int showProgress, 
 	Configuration *out1, Salience *out2, double *vaf);
@@ -632,31 +644,26 @@ int ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp,
 /************** INDSCAL & ....... ***********************************/
 
 
-int Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, 
+void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, 
 	int processTies, int normalizeScalarProducts, double tolerance, 
 	long numberOfIterations, long numberOfRepetitions, int showProgress, 
 	Configuration *out1, Salience *out2);
 
-int Distances_indscal (Distances me, long numberOfDimensions, 
-	int normalizeScalarProducts, double tolerance, long numberOfIterations, 
-	long numberOfRepetitions, int showProgress,
-	Configuration *out1, Salience *out2);
-	
-int Distances_indscaltb (Distances me, long numberOfDimensions, 
+void Distances_indscal (Distances me, long numberOfDimensions, 
 	int normalizeScalarProducts, double tolerance, long numberOfIterations, 
 	long numberOfRepetitions, int showProgress,
 	Configuration *out1, Salience *out2);
 
-int Dissimilarities_Configuration_indscal (Dissimilarities me, 
+void Dissimilarities_Configuration_indscal (Dissimilarities me, 
 	Configuration conf, int processTies, int normalizeScalarProducts,
 	double tolerance, long numberOfIterations,
 	int showProgress, Configuration *out1, Salience *out2);
 	
-int Distances_Configuration_indscal (Distances dists, Configuration conf,
+void Distances_Configuration_indscal (Distances dists, Configuration conf,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
 	int showProgress, Configuration *out1, Salience *out2);
 
-int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
+void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 	Configuration conf, Salience w, int processTies, 
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
 	int showProgress, Configuration *out1, Salience *out2, double *vaf);
@@ -664,26 +671,21 @@ int Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims,
 Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
 	Configuration conf, Salience weights, int processTies);
 
-int Distances_Configuration_Salience_indscal (Distances dists,
-	Configuration conf, Salience weights,
-	int normalizeScalarProducts, double tolerance, long numberOfIterations,
-	int showProgress, Configuration *out1, Salience *out2, double *vaf);
-	
-int Distances_Configuration_Salience_indscaltb (Distances dists,
+void Distances_Configuration_Salience_indscal (Distances dists,
 	Configuration conf, Salience weights,
 	int normalizeScalarProducts, double tolerance, long numberOfIterations,
 	int showProgress, Configuration *out1, Salience *out2, double *vaf);
 
-int Distances_Configuration_Salience_vaf (Distances me, Configuration thee,
+void Distances_Configuration_Salience_vaf (Distances me, Configuration thee,
 	Salience him, int normalizeScalarProducts, double *vaf);
 		
-int Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee,
+void Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee,
 	Salience him, int processTies, int normalizeScalarProducts, double *vaf);
 
-int Distances_Configuration_vaf (Distances me, Configuration thee,
+void Distances_Configuration_vaf (Distances me, Configuration thee,
 	int normalizeScalarProducts, double *vaf);
 
-int Dissimilarities_Configuration_vaf (Dissimilarities me, Configuration thee,
+void Dissimilarities_Configuration_vaf (Dissimilarities me, Configuration thee,
 	int processTies, int normalizeScalarProducts, double *vaf);
 	
 Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, 

@@ -32,31 +32,22 @@
 	extern "C" {
 #endif
 
-#define Command_members Thing_members	\
-	Any data;							\
-	int (*execute) (I);				\
-	int (*undo) (I);
-#define Command_methods Thing_methods
-class_create (Command, Thing);
+Thing_declare1cpp (Command);
 
-int Command_init (I, wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any));
+void Command_init (I, const wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any));
 	
 int Command_do (I);
 
 int Command_undo (I);
 
-
-#define CommandHistory_members Ordered_members	\
-	long current;
-#define CommandHistory_methods Ordered_methods
-class_create (CommandHistory, Ordered);
+Thing_declare1cpp (CommandHistory);
 
 /* Active data structure. 'current' is position of the cursor in the list */
 /* Queries and insertions are at the current position */
 /* Invariants: */
 /*	0 <= current <= size + 1; */
 
-Any CommandHistory_create (long maximumCapacity);
+CommandHistory CommandHistory_create (long maximumCapacity);
 
 void CommandHistory_forth (I);
 /* Precondition: ! offright */
@@ -89,6 +80,21 @@ wchar_t *CommandHistory_commandName (I, long offsetFromCurrent);
 
 #ifdef __cplusplus
 	}
+
+	struct structCommand : public structThing {
+		Any data;
+		int (*execute) (I);
+		int (*undo) (I);
+	};
+	#define Command__methods(klas) Thing__methods(klas)
+	Thing_declare2cpp (Command, Thing);
+
+	struct structCommandHistory : public structOrdered {
+		long current;
+	};
+	#define CommandHistory__methods(klas) Ordered__methods(klas)
+	Thing_declare2cpp (CommandHistory, Ordered);
+
 #endif
 
 #endif /* _Command_h_ */

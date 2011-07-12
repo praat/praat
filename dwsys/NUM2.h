@@ -52,7 +52,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
 /* return array with the number of numbers found */
 
 int NUMstrings_equal (const wchar_t **s1, const wchar_t **s2, long lo, long hi);
-int NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
+void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
 void NUMstrings_free (wchar_t **s, long lo, long hi);
 int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
 	const wchar_t *precursor, long number, long increment);
@@ -241,7 +241,7 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-int NUMmad (double *x, long n, double *location, int wantlocation,
+void NUMmad (double *x, long n, double *location, int wantlocation,
 	double *mad, double *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
@@ -254,7 +254,7 @@ int NUMmad (double *x, long n, double *location, int wantlocation,
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
-int NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
+void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 	double *scale, int wantscale, double k, double tol, double *work);
 /*
 	Finds the Huber M-estimator for location with scale specified,
@@ -413,7 +413,7 @@ void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]);
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-int NUMlowerCholeskyInverse (double **a, long n, double *lnd);
+void NUMlowerCholeskyInverse (double **a, long n, double *lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
@@ -425,7 +425,7 @@ double **NUMinverseFromLowerCholesky (double **m, long n);
 	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
 */
 
-int NUMdeterminant_cholesky (double **a, long n, double *lnd);
+void NUMdeterminant_cholesky (double **a, long n, double *lnd);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
@@ -459,7 +459,7 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]);
 	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
 */
 
-int NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
+void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance);
 /*
 	Determines the first dominant eigenvector from a GENERAL matrix
 	mns[1..n][1..].
@@ -473,7 +473,7 @@ int NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, dou
 	London, (Par. 7.3.1 The Power Method)
 */
 
-int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
+void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 	long numberOfComponents, double **pc);
 /*
 	Precondition:
@@ -498,13 +498,13 @@ int NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols,
 		principal directions.
 */
 
-int NUMprincipalComponents (double **a, long n, long nComponents, double **pc);
+void NUMprincipalComponents (double **a, long n, long nComponents, double **pc);
 /*
 	Determines the principal components of a real symmetric matrix
 	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
 */
 
-int NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance);
+void NUMpseudoInverse (double **y, long nr, long nc, double **yinv, double tolerance);
 /*
 	Determines the pseudo-inverse Y^-1 of Y[1..nr][1..nc] via s.v.d.
 	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
@@ -519,7 +519,7 @@ long NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double
 	If no roots found then x1 and x2 will not be changed.
 */
 
-int NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, double *x);
+void NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, double *x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
@@ -527,7 +527,7 @@ int NUMsolveEquation (double **a, long nr, long nc, double *b, double tol, doubl
 	Algorithm: s.v.d.
 */
 
-int NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tol, double **x);
+void NUMsolveEquations (double **a, long nr, long nc, double **b, long ncb, double tol, double **x);
 /*
 	Solve the equation: a.x = b;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
@@ -576,7 +576,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, doub
 		alpha >= 0
 */
 
-int NUMProcrustes (double **x, double **y, long nPoints,
+void NUMProcrustes (double **x, double **y, long nPoints,
 	long nDimensions, double **t, double *v, double *s);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
@@ -587,7 +587,7 @@ int NUMProcrustes (double **x, double **y, long nPoints,
 	the orthogonal Procrustes transform.
 */
 
-int NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure),
+void NUMnrbis (void (*f)(double x, double *fx, double *dfx, void *closure),
 	double x1, double x2, void *closure, double *root);
 /*
 	Find the root of a function between x1 and x2.
@@ -872,7 +872,7 @@ double **NUMcosinesTable (long first, long last, long npoints);
 
 /******  Interpolation ****/
 
-int NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]);
+void NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2[]);
 /*
 	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
@@ -885,7 +885,7 @@ int NUMspline (double x[], double y[], long n, double yp1, double ypn, double y2
 	zero second derivative on that boundary.
 */
 
-int NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y);
+void NUMsplint (double xa[], double ya[], double y2a[], long n, double x, double *y);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
@@ -997,28 +997,23 @@ struct structNUMfft_Table
 typedef struct structNUMfft_Table_f *NUMfft_Table_f;
 typedef struct structNUMfft_Table *NUMfft_Table;
 
-int NUMfft_Table_init_f (NUMfft_Table_f table, long n);
-int NUMfft_Table_init (NUMfft_Table table, long n);
+void NUMfft_Table_init_f (NUMfft_Table_f table, long n);
+void NUMfft_Table_init (NUMfft_Table table, long n);
 /*
 	n : data size
 */
 
-void NUMfft_Table_free_f (NUMfft_Table_f table);
-void NUMfft_Table_free (NUMfft_Table table);
-
 #ifdef __cplusplus
-struct autoNUMfft_Table {
-        structNUMfft_Table table;
-        autoNUMfft_Table () throw () {
-                table.n = 0;
-                table.trigcache = NULL;
-                table.splitcache = NULL;
-                //Melder_casual ("creating fft table");
-        }
-        ~autoNUMfft_Table () {
-                NUMfft_Table_free (& table);
-                //Melder_casual ("deleting fft table");
-        }
+struct autoNUMfft_Table : public structNUMfft_Table {
+	autoNUMfft_Table () throw () {
+		n = 0;
+		trigcache = 0;
+		splitcache = 0;
+	}
+	~autoNUMfft_Table () {
+		NUMvector_free (trigcache, 0);
+		NUMvector_free (splitcache, 0);
+	}
 };
 #endif
 
@@ -1112,8 +1107,8 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 
 /**** Compatibility with NR fft's */
 
-int NUMforwardRealFastFourierTransform_f (float  *data, long n);
-int NUMforwardRealFastFourierTransform (double  *data, long n);
+void NUMforwardRealFastFourierTransform_f (float  *data, long n);
+void NUMforwardRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1127,8 +1122,8 @@ int NUMforwardRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-int NUMreverseRealFastFourierTransform_f (float  *data, long n);
-int NUMreverseRealFastFourierTransform (double  *data, long n);
+void NUMreverseRealFastFourierTransform_f (float  *data, long n);
+void NUMreverseRealFastFourierTransform (double  *data, long n);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1140,8 +1135,8 @@ int NUMreverseRealFastFourierTransform (double  *data, long n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-int NUMrealft_f (float  *data, long n, int direction);    /* Please stop using. */
-int NUMrealft (double *data, long n, int direction);
+void NUMrealft_f (float *data, long n, int direction);    /* Please stop using. */
+void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 

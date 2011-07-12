@@ -24,33 +24,14 @@
  * djmw 20110306 Latest modification
  */
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _IntensityTier_h_
-	#include "IntensityTier.h"
-#endif
-#ifndef _PitchTier_h_
-	#include "PitchTier.h"
-#endif
-#ifndef _FormantGrid_h_
-	#include "FormantGrid.h"
-#endif
-#ifndef _KlattTable_h_
-	#include "KlattTable.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
-#endif
+#include "Collection.h"
+#include "PointProcess.h"
+#include "Sound.h"
+#include "IntensityTier.h"
+#include "PitchTier.h"
+#include "FormantGrid.h"
+#include "KlattTable.h"
+#include "Interpreter_decl.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -58,40 +39,40 @@
 
 #include "KlattGrid_def.h"
 
-#define PhonationPoint_methods Data_methods
+#define PhonationPoint__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PhonationPoint, Data);
 
-#define PhonationTier_methods Function_methods
+#define PhonationTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (PhonationTier, Function);
 
-#define PhonationGridPlayOptions_methods Data_methods
+#define PhonationGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PhonationGridPlayOptions, Data);
 
-#define PhonationGrid_methods Function_methods
+#define PhonationGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (PhonationGrid, Function);
 
-#define VocalTractGridPlayOptions_methods Data_methods
+#define VocalTractGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (VocalTractGridPlayOptions, Data);
 
-#define VocalTractGrid_methods Function_methods
+#define VocalTractGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (VocalTractGrid, Function);
 
-#define CouplingGridPlayOptions_methods Data_methods
+#define CouplingGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (CouplingGridPlayOptions, Data);
 
-#define CouplingGrid_methods Function_methods
+#define CouplingGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (CouplingGrid, Function);
 
-#define FricationGridPlayOptions_methods Data_methods
+#define FricationGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FricationGridPlayOptions, Data);
 
-#define FricationGrid_methods Function_methods
+#define FricationGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FricationGrid, Function);
 
-#define KlattGridPlayOptions_methods Data_methods
+#define KlattGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (KlattGridPlayOptions, Data);
 
-#define KlattGrid_methods Function_methods
+#define KlattGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (KlattGrid, Function);
 
 /******************** PhonationPoint & Tier ************************************/

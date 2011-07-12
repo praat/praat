@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/07/23 constraint plasticity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/03/29 C++
  */
 
@@ -63,7 +63,7 @@ OTGrammar OTGrammar_create_NoCoda_grammar (void) {
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("NoCoda grammar not created.");
+		Melder_throw ("NoCoda grammar not created.");
 	}
 }
 

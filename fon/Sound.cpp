@@ -128,6 +128,9 @@ static double getMatrix (I, long irow, long icol) {
 	return my z [irow] [icol];
 }
 
+#undef our
+#define our ((Sound_Table) my methods) ->
+
 static double getFunction2 (I, double x, double y) {
 	iam (Sound);
 	long channel = (long) floor (y);
@@ -149,7 +152,7 @@ Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, do
 		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Sound not created.");
+		Melder_throw ("Sound not created.");
 	}
 }
 
@@ -177,7 +180,7 @@ Sound Sound_convertToMono (Sound me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to mono.");
+		Melder_throw (me, ": not converted to mono.");
 	}
 }
 
@@ -194,7 +197,7 @@ Sound Sound_convertToStereo (Sound me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to stereo.");
+		Melder_throw (me, ": not converted to stereo.");
 	}
 }
 
@@ -224,7 +227,7 @@ Sound Sounds_combineToStereo (Sound me, Sound thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": not combined to stereo.");
+		Melder_throw (me, " & ", thee, ": not combined to stereo.");
 	}
 }
 
@@ -238,7 +241,7 @@ Sound Sound_extractChannel (Sound me, long ichan) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": channel ", ichan, " not extracted.");
+		Melder_throw (me, ": channel ", ichan, " not extracted.");
 	}
 }
 
@@ -303,7 +306,7 @@ Sound Matrix_to_Sound_mono (Matrix me, long row) {
 		NUMdvector_copyElements (my z [row], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 
@@ -313,7 +316,7 @@ Matrix Sound_to_Matrix (Sound me) {
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -339,7 +342,7 @@ Sound Sound_upsample (Sound me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not upsampled.");
+		Melder_throw (me, ": not upsampled.");
 	}
 }
 
@@ -400,7 +403,7 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not resampled.");
+		Melder_throw (me, ": not resampled.");
 	}
 }
 
@@ -418,7 +421,7 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": not appended.");
+		Melder_throw (me, " & ", thee, ": not appended.");
 	}
 }
 
@@ -485,7 +488,7 @@ Sound Sounds_concatenate_e (Collection me, double overlapTime) {
 		thy xmax = thy nx * dx;
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Sounds not concatenated.");
+		Melder_throw ("Sounds not concatenated.");
 	}
 }
 
@@ -564,7 +567,7 @@ Sound Sounds_convolve (Sound me, Sound thee, enum kSounds_convolve_scaling scali
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": not convolved.");
+		Melder_throw (me, " & ", thee, ": not convolved.");
 	}
 }
 
@@ -647,7 +650,7 @@ Sound Sounds_crossCorrelate (Sound me, Sound thee, enum kSounds_convolve_scaling
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", thee, ": not cross-correlated.");
+		Melder_throw (me, " & ", thee, ": not cross-correlated.");
 	}
 }
 
@@ -718,7 +721,7 @@ Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": autocorrelation not computed.");
+		Melder_throw (me, ": autocorrelation not computed.");
 	}
 }
 
@@ -915,7 +918,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("Sound not created from tone complex.");
+		Melder_throw ("Sound not created from tone complex.");
 	}
 }
 
@@ -1050,7 +1053,7 @@ Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape
 		Sound_multiplyByWindow (thee.peek(), windowShape);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": part not extracted.");
+		Melder_throw (me, ": part not extracted.");
 	}
 }
 
@@ -1072,7 +1075,7 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 		}
 		Matrix_scaleAbsoluteExtremum (me, 0.99);
 	} catch (MelderError) {
-		rethrowm (me, ": not filtered.");
+		Melder_throw (me, ": not filtered.");
 	}
 }
 
@@ -1082,7 +1085,7 @@ Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 		Sound_filterWithOneFormantInline (thee.peek(), frequency, bandwidth);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered (one formant).");
+		Melder_throw (me, ": not filtered (one formant).");
 	}
 }
 
@@ -1100,7 +1103,7 @@ Sound Sound_filter_preemphasis (Sound me, double frequency) {
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered (pre-emphasis).");
+		Melder_throw (me, ": not filtered (pre-emphasis).");
 	}
 }
 
@@ -1111,7 +1114,7 @@ Sound Sound_filter_deemphasis (Sound me, double frequency) {
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not filtered (de-emphasis).");
+		Melder_throw (me, ": not filtered (de-emphasis).");
 	}
 }
 
@@ -1181,7 +1184,7 @@ Sound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double tma
 		}
 		return him.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not cross-correlated.");
+		Melder_throw (me, ": not cross-correlated.");
 	}
 }
 

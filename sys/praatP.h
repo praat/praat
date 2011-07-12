@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/12
  */
 
 #include "praat.h"
@@ -27,23 +27,23 @@
 	extern "C" {
 #endif
 
-void praat_addActionScript (const wchar_t *className1, int n1, const wchar_t *className2, int n2, const wchar_t *className3, int n3,
-	const wchar_t *title, const wchar_t *after, int depth, const wchar_t *script);
+void praat_addActionScript (const wchar *className1, int n1, const wchar *className2, int n2, const wchar *className3, int n3,
+	const wchar *title, const wchar *after, int depth, const wchar *script);
 /* No strings may be NULL; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
-void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
+void praat_removeAction_classNames (const wchar *className1, const wchar *className2,
+	const wchar *className3, const wchar *title);
 /* No arguments may be NULL; unspecify them by giving an empty string. */
 /* 'title' is deep-copied. */
 void praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title);
-void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
+void praat_hideAction_classNames (const wchar *className1, const wchar *className2,
+	const wchar *className3, const wchar *title);
 void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title);
-void praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title);
+void praat_showAction_classNames (const wchar *className1, const wchar *className2,
+	const wchar *className3, const wchar *title);
 void praat_sortActions (void);
 
-void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, int depth, const wchar_t *script);
+void praat_addMenuCommandScript (const wchar *window, const wchar *menu, const wchar *title,
+	const wchar *after, int depth, const wchar *script);
 /* All strings are deep-copied and may not be NULL; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
@@ -51,11 +51,11 @@ void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, con
 	For the Praat picture window:
 	'window' is "Picture", 'menu' is "File", "Edit", "Margins", "World", "Select", "Pen", "Font", or "Help".
 */
-void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
-void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
+void praat_hideMenuCommand (const wchar *window, const wchar *menu, const wchar *title);
+void praat_showMenuCommand (const wchar *window, const wchar *menu, const wchar *title);
 void praat_saveMenuCommands (FILE *f);
-void praat_addFixedButtonCommand (GuiObject parent, const wchar_t *title, int (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
-void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
+void praat_addFixedButtonCommand (GuiObject parent, const wchar *title, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), int x, int y);
+void praat_sensitivizeFixedButtonCommand (const wchar *title, int sensitive);
 void praat_sortMenuCommands (void);
 
 #define praat_MAXNUM_MENUS 20   /* Maximum number of added New, Open, Save, or Help menus. */
@@ -64,8 +64,8 @@ void praat_sortMenuCommands (void);
 typedef struct structPraat_Command {
 	void *class1, *class2, *class3, *class4;   /* Selected classes. */
 	short n1, n2, n3, n4;   /* Number of selected objects of each class; 0 means "any number" */
-	const wchar_t *title;   /* Button text = command text. */
-	int (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);   /* Multi-purpose. */
+	const wchar *title;   /* Button text = command text. */
+	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure);   /* Multi-purpose. */
 		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
@@ -84,9 +84,9 @@ typedef struct structPraat_Command {
 		unhidable,
 		attractive;
 	GuiObject button;
-	const wchar_t *window, *menu;
-	const wchar_t *script;   /* If 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand. */
-	const wchar_t *after;   /* Title of previous command, often NULL. */
+	const wchar *window, *menu;
+	const wchar *script;   /* If 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand. */
+	const wchar *after;   /* Title of previous command, often NULL. */
 	long uniqueID;   /* For sorting the added commands. */
 	long sortingTail;
 } *praat_Command;
@@ -96,7 +96,7 @@ typedef struct structPraat_Command {
 #define praat_HANDLING_EVENTS  3
 
 long praat_getIdOfSelected (void *voidklas, int inplace);
-wchar_t * praat_getNameOfSelected (void *voidklas, int inplace);
+wchar * praat_getNameOfSelected (void *voidklas, int inplace);
 
 int praat_selection (void *klas);
 	/* How many objects of this class (excluding subclasses) are currently selected? */
@@ -135,7 +135,7 @@ void praat_showLogo (int autoPopDown);
 /* Communication with praat_menuCommands.c: */
 void praat_menuCommands_init (void);
 void praat_menuCommands_exit (void);
-int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   /* 0 = not found or error */
+int praat_doMenuCommand (const wchar *command, const wchar *arguments, Interpreter interpreter);   /* 0 = not found or error */
 long praat_getNumberOfMenuCommands (void);
 praat_Command praat_getMenuCommand (long i);
 
@@ -145,7 +145,7 @@ void praat_actions_createWriteMenu (GuiObject bar);
 void praat_actions_init (void);   /* Creates space for action commands. */
 void praat_actions_createDynamicMenu (GuiObject form, int leftOffset);
 void praat_saveAddedActions (FILE *f);
-int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   /* 0 = not found or error */
+int praat_doAction (const wchar *command, const wchar *arguments, Interpreter interpreter);   /* 0 = not found or error */
 long praat_getNumberOfActions (void);   /* For ButtonEditor. */
 praat_Command praat_getAction (long i);   /* For ButtonEditor. */
 
@@ -174,6 +174,12 @@ extern struct PraatP {
 
 #ifdef __cplusplus
 	}
+
+struct autoPraatBackground {
+	autoPraatBackground () { praat_background (); }
+	~autoPraatBackground () { try { praat_foreground (); } catch (...) { Melder_clearError (); } }
+};
+
 #endif
 
 /* End of file praatP.h */

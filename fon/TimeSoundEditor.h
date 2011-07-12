@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/11
  */
 
 #include "FunctionEditor.h"
@@ -38,29 +38,30 @@ struct TimeSoundEditor_sound {
 	double minimum, maximum;
 };
 
-#define TimeSoundEditor__parents(Klas) FunctionEditor__parents(Klas) Thing_inherit (Klas, FunctionEditor)
-Thing_declare1 (TimeSoundEditor);
-
-#define TimeSoundEditor__members(Klas) FunctionEditor__members(Klas) \
-	bool ownSound; \
-	struct TimeSoundEditor_sound sound; \
-	struct { LongSound data; } longSound; \
-	GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton; \
-	GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
-	void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
-	void (*updateMenuItems_file) (Klas me);
-Thing_declare2 (TimeSoundEditor, FunctionEditor);
+Thing_declare1cpp (TimeSoundEditor);
 
 void TimeSoundEditor_prefs (void);
 
-int TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar_t *title, Any data, Any sound, bool ownSound);
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 
 #ifdef __cplusplus
 	}
-#endif
+
+	struct structTimeSoundEditor : public structFunctionEditor {
+		bool ownSound;
+		struct TimeSoundEditor_sound sound;
+		struct { LongSound data; } longSound;
+		GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton;
+		GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+	};
+	#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
+		void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
+		void (*updateMenuItems_file) (Klas me);
+	Thing_declare2cpp (TimeSoundEditor, FunctionEditor);
+
+#endif // __cplusplus
 
 /* End of file TimeSoundEditor.h */
 #endif

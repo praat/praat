@@ -55,15 +55,14 @@ static void classCollection_info (I) {
 	MelderInfo_writeLine2 (Melder_integer (my size), L" items");
 }
 
-static int classCollection_copy (I, thou) {
+static void classCollection_copy (I, thou) {
 	iam (Collection); thouart (Collection);
-//start:
 	thy item = NULL;   // kill shallow copy of item
-	if (! inherited (Collection) copy (me, thee)) return 0;   // optimize around cherror
+	inherited (Collection) copy (me, thee); therror
 	thy itemClass = my itemClass;
 	thy _capacity = my _capacity;
 	thy size = my size;
-	thy item = Melder_calloc_e (void *, my _capacity); cherror   // filled with NULL
+	thy item = Melder_calloc (void *, my _capacity);   // filled with NULL
 	thy item --;   // immediately turn from base-0 into base-1
 	for (long i = 1; i <= my size; i ++) {
 		Thing item = (Thing) my item [i];
@@ -71,14 +70,10 @@ static int classCollection_copy (I, thou) {
 			thy item [i] = item;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
 		} else {
 			if (! Thing_member (item, classData))
-				error3 (L"Collection::copy: cannot copy item of class ", Thing_className (item), L".")
-			thy item [i] = Data_copy (item); cherror
+				Melder_throw ("Cannot copy item of class ", Thing_className (item), ".");
+			thy item [i] = Data_copy (item); therror
 		}
 	}
-end:
-	// thy item is NULL or base-1
-	iferror return 0;
-	return 1;
 }
 
 static bool classCollection_equal (I, thou) {
@@ -86,12 +81,12 @@ static bool classCollection_equal (I, thou) {
 	if (! inherited (Collection) equal (me, thee)) return false;
 	if (my size != thy size) return false;
 	for (long i = 1; i <= my size; i ++) {
-		if (! Thing_member (my item [i], classData))
-			return Melder_error3 (L"Collection::equal: "
-				"cannot compare items of class ", Thing_className (my item [i]), L".");
-		if (! Thing_member (thy item [i], classData))
-			return Melder_error3 (L"Collection::equal: "
-				"cannot compare items of class ", Thing_className (thy item [i]), L".");
+		if (! Thing_member ((Thing) my item [i], classData))
+			Melder_throw ("Collection::equal: "
+				"cannot compare items of class ", Thing_className ((Thing) my item [i]), ".");
+		if (! Thing_member ((Thing) thy item [i], classData))
+			Melder_throw ("Collection::equal: "
+				"cannot compare items of class ", Thing_className ((Thing) thy item [i]), ".");
 		bool equal = Data_equal (my item [i], thy item [i]);
 		//Melder_casual ("classCollection_equal: %d, items %ld, types %ls and %ls",
 		//	equal, i, Thing_className (my item [i]), Thing_className (thy item [i]));
@@ -110,7 +105,7 @@ static bool classCollection_canWriteAsEncoding (I, int encoding) {
 	return true;
 }
 
-static int classCollection_writeText (I, MelderFile file) {
+static void classCollection_writeText (I, MelderFile file) {
 	iam (Collection);
 	texputi4 (file, my size, L"size", 0,0,0,0,0);
 	texputintro (file, L"item []: ", my size ? NULL : L"(empty)", 0,0,0,0);
@@ -119,138 +114,125 @@ static int classCollection_writeText (I, MelderFile file) {
 		Thing_Table table = thing -> methods;
 		texputintro (file, L"item [", Melder_integer (i), L"]:", 0,0,0);
 		if (! Thing_member (thing, classData) || ! Data_canWriteText (thing))
-			return Melder_error3 (L"(Collection::writeText:) "
-				"Objects of class ", table -> _className, L" cannot be written.");
+			Melder_throw ("Objects of class ", table -> _className, " cannot be written.");
 		texputw2 (file, table -> version > 0 ? Melder_wcscat3 (table -> _className, L" ", Melder_integer (table -> version)) : table -> _className, L"class", 0,0,0,0,0);
 		texputw2 (file, thing -> name, L"name", 0,0,0,0,0);
-		if (! Data_writeText (thing, file)) return 0;
+		Data_writeText (thing, file);
 		texexdent (file);
 	}
 	texexdent (file);
-	return 1;
 }
 
-static int classCollection_readText (I, MelderReadText text) {
+static void classCollection_readText (I, MelderReadText text) {
 	iam (Collection);
 	if (Thing_version < 0) {
 		long size;
 		wchar_t *line = MelderReadText_readLine (text);
 		if (line == NULL || ! swscanf (line, L"%ld", & size) || size < 0)
-			return Melder_error1 (L"Collection::readText: cannot read size.");
-		if (! Collection_init (me, NULL, size)) return 0;
+			Melder_throw ("Collection::readText: cannot read size.");
+		Collection_init (me, NULL, size);
 		for (long i = 1; i <= size; i ++) {
 			long itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
-			do { line = MelderReadText_readLine (text); if (line == NULL) return 0; }
+			do { line = MelderReadText_readLine (text); if (line == NULL) Melder_throw ("Missing object line."); }
 			while (wcsncmp (line, L"Object ", 7));
 			stringsRead = swscanf (line, L"Object %ld: class %s %s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
-				return Melder_error3 (L"Collection::readText: cannot read header of object ", Melder_integer (i), L".");
+				Melder_throw ("Collection::readText: cannot read header of object ", i, ".");
 			if (itemNumberRead != i)
-				return Melder_error5 (L"Collection::readText: read item number ", Melder_integer (itemNumberRead),
-					L" while expecting ", Melder_integer (i), L".");
+				Melder_throw ("Collection::readText: read item number ", itemNumberRead,
+					" while expecting ", i, ".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
-				return Melder_error3 (L"Collection::readText: wrong header at object ", Melder_integer (i), L".");
-			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
+				Melder_throw ("Collection::readText: wrong header at object ", i, ".");
+			my item [i] = Thing_newFromClassNameA (klas); therror
 			Thing_version = -1;   /* Override. */
 			my size ++;
-			if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-				return Melder_error3 (L"Collection::readText: "
-					"cannot read item of class ", Thing_className (my item [i]), L".");
-			if (! Data_readText (my item [i], text)) return 0;
+			if (! Thing_member ((Thing) my item [i], classData) || ! Data_canReadText (my item [i]))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) my item [i]), " in collection.");
+			Data_readText (my item [i], text); therror
 			if (stringsRead == 3) {
-				if (line [n] == ' ') n ++;   /* Skip space character. */
+				if (line [n] == ' ') n ++;   // skip space character
 				length = wcslen (line+n);
 				if (length > 0 && (line+n) [length - 1] == '\n') (line+n) [length - 1] = '\0';
-				Thing_setName (my item [i], line+n);
+				Thing_setName ((Thing) my item [i], line+n);
 			}
 		}
-		return 1;
+		return;
 	}
-	char *className = NULL;
-	wchar_t *objectName = NULL;
-//start:
 	long size = texgeti4 (text);
-	Collection_init (me, NULL, size); cherror
+	Collection_init (me, NULL, size);
 	for (long i = 1; i <= size; i ++) {
 		long saveVersion = Thing_version;   /* The version of the Collection... */
-		Melder_free (className); className = texgets2 (text); cherror
-		my item [i] = Thing_newFromClassNameA (className); cherror
+		autostring8 className = texgets2 (text);
+		my item [i] = Thing_newFromClassNameA (className.peek()); therror
 		my size ++;
-		if (! Thing_member (my item [i], classData) || ! Data_canReadText (my item [i]))
-			error3 (L"Cannot read item of class ", Thing_className (my item [i]), L" in collection.");
-		Melder_free (objectName); objectName = texgetw2 (text); cherror
-		Thing_setName (my item [i], objectName); cherror
-		Data_readText (my item [i], text); cherror
+		if (! Thing_member ((Thing) my item [i], classData) || ! Data_canReadText (my item [i]))
+			Melder_throw ("Cannot read item of class ", Thing_className ((Thing) my item [i]), " in collection.");
+		autostring objectName = texgetw2 (text);
+		Thing_setName ((Thing) my item [i], objectName.peek()); therror
+		Data_readText (my item [i], text); therror
 		Thing_version = saveVersion;
 	}
-end:
-	Melder_free (className);
-	Melder_free (objectName);
-	iferror return 0;
-	return 1;
 }
 
-static int classCollection_writeBinary (I, FILE *f) {
+static void classCollection_writeBinary (I, FILE *f) {
 	iam (Collection);
 	binputi4 (my size, f);
 	for (long i = 1; i <= my size; i ++) {
 		Thing thing = (Thing) my item [i];
 		Thing_Table table = thing -> methods;
 		if (! Thing_member (thing, classData) || ! Data_canWriteBinary (thing))
-			return Melder_error3 (L"(Collection::writeBinary:) "
-				"Objects of class ", table -> _className, L" cannot be written.");
+			Melder_throw ("Objects of class ", table -> _className, L" cannot be written.");
 		binputw1 (table -> version > 0 ?
 			Melder_wcscat3 (table -> _className, L" ", Melder_integer (table -> version)) : table -> _className, f);
 		binputw2 (thing -> name, f);
-		if (! Data_writeBinary (thing, f)) return 0;
+		Data_writeBinary (thing, f);
 	}
-	return 1;
 }
 
-static int classCollection_readBinary (I, FILE *f) {
+static void classCollection_readBinary (I, FILE *f) {
 	iam (Collection);
 	if (Thing_version < 0) {
-		long size = bingeti4 (f); //cherror
-		if (size < 0 || ! Collection_init (me, NULL, size)) return 0;
+		long size = bingeti4 (f); therror
+		if (size < 0)
+			Melder_throw ("Empty collection.");
+		Collection_init (me, NULL, size); therror
 		for (long i = 1; i <= size; i ++) {
 			char klas [200], name [2000];
-			if (fscanf (f, "%s%s", klas, name) < 2 ||
-				! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
+			if (fscanf (f, "%s%s", klas, name) < 2)
+				Melder_throw ("Cannot read class and name.");
+			my item [i] = Thing_newFromClassNameA (klas); therror
 			Thing_version = -1;   /* Override. */
 			my size ++;
-			if (! Thing_member (my item [i], classData))
-				return Melder_error3 (L"Collection::readBinary: "
-					"cannot read item of class ", Thing_className (my item [i]), L".");
-			if (fgetc (f) != ' ' || ! Data_readBinary (my item [i], f)) return 0;
-			if (strcmp (name, "?")) Thing_setName (my item [i], Melder_peekUtf8ToWcs (name));
+			if (! Thing_member ((Thing) my item [i], classData))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) my item [i]), ".");
+			if (fgetc (f) != ' ')
+				Melder_throw ("Cannot read space.");
+			Data_readBinary (my item [i], f); therror
+			if (strcmp (name, "?")) Thing_setName ((Thing) my item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
-		long size = bingeti4 (f); //cherror
-		if (! Collection_init (me, NULL, size)) return 0;
+		long size = bingeti4 (f); therror
+		Collection_init (me, NULL, size); therror
 		for (long i = 1; i <= size; i ++) {
-			long saveVersion = Thing_version;   /* The version of the Collection... */
-			char *klas = bingets1 (f); //cherror
-			if (! (my item [i] = Thing_newFromClassNameA (klas))) return 0;
-			Melder_free (klas);
+			long saveVersion = Thing_version;   // the version of the Collection...
+			autostring8 klas = bingets1 (f);
+			my item [i] = Thing_newFromClassNameA (klas.peek()); therror
 			my size ++;
-			if (! Thing_member (my item [i], classData) || ! Data_canReadBinary (my item [i]))
-				return Melder_error3 (L"(Collection::readBinary:) "
-					"Cannot read item of class ", Thing_className (my item [i]), L".");
-			wchar_t *name = bingetw2 (f); //cherror
-			Thing_setName (my item [i], name);
-			Melder_free (name);
-			if (! Data_readBinary (my item [i], f)) return 0;
+			if (! Thing_member ((Thing) my item [i], classData) || ! Data_canReadBinary (my item [i]))
+				Melder_throw ("Objects of class ", Thing_className ((Thing) my item [i]), " cannot be read.");
+			autostring name = bingetw2 (f);
+			Thing_setName ((Thing) my item [i], name.peek()); therror
+			Data_readBinary (my item [i], f); therror
 			Thing_version = saveVersion;
 		}
 	}
-	return 1;
 }
 
 static struct structData_Description classCollection_description [] = {
-	{ L"size", longwa, (long) & ((Collection) 0) -> size, sizeof (long) },
-	{ L"item", objectwa, (long) & ((Collection) 0) -> item, sizeof (Data), L"Data", & theStructData, 1, 0, L"my size" },
+	{ L"size", longwa, (char *) & ((Collection) & Melder_debug) -> size - (char *) & Melder_debug, sizeof (long) },
+	{ L"item", objectwa, (char *) & ((Collection) & Melder_debug) -> item - (char *) & Melder_debug, sizeof (Data), L"Data", & theStructData, 1, 0, L"my size" },
 	{ 0 } };
 
 static long classCollection_position (I, Any data) {
@@ -274,21 +256,19 @@ class_methods (Collection, Data) {
 	class_methods_end
 }
 
-int Collection_init (I, void *itemClass, long initialCapacity) {
+void Collection_init (I, void *itemClass, long initialCapacity) {
 	iam (Collection);
 	my itemClass = itemClass;
 	my _capacity = initialCapacity >= 1 ? initialCapacity : 1;
 	my size = 0;
-	my item = Melder_calloc_e (void *, my _capacity);
-	if (my item == NULL) return 0;   // optimize around cherror
+	my item = Melder_calloc (void *, my _capacity);
 	my item --;   // base 1
-	return 1;
 }
 
 Collection Collection_create (void *itemClass, long initialCapacity) {
-	Collection me = Thing_new (Collection);
-	if (! me || ! Collection_init (me, itemClass, initialCapacity)) forget (me);
-	return me;
+	autoCollection me = Thing_new (Collection);
+	Collection_init (me.peek(), itemClass, initialCapacity);
+	return me.transfer();
 }
 
 void Collection_dontOwnItems (I) {
@@ -297,35 +277,40 @@ void Collection_dontOwnItems (I) {
 	my _dontOwnItems = true;
 }
 
-int _Collection_insertItem (I, Any data, long pos) {
+void _Collection_insertItem (I, Any data, long pos) {
 	iam (Collection);
 	if (my size >= my _capacity) {
-	/*
-	 * Check without change.
-	 */
-		Any *dum = (Any *) Melder_realloc_e (my item + 1, 2 * my _capacity * sizeof (Any));
-		if (! dum) return Melder_error1 (L"(Collection_insert:) Item not inserted.");
-	/*
-	 * From here: change without error.
-	 */
+		/*
+		 * Check without change.
+		 */
+		Any *dum = (Any *) Melder_realloc (my item + 1, 2 * my _capacity * sizeof (Any));
+		/*
+		 * From here: change without error.
+		 */
 		my item = dum - 1;
 		my _capacity *= 2;
 	}
 	my size ++;
 	for (long i = my size; i > pos; i --) my item [i] = my item [i - 1];
 	my item [pos] = data;
-	return 1;
 }
 
-int Collection_addItem (I, Any data) {
+#undef our
+#define our ((Sorted_Table) my methods) ->  // BUG
+
+void Collection_addItem (I, Any data) {
 	iam (Collection);
-	Melder_assert (data != NULL);
-	long index = our position (me, data);
-	if (index != 0) {
-		return _Collection_insertItem (me, data, index);
-	} else {
-		forget (data);   /* Could not insert; I am owner, so I must dispose of the data!!! */
-		return 1;   /* Refusal; all right. */
+	try {
+		Melder_assert (data != NULL);
+		long index = our position (me, data);
+		if (index != 0) {
+			_Collection_insertItem (me, data, index);
+		} else {
+			if (! my _dontOwnItems)
+				forget (data);   // could not insert; I am the owner, so I must dispose of the data
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": item not added.");
 	}
 }
 
@@ -356,40 +341,40 @@ Any Collection_subtractItem (I, long pos) {
 
 void Collection_removeAllItems (I) {
 	iam (Collection);
-	if (! my _dontOwnItems) for (long i = 1; i <= my size; i ++) forget (my item [i]);
+	if (! my _dontOwnItems)
+		for (long i = 1; i <= my size; i ++)
+			forget (my item [i]);
 	my size = 0;
 }
 
 void Collection_shrinkToFit (I) {
 	iam (Collection);
 	my _capacity = my size ? my size : 1;
-	my item = (Any *) Melder_realloc_f (my item + 1, my _capacity * sizeof (Any)) - 1;
+	my item = (Any *) Melder_realloc (my item + 1, my _capacity * sizeof (Any)) - 1;
 }
 
 Any Collections_merge (I, thou) {
 	iam (Collection); thouart (Collection);
-	Collection him;
-	if (my methods != thy methods) return Melder_errorp5 (L"(Collections_merge:) "
-		"Objects are of different class (", Thing_className (me), L" and ", Thing_className (thee), L").");
-	if (my _dontOwnItems != thy _dontOwnItems) return Melder_errorp1 (L"(Collections_merge:) "
-		"Cannot mix data and references.");
-	him = (Collection) Data_copy (me); cherror
-	for (long i = 1; i <= thy size; i ++) {
-		Thing tmp;
-		Thing item = (Thing) thy item [i];
-		if (my _dontOwnItems) {
-			tmp = item;
-		} else {
-			if (! Thing_member (item, classData))
-				error3 (L"(Collections_merge:) Cannot copy item of class ", Thing_className (item), L".")
-			tmp = (Thing) Data_copy (item); cherror
+	try {
+		if (my methods != thy methods)
+			Melder_throw ("Objects are of different class.");
+		if (my _dontOwnItems != thy _dontOwnItems)
+			Melder_throw ("Cannot mix data and references.");
+		autoCollection him = (Collection) Data_copy (me);
+		for (long i = 1; i <= thy size; i ++) {
+			Thing item = (Thing) thy item [i];
+			if (my _dontOwnItems) {
+				Collection_addItem (him.peek(), item);
+			} else {
+				if (! Thing_member (item, classData))
+					Melder_throw ("Cannot copy item of class ", Thing_className (item), ".");
+				Collection_addItem (him.peek(), Data_copy (item));
+			}
 		}
-		if (! tmp || ! Collection_addItem (him, tmp)) { forget (tmp); goto end; }
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " and ", thee, " not merged." );
 	}
-	return him;
-end:
-	forget (him);
-	return Melder_errorp ("Collections not merged." );
 }
 
 /********** class Ordered **********/
@@ -398,23 +383,23 @@ class_methods (Ordered, Collection) {
 	class_methods_end
 }
 
-int Ordered_init (I, void *itemClass, long initialMaximumLength) {
+void Ordered_init (I, void *itemClass, long initialMaximumLength) {
 	iam (Ordered);
-	if (! Collection_init (me, itemClass, initialMaximumLength)) return 0;
-	return 1;
+	Collection_init (me, itemClass, initialMaximumLength);
 }
 
 Ordered Ordered_create (void) {
-	Ordered me = Thing_new (Ordered);
-	if (! me || ! Ordered_init (me, NULL, 10)) forget (me);
-	return me;
+	autoOrdered me = Thing_new (Ordered);
+	Ordered_init (me.peek(), NULL, 10);
+	return me.transfer();
 }
 
-int Ordered_addItemPos (I, Any data, long position) {
+void Ordered_addItemPos (I, Any data, long position) {
 	iam (Ordered);
 	Melder_assert (data);
-	if (position < 1 || position > my size) position = my size + 1;
-	return _Collection_insertItem (me, data, position);
+	if (position < 1 || position > my size)
+		position = my size + 1;
+	_Collection_insertItem (me, data, position);
 }
 
 /********** class Sorted **********/
@@ -445,15 +430,14 @@ class_methods (Sorted, Collection) {
 	class_methods_end
 }
 
-int Sorted_init (I, void *itemClass, long initialCapacity) {
+void Sorted_init (I, void *itemClass, long initialCapacity) {
 	iam (Sorted);
-	if (! Collection_init (me, itemClass, initialCapacity)) return 0;
-	return 1;
+	Collection_init (me, itemClass, initialCapacity);
 }
 
-int Sorted_addItem_unsorted (I, Any data) {
+void Sorted_addItem_unsorted (I, Any data) {
 	iam (Sorted);
-	return _Collection_insertItem (me, data, my size + 1);
+	_Collection_insertItem (me, data, my size + 1);
 }
 
 void Sorted_sort (I) {
@@ -489,8 +473,8 @@ class_methods (SortedSet, Sorted) {
 	class_methods_end
 }
 
-int SortedSet_init (Any me, void *itemClass, long initialCapacity) {
-	return Sorted_init (me, itemClass, initialCapacity);
+void SortedSet_init (Any me, void *itemClass, long initialCapacity) {
+	Sorted_init (me, itemClass, initialCapacity);
 }
 
 int SortedSet_hasItem (I, Any item) {
@@ -512,12 +496,15 @@ class_methods (SortedSetOfInt, SortedSet) {
 	class_methods_end
 }
 
-int SortedSetOfInt_init (I) { iam (SortedSetOfInt); return SortedSet_init (me, classSimpleInt, 10); }
+void SortedSetOfInt_init (I) {
+	iam (SortedSetOfInt);
+	SortedSet_init (me, classSimpleInt, 10);
+}
 
 SortedSetOfInt SortedSetOfInt_create (void) {
-	SortedSetOfInt me = Thing_new (SortedSetOfInt);
-	if (! me || ! SortedSetOfInt_init (me)) forget (me);
-	return me;
+	autoSortedSetOfInt me = Thing_new (SortedSetOfInt);
+	SortedSetOfInt_init (me.peek());
+	return me.transfer();
 }
 
 /********** class SortedSetOfShort **********/
@@ -534,12 +521,15 @@ class_methods (SortedSetOfShort, SortedSet) {
 	class_methods_end
 }
 
-int SortedSetOfShort_init (I) { iam (SortedSetOfShort); return SortedSet_init (me, classSimpleShort, 10); }
+void SortedSetOfShort_init (I) {
+	iam (SortedSetOfShort);
+	SortedSet_init (me, classSimpleShort, 10);
+}
 
 SortedSetOfShort SortedSetOfShort_create (void) {
-	SortedSetOfShort me = Thing_new (SortedSetOfShort);
-	if (! me || ! SortedSetOfShort_init (me)) forget (me);
-	return me;
+	autoSortedSetOfShort me = Thing_new (SortedSetOfShort);
+	SortedSetOfShort_init (me.peek());
+	return me.transfer();
 }
 
 /********** class SortedSetOfLong **********/
@@ -556,12 +546,15 @@ class_methods (SortedSetOfLong, SortedSet) {
 	class_methods_end
 }
 
-int SortedSetOfLong_init (I) { iam (SortedSetOfLong); return SortedSet_init (me, classSimpleLong, 10); }
+void SortedSetOfLong_init (I) {
+	iam (SortedSetOfLong);
+	SortedSet_init (me, classSimpleLong, 10);
+}
 
 SortedSetOfLong SortedSetOfLong_create (void) {
-	SortedSetOfLong me = Thing_new (SortedSetOfLong);
-	if (! me || ! SortedSetOfLong_init (me)) forget (me);
-	return me;
+	autoSortedSetOfLong me = Thing_new (SortedSetOfLong);
+	SortedSetOfLong_init (me.peek());
+	return me.transfer();
 }
 
 /********** class SortedSetOfDouble **********/
@@ -578,12 +571,15 @@ class_methods (SortedSetOfDouble, SortedSet) {
 	class_methods_end
 }
 
-int SortedSetOfDouble_init (I) { iam (SortedSetOfDouble); return SortedSet_init (me, classSimpleDouble, 10); }
+void SortedSetOfDouble_init (I) {
+	iam (SortedSetOfDouble);
+	SortedSet_init (me, classSimpleDouble, 10);
+}
 
 SortedSetOfDouble SortedSetOfDouble_create (void) {
-	SortedSetOfDouble me = Thing_new (SortedSetOfDouble);
-	if (! me || ! SortedSetOfDouble_init (me)) forget (me);
-	return me;
+	autoSortedSetOfDouble me = Thing_new (SortedSetOfDouble);
+	SortedSetOfDouble_init (me.peek());
+	return me.transfer();
 }
 
 /********** class SortedSetOfString **********/
@@ -598,12 +594,15 @@ class_methods (SortedSetOfString, SortedSet) {
 	class_methods_end
 }
 
-int SortedSetOfString_init (I) { iam (SortedSetOfString); return SortedSet_init (me, classSimpleString, 10); }
+void SortedSetOfString_init (I) {
+	iam (SortedSetOfString);
+	SortedSet_init (me, classSimpleString, 10);
+}
 
 SortedSetOfString SortedSetOfString_create (void) {
-	SortedSetOfString me = Thing_new (SortedSetOfString);
-	if (! me || ! SortedSetOfString_init (me)) forget (me);
-	return me;
+	autoSortedSetOfString me = Thing_new (SortedSetOfString);
+	SortedSetOfString_init (me.peek());
+	return me.transfer();
 }
 
 long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string) {
@@ -631,16 +630,17 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string) {
 	return 0;
 }
 
-int SortedSetOfString_add (SortedSetOfString me, const wchar_t *string) {
+void SortedSetOfString_add (SortedSetOfString me, const wchar *string) {
 	static SimpleString simp;
-	long index;
-	SimpleString newSimp;
-	if (! simp) { simp = SimpleString_create (L""); Melder_free (simp -> string); }
-	simp -> string = (wchar_t *) string;
-	if ((index = our position (me, simp)) == 0) return 1;   /* OK: already there: do not add. */
-	newSimp = SimpleString_create (string);
-	if (! newSimp || ! _Collection_insertItem (me, newSimp, index)) return 0;   /* Must be out of memory. */
-	return 1;   /* OK: added new string. */
+	if (simp == NULL) {
+		simp = SimpleString_create (L"");
+		Melder_free (simp -> string);
+	}
+	simp -> string = (wchar *) string;
+	long index = our position (me, simp);
+	if (index == 0) return;   // OK: already there: do not add
+	autoSimpleString newSimp = SimpleString_create (string);
+	_Collection_insertItem (me, newSimp.transfer(), index);
 }
 
 /********** class Cyclic **********/
@@ -657,8 +657,8 @@ class_methods (Cyclic, Collection) {
 	class_methods_end
 }
 
-int Cyclic_init (Any me, void *itemClass, long initialCapacity) {
-	return Collection_init (me, itemClass, initialCapacity);
+void Cyclic_init (Any me, void *itemClass, long initialCapacity) {
+	Collection_init (me, itemClass, initialCapacity);
 }
 
 static void cycleLeft (I) {

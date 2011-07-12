@@ -34,7 +34,7 @@ Matrix PointProcess_to_Matrix (PointProcess me) {
 			thy z [1] [i] = my t [i];
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to Matrix.");
+		Melder_throw (me, ": not converted to Matrix.");
 	}
 }
 
@@ -46,7 +46,7 @@ PointProcess Matrix_to_PointProcess (Matrix me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PointProcess.");
+		Melder_throw (me, ": not converted to PointProcess.");
 	}
 }
 

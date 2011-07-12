@@ -54,6 +54,9 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled_def.h"
 
+#undef our
+#define our ((Sampled_Table) my methods) ->
+
 static double getNx (I) { iam (Sampled); return my nx; }
 static double getDx (I) { iam (Sampled); return my dx; }
 static double getX (I, long ix) { iam (Sampled); return my x1 + (ix - 1) * my dx; }
@@ -133,30 +136,24 @@ long Sampled_getWindowSamples (I, double xmin, double xmax, long *ixmin, long *i
 	return *ixmax - *ixmin + 1;
 }
 
-int Sampled_init (I, double xmin, double xmax, long nx, double dx, double x1) {
+void Sampled_init (I, double xmin, double xmax, long nx, double dx, double x1) {
 	iam (Sampled);
 	my xmin = xmin; my xmax = xmax; my nx = nx; my dx = dx; my x1 = x1;
-	return 1;
 }
 
-int Sampled_shortTermAnalysis (I, double windowDuration, double timeStep, long *numberOfFrames, double *firstTime) {
+void Sampled_shortTermAnalysis (I, double windowDuration, double timeStep, long *numberOfFrames, double *firstTime) {
 	iam (Sampled);
-	try {
-		double myDuration, thyDuration, ourMidTime;
-		Melder_assert (windowDuration > 0.0);
-		Melder_assert (timeStep > 0.0);
-		myDuration = my dx * my nx;
-		if (windowDuration > myDuration)
-			Melder_throw (me, ": shorter than window length."); 
-		*numberOfFrames = floor ((myDuration - windowDuration) / timeStep) + 1;
-		Melder_assert (*numberOfFrames >= 1);
-		ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
-		thyDuration = *numberOfFrames * timeStep;
-		*firstTime = ourMidTime - 0.5 * thyDuration + 0.5 * timeStep;
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	double myDuration, thyDuration, ourMidTime;
+	Melder_assert (windowDuration > 0.0);
+	Melder_assert (timeStep > 0.0);
+	myDuration = my dx * my nx;
+	if (windowDuration > myDuration)
+		Melder_throw (me, ": shorter than window length."); 
+	*numberOfFrames = floor ((myDuration - windowDuration) / timeStep) + 1;
+	Melder_assert (*numberOfFrames >= 1);
+	ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
+	thyDuration = *numberOfFrames * timeStep;
+	*firstTime = ourMidTime - 0.5 * thyDuration + 0.5 * timeStep;
 }
 
 double Sampled_getValueAtSample (I, long isamp, long ilevel, int unit) {
@@ -236,7 +233,7 @@ double Sampled_getQuantile (I, double xmin, double xmax, double quantile, long i
 		}
 		return result;
 	} catch (MelderError) {
-		rethrowmval	(NUMundefined, me, ": quantile not computed.");
+		Melder_throw (me, ": quantile not computed.");
 	}
 }
 

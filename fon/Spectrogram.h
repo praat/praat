@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/03/03
+ * pb 2011/07/11
  */
 
 #include "Matrix.h"
@@ -30,9 +30,11 @@
 	extern "C" {
 #endif
 
-#define Spectrogram_members  Matrix_members
-#define Spectrogram_methods  Matrix_methods
-class_create (Spectrogram, Matrix);
+Thing_declare1cpp (Spectrogram);
+struct structSpectrogram : public structMatrix {
+};
+#define Spectrogram__methods(klas)  Matrix__methods(klas)
+Thing_declare2cpp (Spectrogram, Matrix);
 
 /* Attributes:
 	xmin			// Start time (seconds).
@@ -40,10 +42,10 @@ class_create (Spectrogram, Matrix);
 	nx			// Number of time slices.
 	dx			// The time between two subsequent time slices.
 	x1			// The centre of the first time slice.
-	ymin			// Minimum frequency (Hertz).
-	ymax		// Maximum frequency (Hertz).
-	dy			// Frequency step (Hertz).
-	y1			// Centre of first frequency band (Hertz).
+	ymin			// Minimum frequency (Hz).
+	ymax		// Maximum frequency (Hz).
+	dy			// Frequency step (Hz).
+	y1			// Centre of first frequency band (Hz).
 	z [iy] [ix]		// Power spectrum density.
 */
 

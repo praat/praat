@@ -42,7 +42,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, ": not converted to PitchTier.");
+		Melder_throw (me, ": not converted to PitchTier.");
 	}
 }
 
@@ -98,7 +98,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 		Pitch_line (uv, g, tmin, fleft, tmax, fright, nonPeriodicLineType);
 	} else for (i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
-		double t = point -> time, f = point -> value;
+		double t = point -> number, f = point -> value;
 		Graphics_fillCircle_mm (g, t, f, 1);
 		if (i == 1)
 			Pitch_line (uv, g, tmin, f, t, f, nonPeriodicLineType);
@@ -110,7 +110,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 			Pitch_line (uv, g, t, f, tmax, RealTier_getValueAtTime (me, tmax), nonPeriodicLineType);
 		else {
 			RealPoint pointRight = (RealPoint) my points -> item [i + 1];
-			Pitch_line (uv, g, t, f, pointRight -> time, pointRight -> value, nonPeriodicLineType);
+			Pitch_line (uv, g, t, f, pointRight -> number, pointRight -> value, nonPeriodicLineType);
 		}
 	}
 	Graphics_unsetInner (g);
@@ -137,7 +137,7 @@ Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (me, " & ", tier, ": not converted to Pitch.");
+		Melder_throw (me, " & ", tier, ": not converted to Pitch.");
 	}
 }
 

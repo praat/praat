@@ -97,17 +97,12 @@ class_methods (Regression, Data) {
 	class_methods_end
 }
 
-int Regression_init (I) {
+void Regression_init (I) {
 	iam (Regression);
-	try {
-		my parameters = Ordered_create (); therror
-		return 1;
-	} catch (MelderError) {
-		rethrowzero;
-	}
+	my parameters = Ordered_create (); therror
 }
 
-int Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
+void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
 	iam (Regression);
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
@@ -115,25 +110,19 @@ int Regression_addParameter (I, const wchar_t *label, double minimum, double max
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;
-		Collection_addItem (my parameters, thee.transfer()); therror
-		return 1;
+		Collection_addItem (my parameters, thee.transfer());
 	} catch (MelderError) {
-		rethrowmzero (Thing_messageName (me), ": parameter not added.");
+		Melder_throw (me, ": parameter not added.");
 	}
 }
 
 long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName) {
 	iam (Regression);
-	try {
-		for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
-			RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);
-			if (Melder_wcsequ (factorName, parm -> label)) return iparm;
-		}
-		Melder_throw (Thing_messageName (me), L" has no parameter named \"", factorName, L"\".");
-		return 0;
-	} catch (MelderError) {
-		rethrowzero;
+	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);
+		if (Melder_wcsequ (factorName, parm -> label)) return iparm;
 	}
+	Melder_throw (Thing_messageName (me), L" has no parameter named \"", factorName, L"\".");
 }
 
 class_methods (LinearRegression, Regression) {
@@ -146,7 +135,7 @@ LinearRegression LinearRegression_create (void) {
 		Regression_init (me.peek()); therror
 		return me.transfer();
 	} catch (MelderError) {
-		rethrowmzero ("LinearRegression not created.");
+		Melder_throw ("LinearRegression not created.");
 	}
 }
 
@@ -183,7 +172,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		rethrowmzero (Thing_messageName (me), ": linear regression not performed.");
+		Melder_throw (me, ": linear regression not performed.");
 	}
 }
 
