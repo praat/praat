@@ -51,13 +51,14 @@
 // Praat specifics                                                                         //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-static void info (I) {
-    iam (KNN);
-    classData -> info (me);
-    MelderInfo_writeLine2 (L"Size of instancebase: ", Melder_integer (my nInstances));
+void structKNN :: v_info ()
+{
+    structData :: v_info ();
+    MelderInfo_writeLine2 (L"Size of instancebase: ", Melder_integer (nInstances));
 }
 
-class_methods (KNN, Data) {
+class_methods (KNN, Data)
+{
 	class_method_local (KNN, destroy)
 	class_method_local (KNN, copy)
 	class_method_local (KNN, equal)
@@ -66,7 +67,6 @@ class_methods (KNN, Data) {
 	class_method_local (KNN, readText)
 	class_method_local (KNN, readBinary)
 	class_method_local (KNN, description)
-	class_method (info)
 	class_methods_end
 }
 

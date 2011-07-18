@@ -37,6 +37,7 @@
  * pb 2008/01/19 double
  * pb 2008/03/20 split off Help menu
  * pb 2011/03/23 C++
+ * pb 2011/07/15 C++
  */
 
 #include "SoundEditor.h"
@@ -47,15 +48,16 @@
 
 #undef our
 #define our ((SoundEditor_Table) my methods) ->
+#define its ((SoundEditor_Table) methods) ->
 
 /********** METHODS **********/
 
-static void dataChanged (SoundEditor me) {
-	Sound sound = (Sound) my data;
-	Melder_assert (sound != NULL);   /* LongSound objects should not get dataChanged messages. */
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-	our destroy_analysis (me);
-	inherited (SoundEditor) dataChanged (me);
+void structSoundEditor :: v_dataChanged () {
+	Sound sound = (Sound) data;
+	Melder_assert (sound != NULL);   // LongSound objects should not get v_dataChanged messages
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & this -> sound.minimum, & this -> sound.maximum);   // BUG unreadable
+	destroy_analysis ();
+	SoundEditor_Parent :: v_dataChanged ();
 }
 
 /***** EDIT MENU *****/
@@ -153,7 +155,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 		/* Force FunctionEditor to show changes. */
 
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-		our destroy_analysis (me);
+		my destroy_analysis ();
 		FunctionEditor_ungroup (me);
 		FunctionEditor_marksChanged (me);
 		Editor_broadcastChange (me);
@@ -221,7 +223,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	/* Force FunctionEditor to show changes. */
 
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-	our destroy_analysis (me);
+	my destroy_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
 	Editor_broadcastChange (me);
@@ -239,7 +241,7 @@ static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
-	our destroy_analysis (me);
+	my destroy_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -249,7 +251,7 @@ static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Editor_save (me, L"Reverse selection");
 	Sound_reverse ((Sound) my data, my startSelection, my endSelection);
-	our destroy_analysis (me);
+	my destroy_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -302,34 +304,34 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 static int menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); return 1; }
 static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); return 1; }
 
-static void createMenus (SoundEditor me) {
-	inherited (SoundEditor) createMenus (me);
-	Melder_assert (my data != NULL);
-	Melder_assert (my sound.data != NULL || my longSound.data != NULL);
+void structSoundEditor :: v_createMenus () {
+	SoundEditor_Parent :: v_createMenus ();
+	Melder_assert (data != NULL);
+	Melder_assert (sound.data != NULL || longSound.data != NULL);
 
-	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
-	if (my sound.data) my cutButton = Editor_addCommand (me, L"Edit", L"Cut", 'X', menu_cb_Cut);
-	my copyButton = Editor_addCommand (me, L"Edit", L"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
-	if (my sound.data) my pasteButton = Editor_addCommand (me, L"Edit", L"Paste after selection", 'V', menu_cb_Paste);
-	if (my sound.data) {
-		Editor_addCommand (me, L"Edit", L"-- zero --", 0, NULL);
-		my zeroButton = Editor_addCommand (me, L"Edit", L"Set selection to zero", 0, menu_cb_SetSelectionToZero);
-		my reverseButton = Editor_addCommand (me, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
+	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
+	if (sound.data) cutButton = Editor_addCommand (this, L"Edit", L"Cut", 'X', menu_cb_Cut);
+	copyButton = Editor_addCommand (this, L"Edit", L"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
+	if (sound.data) pasteButton = Editor_addCommand (this, L"Edit", L"Paste after selection", 'V', menu_cb_Paste);
+	if (sound.data) {
+		Editor_addCommand (this, L"Edit", L"-- zero --", 0, NULL);
+		zeroButton = Editor_addCommand (this, L"Edit", L"Set selection to zero", 0, menu_cb_SetSelectionToZero);
+		reverseButton = Editor_addCommand (this, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
 
-	if (my sound.data) {
-		Editor_addCommand (me, L"Select", L"-- move to zero --", 0, 0);
-		Editor_addCommand (me, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (me, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (me, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (me, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
+	if (sound.data) {
+		Editor_addCommand (this, L"Select", L"-- move to zero --", 0, 0);
+		Editor_addCommand (this, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
+		Editor_addCommand (this, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
+		Editor_addCommand (this, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
+		Editor_addCommand (this, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	our createMenus_analysis (me);
+	its createMenus_analysis (this);
 }
 
-static void createHelpMenuItems (SoundEditor me, EditorMenu menu) {
-	inherited (SoundEditor) createHelpMenuItems (me, menu);
+void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	SoundEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"SoundEditor help", '?', menu_cb_SoundEditorHelp);
 	EditorMenu_addCommand (menu, L"LongSoundEditor help", 0, menu_cb_LongSoundEditorHelp);
 }
@@ -441,9 +443,6 @@ static void unhighlightSelection (SoundEditor me, double left, double right, dou
 }
 
 class_methods (SoundEditor, TimeSoundAnalysisEditor) {
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
-	class_method (dataChanged)
 	class_method (prepareDraw)
 	class_method (draw)
 	class_method (play)

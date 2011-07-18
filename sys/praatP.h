@@ -17,15 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/12
- */
-
 #include "praat.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void praat_addActionScript (const wchar *className1, int n1, const wchar *className2, int n2, const wchar *className3, int n3,
 	const wchar *title, const wchar *after, int depth, const wchar *script);
@@ -172,14 +164,9 @@ extern struct PraatP {
 	Any editor;   /* Scripting environment. */
 } praatP;
 
-#ifdef __cplusplus
-	}
-
 struct autoPraatBackground {
 	autoPraatBackground () { praat_background (); }
 	~autoPraatBackground () { try { praat_foreground (); } catch (...) { Melder_clearError (); } }
 };
-
-#endif
 
 /* End of file praatP.h */

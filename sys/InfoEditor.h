@@ -1,8 +1,8 @@
-#ifndef _SpectrogramEditor_h_
-#define _SpectrogramEditor_h_
-/* SpectrogramEditor.h
+#ifndef _InfoEditor_h_
+#define _InfoEditor_h_
+/* InfoEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 2004-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +19,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
+#include "TextEditor.h"
 
-#include "FunctionEditor.h"
-#include "Spectrogram.h"
-
-Thing_declare1cpp (SpectrogramEditor);
-struct structSpectrogramEditor : public structFunctionEditor {
-	double maximum;
+Thing_declare1cpp (InfoEditor);
+struct structInfoEditor : public structTextEditor {
+	// overridden methods:
+		void v_destroy ();
+		bool fileBased () { return false; }
+		void clear ();
+		bool v_scriptable () { return false; }
 };
-#define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2cpp (SpectrogramEditor, FunctionEditor);
+#define InfoEditor__methods(Klas) TextEditor__methods(Klas)
+Thing_declare2cpp (InfoEditor, TextEditor);
 
-SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Data data);
-
-/* End of file SpectrogramEditor.h */
+/* End of file InfoEditor.h */
 #endif

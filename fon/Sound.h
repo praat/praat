@@ -19,22 +19,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* Sound inherits from Vector */
 /* A Sound is a sampled signal, not quantized. */
 #include "Vector.h"
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Sound_enums.h"
 
 Thing_declare1cpp (Sound);
+struct structSound : public structVector {
+	// overridden methods:
+		void v_info ();
+};
+#define Sound__methods(klas)  Vector__methods(klas)
+Thing_declare2cpp (Sound, Vector);
 
 /* Attributes:
 	xmin              // Start time (seconds).
@@ -340,16 +338,6 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
 Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing);
-
-#ifdef __cplusplus
-	}
-
-	struct structSound : public structVector {
-	};
-	#define Sound__methods(klas)  Vector__methods(klas)
-	Thing_declare2cpp (Sound, Vector);
-
-#endif
 
 /* End of file Sound.h */
 #endif

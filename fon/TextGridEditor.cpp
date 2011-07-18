@@ -59,6 +59,7 @@
 
 #undef our
 #define our ((TextGridEditor_Table) my methods) ->
+#define its ((TextGridEditor_Table) methods) ->
 
 /********** PREFERENCES **********/
 
@@ -101,13 +102,12 @@ void TextGridEditor_prefs (void) {
 	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
 }
 
-static void info (I) {
-	iam (TextGridEditor);
-	inherited (TextGridEditor) info (me);
-	MelderInfo_writeLine2 (L"Selected tier: ", Melder_integer (my selectedTier));
-	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", Melder_boolean (my useTextStyles));
-	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (my fontSize));
-	MelderInfo_writeLine2 (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (my alignment));
+void structTextGridEditor :: v_info () {
+	TextGridEditor_Parent :: v_info ();
+	MelderInfo_writeLine2 (L"Selected tier: ", Melder_integer (selectedTier));
+	MelderInfo_writeLine2 (L"TextGrid uses text styles: ", Melder_boolean (useTextStyles));
+	MelderInfo_writeLine2 (L"TextGrid font size: ", Melder_integer (fontSize));
+	MelderInfo_writeLine2 (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (alignment));
 }
 
 /********** UTILITIES **********/
@@ -223,10 +223,9 @@ static void scrollToView (TextGridEditor me, double t) {
  * if the selected tier is an interval tier.
  */
 
-static void destroy (I) {
-	iam (TextGridEditor);
-	forget (my sound.data);
-	inherited (TextGridEditor) destroy (me);
+void structTextGridEditor :: v_destroy () {
+	forget (sound.data);
+	TextGridEditor_Parent :: v_destroy ();
 }
 
 /***** FILE MENU *****/
@@ -287,18 +286,18 @@ static void createMenuItems_file_write (TextGridEditor me, EditorMenu menu) {
 static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM (L"Draw visible TextGrid", 0)
-		our form_pictureWindow (me, cmd);
-		our form_pictureMargins (me, cmd);
+		my v_form_pictureWindow (cmd);
+		my v_form_pictureMargins (cmd);
 		our form_pictureSelection (me, cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
-		our ok_pictureMargins (me, cmd);
+		my v_ok_pictureWindow (cmd);
+		my v_ok_pictureMargins (cmd);
 		our ok_pictureSelection (me, cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
-		our do_pictureWindow (me, cmd);
-		our do_pictureMargins (me, cmd);
+		my v_do_pictureWindow (cmd);
+		my v_do_pictureMargins (cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
@@ -312,18 +311,18 @@ static int menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 static int menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM (L"Draw visible sound and TextGrid", 0)
-		our form_pictureWindow (me, cmd);
-		our form_pictureMargins (me, cmd);
+		my v_form_pictureWindow (cmd);
+		my v_form_pictureMargins (cmd);
 		our form_pictureSelection (me, cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
-		our ok_pictureMargins (me, cmd);
+		my v_ok_pictureWindow (cmd);
+		my v_ok_pictureMargins (cmd);
 		our ok_pictureSelection (me, cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
-		our do_pictureWindow (me, cmd);
-		our do_pictureMargins (me, cmd);
+		my v_do_pictureWindow (cmd);
+		my v_do_pictureMargins (cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
@@ -606,26 +605,26 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 static int menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM (L"Draw TextGrid and Pitch separately", 0)
-		our form_pictureWindow (me, cmd);
+		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"TextGrid:")
 		BOOLEAN (L"Show boundaries and points", 1);
 		LABEL (L"", L"Pitch:")
 		BOOLEAN (L"Speckle", 0);
-		our form_pictureMargins (me, cmd);
+		my v_form_pictureMargins (cmd);
 		our form_pictureSelection (me, cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
+		my v_ok_pictureWindow (cmd);
 		SET_INTEGER (L"Show boundaries and points", preferences.picture.showBoundaries);
 		SET_INTEGER (L"Speckle", preferences.picture.pitch.speckle);
-		our ok_pictureMargins (me, cmd);
+		my v_ok_pictureMargins (cmd);
 		our ok_pictureSelection (me, cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
-		our do_pictureWindow (me, cmd);
+		my v_do_pictureWindow (cmd);
 		preferences.picture.showBoundaries = GET_INTEGER (L"Show boundaries and points");
 		preferences.picture.pitch.speckle = GET_INTEGER (L"Speckle");
-		our do_pictureMargins (me, cmd);
+		my v_do_pictureMargins (cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
@@ -1277,46 +1276,46 @@ static int menu_cb_AboutSpecialSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEdito
 static int menu_cb_PhoneticSymbols (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Phonetic symbols"); return 1; }
 static int menu_cb_AboutTextStyles (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); Melder_help (L"Text styles"); return 1; }
 
-static void createMenus (TextGridEditor me) {
+void structTextGridEditor :: v_createMenus () {
+	TextGridEditor_Parent :: v_createMenus ();
 	EditorMenu menu;
-	inherited (TextGridEditor) createMenus (me);
 
 	#ifndef macintosh
-		Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
-		Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
-		Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
-		Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
-		Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
-		Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
-		Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
-		Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
-		Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
+		Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
+		Editor_addCommand (this, L"Edit", L"Cut text", 'X', menu_cb_Cut);
+		Editor_addCommand (this, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
+		Editor_addCommand (this, L"Edit", L"Copy text", 'C', menu_cb_Copy);
+		Editor_addCommand (this, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
+		Editor_addCommand (this, L"Edit", L"Paste text", 'V', menu_cb_Paste);
+		Editor_addCommand (this, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
+		Editor_addCommand (this, L"Edit", L"Erase text", 0, menu_cb_Erase);
+		Editor_addCommand (this, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
-	Editor_addCommand (me, L"Edit", L"-- encoding --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
-	Editor_addCommand (me, L"Edit", L"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (me, L"Edit", L"Genericize", Editor_HIDDEN, menu_cb_Genericize);
-	Editor_addCommand (me, L"Edit", L"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
-	Editor_addCommand (me, L"Edit", L"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (me, L"Edit", L"Nativize", Editor_HIDDEN, menu_cb_Nativize);
-	Editor_addCommand (me, L"Edit", L"-- search --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Find...", 'F', menu_cb_Find);
-	Editor_addCommand (me, L"Edit", L"Find again", 'G', menu_cb_FindAgain);
+	Editor_addCommand (this, L"Edit", L"-- encoding --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Convert entire TextGrid to backslash trigraphs", 0, menu_cb_Genericize);
+	Editor_addCommand (this, L"Edit", L"Genericize entire TextGrid", Editor_HIDDEN, menu_cb_Genericize);
+	Editor_addCommand (this, L"Edit", L"Genericize", Editor_HIDDEN, menu_cb_Genericize);
+	Editor_addCommand (this, L"Edit", L"Convert entire TextGrid to Unicode", 0, menu_cb_Nativize);
+	Editor_addCommand (this, L"Edit", L"Nativize entire TextGrid", Editor_HIDDEN, menu_cb_Nativize);
+	Editor_addCommand (this, L"Edit", L"Nativize", Editor_HIDDEN, menu_cb_Nativize);
+	Editor_addCommand (this, L"Edit", L"-- search --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Find...", 'F', menu_cb_Find);
+	Editor_addCommand (this, L"Edit", L"Find again", 'G', menu_cb_FindAgain);
 
-	if (my sound.data) {
-		Editor_addCommand (me, L"Select", L"-- move to zero --", 0, 0);
-		Editor_addCommand (me, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
-		Editor_addCommand (me, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
-		Editor_addCommand (me, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
-		Editor_addCommand (me, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
+	if (sound.data) {
+		Editor_addCommand (this, L"Select", L"-- move to zero --", 0, 0);
+		Editor_addCommand (this, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
+		Editor_addCommand (this, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
+		Editor_addCommand (this, L"Select", L"Move cursor to nearest zero crossing", '0', menu_cb_MoveCursorToZero);
+		Editor_addCommand (this, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	Editor_addCommand (me, L"Query", L"-- query interval --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
-	Editor_addCommand (me, L"Query", L"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
-	Editor_addCommand (me, L"Query", L"Get label of interval", 0, menu_cb_GetLabelOfInterval);
+	Editor_addCommand (this, L"Query", L"-- query interval --", 0, NULL);
+	Editor_addCommand (this, L"Query", L"Get starting point of interval", 0, menu_cb_GetStartingPointOfInterval);
+	Editor_addCommand (this, L"Query", L"Get end point of interval", 0, menu_cb_GetEndPointOfInterval);
+	Editor_addCommand (this, L"Query", L"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
-	menu = Editor_addMenu (me, L"Interval", 0);
+	menu = Editor_addMenu (this, L"Interval", 0);
 	EditorMenu_addCommand (menu, L"Add interval on tier 1", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
 	EditorMenu_addCommand (menu, L"Add interval on tier 2", GuiMenu_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
 	EditorMenu_addCommand (menu, L"Add interval on tier 3", GuiMenu_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
@@ -1326,10 +1325,10 @@ static void createMenus (TextGridEditor me) {
 	EditorMenu_addCommand (menu, L"Add interval on tier 7", GuiMenu_COMMAND | '7', menu_cb_InsertIntervalOnTier7);
 	EditorMenu_addCommand (menu, L"Add interval on tier 8", GuiMenu_COMMAND | '8', menu_cb_InsertIntervalOnTier8);
 
-	menu = Editor_addMenu (me, L"Boundary", 0);
+	menu = Editor_addMenu (this, L"Boundary", 0);
 	/*EditorMenu_addCommand (menu, L"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, L"Move to E", 0, menu_cb_MoveToE);*/
-	if (my sound.data)
+	if (sound.data)
 		EditorMenu_addCommand (menu, L"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 	EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
@@ -1345,7 +1344,7 @@ static void createMenus (TextGridEditor me) {
 	EditorMenu_addCommand (menu, L"-- remove mark --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Remove", GuiMenu_OPTION | GuiMenu_BACKSPACE, menu_cb_RemovePointOrBoundary);
 
-	menu = Editor_addMenu (me, L"Tier", 0);
+	menu = Editor_addMenu (this, L"Tier", 0);
 	EditorMenu_addCommand (menu, L"Add interval tier...", 0, menu_cb_AddIntervalTier);
 	EditorMenu_addCommand (menu, L"Add point tier...", 0, menu_cb_AddPointTier);
 	EditorMenu_addCommand (menu, L"Duplicate tier...", 0, menu_cb_DuplicateTier);
@@ -1357,21 +1356,21 @@ static void createMenus (TextGridEditor me) {
 	EditorMenu_addCommand (menu, L"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, L"Extract entire selected tier", 0, menu_cb_PublishTier);
 
-	if (my spellingChecker) {
-		menu = Editor_addMenu (me, L"Spell", 0);
+	if (spellingChecker) {
+		menu = Editor_addMenu (this, L"Spell", 0);
 		EditorMenu_addCommand (menu, L"Check spelling in tier", GuiMenu_COMMAND | GuiMenu_OPTION | 'L', menu_cb_CheckSpelling);
 		EditorMenu_addCommand (menu, L"Check spelling in interval", 0, menu_cb_CheckSpellingInInterval);
 		EditorMenu_addCommand (menu, L"-- edit lexicon --", 0, NULL);
 		EditorMenu_addCommand (menu, L"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
 
-	if (my sound.data || my longSound.data) {
-		our createMenus_analysis (me);   // Insert some of the ancestor's menus *after* the TextGrid menus.
+	if (sound.data || longSound.data) {
+		its createMenus_analysis (this);   // Insert some of the ancestor's menus *after* the TextGrid menus.
 	}
 }
 
-static void createHelpMenuItems (TextGridEditor me, EditorMenu menu) {
-	inherited (TextGridEditor) createHelpMenuItems (me, menu);
+void structTextGridEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	TextGridEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"TextGridEditor help", '?', menu_cb_TextGridEditorHelp);
 	EditorMenu_addCommand (menu, L"About special symbols", 0, menu_cb_AboutSpecialSymbols);
 	EditorMenu_addCommand (menu, L"Phonetic symbols", 0, menu_cb_PhoneticSymbols);
@@ -1413,22 +1412,22 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	}
 }
 
-static void createChildren (TextGridEditor me) {
-	inherited (TextGridEditor) createChildren (me);
-	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
+void structTextGridEditor :: v_createChildren () {
+	TextGridEditor_Parent :: v_createChildren ();
+	GuiText_setChangeCallback (text, gui_text_cb_change, this);
 }
 
-static void dataChanged (TextGridEditor me) {
-	TextGrid grid = (TextGrid) my data;
+void structTextGridEditor :: v_dataChanged () {
+	TextGrid grid = (TextGrid) data;
 	/*
 	 * Perform a minimal selection change.
 	 * Most changes will involve intervals and boundaries; however, there may also be tier removals.
 	 * Do a simple guess.
 	 */
-	if (grid -> tiers -> size < my selectedTier) {
-		my selectedTier = grid -> tiers -> size;
+	if (grid -> tiers -> size < selectedTier) {
+		selectedTier = grid -> tiers -> size;
 	}
-	inherited (TextGridEditor) dataChanged (me);   // does all the updating
+	TextGridEditor_Parent :: v_dataChanged ();   // does all the updating
 }
 
 /********** DRAWING AREA **********/
@@ -2267,15 +2266,9 @@ static void updateMenuItems_file (TextGridEditor me) {
 }
 
 class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
-	class_method (destroy)
-	class_method (info)
-	class_method (dataChanged)
-	class_method (createChildren)
 	class_method (createMenuItems_file_extract)
 	class_method (createMenuItems_file_write)
 	class_method (createMenuItems_file_draw)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (prepareDraw)
 	class_method (draw)
 	us -> hasText = TRUE;

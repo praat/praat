@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/12
- */
-
 #include "Interpreter.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void praat_executeCommand (Interpreter me, wchar *command);
 void praat_executeCommandFromStandardInput (const char *programName);
@@ -38,10 +30,6 @@ void praat_executeScriptFromDialog (Any dia);
 void DO_praat_runScript (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar *scriptPath, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
 void DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar *script);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file praat_script.h */
 #endif

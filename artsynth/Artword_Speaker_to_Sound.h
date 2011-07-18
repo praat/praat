@@ -17,26 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Artword.h"
 #include "Speaker.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
    double samplingFrequency, int oversampling,
    Sound *w1, int iw1, Sound *w2, int iw2, Sound *w3, int iw3,
    Sound *p1, int ip1, Sound *p2, int ip2, Sound *p3, int ip3,
    Sound *v1, int iv1, Sound *v2, int iv2, Sound *v3, int iv3);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Artword_Speaker_to_Sound.h */

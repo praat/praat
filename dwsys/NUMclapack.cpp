@@ -9530,7 +9530,7 @@ int NUMlapack_dlae2 (double *a, double *b, double *c__, double *rt1, double *rt2
 	adf = fabs (df);
 	tb = *b + *b;
 	ab = fabs (tb);
-	if (abs (*a) > fabs (*c__))
+	if (fabs (*a) > fabs (*c__))
 	{
 		acmx = *a;
 		acmn = *c__;
@@ -10891,7 +10891,7 @@ int NUMlapack_dlaln2 (int *ltrans, long *na, long *nw, double *smin, double *ca,
 			bi2 = bi2 - li21 * br1 - lr21 * bi1;
 			/* Computing MAX */
 			d__1 = (fabs (br1) + fabs (bi1)) * (u22abs * (fabs (ur11r) + fabs (ui11r))), d__2 =
-				abs (br2) + fabs (bi2);
+				fabs (br2) + fabs (bi2);
 			bbnd = MAX (d__1, d__2);
 			if (bbnd > 1. && u22abs < 1.)
 			{

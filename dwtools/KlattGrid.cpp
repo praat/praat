@@ -894,6 +894,7 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me)
 			try {
 				re = get_collisionPoint_x (power1, power2, collisionPhase);
 			} catch (MelderError) { 
+				Melder_clearError ();
 				Melder_warning9 (L"Illegal collision point at t = ", Melder_double (t), L" (power1=", Melder_double(power1), L", power2=", Melder_double(power2), L"colPhase=", Melder_double(collisionPhase), L")");
 			}
 
@@ -1462,7 +1463,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			for (long iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant++)
 			{
 				try { _Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_formants, iformant, antiformants);
-				} catch (MelderError) { Melder_warning ("Frequency or bandwidth missing for nasal formant ",  iformant, L"."); }
+				} catch (MelderError) { 				Melder_clearError ();
+Melder_warning ("Frequency or bandwidth missing for nasal formant ",  iformant, L"."); }
 			}
 		}
 
@@ -1472,7 +1474,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			for (long iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant++)
 			{
 				try { _Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_antiformants, iformant, antiformants);
-				} catch (MelderError) { Melder_warning ("Frequency or bandwidth missing for nasal anti formant ",  iformant, L"."); }
+				} catch (MelderError) { 				Melder_clearError ();
+Melder_warning ("Frequency or bandwidth missing for nasal anti formant ",  iformant, L"."); }
 			}
 		}
 
@@ -1482,7 +1485,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			for (long iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant++)
 			{
 				try { _Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_formants, iformant, antiformants);
-				} catch (MelderError) { Melder_warning ("Frequency or bandwidth missing for tracheal formant ",  iformant, L"."); }
+				} catch (MelderError) { 				Melder_clearError ();
+Melder_warning ("Frequency or bandwidth missing for tracheal formant ",  iformant, L"."); }
 			}
 		}
 
@@ -1492,7 +1496,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			for (long iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant++)
 			{
 				try { _Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_antiformants, iformant, antiformants);
-				} catch (MelderError) { Melder_warning ("Frequency or bandwidth missing for tracheal anti formant ",  iformant, L"."); }
+				} catch (MelderError) { 				Melder_clearError ();
+Melder_warning ("Frequency or bandwidth missing for tracheal anti formant ",  iformant, L"."); }
 			}
 		}
 
@@ -1503,7 +1508,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant++)
 			{
 				try { _Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), formants.peek(), iformant, antiformants);
-				} catch (MelderError) { Melder_warning ("Frequency or bandwidth missing for oral formant ",  iformant, L"."); }
+				} catch (MelderError) { 				Melder_clearError ();
+Melder_warning ("Frequency or bandwidth missing for oral formant ",  iformant, L"."); }
 			}
 		}
 		return him.transfer();
@@ -1796,9 +1802,17 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 		RealTier btier = (RealTier) thy bandwidths -> item[iformant];
 		RealTier atier = (RealTier) amplitudes -> item[iformant];
 
-		if (ftier -> points -> size == 0 || btier -> points -> size == 0 || atier -> points -> size == 0)
+		if (ftier -> points -> size == 0)
 		{
-			Melder_throw ("Frequencies or bandwidths or amplitudes of formant ", iformant, " not defined.\nThis formant will not be used.");
+			Melder_throw ("Frequencies of formant ", iformant, " not defined.\nThis formant will not be used.");
+		}
+		if (btier -> points -> size == 0)
+		{
+			Melder_throw ("Bandwidths of formant ", iformant, " not defined.\nThis formant will not be used.");
+		}
+		if (atier -> points -> size == 0)
+		{
+			Melder_throw ("Amplitudes of formant ", iformant, " not defined.\nThis formant will not be used.");
 		}
 
 		autoResonator r = Resonator_create (my dx, Resonator_NORMALISATION_HMAX);
@@ -1839,7 +1853,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 				his z[1][is] += alternatingSign >= 0 ? tmp -> z[1][is] : - tmp -> z[1][is];
 			}
 			if (alternatingSign != 0) alternatingSign = -alternatingSign;
-			} catch (MelderError) { ; } // Just skip the formant
+			} catch (MelderError) { Melder_clearError(); } // Just skip the formant
 		}
 		return him.transfer();
 	} catch (MelderError) { Melder_thrown (me, ": not filtered."); }

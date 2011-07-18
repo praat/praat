@@ -19,19 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 /* Art = Articulation */
 /* Members represent muscle activities for speech production. */
 /* All members have values from 0 (no activity) to 1 (maximum activity). */
 
 #include "Data.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Articulation_enums.h"
 
@@ -48,10 +40,6 @@ Art Art_create (void);
 		...
 		result -> art [kArt_muscle_BUCCINATOR] = 0.0;
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Articulation.h */
 #endif

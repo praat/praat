@@ -19,14 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 typedef struct fcomplex { float re, im; } fcomplex;
 typedef struct dcomplex { double re, im; } dcomplex;
 
@@ -66,10 +58,6 @@ dcomplex dcomplex_rmul (double x, dcomplex a);
 fcomplex fcomplex_exp (fcomplex z);
 dcomplex dcomplex_exp (dcomplex z);
 	/* Exponentiation: e^z */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file complex.h */
 #endif

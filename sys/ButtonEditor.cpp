@@ -27,7 +27,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2009/01/17 arguments to UiForm callbacks
  * pb 2011/04/06 C++
- * pb 2011/07/01 C++
+ * pb 2011/07/15 C++
  */
 
 #include "ButtonEditor.h"
@@ -273,50 +273,47 @@ static void gui_radiobutton_cb_editors (I, GuiRadioButtonEvent event) { (void) e
 static void gui_radiobutton_cb_actionsAM (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 4); }
 static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void) event; which ((ButtonEditor) void_me, 5); }
 
-static void createChildren (ButtonEditor me) {
+void structButtonEditor :: v_createChildren () {
+	ButtonEditor_Parent :: v_createChildren ();
 	#if gtk
 		void *group = NULL;
 	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
-	inherited (ButtonEditor) createChildren (me);
-	my button1 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"Objects", gui_radiobutton_cb_objects, me, GuiRadioButton_SET);
+	button1 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Objects", gui_radiobutton_cb_objects, this, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
-	my button2 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"Picture", gui_radiobutton_cb_picture, me, 0);
+	button2 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Picture", gui_radiobutton_cb_picture, this, 0);
 	x += BUTTON_WIDTH + 5;
-	my button3 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
-		L"Editors", gui_radiobutton_cb_editors, me, 0);
+	button3 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+		L"Editors", gui_radiobutton_cb_editors, this, 0);
 	x += BUTTON_WIDTH + 5;
-	my button4 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
-		L"Actions A-M", gui_radiobutton_cb_actionsAM, me, 0);
+	button4 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+		L"Actions A-M", gui_radiobutton_cb_actionsAM, this, 0);
 	x += BUTTON_WIDTH + 35;
-	my button5 = GuiRadioButton_createShown (my holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
-		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, me, 0);
+	button5 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, this, 0);
 	
 	#if gtk
-		group = GuiRadioButton_getGroup(my button1);
-		GuiRadioButton_setGroup(my button2, group);
-		group = GuiRadioButton_getGroup(my button2);
-		GuiRadioButton_setGroup(my button3, group);
-		group = GuiRadioButton_getGroup(my button3);
-		GuiRadioButton_setGroup(my button4, group);
-		group = GuiRadioButton_getGroup(my button4);
-		GuiRadioButton_setGroup(my button5, group);
+		group = GuiRadioButton_getGroup (button1);
+		GuiRadioButton_setGroup (button2, group);
+		group = GuiRadioButton_getGroup (button2);
+		GuiRadioButton_setGroup (button3, group);
+		group = GuiRadioButton_getGroup (button3);
+		GuiRadioButton_setGroup (button4, group);
+		group = GuiRadioButton_getGroup (button4);
+		GuiRadioButton_setGroup (button5, group);
 	#endif
 }
 
 static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); return 1; }
 
-static void createHelpMenuItems (ButtonEditor me, EditorMenu menu) {
-	inherited (ButtonEditor) createHelpMenuItems (me, menu);
+void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	ButtonEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
 class_methods (ButtonEditor, HyperPage) {
-	us -> scriptable = false;
-	class_method (createChildren)
-	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (goToPage)
 	class_methods_end

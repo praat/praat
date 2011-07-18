@@ -768,21 +768,20 @@ static void gui_button_cb_redo (I, GuiButtonEvent event) {
 	updateWidgets (me);
 }
 
-static void destroy (I)
+void structCategoriesEditor :: v_destroy ()
 {
-	iam (CategoriesEditor);
-	forget (my history); /* !! Editor */
-	inherited (CategoriesEditor) destroy (me);
+	forget (history); /* !! Editor */
+	CategoriesEditor_Parent :: v_destroy ();
 }
 
-static void createHelpMenuItems (CategoriesEditor me, EditorMenu menu)
+void structCategoriesEditor :: v_createHelpMenuItems (EditorMenu menu)
 {
-	inherited (CategoriesEditor) createHelpMenuItems (me, menu);
+	CategoriesEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"CategoriesEditor help", '?', menu_cb_help);
 }
 
 // origin is at top left.
-static void createChildren (CategoriesEditor me)
+void structCategoriesEditor :: v_createChildren ()
 {
 	GuiObject vertScrollBar;
 	double menuBarOffset = 40;
@@ -791,15 +790,15 @@ static void createChildren (CategoriesEditor me)
 	double left, right, top, bottom, buttons_left, buttons_top;
 
 	left = 5; right = left + button_width; top = 3 + menuBarOffset; bottom = top + text_button_height;
-	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Positions:", 0);
+	GuiLabel_createShown (dialog, left, right, top, bottom, L"Positions:", 0);
 	left = right + delta_x ; right = left + button_width;
-	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Values:", 0);
+	GuiLabel_createShown (dialog, left, right, top, bottom, L"Values:", 0);
 
 	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
-	my list = GuiList_create (my dialog, left, right, top, bottom, true, 0);
-	GuiList_setSelectionChangedCallback (my list, gui_list_cb_extended, me);
-	GuiList_setDoubleClickCallback (my list, gui_list_cb_double_click, me);
-	GuiObject_show (my list);
+	list = GuiList_create (dialog, left, right, top, bottom, true, 0);
+	GuiList_setSelectionChangedCallback (list, gui_list_cb_extended, this);
+	GuiList_setDoubleClickCallback (list, gui_list_cb_double_click, this);
+	GuiObject_show (list);
 
 	/*
 		The valueChangedCallback does not get any notification in case of:
@@ -808,59 +807,55 @@ static void createChildren (CategoriesEditor me)
 
 	#ifndef _WIN32
 		#if motif
-		XtVaGetValues (GuiObject_parent (my list), XmNverticalScrollBar, & vertScrollBar, 0);
+		XtVaGetValues (GuiObject_parent (list), XmNverticalScrollBar, & vertScrollBar, 0);
 		XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll,
-			(XtPointer) me);
-		XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
+			(XtPointer) this);
+		XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) this);
 		XtAddCallback (vertScrollBar, XmNdecrementCallback, gui_cb_scroll,
-			(XtPointer) me);
+			(XtPointer) this);
 		XtAddCallback (vertScrollBar, XmNincrementCallback, gui_cb_scroll,
-			(XtPointer) me);
+			(XtPointer) this);
 		XtAddCallback (vertScrollBar, XmNpageIncrementCallback, gui_cb_scroll,
-			(XtPointer) me);
+			(XtPointer) this);
 		XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll,
-			(XtPointer) me);
+			(XtPointer) this);
 		#endif
 	#endif
 
 	buttons_left = left = right + 2*delta_x; right = left + button_width; bottom = top + button_height;
-	GuiLabel_createShown (my dialog, left, right, top, bottom, L"Value:", 0);
+	GuiLabel_createShown (dialog, left, right, top, bottom, L"Value:", 0);
 	left = right + delta_x; right = left + button_width;
-	my text = GuiText_createShown (my dialog, left, right, top, bottom, 0);
-	GuiText_setString (my text, CategoriesEditor_EMPTYLABEL);
+	text = GuiText_createShown (dialog, left, right, top, bottom, 0);
+	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
 
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
-	my insert = GuiButton_createShown (my dialog, left, right, top, bottom,	L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
+	insert = GuiButton_createShown (dialog, left, right, top, bottom,	L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
 	left = right + delta_x; right = left + button_width;
-	my replace = GuiButton_createShown (my dialog, left, right, top, bottom, L"Replace", gui_button_cb_replace, me, 0);
+	replace = GuiButton_createShown (dialog, left, right, top, bottom, L"Replace", gui_button_cb_replace, this, 0);
 	left = buttons_left; right = left + 1.5 * button_width; top = bottom + delta_y; bottom = top + button_height;
-	my insertAtEnd = GuiButton_createShown (my dialog, left, right, top, bottom, L"Insert at end", gui_button_cb_insertAtEnd, me, 0);
+	insertAtEnd = GuiButton_createShown (dialog, left, right, top, bottom, L"Insert at end", gui_button_cb_insertAtEnd, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	my undo = GuiButton_createShown (my dialog, left, right, top, bottom, L"Undo", gui_button_cb_undo, me, 0);
+	undo = GuiButton_createShown (dialog, left, right, top, bottom, L"Undo", gui_button_cb_undo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	my redo = GuiButton_createShown (my dialog, left, right, top, bottom, L"Redo", gui_button_cb_redo, me, 0);
+	redo = GuiButton_createShown (dialog, left, right, top, bottom, L"Redo", gui_button_cb_redo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	my remove = GuiButton_createShown (my dialog, left, right, top, bottom, L"Remove", gui_button_cb_remove, me, 0);
+	remove = GuiButton_createShown (dialog, left, right, top, bottom, L"Remove", gui_button_cb_remove, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	my moveUp = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, me, 0);
+	moveUp = GuiButton_createShown (dialog, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	my moveDown = GuiButton_createShown (my dialog, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, me, 0);
+	moveDown = GuiButton_createShown (dialog, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, this, 0);
 
 	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
-	my outOfView = GuiLabel_createShown (my dialog, left, right, top, bottom, L"", 0);
+	outOfView = GuiLabel_createShown (dialog, left, right, top, bottom, L"", 0);
 }
 
-static void dataChanged (CategoriesEditor me)
+void structCategoriesEditor :: v_dataChanged ()
 {
-	update (me, 0, 0, 0, 0);
-	updateWidgets (me);
+	update (this, 0, 0, 0, 0);
+	updateWidgets (this);
 }
 
 class_methods (CategoriesEditor, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
-	class_method (createHelpMenuItems)
 	class_methods_end
 }
 

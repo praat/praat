@@ -269,7 +269,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 {
 	iam (OrderedOfString);
 	regexp *compiled_search = NULL;
-	regularExp_CHAR *compileMsg;
+	wchar *compileMsg;
 	wchar_t *r;
 
 	if (search == NULL || replace == NULL) return 0;

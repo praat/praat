@@ -19,30 +19,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Script);
+struct structScript : public structData {
+	structMelderFile file;
+};
+#define Script__methods(klas) Data__methods(klas)
+Thing_declare2cpp (Script, Data);
 
 Script Script_createFromFile (MelderFile file);
-
-#ifdef __cplusplus
-	}
-
-	struct structScript : public structData {
-		structMelderFile file;
-	};
-	#define Script__methods(klas) Data__methods(klas)
-	Thing_declare2cpp (Script, Data);
-
-#endif
 
 /* End of file Script.h */
 #endif

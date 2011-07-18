@@ -829,7 +829,7 @@ void praat_dataChanged (Any object) {
 	WHERE (OBJECT == object) {
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (EDITOR [ieditor])
-				Editor_dataChanged ((Editor) EDITOR [ieditor], object);
+				Editor_dataChanged ((Editor) EDITOR [ieditor], (Data) object);
 	}
 	if (duringError) {
 		Melder_error1 (saveError);   // BUG: this appends an empty newline to the original error message
@@ -842,7 +842,7 @@ void praat_clipboardChanged (void *closure, Any clipboard) {
 	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor])
-				Editor_clipboardChanged ((Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor], clipboard);
+				Editor_clipboardChanged ((Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor], (Data) clipboard);
 }
 
 static void helpProc (const wchar_t *query) {

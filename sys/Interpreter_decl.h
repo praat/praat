@@ -19,13 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
-extern "C" {
-	Thing_declare1cpp (Interpreter);
-}
+Thing_declare (Interpreter);
 
 /* End of file Interpreter_decl.h */
 #endif

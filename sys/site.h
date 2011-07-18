@@ -19,22 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 wchar_t *Site_getPrintCommand (void);
 void Site_setPrintCommand (const wchar_t *text);
 
 void Site_prefs (void);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file site.h */
 #endif

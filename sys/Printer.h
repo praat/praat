@@ -19,20 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2004/05/25 font choice strategy
- * pb 2005/05/19 preference for whether EPS files include a screen preview
- * pb 2007/12/09 enums
- */
-
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Graphics.h"
 
 /* When changing the following structure, update its initialization in Printer.c */
 struct Printer {
@@ -60,10 +47,6 @@ int Printer_print (void (*draw) (I, Graphics g), I);
 void Printer_nextPage (void);
 
 void Printer_prefs (void);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Printer.h */
 #endif

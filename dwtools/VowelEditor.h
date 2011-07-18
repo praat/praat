@@ -29,10 +29,6 @@
 #include "TableOfReal.h"
 #include "Editor.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Vowel);
 struct structVowel : public structFunction {
 	PitchTier pt;
@@ -41,32 +37,24 @@ struct structVowel : public structFunction {
 #define Vowel__methods(klas) Function__methods(klas)
 Thing_declare2cpp (Vowel, Function);
 
-Thing_declare1cpp (VowelEditor);
+struct structVowelEditor_F0 
+{
+	double start;
+	double slopeOctPerSec;
+	double minimum, maximum;
+	double samplingFrequency, adaptFactor, adaptTime;
+	long interpolationDepth;
+};
 
-VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data);
+struct structVowelEditor_F1F2Grid
+{
+	double df1, df2;
+	int text_left, text_right, text_bottom, text_top;
+	double grey;
+};
 
-void VowelEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structVowelEditor_F0 
-	{
-		double start;
-		double slopeOctPerSec;
-		double minimum, maximum;
-		double samplingFrequency, adaptFactor, adaptTime;
-		long interpolationDepth;
-	};
-
-	struct structVowelEditor_F1F2Grid
-	{
-		double df1, df2;
-		int text_left, text_right, text_bottom, text_top;
-		double grey;
-	};
-
-	struct structVowelEditor : public structEditor {
+Thing_define (VowelEditor, Editor) {
+	// new data:
 		int soundFollowsMouse, shiftKeyPressed;
 		double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
 		Matrix f3, b3, f4, b4;
@@ -86,10 +74,15 @@ void VowelEditor_prefs (void);
 		GuiObject durationLabel, durationTextField, extendLabel, extendTextField;
 		GuiObject startInfo, endInfo;
 		structVowelEditor_F1F2Grid grid;
-	};
-	#define VowelEditor__methods(Klas) Editor__methods(Klas)
-	Thing_declare2cpp (VowelEditor, Editor);
+	// overridden methods:
+		void v_destroy ();
+		void v_createChildren ();
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
 
-#endif // __cplusplus
+VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data);
+
+void VowelEditor_prefs (void);
 
 #endif /* _VowelEditor_h_ */

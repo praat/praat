@@ -26,6 +26,7 @@
  * pb 2009/12/25 error messages if the user tries to handle the Demo window while it is waiting for input
  * pb 2010/07/13 GTK
  * pb 2011/04/06 C++
+ * pb 2011/07/15 C++
  */
 
 #include "DemoEditor.h"
@@ -33,50 +34,34 @@
 #include "praatP.h"
 #include "UnicodeData.h"
 
-struct structDemoEditor : public structEditor {
-	GuiObject drawingArea;
-	Graphics graphics;
-	void *praatPicture;
-	bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-	long x, y;
-	wchar key;
-	bool waitingForInput, userWantsToClose, fullScreen;
-// overridden methods:
-	void goAway ();
-};
-#define DemoEditor__methods(Klas) Editor__methods(Klas)
-Thing_declare2cpp (DemoEditor, Editor);
-
 static DemoEditor theDemoEditor;
 
 /***** DemoEditor methods *****/
 
-static void destroy (I) {
-	iam (DemoEditor);
-	Melder_free (my praatPicture);
-	forget (my graphics);
+void structDemoEditor :: v_destroy () {
+	Melder_free (praatPicture);
+	forget (graphics);
 	theDemoEditor = NULL;
-	inherited (DemoEditor) destroy (me);
+	DemoEditor_Parent :: v_destroy ();
 }
 
-static void info (I) {
-	iam (DemoEditor);
-	inherited (DemoEditor) info (me);
-	MelderInfo_writeLine2 (L"Colour: ", Graphics_Colour_name (((PraatPicture) my praatPicture) -> colour));
-	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (((PraatPicture) my praatPicture) -> font));
-	MelderInfo_writeLine2 (L"Font size: ", Melder_integer (((PraatPicture) my praatPicture) -> fontSize));
+void structDemoEditor :: v_info () {
+	DemoEditor_Parent :: v_info ();
+	MelderInfo_writeLine2 (L"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
+	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine2 (L"Font size: ", Melder_integer (((PraatPicture) praatPicture) -> fontSize));
 }
 
-void structDemoEditor::goAway () {
+void structDemoEditor :: v_goAway () {
 	if (waitingForInput) {
 		userWantsToClose = true;
 	} else {
-		DemoEditor_Parent::goAway ();
+		DemoEditor_Parent :: v_goAway ();
 	}
 }
 
-static void createMenus (DemoEditor me) {
-	inherited (DemoEditor) createMenus (me);
+void structDemoEditor :: v_createMenus () {
+	DemoEditor_Parent :: v_createMenus ();
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -134,22 +119,15 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_updateWs (my graphics);
 }
 
-static void createChildren (DemoEditor me) {
-	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, 0, 0, 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+void structDemoEditor :: v_createChildren () {
+	drawingArea = GuiDrawingArea_createShown (dialog, 0, 0, 0, 0,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	#if gtk
-		gtk_widget_set_double_buffered (my drawingArea, FALSE);
+		gtk_widget_set_double_buffered (drawingArea, FALSE);
 	#endif
 }
 
 class_methods (DemoEditor, Editor) {
-	class_method (destroy)
-	class_method (info)
-	class_method (createChildren)
-	class_method (createMenus)
-	us -> hasMenuBar = false;
-	us -> canFullScreen = true;
-	us -> scriptable = false;
 	class_methods_end
 }
 

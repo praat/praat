@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
 #include "Strings_def.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #define Strings__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Strings, Data);
@@ -46,10 +38,6 @@ void Strings_sort (Strings me);
 void Strings_remove (Strings me, long position);
 void Strings_replace (Strings me, long position, const wchar *text);
 void Strings_insert (Strings me, long position, const wchar *text);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Strings.h */
 #endif

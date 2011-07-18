@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "ManPage_enums.h"
 
@@ -39,22 +31,16 @@ typedef struct structManPage_Paragraph {
 } *ManPage_Paragraph;
 
 Thing_declare1cpp (ManPage);
-
-#ifdef __cplusplus
-	}
-
-	struct structManPage : public structThing {
-		const wchar *title, *author;
-		long date;
-		struct structManPage_Paragraph *paragraphs;
-		long nlinksHither, nlinksThither;
-		long *linksHither, *linksThither;
-		double recordingTime;
-	};
-	#define ManPage__methods(klas) Thing__methods(klas)
-	Thing_declare2cpp (ManPage, Thing);
-
-#endif
+struct structManPage : public structThing {
+	const wchar *title, *author;
+	long date;
+	struct structManPage_Paragraph *paragraphs;
+	long nlinksHither, nlinksThither;
+	long *linksHither, *linksThither;
+	double recordingTime;
+};
+#define ManPage__methods(klas) Thing__methods(klas)
+Thing_declare2cpp (ManPage, Thing);
 
 /* End of file ManPage.h */
 #endif

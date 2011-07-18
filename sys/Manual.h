@@ -20,27 +20,15 @@
  */
 
 /*
- * pb 2011/07/12
+ * pb 2011/07/15
  */
 
 #include "HyperPage.h"
 #include "ManPages.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Manual);
-
-void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data);
-Manual Manual_create (GuiObject parent, const wchar *title, Data data);
-
-void Manual_search (Manual me, const wchar *query);
-
-#ifdef __cplusplus
-	}
-
-	struct structManual : public structHyperPage {
+struct structManual : public structHyperPage {
+	// data:
 		long path, numberOfParagraphs;
 		struct structManPage_Paragraph *paragraphs;
 		GuiObject searchText;
@@ -49,11 +37,21 @@ void Manual_search (Manual me, const wchar *query);
 		long matches [1 + 20], fromPage, toPage;
 		int suppressLinksHither;
 		wchar *printPagesStartingWith;
-	};
-	#define Manual__methods(Klas) HyperPage__methods(Klas)
-	Thing_declare2cpp (Manual, HyperPage);
+	// overridden methods:
+		void v_destroy ();
+		bool v_scriptable () { return false; }
+		void v_createChildren ();
+		void v_createMenus ();
+		bool v_hasQueryMenu () { return false; }
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define Manual__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2cpp (Manual, HyperPage);
 
-#endif // __cplusplus
+void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data);
+Manual Manual_create (GuiObject parent, const wchar *title, Data data);
+
+void Manual_search (Manual me, const wchar *query);
 
 /* End of file Manual.h */
 #endif

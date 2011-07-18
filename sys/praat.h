@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
 #include "Editor.h"
 #include "Manual.h"
 #include "Preferences.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* The explanations in this header file assume
 	that you put your extra commands in praat_Sybil.c
@@ -519,8 +511,6 @@ void praat_updateSelection (void);
 
 void praat_addCommandsToEditor (Editor me);
 
-#ifdef __cplusplus
-	}
 #define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
 #define iam_ONLY(klas)  klas me = static_cast<klas> (ONLY (class##klas))
 #define thouart_ONLY(klas)  klas thee = static_cast<klas> (ONLY (class##klas))
@@ -557,6 +547,5 @@ static inline void praat_newWithFile (Data newData, const wchar *s1, const wchar
 	{ praat_newWithFile4 (newData, s1, s2, s3, s4, file); therror }
 static inline void praat_newWithFile (Data newData, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5,
 	MelderFile file) { praat_newWithFile5 (newData, s1, s2, s3, s4, s5, file); therror }
-#endif
 
 /* End of file praat.h */

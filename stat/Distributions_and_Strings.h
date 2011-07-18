@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Distributions.h"
 #include "Strings.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Strings Distributions_to_Strings (Distributions me, long column, long numberOfStrings);
 Strings Distributions_to_Strings_exact (Distributions me, long column);
 Distributions Strings_to_Distributions (Strings me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Distributions_and_Strings.h */

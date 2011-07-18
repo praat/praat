@@ -24,24 +24,23 @@
  * pb 2007/08/12 wchar_t
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/09 C++
+ * pb 2011/07/14 C++
  */
 
 #include "DurationTier.h"
 
-static void info (I) {
-	iam (RealTier);
-	classData -> info (me);
+void structDurationTier :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total original duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine2 (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (me)));
-	MelderInfo_writeLine2 (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (me)));
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total original duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine2 (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (this)));
+	MelderInfo_writeLine2 (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (this)));
 }
 
 class_methods (DurationTier, RealTier) {
-	class_method (info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_methods_end
 }

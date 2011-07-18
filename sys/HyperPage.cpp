@@ -616,6 +616,7 @@ static void draw (HyperPage hyperPage) {
 
 #undef our
 #define our ((HyperPage_Table) my methods) ->
+#define its ((HyperPage_Table) methods) ->
 
 static void print (I, Graphics graphics) {
 	iam (HyperPage);
@@ -630,23 +631,22 @@ static void print (I, Graphics graphics) {
 
 /********** class HyperPage **********/
 
-static void destroy (I) {
-	iam (HyperPage);
-	forget (my links);
-	Melder_free (my entryHint);
-	forget (my g);
-	for (int i = 0; i < 20; i ++) Melder_free (my history [i]. page);
-	Melder_free (my currentPageTitle);
-	if (my praatApplication != NULL) {
-		for (int iobject = ((PraatObjects) my praatObjects) -> n; iobject >= 1; iobject --) {
-			Melder_free (((PraatObjects) my praatObjects) -> list [iobject]. name);
-			forget (((PraatObjects) my praatObjects) -> list [iobject]. object);
+void structHyperPage :: v_destroy () {
+	forget (links);
+	Melder_free (entryHint);
+	forget (g);
+	for (int i = 0; i < 20; i ++) Melder_free (history [i]. page);
+	Melder_free (currentPageTitle);
+	if (praatApplication != NULL) {
+		for (int iobject = ((PraatObjects) praatObjects) -> n; iobject >= 1; iobject --) {
+			Melder_free (((PraatObjects) praatObjects) -> list [iobject]. name);
+			forget (((PraatObjects) praatObjects) -> list [iobject]. object);
 		}
-		Melder_free (my praatApplication);
-		Melder_free (my praatObjects);
-		Melder_free (my praatPicture);
+		Melder_free (praatApplication);
+		Melder_free (praatObjects);
+		Melder_free (praatPicture);
 	}
-	inherited (HyperPage) destroy (me);
+	HyperPage_Parent :: v_destroy ();
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -979,35 +979,35 @@ static void gui_button_cb_forth (I, GuiButtonEvent event) {
 	if (! do_forth (me)) Melder_flushError (NULL);
 }
 
-static void createMenus (HyperPage me) {
-	inherited (HyperPage) createMenus (me);
+void structHyperPage :: v_createMenus () {
+	HyperPage_Parent :: v_createMenus ();
 
-	Editor_addCommand (me, L"File", L"PostScript settings...", 0, menu_cb_postScriptSettings);
+	Editor_addCommand (this, L"File", L"PostScript settings...", 0, menu_cb_postScriptSettings);
 	#ifdef macintosh
-		Editor_addCommand (me, L"File", L"Page setup...", 0, menu_cb_pageSetup);
+		Editor_addCommand (this, L"File", L"Page setup...", 0, menu_cb_pageSetup);
 	#endif
-	Editor_addCommand (me, L"File", L"Print page...", 'P', menu_cb_print);
-	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (this, L"File", L"Print page...", 'P', menu_cb_print);
+	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
 
-	if (our hasHistory) {
-		Editor_addMenu (me, L"Go to", 0);
-		Editor_addCommand (me, L"Go to", L"Search for page...", 0, menu_cb_searchForPage);
-		Editor_addCommand (me, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
-		Editor_addCommand (me, L"Go to", L"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_forth);
-		Editor_addCommand (me, L"Go to", L"-- page --", 0, NULL);
-		Editor_addCommand (me, L"Go to", L"Page up", GuiMenu_PAGE_UP, menu_cb_pageUp);
-		Editor_addCommand (me, L"Go to", L"Page down", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
+	if (its hasHistory) {
+		Editor_addMenu (this, L"Go to", 0);
+		Editor_addCommand (this, L"Go to", L"Search for page...", 0, menu_cb_searchForPage);
+		Editor_addCommand (this, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
+		Editor_addCommand (this, L"Go to", L"Forward", GuiMenu_OPTION | GuiMenu_RIGHT_ARROW, menu_cb_forth);
+		Editor_addCommand (this, L"Go to", L"-- page --", 0, NULL);
+		Editor_addCommand (this, L"Go to", L"Page up", GuiMenu_PAGE_UP, menu_cb_pageUp);
+		Editor_addCommand (this, L"Go to", L"Page down", GuiMenu_PAGE_DOWN, menu_cb_pageDown);
 	}
 
-	Editor_addMenu (me, L"Font", 0);
-	Editor_addCommand (me, L"Font", L"Font size...", 0, menu_cb_fontSize);
-	my fontSizeButton_10 = Editor_addCommand (me, L"Font", L"10", GuiMenu_CHECKBUTTON, menu_cb_10);
-	my fontSizeButton_12 = Editor_addCommand (me, L"Font", L"12", GuiMenu_CHECKBUTTON, menu_cb_12);
-	my fontSizeButton_14 = Editor_addCommand (me, L"Font", L"14", GuiMenu_CHECKBUTTON, menu_cb_14);
-	my fontSizeButton_18 = Editor_addCommand (me, L"Font", L"18", GuiMenu_CHECKBUTTON, menu_cb_18);
-	my fontSizeButton_24 = Editor_addCommand (me, L"Font", L"24", GuiMenu_CHECKBUTTON, menu_cb_24);
-	Editor_addCommand (me, L"Font", L"-- font --", 0, NULL);
-	Editor_addCommand (me, L"Font", L"Font...", 0, menu_cb_font);
+	Editor_addMenu (this, L"Font", 0);
+	Editor_addCommand (this, L"Font", L"Font size...", 0, menu_cb_fontSize);
+	fontSizeButton_10 = Editor_addCommand (this, L"Font", L"10", GuiMenu_CHECKBUTTON, menu_cb_10);
+	fontSizeButton_12 = Editor_addCommand (this, L"Font", L"12", GuiMenu_CHECKBUTTON, menu_cb_12);
+	fontSizeButton_14 = Editor_addCommand (this, L"Font", L"14", GuiMenu_CHECKBUTTON, menu_cb_14);
+	fontSizeButton_18 = Editor_addCommand (this, L"Font", L"18", GuiMenu_CHECKBUTTON, menu_cb_18);
+	fontSizeButton_24 = Editor_addCommand (this, L"Font", L"24", GuiMenu_CHECKBUTTON, menu_cb_24);
+	Editor_addCommand (this, L"Font", L"-- font --", 0, NULL);
+	Editor_addCommand (this, L"Font", L"Font...", 0, menu_cb_font);
 }
 
 /********** **********/
@@ -1036,50 +1036,50 @@ static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
 		our getCurrentPageNumber (me) + 1 : 1);
 }
 
-static void createChildren (HyperPage me) {
+void structHyperPage :: v_createChildren () {
 	int height = Machine_getTextHeight ();
 	int y = Machine_getMenuBarHeight () + 4;
 
 	#if gtk
-		my holder = gtk_hbox_new (FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (my dialog), my holder, false, false, 0);
-		GuiObject_show (my holder);
+		holder = gtk_hbox_new (FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (dialog), holder, false, false, 0);
+		GuiObject_show (holder);
 	#elif motif
-		my holder = my dialog;
+		holder = dialog;
 	#endif
 
 	/***** Create navigation buttons. *****/
 
-	if (our hasHistory) {
-		GuiButton_createShown (my holder, 4, 48, y, y + height,
-			L"<", gui_button_cb_back, me, 0);
-		GuiButton_createShown (my holder, 54, 98, y, y + height,
-			L">", gui_button_cb_forth, me, 0);
+	if (its hasHistory) {
+		GuiButton_createShown (holder, 4, 48, y, y + height,
+			L"<", gui_button_cb_back, this, 0);
+		GuiButton_createShown (holder, 54, 98, y, y + height,
+			L">", gui_button_cb_forth, this, 0);
 	}
-	if (our isOrdered) {
-		GuiButton_createShown (my holder, 174, 218, y, y + height,
-			L"< 1", gui_button_cb_previousPage, me, 0);
-		GuiButton_createShown (my holder, 224, 268, y, y + height,
-			L"1 >", gui_button_cb_nextPage, me, 0);
+	if (its isOrdered) {
+		GuiButton_createShown (holder, 174, 218, y, y + height,
+			L"< 1", gui_button_cb_previousPage, this, 0);
+		GuiButton_createShown (holder, 224, 268, y, y + height,
+			L"1 >", gui_button_cb_nextPage, this, 0);
 	}
 	#if gtk
 		GuiObject scrollBox = gtk_hbox_new (false, 0);
-		gtk_box_pack_end (GTK_BOX (my dialog), scrollBox, true, true, 0);
-		my drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
-		gtk_widget_set_double_buffered (my drawingArea, FALSE);
-		gtk_box_pack_start (GTK_BOX (scrollBox), my drawingArea, true, true, 0);
-		createVerticalScrollBar (me, scrollBox);
-		GuiObject_show (my drawingArea);
+		gtk_box_pack_end (GTK_BOX (dialog), scrollBox, true, true, 0);
+		drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+		gtk_widget_set_double_buffered (drawingArea, FALSE);
+		gtk_box_pack_start (GTK_BOX (scrollBox), drawingArea, true, true, 0);
+		createVerticalScrollBar (this, scrollBox);
+		GuiObject_show (drawingArea);
 		GuiObject_show (scrollBox);
 	#elif motif
 		/***** Create scroll bar. *****/
 
-		createVerticalScrollBar (me, my dialog);
+		createVerticalScrollBar (this, dialog);
 
 		/***** Create drawing area. *****/
-		my drawingArea = GuiDrawingArea_createShown (my dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, GuiDrawingArea_BORDER);
+		drawingArea = GuiDrawingArea_createShown (dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 	#endif
 }
 
@@ -1117,12 +1117,12 @@ void HyperPage_clear (HyperPage me) {
 	forget (my links);
 }
 
-static void dataChanged (HyperPage me) {
+void structHyperPage :: v_dataChanged () {
 	int oldError = Melder_hasError ();
-	(void) our goToPage (me, my currentPageTitle);
+	(void) its goToPage (this, currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
-	HyperPage_clear (me);
-	updateVerticalScrollBar (me);
+	HyperPage_clear (this);
+	updateVerticalScrollBar (this);
 }
 static long getNumberOfPages (HyperPage me) {
 	(void) me;
@@ -1149,12 +1149,7 @@ static int hasHistory = FALSE;
 static int isOrdered = FALSE;
 
 class_methods (HyperPage, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
 	class_method (draw)
-	us -> editable = false;
-	class_method (createMenus)
-	class_method (createChildren)
 	class_method (defaultHeaders)
 	class_method (getNumberOfPages)
 	class_method (getCurrentPageNumber)

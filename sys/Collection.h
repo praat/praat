@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* Collections contain a number of items whose class is a subclass of Data.
 
 	class Collection = Data {
@@ -51,20 +47,19 @@
 
 #include "Simple.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Collection);
-Thing_declare1cpp (Ordered);
-Thing_declare1cpp (Sorted);
-Thing_declare1cpp (SortedSet);
-Thing_declare1cpp (SortedSetOfInt);
-Thing_declare1cpp (SortedSetOfShort);
-Thing_declare1cpp (SortedSetOfLong);
-Thing_declare1cpp (SortedSetOfDouble);
-Thing_declare1cpp (SortedSetOfString);
-Thing_declare1cpp (Cyclic);
+struct structCollection : public structData {
+	// new data:
+		void *itemClass;
+		long _capacity, size;
+		bool _dontOwnItems;
+		Any *item;
+	// overridden methods:
+		void v_info ();
+};
+#define Collection__methods(klas) Data__methods(klas) \
+	long (*position) (I, Any data);
+Thing_declare2cpp (Collection, Data);
 
 /*
 	An object of type Collection is a collection of items of any class.
@@ -187,6 +182,12 @@ void _Collection_insertItem (I, Any item, long position);
 
 /********** class Ordered **********/
 
+Thing_declare1cpp (Ordered);
+struct structOrdered : public structCollection {
+};
+#define Ordered__methods(klas) Collection__methods(klas)
+Thing_declare2cpp (Ordered, Collection);
+
 Ordered Ordered_create (void);
 void Ordered_init (I, void *itemClass, long initialCapacity);
 
@@ -204,6 +205,13 @@ void Ordered_addItemPos (I, Any data, long position);
 
 /********** class Sorted **********/
 /* A Sorted is a sorted Collection. */
+
+Thing_declare1cpp (Sorted);
+struct structSorted : public structCollection {
+};
+#define Sorted__methods(klas) Collection__methods(klas) \
+	int (*compare) (I, thou);
+Thing_declare2cpp (Sorted, Collection);
 
 void Sorted_init (I, void *itemClass, long initialCapacity);
 
@@ -234,6 +242,12 @@ void Sorted_sort (I);
 
 /********** class SortedSet **********/
 
+Thing_declare1cpp (SortedSet);
+struct structSortedSet : public structSorted {
+};
+#define SortedSet__methods(klas) Sorted__methods(klas)
+Thing_declare2cpp (SortedSet, Sorted);
+
 void SortedSet_init (I, void *itemClass, long initialCapacity);
 
 /* Behaviour:
@@ -246,25 +260,55 @@ int SortedSet_hasItem (I, Any item);
 
 /********** class SortedSetOfInt **********/
 
+Thing_declare1cpp (SortedSetOfInt);
+struct structSortedSetOfInt : public structSortedSet {
+};
+#define SortedSetOfInt__methods(klas) SortedSet__methods(klas)
+Thing_declare2cpp (SortedSetOfInt, SortedSet);
+
 void SortedSetOfInt_init (I);
 SortedSetOfInt SortedSetOfInt_create (void);
 
 /********** class SortedSetOfShort **********/
+
+Thing_declare1cpp (SortedSetOfShort);
+struct structSortedSetOfShort : public structSortedSet {
+};
+#define SortedSetOfShort__methods(klas) SortedSet__methods(klas)
+Thing_declare2cpp (SortedSetOfShort, SortedSet);
 
 void SortedSetOfShort_init (I);
 SortedSetOfShort SortedSetOfShort_create (void);
 
 /********** class SortedSetOfLong **********/
 
+Thing_declare1cpp (SortedSetOfLong);
+struct structSortedSetOfLong : public structSortedSet {
+};
+#define SortedSetOfLong__methods(klas) SortedSet__methods(klas)
+Thing_declare2cpp (SortedSetOfLong, SortedSet);
+
 void SortedSetOfLong_init (I);
 SortedSetOfLong SortedSetOfLong_create (void);
 
 /********** class SortedSetOfDouble **********/
 
+Thing_declare1cpp (SortedSetOfDouble);
+struct structSortedSetOfDouble : public structSortedSet {
+};
+#define SortedSetOfDouble__methods(klas) SortedSet__methods(klas)
+Thing_declare2cpp (SortedSetOfDouble, SortedSet);
+
 void SortedSetOfDouble_init (I);
 SortedSetOfDouble SortedSetOfDouble_create (void);
 
 /********** class SortedSetOfString **********/
+
+Thing_declare1cpp (SortedSetOfString);
+struct structSortedSetOfString : public structSortedSet {
+};
+#define SortedSetOfString__methods(klas) SortedSet__methods(klas)
+Thing_declare2cpp (SortedSetOfString, SortedSet);
 
 void SortedSetOfString_init (I);
 SortedSetOfString SortedSetOfString_create (void);
@@ -273,71 +317,16 @@ void SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
 
 /********** class Cyclic **********/
 
+Thing_declare1cpp (Cyclic);
+struct structCyclic : public structCollection {
+};
+#define Cyclic__methods(klas) Collection__methods(klas) \
+	int (*compare) (I, thou);   /* virtual */
+Thing_declare2cpp (Cyclic, Collection);
+
 void Cyclic_init (I, void *itemClass, long initialCapacity);
 
 void Cyclic_unicize (I);
-
-#ifdef __cplusplus
-	}
-
-	struct structCollection : public structData {
-		void *itemClass;
-		long _capacity, size;
-		bool _dontOwnItems;
-		Any *item;
-	};
-	#define Collection__methods(klas) Data__methods(klas) \
-		long (*position) (I, Any data);
-	Thing_declare2cpp (Collection, Data);
-
-	struct structOrdered : public structCollection {
-	};
-	#define Ordered__methods(klas) Collection__methods(klas)
-	Thing_declare2cpp (Ordered, Collection);
-
-	struct structSorted : public structCollection {
-	};
-	#define Sorted__methods(klas) Collection__methods(klas) \
-		int (*compare) (I, thou);
-	Thing_declare2cpp (Sorted, Collection);
-
-	struct structSortedSet : public structSorted {
-	};
-	#define SortedSet__methods(klas) Sorted__methods(klas)
-	Thing_declare2cpp (SortedSet, Sorted);
-
-	struct structSortedSetOfInt : public structSortedSet {
-	};
-	#define SortedSetOfInt__methods(klas) SortedSet__methods(klas)
-	Thing_declare2cpp (SortedSetOfInt, SortedSet);
-
-	struct structSortedSetOfShort : public structSortedSet {
-	};
-	#define SortedSetOfShort__methods(klas) SortedSet__methods(klas)
-	Thing_declare2cpp (SortedSetOfShort, SortedSet);
-
-	struct structSortedSetOfLong : public structSortedSet {
-	};
-	#define SortedSetOfLong__methods(klas) SortedSet__methods(klas)
-	Thing_declare2cpp (SortedSetOfLong, SortedSet);
-
-	struct structSortedSetOfDouble : public structSortedSet {
-	};
-	#define SortedSetOfDouble__methods(klas) SortedSet__methods(klas)
-	Thing_declare2cpp (SortedSetOfDouble, SortedSet);
-
-	struct structSortedSetOfString : public structSortedSet {
-	};
-	#define SortedSetOfString__methods(klas) SortedSet__methods(klas)
-	Thing_declare2cpp (SortedSetOfString, SortedSet);
-
-	struct structCyclic : public structCollection {
-	};
-	#define Cyclic__methods(klas) Collection__methods(klas) \
-		int (*compare) (I, thou);   /* virtual */
-	Thing_declare2cpp (Cyclic, Collection);
-
-#endif
 
 /* End of file Collection.h */
 #endif

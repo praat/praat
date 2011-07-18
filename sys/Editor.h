@@ -19,24 +19,69 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/12
- */
-
 #include "Collection.h"
 #include "Gui.h"
 #include "Ui.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Editor_enums.h"
 
-Thing_declare1cpp (EditorCommand);
-Thing_declare1cpp (EditorMenu);
-Thing_declare1cpp (Editor);
+Thing_declare (Editor);
+Thing_declare (EditorMenu);
+
+Thing_define (EditorCommand, Thing) {
+	Editor editor;
+	EditorMenu menu;
+	const wchar *itemTitle;
+	GuiObject itemWidget;
+	int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
+	const wchar *script;
+	Any dialog;
+};
+
+Thing_define (Editor, Thing) {
+	GuiObject parent, shell, dialog, menuBar, undoButton, searchButton;
+	Ordered menus;
+	Data data, previousData;   // the data that can be displayed and edited
+	wchar undoText [100];
+	Graphics pictureGraphics;
+	void (*destroyCallback) (I, void *closure);
+	void *destroyClosure;
+	void (*dataChangedCallback) (I, void *closure, Data data);
+	void *dataChangedClosure;
+	void (*publishCallback) (I, void *closure, Data publish);
+	void *publishClosure;
+	void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
+	void *publish2Closure;
+// overridden methods:
+	void v_destroy ();
+	void v_info ();
+	void v_nameChanged ();
+// new methods:
+	virtual void v_goAway () { forget_cpp (this); }
+	virtual bool v_hasMenuBar () { return true; }
+	virtual bool v_canFullScreen () { return false; }
+	virtual bool v_editable () { return true ; }
+	virtual bool v_scriptable () { return true; }
+	virtual void v_createMenuItems_file (EditorMenu menu);
+	virtual void v_createMenuItems_edit (EditorMenu menu);
+	virtual bool v_hasQueryMenu () { return true; }
+	virtual void v_createMenuItems_query (EditorMenu menu);
+	virtual void v_createMenuItems_query_info (EditorMenu menu);
+	virtual void v_createMenus ();
+	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
+	virtual void v_createChildren () { }
+	virtual void v_dataChanged () { }
+	virtual void v_save ();
+	virtual void v_restore ();
+	virtual void v_clipboardChanged (Data data) { (void) data; }
+	virtual void v_form_pictureWindow (EditorCommand cmd);
+	virtual void v_ok_pictureWindow (EditorCommand cmd);
+	virtual void v_do_pictureWindow (EditorCommand cmd);
+	virtual void v_form_pictureMargins (EditorCommand cmd);
+	virtual void v_ok_pictureMargins (EditorCommand cmd);
+	virtual void v_do_pictureMargins (EditorCommand cmd);
+};
 
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,
 	int (*commandCallback) (Editor editor_me, EditorCommand, UiForm, const wchar *, Interpreter));
@@ -59,13 +104,13 @@ void Editor_setMenuSensitive (Any editor, const wchar_t *menu, int sensitive);
 void Editor_raise (Editor me);
 	/* Raises and deiconizes the editor window. */
 
-void Editor_dataChanged (Editor me, Any data);
+void Editor_dataChanged (Editor me, Data data);
 /* Tell the Editor that the data has changed.
    If 'data' is not NULL, this routine installs 'data' into the Editor's 'data' field.
    Regardless of 'data', this routine calls the Editor's dataChanged method.
 */
 
-void Editor_clipboardChanged (Editor me, Any data);
+void Editor_clipboardChanged (Editor me, Data data);
 /* Tell the Editor that a clipboard has changed.
    Calls the Editor's clipboardChanged method.
 */
@@ -101,7 +146,7 @@ void Editor_init (Editor me, GuiObject parent, int x, int y , int width, int hei
 	const wchar *title, Data data);
 /*
 	This creates my shell and my dialog,
-	calls the createMenus and createChildren methods,
+	calls the v_createMenus and v_createChildren methods,
 	and manages my shell and my dialog.
 	'width' and 'height' determine the dimensions of the editor:
 	if 'width' < 0, the width of the screen is added to it;
@@ -149,61 +194,6 @@ void Editor_openPraatPicture (Editor me);
 void Editor_closePraatPicture (Editor me);
 
 void Editor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structEditorCommand : public structThing {
-		Editor editor;
-		EditorMenu menu;
-		const wchar *itemTitle;
-		GuiObject itemWidget;
-		int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
-		const wchar *script;
-		Any dialog;
-	};
-	#define EditorCommand__methods(Klas) Thing__methods(klas)
-	Thing_declare2cpp (EditorCommand, Thing);
-
-	struct structEditor : public structThing {
-		GuiObject parent, shell, dialog, menuBar, undoButton, searchButton;
-		Ordered menus;
-		Data data, previousData;   // the data that can be displayed and edited
-		wchar undoText [100];
-		Graphics pictureGraphics;
-		void (*destroyCallback) (I, void *closure);
-		void *destroyClosure;
-		void (*dataChangedCallback) (I, void *closure, Data data);
-		void *dataChangedClosure;
-		void (*publishCallback) (I, void *closure, Data publish);
-		void *publishClosure;
-		void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
-		void *publish2Closure;
-	// methods:
-		virtual void goAway () { forget_cpp (this); }
-	};
-	#define Editor__methods(Klas) Thing__methods(klas) \
-		bool hasMenuBar, canFullScreen, editable, scriptable; \
-		void (*createMenuItems_file) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_edit) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_query) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_query_info) (Klas me, EditorMenu menu); \
-		void (*createMenus) (Klas me); \
-		void (*createHelpMenuItems) (Klas me, EditorMenu menu); \
-		void (*createChildren) (Klas me); \
-		void (*dataChanged) (Klas me); \
-		void (*save) (Klas me); \
-		void (*restore) (Klas me); \
-		void (*clipboardChanged) (Klas me, Any data); \
-		void (*form_pictureWindow) (Klas me, EditorCommand cmd); \
-		void (*ok_pictureWindow) (Klas me, EditorCommand cmd); \
-		void (*do_pictureWindow) (Klas me, EditorCommand cmd); \
-		void (*form_pictureMargins) (Klas me, EditorCommand cmd); \
-		void (*ok_pictureMargins) (Klas me, EditorCommand cmd); \
-		void (*do_pictureMargins) (Klas me, EditorCommand cmd);
-	Thing_declare2cpp (Editor, Thing);
-
-#endif // __cplusplus
 
 #endif
 /* End of file Editor.h */

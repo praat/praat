@@ -1,6 +1,6 @@
 /* KNN_def.h
  *
- * Copyright (C) 2007-2009 Ola Söder
+ * Copyright (C) 2007-2009 Ola Söder, 2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
  */
 
 /*
- * os 20070529 Intial release
- * os 20090123 Bugfix: Wrong Pattern version caused serialization failure. 
+ * os 2007/05/29 Intial release
+ * os 2009/01/23 Bugfix: Wrong Pattern version caused serialization failure. 
  *                     Thanks to Paul Boersma for spotting this problem.
+ * pb 2011/07/14 C++
  */
 
 #include "Pattern.h"
@@ -30,5 +31,11 @@
         oo_LONG (nInstances)
         oo_OBJECT (Pattern, 2, input)
         oo_OBJECT (Categories, 0, output)
+
+		#if oo_DECLARING
+			// overridden methods:
+			void v_info ();
+		#endif
+
     oo_END_CLASS (KNN)
 #undef ooSTRUCT

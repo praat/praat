@@ -19,35 +19,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/23
- */
-
 #include "FunctionEditor.h"
 #include "Spectrum.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (SpectrumEditor);
+struct structSpectrumEditor : public structFunctionEditor {
+	// new data:
+		double minimum, maximum, cursorHeight;
+		double bandSmoothing, dynamicRange;
+		GuiObject publishBandButton, publishSoundButton;
+	// overridden methods:
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
+};
+#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2cpp (SpectrumEditor, FunctionEditor);
 
 SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data);
 
 void SpectrumEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structSpectrumEditor : public structFunctionEditor {
-		double minimum, maximum, cursorHeight;
-		double bandSmoothing, dynamicRange;
-		GuiObject publishBandButton, publishSoundButton;
-	};
-	#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
-	Thing_declare2cpp (SpectrumEditor, FunctionEditor);
-
-#endif // __cplusplus
 
 /* End of file SpectrumEditor.h */
 #endif

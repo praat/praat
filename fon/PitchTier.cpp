@@ -27,25 +27,24 @@
  * pb 2007/08/12 wchar_t
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/31 C++
+ * pb 2011/07/14 C++
  */
 
 #include "PitchTier.h"
 #include "Pitch.h"
 
-static void info (I) {
-	iam (RealTier);
-	classData -> info (me);
+void structPitchTier :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (me)), L" Hz");
-	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (me)), L" Hz");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (this)), L" Hz");
+	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (this)), L" Hz");
 }
 
 class_methods (PitchTier, RealTier) {	
-	class_method (info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_methods_end
 }
@@ -128,7 +127,7 @@ void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) 
 	}
 }
 
-int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
+void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, int unit) {
 	try {
 		for (long i = 1; i <= my points -> size; i ++) {
 			RealPoint point = (RealPoint) my points -> item [i];
@@ -138,11 +137,11 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 				case kPitch_unit_HERTZ: {	
 					frequency += shift;
 					if (frequency <= 0.0)
-						Melder_throw ("Resulting frequency has to be greater than 0 Hz.");
+						Melder_throw ("The resulting frequency has to be greater than 0 Hz.");
 				} break; case kPitch_unit_MEL: {
 					frequency = NUMhertzToMel (frequency) + shift;
 					if (frequency <= 0.0)
-						Melder_throw ("Resulting frequency has to be greater than 0 mel.");
+						Melder_throw ("The resulting frequency has to be greater than 0 mel.");
 					frequency = NUMmelToHertz (frequency);
 				} break; case kPitch_unit_LOG_HERTZ: {
 					frequency = pow (10.0, log10 (frequency) + shift);
@@ -151,15 +150,14 @@ int PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double s
 				} break; case kPitch_unit_ERB: {
 					frequency = NUMhertzToErb (frequency) + shift;
 					if (frequency <= 0.0)
-						Melder_throw ("Resulting frequency has to be greater than 0 ERB.");
+						Melder_throw ("The resulting frequency has to be greater than 0 ERB.");
 					frequency = NUMerbToHertz (frequency);
 				}
 			}
 			point -> value = frequency;
 		}
-		return 1;
 	} catch (MelderError) {
-		Melder_throw (me, ": frequencies not shifted.");
+		Melder_throw (me, ": not all frequencies were shifted.");
 	}
 }
 

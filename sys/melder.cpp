@@ -29,10 +29,10 @@
  * pb 2005/03/04 number and string comparisons, including regular expressions
  * pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
  * pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
- * pb 2007/05/24 more wchar_t
+ * pb 2007/05/24 more wchar
  * pb 2007/05/26 Melder_stringMatchesCriterionW
  * pb 2007/06/19 removed some
- * pb 2007/08/12 wchar_t in helpProc
+ * pb 2007/08/12 wchar in helpProc
  * pb 2007/12/02 enums
  * pb 2007/12/13 Melder_writeToConsole
  * pb 2007/12/18 Gui
@@ -91,7 +91,7 @@ unsigned long Melder_systemVersion;
 	void *Melder_topShell;   /* GuiObject */
 #endif
 
-static void defaultHelp (const wchar_t *query) {
+static void defaultHelp (const wchar *query) {
 	Melder_error3 (L"Do not know how to find help on \"", query, L"\".");
 	Melder_flushError (NULL);
 }
@@ -100,13 +100,13 @@ static void defaultSearch (void) {
 	Melder_flushError ("Do not know how to search.");
 }
 
-static void defaultWarning (const wchar_t *message) {
+static void defaultWarning (const wchar *message) {
 	Melder_writeToConsole (L"Warning: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
 }
 
-static void defaultFatal (const wchar_t *message) {
+static void defaultFatal (const wchar *message) {
 	Melder_writeToConsole (L"Fatal error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
@@ -138,10 +138,10 @@ static int defaultPublishPlayed (void) {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	void (*help) (const wchar_t *query);
+	void (*help) (const wchar *query);
 	void (*search) (void);
-	void (*warning) (const wchar_t *message);
-	void (*fatal) (const wchar_t *message);
+	void (*warning) (const wchar *message);
+	void (*fatal) (const wchar *message);
 	int (*publish) (void *anything);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile fs);
@@ -173,7 +173,7 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static bool waitWhileProgress (double progress, const wchar_t *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
+static bool waitWhileProgress (double progress, const wchar *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
@@ -257,7 +257,7 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiObjec
 	} else {
 		if (progress <= 0.0) progress = 0.0;
 		GuiObject_show (dia);   // TODO: prevent raising to the front
-		const wchar_t *newline = wcschr (message, '\n');
+		const wchar *newline = wcschr (message, '\n');
 		if (newline != NULL) {
 			static MelderString buffer = { 0 };
 			MelderString_copy (& buffer, message);
@@ -360,47 +360,47 @@ static void _Melder_progress (double progress, const wchar *message) {
 
 static MelderString theProgressBuffer = { 0 };
 
-void Melder_progress1 (double progress, const wchar_t *s1) {
+void Melder_progress1 (double progress, const wchar *s1) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append1 (& theProgressBuffer, s1);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress2 (double progress, const wchar_t *s1, const wchar_t *s2) {
+void Melder_progress2 (double progress, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append2 (& theProgressBuffer, s1, s2);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void Melder_progress3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void Melder_progress4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+void Melder_progress5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void Melder_progress6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+void Melder_progress7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+void Melder_progress8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+void Melder_progress9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	_Melder_progress (progress, theProgressBuffer.string);
@@ -434,47 +434,47 @@ static void * _Melder_monitor (double progress, const wchar *message) {
 	return progress <= 0.0 ? NULL /* no Graphics */ : & progress /* any non-NULL pointer */;
 }
 
-void * Melder_monitor1 (double progress, const wchar_t *s1) {
+void * Melder_monitor1 (double progress, const wchar *s1) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append1 (& theProgressBuffer, s1);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor2 (double progress, const wchar_t *s1, const wchar_t *s2) {
+void * Melder_monitor2 (double progress, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append2 (& theProgressBuffer, s1, s2);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor3 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void * Melder_monitor3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor4 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void * Melder_monitor4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor5 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+void * Melder_monitor5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor6 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void * Melder_monitor6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor7 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+void * Melder_monitor7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor8 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+void * Melder_monitor8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor9 (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+void * Melder_monitor9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return _Melder_monitor (progress, theProgressBuffer.string);
@@ -492,7 +492,7 @@ int Melder_numberMatchesCriterion (double value, int which_kMelder_number, doubl
 		(which_kMelder_number == kMelder_number_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_string, const wchar_t *criterion) {
+int Melder_stringMatchesCriterion (const wchar *value, int which_kMelder_string, const wchar *criterion) {
 	if (value == NULL) {
 		value = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
@@ -517,8 +517,8 @@ int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_strin
 		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
-		wchar_t *place = NULL, *errorMessage;
-		regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) criterion, (regularExp_CHAR **) & errorMessage, 0);
+		wchar *place = NULL, *errorMessage;
+		regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;   // BUG: what about removing errorMessage?
 		if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) value, NULL, 0, '\0', '\0', NULL, NULL, NULL))
 			place = (wchar *) compiled_regexp -> startp [0];
@@ -528,7 +528,7 @@ int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_strin
 	return 0;   /* Should not occur. */
 }
 
-void Melder_help (const wchar_t *query) {
+void Melder_help (const wchar *query) {
 	theMelder. help (query);
 }
 
@@ -711,55 +711,55 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 }
 #endif
 
-void Melder_warning1 (const wchar_t *s1) {
+void Melder_warning1 (const wchar *s1) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append1 (& theWarningBuffer, s1);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning2 (const wchar_t *s1, const wchar_t *s2) {
+void Melder_warning2 (const wchar *s1, const wchar *s2) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append2 (& theWarningBuffer, s1, s2);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning3 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void Melder_warning3 (const wchar *s1, const wchar *s2, const wchar *s3) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append3 (& theWarningBuffer, s1, s2, s3);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning4 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void Melder_warning4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append4 (& theWarningBuffer, s1, s2, s3, s4);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning5 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+void Melder_warning5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append5 (& theWarningBuffer, s1, s2, s3, s4, s5);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning6 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void Melder_warning6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append6 (& theWarningBuffer, s1, s2, s3, s4, s5, s6);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning7 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+void Melder_warning7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append7 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning8 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+void Melder_warning8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append8 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	theMelder. warning (theWarningBuffer.string);
 }
-void Melder_warning9 (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+void Melder_warning9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
 	MelderString_append9 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
@@ -822,7 +822,7 @@ static void mac_message (int macAlertType, const wchar *messageW) {
 #define theMessageFund_SIZE  100000
 static char * theMessageFund = NULL;
 
-static void gui_fatal (const wchar_t *message) {
+static void gui_fatal (const wchar *message) {
 	free (theMessageFund);
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -837,7 +837,7 @@ static void gui_fatal (const wchar_t *message) {
 	#endif
 }
 
-static void gui_error (const wchar_t *message) {
+static void gui_error (const wchar *message) {
 	bool memoryIsLow = wcsstr (message, L"Out of memory");
 	if (memoryIsLow) {
 		free (theMessageFund);
@@ -871,7 +871,7 @@ static void gui_error (const wchar_t *message) {
 	}
 }
 
-static void gui_warning (const wchar_t *message) {
+static void gui_warning (const wchar *message) {
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
@@ -885,7 +885,7 @@ static void gui_warning (const wchar_t *message) {
 	#endif
 }
 
-extern "C" void gui_information (const wchar_t *);   // BUG: no prototype
+extern "C" void gui_information (const wchar *);   // BUG: no prototype
 void MelderGui_create (void *appContext, void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund != NULL);
@@ -924,16 +924,16 @@ int Melder_publishPlayed (void) {
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
-void Melder_setHelpProc (void (*help) (const wchar_t *query))
+void Melder_setHelpProc (void (*help) (const wchar *query))
 	{ theMelder. help = help ? help : defaultHelp; }
 
 void Melder_setSearchProc (void (*search) (void))
 	{ theMelder. search = search ? search : defaultSearch; }
 
-void Melder_setWarningProc (void (*warning) (const wchar_t *))
+void Melder_setWarningProc (void (*warning) (const wchar *))
 	{ theMelder. warning = warning ? warning : defaultWarning; }
 
-void Melder_setFatalProc (void (*fatal) (const wchar_t *))
+void Melder_setFatalProc (void (*fatal) (const wchar *))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
 
 void Melder_setPublishProc (int (*publish) (void *))

@@ -1,6 +1,6 @@
 /* Matrix_def.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2008/01/19 version 2 (not 1, because Spectrum had that already)
+ * pb 2011/07/14
  */
 
 
@@ -39,6 +38,11 @@ oo_DEFINE_CLASS (Matrix, Sampled)
 		}
 	#else
 		oo_DOUBLE_MATRIX (z, my ny, my nx)
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+			void v_info ();
 	#endif
 
 oo_END_CLASS (Matrix)

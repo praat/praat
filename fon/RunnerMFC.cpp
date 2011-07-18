@@ -33,35 +33,24 @@
  * pb 2011/03/03 reaction times for mouse clicks
  * pb 2011/03/23 C++
  * pb 2011/04/14 reaction times for key presses
- * pb 2011/07/02 C++
+ * pb 2011/07/15 C++
  */
 
 #include "RunnerMFC.h"
 #include "EditorM.h"
 #include "machine.h"
 
-struct structRunnerMFC : public structEditor {
-	GuiObject drawingArea;
-	Ordered experiments;
-	long iexperiment;
-	Graphics graphics;
-	long numberOfReplays;
-};
-#define RunnerMFC__methods(Klas) Editor__methods(Klas)
-Thing_declare2cpp (RunnerMFC, Editor);
-
-static void destroy (I) {
-	iam (RunnerMFC);
-	if (my experiments) {
-		my experiments -> size = 0;   /* Give ownership back to whoever thinks they own the experiments. */
-		forget (my experiments);
+void structRunnerMFC :: v_destroy () {
+	if (experiments) {
+		experiments -> size = 0;   // give ownership back to whoever thinks they own the experiments. BUG: can be dontOwnItems
+		forget (experiments);
 	}
-	forget (my graphics);
-	inherited (RunnerMFC) destroy (me);
+	forget (graphics);
+	RunnerMFC_Parent :: v_destroy ();
 }
 
-static void dataChanged (RunnerMFC me) {
-	Graphics_updateWs (my graphics);
+void structRunnerMFC :: v_dataChanged () {
+	Graphics_updateWs (graphics);
 }
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
@@ -406,17 +395,12 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	}
 }
 
-static void createChildren (RunnerMFC me) {
-	my drawingArea = GuiDrawingArea_createShown (my dialog, 0, 0, Machine_getMenuBarHeight (), 0,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+void structRunnerMFC :: v_createChildren () {
+	drawingArea = GuiDrawingArea_createShown (dialog, 0, 0, Machine_getMenuBarHeight (), 0,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
 class_methods (RunnerMFC, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
-	us -> editable = false;
-	us -> scriptable = false;
 	class_methods_end
 }
 

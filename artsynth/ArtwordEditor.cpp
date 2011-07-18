@@ -24,16 +24,15 @@
  * pb 2007/12/27 Gui
  * pb 2009/03/21 modern enums
  * pb 2011/03/22 C+
- * pb 2011/07/02 C+
+ * pb 2011/07/16 C+
  */
 
 #include "ArtwordEditor.h"
 #include "machine.h"
 
-static void destroy (I) {
-	iam (ArtwordEditor);
-	forget (my graphics);
-	inherited (ArtwordEditor) destroy (me);
+void structArtwordEditor :: v_destroy () {
+	forget (graphics);
+	ArtwordEditor_Parent :: v_destroy ();
 }
 
 static void updateList (ArtwordEditor me) {
@@ -133,51 +132,48 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	GuiText_setString (my value, Melder_fixed (yWC, 6));
 }
 
-static void dataChanged (ArtwordEditor me) {
-	updateList (me);
-	Graphics_updateWs (my graphics);
+void structArtwordEditor :: v_dataChanged () {
+	updateList (this);
+	Graphics_updateWs (graphics);
 }
 
-static void createChildren (ArtwordEditor me) {
+void structArtwordEditor :: v_createChildren () {
 	int dy = Machine_getMenuBarHeight ();
-	GuiLabel_createShown (my dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
-	GuiLabel_createShown (my dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
-	GuiLabel_createShown (my dialog, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
-	my list = GuiList_createShown (my dialog, 0, 140, dy + 40, dy + 340, true, NULL);
+	GuiLabel_createShown (dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
+	GuiLabel_createShown (dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
+	GuiLabel_createShown (dialog, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
+	list = GuiList_createShown (dialog, 0, 140, dy + 40, dy + 340, true, NULL);
 
-	GuiButton_createShown (my dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, me, 0);
+	GuiButton_createShown (dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, this, 0);
 
-	my drawingArea = GuiDrawingArea_createShown (my dialog, 170, 470, dy + 10, dy + 310,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, me, 0);
+	drawingArea = GuiDrawingArea_createShown (dialog, 170, 470, dy + 10, dy + 310,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, this, 0);
 
-	GuiLabel_createShown (my dialog, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
-	my time = GuiText_createShown (my dialog, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
+	GuiLabel_createShown (dialog, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
+	time = GuiText_createShown (dialog, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
 
-	GuiLabel_createShown (my dialog, 220, 270, dy + 370, Gui_AUTOMATIC, L"Value:", 0);
-	my value = GuiText_createShown (my dialog, 270, 370, dy + 370, Gui_AUTOMATIC, 0);
+	GuiLabel_createShown (dialog, 220, 270, dy + 370, Gui_AUTOMATIC, L"Value:", 0);
+	value = GuiText_createShown (dialog, 270, 370, dy + 370, Gui_AUTOMATIC, 0);
 
-	GuiButton_createShown (my dialog, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, me, GuiButton_DEFAULT);
+	GuiButton_createShown (dialog, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
 
 	#if gtk
-	my radio = my dialog;	
+		radio = dialog;	
 	#elif motif
-	my radio = XtVaCreateManagedWidget
-		("radioBox", xmRowColumnWidgetClass, my dialog,
-		 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
+		radio = XtVaCreateManagedWidget
+			("radioBox", xmRowColumnWidgetClass, dialog,
+			 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
 	#endif
 	for (int i = 1; i <= kArt_muscle_MAX; i ++) {
-		my button [i] = GuiRadioButton_createShown (my radio,
+		button [i] = GuiRadioButton_createShown (radio,
 			0, 160, Gui_AUTOMATIC, Gui_AUTOMATIC,
-			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, me, 0);
+			kArt_muscle_getText (i), gui_radiobutton_cb_toggle, this, 0);
 	}
-	my feature = 1;
-	GuiRadioButton_setValue (my button [1], true);
+	feature = 1;
+	GuiRadioButton_setValue (button [1], true);
 }
 
 class_methods (ArtwordEditor, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
 	class_methods_end
 }
 

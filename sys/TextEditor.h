@@ -19,31 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/03
- */
-
 #include "Editor.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (TextEditor);
-
-TextEditor TextEditor_create (
-	GuiObject parent,
-	const wchar *initialText   // may be NULL
-);
-
-void TextEditor_showOpen (TextEditor me);
-
-void TextEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structTextEditor : public structEditor {
+struct structTextEditor : public structEditor {
+	// data:
 		structMelderFile file;
 		GuiObject textWidget;
 		Any openDialog, saveDialog, printDialog, findDialog;
@@ -53,15 +33,27 @@ void TextEditor_prefs (void);
 	// functions:
 		void init (GuiObject parent, const wchar *initialText);
 	// overridden methods:
-		void goAway ();
-	// methods:
+		void v_destroy ();
+		void v_nameChanged ();
+		void v_goAway ();
+		void v_createChildren ();
+		void v_createMenus ();
+		bool v_hasQueryMenu () { return false; }
+	// new methods:
 		virtual bool fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
 		virtual void clear () { }
-	};
-	#define TextEditor__methods(Klas) Editor__methods(Klas)
-	Thing_declare2cpp (TextEditor, Editor);
+};
+#define TextEditor__methods(Klas)
+Thing_declare2cpp (TextEditor, Editor);
 
-#endif // __cplusplus
+TextEditor TextEditor_create (
+	GuiObject parent,
+	const wchar *initialText   // may be NULL
+);
+
+void TextEditor_showOpen (TextEditor me);
+
+void TextEditor_prefs (void);
 
 /* End of file TextEditor.h */
 #endif

@@ -31,6 +31,7 @@
 
 #undef our
 #define our ((FormantGridEditor_Table) my methods) ->
+#define its ((FormantGridEditor_Table) methods) ->
 
 /********** PREFERENCES **********/
 
@@ -212,9 +213,9 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenus (FormantGridEditor me) {
-	inherited (FormantGridEditor) createMenus (me);
-	EditorMenu menu = Editor_addMenu (me, L"Formant", 0);
+void structFormantGridEditor :: v_createMenus () {
+	FormantGridEditor_Parent :: v_createMenus ();
+	EditorMenu menu = Editor_addMenu (this, L"Formant", 0);
 	EditorMenu_addCommand (menu, L"Show bandwidths", GuiMenu_CHECKBUTTON + 'B', menu_cb_showBandwidths);
 	EditorMenu_addCommand (menu, L"Set formant range...", 0, menu_cb_setFormantRange);
 	EditorMenu_addCommand (menu, L"Set bandwidth range...", 0, menu_cb_setBandwidthRange);
@@ -229,20 +230,16 @@ static void createMenus (FormantGridEditor me) {
 	EditorMenu_addCommand (menu, L"Select eighth", '8', menu_cb_selectEighth);
 	EditorMenu_addCommand (menu, L"Select ninth", '9', menu_cb_selectNinth);
 	EditorMenu_addCommand (menu, L"Select formant or bandwidth...", 0, menu_cb_selectFormantOrBandwidth);
-	menu = Editor_addMenu (me, L"Point", 0);
+	menu = Editor_addMenu (this, L"Point", 0);
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
 	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Remove point(s)", GuiMenu_OPTION + 'T', menu_cb_removePoints);
-	if (our hasSourceMenu) {
-		menu = Editor_addMenu (me, L"Source", 0);
+	if (its hasSourceMenu) {
+		menu = Editor_addMenu (this, L"Source", 0);
 		EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
 		//EditorMenu_addCommand (menu, L"Phonation settings...", 0, menu_cb_phonationSettings);
 	}
-}
-
-static void dataChanged (FormantGridEditor me) {
-	inherited (FormantGridEditor) dataChanged (me);
 }
 
 /********** DRAWING AREA **********/
@@ -494,8 +491,6 @@ static void play (FormantGridEditor me, double tmin, double tmax) {
 }
 
 class_methods (FormantGridEditor, FunctionEditor) {
-	class_method (dataChanged)
-	class_method (createMenus)
 	class_method (draw)
 	class_method (click)
 	class_method (play)

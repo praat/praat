@@ -19,24 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "HyperPage.h"
 #include "OTGrammar.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (OTGrammarEditor);
+struct structOTGrammarEditor : public structHyperPage {
+	// new data:
+		long selected;
+	// overridden methods:
+		bool v_editable () { return true; }
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define OTGrammarEditor__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2cpp (OTGrammarEditor, HyperPage);
 
 OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file OTGrammarEditor.h */
 #endif

@@ -68,6 +68,7 @@
  * pb 2011/03/01 renamed "strategy" to "updateRule", "meanLearningStep" to "plasticity", "rankingSpreading" to "evaluationNoise"
  * pb 2011/03/22 C++
  * pb 2011/04/27 Melder_debug 41 and 42
+ * pb 2011/07/14 C++
  */
 
 #include "OTGrammar.h"
@@ -93,19 +94,19 @@
 #include "enums_getValue.h"
 #include "OTGrammar_enums.h"
 
-static void classOTGrammar_info (I) {
-	iam (OTGrammar);
-	classData -> info (me);
-	long numberOfCandidates = 0, itab, numberOfViolations = 0, icand, icons;
-	for (itab = 1; itab <= my numberOfTableaus; itab ++) {
-		numberOfCandidates += my tableaus [itab]. numberOfCandidates;
-		for (icand = 1; icand <= my tableaus [itab]. numberOfCandidates; icand ++)
-			for (icons = 1; icons <= my numberOfConstraints; icons ++)
-				numberOfViolations += my tableaus [itab]. candidates [icand]. marks [icons];
+void structOTGrammar :: v_info ()
+{
+	structData :: v_info ();
+	long numberOfCandidates = 0, numberOfViolations = 0;
+	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
+		numberOfCandidates += tableaus [itab]. numberOfCandidates;
+		for (long icand = 1; icand <= tableaus [itab]. numberOfCandidates; icand ++)
+			for (long icons = 1; icons <= numberOfConstraints; icons ++)
+				numberOfViolations += tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (my decisionStrategy));
-	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (my numberOfConstraints));
-	MelderInfo_writeLine2 (L"Number of tableaus: ", Melder_integer (my numberOfTableaus));
+	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
+	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (numberOfConstraints));
+	MelderInfo_writeLine2 (L"Number of tableaus: ", Melder_integer (numberOfTableaus));
 	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (numberOfCandidates));
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
@@ -299,7 +300,6 @@ static void readText (I, MelderReadText text) {
 class_methods (OTGrammar, Data) {
 	us -> version = 2;
 	class_method_local (OTGrammar, destroy)
-	class_method_local (OTGrammar, info)
 	class_method_local (OTGrammar, description)
 	class_method_local (OTGrammar, copy)
 	class_method_local (OTGrammar, equal)

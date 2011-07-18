@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Thing.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 typedef struct structDelta_Tube *Delta_Tube;
 struct structDelta_Tube
@@ -61,24 +53,15 @@ struct structDelta_Tube
 	double B, r, R, DeltaP, v;
 };
 
-Thing_declare1cpp (Delta);
-struct structDelta : public structThing {
-	int numberOfTubes;
-	struct structDelta_Tube *tube;
+Thing_define (Delta, Thing) {
+	int numberOfTubes;              // >= 1
+	struct structDelta_Tube *tube;  // tube [1..numberOfTubes]
 };
-#define Delta__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (Delta, Thing);
-
-/*
-	Members:
-		numberOfTubes >= 1
-		tube [1..numberOfTubes]
-*/
 
 Delta Delta_create (int numberOfTubes);
 /*
 	Function:
-		return a new Delta or NULL if out of memory.
+		return a new Delta.
 	Preconditions:
 		numberOfTubes >= 1;
 	Postconditions:
@@ -86,10 +69,6 @@ Delta Delta_create (int numberOfTubes);
 		all members of result -> tube [1..numberOfTubes] are zero or NULL,
 		except 'parallel', which is 1.
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Delta.h */
 #endif

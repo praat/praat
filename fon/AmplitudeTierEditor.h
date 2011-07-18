@@ -19,35 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "RealTierEditor.h"
 #include "AmplitudeTier.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (AmplitudeTierEditor);
+struct structAmplitudeTierEditor : public structRealTierEditor {
+	// overridden methods:
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define AmplitudeTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2cpp (AmplitudeTierEditor, RealTierEditor);
 
 AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title,
-	AmplitudeTier amplitude, Sound sound, bool ownSound);
-/*
-	'sound' may be NULL.
-*/
-
-#ifdef __cplusplus
-	}
-
-	struct structAmplitudeTierEditor : public structRealTierEditor {
-	};
-	#define AmplitudeTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-	Thing_declare2cpp (AmplitudeTierEditor, RealTierEditor);
-
-#endif // __cplusplus
+	AmplitudeTier amplitude,
+	Sound sound,   // may be NULL
+	bool ownSound);
 
 /* End of file AmplitudeTierEditor.h */
 #endif

@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/03/02
+ * pb 2011/07/14
  */
 
 #define ooSTRUCT OTConstraint
@@ -75,6 +75,11 @@ oo_DEFINE_CLASS (OTMulti, Data)
 	oo_STRUCT_VECTOR (OTCandidate, candidates, my numberOfCandidates)
 	#if oo_READING
 		OTMulti_sort (me);
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+			void v_info ();
 	#endif
 
 oo_END_CLASS (OTMulti)

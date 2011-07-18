@@ -21,6 +21,7 @@
  * pb 2008/03/21
  * pb 2009/01/23 minimum and maximum legal values
  * pb 2011/07/01 C++
+ * pb 2011/07/16 C++
  */
 
 #include "DurationTierEditor.h"
@@ -28,8 +29,8 @@
 
 static int menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); return 1; }
 
-static void createHelpMenuItems (DurationTierEditor me, EditorMenu menu) {
-	inherited (DurationTierEditor) createHelpMenuItems (me, menu);
+void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	DurationTierEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
@@ -42,7 +43,6 @@ static void play (DurationTierEditor me, double tmin, double tmax) {
 }
 
 class_methods (DurationTierEditor, RealTierEditor) {
-	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> minimumLegalValue = 0.0;
 	us -> quantityText = L"Relative duration", us -> quantityKey = L"Relative duration";

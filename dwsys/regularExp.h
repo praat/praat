@@ -76,7 +76,7 @@ typedef enum {
    
 regexp * CompileRE (
    const regularExp_CHAR  *exp,         /* String containing the regex specification. */
-   regularExp_CHAR **errorText,   /* Text of any error message produced. */
+   wchar_t **errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
 /* Match a `regexp' structure against a string. */

@@ -19,19 +19,53 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/04
- */
-
 /* Data inherits from Thing. */
 /* It adds the functionality of reproduction, comparison, reading, and writing. */
 #include "Thing.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Data);
+struct structData : public structThing {
+};
+#define Data__methods(Klas) Thing__methods(Klas) \
+	struct structData_Description *description; \
+	void (*copy) (Any data_from, Any data_to); \
+	bool (*equal) (Any data1, Any data2); \
+	bool (*canWriteAsEncoding) (I, int outputEncoding); \
+	void (*writeText) (I, MelderFile openFile); \
+	void (*readText) (I, MelderReadText text); \
+	void (*writeBinary) (I, FILE *f); \
+	void (*readBinary) (I, FILE *f); \
+	void (*writeCache) (I, CACHE *f); \
+	void (*readCache) (I, CACHE *f); \
+	void (*writeLisp) (I, FILE *f); \
+	void (*readLisp) (I, FILE *f); \
+	/* Messages for scripting. */ \
+	double (*getNrow) (I); \
+	double (*getNcol) (I); \
+	double (*getXmin) (I); \
+	double (*getXmax) (I); \
+	double (*getYmin) (I); \
+	double (*getYmax) (I); \
+	double (*getNx) (I); \
+	double (*getNy) (I); \
+	double (*getDx) (I); \
+	double (*getDy) (I); \
+	double (*getX) (I, long ix); \
+	double (*getY) (I, long iy); \
+	const wchar * (*getRowStr) (I, long irow); \
+	const wchar * (*getColStr) (I, long icol); \
+	double (*getCell) (I); \
+	const wchar * (*getCellStr) (I); \
+	double (*getVector) (I, long irow, long icol); \
+	const wchar * (*getVectorStr) (I, long icol); \
+	double (*getMatrix) (I, long irow, long icol); \
+	const wchar * (*getMatrixStr) (I, long irow, long icol); \
+	double (*getFunction0) (I); \
+	double (*getFunction1) (I, long irow, double x); \
+	double (*getFunction2) (I, double x, double y); \
+	double (*getRowIndex) (I, const wchar *rowLabel); \
+	double (*getColumnIndex) (I, const wchar *columnLabel);
+Thing_declare2cpp (Data, Thing);
 
 Any Data_copy (I);
 /*
@@ -420,54 +454,6 @@ Behaviour:
 */
 
 extern structMelderDir Data_directoryBeingRead;
-
-#ifdef __cplusplus
-	}
-
-	struct structData : public structThing {
-	};
-	#define Data__methods(Klas) Thing__methods(Klas) \
-		struct structData_Description *description; \
-		void (*copy) (Any data_from, Any data_to); \
-		bool (*equal) (Any data1, Any data2); \
-		bool (*canWriteAsEncoding) (I, int outputEncoding); \
-		void (*writeText) (I, MelderFile openFile); \
-		void (*readText) (I, MelderReadText text); \
-		void (*writeBinary) (I, FILE *f); \
-		void (*readBinary) (I, FILE *f); \
-		void (*writeCache) (I, CACHE *f); \
-		void (*readCache) (I, CACHE *f); \
-		void (*writeLisp) (I, FILE *f); \
-		void (*readLisp) (I, FILE *f); \
-		/* Messages for scripting. */ \
-		double (*getNrow) (I); \
-		double (*getNcol) (I); \
-		double (*getXmin) (I); \
-		double (*getXmax) (I); \
-		double (*getYmin) (I); \
-		double (*getYmax) (I); \
-		double (*getNx) (I); \
-		double (*getNy) (I); \
-		double (*getDx) (I); \
-		double (*getDy) (I); \
-		double (*getX) (I, long ix); \
-		double (*getY) (I, long iy); \
-		const wchar * (*getRowStr) (I, long irow); \
-		const wchar * (*getColStr) (I, long icol); \
-		double (*getCell) (I); \
-		const wchar * (*getCellStr) (I); \
-		double (*getVector) (I, long irow, long icol); \
-		const wchar * (*getVectorStr) (I, long icol); \
-		double (*getMatrix) (I, long irow, long icol); \
-		const wchar * (*getMatrixStr) (I, long irow, long icol); \
-		double (*getFunction0) (I); \
-		double (*getFunction1) (I, long irow, double x); \
-		double (*getFunction2) (I, double x, double y); \
-		double (*getRowIndex) (I, const wchar *rowLabel); \
-		double (*getColumnIndex) (I, const wchar *columnLabel);
-	Thing_declare2cpp (Data, Thing);
-
-#endif
 
 /* End of file Data.h */
 #endif

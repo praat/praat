@@ -19,13 +19,13 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
+ * pb 2007/06/10 wchar
+ * pb 2007/08/12 wchar
  * pb 2008/03/20 split off Help menu
  * pb 2008/03/21 new Editor API
  * pb 2009/01/23 minimum and maximum legal values
  * pb 2011/03/22 C++
- * pb 2011/07/02 C++
+ * pb 2011/07/15 C++
  */
 
 #include "PitchTierEditor.h"
@@ -38,8 +38,8 @@
 static int menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTierEditor"); return 1; }
 static int menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTier"); return 1; }
 
-static void createHelpMenuItems (PitchTierEditor me, EditorMenu menu) {
-	inherited (PitchTierEditor) createHelpMenuItems (me, menu);
+void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	PitchTierEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"PitchTierEditor help", 0, menu_cb_PitchTierEditorHelp);
 	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
@@ -50,7 +50,6 @@ static void play (PitchTierEditor me, double tmin, double tmax) {
 }
 
 class_methods (PitchTierEditor, RealTierEditor) {
-	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> minimumLegalValue = 0.0;
 	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";

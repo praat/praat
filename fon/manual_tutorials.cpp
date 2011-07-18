@@ -23,9 +23,12 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110712)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110718)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.30# (18 July 2011)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.2.29 whereby the list of object actions could stay empty after an error message in a script.")
+LIST_ITEM (L"\\bu Corrected a bug in Klatt synthesis whereby the generation of a sound could be refused.")
 NORMAL (L"##5.2.29# (12 July 2011)")
 LIST_ITEM (L"\\bu More accurate error checking, due to Praat's conversion to C++ (last C-only version was 5.2.17).")
 NORMAL (L"##5.2.28# (28 June 2011)")

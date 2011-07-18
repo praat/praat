@@ -27,20 +27,12 @@
  * pb 2008/03/20 split off Help menu
  * pb 2011/03/01 multiple update rules
  * pb 2011/03/23 C++
- * pb 2011/07/02 C++
+ * pb 2011/07/15 C++
  */
 
 #include "OTMultiEditor.h"
 #include "EditorM.h"
 #include "machine.h"
-
-struct structOTMultiEditor : public structHyperPage {
-	const wchar *form1, *form2;
-	GuiObject form1Text, form2Text;
-	long selectedConstraint;
-};
-#define OTMultiEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (OTMultiEditor, HyperPage);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
@@ -178,49 +170,49 @@ static void gui_cb_limit (GUI_ARGS) {
 	do_limit (me);
 }
 
-static void createChildren (OTMultiEditor me) {
-#if defined (macintosh)
-	#define STRING_SPACING 8
-#else
-	#define STRING_SPACING 2
-#endif
+void structOTMultiEditor :: v_createChildren () {
+	OTMultiEditor_Parent :: v_createChildren ();
+	#if defined (macintosh)
+		#define STRING_SPACING 8
+	#else
+		#define STRING_SPACING 2
+	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	inherited (OTMultiEditor) createChildren (me);
-	GuiButton_createShown (my dialog, 4, 124, y, y + height,
-		L"Partial forms:", gui_button_cb_limit, me,
+	GuiButton_createShown (dialog, 4, 124, y, y + height,
+		L"Partial forms:", gui_button_cb_limit, this,
 		#ifdef _WIN32
 			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
 		#else
 			0
 		#endif
 		);
-	my form1Text = GuiText_createShown (my dialog, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	form1Text = GuiText_createShown (dialog, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	#if motif
 	/* TODO */
-	XtAddCallback (my form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
+	XtAddCallback (form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);
 	#endif
-	my form2Text = GuiText_createShown (my dialog, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	form2Text = GuiText_createShown (dialog, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	#if motif
 	/* TODO */
-	XtAddCallback (my form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) me);
+	XtAddCallback (form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);
 	#endif
 }
 
-static void createMenus (OTMultiEditor me) {
-	inherited (OTMultiEditor) createMenus (me);
-	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
-	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
-	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
-	Editor_addCommand (me, L"Edit", L"Edit ranking...", 'E', menu_cb_editRanking);
-	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', menu_cb_resetAllRankings);
-	Editor_addCommand (me, L"Edit", L"Learn one...", '1', menu_cb_learnOne);
-	Editor_addCommand (me, L"Edit", L"-- remove --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
+void structOTMultiEditor :: v_createMenus () {
+	OTMultiEditor_Parent :: v_createMenus ();
+	Editor_addCommand (this, L"Edit", L"-- edit ot --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
+	Editor_addCommand (this, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
+	Editor_addCommand (this, L"Edit", L"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
+	Editor_addCommand (this, L"Edit", L"Edit ranking...", 'E', menu_cb_editRanking);
+	Editor_addCommand (this, L"Edit", L"Reset all rankings...", 'R', menu_cb_resetAllRankings);
+	Editor_addCommand (this, L"Edit", L"Learn one...", '1', menu_cb_learnOne);
+	Editor_addCommand (this, L"Edit", L"-- remove --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
 }
 
-static void createHelpMenuItems (OTMultiEditor me, EditorMenu menu) {
-	inherited (OTMultiEditor) createHelpMenuItems (me, menu);
+void structOTMultiEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	OTMultiEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
 }
 
@@ -265,11 +257,7 @@ static int goToPage (OTMultiEditor me, const wchar *title) {
 }
 
 class_methods (OTMultiEditor, HyperPage) {
-	class_method (createChildren)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (draw)
-	us -> editable = true;
 	class_method (goToPage)
 	class_methods_end
 }

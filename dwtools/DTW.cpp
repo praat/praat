@@ -65,7 +65,7 @@
 
 #define DTW_BIG 1e38
 
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
 static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,

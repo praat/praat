@@ -67,7 +67,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 static void Graphics_ticks (Graphics g, double min, double max, int hasNumber,
 	int hasTick, int hasDottedLine, int integers)

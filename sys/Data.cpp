@@ -22,10 +22,10 @@
  * pb 2003/07/02 Data_copy returns NULL if argument is NULL
  * pb 2003/09/14 old ClassTextFile formant readable across systems
  * pb 2004/10/16 C++ compatible struct tags
- * pb 2007/06/21 wchar_t
+ * pb 2007/06/21 wchar
  * pb 2007/07/21 Data_canWriteAsEncoding
  * pb 2008/01/18 guarded against some crashes (-> Data me = NULL)
- * pb 2008/07/20 wchar_t
+ * pb 2008/07/20 wchar
  * pb 2008/08/13 prevented overriding of header in file recognition
  * pb 2011/03/29 C++
  */
@@ -45,13 +45,13 @@ static void copy (Any data1, Any data2) {
 static bool equal (Any data1, Any data2) {
 	(void) data1;
 	(void) data2;
-	return 1;
+	return true;
 }   /* Names may be different. */
 
 static bool canWriteAsEncoding (Any data, int encoding) {
 	(void) data;
 	(void) encoding;
-	return 1;
+	return true;
 }
 
 static void writeText (Any data, MelderFile openFile) {
@@ -538,14 +538,14 @@ long Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const wchar_t *formula, long *result)
+	const wchar *formula, long *result)
 {
-	if (formula == NULL) {   /* This was a VECTOR_FROM array. */
+	if (formula == NULL) {   // this was a VECTOR_FROM array
 		*result = 1;
 		return 1;
 	}
 	if (wcsnequ (formula, L"my ", 3)) {
-		wchar_t buffer [100], *minus1, *psize;
+		wchar buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
 		wcscpy (buffer, formula + 3);   /* Skip leading "my ". */
 		if ((minus1 = wcsstr (buffer, L" - 1")) != NULL)

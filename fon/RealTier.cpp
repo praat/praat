@@ -82,12 +82,11 @@ RealPoint RealPoint_create (double time, double value) {
 
 /********** class RealTier **********/
 
-static void info (I) {
-	iam (RealTier);
-	classFunction -> info (me);
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine2 (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (me)));
-	MelderInfo_writeLine2 (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (me)));
+void structRealTier :: v_info () {
+	structFunction :: v_info ();
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine2 (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (this)));
+	MelderInfo_writeLine2 (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (this)));
 }
 
 static double getNx (I) { iam (RealTier); return my points -> size; }
@@ -96,7 +95,7 @@ static double getNcol (I) { iam (RealTier); return my points -> size; }
 static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
 static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
 
-static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	(void) ilevel;
 	(void) unit;
@@ -132,7 +131,6 @@ class_methods (RealTier, Function) {
 	class_method_local (RealTier, writeBinary)
 	class_method_local (RealTier, readBinary)
 	class_method_local (RealTier, description)
-	class_method (info)
 	class_method (getNx)
 	class_method (getX)
 	class_method (getNcol)

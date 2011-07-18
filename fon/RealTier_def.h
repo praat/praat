@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2011/07/11
+ * pb 2011/07/14
  */
 
 
@@ -35,6 +35,11 @@ oo_END_CLASS (RealPoint)
 oo_DEFINE_CLASS (RealTier, Function)
 
 	oo_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
+
+	#if oo_DECLARING
+		// overridden methods:
+			void v_info ();
+	#endif
 
 oo_END_CLASS (RealTier)
 #undef ooSTRUCT

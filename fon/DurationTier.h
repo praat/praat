@@ -45,6 +45,8 @@ DurationTier PointProcess_upto_DurationTier (PointProcess me);
 	}
 
 	struct structDurationTier : public structRealTier {
+	// overridden methods:
+		void v_info ();
 	};
 	#define DurationTier__methods(klas) RealTier__methods(klas)
 	Thing_declare2cpp (DurationTier, RealTier);

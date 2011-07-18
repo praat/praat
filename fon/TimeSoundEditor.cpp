@@ -26,6 +26,7 @@
  * pb 2007/09/22 Draw visible sound
  * pb 2010/12/08 
  * pb 2011/03/23 C++
+ * pb 2011/07/15 C++
  */
 
 #include "TimeSoundEditor.h"
@@ -34,6 +35,7 @@
 
 #undef our
 #define our ((TimeSoundEditor_Table) my methods) ->
+#define its ((TimeSoundEditor_Table) methods) ->
 
 /********** PREFERENCES **********/
 
@@ -65,17 +67,16 @@ void TimeSoundEditor_prefs (void) {
 
 /********** Thing methods **********/
 
-static void destroy (I) {
-	iam (TimeSoundEditor);
-	if (my ownSound) forget (my sound.data);
-	inherited (TimeSoundEditor) destroy (me);
+void structTimeSoundEditor :: v_destroy () {
+	if (ownSound)
+		forget (sound.data);
+	TimeSoundEditor_Parent :: v_destroy ();
 }
 
-static void info (I) {
-	iam (TimeSoundEditor);
-	inherited (TimeSoundEditor) info (me);
+void structTimeSoundEditor :: v_info () {
+	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flag: */
-	MelderInfo_writeLine2 (L"Sound autoscaling: ", Melder_boolean (my sound.autoscaling));
+	MelderInfo_writeLine2 (L"Sound autoscaling: ", Melder_boolean (sound.autoscaling));
 }
 
 /***** FILE MENU *****/
@@ -83,28 +84,28 @@ static void info (I) {
 static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Draw visible sound", 0)
-		our form_pictureWindow (me, cmd);
+		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"Sound:")
 		BOOLEAN (L"Preserve times", 1);
 		REAL (L"left Vertical range", L"0.0")
 		REAL (L"right Vertical range", L"0.0 (= auto)")
-		our form_pictureMargins (me, cmd);
+		my v_form_pictureMargins (cmd);
 		our form_pictureSelection (me, cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
+		my v_ok_pictureWindow (cmd);
 		SET_INTEGER (L"Preserve times", preferences.picture.preserveTimes);
 		SET_REAL (L"left Vertical range", preferences.picture.bottom);
 		SET_REAL (L"right Vertical range", preferences.picture.top);
-		our ok_pictureMargins (me, cmd);
+		my v_ok_pictureMargins (cmd);
 		our ok_pictureSelection (me, cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
-		our do_pictureWindow (me, cmd);
+		my v_do_pictureWindow (cmd);
 		preferences.picture.preserveTimes = GET_INTEGER (L"Preserve times");
 		preferences.picture.bottom = GET_REAL (L"left Vertical range");
 		preferences.picture.top = GET_REAL (L"right Vertical range");
-		our do_pictureMargins (me, cmd);
+		my v_do_pictureMargins (cmd);
 		our do_pictureSelection (me, cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
@@ -123,26 +124,26 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Draw selected sound", 0)
-		our form_pictureWindow (me, cmd);
+		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"Sound:")
 		BOOLEAN (L"Preserve times", 1);
 		REAL (L"left Vertical range", L"0.0")
 		REAL (L"right Vertical range", L"0.0 (= auto)")
-		our form_pictureMargins (me, cmd);
+		my v_form_pictureMargins (cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
+		my v_ok_pictureWindow (cmd);
 		SET_INTEGER (L"Preserve times", preferences.picture.preserveTimes);
 		SET_REAL (L"left Vertical range", preferences.picture.bottom);
 		SET_REAL (L"right Vertical range", preferences.picture.top);
-		our ok_pictureMargins (me, cmd);
+		my v_ok_pictureMargins (cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
-		our do_pictureWindow (me, cmd);
+		my v_do_pictureWindow (cmd);
 		preferences.picture.preserveTimes = GET_INTEGER (L"Preserve times");
 		preferences.picture.bottom = GET_REAL (L"left Vertical range");
 		preferences.picture.top = GET_REAL (L"right Vertical range");
-		our do_pictureMargins (me, cmd);
+		my v_do_pictureMargins (cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
 			Melder_throw ("There is no sound to draw.");
@@ -343,13 +344,13 @@ static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
 	}
 }
 
-static void createMenuItems_file (TimeSoundEditor me, EditorMenu menu) {
-	inherited (TimeSoundEditor) createMenuItems_file (me, menu);
-	our createMenuItems_file_draw (me, menu);
+void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
+	TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
+	its createMenuItems_file_draw (this, menu);
 	EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
-	our createMenuItems_file_extract (me, menu);
+	its createMenuItems_file_extract (this, menu);
 	EditorMenu_addCommand (menu, L"-- after file extract --", 0, NULL);
-	our createMenuItems_file_write (me, menu);
+	its createMenuItems_file_write (this, menu);
 	EditorMenu_addCommand (menu, L"-- after file write --", 0, NULL);
 }
 
@@ -367,11 +368,11 @@ static int menu_cb_LongSoundInfo (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_query_info (TimeSoundEditor me, EditorMenu menu) {
-	inherited (TimeSoundEditor) createMenuItems_query_info (me, menu);
-	if (my sound.data != NULL && my sound.data != my data) {
+void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
+	TimeSoundEditor_Parent :: v_createMenuItems_query_info (menu);
+	if (sound.data != NULL && sound.data != data) {
 		EditorMenu_addCommand (menu, L"Sound info", 0, menu_cb_SoundInfo);
-	} else if (my longSound.data != NULL && my longSound.data != my data) {
+	} else if (longSound.data != NULL && longSound.data != data) {
 		EditorMenu_addCommand (menu, L"LongSound info", 0, menu_cb_LongSoundInfo);
 	}
 }
@@ -525,13 +526,9 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 }
 
 class_methods (TimeSoundEditor, FunctionEditor) {
-	class_method (destroy)
-	class_method (info)
-	class_method (createMenuItems_file)
 	class_method (createMenuItems_file_draw)
 	class_method (createMenuItems_file_extract)
 	class_method (createMenuItems_file_write)
-	class_method (createMenuItems_query_info)
 	class_method (createMenuItems_view)
 	class_method (createMenuItems_view_sound)
 	class_method (updateMenuItems_file)

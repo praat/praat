@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Strings.h"
 #include "Table.h"
 #include "Distributions.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "PairDistribution_def.h"
 #define PairProbability__methods(klas) Data__methods(klas)
@@ -56,10 +48,6 @@ double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution
 double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, long column);
 
 Table PairDistribution_to_Table (PairDistribution me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file PairDistribution.h */
 #endif

@@ -19,29 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2004/05/14 some three-byte routines
- * pb 2006/12/13 big-endian floating point
- * pb 2007/06/10 *w4
- * pb 2007/06/21 *w2
- * pb 2007/07/21 MelderReadString
- * pb 2008/11/04 MelderReadText
- * pb 2011/05/14
- */
-
-#ifndef _complex_h_
-	#include "complex.h"
-#endif
-#ifndef _melder_h_
-	#include "melder.h"
-#endif
+#include "complex.h"
+#include "melder.h"
 
 #include "abcio_enums.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* Numeric text input and output. */
 
@@ -276,10 +257,6 @@ unsigned long cacgetu4LE (CACHE *f);   void cacputu4LE (unsigned long i, CACHE *
 char * cacgets1 (CACHE *f);   void cacputs1 (const char *s, CACHE *f);
 char * cacgets2 (CACHE *f);   void cacputs2 (const char *s, CACHE *f);
 char * cacgets4 (CACHE *f);   void cacputs4 (const char *s, CACHE *f);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file abcio.h */
 #endif

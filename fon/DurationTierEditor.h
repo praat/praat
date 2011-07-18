@@ -20,34 +20,26 @@
  */
 
 /*
- * pb 2011/07/02
+ * pb 2011/07/16
  */
 
 #include "RealTierEditor.h"
 #include "DurationTier.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (DurationTierEditor);
+struct structDurationTierEditor : public structRealTierEditor {
+	// overridden methods:
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2cpp (DurationTierEditor, RealTierEditor);
 
 DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar *title,
 	DurationTier duration, Sound sound, bool ownSound);
 /*
 	'sound' may be NULL.
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structDurationTierEditor : public structRealTierEditor {
-	};
-	#define DurationTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-	Thing_declare2cpp (DurationTierEditor, RealTierEditor);
-
-#endif // __cplusplus
 
 /* End of file DurationTierEditor.h */
 #endif

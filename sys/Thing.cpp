@@ -28,6 +28,7 @@
  * pb 2008/07/20 wchar_t
  * fb 2010/02/26 fix possible null pointer dereference
  * pb 2011/05/15 C++
+ * pb 2011/07/13 C++
  */
 
 #include <stdarg.h>
@@ -36,21 +37,32 @@
 
 static long theTotalNumberOfThings;
 
+void structThing :: v_destroy ()
+{
+}
+
 static void destroy (I) { iam (Thing); Melder_free (my name); }
 
-static void info (I) {
-	iam (Thing);
-	MelderInfo_writeLine2 (L"Object type: ", Thing_className (me));
-	MelderInfo_writeLine2 (L"Object name: ", my name ? my name : L"<no name>");
+void structThing :: v_info ()
+{
+	MelderInfo_writeLine2 (L"Object type: ", Thing_className (this));
+	MelderInfo_writeLine2 (L"Object name: ", this -> name ? this -> name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 }
 
-static void nameChanged (Any thing) {
-	(void) thing;
+void structThing :: v_checkConstraints ()
+{
 }
 
-/* Because Thing has no parent, we cannot use the macro `class_methods': */
+void structThing :: v_nameChanged ()
+{
+}
+
+static void info (I) {
+	iam (Thing);
+}
+
 static void _Thing_initialize (void *table);
 struct structThing_Table theStructThing = {
 	_Thing_initialize,
@@ -64,7 +76,6 @@ static void _Thing_initialize (void *table) {
 	Thing_Table us = (Thing_Table) table;
 	us -> destroy = destroy;
 	us -> info = info;
-	us -> nameChanged = nameChanged;
 }
 
 const wchar * Thing_className (Thing me) { return our _className; }
@@ -182,6 +193,7 @@ void _Thing_forget_cpp (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
 	our destroy (me);
+	my v_destroy ();
 	theTotalNumberOfThings -= 1;
 }
 
@@ -190,6 +202,7 @@ void _Thing_forget (Thing *pme) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
 	our destroy (me);
+	my v_destroy ();
 	Melder_free (me);
 	theTotalNumberOfThings -= 1;
 	*pme = NULL;
@@ -221,6 +234,7 @@ void Thing_infoWithId (Thing me, unsigned long id) {
 	Melder_clearInfo ();
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine2 (L"Object id: ", Melder_integer (id));
+	my v_info ();
 	our info (me);   // this calls a set of MelderInfo_writeXXX
 	MelderInfo_close ();
 }
@@ -250,7 +264,7 @@ void Thing_setName (Thing me, const wchar *name) {
 	 */
 	Melder_free (my name);
 	my name = newName.transfer();
-	our nameChanged (me);   // BUG: what if this fails?
+	my v_nameChanged ();
 }
 
 long Thing_getTotalNumberOfThings (void) { return theTotalNumberOfThings; }

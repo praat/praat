@@ -19,21 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* TableOfReal inherits from Data */
 #include "Collection.h"
 #include "Strings.h"
 #include "Table.h"
 #include "Interpreter_decl.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-//Thing_declare1cpp (TableOfReal);
 
 #include "TableOfReal_def.h"
 #define TableOfReal__methods(klas) Data__methods(klas)
@@ -87,10 +77,6 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 
 Strings TableOfReal_extractRowLabelsAsStrings (I);
 Strings TableOfReal_extractColumnLabelsAsStrings (I);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file TableOfReal.h */
 #endif

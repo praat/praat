@@ -42,7 +42,7 @@
 #define BUTTON_X  250
 #define LIST_Y  (2 * Gui_TOP_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT)
 #define EDITOR_WIDTH  820
-#define EDITOR_HEIGHT  (LIST_Y + MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
+#define EDITOR_HEIGHT  (LIST_Y + kDataSubEditor_MAXNUM_ROWS * ROW_HEIGHT + 29 + Machine_getMenuBarHeight ())
 #define ROW_HEIGHT  31
 
 #define SCROLL_BAR_WIDTH  Machine_getScrollBarWidth ()
@@ -51,8 +51,6 @@
 #include "EditorM.h"
 #include "Collection.h"
 #include "machine.h"
-
-#define MAXNUM_ROWS  12
 
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
@@ -64,86 +62,35 @@ static int stringLengths [] = { 0,
 	15, 27, 35, 59,
 	33, 33, 8, 6, 60, 60 };
 
-typedef struct structDataSubEditor_FieldData {
-	GuiObject label, button, text;
-	void *address;
-	Data_Description description;
-	long minimum, maximum, min2, max2;
-	wchar_t *history;   /* The full prefix of the members. */
-	int rank;   /* Should the button open a StructEditor (0) or VectorEditor (1) or MatrixEditor (2) ? */
-} *DataSubEditor_FieldData;
-
-struct structDataSubEditor : public structEditor {
-	DataEditor root;
-	void *address;
-	Data_Description description;
-	GuiObject scrollBar;
-	int irow, topField, numberOfFields;
-	struct structDataSubEditor_FieldData fieldData [1 + MAXNUM_ROWS];
-};
-#define DataSubEditor__methods(Klas) Editor__methods(Klas) \
-	long (*countFields) (Klas me); \
-	void (*showMembers) (Klas me);
-Thing_declare2cpp (DataSubEditor, Editor);
-
-struct structVectorEditor : public structDataSubEditor {
-	long minimum, maximum;
-};
-#define VectorEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (VectorEditor, DataSubEditor);
-
-static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
+static VectorEditor VectorEditor_create (DataEditor root, const wchar *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
-struct structMatrixEditor : public structDataSubEditor {
-	long minimum, maximum, min2, max2;
-};
-#define MatrixEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (MatrixEditor, DataSubEditor);
-
-static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
+static MatrixEditor MatrixEditor_create (DataEditor root, const wchar *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2);
 
-struct structStructEditor : public structDataSubEditor {
-};
-#define StructEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (StructEditor, DataSubEditor);
+static StructEditor StructEditor_create (DataEditor root, const wchar *title, void *address, Data_Description description);
 
-static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
-
-struct structClassEditor : public structStructEditor {
-};
-#define ClassEditor__methods(Klas) StructEditor__methods(Klas)
-Thing_declare2cpp (ClassEditor, StructEditor);
-
-static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
-
-struct structDataEditor : public structClassEditor {
-	Collection children;
-};
-#define DataEditor__methods(Klas) ClassEditor__methods(Klas)
-Thing_declare2cpp (DataEditor, ClassEditor);
+static ClassEditor ClassEditor_create (DataEditor root, const wchar *title, void *address, Data_Description description);
 
 /********** DataSubEditor **********/
 #undef our
 #define our ((DataSubEditor_Table) my methods) ->
 
-static void classDataSubEditor_destroy (I) {
-	iam (DataSubEditor);
-	for (int i = 1; i <= MAXNUM_ROWS; i ++)
-		Melder_free (my fieldData [i]. history);
-	if (my root && my root -> children)
-		for (int i = my root -> children -> size; i > 0; i --)
-			if (my root -> children -> item [i] == me)
-				Collection_subtractItem (my root -> children, i);
-	inherited (DataSubEditor) destroy (me);
+void structDataSubEditor :: v_destroy () {
+	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
+		Melder_free (fieldData [i]. history);
+	if (root && root -> children)
+		for (int i = root -> children -> size; i > 0; i --)
+			if (root -> children -> item [i] == this)
+				Collection_subtractItem (root -> children, i);
+	DataSubEditor_Parent :: v_destroy ();
 }
 
 static void update (DataSubEditor me) {
 
 	/* Hide all the existing widgets. */
 
-	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
+	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
 		my fieldData [i]. address = NULL;
 		my fieldData [i]. description = NULL;
 		GuiObject_hide (my fieldData [i]. label);
@@ -176,7 +123,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	(void) event;
 	iam (DataSubEditor);
 	int i;   // has to be declared here
-	for (i = 1; i <= MAXNUM_ROWS; i ++) {
+	for (i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
 	
 	#if motif
 	if (XtIsManaged (my fieldData [i]. text)) {
@@ -332,7 +279,7 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 
 	/* Identify the pressed button; it must be one of those created in the list. */
 
-	for (int i = 1; i <= MAXNUM_ROWS; i ++) if (my fieldData [i]. button == event -> button) { ifield = i; break; }
+	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) if (my fieldData [i]. button == event -> button) { ifield = i; break; }
 	Melder_assert (ifield != 0);
 
 	/* Launch the appropriate subeditor. */
@@ -373,69 +320,69 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 	}
 }
 
-static void classDataSubEditor_createChildren (DataSubEditor me) {
+void structDataSubEditor :: v_createChildren () {
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
 	#if motif
-	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Change", gui_button_cb_change, me, 0);
+	GuiButton_createShown (dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Change", gui_button_cb_change, this, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
-	GuiButton_createShown (my dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Cancel", gui_button_cb_cancel, me, 0);
+	GuiButton_createShown (dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+		L"Cancel", gui_button_cb_cancel, this, 0);
 	
-	GuiObject scrolledWindow = XmCreateScrolledWindow (my dialog, "list", NULL, 0);
+	GuiObject scrolledWindow = XmCreateScrolledWindow (dialog, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
 		XmNbottomAttachment, XmATTACH_FORM,
 		XmNleftAttachment, XmATTACH_FORM, NULL);
 
-	my scrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
+	scrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 		xmScrollBarWidgetClass, scrolledWindow,
 		XmNheight, SCROLL_BAR_WIDTH,
 		XmNminimum, 0,
-		XmNmaximum, my numberOfFields,
+		XmNmaximum, numberOfFields,
 		XmNvalue, 0,
-		XmNsliderSize, my numberOfFields < MAXNUM_ROWS ? my numberOfFields : MAXNUM_ROWS,
-		XmNincrement, 1, XmNpageIncrement, MAXNUM_ROWS - 1,
+		XmNsliderSize, numberOfFields < kDataSubEditor_MAXNUM_ROWS ? numberOfFields : kDataSubEditor_MAXNUM_ROWS,
+		XmNincrement, 1, XmNpageIncrement, kDataSubEditor_MAXNUM_ROWS - 1,
 		NULL);
-	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, my scrollBar, NULL);
+	XtVaSetValues (scrolledWindow, XmNverticalScrollBar, scrollBar, NULL);
 	GuiObject_show (scrolledWindow);
-	XtAddCallback (my scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) me);
-	XtAddCallback (my scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) me);
+	XtAddCallback (scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) this);
+	XtAddCallback (scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) this);
 	GuiObject form = XmCreateForm (scrolledWindow, "list", NULL, 0);
 	
 	#elif gtk
-	GuiObject outerBox = gtk_vbox_new(0, 0);
-	GuiObject buttonBox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_START);
-	gtk_box_pack_start(GTK_BOX(outerBox), buttonBox, 0, 0, 3);
+	GuiObject outerBox = gtk_vbox_new (0, 0);
+	GuiObject buttonBox = gtk_hbutton_box_new ();
+	gtk_button_box_set_layout (GTK_BUTTON_BOX (buttonBox), GTK_BUTTONBOX_START);
+	gtk_box_pack_start (GTK_BOX (outerBox), buttonBox, 0, 0, 3);
 	
 	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Change", gui_button_cb_change, me, 0);
+		L"Change", gui_button_cb_change, this, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
 	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
-		L"Cancel", gui_button_cb_cancel, me, 0);
+		L"Cancel", gui_button_cb_cancel, this, 0);
 	
-	GuiObject scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+	GuiObject scrolledWindow = gtk_scrolled_window_new (NULL, NULL);
 	
-	GuiObject form = gtk_vbox_new(0, 3);
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolledWindow), form);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start(GTK_BOX(outerBox), scrolledWindow, 1, 1, 3);
-	gtk_container_add(GTK_CONTAINER(my dialog), outerBox);
+	GuiObject form = gtk_vbox_new (0, 3);
+	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledWindow), form);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start (GTK_BOX (outerBox), scrolledWindow, 1, 1, 3);
+	gtk_container_add (GTK_CONTAINER (dialog), outerBox);
 	
-	GuiObject_show(outerBox);
-	GuiObject_show(buttonBox);
-	GuiObject_show(scrolledWindow);
+	GuiObject_show (outerBox);
+	GuiObject_show (buttonBox);
+	GuiObject_show (scrolledWindow);
 	#endif
 	
-	for (int i = 1; i <= MAXNUM_ROWS; i ++) {
+	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
 		y = Gui_TOP_DIALOG_SPACING + (i - 1) * ROW_HEIGHT;
-		my fieldData[i].label = GuiLabel_create(form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   /* No fixed x value: sometimes indent. */
-		my fieldData[i].button = GuiButton_create(form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
-			L"Open", gui_button_cb_open, me, 0);
-		my fieldData[i].text = GuiText_create(form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
+		fieldData [i]. label = GuiLabel_create (form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   // no fixed x value: sometimes indent
+		fieldData [i]. button = GuiButton_create (form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
+			L"Open", gui_button_cb_open, this, 0);
+		fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
 	}
 	
 	GuiObject_show (form);
@@ -443,8 +390,8 @@ static void classDataSubEditor_createChildren (DataSubEditor me) {
 
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); return 1; }
 
-static void classDataSubEditor_createHelpMenuItems (DataSubEditor me, EditorMenu menu) {
-	inherited (DataSubEditor) createHelpMenuItems (me, menu);
+void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	DataSubEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"DataEditor help", '?', menu_cb_help);
 }
 
@@ -453,12 +400,8 @@ static long classDataSubEditor_countFields (DataSubEditor me) { (void) me; retur
 static void classDataSubEditor_showMembers (DataSubEditor me) { (void) me; }
 
 class_methods (DataSubEditor, Editor) {
-	class_method_local (DataSubEditor, destroy)
-	class_method_local (DataSubEditor, createChildren)
-	class_method_local (DataSubEditor, createHelpMenuItems)
 	class_method_local (DataSubEditor, countFields)
 	class_method_local (DataSubEditor, showMembers)
-	us -> scriptable = false;
 	class_methods_end
 }
 
@@ -481,7 +424,7 @@ static long classStructEditor_countFields (StructEditor me) {
 	return Data_Description_countMembers (my description);
 }
 
-static const wchar_t * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
+static const wchar * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
 		case bytewa: MelderString_append1 (buffer, Melder_integer (* (signed char *) address)); break;
 		case shortwa: MelderString_append1 (buffer, Melder_integer (* (short *) address)); break;
@@ -518,7 +461,7 @@ static void showStructMember (
 	Data_Description structDescription,   /* The description of (the first member of) the struct. */
 	Data_Description memberDescription,   /* The description of the current member. */
 	DataSubEditor_FieldData fieldData,   /* The widgets in which to show the info about the current member. */
-	wchar_t *history)
+	wchar *history)
 {
 	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= maxsingletypewa && rank == 0;
 	unsigned char *memberAddress = (unsigned char *) structAddress + memberDescription -> offset;
@@ -627,7 +570,7 @@ static void showStructMember (
 	}
 }
 
-static void showStructMembers (I, void *structAddress, Data_Description structDescription, int fromMember, wchar_t *history) {
+static void showStructMembers (I, void *structAddress, Data_Description structDescription, int fromMember, wchar *history) {
 	iam (DataSubEditor);
 	int i;
 	Data_Description memberDescription;
@@ -636,7 +579,7 @@ static void showStructMembers (I, void *structAddress, Data_Description structDe
 	     i ++, memberDescription ++)
 		(void) 0;
 	for (; memberDescription -> name != NULL; memberDescription ++) {
-		if (++ my irow > MAXNUM_ROWS) return;
+		if (++ my irow > kDataSubEditor_MAXNUM_ROWS) return;
 		showStructMember (structAddress, structDescription, memberDescription, & my fieldData [my irow], history);
 	}
 }
@@ -689,7 +632,7 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 		DataSubEditor_FieldData fieldData;
 		int skip = ielement == firstElement ? (my topField - 1) % elementSize : 0;
 
-		if (++ my irow > MAXNUM_ROWS) return;
+		if (++ my irow > kDataSubEditor_MAXNUM_ROWS) return;
 		fieldData = & my fieldData [my irow];
 
 		if (isSingleType) {
@@ -804,7 +747,7 @@ static void classMatrixEditor_showMembers (MatrixEditor me) {
 		unsigned char *elementAddress = * ((unsigned char **) my address + irow) + icolumn * my description -> size;
 		DataSubEditor_FieldData fieldData;
 
-		if (++ my irow > MAXNUM_ROWS) return;
+		if (++ my irow > kDataSubEditor_MAXNUM_ROWS) return;
 		fieldData = & my fieldData [my irow];
 		
 		if (isSingleType) {
@@ -892,41 +835,37 @@ static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, vo
 
 /********** DataEditor **********/
 
-static void classDataEditor_destroy (I) {
-	iam (DataEditor);
-	int i;
+void structDataEditor :: v_destroy () {
 
 	/* Tell my children not to notify me when they die. */
 
-	for (i = 1; i <= my children -> size; i ++) {
-		DataSubEditor child = (DataSubEditor) my children -> item [i];
+	for (int i = 1; i <= children -> size; i ++) {
+		DataSubEditor child = (DataSubEditor) children -> item [i];
 		child -> root = NULL;
 	}
 
-	forget (my children);
-	inherited (DataEditor) destroy (me);
+	forget (children);
+	DataEditor_Parent :: v_destroy ();
 }
 
-static void classDataEditor_dataChanged (DataEditor me) {
+void structDataEditor :: v_dataChanged () {
 	/*
 	 * Someone else changed our data.
 	 * We know that the top-level data is still accessible.
 	 */
-	update ((DataSubEditor) me);
+	update (this);
 	/*
 	 * But all structure may have changed,
 	 * so that we do not know if any of the subeditors contain valid data.
 	 */
-	for (int i = my children -> size; i >= 1; i --) {
-		DataSubEditor subeditor = (DataSubEditor) my children -> item [i];
-		Collection_subtractItem (my children, i);
+	for (int i = children -> size; i >= 1; i --) {
+		DataSubEditor subeditor = (DataSubEditor) children -> item [i];
+		Collection_subtractItem (children, i);
 		forget (subeditor);
 	}
 }
 
 class_methods (DataEditor, ClassEditor) {
-	class_method_local (DataEditor, destroy)
-	class_method_local (DataEditor, dataChanged)
 	class_methods_end
 }
 

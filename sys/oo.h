@@ -251,6 +251,10 @@
 		parent##_Table _parent; \
 		long _size; \
 		void * (* _new) (); \
+		long version; \
+		long sequentialUniqueIdOfReadableClass; \
+		void (*destroy) (I); \
+		void (*info) (I); \
 		klas##__methods(klas) \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas; \

@@ -53,9 +53,9 @@ static void updateRange (SpectrumEditor me) {
 	}
 }
 
-static void dataChanged (SpectrumEditor me) {
-	updateRange (me);
-	inherited (SpectrumEditor) dataChanged (me);
+void structSpectrumEditor :: v_dataChanged () {
+	updateRange (this);
+	SpectrumEditor_Parent :: v_dataChanged ();
 }
 
 static void draw (SpectrumEditor me) {
@@ -172,14 +172,14 @@ static int menu_cb_setDynamicRange (EDITOR_ARGS) {
 static int menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"SpectrumEditor"); return 1; }
 static int menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); return 1; }
 
-static void createMenus (SpectrumEditor me) {
-	inherited (SpectrumEditor) createMenus (me);
-	my publishBandButton = Editor_addCommand (me, L"File", L"Publish band", 0, menu_cb_publishBand);
-	my publishSoundButton = Editor_addCommand (me, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
-	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"-- edit band --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Pass band...", 0, menu_cb_passBand);
-	Editor_addCommand (me, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
+void structSpectrumEditor :: v_createMenus () {
+	SpectrumEditor_Parent :: v_createMenus ();
+	publishBandButton = Editor_addCommand (this, L"File", L"Publish band", 0, menu_cb_publishBand);
+	publishSoundButton = Editor_addCommand (this, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
+	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"-- edit band --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Pass band...", 0, menu_cb_passBand);
+	Editor_addCommand (this, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
 }
 
 static void createMenuItems_view (SpectrumEditor me, EditorMenu menu) {
@@ -189,17 +189,14 @@ static void createMenuItems_view (SpectrumEditor me, EditorMenu menu) {
 	inherited (SpectrumEditor) createMenuItems_view (me, menu);
 }
 
-static void createHelpMenuItems (SpectrumEditor me, EditorMenu menu) {
-	inherited (SpectrumEditor) createHelpMenuItems (me, menu);
+void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	SpectrumEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
 	EditorMenu_addCommand (menu, L"Spectrum help", 0, menu_cb_help_Spectrum);
 }
 
 class_methods (SpectrumEditor, FunctionEditor) {
-	class_method (createMenus)
 	class_method (createMenuItems_view)
-	class_method (createHelpMenuItems)
-	class_method (dataChanged)
 	class_method (draw)
 	us -> format_domain = L"Frequency domain:";
 	us -> format_short = L"%.0f";

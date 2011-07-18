@@ -1,6 +1,6 @@
 /* Strings_def.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/08/10
- */
-
 
 #define ooSTRUCT Strings
 oo_DEFINE_CLASS (Strings, Data)
 
 	oo_LONG (numberOfStrings)
 	oo_STRING_VECTOR (strings, my numberOfStrings)
+
+	#if oo_DECLARING
+		// overridden methods:
+			void v_info ();
+	#endif
 
 oo_END_CLASS (Strings)
 #undef ooSTRUCT

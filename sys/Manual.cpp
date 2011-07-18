@@ -94,11 +94,10 @@ static int menu_cb_searchForPageList (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void destroy (I) {
-	iam (Manual);
-	ManPages pages = (ManPages) my data;
+void structManual :: v_destroy () {
+	ManPages pages = (ManPages) data;
 	if (pages && pages -> dynamic) forget (pages);
-	inherited (Manual) destroy (me);
+	Manual_Parent :: v_destroy ();
 }
 
 static void draw (Manual me) {
@@ -436,53 +435,53 @@ static void gui_cb_search (GUI_ARGS) {
 	do_search (me);
 }
 
-static void createChildren (Manual me) {
-	ManPages pages = (ManPages) my data;   /* Has been installed here by Editor_init (). */
-#if defined (macintosh)
-	#define STRING_SPACING 8
-#else
-	#define STRING_SPACING 2
-#endif
+void structManual :: v_createChildren () {
+	Manual_Parent :: v_createChildren ();
+	ManPages pages = (ManPages) data;   // has been installed here by Editor_init ()
+	#if defined (macintosh)
+		#define STRING_SPACING 8
+	#else
+		#define STRING_SPACING 2
+	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	inherited (Manual) createChildren (me);
-	my homeButton = GuiButton_createShown (my holder, 104, 168, y, y + height,
-		L"Home", gui_button_cb_home, me, 0);
+	homeButton = GuiButton_createShown (holder, 104, 168, y, y + height,
+		L"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
 		#if motif
-			XtVaSetValues (my drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
-			XtVaSetValues (my verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
+			XtVaSetValues (drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
+			XtVaSetValues (verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
 		#endif
-		my recordButton = GuiButton_createShown (my dialog, 4, 79, y+height+8, y+height+8 + height,
-			L"Record", gui_button_cb_record, me, 0);
-		my playButton = GuiButton_createShown (my dialog, 85, 160, y+height+8, y+height+8 + height,
-			L"Play", gui_button_cb_play, me, 0);
-		my publishButton = GuiButton_createShown (my dialog, 166, 166 + 175, y+height+8, y+height+8 + height, 
-			L"Copy last played to list", gui_button_cb_publish, me, 0);
+		recordButton = GuiButton_createShown (dialog, 4, 79, y+height+8, y+height+8 + height,
+			L"Record", gui_button_cb_record, this, 0);
+		playButton = GuiButton_createShown (dialog, 85, 160, y+height+8, y+height+8 + height,
+			L"Play", gui_button_cb_play, this, 0);
+		publishButton = GuiButton_createShown (dialog, 166, 166 + 175, y+height+8, y+height+8 + height, 
+			L"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
-	GuiButton_createShown (my holder, 274, 274 + 69, y, y + height,
-		L"Search:", gui_button_cb_search, me, GuiButton_DEFAULT);
-	my searchText = GuiText_createShown (my holder, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
+	GuiButton_createShown (holder, 274, 274 + 69, y, y + height,
+		L"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
+	searchText = GuiText_createShown (holder, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
 	#if motif
 		/* TODO */
-		XtAddCallback (my searchText, XmNactivateCallback, gui_cb_search, (XtPointer) me);
+		XtAddCallback (searchText, XmNactivateCallback, gui_cb_search, (XtPointer) this);
 	#endif
 }
 
 static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); if (! HyperPage_goToPage (me, L"Manual")) return 0; return 1; }
 
-static void createMenus (Manual me) {
-	inherited (Manual) createMenus (me);
+void structManual :: v_createMenus () {
+	Manual_Parent :: v_createMenus ();
 
-	Editor_addCommand (me, L"File", L"Print manual...", 0, menu_cb_printRange);
-	Editor_addCommand (me, L"File", L"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
-	Editor_addCommand (me, L"File", L"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
-	Editor_addCommand (me, L"File", L"-- close --", 0, NULL);
+	Editor_addCommand (this, L"File", L"Print manual...", 0, menu_cb_printRange);
+	Editor_addCommand (this, L"File", L"Save page as HTML file...", 0, menu_cb_writeOneToHtmlFile);
+	Editor_addCommand (this, L"File", L"Save manual to HTML directory...", 0, menu_cb_writeAllToHtmlDir);
+	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
 
-	Editor_addCommand (me, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);
+	Editor_addCommand (this, L"Go to", L"Search for page (list)...", 0, menu_cb_searchForPageList);
 }
 
-static void createHelpMenuItems (Manual me, EditorMenu menu) {
-	inherited (Manual) createHelpMenuItems (me, menu);
+void structManual :: v_createHelpMenuItems (EditorMenu menu) {
+	Manual_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
 }
 
@@ -562,13 +561,7 @@ static int goToPage (Manual me, const wchar_t *title) {
 static int hasHistory = TRUE, isOrdered = TRUE;
 
 class_methods (Manual, HyperPage) {
-	class_method (destroy)
-	us -> scriptable = false;
 	class_method (draw)
-	class_method (createChildren)
-	class_method (createMenus)
-	us -> createMenuItems_query = NULL;
-	class_method (createHelpMenuItems)
 	class_method (defaultHeaders)
 	class_method (getNumberOfPages)
 	class_method (getCurrentPageNumber)

@@ -20,34 +20,25 @@
  */
 
 /*
- * pb 2011/07/02
+ * pb 2011/07/15
  */
 
 #include "RealTierEditor.h"
 #include "IntensityTier.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (IntensityTierEditor);
+struct structIntensityTierEditor : public structRealTierEditor {
+	void v_createHelpMenuItems (EditorMenu menu);
+};
+#define IntensityTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2cpp (IntensityTierEditor, RealTierEditor);
 
 IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar *title,
 	IntensityTier intensity, Sound sound, bool ownSound);
 /*
 	'sound' may be NULL.
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structIntensityTierEditor : public structRealTierEditor {
-	};
-	#define IntensityTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-	Thing_declare2cpp (IntensityTierEditor, RealTierEditor);
-
-#endif // __cplusplus
 
 /* End of file IntensityTierEditor.h */
 #endif

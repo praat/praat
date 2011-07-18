@@ -46,18 +46,17 @@
 #include "oo_DESCRIPTION.h"
 #include "Network_def.h"
 
-static void classNetwork_info (I) {
-	iam (Network);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Leak: ", Melder_double (my leak));
-	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (my numberOfNodes));
-	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (my numberOfConnections));
+void structNetwork :: v_info ()
+{
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Leak: ", Melder_double (leak));
+	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (numberOfNodes));
+	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (numberOfConnections));
 }
 
 class_methods (Network, Data) {
 	us -> version = 1;
 	class_method_local (Network, destroy)
-	class_method_local (Network, info)
 	class_method_local (Network, description)
 	class_method_local (Network, copy)
 	class_method_local (Network, equal)

@@ -19,36 +19,23 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19950713
- djmw 20020813 GPL header
- djmw 20110305 Latest modification.
-*/
-
 #include "Command.h"
 #include "Editor.h"
 #include "Categories.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (CategoriesEditor);
-
-CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data);
-
-#ifdef __cplusplus
-	}
-
-	struct structCategoriesEditor : public structEditor {
+Thing_define (CategoriesEditor, Editor) {
+	// new data:
 		CommandHistory history;
 		int position;
 		GuiObject list, text, outOfView, undo, redo;
 		GuiObject remove, insert, insertAtEnd, replace, moveUp, moveDown;
-	};
-	#define CategoriesEditor__methods(Klas) Editor__methods(Klas)
-	Thing_declare2cpp (CategoriesEditor, Editor);
+	// overridden methods:
+		void v_destroy ();
+		void v_createChildren ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
+};
 
-#endif // __cplusplus
+CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data);
 
 #endif /* _CategoriesEditor_h_ */

@@ -3811,8 +3811,13 @@ DO
 		kPitch_unit_ERB;
 	LOOP {
 		iam (PitchTier);
-		PitchTier_shiftFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit); therror
-		praat_dataChanged (me);
+		try {
+			PitchTier_shiftFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit); therror
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
+			throw;
+		}
 	}
 END
 

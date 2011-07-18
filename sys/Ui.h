@@ -19,18 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/12
- */
-
 #include "Graphics.h"
 #include "Gui.h"
-#include "Ui_decl.h"
 #include "Interpreter.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* Forms for getting arguments from the user. */
 
@@ -202,9 +193,5 @@ void UiForm_widgetsToValues (I);
 void UiForm_Interpreter_addVariables (I, Interpreter interpreter);
 int UiForm_getClickedContinueButton (UiForm me);
 
-#ifdef __cplusplus
-	}
-#endif
-
-#endif
 /* End of file Ui.h */
+#endif

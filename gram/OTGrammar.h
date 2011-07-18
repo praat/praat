@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/07/11
+ * pb 2011/07/15
  */
 
 #include "Strings.h"
@@ -28,10 +28,6 @@
 #include "PairDistribution.h"
 #include "Distributions.h"
 #include "TableOfReal.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "OTGrammar_enums.h"
 
@@ -153,10 +149,6 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions thee, long columnNumber);
 
 void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file OTGrammar.h */
 #endif

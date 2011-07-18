@@ -166,26 +166,26 @@ static int menu_cb_voiceless (EDITOR_ARGS) {
 static int menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"PitchEditor"); return 1; }
 static int menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"Pitch"); return 1; }
 
-static void createMenus (PitchEditor me) {
-	inherited (PitchEditor) createMenus (me);
+void structPitchEditor :: v_createMenus () {
+	PitchEditor_Parent :: v_createMenus ();
 
-	Editor_addCommand (me, L"Edit", L"Change ceiling...", 0, menu_cb_setCeiling);
-	Editor_addCommand (me, L"Edit", L"Path finder...", 0, menu_cb_pathFinder);
+	Editor_addCommand (this, L"Edit", L"Change ceiling...", 0, menu_cb_setCeiling);
+	Editor_addCommand (this, L"Edit", L"Path finder...", 0, menu_cb_pathFinder);
 
-	Editor_addCommand (me, L"Query", L"-- pitch --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
+	Editor_addCommand (this, L"Query", L"-- pitch --", 0, NULL);
+	Editor_addCommand (this, L"Query", L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
 
-	Editor_addMenu (me, L"Selection", 0);
-	Editor_addCommand (me, L"Selection", L"Unvoice", 0, menu_cb_voiceless);
-	Editor_addCommand (me, L"Selection", L"-- up and down --", 0, NULL);
-	Editor_addCommand (me, L"Selection", L"Octave up", 0, menu_cb_octaveUp);
-	Editor_addCommand (me, L"Selection", L"Fifth up", 0, menu_cb_fifthUp);
-	Editor_addCommand (me, L"Selection", L"Fifth down", 0, menu_cb_fifthDown);
-	Editor_addCommand (me, L"Selection", L"Octave down", 0, menu_cb_octaveDown);
+	Editor_addMenu (this, L"Selection", 0);
+	Editor_addCommand (this, L"Selection", L"Unvoice", 0, menu_cb_voiceless);
+	Editor_addCommand (this, L"Selection", L"-- up and down --", 0, NULL);
+	Editor_addCommand (this, L"Selection", L"Octave up", 0, menu_cb_octaveUp);
+	Editor_addCommand (this, L"Selection", L"Fifth up", 0, menu_cb_fifthUp);
+	Editor_addCommand (this, L"Selection", L"Fifth down", 0, menu_cb_fifthDown);
+	Editor_addCommand (this, L"Selection", L"Octave down", 0, menu_cb_octaveDown);
 }
 
-static void createHelpMenuItems (PitchEditor me, EditorMenu menu) {
-	inherited (PitchEditor) createHelpMenuItems (me, menu);
+void structPitchEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	PitchEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"PitchEditor help", '?', menu_cb_PitchEditorHelp);
 	EditorMenu_addCommand (menu, L"Pitch help", 0, menu_cb_PitchHelp);
 }
@@ -374,8 +374,6 @@ static int click (PitchEditor me, double xWC, double yWC, int dummy) {
 }
 
 class_methods (PitchEditor, FunctionEditor) {
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (play)
 	class_method (click)

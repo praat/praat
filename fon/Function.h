@@ -146,6 +146,8 @@ void Function_scaleXTo (I, double xminto, double xmaxto);
 
 	struct structFunction : public structData {
 		double xmin, xmax;
+	// overridden methods:
+		void v_info ();
 	};
 	#define Function__methods(klas)  Data__methods(klas) \
 		int domainQuantity; \

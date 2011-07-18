@@ -19,24 +19,31 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "Editor.h"
 #include "Table.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_declare1cpp (TableEditor);
+struct structTableEditor : public structEditor {
+	// new data:
+		long topRow, leftColumn, selectedRow, selectedColumn;
+		GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
+		double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
+		Graphics graphics;
+	// overridden methods:
+		void v_destroy ();
+		void v_createChildren ();
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
+};
+#define TableEditor__methods(Klas) \
+	void (*draw) (Klas me); \
+	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
+Thing_declare2cpp (TableEditor, Editor);
 
 TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file TableEditor.h */
 #endif

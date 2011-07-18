@@ -20,25 +20,22 @@
  */
 
 /*
- * pb 2011/06/19
+ * pb 2011/07/14
  */
 
-/* Matrix inherits from Sampled */
 #include "Sampled.h"
 #include "Graphics.h"
 #include "Table.h"
 #include "TableOfReal.h"
 #include "Interpreter_decl.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Matrix);
+#include "Matrix_def.h"
+#define Matrix__methods(klas) Sampled__methods(klas)
+oo_CLASS_CREATE (Matrix, Sampled);
 
 void Matrix_init
-	(I, double xmin, double xmax, long nx, double dx, double x1,
-		double ymin, double ymax, long ny, double dy, double y1);
+	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
+	            double ymin, double ymax, long ny, double dy, double y1);
 
 Matrix Matrix_create
 	(double xmin, double xmax, long nx, double dx, double x1,
@@ -271,20 +268,6 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 
 Matrix TableOfReal_to_Matrix (I);
 TableOfReal Matrix_to_TableOfReal (I);
-
-#ifdef __cplusplus
-	}
-
-	struct structMatrix : public structSampled {
-		double ymin, ymax; \
-		long ny; \
-		double dy, y1; \
-		double **z;
-	};
-	#define Matrix__methods(klas) Sampled__methods(klas)
-	Thing_declare2cpp (Matrix, Sampled);
-
-#endif
 
 /* End of file Matrix.h */
 #endif

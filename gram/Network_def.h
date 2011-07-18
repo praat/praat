@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009 Paul Boersma
+ * Copyright (C) 2009-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2009/06/11
+ * pb 2011/07/14
  */
 
 #define ooSTRUCT NetworkNode
@@ -72,6 +72,11 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_STRUCT_VECTOR (NetworkNode, nodes, my numberOfNodes)
 	oo_LONG (numberOfConnections)
 	oo_STRUCT_VECTOR (NetworkConnection, connections, my numberOfConnections)
+
+	#if oo_DECLARING
+		// overridden methods:
+		void v_info ();
+	#endif
 
 oo_END_CLASS (Network)
 #undef ooSTRUCT

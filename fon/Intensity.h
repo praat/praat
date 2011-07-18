@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2011/07/11
+ * pb 2011/07/14
  */
 
 /*
@@ -35,11 +35,13 @@
 
 #include "Vector.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Intensity);
+struct structIntensity : public structVector {
+	// overridden methods:
+		void v_info ();
+};
+#define Intensity__methods(klas) Vector__methods(klas)
+Thing_declare2cpp (Intensity, Vector);
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 
@@ -66,16 +68,6 @@ double Intensity_getQuantile (Intensity me, double tmin, double tmax, double qua
 #define Intensity_averaging_SONES  2
 #define Intensity_averaging_DB  3
 double Intensity_getAverage (Intensity me, double tmin, double tmax, int averagingMethod);
-
-#ifdef __cplusplus
-	}
-
-	struct structIntensity : public structVector {
-	};
-	#define Intensity__methods(klas) Vector__methods(klas)
-	Thing_declare2cpp (Intensity, Vector);
-
-#endif
 
 /* End of file Intensity.h */
 #endif

@@ -98,12 +98,11 @@ static long Strings_maximumLength (Strings me) {
 	return maximumLength;
 }
 
-static void info (I) {
-	iam (Strings);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my numberOfStrings));
-	MelderInfo_writeLine3 (L"Total length: ", Melder_integer (Strings_totalLength (me)), L" characters");
-	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (me)), L" characters");
+void structStrings :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (numberOfStrings));
+	MelderInfo_writeLine3 (L"Total length: ", Melder_integer (Strings_totalLength (this)), L" characters");
+	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (this)), L" characters");
 }
 
 static const wchar * getVectorStr (I, long icol) {
@@ -124,7 +123,6 @@ class_methods (Strings, Data) {
 	class_method_local (Strings, readText)
 	class_method_local (Strings, writeBinary)
 	class_method_local (Strings, readBinary)
-	class_method (info)
 	class_method (getVectorStr)
 	class_methods_end
 }

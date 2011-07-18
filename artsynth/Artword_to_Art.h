@@ -17,24 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Artword.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Art Artword_to_Art (I, double time);
 /*
 	Function:
 		linear interpolation between targets.	
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Artword_to_Art.h */

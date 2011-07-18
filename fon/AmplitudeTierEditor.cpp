@@ -35,8 +35,8 @@
 
 static int menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); return 1; }
 
-static void createHelpMenuItems (AmplitudeTierEditor me, EditorMenu menu) {
-	inherited (AmplitudeTierEditor) createHelpMenuItems (me, menu);
+void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	AmplitudeTierEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
@@ -49,7 +49,6 @@ static void play (AmplitudeTierEditor me, double tmin, double tmax) {
 }
 
 class_methods (AmplitudeTierEditor, RealTierEditor) {
-	class_method (createHelpMenuItems)
 	class_method (play)
 	us -> quantityText = L"Sound pressure (Pa)", us -> quantityKey = L"Sound pressure";
 	us -> rightTickUnits = L" Pa";

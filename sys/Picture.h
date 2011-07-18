@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/08
- */
-
 /* A self-recording picture inside a Motif DrawingArea widget.
 	All drawing is kept in a Graphics.
 	If the picture is sensitive,
@@ -52,10 +48,6 @@
 
 #ifdef macintosh
 #define Picture PictureNotMac
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
 #endif
 
 typedef struct structPicture *Picture;
@@ -149,10 +141,6 @@ void Picture_background (Picture me);
 void Picture_foreground (Picture me);
 
 void Picture_selfExpose (Picture me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Picture.h */
 #endif

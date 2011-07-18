@@ -22,16 +22,15 @@
  * pb 2008/02/06 const
  * pb 2008/03/20 split off Help menu
  * pb 2011/04/06 C++
- * pb 2011/07/02 C++
+ * pb 2011/07/15 C++
  */
 
 #include "StringsEditor.h"
 #include "EditorM.h"
 #include "machine.h"
 
-static void destroy (I) {
-	iam (StringsEditor);
-	inherited (StringsEditor) destroy (me);
+void structStringsEditor :: v_destroy () {
+	StringsEditor_Parent :: v_destroy ();
 }
 
 static int menu_cb_help (EDITOR_ARGS) {
@@ -41,8 +40,8 @@ static int menu_cb_help (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createHelpMenuItems (StringsEditor me, EditorMenu menu) {
-	inherited (StringsEditor) createHelpMenuItems (me, menu);
+void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	StringsEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"StringsEditor help", '?', menu_cb_help);
 }
 
@@ -137,27 +136,23 @@ static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item)
 		GuiText_setString (my text, strings -> strings [item]);
 }
 
-static void createChildren (StringsEditor me) {
-	my list = GuiList_create (my dialog, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
-	//GuiList_setDoubleClickCallback (my list, gui_list_cb_doubleClick, me);
-	GuiObject_show (my list);
+void structStringsEditor :: v_createChildren () {
+	list = GuiList_create (dialog, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
+	//GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
+	GuiObject_show (list);
 
-	my text = GuiText_createShown (my dialog, 0, 0, Gui_AUTOMATIC, -40, 0);
-	GuiButton_createShown (my dialog, 10, 100, Gui_AUTOMATIC, -10, L"Insert", gui_button_cb_insert, me, GuiButton_DEFAULT);
-	GuiButton_createShown (my dialog, 110, 200, Gui_AUTOMATIC, -10, L"Append", gui_button_cb_append, me, 0);
-	GuiButton_createShown (my dialog, 210, 300, Gui_AUTOMATIC, -10, L"Replace", gui_button_cb_replace, me, 0);
-	GuiButton_createShown (my dialog, 310, 400, Gui_AUTOMATIC, -10, L"Remove", gui_button_cb_remove, me, 0);	
+	text = GuiText_createShown (dialog, 0, 0, Gui_AUTOMATIC, -40, 0);
+	GuiButton_createShown (dialog, 10, 100, Gui_AUTOMATIC, -10, L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	GuiButton_createShown (dialog, 110, 200, Gui_AUTOMATIC, -10, L"Append", gui_button_cb_append, this, 0);
+	GuiButton_createShown (dialog, 210, 300, Gui_AUTOMATIC, -10, L"Replace", gui_button_cb_replace, this, 0);
+	GuiButton_createShown (dialog, 310, 400, Gui_AUTOMATIC, -10, L"Remove", gui_button_cb_remove, this, 0);	
 }
 
-static void dataChanged (StringsEditor me) {
-	updateList (me);
+void structStringsEditor :: v_dataChanged () {
+	updateList (this);
 }
 
 class_methods (StringsEditor, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
-	class_method (createHelpMenuItems)
 	class_methods_end
 }
 

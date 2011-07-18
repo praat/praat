@@ -19,17 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/05/14
- */
-
-#ifndef _melder_h_
-	#include "melder.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "melder.h"
 
 /*
  * All strings added with Preferences_addString should have the following buffer size,
@@ -59,10 +49,6 @@ void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value
 
 void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Preferences.h */
 #endif

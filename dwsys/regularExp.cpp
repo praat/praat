@@ -478,9 +478,9 @@ static regularExp_CHAR *Code_Emit_Ptr;   /* When Code_Emit_Ptr is set to
                                           points to where compiled regex code is
                                           to be written. */
 static unsigned long  Reg_Size;        /* Size of compiled regex code. */
-static regularExp_CHAR         **Error_Ptr;       /* Place to store error messages so
+static wchar         **Error_Ptr;       /* Place to store error messages so
                                           they can be returned by `CompileRE' */
-static regularExp_CHAR           Error_Text [128];/* Sting to build error messages in. */
+static wchar           Error_Text [128];/* Sting to build error messages in. */
 
 static regularExp_CHAR  White_Space [WHITE_SPACE_SIZE]; /* Arrays used by       */
 static regularExp_CHAR  Word_Char   [ALNUM_CHAR_SIZE];  /* functions            */
@@ -515,7 +515,7 @@ static regularExp_CHAR * emit_special    (regularExp_CHAR op_code,
 static regularExp_CHAR   literal_escape  (regularExp_CHAR c);
 static regularExp_CHAR   numeric_escape  (regularExp_CHAR c, regularExp_CHAR **parse);
 static regularExp_CHAR * atom            (int *flag_param, len_range *range_param);
-static void            reg_error       (regularExp_CHAR *str);
+static void            reg_error       (wchar *str);
 static regularExp_CHAR * insert          (regularExp_CHAR op, regularExp_CHAR *opnd,
                                         long min, long max, int index);
 static regularExp_CHAR * next_ptr        (regularExp_CHAR *ptr);
@@ -546,7 +546,7 @@ static int             init_ansi_classes  (void);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
-regexp * CompileRE (const regularExp_CHAR *exp, regularExp_CHAR **errorText, int defaultFlags) {
+regexp * CompileRE (const regularExp_CHAR *exp, wchar **errorText, int defaultFlags) {
 
    register regexp *comp_regex = NULL;
    register regularExp_CHAR *scan;
@@ -618,7 +618,7 @@ regexp * CompileRE (const regularExp_CHAR *exp, regularExp_CHAR **errorText, int
                This is a real issue since the first BRANCH node usually points
                to the end of the compiled regex code. */
 
-            swprintf  (Error_Text, 128, L"regexp > %lu bytes", MAX_COMPILED_SIZE);
+            swprintf  ((wchar *) Error_Text, 128, L"regexp > %lu bytes", MAX_COMPILED_SIZE);
             REG_FAIL (Error_Text);
          }
 
@@ -706,7 +706,7 @@ static regularExp_CHAR * chunk (int paren, int *flag_param,
 
    if (paren == PAREN) {
       if (Total_Paren >= NSUBEXP) {
-         swprintf (Error_Text, 128, L"number of ()'s > %d", (int) NSUBEXP);
+         swprintf ((wchar *) Error_Text, 128, L"number of ()'s > %d", (int) NSUBEXP);
          REG_FAIL (Error_Text);
       }
 
@@ -998,10 +998,10 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
                digit_present [i]++;
             } else {
                if (i == 0) {
-                  swprintf (Error_Text, 128, L"min operand of {%lu%c,???} > 65535",
+                  swprintf ((wchar *) Error_Text, 128, L"min operand of {%lu%c,???} > 65535",
                            min_max [0], *Reg_Parse);
                } else {
-                  swprintf (Error_Text, 128, L"max operand of {%lu,%lu%c} > 65535",
+                  swprintf ((wchar *) Error_Text, 128, L"max operand of {%lu,%lu%c} > 65535",
                            min_max [0], min_max [1], *Reg_Parse);
                }
 
@@ -1029,7 +1029,7 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
          REG_FAIL (L"{0,0} is an invalid range");
       } else if (digit_present [1] && (min_max [1] == REG_ZERO)) {
          if (digit_present [0]) {
-            swprintf (Error_Text, 128, L"{%lu,0} is an invalid range", min_max [0]);
+            swprintf ((wchar *) Error_Text, 128, L"{%lu,0} is an invalid range", min_max [0]);
             REG_FAIL (Error_Text);
          } else {
             REG_FAIL (L"{,0} is an invalid range");
@@ -1044,7 +1044,7 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
       } else if (min_max [1] != REG_INFINITY && min_max [0] > min_max [1]) {
          /* Disallow a backward range. */
 
-         swprintf (Error_Text, 128, L"{%lu,%lu} is an invalid range",
+         swprintf ((wchar *) Error_Text, 128, L"{%lu,%lu} is an invalid range",
                   min_max [0], min_max [1]);
          REG_FAIL (Error_Text);
       }
@@ -1076,7 +1076,7 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
 	 *range_param = range_local;
          return (ret_val);
       } else if (Num_Braces > (int)UCHAR_MAX) {
-         swprintf (Error_Text, 128, L"number of {m,n} constructs > %d", UCHAR_MAX);
+         swprintf ((wchar *) Error_Text, 128, L"number of {m,n} constructs > %d", UCHAR_MAX);
          REG_FAIL (Error_Text);
       }
    }
@@ -1089,10 +1089,10 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
 
    if (!(flags_local & HAS_WIDTH)) {
       if (brace_present) {
-         swprintf (Error_Text, 128, L"{%lu,%lu} operand could be empty",
+         swprintf ((wchar *) Error_Text, 128, L"{%lu,%lu} operand could be empty",
                   min_max [0], min_max [1]);
       } else {
-         swprintf (Error_Text, 128, L"%c operand could be empty", op_code);
+         swprintf ((wchar *) Error_Text, 128, L"%c operand could be empty", op_code);
       }
 
       REG_FAIL (Error_Text);
@@ -1465,9 +1465,9 @@ static regularExp_CHAR * piece (int *flag_param, len_range *range_param) {
 
    if (IS_QUANTIFIER (*Reg_Parse)) {
       if (op_code == '{') {
-         swprintf (Error_Text, 128, L"nested quantifiers, {m,n}%c", *Reg_Parse);
+         swprintf ((wchar *) Error_Text, 128, L"nested quantifiers, {m,n}%c", *Reg_Parse);
       } else {
-         swprintf (Error_Text, 128, L"nested quantifiers, %c%c", op_code, *Reg_Parse);
+         swprintf ((wchar *) Error_Text, 128, L"nested quantifiers, %c%c", op_code, *Reg_Parse);
       }
 
       REG_FAIL (Error_Text);
@@ -1593,14 +1593,14 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
 	          Reg_Parse++;
                   ret_val = chunk (NEG_BEHIND_OPEN, &flags_local, &range_local);
 	       } else {
-                  swprintf (Error_Text, 128,
+                  swprintf ((wchar *) Error_Text, 128,
                            L"invalid look-behind syntax, \"(?<%c...)\"",
                            *Reg_Parse);
 
                   REG_FAIL (Error_Text);
 	       }
             } else {
-               swprintf (Error_Text, 128,
+               swprintf ((wchar *) Error_Text, 128,
                         L"invalid grouping syntax, \"(?%c...)\"",
                         *Reg_Parse);
 
@@ -1627,7 +1627,7 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
       case '?':
       case '+':
       case '*':
-         swprintf (Error_Text, 128, L"%c follows nothing", *(Reg_Parse - 1));
+         swprintf ((wchar *) Error_Text, 128, L"%c follows nothing", *(Reg_Parse - 1));
          REG_FAIL (Error_Text);
 
       case '{':
@@ -1714,14 +1714,14 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
                         } else if (shortcut_escape (*Reg_Parse,
                                                     NULL,
                                                     CHECK_CLASS_ESCAPE)) {
-                           swprintf (Error_Text, 128,
+                           swprintf ((wchar *) Error_Text, 128,
                                     L"\\%c is not allowed as range operand",
                                     *Reg_Parse);
 
                            REG_FAIL (Error_Text);
                         } else {
                            swprintf (
-                              Error_Text, 128,
+                              (wchar *) Error_Text, 128,
                               L"\\%c is an invalid char class escape sequence",
                               *Reg_Parse);
 
@@ -1777,7 +1777,7 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
                         /* Specifically disallow shortcut escapes as the start
                            of a character class range (see comment above.) */
 
-                        swprintf (Error_Text, 128,
+                        swprintf ((wchar *) Error_Text, 128,
                                  L"\\%c not allowed as range operand",
                                  *Reg_Parse);
 
@@ -1789,7 +1789,7 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
                         shortcut_escape (*Reg_Parse, NULL, EMIT_CLASS_BYTES);
                      }
                   } else {
-                     swprintf (Error_Text, 128,
+                     swprintf ((wchar *) Error_Text, 128,
                               L"\\%c is an invalid char class escape sequence",
                               *Reg_Parse);
 
@@ -1851,7 +1851,7 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
 	    break;
          }
 
-         if (wcslen (Error_Text) > 0) REG_FAIL (Error_Text);
+         if (wcslen ((wchar *) Error_Text) > 0) REG_FAIL (Error_Text);
 
          /* At this point it is apparent that the escaped character is not a
             shortcut escape or back-reference.  Back up one character to allow
@@ -1877,7 +1877,7 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
                reference, or end of regex string. */
 
             for (; *Reg_Parse != '\0' &&
-                   !wcschr ((regularExp_CHAR *) Meta_Char, (int) *Reg_Parse);
+                   !wcschr ((wchar *) Meta_Char, (int) *Reg_Parse);
                  len++) {
 
                /* Save where we are in case we have to back
@@ -1907,11 +1907,11 @@ static regularExp_CHAR * atom (int *flag_param, len_range *range_param) {
 
                      Reg_Parse--; break;
                   } else {
-                     if (wcslen (Error_Text) == 0) {
+                     if (wcslen ((wchar *) Error_Text) == 0) {
                         /* None of the above calls generated an error message
                            so generate our own here. */
 
-                        swprintf (Error_Text, 128,
+                        swprintf ((wchar *) Error_Text, 128,
                                  L"\\%c is an invalid escape sequence",
                                  *Reg_Parse);
                      }
@@ -2255,7 +2255,7 @@ static void branch_tail (regularExp_CHAR *ptr, int offset, regularExp_CHAR *val)
  *
  *    CHECK_CLASS_ESCAPE
  *       Same as CHECK_ESCAPE but only allows characters valid within
- *       a class.
+ *       a klas.
  *
  *--------------------------------------------------------------------*/
 
@@ -2264,7 +2264,7 @@ static regularExp_CHAR * shortcut_escape (
    int           *flag_param,
    int            emit) {
 
-   register regularExp_CHAR *class   = NULL;
+   register regularExp_CHAR *klas   = NULL;
    static   regularExp_CHAR *codes   = (regularExp_CHAR *) L"ByYdDlLsSwW";
             regularExp_CHAR *ret_val = (regularExp_CHAR *) 1; /* Assume success. */
             regularExp_CHAR *valid_codes;
@@ -2275,7 +2275,7 @@ static regularExp_CHAR * shortcut_escape (
       valid_codes = codes;
    }
 
-   if (!wcschr ((regularExp_CHAR *) valid_codes, (int) c)) {
+   if (!wcschr ((wchar *) valid_codes, (int) c)) {
       return NULL; /* Not a valid shortcut escape sequence */
    } else if (emit == CHECK_ESCAPE || emit == CHECK_CLASS_ESCAPE) {
       return ret_val; /* Just checking if this is a valid shortcut escape. */
@@ -2285,7 +2285,7 @@ static regularExp_CHAR * shortcut_escape (
       case 'd':
       case 'D':
          if (emit == EMIT_CLASS_BYTES) {
-            class = ASCII_Digits;
+            klas = ASCII_Digits;
          } else if (emit == EMIT_NODE) {
             ret_val = (islower (c) ? emit_node (DIGIT)
                                    : emit_node (NOT_DIGIT));
@@ -2296,7 +2296,7 @@ static regularExp_CHAR * shortcut_escape (
       case 'l':
       case 'L':
          if (emit == EMIT_CLASS_BYTES) {
-            class = Letter_Char;
+            klas = Letter_Char;
          } else if (emit == EMIT_NODE) {
             ret_val = (islower (c) ? emit_node (LETTER)
                                    : emit_node (NOT_LETTER));
@@ -2309,7 +2309,7 @@ static regularExp_CHAR * shortcut_escape (
          if (emit == EMIT_CLASS_BYTES) {
             if (Match_Newline) emit_byte ('\n');
 
-            class = White_Space;
+            klas = White_Space;
          } else if (emit == EMIT_NODE) {
             if (Match_Newline) {
                ret_val = (islower (c) ? emit_node (SPACE_NL)
@@ -2325,7 +2325,7 @@ static regularExp_CHAR * shortcut_escape (
       case 'w':
       case 'W':
          if (emit == EMIT_CLASS_BYTES) {
-            class = Word_Char;
+            klas = Word_Char;
          } else if (emit == EMIT_NODE) {
             ret_val = (islower (c) ? emit_node (WORD_CHAR)
                                    : emit_node (NOT_WORD_CHAR));
@@ -2378,11 +2378,11 @@ static regularExp_CHAR * shortcut_escape (
       *flag_param |= (HAS_WIDTH | SIMPLE);
    }
 
-   if (class) {
+   if (klas) {
       /* Emit bytes within a character class operand. */
 
-      while (*class != '\0') {
-         emit_byte (*class++);
+      while (*klas != '\0') {
+         emit_byte (*klas++);
       }
    }
 
@@ -2444,7 +2444,7 @@ static regularExp_CHAR numeric_escape (
 
    scan = *parse; scan++; /* Only change *parse on success. */
 
-   pos_ptr = (regularExp_CHAR *) wcschr ((regularExp_CHAR *) digit_str, (int) *scan);
+   pos_ptr = (regularExp_CHAR *) wcschr ((wchar *) digit_str, (int) *scan);
 
    for (i = 0; pos_ptr != NULL && (i < width); i++) {
       pos   = (pos_ptr - digit_str) + pos_delta;
@@ -2468,16 +2468,16 @@ static regularExp_CHAR numeric_escape (
       }
 
       scan++;
-      pos_ptr = (regularExp_CHAR *) wcschr ((regularExp_CHAR *) digit_str, (int) *scan);
+      pos_ptr = (regularExp_CHAR *) wcschr ((wchar *) digit_str, (int) *scan);
    }
 
    /* Handle the case of "\0" i.e. trying to specify a NULL character. */
 
    if (value == 0) {
       if (c == '0') {
-         swprintf (Error_Text, 128, L"\\00 is an invalid octal escape");
+         swprintf ((wchar *) Error_Text, 128, L"\\00 is an invalid octal escape");
       } else {
-         swprintf (Error_Text, 128, L"\\%c0 is an invalid hexadecimal escape", c);
+         swprintf ((wchar *) Error_Text, 128, L"\\%c0 is an invalid hexadecimal escape", c);
       }
    } else {
       /* Point to the last character of the number on success. */
@@ -2571,7 +2571,7 @@ static regularExp_CHAR * back_ref (
    /* Make sure parentheses for requested back-reference are complete. */
 
    if (!is_cross_regex && !TEST_BIT (Closed_Parens, paren_no)) {
-      swprintf (Error_Text, 128, L"\\%d is an illegal back reference", paren_no);
+      swprintf ((wchar *) Error_Text, 128, L"\\%d is an illegal back reference", paren_no);
       return NULL;
    }
 
@@ -3052,7 +3052,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
    if (++Recursion_Count > REGEX_RECURSION_LIMIT) {
        if (!Recursion_Limit_Exceeded) /* Prevent duplicate errors */
-           reg_error(L"recursion limit exceeded, please respecify expression");
+           reg_error (L"recursion limit exceeded, please respecify expression");
        Recursion_Limit_Exceeded = 1;
        MATCH_RETURN (0);
    }
@@ -3107,14 +3107,14 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
                if (*opnd != *Reg_Input) MATCH_RETURN (0);
 
-               len = wcslen ((regularExp_CHAR *) opnd);
+               len = wcslen ((wchar *) opnd);
 
                if (End_Of_String != NULL && Reg_Input + len > End_Of_String) {
                    MATCH_RETURN (0);
                }
 
                if (len > 1  &&
-                   wcsncmp ((regularExp_CHAR *) opnd, (regularExp_CHAR *) Reg_Input, len) != 0) {
+                   wcsncmp ((wchar *) opnd, (wchar *) Reg_Input, len) != 0) {
 
                    MATCH_RETURN (0);
                }
@@ -3325,7 +3325,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
                                     considers \0 as a member
                                     of the character set. */
 
-            if (wcschr ((regularExp_CHAR *) OPERAND (scan), (int) *Reg_Input) == NULL) {
+            if (wcschr ((wchar *) OPERAND (scan), (int) *Reg_Input) == NULL) {
                MATCH_RETURN (0);
             }
 
@@ -3337,7 +3337,7 @@ static int match (regularExp_CHAR *prog, int *branch_index_param) {
 
             if (AT_END_OF_STRING(Reg_Input)) MATCH_RETURN (0); /* See comment for ANY_OF. */
 
-            if (wcschr ((regularExp_CHAR *) OPERAND (scan), (int) *Reg_Input) != NULL) {
+            if (wcschr ((wchar *) OPERAND (scan), (int) *Reg_Input) != NULL) {
                MATCH_RETURN (0);
             }
 
@@ -3797,7 +3797,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
 
       case ANY_OF:  /* [...] character class. */
          while (count < max_cmp                                      &&
-                wcschr ((regularExp_CHAR *) operand, (int) *input_str) != NULL  &&
+                wcschr ((wchar *) operand, (int) *input_str) != NULL  &&
                 !AT_END_OF_STRING(input_str)) {
 
             count++; input_str++;
@@ -3810,7 +3810,7 @@ static unsigned long greedy (regularExp_CHAR *p, long max) {
                        time.) */
 
          while (count < max_cmp                                      &&
-                wcschr ((regularExp_CHAR *) operand, (int) *input_str) == NULL  &&
+                wcschr ((wchar *) operand, (int) *input_str) == NULL  &&
                 !AT_END_OF_STRING(input_str)) {
 
             count++; input_str++;
@@ -4071,7 +4071,7 @@ int SubstituteRE(const regexp* prog, const regularExp_CHAR* source, regularExp_C
       if (paren_no < 0) { /* Ordinary character. */
          if (((regularExp_CHAR *) dst - (regularExp_CHAR *) dest) >= (max - 1)) {
 			*errorType = 1;
-            reg_error(L"replacing expression in `SubstituteRE\' too long; truncating");
+            reg_error (L"replacing expression in `SubstituteRE\' too long; truncating");
             anyWarnings = TRUE;
             break;
          } else {
@@ -4084,12 +4084,12 @@ int SubstituteRE(const regexp* prog, const regularExp_CHAR* source, regularExp_C
 
          if (((regularExp_CHAR *) dst + len - (regularExp_CHAR *) dest) >= max-1) {
 			*errorType = 1;
-            reg_error(L"replacing expression in `SubstituteRE\' too long; truncating");
+            reg_error (L"replacing expression in `SubstituteRE\' too long; truncating");
             anyWarnings = TRUE;
             len = max - ((regularExp_CHAR *) dst - (regularExp_CHAR *) dest) - 1;
          }
 
-         (void) wcsncpy ((regularExp_CHAR *) dst, (regularExp_CHAR *) prog->startp [paren_no], len);
+         (void) wcsncpy ((wchar *) dst, (wchar *) prog->startp [paren_no], len);
 
          if (chgcase != '\0') adjustcase (dst, len, chgcase);
 
@@ -4141,7 +4141,7 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
  * reg_error
  *----------------------------------------------------------------------*/
 
-static void reg_error (regularExp_CHAR *str) {
+static void reg_error (wchar *str) {
 	Melder_error2 (L"Internal error processing regular expression: ", str);
 }
 

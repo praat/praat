@@ -33,6 +33,7 @@
  * pb 2009/11/23 support for drawing with reversed axes
  * pb 2011/01/10 Matrix_formula_part
  * pb 2011/06/19 C++
+ * pb 2011/07/14 C++
  */
 
 #include "Matrix.h"
@@ -57,6 +58,24 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
+void structMatrix :: v_info () {
+	structData :: v_info ();
+	double minimum = 0.0, maximum = 0.0;
+	Matrix_getWindowExtrema (this, 1, nx, 1, ny, & minimum, & maximum);
+	MelderInfo_writeLine2 (L"xmin: ", Melder_double (xmin));
+	MelderInfo_writeLine2 (L"xmax: ", Melder_double (xmax));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (nx));
+	MelderInfo_writeLine5 (L"dx: ", Melder_double (dx), L" (-> sampling rate ", Melder_double (1.0 / dx), L" )");
+	MelderInfo_writeLine2 (L"x1: ", Melder_double (x1));
+	MelderInfo_writeLine2 (L"ymin: ", Melder_double (ymin));
+	MelderInfo_writeLine2 (L"ymax: ", Melder_double (ymax));
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (ny));
+	MelderInfo_writeLine5 (L"dy: ", Melder_double (dy), L" (-> sampling rate ", Melder_double (1.0 / dy), L" )");
+	MelderInfo_writeLine2 (L"y1: ", Melder_double (y1));
+	MelderInfo_writeLine2 (L"Minimum value: ", Melder_single (minimum));
+	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
+}
+
 static void readText (I, MelderReadText text) {
 	iam (Matrix);
 	if (Thing_version < 0) {
@@ -78,32 +97,19 @@ static void readText (I, MelderReadText text) {
 		my dy = texgetr8 (text);
 		my y1 = texgetr8 (text);
 	}
-	if (my xmin > my xmax || my ymin > my ymax)
-		Melder_throw ("Matrix::readText: xmin should <= xmax and ymin <= ymax.");
-	if (my nx < 1 || my ny < 1)
-		Melder_throw ("Matrix::readText: nx should >= 1 and ny >= 1.");
-	if (my dx <= 0 || my dy <= 0)
-		Melder_throw ("Matrix::readText: dx should > 0 and dy > 0.");
+	if (my xmin > my xmax)
+		Melder_throw ("xmin should be less than or equal to xmax.");
+	if (my ymin > my ymax)
+		Melder_throw ("ymin should be less than or equal to ymax.");
+	if (my nx < 1)
+		Melder_throw ("nx should be at least 1.");
+	if (my ny < 1)
+		Melder_throw ("ny should be at least 1.");
+	if (my dx <= 0.0)
+		Melder_throw ("dx should be greater than 0.0.");
+	if (my dy <= 0.0)
+		Melder_throw ("dy should be greater than 0.0.");
 	my z = NUMdmatrix_readText_r8 (1, my ny, 1, my nx, text, "z"); therror
-}
-
-static void info (I) {
-	iam (Matrix);
-	double minimum = 0, maximum = 0;
-	classData -> info (me);
-	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
-	MelderInfo_writeLine2 (L"xmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 (L"xmax: ", Melder_double (my xmax));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my nx));
-	MelderInfo_writeLine5 (L"dx: ", Melder_double (my dx), L" (-> sampling rate ", Melder_double (1.0 / my dx), L" )");
-	MelderInfo_writeLine2 (L"x1: ", Melder_double (my x1));
-	MelderInfo_writeLine2 (L"ymin: ", Melder_double (my ymin));
-	MelderInfo_writeLine2 (L"ymax: ", Melder_double (my ymax));
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my ny));
-	MelderInfo_writeLine5 (L"dy: ", Melder_double (my dy), L" (-> sampling rate ", Melder_double (1.0 / my dy), L" )");
-	MelderInfo_writeLine2 (L"y1: ", Melder_double (my y1));
-	MelderInfo_writeLine2 (L"Minimum value: ", Melder_single (minimum));
-	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
 }
 
 #undef our
@@ -154,7 +160,6 @@ class_methods (Matrix, Sampled) {
 	class_method (readText)
 	class_method_local (Matrix, writeBinary)
 	class_method_local (Matrix, readBinary)
-	class_method (info)
 	class_method (getValueAtSample)
 	class_method (getNrow)
 	class_method (getNcol)
@@ -169,10 +174,9 @@ class_methods (Matrix, Sampled) {
 }
 
 void Matrix_init
-	(I, double xmin, double xmax, long nx, double dx, double x1,
-		 double ymin, double ymax, long ny, double dy, double y1)
+	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
+	            double ymin, double ymax, long ny, double dy, double y1)
 {
-	iam (Matrix);
 	Sampled_init (me, xmin, xmax, nx, dx, x1); therror
 	my ymin = ymin;
 	my ymax = ymax;

@@ -19,36 +19,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "TimeSoundEditor.h"
 #include "PointProcess.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (PointEditor);
-
-PointEditor PointEditor_create (GuiObject parent, const wchar *title,
-	PointProcess point, Sound sound);
-/*
-	'sound' may be NULL.
-*/
-
-#ifdef __cplusplus
-	}
-
-	struct structPointEditor : structTimeSoundEditor {
+struct structPointEditor : structTimeSoundEditor {
+	// new data:
 		Sound monoSound;
 		GuiObject addPointAtDialog;
-	};
-	#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
-	Thing_declare2cpp (PointEditor, TimeSoundEditor);
+	// overridden methods:
+		void v_destroy ();
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
+Thing_declare2cpp (PointEditor, TimeSoundEditor);
 
-#endif // __cplusplus
+PointEditor PointEditor_create (GuiObject parent, const wchar *title,
+	PointProcess point,
+	Sound sound   // may be NULL
+);
 
 /* End of file PointEditor.h */
 #endif

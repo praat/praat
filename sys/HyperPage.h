@@ -20,22 +20,61 @@
  */
 
 /*
- * pb 2011/07/11
+ * pb 2011/07/15
  */
 
 #include "Editor.h"
 #include "Collection.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (HyperLink);
+struct structHyperLink : public structData {
+	double x1DC, x2DC, y1DC, y2DC;
+};
+#define HyperLink__methods(klas) Data__methods(klas)
+Thing_declare2cpp (HyperLink, Data);
 
 HyperLink HyperLink_create (const wchar *name, double x1, double x2, double y1, double y2);
 
 Thing_declare1cpp (HyperPage);
+struct structHyperPage : public structEditor {
+	// data:
+		GuiObject drawingArea, verticalScrollBar;
+		Graphics g, ps;
+		double x, y, rightMargin, previousBottomSpacing;
+		long pageNumber;
+		Collection links;
+		int printing, top, mirror;
+		wchar *insideHeader, *middleHeader, *outsideHeader;
+		wchar *insideFooter, *middleFooter, *outsideFooter;
+		enum kGraphics_font font;
+		int fontSize;
+		wchar *entryHint; double entryPosition;
+		struct { wchar *page; int top; } history [20];
+		int historyPointer;
+		wchar *currentPageTitle;
+		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+		GuiObject holder;
+		void *praatApplication, *praatObjects, *praatPicture;
+		bool scriptErrorHasBeenNotified;
+		structMelderDir rootDirectory;
+	// overridden methods:
+		void v_destroy ();
+		bool v_editable () { return false; }
+		void v_createMenus ();
+		void v_createChildren ();
+		void v_dataChanged ();
+	// new methods:
+};
+#define HyperPage__methods(Klas) \
+	void (*draw) (Klas me); \
+	long (*getNumberOfPages) (Klas me); \
+	long (*getCurrentPageNumber) (Klas me); \
+	int (*goToPage) (Klas me, const wchar *title); \
+	int (*goToPage_i) (Klas me, long ipage); \
+	void (*defaultHeaders) (EditorCommand cmd); \
+	int hasHistory, isOrdered;
+Thing_declare2cpp (HyperPage, Editor);
 
 void HyperPage_clear (HyperPage me);
 
@@ -80,48 +119,6 @@ void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data da
 void HyperPage_prefs (void);
 void HyperPage_setEntryHint (I, const wchar *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
-
-#ifdef __cplusplus
-	}
-
-	struct structHyperLink : public structData {
-		double x1DC, x2DC, y1DC, y2DC;
-	};
-	#define HyperLink__methods(klas) Data__methods(klas)
-	Thing_declare2cpp (HyperLink, Data);
-
-	struct structHyperPage : public structEditor {
-		GuiObject drawingArea, verticalScrollBar;
-		Graphics g, ps;
-		double x, y, rightMargin, previousBottomSpacing;
-		long pageNumber;
-		Collection links;
-		int printing, top, mirror;
-		wchar *insideHeader, *middleHeader, *outsideHeader;
-		wchar *insideFooter, *middleFooter, *outsideFooter;
-		enum kGraphics_font font;
-		int fontSize;
-		wchar *entryHint; double entryPosition;
-		struct { wchar *page; int top; } history [20];
-		int historyPointer;
-		wchar *currentPageTitle;
-		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
-		GuiObject holder;
-		void *praatApplication, *praatObjects, *praatPicture;
-		bool scriptErrorHasBeenNotified;
-		structMelderDir rootDirectory;
-	};
-	#define HyperPage__methods(Klas) Editor__methods(Klas) \
-		void (*draw) (Klas me); \
-		long (*getNumberOfPages) (Klas me); \
-		long (*getCurrentPageNumber) (Klas me); \
-		int (*goToPage) (Klas me, const wchar *title); \
-		int (*goToPage_i) (Klas me, long ipage); \
-		void (*defaultHeaders) (EditorCommand cmd); \
-		int hasHistory, isOrdered;
-	Thing_declare2cpp (HyperPage, Editor);
-
-#endif // __cplusplus
 
 /* End of file HyperPage.h */
 #endif

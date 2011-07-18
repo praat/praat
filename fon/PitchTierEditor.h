@@ -19,35 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "RealTierEditor.h"
 #include "PitchTier.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (PitchTierEditor);
+struct structPitchTierEditor : public structRealTierEditor {
+	// overridden methods:
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define PitchTierEditor__methods(Klas) RealTierEditor__methods(Klas)
+Thing_declare2cpp (PitchTierEditor, RealTierEditor);
 
 PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar *title,
-	PitchTier pitch, Sound sound, bool ownSound);
-/*
-	'sound' may be NULL.
-*/
-
-#ifdef __cplusplus
-	}
-
-	struct structPitchTierEditor : public structRealTierEditor {
-	};
-	#define PitchTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-	Thing_declare2cpp (PitchTierEditor, RealTierEditor);
-
-#endif // __cplusplus
+	PitchTier pitch,
+	Sound sound,   // may be NULL
+	bool ownSound);
 
 /* End of file PitchTierEditor.h */
 #endif

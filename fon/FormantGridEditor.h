@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "FunctionEditor.h"
 #include "FormantGrid.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 struct FormantGridEditor_Play {
 	double samplingFrequency;
@@ -39,28 +31,25 @@ struct FormantGridEditor_Source {
 };
 
 Thing_declare1cpp (FormantGridEditor);
+struct structFormantGridEditor : public structFunctionEditor {
+	// new data:
+		bool editingBandwidths;
+		long selectedFormant;
+		double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor;
+		struct FormantGridEditor_Play play;
+		struct FormantGridEditor_Source source;
+	// overridden methods:
+		void v_createMenus ();
+};
+#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
+	bool hasSourceMenu;
+Thing_declare2cpp (FormantGridEditor, FunctionEditor);
 
 void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data);
 
 FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar *title, FormantGrid data);
 
 void FormantGridEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structFormantGridEditor : public structFunctionEditor {
-		bool editingBandwidths;
-		long selectedFormant;
-		double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor;
-		struct FormantGridEditor_Play play;
-		struct FormantGridEditor_Source source;
-	};
-	#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
-		bool hasSourceMenu;
-	Thing_declare2cpp (FormantGridEditor, FunctionEditor);
-
-#endif // __cplusplus
 
 /* End of file FormantGridEditor.h */
 #endif

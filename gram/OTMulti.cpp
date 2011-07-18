@@ -52,18 +52,18 @@
 #include "oo_DESCRIPTION.h"
 #include "OTMulti_def.h"
 
-static void classOTMulti_info (I) {
-	iam (OTMulti);
-	classData -> info (me);
+void structOTMulti :: v_info ()
+{
+	structData :: v_info ();
 	long numberOfViolations = 0;
-	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			numberOfViolations += my candidates [icand]. marks [icons];
+	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
+		for (long icons = 1; icons <= numberOfConstraints; icons ++) {
+			numberOfViolations += candidates [icand]. marks [icons];
 		}
 	}
-	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (my decisionStrategy));
-	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (my numberOfConstraints));
-	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (my numberOfCandidates));
+	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
+	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (numberOfConstraints));
+	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (numberOfCandidates));
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
@@ -152,10 +152,10 @@ static void readText (I, MelderReadText text) {
 	OTMulti_checkIndex (me);
 }
 
-class_methods (OTMulti, Data) {
+class_methods (OTMulti, Data)
+{
 	us -> version = 2;
 	class_method_local (OTMulti, destroy)
-	class_method_local (OTMulti, info)
 	class_method_local (OTMulti, description)
 	class_method_local (OTMulti, copy)
 	class_method_local (OTMulti, equal)

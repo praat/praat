@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Artword.h"
 #include "Speaker.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void Artword_Speaker_Sound_movie
 	(Artword artword, Speaker speaker, Sound sound, Graphics graphics);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Artword_Speaker_Sound.h */

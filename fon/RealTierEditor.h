@@ -19,18 +19,24 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "TimeSoundEditor.h"
 #include "RealTier.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (RealTierEditor);
+struct structRealTierEditor : structTimeSoundEditor {
+	// new data:
+		double ymin, ymax, ycursor;
+	// overridden methods:
+		void v_createMenus ();
+		void v_dataChanged ();
+};
+#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
+	double minimumLegalValue, maximumLegalValue; \
+	const wchar *quantityText, *quantityKey, *rightTickUnits; \
+	double defaultYmin, defaultYmax; \
+	const wchar *setRangeTitle, *defaultYminText, *defaultYmaxText; \
+	const wchar *yminText, *ymaxText, *yminKey, *ymaxKey;
+Thing_declare2cpp (RealTierEditor, TimeSoundEditor);
 
 void RealTierEditor_updateScaling (RealTierEditor me);
 /*
@@ -44,22 +50,6 @@ void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *titl
 	if 'ownSound' is TRUE, the editor will contain a deep copy of the Sound,
 	which the editor will destroy when the editor is destroyed.
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structRealTierEditor : structTimeSoundEditor {
-		double ymin, ymax, ycursor;
-	};
-	#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
-		double minimumLegalValue, maximumLegalValue; \
-		const wchar_t *quantityText, *quantityKey, *rightTickUnits; \
-		double defaultYmin, defaultYmax; \
-		const wchar_t *setRangeTitle, *defaultYminText, *defaultYmaxText; \
-		const wchar_t *yminText, *ymaxText, *yminKey, *ymaxKey;
-	Thing_declare2cpp (RealTierEditor, TimeSoundEditor);
-
-#endif // __cplusplus
 
 /* End of file RealTierEditor.h */
 #endif

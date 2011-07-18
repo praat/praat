@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Simple_def.h"
 
@@ -51,10 +43,6 @@ SimpleShort SimpleShort_create (short number);
 SimpleLong SimpleLong_create (long number);
 SimpleDouble SimpleDouble_create (double number);
 SimpleString SimpleString_create (const wchar_t *string);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Simple.h */
 #endif

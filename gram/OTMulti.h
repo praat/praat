@@ -20,17 +20,13 @@
  */
 
 /*
- * pb 2011/03/23
+ * pb 2011/07/15
  */
 
 #include "Graphics.h"
 #include "PairDistribution.h"
 #include "Distributions.h"
 #include "OTGrammar.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "OTMulti_def.h"
 #define OTMulti__methods(klas) Data__methods(klas)
@@ -74,10 +70,6 @@ void OTMulti_generateOptimalForm (OTMulti me, const wchar *form1, const wchar *f
 Strings OTMulti_generateOptimalForms (OTMulti me, const wchar *form1, const wchar *form2, long numberOfTrials, double evaluationNoise);
 Distributions OTMulti_to_Distribution (OTMulti me, const wchar *form1, const wchar *form2, long numberOfTrials, double evaluationNoise);
 Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings forms, double evaluationNoise);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file OTMulti.h */
 #endif

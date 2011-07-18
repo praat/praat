@@ -37,12 +37,13 @@
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/06/16 units
  * pb 2005/12/07 arrowScrollStep
- * pb 2007/06/10 wchar_t
+ * pb 2007/06/10 wchar
  * pb 2007/09/02 direct drawing to picture window
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
  * pb 2007/12/02 split off TimeSoundAnalysisEditor_enums.h
  * pb 2011/03/23 C++
+ * pb 2011/07/15 C++
  */
 
 #include "TimeSoundEditor.h"
@@ -51,10 +52,6 @@
 #include "Intensity.h"
 #include "Formant.h"
 #include "PointProcess.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "TimeSoundAnalysisEditor_enums.h"
 
@@ -114,21 +111,8 @@ struct FunctionEditor_pulses {
 };
 
 Thing_declare1cpp (TimeSoundAnalysisEditor);
-
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
-
-void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me);
-void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me);
-
-void TimeSoundAnalysisEditor_prefs (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structTimeSoundAnalysisEditor : public structTimeSoundEditor {
+struct structTimeSoundAnalysisEditor : public structTimeSoundEditor {
+	// new data:
 		double longestAnalysis;
 		enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
 		double fixedTimeStep;
@@ -139,29 +123,42 @@ void TimeSoundAnalysisEditor_prefs (void);
 		struct FunctionEditor_formant formant;
 		struct FunctionEditor_pulses pulses;
 		GuiObject spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-	};
-	#define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
-		struct { struct { \
-			struct { bool garnish; } spectrogram; \
-			struct { bool garnish; } pitch; \
-			struct { bool garnish; } intensity; \
-			struct { bool garnish; } formant; \
-			struct { bool garnish; } pulses; \
-		} picture; } preferences; \
-		void (*createMenuItems_spectrum_picture) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_pitch_picture) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_intensity_picture) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_formant_picture) (Klas me, EditorMenu menu); \
-		void (*createMenuItems_pulses_picture) (Klas me, EditorMenu menu); \
-		void (*destroy_analysis) (Klas me); \
-		void (*draw_analysis) (Klas me); \
-		void (*draw_analysis_pulses) (Klas me); \
-		void (*createMenuItems_query_log) (Klas me, EditorMenu menu); \
-		void (*createMenus_analysis) (Klas me); \
-		void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
-	Thing_declare2cpp (TimeSoundAnalysisEditor, TimeSoundEditor);
+	// old methods:
+		void v_destroy ();
+		void v_info ();
+		void v_createMenuItems_query (EditorMenu menu);
+	// new methods:
+		virtual void destroy_analysis ();
+};
+#define TimeSoundAnalysisEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
+	struct { struct { \
+		struct { bool garnish; } spectrogram; \
+		struct { bool garnish; } pitch; \
+		struct { bool garnish; } intensity; \
+		struct { bool garnish; } formant; \
+		struct { bool garnish; } pulses; \
+	} picture; } preferences; \
+	void (*createMenuItems_spectrum_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_pitch_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_intensity_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_formant_picture) (Klas me, EditorMenu menu); \
+	void (*createMenuItems_pulses_picture) (Klas me, EditorMenu menu); \
+	void (*draw_analysis) (Klas me); \
+	void (*draw_analysis_pulses) (Klas me); \
+	void (*createMenuItems_query_log) (Klas me, EditorMenu menu); \
+	void (*createMenus_analysis) (Klas me); \
+	void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
+Thing_declare2cpp (TimeSoundAnalysisEditor, TimeSoundEditor);
 
-#endif // __cplusplus
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
+
+void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me);
+void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me);
+
+void TimeSoundAnalysisEditor_prefs (void);
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif

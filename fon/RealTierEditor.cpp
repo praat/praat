@@ -114,9 +114,9 @@ static void createMenuItems_view (RealTierEditor me, EditorMenu menu) {
 	EditorMenu_addCommand (menu, our setRangeTitle, 0, menu_cb_setRange);
 }
 
-static void createMenus (RealTierEditor me) {
-	inherited (RealTierEditor) createMenus (me);
-	EditorMenu menu = Editor_addMenu (me, L"Point", 0);
+void structRealTierEditor :: v_createMenus () {
+	RealTierEditor_Parent :: v_createMenus ();
+	EditorMenu menu = Editor_addMenu (this, L"Point", 0);
 	EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
 	EditorMenu_addCommand (menu, L"Add point at...", 0, menu_cb_addPointAt);
 	EditorMenu_addCommand (menu, L"-- remove point --", 0, NULL);
@@ -162,9 +162,9 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 	}
 }
 
-static void dataChanged (RealTierEditor me) {
-	RealTierEditor_updateScaling (me);
-	inherited (RealTierEditor) dataChanged (me);
+void structRealTierEditor :: v_dataChanged () {
+	RealTierEditor_updateScaling (this);
+	RealTierEditor_Parent :: v_dataChanged ();
 }
 
 /********** DRAWING AREA **********/
@@ -399,8 +399,6 @@ static void play (RealTierEditor me, double tmin, double tmax) {
 }
 
 class_methods (RealTierEditor, TimeSoundEditor) {
-	class_method (dataChanged)
-	class_method (createMenus)
 	class_method (draw)
 	class_method (click)
 	class_method (play)

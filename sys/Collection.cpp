@@ -30,6 +30,7 @@
  * pb 2010/07/28 tiny corrections (like a memory leak if out of memory...)
  * pb 2011/03/23 Collection_dontOwnItems
  * pb 2011/04/06 C++
+ * pb 2011/07/14 C++
  */
 
 #include "Collection.h"
@@ -50,9 +51,9 @@ static void classCollection_destroy (I) {
 	inherited (Collection) destroy (me);
 }
 
-static void classCollection_info (I) {
-	iam (Collection);
-	MelderInfo_writeLine2 (Melder_integer (my size), L" items");
+void structCollection :: v_info ()
+{
+	MelderInfo_writeLine2 (Melder_integer (size), L" items");
 }
 
 static void classCollection_copy (I, thou) {
@@ -243,7 +244,6 @@ static long classCollection_position (I, Any data) {
 
 class_methods (Collection, Data) {
 	class_method_local (Collection, destroy)
-	class_method_local (Collection, info)
 	class_method_local (Collection, copy)
 	class_method_local (Collection, equal)
 	class_method_local (Collection, canWriteAsEncoding)

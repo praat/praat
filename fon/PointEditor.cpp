@@ -32,7 +32,7 @@
  * pb 2008/03/21 new Editor API
  * pb 2011/02/20 better messages and info
  * pb 2011/06/06 C++
- * pb 2011/07/01 C++
+ * pb 2011/07/15 C++
  */
 
 #include "PointEditor.h"
@@ -45,10 +45,9 @@
 
 /********** DESTRUCTION **********/
 
-static void destroy (I) {
-	iam (PointEditor);
-	forget (my monoSound);
-	inherited (PointEditor) destroy (me);
+void structPointEditor :: v_destroy () {
+	forget (monoSound);
+	PointEditor_Parent :: v_destroy ();
 }
 
 /********** MENU COMMANDS **********/
@@ -167,34 +166,34 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 
 static int menu_cb_PointEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PointEditor); Melder_help (L"PointEditor"); return 1; }
 
-static void createMenus (PointEditor me) {
-	inherited (PointEditor) createMenus (me);
+void structPointEditor :: v_createMenus () {
+	PointEditor_Parent :: v_createMenus ();
 
-	Editor_addCommand (me, L"Query", L"-- query jitter --", 0, NULL);
-	Editor_addCommand (me, L"Query", L"Get jitter (local)", 0, menu_cb_getJitter_local);
-	Editor_addCommand (me, L"Query", L"Get jitter (local, absolute)", 0, menu_cb_getJitter_local_absolute);
-	Editor_addCommand (me, L"Query", L"Get jitter (rap)", 0, menu_cb_getJitter_rap);
-	Editor_addCommand (me, L"Query", L"Get jitter (ppq5)", 0, menu_cb_getJitter_ppq5);
-	Editor_addCommand (me, L"Query", L"Get jitter (ddp)", 0, menu_cb_getJitter_ddp);
-	if (my sound.data) {
-		Editor_addCommand (me, L"Query", L"-- query shimmer --", 0, NULL);
-		Editor_addCommand (me, L"Query", L"Get shimmer (local)", 0, menu_cb_getShimmer_local);
-		Editor_addCommand (me, L"Query", L"Get shimmer (local, dB)", 0, menu_cb_getShimmer_local_dB);
-		Editor_addCommand (me, L"Query", L"Get shimmer (apq3)", 0, menu_cb_getShimmer_apq3);
-		Editor_addCommand (me, L"Query", L"Get shimmer (apq5)", 0, menu_cb_getShimmer_apq5);
-		Editor_addCommand (me, L"Query", L"Get shimmer (apq11)", 0, menu_cb_getShimmer_apq11);
-		Editor_addCommand (me, L"Query", L"Get shimmer (dda)", 0, menu_cb_getShimmer_dda);
+	Editor_addCommand (this, L"Query", L"-- query jitter --", 0, NULL);
+	Editor_addCommand (this, L"Query", L"Get jitter (local)", 0, menu_cb_getJitter_local);
+	Editor_addCommand (this, L"Query", L"Get jitter (local, absolute)", 0, menu_cb_getJitter_local_absolute);
+	Editor_addCommand (this, L"Query", L"Get jitter (rap)", 0, menu_cb_getJitter_rap);
+	Editor_addCommand (this, L"Query", L"Get jitter (ppq5)", 0, menu_cb_getJitter_ppq5);
+	Editor_addCommand (this, L"Query", L"Get jitter (ddp)", 0, menu_cb_getJitter_ddp);
+	if (sound.data) {
+		Editor_addCommand (this, L"Query", L"-- query shimmer --", 0, NULL);
+		Editor_addCommand (this, L"Query", L"Get shimmer (local)", 0, menu_cb_getShimmer_local);
+		Editor_addCommand (this, L"Query", L"Get shimmer (local, dB)", 0, menu_cb_getShimmer_local_dB);
+		Editor_addCommand (this, L"Query", L"Get shimmer (apq3)", 0, menu_cb_getShimmer_apq3);
+		Editor_addCommand (this, L"Query", L"Get shimmer (apq5)", 0, menu_cb_getShimmer_apq5);
+		Editor_addCommand (this, L"Query", L"Get shimmer (apq11)", 0, menu_cb_getShimmer_apq11);
+		Editor_addCommand (this, L"Query", L"Get shimmer (dda)", 0, menu_cb_getShimmer_dda);
 	}
 
-	Editor_addMenu (me, L"Point", 0);
-	Editor_addCommand (me, L"Point", L"Add point at cursor", 'P', menu_cb_addPointAtCursor);
-	Editor_addCommand (me, L"Point", L"Add point at...", 0, menu_cb_addPointAt);
-	Editor_addCommand (me, L"Point", L"-- remove point --", 0, NULL);
-	Editor_addCommand (me, L"Point", L"Remove point(s)", GuiMenu_OPTION + 'P', menu_cb_removePoints);
+	Editor_addMenu (this, L"Point", 0);
+	Editor_addCommand (this, L"Point", L"Add point at cursor", 'P', menu_cb_addPointAtCursor);
+	Editor_addCommand (this, L"Point", L"Add point at...", 0, menu_cb_addPointAt);
+	Editor_addCommand (this, L"Point", L"-- remove point --", 0, NULL);
+	Editor_addCommand (this, L"Point", L"Remove point(s)", GuiMenu_OPTION + 'P', menu_cb_removePoints);
 }
 
-static void createHelpMenuItems (PointEditor me, EditorMenu menu) {
-	inherited (PointEditor) createHelpMenuItems (me, menu);
+void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	PointEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"PointEditor help", '?', menu_cb_PointEditorHelp);
 }
 
@@ -245,9 +244,6 @@ static void play (PointEditor me, double tmin, double tmax) {
 }
 
 class_methods (PointEditor, TimeSoundEditor) {
-	class_method (destroy)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (play)
 	class_methods_end

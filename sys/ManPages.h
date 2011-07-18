@@ -19,22 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "ManPage.h"
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (ManPages);
+struct structManPages : public structData {
+	Ordered pages;
+	const wchar **titles;
+	int ground, dynamic, executable;
+	structMelderDir rootDirectory;
+};
+#define ManPages__methods(klas) Data__methods(klas)
+Thing_declare2cpp (ManPages, Data);
 
 ManPages ManPages_create (void);
 
-void ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
+void ManPages_addPage (ManPages me, const wchar *title, const wchar *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
@@ -47,21 +47,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
 void ManPages_writeAllToHtmlDir (ManPages me, const wchar *dirPath);
 
 long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
-
-#ifdef __cplusplus
-	}
-
-	struct structManPages : public structData {
-		Ordered pages;
-		const wchar **titles;
-		int ground, dynamic, executable;
-		structMelderDir rootDirectory;
-	};
-	#define ManPages__methods(klas) Data__methods(klas)
-	Thing_declare2cpp (ManPages, Data);
-
-#endif
+const wchar **ManPages_getTitles (ManPages me, long *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

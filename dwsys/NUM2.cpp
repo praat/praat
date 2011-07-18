@@ -92,7 +92,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 using namespace std;
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 struct pdf1_struct { double p; double df; };
 struct pdf2_struct { double p; double df1; double df2; };
@@ -216,7 +216,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = 0;
-	regularExp_CHAR *compileMsg;
+	wchar *compileMsg;
 	regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) search_regexp, &compileMsg, 0);
 
 	if (compiled_regexp == 0) Melder_throw ("No regexp");
@@ -456,7 +456,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	wchar_t **result = NULL;
 	try {
 		regexp *compiledRE;
-		regularExp_CHAR *compileMsg;
+		wchar *compileMsg;
 		long nmatches_sub = 0;
 
 		if (searchRE == NULL || replaceRE == NULL) return NULL;

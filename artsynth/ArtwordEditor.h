@@ -19,36 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "Editor.h"
-#include "Graphics.h"
 #include "Artword.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (ArtwordEditor);
-
-ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data);
-
-#ifdef __cplusplus
-	}
-
-	struct structArtwordEditor : public structEditor {
+Thing_define (ArtwordEditor, Editor) {
+	// new data:
 		Graphics graphics;
 		int feature;
 		GuiObject list, drawingArea, radio, time, value;
 		GuiObject button [1 + kArt_muscle_MAX];
-	};
-	#define ArtwordEditor__methods(Klas) Editor__methods(Klas)
-	Thing_declare2cpp (ArtwordEditor, Editor);
+	// overridden methods:
+		void v_destroy ();
+		void v_createChildren ();
+		void v_dataChanged ();
+};
 
-#endif // __cplusplus
+ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data);
 
 /* End of file ArtwordEditor.h */
 #endif
-

@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/06
- */
-
 #include "Thing.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
@@ -52,10 +44,6 @@ struct Formula_Result {
 void Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize);
 
 void Formula_run (long row, long col, struct Formula_Result *result);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Formula.h */
 #endif

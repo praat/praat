@@ -47,10 +47,6 @@
 		#include "abcio.h"
 		#include "lispio.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /* Public. */
 
 typedef void *Any;   /* Prevent compile-time type checking. */
@@ -82,6 +78,29 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 	typedef struct struct##klas##_Table *klas##_Table; \
 	extern klas##_Table class##klas
 
+#define Thing_declare(klas) \
+	typedef struct struct##klas *klas; \
+	typedef _Thing_auto <struct##klas> auto##klas; \
+	typedef struct struct##klas##_Table *klas##_Table; \
+	extern klas##_Table class##klas
+
+#define Thing_define(klas,parentKlas) \
+	Thing_declare (klas); \
+	typedef struct##parentKlas klas##_Parent; \
+	struct struct##klas##_Table { \
+		void (* _initialize) (void *table); \
+		const wchar *_className; \
+		parentKlas##_Table _parent; \
+		long _size; \
+		void * (* _new) (); \
+		long version; \
+		long sequentialUniqueIdOfReadableClass; \
+		void (*destroy) (I); \
+		void (*info) (I); \
+	}; \
+	extern struct struct##klas##_Table theStruct##klas; \
+	struct struct##klas : public struct##parentKlas
+
 #define Thing_declare2cpp(klas,parentKlas) \
 	typedef struct##parentKlas klas##_Parent; \
 	struct struct##klas##_Table { \
@@ -90,6 +109,10 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 		parentKlas##_Table _parent; \
 		long _size; \
 		void * (* _new) (); \
+		long version; \
+		long sequentialUniqueIdOfReadableClass; \
+		void (*destroy) (I); \
+		void (*info) (I); \
 		klas##__methods(klas) \
 	}; \
 	extern struct struct##klas##_Table theStruct##klas
@@ -112,12 +135,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 #define class_method_local(klas,method)  us -> method = class##klas##_##method;
 #define class_methods_end  }
 
-#define Thing__methods(klas) \
-	long version; \
-	long sequentialUniqueIdOfReadableClass; \
-	void (*destroy) (I); \
-	void (*info) (I); \
-	void (*nameChanged) (I);
+#define Thing__methods(klas)
 typedef struct structThing *Thing;
 typedef struct structThing_Table *Thing_Table;
 struct structThing_Table {
@@ -126,6 +144,10 @@ struct structThing_Table {
 	Thing_Table	_parent;
 	long _size;
 	void * (* _new) ();
+	long version;
+	long sequentialUniqueIdOfReadableClass;
+	void (*destroy) (I);
+	void (*info) (I);
 	Thing__methods(Thing)
 };
 struct structThing {
@@ -133,7 +155,11 @@ struct structThing {
 	wchar *name;
 	void * operator new (size_t size) { return Melder_calloc (char, size); }
 	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
-	virtual void info_cpp () { }
+// new methods:
+	virtual void v_destroy ();
+	virtual void v_info ();
+	virtual void v_checkConstraints ();
+	virtual void v_nameChanged ();
 };
 extern struct structThing_Table theStructThing;
 extern Thing_Table classThing;
@@ -299,8 +325,6 @@ long Thing_getTotalNumberOfThings (void);
 extern long Thing_version;
 /* Set by Thing_classFromClassName. */
 
-#ifdef __cplusplus
-	}
 template <class T>
 class _Thing_auto {
 	T *ptr;
@@ -434,8 +458,6 @@ public:
 		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
 	}
 };
-
-#endif
 
 /* End of file Thing.h */
 #endif

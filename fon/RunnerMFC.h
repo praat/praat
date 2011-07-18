@@ -19,24 +19,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "Editor.h"
 #include "ExperimentMFC.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (RunnerMFC);
+struct structRunnerMFC : public structEditor {
+	// new data:
+		GuiObject drawingArea;
+		Ordered experiments;
+		long iexperiment;
+		Graphics graphics;
+		long numberOfReplays;
+	// overridden methods:
+		void v_destroy ();
+		bool v_editable () { return false; }
+		bool v_scriptable () { return false; }
+		void v_createChildren ();
+		void v_dataChanged ();
+};
+#define RunnerMFC__methods(Klas)
+Thing_declare2cpp (RunnerMFC, Editor);
 
 RunnerMFC RunnerMFC_create (GuiObject parent, const wchar *title, Ordered experiments);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file RunnerMFC.h */
 #endif

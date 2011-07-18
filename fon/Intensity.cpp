@@ -25,21 +25,21 @@
  * pb 2006/12/08 MelderInfo
  * pb 2007/03/17 domain quantity
  * pb 2011/05/31 C++
+ * pb 2011/07/14 C++
  */
 
 #include "Intensity.h"
 
-static void info (I) {
-	iam (Intensity);
-	classData -> info (me);
+void structIntensity :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
 	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
+	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
 static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
@@ -67,7 +67,6 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 }
 
 class_methods (Intensity, Vector) {
-	class_method (info)
 	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
 	class_method (convertStandardToSpecialUnit)
 	class_method (convertSpecialToStandardUnit)

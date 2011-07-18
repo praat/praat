@@ -44,11 +44,10 @@
 #include "oo_DESCRIPTION.h"
 #include "FeatureWeights_def.h"
 
-static void info(I)
+void structFeatureWeights :: v_info ()
 {
-    iam (FeatureWeights);
-    classData -> info (me);
-    MelderInfo_writeLine2 (L"Number of weights: ", Melder_integer ((my fweights)->numberOfColumns));
+    this -> structData :: v_info ();
+    MelderInfo_writeLine2 (L"Number of weights: ", Melder_integer (fweights -> numberOfColumns));
 }
 
 class_methods (FeatureWeights, Data) {
@@ -60,7 +59,6 @@ class_methods (FeatureWeights, Data) {
 	class_method_local (FeatureWeights, readText)
 	class_method_local (FeatureWeights, readBinary)
 	class_method_local (FeatureWeights, description)
-	class_method (info)
 	class_methods_end
 }
 

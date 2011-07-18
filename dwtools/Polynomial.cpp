@@ -60,7 +60,7 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 /* Evaluate polynomial and derivative jointly
 	c[1..n] -> degree n-1 !!

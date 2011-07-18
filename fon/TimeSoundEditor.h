@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "FunctionEditor.h"
 #include "Sound.h"
 #include "LongSound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 struct TimeSoundEditor_sound {
 	/* KEEP IN SYNC WITH PREFS. */
@@ -39,29 +31,29 @@ struct TimeSoundEditor_sound {
 };
 
 Thing_declare1cpp (TimeSoundEditor);
+struct structTimeSoundEditor : public structFunctionEditor {
+	// new data:
+		bool ownSound;
+		struct TimeSoundEditor_sound sound;
+		struct { LongSound data; } longSound;
+		GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton;
+		GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+	// overridden methods:
+		void v_destroy ();
+		void v_info ();
+		void v_createMenuItems_file (EditorMenu menu);
+		void v_createMenuItems_query_info (EditorMenu menu);
+};
+#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
+	void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
+	void (*updateMenuItems_file) (Klas me);
+Thing_declare2cpp (TimeSoundEditor, FunctionEditor);
 
 void TimeSoundEditor_prefs (void);
 
 void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
-
-#ifdef __cplusplus
-	}
-
-	struct structTimeSoundEditor : public structFunctionEditor {
-		bool ownSound;
-		struct TimeSoundEditor_sound sound;
-		struct { LongSound data; } longSound;
-		GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton;
-		GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-	};
-	#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
-		void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
-		void (*updateMenuItems_file) (Klas me);
-	Thing_declare2cpp (TimeSoundEditor, FunctionEditor);
-
-#endif // __cplusplus
 
 /* End of file TimeSoundEditor.h */
 #endif

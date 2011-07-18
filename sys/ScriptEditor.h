@@ -19,19 +19,29 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/03
- */
-
 #include "Script.h"
 #include "TextEditor.h"
 #include "Interpreter.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (ScriptEditor);
+struct structScriptEditor : public structTextEditor {
+	// data:
+		wchar *environmentName;
+		Editor_Table editorClass;
+		Interpreter interpreter;
+		Any argsDialog;
+	// functions:
+		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
+	// overridden methods:
+		void v_destroy ();
+		void v_nameChanged ();
+		void v_goAway ();
+		bool v_scriptable () { return false; }
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
+Thing_declare2cpp (ScriptEditor, TextEditor);
 
 ScriptEditor ScriptEditor_createFromText (
 	GuiObject parent,
@@ -46,24 +56,6 @@ ScriptEditor ScriptEditor_createFromScript (
 );
 
 int ScriptEditors_dirty (void);   // are there any modified and unsaved scripts? Ask before quitting the program.
-
-#ifdef __cplusplus
-	}
-
-	struct structScriptEditor : public structTextEditor {
-		wchar *environmentName;
-		Editor_Table editorClass;
-		Interpreter interpreter;
-		Any argsDialog;
-	// functions:
-		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
-	// override:
-		void goAway ();
-	};
-	#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
-	Thing_declare2cpp (ScriptEditor, TextEditor);
-
-#endif // __cplusplus
 
 /* End of file ScriptEditor.h */
 #endif

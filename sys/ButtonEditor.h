@@ -19,31 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
 #include "HyperPage.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (ButtonEditor);
-
-ButtonEditor ButtonEditor_create (GuiObject parent);
-
-#ifdef __cplusplus
-	}
-
-	struct structButtonEditor : public structHyperPage {
+struct structButtonEditor : public structHyperPage {
+	// new data:
 		int show;
 		GuiObject button1, button2, button3, button4, button5;
-	};
-	#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
-	Thing_declare2cpp (ButtonEditor, HyperPage);
+	// overridden methods:
+		bool v_scriptable () { return false; }
+		void v_createChildren ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2cpp (ButtonEditor, HyperPage);
 
-#endif // __cplusplus
+ButtonEditor ButtonEditor_create (GuiObject parent);
 
 /* End of file ButtonEditor.h */
 #endif

@@ -19,31 +19,23 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * 2011/07/02
-*/
-
 #include "Editor.h"
 #include "Strings.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (StringsEditor);
+struct structStringsEditor : public structEditor {
+	// new data:
+		GuiObject list, text;
+	// overridden methods:
+		void v_destroy ();
+		void v_createChildren ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
+};
+#define StringsEditor__methods(Klas)
+Thing_declare2cpp (StringsEditor, Editor);
 
 StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data);
-
-#ifdef __cplusplus
-	}
-
-	struct structStringsEditor : public structEditor {
-		GuiObject list, text;
-	};
-	#define StringsEditor__methods(Klas) Editor__methods(Klas)
-	Thing_declare2cpp (StringsEditor, Editor);
-
-#endif // __cplusplus
 
 /* End of file StringsEditor.h */
 #endif

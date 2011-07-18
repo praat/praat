@@ -19,24 +19,25 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "HyperPage.h"
 #include "OTMulti.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (OTMultiEditor);
+struct structOTMultiEditor : public structHyperPage {
+	// new data:
+		const wchar *form1, *form2;
+		GuiObject form1Text, form2Text;
+		long selectedConstraint;
+	// overridden methods:
+		bool v_editable () { return true; }
+		void v_createChildren ();
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define OTMultiEditor__methods(Klas) HyperPage__methods(Klas)
+Thing_declare2cpp (OTMultiEditor, HyperPage);
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file OTMultiEditor.h */
 #endif

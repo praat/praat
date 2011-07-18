@@ -1,6 +1,6 @@
 /* OTGrammar_def.h
  *
- * Copyright (C) 1997-2008 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2008/04/08
+ * pb 2011/07/14
  */
 
 
@@ -101,6 +101,11 @@ oo_DEFINE_CLASS (OTGrammar, Data)
 	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, my numberOfTableaus)
 	#if oo_READING
 		OTGrammar_sort (me);
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+			void v_info ();
 	#endif
 
 oo_END_CLASS (OTGrammar)

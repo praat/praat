@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* Distributions inherits from TableOfReal */
 #include "TableOfReal.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Thing_declare1cpp (Distributions);
 struct structDistributions : public structTableOfReal {
@@ -47,11 +39,7 @@ double Distributionses_getMeanAbsoluteDifference (Distributions me, Distribution
 Distributions Distributions_addTwo (Distributions me, Distributions thee);
 Distributions Distributions_addMany (Collection me);
 
-#ifdef __cplusplus
-	}
 void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber);
-
-#endif
 
 /* End of file Distributions.h */
 #endif

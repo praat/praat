@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Data.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Speaker_def.h"
 #define Speaker__methods(klas) Data__methods(klas)
@@ -38,10 +30,6 @@ Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses);
 	/*    1 <= numberOfVocalCordMasses <= 2;					*/
 	/* Failures:									*/
 	/*    Kind of speaker is not one of "Female", "Male", or "Child".		*/
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Speaker.h */
 #endif

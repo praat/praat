@@ -593,7 +593,7 @@ static struct {
 void VowelEditor_prefs (void)
 {
 	Preferences_addInt (L"VowelEditor.shellWidth", &prefs.shellWidth, 500);
-	Preferences_addInt (L"VowelEditor.shellHeight", &prefs.shellWidth, 500);
+	Preferences_addInt (L"VowelEditor.shellHeight", &prefs.shellHeight, 500);
 	Preferences_addDouble (L"VowelEditor.f1min", &prefs.f1min, 200);
 	Preferences_addDouble (L"VowelEditor.f1max", &prefs.f1max, 1200);
 	Preferences_addDouble (L"VowelEditor.f2min", &prefs.f2min, 500);
@@ -882,13 +882,13 @@ static int menu_cb_drawTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Draw trajectory", 0)
-		our form_pictureWindow (me, cmd);
+		my v_form_pictureWindow (cmd);
 		BOOLEAN (L"Garnish", 1)
 	EDITOR_OK
-		our ok_pictureWindow (me, cmd);
+		my v_ok_pictureWindow (cmd);
 	EDITOR_DO
 		int garnish = GET_INTEGER (L"Garnish");
-		our do_pictureWindow (me, cmd);
+		my v_do_pictureWindow (cmd);
 		Editor_openPraatPicture (me);
 		if (garnish) VowelEditor_drawBackground (me, my pictureGraphics);
 		FormantTier_drawF1F2Trajectory (my vowel -> ft, my pictureGraphics, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
@@ -1359,51 +1359,50 @@ static void updateWidgets (I)
 	(void) me;
 }
 
-static void destroy (I)
+void structVowelEditor :: v_destroy ()
 {
-	iam (VowelEditor);
-	forget (my g);
-	forget (my marks);
-	forget (my source);
-	forget (my target);
-	forget (my vowel);
-	forget (my f3); forget (my b3);
-	forget (my f4); forget (my b4);
-	inherited (VowelEditor) destroy (me);
+	forget (g);
+	forget (marks);
+	forget (source);
+	forget (target);
+	forget (vowel);
+	forget (f3); forget (b3);
+	forget (f4); forget (b4);
+	VowelEditor_Parent :: v_destroy ();
 }
 
-static void createMenus (VowelEditor me)
+void structVowelEditor :: v_createMenus ()
 {
-	inherited (VowelEditor) createMenus (me);
+	VowelEditor_Parent :: v_createMenus ();
 
-	Editor_addCommand (me, L"File", L"Preferences...", 0, menu_cb_prefs);
-	Editor_addCommand (me, L"File", L"-- publish data --", 0, NULL);
-	Editor_addCommand (me, L"File", L"Publish Sound", 0, menu_cb_publishSound);
-	Editor_addCommand (me, L"File", L"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
-	Editor_addCommand (me, L"File", L"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
-	Editor_addCommand (me, L"File", L"Extract PitchTier", 0, menu_cb_extract_PitchTier);
-	Editor_addCommand (me, L"File", L"-- script stuff --", 0, NULL);
-	Editor_addCommand (me, L"File", L"Draw trajectory...", 0, menu_cb_drawTrajectory);
-	Editor_addCommand (me, L"Edit", L"Show one vowel mark...", 0, menu_cb_showOneVowelMark);
-	Editor_addCommand (me, L"Edit", L"Show vowel marks...", 0, menu_cb_showVowelMarks);
-	Editor_addCommand (me, L"Edit", L"-- f0 --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Set F0...", 0, menu_cb_setF0);
-	Editor_addCommand (me, L"Edit", L"Set F3 & F4...", 0, menu_cb_setF3F4);
-	Editor_addCommand (me, L"Edit", L"-- trajectory commands --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Reverse trajectory", 0, menu_cb_reverseTrajectory);
-	Editor_addCommand (me, L"Edit", L"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
-	Editor_addCommand (me, L"Edit", L"New trajectory...", 0, menu_cb_newTrajectory);
-	Editor_addCommand (me, L"Edit", L"Extend trajectory...", 0, menu_cb_extendTrajectory);
-	Editor_addCommand (me, L"Edit", L"Shift trajectory...", 0, menu_cb_shiftTrajectory);
-	Editor_addCommand (me, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
+	Editor_addCommand (this, L"File", L"Preferences...", 0, menu_cb_prefs);
+	Editor_addCommand (this, L"File", L"-- publish data --", 0, NULL);
+	Editor_addCommand (this, L"File", L"Publish Sound", 0, menu_cb_publishSound);
+	Editor_addCommand (this, L"File", L"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
+	Editor_addCommand (this, L"File", L"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
+	Editor_addCommand (this, L"File", L"Extract PitchTier", 0, menu_cb_extract_PitchTier);
+	Editor_addCommand (this, L"File", L"-- script stuff --", 0, NULL);
+	Editor_addCommand (this, L"File", L"Draw trajectory...", 0, menu_cb_drawTrajectory);
+	Editor_addCommand (this, L"Edit", L"Show one vowel mark...", 0, menu_cb_showOneVowelMark);
+	Editor_addCommand (this, L"Edit", L"Show vowel marks...", 0, menu_cb_showVowelMarks);
+	Editor_addCommand (this, L"Edit", L"-- f0 --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Set F0...", 0, menu_cb_setF0);
+	Editor_addCommand (this, L"Edit", L"Set F3 & F4...", 0, menu_cb_setF3F4);
+	Editor_addCommand (this, L"Edit", L"-- trajectory commands --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Reverse trajectory", 0, menu_cb_reverseTrajectory);
+	Editor_addCommand (this, L"Edit", L"Modify trajectory duration...", 0, menu_cb_modifyTrajectoryDuration);
+	Editor_addCommand (this, L"Edit", L"New trajectory...", 0, menu_cb_newTrajectory);
+	Editor_addCommand (this, L"Edit", L"Extend trajectory...", 0, menu_cb_extendTrajectory);
+	Editor_addCommand (this, L"Edit", L"Shift trajectory...", 0, menu_cb_shiftTrajectory);
+	Editor_addCommand (this, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
 }
 
-static void createHelpMenuItems (VowelEditor me, EditorMenu menu) {
-	inherited (VowelEditor) createHelpMenuItems (me, menu);
+void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	VowelEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"VowelEditor help", '?', menu_cb_help);
 }
 
-static void createChildren (VowelEditor me)
+void structVowelEditor :: v_createChildren ()
 {
 	GuiObject form;
 
@@ -1411,7 +1410,7 @@ static void createChildren (VowelEditor me)
 
 #if gtk
 	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
-	form = my dialog;
+	form = dialog;
 	GuiObject table = gtk_table_new (nrows, ncols, TRUE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 4);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 4);
@@ -1421,54 +1420,54 @@ static void createChildren (VowelEditor me)
 	itop = nrows - 3; ibottom = itop + 2;
 
 	ileft = iright; iright = ileft + 1;
-	my playButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Play", gui_button_cb_play, me, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my playButton, ileft, iright, itop, ibottom);
+	playButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Play", gui_button_cb_play, this, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), playButton, ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my reverseButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Reverse", gui_button_cb_reverse, me, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my reverseButton, ileft, iright, itop, ibottom);
+	reverseButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Reverse", gui_button_cb_reverse, this, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), reverseButton, ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my publishButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Publish", gui_button_cb_publish, me, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my publishButton, ileft, iright, itop, ibottom);
+	publishButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Publish", gui_button_cb_publish, this, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), publishButton, ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my durationLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Duration (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my durationLabel, ileft, iright, itop, itop + 1);
-	my durationTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my durationTextField, ileft, iright, itop + 1, ibottom);
+	durationLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Duration (s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), durationLabel, ileft, iright, itop, itop + 1);
+	durationTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), durationTextField, ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my extendLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Extend (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my extendLabel, ileft, iright, itop, itop + 1);
-	my extendTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my extendTextField, ileft, iright, itop + 1, ibottom);
+	extendLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Extend (s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), extendLabel, ileft, iright, itop, itop + 1);
+	extendTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), extendTextField, ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my f0Label = GuiLabel_create (NULL, 0, 0, 0, 0, L"Start F0 (Hz):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my f0Label, ileft, iright, itop, itop + 1);
-	my f0TextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my f0TextField, ileft, iright, itop + 1, ibottom);
+	f0Label = GuiLabel_create (NULL, 0, 0, 0, 0, L"Start F0 (Hz):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), f0Label, ileft, iright, itop, itop + 1);
+	f0TextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), f0TextField, ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
-	my f0SlopeLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"F0 slope (oct/s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my f0SlopeLabel, ileft, iright, itop, itop + 1);
-	my f0SlopeTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my f0SlopeTextField, ileft, iright, itop + 1, ibottom);
+	f0SlopeLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"F0 slope (oct/s):", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), f0SlopeLabel, ileft, iright, itop, itop + 1);
+	f0SlopeTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), f0SlopeTextField, ileft, iright, itop + 1, ibottom);
 
 	itop = nrows - 1; ibottom = itop + 1;
 	ileft = 0; iright = ileft + 3;
-	my startInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my startInfo, ileft, iright, itop, ibottom);
+	startInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), startInfo, ileft, iright, itop, ibottom);
 
 	ileft = iright + 1; iright = ileft + 3;
-	my endInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), my endInfo, ileft, iright, itop, ibottom);
+	endInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
+	gtk_table_attach_defaults (GTK_TABLE (table), endInfo, ileft, iright, itop, ibottom);
 
-	my drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0, gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
+	drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0, gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 
-	gtk_widget_set_double_buffered (my drawingArea, FALSE);
-	gtk_table_attach_defaults (GTK_TABLE (table), my drawingArea, 0, ncols, 0, nrows - 3);
+	gtk_widget_set_double_buffered (drawingArea, FALSE);
+	gtk_table_attach_defaults (GTK_TABLE (table), drawingArea, 0, ncols, 0, nrows - 3);
 
 	gtk_widget_show_all (form);
 
@@ -1477,7 +1476,7 @@ static void createChildren (VowelEditor me)
 	double button_width = 60, text_width = 95, status_info_width = 290;
 	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
-	form = XmCreateForm (my dialog, "buttons", NULL, 0);
+	form = XmCreateForm (dialog, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
@@ -1488,68 +1487,57 @@ static void createChildren (VowelEditor me)
 	// Three buttons on a row: Play, Reverse, Publish
 	left = 10; right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM +10; bottom_widgets_bottom = bottom = -STATUS_INFO;
-	my playButton = GuiButton_createShown (form, left, right, top, bottom, L"Play", gui_button_cb_play, me, 0);
+	playButton = GuiButton_createShown (form, left, right, top, bottom, L"Play", gui_button_cb_play, this, 0);
 	left = right + 10; right = left + button_width;
-	my reverseButton = GuiButton_createShown (form, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, me, 0);
+	reverseButton = GuiButton_createShown (form, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, this, 0);
 	left = right + 10; right = left + button_width;
-	my publishButton = GuiButton_createShown (form, left, right, top, bottom, L"Publish", gui_button_cb_publish, me, 0);
+	publishButton = GuiButton_createShown (form, left, right, top, bottom, L"Publish", gui_button_cb_publish, this, 0);
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
 	// of the text. Better to have all editing done and then query the widget for its value!
 	left = right + 10; right = left + text_width; bottom_widgets_halfway = bottom = (top + bottom) / 2; top = bottom_widgets_top;
-	my durationLabel = GuiLabel_createShown (form, left, right, top , bottom, L"Duration (s):", 0);
+	durationLabel = GuiLabel_createShown (form, left, right, top , bottom, L"Duration (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	my durationTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	durationTextField = GuiText_createShown (form, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	my extendLabel = GuiLabel_createShown (form, left, right, top, bottom, L"Extend (s):", 0);
+	extendLabel = GuiLabel_createShown (form, left, right, top, bottom, L"Extend (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	my extendTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	extendTextField = GuiText_createShown (form, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	my f0Label = GuiLabel_createShown (form, left, right, top, bottom, L"Start F0 (Hz):", 0);
+	f0Label = GuiLabel_createShown (form, left, right, top, bottom, L"Start F0 (Hz):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	my f0TextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	f0TextField = GuiText_createShown (form, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width + 10; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	my f0SlopeLabel = GuiLabel_createShown (form, left, right, top, bottom, L"F0 slope (oct/s):", 0);
+	f0SlopeLabel = GuiLabel_createShown (form, left, right, top, bottom, L"F0 slope (oct/s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	my f0SlopeTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	f0SlopeTextField = GuiText_createShown (form, left, right, top, bottom, 0);
 
 	// The status startInfo and endInfo widget at the bottom:
 
 	bottom = -(STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
-	my startInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
+	startInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
 
 	left = right; right = left + status_info_width;
-	my endInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
+	endInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
 
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 	// log distances are equal (log (1000/200) == log (2500/500) ).
-	my drawingArea = GuiDrawingArea_createShown (form, 0, 0, 0, -MARGIN_BOTTOM,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, me, 0);
-	my height = GuiObject_getHeight (my drawingArea);
-	my width = GuiObject_getWidth (my drawingArea);
+	drawingArea = GuiDrawingArea_createShown (form, 0, 0, 0, -MARGIN_BOTTOM,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
+	height = GuiObject_getHeight (drawingArea);
+	width = GuiObject_getWidth (drawingArea);
 
 	GuiObject_show (form);
 
 #endif
 }
 
-
-static void dataChanged (VowelEditor me)
-{
-	(void) me;
-}
-
 class_methods (VowelEditor, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_methods_end
 }
 
@@ -1583,7 +1571,6 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data
 		#endif
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
 		Graphics_setFontSize (my g, 12);
-		VowelEditor_prefs ();
 		Editor_setPublishCallback (me.peek(), cb_publish, NULL);
 
 		my f1min = prefs.f1min;

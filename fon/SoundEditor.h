@@ -19,31 +19,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "TimeSoundAnalysisEditor.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (SoundEditor);
-
-SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Data data);
-
-#ifdef __cplusplus
-	}
-
-	struct structSoundEditor : public structTimeSoundAnalysisEditor {
+struct structSoundEditor : public structTimeSoundAnalysisEditor {
+	// new data
 		GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 		double maxBuffer;
-	};
-	#define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
-	Thing_declare2cpp (SoundEditor, TimeSoundAnalysisEditor);
+	// overridden methods:
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
+};
+#define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
+Thing_declare2cpp (SoundEditor, TimeSoundAnalysisEditor);
 
-#endif // __cplusplus
+SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Data data);
 
 /* End of file SoundEditor.h */
 #endif

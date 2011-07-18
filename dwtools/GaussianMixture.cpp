@@ -46,7 +46,7 @@
 #include "oo_DESCRIPTION.h"
 #include "GaussianMixture_def.h"
 
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 const wchar_t *GaussianMixture_criterionText (int criterion)
 {

@@ -17,22 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Articulation.h"
 #include "Speaker.h"
 #include "Delta.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void Art_Speaker_intoDelta (Art art, Speaker speaker, Delta delta);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Art_Speaker_Delta.h */

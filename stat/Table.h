@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Collection.h"
 #include "Graphics.h"
 #include "Interpreter_decl.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* For the inheritors. */
 #include "Table_def.h"
@@ -131,10 +123,6 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, long rowNumber);
 void Table_checkSpecifiedColumnNumberWithinRange (Table me, long columnNumber);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Table.h */
 #endif

@@ -17,22 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/22
- */
-
 #include "Articulation.h"
 #include "Speaker.h"
 #include "VocalTract.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 VocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Art_Speaker_to_VocalTract.h */

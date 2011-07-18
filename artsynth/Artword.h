@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Articulation.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Artword_def.h"
 #define Artword__methods(klas)  Data__methods(klas)
@@ -92,10 +84,6 @@ void Artword_intoArt (Artword me, Art art, double tim);
 */
 	
 void Artword_draw (Artword me, Graphics graphics, int feature, int garnish);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Artword.h */
 #endif

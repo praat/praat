@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/08
- */
-
 #include "Articulation.h"
 #include "Speaker.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void Art_Speaker_toVocalTract (Art art, Speaker speaker,
 	double intX [], double intY [], double extX [], double extY [],
@@ -57,9 +49,5 @@ void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	double xmm [], double ymm [], int closed []);
 
 void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics g);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Art_Speaker.h */

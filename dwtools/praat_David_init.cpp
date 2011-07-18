@@ -67,7 +67,7 @@
 #include "NUM2.h"
 #include "NUMlapack.h"
 #include "NUMmachar.h"
-extern "C" machar_Table NUMfpp;
+extern machar_Table NUMfpp;
 
 #include "Activation.h"
 #include "Categories.h"
@@ -6440,6 +6440,8 @@ extern "C" void praat_uvafon_David_init (void)
 	INCLUDE_LIBRARY (praat_KlattGrid_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_LIBRARY (praat_BSS_init)
+
+	VowelEditor_prefs ();
 }
 
 /* End of file praat_David.c */

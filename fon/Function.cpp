@@ -52,12 +52,12 @@
  * Methods for Function.
  */
 
-static void info (I) {
-	iam (Function);
-	classData -> info (me);
+void structFunction :: v_info ()
+{
+	Function_Parent :: v_info ();
 	MelderInfo_writeLine1 (L"Domain:");
-	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (this -> xmin));
+	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (this -> xmax));
 }
 
 static double getXmin (I) {
@@ -136,7 +136,6 @@ class_methods (Function, Data) {
 	class_method_local (Function, writeBinary)
 	class_method_local (Function, readBinary)
 	class_method_local (Function, description)
-	class_method (info)
 	class_method (getXmin)
 	class_method (getXmax)
 	us -> domainQuantity = 0;

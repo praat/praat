@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "TimeSoundAnalysisEditor.h"
 #include "TextGrid.h"
 #include "SpellingChecker.h"
@@ -34,17 +30,23 @@ Thing_declare1cpp (TextGridEditor);
 #define TextGridEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
 Thing_declare2cpp (TextGridEditor, TimeSoundAnalysisEditor);
 struct structTextGridEditor : public structTimeSoundAnalysisEditor {
-
-//Thing_declare (TextGridEditor, TimeSoundAnalysisEditor) {
-	SpellingChecker spellingChecker;
-	long selectedTier;
-	bool useTextStyles, shiftDragMultiple, suppressRedraw;
-	int fontSize;
-	enum kGraphics_horizontalAlignment alignment;
-	wchar *findString, greenString [Preferences_STRING_BUFFER_SIZE];
-	enum kTextGridEditor_showNumberOf showNumberOf;
-	enum kMelder_string greenMethod;
-	GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+	// new data:
+		SpellingChecker spellingChecker;
+		long selectedTier;
+		bool useTextStyles, shiftDragMultiple, suppressRedraw;
+		int fontSize;
+		enum kGraphics_horizontalAlignment alignment;
+		wchar *findString, greenString [Preferences_STRING_BUFFER_SIZE];
+		enum kTextGridEditor_showNumberOf showNumberOf;
+		enum kMelder_string greenMethod;
+		GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+	// overridden methods:
+		void v_destroy ();
+		void v_info ();
+		void v_createChildren ();
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+		void v_dataChanged ();
 };
 
 TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,

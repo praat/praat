@@ -27,17 +27,11 @@
  * pb 2008/03/21 new Editor API
  * pb 2008/05/31 ExponentialMaximumEntropy
  * pb 2011/03/22 C++
- * pb 2011/07/02 C++
+ * pb 2011/07/15 C++
  */
 
 #include "OTGrammarEditor.h"
 #include "EditorM.h"
-
-struct structOTGrammarEditor : public structHyperPage {
-	long selected;
-};
-#define OTGrammarEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (OTGrammarEditor, HyperPage);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
@@ -185,23 +179,23 @@ static int menu_cb_OTGrammarEditor_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEdi
 static int menu_cb_OTGrammar_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OTGrammar"); return 1; }
 static int menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OT learning"); return 1; }
 
-static void createMenus (OTGrammarEditor me) {
-	inherited (OTGrammarEditor) createMenus (me);
-	Editor_addCommand (me, L"Edit", L"-- edit ot --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
-	Editor_addCommand (me, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
-	Editor_addCommand (me, L"Edit", L"Evaluate (zero noise)", '0', menu_cb_evaluate_zeroNoise);
-	Editor_addCommand (me, L"Edit", L"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
-	Editor_addCommand (me, L"Edit", L"Edit constraint...", 'E', menu_cb_editConstraint);
-	Editor_addCommand (me, L"Edit", L"Reset all rankings...", 'R', menu_cb_resetAllRankings);
-	Editor_addCommand (me, L"Edit", L"Learn one...", 0, menu_cb_learnOne);
-	Editor_addCommand (me, L"Edit", L"Learn one from partial output...", '1', menu_cb_learnOneFromPartialOutput);
-	Editor_addCommand (me, L"Edit", L"-- remove ot --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
+void structOTGrammarEditor :: v_createMenus () {
+	OTGrammarEditor_Parent :: v_createMenus ();
+	Editor_addCommand (this, L"Edit", L"-- edit ot --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Evaluate...", 0, menu_cb_evaluate);
+	Editor_addCommand (this, L"Edit", L"Evaluate (noise 2.0)", '2', menu_cb_evaluate_noise_2_0);
+	Editor_addCommand (this, L"Edit", L"Evaluate (zero noise)", '0', menu_cb_evaluate_zeroNoise);
+	Editor_addCommand (this, L"Edit", L"Evaluate (tiny noise)", '9', menu_cb_evaluate_tinyNoise);
+	Editor_addCommand (this, L"Edit", L"Edit constraint...", 'E', menu_cb_editConstraint);
+	Editor_addCommand (this, L"Edit", L"Reset all rankings...", 'R', menu_cb_resetAllRankings);
+	Editor_addCommand (this, L"Edit", L"Learn one...", 0, menu_cb_learnOne);
+	Editor_addCommand (this, L"Edit", L"Learn one from partial output...", '1', menu_cb_learnOneFromPartialOutput);
+	Editor_addCommand (this, L"Edit", L"-- remove ot --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Remove constraint", 0, menu_cb_removeConstraint);
 }
 
-static void createHelpMenuItems (OTGrammarEditor me, EditorMenu menu) {
-	inherited (OTGrammarEditor) createHelpMenuItems (me, menu);
+void structOTGrammarEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	OTGrammarEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"OTGrammarEditor help", '?', menu_cb_OTGrammarEditor_help);
 	EditorMenu_addCommand (menu, L"OTGrammar help", 0, menu_cb_OTGrammar_help);
 	EditorMenu_addCommand (menu, L"OT learning tutorial", 0, menu_cb_OTLearningTutorial);
@@ -259,10 +253,7 @@ static int goToPage (OTGrammarEditor me, const wchar *title) {
 }
 
 class_methods (OTGrammarEditor, HyperPage) {
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (draw)
-	us -> editable = true;
 	class_method (goToPage)
 	class_methods_end
 }

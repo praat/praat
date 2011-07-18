@@ -19,30 +19,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/02
- */
-
 #include "FunctionEditor.h"
 #include "Pitch.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (PitchEditor);
+struct structPitchEditor : public structFunctionEditor {
+	// overridden methods:
+		void v_createMenus ();
+		void v_createHelpMenuItems (EditorMenu menu);
+};
+#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
+Thing_declare2cpp (PitchEditor, FunctionEditor);
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch);
-
-#ifdef __cplusplus
-	}
-
-	struct structPitchEditor : public structFunctionEditor {
-	};
-	#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
-	Thing_declare2cpp (PitchEditor, FunctionEditor);
-
-#endif // __cplusplus
 
 /* End of file PitchEditor.h */
 #endif

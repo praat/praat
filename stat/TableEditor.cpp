@@ -36,29 +36,16 @@
 #include "machine.h"
 #include "EditorM.h"
 
-#define MAXNUM_VISIBLE_COLUMNS  100
 #define SIZE_INCHES  40
-
-struct structTableEditor : public structEditor {
-	long topRow, leftColumn, selectedRow, selectedColumn;
-	GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
-	double columnLeft [MAXNUM_VISIBLE_COLUMNS], columnRight [MAXNUM_VISIBLE_COLUMNS];
-	Graphics graphics;
-};
-#define TableEditor__methods(Klas) Editor__methods(Klas) \
-	void (*draw) (Klas me); \
-	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
-Thing_declare2cpp (TableEditor, Editor);
 
 #undef our
 #define our ((TableEditor_Table) my methods) ->
 
 /********** EDITOR METHODS **********/
 
-static void destroy (I) {
-	iam (TableEditor);
-	forget (my graphics);
-	inherited (TableEditor) destroy (me);
+void structTableEditor :: v_destroy () {
+	forget (graphics);
+	TableEditor_Parent :: v_destroy ();
 }
 
 static void updateVerticalScrollBar (TableEditor me) {
@@ -83,13 +70,13 @@ static void updateHorizontalScrollBar (TableEditor me) {
 	#endif
 }
 
-static void dataChanged (TableEditor me) {
-	Table table = static_cast<Table> (my data);
-	if (my topRow > table -> rows -> size) my topRow = table -> rows -> size;
-	if (my leftColumn > table -> numberOfColumns) my leftColumn = table -> numberOfColumns;
-	updateVerticalScrollBar (me);
-	updateHorizontalScrollBar (me);
-	Graphics_updateWs (my graphics);
+void structTableEditor :: v_dataChanged () {
+	Table table = static_cast<Table> (data);
+	if (topRow > table -> rows -> size) topRow = table -> rows -> size;
+	if (leftColumn > table -> numberOfColumns) leftColumn = table -> numberOfColumns;
+	updateVerticalScrollBar (this);
+	updateHorizontalScrollBar (this);
+	Graphics_updateWs (graphics);
 }
 
 /********** FILE MENU **********/
@@ -140,7 +127,7 @@ static void draw (TableEditor me) {
 	 * We fit 200 rows in 40 inches, which is 14.4 points per row.
 	 */
 	long rowmin = my topRow, rowmax = rowmin + 197;
-	long colmin = my leftColumn, colmax = colmin + (MAXNUM_VISIBLE_COLUMNS - 1);
+	long colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows -> size) rowmax = table -> rows -> size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
 	Graphics_clearWs (my graphics);
@@ -248,32 +235,32 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_updateWs (my graphics);
 }
 
-static void createChildren (TableEditor me) {
-	Table table = static_cast<Table> (my data);
-	GuiObject form;   /* A form inside a form; needed to keep key presses away from the drawing area. */
+void structTableEditor :: v_createChildren () {
+	Table table = static_cast<Table> (data);
+	GuiObject form;   // a form inside a form; needed to keep key presses away from the drawing area
 
 	#if gtk
-		form = my dialog;
+		form = dialog;
 	#elif motif
-		form = XmCreateForm (my dialog, "buttons", NULL, 0);
+		form = XmCreateForm (dialog, "buttons", NULL, 0);
 		XtVaSetValues (form,
 			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
 			XmNbottomAttachment, XmATTACH_FORM,
-			XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
+			XmNtraversalOn, False,   // needed in order to redirect all keyboard input to the text widget
 			NULL);
 	#endif
 
 	/***** Create text field. *****/
 
 	#if gtk
-		my text = GuiText_create(NULL, 0, 0, 0, Machine_getTextHeight(), 0);
-		gtk_box_pack_start(GTK_BOX(form), my text, FALSE, FALSE, 3);
-		GuiObject_show(my text);
+		text = GuiText_create (NULL, 0, 0, 0, Machine_getTextHeight (), 0);
+		gtk_box_pack_start (GTK_BOX (form), text, FALSE, FALSE, 3);
+		GuiObject_show (text);
 	#else
-		my text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
+		text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
 	#endif
-	GuiText_setChangeCallback (my text, gui_text_cb_change, me);
+	GuiText_setChangeCallback (text, gui_text_cb_change, this);
 
 	/***** Create drawing area. *****/
 	
@@ -282,32 +269,32 @@ static void createChildren (TableEditor me) {
 		gtk_box_pack_start (GTK_BOX (form), table_container, TRUE, TRUE, 3);
 		GuiObject_show (table_container);
 		
-		my drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, me, 0);
+		drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0,
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 		
 		// need to turn off double buffering, otherwise we receive the expose events
 		// delayed by one event, see also FunctionEditor.c
-		gtk_widget_set_double_buffered (my drawingArea, FALSE);
+		gtk_widget_set_double_buffered (drawingArea, FALSE);
 		
-		gtk_table_attach (GTK_TABLE (table_container), my drawingArea, 0, 1, 0, 1,
+		gtk_table_attach (GTK_TABLE (table_container), drawingArea, 0, 1, 0, 1,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-		GuiObject_show (my drawingArea);
+		GuiObject_show (drawingArea);
 	#else
-		my drawingArea = GuiDrawingArea_createShown (form, 0, - Machine_getScrollBarWidth (),
+		drawingArea = GuiDrawingArea_createShown (form, 0, - Machine_getScrollBarWidth (),
 			Machine_getTextHeight (), - Machine_getScrollBarWidth (),
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, me, 0);
+			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, this, 0);
 	#endif
 
 	/***** Create horizontal scroll bar. *****/
 
 	#if gtk
-		GtkAdjustment *hadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table->numberOfColumns + 1, 1, 3, 1));
-		my horizontalScrollBar = gtk_hscrollbar_new (hadj);
-		gtk_table_attach (GTK_TABLE(table_container), my horizontalScrollBar, 0, 1, 1, 2,
+		GtkAdjustment *hadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> numberOfColumns + 1, 1, 3, 1));
+		horizontalScrollBar = gtk_hscrollbar_new (hadj);
+		gtk_table_attach (GTK_TABLE(table_container), horizontalScrollBar, 0, 1, 1, 2,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) 0, 0, 0);
-		GuiObject_show (my horizontalScrollBar);
+		GuiObject_show (horizontalScrollBar);
 	#elif motif
-	my horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
+	horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmHORIZONTAL,
 		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
@@ -326,13 +313,13 @@ static void createChildren (TableEditor me) {
 	/***** Create vertical scroll bar. *****/
 
 	#if gtk
-		GtkAdjustment *vadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table->rows->size + 1, 1, 10, 1));
-		my verticalScrollBar = gtk_vscrollbar_new (vadj);
-		gtk_table_attach (GTK_TABLE (table_container), my verticalScrollBar, 1, 2, 0, 1,
+		GtkAdjustment *vadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> rows -> size + 1, 1, 10, 1));
+		verticalScrollBar = gtk_vscrollbar_new (vadj);
+		gtk_table_attach (GTK_TABLE (table_container), verticalScrollBar, 1, 2, 0, 1,
 			(GtkAttachOptions) 0, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-		GuiObject_show (my verticalScrollBar);
+		GuiObject_show (verticalScrollBar);
 	#elif motif
-	my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
+	verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
 		xmScrollBarWidgetClass, form,
 		XmNorientation, XmVERTICAL,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
@@ -351,33 +338,28 @@ static void createChildren (TableEditor me) {
 	GuiObject_show (form);
 }
 
-static void createMenus (TableEditor me) {
-	inherited (TableEditor) createMenus (me);
+void structTableEditor :: v_createMenus () {
+	TableEditor_Parent :: v_createMenus ();
 
 	#ifndef macintosh
-	Editor_addCommand (me, L"Edit", L"-- cut copy paste --", 0, NULL);
-	Editor_addCommand (me, L"Edit", L"Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (me, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (me, L"Edit", L"Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (me, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (me, L"Edit", L"Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (me, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (me, L"Edit", L"Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (me, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
+	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
+	Editor_addCommand (this, L"Edit", L"Cut text", 'X', menu_cb_Cut);
+	Editor_addCommand (this, L"Edit", L"Cut", Editor_HIDDEN, menu_cb_Cut);
+	Editor_addCommand (this, L"Edit", L"Copy text", 'C', menu_cb_Copy);
+	Editor_addCommand (this, L"Edit", L"Copy", Editor_HIDDEN, menu_cb_Copy);
+	Editor_addCommand (this, L"Edit", L"Paste text", 'V', menu_cb_Paste);
+	Editor_addCommand (this, L"Edit", L"Paste", Editor_HIDDEN, menu_cb_Paste);
+	Editor_addCommand (this, L"Edit", L"Erase text", 0, menu_cb_Erase);
+	Editor_addCommand (this, L"Edit", L"Erase", Editor_HIDDEN, menu_cb_Erase);
 	#endif
 }
 
-static void createHelpMenuItems (TableEditor me, EditorMenu menu) {
-	inherited (TableEditor) createHelpMenuItems (me, menu);
+void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
+	TableEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
 class_methods (TableEditor, Editor) {
-	class_method (destroy)
-	class_method (dataChanged)
-	class_method (createChildren)
-	class_method (createMenus)
-	class_method (createHelpMenuItems)
 	class_method (draw)
 	class_method (click)
 	class_methods_end

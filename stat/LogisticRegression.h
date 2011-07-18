@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Regression.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "LogisticRegression_def.h"
 #define LogisticRegression__methods(klas)  Regression__methods(klas)
@@ -40,10 +32,6 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar *columnsWi
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, long colx, double xmin, double xmax,
 	long coly, double ymin, double ymax, bool garnish);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file LogisticRegression.h */
 #endif

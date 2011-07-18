@@ -1312,7 +1312,7 @@ long TableOfReal_getNumberOfLabelMatches (I, const wchar_t *search, int columnLa
 		}
 		if (use_regexp)
 		{
-			regularExp_CHAR *compileMsg;
+			wchar *compileMsg;
 			compiled_regexp = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
 			if (compiled_regexp == 0) Melder_throw ((wchar *) compileMsg);
 		}
